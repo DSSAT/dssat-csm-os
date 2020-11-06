@@ -20,7 +20,7 @@ C  02/09/2007 GH  Add path for FileA
       SUBROUTINE SU_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, OILWT, PSTRES1, PSTRES2, !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
@@ -40,7 +40,7 @@ C  02/09/2007 GH  Add path for FileA
       CHARACTER*10 STNAME(20)
       CHARACTER*12 FILEA
       CHARACTER*30 FILEIO
-	CHARACTER*80 PATHEX
+      CHARACTER*80 PATHEX
 
       INTEGER DEMRG, DFLR, DMAT, IFPD, DFPD, IFSD, DFSD
       INTEGER DNR0, DNR1, DNR7, DYNAMIC, ERRNUM, FOUND
@@ -59,12 +59,12 @@ C  02/09/2007 GH  Add path for FileA
       REAL SDWT, SDWTAH, SDWTAM, SEEDNO, SKERWT, STOVER
       REAL SWFAC, TOPWT, TURFAC
       REAL WTNCAN, WTNUP, XGNP, XLAI, XN
-      REAL YIELD 
+      REAL YIELD,OILWT,OILPC
 
       REAL, DIMENSION(2) :: HARVFRAC
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 18
+      INTEGER, PARAMETER :: SUMNUM = 19
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -427,7 +427,7 @@ C  02/09/2007 GH  Add path for FileA
       WRITE(Simulated(22),'(I8)') DNR0; WRITE(Measured(22),'(I8)') DEMRG
 
       ENDIF
-
+!
 !-------------------------------------------------------------------
 !     Send information to OPSUM to generate SUMMARY.OUT file
 !-------------------------------------------------------------------
@@ -452,11 +452,13 @@ C  02/09/2007 GH  Add path for FileA
       LABEL(12) = 'NUCM'; VALUE(12) = WTNUP*10.
       LABEL(13) = 'CNAM'; VALUE(13) = WTNCAN*10.
       LABEL(14) = 'GNAM'; VALUE(14) = GNUP        !WTNSD*10.
-      LABEL(15) = 'PWAM'; VALUE(15) = PODWT*10.
+      LABEL(15) = 'COAM'; VALUE(15) = OILWT*10.
       LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
       LABEL(17) = 'HIAM'; VALUE(17) = HI
       LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
-
+      OILPC=OILWT/SDWTAM*100.
+      LABEL(19) = 'GL%M'; VALUE(19) = NINT(OILPC)
+       
       !Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 

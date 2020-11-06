@@ -9,7 +9,7 @@
 !======================================================================
 !  Various oilcropsun Subroutines
 !
-!  Maize growth routine that coordinates calling of GROSUB, PHENOL and
+!  Sunflower growth routine that coordinates calling of GROSUB, PHENOL and
 !  ROOTGR. Prepared for the modular version of Generic CERES.
 !
 !----------------------------------------------------------------------
@@ -20,7 +20,7 @@
 !  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 !                   as defined in ModuleDefs.for
 !  12/17/2004 CHP Modified HRESCeres call for harvest residue
-!  02/04/2005 CHP Added PODWT to Summary.out output
+
 !  06/06/2006 CHP/JIL Added optional temperature sensitivity parameter
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
@@ -113,8 +113,8 @@
       REAL            PCNST     
       REAL            PCNRT
       REAL            SLPF     
-      REAL            PODNO      
-      REAL            PODWT   
+      REAL            OILPC      
+      REAL            OILWT   
       REAL            PORMIN  
       REAL            PLTPOP    
       REAL            PTF        
@@ -180,7 +180,8 @@
       REAL            XN        
       REAL            XNTI     
       REAL            XSTAGE   
-      REAL            YIELD    
+      REAL            YIELD   
+      REAL            PODWT 
       INTEGER         YRDOY  
       INTEGER         YREMRG   
       INTEGER         YRPLT 
@@ -334,8 +335,8 @@ C----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PODNO, PConc_Root, PConc_Seed,     !Output
-     &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
+     &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
+     &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
      &      SHELPC, SI1, SI3, SKERWT, SLA, STMWTO, STOVER,    !Output
@@ -344,7 +345,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,OILPC)
 
 
           !-------------------------------------------------------------
@@ -359,7 +360,7 @@ C----------------------------------------------------------------------
 
           CALL SU_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
@@ -372,7 +373,7 @@ C----------------------------------------------------------------------
           CALL SU_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, OILWT, PSTRES1, PSTRES2, !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
@@ -438,8 +439,8 @@ C-----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PODNO, PConc_Root, PConc_Seed,     !Output
-     &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
+     &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
+     &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
      &      SHELPC, SI1, SI3, SKERWT, SLA, STMWTO, STOVER,    !Output
@@ -448,7 +449,7 @@ C-----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,OILPC)
 
                          
           CALL SU_ROOTGR (DYNAMIC,ISWNIT,                         !C
@@ -459,7 +460,7 @@ C-----------------------------------------------------------------------
 
           CALL SU_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
@@ -473,7 +474,7 @@ C-----------------------------------------------------------------------
           CALL SU_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, OILWT, PSTRES1, PSTRES2, !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
@@ -554,8 +555,8 @@ C----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG,  PODNO, PConc_Root, PConc_Seed,     !Output
-     &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
+     &      PCNVEG,  OILPC, PConc_Root, PConc_Seed,     !Output
+     &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
      &      SHELPC, SI1, SI3, SKERWT, SLA, STMWTO, STOVER,    !Output
@@ -564,7 +565,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
 
         ELSE
@@ -613,8 +614,8 @@ C----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PODNO, PConc_Root, PConc_Seed,     !Output
-     &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
+     &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
+     &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
      &      SHELPC, SI1, SI3, SKERWT, SLA, STMWTO, STOVER,    !Output
@@ -623,13 +624,13 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
         ENDIF   
 
       CALL SU_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
@@ -642,7 +643,7 @@ C----------------------------------------------------------------------
       CALL SU_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, OILWT, PSTRES1, PSTRES2, !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
@@ -679,8 +680,8 @@ C----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PODNO, PConc_Root, PConc_Seed,     !Output
-     &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
+     &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
+     &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
      &      SHELPC, SI1, SI3, SKERWT, SLA, STMWTO, STOVER,    !Output
@@ -689,12 +690,12 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
 
         CALL SU_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
@@ -707,12 +708,13 @@ C----------------------------------------------------------------------
         CALL SU_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, OILWT, PSTRES1, PSTRES2, !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
      &    BWAH, SDWTAH)                                   !Output
 
+        PODWT=GRNWT*PLTPOP
         CALL HRes_Ceres(CONTROL,
      &    CROP, DLAYR, GRNWT, HARVFRAC, NLAYR,            !Input
      &    PConc_Shut, PConc_Root, PConc_Shel,             !Input
@@ -829,8 +831,8 @@ C----------------------------------------------------------------------
 ! PL(I)             Pest level for pest I today
 ! PHTIM      Not used in CERES except to pass 0 into pest.for
 ! PLTPOP      !Plant Population, Pl/m  
-! PODNO       !Ear number, #/m2
-! PODWT       !Pod (ear) weight, g/m2
+! OILPC       !Percent oil in seeds
+! OILWT       !OIL weight, g/m2
 ! PORMIN      !Minimum pore volume before soil water saturation effects growth (not used), cm3/cm3    
 ! PPLTD      Percent plants destroyed  (%/m2/d)
 ! PTF         !Ratio of above ground biomass to total biomass 

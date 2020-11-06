@@ -49,10 +49,10 @@
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
-     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
+     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIO,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
      &      PCNVEG, PConc_Root, PConc_Seed,     !Output
-     &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
+     &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
      &      SHELPC, SI1, SI3, SKERWT, SLA, STMWTO, STOVER,    !Output
@@ -61,7 +61,7 @@
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,OILPC)
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
@@ -139,7 +139,7 @@
       REAL        GRORT       
       REAL        GROSTM      
       REAL        HI
-      REAL        HIP
+      REAL        HIO
       INTEGER     ICOLD       
       INTEGER     ICSDUR      
       CHARACTER   IDETO*1     
@@ -210,7 +210,7 @@
       REAL        PLAG        
       REAL        PLAS        
       REAL        PLTPOP      
-      REAL        PODWT
+      REAL        OILWT
       REAL        PORMIN
       REAL        PPLTD 
       REAL        PRFT        
@@ -331,8 +331,9 @@
       REAL        XNTI        
       REAL        XSTAGE           
       REAL        YIELD       
-      REAL        YIELDB      
-      INTEGER     YR, YRDOY    
+      REAL        YIELDB   
+      REAL        PODWT   
+      INTEGER     YR, YRDOY,OILPC    
 
 !     Added to send messages to WARNING.OUT
       CHARACTER*78 MESSAGE(10)
@@ -379,7 +380,7 @@
       REAL XXX,YLNOI,YRAT,YYY,Z,ZLNOI,ZZZ,C2,CPOOL,CUMDTT
       REAL OILPERC,PNP,SENRATE,TMFAC1(10),SGRO(12)
       REAL ALF,ALF1,GRAINN1,GRAINNE
-      REAL PS
+      REAL PS,KCAN,KEP
       
       INTEGER IDURP,I,JPEPE,NGRO
     
@@ -734,7 +735,7 @@
         GRORT  = 0.0
         GROSTM = 0.0
         HI     = 0.0
-        HIP    = 0.0
+        HIO    = 0.0
         ICOLD  = 0
         ICSDUR = 0
         IPAR   = 0.0
@@ -870,6 +871,8 @@
      &  ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,        !Input
      &  KUPTAKE, KSTRES)                             !Output
 
+        PODWT = SDWT     ! added as no pods exist
+        
         CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &  CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &        PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
@@ -1190,6 +1193,13 @@
           RUE  = 1.4 + 1.8*(1.0-EXP(-0.5*PLA*PLTPOP/10000.0))
           RUE  = AMIN1 (RUE,3.0)
           RI  = PAR*(1.0-EXP(-K2*LAI))
+          
+          KCAN=K2
+C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
+
+
+          KEP=-LOG(0.5*EXP(-KCAN*LAI)+.5*EXP(-0.5*KCAN*LAI))/LAI
+
           !
           ! RUE changes when oil starts to accumulate
           !
@@ -1941,6 +1951,8 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
                 ENDIF
                 OILINC  = PO/100.0 * GROEMB *(P5-170.0)/(P5-230.0)
                 OIL     = OIL + OILINC
+                OILWT=OIL*PLTPOP
+                OILPC=NINT(OIL/GRNWT*100.)
               ELSE
                 OILFRAC = 0.0
               ENDIF
@@ -2403,7 +2415,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
       IF (ISWPHO .NE. 'N') THEN 
         CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &       CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
-     &        PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &        PCNVEG, PLTPOP, OILWT, RLV, RTDEP, RTWTO,       !Input
      &        SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
      &        STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &        WTLF, YRPLT,                                    !Input
@@ -2483,7 +2495,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
 
           CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
-     &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &      PCNVEG, PLTPOP, OILWT, RLV, RTDEP, RTWTO,       !Input
      &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
      &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &      WTLF, YRPLT,                                    !Input
@@ -2522,7 +2534,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
         
         CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
-     &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &      PCNVEG, PLTPOP, OILWT, RLV, RTDEP, RTWTO,       !Input
      &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
      &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &      WTLF, YRPLT,                                    !Input
@@ -2610,7 +2622,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
 ! GROSTM      !Stem growth rate, g/plant/day
 ! HI          !Ratio of seed weight (SDWT) to weight of above-ground portion of 
 !              plant (TOPWT) (g[seed] / g[tops])
-! HIP         !Ratio of pod weight (PODWT) to weight of above-ground portion of 
+! HIO         !Ratio of OIL weight (OILWT) to weight of above-ground portion of 
 !              plant (TOPWT) (g[pods] / g[tops])
 ! I           !Counter
 ! ICOLD       !Cumulative number of days when TMIN is less than -3 C

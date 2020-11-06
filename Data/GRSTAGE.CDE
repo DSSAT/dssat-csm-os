@@ -1,3 +1,4 @@
+
 *Phenological/Growth Stage Codes
 ! DSSAT v4.7; 09/01/2017
 !
@@ -431,6 +432,19 @@ GS006       Maturity                                                            
 GS007       Sowing date                                                          .
 GS008       Germination                                                          .
 GS009       Emergence                                                            .
+
+*Growth and Development Codes - Sunflower (OilcropSun Version 6.1)
+@CDE  NAME  DESCRIPTION......................................................... SYNONYMS
+GS000       None                                                                 .
+GS001       End juvenile phase                                                   .
+GS002       Floral initiation                                                    .
+GS003       First anthesis                                                       .
+GS004       Start grain filling                                                  .
+GS005       End grain filling                                       .
+GS006       Maturity                                                             .
+GS007       Sowing date                                                          .
+GS008       Germination                                                          .
+GS009       Emergence    
 
 *Growth and Development Codes - Wheat (CERES Version 4.5)
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS

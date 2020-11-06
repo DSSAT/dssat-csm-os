@@ -328,7 +328,13 @@
           CLOSE (LUNECO)
         ENDIF
 
-      KEP = KCAN/(1-0.07)*(1-0.25)
+C     KEP = KCAN/(1-0.07)*(1-0.25)
+      
+C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
+C     taking L=1
+
+      KEP=-LOG(0.5*EXP(-KCAN)+.5*EXP(-0.5*KCAN))
+           
 
           DO I=1,20
               STGDOY(I) = 9999999      

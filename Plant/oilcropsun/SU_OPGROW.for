@@ -17,8 +17,8 @@ C  Called by: MAIZE, SG_CERES, ML_CERES
 C  Calls:     None
 !======================================================================
       SUBROUTINE SU_OPGROW(CONTROL, ISWITCH, 
-     &  CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &  PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &  CANHT, CANWH, DTT, HI, HIO, KSTRES, MDATE, NLAYR, NSTRES, 
+     &  PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &  RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &  STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &  WTSO, XLAI, YRPLT)
@@ -40,11 +40,11 @@ C  Calls:     None
       INTEGER DAP, DAS, DOY, I, N_LYR, RSTAGE, RUN
       INTEGER MDATE, YEAR, YRDOY, YRPLT, YRSIM, VWAD
 
-      REAL VSTAGE, XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, PODWT, SEEDNO
+      REAL VSTAGE, XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, OILWT, SEEDNO
       REAL SLA, PCNL, TURFAC, CANHT, CANWH, HI, SHELPC, SATFAC, KSTRES
-      REAL SDSIZE, PODNO, PSTRES1, PSTRES2, RTDEP, NSTRES, SWFAC, HIP
+      REAL SDSIZE,  PSTRES1, PSTRES2, RTDEP, NSTRES, SWFAC, HIO
       REAL PLTPOP, PODWTD, DTT
-      REAL WTLO, WTSO, WTCO
+      REAL WTLO, WTSO, WTCO,OILPC
       REAL RLV(NL)
       REAL CUMSENSURF, CUMSENSOIL     !cumul. senes. soil and surface
 
@@ -120,7 +120,7 @@ C  Calls:     None
      &   '   L#SD   GSTD   LAID   LWAD   SWAD   GWAD',
      &   '   RWAD   VWAD   CWAD   G#AD   GWGD   HIAD   PWAD',
      &   '   P#AD   WSPD   WSGD   NSTD   EWSD  PST1A  PST2A',
-     &   '   KSTD   LN%D   SH%D   HIPD   PWDD   PWTD',
+     &   '   KSTD   LN%D   SH%D   HIOD',
      &   '     SLAD   CHTD   CWID   RDPD') 
 
           DO L = 1, N_LYR
@@ -151,7 +151,7 @@ C  Calls:     None
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
         IF (YRDOY .GE. YRPLT) THEN
 
-          PODWTD = 0
+
 !         DAS = MAX(0, TIMDIF(YRSIM, YRDOY))
           DAP = MAX(0, TIMDIF(YRPLT, YRDOY))
 
@@ -207,13 +207,13 @@ C  Calls:     None
      &        YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
      &        NINT(WTLF*10.),NINT(STMWTO*10.),NINT(SDWT*10.),
      &        NINT(RTWT*10.*PLTPOP), VWAD, NINT(TOPWT*10.),
-     &        NINT(SEEDNO),SDSIZE,HI,NINT(PODWT*10.),NINT(PODNO),
+     &        NINT(SEEDNO),SDSIZE,HI,NINT(OILWT*10.),NINT(OILPC),
      &        SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, KST_AV,
-     &        PCNL,SHELPC,HIP, NINT(PODWTD*10.),
-     &        NINT((PODWTD+PODWT)*10.),SLA,CANHT,CANWH, (RTDEP/100.)
+     &        PCNL,SHELPC,HIO, 
+     &        SLA,CANHT,CANWH, (RTDEP/100.)
  400        FORMAT (1X,I4,1X,I3.3,2(1X,I5),1X,F6.1,1X,I6,1X,F6.2,
      &        7(1X,I6),1X,F6.1,1X,F6.3,2(1X,I6),7(1X,F6.3),3(1X,F6.2),
-     &        2(1X,I6),1X,F8.1,2(1X,F6.2),1X,F6.2)
+     &        1X,F8.1,2(1X,F6.2),1X,F6.2)
 
             WRITE(NOUTDG,402,ADVANCE='NO')(RLV(I),I=1,N_LYR)
  402          FORMAT (10F8.2)
@@ -230,12 +230,12 @@ C  Calls:     None
          CALL CsvOut_SUOIL(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
      &VSTAGE, RSTAGE, XLAI, WTLF, STMWTO, SDWT, RTWT, PLTPOP, VWAD, 
-     &TOPWT, SEEDNO, SDSIZE, HI, PODWT, PODNO, SWF_AV, TUR_AV, NST_AV, 
-     &EXW_AV, PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIP, PODWTD, SLA,
+     &TOPWT, SEEDNO, SDSIZE, HI, OILWT, OILPC, SWF_AV, TUR_AV, NST_AV, 
+     &EXW_AV, PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIO, SLA,
      &CANHT, CANWH, RTDEP, N_LYR, RLV, WTCO, WTLO, WTSO, CUMSENSURF, 
      &CUMSENSOIL, DTT, vCsvlineSUOIL, vpCsvlineSUOIL, vlngthSUOIL)
-    
-         CALL LinklstSUOIL(vCsvlineSUOIL)
+ 
+          CALL LinklstSUOIL(vCsvlineSUOIL)
       END IF
   
           ENDIF
@@ -279,8 +279,8 @@ C-------------------------------------------------------------------
 ! EXPER   Experiment code (prefix of input files) 
 ! HI      Ratio of seed weight (SDWT) to weight of above-ground portion of 
 !           plant (TOPWT) (g[seed] / g[tops])
-! HIP     Ratio of pod weight (PODWT) to weight of above-ground portion of 
-!           plant (TOPWT) (g[pods] / g[tops])
+! HIO     Ratio of OIL weight (OILWT) to weight of above-ground portion of 
+!           plant (TOPWT) (g[oil] / g[tops])
 ! MODEL   Name of CROPGRO executable file 
 ! NL      maximum number of soil layers = 20 
 ! NOUTDG  Unit number for growth output file 
@@ -288,10 +288,8 @@ C-------------------------------------------------------------------
 ! NSTRES  Nitrogen stress factor (1=no stress, 0=max stress) 
 ! OUTG    Growth output file name (typically 'GROWTH.OUT') 
 ! PCNL    Percentage of N in leaf tissue (100 g[N] / g[leaf])
-! PODNO   Total number of pods (#/m2)
-! PODWT   Dry mass of seeds plus shells, including C and N
-!           (g[pods] / m2[ground])
-! PODWTD  Mass of detached pods (g[pods] / m2[ground])
+! OILPC   Percent oil in grains
+! OILWT   Oil mass (g/m2)
 ! RLV(L)  Root length density for soil layer L ((cm root / cm3 soil))
 ! RSTAGE  Number of RSTAGES which have occurred. 
 ! RTDEP   Root depth (cm)
@@ -300,8 +298,8 @@ C-------------------------------------------------------------------
 !           stress; 1 = saturated stress ) 
 ! SDSIZE  Average mass of seeds (mg / seed)
 ! SEEDNO  Total number of seeds (#/m2)
-! SHELLW  Shell mass (g[shell] / m2)
-! SHELPC  Percentage of pod mass that is seeds (g[seed]/g[pods] * 100%)
+! SHELLW  Shell mass (g[shell] / m2) !!! In OilcropSun this refers to pericarp mass
+! SHELPC  Percentage of pod mass that is seeds (g[seed]/g[pods] * 100%) 
 ! SLA     Specific leaf area (cm2[leaf] / m2[ground])
 ! STMWTO   Dry mass of stem tissue, including C and N (g[stem] / m2[ground)
 ! SWFAC   Effect of soil-water stress on photosynthesis, 1.0=no stress, 

@@ -517,7 +517,7 @@ C
 C     CAN  - CANegro model    Version 4.7.5 (2019)
 C     CROP = SC for Sugarcane Version 4.7.5 (2019)
 C
-C     OIL  - OILcrop model    Version 4.7.5 (2019)
+C     OIL  - OILcrop model    Version 4.7.5 (2020)
 C     CROP = SU for Sunflower Version 4.7.5 (2019)
 C
 C     ALO  - ALOha model      Version 4.7.5 (2019)

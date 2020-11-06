@@ -35,7 +35,7 @@ C=======================================================================
       CHARACTER*1  RNMODE,BLANK
       CHARACTER*2  CROP
       CHARACTER*6  VARTY,VARNO,ERRKEY,ECOTYP,ECONO
-	CHARACTER*8  MODEL
+      CHARACTER*8  MODEL
       CHARACTER*12 FILEE,FILEG
       CHARACTER*16 VRNAME,ECONAM
       CHARACTER*80 PATHGE,PATHEC
@@ -121,10 +121,11 @@ C
              NSENS = 0
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
-	       IF (INDEX('GRO,CAS,CSM,CSP,CER,YCA',MODEL(3:5)) .GT. 0) THEN 
-                 CALL IPECO(FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
+         IF (INDEX('GRO,CAS,CSM,CSP,CER,YCA,OIL',MODEL(3:5)).GT.0)
+     &      THEN 
+         CALL IPECO(FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &               ECONO,IVRGRP,MODEL)
-             ENDIF
+         ENDIF
              NSENS = 1
           ENDIF
 
@@ -158,8 +159,8 @@ C**WDB 12/8/2015 added BSCER to case statement for sugarbeet model
 
 !=======================================================================
       ELSE IF (MENU .EQ. 4) THEN
-        IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS,YCA',MODEL(3:5)) .GT. 0)
-     &   THEN
+        IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS,YCA,OIL',MODEL(3:5))
+     &   .GT.0) THEN
               CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &            ECONO,IVRGRP,MODEL)
           ENDIF

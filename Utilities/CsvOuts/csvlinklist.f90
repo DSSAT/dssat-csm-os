@@ -558,7 +558,7 @@ Contains
     Character(:), Allocatable :: ptxtlineSUOIL            
         
     If(.Not. Associated(headSUOIL)) Then          
-      Allocate(headMZCER, Stat=istatSUOIL)        
+      Allocate(headSUOIL, Stat=istatSUOIL)        
       If(istatSUOIL==0) Then                      
         tailSUOIL => headSUOIL                    
         Nullify(tailSUOIL%pSUOIL)                 

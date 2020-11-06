@@ -586,8 +586,8 @@ end Subroutine CsvOut_mzcer
 ! Sub for csv output SUOIL PlantGro.csv
 Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    VSTAGE, RSTAGE, XLAI, WTLF, STMWTO, SDWT, RTWT, PLTPOP, VWAD, TOPWT,SEEDNO,& 
-   SDSIZE, HI, PODWT, PODNO, SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, &
-   KST_AV, PCNL, SHELPC, HIP, PODWTD, SLA, CANHT, CANWH, RTDEP, N_LYR, RLV, &
+   SDSIZE, HI, OILWT, OILPC, SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, &
+   KST_AV, PCNL, SHELPC, HIO, SLA, CANHT, CANWH, RTDEP, N_LYR, RLV, &
    WTCO, WTLO, WTSO, CUMSENSURF, CUMSENSOIL, DTT, Csvline, pCsvline, lngth) 
 
 !  Input vars
@@ -598,8 +598,8 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !        INTEGER,Intent(in)      :: CN      ! Crop component (multicrop)     #
    Real,Intent(IN) :: VSTAGE, XLAI, WTLF, STMWTO, SDWT, RTWT, PLTPOP, TOPWT  
    Integer,Intent(IN) :: RSTAGE, VWAD                            
-   Real,Intent(IN) :: SEEDNO, SDSIZE, HI, PODWT, PODNO, SWF_AV, TUR_AV, NST_AV     
-   Real,Intent(IN) :: EXW_AV, PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIP, PODWTD
+   Real,Intent(IN) :: SEEDNO, SDSIZE, HI, OILWT, OILPC, SWF_AV, TUR_AV, NST_AV     
+   Real,Intent(IN) :: EXW_AV, PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIO
    Real,Intent(IN) :: SLA, CANHT, CANWH, RTDEP, WTCO, WTLO, WTSO
    Integer,Intent(IN) :: N_LYR
    Real, Dimension(N_LYR),Intent(IN) :: RLV 
@@ -608,7 +608,7 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !  Recalculated vars
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
    Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1, cRTDEP1
+   Real :: cDWNOD1, cRTDEP1,cOILWT1,COILPC
    Integer :: cWTCO1, cWTLO1, cWTSO1
   
    Integer :: i
@@ -629,10 +629,7 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    cRTWT1 = NINT(RTWT*10.*PLTPOP)
    cTOPWT1 = NINT(TOPWT*10.)
    cSEEDNO1 = NINT(SEEDNO)
-   cPODWT1 = NINT(PODWT*10.)
-   cPODNO1 = NINT(PODNO)
-   cPODWTD1 = NINT(PODWTD*10.)
-   cPodSum = NINT((PODWTD+PODWT)*10.)
+   cOILWT1 = NINT(OILWT*10.)
    cRTDEP1 = RTDEP/100.
    cWTCO1 = NINT(WTCO*10.)
    cWTLO1 = NINT(WTLO*10.)
@@ -642,8 +639,8 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 
    Write(tmp,'(45(g0,","))')RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,& 
       VSTAGE, RSTAGE, XLAI, cWTLF1, cSTMWT1, cSDWT1, cRTWT1, VWAD, cTOPWT1, &
-      cSEEDNO1, SDSIZE, HI, cPODWT1, cPODNO1, SWF_AV, TUR_AV, NST_AV, EXW_AV, &
-      PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIP, cPODWTD1, cPodSum, SLA, &
+      cSEEDNO1, SDSIZE, HI, cOILWT1, cOILPC, SWF_AV, TUR_AV, NST_AV, EXW_AV, &
+      PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIO, SLA, &
       CANHT, CANWH, cRTDEP1, cWTCO1, cWTLO1, cWTSO1,cCUMSENSURF1,cCUMSENSOIL1,DTT  
     
    Write(fmt,'(I2)') N_LYR - 1   
