@@ -4009,7 +4009,7 @@ C-GH As per Tony Hunt 2017 for GenCalc
         IF (FILEIOT.EQ.'DS4') THEN
 !         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
           IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
-     &       (INDEX('FQN',RNMODE) > 0)) THEN
+     &       (INDEX('FQNY',RNMODE) > 0)) THEN
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
         ENDIF

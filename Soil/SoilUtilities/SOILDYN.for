@@ -514,7 +514,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       ENDDO   !End of soil layer loop.
 
 !     Warning message for non-sequenced runs or any first run
-      IF (INDEX('QFN',RNMODE) .LE. 0 .OR. 
+      IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
         IF (LEN(TRIM(MSG(3))) > 1) THEN
 !         Print message for missing or invalid data
@@ -738,7 +738,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 !     Warning message for Century
 !      (non-sequenced runs or any first run)
       IF (MESOM == 'P' .AND. 
-     &   (INDEX('QFN',RNMODE) .LE. 0 .OR. 
+     &   (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1))) THEN
 !       Texture data missing - write message to WARNING.OUT file.
         IF (NOTEXTURE) THEN

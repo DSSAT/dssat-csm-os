@@ -255,11 +255,10 @@ C***********************************************************************
       CONTROL % YRDOY = 0
       CALL PUT(CONTROL)
 
-      IF ((INDEX('NSFBTY',RNMODE) .GT. 0) .OR. (INDEX('E',RNMODE) .GT.
-     &     0 .AND. RUN .EQ. 1)) THEN
+      IF ((INDEX('NSFBTY',RNMODE) .GT. 0) .OR. 
+     &    (INDEX('E',RNMODE) .GT. 0 .AND. RUN .EQ. 1)) THEN
         CALL IGNORE (LUNBIO,LINBIO,ISECT,CHARTEST)
         IF (ISECT .EQ. 1) THEN
-
           END_POS = LEN(TRIM(CHARTEST(1:92)))+1
           FILEX = CHARTEST((END_POS-12):(END_POS-1))
           PATHEX = CHARTEST(1:END_POS-13)
@@ -271,6 +270,7 @@ C***********************************************************************
           GO TO 2000
         ENDIF
       ENDIF
+
       IF (INDEX('Q',RNMODE) .GT. 0) THEN
         CALL IGNORE (LUNBIO,LINBIO,ISECT,CHARTEST)
         IF (ISECT .EQ. 0 .OR. RUN .EQ. 1) THEN
@@ -417,6 +417,7 @@ C***********************************************************************
         MULTI = 1
         ENDYRS = 1
       ENDIF
+
       IF (MULTI .GT. 1) THEN
         RUN   = RUN + 1
         CALL MULTIRUN(RUN, 0)  !chp 3/17/2011
@@ -430,6 +431,16 @@ C***********************************************************************
           IF (INDEX('Q',RNMODE) > 0) EXIT SEAS_LOOP
         ENDIF
       ENDIF
+
+!     Forecast mode
+      IF (RNMODE .EQ. 'Y') THEN
+        IF (ENDYRS .GT. 1) THEN
+          RUN = RUN + 1
+          CALL MULTIRUN(RUN, 0)  
+          YREND = -99
+        ENDIF
+      ENDIF
+
       IF (RNMODE .NE. 'Q' .OR. RUN .GT. 1) THEN
         YRDOY = YRSIM
       ENDIF
@@ -525,7 +536,7 @@ C
 C-----------------------------------------------------------------------
       ELSE IF (INDEX('GDC',RNMODE) .GT. 0) THEN
         DONE = .TRUE.
-!      ELSE IF (INDEX('FQ',RNMODE).GT. 0 .AND. YEAR .GE. YEAR_END)  THEN
+
       ELSE IF (INDEX('FQ',RNMODE).GT. 0 .AND. YRDOY .GE. YRDOY_END) THEN
         REPNO = REPNO + 1
         CONTROL % REPNO = REPNO
@@ -534,6 +545,15 @@ C-----------------------------------------------------------------------
         ELSE
           RUN = 0
         ENDIF
+
+!!     Forecast mode
+!      ELSEIF (INDEX('Y',RNMODE) .GT. 0) THEN
+!        REPNO = REPNO + 1
+!        CONTROL % REPNO = REPNO
+!        IF (REPNO .GT. NREPS) THEN
+!          DONE = .TRUE.
+!        ENDIF
+
       ELSE IF (INDEX('IE',RNMODE) .GT. 0) THEN
         WRITE(*,1700)
  1700   FORMAT(/,1X,'Do you want to run more simulations ? ',
@@ -545,7 +565,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
  2000 CONTINUE
-      END DO RUN_LOOP 
+      ENDDO RUN_LOOP 
 
 !     Final end-of-run call to land unit module
       CONTROL % DYNAMIC = ENDRUN

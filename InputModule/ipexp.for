@@ -354,7 +354,7 @@ C-GH        TRTN   = 1
          TRTN = TRTNUM
          ROTN = ROTNUM
          I = 999
-       ELSEIF (INDEX ('NQGSFBECT',RNMODE) .GT. 0) THEN
+       ELSEIF (INDEX ('NQGSFBECTY',RNMODE) .GT. 0) THEN
 !         READ (TRNARG(1:6),'(I6)') TRTN
          TRTN = TRTNUM
          I = 999
@@ -394,7 +394,7 @@ C-----------------------------------------------------------------------
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
 
 C     IF (I .LT. TRTN) GO TO 50
-      IF ((INDEX('BEDNSGFCT',RNMODE) .GT. 0 .AND. TRTN .NE. TRTNO) .OR.
+      IF ((INDEX('BEDNSGFCTY',RNMODE) .GT. 0 .AND. TRTN .NE. TRTNO) .OR.
      &    (INDEX('Q',RNMODE) .GT. 0 .AND. 
      &                     (TRTN .NE. TRTNO .OR. ROTN .NE. ROTNO)) .OR. 
      &    (INDEX('AI',RNMODE) .GT. 0 .AND. I .LT. TRTN))

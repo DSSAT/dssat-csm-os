@@ -705,7 +705,7 @@ C     Console output for multi-season runs:
 C     Was OPBAT subroutine
 C-------------------------------------------------------------------
 !      IF (INDEX('NQSABCGF',RNMODE) .GT. 0 .OR. NYRS .GT. 1) THEN
-      IF ((INDEX('NQSABCGF',RNMODE) .GT. 0 .OR. NYRS .GT. 1) .AND.
+      IF ((INDEX('NQSABCGFY',RNMODE) .GT. 0 .OR. NYRS .GT. 1) .AND.
      &    (IDETL .NE. "0")) THEN
           NLINES = RUN - 1
         IF (RUN .EQ. 1) THEN
