@@ -1,4 +1,11 @@
 !=======================================================================
+!  COPYRIGHT 1998-2020 DSSAT Foundation
+!                      University of Florida, Gainesville, Florida
+!                      Inernational Fertilizer Development Center
+!  
+!  ALL RIGHTS RESERVED
+!=======================================================================
+!=======================================================================
 !  MAKEFILEW, Subroutine, Fabio Olivera, Willingthon Pavan, Gerrit Hoogenboom
 !
 ! This subroutine open the FILEX and read the weather station characters (WSTA).
