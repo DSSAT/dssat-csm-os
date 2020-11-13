@@ -114,8 +114,8 @@ C     Input and initialize if first day.
 
 !      IF (YRDOY .EQ. YRSIM) THEN
         IF ((INDEX('IABDNGSEC',RNMODE) .GT. 0 .AND. MULTI .EQ. 1) .OR.
-     &      (INDEX('QF',RNMODE) .GT. 0 .AND. 
-     &            RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
+     &      (INDEX('QFY',RNMODE).GT.0 .AND. RUN.EQ.1 .AND. REPNO.EQ.1)) 
+     &  THEN
           IF (RSEED1 .GT. 0) THEN
             RSEED(1) = RSEED1
           ELSE

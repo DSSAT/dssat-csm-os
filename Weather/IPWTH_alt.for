@@ -24,8 +24,10 @@ C  Calls:     None
 C=======================================================================
 
       SUBROUTINE IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
-     &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
+     &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
+     &    MEWTH, OZON7, PAR,                              !Output
+     &    PATHWTC, PATHWTG, PATHWTW,                      !Output
+     &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    DYNAMIC)
@@ -41,15 +43,16 @@ C=======================================================================
       CHARACTER*6  SECTION, ERRKEY
       CHARACTER*8  WSTAT
       CHARACTER*10 TEXT
-      CHARACTER*12 FILEW, LastFILEW
+      CHARACTER*12 FILEW, LastFILEW, FILEWC, FILEWG
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(8)
-      CHARACTER*80 PATHWT
+      CHARACTER*80 PATHWT, PATHWTC, PATHWTG, PATHWTW
       CHARACTER*92 FILEWW
       CHARACTER*120 LINE
 
       INTEGER DOY, DYNAMIC, ERR, ErrCode, FOUND, INCYD, ISIM
       INTEGER LINWTH, LNUM, LUNIO, LUNWTH, MULTI, NYEAR
+      INTEGER LUNWTHC, LUNWTHG
       INTEGER PATHL, RSEED1, RUN, WYEAR
       INTEGER YEAR, YR, YRDOY, YRDOYW, YRDOYWY, YREND
       INTEGER YRSIM, YRSIMMY, YRDOY_WY
@@ -108,10 +111,8 @@ C     The components are copied into local variables for use here.
       IF (INDEX('FQ',RNMODE) <= 0 .OR. RUN. EQ. 1) THEN
         OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)
         IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
-        READ (LUNIO,'(11(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEW, PATHWT
-        IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,12)
 
-        REWIND (LUNIO)
+!       Need to read MEWTH first
         SECTION = '*SIMUL'
         CALL FIND(LUNIO, SECTION, LNUM, FOUND)
         IF (FOUND == 0) CALL ERROR(SECTION, 42, FILEIO,LNUM)
@@ -120,9 +121,33 @@ C     The components are copied into local variables for use here.
         READ (LUNIO,'(/,19X,A1)',IOSTAT=ERR) MEWTH
         IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM+3)
 
-        CLOSE (LUNIO)
-
+        REWIND (LUNIO)
+        READ (LUNIO,'(11(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEW, PATHWTW
+        IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,12)
         CALL GETLUN('FILEW', LUNWTH)
+
+!       With forecast mode, there is a possibility of two weather files, one for
+!         forecast season observed data (WTH) and one for either historical ensemble 
+!         climate data (CLI) or WTG generated data. It is also possible to have 
+!         only one weather file if historical ensemble is also in the WTH file.
+!       NOTE for future enhancement: May also need a third weather file for short
+!         term forecast, but this would be expected to be in the experiment directory
+!         and the name is read from Simulation Options.
+        IF (RNMODE .EQ. 'Y') THEN
+          SELECT CASE (MEWTH)
+            CASE ('M')
+            CASE ('G')
+              READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
+     &          FILEWG, PATHWTG
+              CALL GETLUN('FILEWG', LUNWTHG)
+            CASE ('S','W')
+              READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
+     &          FILEWC, PATHWTC
+              CALL GETLUN('FILEWC', LUNWTHC)
+          END SELECT
+        ENDIF
+
+        CLOSE (LUNIO)
 
         IF (FILEW /= LastFileW) THEN
 !          NRecords = 0
@@ -142,10 +167,27 @@ C     The components are copied into local variables for use here.
 !     Don't re-initialize for sequence and seasonal runs
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN > 1) RETURN
 
+!     Do we need to do this again for RNMODE = 'Y'?
       OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)
       IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
-      READ (LUNIO,'(11(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEW, PATHWT
+      READ (LUNIO,'(11(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEW, PATHWTW
       IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,12)
+      CALL GETLUN('FILEW', LUNWTH)
+
+      IF (RNMODE .EQ. 'Y') THEN
+        SELECT CASE (MEWTH)
+          CASE ('M')
+          CASE ('G')
+            READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
+     &        FILEWG, PATHWTG
+            CALL GETLUN('FILEWG', LUNWTHG)
+          CASE ('S','W')
+            READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
+     &        FILEWC, PATHWTC
+            CALL GETLUN('FILEWC', LUNWTHC)
+        END SELECT
+      ENDIF
+
       CLOSE (LUNIO)
 
       WYEAR = (ICHAR(FILEW(5:5)) - 48)*10 + (ICHAR(FILEW(6:6)) - 48)
@@ -156,13 +198,13 @@ C     The components are copied into local variables for use here.
       ENDIF
 
       IF (NYEAR == 1 .AND. MULTI > 1) THEN
-        PATHL  = INDEX(PATHWT,BLANK)
+        PATHL  = INDEX(PATHWTW,BLANK)
         WYEAR = MOD((WYEAR + MULTI - 1),100)
         WRITE(FILEW(5:6),'(I2.2)') WYEAR
         IF (PATHL <= 1) THEN
           FILEWW = FILEW
         ELSE
-          FILEWW = PATHWT(1:(PATHL-1)) // FILEW
+          FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
         ENDIF
         INQUIRE (FILE = FILEWW,EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN  
@@ -175,32 +217,19 @@ C     The components are copied into local variables for use here.
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRSIM,YR,ISIM)
 
-      PATHL  = INDEX(PATHWT,BLANK)
+      PATHL  = INDEX(PATHWTW,BLANK)
       IF (PATHL <= 1) THEN
         FILEWW = FILEW
       ELSE
-        FILEWW = PATHWT(1:(PATHL-1)) // FILEW
+        FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
       ENDIF
 
       IF (YRDOY == YRSIM) THEN
         YRDOY_WY = INCYD(YRSIM,-1)
       ENDIF
-
       
       WSTAT = FILEW(1:8)
       CALL PUT('WEATHER','WSTA',WSTAT)
-
-!     Check for forecast mode RNMODE = 'Y'
-      IF (RNMODE .EQ. 'Y') THEN
-        CALL FCAST_COUNT(YRSIM, FODAT)
-        CALL READWEATHER(FILEWW, Obs_YRDOY, 
-     &    FirstWeatherDay, LastWeatherDay, EOF, LNUM, NRECORDS, 
-     &    ERRYRDOY, ErrCode)
-
-        IF (ErrCode > 0) THEN
-           !Take drastic action
-        ENDIF
-      ENDIF
 
       IF (FILEW /= LastFileW) THEN
 !       NRecords = 0
@@ -392,7 +421,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
       ENDIF
 
       YRDOYWY = INCYD(YRSIM,-1)
-      IF (MULTI > 1) THEN
+      IF (MULTI > 1 .OR. RNMODE .EQ. 'Y') THEN
         YRDOY_WY = YRDOYWY
       ELSE
         YRDOY_WY = 0
@@ -491,11 +520,11 @@ C       Substitute default values if REFHT or WINDHT are missing.
           CLOSE(LUNWTH)
           WRITE(FILEW(5:6),'(I2.2)') MOD(CurrentWeatherYear,100)
           LINWTH = 0
-          PATHL  = INDEX(PATHWT,BLANK)
+          PATHL  = INDEX(PATHWTW,BLANK)
           IF (PATHL <= 1) THEN
              FILEWW = FILEW
           ELSE
-             FILEWW = PATHWT(1:(PATHL-1)) // FILEW
+             FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
           ENDIF
 
           INQUIRE(FILE=FILEWW,EXIST=FEXIST)
@@ -1253,7 +1282,9 @@ c                   available.
 ! ERRKEY  Subroutine name for error file 
 ! ERR  Error number for input 
 ! FILEIO  Filename for input file (e.g., IBSNAT35.INP) 
-! FILEW   Weather data file 
+! FILEW   Weather data file (measured data - WTH)
+! FILEWG  Weather data file (generated data - WTG)
+! FILEWC  Weather data file (climate summary - CLI)
 ! FILEWW  Pathname plus filename for weather file (e.g. UFGA7801.WTH) 
 ! FIRST   Indicates first call to subroutine (true or false) 
 ! FOUND   Indicator that good data was read from file by subroutine FIND  
@@ -1276,7 +1307,9 @@ c                   available.
 ! PAR     Daily photosynthetically active radiation or photon flux density
 !           (moles[quanta]/m2-d)
 ! PATHL   Number of characters in path name (path plus filename for FILEC) 
-! PATHWT  Directory path for weather file 
+! PATHWTW Directory path for measured data weather file (WTH)
+! PATHWTC Directory path for climate summary file (CLI)
+! PATHWTG Directory path for generated data weather file (WTG)
 ! RAIN    Precipitation depth for current day (mm)
 ! REFHT   Reference height for wind speed (m)
 ! RHUM    Relative humidity (%)

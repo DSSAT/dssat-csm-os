@@ -555,9 +555,10 @@ C
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             
 !     ==============================================================
-! 2020-11-04 CHP added forecast mode inputs
-!           Also additional inputs to be implemented later
 !           Read ELEVENTH line of simulation control - SIMULATION DATES
+!           2020-11-04 CHP added forecast mode inputs
+!           Also additional inputs to be implemented later
+
 !     ENDAT = End of simulation date - for future use
 !     SDUR  = Maximum duration of one season - for future use
 !     FODAT = Forecast start date, i.e., day after last weather data available
@@ -576,6 +577,7 @@ C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,'(I3,9X,5I8,1X,A15)',IOSTAT=ERRNUM) 
      &        LN, ENDAT, SeasDur, FODAT, FStartYear, FEndYear, FWFILE
+
             IF (ERRNUM .NE. 0) THEN
 
        MSG(1) = "Error in forecast data, check simulation controls."
@@ -588,6 +590,7 @@ C
 
               CALL WARNING(7, ERRKEY, MSG)
             ENDIF
+            CONTROL % FODAT = FODAT
             
 !     ==============================================================
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
@@ -659,6 +662,7 @@ C-----------------------------------------------------------------------
 
       CALL FILL_ISWITCH(
      &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
+
 
 !     Planting date needed for generic start of simulation
       SELECT CASE(IPLTI)
@@ -958,6 +962,11 @@ C-----------------------------------------------------------------------
       CONTROL % YRSIM  = YRSIM     !simulation start date
       CONTROL % MODEL  = MODEL     !crop growth model
 !     CONTROL % MESIC  = MESIC     !initial conditions (no longer used)
+
+!     chp 2020-11-13
+!     For some reason, value of FODAT does not retain it's value here. 
+!     Ignore for now, fill CONTROL when it's read in, but need to solve later.
+!     CONTROL % FODAT  = FODAT     !Forecast start date
 
 !     chp moved 12/9/2009
       ISWITCH % ISWSYM = ISWSYM    !symbiosis (N-fixation)

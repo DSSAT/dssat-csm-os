@@ -161,9 +161,24 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      LINIO = LINIO + 1
-      WRITE (LUNIO,2800,IOSTAT=ERRNUM) FILEW,PATHWT
-      IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERW',FILEW,PATHWTW
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
+      IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERC',FILEWC,PATHWTC
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
+      IF (MEWTH .EQ. 'G') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERG',FILEWG,PATHWTG
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -843,7 +858,7 @@ c1960 FORMAT (A6,1X,A16,1X,A6,1X,F6.2,F8.4,F7.2,F8.2,F7.3,F4.0)
  2500 FORMAT ('CULTIVAR       ',A12,1X,A80)
  2600 FORMAT ('PESTS          ',A12,1X,A80)
  2700 FORMAT ('SOILS          ',A12,1X,A80)
- 2800 FORMAT ('WEATHER        ',A12,1X,A80)
+! 2800 FORMAT ('WEATHER        ',A12,1X,A80)
  2900 FORMAT ('OUTPUT         ',A8)
  3000 FORMAT (A6,1X,A16,1X,A255)
 

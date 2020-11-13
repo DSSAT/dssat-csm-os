@@ -44,17 +44,17 @@ C=======================================================================
       SUBROUTINE WEATHR (CONTROL, ISWITCH, WEATHER, YREND)
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE Forecast
+
       IMPLICIT NONE
       SAVE
 
       CHARACTER*1  MEWTH, RNMODE
       CHARACTER*6  ERRKEY
-      CHARACTER*12 FILEW
+      CHARACTER*12 FILEW, FILEWC, FILEWG
       CHARACTER*78 MESSAGE(10)
-      CHARACTER*80 PATHWT
+      CHARACTER*80 PATHWT, PATHWTC, PATHWTG, PATHWTW
       CHARACTER*92 FILEWW
 
       INTEGER DOY, MULTI, NEV, RUN, YEAR, YRDOY, YRSIM, YYDDD
@@ -62,7 +62,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
 !     Yield forecast variables
-      INTEGER FODAT, SIMYEAR, SIMDOY, ENSEMBLE_YEAR
+      INTEGER FCODE
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
@@ -115,8 +115,10 @@ C=======================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
       CALL IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
-     &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
+     &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
+     &    MEWTH, OZON7, PAR,                              !Output
+     &    PATHWTC, PATHWTG, PATHWTW,                      !Output
+     &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    RUNINIT)
@@ -135,16 +137,21 @@ C=======================================================================
         YYDDD = YRSIM
         CALL YR_DOY(YYDDD, YEAR, DOY)
 !-----------------------------------------------------------------------
-        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
+!       Initialize read from file for 'M', 'G' weather options and also for
+!         RNMODE = 'Y' (yield forecast mode) regardless of weather option
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' .OR. RNMODE .EQ. 'Y')THEN
           CALL IPWTH(CONTROL,
-     &      CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR, !Output
-     &      PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,      !Output
+     &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
+     &      MEWTH, OZON7, PAR,                            !Output
+     &      PATHWTC, PATHWTG, PATHWTW,                    !Output
+     &      RAIN, REFHT, RHUM, RSEED1, SRAD,              !Output
      &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
      &      SEASINIT)
           IF (YREND == YRDOY) RETURN
+        ENDIF
 
-        ELSEIF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+        IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
 C       Set default values FOR REFHT AND WINDHT
           REFHT  = 1.5
           WINDHT = 2.0
@@ -156,7 +163,7 @@ C       Set default values FOR REFHT AND WINDHT
           PAR  = -99.0
           RHUM = -99.0
           CALL WGEN (CONTROL,
-     &      FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,      !Input
+     &      FILEWC, MEWTH, MULTI, RUN, PATHWTC, REPNO,      !Input
      &      RNMODE, RSEED1, YRDOY, YRSIM,                 !Input
      &      PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,      !Output
      &      TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)       !Output
@@ -164,14 +171,9 @@ C       Set default values FOR REFHT AND WINDHT
           CALL ERROR(ERRKEY,1,' ',0)
         ENDIF
 
-!       For yield forecast mode, initialize the weather generator
-        IF (RNMODE .EQ. 'Y') THEN
-          CALL WGEN (CONTROL,
-     &      FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,        !Input
-     &      RNMODE, RSEED1, YRDOY, YRSIM,                   !Input
-     &      PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,        !Output
-     &      TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)         !Output
-        ENDIF
+      IF (RNMODE .EQ. 'Y') THEN
+        CALL FCAST_STORE(FCOUNT)
+      ENDIF
 
       IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
@@ -273,38 +275,42 @@ C     Compute daily normal temperature.
       CALL YR_DOY(YYDDD, YEAR, DOY)
 
 !     Yield forecast mode
+      FCODE = 0
       IF (RNMODE .EQ. 'Y') THEN
-        IF (YRDOY > FODAT-1) THEN
-          CALL YR_DOY(YRSIM, SIMYEAR, SIMDOY)
-          ENSEMBLE_YEAR = SIMYEAR – NYRS + CONTROL % RUN – 1
-          YYDDD = ENSEMBLE_YEAR * 1000 + DOY
-        ENDIF
+!       Retrieve weather data, send back FCODE=1 if successful
+        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, FCODE)
       ENDIF
+
+      IF (FCODE .LE. 0) THEN
+!       Get weather data by normal means    
 !-----------------------------------------------------------------------
-C     Read new weather record.
-      IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' ) THEN
-        CALL IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
-     &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
-     &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
-     &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
-     &    RATE)
-        IF (YREND == YRDOY) RETURN
-
-      ELSE IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
-        SRAD = -99.0
-        TMAX = -99.0
-        TMIN = -99.0
-        RAIN = -99.0
-        PAR  = -99.0
-
-        CALL WGEN (CONTROL,
-     &    FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,        !Input
-     &    RNMODE, RSEED1, YRDOY, YRSIM,                   !Input
-     &    PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,        !Output
-     &    TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)         !Output
-      ELSE
-        CALL ERROR(ERRKEY,1,' ',0)
+C       Read new weather record.
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' ) THEN
+          CALL IPWTH(CONTROL,
+     &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
+     &      MEWTH, OZON7, PAR,                            !Output
+     &      PATHWTC, PATHWTG, PATHWTW,                    !Output
+     &      RAIN, REFHT, RHUM, RSEED1, SRAD,              !Output
+     &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
+     &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
+     &      RATE)
+          IF (YREND == YRDOY) RETURN
+        
+        ELSE IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+          SRAD = -99.0
+          TMAX = -99.0
+          TMIN = -99.0
+          RAIN = -99.0
+          PAR  = -99.0
+        
+          CALL WGEN (CONTROL,
+     &      FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,        !Input
+     &      RNMODE, RSEED1, YRDOY, YRSIM,                   !Input
+     &      PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,        !Output
+     &      TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)         !Output
+        ELSE
+          CALL ERROR(ERRKEY,1,' ',0)
+        ENDIF
       ENDIF
 
 C     Calculate day length, sunrise and sunset.
@@ -379,8 +385,10 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
-     &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
+     &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
+     &    MEWTH, OZON7, PAR,                              !Output
+     &    PATHWTC, PATHWTG, PATHWTW,                      !Output
+     &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    SEASEND)
