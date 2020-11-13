@@ -1,9 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2020 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
+C COPYRIGHT 1998-2020
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
 C                     
-C  ALL RIGHTS RESERVED
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  PLANT, Subroutine
