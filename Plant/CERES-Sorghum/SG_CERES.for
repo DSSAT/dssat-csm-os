@@ -1,8 +1,9 @@
 C=======================================================================
-C  COPYRIGHT 1998-2020 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2020 
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C ALL RIGHTS RESERVED
 C=======================================================================
 C======================================================================
 C  Main CERES-Sorghum CSM Routine
