@@ -97,7 +97,7 @@ C-----------------------------------------------------------------------
       INTEGER       MULTI,NYRS,INCYD,YEAR,DOY,DAS,TIMDIF,ENDYRS
       INTEGER       ERRNUM,LUNIO,TRTALL,TRTNUM,EXPNO,I,RUN
       INTEGER       YRSIM_SAVE, YRDIF, YRDOY_END !IP,IPX, 
-      INTEGER       LUNBIO,LINBIO,ISECT,IFIND,LN
+      INTEGER       LUNBIO,LINBIO,ISECT,IFIND,LN, LNUM, FOUND
       INTEGER       NREPS, REPNO,END_POS, ROTNUM, TRTREP, NARG
 
       LOGICAL       FEXIST, DONE
@@ -328,15 +328,31 @@ C-----------------------------------------------------------------------
       READ (LUNIO,'(//,15X,A12)',IOSTAT=ERRNUM) FILEX
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,1)
       IF (RUN .EQ. 1) THEN
-        READ(LUNIO,'(8(/),15X,A8)',IOSTAT=ERRNUM) FNAME    
+        IF (RNMODE .EQ. 'Y') THEN
+!         There might be 2 weather files listed for yield forecast mode
+          READ(LUNIO,'(8(/),A6,9X,A8)',IOSTAT=ERRNUM) FINDCH, FNAME
+          IF (FINDCH .NE. 'OUTPUT') THEN
+            READ(LUNIO,'(A6,9X,A8)',IOSTAT=ERRNUM) FINDCH, FNAME
+          ENDIF
+        ENDIF    
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,13)
         READ(LUNIO,400,IOSTAT=ERRNUM) NYRS, NREPS, YRSIM
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,15)
  400    FORMAT(/,15X,I5,1X,I5,7X,I7)
       ELSE IF (RNMODE .NE. 'Q') THEN
-        READ(LUNIO,500,IOSTAT=ERRNUM) NYRS, NREPS, YRSIM
-        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,15)
- 500    FORMAT(10(/),15X,I5,1X,I5,7X,I7)
+
+        REWIND (LUNIO)
+        FINDCH = '*SIMUL'
+        CALL FIND(LUNIO, FINDCH, LNUM, FOUND) 
+        IF (FOUND .EQ. 0) THEN
+          CALL ERROR(FINDCH, 42, FILEIO, LNUM)
+        ELSE
+          READ(LUNIO,500,IOSTAT=ERRNUM) NYRS, NREPS, YRSIM
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,15)
+ 500      FORMAT(15X,I5,1X,I5,7X,I7)
+          LNUM = LNUM + 1
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+        ENDIF
       ENDIF
       CLOSE(LUNIO)
 
@@ -351,6 +367,10 @@ C-----------------------------------------------------------------------
           YRDOY_END = INCYD(YRDOY_END, -1)
         ENDIF
         NYRS  = 1
+      ENDIF
+
+      IF (INDEX('Y',RNMODE) .GT. 0) THEN
+        REPNO = 1
       ENDIF
 
       IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
@@ -436,6 +456,7 @@ C***********************************************************************
       IF (RNMODE .EQ. 'Y') THEN
         IF (ENDYRS .GT. 1) THEN
           RUN = RUN + 1
+          REPNO = REPNO + 1
           CALL MULTIRUN(RUN, 0)  
           YREND = -99
         ENDIF
@@ -451,6 +472,8 @@ C***********************************************************************
       CONTROL % YRDOY   = YRDOY
       CONTROL % MULTI   = MULTI
       CONTROL % DYNAMIC = SEASINIT
+      CONTROL % ENDYRS  = ENDYRS
+      CONTROL % REPNO   = REPNO
       CALL PUT(CONTROL)
    
       CALL LAND(CONTROL, ISWITCH, 
@@ -545,14 +568,6 @@ C-----------------------------------------------------------------------
         ELSE
           RUN = 0
         ENDIF
-
-!!     Forecast mode
-!      ELSEIF (INDEX('Y',RNMODE) .GT. 0) THEN
-!        REPNO = REPNO + 1
-!        CONTROL % REPNO = REPNO
-!        IF (REPNO .GT. NREPS) THEN
-!          DONE = .TRUE.
-!        ENDIF
 
       ELSE IF (INDEX('IE',RNMODE) .GT. 0) THEN
         WRITE(*,1700)
