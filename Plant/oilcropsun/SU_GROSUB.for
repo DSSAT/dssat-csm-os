@@ -51,7 +51,7 @@
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIO,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PConc_Root, PConc_Seed,     !Output
+     &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
@@ -61,7 +61,7 @@
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,OILPC)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
@@ -348,7 +348,7 @@
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
 !      REAL        CPSD1, CPSD2, SI5(6), SI6(6)  
 !      real        PCPVEG, N2P !P conc in veg., N:P ratio
-
+      
 !     Transfer mass from stem to ear -- need to transfer P also
       REAL Stem2Ear
 
@@ -627,22 +627,7 @@
 
 ! CHP/US 04/19/2007 Coefficients pulled out to species file.
           xstage=real(istage)
-          ! Calculate critical and minimum N concentrations
-      !
-          XLCNP  = (02.94 * EXP(-0.326*XSTAGE) + 3.26)/100.0
-          XLMNC  = XLCNP - 0.025
-          XSCNP  = (03.29 * EXP(-0.516*XSTAGE) + 1.25)/100.0
-          XSMNC  = XSCNP - 0.0095
-          RCNP   = (03.61 * EXP(-0.521*XSTAGE) + 1.05)/100.0
-          RMNC   = RCNP  - 0.0062
-          XHCNP  = (21.37 * EXP(-0.600*XSTAGE) + 1.60)/100.0
-          XHMNC  = XHCNP - 0.00895
-      !
-          ! Calculate total N in plant parts
-      !
-          TCNP=(XLCNP*GLFWT+XSCNP*STMWT+XHCNP*HEADWT)/(STOVWT-SLFWT)
-          TMNC=(XLMNC*GLFWT+XSMNC*STMWT+XHMNC*HEADWT)/(STOVWT-SLFWT)
-
+ 
 !         Default values: CTCNP1 = 1.52; CTCNP2 = 0.160
           CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
           READ(C80,'(9X,F8.3)',IOSTAT=ERR) CTCNP1
@@ -660,7 +645,6 @@
           ENDIF
         ENDIF
         REWIND(LUNCRP)
-
         !----------------------------------------------------------------
         !        Find and Read Root parameters
         !----------------------------------------------------------------
@@ -687,7 +671,6 @@
         ENDIF
 
         CLOSE (LUNCRP)
-
 !**     Initialize variables
 
 !       CALL SenLig_Ceres(PLIGLF=PLIGLF, PLIGRT=PLIGRT)
@@ -821,18 +804,26 @@
         TOPWT  = 0.0
         TOTNUP = 0.0
         TRNU   = 0.0
-        DO L=1,NLAYR
-          TSS(L) = 0.0
-        ENDDO
+
+        
+        TSS = 0.0
+        
+ 
         TURFAC = 1.0
-        UNO3   = 0.0      !CHP 1/3/2013
+
         UNH4   = 0.0      !CHP 1/3/2013
+
+        UNO3   = 0.0      !CHP 1/3/2013
+
         VANC   = 0.0
         VMNC   = 0.0 
-        VSTAGE = 0.0
+  
+c        VSTAGE = 0.0
+
         WLIDOT = 0.0 
         WRIDOT = 0.0  
         WSIDOT = 0.0  
+
         WTLF   = 0.0
         WTNCAN = 0.0
         WTNLF  = 0.0
@@ -840,18 +831,23 @@
         WTNST  = 0.0
         WTNUP  = 0.0
         WTNVEG = 0.0
+  
         XANC   = 0.0
         XGNP   = 0.0
+  
         XHLAI  = 0.0
+ 
         XLAI   = 0.0
+
         XLFWT  = 0.0
+
         XN = 0.0
         XNF    = 0.0
         XNTI   = 0.0
         YIELD  = 0.0
         YIELDB = 0.0
-
         IF (ISWNIT .NE. 'N') THEN
+
           CALL SU_NFACTO(DYNAMIC,TANC,TCNP,TMNC,
      %    xlanc,xlcnp,xlmnc,AGEFAC,NDEF3,NFAC,NSTRES)         
         ELSE
@@ -1039,7 +1035,7 @@
             ROOTN = RANC   * RTWT
             STOVN = STOVWT * TANC
           ENDIF
-
+     
           WTLF = LFWT * PLTPOP      !Leaf weight, g/m2
           STMWTO = STMWT * PLTPOP   !Stem weight, g/m2
           RTWTO = RTWT * PLTPOP     !Root weight, g/m2

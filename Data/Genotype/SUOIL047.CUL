@@ -3,13 +3,13 @@
 ! Development Aspects                          Range of Values
 !
 ! Juvenile phase coefficient           P1             250-450
-! Photoperiodism coefficient           P2             0.5-12
+! Photoperiodism coefficient           P2             0.5-14
 ! Grain filling duration coefficient   P5             550-750
 !
 ! Yield aspects
 !
 ! Grain number coefficient             G2            1500-3000
-! Kernel growth rate                   G3             1.2-2.4
+! Kernel growth rate                   G3             1.2-2.9
 ! Kernel oil content                   O1              55-85
 !
 ! P1: Duration of juvenile phase (in degree C.days with a
@@ -25,15 +25,15 @@
 !     low plant population density).
 ! O1: Maximum kernel oil content (%)
 
-@VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3    O1
+@VAR#  VRNAME           EXPNO  ECO#      P1    P2    P5    G2    G3    O1
 !
-IB0003 894              		. DFAULT 274.0  9.33 600.0 2800.  1.70 65.00
-IB0005 SUNGRO-380       		.	DFAULT 295.0 12.32 600.0 2800.  1.70 65.00
-IB0008 SH-3000          		.	DFAULT 250.0  2.45 600.0 2800.  1.70 65.00
-IB0009 E-353            		.	DFAULT 245.0  3.74 700.0 1500.  2.90 85.00
-IB0011 FLORASOL         		.	DFAULT 360.0  1.60 600.0 2800.  1.70 65.00
-IB0013 SUNGRO-385       		.	DFAULT 325.0 12.32 700.0 2800.  1.90 65.00
-IB0014 SW-101           		.	DFAULT 210.0  3.74 800.0 1000.  2.50 65.00
-IB0015 S-530            		.	DFAULT 335.0 12.32 700.0 3700.  1.90 65.00
-IB0016 G-100            		.	DFAULT 309.0  2.99 732.0 2800.  1.81 65.00
-IB0017 CONTIFLOR-3      		.	DFAULT 325.5  0.14 712.0 2900.  1.67 65.00
+IB0003 894                  . DFAULT 274.0  9.33 600.0 2800.  1.70 65.00
+IB0005 SUNGRO-380           . DFAULT 295.0 12.32 600.0 2800.  1.70 65.00
+IB0008 SH-3000              . DFAULT 250.0  2.45 600.0 2800.  1.70 65.00
+IB0009 E-353                . DFAULT 245.0  3.74 700.0 1500.  2.90 85.00
+IB0011 FLORASOL             . DFAULT 360.0  1.60 600.0 2800.  1.70 65.00
+IB0013 SUNGRO-385           . DFAULT 325.0 12.32 700.0 2800.  1.90 65.00
+IB0014 SW-101               . DFAULT 210.0  3.74 800.0 1000.  2.50 65.00 
+IB0015 S-530                . DFAULT 335.0 12.32 700.0 3700.  1.90 65.00
+IB0016 G-100                . DFAULT 309.0  2.99 732.0 2800.  1.81 65.00
+IB0017 CONTIFLOR-3          . DFAULT 325.5  0.14 712.0 2900.  1.67 65.00

@@ -5,12 +5,11 @@
         {
             "label": "dssat-csm: Run DSSAT (without debugging)",
             "options": {
-                "cwd": "/DSSAT47/Maize"
+                "cwd": "c:/DSSAT47/Sunflower"
             },
             "args": [
-                "C",
-                "UFGA8201.MZX",
-                "1"
+                "A",
+                "UCCO9102.SUX"
             ],
             "command": "${workspaceRoot}/build/bin/dscsm047.exe",
             "type": "shell",

@@ -83,7 +83,7 @@
       INTEGER         YREND   
       REAL            HARVFRAC(2)
       REAL            HI               
-      REAL            HIP            
+      REAL            HIO            
       INTEGER         I          
       CHARACTER*1     IDETO 
       CHARACTER*1     IPLTI     
@@ -313,7 +313,7 @@ C----------------------------------------------------------------------
           IF(MODEL(1:5).EQ.'SUOIL') THEN
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
      &    YRDOY,YRSIM,                                         !I
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
@@ -333,7 +333,7 @@ C----------------------------------------------------------------------
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
-     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
+     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIO,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
      &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
@@ -345,7 +345,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,OILPC)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
 
           !-------------------------------------------------------------
@@ -359,7 +359,7 @@ C----------------------------------------------------------------------
      %        RTDEP,RLV)            
 
           CALL SU_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    CANHT, CANWH, DTT, HI, HIO, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
@@ -420,7 +420,7 @@ C-----------------------------------------------------------------------
 
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
      &    YRDOY,YRSIM,                                         !I
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
@@ -437,7 +437,7 @@ C-----------------------------------------------------------------------
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
-     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
+     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIO,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
      &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
@@ -449,7 +449,7 @@ C-----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,OILPC)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
                          
           CALL SU_ROOTGR (DYNAMIC,ISWNIT,                         !C
@@ -459,7 +459,7 @@ C-----------------------------------------------------------------------
      %        RTDEP,RLV)            
 
           CALL SU_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    CANHT, CANWH, DTT, HI, HIO, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
@@ -530,7 +530,7 @@ C----------------------------------------------------------------------
             
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
      &    YRDOY,YRSIM,                                         !I
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
@@ -553,7 +553,7 @@ C----------------------------------------------------------------------
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
-     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
+     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIO,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
      &      PCNVEG,  OILPC, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
@@ -612,7 +612,7 @@ C----------------------------------------------------------------------
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
-     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
+     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIO,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
      &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
@@ -629,7 +629,7 @@ C----------------------------------------------------------------------
         ENDIF   
 
       CALL SU_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    CANHT, CANWH, DTT, HI, HIO, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
@@ -678,7 +678,7 @@ C----------------------------------------------------------------------
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
-     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
+     &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIO,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
      &      PCNVEG, OILPC, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, OILWT, PORMIN, PSTRES1,   !Output
@@ -694,7 +694,7 @@ C----------------------------------------------------------------------
 
 
         CALL SU_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    CANHT, CANWH, DTT, HI, HIO, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
@@ -785,7 +785,7 @@ C----------------------------------------------------------------------
 ! GRORT       !Root growth rate, g/plant/day
 ! YREND       !Year and day of year for harvest
 ! HI          !Harvest index, Seed weight/above ground plant weight
-! HIP         !Harvest index of ear, (g ear + seed weight)/(g above ground plant weight)
+! HIO         !Harvest index of oil, (g oil)/(g above ground plant weight)
 ! I           !Index counter
 ! IDETO       !Switch for printing overview.out file
 ! IPLTI       !

@@ -55,7 +55,7 @@
       CHARACTER*6     ECONO           
       INTEGER         ERR             
       CHARACTER*6     ERRKEY          
-      PARAMETER       (ERRKEY='MZPHEN')
+      PARAMETER       (ERRKEY='SUPHEN')
       INTEGER         ERRNUM
       CHARACTER*12    FILEC     
       CHARACTER*12    FILES
@@ -155,7 +155,7 @@
 
 !     CHP added for P model
       REAL SeedFrac, VegFrac
-        
+   
 !----------------------------------------------------------------------
 !         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
 ! ---------------------------------------------------------------------
@@ -208,13 +208,16 @@
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
      %                   P1,P2,P5,G2,G3,O1 ; LNUM = LNUM + 1 
+
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
-1800        FORMAT (A6,1X,A16,1X,A6,1X,F5.1,1X,F5.2,1X,F5.1,1X,F5.0,
-     &        1X,F5.2,1X,F5.2)   
+1800        FORMAT (A6,1X,A16,1x,A6,1X,F5.1,1X,F5.2,1X,F5.1,1X,
+     &        F5.0,1X,F5.2,1X,F5.2)   
+
 
           ENDIF
           CLOSE(LUNIO)
 !XXXXX CONT
+
 !     -----------------------------------------------------------------
 !              Read Species Coefficients
 !     -----------------------------------------------------------------
@@ -267,6 +270,7 @@
 !-----------------------------------------------------------------------
 !    Read Ecotype Parameter File
 !-----------------------------------------------------------------------
+
           CALL GETLUN('FILEE', LUNECO)
           OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
@@ -280,7 +284,7 @@
      &             ROPT,P2O,DJTI,GDDE,DSGFT,RUE, KCAN
  3100          FORMAT (A6,1X,A16,1X,9(1X,F5.1))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
-        
+ 
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter. 
 !               Default to TSEN = -3.0 if no value given.
@@ -309,19 +313,18 @@
 ! CHP 1/4/2004
 ! IMPLEMENT THIS SECTION OF CODE WHEN A DEFAULT ECOTYPE HAS BEEN ADDED
 !    TO THE ECOTYPE FILE.
-!            IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+            IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+!           Write message to WARNING.OUT file that default ecotype 
+!             will be used.
+            WRITE(MESSAGE(1),5000) ECONO, FILEE
+            WRITE(MESSAGE(2),5001) 
+ 5000       FORMAT('Ecotype ',A6,' not found in file: ',A12)
+ 5001       FORMAT('Default ecotype parameters will be used.')
+            CALL WARNING(2, ERRKEY, MESSAGE)
 !
-!!           Write message to WARNING.OUT file that default ecotype 
-!!             will be used.
-!            WRITE(MESSAGE(1),5000) ECONO, FILEE
-!            WRITE(MESSAGE(2),5001) 
-! 5000       FORMAT('Ecotype ',A6,' not found in file: ',A12)
-! 5001       FORMAT('Default ecotype parameters will be used.')
-!            CALL WARNING(2, ERRKEY, MESSAGE)
-!
-!            ECONO = 'DFAULT'
-!            REWIND(LUNECO)
-!            LNUM = 0
+            ECONO = 'DFAULT'
+            REWIND(LUNECO)
+            LNUM = 0
             ENDIF
           ENDDO
 
@@ -334,7 +337,7 @@ C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
 C     taking L=1
 
       KEP=-LOG(0.5*EXP(-KCAN)+.5*EXP(-0.5*KCAN))
-           
+   
 
           DO I=1,20
               STGDOY(I) = 9999999      
@@ -561,13 +564,13 @@ C     taking L=1
      &                    (SW(L0+1)-LL(L0+1))*0.35
                       NDAS = NDAS + 1
 
-                      IF (NDAS .GE. DSGT) THEN
+                      IF (NDAS .GE. DSGT) THEN                      
                           ISTAGE = 6
                           PLTPOP = 0.00
                           GPP    = 1.0
 
                           WRITE(MESSAGE(1),3500)
-                          CALL WARNING(1,'SUPHEN',MESSAGE)
+                          CALL WARNING(1,'MZPHEN',MESSAGE)
                           WRITE (     *,3500)
                           IF (IDETO .EQ. 'Y') THEN
                               WRITE (NOUTDO,3500)
@@ -613,7 +616,7 @@ C     taking L=1
                   GPP    = 1.0
 
                   WRITE(MESSAGE(1),1399)
-                  CALL WARNING(1,'SUPHEN',MESSAGE)
+                  CALL WARNING(1,'MZPHEN',MESSAGE)
 
                   WRITE (     *,1399)
                   IF (IDETO .EQ. 'Y') THEN
@@ -900,7 +903,7 @@ C     taking L=1
 ! ECONO      Ecotype number for the variety (not really used in maize ye
 ! ERR        Determines if error in reading file (0=ok, 1=error)
 ! ERRKEY     Variable containing routine where error occurred
-! (ERRKEY='MZ_PHENL')
+! (ERRKEY='SU_PHENL')
 ! FILEC      Filename of .SPE or species file
 ! FILEIO     Filename containing model inputs (IBSNAT35.INP)
 ! FOUND      Indicates if a section in a file is found
