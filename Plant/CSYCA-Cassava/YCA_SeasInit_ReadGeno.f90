@@ -231,8 +231,8 @@
         kcan = -99 
         !lawcf = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         !lawmnfr = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-        lawtr = -99
-        lawts = -99
+        slatr = -99
+        slats = -99
         !lawmnfr = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         dfpe = -99 
         ppexp = -99 
@@ -383,8 +383,8 @@
         !CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
         CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)
         !CALL SPREADR (SPDIRFLE,'SLAFF',lawff) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-        CALL SPREADR (SPDIRFLE,'SLATR',lawtr)
-        CALL SPREADR (SPDIRFLE,'SLATS',lawts)
+        CALL SPREADR (SPDIRFLE,'SLATR',slatr)
+        CALL SPREADR (SPDIRFLE,'SLATS',slats)
         CALL SPREADR (SPDIRFLE,'LLIFG',llifg)
         CALL SPREADR (SPDIRFLE,'LLIFS',llifs)
         !CALL SPREADR (SPDIRFLE,'LLIFX',llifx) !LPM 14SEP2020 No longer used

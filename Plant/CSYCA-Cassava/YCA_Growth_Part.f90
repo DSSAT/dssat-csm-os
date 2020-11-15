@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Growth_Part ( &
-        BRSTAGE     , ISWNIT      , NFP        , LAI          &
+        BRSTAGE     , ISWNIT      , NFP        , LAI          , WEATHER     &
         )
     
         USE ModuleDefs
@@ -16,6 +16,7 @@
     
         IMPLICIT NONE
         
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
@@ -44,7 +45,7 @@
         
 
 
-        LAWL(1) = LAWS
+        LAWL(1) = LAWS - (SLATR*AMAX1(0.0,SLATS-TMEAN))*LAWS
         !-----------------------------------------------------------------------
         !           Leaf growth
         !-----------------------------------------------------------------------

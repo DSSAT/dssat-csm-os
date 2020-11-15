@@ -233,7 +233,7 @@
             !WRITE(fnumwrk,*)'  Slas,Slasmn  ',Laws,lawmnfr !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
             WRITE(fnumwrk,*)'  Slas  ',Laws
             !WRITE(fnumwrk,*)'  Slacf,Slaff  ',Lawcf,Lawff LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-            WRITE(fnumwrk,*)'  Slatr,Slats  ',Lawtr,Lawts
+            WRITE(fnumwrk,*)'  Slatr,Slats  ',Slatr,slats
             WRITE(fnumwrk,*)'  Lpefr        ',Lpefr
             !WRITE(fnumwrk,*)'  Phints,Phntf ',Phints,Phintfac  !LPM 21MAY2015 PHINTS is not used           
             WRITE(fnumwrk,*)'  Llifa,s,',Llifa,Llifs  

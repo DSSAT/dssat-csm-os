@@ -112,7 +112,7 @@
                 !           Partition C to above ground and roots (minimum) 
                 !-----------------------------------------------------------------------
                 CALL YCA_Growth_Part ( &
-                    BRSTAGE     , ISWNIT      , NFP         , LAI         &
+                    BRSTAGE     , ISWNIT      , NFP         , LAI         , WEATHER     &
                     )
                 
                 !-----------------------------------------------------------------------
