@@ -131,10 +131,7 @@ $SPECIES:CSYCA047.09222020    Last edit: 09/22/2020 LPM
 @RTNO3 RTNH4 NH4MN NO3MN
 !   mg.cm.d     mg/Mg 
  0.006 0.006   0.5   0.5 
-! N demand 
-@NTUPF  ! Fraction of deficit that can be filled per day
-!   fr
-  0.10
+
 ! Nitrogen concentrations
 @ SDN% ! Planting stick
 !    %

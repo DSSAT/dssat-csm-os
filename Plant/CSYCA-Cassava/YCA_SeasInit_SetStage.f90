@@ -166,7 +166,8 @@
         !IF (RSFRS < 0.0) RSFRS = 0.05 !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
         IF (LSENI < 0.0) LSENI = 0.0
         IF (PARIX <= 0.0) PARIX = 0.995
-        IF (NTUPF < 0.0) NTUPF = 0.2
+        !LPM 15NOV2020 Remove the N top-up fraction
+        !IF (NTUPF < 0.0) NTUPF = 0.2
         IF (PPEXP < 0.0) PPEXP = 2.0
         IF (RTUFR < 0.0) RTUFR = 0.05
         IF (SHGR(20) < 0.0) THEN 
