@@ -13,6 +13,7 @@
         
         USE YCA_First_Trans_m
         USE YCA_Control_Plant
+        USE YCA_Control_Leaf
         
         IMPLICIT NONE
         
@@ -38,8 +39,13 @@
             IF((LLIFATT+LLIFSTT) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                  DO LF = 1, LNUMSIMSTG(BR)
-                    node(BR,LF)%SNCX = SNCXS(0) + (node(BR,LF)%LAGETT*(SNCXS(1)-SNCXS(0)) / (LLIFATT+LLIFSTT) )
-                    node(BR,LF)%SNCM = SNCMN(0) + (node(BR,LF)%LAGETT*(SNCMN(1)-SNCMN(0)) / (LLIFATT+LLIFSTT) )
+                    IF (isLeafExpanding(node(BR,LF))) THEN
+                         node(BR,LF)%SNCX = SNCXS(0)
+                         node(BR,LF)%SNCM = SNCMN(0)
+                    ELSE
+                         node(BR,LF)%SNCX = SNCXS(0) + ((node(BR,LF)%LAGETT-LLIFGTT)*(SNCXS(1)-SNCXS(0)) / (LLIFATT+LLIFSTT) )
+                         node(BR,LF)%SNCM = SNCMN(0) + ((node(BR,LF)%LAGETT-LLIFGTT)*(SNCMN(1)-SNCMN(0)) / (LLIFATT+LLIFSTT) )
+                    ENDIF
                  ENDDO
                 ENDDO
             ENDIF
