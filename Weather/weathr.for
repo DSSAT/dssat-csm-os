@@ -173,6 +173,7 @@ C       Set default values FOR REFHT AND WINDHT
 
       IF (RNMODE .EQ. 'Y') THEN
         CALL FCAST_STORE(FCOUNT)
+        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, FCODE)
       ENDIF
 
       IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 

@@ -60,7 +60,7 @@ SUBROUTINE FCAST_STORE(FCOUNT)
   ENDIF
 
 ! Allocate the array size for observed weather data
-  Allocate (Obs_data(FCOUNT))
+  Allocate (Obs_data(0:FCOUNT))
 
 ! These physical years are needed for historical ensemble, but not for generated weather
 ! Determine the first and last years of the weather ensemble using simulation start date as the reference.
@@ -78,7 +78,7 @@ SUBROUTINE FCAST_STORE(FCOUNT)
   CONTROL2 % DYNAMIC = RATE
 
 ! get weather data 
-  DO I = 1, FCOUNT
+  DO I = 0, FCOUNT
     Obs_YRDOY = INCDAT(FSTART, I-1)
     CONTROL2 % YRDOY = Obs_YRDOY
 
@@ -110,10 +110,6 @@ SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, FCODE)
 ! FCODE = 1 - Use observed data, return values.
 
   FCODE = 0
-  RAIN = -99
-  SRAD = -99
-  TMAX = -99
-  TMIN = -99
 
 ! No forecast weather data
   IF (FCOUNT .LE. 0) RETURN
