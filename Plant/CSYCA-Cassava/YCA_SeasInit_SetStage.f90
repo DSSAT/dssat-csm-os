@@ -123,6 +123,8 @@
             RNCMN(L) = RNPCMN(L)/100.0
         ENDDO
         
+        LNSC =  LNSC/100.0
+        
         IF (DFPE < 0.0) THEN  
             DFPE = 1.0
             WRITE(MESSAGE(1),'(A51)') 'Pre-emergence development factor missing. Set to 1.'

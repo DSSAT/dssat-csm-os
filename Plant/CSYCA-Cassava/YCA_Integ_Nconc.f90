@@ -43,8 +43,8 @@
                          node(BR,LF)%SNCX = SNCXS(0)
                          node(BR,LF)%SNCM = SNCMN(0)
                     ELSE
-                         node(BR,LF)%SNCX = SNCXS(0) + ((node(BR,LF)%LAGETT-LLIFGTT)*(SNCXS(1)-SNCXS(0)) / (LLIFATT+LLIFSTT) )
-                         node(BR,LF)%SNCM = SNCMN(0) + ((node(BR,LF)%LAGETT-LLIFGTT)*(SNCMN(1)-SNCMN(0)) / (LLIFATT+LLIFSTT) )
+                         node(BR,LF)%SNCX = SNCXS(0) + AMAX1(SNCXS(1)-SNCXS(0),((node(BR,LF)%LAGETT-LLIFGTT)*(SNCXS(1)-SNCXS(0)) / (LLIFATT+LLIFSTT) ))
+                         node(BR,LF)%SNCM = SNCMN(0) + AMAX1(SNCMN(1)-SNCMN(0),((node(BR,LF)%LAGETT-LLIFGTT)*(SNCMN(1)-SNCMN(0)) / (LLIFATT+LLIFSTT) ))
                     ENDIF
                  ENDDO
                 ENDDO
