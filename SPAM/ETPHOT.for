@@ -458,7 +458,7 @@ C            added by BAK on 10DEC2015
      &      CCNEFF, CICAD, CMXSF, CQESF, PGPATH,          !Input
      &      AGEQESL, CO2QESL, QEFFSL)                     !Output
 
-C         Integrate instantaneous canopy photoynthesis (�mol CO2/m2/s)
+C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
 C         and mm/d).
 
