@@ -496,7 +496,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
           KSEVAP = KEP
         ENDIF
-
+        
 !     -------------------------------------------------
 !     Potato
       CASE('PTSUB')

@@ -281,7 +281,7 @@
      &  '          ',   !19
      &  'Harvest   '/   !20
 
-
+ 
 C----------------------------------------------------------------------
 C
 C              Code for all Dynamic Variables
@@ -293,8 +293,9 @@ C
 C              DYNAMIC = RUNINIT
 C
 C----------------------------------------------------------------------
-
+ 
       IF(DYNAMIC.EQ.RUNINIT) THEN
+          
           !Define names for growth stages for screen output in CROPGRO. 
           !Not used anywhere else in CERES
           DO I = 1, 20
@@ -310,7 +311,8 @@ C----------------------------------------------------------------------
           !-------------------------------------------------------------
           !Call phenology routine
           !-------------------------------------------------------------
-          IF(MODEL(1:5).EQ.'SUOIL') THEN
+          
+         
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
      &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
@@ -319,7 +321,7 @@ C----------------------------------------------------------------------
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &    SeedFrac,VegFrac)
-
+          
           !-------------------------------------------------------------
           !Call growth routine
           !-------------------------------------------------------------
@@ -392,7 +394,7 @@ C                     DYNAMIC = SEASINIT
 C-----------------------------------------------------------------------
 
       ELSEIF(DYNAMIC.EQ.SEASINIT) THEN
-
+       
 C-----------------------------------------------------------------------
 C     Subroutine IPPARM reads FILEP, the PEST progress file.
 C-----------------------------------------------------------------------
@@ -416,7 +418,7 @@ C-----------------------------------------------------------------------
 
 !         CHP 5/18/2011
           MDATE      = -99      
-
+        
 
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
@@ -426,7 +428,7 @@ C-----------------------------------------------------------------------
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &    SeedFrac,VegFrac)
-     
+    
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
      &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
@@ -490,7 +492,7 @@ C----------------------------------------------------------------------
 
       ELSEIF(DYNAMIC.EQ.RATE) THEN
 
-
+ 
         IF (ISWDIS.EQ.'Y') THEN
           CALL PEST(CONTROL, ISWITCH, 
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
@@ -525,6 +527,7 @@ C----------------------------------------------------------------------
           !------------------------------------------------------------
           !        Call SU_PHENOL
           !------------------------------------------------------------
+         
         IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN               
           IF (CROP .NE. 'FA') THEN
             
@@ -728,7 +731,7 @@ C----------------------------------------------------------------------
         SENESCE % ResE     = 0.0
 
       ENDIF
-      endif
+      
       RETURN
       END SUBROUTINE SU_CERES
 

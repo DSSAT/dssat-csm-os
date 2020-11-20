@@ -134,8 +134,6 @@
       REAL            XS             
       REAL            XSTAGE  
       REAL O1
-      
-                            
       INTEGER         YRDOY          
       INTEGER         YREMRG         
       INTEGER         YRSIM
@@ -155,7 +153,8 @@
 
 !     CHP added for P model
       REAL SeedFrac, VegFrac
-   
+     
+      
 !----------------------------------------------------------------------
 !         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
 ! ---------------------------------------------------------------------
@@ -390,7 +389,6 @@ C     taking L=1
 ! ---------------------------------------------------------------------
 
       ELSE    
-
 !         -------------------------------------------------------------
 !             Compute Crown Temperature under snow pack.
 !             Used in COLD.for
@@ -512,7 +510,7 @@ C     taking L=1
           DTT   = AMAX1 (DTT,0.0)
           SUMDTT  = SUMDTT  + DTT 
           CUMDTT = CUMDTT + DTT
-
+          
 
 !     ------------------------------------------------------------------
 !           ISTAGE Definitions
@@ -616,7 +614,7 @@ C     taking L=1
                   GPP    = 1.0
 
                   WRITE(MESSAGE(1),1399)
-                  CALL WARNING(1,'MZPHEN',MESSAGE)
+                  CALL WARNING(1,'SUPHEN',MESSAGE)
 
                   WRITE (     *,1399)
                   IF (IDETO .EQ. 'Y') THEN
@@ -679,7 +677,7 @@ C     taking L=1
 
 
       !-----------------------------------------------------------------
-      !       ISTAGE = 2 - End of Juvenile Stage to Tassel Initiation
+      !       ISTAGE = 2 - End of Juvenile Stage to Floret Initiation
       !-----------------------------------------------------------------
           ELSEIF (ISTAGE .EQ. 2) THEN
               !NDAS - number of days after sowing
@@ -769,7 +767,7 @@ C     taking L=1
               !---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY
               ISDATE = YRDOY      
-              ISTAGE = 4               !FIRST ANTHESIS, END OF LEAF GROWTH
+              ISTAGE = 4               !FIRST ANTHESIS, END POLLINATION
               SUMDTT = SUMDTT - P3P
               IDURP  = 0
               ISDATE = YRDOY

@@ -101,8 +101,7 @@
       REAL        CUMDTTEG      
       REAL        CURV
       REAL        DLAYR(NL)   
-      REAL        DS(NL)   
-!      REAL        DM          
+      REAL        DS(NL)           
       INTEGER     DOY         
       REAL        DTT         
       REAL        DUMMY           
@@ -378,7 +377,7 @@
       REAL XHMNC,XI,XLANC,XLAY,XLCNP,XLEAFN,XLMNC,XLN
       REAL XNGLF,XNSLF,XPEPE,XRAT,XSANC,XSCNP,XSMNC,XSTEMN
       REAL XXX,YLNOI,YRAT,YYY,Z,ZLNOI,ZZZ,C2,CPOOL,CUMDTT
-      REAL OILPERC,PNP,SENRATE,TMFAC1(10),SGRO(12)
+      REAL OILPERC,PNP,SENRATE,TMFAC1(10),SGRO(25)
       REAL ALF,ALF1,GRAINN1,GRAINNE
       REAL PS,KCAN,KEP
       
@@ -399,7 +398,10 @@
       TTE  = 350.0
       PHY1 =  39.0
       PHY2 =  24.0
- 
+      DO I = 1, 8
+         TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
+      END DO
+
 !----------------------------------------------------------------------
 !                     DYNAMIC = RUNINIT
 !----------------------------------------------------------------------
@@ -846,6 +848,7 @@ c        VSTAGE = 0.0
         XNTI   = 0.0
         YIELD  = 0.0
         YIELDB = 0.0
+
         IF (ISWNIT .NE. 'N') THEN
 
           CALL SU_NFACTO(DYNAMIC,TANC,TCNP,TMNC,
@@ -856,13 +859,17 @@ c        VSTAGE = 0.0
           NDEF3 = 1.0
           NFAC = 1.0
         ENDIF
-
+        write(*,*)'start nuptak'
         CALL SU_NUPTAK(
-     %  RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
-     %  RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
-     %  XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
-     %  SHF,PTF, SENESCE, KG2PPM, PLIGRT)
-
+     %    RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
+     %    RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
+     %    XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
+     %    SHF,PTF, SENESCE, KG2PPM, PLIGRT,
+     %    XLCNP,XSCNP,XHCNP,GROPER,GROEMB,
+     %    PDWIL,PDWIH,PDWIS,XNGLF,XSTEMN,XHEADN,
+     %    GLFWT,STMWT,HEADWT,PNP,ENP,PERWT,EMBWT,
+     %    XLEAFN,XLANC,JPEPE)
+        write(*,*)'end nuptak'
         CALL SU_KUPTAK(
      &  ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,        !Input
      &  KUPTAKE, KSTRES)                             !Output
@@ -924,24 +931,17 @@ c        VSTAGE = 0.0
         ENDIF
 
 
+ 
         IF(YRDOY.EQ.STGDOY(3)) THEN
-   
-          XNTI=LEAFNO
-          SWMIN  = STMWT*0.85         
-          SUMP   = 0.0
-
-          ICSDUR = 1
-          CANNAA = STOVN*PLTPOP
-          CANWAA = BIOMAS
-        ENDIF
-
-        IF(YRDOY.EQ.STGDOY(4)) THEN
-          SWMAX  = STMWT          
+          SWMAX  = 1.3*STMWT   
+          SWMIN=STMWT*.99      
           VANC   = TANC       
           VMNC   = TMNC       
           EMAT   = 0
           ICSDUR = 1
-
+          CANNAA = STOVN*PLTPOP
+          CANWAA = BIOMAS
+ 
           MAXLAI = PLAMX*PLTPOP/10000.0
           APLA   = LAI*10000.0/PLTPOP
           ABIOMS = BIOMAS
@@ -952,7 +952,7 @@ c        VSTAGE = 0.0
           ! mantainance respiration
           !
           RM  = (BIOMAS+RTWT*PLTPOP)*0.008*0.729
-          RI1 = 1.0 + RM/PSKER/PLTPOP       
+          RI1 = 1.0 + RM/PSKER/PLTPOP      
           !
           ! Pericarp number calculated according to Soriano
           ! FV - 12/12/97
@@ -968,8 +968,17 @@ c        VSTAGE = 0.0
           ALF       = 0.22
           ALF1      = (ALF*G3/24.*(P5-170.)-2.*(1.-ALF))/270./(1.-ALF)
           POTGROPER = 24.0*ALF1*PPP/1000.0
+          write(*,*)'grosub 979 ****',PPP,POTGROPER,pla
+          SUMDTT  = SUMDTT - P3P                       ! SUN
+          XRAT    = XNGLF / GLFWT
+          YRAT    = (0.009-0.0875*XRAT)/0.9125
+          SLOPEPE = LAI*10E3/PLTPOP/(XNGLF-YRAT*GLFWT) ! SUN, HV
+          XPEPE   = 0.50 * (XNGLF - YRAT*GLFWT)
+          GPP    = 0.0
+          
+
         ENDIF
-        IF(YRDOY.EQ.STGDOY(5)) THEN
+        IF(YRDOY.EQ.STGDOY(4)) THEN
              ! Include calculations to correct RUE after anthesis
              ! mantainence respiration
              !
@@ -977,6 +986,13 @@ c        VSTAGE = 0.0
              RM    = (BIOMAS+RTWT*PLTPOP)*0.008*0.729
              RI1   = 1.0 + RM/PS
              PSKER = SUMP / IDURP
+         
+             OIL    = GRNWT * 0.025
+         
+             HWMAX  = 2.20 * HEADWT
+             HWMIN  = 1.00 * HEADWT
+             VANC   = TANC
+             VMNC   = TMNC
 
              !
              ! Grain number calculated according to Soriano
@@ -988,6 +1004,7 @@ c        VSTAGE = 0.0
                 PERWTE  = (PPP - GPP) * PERWT / PPP
                 EMBWTE  = (PPP - GPP) * EMBWT / PPP
                 GRNWTE  = PERWTE + EMBWTE
+ 
                 IF (ISWNIT .EQ. 'Y') THEN
                    GRAINN1 = GRAINN * (1.0 - GRNWTE / GRNWT)
                    GRAINNE = GRAINN - GRAINN1
@@ -1116,7 +1133,7 @@ c        VSTAGE = 0.0
           ENDIF
         ENDIF
         TURFAC = REAL(INT(TURFAC*1000))/1000
-
+        write(*,*)'grosub 1444'
 
         !-------------------------------------------------------------
         !      Compute Water Saturation Factors       
@@ -1192,10 +1209,10 @@ c        VSTAGE = 0.0
           
           KCAN=K2
 C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
-
+           
 
           KEP=-LOG(0.5*EXP(-KCAN*LAI)+.5*EXP(-0.5*KCAN*LAI))/LAI
-
+          write(*,*)'grosub 1223'
           !
           ! RUE changes when oil starts to accumulate
           !
@@ -1218,13 +1235,14 @@ C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
           ELSE
             IF (RI .GT. 0) THEN
               PCARB = (PCO2*(RI*RI1*C2/C1*RUE)-RM)/PLTPOP
+
             ELSE
               PCARB = 0.0
             ENDIF
           ENDIF
-
-          PCARB = AMAX1 (PCARB,0.0)
           
+          PCARB = AMAX1 (PCARB,0.0)
+          write(*,*)'grosub 1253'
           TAVGD = 0.25*TMIN+0.75*TMAX
 
           PRFT = CURV('LIN',PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4),TAVGD)
@@ -1247,6 +1265,7 @@ C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
 
 !     CHP 9/5/04 Added P stress
           CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES, PStres1,KSTRES)*SLPF
+ 
           !Reduce CARBO for assimilate pest damage
           CARBO = CARBO - ASMDOT
           CARBO = MAX(CARBO,0.0)
@@ -1364,7 +1383,6 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             RGFILL = RGFILL + ELOFT/8.0
           ENDDO
         ENDIF
-       
         
           !-------------------------------------------------------------
           !   ISTAGE = 1 (Emergence to End of Juvenile Stage)
@@ -1479,7 +1497,6 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
               GROHEAD   = 0.0
               MAXGROSTM = RGFILL * MAXGROSTM
             ENDIF
-
             FRCARB = 0.90 * CARBO - MAXGROSTM - GROHEAD
 
             IF (FRCARB .GT. 0.295*CARBO) THEN
@@ -1570,8 +1587,10 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             GLFWT  = GLFWT  - YYY * 6.25
             LFWT   = LFWT   - YYY * 6.25
             STMWT  = STMWT  + YYY * 6.25
-            XSTEMN = XSTEMN + YYY
-            XLEAFN = XLEAFN - YYY
+            IF (ISWNIT .EQ. 'Y') THEN
+              XSTEMN = XSTEMN + YYY
+              XLEAFN = XLEAFN - YYY
+            ENDIF  
           ENDIF
           LFWT   = LFWT   + GROLF
           STMWT  = STMWT  + GROSTM
@@ -1580,6 +1599,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           IF (SUMDTT .GT. (P3P-130.0)) THEN
             SUMP  = SUMP  + CARBO
             IDURP = IDURP + 1
+            
           ENDIF
         ENDIF
 
@@ -1635,17 +1655,17 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             OILFRAC = 0.0
             NSINK1 = 0.0
  
-            IF (PERWT .GT. 0.0) THEN
+            IF (PERWT .GT. 0.0) THEn
               NSINK2 = GROPER*PNP
             ELSE
               NSINK2 = 0.0
             ENDIF
-      
+             write(*,*)'grosub 1668',groper,potgroper,ppp
             NSINK2 = AMAX1 (NSINK2,0.0)
             NSINK  =  NSINK2
 
             IF (NSINK .NE. 0.0) THEN
-         
+            
               FSINK2 = NSINK2 / NSINK
               RANC   = AMAX1 (RANC,RMNC)                  ! Roots actual N conc.                
               XLANC  = XNGLF  / GLFWT  ! Leaf N conc.
@@ -1731,7 +1751,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           ELSE
             DSLANW = 0.0
           ENDIF
-
+        endif
           DSLAN2 = AMAX1 (DSLAN2,DSLANW)
           SLAN2  = SLAN2  + DSLAN2
           SLAY   = GPLA   / GLFWT
@@ -1748,7 +1768,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           GRNWT  = PERWT
           SUMP   = SUMP   + CARBO
           IDURP  = IDURP  + 1
-        ENDIF
+          
 
       !             5/11/2005 CHP Added cumulative leaf senescence
       CumLeafSenes = SLAN / 600. * PLTPOP * 10. + Stg2CLS
@@ -2216,6 +2236,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
       IF(PLTPOP.GT.0.0 .AND. RTWT .GT. 0.) THEN
         ROOTN = ROOTN - ROOTN*(WRIDOT/PLTPOP)/RTWT
         RTWT = RTWT - WRIDOT/PLTPOP
+        
       ENDIF
 
       ! Grain Weight and Number
@@ -2245,16 +2266,21 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
       ENDIF
 
       IF (ISWNIT .NE. 'N') THEN 
+      write(*,*)'grosub 2274',istage,xleafn,xstemn,xheadn
         IF(CARBO.GT.0.0) THEN  
           PDWI   = PCARB*(1.0-GRORT/CARBO)
           PGRORT = PCARB*GRORT/CARBO
         ENDIF
 
         CALL SU_NUPTAK(
-     %        RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
-     %        RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
-     %        XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
-     %        SHF,PTF, SENESCE, KG2PPM, PLIGRT)
+     %    RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
+     %    RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
+     %    XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
+     %    SHF,PTF, SENESCE, KG2PPM, PLIGRT,
+     %    XLCNP,XSCNP,XHCNP,GROPER,GROEMB,
+     %    PDWIL,PDWIH,PDWIS,XNGLF,XSTEMN,XHEADN,
+     %    GLFWT,STMWT,HEADWT,PNP,ENP,PERWT,EMBWT,
+     %    XLEAFN,XLANC,JPEPE)
 
         CALL SU_KUPTAK(
      &          ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,     !Input
@@ -2546,7 +2572,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
         SENESCE % ResE(0,1) = CumLfNSenes
 
       ENDIF       !Endif for DYNAMIC LOOP
-
+     
       RETURN
 
 !----------------------------------------------------------------------

@@ -27,7 +27,11 @@ C----------------------------------------------------------------------
      %    RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
      %    RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
      %    XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
-     %    SHF,PTF, SENESCE, KG2PPM, PLIGRT)
+     %    SHF,PTF, SENESCE, KG2PPM, PLIGRT,
+     %    XLCNP,XSCNP,XHCNP,GROPER,GROEMB,
+     %    PDWIL,PDWIH,PDWIS,XNGLF,XSTEMN,XHEADN,
+     %    GLFWT,STMWT,HEADWT,PNP,ENP,PERWT,EMBWT,
+     %    XLEAFN,XLANC)
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -88,11 +92,11 @@ C----------------------------------------------------------------------
       REAL        XSTAGE      
 !     FV OCTOBER 2020 ADDED MORE VARIABLES
       REAL DHEADN,DLEAFN,DNGE,DNGH,DNGL,DNGP,DNGS,DNSH
-      REAL DNSL,DNSS,DSTEMN,EMBWT,ENP,GLFWT,GROEMP,GROPER
-      REAL HEADWT,PDWIH,PDFIL,PDWIS,PERWT,PNP,PTF2,PTFE
+      REAL DNSL,DNSS,DSTEMN,EMBWT,ENP,GLFWT,GROPER
+      REAL HEADWT,PDWIH,PDWIL,PDWIS,PERWT,PNP,PTF2,PTFE
       REAL PTFH,PTFL,PTFS,STMWT,TOTWT2,XENDEM,XHANC,XHCNP
       REAL XHEADN,XHNDEM,XLANC,XLCNP,XLEAFN,XLNDEM,XNGLF,XNSLF
-      REAL XPNDEM,XSANC,XSCNP,XSNDEM,XSTEMN,GROEMB,PTFP,PDWIL
+      REAL XPNDEM,XSANC,XSCNP,XSNDEM,XSTEMN,GROEMB,PTFP
       TYPE (ResidueType) SENESCE
 
 !----------------------------------------------------------------------
@@ -103,9 +107,43 @@ C----------------------------------------------------------------------
 C----------------------------------------------------------------------
 C     Initialize variables
 C----------------------------------------------------------------------
+
+
+
+      IF (ISTAGE .LT. 4) THEN
+         GROPER = 0.0
+         PERWT  = 0.0
+      ENDIF
+      IF (ISTAGE .LT. 5) THEN
+         GROEMB = 0.0
+         EMBWT  = 0.0
+      ENDIF
+      !
+      ! Reset head and stem N amounts
+      !
+      IF (JPEPE .EQ. 1) THEN
+         XHEADN = 0.0420 * HEADWT
+         XSTEMN = XSTEMN - XHEADN
+         JPEPE  = 0
+      ENDIF
+      RANC   = ROOTN  / RTWT
+      XSANC  = XSTEMN / STMWT                        ! Stem
+C     XLANC  = XLEAFN / LFWT                         ! Leaf
+      XLANC  = XNGLF  / GLFWT                        ! Green leaves
+      IF (HEADWT .GT. 0.0) THEN
+         XHANC = XHEADN / HEADWT
+      ENDIF
+      TOTWT2 = STMWT + GLFWT + HEADWT + PERWT + EMBWT
+      TANC   = (XSTEMN + XNGLF + XHEADN)/(STOVWT - SLFWT)
+      TCNP2  = (XLCNP*GLFWT + XSCNP*STMWT + XHCNP*HEADWT)
+      TCNP2  = (TCNP2 + EMBWT*0.0425 + PERWT*0.015)/TOTWT2
+      PTF2   = TOTWT2/(TOTWT2 + RTWT)
       TRNLOS = 0.0
-      IF (RTWT.GT.0.0) RANC   = ROOTN / RTWT
-      IF (STOVWT.GT.0.0) TANC   = STOVN / STOVWT
+      IF (RTWT.GT.0.0) RANC = ROOTN / RTWT
+      IF (GLFWT.GT.0.0) XLANC=XNGLF/ GLFWT
+      IF (STMWT.GT.0.0) XSANC= XSTEMN / STMWT 
+      IF (HEADWT.GT.0.0) XHANC=XHEADN/HEADWT
+          
       TRLV   = 0.0
       DROOTN = 0.0
       DSTOVN = 0.0
@@ -153,7 +191,6 @@ C-----------------------------------------------------------------------
       DNSL   = GLFWT  * (XLCNP - XLANC)
       DNSS   = STMWT  * (XSCNP - XSANC)
       DNSH   = HEADWT * (XHCNP - XHANC)
-
 !     N demand for new growth
 
       DNG    = DNGL + DNGS + DNGH + DNGE + DNGP  
@@ -164,7 +201,6 @@ C-----------------------------------------------------------------------
       XSNDEM = DNSS + DNGS
       XHNDEM = DNSH + DNGH
       IF (PERWT .GT. 0.0) THEN
-C        XPNDEM = PERWT*(0.015-PERN/PERWT)+DNGP
          XPNDEM = DNGP
       ELSE
          IF (GROPER .GT. 0.0) THEN
@@ -231,7 +267,7 @@ C
             TRNU     = TRNU + RNO3U(L) + RNH4U(L)
          ENDIF
       END DO
-
+       
 C-----------------------------------------------------------------------
 C     Calculate factor (NUF) to reduce N uptake to level of demand
 C-----------------------------------------------------------------------
@@ -270,7 +306,7 @@ C-------------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Update stover and root N
 C-----------------------------------------------------------------------
-
+       write(*,*)'nuptak 278',ndem,stovwt,totwt2
       IF (NDEM .GT. TRNU) THEN
         XNDEM  = TRNU
         FACTOR = XNDEM / NDEM
@@ -287,13 +323,16 @@ C-----------------------------------------------------------------------
       ENDIF
       !
       ! Fractions of organs over the whole plant weight
-      !
-      PTFL = PTF  * GLFWT  / STOVWT
-      PTFS = PTF  * STMWT  / STOVWT
-      PTFH = PTF  * HEADWT / STOVWT
+      IF (STOVWT.GT.0.0) THEN
+        PTFL = PTF  * GLFWT  / STOVWT
+        PTFS = PTF  * STMWT  / STOVWT
+        PTFH = PTF  * HEADWT / STOVWT
+      ENDIF
+      IF (TOTWT2.GT.0.0) THEN
       PTFE = PTF2 * EMBWT  / TOTWT2
       PTFP = PTF2 * PERWT  / TOTWT2
-
+      ENDIF
+      write(*,*)'nuptak 301'
       IF (NDEM .LE. 0.0 .OR. TRNU .LE. 0.0) THEN
          DSTOVN = 0.0
          DROOTN = 0.0
