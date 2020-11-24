@@ -868,6 +868,8 @@
        XLEAFN = 0.0
        SENTIME = 0
        SENCODE = 0
+       OIL = 0.0
+       OILWT = 0.0
  
         IF (ISWNIT .NE. 'N') THEN
 
@@ -954,7 +956,7 @@
           END DO
           SLAN1  = 0.0
         ENDIF
-
+          GLFWT = LFWT
 
  
         IF(YRDOY.EQ.STGDOY(3)) THEN
@@ -997,12 +999,15 @@
           XRAT    = XNGLF / GLFWT
           YRAT    = (0.009-0.0875*XRAT)/0.9125
           SLOPEPE = LAI*10E3/PLTPOP/(XNGLF-YRAT*GLFWT) ! SUN, HV
+c          write(*,*)xnglf,yrat,GLFWT
+          
           XPEPE   = 0.50 * (XNGLF - YRAT*GLFWT)
           GPP    = 0.0
           MAXLAI = PLAMX*PLTPOP/10000.0
           APLA   = LAI*10000.0/PLTPOP
           ABIOMS = BIOMAS
-          
+          OILWT = 0.0
+          OIL = 0.0
 
         ENDIF
         IF(YRDOY.EQ.STGDOY(4)) THEN
@@ -1389,7 +1394,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
         IF (LEAFNO .LT. 1) THEN
           PLAG = 2.0
         ENDIF
-        IF (TURFAC .LT. 1.0) THEN
+        IF (TURFAC .LT. 0.9) THEN
           SLAMAX = SLAMIN
         ENDIF
 
@@ -1499,7 +1504,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
 !         -------------------------------------------------------------------
 
         ELSEIF (ISTAGE .EQ. 3) THEN   
-          PLAG = 0.0
+          
           DSLAN1 = 0.0
           DSLAN2 = 0.0
           GROLF = 0.0
@@ -1593,7 +1598,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
               SENTIME    = SENTIME + 1             
               SGRO(SENTIME) = PLAG
             ENDIF
-C            WRITE(*,*)'GROSUB 1590',SENTIME,SENCODE,SGRO(1)
+
             IF (SENCODE .EQ. 1) THEN
               WWWW= -0.0182 + 0.4147*SGRO(1)*PLTPOP/10000.0
               DO I = 1, 11
@@ -1634,6 +1639,7 @@ C            WRITE(*,*)'GROSUB 1590',SENTIME,SENCODE,SGRO(1)
           GLFWT  = GLFWT + GROLF + SDN * 6.25 - DSLAN1/SLAY
           XNGLF  = XNGLF - DSLAN1/SLAY*YRAT
           XXX    = GLFWT * XLCNP   ! N content in green leaves at critical level
+
           ! N is first moved from secesced leaves to green leaves and then from the latter to the stem
           IF (XNGLF .GT. XXX) THEN
             YYY    = XNGLF  - XXX   ! Leaf N amount in excess of critical (g/plant)
@@ -1652,7 +1658,7 @@ C            WRITE(*,*)'GROSUB 1590',SENTIME,SENCODE,SGRO(1)
             
           ENDIF
         ENDIF
-
+c        WRITE(*,*)'GROSUB 1655',SENTIME,SENCODE,SGRO(1),DSLAN1,GPLA,PLAG,MAXGROLF
         CumLeafSenes = SLAN / 600. * PLTPOP * 10. + Stg2CLS
         !                kg/ha     =  g/plant * plants/m2 * (kg/ha)/(g/m2)
 
@@ -1669,8 +1675,6 @@ C            WRITE(*,*)'GROSUB 1590',SENTIME,SENCODE,SGRO(1)
           GROHEAD = 0.0  
           GROPER = 0.0
           GROEMB = 0.0   
-
-
 
           IF (CARBO .NE. 0.0) THEN
            GROPER = POTGROPER * trg                 ! SUN, Hall
@@ -1827,7 +1831,7 @@ C            WRITE(*,*)'GROSUB 1590',SENTIME,SENCODE,SGRO(1)
           GRNWT  = PERWT
           SUMP   = SUMP   + CARBO
           IDURP  = IDURP  + 1
-
+c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
       !             5/11/2005 CHP Added cumulative leaf senescence
       CumLeafSenes = SLAN / 600. * PLTPOP * 10. + Stg2CLS
       !                kg/ha     =  g/plant * plants/m2 * (kg/ha)/(g/m2)
@@ -2164,13 +2168,9 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
                 OILFRAC = 0.0
                 OILPERC = 0.0
                 OILPC = 0.0
+                OILWT = 0.0
               ENDIF
 
-!          IF (GRNWT .GT. 0.1) THEN
-!            OILPERC = OIL / GRNWT * 100.0
-!          ELSE
-!            OILPERC = 0.0
-!          ENDIF
 
           SUMP  = SUMP  + CARBO
           IDURP = IDURP + 1
@@ -2225,7 +2225,8 @@ C      SLFP   = (1-FSLFP) + FSLFP*PSTRES1
       EMBWT = EMBWT + GROEMB
       GRNWT = PERWT + EMBWT
       PLA = PLA + PLAG
-      GPLA = PLA + PLAG
+      
+      GPLA = GPLA + PLAG
 c      PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFT,SLFN,SLFP)) 
 !     Daily rate of leaf senescence
       SENLA = SENLA + PLAS
@@ -2268,7 +2269,8 @@ c      PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFT,SLFN,SLFP))
 
         BIOMAS = (LFWT + STMWT + HEADWT + GRNWT + GRNWTE)*PLTPOP
         DM     = BIOMAS*10.0
-        
+        HIO = OILWT/BIOMAS
+
         PTF    = STOVWT/(RTWT + STOVWT)      
 !     the section below is added similar to that of Ceres-Maize      
            !------------------------------------------------------------
@@ -2654,7 +2656,7 @@ c            ! Yield in bu/ac at 0% moisture content
         SENESCE % ResE(0,1) = CumLfNSenes
 
       ENDIF       !Endif for DYNAMIC LOOP
-
+c      write(*,*)istage,xnglf,gpla,sumdtt,headwt
       RETURN
 
 !----------------------------------------------------------------------
