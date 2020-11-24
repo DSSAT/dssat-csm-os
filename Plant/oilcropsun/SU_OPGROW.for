@@ -47,7 +47,7 @@ C  Calls:     None
       REAL WTLO, WTSO, WTCO,OILPC
       REAL RLV(NL)
       REAL CUMSENSURF, CUMSENSOIL     !cumul. senes. soil and surface
-
+      
 !     Average stresses since last printout
       REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, KST_AV
 
@@ -73,7 +73,6 @@ C  Calls:     None
       YRSIM   = CONTROL % YRSIM
       
       FMOPT   = ISWITCH % FMOPT   ! VSH
-
 !-----------------------------------------------------------------------
 !                                 DYNAMIC = RUNINIT
 !-----------------------------------------------------------------------
@@ -154,7 +153,6 @@ C  Calls:     None
 
 !         DAS = MAX(0, TIMDIF(YRSIM, YRDOY))
           DAP = MAX(0, TIMDIF(YRPLT, YRDOY))
-
           IF (DAP > DAS) DAP = 0
 
 !         Calculate cumulative senesence
@@ -201,7 +199,6 @@ C  Calls:     None
             ENDIF
 
             VWAD = NINT(WTLF*10. + STMWTO*10.)
-      
             IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             WRITE(NOUTDG,400,ADVANCE='NO')
      &        YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
@@ -217,7 +214,6 @@ C  Calls:     None
 
             WRITE(NOUTDG,402,ADVANCE='NO')(RLV(I),I=1,N_LYR)
  402          FORMAT (10F8.2)
-
             WRITE(NOUTDG,404)
      &        NINT(WTCO*10.),NINT(WTLO*10.),NINT(WTSO*10.),
      &         NINT(CUMSENSURF), NINT(CUMSENSOIL), DTT
@@ -262,7 +258,6 @@ C-------------------------------------------------------------------
         CLOSE (NOUTDG)
 
       ENDIF
-
 !***********************************************************************
       RETURN
       END SUBROUTINE SU_OPGROW

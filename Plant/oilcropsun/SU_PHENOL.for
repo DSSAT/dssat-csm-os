@@ -141,7 +141,7 @@
       INTEGER PATHL
       PARAMETER (BLANK = ' ')
       INTEGER LUNECO
-
+      REAL TTMP,ZSIND
       CHARACTER*6 ECOTYP
       INTEGER ISECT
       CHARACTER*255 C255
@@ -150,11 +150,15 @@
       CHARACTER*92 FILECC
       CHARACTER*80 C80
       CHARACTER*78 MESSAGE(10)
+      REAL TMFAC1(10)
 
 !     CHP added for P model
       REAL SeedFrac, VegFrac
      
-      
+       DO I = 1, 8
+         TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
+      END DO
+     
 !----------------------------------------------------------------------
 !         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
 ! ---------------------------------------------------------------------
@@ -390,122 +394,27 @@ C     taking L=1
 
       ELSE    
 !         -------------------------------------------------------------
-!             Compute Crown Temperature under snow pack.
-!             Used in COLD.for
-!         -------------------------------------------------------------
-          ! TEMPCN = crown temperature when snow is present and 
-          !   TMIN < 0. This function computes crown temperature 
-          !   as higher than TMIN, C.
-          ! TEMPCX = crown temp. for max. development rate, C
-          ! SNOW  = Snow depth, mm
-          ! XS    = temporary snow depth variable, mm
 
-          TEMPCN = TMIN
-          TEMPCX = TMAX
-          XS     = SNOW
-          XS     = AMIN1 (XS,15.0)
-          !------------------------------------------------------------
-          ! Calculate crown temperature based on temperature and
-          ! snow cover. Crown temperature is higher than TAVG due
-          ! to energy balance of snow pack.
-          !------------------------------------------------------------
-               ! REMOVED FV 2018
-          !IF (TMIN .LT. 0.0) THEN
-          !    TEMPCN = 2.0 + TMIN*(0.4+0.0018*(XS-15.0)**2)
-          !ENDIF
-          !IF (TMAX .LT. 0.0) THEN
-          !    TEMPCX = 2.0 + TMAX*(0.4+0.0018*(XS-15.0)**2)
-          !ENDIF
-          TEMPCR = (TEMPCX + TEMPCN)/2.0
-  
-  
-          !------------------------------------------------------------
-          ! Compute thermal time based on new method developed by J.T.R
-          ! at CYMMIT, 5/5/98.  TBASE, TOPT, and ROPT are read in 
-          ! from the species file.
-          !------------------------------------------------------------
-          
-          !   DOPT, Devlopment optimum temperature, is set to TOPT 
-          !   during vegetative growth and to ROPT after anthesis
-          
-          DOPT = TOPT
-          IF ((ISTAGE .GT. 3) .AND. (ISTAGE .LE. 6)) THEN
-              DOPT = ROPT
-          ENDIF
+       DTT    = .5*(TMAX+TMIN) - TBASE
 
-          !   Check basic temperature ranges and calculate DTT for
-          !   development based on PC with JTR
-
-          IF (TMAX .LT. TBASE) THEN
-              DTT = 0.0
-          ELSEIF (TMIN .GT. DOPT) THEN
-          !   !
-!   This statement replaces DTT = TOPT .. GoL and LAH, CIMMYT, 1999
-          !   !
-              DTT = DOPT - TBASE
-          !   !
-          !Now, modify TEMPCN, TEMPCX based on soil conditions or snow
-          !   ! If wheat and barley is before terminal spiklett stage
-          !   ! Or if corn and sorghum are before 10 leaves
-          !   !
-          ELSEIF (LEAFNO.LE.2) THEN  
-          !Check for snow  (should following be GT.0 or GT.15 ?).  
-          !   !Based on snow cover, calculate DTT for the day
-          !   !
-              IF (XS .GT. 0.0) THEN
-          !       !
-          !       ! Snow on the ground
-          !       !
-                  DTT    = (TEMPCN + TEMPCX)/2.0 - TBASE
-              ELSE
-          !       !
-          !       ! No snow, compute soil temperature
-          !       !
-                  ACOEF  = 0.01061 * SRAD + 0.5902
-                  TDSOIL = ACOEF * TMAX + (1.0 - ACOEF) * TMIN
-                  TNSOIL = 0.36354 * TMAX + 0.63646 * TMIN
-                  IF (TDSOIL .LT. TBASE) THEN
-                      DTT = 0.0
-                  ELSE
-                      IF (TNSOIL .LT. TBASE) THEN
-                          TNSOIL = TBASE
-                      ENDIF
-                      IF (TDSOIL .GT. DOPT) THEN
-                          TDSOIL = DOPT
-                      ENDIF
-                      !Import DAYL from WEATHR module. chp 5-6-02
-                      !CALL DAYLEN (DOY,XLAT,DAYL,DEC,SNDN,SNUP)
-                      TMSOIL = TDSOIL * (DAYL/24.) + 
-     &                        TNSOIL * ((24.-DAYL)/24.)
-                      IF (TMSOIL .LT. TBASE) THEN
-                          DTT = (TBASE+TDSOIL)/2.0 - TBASE
-                      ELSE
-                          DTT = (TNSOIL+TDSOIL)/2.0 - TBASE
-                      ENDIF
-          !           !
-          !           ! Statement added ... GoL and LAH, CIMMYT, 1999
-          !           !
-                      DTT = AMIN1 (DTT,DOPT-TBASE)
-                  ENDIF
+      IF (TMIN .LE. TBASE .OR. TMAX .GE. 28.0) THEN
+         IF (TMAX .LT. TBASE) THEN
+            DTT = 0.0
+         ENDIF
+         IF (DTT .NE. 0.0) THEN
+            DTT = 0.0
+            DO I = 1, 8
+               TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
+               IF (TTMP .GT. TBASE .AND. TTMP .LE. 28.0) THEN
+                  DTT = DTT + (TTMP-TBASE)/8.0
+               ENDIF
+               IF (TTMP .GT. 28.0 .AND. TTMP .LT. 40.0) THEN
+                  DTT = DTT + (28.0-TBASE)*(1.-.007*(TTMP-28.0)**2.)/8.0
               ENDIF
-          !
-          ! Now, compute DTT for when Tmax or Tmin out of range
-          !
-          ELSEIF (TMIN .LT. TBASE .OR. TMAX .GT. DOPT) THEN
-              DTT = 0.0
-              DO I = 1, 24
-                  TH = (TMAX+TMIN)/2. + (TMAX-TMIN)/2. * SIN(3.14/12.*I)
-                  IF (TH .LT. TBASE) THEN
-                      TH = TBASE
-                  ENDIF
-                  IF (TH .GT. DOPT) THEN
-                      TH = DOPT
-                  ENDIF
-                  DTT = DTT + (TH-TBASE)/24.0
-              END DO
-          ELSE
-              DTT = (TMAX+TMIN)/2.0 - TBASE
-          ENDIF
+            END DO
+         ENDIF
+      ENDIF
+
 
           DTT   = AMAX1 (DTT,0.0)
           SUMDTT  = SUMDTT  + DTT 
@@ -522,8 +431,8 @@ C     taking L=1
 !  �1 - End juvenile                     �
 !  �2 - Floret initiation              �
 !  �3 - Flowering                �
-!  �4 - End pollination              �
-!  �5 - Start embryo fill                       �
+!  �4 - Star grain filling             �
+!  �5 - End grain filling                      �
 !  �6 - Maturity                         �
 !  �������������������������������������;
 
@@ -589,7 +498,7 @@ C     taking L=1
               CUMDTT =  0.0
               SUMDTT =  0.0
 
-              P9    = 66.0 +  GDDE*SDEPTH
+              P9     = 66.0 + 11.9*SDEPTH                ! SUN
 
               RETURN
 
@@ -630,7 +539,7 @@ C     taking L=1
               STGDOY(ISTAGE) = YRDOY
               ISTAGE = 1
               SUMDTT = SUMDTT - P9
-              TLNO   = 30.0
+              
               YREMRG = STGDOY(9)   !Passed back into water balance routi
               RETURN
 
@@ -664,7 +573,7 @@ C     taking L=1
 !              VegFrac = SUMDTT / (P1 + 20. * (DOPT - TBASE))
 ! 5/30/2007 CHP Estimate of total time is way off for EAAMOD runs,
 !     try using 25* instead of 20*
-              VegFrac = SUMDTT / (P1 + 25. * (DOPT - TBASE))
+              VegFrac = SUMDTT / (P1 + 25. * (28. - TBASE))
 
               IF (SUMDTT .LT. P1) RETURN      
 
@@ -682,8 +591,7 @@ C     taking L=1
           ELSEIF (ISTAGE .EQ. 2) THEN
               !NDAS - number of days after sowing
               NDAS   = NDAS + 1       
-              !XSTAGE - noninteger growth stage (1-1.5)
-              
+            
 
               PDTT = DTT
               IF (ISWWAT .EQ. 'N') THEN    
@@ -695,38 +603,31 @@ C     taking L=1
               ENDIF                           
 
 !             chp 9/23/2004
-!             See note for VegFrac under ISTAGE = 1, above
-!             VegFrac = SUMDTT / (P1 + 5.0 * (DOPT - TBASE))
-!             don't know value of P3 yet
-!             VegFrac = SUMDTT / (P1 + 5. * (DOPT - TBASE) + P3 + DSGFT)
-
-!     CHP 5/25/2007 Move inflection point back to end of stage 3
-!             VegFrac = SUMDTT / (P1 + 20. * (DOPT - TBASE) + DSGFT)
-!              VegFrac = SUMDTT / (P1 + 20. * (DOPT - TBASE))
-! 5/30/2007 CHP Estimate of total time is way off for EAAMOD runs,
-!     try using 25* instead of 20*
-              VegFrac = MAX(VegFrac,SUMDTT / (P1 + 25. *(DOPT - TBASE)))
+!
+              VegFrac = MAX(VegFrac,SUMDTT / (P1 + 25. *(28. - TBASE)))
 
               !RATEIN - floral rate of development driven  by daylength
               ! and photoperiod sensitivity value for sunflower  
               
-              !TWILEN = AMAX1 (TWILEN,P2O)
-
-              IF (TWILEN .GT. P2O) THEN
+                      IF (TWILEN .GT. P2O) THEN
                 RATEIN = 1.0/(DJTI-P2*(TWILEN-P2O))  
               ELSE
                 RATEIN = 1.0 / DJTI
               ENDIF
               PDTT   = 1.0   
-              SIND = SIND + RATEIN*PDTT
-                     XSTAGE = 1.0 + 0.5*SIND !      Used to compute N demand.
-              !Return if FLORET initiation has not been reached
-              IF (SIND .LT. 1.0) RETURN           
 
-                     P3P  = 2.0*P1
-          !
-          ! P3P will define the start of anthesis
-              !---------------------------------------------------------
+
+              RATEIN = 1.0/(3.0 + P2 * (15.0 - TWILEN))    ! SUN
+              SIND   = SIND + RATEIN
+              ZSIND  = AMIN1 (SIND,1.0)
+              XSTAGE = 1.0 + 0.5 * ZSIND
+              IF (SIND .LT. 1.0) RETURN
+          
+              P3P  = 2.0*P1
+              !
+              ! P3P will define the start of anthesis
+
+             !---------------------------------------------------------
               !   New Growth Stage Occurred Today. Initialize Some Varia
               !---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY          
@@ -734,8 +635,8 @@ C     taking L=1
 
 !             chp 5/11/2005
               SUMDTT_2 = SUMDTT   !SUMDTT_2 = P1 + P2
-              VegFrac = MAX(VegFrac,SUMDTT_2 / (SUMDTT_2 + P3 + DSGFT))
-
+              VegFrac = MAX(VegFrac,SUMDTT_2 / (SUMDTT_2 + P3P + DSGFT))
+              TLNO = IFIX(SUMDTT/14.0+2.0)  
               SUMDTT  = 0.0
 
  
@@ -747,17 +648,8 @@ C     taking L=1
               NDAS   = NDAS + 1            
               ! XSTAGE - noninteger growth stage (1.5-4.5)
               !    Used to compute N demand.
-              XSTAGE = 1.5 + 3.0*SUMDTT/P3 
+              XSTAGE = 1.5 + 3.0*SUMDTT/P3P 
                 
-!             chp 9/23/2004
-!             For P model, we need to estimate the fraction of time 
-!             completed between tassel initiation and physiological 
-!             maturity, SeedFrac.  
-!             CHP 5/11/2005 Extend VegFrac thru stage 4
-!             SeedFrac = SUMDTT / (P3 + DSGFT + P5)
-
-!     CHP 5/25/2007 Move inflection point back to end of stage 3
-!             VegFrac = (SUMDTT + SUMDTT_2) / (SUMDTT_2 + P3P + DSGFT)
               VegFrac = MAX(VegFrac,(SUMDTT + SUMDTT_2) / (SUMDTT_2+P3P))
 
               IF (SUMDTT .LT. P3P) RETURN
@@ -769,10 +661,8 @@ C     taking L=1
               ISDATE = YRDOY      
               ISTAGE = 4               !FIRST ANTHESIS, END POLLINATION
               SUMDTT = SUMDTT - P3P
-              IDURP  = 0
-              ISDATE = YRDOY
 
-          
+    
 
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
               VegFrac = 1.0
@@ -782,7 +672,7 @@ C     taking L=1
       !-----------------------------------------------------------------
           ELSEIF (ISTAGE .EQ. 4) THEN
               NDAS = NDAS + 1
-              IDURP  = IDURP + 1
+
               ! Determine beginning of effective grain filling period fo
               !  maize.  Silking to beginning EFG is assumed to be 170 G
               XSTAGE = 4.5+5.5*SUMDTT/(P5*0.95)
@@ -791,27 +681,11 @@ C     taking L=1
               SeedFrac = SUMDTT / P5
 
               IF (SUMDTT .LT. DSGFT) RETURN
-
-              !---------------------------------------------------------
-              !   New Growth Stage Occurred Today. Initialize Some Varia
-              !---------------------------------------------------------
-
-              ! When Silking phase ends and beginning of effective grain
-              !  filling begins.  Compute grains per plant, ears per pla
-              !  and barrenness
-
-             
- 
-             
-         IF (SUMDTT .GE. 230.0 .AND. GPP .EQ. 0.0) THEN
-
               STGDOY(ISTAGE) = YRDOY
               ISTAGE = 5
-
-         ENDIF
-
-
-!             CHP 5/11/2005
+ 
+             
+ !             CHP 5/11/2005
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
 !              VegFrac = 1.0
 
@@ -893,7 +767,7 @@ C     taking L=1
 ! DLAYR(L)   Soil thickness in layer L (cm)
 ! DLV        Used to compute daylength
 ! DOPT       Development optimum temperature
-! DSGFT      GDD from silking to effective grain filling period, C
+! DSGFT      GDD from anthesis to effective grain filling period, C d
 ! DSGT       Maximum number of days from sowing to germination before crop failure occurs.
 ! DTT        Growing degree days today, C
 ! DUMMY      Temporary variable

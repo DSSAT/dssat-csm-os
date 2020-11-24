@@ -59,6 +59,7 @@ C     ----------------------------------------------------------------
 ! total nitrogen between the critical level and minimum 
 ! level (TCNP-TMNC). 
         NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)  
+c       write(*,*)'nfacto 62',tcnp,tanc,tmnc,NFAC
           NFAC   = AMIN1 (NFAC,1.0)
           NFAC   = AMAX1 (NFAC,0.001)
 

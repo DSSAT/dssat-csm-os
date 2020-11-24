@@ -24,7 +24,7 @@ C  02/09/2007 GH  Add path for FileA
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
+     &    BWAH, SDWTAH,OILPC)                                   !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -207,8 +207,8 @@ C  02/09/2007 GH  Add path for FileA
       PlantStres % StageName(0) = 'Planting to Harvest    '
       PlantStres % StageName(1) = 'Emergence-End Juvenile '
       PlantStres % StageName(2) = 'End Juvenil-Floral Init'
-      PlantStres % StageName(3) = 'Floral Init-End Lf Grow'
-      PlantStres % StageName(4) = 'End Lf Grth-Beg Grn Fil'
+      PlantStres % StageName(3) = 'Floral Init-First anth.'
+      PlantStres % StageName(4) = 'First anthesis-Beg GrnF'
       PlantStres % StageName(5) = 'Grain Filling Phase    '
 
       CALL OPVIEW(CONTROL, 
@@ -306,7 +306,6 @@ C  02/09/2007 GH  Add path for FileA
 
       BWAH   = (STOVER + StovSenes) * HARVFRAC(2) 
       PBIOMS = TOPWT * 10.0
-
 !-----------------------------------------------------------------------
       IF ((INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) 
      &  .OR. (INDEX('AY',IDETS) .GT. 0 .AND. CROP .NE. 'FA')) THEN
@@ -388,7 +387,6 @@ C  02/09/2007 GH  Add path for FileA
           DNR0 = -99
           YREMRG = -99
         ENDIF
-
       WRITE(Simulated(1),'(I8)') DNR1;  WRITE(Measured(1),'(I8)') DFLR    !ADAT
       WRITE(Simulated(2),'(I8)') -99 ;  WRITE(Measured(2),'(I8)') -99     !PD1T
       WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT
@@ -456,7 +454,6 @@ C  02/09/2007 GH  Add path for FileA
       LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
       LABEL(17) = 'HIAM'; VALUE(17) = HI
       LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
-      OILPC=OILWT/SDWTAM*100.
       LABEL(19) = 'GL%M'; VALUE(19) = NINT(OILPC)
        
       !Send labels and values to OPSUM
@@ -466,7 +463,6 @@ C  02/09/2007 GH  Add path for FileA
      &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN, 
      &    Measured, PlantStres, Simulated, STGDOY, 
      &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
-
       !Send Measured and Simulated datat to OPSUM
       CALL EvaluateDat (ACOUNT, Measured, Simulated, DESCRIP, OLAP) 
 

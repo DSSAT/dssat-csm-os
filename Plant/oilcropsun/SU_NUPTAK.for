@@ -31,7 +31,7 @@ C----------------------------------------------------------------------
      %    XLCNP,XSCNP,XHCNP,GROPER,GROEMB,
      %    PDWIL,PDWIH,PDWIS,XNGLF,XSTEMN,XHEADN,
      %    GLFWT,STMWT,HEADWT,PNP,ENP,PERWT,EMBWT,
-     %    XLEAFN,XLANC)
+     %    XLEAFN,XLANC,JPEPE,SLFWT,XNSLF)
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -96,7 +96,9 @@ C----------------------------------------------------------------------
       REAL HEADWT,PDWIH,PDWIL,PDWIS,PERWT,PNP,PTF2,PTFE
       REAL PTFH,PTFL,PTFS,STMWT,TOTWT2,XENDEM,XHANC,XHCNP
       REAL XHEADN,XHNDEM,XLANC,XLCNP,XLEAFN,XLNDEM,XNGLF,XNSLF
-      REAL XPNDEM,XSANC,XSCNP,XSNDEM,XSTEMN,GROEMB,PTFP
+      REAL XPNDEM,XSANC,XSCNP,XSNDEM,XSTEMN,GROEMB,PTFP,TCNP2
+      REAL SLFWT
+      INTEGER JPEPE
       TYPE (ResidueType) SENESCE
 
 !----------------------------------------------------------------------
@@ -109,36 +111,24 @@ C     Initialize variables
 C----------------------------------------------------------------------
 
 
-
-      IF (ISTAGE .LT. 4) THEN
-         GROPER = 0.0
-         PERWT  = 0.0
-      ENDIF
-      IF (ISTAGE .LT. 5) THEN
-         GROEMB = 0.0
-         EMBWT  = 0.0
-      ENDIF
       !
       ! Reset head and stem N amounts
-      !
-      IF (JPEPE .EQ. 1) THEN
-         XHEADN = 0.0420 * HEADWT
-         XSTEMN = XSTEMN - XHEADN
-         JPEPE  = 0
-      ENDIF
-      RANC   = ROOTN  / RTWT
-      XSANC  = XSTEMN / STMWT                        ! Stem
-C     XLANC  = XLEAFN / LFWT                         ! Leaf
-      XLANC  = XNGLF  / GLFWT                        ! Green leaves
-      IF (HEADWT .GT. 0.0) THEN
-         XHANC = XHEADN / HEADWT
-      ENDIF
+     
+
       TOTWT2 = STMWT + GLFWT + HEADWT + PERWT + EMBWT
+      IF (STOVWT- SLFWT.GT.0.0) THEN
       TANC   = (XSTEMN + XNGLF + XHEADN)/(STOVWT - SLFWT)
-      TCNP2  = (XLCNP*GLFWT + XSCNP*STMWT + XHCNP*HEADWT)
-      TCNP2  = (TCNP2 + EMBWT*0.0425 + PERWT*0.015)/TOTWT2
-      PTF2   = TOTWT2/(TOTWT2 + RTWT)
+        TCNP2  = (XLCNP*GLFWT + XSCNP*STMWT + XHCNP*HEADWT)
+      ENDIF  
+      IF (TOTWT2.gt.0.0) THEN
+        TCNP2  = (TCNP2 + EMBWT*0.0425 + PERWT*0.015)/TOTWT2
+      ENDIF  
+      
+      IF (TOTWT2+RTWT.GT.0.0) THEN
+        PTF2   = TOTWT2/(TOTWT2 + RTWT)
+      ENDIF  
       TRNLOS = 0.0
+      
       IF (RTWT.GT.0.0) RANC = ROOTN / RTWT
       IF (GLFWT.GT.0.0) XLANC=XNGLF/ GLFWT
       IF (STMWT.GT.0.0) XSANC= XSTEMN / STMWT 
@@ -164,7 +154,7 @@ C     XLANC  = XLEAFN / LFWT                         ! Leaf
       L1 = 0
       UNH4 = 0.0
       UNO3 = 0.0
-
+       
       DO L = 1, NLAYR
          RNO3U(L) = 0.0
          RNH4U(L) = 0.0
@@ -178,9 +168,6 @@ C-----------------------------------------------------------------------
 C     Calculate N demand (DNG=g N/PLT) for new growth (PDWI=g/plt)
 C-----------------------------------------------------------------------
 
-      IF (PDWI .EQ. 0.0) THEN
-         PDWI = 1.0
-      ENDIF
 ! Demand of N for new growth of the plant parts
 
       DNGP   = GROPER * PNP
@@ -191,6 +178,9 @@ C-----------------------------------------------------------------------
       DNSL   = GLFWT  * (XLCNP - XLANC)
       DNSS   = STMWT  * (XSCNP - XSANC)
       DNSH   = HEADWT * (XHCNP - XHANC)
+      IF (DNSL.LT.0.0)DNSL=0.0
+      IF (DNSS.LT.0.0)DNSS=0.0
+      IF (DNSH.LT.0.0)DNSH=0.0
 !     N demand for new growth
 
       DNG    = DNGL + DNGS + DNGH + DNGE + DNGP  
@@ -200,24 +190,12 @@ C-----------------------------------------------------------------------
       XLNDEM = DNSL + DNGL
       XSNDEM = DNSS + DNGS
       XHNDEM = DNSH + DNGH
+C      write(*,*)'nuptak 196',dnsl,dngl,dnss,dngs,dnsh,dngh
       IF (PERWT .GT. 0.0) THEN
          XPNDEM = DNGP
-      ELSE
-         IF (GROPER .GT. 0.0) THEN
-            XPNDEM = DNGP
-         ELSE
-            XPNDEM = 0.0
-         ENDIF
       ENDIF
       IF (EMBWT .GT. 0.0) THEN
-
          XENDEM = DNGE
-      ELSE
-         IF (GROEMB .GT. 0.0) THEN
-            XENDEM = DNGE
-         ELSE
-            XENDEM = 0.0
-         ENDIF
       ENDIF
 
 C-----------------------------------------------------------------------
@@ -232,12 +210,12 @@ C-----------------------------------------------------------------------
       IF (NDEM .EQ. 0.0) THEN
          NDEM = 0.001
       ENDIF
-
+      
 C-----------------------------------------------------------------------
 C     Convert total N demand from g N/plt to kg N/ha (ANDEM)
 C-----------------------------------------------------------------------
 
-      ANDEM  = NDEM   * PLTPOP*10.0
+      ANDEM  = NDEM * PLTPOP*10.0
 
 C-----------------------------------------------------------------------
 C     Calculate potential N supply in soil layers with roots (TRNU)
@@ -306,7 +284,7 @@ C-------------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Update stover and root N
 C-----------------------------------------------------------------------
-       write(*,*)'nuptak 278',ndem,stovwt,totwt2
+      
       IF (NDEM .GT. TRNU) THEN
         XNDEM  = TRNU
         FACTOR = XNDEM / NDEM
@@ -332,7 +310,7 @@ C-----------------------------------------------------------------------
       PTFE = PTF2 * EMBWT  / TOTWT2
       PTFP = PTF2 * PERWT  / TOTWT2
       ENDIF
-      write(*,*)'nuptak 301'
+      
       IF (NDEM .LE. 0.0 .OR. TRNU .LE. 0.0) THEN
          DSTOVN = 0.0
          DROOTN = 0.0
@@ -385,6 +363,7 @@ C     Cumulative N amount per organ
       XHEADN = XHEADN + DHEADN
 
       STOVN  = XNGLF + XSTEMN + XHEADN + XNSLF
+C     write(*,*)'nuptak 387',xnglf,xstemn,xheadn,xnslf
       IF(STOVWT.GT.0.0) TANC  = STOVN / STOVWT
       ROOTN = ROOTN + DROOTN
       IF(RTWT.GT.0.1*RTWT.AND.RTWT.GT.0.0) 

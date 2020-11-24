@@ -349,7 +349,7 @@ C----------------------------------------------------------------------
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
      &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
-
+          
           !-------------------------------------------------------------
           !Call Root routine
           !-------------------------------------------------------------
@@ -366,20 +366,19 @@ C----------------------------------------------------------------------
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
-
           CALL SU_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
        
-          CALL SU_OPHARV(CONTROL, 
+          CALL SU_OPHARV (CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
      &    ISTAGE, MDATE, NSTRES, OILWT, PSTRES1, PSTRES2, !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
+     &    BWAH, SDWTAH,OILPC)                                   !Output
 
           CALL PEST(CONTROL, ISWITCH, 
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
@@ -480,7 +479,7 @@ C-----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
+     &    BWAH, SDWTAH,OILPC)                                   !Output
 
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
@@ -512,7 +511,7 @@ C----------------------------------------------------------------------
 C----------------------------------------------------------------------
 
       ELSEIF(DYNAMIC.EQ.INTEGR) THEN
-
+        
         IF (ISWDIS.EQ.'Y') THEN
           CALL PEST(CONTROL, ISWITCH, 
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
@@ -541,11 +540,11 @@ C----------------------------------------------------------------------
      &    SeedFrac,VegFrac)
           ENDIF
         ENDIF
+       
           !------------------------------------------------------------
           !Call SU_GROSUB
           !------------------------------------------------------------
         IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN  
-          
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
      &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
@@ -570,14 +569,13 @@ C----------------------------------------------------------------------
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
      &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
-
         ELSE
           UNO3 = 0.0
           UNH4 = 0.0
           PUptake = 0.0
           SWFAC = 1.0
         ENDIF
-
+          
           !------------------------------------------------------------
           !        Call SU_ROOTGR
           !------------------------------------------------------------
@@ -590,7 +588,6 @@ C----------------------------------------------------------------------
      %        SHF,STGDOY,SW,SWFAC,YRDOY,                          !I
      %        RTDEP,RLV)            
           ENDIF
-
 C----------------------------------------------------------------------
 C ---------------------------------------------------------------------
 C
@@ -602,7 +599,7 @@ C----------------------------------------------------------------------
         IF (YRDOY .EQ. YREND) THEN
           STGDOY(16) = YREND
         ENDIF
-
+         
         IF (YRDOY .GE. YRPLT) THEN
 
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
@@ -630,14 +627,13 @@ C----------------------------------------------------------------------
      &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
 
         ENDIF   
-
+          
       CALL SU_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIO, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, OILPC, OILWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
-
       CALL SU_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
@@ -650,8 +646,7 @@ C----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
-
+     &    BWAH, SDWTAH,OILPC)                             !Output
       IF (ISWDIS.EQ.'Y') THEN
         CALL PEST(CONTROL, ISWITCH, 
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
@@ -662,6 +657,7 @@ C----------------------------------------------------------------------
      &    ASMDOT, DISLA, NPLTD, PPLTD,                    !Output
      &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT)             !Output
       ENDIF
+      
 C----------------------------------------------------------------------
 C ---------------------------------------------------------------------
 C
@@ -702,12 +698,10 @@ C----------------------------------------------------------------------
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
-
         CALL SU_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
-
         CALL SU_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
@@ -715,8 +709,7 @@ C----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
-
+     &    BWAH, SDWTAH,OILPC)                             !Output
         PODWT=GRNWT*PLTPOP
         CALL HRes_Ceres(CONTROL,
      &    CROP, DLAYR, GRNWT, HARVFRAC, NLAYR,            !Input
@@ -724,14 +717,13 @@ C----------------------------------------------------------------------
      &    PConc_Seed, PLTPOP, PODWT, RLV, ROOTN,          !Input
      &    RTWT, SENESCE, STOVN, STOVWT, WTNSD,            !Input
      &    HARVRES)                                        !Output
-
         !Set senescence variable to zero for next season
         SENESCE % ResWt    = 0.0
         SENESCE % ResLig = 0.0
         SENESCE % ResE     = 0.0
 
       ENDIF
-      
+     
       RETURN
       END SUBROUTINE SU_CERES
 
