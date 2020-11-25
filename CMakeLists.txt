@@ -390,7 +390,6 @@ set(
         "Plant/CSYCA-Cassava/YCA_Out_ReInit.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Sens.f90"
         "Plant/CSYCA-Cassava/YCA_Out_StoreVars.f90"
-        "Plant/CSYCA-Cassava/YCA_Out_Work.f90"
         "Plant/CSYCA-Cassava/YCA_Out_WrkPhenRes.f90"
         "Plant/CSYCA-Cassava/YCA_PrePlant.f90"
         "Plant/CSYCA-Cassava/YCA_RunInit.f90"
