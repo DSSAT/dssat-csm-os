@@ -329,8 +329,7 @@
       REAL        XNF      
       REAL        XNTI        
       REAL        XSTAGE           
-      REAL        YIELD       
-      REAL        YIELDB   
+      REAL        YIELD         
       REAL        PODWT   
       INTEGER     YR, YRDOY   
       REAL        OILPC,TRG
@@ -860,7 +859,6 @@
         XNF    = 0.0
         XNTI   = 0.0
         YIELD  = 0.0
-        YIELDB = 0.0
        XNGLF = 0.0
        XSTEMN = 0.0
        XHEADN = 0.0
@@ -946,7 +944,7 @@
 
 
         IF(YRDOY.EQ.STGDOY(2)) THEN
-
+          GLFWT = LFWT
 !         Assuming  1 head/plant. we use EARS for number of heads per m2
           EARS   = PLTPOP  
           IDURP = 0
@@ -956,7 +954,7 @@
           END DO
           SLAN1  = 0.0
         ENDIF
-          GLFWT = LFWT
+          
 
  
         IF(YRDOY.EQ.STGDOY(3)) THEN
@@ -1659,8 +1657,8 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           ENDIF
         ENDIF
 c        WRITE(*,*)'GROSUB 1655',SENTIME,SENCODE,SGRO(1),DSLAN1,GPLA,PLAG,MAXGROLF
-        CumLeafSenes = SLAN / 600. * PLTPOP * 10. + Stg2CLS
-        !                kg/ha     =  g/plant * plants/m2 * (kg/ha)/(g/m2)
+        CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha
+
 
 !      --------------------------------------------------------------------
 !         ISTAGE = 4 (Silking to beginning of effective grain filling period)
@@ -1833,8 +1831,7 @@ c        WRITE(*,*)'GROSUB 1655',SENTIME,SENCODE,SGRO(1),DSLAN1,GPLA,PLAG,MAXGRO
           IDURP  = IDURP  + 1
 c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
       !             5/11/2005 CHP Added cumulative leaf senescence
-      CumLeafSenes = SLAN / 600. * PLTPOP * 10. + Stg2CLS
-      !                kg/ha     =  g/plant * plants/m2 * (kg/ha)/(g/m2)
+         CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha
 
           !-------------------------------------------------------------
           !   ISTAGE = 5 Effective Grain Filling Period
@@ -2175,7 +2172,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
           SUMP  = SUMP  + CARBO
           IDURP = IDURP + 1
         ENDIF
-                            
+        CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha                    
         !----------------------------------------------------------------
         !ISTAGE = 6 
         !(End effective grain filling period to physiological maturity)
@@ -2199,16 +2196,10 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
           !------------------------------------------------------------
           !               Compute Leaf Senescence Factors
           !------------------------------------------------------------
-!xxxxx
-!         Senescence due to water stress
-c      SLFW   = (1-FSLFW) + FSLFW*SWFAC  
 
-!     Senescence due to nitrogen stress
-c      SLFN   = (1-FSLFN) + FSLFN*AGEFAC 
-
-!     Senescence due to phosphorus stress
+!     Senescence due to phosphorus stress inactivated for OS
 !     5/9/07 CHP, JIL, KJB change from PStres2 to PStres1
-C      SLFP   = (1-FSLFP) + FSLFP*PSTRES1 
+c      SLFP   = (1-FSLFP) + FSLFP*PSTRES1 
 
 !     Senescence due to temperature
       SLFT   = 1.0
@@ -2227,7 +2218,7 @@ C      SLFP   = (1-FSLFP) + FSLFP*PSTRES1
       PLA = PLA + PLAG
       
       GPLA = GPLA + PLAG
-c      PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFT,SLFN,SLFP)) 
+c      PLAS  = (PLA-SENLA)*(1.0-SLFP) 
 !     Daily rate of leaf senescence
       SENLA = SENLA + PLAS
       SENLA = AMAX1 (SENLA,SLAN)
@@ -2267,11 +2258,7 @@ c      PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFT,SLFN,SLFP))
            RTWT = RTWT + GRORT - 0.005*RTWT
         ENDIF
 
-        BIOMAS = (LFWT + STMWT + HEADWT + GRNWT + GRNWTE)*PLTPOP
-        DM     = BIOMAS*10.0
-        HIO = OILWT/BIOMAS
-
-        PTF    = STOVWT/(RTWT + STOVWT)      
+   
 !     the section below is added similar to that of Ceres-Maize      
            !------------------------------------------------------------
           !CROP GROWTH FAILURE DUE TO SEVERE WATER STRESS  
@@ -2378,12 +2365,6 @@ c      PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFT,SLFN,SLFP))
       !                      STATE VARIABLES
           !------------------------------------------------------------
 
-      IF (ISTAGE .LT. 4) THEN
-        RTWT = RTWT + GRORT
-      ELSE
-        RTWT = RTWT + GRORT - 0.005*RTWT
-      ENDIF
-
           
       LFWT = MAX(0.0,LFWT)
       PLA = MAX(0.0,PLA)
@@ -2394,16 +2375,18 @@ c      PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFT,SLFN,SLFP))
       GRNWT = MAX(0.0,GRNWT)
       HEADWT = MAX(0.0,HEADWT)
       PLTPOP = MAX(0.0,PLTPOP)
-          
-
       RTWT = MAX(0.0,RTWT)
-      BIOMAS= (LFWT+STMWT+HEADWT+GRNWT+GRNWTE)*PLTPOP
+
+      BIOMAS = (LFWT + STMWT + HEADWT + GRNWT + GRNWTE)*PLTPOP
+      DM     = BIOMAS*10.0
+      HIO = OILWT/BIOMAS
+
       BIOMAS_R=(LFWT+STMWT+HEADWT+GRNWT+GRNWTE+RTWT)
      &     *PLTPOP
-      DM     = BIOMAS*10.0
+
       STOVWT = LFWT + STMWT + HEADWT
       PTF    = STOVWT/(RTWT + STOVWT)   
-      IF (RTWT + LFWT + STMWT + EARWT .GT. 0.0) THEN
+      IF (BIOMAS .GT. 0.0) THEN
         PTF = BIOMAS/BIOMAS_R
       ELSE
         PTF = 0.0
@@ -2421,20 +2404,14 @@ c      PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFT,SLFN,SLFP))
       XLAI = LAI                !Leaf area index, m2/m2
       XHLAI = LAI               !Used in WATBAL
 
-!** added 26May04 RS
-! An empirical equation was added to calculate canopy height (CANHT). The denominator
-! (0.4238*PLTPOP + 0.3424) describes the relationship between potential maximum
-! LAI and plant population by fitting a straight line through the data of Jaya
-! et al. (http://www.regional.org.au/au/asa/2001/6/b/jaya.htm).
-! Potential canopy height (CANHT_POT) was set to 1.6 m but should be provided by
-! the user (added to cultivar file?); RS 26May04
+
       IF (XLAI >= MAXLAI) THEN    !keeps CANHT at the maximum value
-        CANHT = XLAI / (0.4238 * PLTPOP + 0.3424) * CANHT_POT
+        CANHT = XLAI / 2.0
         IF (CANHT .GT. CANHT_POT) THEN
           CANHT = CANHT_POT
         ENDIF
       ENDIF 
-!** end
+
       MAXLAI = AMAX1 (MAXLAI,XLAI)      ! Maximum XLAI season
 
       IF(WTLF.GT.0) THEN
@@ -2577,13 +2554,13 @@ C       WTN = WTNCAN*10. / BIOMAS * 100.
 
 !          WTNUP = WTNUP + TRNU*PLTPOP  
               !Total N uptake, g/m2  Moved to mz_roots.for
-          YIELD = GRNWT*10.0*EARS
+          YIELD = GRNWT*10.0*PLTPOP/.91
           IF (GPP.GT. 0) THEN
             SKERWT = GRNWT/GPP
           ELSE
             SKERWT = 0.0
           ENDIF
-          GPSM = GPP*EARS
+          GPSM = GPP*PLTPOP
           APTNUP = STOVN*10.0*PLTPOP
           TOTNUP = APTNUP
 
@@ -2620,8 +2597,6 @@ C       WTN = WTNCAN*10. / BIOMAS * 100.
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
 
         STOVER  = BIOMAS*10.0-YIELD
-c        YIELDB  = YIELD/62.8  
-c            ! Yield in bu/ac at 0% moisture content
         XANC   = TANC*100.0
 
         IF (ISWNIT .EQ. 'N') THEN
@@ -2899,8 +2874,7 @@ c      write(*,*)istage,xnglf,gpla,sumdtt,headwt
 ! XNF         !Modified nitrogen factor based on critical N concentration in vegetative biomass
 ! XNTI        !Number of leaves at tassel initiation
 ! XSTAGE      !Non-integer growth stage indicator
-! YIELD       !Yield in kg/ha at 0% moisture content
-! YIELDB      !Yield, bu/ac at 0% moisture content
+! YIELD       !Yield in kg/ha at 9% moisture content
 ! YRDOY       !Year and day of year
 
 

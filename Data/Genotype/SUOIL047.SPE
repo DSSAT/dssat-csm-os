@@ -43,7 +43,7 @@
 *ROOT PARAMETERS		ok
   PORM    0.02      !Minimum volume required for supplying oxygen to roots for optimum growth (1-1.0)
   RWMX    0.03      !Not used in ceres, but passed through AltPlant for use elsewhere
-  RLWR    1.70      !Root length to weight ratio (cm/g * 1E-4)
+  RLWR    0.98      !Root length to weight ratio (cm/g * 1E-4)
   RWUEP1  1.50  
 
 *PLANT COMPOSITION VALUES  ok FV 11/1/2020

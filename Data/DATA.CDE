@@ -94,6 +94,7 @@ HWAH   Harvested yield Harvested yield (kg [dm]/ha)                             
 HWAM   Mat Yield kg/ha Yield at harvest maturity (kg [dm]/ha)                   .
 HWUM   Weight g/unit   Unit wt at maturity (g [dm]/unit)                        .
 HYAH   Field wt Mg/ha  Field weight at harvest (Mg [fm]/ha)                     .
+HSAM   Seed Yield      Yield at harvest maturity (kg/ha 9% moisture)            .
 IDAP   Panicle in day  Panicle Initiation day (dap)                             .
 IDAT   Panicle in date Panicle Initiation date (YrDoy)                          .
 IR#M   Irrig apps #    Irrigation applications (no)                             .
@@ -345,7 +346,8 @@ WSGD   H20 stress,ex   Water stress - expansion/partioning/development (0-1)    
 WSPAV  H2O stress (av) Water stress (avg) - photosynthesis (0-1,0=none)         .
 WSPD   H20 stress,ph   Water stress - photosynthesis (0-1)                      .
 WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         .
-
+XWAD   Oil kg /ha      Oil kg /ha                                               .
+XO%D   Seed oil %      Seed oil concentration (%)                               .
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 AMLC   NH3vol kgN/ha   Cumulative ammonia volatilization (kg [N]/ha)            .
