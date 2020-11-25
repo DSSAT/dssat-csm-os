@@ -1,5 +1,5 @@
 *WEATHER DATA CODES
-! DSSAT v4.7; 10/09/2020
+! DSSAT v4.7; 11/20/2020
 
 ! Headers used in the @ line to identify variables are listed first; codes
 ! ('flags') used to designate data types are listed next.
@@ -61,10 +61,10 @@ REFHT    Reference height for weather measurements, m                         IB
 RHUM     Relative humidity average, %                                         IB
 RNUM     Rainy days, # month-1                                                IB
 RTOT     Rainfall total, mm month-1                                           IB
-SAMN     Solar radiation,all days,monthly average, MJ m-2 d-1                 IB
-SDMN     Solar radiation,dry days,monthly average, MJ m-2 d-1                 IB
-SDSD     Solar radiation,dry days,monthly standard deviation, MJ m-2 d-1      IB
-SHMN     Daily sunshine duration, monthly average, percent                    IB
+SAMN     Solar radiation,all days, monthly average, MJ m-2 d-1                IB
+SDMN     Solar radiation,dry days, monthly average, MJ m-2 d-1                IB
+SDSD     Solar radiation,dry days, monthly standard deviation, MJ m-2 d-1     IB
+SHMN     Daily sunshine duration,  monthly average, %                         IB
 SOURCE   Source of daily weather data, text                                   IB
 SRAD     Daily solar radiation, MJ m-2 day-1                                  IB
 SRAY     Solar radiation,yearly average, MJ m-2 day-1                         IB

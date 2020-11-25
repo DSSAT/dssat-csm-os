@@ -844,6 +844,12 @@ Error in ECOTYPE entry.
 GENERI   36
 Error in cultivar entry.
 
+GENERI   37
+Missing ECOTYPE coefficient.
+
+GENERI   38
+Ecotpye not found.
+
 GENERI   42
 Input section not found.
 
