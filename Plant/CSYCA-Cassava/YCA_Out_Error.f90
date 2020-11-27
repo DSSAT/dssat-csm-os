@@ -41,19 +41,10 @@
             ENDIF
             IF (L > 0) THEN
                 PSIDAP = PSDAP(L)
-            ELSE
-                WRITE (fnumwrk,*)' '
-                WRITE (fnumwrk,*)' Problem in finding intermediate stage '
-                !WRITE (fnumwrk,*)'  Mature stage       = ',mstg   !LPM 06MAR15 MSTG TO PSX        
-                WRITE (fnumwrk,*)'  Mature stage       = ',PSX
-                WRITE (fnumwrk,*)'  Intermediate stage = ',l             
-                WRITE (fnumwrk,*)' '
             ENDIF
                     
             ! Errors (A-data)
             IF (TDATANUM <= 0 .AND. .NOT.FEXISTA) THEN
-                WRITE (fnumwrk,*)' '
-                WRITE (fnumwrk,*)' No data so cannot write PLANTERA'
                 OPEN (UNIT=FNUMTMP,FILE=FNAMEERA,STATUS='UNKNOWN')
                 CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
             ELSE ! If data availabe
@@ -146,12 +137,6 @@
                     
             ! Errors (T)
             IF (.NOT.FEXISTT .OR. FROPADJ > 1 .OR. IDETG == 'N') THEN
-                WRITE (fnumwrk,*) ' '
-                IF (FROPADJ > 1) THEN
-                    WRITE (fnumwrk,*) ' Cannot write PLANT ERRORS (T).',' Frequency of output > 1 day'
-                ELSE  
-                    WRITE (fnumwrk,*)' No data so cannot write PLANT ERRORS (T)'
-                ENDIF      
                 OPEN (UNIT=FNUMTMP,FILE=FNAMEERT,STATUS='UNKNOWN')
                 CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
             ELSE
@@ -193,7 +178,6 @@
                 ENDDO
                 TFCOLNUM = L-1
                 IF (TFCOLNUM <= 0) THEN
-                    WRITE (FNUMWRK,*) 'No columns found in T-file '
                     GO TO 7777
                 ENDIF
                 ! Make new header line
@@ -234,7 +218,6 @@
                         READ (NOUTPG, FMT7779, ERR=7777, END=7777) TLINEGRO
                         CALL Getstri(tlinegro,pgrocol(tfdapcol),pgdap)
                         IF (PGDAP < 0) THEN
-                            WRITE (FNUMWRK,*) 'DAP in Plantgro file < 0 '
                             EXIT
                         ENDIF
                     ENDDO
@@ -264,8 +247,7 @@
 7777                    CONTINUE
                 GO TO 1601
 1600                    CONTINUE
-                WRITE(fnumwrk,*)'End of file reading Measured.out'
-                WRITE(fnumwrk,*)'Starnum and starnumm were: ',starnum,starnumm
+
 1601                    CONTINUE
                 CLOSE (FNUMERT)
                 CLOSE (FNUMT)

@@ -70,19 +70,6 @@
                     GrP_NUpt = HWAM  / NUPAC
                 ENDIF
             ENDIF ! ISWNIT NE 'N'
-            WRITE (FNUMWRK, FMT1200) CDAYS,RAINCC, DMP_Rain*0.1, DMP_Rain, GrP_Rain*0.1, GrP_Rain,ETCC,  DMP_ET*0.1, &
-                DMP_ET,GrP_ET*0.1,GrP_ET,EPCC,DMP_EP*0.1,DMP_EP,GrP_EP*0.1,GrP_EP
-            IF (IRRAMTC > 1.E-3) THEN
-                WRITE(FNUMWRK, FMT1210) IRRAMTC, DMP_Irr*0.1, DMP_Irr, GrP_Irr*0.1, GrP_Irr
-            ENDIF  
-            IF (ISWNIT /= 'N') THEN
-                IF (Amtnit > 1.E-3) THEN
-                    WRITE(FNUMWRK, FMT1220) Amtnit, DMP_NApp, GrP_NApp 
-                ENDIF
-                IF (NUPAC > 1.E-3) THEN
-                    WRITE(FNUMWRK, FMT1230) NUPAC, DMP_NUpt,GrP_NUpt
-                ENDIF
-            ENDIF ! ISWNIT NE 'N'
         ENDIF
                 
         LABEL(1) = 'ADAT'; VALUE(1) = -99.0

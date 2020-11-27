@@ -177,14 +177,10 @@
         ENDIF
         
         IF (SLPF <= 0.0 .OR. SLPF > 1.0) SLPF = 1.0
-        IF (SLPF < 1.0) THEN
-            WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A42,F5.1)') ' Soil fertility factor was less than 1.0: ',slpf
-        ENDIF  
         
         IF (PLPH <= 0.0) THEN
-            WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A27,F6.1,A14)') ' Plants per hill <= 0.0 at ',PLPH,'  Reset to 1.0'
+            WRITE (MESSAGE,'(A27,F6.1,A14)') ' Plants per hill <= 0.0 at ',PLPH,'  Reset to 1.0'
+            CALL WARNING(1,'CSYCA',MESSAGE)
             PLPH = 1.0
         ENDIF  
         
@@ -310,8 +306,6 @@
                 IF (PLME /= 'V') THEN
                     WRITE(MESSAGE(1),'(A16,A1,A15,A24)') 'PLANTING method ',PLME,' not an option ', ' Changed to V (Vertical)'
                     CALL WARNING(1,'CSYCA',MESSAGE)
-                    WRITE(FNUMWRK,*)' '
-                    WRITE(FNUMWRK,'(A17,A1,A15,A24)') ' Planting method ',PLME,' not an option ', ' Changed to V (Vertical)'
                     PLME = 'V'
                 ENDIF
             ENDIF
@@ -319,8 +313,6 @@
         IF (SPRL <= 0.0) THEN
             WRITE(MESSAGE(1),'(A30,A20)') 'Planting stick length <= 00  ', ' Changed to 25.0 cm '
             CALL WARNING(1,'CSYCA',MESSAGE)
-            WRITE(FNUMWRK,*)' '
-            WRITE(FNUMWRK,'(A31,A20)') ' Planting stick length <= 0.0  ', ' Changed to 25.0 cm '
             SPRL = 25.0
         ENDIF
         sdepthu = -99.0

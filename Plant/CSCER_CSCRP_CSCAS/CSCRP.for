@@ -13145,12 +13145,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
       PARAMETER     (SHAIR=1005.0)     ! MJ/kg/K?? or need*10-5
 
       TCAN = -99.0
-
-      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
-        CALL Getlun ('WORK.OUT',fnumwrk)
-        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
-      ENDIF
+      
+! FO - 11/20/2020 - Removed unused statement for WORKS.OUT
+!      CSYCA uses this subroutine as well.
+!      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
+!        CALL Getlun ('WORK.OUT',fnumwrk)
+!        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!      ENDIF
 
       RT = 8.314 * ((TMAX+TMIN)*0.5 + 273.0)             ! N.m/mol ??
       VPAIR = CSVPSAT(TDEW)                              ! Pa
