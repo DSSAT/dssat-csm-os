@@ -3,7 +3,7 @@ Module Forecast
 
   Type DailyWeatherType
     INTEGER YRDOY
-    REAL RAIN, SRAD, TMAX, TMIN
+    REAL RAIN, SRAD, TMAX, TMIN, PAR
   End Type
   TYPE (DailyWeatherType), Allocatable :: Obs_data(:)
 
@@ -96,15 +96,16 @@ SUBROUTINE FCAST_STORE(FCOUNT)
     Obs_data(I) % TMAX = TMAX
     Obs_data(I) % TMIN = TMIN
     Obs_data(I) % RAIN = RAIN
+    Obs_data(I) % PAR  = PAR
   ENDDO
 
   RETURN
 END SUBROUTINE FCAST_STORE
 
 !========================================================================
-SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, FCODE)
+SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, PAR, FCODE)
   INTEGER WDATE, FCODE, I, TIMDIF
-  REAL RAIN, TMAX, TMIN, SRAD
+  REAL RAIN, TMAX, TMIN, SRAD, PAR
 
 ! FCODE = 0 - No observed data for this date, use ensemble data
 ! FCODE = 1 - Use observed data, return values.
@@ -127,6 +128,7 @@ SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, FCODE)
   SRAD = Obs_data(I) % SRAD
   TMAX = Obs_data(I) % TMAX
   TMIN = Obs_data(I) % TMIN
+  PAR  = Obs_data(I) % PAR
   FCODE = 1
 
   RETURN

@@ -167,13 +167,13 @@ C       Set default values FOR REFHT AND WINDHT
      &      RNMODE, RSEED1, YRDOY, YRSIM,                 !Input
      &      PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,      !Output
      &      TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)       !Output
-        ELSE
-          CALL ERROR(ERRKEY,1,' ',0)
+!        ELSE
+!          CALL ERROR(ERRKEY,1,' ',0)
         ENDIF
 
       IF (RNMODE .EQ. 'Y') THEN
         CALL FCAST_STORE(FCOUNT)
-        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, FCODE)
+        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FCODE)
       ENDIF
 
       IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
@@ -279,7 +279,7 @@ C     Compute daily normal temperature.
       FCODE = 0
       IF (RNMODE .EQ. 'Y') THEN
 !       Retrieve weather data, send back FCODE=1 if successful
-        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, FCODE)
+        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FCODE)
       ENDIF
 
       IF (FCODE .LE. 0) THEN
