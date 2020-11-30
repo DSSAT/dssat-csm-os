@@ -328,19 +328,16 @@ C-----------------------------------------------------------------------
       READ (LUNIO,'(//,15X,A12)',IOSTAT=ERRNUM) FILEX
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,1)
       IF (RUN .EQ. 1) THEN
-        IF (RNMODE .EQ. 'Y') THEN
-!         There might be 2 weather files listed for yield forecast mode
-          READ(LUNIO,'(8(/),A6,9X,A8)',IOSTAT=ERRNUM) FINDCH, FNAME
-          IF (FINDCH .NE. 'OUTPUT') THEN
-            READ(LUNIO,'(A6,9X,A8)',IOSTAT=ERRNUM) FINDCH, FNAME
-          ENDIF
-        ENDIF    
+        READ(LUNIO,'(8(/),A6,9X,A8)',IOSTAT=ERRNUM) FINDCH, FNAME
+        IF (RNMODE .EQ. 'Y' .AND. FINDCH .NE. 'OUTPUT') THEN
+!       There might be 2 weather files listed for yield forecast mode
+          READ(LUNIO,'(A6,9X,A8)',IOSTAT=ERRNUM) FINDCH, FNAME
+        ENDIF
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,13)
         READ(LUNIO,400,IOSTAT=ERRNUM) NYRS, NREPS, YRSIM
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,15)
  400    FORMAT(/,15X,I5,1X,I5,7X,I7)
       ELSE IF (RNMODE .NE. 'Q') THEN
-
         REWIND (LUNIO)
         FINDCH = '*SIMUL'
         CALL FIND(LUNIO, FINDCH, LNUM, FOUND) 

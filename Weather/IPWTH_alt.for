@@ -145,6 +145,17 @@ C     The components are copied into local variables for use here.
      &          FILEWC, PATHWTC
               CALL GETLUN('FILEWC', LUNWTHC)
           END SELECT
+        ELSE
+!         In any case, need to keep separate weather file names
+          SELECT CASE (MEWTH)
+            CASE ('M')
+            CASE ('G')
+              FILEWG = FILEW
+              PATHWTG = PATHWTW
+            CASE ('S','W')
+              FILEWC = FILEW
+              PATHWTC = PATHWTW
+          END SELECT
         ENDIF
 
         CLOSE (LUNIO)
@@ -185,6 +196,17 @@ C     The components are copied into local variables for use here.
             READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
      &        FILEWC, PATHWTC
             CALL GETLUN('FILEWC', LUNWTHC)
+        END SELECT
+      ELSE
+!       In any case, need to keep separate weather file names
+        SELECT CASE (MEWTH)
+          CASE ('M')
+          CASE ('G')
+            FILEWG = FILEW
+            PATHWTG = PATHWTW
+          CASE ('S','W')
+            FILEWC = FILEW
+            PATHWTC = PATHWTW
         END SELECT
       ENDIF
 
