@@ -64,7 +64,7 @@ c       write(*,*)'nfacto 62',tcnp,tanc,tmnc,NFAC
           NFAC   = AMAX1 (NFAC,0.001)
 
           !Compute nitrogen stress factor for reducing leaf expansion
-          AGEFAC = 1.0
+
           AGEFAC = NFAC
           AGEFAC = AMIN1 (AGEFAC,1.0)
 

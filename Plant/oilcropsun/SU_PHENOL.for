@@ -25,7 +25,7 @@
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac)
+     &    SeedFrac,VegFrac,P3P)
    
 
       USE ModuleDefs
@@ -117,7 +117,6 @@
       REAL            SWSD           
       REAL            TBASE          
       REAL            TDSOIL         
-      REAL            TEMPCN                                              
       REAL            TEMPCR         
       REAL            TEMPCX         
       REAL            TH             
@@ -131,7 +130,6 @@
       REAL            TWILEN         
       CHARACTER*6     VARNO          
       CHARACTER*16    VRNAME                              
-      REAL            XS             
       REAL            XSTAGE  
       REAL O1
       INTEGER         YRDOY          
@@ -394,7 +392,11 @@ C     taking L=1
 
       ELSE    
 !         -------------------------------------------------------------
-
+!       IF (ISTAGE.GE.1.AND.ISTAGE.LE.6) THEN
+!         TBASE=4.0
+!       ELSE
+!         TBASE=6.0
+!      ENDIF
        DTT    = .5*(TMAX+TMIN) - TBASE
 
       IF (TMIN .LE. TBASE .OR. TMAX .GE. 28.0) THEN
@@ -417,6 +419,10 @@ C     taking L=1
 
 
           DTT   = AMAX1 (DTT,0.0)
+! thermal time from end of grain fillin to physiological maturity has Tb=0 C  and takes 210 C d        
+          IF (ISTAGE.EQ.6) THEN
+            DTT=.5*(TMAX+TMIN)
+          ENDIF  
           SUMDTT  = SUMDTT  + DTT 
           CUMDTT = CUMDTT + DTT
           
@@ -593,31 +599,16 @@ C     taking L=1
               NDAS   = NDAS + 1       
             
 
-              PDTT = DTT
-              IF (ISWWAT .EQ. 'N') THEN    
-                  DUMMY = DUMMY + 1       
-              ENDIF
  
-              IF (DUMMY .EQ. 1) THEN          
-                  PDTT = SUMDTT - P1          
-              ENDIF                           
-
 !             chp 9/23/2004
 !
               VegFrac = MAX(VegFrac,SUMDTT / (P1 + 25. *(28. - TBASE)))
 
               !RATEIN - floral rate of development driven  by daylength
               ! and photoperiod sensitivity value for sunflower  
-              
-                      IF (TWILEN .GT. P2O) THEN
-                RATEIN = 1.0/(DJTI-P2*(TWILEN-P2O))  
-              ELSE
-                RATEIN = 1.0 / DJTI
-              ENDIF
-              PDTT   = 1.0   
-
-
-              RATEIN = 1.0/(3.0 + P2 * (15.0 - TWILEN))    ! SUN
+              DAYL=TWILEN-1.2
+              DAYL   = AMIN1  (DAYL,15.0)
+              RATEIN = 1.0/(3.0 + P2 * (15.0 - DAYL))    ! SUN
               SIND   = SIND + RATEIN
               ZSIND  = AMIN1 (SIND,1.0)
               XSTAGE = 1.0 + 0.5 * ZSIND
@@ -700,22 +691,23 @@ C     taking L=1
 
               SeedFrac = SUMDTT / P5
           
-              IF (SUMDTT .LT. P5*0.95) RETURN  !End of EFP assumed to be 95%
+              IF (SUMDTT .LT. P5) RETURN  !End of EFP assumed to be P5
               !-------------------------------------------------------------
               !   New Growth Stage Occurred Today. Initialize Some Variables
               !-------------------------------------------------------------
               STGDOY (ISTAGE) = YRDOY
+              SUMDTT = 0.
               ISTAGE = 6
 
       !-----------------------------------------------------------------
-      !       ISTAGE = 6 - End Effective Grain Filling to Physiological 
+      !       ISTAGE = 6 - End Effective Grain Filling to Harvest Maturity 
       !-----------------------------------------------------------------
           ELSEIF (ISTAGE .EQ. 6) THEN
-              IF (DTT .LT. 2.0) SUMDTT = P5
+              
 
-              SeedFrac = SUMDTT / P5
+              
 
-              IF (SUMDTT .LT. P5)  RETURN
+              IF (SUMDTT .LT. 210.)  RETURN
               !---------------------------------------------------------
               !   New Growth Stage Occurred Today. Initialize Some Varia
               !---------------------------------------------------------
@@ -739,6 +731,7 @@ C     taking L=1
 ! ----------------------------------------------------------------------
 
       ENDIF  ! End DYNAMIC STRUCTURE
+
       RETURN
 
 !-----------------------------------------------------------------------
@@ -802,8 +795,7 @@ C     taking L=1
 ! NOUTDO     Output file number
 ! P1         GDD from seedling emergence to end of juvenile phase, C
 ! P2         Photoperiod sensitivity coefficient, 1/hr
-! P2O        Minimum daylength below which daylength does not affect dev
-! P3         Cumulative GDD required to complete ISTAGE 3, C
+! P3P        Cumulative GDD required to complete ISTAGE 3, C
 ! P5         GDD from silking to physiological maturity, C
 ! P9         Growing degree days from germination to emergence, C
 ! PATHCR     Pathname of species file
@@ -827,7 +819,6 @@ C     taking L=1
 ! SWSD       Modified soil water content for computing emergence
 ! TBASE      Base temperature for development from ecotype file, C
 ! TDSOIL     Weighted average soil temperature, C
-! TEMPCN     Crown temperature when snow is present and TMIN < 0. This f
 !            computes crown temperature as higher than TMIN, C.
 ! TEMPCR     Crown temperature, C
 ! TEMPCX     Crown temperature for maximum development rate, C
@@ -844,7 +835,6 @@ C     taking L=1
 ! WTHADJ(2,8)Note, used here, but not passed into maize.for from cropgro
 ! WMODB*1    Note, used here, but not passed into maize.for from cropgro
 ! XLAT       Latitude
-! XS         Temporary snow depth variable
 ! XSTAGE     Non-integer growth stage indicator
 ! YRDOY      Year and day of year
 ! YREMRG     Year and day of year of emergence (passed back to water bal

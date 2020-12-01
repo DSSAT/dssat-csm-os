@@ -117,7 +117,7 @@ C  Calls:     None
           WRITE (NOUTDG,201, ADVANCE='NO')
   201     FORMAT('@YEAR DOY   DAS   DAP',
      &   '   L#SD   GSTD   LAID   LWAD   SWAD   GWAD',
-     &   '   RWAD   VWAD   CWAD   G#AD   GWGD   HIAD   XWAD',
+     &   '   RWAD   VWAD   CWAD   G#AD   GWGD   HIAD   COAD',
      &   '   XO%D   WSPD   WSGD   NSTD   EWSD  PST1A  PST2A',
      &   '   KSTD   LN%D   SH%D   HIOD',
      &   '     SLAD   CHTD   CWID   RDPD') 

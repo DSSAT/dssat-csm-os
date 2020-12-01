@@ -25,13 +25,13 @@ C  Calls  : None
 C----------------------------------------------------------------------
       SUBROUTINE SU_NUPTAK(
      %    RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
-     %    RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
-     %    XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
+     %    RLV,NO3,NH4,UNO3,UNH4,
+     %    RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
      %    SHF,PTF, SENESCE, KG2PPM, PLIGRT,
      %    XLCNP,XSCNP,XHCNP,GROPER,GROEMB,
      %    PDWIL,PDWIH,PDWIS,XNGLF,XSTEMN,XHEADN,
      %    GLFWT,STMWT,HEADWT,PNP,ENP,PERWT,EMBWT,
-     %    XLEAFN,XLANC,JPEPE,SLFWT,XNSLF)
+     %    XLEAFN,XLANC,XNSLF)
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -56,8 +56,7 @@ C----------------------------------------------------------------------
       REAL        NH4(NL)     
       INTEGER     NLAYR       
       REAL        NO3(NL)     
-      REAL        NUF         
-      REAL        PDWI        
+      REAL        NUF                
       REAL        PGRORT      
       REAL        PLTPOP      
       REAL        PTF         
@@ -79,8 +78,7 @@ C----------------------------------------------------------------------
       REAL        STOVWT      
       REAL        SAT(NL)     
       REAL        SW(NL)      
-      REAL        TANC        
-      REAL        TCNP        
+      REAL        TANC                
       REAL        TNDEM       
       REAL        TRLV        
       REAL        TRNLOS      
@@ -89,7 +87,6 @@ C----------------------------------------------------------------------
       REAL        UNO3(NL)    
       REAL        XMIN        
       REAL        XNDEM       
-      REAL        XSTAGE      
 !     FV OCTOBER 2020 ADDED MORE VARIABLES
       REAL DHEADN,DLEAFN,DNGE,DNGH,DNGL,DNGP,DNGS,DNSH
       REAL DNSL,DNSS,DSTEMN,EMBWT,ENP,GLFWT,GROPER
@@ -97,8 +94,6 @@ C----------------------------------------------------------------------
       REAL PTFH,PTFL,PTFS,STMWT,TOTWT2,XENDEM,XHANC,XHCNP
       REAL XHEADN,XHNDEM,XLANC,XLCNP,XLEAFN,XLNDEM,XNGLF,XNSLF
       REAL XPNDEM,XSANC,XSCNP,XSNDEM,XSTEMN,GROEMB,PTFP,TCNP2
-      REAL SLFWT
-      INTEGER JPEPE
       TYPE (ResidueType) SENESCE
 
 !----------------------------------------------------------------------
@@ -116,8 +111,8 @@ C----------------------------------------------------------------------
      
 
       TOTWT2 = STMWT + GLFWT + HEADWT + PERWT + EMBWT
-      IF (STOVWT- SLFWT.GT.0.0) THEN
-      TANC   = (XSTEMN + XNGLF + XHEADN)/(STOVWT - SLFWT)
+      IF (STOVWT.GT.0.0) THEN
+      TANC   = (XSTEMN + XNGLF + XHEADN)/STOVWT
         TCNP2  = (XLCNP*GLFWT + XSCNP*STMWT + XHCNP*HEADWT)
       ENDIF  
       IF (TOTWT2.gt.0.0) THEN
@@ -190,7 +185,6 @@ C-----------------------------------------------------------------------
       XLNDEM = DNSL + DNGL
       XSNDEM = DNSS + DNGS
       XHNDEM = DNSH + DNGH
-C      write(*,*)'nuptak 196',dnsl,dngl,dnss,dngs,dnsh,dngh
       IF (PERWT .GT. 0.0) THEN
          XPNDEM = DNGP
       ENDIF
@@ -314,6 +308,11 @@ C-----------------------------------------------------------------------
       IF (NDEM .LE. 0.0 .OR. TRNU .LE. 0.0) THEN
          DSTOVN = 0.0
          DROOTN = 0.0
+         DLEAFN=0.0
+         DSTEMN=0.0
+         DHEADN=0.0  
+         DSTOVN=0.0
+         DROOTN=0.0
       ELSE
          !
          ! Calculate root senescence losses @ 0.5%/day
@@ -352,6 +351,7 @@ C-----------------------------------------------------------------------
            DHEADN = XHNDEM/NDEM*TRNU - PTFH*TRNLOS/(PLTPOP)
            DSTOVN = DLEAFN + DSTEMN + DHEADN
            DROOTN = RNDEM /NDEM*TRNU - (1.0-PTF)*TRNLOS/(PLTPOP)!          g N/pl =   fraction  *g N/pl- fraction*g N/m2/(pl/m2) 
+ 
          ENDIF
       ENDIF
 C     Cumulative N amount per organ
@@ -362,8 +362,9 @@ C     Cumulative N amount per organ
       XSTEMN = XSTEMN + DSTEMN
       XHEADN = XHEADN + DHEADN
 
-      STOVN  = XNGLF + XSTEMN + XHEADN + XNSLF
-C     write(*,*)'nuptak 387',xnglf,xstemn,xheadn,xnslf
+      STOVN  = XNGLF + XSTEMN + XHEADN 
+
+ 
       IF(STOVWT.GT.0.0) TANC  = STOVN / STOVWT
       ROOTN = ROOTN + DROOTN
       IF(RTWT.GT.0.1*RTWT.AND.RTWT.GT.0.0) 
@@ -429,5 +430,5 @@ C-------------------------------------------------------------------------------
 ! UNO3(20)    !Plant uptake of nitrate from a layer (kg N/ha/day)
 ! XMIN        !
 ! XNDEM       !Temporary variable
-! XSTAGE      !Non-integer growth stage indicator
+
 

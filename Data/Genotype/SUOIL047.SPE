@@ -25,25 +25,25 @@
   SWCG    0.02      !Minimimum available soil water required for seed germination, cm3/cm3 ok
   
 *EMERGENCE INITIAL CONDITIONS  FV ok
-  STMWTE  0.05      !Stem weight at emergence, g/plant
-  RTWTE   0.05      !Root weight at emergence, g/plant
-  LFWTE   0.05      !Leaf weight at emergence, g/plant
+  STMWTE  0.01      !Stem weight at emergence, g/plant
+  RTWTE   0.02      !Root weight at emergence, g/plant
+  LFWTE   0.03      !Leaf weight at emergence, g/plant
   SEEDRVE 0.05      !Carbohydrate reserve in seed at emergence, g/plant
   LEAFNOE 1.0       !Leaf number at emergence, #/plant
-  PLAE    2.0       !Leaf area at emergence, cm2/plant		! FV OCT/20 at emergence we assume 1 leaf with 2 cm2, corresponding to the cotyledons
+  PLAE    3.0       !Leaf area at emergence, cm2/plant		! FV OCT/20 at emergence we assume 1 leaf with 2 cm2, corresponding to the cotyledons
 
 *NITROGEN PARAMETERS
   TMNC    0.00450   !Plant top minimum N concentration g N/g dry matter (orig)
   TANCE   0.0440    !Nitrogen content in above ground biomass at emergence, g N/g dry matter
   RCNP    0.01060   !Root critical nitrogen concentration, g N/g root dry weight
-  RANCE   0.0220    !Root N content at emergence   g N/g root
+  RANCE   0.0470    !Root N content at emergence   g N/g root
   CTCNP1  1.52      !Maximum value for critical tissue N concentration (in developing seed embryo)
   CTCNP2  0.160     !Coefficent for change in conc. with growth stage
 
 *ROOT PARAMETERS		ok
   PORM    0.02      !Minimum volume required for supplying oxygen to roots for optimum growth (1-1.0)
   RWMX    0.03      !Not used in ceres, but passed through AltPlant for use elsewhere
-  RLWR    0.98      !Root length to weight ratio (cm/g * 1E-4)
+  RLWR    1.70      !Root length to weight ratio (cm/g * 1E-4)
   RWUEP1  1.50  
 
 *PLANT COMPOSITION VALUES  ok FV 11/1/2020

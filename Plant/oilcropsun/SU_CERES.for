@@ -201,7 +201,7 @@
 !     FV added for SUOIL
       REAL EMBWT,EMBWTE,HEADWT
       REAL PERWT,PERWTE,POTGROPER
-      REAL POTHEADWT,PPP,PSKER,GRNWTE
+      REAL POTHEADWT,PPP,PSKER,GRNWTE,P3P
       INTEGER IDURP 
 !     CHP added for P model 
       REAL PUptake(NL), SPi_AVAIL(NL), FracRts(NL)       
@@ -320,7 +320,7 @@ C----------------------------------------------------------------------
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac)
+     &    SeedFrac,VegFrac,P3P)
           
           !-------------------------------------------------------------
           !Call growth routine
@@ -347,7 +347,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
 
           
           !-------------------------------------------------------------
@@ -426,7 +426,7 @@ C-----------------------------------------------------------------------
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac)
+     &    SeedFrac,VegFrac,P3P)
     
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
@@ -450,7 +450,7 @@ C-----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
 
                          
           CALL SU_ROOTGR (DYNAMIC,ISWNIT,                         !C
@@ -537,7 +537,7 @@ C----------------------------------------------------------------------
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac)
+     &    SeedFrac,VegFrac,P3P)
           ENDIF
         ENDIF
        
@@ -567,7 +567,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
 
         ELSE
           UNO3 = 0.0
@@ -624,7 +624,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
 
         ENDIF   
           
@@ -689,7 +689,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
 
 
         CALL SU_OPGROW(CONTROL, ISWITCH,  
@@ -711,6 +711,7 @@ C----------------------------------------------------------------------
      &    YIELD, YREMRG, YRPLT,                           !Input
      &    BWAH, SDWTAH,OILPC)                             !Output
         PODWT=GRNWT*PLTPOP
+        
         CALL HRes_Ceres(CONTROL,
      &    CROP, DLAYR, GRNWT, HARVFRAC, NLAYR,            !Input
      &    PConc_Shut, PConc_Root, PConc_Shel,             !Input
