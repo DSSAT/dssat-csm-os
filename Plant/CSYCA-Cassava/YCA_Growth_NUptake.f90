@@ -26,6 +26,7 @@
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL    BD(NL)      , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SAT(NL)     
         REAL    SW(NL)      , UNH4(NL)    , UNO3(NL)    , BRSTAGE
+        REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
     
         
         !-----------------------------------------------------------------------
@@ -93,19 +94,35 @@
                 ENDIF
             END DO
     
-            LNDEM = GROLFP*LNCX - GROLSRTN                        !EQN 152
+            !LPM 20nov2020 Leaf demand by cohort
+            !LNDEM = GROLFP*LNCX - GROLSRTN                        !EQN 152
             !SNDEM = AMAX1(0.0,GROST+GROCR)*SNCX + (woodyWeight())*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
             RNDEM = RTWTG*RNCX                                     !EQN 154
             
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0)                      !EQN 155
+            !LPM 01DEC2020 Added Lcount to distribute GROLSRTN among the growing leaves
+            Lcount = 0
+            DO BR = 0, BRSTAGE                                                                                        
+                DO LF = 1, LNUMSIMSTG(BR)
+                    IF (isLeafExpanding(node(BR,LF))) THEN
+                        Lcount = Lcount + 1
+                    ENDIF                
+                ENDDO
+            ENDDO
+                        
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP>0.0) THEN
                         node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%NODEWTG)*node(BR,LF)%SNCX
                         SNDEM = SNDEM + node(BR,LF)%SNDEMN
                     ENDIF
+                    IF (GROLFP>0.0) THEN 
+                        node(BR,LF)%LNDEMN = (AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP))*node(BR,LF)%LNCX) - (GROLSRTN/Lcount)
+                        LNDEM = LNDEM + node(BR,LF)%LNDEMN
+                    ENDIF
                 ENDDO
             ENDDO
+            !LNDEM = LNDEM - GROLSRTN 
             ! Seed use if no roots
             ! N use same % of initial as for CH20,if needed.
             IF (STDAY /= 0) THEN
@@ -221,22 +238,27 @@
             RNUSE = 0.0
             SRNUSE = 0.0
             SNUSEN = 0.0                                                                              !LPM23MAY2015 To consider different N use by node according with age
+            LNUSEN = 0.0
             NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD                                                                   !EQN 206
             node%NDEMSMN = 0.0      !LPM14SEP2017 Initialize the variable with 0
+            node%NDEMLMN = 0.0
     
             ! For supplying minimum
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     !NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
                     node(BR,LF)%NDEMSMN = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM
+                    IF (PLAGSB2 > 0.0) THEN
+                        node(BR,LF)%NDEMLMN = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * node(BR,LF)%LNCM
+                    ENDIF
                 ENDDO
             ENDDO
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
             !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using GROLFP instead of GROLF
             !LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
-            NDEMMN = GROLFP*LNCM+RTWTG*RNCM+SUM(node%NDEMSMN) 
-            LNUSE(1) = (GROLFP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
+            NDEMMN = SUM(node%NDEMLMN)+RTWTG*RNCM+SUM(node%NDEMSMN) 
+            !LNUSE(1) = (GROLFP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
             !SNUSE(1) = ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
             
@@ -247,12 +269,18 @@
                         SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
                     ENDIF
+                    IF (GROLFP > 0.0) THEN
+                        LNUSEN(1,BR,LF) = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * node(BR,LF)%LNCM*AMIN1(1.0,NULEFT/NDEMMN) 
+                        LNUSE(1) = LNUSE(1) + LNUSEN(1,BR,LF)
+                    ENDIF
                 ENDDO
             ENDDO
             !SRNUSE(1) = (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
     
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
+            !LPM 23NOV2020 Reduce also leaf growth
             IF (NDEMMN > NULEFT) THEN
+                GROLFADJ = GROLFP*AMIN1(1.0,NULEFT/NDEMMN)
                 GROSTADJ = GROSTP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
                 GROCRADJ = GROCRP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
@@ -260,6 +288,7 @@
             ELSE
                 !GROSTADJ = GROST   !LPM 02SEP2016 Use potential growth
                 !GROCRADJ = GROCR
+                GROLFADJ = GROLFP
                 GROSTADJ = GROSTP
                 GROCRADJ = GROCRP
                 RTWTGADJ = RTWTG
@@ -268,18 +297,20 @@
     
             !NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
             NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)
+            !LPM 23NOV2020 Avoid giving priority to leaf N
             ! 5.For leaf growth to standard N (N to leaves first)
             !LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX)-LNUSE(1))                                                             !EQN 217 !LPM 02SEP2016 To use potential growth instead of CHO restricted growth
-            LNUSE(2) = AMIN1(NULEFT,(GROLFP*LNCX)-LNUSE(1))                                                             !EQN 217
+            !LNUSE(2) = AMIN1(NULEFT,(GROLFP*LNCX)-LNUSE(1))                                                             !EQN 217 
+            !LNUSE(2) = AMIN1(NULEFT,LNUSE(2))
             !Could use the NLLG parameter but may need to adjust 
             !the photosynthesis-leaf N response parameters, or
             !the standard PARUE  
             !LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX*NLLG)-LNUSE(1))
-            NULEFT = NULEFT - LNUSE(2)                                                                                 !EQN 218
+            !NULEFT = NULEFT - LNUSE(2)                                                                                 !EQN 218
     
             ! 6.For distribution of remaining N to st,rt,storage root
             !NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1)                                                     !EQN 219 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
-            NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM                                                                !EQN 219
+            NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM + LNDEM-LNUSE(1)                                                                !EQN 219
             IF (NDEM2 > 0.0)THEN
                 !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
@@ -288,29 +319,37 @@
                             SNUSEN(2,BR,LF) = (node(BR,LF)%SNDEMN - SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
                             SNUSE(2) = SNUSE(2)+ SNUSEN(2,BR,LF)
                         ENDIF
+                        IF (GROLFP > 0.0) THEN
+                            LNUSEN(2,BR,LF) = (node(BR,LF)%LNDEMN - LNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
+                            LNUSE(2) = LNUSE(2)+ LNUSEN(2,BR,LF)
+                        ENDIF
                     ENDDO
                 ENDDO
                 RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
                 SRNUSE(2) = (SRNDEM)*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
-                NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)                                                      !EQN 223
-                IF (NULEFT > 0.0) THEN
-                    LNUSE(3) = NULEFT                                                                                  !EQN 224
-                ELSE
-                    LNUSE(3) = 0.0
-                ENDIF
+                NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)-LNUSE(2)                                             !EQN 223
+                !LPM 23NOV2020 Remove additional N going to the leaves
+                !IF (NULEFT > 0.0) THEN
+                !    LNUSE(3) = NULEFT                                                                                  !EQN 224
+                !ELSE
+                !    LNUSE(3) = 0.0
+                !ENDIF
             ELSE
-                LNUSE(3) = 0.0
+                !LNUSE(3) = 0.0
                 SNUSE(2) = 0.0
                 RNUSE(2) = 0.0
                 SRNUSE(2) = 0.0
             ENDIF  
     
-            LNUSE(0) = LNUSE(1) + LNUSE(2) + LNUSE(3)                                                                  !EQN 225
+            LNUSE(0) = LNUSE(1) + LNUSE(2) !+ LNUSE(3)                                                                  !EQN 225
             SNUSE(0) = SNUSE(1) + SNUSE(2)                                                                             !EQN 226
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP > 0.0) THEN
                         SNUSEN(0,BR,LF) = SNUSEN(1,BR,LF) + SNUSEN(2,BR,LF)
+                    ENDIF
+                    IF (GROLFP > 0.0) THEN
+                        LNUSEN(0,BR,LF) = LNUSEN(1,BR,LF) + LNUSEN(2,BR,LF)
                     ENDIF
                 ENDDO
             ENDDO
@@ -321,30 +360,34 @@
             ! N Pools available for re-mobilization
             NUSEFAC = NLABPC/100.0                                                                                     !EQN 229
             NPOOLR = AMAX1 (0.0,((RTWT-SENRTG)*(RANC-RNCM)*NUSEFAC))                                                   !EQN 230
-            NPOOLL = AMAX1 (0.0,((LFWT-leafTotalSenescedWeight())*(LANC-LNCM)*NUSEFAC))                                          !EQN 231
+            !NPOOLL = AMAX1 (0.0,((LFWT-leafTotalSenescedWeight())*(LANC-LNCM)*NUSEFAC))                                          !EQN 231
             !NPOOLS = AMAX1 (0.0,((woodyWeight())*(SANC-SNCM)*NUSEFAC))                                                     !EQN 232
-            NPOOLS = 0
+            NPOOLS = 0.0
+            NPOOLL = 0.0
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)          
                     IF(STWTP+CRWTP > 0.0)THEN
-                        node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%NODEWT * (woodyWeight())/(STWTP+CRWTP))*( node(BR,LF)%SANC - node(BR,LF)%SNCM )*NUSEFAC))  
+                        node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%NODEWT * (woodyWeight())/(STWTP+CRWTP))*(node(BR,LF)%SANC - node(BR,LF)%SNCM)*NUSEFAC))  
                     ELSE
                         node(BR,LF)%NPOOLSN = 0.0
                     ENDIF
-                    NPOOLS =  NPOOLS + node(BR,LF)%NPOOLSN                                                                 !EQN 232
+                    node(BR,LF)%NPOOLLN = AMAX1 (0.0,(((leafAreaLeftToSenesce(node(BR,LF))/LAWL(1)) / (1.0-LPEFR))*(node(BR,LF)%LANC-node(BR,LF)%LNCM)*NUSEFAC))
+                    NPOOLS =  NPOOLS + node(BR,LF)%NPOOLSN                                                                 
+                    NPOOLL = NPOOLL + node(BR,LF)%NPOOLLN
                 ENDDO
             ENDDO
             ! Check N and reduce leaf growth if not enough N  
             IF (ABS(NULEFT) <= 1.0E-5) THEN   ! Inadequate N
-                IF (NLLG > 0.0 .AND. LNCX > 0.0 .AND. GROLFP > 0.0) THEN 
-                    !IF ((LNUSE(1)+LNUSE(2))/GROLF < (LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
-                    IF ((LNUSE(1)+LNUSE(2))/GROLFP < (LNCX*NLLG)) THEN 
-                        GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
-                    ELSE  
-                        !GROLFADJ = GROLF                                                                               !EQN 233b !LPM 02SEP2016 Use GROLFP instead of GROLF
-                        GROLFADJ = GROLFP                                                                               !EQN 233b
-                    ENDIF  
-                ENDIF
+                !LPM 23NOV2020  Define the leaf growth restriction at the same time than stem, storage roots and roots.
+                !IF (NLLG > 0.0 .AND. LNCX > 0.0 .AND. GROLFP > 0.0) THEN 
+                !    !IF ((LNUSE(1)+LNUSE(2))/GROLF < (LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
+                !    IF ((LNUSE(1)+LNUSE(2))/GROLFP < (LNCX*NLLG)) THEN 
+                !        GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
+                !    ELSE  
+                !        !GROLFADJ = GROLF                                                                               !EQN 233b !LPM 02SEP2016 Use GROLFP instead of GROLF
+                !        GROLFADJ = GROLFP                                                                               !EQN 233b
+                !    ENDIF  
+                !ENDIF
                 !RSSRWTGLFADJ = GROLF - GROLFADJ                                                                        !EQN 234 !LPM 02SEP2016 Keep GROLF but restrict to 0 if N growth is greater than CHO growth (GROLF)
                 RSSRWTGLFADJ = AMAX1(0.0,GROLF - GROLFADJ)                                                              !EQN 234 
                 !AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                              !EQN 235 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 

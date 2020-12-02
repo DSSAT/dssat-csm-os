@@ -245,10 +245,10 @@
         ENDIF
         
         ! Critical and starting N concentrations
-        LNCX = LNCXS(0)
+        node%LNCX = LNCXS(0)
         node%SNCX = SNCXS(0)
         RNCX = RNCXS(0)
-        LNCM = LNCMN(0)
+        node%LNCM = LNCMN(0)
         node%SNCM = SNCMN(0)
         RNCM = RNCMN(0)
         

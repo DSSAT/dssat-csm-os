@@ -192,7 +192,7 @@
         laistg = 0.0
         laix = 0.0
         laixm = -99.0
-        lanc = 0.0
+        !lanc = 0.0
         laphc = 0.0
         NLAYRROOT = 0 !LPM 07SEP2017 To initialize this variable for initial estimation of WFG 
         !lcnum = 0 !LPM 28MAR15 Non necessary variables
@@ -205,8 +205,8 @@
         !llrswad = 0.0
         !llrswt = 0.0 !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
         llwad = 0.0
-        lncr = 0.0
-        lncx = 0.0
+        !lncr = 0.0
+        !lncx = 0.0
         lndem = 0.0
         lnphc = 0.0
         lnum = 0.0

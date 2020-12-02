@@ -122,16 +122,16 @@
             IF (ISWNIT /= 'N') THEN
               IF (LFWT > ZERO) THEN
                 !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))
-                LNCGL = LNCM + NFGL * (LNCX-LNCM)                                                                      !EQN 164
-                LNCGU = LNCM + NFGU * (LNCX-LNCM)                                                                      !EQN 165
+                LNCGL = node(0,0)%LNCM + NFGL * (node(0,0)%LNCX-node(0,0)%LNCM)                                                                      !EQN 164
+                LNCGU = node(0,0)%LNCM + NFGU * (node(0,0)%LNCX-node(0,0)%LNCM)                                                                      !EQN 165
                 IF (LNCGU - LNCGL > ZERO) THEN
                  !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))                                                 !EQN 163 !LPM 02SEP2016 To keep NFG as NFLF2
                  NFG = node(0,0)%NFLF2                                                 !EQN 163
                 ELSE
                  NFG = 1.0 
                 ENDIF
-                LNCPL = LNCM + NFPL * (LNCX-LNCM)
-                LNCPU = LNCM + NFPU * (LNCX-LNCM)
+                LNCPL = node(0,0)%LNCM + NFPL * (node(0,0)%LNCX-node(0,0)%LNCM)
+                LNCPU = node(0,0)%LNCM + NFPU * (node(0,0)%LNCX-node(0,0)%LNCM)
                 IF (LNCPU - LNCPL > ZERO) THEN                                                                        !EQN 167
                  !NFP =AMIN1(1.0,AMAX1(0.0,(LANC-LNCPL)/(LNCPU-LNCPL)))                                                 !EQN 166 !LPM 02SEP2016 Use NFLF2 intead of original equation
                  NFP =node(0,0)%NFLF2 

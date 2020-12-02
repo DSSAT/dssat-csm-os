@@ -356,7 +356,7 @@ Module YCA_First_Trans_m
     REAL    :: LAIXM                   ! Lf lamina area index,mx,meas   m2/m2      ! (From SeasInit)  
     REAL    :: LAIXT                   ! Leaf area index,max,t-file     m2/m2      ! (From Output)    
     REAL    :: LAIXX                   ! Leaf area index,max posible    #          ! (From SeasInit)  
-    REAL    :: LANC                    ! Leaf actual N concentration    #          ! (From SeasInit)  
+    REAL    :: LANCM                   ! Leaf actual mean N conc.       #
     REAL    :: LANCRS                  ! Leaf N+rsN concentration       #          ! (From Growth)    
     REAL    :: LAPD                    ! Leaf area (green) per plant    cm2        ! (From Growth)    
     REAL    :: LAPH                    ! Leaf area (green) harvested    cm2/d      ! (From Growth)    
@@ -364,6 +364,8 @@ Module YCA_First_Trans_m
     REAL    :: LAWL(2)                 ! Area to wt ratio,n=youngest lf cm2/g      ! (From Growth)    
     REAL    :: LAWS                    ! Leaf area/wt ratio,standard    cm2/g      ! (From SeasInit)     
     REAL    :: LAXS                    ! Area of biggest leaf,main stem cm2        ! (From SeasInit)  
+    REAL    :: LCNCT                   ! Leaf critical max N conc       #          !
+    REAL    :: LCNMT                   ! Leaf critical min N conc       #          !
     REAL    :: LEAFN                   ! Leaf N                         g/p        ! (From SeasInit)  
     REAL    :: LEAFNEXCESS             ! Leaf N > critical              g/p        ! (From Integrate) 
     INTEGER :: LENDIS                  ! Length,ISWDIS flag             #          ! (From SeasInit)  
@@ -391,14 +393,12 @@ Module YCA_First_Trans_m
     REAL    :: LLWAD                   ! Leaf lamina weight             kg/ha      ! (From SeasInit)  
     REAL    :: LLWADOUT                ! Leaf lamina weight for output  kg/ha      ! (From Output)    
     REAL    :: LNCGL                   ! N concentration,growth,lower   fr         ! (From Growth)    
-    REAL    :: LNCGU                   ! N concentration,growth,upper   fr         ! (From Growth)    
-    REAL    :: LNCM                    ! Leaf N conc,minimum            fr         ! (From SeasInit)  
+    REAL    :: LNCGU                   ! N concentration,growth,upper   fr         ! (From Growth)      
     REAL    :: LNCMN(0:1)              ! Leaf N conc,minimum            fr         ! (From SeasInit)  
     REAL    :: LNCPL                   ! Leaf N concentration,phs,lower fr         ! (From Growth)    
-    REAL    :: LNCPU                   ! Leaf N concentration,phs,upper fr         ! (From Growth)    
-    REAL    :: LNCR                    ! Leaf N relative to maximum     #          ! (From SeasInit)  
-    REAL    :: LNCSEN                  ! N conc.for senescence          fr         ! (From Growth)    
-    REAL    :: LNCX                    ! Leaf N conc,maximum            fr         ! (From SeasInit)  
+    REAL    :: LNCPU                   ! Leaf N concentration,phs,upper fr         ! (From Growth)      
+    REAL    :: LNCRM                   ! Leaf N relative to maximum (mean)#        !
+    REAL    :: LNCSEN                  ! N conc.for senescence          fr         ! (From Growth)      
     REAL    :: LNCXS(0:1)              ! Leaf N conc,maximum,stage      fr         ! (From SeasInit)  
     REAL    :: LNDEM                   ! Leaf demand for N              g/p        ! (From SeasInit)  
     REAL    :: LNDEMG                  ! Leaf demand for N,for growth   g/p        ! (From Growth)    
@@ -425,7 +425,8 @@ Module YCA_First_Trans_m
     REAL    :: LNUMSTG(20)             ! Leaf number,specific stage     #          ! (From SeasInit)  
     REAL    :: LNUMT                   ! Leaf number from t file        #          ! (From Output)    
     REAL    :: LNUMTOSTG(0:PSX)        ! Leaf numbers at fork stages    #          ! (From SeasInit)  
-    REAL    :: LNUSE(0:3)              ! Leaf N use,overall and parts   g          ! (From SeasInit)  
+    REAL    :: LNUSE(0:3)              ! Leaf N use,overall and parts   g          ! (From SeasInit)
+    REAL    :: LNUSEN(0:2,0:PSX,0:LCNUMX)!Leaf N use by canopy level    g
     REAL    :: LPEAI                   ! Leaf petiole area index        m2/m2      ! (From SeasInit)  
     REAL    :: LPEAW                   ! Leaf petiole area/wt,veg.ph    cm2/g      ! (From SeasInit)  
     REAL    :: LPEFR                   ! Leaf petiole fraction of total #          ! (From SeasInit)  
@@ -1374,15 +1375,14 @@ Module YCA_First_Trans_m
         laistg = 0.0
         laix = 0.0
         laixm = -99.0
-        lanc = 0.0
+        !lanc = 0.0
         laphc = 0.0
         leafn = 0.0
         lfwt = 0.0
         lfwtm = 0.0
         llnad = 0.0
         llwad = 0.0
-        lncr = 0.0
-        lncx = 0.0
+        !lncr = 0.0
         lndem = 0.0
         lnphc = 0.0
         lnum = 0.0
