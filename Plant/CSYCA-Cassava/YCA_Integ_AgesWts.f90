@@ -78,18 +78,17 @@
                         ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
                             IF (isLeafAlive(node(BR,LF))) THEN                                                ! DA If the leaf is still alive
                                 node(BR,LF)%DSLF = node(BR,LF)%DSLF + 1.0                                                               ! EQN 365b
-                            ELSE
-                                IF (didLeafFallToday(node(BR,LF))) THEN                             ! DA Or, if leaf died today
-                                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(node(BR,LF)%LAGETT-dailyGrowth()))/(dailyGrowth())
-                                    node(BR,LF)%DSLF = node(BR,LF)%DSLF + TVR1                                                          ! EQN 365c
-                                    node(BR,LF)%LDEATHDAP = DAP                                                                    ! DA establish decease date
-                                ENDIF
                             ENDIF
                         ENDIF
                         !LPM 12DEC2016 To generate a restriction for leaf senescence duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
                         IF (node(BR,LF)%DSLF>(2.0*LLIFSTT/(TRDV3(2)-TRDV3(1)))) THEN 
                             call setLeafAsFall(node(BR,LF))
                         ENDIF
+                    ENDIF
+                    IF (didLeafFallToday(node(BR,LF))) THEN                             ! DA Or, if leaf died today
+                        TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(node(BR,LF)%LAGETT-dailyGrowth()))/(dailyGrowth())
+                        node(BR,LF)%DSLF = node(BR,LF)%DSLF + TVR1                                                          ! EQN 365c
+                        node(BR,LF)%LDEATHDAP = DAP                                                                    ! DA establish decease date
                     ENDIF
                 
                 !ELSE 
