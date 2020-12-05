@@ -950,6 +950,11 @@ GLI%D  Light Int. GL   Fraction of light intercepted by green leaves (0-1)      
 TLI%D  Light Int. TL   Fraction of light intercepted by dry+green leaves (0-1)  .
 TRWUP  TotRootUpPot    Potential Root Water Uptake (mm/d)                       .
 EOP    PTranspiration  Potential Crop Transpiration (mm/d)                      .  
+COAD   Oil kg/ha       Total oil accumulated (kg/ha)                     .
+COAM   Oil kg/ha at PM Total oil accumulated at physiological maturity (kg/ha)                                    .
+XWAD   Oil kg /ha      Oil kg/ha                                               .
+XO%D   Seed oil %      Seed oil concentration (%)                               .
+HSAM   Seed Yield      Yield at harvest maturity (kg/ha 9% moisture)            .
 
 *SOIL ORGANIC MATTER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -1335,12 +1340,3 @@ RSWAH  Resid. Stem Wt. Residual stem weight after forage harvest (kg/ha)
 RSRWH  Resid. Stor.Wt. Residual storage organ weight after forage harvest (kg/ha)
 RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)
 RLAIH  Resid. LAI      Residual leaf area index after forage harvest
-
-*OILCROPSUN 
-! Added by FV 4 Nov 2020
-@CDE   LABEL           DESCRIPTION............................................  SYNONYMS
-COAD   Oil kg/ha       Total oil accumulated (kg/ha)                     .
-COAM   Oil kg/ha at PM Total oil accumulated at physiological maturity (kg/ha)                                    .
-XWAD   Oil kg /ha      Oil kg/ha                                               .
-XO%D   Seed oil %      Seed oil concentration (%)                               .
-HSAM   Seed Yield      Yield at harvest maturity (kg/ha 9% moisture)            .

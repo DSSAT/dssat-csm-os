@@ -943,7 +943,7 @@
 
 
         IF(YRDOY.EQ.STGDOY(2)) THEN
-          GLFWT = LFWT
+
 !         Assuming  1 head/plant. we use EARS for number of heads per m2
           EARS   = PLTPOP  
           IDURP = 0
@@ -959,7 +959,7 @@
         IF(YRDOY.EQ.STGDOY(3)) THEN
 
           SWMAX  = 1.3*STMWT   
-          SWMIN=STMWT*.80      
+          SWMIN=STMWT*.99      
           VANC   = TANC       
           VMNC   = TMNC       
           EMAT   = 0
@@ -987,6 +987,7 @@
           ZZZ       = AMIN1 (1.0,HEADWT/POTHEADWT)
           GRFACTOR  = 0.6 + 0.4 * ZZZ
           GRFACTOR  = AMIN1 (GRFACTOR,1.0)
+          
           PERWT     = PPP * 0.002                     ! Pericarp starts with 2 mg
           HEADWT    = HEADWT - PERWT
           ALF       = 0.22
@@ -1008,57 +1009,14 @@ c          write(*,*)xnglf,yrat,GLFWT
 
         ENDIF
         IF(YRDOY.EQ.STGDOY(4)) THEN
-             ! Include calculations to correct RUE after anthesis
-             ! mantainance respiration
+          OIL    = GRNWT * 0.025
+          GPP    = 0.0
+          HWMAX  = 2.20 * HEADWT
+          HWMIN  = 1.00 * HEADWT
+          VANC   = TANC
+          VMNC   = TMNC
 
-             PS    = RM/(RI1-1.0)
-             RM    = (BIOMAS+RTWT*PLTPOP)*0.008*0.729  ! mantainance respiration
-             RI1   = 1.0 + RM/PS !ratio gross net photosyntesis
-             PSKER = SUMP / IDURP
-         
-             OIL    = GRNWT * 0.025
-         
-             HWMAX  = 2.20 * HEADWT
-             HWMIN  = 1.00 * HEADWT
-             VANC   = TANC
-             VMNC   = TMNC
-
-             !
-             ! Grain number calculated according to Soriano
-             ! FV - 12/12/97
-             !
-             GPP = 500.0 + PLA*750.0/6000.0
-             GPP = AMIN1 (GPP,PPP)
-             IF (PPP.GT.0.0) THEN
-                PERWTE  = (PPP - GPP) * PERWT / PPP
-                EMBWTE  = (PPP - GPP) * EMBWT / PPP
-                GRNWTE  = PERWTE + EMBWTE
  
-                IF (ISWNIT .EQ. 'Y') THEN
-                   GRAINN1 = GRAINN * (1.0 - GRNWTE / GRNWT)
-                   GRAINNE = GRAINN - GRAINN1
-                   PERN    = PERN   * GRAINN1 / GRAINN
-                   EMBN    = EMBN   * GRAINN1 / GRAINN
-                   GRAINN  = GRAINN1
-                ENDIF
-                GRNWT   = GRNWT  - GRNWTE
-                PERWT   = PERWT  - PERWTE
-                EMBWT   = EMBWT  - EMBWTE
-                
-              ELSE
-                PERWTE  = PERWT
-                EMBWTE  = EMBWT
-                GRNWTE  = PERWTE + EMBWTE
-                
-                EMBN    = 0.0
-                GRNWT   = 0.0
-                EMBWT   = 0.0
-                GPSM    = 0.0
-                IF (ISWNIT .EQ. 'Y') THEN
-                  GRAINN1 = 0.0
-                  GRAINNE = GRAINN
-                ENDIF
-             ENDIF
         ENDIF
         
         IF(YRDOY.EQ.STGDOY(9)) THEN
@@ -1281,10 +1239,10 @@ C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
               PCARB = (PCO2*(RI*RI1*C2/C1*RUE)-RM)/PLTPOP
 
             ELSE
-              PCARB = 0.0
+              PCARB =-RM/PLTPOP
             ENDIF
           ENDIF
-c          write(*,*)istage,pcarb,pco2,ri1,c2,c1,rm
+c          write(*,*)istage,lai,pcarb,pco2,ri1,c2,c1,rm
 c         PCARB = AMAX1 (PCARB,0.0)
           TAVGD = 0.25*TMIN+0.75*TMAX
 
@@ -1307,10 +1265,10 @@ c         PCARB = AMAX1 (PCARB,0.0)
 C      WRITE(*,*)'GROSUB 1296',ISTAGE,LFWT,STMWT,GROLF,headwt
 !     CHP 9/5/04 Added P stress
           CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES, PStres1,KSTRES)*SLPF
- 
+
           !Reduce CARBO for assimilate pest damage
           CARBO = CARBO - ASMDOT
-          CARBO = MAX(CARBO,0.0)
+!         CARBO = MAX(CARBO,0.0)
 
       ! Calculate total number of leaves appeared ....  SUN
       !
@@ -1632,44 +1590,48 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
               DSLANW = 0.0
             ENDIF
 
-          DSLAN1 = AMAX1 (DSLAN1,DSLANW)    ! rate of lraf senescence cm2/day/plant
-          SLAN1  = SLAN1 + DSLAN1
-          SLAN   = SLAN1
-          SLAY   = GPLA  / GLFWT     ! SLA of mean green area
-          GPLA   = GPLA  - DSLAN1 
-          SPLA   = SPLA  + DSLAN1
-          XRAT   = XNGLF / GLFWT
-          YRAT   = (0.009 - 0.0875 * XRAT)/0.9125  ! residual nitrogen concentration in senesced leaves
-          SDN    = DSLAN1/SLAY*(XRAT - YRAT)      ! amount of nitrogen retranslocated from the senesced leaves to other organs ( g N/plant)
-          SLFWT  = SLFWT + DSLAN1/SLAY - SDN * 6.25
-          XNSLF  = XNSLF + DSLAN1/SLAY*YRAT
-          GLFWT  = GLFWT + GROLF + SDN * 6.25 - DSLAN1/SLAY
-          XNGLF  = XNGLF - DSLAN1/SLAY*YRAT
-          XXX    = GLFWT * XLCNP   ! N content in green leaves at critical level
-
-          ! N is first moved from secesced leaves to green leaves and then from the latter to the stem
-          IF (XNGLF .GT. XXX) THEN
-            YYY    = XNGLF  - XXX   ! Leaf N amount in excess of critical (g/plant)
-            XNGLF  = XXX            ! set actual to critical amount of N in green leaves
-            GLFWT  = GLFWT  - YYY * 6.25  !export of protein by senescence
-            LFWT   = LFWT   - YYY * 6.25  !export of protein by senescence
-            STMWT  = STMWT  + YYY * 6.25  !input of protein by senescence
+            DSLAN1 = AMAX1 (DSLAN1,DSLANW)    ! rate of lraf senescence cm2/day/plant
+            SLAN1  = SLAN1 + DSLAN1
+            SLAN   = SLAN1
+            SLAY   = GPLA  / GLFWT     ! SLA of mean green area
+            GPLA   = GPLA  - DSLAN1 
+            SPLA   = SPLA  + DSLAN1
+            GLFWT  = GLFWT + GROLF - DSLAN1/SLAY
+            SLFWT  = SLFWT + DSLAN1/SLAY
             IF (ISWNIT .EQ. 'Y') THEN
-              XSTEMN = XSTEMN + YYY
-              XLEAFN = XLEAFN - YYY
-            ENDIF  
-          ENDIF
+              XRAT   = XNGLF / GLFWT
+              YRAT   = (0.009 - 0.0875 * XRAT)/0.9125  ! residual nitrogen concentration in senesced leaves
+              SDN    = DSLAN1/SLAY*(XRAT - YRAT)      ! amount of nitrogen retranslocated from the senesced leaves to other organs ( g N/plant)
+              SLFWT  = SLFWT - SDN * 6.25
+              XNSLF  = XNSLF + DSLAN1/SLAY*YRAT
+              GLFWT  = GLFWT + SDN * 6.25
+              XNGLF  = XNGLF - DSLAN1/SLAY*YRAT
+              XXX    = GLFWT * XLCNP   ! N content in green leaves at critical level
+
+            ! N is first moved from secesced leaves to green leaves and then from the latter to the stem
+              IF (XNGLF .GT. XXX) THEN
+                YYY    = XNGLF  - XXX   ! Leaf N amount in excess of critical (g/plant)
+                XNGLF  = XXX            ! set actual to critical amount of N in green leaves
+                GLFWT  = GLFWT  - YYY * 6.25  !export of protein by senescence
+                LFWT   = LFWT   - YYY * 6.25  !export of protein by senescence
+                STMWT  = STMWT  + YYY * 6.25  !input of protein by senescence
+                XNGLF  = XNGLF - YYY 
+                XSTEMN = XSTEMN + YYY
+                XLEAFN = XLEAFN - YYY
+              ENDIF  
+            ENDIF
+          ENDIF  
           IF (SUMDTT .GT. (P3P-130.0)) THEN
             SUMP  = SUMP  + CARBO
             IDURP = IDURP + 1
           ENDIF
-        ENDIF
+        
 
         CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha
 
 
 !      --------------------------------------------------------------------
-!         ISTAGE = 4 (Silking to beginning of effective grain filling period)
+!         ISTAGE = 4 (Anthesis to beginning of effective grain filling period)
 !      --------------------------------------------------------------------
 
         ELSEIF (ISTAGE .EQ. 4) THEN
@@ -1751,7 +1713,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
                 NPL1L = 0 
               ENDIF   
               NPL1S  = STMWT  * (XSANC - XSMNC)           ! Total N in stem pool
-                NPL1S  = AMAX1 (NPL1S,0.0)
+              NPL1S  = AMAX1 (NPL1S,0.0)
               NPL1H  = HEADWT * (XHANC - XHMNC)           ! Total N in head pool
               NPL1H  = AMAX1 (NPL1H,0.0)
               NPOOL1 = NPL1L  + NPL1S + NPL1H             ! Total N in stover
@@ -1830,6 +1792,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           GLFWT  = GLFWT  - WLAN2
           SLFWT  = SLFWT  + WLAN2 * (1.0-6.25*(XLAY-YRAT))
           GPLA   = GPLA   - DSLAN2
+ 
           SPLA   = SPLA   + DSLAN2
           GROLF  = 0.0
           GROSTM  =  WLAN2 * (XLAY-YRAT)*6.25+GROSTM
@@ -1855,8 +1818,52 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
           GROPER = 0.0
           GROEMB = 0.0   
           PLAG = 0.0
- 
 
+         IF (SUMDTT .GE. 230.0 .AND. GPP .EQ. 0.0) THEN             ! Include calculations to correct RUE after anthesis
+             ! mantainance respiration
+
+             PS    = RM/(RI1-1.0)
+             RM    = (BIOMAS+RTWT*PLTPOP)*0.008*0.729  ! mantainance respiration
+             RI1   = 1.0 + RM/PS !ratio gross net photosyntesis
+             PSKER = SUMP / IDURP
+         
+             !
+             ! Grain number calculated according to Soriano
+             ! FV - 12/12/97
+             !
+             GPP = 500.0 + PLA*750.0/6000.0
+             GPP = AMIN1 (GPP,PPP)
+             IF (PPP.GT.0.0) THEN
+                PERWTE  = (PPP - GPP) * PERWT / PPP
+                EMBWTE  = (PPP - GPP) * EMBWT / PPP
+                GRNWTE  = PERWTE + EMBWTE
+ 
+                IF (ISWNIT .EQ. 'Y') THEN
+                   GRAINN1 = GRAINN * (1.0 - GRNWTE / GRNWT)
+                   GRAINNE = GRAINN - GRAINN1
+                   PERN    = PERN   * GRAINN1 / GRAINN
+                   EMBN    = EMBN   * GRAINN1 / GRAINN
+                   GRAINN  = GRAINN1
+                ENDIF
+                GRNWT   = GRNWT  - GRNWTE
+                PERWT   = PERWT  - PERWTE
+                EMBWT   = EMBWT  - EMBWTE
+                
+              ELSE
+                PERWTE  = PERWT
+                EMBWTE  = EMBWT
+                GRNWTE  = PERWTE + EMBWTE
+                
+                EMBN    = 0.0
+                GRNWT   = 0.0
+                EMBWT   = 0.0
+                GPSM    = 0.0
+                IF (ISWNIT .EQ. 'Y') THEN
+                  GRAINN1 = 0.0
+                  GRAINNE = GRAINN
+                ENDIF
+             ENDIF
+           ENDIF  
           IF (ABS(CARBO) .GT. 0.000001) CMAT = 0
 C          WRITE(*,*)'GROSUB 1852',ISTAGE,EMAT,CMAT,CARBO
           IF (ISWNIT .EQ. 'Y') THEN
@@ -1920,7 +1927,7 @@ C          WRITE(*,*)'GROSUB 1852',ISTAGE,EMAT,CMAT,CARBO
             ELSE
               GROEMB = PPP * PEPE
             ENDIF
-            PEPE =TRG*(0.70 + 0.30 * SWFAC)
+c            PEPE =TRG*(0.70 + 0.30 * SWFAC)
             
             IF (HEADWT .LT. HWMAX) THEN
               GROHEAD = 1.71 * trg
@@ -2142,6 +2149,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
           IF (GLFWT.GT.0.0) THEN
             SLAY   = GPLA   / GLFWT
             XLAY   = XNGLF  / GLFWT
+            YRAT = (0.009 - 0.0875*XLAY)/0.9125
           ENDIF  
           SLAN   = SLAN1  + SLAN2
           IF (SLAY .GT. 0.0) THEN
@@ -2176,17 +2184,17 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
                 OILWT = 0.0
               ENDIF
 
-
           SUMP  = SUMP  + CARBO
           IDURP = IDURP + 1
         ENDIF
+
         CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha                    
         !----------------------------------------------------------------
         !ISTAGE = 6 
         !(End effective grain filling period to harvest maturity)
         !----------------------------------------------------------------
         ELSEIF (ISTAGE .EQ. 6) THEN
-          carbo = .01*(glfwt+stmwt+headwt+grnwt)
+          rm = .00*(glfwt+stmwt+headwt+grnwt)
           IF (STMWT-SWMIN.GT.0.) THEN
             CPOOL1=STMWT-SWMIN
           ELSE
@@ -2211,11 +2219,15 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
             HEADWT=HEADWT-CPOOL2/CPOOL*RM
             IF (GLFWT.GT.0.0) THEN
               SLAY   = GPLA   / GLFWT
+              YRAT = (0.009 - 0.0875*SLAY)/0.9125
             ELSE
               SLAY=0.
             ENDIF
             GLFWT=GLFWT-CPOOL3/CPOOL*RM
-            GPLA = GLFWT * SLAY
+            GPLA = GPLA - CPOOL3/CPOOL*RM * SLAY
+            IF (ISWNIT .EQ. 'Y') THEN
+              XNGLF = XNGLF -CPOOL3/CPOOL*RM*YRAT
+            ENDIF
           ENDIF  
             UNO3 = 0.0; UNH4 = 0.0; KUPTAKE = 0.0
   
@@ -2224,7 +2236,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
 
 
         ENDIF
-C              write(*,*)istage,xnglf,gpla,sumdtt,headwt,STMWT,HWMIN,SWMIN
+c              write(*,*)istage,xnglf,glfwt,gpla,xnglf/glfwt
           
 
 
@@ -2256,7 +2268,7 @@ c      SLFP   = (1-FSLFP) + FSLFP*PSTRES1
       SLFT  = AMAX1 (SLFT,0.0)
 
       LFWT = LFWT + GROLF
-      
+      GLFWT = GLFWT + GROLF
       STMWT = STMWT + GROSTM
       HEADWT = HEADWT + GROHEAD
       PERWT = PERWT + GROPER
@@ -2490,15 +2502,11 @@ c      PLAS  = (PLA-SENLA)*(1.0-SLFP)
       WTNUP = WTNUP + TRNU*PLTPOP    !Total N uptake (g N/m2)  
       WTNCAN = (STOVN+GRAINN)*PLTPOP !Nitrogen in canopy (g N/m2)
       WTNSD = GRAINN*PLTPOP  !Nitrogen in grain (g N/m2)
-      IF ((GLFWT+STMWT) .GT. 0.0) THEN     
+    
         WTNLF = XNGLF * PLTPOP 
         !Nitrogen in leaf, g/m2
         WTNST = XSTEMN * PLTPOP 
         !Nitrogen in stem, g/m2
-      ELSE
-        WTNLF = 0.0 
-        WTNST = 0.0
-      ENDIF
       
       WTNVEG=(XNGLF+XSTEMN+XHEADN)*10.   !Nitrogen in vegetative tissue (g/m2)
 
@@ -2510,7 +2518,6 @@ C       WTN = WTNCAN*10. / BIOMAS * 100.
 
       IF(GLFWT.GT.0.AND.PLTPOP.GT.0) THEN
         PCNL = WTNLF/(GLFWT*PLTPOP)*100  !Percent N in leaf tissue
-C        write(*,*)'grosub 2465',wtnlf,lfwt*pltpop,pcnl,stovn,stovwt,lfwt
       ELSE
         PCNL = 0
       ENDIF

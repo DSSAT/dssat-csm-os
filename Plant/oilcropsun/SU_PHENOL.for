@@ -392,13 +392,12 @@ C     taking L=1
 
       ELSE    
 !         -------------------------------------------------------------
-!       IF (ISTAGE.GE.1.AND.ISTAGE.LE.6) THEN
-!         TBASE=4.0
-!       ELSE
-!         TBASE=6.0
-!      ENDIF
+!        IF (ISTAGE.GE.1.AND.ISTAGE.LE.6) THEN
+!          TBASE=4.0
+!        ELSE
+!          TBASE=6.0
+!       ENDIF
        DTT    = .5*(TMAX+TMIN) - TBASE
-
       IF (TMIN .LE. TBASE .OR. TMAX .GE. 28.0) THEN
          IF (TMAX .LT. TBASE) THEN
             DTT = 0.0
@@ -451,6 +450,7 @@ C     taking L=1
               NDAS           = 0.0
               ISTAGE = 8
               SUMDTT = 0.0
+
               IF (ISWWAT .EQ. 'N') RETURN
 
               !---------------------------------------------------------
@@ -545,7 +545,7 @@ C     taking L=1
               STGDOY(ISTAGE) = YRDOY
               ISTAGE = 1
               SUMDTT = SUMDTT - P9
-              
+
               YREMRG = STGDOY(9)   !Passed back into water balance routi
               RETURN
 
@@ -606,7 +606,7 @@ C     taking L=1
 
               !RATEIN - floral rate of development driven  by daylength
               ! and photoperiod sensitivity value for sunflower  
-              DAYL=TWILEN-1.2
+              DAYL=TWILEN
               DAYL   = AMIN1  (DAYL,15.0)
               RATEIN = 1.0/(3.0 + P2 * (15.0 - DAYL))    ! SUN
               SIND   = SIND + RATEIN
