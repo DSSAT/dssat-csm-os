@@ -25,7 +25,7 @@
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac,P3P)
+     &    SeedFrac,VegFrac,P3P,P9)
    
 
       USE ModuleDefs
@@ -371,7 +371,6 @@ C     taking L=1
       PSKER = 0.0
       PDTT = 0.0
       P9 = 0.0
-      P3 = 0.0
       P3P=0.0
       NDAS = 0.0
       L0 = 0.0

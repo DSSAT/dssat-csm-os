@@ -51,7 +51,7 @@ C----------------------------------------------------------------------
       INTEGER     NLAYR       
       REAL        NO3(NL)     
       REAL        PLTPOP 
-			REAL        PORMIN     
+      REAL        PORMIN     
       REAL        RLDF(NL)    
                               
       REAL        RLNEW      
@@ -62,13 +62,13 @@ C----------------------------------------------------------------------
       REAL        RNLF       
                              
       REAL        RTDEP 
-			REAL        RTEXF     
-			REAL        RTSURV
+      REAL        RTEXF     
+      REAL        RTSURV
       REAL        SDEPTH     
       REAL        SHF(NL)    
       INTEGER     STGDOY(20) 
       REAL        SW(NL)     
-			REAL        SAT(NL)
+      REAL        SAT(NL)
       REAL        SWDF       
       REAL        SWEXF                       
       REAL        SWFAC      
@@ -178,11 +178,12 @@ c** wdb 10/22/03
           RTSURV = MIN(1.0,(1.-RTEXF*(1.-SWEXF)))
 
 c** wdb 10/22/03
-          IF (CUMDTT .LT. 275.0) THEN             ! JTR 6/17/94
-              RTDEP = RTDEP + DTT*0.1*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
-          ELSE
-              RTDEP = RTDEP + DTT*0.2*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
-          ENDIF
+C          IF (CUMDTT .LT. 275.0) THEN             ! JTR 6/17/94
+C              RTDEP = RTDEP + DTT*0.2*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
+C          ELSE
+C              RTDEP = RTDEP + DTT*0.2*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
+C          ENDIF
+          RTDEP = RTDEP + DTT*0.2*AMIN1(SWFAC*2.0,SWDF)
 
           RTDEP    = AMIN1 (RTDEP,DEPMAX)                            
           RLDF(L1) = RLDF(L1)*(1.0-(CUMDEP-RTDEP)/DLAYR(L1))
@@ -195,13 +196,13 @@ c** wdb 10/22/03
           IF (TRLDF .GE. RLNEW*0.00001) THEN
               RNLF = RLNEW/TRLDF
               DO L = 1, L1
-									IF (ISTAGE .LT. 4) THEN
-               				RLV(L) = RLV(L) + RLDF(L)*RNLF/DLAYR(L)
-             			ELSE
-                  		RLV(L) = RLV(L) + RLDF(L)*RNLF/DLAYR(L)-0.005*RLV(L)
-                  ENDIF
+                IF (ISTAGE .LT. 4) THEN
+                  rLV(L) = RLV(L) + RLDF(L)*RNLF/DLAYR(L)
+                ELSE
+                  RLV(L) = RLV(L) + RLDF(L)*RNLF/DLAYR(L)-0.005*RLV(L)
+                ENDIF
                   !Round off to nearest 1/1000th place
-	            		RLV(L) = RLV(L) * RTSURV
+                  RLV(L) = RLV(L) * RTSURV
                   RLV(L) = REAL(INT(RLV(L)*1000.))/1000.  
                   RLV(L) = AMAX1 (RLV(L),0.0)
                   RLV(L) = AMIN1 (RLV(L),10.0)
@@ -219,6 +220,7 @@ C----------------------------------------------------------------------
       ENDIF !Dynamic loop
 
 999   CONTINUE
+
       RETURN
       END SUBROUTINE SU_ROOTGR
 

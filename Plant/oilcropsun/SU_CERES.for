@@ -201,7 +201,7 @@
 !     FV added for SUOIL
       REAL EMBWT,EMBWTE,HEADWT
       REAL PERWT,PERWTE,POTGROPER
-      REAL POTHEADWT,PPP,PSKER,GRNWTE,P3P
+      REAL POTHEADWT,PPP,PSKER,GRNWTE,P3P,P9
       INTEGER IDURP 
 !     CHP added for P model 
       REAL PUptake(NL), SPi_AVAIL(NL), FracRts(NL)       
@@ -320,7 +320,7 @@ C----------------------------------------------------------------------
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac,P3P)
+     &    SeedFrac,VegFrac,P3P,P9)
           
           !-------------------------------------------------------------
           !Call growth routine
@@ -347,7 +347,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P,P9)
 
           
           !-------------------------------------------------------------
@@ -426,7 +426,7 @@ C-----------------------------------------------------------------------
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac,P3P)
+     &    SeedFrac,VegFrac,P3P,P9)
     
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
@@ -450,7 +450,7 @@ C-----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P,P9)
 
                          
           CALL SU_ROOTGR (DYNAMIC,ISWNIT,                         !C
@@ -537,7 +537,7 @@ C----------------------------------------------------------------------
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac,P3P)
+     &    SeedFrac,VegFrac,P3P,P9)
           ENDIF
         ENDIF
        
@@ -567,7 +567,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P,P9)
 
         ELSE
           UNO3 = 0.0
@@ -624,7 +624,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P,P9)
 
         ENDIF   
           
@@ -689,7 +689,7 @@ C----------------------------------------------------------------------
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P,P9)
 
 
         CALL SU_OPGROW(CONTROL, ISWITCH,  

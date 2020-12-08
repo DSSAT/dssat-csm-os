@@ -61,7 +61,7 @@
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
      &      KUptake, KSTRES,                                  !Output
      &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
-     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P)
+     &      POTHEADWT,PPP,PSKER,GRNWTE,KCAN,KEP,CUMDTT,P3P,P9)
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
@@ -958,8 +958,8 @@
  
         IF(YRDOY.EQ.STGDOY(3)) THEN
 
-          SWMAX  = 1.3*STMWT   
-          SWMIN=STMWT*.99      
+          SWMAX  = 1.25*STMWT   
+          SWMIN=STMWT*.80     
           VANC   = TANC       
           VMNC   = TMNC       
           EMAT   = 0
@@ -981,7 +981,7 @@
           ! Pericarp number calculated according to Soriano
           ! FV - 12/12/97
           !
-          PPP = 1250.0 + (PLA-750.0)*750.0/1500.0
+          PPP = 1250.0 + (GPLA-750.0)*750.0/1500.0
           PPP = AMIN1 (PPP,G2)
 
           ZZZ       = AMIN1 (1.0,HEADWT/POTHEADWT)
@@ -1030,7 +1030,7 @@ c          write(*,*)xnglf,yrat,GLFWT
           STOVWT  = LFWT+STMWT     
           SEEDRV  = SEEDRVE
           BIOMAS = STOVWT*PLTPOP
-          LEAFNO = INT(LEAFNOE)   
+          LEAFNO = 1   
           XLN=1   
           PLA     = PLAE
           GPLA = PLA
@@ -1039,13 +1039,16 @@ c          write(*,*)xnglf,yrat,GLFWT
           LAI    = PLTPOP*PLA*0.0001 
           CUMPH   = 0
           XCUMPH = 0.0
-          P3       = 400.0
+          CUMPH = 0.0
           TLNO     =  (2.0+(P1+30.0+30.0*P2)/14.0)
+          NSTRES = 1.0
+          AGEFAC = 1.0
+          NDEF3  = 1.0
           IF (ISWNIT .NE. 'N') THEN
             GRAINN = 0.000
             TANC = TANCE
             XLANC = .062
-            XSANC = .044
+            XSANC = .0444
             RANC = RANCE   !Initialize root N (fraction) JIL
             ROOTN = RANCE   * RTWT
             STOVN = STOVWT * TANC
@@ -1055,6 +1058,7 @@ c          write(*,*)xnglf,yrat,GLFWT
             XHEADN = 0.0
             XNSLF = 0.0
           ENDIF
+
 
           WTLF = LFWT * PLTPOP      !Leaf weight, g/m2
           STMWTO = STMWT * PLTPOP   !Stem weight, g/m2
@@ -1187,7 +1191,7 @@ c          write(*,*)xnglf,yrat,GLFWT
           !Compare with weather module: PAR = SRAD * 2.0  chp
           PAR = SRAD*PARSR    !PAR local variable        
           
-          PCO2  = TABEX (CO2Y,CO2X,CO2,10)
+         
 
 
           QN  = 1.0 - EXP(-0.86*LAI)
@@ -1233,10 +1237,10 @@ C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
             ENDIF
           ENDIF
           IF (ISTAGE .LT. 4) THEN
-            PCARB = PCO2*RUE * RI/PLTPOP
+            PCARB = RUE * RI/PLTPOP
           ELSE
             IF (RI .GT. 0) THEN
-              PCARB = (PCO2*(RI*RI1*C2/C1*RUE)-RM)/PLTPOP
+              PCARB = (RI*RI1*C2/C1*RUE-RM)/PLTPOP
 
             ELSE
               PCARB =-RM/PLTPOP
@@ -1244,6 +1248,9 @@ C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
           ENDIF
 c          write(*,*)istage,lai,pcarb,pco2,ri1,c2,c1,rm
 c         PCARB = AMAX1 (PCARB,0.0)
+
+          PCO2  = TABEX (CO2Y,CO2X,CO2,10)
+          PCARB = PCARB*PCO2
           TAVGD = 0.25*TMIN+0.75*TMAX
 
           PRFT = CURV('LIN',PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4),TAVGD)
@@ -1262,7 +1269,7 @@ c         PCARB = AMAX1 (PCARB,0.0)
 !** WDB   Water logging reduces root water uptake and creates water stress
 !** WDB   through SWFAC. Thus, we do not need to also create a reduction
 !** WDB   using SATFAC
-C      WRITE(*,*)'GROSUB 1296',ISTAGE,LFWT,STMWT,GROLF,headwt
+
 !     CHP 9/5/04 Added P stress
           CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES, PStres1,KSTRES)*SLPF
 
@@ -1270,8 +1277,8 @@ C      WRITE(*,*)'GROSUB 1296',ISTAGE,LFWT,STMWT,GROLF,headwt
           CARBO = CARBO - ASMDOT
 !         CARBO = MAX(CARBO,0.0)
 
-      ! Calculate total number of leaves appeared ....  SUN
-      !
+             ! Calculate total number of leaves appeared ....  SUN
+
           IF (LEAFNO .LT. 6) THEN
             PHY = PHY1
               ELSE
@@ -1296,7 +1303,6 @@ C      WRITE(*,*)'GROSUB 1296',ISTAGE,LFWT,STMWT,GROLF,headwt
              XHY = PHY2
            ENDIF
 
-      
           IF (CUMPH .LT. TLNO) THEN
             IF ((CUMDTT-P9) .LT. (TTE+PHY1)) THEN
               CUMPH  = 0
@@ -1353,16 +1359,13 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           LER   = MAXLA * TFACLG / 18.0
           PLAG  = PLAG + LER
         ENDDO
-        INCPLA = PLAG
-        IF (ISTAGE .EQ. 1 .OR. ISTAGE .EQ. 2 .OR. ISTAGE .EQ. 3) THEN
-          PLAG = RFR*INCPLA 
+        
+        IF (ISTAGE. GE. 1 .AND. ISTAGE .LE. 3) THEN
+          PLAG = RFR*PLAG 
         ELSE
           PLAG=0.
         ENDIF
-        IF (LEAFNO .LT. 1) THEN
-          PLAG = 2.0
-        ENDIF
-        IF (TURFAC .LT. 0.9) THEN
+         IF (TURFAC .LT. 0.9) THEN
           SLAMAX = SLAMIN
         ENDIF
 
@@ -1615,7 +1618,6 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
                 GLFWT  = GLFWT  - YYY * 6.25  !export of protein by senescence
                 LFWT   = LFWT   - YYY * 6.25  !export of protein by senescence
                 STMWT  = STMWT  + YYY * 6.25  !input of protein by senescence
-                XNGLF  = XNGLF - YYY 
                 XSTEMN = XSTEMN + YYY
                 XLEAFN = XLEAFN - YYY
               ENDIF  
@@ -1809,7 +1811,6 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
           !-------------------------------------------------------------
 
         ELSEIF (ISTAGE .EQ. 5) THEN
-
           DSLAN1 = 0.0
           DSLAN2 = 0.0
           GROLF = 0.0
@@ -1819,7 +1820,7 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
           GROEMB = 0.0   
           PLAG = 0.0
 
-         IF (SUMDTT .GE. 230.0 .AND. GPP .EQ. 0.0) THEN             ! Include calculations to correct RUE after anthesis
+          IF (SUMDTT .GE. 230.0 .AND. GPP .EQ. 0.0) THEN             ! Include calculations to correct RUE after anthesis
              ! mantainance respiration
 
              PS    = RM/(RI1-1.0)
@@ -1831,7 +1832,7 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
              ! Grain number calculated according to Soriano
              ! FV - 12/12/97
              !
-             GPP = 500.0 + PLA*750.0/6000.0
+             GPP = 500.0 + GPLA*750.0/6000.0
              GPP = AMIN1 (GPP,PPP)
              IF (PPP.GT.0.0) THEN
                 PERWTE  = (PPP - GPP) * PERWT / PPP
@@ -1863,7 +1864,7 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
                   GRAINNE = GRAINN
                 ENDIF
              ENDIF
-           ENDIF  
+          ENDIF  
           IF (ABS(CARBO) .GT. 0.000001) CMAT = 0
 C          WRITE(*,*)'GROSUB 1852',ISTAGE,EMAT,CMAT,CARBO
           IF (ISWNIT .EQ. 'Y') THEN
@@ -1958,22 +1959,7 @@ c            PEPE =TRG*(0.70 + 0.30 * SWFAC)
 !              ENDIF                                           !
             ENDIF                                               !
           ENDIF 
-!          ELSE                                                    !
-!            CMAT = CMAT + 1
-!            IF (CMAT.GE.CARBOT) THEN
-!              SUMDTT = P5                                         !
-!              CALL YR_DOY(YRDOY, YR, DOY)
-!              WRITE(MESSAGE(1),2700) DOY                          !
-!              CALL WARNING(1,ERRKEY, MESSAGE)                     !
-!              WRITE (     *,2700) DOY                             !
-!              IF (IDETO .EQ. 'Y') THEN                            !
-!                WRITE (NOUTDO,2700) DOY                         !
-!              ENDIF                                               !
-!              EMAT   = 0                                          !
-!              GRORT  = 0.0    
-                                             !
-!            ENDIF
-!          ENDIF           !<--------------------------------------!
+
 
           CDEMAND = GROEMB + GROPER + GROHEAD
           
@@ -1998,7 +1984,7 @@ c            PEPE =TRG*(0.70 + 0.30 * SWFAC)
                 GROHEAD = CARBO - CDGR
               ELSE
                 GROHEAD = 0.0
-               CPOOL   = (STMWT - SWMIN) + (HEADWT - HWMIN)
+                CPOOL   = (STMWT - SWMIN) + (HEADWT - HWMIN)
                 FCP     = (STMWT - SWMIN) / (SWMAX - SWMIN)
                 IF (FCP .GT. 0.3) THEN
                   FCP2 = 1.0
@@ -2025,6 +2011,7 @@ c            PEPE =TRG*(0.70 + 0.30 * SWFAC)
                   ELSE
                     FACPOOL = 0.0
                   ENDIF
+                  FACPOOL=AMAX1(FACPOOL,0.0)
                   GROEMB = GROEMB * FACPOOL
                   GROPER = GROPER * FACPOOL
                   STMWT  = STMWT  - CPOOL1
@@ -2108,85 +2095,84 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
                 ENDIF    
                 YRAT = (0.009 - 0.0875*XRAT)/0.9125
 
-              IF (NSINK .GT. NPOOL1 ) THEN
-                XSTEMN = XSTEMN - NPL1S
-                XHEADN = XHEADN - NPL1H
-                STOVN  = STOVN  - NPOOL1
-                RNOUT  = NSINK  - NPOOL1
-                IF (NPOOL2.GT.0.0) THEN
-                  ROOTN  = ROOTN  - RNOUT*NPL2R/NPOOL2
-                ENDIF  
-                RANC   = ROOTN  / RTWT
-                IF (NPOOL2.GT.0.0) THEN
-                  RONL   = RNOUT*NPL2L/NPOOL2 + NPL1L
+                IF (NSINK .GT. NPOOL1 ) THEN
+                  XSTEMN = XSTEMN - NPL1S
+                  XHEADN = XHEADN - NPL1H
+                  STOVN  = STOVN  - NPOOL1
+                  RNOUT  = NSINK  - NPOOL1
+                  IF (NPOOL2.GT.0.0) THEN
+                    ROOTN  = ROOTN  - RNOUT*NPL2R/NPOOL2
+                  ENDIF  
+                  RANC   = ROOTN  / RTWT
+                  IF (NPOOL2.GT.0.0) THEN
+                    RONL   = RNOUT*NPL2L/NPOOL2 + NPL1L
+                  ELSE
+                    RONL =   NPL1L
+                  ENDIF  
+                  XLEAFN = XLEAFN - RONL           
+                  XNGLF  = XNGLF  - RONL - RONL*YRAT/(XNGLF/GLFWT-YRAT)
+                  XNSLF  = XLEAFN - XNGLF
                 ELSE
-                  RONL =   NPL1L
-                ENDIF  
-                XLEAFN = XLEAFN - RONL           
-                XNGLF  = XNGLF  - RONL - RONL*YRAT/(XNGLF/GLFWT-YRAT)
-                XNSLF  = XLEAFN - XNGLF
-              ELSE
-                FACLN  = NPL1L  / NPOOL1
-                FACSN  = NPL1S  / NPOOL1
-                FACHN  = NPL1H  / NPOOL1
-                XLEAFN = XLEAFN - FACLN * NSINK
-                XNGLF=XNGLF-FACLN*NSINK*(1+YRAT/(XNGLF/GLFWT-YRAT))
-                XNSLF  = XLEAFN - XNGLF
-                XSTEMN = XSTEMN - FACSN * NSINK
-                XHEADN = XHEADN - FACHN * NSINK
-                STOVN  = STOVN  - NSINK
-                VANC   = STOVN  / STOVWT
+                  FACLN  = NPL1L  / NPOOL1
+                  FACSN  = NPL1S  / NPOOL1
+                  FACHN  = NPL1H  / NPOOL1
+                  XLEAFN = XLEAFN - FACLN * NSINK
+                  XNGLF=XNGLF-FACLN*NSINK*(1+YRAT/(XNGLF/GLFWT-YRAT))
+                  XNSLF  = XLEAFN - XNGLF
+                  XSTEMN = XSTEMN - FACSN * NSINK
+                  XHEADN = XHEADN - FACHN * NSINK
+                  STOVN  = STOVN  - NSINK
+                  VANC   = STOVN  / STOVWT
+                ENDIF
+
+                PERN = PERN + NSINK * FSINK2
+                EMBN = EMBN + NSINK * FSINK1
               ENDIF
 
-              PERN = PERN + NSINK * FSINK2
-              EMBN = EMBN + NSINK * FSINK1
+              GRAINN = EMBN + PERN
             ENDIF
 
-            GRAINN = EMBN + PERN
-          ENDIF
-
  
-          IF (GLFWT.GT.0.0) THEN
-            SLAY   = GPLA   / GLFWT
-            XLAY   = XNGLF  / GLFWT
-            YRAT = (0.009 - 0.0875*XLAY)/0.9125
-          ENDIF  
-          SLAN   = SLAN1  + SLAN2
-          IF (SLAY .GT. 0.0) THEN
-            WLAN2 = DSLAN2/SLAY
-          ELSE
-            WLAN2 = 0.0
-          ENDIF
-          LFWT  = LFWT  - WLAN2 * (XLAY-YRAT)*6.25
-          GLFWT = GLFWT - WLAN2
-          SLFWT = SLFWT + WLAN2 * (1.0-6.25*(XLAY-YRAT))
-          GPLA  = GPLA  - DSLAN2
-          SPLA  = SPLA  + DSLAN2
-          STMWT = STMWT + WLAN2*(XLAY-YRAT)*6.25 
+            IF (GLFWT.GT.0.0) THEN
+              SLAY   = GPLA   / GLFWT
+              XLAY   = XNGLF  / GLFWT
+              YRAT = (0.009 - 0.0875*XLAY)/0.9125
+            ENDIF  
+            SLAN   = SLAN1  + SLAN2
+            IF (SLAY .GT. 0.0) THEN
+              WLAN2 = DSLAN2/SLAY
+            ELSE
+              WLAN2 = 0.0
+            ENDIF
+            LFWT  = LFWT  - WLAN2 * (XLAY-YRAT)*6.25
+            GLFWT = GLFWT - WLAN2
+            SLFWT = SLFWT + WLAN2 * (1.0-6.25*(XLAY-YRAT))
+            GPLA  = GPLA  - DSLAN2
+            SPLA  = SPLA  + DSLAN2
+            STMWT = STMWT + WLAN2*(XLAY-YRAT)*6.25 
 
-              IF (GROEMB.GT.0.0.AND.SUMDTT.GT.230.0) THEN
-                PR = 1000.0*GROEMB/GPP/G3
-                IF (PR .LE. 0.7) THEN
-                  PO = O1
-                ELSE
-
-                  PO = EXP(-1.4*(PR-0.8))*O1
-                ENDIF
-                OILINC  = PO/100.0 * GROEMB *(P5-170.0)/(P5-230.0)
-                OIL     = OIL + OILINC
-                OILWT=OIL*PLTPOP
-                OILPERC = OIL / GRNWT * 100.0
-                OILPC=OILPERC
+            IF (EMBWT.GT.0.0.AND.SUMDTT.GT.230.0) THEN
+              PR = 1000.0*GROEMB/GPP/G3
+              IF (PR .LE. 0.7) THEN
+                PO = O1
               ELSE
-                OILFRAC = 0.0
-                OILPERC = 0.0
-                OILPC = 0.0
-                OILWT = 0.0
+                PO = EXP(-1.4*(PR-0.8))*O1
               ENDIF
+              OILINC  = PO/100.0 * GROEMB *(P5-170.0)/(P5-230.0)
+              OIL     = OIL + OILINC
+              OILWT=OIL*PLTPOP
+              OILPERC = OIL / GRNWT * 100.0
+              OILPC=OILPERC
+            ELSE
+              OILFRAC = 0.0
+              OILPERC = 0.0
+              OILPC = 0.0
+              OILWT = 0.0
+            ENDIF
 
-          SUMP  = SUMP  + CARBO
-          IDURP = IDURP + 1
-        ENDIF
+            SUMP  = SUMP  + CARBO
+            IDURP = IDURP + 1
+          ENDIF
 
         CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha                    
         !----------------------------------------------------------------
@@ -2194,7 +2180,16 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
         !(End effective grain filling period to harvest maturity)
         !----------------------------------------------------------------
         ELSEIF (ISTAGE .EQ. 6) THEN
-          rm = .00*(glfwt+stmwt+headwt+grnwt)
+          GROLF = 0.0
+          GROSTM = 0.0
+          GROHEAD = 0.0  
+          GROPER = 0.0
+          GROEMB = 0.0  
+          GRORT = 0.0
+          GROGRN = 0.0 
+          PLAG = 0.0
+
+          rm = .01*(glfwt+stmwt+headwt+grnwt)
           IF (STMWT-SWMIN.GT.0.) THEN
             CPOOL1=STMWT-SWMIN
           ELSE
@@ -2204,12 +2199,12 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
             CPOOL2=HEADWT-HWMIN
           ELSE
             CPOOL2=0.  
-           ENDIF 
+          ENDIF 
           IF (GLFWT.GT.0.) THEN
             CPOOL3=GLFWT*.7
           ELSE
             CPOOL3=0.  
-           ENDIF 
+          ENDIF 
           CPOOL=CPOOL1+CPOOL2+CPOOL3
           IF (RM.GT.CPOOL) THEN
             RM = CPOOL
@@ -2219,14 +2214,14 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
             HEADWT=HEADWT-CPOOL2/CPOOL*RM
             IF (GLFWT.GT.0.0) THEN
               SLAY   = GPLA   / GLFWT
-              YRAT = (0.009 - 0.0875*SLAY)/0.9125
             ELSE
               SLAY=0.
-            ENDIF
+            ENDIF           
             GLFWT=GLFWT-CPOOL3/CPOOL*RM
             GPLA = GPLA - CPOOL3/CPOOL*RM * SLAY
-            IF (ISWNIT .EQ. 'Y') THEN
-              XNGLF = XNGLF -CPOOL3/CPOOL*RM*YRAT
+            IF (ISWNIT .EQ. 'Y'.AND.GLFWT.GT.0.0) THEN
+              XLAY   = XNGLF  / GLFWT
+              XNGLF = XNGLF -CPOOL3/CPOOL*RM*XLAY
             ENDIF
           ENDIF  
             UNO3 = 0.0; UNH4 = 0.0; KUPTAKE = 0.0
@@ -2892,8 +2887,7 @@ C       WTN = WTNCAN*10. / BIOMAS * 100.
 ! TCNP        !Critical nitrogen concentration in tops, g N/g dry weight
 ! TEMPM       !Mean daily temperature, C
 ! TFAC        !Temperature stress factor for grain nitrogen concentration
-! TFACLG      !
- 
+! TFACLG      !Temperature factor for leaf expansion
 ! TI          !Fraction of a phyllochron interval which occurred as a fraction of today's daily thermal time
 ! TLNO        !Total number of leaves that the plant produces
 ! TMAX        !Maximum daily temperture, C
