@@ -206,7 +206,7 @@ Module YCA_First_Trans_m
     INTEGER :: FNUMPREM                ! File number,measured responses #          ! (From RunInit)   
     INTEGER :: FNUMPRES                ! File number,simulated response #          ! (From RunInit)   
     INTEGER :: FNUMPSUM                ! Number used for plant summary  #          ! (From RunInit)   
-    INTEGER :: FNUMREA                 ! File number,reads.out file     #          ! (From RunInit)   
+!    INTEGER :: FNUMREA                 ! File number,reads.out file     #          ! (From RunInit)   
     INTEGER :: FNUMT                   ! Number used for T-file         #          ! (From RunInit)   
     INTEGER :: FNUMTMP                 ! File number,temporary file     #          ! (From RunInit)   
 !    INTEGER :: FNUMWRK                 ! File number,work file          #          ! (From RunInit)   
