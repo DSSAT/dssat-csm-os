@@ -62,7 +62,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
 !     Yield forecast variables
-      INTEGER FCODE
+      INTEGER FCODE, YRDOY_F
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
@@ -96,7 +96,7 @@ C=======================================================================
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
 !     The components are copied into local variables for use here.
-      TYPE (ControlType) CONTROL
+      TYPE (ControlType) CONTROL, CONTROL2
       TYPE (SwitchType) ISWITCH
       TYPE (WeatherType) WEATHER
 
@@ -171,10 +171,13 @@ C       Set default values FOR REFHT AND WINDHT
 !          CALL ERROR(ERRKEY,1,' ',0)
         ENDIF
 
-      IF (RNMODE .EQ. 'Y') THEN
-        CALL FCAST_STORE(FCOUNT)
-        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FCODE)
-      ENDIF
+!       Forecast mode - read in-season weather and store in memory
+        IF (RNMODE .EQ. 'Y') THEN
+!         Read in-season weather and store in memory
+          CALL FCAST_STORE(FCOUNT)
+!         Initialize retreival and grab first day (if needed)
+          CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FCODE)
+        ENDIF
 
       IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
@@ -276,18 +279,22 @@ C     Compute daily normal temperature.
       CALL YR_DOY(YYDDD, YEAR, DOY)
 
 !     Yield forecast mode
-      FCODE = 0
+      CONTROL2 = CONTROL
+      YRDOY_F = 0
       IF (RNMODE .EQ. 'Y') THEN
-!       Retrieve weather data, send back FCODE=1 if successful
-        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FCODE)
+!       Retrieve weather data, send back FCODE=1 if YRDOY_WY
+        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, YRDOY_F)
+        IF (YRDOY_F .GT. 0) THEN
+          CONTROL2 % YRDOY = YRDOY_F
+        ENDIF
       ENDIF
 
-      IF (FCODE .LE. 0) THEN
+      IF (YRDOY_F .GT. 0) THEN
 !       Get weather data by normal means    
 !-----------------------------------------------------------------------
 C       Read new weather record.
         IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' ) THEN
-          CALL IPWTH(CONTROL,
+          CALL IPWTH(CONTROL2,
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
      &      PATHWTC, PATHWTG, PATHWTW,                    !Output

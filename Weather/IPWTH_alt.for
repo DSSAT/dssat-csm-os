@@ -35,6 +35,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
+      USE Forecast
       IMPLICIT NONE
       SAVE
 
@@ -174,6 +175,12 @@ C     The components are copied into local variables for use here.
       
       ErrCode = 0
 
+      !IF (RNMODE .EQ. 'Y') THEN
+      !  CALL FCAST_GETDATE(YRDOY_WY)
+      !ELSE
+      !  YRDOY_WY = YRDOY
+      !ENDIF
+      
 !-----------------------------------------------------------------------
 !     Don't re-initialize for sequence and seasonal runs
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN > 1) RETURN
@@ -249,6 +256,10 @@ C     The components are copied into local variables for use here.
       IF (YRDOY == YRSIM) THEN
         YRDOY_WY = INCYD(YRSIM,-1)
       ENDIF
+
+      !IF (RNMODE .EQ. 'Y') THEN
+      !  CALL FCAST_GETDATE(YRDOY_WY)
+      !ENDIF
       
       WSTAT = FILEW(1:8)
       CALL PUT('WEATHER','WSTA',WSTAT)

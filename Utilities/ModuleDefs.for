@@ -105,7 +105,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER   DAS, DYNAMIC, FROP, ErrCode, LUNIO, MULTI, N_ELEMS
         INTEGER   NYRS, REPNO, ROTNUM, RUN, TRTNUM
         INTEGER   YRDIF, YRDOY, YRSIM
-        INTEGER   FODAT, ENDYRS   !Forecast start date and forecast number
+        INTEGER   FODAT, ENDYRS   !Forecast start date and forecast ensemble number
       END TYPE ControlType
 
 !=======================================================================
