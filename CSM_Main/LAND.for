@@ -231,8 +231,6 @@ C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
 C     Seasonal initialization for soil processes
-! temp chp do this twice. Need soil initialized for SPAM
-!     and need ST initialized for soil.
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
@@ -246,6 +244,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Seasonal initialization for soil-plant-atmosphere processes
 !     chp moved this before SOIL, so soil temp is available 
+!     update 2020-12-04 - order makes no difference
 C-----------------------------------------------------------------------
       CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
@@ -255,17 +254,17 @@ C-----------------------------------------------------------------------
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
-C-----------------------------------------------------------------------
-C     Seasonal initialization for soil processes
-C-----------------------------------------------------------------------
-      CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
-     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
+!C-----------------------------------------------------------------------
+!C     Seasonal initialization for soil processes
+!C-----------------------------------------------------------------------
+!      CALL SOIL(CONTROL, ISWITCH, 
+!     &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
+!     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+!     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
+!     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
+!     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
+!     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+!     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
 
 C-----------------------------------------------------------------------
 C     Initialize PLANT routines (including phenology and pest)
