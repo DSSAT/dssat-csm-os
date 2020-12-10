@@ -1376,6 +1376,7 @@ Module YCA_First_Trans_m
         laix = 0.0
         laixm = -99.0
         !lanc = 0.0
+        LANCM = 0.0
         laphc = 0.0
         leafn = 0.0
         lfwt = 0.0

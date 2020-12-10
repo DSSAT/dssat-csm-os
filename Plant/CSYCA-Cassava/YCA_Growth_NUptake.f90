@@ -117,7 +117,7 @@
                         SNDEM = SNDEM + node(BR,LF)%SNDEMN
                     ENDIF
                     IF (GROLFP>0.0) THEN 
-                        node(BR,LF)%LNDEMN = (AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP))*node(BR,LF)%LNCX) - (GROLSRTN/Lcount)
+                        node(BR,LF)%LNDEMN = (AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP))*node(BR,LF)%LNCX) 
                         LNDEM = LNDEM + node(BR,LF)%LNDEMN
                     ENDIF
                 ENDDO
@@ -239,7 +239,8 @@
             SRNUSE = 0.0
             SNUSEN = 0.0                                                                              !LPM23MAY2015 To consider different N use by node according with age
             LNUSEN = 0.0
-            NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD                                                                   !EQN 206
+            !LPM 12DEC2020 Add GROLSRTN as part of the N reserves
+            NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD+GROLSRTN                                                               !EQN 206
             node%NDEMSMN = 0.0      !LPM14SEP2017 Initialize the variable with 0
             node%NDEMLMN = 0.0
     
@@ -248,9 +249,9 @@
                 DO LF = 1, LNUMSIMSTG(BR)
                     !NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
                     node(BR,LF)%NDEMSMN = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM
-                    IF (PLAGSB2 > 0.0) THEN
+                    IF (PLAGSB2 > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
                         node(BR,LF)%NDEMLMN = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * node(BR,LF)%LNCM
-                    ENDIF
+                    ENDIF  
                 ENDDO
             ENDDO
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
@@ -260,7 +261,8 @@
             NDEMMN = SUM(node%NDEMLMN)+RTWTG*RNCM+SUM(node%NDEMSMN) 
             !LNUSE(1) = (GROLFP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
-            !SNUSE(1) = ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
+            !SNUSE(1) = ((GROST+GRCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
+
             
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
@@ -269,7 +271,7 @@
                         SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
                     ENDIF
-                    IF (GROLFP > 0.0) THEN
+                    IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
                         LNUSEN(1,BR,LF) = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * node(BR,LF)%LNCM*AMIN1(1.0,NULEFT/NDEMMN) 
                         LNUSE(1) = LNUSE(1) + LNUSEN(1,BR,LF)
                     ENDIF
@@ -319,8 +321,8 @@
                             SNUSEN(2,BR,LF) = (node(BR,LF)%SNDEMN - SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
                             SNUSE(2) = SNUSE(2)+ SNUSEN(2,BR,LF)
                         ENDIF
-                        IF (GROLFP > 0.0) THEN
-                            LNUSEN(2,BR,LF) = (node(BR,LF)%LNDEMN - LNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
+                        IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
+                            LNUSEN(2,BR,LF) = (AMAX1(0.0,node(BR,LF)%LNDEMN - LNUSEN(1,BR,LF)))* AMIN1(1.0,NULEFT/NDEM2)
                             LNUSE(2) = LNUSE(2)+ LNUSEN(2,BR,LF)
                         ENDIF
                     ENDDO
@@ -348,7 +350,7 @@
                     IF (GROSTP > 0.0) THEN
                         SNUSEN(0,BR,LF) = SNUSEN(1,BR,LF) + SNUSEN(2,BR,LF)
                     ENDIF
-                    IF (GROLFP > 0.0) THEN
+                    IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
                         LNUSEN(0,BR,LF) = LNUSEN(1,BR,LF) + LNUSEN(2,BR,LF)
                     ENDIF
                 ENDDO

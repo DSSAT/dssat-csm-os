@@ -69,6 +69,8 @@
         SHLAGB2 = 0.0
         SHLAGB3 = 0.0
         SHLAGB4 = 0.0
+        node%LAGL = 0.0
+        node%LAGLT = 0.0
             
         
         
@@ -92,6 +94,9 @@
             IF (node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)))%LAPOTX <= 0.0) THEN
                 node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)))%LAPOTX = node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX
             ENDIF
+            
+            node%LAGL = 0.0
+            node%LAGLT = 0.0
         
                                                                                                               
             DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts

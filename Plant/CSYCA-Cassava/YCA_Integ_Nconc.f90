@@ -67,17 +67,17 @@
             
             IF (RTWT > ZERO) RANC = ROOTN / RTWT        !EQN 017
             !IF (LFWT > ZERO) LANC = LEAFN / LFWT        !EQN 243 
-            Lcount = 0
+
 
             IF ((woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO .AND. LFWT > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (isLeafAlive(node(BR,LF))) THEN
-                            Lcount = Lcount + 1 
                             IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
                                 node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
                             ENDIF
-                            IF (leafAreaLeftToSenesce(node(BR,LF))> 0.0) THEN 
+                            !LPM 09DEC2020 adding restriction to avoid considering leaves that are almost falling
+                            IF (leafAreaLeftToSenesce(node(BR,LF))> (0.1*node(BR,LF)%LATL3T)) THEN 
                                 node(BR,LF)%LANC = node(BR,LF)%LEAFNN / ((leafAreaLeftToSenesce(node(BR,LF))/LAWL(1)) / (1.0-LPEFR)) 
                             ENDIF
                             IF (node(BR,LF)%LANC < 0.0) THEN 
@@ -87,12 +87,12 @@
                                 CALL WARNING(3,'CSYCA',MESSAGE)
                                 node(BR,LF)%LANC = AMAX1(0.0,node(BR,LF)%LANC)
                             ENDIF
+                            LANCM = LANCM + node(BR,LF)%LANC
                         ENDIF
                     ENDDO
                 ENDDO
             ENDIF
             IF (VWAD > 0.0) VANC = VNAD/VWAD                                                                          !EQN 020
-            LANCM = SUM(node%LANC)/ MAX(1,Lcount)
 
             
             SCNCT = 0.0

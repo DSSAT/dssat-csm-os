@@ -21,18 +21,13 @@
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL BRSTAGE
-        INTEGER   :: Lcount                   ! counter for iterations in leaves expanding
         INTEGER   :: Lcounth                   ! counter for iterations in leaves for harvesting
         !-----------------------------------------------------------------------
         !         Update nitrogen amounts
         !-----------------------------------------------------------------------
-        Lcount = 0
         Lcounth = 0
         DO BR = 0, BRSTAGE                                                                                        
             DO LF = 1, LNUMSIMSTG(BR)
-                IF (isLeafExpanding(node(BR,LF))) THEN
-                    Lcount = Lcount + 1
-                ENDIF
                 IF (isLeafAlive(node(BR,LF))) THEN
                     Lcounth = Lcounth + 1
                 ENDIF
@@ -54,7 +49,7 @@
                     !LPM 01DEC2020 Assume harvesting proportional for all the leaves that are active (LNPH) and N increase just for the leaves that are growing 
                     node(BR,LF)%LEAFNN = node(BR,LF)%LEAFNN  + LNUSEN(1,BR,LF)+ LNUSEN(2,BR,LF) - node(BR,LF)%SENNLFGN - node(BR,LF)%SENNLFGRSN - (LNPH/Lcounth) - node(BR,LF)%LEAFNEXCESSN 
                     IF (isLeafExpanding(node(BR,LF))) THEN
-                       node(BR,LF)%LEAFNN = node(BR,LF)%LEAFNN + GROLSRTN/Lcount
+                       node(BR,LF)%LEAFNN = node(BR,LF)%LEAFNN
                     ENDIF
                     LEAFN= LEAFN + node(BR,LF)%LEAFNN
                 ENDIF
