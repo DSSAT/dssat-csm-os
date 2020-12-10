@@ -1065,6 +1065,8 @@ c          write(*,*)xnglf,yrat,GLFWT
           RTWTO = RTWT * PLTPOP     !Root weight, g/m2
           GROHEAD = 0.0
           HEADWT = 0.0
+          ! POD WEIGHT IS SET TO SEED WEIGHT
+          PODWT = SDWT
  
           CALL P_Ceres (EMERG, ISWPHO,                      !Input
      &          CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
@@ -1076,7 +1078,6 @@ c          write(*,*)xnglf,yrat,GLFWT
      &          PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
      &          PStres1, PStres2, PUptake, FracRts)             !Output
         ENDIF
-
 !       CHP 7/29/2008
         IF (MDATE == YRDOY) THEN
           RETURN
