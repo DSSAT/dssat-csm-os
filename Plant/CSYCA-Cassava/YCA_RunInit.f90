@@ -234,15 +234,16 @@
             !-----------------------------------------------------------------------
             
             ! WARNING AND WORK FILES
-            IF (IDETL .EQ. 'Y') THEN
-              ! Close and re-open Work file
-              CALL Getlun('READS.OUT',fnumrea)
-              ! Close and re-open Reads file
-              CLOSE (FNUMREA, STATUS = 'DELETE')
-              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
-              WRITE(fnumrea,*)' '
-              WRITE(fnumrea,*)' File closed and re-opened to avoid generating huge file'
-            ENDIF
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
+!            IF (IDETL .EQ. 'Y') THEN
+!              ! Close and re-open Work file
+!              CALL Getlun('READS.OUT',fnumrea)
+!              ! Close and re-open Reads file
+!              CLOSE (FNUMREA, STATUS = 'DELETE')
+!              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
+!              WRITE(fnumrea,*)' '
+!              WRITE(fnumrea,*)' File closed and re-opened to avoid generating huge file'
+!            ENDIF
             
             IF (RUN == 1) THEN
                 ! IDETG FILES
