@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.7.5.24 gh  12/11/2020 READS.OUT removed from CSM; WARNING.OUT removed from YCA
 !       4.7.5.23 gh  11/13/2020 ETPHOT corrections: phase 1; zero divide corrections
 !       4.7.5.22 gh  11/13/2020 Minor updates; sorghum ecotype file
 
