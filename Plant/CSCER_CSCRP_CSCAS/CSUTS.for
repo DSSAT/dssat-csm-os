@@ -1059,19 +1059,19 @@
 
       j=Tvilent(tlineini)
       IF(j.LT.3)THEN
-        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-        IF (.NOT.FOPEN)THEN
-          CALL Getlun ('WORK.OUT',fnumwrk)
-          OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-        ENDIF
-        WRITE (fnumwrk,*)' Data line sent for standardising too short!'
-        WRITE (fnumwrk,*)' Abvr.line: ',atlinein(1:60)
-        WRITE (fnumwrk,*)' Data line: ',tlineini(1:60)
-        WRITE (fnumwrk,*)' Check WORK.OUT for details. Routine STANDC.'
-        WRITE (*,*) ' Data line sent for standardising too short!'
-        WRITE (*,*) ' Abvr.line: ',atlinein(1:60)
-        WRITE (*,*) ' Data line: ',tlineini(1:60)
-        WRITE (*,*) ' Check WORK.OUT for details. Routine STANDC.'
+!        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+!        IF (.NOT.FOPEN)THEN
+!          CALL Getlun ('WORK.OUT',fnumwrk)
+!          OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+!        ENDIF
+!        WRITE (fnumwrk,*)' Data line sent for standardising too short!'
+!        WRITE (fnumwrk,*)' Abvr.line: ',atlinein(1:60)
+!        WRITE (fnumwrk,*)' Data line: ',tlineini(1:60)
+!        WRITE (fnumwrk,*)' Check WORK.OUT for details. Routine STANDC.'
+!        WRITE (*,*) ' Data line sent for standardising too short!'
+!        WRITE (*,*) ' Abvr.line: ',atlinein(1:60)
+!        WRITE (*,*) ' Data line: ',tlineini(1:60)
+!        WRITE (*,*) ' Check WORK.OUT for details. Routine STANDC.'
         RETURN
       ENDIF
 
@@ -1406,7 +1406,8 @@
 
       SAVE
 
-      CALL CSYR_DOY(ADATE, AYR, ADOY)
+      !CALL CSYR_DOY(ADATE, AYR, ADOY)
+      CALL YR_DOY(ADATE, AYR, ADOY)
       NDYR = CSENDYR(AYR)
       ADOY = ADOY + DELTA
   100 CONTINUE
@@ -1613,16 +1614,16 @@
       IMPLICIT NONE
 
       REAL      tfac4,tcard(4),temp,tunit,topt,tfacbeta
-      INTEGER   fnumwrk
+!      INTEGER   fnumwrk
       LOGICAL   fopen
 
       INTRINSIC AMAX1,AMIN1
 
       SAVE
       
-      CALL Getlun ('WORK.OUT',fnumwrk)
-      INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-      IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!      CALL Getlun ('WORK.OUT',fnumwrk)
+!      INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!      IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
       
       TOPT = TCARD(2)+((TCARD(3)-TCARD(2))/2.0)
       
@@ -2064,18 +2065,18 @@
       MESSAGE(3) = 'Returned -99. This may affect results'      
       CALL WARNING(3,'CSUTS',MESSAGE)
 
-      CALL Getlun ('WORK.OUT',fnumwrk)
-      INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-      IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!      CALL Getlun ('WORK.OUT',fnumwrk)
+!      INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!      IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
       lenchar=Tvilent(newchar)
-      WRITE (fnumwrk,*) ' '
-      WRITE (fnumwrk,*) ' WARNING Problem in Tvifromc utility.'
-      WRITE (fnumwrk,*) ' Trying to convert to integer character: ',
-     & newchar
-      WRITE (fnumwrk,*) ' Length of input character was ',lenchar   
-      WRITE (fnumwrk,*) ' Returned -99. This may affect results'      
-      WRITE (fnumwrk,*) ' '
-      IF (.NOT.fopen) CLOSE (fnumwrk)
+!      WRITE (fnumwrk,*) ' '
+!      WRITE (fnumwrk,*) ' WARNING Problem in Tvifromc utility.'
+!      WRITE (fnumwrk,*) ' Trying to convert to integer character: ',
+!     & newchar
+!      WRITE (fnumwrk,*) ' Length of input character was ',lenchar   
+!      WRITE (fnumwrk,*) ' Returned -99. This may affect results'      
+!      WRITE (fnumwrk,*) ' '
+!      IF (.NOT.fopen) CLOSE (fnumwrk)
       
       RETURN
 
@@ -2175,13 +2176,13 @@
       MESSAGE(3) = 'Returned -99. This may affect results'      
       CALL WARNING(3,'CSUTS',MESSAGE)
             
-      CALL Getlun ('WORK.OUT',fnumwrk)
-      INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-      IF (.NOT.FOPEN)THEN
-        OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-      ENDIF  
-      WRITE (fnumwrk,*) ' Problem in Tvrfromc (real<-character)!'
-      WRITE (fnumwrk,*) ' Trying to convert: ',newchar
+!      CALL Getlun ('WORK.OUT',fnumwrk)
+!      INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+!      IF (.NOT.FOPEN)THEN
+!        OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+!      ENDIF  
+!      WRITE (fnumwrk,*) ' Problem in Tvrfromc (real<-character)!'
+!      WRITE (fnumwrk,*) ' Trying to convert: ',newchar
 
 
       RETURN
@@ -2285,13 +2286,13 @@
       MESSAGE(3) = 'Returned -99. This may affect results'      
       CALL WARNING(3,'CSUTS',MESSAGE)
 
-      CALL Getlun ('WORK.OUT',fnumwrk)
-      INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-      IF (.NOT.FOPEN)THEN
-        OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-      ENDIF  
-      WRITE (fnumwrk,*) ' Problem in Tvrfromccde (real<-character)!'
-      WRITE (fnumwrk,*) ' Trying to convert: ',newchar
+!      CALL Getlun ('WORK.OUT',fnumwrk)
+!      INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+!      IF (.NOT.FOPEN)THEN
+!        OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+!      ENDIF  
+!      WRITE (fnumwrk,*) ' Problem in Tvrfromccde (real<-character)!'
+!      WRITE (fnumwrk,*) ' Trying to convert: ',newchar
 
       RETURN
 
@@ -2659,8 +2660,8 @@
 
       CHARACTER (LEN=*)   WTHSTA
       CHARACTER (LEN=128) ARG
-      CHARACTER (LEN=120) CFGDFILE, FILEIO
-      CHARACTER (LEN=64)  WTHDIRFL
+      CHARACTER (LEN=250) CFGDFILE, FILEIO
+      CHARACTER (LEN=250) WTHDIRFL
       CHARACTER (LEN=12)  WTHFLE, WTHTFLE, WTHSS
       CHARACTER (LEN=4)   TL4
       CHARACTER (LEN=3)   CFGCODE,WTHFTYPE

@@ -206,10 +206,10 @@ Module YCA_First_Trans_m
     INTEGER :: FNUMPREM                ! File number,measured responses #          ! (From RunInit)   
     INTEGER :: FNUMPRES                ! File number,simulated response #          ! (From RunInit)   
     INTEGER :: FNUMPSUM                ! Number used for plant summary  #          ! (From RunInit)   
-    INTEGER :: FNUMREA                 ! File number,reads.out file     #          ! (From RunInit)   
+!    INTEGER :: FNUMREA                 ! File number,reads.out file     #          ! (From RunInit)   
     INTEGER :: FNUMT                   ! Number used for T-file         #          ! (From RunInit)   
     INTEGER :: FNUMTMP                 ! File number,temporary file     #          ! (From RunInit)   
-    INTEGER :: FNUMWRK                 ! File number,work file          #          ! (From RunInit)   
+!    INTEGER :: FNUMWRK                 ! File number,work file          #          ! (From RunInit)   
     INTEGER :: FROPADJ                 ! Frequency of outputs,adjusted  d          ! (From RunInit)   
     REAL    :: FSOILH2O                ! Final soil water               cm         ! (From Integrate) 
     REAL    :: FSOILN                  ! Final soil inorganic N         kg/ha      ! (From Integrate) 
@@ -1208,6 +1208,7 @@ Module YCA_First_Trans_m
         !CHARACTER(LEN=1)   IDETL       , ISWNIT      , ISWWAT      , RNMODE      
         !CHARACTER(LEN=120) FILEIOIN    
         !CHARACTER(LEN=10)  TL10FROMI                                                          ! Character function call
+
 
     End Module YCA_First_Trans_m
     

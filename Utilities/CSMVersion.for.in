@@ -17,17 +17,16 @@
         INTEGER :: Build = @BUILD@
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
+!     CMake no longer able to change the branch name, do it manually.      
+!     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
 !       4.8.0.1  chp 2020-07-21 v4.8
 !       4.7.5.0  chp 2018-12-18 Pre-release version
 !       4.7.2.3  chp 2018-10-25 Rice - G5 parameter (rolled back for v4.7.5)  
 !       4.7.2.2  chp 2018-10-25 Sugarbeet, Forage, Cassava,    
-!                               ASCE ET added (on hold),
-!                               Fixed bug with maize byproduct harvest percentage 
 !       4.7.2.1  chp 2018-07-08 Use CSMVersion, minor bug fixes, Linux hacks, 
-!                                 VSCode files
 !       4.7.2.0  chp 2018-05-07 v4.7.2 Release 2018 Workshop
 !       4.7.1.0  chp 2017-10-27 v4.7.1 Release
 !       4.7.0.0  chp 2017-08-09 v4.7.0 Release
