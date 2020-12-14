@@ -49,8 +49,6 @@
             ELSE                                                                         
                 EMRGFR = 1.0
                 IF (EMFLAG /= 'Y') THEN
-                    WRITE(FNUMWRK,*)' ' 
-                    WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
                     EMFLAG = 'Y'
                 ENDIF
                 LNUMSG = 1     ! LAH NEW
@@ -60,8 +58,6 @@
             SEEDUSES = 0.0     
             EMRGFR = 1.0
             IF (EMFLAG /= 'Y') THEN
-                WRITE(FNUMWRK,*)' ' 
-                WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
                 EMFLAG = 'Y'
             ENDIF
             LNUMSG = 1     ! LAH NEW
@@ -171,8 +167,6 @@
         !DO I = 1, 20 !LPM 27SEP2019 This section is not necessary and defines the wrong harvesting the second year for multiple years simulations  
         !    IF (HYEARDOY(I) == YEARDOY) THEN  
         !        HANUM = I
-        !        WRITE(fnumwrk,*) ' '
-        !        WRITE(fnumwrk,'(A20,i2,A12,A1,A6,i8)')' Harvest instruction ',hanum,'  Operation ',hop(i),'  Day ',yeardoy
         !        CALL CSUCASE(HOP(I)) 
         !        IF (hop(i) == 'F') YEARDOYHARF = YEARDOY 
         !    ENDIF
@@ -193,7 +187,6 @@
             ENDIF
         ENDIF
               
-        IF (HAFR > 0.0) WRITE(fnumwrk,'(A23,3F6.1)')' HARVEST  FR,CWAN,CWAD ',HAFR,CWAN(HANUM),CWAD
 
         ! For grazing 
         lwph = lfwt * hafr                                                                                             !EQN 416

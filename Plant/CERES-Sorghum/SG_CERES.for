@@ -1,10 +1,9 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C                      USDA-ARS-ALARC, Phoenix, AZ
-C                      Washington State University
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2020 
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C ALL RIGHTS RESERVED
 C=======================================================================
 C======================================================================
 C  Main CERES-Sorghum CSM Routine
@@ -374,8 +373,6 @@ C-----------------------------------------------------------------------
       Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
 
-C      PARAMETER       (ERRKEY='MAIZE')
-
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       CROP    = CONTROL % CROP
@@ -737,6 +734,10 @@ C         ***********************************************************
 C-GH &            ROPT,GDDE,RUE,KCAN
 C-gh &            ROPT,DJTI,GDDE,RUE,KCAN
 
+             IF (PLAM .LE. 0.0) THEN
+              CALL ERROR (ERRKEY,37,FILEE,LNUM)
+             ENDIF
+
 c             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
 c     &            ROPT,DJTI,GDDE,RUE,KCAN,P3,P4
 
@@ -745,7 +746,7 @@ C-GH3100         FORMAT (A6,1X,A16,1X,8(1X,F5.0))
 c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
           ELSEIF (ISECT .EQ. 0) THEN
-            CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            CALL ERROR(ERRKEY,38,FILEE,LNUM)
           ENDIF
         ENDDO
         CLOSE (LUNECO)
