@@ -79,7 +79,7 @@
   0.70                                FRLFMX        
   
 !*LEAF GROWTH PARAMETERS                                                                            
-!150.  270. 115.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC
+! 150.  270. 115.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC
   200.  260. 115.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC       
   650.  260. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA
 ! 650.  285. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA   
