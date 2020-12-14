@@ -128,13 +128,9 @@
         
         INQUIRE (FILE = CUDIRFLE,EXIST = FFLAG)
         IF (.NOT.(FFLAG)) THEN
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,*) 'Cultivar file not found!     '
-            WRITE(fnumwrk,*) 'File sought was:          '  
-            WRITE(fnumwrk,*) Cudirfle(1:78)
-            WRITE(fnumwrk,*) 'Will search in the working directory for:'
+            
             CUDIRFLE = CUFILE
-            WRITE(fnumwrk,*)  Cudirfle(1:78)
+                        
             INQUIRE (FILE = CUDIRFLE,EXIST = FFLAG)
             IF (.NOT.(FFLAG)) THEN
                 OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
@@ -154,16 +150,13 @@
         
         INQUIRE (FILE = ECDIRFLE,EXIST = FFLAGEC)
         IF (.NOT.(FFLAGEC)) THEN
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,*) 'Ecotype file not found!     '
-            WRITE(fnumwrk,*) 'File sought was: ',Ecdirfle(1:60)  
             ECDIRFLE = ECFILE
-            WRITE(fnumwrk,*) 'Will search in the working directory for:',Ecdirfle(1:60)
+            
             INQUIRE (FILE = ECDIRFLE,EXIST = FFLAGEC)
             IF (.NOT.(FFLAGEC)) THEN
                 OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
-                WRITE(fnumwrk,*) 'File not found in working directory!'
-                WRITE(fnumwrk,*) 'Please check'
+                WRITE(fnumerr,*) 'File not found in working directory!'
+                WRITE(fnumerr,*) 'Please check'
                 WRITE(*,*) ' Ecotype file not found!     '
                 WRITE(*,*) ' File sought was: ',Ecdirfle(1:60)
                 WRITE(*,*) ' Program will have to stop'

@@ -1,12 +1,12 @@
-!=======================================================================
-!  COPYRIGHT 1998-2010 Iowa State University, Ames, Iowa
-!                      University of Florida, Gainesville, Florida
-!                      The University of Georgia, Griffin, Georgia
-!                      International Fertilizer Development Center
-!                      University of Guelph
-!  ALL RIGHTS RESERVED
-!=======================================================================
-!======================================================================
+C=======================================================================
+C COPYRIGHT 1998-2020 
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C
+C ALL RIGHTS RESERVED
+C=======================================================================
+C======================================================================
 !  Various MAIZE Subroutines
 !
 !  Maize growth routine that coordinates calling of GROSUB, PHENOL and
