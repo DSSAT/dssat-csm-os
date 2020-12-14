@@ -15,7 +15,11 @@ Module Forecast
 CONTAINS
 
 !========================================================================
-SUBROUTINE FCAST_STORE(FCOUNT)
+SUBROUTINE FCAST_STORE(                  &  
+     FILEW, FILEWC, FILEWG, MEWTH,       &  !Input
+     PATHWT, PATHWTC, PATHWTG, PATHWTW,  &  !Input
+     YREND,                              &  !Input/Output
+     FCOUNT, FYRDOY)                        !Output
 ! Determine start and end of forecast season (i.e., prior to ensemble)
 !   and the first and last years for the historical ensemble weather years
 ! Store the forecast year weather data plus data from short term forecast file. 
@@ -26,12 +30,14 @@ SUBROUTINE FCAST_STORE(FCOUNT)
   IMPLICIT NONE
 
   CHARACTER*1  MEWTH
+  CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
   CHARACTER*12 FILEW, FILEWC, FILEWG
   CHARACTER*80 PATHWT, PATHWTC, PATHWTG, PATHWTW
   CHARACTER*92 FILEWW
+
   INTEGER, INTENT(OUT)  :: FCOUNT
   INTEGER DOY, I, Obs_YRDOY, RSEED1, YREND, YR, YRSIM
-  INTEGER INCDAT, TIMDIF
+  INTEGER INCDAT, TIMDIF, FYRDOY
   REAL CCO2, DCO2, OZON7, PAR, RAIN, REFHT, RHUM
   REAL SRAD, TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT
   REAL WINDSP, XELEV, XLAT, XLONG
@@ -73,6 +79,29 @@ SUBROUTINE FCAST_STORE(FCOUNT)
   EnsYearCurrent = EnsYearFirst
 
 ! =======================================================================
+! Initialize weather file for this year's data (i.e., pre-forecast date)
+  CONTROL2 = CONTROL
+  CONTROL2 % DYNAMIC = SEASINIT
+  Obs_YRDOY = INCDAT(FSTART, -1)
+  CONTROL2 % YRDOY = Obs_YRDOY
+
+  CALL IPWTH(CONTROL2, ERRKEY,                        &
+        CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
+        MEWTH, OZON7, PAR,                            &    !Output
+        PATHWTC, PATHWTG, PATHWTW,                    &    !Output
+        RAIN, REFHT, RHUM, RSEED1, SRAD,              &    !Output
+        TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
+        WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
+        SEASINIT)                                           
+
+    Obs_data(0) % YRDOY= Obs_YRDOY
+    Obs_data(0) % SRAD = SRAD
+    Obs_data(0) % TMAX = TMAX
+    Obs_data(0) % TMIN = TMIN
+    Obs_data(0) % RAIN = RAIN
+    Obs_data(0) % PAR  = PAR
+
+! =======================================================================
 ! Get and store weather data between YRSIM and FODAT-1
   CONTROL2 = CONTROL
   CONTROL2 % DYNAMIC = RATE
@@ -80,11 +109,11 @@ SUBROUTINE FCAST_STORE(FCOUNT)
 ! IPWTH was already initialized for the forecast year. Go ahead and retrieve 
 !   data for this year and store for retrieval at the beginning of each 
 !   ensemble.
-  DO I = 0, FCOUNT
+  DO I = 1, FCOUNT
     Obs_YRDOY = INCDAT(FSTART, I-1)
     CONTROL2 % YRDOY = Obs_YRDOY
 
-    CALL IPWTH(CONTROL2,                              &
+    CALL IPWTH(CONTROL2, ERRKEY,                      &
         CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
         MEWTH, OZON7, PAR,                            &    !Output
         PATHWTC, PATHWTG, PATHWTW,                    &    !Output
@@ -101,20 +130,24 @@ SUBROUTINE FCAST_STORE(FCOUNT)
     Obs_data(I) % PAR  = PAR
   ENDDO
 
-  IF (MEWTH .EQ. 'M') THEN
-    CONTROL2 % YRDOY = EnsYearFirst * 1000 + DOY
-    CONTROL2 % DYNAMIC = RUNINIT
-
-!   Re-initialize IPWTH for the historical ensemble.
-    CALL IPWTH(CONTROL2,                              &
-        CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
-        MEWTH, OZON7, PAR,                            &    !Output
-        PATHWTC, PATHWTG, PATHWTW,                    &    !Output
-        RAIN, REFHT, RHUM, RSEED1, SRAD,              &    !Output
-        TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
-        WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
-        RUNINIT)                                           
-  ENDIF
+!! =======================================================================
+!! Now need to re-initialize to read historical weather data
+!  IF (INDEX('MG', MEWTH) .GT. 0) THEN
+!    FYRDOY = EnsYearFirst * 1000 + DOY
+!    CONTROL2 % YRDOY = FYRDOY
+!    CONTROL2 % YRSIM = FYRDOY
+!    CONTROL2 % DYNAMIC = RUNINIT
+!
+!!   Re-initialize IPWTH for the historical ensemble.
+!    CALL IPWTH(CONTROL2,                              &
+!        CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
+!        MEWTH, OZON7, PAR,                            &    !Output
+!        PATHWTC, PATHWTG, PATHWTW,                    &    !Output
+!        RAIN, REFHT, RHUM, RSEED1, SRAD,              &    !Output
+!        TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
+!        WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
+!        RUNINIT)                                           
+!  ENDIF
 
   RETURN
 END SUBROUTINE FCAST_STORE

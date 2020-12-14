@@ -23,7 +23,7 @@ C  Called by: WEATHR
 C  Calls:     None
 C=======================================================================
 
-      SUBROUTINE IPWTH(CONTROL,
+      SUBROUTINE IPWTH(CONTROL, SOURCE,
      &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
      &    MEWTH, OZON7, PAR,                              !Output
      &    PATHWTC, PATHWTG, PATHWTW,                      !Output
@@ -41,7 +41,7 @@ C=======================================================================
 
       CHARACTER*1  BLANK, MEWTH, RNMODE, UPCASE
       CHARACTER*4  INSI
-      CHARACTER*6  SECTION, ERRKEY
+      CHARACTER*6  SECTION, ERRKEY, SOURCE
       CHARACTER*8  WSTAT
       CHARACTER*10 TEXT
       CHARACTER*12 FILEW, LastFILEW, FILEWC, FILEWG
@@ -175,12 +175,6 @@ C     The components are copied into local variables for use here.
       
       ErrCode = 0
 
-      !IF (RNMODE .EQ. 'Y') THEN
-      !  CALL FCAST_GETDATE(YRDOY_WY)
-      !ELSE
-      !  YRDOY_WY = YRDOY
-      !ENDIF
-      
 !-----------------------------------------------------------------------
 !     Don't re-initialize for sequence and seasonal runs
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN > 1) RETURN
@@ -204,6 +198,7 @@ C     The components are copied into local variables for use here.
      &        FILEWC, PATHWTC
             CALL GETLUN('FILEWC', LUNWTHC)
         END SELECT
+
       ELSE
 !       In any case, need to keep separate weather file names
         SELECT CASE (MEWTH)
@@ -243,6 +238,13 @@ C     The components are copied into local variables for use here.
         ENDIF
       ENDIF
 
+!     Forecast mode: Set weather file name for historical weather data for forecast
+!     - when IPWTH is called from the forecast module, don't change weather file name
+! 
+      IF (RNMODE .EQ. 'Y' .AND. SOURCE .EQ. "WEATHR") THEN
+        
+      ENDIF
+
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRSIM,YR,ISIM)
 
@@ -257,10 +259,6 @@ C     The components are copied into local variables for use here.
         YRDOY_WY = INCYD(YRSIM,-1)
       ENDIF
 
-      !IF (RNMODE .EQ. 'Y') THEN
-      !  CALL FCAST_GETDATE(YRDOY_WY)
-      !ENDIF
-      
       WSTAT = FILEW(1:8)
       CALL PUT('WEATHER','WSTA',WSTAT)
 

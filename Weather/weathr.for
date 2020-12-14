@@ -62,7 +62,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
 !     Yield forecast variables
-      INTEGER FCODE, YRDOY_F
+      INTEGER FCODE, FYRDOY, INCDAT, YRDOY_F
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
@@ -114,7 +114,7 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
-      CALL IPWTH(CONTROL,
+      CALL IPWTH(CONTROL, ERRKEY,
      &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
      &    MEWTH, OZON7, PAR,                              !Output
      &    PATHWTC, PATHWTG, PATHWTW,                      !Output
@@ -137,10 +137,20 @@ C=======================================================================
         YYDDD = YRSIM
         CALL YR_DOY(YYDDD, YEAR, DOY)
 !-----------------------------------------------------------------------
+!       Forecast mode - read in-season weather and store in memory
+        IF (RNMODE .EQ. 'Y') THEN
+!         Read in-season weather and store in memory
+          CALL FCAST_STORE(                    
+     &        FILEW, FILEWC, FILEWG, MEWTH,         !Input
+     &        PATHWT, PATHWTC, PATHWTG, PATHWTW,    !Input
+     &        YREND,                                !Input/Output
+     &        FCOUNT, FYRDOY)                       !Output
+        ENDIF
+
 !       Initialize read from file for 'M', 'G' weather options and also for
 !         RNMODE = 'Y' (yield forecast mode) regardless of weather option
-        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' .OR. RNMODE .EQ. 'Y')THEN
-          CALL IPWTH(CONTROL,
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G')THEN
+          CALL IPWTH(CONTROL, ERRKEY,
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
      &      PATHWTC, PATHWTG, PATHWTW,                    !Output
@@ -169,14 +179,6 @@ C       Set default values FOR REFHT AND WINDHT
      &      TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)       !Output
 !        ELSE
 !          CALL ERROR(ERRKEY,1,' ',0)
-        ENDIF
-
-!       Forecast mode - read in-season weather and store in memory
-        IF (RNMODE .EQ. 'Y') THEN
-!         Read in-season weather and store in memory
-          CALL FCAST_STORE(FCOUNT)
-!         Initialize retreival and grab first day (if needed)
-          CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FCODE)
         ENDIF
 
       IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
@@ -214,6 +216,11 @@ C         message to the WARNING.OUT file.
      &            ' simulation,')
   130 FORMAT('which may produce undesirable results.')
 
+!     For forecast mode, retrive initial weather data
+      IF (RNMODE .EQ. 'Y') THEN
+        FYRDOY = INCDAT(YRSIM,-1)
+        CALL FCAST_RETRIEVE(FYRDOY, RAIN, TMAX, TMIN, SRAD, PAR,YRDOY_F)
+      ENDIF
 
 C     Calculate day length, sunrise and sunset.
       CALL DAYLEN(
@@ -280,21 +287,21 @@ C     Compute daily normal temperature.
 
 !     Yield forecast mode
       CONTROL2 = CONTROL
-      YRDOY_F = 0
+      FYRDOY = 0
       IF (RNMODE .EQ. 'Y') THEN
 !       Retrieve weather data, send back FCODE=1 if YRDOY_WY
-        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, YRDOY_F)
-        IF (YRDOY_F .GT. 0) THEN
-          CONTROL2 % YRDOY = YRDOY_F
+        CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FYRDOY)
+        IF (FYRDOY .GT. 0) THEN
+          CONTROL2 % YRDOY = FYRDOY
         ENDIF
       ENDIF
 
-      IF (YRDOY_F .GT. 0) THEN
+      IF (FYRDOY .GT. 0) THEN
 !       Get weather data by normal means    
 !-----------------------------------------------------------------------
 C       Read new weather record.
         IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' ) THEN
-          CALL IPWTH(CONTROL2,
+          CALL IPWTH(CONTROL2, ERRKEY,
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
      &      PATHWTC, PATHWTG, PATHWTW,                    !Output
@@ -392,7 +399,7 @@ C-----------------------------------------------------------------------
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
-        CALL IPWTH(CONTROL,
+        CALL IPWTH(CONTROL, ERRKEY,
      &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
      &    MEWTH, OZON7, PAR,                              !Output
      &    PATHWTC, PATHWTG, PATHWTW,                      !Output
