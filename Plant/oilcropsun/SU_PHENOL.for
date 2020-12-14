@@ -640,7 +640,7 @@ C     taking L=1
               !    Used to compute N demand.
               XSTAGE = 1.5 + 3.0*SUMDTT/P3P 
                 
-              VegFrac = MAX(VegFrac,(SUMDTT + SUMDTT_2) / (SUMDTT_2+P3P))
+              VegFrac=MAX(VegFrac,(SUMDTT+SUMDTT_2) /(SUMDTT_2+P3P))
 
               IF (SUMDTT .LT. P3P) RETURN
 
