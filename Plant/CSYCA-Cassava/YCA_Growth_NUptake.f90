@@ -99,7 +99,7 @@
             !SNDEM = AMAX1(0.0,GROST+GROCR)*SNCX + (woodyWeight())*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
             RNDEM = RTWTG*RNCX                                     !EQN 154
             
-            SRNDEM = (SRWTGRS)*(SRNPCS/100.0)                      !EQN 155
+            SRNDEM = (SRWTGRSP)*(SRNPCS/100.0)                      !EQN 155
 
                         
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       

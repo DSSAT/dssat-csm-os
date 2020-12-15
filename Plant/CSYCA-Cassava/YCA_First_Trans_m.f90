@@ -838,6 +838,7 @@ Module YCA_First_Trans_m
     REAL    :: SRWAD                   ! Storage root weight            kg/ha      ! (From Integrate) 
     REAL    :: SRWT                    ! Root storage organ weight      g/p        ! (From SeasInit)  
     REAL    :: SRWTGRS                 ! Root storage,reserves>std.%    g/p        ! (From SeasInit)  
+    REAL    :: SRWTGRSP                ! Root storage potential         g/p        ! (From SeasInit)
     REAL    :: SRWTGRSADJ              ! Root storage adjusted          g/p        ! (From SeasInit) 
     ! REAL    :: SRWUD                   ! Storage root size              g          ! (From SeasInit)   ! issue 50
     REAL    :: SRWUM                   ! Storage root wt/unit,maturity  g          ! (From SeasInit)  
