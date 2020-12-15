@@ -70,9 +70,9 @@
                 IF (node(BR,LF)%SANC > node(BR,LF)%SNCX) THEN 
                     node(BR,LF)%STEMNEXCESSN = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*(node(BR,LF)%SANC-node(BR,LF)%SNCX)
                     STEMNEXCESS = STEMNEXCESS + node(BR,LF)%STEMNEXCESSN
-                    node(BR,LF)%STEMNN = node(BR,LF)%STEMNN + SNUSEN(0,BR,LF) - node(BR,LF)%SNPHN - node(BR,LF)%STEMNEXCESSN  
-                    STEMN = STEMN + node(BR,LF)%STEMNN
-                ENDIF 
+                ENDIF
+                node(BR,LF)%STEMNN = node(BR,LF)%STEMNN + SNUSEN(0,BR,LF) - node(BR,LF)%SNPHN - node(BR,LF)%STEMNEXCESSN  
+                STEMN = STEMN + node(BR,LF)%STEMNN
             ENDDO
         ENDDO
            

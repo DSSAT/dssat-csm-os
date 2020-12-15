@@ -136,6 +136,7 @@ Module YCA_Node !Module of environment
         Node_type_constructor%sncm = 0.0
         Node_type_constructor%sncr = 0.0
         Node_type_constructor%sndemn = 0.0
+        Node_type_constructor%snphn = 0.0
         Node_type_constructor%stemnn = 0.0 !LPM 23MAY2015 Added to keep nitrogen content by node
         Node_type_constructor%STEMNEXCESSN = 0.0
         Node_type_constructor%tfdlf = 0.0

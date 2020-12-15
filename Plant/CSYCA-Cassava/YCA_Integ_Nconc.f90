@@ -72,10 +72,10 @@
             IF ((woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO .AND. LFWT > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
+                        IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
+                            node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
+                        ENDIF
                         IF (isLeafAlive(node(BR,LF))) THEN
-                            IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
-                                node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
-                            ENDIF
                             !LPM 09DEC2020 adding restriction to avoid considering leaves that are almost falling
                             IF (leafAreaLeftToSenesce(node(BR,LF))> (0.1*node(BR,LF)%LATL3T)) THEN 
                                 node(BR,LF)%LANC = node(BR,LF)%LEAFNN / ((leafAreaLeftToSenesce(node(BR,LF))/LAWL(1)) / (1.0-LPEFR)) 
