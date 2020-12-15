@@ -129,6 +129,8 @@ C=======================================================================
      &    TMAX, TMIN, TWILEN, WINDSP,                     !Input/Output
      &    DEC, NEV, SNUP, SNDN, YREND)                    !Output
 
+      FYRDOY = 0
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -136,6 +138,7 @@ C=======================================================================
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
         YYDDD = YRSIM
         CALL YR_DOY(YYDDD, YEAR, DOY)
+        FYRDOY = 0
 !-----------------------------------------------------------------------
         CONTROL2 = CONTROL
 !       Forecast mode - read in-season weather and store in memory
@@ -148,6 +151,7 @@ C=======================================================================
 ! chp note: may not need FCOUNT here
      &        FCOUNT, FYRDOY)                       !Output
           CONTROL2 % YRDOY = FYRDOY
+          CONTROL2 % YRSIM = FYRDOY
         ENDIF
 
 !       Initialize read from file for 'M', 'G' weather options and also for
@@ -297,6 +301,8 @@ C     Compute daily normal temperature.
         IF (FYRDOY .GT. 0) THEN
           CONTROL2 % YRDOY = FYRDOY
         ENDIF
+      ELSE
+        FYRDOY = YRDOY
       ENDIF
 
       IF (FYRDOY .GT. 0) THEN

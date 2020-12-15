@@ -240,15 +240,9 @@ C     The components are copied into local variables for use here.
 
 !     Forecast mode: Set weather file name for historical weather data for forecast
 !     - when IPWTH is called from the forecast module, don't change weather file name
-! 
-      IF (RNMODE .EQ. 'Y' .AND. SOURCE .EQ. "WEATHR") THEN
-        !IF (ENDYRS .GT. 1) THEN
-        !  RUN = RUN + 1
-        !  REPNO = REPNO + 1
-        !  CALL MULTIRUN(RUN, 0)  
-        !  YREND = -99
-        !ENDIF
-
+!     If it's a multi-year weather file, no need to change the name.
+      IF (RNMODE .EQ. 'Y' .AND. SOURCE .EQ. "WEATHR" 
+     &    .AND. NYEAR .EQ. 1) THEN
         PATHL  = INDEX(PATHWTW,BLANK)
         CALL YR_DOY(CONTROL % YRDOY, WYEAR, WDOY)
         WYEAR = MOD(WYEAR,100)
@@ -450,7 +444,9 @@ C       Substitute default values if REFHT or WINDHT are missing.
 
         NRecords = 0
 
-      ELSEIF (LongFile .AND. YRDOY < FirstWeatherDay) THEN
+      ELSEIF ((LongFile .AND. YRDOY < FirstWeatherDay)
+     &   .OR. (RNMODE .EQ. 'Y')) THEN
+! CHP NOTE: This is where I left off on 2020-12-15. Not sure this is right...
 !       Starting over with long file -- same file, but need to read from tops
         REWIND(LUNWTH)
         
