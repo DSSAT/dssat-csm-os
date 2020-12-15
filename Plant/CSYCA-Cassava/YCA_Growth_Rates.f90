@@ -220,13 +220,22 @@
             !LPM 24MAR2016 
             IF (DAE > 0) THEN
                 IF (ISWWAT == 'Y') THEN
-                    LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TT*WFG)                                      !LPM 31JUL2015 to consider water stress
+                    IF (ISWNIT /= 'N') THEN
+                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TT* (AMIN1(WFG,NFG)) 
+                    ELSE
+                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TT*WFG)                                      !LPM 31JUL2015 to consider water stress
+                    ENDIF
                 ELSE
                     LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TT                                              !LPM 21/02/2015 leaf number curve
                 ENDIF
             ELSEIF (DAG > 0) THEN
                 IF (ISWWAT == 'Y') THEN
-                    LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TTGEM*WFG)                                      !LPM 31JUL2015 to consider water stress
+                    IF (ISWNIT /= 'N') THEN
+                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TTGEM*(AMIN1(WFG,NFG))                           !LPM 31JUL2015 to consider water stress
+                    ELSE
+                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TTGEM*WFG) 
+                    ENDIF
+                    
                 ELSE
                     LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TTGEM                                              !LPM 21/02/2015 leaf number curve
                 ENDIF

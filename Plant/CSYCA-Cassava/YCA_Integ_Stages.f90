@@ -59,9 +59,10 @@
             TMEANE = TMEANEC/GEDAYSE
         ENDIF
         ! STAGES:Overall development
+        !LPM 11DEC2020 Add delay on branching due to N
         IF (DAG>=0) THEN !LPM 10JUL2017 To avoid accumulation of developmental units for branching before germination
             CUMDU = CUMDU + DU
-            DABR = DABR + (DU*WFG)
+            DABR = DABR + (DU*AMIN1(WFG,NFG))
         ENDIF
         
         ! BRANCH NUMBER     !LPM 07MAR15 This section was moved from CS_Growth_Part (has to be before of the estimation of brstage)       
@@ -98,7 +99,8 @@
                 IF (BRFX(INT(TVR1)) <= 0.0) then 
                     BRFX(INT(TVR1)) = BRFX(INT(TVR1-1))                 !LPM 09JUN2015 To avoid number of branches 0 for BRSTAGE>6
                 endif                                
-                BRNUMST(TVR1) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
+            !LPM 11DEC2020 to reduce # of branches due to water or N stress
+                BRNUMST(TVR1) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))*AMIN1(WFG,NFG)                    ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             ENDIF
         ENDIF 
         

@@ -26,7 +26,6 @@
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL    BD(NL)      , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SAT(NL)     
         REAL    SW(NL)      , UNH4(NL)    , UNO3(NL)    , BRSTAGE
-        REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
     
         
         !-----------------------------------------------------------------------
@@ -52,6 +51,7 @@
         RTRESPADJ = RTRESP   
         RTWTGADJ = RTWTG
         SHLAGB4 = SHLAGB2
+        SRWTGRSADJ = SRWTGRSP
 
         node(0,0)%NFLF2 = 1.0
         
@@ -100,15 +100,7 @@
             RNDEM = RTWTG*RNCX                                     !EQN 154
             
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0)                      !EQN 155
-            !LPM 01DEC2020 Added Lcount to distribute GROLSRTN among the growing leaves
-            Lcount = 0
-            DO BR = 0, BRSTAGE                                                                                        
-                DO LF = 1, LNUMSIMSTG(BR)
-                    IF (isLeafExpanding(node(BR,LF))) THEN
-                        Lcount = Lcount + 1
-                    ENDIF                
-                ENDDO
-            ENDDO
+
                         
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
@@ -258,7 +250,8 @@
             !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using GROLFP instead of GROLF
             !LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
-            NDEMMN = SUM(node%NDEMLMN)+RTWTG*RNCM+SUM(node%NDEMSMN) 
+            !LPM 14DEC2020 Add minimum storage root demand considering 50% of the total demand
+            NDEMMN = SUM(node%NDEMLMN)+RTWTG*RNCM+SUM(node%NDEMSMN)+ (SRNDEM*0.5)
             !LNUSE(1) = (GROLFP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
             !SNUSE(1) = ((GROST+GRCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
@@ -277,7 +270,9 @@
                     ENDIF
                 ENDDO
             ENDDO
-            !SRNUSE(1) = (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            !LPM 05JUN2015 GROSR or basic growth of storage roots will not be used
+            !LPM 14DEC2020 Add a minimum N demand for storage roots
+            SRNUSE(1) = (SRNDEM*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 
     
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
             !LPM 23NOV2020 Reduce also leaf growth
@@ -286,7 +281,8 @@
                 GROSTADJ = GROSTP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
                 GROCRADJ = GROCRP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
-                RTRESPADJ = RTWTGADJ*RRESP/(1.0-RRESP)                                                                 !EQN 216   
+                RTRESPADJ = RTWTGADJ*RRESP/(1.0-RRESP)                                                                 !EQN 216 
+                SRWTGRSADJ = SRWTGRSP*AMIN1(1.0,NULEFT/NDEMMN) 
             ELSE
                 !GROSTADJ = GROST   !LPM 02SEP2016 Use potential growth
                 !GROCRADJ = GROCR
@@ -294,11 +290,12 @@
                 GROSTADJ = GROSTP
                 GROCRADJ = GROCRP
                 RTWTGADJ = RTWTG
-                RTRESPADJ = RTRESP   
+                RTRESPADJ = RTRESP
+                SRWTGRSADJ = SRWTGRSP
             ENDIF
     
             !NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
-            NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)
+            NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)
             !LPM 23NOV2020 Avoid giving priority to leaf N
             ! 5.For leaf growth to standard N (N to leaves first)
             !LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX)-LNUSE(1))                                                             !EQN 217 !LPM 02SEP2016 To use potential growth instead of CHO restricted growth
@@ -312,7 +309,7 @@
     
             ! 6.For distribution of remaining N to st,rt,storage root
             !NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1)                                                     !EQN 219 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
-            NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM + LNDEM-LNUSE(1)                                                                !EQN 219
+            NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1) + LNDEM-LNUSE(1)                                                                !EQN 219
             IF (NDEM2 > 0.0)THEN
                 !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
@@ -328,7 +325,7 @@
                     ENDDO
                 ENDDO
                 RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
-                SRNUSE(2) = (SRNDEM)*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
+                SRNUSE(2) = (SRNDEM-SRNUSE(1))*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
                 NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)-LNUSE(2)                                             !EQN 223
                 !LPM 23NOV2020 Remove additional N going to the leaves
                 !IF (NULEFT > 0.0) THEN
@@ -356,8 +353,7 @@
                 ENDDO
             ENDDO
             RNUSE(0) = RNUSE(1) + RNUSE(2)                                                                             !EQN 227 
-            !SRNUSE(0) = SRNUSE(1) + SRNUSE(2)                                                                          !EQN 228 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
-            SRNUSE(0) = SRNUSE(2)                                                                                      !EQN 228    
+            SRNUSE(0) = SRNUSE(1) + SRNUSE(2)                                                                          !EQN 228     
             
             ! N Pools available for re-mobilization
             NUSEFAC = NLABPC/100.0                                                                                     !EQN 229

@@ -345,6 +345,13 @@
         ENDIF
         
         !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)                      
-
+ 
         
+        GRORSP = CARBOT+GROLSSD+GROLSRT+SENLFGRS+GROLSRS-GROLF-GROST-GROCR                                    
+        IF(GRORSP < 0.0.AND.GRORSP > -1.0E-07) GRORSP = 0.0
+
+        ! Reserves to STORAGE ROOT if conc too great (overflow!)
+        SRWTGRSP = 0.0
+        
+        SRWTGRSP = RSWT+GRORSP
     END SUBROUTINE YCA_Growth_Part

@@ -94,7 +94,7 @@
                 !    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(vegetativeCanopyWeight())*plantPopulation()
                 !    WRITE(fnumwrk,'(A,F7.1)')  ' Storage root fraction            ',srfr
                 !ENDIF
-                IF (SRWTGRS+SRWTGRS > 0.0) WRITE(FNUMWRK,'(A)')' Surplus assimilates sent to storage roots      '
+                IF (SRWTGRSADJ+SRWTGRSADJ > 0.0) WRITE(FNUMWRK,'(A)')' Surplus assimilates sent to storage roots      '
                 IF (LRTIP == 1) WRITE(fnumwrk,'(A)')' Root tip in layer 1 '
                 WRITE(FNUMWRK,'(A,2F7.2)')     ' N demand,shortage (kg/ha)        ',andem,AMAX1(0.0,andem-nupap)
                 ! Folowing detailed outputs can be printed if tvi1=1

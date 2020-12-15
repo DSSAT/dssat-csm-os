@@ -242,6 +242,7 @@ Module YCA_First_Trans_m
     REAL    :: GROLSSEN                ! Leaf+stem growth from senesnce g/p        ! (From Growth) 
     REAL    :: GRORP                   ! Potential root growth          g/p        ! (From SeasInit) !LPM 22DEC2016 potential root growth
     REAL    :: GRORS                   ! Reserves growth                g/p        ! (From SeasInit)  
+    REAL    :: GRORSP                  ! Reserves growth potential      g/p        ! (From SeasInit)
     REAL    :: GROST                   ! Stem growth rate               g/p        ! (From SeasInit)  
     REAL    :: GROSTADJ                ! Stem growth rate N adjusted    g/p        ! (From SeasInit)  
     REAL    :: GROSTCR                 ! Stem+Plant. stick growth rate         g/p ! (From SeasInit)  
@@ -837,6 +838,7 @@ Module YCA_First_Trans_m
     REAL    :: SRWAD                   ! Storage root weight            kg/ha      ! (From Integrate) 
     REAL    :: SRWT                    ! Root storage organ weight      g/p        ! (From SeasInit)  
     REAL    :: SRWTGRS                 ! Root storage,reserves>std.%    g/p        ! (From SeasInit)  
+    REAL    :: SRWTGRSADJ              ! Root storage adjusted          g/p        ! (From SeasInit) 
     ! REAL    :: SRWUD                   ! Storage root size              g          ! (From SeasInit)   ! issue 50
     REAL    :: SRWUM                   ! Storage root wt/unit,maturity  g          ! (From SeasInit)  
     REAL    :: SRWUMM                  ! Storage root wt/unit,mat,meas  g          ! (From SeasInit)  
@@ -1336,6 +1338,7 @@ Module YCA_First_Trans_m
         grolf = 0.0
         grolfadj = 0.0
         grors = 0.0
+        grorsp = 0.0
         grost = 0.0
         grostadj = 0.0
         grostcr = 0.0
@@ -1599,6 +1602,7 @@ Module YCA_First_Trans_m
         stais = 0.0
         stemn = 0.0
         stgedat = 0
+        SRWTGRSADJ = 0.0
         stwad = 0.0
         stwt = 0.0
         stwtp = 0.0 !LPM 23MAY2015 Added to keep the potential stem weight
