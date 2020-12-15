@@ -41,7 +41,6 @@ SUBROUTINE FCAST_STORE(                  &
   REAL CCO2, DCO2, OZON7, PAR, RAIN, REFHT, RHUM
   REAL SRAD, TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT
   REAL WINDSP, XELEV, XLAT, XLONG
-  LOGICAL SUCCESS
   TYPE (ControlType) CONTROL, CONTROL2
 
   EXTERNAL IPWTH, YR_DOY
@@ -58,6 +57,24 @@ SUBROUTINE FCAST_STORE(                  &
   FSTART = YRSIM
   FCOUNT = TIMDIF(FSTART, FODAT)
 
+! These physical years are needed for historical ensemble, but not for generated weather
+! Determine the first and last years of the weather ensemble using simulation start date as the reference.
+  CALL YR_DOY(YRSIM,YR,DOY)
+
+! Initialize weather file for this year's data (i.e., pre-forecast date)
+  CONTROL2 = CONTROL
+  CONTROL2 % DYNAMIC = SEASINIT
+  Obs_YRDOY = INCDAT(FSTART, -1)
+  CONTROL2 % YRDOY = Obs_YRDOY
+
+! First year of historical ensemble is NYRS before start of simulation date
+  EnsYearFirst = YR - CONTROL % NYRS
+! Last year of historical ensemble is one year before start of simulation date
+  EnsYearLast = YR - 1
+! Start with first year of ensemble
+  EnsYearCurrent = EnsYearFirst
+  FYRDOY = EnsYearFirst *1000 + DOY
+
 ! IF FODAT is before or equal to YRSIM, then all weather data are from ensembles.
   IF (FCOUNT .LT. 1) RETURN
 
@@ -68,23 +85,7 @@ SUBROUTINE FCAST_STORE(                  &
 ! Allocate the array size for observed weather data
   Allocate (Obs_data(0:FCOUNT))
 
-! These physical years are needed for historical ensemble, but not for generated weather
-! Determine the first and last years of the weather ensemble using simulation start date as the reference.
-  CALL YR_DOY(YRSIM,YR,DOY)
-! First year of historical ensemble is NYRS before start of simulation date
-  EnsYearFirst = YR - CONTROL % NYRS
-! Last year of historical ensemble is one year before start of simulation date
-  EnsYearLast = YR - 1
-! Start with first year of ensemble
-  EnsYearCurrent = EnsYearFirst
-
 ! =======================================================================
-! Initialize weather file for this year's data (i.e., pre-forecast date)
-  CONTROL2 = CONTROL
-  CONTROL2 % DYNAMIC = SEASINIT
-  Obs_YRDOY = INCDAT(FSTART, -1)
-  CONTROL2 % YRDOY = Obs_YRDOY
-
   CALL IPWTH(CONTROL2, ERRKEY,                        &
         CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
         MEWTH, OZON7, PAR,                            &    !Output
@@ -153,9 +154,9 @@ SUBROUTINE FCAST_STORE(                  &
 END SUBROUTINE FCAST_STORE
 
 !========================================================================
-SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, PAR, YRDOY_F)
+SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, PAR, FYRDOY)
   USE ModuleData
-  INTEGER DOY, YR, YRDOY, YRDOY_F
+  INTEGER DOY, YR, FYRDOY
   INTEGER WDATE, FCODE, I, TIMDIF
   REAL RAIN, TMAX, TMIN, SRAD, PAR
   TYPE (ControlType) CONTROL
@@ -164,17 +165,12 @@ SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, PAR, YRDOY_F)
 ! YRDOY_F = 0 - No observed data for this date, use ensemble data
 ! YRDOY_F > 0 - This is the date for the historical ensemble (or generated weather)
 
-  YRDOY_F = 0
-
-! No forecast weather data
-  IF (FCOUNT .LE. 0) RETURN
-
 ! Current date is after forecast date
   IF (WDATE .GE. FODAT) THEN
     CALL GET(CONTROL)
     CALL YR_DOY(WDATE, YR, DOY)
     EnsYearCurrent = EnsYearFirst + CONTROL % ENDYRS - 1
-    YRDOY_F = EnsYearCurrent * 1000 + DOY
+    FYRDOY = EnsYearCurrent * 1000 + DOY
 
   ELSE
 !   Find today's forecast weather data
@@ -188,7 +184,7 @@ SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, PAR, YRDOY_F)
     TMAX = Obs_data(I) % TMAX
     TMIN = Obs_data(I) % TMIN
     PAR  = Obs_data(I) % PAR
-    FCODE = 1
+    FYRDOY = 0
   ENDIF
 
   RETURN

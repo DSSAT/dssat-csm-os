@@ -54,7 +54,7 @@ C=======================================================================
       INTEGER DOY, DYNAMIC, ERR, ErrCode, FOUND, INCYD, ISIM
       INTEGER LINWTH, LNUM, LUNIO, LUNWTH, MULTI, NYEAR
       INTEGER LUNWTHC, LUNWTHG
-      INTEGER PATHL, RSEED1, RUN, WYEAR
+      INTEGER PATHL, RSEED1, RUN, WYEAR, WDOY
       INTEGER YEAR, YR, YRDOY, YRDOYW, YRDOYWY, YREND
       INTEGER YRSIM, YRSIMMY, YRDOY_WY
 
@@ -242,7 +242,29 @@ C     The components are copied into local variables for use here.
 !     - when IPWTH is called from the forecast module, don't change weather file name
 ! 
       IF (RNMODE .EQ. 'Y' .AND. SOURCE .EQ. "WEATHR") THEN
-        
+        !IF (ENDYRS .GT. 1) THEN
+        !  RUN = RUN + 1
+        !  REPNO = REPNO + 1
+        !  CALL MULTIRUN(RUN, 0)  
+        !  YREND = -99
+        !ENDIF
+
+        PATHL  = INDEX(PATHWTW,BLANK)
+        CALL YR_DOY(CONTROL % YRDOY, WYEAR, WDOY)
+        WYEAR = MOD(WYEAR,100)
+        WRITE(FILEW(5:6),'(I2.2)') WYEAR
+        YRSIM = CONTROL % YRDOY
+        IF (PATHL <= 1) THEN
+          FILEWW = FILEW
+        ELSE
+          FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
+        ENDIF
+        INQUIRE (FILE = FILEWW,EXIST = FEXIST)
+        IF (.NOT. FEXIST) THEN  
+          ErrCode = 29
+          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
+          RETURN
+        ENDIF
       ENDIF
 
 !-----------------------------------------------------------------------

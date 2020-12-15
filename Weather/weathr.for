@@ -137,6 +137,7 @@ C=======================================================================
         YYDDD = YRSIM
         CALL YR_DOY(YYDDD, YEAR, DOY)
 !-----------------------------------------------------------------------
+        CONTROL2 = CONTROL
 !       Forecast mode - read in-season weather and store in memory
         IF (RNMODE .EQ. 'Y') THEN
 !         Read in-season weather and store in memory
@@ -144,13 +145,15 @@ C=======================================================================
      &        FILEW, FILEWC, FILEWG, MEWTH,         !Input
      &        PATHWT, PATHWTC, PATHWTG, PATHWTW,    !Input
      &        YREND,                                !Input/Output
+! chp note: may not need FCOUNT here
      &        FCOUNT, FYRDOY)                       !Output
+          CONTROL2 % YRDOY = FYRDOY
         ENDIF
 
 !       Initialize read from file for 'M', 'G' weather options and also for
 !         RNMODE = 'Y' (yield forecast mode) regardless of weather option
         IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G')THEN
-          CALL IPWTH(CONTROL, ERRKEY,
+          CALL IPWTH(CONTROL2, ERRKEY,
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
      &      PATHWTC, PATHWTG, PATHWTW,                    !Output
@@ -158,7 +161,7 @@ C=======================================================================
      &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
      &      SEASINIT)
-          IF (YREND == YRDOY) RETURN
+          IF (YREND == CONTROL2 % YRDOY) RETURN
         ENDIF
 
         IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
@@ -172,7 +175,7 @@ C       Set default values FOR REFHT AND WINDHT
           RAIN = -99.0
           PAR  = -99.0
           RHUM = -99.0
-          CALL WGEN (CONTROL,
+          CALL WGEN (CONTROL2,
      &      FILEWC, MEWTH, MULTI, RUN, PATHWTC, REPNO,      !Input
      &      RNMODE, RSEED1, YRDOY, YRSIM,                 !Input
      &      PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,      !Output
@@ -228,7 +231,7 @@ C     Calculate day length, sunrise and sunset.
      &    DAYL, DEC, SNDN, SNUP)                          !Output
 
 !     Subroutine to determine daily CO2
-      CALL CO2VAL(CONTROL, ISWITCH, CCO2, DCO2, CO2)
+      CALL CO2VAL(CONTROL2, ISWITCH, CCO2, DCO2, CO2)
 
 C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
