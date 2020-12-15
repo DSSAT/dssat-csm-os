@@ -406,7 +406,7 @@
       REAL          FNH4          ! Unitless ammonium supply index #
       REAL          FNO3          ! Unitless nitrate supply index  #
       INTEGER       FNUMLVS       ! File number,leaves             #
-      INTEGER       FNUMREA       ! File number,reads.out file     #
+!      INTEGER       FNUMREA       ! File number,reads.out file     #
       INTEGER       FNUMT         ! Number used for T-file         #
       INTEGER       FNUMTMP       ! File number,temporary file     #
       INTEGER       FNUMWRK       ! File number,work file          #
@@ -1449,10 +1449,11 @@
             WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
           ENDIF
         ENDIF
-          
-        ! Set Reads file #
-        IF (FNUMREA.LE.0.OR.FNUMREA.GT.1000) 
-     &      CALL Getlun('READS.OUT',fnumrea)
+
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.          
+!        ! Set Reads file #
+!        IF (FNUMREA.LE.0.OR.FNUMREA.GT.1000) 
+!     &      CALL Getlun('READS.OUT',fnumrea)
         ! Set temporary file #
         IF (FNUMTMP.LE.0.OR.FNUMTMP.GT.1000) 
      &      CALL Getlun ('FNAMETMP',fnumtmp)
@@ -1856,12 +1857,13 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
      &      ACTION = 'READWRITE')
           WRITE(FNUMWRK,*) 'CSCER  Cropsim-Ceres Crop Module '
-          CLOSE (FNUMREA, STATUS = 'DELETE')
-          OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &      ACTION = 'READWRITE')
-          WRITE(FNUMREA,*)' '
-          WRITE(FNUMREA,*)
-     &      ' File closed and re-opened to avoid generating huge file'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.          
+!          CLOSE (FNUMREA, STATUS = 'DELETE')
+!          OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+!     &      ACTION = 'READWRITE')
+!          WRITE(FNUMREA,*)' '
+!          WRITE(FNUMREA,*)
+!     &      ' File closed and re-opened to avoid generating huge file'
         ENDIF
 
         ! Create composite run variable

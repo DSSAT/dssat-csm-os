@@ -329,7 +329,7 @@
       INTEGER       FNUMPREM      ! File number,measured responses #
       INTEGER       FNUMPRES      ! File number,simulated response #
       INTEGER       FNUMPSUM      ! Number used for plant summary  #
-      INTEGER       FNUMREA       ! File number,reads.out file     #
+!      INTEGER       FNUMREA       ! File number,reads.out file     #
       INTEGER       FNUMT         ! Number used for T-file         #
       INTEGER       FNUMTMP       ! File number,temporary file     #
       INTEGER       FNUMWRK       ! File number,work file          #
@@ -1699,14 +1699,15 @@
      &              ACTION = 'READWRITE')
               WRITE(fnumwrk,*) ' '
               WRITE(fnumwrk,*) 'CSCAS  Cropsim Cassava Module '
-              CALL Getlun('READS.OUT',fnumrea)
-              ! Close and re-open Reads file
-              CLOSE (FNUMREA, STATUS = 'DELETE')
-              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &              ACTION = 'READWRITE')
-              WRITE(fnumrea,*)' '
-              WRITE(fnumrea,*)
-     &        ' File closed and re-opened to avoid generating huge file'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.              
+!              CALL Getlun('READS.OUT',fnumrea)
+!              ! Close and re-open Reads file
+!              CLOSE (FNUMREA, STATUS = 'DELETE')
+!              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+!     &              ACTION = 'READWRITE')
+!              WRITE(fnumrea,*)' '
+!              WRITE(fnumrea,*)
+!     &        ' File closed and re-opened to avoid generating huge file'
             ELSE  
               WRITE(fnumwrk,*) ' '
               WRITE(fnumwrk,*) 'CSCAS  Cropsim Cassava Module '

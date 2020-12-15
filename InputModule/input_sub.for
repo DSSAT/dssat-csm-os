@@ -1,10 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
-C                      University of Florida, Gainesville, Florida
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
+C COPYRIGHT 1998-2020 
+C                     DSSAT Foundation                      
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
 C                     
-C  ALL RIGHTS RESERVED
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  INPUT, Subroutine
