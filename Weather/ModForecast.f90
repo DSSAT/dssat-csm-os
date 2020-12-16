@@ -52,7 +52,8 @@ SUBROUTINE FCAST_STORE(                  &
   IF (CONTROL % ENDYRS .GT. 1) RETURN
 
 ! =======================================================================
-! FODAT = date of forecast. Weather prior to this date come from observations. After, they come from ensemble.
+! FODAT = date of forecast. Weather prior to this date come from observations. 
+!   On this date and after, they come from ensemble.
 ! FCOUNT = number of days of "observed weather" to be used in forecast. 
   FSTART = YRSIM
   FCOUNT = TIMDIF(FSTART, FODAT)

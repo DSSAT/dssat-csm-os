@@ -278,7 +278,14 @@ C     The components are copied into local variables for use here.
       WSTAT = FILEW(1:8)
       CALL PUT('WEATHER','WSTA',WSTAT)
 
-      IF (FILEW /= LastFileW) THEN
+!     If this is the first of the forecast simulations, need to 
+!     re-read weather data so that metadata are available in WEATHR 
+      IF (RNMODE .EQ. 'Y' .AND. CONTROL % ENDYRS .EQ. 1) THEN
+        LastFileW = ''
+        CLOSE (LUNWTH)
+      ENDIF
+
+      IF (FILEW /= LastFileW) THEN 
 !       NRecords = 0
         YRDOY_WY = 0
         LastWeatherDay  = 0
@@ -445,9 +452,9 @@ C       Substitute default values if REFHT or WINDHT are missing.
         NRecords = 0
 
       ELSEIF ((LongFile .AND. YRDOY < FirstWeatherDay)
-     &   .OR. (RNMODE .EQ. 'Y')) THEN
-! CHP NOTE: This is where I left off on 2020-12-15. Not sure this is right...
-!       Starting over with long file -- same file, but need to read from tops
+     &   .OR. (RNMODE .EQ. 'Y' .AND. CONTROL % ENDYRS. EQ. 1)) THEN
+!       Starting over with long file -- same file, but need to read from top
+!       or starting a historical ensemble for forecast mode.
         REWIND(LUNWTH)
         
   200   CONTINUE
