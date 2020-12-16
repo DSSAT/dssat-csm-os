@@ -1562,10 +1562,10 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SOILPROP % MSALB  = MSALB
       SOILPROP % SWALB  = SWALB
 
-!!       Temporary -- print soil albedo stuff
+!!    Temporary -- print soil albedo stuff
 !     GET (CONTROL)
 !     CALL YR_DOY(CONTROL.YRDOY, YEAR, DOY)
-!        WRITE(2250,'(1X,I4,1X,I3.3,1X,I5,8F8.3)') YEAR, DOY, CONTROL.DAS, SOILPROP.SALB, 
+!     WRITE(2250,'(1X,I4,1X,I3.3,1X,I5,8F8.3)') YEAR, DOY, CONTROL.DAS, SOILPROP.SALB, 
 !     &      FF, SWALB, MULCHCOVER, MSALB, CANCOV, CMSALB
 
       RETURN
