@@ -1,4 +1,4 @@
-$SPECIES:CSYCA047.09222020    Last edit: 11/17/2020 LPM
+$SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
 
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
@@ -138,8 +138,8 @@ $SPECIES:CSYCA047.09222020    Last edit: 11/17/2020 LPM
    1.9   2.4
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN  ! Standard,minima N% leaves,stems,roots
 !    %     %     %     %     %     %
-   5.1   4.8   3.5   1.7   1.0   1.0
-   4.1   3.8   1.4   0.8   1.0   1.0
+   5.1   4.5   3.5   1.7   1.0   1.0
+   4.1   3.3   1.4   0.8   1.0   1.0
 ! N distribution/mobilization
 @NLAB% ! Labile nitrogen
 !    %
