@@ -394,9 +394,6 @@ Invalid planting method.  Please check input data.
 IPPLNT   64
 Invalid format in input file.  Please check format.
 
-IPPLNT    1
-Error in pest observations (FileT) date is defined prior to the start of simulation. 
-
 IPRES     1
 Residue input section not found.  Please add to input file.
 
@@ -423,6 +420,9 @@ Error in amount of residue K input.  Correct input file.
 
 IPRICE   10
 Nursery temperature can not be less than zero. Correct input file.
+
+IPPROG    1
+Error in pest observations (FileT) date is defined prior to the start of simulation. 
 
 IPSIM     1
 Simulation control section not found.  Please add to input file.
