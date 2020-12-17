@@ -1,8 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2019 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2020
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C
+C ALL RIGHTS RESERVED
 !  
 !  Redistribution and use in source and binary forms, with or without modification, 
 !  are permitted provided that the following conditions are met:
@@ -36,13 +38,15 @@ C     CROPPING SYSTEM MODEL Version 4.7.5
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     March 2019  CSM Version 4.7.5
+C     November 2020  CSM Version 4.7.5
 C
 C     Gerrit Hoogenboom, J.W. Jones, Cheryl Porter, K.J. Boote, 
 C
 C     Tony Hunt, Jon Lizaso, Vakhtang Shelia,
 C
 C     Upendra Singh, Jeff W. White
+C
+C     Willingthon Pavan, Fabio Oliveira
 C
 C     Special contributions by others including:
 C     Arjan Gijsman
@@ -69,8 +73,9 @@ C  11/23/2004 CHP Increased length of PATHX (path for executable) to 120.
 C  02/08/2005 CHP Changed criteria for ending a sequence run.
 C  06/14/2005 CHP Added FILEX to CONTROL variable, read FILEX from FILEIO
 C  02/20/2006 GH  Add RNMODE="G" option for GENCALC
-!  01/11/2007 CHP Changed GETPUT calls to GET and PUT
-!  01/12/2007 CHP Read trt number and rotation number for sequence mode
+C  01/11/2007 CHP Changed GETPUT calls to GET and PUT
+C  01/12/2007 CHP Read trt number and rotation number for sequence mode
+C  10/09/2020 FO  Y4K implementation for weather files
 C=======================================================================
       PROGRAM CSM
 

@@ -38,7 +38,34 @@
      &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
      &      MXLFAREA, MXLFARNO, PSWITCH, TTPLNTEM, 
      &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, POPTT16, 
-     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5 
+     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5
+
+	!--- SAMUCA's cultivar parameters	(MV, jan-2020)
+	real    maxgl_r
+	real    n_lf_when_stk_emerg_r
+	real    n_lf_it_form_r
+	real    maxdgl_r
+	real    amax
+	real    eff
+	real    chustk
+	real    chupeak
+	real    chudec
+	real    chumat
+	real    popmat
+	real    poppeak
+	real    tillochron
+	real    phyllochron
+	real    sla
+	real    mla
+	real    plastochron
+	real    init_leaf_area
+	real    max_ini_la
+	real    max_it_dw
+	real    mid_tt_it_growth
+	real    end_tt_it_growth
+	real    mid_tt_lf_growth
+	real    end_tt_lf_growth
+
 
       REAL          CSDVAR,PHTHRS(20),SDPDVR,SLAVAR,LFMAX,XFRUIT,WTPSD
       REAL          SFDUR,PODUR,PPSEN,PH2T5,SIZELF
@@ -55,11 +82,7 @@
 
 ! 	  For APSIM-wheat (WHAPS)
       REAL  VSEN,GRNO,MXFIL
-      REAL  STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
-      REAL  P2AF,P3AF,P4AF,P5AF,P6AF
-      REAL  ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU
-      REAL  PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR
-      REAL  MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+      REAL  STMMX,SLAP1
 
 
       COMMON /GEN01/P1,P1V,P1D,P2,P2O,P2R,P3,P4,P5,G1,G2,G3,G4,PHINT,O1,
@@ -99,12 +122,34 @@
 
       COMMON /GEN13/ ! For APSIM-wheat (WHAPS)
      &      VSEN,GRNO,MXFIL,
-     &      STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &      P2AF,P3AF,P4AF,P5AF,P6AF,
-     &      ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &      PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &      MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &      STMMX,SLAP1
 
 !CHP Add new Ceres-rice coefficients
 	  COMMON /GEN14/ THOT, TCLDP, TCLDF
-
+	  
+!MV	 Add SAMUCA Coefficients
+      COMMON /GEN15/ 
+     &      maxgl_r                     ,
+     &      n_lf_when_stk_emerg_r       ,
+     &      n_lf_it_form_r              ,
+     &      maxdgl_r                    ,   
+     &      amax                        ,   
+     &      eff                         ,   
+     &      chustk                      ,   
+     &      chupeak                     ,   
+     &      chudec                      ,   
+     &      chumat                      ,   
+     &      popmat                      ,   
+     &      poppeak                     ,   
+     &      tillochron                  ,   
+     &      phyllochron                 ,   
+     &      sla                         ,   
+     &      mla                         ,   
+     &      plastochron                 ,   
+     &      init_leaf_area              ,   
+     &      max_ini_la                  ,   
+     &      max_it_dw                   ,   
+     &      mid_tt_it_growth            ,   
+     &      end_tt_it_growth            ,   
+     &      mid_tt_lf_growth            ,   
+     &      end_tt_lf_growth                  

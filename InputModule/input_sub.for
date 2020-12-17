@@ -1,10 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
-C                      University of Florida, Gainesville, Florida
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
+C COPYRIGHT 1998-2020 
+C                     DSSAT Foundation                      
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
 C                     
-C  ALL RIGHTS RESERVED
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  INPUT, Subroutine
@@ -229,7 +229,7 @@ C-----------------------------------------------------------------------
          IF (ISWNIT .EQ. 'Y') THEN
             CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)
+     &            SASC, NLAYR,YRSIM)
          ENDIF
 !      ENDIF
       ENDIF
@@ -265,7 +265,7 @@ C-----------------------------------------------------------------------
      &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM) 
                   CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, 
      &            OC, PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)
+     &            SASC, NLAYR,YRSIM)
                   NSENS = 1
                ENDIF
             ENDIF

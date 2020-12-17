@@ -17,14 +17,15 @@ C                   a sequence occurs on Jan 1.
 !  08/02/2006 CHP Read and store weather data in arrays
 !  08/25/2011 CHP Read vapor pressure (VAPR or VPRS) 
 !  07/25/2014 CHP Added daily CO2 read from weather file (DCO2)
+!  10/18/2016 CHP Read daily ozone values (ppb)
 C-----------------------------------------------------------------------
 C  Called by: WEATHR
 C  Calls:     None
 C=======================================================================
 
       SUBROUTINE IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,  !Output
-     &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
+     &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    DYNAMIC)
@@ -57,7 +58,7 @@ C=======================================================================
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
-     &  WINDSP,XLAT,XLONG,CCO2,RHUM, VAPR, DCO2
+     &  WINDSP,XLAT,XLONG,CCO2,RHUM, VAPR, DCO2, OZON7
 
       LOGICAL FEXIST, LongFile
 
@@ -70,7 +71,7 @@ C=======================================================================
       INTEGER, DIMENSION(MaxRecords) :: YRDOY_A, LineNumber
       REAL, DIMENSION(MaxRecords) :: SRAD_A, TMAX_A, TMIN_A, 
      &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A, VAPR_A
-     &        , DCO2_A
+     &        , DCO2_A, OZON7_A
       INTEGER CurrentWeatherYear, DOYW
       INTEGER I, J, LastRec, LastWeatherDay, NRecords
       INTEGER FirstWeatherDay, YEARW, RecNum
@@ -222,7 +223,10 @@ C     The components are copied into local variables for use here.
           CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
           SELECT CASE(ISECT)
           CASE(0); CALL ERROR (ERRKEY,10,FILEW,LINWTH) !End of file 
-          CASE(1); CALL ERROR (ERRKEY,10,FILEW,LINWTH) !Data record 
+          CASE(1)
+            IF(FirstWeatherDate .EQ. -99) THEN
+              CALL ERROR (ERRKEY,10,FILEW,LINWTH) !Data record 
+            ENDIF
           CASE(2); CYCLE                               !End of section 
           CASE(3); EXIT                                !Header line 
           END SELECT
@@ -311,7 +315,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
           WRITE(MSG(3), 130)
   100     FORMAT
      &   ('Value of TAV, average annual soil temperature, is missing.')
-  120     FORMAT('A default value of', F5.1, '튏 is being used for ',
+  120     FORMAT('A default value of', F5.1, '째C is being used for ',
      &            'this simulation,')
   130     FORMAT('which may produce inaccurate results.')
           CALL WARNING (3, ERRKEY, MSG)
@@ -349,14 +353,15 @@ C       Substitute default values if REFHT or WINDHT are missing.
         NRecords = 0
 
       ELSEIF (LongFile .AND. YRDOY < FirstWeatherDay) THEN
-!       Starting over with long file -- same file, but need to read from top
+!       Starting over with long file -- same file, but need to read from tops
         REWIND(LUNWTH)
+        
   200   CONTINUE
         CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
         IF (FOUND == 2) GO TO 200
         IF (FOUND == 0) CALL ERROR(ERRKEY,-1,FILEW,LINWTH)
         NRecords = 0
-
+        
       ELSEIF (LongFile .AND. YRDOY > LastWeatherDay) THEN
 !       Need to get next batch of records from long file
         NRecords = 0
@@ -382,9 +387,10 @@ C       Substitute default values if REFHT or WINDHT are missing.
 !       Use YRDOY_WY here (different argument than next call)
         CALL IpWRec(CONTROL, MaxRecords,
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
-     &    LUNWTH, YRDOY_WY,                               !Input
+     &    LUNWTH, YRDOY_WY,                                !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
-     &    LineNumber, LongFile, NRecords, DCO2_A, PAR_A,  !Output
+     &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
+     &    OZON7_A, PAR_A,                                 !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
@@ -422,6 +428,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
       RHUM  = RHUM_A(I)
       VAPR  = VAPR_A(I)
       DCO2  = DCO2_A(I)
+      OZON7 = OZON7_A(I)
 
 !     Error checking
       CALL DailyWeatherCheck(CONTROL,
@@ -441,6 +448,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
         RHUM  = RHUM_A(I+1)
         VAPR  = VAPR_A(I+1)
         DCO2  = DCO2_A(I+1)
+        OZON7 = OZON7_A(I+1)
         YREND = -99
       
 !       Error checking
@@ -529,7 +537,8 @@ C         Read in weather file header.
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
      &    LUNWTH, YRDOYWY,                                !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
-     &    LineNumber, LongFile, NRecords, DCO2_A, PAR_A,  !Output
+     &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
+     &    OZON7_A, PAR_A,                                 !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
@@ -583,6 +592,7 @@ C         Read in weather file header.
         RHUM   = RHUM_A(I) 
         VAPR   = VAPR_A(I)
         DCO2   = DCO2_A(I)
+        OZON7  = OZON7_A(I)
 
         LastRec = I
         EXIT
@@ -686,7 +696,8 @@ C         Read in weather file header.
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
      &    LUNWTH, YRDOYWY,                                !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
-     &    LineNumber, LongFile, NRecords, DCO2_A, PAR_A,  !Output
+     &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
+     &    OZON7_A, PAR_A,                                 !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
 
@@ -709,12 +720,14 @@ C         Read in weather file header.
       INTEGER YRDOYW_SAVE
 
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
+      REAL OZON7
 
       LOGICAL LongFile
 
 !     Arrays of weather data -- up to one year stored.
       INTEGER, DIMENSION(MaxRecords) :: YRDOY_A, LineNumber
       REAL, DIMENSION(MaxRecords) :: SRAD_A, TMAX_A, TMIN_A, DCO2_A,
+     &          OZON7_A, 
      &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A, VAPR_A
       INTEGER LastRec, LastWeatherDay, NRecords
       INTEGER FirstWeatherDay
@@ -771,6 +784,7 @@ C         Read in weather file header.
           RHUM  = -99. 
           VAPR  = -99.
           DCO2  = -99.
+          OZON7 = -99.
 
 !         Use free format reads
 !          READ (LINE,RECFMT,IOSTAT=ERR) YRDOYW,SRAD,TMAX,TMIN,
@@ -779,7 +793,13 @@ C         Read in weather file header.
 
 !         CHP 1/2/2008
 !         Require date in col 1-5 regardless of header
-          READ (LINE,'(I5)',IOSTAT=ERR) YRDOYW
+! FO - 06/09/2020 - Update to handle Y4K dates.
+          IF(FirstWeatherDate .GT. 0) THEN
+            READ (LINE,'(I7)',IOSTAT=ERR) YRDOYW
+          ELSE
+            READ (LINE,'(I5)',IOSTAT=ERR) YRDOYW
+          ENDIF
+          
           IF (ERR /= 0) THEN
             ErrCode = 59
             CALL WeatherError(CONTROL, ErrCode, FILEWW, 
@@ -836,6 +856,10 @@ C         Read in weather file header.
               CASE('DCO2','CO2')   !Atmospheric CO2 (ppm)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) DCO2
                 IF (ERR .NE. 0) DCO2 = -99.0
+
+              CASE('OZON7')   !Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
+                READ(LINE(C1:C2),*,IOSTAT=ERR) OZON7
+                IF (ERR .NE. 0) OZON7 = -99.0
             END SELECT
           ENDDO
 
@@ -865,6 +889,8 @@ C         Read in weather file header.
           RHUM_A(NRecords)  = RHUM
           VAPR_A(NRecords)  = VAPR
           DCO2_A(NRecords)  = DCO2
+          OZON7_A(NRecords) = OZON7
+
           LineNumber(NRecords) = LINWTH
 
           IF (NRecords > 1) THEN
@@ -949,7 +975,7 @@ C         Read in weather file header.
 !       Print confirmation that header was found to INFO.OUT
         SELECT CASE (TRIM(HEADER(I)))
           CASE('SRAD','TMAX','TMIN','RAIN','DEWP','TDEW','WIND',
-     &        'PAR','RHUM','VAPR','VPRS','DCO2','CO2')
+     &        'PAR','RHUM','VAPR','VPRS','DCO2','CO2','OZON7')
             IM = IM + 1
             WRITE(MSG(IM),'(2X,A15,"Col ",I3," - ",I3)') 
      &          HEADER(I), COL(I,1), COL(I,2)
@@ -1243,14 +1269,14 @@ c                   available.
 ! SECTION Section name in input file 
 ! SRAD    Solar radiation (MJ/m2-d)
 ! TAMP    Amplitude of temperature function used to calculate soil 
-!           temperatures (캜)
+!           temperatures (째C)
 ! TAV     Average annual soil temperature, used with TAMP to calculate soil 
-!           temperature. (캜)
-! TDEW    Dewpoint temperature (캜)
+!           temperature. (째C)
+! TDEW    Dewpoint temperature (째C)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
-! TMAX    Maximum daily temperature (캜)
-! TMIN    Minimum daily temperature (캜)
+! TMAX    Maximum daily temperature (째C)
+! TMIN    Minimum daily temperature (째C)
 ! WINDHT  Reference height for wind speed (m)
 ! WINDSP  Wind speed (km/d)
 ! WYEAR   Weather year; current year for weather data 

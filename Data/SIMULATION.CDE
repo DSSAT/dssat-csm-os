@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.7; 09/18/2020
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
@@ -83,6 +83,7 @@ S        Suleiman-Ritchie                                                     IB
 *Simulation/Management/Planting
 @CDE     DESCRIPTION                                                          SO
 A        Automatic                                                            IB
+F        Automatic, force planting on last day of window                      IB
 R        On reported date                                                     IB
 
 *Simulation/Management/Irrigation
@@ -163,6 +164,7 @@ CRGRO    NP   CROPGRO-Napier grass
 CRGRO    PN   CROPGRO-Peanut
 CRGRO    PP   CROPGRO-Pigeonpea
 CRGRO    PR   CROPGRO-Bellpepper
+CRGRO    QU   CROPGRO-Quinoa
 CRGRO    SF   CROPGRO-Safflower
 CRGRO    SB   CROPGRO-Soybean
 CRGRO    SU   CROPGRO-Sunflower
@@ -181,16 +183,16 @@ PTSUB    PT   SUBSTOR-Potato
 RICER    RI   CERES-Rice
 SCCAN    SC   CANEGRO-Sugarcane
 SCCSP    SC   CASUPRO-Sugarcane
+SCSAM    SC   SAMUCA-Sugarcane
 SGCER    SG   CERES-Sorghum
 SWCER    SW   CERES-Sweetcorn
 PIALO    PI   ALOHA-Pineapple
 TRARO    TR   AROIDS-Taro
 TNARO    TN   AROIDS-Tanier
-TFAPS    TF   NWHEAT-Tef
+TFAPS    TF   NWHEAT-Teff
 WHAPS    WH   NWHEAT-Wheat
 PRFRM    BM   FORAGE-Bermudagrass
 PRFRM    BR   FORAGE-Brachiaria
 PRFRM    BH   FORAGE-Bahiagrass
 PRFRM    G0   FORAGE-Generic
 PRFRM    AL   FORAGE-Alfalfa
-PRFRM    RG   PRFRM-Ryegrass

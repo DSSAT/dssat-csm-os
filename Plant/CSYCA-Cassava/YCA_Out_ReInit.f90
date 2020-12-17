@@ -42,10 +42,7 @@
                 
             UNO3 = 0.0
             UNH4 = 0.0
-                
-            WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A50)')' END OF RUN. WILL BEGIN NEW CYCLE IF CALLED FOR.  '
-            IF (IDETL /= 'N') WRITE (fnumwrk,*) ' '
+            
             SEASENDOUT = 'Y'
                 
         ENDIF ! End STGYEARDOY(PSX) == YEARDOY.OR.DYNAMIC == SEASEND

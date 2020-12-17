@@ -168,7 +168,6 @@
             CALL GETLUN ('FILET',FNUMT)
             
             ! WORK,ERROR,AND TEMPORARY FILES
-            CALL GETLUN ('WORK.OUT',FNUMWRK)
             CALL GETLUN ('ERROR.OUT',FNUMERR)
             CALL GETLUN ('FNAMETMP',FNUMTMP)
             
@@ -235,40 +234,16 @@
             !-----------------------------------------------------------------------
             
             ! WARNING AND WORK FILES
-            INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-            IF (.NOT.FOPEN) THEN
-                IF (RUN == 1) THEN
-                    OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-                    WRITE(FNUMWRK,*) 'CSYCA  CIAT Cassava Module '
-                ELSE
-                    OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',ACTION = 'READWRITE')
-                    WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                    IF (IDETL == '0'.OR.IDETL == 'Y'.OR.IDETL == 'N') THEN
-                        CLOSE (FNUMWRK)
-                        OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-                        WRITE(fnumwrk,*) ' '
-                        WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                    ENDIF  
-                ENDIF
-            ELSE          
-                IF (IDETL == '0'.OR.IDETL == 'Y'.OR.IDETL == 'N') THEN
-                    ! Close and re-open Work file
-                    CLOSE (FNUMWRK, STATUS = 'DELETE')
-                    OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
-                    WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                    CALL Getlun('READS.OUT',fnumrea)
-                    ! Close and re-open Reads file
-                    CLOSE (FNUMREA, STATUS = 'DELETE')
-                    OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
-                    WRITE(fnumrea,*)' '
-                    WRITE(fnumrea,*)' File closed and re-opened to avoid generating huge file'
-                ELSE  
-                    WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                ENDIF
-            ENDIF  
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
+!            IF (IDETL .EQ. 'Y') THEN
+!              ! Close and re-open Work file
+!              CALL Getlun('READS.OUT',fnumrea)
+!              ! Close and re-open Reads file
+!              CLOSE (FNUMREA, STATUS = 'DELETE')
+!              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
+!              WRITE(fnumrea,*)' '
+!              WRITE(fnumrea,*)' File closed and re-opened to avoid generating huge file'
+!            ENDIF
             
             IF (RUN == 1) THEN
                 ! IDETG FILES

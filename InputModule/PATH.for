@@ -326,6 +326,7 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.   !SUBSTOR
      &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.   !CANEGRO
      &    (INDEX(MODEL(3:5),'CSP') .EQ. 0) .AND.   !CASUPRO
+     &	(INDEX(MODEL(3:5),'SAM') .EQ. 0) .AND.	 !SAMUCA
      &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.   !ALOHA
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.   !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.   !CropSim cassava
@@ -358,6 +359,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'SGCER') .EQ. 0) .AND. !Sorghum
      &    (INDEX(MODEL(1:5),'SCCSP') .EQ. 0) .AND. !Sugarcane CASUPRO
      &    (INDEX(MODEL(1:5),'SCCAN') .EQ. 0) .AND. !Sugarcane CaneGro
+     &	(INDEX(MODEL(1:5),'SCSAM') .EQ. 0) .AND. !Sugarcane SAMUCA
      &    (INDEX(MODEL(1:5),'BSCER') .EQ. 0) .AND. !Sugarbeet VSH
      &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND. !Sweet corn
      &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND. !Tanier

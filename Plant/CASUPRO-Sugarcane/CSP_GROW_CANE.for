@@ -1112,6 +1112,10 @@ C     stimulation of photosynthesis and the sq root works differently.
 
       IF (DAS < NVEG0) THEN
 
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
+
+
       WRITE(CGLUN,'(/1X,I4,1X,I3,1X,I3,1X,I3,4X,I2,1X,F5.2,3X,F5.2,2X,
      &      F6.2,2X,F5.0,1X,F6.0,1X,
      &      F7.0,1X,F6.0,1X,F7.0,1X,F5.1,3X,F5.2,2X,I3,1X,F5.2,
@@ -1164,6 +1168,7 @@ C     stimulation of photosynthesis and the sq root works differently.
           END IF
         END DO
 
+      ENDIF
       ENDIF
 !-----------------------------------------------------------------------
 !***********************************************************************

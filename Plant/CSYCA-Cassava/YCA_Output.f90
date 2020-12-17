@@ -86,14 +86,9 @@
                 NFP         , RLV         , RUN         , TN          , YEAR        &
                 )  
             
-        ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.IPLTI == 'A') THEN
+!       ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.IPLTI == 'A') THEN
+        ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.(IPLTI == 'A' .OR. IPLTI == 'F')) THEN
                 
-            !! Automatic planting                                                              ! MF Commented out bt LAH in original code. Left in case useful in debugging.
-            !WRITE (fnumwrk,*) 'Yeardoy ',yeardoy
-            !WRITE (fnumwrk,*) 'Water thresholds ',swpltl,swplth
-            !WRITE (fnumwrk,*) 'Water ',avgsw
-            !WRITE (fnumwrk,*) 'Temperature thresholds ',pttn,ptx
-            !WRITE (fnumwrk,*) 'Temperature ',tsdep
                 
         ENDIF  ! End time-course outputs (appropriate day, etc.)
         ! (MOD(DAS,FROPADJ) == 0.AND.YEARDOY >= PLYEARDOY),etc..
