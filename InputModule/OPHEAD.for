@@ -446,8 +446,8 @@ C-----------------------------------------------------------------------
 
   400 FORMAT (1X,'STARTING DATE  :',1X,A3,1X,I2,1X,I4)
   425 FORMAT (1X,'HARVEST DATE   :',1X,A3,1X,I2,1X,I4)
-  450 FORMAT (1X,'PLANTING DATE  :',1X,A3,1X,I2,1X,I4,8X,
-     &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')
+  450 FORMAT (1X,'PLANTING DATE  :',1X,A3,1X,I2,1X,I4,6X,
+     &       'PLANTS/m2 :',F8.1,4X,'ROW SPACING :',F5.0,'cm ')
   475 FORMAT (1X,'PLANTING DATE  :',1X,'AUTOMATIC PLANTING',1X,
      &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')
   500 FORMAT (1X,'WEATHER',8X,':',1X,A4,3X,I4)
