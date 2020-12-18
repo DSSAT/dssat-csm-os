@@ -397,7 +397,7 @@
           MSG(3) = 'Set simulation to 5-digits first weather date'
           FirstWeatherDate = -99
           
-          CALL WARNING(3,ERRKEY,MSG)
+          CALL INFO(3,ERRKEY,MSG)
         ENDIF
       
       ENDIF

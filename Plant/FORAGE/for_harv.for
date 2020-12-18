@@ -38,7 +38,7 @@ C=======================================================================
       INTEGER LNUM,FOUND
       INTEGER I,MOWCOUNT,j
       integer,dimension(8) :: date_time
-      INTEGER LUNEXP,ERRNUM,LINEXP,LNHAR,LUNIO
+      INTEGER LUNEXP,ERRNUM,LINEXP,LNHAR,LUNIO,PATHL
 
       REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
       REAL FHLEAF,FHSTEM,FHVSTG
@@ -54,7 +54,8 @@ C=======================================================================
       REAL WTCO, WTLO, WTSO
       REAL FREQ,CUHT,YHT
 !      REAL,ALLOCATABLE,DIMENSION(:) :: canht
-
+      
+      character(len=1)  BLANK
       character(len=2)  crop
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
       character(len=10),parameter :: fhout='FORAGE.OUT'
@@ -80,9 +81,9 @@ C=======================================================================
       TYPE(CONTROLTYPE) CONTROL
       
       PARAMETER  (ERRKEY = 'FRHARV')
+      PARAMETER (BLANK  = ' ')
 
       FILEIO = CONTROL % FILEIO
-      LUNIO  = CONTROL % LUNIO
       YRDOY  = CONTROL % YRDOY
       crop   = control % crop
       trtno  = control % trtnum
@@ -93,15 +94,23 @@ C----------------------------------------------------------
 C     Open and read MOWFILE and PATH 
 C----------------------------------------------------------
 C FO - 10/15/2020 Fixed path issue for MOWFILE.
+      CALL GETLUN('FILEIO', LUNIO)
       OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
+      
       READ (LUNIO,'(3(/),15X,A12,1X,A80)',IOSTAT=ERRNUM) mowfile,
      &     PATHEX
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,5)
       mowfile(10:12) = 'MOW'
       
-      FILEMOW = TRIM(PATHEX)//mowfile
+      PATHL  = INDEX(PATHEX,BLANK)
+      IF (PATHL .LE. 1) THEN
+         FILEMOW = mowfile
+      ELSE
+         FILEMOW = PATHEX(1:(PATHL-1)) // mowfile
+      ENDIF
       
+      CLOSE(LUNIO)
 C----------------------------------------------------------
       
 !      YHT=canht
@@ -195,7 +204,7 @@ C---------------------------------------------------------
         CALL GETLUN('MOWFILE',MOWLUN)
 									  
         OPEN (UNIT=MOWLUN,FILE=FILEMOW,STATUS='OLD',IOSTAT=ERR)
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,29,MOWFILE,LNUM)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,29,FILEMOW,LNUM)
         REWIND(MOWLUN)
         
         ISECT = 0
