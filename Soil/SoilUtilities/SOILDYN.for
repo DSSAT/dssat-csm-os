@@ -354,11 +354,17 @@ C-----------------------------------------------------------------------
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
       DO L = 1, NLAYR
-
         READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)SW(L), NH4(L),NO3(L)
 100     FORMAT (8X, 3 (1X, F5.1))
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
+
+        IF (SW(L) .LT. LL(L)) THEN
+          SW(L) = LL(L)
+        ENDIF
+        IF (SW(L) > SAT(L)) THEN
+          SW(L) = SAT(L)
+        ENDIF
       ENDDO
 
       CLOSE (LUNIO)

@@ -126,16 +126,12 @@ C-----------------------------------------------------------------------
             LNUM = LNUM + 1
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
             IF (SWI(L) .LT. LL(L)) SWI(L) = LL(L)
-            IF (L .EQ. 1) THEN
-              DLI(L) = DSI(L)
-            ELSE
-              DLI(L) = DSI(L) - DSI(L-1)
-            ENDIF
           ENDDO
 
           CLOSE (LUNIO)
         ELSE
           SWI = DUL
+          DSI = SOILPROP % DS
         ENDIF
 
         IF (XLAT .LT. 0.0) THEN
@@ -150,6 +146,11 @@ C-----------------------------------------------------------------------
         TDL = 0.0
         CUMDPT = 0.0
         DO L = 1, NLAYR
+          IF (L .EQ. 1) THEN
+            DLI(L) = DSI(L)
+          ELSE
+            DLI(L) = DSI(L) - DSI(L-1)
+          ENDIF
           DSMID(L) = CUMDPT + DLI(L)* 5.0   !mm depth to midpt of lyr
           CUMDPT   = CUMDPT + DLI(L)*10.0   !mm profile depth 
           TBD = TBD + BD(L)  * DLI(L)       !CHP
