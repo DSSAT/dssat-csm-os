@@ -62,7 +62,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
 !     Yield forecast variables
-      INTEGER FCODE, FYRDOY, INCDAT, YRDOY_F
+      INTEGER FCODE, FYRDOY, INCDAT
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
@@ -226,7 +226,7 @@ C         message to the WARNING.OUT file.
 !     For forecast mode, retrive initial weather data
       IF (RNMODE .EQ. 'Y') THEN
         FYRDOY = INCDAT(YRSIM,-1)
-        CALL FCAST_RETRIEVE(FYRDOY, RAIN, TMAX, TMIN, SRAD, PAR,YRDOY_F)
+        CALL FCAST_RETRIEVE(FYRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FYRDOY)
       ENDIF
 
 C     Calculate day length, sunrise and sunset.

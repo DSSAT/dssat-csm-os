@@ -47,8 +47,8 @@ C=======================================================================
       CHARACTER*12 FILEW, LastFILEW, FILEWC, FILEWG
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(8)
-      CHARACTER*80 PATHWT, PATHWTC, PATHWTG, PATHWTW
-      CHARACTER*92 FILEWW
+      CHARACTER*80 PATHWT, PATHWTC, PATHWTG, PATHWTW, WPath
+      CHARACTER*92 FILEWW, WFile
       CHARACTER*120 LINE
 
       INTEGER DOY, DYNAMIC, ERR, ErrCode, FOUND, INCYD, ISIM
@@ -221,19 +221,35 @@ C     The components are copied into local variables for use here.
         NYEAR = MAX(1, NYEAR)
       ENDIF
 
+!     Detect name of weather file based on MEWTH
+      IF (INDEX('M',MEWTH) .GT. 0 .OR. SOURCE .EQ. 'FORCST') THEN
+        WFile = FILEW
+        WPath = PATHWTW
+      ELSEIF (INDEX('G',MEWTH) .GT. 0) .AND. SOURCE .EQ. 'WEATHR') THEN
+        WFile = FILEWG
+        WPath = PATHWTG
+      ELSEIF (INDEX('SW',MEWTH) .GT. 0) .AND. SOURCE .EQ. 'WEATHR') THEN
+        WFile = FILEWC
+        WPath = PATHWTC
+      ELSE
+!       to be handled later chp
+        WRITE(555,'(A)') "PANIC NOW! Problem with weather file."
+      ENDIF        
+
+!     Multi-year runs, update file names for single season weather files
       IF (NYEAR == 1 .AND. MULTI > 1) THEN
         PATHL  = INDEX(PATHWTW,BLANK)
         WYEAR = MOD((WYEAR + MULTI - 1),100)
         WRITE(FILEW(5:6),'(I2.2)') WYEAR
         IF (PATHL <= 1) THEN
-          FILEWW = FILEW
+          WFile = WFile
         ELSE
-          FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
+          WFile = WPath(1:(PATHL-1)) // WFile
         ENDIF
-        INQUIRE (FILE = FILEWW,EXIST = FEXIST)
+        INQUIRE (FILE = WFile,EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN  
           ErrCode = 29
-          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
+          CALL WeatherError(CONTROL, ErrCode, WFile, 0, YRDOYWY, YREND)
           RETURN
         ENDIF
       ENDIF
@@ -246,27 +262,29 @@ C     The components are copied into local variables for use here.
         PATHL  = INDEX(PATHWTW,BLANK)
         CALL YR_DOY(CONTROL % YRDOY, WYEAR, WDOY)
         WYEAR = MOD(WYEAR,100)
-        WRITE(FILEW(5:6),'(I2.2)') WYEAR
         YRSIM = CONTROL % YRDOY
+
+        WRITE(FILEW(5:6),'(I2.2)') WYEAR
         IF (PATHL <= 1) THEN
-          FILEWW = FILEW
+          WFile = WFile
         ELSE
-          FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
+          WFile = WPath(1:(PATHL-1)) // WFile
         ENDIF
-        INQUIRE (FILE = FILEWW,EXIST = FEXIST)
+        INQUIRE (FILE = WPath,EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN  
           ErrCode = 29
-          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
+          CALL WeatherError(CONTROL, ErrCode, WFile, 0,YRDOYWY,YREND)
           RETURN
         ENDIF
       ENDIF
 
+!     This is where I left off on 2020-12-18 chp
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRSIM,YR,ISIM)
 
       PATHL  = INDEX(PATHWTW,BLANK)
       IF (PATHL <= 1) THEN
-        FILEWW = FILEW
+        FILEWW = WFile
       ELSE
         FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
       ENDIF
