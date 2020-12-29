@@ -15,29 +15,30 @@ Module Forecast
 CONTAINS
 
 !========================================================================
-SUBROUTINE FCAST_STORE(                  &  
-     FILEW, FILEWC, FILEWG, MEWTH,       &  !Input
-     PATHWT, PATHWTC, PATHWTG, PATHWTW,  &  !Input
-     YREND,                              &  !Input/Output
-     FCOUNT, FYRDOY)                        !Output
+! Subroutine FCAST_STORE
+
 ! Determine start and end of forecast season (i.e., prior to ensemble)
 !   and the first and last years for the historical ensemble weather years
 ! Store the forecast year weather data plus data from short term forecast file. 
 !   These will be used in every year of the forecast ensemble. 
 
-  USE ModuleData
+SUBROUTINE FCAST_STORE(                                 &  
+     CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,         &  !Output
+     FYRDOY, MEWTH, PATHWTC, PATHWTG, PATHWTW,          &  !Output
+     REFHT, RSEED1, TAMP, TAV, WINDHT,                  &  !Output
+     XELEV, XLAT, XLONG, YREND)                            !Output
 
+  USE ModuleData
   IMPLICIT NONE
 
   CHARACTER*1  MEWTH
   CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
   CHARACTER*12 FILEW, FILEWC, FILEWG
-  CHARACTER*80 PATHWT, PATHWTC, PATHWTG, PATHWTW
+  CHARACTER*80 PATHWTC, PATHWTG, PATHWTW
   CHARACTER*92 FILEWW
 
-  INTEGER, INTENT(OUT)  :: FCOUNT
   INTEGER DOY, I, Obs_YRDOY, RSEED1, YREND, YR, YRSIM
-  INTEGER INCDAT, TIMDIF, FYRDOY
+  INTEGER INCDAT, TIMDIF, FYRDOY, FCOUNT
   REAL CCO2, DCO2, OZON7, PAR, RAIN, REFHT, RHUM
   REAL SRAD, TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT
   REAL WINDSP, XELEV, XLAT, XLONG
@@ -158,7 +159,7 @@ END SUBROUTINE FCAST_STORE
 SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, PAR, FYRDOY)
   USE ModuleData
   INTEGER DOY, YR, FYRDOY
-  INTEGER WDATE, FCODE, I, TIMDIF
+  INTEGER WDATE, I, TIMDIF
   REAL RAIN, TMAX, TMIN, SRAD, PAR
   TYPE (ControlType) CONTROL
   EXTERNAL :: YR_DOY, TIMDIF

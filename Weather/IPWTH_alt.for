@@ -47,7 +47,7 @@ C=======================================================================
       CHARACTER*12 FILEW, LastFILEW, FILEWC, FILEWG
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(8)
-      CHARACTER*80 PATHWT, PATHWTC, PATHWTG, PATHWTW, WPath
+      CHARACTER*80 PATHWTC, PATHWTG, PATHWTW, WPath
       CHARACTER*92 FILEWW, WFile
       CHARACTER*120 LINE
 
@@ -225,10 +225,10 @@ C     The components are copied into local variables for use here.
       IF (INDEX('M',MEWTH) .GT. 0 .OR. SOURCE .EQ. 'FORCST') THEN
         WFile = FILEW
         WPath = PATHWTW
-      ELSEIF (INDEX('G',MEWTH) .GT. 0) .AND. SOURCE .EQ. 'WEATHR') THEN
+      ELSEIF (INDEX('G',MEWTH) .GT. 0 .AND. SOURCE .EQ. 'WEATHR') THEN
         WFile = FILEWG
         WPath = PATHWTG
-      ELSEIF (INDEX('SW',MEWTH) .GT. 0) .AND. SOURCE .EQ. 'WEATHR') THEN
+      ELSEIF (INDEX('SW',MEWTH) .GT. 0 .AND. SOURCE .EQ. 'WEATHR') THEN
         WFile = FILEWC
         WPath = PATHWTC
       ELSE
@@ -238,7 +238,7 @@ C     The components are copied into local variables for use here.
 
 !     Multi-year runs, update file names for single season weather files
       IF (NYEAR == 1 .AND. MULTI > 1) THEN
-        PATHL  = INDEX(PATHWTW,BLANK)
+        PATHL  = INDEX(WPath,BLANK)
         WYEAR = MOD((WYEAR + MULTI - 1),100)
         WRITE(FILEW(5:6),'(I2.2)') WYEAR
         IF (PATHL <= 1) THEN
@@ -259,7 +259,7 @@ C     The components are copied into local variables for use here.
 !     If it's a multi-year weather file, no need to change the name.
       IF (RNMODE .EQ. 'Y' .AND. SOURCE .EQ. "WEATHR" 
      &    .AND. NYEAR .EQ. 1) THEN
-        PATHL  = INDEX(PATHWTW,BLANK)
+        PATHL  = INDEX(WPath,BLANK)
         CALL YR_DOY(CONTROL % YRDOY, WYEAR, WDOY)
         WYEAR = MOD(WYEAR,100)
         YRSIM = CONTROL % YRDOY
@@ -270,7 +270,7 @@ C     The components are copied into local variables for use here.
         ELSE
           WFile = WPath(1:(PATHL-1)) // WFile
         ENDIF
-        INQUIRE (FILE = WPath,EXIST = FEXIST)
+        INQUIRE (FILE = WFile,EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN  
           ErrCode = 29
           CALL WeatherError(CONTROL, ErrCode, WFile, 0,YRDOYWY,YREND)
@@ -976,7 +976,7 @@ C         Read in weather file header.
                 READ(LINE(C1:C2),*,IOSTAT=ERR) DCO2
                 IF (ERR .NE. 0) DCO2 = -99.0
 
-              CASE('OZON7')   !Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
+              CASE('OZON7')   !Daily 7-hr mean ozone conc, ppb (9am-4pm)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) OZON7
                 IF (ERR .NE. 0) OZON7 = -99.0
             END SELECT

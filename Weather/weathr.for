@@ -62,7 +62,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
 !     Yield forecast variables
-      INTEGER FCODE, FYRDOY, INCDAT
+      INTEGER FYRDOY, INCDAT
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
@@ -145,11 +145,11 @@ C=======================================================================
         IF (RNMODE .EQ. 'Y') THEN
 !         Read in-season weather and store in memory
           CALL FCAST_STORE(                    
-     &        FILEW, FILEWC, FILEWG, MEWTH,         !Input
-     &        PATHWT, PATHWTC, PATHWTG, PATHWTW,    !Input
-     &        YREND,                                !Input/Output
-! chp note: may not need FCOUNT here
-     &        FCOUNT, FYRDOY)                       !Output
+     &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
+     &      FYRDOY, MEWTH, PATHWTC, PATHWTG, PATHWTW,     !Output
+     &      REFHT, RSEED1, TAMP, TAV, WINDHT,             !Output
+     &      XELEV, XLAT, XLONG, YREND)                    !Output
+
           CONTROL2 % YRDOY = FYRDOY
           CONTROL2 % YRSIM = FYRDOY
         ENDIF
