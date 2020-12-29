@@ -119,17 +119,6 @@ C=======================================================================
 
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
-!     Print warning if Century soil N routine used
-      IF (DYNAMIC  ==  RUNINIT .AND. ISWITCH % MESOM  ==  'P') THEN
-        WRITE(MESSAGE(1),100) 
-        WRITE(MESSAGE(2),110)  
-        WRITE(MESSAGE(3),120) 
-        CALL WARNING(3, "CSYCA ", MESSAGE)
-      ENDIF
-
-  100 FORMAT('You have selected the Century soil nutrient model. ')
-  110 FORMAT('The CSYCA (cassava) routines have not been ')
-  120 FORMAT('calibrated for use with this model.' )
 
       IF (DYNAMIC  ==  RUNINIT .OR. DYNAMIC  ==  SEASINIT) THEN
         TN = 0
