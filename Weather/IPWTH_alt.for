@@ -240,16 +240,16 @@ C     The components are copied into local variables for use here.
       IF (NYEAR == 1 .AND. MULTI > 1) THEN
         PATHL  = INDEX(WPath,BLANK)
         WYEAR = MOD((WYEAR + MULTI - 1),100)
-        WRITE(FILEW(5:6),'(I2.2)') WYEAR
+        WRITE(WFile(5:6),'(I2.2)') WYEAR
         IF (PATHL <= 1) THEN
-          WFile = WFile
+          FileWW = WFile
         ELSE
-          WFile = WPath(1:(PATHL-1)) // WFile
+          FileWW = WPath(1:(PATHL-1)) // WFile
         ENDIF
-        INQUIRE (FILE = WFile,EXIST = FEXIST)
+        INQUIRE (FILE = FileWW, EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN  
           ErrCode = 29
-          CALL WeatherError(CONTROL, ErrCode, WFile, 0, YRDOYWY, YREND)
+          CALL WeatherError(CONTROL, ErrCode, FileWW, 0, YRDOYWY, YREND)
           RETURN
         ENDIF
       ENDIF
@@ -264,36 +264,35 @@ C     The components are copied into local variables for use here.
         WYEAR = MOD(WYEAR,100)
         YRSIM = CONTROL % YRDOY
 
-        WRITE(FILEW(5:6),'(I2.2)') WYEAR
+        WRITE(WFile(5:6),'(I2.2)') WYEAR
         IF (PATHL <= 1) THEN
-          WFile = WFile
+          FILEWW = WFile
         ELSE
-          WFile = WPath(1:(PATHL-1)) // WFile
+          FILEWW = WPath(1:(PATHL-1)) // WFile
         ENDIF
-        INQUIRE (FILE = WFile,EXIST = FEXIST)
+        INQUIRE (FILE = FILEWW,EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN  
           ErrCode = 29
-          CALL WeatherError(CONTROL, ErrCode, WFile, 0,YRDOYWY,YREND)
+          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
           RETURN
         ENDIF
       ENDIF
 
-!     This is where I left off on 2020-12-18 chp
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRSIM,YR,ISIM)
 
-      PATHL  = INDEX(PATHWTW,BLANK)
+      PATHL  = INDEX(WPath,BLANK)
       IF (PATHL <= 1) THEN
         FILEWW = WFile
       ELSE
-        FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
+        FILEWW = WPath(1:(PATHL-1)) // WFile
       ENDIF
 
       IF (YRDOY == YRSIM) THEN
         YRDOY_WY = INCYD(YRSIM,-1)
       ENDIF
 
-      WSTAT = FILEW(1:8)
+      WSTAT = WFile(1:8)
       CALL PUT('WEATHER','WSTA',WSTAT)
 
 !     If this is the first of the forecast simulations, need to 
@@ -303,7 +302,7 @@ C     The components are copied into local variables for use here.
         CLOSE (LUNWTH)
       ENDIF
 
-      IF (FILEW /= LastFileW) THEN 
+      IF (WFile /= LastFileW) THEN 
 !       NRecords = 0
         YRDOY_WY = 0
         LastWeatherDay  = 0
@@ -322,7 +321,7 @@ C     The components are copied into local variables for use here.
           CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
           RETURN
         ENDIF
-        WSTAT = FILEW(1:8)
+        WSTAT = WFile(1:8)
         CALL PUT('WEATHER','WSTA',WSTAT)
 
         INSI  = '-99 '
@@ -339,10 +338,10 @@ C     The components are copied into local variables for use here.
         DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
           CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
           SELECT CASE(ISECT)
-          CASE(0); CALL ERROR (ERRKEY,10,FILEW,LINWTH) !End of file 
+          CASE(0); CALL ERROR (ERRKEY,10,WFile,LINWTH) !End of file 
           CASE(1)
             IF(FirstWeatherDate .EQ. -99) THEN
-              CALL ERROR (ERRKEY,10,FILEW,LINWTH) !Data record 
+              CALL ERROR (ERRKEY,10,WFile,LINWTH) !Data record 
             ENDIF
           CASE(2); CYCLE                               !End of section 
           CASE(3); EXIT                                !Header line 
@@ -351,7 +350,7 @@ C     The components are copied into local variables for use here.
 
 !       Found header line for weather station data
         CALL PARSE_HEADERS(LINE, MAXCOL, HEADER, ICOUNT, COL)
-        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,10,WFile,LINWTH)
         DO I = 1, ICOUNT
           HTXT = HEADER(I)
           DO J = 1, LEN(TRIM(HTXT))
@@ -362,7 +361,7 @@ C     The components are copied into local variables for use here.
 
 !       Read corresponding line of data 
         CALL IGNORE (LUNWTH, LINWTH, ISECT, LINE)
-        IF (ISECT .NE. 1) CALL ERROR (ERRKEY,59,FILEW,LINWTH)
+        IF (ISECT .NE. 1) CALL ERROR (ERRKEY,59,WFile,LINWTH)
 
         DO I = 1, ICOUNT
           C1 = COL(I,1)
@@ -417,7 +416,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
         IF (REFHT <= 0.) REFHT = 1.5
         IF (WINDHT <= 0.) WINDHT = 2.0
 
-        LastFileW = FILEW
+        LastFileW = WFile
 !       10/27/2005 CHP The checks for TAV and TAMP were being done in the 
 !       STEMP routine, overriding this check. STEMP used .LE. instead 
 !       of .LT. and the results were very different for some experiments 
@@ -453,16 +452,16 @@ C       Substitute default values if REFHT or WINDHT are missing.
 !       Look for second header line beginning with '@' in column 1 (ISECT = 3)
         CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
         IF (ISECT .EQ. 0) THEN        !End of file found
-          CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+          CALL ERROR (ERRKEY,10,WFile,LINWTH)
         ELSEIF (ISECT. EQ. 1) THEN    !Data record found
-          CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+          CALL ERROR (ERRKEY,10,WFile,LINWTH)
         ELSEIF (ISECT .EQ. 2) THEN    !End of section found
-          CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+          CALL ERROR (ERRKEY,10,WFile,LINWTH)
         ENDIF
 
 !       Found header line for daily weather data
         CALL PARSE_HEADERS(LINE, MAXCOL, HEADER, ICOUNT, COL)
-        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,10,WFile,LINWTH)
         CALL Check_Weather_Headers(
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH)             !Input
 !       ------------------------------------------------------------
@@ -478,7 +477,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
   200   CONTINUE
         CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
         IF (FOUND == 2) GO TO 200
-        IF (FOUND == 0) CALL ERROR(ERRKEY,-1,FILEW,LINWTH)
+        IF (FOUND == 0) CALL ERROR(ERRKEY,-1,WFile,LINWTH)
         NRecords = 0
         
       ELSEIF (LongFile .AND. YRDOY > LastWeatherDay) THEN
@@ -491,7 +490,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
   210     CONTINUE
           CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
           IF (FOUND == 2) GO TO 210
-          IF (FOUND == 0) CALL ERROR(ERRKEY,-1,FILEW,LINWTH)
+          IF (FOUND == 0) CALL ERROR(ERRKEY,-1,WFile,LINWTH)
         ENDIF
       ENDIF
 
@@ -593,13 +592,13 @@ C       Substitute default values if REFHT or WINDHT are missing.
         IF (NYEAR <= 1 .AND. .NOT. LongFile) THEN
 !         Open new weather file
           CLOSE(LUNWTH)
-          WRITE(FILEW(5:6),'(I2.2)') MOD(CurrentWeatherYear,100)
+          WRITE(WFile(5:6),'(I2.2)') MOD(CurrentWeatherYear,100)
           LINWTH = 0
-          PATHL  = INDEX(PATHWTW,BLANK)
+          PATHL  = INDEX(WPath,BLANK)
           IF (PATHL <= 1) THEN
-             FILEWW = FILEW
+             FILEWW = WFile
           ELSE
-             FILEWW = PATHWTW(1:(PATHL-1)) // FILEW
+             FILEWW = WPath(1:(PATHL-1)) // WFile
           ENDIF
 
           INQUIRE(FILE=FILEWW,EXIST=FEXIST)
@@ -615,16 +614,16 @@ C       Substitute default values if REFHT or WINDHT are missing.
             CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
             RETURN
           ENDIF
-          WSTAT = FILEW(1:8)
+          WSTAT = WFile(1:8)
           CALL PUT('WEATHER','WSTA',WSTAT)
 
 C         Read in weather file header.
   500     CONTINUE
           CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
           IF (FOUND == 2) GO TO 500
-          IF (FOUND == 0) CALL ERROR(ERRKEY,-1,FILEW,LINWTH)
+          IF (FOUND == 0) CALL ERROR(ERRKEY,-1,WFile,LINWTH)
 
-          IF (FILEW == LastFILEW) THEN
+          IF (WFile == LastFILEW) THEN
             IF(YRDOY > YRDOY_A(NRecords)) THEN
               ErrCode = 10
               CALL WeatherError(CONTROL, ErrCode, FILEWW,
@@ -632,7 +631,7 @@ C         Read in weather file header.
               RETURN
             ENDIF
           ENDIF
-          LastFileW = FILEW
+          LastFileW = WFile
         ELSEIF (NYEAR > 1 .AND. .NOT. LongFile) THEN
 !         Simulation goes beyond weather file data
           ErrCode = 10

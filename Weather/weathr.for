@@ -62,7 +62,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
 !     Yield forecast variables
-      INTEGER FYRDOY, INCDAT
+      INTEGER FYRDOY, FYRSIM, INCDAT
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
@@ -146,12 +146,12 @@ C=======================================================================
 !         Read in-season weather and store in memory
           CALL FCAST_STORE(                    
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
-     &      FYRDOY, MEWTH, PATHWTC, PATHWTG, PATHWTW,     !Output
-     &      REFHT, RSEED1, TAMP, TAV, WINDHT,             !Output
+     &      FYRDOY, FYRSIM, MEWTH, PATHWTC, PATHWTG,      !Output
+     &      PATHWTW, REFHT, RSEED1, TAMP, TAV, WINDHT,    !Output
      &      XELEV, XLAT, XLONG, YREND)                    !Output
 
           CONTROL2 % YRDOY = FYRDOY
-          CONTROL2 % YRSIM = FYRDOY
+          CONTROL2 % YRSIM = FYRSIM
         ENDIF
 
 !       Initialize read from file for 'M', 'G' weather options and also for
@@ -300,6 +300,7 @@ C     Compute daily normal temperature.
         CALL FCAST_RETRIEVE(YRDOY, RAIN, TMAX, TMIN, SRAD, PAR, FYRDOY)
         IF (FYRDOY .GT. 0) THEN
           CONTROL2 % YRDOY = FYRDOY
+          CONTROL2 % YRSIM = FYRSIM
         ENDIF
       ELSE
         FYRDOY = YRDOY

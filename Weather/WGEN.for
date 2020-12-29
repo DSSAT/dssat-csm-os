@@ -113,8 +113,12 @@ C     Input and initialize if first day.
       RHUM = -99.
 
 !      IF (YRDOY .EQ. YRSIM) THEN
-        IF ((INDEX('IABDNGSEC',RNMODE) .GT. 0 .AND. MULTI .EQ. 1) .OR.
+         IF ((INDEX('IABDNGSEC',RNMODE) .GT. 0 .AND. MULTI .EQ. 1) .OR.
      &      (INDEX('QFY',RNMODE).GT.0 .AND. RUN.EQ.1 .AND. REPNO.EQ.1)) 
+
+! Error is here. Try splitting out RNMODE = "Y" in a separate IF clause.
+!     Need to set RSEED here for WGEN after reading fileX
+
      &  THEN
           IF (RSEED1 .GT. 0) THEN
             RSEED(1) = RSEED1
