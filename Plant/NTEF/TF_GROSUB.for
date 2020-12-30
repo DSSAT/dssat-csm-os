@@ -714,7 +714,8 @@ C The statements begining with !*! are refer to APSIM source codes
             CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
             READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC ; LNUM = LNUM + 1
- 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+C60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+ 60         FORMAT(24X,F6.0,12X,F6.0,7X,F5.2)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 !     -----------------------------------------------------------------

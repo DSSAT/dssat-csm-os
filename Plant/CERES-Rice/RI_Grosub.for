@@ -1446,7 +1446,8 @@ C-----------------------------------------------------------------------
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
       READ (LUNIO,70, IOSTAT=ERR) 
      &        PLANTS, PLTPOP, ROWSPC, SDWTPL, ATEMP, PLPH
-   70 FORMAT (18X,2(1X,F5.1),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
+C   70 FORMAT (18X,2(1X,F5.1),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
+   70 FORMAT (18X,2(F6.0),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
