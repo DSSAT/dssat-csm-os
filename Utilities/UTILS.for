@@ -714,8 +714,8 @@ C========================================================================
       CASE ('FILETMP'); LUN = 23  !Tony Hunt temp file
       CASE ('SIMCNTL'); LUN = 24  !Simulation Control file
       CASE ('DSPRO');   LUN = 25  !DSSATPRO file
-      CASE ('FILEWC');  LUN = 26  !*.wth - weather files
-      CASE ('FILEWG');  LUN = 27  !*.wth - weather files
+      CASE ('FILEWC');  LUN = 26  !*.cli - climate summary files
+      CASE ('FILEWG');  LUN = 27  !*.wtg - generated weather files
 
 !     Currently 30 is the highest number for reserved logical units
 !     Change value in subroutine OUTFILES if necessary

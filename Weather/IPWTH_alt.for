@@ -1356,6 +1356,7 @@ c                   available.
 ! ERRKEY  Subroutine name for error file 
 ! ERR  Error number for input 
 ! FILEIO  Filename for input file (e.g., IBSNAT35.INP) 
+! WFile   Name of current weather data file (generic - regardless of type)
 ! FILEW   Weather data file (measured data - WTH)
 ! FILEWG  Weather data file (generated data - WTG)
 ! FILEWC  Weather data file (climate summary - CLI)
@@ -1381,6 +1382,7 @@ c                   available.
 ! PAR     Daily photosynthetically active radiation or photon flux density
 !           (moles[quanta]/m2-d)
 ! PATHL   Number of characters in path name (path plus filename for FILEC) 
+! WPath   Directory path for current weather data file, regardless of type
 ! PATHWTW Directory path for measured data weather file (WTH)
 ! PATHWTC Directory path for climate summary file (CLI)
 ! PATHWTG Directory path for generated data weather file (WTG)
