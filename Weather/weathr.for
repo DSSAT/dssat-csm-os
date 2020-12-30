@@ -45,6 +45,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE ModuleData
       USE Forecast
 
       IMPLICIT NONE
@@ -62,7 +63,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
 !     Yield forecast variables
-      INTEGER FYRDOY, FYRSIM, INCDAT, WDATE
+      INTEGER FYRDOY, FYRSIM, INCDAT, WDATE, WYEAR
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
@@ -137,7 +138,7 @@ C=======================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
         YYDDD = YRSIM
-        CALL YR_DOY(YYDDD, YEAR, DOY)
+        CALL YR_DOY(YYDDD, WYEAR, DOY)
         FYRDOY = 0
 !-----------------------------------------------------------------------
         CONTROL2 = CONTROL
@@ -152,6 +153,7 @@ C=======================================================================
 
           CONTROL2 % YRDOY = FYRDOY
           CONTROL2 % YRSIM = FYRSIM
+          CALL YR_DOY(FYRSIM, WYEAR, DOY)
         ENDIF
 
 !       Initialize read from file for 'M', 'G' weather options and also for
@@ -395,7 +397,7 @@ C     Calculate hourly weather data.
 C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
 
-!      CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
+!     CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
 
 !***********************************************************************
 !***********************************************************************
@@ -430,6 +432,7 @@ C-----------------------------------------------------------------------
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
      &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
+      CALL PUT('WEATHER','WYEAR',WYEAR)
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT

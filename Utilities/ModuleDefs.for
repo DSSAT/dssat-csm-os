@@ -105,7 +105,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER   DAS, DYNAMIC, FROP, ErrCode, LUNIO, MULTI, N_ELEMS
         INTEGER   NYRS, REPNO, ROTNUM, RUN, TRTNUM
         INTEGER   YRDIF, YRDOY, YRSIM
-        INTEGER   FODAT, ENDYRS   !Forecast start date and forecast ensemble number
+        INTEGER   FODAT, ENDYRS  !Forecast start date and # of ensembles
       END TYPE ControlType
 
 !=======================================================================
@@ -435,7 +435,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Data transferred from management routine 
       Type MgmtType
         REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR
-        REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
+        REAL V_AVWAT(20) !Create vectors for growth stage based irrig
         REAL V_IMDEP(20)
         REAL V_ITHRL(20)
         REAL V_ITHRU(20)
@@ -466,6 +466,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data from weather
       Type WeathType
+        INTEGER WYEAR
         Character*8 WSTAT
       End Type WeathType
 
@@ -939,6 +940,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('WEATHER')
+        SELECT CASE (VarName)
+        Case ('WYEAR'); Value = SAVE_data % WEATHER % WYEAR
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -969,6 +976,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('NR5');  SAVE_data % PLANT % NR5  = Value
         Case ('iSTAGE');  SAVE_data % PLANT % iSTAGE  = Value
         Case ('iSTGDOY'); SAVE_data % PLANT % iSTGDOY = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('WEATHER')
+        SELECT CASE (VarName)
+        Case ('WYEAR'); SAVE_data % WEATHER % WYEAR = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
