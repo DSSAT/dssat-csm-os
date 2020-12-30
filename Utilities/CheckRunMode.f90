@@ -3,7 +3,7 @@ Subroutine CheckRunMode(RNMODE)
   Implicit None
   INTEGER COUNT
   CHARACTER*1 RNMODE
-  CHARACTER*120 MSG(66)
+  CHARACTER*120 MSG(67)
 
   DATA MSG / &
   "-----------------------------------------------------------------------------", &
@@ -44,6 +44,7 @@ Subroutine CheckRunMode(RNMODE)
   " Q   BatchFile  NA    Sequence analysis: Batchfile lists FileX & rotation #. ", &
   " S   BatchFile  NA    Spatial: Batchfile lists experiments and treatments.   ", &
   " T   BatchFile  NA    Gencalc: Batchfile lists experiments and treatments.   ", &
+  " Y   BatchFile  NA    Yield forecast mode uses ensemble weather data.        ", &
   "                                                                             ", &
   "  BatchFile - Name of DSSAT batch file with list of exeriments and treatments", &
   "                (e.g., DSSBATCH.v47)                                         ", &
@@ -73,7 +74,7 @@ Subroutine CheckRunMode(RNMODE)
   "           simulation control options specified by DSCSM047.CTR              ", &
   "-----------------------------------------------------------------------------"/
 
-  IF (INDEX('ABCDEFGILNQSTabcdefginlqst',RNMODE) .GT. 0) RETURN
+  IF (INDEX('ABCDEFGILNQSTYabcdefginlqsty',RNMODE) .GT. 0) RETURN
 
   COUNT = SIZE(MSG)
   WRITE(*,'(100(/,A))') MSG

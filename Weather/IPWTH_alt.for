@@ -23,9 +23,11 @@ C  Called by: WEATHR
 C  Calls:     None
 C=======================================================================
 
-      SUBROUTINE IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
-     &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
+      SUBROUTINE IPWTH(CONTROL, SOURCE,
+     &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
+     &    MEWTH, OZON7, PAR,                              !Output
+     &    PATHWTC, PATHWTG, PATHWTW,                      !Output
+     &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    DYNAMIC)
@@ -33,24 +35,26 @@ C=======================================================================
 !-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
+      USE Forecast
       IMPLICIT NONE
       SAVE
 
       CHARACTER*1  BLANK, MEWTH, RNMODE, UPCASE
       CHARACTER*4  INSI
-      CHARACTER*6  SECTION, ERRKEY
+      CHARACTER*6  SECTION, ERRKEY, SOURCE
       CHARACTER*8  WSTAT
       CHARACTER*10 TEXT
-      CHARACTER*12 FILEW, LastFILEW
+      CHARACTER*12 FILEW, LastFILEW, FILEWC, FILEWG
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(8)
-      CHARACTER*80 PATHWT
-      CHARACTER*92 FILEWW
+      CHARACTER*80 PATHWTC, PATHWTG, PATHWTW, WPath
+      CHARACTER*92 FILEWW, WFile
       CHARACTER*120 LINE
 
       INTEGER DOY, DYNAMIC, ERR, ErrCode, FOUND, INCYD, ISIM
       INTEGER LINWTH, LNUM, LUNIO, LUNWTH, MULTI, NYEAR
-      INTEGER PATHL, RSEED1, RUN, WYEAR
+      INTEGER LUNWTHC, LUNWTHG
+      INTEGER PATHL, RSEED1, RUN, WYEAR, WDOY
       INTEGER YEAR, YR, YRDOY, YRDOYW, YRDOYWY, YREND
       INTEGER YRSIM, YRSIMMY, YRDOY_WY
 
@@ -108,10 +112,8 @@ C     The components are copied into local variables for use here.
       IF (INDEX('FQ',RNMODE) <= 0 .OR. RUN. EQ. 1) THEN
         OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)
         IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
-        READ (LUNIO,'(11(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEW, PATHWT
-        IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,12)
 
-        REWIND (LUNIO)
+!       Need to read MEWTH first
         SECTION = '*SIMUL'
         CALL FIND(LUNIO, SECTION, LNUM, FOUND)
         IF (FOUND == 0) CALL ERROR(SECTION, 42, FILEIO,LNUM)
@@ -120,9 +122,44 @@ C     The components are copied into local variables for use here.
         READ (LUNIO,'(/,19X,A1)',IOSTAT=ERR) MEWTH
         IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM+3)
 
-        CLOSE (LUNIO)
-
+        REWIND (LUNIO)
+        READ (LUNIO,'(11(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEW, PATHWTW
+        IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,12)
         CALL GETLUN('FILEW', LUNWTH)
+
+!       With forecast mode, there is a possibility of two weather files, one for
+!         forecast season observed data (WTH) and one for either historical ensemble 
+!         climate data (CLI) or WTG generated data. It is also possible to have 
+!         only one weather file if historical ensemble is also in the WTH file.
+!       NOTE for future enhancement: May also need a third weather file for short
+!         term forecast, but this would be expected to be in the experiment directory
+!         and the name is read from Simulation Options.
+        IF (RNMODE .EQ. 'Y') THEN
+          SELECT CASE (MEWTH)
+            CASE ('M')
+            CASE ('G')
+              READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
+     &          FILEWG, PATHWTG
+              CALL GETLUN('FILEWG', LUNWTHG)
+            CASE ('S','W')
+              READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
+     &          FILEWC, PATHWTC
+              CALL GETLUN('FILEWC', LUNWTHC)
+          END SELECT
+        ELSE
+!         In any case, need to keep separate weather file names
+          SELECT CASE (MEWTH)
+            CASE ('M')
+            CASE ('G')
+              FILEWG = FILEW
+              PATHWTG = PATHWTW
+            CASE ('S','W')
+              FILEWC = FILEW
+              PATHWTC = PATHWTW
+          END SELECT
+        ENDIF
+
+        CLOSE (LUNIO)
 
         IF (FILEW /= LastFileW) THEN
 !          NRecords = 0
@@ -142,10 +179,39 @@ C     The components are copied into local variables for use here.
 !     Don't re-initialize for sequence and seasonal runs
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN > 1) RETURN
 
+!     Do we need to do this again for RNMODE = 'Y'?
       OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)
       IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
-      READ (LUNIO,'(11(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEW, PATHWT
+      READ (LUNIO,'(11(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEW, PATHWTW
       IF (ERR /= 0) CALL ERROR(ERRKEY,ERR,FILEIO,12)
+      CALL GETLUN('FILEW', LUNWTH)
+
+      IF (RNMODE .EQ. 'Y') THEN
+        SELECT CASE (MEWTH)
+          CASE ('M')
+          CASE ('G')
+            READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
+     &        FILEWG, PATHWTG
+            CALL GETLUN('FILEWG', LUNWTHG)
+          CASE ('S','W')
+            READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
+     &        FILEWC, PATHWTC
+            CALL GETLUN('FILEWC', LUNWTHC)
+        END SELECT
+
+      ELSE
+!       In any case, need to keep separate weather file names
+        SELECT CASE (MEWTH)
+          CASE ('M')
+          CASE ('G')
+            FILEWG = FILEW
+            PATHWTG = PATHWTW
+          CASE ('S','W')
+            FILEWC = FILEW
+            PATHWTC = PATHWTW
+        END SELECT
+      ENDIF
+
       CLOSE (LUNIO)
 
       WYEAR = (ICHAR(FILEW(5:5)) - 48)*10 + (ICHAR(FILEW(6:6)) - 48)
@@ -155,19 +221,59 @@ C     The components are copied into local variables for use here.
         NYEAR = MAX(1, NYEAR)
       ENDIF
 
+!     Detect name of weather file based on MEWTH
+      IF (INDEX('M',MEWTH) .GT. 0 .OR. SOURCE .EQ. 'FORCST') THEN
+        WFile = FILEW
+        WPath = PATHWTW
+      ELSEIF (INDEX('G',MEWTH) .GT. 0 .AND. SOURCE .EQ. 'WEATHR') THEN
+        WFile = FILEWG
+        WPath = PATHWTG
+      ELSEIF (INDEX('SW',MEWTH) .GT. 0 .AND. SOURCE .EQ. 'WEATHR') THEN
+        WFile = FILEWC
+        WPath = PATHWTC
+      ELSE
+!       to be handled later chp
+        WRITE(555,'(A)') "PANIC NOW! Problem with weather file."
+      ENDIF        
+
+!     Multi-year runs, update file names for single season weather files
       IF (NYEAR == 1 .AND. MULTI > 1) THEN
-        PATHL  = INDEX(PATHWT,BLANK)
+        PATHL  = INDEX(WPath,BLANK)
         WYEAR = MOD((WYEAR + MULTI - 1),100)
-        WRITE(FILEW(5:6),'(I2.2)') WYEAR
+        WRITE(WFile(5:6),'(I2.2)') WYEAR
         IF (PATHL <= 1) THEN
-          FILEWW = FILEW
+          FileWW = WFile
         ELSE
-          FILEWW = PATHWT(1:(PATHL-1)) // FILEW
+          FileWW = WPath(1:(PATHL-1)) // WFile
+        ENDIF
+        INQUIRE (FILE = FileWW, EXIST = FEXIST)
+        IF (.NOT. FEXIST) THEN  
+          ErrCode = 29
+          CALL WeatherError(CONTROL, ErrCode, FileWW, 0, YRDOYWY, YREND)
+          RETURN
+        ENDIF
+      ENDIF
+
+!     Forecast mode: Set weather file name for historical weather data for forecast
+!     - when IPWTH is called from the forecast module, don't change weather file name
+!     If it's a multi-year weather file, no need to change the name.
+      IF (RNMODE .EQ. 'Y' .AND. SOURCE .EQ. "WEATHR" 
+     &    .AND. NYEAR .EQ. 1) THEN
+        PATHL  = INDEX(WPath,BLANK)
+        CALL YR_DOY(CONTROL % YRDOY, WYEAR, WDOY)
+        WYEAR = MOD(WYEAR,100)
+        YRSIM = CONTROL % YRDOY
+
+        WRITE(WFile(5:6),'(I2.2)') WYEAR
+        IF (PATHL <= 1) THEN
+          FILEWW = WFile
+        ELSE
+          FILEWW = WPath(1:(PATHL-1)) // WFile
         ENDIF
         INQUIRE (FILE = FILEWW,EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN  
           ErrCode = 29
-          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
+          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
           RETURN
         ENDIF
       ENDIF
@@ -175,18 +281,28 @@ C     The components are copied into local variables for use here.
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRSIM,YR,ISIM)
 
-      PATHL  = INDEX(PATHWT,BLANK)
+      PATHL  = INDEX(WPath,BLANK)
       IF (PATHL <= 1) THEN
-        FILEWW = FILEW
+        FILEWW = WFile
       ELSE
-        FILEWW = PATHWT(1:(PATHL-1)) // FILEW
+        FILEWW = WPath(1:(PATHL-1)) // WFile
       ENDIF
 
       IF (YRDOY == YRSIM) THEN
         YRDOY_WY = INCYD(YRSIM,-1)
       ENDIF
 
-      IF (FILEW /= LastFileW) THEN
+      WSTAT = WFile(1:8)
+      CALL PUT('WEATHER','WSTA',WSTAT)
+
+!     If this is the first of the forecast simulations, need to 
+!     re-read weather data so that metadata are available in WEATHR 
+      IF (RNMODE .EQ. 'Y' .AND. CONTROL % ENDYRS .EQ. 1) THEN
+        LastFileW = ''
+        CLOSE (LUNWTH)
+      ENDIF
+
+      IF (WFile /= LastFileW) THEN 
 !       NRecords = 0
         YRDOY_WY = 0
         LastWeatherDay  = 0
@@ -205,7 +321,7 @@ C     The components are copied into local variables for use here.
           CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
           RETURN
         ENDIF
-        WSTAT = FILEW(1:8)
+        WSTAT = WFile(1:8)
         CALL PUT('WEATHER','WSTA',WSTAT)
 
         INSI  = '-99 '
@@ -222,10 +338,10 @@ C     The components are copied into local variables for use here.
         DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
           CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
           SELECT CASE(ISECT)
-          CASE(0); CALL ERROR (ERRKEY,10,FILEW,LINWTH) !End of file 
+          CASE(0); CALL ERROR (ERRKEY,10,WFile,LINWTH) !End of file 
           CASE(1)
             IF(FirstWeatherDate .EQ. -99) THEN
-              CALL ERROR (ERRKEY,10,FILEW,LINWTH) !Data record 
+              CALL ERROR (ERRKEY,10,WFile,LINWTH) !Data record 
             ENDIF
           CASE(2); CYCLE                               !End of section 
           CASE(3); EXIT                                !Header line 
@@ -234,7 +350,7 @@ C     The components are copied into local variables for use here.
 
 !       Found header line for weather station data
         CALL PARSE_HEADERS(LINE, MAXCOL, HEADER, ICOUNT, COL)
-        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,10,WFile,LINWTH)
         DO I = 1, ICOUNT
           HTXT = HEADER(I)
           DO J = 1, LEN(TRIM(HTXT))
@@ -245,7 +361,7 @@ C     The components are copied into local variables for use here.
 
 !       Read corresponding line of data 
         CALL IGNORE (LUNWTH, LINWTH, ISECT, LINE)
-        IF (ISECT .NE. 1) CALL ERROR (ERRKEY,59,FILEW,LINWTH)
+        IF (ISECT .NE. 1) CALL ERROR (ERRKEY,59,WFile,LINWTH)
 
         DO I = 1, ICOUNT
           C1 = COL(I,1)
@@ -300,7 +416,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
         IF (REFHT <= 0.) REFHT = 1.5
         IF (WINDHT <= 0.) WINDHT = 2.0
 
-        LastFileW = FILEW
+        LastFileW = WFile
 !       10/27/2005 CHP The checks for TAV and TAMP were being done in the 
 !       STEMP routine, overriding this check. STEMP used .LE. instead 
 !       of .LT. and the results were very different for some experiments 
@@ -336,30 +452,32 @@ C       Substitute default values if REFHT or WINDHT are missing.
 !       Look for second header line beginning with '@' in column 1 (ISECT = 3)
         CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
         IF (ISECT .EQ. 0) THEN        !End of file found
-          CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+          CALL ERROR (ERRKEY,10,WFile,LINWTH)
         ELSEIF (ISECT. EQ. 1) THEN    !Data record found
-          CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+          CALL ERROR (ERRKEY,10,WFile,LINWTH)
         ELSEIF (ISECT .EQ. 2) THEN    !End of section found
-          CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+          CALL ERROR (ERRKEY,10,WFile,LINWTH)
         ENDIF
 
 !       Found header line for daily weather data
         CALL PARSE_HEADERS(LINE, MAXCOL, HEADER, ICOUNT, COL)
-        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,10,FILEW,LINWTH)
+        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,10,WFile,LINWTH)
         CALL Check_Weather_Headers(
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH)             !Input
 !       ------------------------------------------------------------
 
         NRecords = 0
 
-      ELSEIF (LongFile .AND. YRDOY < FirstWeatherDay) THEN
-!       Starting over with long file -- same file, but need to read from tops
+      ELSEIF ((LongFile .AND. YRDOY < FirstWeatherDay)
+     &   .OR. (RNMODE .EQ. 'Y' .AND. CONTROL % ENDYRS. EQ. 1)) THEN
+!       Starting over with long file -- same file, but need to read from top
+!       or starting a historical ensemble for forecast mode.
         REWIND(LUNWTH)
         
   200   CONTINUE
         CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
         IF (FOUND == 2) GO TO 200
-        IF (FOUND == 0) CALL ERROR(ERRKEY,-1,FILEW,LINWTH)
+        IF (FOUND == 0) CALL ERROR(ERRKEY,-1,WFile,LINWTH)
         NRecords = 0
         
       ELSEIF (LongFile .AND. YRDOY > LastWeatherDay) THEN
@@ -372,12 +490,12 @@ C       Substitute default values if REFHT or WINDHT are missing.
   210     CONTINUE
           CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
           IF (FOUND == 2) GO TO 210
-          IF (FOUND == 0) CALL ERROR(ERRKEY,-1,FILEW,LINWTH)
+          IF (FOUND == 0) CALL ERROR(ERRKEY,-1,WFile,LINWTH)
         ENDIF
       ENDIF
 
       YRDOYWY = INCYD(YRSIM,-1)
-      IF (MULTI > 1) THEN
+      IF (MULTI > 1 .OR. RNMODE .EQ. 'Y') THEN
         YRDOY_WY = YRDOYWY
       ELSE
         YRDOY_WY = 0
@@ -474,13 +592,13 @@ C       Substitute default values if REFHT or WINDHT are missing.
         IF (NYEAR <= 1 .AND. .NOT. LongFile) THEN
 !         Open new weather file
           CLOSE(LUNWTH)
-          WRITE(FILEW(5:6),'(I2.2)') MOD(CurrentWeatherYear,100)
+          WRITE(WFile(5:6),'(I2.2)') MOD(CurrentWeatherYear,100)
           LINWTH = 0
-          PATHL  = INDEX(PATHWT,BLANK)
+          PATHL  = INDEX(WPath,BLANK)
           IF (PATHL <= 1) THEN
-             FILEWW = FILEW
+             FILEWW = WFile
           ELSE
-             FILEWW = PATHWT(1:(PATHL-1)) // FILEW
+             FILEWW = WPath(1:(PATHL-1)) // WFile
           ENDIF
 
           INQUIRE(FILE=FILEWW,EXIST=FEXIST)
@@ -496,16 +614,16 @@ C       Substitute default values if REFHT or WINDHT are missing.
             CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
             RETURN
           ENDIF
-          WSTAT = FILEW(1:8)
+          WSTAT = WFile(1:8)
           CALL PUT('WEATHER','WSTA',WSTAT)
 
 C         Read in weather file header.
   500     CONTINUE
           CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
           IF (FOUND == 2) GO TO 500
-          IF (FOUND == 0) CALL ERROR(ERRKEY,-1,FILEW,LINWTH)
+          IF (FOUND == 0) CALL ERROR(ERRKEY,-1,WFile,LINWTH)
 
-          IF (FILEW == LastFILEW) THEN
+          IF (WFile == LastFILEW) THEN
             IF(YRDOY > YRDOY_A(NRecords)) THEN
               ErrCode = 10
               CALL WeatherError(CONTROL, ErrCode, FILEWW,
@@ -513,7 +631,7 @@ C         Read in weather file header.
               RETURN
             ENDIF
           ENDIF
-          LastFileW = FILEW
+          LastFileW = WFile
         ELSEIF (NYEAR > 1 .AND. .NOT. LongFile) THEN
 !         Simulation goes beyond weather file data
           ErrCode = 10
@@ -857,7 +975,7 @@ C         Read in weather file header.
                 READ(LINE(C1:C2),*,IOSTAT=ERR) DCO2
                 IF (ERR .NE. 0) DCO2 = -99.0
 
-              CASE('OZON7')   !Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
+              CASE('OZON7')   !Daily 7-hr mean ozone conc, ppb (9am-4pm)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) OZON7
                 IF (ERR .NE. 0) OZON7 = -99.0
             END SELECT
@@ -1238,7 +1356,10 @@ c                   available.
 ! ERRKEY  Subroutine name for error file 
 ! ERR  Error number for input 
 ! FILEIO  Filename for input file (e.g., IBSNAT35.INP) 
-! FILEW   Weather data file 
+! WFile   Name of current weather data file (generic - regardless of type)
+! FILEW   Weather data file (measured data - WTH)
+! FILEWG  Weather data file (generated data - WTG)
+! FILEWC  Weather data file (climate summary - CLI)
 ! FILEWW  Pathname plus filename for weather file (e.g. UFGA7801.WTH) 
 ! FIRST   Indicates first call to subroutine (true or false) 
 ! FOUND   Indicator that good data was read from file by subroutine FIND  
@@ -1261,7 +1382,10 @@ c                   available.
 ! PAR     Daily photosynthetically active radiation or photon flux density
 !           (moles[quanta]/m2-d)
 ! PATHL   Number of characters in path name (path plus filename for FILEC) 
-! PATHWT  Directory path for weather file 
+! WPath   Directory path for current weather data file, regardless of type
+! PATHWTW Directory path for measured data weather file (WTH)
+! PATHWTC Directory path for climate summary file (CLI)
+! PATHWTG Directory path for generated data weather file (WTG)
 ! RAIN    Precipitation depth for current day (mm)
 ! REFHT   Reference height for wind speed (m)
 ! RHUM    Relative humidity (%)

@@ -112,19 +112,18 @@ C=======================================================================
 C     Input and initialize if first day.
       RHUM = -99.
 
-!      IF (YRDOY .EQ. YRSIM) THEN
-        IF ((INDEX('IABDNGSEC',RNMODE) .GT. 0 .AND. MULTI .EQ. 1) .OR.
-     &      (INDEX('QF',RNMODE) .GT. 0 .AND. 
-     &            RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
-          IF (RSEED1 .GT. 0) THEN
-            RSEED(1) = RSEED1
-          ELSE
-            RSEED(1) = 2510
-          ENDIF
-          RSEED(2) = 7692
-          RSEED(3) = 2456
-          RSEED(4) = 3765
+      IF ((INDEX('IABDNGSEC',RNMODE) .GT. 0 .AND. MULTI .EQ. 1) 
+     &  .OR.(INDEX('QF',RNMODE).GT.0 .AND. RUN.EQ.1 .AND. REPNO.EQ.1) 
+     &  .OR.(INDEX('Y',RNMODE).GT.0 .AND. CONTROL % ENDYRS .EQ. 1)) THEN
+        IF (RSEED1 .GT. 0) THEN
+          RSEED(1) = RSEED1
+        ELSE
+          RSEED(1) = 2510
         ENDIF
+        RSEED(2) = 7692
+        RSEED(3) = 2456
+        RSEED(4) = 3765
+      ENDIF
 
 !-----------------------------------------------------------------------
 !     Two methods of calculating Y, monthly input factors and CF, monthly

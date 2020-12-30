@@ -184,7 +184,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     Run Initialization - Called once per simulation
 !***********************************************************************
-      IF (DYNAMIC .EQ. RUNINIT) THEN
+      IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
@@ -354,11 +354,17 @@ C-----------------------------------------------------------------------
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
       DO L = 1, NLAYR
-
         READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)SW(L), NH4(L),NO3(L)
 100     FORMAT (8X, 3 (1X, F5.1))
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
+
+        IF (SW(L) .LT. LL(L)) THEN
+          SW(L) = LL(L)
+        ENDIF
+        IF (SW(L) > SAT(L)) THEN
+          SW(L) = SAT(L)
+        ENDIF
       ENDDO
 
       CLOSE (LUNIO)
@@ -512,7 +518,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       ENDDO   !End of soil layer loop.
 
 !     Warning message for non-sequenced runs or any first run
-      IF (INDEX('QFN',RNMODE) .LE. 0 .OR. 
+      IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
         IF (LEN(TRIM(MSG(3))) > 1) THEN
 !         Print message for missing or invalid data
@@ -736,7 +742,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 !     Warning message for Century
 !      (non-sequenced runs or any first run)
       IF (MESOM == 'P' .AND. 
-     &   (INDEX('QFN',RNMODE) .LE. 0 .OR. 
+     &   (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1))) THEN
 !       Texture data missing - write message to WARNING.OUT file.
         IF (NOTEXTURE) THEN
@@ -954,12 +960,12 @@ C  tillage and rainfall kinetic energy
       CRAIN     = 0.
       LCRAIN    = 0.
 
-!***********************************************************************
-!***********************************************************************
-!     Seasonal initialization
-!***********************************************************************
-      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
-!-----------------------------------------------------------------------
+!!***********************************************************************
+!!***********************************************************************
+!!     Seasonal initialization
+!!***********************************************************************
+!      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
+!!-----------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
 
       ISWTIL = ISWITCH % ISWTIL
@@ -1562,10 +1568,10 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SOILPROP % MSALB  = MSALB
       SOILPROP % SWALB  = SWALB
 
-!!       Temporary -- print soil albedo stuff
+!!    Temporary -- print soil albedo stuff
 !     GET (CONTROL)
 !     CALL YR_DOY(CONTROL.YRDOY, YEAR, DOY)
-!        WRITE(2250,'(1X,I4,1X,I3.3,1X,I5,8F8.3)') YEAR, DOY, CONTROL.DAS, SOILPROP.SALB, 
+!     WRITE(2250,'(1X,I4,1X,I3.3,1X,I5,8F8.3)') YEAR, DOY, CONTROL.DAS, SOILPROP.SALB, 
 !     &      FF, SWALB, MULCHCOVER, MSALB, CANCOV, CMSALB
 
       RETURN
