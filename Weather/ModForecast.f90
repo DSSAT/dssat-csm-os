@@ -4,6 +4,7 @@ Module Forecast
   Type DailyWeatherType
     INTEGER YRDOY
     REAL RAIN, SRAD, TMAX, TMIN, PAR
+    REAL DCO2, OZON7, RHUM, TDEW, VAPR, WINDSP
   End Type
   TYPE (DailyWeatherType), Allocatable :: Obs_data(:)
 
@@ -24,9 +25,9 @@ CONTAINS
 
 SUBROUTINE FCAST_STORE(                                 &  
      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,         &  !Output
-     FYRDOY, FYRSIM, MEWTH, PATHWTC, PATHWTG, PATHWTW,  &  !Output
-     REFHT, RSEED1, TAMP, TAV, WINDHT,                  &  !Output
-     XELEV, XLAT, XLONG, YREND)                            !Output
+     FYRDOY, FYRSIM, MEWTH, OZON7, PATHWTC, PATHWTG,    &  !Output
+     PATHWTW,REFHT, RHUM, RSEED1, TAMP, TAV, TDEW,      &  !Output
+     VAPR, WINDHT, WINDSP, XELEV, XLAT, XLONG, YREND)      !Output
 
   USE ModuleData
   IMPLICIT NONE
@@ -101,12 +102,18 @@ SUBROUTINE FCAST_STORE(                                 &
         WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
         SEASINIT)                                           
 
-    Obs_data(0) % YRDOY= Obs_YRDOY
-    Obs_data(0) % SRAD = SRAD
-    Obs_data(0) % TMAX = TMAX
-    Obs_data(0) % TMIN = TMIN
-    Obs_data(0) % RAIN = RAIN
-    Obs_data(0) % PAR  = PAR
+    Obs_data(0) % YRDOY  = Obs_YRDOY
+    Obs_data(0) % SRAD   = SRAD
+    Obs_data(0) % TMAX   = TMAX
+    Obs_data(0) % TMIN   = TMIN
+    Obs_data(0) % RAIN   = RAIN
+    Obs_data(0) % PAR    = PAR
+    Obs_data(0) % TDEW   = TDEW
+    Obs_data(0) % WINDSP = WINDSP
+    Obs_data(0) % RHUM   = RHUM
+    Obs_data(0) % VAPR   = VAPR
+    Obs_data(0) % DCO2   = DCO2
+    Obs_data(0) % OZON7  = OZON7
 
 ! =======================================================================
 ! Get and store weather data between YRSIM and FODAT-1
@@ -129,12 +136,18 @@ SUBROUTINE FCAST_STORE(                                 &
         WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
         RATE)                                           
 
-    Obs_data(I) % YRDOY= Obs_YRDOY
-    Obs_data(I) % SRAD = SRAD
-    Obs_data(I) % TMAX = TMAX
-    Obs_data(I) % TMIN = TMIN
-    Obs_data(I) % RAIN = RAIN
-    Obs_data(I) % PAR  = PAR
+    Obs_data(I) % YRDOY  = Obs_YRDOY
+    Obs_data(I) % SRAD   = SRAD
+    Obs_data(I) % TMAX   = TMAX
+    Obs_data(I) % TMIN   = TMIN
+    Obs_data(I) % RAIN   = RAIN
+    Obs_data(I) % PAR    = PAR
+    Obs_data(0) % TDEW   = TDEW
+    Obs_data(0) % WINDSP = WINDSP
+    Obs_data(0) % RHUM   = RHUM
+    Obs_data(0) % VAPR   = VAPR
+    Obs_data(0) % DCO2   = DCO2
+    Obs_data(0) % OZON7  = OZON7
   ENDDO
 
 ! =======================================================================
@@ -150,11 +163,16 @@ SUBROUTINE FCAST_STORE(                                 &
 END SUBROUTINE FCAST_STORE
 
 !========================================================================
-SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, PAR, FYRDOY)
+SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
+        DCO2, FYRDOY, OZON7, PAR, RAIN, &   !Output
+        RHUM, TDEW, TMAX, TMIN, VAPR,   &   !Output
+        SRAD, WINDSP)                       !Output
+
   USE ModuleData
   INTEGER DOY, YR, FYRDOY
   INTEGER WDATE, I, TIMDIF
   REAL RAIN, TMAX, TMIN, SRAD, PAR
+  REAL DCO2, OZON7, RHUM, TDEW, VAPR, WINDSP
   TYPE (ControlType) CONTROL
   EXTERNAL :: YR_DOY, TIMDIF
 
@@ -175,11 +193,17 @@ SUBROUTINE FCAST_RETRIEVE(WDATE, RAIN, TMAX, TMIN, SRAD, PAR, FYRDOY)
       PRINT *, WDATE, Obs_data(I) % YRDOY, "Error in forecast weather data"
     ENDIF
     
-    RAIN = Obs_data(I) % RAIN
-    SRAD = Obs_data(I) % SRAD
-    TMAX = Obs_data(I) % TMAX
-    TMIN = Obs_data(I) % TMIN
-    PAR  = Obs_data(I) % PAR
+    RAIN   = Obs_data(I) % RAIN
+    SRAD   = Obs_data(I) % SRAD
+    TMAX   = Obs_data(I) % TMAX
+    TMIN   = Obs_data(I) % TMIN
+    PAR    = Obs_data(I) % PAR
+    TDEW   = Obs_data(0) % TDEW
+    WINDSP = Obs_data(0) % WINDSP
+    RHUM   = Obs_data(0) % RHUM
+    VAPR   = Obs_data(0) % VAPR
+    DCO2   = Obs_data(0) % DCO2
+    OZON7  = Obs_data(0) % OZON7
     FYRDOY = 0
   ENDIF
 
