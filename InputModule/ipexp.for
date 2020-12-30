@@ -662,18 +662,13 @@ C-----------------------------------------------------------------------
       CALL YR_DOY (YRSIM,YEAR,ISIM)
       CONTROL % YRSIM = YRSIM
 
-C-----------------------------------------------------------------------
-C     Now establish the weather file FILEW as WSTA + .WT?  where ? :
-C
-C          M = observed data           FILEW
-C          G = generated data          FILEWG
-C          S = interactively generated FILEWC
-C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
 ! 2020-10-11 CHP RNMODE = 'Y' indicates yield forecast mode. May need multiple
 !     weather files. 
 !     If RNMODE = 'Y' and MEWTH = 'G','W','S', then also need a WTH file for
 !     forecast year weather data.
-!
+!-----------------------------------------------------------------------
+!     Generated weather data files
       IF (MEWTH .EQ. 'G') THEN
          IF (WSTA1(4:4) .EQ. BLANK) THEN
             IF (YEAR .LT. 2000) THEN
@@ -687,10 +682,12 @@ C-----------------------------------------------------------------------
          ENDIF
          PROCODG = 'WGD'
       ENDIF
+!     Interactively generated weather 
       IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
          WRITE (FILEWC(1:12),77) WSTA,'.CLI    '
          PROCODC = 'CLD'
       ENDIF
+!     Measured weather data
       IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
          IF (WSTA1(4:4) .EQ. BLANK) THEN
            IF (YEAR .LT. 2000) THEN

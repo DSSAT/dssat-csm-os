@@ -963,11 +963,6 @@ C-----------------------------------------------------------------------
       CONTROL % MODEL  = MODEL     !crop growth model
 !     CONTROL % MESIC  = MESIC     !initial conditions (no longer used)
 
-!     chp 2020-11-13
-!     For some reason, value of FODAT does not retain it's value here. 
-!     Ignore for now, fill CONTROL when it's read in, but need to solve later.
-!     CONTROL % FODAT  = FODAT     !Forecast start date
-
 !     chp moved 12/9/2009
       ISWITCH % ISWSYM = ISWSYM    !symbiosis (N-fixation)
       ISWITCH % MEPHO  = MEPHO     !photsynthesis method
