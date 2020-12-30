@@ -989,7 +989,9 @@ C 05/07/2020 FO Add new Y4K subroutine call to convert YRDOY
          IF (PLTPOP .LE. 0.0 .AND. PLANTS .GT. 0.0) THEN
             PLTPOP = PLANTS
          ENDIF
-         IF (PLTPOP .LE. 0.0 .OR. PLTPOP .GT. 999.) THEN
+C-GH     IF (PLTPOP .LE. 0.0 .OR. PLTPOP .GT. 999.) THEN
+         IF (PLTPOP .LE. 0.0) THEN
+
             IF (CROP /= 'SC') CALL ERROR (ERRKEY,11,FILEX,LINEXP)
          ENDIF
 
@@ -1050,7 +1052,8 @@ C-----------------------------------------------------------------------
 C     FORMAT Strings
 C-----------------------------------------------------------------------
 
- 60   FORMAT (I3,I5,1X,I5,2(1X,F5.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
+C 60 FORMAT (I3,I5,1X,I5,2(1X,F5.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
+ 60   FORMAT (I3,I5,1X,I5,2(F6.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
 
       END SUBROUTINE IPPLNT_Inp
 
