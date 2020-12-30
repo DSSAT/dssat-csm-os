@@ -307,7 +307,7 @@ c     IHARI is harvest management option
 c     (e.g. 'R' = 'On reported date', 'M' = 'At maturity')
 c     HDATE(1) is harvest date (YYYYDOY)
 c     ::::::::::::::::::::::::::::::::::
-      IF (IHARI  .EQ. 'R' .AND. INDEX('FQN',RNMODE)<1) THEN
+      IF (IHARI  .EQ. 'R' .AND. INDEX('FQNY',RNMODE)<1) THEN
 
 c         Get Day Of Year (DOY) date
           HDATE_YR = HDATE(1)/1000

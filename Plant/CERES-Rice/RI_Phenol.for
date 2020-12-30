@@ -172,12 +172,6 @@ C=======================================================================
 
       NEW_PHASE = .FALSE.
 
-!! temp chp
-!      write(3000,'(A)') 
-!     & "   yrdoy  xstage icsdur     dtt    sind     tn    tmpi" //
-!     &  "  idur1     lai"
-
-
 !***********************************************************************
 !***********************************************************************
 !     Daily rate / integration calculations
@@ -552,11 +546,6 @@ C=======================================================================
                 IF (TN .GT. TCLDP) THEN
                    IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
                 ENDIF
-
-!! temp chp
-!      write(3000,3000) yrdoy, xstage, icsdur, dtt,sind,tn,tmpi,idur1,lai
-! 3000 format(i8,f8.3,i7,2f8.3,f7.2,f8.3,I7,f8.3)
-
                 RETURN
              ENDIF
 

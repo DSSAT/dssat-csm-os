@@ -78,13 +78,13 @@ C=======================================================================
       CHARACTER* 1 LINE(80),BLANK, RNMODE
       CHARACTER* 1 WMODI,ANS
       CHARACTER* 2 CROP
-      CHARACTER* 3 PROCOD,ALN(13),ALLN
+      CHARACTER* 3 PROCOD,ALN(13),ALLN, PROCODG, PROCODC, PROCODW
       CHARACTER* 4 WSTA1
       CHARACTER* 6 VARNO,ERRKEY,FINDCH
       CHARACTER* 7 FILELS
       CHARACTER* 8 FILES_a, FILES_b, MODEL, MODELARG, FILEW4
       CHARACTER*10 SLNO
-      CHARACTER*12 NAMEF, FILEX
+      CHARACTER*12 NAMEF, FILEX, FILE_CHECK
       CHARACTER*25 TITLET
       CHARACTER*42 CHEXTR(NAPPL)
       CHARACTER*78 MSG(4)
@@ -354,7 +354,7 @@ C-GH        TRTN   = 1
          TRTN = TRTNUM
          ROTN = ROTNUM
          I = 999
-       ELSEIF (INDEX ('NQGSFBECT',RNMODE) .GT. 0) THEN
+       ELSEIF (INDEX ('NQGSFBECTY',RNMODE) .GT. 0) THEN
 !         READ (TRNARG(1:6),'(I6)') TRTN
          TRTN = TRTNUM
          I = 999
@@ -394,7 +394,7 @@ C-----------------------------------------------------------------------
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
 
 C     IF (I .LT. TRTN) GO TO 50
-      IF ((INDEX('BEDNSGFCT',RNMODE) .GT. 0 .AND. TRTN .NE. TRTNO) .OR.
+      IF ((INDEX('BEDNSGFCTY',RNMODE) .GT. 0 .AND. TRTN .NE. TRTNO) .OR.
      &    (INDEX('Q',RNMODE) .GT. 0 .AND. 
      &                     (TRTN .NE. TRTNO .OR. ROTN .NE. ROTNO)) .OR. 
      &    (INDEX('AI',RNMODE) .GT. 0 .AND. I .LT. TRTN))
@@ -662,14 +662,13 @@ C-----------------------------------------------------------------------
       CALL YR_DOY (YRSIM,YEAR,ISIM)
       CONTROL % YRSIM = YRSIM
 
-C-----------------------------------------------------------------------
-C     Now establish the weather file FILEW as WSTA + .WT?  where ? :
-C
-C          M = observed data
-C          G = generated data
-C          S = interactively generated
-C-----------------------------------------------------------------------
-
+!-----------------------------------------------------------------------
+! 2020-10-11 CHP RNMODE = 'Y' indicates yield forecast mode. May need multiple
+!     weather files. 
+!     If RNMODE = 'Y' and MEWTH = 'G','W','S', then also need a WTH file for
+!     forecast year weather data.
+!-----------------------------------------------------------------------
+!     Generated weather data files
       IF (MEWTH .EQ. 'G') THEN
          IF (WSTA1(4:4) .EQ. BLANK) THEN
             IF (YEAR .LT. 2000) THEN
@@ -677,15 +676,19 @@ C-----------------------------------------------------------------------
             ELSE IF (YEAR .LT. 3000) THEN
               YR = YEAR - 2000
             ENDIF
-            WRITE (FILEW(1:12),75) WSTA,YR,'01.WTG'
+            WRITE (FILEWG(1:12),75) WSTA,YR,'01.WTG'
          ELSE
-            WRITE (FILEW(1:12),76) WSTA,WSTA1,'.WTG'
+            WRITE (FILEWG(1:12),76) WSTA,WSTA1,'.WTG'
          ENDIF
-         PROCOD = 'WGD'
-      ELSEIF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
-         WRITE (FILEW(1:12),77) WSTA,'.CLI    '
-         PROCOD = 'CLD'
-      ELSEIF (MEWTH .EQ. 'M') THEN
+         PROCODG = 'WGD'
+      ENDIF
+!     Interactively generated weather 
+      IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+         WRITE (FILEWC(1:12),77) WSTA,'.CLI    '
+         PROCODC = 'CLD'
+      ENDIF
+!     Measured weather data
+      IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
          IF (WSTA1(4:4) .EQ. BLANK) THEN
            IF (YEAR .LT. 2000) THEN
              YR = YEAR - 1900
@@ -696,58 +699,93 @@ C-----------------------------------------------------------------------
          ELSE
             WRITE(FILEW(1:12),76) WSTA,WSTA1,'.WTH'
          ENDIF
-         PROCOD = 'WED'
-      ELSE
+         PROCODW = 'WED'
+      ENDIF
+      IF (INDEX('GSWM',RNMODE) .LT. 0) THEN
          CALL ERROR (ERRKEY,22,FILEX,LINEXP)
       ENDIF
 
-!     Check weather filename in current directory
-      INQUIRE (FILE = FILEW,EXIST = FEXIST)
-      IF (FEXIST) THEN
-        PATHWT = BLANK
-!     Check weather filename in data directory
-      ELSE
-        FILETMP = TRIM(PATHEX)//FILEW
-        INQUIRE (FILE = FILETMP,EXIST = FEXIST)
+!     Check for existing FILEW, FILEWC, and FILEWG
+      DO I = 1, 3
+        SELECT CASE (I)
+          CASE (1)
+            IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
+              FILE_CHECK = FILEW
+              PROCOD = PROCODW
+            ELSE
+              CYCLE
+            ENDIF
+          CASE (2)
+            IF (MEWTH .EQ. 'G') THEN
+              FILE_CHECK = FILEWG
+              PROCOD = PROCODG
+            ELSE
+              CYCLE
+            ENDIF
+          CASE (3)
+            IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+              FILE_CHECK = FILEWC
+              PROCOD = PROCODC
+            ELSE
+              CYCLE
+            ENDIF
+          CASE DEFAULT; CYCLE
+        END SELECT
+
+!       Check weather filename in current directory
+        INQUIRE (FILE = FILE_CHECK,EXIST = FEXIST)
         IF (FEXIST) THEN
-          PATHWT = TRIM(PATHEX)
-!       Check weather filename in default DSSAT directory
+          PATHWT = BLANK
+!       Check weather filename in data directory
         ELSE
-          CALL PATH(PROCOD,DSSATP,PATHWT,1,NAMEF)
-          FILETMP = TRIM(PATHWT) // FILEW
-          INQUIRE (FILE=FILETMP, EXIST = FEXIST)
+          FILETMP = TRIM(PATHEX)//FILE_CHECK
+          INQUIRE (FILE = FILETMP,EXIST = FEXIST)
           IF (FEXIST) THEN
-            PATHWT = PATHWT
-!         Check 4-character file name in data directory
+            PATHWT = TRIM(PATHEX)
+!         Check weather filename in default DSSAT directory
           ELSE
-            FILEW4 = FILEW(1:4) // ".WTH"
-            FILETMP = TRIM(PATHEX) // FILEW4
+            CALL PATH(PROCOD,DSSATP,PATHWT,1,NAMEF)
+            FILETMP = TRIM(PATHWT) // FILE_CHECK
             INQUIRE (FILE=FILETMP, EXIST = FEXIST)
             IF (FEXIST) THEN
-              PATHWT = TRIM(PATHEX)
-              FILEW = FILEW4
-!           Check 4-character filename in default DSSAT directory
+              PATHWT = PATHWT
+!           Check 4-character file name in data directory
             ELSE
-              FILETMP = TRIM(PATHWT) // FILEW
+              FILEW4 = FILE_CHECK(1:4) // ".WTH"
+              FILETMP = TRIM(PATHEX) // FILEW4
               INQUIRE (FILE=FILETMP, EXIST = FEXIST)
               IF (FEXIST) THEN
-                PATHWT = PATHWT
-                FILEW = FILEW4
+                PATHWT = TRIM(PATHEX)
+                FILE_CHECK = FILEW4
+!             Check 4-character filename in default DSSAT directory
               ELSE
-                MSG(1) = "Weather file not found."
-                MSG(2) = "  Neither " // FILEW // " nor " // FILEW4
-                MSG(3) = 
-     &            "  were found in weather or experiment directories."
-                MSG(4) = "Simulation will end."
-                CONTROL % ErrCode = 29
-                CALL PUT(CONTROL)
-                CALL WARNING(4,ERRKEY,MSG)
-!               CALL ERROR(ERRKEY,29,FILEW,0)
+                FILETMP = TRIM(PATHWT) // FILE_CHECK
+                INQUIRE (FILE=FILETMP, EXIST = FEXIST)
+                IF (FEXIST) THEN
+                  PATHWT = PATHWT
+                  FILE_CHECK = FILEW4
+                ELSE
+                  MSG(1) = "Weather file not found."
+                  MSG(2) = "  Neither " // FILE_CHECK // " nor "//FILEW4
+                  MSG(3) = 
+     &              "  were found in weather or experiment directories."
+                  MSG(4) = "Simulation will end."
+                  CONTROL % ErrCode = 29
+                  CALL PUT(CONTROL)
+                  CALL WARNING(4,ERRKEY,MSG)
+!                 CALL ERROR(ERRKEY,29,FILEW,0)
+                ENDIF
               ENDIF
             ENDIF
           ENDIF
         ENDIF
-      ENDIF
+
+        SELECT CASE(I)
+          CASE (1); FILEW  = FILE_CHECK; PATHWTW = PATHWT
+          CASE (2); FILEWG = FILE_CHECK; PATHWTG = PATHWT
+          CASE (3); FILEWC = FILE_CHECK; PATHWTC = PATHWT
+        END SELECT
+      ENDDO
 
 C-----------------------------------------------------------------------
 C     Build output files.

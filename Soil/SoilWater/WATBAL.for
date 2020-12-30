@@ -176,8 +176,8 @@ C=======================================================================
       MEEVP  = ISWITCH % MEEVP
 
       IF (ISWWAT .EQ. 'Y') THEN
-        IF (CONTROL%MULTI .GT. 1) THEN
-        !Re-read initial conditions if multi-season run
+        IF (CONTROL%MULTI .GT. 1 .OR. CONTROL%RNMODE .EQ. 'Y') THEN
+        !Re-read initial conditions if multi-season or forecast run
           CALL IPWBAL (CONTROL, DLAYR, LL, NLAYR, SAT,    !Input
      &    SW, WTDEP)                                      !Output
         ENDIF

@@ -14,6 +14,9 @@
 !  Revision history
 !
 !  01/23/2020 FO  Written
+!  11/10/2020 CHP Need to make revisions here like in IPEXP for forecast mode
+!       This mode needs to keep FILEW (WTH file) and potentially also 
+!       FILEWC (CLI) file and FILEWG (WTG file).
 !-----------------------------------------------------------------------
 !  INPUT  : DSSATP, PATHEX, FILEX
 !

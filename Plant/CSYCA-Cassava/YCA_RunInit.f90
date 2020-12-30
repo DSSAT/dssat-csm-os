@@ -150,7 +150,7 @@
             IF (FILEIOT == 'XFL') THEN
                 IF (RNMODE == 'I'.OR.RNMODE == 'E'.OR.RNMODE == 'A') THEN
                     IDETD = 'M'
-                ELSEIF (RNMODE == 'B'.OR.RNMODE == 'N'.OR.RNMODE == 'Q')THEN
+                ELSEIF (RNMODE == 'B'.OR.RNMODE == 'N'.OR.RNMODE == 'Q' .OR. RNMODE .EQ. 'Y')THEN
                     IDETD = 'S'
                 ENDIF  
             ELSE
