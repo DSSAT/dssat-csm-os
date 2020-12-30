@@ -280,6 +280,7 @@ C***********************************************************************
         CALL IGNORE (LUNBIO,LINBIO,ISECT,CHARTEST)
         IF (ISECT .EQ. 0 .OR. RUN .EQ. 1) THEN
           REWIND(LUNBIO)
+          FINDCH='$BATCH'
           CALL FIND (LUNBIO,FINDCH,LINBIO,IFIND)
           CALL IGNORE (LUNBIO,LINBIO,ISECT,CHARTEST)
         ENDIF
