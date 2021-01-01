@@ -155,12 +155,12 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data(I) % TMIN   = TMIN
     Obs_data(I) % RAIN   = RAIN
     Obs_data(I) % PAR    = PAR
-    Obs_data(0) % TDEW   = TDEW
-    Obs_data(0) % WINDSP = WINDSP
-    Obs_data(0) % RHUM   = RHUM
-    Obs_data(0) % VAPR   = VAPR
-    Obs_data(0) % DCO2   = DCO2
-    Obs_data(0) % OZON7  = OZON7
+    Obs_data(I) % TDEW   = TDEW
+    Obs_data(I) % WINDSP = WINDSP
+    Obs_data(I) % RHUM   = RHUM
+    Obs_data(I) % VAPR   = VAPR
+    Obs_data(I) % DCO2   = DCO2
+    Obs_data(I) % OZON7  = OZON7
   ENDDO
 
 ! =======================================================================
@@ -211,12 +211,12 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
     TMAX   = Obs_data(I) % TMAX
     TMIN   = Obs_data(I) % TMIN
     PAR    = Obs_data(I) % PAR
-    TDEW   = Obs_data(0) % TDEW
-    WINDSP = Obs_data(0) % WINDSP
-    RHUM   = Obs_data(0) % RHUM
-    VAPR   = Obs_data(0) % VAPR
-    DCO2   = Obs_data(0) % DCO2
-    OZON7  = Obs_data(0) % OZON7
+    TDEW   = Obs_data(I) % TDEW
+    WINDSP = Obs_data(I) % WINDSP
+    RHUM   = Obs_data(I) % RHUM
+    VAPR   = Obs_data(I) % VAPR
+    DCO2   = Obs_data(I) % DCO2
+    OZON7  = Obs_data(I) % OZON7
     FYRDOY = 0
   ENDIF
 
