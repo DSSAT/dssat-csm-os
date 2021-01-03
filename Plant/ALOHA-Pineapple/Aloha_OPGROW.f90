@@ -237,7 +237,8 @@
             
             XLAI   = LAI
             IF (WTLF .GT. 0.0) THEN
-               SLA  = LAI * 10000 / WTLF
+               SLA  = LAI * 10000 / WTLF  ! Equation has an error. The results in the PlantGro.out file are exactly 10 times higher. 
+                                          ! I think the correct thing is SLA = LAI * 10000 / LWAD
             ELSE
                SLA = 0.0
             ENDIF
