@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.7.5.26 chp 01/07/2021 Forecast mode bugfix on century for historical weather
 !       4.7.5.25 chp 12/30/2020 In-season yield forecast mode added, RNMODE = "Y"
 !       4.7.5.24 gh  12/11/2020 READS.OUT removed from CSM; WARNING.OUT removed from YCA
 !       4.7.5.23 gh  11/13/2020 ETPHOT corrections: phase 1; zero divide corrections
