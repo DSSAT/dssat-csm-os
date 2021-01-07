@@ -58,7 +58,7 @@ C=======================================================================
       INTEGER YEAR, YR, YRDOY, YRDOYW, YRDOYWY, YREND
       INTEGER YRSIM, YRSIMMY, YRDOY_WY
 
-      INTEGER, PARAMETER :: MaxRecords = 11000   !5000
+      INTEGER, PARAMETER :: MaxRecords = 366000   !5000
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
@@ -986,7 +986,15 @@ C         Read in weather file header.
           IF (NRecords == 0 .AND. YRDOY == YRSIM .AND.  !First record
      &        YRDOYW > YRSIM .AND.                      ! > YRSIM
      &        YRDOYW_SAVE < 99366) THEN       ! & century set by program
-              CENTURY = CENTURY - 1
+            CENTURY = CENTURY - 1
+            YRDOYW = YRDOYW - 100000
+          ENDIF
+
+!         Determination of century here doesn't work for forecast mode. Need to modify.
+          IF (RNMODE .EQ. 'Y' .AND.       !Forecast mode
+     &        NRecords == 0 .AND.         !First record
+     &        YRDOYW > YRSIM) THEN        !century too high.
+            CENTURY = CENTURY - 1
             YRDOYW = YRDOYW - 100000
           ENDIF
 

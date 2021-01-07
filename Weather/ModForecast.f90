@@ -39,7 +39,7 @@ SUBROUTINE FCAST_STORE(                                 &
   CHARACTER*92 FILEWW
 
   INTEGER DOY, I, Obs_YRDOY, RSEED1, YREND, YR, YRSIM
-  INTEGER INCDAT, TIMDIF, FYRDOY, FYRSIM, FCOUNT
+  INTEGER INCDAT, TIMDIF, FYRDOY, FYRSIM
   REAL CCO2, DCO2, OZON7, PAR, RAIN, REFHT, RHUM
   REAL SRAD, TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT
   REAL WINDSP, XELEV, XLAT, XLONG
@@ -90,6 +90,19 @@ SUBROUTINE FCAST_STORE(                                 &
 
 ! Allocate the array size for observed weather data
   Allocate (Obs_data(0:FCOUNT))
+
+  Obs_data % YRDOY  = -99
+  Obs_data % RAIN   = -99.
+  Obs_data % SRAD   = -99.
+  Obs_data % TMAX   = -99.
+  Obs_data % TMIN   = -99.
+  Obs_data % PAR    = -99.
+  Obs_data % DCO2   = -99.
+  Obs_data % OZON7  = -99.
+  Obs_data % RHUM   = -99.
+  Obs_data % TDEW   = -99.
+  Obs_data % VAPR   = -99.
+  Obs_data % WINDSP = -99.
 
 ! =======================================================================
 ! Initialize IPWTH for forecast year
@@ -142,12 +155,12 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data(I) % TMIN   = TMIN
     Obs_data(I) % RAIN   = RAIN
     Obs_data(I) % PAR    = PAR
-    Obs_data(0) % TDEW   = TDEW
-    Obs_data(0) % WINDSP = WINDSP
-    Obs_data(0) % RHUM   = RHUM
-    Obs_data(0) % VAPR   = VAPR
-    Obs_data(0) % DCO2   = DCO2
-    Obs_data(0) % OZON7  = OZON7
+    Obs_data(I) % TDEW   = TDEW
+    Obs_data(I) % WINDSP = WINDSP
+    Obs_data(I) % RHUM   = RHUM
+    Obs_data(I) % VAPR   = VAPR
+    Obs_data(I) % DCO2   = DCO2
+    Obs_data(I) % OZON7  = OZON7
   ENDDO
 
 ! =======================================================================
@@ -180,7 +193,7 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
 ! FYRDOY > 0 - This is the date to use for the historical ensemble.
 
 ! Current date is after forecast date, use ensemble weather data
-  IF (WDATE .GE. FODAT) THEN
+  IF (WDATE .GE. FODAT .OR. FCOUNT .LT. 1) THEN
     CALL GET(CONTROL)
     CALL YR_DOY(WDATE, YR, DOY)
     EnsYearCurrent = EnsYearFirst + CONTROL % ENDYRS - 1
@@ -198,12 +211,12 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
     TMAX   = Obs_data(I) % TMAX
     TMIN   = Obs_data(I) % TMIN
     PAR    = Obs_data(I) % PAR
-    TDEW   = Obs_data(0) % TDEW
-    WINDSP = Obs_data(0) % WINDSP
-    RHUM   = Obs_data(0) % RHUM
-    VAPR   = Obs_data(0) % VAPR
-    DCO2   = Obs_data(0) % DCO2
-    OZON7  = Obs_data(0) % OZON7
+    TDEW   = Obs_data(I) % TDEW
+    WINDSP = Obs_data(I) % WINDSP
+    RHUM   = Obs_data(I) % RHUM
+    VAPR   = Obs_data(I) % VAPR
+    DCO2   = Obs_data(I) % DCO2
+    OZON7  = Obs_data(I) % OZON7
     FYRDOY = 0
   ENDIF
 
