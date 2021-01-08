@@ -35,6 +35,7 @@ SUBROUTINE FCAST_STORE(                                 &
   CHARACTER*1  MEWTH
   CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
   CHARACTER*12 FILEW, FILEWC, FILEWG
+  CHARACTER*78 MSG(2)
   CHARACTER*80 PATHWTC, PATHWTG, PATHWTW
   CHARACTER*92 FILEWW
 
@@ -113,7 +114,14 @@ SUBROUTINE FCAST_STORE(                                 &
         RAIN, REFHT, RHUM, RSEED1, SRAD,              &    !Output
         TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
         WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
-        SEASINIT)                                           
+        SEASINIT)
+                                           
+    IF (YREND .EQ. Obs_YRDOY) THEN
+      MSG(1) = "In-season observed weather data not found."
+      MSG(2) = "Program will stop."
+      CALL WARNING(2, ERRKEY, MSG)
+      CALL ERROR(ERRKEY,CONTROL%ERRCODE,"",0)
+    ENDIF
 
     Obs_data(0) % YRDOY  = Obs_YRDOY
     Obs_data(0) % SRAD   = SRAD
