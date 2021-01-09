@@ -1,7 +1,11 @@
 *RICE GENOTYPE COEFFICIENTS: RICER047 MODEL
 !
+@CALIBRATION(N/D/G)                      D     D     D     D     G     G     G     G     G     G     G
 @VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2R    P5   P2O    G1    G2    G3 PHINT  THOT TCLDP TCLDF  !    previous
 !                                        1     2     3     4     5     6     7     8     9    10    11  !     G4    G5 
+999991 MINIMA               . DFAULT 150.0   5.0 150.0  11.0  50.0 0.015   0.70 55.0  25.0  12.0  10.0
+999992 MAXIMA               . DFAULT 800.0 300.0 850.0  13.0  75.0 0.030   1.30 90.0  34.0  18.0  20.0
+
 !Introduce temperature-based factors to replace G4 and G5
 990001 IRRI ORIGINALS       . IB0001 880.0  52.0 550.0  12.0  65.0 .0280  1.00  83.0  28.0  15.0  15.0  !   1.00   1.0
 990002 IRRI RECENT          . IB0001 450.0 149.0 350.0  11.7  68.0 .0230  1.00  83.0  28.0  15.0  15.0  !   1.00   1.0
