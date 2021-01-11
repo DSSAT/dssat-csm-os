@@ -57,7 +57,8 @@ C-----------------------------------------------------------------------
       REAL TAMP, TAV, TAVG, TBD, TMAX, XLAT, WW
       REAL TDL, TLL, TSW
       REAL TMA(5)
-      REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL, ST, SW, SWI, DSMID
+      REAL, DIMENSION(NL) :: BD, DLAYR, DLI, DS, DSI, DSMID, DUL, LL, 
+     &      ST, SW, SWI
 
 !-----------------------------------------------------------------------
       TYPE (ControlType) CONTROL
@@ -119,8 +120,9 @@ C-----------------------------------------------------------------------
           READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
 
+!         These have not yet been initialized in SOILDYN, so do it here.
           DO L = 1, NLAYR
-            READ(LUNIO,'(9X,F5.3)',IOSTAT=ERRNUM) SWI(L)
+            READ(LUNIO,'(2X,2F6.0)',IOSTAT=ERRNUM) DSI(L), SWI(L)
             LNUM = LNUM + 1
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
             IF (SWI(L) .LT. LL(L)) SWI(L) = LL(L)
@@ -129,6 +131,7 @@ C-----------------------------------------------------------------------
           CLOSE (LUNIO)
         ELSE
           SWI = DUL
+          DSI = SOILPROP % DS
         ENDIF
 
         IF (XLAT .LT. 0.0) THEN
@@ -143,12 +146,17 @@ C-----------------------------------------------------------------------
         TDL = 0.0
         CUMDPT = 0.0
         DO L = 1, NLAYR
-          DSMID(L) = CUMDPT + DLAYR(L)* 5.0   !mm depth to midpt of lyr
-          CUMDPT   = CUMDPT + DLAYR(L)*10.0   !mm profile depth 
-          TBD = TBD + BD(L)  * DLAYR(L)       !CHP
-          TLL = TLL + LL(L)  * DLAYR(L)
-          TSW = TSW + SWI(L) * DLAYR(L)
-          TDL = TDL + DUL(L) * DLAYR(L)
+          IF (L .EQ. 1) THEN
+            DLI(L) = DSI(L)
+          ELSE
+            DLI(L) = DSI(L) - DSI(L-1)
+          ENDIF
+          DSMID(L) = CUMDPT + DLI(L)* 5.0   !mm depth to midpt of lyr
+          CUMDPT   = CUMDPT + DLI(L)*10.0   !mm profile depth 
+          TBD = TBD + BD(L)  * DLI(L)       !CHP
+          TLL = TLL + LL(L)  * DLI(L)
+          TSW = TSW + SWI(L) * DLI(L)
+          TDL = TDL + DUL(L) * DLI(L)
         END DO
 
         IF (ISWWAT .EQ. 'Y') THEN
@@ -158,7 +166,7 @@ C-----------------------------------------------------------------------
           PESW = AMAX1(0.0, TDL - TLL)
         ENDIF
 
-        ABD    = TBD / DS(NLAYR)                   !CHP
+        ABD    = TBD / DSI(NLAYR)                   !CHP
         FX     = ABD/(ABD+686.0*EXP(-5.63*ABD))
         DP     = 1000.0 + 2500.0*FX
         WW     = 0.356  - 0.144*ABD
