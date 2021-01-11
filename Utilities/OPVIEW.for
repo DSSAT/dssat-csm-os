@@ -206,7 +206,7 @@ C-----------------------------------------------------------------------
       IF (CROP == 'FA') RETURN
 
       IF (YRDOY == YRPLT) THEN
-        IF (CONTROL%MULTI > 1 .OR. INDEX('NQF',CONTROL%RNMODE) > 0) THEN
+        IF (CONTROL%MULTI > 1 .OR. INDEX('NQFY',CONTROL%RNMODE) > 0)THEN
           CALL MULTIRUN(RUN,YRPLT)
         ENDIF
 C-----------------------------------------------------------------------
