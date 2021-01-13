@@ -9,7 +9,7 @@
             },
             "args": [
                 "A",
-                "UCCO9102.SUX"
+                "UAFD0801.SUX"
             ],
             "command": "${workspaceRoot}/build/bin/dscsm047.exe",
             "type": "shell",
@@ -102,7 +102,7 @@
                 "isDefault": true
             },
             "problemMatcher": []
-        },
+        }, 
         {
             "label": "dssat-csm: Build RELEASE",
             "windows": {

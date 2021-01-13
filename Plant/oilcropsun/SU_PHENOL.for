@@ -639,7 +639,7 @@ C     taking L=1
               ! XSTAGE - noninteger growth stage (1.5-4.5)
               !    Used to compute N demand.
               XSTAGE = 1.5 + 3.0*SUMDTT/P3P 
-                
+c                
               VegFrac=MAX(VegFrac,(SUMDTT+SUMDTT_2) /(SUMDTT_2+P3P)) 
 
               IF (SUMDTT .LT. P3P) RETURN
@@ -651,7 +651,6 @@ C     taking L=1
               ISDATE = YRDOY      
               ISTAGE = 4               !FIRST ANTHESIS, END POLLINATION
               SUMDTT = SUMDTT - P3P
-
     
 
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
