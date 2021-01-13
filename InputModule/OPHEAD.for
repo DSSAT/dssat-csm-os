@@ -739,10 +739,10 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
 !     Cassava CIAT      
       CASE ('CSYCA')
           WRITE (HEADER(I),'(A,A)')
-     &     "  B01ND B12ND B23ND BR1FX BR2FX BR3FX BR4FX "
+     &     "  B01ND B12ND BR1FX BR2FX BR3FX BR4FX "
           I=I+1
           WRITE (HEADER(I),'(3F6.0,4F6.2)') 
-     &     B01ND, B12ND, B23ND, BR1FX, BR2FX, BR3FX, BR4FX
+     &     B01ND, B12ND, BR1FX, BR2FX, BR3FX, BR4FX
          I=I+1
          WRITE (HEADER(I),'(A,A)') 
      &     "  LAXS  SLAS",
@@ -818,13 +818,15 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
 !-----------------------------------------------------------------------
 !     Pineapple **
       CASE ('PIALO')
-         WRITE (HEADER(I),2010) P1,P2,P3,P4,P5,P6; I=I+1
-         WRITE (HEADER(I),2011) G2,G3,PHINT; I=I+1
- 2010 FORMAT (1X,'    P1:',F6.1,'    P2:',F6.1,
-     &           '    P3:',F6.1,'    P4:',F6.0,
-     &           '    P5:',F6.1,'    P6:',F6.1)
- 2011 FORMAT (1X,'    G2:',F6.1,'    G3:',F6.2,
-     &           ' PHINT:',F6.1)
+         WRITE (HEADER(I),2010) TC,P1,P2,P3,P4,P5,P6,P7,P8; I=I+1
+         WRITE (HEADER(I),2011) G1,G2,G3,PHINT; I=I+1
+ 2010    FORMAT (1X,'    TC:',F6.1,'    P1:',F6.1,
+     &           '    P2:',F6.1,'    P3:',F6.1,
+     &           '    P4:',F6.1,'    P5:',F6.1
+     &           '    P6:',F6.1,'    P7:',F6.1,
+     &           '    P8:',F6.1)
+ 2011 FORMAT (1X,'    G1:',F6.1,'    G2:',F6.1,
+     &           '    G3:',F6.1,' PHINT:',F6.1)
 
 !-----------------------------------------------------------------------
 !     Sugarcane - Canegro
