@@ -19,9 +19,10 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-dev-pineapple'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.7.5.27 chp 01/14/2021 ALOHA-pineapple model updates, Jhonny Vasquez
 !       4.7.5.26 chp 01/07/2021 Forecast mode bugfix on century for historical weather
 !       4.7.5.25 chp 12/30/2020 In-season yield forecast mode added, RNMODE = "Y"
 !       4.7.5.24 gh  12/11/2020 READS.OUT removed from CSM; WARNING.OUT removed from YCA
