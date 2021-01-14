@@ -161,9 +161,24 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      LINIO = LINIO + 1
-      WRITE (LUNIO,2800,IOSTAT=ERRNUM) FILEW,PATHWT
-      IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERW',FILEW,PATHWTW
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
+      IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERC',FILEWC,PATHWTC
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
+      IF (MEWTH .EQ. 'G') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERG',FILEWG,PATHWTG
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -327,13 +342,21 @@ C-----------------------------------------------------------------------
      &          NFORC,PLTFOR,NDOF,PMTYPE
       ELSE
 
-         IF (SDWTPL <= 9999.) THEN
+         IF (SDWTPL .LE. 9999. .AND. PLANTS .LE. 9999.) THEN
            WRITE(LUNIO,70,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
      &          PLDS,ROWSPC,AZIR,SDEPTH,SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP
-         ELSE
+         ELSE IF (SDWTPL .GT. 9999. .AND. PLANTS .LE. 9999.) THEN
            WRITE(LUNIO,71,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
-     &          PLDS,ROWSPC,AZIR,SDEPTH, NINT(SDWTPL),
+     &          PLDS,ROWSPC,AZIR,SDEPTH,SDWTPL,NINT(SDWTPL),
      &          SDAGE,ATEMP,PLPH,SPRLAP
+         ELSE IF (SDWTPL .LE. 9999. .AND. PLANTS .GT. 9999.) THEN
+           WRITE(LUNIO,72,IOSTAT=ERRNUM) YRPLT,IEMRG,NINT(PLANTS),
+     &          NINT(PLTPOP),PLME,PLDS,ROWSPC,AZIR,SDEPTH,
+     &          SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP
+         ELSE
+           WRITE(LUNIO,73,IOSTAT=ERRNUM) YRPLT,IEMRG,NINT(PLANTS),
+     &          NINT(PLTPOP),PLME,PLDS,ROWSPC,AZIR,SDEPTH,
+     &          NINT(SDWTPL),SDAGE,ATEMP,PLPH,SPRLAP
          ENDIF
       ENDIF
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
@@ -748,6 +771,12 @@ C-GH   70 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
 C-GH   71 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
    71 FORMAT (3X,I7,1X,I7,2F6.1,2(5X,A1),2(1X,F5.0),1X,F5.1,
      &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
+   72 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
+     &        2(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
+   73 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
+     &        I6,1(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
+   74 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
+     &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
    75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1)
    76 FORMAT (3X,I7,1X,A5,1X,F5.1)
 !chp   76 FORMAT (3X,I7,1X,A5,1X,F5.1,4X,I2)
@@ -843,7 +872,7 @@ c1960 FORMAT (A6,1X,A16,1X,A6,1X,F6.2,F8.4,F7.2,F8.2,F7.3,F4.0)
  2500 FORMAT ('CULTIVAR       ',A12,1X,A80)
  2600 FORMAT ('PESTS          ',A12,1X,A80)
  2700 FORMAT ('SOILS          ',A12,1X,A80)
- 2800 FORMAT ('WEATHER        ',A12,1X,A80)
+! 2800 FORMAT ('WEATHER        ',A12,1X,A80)
  2900 FORMAT ('OUTPUT         ',A8)
  3000 FORMAT (A6,1X,A16,1X,A255)
 

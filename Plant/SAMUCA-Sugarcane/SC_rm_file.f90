@@ -4,6 +4,8 @@
     !--- Delete existing file --------!
     !--- Murilo Vianna, Feb-2020 -----!
     !---------------------------------!
+    !  REVISION HISTORY
+    !  10/03/2020 FO Changed inquire units args
     
     implicit none
 
@@ -15,7 +17,7 @@
 
     !--- Check that the file exists (LBYL):
     file_exists = .false.
-    inquire(file=io, exist=file_exists)
+    inquire(unit=io, exist=file_exists)
 
     !--- Delete it if file exists
     if(file_exists)then
@@ -34,7 +36,9 @@
     !--------- Open file -------------!
     !--- Murilo Vianna, Feb-2020 -----!
     !---------------------------------!
-    
+    !  REVISION HISTORY
+    !  10/03/2020 FO Changed inquire units args
+        
     implicit none
 
     integer         io
@@ -47,7 +51,7 @@
 
     !--- Check that the file exists (LBYL):
     file_exists = .false.
-    inquire(file=io, exist=file_exists)
+    inquire(unit=io, exist=file_exists)
 
     !--- Open the file
     IF (FILE_EXISTS) THEN

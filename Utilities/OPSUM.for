@@ -144,6 +144,10 @@ C-----------------------------------------------------------------------
       REAL N2OEC  !kg/ha
       INTEGER CO2EC
 
+!     2020-12-30 CHP added WYEAR - weather year corresponding to YRSIM date
+!     For forecast mode may be different than simulation year
+      INTEGER WYEAR
+
       LOGICAL FEXIST
 
 !     Text values for some variables that get overflow with "-99" values
@@ -464,6 +468,7 @@ C     Initialize OPSUM variables.
       ESCP   = SUMDAT % ESCP  !Cumul soil evap (mm), planting to harvest
       EPCP   = SUMDAT % EPCP  !Cumul transp (mm), planting to harvest
 
+      CALL GET('WEATHER','WYEAR',WYEAR)
 C-------------------------------------------------------------------
 C
 C  Simulation Summary File
@@ -509,7 +514,7 @@ C-------------------------------------------------------------------
   310     FORMAT(/,
      &'!IDENTIFIERS......................... ',
      &'EXPERIMENT AND TREATMENT.......... ', 
-     &'SITE INFORMATION............ ',
+     &'SITE INFORMATION.................. ',
      &'DATES..........................................  ',
      &'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
      &'....................  ',
@@ -527,7 +532,7 @@ C-------------------------------------------------------------------
 ! CHP 3/14/2018 USE P# for REPNO instead of C# for CRPNO, which isn't used.
   400     FORMAT ('@   RUNNO   TRNO R# O# P# CR MODEL... ',
      &   'EXNAME.. TNAM..................... ',
-     &   'FNAM.... WSTA.... SOIL_ID...  ',
+     &   'FNAM.... WSTA.... WYEAR SOIL_ID...  ',
      &   '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
      &   '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
 !    &   '    HWUM  H#AM    H#UM  HIAM  LAIX',
@@ -553,15 +558,15 @@ C-------------------------------------------------------------------
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, 
-     &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO,
-     &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
+     &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, WYEAR,
+     &    SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
 !       RUN, TRTNUM, ROTNO, ROTOPT, REPNO (was CRPNO), 
   500   FORMAT (I9,1X,I6,3(I3),               
 
-!       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, SLNO,
-     &  1X,A2,1X,A8,1X,A8,1X,A25,1X,A8,1X,A8,1X,A10,      
+!       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, WYEAR, SLNO,
+     &  1X,A2,1X,A8,1X,A8,1X,A25,1X,A8,1X,A8,1X,I5,1X,A10,      
 
 !       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &  6(1X,I7),
@@ -705,7 +710,7 @@ C     Console output for multi-season runs:
 C     Was OPBAT subroutine
 C-------------------------------------------------------------------
 !      IF (INDEX('NQSABCGF',RNMODE) .GT. 0 .OR. NYRS .GT. 1) THEN
-      IF ((INDEX('NQSABCGF',RNMODE) .GT. 0 .OR. NYRS .GT. 1) .AND.
+      IF ((INDEX('NQSABCGFY',RNMODE) .GT. 0 .OR. NYRS .GT. 1) .AND.
      &    (IDETL .NE. "0")) THEN
           NLINES = RUN - 1
         IF (RUN .EQ. 1) THEN
@@ -767,7 +772,7 @@ C-------------------------------------------------------------------
           WRITE(*,'(3I6)',ADVANCE='NO') CWAM, NINT(HWAH), PRCM
         ENDIF
 
-        WRITE(*,'(6I6,I7,I5)') IRCM, ETCM, SWXM, NUCM, NIAM, 
+        WRITE(*,'(5I6,I7,I5)') IRCM, ETCM, SWXM, NUCM, NIAM, 
      &      ONAM, NINT(OCAM/1000.)
         NLINES=NLINES+1
       ENDIF

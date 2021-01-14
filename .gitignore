@@ -52,7 +52,6 @@ Version047.rc
 .DS_Store
 Data/.DS_Store
 Resources/RC*
-*makefile*
 build/
 nbproject/
 .metadata/

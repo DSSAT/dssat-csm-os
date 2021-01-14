@@ -155,6 +155,7 @@
 
       CHARACTER(LEN=1),PARAMETER::BLANK = ' '
       CHARACTER(LEN=3),PARAMETER::DASH = ' - '
+      CHARACTER(LEN=6),PARAMETER::ERRKEY = 'CSCRP '
 
       !REAL,PARAMETER::PATM=101300.0! Pressure of air,Pa
       !REAL,PARAMETER::SHAIR=1005.0 ! Specific heat of air,MJ/kg
@@ -436,7 +437,7 @@
       INTEGER       FNUMPREM      ! File number,measured responses #
       INTEGER       FNUMPRES      ! File number,simulated response #
       INTEGER       FNUMPSUM      ! Number used for plant summary  #
-      INTEGER       FNUMREA       ! File number,reads.out file     #
+!      INTEGER       FNUMREA       ! File number,reads.out file     #
       INTEGER       FNUMT         ! Number used for T-file         #
       INTEGER       FNUMTMP       ! File number,temporary file     #
       INTEGER       FNUMWRK       ! File number,work file          #
@@ -1903,7 +1904,8 @@
           IF (FILEIOT.EQ.'XFL') THEN
             IF (RNMODE.EQ.'I'.OR.RNMODE.EQ.'E'.OR.RNMODE.EQ.'A') THEN
               IDETD = 'M'
-            ELSEIF (RNMODE.EQ.'B'.OR.RNMODE.EQ.'N'.OR.RNMODE.EQ.'Q')THEN
+            ELSEIF (RNMODE.EQ.'B'.OR.RNMODE.EQ.'N'.OR.RNMODE.EQ.'Q'
+     &               .OR.RNMODE.EQ.'Y')THEN
               IDETD = 'S'
             ENDIF  
           ELSE
@@ -2106,14 +2108,15 @@
               WRITE(fnumwrk,*) ' '
               WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
             ENDIF  
-            IF (FNUMREA.LE.0) CALL Getlun('READS.OUT',fnumrea)
-            ! Close and re-open Reads file
-            CLOSE (FNUMREA, STATUS = 'DELETE')
-            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &            ACTION = 'READWRITE')
-            WRITE(fnumrea,*)' '
-            WRITE(fnumrea,*)
-     &      ' File closed and re-opened to avoid generating huge file'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
+!            IF (FNUMREA.LE.0) CALL Getlun('READS.OUT',fnumrea)
+!            ! Close and re-open Reads file
+!            CLOSE (FNUMREA, STATUS = 'DELETE')
+!            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+!     &            ACTION = 'READWRITE')
+!            WRITE(fnumrea,*)' '
+!            WRITE(fnumrea,*)
+!     &      ' File closed and re-opened to avoid generating huge file'
           ENDIF
         ELSE  ! File is open .. not closed at end of run!        
           IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
@@ -2124,14 +2127,15 @@
      &            ACTION = 'READWRITE')
             WRITE(fnumwrk,*) ' '
             WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
-            CALL Getlun('READS.OUT',fnumrea)
-            ! Close and re-open Reads file
-            CLOSE (FNUMREA, STATUS = 'DELETE')
-            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &            ACTION = 'READWRITE')
-            WRITE(fnumrea,*)' '
-            WRITE(fnumrea,*)
-     &      ' File closed and re-opened to avoid generating huge file'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
+!            CALL Getlun('READS.OUT',fnumrea)
+!            ! Close and re-open Reads file
+!            CLOSE (FNUMREA, STATUS = 'DELETE')
+!            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+!     &            ACTION = 'READWRITE')
+!            WRITE(fnumrea,*)' '
+!            WRITE(fnumrea,*)
+!     &      ' File closed and re-opened to avoid generating huge file'
           ELSE  
             WRITE(fnumwrk,*) ' '
             WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
@@ -2864,7 +2868,10 @@
             hnumber = i - 1
             EXIT  
           ENDIF
-          hyeardoy(i) = CSYEARDOY(hyrdoy(i))
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY          
+          !hyeardoy(i) = CSYEARDOY(hyrdoy(i))
+          CALL Y4K_DOY(hyrdoy(i),FILEX,0,ERRKEY,3)
+          hyeardoy(i) = hyrdoy(i)
         ENDDO
         IF (hnumber.LE.1) HOP(1) = 'F' 
         yeardoyharf = -99
@@ -2975,22 +2982,35 @@
         GENFLCHK = CROP//GENFLCHK(3:15)
         CALL CSUCASE (EXCODE)
 
-        HLAST = CSYEARDOY(hlast)
-        HFIRST = CSYEARDOY(hfirst)
-        PWDINF = CSYEARDOY(pwdinf)
-        PWDINL = CSYEARDOY(pwdinl)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+        !HLAST = CSYEARDOY(hlast)
+        CALL Y4K_DOY(hlast,FILEX,0,ERRKEY,3)
+        !HFIRST = CSYEARDOY(hfirst)
+        CALL Y4K_DOY(hfirst,FILEX,0,ERRKEY,3)
+        !PWDINF = CSYEARDOY(pwdinf)
+        CALL Y4K_DOY(pwdinf,FILEX,0,ERRKEY,3)
+        !PWDINL = CSYEARDOY(pwdinl)
+        CALL Y4K_DOY(pwdinl,FILEX,0,ERRKEY,3)
         DO L = 1,DINX
-          DIDAT(L) = CSYEARDOY(DIDAT(L))
+          !DIDAT(L) = CSYEARDOY(DIDAT(L))
+          CALL Y4K_DOY(DIDAT(L),FILEX,0,ERRKEY,3)
         ENDDO
         DO L = 1,DCNX
-          DCDAT(L) = CSYEARDOY(DCDAT(L))
+          !DCDAT(L) = CSYEARDOY(DCDAT(L))
+          CALL Y4K_DOY(DCDAT(L),FILEX,0,ERRKEY,3)
         ENDDO
 
-        CALL CSYR_DOY(PWDINF,PWYEARF,PWDOYF)
-        CALL CSYR_DOY(PWDINL,PWYEARL,PWDOYL)
-        CALL CSYR_DOY(HFIRST,HYEARF,HDOYF)
-        CALL CSYR_DOY(HLAST,HYEARL,HDOYL)
-        CALL CSYR_DOY(PDATE,PLYEARTMP,PLDAY)
+!        CALL CSYR_DOY(PWDINF,PWYEARF,PWDOYF)
+!        CALL CSYR_DOY(PWDINL,PWYEARL,PWDOYL)
+!        CALL CSYR_DOY(HFIRST,HYEARF,HDOYF)
+!        CALL CSYR_DOY(HLAST,HYEARL,HDOYL)
+!        CALL CSYR_DOY(PDATE,PLYEARTMP,PLDAY)
+        CALL YR_DOY(PWDINF,PWYEARF,PWDOYF)
+        CALL YR_DOY(PWDINL,PWYEARL,PWDOYL)
+        CALL YR_DOY(HFIRST,HYEARF,HDOYF)
+        CALL YR_DOY(HLAST,HYEARL,HDOYL)
+        CALL YR_DOY(PDATE,PLYEARTMP,PLDAY)
+        
         PLYEARREAD = PLYEARTMP
 
 !-----------------------------------------------------------------------
@@ -3035,7 +3055,8 @@
         ENDIF
 
         ! Check final harvest date for seasonal runs        
-        CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+!        CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+        CALL YR_DOY(YEARDOYHARF,HYEAR,HDAY)
         PLTOHARYR = HYEAR - PLYEARREAD
         ! Upgrade harvest date for seasonal and sequential runs
         yeardoyharf = (plyear+pltoharyr)*1000 +hday
@@ -5280,7 +5301,7 @@
         IF (FILEIOT.EQ.'DS4') THEN
 !         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
           IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
-     &       (INDEX('FQN',RNMODE) > 0)) THEN
+     &       (INDEX('FQNY',RNMODE) > 0)) THEN
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
         ENDIF
@@ -10716,7 +10737,8 @@
      &           NINT(rowspc)
   208           FORMAT(' PLANTING         ',A3,I3,I8,2X,I4,' plants/m2 '
      &          ,'in ',I3,' cm rows')
-                CALL CSYR_DOY(EYEARDOY,YEAR,DOY)
+!                CALL CSYR_DOY(EYEARDOY,YEAR,DOY)
+                CALL YR_DOY(EYEARDOY,YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 WRITE(FNUMOV,109) month,dom,eyeardoy                  
   109           FORMAT (' EMERGENCE        ',A3,I3,I8)
@@ -10792,7 +10814,8 @@
                 CALL Csopline(laic,laistg(l))
                 IF (STGYEARDOY(L).LT.9999999.AND.
      &              L.NE.10.AND.L.NE.11) THEN
-                  CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                  CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                  CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                   CALL Calendar(year,doy,dom,month)
                   CNCTMP = 0.0
                   IF (CWADSTG(L).GT.0.0)
@@ -10810,7 +10833,8 @@
               ! For harvest at specified date
               IF (YEARDOYHARF.EQ.YEARDOY) THEN
                 CALL Csopline(laic,lai)
-                  CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+!                  CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                  CALL YR_DOY(YEARDOYHARF,YEAR,DOY)
                   CALL Calendar(year,doy,dom,month)
                   CNCTMP = 0.0
                   IF (CWAD.GT.0.0)CNCTMP = CNAD/CWAD*100
@@ -12275,7 +12299,8 @@
               CALL Csopline(laic,laistg(l))
               IF (STGYEARDOY(L).LT.9999999.AND.
      &         L.NE.10.AND.L.NE.11) THEN
-                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWADSTG(L).GT.0.) 
@@ -12327,7 +12352,8 @@
               CALL Csopline(laic,laistg(l))
               IF (STGYEARDOY(L).LT.9999999.AND.
      &            L.NE.10.AND.L.NE.11) THEN
-                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWADSTG(L).GT.0.0)
@@ -12344,7 +12370,8 @@
             ! For harvest at specified date
             IF (YEARDOYHARF.EQ.YEARDOY) THEN
               CALL Csopline(laic,lai)
-                CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+!                CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                CALL YR_DOY(YEARDOYHARF,YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWAD.GT.0.0)CNCTMP = CNAD/CWAD*100
@@ -12657,8 +12684,8 @@
      &'-Nitrogen--|--Phosphorus-|',/,
      &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
      &'to         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ',
-     &'synth Growth  synth Growth',/,110('-'))
+     &25X,'days    Ã¸C    Ã¸C MJ/m2     hr     mm     mm  synth Growth ',
+     &' synth Growth  synth Growth',/,110('-'))
   270 FORMAT(/,'------------------------------------------------------',
      &'--------------------------------------------------------')
   300 FORMAT(/,10X,A," YIELD : ",I8," kg/ha    [",F4.1,"%Moisture] ",/)
@@ -13121,12 +13148,14 @@
       PARAMETER     (SHAIR=1005.0)     ! MJ/kg/K?? or need*10-5
 
       TCAN = -99.0
-
-      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
-        CALL Getlun ('WORK.OUT',fnumwrk)
-        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
-      ENDIF
+      
+! FO - 11/20/2020 - Removed unused statement for WORKS.OUT
+!      CSYCA uses this subroutine as well.
+!      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
+!        CALL Getlun ('WORK.OUT',fnumwrk)
+!        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!      ENDIF
 
       RT = 8.314 * ((TMAX+TMIN)*0.5 + 273.0)             ! N.m/mol ??
       VPAIR = CSVPSAT(TDEW)                              ! Pa

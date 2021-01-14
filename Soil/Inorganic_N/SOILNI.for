@@ -62,7 +62,7 @@ C=======================================================================
      &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
      &    XHLAI,                                          !Input
      &    FLOODN,                                         !I/O
-     &    NH4, NO3, UPPM)                                 !Output
+     &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
 !-----------------------------------------------------------------------
       USE N2O_mod 
@@ -96,6 +96,7 @@ C=======================================================================
       REAL NH4(NL), NO3(NL), PH(NL), SAT(NL), SNH4(NL)
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
+      REAL NH4_plant(NL), NO3_plant(NL)
       
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
@@ -550,7 +551,7 @@ C=======================================================================
 !         available, take all NH4, leaving behind a minimum amount of
 !         NH4 equal to XMIN (NNOM is negative!).
 
-          IF (ABS(NNOM) .GT. (SNH4(L) - XMIN)) THEN
+          IF (ABS(NNOM) .GT. (SNH4(L) + DLTSNH4(L) - XMIN)) THEN
             NNOM_a = -(SNH4(L) - XMIN + DLTSNH4(L))
             NNOM_b = NNOM - NNOM_a
 
@@ -559,7 +560,7 @@ C=======================================================================
             NNOM = NNOM_b
 
             SNO3_AVAIL = SNO3(L) + DLTSNO3(L)
-            IF (ABS(NNOM) .GT. (SNO3_AVAIL - XMIN)) THEN
+            IF (ABS(NNOM) .GT. (SNO3_AVAIL + DLTSNO3(L) - XMIN)) THEN
               !Not enough SNO3 to fill remaining NNOM, leave residual
               DLTSNO3(L) = DLTSNO3(L) + XMIN - SNO3_AVAIL
               !TIMMOBILIZE(N) = TIMMOBILIZE(N) + (SNO3_AVAIL - XMIN)
@@ -836,6 +837,12 @@ C=======================================================================
       
       CALL PUT('NITR','TLCHD',TLeachD) 
 
+!     Psuedo-integration - for plant-available N
+      DO L = 1, NLAYR
+        NO3_plant(L) = (SNO3(L) + DLTSNO3(L)) * KG2PPM(L)
+        NH4_plant(L) = (SNH4(L) + DLTSNH4(L)) * KG2PPM(L)
+      ENDDO
+
 !***********************************************************************
 !***********************************************************************
 !     END OF FIRST DYNAMIC IF CONSTRUCT
@@ -871,8 +878,8 @@ C=======================================================================
 
 !     Loop through soil layers for integration
       DO L = 1, NLAYR
-        SNO3(L) = SNO3(L) + DLTSNO3(L)    !plant uptake added to DLTSNO3
-        SNH4(L) = SNH4(L) + DLTSNH4(L)    !plant uptake added to DLTSNH4
+        SNO3(L) = SNO3(L) + DLTSNO3(L)
+        SNH4(L) = SNH4(L) + DLTSNH4(L)
         UREA(L) = UREA(L) + DLTUREA(L)
 
 !       Underflow trapping
@@ -952,6 +959,9 @@ C=======================================================================
      &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, TUREA, CNOX, TOTAML)
       ENDIF
 
+      NO3_plant = NO3
+      NH4_plant = NH4
+
 !***********************************************************************
 !***********************************************************************
 !     OUTPUT
@@ -988,7 +998,6 @@ C     END OF SECOND DYNAMIC IF CONSTRUCT
 C***********************************************************************
       ENDIF
 C-----------------------------------------------------------------------
-  
       RETURN
       END SUBROUTINE SoilNi
 
