@@ -43,6 +43,8 @@ C  06/11/2002 GH  Modified for Y2K
 !  11/14/2020 FO  ETPHOT - First part of code protections for divisions by zero
 !                 and negative values.
 !                 These changes were supervised by GH, KJB, SC and NBP.
+!  01/15/2021 FO  ETPHOT - Second part of code protections for divisions by zero
+!                 and negative values. Removed XLAI, CANHT, CANWH initializations.
 C-----------------------------------------------------------------------
 C  Called from: SPAM
 C  Calls:       ETIND,ETINP,PGINP,PGIND,RADABS,ETPHR,ROOTWU,SOIL05,SWFACS
@@ -337,9 +339,6 @@ C     Initialize DAILY parameters.
         NHOUR = 0
         TCANAV = 0.0
         TCANDY = 0.0
-        IF (XLAI.GT.0.0 .AND. XLAI.LT.0.002) XLAI = 0.002
-        IF (CANHT.GT.0.0 .AND. CANHT.LT.0.01) CANHT = 0.01
-        IF (CANWH.GT.0.0 .AND. CANWH.LT.0.01) CANWH = 0.01
 
         IF (MEEVP .EQ. 'Z') THEN
           CALL ETIND(
@@ -606,7 +605,6 @@ C       Assign daily values.
         CANWH = HOLDWH
 
         IF (MEEVP .EQ. 'Z') THEN
-!          IF (XLAI .GT. 1.E-4) THEN
           IF (XLAI .GT. 0.0) THEN
             DAYKR = -LOG((DAYRAD-DYINTR)/DAYRAD) / XLAI
           ELSE
@@ -652,7 +650,6 @@ C          ES = MAX(MIN(EDAY,AWEV1),0.0)
         ENDIF
 
         IF (MEPHO .EQ. 'L') THEN
-!          IF (XLAI .GT. 1.E-4) THEN
           IF (XLAI .GT. 0.0) THEN
             DAYKP = -LOG((DAYPAR-DYINTP)/DAYPAR) / XLAI
           ELSE
@@ -1405,7 +1402,6 @@ C     Initialize.
       RABS(2) = 0.0
       RABS(3) = 0.0
 
-!      IF (XLAI .GT. 1.E-4) THEN
       IF (XLAI .GT. 0.0) THEN
 
 C       Calculate fraction shaded and LAI's for vertical sun position.

@@ -10,6 +10,8 @@ C  11/23/93 NBP Removed SLW effect from INVEG, all in PGLFEQ
 C  12/11/93 NBP Removed AWES1 from calc. of Rsoil.
 C  04/21/94 NBP Check in CANPET prevents small trans. amounts for LAI=0.
 C  01/10/00 NBP Modular version
+!  01/15/21 FO  ETPHOT - Second part of code protections for divisions by zero
+!                 and negative values.
 C-----------------------------------------------------------------------
 C  Called from: ETPHOT
 C  Calls:       CANPET,CANOPG,HSOILT
