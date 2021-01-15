@@ -451,7 +451,7 @@ C***********************************************************************
         IF (CONTROL%ErrCode /= 0) THEN
           CONTROL%ErrCode = 0
 !         EXIT SEAS_LOOP
-          IF (INDEX('Q',RNMODE) > 0) EXIT SEAS_LOOP
+          IF (INDEX('QY',RNMODE) > 0) EXIT SEAS_LOOP
         ENDIF
       ENDIF
 

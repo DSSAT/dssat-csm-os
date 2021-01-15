@@ -58,7 +58,7 @@ C=======================================================================
       INTEGER YEAR, YR, YRDOY, YRDOYW, YRDOYWY, YREND
       INTEGER YRSIM, YRSIMMY, YRDOY_WY
 
-      INTEGER, PARAMETER :: MaxRecords = 366000   !5000
+      INTEGER, PARAMETER :: MaxRecords = 10000   !5000
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
@@ -1344,7 +1344,7 @@ c                   available.
 !        CALL ERROR(ERRKEY,ErrCode,FILEWW(I-11:I),0)
 !      END SELECT
 
-      IF (INDEX('FQ',CONTROL%RNMODE) > 0) THEN
+      IF (INDEX('FQY',CONTROL%RNMODE) > 0) THEN
         I = LEN_TRIM(FILEWW)
         CALL ERROR(ERRKEY,ErrCode,FILEWW(I-11:I),LNUM)
       ENDIF
