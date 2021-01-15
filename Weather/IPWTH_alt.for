@@ -674,7 +674,7 @@ C         Read in weather file header.
           YRDOYW = YRDOY_A(I)
           CALL YR_DOY(YRDOYW, YEARW, DOYW)
 
-          IF (YRDOYW <= YRDOYWY) THEN
+          IF (YRDOYW <= YRDOYWY .AND. CONTROL % RNMODE .NE. 'Y') THEN
 !           Repeated date - ignore with warning
             WRITE(MSG(1),601) 
             WRITE(MSG(2),602) YEARW, DOYW
