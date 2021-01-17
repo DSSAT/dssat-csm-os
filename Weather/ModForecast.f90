@@ -57,57 +57,57 @@ SUBROUTINE FCAST_STORE(                                 &
   SELECT CASE (CONTROL % ENDYRS)
 ! =======================================================================
   CASE (1)
-! ENDYRS = 1: Initialize and store forecast data
+!   ENDYRS = 1: Initialize and store forecast data
 
-! FODAT = date of forecast. Weather prior to this date come from observations. 
-!   On this date and after, they come from ensemble.
-! FCOUNT = number of days of "observed weather" to be used in forecast. 
-  FSTART = YRSIM
-  FCOUNT = TIMDIF(FSTART, FODAT)
+!   FODAT = date of forecast. Weather prior to this date come from observations. 
+!     On this date and after, they come from ensemble.
+!   FCOUNT = number of days of "observed weather" to be used in forecast. 
+    FSTART = YRSIM
+    FCOUNT = TIMDIF(FSTART, FODAT)
 
-! Initialize weather file for this year's data (i.e., pre-forecast date)
-  CONTROL2 = CONTROL
-  CONTROL2 % DYNAMIC = SEASINIT
-  Obs_YRDOY = INCDAT(FSTART, -1)
-  CONTROL2 % YRDOY = Obs_YRDOY
+!   Initialize weather file for this year's data (i.e., pre-forecast date)
+    CONTROL2 = CONTROL
+    CONTROL2 % DYNAMIC = SEASINIT
+    Obs_YRDOY = INCDAT(FSTART, -1)
+    CONTROL2 % YRDOY = Obs_YRDOY
 
-! Determine the first and last years of the weather ensemble using simulation start date as the reference.
-! These physical years are needed for historical ensemble, but not for generated weather
-! First year of historical ensemble is NYRS before start of simulation date
-  EnsYearFirst = YR - CONTROL % NYRS
-! Last year of historical ensemble is one year before start of simulation date
-  EnsYearLast = YR - 1
-! Start with first year of ensemble
-  EnsYearCurrent = EnsYearFirst
-  FYRDOY = EnsYearFirst *1000 + DOY
-  FYRSIM = FYRDOY
+!   Determine the first and last years of the weather ensemble using simulation start date as the reference.
+!   These physical years are needed for historical ensemble, but not for generated weather
+!   First year of historical ensemble is NYRS before start of simulation date
+    EnsYearFirst = YR - CONTROL % NYRS
+!   Last year of historical ensemble is one year before start of simulation date
+    EnsYearLast = YR - 1
+!   Start with first year of ensemble
+    EnsYearCurrent = EnsYearFirst
+    FYRDOY = EnsYearFirst *1000 + DOY
+    FYRSIM = FYRDOY
 
-! IF FODAT is before or equal to YRSIM, then all weather data are from ensembles.
-  IF (FCOUNT .LT. 1) RETURN
+!   IF FODAT is before or equal to YRSIM, then all weather data are from ensembles.
+    IF (FCOUNT .LT. 1) RETURN
 
-  IF (ALLOCATED(Obs_data)) THEN
-    DEALLOCATE(Obs_data)
-  ENDIF
+    IF (ALLOCATED(Obs_data)) THEN
+      DEALLOCATE(Obs_data)
+    ENDIF
 
-! Allocate the array size for observed weather data
-  Allocate (Obs_data(0:FCOUNT))
+!   Allocate the array size for observed weather data
+    Allocate (Obs_data(0:FCOUNT))
 
-  Obs_data % YRDOY  = -99
-  Obs_data % RAIN   = -99.
-  Obs_data % SRAD   = -99.
-  Obs_data % TMAX   = -99.
-  Obs_data % TMIN   = -99.
-  Obs_data % PAR    = -99.
-  Obs_data % DCO2   = -99.
-  Obs_data % OZON7  = -99.
-  Obs_data % RHUM   = -99.
-  Obs_data % TDEW   = -99.
-  Obs_data % VAPR   = -99.
-  Obs_data % WINDSP = -99.
+    Obs_data % YRDOY  = -99
+    Obs_data % RAIN   = -99.
+    Obs_data % SRAD   = -99.
+    Obs_data % TMAX   = -99.
+    Obs_data % TMIN   = -99.
+    Obs_data % PAR    = -99.
+    Obs_data % DCO2   = -99.
+    Obs_data % OZON7  = -99.
+    Obs_data % RHUM   = -99.
+    Obs_data % TDEW   = -99.
+    Obs_data % VAPR   = -99.
+    Obs_data % WINDSP = -99.
 
 ! =======================================================================
-! Initialize IPWTH for forecast year
-  CALL IPWTH(CONTROL2, ERRKEY,                        &
+!   Initialize IPWTH for forecast year
+    CALL IPWTH(CONTROL2, ERRKEY,                        &
         CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
         MEWTH, OZON7, PAR,                            &    !Output
         PATHWTC, PATHWTG, PATHWTW,                    &    !Output
@@ -122,7 +122,7 @@ SUBROUTINE FCAST_STORE(                                 &
       CALL WARNING(2, ERRKEY, MSG)
       CALL ERROR(ERRKEY,CONTROL%ERRCODE,"",0)
     ENDIF
-
+    
     Obs_data(0) % YRDOY  = Obs_YRDOY
     Obs_data(0) % SRAD   = SRAD
     Obs_data(0) % TMAX   = TMAX
@@ -137,43 +137,43 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data(0) % OZON7  = OZON7
 
 ! =======================================================================
-! Get and store weather data between YRSIM and FODAT-1
-  CONTROL2 = CONTROL
-  CONTROL2 % DYNAMIC = RATE
-
-! IPWTH was already initialized for the forecast year. Go ahead and retrieve 
-!   data for this year and store for retrieval at the beginning of each 
-!   ensemble.
-  DO I = 1, FCOUNT
-    Obs_YRDOY = INCDAT(FSTART, I-1)
-    CONTROL2 % YRDOY = Obs_YRDOY
-
-    CALL IPWTH(CONTROL2, ERRKEY,                      &
-        CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
-        MEWTH, OZON7, PAR,                            &    !Output
-        PATHWTC, PATHWTG, PATHWTW,                    &    !Output
-        RAIN, REFHT, RHUM, RSEED1, SRAD,              &    !Output
-        TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
-        WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
-        RATE)                                           
-
-    Obs_data(I) % YRDOY  = Obs_YRDOY
-    Obs_data(I) % SRAD   = SRAD
-    Obs_data(I) % TMAX   = TMAX
-    Obs_data(I) % TMIN   = TMIN
-    Obs_data(I) % RAIN   = RAIN
-    Obs_data(I) % PAR    = PAR
-    Obs_data(I) % TDEW   = TDEW
-    Obs_data(I) % WINDSP = WINDSP
-    Obs_data(I) % RHUM   = RHUM
-    Obs_data(I) % VAPR   = VAPR
-    Obs_data(I) % DCO2   = DCO2
-    Obs_data(I) % OZON7  = OZON7
-  ENDDO
+!   Get and store weather data between YRSIM and FODAT-1
+    CONTROL2 = CONTROL
+    CONTROL2 % DYNAMIC = RATE
+    
+!   IPWTH was already initialized for the forecast year. Go ahead and retrieve 
+!     data for this year and store for retrieval at the beginning of each 
+!     ensemble.
+    DO I = 1, FCOUNT
+      Obs_YRDOY = INCDAT(FSTART, I-1)
+      CONTROL2 % YRDOY = Obs_YRDOY
+    
+      CALL IPWTH(CONTROL2, ERRKEY,                      &
+          CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
+          MEWTH, OZON7, PAR,                            &    !Output
+          PATHWTC, PATHWTG, PATHWTW,                    &    !Output
+          RAIN, REFHT, RHUM, RSEED1, SRAD,              &    !Output
+          TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
+          WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
+          RATE)                                           
+    
+      Obs_data(I) % YRDOY  = Obs_YRDOY
+      Obs_data(I) % SRAD   = SRAD
+      Obs_data(I) % TMAX   = TMAX
+      Obs_data(I) % TMIN   = TMIN
+      Obs_data(I) % RAIN   = RAIN
+      Obs_data(I) % PAR    = PAR
+      Obs_data(I) % TDEW   = TDEW
+      Obs_data(I) % WINDSP = WINDSP
+      Obs_data(I) % RHUM   = RHUM
+      Obs_data(I) % VAPR   = VAPR
+      Obs_data(I) % DCO2   = DCO2
+      Obs_data(I) % OZON7  = OZON7
+    ENDDO
 
 ! =======================================================================
   CASE DEFAULT  ! CONTROL % ENDYRS > 1
-! Data has already been stored. Just need to update YRSIM for this ensemble year
+!   Data has already been stored. Just need to update YRSIM for this ensemble year
     EnsYearCurrent = EnsYearCurrent + 1
     FYRDOY = EnsYearCurrent * 1000 + DOY
     FYRSIM = FYRDOY

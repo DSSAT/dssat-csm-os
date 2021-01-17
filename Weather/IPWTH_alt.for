@@ -674,7 +674,11 @@ C         Read in weather file header.
           YRDOYW = YRDOY_A(I)
           CALL YR_DOY(YRDOYW, YEARW, DOYW)
 
-          IF (YRDOYW <= YRDOYWY .AND. CONTROL % RNMODE .NE. 'Y') THEN
+!         For Forecast mode, we need to be able to skip over all of the 
+!           in-season dates. Just keep going until current date is reached.
+          IF (RNMODE .EQ. 'Y') CYCLE
+
+          IF (YRDOYW <= YRDOYWY) THEN
 !           Repeated date - ignore with warning
             WRITE(MSG(1),601) 
             WRITE(MSG(2),602) YEARW, DOYW
