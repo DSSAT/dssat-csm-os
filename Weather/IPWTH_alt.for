@@ -340,7 +340,7 @@ C     The components are copied into local variables for use here.
           SELECT CASE(ISECT)
           CASE(0); CALL ERROR (ERRKEY,10,WFile,LINWTH) !End of file 
           CASE(1)
-            IF(FirstWeatherDate .EQ. -99) THEN
+            IF(FirstWeatherDay .EQ. -99) THEN
               CALL ERROR (ERRKEY,10,WFile,LINWTH) !Data record 
             ENDIF
           CASE(2); CYCLE                               !End of section 
@@ -995,11 +995,36 @@ C         Read in weather file header.
           ENDIF
 
 !         Determination of century here doesn't work for forecast mode. Need to modify.
+!         For CAPE2001.SNX file, weather starts in 1984001 and runs thru 2020138
+!         The file is longer than MaxRecords, so the first time thru, it reads up to 2011138.
+!         When the first date is reached after 2011138 (day 2011182 - first day of forecast in 2011),
+!           the century is set to 19 here.
+!         
+!          IF (RNMODE .EQ. 'Y' .AND.       !Forecast mode
+!     &        NRecords == 0 .AND.         !First record
+!     &        YRDOYW > YRSIM) THEN        !century too high.
+!            CENTURY = CENTURY - 1
+!            YRDOYW = YRDOYW - 100000
+!          ENDIF
+
+
+!     chp 2021-01-17 - We know "LastWeatherDay" here. Get the century from there!
+!     This doesn't work. 
+!     Cases:
+!     1. Forecast dates, first time through, seems OK, sets century to 19
+!     2. Forecast dates, 2nd time through, sets century to 19 when it should be 20
+!     3. Weather data, first time through, should be OK
+!     4. Weather data, 2nd time through, ??? don't know yet.
           IF (RNMODE .EQ. 'Y' .AND.       !Forecast mode
-     &        NRecords == 0 .AND.         !First record
-     &        YRDOYW > YRSIM) THEN        !century too high.
-            CENTURY = CENTURY - 1
-            YRDOYW = YRDOYW - 100000
+     &        NRecords == 0) THEN         !First record
+            IF (FirstWeatherDay > 0) THEN
+              Century = FirstWeatherDay/100000
+            ELSE
+              IF (YRDOYW > YRSIM) THEN
+                CENTURY = CENTURY - 1
+                YRDOYW = YRDOYW - 100000
+              ENDIF
+            ENDIF
           ENDIF
 
           YRDOYWY = YRDOYW
