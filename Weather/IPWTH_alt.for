@@ -340,7 +340,7 @@ C     The components are copied into local variables for use here.
           SELECT CASE(ISECT)
           CASE(0); CALL ERROR (ERRKEY,10,WFile,LINWTH) !End of file 
           CASE(1)
-            IF(FirstWeatherDate .EQ. -99) THEN
+            IF(FirstWeatherDay .EQ. -99) THEN
               CALL ERROR (ERRKEY,10,WFile,LINWTH) !Data record 
             ENDIF
           CASE(2); CYCLE                               !End of section 
@@ -674,6 +674,10 @@ C         Read in weather file header.
           YRDOYW = YRDOY_A(I)
           CALL YR_DOY(YRDOYW, YEARW, DOYW)
 
+!         For Forecast mode, we need to be able to skip over all of the 
+!           in-season dates. Just keep going until current date is reached.
+          IF (RNMODE .EQ. 'Y') CYCLE
+
           IF (YRDOYW <= YRDOYWY) THEN
 !           Repeated date - ignore with warning
             WRITE(MSG(1),601) 
@@ -821,6 +825,7 @@ C         Read in weather file header.
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE Forecast
       IMPLICIT NONE
       SAVE
 
@@ -835,7 +840,7 @@ C         Read in weather file header.
 
       INTEGER CENTURY, ERR, ErrCode, FOUND, LINWTH, LUNWTH, MULTI, RUN  
       INTEGER YRDOY, YRDOYW, YRDOYWY, YRDOY_start, YREND, YRSIM
-      INTEGER YRDOYW_SAVE
+      INTEGER YRDOYW_SAVE, YEAR, DOY
 
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
       REAL OZON7
@@ -990,16 +995,24 @@ C         Read in weather file header.
             YRDOYW = YRDOYW - 100000
           ENDIF
 
-!         Determination of century here doesn't work for forecast mode. Need to modify.
+!         Determination of century and weather file date for forecast mode. 
           IF (RNMODE .EQ. 'Y' .AND.       !Forecast mode
-     &        NRecords == 0 .AND.         !First record
-     &        YRDOYW > YRSIM) THEN        !century too high.
-            CENTURY = CENTURY - 1
-            YRDOYW = YRDOYW - 100000
+     &        NRecords == 0) THEN         !First record
+!           YRDOYW and Century refer to dates in weather file. 
+            Century = EnsYearFirst/100
+            IF (YRDOYW .GT. YRSIM) THEN
+              CALL YR_DOY(YRDOYW,YEAR,DOY)
+!             If the year is past the last ensemble year, then we probably have the wrong century 
+              IF (YEAR .GT. ForecastYear) THEN  
+                YRDOYW = Century*100000 + MOD(YEAR,100)*1000 + DOY
+              ENDIF
+            ENDIF
           ENDIF
 
           YRDOYWY = YRDOYW
-          IF (NRecords == 0) FirstWeatherDay = YRDOYW
+          IF (NRecords == 0) THEN
+            FirstWeatherDay = YRDOYW
+          ENDIF
 !         Store record in arrays
 !         Data will be checked for errors when used.  May have errors
 !         in records which are after harvest dates.
