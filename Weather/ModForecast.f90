@@ -11,7 +11,7 @@ Module Forecast
   INTEGER FCOUNT, FODAT, FSTART
 
 ! Track years of ensemble weather data
-  INTEGER EnsYearFirst, EnsYearLast, EnsYearCurrent
+  INTEGER EnsYearFirst, EnsYearLast, EnsYearCurrent, ForecastYear
 
 CONTAINS
 
@@ -81,6 +81,8 @@ SUBROUTINE FCAST_STORE(                                 &
     EnsYearCurrent = EnsYearFirst
     FYRDOY = EnsYearFirst *1000 + DOY
     FYRSIM = FYRDOY
+
+    ForecastYear = YR
 
 !   IF FODAT is before or equal to YRSIM, then all weather data are from ensembles.
     IF (FCOUNT .LT. 1) RETURN
@@ -190,6 +192,8 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
         SRAD, WINDSP)                       !Output
 
   USE ModuleData
+  CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
+  CHARACTER*78 MSG(4)
   INTEGER DOY, YR, FYRDOY
   INTEGER WDATE, I, TIMDIF
   REAL RAIN, TMAX, TMIN, SRAD, PAR
@@ -211,7 +215,12 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
 !   Use observed weather data. 
     I = TIMDIF(FSTART, WDATE) + 1
     IF (WDATE .NE. Obs_data(I) % YRDOY) THEN
-      PRINT *, WDATE, Obs_data(I) % YRDOY, "Error in forecast weather data"
+      WRITE(MSG(1),'(A)') "Error in forecast weather data, possible non-consecutive dates."
+      WRITE(MSG(2),'(A,I10)') "Simulation date:", WDATE 
+      WRITE(MSG(3),'(A,I10)') "Observed weather date:", Obs_data(I) % YRDOY
+      WRITE(MSG(4),'(A)') "Program will stop."
+      CALL WARNING(4, ERRKEY, MSG)
+      CALL ERROR(ERRKEY,CONTROL%ERRCODE,"",0)
     ENDIF
     
     RAIN   = Obs_data(I) % RAIN
