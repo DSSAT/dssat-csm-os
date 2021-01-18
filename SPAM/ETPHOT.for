@@ -43,6 +43,8 @@ C  06/11/2002 GH  Modified for Y2K
 !  11/14/2020 FO  ETPHOT - First part of code protections for divisions by zero
 !                 and negative values.
 !                 These changes were supervised by GH, KJB, SC and NBP.
+!  01/15/2021 FO  ETPHOT - Second part of code protections for divisions by zero
+!                 and negative values. Removed XLAI, CANHT, CANWH initializations.
 C-----------------------------------------------------------------------
 C  Called from: SPAM
 C  Calls:       ETIND,ETINP,PGINP,PGIND,RADABS,ETPHR,ROOTWU,SOIL05,SWFACS
@@ -337,9 +339,6 @@ C     Initialize DAILY parameters.
         NHOUR = 0
         TCANAV = 0.0
         TCANDY = 0.0
-        IF (XLAI.GT.0.0 .AND. XLAI.LT.0.002) XLAI = 0.002
-        IF (CANHT.GT.0.0 .AND. CANHT.LT.0.01) CANHT = 0.01
-        IF (CANWH.GT.0.0 .AND. CANWH.LT.0.01) CANWH = 0.01
 
         IF (MEEVP .EQ. 'Z') THEN
           CALL ETIND(
@@ -606,7 +605,7 @@ C       Assign daily values.
         CANWH = HOLDWH
 
         IF (MEEVP .EQ. 'Z') THEN
-          IF (XLAI .GT. 1.E-4) THEN
+          IF (XLAI .GT. 0.0) THEN
             DAYKR = -LOG((DAYRAD-DYINTR)/DAYRAD) / XLAI
           ELSE
             DAYKR = 0.0
@@ -651,7 +650,7 @@ C          ES = MAX(MIN(EDAY,AWEV1),0.0)
         ENDIF
 
         IF (MEPHO .EQ. 'L') THEN
-          IF (XLAI .GT. 1.E-4) THEN
+          IF (XLAI .GT. 0.0) THEN
             DAYKP = -LOG((DAYPAR-DYINTP)/DAYPAR) / XLAI
           ELSE
             DAYKP = 0.0
@@ -1403,7 +1402,7 @@ C     Initialize.
       RABS(2) = 0.0
       RABS(3) = 0.0
 
-      IF (XLAI .GT. 1.E-4) THEN
+      IF (XLAI .GT. 0.0) THEN
 
 C       Calculate fraction shaded and LAI's for vertical sun position.
 
@@ -1534,7 +1533,7 @@ C=======================================================================
 
 C     Set fraction shaded to 0.0 for zero width or height.
 
-      IF (CANWH .LE. ZERO .OR. CANHT .LE. ZERO) THEN
+      IF (CANWH .LE. 0.0 .OR. CANHT .LE. 0.0) THEN
         FRACSH = 0.0
 
 C     Set fraction shaded to 1.0 for full cover.
@@ -1683,8 +1682,13 @@ C     Calculate diffuse light extinction coefficient for black leaves.
       K15 = 1.00*F15 + 1.82*F45 + 2.26*F75
       K45 = 0.93*F15 + 0.68*F45 + 0.67*F75
       K75 = 0.93*F15 + 0.68*F45 + 0.29*F75
-      KDIFBL = -ALOG(0.25*EXP(-K15*XLAI)+0.5*EXP(-K45*XLAI)
-     &  +0.25*EXP(-K75*XLAI)) / XLAI
+      
+      IF(XLAI .GT. 0.0) THEN
+        KDIFBL = -ALOG(0.25*EXP(-K15*XLAI)+0.5*EXP(-K45*XLAI)
+     &           +0.25*EXP(-K75*XLAI)) / XLAI
+      ELSE
+        KDIFBL = 0.0
+      ENDIF
 
 C     Calculate sunlit and shaded leaf area indices.
 !CHP added check to prevent underflow 1/16/03
