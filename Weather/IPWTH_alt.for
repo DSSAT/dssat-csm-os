@@ -1185,7 +1185,7 @@ C         Read in weather file header.
 
 !     Error checking
       ErrCode = 0
-      IF (SRAD < 1.E-2) ErrCode = 2
+!      IF (SRAD < 1.E-2) ErrCode = 2
       IF (RAIN < 0.) ErrCode = 3
       IF (NINT(TMAX * 100.) == 0 .AND. NINT(TMIN * 100.) == 0)
      &  ErrCode = 4
@@ -1229,8 +1229,16 @@ C         Read in weather file header.
       ENDIF
 
 !     Warnings: issue message, but do not end simulation
-      IF (SRAD < 1.0) THEN
-        MSG(1) = "Warning: SRAD < 1"
+      IF (SRAD < 0.2) THEN
+        MSG(1) = "Warning: SRAD < 0.2 MJ.m-2.d-1."
+        NChar = MIN(78,LEN_Trim(FILEWW))
+        WRITE(MSG(2),'(A)') FILEWW(1:NChar)
+        WRITE(MSG(3),'(A,I8)') "Line ", RecNum
+        WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD
+        MSG(5)="SRAD will be set equal to 0.2 MJ.m-2.d-1."
+        CALL WARNING(5,ERRKEY,MSG) 
+      ELSEIF (SRAD < 1.0) THEN
+        MSG(1) = "Warning: SRAD < 1 MJ.m-2.d-1."
         NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)
         WRITE(MSG(3),'(A,I8)') "Line ", RecNum
