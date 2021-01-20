@@ -514,7 +514,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
 !       Use YRDOY_WY here (different argument than next call)
         CALL IpWRec(CONTROL, MaxRecords,
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
-     &    LUNWTH, YRDOYWY, CenturyFirst,                  !Input
+     &    LUNWTH, YRDOY_WY, CenturyFirst,                  !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
      &    OZON7_A, PAR_A,                                 !Output
@@ -1213,10 +1213,10 @@ C         Read in weather file header.
         NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)
         WRITE(MSG(3),'(A,I4)') "Line ", RecNum
-        WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD 
-        WRITE(MSG(5),'("TMAX = ",F6.2)') TMAX  
-        WRITE(MSG(6),'("TMIN = ",F6.2)') TMIN  
-        WRITE(MSG(7),'("RAIN = ",F6.2)') RAIN
+        WRITE(MSG(4),'("SRAD = ",F6.2," MJ.m-2.d-1")') SRAD 
+        WRITE(MSG(5),'("TMAX = ",F6.2," oC")') TMAX  
+        WRITE(MSG(6),'("TMIN = ",F6.2," oC")') TMIN  
+        WRITE(MSG(7),'("RAIN = ",F6.2," mm")') RAIN
         MSG(8) = "This run will stop."
         CALL WARNING(8,ERRKEY,MSG)
 
@@ -1234,7 +1234,7 @@ C         Read in weather file header.
         NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)
         WRITE(MSG(3),'(A,I8)') "Line ", RecNum
-        WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD
+        WRITE(MSG(4),'("SRAD = ",F6.2," MJ.m-2.d-1")') SRAD
         MSG(5)="SRAD will be set equal to 0.2 MJ.m-2.d-1."
         CALL WARNING(5,ERRKEY,MSG) 
       ELSEIF (SRAD < 1.0) THEN
@@ -1242,7 +1242,7 @@ C         Read in weather file header.
         NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)
         WRITE(MSG(3),'(A,I8)') "Line ", RecNum
-        WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD
+        WRITE(MSG(4),'("SRAD = ",F6.2," MJ.m-2.d-1")') SRAD
         CALL WARNING(4,ERRKEY,MSG) 
       ENDIF
 
