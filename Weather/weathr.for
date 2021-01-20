@@ -433,6 +433,10 @@ C-----------------------------------------------------------------------
      &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
       CALL PUT('WEATHER','WYEAR',WYEAR)
+
+      IF (CONTROL % ENDYRS .EQ. CONTROL % NYRS) THEN
+        CALL FCAST_FINISH()
+      ENDIF
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
