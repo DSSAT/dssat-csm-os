@@ -19,7 +19,7 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-Forecast'
 
 !     Version history:  
 !       4.7.5.28 chp 01/18/2021 Second part of ETPHOT protections
