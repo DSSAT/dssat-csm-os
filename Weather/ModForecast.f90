@@ -326,11 +326,11 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
     NDays = (NWeathYears - NYears)*365.25
     WFirstYear = WLastYear - NYears
     
-    WFirstDate = WFirstYear * 100 + WLastDOY
-    WFirstDate = INCDAT(WFirstDate, -Ndays)
+    WFirstDate = WFirstYear * 1000 + WLastDOY
+    WFirstDate = INCDAT(WFirstDate, -Ndays+1)
   ENDIF
   
-  CenturyFirst = AINT(FLOAT(WeathRecFirst) / 100000.)
+  CenturyFirst = AINT(FLOAT(WFirstDate) / 100000.)
 
 !  Check that EnsYearFirst, EnsYearLast, and ForecastYear are contained within.
 

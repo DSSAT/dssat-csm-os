@@ -56,10 +56,10 @@ C=======================================================================
       INTEGER LUNWTHC, LUNWTHG
       INTEGER PATHL, RSEED1, RUN, WYEAR, WDOY
       INTEGER YEAR, YR, YRDOY, YRDOYW, YRDOYWY, YREND
-      INTEGER YRSIM, YRSIMMY, YRDOY_WY
+      INTEGER YRSIM, YRSIMMY, YRDOY_WY, WFPASS
       INTEGER CenturyFirst !Century associated with first weather record
 
-      INTEGER, PARAMETER :: MaxRecords = 10000   !5000
+      INTEGER, PARAMETER :: MaxRecords = 5000   !10000
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
@@ -294,11 +294,13 @@ C     The components are copied into local variables for use here.
 !     Forecast mode - check bounds of weather file. Needed to determine
 !     that correct century is read for files with 2-digit years
       IF (RNMODE .EQ. 'Y' .AND.               !Yield forecast mode
-!     &    SOURCE .EQ. "FORCST" .AND.          !Getting in-season data for storage
+     &    SOURCE .EQ. "FORCST" .AND.          !Getting in-season data for storage
      &    INDEX('MG',MEWTH) .GT. 0 .AND.      !Measured or generated data files
-     &    NYEAR .GT. 1) THEN                  !Multi-year weather file
-          CenturyFirst = -99
-          CALL FCAST_ScanWeathData(CONTROL, FileWW, LunWth,CenturyFirst)
+     &    NYEAR .GT. 1 .AND.                  !Multi-year weather file
+     &    CONTROL % ENDYRS .EQ. 1) THEN       !First year simulation
+        WFPASS = 0
+        CenturyFirst = -99
+        CALL FCAST_ScanWeathData(CONTROL, FileWW, LunWth,CenturyFirst)
       ENDIF
 
       WSTAT = WFile(1:8)
@@ -517,7 +519,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
      &    LUNWTH, YRDOY_WY, CenturyFirst,                  !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
-     &    OZON7_A, PAR_A,                                 !Output
+     &    OZON7_A, PAR_A, WFPASS,                         !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
@@ -665,7 +667,7 @@ C         Read in weather file header.
      &    LUNWTH, YRDOYWY, CenturyFirst,                  !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
-     &    OZON7_A, PAR_A,                                 !Output
+     &    OZON7_A, PAR_A, WFPASS,                         !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
@@ -828,7 +830,7 @@ C         Read in weather file header.
      &    LUNWTH, YRDOYWY, CenturyFirst,                  !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
-     &    OZON7_A, PAR_A,                                 !Output
+     &    OZON7_A, PAR_A, WFPASS,                         !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
 
@@ -849,7 +851,7 @@ C         Read in weather file header.
 
       INTEGER CENTURY, ERR, ErrCode, FOUND, LINWTH, LUNWTH, MULTI, RUN  
       INTEGER YRDOY, YRDOYW, YRDOYWY, YRDOY_start, YREND, YRSIM
-      INTEGER YRDOYW_SAVE, YEAR, DOY
+      INTEGER YRDOYW_SAVE, YEAR, DOY, WFPASS, J
       INTEGER CenturyFirst !Century associated with first weather record
 
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
@@ -899,8 +901,21 @@ C         Read in weather file header.
       DCO2_A   = 0.0
 
       CENTURY = INT(YRSIM / 100000.)
+      WFPASS = WFPASS + 1  !Large files require multiple passes
 
       DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
+
+!        IF (WFPASS .GT. 1) THEN
+!          J = 0
+!!         Skip over lines previously read and go straight to the next record
+!          DO WHILE (J .LT. MaxRecords * (WFPASS - 1))
+!            CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
+!            IF (FOUND .EQ. 1) THEN
+!              J = J + 1
+!            ENDIF
+!          ENDDO
+!        ENDIF
+
 !       Read array of weather records for this calendar year 
 !       starting with simulation start date and ending at end 
 !       of file or at MaxRecords # of records
@@ -1008,13 +1023,16 @@ C         Read in weather file header.
 !         Determination of century and weather file date for forecast mode. 
 !     Aaaargh! This still doesn't work! Failure mode:
 !       first year of ensemble is in same century as forecast date.
-          IF (RNMODE .EQ. 'Y' .AND.       !Forecast mode
-     &        NRecords == 0) THEN         !First record
-!           YRDOYW and Century refer to dates in weather file. 
-            IF (YRDOYW .GT. YRSIM) THEN
-              CALL YR_DOY(YRDOYW,YEAR,DOY)
+          IF (RNMODE .EQ. 'Y') THEN        !Forecast mode
+            IF (NRecords == 0 .AND.        !First record
+     &          WFPASS .EQ. 1) THEN !First pass thru weather file
+!             YRDOYW and Century refer to dates in weather file. 
+              IF (YRDOYW .GT. YRSIM) THEN
+                CALL YR_DOY(YRDOYW,YEAR,DOY)
                 IF (CenturyFirst .LE. 0) CenturyFirst = CENTURY
                 YRDOYW = CenturyFirst*100000 + MOD(YEAR,100)*1000 + DOY
+                CENTURY = CenturyFirst
+              ENDIF
             ENDIF
           ENDIF
 
