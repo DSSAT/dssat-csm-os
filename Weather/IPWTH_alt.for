@@ -514,7 +514,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
 !       Use YRDOY_WY here (different argument than next call)
         CALL IpWRec(CONTROL, MaxRecords,
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
-     &    LUNWTH, YRDOYWY, CenturyFirst,                  !Input
+     &    LUNWTH, YRDOY_WY, CenturyFirst,                  !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
      &    OZON7_A, PAR_A,                                 !Output
@@ -1068,6 +1068,11 @@ C         Read in weather file header.
           ENDIF
         ELSE
           LastWeatherDay = YRDOYW
+          IF (EOF(LUNWTH) .AND. YRDOY .GT. LastWeatherDay) THEN
+            ErrCode = 10
+            CALL WeatherError(CONTROL, ErrCode, FILEWW, 
+     &                  LINWTH, YRDOYW, YREND)
+          ENDIF
           EXIT  
         ENDIF
       ENDDO
@@ -1185,17 +1190,17 @@ C         Read in weather file header.
 
 !     Error checking
       ErrCode = 0
-      IF (SRAD < 1.E-2) ErrCode = 2
-      IF (RAIN < 0.) ErrCode = 3
-      IF (NINT(TMAX * 100.) == 0 .AND. NINT(TMIN * 100.) == 0)
+!     IF (SRAD < 1.E-2) ErrCode = 2
+      IF (RAIN .LT. 0.) ErrCode = 3
+      IF (NINT(TMAX * 100.) .EQ. 0 .AND. NINT(TMIN * 100.) .EQ. 0)
      &  ErrCode = 4
-      IF (TMAX < TMIN) THEN 
+      IF (TMAX .LT. TMIN) THEN 
         ErrCode = 6
-      ELSEIF (TMAX - TMIN < 0.05) THEN
+      ELSEIF (TMAX - TMIN .LT. 0.05) THEN
         ErrCode = 5
       ENDIF
 
-      IF (ErrCode > 0) THEN
+      IF (ErrCode .GT. 0) THEN
 !       For seasonal initialization, try next weather day
 !       ERRKEY="INIT" indicates using weather for day before start 
 !         of simulation.  YREND = ErrCode indicates that error was
@@ -1213,10 +1218,10 @@ C         Read in weather file header.
         NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)
         WRITE(MSG(3),'(A,I4)') "Line ", RecNum
-        WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD 
-        WRITE(MSG(5),'("TMAX = ",F6.2)') TMAX  
-        WRITE(MSG(6),'("TMIN = ",F6.2)') TMIN  
-        WRITE(MSG(7),'("RAIN = ",F6.2)') RAIN
+        WRITE(MSG(4),'("SRAD = ",F6.2," MJ.m-2.d-1")') SRAD 
+        WRITE(MSG(5),'("TMAX = ",F6.2," oC")') TMAX  
+        WRITE(MSG(6),'("TMIN = ",F6.2," oC")') TMIN  
+        WRITE(MSG(7),'("RAIN = ",F6.2," mm")') RAIN
         MSG(8) = "This run will stop."
         CALL WARNING(8,ERRKEY,MSG)
 
@@ -1229,12 +1234,20 @@ C         Read in weather file header.
       ENDIF
 
 !     Warnings: issue message, but do not end simulation
-      IF (SRAD < 1.0) THEN
-        MSG(1) = "Warning: SRAD < 1"
+      IF (SRAD .LT. 0.2) THEN
+        MSG(1) = "Warning: SRAD < 0.2 MJ.m-2.d-1."
         NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)
         WRITE(MSG(3),'(A,I8)') "Line ", RecNum
-        WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD
+        WRITE(MSG(4),'("SRAD = ",F6.2," MJ.m-2.d-1")') SRAD
+        MSG(5)="SRAD will be set equal to 0.2 MJ.m-2.d-1."
+        CALL WARNING(5,ERRKEY,MSG) 
+      ELSEIF (SRAD .LT. 1.0) THEN
+        MSG(1) = "Warning: SRAD < 1 MJ.m-2.d-1."
+        NChar = MIN(78,LEN_Trim(FILEWW))
+        WRITE(MSG(2),'(A)') FILEWW(1:NChar)
+        WRITE(MSG(3),'(A,I8)') "Line ", RecNum
+        WRITE(MSG(4),'("SRAD = ",F6.2," MJ.m-2.d-1")') SRAD
         CALL WARNING(4,ERRKEY,MSG) 
       ENDIF
 
