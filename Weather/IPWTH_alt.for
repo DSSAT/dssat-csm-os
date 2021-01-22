@@ -852,7 +852,7 @@ C         Read in weather file header.
 
       INTEGER CENTURY, ERR, ErrCode, FOUND, LINWTH, LUNWTH, MULTI, RUN  
       INTEGER YRDOY, YRDOYW, YRDOYWY, YRDOY_start, YREND, YRSIM
-      INTEGER YRDOYW_SAVE, YEAR, DOY, WFPASS, J
+      INTEGER YRDOYW_SAVE, YEAR, DOY, WFPASS, YRDOY0
       INTEGER CenturyWRecord !Century associated with first weather record
 
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
@@ -1063,6 +1063,10 @@ C         Read in weather file header.
           IF (NRecords == MaxRecords) THEN
             LastWeatherDay = YRDOYW
             CenturyWRecord = AINT(FLOAT(YRDOYW)/100000.)
+            YRDOY0 = MOD(LastWeatherDay,100000)
+            IF (YRDOY0 == 99365) THEN
+              CenturyWRecord = CenturyWRecord + 1
+            ENDIF
             LongFile = .TRUE.
             IF (YRDOYW < YRDOY_start) THEN
 !             Beginning of simulation is after (MaxRecords) number

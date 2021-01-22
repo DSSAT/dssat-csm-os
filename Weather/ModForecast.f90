@@ -53,9 +53,9 @@ SUBROUTINE FCAST_STORE(                                 &
   YRSIM = CONTROL % YRSIM
   CALL YR_DOY(YRSIM,YR,DOY)
 
-! =======================================================================
+! ----------------------------------------------------------------------
   SELECT CASE (CONTROL % ENDYRS)
-! =======================================================================
+! ----------------------------------------------------------------------
   CASE (1)
 !   ENDYRS = 1: Initialize and store forecast data
 
@@ -106,7 +106,7 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data % VAPR   = -99.
     Obs_data % WINDSP = -99.
 
-! =======================================================================
+! ----------------------------------------------------------------------
 !   Initialize IPWTH for forecast year
     CALL IPWTH(CONTROL2, ERRKEY,                        &
         CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
@@ -137,7 +137,7 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data(0) % DCO2   = DCO2
     Obs_data(0) % OZON7  = OZON7
 
-! =======================================================================
+! ----------------------------------------------------------------------
 !   Get and store weather data between YRSIM and FODAT-1
     CONTROL2 = CONTROL
     CONTROL2 % DYNAMIC = RATE
@@ -172,7 +172,7 @@ SUBROUTINE FCAST_STORE(                                 &
       Obs_data(I) % OZON7  = OZON7
     ENDDO
 
-! =======================================================================
+! ----------------------------------------------------------------------
   CASE DEFAULT  ! CONTROL % ENDYRS > 1
 !   Data has already been stored. Just need to update YRSIM for this ensemble year
     EnsYearCurrent = EnsYearCurrent + 1
@@ -331,10 +331,6 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
   ENDIF
   
   CenturyFirst = AINT(FLOAT(WFirstDate) / 100000.)
-
-!  Check that EnsYearFirst, EnsYearLast, and ForecastYear are contained within.
-
-
 
   CLOSE (LUNWTH)
   RETURN
