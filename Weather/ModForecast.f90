@@ -116,6 +116,10 @@ SUBROUTINE FCAST_STORE(                                 &
         TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
         WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
         SEASINIT)
+
+!   FCAST_ScanWeathData was called from IPWTH so now we know
+!   the starting and ending dates for weather in a long weather file.
+!   Could do some checking here.
                                            
     IF (YREND .EQ. Obs_YRDOY) THEN
       MSG(1) = "In-season observed weather data not found."
@@ -328,6 +332,17 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
     
     WFirstDate = WFirstYear * 1000 + WLastDOY
     WFirstDate = INCDAT(WFirstDate, -Ndays+1)
+
+!   One possible failure mode is when the first weather date is near 
+!   the beginning or end of a century. Because the number of leap days
+!   is uncertain, there may be a mismatch on first date and therefore
+!   first century. Probably need to check the DOY. If it matches, then
+!   we're OK. If not, then maybe adjust WFirstDate to match WeathRecFirst
+!   Below is the beginning of something to handle that.
+!    CALL YR_DOY(WeathRecFirst, YR0, DOY0)
+!    CALL YR_DOY(WFirstDate, YR1, DOY1)
+!    IF (DOY1 - DOY0 .GT. 300) THEN
+    
   ENDIF
   
   CenturyFirst = AINT(FLOAT(WFirstDate) / 100000.)
