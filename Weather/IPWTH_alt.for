@@ -1078,7 +1078,7 @@ C         Read in weather file header.
           ENDIF
         ELSE
           LastWeatherDay = YRDOYW
-          IF (EOF(LUNWTH) .AND. YRDOY .GT. LastWeatherDay) THEN
+          IF (FOUND .EQ. 0 .AND. YRDOY .GT. LastWeatherDay) THEN
             ErrCode = 10
             CALL WeatherError(CONTROL, ErrCode, FILEWW, 
      &                  LINWTH, YRDOYW, YREND)
