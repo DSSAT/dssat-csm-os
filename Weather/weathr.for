@@ -434,7 +434,7 @@ C-----------------------------------------------------------------------
 
       CALL PUT('WEATHER','WYEAR',WYEAR)
 
-      IF (CONTROL % ENDYRS .EQ. CONTROL % NYRS) THEN
+      IF (RNMODE == 'Y' .AND. CONTROL % ENDYRS == CONTROL % NYRS) THEN
         CALL FCAST_FINISH()
       ENDIF
 !***********************************************************************
