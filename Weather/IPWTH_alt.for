@@ -57,9 +57,9 @@ C=======================================================================
       INTEGER PATHL, RSEED1, RUN, WYEAR, WDOY
       INTEGER YEAR, YR, YRDOY, YRDOYW, YRDOYWY, YREND
       INTEGER YRSIM, YRSIMMY, YRDOY_WY, WFPASS
-      INTEGER CenturyFirst !Century associated with first weather record
+      INTEGER CenturyWRecord !Century associated with weather record
 
-      INTEGER, PARAMETER :: MaxRecords = 5000   !10000
+      INTEGER, PARAMETER :: MaxRecords = 10000
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
@@ -299,8 +299,8 @@ C     The components are copied into local variables for use here.
      &    NYEAR .GT. 1 .AND.                  !Multi-year weather file
      &    CONTROL % ENDYRS .EQ. 1) THEN       !First year simulation
         WFPASS = 0
-        CenturyFirst = -99
-        CALL FCAST_ScanWeathData(CONTROL, FileWW, LunWth,CenturyFirst)
+        CenturyWRecord = -99
+        CALL FCAST_ScanWeathData(CONTROL, FileWW, LunWth,CenturyWRecord)
       ENDIF
 
       WSTAT = WFile(1:8)
@@ -428,6 +428,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
         IF (WINDHT <= 0.) WINDHT = 2.0
 
         LastFileW = WFile
+        
 !       10/27/2005 CHP The checks for TAV and TAMP were being done in the 
 !       STEMP routine, overriding this check. STEMP used .LE. instead 
 !       of .LT. and the results were very different for some experiments 
@@ -516,7 +517,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
 !       Use YRDOY_WY here (different argument than next call)
         CALL IpWRec(CONTROL, MaxRecords,
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
-     &    LUNWTH, YRDOY_WY, CenturyFirst,                  !Input
+     &    LUNWTH, YRDOY_WY, CenturyWRecord,                  !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
      &    OZON7_A, PAR_A, WFPASS,                         !Output
@@ -664,7 +665,7 @@ C         Read in weather file header.
 !       Use YRDOYWY here (different argument than previous call)
         CALL IpWRec(CONTROL, MaxRecords, 
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
-     &    LUNWTH, YRDOYWY, CenturyFirst,                  !Input
+     &    LUNWTH, YRDOYWY, CenturyWRecord,                  !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
      &    OZON7_A, PAR_A, WFPASS,                         !Output
@@ -827,7 +828,7 @@ C         Read in weather file header.
 
       SUBROUTINE IpWRec(CONTROL, MaxRecords,
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
-     &    LUNWTH, YRDOYWY, CenturyFirst,                  !Input
+     &    LUNWTH, YRDOYWY, CenturyWRecord,                  !Input
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
      &    OZON7_A, PAR_A, WFPASS,                         !Output
@@ -852,7 +853,7 @@ C         Read in weather file header.
       INTEGER CENTURY, ERR, ErrCode, FOUND, LINWTH, LUNWTH, MULTI, RUN  
       INTEGER YRDOY, YRDOYW, YRDOYWY, YRDOY_start, YREND, YRSIM
       INTEGER YRDOYW_SAVE, YEAR, DOY, WFPASS, J
-      INTEGER CenturyFirst !Century associated with first weather record
+      INTEGER CenturyWRecord !Century associated with first weather record
 
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
       REAL OZON7
@@ -883,6 +884,7 @@ C         Read in weather file header.
 !-----------------------------------------------------------------------
 !     LongFile = .FALSE.
       YRDOY_start = CONTROL % YRDOY
+      CENTURY = INT(YRSIM / 100000.)
 !-----------------------------------------------------------------------
 !     Begin reading daily weather data
  100  NRecords = 0
@@ -900,22 +902,9 @@ C         Read in weather file header.
       VAPR_A   = 0.0
       DCO2_A   = 0.0
 
-      CENTURY = INT(YRSIM / 100000.)
       WFPASS = WFPASS + 1  !Large files require multiple passes
 
       DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
-
-!        IF (WFPASS .GT. 1) THEN
-!          J = 0
-!!         Skip over lines previously read and go straight to the next record
-!          DO WHILE (J .LT. MaxRecords * (WFPASS - 1))
-!            CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
-!            IF (FOUND .EQ. 1) THEN
-!              J = J + 1
-!            ENDIF
-!          ENDDO
-!        ENDIF
-
 !       Read array of weather records for this calendar year 
 !       starting with simulation start date and ending at end 
 !       of file or at MaxRecords # of records
@@ -1021,17 +1010,15 @@ C         Read in weather file header.
           ENDIF
 
 !         Determination of century and weather file date for forecast mode. 
-!     Aaaargh! This still doesn't work! Failure mode:
-!       first year of ensemble is in same century as forecast date.
           IF (RNMODE .EQ. 'Y') THEN        !Forecast mode
             IF (NRecords == 0 .AND.        !First record
      &          WFPASS .EQ. 1) THEN !First pass thru weather file
 !             YRDOYW and Century refer to dates in weather file. 
               IF (YRDOYW .GT. YRSIM) THEN
                 CALL YR_DOY(YRDOYW,YEAR,DOY)
-                IF (CenturyFirst .LE. 0) CenturyFirst = CENTURY
-                YRDOYW = CenturyFirst*100000 + MOD(YEAR,100)*1000 + DOY
-                CENTURY = CenturyFirst
+                IF (CenturyWRecord .LE. 0) CenturyWRecord = CENTURY
+                YRDOYW = CenturyWRecord*100000 + MOD(YEAR,100)*1000 +DOY
+                CENTURY = CenturyWRecord
               ENDIF
             ENDIF
           ENDIF
@@ -1075,6 +1062,7 @@ C         Read in weather file header.
 
           IF (NRecords == MaxRecords) THEN
             LastWeatherDay = YRDOYW
+            CenturyWRecord = AINT(FLOAT(YRDOYW)/100000.)
             LongFile = .TRUE.
             IF (YRDOYW < YRDOY_start) THEN
 !             Beginning of simulation is after (MaxRecords) number
