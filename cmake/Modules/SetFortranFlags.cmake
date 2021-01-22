@@ -83,6 +83,11 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                  Fortran "-finit-character=32"
                 )
 
+# Supress warnings about external subroutines not declared
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-noexternal"
+                )
+
 # Enable preprocessing
 # Ref: http://fortranwiki.org/fortran/show/Predefined+preprocessor+macros
 # Ref: https://software.intel.com/en-us/node/694581
