@@ -238,14 +238,11 @@
             
             XLAI   = LAI
             IF (WTLF .GT. 0.0) THEN
-               !SLA  = LAI * 10000 / WTLF   ! SLA es el área específica de la hoja dividida entre su peso seco. Por lo que creo que lo correcto es:
+               SLA  = LAI * 10000 / WTLF   
                                             
-               SLA  = LAI * 10000 / LWAD
-            
+              
                
-                                           ! Puesto que SLA = LAI*10000 / WTLF  (divide el área de las hoja en una hectárea (Lo que es correcto) 
-                                           ! entre gramos de hoja por metro cuadrado (que es incorrecto) que es lo que representa WTLF), ya que
-                                           ! debería ser Kg de hoja en una hectárea. No es lo mismo gr/m2 que Kg/ha (hay un digito demás en el calculo)
+                                           
                
                
                
