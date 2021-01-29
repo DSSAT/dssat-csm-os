@@ -578,16 +578,16 @@ C
             READ (CHARTEST,'(I3,9X,5I8,1X,A15)',IOSTAT=ERRNUM) 
      &        LN, ENDAT, SeasDur, FODAT, FStartYear, FEndYear, FWFILE
 
-            IF (ERRNUM .NE. 0) THEN
-
-       MSG(1) = "Error in forecast data, check simulation controls."
-       WRITE(MSG(2),'("End simulation date = ",I8)') ENDAT
-       WRITE(MSG(3),'("Maximum season duration = ",I8)') SeasDur
-       WRITE(MSG(4),'("Simulated forecast start date= ",I8)') FODAT
-       WRITE(MSG(5),'("Forecast start year = ",I8)') FStartYear
-       WRITE(MSG(6),'("Forecast end year = ",I8)') FEndYear
-       WRITE(MSG(7),'("Short term forecast weather file = ",A5)') FWFILE
-
+            IF (ERRNUM .NE. 0 .AND. RNMODE .EQ. 'Y') THEN
+              MSG(1) = 
+     &          "Error in forecast data, check simulation controls."
+              WRITE(MSG(2),'("End simulation date = ",I8)') ENDAT
+              WRITE(MSG(3),'("Maximum season duration = ",I8)') SeasDur
+              WRITE(MSG(4),'("Simulated forecast start date=",I8)')FODAT
+              WRITE(MSG(5),'("Forecast start year = ",I8)') FStartYear
+              WRITE(MSG(6),'("Forecast end year = ",I8)') FEndYear
+              WRITE(MSG(7),'("Short term forecast weather file = ",A5)')
+     &          FWFILE
               CALL WARNING(7, ERRKEY, MSG)
             ENDIF
             CONTROL % FODAT = FODAT

@@ -240,7 +240,7 @@ C     Calculate day length, sunrise and sunset.
      &    DAYL, DEC, SNDN, SNUP)                          !Output
 
 !     Subroutine to determine daily CO2
-      CALL CO2VAL(CONTROL2, ISWITCH, CCO2, DCO2, CO2)
+      CALL CO2VAL(CONTROL, ISWITCH, CCO2, DCO2, CO2)
 
 C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
@@ -433,6 +433,10 @@ C-----------------------------------------------------------------------
      &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
       CALL PUT('WEATHER','WYEAR',WYEAR)
+
+      IF (RNMODE == 'Y' .AND. CONTROL % ENDYRS == CONTROL % NYRS) THEN
+        CALL FCAST_FINISH()
+      ENDIF
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
