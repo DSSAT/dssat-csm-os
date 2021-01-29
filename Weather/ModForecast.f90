@@ -53,9 +53,9 @@ SUBROUTINE FCAST_STORE(                                 &
   YRSIM = CONTROL % YRSIM
   CALL YR_DOY(YRSIM,YR,DOY)
 
-! =======================================================================
+! ----------------------------------------------------------------------
   SELECT CASE (CONTROL % ENDYRS)
-! =======================================================================
+! ----------------------------------------------------------------------
   CASE (1)
 !   ENDYRS = 1: Initialize and store forecast data
 
@@ -81,7 +81,6 @@ SUBROUTINE FCAST_STORE(                                 &
     EnsYearCurrent = EnsYearFirst
     FYRDOY = EnsYearFirst *1000 + DOY
     FYRSIM = FYRDOY
-
     ForecastYear = YR
 
 !   IF FODAT is before or equal to YRSIM, then all weather data are from ensembles.
@@ -107,7 +106,7 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data % VAPR   = -99.
     Obs_data % WINDSP = -99.
 
-! =======================================================================
+! ----------------------------------------------------------------------
 !   Initialize IPWTH for forecast year
     CALL IPWTH(CONTROL2, ERRKEY,                        &
         CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
@@ -117,6 +116,10 @@ SUBROUTINE FCAST_STORE(                                 &
         TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
         WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
         SEASINIT)
+
+!   FCAST_ScanWeathData was called from IPWTH so now we know
+!   the starting and ending dates for weather in a long weather file.
+!   Could do some checking here.
                                            
     IF (YREND .EQ. Obs_YRDOY) THEN
       MSG(1) = "In-season observed weather data not found."
@@ -138,7 +141,7 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data(0) % DCO2   = DCO2
     Obs_data(0) % OZON7  = OZON7
 
-! =======================================================================
+! ----------------------------------------------------------------------
 !   Get and store weather data between YRSIM and FODAT-1
     CONTROL2 = CONTROL
     CONTROL2 % DYNAMIC = RATE
@@ -173,7 +176,7 @@ SUBROUTINE FCAST_STORE(                                 &
       Obs_data(I) % OZON7  = OZON7
     ENDDO
 
-! =======================================================================
+! ----------------------------------------------------------------------
   CASE DEFAULT  ! CONTROL % ENDYRS > 1
 !   Data has already been stored. Just need to update YRSIM for this ensemble year
     EnsYearCurrent = EnsYearCurrent + 1
@@ -242,9 +245,111 @@ END SUBROUTINE FCAST_RETRIEVE
 
 !========================================================================
 SUBROUTINE FCAST_FINISH()
-  DEALLOCATE (Obs_data)
+  IF (ALLOCATED(Obs_data)) THEN
+    DEALLOCATE(Obs_data)
+  ENDIF
   RETURN
 END SUBROUTINE FCAST_FINISH
+
+!========================================================================
+SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst) 
+
+!Scan the historic weather data to get starting and ending dates.
+!Set the Century for the first weather data - important for 2-digit years.
+
+  USE ModuleDefs
+  CHARACTER*92 FileW
+  CHARACTER*120 LINE
+  Integer ERR, ErrCode, ISECT, LINWTH, LUNWTH
+  integer CenturyForecast, CenturyFirst, I, NYears, NDays, NRecords
+  integer WRecDate, WeathRecFirst, WeathRecLast, WFirstDate, WFirstYear, WLastYear, WLastDOY
+  REAL NWeathYears
+  Type (ControlType) CONTROL
+  INTEGER :: INCDAT  !FUNCTION
+
+  ErrCode = 0
+
+  OPEN (LUNWTH,FILE=FILEW,STATUS='OLD',IOSTAT=ERR)
+  REWIND(LUNWTH)
+  IF (ERR /= 0) THEN
+    ErrCode = 29
+    CALL WeatherError(CONTROL, ErrCode, FILEW, 0, 0, 0)
+    RETURN
+  ENDIF
+
+! Find 2nd header line
+  DO I = 1, 2
+! Look for header line beginning with '@' in column 1 (ISECT = 3)
+    DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
+      CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
+      SELECT CASE(ISECT)
+        CASE(0);            !End of file
+          ErrCode = 59
+          CALL WeatherError(CONTROL, ErrCode, FILEW, 0, 0, 0)
+          RETURN          
+        CASE(1); CYCLE      !Data line
+        CASE(2); CYCLE      !New section ("*" found) 
+        CASE(3); EXIT       !Header line ("@" found)
+      END SELECT
+    ENDDO  !Loop thru data file one record at a time
+  ENDDO    !Loop thru 1st and 2nd headers
+
+  I = 0
+! Read weather dates
+  DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
+    CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
+    SELECT CASE(ISECT)
+      CASE(0); EXIT       !End of file
+      CASE(2); EXIT       !New section ("*" found) 
+      CASE(3); EXIT       !Header line ("@" found)
+      CASE(1)             !Data line found
+        I = I + 1
+        READ (LINE,'(I7)') WRecDate
+        IF (I .EQ. 1) WeathRecFirst = WRecDate
+    END SELECT
+  ENDDO  !Loop thru data file one record at a time
+
+  WeathRecLast = WRecDate
+  NRecords = I
+  NWeathYears = NRecords / 365.25
+   
+  IF (WeathRecLast .LE. 99365) THEN
+!   2-digit years, calculate first weather date based on FODAT and # records 
+!   First assume last weather record has the same century as the FODAT
+    CenturyForecast = AINT(FLOAT(FODAT) / 100000.)
+    WeathRecLast = CenturyForecast * 100000 + WeathRecLast
+!   If the last weather date is before FODAT, then need to incrment the century
+    DO WHILE (WeathRecLast .LT. FODAT)
+      WeathRecLast = WeathRecLast + 100000
+    ENDDO
+
+!   Now we have the correct century for the last weather date,
+!     calculate first weather date based on number of records
+    CALL YR_DOY(WeathRecLast, WLastYear, WLastDOY)
+    NYears = AINT(NWeathYears)
+    NDays = (NWeathYears - NYears)*365.25
+    WFirstYear = WLastYear - NYears
+    
+    WFirstDate = WFirstYear * 1000 + WLastDOY
+    WFirstDate = INCDAT(WFirstDate, -Ndays+1)
+
+!   One possible failure mode is when the first weather date is near 
+!   the beginning or end of a century. Because the number of leap days
+!   is uncertain, there may be a mismatch on first date and therefore
+!   first century. Probably need to check the DOY. If it matches, then
+!   we're OK. If not, then maybe adjust WFirstDate to match WeathRecFirst
+!   Below is the beginning of something to handle that.
+!    CALL YR_DOY(WeathRecFirst, YR0, DOY0)
+!    CALL YR_DOY(WFirstDate, YR1, DOY1)
+!    IF (DOY1 - DOY0 .GT. 300) THEN
+    
+  ENDIF
+  
+  CenturyFirst = AINT(FLOAT(WFirstDate) / 100000.)
+
+  CLOSE (LUNWTH)
+  RETURN
+END SUBROUTINE FCAST_ScanWeathData
 
 !========================================================================
 End Module Forecast
