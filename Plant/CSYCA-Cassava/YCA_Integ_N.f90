@@ -48,7 +48,7 @@
                         LEAFNEXCESS = LEAFNEXCESS + node(BR,LF)%LEAFNEXCESSN
                     ENDIF
                     !LPM 01DEC2020 Assume harvesting proportional for all the leaves that are active (LNPH) and N increase just for the leaves that are growing 
-                    node(BR,LF)%LEAFNN = AMIN1(0.0,node(BR,LF)%LEAFNN  + LNUSEN(1,BR,LF)+ LNUSEN(2,BR,LF) - node(BR,LF)%SENNLFGN - node(BR,LF)%SENNLFGRSN - (LNPH/Lcounth) - node(BR,LF)%LEAFNEXCESSN) 
+                    node(BR,LF)%LEAFNN = AMAX1(0.0,node(BR,LF)%LEAFNN  + LNUSEN(1,BR,LF)+ LNUSEN(2,BR,LF) - node(BR,LF)%SENNLFGN - node(BR,LF)%SENNLFGRSN - (LNPH/Lcounth) - node(BR,LF)%LEAFNEXCESSN) 
                     LEAFN= LEAFN + node(BR,LF)%LEAFNN
                 ENDIF
             ENDDO
