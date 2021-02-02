@@ -75,11 +75,9 @@
                         IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
                             node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
                         ENDIF
-                        IF (isLeafAlive(node(BR,LF))) THEN
-                            !LPM 09DEC2020 adding restriction to avoid considering leaves that are almost falling
-                            IF (leafAreaLeftToSenesce(node(BR,LF))> (0.1*node(BR,LF)%LATL3T)) THEN 
-                                node(BR,LF)%LANC = node(BR,LF)%LEAFNN / ((leafAreaLeftToSenesce(node(BR,LF))/LAWL(1)) / (1.0-LPEFR)) 
-                            ENDIF
+                        !LPM 01FEB2021 adding restriction to avoid considering leaves that are almost falling
+                        IF (isLeafActive(node(BR,LF))) THEN
+                            node(BR,LF)%LANC = node(BR,LF)%LEAFNN / ((leafAreaLeftToSenesce(node(BR,LF))/LAWL(1)) / (1.0-LPEFR)) 
                             IF (node(BR,LF)%LANC < 0.0) THEN 
                                 WRITE(Message(1),'(A27,F4.1)') 'LANC below 0 with value of ',node(BR,LF)%LANC
                                 WRITE(Message(2),'(A27,2F8.3)') 'LEAFN,LFWT had values of  ',node(BR,LF)%LEAFNN,LFWT
@@ -87,7 +85,6 @@
                                 CALL WARNING(3,'CSYCA',MESSAGE)
                                 node(BR,LF)%LANC = AMAX1(0.0,node(BR,LF)%LANC)
                             ENDIF
-                            LANCM = LANCM + node(BR,LF)%LANC
                         ENDIF
                     ENDDO
                 ENDDO

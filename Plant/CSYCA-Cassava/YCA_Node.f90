@@ -115,6 +115,7 @@ Module YCA_Node !Module of environment
         Node_type_constructor%lcnm = 0.0
         Node_type_constructor%LDEATHDAP = 0
         Node_type_constructor%leafnexcessn = 0.0
+        Node_type_constructor%leafnn = 0.0
         Node_type_constructor%lncm = 0.0
         Node_type_constructor%lncr = 0.0
         Node_type_constructor%lncx = 0.0
