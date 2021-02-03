@@ -408,7 +408,196 @@
 
                 
             ENDIF
+            
+            ! Define actual distribution of N to leaves,stem,root,and storage root
+            !LPM 02FEB2021 to consider restrictions if WFG<NFG (more water stress than N stress)
+            !or AFLF< NFG (more assimilate stress than N stress)
+            IF (node(0,0)%NFLF2 > node(0,0)%AFLF .OR. node(0,0)%NFLF2 > WFG) THEN
+                ANDEM = 0.0
+                RNDEM = 0.0
+                LNDEM = 0.0
+                SNDEM = 0.0
+                SRNDEM = 0.0
+                RNDEMG = 0.0
+                LNDEMG = 0.0
+                SNDEMG = 0.0
+                SRNDEMG = 0.0
+                RNDEMTU = 0.0
+                LNDEMTU = 0.0
+                SNDEMTU = 0.0
+                SRNDEMTU = 0.0
+                SEEDNUSE = 0.0
+                SEEDNUSE2 = 0.0
+                RSNUSED = 0.0
+            
+                RNDEM = RTWTG*RNCX * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2,WFG)                              !EQN 154
+            
+                SRNDEM = (SRWTGRSP)*(SRNPCS/100.0)                     !EQN 155
+
+                        
+                DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
+                    DO LF = 1, LNUMSIMSTG(BR)
+                        IF (GROSTP>0.0) THEN
+                            node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%NODEWTG)*node(BR,LF)%SNCX * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2,WFG)
+                            SNDEM = SNDEM + node(BR,LF)%SNDEMN
+                        ENDIF
+                        IF (GROLFP>0.0) THEN 
+                            node(BR,LF)%LNDEMN = (AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP))*node(BR,LF)%LNCX) * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2,WFG) 
+                            LNDEM = LNDEM + node(BR,LF)%LNDEMN
+                        ENDIF
+                    ENDDO
+                ENDDO
+                !LNDEM = LNDEM - GROLSRTN 
+                ! Seed use if no roots
+                ! N use same % of initial as for CH20,if needed.
+                IF (STDAY /= 0) THEN
+                    IF (RTWT <= 0.0) THEN
+                        SEEDNUSE = AMAX1(0.0, AMIN1(SEEDN,LNDEM+SNDEM+RNDEM,SEEDNI/SDDUR*(TT/STDAY)))                          !EQN 203a
+                    ELSE
+                        ! Some use of seed (0.5 need) even if may not be needed
+                        SEEDNUSE = AMAX1(0.0,AMIN1(SEEDN, 0.5*(LNDEM+SNDEM+RNDEM),SEEDNI/SDDUR*(TT/STDAY)))                    !EQN 203b
+                    ENDIF
+                ENDIF
     
+                ! Reserves used before uptake
+                RSNUSED = AMIN1(LNDEM+SNDEM+RNDEM+SRNDEM-SEEDNUSE,RSN)                                                     !EQN 156
+    
+                ! N uptake needed 
+                ANDEM = AMAX1(0.0,plantPopulation()* (LNDEM+SNDEM+RNDEM+SRNDEM-SEEDNUSE-RSNUSED))                                !EQN 158
+                ! Uptake
+    
+                ! Ratio (NUPRATIO) to indicate N supply for output
+                IF (ANDEM > 0.0) THEN
+                    NUPRATIO = NUPAP/ANDEM                                                                                 !EQN 192
+                ELSE
+                    IF (NUPAP > 0.0) THEN
+                        NUPRATIO = 10.0
+                    ELSE  
+                        NUPRATIO = 0.0
+                    ENDIF  
+                ENDIF
+                ! Factor (NUF) to reduce N uptake to level of demand
+                NUF = 1.0
+                IF (NUPAP > 0.0) THEN
+                    NUF = AMIN1(1.0,ANDEM/NUPAP)                                                                           !EQN 193
+                ENDIF 
+    
+                ! Actual N uptake by layer roots based on demand (kg/ha)
+                UNO3 = 0.0
+                UNH4 = 0.0
+                NUPD = 0.0
+                NUPAD = 0.0
+                DO L = 1, NLAYRROOT
+                    UNO3(L) = RNO3U(L)*NUF                                                                                 !EQN 196
+                    UNH4(L) = RNH4U(L)*NUF                                                                                 !EQN 198
+                    IF (FAC(L) <= 0.0) THEN
+                        XMIN = 0.0
+                    ELSE  
+                        XMIN = NO3MN/FAC(L)                                                                                !EQN 194
+                    ENDIF  
+                    UNO3(L) = MAX(0.0,MIN (UNO3(L),SNO3(L)-XMIN))                                                          !EQN 197
+                    IF (FAC(L) <= 0.0) THEN
+                        XMIN = 0.0
+                    ELSE  
+                        XMIN = NH4MN/FAC(L)                                                                                !EQN 195 
+                    ENDIF  
+                    XMIN = NH4MN/FAC(L) 
+                    UNH4(L) = MAX(0.0,MIN (UNH4(L),SNH4(L)-XMIN))                                                          !EQN 199
+                    NUPAD = NUPAD + UNO3(L) + UNH4(L)                                                                      !EQN 200              
+                END DO
+                IF (PLTPOP > 1.E-6) THEN
+                    NUPD = NUPAD/(plantPopulation())                                                                             !EQN 201
+                ELSE
+                    NUPD = 0.
+                ENDIF
+    
+                SEEDNUSE2 = 0.0
+                ! Seed use after using reserves and uptake
+                IF (RTWT > 0.0 .AND. ISWNIT /= 'N') THEN
+                    SEEDNUSE2 = AMAX1(0.0,AMIN1(SEEDN-SEEDNUSE,LNDEM+SNDEM+RNDEM-RSNUSED-SEEDNUSE-NUPD,SEEDNI/SDDUR*(TT/STDAY)))  !EQN 205
+                ELSE
+                    SEEDNUSE2 = 0.0
+                ENDIF
+    
+                
+                
+                LNUSE = 0.0
+                SNUSE = 0.0
+                RNUSE = 0.0
+                SRNUSE = 0.0
+                SNUSEN = 0.0                                                                             
+                LNUSEN = 0.0
+                NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD+GROLSRTN                                                               !EQN 206
+                node%NDEMSMN = 0.0      
+                node%NDEMLMN = 0.0
+    
+                ! For supplying minimum
+                DO BR = 0, BRSTAGE                                                                                                                                                               
+                    DO LF = 1, LNUMSIMSTG(BR)
+                        node(BR,LF)%NDEMSMN = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2,WFG)
+                        IF (PLAGSB2 > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
+                            node(BR,LF)%NDEMLMN = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * node(BR,LF)%LNCM * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)
+                        ENDIF  
+                    ENDDO
+                ENDDO
+                NDEMMN = SUM(node%NDEMLMN)+(RTWTG*RNCM * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2))+SUM(node%NDEMSMN)+ (SRNDEM*0.5)
+                RNUSE(1) = (RTWTG*RNCM* AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2))*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
+
+            
+                DO BR = 0, BRSTAGE                                                                                                                                                              
+                    DO LF = 1, LNUMSIMSTG(BR)
+                        IF (GROSTP > 0.0) THEN
+                            SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)* node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
+                            SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
+                        ENDIF
+                        IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
+                            LNUSEN(1,BR,LF) = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) * node(BR,LF)%LNCM*AMIN1(1.0,NULEFT/NDEMMN) 
+                            LNUSE(1) = LNUSE(1) + LNUSEN(1,BR,LF)
+                        ENDIF
+                    ENDDO
+                ENDDO
+                SRNUSE(1) = (SRNDEM*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 
+                NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)
+
+                NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1) + LNDEM-LNUSE(1)                                                                !EQN 219
+                IF (NDEM2 > 0.0)THEN
+                    DO BR = 0, BRSTAGE                                                                                                                                                              
+                        DO LF = 1, LNUMSIMSTG(BR)
+                            IF (GROSTP > 0.0) THEN
+                                SNUSEN(2,BR,LF) = (node(BR,LF)%SNDEMN - SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
+                                SNUSE(2) = SNUSE(2)+ SNUSEN(2,BR,LF)
+                            ENDIF
+                            IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
+                                LNUSEN(2,BR,LF) = (AMAX1(0.0,node(BR,LF)%LNDEMN - LNUSEN(1,BR,LF)))* AMIN1(1.0,NULEFT/NDEM2)
+                                LNUSE(2) = LNUSE(2)+ LNUSEN(2,BR,LF)
+                            ENDIF
+                        ENDDO
+                    ENDDO
+                    RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
+                    SRNUSE(2) = (SRNDEM-SRNUSE(1))*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
+                    NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)-LNUSE(2)                                             !EQN 223
+                ELSE
+                    SNUSE(2) = 0.0
+                    RNUSE(2) = 0.0
+                    SRNUSE(2) = 0.0
+                ENDIF  
+    
+                LNUSE(0) = LNUSE(1) + LNUSE(2)                                                                   !EQN 225
+                SNUSE(0) = SNUSE(1) + SNUSE(2)                                                                             !EQN 226
+                DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
+                    DO LF = 1, LNUMSIMSTG(BR)
+                        IF (GROSTP > 0.0) THEN
+                            SNUSEN(0,BR,LF) = SNUSEN(1,BR,LF) + SNUSEN(2,BR,LF)
+                        ENDIF
+                        IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
+                            LNUSEN(0,BR,LF) = LNUSEN(1,BR,LF) + LNUSEN(2,BR,LF)
+                        ENDIF
+                    ENDDO
+                ENDDO
+                RNUSE(0) = RNUSE(1) + RNUSE(2)                                                                             !EQN 227 
+                SRNUSE(0) = SRNUSE(1) + SRNUSE(2)                                                                          !EQN 228     
+            
+            ENDIF
     
         ENDIF    ! End of N uptake and growth adjustmenets
     
@@ -473,4 +662,7 @@
             RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)
             RTRESPADJ = AMIN1(RTRESP,RTRESPADJ)    
             RTWTGADJ = AMIN1(RTWTG,RTWTGADJ)
+            
+            
+
     END SUBROUTINE YCA_Growth_NUptake
