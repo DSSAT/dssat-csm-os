@@ -383,9 +383,9 @@
         !CALL SPREADR (SPDIRFLE,'LLIFX',llifx) !LPM 14SEP2020 No longer used
         CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
         CALL SPREADR (SPDIRFLE,'LN%SC',lnsc)
-        CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
+        !CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
         CALL SPREADR (SPDIRFLE,'LWLOS',lwlos)
-        CALL SPREADR (SPDIRFLE,'NFSU' ,nfsu)
+        !CALL SPREADR (SPDIRFLE,'NFSU' ,nfsu)
         CALL SPREADR (SPDIRFLE,'LPEAW',lpeaw)
         CALL SPREADR (SPDIRFLE,'NCRG',ncrg)
         !CALL SPREADR (SPDIRFLE,'NTUPF',ntupf)
@@ -423,7 +423,7 @@
         !CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
         !CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
         CALL SPREADR (SPDIRFLE,'WFRGU',wfrtg)
-        CALL SPREADR (SPDIRFLE,'WFSU' ,wfsu)
+        !CALL SPREADR (SPDIRFLE,'WFSU' ,wfsu)
         CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
         ! Following may be temporarily in ECO or CUL file
         IF (PD(9) <= 0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))

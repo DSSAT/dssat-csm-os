@@ -1,9 +1,9 @@
-$SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
+$SPECIES:CSYCA047.020421    Last edit: 02/04/2021 LPM
 
 
-! Coefficients differ from those used in the DSSAT V3.5 cassava model.
+! Coefficients differ from those used in the CROPSIM cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
-! embedded in the code of, the earlier model,and from the literature.
+!  of the CROPSIM model,and from the literature.
 ! They may change as experience is gained,and should not be taken as
 ! 'fixed'. 
 
@@ -12,10 +12,7 @@ $SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
 ! in these characteristics, but the extent of such differences is not
 ! well understood.
 
-! Users should also be aware that the algorithms using the following coefficients
-! are being worked upon, but have not yet been implemented in the model:
-! LLOSA; SLATS,SLATR; RWUPM,WFS
-! Further,the coefficient SDSZ is a default that is used only if no planting-stick
+! The coefficient SDSZ is a default that is used only if no planting-stick
 ! size is entered in the experiment details file.
 
 *SPECIES:CSYCA047
@@ -56,9 +53,9 @@ $SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
 @LLIFG LLIFS  ! Growing,senescence durations
 !   Tu    Tu
  100.0  70.0
-@LLOSA LWLOS  ! Loss when accelerated,normal senescence   
-!   fr    fr
-   1.0  0.30  
+@LWLOS  ! Loss when normal senescence   
+!   fr
+  0.30  
 @SLATS SLATR   ! Specific leaf area temperature effect parameters
 !  oC     fr 
   30.0 0.022   
@@ -119,9 +116,9 @@ $SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
   0.00  0.06 
 ! Water shortage effects
 ! Based on ratio of soil water content to field capacity 
-@ WFGU  WFGL  WFSU  ! Growth,phs,senescence
-!   fr    fr    fr
-   1.0   0.0   0.6
+@ WFGU  WFGL  ! Growth,phs
+!   fr    fr
+   1.0   0.0
 @WFGEM WFRGU  ! Germination/emergence, root growth
 !   fr    fr
   0.50  0.25
@@ -145,9 +142,9 @@ $SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
 !    %
     20
 ! N shortage effects (Fraction of span from lowest to upper N concentration)
-@ NFPU  NFPL  NFGU  NFGL  NFSU ! Photosynthesis,growth,senescence
-!   fr    fr    fr    fr    fr
-  0.90  0.10  1.00  0.00  0.40
+@ NFPU  NFPL  NFGU  NFGL ! Photosynthesis,growth
+!   fr    fr    fr    fr
+  0.90  0.10  1.00  0.00
 ! N limits for leaf growth (Fraction of upper N concentration)
 @ NLLG
 !   fr
@@ -165,7 +162,6 @@ $SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
 ! LLIFG   Leaf growth (expansion) period (Thermal units)  
 ! LLIFS   Leaf senescence period (Thermal units)  
 ! LLIG%   Leaf lignin (%)
-! LLOSA   Leaf dry matter loss,accelerated senescence (fr)
 ! LN%MN   Leaf N concentration,minimum,early and late in life cycle (fr)
 ! LN%S    Leaf N concentration,standard,early and late in life cycle (fr)
 ! LN%SC   Leaf N concentration,fallen leaves(fr)
@@ -177,7 +173,6 @@ $SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
 ! NLLG    N limit,leaf growth (fr.max.N%)
 ! NFPL    N stress factor,photosynthesis,lower (fr)
 ! NFPU    N stress factor,photosynthesis,upper (fr)
-! NFSU    N stress factor,senescence,upper (fr)
 ! NH4MN   NH4 minimum concentration for uptake (mg/MG)
 ! NLAB%   N labile fraction,standard (%)
 ! NO3MN   NO3 minimum concentration for uptake (mg/MG)
@@ -227,4 +222,3 @@ $SPECIES:CSYCA047.09222020    Last edit: 12/14/2020 LPM
 ! WFGEM   Water factor,germination and emergence (fr)
 ! WFGL    Water factor,growth,lower (fr)
 ! WFGU    Water factor,growth,upper (fr)
-! WFSU    Water factor,senescence,upper (fr)

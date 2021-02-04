@@ -63,9 +63,10 @@
         ! LAH Need to accelerated senescence rather than lose leaf
         PLASW = 0.0
         PLASN = 0.0
-        IF (ISWWAT /= 'N') THEN
-            IF (plantLeafAreaLeftToSenesce() > 0.0.AND.WUPR < WFSU) PLASW = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenesce())-PLAS,(plantLeafAreaLeftToSenesce())*LLOSA))        !EQN 373
-        ENDIF
+        !LPM 04FEB2021 Remove equations of accelerated senescence due to water stress (currently this effected is not implemented)
+        !IF (ISWWAT /= 'N') THEN
+        !    IF (plantLeafAreaLeftToSenesce() > 0.0.AND.WUPR < WFSU) PLASW = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenesce())-PLAS,(plantLeafAreaLeftToSenesce())*LLOSA))        !EQN 373
+        !ENDIF
         !LPM 30NOV2020 Remove equations of accelerated senescence due to N (currently this effected is not implemented) 
         !Better to affect leaf appearance rate and leaf size
         !IF (ISWNIT /= 'N') THEN

@@ -388,7 +388,7 @@ Module YCA_First_Trans_m
     !REAL    :: LLIFXUnused             ! Leaf ageing accel.unused       Tu         ! (From Integrate) 
     REAL    :: LLIGP                   ! Leaf lignin percentage         #          ! (From SeasInit)  
     REAL    :: LLNAD                   ! Leaf lamina nitrogen           kg/ha      ! (From SeasInit)  
-    REAL    :: LLOSA                   ! Leaf area loss,accelerated sen fr         ! (From SeasInit)  
+    !REAL    :: LLOSA                   ! Leaf area loss,accelerated sen fr         ! (From SeasInit)  
     !REAL    :: LLRSWAD                 ! Leaf lamina reserves weight    kg/ha      ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
     !REAL    :: LLRSWT                  ! Leaf lamina reserves           g/p        ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
     REAL    :: LLWAD                   ! Leaf lamina weight             kg/ha      ! (From SeasInit)  
@@ -471,7 +471,7 @@ Module YCA_First_Trans_m
     REAL    :: NFPPC                   ! N factor,phs,cumulative,tier   #          ! (From SeasInit)  
     REAL    :: NFPU                    ! N factor,phs,upper limit       #          ! (From SeasInit)  
     REAL    :: NFRG                    ! N factor,root growth 0-1       #          ! (From Growth)    
-    REAL    :: NFSU                    ! N factor,senescence,upper lim  #          ! (From SeasInit)  
+    !REAL    :: NFSU                    ! N factor,senescence,upper lim  #          ! (From SeasInit)  
     INTEGER :: NG                      ! Index for group number/cohorts #          ! DA 13DIC2016
     REAL    :: NH4CF                   ! NH4 uptake concentration fac   #          ! (From SeasInit)  
     REAL    :: NH4MN                   ! NH4 conc minimum for uptake    g/Mg       ! (From SeasInit)  
@@ -1035,7 +1035,7 @@ Module YCA_First_Trans_m
     !REAL    :: WFPU                    ! Water factor,phs,upper         #          ! (From SeasInit)  
     REAL    :: WFRG                    ! Water factor,root growth,0-1   #          ! (From Growth)    
     REAL    :: WFRTG                   ! Water factor,root gr           #          ! (From SeasInit)  
-    REAL    :: WFSU                    ! Water fac,senescence,upper 0-1 #          ! (From SeasInit)  
+    !REAL    :: WFSU                    ! Water fac,senescence,upper 0-1 #          ! (From SeasInit)  
     INTEGER :: WSDAYS                  ! Water stress days              #          ! (From SeasInit)  
     REAL    :: WTDEP                   ! Water table depth              cm         ! (From SeasInit)  
     REAL    :: WUPR                    ! Water pot.uptake/demand        #          ! (From SeasInit)  

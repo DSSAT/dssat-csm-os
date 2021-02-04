@@ -162,7 +162,7 @@
         IF (NFGL < 0.0) NFGL = 0.0
         IF (NFGU < 0.0) NFGU = 1.0
         IF (NLLG <= 0.0) NLLG = 0.95
-        IF (NFSU < 0.0) NFSU = 0.2
+        !IF (NFSU < 0.0) NFSU = 0.2
         
         ! Various
         !IF (RSFRS < 0.0) RSFRS = 0.05 !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
@@ -269,7 +269,7 @@
             ! Plant water status effects on growth turned off
             WFGU = 0.0
             !WFPU = 0.0
-            WFSU = 0.0
+            !WFSU = 0.0
             WFRTG = 0.0
         ENDIF
         
