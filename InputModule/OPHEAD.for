@@ -307,7 +307,7 @@ c     IHARI is harvest management option
 c     (e.g. 'R' = 'On reported date', 'M' = 'At maturity')
 c     HDATE(1) is harvest date (YYYYDOY)
 c     ::::::::::::::::::::::::::::::::::
-      IF (IHARI  .EQ. 'R' .AND. INDEX('FQN',RNMODE)<1) THEN
+      IF (IHARI  .EQ. 'R' .AND. INDEX('FQNY',RNMODE)<1) THEN
 
 c         Get Day Of Year (DOY) date
           HDATE_YR = HDATE(1)/1000
@@ -446,8 +446,8 @@ C-----------------------------------------------------------------------
 
   400 FORMAT (1X,'STARTING DATE  :',1X,A3,1X,I2,1X,I4)
   425 FORMAT (1X,'HARVEST DATE   :',1X,A3,1X,I2,1X,I4)
-  450 FORMAT (1X,'PLANTING DATE  :',1X,A3,1X,I2,1X,I4,8X,
-     &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')
+  450 FORMAT (1X,'PLANTING DATE  :',1X,A3,1X,I2,1X,I4,6X,
+     &       'PLANTS/m2 :',F8.1,4X,'ROW SPACING :',F5.0,'cm ')
   475 FORMAT (1X,'PLANTING DATE  :',1X,'AUTOMATIC PLANTING',1X,
      &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')
   500 FORMAT (1X,'WEATHER',8X,':',1X,A4,3X,I4)
@@ -820,13 +820,15 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
 !-----------------------------------------------------------------------
 !     Pineapple **
       CASE ('PIALO')
-         WRITE (HEADER(I),2010) P1,P2,P3,P4,P5,P6; I=I+1
-         WRITE (HEADER(I),2011) G2,G3,PHINT; I=I+1
- 2010 FORMAT (1X,'    P1:',F6.1,'    P2:',F6.1,
-     &           '    P3:',F6.1,'    P4:',F6.0,
-     &           '    P5:',F6.1,'    P6:',F6.1)
- 2011 FORMAT (1X,'    G2:',F6.1,'    G3:',F6.2,
-     &           ' PHINT:',F6.1)
+         WRITE (HEADER(I),2010) TC,P1,P2,P3,P4,P5,P6,P7,P8; I=I+1
+         WRITE (HEADER(I),2011) G1,G2,G3,PHINT; I=I+1
+ 2010    FORMAT (1X,'    TC:',F6.1,'    P1:',F6.1,
+     &           '    P2:',F6.1,'    P3:',F6.1,
+     &           '    P4:',F6.1,'    P5:',F6.1
+     &           '    P6:',F6.1,'    P7:',F6.1,
+     &           '    P8:',F6.1)
+ 2011 FORMAT (1X,'    G1:',F6.1,'    G2:',F6.1,
+     &           '    G3:',F6.1,' PHINT:',F6.1)
 
 !-----------------------------------------------------------------------
 !     Sugarcane - Canegro

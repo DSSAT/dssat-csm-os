@@ -649,7 +649,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Set default canopy height upon emergence (or first day with
 !       LAI.  Should actually set these defaults within each
 !       crop routine.
-        IF (FixCanht .AND. (XLAI .GT. 0.001 .OR. XHLAI .GT. 0.001)) THEN
+        IF (FixCanht .AND. (XLAI .GT. 0.0 .OR. XHLAI .GT. 0.0)) THEN
           CANHT = 0.5
           FixCanht = .FALSE.
         ENDIF

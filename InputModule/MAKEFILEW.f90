@@ -14,6 +14,9 @@
 !  Revision history
 !
 !  01/23/2020 FO  Written
+!  11/10/2020 CHP Need to make revisions here like in IPEXP for forecast mode
+!       This mode needs to keep FILEW (WTH file) and potentially also 
+!       FILEWC (CLI) file and FILEWG (WTG file).
 !-----------------------------------------------------------------------
 !  INPUT  : DSSATP, PATHEX, FILEX
 !
@@ -397,7 +400,7 @@
           MSG(3) = 'Set simulation to 5-digits first weather date'
           FirstWeatherDate = -99
           
-          CALL WARNING(3,ERRKEY,MSG)
+          CALL INFO(3,ERRKEY,MSG)
         ENDIF
       
       ENDIF
