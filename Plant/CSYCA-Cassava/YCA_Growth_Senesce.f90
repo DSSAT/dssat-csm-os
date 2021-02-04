@@ -133,9 +133,9 @@
             !SENNLFG = AMIN1(LEAFN,(SENLFG+SENLFGRS)*LNSC)                                                              !EQN 378
             DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR)   
-                    IF (plantLeafAreaLeftToSenesce() > 0.0) THEN
-                        node(BR,LF)%SENNLFGN = AMIN1(0.0,(LFWT*(node(BR,LF)%LAPSTMP/plantLeafAreaLeftToSenesce()))*LNSC)
-                        node(BR,LF)%SENNLFGRSN = AMIN1(0.0,(LFWT*(node(BR,LF)%LAPSTMP/plantLeafAreaLeftToSenesce()))*(node(BR,LF)%LANC-LNSC))                                 !EQN 379
+                    IF (plantLeafAreaLeftToSenesce() > 0.0 .AND. leafAreaLeftToSenesce(node(BR,LF)) > 0.0 .AND. .NOT. willLeafStillGrowingToday(node(BR,LF))) THEN
+                        node(BR,LF)%SENNLFGN = AMAX1(0.0,(LFWT*(node(BR,LF)%LAPSTMP/plantLeafAreaLeftToSenesce()))*LNSC)
+                        node(BR,LF)%SENNLFGRSN = AMAX1(0.0,(LFWT*(node(BR,LF)%LAPSTMP/plantLeafAreaLeftToSenesce()))*(node(BR,LF)%LANC-LNSC))                                 !EQN 379
                         SENNLFG = SENNLFG + node(BR,LF)%SENNLFGN
                         SENNLFGRS = SENNLFGRS + node(BR,LF)%SENNLFGRSN
                     ENDIF
