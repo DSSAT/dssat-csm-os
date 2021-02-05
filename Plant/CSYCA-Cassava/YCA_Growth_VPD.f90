@@ -70,7 +70,7 @@ Module YCA_Growth_VPD
         DO hour =1, TS
             IF (PHTV > 0.0) THEN                                                    ! If PHTV has a value (.NE. -99)
                 IF (VPDHR(hour) > PHTV) THEN
-                    VPDFPHR(hour) = AMIN1(1.0,AMAX1(0.0,1.0+PHSV*(VPDHR(hour)-PHTV)))
+                    VPDFPHR(hour) = AMIN1(1.0,AMAX1(0.0,1.0-PHSV*(VPDHR(hour)-PHTV)))
                     IF (hour > 1 .AND. VPDStartHr == 0.0) THEN
                         VPDStartHr = FLOAT(hour)    ! Hour start of stomatal closure in response to VPD
                     ENDIF
