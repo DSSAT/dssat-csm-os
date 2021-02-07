@@ -82,7 +82,7 @@ C       soil water balance and predicting measured ET.
         IF (KCB .GE. 0.0) THEN
           EOP = KCB * REFET !KRT added for ASCE dual Kc ET approach
         ELSE  
-          IF (meevp .NE.'V') THEN
+          IF (meevp .NE.'H') THEN
             FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
             EOP = EO * FDINT
           ELSE

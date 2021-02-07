@@ -620,7 +620,7 @@ Module YCA_First_Trans_m
     REAL    :: RLF                     ! Leaf stomatal res,330.0 ppmCO2 s/m        ! (From SeasInit)  
     REAL    :: RLFC                    ! Leaf stomatal resistance       s/m        ! (From SeasInit)    
     REAL    :: RLIGP                   ! Root lignin concentration      %          ! (From SeasInit)  
-    REAL    :: RLWR                    ! Root length/weight ratio     m/10mg       ! (From SeasInit)  
+    REAL    :: RLWR                    ! Root length/weight ratio       m/g        ! (From SeasInit)  
     REAL    :: RM                      ! Mesophyll resistance           d/m        ! (From Growth)    
     REAL    :: RNAD                    ! Root N                         kg/ha      ! (From SeasInit)  
     REAL    :: RNAM                    ! Root N at maturity             kg/ha      ! (From SeasInit)  

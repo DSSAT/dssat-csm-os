@@ -143,9 +143,9 @@
         RTDEP = AMIN1 (RTDEP+RTDEPG,DEPMAX)                                                                            !EQN 390
         DO L = 1, NLAYR
             IF (WFG > 0.0 .AND. WFG < 0.5) THEN
-                RLV(L)=RTWTL(L)*(RLWR/(WFG/0.5))*PLTPOP/DLAYR(L)
+                RLV(L)=RTWTL(L)*((RLWR/100.)/(WFG/0.5))*PLTPOP/DLAYR(L)
             ELSE
-                RLV(L)=RTWTL(L)*RLWR*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
+                RLV(L)=RTWTL(L)*(RLWR/100.)*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
             ENDIF
             IF (L == NLAYR.AND.RLV(L) > 0.0)THEN
                 IF (RTSLXDATE <= 0.0) RTSLXDATE = YEARDOY
