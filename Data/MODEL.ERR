@@ -196,11 +196,11 @@ Error in Ecotype entry.  Fix entry or batch file.
 IPECO     2
 Error in Ecotype entry.  Fix ecotype input file.
 
-IPECO     2
-Error in Ecotype entry.  Fix ecotype input file.
-
 IPECO     3
 DEFAULT Ecotype not found. Fix ecotype input file.
+
+IPECO     4
+Missing ecotype coefficients. Fix ecotype input file.
 
 IPECO    21
 Ecotype input section not found.  Please correct file.

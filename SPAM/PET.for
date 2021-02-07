@@ -20,7 +20,7 @@
 !   P  PETPNO  FAO Penman (FAO-24) potential evapotranspiration 
 !   M  PETMEY  "Standard reference evaporation calculation for inland 
 !                south eastern Australia" By Wayne Meyer 1993
-!   V  PETPTH Calculates Priestly-Taylor potential evapotranspiration
+!   H  PETPTH Calculates Priestly-Taylor potential evapotranspiration
 !             using hourly temperature and radiation. Also includes a VPD 
 !             effect to the transpiration
 
@@ -126,7 +126,7 @@ C=======================================================================
 !         ------------------------
           !Priestly-Taylor potential evapotranspiration hourly
           !including a VPD effect on transpiration
-          CASE ('V')
+          CASE ('H')
               CALL PETPTH(
      &        KSEVAP, ET_ALB, SRAD, TMAX, TMIN, XHLAI,  !Input
      &        RADHR, TAIRHR, TDEW,                      !Input
@@ -1308,10 +1308,27 @@ C=======================================================================
       INTEGER hour
       REAL PHSV, PHTV
       REAL EOP
+      CHARACTER(len=6), PARAMETER :: ERRKEY = 'IPECO'
+      CHARACTER(len=78)  MSG(2)
 !-----------------------------------------------------------------------
 
       CALL GET('SPAM', 'PHSV' ,phsv)
       CALL GET('SPAM', 'PHTV' ,phtv)
+      
+      IF (phsv <= 0.0) THEN
+          MSG(1) = "Photoperiod sensitivity parameter PHSV is" //
+     &     " not defined for EVAPO method (H)."
+          MSG(2) = "Program will stop."
+          CALL WARNING(2, ERRKEY, MSG)
+          CALL ERROR(ERRKEY,4,"",0)
+      ENDIF
+      IF (phtv <= 0.0) THEN
+          MSG(1) = "Photoperiod threshold parameter PHTV is" //
+     &     " not defined for EVAPO method (H)."
+          MSG(2) = "Program will stop."
+          CALL WARNING(2, ERRKEY, MSG)
+          CALL ERROR(ERRKEY,4,"",0)
+      ENDIF
       IF (XHLAI .LE. 0.0) THEN
         ALBEDO = MSALB
       ELSE
