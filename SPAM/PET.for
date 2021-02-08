@@ -38,8 +38,8 @@ C=======================================================================
      &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
      &      EORATIO, !Needed by Penman-Monteith
      &      CANHT,   !Needed by dynamic Penman-Monteith
-     &      KSEVAP,  !Needed by hourly Priestly-Taylor
-     &      EO)      !Output
+     &      EO,      !Output
+     &      ET0)     !Output hourly Priestly-Taylor with VPD effect
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -49,10 +49,10 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       CHARACTER*1 MEEVP
       INTEGER YRDOY, YEAR, DOY
-      REAL CANHT, CLOUDS, EO, EORATIO, ET_ALB, SRAD, TAVG
-      REAL, DIMENSION(TS)    ::RADHR, TAIRHR
+      REAL CANHT, CLOUDS, EO, EORATIO, ET_ALB, SRAD, TAVG               
       REAL TDEW, TMAX, TMIN, VAPR, WINDHT, WINDSP, XHLAI
-      REAL WINDRUN, XLAT, XELEV, KSEVAP
+      REAL WINDRUN, XLAT, XELEV
+      REAL, DIMENSION(TS)    ::RADHR, TAIRHR, ET0
       
       CLOUDS = WEATHER % CLOUDS
       SRAD   = WEATHER % SRAD  
@@ -128,9 +128,8 @@ C=======================================================================
           !including a VPD effect on transpiration
           CASE ('H')
               CALL PETPTH(
-     &        KSEVAP, ET_ALB, SRAD, TMAX, TMIN, XHLAI,  !Input
-     &        RADHR, TAIRHR, TDEW,                      !Input
-     &        EO)                                       !Output
+     &        ET_ALB, TMAX, XHLAI, RADHR, TAIRHR,       !Input
+     &        EO, ET0)                                  !Output
 !         ------------------------
           !Priestly-Taylor potential evapotranspiration
           CASE DEFAULT !Default - MEEVP = 'R' 
@@ -1279,56 +1278,36 @@ C  10/17/1997 CHP Updated for modular format.
 C  09/01/1999 GH  Incorporated into CROPGRO
 !  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil 
 !                 water effects on albedo)
-! 09/01/2020 LPM  Modified PETPT to use hourly variables 
+!  09/01/2020 LPM  Modified PETPT to use hourly variables 
 !-----------------------------------------------------------------------
 !  Called by:   WATBAL
 !  Calls:       None
 C=======================================================================
       SUBROUTINE PETPTH(
-     &    KSEVAP, MSALB, SRAD, TMAX, TMIN, XHLAI,         !Input
-     &    RADHR, TAIRHR, TDEW,                            !Input
-     &    EO)                                             !Output
+     &    MSALB, TMAX, XHLAI, RADHR, TAIRHR,              !Input
+     &    EO,ET0)                                         !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
-      USE YCA_Growth_VPD
       IMPLICIT NONE
 
 !-----------------------------------------------------------------------
 !     INPUT VARIABLES:
-      REAL KSEVAP, MSALB, SRAD, TMAX, TMIN, TDEW, XHLAI
-      REAL, DIMENSION(TS)    ::RADHR, TAIRHR
+      REAL MSALB, TMAX, XHLAI
+      REAL, DIMENSION(TS)    ::RADHR, TAIRHR 
 !-----------------------------------------------------------------------
 !     OUTPUT VARIABLES:
       REAL EO
+      REAL, DIMENSION(TS)    :: ET0
 !-----------------------------------------------------------------------
 !     LOCAL VARIABLES:
       REAL ALBEDO, EEQ, SLANG
       INTEGER hour
-      REAL PHSV, PHTV
       REAL EOP
-      CHARACTER(len=6), PARAMETER :: ERRKEY = 'IPECO'
-      CHARACTER(len=78)  MSG(2)
 !-----------------------------------------------------------------------
 
-      CALL GET('SPAM', 'PHSV' ,phsv)
-      CALL GET('SPAM', 'PHTV' ,phtv)
-      
-      IF (phsv <= 0.0) THEN
-          MSG(1) = "Photoperiod sensitivity parameter PHSV is" //
-     &     " not defined for EVAPO method (H)."
-          MSG(2) = "Program will stop."
-          CALL WARNING(2, ERRKEY, MSG)
-          CALL ERROR(ERRKEY,4,"",0)
-      ENDIF
-      IF (phtv <= 0.0) THEN
-          MSG(1) = "Photoperiod threshold parameter PHTV is" //
-     &     " not defined for EVAPO method (H)."
-          MSG(2) = "Program will stop."
-          CALL WARNING(2, ERRKEY, MSG)
-          CALL ERROR(ERRKEY,4,"",0)
-      ENDIF
+
       IF (XHLAI .LE. 0.0) THEN
         ALBEDO = MSALB
       ELSE
@@ -1346,11 +1325,6 @@ C=======================================================================
           ELSE IF (TMAX .LT. 5.0) THEN
             ET0(hour) = EEQ*0.01*EXP(0.18*(TMAX+20.0))
           ENDIF
-          VPDFPHR(hour) =  get_Growth_VPDFPHR(PHSV, PHTV, TDEW, 
-     &                     TMIN, TAIRHR, hour)
-          EOSH(hour) = ET0(hour)*EXP(-KSEVAP*XHLAI)
-          EOPH(hour) = (ET0(hour) - EOSH(hour)) * VPDFPHR(hour)
-          EOP = EOP + EOPH(hour)
           EO = EO + ET0(hour)
       ENDDO
 
@@ -1358,8 +1332,6 @@ C=======================================================================
 
 !###  EO = MAX(EO,0.0)   !gives error in DECRAT_C
       EO = MAX(EO,0.0001)
-      EOP = MAX(EOP,0.0)
-      CALL PUT('SPAM', 'EOP' ,EOP)
 
 !-----------------------------------------------------------------------
       RETURN
@@ -1371,7 +1343,6 @@ C=======================================================================
 ! EEQ     Equilibrium evaporation (mm/d)
 ! EO      Potential evapotranspiration rate (mm/d)
 ! EOPH    Hourly potential transpiration (mm/h)
-! EOSH    Hourly potential evaporation (mm/h)
 ! EOP     Potential transpiration (mm/h)
 ! EOS     Potential evaporation (mm/h)
 ! ET0     Hourly reference transpiration (mm/m2/hr)
