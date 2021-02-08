@@ -241,7 +241,6 @@ C=======================================================================
 
 !     10/10/2006 CHP
 !     Fixes problem with model going from 2010 to 1911 during simulation
-      IF (CONTROL % ENDYRS .LE. 1) THEN
         IF (CENTURYY > CENTURY) THEN
           CENTURY = CENTURYY
           YEAR = CENTURY * 100 + YR
@@ -254,7 +253,6 @@ C=======================================================================
           YEAR = CENTURY * 100 + YR
           YRDOYW = YEAR * 1000 + DOY
         ENDIF
-      ENDIF
 
       RETURN
       END SUBROUTINE Y2K_DOYW
