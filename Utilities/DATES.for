@@ -185,7 +185,6 @@ C=======================================================================
       USE ModuleData
       IMPLICIT NONE
 
-      CHARACTER*1 RNMODE
       INTEGER MULTI   !, RUN
       INTEGER CENTURY,  DOY,  YEAR,  YR,  YRDOYW
       INTEGER CENTURYY, DOYY, YEARY, YRY, YRDOYWY !, YRINC
@@ -195,7 +194,6 @@ C=======================================================================
       DATA YRY /0/
 
       CALL GET(CONTROL)
-      RNMODE = CONTROL % RNMODE
 
       IF (MULTI .LE. 1) YRY = 0
 
@@ -243,7 +241,7 @@ C=======================================================================
 
 !     10/10/2006 CHP
 !     Fixes problem with model going from 2010 to 1911 during simulation
-      IF (RNMODE .NE. 'Y') THEN
+      IF (CONTROL % ENDYRS .LE. 1) THEN
         IF (CENTURYY > CENTURY) THEN
           CENTURY = CENTURYY
           YEAR = CENTURY * 100 + YR

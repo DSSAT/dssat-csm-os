@@ -507,7 +507,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
       ENDIF
 
       YRDOYWY = INCYD(YRSIM,-1)
-      IF (MULTI > 1 .OR. RNMODE .EQ. 'Y') THEN
+      IF (MULTI > 1) THEN     ! .OR. RNMODE .EQ. 'Y'
         YRDOY_WY = YRDOYWY
       ELSE
         YRDOY_WY = 0
