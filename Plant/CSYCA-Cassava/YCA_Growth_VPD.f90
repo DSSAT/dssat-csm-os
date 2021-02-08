@@ -3,9 +3,7 @@ Module YCA_Growth_VPD
     USE ModuleDefs
     
     REAL, DIMENSION(TS)    :: VPDFPHR                ! Hourly VPD factor, 0-1
-    REAL, DIMENSION(TS)    :: ET0                    ! Hourly potential evapotranspiration
     REAL, DIMENSION(TS)    :: EOPH                   ! Hourly potential transpiration
-    REAL, DIMENSION(TS)    :: EOSH                   ! Hourly potential evaporation
     REAL    :: MNVPDFPHR                  ! Daily mean VPD factor, 0-1MNVPDFPHR
     REAL    :: VPDStartHr    , VPDMaxHr   ! VPD start hour, VPD max hour
     REAL    :: ET0DAY                     ! Daily integral of reference transpiration
