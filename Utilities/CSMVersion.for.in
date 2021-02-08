@@ -22,7 +22,9 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
-!       4.8.0.1  chp 2020-07-21 v4.8
+!       4.8.0.3  chp 2020-07-21 v4.8 (=v4.7.5.29)
+!       4.8.0.2  chp 2020-07-21 v4.8 (=v4.7.5.28)
+!       4.8.0.1  chp 2020-07-21 v4.8 (=v4.7.5.14)
 !       4.7.5.0  chp 2018-12-18 Pre-release version
 !       4.7.2.3  chp 2018-10-25 Rice - G5 parameter (rolled back for v4.7.5)  
 !       4.7.2.2  chp 2018-10-25 Sugarbeet, Forage, Cassava,    
