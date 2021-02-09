@@ -541,22 +541,29 @@
                     ENDDO
                 ENDDO
                 NDEMMN = SUM(node%NDEMLMN)+(RTWTG*RNCM * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2))+SUM(node%NDEMSMN)+ (SRNDEM*0.5)
-                RNUSE(1) = (RTWTG*RNCM* AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2))*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
+                IF (NDEMMN > 0.0) THEN
+                    RNUSE(1) = (RTWTG*RNCM* AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2))*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
 
-            
-                DO BR = 0, BRSTAGE                                                                                                                                                              
-                    DO LF = 1, LNUMSIMSTG(BR)
-                        IF (GROSTP > 0.0) THEN
-                            SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)* node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
-                            SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
-                        ENDIF
-                        IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
-                            LNUSEN(1,BR,LF) = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) * node(BR,LF)%LNCM*AMIN1(1.0,NULEFT/NDEMMN) 
-                            LNUSE(1) = LNUSE(1) + LNUSEN(1,BR,LF)
-                        ENDIF
+                    DO BR = 0, BRSTAGE                                                                                                                                                              
+                        DO LF = 1, LNUMSIMSTG(BR)
+                            IF (GROSTP > 0.0) THEN
+                                SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)* node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
+                                SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
+                            ENDIF
+                            IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
+                                LNUSEN(1,BR,LF) = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) * node(BR,LF)%LNCM*AMIN1(1.0,NULEFT/NDEMMN) 
+                                LNUSE(1) = LNUSE(1) + LNUSEN(1,BR,LF)
+                            ENDIF
+                        ENDDO
                     ENDDO
-                ENDDO
-                SRNUSE(1) = (SRNDEM*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 
+
+                    SRNUSE(1) = (SRNDEM*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 
+                ELSE
+                    SNUSE(1) = 0.0
+                    RNUSE(1) = 0.0
+                    SRNUSE(1) = 0.0
+                ENDIF
+                
                 NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)
 
                 NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1) + LNDEM-LNUSE(1)                                                                !EQN 219
