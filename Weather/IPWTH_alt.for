@@ -507,7 +507,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
       ENDIF
 
       YRDOYWY = INCYD(YRSIM,-1)
-      IF (MULTI > 1) THEN     ! .OR. RNMODE .EQ. 'Y'
+      IF (MULTI > 1) THEN 
         YRDOY_WY = YRDOYWY
       ELSE
         YRDOY_WY = 0
@@ -675,6 +675,11 @@ C         Read in weather file header.
       ENDIF
 
       YRDOYWY = INCYD(YRDOY,-1)
+      IF (LastRec > 0) THEN 
+        IF (YRDOYWY < YRDOY_A(LastRec)) THEN
+          LastRec = 0
+        ENDIF
+      ENDIF
 !     ---------------------------------------------------------
 !     Retreive daily weather data from stored arrays
       DO I = LastRec+1, NRecords
