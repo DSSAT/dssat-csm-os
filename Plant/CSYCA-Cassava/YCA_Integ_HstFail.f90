@@ -57,9 +57,7 @@
         ENDIF
         ! Determine if to harvest
         CFLHAR = 'N'
-        !LPM 12SEP2019 modified YEARDOY >= YEARDOYHARF instead of YEARDOYHARF ==YEARDOY
-        !to allow harvesting nad summary data for leap years
-        IF (IHARI == 'R'.AND.YEARDOY >= YEARDOYHARF.OR. IHARI == 'D'.AND.YEARDOYHARF == DAP .OR. IHARI == 'G'.AND. &
+        IF (IHARI == 'R'.AND.YEARDOY == YEARDOYHARF.OR. IHARI == 'D'.AND.YEARDOYHARF == DAP .OR. IHARI == 'G'.AND. &
             YEARDOYHARF <= BRSTAGE .OR. IHARI == 'A'.AND.YEARDOY >= YEARDOYHARF.OR. IHARI == 'M'.AND.DABR >=  &   
             PSTART(PSX)) THEN 
             !YEARDOYHARF <= BRSTAGE .OR. IHARI == 'A'.AND.YEARDOYHARF == YEARDOY .OR. IHARI == 'M'.AND.CUMDU >=  & !LPM 24APR2016 Using DABR instead of CUMDU
