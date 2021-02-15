@@ -9698,7 +9698,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &             month,dom,plyeardoy,NINT(pltpopp),NINT(rowspc)
                 ENDIF 
                 WRITE (NOUTPN,2252)
- 2252           FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD',
+!               2021-02-15 chp Change NUAD to NUAC in header.
+ 2252           FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC',
      A           '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      F           ' RSNAD SNNPD SNN0D SNN1D',
      B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
