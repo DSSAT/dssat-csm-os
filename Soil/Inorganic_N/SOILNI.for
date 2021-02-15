@@ -322,6 +322,9 @@ C=======================================================================
         SNH4(L) = SNH4(L) - UNH4(L)
         NO3(L)  = SNO3(L) * KG2PPM(L)
         NH4(L)  = SNH4(L) * KG2PPM(L)
+!       Must calculate WTNUP here or it won't be guaranteed to match N
+!       removed from the soil today and the balance will be off.
+        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
       ENDDO
 
 !     Check for fertilizer added today or active slow release fertilizers 
@@ -907,7 +910,8 @@ C=======================================================================
         TNO3  = TNO3  + SNO3(L)
         TUREA = TUREA + UREA(L)
         TN2OnitrifD = TN2OnitrifD + N2Onitrif(L)
-        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
+!       Calculate this where uptake is removed from the soil.
+!       WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
         IF (L ==1) THEN
           TMINERN = MNR(0,N) + MNR(1,N)
           TIMMOBN = IMM(0,N) + IMM(1,N)
@@ -984,6 +988,7 @@ C     Write daily output
      &    DLTSNH4, DLTSNO3, DLTUREA, FLOODN, OXLAYR,      !I/O
      &    ALGFIX, BD1, CUMFNRO, TOTAML, TOTFLOODN)        !Output
       ENDIF
+
 
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
