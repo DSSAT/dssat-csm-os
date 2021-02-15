@@ -295,7 +295,7 @@
             ENDIF
     
             !NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
-            NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)
+            NULEFT = AMAX1(0.0, NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1))
             !LPM 23NOV2020 Avoid giving priority to leaf N
             ! 5.For leaf growth to standard N (N to leaves first)
             !LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX)-LNUSE(1))                                                             !EQN 217 !LPM 02SEP2016 To use potential growth instead of CHO restricted growth
@@ -326,7 +326,7 @@
                 ENDDO
                 RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
                 SRNUSE(2) = (SRNDEM-SRNUSE(1))*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
-                NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)-LNUSE(2)                                             !EQN 223
+                NULEFT = AMAX1(0.0,NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)-LNUSE(2))                                             !EQN 223
                 !LPM 23NOV2020 Remove additional N going to the leaves
                 !IF (NULEFT > 0.0) THEN
                 !    LNUSE(3) = NULEFT                                                                                  !EQN 224
@@ -564,7 +564,7 @@
                     SRNUSE(1) = 0.0
                 ENDIF
                 
-                NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)
+                NULEFT = AMAX1(0.0, NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1))
 
                 NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1) + LNDEM-LNUSE(1)                                                                !EQN 219
                 IF (NDEM2 > 0.0)THEN
@@ -582,7 +582,7 @@
                     ENDDO
                     RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
                     SRNUSE(2) = (SRNDEM-SRNUSE(1))*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
-                    NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)-LNUSE(2)                                             !EQN 223
+                    NULEFT = AMAX1(0.0, NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)-LNUSE(2))                                             !EQN 223
                 ELSE
                     SNUSE(2) = 0.0
                     RNUSE(2) = 0.0
