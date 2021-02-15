@@ -1384,9 +1384,9 @@
       REAL          VWAD          ! Vegetative canopy weight       kg/ha
       REAL          VRNSTAGE      ! Vernalization stage            #
 
-!     2021-02-14 chp
-      REAL          Nuptake_daily !Daily N uptake (kg [N]/ha)
-      REAL          NUAD_Y        !Yesterday's cumulative N uptake
+!!     2021-02-14 chp
+!      REAL          Nuptake_daily !Daily N uptake (kg [N]/ha)
+!      REAL          NUAD_Y        !Yesterday's cumulative N uptake
 
       PARAMETER     (BLANK = ' ')
       PARAMETER     (RUNINIT = 1)
@@ -5322,15 +5322,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           ENDIF  
           TNUMAD = TNUM*PLTPOP
 
-!         2021-02-14 chp NUAD should be the daily value according to DATA.CDE, but 
-!            this is cumulative. NUAD is used in many other places here, so can't 
-!            change it without careful scrutiny. Probably need to introduce another
-!            variable to handle this. (Nuptak_daily added below.)
-!         Note also, in PlantN.OUT NUAD and NUPC have the same value and are
-!            cumulative. (Changed below.)
-!         NUPD is the daily variable in same units as NUPC
           NUAD = NUPC*PLTPOP*10.0
-
           CNAD = (LEAFN+STEMN+GRAINN+RSN+DEADN)*PLTPOP*10.0
           DNAD = DEADN*PLTPOP*10.0
           GNAD = GRAINN*PLTPOP*10.0
@@ -6256,7 +6248,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &        ' VRNFD DYLFD')
      
               WRITE (NOUTPN,2251)
- 2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD',
+ 2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC',
      &        '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      &        ' RSNAD SNNPD SNN0D SNN1D',
      B        '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
@@ -6481,10 +6473,10 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
          CALL LinklstPlGrf(vCsvlinePlGrf)
       END IF
  
-!             2021-02-14 chp 
-!             NUAD should be a daily variable, but here it's cumulative. 
-!             Introduce a new variable that is daily.
-              Nuptake_daily = NUAD - NUAD_Y
+!!             2021-02-14 chp 
+!!             NUAD should be a daily variable, but here it's cumulative. 
+!!             Introduce a new variable that is daily.
+!              Nuptake_daily = NUAD - NUAD_Y
 
               ! Plant N outputs
               IF (ISWNIT.EQ.'Y') THEN
@@ -6501,9 +6493,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &           3F6.2,
      &           F6.1,F6.2,
      &           2F6.2)')
-!    &           YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,NUAD,
-     &           YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,
-     &           Nuptake_daily,
+     &           YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,NUAD,
+!    &           YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,
+!    &           Nuptake_daily,
      &           TNAD,SDNAD,
      &           RNAD,
      &           CNAD,LLNAD,SNAD,
@@ -6527,9 +6519,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 
               ENDIF  ! ISWNIT = Y
 
-!             2021-02-14 chp 
-!             Keep cumulative value for use tomorrow.
-              NUAD_Y = NUAD
+!!             2021-02-14 chp 
+!!             Keep cumulative value for use tomorrow.
+!              NUAD_Y = NUAD
 
             ENDIF    ! IDETG.NE.'N'
             ENDIF    ! IDETG.NE.'N'.OR.IDETL.EQ.'0'
