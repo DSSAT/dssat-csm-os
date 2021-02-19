@@ -219,7 +219,11 @@ C     The components are copied into local variables for use here.
       NYEAR = (ICHAR(FILEW(7:7)) - 48)*10 + (ICHAR(FILEW(8:8)) - 48)
       IF (LastWeatherDay > FirstWeatherDay) THEN
         NYEAR = INT(LastWeatherDay)/1000 - INT(FirstWeatherDay)/1000 + 1
-        NYEAR = MAX(1, NYEAR)
+        IF (LongFile) THEN
+          NYEAR = MAX(2, NYEAR)
+        ELSE  
+          NYEAR = MAX(1, NYEAR)
+        ENDIF
       ENDIF
 
 !     Detect name of weather file based on MEWTH
