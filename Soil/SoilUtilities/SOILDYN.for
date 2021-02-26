@@ -132,7 +132,7 @@ C-----------------------------------------------------------------------
 !     values for comparison with effects of tillage and organic C content.
       REAL CN_INIT
       REAL, DIMENSION(NL) :: BD_INIT, DLAYR_INIT, DS_INIT, DUL_INIT
-      REAL, DIMENSION(NL) :: LL_INIT, SWCN_INIT, SAT_INIT
+      REAL, DIMENSION(NL) :: LL_INIT, SWCN_INIT, SAT_INIT, SW_INIT
 
 !     Base soil values modified by soil organic matter
       REAL dBD_SOM, dDLAYR_SOM, dDUL_SOM, dLL_SOM, dSOM, dOC
@@ -184,7 +184,8 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     Run Initialization - Called once per simulation
 !***********************************************************************
-      IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
+!     IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
+      IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
@@ -353,6 +354,7 @@ C-----------------------------------------------------------------------
       LNUM = LNUM + 1
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
+      NMSG = 0
       DO L = 1, NLAYR
         READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)SW(L), NH4(L),NO3(L)
 100     FORMAT (8X, 3 (1X, F5.1))
@@ -360,12 +362,46 @@ C-----------------------------------------------------------------------
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
         IF (SW(L) .LT. LL(L)) THEN
-          SW(L) = LL(L)
+          IF (NMSG == 0) THEN
+            MSG(1) = "Initial soil water content < LL."
+            MSG(2) = "Layer  Init SW       LL"
+            NMSG = 2
+          ENDIF
+          NMSG = NMSG + 1
+          WRITE(MSG(NMSG),'(I5,2F9.3)') L, SW(L), LL(L)
+          IF (L > 1) THEN
+            SW(L) = LL(L)
+          ENDIF
         ENDIF
+      ENDDO
+      IF (NMSG > 0) THEN
+        NMSG = NMSG + 1
+        MSG(NMSG) = "Initial soil water content will be set to LL for"
+     &    // " these layers"
+        NMSG = NMSG + 1
+        MSG(NMSG) = "  except for layer 1 (no change)."
+        CALL WARNING(NMSG, ERRKEY, MSG)
+      ENDIF
+
+      NMSG = 0
+      DO L = 1, NLAYR
         IF (SW(L) > SAT(L)) THEN
+          IF (NMSG == 0) THEN
+            MSG(1) = "Initial soil water content > SAT."
+            MSG(2) = "Layer  Init SW      SAT"
+            NMSG = 2
+          ENDIF
+          NMSG = NMSG + 1
+          WRITE(MSG(NMSG),'(I5,2F9.3)') L, SW(L), SAT(L)
           SW(L) = SAT(L)
         ENDIF
       ENDDO
+      IF (NMSG > 0) THEN
+        NMSG = NMSG + 1
+        MSG(NMSG) = "Initial soil water content will be set to SAT for"
+     &    // " these layers."
+        CALL WARNING(NMSG, ERRKEY, MSG)
+      ENDIF
 
       CLOSE (LUNIO)
 
@@ -949,6 +985,7 @@ C  tillage and rainfall kinetic energy
       TOTN_INIT = TOTN
       TotOrgN_INIT = TotOrgN
       SWCN_INIT = SWCN
+      SW_INIT   = SW
 
       BD_SOM   = BD
       DUL_SOM  = DUL
@@ -960,12 +997,12 @@ C  tillage and rainfall kinetic energy
       CRAIN     = 0.
       LCRAIN    = 0.
 
-!!***********************************************************************
-!!***********************************************************************
-!!     Seasonal initialization
-!!***********************************************************************
-!      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
-!!-----------------------------------------------------------------------
+!***********************************************************************
+!***********************************************************************
+!     Seasonal initialization
+!***********************************************************************
+      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
+!-----------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
 
       ISWTIL = ISWITCH % ISWTIL
@@ -997,6 +1034,8 @@ C  tillage and rainfall kinetic energy
       SWCN  = SWCN_INIT
       TOTN  = TOTN_INIT
       TotOrgN = TotOrgN_INIT
+
+      SW    = SW_INIT
 
       BD_SOM   = BD
       DUL_SOM  = DUL

@@ -117,7 +117,8 @@ C  08/12/2003 CHP Added I/O error checking
 
       INTEGER ERRNUM, FOUND, L, LINC, LNUM, RUN
 
-      REAL ICWD, SWEF
+      REAL, DIMENSION(NL) :: SW_INIT
+      REAL ICWD, SWEF, ICWD_INIT
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -157,7 +158,7 @@ C     Find and Read Initial Conditions Section
             LNUM = LNUM + 1
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
 
-            IF (SW(L) .LT. LL(L)) THEN
+            IF (L > 1 .AND. SW(L) .LT. LL(L)) THEN
               SW(L) = LL(L)
             ENDIF
             IF (SW(L) > SAT(L)) THEN
@@ -168,6 +169,9 @@ C     Find and Read Initial Conditions Section
         ENDIF
       ENDIF
 
+      SW_INIT   = SW
+      ICWD_INIT = ICWD
+
       CLOSE (LUNIO)
 
 !***********************************************************************
@@ -176,34 +180,37 @@ C     Find and Read Initial Conditions Section
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
-      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
-      SECTION = '*INITI'
-      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
-      IF (FOUND .EQ. 0) THEN
-        CALL ERROR(SECTION, 42, FILEIO, LNUM)
-      ELSE
-        READ(LUNIO,'(40X,F6.0)', IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
-        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-        WTDEP = ICWD
+!      OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
+!      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
+!      SECTION = '*INITI'
+!      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
+!      IF (FOUND .EQ. 0) THEN
+!        CALL ERROR(SECTION, 42, FILEIO, LNUM)
+!      ELSE
+!        READ(LUNIO,'(40X,F6.0)', IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
+!        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+!        WTDEP = ICWD
+!
+!        DO L = 1, NLAYR
+!          READ(LUNIO,'(9X,F5.3)',IOSTAT=ERRNUM) SW(L)
+!          LNUM = LNUM + 1
+!          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+!        ENDDO
+!      ENDIF
+!      CLOSE (LUNIO)
 
-        DO L = 1, NLAYR
-          READ(LUNIO,'(9X,F5.3)',IOSTAT=ERRNUM) SW(L)
-          LNUM = LNUM + 1
-          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-        ENDDO
-      ENDIF
+!!     Limit initial water content to wilting point
+!      DO L = 2, NLAYR
+!        IF (SW(L) .LT. LL(L)) SW(L) = LL(L)
+!      ENDDO
 
-      CLOSE (LUNIO)
+!     CHP - don't restrict SW in top layer.
+!!     Limit top soil layer to air dry water content
+!      SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
+!      IF (SW(1) .LT. SWEF * LL(1)) SW(1) = SWEF * LL(1)
 
-!     Limit initial water content to wilting point
-      DO L = 2, NLAYR
-        IF (SW(L) .LT. LL(L)) SW(L) = LL(L)
-      ENDDO
-
-!     Limit top soil layer to air dry water content
-      SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
-      IF (SW(1) .LT. SWEF * LL(1)) SW(1) = SWEF * LL(1)
+      SW   = SW_INIT   
+      ICWD = ICWD_INIT  
 
 !***********************************************************************
 !***********************************************************************
