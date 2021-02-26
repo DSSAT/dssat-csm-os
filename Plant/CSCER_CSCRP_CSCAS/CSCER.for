@@ -6248,6 +6248,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &        ' VRNFD DYLFD')
      
               WRITE (NOUTPN,2251)
+!             2021-02-15 chp Change NUAD to NUAC in header.
  2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC',
      &        '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      &        ' RSNAD SNNPD SNN0D SNN1D',
