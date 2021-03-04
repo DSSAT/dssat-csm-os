@@ -19,7 +19,8 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
+!     CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-sw_init'
 
 !     Version history:  
 !       4.7.5.29 chp 02/08/2021 Forecast improvments, SRAD 0.1 limit
