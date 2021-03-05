@@ -1,8 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2019 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2020
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C
+C ALL RIGHTS RESERVED
 !  
 !  Redistribution and use in source and binary forms, with or without modification, 
 !  are permitted provided that the following conditions are met:
@@ -36,13 +38,15 @@ C     CROPPING SYSTEM MODEL Version 4.7.5
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     March 2019  CSM Version 4.7.5
+C     November 2020  CSM Version 4.7.5
 C
 C     Gerrit Hoogenboom, J.W. Jones, Cheryl Porter, K.J. Boote, 
 C
 C     Tony Hunt, Jon Lizaso, Vakhtang Shelia,
 C
 C     Upendra Singh, Jeff W. White
+C
+C     Willingthon Pavan, Fabio Oliveira
 C
 C     Special contributions by others including:
 C     Arjan Gijsman
@@ -69,8 +73,9 @@ C  11/23/2004 CHP Increased length of PATHX (path for executable) to 120.
 C  02/08/2005 CHP Changed criteria for ending a sequence run.
 C  06/14/2005 CHP Added FILEX to CONTROL variable, read FILEX from FILEIO
 C  02/20/2006 GH  Add RNMODE="G" option for GENCALC
-!  01/11/2007 CHP Changed GETPUT calls to GET and PUT
-!  01/12/2007 CHP Read trt number and rotation number for sequence mode
+C  01/11/2007 CHP Changed GETPUT calls to GET and PUT
+C  01/12/2007 CHP Read trt number and rotation number for sequence mode
+C  10/09/2020 FO  Y4K implementation for weather files
 C=======================================================================
       PROGRAM CSM
 
@@ -94,10 +99,10 @@ C-----------------------------------------------------------------------
       CHARACTER*130 CHARTEST
 
       INTEGER       YRDOY,YRSIM,YRPLT,MDATE,YREND,YR,ISIM, YR0, ISIM0
-      INTEGER       MULTI,NYRS,INCYD,YEAR,DOY,DAS,TIMDIF
+      INTEGER       MULTI,NYRS,INCYD,YEAR,DOY,DAS,TIMDIF,ENDYRS
       INTEGER       ERRNUM,LUNIO,TRTALL,TRTNUM,EXPNO,I,RUN
       INTEGER       YRSIM_SAVE, YRDIF, YRDOY_END !IP,IPX, 
-      INTEGER       LUNBIO,LINBIO,ISECT,IFIND,LN
+      INTEGER       LUNBIO,LINBIO,ISECT,IFIND,LN, LNUM, FOUND
       INTEGER       NREPS, REPNO,END_POS, ROTNUM, TRTREP, NARG
 
       LOGICAL       FEXIST, DONE
@@ -165,6 +170,7 @@ C          treatments
 C      Q - Sequence analysis. Use Batch file to define experiment
 C      S - Spatial.  Use Batch file to define experiment
 C      T - Gencalc. Use Batch file to define experiments and treatment
+C      Y - Yield forecast mode. Use batch file.
 C-----------------------------------------------------------------------
 
       RNMODE = UPCASE(RNMODE)
@@ -185,9 +191,9 @@ C-----------------------------------------------------------------------
         READ(TRNARG,'(I6)') TRTNUM
 
 !     Get experiment and treatment from batch file
-      CASE('B','N','Q','S','F','T','E','L')
+      CASE('B','N','Q','S','F','T','E','L','Y')
 !           Batch, seasoNal, seQuence, Spatial, 
-!           Farm, Gencalc(T), sEnsitivity, Locus 
+!           Farm, Gencalc(T), sEnsitivity, Locus, Yield forecast
         CALL GETARG(NARG+1,FILEB)   !,IP   !Batch file name
         CALL GETARG(NARG+2,FILECTL) !,IP   !Simulation control file name
 
@@ -226,7 +232,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C    Open BATCH file
 C-----------------------------------------------------------------------
-        IF (INDEX('NQSFBET',RNMODE) .GT. 0) THEN
+        IF (INDEX('NQSFBETY',RNMODE) .GT. 0) THEN
            CALL GETLUN('BATCH ', LUNBIO)
            FINDCH='$BATCH'
            OPEN (LUNBIO, FILE = FILEB,STATUS = 'UNKNOWN',IOSTAT=ERRNUM)
@@ -254,11 +260,10 @@ C***********************************************************************
       CONTROL % YRDOY = 0
       CALL PUT(CONTROL)
 
-      IF ((INDEX('NSFBT',RNMODE) .GT. 0) .OR. (INDEX('E',RNMODE) .GT.
-     &     0 .AND. RUN .EQ. 1)) THEN
+      IF ((INDEX('NSFBTY',RNMODE) .GT. 0) .OR. 
+     &    (INDEX('E',RNMODE) .GT. 0 .AND. RUN .EQ. 1)) THEN
         CALL IGNORE (LUNBIO,LINBIO,ISECT,CHARTEST)
         IF (ISECT .EQ. 1) THEN
-
           END_POS = LEN(TRIM(CHARTEST(1:92)))+1
           FILEX = CHARTEST((END_POS-12):(END_POS-1))
           PATHEX = CHARTEST(1:END_POS-13)
@@ -270,10 +275,12 @@ C***********************************************************************
           GO TO 2000
         ENDIF
       ENDIF
+
       IF (INDEX('Q',RNMODE) .GT. 0) THEN
         CALL IGNORE (LUNBIO,LINBIO,ISECT,CHARTEST)
         IF (ISECT .EQ. 0 .OR. RUN .EQ. 1) THEN
           REWIND(LUNBIO)
+          FINDCH='$BATCH'
           CALL FIND (LUNBIO,FINDCH,LINBIO,IFIND)
           CALL IGNORE (LUNBIO,LINBIO,ISECT,CHARTEST)
         ENDIF
@@ -327,15 +334,28 @@ C-----------------------------------------------------------------------
       READ (LUNIO,'(//,15X,A12)',IOSTAT=ERRNUM) FILEX
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,1)
       IF (RUN .EQ. 1) THEN
-        READ(LUNIO,'(8(/),15X,A8)',IOSTAT=ERRNUM) FNAME    
+        READ(LUNIO,'(8(/),A6,9X,A8)',IOSTAT=ERRNUM) FINDCH, FNAME
+        IF (RNMODE .EQ. 'Y' .AND. FINDCH .NE. 'OUTPUT') THEN
+!       There might be 2 weather files listed for yield forecast mode
+          READ(LUNIO,'(A6,9X,A8)',IOSTAT=ERRNUM) FINDCH, FNAME
+        ENDIF
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,13)
         READ(LUNIO,400,IOSTAT=ERRNUM) NYRS, NREPS, YRSIM
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,15)
  400    FORMAT(/,15X,I5,1X,I5,7X,I7)
       ELSE IF (RNMODE .NE. 'Q') THEN
-        READ(LUNIO,500,IOSTAT=ERRNUM) NYRS, NREPS, YRSIM
-        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,15)
- 500    FORMAT(10(/),15X,I5,1X,I5,7X,I7)
+        REWIND (LUNIO)
+        FINDCH = '*SIMUL'
+        CALL FIND(LUNIO, FINDCH, LNUM, FOUND) 
+        IF (FOUND .EQ. 0) THEN
+          CALL ERROR(FINDCH, 42, FILEIO, LNUM)
+        ELSE
+          READ(LUNIO,500,IOSTAT=ERRNUM) NYRS, NREPS, YRSIM
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,15)
+ 500      FORMAT(15X,I5,1X,I5,7X,I7)
+          LNUM = LNUM + 1
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+        ENDIF
       ENDIF
       CLOSE(LUNIO)
 
@@ -352,12 +372,17 @@ C-----------------------------------------------------------------------
         NYRS  = 1
       ENDIF
 
+      IF (INDEX('Y',RNMODE) .GT. 0) THEN
+        REPNO = 1
+      ENDIF
+
       IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
         YRDOY = YRSIM
       ENDIF
 
       MULTI  = 0
       YRDIF  = 0
+      ENDYRS = 0
       
       IF (INDEX('FQ',RNMODE).GT. 0 .AND. RUN .GT. 1) THEN
          YRSIM = INCYD(YRDOY,1)
@@ -404,13 +429,18 @@ C     BEGINNING of SEASONAL SIMULATION loop
 C-----------------------------------------------------------------------
 C     SEASONAL INITIALIZATION
 C*********************************************************************** 
-      SEAS_LOOP: DO WHILE (MULTI .NE. NYRS)
+      SEAS_LOOP: DO WHILE (ENDYRS .NE. NYRS)
 C***********************************************************************
       IF (NYRS .GT. 1) THEN 
-        MULTI = MULTI + 1
+        ENDYRS = ENDYRS + 1
+        IF (RNMODE .NE. 'Y') THEN
+          MULTI = MULTI + 1
+        ENDIF
       ELSE
         MULTI = 1
+        ENDYRS = 1
       ENDIF
+
       IF (MULTI .GT. 1) THEN
         RUN   = RUN + 1
         CALL MULTIRUN(RUN, 0)  !chp 3/17/2011
@@ -421,9 +451,20 @@ C***********************************************************************
         IF (CONTROL%ErrCode /= 0) THEN
           CONTROL%ErrCode = 0
 !         EXIT SEAS_LOOP
-          IF (INDEX('Q',RNMODE) > 0) EXIT SEAS_LOOP
+          IF (INDEX('QY',RNMODE) > 0) EXIT SEAS_LOOP
         ENDIF
       ENDIF
+
+!     Forecast mode
+      IF (RNMODE .EQ. 'Y') THEN
+        IF (ENDYRS .GT. 1) THEN
+          RUN = RUN + 1
+          REPNO = REPNO + 1
+          CALL MULTIRUN(RUN, 0)  
+          YREND = -99
+        ENDIF
+      ENDIF
+
       IF (RNMODE .NE. 'Q' .OR. RUN .GT. 1) THEN
         YRDOY = YRSIM
       ENDIF
@@ -434,6 +475,8 @@ C***********************************************************************
       CONTROL % YRDOY   = YRDOY
       CONTROL % MULTI   = MULTI
       CONTROL % DYNAMIC = SEASINIT
+      CONTROL % ENDYRS  = ENDYRS
+      CONTROL % REPNO   = REPNO
       CALL PUT(CONTROL)
    
       CALL LAND(CONTROL, ISWITCH, 
@@ -519,7 +562,7 @@ C
 C-----------------------------------------------------------------------
       ELSE IF (INDEX('GDC',RNMODE) .GT. 0) THEN
         DONE = .TRUE.
-!      ELSE IF (INDEX('FQ',RNMODE).GT. 0 .AND. YEAR .GE. YEAR_END)  THEN
+
       ELSE IF (INDEX('FQ',RNMODE).GT. 0 .AND. YRDOY .GE. YRDOY_END) THEN
         REPNO = REPNO + 1
         CONTROL % REPNO = REPNO
@@ -528,6 +571,7 @@ C-----------------------------------------------------------------------
         ELSE
           RUN = 0
         ENDIF
+
       ELSE IF (INDEX('IE',RNMODE) .GT. 0) THEN
         WRITE(*,1700)
  1700   FORMAT(/,1X,'Do you want to run more simulations ? ',
@@ -539,7 +583,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
  2000 CONTINUE
-      END DO RUN_LOOP 
+      ENDDO RUN_LOOP 
 
 !     Final end-of-run call to land unit module
       CONTROL % DYNAMIC = ENDRUN

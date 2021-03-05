@@ -182,14 +182,18 @@ C=======================================================================
       SUBROUTINE Y2K_DOYW(MULTI, YRDOYWY, YRDOYW, CENTURY)
 
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
 
-!      CHARACTER*1 RNMODE
       INTEGER MULTI   !, RUN
       INTEGER CENTURY,  DOY,  YEAR,  YR,  YRDOYW
       INTEGER CENTURYY, DOYY, YEARY, YRY, YRDOYWY !, YRINC
 
+      TYPE (ControlType) CONTROL
+
       DATA YRY /0/
+
+      CALL GET(CONTROL)
 
       IF (MULTI .LE. 1) YRY = 0
 
@@ -237,18 +241,18 @@ C=======================================================================
 
 !     10/10/2006 CHP
 !     Fixes problem with model going from 2010 to 1911 during simulation
-      IF (CENTURYY > CENTURY) THEN
-        CENTURY = CENTURYY
-        YEAR = CENTURY * 100 + YR
-        YRDOYW = YEAR * 1000 + DOY
-
-!     Fixes problem with crossing centuries
-      ELSEIF (CENTURYY == CENTURY .AND. 
-     &        YEAR < YEARY .AND. MOD(YEARY,100) == 99) THEN
-        CENTURY = CENTURY + 1
-        YEAR = CENTURY * 100 + YR
-        YRDOYW = YEAR * 1000 + DOY
-      ENDIF
+        IF (CENTURYY > CENTURY) THEN
+          CENTURY = CENTURYY
+          YEAR = CENTURY * 100 + YR
+          YRDOYW = YEAR * 1000 + DOY
+        
+!       Fixes problem with crossing centuries
+        ELSEIF (CENTURYY == CENTURY .AND. 
+     &          YEAR < YEARY .AND. MOD(YEARY,100) == 99) THEN
+          CENTURY = CENTURY + 1
+          YEAR = CENTURY * 100 + YR
+          YRDOYW = YEAR * 1000 + DOY
+        ENDIF
 
       RETURN
       END SUBROUTINE Y2K_DOYW

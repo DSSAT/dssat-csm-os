@@ -406,7 +406,7 @@
       REAL          FNH4          ! Unitless ammonium supply index #
       REAL          FNO3          ! Unitless nitrate supply index  #
       INTEGER       FNUMLVS       ! File number,leaves             #
-      INTEGER       FNUMREA       ! File number,reads.out file     #
+!      INTEGER       FNUMREA       ! File number,reads.out file     #
       INTEGER       FNUMT         ! Number used for T-file         #
       INTEGER       FNUMTMP       ! File number,temporary file     #
       INTEGER       FNUMWRK       ! File number,work file          #
@@ -1384,6 +1384,10 @@
       REAL          VWAD          ! Vegetative canopy weight       kg/ha
       REAL          VRNSTAGE      ! Vernalization stage            #
 
+!!     2021-02-14 chp
+!      REAL          Nuptake_daily !Daily N uptake (kg [N]/ha)
+!      REAL          NUAD_Y        !Yesterday's cumulative N uptake
+
       PARAMETER     (BLANK = ' ')
       PARAMETER     (RUNINIT = 1)
       PARAMETER     (SEASINIT = 2)
@@ -1449,10 +1453,11 @@
             WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
           ENDIF
         ENDIF
-          
-        ! Set Reads file #
-        IF (FNUMREA.LE.0.OR.FNUMREA.GT.1000) 
-     &      CALL Getlun('READS.OUT',fnumrea)
+
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.          
+!        ! Set Reads file #
+!        IF (FNUMREA.LE.0.OR.FNUMREA.GT.1000) 
+!     &      CALL Getlun('READS.OUT',fnumrea)
         ! Set temporary file #
         IF (FNUMTMP.LE.0.OR.FNUMTMP.GT.1000) 
      &      CALL Getlun ('FNAMETMP',fnumtmp)
@@ -1856,12 +1861,13 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
      &      ACTION = 'READWRITE')
           WRITE(FNUMWRK,*) 'CSCER  Cropsim-Ceres Crop Module '
-          CLOSE (FNUMREA, STATUS = 'DELETE')
-          OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &      ACTION = 'READWRITE')
-          WRITE(FNUMREA,*)' '
-          WRITE(FNUMREA,*)
-     &      ' File closed and re-opened to avoid generating huge file'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.          
+!          CLOSE (FNUMREA, STATUS = 'DELETE')
+!          OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+!     &      ACTION = 'READWRITE')
+!          WRITE(FNUMREA,*)' '
+!          WRITE(FNUMREA,*)
+!     &      ' File closed and re-opened to avoid generating huge file'
         ENDIF
 
         ! Create composite run variable
@@ -3529,7 +3535,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         IF (FILEIOT.EQ.'DS4') THEN
 !         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
           IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
-     &       (INDEX('FQN',RNMODE) > 0)) THEN
+     &       (INDEX('FQNY',RNMODE) > 0)) THEN
             YEARPLTP = YEARPLTCSM
           ENDIF  
         ENDIF
@@ -6242,7 +6248,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &        ' VRNFD DYLFD')
      
               WRITE (NOUTPN,2251)
- 2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD',
+!             2021-02-15 chp Change NUAD to NUAC in header.
+ 2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC',
      &        '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      &        ' RSNAD SNNPD SNN0D SNN1D',
      B        '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
@@ -6467,6 +6474,11 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
          CALL LinklstPlGrf(vCsvlinePlGrf)
       END IF
  
+!!             2021-02-14 chp 
+!!             NUAD should be a daily variable, but here it's cumulative. 
+!!             Introduce a new variable that is daily.
+!              Nuptake_daily = NUAD - NUAD_Y
+
               ! Plant N outputs
               IF (ISWNIT.EQ.'Y') THEN
                 CALL Csopline(senn0c,sennal(0))
@@ -6483,6 +6495,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &           F6.1,F6.2,
      &           2F6.2)')
      &           YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,NUAD,
+!    &           YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,
+!    &           Nuptake_daily,
      &           TNAD,SDNAD,
      &           RNAD,
      &           CNAD,LLNAD,SNAD,
@@ -6505,6 +6519,11 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
       END IF 
 
               ENDIF  ! ISWNIT = Y
+
+!!             2021-02-14 chp 
+!!             Keep cumulative value for use tomorrow.
+!              NUAD_Y = NUAD
+
             ENDIF    ! IDETG.NE.'N'
             ENDIF    ! IDETG.NE.'N'.OR.IDETL.EQ.'0'
           ENDIF      ! MOD(FROPADJ)

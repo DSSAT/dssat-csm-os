@@ -329,7 +329,7 @@
       INTEGER       FNUMPREM      ! File number,measured responses #
       INTEGER       FNUMPRES      ! File number,simulated response #
       INTEGER       FNUMPSUM      ! Number used for plant summary  #
-      INTEGER       FNUMREA       ! File number,reads.out file     #
+!      INTEGER       FNUMREA       ! File number,reads.out file     #
       INTEGER       FNUMT         ! Number used for T-file         #
       INTEGER       FNUMTMP       ! File number,temporary file     #
       INTEGER       FNUMWRK       ! File number,work file          #
@@ -1699,14 +1699,15 @@
      &              ACTION = 'READWRITE')
               WRITE(fnumwrk,*) ' '
               WRITE(fnumwrk,*) 'CSCAS  Cropsim Cassava Module '
-              CALL Getlun('READS.OUT',fnumrea)
-              ! Close and re-open Reads file
-              CLOSE (FNUMREA, STATUS = 'DELETE')
-              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &              ACTION = 'READWRITE')
-              WRITE(fnumrea,*)' '
-              WRITE(fnumrea,*)
-     &        ' File closed and re-opened to avoid generating huge file'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.              
+!              CALL Getlun('READS.OUT',fnumrea)
+!              ! Close and re-open Reads file
+!              CLOSE (FNUMREA, STATUS = 'DELETE')
+!              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+!     &              ACTION = 'READWRITE')
+!              WRITE(fnumrea,*)' '
+!              WRITE(fnumrea,*)
+!     &        ' File closed and re-opened to avoid generating huge file'
             ELSE  
               WRITE(fnumwrk,*) ' '
               WRITE(fnumwrk,*) 'CSCAS  Cropsim Cassava Module '
@@ -4009,7 +4010,7 @@ C-GH As per Tony Hunt 2017 for GenCalc
         IF (FILEIOT.EQ.'DS4') THEN
 !         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
           IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
-     &       (INDEX('FQN',RNMODE) > 0)) THEN
+     &       (INDEX('FQNY',RNMODE) > 0)) THEN
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
         ENDIF
@@ -7121,7 +7122,8 @@ c           ENDIF
      &             month,dom,plyeardoy,NINT(pltpopp),NINT(rowspc)
                 ENDIF 
                 WRITE (NOUTPN,2252)
- 2252           FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD',
+!               2021-02-15 chp Change NUAD to NUAC in header.
+ 2252           FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC',
      A           '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      F           ' RSNAD SNN0D SNN1D',
      B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',

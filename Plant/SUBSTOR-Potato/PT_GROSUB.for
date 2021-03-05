@@ -78,9 +78,6 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
      &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
 
-!     temp chp
-      REAL X1, X2, X3, X4
-
 !      DATA  LALWR, SLAN /270.,0./
       DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
      

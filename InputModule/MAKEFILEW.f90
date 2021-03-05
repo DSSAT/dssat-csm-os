@@ -1,4 +1,11 @@
 !=======================================================================
+!  COPYRIGHT 1998-2020 DSSAT Foundation
+!                      University of Florida, Gainesville, Florida
+!                      Inernational Fertilizer Development Center
+!  
+!  ALL RIGHTS RESERVED
+!=======================================================================
+!=======================================================================
 !  MAKEFILEW, Subroutine, Fabio Olivera, Willingthon Pavan, Gerrit Hoogenboom
 !
 ! This subroutine open the FILEX and read the weather station characters (WSTA).
@@ -7,6 +14,9 @@
 !  Revision history
 !
 !  01/23/2020 FO  Written
+!  11/10/2020 CHP Need to make revisions here like in IPEXP for forecast mode
+!       This mode needs to keep FILEW (WTH file) and potentially also 
+!       FILEWC (CLI) file and FILEWG (WTG file).
 !-----------------------------------------------------------------------
 !  INPUT  : DSSATP, PATHEX, FILEX
 !
@@ -26,7 +36,7 @@
       CHARACTER*6   ERRKEY,SECTION
       CHARACTER*5   FINDH
       CHARACTER*8   WSTA,FILEW4,FILEX
-      CHARACTER*12  FILEW,NAMEF
+      CHARACTER*12  FILEW,NAMEF, LastFileW
       CHARACTER*78  MSG(4)
       CHARACTER*80  PATHWT,PATHEX,CHARTEST
       CHARACTER*92  FILEWW,FILETMP
@@ -43,6 +53,7 @@
       INTEGER       LNPLT,TLNPLT
       INTEGER       YEARDOY,YEAR,YR,DOY
       
+      DATA LastFileW /" "/
 
       PARAMETER (ERRKEY = 'MAKEFW')
       PARAMETER (BLANK = ' ')
@@ -304,8 +315,6 @@
 !-----------------------------------------------------------------------
 !    Open and Read Weather file data
 !-----------------------------------------------------------------------
-      CALL GETLUN('FILEW', LUNWTH)
-      
       PATHL  = INDEX(PATHWT,BLANK)
       IF (PATHL .LE. 1) THEN
          FILEWW = FILEW
@@ -313,80 +322,87 @@
          FILEWW = PATHWT(1:(PATHL-1)) // FILEW
       ENDIF
       
-      ICASAF  = 0
-      YEAR    = -99
-      DOY     = -99
-      YEARDOY = -99
+      !FO - Process FILEW if last FILEW is different.
+      IF(LastFileW /= FILEW) THEN
       
-      !FO - Rewind file because of BatchFiles runs that keep the same unit.
-      INQUIRE(FILE = FILEWW,NUMBER = UNIT)
-      IF(UNIT .LT. 0) THEN
-        OPEN (LUNWTH, FILE = FILEWW,STATUS = 'OLD',IOSTAT=ERRNUM)
-      ELSE
-        REWIND(LUNWTH)
-      ENDIF
-      
-      IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,18,FILEW,0)
+        LastFileW = FILEW
+        
+        ICASAF  = 0
+        YEAR    = -99
+        DOY     = -99
+        YEARDOY = -99
+        
+        CALL GETLUN('FILEW', UNIT)
+        
+        INQUIRE(FILE=FILEWW, EXIST = FEXIST)
+        IF(FEXIST) THEN
+          OPEN (UNIT, FILE = FILEWW,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,18,FILEW,0)
+        ELSE
+          CALL ERROR (ERRKEY,18,FILEW,0)
+        ENDIF
+              
+        DO WHILE (ERRNUM .EQ. 0)
+          READ (UNIT,'(A)', IOSTAT=ERRNUM) LINE
+          
+          !FO - Look for 1st header line beginning with '$'
+          IF(INDEX(LINE, '$WEATHER') .GT. 0 .AND. ICASAF .EQ. 0) THEN
+            ICASAF = 1  
+          
+          !FO - New Weather file format true read 7-digit. Otherwise keep the default.
+          ELSEIF(ICASAF .EQ. 1) THEN
             
-      DO WHILE (ERRNUM .EQ. 0)
-        READ (LUNWTH,'(A)', IOSTAT=ERRNUM) LINE
+            !FO - Look for header lines beginning with '@'  
+            IF(LINE(1:1) .EQ. '@' .AND. INDEX(LINE, 'DATE') .GT. 0) THEN
+                !FO - Read 7-digit First Weather YEAR
+                READ (UNIT,'(I7)', IOSTAT=ERRNUM) YEARDOY
+                IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,17,FILEW,0)
+                
+                EXIT
+            ELSE IF(LINE(1:1) .EQ. '@' .AND. INDEX(LINE, 'YEAR') .GT. 0) THEN
+                !FO - Read ICASA format
+                READ (UNIT,'(I4,1X,I3)', IOSTAT=ERRNUM) YEAR, DOY 
+                IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,17,FILEW,0)
+                
+                YEARDOY = YEAR * 1000 + DOY
+                
+                EXIT
+              ENDIF
+            ENDIF  
+            
+        ENDDO
         
-        !FO - Look for 1st header line beginning with '$'
-        IF(INDEX(LINE, '$WEATHER') .GT. 0 .AND. ICASAF .EQ. 0) THEN
-          ICASAF = 1  
+        CLOSE(UNIT)
         
-        !FO - New Weather file format true read 7-digit. Otherwise keep the default.
-        ELSEIF(ICASAF .EQ. 1) THEN
-          
-          !FO - Look for header lines beginning with '@'  
-          IF(LINE(1:1) .EQ. '@' .AND. INDEX(LINE, 'DATE') .GT. 0) THEN
-              !FO - Read 7-digit First Weather YEAR
-              READ (LUNWTH,'(I7)', IOSTAT=ERRNUM) YEARDOY
-              IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,17,FILEW,0)
-              
-              EXIT
-          ELSE IF(LINE(1:1) .EQ. '@' .AND. INDEX(LINE, 'YEAR') .GT. 0) THEN
-              !FO - Read ICASA format
-              READ (LUNWTH,'(I4,1X,I3)', IOSTAT=ERRNUM) YEAR, DOY 
-              IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,17,FILEW,0)
-              
-              YEARDOY = YEAR * 1000 + DOY
-              
-              EXIT
-            ENDIF
-          ENDIF  
-          
-      ENDDO
-      
-      CLOSE(LUNWTH)
-      
 !-----------------------------------------------------------------------
 !    Convert SDATE to 7-digits and check if is in the date range 
 !-----------------------------------------------------------------------      
-      
-      IF (YEARDOY .GT. 0 .AND. ICASAF .EQ. 1) THEN
-        FirstWeatherDate = YEARDOY
         
-        YEARDOY = INT(FirstWeatherDate/100000) * 100000 + YRDOY
-        
-        IF(YEARDOY .GE. FirstWeatherDate) THEN
-          NEWSDATE = YEARDOY
+        IF (YEARDOY .GT. 0 .AND. ICASAF .EQ. 1) THEN
+          FirstWeatherDate = YEARDOY
+          
+          YEARDOY = INT(FirstWeatherDate/100000) * 100000 + YRDOY
+          
+          IF(YEARDOY .GE. FirstWeatherDate) THEN
+            NEWSDATE = YEARDOY
+          ELSE
+            NEWSDATE = INT((FirstWeatherDate+99000)/100000)*100000+YRDOY
+          ENDIF
+          
+          ! Error Checking
+          IF(NEWSDATE .LT. FirstWeatherDate .OR. NEWSDATE .GT. FirstWeatherDate+99000) THEN
+            CALL ERROR (ERRKEY,19,FILEX,0)
+          ENDIF
+          
         ELSE
-          NEWSDATE = INT((FirstWeatherDate+99000)/100000)*100000+YRDOY
+          MSG(1) = 'Y4KDOY - Weather file'
+          MSG(2) = 'Not able to find 7-digits first weather date'
+          MSG(3) = 'Set simulation to 5-digits first weather date'
+          FirstWeatherDate = -99
+          
+          CALL INFO(3,ERRKEY,MSG)
         ENDIF
-        
-        ! Error Checking
-        IF(NEWSDATE .LT. FirstWeatherDate .OR. NEWSDATE .GT. FirstWeatherDate+99000) THEN
-          CALL ERROR (ERRKEY,19,FILEX,0)
-        ENDIF
-        
-      ELSE
-        MSG(1) = 'Y4KDOY - Weather file'
-        MSG(2) = 'Not able to find 7-digits first weather date'
-        MSG(3) = 'Set simulation to 5-digits first weather date'
-        FirstWeatherDate = -99
-        
-        CALL WARNING(3,ERRKEY,MSG)
+      
       ENDIF
       
     END SUBROUTINE MAKEFILEW

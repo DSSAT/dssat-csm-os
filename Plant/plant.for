@@ -1,9 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2015 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C                      Washington State University
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2020
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C                     
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  PLANT, Subroutine
@@ -649,7 +650,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Set default canopy height upon emergence (or first day with
 !       LAI.  Should actually set these defaults within each
 !       crop routine.
-        IF (FixCanht .AND. (XLAI .GT. 0.001 .OR. XHLAI .GT. 0.001)) THEN
+        IF (FixCanht .AND. (XLAI .GT. 0.0 .OR. XHLAI .GT. 0.0)) THEN
           CANHT = 0.5
           FixCanht = .FALSE.
         ENDIF
