@@ -41,7 +41,7 @@ C=======================================================================
       DATA ACRO /'SHME','SHFC','PHIN','CO2X','CO2Y',
      &           'RWEP','PORM','RWMX','RLWR'/
 !      !
-!      ! Default CO2 response of Rice
+!      ! Default CO2 response of teff
 !      !
 !      DATA CO2X1 /   0, 220, 330, 440, 550, 660, 770, 880, 990,9999/
 !      DATA CO2Y1 /0.00,0.71,1.00,1.08,1.17,1.25,1.32,1.38,1.43,1.50/

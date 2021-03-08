@@ -1,7 +1,7 @@
 C=======================================================================
 C  TEFF_GROSUB, Subroutine
 C
-C  Determines rice growth
+C  Determines teff growth
 C-----------------------------------------------------------------------
 C  Revision history
 C
@@ -1543,3 +1543,166 @@ C-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE TEFF_IPGROSUB
 C=======================================================================
+
+!------------------------------------------------------------------------------------------------------------------------------------------
+!                         DEFINITIONS
+!-----------------------------------------------------------------------------------------------------------------------------------------
+!AGEFAC		  Nitrogen stress factor affecting expansion (0-1)
+!APTNUP   	  Nitrogen in stover (above ground biomass) kg N/ha
+!BIOMAS       Above ground biomass, g/m2
+!CANNAA 	     Stover N at anthesis, g N/M2
+!CANWAA  	  Canopy weight at anthesis, g/m2
+!CARBO     	  Daily biomass production, g/plant/day
+!CO2X(10)  	  CO2 effect on photosynthesis, X axis is CO2 level, ppm
+!CO2Y(10)     CO2 effect on photosynthesis, Y axis is relative effect
+!CO2          Atmospheric CO2, ppm
+!CUMDEP	     Cumulative depth of soil, cm
+!CUMDTT 	     Cumulative daily thermal time after germination, C
+!CUMPH 	     Cumulative phyllochron intervals or fully expanded leaves
+!DLAYR(L)	  Soil thickness in layer L (cm) DM          !Total above ground biomass, kg/ha
+!DOY		     Day of year
+!DTT          Growing degree days today, C
+!DYNAMIC      Main control variable to tell each module which section of code to run
+!EMAT         Flag used in grosub to determine if relative grain fill is below 0.1 for 2 consecutive days
+!ERR  	     Determines if error in reading file (0=ok, 1=error)
+!ERRKEY       Variable containing routine where error occurred
+!FILEC        Filename of .SPE or species file
+!FILEIO       Filename containing model inputs (IBSNAT35.INP)
+!FSLFN        Fraction of leaf area senesced due to 100% nitrogen stress, 1/daY
+!G2    		  Potential kernel number, kernels/plant
+!G3  		     Potential kernel growth rate mg/kernel/day
+!GNP 		     Nitrogen concentration in new grain growth, gN/g dry matter
+!GNUP   		  Total grain N uptake, kg N/ha
+!GPP   		  Grain number per plant, grains/plant
+!GPSM    	  Grain numbers, grains/m2
+!GRAINN   	  Grain nitrogen content, g N/plant
+!GRF   	 	  Fraction of today's carbon allocated to above ground biomass
+!GRNWT	  	  Grain weight, g/plant
+!GROGRN	     Daily growth of the grain - g
+!GROLF   	  Leaf growth rate, g/plant/day
+!GRORT   	  Root growth rate, g/plant/day
+!GROSTM 	     Stem growth rate, g/plant/day
+!I         	  Counter
+!INTEGR		  Program control variable to execute code to integrate daily rate 
+!             variables(value=4)
+!ISTAGE 		  Growth stage (integer)
+!ISWNIT  	  Nitrogen balance switch (Y/N) 
+!ISWPHO	     Phosphorus simulation (stress) switch
+!ISWPOT		  Potassium simulation (stress) switch
+!ISWWAT 	     Soil water balance on/off switch (Y for yes, N for no)
+!L  		     Index counter
+!LAI   		  Leaf area index, m2/m2
+!LEAFNO		  Number of oldest leaf per plant (same as XN)
+!LFWT		     Leaf weight, g/plant
+!LINC 		  Indicates if a line is a good line
+!LNUM 		  Line number in an input file
+!LUNIO        Logical input number for model input file
+!LUNIO        Assign value to LUNIO for local use
+!MAXLAI  	  Maximum leaf area index, m2/m2
+!MDATE 		  Year and day of year of maturity
+!NDEF3 		  Nitrogen stress factor affecting grains per plant (0-1)
+!NFAC 		  Nitrogen stress factor based on actual and critical nitrogen 
+!             content in vegetative tissue
+!NH4 (L) 	  Ammonium in soil layer L, mg elemental N/kg soil
+!NLAYR 		  Number of soil layer
+!NO3 (L) 	  Nitrate in soil layer L (mg elemental N/kg soil)
+!NPOOL 		  Total plant N available for translocation to grain (g/plant)
+!NPOOL1	     Tops N available for translocation to grain (g/plant)
+!NPOOL2, 	  Root N available for translocation to grain (g/plant)
+!NSDR 		  Plant N supply/demand ratio used to modify grain N content
+!NSINK		  Demand for N associated with grain filling (g/plant/day)
+!NSTRES 	     Nitrogen stress factor affecting growth (0-1)
+!OUTPUT   	  Program control variable to output state and rate variables to output file (value=5)
+!P1 		     GDD from seedling emergence to end of juvenile phase, C
+!P3     		  Cumulative GDD required to complete ISTAGE 3, C
+!P5 		     GDD from silking to physiological maturity, C
+!PAR  		  Daily photosynthetically active radiation, calculated as half
+!PATHCR 	     Pathname of species file
+!PCARB   	  Potential dry matter production under optimum water, nitrogen and temperature,  
+!             g/plant
+!PCNVEG	     Percent nitrogen in vegetative tissue (leaf and stem), kg N/ha
+!PCNGRN       Percent nitrogen in grain,%
+!PCO2      	  Effect of CO2 on plant growth rate
+!PDWI  		  Potential increment in new shoot growth, g/plant
+!PGRORT 	     Potential increment in new root growth, g/plant
+!PHINT 		  Phyllochron interval. Number of GDD required for new leaf emergence, C.
+!PLA     	  Plant leaf area, cm2/plant
+!PLAS 		  The rate of senescence of leaf area on one plant - sq. cm/day
+!PLTPOP 	     Plant population, plants/m2
+!PODWT		  Dry mass of seeds plus shells, including C and N (g[pods] / m2[ground])
+!PORMIN 	     Minimum pore space volume required for supplying oxygen
+!             to roots for optimum
+!PRFT  		  Photosynthetic reduction factor for low and high temperatures
+!PRFTC        Array containing base, optimum and maximum temperature for function 
+!             reducing photosynthesis due to temperature
+!PTF  		  Ratio of above ground biomass to total biomass
+!RANCE        Root nitrogen concentration at emergence, g N/g root dry weight
+!RCNP 		  Root critical nitrogen concentration, g N/g root dry weight
+!RGFILL  	  Rate of grain fill - mg/day
+!RLV (L) 	  Root length density for soil layer L, cm root/cm3 soil 
+!RLWR 		  Root length weight ratio
+!RMNC  		  Root minimum nitrogen concentration (g N/g root dry weight
+!RNLOSS 	     Loss of N from the plant via root exudation in one layer (g N/m2)
+!ROOTN  	     Root nitrogen content, g N/plant
+!ROWSPC 	     Row spacing, cm
+!RTDEP 		  Root depth (cm)
+!RTWT     	  Root weight, g/plant
+!RTWTO 	     Root weight, g/m2
+!RUE          Radiation use efficiency, g CH2O/MJ Par
+!RWUEP1 	     Factor to modify water stress for cell expansion (in species
+!             file), mm/day
+!RWUMX  	     Max root water uptake
+!SDEPTH    	  Sowing depth, cm
+!SDWT      	  Seed weight, g/m2
+!SEEDRV  	  Carbohydrate reserve in seed, g/plant
+!SENLA    	  Normal leaf senescence today, cm2/plant
+!SI3(6)       Nitrogen stress during a growth stage used for output
+!SKERWT       Weight per kernel, g/kernel
+!SLAN         Normal leaf senescence since emergence, cm2/plant
+!SLFC         Leaf senescence factor due to competition for light(0-1
+!SLFN         Leaf senescence factor due to nitrogen stress (0-1)
+!SLFP    	  Leaf senescence factor due to phosphorus stress (0-1)
+!SLFT  	     Leaf senescence factor due to temperature (0-1)
+!SLFW	        Leaf senescence factor due to water sterss (0-1)
+!SLPF  	     Relative reduction in growth due to poor soil fertility (0-1.0) that is not related to nitrogen.
+!SRAD 	     Daily solar radiation, MJ/M2/day
+!STMWT        Stem weight, g/plant
+!STMWTO 	     Dry mass of stem tissue, including C and N (g[stem] / m2[ground)
+!STOVER 	     Stover weight (leaf+stem), kg/ha
+!STOVN 		  Nitrogen content in stover, g N/plant
+!STOVWT	     Stover weight (Stem + leaf), g/plant
+!SUMDTT  	  Sum of GDD for a given stage, C
+!SW(L)        Soil water content in layer L, cm3 water/cm3 soil
+!SWFAC  	     Soil water stress effect on growth (0-1), 1 is no stress, 0 is full
+!SWIDOT	     Seed loss due to pests, g seed/m2/day
+!SWMIN 	     Minimum value stem weight can reach during linear grain filling g/plant
+!TABEX 		  Table lookup function
+!TANC 		  Nitrogen content in above ground biomass, g N/g dry weight
+!TBASE 		  Base temperature for development from ecotype file, C
+!TCNP   		  Critical nitrogen concentration in tops, g N/g dry weight
+!TEMPM  	     Mean daily temperature, C
+!TI 		     Fraction of a phyllochron interval which occurred as a fraction of today's daily thermal  
+!             time
+!TMAX         Maximum daily temperture, C
+!TMIN         Minimum daily temperature
+!TMNC         Plant top minimum N concentration g N/g dry matter
+!TNLAB        Total potential daily plant water uptake, cm/d
+!TOTNUP       Total shoot N uptake at maturity, kg N/ha
+!TRNLOS		  Total plant N lost by root exudation (g N/m2)
+!TURFAC		  Soil water stress effect on expansion (0-1), 1 is no 
+!             stress, 0 is full stress
+!UNH4 (L)	  Plant uptake of ammonium from layer (kg N/ha/day)
+!UNO3 (L) 	  Plant uptake of nitrate from a layer (kg N/ha/day
+!VANC 		  Plant vegetative actual N concentration, g N/g plant
+!VMNC   	     Plant vegetative minimum nitrogen concentration, g N/g plant
+!WLIDOT	     Leaf loss due to pests, g/m2/day
+!WRIDOT	     Root loss due to pests, g root/m2/day
+!WSIDOT	     Stem loss due to pests, g stem/m2/day
+!WTLF  		  Dry mass of leaf tissue including C and N (g[leaf] / m2[ground])
+!XANC 		  Nitrogen concentration in above ground biomass %
+!XGNP  		  Nitrogen content of grain, 
+!XN   		  Number of oldest expanding leaf
+!XNF    		  Modified nitrogen factor based on critical N concentration in vegetative biomass
+!XSTAGE		  Non-integer growth stage indicator 
+!YR_DOY  	  Year and day of year
+!YRPLT    	  Planting date (YYDDD)                             
