@@ -49,7 +49,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6 SECTION
       CHARACTER*7, PARAMETER :: ERRKEY = 'SOILDYN'
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(NL+4)
+      CHARACTER*78 MSG(NL+10)
       CHARACTER*200 CHAR
 
       INTEGER DAS, DYNAMIC, ERRNUM, FOUND, I, L, Length 
@@ -65,6 +65,7 @@ C-----------------------------------------------------------------------
       CHARACTER*50 SLDESC, TAXON
       INTEGER NLAYR
       REAL CN, DMOD, KTRANS, SALB, SLDP, SLPF, SWCON, TEMP, TOTAW, U
+      REAL SWAD, SWnew
       REAL, DIMENSION(NL) :: ADCOEF, BD, CEC, CLAY, DLAYR, DS, DUL
       REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, POROS, SAND, SAT, SILT
       REAL, DIMENSION(NL) :: SW, SWCN, TOTN, TotOrgN, WCR, WR
@@ -364,22 +365,30 @@ C-----------------------------------------------------------------------
         IF (SW(L) .LT. LL(L)) THEN
           IF (NMSG == 0) THEN
             MSG(1) = "Initial soil water content < LL."
-            MSG(2) = "Layer  Init SW       LL"
-            NMSG = 2
+            MSG(2) = " "
+            MSG(3) = "         FileX              SW @  Revised"
+            MSG(4) = "Layer  Init SW       LL   AirDry  Init SW"
+            NMSG = 4
           ENDIF
-          NMSG = NMSG + 1
-          WRITE(MSG(NMSG),'(I5,2F9.3)') L, SW(L), LL(L)
-          IF (L > 1) THEN
-            SW(L) = LL(L)
+          IF (L == 1) THEN
+!           Layer 1 - check for SW < air dry
+            SWAD = 0.30 * LL(L)
+            IF (SW(L) < SWAD) THEN
+              SWnew = SWAD
+              NMSG = NMSG + 1
+              WRITE(MSG(NMSG),'(I5,4F9.3)') L, SW(L), LL(L), SWAD, SWnew
+              SW(L) = SWnew
+            ENDIF
+          ELSE
+!           Layers 2 thru NLAYR
+            SWnew = LL(L)
+            NMSG = NMSG + 1
+            WRITE(MSG(NMSG),'(I5,2F9.3,9X,F9.3)') L, SW(L), LL(L), SWnew
+            SW(L) = SWnew
           ENDIF
         ENDIF
       ENDDO
       IF (NMSG > 0) THEN
-        NMSG = NMSG + 1
-        MSG(NMSG) = "Initial soil water content will be set to LL for"
-     &    // " these layers"
-        NMSG = NMSG + 1
-        MSG(NMSG) = "  except for layer 1 (no change)."
         CALL WARNING(NMSG, ERRKEY, MSG)
       ENDIF
 
@@ -388,18 +397,18 @@ C-----------------------------------------------------------------------
         IF (SW(L) > SAT(L)) THEN
           IF (NMSG == 0) THEN
             MSG(1) = "Initial soil water content > SAT."
-            MSG(2) = "Layer  Init SW      SAT"
-            NMSG = 2
+            MSG(2) = " "
+            MSG(3) = "         FileX           Revised"
+            MSG(4) = "Layer  Init SW      SAT  Init SW"
+            NMSG = 4
           ENDIF
+          SWnew = SAT(L)
           NMSG = NMSG + 1
-          WRITE(MSG(NMSG),'(I5,2F9.3)') L, SW(L), SAT(L)
-          SW(L) = SAT(L)
+          WRITE(MSG(NMSG),'(I5,3F9.3)') L, SW(L), SAT(L), SWnew
+          SW(L) = SWnew
         ENDIF
       ENDDO
       IF (NMSG > 0) THEN
-        NMSG = NMSG + 1
-        MSG(NMSG) = "Initial soil water content will be set to SAT for"
-     &    // " these layers."
         CALL WARNING(NMSG, ERRKEY, MSG)
       ENDIF
 

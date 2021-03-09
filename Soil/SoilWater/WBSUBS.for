@@ -118,7 +118,7 @@ C  08/12/2003 CHP Added I/O error checking
       INTEGER ERRNUM, FOUND, L, LINC, LNUM, RUN
 
       REAL, DIMENSION(NL) :: SW_INIT
-      REAL ICWD, SWEF, ICWD_INIT
+      REAL ICWD, SWEF, ICWD_INIT, SWAD
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -158,11 +158,17 @@ C     Find and Read Initial Conditions Section
             LNUM = LNUM + 1
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
 
-            IF (L > 1 .AND. SW(L) .LT. LL(L)) THEN
-              SW(L) = LL(L)
-            ENDIF
-            IF (SW(L) > SAT(L)) THEN
-              SW(L) = SAT(L)
+            IF (SW(L) .LT. LL(L)) THEN
+              IF (L == 1) THEN
+!               Layer 1 - check for SW < air dry
+                SWAD = 0.30 * LL(L)
+                IF (SW(L) < SWAD) THEN
+                  SW(L) = SWAD
+                ENDIF
+              ELSE
+!               Layers 2 thru NLAYR
+                SW(L) = LL(L)
+              ENDIF
             ENDIF
           ENDDO
 
