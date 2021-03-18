@@ -98,7 +98,7 @@ C-----------------------------------------------------------------------
   120       FORMAT('@YEAR DOY   DAS',
      &'   PRED  DAYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND   TAVD',
      &'   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D   VPDF    VPD  OZON7',
-     &'  WDATE')
+     &'   WDATE')
           END IF   ! VSH
         ENDIF
 

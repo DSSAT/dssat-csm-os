@@ -195,9 +195,10 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
         SRAD, WINDSP)                       !Output
 
   USE ModuleData
+  SAVE
   CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
   CHARACTER*78 MSG(4)
-  INTEGER DOY, YR, FYRDOY
+  INTEGER DOY, YR, FYRDOY, FYRDOY_Y
   INTEGER WDATE, I, TIMDIF
   REAL RAIN, TMAX, TMIN, SRAD, PAR
   REAL DCO2, OZON7, RHUM, TDEW, VAPR, WINDSP
@@ -211,8 +212,13 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
   IF (WDATE .GE. FODAT .OR. FCOUNT .LT. 1) THEN
     CALL GET(CONTROL)
     CALL YR_DOY(WDATE, YR, DOY)
-    EnsYearCurrent = EnsYearFirst + CONTROL % ENDYRS - 1
-    FYRDOY = EnsYearCurrent * 1000 + DOY
+    IF (WDATE == FODAT) THEN
+      EnsYearCurrent = EnsYearFirst + CONTROL % ENDYRS - 1
+      FYRDOY = EnsYearCurrent * 1000 + DOY
+    ELSE
+      FYRDOY = INCDAT(FYRDOY_Y, 1)
+    ENDIF
+    FYRDOY_Y = FYRDOY
 
   ELSE
 !   Use observed weather data. 
