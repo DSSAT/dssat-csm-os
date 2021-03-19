@@ -2484,7 +2484,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           ! Additional controls that not handled by CSM
           ! To get name and location of x-file to -> special controls.
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'AFILE',filea)
-          FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+
+!     CHP 2021-03-19
+          IF (INDEX(FILEADIR,"-99") > 0) THEN
+            FILEX = FILEA(1:TVILENT(FILEA))
+          ELSE
+            FILEX=FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+          ENDIF
+
           CALL LTRIM2 (FILEX,filenew)
           FILELEN = TVILENT(FILENEW)
           FILENEW(FILELEN:FILELEN)= 'X'
