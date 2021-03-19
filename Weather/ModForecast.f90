@@ -65,6 +65,14 @@ SUBROUTINE FCAST_STORE(                                 &
     FSTART = YRSIM
     FCOUNT = TIMDIF(FSTART, FODAT)
 
+!   Check for FODAT < FSTART
+    IF (FCOUNT < 0) THEN
+      MSG(1) = "Forecast date is less than start of simulation date."
+      MSG(2) = "Please check your input data. Program will stop."
+      CALL WARNING(2, ERRKEY, MSG)
+      CALL ERROR(ERRKEY,1,"",0)
+    ENDIF
+
 !   Initialize weather file for this year's data (i.e., pre-forecast date)
     CONTROL2 = CONTROL
     CONTROL2 % DYNAMIC = SEASINIT
