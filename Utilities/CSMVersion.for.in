@@ -19,7 +19,7 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-CheckModel'
 
 !     Version history:  
 !       4.7.5.31 chp 03/25/2021 Forecast output weather yeardoy, & minor other   
