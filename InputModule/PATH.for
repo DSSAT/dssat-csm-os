@@ -234,6 +234,11 @@ C=======================================================================
         IF (ERRNUM == 0) THEN
           MODEL = CRMODEL
           RETURN
+        ELSE
+          MSG(1) = "Invalid model specified."
+          WRITE(MSG(2),'("Crop: ",A2,"; Model: ",A8)') CROP, CRMODEL
+          MSG(3) = "Use default model from DSSATPRO."
+          CALL WARNING(3,ERRKEY,MSG)
         ENDIF
       ELSE
         ERRNUM = 8
@@ -280,7 +285,13 @@ C=======================================================================
 
 !     Check MODEL for validity.
       ERRNUM = ValidModel(CROP, MODEL)
-      IF (ERRNUM /= 0) CALL ERROR (ERRKEY,ERRNUM,DSSATP,0)
+      IF (ERRNUM /= 0) THEN
+        MSG(1) = "No valid model found in DSSATPRO for this crop."
+        WRITE(MSG(2),'("Crop: ",A2)') CROP
+        MSG(3) = "Simulation will stop."
+        CALL WARNING(3,ERRKEY,MSG)
+        CALL ERROR (ERRKEY,ERRNUM,DSSATP,0)
+      ENDIF
 
       RETURN
       END SUBROUTINE MODEL_NAME
@@ -313,63 +324,64 @@ C=======================================================================
         RETURN
       ENDIF
 
-!    Check for valid crop modeling approaches
-      IF ((INDEX(MODEL(3:5),'CER') .EQ. 0) .AND.   !CERES
-!    &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.   !ORYZA
-     &    (INDEX(MODEL(3:5),'IXM') .EQ. 0) .AND.   !IXIM
-     &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.   !CROPGRO
-     &    (INDEX(MODEL(3:5),'FRM') .EQ. 0) .AND.   !FORAGE
-     &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.   !CROPSIM (Cereal)
-     &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.   !CSCAS (Cassava)
-     &    (INDEX(MODEL(3:5),'YCA') .EQ. 0) .AND.   !CSYCA (CIAT-Cassava)
-     &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.   !CROPSIM (Cassava)
-     &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.   !SUBSTOR
-     &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.   !CANEGRO
-     &    (INDEX(MODEL(3:5),'CSP') .EQ. 0) .AND.   !CASUPRO
-     &	(INDEX(MODEL(3:5),'SAM') .EQ. 0) .AND.	 !SAMUCA
-     &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.   !ALOHA
-     &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.   !AROIDS
-     &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.   !CropSim cassava
-     &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.   !APSIM N-wheat
-     &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.   !OILCROP
-     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)         !SALUS
-     &    ) THEN
-!       Invalid model = error 4
-        ValidModel = 4
-        RETURN
-      ENDIF
-
-!     Check for valid crop modules
-      IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND. !Wheat and Barley
-     &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND. !Wheat and barley
-     &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND. !Cassava
-     &    (INDEX(MODEL(1:5),'CSYCA') .EQ. 0) .AND. !Cassava CIAT
-     &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND. !APSIM N-wheat
-     &    (INDEX(MODEL(1:5),'TFAPS') .EQ. 0) .AND. !Tef based on N-wheat
-     &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND. !CROPGRO (All
-!                         grain legumes, grasses, vegetables and cotton
-     &    (INDEX(MODEL(1:5),'PRFRM') .EQ. 0) .AND. !FORAGE
-     &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND. !Maize CERES
-     &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND. !Maize IXIM
-     &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND. !Millet
-     &    (INDEX(MODEL(1:5),'PIALO') .EQ. 0) .AND. !Aloha Pineapple
-     &    (INDEX(MODEL(1:5),'PTSUB') .EQ. 0) .AND. !Potato
-     &    (INDEX(MODEL(1:5),'RICER') .EQ. 0) .AND. !CERES-Rice
-!    &    (INDEX(MODEL(1:5),'RIORZ') .EQ. 0) .AND. !ORYZA-Rice
-     &    (INDEX(MODEL(1:5),'SGCER') .EQ. 0) .AND. !Sorghum
-     &    (INDEX(MODEL(1:5),'SCCSP') .EQ. 0) .AND. !Sugarcane CASUPRO
-     &    (INDEX(MODEL(1:5),'SCCAN') .EQ. 0) .AND. !Sugarcane CaneGro
-     &	(INDEX(MODEL(1:5),'SCSAM') .EQ. 0) .AND. !Sugarcane SAMUCA
-     &    (INDEX(MODEL(1:5),'BSCER') .EQ. 0) .AND. !Sugarbeet VSH
-     &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND. !Sweet corn
-     &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND. !Tanier
-     &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND. !Taro
-     &    (INDEX(MODEL(1:5),'SALUS') .EQ. 0)       !Salus generic
-     &    ) THEN
-!       Invalid module name = error 5
-        ValidModel = 5
-        RETURN
-      ENDIF
+!!    Check for valid crop modeling approaches
+!      IF ((INDEX(MODEL(3:5),'CER') .EQ. 0) .AND.   !CERES
+!!    &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.   !ORYZA
+!     &    (INDEX(MODEL(3:5),'IXM') .EQ. 0) .AND.   !IXIM
+!     &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.   !CROPGRO
+!     &    (INDEX(MODEL(3:5),'FRM') .EQ. 0) .AND.   !FORAGE
+!     &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.   !CROPSIM (Cereal)
+!     &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.   !CSCAS (Cassava)
+!     &    (INDEX(MODEL(3:5),'YCA') .EQ. 0) .AND.   !CSYCA (CIAT-Cassava)
+!     &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.   !CROPSIM (Cassava)
+!     &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.   !SUBSTOR
+!     &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.   !CANEGRO
+!     &    (INDEX(MODEL(3:5),'CSP') .EQ. 0) .AND.   !CASUPRO
+!     &	(INDEX(MODEL(3:5),'SAM') .EQ. 0) .AND.	 !SAMUCA
+!     &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.   !ALOHA
+!     &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.   !AROIDS
+!     &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.   !CropSim cassava
+!     &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.   !APSIM N-wheat
+!     &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.   !OILCROP
+!     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)         !SALUS
+!     &    ) THEN
+!!       Invalid model = error 4
+!        ValidModel = 4
+!        RETURN
+!      ENDIF
+!
+!!     Check for valid crop modules
+!      IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND. !Wheat and Barley
+!     &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND. !Wheat and barley
+!     &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND. !Cassava
+!     &    (INDEX(MODEL(1:5),'CSYCA') .EQ. 0) .AND. !Cassava CIAT
+!     &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND. !APSIM N-wheat
+!     &    (INDEX(MODEL(1:5),'TFAPS') .EQ. 0) .AND. !Tef based on N-wheat
+!     &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND. !CROPGRO (All
+!!                         grain legumes, grasses, vegetables and cotton
+!     &    (INDEX(MODEL(1:5),'PRFRM') .EQ. 0) .AND. !FORAGE
+!     &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND. !Maize CERES
+!     &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND. !Maize IXIM
+!     &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND. !Millet
+!     &    (INDEX(MODEL(1:5),'PIALO') .EQ. 0) .AND. !Aloha Pineapple
+!     &    (INDEX(MODEL(1:5),'PTSUB') .EQ. 0) .AND. !Potato
+!     &    (INDEX(MODEL(1:5),'RICER') .EQ. 0) .AND. !CERES-Rice
+!!    &    (INDEX(MODEL(1:5),'RIORZ') .EQ. 0) .AND. !ORYZA-Rice
+!     &    (INDEX(MODEL(1:5),'SGCER') .EQ. 0) .AND. !Sorghum
+!     &    (INDEX(MODEL(1:5),'SCCSP') .EQ. 0) .AND. !Sugarcane CASUPRO
+!     &    (INDEX(MODEL(1:5),'SCCAN') .EQ. 0) .AND. !Sugarcane CaneGro
+!     &	(INDEX(MODEL(1:5),'SCSAM') .EQ. 0) .AND. !Sugarcane SAMUCA
+!     &    (INDEX(MODEL(1:5),'BSCER') .EQ. 0) .AND. !Sugarbeet VSH
+!     &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND. !Sweet corn
+!     &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND. !Tanier
+!     &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0)       !Taro
+!!    &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND. !Taro
+!!    &    (INDEX(MODEL(1:5),'SUOIL') .EQ. 0)       !Oilcrop
+!     &    ) THEN
+!!       Invalid module name = error 5
+!        ValidModel = 5
+!        RETURN
+!      ENDIF
 
 !     Check that crop and model are compatible based on codes in
 !     Simulation.CDE
