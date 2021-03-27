@@ -9,7 +9,7 @@
             },
             "args": [
                 "A",
-                "UAFD0801.SUX"
+                "UCCO9101.SUX"
             ],
             "command": "${workspaceRoot}/build/bin/dscsm047.exe",
             "type": "shell",

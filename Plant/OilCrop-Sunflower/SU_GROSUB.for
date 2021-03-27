@@ -386,7 +386,7 @@
       TYPE (SwitchType)  ISWITCH
 
 
- 
+      
 !----------------------------------------------------------------------
 !     CHP 3/31/2006
 !     Proportion of lignin in STOVER and Roots
@@ -989,7 +989,10 @@
           GRFACTOR  = AMIN1 (GRFACTOR,1.0)
           
           PERWT     = PPP * 0.002                     ! Pericarp starts with 2 mg
-          HEADWT    = HEADWT - PERWT
+          IF (PERWT.GT.0.5*HEADWT) THEN
+              PERWT=0.5*HEADWT
+          ENDIF
+          HEADWT=HEADWT-PERWT
           ALF       = 0.22
           ALF1      = (ALF*G3/24.*(P5-170.)-2.*(1.-ALF))/270./(1.-ALF)
           POTGROPER = 24.0*ALF1*PPP/1000.0
@@ -997,7 +1000,7 @@
           XRAT    = XNGLF / GLFWT
           YRAT    = (0.009-0.0875*XRAT)/0.9125
           SLOPEPE = LAI*10E3/PLTPOP/(XNGLF-YRAT*GLFWT) ! SUN, HV
-c          write(*,*)xnglf,yrat,GLFWT
+
           
           XPEPE   = 0.50 * (XNGLF - YRAT*GLFWT)
           GPP    = 0.0
@@ -1393,6 +1396,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             trg = trg + ELOFT/8.0
           ENDDO
         ENDIF
+
           !-------------------------------------------------------------
           !   ISTAGE = 1 (Emergence to End of Juvenile Stage)
           !-------------------------------------------------------------
@@ -1404,7 +1408,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           GROHEAD = 0.0  
           GROPER = 0.0
           GROEMB = 0.0   
-   
+
       !
         ! More than 0.18 carbo to root
       !
@@ -1429,7 +1433,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           GROHEAD = 0.0
           GROPER = 0.0
           GROEMB = 0.0   
- 
+
           !-------------------------------------------------------------
           !  ISTAGE = 2 (End of Juvenile to Tassel Initiation)
           !-------------------------------------------------------------
@@ -1507,13 +1511,15 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             GROLF  = GROLF * AMIN1 (TURFAC,AGEFAC)
             PLAG   = PLAG  * AMIN1 (TURFAC,AGEFAC)
             GROSTM = 0.245 * CARBO
-            GRORT  = CARBO - GROLF - GROSTM                       
+            GRORT  = CARBO - GROLF - GROSTM 
+                   
           ELSE
             MAXGROSTM = 0.605 * CARBO
             IF (SUMDTT .GT. (P3P-180.0) .AND. HEADWT .EQ. 0.0) THEN
               HEADWT    = 0.05  * STMWT
               POTHEADWT = 22.1
               STMWT     = STMWT - HEADWT
+              
               IF (ISWNIT .EQ. 'Y') THEN
                    XHEADN = 0.0420 * HEADWT
                    XSTEMN = XSTEMN - XHEADN
@@ -1585,7 +1591,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             ELSE
               DSLAN1 = 0.0
             ENDIF
-            
+
           ! Calculo de senescencia March/91
           !
             IF (CUMPH .GT. (TLNO-5) .AND. TURFAC .LT. 0.8) THEN
@@ -1648,7 +1654,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           GROEMB = 0.0   
 
           IF (CARBO .NE. 0.0) THEN
-           GROPER = POTGROPER * trg                 ! SUN, Hall
+           GROPER = POTGROPER * trg* AMIN1 (TURFAC,AGEFAC)                 ! SUN, Hall
           ENDIF
 
           GROHEAD = 1.71 * trg                        ! SUN, Hall
@@ -1672,7 +1678,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             GRORT  = EXCESS
             GROSTM = 0.0
           ENDIF 
-
+ 
           GROHEAD = GROHEAD * AMIN1 (TURFAC,AGEFAC)
           GROPER  = GROPER  * (0.7 + 0.3*SWFAC)
           GROSTM  = GROSTM  * AMIN1 (SWFAC,NSTRES)
@@ -1708,6 +1714,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
               VANC   = STOVN  / STOVWT                    ! Stover actual N conc.
               NPL1L  = GLFWT  * (XLANC - XLMNC)           ! Total N in leaf pool
               NPL1L  = AMAX1 (NPL1L,0.0)
+
               IF (NPL1L .GT. XPEPE) THEN
                 NPL1L = NPL1L - XPEPE
                 NPL2L = XPEPE
@@ -1776,7 +1783,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           ELSE
               DSLAN2 = 0.0
           ENDIF
-        
+
         ! Threshold for starting leaf senescence due to water stress
         ! changed from 0.8 to 0.2 - FV, 12/12/97
         !
@@ -2226,18 +2233,8 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
             ENDIF
           ENDIF  
             UNO3 = 0.0; UNH4 = 0.0; KUPTAKE = 0.0
-  
-
-
-
-
-        ENDIF
-c              write(*,*)istage,xnglf,glfwt,gpla,xnglf/glfwt
-          
-
-
  
-
+        ENDIF
 
         CARBO = AMAX1 (CARBO,0.001)
       !
