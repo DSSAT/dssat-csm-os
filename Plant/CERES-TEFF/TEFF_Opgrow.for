@@ -374,3 +374,47 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       RETURN
       END SUBROUTINE TEFF_OPGROW
+
+C=======================================================================
+
+!------------------------------------------------------------------------------------------------------------------------------------------
+!                         DEFINITIONS
+!-----------------------------------------------------------------------------------------------------------------------------------------
+!BIOMAS      Above ground biomass, g/m2
+!CARBO     	 Daily biomass production, g/plant/day
+!DOY		     Day of year
+!DTT         Growing degree days today, C
+!DYNAMIC     Main control variable to tell each module which section of code to run
+!GPP   		   Grain number per plant, grains/plant
+!GPSM    	   Grain numbers, grains/m2
+!GRAINN   	 Grain nitrogen content, g N/plant
+!GRNWT	  	 Grain weight, g/plant
+!I         	 Counter
+!ISTAGE 		 Growth stage (integer)
+!ISWNIT  	   Nitrogen balance switch (Y/N) 
+!L  		     Index counter
+!LAI   		   Leaf area index, m2/m2
+!LEAFNO		   Number of oldest leaf per plant (same as XN)
+!LFWT		     Leaf weight, g/plant
+!MDATE 		   Year and day of year of maturity
+!NLAYR 		   Number of soil layer
+!NSTRES 	   Nitrogen stress factor affecting growth (0-1)
+!OUTPUT   	 Program control variable to output state and rate variables to output file (value=5)
+!PCNVEG	     Percent nitrogen in vegetative tissue (leaf and stem), kg N/ha
+!PCNGRN      Percent nitrogen in grain,%
+!PLTPOP 	   Plant population, plants/m2
+!PODWT		   Dry mass of seeds plus shells, including C and N (g[pods] / m2[ground])
+!RLV (L) 	   Root length density for soil layer L, cm root/cm3 soil 
+!ROOTN  	   Root nitrogen content, g N/plant
+!RTDEP 		   Root depth (cm)
+!RTWT     	 Root weight, g/plant
+!SDWT      	 Seed weight, g/m2
+!STMWT       Stem weight, g/plant
+!STOVN 		   Nitrogen content in stover, g N/plant
+!SWFAC  	   Soil water stress effect on growth (0-1), 1 is no stress, 0 is full
+!TURFAC		   Soil water stress effect on expansion (0-1), 1 is no 
+!            stress, 0 is full stress
+!WTLF  		   Dry mass of leaf tissue including C and N (g[leaf] / m2[ground])
+!XN   		   Number of oldest expanding leaf
+!YR_DOY  	   Year and day of year
+!YRPLT    	 Planting date (YYDDD)                             

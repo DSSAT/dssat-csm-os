@@ -220,3 +220,43 @@ C-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE TEFF_IPROOTGR
 C=======================================================================
+
+
+!------------------------------------------------------------------------------------------------------------------------------------------
+!                         DEFINITIONS
+!-----------------------------------------------------------------------------------------------------------------------------------------
+!CUMDEP	 Cumulative depth of soil, cm
+!DLAYR(L)	 Soil thickness in layer L (cm) DM          !Total above ground biomass, kg/ha
+!DOY		 Day of year
+!DTT         Growing degree days today, C
+!DYNAMIC     Main control variable to tell each module which section of code to run
+!ERR  	 Determines if error in reading file (0=ok, 1=error)
+!ERRKEY      Variable containing routine where error occurred
+!FILEIO      Filename containing model inputs (IBSNAT35.INP)
+!GRORT   	 Root growth rate, g/plant/day
+!I         	 Counter
+!INTEGR	 Program control variable to execute code to integrate daily rate 
+!            variables(value=4)
+!ISWNIT  	 Nitrogen balance switch (Y/N) 
+!ISWWAT 	 Soil water balance on/off switch (Y for yes, N for no)
+!L  		 Index counter
+!LNUM 	 Line number in an input file
+!LUNIO       Logical input number for model input file
+!LUNIO       Assign value to LUNIO for local use
+!NFAC 	 Nitrogen stress factor based on actual and critical nitrogen 
+!            content in vegetative tissue
+!NH4 (L) 	 Ammonium in soil layer L, mg elemental N/kg soil
+!NLAYR 	 Number of soil layer
+!NO3 (L) 	 Nitrate in soil layer L (mg elemental N/kg soil)
+!RGFILL  	 Rate of grain fill - mg/day
+!RLV (L) 	 Root length density for soil layer L, cm root/cm3 soil 
+!RLWR 	 Root length weight ratio
+!RTDEP 	 Root depth (cm)
+!RTWT     	 Root weight, g/plant
+!RTWTO 	 Root weight, g/m2
+!SDEPTH    	 Sowing depth, cm
+!SUMDTT  	 Sum of GDD for a given stage, C
+!SW(L)       Soil water content in layer L, cm3 water/cm3 soil
+!SWFAC  	 Soil water stress effect on growth (0-1), 1 is no stress, 0 is full
+!YR_DOY  	 Year and day of year
+!YRPLT    	 Planting date (YYDDD)                             
