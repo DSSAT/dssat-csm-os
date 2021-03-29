@@ -13,6 +13,8 @@ C  11/22/2004 CHP Changed output file names from *.out to *.OUT
 C                   for case-sensitive OS's.
 !  02/13/2015 chp N-uptake from TEFF_Nuptak.for routine instead of calculated
 !                 here as tops N
+C  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C=======================================================================
 
       SUBROUTINE TEFF_OPGROW (CONTROL, ISWITCH, SOILPROP,

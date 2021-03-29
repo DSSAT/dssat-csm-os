@@ -8,6 +8,8 @@ C
 C  08/02/1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
+C  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C=======================================================================
 
       SUBROUTINE TEFF_ROOTGR (CONTROL, 
@@ -135,8 +137,7 @@ C     RLNEW  = GRORT*PLANTS*1.05
 
          RLDF(L) = AMIN1(SWDF,RNFAC)*SHF(L)*DLAYR(L)
          IF (CUMDEP .GE. RTDEP) THEN
-            !RTDEP   = RTDEP + DTT*0.18*AMIN1((SWFAC*1.5),SWDF) !RICE
-            RTDEP   = RTDEP + DTT*0.18*AMIN1((SWFAC*2.5),SWDF) !Tef
+            RTDEP   = RTDEP + DTT*0.18*AMIN1((SWFAC*2.5),SWDF)
             RTDEP   = AMIN1 (RTDEP,DEPMAX)
             RLDF(L) = RLDF(L)*(1.0-(CUMDEP-RTDEP)/DLAYR(L))
             TRLDF   = TRLDF + RLDF(L)
@@ -172,7 +173,7 @@ C=======================================================================
 C=======================================================================
 C  TEFF_IPROOTGR, Subroutine
 C
-C  Reads FILEIO for RICE routine
+C  Reads FILEIO for TEFF routine
 C  05/07/2002 CHP Written
 C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
