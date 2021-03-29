@@ -156,7 +156,6 @@
             RSWTX = AMAX1(RSWTX,RSWT)
             STWT = STWT + GROSTADJ - SWPH
             IF (STWT < 1.0E-06) THEN
-                IF (STWT < 0.0) WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
                 STWT = 0.0
             ENDIF
             SWPHC = SWPHC +  SWPH                                                                                      !EQN 435
@@ -199,8 +198,8 @@
         ENDIF
         ! IF (SRNOPD > 0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
         
-        IF ((canopyWeight()) > 0.0) THEN
-            HIAD = SRWT/(canopyWeight()+SRWT)                                                                     !EQN 293
+        IF ((totalWeight()) > 0.0) THEN !LPM 02OCT2019 To consider the total weight for the harvest index
+            HIAD = SRWT/(totalWeight()+SEEDRS+SDCOAT)                                                                     !EQN 293
         ENDIF
         IF (RTWT > 0.0) THEN
             SHRTD = (canopyWeight()) / RTWT                                                          !EQN 294

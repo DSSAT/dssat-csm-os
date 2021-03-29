@@ -2218,9 +2218,10 @@ C-----------------------------------------------------------------------
         SECTION = '*PLANT'
         CALL FIND(LUNIO, SECTION, LNUM, FOUND)
         IF (FOUND .EQ. 0) THEN
-        CALL ERROR(ERRKEY, 1, FILEIO, LNUM)
+          CALL ERROR(ERRKEY, 1, FILEIO, LNUM)
         ELSE
-        READ(LUNIO,'(24X,F6.1,5X,A1,6X,F6.0,12X,F6.0)')
+C-GH      READ(LUNIO,'(24X,F6.1,5X,A1,6X,F6.0,12X,F6.0)')
+          READ(LUNIO,'(24X,F6.0,5X,A1,6X,F6.0,12X,F6.0)')
      &    PLTPOP, PLME, ROWSPC, SDWTPL
         ENDIF
 
