@@ -14,6 +14,8 @@
 !                 to transp_eff_coeff = 0.009 * ( 1+ (0.28/350)*(WEATHER % CO2 -350))
 !  04/05/2018 KEP changed transp_eff_coeff from transp_eff_coeff=0.006 to transp_eff_coeff=0.009
 !  09/14/2018 KEP increased the base growth temperature from -4 C to 7.8 C for calculating prft.
+!  01/21/2020 JG moved some CUL parameters to ECO file
+!  07/24/2020 JG moved ozone parameters to ECO file
 !----------------------------------------------------------------------
 !  Called by : TF_APSIM
 !
@@ -104,6 +106,8 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        EO, ep_nw, ES!JZW add for Canopy T calculation
       REAL        EXNH4
       REAL        EXNO3
+      REAL        FOZ1  ! Added by JG for ozone calculation
+      REAL        FOZ2  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -134,6 +138,8 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        MXFIL
       REAL        RTDP1
       REAL        RTDP2
+      REAL        SFOZ1  ! Added by JG for ozone calculation
+      REAL        SFOZ2  ! Added by JG for ozone calculation
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2 ! nwheat cultivar parameter
@@ -391,6 +397,19 @@ C The statements begining with !*! are refer to APSIM source codes
       CHARACTER*92    FILECC
       CHARACTER*12    FILES
       CHARACTER*12    FILEE
+
+      ! JG added for ecotype file
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      INTEGER     PATHL
+      INTEGER     LUNECO
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2  ! JG added for ecotype file
+      
       INTEGER         FOUND
       REAL        FSLFW
       REAL        FSLFN
@@ -695,7 +714,8 @@ C The statements begining with !*! are refer to APSIM source codes
             CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
             READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC ; LNUM = LNUM + 1
- 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+C60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+ 60         FORMAT(24X,F6.0,12X,F6.0,7X,F5.2)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 !     -----------------------------------------------------------------
@@ -708,11 +728,7 @@ C The statements begining with !*! are refer to APSIM source codes
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR)
      &          VARNO,VRNAME,ECONO,VSEN,PPSEN,P1,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1
 !------------------------------------------------------------------
 ! PNUPR = 0.45; APSIM pot_nuprate =  .45e-6 , g/mm root/day
 ! MNNCR=1.23: APSIM min_grain_nc_ratio = 0.0123
@@ -727,16 +743,60 @@ C The statements begining with !*! are refer to APSIM source codes
 ! p_max_grain_nc_ratio = 0.04
 !-----------------------------------------------------------------
 !*!1800        FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)
-1800        FORMAT (A6,1X,A16,1X,A6,1X,43F6.0)
+1800        FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 
       VSEN = VSEN * 0.0054545 + 0.0003
       PPSEN = PPSEN *0.002
-      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
 
         CLOSE(LUNIO)
 
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+
+      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
+          CLOSE (LUNECO)
+        
 !         ************************************************************
 !         ************************************************************
 !
@@ -2824,10 +2884,11 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 
             ! find actual grain uptake by translocation
       !JZW should not call grain before dtage grnfil ??
+      !JG linked MXNCR in nwheats_grnit
 *     ==================================================================
 
       call nwheats_grnit (CONTROL, ISWITCH,                       !Input
-     &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
+     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        pntrans)                                           !Output
@@ -2846,10 +2907,10 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 *     ==================================================================
       CALL nwheats_nuptk (SOILPROP,                               !Input
      &      carbh, cnc, EXNH4/100, EXNO3/100,                     !Input
-     &      g_uptake_source, gro_wt, MNNH4, MNNO3,                !Input
+     &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR/1000000, rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw, MXNUP,                                !Input, ! MXNUP added, 02/03/2017, btk
+     &      WFNU, xstag_nw,                                       !Input
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
        ptnup = sum_real_array (pnup, mxpart)

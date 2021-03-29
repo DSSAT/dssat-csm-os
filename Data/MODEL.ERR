@@ -151,6 +151,12 @@ Invalid format in file.
 CSM      90
 Runmode not specified or invalid.
 
+DATEC     1
+Error a new weather year is defined prior to the start of simulation.
+
+FRHARV    1
+Error in forage harvest. Mow input date is defined prior to the start of simulation.
+
 GETDSC   29
 Detail.CDE file not found.  Program will stop.
 
@@ -207,6 +213,9 @@ Environmental modification input level not found. Please correct input file.
 
 IPENV     2
 Environmental modification input level not found. Please correct input file.
+
+IPENV     3
+Environmental modification date is defined prior to the start of simulation.
 
 IPEXP     1
 Treatment input section not found.  Please add to input file.
@@ -297,6 +306,9 @@ Reported harvest date not found.  Please add to input file.
 
 IPHAR     5
 Reported harvest date after planting not found.  Please add to input file.
+
+IPHAR    6
+Harvest input date is defined prior to the start of simulation.
 
 IPHAR    10
 Error in date of harvest input.  Correct input file.
@@ -409,6 +421,9 @@ Error in amount of residue K input.  Correct input file.
 IPRICE   10
 Nursery temperature can not be less than zero. Correct input file.
 
+IPPROG    1
+Error in pest observations (FileT) date is defined prior to the start of simulation. 
+
 IPSIM     1
 Simulation control section not found.  Please add to input file.
 
@@ -430,11 +445,26 @@ Phosphorus model not enabled for this crop. Contact CSM team for more info.
 IPSIM     7
 Potassium model not enabled for this crop. Contact CSM team for more info.
 
+IPSIM     8
+Error in start simulation date input.  Check format.
+
+IPSIM     9
+Automatic planting date is defined prior to the start of simulation.
+
+IPSIM    10
+Automatic harvest date is defined prior to the start of simulation.
+
+SIMCTR    1
+Error in start simulation date input.  Check format.
+
 IPSLAN    1
 Initial soil analysis section not found.  Please add to input file.
 
 IPSLAN    2
 Soil analysis input level not found. Please correct input file.
+
+IPSLAN    3
+Soil analysis input date is defined prior to the start of simulation.
 
 IPSLAN   10
 Error in initial bulk density inputs.  Please check data.
@@ -450,6 +480,9 @@ Initial soil input section not found.  Please add to input file.
 
 IPSLIN    2
 Initial soil conditions input level not found. Please correct input file.
+
+IPSLIN    3
+Initial conditions date is lower than start simulation date.
 
 IPSLIN   10
 Error in initial soil water inputs.  Please check data.
@@ -643,8 +676,14 @@ Configuration file not found.
 PATH      3
 Path error in configuration file. Please correct file.
 
+PETASCE  50
+ASCE reference ET method is not available for this crop.
+
 PPLANT   10
 Review P parameters in species file.
+
+RADATE    1
+READA date is defined prior to the start of simulation.
 
 READA     1
 Error in experimental data (averages) file.  Could not find @TRNO header line.
@@ -693,6 +732,15 @@ Error in Weather Sensitivity Analysis Selection entry. Fix entry or batch file.
 
 SENS      1
 Error in Sensitivity Selection entry.  Fix entry or batch file.
+
+ENTFER    1
+Error in fertilizer data entry is defined prior to the start of simulation.
+
+ENTIRR    1
+Error in interactive irrigation data entry is defined prior to the start of simulation.
+
+ENTRES    1
+Error in residue data entry is defined prior to the start of simulation.
 
 SOILDY   10
 Organic carbon in soil file is zero or undefined.  Please check file.
@@ -796,6 +844,12 @@ Error in ECOTYPE entry.
 GENERI   36
 Error in cultivar entry.
 
+GENERI   37
+Missing ECOTYPE coefficient.
+
+GENERI   38
+Ecotpye not found.
+
 GENERI   42
 Input section not found.
 
@@ -811,3 +865,67 @@ Invalid format in file.
 GENERI   75
 Array size exceeded.
 
+
+MAKEFW    1
+Field level not found. Please correct input file.
+
+MAKEFW    2
+Field input section not found. Please add to input file.
+
+MAKEFW    3
+Weather station input is missing. Please add to input file.
+
+MAKEFW    4
+Error in weather station input. Correct input file.
+
+
+MAKEFW    5
+Simulation Controls level not found. Please correct input file.
+
+MAKEFW    6
+Simulation Controls section not found. Please add to input file.
+
+MAKEFW    7
+Start simulation date input is missing. Please add to input file.
+
+MAKEFW    8
+Error in Start simulation date input. Correct input file.
+
+
+MAKEFW    9
+Weather method section not found. Please add to input file.
+
+MAKEFW   10
+Weather method input is missing. Please add to input file.
+
+MAKEFW   11
+Error in weather method input. Correct input file.
+
+
+MAKEFW   12
+Planting input section not found. Please add to input file.
+
+MAKEFW   13
+Planting input is missing. Please add to input file.
+
+MAKEFW   14
+Error in planting date input. Correct input file.
+
+
+MAKEFW   15
+Start simulation date or planting date missing. Correct input file.
+
+MAKEFW   16
+Incorrect weather method option selected.  Correct input file.
+
+MAKEFW   17
+Error in weather date input. Correct input file.
+
+MAKEFW   18
+Weather file not found.  Please check file name or create file.
+
+MAKEFW   19
+Start simulation date is lower than first weather date.
+
+Y4KDOY    1
+Input date is greather than 99 years after start simulation date.

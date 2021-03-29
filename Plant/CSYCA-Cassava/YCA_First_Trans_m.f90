@@ -110,7 +110,7 @@ Module YCA_First_Trans_m
     REAL    :: DAYLPAV(0:19)           ! Daylength (6deg) av for tier   h          ! (From SeasInit)  
     REAL    :: DAYLPC                  ! Daylength (6deg),cumulative    h          ! (From SeasInit)  
     REAL    :: DAYLPREV                ! Daylength previous day         h          ! (From Output)    
-    REAL    :: DAYLS(0:PSX)             ! Daylength sensitivity,tier     %/10h      ! (From SeasInit)  
+    REAL    :: DAYLS(PSX)                  ! Daylength sensitivity,tier     %/10h      ! (From SeasInit)  
     REAL    :: DAYLST(0:PSX)            ! Daylength (6deg) at stage      h          ! (From SeasInit)  
     REAL    :: DAYSUM                  ! Days accumulated in month      #          ! (From SeasInit)  
     INTEGER :: DCDAT(DCNX)             ! Disease control application    YrDoy      ! (From SeasInit)  
@@ -175,7 +175,7 @@ Module YCA_First_Trans_m
     REAL    :: EOPT                    ! Potential evaporation,PT       mm/d       ! (From SeasInit)  
     REAL    :: EOPTC                   ! Potential evaporation,PT,cum   mm         ! (From SeasInit)  
     REAL    :: EPCC                    ! Transpiration cycle sum        mm         ! (From SeasInit)  
-    REAL    :: EPPC(0:12)              ! Transpiration cycle sum        mm         ! (From Integrate) 
+    REAL    :: EPPC(0:PSX)              ! Transpiration cycle sum        mm         ! (From Integrate) 
     REAL    :: EPSRATIO                ! Function,plant/soil evap rate  #          ! (From SeasInit)  
     REAL    :: ERRORVAL                ! Plgro-tfile values/Plgro       #          ! (From Output)    
     REAL    :: ETCC                    ! Evapotranspiration cumulative  mm         ! (From SeasInit)  
@@ -206,10 +206,10 @@ Module YCA_First_Trans_m
     INTEGER :: FNUMPREM                ! File number,measured responses #          ! (From RunInit)   
     INTEGER :: FNUMPRES                ! File number,simulated response #          ! (From RunInit)   
     INTEGER :: FNUMPSUM                ! Number used for plant summary  #          ! (From RunInit)   
-    INTEGER :: FNUMREA                 ! File number,reads.out file     #          ! (From RunInit)   
+!    INTEGER :: FNUMREA                 ! File number,reads.out file     #          ! (From RunInit)   
     INTEGER :: FNUMT                   ! Number used for T-file         #          ! (From RunInit)   
     INTEGER :: FNUMTMP                 ! File number,temporary file     #          ! (From RunInit)   
-    INTEGER :: FNUMWRK                 ! File number,work file          #          ! (From RunInit)   
+!    INTEGER :: FNUMWRK                 ! File number,work file          #          ! (From RunInit)   
     INTEGER :: FROPADJ                 ! Frequency of outputs,adjusted  d          ! (From RunInit)   
     REAL    :: FSOILH2O                ! Final soil water               cm         ! (From Integrate) 
     REAL    :: FSOILN                  ! Final soil inorganic N         kg/ha      ! (From Integrate) 
@@ -652,7 +652,7 @@ Module YCA_First_Trans_m
     REAL    :: RSFP                    ! Reserves factor,photosynthesis fr         ! (From SeasInit)  
     REAL    :: RSFPL                   ! Reserves conc.,phs.lower bound fr         ! (From SeasInit)  
     REAL    :: RSFPU                   ! Reserves conc.,phs upper bound fr         ! (From SeasInit)  
-    REAL    :: RSFRS                   ! Reserves fr.assim.for stem,std fr         ! (From SeasInit)  
+    !REAL    :: RSFRS                   ! Reserves fr.assim.for stem,std fr         ! (From SeasInit)   !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
     REAL    :: RSN                     ! Reserve N                      g/p        ! (From SeasInit)  
     REAL    :: RSNAD                   ! Reserve N                      kg/ha      ! (From SeasInit)  
     REAL    :: RSNPH                   ! Reserves N harvested           g/p        ! (From SeasInit)  
@@ -898,7 +898,7 @@ Module YCA_First_Trans_m
     REAL    :: TFG                     ! Temperature factor,growth 0-1  #          ! (From SeasInit)  
     REAL    :: TFGEM                   ! Temperature factor,germ,emrg   #          ! (From Growth)    
     !REAL    :: TFLAW                   ! Temperature factor,lf area/wt #          ! (From Growth)  !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA   
-    REAL    :: TFLFGROWTH              ! Temperature factor,leaf expansion #       ! (From Growth)  !LPM 14SEP2017 New cardinal temperatures for leaf expansion
+    !REAL    :: TFLFGROWTH              ! Temperature factor,leaf expansion #       ! (From Growth)  !LPM 14SEP2017 New cardinal temperatures for leaf expansion
     REAL    :: TFLFLIFE                ! Temperature factor,leaf life   #          ! (From Growth)
     REAL    :: TFLFSIZE                ! Temperature factor,leaf size   #          ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TFP                     ! Temperature factor,phs 0-1     #          ! (From SeasInit)  
@@ -975,7 +975,7 @@ Module YCA_First_Trans_m
     REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit)  
     REAL    :: TTGEM                   ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
     REAL    :: TTL                     ! Daily thermal time, leaves     C.d        ! LPM 19APR2016 Added to separate the thermal clock for branching and leaf development
-    REAL    :: TTLFGROWTH              ! Daily thermal time,leaf growth C.d        ! (From Growth) !LPM 14SEP2017 Adding new cardinal temperatures for leaf growth
+    !REAL    :: TTLFGROWTH              ! Daily thermal time,leaf growth C.d        ! (From Growth) !LPM 14SEP2017 Adding new cardinal temperatures for leaf growth
     REAL    :: TTLFLIFE                ! Daily thermal time,leaf life   C.d        ! (From Growth) 
     REAL    :: TTLFSIZE                ! Daily thermal time,leaf size   C.d        ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TTNEED                  ! Thermal time to start new leaf #          ! (From Growth)    
@@ -1208,6 +1208,7 @@ Module YCA_First_Trans_m
         !CHARACTER(LEN=1)   IDETL       , ISWNIT      , ISWWAT      , RNMODE      
         !CHARACTER(LEN=120) FILEIOIN    
         !CHARACTER(LEN=10)  TL10FROMI                                                          ! Character function call
+
 
     End Module YCA_First_Trans_m
     

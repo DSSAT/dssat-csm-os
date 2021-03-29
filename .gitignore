@@ -52,7 +52,6 @@ Version047.rc
 .DS_Store
 Data/.DS_Store
 Resources/RC*
-*makefile*
 build/
 nbproject/
 .metadata/
@@ -69,3 +68,4 @@ Utilities/CSMVersion.for
 Plant/ORYZA
 .vscode
 .vs
+.history/

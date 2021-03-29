@@ -20,6 +20,8 @@ C  08/12/2003 CHP Added I/O error checking and changed call to READA
 C  02/09/2007 GH  Add path for FileA
 !  04/02/2008 US/CHP Added P model
 !  08/28/2009 CHP added EDAT, EDAP 
+C  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C=======================================================================
 
       SUBROUTINE TEFF_OPHARV (CONTROL, ISWITCH, 

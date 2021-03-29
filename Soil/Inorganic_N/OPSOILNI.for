@@ -21,8 +21,8 @@ C  08/20/2002 GH  Modified for Y2K
 !     HJ added CNTILEDR
       SUBROUTINE OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
-     &    FertData, NH4, NO3, 
-     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
+     &    FertData, NH4, NO3,
+     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, TUREA, CNOX, TOTAML)
 !-----------------------------------------------------------------------
       USE ModuleDefs
 !     VSH
@@ -40,7 +40,7 @@ C  08/20/2002 GH  Modified for Y2K
       INTEGER NAPFER(NELEM)
 
       REAL AMTFER(NELEM)
-      REAL TNH4, TNH4NO3, TNO3
+      REAL TNH4, TNH4NO3, TNO3, TUREA
       REAL NO3(NL), NH4(NL)
 
       LOGICAL FEXIST
@@ -125,7 +125,7 @@ C-----------------------------------------------------------------------
           CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-            WRITE(NOUTDN,'(A1,T128,A)',ADVANCE='NO') 
+            WRITE(NOUTDN,'(A1,T136,A)',ADVANCE='NO') 
      &        "!","NO3 (ppm) at soil dep. (cm):"
           
             SPACES = (N_LYR - 4) * 8 + 4
@@ -138,14 +138,14 @@ C-----------------------------------------------------------------------
      &       '(T',SPACES,'X,"Total Inorganic N @dep(ppm):")'
             WRITE(NOUTDN, FRMT2)
 
-            WRITE(NOUTDN,'("!",T124,30A8)')
+            WRITE(NOUTDN,'("!",T132,30A8)')
      &        (SoilProp%LayerText(L),L=1,N_LYR), 
      &        (SoilProp%LayerText(L),L=1,N_LYR),
      &        (SoilProp%LayerText(L),L=1,N_LYR)
 
             WRITE (NOUTDN,100, ADVANCE='NO')
   100       FORMAT('@YEAR DOY   DAS  NAPC  NI#M',
-     &       '    NIAD    NITD    NHTD    NMNC    NITC    NDNC',
+     &       '    NIAD    NITD    NHTD   NURTD    NMNC    NITC    NDNC',
 C-GH &       '    NIMC    AMLC   NNMNC    NUCM    NLCC    TDFC')
      &       '    NIMC    AMLC   NNMNC    NUCM    NLCC    TDNC')
 
@@ -164,7 +164,7 @@ C-GH &       '    NIMC    AMLC   NNMNC    NUCM    NLCC    TDFC')
             ENDIF
 
             WRITE (NOUTDN,310) YEAR, DOY, DAS, 0, 
-     &       0, TNH4NO3, TNO3, TNH4, 
+     &       0, TNH4NO3, TNO3, TNH4, TUREA,
      &       0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
      &       0.0, 0.0, 0.0,                           !HJ 0.0
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
@@ -200,12 +200,12 @@ C-----------------------------------------------------------------------
             WRITE (NOUTDN,310) YEAR, DOY, DAS, NINT(AMTFER(N)), 
 !     &       NAPFER, TLCH, TNH4NO3, NINT(THUMN), TNO3, TNH4, 
 !             HJ added CNTILEDR 
-     &       NAPFER(N), TNH4NO3, TNO3, TNH4, 
+     &       NAPFER(N), TNH4NO3, TNO3, TNH4, TUREA,
      &       CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, CNETMINRN,
      &       CNUPTAKE, CLeach, CNTILEDR,
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR), 
      &       (NO3(I)+NH4(I),I=1,N_LYR)
-  310       FORMAT(1X,I4,1X,I3.3,3(1X,I5),3F8.1,
+  310       FORMAT(1X,I4,1X,I3.3,3(1X,I5),4F8.1,
      &       10F8.2,2F8.1, !HJ modified
      &       30F8.2) 
           END IF   ! VSH
@@ -214,7 +214,7 @@ C-----------------------------------------------------------------------
           IF (FMOPT == 'C') THEN 
             CALL CsvOutSoilNi(EXPNAME, RUN, CONTROL%TRTNUM, 
      &        CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
-     &        N, AMTFER, NAPFER, CLEACH ,TNH4NO3,TNO3,TNH4, N_LYR, 
+     &        N, AMTFER, NAPFER, CLEACH ,TNH4NO3,TNO3,TNH4, N_LYR,
      &        NO3, NH4, CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, 
      &        CNETMINRN, CNUPTAKE,
      &        vCsvlineSoilNi, vpCsvlineSoilNi, vlngthSoilNi)

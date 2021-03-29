@@ -427,8 +427,9 @@
                         ! Potential leaf weight increase.
             !LPM 16DEC2016 GROLFADJ is defined by the new estimation of leaf area which is considering water stress (WFG), carbohydrates available (AFLF) and nitrogen restrictions (NFLF2)
             IF (LAWL(1) > 0.0) GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
-            
-            GROSTADJ = AMIN1(GROST,GROSTADJ)
+            !LPM 09OCT2019 Adding the WFG at the same time than the restrictions due to N and assimilates (selecting the most limiting)
+            ! No water stress factor added to the roots
+            GROSTADJ = AMIN1(GROST,GROSTADJ, (GROSTP * WFG))
             RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)
             RTRESPADJ = AMIN1(RTRESP,RTRESPADJ)    
             RTWTGADJ = AMIN1(RTWTG,RTWTGADJ)

@@ -22,7 +22,7 @@ C=======================================================================
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS, ISWWAT, ISWNIT, RNMODE
       CHARACTER*2   CROP
       CHARACTER*30  FILEIO
-      CHARACTER*120 FILEIOCS
+      CHARACTER*250 FILEIOCS
 
       INTEGER DYNAMIC, RUN, TN, RUNI, RN, ON
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY

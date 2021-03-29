@@ -12,6 +12,8 @@ C  02/19/2003 CHP Converted dates to YRDOY format
 !  02/20/2012 CHP/US Modify temperature response
 !  12/06/2016 CHP/US Add check for small LAI during grainfilling - triggers maturity
 !  04/24/2019 US/JF/CHP Replace G4, G5 with THOT, TCLDP, TCLDF
+C  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C=======================================================================
 
       SUBROUTINE TEFF_PHENOL (CONTROL, ISWITCH, 
@@ -157,7 +159,7 @@ C=======================================================================
 
       LTRANS = .FALSE.
       PRESOW = .TRUE. 
-      CALL TEFF_RiceInit(
+      CALL TEFF_Init(
      &    PLME, TAGE, YRDOY, YRPLT, YRSIM, YRSOW,         !Input
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
@@ -506,10 +508,9 @@ C=======================================================================
           ENDIF
           CUMTMP = CUMTMP + TN
           IF (TWILEN .GT. P2O) THEN
-          !   RATEIN = 1.0/(136.0+P2R*(HRLT-P2O))
-             RATEIN = 1.0/(45.0+P2R*(TWILEN-P2O))       !TEF    136 (RICE)
+             RATEIN = 1.0/(45.0+P2R*(TWILEN-P2O))
           ELSE
-             RATEIN = 1.0 / 45.0 ! Tef
+             RATEIN = 1.0 / 45.0
           ENDIF
 
 !          IF (ITRANS .NE. 1 .AND. DOY .EQ. ITDATE) THEN
@@ -945,7 +946,7 @@ C=======================================================================
 
 
 C=======================================================================
-C  TEFF_RiceInit, Subroutine
+C  TEFF_Init, Subroutine
 C
 C  Seasonal initialization
 C-----------------------------------------------------------------------
@@ -956,7 +957,7 @@ C  02/19/2003 CHP Converted dates to YRDOY format
 C-----------------------------------------------------------------------
 C  Called : TEFF_PHENOL
 C=======================================================================
-      SUBROUTINE TEFF_RiceInit(
+      SUBROUTINE TEFF_Init(
      &    PLME, TAGE, YRDOY, YRPLT, YRSIM, YRSOW,         !Input
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
@@ -1054,7 +1055,7 @@ C=======================================================================
       END SELECT
 
       RETURN
-      END SUBROUTINE TEFF_RiceInit
+      END SUBROUTINE TEFF_Init
 
 C=======================================================================
 
@@ -1102,7 +1103,7 @@ C=======================================================================
 C=======================================================================
 C  TEFF_IPPHEN, Subroutine
 C
-C  Reads FILEIO for RICE routine
+C  Reads FILEIO for TEFF routine
 C  05/07/2002 CHP Written
 C  08/12/2003 CHP Added I/O error checking
 C=======================================================================

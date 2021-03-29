@@ -11,6 +11,8 @@ C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
 C  04/02/2008 US/CHP Added P and K models
 C  02/25/2012 JZW PHINT from CUL file (remove from SPE)
+!  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
@@ -170,8 +172,7 @@ C=======================================================================
 
       STMWT    = 0.001
       LEAFNO   = 0
-      SEEDRV   = G2  ! Rice
-      SEEDRV   = 0.0003  !Tef
+      SEEDRV   = 0.0003  
       RANC     = 0.022
       SEEDNI   = 0.0
       GPP    = 1.0
@@ -182,10 +183,8 @@ C=======================================================================
       LAI      = 0.0  !chp 8/12/2003 - prevents early N stress
       MAXLAI   = 0.0
       PTF      = 0.0
-      PLA      = 0.5 !Rice
-      MPLA     = 0.5 !Rice
-      PLA      = 0.1 !Tef
-      MPLA     = 0.1 !Tef
+      PLA      = 0.1
+      MPLA     = 0.1
       MPLAG    = 0.0
       TPLAG    = 0.0
       SLAN     = 0.0    
@@ -373,8 +372,7 @@ C=======================================================================
             CUMDEP = 0.0
             DO L = 1, NLAYR
               CUMDEP = CUMDEP + DLAYR(L)
-              RLV(L) = AMIN1(0.20*PLANTS/DLAYR(L),0.5) ! Rice
-              RLV(L) = AMIN1(0.02*PLANTS/DLAYR(L),0.5) !Tef
+              RLV(L) = AMIN1(0.02*PLANTS/DLAYR(L),0.5)
               IF (CUMDEP .GT. RTDEP) then
                 EXIT
               ELSE
@@ -416,12 +414,9 @@ C
 C
 C         Lower rate for varieties with lower grain number
 C
-          IF (G1 .LT. 50.0) THEN
-             RGFILL = G2/P5*(G1/50.0)
-          ENDIF !Rice
           IF (G1 .LT. 7500.0) THEN
              RGFILL = G2/P5*(G1/7500.0) !TEF X100
-          ENDIF!Tef
+          ENDIF
           
           MFILL   = 0.0
           TFILL   = 0.0
@@ -437,17 +432,14 @@ C
           ENDIF
 
           TILNO   = AMIN1 (TILNO,TILRAT)
-          SWMIN   = 35.0*G2! Rice
-          SWMIN   = 350.0*G2! Tef
+          SWMIN   = 350.0*G2
           IF (STMWT .LT. SWMIN) THEN
              SWMIN = STMWT          
           ENDIF                     
 
           PANIWT  = 0.0
-          G1FAC   = AMIN1 (1.0,G1/50.0)!Rice
-          G1FAC   = AMIN1 (1.0,G1/7500.0)!Tef
-          PANFAC  = 0.65*G1FAC  ! Rice
-          PANFAC  = 0.45*G1FAC  !Tef
+          G1FAC   = AMIN1 (1.0,G1/7500.0)
+          PANFAC  = 0.45*G1FAC 
           IF (STRHEAT .LT. 1.0) THEN
              PANFAC = PANFAC * STRHEAT
           ENDIF
@@ -599,8 +591,7 @@ CCCCC-PW
       RUEA    = 5.85   !6.85      UPS UH 03/21/03
       RUEA    = 3.2   ! Tef
       RUEX    = 0.65
-      PCARB   = RUEA*PAR**RUEX/EPLANTS*(1.0-AMIN1(Y1,Y2)) ! Rice
-      PCARB   = RUEA*PAR/EPLANTS*(1.0-AMIN1(Y1,Y2)) !Tef
+      PCARB   = RUEA*PAR/EPLANTS*(1.0-AMIN1(Y1,Y2)) 
       !
       ! PCARB2  = 2.95*PAR/EPLANTS*(1-AMAX1(Y1,Y2))
       !
@@ -608,8 +599,7 @@ CCCCC-PW
       !
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
       PCARB = PCARB*PCO2
-      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-26.0)**2   !need to lower so temp is 10 for prft=0 mar17 ! RICE
-      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-20.0)**2   !need to lower so temp is 10 for prft=0 mar17 ! TEF
+      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-20.0)**2   !need to lower so temp is 10 for prft=0 mar17 
       PRFT  = AMAX1 (PRFT,0.0)
       IF (PRFT .GT. 1.0) THEN
           PRFT = 1.0                                
@@ -709,7 +699,7 @@ CCCCC-PW
       IF (ISTAGE .LT. 4) THEN
          LEAFNO = AMAX1 (CUMPH,1.0)
       ENDIF
-      BF    = 0.18     !tef                              ! 0.12 rice
+      BF    = 0.18
       XTN   = -9.678*EXP(-BF*CUMPH)
       A     = 3800.0       !3800
 
@@ -720,8 +710,7 @@ CCCCC-PW
           !
           ! Need to incorporate shock effect
           !
-          MGROLF = MPLAG*0.0055 !Rice
-          MGROLF = MPLAG*0.0060 !Tef
+          MGROLF = MPLAG*0.0060
           GRORT  = CARBO - MGROLF
           GRORT  = AMAX1 (GRORT,CARBO*0.35)
           IF (SEEDRV .GT. 0.0) THEN
@@ -731,10 +720,8 @@ CCCCC-PW
              SEEDRV = 0.0
              MGROLF = CARBO*0.65
              GRORT  = CARBO - MGROLF
-             MPLAG  = MGROLF/0.0055*TSHOCK*
-     &		        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) ! Rice
              MPLAG  = MGROLF/0.0060*TSHOCK*
-     &		        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Tef
+     &		        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
           ENDIF
           IF (CUMPH .LE. 5.0/G3 .OR. TSHOCK .LT. 1.0) THEN !G3 not needed
              MPLA  = MPLA  + MPLAG
@@ -747,17 +734,13 @@ CCCCC-PW
              IF (MGROLF .GT. 0.60*CARBO) THEN
                 MGROLF = 0.60*CARBO
                 MPLAG  = MGROLF/0.0060*
-     &			       AMIN1 (TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Rice
-                MPLAG  = MGROLF/0.0060*
-     &			       AMIN1 (TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Tef
+     &			       AMIN1 (TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
              END IF
              GRORT = 0.25*CARBO
              IF (MGROLF .LT. (0.30*CARBO*TSHOCK)) THEN
                 MGROLF = 0.35*TSHOCK*CARBO
                 MPLAG  = MGROLF/0.0060*
-     &			       AMIN1 (TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Rice
-                MPLAG  = MGROLF/0.0060*
-     &			       AMIN1 (TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Tef
+     &			       AMIN1 (TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) 
              ENDIF
              MGROSTM = MGROLF*0.85   !0.15
              TCARBO  = CARBO - MGROLF - GRORT - MGROSTM
@@ -792,15 +775,12 @@ CCCCC-PW
           MPLAG  = A/CUMPH*(-BF)*XTN*EXP(XTN)*TI*
      &             AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)*TSHOCK
           XPLAG1 = MPLAG
-          MGROLF = MPLAG*0.0060 !Rice
-          MGROLF = MPLAG*0.0060 !Tef
+          MGROLF = MPLAG*0.0060
           IF (CUMPH .LE. 6.0/G3) THEN ! G3
              IF (MGROLF .GT. CARBO*0.60) THEN
                 MGROLF = CARBO*0.60
                 MPLAG  = MGROLF/0.0060*TSHOCK*
-     &		           AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Rice
-                MPLAG  = MGROLF/0.0060*TSHOCK*
-     &		           AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Tef
+     &		           AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
              ENDIF
              MGROSTM = MGROLF * 0.15
              GRORT   = CARBO  - MGROLF - MGROSTM
@@ -815,22 +795,17 @@ CCCCC-PW
              IF (MGROLF .GT. 0.45*CARBO) THEN
                 MGROLF = 0.45*CARBO
                 MPLAG  = MGROLF/0.0060*TSHOCK*
-     &                   AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Rice
-                MPLAG  = MGROLF/0.0060*TSHOCK*
-     &                   AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Tef
+     &                   AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
              ENDIF
              MGROSTM = MGROLF*0.85   !0.15
              TCARBO  = CARBO - MGROLF - MGROSTM - GRORT
-             GRF     = 0.25*CARBO*G3*AGEFAC ! Rice
-             GRF     = 0.15*CARBO*(-0.0012*PLANTS+1.6)*G3*AGEFAC ! Tef 0.25
+             GRF     = 0.15*CARBO*(-0.0012*PLANTS+1.6)*G3*AGEFAC 
              IF (TCARBO .LT. GRF) THEN
                !TCARBO  = TCARBO  + GRF
                 MGROLF  = MGROLF  - (0.25*GRF)!0.5
                 MGROSTM = MGROSTM - (0.25*GRF)!0.5
-                MPLAG   = MGROLF/0.0055*TSHOCK*
-     &			        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Rice
                 MPLAG   = MGROLF/0.0060*TSHOCK*
-     &			        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)!Tef 
+     &			        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
                 TCARBO  = CARBO - MGROLF - MGROSTM - GRORT
              END IF
              IF (TCARBO .GT. 0.0) THEN
@@ -861,34 +836,24 @@ CCCCC-PW
           MPLAG   = A/CUMPH*(-BF)*XTN*EXP(XTN)*TI*
      &              AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) +
      &              (0.65*TCARB1)/0.0055
-         ! GRORT   = CARBO*0.15 !RICE
-          GRORT   = CARBO*(0.20-SWFAC*0.05)  !TEF
-          MGROLF  = MPLAG*0.0060 !Rice
-          MGROLF  = MPLAG*0.0060 !Tef
-  !       MGROSTM = 0.0015*DTT*AMIN1(TURFAC,TEMF)+0.35*TCARB1!Rice
-  !       MGROSTM = AMIN1 (MGROSTM,0.65*CARBO) !Rice
-          MGROSTM = 0.0015*DTT*AMIN1(TURFAC,TEMF)+0.35*TCARB1 !Tef
-          MGROSTM = AMIN1 (MGROSTM,0.65*CARBO) !Tef
+          GRORT   = CARBO*(0.20-SWFAC*0.05)
+          MGROLF  = MPLAG*0.0060 
+          MGROSTM = 0.0015*DTT*AMIN1(TURFAC,TEMF)+0.35*TCARB1 
+          MGROSTM = AMIN1 (MGROSTM,0.65*CARBO) 
           IF (MGROLF .GT. 0.35*CARBO .AND. SUMDTT .GT. 249.0) THEN
            MGROLF = 0.35*CARBO
- !          MPLAG  = MGROLF/0.0060*
- !   &        		AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) ! Rice
             MPLAG  = MGROLF/0.0060*
-     &        		AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Tef
+     &        		AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
           END IF   
           TILCAR = CARBO - MGROLF - MGROSTM - GRORT
-          GRF     = 0.15*CARBO*(-0.0012*PLANTS+1.6)*G3*AGEFAC ! Tef 0.25
+          GRF     = 0.15*CARBO*(-0.0012*PLANTS+1.6)*G3*AGEFAC
           IF (GRF .GE. TILCAR .AND. GRF .LE. CARBO-GRORT) THEN 
-             !TILCAR  = (MGROSTM*0.5+MGROLF*0.3)*G3    !FOR RICE!
-           ! TILCAR  = 0.0    !FOR TEF
-             MGROLF  = (MGROLF*0.5)/G3   ! REDUCED FOR TEF WAS 0.7 FOR RICE
+             MGROLF  = (MGROLF*0.5)/G3 
              MGROSTM  = (MGROSTM*0.5)/G3
              TILCAR = CARBO - GRORT - MGROLF - MGROSTM
            ! MGROSTM = CARBO - GRORT - MGROLF - TILCAR
-   !          MPLAG   = MGROLF/0.0060*
-   ! &		         AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Rice
              MPLAG   = MGROLF/0.0060*
-     &		         AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) !Tef
+     &		         AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
           END IF 
           TCARBO = TILCAR
          !GRF    = TILCAR     !US
@@ -1200,12 +1165,9 @@ C
       !
       SLFC   = 1.0
    
-      IF (LAI .GT. 5.0 .AND. RTR. LT. 1.5) THEN
-          SLFC = AMAX1 (0.995,1.0-0.015*(LAI-5.0))
-      ENDIF  !Rice
       IF (LAI .GT. 5.0 ) THEN
           SLFC = AMAX1 (0.900,1.0-0.015*(LAI-5.0))
-      ENDIF  ! Tef
+      ENDIF  
       IF (ISTAGE .GE. 4 .AND. LAI .GT. 2.0) THEN
           SLFC = AMAX1 (0.825,1.0-0.02*LAI)
       ENDIF

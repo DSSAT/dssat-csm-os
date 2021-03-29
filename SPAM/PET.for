@@ -65,7 +65,7 @@ C=======================================================================
       YRDOY = CONTROL % YRDOY
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
-          SELECT CASE (MEEVP)
+      SELECT CASE (MEEVP)
 !          !Penman-Monteith reference ET based on the ASCE Standardized
 !          !Reference Evapotranspiration Equation
 ! CHP 2018-07-20 A and G methods require changes to species file.
@@ -123,7 +123,7 @@ C=======================================================================
      &        ET_ALB, SRAD, TMAX, TMIN, XHLAI,          !Input
      &        EO)                                       !Output
 !         ------------------------
-          END SELECT
+      END SELECT
 
       RETURN
       END SUBROUTINE PET

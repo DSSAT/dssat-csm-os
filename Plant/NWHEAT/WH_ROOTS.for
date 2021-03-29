@@ -5,6 +5,8 @@ C    this is a new routine for senthold's stuff.
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  02/28/2012  FSR adapted from nwheats
+!  01/21/2020  JG moved some CUL parameters to ECO file
+!  07/24/2020  JG moved ozone parameters to ECO file
 !-----------------------------------------------------------------------
 C  Called by: nwheats_crppr
 C  Calls    : integer nwheats_level, nwheats_ad_rtloss
@@ -69,12 +71,94 @@ C=======================================================================
       real swdep(NL)    ! water content by soil layer (mm) 
       real xstag_nw     ! growth stage index for use in plant nitrogen
       REAL TABEX
+
+      ! JG added for ecotype file
+      INTEGER         DYNAMIC         
+      CHARACTER*12    FILEE 
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased fopr large ecotype file
+      CHARACTER*16    ECONAM
+      CHARACTER*6     ECONO 
+      CHARACTER*6     ERRKEY   
+      INTEGER     ERRNUM
+      INTEGER     ISECT
+      INTEGER     PATHL
+      INTEGER     LNUM
+      INTEGER     LUNECO
+      INTEGER     NOUTDO
+      CHARACTER*80    PATHER 
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
+      REAL        P2AF,STEMN,MXNUP,MXNCR,WFNU,PNUPR,EXNO3,MNNO3,EXNH4
+      REAL        MNNH4,INGWT,INGNC,FREAR,MNNCR,GPPSS,GPPES,MXGWT
+      REAL        MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,FOZ2,SFOZ1,SFOZ2
+      ! JG end for ecotype variables
       
 !     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
       YRDOY= CONTROL % YRDOY
 
+!  JG added section to read ecotype file
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+!----------------------------------------------------------------------
+!         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
+! ---------------------------------------------------------------------
+      IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
 
+!       Do this just once in RUNINIT
+        IF (DYNAMIC .EQ. RUNINIT) THEN
+          CALL GETLUN('OUTO', NOUTDO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+          CLOSE (LUNECO)
+        ENDIF
+      ENDIF
+!  JG end of ecotype addition
+      
       nlayr_nw = count_of_real_vals (dlayr_nw, NL)
  
       do L = 1, nlayr_nw
@@ -228,10 +312,95 @@ C=======================================================================
       PARAMETER   (sm2ha = 0.0001)  ! from NWheat.
       REAL        sm2smm
       PARAMETER   (sm2smm = 1000000) ! from NWheat.
+      
+      ! JG added for ecotype file
+      INTEGER         DYNAMIC         
+      CHARACTER*12    FILEE 
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      CHARACTER*6     ECONO 
+      CHARACTER*6     ERRKEY   
+      INTEGER     ERRNUM
+      INTEGER     ISECT
+      INTEGER     PATHL
+      INTEGER     LNUM
+      INTEGER     LUNECO
+      INTEGER     NOUTDO
+      CHARACTER*80    PATHER 
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
+      REAL        P2AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR
+      REAL        WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC
+      REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+      REAL        FOZ1,FOZ2,SFOZ1,SFOZ2
+      ! JG end for ecotype variables
+      
 !     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
       YRDOY= CONTROL % YRDOY
- 
+
+!  JG added section to read ecotype file
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+!----------------------------------------------------------------------
+!         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
+! ---------------------------------------------------------------------
+      IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
+
+!       Do this just once in RUNINIT
+        IF (DYNAMIC .EQ. RUNINIT) THEN
+          CALL GETLUN('OUTO', NOUTDO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+          CLOSE (LUNECO)
+        ENDIF
+      ENDIF
+!  JG end of ecotype addition
+
       ! FIND THE NUMBER OF LAYERS WITH ROOTS
       ! ------------------------------------
       nrlayr = nwheats_level (rtdep_nw, dlayr_nw, NL)
@@ -555,16 +724,45 @@ C=======================================================================
       data rtrate (fallow) / 0.0 /
       data rtrate (sowing) / 0.0 /
 
+      ! JG added for ecotype file
+      INTEGER         DYNAMIC         
+      CHARACTER*12    FILEE 
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      CHARACTER*6     ECONO 
+      CHARACTER*6     ERRKEY   
+      INTEGER     ERRNUM
+      INTEGER     ISECT
+      INTEGER     PATHL
+      INTEGER     LNUM
+      INTEGER     LUNECO
+      INTEGER     NOUTDO
+      CHARACTER*80    PATHER 
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
+      REAL        P2AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,STEMN,MXNUP,MXNCR
+      REAL        WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC
+      REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB
+      REAL        FOZ1,FOZ2,SFOZ1,SFOZ2
+      ! JG end for ecotype variables
+      
       TYPE (ControlType) CONTROL
       TYPE (SoilType) SOILPROP
       ! nem (1) = 0.869; nem(2)= 0.869; nem(3)=0.657 ; nem(4)=0.507;   
       ! nem(5) = 0.333; nem(6)= 0.333; nem(7)= 0.333; nem(8) = 0.333;
       ! nem(9) = 0.333
       nem = SOILPROP % WR 
+
 C----------------------------------------------------------------------
 C            DYNAMIC = RUNINIT OR SEASINIT
-C----------------------------------------------------------------------
-      IF(CONTROL%DYNAMIC.EQ.RUNINIT.OR.CONTROL%DYNAMIC.EQ.SEASINIT) THEN
+C----------------------------------------------------------------------     
+      DYNAMIC = CONTROL % DYNAMIC  ! JG added to read ecotype file
+!      IF(CONTROL%DYNAMIC.EQ.RUNINIT.OR.CONTROL%DYNAMIC.EQ.SEASINIT) THEN
+      IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
         ! JZW add the following initial value
 !        rtdep_nw = 0.
 !        nrlayr = 1.
@@ -573,11 +771,63 @@ C----------------------------------------------------------------------
 !        sw_factor = 1.
 !        optfr = 1.
 !        new_depth = 0.
+
+!  JG added section to read ecotype file
+!       Do this just once in RUNINIT
+        ELSEIF (DYNAMIC .EQ. RUNINIT) THEN  ! changed IF to ELSEIF
+          CALL GETLUN('OUTO', NOUTDO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+          CLOSE (LUNECO)
+!        ENDIF
+!      ENDIF
+!  JG end of ecotype addition
+
 C----------------------------------------------------------------------
 C                 DYNAMIC = RATE
 C----------------------------------------------------------------------
       ! JZW add the following. These should be called in the DYNAMIC = INTEGR
-      ELSEIF(CONTROL % DYNAMIC .EQ. RATE) THEN
+      ELSEIF(DYNAMIC.EQ.RATE) THEN
          ! increase root depth   ! sowing     = 8, stgdur(8) = 2
          if (stgdur(sowing).eq.1 .and. istage.eq.sowing) then
              ! initialise root depth
@@ -610,7 +860,7 @@ C----------------------------------------------------------------------
 C             DYNAMIC = INTEGR
 C----------------------------------------------------------------------
 
-      ELSEIF(CONTROL % DYNAMIC.EQ.INTEGR) THEN
+      ELSEIF(DYNAMIC.EQ.INTEGR) THEN
 *- Implementation Section ----------------------------------
  
              ! increase root depth   ! sowing     = 8, stgdur(8) = 2
@@ -689,7 +939,7 @@ cnh senthold
 C----------------------------------------------------------------------
 C                     DYNAMIC = OUTPUT
 C----------------------------------------------------------------------
-      ELSEIF(CONTROL % DYNAMIC.EQ.OUTPUT) THEN
+      ELSEIF(DYNAMIC.EQ.OUTPUT) THEN
 
       ! {no procedures to date}
 
@@ -777,8 +1027,93 @@ C=======================================================================
       CHARACTER*8     ERRKEY
       PARAMETER       (ERRKEY='WH_ROOTS') 
 
+      ! JG added for ecotype file
+      INTEGER         DYNAMIC         
+      CHARACTER*12    FILEE 
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      CHARACTER*6     ECONO 
+      INTEGER     ERRNUM
+      INTEGER     ISECT
+      INTEGER     PATHL
+      INTEGER     LNUM
+      INTEGER     LUNECO
+      INTEGER     NOUTDO
+      CHARACTER*80    PATHER 
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
+      REAL        P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR
+      REAL        WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC
+      REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+      REAL        FOZ1,FOZ2,SFOZ1,SFOZ2
+      ! JG end for ecotype variables
+      
       TYPE (ControlType) CONTROL
       TYPE (SoilType) SOILPROP
+
+!  JG added section to read ecotype file
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+!----------------------------------------------------------------------
+!         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
+! ---------------------------------------------------------------------
+      IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
+
+!       Do this just once in RUNINIT
+        IF (DYNAMIC .EQ. RUNINIT) THEN
+          CALL GETLUN('OUTO', NOUTDO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+          CLOSE (LUNECO)
+        ENDIF
+      ENDIF
+!  JG end of ecotype addition
+
+
 *- Implementation Section ----------------------------------
 !**!  nrlayr = nwheats_level (rtdep_nw)
       nrlayr = nwheats_level(rtdep_nw,dlayr_nw,NL)

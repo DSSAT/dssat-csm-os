@@ -10,6 +10,8 @@ C                 Written
 C  08/07/1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  12/16/2004 US  Changed dimension for NPER, XST to 16
+C  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C-----------------------------------------------------------------------
 C  Called : TRNSP GROSUB
 C  Calls  : None

@@ -145,7 +145,6 @@
 !*****************************************************************************
 !       compare with Shcherbak method
         ratio(L) = dD0_DayCent(L) / dD0_fc(L)
-!        write(555,'(i5,4f10.4)') L,SW(L),dD0_fc(L), dD0_chp(L), ratio(L)
       enddo
 
       dD0 = dD0_DayCent
