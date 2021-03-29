@@ -23,18 +23,27 @@
       
       ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
       ! CHP 09/28/09 - account for planting date >> simulation date.
+      !LPM 07/17/20 - account for simulation date when is a year before planting date
+      !Avoid wrong value of yeardoyharf
       IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
-          PLYEAR = YEAR
-          PLYEARTMP = YEAR
+          IF (YEAR < PLYEARREAD) THEN
+              PLYEAR = PLYEARREAD
+              PLYEARTMP = PLYEARREAD
+          ELSE
+              PLYEAR = YEAR
+              PLYEARTMP = YEAR
+          ENDIF
       ENDIF
       
       ! Check final harvest date for seasonal runs        
-      CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+!      CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+      CALL YR_DOY(YEARDOYHARF,HYEAR,HDAY)
       PLTOHARYR = HYEAR - PLYEARREAD
       ! Upgrade harvest date for seasonal and sequential runs
       yeardoyharf = (plyear+pltoharyr)*1000 +hday
       
-      IF (IPLTI /= 'A') THEN
+!     IF (IPLTI /= 'A') THEN
+      IF (IPLTI /= 'A' .AND. IPLTI /= 'F') THEN
           IF (PLDAY >= DOY) THEN
               PLYEARDOYT = PLYEARTMP*1000 + PLDAY
           ELSEIF (PLDAY < DOY) THEN

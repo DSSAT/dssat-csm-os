@@ -21,7 +21,7 @@
         
     ! Harvesting conditions
         !IF (IHARI == 'A' .AND. CUMDU >= PSTART(MSTG)) THEN !LPM 04MAR15 MSTG TO PSX
-        IF (IHARI == 'A' .AND. CUMDU >= PSTART(PSX)) THEN
+        IF (IHARI == 'A' .AND. DABR >= PSTART(PSX)) THEN !LPM 23JUL19 Use DABR instead of CUMDU
             ! Here need to check out if possible to harvest.
             IF (YEARDOY >= HFIRST) THEN
                 IF (SW(1) >= SWPLTL.AND.SW(1) <= SWPLTH) YEARDOYHARF=YEARDOY
@@ -32,10 +32,10 @@
             ! (Change YEARDOYHARF to more something more appropriate)
         ENDIF
             
-        ! Determine if crop failure
-        IF (DAP >= 90 .AND. GESTAGE < 1.0) THEN
+        ! Determine if crop failure LPM02OCT2019 Modified to 30 DAP
+        IF (DAP >= 30 .AND. GESTAGE < 1.0) THEN
             CFLFAIL = 'Y'
-            WRITE (Message(1),'(A40)') 'No germination within 90 days of sowing '
+            WRITE (Message(1),'(A40)') 'No germination within 30 days of sowing '
             CALL WARNING(1,'CSYCA',MESSAGE)
         ENDIF
         IF (IHARI /= 'A'.AND.MDAT >= 0.AND.DAP-MDAP >= 300) THEN
@@ -57,8 +57,10 @@
         ENDIF
         ! Determine if to harvest
         CFLHAR = 'N'
-        IF (IHARI == 'R'.AND.YEARDOYHARF == YEARDOY .OR. IHARI == 'D'.AND.YEARDOYHARF == DAP .OR. IHARI == 'G'.AND. &
-            YEARDOYHARF <= BRSTAGE .OR. IHARI == 'A'.AND.YEARDOYHARF == YEARDOY .OR. IHARI == 'M'.AND.DABR >=  &   
+        !LPM 12SEP2019 modified YEARDOY >= YEARDOYHARF instead of YEARDOYHARF ==YEARDOY
+        !to allow harvesting nad summary data for leap years
+        IF (IHARI == 'R'.AND.YEARDOY >= YEARDOYHARF.OR. IHARI == 'D'.AND.YEARDOYHARF == DAP .OR. IHARI == 'G'.AND. &
+            YEARDOYHARF <= BRSTAGE .OR. IHARI == 'A'.AND.YEARDOY >= YEARDOYHARF.OR. IHARI == 'M'.AND.DABR >=  &   
             PSTART(PSX)) THEN 
             !YEARDOYHARF <= BRSTAGE .OR. IHARI == 'A'.AND.YEARDOYHARF == YEARDOY .OR. IHARI == 'M'.AND.CUMDU >=  & !LPM 24APR2016 Using DABR instead of CUMDU
             !PSTART(MSTG)) THEN !LPM 04MAR15 MSTG TO PSX
@@ -77,7 +79,7 @@
                 
         IF (CFLFAIL == 'Y' .OR. CFLHAR == 'Y') THEN
                     
-            IF (CFLFAIL == 'Y' .AND. BRSTAGE <= PSX+2 .AND. BRSTAGE > 0 ) THEN       
+            IF (CFLFAIL == 'Y' .AND. BRSTAGE <= PSX+2 .AND. BRSTAGE >= 0 ) THEN       
                 STGYEARDOY(PSX+2) = YEARDOY
                 TMAXPAV(PSX+2) = TMAXPAV(INT(BRSTAGE))
                 TMINPAV(PSX+2) = TMINPAV(INT(BRSTAGE))

@@ -12,7 +12,7 @@
 # function in this manner:
 # SET_COMPILE_FLAGS(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" C REQUIRED
 #                   "-Wall"     # GNU
-#                   "-warn all" # Intel
+#                   "-warn all,noexternal" # Intel
 #                  )
 # The optin "-Wall" will be checked first, and if it works, will be
 # appended to the CMAKE_C_FLAGS variable.  If it doesn't work, then

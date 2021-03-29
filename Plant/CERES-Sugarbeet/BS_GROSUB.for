@@ -1149,26 +1149,29 @@
                ETGT = 0.0
               ENDIF
 
-          GRORT = G3*PCO2*ETGT/PLTPOP*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
-              GROSTM = 0.04*DTT*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
-              GROEAR = CARBO-GRORT-GROSTM
-              !GROEAR = 0.10*DTT*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
-              !GROSTM = GROEAR*0.40
-              !GRORT = CARBO-GROEAR-GROSTM
+!         CHP 2020-07-31
+          IF (CARBO .LT. 1.E-6) THEN
+            GRF   = 0.0                  
+            GROEAR  = 0.0
+            GROSTM = 0.0
+            GRORT = 0.0
+
+          ELSE
+            GRORT = G3*PCO2*ETGT/PLTPOP*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
+            GROSTM = 0.04*DTT*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
+            GROEAR = CARBO-GRORT-GROSTM
+            !GROEAR = 0.10*DTT*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
+            !GROSTM = GROEAR*0.40
+            !GRORT = CARBO-GROEAR-GROSTM
               
-!chp 2019-05-20
-!             IF (GRORT .LE. CARBO*0.85) THEN
-              IF (GRORT .LE. CARBO*0.85 .AND. CARBO .GT. 1.E-6) THEN
-                  GRF   = CARBO*0.15/(GROSTM+GROEAR)                  
-                  GROEAR  = GROLF*GRF
-                  GROSTM = GROSTM*GRF
-                  GRORT = CARBO*0.85
-              ELSE
-                  GRF   = 0.0                  
-                  GROEAR  = 0.0
-                  GROSTM = 0.0
-                  GRORT = 0.0
-              ENDIF
+!           chp 2019-05-20
+            IF (GRORT .LE. CARBO*0.85) THEN
+              GRF   = CARBO*0.15/(GROSTM+GROEAR)                  
+              GROEAR  = GROLF*GRF
+              GROSTM = GROSTM*GRF
+              GRORT = CARBO*0.85
+            ENDIF
+          ENDIF
 
               SLAN   = PLA*(0.08+SUMDTT/170.0*0.05)
               LFWT   = LFWT  - SLAN/10000.0

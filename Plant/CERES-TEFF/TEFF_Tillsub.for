@@ -7,6 +7,8 @@ C  Revision history
 C
 C  08/07/1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
+C  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C=======================================================================
 
       SUBROUTINE TEFF_TILLSUB (DYNAMIC,
@@ -97,8 +99,7 @@ C=======================================================================
       ELSEIF (TGROLF .GT. 0.0 .AND. TPLAG .GT. 0.0) THEN
         SLW = TGROLF/TPLAG
       ELSE
-        SLW = 0.0055 !Rice
-        SLW = 0.0120 !Tef
+        SLW = 0.0120
       ENDIF
   !   WRITE(*,*) 'RLTIL SLW', SLW
       SELECT CASE (ISTAGE)
@@ -122,22 +123,17 @@ C=======================================================================
           SENTIL  = TILNO*0.010*((SUMDTT/(P3+P4+P5))**2)
           TILS    = AMAX1(TILNO*(1.0-AMIN1(SLFW,SLFT,SLFN)),SENTIL)
           TILNO   = AMAX1(0.0,TILNO-TILS)
-          B       = AMAX1((0.55-0.00005*SUMDTT-0.000002*SUMDTT**2),0.35) !Rice
-          B       = AMAX1((0.75-0.00005*SUMDTT-0.000002*SUMDTT**2),0.35) !Tef
+          B       = AMAX1((0.75-0.00005*SUMDTT-0.000002*SUMDTT**2),0.35)
  !       WRITE (*,*)' SUMDTT B', SUMDTT,B
          !IF (B .GT. 0.15 .AND. SUMDTT .GT. 0.75*P3) THEN
           !   B = 0.15
          !ENDIF   ! use only for Rice
-          IF (SLW .LT. 0.0055) THEN
-              SLW =0.0055
-          ENDIF !Rice
           IF (SLW .LT. 0.0120) THEN
               SLW =0.0120
-          ENDIF !Tef
+          ENDIF
           TPLAG   = B * TCARBO/SLW *
      &	          AMIN1(TURFAC,NSTRES,TEMF, PSTRES1, KSTRES)
-          TGROLF  = TPLAG  * 0.0055 ! Rice
-          TGROLF  = TPLAG  * 0.0120 ! Tef
+          TGROLF  = TPLAG  * 0.0120
           TPLA    = TPLA   + TPLAG
           TGROSTM = TCARBO - TGROLF
 
@@ -152,10 +148,8 @@ C=======================================================================
              TGROLF  = TCARBO - TGROSTM
              TGROLF  = AMIN1 (TGROLF,B*TCARBO)
              TGROSTM = TCARBO - TGROLF
-             TPLAG   = TGROLF / 0.0055 * 
-     &		       AMIN1 (TURFAC,NSTRES,TEMF,PSTRES1,KSTRES) ! Rice
              TPLAG   = TGROLF / 0.0120 * 
-     &		       AMIN1 (TURFAC,NSTRES,TEMF,PSTRES1,KSTRES) ! Tef
+     &		       AMIN1 (TURFAC,NSTRES,TEMF,PSTRES1,KSTRES)
              TPLA    = TPLA   + TPLAG
            ELSE
              TGROSTM = TCARBO

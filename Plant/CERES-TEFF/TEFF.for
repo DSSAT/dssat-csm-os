@@ -8,7 +8,7 @@ C                      University of Guelph, Guelph, Ontario
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
-C  CERES RICE UPLAND and LOWLAND N MODEL
+C  CERES TEFF UPLAND and LOWLAND N MODEL
 C
 C  May 1, 2003 CERES Rice Model V4.0
 C
@@ -43,7 +43,9 @@ C  04/01/2004 CHP/US New PHEFAC calculation
 !  04/02/2008 CHP/US Added P model
 !  04/02/2008 US Added simple K model
 !  04/24/2019 US/JF/CHP Replace G4, G5 with THOT, TCLDP, TCLDF
+!  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
 !  03/17/2020 WP subroutine name changed to TEFF
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C=======================================================================
 
       SUBROUTINE TEFF(CONTROL, ISWITCH,

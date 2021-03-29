@@ -12,6 +12,8 @@ C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  08/12/2003 CHP Added I/O error checking
 C  02/25/2012 JZW PHINT from CUL file (remove from SPE)
 !  07/01/2012 CHP remove IPCREATE
+!  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C=======================================================================
 
       SUBROUTINE TEFF_IPCROP (FILEC, PATHCR, CROP, 
@@ -114,76 +116,3 @@ C-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE TEFF_IPCROP
 
-!C=======================================================================
-!C  TEFF_IPCREATE, Subroutine
-!C
-!C  Make crop parameter file RICER970.SPE
-!C-----------------------------------------------------------------------
-!C  Revision history
-!C
-!C  1. Written                                     P.W.W.      6-15-94
-!C  2. Header revision and minor changes           P.W.W.      2- 7-93
-!C  2. Added switch common block, restructured     P.W.W.      2- 7-93
-!C-----------------------------------------------------------------------
-!C  INPUT  :
-!C
-!C  LOCAL  :
-!C
-!C  OUTPUT :
-!C-----------------------------------------------------------------------
-!C  Called : PHENOL
-!C
-!C  Calls  : None
-!C-----------------------------------------------------------------------
-!C                         DEFINITIONS
-!C
-!C  PP3    :
-!C=======================================================================
-!
-!      SUBROUTINE TEFF_IPCREATE (
-!     &    ACRO, CO2X, CO2Y, CROP, FILECC, LUNCRP,  MODELVER, 
-!     &    PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC)
-!      !&    PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC)
-!
-!      IMPLICIT    NONE
-!
-!      CHARACTER*2 CROP
-!      CHARACTER*4 ACRO(9)
-!      CHARACTER   FILECC*92
-!      INTEGER     I,LUNCRP,ERR
-!      INTEGER MODELVER
-!      REAL PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC
-!      REAL CO2X(10), CO2Y(10)
-!
-!!      LUNCRP = 10
-!      OPEN (LUNCRP,FILE = FILECC, STATUS = 'NEW',IOSTAT=ERR)
-!
-!      WRITE (LUNCRP,100) CROP
-!      WRITE (LUNCRP,110)
-!      WRITE (LUNCRP,120) CROP, ACRO( 1), MODELVER
-!      WRITE (LUNCRP,130) CROP, ACRO( 2), SHOCKFAC
-!      !WRITE (LUNCRP,130) CROP, ACRO( 3), PHINT
-!      WRITE (LUNCRP,140) CROP, ACRO( 4), (INT(CO2X(I)),I=1,10)
-!      WRITE (LUNCRP,150) CROP, ACRO( 5), (CO2Y(I),I=1,10)
-!      WRITE (LUNCRP,160) CROP, ACRO( 6), RWUEP1
-!      WRITE (LUNCRP,160) CROP, ACRO( 7), PORMIN
-!      WRITE (LUNCRP,160) CROP, ACRO( 8), RWUMX
-!      WRITE (LUNCRP,160) CROP, ACRO( 9), RLWR
-!
-!      CLOSE (LUNCRP)
-!
-!      RETURN
-!
-!C-----------------------------------------------------------------------
-!C     Format Strings
-!C-----------------------------------------------------------------------
-!
-!  100 FORMAT ('*SPECIES DATA: ',A2,/)
-!  110 FORMAT ('*CHARACTERISTICS',/,'@C X(EN) Y(CH)  YSTD')
-!  120 FORMAT (A2,1X,'OPT   ',A4,2X,I5)
-!  130 FORMAT (A2,1X,'OPT   ',A4,2X,F5.1)
-!  140 FORMAT (A2,1X,'OPT   ',A4,2X,10(I5))
-!  150 FORMAT (A2,1X,'OPT   ',A4,2X,10(F5.2))
-!  160 FORMAT (A2,1X,'OPT   ',A4,2X,F5.2)
-!
-!      END SUBROUTINE TEFF_IPCREATE

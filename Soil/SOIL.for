@@ -37,8 +37,8 @@ C=====================================================================
      &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-     &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SomLitC, SomLitE,                               !Output
+     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
+     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
      &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
 
 !-----------------------------------------------------------------------
@@ -78,8 +78,8 @@ C=====================================================================
       TYPE (MulchType)    MULCH
 
 !     Output:
-      REAL, DIMENSION(NL), INTENT(OUT) :: NH4
-      REAL, DIMENSION(NL), INTENT(OUT) :: NO3
+      REAL, DIMENSION(NL), INTENT(OUT) :: NH4_plant
+      REAL, DIMENSION(NL), INTENT(OUT) :: NO3_plant
       REAL, DIMENSION(NL), INTENT(OUT) :: UPPM
       REAL, DIMENSION(NL), INTENT(OUT) :: SPi_AVAIL, SKi_AVAIL
       REAL               , INTENT(OUT) :: SNOW
@@ -100,7 +100,7 @@ C=====================================================================
 
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
-      REAL, DIMENSION(NL) :: SPi_Labile
+      REAL, DIMENSION(NL) :: SPi_Labile, NO3, NH4
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
       REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
       
@@ -159,7 +159,7 @@ C=====================================================================
      &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
      &    XHLAI,                                          !Input
      &    FLOODN,                                         !I/O
-     &    NH4, NO3, UPPM)                                 !Output
+     &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
 !     Inorganic P
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 

@@ -404,7 +404,8 @@
             CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
             READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC ; LNUM = LNUM + 1
- 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+ 60         FORMAT(24X,F6.0,12X,F6.0,7X,F5.2)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 !     -----------------------------------------------------------------
@@ -1694,15 +1695,18 @@
 !--------------------------------------------------------------
 
       ! Leaf Damage
+      ! TF 07/22/2020 Adjusted units for LAIDOT and setting LAIDOT 
+      !               initial value to zero 
+          LAIDOT = 0
           IF((LFWT+STMWT).GT.0.0)
      $      STOVN=STOVN - STOVN*(WLIDOT/PLTPOP)/(LFWT+STMWT)
           IF (PLTPOP.GT.0.0.AND.LFWT.GT.0.0)
-     &      LAIDOT = WLIDOT*(PLA-SENLA)/(LFWT*PLTPOP)  !cm2/plant/day
+     &      LAIDOT = WLIDOT*(PLA-SENLA)/LFWT  !cm2/m2/day
           IF(PLTPOP.GT.0.0)
      &      LFWT = LFWT - WLIDOT/PLTPOP
            
-          PLA = PLA - LAIDOT
-          LAI = LAI - LAIDOT*PLTPOP/10000
+          PLA = PLA - (LAIDOT/PLTPOP)
+          LAI = LAI - LAIDOT/10000
 
       ! Stem Damage
           IF(PLTPOP.GT.0.0)

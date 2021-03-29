@@ -29,7 +29,7 @@
        SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                                                & !Run+loop
        SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,                                             & !Weather
        DRAIN, RUNOFF, IRRAMT,                                                                 & !Water
-       DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                              & !Weather        !TWILEN = DAYL; SOILTEMP = ST
+       DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                              & !Weather        !TWILEN = DAYL; SOILTEMP = ST 
        NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,                                     & !Soil states
        SW, NO3LEFT, NH4LEFT, FERNIT,                                                          & !H2O,N states
        TLCHD, TNIMBSOM, TNOXD, TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,           & !N components
@@ -56,7 +56,7 @@
     INTEGER :: YEARPLTCSM 
     INTEGER :: CSTIMDIF , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT     , CSIDLAYR    , CSYEARDOY              ! Integer function calls
 
-    REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CO2         , DAYL     ! REPLACED ALBEDO WITH ALBEDOS  
+    REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CO2         , DAYL      ! REPLACED ALBEDO WITH ALBEDOS
     REAL    DEPMAX      , DEWDUR      , DLAYR(NL)   , DRAIN       , DUL(NL)     , EO          , EOP         , EP          
     REAL    ES          , ET          , FERNIT      , HARVFRAC(2) , IRRAMT      , KCAN        , KEP         , LAIL(30)    
     REAL    LAILA(30)   , LL(NL)      , NFP         , NH4LEFT(NL) , NO3LEFT(NL) , PARIP       , PARIPA      , RAIN        
@@ -142,14 +142,7 @@
             CN          , DOY         , FILEIOIN    , FROP        , IDETL       , ISWNIT      , ON          , RN          , &
             RNMODE      , RUN         , SN          , TN          , YEAR        & 
             )
-        
-        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-        IF (.NOT.FOPEN) THEN
-            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',ACTION = 'READWRITE')
-        END IF
-        WRITE (fnumwrk,'(2A, 2F9.5)') 'ALBEDOS (soil albedo) and ALBEDO (canopy ',  &  ! MF 19JA15  For WORK.OUT   
-            'albedo) AFTER YCA_RunInit in CSYCA) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
-            
+                    
 !*******************************************************************************************************************************
     ELSEIF (DYNAMIC == SEASINIT) THEN    ! Initialization                      ! MF Equivalent to line 1824 in CSCAS.FOR
 !*******************************************************************************************************************************
@@ -237,19 +230,12 @@
       ELSEIF (DYNAMIC == SEASEND) THEN                                         ! MF Equivalent to line 9630 in CSCAS.FOR
 !*******************************************************************************************************************************
 
-        IF (STGYEARDOY(PSX+1) /= YEARDOY) THEN  ! End for non-crop reason
-          WRITE (fnumwrk,*)' '
-          WRITE (fnumwrk,'(A50)') &
-           ' Run terminated.(Usually because ran out of weather data).'
-        ENDIF
-
         EXCODEPREV = EXCODE
 
         CLOSE (NOUTPG)
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
         CLOSE (NOUTPN)
-        CLOSE (FNUMWRK)
 
 !*******************************************************************************************************************************
       ENDIF ! End of INITIATION-RATES-INTEGRATE-OUTPUT-SEASEND construct       ! MF Equivalent to line 9648 in CSCAS.FOR

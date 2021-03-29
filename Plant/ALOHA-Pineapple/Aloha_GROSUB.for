@@ -7,6 +7,7 @@
 !  02/07/1993 PWW Header revision and minor changes   
 !  02/07/1993 PWW Switch block added, etc
 !  10/17/2017 CHP Adpated for CSM v4.7
+!  09/05/2020 JVJ Stages changes for inclusion in Overview   
 !-----------------------------------------------------------------------
 !  INPUT  : NOUTDO,ISWNIT
 !
@@ -90,7 +91,7 @@
 
       REAL    CO2, SRAD, TMIN, TMAX
       REAL    PLTPOP, SDWTPL, PLANTSIZE
-      REAL    G2, G3, P4, PHINT, TBASE
+      REAL    G2, G3, P8, PHINT, TBASE      !G2, G3, P4, PHINT, TBASE G2, G3, P7, PHINT, TBASE
       INTEGER PMTYPE, NFORCING
       REAL    GRNWT, SDWTAH, SDWTAM, WTNUP, BWAH
       REAL    WTNLF, WTNST, WTNSH, WTNRT, WTNLO
@@ -217,7 +218,7 @@
 
       G2  = CULTIVAR % G2
       G3  = CULTIVAR % G3
-      P4  = CULTIVAR % P4
+      P8  = CULTIVAR % P8                  ! P4  = CULTIVAR % P4   P7  = CULTIVAR % P7 
       PHINT = CULTIVAR % PHINT
 
       PLA        = 0.0
@@ -257,14 +258,14 @@
         XANC   = TANC*100.0               
         APTNUP = STOVN*10.0*PLTPOP
 
-        IF (ISTAGE .LT. 7) THEN
+        IF (ISTAGE .LT. 10) THEN                      !IF (ISTAGE .LT. 7) THEN     JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           CALL Aloha_NFACTO (DYNAMIC, 
      &      ISTAGE, TANC, XSTAGE,                           !Input
      &      AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
         ENDIF
       ENDIF
 
-      IF (ISTAGE .GT. 5) RETURN
+      IF (ISTAGE .GT. 8) RETURN                     ! IF (ISTAGE .GT. 5) RETURN   JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
 
 !-----------------------------------------------------------------
 
@@ -279,7 +280,7 @@
 
       TEMPM = 0.6*TMIN + 0.4*TMAX
       SELECT CASE (ISTAGE)
-        CASE (1,2,3,7,8,9)
+        CASE (1,2,3,4,5,10,11,12)                          ! CASE (1,2,3,7,8,9)  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           IF (TEMPM .LE. 25.0) THEN
              PRFT = 1.0-0.001*(TEMPM-25.0)**2
            ELSEIF (TEMPM .LT. 29.0) THEN
@@ -287,7 +288,7 @@
            ELSE
              PRFT = 0.1
           ENDIF
-        CASE (4,5,6)
+        CASE (6,7,8,9)                                   !CASE (4,5,6) JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           PRFT = 1.0-0.005*((0.4*TMIN+0.6*TMAX)-26.)**2
           PRFT = AMAX1 (PRFT,0.0)
       END SELECT
@@ -303,7 +304,7 @@
          TRF2 = 1.65
       ENDIF
 
-      IF (ISTAGE .GE. 4 .AND. ISTAGE .LT. 7) THEN
+      IF (ISTAGE .GE. 8 .AND. ISTAGE .LT. 10) THEN                 !IF (ISTAGE .GE. 4 .AND. ISTAGE .LT. 7) THEN    JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
          CARBO = PCARB*AMIN1(PRFT,0.55+0.45*SWFAC,NSTRES)
        ELSE
          CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES)
@@ -311,9 +312,9 @@
       DTT = AMAX1 (DTT,0.0)
 
 !-----------------------------------------------------------------
-      IF (ISTAGE .LE. 3) THEN
-!         
-!        Calculate leaf emergence
+      IF (ISTAGE .LE. 4) THEN                                    ! IF (ISTAGE .LE. 3) THEN   JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!                                                                ! IF (ISTAGE .LE. 3) THEN  debe ser 4 para que deje de producir hojas a partir de forza.
+!        Calculate leaf emergence                                ! Originalmente lo había modificado como 5 pero era 4. Sucerá lo mismo más abajo?
 !        The first 5 leaves grow faster than other leaves, used for maize
 !         
          PC = 1.0                       ! Calculate leaf emergence
@@ -326,10 +327,10 @@
 !        
 !        Correcting water stress effect and effect due to shading.
 !        
-         IF (ISTAGE .EQ. 3) THEN
-            IF (TEMPM .GT. TBASE) THEN
-               IF ((LN*PLTPOP) .GT. 550.0) THEN
-                  TI = TURFAC*(1.0/PHINT)*0.5*(DTT-2.0)/PC
+         IF (ISTAGE .EQ. 5) THEN                             !  IF (ISTAGE .EQ. 3) THEN   JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+            IF (TEMPM .GT. TBASE) THEN                       ! En el ISTAGE anterior note que no se cumple la regla de sumar 2 al ISTAGE original, así que
+               IF ((LN*PLTPOP) .GT. 550.0) THEN              ! debo recordar que si calibrar un dato que no es posible calibrar con los coeficientes PIALO              
+                  TI = TURFAC*(1.0/PHINT)*0.5*(DTT-2.0)/PC   ! debería intentar revisando si estos ISTAGES están bien colocados, o por ejemplo en lugar de 5 es 4 también.
                 ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
                   TI = TURFAC*(1.0/PHINT)*(-0.001*LN*PLTPOP+1.05)*
      &                 (DTT-2.0)/PC
@@ -341,7 +342,7 @@
             ENDIF         ! no leaf emerges
           ELSE
             IF (TEMPM .GT. TBASE) THEN
-               IF ((LN*PLTPOP) .GT. 550.0) THEN
+               IF ((LN*PLTPOP) .GT. 550.0) THEN                       
                   TI = TURFAC*(1.0/PHINT)*0.5*DTT/PC
                 ELSEIF ((LN*PLTPOP).GE.50.0) THEN
                   TI = TURFAC*(1.0/PHINT)*(-0.001*LN*PLTPOP+1.05)*
@@ -382,7 +383,7 @@
         !
         SELECT CASE (PMTYPE)
           CASE (0)
-            IF ((LN*PLTPOP) .GT. 550.0) THEN
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                          
                PLAG = CMF*1.75*(33.0+7.5*XN)*0.5*TI*TURFAC
              ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
                PLAG = CMF*1.75*(33.0+7.5*XN)*TI*TURFAC
@@ -391,7 +392,7 @@
                PLAG = CMF*1.75*(33.0+7.5*XN)*TI*TURFAC
            ENDIF
           CASE (1)
-            IF ((LN*PLTPOP) .GT. 550.0) THEN
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                   
                PLAG = CMF*0.77*(174.0+16.0*XN)*0.5*TI*TURFAC
              ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
                PLAG = CMF*0.77*(174.0+16.0*XN)*TI*TURFAC
@@ -442,7 +443,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         !
         SELECT CASE (PMTYPE)
           CASE (0)
-            IF ((LN*PLTPOP) .GT. 550.0) THEN
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                        
                PLAG = CMF*1.75*(33.0+7.5*XN)*0.5*TI*TURFAC
              ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
                PLAG = CMF*1.75*(33.0+7.5*XN)*TI*TURFAC
@@ -451,7 +452,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
                PLAG = CMF*1.75*(33.0+7.5*XN)*TI*TURFAC
            ENDIF
           CASE (1)
-            IF ((LN*PLTPOP) .GT. 550.0) THEN
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                      
                PLAG = CMF*0.77*(174.0+16.0*XN)*0.5*TI*TURFAC
              ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
                PLAG = CMF*0.77*(174.0+16.0*XN)*TI*TURFAC
@@ -499,13 +500,141 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         LFWT = LFWT-SLAN/600.0
 
 !-----------------------------------------------------------------
-      CASE (3)
+!-----------------------------------------------------------------JVJ NEW
+      CASE (3)                                           !CASE (2)  JVJ  Case duplicated because 2 stages in vegetative phase were included 
+        ! Net zero stem growth to forcing
+        !
+        SELECT CASE (PMTYPE)
+          CASE (0)
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                       
+               PLAG = CMF*1.75*(33.0+7.5*XN)*0.5*TI*TURFAC
+             ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
+               PLAG = CMF*1.75*(33.0+7.5*XN)*TI*TURFAC
+     1               *(-0.001*LN*PLTPOP+1.05)
+             ELSE
+               PLAG = CMF*1.75*(33.0+7.5*XN)*TI*TURFAC
+           ENDIF
+          CASE (1)
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                      
+               PLAG = CMF*0.77*(174.0+16.0*XN)*0.5*TI*TURFAC
+             ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
+               PLAG = CMF*0.77*(174.0+16.0*XN)*TI*TURFAC
+     1               *(-0.001*LN*PLTPOP+1.05)
+             ELSE
+               PLAG = CMF*0.77*(174.0+16.0*XN)*TI*TURFAC
+            ENDIF
+        END SELECT
+
+        GROLF  = PLAG*(1/((85*EXP(-XN*0.012))*TRF2))
+        GROBSL = 0.42*GROLF
+        !
+        ! Calculation of daily stem growth
+        !
+        GROSTM = 0.52*GROBSL
+        GROSTM = AMIN1 (GROSTM,GROBSL)
+        !
+        ! Check the balance of supply and demand
+        !
+        GRORT = CARBO - GROLF - GROBSL - GROSTM
+        IF (GRORT .LT. 0.15*CARBO) THEN
+           IF (GROLF .GT. 0.0 .OR. GROBSL .GT. 0.0 .OR.
+     &         GROSTM .GT. 0.0) THEN
+              GRF   = CARBO*0.9/(GROLF+GROBSL+GROSTM)
+              GRORT = CARBO*0.1
+            ELSE
+              GRF = 1.0
+           ENDIF
+
+           GROLF  = GROLF  * GRF
+           GROBSL = GROBSL * GRF
+           GROSTM = GROSTM * GRF
+
+           PLAG   = GROLF*((85.0*EXP(-XN*0.012))*TRF2)
+        ENDIF
+
+        LFWT    = LFWT    + GROLF
+        BASLFWT = BASLFWT + GROBSL
+        STMWT   = STMWT   + GROSTM
+        PLA     = PLA     + PLAG
+
+        IF (GROLF .GT. 0.0) THEN
+           SLAN = PLA/1000.0
+        ENDIF
+        LFWT = LFWT-SLAN/600.0
+        
+        
+      CASE (4)                                           !CASE (2)    JVJ  Case duplicated because 2 stages in vegetative phase were included 
+        !
+        ! Net zero stem growth to forcing
+        !
+        SELECT CASE (PMTYPE)
+          CASE (0)
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                      
+               PLAG = CMF*1.75*(33.0+7.5*XN)*0.5*TI*TURFAC
+             ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
+               PLAG = CMF*1.75*(33.0+7.5*XN)*TI*TURFAC
+     1               *(-0.001*LN*PLTPOP+1.05)
+             ELSE
+               PLAG = CMF*1.75*(33.0+7.5*XN)*TI*TURFAC
+           ENDIF
+          CASE (1)
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                      
+               PLAG = CMF*0.77*(174.0+16.0*XN)*0.5*TI*TURFAC
+             ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
+               PLAG = CMF*0.77*(174.0+16.0*XN)*TI*TURFAC
+     1               *(-0.001*LN*PLTPOP+1.05)
+             ELSE
+               PLAG = CMF*0.77*(174.0+16.0*XN)*TI*TURFAC
+            ENDIF
+        END SELECT
+
+        GROLF  = PLAG*(1/((85*EXP(-XN*0.012))*TRF2))
+        GROBSL = 0.42*GROLF
+        !
+        ! Calculation of daily stem growth
+        !
+        GROSTM = 0.52*GROBSL
+        GROSTM = AMIN1 (GROSTM,GROBSL)
+        !
+        ! Check the balance of supply and demand
+        !
+        GRORT = CARBO - GROLF - GROBSL - GROSTM
+        IF (GRORT .LT. 0.15*CARBO) THEN
+           IF (GROLF .GT. 0.0 .OR. GROBSL .GT. 0.0 .OR.
+     &         GROSTM .GT. 0.0) THEN
+              GRF   = CARBO*0.9/(GROLF+GROBSL+GROSTM)
+              GRORT = CARBO*0.1
+            ELSE
+              GRF = 1.0
+           ENDIF
+
+           GROLF  = GROLF  * GRF
+           GROBSL = GROBSL * GRF
+           GROSTM = GROSTM * GRF
+
+           PLAG   = GROLF*((85.0*EXP(-XN*0.012))*TRF2)
+        ENDIF
+
+        LFWT    = LFWT    + GROLF
+        BASLFWT = BASLFWT + GROBSL
+        STMWT   = STMWT   + GROSTM
+        PLA     = PLA     + PLAG
+
+        IF (GROLF .GT. 0.0) THEN
+           SLAN = PLA/1000.0
+        ENDIF
+        LFWT = LFWT-SLAN/600.0
+
+!-----------------------------------------------------------------JVJ NEW END
+       
+        
+      CASE (5)                                           ! CASE (3)
         !
         ! Forcing to sepals closed on youngest flowers
         !
         SELECT CASE (PMTYPE)
           CASE (0)
-            IF ((LN*PLTPOP) .GT. 550.0) THEN
+            IF ((LN*PLTPOP) .GT. 550.0) THEN               
                PLAG = CMF*2.*(33.0+7.5*XN)*0.5*TI*TURFAC
              ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
                PLAG = CMF*2.*(33.0+7.5*XN)*TI*TURFAC
@@ -514,7 +643,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
                PLAG = CMF*2.*(33.0+7.5*XN)*TI*TURFAC
             ENDIF
           CASE (1)
-            IF ((LN*PLTPOP) .GT. 550.0) THEN
+            IF ((LN*PLTPOP) .GT. 550.0) THEN                   
                PLAG = CMF*2.5*(174.0+16.0*XN)*0.5*TI*TURFAC
              ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
                PLAG = CMF*2.5*(174.0+16.0*XN)*TI*TURFAC
@@ -562,10 +691,9 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         ENDIF
         LFWT  = LFWT  - SLAN/600.0
         SUMP  = SUMP  + CARBO !Total biomass cumulated during the stage
-        IDURP = IDURP + 1     !Duration of the stage
-
+        IDURP = IDURP + 1     !Duration of the stage        
 !-----------------------------------------------------------------
-      CASE (4)
+      CASE (6)                !CASE (4)
         !
         ! SCY to first open flower
         !
@@ -574,7 +702,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         GROFLR = AMAX1 (GROFLR,0.0)
         GRORT  = 0.05*GROFLR
 
-        IF (TOTPLTWT .LE. 600.0) THEN
+        IF (TOTPLTWT .LE. 550.0) THEN                                
            GROSTM = CARBO - GRORT - GROFLR
            IF (GROSTM .LT. 0.16*CARBO) THEN
               IF (GRORT .GT. 0.0 .OR. GROFLR .GT. 0.0) THEN
@@ -612,8 +740,55 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
 !       CRWNWT = FLRWT*0.3      !CHP 10/14/2017
         SKWT  = SKWT  + GROSK
 
+      CASE (7)                !CASE (4)
+        !
+        ! SCY to first open flower
+        !
+        GROFLR = (1.26-0.17*PLTPOP+0.0075*PLTPOP**2)*DTT/20.5*
+     &           AMIN1(AGEFAC,TURFAC)
+        GROFLR = AMAX1 (GROFLR,0.0)
+        GRORT  = 0.05*GROFLR
+
+        IF (TOTPLTWT .LE. 600.0) THEN                                   
+           GROSTM = CARBO - GRORT - GROFLR
+           IF (GROSTM .LT. 0.16*CARBO) THEN
+              IF (GRORT .GT. 0.0 .OR. GROFLR .GT. 0.0) THEN
+                 GRF    = CARBO*0.84/(GRORT+GROFLR)
+                 GROSTM = CARBO*0.16
+               ELSE
+                 GRF    = 1.0
+              ENDIF
+              GRORT  = GRORT  * GRF
+              GROFLR = GROFLR * GRF
+              GROSK  = GROSK  * GRF
+           ENDIF
+         ELSE
+           GROSK  = CARBO*0.15
+           GROSTM = CARBO - GROSK - GRORT - GROFLR   !Sucker initiation
+           IF (GROSTM .LE. 0.16*CARBO) THEN
+              IF (GROSK .GT. 0.0 .OR. GROFLR .GT. 0.0 .OR.
+     &            GRORT .GT. 0.0) THEN
+                 GRF = CARBO*0.84/(GRORT+GROFLR+GROSK)
+               ELSE
+                 GRF = 1.0
+              ENDIF
+              GRORT  = GRORT  * GRF
+              GROFLR = GROFLR * GRF
+              GROSK  = GROSK  * GRF
+           ENDIF
+        ENDIF
+
+        IF (GROSTM .GT. 0.2*CARBO) THEN
+           GROSTM = 0.2*CARBO
+        ENDIF
+        STMWT = STMWT + GROSTM
+        FLRWT = FLRWT + GROFLR
+!       FRTWT  = FLRWT*0.7      !CHP 10/14/2017
+!       CRWNWT = FLRWT*0.3      !CHP 10/14/2017
+        SKWT  = SKWT  + GROSK
+        
 !-----------------------------------------------------------------
-      CASE (5)
+      CASE (8)                       ! CASE (5)
         !
         ! Fruit growth
         !
@@ -625,7 +800,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
            ENDIF
         ENDIF
 
-        IF (SUMDTT .GT. P4) THEN
+        IF (SUMDTT .GT. P8) THEN           !IF (SUMDTT .GT. P4) THEN   IF (SUMDTT .GT. P7) THEN 
            GROSK = CARBO*0.1
            STMWT = STMWT
            SKWT  = SKWT + GROSK
@@ -638,7 +813,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         RGFILL  = 1-0.0025*(TEMPM-26.)**2
 
         IF (PMTYPE .GE. 1) THEN
-           IF (SUMDTT .GT. 0.5*P4) THEN
+           IF (SUMDTT .GT. 0.5*P8) THEN    !IF (SUMDTT .GT. 0.5*P4) THEN  IF (SUMDTT .GT. 0.5*P7) THEN
               IF (SRAD .LT. 12.0) THEN
                  GROFRT = GPP*G3*0.001*(0.7+0.3*SWFAC)*(SRAD/12.)
                ELSEIF (SRAD .LT. 36.0) THEN
@@ -688,8 +863,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         GO TO 1900
 
 1700    SELECT CASE (PMTYPE)
-          CASE (1:10)
-            IF (SUMDTT .LT. 0.8*P4) THEN
+          CASE (1:12)
+            IF (SUMDTT .LT. 0.8*P8) THEN      ! IF (SUMDTT .LT. 0.8*P4) THEN   IF (SUMDTT .LT. 0.8*P7) THEN 
                IF (SRAD .LT. 6.0) THEN
                   GROSTM  = CARBO
                 ELSEIF (SRAD .LT. 13.0) THEN
@@ -776,12 +951,12 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         !
         FRTWT = FRTWT + GROFRT
         FLRWT = FLRWT + GROFRT + GROCRWN
-        IF (SUMDTT .GT. 0.8*P4) THEN
+        IF (SUMDTT .GT. 0.8*P8) THEN       !IF (SUMDTT .GT. 0.8*P4) THEN   IF (SUMDTT .GT. 0.8*P7) THEN  
            STMWT = AMIN1 (STMWT,SWMAX)
         ENDIF
 
 !-----------------------------------------------------------------
-      CASE (6)
+      CASE (9)                   !     CASE (6)
 !        
 !       Physiological maturity
 !        
@@ -805,7 +980,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
  2400 SLFW = 1.0
       SLFN = 0.95+0.05*AGEFAC
       SLFC = 1.0
-      IF (ISTAGE .GT. 2 .AND. ISTAGE .LT. 7) THEN
+      IF (ISTAGE .GT. 2 .AND. ISTAGE .LT. 10) THEN                    !  IF (ISTAGE .GT. 2 .AND. ISTAGE .LT. 7) THEN JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
          IF (LAI .GT. 6.0) THEN
             SLFC = 1.0-0.0005*(LAI-6.0)
          ENDIF
@@ -832,13 +1007,13 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
       SENLA = AMIN1 (SENLA,PLA)
       LAI   = (PLA-SENLA)*PLTPOP*0.0001
 
-      IF (LN .GT. 3 .AND .LAI .LE. 0.0 .AND. ISTAGE .LE. 3) THEN
+      IF (LN .GT. 3 .AND .LAI .LE. 0.0 .AND. ISTAGE .LE. 5) THEN             !  IF (LN .GT. 3 .AND .LAI .LE. 0.0 .AND. ISTAGE .LE. 3) THEN JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
          WRITE (MSG(1),   2800)
          CALL WARNING(1, ERRKEY, MSG)
 !         IF (IDETO .EQ. 'Y') THEN
 !            WRITE (NOUTDO,2800)
 !         ENDIF
-         ISTAGE = 4
+         ISTAGE = 6                                       ! ISTAGE = 4 JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
        ELSE
          IF (ICOLD .GE. 7) THEN
             WRITE (MSG(1),   2800)
@@ -846,7 +1021,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
 !            IF (IDETO .EQ. 'Y') THEN
 !               WRITE (NOUTDO,2800)
 !            ENDIF
-           ISTAGE = 5
+           ISTAGE = 7                                     !ISTAGE = 5 JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
          ENDIF
       ENDIF
 !      
@@ -862,7 +1037,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
 !       less than the plant population (PLTPOP). Need to differentiate
 !       for consistency with daily and seasonal outputs.
       SELECT CASE(ISTAGE)
-      CASE(5,6)
+      CASE(8,9)                                             ! CASE(5,6)  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
 !       In this case FLRWT is fruit + crown
         BIOMAS   = (LFWT + STMWT + BASLFWT + SKWT)*PLTPOP 
      &                + (FLRWT * FRUITS) 
@@ -946,8 +1121,47 @@ C-----------------------------------------------------------------------
           FLRWT  = 0.0
           FRTWT  = 0.0
           CRWNWT = 0.0
-
-        CASE (4)
+!-------------------------------------------------------- NEW  JVJ  Case duplicated because 2 stages in vegetative phase were included 
+         CASE (4)
+!          IF (NFORCING .GE. 2) THEN
+             ! Forcing by number of days after planting
+             PLANTSIZE = TOTPLTWT
+!          ELSE    
+!             PLANTSIZE = PLANTING % PLANTSIZE
+!          ENDIF
+          FBIOM  = BIOMAS               
+          SUMP   = 0.0                  
+          IDURP  = 0                    
+          PLAMX  = PLA                  
+          GROFLR = 0.0
+          GROCRWN= 0.0
+          GROFRT = 0.0
+          FLRWT  = 0.0
+          FRTWT  = 0.0
+          CRWNWT = 0.0
+  
+         CASE (5)                                                                !  JVJ  Case duplicated because 2 stages in vegetative phase were included 
+!          IF (NFORCING .GE. 2) THEN
+             ! Forcing by number of days after planting
+             PLANTSIZE = TOTPLTWT
+!          ELSE    
+!             PLANTSIZE = PLANTING % PLANTSIZE
+!          ENDIF
+          FBIOM  = BIOMAS               
+          SUMP   = 0.0                  
+          IDURP  = 0                    
+          PLAMX  = PLA                  
+          GROFLR = 0.0
+          GROCRWN= 0.0
+          GROFRT = 0.0
+          FLRWT  = 0.0
+          FRTWT  = 0.0
+          CRWNWT = 0.0
+            
+          
+          
+!---------------------------------------------------------NEW END JVJ  Case duplicated because 2 stages in vegetative phase were included  
+        CASE (6)                                      !     CASE (4)
 !         MaxLAI = LAI at the end of the stage
           MAXLAI      = LAI               
 !         Above biomass per square meter (g/m^2)
@@ -972,7 +1186,7 @@ C         ABIOMS      = BIOMAS
           VANC   = TANC                 
           VMNC   = TMNC                 
 
-        CASE (5)
+        CASE (7)                       !   CASE (5)
 
 !         Move from Istage 4 because no actual fruits until stage 5
           FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  
@@ -990,7 +1204,25 @@ C         ABIOMS      = BIOMAS
           SWMAX  = 0.0
           SWMIN  = 0.0
 
-        CASE (6)
+        CASE (8)                       !   CASE (5)  JVJ  Case duplicated because 1 stage in reproductive phase were included 
+
+!         Move from Istage 4 because no actual fruits until stage 5
+          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  
+!         There will be some loss of mass when going from flower mass
+!           to fruit + crown because FRUITS (#/m2) < PLTPOP (#/m2)
+
+! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
+! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
+!         FRTWT  = FLRWT*0.5            
+!         CRWNWT = FLRWT*0.2            
+! 10/14/2017 CHP 50% to fruit and 20% to crown causes 30% of flower mass to be lost. 
+!     change ratios to add up to 1, maintaining approximately the same ratio.
+          FRTWT  = FLRWT*0.7 
+          CRWNWT = FLRWT*0.3 
+          SWMAX  = 0.0
+          SWMIN  = 0.0
+          
+        CASE (9)                                  ! CASE (6)
           YIELD = FRTWT*10.0*FRUITS        
 !         IF (PLTPOP .GE. 0.0) THEN
 !            IF (GPP .GT. 0.0) THEN
@@ -1005,16 +1237,16 @@ C         ABIOMS      = BIOMAS
 !         ENDIF
 !         HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
 
-        CASE (8)
+        CASE (11)                          !  CASE (8)
           WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
 
-          PLA        = WTINITIAL*0.6*63.0  
-          LAI        = PLTPOP*PLA*0.0001   
-          BIOMAS     = WTINITIAL*PLTPOP    
-          LFWT       = WTINITIAL*0.53      
-          BASLFWT    = LFWT*0.66           
-          STMWT      = WTINITIAL*0.115     
-          STOVWT     = WTINITIAL              
+          PLA        = WTINITIAL*49.61     !PLA        = WTINITIAL*0.6*63.0  OJO esta era la fórmula original agregué esa constante para cuadrar el resultado tengo un libro de excel con estos calculos.
+          LAI        = PLTPOP*PLA*0.0001     !
+          BIOMAS     = WTINITIAL*PLTPOP      ! Este cambio quedó en el archivo dscsm047.exe que se ejecuta actualmente en esta máquina.
+          LFWT       = WTINITIAL*0.97        ! LFWT       = WTINITIAL*0.53 No encontré donde está la variable del archivo T  LWDA es esta o sale de aqui La definición en el archivo T es Leaf Weight  kg dm/ha
+          BASLFWT    = LFWT*0.66             ! Esto es un peso del tejido blanco basal (ojo yo no separé esto y parece muy buena idea) 
+          STMWT      = WTINITIAL*0.03       ! STMWT      = WTINITIAL*0.115 Tampoco está la variable del archivo T SWDA pero es esta o sale de aqui STMWT
+          STOVWT     = WTINITIAL             ! 
 
 !          NSTRES     = 1.0
 

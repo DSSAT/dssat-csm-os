@@ -114,7 +114,7 @@
         CHARACTER(LEN=256) :: FMT2215 = '("!........DATES.......  ...TEMP... STAGE "," ...PHENOLOGY.... ",' // & 
             '" ....PHOTOSYNTHESIS.... ", " .....GROWTH..... ","H2O STRESS DETERMINANTS"," .N STRESS DETERMINANTS.")'
         CHARACTER(LEN=256) :: FMT2251 = '("@YEAR DOY   DAS   DAP TMEAN  GSTD  RSTD"," LAIPD LAISD  LAID  CHTD SDWAD ",' // &
-            '"SNWLD SNWSD"," SHRTD  PTFD  RDPD","  RL1D  RL2D  RL3D  RL4D  RL5D  RL6D  RL7D  RL8D",' // & ! issue 50
+            '"SNWLD SNWSD"," SHRTD  RDPD","  RL1D  RL2D  RL3D  RL4D  RL5D  RL6D  RL7D  RL8D",' // & ! issue 50
             '"  RL9D RL10D")'
         CHARACTER(LEN=256) :: FMT2252 = '("@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD", "  TNAD SDNAD  RNAD  CNAD  LNAD",' // &
             '"  SNAD  HNAD  HIND RSNAD SNN0D SNN1D","  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D"," LN%RD SN%RD RN%RD  ",' // &

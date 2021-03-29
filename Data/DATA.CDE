@@ -478,6 +478,7 @@ NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (ug [N]/g [soil])        
 NUAC   N Uptake kg/ha  N uptake, cumulative (kg [N]/ha)                         .
 NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
+NURTD  Urea-N kg/ha    Total soil urea (kg [N]/ha)                              .
 OXRN   Oxnitr kgN/ha/d Ox Layer Nitrif Rt (kg [N]/ha/d)                         .
 QNAD   Stolon N kg/ha  Stolon N (kg/ha)                                         .
 QN%D   Stolon N %        Stolon N concentration (%)       
@@ -939,6 +940,17 @@ WFSD   WATER FAC SENES Water factor for senescence (0-1)                        
 WFTD   WATER FAC TRANS Water factor for transpiration (0-1)                     .
 WSTD   H2O STRESS,TILR Water stress - tillering (0-1)                           .
 YEAR   YEAR            Year (4 digits)                                          .
+RCANE  Cane Type       PlantCane or Ratoon Cane                                 .
+DDLMD  Dead Leaf Biom. Dead Leaves Biomass (ton/ha)   							.
+DDTMD  Dead Tillers B. Dead Tillers Biomass (ton/ha)							.
+SEQR   Ratoon Seq.     Ratooning Cane Sequence                                  .
+TTTOT  Total TT        Total thermal time accumulated (oCdays)                  .
+BBDMD  Below Ground W  Total below ground dry weight (ton/ha)                   .
+CSTAT  Crop Status     Crop Status (1=alive, 0=dead)                            .
+GLI%D  Light Int. GL   Fraction of light intercepted by green leaves (0-1)      .
+TLI%D  Light Int. TL   Fraction of light intercepted by dry+green leaves (0-1)  .
+TRWUP  TotRootUpPot    Potential Root Water Uptake (mm/d)                       .
+EOP    PTranspiration  Potential Crop Transpiration (mm/d)                      .  
 
 *SOIL ORGANIC MATTER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS

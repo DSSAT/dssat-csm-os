@@ -22,6 +22,8 @@
 !  03/18/2018 KEP changed  nwheats_ppfac = 1. - PPSEN * (20-TWILEN)**2 to  ntef_ppfac = 1. - PPSEN * (TWILEN-20)**2
 !             All uses of nwheats_ppfac were changed to ntef_ppfac
 !  05/07/2018 KEP added if statements to ntef_ppfac routine to account for TWILEN < 1
+!  01/21/2020 JG moved some CUL parameters to ECO file
+!  07/24/2020 JG moved ozone parameters to ECO file
 !---------------------------------------------------------------------
 !  Called by : TF_APSIM
 !  when DYNAMIC = RUNINIT, SEASINIT and INTEGRATE only
@@ -66,6 +68,8 @@ C-----------------------------------------------------------------------
       REAL        FDSW1
       REAL        FDSW2
       REAL        FDSW3
+      REAL        FOZ1  ! Added by JG for ozone calculation
+      REAL        FOZ2  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -101,6 +105,8 @@ C-----------------------------------------------------------------------
       REAL        MXFIL
       REAL        RTDP1
       REAL        RTDP2
+      REAL        SFOZ1  ! Added by JG for ozone calculation
+      REAL        SFOZ2  ! Added by JG for ozone calculation
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2
@@ -182,6 +188,8 @@ C-----------------------------------------------------------------------
       CHARACTER*1     IDETR
       REAL            KCAN
       REAL            KEP
+      REAL            KVAL1  ! JG added for pre-anthesis kvalue
+      REAL            KVAL2  ! JG added for post-anthesis kvalue
       INTEGER         LEAFNO
       INTEGER         L
       INTEGER         L0
@@ -212,6 +220,8 @@ C-----------------------------------------------------------------------
       REAL            RATEIN
       REAL            ROPT
       REAL            RUE
+      REAL            RUE1  ! JG added for pre-anthesis RUE
+      REAL            RUE2  ! JG added for post-anthesis RUE
       REAL            SDEPTH
       CHARACTER*6     SECTION
       REAL            S1
@@ -272,7 +282,7 @@ C-----------------------------------------------------------------------
 
       CHARACTER*6 ECOTYP
       INTEGER ISECT
-      CHARACTER*255 C255
+      CHARACTER*355 C255  ! JG increased for large ecotype file
       CHARACTER*16  ECONAM
       INTEGER LUNCRP
       CHARACTER*92 FILECC
@@ -354,20 +364,15 @@ C-----------------------------------------------------------------------
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
      &            VSEN,PPSEN,P1,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1
             LNUM = LNUM + 1
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
-1800           FORMAT (A6,1X,A16,1X,A6,1X,43F6.0)
+1800           FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)
           ENDIF
 
       VSEN = VSEN * 0.0054545 + 0.0003
       PPSEN = PPSEN *0.002
-      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
           CLOSE(LUNIO)
 
 !     -----------------------------------------------------------------
@@ -526,26 +531,37 @@ C-----------------------------------------------------------------------
             IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
      &            C255(1:1) .NE. '*') THEN
               READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
-     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE, KCAN
-3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1))
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
 
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter.
 !               Default to TSEN = 6.0 if no value given.
-                IF (C255(87:91) == '     ') THEN
+                ! JG changed column numbers to match updated ecotype file
+                IF (C255(327:331) == '     ') THEN
                   TSEN = 6.0
                 ELSE
-                  READ(C255(87:91),'(F5.0)',IOSTAT=ERRNUM) TSEN
+                  READ(C255(327:331),'(F5.0)',IOSTAT=ERRNUM) TSEN
                   IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
                 ENDIF
 
 !               Read optional number of cold days paramter.
 !               Default to CDAY = 15.0 if no value given.
-                IF (C255(93:97) == '     ') THEN
+                ! JG changed column numbers to match updated ecotype file
+                IF (C255(333:337) == '     ') THEN
                   CDAY = 15
                 ELSE
-                  READ(C255(93:97),'(I5)',IOSTAT=ERRNUM) CDAY
+                  READ(C255(333:337),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
                 ENDIF
 

@@ -5,6 +5,13 @@
 !----------------------------------------------------------------------
 !  Revision history
 !  06/27/2011 FSR created WH_GROSUB.for for APSIM NWheat (WHAPS) adaptation
+!  10/27/2016 BK, JG  added ozone effects
+!  07/21/2017 WP  Changes for pest damage
+!  08/30/2018 WP/FO  Changes for pest damage
+!  08/08/2019 TF  Changes for pest damage
+!  01/21/2020 JG added pre- and post-anthesis RUE and kvalue
+!  01/21/2020 JG moved some CUL parameters to ECO file
+!  07/24/2020 JG moved ozone parameters to ECO file, replaced OZONX with OZON7
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
 !
@@ -23,17 +30,17 @@ C The statements begining with !*! are refer to APSIM source codes
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR, nh4ppm, no3ppm,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,        !Input
+     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input ! OZON7 added by BTK, JG
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
      &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
-     &      WRIDOT, WSIDOT, XNTI, xstag_nw,                   !Input
+     &      WRIDOT, WSIDOT, XNTI, xstag_nw, DISLA,            !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,                                 !I/O
-     &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
-     &      CANWH, CARBO, carbh, dlayr_nw, GNUP, GPSM, GRNWT, !Output
-     &      GRORT, HI, HIP, LEAFNO, NSTRES,                   !Output 
+     &      AGEFAC, APTNUP, AREALF, AREAH, CANHT, CANNAA,     !Output
+     &      CANWAA, CANWH, CARBO, carbh, dlayr_nw, GNUP,      !Output
+     &      GPSM, GRNWT, GRORT, HI, HIP, LEAFNO, NSTRES,      !Output 
      &      nwheats_topsfr, PCNGRN, PCNL, PCNRT, PCNST,       !Output
      &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output !PODNO should be removed
      &      PConc_Shel, PConc_Shut, pl_la, plsc,              !Output
@@ -45,10 +52,11 @@ C The statements begining with !*! are refer to APSIM source codes
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output 
      &      TOPWT, TURFAC, snup_nh4,                          !Output
      &      snup_no3, VSTAGE, WTLF, WTNCAN, pl_nit_leaf,      !Output  pl_nit_leaf is  WTNLF,
-     &      pl_nit_grain, pl_nit_stem, cumph_nw,                       !Output they are  WTNSD, WTNST, 
+     &      pl_nit_grain, pl_nit_stem, cumph_nw,              !Output  they are  WTNSD, WTNST, 
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
      &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)        !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2,         !Output
+     &      CLW, SLDOT)                                       !Output  !WP added CLW, SLDOT for pest damage
 
       USE ModuleDefs
       USE WH_module
@@ -95,6 +103,8 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        EO, ep_nw, ES!JZW add for Canopy T calculation
       REAL        EXNH4
       REAL        EXNO3
+      REAL        FOZ1  ! Added by JG for ozone calculation
+      REAL        FOZ2  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -125,6 +135,8 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        MXFIL
       REAL        RTDP1
       REAL        RTDP2
+      REAL        SFOZ1  ! Added by JG for ozone calculation, formerly SLFOZ1
+      REAL        SFOZ2  ! Added by JG for ozone calculation, formerly SLFOZ2
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2 ! nwheat cultivar parameter
@@ -161,7 +173,9 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL ce_tops  ! ce for tops  (g biomass/MJ)
       real Ctrans ! Carbohydrate avail for translocation
                   ! from seed reserves (g/plant)
+      REAL CLW    ! Cumulative leaf grow (g[leaf]/m2) - (WP 07/21/2017)
       real cwdemand     ! crop water demand (mm) add by JZW
+      REAL DISLA    ! Diseased leaf area (cm2[leaf]/m2[ground]/d) - (Fabio 09/19/2018)
 !     real gndmd                 ! (OUTPUT) grain N demand (g/plant) add by JZW
       Real tempmx, tempmn !add by JZW
       REAL zstage, xtag_nw !add by JZW
@@ -183,6 +197,7 @@ C The statements begining with !*! are refer to APSIM source codes
       real dtiln       
       REAL DUL(NL)
       real duldep(NL)   ! drained upper limit by soil layer
+      real FO3      ! ozone concentration factor for photosynthesis ! added by JG
       REAL fr_intc_radn 
       REAL frlf ! New fraction of oldest expanding leaf
       real fstage
@@ -232,6 +247,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL nwheats_topsfr ! Senthold alternative to topsfr 
       real nwheats_vfac
       real optfr ! fraction of optimum conditions from stress (0-1)
+      real OZON7    ! ozone concentration  ! added by BTK, JG
       real part_shift     ! the shift in allocation from leaves to
       REAL plagtf !plant leaf area growth temperature function(?)
       real pot_growt_leaf ! a potential leaf growth before reallocation
@@ -252,6 +268,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL plwtmn(mxpart) !min wt of each plant part     nwheat
       REAL plantwtmn(mxpart)!Replaced with "plwtmn"      nwheat
       real pntrans(mxpart) ! N translocated to grain.
+      real PRFO3    ! ozone effect on photosynthesis ! added by JG
       REAL ptcarb
       REAL ptfstem  
       REAL ptgrn    ! potential grain growth (g/plant)
@@ -273,12 +290,15 @@ C The statements begining with !*! are refer to APSIM source codes
                       !  uptake (mm)
       REAL seedrvNW ! seed carbohydrate reserves (g/plant) 
       REAL sen_la   ! Senesced leaf area, mm2/plant      nwheat
+      REAL sen_la_p ! Previous Senesced leaf area, mm2/plant - (WP 07/21/2017)
       real senrt    ! Senesced root
       real sentil   ! Senesced tillers? (undocumented in NWheat)
       real sfactor  ! stress factor for leaf senescence(0-1)
       REAL sla_new  ! specific leaf area of new growth (mm2/g)      
-      real slan  ! leaf area senesced during normal development (mm^2 ?)
+      real slan     ! leaf area senesced during normal development (mm^2 ?)
+      REAL SLDOT    ! Defoliation due to daily leaf senescence (g/m2/day) - (WP 07/21/2017)
       real slfn     ! N effect on leaf senescence  (0-1)
+      real SLFO3    ! effect of ozone on leaf scenescence ! added by JG
       real slft     ! low temperature factor (0-1)
       real slfw     ! drought stress factor (0-1)
       real stage_gpla ! from function nwheats_slan
@@ -335,6 +355,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        AGEFAC            
       REAL        APTNUP      
       REAL        AREALF
+      REAL        AREAH
       REAL        ASGDD
       REAL        ASMDOT
       REAL        BIOMAS 
@@ -382,6 +403,19 @@ C The statements begining with !*! are refer to APSIM source codes
       CHARACTER*92    FILECC
       CHARACTER*12    FILES
       CHARACTER*12    FILEE 
+
+      ! JG added for ecotype file
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      INTEGER     PATHL
+      INTEGER     LUNECO
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2  ! JG added for ecotype file
+      
       INTEGER         FOUND  
       REAL        FSLFW
       REAL        FSLFN  
@@ -609,6 +643,9 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL, DIMENSION(NL) :: KUptake, SKi_Avail
       REAL KSTRES
 
+!     5/24/2017 CHP / IH
+      REAL Taverage
+      
 !     CHP 3/31/2006
 !     Proportion of lignin in STOVER and Roots
       REAL PLIGLF, PLIGRT
@@ -686,7 +723,8 @@ C The statements begining with !*! are refer to APSIM source codes
             CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
             READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC ; LNUM = LNUM + 1
- 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+C 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+ 60         FORMAT(24X,F6.0,12X,F6.0,7X,F5.2)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 !     -----------------------------------------------------------------
@@ -699,11 +737,7 @@ C The statements begining with !*! are refer to APSIM source codes
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR) 
      &          VARNO,VRNAME,ECONO,VSEN,PPSEN,P1,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1
 !------------------------------------------------------------------
 ! PNUPR = 0.45; APSIM pot_nuprate =  .45e-6 , g/mm root/day
 ! MNNCR=1.23: APSIM min_grain_nc_ratio = 0.0123
@@ -718,15 +752,59 @@ C The statements begining with !*! are refer to APSIM source codes
 ! p_max_grain_nc_ratio = 0.04
 !-----------------------------------------------------------------     
 !*!1800        FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)
-1800        FORMAT (A6,1X,A16,1X,A6,1X,43F6.0)
+1800        FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 
       VSEN = VSEN * 0.0054545 + 0.0003
       PPSEN = PPSEN *0.002
-      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
 
         CLOSE(LUNIO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+
+      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
+          CLOSE (LUNECO)
 
 !         ************************************************************
 !         ************************************************************
@@ -1522,8 +1600,11 @@ C The statements begining with !*! are refer to APSIM source codes
       ! JZW replace rue_factor/transp_eff_coeff by model equation from David on Mar. 22, 2014
       ! rue_factor  = TABEX (rue_fac, XCO2, WEATHER % CO2 ,8) 
       !Tdepend is Temperature dependent CO2 compensation point
+      !Taverage added to reduce CO2 effect, added by CHP / IH
       if (RUEFAC .eq. 1) then
-        Tdepend = (163 - (Tmax+Tmin)/2)/(5.0 - 0.1* (Tmax+Tmin)/2)
+        Taverage = min(15., (Tmax+Tmin)/2.)
+!        Tdepend = (163 - (Tmax+Tmin)/2)/(5.0 - 0.1* (Tmax+Tmin)/2)
+        Tdepend = (163 - Taverage)/(5.0 - 0.1* Taverage)
         rue_factor = (WEATHER % CO2 - Tdepend) *(350 + 2* Tdepend)/
      &           ((WEATHER % CO2 + 2*Tdepend)*(350 - Tdepend)) 
       else 
@@ -1634,6 +1715,11 @@ C The statements begining with !*! are refer to APSIM source codes
               WTLF = plantwt(leaf_part) * PLTPOP      !Leaf weight, g/m2
               STMWTO = STMWT * PLTPOP   !Stem weight, g/m2
               RTWTO = RTWT * PLTPOP     !Root weight, g/m2
+              
+              !- Added for pest damage (WP - 07/26/2017)
+              CLW = WTLF 
+              !-----------------------------------------
+              
               CALL P_Ceres (EMERG, ISWPHO,                      !Input
      &          CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &          PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
@@ -1866,7 +1952,7 @@ cnh added 7-4-94 ???                                                  !
 !*!      else                                                         !
 !*!      endif                                                        !
 !---------From nwheats_crppr-------------------------------------------
- 
+
       elseif (stgdur(grnfil) .eq. 1
      &        .and. istage .eq. grnfil) then ! start of grain filling
 c Senthold
@@ -1891,7 +1977,7 @@ cnh need to account for this initial (and significant) biomass
 cnh in stem grown BEFORE ear growth.
          plantwt(stem_part) = plantwt(stem_part)-plantwt(grain_part)
          plwtmn(stem_part) = plwtmn(stem_part)-plantwt(grain_part)
- 
+
 c Senthold
 !*!      if (stemmn_p1.gt.0.0) then
 !*!          plantwtmn(stem) = plantwt(stem) * stemmn_p1
@@ -1920,12 +2006,16 @@ c
 !*!      lfipar = radfr*solrad  (solrad same as SRAD)
 
          lai = (pl_la - sen_la) *PLTPOP/sm2smm
-         XHLAI=LAI  ! XHLAI: Healthy leaf area index used to compute
+!        XHLAI=LAI
+      !- WP - Update Leaf Area by Willingthon
+         AREALF = LAI * 10000  !cm2/m2
+!        TF (31/08/2019) - Photosynthesis rate should be calculated over the non-diseased leaf area (XHLAI)
+         AREAH  = AREALF - DISLA
+         AREAH  = MAX(0.,AREAH)
+         XHLAI=AREAH/10000  ! XHLAI: Healthy leaf area index used to compute
                     ! transpiration in water balance routine
-
-         radfr = 1.0 - exp (-nwheats_kvalue * lai)
+         radfr = 1.0 - exp (-nwheats_kvalue * XHLAI)
          lfipar = radfr * SRAD
- 
       else  ! interception has already been calculated for us
 !*!      lfipar = fr_intc_radn * solrad
          lfipar = fr_intc_radn * SRAD
@@ -2078,8 +2168,9 @@ cbak    testing:
 !*!     ce_tops = 3.8 * divide (solrad**0.63, solrad, 0.0)
 !*!     ce_tops = 3.2 * divide (solrad**0.7, solrad, 0.0)
 !*!     ce_tops = u_bound(ce_tops,2.0)
- 
-        ce_tops = 3.8 * (SRAD**0.63 / SRAD)
+! JG added pre- and post-anthesis RUE and kvalue routine
+        ce_tops = RUE * (SRAD**nwheats_kvalue / SRAD)
+!        ce_tops = RUE * (SRAD**0.63 / SRAD)
         ce_tops = MIN(ce_tops,2.0)
  
 !*!   if (nwheats_min_rootfr() .gt. 0.0) then
@@ -2107,6 +2198,17 @@ cbak    testing:
 !*! End WHAPS potential dry matter production calculation 
 !*!       (from APSIM NWheat subroutine nwheats_ptcarb)
 !====================================================================== 
+!---------------------------------------------------------------------- 
+!*! Begin WHAPS assimilative damage due to pests.
+!---------------------------------------------------------------------- 
+
+!     Reduced pcarbo for assimilate pest damage (Fabio - 08/30/2018)
+      pcarbo = pcarbo - ASMDOT
+      pcarbo = MAX(pcarbo, 0.0)
+!----------------------------------------------------------------------
+!*! End WHAPS assimilative damage due to pests. 
+!====================================================================== 
+!----------------------------------------------------------------------
 !*! Begin WHAPS - actual & potential biomass (CH2O) production from   
 !*!       photosynthesis   (from APSIM NWheat subroutine nwheats_biomp) 
 !---------------------------------------------------------------------- 
@@ -2131,18 +2233,35 @@ cbak optimum of 18oc for photosynthesis
          ! cold morning - too cold for plants to grow today
          prft = 0.0
       endif
- 
+
+          !Effect of Ozone on photosynthesis added by BTK, JG
+      if (OZON7 .gt. 25.0) then
+          FO3 = (-(FOZ1/100) * OZON7) + FOZ2  ! JG divided FOZ1 by 100 to clean parameter value 7/24/20
+          !FO3 = (-0.0006 * OZON7) + 1.015  !Ozone Tolerant cultivars
+          !FO3 = (-0.005 * OZON7) + 1.125   !Ozone Sensitive cultivars
+          !FO3 = (-0.001 * OZON7) + 1.025   !Ozone Intermediate cultivars
+      else
+          FO3 = 1.0
+      Endif
+
+      if (swdef(photo_nw) .eq. 0.0) then
+          PRFO3 = min(1.0, (FO3*rue_factor)/(swdef(photo_nw)+0.00001)) ! added to prevent dividing by 0
+      else
+          PRFO3 = min(1.0, (FO3*rue_factor)/swdef(photo_nw)) ! ozone effect added by JG
+      endif
+            
           ! --------------- actual -----------------
  
           ! now get the actual dry matter (carbohydrate) production on the
           ! day by discounting by temperature, water or N stress factors.
 cnh senthold
 cnh      optfr = min (swdef(photo), nfact(1)) * prft
-      optfr = min (swdef(photo_nw), nfact(1), ADPHO) * prft 
+      optfr = min(swdef(photo_nw), nfact(1), ADPHO, PRFO3) * prft 
+      
         !! threshold aeration deficit (AF2) affecting photosyn
       carbh = ptcarb*optfr
       carbh = MAX(carbh, 0.0)  !*! was: carbh = l_bound (carbh, 0.0)
- 
+
       if (istage .eq. grnfil) then
          carbh = 
      &    carbh * (1. - (1.2 - 0.8*plwtmn(stem_part)/plantwt(stem_part))
@@ -2156,6 +2275,9 @@ cnh      optfr = min (swdef(photo), nfact(1)) * prft
       endif
  
       carbh = MAX(carbh, 0.0001) !*! was: carbh = l_bound(carbh, 0.0001)
+      
+!     CARBO is a input variable for PEST module (Fabio - 08/30/2018)
+      CARBO = carbh
 !---------------------------------------------------------------------- 
 !*! End WHAPS - actual & potential biomass (CH2O) production from   
 !*!       photosynthesis   (from APSIM NWheat subroutine nwheats_biomp)
@@ -2324,7 +2446,7 @@ cnh      plagms = 1400.*(cumph(istage)**.6)*ti*optfr
 !*!        CUL input SLAP1 replaces sla_p1
 !*!        CUL input SLAP2 replaces sla
 !*!        note that SLAP2 was converted to mm2/g (multiplied by 100)
-!*!        sla_new - specific leaf area of new growth (mm2/g)       
+!*!        sla_new - specific leaf area of new growth (mm2/g)
       sla_new = SLAP2 + ((SLAP1*100.-SLAP2) * exp(-2.*(xstag_nw-1.)))
       sla = sla_new/100
 
@@ -2711,7 +2833,7 @@ cnh            optfr = min (wfactor,nfactor)
             dtiln = 0.0
  
          endif
- 
+
       elseif (istage .eq. endjuv) then
  
 cbak  tiller number is used in stage "emerg" to help determine plag
@@ -2804,7 +2926,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 *     ==================================================================
       
       call nwheats_grnit (CONTROL, ISWITCH,                       !Input
-     &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
+     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input ! JG added MXNCR 7/23/20
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        pntrans)                                           !Output
@@ -2823,10 +2945,10 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 *     ==================================================================
       CALL nwheats_nuptk (SOILPROP,                               !Input
      &      carbh, cnc, EXNH4/100, EXNO3/100,                     !Input
-     &      g_uptake_source, gro_wt, MNNH4, MNNO3,                !Input
+     &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR/1000000, rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw, MXNUP,                                !Input, ! MXNUP added, 02/03/2017, btk
+     &      WFNU, xstag_nw,                                       !Input
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
        ptnup = sum_real_array (pnup, mxpart)
@@ -2947,6 +3069,10 @@ cbak   add the relevant c and n pools to the soil organic matter cycling
 !*!   pl_la = pl_la + gro_wt(leaf)*nwheats_sla() 
       pl_la = pl_la + gro_wt(leaf_part)*sla_new
 
+      !- Added for pest damage (WP - 07/24/2017)
+      CLW = CLW + (gro_wt(leaf_part) * PLTPOP)
+      !-----------------------------------------
+      
       lai = (pl_la - sen_la) * PLTPOP / sm2smm
       XHLAI  = LAI  ! XHLAI: Healthy leaf area index used to compute
                     ! transpiration in water balance routine
@@ -3049,8 +3175,11 @@ cbak  adjust the green leaf ara of the leaf that is dying
       endif                
          weather % TGROAV = Tcnpy !Average daily canopy temperature (°C)
          slft = ALIN (SENST, SENSF, 4, Tcnpy)
+
        Weather % VPD_TRANSP = vpd_transp
        Weather % VPDF = vpdf
+
+!      TMAX ON SENESCENCE FUNCTION EXTERNALIZED IN SPECIES FILE 
 !      if (TMAX .gt. 34.) then ! note that this factor is not continuous
 !      ! REAL FUNCTION INTERPOLATE (ARRVAR, DEPTH, DS)
 !         slft = 4. - (1.-(TMAX - 34.)/2.)
@@ -3058,10 +3187,20 @@ cbak  adjust the green leaf ara of the leaf that is dying
 !         slft = 1.0
 !      endif
       sfactor = max (slfw, slfn, slft)
- 
+
+      ! Ozone effect on leaf senescence added by BTK, JG
+      if (OZON7 .gt. 25.0 ) then
+          SLFO3 = (SFOZ1/10) * OZON7 + SFOZ2  ! JG divided SFOZ1 by 10 to clean parameter value 7/24/20
+          !SLFO3 = 0.008 * OZON7 + 0.8    !Ozone Tolerant cultivars
+          !SLFO3 = 0.04 * OZON7 + 0.0     !Ozone Sensitive cultivars
+          !SLFO3 = 0.025 * OZON7 + 0.375  !Ozone Intermediate cultivars
+      else
+          SLFO3 = 1.0
+          endif
+      
 cbak increase slan to account for stresses
  
-      leafsen = slan * sfactor
+      leafsen = slan * sfactor * SLFO3
  
       ! More Housekeeping needed here.!!!!!!!!!!!
  
@@ -3077,8 +3216,18 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
 
 !*!   sen_la = nwheats_lfsen ()
 !*!   nwheats_lfsen = bound (sen_la + leafsen, 0.0, pl_la)
+
+      !- Store the senescence area before add new area for pest damage (WP - 07/21/2017)
+      sen_la_p = sen_la
+      !---------------------------------------------------------------------------------
+      
       sen_la = MAX (sen_la + leafsen, 0.0)
       sen_la = MIN (sen_la, pl_la)
+      
+      !- Added for pest damage (WP - 07/21/2017)----------------
+      SENLA = MAX(sen_la-sen_la_p,0.0)
+      SLDOT = SENLA/100*PLTPOP/SLA !cm2/p * p/m2 / cm2/g = g/m2
+      !---------------------------------------------------------
      
       if (istage.eq.endveg) then
           lai = (pl_la - sen_la) *PLTPOP/sm2smm
@@ -3090,6 +3239,99 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
 !*! End WHAPS calculation of leaf senescense 
 !*! (from APSIM NWheat real function nwheats_lfsen) 
 !----------------------------------------------------------------------
+!====================================================================== 
+!---------------------------------------------------------------------- 
+!*! Begin WHAPS Leaf damage due to pests. 
+!*! (Fabio - 09/10/2018; TF - 09/22/2019) 
+!---------------------------------------------------------------------- 
+      LAIDOT = 0
+      IF (PLTPOP .GT. 0.0 .AND. plantwt(leaf_part) .GT. 0.0 .AND. 
+     &     WLIDOT .GT. 0.0) THEN
+        LAIDOT = WLIDOT * ((pl_la - sen_la) / 100)/
+     &  (plantwt(leaf_part)) !cm2/m2
+      ENDIF
+      
+      IF(PLTPOP.GT.0.0) THEN
+        pl_nit(leaf_part) = pl_nit (leaf_part) - 
+     &  pl_nit(leaf_part) * (WLIDOT/PLTPOP) / plantwt(leaf_part)
+        plantwt(leaf_part) = plantwt(leaf_part) - WLIDOT/PLTPOP
+        plantwt(leaf_part) = MAX(plantwt(leaf_part),0.0)
+      ENDIF
+      pl_la = pl_la - (LAIDOT * 100/PLTPOP) !pl_la mm2/plant
+      pl_la = MAX(pl_la, 0.0)
+      LAI = LAI - LAIDOT/10000  ! LAI m2/m2
+      LAI = MAX(LAI, 0.0)
+!----------------------------------------------------------------------
+!*! End WHAPS Leaf damage due to pests. 
+!======================================================================
+!---------------------------------------------------------------------- 
+!*! Begin WHAPS Stem damage due to pests. 
+!*! (Fabio - 09/10/2018; TF - 09/22/2019) 
+!---------------------------------------------------------------------- 
+      IF(PLTPOP.GT.0.0 .AND. plantwt(stem_part) .GT. 0.0 .AND. 
+     &     WSIDOT .GT. 0.0) THEN
+        pl_nit(stem_part)=pl_nit(stem_part)-
+     &  pl_nit(stem_part)*(WSIDOT/PLTPOP)/plantwt(stem_part)
+        plantwt(stem_part) = plantwt(stem_part) - WSIDOT/PLTPOP
+        plantwt(stem_part) = MAX(plantwt(stem_part), 0.0)
+      ENDIF  
+!----------------------------------------------------------------------
+!*! End WHAPS Stem damage due to pests. 
+!====================================================================== 
+!---------------------------------------------------------------------- 
+!*! Begin WHAPS Root damage due to pests. 
+!*! (Fabio - 09/10/2018; TF - 09/25/2019) 
+!---------------------------------------------------------------------- 
+      IF(PLTPOP.GT.0.0 .AND. plantwt(root_part) .GT. 0.0 .AND. 
+     &     WRIDOT .GT. 0.0) THEN
+        pl_nit(root_part)= pl_nit(root_part) - pl_nit(root_part)*
+     &  (WRIDOT/PLTPOP)/plantwt(root_part)
+        plantwt(root_part) = plantwt(root_part) - WRIDOT/PLTPOP
+        plantwt(root_part) = MAX(plantwt(root_part), 0.0)
+      ENDIF
+!----------------------------------------------------------------------
+!*! End WHAPS Root damage due to pests. 
+!====================================================================== 
+!---------------------------------------------------------------------- 
+!*! Begin WHAPS Grain Weight and number damage due to pests. 
+!*! (Fabio - 09/10/2018; TF - 09/25/2019) 
+!---------------------------------------------------------------------- 
+      IF (PLTPOP.GT. 0.0 .AND. plantwt(grain_part) .GT. 0.0 .AND. 
+     &      SWIDOT .GT. 0.0) THEN
+        pl_nit(grain_part) = pl_nit(grain_part) - pl_nit(grain_part)*
+     &  (SWIDOT/PLTPOP)/plantwt(grain_part)
+        gpp = gpp - gpp *(SWIDOT/PLTPOP)/plantwt(grain_part)
+      ENDIF
+
+      IF(PLTPOP.GT.0.0 .AND. SWIDOT .GT. 0.0) THEN 
+        plantwt(grain_part) = plantwt(grain_part) - SWIDOT/PLTPOP
+        plantwt(grain_part) = MAX(plantwt(grain_part), 0.0)
+        plantwt(seed_part) = plantwt(seed_part) - SWIDOT/PLTPOP
+        plantwt(seed_part) = MAX(plantwt(seed_part), 0.0)
+      ENDIF
+!----------------------------------------------------------------------
+!*! End WHAPS Grain Weight and number damage due to pests. 
+!====================================================================== 
+!---------------------------------------------------------------------- 
+!*! Begin WHAPS Plants damage due to pests. 
+!*! (Fabio - 09/10/2018; TF - 09/22/2019) 
+!---------------------------------------------------------------------- 
+      IF(PLTPOP.GT. 0.0 .AND. PPLTD.GT.0) THEN
+        PLTPOP = PLTPOP - PLTPOP * PPLTD/100
+        PLTPOP = MAX(PLTPOP, 0.0)
+        LAI = LAI - LAI*(PPLTD/100)
+        LAI = MAX(LAI, 0.0)
+      ENDIF
+!----------------------------------------------------------------------
+!*! End WHAPS Plants damage due to pests. 
+!======================================================================
+
+      !- WP - Update Leaf Area by Willingthon
+      AREALF = LAI * 10000  !cm2/m2
+      !---------------------------------------
+!     Added Area of healthy leaves (AREAH). (TF - 08/08/2019)
+      AREAH  = AREALF - DISLA
+      AREAH  = MAX(0.,AREAH)
 
 cjh quick fix for maturity stage
  
@@ -3143,11 +3385,12 @@ cjh quick fix for maturity stage
              RSTAGE = 0
           ENDIF
 
-          SEEDNO = gpp                ! no. of grains per plant
-          SLA    = sla_new / 100      ! mm2/g  to  cm2/g
-          XLAI   = LAI                !Leaf area index, m2/m2
-          XHLAI  = LAI  ! XHLAI: Healthy leaf area index used to compute
-                        ! transpiration in water balance routine, m2/m2
+         SEEDNO = gpp                 ! no. of grains per plant
+         SLA    = sla_new / 100       ! mm2/g  to  cm2/g
+         XLAI   = LAI                 !Leaf area index, m2/m2
+         XHLAI  = AREAH / 10000.  ! XHLAI: Healthy leaf area index used to compute         
+                                  ! transpiration in water balance routine, m2/m2
+
           RTWT   = plantwt(root_part) ! * PLTPOP in WH_OPGROW   g/plant
           WTLF   = plantwt(leaf_part) * PLTPOP       !Leaf weight, g/m2
           PODWT  = plantwt(lfsheath_part) * PLTPOP !sheath weight, g/m2
@@ -3157,6 +3400,7 @@ cjh quick fix for maturity stage
           tpsm = tiln * PLTPOP
           SHELPC = tpsm               ! Tiller number (no/m2)
           TOPWT  = WTLF+PODWT+STMWTO+SDWT  
+          TOPWT = MAX(0., TOPWT)
           if (plantwt(grain_part)  .gt. 0.) then
              PCNGRN = pl_nit(grain_part)* 100./plantwt(grain_part)
           else 
@@ -3218,6 +3462,7 @@ cjh quick fix for maturity stage
 ! carbh       Actual dry matter production for the day (g/plant)  (NWheat output)
 ! CARBO       Daily biomass production, g/plant/day
 ! CARBOT      Consecutive days where CARBO is less than .001 before plant matures due to stress
+! CLW         Cumulative leaf grow (g[leaf]/m2) - (WP 07/24/2017)
 ! CMAT        Counts consecutive days that CARBO is less than 0.001    
 ! CNSD1       Cumulative nitrogen deficit factor on photosynthesis in 
 !              each stage used to compute avg. stress during stage
@@ -3387,7 +3632,8 @@ cjh quick fix for maturity stage
 ! SLAN        Normal leaf senescence since emergence, cm2/plant
 ! sla_new     Calculated specific leaf area of new growth (mm2/g)
 ! SLAP1       ratio of leaf area to mass at emergence (CUL parameter)
-! SLAP2       ratio of leaf area to mass at end of leaf growth (CUL parameter) 
+! SLAP2       ratio of leaf area to mass at end of leaf growth (CUL parameter)
+! SLDOT       Defoliation due to daily leaf senescence (g/m2/day) - (WP 07/21/2017)
 ! SLFC        Leaf senescence factor due to competition for light(0-1)
 ! SLFN        Leaf senescence factor due to nitrogen stress (0-1)
 ! SLFP        Leaf senescence factor due to phosphorus stress (0-1)
@@ -3396,6 +3642,7 @@ cjh quick fix for maturity stage
 ! SNH4(L)     Ammonium nitrogen in soil layer L, kg N/ha
 ! SNO3(L)     Nitrate content in soil layer L, kg N/ha
 ! SRAD        Daily solar radiation, MJ/M2/day
+! OZON7       Daily 7-hour mean ozone concentration (9:00-15:59), ppb
 ! stemgr      Stem growth before emergence (g/plant) (WHAPS-nwheats.for)
 ! STGDOY(20)  Year and day of year that a growth stage occurred on
 ! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) 
@@ -3447,6 +3694,7 @@ cjh quick fix for maturity stage
 ! WRIDOT      Root loss due to pests, g root/m2/day
 ! WSIDOT      Stem loss due to pests, g stem/m2/day
 
+! WTLF        Leaf weight, g/m2 - (WP 07/21/2017)
 
 ! WTNCAN      Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha
 ! WTNLF       Weight of nitrogen in leaf tissue, kg N/ha

@@ -6,6 +6,8 @@
 !  Revision history
 !
 !  10/31/2007 CHP Written based on TEFF_NUPTAK
+!  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+!  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 !----------------------------------------------------------------------
 !  Called : TEFF_GROSUB 
 !

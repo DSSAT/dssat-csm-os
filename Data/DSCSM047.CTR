@@ -47,7 +47,7 @@ $SIMULATION_CONTROLS
 @N CONTROLS_TITLE
  5 Detail output (VBOSE='D') 
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
- 5 OU              .     .     .     .     .     .     .     .     .     .     D     .     .     .
+ 5 OU              .     .     .     1     .     .     .     .     .     .     D     .     Y     .
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
@@ -60,6 +60,12 @@ $SIMULATION_CONTROLS
  7 CSV outputs
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
  7 OU              .     .     .     .     .     .     .     .     .     .     .     .     .     C
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 8 CSV outputs, only Summary.OUT
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 8 OU              .     .     .     .     .     .     .     .     .     .     0     .     .     C
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
@@ -264,12 +270,6 @@ $SIMULATION_CONTROLS
 96 N-Wheat
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
 96 GE              .     .     .     .     . N-Wheat                   WHAPS
-
-!-----------------------------------------------------------------------------------------
-@N CONTROLS_TITLE
-97 Ceres-Rice
-@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
-97 GE              .     .     .     .     . Ceres-Rice                RICER
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
