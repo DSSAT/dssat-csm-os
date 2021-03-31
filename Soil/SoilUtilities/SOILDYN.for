@@ -49,7 +49,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6 SECTION
       CHARACTER*7, PARAMETER :: ERRKEY = 'SOILDYN'
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(NL+4)
+      CHARACTER*78 MSG(NL+10)
       CHARACTER*200 CHAR
 
       INTEGER DAS, DYNAMIC, ERRNUM, FOUND, I, L, Length 
@@ -65,6 +65,7 @@ C-----------------------------------------------------------------------
       CHARACTER*50 SLDESC, TAXON
       INTEGER NLAYR
       REAL CN, DMOD, KTRANS, SALB, SLDP, SLPF, SWCON, TEMP, TOTAW, U
+      REAL SWAD, SWnew
       REAL, DIMENSION(NL) :: ADCOEF, BD, CEC, CLAY, DLAYR, DS, DUL
       REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, POROS, SAND, SAT, SILT
       REAL, DIMENSION(NL) :: SW, SWCN, TOTN, TotOrgN, WCR, WR
@@ -132,7 +133,7 @@ C-----------------------------------------------------------------------
 !     values for comparison with effects of tillage and organic C content.
       REAL CN_INIT
       REAL, DIMENSION(NL) :: BD_INIT, DLAYR_INIT, DS_INIT, DUL_INIT
-      REAL, DIMENSION(NL) :: LL_INIT, SWCN_INIT, SAT_INIT
+      REAL, DIMENSION(NL) :: LL_INIT, SWCN_INIT, SAT_INIT, SW_INIT
 
 !     Base soil values modified by soil organic matter
       REAL dBD_SOM, dDLAYR_SOM, dDUL_SOM, dLL_SOM, dSOM, dOC
@@ -184,7 +185,8 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     Run Initialization - Called once per simulation
 !***********************************************************************
-      IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
+!     IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
+      IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
@@ -353,6 +355,7 @@ C-----------------------------------------------------------------------
       LNUM = LNUM + 1
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
+      NMSG = 0
       DO L = 1, NLAYR
         READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)SW(L), NH4(L),NO3(L)
 100     FORMAT (8X, 3 (1X, F5.1))
@@ -360,12 +363,54 @@ C-----------------------------------------------------------------------
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
         IF (SW(L) .LT. LL(L)) THEN
-          SW(L) = LL(L)
-        ENDIF
-        IF (SW(L) > SAT(L)) THEN
-          SW(L) = SAT(L)
+          IF (NMSG == 0) THEN
+            MSG(1) = "Initial soil water content < LL."
+            MSG(2) = " "
+            MSG(3) = "         FileX              SW @  Revised"
+            MSG(4) = "Layer  Init SW       LL   AirDry  Init SW"
+            NMSG = 4
+          ENDIF
+          IF (L == 1) THEN
+!           Layer 1 - check for SW < air dry
+            SWAD = 0.30 * LL(L)
+            IF (SW(L) < SWAD) THEN
+              SWnew = SWAD
+              NMSG = NMSG + 1
+              WRITE(MSG(NMSG),'(I5,4F9.3)') L, SW(L), LL(L), SWAD, SWnew
+              SW(L) = SWnew
+            ENDIF
+          ELSE
+!           Layers 2 thru NLAYR
+            SWnew = LL(L)
+            NMSG = NMSG + 1
+            WRITE(MSG(NMSG),'(I5,2F9.3,9X,F9.3)') L, SW(L), LL(L), SWnew
+            SW(L) = SWnew
+          ENDIF
         ENDIF
       ENDDO
+      IF (NMSG > 0) THEN
+        CALL WARNING(NMSG, ERRKEY, MSG)
+      ENDIF
+
+      NMSG = 0
+      DO L = 1, NLAYR
+        IF (SW(L) > SAT(L)) THEN
+          IF (NMSG == 0) THEN
+            MSG(1) = "Initial soil water content > SAT."
+            MSG(2) = " "
+            MSG(3) = "         FileX           Revised"
+            MSG(4) = "Layer  Init SW      SAT  Init SW"
+            NMSG = 4
+          ENDIF
+          SWnew = SAT(L)
+          NMSG = NMSG + 1
+          WRITE(MSG(NMSG),'(I5,3F9.3)') L, SW(L), SAT(L), SWnew
+          SW(L) = SWnew
+        ENDIF
+      ENDDO
+      IF (NMSG > 0) THEN
+        CALL WARNING(NMSG, ERRKEY, MSG)
+      ENDIF
 
       CLOSE (LUNIO)
 
@@ -949,6 +994,7 @@ C  tillage and rainfall kinetic energy
       TOTN_INIT = TOTN
       TotOrgN_INIT = TotOrgN
       SWCN_INIT = SWCN
+      SW_INIT   = SW
 
       BD_SOM   = BD
       DUL_SOM  = DUL
@@ -960,12 +1006,12 @@ C  tillage and rainfall kinetic energy
       CRAIN     = 0.
       LCRAIN    = 0.
 
-!!***********************************************************************
-!!***********************************************************************
-!!     Seasonal initialization
-!!***********************************************************************
-!      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
-!!-----------------------------------------------------------------------
+!***********************************************************************
+!***********************************************************************
+!     Seasonal initialization
+!***********************************************************************
+      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
+!-----------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
 
       ISWTIL = ISWITCH % ISWTIL
@@ -997,6 +1043,8 @@ C  tillage and rainfall kinetic energy
       SWCN  = SWCN_INIT
       TOTN  = TOTN_INIT
       TotOrgN = TotOrgN_INIT
+
+      SW    = SW_INIT
 
       BD_SOM   = BD
       DUL_SOM  = DUL

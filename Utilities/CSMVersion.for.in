@@ -22,6 +22,9 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.7.5.31 chp 03/25/2021 Forecast output weather yeardoy, & minor other   
+!       4.7.5.30 chp 03/05/2021 Minor updates, SW initialization limits,  
+!																	Soil N mass balance reporting, output WYear
 !       4.7.5.29 chp 02/08/2021 Forecast improvments, SRAD 0.1 limit
 !       4.7.5.28 chp 01/18/2021 Second part of ETPHOT protections
 !       4.7.5.27 chp 01/14/2021 ALOHA-pineapple model updates, Jhonny Vasquez
