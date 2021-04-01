@@ -79,7 +79,7 @@
                 TVR1 = FLOAT(INT(BRSTAGE))
             ENDIF
         ELSE
-            IF (PD(INT(BRSTAGE)) >= 0.0) THEN                                                          ! MSTG = KEYPSNUM
+            IF (PD(INT(BRSTAGE)) >= 0.0 .AND.(INT(BRSTAGE)+1) < PSX) THEN                                                          ! MSTG = KEYPSNUM
                 TVR1 = FLOAT(INT(BRSTAGE)) + (DABR-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE)+1)              ! EQN 004 !LPM 17JUL19 use DABR instead of CUMDU 
             ELSE
                 TVR1 = FLOAT(INT(BRSTAGE))
@@ -186,7 +186,7 @@
         
         ! Primary stages.   Calculated using Pstart
         IF (BRSTAGEPREV < 0.0) BRSTAGEPREV = 0.0
-        L = INT(BRSTAGEPREV) + 1
+        L = AMIN1(PSX, INT(BRSTAGEPREV) + 1)
         !IF (PSDAT(L) <= 0.0.AND.CUMDU >= PSTART(L)) THEN !LPM 24APR2016 Using DABR instead of CUMDU
         IF (PSDAT(L) <= 0.0.AND.DABR >= PSTART(L)) THEN
             PSDAT(L) = YEARDOY

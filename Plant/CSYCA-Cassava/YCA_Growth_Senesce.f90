@@ -83,7 +83,7 @@
         !-----------------------------------------------------------------------
         !        LAI by Cohort
         !-----------------------------------------------------------------------
-        node(BR,LF)%LAIByCohort=0.0                               ! DA re-initializing LAIByCohort
+        node%LAIByCohort=0.0                               ! DA re-initializing LAIByCohort
         LAI=0.0                                              ! DA re-initializing LAI
         DO Bcount=0,BRSTAGE
             BR= BRSTAGE - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
