@@ -463,7 +463,8 @@
 !       routine.  Currently, both are done.
 !-----------------------------------------------------------------------
           RSD = 1.0
-          IF (GDMSD .GT. 0.0001) THEN
+C-GH      IF (GDMSD .GT. 0.0001) THEN
+          IF (GDMSD .GT. 0.0) THEN
             CRSD = MIN(PGAVLR / (GDMSD*AGRSD1), 1.0)
             NREQ = FNINSD * MIN(PGAVLR/AGRSD1, GDMSD)
             IF (NREQ .GT. 0.0) THEN
@@ -571,7 +572,8 @@ C 24 changed to TS on 3Jul17 by Bruce Kimball
             ADDSHL = 0.0
             SUPDAY = 1.0
             IF (PAGE .LE. LNGSH) THEN
-              IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
+C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
+              IF (SHELN(NPP) .GT. 0.0 .AND. GRRAT1 .GT. 0.0) THEN
                 IF (PAGE .GE. LNGPEG) THEN
                   ADDSHL = MIN(PGLEFT/AGRSH1,GRRAT1 * SHELN(NPP),
      &              NLEFT/(FNINSH*CNSTRES**0.5))
