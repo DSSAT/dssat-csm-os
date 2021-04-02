@@ -36,7 +36,8 @@
       ENDIF
       
       ! Check final harvest date for seasonal runs        
-      CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+!      CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+      CALL YR_DOY(YEARDOYHARF,HYEAR,HDAY)
       PLTOHARYR = HYEAR - PLYEARREAD
       ! Upgrade harvest date for seasonal and sequential runs
       yeardoyharf = (plyear+pltoharyr)*1000 +hday

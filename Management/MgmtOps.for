@@ -513,7 +513,7 @@ C-----------------------------------------------------------------------
           WRITE(DLUN2,'("*MANAGEMENT OPERATIONS EVENT SUMMARY")')
         ENDIF
 
-        IF (INDEX('FQN',RNMODE) <= 0 .OR. RUN == 1) THEN
+        IF (INDEX('FQNY',RNMODE) <= 0 .OR. RUN == 1) THEN
           CALL HEADER(SEASINIT, DLUN2, RUN)  
         ENDIF
 

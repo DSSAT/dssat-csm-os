@@ -87,6 +87,9 @@ C             CHP Added TRTNUM to CONTROL variable.
       DATA MonthTxt /'JAN','FEB','MAR','APR','MAY','JUN',
      &               'JUL','AUG','SEP','OCT','NOV','DEC'/
 
+!     MAKEFILEW VARIABLES 
+      INTEGER:: FirstWeatherDate = -99
+      INTEGER:: NEWSDATE = -99
 !=======================================================================
 !     Data construct for control variables
       TYPE ControlType
@@ -102,6 +105,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER   DAS, DYNAMIC, FROP, ErrCode, LUNIO, MULTI, N_ELEMS
         INTEGER   NYRS, REPNO, ROTNUM, RUN, TRTNUM
         INTEGER   YRDIF, YRDOY, YRSIM
+        INTEGER   FODAT, ENDYRS  !Forecast start date and ensemble #
       END TYPE ControlType
 
 !=======================================================================
@@ -410,7 +414,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Data transferred from hourly energy balance 
       Type SPAMType
         REAL AGEFAC, PG                   !photosynthese
-        REAL CEF, CEM, CEO, CEP, CES, CET !Cumulative ET - mm
+        REAL CEF, CEM, CEO, CEP, CES      !Cumulative ET - mm
+        REAL CET, CEVAP                   !Cumulative ET - mm
         REAL  EF,  EM,  EO,  EP,  ES,  ET !Daily ET - mm/d
         REAL  EOP, EVAP                   !Daily mm/d
         REAL, DIMENSION(NL) :: UH2O       !Root water uptake
@@ -430,7 +435,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Data transferred from management routine 
       Type MgmtType
         REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR
-        REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
+        REAL V_AVWAT(20) !Create vectors for growth stage based irrig
         REAL V_IMDEP(20)
         REAL V_ITHRL(20)
         REAL V_ITHRU(20)
@@ -461,6 +466,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data from weather
       Type WeathType
+        INTEGER WYEAR
         Character*8 WSTAT
       End Type WeathType
 
@@ -632,6 +638,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('CEP');    Value = SAVE_data % SPAM % CEP
         Case ('CES');    Value = SAVE_data % SPAM % CES
         Case ('CET');    Value = SAVE_data % SPAM % CET
+        Case ('CEVAP');  Value = SAVE_data % SPAM % CEVAP
         Case ('EF');     Value = SAVE_data % SPAM % EF
         Case ('EM');     Value = SAVE_data % SPAM % EM
         Case ('EO');     Value = SAVE_data % SPAM % EO
@@ -755,6 +762,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('CEP');    SAVE_data % SPAM % CEP    = Value
         Case ('CES');    SAVE_data % SPAM % CES    = Value
         Case ('CET');    SAVE_data % SPAM % CET    = Value
+        Case ('CEVAP');  SAVE_data % SPAM % CEVAP  = Value
         Case ('EF');     SAVE_data % SPAM % EF     = Value
         Case ('EM');     SAVE_data % SPAM % EM     = Value
         Case ('EO');     SAVE_data % SPAM % EO     = Value
@@ -930,6 +938,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('WEATHER')
+        SELECT CASE (VarName)
+        Case ('WYEAR'); Value = SAVE_data % WEATHER % WYEAR
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -960,6 +974,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('NR5');  SAVE_data % PLANT % NR5  = Value
         Case ('iSTAGE');  SAVE_data % PLANT % iSTAGE  = Value
         Case ('iSTGDOY'); SAVE_data % PLANT % iSTGDOY = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('WEATHER')
+        SELECT CASE (VarName)
+        Case ('WYEAR'); SAVE_data % WEATHER % WYEAR = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

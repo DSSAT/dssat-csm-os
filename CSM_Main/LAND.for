@@ -1,9 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C                      Washington State University 
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2020 
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C                     
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  LAND UNIT Module. G.Hoogenboom, J.W.Jones, C.Porter
@@ -230,18 +231,6 @@ C-----------------------------------------------------------------------
       ENDIF
 
 C-----------------------------------------------------------------------
-C     Seasonal initialization for soil-plant-atmosphere processes
-!     chp moved this before SOIL, so soil temp is available 
-C-----------------------------------------------------------------------
-      CALL SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
-     &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
-
-C-----------------------------------------------------------------------
 C     Seasonal initialization for soil processes
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
@@ -252,6 +241,31 @@ C-----------------------------------------------------------------------
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
      &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
+
+C-----------------------------------------------------------------------
+C     Seasonal initialization for soil-plant-atmosphere processes
+!     chp moved this before SOIL, so soil temp is available 
+!     update 2020-12-04 - order makes no difference
+C-----------------------------------------------------------------------
+      CALL SPAM(CONTROL, ISWITCH,
+     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
+     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    FLOODWAT, SWDELTU,                              !I/O
+     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+
+!C-----------------------------------------------------------------------
+!C     Seasonal initialization for soil processes
+!C-----------------------------------------------------------------------
+!      CALL SOIL(CONTROL, ISWITCH, 
+!     &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
+!     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+!     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
+!     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
+!     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
+!     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+!     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
 
 C-----------------------------------------------------------------------
 C     Initialize PLANT routines (including phenology and pest)
@@ -328,8 +342,8 @@ C     Call PLANT Subroutine to calculate crop growth and
 C     development rates.
 C     Skip plant growth and development routines for fallow runs
 C-----------------------------------------------------------------------
-      IF (CROP .NE. 'FA' .AND. 
-     &    YRDOY .GE. YRPLT .AND. YRPLT .NE. -99) THEN
+!      IF (CROP .NE. 'FA' .AND. 
+!     &    YRDOY .GE. YRPLT .AND. YRPLT .NE. -99) THEN
         CALL PLANT(CONTROL, ISWITCH, 
      &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
      &    NH4_plant, NO3_plant, SKi_Avail, SomLitC, SomLitE, !Input
@@ -341,7 +355,7 @@ C-----------------------------------------------------------------------
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
-      ENDIF
+!      ENDIF
 
 C***********************************************************************
 C     DAILY INTEGRATION 

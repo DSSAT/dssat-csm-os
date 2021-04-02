@@ -65,7 +65,16 @@ C=======================================================================
       YRDOY = CONTROL % YRDOY
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
-          SELECT CASE (MEEVP)
+      SELECT CASE (MEEVP)
+!         ------------------------
+          !FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
+!             with KC = 1.0
+          CASE ('F')
+            CALL PETPEN(
+     &        CLOUDS, EORATIO, ET_ALB, SRAD, TAVG, TDEW,  !Input
+     &        TMAX, TMIN, VAPR, WINDSP, WINDHT, XHLAI,    !Input
+     &        EO)                                         !Output
+!         ------------------------
           !ASCE Standardized Reference Evapotranspiration Equation
           !for the short reference crop (12-cm grass, "S") or the
           !tall reference crop (50-cm grass, "T") with dual 
@@ -76,16 +85,6 @@ C=======================================================================
      &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
      &        XLAT, XELEV,                                !Input
      &        EO)                                         !Output
-     
-!         ------------------------
-          !FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
-!             with KC = 1.0
-          CASE ('F')
-            CALL PETPEN(
-     &        CLOUDS, EORATIO, ET_ALB, SRAD, TAVG, TDEW,  !Input
-     &        TMAX, TMIN, VAPR, WINDSP, WINDHT, XHLAI,    !Input
-     &        EO)                                         !Output
-
 !         ------------------------
           !Dynamic Penman-Monteith, pot. evapotranspiration, with
 !             dynamic input of LAI, crop height effects on Ra and Rs
@@ -118,7 +117,7 @@ C=======================================================================
      &        ET_ALB, SRAD, TMAX, TMIN, XHLAI,          !Input
      &        EO)                                       !Output
 !         ------------------------
-          END SELECT
+      END SELECT
 
       RETURN
       END SUBROUTINE PET

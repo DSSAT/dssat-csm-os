@@ -1,11 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
-C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2020 
+C                     DSSAT Foundation
+C                     International Fertilizer Development Center
+C                     University of Florida, Gainesville, Florida
+C
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  CERES RICE UPLAND and LOWLAND N MODEL

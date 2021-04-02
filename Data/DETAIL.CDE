@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.7; 09/18/2020
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -265,6 +265,7 @@ PO       Perennial peanut                                                     IB
 PP       Pigeon pea                                                           IB
 PR       Pepper                                                               IB
 PT       Potato                                                               IB
+QU       Quinoa                                                               IB
 RG       Ryegrass                                                             IB
 RI       Rice                                                                 IB
 RP       Rhizoma peanut                                                       IB

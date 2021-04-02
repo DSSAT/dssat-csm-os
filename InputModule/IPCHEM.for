@@ -10,6 +10,7 @@ C  01/01/1996 GH  Accepted and included in DSSAT v3.1
 C  08/19/2002 GH  Modified for Y2K
 C  08/23/2002 GH  Expanded array for chemical applications to 200
 C  02/03/2005 GH  Corrected error checking for missing levels
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNCHE,CDATE,CHCOD,CHAMT,CHMET,CHDEP,CHT
 C           YRSIM,ISWWAT,NCHEM
@@ -84,11 +85,14 @@ C    &            CHDEP(NCHEM),CHT(NCHEM)
      &         (MOD(CDATE(NCHEM),1000) .GT. 366)) THEN
                CALL ERROR (ERRKEY,10,FILEX,LINEXP)
             ENDIF
-
-	      CALL Y2K_DOY (CDATE(NCHEM))
+            
+C  FO 05/07/2020 - Add new Y4K subroutine call to convert YRDOY
+	          !CALL Y2K_DOY (CDATE(NCHEM))
+            CALL Y4K_DOY (CDATE(NCHEM),FILEX,LINEXP,ERRKEY,3)
             IF (CDATE(NCHEM) .LT. YRSIM) THEN
-	         CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+	             CALL ERROR (ERRKEY,3,FILEX,LINEXP)
             ENDIF
+            
             IF ((CHAMT(NCHEM) .LT. 0.0) .OR.
      &          (CHAMT(NCHEM) .GT. 9999999.)) THEN
                CALL ERROR (ERRKEY,11,FILEX,LINEXP)

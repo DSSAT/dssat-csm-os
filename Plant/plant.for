@@ -1,9 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2015 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C                      Washington State University
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2020
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C                     
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  PLANT, Subroutine
@@ -292,15 +293,50 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !        HARVRES % CumResE = 0.0
       ENDIF
 
+!     Initialize output variables.
+!     Each plant routine may or may not re-compute these values.
+      CANHT    = 0.0
+      EORATIO  = 1.0
+      FracRts  = 0.0
+      KCAN     = 0.85
+      KEP      = 1.0
+      KSEVAP   = -99.
+      KTRANS   = 1.0
       KUptake = 0.0
+      NSTRES   = 1.0
+      PORMIN   = 0.02
+      PSTRES1  = 1.0
+      PUPTAKE  = 0.0
+      RLV      = 0.0
+      RWUEP1   = 1.5
+      RWUMX    = 0.03
+      UH2O     = 0.0
+      UNH4     = 0.0
+      UNO3     = 0.0
+      XHLAI    = 0.0
+      XLAI     = 0.0
+      SENESCE % ResWt  = 0.0
+      SENESCE % ResLig = 0.0
+      SENESCE % ResE   = 0.0
 
 !***********************************************************************
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
+      IF (CROP .NE. 'FA' .AND. 
+     &    CONTROL % YRDOY .GE. YRPLT .AND. YRPLT .NE. -99) THEN
+
         SENESCE % ResWt  = 0.0
         SENESCE % ResLig = 0.0
         SENESCE % ResE   = 0.0
+
+      ELSE
+        CANHT = 0.0
+        RLV   = 0.0
+        XHLAI = 0.0
+        XLAI  = 0.0
+        RETURN
+      ENDIF
 
 !-----------------------------------------------------------------------
       ENDIF   !End of dynamic loop prior to calls to crop models
@@ -650,7 +686,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Set default canopy height upon emergence (or first day with
 !       LAI.  Should actually set these defaults within each
 !       crop routine.
-        IF (FixCanht .AND. (XLAI .GT. 0.001 .OR. XHLAI .GT. 0.001)) THEN
+        IF (FixCanht .AND. (XLAI .GT. 0.0 .OR. XHLAI .GT. 0.0)) THEN
           CANHT = 0.5
           FixCanht = .FALSE.
         ENDIF
