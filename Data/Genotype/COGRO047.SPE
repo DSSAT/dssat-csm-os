@@ -133,6 +133,8 @@
 
 !*EVAPOTRANSPIRATION
   0.70   1.1       KEP, EORATIO
+     T  0.50  0.00  1.00 SKC, KCBmin, KCBmax ASCE tall ref (50 cm alfalfa)
+     S  0.50  0.00  1.20 SKC, KCBmin, KCBmax ASCE short ref (12 cm grass)
 
 *PHOSPHORUS CONTENT
 ! Two options for Optimum and minimum P concentrations for shoots: 
