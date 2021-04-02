@@ -65,7 +65,7 @@ C-----------------------------------------------------------------------
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KCAN_ECO, KC_SLOPE
-      REAL SSKC, SKCBMAX, TSKC, TKCBMAX
+!     REAL SSKC, SKCBMAX, TSKC, TKCBMAX
 
 !     Species parameters for N stress  9/11/2008
 !     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
@@ -329,40 +329,6 @@ C-----------------------------------------------------------------------
           CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
           READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-          
-          IF (MEEVP .EQ. 'S' .OR. MEEVP .EQ. 'T') THEN
-            CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-            IF(ISECT .NE. 1) CALL ERROR ('CSM',1,FILECC,LNUM)
-            READ(CHAR,'(2F6.0)',IOSTAT=ERR) SSKC, SKCBMAX
-            IF (ERR .NE. 0) THEN
-              MSG(1) = "Error reading SSKC, SKCBMAX for ASCE PET method"
-              CALL WARNING(1, ERRKEY, MSG)
-              CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-            ENDIF
-            
-            CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-            IF(ISECT .NE. 1) CALL ERROR ('CSM',1,FILECC,LNUM)
-            READ(CHAR,'(2F6.0)',IOSTAT=ERR) TSKC, TKCBMAX
-            IF (ERR .NE. 0) THEN
-              MSG(1) = "Error reading TSKC, TKCBMAX for ASCE PET method"
-              CALL WARNING(1, ERRKEY, MSG)
-              CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-            ENDIF
-            
-            SSKC    = MAX(0.30,MIN(1.0,SSKC))
-            SKCBMAX = MAX(0.25,MIN(1.5,SKCBMAX))
-            TSKC    = MAX(0.30,MIN(1.0,TSKC))
-            TKCBMAX = MAX(0.25,MIN(1.5,TKCBMAX))
-            IF (MEEVP.EQ.'S') THEN
-              CALL PUT('SPAM', 'SKC', SSKC)
-              CALL PUT('SPAM', 'KCBMAX', SKCBMAX)
-            ELSEIF (MEEVP.EQ.'T') THEN
-              CALL PUT('SPAM', 'SKC', TSKC)
-              CALL PUT('SPAM', 'KCBMAX', TKCBMAX)
-            ENDIF
-            
-          ENDIF
-          
         ENDIF
 
 C-----------------------------------------------------------------------
