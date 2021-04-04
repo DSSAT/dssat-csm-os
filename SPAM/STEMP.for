@@ -107,32 +107,35 @@ C-----------------------------------------------------------------------
 
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
 
-        IF (ISWWAT .NE. 'N') THEN
-!         Read inital soil water values from FILEIO 
-!         (not yet done in WATBAL, so need to do here)
-          OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
-          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
-          SECTION = '*INITI'
-          CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
-          IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
+!        IF (ISWWAT .NE. 'N') THEN
+!!         Read inital soil water values from FILEIO 
+!!         (not yet done in WATBAL, so need to do here)
+!          OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
+!          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
+!          SECTION = '*INITI'
+!          CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
+!          IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
+!
+!!         Initial depth to water table (not currently used)
+!          READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
+!          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+!
+!!         These have not yet been initialized in SOILDYN, so do it here.
+!          DO L = 1, NLAYR
+!            READ(LUNIO,'(2X,2F6.0)',IOSTAT=ERRNUM) DSI(L), SWI(L)
+!            LNUM = LNUM + 1
+!            IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+!            IF (SWI(L) .LT. LL(L)) SWI(L) = LL(L)
+!          ENDDO
+!
+!          CLOSE (LUNIO)
+!        ELSE
+!          SWI = DUL
+!          DSI = SOILPROP % DS
+!        ENDIF
 
-!         Initial depth to water table (not currently used)
-          READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
-          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-
-!         These have not yet been initialized in SOILDYN, so do it here.
-          DO L = 1, NLAYR
-            READ(LUNIO,'(2X,2F6.0)',IOSTAT=ERRNUM) DSI(L), SWI(L)
-            LNUM = LNUM + 1
-            IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-            IF (SWI(L) .LT. LL(L)) SWI(L) = LL(L)
-          ENDDO
-
-          CLOSE (LUNIO)
-        ELSE
-          SWI = DUL
-          DSI = SOILPROP % DS
-        ENDIF
+        SWI = SW
+        DSI = SOILPROP % DS
 
         IF (XLAT .LT. 0.0) THEN
           HDAY =  20.0           !DOY (hottest) for southern hemisphere

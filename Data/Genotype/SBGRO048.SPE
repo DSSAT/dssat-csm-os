@@ -1,4 +1,4 @@
-*SOYBEAN SPECIES COEFFICIENTS: CRGRO047 MODEL
+*SOYBEAN SPECIES COEFFICIENTS: CRGRO048 MODEL
 
 !*PHOTOSYNTHESIS PARAMETERS
  40.00 61.00  0.67  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE
@@ -149,7 +149,8 @@
 
 !*EVAPOTRANSPIRATION
   0.68   1.1       KEP, EORATIO
-!  0.72   1.1       KEP, EORATIO
+  0.50  0.95       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+  0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
 
 *PHOSPHORUS CONTENT
 ! Two options for Optimum and minimum P concentrations for shoots: 

@@ -5,16 +5,16 @@
 !  Includes subroutines:
 
 !  MEEVP Routine Description
-!   R  PETPT   Calculates Priestly-Taylor potential evapotranspiration
+!   S  PETASCE ASCE Standardized Reference Evapotranspiration Equation
+!                for the short reference crop (12-cm grass) with dual
+!                FAO-56 crop coefficient method
+!   T  PETASCE ASCE Standardized Reference Evapotranspiration Equation
+!                for the tall reference crop (50-cm alfalfa) with dual
+!                FAO-56 crop coefficient method
+!   R  PETPT   Calculates Priestley-Taylor potential evapotranspiration
 !                (default method)
-!   A  PETASCE ASCE Standardized Reference Evapotranspiration Equation
-!                for tall reference (alfalfa) with dual FAO-56 crop 
-!                coefficient
 !   F  PETPEN  FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
 !                with KC = 1.0
-!   G  PETASCE ASCE Standardized Reference Evapotranspiration Equation
-!                for short reference (grass) with dual FAO-56 crop
-!                coefficient
 !   D  PETDYN  Dynamic Penman-Monteith, pot. evapotranspiration, with
 !                dynamic input of LAI, crop height effects on Ra and Rs
 !   P  PETPNO  FAO Penman (FAO-24) potential evapotranspiration 
@@ -65,23 +65,7 @@ C=======================================================================
       YRDOY = CONTROL % YRDOY
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
-          SELECT CASE (MEEVP)
-!          !Penman-Monteith reference ET based on the ASCE Standardized
-!          !Reference Evapotranspiration Equation
-! CHP 2018-07-20 A and G methods require changes to species file.
-!     We need to figure out a better way to do this. 
-!     The way the routine is written,  
-!     either parameters for A and G are in the species file, 
-!     OR parameters for all other methods are in the species file.
-!     This requires that different species files are used for the
-!     different methods.
-!          CASE ('A','G')
-!            CALL PETASCE(
-!     &        CANHT, DOY, ET_ALB, MEEVP, SRAD, TDEW,      !Input 
-!     &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
-!     &        XLAT, XELEV,                                !Input
-!     &        EO)                                         !Output
-     
+      SELECT CASE (MEEVP)
 !         ------------------------
           !FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
 !             with KC = 1.0
@@ -90,7 +74,17 @@ C=======================================================================
      &        CLOUDS, EORATIO, ET_ALB, SRAD, TAVG, TDEW,  !Input
      &        TMAX, TMIN, VAPR, WINDSP, WINDHT, XHLAI,    !Input
      &        EO)                                         !Output
-
+!         ------------------------
+          !ASCE Standardized Reference Evapotranspiration Equation
+          !for the short reference crop (12-cm grass, "S") or the
+          !tall reference crop (50-cm grass, "T") with dual 
+          !FAO-56 crop coefficient method.
+          CASE ('S','T')
+            CALL PETASCE(
+     &        CANHT, DOY, ET_ALB, MEEVP, SRAD, TDEW,      !Input 
+     &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
+     &        XLAT, XELEV,                                !Input
+     &        EO)                                         !Output
 !         ------------------------
           !Dynamic Penman-Monteith, pot. evapotranspiration, with
 !             dynamic input of LAI, crop height effects on Ra and Rs
@@ -123,7 +117,7 @@ C=======================================================================
      &        ET_ALB, SRAD, TMAX, TMIN, XHLAI,          !Input
      &        EO)                                       !Output
 !         ------------------------
-          END SELECT
+      END SELECT
 
       RETURN
       END SUBROUTINE PET
@@ -132,18 +126,22 @@ C=======================================================================
 
 C=======================================================================
 C  PETASCE, Subroutine, K. R. Thorp
-C  Calculates reference evapotranspiration using the ASCE
-C  Standardized Reference Evapotranspiration Equation.
-C  Adjusts reference evapotranspiration to potential evapotranspiration
-C  using dual crop coefficients.
-C  DeJonge K. C., Thorp, K. R., 2017. Implementing standardized refernce
-C  evapotranspiration and dual crop coefficient approach in the DSSAT
-C  Cropping System Model. Transactions of the ASABE. 60(6):1965-1981.
+C  Calculates reference evapotranspiration for the short or tall
+C  reference crops using the ASCE Standardized Reference 
+C  Evapotranspiration Equation.
+C  Adjusts reference evapotranspiration to potential soil water 
+C  evaporation and potential transpiration using FAO-56 dual crop
+C  coefficients.
+C  DeJonge K. C., Thorp, K. R., 2017. Implementing standardized
+C  reference evapotranspiration and dual crop coefficient approach
+C  in the DSSAT Cropping System Model. Transactions of the ASABE. 
+C  60(6):1965-1981.
 !-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  08/19/2013 KRT Added the ASCE Standardize Reference ET approach
 C  01/26/2015 KRT Added the dual crop coefficient (Kc) approach
 C  01/18/2018 KRT Merged ASCE dual Kc ET method into develop branch
+C  07/23/2020 KRT Changed flags to S and T for short and tall references
 !-----------------------------------------------------------------------
 !  Called from:   PET
 !  Calls:         None
@@ -174,6 +172,7 @@ C=======================================================================
       REAL FCD, TK4, RNL, RN, G, WINDSP, WIND2m, Cn, Cd, KCMAX, RHMIN
       REAL WND, CHT
       REAL REFET, SKC, KCBMIN, KCBMAX, KCB, KE, KC
+      CHARACTER*78 MSG(2)
 !-----------------------------------------------------------------------
 
 !     ASCE Standardized Reference Evapotranspiration 
@@ -245,12 +244,12 @@ C=======================================================================
 !     Aerodynamic roughness and surface resistance daily timestep constants
 !     (ASCE Standard Table 1)
       SELECT CASE(MEEVP) !
-        CASE('A') !Alfalfa reference
-          Cn = 1600.0 !K mm s^3 Mg^-1 d^-1
-          Cd = 0.38 !s m^-1
-        CASE('G') !Grass reference
+        CASE('S') !Short reference crop (12-cm grass)
           Cn = 900.0 !K mm s^3 Mg^-1 d^-1
           Cd = 0.34 !s m^-1
+        CASE('T') !Tall reference crop (50-cm alfalfa)
+          Cn = 1600.0 !K mm s^3 Mg^-1 d^-1
+          Cd = 0.38 !s m^-1
       END SELECT
 
 !     Standardized reference evapotranspiration (ASCE Standard Eq. 1)
@@ -259,16 +258,25 @@ C=======================================================================
       REFET = MAX(0.0001, REFET)
 
 !     FAO-56 dual crop coefficient approach
+!     First step is to obtain crop coefficient parameters.
+      CALL GET('SPAM', 'SKC', SKC)
+      KCBMIN = 0.0
+      CALL GET('SPAM', 'KCBMAX', KCBMAX)
+      IF (SKC .LT. 1.E-6 .OR. KCBMAX .LT. 1.E-6) THEN
+          MSG(1) = "Crop coefficient parameters for the ASCE dual Kc"
+          MSG(2) = "ET method are not available for this crop."
+          CALL WARNING(2,"PET",MSG)
+          CALL ERROR("CSM",64,"",0)
+      ENDIF
+
 !     Basal crop coefficient (Kcb)
 !     Also similar to FAO-56 Eq. 97
-!     KCB is zero when LAI is zero
-      CALL GET('SPAM', 'SKC', SKC)
-      CALL GET('SPAM', 'KCBMIN', KCBMIN)
-      CALL GET('SPAM', 'KCBMAX', KCBMAX)
+!     KCB is zero when LAI is zero by hard coding KCBMIN = 0.0.      
       IF (XHLAI .LE. 0.0) THEN
          KCB = 0.0
       ELSE
-         !DeJonge et al. (2012) equation
+         !Equation from DeJonge et al. (2012) Agricultural Water
+         !Management 115, 92-103
          KCB = MAX(0.0,KCBMIN+(KCBMAX-KCBMIN)*(1.0-EXP(-1.0*SKC*XHLAI)))
       ENDIF
 
@@ -276,11 +284,11 @@ C=======================================================================
       WND = MAX(1.0,MIN(WIND2m,6.0))
       CHT = MAX(0.001,CANHT)
       SELECT CASE(MEEVP)
-        CASE('A') !Alfalfa reference
-            KCMAX = MAX(1.0,KCB+0.05)
-        CASE('G') !Grass reference
+        CASE('S') !Short reference crop (12-cm grass)
             KCMAX = MAX((1.2+(0.04*(WND-2.0)-0.004*(RHMIN-45.0))
      &                      *(CHT/3.0)**(0.3)),KCB+0.05)
+        CASE('T') !Tall reference crop (50-cm alfalfa)
+            KCMAX = MAX(1.0,KCB+0.05)
       END SELECT
 
       !Effective canopy cover (fc) (FAO-56 Eq. 76)
@@ -290,16 +298,18 @@ C=======================================================================
          FC = ((KCB-KCBMIN)/(KCMAX-KCBMIN))**(1.0+0.5*CANHT)
       ENDIF
       
-      !Exposed and wetted soil fraction (FAO-56 Eq. 75) 
-      !Unresolved issue with FW (fraction wetted soil surface).
-      !Some argue FW should not be used to adjust demand.
-      !Rather wetting fraction issue should be addressed on supply side.
-      !Difficult to do with a 1-D soil water model
+      !Exposed and wetted soil fraction (FAO-56 Eq. 75)
+      !Wetted soil fraction (FW) is hard-coded to 1.0.
+      !FW should not be used to adjust demand.
+      !Rather wetting fraction should be addressed on supply side.
+      !Difficult to do with a 1-D soil water model, but 2-D models
+      !offer opportunity for this.
       FW = 1.0
       FEW = MIN(1.0-FC,FW)
 
       !Potential evaporation coefficient (Ke) (Based on FAO-56 Eq. 71)
-      !Kr = 1.0 since this is potential Ke. Model routines handle stress
+      !Kr = 1.0 since this is for potential E. Other model routines
+      !handle reductions from potential.
       KE = MAX(0.0, MIN(1.0*(KCMAX-KCB), FEW*KCMAX))
 
       !Potential crop coefficient (Kc) (FAO-56 Eqs. 58 & 69)

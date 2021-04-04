@@ -1384,6 +1384,10 @@
       REAL          VWAD          ! Vegetative canopy weight       kg/ha
       REAL          VRNSTAGE      ! Vernalization stage            #
 
+!!     2021-02-14 chp
+!      REAL          Nuptake_daily !Daily N uptake (kg [N]/ha)
+!      REAL          NUAD_Y        !Yesterday's cumulative N uptake
+
       PARAMETER     (BLANK = ' ')
       PARAMETER     (RUNINIT = 1)
       PARAMETER     (SEASINIT = 2)
@@ -6244,7 +6248,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &        ' VRNFD DYLFD')
      
               WRITE (NOUTPN,2251)
- 2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD',
+!             2021-02-15 chp Change NUAD to NUAC in header.
+ 2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC',
      &        '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      &        ' RSNAD SNNPD SNN0D SNN1D',
      B        '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
@@ -6469,6 +6474,11 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
          CALL LinklstPlGrf(vCsvlinePlGrf)
       END IF
  
+!!             2021-02-14 chp 
+!!             NUAD should be a daily variable, but here it's cumulative. 
+!!             Introduce a new variable that is daily.
+!              Nuptake_daily = NUAD - NUAD_Y
+
               ! Plant N outputs
               IF (ISWNIT.EQ.'Y') THEN
                 CALL Csopline(senn0c,sennal(0))
@@ -6485,6 +6495,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &           F6.1,F6.2,
      &           2F6.2)')
      &           YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,NUAD,
+!    &           YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,
+!    &           Nuptake_daily,
      &           TNAD,SDNAD,
      &           RNAD,
      &           CNAD,LLNAD,SNAD,
@@ -6507,6 +6519,11 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
       END IF 
 
               ENDIF  ! ISWNIT = Y
+
+!!             2021-02-14 chp 
+!!             Keep cumulative value for use tomorrow.
+!              NUAD_Y = NUAD
+
             ENDIF    ! IDETG.NE.'N'
             ENDIF    ! IDETG.NE.'N'.OR.IDETL.EQ.'0'
           ENDIF      ! MOD(FROPADJ)

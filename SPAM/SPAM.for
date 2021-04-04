@@ -134,7 +134,7 @@ C=======================================================================
       IF (MEPHO .EQ. 'L' .OR. MEEVP .EQ. 'Z') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
+     &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
       
@@ -160,6 +160,7 @@ C=======================================================================
       ES_LYR = 0.0
       SWDELTX = 0.0
       TRWU = 0.0
+      XHLAI = 0.0
 
 !     ---------------------------------------------------------
       IF (meevp .NE.'Z') THEN   !LPM 02dec14 to use the values from ETPHOT
