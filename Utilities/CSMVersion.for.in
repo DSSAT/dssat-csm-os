@@ -19,9 +19,10 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-forecast'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.7.5.34 chp 04/04/2021 Forecast mode: FODAT = Last Weather date +1 if no SimCtrl.  
 !       4.7.5.33 chp 04/04/2021 ASCE potential evapotranspiration enabled for cotton, soybean   
 !       4.7.5.32 chp 03/29/2021 Model check based on Simulation.CDE   
 !       4.7.5.31 chp 03/25/2021 Forecast output weather yeardoy, & minor other   
