@@ -13,8 +13,6 @@
 !        below this note. This is important to ensure that information from
 !        different workers can be easily integrated.
 
-TAV TRANGE REFHT WNDHT SITE
-
 *Headers
 @CDE     DESCRIPTION                                                          SO
 ALPHA    Monthly value of gamma distribution shape parameter                  IB 
