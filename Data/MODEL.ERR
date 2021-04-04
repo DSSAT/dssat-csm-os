@@ -640,6 +640,9 @@ File not found.  Please check file name or create file.
 IPWTH    30
 Error opening file.
 
+IPASCE    1
+Error reading species parameters for evapotranspiration.
+
 IRRIG    10
 Incompatibility between Century SOM method and flooded field management.
 
@@ -929,3 +932,6 @@ Start simulation date is lower than first weather date.
 
 Y4KDOY    1
 Input date is greather than 99 years after start simulation date.
+
+FORCST    1
+Forecast date is before start of simulation date.
