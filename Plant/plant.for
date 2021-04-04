@@ -789,6 +789,11 @@ c     Total LAI must exceed or be equal to healthy LAI:
 
 !===========================================================================
       SUBROUTINE READ_ASCE_KT(CONTROL, MEEVP)
+!     Generic routine to read evapotranspiration species parameters
+!     KEP, EORATIO 
+!     TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+!     SSKC, SKCBmax ASCE short ref (12 cm grass)
+
       USE ModuleData
       External IGNORE, WARNING, ERROR
 
@@ -847,7 +852,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
         OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,0)
         LNUM = 0
-        
+
 !       ***** READ ASCE EVAPOTRANSPIRATION PARAMETERS *****
         SECTION = '!*EVAP'
         CALL FIND(LUNCRP, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
@@ -864,14 +869,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
           ENDIF
         ENDIF
 
-        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-        IF(ISECT .NE. 1) CALL ERROR (ERRKEY,1,FILECC,LNUM)
-        READ(CHAR,'(2F6.0)',IOSTAT=ERR) SSKC, SKCBMAX
-        IF (ERR .NE. 0) THEN
-          NMSG = NMSG + 1
-          MSG(NMSG)="Error reading SSKC, SKCBMAX for ASCE PET method."
-        ENDIF
-        
+!       Read tall reference crop parameters
         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
         IF(ISECT .NE. 1) CALL ERROR (ERRKEY,1,FILECC,LNUM)
         READ(CHAR,'(2F6.0)',IOSTAT=ERR) TSKC, TKCBMAX
@@ -880,8 +878,17 @@ c     Total LAI must exceed or be equal to healthy LAI:
           MSG(NMSG)="Error reading TSKC, TKCBMAX for ASCE PET method."
         ENDIF
 
+!       Read short reference crop parameters
+        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+        IF(ISECT .NE. 1) CALL ERROR (ERRKEY,1,FILECC,LNUM)
+        READ(CHAR,'(2F6.0)',IOSTAT=ERR) SSKC, SKCBMAX
+        IF (ERR .NE. 0) THEN
+          NMSG = NMSG + 1
+          MSG(NMSG)="Error reading SSKC, SKCBMAX for ASCE PET method."
+        ENDIF
+
         CLOSE (LUNCRP)
-        
+
 !       Check for value with valid ranges.
         SSKC    = MAX(0.30,MIN(1.0,SSKC))
         SKCBMAX = MAX(0.25,MIN(1.5,SKCBMAX))
@@ -899,7 +906,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
         MSG(NMSG+1) ="ASCE PET method may not be valid for this crop."
         MSG(NMSG+2) = "Model will stop."
         CALL WARNING(NMSG+2, ERRKEY, MSG)
-        CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+        CALL ERROR(ERRKEY,1,FILECC,LNUM)
       ENDIF
 
 !     Store the values for retreival in SPAM.
