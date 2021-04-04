@@ -330,6 +330,7 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
         IF (I .EQ. 1) WeathRecFirst = WRecDate
     END SELECT
   ENDDO  !Loop thru data file one record at a time
+  CLOSE (LUNWTH)
 
   WeathRecLast = WRecDate
   NRecords = I
@@ -403,7 +404,6 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
 !--------------------------------------------------------------
   CenturyFirst = AINT(FLOAT(WFirstDate) / 100000.)
 
-  CLOSE (LUNWTH)
   RETURN
 END SUBROUTINE FCAST_ScanWeathData
 

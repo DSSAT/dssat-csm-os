@@ -299,8 +299,8 @@ C     The components are copied into local variables for use here.
 !     that correct century is read for files with 2-digit years
       IF (RNMODE .EQ. 'Y' .AND.               !Yield forecast mode
      &    SOURCE .EQ. "FORCST" .AND.          !Getting in-season data for storage
-     &    INDEX('MG',MEWTH) .GT. 0 .AND.      !Measured or generated data files
-     &    NYEAR .GT. 1 .AND.                  !Multi-year weather file
+!    &    INDEX('MG',MEWTH) .GT. 0 .AND.      !Measured or generated data files
+!    &    NYEAR .GT. 1 .AND.                  !Multi-year weather file
      &    CONTROL % ENDYRS .EQ. 1) THEN       !First year simulation
         WFPASS = 0
         CenturyWRecord = -99
