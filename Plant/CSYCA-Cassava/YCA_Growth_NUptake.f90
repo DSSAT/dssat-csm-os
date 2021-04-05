@@ -430,7 +430,7 @@
                 SEEDNUSE2 = 0.0
                 RSNUSED = 0.0
             
-                RNDEM = RTWTG*RNCX * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2,WFG)                              !EQN 154
+                RNDEM = RTWTG*RNCX * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)                              !EQN 154
             
                 SRNDEM = (SRWTGRSP)*(SRNPCS/100.0)                     !EQN 155
 
@@ -438,11 +438,11 @@
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (GROSTP>0.0) THEN
-                            node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%NODEWTG)*node(BR,LF)%SNCX * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2,WFG)
+                            node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%NODEWTG)*node(BR,LF)%SNCX * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)
                             SNDEM = SNDEM + node(BR,LF)%SNDEMN
                         ENDIF
                         IF (GROLFP>0.0) THEN 
-                            node(BR,LF)%LNDEMN = (AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP))*node(BR,LF)%LNCX) * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2,WFG) 
+                            node(BR,LF)%LNDEMN = (AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP))*node(BR,LF)%LNCX) * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2) 
                             LNDEM = LNDEM + node(BR,LF)%LNDEMN
                         ENDIF
                     ENDDO
@@ -534,24 +534,24 @@
                 ! For supplying minimum
                 DO BR = 0, BRSTAGE                                                                                                                                                               
                     DO LF = 1, LNUMSIMSTG(BR)
-                        node(BR,LF)%NDEMSMN = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2,WFG)
+                        node(BR,LF)%NDEMSMN = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)
                         IF (PLAGSB2 > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
-                            node(BR,LF)%NDEMLMN = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * node(BR,LF)%LNCM * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)
+                            node(BR,LF)%NDEMLMN = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * node(BR,LF)%LNCM * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)
                         ENDIF  
                     ENDDO
                 ENDDO
-                NDEMMN = SUM(node%NDEMLMN)+(RTWTG*RNCM * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2))+SUM(node%NDEMSMN)+ (SRNDEM*0.5)
+                NDEMMN = SUM(node%NDEMLMN)+(RTWTG*RNCM * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2))+SUM(node%NDEMSMN)+ (SRNDEM*0.5)
                 IF (NDEMMN > 0.0) THEN
-                    RNUSE(1) = (RTWTG*RNCM* AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2))*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
+                    RNUSE(1) = (RTWTG*RNCM* AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2))*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
 
                     DO BR = 0, BRSTAGE                                                                                                                                                              
                         DO LF = 1, LNUMSIMSTG(BR)
                             IF (GROSTP > 0.0) THEN
-                                SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)* node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
+                                SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)* node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
                                 SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
                             ENDIF
                             IF (GROLFP > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
-                                LNUSEN(1,BR,LF) = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) * node(BR,LF)%LNCM*AMIN1(1.0,NULEFT/NDEMMN) 
+                                LNUSEN(1,BR,LF) = AMAX1(0.0,((node(BR,LF)%LAGLT/PLAGSB2)*GROLFP)) * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2) * node(BR,LF)%LNCM*AMIN1(1.0,NULEFT/NDEMMN) 
                                 LNUSE(1) = LNUSE(1) + LNUSEN(1,BR,LF)
                             ENDIF
                         ENDDO
@@ -615,7 +615,7 @@
                             IF (LNUMSIMSTG(BR) < LCNUMX) THEN
                                 !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
                                 !LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG) !LPM 02SEP2016  Use of NFLF2 instead of NFG
-                                node(BR,LF)%LAGL3 = node(BR,LF)%LAGL * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) 
+                                node(BR,LF)%LAGL3 = node(BR,LF)%LAGL * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2) 
                                 !LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
                                 node(BR,LF)%LATL3= node(BR,LF)%LATL3 + node(BR,LF)%LAGL3                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
                                 node(BR,LF)%AFLF = AMIN1(1.0,node(BR,LF)%AFLF + AMAX1(0.0,node(0,0)%AFLF) * (node(BR,LF)%LAGL)/node(BR,LF)%LAPOTX2)             !EQN 151   
@@ -630,7 +630,7 @@
                                 ENDDO
                                 !IF (CFLAFLF == 'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
                                 IF (LF == LNUMSIMSTG(BR) .AND. LNUMG > LNUMNEED .AND. BR == BRSTAGE) THEN                                             ! This is where new leaf is initiated
-                                    node(BR,LF+1)%LAGL3 = node(BR,LF+1)%LAGL * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)
+                                    node(BR,LF+1)%LAGL3 = node(BR,LF+1)%LAGL * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)
                                     node(BR,LF+1)%LATL3= node(BR,LF+1)%LATL3 + node(BR,LF+1)%LAGL3                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
                                     node(BR,LF+1)%AFLF = AMIN1(1.0,node(BR,LF+1)%AFLF + AMAX1(0.0,node(0,0)%AFLF) * (node(BR,LF+1)%LAGL)/node(BR,LF+1)%LAPOTX2)             !EQN 151   
                                     node(BR,LF+1)%NFLF2 = AMIN1(1.0,node(BR,LF+1)%NFLF2 + AMAX1(0.0,node(0,0)%NFLF2) * (node(BR,LF)%LAGL)/node(BR,LF+1)%LAPOTX2)  !EQN 237 !LPM 02SEP2016 To save NFLF2
@@ -653,10 +653,10 @@
                     ENDDO
                 ENDDO
 
-            PLAGSB4 = PLAGSB2 * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) 
-            SHLAGB4(1) = SHLAG2(1) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                          !EQN 240
-            SHLAGB4(2) = SHLAG2(2) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                          !EQN 240
-            SHLAGB4(3) = SHLAG2(3) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                         !EQN 240    
+            PLAGSB4 = PLAGSB2 * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2) 
+            SHLAGB4(1) = SHLAG2(1) * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)                                                                          !EQN 240
+            SHLAGB4(2) = SHLAG2(2) * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)                                                                          !EQN 240
+            SHLAGB4(3) = SHLAG2(3) * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)                                                                         !EQN 240    
 
             GROCRADJ = AMIN1(GROCR,GROCRADJ)
             !GROLFADJ = AMIN1(GROLF,GROLFADJ)
@@ -665,7 +665,7 @@
             IF (LAWL(1) > 0.0) GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
             !LPM 09OCT2019 Adding the WFG at the same time than the restrictions due to N and assimilates (selecting the most limiting)
             ! No water stress factor added to the roots
-            GROSTADJ = AMIN1(GROST,GROSTADJ, (GROSTP * WFG))
+            GROSTADJ = AMIN1(GROST,GROSTADJ)
             RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)
             RTRESPADJ = AMIN1(RTRESP,RTRESPADJ)    
             RTWTGADJ = AMIN1(RTWTG,RTWTGADJ)

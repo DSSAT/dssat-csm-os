@@ -43,17 +43,17 @@
         TVR1 = 0.0 
         ! Determine potential new concentration
         IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) THEN
-            TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))  !EQN 310
+            TVR1 = GRORS/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+GRORS)  !EQN 310
         ENDIF
         IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
             TVR1 = 0.0
         END IF
         !LPM 15DEC2020 Keep SRWTGRS instead of SRWTGRSADJ to consider additional CHO going to the roots when N is the most 
         !restrictive factor (diluted N in storage roots)
-        SRWTGRS = RSWT+GRORS
+        SRWTGRS = GRORS
         ! Determine FINAL new concentration
-        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
-            (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
+        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
+            (STWT+GROSTADJ+CRWT+GROCRADJ)+(GRORS-SRWTGRS))
 
         
                 

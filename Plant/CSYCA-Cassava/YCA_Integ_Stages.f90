@@ -83,26 +83,47 @@
                 TVR1 = FLOAT(INT(BRSTAGE)) + (DABR-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE)+1)              ! EQN 004 !LPM 17JUL19 use DABR instead of CUMDU 
             ELSE
                 TVR1 = FLOAT(INT(BRSTAGE))
-            ENDIF        
+            ENDIF         
         ENDIF    
         
+        
+        IF (INT(BRSTAGE) == 0.0) THEN
+            BRNUMST(INT(BRSTAGE)) = 1
+            BRNUMSHM = BRNUMST(INT(BRSTAGE))
+            DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
+               IF (SHNUM-FLOAT(L-1) > 0.0) THEN
+                   BRNUMSH(L) = BRNUMST(INT(BRSTAGE))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
+                   BRNUMSHM = BRNUMSHM + BRNUMSH(L)                             
+               ENDIF
+            ENDDO
+        ENDIF
+
         IF (INT(TVR1) > INT(BRSTAGEPREV)) THEN
             !IF (BRSTAGE == 0.0) THEN
             !    BRNUMST = 1                                                                         ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)! to have the apex number by branch level
             !ELSEIF (BRSTAGE > 0.0) THEN
             !    BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             !ENDIF
-            BRDAE(TVR1) = DAG !LPM 10JUL2017 To consider root and stem development after germination and before emergence (planting stick below-ground)
-            IF (BRSTAGE == 0.0) THEN
-                BRNUMST(TVR1) = 1                                                                                    ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
-            ELSEIF (BRSTAGE > 0.0) THEN
+            BRDAE(INT(TVR1)) = DAG !LPM 10JUL2017 To consider root and stem development after germination and before emergence (planting stick below-ground)
+            IF (BRSTAGE > 0.0) THEN
                 IF (BRFX(INT(TVR1)) <= 0.0) then 
                     BRFX(INT(TVR1)) = BRFX(INT(TVR1-1))                 !LPM 09JUN2015 To avoid number of branches 0 for BRSTAGE>6
-                endif                                
+                ENDIF                                
             !LPM 11DEC2020 to reduce # of branches due to water or N stress
-                BRNUMST(TVR1) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))*AMIN1(WFG,NFG)                    ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
+            !LPM 16FEB2021 avoid reduction in the number of branches of no more than 50% of the maximum branching
+                BRNUMST(INT(TVR1)) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))                    ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
+                BRNUMSHM = BRNUMST(INT(TVR1))
             ENDIF
+            DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
+               IF (SHNUM-FLOAT(L-1) > 0.0) THEN
+                   BRNUMSH(L) = BRNUMST(TVR1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
+                   BRNUMSHM = BRNUMSHM + BRNUMSH(L)                             
+               ENDIF
+            ENDDO
         ENDIF 
+        BRNUMSHM = BRNUMSHM*PLTPOP
+        
+
         
         !LPM 05JUN2015 DSTAGE is not used
         !IF (MEDEV == 'DEVU'.AND.PSTART(MSTG) > 0.0) THEN   !LPM 04MAR15 MSTG TO PSX

@@ -1,4 +1,4 @@
-$SPECIES:CSYCA047.020421    Last edit: 02/04/2021 LPM
+$SPECIES:CSYCA047.032121    Last edit: 03/21/2021 LPM
 
 
 ! Coefficients differ from those used in the CROPSIM cassava model.
@@ -32,8 +32,14 @@ $SPECIES:CSYCA047.020421    Last edit: 02/04/2021 LPM
     7      K B7DAT 7thBranch
     8      K B8DAT 8thBranch
     9      K B9DAT 9thBranch
-    9      K B9DAT 9thBranch
-   10      K B0DAT 10thBranch
+   10      K B10DT 10thBranch
+   11      K B11DT 11thBranch
+   12      K B12DT 12thBranch
+   13      K B13DT 13thBranch
+   14      K B14DT 14thBranch
+   15      K B15DT 15thBranch
+   16      K B16DT 16thBranch
+   17      K B17DT 17thBranch
 ! Phase durations
 @PEMRG  ! gr by cum. soil temperature                              
 !gCH2O/TT                                                              
@@ -68,11 +74,8 @@ $SPECIES:CSYCA047.020421    Last edit: 02/04/2021 LPM
 ! Shoots 
 @SGRO2  ! Relative size of 2nd shoot
 !   fr
-  1.00     
-! Reserves   
-@RSUSE  ! fr utilizeable/day
-!   fr 
-   0.1 
+  0.75     
+
 ! Stems
 @SLIG%  SESR ! Lignin%, elongation rate (shoot)
 !    %  cm/gCH2O 
@@ -116,9 +119,9 @@ $SPECIES:CSYCA047.020421    Last edit: 02/04/2021 LPM
   0.00  0.06 
 ! Water shortage effects
 ! Based on ratio of soil water content to field capacity 
-@ WFGU  WFGL  ! Growth,phs
-!   fr    fr
-   1.0   0.0
+@ WFGU  WFGL  WFPU  WFPL  ! Growth,phs
+!   fr    fr    fr    fr
+   1.0   0.0   1.0   0.0
 @WFGEM WFRGU  ! Germination/emergence, root growth
 !   fr    fr
   0.50  0.25
@@ -195,7 +198,6 @@ $SPECIES:CSYCA047.020421    Last edit: 02/04/2021 LPM
 ! RRATE   Relative process rate (#)
 ! RRESP   Root respiration fraction (fr)
 ! RSEN    Root senescence rate (%/standard day)
-! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
 ! RTNO3   NO3 uptake/root length  (mg N/cm.day)
 ! RTNH4   NH4 uptake/root length  (mg N/cm.day)
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
@@ -222,3 +224,5 @@ $SPECIES:CSYCA047.020421    Last edit: 02/04/2021 LPM
 ! WFGEM   Water factor,germination and emergence (fr)
 ! WFGL    Water factor,growth,lower (fr)
 ! WFGU    Water factor,growth,upper (fr)
+! WFPL    Water factor,photosynthesis,lower (fr)
+! WFPU    Water factor,photosynthesis,upper (fr)

@@ -61,9 +61,9 @@
         ! End of day interception = today's starting interception
         select case(MEPHO)
             case ('R')
-                availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP)
+                availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP, WFP)
             case ('V')
-                availableCH2O = availableCarbohydrate_methodV(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, LAI, WEATHER, CONTROL, SOILPROP)
+                availableCH2O = availableCarbohydrate_methodV(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, LAI, WFP, WEATHER, CONTROL, SOILPROP)
         end select
         CARBOEND = availableCH2O
             
@@ -105,8 +105,8 @@
                     !Linear decrease according SWP
                     IF (WFGU-WFGL > 0.0) &
                         WFG = AMAX1(0.0,AMIN1(1.0,(RAW-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
-                    !IF (WFPU-WFPL > 0.0) &
-                    !    WFP = AMAX1(0.0,AMIN1(1.0,(RAW-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
+                    IF (WFPU-WFPL > 0.0) &
+                        WFP = AMAX1(0.0,AMIN1(1.0,(RAW-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
                     
                     
                     IF (ISWWATEARLY == 'N') THEN
@@ -218,27 +218,54 @@
             !!LNUMG = LNUMEND - LNUM
             !LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
             !LPM 24MAR2016 
-            IF (DAE > 0) THEN
-                IF (ISWWAT == 'Y') THEN
-                    IF (ISWNIT /= 'N') THEN
-                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TT* (AMIN1(WFG,NFG)) 
+            IF (PDL(1) < 1200.) THEN
+                IF (DAE > 0) THEN
+                    IF (ISWWAT == 'Y') THEN
+                        IF (ISWNIT /= 'N') THEN
+                            LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TT* (AMIN1(WFG,NFG)) * WFGREA  
+                        ELSE
+                            LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TT* WFG  * WFGREA                                      !LPM 31JUL2015 to consider water stress
+                        ENDIF
                     ELSE
-                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TT*WFG)                                      !LPM 31JUL2015 to consider water stress
+                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TT                                              !LPM 21/02/2015 leaf number curve
                     ENDIF
-                ELSE
-                    LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TT                                              !LPM 21/02/2015 leaf number curve
-                ENDIF
-            ELSEIF (DAG > 0) THEN
-                IF (ISWWAT == 'Y') THEN
-                    IF (ISWNIT /= 'N') THEN
-                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TTGEM*(AMIN1(WFG,NFG))                           !LPM 31JUL2015 to consider water stress
-                    ELSE
-                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TTGEM*WFG) 
-                    ENDIF
+                ELSEIF (DAG > 0) THEN
+                    IF (ISWWAT == 'Y') THEN
+                        IF (ISWNIT /= 'N') THEN
+                            LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TTGEM*(AMIN1(WFG,NFG)) * WFGREA                               !LPM 31JUL2015 to consider water stress
+                        ELSE
+                            LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TTGEM * WFG * WFGREA 
+                        ENDIF
+                        
                     
-                ELSE
-                    LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TTGEM                                              !LPM 21/02/2015 leaf number curve
+                    ELSE
+                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2)) * Tfgem                                              !LPM 21/02/2015 leaf number curve
+                    ENDIF
                 ENDIF
+            ELSE
+                IF (DAE > 0) THEN
+                        IF (ISWWAT == 'Y') THEN
+                            IF (ISWNIT /= 'N') THEN
+                                LNUMG = LNSLP * tfd * (AMIN1(WFG,NFG)) * WFGREA   
+                            ELSE
+                                LNUMG = LNSLP *tfd * WFG * WFGREA                                       !LPM 31JUL2015 to consider water stress
+                            ENDIF
+                        ELSE
+                            LNUMG = LNSLP * tfd                                              !LPM 21/02/2015 leaf number curve
+                        ENDIF
+                    ELSEIF (DAG > 0) THEN
+                        IF (ISWWAT == 'Y') THEN
+                            IF (ISWNIT /= 'N') THEN
+                                LNUMG = LNSLP * Tfgem * AMIN1(WFG,NFG) * WFGREA                             !LPM 31JUL2015 to consider water stress
+                            ELSE
+                                LNUMG = LNSLP * Tfgem * WFG * WFGREA  
+                            ENDIF
+                        ELSE
+                            LNUMG = LNSLP * Tfgem                                              !LPM 21/02/2015 leaf number curve
+                        ENDIF
+                    ENDIF
             ENDIF
+    
+        
     END SUBROUTINE YCA_Growth_Rates
     

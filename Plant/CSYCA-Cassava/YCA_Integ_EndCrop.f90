@@ -124,7 +124,7 @@
             !HNUMAM = FLOAT(SRNOPD)*PLTPOP !issue 50
             !HNUMGM = FLOAT(SRNOPD)        !issue 50
             !HNUMPM = FLOAT(SRNOPD)        !issue 50
-            BRNUMSH = BRNUMST
+            !BRNUMSH = BRNUMST
             IF (SRWT > 0.0) HNPCM = SROOTN/SRWT*100.0
                     
         ENDIF    

@@ -37,8 +37,8 @@ Module YCA_First_Trans_m
     REAL    :: BASELAYER               ! Depth at base of layer         cm         ! (From Integrate) 
     INTEGER :: BRDAE(PSX)              ! DAE when a new branch appears  d          ! LPM 11APR15 To save the date of branch appearance
     REAL    :: BRFX(0:PSX)             ! Branch # per fork at each fork #          ! (From SeasInit)  
-    REAL    :: BRNUMSH(0:PSX)          ! Branch number/shoot at harvest #          ! (From Integrate) !LPM 28MAR15 to have the apex number by branch level 
-    REAL    :: BRNUMSHM                ! Branch #/shoot,harvest,measurd #          ! (From Output)    
+    REAL    :: BRNUMSH(0:25)           ! Branch number/shoot at harvest #          ! (From Integrate) !LPM 28MAR15 to have the apex number by branch level 
+    REAL    :: BRNUMSHM                ! Branch #,harvest,all shoots    #          ! (From Output)    
     REAL    :: BRNUMST(0:PSX)          ! Branch number/shoot (>forking) #          ! (From RunInit) !LPM 23MAR15 to have the apex number by branch level   
     REAL    :: BRNUMSTPREV(0:PSX)      ! Branch number/shoot,previous   #          ! (From Output)  !LPM 23MAR15 to have the apex number by branch level      
     INTEGER :: BROLDESTA               ! Br with Leaf  ,oldest active   #          ! (From Integrate)
@@ -100,6 +100,7 @@ Module YCA_First_Trans_m
     INTEGER :: DAG                     ! Days after germination         d          !  !LPM 10JUL2017 To consider root and stem development after germination and before emergence (planting stick below-ground)
     REAL    :: DAGERM                  ! Dev. age for germination       #          ! (From SeasInit)  !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
     REAL    :: DALS                    ! Development Age leaf size (2)  C.d        ! (From SeasInit) !LPM 24APR2016 DALS added to save Dev. age for potential leaf size (with stress)
+    INTEGER :: DALScount               ! DALS count                     #
     INTEGER :: DALSMAX                 ! DAE with the max leaf size     d          ! LPM 28FEB15 
     INTEGER :: DAP                     ! Days after planting            d          ! (From SeasInit)  
     INTEGER :: DAS                     ! Days after start of simulation d          ! (From Output)    
@@ -235,7 +236,8 @@ Module YCA_First_Trans_m
     REAL    :: GROLS                   ! Leaf+stem growth               g/p        ! (From Growth)    
     REAL    :: GROLSA                  ! Leaf+stem gr from assimilates  g/p        ! (From Growth)    
     REAL    :: GROLSP                  ! Leaf+stem growth potential     g/p        ! (From Growth)    
-    REAL    :: GROLSRS                 ! Leaf+stem growth from reserves g/p        ! (From Growth)    
+    REAL    :: GROLSRS                 ! Leaf+stem growth from reserves g/p        ! (From Growth) 
+    REAL    :: GROLSRS05S(5)           ! GROLSRS values for last 5 days g/p  
     REAL    :: GROLSRT                 ! Leaf+stem gr from root dmatter g/p        ! (From Growth)    
     REAL    :: GROLSRTN                ! Leaf+stem N growth from root N g/p        ! (From Growth)    
     REAL    :: GROLSSD                 ! Leaf+stem gr from seed         g/p        ! (From Growth)    
@@ -766,7 +768,7 @@ Module YCA_First_Trans_m
     REAL    :: SESR                    ! Shoot elongation rate+reserves cm2/g      ! (From SeasInit) !LPM 21MAR2016 Added SESR   
     INTEGER :: SHDAP                   ! Shoot prodn.start DAP          #          ! (From Integrate) 
     INTEGER :: SHDAT                   ! Shoot prodn.startdate YEARDOY  #          ! (From SeasInit)  
-    REAL    :: SHGR(22)                ! Shoot size relative to 1       #          ! (From SeasInit)  
+    REAL    :: SHGR(25)                ! Shoot size relative to 1       #          ! (From SeasInit)  
     REAL    :: SHLA(25)                ! Shoot leaf area produced       cm2        ! (From SeasInit)  
     REAL    :: SHLAG2(25)              ! Shoot lf area gr,all axis,H2oN cm2        ! (From SeasInit)  
     REAL    :: SHLAG2B(0:PSX)          ! Shoot lf area gr by br         cm2        ! (From SeasInit)
@@ -1023,19 +1025,21 @@ Module YCA_First_Trans_m
     REAL    :: WFGL                    ! Water factor,growth,lower      #          ! (From SeasInit)  
     REAL    :: WFGPAV(0:19)            ! Water factor,growth,average    #          ! (From SeasInit)  
     REAL    :: WFGPC                   ! Water factor,growth,cumulative #          ! (From SeasInit)  
+    REAL    :: WFGREA                  ! Water factor, reallocation     #               
+    INTEGER :: WFGREAcount             ! WFGREA index,stop reallocation #
     REAL    :: WFGU                    ! Water factor,growth,upper      #          ! (From SeasInit)  
     !REAL    :: WFLAW                   ! Water factor,leaf area/weight  #          ! (From Growth)    !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
     REAL    :: WFNU                    ! Water factor,N uptake          #          ! (From Growth)    
     REAL    :: WFP                     ! Water factor,photosynthsis 0-1 #          ! (From SeasInit)  
     REAL    :: WFPCAV                  ! Water factor,phs,av 0-1,cycle  #          ! (From SeasInit)  
     REAL    :: WFPCC                   ! H20 factor,phs,cycle sum       #          ! (From SeasInit)  
-    !REAL    :: WFPL                    ! Water factor,phs,lower         #          ! (From SeasInit) !LPM 15SEP2020 No water stress factor on photosynthesis 
+    REAL    :: WFPL                    ! Water factor,phs,lower         #          ! (From SeasInit) !LPM 15SEP2020 No water stress factor on photosynthesis 
     REAL    :: WFPPAV(0:19)            ! Water factor,phs,average 0-1   #          ! (From SeasInit)  
     REAL    :: WFPPC                   ! Water factor,phs,cumulative    #          ! (From SeasInit)  
-    !REAL    :: WFPU                    ! Water factor,phs,upper         #          ! (From SeasInit)  
+    REAL    :: WFPU                    ! Water factor,phs,upper         #          ! (From SeasInit)  
     REAL    :: WFRG                    ! Water factor,root growth,0-1   #          ! (From Growth)    
     REAL    :: WFRTG                   ! Water factor,root gr           #          ! (From SeasInit)  
-    !REAL    :: WFSU                    ! Water fac,senescence,upper 0-1 #          ! (From SeasInit)  
+    REAL    :: WFSU                    ! Water fac,leaf senescence,0-1  #          ! (From SeasInit)  
     INTEGER :: WSDAYS                  ! Water stress days              #          ! (From SeasInit)  
     REAL    :: WTDEP                   ! Water table depth              cm         ! (From SeasInit)  
     REAL    :: WUPR                    ! Water pot.uptake/demand        #          ! (From SeasInit)  
@@ -1273,6 +1277,7 @@ Module YCA_First_Trans_m
         dag=-99 !LPM 10JUL2017 To consider root and stem develpment after germination and before emergence (planting stick below-ground)
         dagerm = 0.0 !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
         dals = 0.0 !LPM 24APR2016 DALS added as developmental age for leaf size (when DAWWP> 900)
+        DALScount = 0
         dap = -99
         dawwp = 0.0 !LPM 06MAR2016 DAWWP added to save Development Age (with stress)
         daylcc = 0.0
@@ -1339,6 +1344,8 @@ Module YCA_First_Trans_m
         grocradj = 0.0
         grolf = 0.0
         grolfadj = 0.0
+        GROLSRS = 0.0
+        GROLSRS05S = 1.0
         grors = 0.0
         grorsp = 0.0
         grost = 0.0
@@ -1597,6 +1604,7 @@ Module YCA_First_Trans_m
         srootn = 0.0
         srwt = 0.0
         srwtgrs = 0.0
+        SRWTGRSADJ = 0.0
         srwum = 0.0
         srwum = 0.0
         stai = 0.0
@@ -1604,8 +1612,8 @@ Module YCA_First_Trans_m
         stais = 0.0
         stemn = 0.0
         stgedat = 0
-        SRWTGRSADJ = 0.0
         stwad = 0.0
+        STRESSW = 1.0
         stwt = 0.0
         stwtp = 0.0 !LPM 23MAY2015 Added to keep the potential stem weight
         stwtm = 0.0
@@ -1683,6 +1691,8 @@ Module YCA_First_Trans_m
         wfppav = 1.0
         wfpcc = 0.0
         wfppc = 0.0
+        WFGREA = 1.0
+        WFGREAcount = 0
         wsdays = 0
         wupr = 1.0
         

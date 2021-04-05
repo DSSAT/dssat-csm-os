@@ -345,6 +345,8 @@
         CALL ECREADR (ECDIRFLE,ECONO,'PPS3',dayls(3))
         CALL ECREADR (ECDIRFLE,ECONO,'PHTV',PHTV)
         CALL ECREADR (ECDIRFLE,ECONO,'PHSV',PHSV)
+        CALL ECREADR (ECDIRFLE,ECONO,'WFSU',WFSU)
+        CALL ECREADR (ECDIRFLE,ECONO,'RSUSE',rsuse)
         ! Following may have been (temporarily) in the CUL file
         ! Radiation use efficiency
         IF (PARUE <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
@@ -403,7 +405,8 @@
         IF (RSEN < 0.0) CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)
         CALL SPREADR (SPDIRFLE,'RSFPL',rsfpl)
         CALL SPREADR (SPDIRFLE,'RSFPU',rsfpu)
-        CALL SPREADR (SPDIRFLE,'RSUSE',rsuse)
+        !LPM 17MAR2021 Move RSUSE to the ecotype file
+        !CALL SPREADR (SPDIRFLE,'RSUSE',rsuse)
         CALL SPREADR (SPDIRFLE,'RTUFR',rtufr)
         CALL SPREADR (SPDIRFLE,'RWUMX',rwumx)
         CALL SPREADR (SPDIRFLE,'RWUPM',rwupm)
@@ -420,8 +423,8 @@
         CALL SPREADR (SPDIRFLE,'WFGEM',wfgem)!LPM 25MAR2016 To keep value in the code and SPE file
         CALL SPREADR (SPDIRFLE,'WFGU' ,wfgu)
         CALL SPREADR (SPDIRFLE,'WFGL' ,wfgl)
-        !CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
-        !CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
+        CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
+        CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
         CALL SPREADR (SPDIRFLE,'WFRGU',wfrtg)
         !CALL SPREADR (SPDIRFLE,'WFSU' ,wfsu)
         CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
