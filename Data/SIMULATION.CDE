@@ -47,6 +47,8 @@ F        FAO-56                                                               IB
 !P       FAO-24/(old Penman)                                                  IB
 R        Priestley-Taylor/Ritchie                                             IB
 !Z       Hourly energy bal. method                                            IB
+S        ASCE Standardized Reference ET - Short reference                     IB
+T        ASCE Standardized Reference ET - Tall reference                      IB
 
 *Simulation/Methods/Infiltration
 @CDE     DESCRIPTION                                                          SO
@@ -194,6 +196,6 @@ TFAPS    TF   NWHEAT-Teff
 WHAPS    WH   NWHEAT-Wheat
 PRFRM    BM   FORAGE-Bermudagrass
 PRFRM    BR   FORAGE-Brachiaria
-PRFRM    BH   FORAGE-Bahiagrass
 PRFRM    G0   FORAGE-Generic
 PRFRM    AL   FORAGE-Alfalfa
+SUOIL    SU   OILCROP-Sunflower
