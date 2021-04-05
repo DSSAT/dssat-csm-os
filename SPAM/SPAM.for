@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
+C  COPYRIGHT 1998-2014 DSSAT Foundation      SUBROUTINE
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Washington State University
@@ -82,6 +82,8 @@ C=======================================================================
       
 !     P Stress on photosynthesis
       REAL PSTRES1
+!     Hourly transpiration for MEEVP=H      
+      REAL, DIMENSION(TS)    :: ET0
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -199,9 +201,10 @@ C=======================================================================
         END SELECT
 
 !       Initialize plant transpiration variables
-        CALL TRANS(DYNAMIC, 
-     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+        CALL TRANS(DYNAMIC, MEEVP, 
+     &    CO2, CROP, EO, ET0, EVAP, KTRANS,               !Input
      &    WINDSP, XHLAI,                                  !Input
+     &    WEATHER,                                        !Input
      &    EOP)                                            !Output
       ENDIF
 
@@ -295,12 +298,13 @@ C       and total potential water uptake rate.
           ELSE
             ET_ALB = MSALB
           ENDIF
-
-          CALL PET(CONTROL, 
-     &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
-     &      EORATIO, !Needed by Penman-Monteith
-     &      CANHT,   !Needed by dynamic Penman-Monteith
-     &      EO)      !Output
+          
+           CALL PET(CONTROL, 
+     &       ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
+     &       EORATIO, !Needed by Penman-Monteith
+     &       CANHT,   !Needed by dynamic Penman-Monteith
+     &       EO,      !Output
+     &       ET0)     !Output hourly Priestly-Taylor with VPD effect
 
 !-----------------------------------------------------------------------
 !         POTENTIAL SOIL EVAPORATION
@@ -390,9 +394,10 @@ C       and total potential water uptake rate.
 
 !            CASE DEFAULT
 !             For all models except ORYZA
-              CALL TRANS(RATE, 
-     &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
+              CALL TRANS(RATE, MEEVP, 
+     &        CO2, CROP, EO, ET0, EVAP, KTRANS,           !Input
      &        WINDSP, XHLAI,                              !Input
+     &        WEATHER,                                    !Input
      &        EOP)                                        !Output
 !            END SELECT
             

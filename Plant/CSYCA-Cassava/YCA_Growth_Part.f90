@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Growth_Part ( &
-        BRSTAGE     , ISWNIT      , NFP         &
+        BRSTAGE     , ISWNIT      , NFP        , LAI          , WEATHER     &
         )
     
         USE ModuleDefs
@@ -16,11 +16,12 @@
     
         IMPLICIT NONE
         
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
         CHARACTER(LEN=1) ISWNIT      
-        REAL    BRSTAGE     , NFP         
+        REAL    BRSTAGE     , NFP      , LAI    
 
         REAL    CSYVAL      , TFAC4     , TFAC5                                                           ! Real function call !LPM 19SEP2017 Added tfac5
         
@@ -44,7 +45,7 @@
         
 
 
-        LAWL(1) = LAWS
+        LAWL(1) = LAWS - (SLATR*AMAX1(0.0,SLATS-TMEAN))*LAWS
         !-----------------------------------------------------------------------
         !           Leaf growth
         !-----------------------------------------------------------------------
@@ -68,6 +69,8 @@
         SHLAGB2 = 0.0
         SHLAGB3 = 0.0
         SHLAGB4 = 0.0
+        node%LAGL = 0.0
+        node%LAGLT = 0.0
             
         
         
@@ -87,6 +90,13 @@
                 !LPM 24APR2016 Use of DALS (considering water stress) instead of TTCUMLS
                 node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX = LAXS/((1+(5.665259E-3*(DALS))))
             ENDIF
+            !LPM 16sep2020 Define potential leaf size for previous leaf if two leaves are created the same day
+            IF (node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)))%LAPOTX <= 0.0) THEN
+                node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)))%LAPOTX = node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX
+            ENDIF
+            
+            node%LAGL = 0.0
+            node%LAGLT = 0.0
         
                                                                                                               
             DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
@@ -335,6 +345,13 @@
         ENDIF
         
         !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)                      
-
+ 
         
+        GRORSP = CARBOT+GROLSSD+GROLSRT+SENLFGRS+GROLSRS-GROLF-GROST-GROCR                                    
+        IF(GRORSP < 0.0.AND.GRORSP > -1.0E-07) GRORSP = 0.0
+
+        ! Reserves to STORAGE ROOT if conc too great (overflow!)
+        SRWTGRSP = 0.0
+        
+        SRWTGRSP = RSWT+GRORSP
     END SUBROUTINE YCA_Growth_Part
