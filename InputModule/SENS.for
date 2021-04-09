@@ -420,7 +420,6 @@ C  2. Header revision and minor changes           P.W.W.      2-7-93
 C  2. Added switch common block, restructured     P.W.W.      2-7-93
 C  3. Added additional variables                  G.H.       04-2-96
 C  07/16/2002 CHP Increased number of applications to 200 (NAPPL)
-C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : FILEW,YRSIM,YRPLT,YEAR,PATHWT,IDLAPL,NIRR,RESDAY,NARES,FDAY,
 C           NFERT,HLATE,PWDINF,PWDINL,NHAR,HDATE
@@ -492,10 +491,7 @@ C
 
       !Y2K shift for YEARN
       YEARNDOY = YEARN * 1000 + 1
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-	    !CALL Y2K_DOY(YEARNDOY)
-	    CALL Y4K_DOY(YEARNDOY,FILEWW,LINWTH,ERRKEY,1)
-      
+	CALL Y2K_DOY(YEARNDOY)
       YEARN = (YEARNDOY - 1) / 1000
 
       YRDIF = YEARN - YEAR

@@ -38,7 +38,6 @@ C  06/07/2002 GH  Modifed for Y2K Output
 !  Apr-May 2015 KJB added G0 and G5 for pearl millet
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 !  03/20/2018 Created new FORMAT to read in CUL file for tef
-!  01/21/2020 JG moved some CUL parameters to ECO file
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO
@@ -161,24 +160,9 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
-        LINIO = LINIO + 1
-        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
-     &     'WEATHERW',FILEW,PATHWTW
-        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
-      ENDIF
-      IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
-        LINIO = LINIO + 1
-        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
-     &     'WEATHERC',FILEWC,PATHWTC
-        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
-      ENDIF
-      IF (MEWTH .EQ. 'G') THEN
-        LINIO = LINIO + 1
-        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
-     &     'WEATHERG',FILEWG,PATHWTG
-        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
-      ENDIF
+      LINIO = LINIO + 1
+      WRITE (LUNIO,2800,IOSTAT=ERRNUM) FILEW,PATHWT
+      IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -342,21 +326,13 @@ C-----------------------------------------------------------------------
      &          NFORC,PLTFOR,NDOF,PMTYPE
       ELSE
 
-         IF (SDWTPL .LE. 9999. .AND. PLANTS .LE. 9999.) THEN
+         IF (SDWTPL <= 9999.) THEN
            WRITE(LUNIO,70,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
      &          PLDS,ROWSPC,AZIR,SDEPTH,SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP
-         ELSE IF (SDWTPL .GT. 9999. .AND. PLANTS .LE. 9999.) THEN
-           WRITE(LUNIO,71,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
-     &          PLDS,ROWSPC,AZIR,SDEPTH,SDWTPL,NINT(SDWTPL),
-     &          SDAGE,ATEMP,PLPH,SPRLAP
-         ELSE IF (SDWTPL .LE. 9999. .AND. PLANTS .GT. 9999.) THEN
-           WRITE(LUNIO,72,IOSTAT=ERRNUM) YRPLT,IEMRG,NINT(PLANTS),
-     &          NINT(PLTPOP),PLME,PLDS,ROWSPC,AZIR,SDEPTH,
-     &          SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP
          ELSE
-           WRITE(LUNIO,73,IOSTAT=ERRNUM) YRPLT,IEMRG,NINT(PLANTS),
-     &          NINT(PLTPOP),PLME,PLDS,ROWSPC,AZIR,SDEPTH,
-     &          NINT(SDWTPL),SDAGE,ATEMP,PLPH,SPRLAP
+           WRITE(LUNIO,71,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
+     &          PLDS,ROWSPC,AZIR,SDEPTH, NINT(SDWTPL),
+     &          SDAGE,ATEMP,PLPH,SPRLAP
          ENDIF
       ENDIF
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
@@ -641,17 +617,24 @@ C-----------------------------------------------------------------------
 !       Do nothing - these models read the INH file written by OPTEMPXY2K
 
 !       APSIM Wheat (NWheat)
-!  JG moved CUL parameters to ECO file for WHAPS and TFAPS 01/21/2020
         CASE('WHAPS')
                 WRITE (LUNIO,1850,IOSTAT=ERRNUM)
      &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1
+     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
+     &            P2AF,P3AF,P4AF,P5AF,P6AF,
+     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
 !       Tef based on APSIM NWheat KEP
     !Created new FORMAT to read in CUL file for tef
         CASE('TFAPS')
                 WRITE (LUNIO,1855,IOSTAT=ERRNUM)
      &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1
+     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
+     &            P2AF,P3AF,P4AF,P5AF,P6AF,
+     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
 !       Ceres Maize, sweetcorn
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
@@ -771,12 +754,6 @@ C-GH   70 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
 C-GH   71 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
    71 FORMAT (3X,I7,1X,I7,2F6.1,2(5X,A1),2(1X,F5.0),1X,F5.1,
      &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
-   72 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
-     &        2(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
-   73 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
-     &        I6,1(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
-   74 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
-     &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
    75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1)
    76 FORMAT (3X,I7,1X,A5,1X,F5.1)
 !chp   76 FORMAT (3X,I7,1X,A5,1X,F5.1,4X,I2)
@@ -841,16 +818,24 @@ C     &        1X,F5.2,19(1X,F5.1))
      &        F6.3,F6.2,6(F6.0))
  1700 FORMAT (A6,1X,A16,1X,A6,1X,5(F6.1),F6.2, F6.1)
  1800 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2))
-! JG modified to move CUL parameters to ECO file
  1850 FORMAT (A6,1X,A16,1X,A6,1X,
  !             1     2     3     4     5     6     7     8     9     0
-     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1)
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1, F6.1,
+     &       F6.2, F6.2, F6.3, F6.0, F6.2, F6.2, F6.1, F6.2, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.2, F6.2, F6.3, F6.2, F6.3, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
+     &       F6.3, F6.0, F6.0)
 
-! JG modified to move CUL parameters to ECO file
+!Changed F6.1. in column 6, row 1 to F6.0 so that the GRNO value read in can be a 6 digit integer
+!Changed F6.2 to F6.4 in column 3, row 4. INGWT can now be up to 4 decimal places long
+! Added 1X to add a space between the values of MNH4 and INGWT when they are written
  1855 FORMAT (A6,1X,A16,1X,A6,1X,
  !             1     2     3     4     5     6     7     8     9     0
-     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1)
-
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.0, F6.2, F6.2, F6.1, F6.1,
+     &       F6.2, F6.2, F6.3, F6.0, F6.2, F6.2, F6.1, F6.2, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.2, F6.2, F6.3, F6.2, F6.3, F6.2, F6.2,
+     &   F6.2, F6.2, 1X, F6.4, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
+     &       F6.3, F6.0, F6.0)
  1801 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2),2(F6.1),I4)
  1802 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),5(F6.2))
  1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,4(F6.1))
@@ -872,7 +857,7 @@ c1960 FORMAT (A6,1X,A16,1X,A6,1X,F6.2,F8.4,F7.2,F8.2,F7.3,F4.0)
  2500 FORMAT ('CULTIVAR       ',A12,1X,A80)
  2600 FORMAT ('PESTS          ',A12,1X,A80)
  2700 FORMAT ('SOILS          ',A12,1X,A80)
-! 2800 FORMAT ('WEATHER        ',A12,1X,A80)
+ 2800 FORMAT ('WEATHER        ',A12,1X,A80)
  2900 FORMAT ('OUTPUT         ',A8)
  3000 FORMAT (A6,1X,A16,1X,A255)
 

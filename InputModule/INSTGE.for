@@ -8,6 +8,7 @@ C
 C  03/28/1993  GH  Written 
 C  05/28/1993  PWW Header revision and minor changes     
 C  09/23/2002  GH  Added Faba Bean
+C  09/05/2020  JVJ Stages inclusion for Overview.    
 C-----------------------------------------------------------------------
 C  INPUT  : CROP
 C
@@ -158,18 +159,18 @@ C-----------------------------------------------------------------------
 
 !      ELSE IF (CROP .EQ. 'PI') THEN
       CASE ('PI')
-         STNAME( 1) = 'Zero Stem '
-         STNAME( 2) = 'Forcing   '
-         STNAME( 3) = 'SCY       '
-         STNAME( 4) = 'Early Flwr'
-         STNAME( 5) = 'Fruit Harv'
-         STNAME( 6) = 'Maturity  '
-         STNAME( 7) = 'Planting  '
-         STNAME( 8) = 'Root Init '
-         STNAME( 9) = 'Leaf Emerg'
-         STNAME(10) = '          '
-         STNAME(11) = '          '
-         STNAME(12) = '          '
+         STNAME( 1) = 'Foliar C1 '  !JVJ   Zero Stem is not a phenological stage, and it cannot be seen with the naked eye. The phyllotaxis of pineapple is 5/13
+         STNAME( 2) = 'Foliar C2 '         !(leaves are produced around the axis of the stem, when 5 turns are completed, leaf number 13 is aligned with the first leaf.
+         STNAME( 3) = 'Foliar C3 '         !In other words, a pineapple leaf cycle is fulfilled each time it is produce 13 leaves. 
+         STNAME( 4) = 'Forcing   '         !It is a date entered by the user.
+         STNAME( 5) = 'Open Heart'         !Calving is an important event for producers. But you can have different criteria to define the precise moment. I am writing an article where this will be well defined.
+         STNAME( 6) = 'EarlyAnthe'         !Idem
+         STNAME( 7) = 'LastAnthes'         !Idem
+         STNAME( 8) = 'PhMaturity'         !For MD-2 producers, physiological maturity is important because it defines the timing of degreening the fruit
+         STNAME( 9) = 'Fruit Harv'         !The concept of previous physiological maturity of the Aloha Pineapple model is very different, so the values have been modified.
+         STNAME(10) = 'Planting  '
+         STNAME(11) = 'WhRoottips'
+         STNAME(12) = 'Leaf Emerg'
          STNAME(13) = '          '
          STNAME(14) = 'Start Sim '
          STNAME(15) = 'End Sim   '

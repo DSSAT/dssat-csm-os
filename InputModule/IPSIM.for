@@ -13,8 +13,7 @@ C  02/21/2006 GH  Removed crop model selection
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2009 CHP IPSIM separate file.  
 !  02/11/2010 CHP Added checks for P model linked with crop models.
-!  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
-!  05/07/2020 FO  Added check for SimLevel to set YRSIM using YRPLT
+
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
@@ -37,12 +36,12 @@ C
 C  HDLAY  :
 C=======================================================================
 
-      SUBROUTINE IPSIM (LUNEXP,LNSIM,SimLevel,TITSIM,NYRS,RUN,NREPSQ,
+      SUBROUTINE IPSIM (LUNEXP,LNSIM,TITSIM,NYRS,RUN,NREPSQ,
      & ISIMI,PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
      & RSEED1,LINEXP,AIRAMT,EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
-     & CONTROL,ISWITCH,UseSimCtr,FILECTL,MODELARG,YRPLT)
+     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
 
       USE ModuleDefs
       USE ModuleData
@@ -84,11 +83,7 @@ C=======================================================================
       REAL V_IREFF(20)
       INTEGER GSIRRIG, I, STAT, CHARLEN
 
-      LOGICAL UseSimCtr, MulchWarn, SimLevel
-
-!     2020-11-04 CHP Added for yield forecast mode, RNMODE = 'Y'
-      INTEGER ENDAT, SeasDur, FODAT, FStartYear, FEndYear
-      CHARACTER*15 FWFILE
+      LOGICAL UseSimCtr, MulchWarn
 
       TYPE (SwitchType)  ISWITCH
       TYPE (ControlType) CONTROL
@@ -98,14 +93,12 @@ C=======================================================================
                  
       DATA MulchWarn /.FALSE./
 
-      !FO - IF SimLevel is not present set defaults
-      IF (LNSIM .EQ. 0 .OR. .NOT. SimLevel) THEN
+      IF (LNSIM .EQ. 0) THEN
          LNSIM   = 0
          NYRS    = 1
          NREPSQ  = 1
          ISIMI   = 'S'
-         !FO - YRPLT was already read and can be updated.
-         YRSIM   = YRPLT
+         YRSIM   = -99
          RSEED1  = 2150
          ISWWAT  = 'Y'
          ISWNIT  = 'Y'
@@ -170,9 +163,6 @@ C=======================================================================
          NCODE = "-99  "
          NEND  = "-99  "
        ELSE
-
-!     ==============================================================
-!     Read first line of simulation controls - GENERAL
  40      CALL FIND (LUNEXP,FINDCH,LINEXP,IFIND)
          IF (IFIND .EQ. 0) CALL ERROR (ERRKEY,1,FILEX,LINEXP)
  50      CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
@@ -191,18 +181,14 @@ C=======================================================================
                  RSEED1 = 2150
                ENDIF
             ENDIF
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-            !CALL Y2K_DOY (YRSIM)
-            CALL Y4K_DOY (YRSIM,FILEX,LINEXP,ERRKEY,8)
-            !Call Error before first weather day (RANGELH(1))
+            CALL Y2K_DOY (YRSIM)
             CALL YR_DOY (YRSIM,YEAR,ISIM)
           ELSE
             BACKSPACE (LUNEXP)
             GO TO 40
          ENDIF
 C
-!     ==============================================================
-C        Read SECOND line of simulation control - OPTIONS
+C        Read SECOND line of simulation control
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,ISWWAT,ISWNIT,ISWSYM,
@@ -249,8 +235,7 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
            IF (INDEX ('WMD', ICO2) < 1) ICO2 = 'M'
          ENDIF
 
-!     ==============================================================
-C        Read THIRD line of simulation control - METHODS
+C        Read THIRD line of simulation control
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,61,IOSTAT=ERRNUM) LN,MEWTH,MESIC,
@@ -326,8 +311,7 @@ C
            NSWITCH = 1
          ENDIF
 C
-!     ==============================================================
-C        Read FOURTH line of simulation control - MANAGEMENT
+C        Read FOURTH line of simulation control
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,IPLTI,IIRRI,
@@ -351,8 +335,7 @@ C
            ENDIF
          ENDIF
 C
-!     ==============================================================
-C        Read FIFTH line of simulation control - OUTPUTS
+C        Read FIFTH line of simulation control
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          IF (INDEX('FQ',RNMODE) < 1 .OR. RUN == 1) THEN
@@ -410,9 +393,9 @@ C
               IDETH = 'N' 
               IDETR = 'N' 
               IDETO = 'E'
-!             Seasonal, Spatial, and Yield forecast runs do not get evaluate file when IDETL=0
-              IF (INDEX('SNY',RNMODE) > 0) IDETO = 'N'
-            ELSEIF (IDETL == 'A' .OR. IDETL == 'D') THEN
+!             Seasonal and spatial runs do not get evaluate file when IDETL=0
+              IF (INDEX('SN',RNMODE) > 0) IDETO = 'N'
+            ELSEIF (IDETL == 'A') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
               IDETO = 'Y'
@@ -432,31 +415,19 @@ C
             IF (FROP .LE. 0) FROP = 10
          ENDIF
 C
-!     ==============================================================
-C        Read SIXTH line of simulation control - AUTOMATIC PLANTING
+C        Read SIXTH line of simulation control
 C
          CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
          IF (ISECT .EQ. 1) THEN
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,PWDINF,PWDINL,
      &           SWPLTL,SWPLTH,SWPLTD,PTX,PTTN
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-!            IF (PWDINF .LT. 1000) PWDINF = YEAR * 1000 + PWDINF
-!            IF (PWDINL .LT. 1000) PWDINL = YEAR * 1000 + PWDINL
-            
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-            !CALL Y2K_DOY (PWDINF)
-            !CALL Y2K_DOY (PWDINL)
-            IF(IPLTI .EQ. 'A' .OR. IPLTI .EQ. 'F') THEN
-              CALL Y4K_DOY (PWDINF,FILEX,LINEXP,ERRKEY,9)
-              CALL Y4K_DOY (PWDINL,FILEX,LINEXP,ERRKEY,9)
-            ELSE
-              PWDINF = -99
-              PWDINL = -99
-            ENDIF
-            
+            IF (PWDINF .LT. 1000) PWDINF = YEAR * 1000 + PWDINF
+            IF (PWDINL .LT. 1000) PWDINL = YEAR * 1000 + PWDINL
+            CALL Y2K_DOY (PWDINF)
+            CALL Y2K_DOY (PWDINL)
 C
-!     ==============================================================
-C           Read SEVENTH line of simulation control - AUTOMATIC IRRIGATION
+C           Read SEVENTH line of simulation control
 C
            DO I=1,20
                 V_IMDEP (I) = -99       ! Assighn default values to variable
@@ -528,8 +499,7 @@ C
            SAVE_data % MGMT % GSIRRIG = GSIRRIG
 
 C
-!     ==============================================================
-C           Read EIGHTH line of simulation control - AUTOMATIC N APPLICTION (not currently used)
+C           Read EIGHTH line of simulation control
 
 C
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
@@ -539,69 +509,20 @@ C
             READ (NCODE,70,IOSTAT=ERRNUM) FTYPEN
 
 C
-!     ==============================================================
-C           Read NINTH line of simulation control - AUTOMATIC RESIDUE APPLICAITON (not currently used)
+C           Read NINTH line of simulation control
 C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,68,IOSTAT=ERRNUM) LN,RIP,NRESDL,DRESMG
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 C
-!     ==============================================================
-C           Read TENTH line of simulation control - AUTOMATIC HARVEST
+C           Read TENTH line of simulation control
 C
+
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
      &           HPP,HRP
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-            
-!     ==============================================================
-!           Read ELEVENTH line of simulation control - SIMULATION DATES
-!           2020-11-04 CHP added forecast mode inputs
-!           Also additional inputs to be implemented later
-
-!     ENDAT = End of simulation date - for future use
-!     SDUR  = Maximum duration of one season - for future use
-!     FODAT = Forecast start date, i.e., day after last weather data available
-!     FSTART= Ensemble start year - for future use
-!     FEND  = Ensemble end year -for future use
-!     FWFILE= Forecast weather file (for short term forecast) - for future use
-!     FONAME= Forecast level name
-
-            ENDAT = -99
-            SeasDur = -99
-            FODAT = -99
-            FStartYear = -99
-            FEndYear = -99
-            FWFILE = "-99"
-
-            CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
-            READ (CHARTEST,'(I3,9X,5I8,1X,A15)',IOSTAT=ERRNUM) 
-     &        LN, ENDAT, SeasDur, FODAT, FStartYear, FEndYear, FWFILE
-
-            IF (ERRNUM .NE. 0) THEN
-
-       MSG(1) = "Error in forecast data, check simulation controls."
-       WRITE(MSG(2),'("End simulation date = ",I8)') ENDAT
-       WRITE(MSG(3),'("Maximum season duration = ",I8)') SeasDur
-       WRITE(MSG(4),'("Simulated forecast start date= ",I8)') FODAT
-       WRITE(MSG(5),'("Forecast start year = ",I8)') FStartYear
-       WRITE(MSG(6),'("Forecast end year = ",I8)') FEndYear
-       WRITE(MSG(7),'("Short term forecast weather file = ",A5)') FWFILE
-
-              CALL WARNING(7, ERRKEY, MSG)
-            ENDIF
-            CONTROL % FODAT = FODAT
-            
-!     ==============================================================
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-            !CALL Y2K_DOY (HLATE)
-!            IF(HLATE .LE. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-            IF(IHARI .EQ. 'A' .OR. IHARI .EQ. 'F') THEN
-              CALL Y4K_DOY (HLATE,FILEX,LINEXP,ERRKEY,10)
-            ELSE
-              HLATE = -99
-            ENDIF
-            
+            CALL Y2K_DOY (HLATE)
             IF (HPP   .LT. 0.0)  HPP   = 100.
             IF (HRP   .LT. 0.0)  HRP   = 0.0
           ELSE
@@ -662,7 +583,6 @@ C-----------------------------------------------------------------------
 
       CALL FILL_ISWITCH(
      &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
-
 
 !     Planting date needed for generic start of simulation
       SELECT CASE(IPLTI)
@@ -733,7 +653,7 @@ C-----------------------------------------------------------------------
 !     Check for N model compatible with crop model
       IF (ISWNIT /= 'N') THEN
         SELECT CASE(MODEL(1:5))
-        CASE ('SALUS', 'SCCAN', 'SCCSP', 'SCSAM')
+        CASE ('SALUS', 'SCCAN', 'SCCSP')
 !           N model has NOT been linked for these models
 !           Print a warning message.
             CALL GET_CROPD(CROP, CROPD)
@@ -1228,9 +1148,7 @@ D     IPX = 23
             IF (YRSIM == -99) YRSIM = PLDATE
             CALL CHECK_I('YRSIM', YRSIM, ERRNUM, MSG, NMSG)
             IF (ERRNUM == 0) THEN
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-              !CALL Y2K_DOY (YRSIM)
-              CALL Y4K_DOY (YRSIM,FILEX,LINEXP,ERRKEY,1)
+              CALL Y2K_DOY (YRSIM)
               CALL YR_DOY (YRSIM,YEAR,ISIM)
             ENDIF
 
@@ -1485,10 +1403,10 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               IDETO = 'E'
 !             FMOPT = 'N' ! VSH  !CHP FMOPT is not tied to IDETL
 
-!             Seasonal, Spatial, and Yield forecast runs do not get evaluate file when IDETL=0
-              IF (INDEX('SNY',CONTROL%RNMODE) > 0) IDETO = 'N'
+!             Seasonal and spatial runs do not get evaluate file when IDETL=0
+              IF (INDEX('SN',CONTROL%RNMODE) > 0) IDETO = 'N'
 
-            ELSEIF (IDETL == 'A' .OR. IDETL == 'D') THEN
+            ELSEIF (IDETL == 'A') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
               IDETO = 'Y'

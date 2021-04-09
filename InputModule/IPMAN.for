@@ -10,7 +10,7 @@ C  05/28/1993 PWW Header revision and minor changes
 C  04/16/2002 GH  Modified logic for reading planting date
 C  06/19/2002 GH  Modified for Y2K
 C  08/23/2002 GH  Expanded array for irrigation applications to NAPPL
-C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNIR,YRSIM,ISWWAT,NIRR,EFFIRX,DSOILX,THETCX
 C           IEPTX,IOFFX,IAMEX,NAPW,TOTAPW,AIRAMX,IDLAPL,IRRCOD,AMT
@@ -113,14 +113,9 @@ C
             IF ((IDLAPL(NIRR) .LT.  0) .OR.
      &         (IIRRI .EQ. 'R' .AND. MOD(IDLAPL(NIRR),1000) .GT. 366))
      &         CALL ERROR (ERRKEY,10,FILEX,LINEXP)
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-            !IF (IIRRI .NE. 'D') CALL Y2K_DOY (IDLAPL(NIRR))
-            IF (IIRRI .NE. 'D') THEN
-              CALL Y4K_DOY (IDLAPL(NIRR),FILEX,LINEXP,ERRKEY,3)
-            ENDIF
+            IF (IIRRI .NE. 'D') CALL Y2K_DOY (IDLAPL(NIRR))
             IF (IIRRI .EQ. 'R' .AND. IDLAPL(NIRR) .LT. YRSIM) 
      &          CALL ERROR (ERRKEY,3,FILEX,LINEXP)
-     
             IF (IIRRI .EQ. 'D' .AND. IDLAPL(NIRR) .LT. 0) GO TO 70
 
 !           chp 04/18/2013 remove this requirement. For puddling event, 
@@ -239,7 +234,6 @@ C  06/19/2002 GH  Modified for Y2K
 C  05/28/1993 PWW Header revision and minor changes
 C  08/23/2002 GH  Expanded array for organic material applications to NAPPL
 C  02/03/2005 GH  Corrected error checking for missing levels
-C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNRES,RESDAY,RESCOD,RESIDUE,RINP,DEPRES,
 C           RESN,RESP,RESK,NARES,RESAMT,ISWNIT,YRSIM,ISWPHO,ISWPOT
@@ -340,14 +334,11 @@ C-PW        RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),10.0)
                CALL ERROR (ERRKEY,11,FILEX,LINEXP)
             ENDIF
             IF (IRESI .EQ. 'R') THEN
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-              !CALL Y2K_DOY (RESDAY(NRESAP))
-              CALL Y4K_DOY (RESDAY(NRESAP),FILEX,LINEXP,ERRKEY,3)
+              CALL Y2K_DOY (RESDAY(NRESAP))
             ENDIF
             IF (IRESI .EQ. 'R' .AND. RESDAY(NRESAP) .LT. YRSIM) THEN
                 CALL ERROR (ERRKEY,3,FILEX,LINEXP)
             ENDIF
-            
             IF (RESIDUE(NRESAP) .LT. 0.0 .OR. RESIDUE(NRESAP)
      &           .GT. 99999.) THEN
                CALL ERROR (ERRKEY,11,FILEX,LINEXP)
@@ -434,7 +425,7 @@ C  05/08/1991 JWW Written for DSSAT v3 format
 C  05/28/1993 PWW Header revision and minor changes
 C  08/23/2002 GH  Expanded array for fertilizer applications to NAPPL
 C  02/03/2005 GH  Corrected error checking for missing levels
-C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNFER,YRSIM,ISWNIT
 C
@@ -518,9 +509,7 @@ C
                CALL ERROR (ERRKEY,10,FILEX,LINEXP)
             ENDIF
             IF (IFERI .EQ. 'R') THEN
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-              !CALL Y2K_DOY(FDAY(NFERT))
-              CALL Y4K_DOY(FDAY(NFERT),FILEX,LINEXP,ERRKEY,3)
+              CALL Y2K_DOY(FDAY(NFERT))
             ENDIF
             IF (IFERI .EQ. 'R' .AND. FDAY(NFERT) .LT. YRSIM)  THEN
                CALL ERROR (ERRKEY,3,FILEX,LINEXP)
@@ -534,7 +523,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
                CALL ERROR (ERRKEY,12,FILEX,LINEXP)
             ENDIF
             READ (IFTYPE(NFERT)(3:5),'(I3)',IOSTAT=ERRNUM) IFFTYP
-            IF (IFFTYP .LT. 1 .OR. IFFTYP .GE. 999 .OR.
+            IF (IFFTYP .LT. 1 .OR. IFFTYP .GE. 60 .OR.
      &          ERRNUM .NE. 0) THEN
                CALL ERROR (ERRKEY,14,FILEX,LINEXP)
             ENDIF
@@ -595,7 +584,7 @@ C  05/08/1991 JWW Written for DSSAT v3 format
 C  05/28/1993 PWW Header revision and minor changes
 C  06/09/2002 GH  Modified for Y2K
 C  02/03/2005 GH  Corrected error checking for missing levels
-C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNHAR,YEAR
 C
@@ -669,12 +658,14 @@ C
              CALL ERROR (ERRKEY,10,FILEX,LINEXP)
          ENDIF
          IF (IHARI .EQ. 'R') THEN
-C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-           !CALL Y2K_DOY(HDATE(NHAR))
-           CALL Y4K_DOY(HDATE(NHAR),FILEX,LINEXP,ERRKEY,6)
+           CALL Y2K_DOY(HDATE(NHAR))
+           IF (INT(HDATE(NHAR)/100.) < INT(YRSIM/100.)) THEN
+!            Increment harvest century (can't be less than simulation century)
+             CALL YR_DOY(HDATE(NHAR), HYR, HDAY)
+             HDATE(NHAR) = (HYR + 100) * 1000 + HDAY
+           ENDIF
          ENDIF
          IF (IHARI .EQ. 'R' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
-
 !        Harvested product defaults to 100%
          IF (HPC(NHAR) .LT. -1.E-4) THEN
              HPC(NHAR) = 100.0
