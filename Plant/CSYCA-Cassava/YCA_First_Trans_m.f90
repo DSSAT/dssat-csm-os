@@ -100,7 +100,6 @@ Module YCA_First_Trans_m
     INTEGER :: DAG                     ! Days after germination         d          !  !LPM 10JUL2017 To consider root and stem development after germination and before emergence (planting stick below-ground)
     REAL    :: DAGERM                  ! Dev. age for germination       #          ! (From SeasInit)  !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
     REAL    :: DALS                    ! Development Age leaf size (2)  C.d        ! (From SeasInit) !LPM 24APR2016 DALS added to save Dev. age for potential leaf size (with stress)
-    INTEGER :: DALScount               ! DALS count                     #
     INTEGER :: DALSMAX                 ! DAE with the max leaf size     d          ! LPM 28FEB15 
     INTEGER :: DAP                     ! Days after planting            d          ! (From SeasInit)  
     INTEGER :: DAS                     ! Days after start of simulation d          ! (From Output)    
@@ -1279,7 +1278,6 @@ Module YCA_First_Trans_m
         dag=-99 !LPM 10JUL2017 To consider root and stem develpment after germination and before emergence (planting stick below-ground)
         dagerm = 0.0 !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
         dals = 0.0 !LPM 24APR2016 DALS added as developmental age for leaf size (when DAWWP> 900)
-        DALScount = 0
         dap = -99
         dawwp = 0.0 !LPM 06MAR2016 DAWWP added to save Development Age (with stress)
         daylcc = 0.0

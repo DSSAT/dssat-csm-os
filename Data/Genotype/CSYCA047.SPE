@@ -121,7 +121,7 @@ $SPECIES:CSYCA047.032121    Last edit: 03/21/2021 LPM
 ! Based on ratio of soil water content to field capacity 
 @ WFGU  WFGL  WFPU  WFPL  ! Growth,phs
 !   fr    fr    fr    fr
-   1.0   0.0   1.0   0.0
+  0.75   0.0   0.5   0.0
 @WFGEM WFRGU  ! Germination/emergence, root growth
 !   fr    fr
   0.50  0.25
