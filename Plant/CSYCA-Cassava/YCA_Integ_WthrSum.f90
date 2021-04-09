@@ -49,10 +49,6 @@
         IF (DAWWP > 900.0) THEN
             TTCUMLS = TTCUMLS + TTlfsize   ! LPM 12JUL2015 added to consider a different optimum temperature for potential leaf size
             IF (ISWWAT == 'Y') THEN
-                IF (WFGREA > 1.0 .AND. WFGREAcount == 0) THEN
-                    WFGREAcount = 1
-                    GROLSRS05S = 1.0
-                ENDIF 
                 DALS = DALS + (TTlfsize*WFG) !LPM 24APR2015 Added to have a new clock with water stress
             ELSE
                 DALS = TTCUMLS

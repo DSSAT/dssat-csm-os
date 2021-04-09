@@ -1025,7 +1025,6 @@ Module YCA_First_Trans_m
     REAL    :: WFGPAV(0:19)            ! Water factor,growth,average    #          ! (From SeasInit)  
     REAL    :: WFGPC                   ! Water factor,growth,cumulative #          ! (From SeasInit)  
     REAL    :: WFGREA                  ! Water factor, reallocation     #               
-    INTEGER :: WFGREAcount             ! WFGREA index,stop reallocation #
     REAL    :: WFGU                    ! Water factor,growth,upper      #          ! (From SeasInit)  
     !REAL    :: WFLAW                   ! Water factor,leaf area/weight  #          ! (From Growth)    !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
     REAL    :: WFNU                    ! Water factor,N uptake          #          ! (From Growth)    
@@ -1692,7 +1691,6 @@ Module YCA_First_Trans_m
         wfpcc = 0.0
         wfppc = 0.0
         WFGREA = 1.0
-        WFGREAcount = 0
         wsdays = 0
         wupr = 1.0
         
