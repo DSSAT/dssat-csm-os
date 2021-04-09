@@ -300,15 +300,7 @@
                 GROLSRS =  AMIN1(RSWT,GROLSP-GROLSA-GROLSSD-GROLSSEN)                                            !EQN 301
             ENDIF
             
-             DO L = 5,2,-1
-                 GROLSRS05S(L) = GROLSRS05S(L-1)
-             ENDDO
-             
-             GROLSRS05S(1) = GROLSRS
-             
-            IF (SUM(GROLSRS05S) == 0.0 .AND. WFGREAcount == 1) THEN
-                WFGREAcount = 0
-            ENDIF
+
             
             ! Leaf+stem weight increase from roots (after drought)
             GROLSRT = 0.0
