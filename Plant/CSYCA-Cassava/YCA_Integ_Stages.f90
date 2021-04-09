@@ -86,7 +86,7 @@
             ENDIF         
         ENDIF    
         
-        
+
         IF (INT(BRSTAGE) == 0.0) THEN
             BRNUMST(INT(BRSTAGE)) = 1
             BRNUMSHM = BRNUMST(INT(BRSTAGE))
@@ -96,6 +96,7 @@
                    BRNUMSHM = BRNUMSHM + BRNUMSH(L)                             
                ENDIF
             ENDDO
+            BRNUMSHM = BRNUMSHM*PLTPOP
         ENDIF
 
         IF (INT(TVR1) > INT(BRSTAGEPREV)) THEN
@@ -116,12 +117,13 @@
             ENDIF
             DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
                IF (SHNUM-FLOAT(L-1) > 0.0) THEN
-                   BRNUMSH(L) = BRNUMST(TVR1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
+                   BRNUMSH(L) = BRNUMST(INT(TVR1))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
                    BRNUMSHM = BRNUMSHM + BRNUMSH(L)                             
                ENDIF
             ENDDO
+			BRNUMSHM = BRNUMSHM*PLTPOP
         ENDIF 
-        BRNUMSHM = BRNUMSHM*PLTPOP
+        
         
 
         

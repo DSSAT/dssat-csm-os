@@ -1234,7 +1234,9 @@ Module YCA_First_Trans_m
         
         amtnit = 0.0
         andem = 0.0
+        brfx = 0.0
         brnumst = 1.0
+        BRNUMSHM = 0.0
         caid = 0.0
         canhtg = 0.0
         carboadj = 0.0
