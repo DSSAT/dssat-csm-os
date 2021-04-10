@@ -1,12 +1,12 @@
 C=======================================================================
-C  COPYRIGHT 1998-2020 DSSAT Foundation
+C  COPYRIGHT 1998-2021 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                    
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
-C  WATBAL, Subroutine, J.T. Ritchie
+C  WATBAL, Subroutine
 C  Calculates water balance components.
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
@@ -35,6 +35,7 @@ C  06/12/2002 CHP/US  Added flooded field options
 !                 MEINF = 'M', Mulch effects modelled.
 !  04/05/2006 CHP Added mixing of SW and variable soil layer depths
 !                 due to tillage
+!  04/10/2021 GH Corrected snowfall for very small amounts
 C-----------------------------------------------------------------------
 C  Called by: SOIL module
 C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.for)
@@ -241,7 +242,9 @@ C=======================================================================
 !-----------------------------------------------------------------------
       !Convert snowfall into precip ( = rain)
       !This is needed for winter crops even if water not simulated.
-      IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.001) THEN
+C-GH   IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.001) THEN
+C     Conflict with CERES-Wheat
+      IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.0) THEN
         CALL SNOWFALL (RATE,
      &    TMAX, RAIN,                                 !Input
      &    SNOW, WATAVL)                               !Output

@@ -780,6 +780,12 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
              WRITE (HEADER(I),916) G2,G3,PHINT,LX; I=I+1
              
 !-----------------------------------------------------------------------
+!     CERES-Sugarbeet
+      CASE ('BSCER')
+            WRITE (HEADER(I),900) P1,P2,P5; I=I+1
+            WRITE (HEADER(I),901) G2,G3,PHINT; I=I+1
+
+!-----------------------------------------------------------------------
 !     Sorghum
       CASE ('SGCER')
             WRITE (HEADER(I), 902) P1,P2O,P2R,P5; I=I+1
