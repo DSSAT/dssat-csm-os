@@ -1,16 +1,5 @@
 *Sugarbeet CULTIVAR COEFFICIENTS: BSCER047 MODEL
 !
-!The P1 values for the varieties used in experiments IBWA8301 and
-!UFGA8201 were recalibrated to obtain a better fit for version 3
-!of the model. After converting from 2.1 to 3.0 the varieties
-!IB0035, IB0060, and IB0063 showed an earlier simulated flowering
-!date. To correct this, the P1 values were recalibrated.
-!The reason for this is that there was an error in PHASEI in
-!version 2.1 that had TLNO=IFIX(CUMDTT/21.+6.) rather than
-!TLNO=IFIX(SUMDTT/21.+6.); see p. 74 of Jones & Kiniry.
-!-Walter Bowen, 22 DEC 1994.
-!
-!
 ! COEFF       DEFINITIONS
 ! ========    ===========
 ! VAR#        Identification code or number for a specific cultivar
@@ -33,13 +22,10 @@
 ! PHINT       Phylochron interval; the interval in thermal time (degree days)
 !             between successive leaf tip appearances.
 !
-! PIO         Pioneer
-! AS          Asgrow (Monsanto)
-! DK          Dekalb (Monsanto)
-! LH          Holden (Monsanto)
-! C/LOL       Land of Lakes
+!             Modified from CERES-Maize
 !
 @VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3 PHINT
 !                                        1     2     3     4     5     6
 CR0001 SVRR1142E            . IB0001  940. 0.000 700.0 220.0  37.5 42.00
 BU0003 Emma                 . IB0002  969. 0.000 730.0 160.0  25.2 43.40
+IH0001 BTS940               . IHSTUT 760.0 0.000 700.0 420.0  27.5 43.00
