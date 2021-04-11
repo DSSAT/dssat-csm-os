@@ -3674,7 +3674,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 
           ! Mean temperature
           TMEAN = (TMAX+TMIN)/2.0
-          IF (snow.GT.0) THEN
+C-GH      IF (snow.GT.0) THEN
+          IF (snow .GT. 0.0) THEN
             tmeans = 0.0
           ELSE
             tmeans = tmean
