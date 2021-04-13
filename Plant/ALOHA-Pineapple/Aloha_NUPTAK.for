@@ -8,6 +8,7 @@
 !  06/--/1993 WTB Modifications
 !  06/28/1994 JTR & BDB Changed water content dependent factor 
 !  10/17/2017 CHP Adpated for CSM v4.7
+!  09/05/2020 JVJ Stages changes for inclusion in Overview    
 !-----------------------------------------------------------------------
 !  INPUT  : None
 !
@@ -324,7 +325,7 @@ C-----------------------------------------------------------------------
 !        IF (STOVWT .GT. 0.0) TANC   = STOVN / STOVWT
       ENDIF
 
-      IF (ISTAGE .LT. 7) THEN
+      IF (ISTAGE .LT. 10) THEN                          !IF (ISTAGE .LT. 7) THEN JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
         STOVN = STOVN + DSTOVN
         IF(STOVWT.GT.0.001) TANC  = STOVN / STOVWT
         ROOTN = ROOTN + DROOTN

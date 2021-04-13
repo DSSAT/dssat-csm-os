@@ -240,7 +240,7 @@ C     Calculate day length, sunrise and sunset.
      &    DAYL, DEC, SNDN, SNUP)                          !Output
 
 !     Subroutine to determine daily CO2
-      CALL CO2VAL(CONTROL2, ISWITCH, CCO2, DCO2, CO2)
+      CALL CO2VAL(CONTROL, ISWITCH, CCO2, DCO2, CO2)
 
 C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
@@ -282,9 +282,9 @@ C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
 
       CALL OpWeath(CONTROL, ISWITCH, 
-     &    CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD,  !Daily values
-     &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
+     &    CLOUDS, CO2, DAYL, FYRDOY, OZON7, PAR, RAIN,    !Daily values
+     &    SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,         !Daily values
+     &    TMAX, TMIN, TWILEN, WINDSP, WEATHER)            !Daily values
 
 !***********************************************************************
 !***********************************************************************
@@ -406,9 +406,9 @@ C     Compute daily normal temperature.
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
 C-----------------------------------------------------------------------
       CALL OpWeath(CONTROL, ISWITCH, 
-     &    CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD,  !Daily values
-     &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP, WEATHER)      !Daily values
+     &    CLOUDS, CO2, DAYL, FYRDOY, OZON7, PAR, RAIN,    !Daily values
+     &    SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,         !Daily values
+     &    TMAX, TMIN, TWILEN, WINDSP, WEATHER)            !Daily values
 
 !***********************************************************************
 !***********************************************************************
@@ -428,11 +428,15 @@ C-----------------------------------------------------------------------
       ENDIF
 
       CALL OpWeath(CONTROL, ISWITCH, 
-     &    CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD,  !Daily values
-     &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
+     &    CLOUDS, CO2, DAYL, FYRDOY, OZON7, PAR, RAIN,    !Daily values
+     &    SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,         !Daily values
+     &    TMAX, TMIN, TWILEN, WINDSP, WEATHER)            !Daily values
 
       CALL PUT('WEATHER','WYEAR',WYEAR)
+
+      IF (RNMODE == 'Y' .AND. CONTROL % ENDYRS == CONTROL % NYRS) THEN
+        CALL FCAST_FINISH()
+      ENDIF
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT

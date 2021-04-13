@@ -177,6 +177,7 @@ VN%M   Veg N% @ matur. Vegetative N at maturity (%)                             
 VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         .
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
+WYEAR  Weather year    Year for weather data (for forecast ensembles)           .
 YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
@@ -865,6 +866,7 @@ TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     
 VPD    Vapor Pres Def  Vapor pressure deficit                                   .
 VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
 WDSD   WIND SPEED km/d Wind speed (km/d)                                        .
+WDATE  WEATHER DATE    Date for weather data (YYYYDDD, for forecast ensembles)  .
 
 *OTHER MODELS
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
