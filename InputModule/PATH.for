@@ -14,6 +14,7 @@ C  04/16/2013 CHP/KAD Added codes for SALUS model
 C  06/03/2015 LPM Added codes for CSYCA CIAT cassava model
 C  06/18/2015 GH  Add error code for configuration file issues
 C  09/26/2017 WP  Add DSSAT_HOME environment variable configuration
+C  10/20/2020 FV add OilcropSun
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -527,7 +528,7 @@ C
 C     CAN  - CANegro model    Version 4.7.5 (2019)
 C     CROP = SC for Sugarcane Version 4.7.5 (2019)
 C
-C     OIL  - OILcrop model    Version 4.7.5 (2019)
+C     OIL  - OILcrop model    Version 4.7.5 (2020)
 C     CROP = SU for Sunflower Version 4.7.5 (2019)
 C
 C     ALO  - ALOha model      Version 4.7.5 (2019)

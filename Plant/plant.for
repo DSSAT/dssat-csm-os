@@ -55,6 +55,7 @@ C  08/09/2012 GH  Added CSCAS model
 !  05/10/2017 CHP removed SALUS model
 !  12/01/2015 WDB added Sugarbeet
 !  09/01/2018  MJ modified Canegro interface, IRRAMT added.
+!  20/19/2020 FV added OilcropSun
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
@@ -93,6 +94,7 @@ C-----------------------------------------------------------------------
 !         'TFAPS' - APSIM Tef
 !         'PRFRM' - Perennial forage model
 !         'BSCER' - Sugarbeet
+!         'SUOIL' - Sunflower (OilcropSun)
 C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -137,8 +139,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       REAL PAR, TAVG, TGROAV  !CHP 7/26/04 , TDAY
       REAL TGRO(TS)
 
-	INTEGER, PARAMETER :: CanopyLayers=3
-	REAL, DIMENSION(1:NumOfStalks,CanopyLayers) :: LFmntDEF
+      INTEGER, PARAMETER :: CanopyLayers=3
+      REAL, DIMENSION(1:NumOfStalks,CanopyLayers) :: LFmntDEF
 !     P model
       REAL, DIMENSION(NL) :: PUptake, SPi_AVAIL, FracRts
       REAL PSTRES1
@@ -517,7 +519,22 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
           KSEVAP = KEP
         ENDIF
+!     -------------------------------------------------
+!     Sunflower
+      CASE('SUOIL')
+        CALL SU_CERES (CONTROL, ISWITCH,              !Input
+     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     SPi_AVAIL, SNOW,                               !Input
+     &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
+     &     CANHT, HARVRES, KCAN, KEP,KUptake,  MDATE,     !Output
+     &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
+     &     STGDOY, FracRts, UNH4, UNO3, XLAI, XHLAI)      !Output
 
+        IF (DYNAMIC < RATE) THEN
+          KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
+          KSEVAP = KEP
+        ENDIF
+        
 !     -------------------------------------------------
 !     Potato
       CASE('PTSUB')

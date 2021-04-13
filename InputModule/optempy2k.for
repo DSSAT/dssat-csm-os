@@ -39,6 +39,7 @@ C  06/07/2002 GH  Modifed for Y2K Output
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 !  03/20/2018 Created new FORMAT to read in CUL file for tef
 !  01/21/2020 JG moved some CUL parameters to ECO file
+!  20/10/2020 FV checked that SUOIL is already defined
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO

@@ -35,7 +35,7 @@ C=======================================================================
       CHARACTER*1  RNMODE,BLANK
       CHARACTER*2  CROP
       CHARACTER*6  VARTY,VARNO,ERRKEY,ECOTYP,ECONO
-	CHARACTER*8  MODEL
+      CHARACTER*8  MODEL
       CHARACTER*12 FILEE,FILEG
       CHARACTER*16 VRNAME,ECONAM
       CHARACTER*80 PATHGE,PATHEC
@@ -69,8 +69,10 @@ C=======================================================================
             CASE('BN','PN','SB','TM','PE','CH','PP','PR','C3','C4','BH',
      &              'BR','SC','VB','CP','CB','FB','CO','CT','NP','GB',
 c**WDB 12/2015     &              'WH','BA','MZ','SG','ML','LT','CS')
-C**WDB   Added sugarbeet crop code BS           
-     &              'WH','BA','MZ','SG','ML','LT','CS','BS')                  
+C**WDB   Added sugarbeet crop code BS  
+!added sunflower code SU   10/20/2020
+         
+     &              'WH','BA','MZ','SG','ML','LT','CS','BS','SU')                  
            WRITE (*, 210) ECOTYP,ECONAM
           END SELECT
 !         ENDIF
@@ -119,10 +121,11 @@ C
              NSENS = 0
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
-	       IF (INDEX('GRO,CAS,CSM,CSP,CER,YCA',MODEL(3:5)) .GT. 0) THEN 
-                 CALL IPECO(FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
+         IF (INDEX('GRO,CAS,CSM,CSP,CER,YCA,OIL',MODEL(3:5)).GT.0)
+     &      THEN 
+         CALL IPECO(FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &               ECONO,IVRGRP,MODEL)
-             ENDIF
+         ENDIF
              NSENS = 1
           ENDIF
 
@@ -133,9 +136,10 @@ C
           CASE ('CRGRO','PRFRM')
             CALL INVRLE (FILEG,RNMODE,VARTY,VRNAME,PATHGE,ECONO)
 C**WDB 12/8/2015 added BSCER to case statement for sugarbeet model
+! added SUOIL to case statement, FV 10/20/2020
           CASE('MLCER','MZCER','SWCER','MZIXM','SGCER',
      &         'PTSUB','RICER','TRARO','TNARO',
-     &         'SCCAN','SCCSP','BSCER')
+     &         'SCCAN','SCCSP','BSCER','SUOIL')
             CALL INVRCE (CROP, MODEL)
           CASE ('CSCER','CSCAS','CSYCA')
 !           CALL INVRCS
@@ -155,8 +159,8 @@ C**WDB 12/8/2015 added BSCER to case statement for sugarbeet model
 
 !=======================================================================
       ELSE IF (MENU .EQ. 4) THEN
-        IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS,YCA',MODEL(3:5)) .GT. 0)
-     &   THEN
+        IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS,YCA,OIL',MODEL(3:5))
+     &   .GT.0) THEN
               CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &            ECONO,IVRGRP,MODEL)
           ENDIF

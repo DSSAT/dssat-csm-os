@@ -177,10 +177,11 @@ C     Initialize.
       LAIMAX = 3.5
 
 !     10/16/2006 CHP/MJ added sugarcane to 1.5m crops
+!     11/1/2020 FV added sunflower to 1.5 m crops, might reflect better current shorter cultivars 
 !     Need to look at how to add new crops -- put this in species file?
 !     Other new crop modules: TR, TN, ....???
 
-      IF (INDEX('MZMLSGSC',CROP) .GT. 0) THEN
+      IF (INDEX('MZMLSGSCSU',CROP) .GT. 0) THEN
         CHIGHT = 1.5
       ELSE IF (INDEX('WHBA',CROP) .GT. 0) THEN
         CHIGHT = 1.0
