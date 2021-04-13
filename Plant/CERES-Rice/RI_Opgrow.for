@@ -23,9 +23,8 @@ C=======================================================================
      &    CANHT, KSTRES, DTT)                                  
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE CsvOutput   ! VSH,chp
       IMPLICIT  NONE
       SAVE
 
@@ -43,7 +42,7 @@ C-----------------------------------------------------------------------
       REAL BIOMAS, RTWT, LFWT, GRNWT, HI, GM2KG
       REAL LAI, GPSM, PANWT, GPP, PCNGRN, PCNSH, PCNVEG
       REAL PLTPOP, PLANTS, STOVN, GRAINN, ROOTN
-      REAL TURFAC, RTDEP, STMWT,  RLV(NL), SWFAC, NSTRES
+      REAL TURFAC, RTDEP, STMWT,  RLV(NL), SWFAC, NSTRES, RLV5(5)
       REAL TILNO, CumNUptake, SATFAC, SDSIZE, SHELPC
       REAL WTNGRN, WTNVEG
 
@@ -85,6 +84,8 @@ C-----------------------------------------------------------------------
       RUN     = CONTROL % RUN
       YRDOY   = CONTROL % YRDOY
 
+      FMOPT   = ISWITCH % FMOPT   ! VSH, CHP
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -92,11 +93,6 @@ C-----------------------------------------------------------------------
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       IF (IDETG .EQ. 'Y') THEN
-        OUTG  = 'PlantGro.OUT'
-        CALL GETLUN('OUTG',  NOUTDG)
-        OUTPN  = 'PlantN.OUT  '
-        CALL GETLUN('OUTPN', NOUTPN)
-
 !       Text describing soil layer depths
         LayerText = "                              "
         DO L = 1, MIN(5,NLAYR)
@@ -109,6 +105,14 @@ C-----------------------------------------------------------------------
           J = L*6
           LayerText(I:J) = CHAR8(3:8)
         ENDDO
+      ENDIF
+
+      IF ((FMOPT == 'A' .OR. FMOPT == ' ') .AND.   ! VSH, chp
+     &     IDETG .EQ. 'Y') THEN
+        OUTG  = 'PlantGro.OUT'
+        CALL GETLUN('OUTG',  NOUTDG)
+        OUTPN  = 'PlantN.OUT  '
+        CALL GETLUN('OUTPN', NOUTPN)
 
       GROHEAD(1) =
      &  '!YR        Days  Days              Leaf  <--------- Dry Wei' //
@@ -180,18 +184,16 @@ C-----------------------------------------------------------------------
 
           !Write headers
           CALL HEADER(SEASINIT, NOUTPN, RUN)
-
           WRITE (NOUTPN,2240) NITHEAD
  2240     FORMAT (A140)
         ENDIF
       ENDIF
 
 !-----------------------------------------------------------------------
-
       SEEDNO = 0.0
       GPP   = 0.0
       WTNUP = 0.0
-!      YIELD = 0.0
+!     YIELD = 0.0
       CANHT = 0.0
       CANWH = 0.0
 
@@ -334,33 +336,51 @@ C-----------------------------------------------------------------------
           ENDIF
 
           WRITE (NOUTPN,310)YEAR, DOY, DAS, DAP,
-     &    (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0), PCNGRN, PCNVEG,
-!    &    (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0), PCNL,
-     &    CumNUptake, (WTNLF*10.0), (WTNST*10.0), PCNL,
-     &    PCNST, PCNSH, PCNRT, CUMSENSURFN, CUMSENSOILN
+     &      (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0), PCNGRN, PCNVEG,
+!    &      (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0), PCNL,
+     &      CumNUptake, (WTNLF*10.0), (WTNST*10.0), PCNL,
+     &      PCNST, PCNSH, PCNRT, CUMSENSURFN, CUMSENSOILN
  
-  310     FORMAT (1X,I4,1X,I3.3,2(1X,I5),
+  310       FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &        3(1X,F5.1),2(1X,F5.2),1X,F5.1,
      &        2(1X,F5.1),4(1X,F5.2),2(1X,F6.2))
         ENDIF
 
-        WRITE (NOUTDG,400)YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH, CHP
+
+          WRITE (NOUTDG,400)YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
      &       NINT(WTLF*10),NINT(STMWT*GM2KG),NINT(GRNWT*GM2KG),
      &       NINT(RTWT*GM2KG),NINT(PANWT*GM2KG),NINT(BIOMAS*GM2KG),
      &       NINT(SEEDNO),SDSIZE,HI,NINT((TILNO+1.)*PLTPOP),(1.0-SWFAC),
      &       (1.0-TURFAC),SATFAC,(1.0-NSTRES),(1.0-KSTRES),PCNL,SHELPC,
      &       SLA,CANHT,CANWH,(RTDEP/100),(RLV(I),I=1,5),
      &       NINT(CUMSENSURF), NINT(CUMSENSOIL), DTT
- 400    FORMAT (1X,I4,1X,I3.3,2(1X,I5),
+ 400      FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &        1X,F5.1,1X,I5,1X,F5.2,7(1X,I5),
      &        1X,F5.1,1X,F5.3,1X,I5,5(1X,F5.3),2(1X,F6.2),1X,F5.1,
      &        2(1X,F5.2),6(1X,F5.2)  !)
      &        ,2(1X,I6),F7.2 ) 
+
+ !      VSH CSV output corresponding to PlantGro.OUT
+        ELSEIF (FMOPT == 'C') THEN 
+          DO L = 1, 5
+            RLV5(L) = RLV(L)
+          ENDDO    
+          CALL CsvOut_RICER(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
+     &       CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &       VSTAGE,RSTAGE,XLAI,
+     &       WTLF*10,STMWT*GM2KG,GRNWT*GM2KG,
+     &       RTWT*GM2KG,PANWT*GM2KG,(BIOMAS*GM2KG),
+     &       SEEDNO,SDSIZE,HI,((TILNO+1.)*PLTPOP),(1.0-SWFAC),
+     &       (1.0-TURFAC),SATFAC,(1.0-NSTRES),(1.0-KSTRES),PCNL,SHELPC,
+     &       SLA,CANHT,CANWH,(RTDEP/100), RLV5,
+     &       CUMSENSURF, CUMSENSOIL, DTT,
+     &       vCsvlineRICER, vpCsvlineRICER, vlngthRICER) 
+          CALL LinklstRICER(vCsvlineRICER)
+        ENDIF
       ENDIF
 
 !***********************************************************************
-!***********************************************************************
-!     Daily OUTPUT
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 !***********************************************************************
