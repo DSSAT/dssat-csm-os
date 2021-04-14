@@ -98,6 +98,11 @@
         IF (LLWAD > ZERO) LANCM = LLNAD/LLWAD
                 
         HWAD = SRWAD
+        !LPM 14apr2021 Adding the % of dry matter 
+        IF (HWFD > 0.0) THEN
+            DMHD = HWAD *100./ HWFD
+        ENDIF
+        
         ! HWUD = SRWUD ! issue 50
         ! HNUMAD = SRNOPD * PLTPOP ! issue 50
         HNAD = SRNAD
