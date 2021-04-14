@@ -13,6 +13,7 @@ C  11/22/2004 CHP Changed output file names from *.out to *.OUT
 C                   for case-sensitive OS's.
 !  02/13/2015 chp N-uptake from ri_Nuptak.for routine instead of calculated
 !                 here as tops N
+!  04/14/2021 chp Added CSV output for PlantGro.OUT (but not yet PlantN.OUT)
 C=======================================================================
 
       SUBROUTINE RI_OPGROW (CONTROL, ISWITCH, SOILPROP,
@@ -105,14 +106,10 @@ C-----------------------------------------------------------------------
           J = L*6
           LayerText(I:J) = CHAR8(3:8)
         ENDDO
-      ENDIF
 
-      IF ((FMOPT == 'A' .OR. FMOPT == ' ') .AND.   ! VSH, chp
-     &     IDETG .EQ. 'Y') THEN
-        OUTG  = 'PlantGro.OUT'
-        CALL GETLUN('OUTG',  NOUTDG)
-        OUTPN  = 'PlantN.OUT  '
-        CALL GETLUN('OUTPN', NOUTPN)
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN
+          OUTG  = 'PlantGro.OUT'
+          CALL GETLUN('OUTG',  NOUTDG)
 
       GROHEAD(1) =
      &  '!YR        Days  Days              Leaf  <--------- Dry Wei' //
@@ -138,38 +135,41 @@ C-----------------------------------------------------------------------
      &  '  EWSD  NSTD  KSTD   LN%D   SH%D  SLAD  CHTD  CWID  RDPD' //
      &  '  RL1D  RL2D  RL3D  RL4D  RL5D  SNW0C  SNW1C   DTTD' 
 
-C-----------------------------------------------------------------------
-      NITHEAD = '@YEAR DOY   DAS   DAP' //
-     &  '  CNAD  GNAD  VNAD  GN%D  VN%D  NUPC  LNAD' //
-     &  '  SNAD  LN%D  SN%D  SHND  RN%D  SNN0C  SNN1C'
-
 !-----------------------------------------------------------------------
-!       Initialize daily growth output file
-        INQUIRE (FILE = OUTG, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'OLD',
-     &      IOSTAT = ERRNUM, POSITION = 'APPEND')
-          FIRST = .FALSE.  
-        ELSE
-          OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'NEW',
-     &      IOSTAT = ERRNUM)
-          WRITE(NOUTDG,'("*GROWTH ASPECTS OUTPUT FILE")')
-          FIRST = .TRUE.  
+!         Initialize daily growth output file
+          INQUIRE (FILE = OUTG, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'OLD',
+     &        IOSTAT = ERRNUM, POSITION = 'APPEND')
+            FIRST = .FALSE.  
+          ELSE
+            OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'NEW',
+     &        IOSTAT = ERRNUM)
+            WRITE(NOUTDG,'("*GROWTH ASPECTS OUTPUT FILE")')
+            FIRST = .TRUE.  
+          ENDIF
+          
+          !Write headers
+          CALL HEADER(SEASINIT, NOUTDG, RUN)
+          
+!         Variable heading for GROWTH.OUT
+          WRITE (NOUTDG,2192) GROHEAD(1)
+          WRITE (NOUTDG,2192) GROHEAD(2)
+          WRITE (NOUTDG,2192) GROHEAD(3)
+          WRITE (NOUTDG,2192) GROHEAD(4)
+ 2192     FORMAT (A220)
+
         ENDIF
-
-        !Write headers
-        CALL HEADER(SEASINIT, NOUTDG, RUN)
-
-!       Variable heading for GROWTH.OUT
-        WRITE (NOUTDG,2192) GROHEAD(1)
-        WRITE (NOUTDG,2192) GROHEAD(2)
-        WRITE (NOUTDG,2192) GROHEAD(3)
-        WRITE (NOUTDG,2192) GROHEAD(4)
- 2192   FORMAT (A220)
-
 !-----------------------------------------------------------------------
-!     Initialize daily plant nitrogen output file
+!       Initialize daily plant nitrogen output file
         IF (ISWNIT .EQ. 'Y') THEN
+C-----------------------------------------------------------------------
+          OUTPN  = 'PlantN.OUT  '
+          CALL GETLUN('OUTPN', NOUTPN)
+          NITHEAD = '@YEAR DOY   DAS   DAP' //
+     &      '  CNAD  GNAD  VNAD  GN%D  VN%D  NUPC  LNAD' //
+     &      '  SNAD  LN%D  SN%D  SHND  RN%D  SNN0C  SNN1C'
+        
           INQUIRE (FILE = OUTPN, EXIST = FEXIST)
           IF (FEXIST) THEN
             OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'OLD',
@@ -181,14 +181,13 @@ C-----------------------------------------------------------------------
             WRITE(NOUTPN,'("*PLANT N OUTPUT FILE")')
             FIRST = .TRUE.  
           ENDIF
-
+        
           !Write headers
           CALL HEADER(SEASINIT, NOUTPN, RUN)
           WRITE (NOUTPN,2240) NITHEAD
  2240     FORMAT (A140)
         ENDIF
       ENDIF
-
 !-----------------------------------------------------------------------
       SEEDNO = 0.0
       GPP   = 0.0
