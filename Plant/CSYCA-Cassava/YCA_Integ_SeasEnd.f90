@@ -41,6 +41,7 @@
         ! And weights are in kg/ha
         CWAD = (canopyWeight())*plantPopulation()                                                                       !EQN 318
         SRWAD = SRWT*plantPopulation()
+        HWFD = SRWTF*plantPopulation()
         LLWAD = LFWT*(1.0-LPEFR)*plantPopulation()
         LPEWAD = LFWT*LPEFR*plantPopulation()
         RWAD = RTWT*plantPopulation()

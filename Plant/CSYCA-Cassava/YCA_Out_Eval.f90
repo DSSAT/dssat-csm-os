@@ -80,7 +80,8 @@
                 LAIXT = -99.0 
                 LNUMT = -99.0 
                 CWADT = -99.0 
-                HWADT = -99.0 
+                HWADT = -99.0
+                HWFDT = -99.0
                 HIADT = -99.0 
                 HWUT = -99.0 
                 HNUMAT = -99.0 
@@ -230,6 +231,7 @@
                                         LNUMCOL = Tvicolnm(linet,'L#SD')
                                         CWADCOL = Tvicolnm(linet,'CWAD')
                                         HWADCOL = Tvicolnm(linet,'HWAD')
+                                        HWFDCOL = Tvicolnm(linet,'HWFD')
                                         HIADCOL = Tvicolnm(linet,'HIAD')
                                         HWTUCOL = Tvicolnm(linet,'HWUD')
                                         HNUMACOL = Tvicolnm(linet,'H#AD')
@@ -305,6 +307,8 @@
                                                     IF (VALUER > 0.0) CWADT = VALUER
                                                     CALL Getstrr (LINET,HWADCOL,VALUER)
                                                     IF (VALUER > 0.0) HWADT = VALUER
+                                                    CALL Getstrr (LINET,HWFDCOL,VALUER)
+                                                    IF (VALUER > 0.0) HWFDT = VALUER
                                                     CALL Getstrr (LINET,HIADCOL,VALUER)
                                                     IF (VALUER > 0.0) HIADT = VALUER
                                                     IF (HIADT >= 1.0) HIADT = HIADT/100.0
@@ -342,6 +346,11 @@
                             IF (HWAMM <= 0.0) THEN
                                 IF (HWADT > 0.0) THEN
                                     HWAMM = HWADT
+                                ENDIF
+                            ENDIF
+                            IF (HWFMM <= 0.0) THEN
+                                IF (HWFDT > 0.0) THEN
+                                    HWFMM = HWFDT
                                 ENDIF
                             ENDIF
                             IF (CWAMM <= 0.0) THEN

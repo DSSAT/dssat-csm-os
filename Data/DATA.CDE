@@ -210,6 +210,7 @@ DAS    Days after st   Days after start of simulation (#)                       
 DCCD   Zadoks code     Growth stage (Zadoks code, 1-90)                         .
 DLAID  LAI-dead        Leaf area index, dead leaves                             .
 DLW_1  Dead Lf wt stk1 Dead leaf weight, primary stalk (g[dm]/stk)              .
+DMHD   DM % harvest    Percent dry matter (%) in the harvested product          .
 DTTD   Grow deg-days   Growing degree days (°C-d/d)                             .
 DU     Develpm units   Developmental units  (PVC.d)                             .
 DWTCO  Dead canopy     Dead canopy weight (kg [dm]/ha)                          .
@@ -241,6 +242,7 @@ HIAD   Harvest index   Harvest index (grain/top)                                
 HIDC   Harvest index   Harvest index (sucrose/(stalk dm + sucrose))             .
 HIPD   Pod index       Pod harvest index (pod/top)                              .
 HWAD   Harvest wt      Harvest product wt (kg [dm]/ha                           .
+HWFD   Fresh harvest   Harvest product fresh wt (kg/ha)                         .
 HWUD   Harvest wt/unit Harvest wt (wt/unit)                                     .
 HYAD   Field wt Mg/ha  Field weight (Mg [fm]/ha)                                .
 KSTD   K stress factor Potassium stress factor (0-1)                            .

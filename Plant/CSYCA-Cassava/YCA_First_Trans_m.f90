@@ -285,7 +285,7 @@ Module YCA_First_Trans_m
     REAL    :: HINM                    ! Harvest index,N,abground,mat   #          ! (From SeasInit)  
     REAL    :: HINMM                   ! Harvest N index,mature,meas    %          ! (From SeasInit)  
     INTEGER :: HLAST                   ! Last date for harvest          #          ! (From SeasInit)  
-    ! REAL    :: HMPC                    ! Harvest moisture percent,std.. #          ! (From SeasInit)  ! issue 49
+    REAL    :: HMPC                    ! Harvest dry percent,std..      #          ! (From SeasInit)  ! issue 49
     REAL    :: HNAD                    ! Product N                      kg/ha      ! (From SeasInit)  
     REAL    :: HNAM                    ! Harvest N at maturity          kg/ha      ! (From SeasInit)  
     REAL    :: HNAMERR                 ! Harvest N,error                %          ! (From Output)    
@@ -320,7 +320,11 @@ Module YCA_First_Trans_m
     REAL    :: HWAHM                   ! Harvest wt,harvest,measured    kg/ha      ! (From Output)    
     REAL    :: HWAM                    ! Harvest product wt.,maturity   kg/ha      ! (From SeasInit)  
     REAL    :: HWAMM                   ! Harvest product wt.,measured   kg/ha      ! (From SeasInit)  
-    INTEGER :: HWTUCOL                 ! Harvest weight per unit column #          ! (From Output)    
+    REAL    :: HWFD                    ! Harvest product (fresh)        kg/ha
+    INTEGER :: HWFDCOL                 ! Product wt column number       #          ! (From Output)
+    REAL    :: HWFDT                   ! Harvest weight (fresh) t file  kg/ha      ! (From Output)
+    REAL    :: HWFMM                   ! Harvest prod.(fresh) measured  kg/ha      ! (From SeasInit)
+    INTEGER :: HWTUCOL                 ! Harvest weight per unit column #          ! (From Output)   
     ! REAL    :: HWUD                    ! Harvest wt/unit                g          ! (From Integrate) ! issue 50
     REAL    :: HWUM                    ! Harvest product size,maturity  g          ! (From SeasInit)  
     REAL    :: HWUMERR                 ! Harvest wt per unit error      %          ! (From Output)    
@@ -453,7 +457,8 @@ Module YCA_First_Trans_m
     REAL    :: MDATT                   ! Maturity date from t file      YrDoy      ! (From Output)    
     REAL    :: MDAYFR                  ! Maturity,fraction of day       #          ! (From SeasInit)  
     INTEGER :: MDOY                    ! Maturity day of year           d          ! (From SeasInit)  
-    REAL    :: MJPERE                  ! Energy per Einstein (300-170)  MJ/E       ! (From RunInit)   
+    REAL    :: MJPERE                  ! Energy per Einstein (300-170)  MJ/E       ! (From RunInit) 
+    REAL    :: MSWT                    ! Water weight storage roots     g/p        ! (From Integrate)
     !INTEGER :: MSTG                    ! Maturity stage(eg.black layer) #          ! (From SeasInit) !LPM 05JAN2015 MSTG is not used  
     REAL    :: NCRG                    ! N factor,root growth           ppm        ! (From SeasInit)  
     REAL    :: NDEM2                   ! N demand for growth>minimum    g/p        ! (From Growth)    
@@ -837,7 +842,11 @@ Module YCA_First_Trans_m
     REAL    :: SROOTN                  ! Storage root N                 g/p        ! (From SeasInit)  
     REAL    :: SRPRS                   ! Storage protein standard %     #          ! (From SeasInit)  
     REAL    :: SRWAD                   ! Storage root weight            kg/ha      ! (From Integrate) 
-    REAL    :: SRWT                    ! Root storage organ weight      g/p        ! (From SeasInit)  
+    REAL    :: SRWFAD                  ! Storage root weight (fresh)    kg/ha      ! (From Integrate)
+    REAL    :: SRWT                    ! Root storage organ weight      g/p        ! (From SeasInit)
+    REAL    :: SRWTF                   ! Root storage weight (fresh)    g/p        ! (From SeasInit)
+    REAL    :: SRWTFPREV               ! Root storage wt(fresh)last day g/p        ! (From SeasInit)
+    REAL    :: SRWTPREV                ! Root storage wt(dry) last day  g/p        ! (From SeasInit)
     REAL    :: SRWTGRS                 ! Root storage,reserves>std.%    g/p        ! (From SeasInit)  
     REAL    :: SRWTGRSP                ! Root storage potential         g/p        ! (From SeasInit)
     REAL    :: SRWTGRSADJ              ! Root storage adjusted          g/p        ! (From SeasInit) 
@@ -1417,6 +1426,7 @@ Module YCA_First_Trans_m
         mdat = -99
         mdayfr = -99
         mdoy = -99
+        MSWT = 0.0
         nfg = 1.0
         nfgcc = 0.0
         nfgcc = 0.0
@@ -1602,6 +1612,9 @@ Module YCA_First_Trans_m
         srnuse = 0.0
         srootn = 0.0
         srwt = 0.0
+        srwtf = 0.0
+        SRWTFPREV = 0.0
+        SRWTPREV = 0.0
         srwtgrs = 0.0
         SRWTGRSADJ = 0.0
         srwum = 0.0

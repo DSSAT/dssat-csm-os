@@ -231,6 +231,7 @@
         mdat = -99
         mdayfr = -99
         mdoy = -99
+        MSWT = 0.0
         nfg = 1.0
         nfgcc = 0.0
         nfgcc = 0.0
@@ -430,6 +431,8 @@
         srnuse = 0.0
         srootn = 0.0
         srwt = 0.0
+        SRWTFPREV = 0.0
+        SRWTPREV = 0.0
         srwtgrs = 0.0
         ! srwud = 0.0  !issue 50
         srwum = 0.0

@@ -185,6 +185,13 @@
             !SRWT = SRWT + GROSR + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
             !LPM 16FEB2021 Reduce storage root weight when used as reserve for aboveground growth after release of water stress (GROLSRS)
             SRWT = SRWT + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) - GROLSRS ! Root N adjustment                              !EQN 447
+            !LPM 13APR2021 Estimate fresh weight of storage roots
+            SRWTF = SRWT * (100./HMPC)
+            IF (SRWTPREV > SRWT .OR. SRWTFPREV > SRWTF) THEN
+                SRWTF = SRWTFPREV   
+            ENDIF
+            MSWT = SRWTF - SRWT
+            
         ENDIF
         IF (DAGERM+TTGEM*WFGE >= PGERM) THEN !LPM 23MAR2016 To consider reserves of stake after germination
             !SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD-SEEDRSAVR)                                                                   !EQN 285 !LPM 23MAR2016 SEEDRSAVR subtracted in CS_Growth_Init.f90
