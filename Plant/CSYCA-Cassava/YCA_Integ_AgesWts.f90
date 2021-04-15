@@ -184,11 +184,14 @@
             END DO
             !SRWT = SRWT + GROSR + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
             !LPM 16FEB2021 Reduce storage root weight when used as reserve for aboveground growth after release of water stress (GROLSRS)
-            SRWT = SRWT + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) - GROLSRS ! Root N adjustment                              !EQN 447
+            SRWTG = SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) - GROLSRS
+            SRWT = SRWT + SRWTG ! Root N adjustment                              !EQN 447
             !LPM 13APR2021 Estimate fresh weight of storage roots
-            SRWTF = SRWT * (100./HMPC)
-            IF (SRWTPREV > SRWT .OR. SRWTFPREV > SRWTF) THEN
-                SRWTF = SRWTFPREV   
+            
+            IF (SRWTG > 0.0) THEN
+                SRWTF = SRWTF + (SRWTG * (100./HMPC))  
+            ELSE
+                SRWTF = SRWTF
             ENDIF
             MSWT = SRWTF - SRWT
             

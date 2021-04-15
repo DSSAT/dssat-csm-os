@@ -432,8 +432,9 @@
         srootn = 0.0
         srwt = 0.0
         SRWTFPREV = 0.0
-        SRWTPREV = 0.0
+        SRWTG = 0.0
         srwtgrs = 0.0
+        SRWTPREV = 0.0
         ! srwud = 0.0  !issue 50
         srwum = 0.0
         srwum = 0.0

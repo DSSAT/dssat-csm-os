@@ -847,10 +847,11 @@ Module YCA_First_Trans_m
     REAL    :: SRWT                    ! Root storage organ weight      g/p        ! (From SeasInit)
     REAL    :: SRWTF                   ! Root storage weight (fresh)    g/p        ! (From SeasInit)
     REAL    :: SRWTFPREV               ! Root storage wt(fresh)last day g/p        ! (From SeasInit)
-    REAL    :: SRWTPREV                ! Root storage wt(dry) last day  g/p        ! (From SeasInit)
+    REAL    :: SRWTG                   ! Root storage growth            g/p        ! (From SeasInit)
     REAL    :: SRWTGRS                 ! Root storage,reserves>std.%    g/p        ! (From SeasInit)  
     REAL    :: SRWTGRSP                ! Root storage potential         g/p        ! (From SeasInit)
-    REAL    :: SRWTGRSADJ              ! Root storage adjusted          g/p        ! (From SeasInit) 
+    REAL    :: SRWTGRSADJ              ! Root storage adjusted          g/p        ! (From SeasInit)
+    REAL    :: SRWTPREV                ! Root storage wt(dry) last day  g/p        ! (From SeasInit)
     ! REAL    :: SRWUD                   ! Storage root size              g          ! (From SeasInit)   ! issue 50
     REAL    :: SRWUM                   ! Storage root wt/unit,maturity  g          ! (From SeasInit)  
     REAL    :: SRWUMM                  ! Storage root wt/unit,mat,meas  g          ! (From SeasInit)  
@@ -1616,6 +1617,7 @@ Module YCA_First_Trans_m
         srwt = 0.0
         srwtf = 0.0
         SRWTFPREV = 0.0
+        SRWTG = 0.0
         SRWTPREV = 0.0
         srwtgrs = 0.0
         SRWTGRSADJ = 0.0
