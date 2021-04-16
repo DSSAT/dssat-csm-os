@@ -191,10 +191,10 @@
             ! To reduce dry matter content for young plants we use 1.35E-3*(3000.- DAWWP)
             !This has an effect for plants younger than 6 months reducing up to 4.05%
             !Data from ACAI trials (multiple linear regression) converting the effect of chronological age to thermal time
-            !0.023/17 GDD = 1.35E-3
+            !0.023/17 = 1.35E-3 = DMRD
             IF (SRWTG > 0.0 .AND. HMPC > 0.0 .AND. Tfdmc >= 0.0) THEN
-                IF (DAWWP < 3000.0) THEN
-                    SRWTF = SRWTF + (SRWTG * (100./(HMPC+(DMIC*(1.-Tfdmc))-(1.35E-3*(3000.- DAWWP))))) 
+                IF (DAWWP < DMAG) THEN
+                    SRWTF = SRWTF + (SRWTG * (100./(HMPC+(DMIC*(1.-Tfdmc))-((DMRD/1000.)*(DMAG - DAWWP))))) 
                 ELSE
                     SRWTF = SRWTF + (SRWTG * (100./(HMPC+(DMIC*(1.-Tfdmc)))))
                 ENDIF
