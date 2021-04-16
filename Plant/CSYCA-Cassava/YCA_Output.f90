@@ -76,7 +76,10 @@
              CALL YCA_Out_PlGrow ( & 
                 BRSTAGE     , CANHT       , DOY         ,  EOP         , IDETG       , IDETL       , ISWNIT      , &
                 NFP         , RLV         , RUN         , TN          , YEAR        &
-                )  
+                ) 
+             CALL YCA_Out_FreshWt ( & 
+                DOY         ,  IDETG       , IDETL       , RUN         , YEAR        &
+                )
             
 !       ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.IPLTI == 'A') THEN
         ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.(IPLTI == 'A' .OR. IPLTI == 'F')) THEN

@@ -384,6 +384,7 @@ set(
         "Plant/CSYCA-Cassava/YCA_Out_CrpSim.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Error.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Eval.f90"
+		"Plant/CSYCA-Cassava/YCA_Out_FreshWt.f90"
         "Plant/CSYCA-Cassava/YCA_Out_LfTier.f90"
         "Plant/CSYCA-Cassava/YCA_Out_ModFail.f90"
         "Plant/CSYCA-Cassava/YCA_Out_PlantSum.f90"

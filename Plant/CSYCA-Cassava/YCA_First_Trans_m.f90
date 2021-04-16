@@ -493,7 +493,8 @@ Module YCA_First_Trans_m
     REAL    :: NODLT                   ! internode length Br=0 lignified cm        ! LPM 08JUN2015
     REAL    :: NODWT                   ! Node wt Br=0  at 3400 ˚Cd      g/node     ! LPM 08JUN2015
     INTEGER :: NOUTPG                  ! Number for growth output file  #          ! (From RunInit)   
-    INTEGER :: NOUTPG2                 ! Number for growth output file2 #          ! (From RunInit)   
+    INTEGER :: NOUTPG2                 ! Number for growth output file2 #          ! (From RunInit)
+    INTEGER :: NOUTPF                  ! Number for fresh growth output #          ! (From RunInit)
     INTEGER :: NOUTPGF                 ! Number for growth factors file #          ! (From RunInit)   
     INTEGER :: NOUTPN                  ! Number for growthN output file #          ! (From RunInit)   ! Stem N pool (ie.above minimum) g/p        !
     REAL    :: NPOOLL                  ! Leaf N pool (ie.above minimum) g/p        ! (From Growth)    
@@ -1171,6 +1172,7 @@ Module YCA_First_Trans_m
     CHARACTER (LEN=79)  OUTHED        ! Output file heading                       ! (From SeasInit) 
     CHARACTER (LEN=12)  OUTPG         ! Growth output file code                   ! (From RunInit)  
     CHARACTER (LEN=12)  OUTPG2        ! Growth output file2 code                  ! (From RunInit)  
+    CHARACTER (LEN=12)  OUTPG3        ! Growth output file3 code                  ! (From RunInit)
     CHARACTER (LEN=12)  OUTPGF        ! Growth factors file2 code                 ! (From RunInit)  
     CHARACTER (LEN=12)  OUTPN         ! GrowthN output file code                  ! (From RunInit)  
     CHARACTER (LEN=80)  PATHCR        ! Path to genotype (CUL) files              ! (From SeasInit) 

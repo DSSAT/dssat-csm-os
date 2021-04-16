@@ -60,6 +60,7 @@
         CHARACTER(LEN=128) :: FMT502 = '(I5,I4,2I6,F6.1,A6,F6.2,A6,F6.2,A6,A6,F6.1,2A6,2F6.2,F6.3,9F6.2)' ! issue 50
         CHARACTER(LEN=512) :: FMT503 = '(I5,I4,2I6,F6.1,A6,F6.1,F6.1,2F6.2,4F6.1,A6,F6.2,2A6,3F6.3,3F6.3,3F6.3,F6.2,' //&
             'F6.2,F6.2,F6.1,F6.1)'
+        CHARACTER(LEN= 78) :: FMT504 = '(I5,I4,2I6,F6.1,A6,F6.1,2I6,F6.1,3F6.2)'
         CHARACTER(LEN=128) :: FMT507 = '(I5,I4,2I6,2F6.1,A6,F6.1,F6.2,5F6.2,3F6.2,2F6.2,F6.1,F6.2,F6.1,3F6.2)'
         CHARACTER(LEN=128) :: FMT600 = '(1X,A10,A3,A10,I5,3F6.1,F7.2,2F7.1,4F7.3,2F7.2)'
         CHARACTER(LEN=128) :: FMT610 = '(1X,A10,13X,I5,3F6.1,F7.2,2I7,6F7.3)'
@@ -109,6 +110,7 @@
             !'"  RS%D","  H#AD  HWUD", "  S#AD  SLAD  RDPD  PTFD","  SWXD WAVRD"," WUPRD  WFPD  WFGD","  NFPD  ",' // & !LPM 20MAY2015 to delete PTFD
             '"  RS%D","  S#AD  SLAD  RDPD","  SWXD WAVRD"," WUPRD  WFPD  WFGD","  NFPD  ",' // & ! issue 50
             '"NFGD NUPRD  TFPD  TFGD", " DYLFD","      ","      ")'
+        CHARACTER(LEN=90) :: FMT2202 = '("@YEAR DOY   DAS   DAP TMEAN","  GSTD  L#SD","  HWAD  HWFD  DMHD  HIAD  TFGD  WFGD")'
         CHARACTER(LEN=256) :: FMT2205 = '("@YEAR DOY   DAS   DAP TMEAN TCDIF  GSTD","    DU DYLFD  TFPD","  WFPD  NFPD ",' // &
             '"CO2FD RSFPD  TFGD  WFGD  NFGD"," WAVRD WUPRD  SWXD  EOPD","  SNXD LN%RD SN%RD RN%RD            ")'
         CHARACTER(LEN=256) :: FMT2215 = '("!........DATES.......  ...TEMP... STAGE "," ...PHENOLOGY.... ",' // & 
