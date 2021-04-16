@@ -59,9 +59,10 @@
       IF (INDEX('Y',ISWFWT) < 1 .OR. 
      &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
 
-      CROP   = CONTROL % CROP
+      CROP   = CONTROL%CROP
 
-!     Currently only works for tomato.  Add other crops later. 
+!     Currently only works for tomato, green bean, bell pepper, and strawberry. 
+!     Add other crops later. 
 !     Send a message if not available crop
       IF (INDEX('TM,GB,PR',CROP) < 0) THEN
         CALL GET_CROPD(CROP, CROPD)

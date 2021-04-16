@@ -1,9 +1,9 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 Iowa State University, Ames, Iowa
+C  COPYRIGHT 1998-2021 
+C                      DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      The University of Georgia, Griffin, Georgia
 C                      International Fertilizer Development Center
-C                      University of Guelph
+C                      
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C======================================================================

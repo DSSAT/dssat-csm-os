@@ -88,7 +88,7 @@ C  Calls:     None
           !-------------------------------------------------------------
           !   Open PlantGro.OUT as new or append
           !-------------------------------------------------------------
-          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           INQUIRE (FILE = OUTG, EXIST = FEXIST)
           IF (FEXIST) THEN
             OPEN (UNIT=NOUTDG, FILE=OUTG, STATUS='OLD',
@@ -133,7 +133,7 @@ C  Calls:     None
 
           WRITE (NOUTDG,207)
   207     FORMAT('   CDAD   LDAD   SDAD   SNW0C   SNW1C  DTTD') 
-          END IF ! VSH
+        END IF ! VSH
           
         CUMSENSURF = 0.0
         CUMSENSOIL = 0.0
@@ -151,7 +151,7 @@ C  Calls:     None
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
         IF (YRDOY .GE. YRPLT) THEN
 
-          PODWTD = 0
+          PODWTD = 0.0
 !         DAS = MAX(0, TIMDIF(YRSIM, YRDOY))
           DAP = MAX(0, TIMDIF(YRPLT, YRDOY))
 
