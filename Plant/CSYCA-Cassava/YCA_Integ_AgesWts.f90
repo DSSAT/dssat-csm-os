@@ -187,9 +187,17 @@
             SRWTG = SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) - GROLSRS
             SRWT = SRWT + SRWTG ! Root N adjustment                              !EQN 447
             !LPM 13APR2021 Estimate fresh weight of storage roots
-            
+            !DMIC represents the maximum increase of dry matter due to low temperatures
+            ! To reduce dry matter content for young plants we use 1.35E-3*(3000.- DAWWP)
+            !This has an effect for plants younger than 6 months reducing up to 4.05%
+            !Data from ACAI trials (multiple linear regression) converting the effect of chronological age to thermal time
+            !0.023/17 GDD = 1.35E-3
             IF (SRWTG > 0.0 .AND. HMPC > 0.0 .AND. Tfdmc >= 0.0) THEN
-                SRWTF = SRWTF + (SRWTG * (100./(HMPC+(5.*(1.-Tfdmc)))))  
+                IF (DAWWP < 3000.0) THEN
+                    SRWTF = SRWTF + (SRWTG * (100./(HMPC+(DMIC*(1.-Tfdmc))-(1.35E-3*(3000.- DAWWP))))) 
+                ELSE
+                    SRWTF = SRWTF + (SRWTG * (100./(HMPC+(DMIC*(1.-Tfdmc)))))
+                ENDIF
             ELSE
                 SRWTF = SRWTF
             ENDIF

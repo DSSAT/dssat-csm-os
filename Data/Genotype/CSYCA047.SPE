@@ -112,6 +112,11 @@ $SPECIES:CSYCA047.032121    Last edit: 04/16/2021 LPM
    1.0  35.0  35.0  24.0  30.0    40  25.0  26.0
      0  42.5  42.5  24.0  30.0    50  42.5  26.0
 
+!Dry matter content increase (storage roots)
+@ DMIC 
+!    % 
+   5.0 
+
 ! WATER loss,uptake,etc.
 ! Water uptake  
 @RWUPM RWUMX ! Min pore size,max.uptake rate
@@ -161,6 +166,7 @@ $SPECIES:CSYCA047.032121    Last edit: 04/16/2021 LPM
 ! =====   ==========
 ! CO2F    CO2 factor,photosynthesis,relative (0-2)
 ! CO2RF   CO2 reference (vpm)
+! DMIC    Maximum increase in the dry matter content of storage roots due to low temperatures (%)
 ! HPROD   Harvest product (SR=Storage root)
 ! LLIFG   Leaf growth (expansion) period (Thermal units)  
 ! LLIFS   Leaf senescence period (Thermal units)  

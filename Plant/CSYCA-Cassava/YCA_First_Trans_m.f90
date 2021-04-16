@@ -128,6 +128,7 @@ Module YCA_First_Trans_m
     REAL    :: DIGFAC(DINX)            ! Disease growth factor 0-1      #          ! (From SeasInit)  
     REAL    :: DLAYRTMP(20)            ! Depth of soil layers with root cm         ! (From Integrate) 
     REAL    :: DMHD                    ! Dry matter cont. storage roots %          ! (From Integrate)
+    REAL    :: DMIC                    ! Dry matter c. increase by temp %          ! (From SeasInit)
     REAL    :: DMP_EP                  ! Dry matter per unit EP         g/mm       ! (From Output)    
     REAL    :: DMP_ET                  ! Dry matter per unit ET         g/mm       ! (From Output)    
     REAL    :: DMP_Irr                 ! Dry matter per unit irrigation g/mm       ! (From Output)    

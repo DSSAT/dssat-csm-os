@@ -377,6 +377,7 @@
         CALL FVCHECK(SPDIRFLE,GENFLCHK)
         !CALL SPREADR (SPDIRFLE,'CO2CC',co2compc) 
         !CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
+        CALL SPREADR (SPDIRFLE,'DMIC',dmic)
         CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)
         !CALL SPREADR (SPDIRFLE,'SLAFF',lawff) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         CALL SPREADR (SPDIRFLE,'SLATR',slatr)
