@@ -38,7 +38,7 @@ DFAULT DEFAULT            2.80  12.0   .65  0.65   120     0     0     0   0.8  
 ! =====   ==========
 ! ECO#    Ecotype code (text)
 ! ECONAME Ecotype name (text)
-! HMPC    Harvest product dry content (%)
+! HMPC    Harvest product dry matter content (%)
 ! KCAN    PAR extinction coefficient (#)
 ! PARUE   PAR conversion factor,standard (g dry matter/MJ)
 ! PGERM   Germination duration (Tu)
@@ -47,7 +47,7 @@ DFAULT DEFAULT            2.80  12.0   .65  0.65   120     0     0     0   0.8  
 ! PPSn    Photoperiod sensitivity that delays branching n in short days (h-1)
 ! RDGS    Root depth growth rate,standard (cm/standard day)
 ! RLWR    Root length/weight ratio (m/g)
-! RSUSE   Reserves utilisation fraction (storage roots for top growth) (fr)
+! RSUSE   Reserves remobilization fraction (storage roots for top growth) (fr)
 ! TBLSZ   Base temperature for leaf development (˚C)
 ! SRN%S   Storage root standard N concentration (% dm)
 ! WFSU    Water stress factor for leaf senescence (0-1)
