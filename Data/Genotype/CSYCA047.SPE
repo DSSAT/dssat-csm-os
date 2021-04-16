@@ -1,4 +1,4 @@
-$SPECIES:CSYCA047.032121    Last edit: 03/21/2021 LPM
+$SPECIES:CSYCA047.032121    Last edit: 04/16/2021 LPM
 
 
 ! Coefficients differ from those used in the CROPSIM cassava model.
@@ -55,7 +55,7 @@ $SPECIES:CSYCA047.032121    Last edit: 03/21/2021 LPM
 ! Leaves
 @LLIG% LPEAW ! Lignin%, petiole area/wt
 !    % cm2/g
-  10.0    45 
+  16.8    45 
 @LLIFG LLIFS  ! Growing,senescence durations
 !   Tu    Tu
  100.0  70.0
@@ -105,12 +105,12 @@ $SPECIES:CSYCA047.032121    Last edit: 03/21/2021 LPM
 !   fr
   0.10
 ! Temperature responses
-@RRATE TRGEM TRDV1 TRLFG TRLFL TRPHS TRBRG  ! Germination/emergence,development,leaf growth,leaf life,phsis, branching
-!    #    oC    oC    oC    oC    oC    oC
-     0  13.0  13.0  13.0  13.0    10  17.0
-   1.0  30.0  30.0  24.0  30.0    25  22.0
-   1.0  35.0  35.0  24.0  30.0    40  25.0
-     0  42.5  42.5  24.0  30.0    50  42.5
+@RRATE TRGEM TRDV1 TRLFG TRLFL TRPHS TRBRG TRDMC  ! Germination/emergence,development,leaf growth,leaf life,phsis, branching, dry matter
+!    #    oC    oC    oC    oC    oC    oC    oC
+     0  13.0  13.0  13.0  13.0    10  17.0  18.0
+   1.0  30.0  30.0  24.0  30.0    25  22.0  26.0
+   1.0  35.0  35.0  24.0  30.0    40  25.0  26.0
+     0  42.5  42.5  24.0  30.0    50  42.5  26.0
 
 ! WATER loss,uptake,etc.
 ! Water uptake  
@@ -216,6 +216,7 @@ $SPECIES:CSYCA047.032121    Last edit: 03/21/2021 LPM
 ! TPAR    Transmission,photosynthetically active radiation (fr)
 ! TRDVx   Temperature response,development,phase x and on until next x entry
 ! TRBRG   Temperature response, branching (oC)
+! TRDMC   Temperature response, dry matter content (oC)
 ! TRGEM   Temperature response,germination (oC)
 ! TRLFG   Temperature response,leaf growth (oC)
 ! TRLFL   Temperature response,leaf life (oC)

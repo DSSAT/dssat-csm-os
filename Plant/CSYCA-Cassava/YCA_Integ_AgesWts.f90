@@ -188,8 +188,8 @@
             SRWT = SRWT + SRWTG ! Root N adjustment                              !EQN 447
             !LPM 13APR2021 Estimate fresh weight of storage roots
             
-            IF (SRWTG > 0.0) THEN
-                SRWTF = SRWTF + (SRWTG * (100./HMPC))  
+            IF (SRWTG > 0.0 .AND. HMPC > 0.0 .AND. Tfdmc >= 0.0) THEN
+                SRWTF = SRWTF + (SRWTG * (100./(HMPC+(5.*(1.-Tfdmc)))))  
             ELSE
                 SRWTF = SRWTF
             ENDIF

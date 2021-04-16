@@ -483,6 +483,7 @@
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
         CALL SPREADRA (SPDIRFLE,'TRBRG','4',trbrg) !LPM 19APR15 TRBRG added to represent new cardinal temperatures for branching
         CALL SPREADRA (SPDIRFLE,'TRLFL','4',trlfl) !LPM 14SEP2017 TRLF added to consider leaf life with different cardinal temperatures
+        CALL SPREADRA (SPDIRFLE,'TRDMC','4',trdmc) !LPM 16APR2021 TRDMC added to consider dry matter content variability due to temp.
         
         TRDV3 = TRLFG               ! LPM 21MAR15 new variable to change base temperature for leaf size
         TRDV3(1) = TBLSZ            ! LPM 21MAR15 new variable to change base temperature for leaf size

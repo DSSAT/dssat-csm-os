@@ -909,7 +909,8 @@ Module YCA_First_Trans_m
     REAL    :: TFD                     ! Temperature factor,development #          ! (From SeasInit)  
     INTEGER :: TFDAP                   ! T-file days after planting     #          ! (From Output)    
     INTEGER :: TFDAPCOL                ! T-file DAP column #            #          ! (From Output)    
-    REAL    :: TFDF                    ! Temperature factor,dayl sens   #          ! (From Growth)    
+    REAL    :: TFDF                    ! Temperature factor,dayl sens   #          ! (From Growth)
+    REAL    :: TFDMC                   ! Temperature factor, dry matter #          ! (From Growth)
     REAL    :: TFDNEXT                 ! Temperature factor,development #          ! (From Growth)    
     REAL    :: TFG                     ! Temperature factor,growth 0-1  #          ! (From SeasInit)  
     REAL    :: TFGEM                   ! Temperature factor,germ,emrg   #          ! (From Growth)    
@@ -968,6 +969,7 @@ Module YCA_First_Trans_m
     REAL    :: TPAR                    ! Transmission,PAR,fraction      #          ! (From SeasInit)  
     REAL    :: TRATIO                  ! Function,relative tr rate      #          ! (From SeasInit)  
     REAL    :: TRBRG(4)                ! Temp response,development br   #          ! (From SeasInit) !LPM 19APR2016 new variable for the cardinal temperatures for branching
+    REAL    :: TRDMC(4)                ! Temp response,dry matter       #          ! (From SeasInit)
     REAL    :: TRDV1(4)                ! Temp response,development 1    #          ! (From SeasInit)  
     REAL    :: TRDV2(4)                ! Temp response,development 2    #          ! (From SeasInit)  
     REAL    :: TRDV3(4)                ! Temp response,leaf size Tb cul #          ! LPM 28feb15 new variable to change base temperature for leaf size
@@ -988,7 +990,8 @@ Module YCA_First_Trans_m
     REAL    :: TTCUM                   ! Cumulative thermal time        C.d        ! (From SeasInit)  
     REAL    :: TTCUMLS                 ! Cumulative thermal time lf sizeC.d        ! LPM 12JUL2015 new variable to change optimum temperature for potential leaf size
     REAL    :: TTCUMWS                 ! Cumulative TT with water stressC.d        ! LPM 31JUL2015 new variable to create an additional clock under water stress
-    REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit)  
+    REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit) 
+    REAL    :: TTDMC                   ! Daily thermal time, dry matter #          ! (From Growth)
     REAL    :: TTGEM                   ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
     REAL    :: TTL                     ! Daily thermal time, leaves     C.d        ! LPM 19APR2016 Added to separate the thermal clock for branching and leaf development
     !REAL    :: TTLFGROWTH              ! Daily thermal time,leaf growth C.d        ! (From Growth) !LPM 14SEP2017 Adding new cardinal temperatures for leaf growth

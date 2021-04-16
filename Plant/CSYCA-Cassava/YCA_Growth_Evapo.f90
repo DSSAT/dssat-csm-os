@@ -139,6 +139,7 @@
           !Tflfgrowth = calculateTemperatureFactor(trdv3,tmean,TTlfgrowth)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
             Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
             Tflflife = calculateTemperatureFactor(trlfl,tmean,TTlflife)              !LPM 14SEP2017 Added new cardinal temperatures for leaf life and other for leaf growth (trdv3 or trlfg)
+            Tfdmc = calculateTemperatureFactor(trdmc,tmean,TTdmc)
             !ENDIF  
           
         
