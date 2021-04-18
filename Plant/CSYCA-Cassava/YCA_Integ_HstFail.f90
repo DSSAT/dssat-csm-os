@@ -90,7 +90,11 @@
                 WFGPAV(PSX+2) = WFGPAV(INT(BRSTAGE))
                 NFGPAV(PSX+2) = NFGPAV(INT(BRSTAGE))
             ENDIF
-            STGYEARDOY(PSX) = YEARDOY  ! Harvest
+            IF (CFLFAIL == 'Y') THEN
+                STGYEARDOY(PSX) = -99
+            ELSE
+                STGYEARDOY(PSX) = YEARDOY  ! Harvest
+            ENDIF
             STGYEARDOY(PSX+1) = YEARDOY  ! Crop End
             ! IF (HSTG > 0) THEN
             !    PSDAPFR(HSTG) = FLOAT(DAP)

@@ -118,7 +118,8 @@
         CHARACTER(LEN=256) :: FMT2251 = '("@YEAR DOY   DAS   DAP TMEAN  GSTD  RSTD"," LAIPD LAISD  LAID  CHTD SDWAD ",' // &
             '"SNWLD SNWSD"," SHRTD  RDPD","  RL1D  RL2D  RL3D  RL4D  RL5D  RL6D  RL7D  RL8D",' // & ! issue 50
             '"  RL9D RL10D")'
-        CHARACTER(LEN=256) :: FMT2252 = '("@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD", "  TNAD SDNAD  RNAD  CNAD  LNAD",' // &
+        !LPM 18apr2021 Change NUAD to NUAC in header as suggested by CHP
+        CHARACTER(LEN=256) :: FMT2252 = '("@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC", "  TNAD SDNAD  RNAD  CNAD  LNAD",' // &
             '"  SNAD  HNAD  HIND RSNAD SNN0D SNN1D","  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D"," LN%RD SN%RD RN%RD  ",' // &
             '"VCN%  VMN% NUPRD NDEMD NFLF2")'
         CHARACTER(LEN=128) :: FMT2996 = '(/,"*ERRORS(T):",A69,/)'
