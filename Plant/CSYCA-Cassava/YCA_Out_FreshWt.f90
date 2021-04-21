@@ -36,8 +36,8 @@
 
                 WRITE (NOUTPF, FMT2202)
             ENDIF  ! End FreshWt header writes
-            WRITE (NOUTPF, FMT504)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,LNUM, NINT(HWAD), NINT(HWFD), &
-                DMHD,HIAD, Tfdmc, 1.0-WFG
+            WRITE (NOUTPF, FMT504)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,LNUM, NINT(HWAD), NINT(FHWAD), &
+                PDMCD,HIAD, Tfdmc, 1.0-WFG
             ! End FreshWt writes
         ENDIF 
     

@@ -41,7 +41,7 @@
         ! And weights are in kg/ha
         CWAD = (canopyWeight())*plantPopulation()                                                                       !EQN 318
         SRWAD = SRWT*plantPopulation()
-        HWFD = SRWTF*plantPopulation()
+        FHWAD = SRWTF*plantPopulation()
         LLWAD = LFWT*(1.0-LPEFR)*plantPopulation()
         LPEWAD = LFWT*LPEFR*plantPopulation()
         RWAD = RTWT*plantPopulation()
@@ -99,8 +99,8 @@
                 
         HWAD = SRWAD
         !LPM 14apr2021 Adding the % of dry matter 
-        IF (HWFD > 0.0) THEN
-            DMHD = HWAD *100./ HWFD
+        IF (FHWAD > 0.0) THEN
+            PDMCD = HWAD / FHWAD
         ENDIF
         
         ! HWUD = SRWUD ! issue 50

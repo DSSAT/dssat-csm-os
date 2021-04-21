@@ -127,7 +127,6 @@ Module YCA_First_Trans_m
     REAL    :: DIFFACR(DINX)           ! Dis favourability requirement  #          ! (From SeasInit)  
     REAL    :: DIGFAC(DINX)            ! Disease growth factor 0-1      #          ! (From SeasInit)  
     REAL    :: DLAYRTMP(20)            ! Depth of soil layers with root cm         ! (From Integrate) 
-    REAL    :: DMHD                    ! Dry matter cont. storage roots %          ! (From Integrate)
     REAL    :: DMAG                    ! Thermal age threshold dry mat. oCd        ! (From SeasInit)
     REAL    :: DMIC                    ! Dry matter c. increase by temp %          ! (From SeasInit)
     REAL    :: DMP_EP                  ! Dry matter per unit EP         g/mm       ! (From Output)    
@@ -192,7 +191,11 @@ Module YCA_First_Trans_m
     REAL    :: FAC(20)                 ! Factor ((g/Mg)/(kg/ha))        #          ! (From Growth)    
     INTEGER :: FAPPNUM                 ! Fertilization application number          ! (From SeasInit)  
     INTEGER :: FDAY(200)               ! Dates of fertilizer appn       YrDoy      ! (From SeasInit)  
-    REAL    :: FERNITPREV              ! Fertilizer N applied to ystday kg/ha      ! (From SeasInit)  
+    REAL    :: FERNITPREV              ! Fertilizer N applied to ystday kg/ha      ! (From SeasInit)
+    REAL    :: FHWAD                   ! Harvest product (fresh)        kg/ha
+    INTEGER :: FHWADCOL                ! Product wt column number       #          ! (From Output)
+    REAL    :: FHWADT                  ! Harvest weight (fresh) t file  kg/ha      ! (From Output)
+    REAL    :: FHWAM                   ! Harvest product wt.,maturity   kg/ha      !
     INTEGER :: FILELEN                 ! Length of file name            #          ! (From SeasInit)  
     INTEGER :: FLDAP                   ! Final leaf date                Yrdoy      ! (From SeasInit)  
     REAL    :: FLN                     ! Final leaf #                   #          ! (From SeasInit)  
@@ -324,9 +327,6 @@ Module YCA_First_Trans_m
     REAL    :: HWAHM                   ! Harvest wt,harvest,measured    kg/ha      ! (From Output)    
     REAL    :: HWAM                    ! Harvest product wt.,maturity   kg/ha      ! (From SeasInit)  
     REAL    :: HWAMM                   ! Harvest product wt.,measured   kg/ha      ! (From SeasInit)  
-    REAL    :: HWFD                    ! Harvest product (fresh)        kg/ha
-    INTEGER :: HWFDCOL                 ! Product wt column number       #          ! (From Output)
-    REAL    :: HWFDT                   ! Harvest weight (fresh) t file  kg/ha      ! (From Output)
     REAL    :: HWFMM                   ! Harvest prod.(fresh) measured  kg/ha      ! (From SeasInit)
     INTEGER :: HWTUCOL                 ! Harvest weight per unit column #          ! (From Output)   
     ! REAL    :: HWUD                    ! Harvest wt/unit                g          ! (From Integrate) ! issue 50
@@ -538,7 +538,8 @@ Module YCA_First_Trans_m
     REAL    :: PDADJ                   ! Tier duration adjustment       deg.d      ! (From SeasInit)  
     INTEGER :: PDATE                   ! Planting Yrdoy from X-file     #          ! (From SeasInit)  
     INTEGER :: PDAYS(0:PSX)             ! Tier durations                 PVoCd      ! (From SeasInit)  
-    REAL    :: PDL(0:PSX)              ! Tier durations,phint units     #          ! (From SeasInit)  
+    REAL    :: PDL(0:PSX)              ! Tier durations,phint units     #          ! (From SeasInit)
+    REAL    :: PDMCD                   ! Dry matter cont. storage roots %          ! (From Integrate)
     REAL    :: PDSV                    ! Phs,fr reduction with VPD daily  /KPa    ! (From SeasInit)  
     REAL    :: PDTV                    ! Phs,threshold VPD for reduction daily KPa! (From SeasInit)  
     REAL    :: PECM                    ! Emergence duration             Cd/cm      ! (From SeasInit)  
@@ -1221,7 +1222,7 @@ Module YCA_First_Trans_m
     INTEGER ::          IOCHECK       ! File open indicator                       ! (From Output)
 
     ! Arrays for passing variables to OPSUM subroutine, CSM model only             ! (From Output)
-    INTEGER,      PARAMETER :: SUMNUM = 37                                         ! (From Output)
+    INTEGER,      PARAMETER :: SUMNUM = 42                                         ! (From Output)
     CHARACTER*5,  DIMENSION(SUMNUM) :: LABEL                                       ! (From Output)
     REAL,         DIMENSION(SUMNUM) :: VALUE                                       ! (From Output)
     
@@ -1306,7 +1307,6 @@ Module YCA_First_Trans_m
         sentoplitter = 0.0
         df = 1.0
         dfout = 1.0
-        DMHD = -99.0
         drainc = 0.0
         du = 0.0
         duneed = 0.0
@@ -1347,6 +1347,7 @@ Module YCA_First_Trans_m
         fappline = ' '
         fappnum = 0
         fernitprev = 0.0
+        fhwam = -99.0
         fldap = 0
         fln = 0.0
         gdap = -99
@@ -1466,6 +1467,7 @@ Module YCA_First_Trans_m
         paru = 0.0
         pdadj = -99.0
         pdays  = 0
+        PDMCD = 0.0
         photqr = 0.0
         pla = 0.0
         plagsb2 = 0.0
