@@ -140,7 +140,7 @@ $SPECIES:CSYCA047.041621    Last edit: 04/16/2021 LPM
 ! Nitrogen concentrations
 @ SDN% LN%SC ! Planting stick, N% fallen leaves
 !    %     %
-   1.9   2.4
+   1.9   1.6
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN  ! Standard,minima N% leaves,stems,roots
 !    %     %     %     %     %     %
    5.1   4.5   3.5   1.7   1.0   1.0
