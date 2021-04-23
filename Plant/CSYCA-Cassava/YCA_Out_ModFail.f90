@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Out_ModFail ( &
-        BRSTAGE     , CAID        , DYNAMIC     , KCAN        &
+        BRSTAGE     , LAI        , DYNAMIC     , KCAN        &
         )
         
         USE ModuleDefs
@@ -22,7 +22,7 @@
         INTEGER :: DYNAMIC     
         INTEGER :: CSTIMDIF                                                                      ! Integer function calls
 
-        REAL    :: BRSTAGE     , CAID        , KCAN         
+        REAL    :: BRSTAGE     , LAI        , KCAN         
 
         ! If model failure so that cycle not completed
         IF (DYNAMIC == SEASEND .AND. SEASENDOUT /= 'Y') THEN

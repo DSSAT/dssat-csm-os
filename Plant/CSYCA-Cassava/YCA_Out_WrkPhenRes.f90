@@ -139,12 +139,17 @@
                 WRITE (FNUMPRES,'(4A)',ADVANCE='NO')'@  RUN',' EXCODE   ',' TRNO RN    CR','  PDAT  EDAP'
                 !DO L = 1,KEYSTX
                 DO L = 0,KEYSTX
-                    IF (KEYPS(L) > 0) THEN
-                        WRITE (FNUMPRES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
-                    ENDIF  
+                    IF (L == PSX.AND.HNUMBER == 1) THEN
+                        WRITE (FNUMPRES,'(A6)',ADVANCE='NO') ' HDAT'
+                    ELSE
+                        IF (KEYPS(L) > 0) THEN
+                            WRITE (FNUMPRES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
+                        ENDIF
+                    ENDIF
                 ENDDO
-                WRITE (FNUMPRES,'(9A)') '  HWAH  HWUH','  H#AH  H#GH  LAIX  L#SH ', &
-                    'BR0AH BR1AH BR2AH BR3AH BR4AH BR5AH BR6AH BR7AH BR8AH BR9AH BR0AH BR1AH BR2AH ', &
+                WRITE (FNUMPRES,'(10A)') '  HWAH  HWUH','  H#AH  H#GH  LAIX  L#SH ', &
+                    'BR0AH BR1AH BR2AH BR3AH BR4AH BR5AH BR6AH BR7AH BR8AH BR9AH B10AH B11AH B12AH ', &
+                    'B13AH B14AH B15AH B16AH B17AH ', &
                     ' CWAH  VWAH  HIAH  RWAH', '  HN%H  TNAH','  CNAH  HNAH','  HINH PLPOP', &
                     '  NICH',' SRADA TMAXA TMINA  PRCP'
             ELSE
@@ -162,7 +167,7 @@
                     IF (KEYPS(L) > 0) WRITE(FNUMPRES,'(I6)',ADVANCE='NO')PSDAP(KEYPS(L))
                 ENDIF
             ENDDO
-            WRITE (fnumpres, FMT409)NINT(hwam),hwumchar, NINT(hnumam),NINT(hnumgm),laixchar,lnumsm,brnumsh,NINT(cwam), &
+            WRITE (fnumpres, FMT409)NINT(hwam),hwumchar, NINT(hnumam),NINT(hnumgm),laixchar,lnumsm,BRNUMST,NINT(cwam), &
                 NINT(vwam),hiamchar,NINT(rwam),hnpcmchar,NINT(AMAX1(-99.0,cnam+rnam)),NINT(cnam),NINT(hnam),hinmchar, &
                 pltpop,NINT(amtnit),sradcav,tmaxcav,tmincav,NINT(raincc)
             CLOSE(FNUMPRES)

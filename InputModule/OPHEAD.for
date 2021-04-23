@@ -741,10 +741,10 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
 !     Cassava CIAT      
       CASE ('CSYCA')
           WRITE (HEADER(I),'(A,A)')
-     &     "  B01ND B12ND B23ND BR1FX BR2FX BR3FX BR4FX "
+     &     "  B01ND B12ND B23ND B34ND BR1FX BR2FX BR3FX BR4FX "
           I=I+1
-          WRITE (HEADER(I),'(3F6.0,4F6.2)') 
-     &     B01ND, B12ND, B23ND, BR1FX, BR2FX, BR3FX, BR4FX
+          WRITE (HEADER(I),'(4F6.0,4F6.2)') 
+     &     B01ND, B12ND, B23ND, B34ND, BR1FX, BR2FX, BR3FX, BR4FX
          I=I+1
          WRITE (HEADER(I),'(A,A)') 
      &     "  LAXS  SLAS",

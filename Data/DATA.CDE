@@ -1217,10 +1217,15 @@ ADPWM  DryWt g/fruit   Avg dry fruit (pod, ear) weight at maturity (g/fruit)    
 AFPWD  FreshWt g/fruit Average fresh fruit (pod, ear) weight (g/fruit)          .
 AFPWM  FreshWt g/fruit Avg fresh fruit (pod, ear) weight at maturity (g/fruit)  .
 FCULD  Fr wt cull      Fresh weight for cull fruit/pods (g/m2)                  .
-FPWAD  Tot Fr Wt kg/ha Total fresh fruit (pod, ear) weight (kg/ha)              .
+FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
+FHWAD  Fresh harvest   Harvest product fresh wt (kg/ha)                         .
+FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
+FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
+FPWAD  Tot Fr Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
 FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
-RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)
-RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)
+HWAHF  Fresh yield     Harvested yield (fresh weight) (kg/ha)                   .
+RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)         .
+RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)           .
 FSZ1D  Fr wt 1 g/m2    Fresh weight for size class 1 (g/m2)                     .
 FSZ2D  Fr wt 2 g/m2    Fresh weight for size class 2 (g/m2)                     .
 FSZ3D  Fr wt 3 g/m2    Fresh weight for size class 3 (g/m2)                     .
@@ -1233,8 +1238,9 @@ MFWAD  Mrkt Fr Wt k/h  Market fresh fruit (pod, ear) weight (kg/ha)             
 NFWAD  # market/ha     Market fruit (pod, ear) number (fruit/ha)                .
 PAGED  Pod age d       Age of oldest pod or ear (days)                          .
 PAGEM  Pod age d       Age of oldest pod or ear at maturity (days)              .
-PDMCD  DryWt frac      Fruit (pod, ear) dry matter concentration (fraction)     .
+PDMCD  DryMatter frac  Dry matter concentration of harvested product (fraction) .
 PDMCM  DryMatter frac  Avg dry matter concentration at maturity (fraction)      .
+PDMCH  DryMatter frac  Avg dry matter concentration at harvest (fraction)       .
 SMFMH  Stalk fresh massMillable cane fresh weight at harvest (t/ha)             .
 
 *CANEGRO - South Africa
