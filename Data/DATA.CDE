@@ -1221,7 +1221,7 @@ FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    
 FHWAD  Fresh harvest   Harvest product fresh wt (kg/ha)                         .
 FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
 FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
-FPWAD  Tot Fr Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
+FPWAD  Tot Fr Wt kg/ha Total fresh fruit (pod, ear) weight (kg/ha)              .
 FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
 HWAHF  Fresh yield     Harvested yield (fresh weight) (kg/ha)                   .
 RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)         .
