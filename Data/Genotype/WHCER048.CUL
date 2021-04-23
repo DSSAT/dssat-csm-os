@@ -16,7 +16,7 @@ $CULTIVARS:WHCER048.20200721   Last edit: 2020-07-21 CHP
 ! tested by using them with real experiments and comparing model 
 ! outputs with measured values. 
 
-*CULTIVARS:WHCER047
+*CULTIVARS:WHCER048
 @VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
 !                                        1     2     3     4     5     6     7
 !                                     Vday %/10h  oC.d   #/g    mg     g  oC.d

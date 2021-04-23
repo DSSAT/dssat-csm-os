@@ -1,4 +1,4 @@
-!*SUGARCANE SPECIES COEFFICIENTS - SCCSP047 MODEL
+!*SUGARCANE SPECIES COEFFICIENTS - SCCSP048 MODEL
 
 *#PHOTOSYNTHESIS PARAMETERS (note: ETPHOT variables not currently used in CASUPRO)
   KCAN        0.50     Light extinction coefficient (KCAN_ECO in the .ECO input file will be used if a value is present there)
