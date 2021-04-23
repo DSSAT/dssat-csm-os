@@ -117,7 +117,15 @@
         LABEL(34) = 'DAYLA' ; VALUE(34) = DAYLCAV       
         LABEL(35) = 'CO2A ' ; VALUE(35) = CO2CAV        
         LABEL(36) = 'PRCP ' ; VALUE(36) = RAINCC       
-        LABEL(37) = 'ETCP ' ; VALUE(37) = ETCC      
+        LABEL(37) = 'ETCP ' ; VALUE(37) = ETCC 
+        
+        !LPM 20APR2021 Add fresh weight variables
+        LABEL(38) = 'FCWAM' ; VALUE(38) = -99.0
+        LABEL(39) = 'FHWAM' ; VALUE(39) = FHWAM
+        LABEL(40) = 'HWAHF' ; VALUE(40) = FHWAM * hpcf/100.0
+        !FBWAH Multiplied by 10. in OPSUM
+        LABEL(41) = 'FBWAH' ; VALUE(41) = -9.9 
+        LABEL(42) = 'FPWAM' ; VALUE(42) = -99.0
                 
         IF (FILEIOT(1:2) == 'DS') CALL SUMVALS (SUMNUM, LABEL, VALUE)
     

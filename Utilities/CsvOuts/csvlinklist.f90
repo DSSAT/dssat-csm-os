@@ -85,6 +85,19 @@ Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
     Integer :: istatMZCER                            
 !------------------------------------------------------------------------------
 
+!   for RICER
+    Type :: lin_valueRICER
+       Character(:), Allocatable :: pclineRICER
+       Type (lin_valueRICER), Pointer :: pRICER
+    End Type
+
+    Type (lin_valueRICER), Pointer :: headRICER      
+    Type (lin_valueRICER), Pointer :: tailRICER      
+    Type (lin_valueRICER), Pointer :: ptrRICER       
+    
+    Integer :: istatRICER                            
+
+!------------------------------------------------------------------------------
 !   for MLCER
     Type :: lin_valueMLCER
        Character(:), Allocatable :: pclineMLCER
@@ -148,6 +161,19 @@ Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
     Type (lin_valuePlNMzCer), Pointer :: ptrPlNMzCer    
     
     Integer :: istatPlNMzCer                            
+!!------------------------------------------------------------------------------
+!
+!!   for PlNRICer
+!    Type :: lin_valuePlNRICer
+!       Character(:), Allocatable :: pclinePlNRICer
+!       Type (lin_valuePlNRICer), Pointer :: pPlNRICer
+!    End Type
+!
+!    Type (lin_valuePlNRICer), Pointer :: headPlNRICer   
+!    Type (lin_valuePlNRICer), Pointer :: tailPlNRICer   
+!    Type (lin_valuePlNRICer), Pointer :: ptrPlNRICer    
+!    
+!    Integer :: istatPlNRICer                            
 !------------------------------------------------------------------------------
 
 !   for PlNMzCer
@@ -524,6 +550,33 @@ Contains
 
  End Subroutine LinklstMZCER
 !------------------------------------------------------------------------------
+
+ Subroutine LinklstRICER(ptxtlineRICER)
+
+    Character(:), Allocatable :: ptxtlineRICER            
+        
+    If(.Not. Associated(headRICER)) Then          
+      Allocate(headRICER, Stat=istatRICER)        
+      If(istatRICER==0) Then                      
+        tailRICER => headRICER                    
+        Nullify(tailRICER%pRICER)                 
+        tailRICER%pclineRICER = ptxtlineRICER     
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailRICER%pRICER, Stat=istatRICER)      
+      If(istatRICER==0) Then                           
+        tailRICER=> tailRICER%pRICER                   
+        Nullify(tailRICER%pRICER)                      
+        tailRICER%pclineRICER = ptxtlineRICER          
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstRICER
+!------------------------------------------------------------------------------
  Subroutine LinklstMLCER(ptxtlineMLCER)
 
     Character(:), Allocatable :: ptxtlineMLCER            
@@ -657,6 +710,33 @@ Contains
     End If
 
  End Subroutine LinklstPlNMzCER
+!!------------------------------------------------------------------------------
+!
+! Subroutine LinklstPlNRICer(ptxtlinePlNRICer)
+!
+!    Character(:), Allocatable :: ptxtlinePlNRICER            
+!        
+!    If(.Not. Associated(headPlNRICER)) Then             
+!      Allocate(headPlNRICER, Stat=istatPlNRICER)        
+!      If(istatPlNRICER==0) Then                         
+!        tailPlNRICER => headPlNRICER                    
+!        Nullify(tailPlNRICER%pPlNRICER)                 
+!        tailPlNRICER%pclinePlNRICER = ptxtlinePlNRICER  
+!      Else
+!        ! Error message
+!      End If
+!    Else
+!      Allocate(tailPlNRICER%pPlNRICER, Stat=istatPlNRICER)      
+!      If(istatPlNRICER==0) Then                                 
+!        tailPlNRICER=> tailPlNRICER%pPlNRICER                   
+!        Nullify(tailPlNRICER%pPlNRICER)                         
+!        tailPlNRICER%pclinePlNRICER = ptxtlinePlNRICER           
+!      Else
+!      ! Error message
+!      End If
+!    End If
+!
+! End Subroutine LinklstPlNRICER
 !------------------------------------------------------------------------------
 
  Subroutine LinklstWth(ptxtlineWth)
@@ -1129,6 +1209,61 @@ Contains
       Nullify(ptrMZCER, headMZCER, tailMZCER)
       Close(nf)
   End Subroutine ListtofileMZCER
+!------------------------------------------------------------------------------
+
+  Subroutine ListtofileRICER(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Character(Len=12):: fn 
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=100) :: tmp
+      Character(:),Allocatable :: Header 
+      
+      If(.Not. Associated(headRICER)) Return
+
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,EWAD,CWAD,G#AD,GWGD,HIAD,T#AD,WSPD,WSGD,EWSD,NSTD,KSTD,LN%D,' &
+  //'SH%D,SLAD,CHTD,CWID,RDPD,'&   
+  //'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,EWAD,CWAD,G#AD,GWGD,HIAD,T#AD,WSPD,WSGD,EWSD,NSTD,KSTD,LN%D,' &
+  //'SH%D,SLAD,CHTD,CWID,RDPD,'&   
+  //'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C,DTTD,' // Trim(Adjustl(tmp)) 
+        
+      fn = 'plantgro.csv'
+      Call GETLUN (fn,nf)
+   
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+
+      ptrRICER => headRICER
+      Do
+        If(.Not. Associated(ptrRICER)) Exit                
+        Write(nf,'(A)') ptrRICER % pclineRICER            
+        ptrRICER => ptrRICER % pRICER                      
+      End Do
+
+      Nullify(ptrRICER, headRICER, tailRICER)
+      Close(nf)
+  End Subroutine ListtofileRICER
 !------------------------------------------------------------------------------
 
   Subroutine ListtofileMLCER(nlayers)

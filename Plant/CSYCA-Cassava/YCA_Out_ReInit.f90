@@ -10,7 +10,7 @@
     
     SUBROUTINE YCA_Out_ReInit ( & 
         BRSTAGE     , CN          , DYNAMIC     , IDETL       , NFP         , RNMODE      , SRAD        , STGYEARDOY  , &
-        UNH4        , UNO3        &
+        UNH4        , UNO3        , LAI         &
         )
         
         USE ModuleDefs
@@ -21,7 +21,7 @@
      
         INTEGER :: CN          , DYNAMIC     , STGYEARDOY(0:19)
         
-        REAL    :: BRSTAGE     , NFP         , SRAD        , UNH4(NL)     , UNO3(NL)    
+        REAL    :: BRSTAGE     , NFP         , SRAD        , UNH4(NL)     , UNO3(NL)    , LAI
         
         CHARACTER(LEN=1)  :: IDETL       , RNMODE      
 
@@ -66,6 +66,8 @@
         BRNUMSTPREV = BRNUMST
         SPDIRFLPREV = SPDIRFLE
         SRADPREV = SRAD
+        SRWTFPREV = SRWTF
+        SRWTPREV = SRWT
         !SWFRPREV = SWFR !LPM 06JUN2015 SWFR is not used 
         VARNOPREV = VARNO
         YEARDOYPREV = YEARDOY

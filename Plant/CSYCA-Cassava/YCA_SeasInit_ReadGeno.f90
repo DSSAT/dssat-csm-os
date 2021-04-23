@@ -15,6 +15,7 @@
         )
 
         USE ModuleDefs
+        USE ModuleData
         USE YCA_First_Trans_m
         
         IMPLICIT NONE
@@ -188,7 +189,7 @@
         pdl = 0.0
         
         ! Ecotype coefficients re-set
-        rspco = -99
+        !rspco = -99
         dayls = -99
         srnpcs = -99
         srprs = -99
@@ -223,8 +224,8 @@
         kcan = -99 
         !lawcf = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         !lawmnfr = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-        lawtr = -99
-        lawts = -99
+        slatr = -99
+        slats = -99
         !lawmnfr = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         dfpe = -99 
         ppexp = -99 
@@ -251,6 +252,7 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B01ND',pdl(1))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B12ND',pdl(2))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B23ND',pdl(3))
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B34ND',pdl(4))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR1FX',brfx(1))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR2FX',brfx(2))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR3FX',brfx(3))
@@ -304,6 +306,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'B01ND',pdl(1))
             CALL CUREADR (CUDIRFLE,VARNO,'B12ND',pdl(2))
             CALL CUREADR (CUDIRFLE,VARNO,'B23ND',pdl(3))
+            CALL CUREADR (CUDIRFLE,VARNO,'B34ND',pdl(4))
             CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
             CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
             CALL CUREADR (CUDIRFLE,VARNO,'SLAS',laws)
@@ -340,6 +343,11 @@
         CALL ECREADR (ECDIRFLE,ECONO,'PPS1',dayls(1))
         CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         CALL ECREADR (ECDIRFLE,ECONO,'PPS3',dayls(3))
+        CALL ECREADR (ECDIRFLE,ECONO,'PHTV',PHTV)
+        CALL ECREADR (ECDIRFLE,ECONO,'PHSV',PHSV)
+        CALL ECREADR (ECDIRFLE,ECONO,'WFSU',WFSU)
+        CALL ECREADR (ECDIRFLE,ECONO,'RSUSE',rsuse)
+        CALL ECREADR (ECDIRFLE,ECONO,'HMPC',HMPC)
         ! Following may have been (temporarily) in the CUL file
         ! Radiation use efficiency
         IF (PARUE <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
@@ -350,6 +358,7 @@
         IF (LAWS <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',laws)
         ! Roots
         IF (RDGS <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'RDGS',rdgs)
+        IF (RLWR <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'RLWR',rlwr)
         ! Reduction factors
         IF (NFGU < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
         IF (NFGL < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
@@ -366,41 +375,42 @@
         !-----------------------------------------------------------------------------------------------------------------------
         
         CALL FVCHECK(SPDIRFLE,GENFLCHK)
-        CALL SPREADR (SPDIRFLE,'CO2CC',co2compc) 
-        CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
+        !CALL SPREADR (SPDIRFLE,'CO2CC',co2compc) 
+        !CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
+        CALL SPREADR (SPDIRFLE,'DMAG',dmag)
+        CALL SPREADR (SPDIRFLE,'DMIC',dmic)
+        CALL SPREADR (SPDIRFLE,'DMRD',dmrd)
         CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)
         !CALL SPREADR (SPDIRFLE,'SLAFF',lawff) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-        CALL SPREADR (SPDIRFLE,'SLATR',lawtr)
-        CALL SPREADR (SPDIRFLE,'SLATS',lawts)
+        CALL SPREADR (SPDIRFLE,'SLATR',slatr)
+        CALL SPREADR (SPDIRFLE,'SLATS',slats)
         CALL SPREADR (SPDIRFLE,'LLIFG',llifg)
         CALL SPREADR (SPDIRFLE,'LLIFS',llifs)
-        CALL SPREADR (SPDIRFLE,'LLIFX',llifx)
+        !CALL SPREADR (SPDIRFLE,'LLIFX',llifx) !LPM 14SEP2020 No longer used
         CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
-        CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
+        CALL SPREADR (SPDIRFLE,'LN%SC',lnsc)
+        !CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
         CALL SPREADR (SPDIRFLE,'LWLOS',lwlos)
-        CALL SPREADR (SPDIRFLE,'NFSU' ,nfsu)
+        !CALL SPREADR (SPDIRFLE,'NFSU' ,nfsu)
         CALL SPREADR (SPDIRFLE,'LPEAW',lpeaw)
         CALL SPREADR (SPDIRFLE,'NCRG',ncrg)
-        CALL SPREADR (SPDIRFLE,'NTUPF',ntupf)
+        !CALL SPREADR (SPDIRFLE,'NTUPF',ntupf)
         CALL SPREADR (SPDIRFLE,'PARIX',parix)
         CALL SPREADR (SPDIRFLE,'LAIXX',laixx)
-        CALL SPREADR (SPDIRFLE,'PARFC',parfc)
+        !CALL SPREADR (SPDIRFLE,'PARFC',parfc)
         CALL SPREADR (SPDIRFLE,'PEMRG',pemrg) !LPM 22MAR2016 To use the same name than in the SPE file (no PECM)  
-        CALL SPREADR (SPDIRFLE,'PHSV' ,phsv)
-        CALL SPREADR (SPDIRFLE,'PHTV' ,phtv)
+        CALL SPREADR (SPDIRFLE,'PDSV' ,pdsv)
+        CALL SPREADR (SPDIRFLE,'PDTV' ,pdtv)
         CALL SPREADR (SPDIRFLE,'PPTHR',ppthr)
         CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)
-        CALL SPREADR (SPDIRFLE,'RATM' ,ratm)
-        CALL SPREADR (SPDIRFLE,'RCROP',rcrop)
-        CALL SPREADR (SPDIRFLE,'RWULF',rlfwu)
         CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
-        CALL SPREADR (SPDIRFLE,'RS%O' ,rspco)
         CALL SPREADR (SPDIRFLE,'RSEN' ,rsen)
         IF (RSEN < 0.0) CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)
         CALL SPREADR (SPDIRFLE,'RSFPL',rsfpl)
         CALL SPREADR (SPDIRFLE,'RSFPU',rsfpu)
-        CALL SPREADR (SPDIRFLE,'RSUSE',rsuse)
+        !LPM 17MAR2021 Move RSUSE to the ecotype file
+        !CALL SPREADR (SPDIRFLE,'RSUSE',rsuse)
         CALL SPREADR (SPDIRFLE,'RTUFR',rtufr)
         CALL SPREADR (SPDIRFLE,'RWUMX',rwumx)
         CALL SPREADR (SPDIRFLE,'RWUPM',rwupm)
@@ -414,21 +424,20 @@
         CALL SPREADR (SPDIRFLE,'SGRO2',shgr(2))
         CALL SPREADR (SPDIRFLE,'TPAR' ,tpar)
         CALL SPREADR (SPDIRFLE,'TSRAD',tsrad)
-        CALL SPREADR (SPDIRFLE,'WFEU' ,wfeu)
         CALL SPREADR (SPDIRFLE,'WFGEM',wfgem)!LPM 25MAR2016 To keep value in the code and SPE file
         CALL SPREADR (SPDIRFLE,'WFGU' ,wfgu)
         CALL SPREADR (SPDIRFLE,'WFGL' ,wfgl)
         CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
         CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
         CALL SPREADR (SPDIRFLE,'WFRGU',wfrtg)
-        CALL SPREADR (SPDIRFLE,'WFSU' ,wfsu)
+        !CALL SPREADR (SPDIRFLE,'WFSU' ,wfsu)
         CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
         ! Following may be temporarily in ECO or CUL file
         IF (PD(9) <= 0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
         IF (LLIFA <= 0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
-        IF (RDGS <= 0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
+        !IF (RDGS <= 0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
         IF (LAXS <= 0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
-        IF (RLWR <= 0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
+        !IF (RLWR <= 0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
         IF (NFGL < 0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
         IF (NLLG <= 0.0) CALL SPREADR (SPDIRFLE,'NLLG',nllg)
         IF (NFGU <= 0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
@@ -477,6 +486,7 @@
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
         CALL SPREADRA (SPDIRFLE,'TRBRG','4',trbrg) !LPM 19APR15 TRBRG added to represent new cardinal temperatures for branching
         CALL SPREADRA (SPDIRFLE,'TRLFL','4',trlfl) !LPM 14SEP2017 TRLF added to consider leaf life with different cardinal temperatures
+        CALL SPREADRA (SPDIRFLE,'TRDMC','4',trdmc) !LPM 16APR2021 TRDMC added to consider dry matter content variability due to temp.
         
         TRDV3 = TRLFG               ! LPM 21MAR15 new variable to change base temperature for leaf size
         TRDV3(1) = TBLSZ            ! LPM 21MAR15 new variable to change base temperature for leaf size
@@ -490,4 +500,7 @@
         CALL SPREADCA (SPDIRFLE,'PSTYP','20',pstyp)
         LNUMSIMTOSTG = 0.0 !LPM 12SEP2017 defining again LNUMSIMTOSTG to avoid strange values in Linux
         
+        !Put VPD parameters in SPAM
+        CALL PUT('SPAM', 'PHSV' ,phsv)
+        CALL PUT('SPAM', 'PHTV' ,phtv)
     END SUBROUTINE YCA_SeasInit_ReadGeno

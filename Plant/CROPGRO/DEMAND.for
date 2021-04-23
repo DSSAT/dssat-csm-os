@@ -1,22 +1,24 @@
-!=======================================================================
-!  DEMAND, Subroutine, J.W. Jones and G. Hoogenboom.
-!-----------------------------------------------------------------------
-!  Calculates potential demand for C and N based upon new growth and
-!  existing N deficiency in old tissue.
-!-----------------------------------------------------------------------
-!  REVISION       HISTORY
-!  01/01/1990 JWJ Written.
-!  02/01/1993 GH  Revised.
-!  04/24/1994 NBP Changed TAIRHR to TGRO.
-!  08/22/1995 GH  Added seed composition routine from KJB & ELPiper
-!  04/02/1996 JWJ Modified partitioning during early growth
-!  01/10/1997 GH  Added TURFAC effect on seed growth and pod addition
-!  09/15/1998 CHP Modified for modular format
-!  05/10/1999 GH  Incorporated in CROPGRO
-!-----------------------------------------------------------------------
-!  Called by:  PLANT
-!  Calls:      SDCOMP, IPDMND
-!=======================================================================
+C=======================================================================
+C  DEMAND, Subroutine, J.W. Jones and G. Hoogenboom.
+C-----------------------------------------------------------------------
+C  Calculates potential demand for C and N based upon new growth and
+C  existing N deficiency in old tissue.
+C-----------------------------------------------------------------------
+C  REVISION       HISTORY
+C  01/01/1990 JWJ Written.
+C  02/01/1993 GH  Revised.
+C  04/24/1994 NBP Changed TAIRHR to TGRO.
+C  08/22/1995 GH  Added seed composition routine from KJB & ELPiper
+C  04/02/1996 JWJ Modified partitioning during early growth
+C  01/10/1997 GH  Added TURFAC effect on seed growth and pod addition
+C  09/15/1998 CHP Modified for modular format
+C  05/10/1999 GH  Incorporated in CROPGRO
+C  04/02/2021 GH  Adjust growth rate for small seeded crops
+C
+C-----------------------------------------------------------------------
+C  Called by:  PLANT
+C  Calls:      SDCOMP, IPDMND
+C=======================================================================
 
       SUBROUTINE DEMAND(DYNAMIC, CONTROL,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
@@ -277,7 +279,8 @@ C 24 changed to TS on 3Jul17 by Bruce Kimball
 !-----------------------------------------------------------------------
 !       Calculate reduction in seed growth due to insect punctures
 !-----------------------------------------------------------------------
-        IF (PUNCSD .GT. 0.001) THEN
+C-GH    IF (PUNCSD .GT. 0.001) THEN
+        IF (PUNCSD .GT. 0.0) THEN
           REDPUN = 1.0 - (PUNCTR/PUNCSD) * RPRPUN
           REDPUN = MAX(0.0,REDPUN)
         ELSE
@@ -375,13 +378,16 @@ C 24 changed to TS on 3Jul17 by Bruce Kimball
         DO NPP = 1,DAS - NR2
           NAGE = DAS - NR2 + 1 - NPP  !NAGE not used - chp
           PAGE = PHTIM(DAS - NR2 + 1) - PHTIM(NPP)
-          IF (PAGE .LE. LNGSH .AND. SHELN(NPP) .GE. 0.001 .AND.
-     &       GRRAT1 .GE. 0.001) THEN
+C-GH      IF (PAGE .LE. LNGSH .AND. SHELN(NPP) .GE. 0.001 .AND.
+C-GH &       GRRAT1 .GE. 0.001) THEN
+C-GH  Correction for small seeded crops like chia
+          IF (PAGE .LE. LNGSH .AND. SHELN(NPP) .GT. 0.0 .AND.
+     &       GRRAT1 .GT. 0.0) THEN
             IF (PAGE .GE. LNGPEG) THEN
-              !Shells between LNGPEG and LNGSH
+C              Shells between LNGPEG and LNGSH
               ADDSHL = GRRAT1 * SHELN(NPP)
             ELSE
-              !Shells < LNGPEG
+C              Shells < LNGPEG
               ADDSHL = GRRAT1 * SHELN(NPP) * SHLAG
             ENDIF
           ENDIF
