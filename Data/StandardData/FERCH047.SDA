@@ -36,17 +36,17 @@
                                             | composition (%) | inhibitor | inhibitor |---- release ----|----------------- Content by weight (%) ------------------| 
 @CDE  Description                             NO3%  NH4% Urea% UIEFF UIDUR NIEFF NIDUR NRL50 NRFNC NSIGK FertN FertP FertK FertS FerMg FerCa FertB FerZn FerMn FerFe Form         Notes
 !     ICASA original fertilizers
-FE001 Ammonium Nitrate                          50    50     0     0     0     0     0     0     0     0    34     0     0     0     0     0     0     0     0     0 dry          N range 33-34%
-FE002 Ammonium Sulfate                           0   100     0     0     0     0     0     0     0     0    21     0     0    24     0     0     0     0     0     0 dry          N range 20-21%
-FE003 Ammonium Nitrate Sulfate                  33    67     0     0     0     0     0     0     0     0    26     0     0   6.5     0     0     0     0     0     0 dry          N range 26 - 30%
-FE004 Anhydrous Ammonia                          0   100     0     0     0     0     0     0     0     0    80     0     0     0     0     0     0     0     0     0 liquid       N range 60-83%
+FE001 Ammonium nitrate                          50    50     0     0     0     0     0     0     0     0    34     0     0     0     0     0     0     0     0     0 dry          N range 33-34%
+FE002 Ammonium sulfate                           0   100     0     0     0     0     0     0     0     0    21     0     0    24     0     0     0     0     0     0 dry          N range 20-21%
+FE003 Ammonium nitrate sulfate                  33    67     0     0     0     0     0     0     0     0    26     0     0   6.5     0     0     0     0     0     0 dry          N range 26 - 30%
+FE004 Anhydrous ammonia                          0   100     0     0     0     0     0     0     0     0    80     0     0     0     0     0     0     0     0     0 liquid       N range 60-83%
 FE005 Urea                                       0     0   100     0     0     0     0     0     0     0  46.4     0     0     0     0     0     0     0     0     0 dry          
-FE006 Diammonium Phosphate (DAP)                 0   100     0     0     0     0     0     0     0     0    18  20.1     0     0     0     0     0     0     0     0 dry          
-FE007 Monoammonium Phosphate (MAP)               0   100     0     0     0     0     0     0     0     0    11    23     0     0     0     1     0     0     0     0 dry          P2O5 range 48-61%
-FE008 Calcium Nitrate                          100     0     0     0     0     0     0     0     0     0    15     0     0     0     0    21     0     0     0     0 dry, liquid  N range 15-15.5%
-FE009 Aqua Ammonia                               0   100     0     0     0     0     0     0     0     0  20.5     0     0     0     0     0     0     0     0     0 liquid       N range 10-30%
-FE010 Urea Ammonium Nitrate                     28    28    44     0     0     0     0     0     0     0    30     0     0     0     0     0     0     0     0     0 liquid
-FE011 Calcium Ammonium Nitrate                  50    50     0     0     0     0     0     0     0     0    27     0     0     0     0     8     0     0     0     0 dry, liquid  N range 17-20.5%
+FE006 Diammonium phosphate (DAP)                 0   100     0     0     0     0     0     0     0     0    18  20.1     0     0     0     0     0     0     0     0 dry          
+FE007 Monoammonium phosphate (MAP)               0   100     0     0     0     0     0     0     0     0    11    23     0     0     0     1     0     0     0     0 dry          P2O5 range 48-61%
+FE008 Calcium nitrate                          100     0     0     0     0     0     0     0     0     0    15     0     0     0     0    21     0     0     0     0 dry, liquid  N range 15-15.5%
+FE009 Aqua ammonia                               0   100     0     0     0     0     0     0     0     0  20.5     0     0     0     0     0     0     0     0     0 liquid       N range 10-30%
+FE010 Urea ammonium nitrate                     28    28    44     0     0     0     0     0     0     0    30     0     0     0     0     0     0     0     0     0 liquid
+FE011 Calcium ammonium nitrate                  50    50     0     0     0     0     0     0     0     0    27     0     0     0     0     8     0     0     0     0 dry, liquid  N range 17-20.5%
 FE012 Ammonium poly-phosphate                    0   100     0     0     0     0     0     0     0     0    10    15     0     0     0     0     0     0     0     0 dry, liquid
 FE013 Single super phosphate                     0     0     0     0     0     0     0     0     0     0     0    10     0    11     0    21     0     0     0     0 dry          P2O5 range 18-22%
 FE014 Triple super phosphate (TSP)               0     0     0     0     0     0     0     0     0     0     0    20     0     2     0    14     0     0     0     0 dry          P2O5 range 40-54%
@@ -58,7 +58,7 @@ FE019 Urea super granules                        0     0   100     0     0     0
 FE020 Dolomitic limestone                        0     0     0     0     0     0     0     0     0     0     0     0     0     0     6    29     0     0     0     0 dry          Ca range 24-30%, Mg range 6-12%
 FE021 Rock phosphate                             0     0     0     0     0     0     0     0     0     0     0   1.3     0     0   var   var     0     0     0     0 dry          Range 2-35% P2O5, 1-15% elemental P
 FE022 Calcitic limestone                         0     0     0     0     0     0     0     0     0     0     0     0     0     0     0    36     0     0     0     0 dry          
-FE023 Urea Ammonium Sulfate                      0    50    50     0     0     0     0     0     0     0  29.2     0     0  16.7     0     0     0     0     0     0 dry          N range 33-34%
+FE023 Urea ammonium sulfate                      0    50    50     0     0     0     0     0     0     0  29.2     0     0  16.7     0     0     0     0     0     0 dry          N range 33-34%
 FE024 Rhizobium                                  0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0              
 FE026 Calcium hydroxide (hydrated lime)          0     0     0     0     0     0     0     0     0     0     0     0     0     0     0    50     0     0     0     0 dry          Ca amount varies
                                                                                                                                                                      
@@ -87,22 +87,22 @@ FE050 Calcium cyanamide                          2    98     0     0     0   -99
 FE051 Calcium nitrate-urea                      20     0    80     0     0     0     0     0     0     0    34     0     0     0     0    10     0     0     0     0 dry          N range 30-35%
                                                                                                                                                                      
 FE055 Sodium nitrate                           100     0     0     0     0     0     0     0     0     0    16     0     0     0     0     0     0     0     0     0 dry
-FE056 Magnesium Nitrate                        100     0     0     0     0     0     0     0     0     0   7.1   0.0   0.0   0.0   6.6   0.0     0     0     0     0 liquid
+FE056 Magnesium nitrate                        100     0     0     0     0     0     0     0     0     0   7.1   0.0   0.0   0.0   6.6   0.0     0     0     0     0 liquid
 FE057 Ammonium thiosulfate (60% solution)        0   100     0     0     0     0     0     0     0     0    12     0     0    26     0     0     0     0     0     0 liquid
-FE058 Ammonium Polysulfide                       0   100     0     0     0     0     0     0     0     0    20     0     0    40     0     0     0     0     0     0 liquid       N range 18 - 23%
-FE059 Ammonium Sulfate Solution                  0   100     0     0     0     0     0     0     0     0     6     0     0     5     0     0     0     0     0     0 liquid       N range 6-9%
-FE060 Ammonium Sulfate - Nitrate                25    75     0     0     0     0     0     0     0     0    26     0     0    15     0     0     0     0     0     0 dry, liquid
+FE058 Ammonium polysulfide                       0   100     0     0     0     0     0     0     0     0    20     0     0    40     0     0     0     0     0     0 liquid       N range 18 - 23%
+FE059 Ammonium sulfate solution                  0   100     0     0     0     0     0     0     0     0     6     0     0     5     0     0     0     0     0     0 liquid       N range 6-9%
+FE060 Ammonium sulfate - nitrate                25    75     0     0     0     0     0     0     0     0    26     0     0    15     0     0     0     0     0     0 dry, liquid
 FE061 Ferrous ammonium sulfate                   0   100     0     0     0     0     0     0     0     0     7     0     0    16     0     0     0     0     0    14 dry
 FE062 Liquid ammonium polyphosphate              0   100     0     0     0     0     0     0     0     0    10    15     0     0     0     0     0     0     0     0 liquid       N range 5-12%, P2O5 range 17-37%
 FE063 Nitric phosphate                         100     0     0     0     0     0     0     0     0     0    15    10     0     0     0     0     0     0     0     0 dry          N range 12-17%, P range 22-35%
                                                                                                                                                                      
-FE064 Nitric Acid                              100     0     0     0     0     0     0     0     0     0    15     0     0     0     0     0     0     0     0     0 liquid
-FE065 Urea Solution                              0     0   100     0     0     0     0     0     0     0    20     0     0     0     0     0     0     0     0     0 liquid
+FE064 Nitric acid                              100     0     0     0     0     0     0     0     0     0    15     0     0     0     0     0     0     0     0     0 liquid
+FE065 Urea solution                              0     0   100     0     0     0     0     0     0     0    20     0     0     0     0     0     0     0     0     0 liquid
 FE066 Zinc ammonium sulfate solution             0   100     0     0     0     0     0     0     0     0    10     0     0     5     0     0     0    10     0     0 liquid       N range 10-15%
 FE067 Zinc manganese ammonium sulfate            0   100     0     0     0     0     0     0     0     0    14     0     0   -99     0     0     0   -99   -99     0 liquid, dry
-FE068 Ammonium Metaphosphate                     0   100     0     0     0     0     0     0     0     0    12    22     0     0     0     0     0     0     0     0 dry
-FE069 Ammonium Phosphate                         0   100     0     0     0     0     0     0     0     0    11    21     0     0     0     0     0     0     0     0 dry
-FE070 Potassium - Sodium Nitrate               100     0     0     0     0     0     0     0     0     0    15     0    12     0     0     0     0     0     0     0 dry, liquid
+FE068 Ammonium metaphosphate                     0   100     0     0     0     0     0     0     0     0    12    22     0     0     0     0     0     0     0     0 dry
+FE069 Ammonium phosphate                         0   100     0     0     0     0     0     0     0     0    11    21     0     0     0     0     0     0     0     0 dry
+FE070 Potassium - sodium nitrate               100     0     0     0     0     0     0     0     0     0    15     0    12     0     0     0     0     0     0     0 dry, liquid
                                                                                                                                                                      
 !     Slow release, controlled release, urease inhibitors, nitrification inhibitors                                                                                  
 FE201 ESN                                        0     0   100     0     0     0     0    50  LIN           30     0     0     0     0     0     0     0     0     0 
@@ -110,38 +110,38 @@ FE202 NBTPT                                      0     0   100    50    25     0
 FE203 DCD (dicyandiamide)                        0     0   100     0     0    50    30     0                46     0     0     0     0     0     0     0     0     0 
 FE204 SuperU                                     0     0   100    50    25    50    30     0                46     0     0     0     0     0     0     0     0     0 
 FE205 DMPP (3,4-Dimethylpyrazole phosphate)      0     0   100     0     0    80    60     0                46     0     0     0     0     0     0     0     0     0 
-FE206 sulfur coated urea (thin coat)             0     0   100     0     0     0     0    10  STP           41     0     0     0     0     0     0     0     0     0 dry
-FE207 sulfur coated urea (thick coat)            0     0   100     0     0     0     0    20  STP           32     0     0     0     0     0     0     0     0     0 dry          N range 32-41%
+FE206 Sulfur coated urea (thin coat)             0     0   100     0     0     0     0    10  STP           41     0     0     0     0     0     0     0     0     0 dry
+FE207 Sulfur coated urea (thick coat)            0     0   100     0     0     0     0    20  STP           32     0     0     0     0     0     0     0     0     0 dry          N range 32-41%
 FE208 ESN + NBTPT                                0     0   100    50    25    50    30    50  LIN           46     0     0     0     0     0     0     0     0     0              
-FE209 Ureaform (Urea + formalde                  0     0   100   -99     0     0     0   -99  -99    -99    38     0     0     0     0     0     0     0     0     0 dry          N range 35-40%
+FE209 Ureaform (urea + formaldehyde)             0     0   100   -99     0     0     0   -99  -99    -99    38     0     0     0     0     0     0     0     0     0 dry          N range 35-40%
 FE210 Crotonylidene diurea (CDU)                 0     0   100   -99     0     0     0   -99  -99    -99    32     0     0     0     0     0     0     0     0     0              
 FE211 Isobutylidene diurea (IBDU)                0     0   100   -99     0     0     0   -99  -99    -99    31     0     0     0     0     0     0     0     0     0              
 FE212 Methylene ureas                            0     0   100     0     0     0     0   -99  -99    -99  40.0     0     0     0     0     0     0     0     0     0              
                                                                                                                                                                                   
 !     Phosphorus-based fertilizers                                                                                                                                                
-FE300 Mono Potassium Phosphate                   0     0     0     0     0     0     0     0     0     0   0.0  23.0  28.0     0     0     0     0     0     0     0 dry          NPK 0-52-34.
-FE301 Superphosphoric Acid                       0     0     0     0     0     0     0     0     0     0     0    30     0     0     0     0     0     0     0     0 liquid       P2O5 range 68-75%
+FE300 Mono potassium phosphate                   0     0     0     0     0     0     0     0     0     0   0.0  23.0  28.0     0     0     0     0     0     0     0 dry          NPK 0-52-34.
+FE301 Superphosphoric acid                       0     0     0     0     0     0     0     0     0     0     0    30     0     0     0     0     0     0     0     0 liquid       P2O5 range 68-75%
 FE302 Calcium metaphosphate                      0     0     0     0     0     0     0     0     0     0     0    26     0     0     0     0     0     0     0     0 dry          P2O5 range 60 - 62%
 FE303 Potassium metaphosphate                    0     0     0     0     0     0     0     0     0     0     0    24    31     0     0     0     0     0     0     0 dry          
-FE304 Precipitated Phosphate                     0     0     0     0     0     0     0     0     0     0     0    15     0     0     0     0     0     0     0     0 dry          P2O5 range 24-45%
+FE304 Precipitated phosphate                     0     0     0     0     0     0     0     0     0     0     0    15     0     0     0     0     0     0     0     0 dry          P2O5 range 24-45%
 FE305 Magnesium ammonium phosphate(struvite)     0   100     0     0     0     0     0     0     0     0   5.7  12.6     0     0   9.9     0     0     0     0     0              
 FE306 Bone meal (steamed)                        0   100     0     0     0     0     0     0     0     0     2    12     0     0     0    20     0     0     0     0              N range 0-2%, Ca range 19-25%
-FE307 Superphosphate, Enriched                   0     0     0     0     0     0     0     0     0     0     0    10     0     0     0     0     0     0     0     0 dry          P2O5 range 23-39%
-FE308 Basic Lime Phosphate                       0     0     0     0     0     0     0     0     0     0     0    10     0     0     0   var     0     0     0     0 dry          P range 2-16%
-FE309 Magnesium Phosphate                        0     0     0     0     0     0     0     0     0     0     0   7.6     0     0     0     0     0     0     0     0 dry          P2O5 range 17-18%
-FE310 Limestone, Phosphatic                      0     0     0     0     0     0     0     0     0     0     0     6     0     0     0   var     0     0     0     0 dry          P2O5 range 13-14%
+FE307 Superphosphate, enriched                   0     0     0     0     0     0     0     0     0     0     0    10     0     0     0     0     0     0     0     0 dry          P2O5 range 23-39%
+FE308 Basic lime phosphate                       0     0     0     0     0     0     0     0     0     0     0    10     0     0     0   var     0     0     0     0 dry          P range 2-16%
+FE309 Magnesium phosphate                        0     0     0     0     0     0     0     0     0     0     0   7.6     0     0     0     0     0     0     0     0 dry          P2O5 range 17-18%
+FE310 Limestone, phosphatic                      0     0     0     0     0     0     0     0     0     0     0     6     0     0     0   var     0     0     0     0 dry          P2O5 range 13-14%
 FE311 Basic slag                                 0     0     0     0     0     0     0     0     0     0     0     3   var   var   var    15     0     0     0     0 dry, liquid  P range 0-6%, Ca range 3-29%
 FE312 Colloidal phosphate (Soft)                 0     0     0     0     0     0     0     0     0     0     0     1     0     0     0     0     0     0     0     0 dry          P205 range 2 - 8% 
                                                                                                                                                                                   
 !     Potassium-based fertilizers                                                                                                                                                 
-FE400 Potash Suspensions                         0     0     0     0     0     0     0     0     0     0     0     0    50     0     0     0     0     0     0     0 liquid       
+FE400 Potash suspensions                         0     0     0     0     0     0     0     0     0     0     0     0    50     0     0     0     0     0     0     0 liquid       
 FE401 Potassium carbonate K2CO3 solid            0     0     0     0     0     0     0     0     0     0     0     0    48     0     0     0     0     0     0     0 dry          
 FE402 Potassium carbonate K2CO3 liquid           0     0     0     0     0     0     0     0     0     0     0     0    34     0     0     0     0     0     0     0 liquid       
 FE403 Potassium magnesium sulfate                0     0     0     0     0     0     0     0     0     0     0     0    18    23    11     0     0     0     0     0 dry          
-FE404 Manure Salts                               0     0     0     0     0     0     0     0     0     0     0     0    17     0     0     0     0     0     0     0 dry          K2O range 20-30%
+FE404 Manure salts                               0     0     0     0     0     0     0     0     0     0     0     0    17     0     0     0     0     0     0     0 dry          K2O range 20-30%
 FE405 Kainite KMg(SO4)Cl·3H2O                    0     0     0     0     0     0     0     0     0     0     0     0     9     4     3     0     0     0     0     0              
 FE406 Carnallite (hydrated MgKCl3)               0     0     0     0     0     0     0     0     0     0     0     0    14     0     9     0     0     0     0     0              
-FE407 Lime-Potash Mixtures                       0     0     0     0     0     0     0     0     0     0     0     0     8     0     0   var     0     0     0     0 dry          K2O range 5-10%
+FE407 Lime-potash mixtures                       0     0     0     0     0     0     0     0     0     0     0     0     8     0     0   var     0     0     0     0 dry          K2O range 5-10%
 FE408 Greensand                                  0     0     0     0     0     0     0     0     0     0     0     1     6     0     2     0     0     0     0    15 dry          Fe 12-19%, K 5-7%, Mg 2-3%
                                                                                                                                                                                   
 !     Sulfur                                                                                                                                                                      
