@@ -538,7 +538,7 @@ C-------------------------------------------------------------------
      &'DATES..........................................  ',
      &'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
      &'....................   ',
-     &'FRESH WEIGHT.......................  ',
+     &'FRESH WEIGHT.........................  ',
      &'WATER...............................................  ',
      &'NITROGEN..................................................  ',
      &'PHOSPHORUS............  ',
@@ -558,7 +558,7 @@ C-------------------------------------------------------------------
      &   '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
 !    &   '    HWUM  H#AM    H#UM  HIAM  LAIX',
      &   '    HWUM    H#AM    H#UM  HIAM  LAIX',
-     &   '   FCWAM   FHWAM   HWAHF   FBWAH FPWAM',
+     &   '   FCWAM   FHWAM   HWAHF   FBWAH   FPWAM',
      &   '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
      &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM NMINC  CNAM  GNAM N2OEC',
 !    &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
@@ -680,7 +680,7 @@ C-------------------------------------------------------------------
      &  F6.1, 
                                               
 !       FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH*10.), FPWAM
-     &  4(1X,I7),1X,I5,
+     &  5(1X,I7),
 
 !       IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
 !       NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, 
