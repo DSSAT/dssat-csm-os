@@ -10,7 +10,6 @@ C  01/01/1989     Written.
 C  12/31/1996 GH  Deleted phenology statements.
 C  09/15/1998 CHP Modified for modular format.
 C  05/10/1999 GH  Incorporaed in CROPGRO
-!  04/23/2021 chp Added CropStatus
 C-----------------------------------------------------------------------
 C  Called by  : CROPGRO
 C  Calls      : None
@@ -19,14 +18,14 @@ C========================================================================
      &    FREEZ2, IDETO, NOUTDO, NRUSLF, SLDOT,           !Input
      &    TMIN, WTLF, YRDOY,  YRPLT,                      !Input
      &    MDATE,                                          !Input/Output
-     &    WLFDOT, CropStatus)                             !Output
+     &    WLFDOT)                                         !Output
 C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 C-----------------------------------------------------------------------
       CHARACTER*1  IDETO
       CHARACTER*78 MESSAGE(10)
-      INTEGER MDATE, YRDOY, DAP, NOUTDO, YRPLT, TIMDIF, CropStatus
+      INTEGER MDATE, YRDOY, DAP, NOUTDO, YRPLT, TIMDIF
       REAL  WLFDOT, WTLF, SLDOT, NRUSLF, TMIN, FREEZ2
 
 C-----------------------------------------------------------------------
@@ -36,7 +35,6 @@ C-----------------------------------------------------------------------
       IF (TMIN .LT. FREEZ2) THEN
         IF (MDATE .LT. 0) THEN
           MDATE = YRDOY
-          CropStatus = 32  !cold stress
         ENDIF
       ENDIF
 
