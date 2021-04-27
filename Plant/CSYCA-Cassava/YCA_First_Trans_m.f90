@@ -37,8 +37,10 @@ Module YCA_First_Trans_m
     REAL    :: BASELAYER               ! Depth at base of layer         cm         ! (From Integrate) 
     INTEGER :: BRDAE(PSX)              ! DAE when a new branch appears  d          ! LPM 11APR15 To save the date of branch appearance
     REAL    :: BRFX(0:PSX)             ! Branch # per fork at each fork #          ! (From SeasInit)  
-    REAL    :: BRNUMSH(0:25)           ! Branch number/shoot at harvest #          ! (From Integrate) !LPM 28MAR15 to have the apex number by branch level 
-    REAL    :: BRNUMSHM                ! Branch #,harvest,all shoots    #          ! (From Output)    
+    REAL    :: BRNAM                   ! Branch #, all shoots at harvest#          ! (From Output)
+    REAL    :: BRNUMSH(0:25)           ! Branch number/shoot            #          ! (From Integrate) !LPM 28MAR15 to have the apex number by branch level 
+    REAL    :: BRNUMSHM                ! Branch #, all shoots           #          ! (From Output)    
+    REAL    :: BRNUMSHMM               ! Branch #,harv,all shoots obs   #          ! (From Output)
     REAL    :: BRNUMST(0:PSX)          ! Branch number/shoot (>forking) #          ! (From RunInit) !LPM 23MAR15 to have the apex number by branch level   
     REAL    :: BRNUMSTPREV(0:PSX)      ! Branch number/shoot,previous   #          ! (From Output)  !LPM 23MAR15 to have the apex number by branch level      
     INTEGER :: BROLDESTA               ! Br with Leaf  ,oldest active   #          ! (From Integrate)
@@ -196,6 +198,7 @@ Module YCA_First_Trans_m
     INTEGER :: FHWADCOL                ! Product wt column number       #          ! (From Output)
     REAL    :: FHWADT                  ! Harvest weight (fresh) t file  kg/ha      ! (From Output)
     REAL    :: FHWAM                   ! Harvest product wt.,maturity   kg/ha      !
+    REAL    :: FHWAMM                  ! Harvest wt.(fresh),measured    kg/ha      ! (From SeasInit) 
     INTEGER :: FILELEN                 ! Length of file name            #          ! (From SeasInit)  
     INTEGER :: FLDAP                   ! Final leaf date                Yrdoy      ! (From SeasInit)  
     REAL    :: FLN                     ! Final leaf #                   #          ! (From SeasInit)  
@@ -1253,8 +1256,10 @@ Module YCA_First_Trans_m
         amtnit = 0.0
         andem = 0.0
         brfx = 0.0
+        BRNAM = -99.0
         brnumst = 1.0
         BRNUMSHM = 0.0
+        BRNUMSHMM = -99.0
         caid = 0.0
         canhtg = 0.0
         carboadj = 0.0
@@ -1348,6 +1353,7 @@ Module YCA_First_Trans_m
         fappnum = 0
         fernitprev = 0.0
         fhwam = -99.0
+        FHWAMM = -99.0
         fldap = 0
         fln = 0.0
         gdap = -99
