@@ -81,7 +81,7 @@
                             IF (node(BR,LF)%LANC < 0.0) THEN 
                                 WRITE(Message(1),'(A27,F4.1)') 'LANC below 0 with value of ',node(BR,LF)%LANC
                                 WRITE(Message(2),'(A27,2F8.3)') 'LEAFN,LFWT had values of  ',node(BR,LF)%LEAFNN,LFWT
-                                WRITE(Message(3),'(A27,2I)') 'Branch, leaf number       ',BR,LF
+                                WRITE(Message(3),'(A27,2I5)') 'Branch, leaf number       ',BR,LF
                                 CALL WARNING(3,'CSYCA',MESSAGE)
                                 node(BR,LF)%LANC = AMAX1(0.0,node(BR,LF)%LANC)
                             ENDIF

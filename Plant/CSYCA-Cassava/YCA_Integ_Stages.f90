@@ -209,7 +209,7 @@
         
         ! Primary stages.   Calculated using Pstart
         IF (BRSTAGEPREV < 0.0) BRSTAGEPREV = 0.0
-        L = AMIN1(PSX, INT(BRSTAGEPREV) + 1)
+        L = AMIN1(FLOAT(PSX), BRSTAGEPREV + 1)
         !IF (PSDAT(L) <= 0.0.AND.CUMDU >= PSTART(L)) THEN !LPM 24APR2016 Using DABR instead of CUMDU
         IF (PSDAT(L) <= 0.0.AND.DABR >= PSTART(L)) THEN
             PSDAT(L) = YEARDOY
