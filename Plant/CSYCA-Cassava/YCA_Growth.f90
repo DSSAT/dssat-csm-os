@@ -106,7 +106,8 @@
                 
                 CALL YCA_Growth_Photo ( &
                     CO2         , NFP         , SLPF        , SRAD        , TAIRHR      , TDEW        , TMAX        , &
-                    TMIN        , LAI        , CONTROL     , WEATHER     , SOILPROP &                    )
+                    TMIN        , LAI        , CONTROL     , WEATHER     , SOILPROP &
+                    )
                 
                 !-----------------------------------------------------------------------
                 !           Partition C to above ground and roots (minimum) 
