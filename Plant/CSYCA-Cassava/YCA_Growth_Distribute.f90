@@ -42,7 +42,7 @@
         !LPM 14SEP2020 initialize temporary variable
         TVR1 = 0.0 
         ! Determine potential new concentration
-        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) THEN
+        IF (LFWT+GROLFADJ+STWT+GROSTADJ+CRWT+GROCRADJ > 0.0) THEN
             TVR1 = GRORS/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+GRORS)  !EQN 310
         ENDIF
         IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
@@ -52,7 +52,7 @@
         !restrictive factor (diluted N in storage roots)
         SRWTGRS = GRORS
         ! Determine FINAL new concentration
-        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
+        IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ > 0.0) TVR5 = (GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
             (STWT+GROSTADJ+CRWT+GROCRADJ)+(GRORS-SRWTGRS))
 
         
