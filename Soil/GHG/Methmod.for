@@ -32,7 +32,6 @@ c   LL : root transport factor s-1
 c   VV : reaction potential mol m-3 s-1
 c   yy : concentration mol m-3
 c
-c
 C ***********************************************************************
 C Module to define constants used by subroutines.
 C ***********************************************************************
@@ -45,26 +44,26 @@ C ***********************************************************************
 
 	  DATA om,o2,bb,ch4/1,2,3,4/
 	  DATA steps,niterations/51,100/
-! ebullition coefficient (1/d)
+!       ebullition coefficient (1/d)
 	  DATA ebullk/86400./
-! solubility of substances in water (mol/m3 at 25°C)
+!       solubility of substances in water (mol/m3 at 25°C)
         DATA solub/0.0,1.23,0.0,1.31/
-! solubility constants (aqueous / gaseous)
+!       solubility constants (aqueous / gaseous)
 	  DATA alpha/0., 0.03, 1.e9, 0.03/ 
-! surface gas-phase concentration (mol/m3) o2, b, ch4
+!       surface gas-phase concentration (mol/m3) o2, b, ch4
 	  DATA ya0/0., 7.76, -1.e-3, 7.5e-5/  
-! gaseous diffusion constants (m2/s) o2, b, ch4
-! (figures for O2 from Jones, 1983. Plants & Microclimate)
+!       gaseous diffusion constants (m2/s) o2, b, ch4
+!       (figures for O2 from Jones, 1983. Plants & Microclimate)
 	  DATA Da/0., 2.02e-5, 0.0, 1.06e-5/  
-! aqueous diffusion constants (m2/s) o2, b, ch4 
-! (figures for O2 from Jones, 1983. Plants & Microclimate)
+!       aqueous diffusion constants (m2/s) o2, b, ch4 
+!       (figures for O2 from Jones, 1983. Plants & Microclimate)
 	  DATA Dw/0., 2.00e-9, 1.5e-9, 1.49e-9/  
-! inhibition factor, o2 on ch4 production (see text)
+!       inhibition factor, o2 on ch4 production (see text)
         DATA eta/0.,0.,0.,0.,
      &           0.,0.,0.,0.,
      &           0.,100.,0.,0.,
      &		   0.,400.,200.,0./		   
-! Michaelis constants (mol/m3) for respn, O2ox, CH4ox
+!       Michaelis constants (mol/m3) for respn, O2ox, CH4ox
 	  DATA k/0.00,0.22,1.00,0.00,
      &         0.00,0.00,0.00,0.44,
      &         0.00,0.00,0.00,0.00,

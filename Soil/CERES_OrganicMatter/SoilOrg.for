@@ -133,6 +133,18 @@
       REAL SOM1C(0:NL)
       REAL CN_SOM(0:NL), CN_FOM(0:NL)
 
+!     Methane variables:
+      REAL FOMContrib, HUMContrib
+      REAL Immob_OM
+      REAL TFOMSubstrateC
+      REAL THUMSubstrateC
+!     REAL, DIMENSION(NL) :: CSubstrate
+      REAL CO2FOMFac
+
+      REAL, PARAMETER :: FOMCFrac = 0.4
+      REAL, PARAMETER :: HumusCFrac = 0.526 !(=1/1.9)
+      REAL, PARAMETER :: HumusCNRatio = 10.0
+
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
       TYPE (ControlType) CONTROL
@@ -162,7 +174,7 @@
       FLOOD = FLOODWAT % FLOOD
 
       SenWt  = SENESCE % ResWt
-!      SenLig = SENESCE % ResLig
+!     SenLig = SENESCE % ResLig
       SenE   = SENESCE % ResE
 
 !***********************************************************************
@@ -279,6 +291,11 @@
       ENDDO
 
       PREV_CROP = CONTROL % CROP  !Save crop name for harvest residue
+
+!     Substrate for methanogenesis
+      TFOMSubstrateC = 0.0
+      THUMSubstrateC = 0.0
+!     CSubstrate = 0.0
 
       ACCCO2 = 0.0 !Cumulative CO2 released from SOM, FOM decomposition
       newCO2_FOM = 0.0
@@ -460,6 +477,10 @@
       TOMINSOM = 0.0
       TNIMBSOM = 0.0
 
+      TFOMSubstrateC = 0.0
+      THUMSubstrateC = 0.0 
+      newCO2 = 0.0
+
       DO L = 1, NLAYR
 !       ----------------------------------------------------------------
 !       Environmental limitation factors for the soil processes.
@@ -530,7 +551,7 @@
 !           C/N ratio of the fresh organic residue in the soil, including
 !           the mineral N that is present in the soil.
             IF (FON(L) + SNH4NO3(L) > 1.E-6) THEN
-                CNR = (0.4 * FOM(L)) / (FON(L) + SNH4NO3(L))
+                CNR = (FOMCFrac * FOM(L)) / (FON(L) + SNH4NO3(L))
             ELSE
                 CNR = 25.
             ENDIF
@@ -554,6 +575,7 @@
           FOMFRAC = DECFACT * (FPOOL(L,1) * RDCHO 
      &                      +  FPOOL(L,2) * RDCEL 
      &                      +  FPOOL(L,3) * RDLIG) / FOM(L)
+
 C         Add different switch point for immobln under flooded conditions
 C         REQN = N Req. ---> To decompose 1g of FOM (GRCOM) will have to
 C         recruit (NREQ-N CONC) g of N
@@ -606,8 +628,10 @@ C         recruit (NREQ-N CONC) g of N
 
 !           80% of FOM decomposition goes to CO2 (the remainder to HUM pool)
 !           Convert FOM to C units with 0.4 multiplier
-            newCO2_FOM(L) = 0.8 * 0.4 * DLTFOM
+            newCO2_FOM(L) = 0.8 * FOMCFrac * DLTFOM
 
+!           Amount of OM associated with immobilized N
+            Immob_OM = IMMOBN * HumusCNRatio / HumusCFrac
 !           Change to FON (also, change to inorganic N)
             DLTNI1 = IMMOBN - FOMFRAC * FON(L)
             DLTFON(L) = DLTFON(L) + DLTNI1
@@ -651,7 +675,7 @@ C         recruit (NREQ-N CONC) g of N
 
 !       chp 2019-03-07 Add 20% of C, regardless of N movement. Let C decomposition
 !         drive the mass transfer.
-        DLTHUMC(L) = DLTHUMC(L) + 0.2 * 0.4 * DLTFOM
+        DLTHUMC(L) = DLTHUMC(L) + 0.2 * FOMCFrac * DLTFOM
 
         IF (N_ELEMS > 0) THEN
 !          DLTHUMC(L) = DLTHUMC(L) + 0.2 * FOMFRAC * FON(L) * 10.0
@@ -669,14 +693,16 @@ C         recruit (NREQ-N CONC) g of N
           ENDIF
         ENDIF
 
+!       Phosphorus
         IF (N_ELEMS > 1) THEN
 !         N:P ratio of 10 for new humus.
-          DLTPI2 = - HUMFRAC * SSOME(L,P) + 0.2 * FOMFRAC * FON(L) *0.10
+          DLTPI2 = -HUMFRAC*SSOME(L,P) + 0.2*FOMFRAC*FON(L)/HumusCNRatio
           IF (DLTPI2 + SSOME(L,P) < 1.E-5) THEN
             DLTPI2 = -SSOME(L,P)
           ENDIF
           DLTHUME(L,P) = DLTHUME(L,P) + DLTPI2
         ENDIF
+
         IF (N_ELEMS > 0) THEN
 !         Net N release from all SOM and FOM sources
 !         NNOM = HUMFRAC * SSOME(L,N) + 0.8 * FOMFRAC *FON(L) - IMMOBN 
@@ -706,13 +732,44 @@ C         recruit (NREQ-N CONC) g of N
 !         MINERALIZE(L,P) = PNOM
         ENDIF
 
+!       Calculate total amt of C (kg[C]/ha/d) released by decay for methanogenesis
+!       convert from kg[DM]/ha to kg[C]/ha
+        CO2FOMFac = (FPOOL(L,1) * 0.55 
+     &                      +  FPOOL(L,2) * 0.55 
+     &                      +  FPOOL(L,3) * 0.30) / FOM(L)
+
+        FOMContrib = FOMFRAC * FOM(L) * FOMCFrac * CO2FOMFac
+!                  = amount FOM[C] decomposed 
+!          FOMFRAC = DECFACT * (FPOOL(L,1) * RDCHO 
+!     &                      +  FPOOL(L,2) * RDCEL 
+!     &                      +  FPOOL(L,3) * RDLIG) / FOM(L)
+
+!       already in units of kg[C]/ha
+        HUMContrib = SSOMC(L) * HUMFRAC * 0.55
+!     the 0.55 value = portion of decomposed humus that goes to CO2 (value from Century model)
+!                  = amount of humus decomposed 
+    ! &             - 0.2 * FOMFRAC * FON(L) * HumusCNRatio 
+!                  - minus [C] moving from FOM to Humus 
+!        HUMFRAC = DMINR * TFSOM * CMF * DMOD1 * PHMIN
+!        DLTHUMC(L) = DLTHUMC(L) - HUMFRAC * SSOMC(L)  !change to humus C
+
+        TFOMSubstrateC = TFOMSubstrateC + FOMContrib
+        THUMSubstrateC = THUMSubstrateC + HUMContrib 
+
+!       CSubstrate (methane routine) = newCO2 (N2O routine) - verify with PG!
+!       CSubstrate(L)  = FOMContrib + HUMContrib  !substrate for methane production
+        newCO2(L) = FOMContrib + HUMContrib     !new CO2 production
+
+!     temp chp
+        write(3000,'(i7,i3,3f12.4)') 
+     &    control.yrdoy, L, FOMContrib, HUMContrib, newCO2(L)
+
       END DO   !End of soil layer loop.
 
 !     Transfer daily mineralization values for use by Cassava model
       CALL PUT('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
       CALL PUT('ORGC','TOMINSOM' ,TOMINSOM) !Miner from SOM (kg/ha)
       CALL PUT('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
-
 
 !***********************************************************************
 !***********************************************************************
@@ -738,13 +795,14 @@ C         recruit (NREQ-N CONC) g of N
         FOM(L) = FPOOL(L,1) + FPOOL(L,2) + FPOOL(L,3)
 !       FOM is units of kg[OM]/ha, HUMC in units of kg[C]/ha
 !       Convert SSOMC at 1.9 kg[OM]/kg[C] (Adams, 1973)
-        SomLit(L)  = SSOMC(L) * 1.9 + FOM(L)       !kg[OM]/ha
+!       SomLit(L)  = SSOMC(L) * 1.9 + FOM(L)       !kg[OM]/ha
+        SomLit(L)  = SSOMC(L) / HumusCFrac + FOM(L)       !kg[OM]/ha
 
 !       CHP 3/1/2005. LITC in kg[C]/ha, FOM in kg[dry matter]/ha
 !       These are put into "Century" variable names to export to the
 !       inorganic soil routines.
 !       Convert FOM at 2.5 kg[OM]/kg[C] 
-        LITC(L) = FOM(L) * 0.4
+        LITC(L) = FOM(L) * FOMCFrac
         SomLitC(L) = SSOMC(L) + LITC(L) 
 
         IF (N_ELEMS > 0) THEN
@@ -766,12 +824,12 @@ C         recruit (NREQ-N CONC) g of N
         IF (SSOME(L,N) .GT. 1.E-6) THEN
           CN_SOM(L) = SSOMC(L) / SSOME(L,N)
         ELSE
-          CN_SOM(L) = 10.
+          CN_SOM(L) = HumusCNRatio
         ENDIF
         IF (LITE(L,N) .GT. 1.E-6) THEN
           CN_FOM(L) = LITC(L) / LITE(L,N)
         ELSE
-          CN_FOM(L) = 10.
+          CN_FOM(L) = HumusCNRatio
         ENDIF
       ENDDO
 
@@ -813,8 +871,8 @@ C         recruit (NREQ-N CONC) g of N
       IF (N_ELEMS > 0) MULCH % MULCHN = MULCH % MULCHN + DltSRFN !kg/ha
       IF (N_ELEMS > 1) MULCH % MULCHP = MULCH % MULCHP + DltSRFP !kg/ha
 
-      SomLitC(0)   = MULCH % MULCHMASS * 0.4
-      LITC(0)      = MULCH % MULCHMASS * 0.4
+      SomLitC(0)   = MULCH % MULCHMASS * FOMCFrac
+      LITC(0)      = MULCH % MULCHMASS * FOMCFrac
       LITE(0,1)    = MULCH % MULCHN
       LITE(0,2)    = MULCH % MULCHP
       SomLitE(0,N) = MULCH % MULCHN
@@ -825,7 +883,7 @@ C         recruit (NREQ-N CONC) g of N
       IF (LITE(0,N) .GT. 1.E-6) THEN
         CN_FOM(0) = LITC(0) / LITE(0,N)
       ELSE
-        CN_FOM(0) = 10.
+        CN_FOM(0) = HumusCNRatio
       ENDIF
 
 !     Compute mulch properties
