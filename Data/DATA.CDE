@@ -77,6 +77,10 @@ FDAT   Forcing date    Forcing or flowering date (YrDoy)                        
 FNAM   Field name      Field name                                               .
 FRN%M  Fruit N% @ mat  Fruit N concentration at maturity (%)                    .
 FRNAM  Fruit N @ mat   Fruit N content at maturity (kg/ha)                      .
+FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
+FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
+FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
+FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
 FWAH   Fresh wt @ harv Yield fresh weight at harvest (t/ha)                     .
 GL%M   Grain oil%,matu Grain oil at maturity (%)                                .
 GN%M   Grain N%,mature Grain N at maturity (%)                                  .
@@ -91,6 +95,7 @@ HINM   N harvest index Nitrogen harvest index at maturity (fr)                  
 HIPM   Pod index       Pod harvest index at maturity                            .
 HPRH   Purity %        Purity immediately after harvest (%)                     .
 HWAH   Harvested yield Harvested yield (kg [dm]/ha)                             .
+HWAHF  Fresh yield     Harvested yield (fresh weight) (kg/ha)                   .
 HWAM   Mat Yield kg/ha Yield at harvest maturity (kg [dm]/ha)                   .
 HWUM   Weight g/unit   Unit wt at maturity (g [dm]/unit)                        .
 HYAH   Field wt Mg/ha  Field weight at harvest (Mg [fm]/ha)                     .
@@ -177,6 +182,7 @@ VN%M   Veg N% @ matur. Vegetative N at maturity (%)                             
 VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         .
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
+WYEAR  Weather year    Year for weather data (for forecast ensembles)           .
 YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
@@ -866,6 +872,7 @@ TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     
 VPD    Vapor Pres Def  Vapor pressure deficit                                   .
 VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
 WDSD   WIND SPEED km/d Wind speed (km/d)                                        .
+WDATE  WEATHER DATE    Date for weather data (YYYYDDD, for forecast ensembles)  .
 
 *OTHER MODELS
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -951,6 +958,11 @@ GLI%D  Light Int. GL   Fraction of light intercepted by green leaves (0-1)      
 TLI%D  Light Int. TL   Fraction of light intercepted by dry+green leaves (0-1)  .
 TRWUP  TotRootUpPot    Potential Root Water Uptake (mm/d)                       .
 EOP    PTranspiration  Potential Crop Transpiration (mm/d)                      .  
+COAD   Oil kg/ha       Total oil accumulated (kg/ha)                     .
+COAM   Oil kg/ha at PM Total oil accumulated at physiological maturity (kg/ha)                                    .
+XWAD   Oil kg /ha      Oil kg/ha                                               .
+XO%D   Seed oil %      Seed oil concentration (%)                               .
+HSAM   Seed Yield      Yield at harvest maturity (kg/ha 9% moisture)            .
 
 *SOIL ORGANIC MATTER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -1210,10 +1222,10 @@ ADPWM  DryWt g/fruit   Avg dry fruit (pod, ear) weight at maturity (g/fruit)    
 AFPWD  FreshWt g/fruit Average fresh fruit (pod, ear) weight (g/fruit)          .
 AFPWM  FreshWt g/fruit Avg fresh fruit (pod, ear) weight at maturity (g/fruit)  .
 FCULD  Fr wt cull      Fresh weight for cull fruit/pods (g/m2)                  .
-FPWAD  Tot Fr Wt kg/ha Total fresh fruit (pod, ear) weight (kg/ha)              .
-FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
-RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)
-RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)
+FHWAD  Fresh harvest   Harvest product fresh wt (kg/ha)                         .
+FPWAD  Tot Fr Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
+RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)         .
+RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)           .
 FSZ1D  Fr wt 1 g/m2    Fresh weight for size class 1 (g/m2)                     .
 FSZ2D  Fr wt 2 g/m2    Fresh weight for size class 2 (g/m2)                     .
 FSZ3D  Fr wt 3 g/m2    Fresh weight for size class 3 (g/m2)                     .
@@ -1226,8 +1238,9 @@ MFWAD  Mrkt Fr Wt k/h  Market fresh fruit (pod, ear) weight (kg/ha)             
 NFWAD  # market/ha     Market fruit (pod, ear) number (fruit/ha)                .
 PAGED  Pod age d       Age of oldest pod or ear (days)                          .
 PAGEM  Pod age d       Age of oldest pod or ear at maturity (days)              .
-PDMCD  DryWt frac      Fruit (pod, ear) dry matter concentration (fraction)     .
+PDMCD  DryMatter frac  Dry matter concentration of harvested product (fraction) .
 PDMCM  DryMatter frac  Avg dry matter concentration at maturity (fraction)      .
+PDMCH  DryMatter frac  Avg dry matter concentration at harvest (fraction)       .
 SMFMH  Stalk fresh massMillable cane fresh weight at harvest (t/ha)             .
 
 *CANEGRO - South Africa

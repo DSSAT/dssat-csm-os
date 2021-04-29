@@ -161,7 +161,7 @@ C
 !     &         SOM1I, SOM2I, SOM3I)
           CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)
+     &            SASC, NLAYR, YRSIM)
       ELSE IF (MENU .EQ. 5) THEN
           CALL SEPROF (DLAYR,NLAYR,RNMODE,DS,DUL,LL,SAT,BD,WR,OC,PH,
      &         SWINIT,SWCN,ADCOEF,TOTN)

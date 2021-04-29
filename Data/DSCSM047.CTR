@@ -47,7 +47,7 @@ $SIMULATION_CONTROLS
 @N CONTROLS_TITLE
  5 Detail output (VBOSE='D') 
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
- 5 OU              .     .     .     .     .     .     .     .     .     .     D     .     Y     .
+ 5 OU              .     .     .     1     .     .     .     .     .     .     D     .     Y     .
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE

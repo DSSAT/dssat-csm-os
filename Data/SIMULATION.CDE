@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.7; 02/06/2021
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
@@ -47,6 +47,9 @@ F        FAO-56                                                               IB
 !P       FAO-24/(old Penman)                                                  IB
 R        Priestley-Taylor/Ritchie                                             IB
 !Z       Hourly energy bal. method                                            IB
+S        ASCE Standardized Reference ET - Short reference                     IB
+T        ASCE Standardized Reference ET - Tall reference                      IB
+!H       Hourly Priestley-Taylor/Ritchie                                      IB
 
 *Simulation/Methods/Infiltration
 @CDE     DESCRIPTION                                                          SO
@@ -83,6 +86,7 @@ S        Suleiman-Ritchie                                                     IB
 *Simulation/Management/Planting
 @CDE     DESCRIPTION                                                          SO
 A        Automatic                                                            IB
+F        Automatic, force planting on last day of window                      IB
 R        On reported date                                                     IB
 
 *Simulation/Management/Irrigation
@@ -151,6 +155,7 @@ CRGRO    BN   CROPGRO-Dry bean
 CRGRO    BR   CROPGRO-Brachiaria
 CRGRO    CB   CROPGRO-Cabbage
 CRGRO    CH   CROPGRO-Chickpea
+CRGRO    CI   CROPGRO-Chia
 CRGRO    CN   CROPGRO-Canola
 CRGRO    CO   CROPGRO-Cotton
 CRGRO    CP   CROPGRO-Cowpea
@@ -163,6 +168,7 @@ CRGRO    NP   CROPGRO-Napier grass
 CRGRO    PN   CROPGRO-Peanut
 CRGRO    PP   CROPGRO-Pigeonpea
 CRGRO    PR   CROPGRO-Bellpepper
+CRGRO    QU   CROPGRO-Quinoa
 CRGRO    SF   CROPGRO-Safflower
 CRGRO    SB   CROPGRO-Soybean
 CRGRO    SU   CROPGRO-Sunflower
@@ -172,7 +178,7 @@ CSCER    BA   CROPSIM-CERES-Barley
 CSCER    WH   CROPSIM-CERES-Wheat
 CSCRP    BA   CSCRP-Barley
 CSCAS    CS   CSCAS-Cassava
-CSYCA    CS   CSYCA-Cassava
+CSYCA    CS   MANIHOT-Cassava
 CSCRP    WH   CSCRP-Wheat
 MLCER    ML   CERES-Millet
 MZCER    MZ   CERES-Maize
@@ -181,16 +187,16 @@ PTSUB    PT   SUBSTOR-Potato
 RICER    RI   CERES-Rice
 SCCAN    SC   CANEGRO-Sugarcane
 SCCSP    SC   CASUPRO-Sugarcane
+SCSAM    SC   SAMUCA-Sugarcane
 SGCER    SG   CERES-Sorghum
 SWCER    SW   CERES-Sweetcorn
 PIALO    PI   ALOHA-Pineapple
 TRARO    TR   AROIDS-Taro
 TNARO    TN   AROIDS-Tanier
-TFAPS    TF   NWHEAT-Tef
+TFAPS    TF   NWHEAT-Teff
 WHAPS    WH   NWHEAT-Wheat
 PRFRM    BM   FORAGE-Bermudagrass
 PRFRM    BR   FORAGE-Brachiaria
-PRFRM    BH   FORAGE-Bahiagrass
 PRFRM    G0   FORAGE-Generic
 PRFRM    AL   FORAGE-Alfalfa
-PRFRM    RG   PRFRM-Ryegrass
+SUOIL    SU   OILCROP-Sunflower

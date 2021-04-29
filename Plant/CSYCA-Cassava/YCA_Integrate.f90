@@ -11,7 +11,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integrate ( &
-        ALBEDOS     , BD          , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX      , &
+        ALBEDOS     , BD          , BRSTAGE     , LAI         , CANHT       , CO2         , DAYL        , DEPMAX      , &
         DLAYR       , DOY         , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , &
         ISWNIT      , ISWWAT      , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , RAIN        , &
         RESCALG     , RESLGALG    , RESNALG     , RLV         , RUNOFF      , SRAD        , STGYEARDOY  , SW          , &
@@ -26,7 +26,7 @@
         
         INTEGER DOY         , NLAYR       , STGYEARDOY(0:19)            , YEAR
         
-        REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX
+        REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , LAI         , CANHT       , CO2         , DAYL        , DEPMAX
         REAL    DLAYR(NL)   , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , LL(NL)      
         REAL    NFP         , NH4LEFT(NL) , NO3LEFT(NL) , RAIN        , RESCALG(0:NL)             , RESLGALG(0:NL)            
         REAL    RESNALG(0:NL)             , RLV(NL)     , RUNOFF      , SRAD        , SW(NL)      , TLCHD       , TMAX      
@@ -45,7 +45,7 @@
         !         Calculate reserve concentrations, shoot and total leaf area.
         !-----------------------------------------------------------------------
         CALL  YCA_Integ_LA ( &
-            CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV         , BRSTAGE   & 
+            LAI        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV         , BRSTAGE   & 
             ) 
             
         !-----------------------------------------------------------------------
@@ -76,7 +76,7 @@
         !         Determine if to harvest or fail
         !-----------------------------------------------------------------------
          CALL YCA_Integ_HstFail ( &   
-            BRSTAGE     , DOY         , STGYEARDOY  , SW          , YEAR        & 
+            BRSTAGE     , DOY         , STGYEARDOY  , SW          , YEAR        , LAI      & 
             ) 
              
         !-----------------------------------------------------------------------
@@ -101,7 +101,7 @@
         !-----------------------------------------------------------------------
         CALL YCA_Integ_EndCrop ( &
             ALBEDOS     , DLAYR       , EOP         , FERNIT      , ISWWAT      , LL          , NLAYR       , STGYEARDOY  , &
-            SW          & 
+            SW          , LAI         & 
             )
             
     END SUBROUTINE YCA_Integrate

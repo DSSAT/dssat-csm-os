@@ -45,9 +45,15 @@
 ! Reason:  Files initially run with 93 and 94 as years (Mauna Loa CO2 was 357-357ppm), real years 2013-2014 with Mauna Loa higher CO2
 ! increased yield a fair amount.  Reduced LFMAX from 2.2 (really too high anyway) to 1.7, yield now within 3 kg/ha and biomass within 5 kg/ha
 !
+! 2/4/2019, Modifications made by K. Boote, and K. Steberl during January 2019, to go along with modified Spe and Eco files.
 @VAR#  VAR-NAME........ EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
 !                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
 IB0001 PI8311               . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
 IB0002 99OL                 . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
 IB0003 Nutrisaff            . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
+!**IB0001 PI8311               . SF0401 23.00 0.001  17.0   3.0  15.0 30.00 20.25  1.70  270. 115.0  0.55 0.040  29.0 22.25  17.0  51.3  .140  .330
+!**prior cultivar is exactly from V4.7 DSSAT, I modified LFMAX from 2.20 of the paper, to 1.70 for DSSAT V4.7.  No longer valid as spe modified
 
+! following are two cultivars from Kathrin Steberl, grown at Stuttgart, Germany
+UH0001 Goldschopf           . BW0001 23.00 0.001  10.3   4.5  13.0 28.50 18.00  1.55  250. 115.0  0.67 0.064  30.0 22.25  19.0  55.0  .140  .330
+UH0002 Thornless Safflower  . BW0002 23.00 0.001  10.3   4.5  13.0 28.50 18.00  1.80  260. 115.0  0.76 0.052  30.0 22.25  17.0  61.0  .140  .330

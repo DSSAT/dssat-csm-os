@@ -62,7 +62,7 @@ C=======================================================================
      &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
      &    XHLAI,                                          !Input
      &    FLOODN,                                         !I/O
-     &    NH4, NO3, UPPM)                                 !Output
+     &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
 !-----------------------------------------------------------------------
       USE N2O_mod 
@@ -96,6 +96,7 @@ C=======================================================================
       REAL NH4(NL), NO3(NL), PH(NL), SAT(NL), SNH4(NL)
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
+      REAL NH4_plant(NL), NO3_plant(NL)
       
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
@@ -321,6 +322,9 @@ C=======================================================================
         SNH4(L) = SNH4(L) - UNH4(L)
         NO3(L)  = SNO3(L) * KG2PPM(L)
         NH4(L)  = SNH4(L) * KG2PPM(L)
+!       Must calculate WTNUP here or it won't be guaranteed to match N
+!       removed from the soil today and the balance will be off.
+        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
       ENDDO
 
 !     Check for fertilizer added today or active slow release fertilizers 
@@ -550,7 +554,7 @@ C=======================================================================
 !         available, take all NH4, leaving behind a minimum amount of
 !         NH4 equal to XMIN (NNOM is negative!).
 
-          IF (ABS(NNOM) .GT. (SNH4(L) - XMIN)) THEN
+          IF (ABS(NNOM) .GT. (SNH4(L) + DLTSNH4(L) - XMIN)) THEN
             NNOM_a = -(SNH4(L) - XMIN + DLTSNH4(L))
             NNOM_b = NNOM - NNOM_a
 
@@ -559,7 +563,7 @@ C=======================================================================
             NNOM = NNOM_b
 
             SNO3_AVAIL = SNO3(L) + DLTSNO3(L)
-            IF (ABS(NNOM) .GT. (SNO3_AVAIL - XMIN)) THEN
+            IF (ABS(NNOM) .GT. (SNO3_AVAIL + DLTSNO3(L) - XMIN)) THEN
               !Not enough SNO3 to fill remaining NNOM, leave residual
               DLTSNO3(L) = DLTSNO3(L) + XMIN - SNO3_AVAIL
               !TIMMOBILIZE(N) = TIMMOBILIZE(N) + (SNO3_AVAIL - XMIN)
@@ -836,6 +840,12 @@ C=======================================================================
       
       CALL PUT('NITR','TLCHD',TLeachD) 
 
+!     Psuedo-integration - for plant-available N
+      DO L = 1, NLAYR
+        NO3_plant(L) = (SNO3(L) + DLTSNO3(L)) * KG2PPM(L)
+        NH4_plant(L) = (SNH4(L) + DLTSNH4(L)) * KG2PPM(L)
+      ENDDO
+
 !***********************************************************************
 !***********************************************************************
 !     END OF FIRST DYNAMIC IF CONSTRUCT
@@ -871,8 +881,8 @@ C=======================================================================
 
 !     Loop through soil layers for integration
       DO L = 1, NLAYR
-        SNO3(L) = SNO3(L) + DLTSNO3(L)    !plant uptake added to DLTSNO3
-        SNH4(L) = SNH4(L) + DLTSNH4(L)    !plant uptake added to DLTSNH4
+        SNO3(L) = SNO3(L) + DLTSNO3(L)
+        SNH4(L) = SNH4(L) + DLTSNH4(L)
         UREA(L) = UREA(L) + DLTUREA(L)
 
 !       Underflow trapping
@@ -900,7 +910,8 @@ C=======================================================================
         TNO3  = TNO3  + SNO3(L)
         TUREA = TUREA + UREA(L)
         TN2OnitrifD = TN2OnitrifD + N2Onitrif(L)
-        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
+!       Calculate this where uptake is removed from the soil.
+!       WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
         IF (L ==1) THEN
           TMINERN = MNR(0,N) + MNR(1,N)
           TIMMOBN = IMM(0,N) + IMM(1,N)
@@ -952,6 +963,9 @@ C=======================================================================
      &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, TUREA, CNOX, TOTAML)
       ENDIF
 
+      NO3_plant = NO3
+      NH4_plant = NH4
+
 !***********************************************************************
 !***********************************************************************
 !     OUTPUT
@@ -975,6 +989,7 @@ C     Write daily output
      &    ALGFIX, BD1, CUMFNRO, TOTAML, TOTFLOODN)        !Output
       ENDIF
 
+
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
      &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
@@ -988,7 +1003,6 @@ C     END OF SECOND DYNAMIC IF CONSTRUCT
 C***********************************************************************
       ENDIF
 C-----------------------------------------------------------------------
-  
       RETURN
       END SUBROUTINE SoilNi
 

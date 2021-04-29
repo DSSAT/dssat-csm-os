@@ -1,9 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2015 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C                      Washington State University
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2021
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C                     
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  PLANT, Subroutine
@@ -81,6 +82,7 @@ C-----------------------------------------------------------------------
 !         'RICER' - CERES-Rice
 !         'SCCAN' - CANEGRO Sugarcane
 !         'SCCSP' - CASUPRO Sugarcane
+!         'SCSAM' - SAMUCA Sugarcane
 !         'SGCER' - CERES-Sorghum
 !         'SWCER' - CERES-Sweet corn
 !         'MZIXM' - IXIM Maize
@@ -274,6 +276,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       UNO3     = 0.0
       UH2O     = 0.0
 
+      CALL READ_ASCE_KT(CONTROL, MEEVP)
+
 !***********************************************************************
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
@@ -289,15 +293,50 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !        HARVRES % CumResE = 0.0
       ENDIF
 
+!     Initialize output variables.
+!     Each plant routine may or may not re-compute these values.
+      CANHT    = 0.0
+      EORATIO  = 1.0
+      FracRts  = 0.0
+      KCAN     = 0.85
+      KEP      = 1.0
+      KSEVAP   = -99.
+      KTRANS   = 1.0
       KUptake = 0.0
+      NSTRES   = 1.0
+      PORMIN   = 0.02
+      PSTRES1  = 1.0
+      PUPTAKE  = 0.0
+      RLV      = 0.0
+      RWUEP1   = 1.5
+      RWUMX    = 0.03
+      UH2O     = 0.0
+      UNH4     = 0.0
+      UNO3     = 0.0
+      XHLAI    = 0.0
+      XLAI     = 0.0
+      SENESCE % ResWt  = 0.0
+      SENESCE % ResLig = 0.0
+      SENESCE % ResE   = 0.0
 
 !***********************************************************************
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
+      IF (CROP .NE. 'FA' .AND. 
+     &    CONTROL % YRDOY .GE. YRPLT .AND. YRPLT .NE. -99) THEN
+
         SENESCE % ResWt  = 0.0
         SENESCE % ResLig = 0.0
         SENESCE % ResE   = 0.0
+
+      ELSE
+        CANHT = 0.0
+        RLV   = 0.0
+        XHLAI = 0.0
+        XLAI  = 0.0
+        RETURN
+      ENDIF
 
 !-----------------------------------------------------------------------
       ENDIF   !End of dynamic loop prior to calls to crop models
@@ -556,7 +595,18 @@ c     Added by MJ, 2007-04-04:
 c     ::::::::::::::::::::::::
 c     Total LAI must exceed or be equal to healthy LAI:
           XLAI = MAX(XLAI, XHLAI)
-
+!     -------------------------------------------------
+!     Sugarcane - SAMUCA
+      CASE('SCSAM')
+          call SAMUCA(
+     &    CONTROL, ISWITCH,                                      !Input
+     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,  !Input
+     &    SOILPROP, ST, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,  !Input
+     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,         !Input
+     $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,           !Output
+     &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,              !Output
+     &    UNO3, XLAI, XHLAI, EORATIO)                            !Output
+          
 !     -------------------------------------------------
 !     Sugarcane - CASUPRO
       CASE('SCCSP')
@@ -636,7 +686,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Set default canopy height upon emergence (or first day with
 !       LAI.  Should actually set these defaults within each
 !       crop routine.
-        IF (FixCanht .AND. (XLAI .GT. 0.001 .OR. XHLAI .GT. 0.001)) THEN
+        IF (FixCanht .AND. (XLAI .GT. 0.0 .OR. XHLAI .GT. 0.0)) THEN
           CANHT = 0.5
           FixCanht = .FALSE.
         ENDIF
@@ -734,4 +784,140 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! YREMRG    Day of emergence (YYYYDDD)
 ! YREND     Date for end of season (usually harvest date) (YYYYDDD)
 ! YRPLT     Planting date (YYYYDDD)
+!===========================================================================
+
+
+!===========================================================================
+      SUBROUTINE READ_ASCE_KT(CONTROL, MEEVP)
+!     Generic routine to read evapotranspiration species parameters
+!     KEP, EORATIO 
+!     TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+!     SSKC, SKCBmax ASCE short ref (12 cm grass)
+
+      USE ModuleData
+      External IGNORE, WARNING, ERROR
+
+      CHARACTER*1  BLANK, MEEVP
+      PARAMETER (BLANK  = ' ')
+
+      CHARACTER*2 CROP
+      CHARACTER*6 SECTION
+      CHARACTER*6  ERRKEY
+      PARAMETER (ERRKEY = 'IPASCE')
+
+      CHARACTER*12 FILEC
+      CHARACTER*30 FILEIO
+      CHARACTER*78 MSG(6)
+      CHARACTER*80 PATHCR, CHAR
+      CHARACTER*92 FILECC
+
+      INTEGER LUNCRP, LUNIO, NMSG
+      INTEGER PATHL, FOUND, ERR, LINC, LNUM, ISECT
+
+!     Species-dependant variables exported to SPAM:
+      REAL KEP, EORATIO, SSKC, SKCBMAX, TSKC, TKCBMAX
+
+!     The variable "CONTROL" is of constructed type "ControlType" as 
+!     defined in ModuleDefs.for, and contains the following variables.
+!     The components are copied into local variables for use here.
+      TYPE (ControlType) CONTROL
+
+      IF (MEEVP .NE. 'S' .AND. MEEVP .NE. 'T') RETURN
+
+      NMSG = 0
+
+!-----------------------------------------------------------------------
+!     Read file plus path for species file 
+!-----------------------------------------------------------------------
+      FILEIO = CONTROL % FILEIO
+      LUNIO  = CONTROL % LUNIO
+      OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERR)
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
+      READ(LUNIO,50,IOSTAT=ERR) FILEC, PATHCR ; LNUM = 7
+   50 FORMAT(6(/),15X,A12,1X,A80)
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+      CLOSE (LUNIO)
+
+!-----------------------------------------------------------------------
+      IF (CROP .NE. 'FA') THEN
+!       open species file
+        LNUM = 0
+        PATHL  = INDEX(PATHCR,BLANK)
+        IF (PATHL .LE. 1) THEN
+          FILECC = FILEC
+        ELSE
+          FILECC = PATHCR(1:(PATHL-1)) // FILEC
+        ENDIF
+        CALL GETLUN('FILEC', LUNCRP)
+        OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,0)
+        LNUM = 0
+
+!       ***** READ ASCE EVAPOTRANSPIRATION PARAMETERS *****
+        SECTION = '!*EVAP'
+        CALL FIND(LUNCRP, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+        IF (FOUND .EQ. 0) THEN
+          NMSG = NMSG + 1
+          MSG(NMSG) = "*EVAP section missing from species file."
+          GOTO 100
+        ELSE
+          CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+          READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
+          IF (ERR .NE. 0) THEN
+            NMSG = NMSG + 1
+            MSG(NMSG)="Error reading KEP, EORATIO for ASCE PET method."
+          ENDIF
+        ENDIF
+
+!       Read tall reference crop parameters
+        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+        IF(ISECT .NE. 1) CALL ERROR (ERRKEY,1,FILECC,LNUM)
+        READ(CHAR,'(2F6.0)',IOSTAT=ERR) TSKC, TKCBMAX
+        IF (ERR .NE. 0) THEN
+          NMSG = NMSG + 1
+          MSG(NMSG)="Error reading TSKC, TKCBMAX for ASCE PET method."
+        ENDIF
+
+!       Read short reference crop parameters
+        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+        IF(ISECT .NE. 1) CALL ERROR (ERRKEY,1,FILECC,LNUM)
+        READ(CHAR,'(2F6.0)',IOSTAT=ERR) SSKC, SKCBMAX
+        IF (ERR .NE. 0) THEN
+          NMSG = NMSG + 1
+          MSG(NMSG)="Error reading SSKC, SKCBMAX for ASCE PET method."
+        ENDIF
+
+        CLOSE (LUNCRP)
+
+!       Check for value with valid ranges.
+        SSKC    = MAX(0.30,MIN(1.0,SSKC))
+        SKCBMAX = MAX(0.25,MIN(1.5,SKCBMAX))
+        TSKC    = MAX(0.30,MIN(1.0,TSKC))
+        TKCBMAX = MAX(0.25,MIN(1.5,TKCBMAX))
+      ELSE
+!       If fallow, use minimum values
+        SSKC    = 0.30
+        SKCBMAX = 0.25
+        TSKC    = 0.30
+        TKCBMAX = 0.25
+      ENDIF
+
+ 100  IF (NMSG > 0) THEN
+        MSG(NMSG+1) ="ASCE PET method may not be valid for this crop."
+        MSG(NMSG+2) = "Model will stop."
+        CALL WARNING(NMSG+2, ERRKEY, MSG)
+        CALL ERROR(ERRKEY,1,FILECC,LNUM)
+      ENDIF
+
+!     Store the values for retreival in SPAM.
+      IF (MEEVP.EQ.'S') THEN
+        CALL PUT('SPAM', 'SKC', SSKC)
+        CALL PUT('SPAM', 'KCBMAX', SKCBMAX)
+      ELSEIF (MEEVP.EQ.'T') THEN
+        CALL PUT('SPAM', 'SKC', TSKC)
+        CALL PUT('SPAM', 'KCBMAX', TKCBMAX)
+      ENDIF
+
+      RETURN
+      END SUBROUTINE READ_ASCE_KT
 !===========================================================================
