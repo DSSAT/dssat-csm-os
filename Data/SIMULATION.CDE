@@ -161,7 +161,6 @@ CRGRO    CO   CROPGRO-Cotton
 CRGRO    CP   CROPGRO-Cowpea
 CRGRO    FA   CROPGRO-Fallow
 CRGRO    FB   CROPGRO-Faba bean
-CRGRO    FX   CROPGRO-Flax
 CRGRO    GB   CROPGRO-Grean bean
 CRGRO    LT   CROPGRO-Lentil
 CRGRO    NP   CROPGRO-Napier grass
@@ -197,6 +196,6 @@ TFAPS    TF   NWHEAT-Teff
 WHAPS    WH   NWHEAT-Wheat
 PRFRM    BM   FORAGE-Bermudagrass
 PRFRM    BR   FORAGE-Brachiaria
-PRFRM    G0   FORAGE-Generic
+PRFRM    BH   FORAGE-Bahiagrass
 PRFRM    AL   FORAGE-Alfalfa
 SUOIL    SU   OILCROP-Sunflower
