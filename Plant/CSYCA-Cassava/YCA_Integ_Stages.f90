@@ -73,26 +73,26 @@
         ! (LAH Check whether can move brstage calc up here! 
         ! (If do this, brstage in brfx below must be reduced by 1))
         IF (MEDEV == 'LNUM') THEN 
-            IF (PDL(INT(BRSTAGE)) > 0.0) THEN                                                          ! MSTG = KEYPSNUM
-                TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE)+1)           ! EQN 004
+            IF (PDL(BRSTAGEINT) > 0.0) THEN                                                          ! MSTG = KEYPSNUM
+                TVR1 = FLOAT(BRSTAGEINT) + (LNUM-LNUMTOSTG(BRSTAGEINT))/PDL(BRSTAGEINT+1)           ! EQN 004
             ELSE
-                TVR1 = FLOAT(INT(BRSTAGE))
+                TVR1 = FLOAT(BRSTAGEINT)
             ENDIF
         ELSE
-            IF (PD(INT(BRSTAGE)) >= 0.0 .AND.(INT(BRSTAGE)+1) < PSX) THEN                                                          ! MSTG = KEYPSNUM
-                TVR1 = FLOAT(INT(BRSTAGE)) + (DABR-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE)+1)              ! EQN 004 !LPM 17JUL19 use DABR instead of CUMDU 
+            IF (PD(BRSTAGEINT) >= 0.0 .AND.(BRSTAGEINT+1) < PSX) THEN                                                          ! MSTG = KEYPSNUM
+                TVR1 = FLOAT(BRSTAGEINT) + (DABR-PSTART(BRSTAGEINT))/PD(BRSTAGEINT+1)              ! EQN 004 !LPM 17JUL19 use DABR instead of CUMDU 
             ELSE
-                TVR1 = FLOAT(INT(BRSTAGE))
+                TVR1 = FLOAT(BRSTAGEINT)
             ENDIF         
         ENDIF    
         
 
-        IF (INT(BRSTAGE) == 0.0) THEN
-            BRNUMST(INT(BRSTAGE)) = 1
-            BRNUMSHM = BRNUMST(INT(BRSTAGE))
+        IF (BRSTAGEINT == 0.0) THEN
+            BRNUMST(BRSTAGEINT) = 1
+            BRNUMSHM = BRNUMST(BRSTAGEINT)
             DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
                IF (SHNUM-FLOAT(L-1) > 0.0) THEN
-                   BRNUMSH(L) = BRNUMST(INT(BRSTAGE))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
+                   BRNUMSH(L) = BRNUMST(BRSTAGEINT)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
                    BRNUMSHM = BRNUMSHM + BRNUMSH(L)                             
                ENDIF
             ENDDO
@@ -112,7 +112,7 @@
                 ENDIF                                
             !LPM 11DEC2020 to reduce # of branches due to water or N stress
             !LPM 16FEB2021 avoid reduction in the number of branches of no more than 50% of the maximum branching
-                BRNUMST(INT(TVR1)) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))                    ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
+                BRNUMST(INT(TVR1)) = BRNUMST(BRSTAGEINT)*BRFX(INT(TVR1))                    ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
                 BRNUMSHM = BRNUMST(INT(TVR1))
             ENDIF
             DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
@@ -153,7 +153,7 @@
                         ! Brstage cannot go above harvest stage 
                         BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
                         LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
-                        LNUMSIMSTG(L) = LNUMSIMTOSTG(L+1)-LNUMSIMTOSTG(L)                 !LPM 21MAR15 LNUMSIMSTG Introduces to save the number of leaves by cohort
+                        LNUMSIMSTG(L) = INT(LNUMSIMTOSTG(L+1)-LNUMSIMTOSTG(L))                 !LPM 21MAR15 LNUMSIMSTG Introduces to save the number of leaves by cohort
                         EXIT
                     ENDIF
                 ENDDO
@@ -167,14 +167,14 @@
                         LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
                         ! Brstage cannot go above harvest stage 
                         !LPM 21MAR15 LNUMSIMSTG Introduces to save the number of leaves by cohort, necessary to check if has to be +1 as LNUMSG 
-                        LNUMSIMSTG(L) = LNUMSIMTOSTG(L+1)-LNUMSIMTOSTG(L)                 
+                        LNUMSIMSTG(L) = INT(LNUMSIMTOSTG(L+1)-LNUMSIMTOSTG(L))                 
                         BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
                         EXIT
                     ENDIF  
                 ENDDO
             ENDIF  
         ENDIF
-        
+        BRSTAGEINT = INT(BRSTAGE)
         ! STAGES:leaf numbers 
         LNUM = AMAX1(0.0,(AMIN1(FLOAT(LNUMX-1),(LNUM+LNUMG))))                                                         !EQN 348
         LNUMSG = INT(LNUM)+1  ! Youngest growing leaf
@@ -184,7 +184,7 @@
         !-----------------------------------------------------------------------
         
         !IF (INT(BRSTAGE) > 10 .OR. INT(BRSTAGE) < 0.AND.GESTAGE > 0.5) THEN !LPM 21MAR2016 To separate germination and emergence
-        IF (INT(BRSTAGE) > PSX .OR. INT(BRSTAGE) < 0.AND.GESTAGE > 1.0) THEN !LP 23JUL19 to use PSX instead of 10
+        IF (BRSTAGEINT > PSX .OR. BRSTAGEINT < 0.AND.GESTAGE > 1.0) THEN !LP 23JUL19 to use PSX instead of 10
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '
             WRITE(fnumerr,*) 'Brstage out of range allowed for branching        '
@@ -198,13 +198,13 @@
             STOP ' '
         ENDIF
         ! NB. Status at start of branch tier
-        IF (INT(BRSTAGE) > INT(BRSTAGEPREV).AND.STGYEARDOY(INT(BRSTAGE)) >= 9999999) THEN
-            STGYEARDOY(INT(BRSTAGE)) = YEARDOY
-            LAISTG(INT(BRSTAGE)) = LAIPREV 
-            LNUMSTG(INT(BRSTAGE)) = LNUMPREV
+        IF (BRSTAGEINT > INT(BRSTAGEPREV).AND.STGYEARDOY(BRSTAGEINT) >= 9999999) THEN
+            STGYEARDOY(BRSTAGEINT) = YEARDOY
+            LAISTG(BRSTAGEINT) = LAIPREV 
+            LNUMSTG(BRSTAGEINT) = LNUMPREV
             ! CWAD and CNAD not include the seed
-            CWADSTG(INT(BRSTAGE)) = CWADPREV
-            CNADSTG(INT(BRSTAGE)) = CNADPREV
+            CWADSTG(BRSTAGEINT) = CWADPREV
+            CNADSTG(BRSTAGEINT) = CNADPREV
         ENDIF
         
         ! Primary stages.   Calculated using Pstart
@@ -259,7 +259,7 @@
         
         !IF (GESTAGE > 0.1) THEN !LPM 21MAR2016 Branching after emergence
         IF (GESTAGE >= 1.0) THEN
-            IF (INT(BRSTAGE) /= INT(BRSTAGEPREV)) THEN
+            IF (BRSTAGEINT /= INT(BRSTAGEPREV)) THEN
                 TMAXPC = 0.0
                 TMINPC = 0.0
                 TMEANPC = 0.0
@@ -284,9 +284,9 @@
             DAYLCC = DAYLCC + DAYL
             RAINCC = RAINCC + RAIN
             
-            RAINPC(INT(BRSTAGE)) = RAINPC(INT(BRSTAGE)) + RAIN
-            ETPC(INT(BRSTAGE))   = ETPC(INT(BRSTAGE)) + ET 
-            EPPC(INT(BRSTAGE))   = EPPC(INT(BRSTAGE)) + EP 
+            RAINPC(BRSTAGEINT) = RAINPC(BRSTAGEINT) + RAIN
+            ETPC(BRSTAGEINT)   = ETPC(BRSTAGEINT) + ET 
+            EPPC(BRSTAGEINT)   = EPPC(BRSTAGEINT) + EP 
             
             CO2PC = CO2PC + CO2
             NFPPC = NFPPC + NFP
@@ -300,21 +300,21 @@
             ETCC   = ETCC + ET
             EPCC   = EPCC + EP 
             
-            PDAYS(INT(BRSTAGE)) = PDAYS(INT(BRSTAGE)) + 1
+            PDAYS(BRSTAGEINT) = PDAYS(BRSTAGEINT) + 1
             CDAYS = CDAYS + 1
-            IF (PDAYS(INT(BRSTAGE)) > 0.0) THEN
-                TMAXPAV(INT(BRSTAGE)) = TMAXPC / PDAYS(INT(BRSTAGE))
-                TMINPAV(INT(BRSTAGE)) = TMINPC / PDAYS(INT(BRSTAGE))
-                TMEANAV(INT(BRSTAGE)) = TMEANPC / PDAYS(INT(BRSTAGE))
-                SRADPAV(INT(BRSTAGE)) = SRADPC / PDAYS(INT(BRSTAGE))
-                DAYLPAV(INT(BRSTAGE)) = DAYLPC / PDAYS(INT(BRSTAGE))
-                DAYLST(INT(BRSTAGE)) = DAYL
-                CO2PAV(INT(BRSTAGE)) = CO2PC / PDAYS(INT(BRSTAGE))
-                RAINPAV(INT(BRSTAGE)) = RAINPC(INT(BRSTAGE)) / PDAYS(INT(BRSTAGE))
-                NFPPAV(INT(BRSTAGE)) = NFPPC / PDAYS(INT(BRSTAGE))
-                NFGPAV(INT(BRSTAGE)) = NFGPC / PDAYS(INT(BRSTAGE))
-                WFPPAV(INT(BRSTAGE)) = WFPPC / PDAYS(INT(BRSTAGE))
-                WFGPAV(INT(BRSTAGE)) = WFGPC / PDAYS(INT(BRSTAGE))
+            IF (PDAYS(BRSTAGEINT) > 0.0) THEN
+                TMAXPAV(BRSTAGEINT) = TMAXPC / PDAYS(BRSTAGEINT)
+                TMINPAV(BRSTAGEINT) = TMINPC / PDAYS(BRSTAGEINT)
+                TMEANAV(BRSTAGEINT) = TMEANPC / PDAYS(BRSTAGEINT)
+                SRADPAV(BRSTAGEINT) = SRADPC / PDAYS(BRSTAGEINT)
+                DAYLPAV(BRSTAGEINT) = DAYLPC / PDAYS(BRSTAGEINT)
+                DAYLST(BRSTAGEINT) = DAYL
+                CO2PAV(BRSTAGEINT) = CO2PC / PDAYS(BRSTAGEINT)
+                RAINPAV(BRSTAGEINT) = RAINPC(BRSTAGEINT) / PDAYS(BRSTAGEINT)
+                NFPPAV(BRSTAGEINT) = NFPPC / PDAYS(BRSTAGEINT)
+                NFGPAV(BRSTAGEINT) = NFGPC / PDAYS(BRSTAGEINT)
+                WFPPAV(BRSTAGEINT) = WFPPC / PDAYS(BRSTAGEINT)
+                WFGPAV(BRSTAGEINT) = WFGPC / PDAYS(BRSTAGEINT)
             ENDIF
             IF (CDAYS > 0) THEN              
                 TMAXCAV = TMAXCC / CDAYS

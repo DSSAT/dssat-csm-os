@@ -64,7 +64,7 @@
         IF(GROSTP > 0.0) THEN
             !LPM06JUL2017 It is assumed a branching angle of 60 from the vertical line (cos(60)=0.5)
             !LPM 15JUL2020 Adjust canopy height to m instead of cm and use NODLT instead of SESR 
-            DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (isLeafExpanding(node(BR,LF))) THEN
                         IF(BRSTAGE>=1.0) THEN

@@ -102,7 +102,7 @@
             SRNDEM = (SRWTGRSP)*(SRNPCS/100.0)                      !EQN 155
 
                         
-            DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP>0.0) THEN
                         node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%NODEWTG)*node(BR,LF)%SNCX
@@ -237,7 +237,7 @@
             node%NDEMLMN = 0.0
     
             ! For supplying minimum
-            DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     !NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
                     node(BR,LF)%NDEMSMN = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM
@@ -312,7 +312,7 @@
             NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1) + LNDEM-LNUSE(1)                                                                !EQN 219
             IF (NDEM2 > 0.0)THEN
                 !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
-                DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
+                DO BR = 0, BRSTAGEINT                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (GROSTP > 0.0) THEN
                             SNUSEN(2,BR,LF) = (node(BR,LF)%SNDEMN - SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
@@ -342,7 +342,7 @@
     
             LNUSE(0) = LNUSE(1) + LNUSE(2) !+ LNUSE(3)                                                                  !EQN 225
             SNUSE(0) = SNUSE(1) + SNUSE(2)                                                                             !EQN 226
-            DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP > 0.0) THEN
                         SNUSEN(0,BR,LF) = SNUSEN(1,BR,LF) + SNUSEN(2,BR,LF)
@@ -362,7 +362,7 @@
             !NPOOLS = AMAX1 (0.0,((woodyWeight())*(SANC-SNCM)*NUSEFAC))                                                     !EQN 232
             NPOOLS = 0.0
             NPOOLL = 0.0
-            DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)          
                     IF(STWTP+CRWTP > 0.0)THEN
                         node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%NODEWT * (woodyWeight())/(STWTP+CRWTP))*(node(BR,LF)%SANC - node(BR,LF)%SNCM)*NUSEFAC))  
@@ -435,7 +435,7 @@
                 SRNDEM = (SRWTGRSP)*(SRNPCS/100.0)                     !EQN 155
 
                         
-                DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
+                DO BR = 0, BRSTAGEINT                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (GROSTP>0.0) THEN
                             node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%NODEWTG)*node(BR,LF)%SNCX * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)
@@ -532,7 +532,7 @@
                 node%NDEMLMN = 0.0
     
                 ! For supplying minimum
-                DO BR = 0, BRSTAGE                                                                                                                                                               
+                DO BR = 0, BRSTAGEINT                                                                                                                                                               
                     DO LF = 1, LNUMSIMSTG(BR)
                         node(BR,LF)%NDEMSMN = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)
                         IF (PLAGSB2 > 0.0 .AND. isLeafExpanding(node(BR,LF))) THEN
@@ -544,7 +544,7 @@
                 IF (NDEMMN > 0.0) THEN
                     RNUSE(1) = (RTWTG*RNCM* AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2))*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
 
-                    DO BR = 0, BRSTAGE                                                                                                                                                              
+                    DO BR = 0, BRSTAGEINT                                                                                                                                                              
                         DO LF = 1, LNUMSIMSTG(BR)
                             IF (GROSTP > 0.0) THEN
                                 SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)* node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
@@ -568,7 +568,7 @@
 
                 NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1) + LNDEM-LNUSE(1)                                                                !EQN 219
                 IF (NDEM2 > 0.0)THEN
-                    DO BR = 0, BRSTAGE                                                                                                                                                              
+                    DO BR = 0, BRSTAGEINT                                                                                                                                                              
                         DO LF = 1, LNUMSIMSTG(BR)
                             IF (GROSTP > 0.0) THEN
                                 SNUSEN(2,BR,LF) = (node(BR,LF)%SNDEMN - SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
@@ -591,7 +591,7 @@
     
                 LNUSE(0) = LNUSE(1) + LNUSE(2)                                                                   !EQN 225
                 SNUSE(0) = SNUSE(1) + SNUSE(2)                                                                             !EQN 226
-                DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
+                DO BR = 0, BRSTAGEINT                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (GROSTP > 0.0) THEN
                             SNUSEN(0,BR,LF) = SNUSEN(1,BR,LF) + SNUSEN(2,BR,LF)
@@ -609,7 +609,7 @@
         ENDIF    ! End of N uptake and growth adjustmenets
     
     ! Area and assimilate factors for each leaf
-                DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
+                DO BR = 0, BRSTAGEINT                                                                                        !LPM 23MAR15 To consider cohorts
                     DO LF = 1, LNUMSIMSTG(BR)   
                         IF (node(BR,LF)%LAGETT <= LLIFGTT .AND. node(BR,LF)%LAPOTX2 > 0.0 ) THEN
                             IF (LNUMSIMSTG(BR) < LCNUMX) THEN
@@ -629,7 +629,7 @@
                                     ENDIF
                                 ENDDO
                                 !IF (CFLAFLF == 'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
-                                IF (LF == LNUMSIMSTG(BR) .AND. LNUMG > LNUMNEED .AND. BR == BRSTAGE) THEN                                             ! This is where new leaf is initiated
+                                IF (LF == LNUMSIMSTG(BR) .AND. LNUMG > LNUMNEED .AND. BR == BRSTAGEINT) THEN                                             ! This is where new leaf is initiated
                                     node(BR,LF+1)%LAGL3 = node(BR,LF+1)%LAGL * AMIN1(node(0,0)%AFLF,node(0,0)%NFLF2)
                                     node(BR,LF+1)%LATL3= node(BR,LF+1)%LATL3 + node(BR,LF+1)%LAGL3                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
                                     node(BR,LF+1)%AFLF = AMIN1(1.0,node(BR,LF+1)%AFLF + AMAX1(0.0,node(0,0)%AFLF) * (node(BR,LF+1)%LAGL)/node(BR,LF+1)%LAPOTX2)             !EQN 151   

@@ -44,6 +44,7 @@ Module YCA_First_Trans_m
     REAL    :: BRNUMST(0:PSX)          ! Branch number/shoot (>forking) #          ! (From RunInit) !LPM 23MAR15 to have the apex number by branch level   
     REAL    :: BRNUMSTPREV(0:PSX)      ! Branch number/shoot,previous   #          ! (From Output)  !LPM 23MAR15 to have the apex number by branch level      
     INTEGER :: BROLDESTA               ! Br with Leaf  ,oldest active   #          ! (From Integrate)
+    INTEGER :: BRSTAGEINT              ! Branching stage,integer        #          
     REAL    :: BRSTAGEPREV             ! Branching stage,previous       #          ! (From SeasInit)
     REAL    :: CAID                    ! Canopy leaf area index         #          ! (From SeasInit)
     REAL    :: CANHTG                  ! Canopy height growth           cm         ! (From SeasInit)  
@@ -430,7 +431,7 @@ Module YCA_First_Trans_m
     REAL    :: LNUMPREV                ! Leaf number,Haun stage         #          ! (From SeasInit)  
     REAL    :: LNUMSERR                ! Leaf #,error                   %          ! (From Output)    
     INTEGER :: LNUMSG                  ! Leaf number produced on axis   #          ! (From SeasInit)  
-    REAL    :: LNUMSIMSTG(0:PSX)       ! Leaf numbers by br level sim   #          ! LPM 21MAR15 to save the number of leaves by cohort
+    INTEGER :: LNUMSIMSTG(0:PSX)       ! Leaf numbers by br level sim   #          ! LPM 21MAR15 to save the number of leaves by cohort
     REAL    :: LNUMSIMTOSTG(0:PSX)     ! Leaf numbers,fork,simul        #          ! (From Integrate) 
     REAL    :: LNUMSM                  ! Leaf #/shoot,Haun,maturity     #          ! (From SeasInit)  
     REAL    :: LNUMSMM                 ! Leaf #,mature,measured         #/s        ! (From SeasInit)  
@@ -1260,6 +1261,7 @@ Module YCA_First_Trans_m
         brnumst = 1.0
         BRNUMSHM = 0.0
         BRNUMSHMM = -99.0
+        BRSTAGEINT = 0
         caid = 0.0
         canhtg = 0.0
         carboadj = 0.0
@@ -1425,7 +1427,7 @@ Module YCA_First_Trans_m
         lndem = 0.0
         lnphc = 0.0
         lnum = 0.0
-        lnumsimstg = 0.0   !LPM 09AGO2015 To initialize the variable lnumsimstg
+        lnumsimstg = 0     !LPM 09AGO2015 To initialize the variable lnumsimstg
         lnumsimtostg = 0.0 !LPM 09AGO2015 To initialize the variable lnumsimtostg
         lnumg = 0.0
         lnumprev = 0.0

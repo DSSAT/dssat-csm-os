@@ -40,7 +40,7 @@
             RNCM = (RNCMN(0) + RNCMN(1))/2.0
             !LPM 22MAY2015 the stem nitrogen concentration changes according with the canopy level age (non-lignified to lignified)
             IF((LLIFATT+LLIFSTT) > ZERO) THEN
-                DO BR = 0, BRSTAGE                                                                                        
+                DO BR = 0, BRSTAGEINT                                                                                        
                  DO LF = 1, LNUMSIMSTG(BR)
                     IF (isLeafExpanding(node(BR,LF))) THEN
                          node(BR,LF)%SNCX = SNCXS(0)
@@ -70,7 +70,7 @@
 
 
             IF ((woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO .AND. LFWT > ZERO) THEN
-                DO BR = 0, BRSTAGE                                                                                        
+                DO BR = 0, BRSTAGEINT                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
                             node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
@@ -97,7 +97,7 @@
             LCNCT = 0.0
             LCNMT = 0.0 
             IF ((LFWT+woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
-                DO BR = 0, BRSTAGE                                                                                        
+                DO BR = 0, BRSTAGEINT                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
                         node(BR,LF)%SCNC = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCX
                         SCNCT =  SCNCT + node(BR,LF)%SCNC
@@ -125,7 +125,7 @@
             node%SNCR = 0.0
             RNCR = 0.0
             Lcount = 0
-            DO BR = 0, BRSTAGE                                                                              !LPM25MAY2015 To consider different N concentration by node according with node age                                                                       
+            DO BR = 0, BRSTAGEINT                                                                              !LPM25MAY2015 To consider different N concentration by node according with node age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)  
                     IF (isLeafAlive(node(BR,LF))) THEN
                         Lcount = Lcount + 1 
