@@ -1,8 +1,6 @@
-*NWHEAT CULTIVAR COEFFICIENTS: TFAPS048 MODEL
+*TEFF CULTIVAR COEFFICIENTS: TFAPS048 MODEL
 !
 !********** NWheat transition Cultivar Coefficient File ***************
-!
-!(Comments Here)
 !
 ! COEFF       DEFINITIONS
 ! ========    ===========
@@ -10,20 +8,26 @@
 ! VAR-NAME    Name of cultivar
 ! EXPNO       Number of experiments used to estimate cultivar parameters
 ! ECO#        Ecotype code of this cultivar, points to the Ecotype in the
-!             ECO file (currently not used).
 !
 ! VSEN	      sensitivity to vernalisation
 ! PPSEN       sensitivity to photoperiod (keep <= 19.0 for prevent LAI from spiking)
-! P1	      Thermal time from seedling emergence to the end of the juvenile phase
-! P5	      Thermal time (base 0oC) from beginning of grainfill to maturity: range 500 to 700
+! P1	        Thermal time from seedling emergence to the end of the juvenile phase
+! P5	        Thermal time (base 0oC) from beginning of grainfill to maturity: range 500 to 700
 ! PHINT       Phyllochron interval
 ! GRNO        Coefficient of 100 kernels per stem weight at the beginning of grain filling [100 kernels (g stem)-1] 
 ! MXFIL       Potential kernel growth rate [mg kernel-1 day-1]:  Values between 1.0 and 3.0
 ! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) values 1.0 - 3.0
 ! SLAP1       ratio of leaf area to mass at emergence (cm2/g)
-
-!                                        1     2     3     4     5     6     7     8     9
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
 @VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1
+!Coeffient #                             1     2     3     4     5     6     7     8     9
+!Calibration                             P     P     P     P     P     G     G     G     N
+
+999991 MINIMA               . DFAULT  1.00  14.0 100.0 100.0  70.0  16.0  1.00  1.00 400.0
+999992 MAXIMA               . DFAULT  1.00  19.0 100.0 700.0 120.0  36.0  1.80  3.00 400.0
+
 IB0135 Keyh (local)         . IB0004  1.00  18.0 100.0 600.0 110.0  16.0  1.00  3.00 400.0
 IB0136 DZ-974 & Keyh        . IB0004  1.00  18.0 100.0 500.0 105.0  16.0  1.00  1.00 400.0
 IB0157 DZ-Cr-387            . IB0004  1.00  18.0 100.0 100.0 120.0  32.0  1.30  3.00 400.0

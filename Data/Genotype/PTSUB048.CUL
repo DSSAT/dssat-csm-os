@@ -13,8 +13,16 @@
 !             that immediately follows tuber induction
 ! P2          Tuber initiation sensitivity to long photoperiods
 ! TC          Upper critical temperature for tuber initiation (C)
-
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
 @VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    PD    P2    TC
+!Coeffient #                             1     2     3     4     5
+!Calibration                             G     G     G     P     P
+
+999991 MINIMA               . DFAULT  900.  21.0   0.5   0.3  15.0
+999992 MAXIMA               . DFAULT 2100.  26.0   1.0   0.9  22.0
+
 IB0001 MAJESTIC             . IB0001 2000.  22.5   0.8   0.6  17.0   
 IB0002 SEBAGO               . IB0001 1100.  22.5   0.9   0.0  19.0   
 IB0003 Russet Burbank       . IB0001 1100.  26.0   0.9   0.2  17.0 

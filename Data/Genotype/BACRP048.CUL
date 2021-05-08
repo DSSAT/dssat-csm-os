@@ -1,4 +1,4 @@
-$CULTIVARS:BACRP048.20200721   Last edit: 2020-07-21 CHP
+$CULTIVARS:BACRP048.20200721   Last edit: 2021-05-08 GH
 
 ! Coefficients used in the Cropsim model differ from those used in
 ! earlier DSSAT wheat/barley models. They can be calculated
@@ -29,10 +29,13 @@ $CULTIVARS:BACRP048.20200721   Last edit: 2020-07-21 CHP
 ! the current incomplete understanding of the environmental physiology
 ! of barley and other cereals.
 
-*CULTIVARS:BACRP047
+!             P/G/N:Phenology/Growth/Not used for calbration
+
+*CULTIVARS:BACRP048
 !                                     --------- PHENOLOGY (PHASE DURATIONS) -------- -------- P.MODIFIERS -------- -- LEAF PRODN.& SIZE -- SHOOT -- GRAIN --             
 @VAR#  VAR-NAME........  EXP#   ECO#    P1    P2    P3    P4    P5    P6    P7    P8  VREQ VBASE  VEFF  PPS1  PPS2 PHINT  LA1S  LAFV  LAFR SHWTS G#WTS  GWTS
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20
+!Calibration                             P     P     P     P     P     P     P     P     P     P     P     P     P     P     G     G     G     G     G     G
 !                                     oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  Vday  Vday    fr %/10h %/10h  oC.d m2/m2 fr/lf fr/lf     g   #/g    mg      
 999991 MINIMA               . 999991   100    60   100    50    50    10    50   100     0     0     0     0     0    40   0.1  0.01  0.01   0.5    10    10
 999992 MAXIMA               . 999992   800   100   300   500   400   100   300   800    60    30   1.0   300   200   120  10.0  5.00  5.00   5.0    50    75
