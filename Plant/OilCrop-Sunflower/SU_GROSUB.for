@@ -392,7 +392,6 @@
 !     Proportion of lignin in STOVER and Roots
       REAL PLIGLF, PLIGRT
 
-
       TTE  = 350.0
       PHY1 =  39.0
       PHY2 =  24.0
@@ -1318,7 +1317,6 @@ c         PCARB = AMAX1 (PCARB,0.0)
             CUMPH = INT(TLNO)
           ENDIF
 
-         
 
       !   Run the code needed for the particular stage the plant is in
       !
@@ -1396,11 +1394,10 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             trg = trg + ELOFT/8.0
           ENDDO
         ENDIF
-
           !-------------------------------------------------------------
           !   ISTAGE = 1 (Emergence to End of Juvenile Stage)
           !-------------------------------------------------------------
-        IF (ISTAGE.EQ.1) THEN    
+        IF (ISTAGE.EQ.1) THEN   
           DSLAN1 = 0.0
           DSLAN2 = 0.0
           GROLF = 0.0
@@ -1479,7 +1476,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
 !         -------------------------------------------------------------------
 
         ELSEIF (ISTAGE .EQ. 3) THEN   
-          
+
           DSLAN1 = 0.0
           DSLAN2 = 0.0
           GROLF = 0.0
@@ -1830,7 +1827,6 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
 
           IF (SUMDTT .GE. 230.0 .AND. GPP .EQ. 0.0) THEN             ! Include calculations to correct RUE after anthesis
              ! mantainance respiration
-
              PS    = RM/(RI1-1.0)
              RM    = (BIOMAS+RTWT*PLTPOP)*0.008*0.729  ! mantainance respiration
              RI1   = 1.0 + RM/PS !ratio gross net photosyntesis
@@ -1847,7 +1843,8 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
                 EMBWTE  = (PPP - GPP) * EMBWT / PPP
                 GRNWTE  = PERWTE + EMBWTE
  
-                IF (ISWNIT .EQ. 'Y') THEN
+                IF (ISWNIT .EQ. 'Y'.and.grainn.gt.0.0) THEN
+                   write(*,*)'1853',grainn
                    GRAINN1 = GRAINN * (1.0 - GRNWTE / GRNWT)
                    GRAINNE = GRAINN - GRAINN1
                    PERN    = PERN   * GRAINN1 / GRAINN
@@ -1857,7 +1854,6 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
                 GRNWT   = GRNWT  - GRNWTE
                 PERWT   = PERWT  - PERWTE
                 EMBWT   = EMBWT  - EMBWTE
-                
               ELSE
                 PERWTE  = PERWT
                 EMBWTE  = EMBWT
@@ -1944,7 +1940,11 @@ c            PEPE =TRG*(0.70 + 0.30 * SWFAC)
               GROHEAD = 0.0
             ENDIF
             CDGR    = GROPER + GROEMB
-            RGFILL = CDGR/GPP
+            if (gpp.gt.0) then
+              RGFILL = CDGR/GPP
+            ELSE
+              rgfill = 0.
+            endif    
             IF (PEPE.GT.0.0) THEN   
               EMAT  = 0                                       !
              GRORT = 0.0                                     !
@@ -2239,7 +2239,6 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
         CARBO = AMAX1 (CARBO,0.001)
       !
 
-
 !----------------------------------------------------------------------
 !   The following code is executed each day regardless of ISTAGE value
 !----------------------------------------------------------------------
@@ -2297,11 +2296,12 @@ c      PLAS  = (PLA-SENLA)*(1.0-SLFP)
         IF (((LEAFNO.GT.3).AND.(LAI.LE.0.0).AND.(ISTAGE.LE.4))
      &                      .OR. (ICOLD .GE. CDAY)) THEN
           
-          WRITE (*,2800)
+c          WRITE (*,2800)
           IF (IDETO .EQ. 'Y') THEN
             WRITE (NOUTDO,2800)
           ENDIF
           ISTAGE = 6
+          MDATE = YRDOY
         ENDIF
 
         IF (ISTAGE .LT. 4) THEN
@@ -2679,7 +2679,6 @@ C       WTN = WTNCAN*10. / BIOMAS * 100.
         SENESCE % ResE(0,1) = CumLfNSenes
 
       ENDIF       !Endif for DYNAMIC LOOP
-
       RETURN
 
 !----------------------------------------------------------------------
