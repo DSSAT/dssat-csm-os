@@ -458,7 +458,8 @@ C      REAL        PRLF
 ! 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! ** JIL Read AZIR (Row direction, PLRD)
             READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC,AZIR ; LNUM=LNUM+1
- 60         FORMAT(25X,F5.2,13X,F5.2,1X,F5.2,1X,F5.2)
+C 60         FORMAT(25X,F5.2,13X,F5.2,1X,F5.2,1X,F5.2)
+ 60         FORMAT(24X,F6.0,13X,F5.2,1X,F5.2,1X,F5.2)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 !     -----------------------------------------------------------------

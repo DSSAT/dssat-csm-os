@@ -226,8 +226,8 @@ C-----------------------------------------------------------------------
       PlantStres % ACTIVE = .FALSE.
       PlantStres % StageName = '                       '
       SELECT CASE (CROP)
-      CASE ('BN','CH','CN','CO','CP','FB','PE',
-     &      'PN','PP','PR','SB','TM','VB','GB','LT')
+      CASE ('BN','CH','CN','CO','CP','FB','GB','PE','LT',
+     &      'PN','PP','PR','QU','SB','SF','SU','TM','VB')
         PlantStres % NSTAGES = 4
         PlantStres % StageName(1)  = 'Emergence -First Flower'
         PlantStres % StageName(2)  = 'First Flower-First Seed'
@@ -270,8 +270,8 @@ C-----------------------------------------------------------------------
 
 !     Set ACTIVE variable to indicate that current phase is active
       SELECT CASE (CROP)
-      CASE ('BN','CH','CN','CO','CP','FB','PE',
-     &      'PN','PP','PR','SB','TM','VB','GB','LT','SF','SU')
+      CASE ('BN','CH','CN','CO','CP','FB','GB','LT',
+     &     'PE','PN','PP','PR','QU','SB','SF','SU','TM','VB')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(5)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -606,6 +606,7 @@ C  Assigns STNAME for various CROPGRO crops.
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  02/01/2001 CHP Written
+C  08/28/2020 GH Added quinoa
 C=======================================================================
 
       SUBROUTINE STNAMES(CROP, PLME, STNAME)
@@ -666,6 +667,28 @@ C-----------------------------------------------------------------------
         STNAME(15)= 'Sowing    '
         STNAME(16)= 'Harvest   '
 
+! GH
+! KJB - 7/27/2020 adding stages for quinoa
+! KJB very similar to sunflower, but do not like "thalam"
+      CASE ('QU')
+!     For stage-dependant irrigation - send GSTAGE back to irrig routine
+        STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
+        STNAME(2) = 'Unifoliate'
+        STNAME(3) = 'End Juven.'
+        STNAME(4) = 'Flower Ind'
+        STNAME(5) = 'Repr. bud'
+        STNAME(6) = '1st inflor'
+        STNAME(7) = '1st inflor'
+        STNAME(8) = '1st Flw/Sd'
+        STNAME(9) = 'End Sd-add'
+        STNAME(10)= 'Phys. Mat '
+        STNAME(11)= 'Harv. Mat '
+        STNAME(12)= 'End Msnode'
+        STNAME(13)= 'End Leaf  '
+        STNAME(14)= 'Start Sim '
+        STNAME(15)= 'Sowing    '
+        STNAME(16)= 'Harvest   '
+        
 ! KJB
       CASE ('PN')
         STNAME(1) = 'Emergence '

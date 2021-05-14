@@ -72,15 +72,15 @@
 
             
         DO L = 0,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
-            IF (L <= 2)THEN
+            IF (L <= 4)THEN
                 PD(L) = PDL(L)
             ELSE
-                PD(L) = PDL(2)
+                PD(L) = PDL(4)
             ENDIF
         ENDDO
             
             !IF (MSTG > 2) THEN !LPM 07MAR15 MSTG to PSX
-            IF (PSX > 2) THEN
+            IF (PSX > 4) THEN
                 Ctrnumpd = 0
                 !DO L = 2,MSTG-1  !LPM 04MAR15 It is not necessary the -1 because there is not a MSTG with a different value 
                 DO L = 1,PSX
@@ -123,6 +123,8 @@
             RNCMN(L) = RNPCMN(L)/100.0
         ENDDO
         
+        LNSC =  LNSC/100.0
+        
         IF (DFPE < 0.0) THEN  
             DFPE = 1.0
             WRITE(MESSAGE(1),'(A51)') 'Pre-emergence development factor missing. Set to 1.'
@@ -151,8 +153,8 @@
         IF (RSEN < 0.0) RSEN = 5.0
         
         ! Reduction factor limits
-        IF (WFPL < 0.0) WFPL = 0.0
-        IF (WFPU < 0.0) WFPU = 1.0
+        !IF (WFPL < 0.0) WFPL = 0.0
+        !IF (WFPU < 0.0) WFPU = 1.0
         IF (WFGL < 0.0) WFGL = 0.0
         IF (WFGU < 0.0) WFGU = 1.0
         IF (NFPL < 0.0) NFPL = 0.0
@@ -160,22 +162,16 @@
         IF (NFGL < 0.0) NFGL = 0.0
         IF (NFGU < 0.0) NFGU = 1.0
         IF (NLLG <= 0.0) NLLG = 0.95
-        IF (NFSU < 0.0) NFSU = 0.2
+        !IF (NFSU < 0.0) NFSU = 0.2
         
         ! Various
-        IF (RSFRS < 0.0) RSFRS = 0.05
+        !IF (RSFRS < 0.0) RSFRS = 0.05 !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
         IF (LSENI < 0.0) LSENI = 0.0
         IF (PARIX <= 0.0) PARIX = 0.995
-        IF (NTUPF < 0.0) NTUPF = 0.2
+        !LPM 15NOV2020 Remove the N top-up fraction
+        !IF (NTUPF < 0.0) NTUPF = 0.2
         IF (PPEXP < 0.0) PPEXP = 2.0
-        IF (RLFWU < 0.0) RLFWU = 0.5  
         IF (RTUFR < 0.0) RTUFR = 0.05
-        IF (BRFX(1) <= 0.0) BRFX(1) = 3.0
-        IF (BRFX(2) <= 0.0) BRFX(2) = 3.0
-        IF (BRFX(3) <= 0.0) BRFX(3) = 3.0
-        IF (BRFX(4) <= 0.0) BRFX(4) = 3.0
-        IF (BRFX(5) <= 0.0) BRFX(5) = BRFX(4) !LPM 06JUL2017 Use BRFX(4) for branch level higher than 4
-        IF (BRFX(6) <= 0.0) BRFX(6) = BRFX(4)
         IF (SHGR(20) < 0.0) THEN 
             DO L = 3,22
                 SHGR(L) = 1.0 !  Shoot sizes relative to main shoot
@@ -183,14 +179,10 @@
         ENDIF
         
         IF (SLPF <= 0.0 .OR. SLPF > 1.0) SLPF = 1.0
-        IF (SLPF < 1.0) THEN
-            WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A42,F5.1)') ' Soil fertility factor was less than 1.0: ',slpf
-        ENDIF  
         
         IF (PLPH <= 0.0) THEN
-            WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A27,F6.1,A14)') ' Plants per hill <= 0.0 at ',PLPH,'  Reset to 1.0'
+            WRITE (MESSAGE,'(A27,F6.1,A14)') ' Plants per hill <= 0.0 at ',PLPH,'  Reset to 1.0'
+            CALL WARNING(1,'CSYCA',MESSAGE)
             PLPH = 1.0
         ENDIF  
         
@@ -222,8 +214,14 @@
         KEP = (KCAN/(1.0-TPAR)) * (1.0-TSRAD)                                                                          ! EQN 009
         
         ! Photoperiod sensitivities
-        DO L = 0,10
-            IF (DAYLS(L) < 0.0) DAYLS(L) = 0.0
+        DO L = 1,PSX
+            IF (L<=3) THEN
+                IF (DAYLS(L)< 0.0) DAYLS(L) = 0.0
+                IF (BRFX(L) <= 0.0) BRFX(L) = 3.0
+            ELSE
+                DAYLS(L) = DAYLS(L-1)
+                IF (BRFX(L) <= 0.0) BRFX(L) = BRFX(L-1)
+            ENDIF
         ENDDO
         IF (Dayls(1) == 0.0.AND.dfpe < 1.0) THEN
             WRITE(MESSAGE(1),'(A36,A41)') 'Cultivar insensitive to photoperiod ', 'but pre-emergence photoperiod factor < 1.' 
@@ -243,10 +241,10 @@
         ENDIF
         
         ! Critical and starting N concentrations
-        LNCX = LNCXS(0)
+        node%LNCX = LNCXS(0)
         node%SNCX = SNCXS(0)
         RNCX = RNCXS(0)
-        LNCM = LNCMN(0)
+        node%LNCM = LNCMN(0)
         node%SNCM = SNCMN(0)
         RNCM = RNCMN(0)
         
@@ -270,8 +268,8 @@
         IF (ISWWATCROP == 'N') THEN
             ! Plant water status effects on growth turned off
             WFGU = 0.0
-            WFPU = 0.0
-            WFSU = 0.0
+            !WFPU = 0.0
+            !WFSU = 0.0
             WFRTG = 0.0
         ENDIF
         
@@ -292,9 +290,6 @@
         SEEDNI = (SDNPCI/100.0)*(SDRATE/(PPOP*10.0))                                                                !EQN 027
         IF (ISWNIT /= 'N') THEN
             SEEDN = SEEDNI
-            WRITE(MESSAGE(1),'(A39)') 'Simulations with N are under evaluation'
-            WRITE(MESSAGE(2),'(A68)') 'it could affect your results, consider to turn off N for simulations'
-            CALL WARNING(2,'CSYCA',MESSAGE)
         ELSE
             SEEDN = 0.0
             SDNAP = 0.0
@@ -310,8 +305,6 @@
                 IF (PLME /= 'V') THEN
                     WRITE(MESSAGE(1),'(A16,A1,A15,A24)') 'PLANTING method ',PLME,' not an option ', ' Changed to V (Vertical)'
                     CALL WARNING(1,'CSYCA',MESSAGE)
-                    WRITE(FNUMWRK,*)' '
-                    WRITE(FNUMWRK,'(A17,A1,A15,A24)') ' Planting method ',PLME,' not an option ', ' Changed to V (Vertical)'
                     PLME = 'V'
                 ENDIF
             ENDIF
@@ -319,8 +312,6 @@
         IF (SPRL <= 0.0) THEN
             WRITE(MESSAGE(1),'(A30,A20)') 'Planting stick length <= 00  ', ' Changed to 25.0 cm '
             CALL WARNING(1,'CSYCA',MESSAGE)
-            WRITE(FNUMWRK,*)' '
-            WRITE(FNUMWRK,'(A31,A20)') ' Planting stick length <= 0.0  ', ' Changed to 25.0 cm '
             SPRL = 25.0
         ENDIF
         sdepthu = -99.0

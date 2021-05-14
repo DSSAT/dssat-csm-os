@@ -4,6 +4,7 @@
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  06/24/2017 CHP Written, based on MZ_OPHARV
+!  09/05/2020 JVJ Modifying the PlantStres% NSTAGES names     
 !=======================================================================
 
       SUBROUTINE Aloha_OPHARV(CONTROL, ISWITCH,
@@ -191,11 +192,11 @@
       PlantStres % NSTAGES = 5
 
       PlantStres % StageName(0) = 'Planting to Harvest    '
-      PlantStres % StageName(1) = 'Emergence - Zero Stem  '
-      PlantStres % StageName(2) = 'Zero Stem - Forcing    '
-      PlantStres % StageName(3) = 'Forcing - SCY          '
-      PlantStres % StageName(4) = 'SCY - Early Flwr       '
-      PlantStres % StageName(5) = 'Early Flwr - Fruit Harv'
+      PlantStres % StageName(1) = 'Emergence - Foliar C1  '
+      PlantStres % StageName(2) = 'Foliar C1 - Forcing    '
+      PlantStres % StageName(3) = 'Forcing - Open Heart   '
+      PlantStres % StageName(4) = 'Open Heart - EarlyAnthe'
+      PlantStres % StageName(5) = 'EarlyAnthe - Fruit Harv'
 
       Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
 

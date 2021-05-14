@@ -9,7 +9,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_LA ( &
-        CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        , BRSTAGE    & 
+        LAI        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        , BRSTAGE    & 
         )
         
         USE ModuleDefs
@@ -23,7 +23,7 @@
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         
-        REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
+        REAL    LAI        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
         REAL    :: leafAreaSenesced                 !PLASTMP Leaf area senesced,temporary   cm2/p      ! (From Integrate) 
        
         !-----------------------------------------------------------------------
@@ -126,7 +126,7 @@
         STAI = STAI + STAIG - STAIS                                                                                    !EQN 467
         
         SAID = STAI+LPEAI                                                                                              !EQN 468
-        CAID = LAI + SAID                                                                                              !EQN 469
+        CAID = LAI + SAID                                                                                                    !EQN 469
         
         !-----------------------------------------------------------------------
         !         Update height
@@ -137,11 +137,16 @@
         !-----------------------------------------------------------------------
         !         Update root depth and length
         !-----------------------------------------------------------------------
-        
-        IF (SDEPTH > 0.0 .AND.RTDEP <= 0.0) RTDEP = AMAX1(0.0,SDEPTHU)   !LPM 26MAR2016 To consider root growth from the same depth of bud growth
+        !LPM 26MAR2016 To consider root growth from the same depth of bud growth
+        !LPM 10OCT2019 To modify the initial root depth as teh planting stick depth to avoid high water stress in the top layer
+        IF (SDEPTH > 0.0 .AND.RTDEP <= 0.0) RTDEP = AMAX1(0.0,SDEPTH)   
         RTDEP = AMIN1 (RTDEP+RTDEPG,DEPMAX)                                                                            !EQN 390
         DO L = 1, NLAYR
-            RLV(L)=RTWTL(L)*RLWR*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
+            IF (WFG > 0.0 .AND. WFG < 0.5) THEN
+                RLV(L)=RTWTL(L)*((RLWR/100.)/(WFG/0.5))*PLTPOP/DLAYR(L)
+            ELSE
+                RLV(L)=RTWTL(L)*(RLWR/100.)*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
+            ENDIF
             IF (L == NLAYR.AND.RLV(L) > 0.0)THEN
                 IF (RTSLXDATE <= 0.0) RTSLXDATE = YEARDOY
             ENDIF

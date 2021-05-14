@@ -3,18 +3,18 @@ Subroutine CheckRunMode(RNMODE)
   Implicit None
   INTEGER COUNT
   CHARACTER*1 RNMODE
-  CHARACTER*120 MSG(66)
+  CHARACTER*120 MSG(67)
 
   DATA MSG / &
   "-----------------------------------------------------------------------------", &
   "DSSAT COMMAND LINE USAGE:                                                    ", & 
   "                                                                             ", &
-  "  dscsm047 <model> runmode <argA> <argB> <control_file>                      ", &
+  "  dscsm048 <model> runmode <argA> <argB> <control_file>                      ", &
   "                                                                             ", &
   "-----------------------------------------------------------------------------", &
   "Details:                                                                     ", &
   "  <model>   - OPTIONAL                                                       ", &
-  "            - 8-character name of crop model (e.g., MZIXM047 or WHAPS047).   ", &
+  "            - 8-character name of crop model (e.g., MZIXM048 or WHAPS048).   ", &
   "            - If model name is blank or invalid, the default will be used.   ", &
   "                                                                             ", &
   "  runmode   - REQUIRED                                                       ", &
@@ -25,7 +25,7 @@ Subroutine CheckRunMode(RNMODE)
   "            - path + filename of external file which contains overrides for  ", &
   "                simulation controls.                                         ", &
   "            - This option is available with all run modes except D and I.    ", &
-  "            - Default file (DSCSM047.CTR) is found in DSSAT root directory.  ", &
+  "            - Default file (DSCSM048.CTR) is found in DSSAT root directory.  ", &
   "            - see https://dssat.net/using-an-external-simulation-control-file", &
   "            - 120 characters maximum.                                        ", &
   "run                                                                          ", &
@@ -44,6 +44,7 @@ Subroutine CheckRunMode(RNMODE)
   " Q   BatchFile  NA    Sequence analysis: Batchfile lists FileX & rotation #. ", &
   " S   BatchFile  NA    Spatial: Batchfile lists experiments and treatments.   ", &
   " T   BatchFile  NA    Gencalc: Batchfile lists experiments and treatments.   ", &
+  " Y   BatchFile  NA    Yield forecast mode uses ensemble weather data.        ", &
   "                                                                             ", &
   "  BatchFile - Name of DSSAT batch file with list of exeriments and treatments", &
   "                (e.g., DSSBATCH.v47)                                         ", &
@@ -60,20 +61,20 @@ Subroutine CheckRunMode(RNMODE)
   "                                                                             ", &
   "-----------------------------------------------------------------------------", &
   " Example #1:                                                                 ", &
-  " DSCSM047 B DSSBATCH.V47                                                     ", &
+  " DSCSM048 B DSSBATCH.V48                                                     ", &
   " Effect: Run in batch mode. Name of the batch file is DSSBATCH.V47.          ", &
   "                                                                             ", &
   " Example #2:                                                                 ", &
-  " DSCSM047 MZIXM047 A UFGA8201.MZX                                            ", &
+  " DSCSM048 MZIXM048 A UFGA8201.MZX                                            ", &
   " Effect: Run all treatments in experiment UFGA8201.MZX using IXIM model.     ", &
   "                                                                             ", &
   " Example #3:                                                                 ", &
-  " DSCSM047 Q DSSBATCH.V47 DSCSM047.CTR                                        ", &
+  " DSCSM048 Q DSSBATCH.V48 DSCSM048.CTR                                        ", &
   " Effect: Run sequence simulation listed in DSSBATCH.V47 using the            ", &
-  "           simulation control options specified by DSCSM047.CTR              ", &
+  "           simulation control options specified by DSCSM048.CTR              ", &
   "-----------------------------------------------------------------------------"/
 
-  IF (INDEX('ABCDEFGILNQSTabcdefginlqst',RNMODE) .GT. 0) RETURN
+  IF (INDEX('ABCDEFGILNQSTYabcdefginlqsty',RNMODE) .GT. 0) RETURN
 
   COUNT = SIZE(MSG)
   WRITE(*,'(100(/,A))') MSG

@@ -15,6 +15,7 @@ C 03/16/2004 SJR replaced older version of this file with this one
 C                  from newer release (3/04) but needed to retain
 C                  FILEIO and RUN for older WARNING routine used 
 C                  throughout the rest of this version
+C 05/07/2020 FO  Add new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  Called by: PEST
 C  Calls:     None
@@ -143,7 +144,9 @@ C-----------------------------------------------------------------------
         IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILET,LNUM)
         IF (TR .NE. TRTNO) GOTO 500
 C-----------------------------------------------------------------
-        CALL Y2K_DOY(YRPST)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+        !CALL Y2K_DOY(YRPST)
+        CALL Y4K_DOY(YRPST,FILET,LNUM,ERRKEY,1)
         CALL YR_DOY(YRPST,YR,IPST)               !GH - Fix to handle
         YRPST = (YR + MULTI - 1) * 1000 + IPST   !GH - multiple years.
 

@@ -28,6 +28,7 @@
 !  02/07/1993 PWW Header revision and minor changes   
 !  02/24/1993 BDB Changed call to WATBAL (Added AIRAMT)
 !  03/22/2017 CHP Adpated for CSM v4.6
+!  09/05/2020 JVJ Stages changes for inclusion in Overview         
 C=======================================================================
 
       Subroutine Aloha_Pineapple(CONTROL, ISWITCH, 
@@ -208,7 +209,7 @@ C-----------------------------------------------------------------------
             CANWAA = BIOMAS
          ENDIF
 
-        IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
+        IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 10) THEN              ! IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           CALL Aloha_PHENOL (CONTROL, ISWITCH, 
      &    SW, WEATHER, SOILPROP, YRPLT,                       !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output

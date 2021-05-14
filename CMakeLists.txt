@@ -20,9 +20,9 @@ PROJECT(DSSAT-CSM Fortran)
 ##########################################################################################
 
 SET(MAJOR 4)
-SET(MINOR 7)
-SET(MODEL 5)
-SET(BUILD 12)
+SET(MINOR 8)
+SET(MODEL 0)
+SET(BUILD 6)
 
 # Get the current working branch
 execute_process(
@@ -151,6 +151,7 @@ set(
         "InputModule/IPSOIL_Inp.for"
         "InputModule/IPTILL.for"
         "InputModule/IPVAR.for"
+        "InputModule/MAKEFILEW.f90"
         "InputModule/OPGEN.for"
         "InputModule/OPHEAD.for"
         "InputModule/OPTEMPXY2K.for"
@@ -178,6 +179,7 @@ set(
         "Management/AUTHAR.for"
         "Management/AUTPLT.for"
         "Management/CHEMICAL.for"
+        "Management/FertType_mod.for"
         "Management/Fert_Place.for"
         "Management/Flood_Irrig.for"
         "Management/IRRIG.for"
@@ -354,7 +356,6 @@ set(
         "Plant/CSYCA-Cassava/YCA_Control_Leaf.f90"
         "Plant/CSYCA-Cassava/YCA_Control_Photosynthesis.f90"
         "Plant/CSYCA-Cassava/YCA_Control_Plant.f90"
-        "Plant/CSYCA-Cassava/YCA_Control_VPDEffect.f90"
         "Plant/CSYCA-Cassava/YCA_First_Trans_m.f90"
         "Plant/CSYCA-Cassava/YCA_Formats_m.f90"
         "Plant/CSYCA-Cassava/YCA_Growth.f90"
@@ -366,6 +367,7 @@ set(
         "Plant/CSYCA-Cassava/YCA_Growth_Photo.f90"
         "Plant/CSYCA-Cassava/YCA_Growth_Rates.f90"
         "Plant/CSYCA-Cassava/YCA_Growth_Senesce.f90"
+        "Plant/CSYCA-Cassava/YCA_Growth_VPD.f90"
         "Plant/CSYCA-Cassava/YCA_Integrate.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_AgesWts.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_EndCrop.f90"
@@ -376,11 +378,13 @@ set(
         "Plant/CSYCA-Cassava/YCA_Integ_SeasEnd.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_Stages.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_WthrSum.f90"
+        "Plant/CSYCA-Cassava/YCA_Model_VPD_Interface.f90"
         "Plant/CSYCA-Cassava/YCA_Node.f90"
         "Plant/CSYCA-Cassava/YCA_Output.f90"
         "Plant/CSYCA-Cassava/YCA_Out_CrpSim.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Error.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Eval.f90"
+		"Plant/CSYCA-Cassava/YCA_Out_FreshWt.f90"
         "Plant/CSYCA-Cassava/YCA_Out_LfTier.f90"
         "Plant/CSYCA-Cassava/YCA_Out_ModFail.f90"
         "Plant/CSYCA-Cassava/YCA_Out_PlantSum.f90"
@@ -388,7 +392,6 @@ set(
         "Plant/CSYCA-Cassava/YCA_Out_ReInit.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Sens.f90"
         "Plant/CSYCA-Cassava/YCA_Out_StoreVars.f90"
-        "Plant/CSYCA-Cassava/YCA_Out_Work.f90"
         "Plant/CSYCA-Cassava/YCA_Out_WrkPhenRes.f90"
         "Plant/CSYCA-Cassava/YCA_PrePlant.f90"
         "Plant/CSYCA-Cassava/YCA_RunInit.f90"
@@ -488,6 +491,24 @@ set(
         "Plant/NWHEAT/WH_ROOTS.for"
         "Plant/NWHEAT/WH_SW_SUBS.for"
         "Plant/NWHEAT/WH_temp.for"
+        "Plant/SAMUCA-Sugarcane/SC_admit1.f90"
+        "Plant/SAMUCA-Sugarcane/SC_astro.f90"
+        "Plant/SAMUCA-Sugarcane/SC_Det_outputs.f90"
+        "Plant/SAMUCA-Sugarcane/SC_find_inp_sam.for"
+        "Plant/SAMUCA-Sugarcane/SC_functions.f90"
+		"Plant/SAMUCA-Sugarcane/SC_OPHARV_SAM.f90"
+        "Plant/SAMUCA-Sugarcane/SC_OUTPUT_SAM.for"
+        "Plant/SAMUCA-Sugarcane/SC_PGS.f90"
+        "Plant/SAMUCA-Sugarcane/SC_radiat.f90"
+        "Plant/SAMUCA-Sugarcane/SC_rld.f90"
+        "Plant/SAMUCA-Sugarcane/SC_rm_file.f90"
+        "Plant/SAMUCA-Sugarcane/SC_root_profile.f90"
+        "Plant/SAMUCA-Sugarcane/SC_SAMUCA_MODEL.f90"
+        "Plant/SAMUCA-Sugarcane/SC_SAM_ModuleDefs.f90"
+        "Plant/SAMUCA-Sugarcane/SC_substrates_balance.f90"
+        "Plant/SAMUCA-Sugarcane/SC_sucrose_content.f90"
+        "Plant/SAMUCA-Sugarcane/SC_TOTASS_SAM.f90"
+        "Plant/SAMUCA-Sugarcane/SC_water_stress_sugarcane.f90"
         "Plant/SUBSTOR-Potato/PT_GROSUB.for"
         "Plant/SUBSTOR-Potato/PT_NFACTO.for"
         "Plant/SUBSTOR-Potato/PT_NUPTAK.for"
@@ -589,6 +610,7 @@ set(
         "Weather/HMET.for"
         "Weather/IPWTH_alt.for"
         "Weather/OPWEATH.for"
+        "Weather/ModForecast.f90"
         "Weather/SOLAR.for"
         "Weather/weathr.for"
         "Weather/WGEN.for"
