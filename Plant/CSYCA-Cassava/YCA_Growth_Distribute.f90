@@ -42,7 +42,7 @@
         !LPM 14SEP2020 initialize temporary variable
         TVR1 = 0.0 
         ! Determine potential new concentration
-        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) THEN
+        IF (LFWT+GROLFADJ+STWT+GROSTADJ+CRWT+GROCRADJ > 0.0) THEN
             TVR1 = GRORS/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+GRORS)  !EQN 310
         ENDIF
         IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
@@ -52,7 +52,7 @@
         !restrictive factor (diluted N in storage roots)
         SRWTGRS = GRORS
         ! Determine FINAL new concentration
-        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
+        IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ > 0.0) TVR5 = (GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
             (STWT+GROSTADJ+CRWT+GROCRADJ)+(GRORS-SRWTGRS))
 
         
@@ -64,7 +64,7 @@
         IF(GROSTP > 0.0) THEN
             !LPM06JUL2017 It is assumed a branching angle of 60 from the vertical line (cos(60)=0.5)
             !LPM 15JUL2020 Adjust canopy height to m instead of cm and use NODLT instead of SESR 
-            DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (isLeafExpanding(node(BR,LF))) THEN
                         IF(BRSTAGE>=1.0) THEN

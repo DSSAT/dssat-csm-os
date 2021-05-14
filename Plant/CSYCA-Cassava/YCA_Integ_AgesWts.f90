@@ -38,7 +38,7 @@
         TVI1 = LNUMSOLDESTA
         LNUMSOLDESTA = -99
         ! Leaves that present at beginning of day
-        DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+        DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM 23MAY2015 Modified to avoid high values of LAGETT 
                 IF (isLeafAlive(node(BR,LF))) THEN             !LPM 24APR2016 Leaf age in thermal time
                     call leafAge(node(BR,LF))
@@ -101,7 +101,7 @@
                     ENDIF
                 ENDIF
 
-                IF (LNUMG > 0.0 .AND. BR == BRSTAGE .AND. LF == LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
+                IF (LNUMG > 0.0 .AND. BR == BRSTAGEINT .AND. LF == LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
                     IF (LNUMSG < LNUMX) THEN
                         node(BR,LF+1)%LAGETT = node(BR,LF+1)%LAGETT + (dailyGrowth())*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
                         !LAGEP(BR,LF+1)=LAGEP(BR,LF+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367 !LPM21MAY2015 this variable is not used

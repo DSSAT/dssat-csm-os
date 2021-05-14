@@ -7,14 +7,19 @@
 !  MEEVP Routine Description
 !   S  PETASCE ASCE Standardized Reference Evapotranspiration Equation
 !                for the short reference crop (12-cm grass) with dual
-!                FAO-56 crop coefficient method
+!                FAO-56 crop coefficient method (potential E and T 
+!                calculated independently).
 !   T  PETASCE ASCE Standardized Reference Evapotranspiration Equation
 !                for the tall reference crop (50-cm alfalfa) with dual
-!                FAO-56 crop coefficient method
+!                FAO-56 crop coefficient method (potential E and T
+!                calculated independently).
 !   R  PETPT   Calculates Priestley-Taylor potential evapotranspiration
-!                (default method)
-!   F  PETPEN  FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
-!                with KC = 1.0
+!                (default method with potential E and T partitioned as a
+!                function of LAI).
+!   F  PETPEN  FAO Penman-Monteith (FAO-56) reference evapotranspiration 
+!                with EORATIO adjustment for CROPGRO models and KC = 1.0
+!                for non-CROPGRO models (potential E and T partioned as 
+!                a function of LAI).
 !   D  PETDYN  Dynamic Penman-Monteith, pot. evapotranspiration, with
 !                dynamic input of LAI, crop height effects on Ra and Rs
 !   P  PETPNO  FAO Penman (FAO-24) potential evapotranspiration 
@@ -145,7 +150,8 @@ C  reference crops using the ASCE Standardized Reference
 C  Evapotranspiration Equation.
 C  Adjusts reference evapotranspiration to potential soil water 
 C  evaporation and potential transpiration using FAO-56 dual crop
-C  coefficients.
+C  coefficients, following FAO-56 (Allen et al., 1998) and the
+C  ASCE (2005) standardized reference ET algorithm.
 C  DeJonge K. C., Thorp, K. R., 2017. Implementing standardized
 C  reference evapotranspiration and dual crop coefficient approach
 C  in the DSSAT Cropping System Model. Transactions of the ASABE. 
@@ -276,9 +282,13 @@ C=======================================================================
       CALL GET('SPAM', 'SKC', SKC)
       KCBMIN = 0.0
       CALL GET('SPAM', 'KCBMAX', KCBMAX)
-      IF (SKC .LT. 1.E-6 .OR. KCBMAX .LT. 1.E-6) THEN
-          MSG(1) = "Crop coefficient parameters for the ASCE dual Kc"
-          MSG(2) = "ET method are not available for this crop."
+      IF (SKC .LT. 0.30 .OR. SKC .GT. 1.0) THEN
+          MSG(1) = "SKC for ASCE PET method is out of range."
+          CALL WARNING(2,"PET",MSG)
+          CALL ERROR("CSM",64,"",0)
+      ENDIF
+      IF (KCBMAX .LT. 0.25 .OR. KCBMAX .GT. 1.5) THEN
+          MSG(1) = "KCBMAX for ASCE PET method is out of range."
           CALL WARNING(2,"PET",MSG)
           CALL ERROR("CSM",64,"",0)
       ENDIF
@@ -290,7 +300,7 @@ C=======================================================================
          KCB = 0.0
       ELSE
          !Equation from DeJonge et al. (2012) Agricultural Water
-         !Management 115, 92-103
+         !Management 115, 92-103 and revised in DeJonge and Thorp (2017)
          KCB = MAX(0.0,KCBMIN+(KCBMAX-KCBMIN)*(1.0-EXP(-1.0*SKC*XHLAI)))
       ENDIF
 
