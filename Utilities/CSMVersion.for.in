@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-release'
 
 !     Version history:  
+!       4.8.0.7  chp 2021-05-14 v4.8 (=v4.7.5.36+) May 2021 Release
 !       4.8.0.6  chp 2021-05-04 v4.8 (=v4.7.5.36+) May 2021 Release
 !       4.8.0.5  chp 2021-04-23 v4.8 (=v4.7.5.36)
 !       4.8.0.4  chp 2021-04-04 v4.8 (=v4.7.5.33)
