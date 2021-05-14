@@ -78,7 +78,7 @@
         leafAreaSenesced = PLAS - PLASP
         IF (LNUMSG > 0 .AND. leafAreaSenesced > 0) THEN
             !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
-            DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR) 
                     IF (leafAreaLeftToSenesce(node(BR,LF)) > leafAreaSenesced) THEN                                                                     ! DA If the leaf can senesce more
                         node(BR,LF)%LAPS = node(BR,LF)%LAPS + leafAreaSenesced                                                                        !EQN 459a
@@ -97,7 +97,7 @@
             !DO L = 1, LNUMSG
             !    IF (LAP(L)-LAPS(L) > 0.0) LAPS(L) = LAPS(L) + (LAP(L)-LAPS(L)) * HAFR                                 !EQN 461
             !ENDDO
-            DO BR = 0, BRSTAGE                                                                                        !LPM 28MAR15 Change to include cohorts
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 28MAR15 Change to include cohorts
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (leafAreaLeftToSenesce(node(BR,LF)) > 0.0) THEN
                         node(BR,LF)%LAPS = node(BR,LF)%LAPS + (leafAreaLeftToSenesce(node(BR,LF))) * HAFR     !EQN 461

@@ -17,8 +17,8 @@
         
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
-        REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
-        REAL    :: Bcount                  ! counters for iterations in branches (Bcount)
+        INTEGER :: Lcount                   ! counter for iterations in leafs (Lcount)
+        INTEGER :: Bcount                  ! counters for iterations in branches (Bcount)
         CHARACTER(LEN=1) ISWNIT      , ISWWAT
         REAL BRSTAGE
         REAL LAI
@@ -44,7 +44,7 @@
 
         ! Leaf senescence - phyllochron or real time driven
         node%LAPSTMP = 0.0
-        DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+        DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)         
                 IF (.NOT. willLeafStillGrowingToday(node(BR,LF))) THEN                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
                     IF (leafAreaLeftToSenesce(node(BR,LF)) > 0.0) THEN
@@ -85,8 +85,8 @@
         !-----------------------------------------------------------------------
         node%LAIByCohort=0.0                               ! DA re-initializing LAIByCohort
         LAI=0.0                                              ! DA re-initializing LAI
-        DO Bcount=0,BRSTAGE
-            BR= BRSTAGE - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
+        DO Bcount=0,BRSTAGEINT
+            BR= BRSTAGEINT - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
             DO Lcount=0,LNUMSIMSTG(BR)-1
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
                 IF (isLeafAlive(node(BR,LF))) THEN                      ! DA if leave is alive
@@ -132,7 +132,7 @@
             ! Assumes that all reserve N in leaves
             IF (LFWT > 0.0) LANCRS = (LEAFN+RSN) / LFWT                                                               !EQN 377
             !SENNLFG = AMIN1(LEAFN,(SENLFG+SENLFGRS)*LNSC)                                                              !EQN 378
-            DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR)   
                     IF (plantLeafAreaLeftToSenesce() > 0.0 .AND. leafAreaLeftToSenesce(node(BR,LF)) > 0.0 .AND. .NOT. willLeafStillGrowingToday(node(BR,LF))) THEN
                         node(BR,LF)%SENNLFGN = AMAX1(0.0,(LFWT*(node(BR,LF)%LAPSTMP/plantLeafAreaLeftToSenesce()))*LNSC)
