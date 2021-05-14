@@ -27,9 +27,15 @@
 ! se1          Sugary-enhancer genotypes (increases the sugar level in homozygous su1 germplasm)
 ! sh2          Shrunken genotypes ('super sweet' cultivars)
 !
+!              P/G/N:Phenology/Growth/Not used for calbration
 ! 
 @VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3 PHINT
-!                                  1     2     3     4     5     6
+!Coeffient #                             1     2     3     4     5     6
+!Calibration                             P     P     P     G     G     P
+
+999991 MINIMA               . DFAULT 150.0 0.300 680.0 600.0  5.50 35.00
+999992 MAXIMA               . DFAULT 180.0 0.300 738.0 850.0 15.00 50.00
+
 SW0001 GSS0966 sh2          . IB0001 150.0 0.300 680.0 600.0  5.50 43.00
 SW0002 Saturn sh2           . IB0001 180.0 0.300 738.0 850.0 15.00 35.00
 SW0003 BSS0977 sh2          . IB0001 175.0 0.300 700.0 500.0  5.00 50.00

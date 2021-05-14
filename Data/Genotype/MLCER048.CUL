@@ -27,8 +27,15 @@
 ! GT          Tillering coefficient, equivalent to G1, but on tillers
 ! G5          Potential grain size, mg
 !
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
 @VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2O   P2R    P5    G1    G4 PHINT    GT    G5
-!                                        1     2     3     4     5     6     7     8     9
+!Coeffient #                             1     2     3     4     5     6     7     8     9
+!Calibration                             P     P     P     P     G     G     N     G     G
+
+999991 MINIMA               . DFAULT 120.0 10.00 100.0 350.0  1.00  0.50 43.00  1.00  10.0
+999992 MAXIMA               . DFAULT 200.0 15.00 200.0 600.0  2.50  1.50 43.00  1.50  11.0
+!
 ! The sample 3 varieties were estimated to give increasing days to maturity
 ! moving from north to south
 !
@@ -94,7 +101,7 @@ IB0075 Heini Kirey          . IB0001 396.0 12.00 410.0 285.0  0.60  0.80 43.00  
 IB0076 Zatib                . IB0001 340.0 12.00 260.0 285.0  0.45  0.90 43.00  1.00  11.0  
 IB0077 3/4HK                . IB0001 270.0 12.00 390.0 108.0  0.40 18.00 43.00  1.00  11.0
 
-! Provided by Gerrit Hoogenboom (Nebraska study), but GCs were changed for further changed by Piara Singh
+! Provided by Gerrit Hoogenboom (Nebraska study), but GCs were further changed by Piara Singh
 IB0078 59022A X 89-083      . IB0001 100.0 12.50   3.0 280.0  0.9   1.00 43.00  1.00  11.0  
 IB0079 1011A X 086R         . IB0001 100.0 12.50   3.0 280.0  0.9   0.90 43.00  1.00  11.0  
 IB0080 1361M X 6Rm          . IB0001 100.0 12.50   8.0 330.0  0.4   0.53 43.00  1.00  11.0  

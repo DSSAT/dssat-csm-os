@@ -1,4 +1,4 @@
-*GREENBEAN GENOTYPE COEFFICIENTS: CRGRO048 MODEL
+*GREENBEAN CULTIVAR COEFFICIENTS: CRGRO048 MODEL
 !
 ! COEFF   DEFINITIONS
 ! =====   ===========
@@ -35,6 +35,13 @@
 ! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
 ! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
 !
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
 @VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             P     P     P     N     P     P     N     G     G     G     N     G     G     G     N     N     N     N
+
+999991 MINIMA               . DFAULT 11.78 0.000   9.0   2.8  11.0 12.00 18.00  0.85  220. 124.0  1.00 0.250  12.0  4.00   6.0  77.0  .255  .030
+999992 MAXIMA               . DFAULT 14.60 0.385  28.9  10.0  15.0 16.00 18.00  1.20  300. 140.0  1.00 0.340  16.0  6.00  10.0  77.0  .255  .030
+
 GB0001 Bronco Habit 1       . SNAPBN 12.17 0.000  21.0   2.8  13.0 14.00 12.00  1.00  250. 133.0  1.00 0.290  14.0  5.40   6.0  77.0  .255  .030

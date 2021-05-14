@@ -1,4 +1,4 @@
-*NWHEAT CULTIVAR COEFFICIENTS: WHAPS048 MODEL
+*WHEAT CULTIVAR COEFFICIENTS: WHAPS048 MODEL
 !
 !********** NWheat transition Cultivar Coefficient File ***************
 !
@@ -20,9 +20,16 @@
 ! MXFIL       Potential kernel growth rate [mg kernel-1 day-1]:  Values between 1.0 and 3.0
 ! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) values 1.0 - 3.0
 ! SLAP1       ratio of leaf area to mass at emergence (cm2/g)
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
 !																   *	 *     *				   *     *                                                                                                                  
-!                                        1     2     3     4     5     6     7     8     9
 @VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1
+!Coeffient #                             1     2     3     4     5     6     7     8     9
+!Calibration                             P     P     P     P     P     G     G     G     G
+
+999991 MINIMA               . 999991  0.00  1.20 380.0 200.0  85.0  20.0  1.60  1.00 200.0
+999992 MAXIMA               . 999992  4.00  4.50 530.0 700.0 130.0  32.0  2.90  3.00 400.0
+
 AW0071 YECORA ROJO          . IB0002  1.00  1.20 400.0 600.0 120.0  24.0  1.90  3.00 300.0
 IB0001 YECORA               . IB0001  1.00  1.20 400.0 600.0 120.0  24.0  1.90  3.00 400.0
 IB0002 ARMINDA              . IB0006  4.00  4.50 400.0 640.0 100.0  32.0  2.50  3.00 280.0
