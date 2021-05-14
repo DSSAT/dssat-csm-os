@@ -35,8 +35,8 @@
             WRITE (FNUMLVS,'(A14,F6.1)') '! LEAF NUMBER ',LNUM
             WRITE (FNUMLVS,'(/,A42,A30,A30)')'@ BRNUM LNUM AREAP AREA1 AREA2 AREAT AREAS', &                 ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
                 '  WFLF  NFLF  AFLF TFGLF TFDLF ',' LLIFG LLIFA LLIFS LLIFE   DAP'  !LPM 07JUL2017 Issue #41 eliminate NFLF2 (same than NFLF)
-            DO BR = 0, BRSTAGE
-                DO LF = 1, INT(LNUMSIMSTG(BR))  
+            DO BR = 0, BRSTAGEINT
+                DO LF = 1, LNUMSIMSTG(BR)  
                     CALL Csopline(lapotxc,node(BR,LF)%lapotx)
                     CALL Csopline(latlc,AMAX1(0.0,node(BR,LF)%LATL))
                     CALL Csopline(latl2c,AMAX1(0.0,node(BR,LF)%LATL2))

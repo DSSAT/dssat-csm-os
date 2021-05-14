@@ -187,7 +187,6 @@ $SPECIES:CSYCA048.041621    Last edit: 04/16/2021 LPM
 ! NH4MN   NH4 minimum concentration for uptake (mg/MG)
 ! NLAB%   N labile fraction,standard (%)
 ! NO3MN   NO3 minimum concentration for uptake (mg/MG)
-! NTUPF   N top-up fraction (/d)
 ! PARIX   PAR interception beyond which accelerated ageing (fr)
 ! PDSV    Photosynthesis,sensitivity to VPD, daily effect (fr/kPa)
 ! PDTV    Photosynthesis,threshold VPD for reduction in rate, daily effect (kPa)

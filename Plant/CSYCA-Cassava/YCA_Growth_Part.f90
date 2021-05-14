@@ -19,7 +19,7 @@
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
-        REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
+        INTEGER :: Lcount                   ! counter for iterations in leafs (Lcount)
         CHARACTER(LEN=1) ISWNIT      
         REAL    BRSTAGE     , NFP      , LAI    
 
@@ -84,29 +84,29 @@
                 
             IF (DAWWP < 900) THEN
                 IF (WFGREA > 1.0) THEN
-                    node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX =  LAXS                  ! LPM 07MAR15
+                    node(BRSTAGEINT,(LNUMSIMSTG(BRSTAGEINT)+1))%LAPOTX =  LAXS                  ! LPM 07MAR15
                 ELSE
-                    node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX =  LAXS*((DAWWP*1E-3)+0.10)
+                    node(BRSTAGEINT,(LNUMSIMSTG(BRSTAGEINT)+1))%LAPOTX =  LAXS*((DAWWP*1E-3)+0.10)
                 ENDIF    
             ELSE
                 IF (DAWWP-TT< 900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
                 !LPM 12JUL2015 test with thermal time with optimum of 20 C
                 !LPM 24APR2016 Use of DALS (considering water stress) instead of TTCUMLS
                 IF (PDL(1) < 1200.) THEN
-                    node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX = LAXS *(0.9**(BRSTAGE))/((1+(5.665259E-3*(DALS))))
+                    node(BRSTAGEINT,(LNUMSIMSTG(BRSTAGEINT)+1))%LAPOTX = LAXS *(0.9**(BRSTAGE))/((1+(5.665259E-3*(DALS))))
                 ELSE
-                    node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX = LAXS /((1+(1.665259E-3*(DALS))))
+                    node(BRSTAGEINT,(LNUMSIMSTG(BRSTAGEINT)+1))%LAPOTX = LAXS /((1+(1.665259E-3*(DALS))))
                 ENDIF
                 
                 !LPM 31MAR2021 Increase leaf size during the recovery of water stress
                 IF (WFGREA > 1.0) THEN
-                    node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX = 2.0 *(node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX)
+                    node(BRSTAGEINT,(LNUMSIMSTG(BRSTAGEINT)+1))%LAPOTX = 2.0 *(node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX)
                 ENDIF
                 
             ENDIF
             !LPM 16sep2020 Define potential leaf size for previous leaf if two leaves are created the same day
-            IF (node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)))%LAPOTX <= 0.0) THEN
-                node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)))%LAPOTX = node(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX
+            IF (node(BRSTAGEINT,(LNUMSIMSTG(BRSTAGEINT)))%LAPOTX <= 0.0) THEN
+                node(BRSTAGEINT,(LNUMSIMSTG(BRSTAGEINT)))%LAPOTX = node(BRSTAGEINT,(LNUMSIMSTG(BRSTAGEINT)+1))%LAPOTX
             ENDIF
             
 
@@ -114,7 +114,7 @@
             node%LAGLT = 0.0
         
                                                                                                               
-            DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 23MAR15 To consider cohorts
                SHLAG2B(BR) = 0.0  
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (node(BR,LF)%LAGETT <= LLIFGTT) THEN
@@ -166,7 +166,7 @@
                         ENDIF
                         
                             ! New LEAF
-                        IF (LF == LNUMSIMSTG(BR) .AND. LNUMG > LNUMNEED .AND. BR == BRSTAGE) THEN                                             ! This is where new leaf is initiated
+                        IF (LF == LNUMSIMSTG(BR) .AND. LNUMG > LNUMNEED .AND. BR == BRSTAGEINT) THEN                                             ! This is where new leaf is initiated
                             node(BR,LF+1)%LAPOTX2 = node(BR,LF+1)%LAPOTX * TFG
                             !LPM 09OCT2019 Remove TTLfgrowth because it is the same than TFG 
                             node(BR,LF+1)%LAGL = node(BR,LF+1)%LAPOTX2 * (TTL/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
@@ -230,7 +230,7 @@
         Lcount = 0
         !IF (DAE > 0.0) THEN !LPM 01SEP16 putting a conditional DAE > 0.0 to avoid illogical values of NODEWTGB
         IF (DAG > 0.0) THEN !LPM 10JUL2017 DAG instead of DAE To consider root and stem develpment after germination and before emergence (planting stick below-ground)
-          DO BR = 0, BRSTAGE               ! for each branch   
+          DO BR = 0, BRSTAGEINT               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
 

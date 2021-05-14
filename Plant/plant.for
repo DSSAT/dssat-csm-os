@@ -862,11 +862,22 @@ c     Total LAI must exceed or be equal to healthy LAI:
           GOTO 100
         ELSE
           CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+          !KEP and EORATIO are not used in ASCE PET method,
+          !but must be read in prior to ASCE parameters.
           READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
           IF (ERR .NE. 0) THEN
             NMSG = NMSG + 1
-            MSG(NMSG)="Error reading KEP, EORATIO for ASCE PET method."
+            MSG(NMSG)="Error reading KEP and EORATIO."
           ENDIF
+        ENDIF
+        
+!       Read short reference crop parameters
+        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+        IF(ISECT .NE. 1) CALL ERROR (ERRKEY,1,FILECC,LNUM)
+        READ(CHAR,'(2F6.0)',IOSTAT=ERR) SSKC, SKCBMAX
+        IF (ERR .NE. 0) THEN
+          NMSG = NMSG + 1
+          MSG(NMSG)="Error reading SSKC, SKCBMAX for ASCE PET method."
         ENDIF
 
 !       Read tall reference crop parameters
@@ -876,15 +887,6 @@ c     Total LAI must exceed or be equal to healthy LAI:
         IF (ERR .NE. 0) THEN
           NMSG = NMSG + 1
           MSG(NMSG)="Error reading TSKC, TKCBMAX for ASCE PET method."
-        ENDIF
-
-!       Read short reference crop parameters
-        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-        IF(ISECT .NE. 1) CALL ERROR (ERRKEY,1,FILECC,LNUM)
-        READ(CHAR,'(2F6.0)',IOSTAT=ERR) SSKC, SKCBMAX
-        IF (ERR .NE. 0) THEN
-          NMSG = NMSG + 1
-          MSG(NMSG)="Error reading SSKC, SKCBMAX for ASCE PET method."
         ENDIF
 
         CLOSE (LUNCRP)
@@ -909,7 +911,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
         CALL ERROR(ERRKEY,1,FILECC,LNUM)
       ENDIF
 
-!     Store the values for retreival in SPAM.
+!     Store the values for retrieval in SPAM (actually in PET.for).
       IF (MEEVP.EQ.'S') THEN
         CALL PUT('SPAM', 'SKC', SSKC)
         CALL PUT('SPAM', 'KCBMAX', SKCBMAX)

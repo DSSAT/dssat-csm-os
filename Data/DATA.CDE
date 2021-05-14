@@ -40,6 +40,7 @@ B4DAT  Branch 4 date   Date of fourth branching (YrDoy)                         
 B5DAT  Branch 5 date   Date of fifth branching (YrDoy)                          B5DAT
 BADMF  Biomass@forcing Above-ground biomass at forcing (pineapple, t/ha)        .
 BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
+BR#SH  SHOOT NO #/m2   Shoot (apex) number at harvest (no/m2)                   .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                  .
@@ -72,15 +73,15 @@ ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) 
 ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. (g)     Eye weight (g)                                           .
+FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
+FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .
 FDAT   Forcing date    Forcing or flowering date (YrDoy)                        .
+FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
 FNAM   Field name      Field name                                               .
+FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
 FRN%M  Fruit N% @ mat  Fruit N concentration at maturity (%)                    .
 FRNAM  Fruit N @ mat   Fruit N content at maturity (kg/ha)                      .
-FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
-FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
-FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
-FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
 FWAH   Fresh wt @ harv Yield fresh weight at harvest (t/ha)                     .
 GL%M   Grain oil%,matu Grain oil at maturity (%)                                .
 GN%M   Grain N%,mature Grain N at maturity (%)                                  .

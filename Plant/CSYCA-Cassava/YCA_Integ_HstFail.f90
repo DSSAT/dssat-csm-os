@@ -79,16 +79,16 @@
                     
             IF (CFLFAIL == 'Y' .AND. BRSTAGE <= PSX+2 .AND. BRSTAGE >= 0 ) THEN       
                 STGYEARDOY(PSX+2) = YEARDOY
-                TMAXPAV(PSX+2) = TMAXPAV(INT(BRSTAGE))
-                TMINPAV(PSX+2) = TMINPAV(INT(BRSTAGE))
-                SRADPAV(PSX+2) = SRADPAV(INT(BRSTAGE))
-                DAYLPAV(PSX+2) = DAYLPAV(INT(BRSTAGE))
-                RAINPAV(PSX+2) = RAINPAV(INT(BRSTAGE))
-                CO2PAV(PSX+2) = CO2PAV(INT(BRSTAGE))
-                NFPPAV(PSX+2) = NFPPAV(INT(BRSTAGE))
-                WFPPAV(PSX+2) = WFPPAV(INT(BRSTAGE))
-                WFGPAV(PSX+2) = WFGPAV(INT(BRSTAGE))
-                NFGPAV(PSX+2) = NFGPAV(INT(BRSTAGE))
+                TMAXPAV(PSX+2) = TMAXPAV(BRSTAGEINT)
+                TMINPAV(PSX+2) = TMINPAV(BRSTAGEINT)
+                SRADPAV(PSX+2) = SRADPAV(BRSTAGEINT)
+                DAYLPAV(PSX+2) = DAYLPAV(BRSTAGEINT)
+                RAINPAV(PSX+2) = RAINPAV(BRSTAGEINT)
+                CO2PAV(PSX+2) = CO2PAV(BRSTAGEINT)
+                NFPPAV(PSX+2) = NFPPAV(BRSTAGEINT)
+                WFPPAV(PSX+2) = WFPPAV(BRSTAGEINT)
+                WFGPAV(PSX+2) = WFGPAV(BRSTAGEINT)
+                NFGPAV(PSX+2) = NFGPAV(BRSTAGEINT)
             ENDIF
             IF (CFLFAIL == 'Y') THEN
                 STGYEARDOY(PSX) = -99
