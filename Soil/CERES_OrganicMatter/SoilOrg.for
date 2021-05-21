@@ -732,17 +732,16 @@ C         recruit (NREQ-N CONC) g of N
 !         MINERALIZE(L,P) = PNOM
         ENDIF
 
+!       --------------------------------------------------------------------------------------
 !       Calculate total amt of C (kg[C]/ha/d) released by decay for methanogenesis
-!       convert from kg[DM]/ha to kg[C]/ha
+!       Convert from kg[DM]/ha to kg[C]/ha
         CO2FOMFac = (FPOOL(L,1) * 0.55 
-     &                      +  FPOOL(L,2) * 0.55 
-     &                      +  FPOOL(L,3) * 0.30) / FOM(L)
+     &            +  FPOOL(L,2) * 0.55 
+     &            +  FPOOL(L,3) * 0.30) / FOM(L)
 
         FOMContrib = FOMFRAC * FOM(L) * FOMCFrac * CO2FOMFac
-!                  = amount FOM[C] decomposed 
-!          FOMFRAC = DECFACT * (FPOOL(L,1) * RDCHO 
-!     &                      +  FPOOL(L,2) * RDCEL 
-!     &                      +  FPOOL(L,3) * RDLIG) / FOM(L)
+!       C released =  Frac   * FOM    *    0.4   *   Same as
+!       from FOM    decomposed                      FOMCFrac?
 
 !       already in units of kg[C]/ha
         HUMContrib = SSOMC(L) * HUMFRAC * 0.55
@@ -763,6 +762,7 @@ C         recruit (NREQ-N CONC) g of N
 !     temp chp
         write(3000,'(i7,i3,3f12.4)') 
      &    control%yrdoy, L, FOMContrib, HUMContrib, newCO2(L)
+!       --------------------------------------------------------------------------------------
 
       END DO   !End of soil layer loop.
 
