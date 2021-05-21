@@ -19,7 +19,7 @@ c   L       : leaching rate m3 m-3 s-1
 c
 c Following are (4) arrays for each substance:
 c   alpha   : solubility constant (aqueous/gaseous)	(mol/m3 aq : mol/m3 g)
-c   solub   : solubility at 25°C (mol m-3)  
+c   solub   : solubility at 25ï¿½C (mol m-3)  
 c   rate    : reaction rate mol m-2 s-1
 c
 c Following are (4,4) arrays for interactions between each substance:
@@ -46,7 +46,7 @@ C ***********************************************************************
 	  DATA steps,niterations/51,100/
 !       ebullition coefficient (1/d)
 	  DATA ebullk/86400./
-!       solubility of substances in water (mol/m3 at 25°C)
+!       solubility of substances in water (mol/m3 at 25ï¿½C)
         DATA solub/0.0,1.23,0.0,1.31/
 !       solubility constants (aqueous / gaseous)
 	  DATA alpha/0., 0.03, 1.e9, 0.03/ 
@@ -88,7 +88,7 @@ C ***********************************************************************
 	  REAL DD(4,51),LL(4,51),VV(4,51),yy(4,51),inityy(4,51)
 	  REAL h,Lz,lamda_rho,difference1,TSubstrate
 	  LOGICAL FirstTime
-	  DATA oxy.ID,meth.ID/2,4/
+	  DATA oxy%ID,meth%ID/2,4/
 	  DATA FirstTime/.TRUE./
 	END MODULE MethaneVariables
 
@@ -272,23 +272,23 @@ C ***********************************************************************
       INTEGER i,s
 	REAL OO,PP,QQ,RR,SS,ys
 
-	s = sub.ID
-	sub.Leaching = L(steps)	* ys(ch4,steps,yy)
-	sub.RootFluxIn = 0.0
-      sub.Production = 0.0
-	sub.Consumption = 0.0
-	sub.RootFluxOut = 0.0
-	sub.Ebullition = 0.0
-	sub.Storage = 0.0
-	sub.StorageFlux = 0.0
+	s = sub%ID
+	sub%Leaching = L(steps)	* ys(ch4,steps,yy)
+	sub%RootFluxIn = 0.0
+      sub%Production = 0.0
+	sub%Consumption = 0.0
+	sub%RootFluxOut = 0.0
+	sub%Ebullition = 0.0
+	sub%Storage = 0.0
+	sub%StorageFlux = 0.0
 	DO i=1,steps
-	  sub.RootFluxIn = sub.RootFluxIn + OO(s,i,yy) * h
-	  sub.Production = sub.Production + PP(s,i,yy) * h
-	  sub.Consumption = sub.Consumption + QQ(s,i,yy) * h
-	  sub.RootFluxOut = sub.RootFluxOut + RR(s,i,yy) * h
-	  sub.Ebullition = sub.Ebullition + SS(s,i,yy) * h
-	  sub.Storage = sub.Storage + yy(s,i) * h
-	  sub.StorageFlux = sub.StorageFlux + (yy(s,i)-inityy(s,i)) 
+	  sub%RootFluxIn = sub%RootFluxIn + OO(s,i,yy) * h
+	  sub%Production = sub%Production + PP(s,i,yy) * h
+	  sub%Consumption = sub%Consumption + QQ(s,i,yy) * h
+	  sub%RootFluxOut = sub%RootFluxOut + RR(s,i,yy) * h
+	  sub%Ebullition = sub%Ebullition + SS(s,i,yy) * h
+	  sub%Storage = sub%Storage + yy(s,i) * h
+	  sub%StorageFlux = sub%StorageFlux + (yy(s,i)-inityy(s,i)) 
      &       * h / (3600.*24.)
 	ENDDO
 
@@ -317,12 +317,12 @@ C ***********************************************************************
 	Header = '       Diffusion     Leached  RootFluxIn  Production Con
      &sumption RootFluxOut  Ebullition'
 	write(fn,'(A256)') Header
-	write(fn,'(a4,7f12.4)') '  O2',oxy.Diffusion*1.e6,
-     &  oxy.Leaching*1.e6,oxy.RootFluxIn*1.e6,oxy.Production*1.e6,
-     &  oxy.Consumption*1.e6,oxy.RootFluxOut*1.e6,oxy.Ebullition*1.e6
-	write(fn,'(a4,7f12.4)') ' CH4',meth.Diffusion*1.e6,
-     &  meth.Leaching*1.e6,meth.RootFluxIn*1.e6,meth.Production*1.e6,
-     &  meth.Consumption*1.e6,meth.RootFluxOut*1.e6,meth.Ebullition*1.e6
+	write(fn,'(a4,7f12.4)') '  O2',oxy%Diffusion*1.e6,
+     &  oxy%Leaching*1.e6,oxy%RootFluxIn*1.e6,oxy%Production*1.e6,
+     &  oxy%Consumption*1.e6,oxy%RootFluxOut*1.e6,oxy%Ebullition*1.e6
+	write(fn,'(a4,7f12.4)') ' CH4',meth%Diffusion*1.e6,
+     &  meth%Leaching*1.e6,meth%RootFluxIn*1.e6,meth%Production*1.e6,
+     &  meth%Consumption*1.e6,meth%RootFluxOut*1.e6,meth%Ebullition*1.e6
 
       Header = 'depth theta epsil   lamda   DD-O2  DD-CH4   VV-OM   VV-O   
      &2  VV-ch4   [O2]o      [CH4]o    [O2]       [CH4]      [CH4]a      

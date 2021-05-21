@@ -217,11 +217,11 @@ c	IF(DAP.eq.20) CALL Report(29)
 
 C Calculate fractions of C in each methane flux
 	  IF(TSubstrate.GT.0.0) THEN
-		ProductionFrac = meth.Production/TSubstrate
-		ConsumptionFrac = meth.Consumption/TSubstrate
-	    PlantFrac = meth.RootFluxOut/TSubstrate
-	    EbullitionFrac = meth.Ebullition/TSubstrate
-	    LeachingFrac = meth.Leaching/TSubstrate
+		ProductionFrac = meth%Production/TSubstrate
+		ConsumptionFrac = meth%Consumption/TSubstrate
+	    PlantFrac = meth%RootFluxOut/TSubstrate
+	    EbullitionFrac = meth%Ebullition/TSubstrate
+	    LeachingFrac = meth%Leaching/TSubstrate
 	  ELSE
 	    ProductionFrac = 0.0
 	    ConsumptionFrac = 0.0
@@ -250,7 +250,7 @@ C***********************************************************************
 C-----------------------------------------------------------------------
 c Calculate emissions from dissolved CH4 on draining
         if (FLOOD.gt.0.0) then
-	    CH4Stored = meth.Storage * 12. * 10.	! kgC/ha
+	    CH4Stored = meth%Storage * 12. * 10.	! kgC/ha
 	  else
 	    x = CH4Stored * 0.5
 	    CH4Emission = CH4Emission + x
@@ -265,13 +265,13 @@ c Calculate emissions from dissolved CH4 on draining
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
 !-----------------------------------------------
 
-      write(LUN,'(i6,6f10.4,f12.3,f10.3,8f10.5,i4,f15.10)') CONTROL.DAS,
+      write(LUN,'(i6,6f10.4,f12.3,f10.3,8f10.5,i4,f15.10)') CONTROL%DAS,
      &  ProductionFrac, ConsumptionFrac,
      &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
-     &  meth.StorageFlux*86400.*12.*10., TSubstrate*1.e6,
+     &  meth%StorageFlux*86400.*12.*10., TSubstrate*1.e6,
      &    CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
      &    CH4Ebullition,CH4Diffusion,CH4Leaching,
-     &    meth.StorageFlux*12.*10.,iterations1,difference1
+     &    meth%StorageFlux*12.*10.,iterations1,difference1
 
 !***********************************************************************
 !***********************************************************************

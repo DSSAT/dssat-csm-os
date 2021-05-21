@@ -762,7 +762,7 @@ C         recruit (NREQ-N CONC) g of N
 
 !     temp chp
         write(3000,'(i7,i3,3f12.4)') 
-     &    control.yrdoy, L, FOMContrib, HUMContrib, newCO2(L)
+     &    control%yrdoy, L, FOMContrib, HUMContrib, newCO2(L)
 
       END DO   !End of soil layer loop.
 
@@ -984,16 +984,16 @@ C-----------------------------------------------------------------------
 ! ISWITCH       Composite variable containing switches which control flow 
 !                 of execution for model.  The structure of the variable 
 !                 (SwitchType) is defined in ModuleDefs.for. 
-! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to µg [N] / g 
+! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to ï¿½g [N] / g 
 !                 [soil] for soil layer L 
 ! LL(L)         Volumetric soil water content in soil layer L at lower 
 !                 limit (cm3 [water] / cm3 [soil])
-! NH4(L)        Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)        Ammonium N in soil layer L (ï¿½g[N] / g[soil])
 ! NI_AVAIL      N available for immobilization (kg [N] / ha)
 ! NL            Maximum number of soil layers = 20 
 ! NLAYR         Actual number of soil layers 
 ! NNOM          Net mineral N release from all SOM sources (kg [N] / ha)
-! NO3(L)        Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)        Nitrate in soil layer L (ï¿½g[N] / g[soil])
 ! OXLAYR        Composite variable which contains data about oxidation 
 !                 layer.  See ModuleDefs.for for structure. 
 ! PH(L)         pH in soil layer L 
@@ -1031,7 +1031,7 @@ C-----------------------------------------------------------------------
 ! SOILPROP      Composite variable containing soil properties including 
 !                 bulk density, drained upper limit, lower limit, pH, 
 !                 saturation water content.  Structure defined in ModuleDefs. 
-! ST(L)         Soil temperature in soil layer L (°C)
+! ST(L)         Soil temperature in soil layer L (ï¿½C)
 ! SW(L)         Volumetric soil water content in layer L
 !                (cm3 [water] / cm3 [soil])
 ! SWEF          Soil water evaporation fraction; fraction of lower limit 
