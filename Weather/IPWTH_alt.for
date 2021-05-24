@@ -259,9 +259,9 @@ C     The components are copied into local variables for use here.
 !     Forecast mode: Set weather file name for historical weather data for forecast
 !     - when IPWTH is called from the forecast module, don't change weather file name
 !     If it's a multi-year weather file, no need to change the name.
-      IF (RNMODE .EQ. 'Y' .AND.               !Yield forecast mode
-     &    SOURCE .EQ. "WEATHR" .AND.          !Getting data from historical ensemble
-     &    NYEAR .EQ. 1) THEN                  !Single-season weather file
+      IF (RNMODE .EQ. 'Y' .AND.      !Yield forecast mode
+     &    SOURCE .EQ. "WEATHR" .AND. !Using historical ensemble
+     &    NYEAR .EQ. 1) THEN         !Single-season weather file
         PATHL  = INDEX(WPath,BLANK)
         CALL YR_DOY(CONTROL % YRDOY, WYEAR, WDOY)
         WYEAR = MOD(WYEAR,100)
@@ -297,11 +297,11 @@ C     The components are copied into local variables for use here.
 
 !     Forecast mode - check bounds of weather file. Needed to determine
 !     that correct century is read for files with 2-digit years
-      IF (RNMODE .EQ. 'Y' .AND.               !Yield forecast mode
-     &    SOURCE .EQ. "FORCST" .AND.          !Getting in-season data for storage
-!    &    INDEX('MG',MEWTH) .GT. 0 .AND.      !Measured or generated data files
-!    &    NYEAR .GT. 1 .AND.                  !Multi-year weather file
-     &    CONTROL % ENDYRS .EQ. 1) THEN       !First year simulation
+      IF (RNMODE .EQ. 'Y' .AND.           !Yield forecast mode
+     &    SOURCE .EQ. "FORCST" .AND.      !Getting in-season data 
+!    &    INDEX('MG',MEWTH) .GT. 0 .AND.  !Measured or generated data 
+!    &    NYEAR .GT. 1 .AND.              !Multi-year weather file
+     &    CONTROL % ENDYRS .EQ. 1) THEN   !First year simulation
         WFPASS = 0
         CenturyWRecord = -99
         CALL FCAST_ScanWeathData(CONTROL, FileWW, LunWth,CenturyWRecord)
@@ -862,7 +862,7 @@ C         Read in weather file header.
       INTEGER CENTURY, ERR, ErrCode, FOUND, LINWTH, LUNWTH, MULTI, RUN  
       INTEGER YRDOY, YRDOYW, YRDOYWY, YRDOY_start, YREND, YRSIM
       INTEGER YRDOYW_SAVE, YEAR, DOY, WFPASS, YRDOY0
-      INTEGER CenturyWRecord !Century associated with first weather record
+      INTEGER CenturyWRecord !Century for first weather record
 
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
       REAL OZON7
