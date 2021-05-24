@@ -1217,7 +1217,15 @@ C         Read in weather file header.
       IF (TMAX .LT. TMIN) THEN 
         ErrCode = 6
       ELSEIF (TMAX - TMIN .LT. 0.05) THEN
-        ErrCode = 5
+!       was ErrCode = 5
+        MSG(1) = "Warning: TMAX ~= TMIN"
+        NChar = MIN(78,LEN_Trim(FILEWW))
+        WRITE(MSG(2),'(A)') FILEWW(1:NChar)
+        WRITE(MSG(3),'(A,I8)') "Line ", RecNum
+        WRITE(MSG(4),'("TMAX = ",F6.2," TMIN = ",F6.2)') TMAX, TMIN
+!        MSG(5)="TMAX will be set equal to TMIN + 0.1 degrees-C"
+!        TMAX = TMIN + 0.1
+        CALL WARNING(4,ERRKEY,MSG) 
       ENDIF
 
       IF (ErrCode .GT. 0) THEN
