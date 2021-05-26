@@ -28,13 +28,17 @@
         !-----------------------------------------------------------------------
         IF (YEARDOY > PLYEARDOY) THEN
             DAP = DAP + 1
-            IF (GYEARDOY > 0) DAG = DAG + 1
-            IF (EYEARDOY > 0) DAE = DAE + 1
+            IF (GYEARDOY > 0) then
+                DAG = DAG + 1
+            endif
+            IF (EYEARDOY > 0) then
+                DAE = DAE + 1
+            endif
         ENDIF
         TVI1 = LNUMSOLDESTA
         LNUMSOLDESTA = -99
         ! Leaves that present at beginning of day
-        DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+        DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM 23MAY2015 Modified to avoid high values of LAGETT 
                 IF (isLeafAlive(node(BR,LF))) THEN             !LPM 24APR2016 Leaf age in thermal time
                     call leafAge(node(BR,LF))
@@ -74,18 +78,17 @@
                         ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
                             IF (isLeafAlive(node(BR,LF))) THEN                                                ! DA If the leaf is still alive
                                 node(BR,LF)%DSLF = node(BR,LF)%DSLF + 1.0                                                               ! EQN 365b
-                            ELSE
-                                IF (didLeafFallToday(node(BR,LF))) THEN                             ! DA Or, if leaf died today
-                                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(node(BR,LF)%LAGETT-dailyGrowth()))/(dailyGrowth())
-                                    node(BR,LF)%DSLF = node(BR,LF)%DSLF + TVR1                                                          ! EQN 365c
-                                    node(BR,LF)%LDEATHDAP = DAP                                                                    ! DA establish decease date
-                                ENDIF
                             ENDIF
                         ENDIF
                         !LPM 12DEC2016 To generate a restriction for leaf senescence duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
                         IF (node(BR,LF)%DSLF>(2.0*LLIFSTT/(TRDV3(2)-TRDV3(1)))) THEN 
                             call setLeafAsFall(node(BR,LF))
                         ENDIF
+                    ENDIF
+                    IF (didLeafFallToday(node(BR,LF))) THEN                             ! DA Or, if leaf died today
+                        TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(node(BR,LF)%LAGETT-dailyGrowth()))/(dailyGrowth())
+                        node(BR,LF)%DSLF = node(BR,LF)%DSLF + TVR1                                                          ! EQN 365c
+                        node(BR,LF)%LDEATHDAP = DAP                                                                    ! DA establish decease date
                     ENDIF
                 
                 !ELSE 
@@ -98,7 +101,7 @@
                     ENDIF
                 ENDIF
 
-                IF (LNUMG > 0.0 .AND. BR == BRSTAGE .AND. LF == LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
+                IF (LNUMG > 0.0 .AND. BR == BRSTAGEINT .AND. LF == LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
                     IF (LNUMSG < LNUMX) THEN
                         node(BR,LF+1)%LAGETT = node(BR,LF+1)%LAGETT + (dailyGrowth())*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
                         !LAGEP(BR,LF+1)=LAGEP(BR,LF+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367 !LPM21MAY2015 this variable is not used
@@ -129,7 +132,10 @@
                 CALL WARNING(1,'CSYCA',MESSAGE)
                 LFWT = 0.0
             ENDIF
-            RSWT = RSWT+GRORS-RSWPH-SRWTGRS+RSWTGLFADJ                                                                 !EQN 429
+            !LPM 16FEB2021 Add reallocation of assimilates from the storage roots to the leaves and stems
+            RSWT = SRWT*RSUSE                                                                                          !EQN 429
+
+            
             RSWPHC = RSWPHC +  RSWPH                                                                                   !EQN 430
             ! Reserves distribution 
             ! Max concentration in leaves increases through life cycle.
@@ -177,7 +183,26 @@
                 SENLS = SENLS + RTWTSL(L) * RLIGP/100.0                                                                !EQN 446
             END DO
             !SRWT = SRWT + GROSR + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-            SRWT = SRWT + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                              !EQN 447
+            !LPM 16FEB2021 Reduce storage root weight when used as reserve for aboveground growth after release of water stress (GROLSRS)
+            SRWTG = SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) - GROLSRS
+            SRWT = SRWT + SRWTG ! Root N adjustment                              !EQN 447
+            !LPM 13APR2021 Estimate fresh weight of storage roots
+            !DMIC represents the maximum increase of dry matter due to low temperatures
+            ! To reduce dry matter content for young plants we use 1.35E-3*(3000.- DAWWP)
+            !This has an effect for plants younger than 6 months reducing up to 4.05%
+            !Data from ACAI trials (multiple linear regression) converting the effect of chronological age to thermal time
+            !0.023/17 = 1.35E-3 = DMRD
+            IF (SRWTG > 0.0 .AND. HMPC > 0.0 .AND. Tfdmc >= 0.0) THEN
+                IF (DAWWP < DMAG) THEN
+                    SRWTF = SRWTF + (SRWTG * (100./(HMPC+(DMIC*(1.-Tfdmc))-((DMRD/1000.)*(DMAG - DAWWP))))) 
+                ELSE
+                    SRWTF = SRWTF + (SRWTG * (100./(HMPC+(DMIC*(1.-Tfdmc)))))
+                ENDIF
+            ELSE
+                SRWTF = SRWTF
+            ENDIF
+            MSWT = SRWTF - SRWT
+            
         ENDIF
         IF (DAGERM+TTGEM*WFGE >= PGERM) THEN !LPM 23MAR2016 To consider reserves of stake after germination
             !SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD-SEEDRSAVR)                                                                   !EQN 285 !LPM 23MAR2016 SEEDRSAVR subtracted in CS_Growth_Init.f90

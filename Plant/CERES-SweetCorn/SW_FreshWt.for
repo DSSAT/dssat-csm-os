@@ -32,8 +32,9 @@
       REAL        EARMKT
       REAL        EARS        
       REAL        EARWT       
-      CHARACTER*6     ERRKEY          
-      PARAMETER       (ERRKEY='MZ_GRO')   
+      CHARACTER*6 ERRKEY 
+      CHARACTER*11, PARAMETER :: FWFile = "FreshWt.OUT"
+      PARAMETER   (ERRKEY='MZ_GRO')   
       REAL        EARSFCY
       REAL        FWYLDFCY
       REAL        FWYIELD
@@ -41,9 +42,8 @@
       CHARACTER*1 ISWFWT  
       INTEGER     MDATE
       REAL        MKTFWYLD
-      INTEGER     NOUTDG
+      INTEGER     NOUTPF
       REAL        NSTRES      
-      CHARACTER*12 OUTG
       REAL        SLPF
       INTEGER     STGDOY(20) 
       REAL        SUMDTT      
@@ -60,7 +60,7 @@
       IF (ISWFWT == 'N' .OR. ISWITCH % IDETG == 'N') RETURN
 
       CALL GET (CONTROL)
-      DYNAMIC = CONTROL % DYNAMIC
+      DYNAMIC = CONTROL%DYNAMIC
 
 !----------------------------------------------------------------------
 !                     DYNAMIC = SEASINIT
@@ -68,23 +68,22 @@
 
       IF(DYNAMIC == SEASINIT) THEN
 
-          OUTG  = 'FreshWt.OUT'
-          CALL GETLUN('OUTFW',  NOUTDG)
+          CALL GETLUN(FWFile,  NOUTPF)
 
-          INQUIRE (FILE = OUTG, EXIST = FEXIST)
+          INQUIRE (FILE = FWFILE, EXIST = FEXIST)
           IF (FEXIST) THEN
-            OPEN (UNIT=NOUTDG, FILE=OUTG, STATUS='OLD',
+            OPEN (UNIT = NOUTPF, FILE = FWFILE, STATUS='OLD',
      &        IOSTAT=ERRNUM, POSITION='APPEND')
           ELSE
-            OPEN (UNIT=NOUTDG, FILE=OUTG, STATUS='NEW',
+            OPEN (UNIT = NOUTPF, FILE = FWFILE, STATUS='NEW',
      &        IOSTAT = ERRNUM)
-              WRITE(NOUTDG,'("*Fresh weight daily output")')
+              WRITE(NOUTPF,'("*Fresh weight daily output")')
           ENDIF
 
-          CALL HEADER(SEASINIT, NOUTDG, CONTROL % RUN)
-
-          WRITE (NOUTDG, 1000)
-          WRITE (NOUTDG, 1001)
+          CALL HEADER(SEASINIT, NOUTPF, CONTROL%RUN)
+                   
+          WRITE (NOUTPF, 1000)
+          WRITE (NOUTPF, 1001)
 
  1000 FORMAT ('!',22X,'(0-1)  g/ear g/ear  <---- kg/ha ---> < ear/ha >')
  1001 FORMAT ('@YEAR DOY   DAS   DAP',
@@ -189,7 +188,7 @@
 
           CALL YR_DOY(YRDOY, YEAR, DOY)
 
-          WRITE (NOUTDG,1100) YEAR, DOY, DAS, DAP, EARDMC, EARFWT, 
+          WRITE (NOUTPF,1100) YEAR, DOY, DAS, DAP, EARDMC, EARFWT, 
      &            EARWT, FWYIELD, MKTFWYLD, EARMKT
  1100 FORMAT (1X,I4,1X,I3.3,2(1X,I5),F7.3,F7.1,F6.1,3(F9.1))
 
@@ -203,7 +202,7 @@
 
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
 
-      CLOSE (NOUTDG)
+      CLOSE (NOUTPF)
       ENDIF       !Endif for DYNAMIC LOOP
 
       RETURN

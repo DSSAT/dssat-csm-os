@@ -1,8 +1,8 @@
 !=======================================================================
-!  COPYRIGHT 1998-2019 DSSAT Foundation
+!  COPYRIGHT 1998-2021 DSSAT Foundation
 !                      University of Florida, Gainesville, Florida                  
 !                      International Fertilizer Development Center
-!                      University of Guelph
+!                     
 !  ALL RIGHTS RESERVED
 !=======================================================================
 !======================================================================

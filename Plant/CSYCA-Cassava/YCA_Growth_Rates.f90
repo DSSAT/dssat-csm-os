@@ -12,20 +12,24 @@
     
     SUBROUTINE YCA_Growth_Rates ( &
         CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
-        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF  &                                !LPM 26MAR2016 RLV added
+        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF        , &                                !LPM 26MAR2016 RLV added
+        LAI         , CONTROL     , WEATHER     , SOILPROP &  
         )
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Control_Photosyntesis
         USE YCA_Control_Environment
+        USE YCA_Growth_VPD
 
         IMPLICIT NONE
         
-        
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
         REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
         REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
-        REAL    availableCH2O
+        REAL    availableCH2O , LAI
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      
 
@@ -57,13 +61,9 @@
         ! End of day interception = today's starting interception
         select case(MEPHO)
             case ('R')
-                availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP)
-            case ('I')
-                availableCH2O = availableCarbohydrate_methodI(CO2, CO2AIR, CO2EX, CO2FP, CO2COMPC, PARMJFAC, PARFC, PARI, PARU, PLTPOP, RATM, RCROP, RLFC, RLF, RSFP, SLPF, SRAD, TMAX, TMIN, TFP, WFP)
-            case ('M')
-                availableCH2O = availableCarbohydrate_methodM(CO2AIR,PARU, RATM, RCROP,RLFC, RLF, WFP, MJPERE, PARMJFAC, SRAD, TFP, RSFP, SLPF, PARI, PLTPOP)
+                availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP, WFP)
             case ('V')
-                availableCH2O = availableCarbohydrate_methodV(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
+                availableCH2O = availableCarbohydrate_methodV(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, LAI, WFP, WEATHER, CONTROL, SOILPROP)
         end select
         CARBOEND = availableCH2O
             
@@ -108,16 +108,6 @@
                     IF (WFPU-WFPL > 0.0) &
                         WFP = AMAX1(0.0,AMIN1(1.0,(RAW-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
                     
-                    !Fix factor of 0.5 when SWP<0.5
-                    !IF (RAW <= 0.5) THEN
-                    !    IF (WFGU-WFGL > 0.0) &
-                    !        WFG = 0.5                                                   !EQN 147
-                    !    IF (WFPU-WFPL > 0.0) &
-                    !        WFP = 0.5                                                 !EQN 145
-                    !ELSE
-                    !    WFG = 1.0
-                    !    WFP = 1.0 
-                    !ENDIF
                     
                     IF (ISWWATEARLY == 'N') THEN
                         WFG = 1.0
@@ -132,16 +122,16 @@
             IF (ISWNIT /= 'N') THEN
               IF (LFWT > ZERO) THEN
                 !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))
-                LNCGL = LNCM + NFGL * (LNCX-LNCM)                                                                      !EQN 164
-                LNCGU = LNCM + NFGU * (LNCX-LNCM)                                                                      !EQN 165
+                LNCGL = node(0,0)%LNCM + NFGL * (node(0,0)%LNCX-node(0,0)%LNCM)                                                                      !EQN 164
+                LNCGU = node(0,0)%LNCM + NFGU * (node(0,0)%LNCX-node(0,0)%LNCM)                                                                      !EQN 165
                 IF (LNCGU - LNCGL > ZERO) THEN
                  !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))                                                 !EQN 163 !LPM 02SEP2016 To keep NFG as NFLF2
                  NFG = node(0,0)%NFLF2                                                 !EQN 163
                 ELSE
                  NFG = 1.0 
                 ENDIF
-                LNCPL = LNCM + NFPL * (LNCX-LNCM)
-                LNCPU = LNCM + NFPU * (LNCX-LNCM)
+                LNCPL = node(0,0)%LNCM + NFPL * (node(0,0)%LNCX-node(0,0)%LNCM)
+                LNCPU = node(0,0)%LNCM + NFPU * (node(0,0)%LNCX-node(0,0)%LNCM)
                 IF (LNCPU - LNCPL > ZERO) THEN                                                                        !EQN 167
                  !NFP =AMIN1(1.0,AMAX1(0.0,(LANC-LNCPL)/(LNCPU-LNCPL)))                                                 !EQN 166 !LPM 02SEP2016 Use NFLF2 intead of original equation
                  NFP =node(0,0)%NFLF2 
@@ -183,11 +173,11 @@
             Tfb = TFAC4(trbrg,tmean,TTB)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             ! Vapour pressure
             VPDFP = 1.0
-            IF (PHTV > 0.0) THEN
+            IF (PDTV > 0.0) THEN
               IF (TDEW <= -98.0) TDEW = TMIN
               VPD = CSVPSAT(tmax) - CSVPSAT(TDEW)    ! Pa                                                              !EQN 262
-              IF (VPD/1000.0 > PHTV) &
-               VPDFP = AMAX1(0.0,1.0+PHSV*(VPD/1000.0-PHTV))                                                           !EQN 263
+              IF (VPD/1000.0 > PDTV) &
+               VPDFP = AMAX1(0.0,1.0+PDSV*(VPD/1000.0-PDTV))                                                           !EQN 263
             ENDIF
 
             ! CO2 factor using look-up table
@@ -228,18 +218,54 @@
             !!LNUMG = LNUMEND - LNUM
             !LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
             !LPM 24MAR2016 
-            IF (DAE > 0) THEN
-                IF (ISWWAT == 'Y') THEN
-                    LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TT*WFG)                                      !LPM 31JUL2015 to consider water stress
-                ELSE
-                    LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TT                                              !LPM 21/02/2015 leaf number curve
+            IF (PDL(1) < 1200.) THEN
+                IF (DAE > 0) THEN
+                    IF (ISWWAT == 'Y') THEN
+                        IF (ISWNIT /= 'N') THEN
+                            LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TT* (AMIN1(WFG,NFG)) * WFGREA  
+                        ELSE
+                            LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TT* WFG  * WFGREA                                      !LPM 31JUL2015 to consider water stress
+                        ENDIF
+                    ELSE
+                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TT                                              !LPM 21/02/2015 leaf number curve
+                    ENDIF
+                ELSEIF (DAG > 0) THEN
+                    IF (ISWWAT == 'Y') THEN
+                        IF (ISWNIT /= 'N') THEN
+                            LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TTGEM*(AMIN1(WFG,NFG)) * WFGREA                               !LPM 31JUL2015 to consider water stress
+                        ELSE
+                            LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*TTGEM * WFG * WFGREA 
+                        ENDIF
+                        
+                    
+                    ELSE
+                        LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2)) * Tfgem                                              !LPM 21/02/2015 leaf number curve
+                    ENDIF
                 ENDIF
-            ELSEIF (DAG > 0) THEN
-                IF (ISWWAT == 'Y') THEN
-                    LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TTGEM*WFG)                                      !LPM 31JUL2015 to consider water stress
-                ELSE
-                    LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TTGEM                                              !LPM 21/02/2015 leaf number curve
-                ENDIF
+            ELSE
+                IF (DAE > 0) THEN
+                        IF (ISWWAT == 'Y') THEN
+                            IF (ISWNIT /= 'N') THEN
+                                LNUMG = LNSLP * tfd * (AMIN1(WFG,NFG)) * WFGREA   
+                            ELSE
+                                LNUMG = LNSLP *tfd * WFG * WFGREA                                       !LPM 31JUL2015 to consider water stress
+                            ENDIF
+                        ELSE
+                            LNUMG = LNSLP * tfd                                              !LPM 21/02/2015 leaf number curve
+                        ENDIF
+                    ELSEIF (DAG > 0) THEN
+                        IF (ISWWAT == 'Y') THEN
+                            IF (ISWNIT /= 'N') THEN
+                                LNUMG = LNSLP * Tfgem * AMIN1(WFG,NFG) * WFGREA                             !LPM 31JUL2015 to consider water stress
+                            ELSE
+                                LNUMG = LNSLP * Tfgem * WFG * WFGREA  
+                            ENDIF
+                        ELSE
+                            LNUMG = LNSLP * Tfgem                                              !LPM 21/02/2015 leaf number curve
+                        ENDIF
+                    ENDIF
             ENDIF
+    
+        
     END SUBROUTINE YCA_Growth_Rates
     
