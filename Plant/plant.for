@@ -92,6 +92,7 @@ C-----------------------------------------------------------------------
 !         'RIORZ' - IRRI ORYZA Rice model
 !         'WHAPS' - APSIM N-wheat
 !         'TFAPS' - APSIM Tef
+!         'TFCER' - CERES Teff
 !         'PRFRM' - Perennial forage model
 !         'BSCER' - Sugarbeet
 C-----------------------------------------------------------------------
