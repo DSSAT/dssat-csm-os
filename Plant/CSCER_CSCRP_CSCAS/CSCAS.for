@@ -1471,9 +1471,9 @@
 
         IF (RUNCRP.LE.0) THEN          ! First time through
 
-          MODNAME(1:8) = 'CSCAS047'
+          MODNAME(1:8) = 'CSCAS048'
           VERSION = 010115
-          GENFLCHK(1:15) = 'CSCAS047.081017'
+          GENFLCHK(1:15) = 'CSCAS048.20200721'
 
 !-----------------------------------------------------------------------
 !         Set parameters (Most should be placed in input files!)

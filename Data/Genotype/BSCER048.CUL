@@ -1,0 +1,31 @@
+*Sugarbeet CULTIVAR COEFFICIENTS: BSCER048 MODEL
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code of this cultivar, points to the Ecotype in the
+!             ECO file (currently not used).
+! P1          Thermal time from seedling emergence to the end of the juvenile
+!             phase (expressed in degree days above a base temperature of 3 deg.C)
+!             during which the plant is not responsive to changes in
+!             photoperiod.
+! P2          Extent to which development (expressed as days) is delayed for
+!             each hour increase in photoperiod above the longest photoperiod
+!             at which development proceeds at a maximum rate (which is
+!             considered to be 12.5 hours).
+! P5          Thermal time from silking to physiological maturity (expressed
+!             in degree days above a base temperature of 3 deg.C).
+! G2          Potential Leaf growth rate (cm2/cm2).
+! G3          Potential root growth rate (g/m2-day).
+! PHINT       Phylochron interval; the interval in thermal time (degree days)
+!             between successive leaf tip appearances.
+!
+!             Modified from CERES-Maize
+!
+@VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3 PHINT
+!                                        1     2     3     4     5     6
+CR0001 SVRR1142E            . IB0001  940. 0.000 700.0 220.0  37.5 42.00
+BU0003 Emma                 . IB0002  969. 0.000 730.0 160.0  25.2 43.40
+IH0001 BTS940               . IHSTUT 760.0 0.000 700.0 420.0  27.5 43.00

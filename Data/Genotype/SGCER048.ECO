@@ -1,0 +1,23 @@
+*SORGHUM ECOTYPE COEFFICIENTS: SGCER048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! ECO#    Code for the ecotype to which a cultivar belongs (see *.cul file)
+! ECONAME Name of the ecotype, which is referenced from the cultivar file
+! TBASE   Base temperature below which no development occurs (oC)
+! TOPT    Temperature at which maximum development occurs for vegetative stages (oC)
+! ROPT    Temperature at which maximum development occurs for reproductive stages (oC)
+! GDDE    Growing degree days per cm seed depth required for emergence (degree days/cm)
+! RUE     Radiation use efficiency (g plant dry matter/MJ PAR)
+! KCAN    Canopy light extinction coefficient for daily PAR
+! STPC    Partitioning to stem growth as a fraction of potential leaf growth
+! RTPC    Partitioning to root growth as a fraction of available carbohydrates
+! TILFC   Tillering factor (0.0 no tillering; 1.0 full tillering)
+! PLAM    Plant leaf area maximun (Initial leaf area)
+!
+@ECO#  ECONAME.........  TBASE  TOPT  ROPT  GDDE   RUE  KCAN  STPC  RTPC TILFC  PLAM
+!                            1     2     3     4     5     6     7     8     9    10
+IB0001 GENERIC             8.0  34.0  34.0   6.0   3.2  0.85 0.100 0.250   0.0 6000.
+IB0002 West Africa        11.0  34.0  34.0   6.0   3.8  0.85 3.000 0.200   1.0 6000.
+DFAULT DEFAULT             8.0  34.0  34.0   6.0   3.2  0.85 0.100 0.250   1.0 6000.
+
