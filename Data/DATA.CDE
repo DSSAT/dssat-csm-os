@@ -869,6 +869,7 @@ TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     
 CLDD   CLOUD FRAC      Relative cloudiness factor (0-1)                         .
 CO2D   CO2 ppm         Atmospheric CO2 concentration (ppm)                      .
 DAYLD  DAYLENGTH hr    Day length sunrise to sunset (hr)                        .
+OZON7  Ozone ppb       Daily 7-hour mean ozone concentration (9:00-15:59), ppb  .
 PARD   PAR             Daily PAR or photon flux density (moles[quanta]/(m2.d))  .
 PRED   PRECIP mm/d     Precipitation depth (mm/d)                               .
 SRAD   SRAD MJ/m2.d    Solar radiation (MJ/(m2.d))                              .
