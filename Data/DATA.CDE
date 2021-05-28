@@ -740,11 +740,22 @@ DSH#   DIS SHL #/m2.d  Daily shell number consumed                              
 DSHM   DIS SHL kg/ha.d Daily shell mass consumed                                .
 DSTM   DIS STEM kg/ha  Daily stem mass consumed                                 .
 FAW    FAW #/m         Fall armyworm                                            .
+IBCUT  Cutworm, no. m-2                                                         .
+LFMIN  Leafminer (Aproaerema Modicella-Deventer) no.m-2, m2 m-2 leaf damage     .
+PCLA   Defoliation, %                                                           .
+PDLA   Diseased leaf area, %                                                    .
+PRP    Reduction in photosynthetic rate, %                                      .
+PSTDS  General pest and diseases losses due to rot, tikka, leafminer, etc.      .
 RTWM   RTWM #/m        Root worm                                                .
 SGSB   SGSB #/m        Southern green stinkbug                                  .
 SL     SB LOOPER #/m   Soybean looper                                           .
 VBC5   VBC5 #/m        5 instar velvetbean caterpillar                          .
 VBC6   VBC6 #/m        6 instar velvetbean caterpillar                          .
+UFCEW  Corn earworm (Heliothis zea), no. m-2                                    .
+UFRKN  Root-knot nematode (Meloidogyne spp.), no. cm-3 soil                     .
+UFSBL  Soybean looper (Pseudoplusia includens), no. m-2                         .
+UFSKB  Southern green stinkbug (Mezara viridula), no. m-2                       .
+UFVBC  Velvetbean caterpillar (Anticarsia gemmatalis), no. m-2                  .
 
 *EXPERIMENTAL DATA
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
