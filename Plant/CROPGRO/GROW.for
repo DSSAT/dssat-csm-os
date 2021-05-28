@@ -1275,7 +1275,8 @@ C=======================================================================
         IF (FOUND == 0) THEN
           CALL ERROR(SECTION, 42, FILEIO, LNUM)
         ELSE
-          READ(LUNIO,'(24X,F6.1,5X,A1,6X,F6.0,12X,F6.0)',IOSTAT=ERR)
+C-GH      READ(LUNIO,'(24X,F6.1,5X,A1,6X,F6.0,12X,F6.0)',IOSTAT=ERR)
+          READ(LUNIO,'(24X,F6.0,5X,A1,6X,F6.0,12X,F6.0)',IOSTAT=ERR)
      &            PLTPOP, PLME, ROWSPC, SDWTPL ; LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF

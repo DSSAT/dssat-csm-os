@@ -291,11 +291,12 @@
       SAVE
 
       IF (FNUMFLAG.NE.'Y')THEN
-        CALL Getlun('READS.OUT',fnumrea)
         CALL GETLUN('FILETMP',FILENUM)
-        INQUIRE (FILE='READS.OUT',OPENED=fopen)
-        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
         FNUMFLAG = 'Y'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!        CALL Getlun('READS.OUT',fnumrea)
+!        INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
       ENDIF
 
 
@@ -361,15 +362,16 @@
 
       IF (COL1R.LT.0) COL1R=0
 
-      WRITE(fnumrea,*)' '
-      WRITE(fnumrea,*)'FILE ',FILENAME(1:FILELEN)
-      WRITE(fnumrea,*)' TREATMENT: ',COL1
-      WRITE(fnumrea,*)' REPLICATE: ',COL1R
-      WRITE(fnumrea,*)' SN,ON,CN (as provided): ',COL2,COL3,COL4
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      WRITE(fnumrea,*)' '
+!      WRITE(fnumrea,*)'FILE ',FILENAME(1:FILELEN)
+!      WRITE(fnumrea,*)' TREATMENT: ',COL1
+!      WRITE(fnumrea,*)' REPLICATE: ',COL1R
+!      WRITE(fnumrea,*)' SN,ON,CN (as provided): ',COL2,COL3,COL4
       IF (COL2.LE.0) COL2=1
       IF (COL3.LE.0) COL3=1
       IF (COL4.LE.0) COL4=1
-      WRITE(fnumrea,*)' SN,ON,CN (as used)    : ',COL2,COL3,COL4
+!      WRITE(fnumrea,*)' SN,ON,CN (as used)    : ',COL2,COL3,COL4
 
       LEVEL=TL10FROMI(COL1)
       LEVELLEN=TVILENT(LEVEL)
@@ -539,7 +541,7 @@
              IF(SM(1:1).NE.'0')THEN
                IF(CTR.EQ.'N')THEN
                  IF(Ctrflag.NE.'Y') THEN
-                   WRITE(fnumrea,*)' CONTROLS FROM: ',filenew(1:60)
+!                   WRITE(fnumrea,*)' CONTROLS FROM: ',filenew(1:60)
                    Ctrflag = "Y"
                  ENDIF
                ENDIF
@@ -854,7 +856,7 @@
         ENDIF
         OPEN(filenum,FILE=ctrdirfl,STATUS='OLD')
         IF(Ctrflag.NE.'Y') THEN
-          WRITE(fnumrea,*)' CONTROLS FROM: ',filenew(1:60)
+!          WRITE(fnumrea,*)' CONTROLS FROM: ',filenew(1:60)
           Ctrflag = "Y"
         ENDIF  
         STARTCOL=2
@@ -898,10 +900,11 @@
         STOP ' '
       ENDIF
 
-      WRITE(fnumrea,'(A13)')'  Data array:'
-      DO TVI3=1,DATANUM
-        WRITE(fnumrea,'(I6,A2,A60)')tvi3,'  ',datarray(TVI3)(1:60)
-      ENDDO
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      WRITE(fnumrea,'(A13)')'  Data array:'
+!      DO TVI3=1,DATANUM
+!        WRITE(fnumrea,'(I6,A2,A60)')tvi3,'  ',datarray(TVI3)(1:60)
+!      ENDDO
 
       abvfile=' '
       abvfile(1:10)='DETAIL.CDE'
@@ -920,11 +923,12 @@
       ENDIF
       IF(fflag)THEN
         ! Read abbreviation file
-        WRITE(fnumrea,*)' '
-        WRITE(fnumrea,*)' Reading abbrev file: ',abvfile(1:55)
         CALL AMAKEABV(ABVFILE,abvarray,abvsyn)
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.        
+!        WRITE(fnumrea,*)' '
+!        WRITE(fnumrea,*)' Reading abbrev file: ',abvfile(1:55)
       ELSE
-        WRITE(fnumrea,*)' '
+!        WRITE(fnumrea,*)' '
         abvsyn=0
       ENDIF
 
@@ -1090,19 +1094,32 @@
 
       ! Following is to return yeardoy instead of yrdoy
       IF (VALUOUT.GT.0 .AND. VALUOUT.LE.99365) THEN
-        IF (CODE.EQ.'SDATE') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'PDATE') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'ICDAT') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'ICRDT') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'IDATE') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'FDATE') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'RDATE') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'PFRST') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'PLAST') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'CDATE') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'TDATE') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'ODATE') VALUOUT=CSYEARDOY (valuout)
-        IF (CODE.EQ.'HDATE') VALUOUT=CSYEARDOY (valuout)
+        !IF (CODE.EQ.'SDATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'SDATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'PDATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'PDATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'ICDAT') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'ICDAT') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'ICRDT') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'ICRDT') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'IDATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'IDATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'FDATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'FDATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'RDATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'RDATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'PFRST') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'PFRST') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'PLAST') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'PLAST') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'CDATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'CDATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'TDATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'TDATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'ODATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'ODATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
+        !IF (CODE.EQ.'HDATE') VALUOUT=CSYEARDOY (valuout)
+        IF (CODE.EQ.'HDATE') CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
       ENDIF
 
       ! Following is to read years and days instead of date
@@ -1121,7 +1138,8 @@
         VALUETMP=TVRFROMC(Charout(1:12))
         YEAR=NINT(VALUETMP)
         VALUOUT=YEAR*1000+DAY
-        VALUOUT=CSYEARDOY (valuout)
+        !VALUOUT=CSYEARDOY (valuout)
+        CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
       ENDIF
       IF(CODE.EQ.'ICRDT'.AND.VALUOUT.EQ.-99)THEN
         CALL XREADC(FILENAME,COL1,COL1R,COL2,COL3,COL4,'ICRDY',charout)
@@ -1138,7 +1156,8 @@
         VALUETMP=TVRFROMC(Charout(1:12))
         YEAR=NINT(VALUETMP)
         VALUOUT=YEAR*1000+DAY
-        VALUOUT=CSYEARDOY (valuout)
+        !VALUOUT=CSYEARDOY (valuout)
+        CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
       ENDIF
       IF(CODE.EQ.'PDATE'.AND.VALUOUT.EQ.-99)THEN
         CALL XREADC(FILENAME,COL1,COL1R,COL2,COL3,COL4,'PLDAY',charout)
@@ -1167,7 +1186,8 @@
           STOP ' '
         ENDIF
         VALUOUT=YEAR*1000+DAY
-        VALUOUT=CSYEARDOY (valuout)
+        !VALUOUT=CSYEARDOY (valuout)
+        CALL Y4K_DOY(VALUOUT,FILENAME,0,'CSREAD',3)
       ENDIF
 
       RETURN
@@ -1409,12 +1429,13 @@
 
       SAVE
 
-      IF (FNUMFLAG.NE.'Y')THEN
-        CALL Getlun('READS.OUT',fnumrea)
-        INQUIRE (FILE='READS.OUT',OPENED=fopen)
-        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
-        FNUMFLAG = 'Y'
-      ENDIF
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      IF (FNUMFLAG.NE.'Y')THEN
+!        CALL Getlun('READS.OUT',fnumrea)
+!        INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+!        FNUMFLAG = 'Y'
+!      ENDIF
 
       ! File
       CALL LTRIM2(FILENAME,filenew)
@@ -1462,12 +1483,13 @@
       ENDIF
       IF(fflag)THEN
         ! Read abbreviation file
-        WRITE(fnumrea,*)' '
-        WRITE(fnumrea,*)' Reading abbrev file: ',abvfile(1:55)
         CALL AMAKEABV(ABVFILE,abvarray,abvsyn)
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.        
+!        WRITE(fnumrea,*)' '
+!        WRITE(fnumrea,*)' Reading abbrev file: ',abvfile(1:55)
       ELSE
-        WRITE(fnumrea,*)' '
-        WRITE(fnumrea,*)' No abbreviation file: ',abvfile(1:55)
+!        WRITE(fnumrea,*)' '
+!        WRITE(fnumrea,*)' No abbreviation file: ',abvfile(1:55)
         abvsyn=0
       ENDIF
 
@@ -1620,12 +1642,13 @@
 
       SAVE
 
-      IF (FNUMFLAG.NE.'Y')THEN
-        CALL Getlun('READS.OUT',fnumrea)
-        INQUIRE (FILE='READS.OUT',OPENED=fopen)
-        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
-        FNUMFLAG = 'Y'
-      ENDIF
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      IF (FNUMFLAG.NE.'Y')THEN
+!        CALL Getlun('READS.OUT',fnumrea)
+!        INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+!        FNUMFLAG = 'Y'
+!      ENDIF
 
       LENSTD=12
 
@@ -1791,12 +1814,13 @@
 
       SAVE
 
-      IF (FNUMFLAG.NE.'Y')THEN
-        CALL Getlun('READS.OUT',fnumrea)
-        INQUIRE (FILE='READS.OUT',OPENED=fopen)
-        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
-        FNUMFLAG = 'Y'
-      ENDIF
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      IF (FNUMFLAG.NE.'Y')THEN
+!        CALL Getlun('READS.OUT',fnumrea)
+!        INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+!        FNUMFLAG = 'Y'
+!      ENDIF
 
       CALL LTRIM2(ECDIRFLE,ecdirflt)
       FILELEN=TVILENT(ECDIRFLT)
@@ -1947,11 +1971,12 @@
       SAVE
 
       IF (FNUMFLAG.NE.'Y')THEN
-        CALL Getlun('READS.OUT',fnumrea)
         CALL GETLUN('FILETMP',FILENUM)
-        INQUIRE (FILE='READS.OUT',OPENED=fopen)
-        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
         FNUMFLAG = 'Y'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!        CALL Getlun('READS.OUT',fnumrea)
+!        INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
       ENDIF
 
       LENSTD=12
@@ -2059,11 +2084,12 @@
 
       CLOSE(FILENUM)
 
-      WRITE(fnumrea,*)' '
-      WRITE(fnumrea,*)'FILE ',SPDIRFLE(1:FILELEN)
-      DO TVI3=1,DATANUM
-        WRITE(fnumrea,'(I6,A2,A60)')tvi3,'  ',datarray(TVI3)(1:60)
-      ENDDO
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      WRITE(fnumrea,*)' '
+!      WRITE(fnumrea,*)'FILE ',SPDIRFLE(1:FILELEN)
+!      DO TVI3=1,DATANUM
+!        WRITE(fnumrea,'(I6,A2,A60)')tvi3,'  ',datarray(TVI3)(1:60)
+!      ENDDO
 
       ! No abbreviation file. Headers must be standard!
       abvsyn=0
@@ -2329,11 +2355,12 @@
 
       SAVE
 
-      IF (fnumrea.LE.0.OR.fnumrea.GT.1000) THEN
-        CALL Getlun('READS.OUT',fnumrea)
-        INQUIRE (FILE='READS.OUT',OPENED=fopen)
-        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
-      ENDIF
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      IF (fnumrea.LE.0.OR.fnumrea.GT.1000) THEN
+!        CALL Getlun('READS.OUT',fnumrea)
+!        INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+!      ENDIF
 
       SYNCODE=' '
       CODENUM=1
@@ -2402,8 +2429,9 @@
             CODENUM=CODENUM+1
             CALL Getstr(ABVARRAY(TVIABV),CODENUM,SYNCODE)
             IF(TVILENT(SYNCODE).GT.0.AND.SYNCODE(1:3).NE.'-99')THEN
-              WRITE(fnumrea,*)' Abbreviations  ',abvarray(tviabv)(1:55)
-              WRITE(fnumrea,*)' Trying synonym ',syncode
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.              
+!              WRITE(fnumrea,*)' Abbreviations  ',abvarray(tviabv)(1:55)
+!              WRITE(fnumrea,*)' Trying synonym ',syncode
               GO TO 5556
             ELSE
               ! WRITE(fnumrea,*)' Nothing found for ',Code
@@ -2411,7 +2439,7 @@
           ENDIF
         ENDIF
 
-        WRITE(fnumrea,*)' Nothing found for ',Code
+!        WRITE(fnumrea,*)' Nothing found for ',Code
         TXTO=' '
         TXTO(1:3)='-99'
 
@@ -2503,11 +2531,12 @@
 
       SAVE
 
-      CALL Getlun('READS.OUT',fnumrea)
       CALL GETLUN('FILETMP',FILENUM)
 
-      INQUIRE (FILE='READS.OUT',OPENED=fopen)
-      IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      CALL Getlun('READS.OUT',fnumrea)
+!      INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!      IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
 
       ! File
       FILELEN=TVILENT(ADIRFILE)
@@ -2518,9 +2547,10 @@
       IF(LEVELLEN.GT.LENSTD)LEVELLEN=LENSTD
       OPEN(filenum,FILE=ADIRFILE,STATUS='OLD')
 
-      WRITE(fnumrea,*)' '
-      WRITE(fnumrea,*)'FILE ',ADIRFILE(1:FILELEN)
-      WRITE(fnumrea,*)' LEVEL ',LEVEL(1:LEVELLEN)
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      WRITE(fnumrea,*)' '
+!      WRITE(fnumrea,*)'FILE ',ADIRFILE(1:FILELEN)
+!      WRITE(fnumrea,*)' LEVEL ',LEVEL(1:LEVELLEN)
 
       DATANUM=0
       STARTCOL=1
@@ -2652,9 +2682,10 @@
 
       CLOSE(filenum)
 
-      DO TVI1=1,DATANUM
-        WRITE(fnumrea,'(I6,A2,A60)')tvi1,'  ',DATARRAY(TVI1)(1:60)
-      ENDDO
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      DO TVI1=1,DATANUM
+!        WRITE(fnumrea,'(I6,A2,A60)')tvi1,'  ',DATARRAY(TVI1)(1:60)
+!      ENDDO
 
       IF (DATANUM .LE. 0)THEN
         CALL Getlun('ERROR.OUT',fnumerr)
@@ -2703,16 +2734,17 @@
 
       SIZE=500
 
-      CALL Getlun('READS.OUT',fnumrea)
       CALL GETLUN('FILETMP',FILENUM)
 
-      INQUIRE (FILE='READS.OUT',OPENED=fopen)
-      IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      CALL Getlun('READS.OUT',fnumrea)
+!      INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!      IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+!      WRITE(fnumrea,*)' '
+!      WRITE(fnumrea,*)'FILE ',SPDIRFLT(1:50)
 
       OPEN(filenum,FILE=spdirflt,STATUS='OLD')
 
-      WRITE(fnumrea,*)' '
-      WRITE(fnumrea,*)'FILE ',SPDIRFLT(1:50)
 
       TVI1=0
       FFLAG=.FALSE.
@@ -2746,7 +2778,8 @@
                     ENDIF
                   ENDDO
                   datarray(tvi1)=tl2541
-                  WRITE(fnumrea,'(I6,A2,A60)')TVI1,'  ',TL2541(1:60)
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.                  
+!                  WRITE(fnumrea,'(I6,A2,A60)')TVI1,'  ',TL2541(1:60)
                 ENDIF
               ENDIF
             ENDIF
@@ -2811,11 +2844,12 @@
 
       SAVE
 
-      CALL Getlun('READS.OUT',fnumrea)
       CALL GETLUN('FILETMP',FILENUM)
 
-      INQUIRE (FILE='READS.OUT',OPENED=fopen)
-      IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      CALL Getlun('READS.OUT',fnumrea)
+!      INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!      IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
 
       ! Currently SN, ON, AND CN are not currently used .. but will be!
 
@@ -2830,10 +2864,11 @@
       IF(LEVELLEN.GT.LENSTD)LEVELLEN=LENSTD
       OPEN(filenum,FILE=ADIRFILE,STATUS='OLD')
 
-      WRITE(fnumrea,*)' '
-      WRITE(fnumrea,*)'FILE   ',ADIRFILE(1:FILELEN)
-      WRITE(fnumrea,*)' TRT   ',LEVEL(1:LEVELLEN)
-      WRITE(fnumrea,*)'  RP   ',RN
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      WRITE(fnumrea,*)' '
+!      WRITE(fnumrea,*)'FILE   ',ADIRFILE(1:FILELEN)
+!      WRITE(fnumrea,*)' TRT   ',LEVEL(1:LEVELLEN)
+!      WRITE(fnumrea,*)'  RP   ',RN
 
       DATANUM=0
       STARTCOL=1
@@ -2919,10 +2954,10 @@
           ONCOL=Tvicolnm(ABVLINE,'ON ')
           CNCOL=Tvicolnm(ABVLINE,'CN ')
           IF (RNCOL.GT.0)THEN
-            WRITE(fnumrea,*)' RN column ',rncol
+            !WRITE(fnumrea,*)' RN column ',rncol
             CALL Getstr(datastd,rncol,value)
             RNVAL=Tvifromc(value)
-            WRITE(fnumrea,*)' RN valu   ',rnval
+            !WRITE(fnumrea,*)' RN valu   ',rnval
             IF (RNVAL.NE.RN) GO TO 999
           ENDIF
           IF (SNCOL.GT.0)THEN
@@ -2991,14 +3026,14 @@
 
       CLOSE(filenum)
 
-      DO TVI1=1,DATANUM
-        WRITE(fnumrea,'(I6,A2,A60)')tvi1,'  ',DATARRAY(TVI1)(1:60)
-      ENDDO
-
-      IF (DATANUM .LE. 0)THEN
-        WRITE(fnumrea,*)' Problem reading: ',ADIRFILE(1:60)
-        WRITE (fnumrea,*) ' Nothing in the array of input data!'
-      ENDIF
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      DO TVI1=1,DATANUM
+!        WRITE(fnumrea,'(I6,A2,A60)')tvi1,'  ',DATARRAY(TVI1)(1:60)
+!      ENDDO
+!      IF (DATANUM .LE. 0)THEN
+!        WRITE(fnumrea,*)' Problem reading: ',ADIRFILE(1:60)
+!        WRITE (fnumrea,*) ' Nothing in the array of input data!'
+!      ENDIF
 
       RETURN
 
@@ -3037,11 +3072,12 @@
       SAVE
 
       IF (FNUMFLAG.NE.'Y')THEN
-        CALL Getlun('READS.OUT',fnumrea)
         CALL GETLUN('FILETMP',FILENUM)
-        INQUIRE (FILE='READS.OUT',OPENED=fopen)
-        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
         FNUMFLAG = 'Y'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.        
+!        CALL Getlun('READS.OUT',fnumrea)
+!        INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
       ENDIF
 
       arg=' '
@@ -3087,9 +3123,11 @@
       ENDIF
 
       IF(SLCODE(1:10).EQ.SLCODEP(1:10))GO TO 5555
-      WRITE(fnumrea,*)' '
-      WRITE(fnumrea,*)' SOIL FILENAME ',SLDIRFLE(1:60)
-      WRITE(fnumrea,*)' SOIL CODE     ',SLCODE
+      
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.      
+!      WRITE(fnumrea,*)' '
+!      WRITE(fnumrea,*)' SOIL FILENAME ',SLDIRFLE(1:60)
+!      WRITE(fnumrea,*)' SOIL CODE     ',SLCODE
 
       FILELEN=TVILENT(SLDIRFLE)
 
@@ -3116,9 +3154,10 @@
         IF(tl0801(1:GROUPLEN).EQ.GROUP(1:GROUPLEN))EXIT
       END DO
 
-      WRITE(fnumrea,*)' '
-      WRITE(fnumrea,*)'FILE ',SLDIRFLE(1:FILELEN)
-      WRITE(fnumrea,*)' GROUP ',GROUP(1:GROUPLEN)
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      WRITE(fnumrea,*)' '
+!      WRITE(fnumrea,*)'FILE ',SLDIRFLE(1:FILELEN)
+!      WRITE(fnumrea,*)' GROUP ',GROUP(1:GROUPLEN)
 
       DO L=1,500
         DATARRAY=' '
@@ -3208,9 +3247,10 @@
 
       CLOSE(FILENUM)
 
-      DO TVI3=1,datanum
-        WRITE(fnumrea,'(I6,A2,A60)')tvi3,'  ',datarray(TVI3)(1:60)
-      enddo
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      DO TVI3=1,datanum
+!        WRITE(fnumrea,'(I6,A2,A60)')tvi3,'  ',datarray(TVI3)(1:60)
+!      enddo
 
       SLCODEP(1:10)=SLCODE(1:10)
 
@@ -3231,12 +3271,13 @@
       ENDIF
       IF(fflag)THEN
         ! Read abbreviation file
-        WRITE(fnumrea,*)' '
-        WRITE(fnumrea,*)' Reading abbrev file: ',abvfile(1:55)
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.        
+!        WRITE(fnumrea,*)' '
+!        WRITE(fnumrea,*)' Reading abbrev file: ',abvfile(1:55)
         CALL AMAKEABV(ABVFILE,abvarray,abvsyn)
       ELSE
-        WRITE(fnumrea,*)' '
-        WRITE(fnumrea,*)' No abbreviation file: ',abvfile(1:55)
+!        WRITE(fnumrea,*)' '
+!        WRITE(fnumrea,*)' No abbreviation file: ',abvfile(1:55)
         abvsyn=0
       ENDIF
 
@@ -3485,10 +3526,10 @@
       IMPLICIT NONE
 
       CHARACTER (LEN=254) DATARRAY(500), ABVARRAY(1000)
-      CHARACTER (LEN=128) ARG
-      character (LEN=100) CODENEW
-      CHARACTER (LEN=132) ABVFILE
-      CHARACTER (LEN=93)  SMDIRFLE
+      CHARACTER (LEN=250) ARG
+      character (LEN=250) CODENEW
+      CHARACTER (LEN=250) ABVFILE
+      CHARACTER (LEN=250) SMDIRFLE
       CHARACTER (LEN=12)  SMFILE
       CHARACTER (LEN=8)   MODEL, MODELP
       CHARACTER (LEN=1)   FNUMFLAG
@@ -3500,12 +3541,13 @@
 
       SAVE
 
-      IF (FNUMFLAG.NE.'Y')THEN
-        CALL Getlun('READS.OUT',fnumrea)
-        INQUIRE (FILE='READS.OUT',OPENED=fopen)
-        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
-        FNUMFLAG = 'Y'
-      ENDIF
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.
+!      IF (FNUMFLAG.NE.'Y')THEN
+!        CALL Getlun('READS.OUT',fnumrea)
+!        INQUIRE (FILE='READS.OUT',OPENED=fopen)
+!        IF (.NOT.fopen) OPEN(UNIT=fnumrea,FILE='READS.OUT')
+!        FNUMFLAG = 'Y'
+!      ENDIF
 
       CALL LTRIM2(CODE,codenew)
 

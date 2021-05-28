@@ -8,7 +8,7 @@
 !**********************************************************************************************************************
     
     SUBROUTINE YCA_SeasInit_VarInit( &
-        BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
+        BRSTAGE     , LAI         , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
         PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
         STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3         &
         )  
@@ -20,7 +20,7 @@
         
         INTEGER STGYEARDOY(0:19)            
         
-        REAL    BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL(30)    , LAILA(30)   , NFP         , PARIP       
+        REAL    BRSTAGE     , LAI        , CANHT       , DEWDUR      , LAIL(30)    , LAILA(30)   , NFP         , PARIP       
         REAL    PARIPA      , RESCALG(0:NL)             , RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)     
         REAL    SENCALG(0:NL)             , SENLALG(0:NL)             , SENNALG(0:NL)             , TRWUP       , UH2O(NL)    
         REAL    UNH4(NL)    , UNO3(NL)    
@@ -36,7 +36,7 @@
         amtnit = 0.0
         andem = 0.0
         brnumst = 1.0
-        caid = 0.0
+        lai = 0.0
         canht = 0.0
         canhtg = 0.0
         carboadj = 0.0
@@ -192,7 +192,7 @@
         laistg = 0.0
         laix = 0.0
         laixm = -99.0
-        lanc = 0.0
+        !lanc = 0.0
         laphc = 0.0
         NLAYRROOT = 0 !LPM 07SEP2017 To initialize this variable for initial estimation of WFG 
         !lcnum = 0 !LPM 28MAR15 Non necessary variables
@@ -205,12 +205,12 @@
         !llrswad = 0.0
         !llrswt = 0.0 !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
         llwad = 0.0
-        lncr = 0.0
-        lncx = 0.0
+        !lncr = 0.0
+        !lncx = 0.0
         lndem = 0.0
         lnphc = 0.0
         lnum = 0.0
-        lnumsimstg = 0.0   !LPM 09AGO2015 To initialize the variable lnumsimstg
+        lnumsimstg = 0   !LPM 09AGO2015 To initialize the variable lnumsimstg
         lnumsimtostg = 0.0 !LPM 09AGO2015 To initialize the variable lnumsimtostg
         !lnumend = 0.0
         lnumg = 0.0
@@ -231,6 +231,7 @@
         mdat = -99
         mdayfr = -99
         mdoy = -99
+        MSWT = 0.0
         nfg = 1.0
         nfgcc = 0.0
         nfgcc = 0.0
@@ -430,7 +431,10 @@
         srnuse = 0.0
         srootn = 0.0
         srwt = 0.0
+        SRWTFPREV = 0.0
+        SRWTG = 0.0
         srwtgrs = 0.0
+        SRWTPREV = 0.0
         ! srwud = 0.0  !issue 50
         srwum = 0.0
         srwum = 0.0

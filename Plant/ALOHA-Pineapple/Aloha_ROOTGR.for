@@ -12,6 +12,7 @@
 !  06/20/1994 JTR, BDB Simplified the RLNEW calculation and slowed
 !                  the growth of roots in deeper soils.   
 !  06/25/2017 CHP Adpated for CSM v4.6
+!  09/05/2020 JVJ Stage changed for inclusion in Overview      
 !-----------------------------------------------------------------------
 !                         DEFINITIONS
 !
@@ -85,7 +86,7 @@
         CASE (1)
           IF (ISWWAT .NE. 'Y') RETURN
           RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
-        CASE (9)
+        CASE (12)                        !CASE (9) JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
       END SELECT
 

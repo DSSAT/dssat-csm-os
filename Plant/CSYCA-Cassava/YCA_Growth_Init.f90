@@ -49,8 +49,6 @@
             ELSE                                                                         
                 EMRGFR = 1.0
                 IF (EMFLAG /= 'Y') THEN
-                    WRITE(FNUMWRK,*)' ' 
-                    WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
                     EMFLAG = 'Y'
                 ENDIF
                 LNUMSG = 1     ! LAH NEW
@@ -60,8 +58,6 @@
             SEEDUSES = 0.0     
             EMRGFR = 1.0
             IF (EMFLAG /= 'Y') THEN
-                WRITE(FNUMWRK,*)' ' 
-                WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
                 EMFLAG = 'Y'
             ENDIF
             LNUMSG = 1     ! LAH NEW
@@ -73,33 +69,44 @@
         DF = 1.0
         DFNEXT = 1.0
         ! To ensure correct sensitivity on emergence day
-        IF (BRSTAGE <= 0.0) THEN
+        IF (BRSTAGE < 1.0) THEN
             BRSTAGETMP = 1.0
         ELSE
             BRSTAGETMP = BRSTAGE
         ENDIF
         IF (PPSEN == 'SL') THEN      ! Short day response,linear 
-            DF = 1.0 - DAYLS(INT(BRSTAGETMP))/1000.*(PPTHR-DAYL)                                                       !EQN 050
-            !IF (BRSTAGETMP < FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
+            DF = 1.0 - DAYLS(INT(BRSTAGETMP))/1000.*(PPTHR-DAYL)
             IF (BRSTAGETMP < FLOAT(PSX)) THEN
                 DFNEXT = 1.-DAYLS(INT(BRSTAGETMP+1))/1000.*(PPTHR-DAYL)
             ELSE
                 DFNEXT = DF
-            ENDIF 
+            ENDIF !EQN 050
         ELSEIF (PPSEN == 'LQ') THEN  ! Long day response,quadratic
             DF = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP))/10000.*(PPTHR-DAYL)**PPEXP)))                         !EQN 048
-            IF (BRSTAGETMP < 10.0) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP+1.0))/10000.*(PPTHR-DAYL)**PPEXP)))
+            IF (BRSTAGETMP < FLOAT(PSX)) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP+1.0))/10000.*(PPTHR-DAYL)**PPEXP)))
             Tfdf = AMAX1(0.0,1.0-AMAX1(0.0,(TMEAN-10.0)/10.0))
             Tfdf = 1.0  ! LAH No temperature effect on DF ! 
             DF = DF + (1.0-DF)*(1.0-TFDF)                                                                              !EQN 049
             DFNEXT = DFNEXT + (1.0-DFNEXT)*(1.0-TFDF)
         ELSEIF (PPSEN == 'LL') THEN      ! Long day response,linear 
-            DF = 1.0 - AMIN1(1.0,DAYLS(INT(BRSTAGETMP))*(PPTHR-DAYL))                                                       !EQN 050
-            !IF (BRSTAGETMP < FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
-            IF (BRSTAGETMP < FLOAT(PSX)) THEN
-                DFNEXT = 1.-AMIN1(1.0,DAYLS(INT(BRSTAGETMP+1))*(PPTHR-DAYL))
+            IF (DAYL >= PPTHR) THEN
+                DF = 1.0 
+                DFNEXT = 1.0
             ELSE
-                DFNEXT = DF
+                IF (BRSTAGE < 1.0) THEN
+                    DF = 1.0 - AMIN1(1.0,DAYLS(INT(BRSTAGETMP))*(PPTHR-DAYL)) 
+                ELSEIF (BRSTAGETMP < FLOAT(PSX)) THEN
+                    DF = 1.0 - AMIN1(1.0,DAYLS(INT(BRSTAGETMP+1))*(PPTHR-DAYL)) 
+                ENDIF 
+                IF ((BRSTAGETMP+ 2.0) < FLOAT(PSX)) THEN
+                    IF (BRSTAGE < 1.0) THEN
+                        DFNEXT = 1.-AMIN1(1.0,DAYLS(INT(BRSTAGETMP+1))*(PPTHR-DAYL))
+                    ELSE
+                        DFNEXT = 1.-AMIN1(1.0,DAYLS(INT(BRSTAGETMP+2))*(PPTHR-DAYL))
+                    ENDIF    
+                ELSE
+                    DFNEXT = DF
+                ENDIF!EQN 050
             ENDIF
         ENDIF
 
@@ -118,9 +125,14 @@
         DUPHASE = 0.0
         DUPNEXT = 0.0
         ! To avoid exceeding the array sizes
-        IF (BRSTAGETMP < 10.0) THEN
+        IF (BRSTAGETMP < FLOAT(PSX)) THEN ! LPM 23JUL19 To use PSX instead of a fixed value
             !DUNEED = PSTART(INT(BRSTAGETMP+1.0))-CUMDU                                                                 !EQN 051
-            DUNEED = PSTART(INT(BRSTAGETMP+1.0))-DABR                                                                 !EQN 051!LPM 24APR2016 using the thermal clock with stress
+            !LPM 23JUL19 to use BRSTAGETMP for the first branching level
+            IF (BRSTAGE < 1.0) THEN
+                DUNEED = PSTART(INT(BRSTAGETMP))-DABR 
+            ELSE
+                DUNEED = PSTART(INT(BRSTAGETMP+1.0))-DABR     !EQN 051!LPM 24APR2016 using the thermal clock with stress
+            ENDIF                                              
             IF (DUNEED >= TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN                                                    !LPM 21MAR15 use TTB instead of TT (TO1=24=TO2)
                 DUPHASE = TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)                                                          !EQN 052a !LPM 21MAR15/19APR2016 use TTB instead of TT (TO1=24=TO2)
                 TIMENEED = 1.0
@@ -130,7 +142,6 @@
                 TIMENEED = DUNEED/(TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))                                                !EQN 054 !LPM 21MAR15/19APR2016 use TTB instead of TT (TO1=24=TO2)
                 DUPNEXT = TTNEXT*(1.0-TIMENEED)*DFNEXT                                                                 !EQN 053 
             ENDIF
-        ELSE
         ENDIF
             
         DU = DUPHASE+DUPNEXT                                                                                           !EQN 055
@@ -153,15 +164,13 @@
         !           Determine if today has a harvest instruction
         !-----------------------------------------------------------------------
 
-        DO I = 1, 20
-            IF (HYEARDOY(I) == YEARDOY) THEN
-                HANUM = I
-                WRITE(fnumwrk,*) ' '
-                WRITE(fnumwrk,'(A20,i2,A12,A1,A6,i8)')' Harvest instruction ',hanum,'  Operation ',hop(i),'  Day ',yeardoy
-                CALL CSUCASE(HOP(I)) 
-                IF (hop(i) == 'F') YEARDOYHARF = YEARDOY 
-            ENDIF
-        END DO
+        !DO I = 1, 20 !LPM 27SEP2019 This section is not necessary and defines the wrong harvesting the second year for multiple years simulations  
+        !    IF (HYEARDOY(I) == YEARDOY) THEN  
+        !        HANUM = I
+        !        CALL CSUCASE(HOP(I)) 
+        !        IF (hop(i) == 'F') YEARDOYHARF = YEARDOY 
+        !    ENDIF
+        !END DO
 
         !-----------------------------------------------------------------------
         !           Determine amounts removed by grazing, etc.   
@@ -178,7 +187,6 @@
             ENDIF
         ENDIF
               
-        IF (HAFR > 0.0) WRITE(fnumwrk,'(A23,3F6.1)')' HARVEST  FR,CWAN,CWAD ',HAFR,CWAN(HANUM),CWAD
 
         ! For grazing 
         lwph = lfwt * hafr                                                                                             !EQN 416

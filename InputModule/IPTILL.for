@@ -10,6 +10,7 @@ C  04/01/1996 GH  Modified and included in DSSAT v3.1
 C  08/19/2002 GH  Modified for Y2K
 C  08/23/2002 GH  Expanded array tillage applications to 200
 C  02/03/2005 GH  Corrected error checking for missing levels
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNCHE,CDATE,CHCOD,CHAMT,CHMET,CHDEP,CHT
 C           YRSIM,ISWWAT,NCHEM,FOLFR,SOLFR
@@ -75,11 +76,13 @@ C
      &         (MOD(TDATE(NTIL),1000) .GT. 366)) THEN
                CALL ERROR (ERRKEY,10,FILEX,LINEXP)
             ENDIF
-
-            CALL Y2K_DOY(TDATE(NTIL))
+            
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY(TDATE(NTIL))
+            CALL Y4K_DOY(TDATE(NTIL),FILEX,LINEXP,ERRKEY,3)
 
             IF (TDATE(NTIL) .LT. YRSIM) THEN
-	        CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+	             CALL ERROR (ERRKEY,3,FILEX,LINEXP)
             ENDIF
 
             IF (TDEP(NTIL) .LT. 0) CALL ERROR (ERRKEY,11,FILEX,LINEXP)

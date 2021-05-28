@@ -8,6 +8,7 @@ C  REVISION HISTORY
 C             US  Written
 C  03/29/2002 CHP modular format
 !  01/12/2009 CHP fixed bug introduced with correction of underflow errors
+!  04/27/2021 FO/GH Added protection for division by zero for VOLOX and VOLSW
 C=======================================================================
 
       SUBROUTINE EQUIL2 (
@@ -131,7 +132,12 @@ C=======================================================================
          OXC   = OXSPEC * OXFAC
          SPPM  = SSPEC  * FAC1
          OXSPP = (OXSPEC-OXMIN)*FIS
-         OXSC  = OXSPP/VOLOX*1.E6
+!FO 04/27/2021 - Added protection for division by zero for VOLOX              
+         IF(VOLOX .GT. 0.0) THEN
+           OXSC  = OXSPP/VOLOX*1.E6
+         ELSE
+           OXSC = 0.0
+         ENDIF
 !         EQUIN = OXSPEC + SSPEC
          IF (OXSPEC .LT. 1.E-6) THEN
             OXSPP = 0.0
@@ -167,8 +173,13 @@ C=======================================================================
          IF (SSPP .LT. 1.E-6) THEN
             SSPP = 0.0
          ENDIF
-       ELSE
-         SOILC = SSPP/VOLSW*1.E6
+      ELSE
+!FO 04/27/2021 - Added protection for division by zero for VOLSW        
+         IF(VOLSW .GT. 0.0) THEN
+           SOILC = SSPP/VOLSW*1.E6
+         ELSE
+           SOILC = 0.0
+         ENDIF
       ENDIF
 
       SOILC = AMAX1 (SOILC,0.0)

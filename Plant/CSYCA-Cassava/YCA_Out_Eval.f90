@@ -10,7 +10,7 @@
     SUBROUTINE YCA_Out_Eval ( & 
         CN          , DOY         , DYNAMIC     , IDETG       , IDETL       , IDETO       , ISWNIT      , ISWWAT      , &
         MESOM       , ON          , RN          , RUN         , RUNI        , SN          , STGYEARDOY  , TN          , &
-        TNIMBSOM    , TOMINSOM1   , YEAR        &
+        TNIMBSOM    , TOMINSOM1   , YEAR        , LAI         &
         )
         
         USE ModuleDefs                                                                        ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
@@ -23,7 +23,7 @@
         INTEGER :: STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: CSTIMDIF    , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT            ! Integer function calls
 
-        REAL    :: TNIMBSOM    , TOMINSOM1          
+        REAL    :: TNIMBSOM    , TOMINSOM1   , LAI       
         REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
         REAL    :: HIAMMTMP                ! Harvest index,mature,temporary #          ! (From Output)    
 
@@ -79,8 +79,9 @@
                 ! Variables from time-course file
                 LAIXT = -99.0 
                 LNUMT = -99.0 
-                CWADT = -99.0 
-                HWADT = -99.0 
+                CWADT = -99.0
+                FHWADT = -99.0
+                HWADT = -99.0
                 HIADT = -99.0 
                 HWUT = -99.0 
                 HNUMAT = -99.0 
@@ -113,6 +114,8 @@
                     ! Yield at harvest   
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HWAM',hwamm)
                     IF (hwamm > 0.0.AND.HWAMM < 50.0) HWAMM = HWAMM*1000.0
+                    CALL AREADR (FILEA,TN,RN,SN,ON,CN,'FHWAM',fhwamm)
+                    IF (fhwamm > 0.0.AND.FHWAMM < 50.0) FHWAMM = FHWAMM*1000.0
                     IF (HWAMM <= 0.0) THEN
                         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HYAM',hyamm)
                         IF (hyamm <= 0.0) THEN
@@ -133,7 +136,7 @@
                     IF (hnumgmm.le.0.0)CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HNOUM',hnumgmm)
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'L#SM',lnumsmm)
                     IF (lnumsmm.le.0.0)CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LNOSM',lnumsmm)
-                    CALL AREADR (FILEA,TN,RN,SN,ON,CN,'BR#SH',brnumshm)
+                    CALL AREADR (FILEA,TN,RN,SN,ON,CN,'BR#SH',brnumshmm)
                         
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CNAM',cnamm)
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'VNAM',vnamm)
@@ -230,6 +233,7 @@
                                         LNUMCOL = Tvicolnm(linet,'L#SD')
                                         CWADCOL = Tvicolnm(linet,'CWAD')
                                         HWADCOL = Tvicolnm(linet,'HWAD')
+                                        FHWADCOL = Tvicolnm(linet,'FHWAD')
                                         HIADCOL = Tvicolnm(linet,'HIAD')
                                         HWTUCOL = Tvicolnm(linet,'HWUD')
                                         HNUMACOL = Tvicolnm(linet,'H#AD')
@@ -297,7 +301,6 @@
                                             ! Below is to pick up variables for output files
                                             IF (IDETL == 'A') THEN
                                                 IF (GROUP == 'A') THEN
-                                                    !WRITE(fnumwrk,*)' Picking vars from t-file'
                                                     CALL Getstrr (LINET,LAIDCOL,VALUER)
                                                     IF (VALUER > LAIXT) LAIXT = VALUER
                                                     CALL Getstrr (LINET,LNUMCOL,VALUER)
@@ -306,6 +309,8 @@
                                                     IF (VALUER > 0.0) CWADT = VALUER
                                                     CALL Getstrr (LINET,HWADCOL,VALUER)
                                                     IF (VALUER > 0.0) HWADT = VALUER
+                                                    CALL Getstrr (LINET,FHWADCOL,VALUER)
+                                                    IF (VALUER > 0.0) FHWADT = VALUER
                                                     CALL Getstrr (LINET,HIADCOL,VALUER)
                                                     IF (VALUER > 0.0) HIADT = VALUER
                                                     IF (HIADT >= 1.0) HIADT = HIADT/100.0
@@ -340,28 +345,19 @@
                     IF (IDETL == 'A') THEN
                         ! Use T-data if A-data missing (whem output=all)
                         IF (FEXISTT) THEN
-                            WRITE(Fnumwrk,*)' '
-                            WRITE(Fnumwrk,'(A45)')' FINISHED SIMULATION. PREPARING FINAL OUTPUTS'
-                            WRITE(Fnumwrk,*)' '
                             IF (HWAMM <= 0.0) THEN
                                 IF (HWADT > 0.0) THEN
                                     HWAMM = HWADT
-                                    WRITE(Fnumwrk,'(A32)')'  Time-course data used for HWAM'
                                 ENDIF
-                            ELSE
-                                IF (HWADT > 0.0) THEN
-                                    IF (ABS(100.0*ABS(HWAMM-HWADT)/HWAMM) > 0.0) THEN
-                                        WRITE(Fnumwrk,'(A48,F8.2)')'  Pc difference between final,time-course yields', &
-                                            100.0*ABS(HWAMM-HWADT)/HWAMM
-                                        WRITE(Fnumwrk,'(A22,I6)')'  Final yield         ',NINT(HWAMM)
-                                        WRITE(Fnumwrk,'(A22,I6)')'  Time-course yield   ',NINT(HWADT)
-                                    ENDIF
+                            ENDIF
+                            IF (HWFMM <= 0.0) THEN
+                                IF (FHWADT > 0.0) THEN
+                                    HWFMM = FHWADT
                                 ENDIF
                             ENDIF
                             IF (CWAMM <= 0.0) THEN
                                 IF (CWADT > 0.0) THEN
                                     CWAMM = CWADT
-                                    WRITE(Fnumwrk,'(A33)')'  Time-course data used for CWAMM'
                                 ENDIF
                             ELSE
                                 IF (CWADT > 0.0) THEN
@@ -378,37 +374,31 @@
                                 LAIXM = LAIXT
                                 WRITE(Message(1),'(A31)')'Time-course data used for LAIXM'
                                 CALL WARNING(1,'CSYCA',MESSAGE)
-                                WRITE(Fnumwrk,'(A33)')'  Time-course data used for LAIXM'
                             ENDIF
                             IF (LNUMSMM <= 0.0.AND.LNUMSMM > 0.0) THEN
                                 LNUMSMM = LNUMT
                                 WRITE(Message(1),'(A33)')'Time-course data used for LNUMSMM'
                                 CALL WARNING(1,'CSYCA',MESSAGE)
-                                WRITE(Fnumwrk,'(A35)')'  Time-course data used for LNUMSMM'
                             ENDIF
                             IF (HIAMM <= 0.0.AND.HIADT > 0.0) THEN
                                 HIAMM = HIADT
                                 WRITE(Message(1),'(A31)')'Time-course data used for HIAMM'
                                 CALL WARNING(1,'CSYCA',MESSAGE)
-                                WRITE(Fnumwrk,'(A33)')'  Time-course data used for HIAMM'
                             ENDIF
                             IF (HWUMM <= 0.0.AND.HWUT > 0.0) THEN
                                 HWUMM = HWUT
                                 WRITE(Message(1),'(A31)')'Time-course data used for HWUMM'
                                 CALL WARNING(1,'CSYCA',MESSAGE)
-                                WRITE(Fnumwrk,'(A33)')'  Time-course data used for HWUMM'
                             ENDIF
                             IF (HNUMAMM <= 0.0.AND.HNUMAT > 0.0) THEN
                                 HNUMAMM = HNUMAT
                                 WRITE(Message(1),'(A31)')'Time-course data used for H#AT'
                                 CALL WARNING(1,'CSYCA',MESSAGE)
-                                WRITE(Fnumwrk,'(A33)')'  Time-course data used for H#AT'
                             ENDIF
                             IF (HNUMGMM <= 0.0.AND.HNUMET > 0.0) THEN
                                 HNUMGMM = HNUMET
                                 WRITE(Message(1),'(A32)')'Time-course data used for H#GMM'
                                 CALL WARNING(1,'CSYCA',MESSAGE)
-                                WRITE(Fnumwrk,'(A34)')'  Time-course data used for H#GMM'
                             ENDIF
                         ENDIF
                         DO L = 1,PSNUM
@@ -417,7 +407,6 @@
                                     PSDATM(L) = INT(MDATT)
                                     WRITE(Message(1),'(A31)')'Time-course data used for MDATM'
                                     CALL WARNING(1,'CSYCA',MESSAGE)
-                                    WRITE(Fnumwrk,'(A33)')'  Time-course data used for MDATM'
                                 ENDIF  
                             ENDIF
                         ENDDO
@@ -463,14 +452,6 @@
                 ELSE
                     IF (cwamm > 0.AND.hwamm > 0) THEN
                         hiammtmp = hwamm/cwamm
-                        IF (hiammtmp/hiam > 1.1 .OR. hiammtmp/hiam < 0.9) THEN
-                            IF (ABS(hiammtmp-hiamm)/hiamm > 0.05) THEN
-                                WRITE (fnumwrk,*) 'Reported HI not consistent',' with yield and total weight data  '
-                                WRITE (fnumwrk,*) ' Reported HI   ',hiamm
-                                WRITE (fnumwrk,*) ' Calculated HI ',hiammtmp
-                                WRITE (fnumwrk,*) ' Will use reported value '
-                            ENDIF
-                        ENDIF
                     ENDIF
                 ENDIF
                     
@@ -481,17 +462,6 @@
                 ELSE
                     IF (hwamm.gt.0.0.AND.hnumamm > 0.0) THEN
                         hwumyld = hwamm*0.1/hnumamm
-                        IF (ABS(hwumyld-hwumm)/hwumm > 0.05) THEN
-                            WRITE (fnumwrk,*)' '
-                            WRITE (fnumwrk,'(A14)')' MEASURED DATA'
-                            WRITE (fnumwrk,'(A36,A33)')' Reported product wt.not consistent', &
-                                ' with yield and product # data   '
-                            WRITE (fnumwrk,*) ' Reported wt   ',hwumm
-                            WRITE (fnumwrk,*) ' Calculated wt ',hwumyld
-                            WRITE (fnumwrk,*) '   Yield       ',hwamm
-                            WRITE (fnumwrk,*) '   Kernel no   ',hnumamm
-                            WRITE (fnumwrk,*) ' Will use reported value '
-                        ENDIF
                     ENDIF
                 ENDIF
                     
@@ -625,8 +595,8 @@
                                 WRITE (FNUMEVAL,'(A5,A1)',ADVANCE='NO') PSABVO(KEYPS(L)),'M'
                             ENDIF 
                         ENDDO
-                        WRITE (FNUMEVAL,'(6A)') &
-                            ' HWAMS HWAMM HWUMS HWUMM',' H#AMS H#AMM H#GMS H#GMM',' LAIXS LAIXM L#SMS L#SMM', &
+                        WRITE (FNUMEVAL,'(5A)') &
+                            ' HWAMS HWAMM FWAMS FWAMM',' LAIXS LAIXM L#SMS L#SMM BR#SS BR#SM', &
                             ' CWAMS CWAMM VWAMS VWAMM',' HIAMS HIAMM HN%MS HN%MM VN%MS VN%MM', &
                             ' CNAMS CNAMM HNAMS HNAMM HINMS HINMM'
                         CLOSE(FNUMEVAL)
@@ -645,8 +615,8 @@
                         WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') PSDAPM(KEYPS(L))
                     ENDIF
                 ENDDO
-                WRITE (FNUMEVAL,'(2I6, 2A6, 2I6, 6F6.1, 4I6, 6A6, 4I6, 2A6)')NINT(hwam),NINT(hwamm),hwumchar,hwummchar, &
-                    NINT(hnumam),NINT(hnumamm),hnumgm,hnumgmm,laix,laixm,lnumsm,lnumsmm,NINT(cwam),NINT(cwamm),NINT(vwam), &
+                WRITE (FNUMEVAL,'(4I6, 6F6.1, 4I6, 6A6, 4I6, 2A6)')NINT(hwam),NINT(hwamm),NINT(fhwam),NINT(fhwamm), &
+                    laix,laixm,lnumsm,lnumsmm, brnam, brnumshmm,NINT(cwam),NINT(cwamm),NINT(vwam), &
                     NINT(vwamm),hiamchar,hiammchar,hnpcmchar,hnpcmmchar,vnpcmchar,vnpcmmchar,NINT(cnam),NINT(cnamm), &
                     NINT(hnam),NINT(hnamm),hinmchar,hinmmchar
                 Close(FNUMEVAL)
@@ -689,7 +659,8 @@
                         WRITE(FNUMOV,*) ' '
                         CALL Calendar (plyear,plday,dom,month)
                         WRITE (FNUMOV, FMT208)month,dom,plyeardoy,NINT(pltpop),NINT(rowspc)
-                        CALL CSYR_DOY(EYEARDOY,YEAR,DOY)
+!                        CALL CSYR_DOY(EYEARDOY,YEAR,DOY)
+                        CALL YR_DOY(EYEARDOY,YEAR,DOY)
                         CALL Calendar(year,doy,dom,month)
                         WRITE(FNUMOV, '(A, A3, I3, I8)') ' EMERGENCE        ', month, dom, eyeardoy                  
                         WRITE(FNUMOV,*) ' '
@@ -723,7 +694,8 @@
                     DO L = 0, PSNUM
                         CALL Csopline(laic,laistg(l))
                         IF (STGYEARDOY(L) < 9999999.AND.L /= PSX.AND.L /= PSX+1) THEN
-                            CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                            CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                            CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                             CALL Calendar(year,doy,dom,month)
                             CNCTMP = -99
                             IF (CNADSTG(L) > 0.0 .AND. CWADSTG(L) > 0.0) CNCTMP = CNADSTG(L)/CWADSTG(L)*100
@@ -736,7 +708,8 @@
                     IF (YEARDOYHARF == YEARDOY) THEN
                                 
                         CALL Csopline(laic,lai)
-                        CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+!                        CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                        CALL YR_DOY(YEARDOYHARF,YEAR,DOY)
                         CALL Calendar(year,doy,dom,month)
                         CNCTMP = -99
                         IF (CNAD>0.0 .AND. CWAD > 0.0)CNCTMP = CNAD/CWAD*100
@@ -885,47 +858,6 @@
                         WRITE(FNUMOV,'(110("*"))')
                         CLOSE(FNUMOV)  ! Overview.out
                     ENDIF 
-                    ! Basic info.to Work.out when calling for Overview
-                    !  Summary of various environmental aspects
-                    WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,'(A,A10,I3)')' OVERVIEW OF CONDITIONS FOR ',excode,tn
-                    WRITE(fnumwrk,*) ' '
-                    WRITE (fnumwrk, FMT209) tmaxx,tmaxm,tminn,tminm              
-                    IF (ISWNIT /= 'N') THEN
-                        WRITE(fnumwrk, FMT2095)cnad+rnad+hnad,hnad,vnad
-                        WRITE(fnumwrk, FMT2096)sennal(0),sennas            
-                        WRITE(fnumwrk, FMT2093)isoiln,amtnit,fsoiln
-                        WRITE(fnumwrk, FMT2094)tnoxc,tlchc,tominsomc+tominfomc-tnimbsom
-                        WRITE(fnumwrk, FMT2099)tnimbsom,tominfomc,tominsomc   
-                        IF (tominsom1 > 0.0)WRITE(fnumwrk, FMT2098)NINT(tominsom1c),NINT(tominsom2c),NINT(tominsom3c)
-                        IF (FILEIOT == 'DS4'.AND.IDETL == 'D'.OR.FILEIOT == 'DS4'.AND.IDETL == 'A'.OR. &
-                            FILEIOT /= 'DS4') THEN                
-                            WRITE(fnumwrk, FMT2090)isoilh2o,rainc/10.0,irramtc/10.0
-                            WRITE(fnumwrk, FMT2091)runoffc/10.0,drainc/10.0,fsoilh2o
-                            WRITE(fnumwrk, FMT2089)eoc/10.0,eopenc/10.0,eompenc/10.0
-                            WRITE(fnumwrk, FMT2097)eoptc/10.0,eoebudc/10.0
-                        ENDIF
-                        IF (FAPPNUM > 0) THEN
-                            WRITE (fnumwrk,*) ' '
-                            WRITE (fnumwrk,'(A,A10,I3)')' N FERTILIZER FOR ',excode,tn
-                            DO L = 1,FAPPNUM
-                                WRITE (fnumwrk,'(A80)') FAPPLINE(L)
-                            ENDDO
-                        ENDIF
-                        WRITE(FNUMWRK,*) ' '
-                        WRITE(FNUMWRK,'(A)')' INORGANIC N (kg/ha) LEFT IN SOIL AT HARVEST '
-                        WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in PROFILE: ',SNO3PROFILE,SNH4PROFILE
-                        WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in ROOTZONE:',SNO3ROOTZONE,SNH4ROOTZONE
-                    ENDIF   ! End Iswnit NE N
-                    WRITE(FNUMWRK,*) ' '
-                    WRITE(FNUMWRK,'(A)')' H2O (mm) LEFT IN SOIL AT HARVEST '
-                    WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in PROFILE: ',H2OPROFILE,AH2OPROFILE
-                    WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in ROOTZONE:',H2OROOTZONE,AH2OROOTZONE
-                    WRITE (fnumwrk,*) ' '
-                    WRITE (fnumwrk,'(A,A10,I3)')' CRITICAL PERIOD CONDITIONS FOR ',excode,tn
-                    WRITE (fnumwrk,'(A,F6.1)')'  Temperature mean,germination         ',TMEANG
-                    WRITE (fnumwrk,'(A,F6.1)')'  Temperature mean,germ-emergence      ',TMEANE
-                    WRITE (fnumwrk,'(A,F6.1)')'  Temperature mean,first 20 days       ',TMEAN20P
             ELSE   ! For Overview
                             
                 OPEN (UNIT=FNUMOV, FILE=FNAMEOV, STATUS = 'UNKNOWN')

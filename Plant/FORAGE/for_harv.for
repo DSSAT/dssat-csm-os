@@ -1,3 +1,22 @@
+C=======================================================================
+C  for_harv, Subroutine
+C
+C  Description
+C-----------------------------------------------------------------------
+C  Revision history
+C
+C  --/--/---- DP  Written.
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C  10/15/2020 FO  Fixed path issue for MOWFILE.
+C-----------------------------------------------------------------------
+C  INPUT  : 
+C
+C  OUTPUT :
+C-----------------------------------------------------------------------
+C  Called :
+C
+C  Calls  :
+C=======================================================================
       SUBROUTINE forage_harvest(CONTROL,FILECC,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
@@ -19,7 +38,7 @@
       INTEGER LNUM,FOUND
       INTEGER I,MOWCOUNT,j
       integer,dimension(8) :: date_time
-      INTEGER LUNEXP,ERRNUM,LINEXP,LNHAR
+      INTEGER LUNEXP,ERRNUM,LINEXP,LNHAR,LUNIO,PATHL
 
       REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
       REAL FHLEAF,FHSTEM,FHVSTG
@@ -35,19 +54,23 @@
       REAL WTCO, WTLO, WTSO
       REAL FREQ,CUHT,YHT
 !      REAL,ALLOCATABLE,DIMENSION(:) :: canht
-
+      
+      character(len=1)  BLANK
       character(len=2)  crop
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
       character(len=10),parameter :: fhout='FORAGE.OUT'
       CHARACTER*12 MOWFILE
+      CHARACTER*30 FILEIO
       CHARACTER*78 MSG(2)
       CHARACTER*80 FILECC
+      CHARACTER*80 PATHEX
       character(len=60) ename
       CHARACTER*80 MOW80
       character(len=180) fhoutfmt
       CHARACTER*255 C255
       CHARACTER*80 CHARTEST
       CHARACTER*92 FILEX_P
+      CHARACTER*92 FILEMOW
       CHARACTER*6  FINDCH
       CHARACTER*12 FILEX
       CHARACTER*78 MESSAGE(2)
@@ -56,15 +79,39 @@
       logical exists
       
       TYPE(CONTROLTYPE) CONTROL
+      
+      PARAMETER  (ERRKEY = 'FRHARV')
+      PARAMETER (BLANK  = ' ')
 
+      FILEIO = CONTROL % FILEIO
       YRDOY  = CONTROL % YRDOY
       crop   = control % crop
       trtno  = control % trtnum
       run    = control % run
       ename  = control % ename
-      mowfile = control % filex
+
+C----------------------------------------------------------      
+C     Open and read MOWFILE and PATH 
+C----------------------------------------------------------
+C FO - 10/15/2020 Fixed path issue for MOWFILE.
+      CALL GETLUN('FILEIO', LUNIO)
+      OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
+      
+      READ (LUNIO,'(3(/),15X,A12,1X,A80)',IOSTAT=ERRNUM) mowfile,
+     &     PATHEX
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,5)
       mowfile(10:12) = 'MOW'
-      ERRKEY = 'FRHARV'
+      
+      PATHL  = INDEX(PATHEX,BLANK)
+      IF (PATHL .LE. 1) THEN
+         FILEMOW = mowfile
+      ELSE
+         FILEMOW = PATHEX(1:(PATHL-1)) // mowfile
+      ENDIF
+      
+      CLOSE(LUNIO)
+C----------------------------------------------------------
       
 !      YHT=canht
 !      do j=1,size(canht); YHT(size(canht))=canht; end do
@@ -154,10 +201,10 @@ C---------------------------------------------------------
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         END IF
 
-        MOWLUN=999
+        CALL GETLUN('MOWFILE',MOWLUN)
 									  
-        OPEN (UNIT=MOWLUN,FILE=MOWFILE,STATUS='OLD',IOSTAT=ERR)
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,29,MOWFILE,LNUM)
+        OPEN (UNIT=MOWLUN,FILE=FILEMOW,STATUS='OLD',IOSTAT=ERR)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,29,FILEMOW,LNUM)
         REWIND(MOWLUN)
         
         ISECT = 0
@@ -199,7 +246,9 @@ C         MOW file has no data for this treatment
             I = I + 1
             READ (MOW80,'(2I6,4F6.0)',IOSTAT=ISECT)
      &                TRNO(I),DATE(I),MOW(I),RSPLF(I),MVS(I),rsht(i)
-            CALL Y2K_DOY(DATE(I))
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY(DATE(I))
+            CALL Y4K_DOY(DATE(I),MOWFILE,I,ERRKEY,1)
           END IF
         END DO
 

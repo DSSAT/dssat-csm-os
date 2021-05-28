@@ -24,6 +24,7 @@ C  02/25/2012 JZW add the PHINT data reading from *.cul for RICER
 C  08/09/2012 GH  Updated for cassava
 !  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
+!  01/21/2020 JG moved some CUL parameters to ECO file
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -210,7 +211,7 @@ C-LPM  Add CIAT cassava model
 !     CASSAVA: cassava **
       CASE ('CSYCA')
           READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      PPS1, B01ND, B12ND, BR1FX, BR2FX, BR3FX, BR4FX, 
+     &      B01ND, B12ND, B23ND, B34ND, BR1FX, BR2FX, BR3FX, BR4FX, 
      &      LAXS, SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT 
 
 !     Ceres-wheat: wheat, barley **
@@ -223,14 +224,11 @@ C-LPM  Add CIAT cassava model
 
 !     APSIM-NWheat wheat  **
 !     Tef model based on APSIM-NWheat created by KEP **
+!     JG moved CUL parameters to ECO file 01/21/2020
       CASE ('WHAPS','TFAPS')
         READ (C360,850,IOSTAT=ERRNUM)
      &            VARTY,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1
 
 !     Ceres Maize: maize, sweet corn **
       CASE ('MZCER','SWCER')
@@ -300,6 +298,12 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
           CALL ERROR(ERRKEY,ERRNUM,FILEGG,LINVAR)
         ENDIF
 
+!     Ceres Rice **
+      CASE ('TFCER')
+        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+!    &            P1,P2R,P5,P2O,G1,G2,G3,G4, PHINT, G5
+     &            P1,P2R,P5,P2O,G1,G2,G3,PHINT, THOT, TCLDP, TCLDF
+
 !        READ (C360,'(90X,F6.0)',IOSTAT=ERRNUM) G5
 !!       For backwards compatibility for cultivar files with no G5.
 !        IF (ERRNUM /= 0 .OR. ABS(G5-1.0) .LT. 1.E-3) THEN
@@ -346,6 +350,35 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
      &          TO2(2),TM(2),Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,
      &          MinGr,empty,RES30C,RLF30C,R30C2,empty,empty
 
+!MV   SAMuCA: Agronomic Modular Simulator for Sugarcane
+!     Simulador Agronomico Modular de Cana-de-Acucar
+      CASE ('SCSAM') 
+        READ (C360,1070,IOSTAT=ERRNUM) VARTY, VRNAME, ECONO,
+     &      maxgl_r       		     ,
+     &      n_lf_when_stk_emerg_r    ,
+     &      n_lf_it_form_r           ,
+     &      maxdgl_r       		     ,
+     &      amax       			     ,
+     &      eff       			     ,
+     &      chustk       		     ,
+     &      chupeak     		     ,
+     &      chudec     			     ,
+     &      chumat     			     ,
+     &      popmat     			     ,
+     &      poppeak      		     ,
+     &      tillochron      	     ,
+     &      phyllochron     	     ,
+     &      sla       			     ,
+     &      mla       			     ,
+     &      plastochron       	     ,
+     &      init_leaf_area           ,
+     &      max_ini_la       	     ,
+     &      max_it_dw                ,
+     &      mid_tt_it_growth         ,
+     &      end_tt_it_growth         ,
+     &      mid_tt_lf_growth         ,
+     &      end_tt_lf_growth         
+
 !     Taro, tanier **
       CASE ('TRARO','TNARO')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
@@ -359,7 +392,7 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Pineapple **
       CASE ('PIALO')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &           P1,P2,P3,P4,P5,P6,G2,G3,PHINT
+     &           TC,P1,P2,P3,P4,P5,P6,P7,P8,G1,G2,G3,PHINT
       END SELECT
 
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEG,LINVAR)
@@ -395,7 +428,6 @@ C-----------------------------------------------------------------------
      &      /,2X,'NO.',1X,'ENTRY',3X,'VARIETY',22X,'GROUP',5X,'GROUP',
      &      /,2X,'---',1X,'------',2X,20('-'),8X,'-------',2X,
      &           '--------')
-! 110 FORMAT (A6,1X,A16,1X,A6,6X,A2)
   110 FORMAT (A6,1X,A16,7X,A6)
   120 FORMAT (I4,') ',A6,2X,A16,13X,A6,6X,A2)
   300 FORMAT (/,'  More.... press < ENTER > key')
@@ -405,25 +437,16 @@ C-----------------------------------------------------------------------
   500 FORMAT (6X,'ERROR! Variety Selection must be between 1 & ',I3,/)
   510 FORMAT (6X,'ERROR! Variety Selection must be an INTEGER value',/)
 
-! 800 FORMAT (A6,1X,A16,1X,A6,15(F6.0))
-  800 FORMAT (A6,1X,A16,7X,A6,21F6.0)                     !11/8/07
+  800 FORMAT (A6,1X,A16,7X,A6,21F6.0)      !11/8/07
 
-
-  810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010
-C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
-  820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
-     
-  821 FORMAT (A6,1X,A16,7X,A6,20F6.0)         !CSYCA        01/11/2019 
-
-  830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
-  850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 
-! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
- 1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 
-!!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)       !02/10/2009 
- ! 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                   !02/10/2009 
- 1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)                   !02/21/2018 
-
-!1500 FORMAT (A6,1X,A16,1X,A255)
- 1500 FORMAT (A6,1X,A16,7X,A)                             !11/8/07
+  810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)    !WHCRP, BACRP 03/16/2010
+  820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)    !CSCAS        02/18/2014
+  821 FORMAT (A6,1X,A16,7X,A6,15F6.0)      !CSYCA        09/09/2020 
+  830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)     !WHCER, BACER 03/16/2010
+  850 FORMAT (A6,1X,A16,7X,A6,9F6.0,A)     !JG moved parameters to ECO, 01/09/2020
+ 1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)      ! 02/10/2009 
+ 1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)     ! 02/21/2018 
+ 1070 FORMAT (A6,1X,A16,7X,A6,24F15.0)     ! 01/07/2020 (SAMUCA)
+ 1500 FORMAT (A6,1X,A16,7X,A)              ! 11/8/07
 
       END SUBROUTINE IPVAR

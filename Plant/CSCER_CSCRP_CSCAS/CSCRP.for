@@ -155,6 +155,7 @@
 
       CHARACTER(LEN=1),PARAMETER::BLANK = ' '
       CHARACTER(LEN=3),PARAMETER::DASH = ' - '
+      CHARACTER(LEN=6),PARAMETER::ERRKEY = 'CSCRP '
 
       !REAL,PARAMETER::PATM=101300.0! Pressure of air,Pa
       !REAL,PARAMETER::SHAIR=1005.0 ! Specific heat of air,MJ/kg
@@ -436,7 +437,7 @@
       INTEGER       FNUMPREM      ! File number,measured responses #
       INTEGER       FNUMPRES      ! File number,simulated response #
       INTEGER       FNUMPSUM      ! Number used for plant summary  #
-      INTEGER       FNUMREA       ! File number,reads.out file     #
+!      INTEGER       FNUMREA       ! File number,reads.out file     #
       INTEGER       FNUMT         ! Number used for T-file         #
       INTEGER       FNUMTMP       ! File number,temporary file     #
       INTEGER       FNUMWRK       ! File number,work file          #
@@ -1580,10 +1581,10 @@
       
       integer pausenum
 
-      CHARACTER (LEN=128) ARG           ! Argument component
+      CHARACTER (LEN=250) ARG           ! Argument component
       CHARACTER (LEN=6)   CAIC          ! Canopy area index
       CHARACTER (LEN=6)   CANHTC        ! Canopy height
-      CHARACTER (LEN=120) CFGDFILE      ! Configuration directory+file
+      CHARACTER (LEN=250) CFGDFILE      ! Configuration directory+file
       CHARACTER (LEN=1)   CFLFAIL       ! Control flag for failure
       CHARACTER (LEN=1)   CFLFLN        ! Control flag,final leaf # Y/N
       CHARACTER (LEN=1)   CFLHAR        ! Control flag for final harvest
@@ -1598,14 +1599,14 @@
       CHARACTER (LEN=2)   CNCHAR2       ! Crop component (multicrop)
       CHARACTER (LEN=2)   CROP          ! Crop identifier (ie. WH, BA)
       CHARACTER (LEN=2)   CROPPREV      ! Crop identifier,previous run
-      CHARACTER (LEN=93)  CUDIRFLE      ! Cultivar directory+file
-      CHARACTER (LEN=93)  CUDIRFLPREV   ! Cultivar directory+file,prev
+      CHARACTER (LEN=250)  CUDIRFLE      ! Cultivar directory+file
+      CHARACTER (LEN=250)  CUDIRFLPREV   ! Cultivar directory+file,prev
       CHARACTER (LEN=12)  CUFILE        ! Cultivar file
       CHARACTER (LEN=10)  DAPCHAR       ! DAP in character form
       CHARACTER (LEN=6)   DAPWRITE      ! DAP character string -> output
       CHARACTER (LEN=8)   DATEWRITE     ! YEARDOY character string -> op
-      CHARACTER (LEN=93)  ECDIRFLE      ! Ecotype directory+file
-      CHARACTER (LEN=93)  ECDIRFLPREV   ! Ecotype directory+file,prev
+      CHARACTER (LEN=250)  ECDIRFLE      ! Ecotype directory+file
+      CHARACTER (LEN=250)  ECDIRFLPREV   ! Ecotype directory+file,prev
       CHARACTER (LEN=12)  ECFILE        ! Ecotype filename
       CHARACTER (LEN=6)   ECONO         ! Ecotype code
       CHARACTER (LEN=6)   ECONOPREV     ! Ecotype code,previous
@@ -1616,27 +1617,27 @@
       CHARACTER (LEN=10)  EXCODE        ! Experiment code/name
       CHARACTER (LEN=10)  EXCODEPREV    ! Previous experiment code/name
       CHARACTER (LEN=80)  FAPPLINE(30)  ! Fertilizer application details
-      CHARACTER (LEN=120) FILEA         ! Name of A-file
-      CHARACTER (LEN=120) FILEX         ! Name of X-file
-      CHARACTER (LEN=120) FILEIO        ! Name of input file,after check
-      CHARACTER (LEN=120) FILEIOIN      ! Name of input file
-      CHARACTER (LEN=107) FILEADIR      ! Name of A-file directory     
+      CHARACTER (LEN=250) FILEA         ! Name of A-file
+      CHARACTER (LEN=250) FILEX         ! Name of X-file
+      CHARACTER (LEN=250) FILEIO        ! Name of input file,after check
+      CHARACTER (LEN=250) FILEIOIN      ! Name of input file
+      CHARACTER (LEN=250) FILEADIR      ! Name of A-file directory     
       CHARACTER (LEN=3)   FILEIOT       ! Type of input file
-      CHARACTER (LEN=120) FILENEW       ! Temporary name of file
-      CHARACTER (LEN=120) FILET         ! Name of T-file
+      CHARACTER (LEN=250) FILENEW       ! Temporary name of file
+      CHARACTER (LEN=250) FILET         ! Name of T-file
       CHARACTER (LEN=1)   FNAME         ! File name switch (N->standard)
-      CHARACTER (LEN=120) FNAMEERA      ! File name,A-errors
-      CHARACTER (LEN=120) FNAMEERT      ! File name,T-errors
-      CHARACTER (LEN=120) FNAMEEVAL     ! File name,evaluate outputs
-      CHARACTER (LEN=120) FNAMELEAVES   ! File name,leaves outputs
-      CHARACTER (LEN=120) FNAMEMEAS     ! File name,measured outputs
-      CHARACTER (LEN=120) FNAMEOV       ! File name,overview outputs
-      CHARACTER (LEN=120) FNAMEPHASES   ! File name,phases outputs
-      CHARACTER (LEN=120) FNAMEPHENOLM  ! File name,phenology measured
-      CHARACTER (LEN=120) FNAMEPHENOLS  ! File name,phenology outputs
-      CHARACTER (LEN=120) FNAMEPREM     ! File name,responses,measured
-      CHARACTER (LEN=120) FNAMEPRES     ! File name,responses,simulated
-      CHARACTER (LEN=120) FNAMEPSUM     ! File name,plant summary
+      CHARACTER (LEN=250) FNAMEERA      ! File name,A-errors
+      CHARACTER (LEN=250) FNAMEERT      ! File name,T-errors
+      CHARACTER (LEN=250) FNAMEEVAL     ! File name,evaluate outputs
+      CHARACTER (LEN=250) FNAMELEAVES   ! File name,leaves outputs
+      CHARACTER (LEN=250) FNAMEMEAS     ! File name,measured outputs
+      CHARACTER (LEN=250) FNAMEOV       ! File name,overview outputs
+      CHARACTER (LEN=250) FNAMEPHASES   ! File name,phases outputs
+      CHARACTER (LEN=250) FNAMEPHENOLM  ! File name,phenology measured
+      CHARACTER (LEN=250) FNAMEPHENOLS  ! File name,phenology outputs
+      CHARACTER (LEN=250) FNAMEPREM     ! File name,responses,measured
+      CHARACTER (LEN=250) FNAMEPRES     ! File name,responses,simulated
+      CHARACTER (LEN=250) FNAMEPSUM     ! File name,plant summary
       CHARACTER (LEN=35)  GENFLCHK      ! Genotype file name for check
       CHARACTER (LEN=1)   GROUP         ! Flag for type of group
       CHARACTER (LEN=6)   GSTAGEC       ! Growth stage
@@ -1693,9 +1694,9 @@
       CHARACTER (LEN=12)  OUTPG2        ! Growth output file2 code
       CHARACTER (LEN=12)  OUTPGF        ! Growth factors file2 code
       CHARACTER (LEN=12)  OUTPN         ! GrowthN output file code
-      CHARACTER (LEN=80)  PATHCR        ! Path to genotype (CUL) files
-      CHARACTER (LEN=80)  PATHEC        ! Path to genotype (ECO) files
-      CHARACTER (LEN=80)  PATHSP        ! Path to genotype (SPE) files
+      CHARACTER (LEN=250)  PATHCR        ! Path to genotype (CUL) files
+      CHARACTER (LEN=250)  PATHEC        ! Path to genotype (ECO) files
+      CHARACTER (LEN=250)  PATHSP        ! Path to genotype (SPE) files
       CHARACTER (LEN=1)   PLME          ! Planting method (code)        
       CHARACTER (LEN=2)   PPSEN         ! Code,photoperiod sensitivity
       CHARACTER (LEN=5)   PSABV(PSX)    ! Principal stage abbreviation
@@ -1711,8 +1712,8 @@
       CHARACTER (LEN=6)   SENNSC        ! Senesced N added to soil
       CHARACTER (LEN=6)   SENROOTC      ! Senesced OM,soil
       CHARACTER (LEN=6)   SENTOPLITTERAC! Senesced OM added to surface
-      CHARACTER (LEN=64)  SPDIRFLE      ! Species directory+file
-      CHARACTER (LEN=64)  SPDIRFLPREV   ! Species directory+file,last
+      CHARACTER (LEN=250)  SPDIRFLE      ! Species directory+file
+      CHARACTER (LEN=250)  SPDIRFLPREV   ! Species directory+file,last
       CHARACTER (LEN=12)  SPFILE        ! Species filename
       CHARACTER (LEN=5)   SSABV(SSX)    ! Secondary stage abbreviation
       CHARACTER (LEN=5)   SSABVO(SSX)   ! Secondary stage abv,output
@@ -1782,9 +1783,9 @@
 
        IF (RUNCRP.LE.0) THEN          ! First time through
 
-          MODNAME(1:8) = 'CSCRP047'
+          MODNAME(1:8) = 'CSCRP048'
           VERSION = 010115         
-          GENFLCHK(3:15) = 'CRP047.08102017'
+          GENFLCHK(3:15) = 'CRP048.20200721'
           ! Control flags/switches
           CFLPDATE = 'P'      ! P=at planting;I=at first irrigation;
                               ! E=relative to emergence
@@ -1903,7 +1904,8 @@
           IF (FILEIOT.EQ.'XFL') THEN
             IF (RNMODE.EQ.'I'.OR.RNMODE.EQ.'E'.OR.RNMODE.EQ.'A') THEN
               IDETD = 'M'
-            ELSEIF (RNMODE.EQ.'B'.OR.RNMODE.EQ.'N'.OR.RNMODE.EQ.'Q')THEN
+            ELSEIF (RNMODE.EQ.'B'.OR.RNMODE.EQ.'N'.OR.RNMODE.EQ.'Q'
+     &               .OR.RNMODE.EQ.'Y')THEN
               IDETD = 'S'
             ENDIF  
           ELSE
@@ -2106,14 +2108,15 @@
               WRITE(fnumwrk,*) ' '
               WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
             ENDIF  
-            IF (FNUMREA.LE.0) CALL Getlun('READS.OUT',fnumrea)
-            ! Close and re-open Reads file
-            CLOSE (FNUMREA, STATUS = 'DELETE')
-            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &            ACTION = 'READWRITE')
-            WRITE(fnumrea,*)' '
-            WRITE(fnumrea,*)
-     &      ' File closed and re-opened to avoid generating huge file'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
+!            IF (FNUMREA.LE.0) CALL Getlun('READS.OUT',fnumrea)
+!            ! Close and re-open Reads file
+!            CLOSE (FNUMREA, STATUS = 'DELETE')
+!            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+!     &            ACTION = 'READWRITE')
+!            WRITE(fnumrea,*)' '
+!            WRITE(fnumrea,*)
+!     &      ' File closed and re-opened to avoid generating huge file'
           ENDIF
         ELSE  ! File is open .. not closed at end of run!        
           IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
@@ -2124,14 +2127,15 @@
      &            ACTION = 'READWRITE')
             WRITE(fnumwrk,*) ' '
             WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
-            CALL Getlun('READS.OUT',fnumrea)
-            ! Close and re-open Reads file
-            CLOSE (FNUMREA, STATUS = 'DELETE')
-            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &            ACTION = 'READWRITE')
-            WRITE(fnumrea,*)' '
-            WRITE(fnumrea,*)
-     &      ' File closed and re-opened to avoid generating huge file'
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
+!            CALL Getlun('READS.OUT',fnumrea)
+!            ! Close and re-open Reads file
+!            CLOSE (FNUMREA, STATUS = 'DELETE')
+!            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+!     &            ACTION = 'READWRITE')
+!            WRITE(fnumrea,*)' '
+!            WRITE(fnumrea,*)
+!     &      ' File closed and re-opened to avoid generating huge file'
           ELSE  
             WRITE(fnumwrk,*) ' '
             WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
@@ -2788,7 +2792,9 @@
 
         ! Planting date information
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'PLANT',iplti)
-        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+!       IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a'.OR.
+     &     IPLTI.EQ.'F'.OR.IPLTI.EQ.'f')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PLAST',pwdinl)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OL',swpltl)
@@ -2862,7 +2868,10 @@
             hnumber = i - 1
             EXIT  
           ENDIF
-          hyeardoy(i) = CSYEARDOY(hyrdoy(i))
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY          
+          !hyeardoy(i) = CSYEARDOY(hyrdoy(i))
+          CALL Y4K_DOY(hyrdoy(i),FILEX,0,ERRKEY,3)
+          hyeardoy(i) = hyrdoy(i)
         ENDDO
         IF (hnumber.LE.1) HOP(1) = 'F' 
         yeardoyharf = -99
@@ -2949,7 +2958,14 @@
           ! Additional controls that not handled by CSM
           ! To get name and location of x-file to -> special controls.
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'AFILE',filea)
-          FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+
+!     CHP 2021-03-19
+          IF (INDEX(FILEADIR,"-99") > 0) THEN
+            FILEX = FILEA(1:TVILENT(FILEA))
+          ELSE
+            FILEX=FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+          ENDIF
+
           CALL LTRIM2 (FILEX,filenew)
           FILELEN = TVILENT(FILENEW)
           FILENEW(FILELEN:FILELEN)= 'X'
@@ -2973,22 +2989,35 @@
         GENFLCHK = CROP//GENFLCHK(3:15)
         CALL CSUCASE (EXCODE)
 
-        HLAST = CSYEARDOY(hlast)
-        HFIRST = CSYEARDOY(hfirst)
-        PWDINF = CSYEARDOY(pwdinf)
-        PWDINL = CSYEARDOY(pwdinl)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+        !HLAST = CSYEARDOY(hlast)
+        CALL Y4K_DOY(hlast,FILEX,0,ERRKEY,3)
+        !HFIRST = CSYEARDOY(hfirst)
+        CALL Y4K_DOY(hfirst,FILEX,0,ERRKEY,3)
+        !PWDINF = CSYEARDOY(pwdinf)
+        CALL Y4K_DOY(pwdinf,FILEX,0,ERRKEY,3)
+        !PWDINL = CSYEARDOY(pwdinl)
+        CALL Y4K_DOY(pwdinl,FILEX,0,ERRKEY,3)
         DO L = 1,DINX
-          DIDAT(L) = CSYEARDOY(DIDAT(L))
+          !DIDAT(L) = CSYEARDOY(DIDAT(L))
+          CALL Y4K_DOY(DIDAT(L),FILEX,0,ERRKEY,3)
         ENDDO
         DO L = 1,DCNX
-          DCDAT(L) = CSYEARDOY(DCDAT(L))
+          !DCDAT(L) = CSYEARDOY(DCDAT(L))
+          CALL Y4K_DOY(DCDAT(L),FILEX,0,ERRKEY,3)
         ENDDO
 
-        CALL CSYR_DOY(PWDINF,PWYEARF,PWDOYF)
-        CALL CSYR_DOY(PWDINL,PWYEARL,PWDOYL)
-        CALL CSYR_DOY(HFIRST,HYEARF,HDOYF)
-        CALL CSYR_DOY(HLAST,HYEARL,HDOYL)
-        CALL CSYR_DOY(PDATE,PLYEARTMP,PLDAY)
+!        CALL CSYR_DOY(PWDINF,PWYEARF,PWDOYF)
+!        CALL CSYR_DOY(PWDINL,PWYEARL,PWDOYL)
+!        CALL CSYR_DOY(HFIRST,HYEARF,HDOYF)
+!        CALL CSYR_DOY(HLAST,HYEARL,HDOYL)
+!        CALL CSYR_DOY(PDATE,PLYEARTMP,PLDAY)
+        CALL YR_DOY(PWDINF,PWYEARF,PWDOYF)
+        CALL YR_DOY(PWDINL,PWYEARL,PWDOYL)
+        CALL YR_DOY(HFIRST,HYEARF,HDOYF)
+        CALL YR_DOY(HLAST,HYEARL,HDOYL)
+        CALL YR_DOY(PDATE,PLYEARTMP,PLDAY)
+        
         PLYEARREAD = PLYEARTMP
 
 !-----------------------------------------------------------------------
@@ -3011,9 +3040,16 @@
 
         ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
         ! CHP 09/28/2009 account for planting date >> simulation date.
-        IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
-          PLYEAR = YEAR
-          PLYEARTMP = YEAR
+        !LPM 07/17/20 - account for simulation date when is a year before planting date
+        !Avoid wrong value of yeardoyharf
+        IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
+            IF (YEAR < PLYEARREAD) THEN
+                PLYEAR = PLYEARREAD
+                PLYEARTMP = PLYEARREAD
+            ELSE
+                PLYEAR = YEAR
+                PLYEARTMP = YEAR
+            ENDIF
         ENDIF
 
         IF (IDATE1.GT.0.AND.CFLPDATE.EQ.'I') THEN
@@ -3026,12 +3062,14 @@
         ENDIF
 
         ! Check final harvest date for seasonal runs        
-        CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+!        CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+        CALL YR_DOY(YEARDOYHARF,HYEAR,HDAY)
         PLTOHARYR = HYEAR - PLYEARREAD
         ! Upgrade harvest date for seasonal and sequential runs
         yeardoyharf = (plyear+pltoharyr)*1000 +hday
 
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           IF (PLDAY.GE.DOY) THEN
             PLYEARDOYT = PLYEARTMP*1000 + PLDAY
           ELSEIF (PLDAY.LT.DOY) THEN
@@ -4887,7 +4925,8 @@
          WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
          WRITE(fnumwrk,'(A26,A6,2X,A16)')
      &     '  CULTIVAR                ',VARNO,VRNAME
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           WRITE(fnumwrk,'(A23,I7)')
      &     '  PLANTING DATE TARGET:',PLYEARDOYT
         ELSE
@@ -5267,7 +5306,9 @@
         !  PLYEARDOYT = YEARPLTCSM
         !ENDIF
         IF (FILEIOT.EQ.'DS4') THEN
-          IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+!         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
+     &       (INDEX('FQNY',RNMODE) > 0)) THEN
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
         ENDIF
@@ -9664,7 +9705,8 @@
      &             month,dom,plyeardoy,NINT(pltpopp),NINT(rowspc)
                 ENDIF 
                 WRITE (NOUTPN,2252)
- 2252           FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD',
+!               2021-02-15 chp Change NUAD to NUAC in header.
+ 2252           FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC',
      A           '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      F           ' RSNAD SNNPD SNN0D SNN1D',
      B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
@@ -9710,7 +9752,8 @@
           ENDIF ! End ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A'
 
         ELSEIF(YEARDOY.LT.PLYEARDOY.AND.(MOD(DAS,FROPADJ)).EQ.0.AND.
-     &   IPLTI.EQ.'A') THEN
+!    &   IPLTI.EQ.'A') THEN
+     &   (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F')) THEN
      
           ! Automatic planting
           !WRITE (fnumwrk,*) 'Yeardoy ',yeardoy
@@ -10702,7 +10745,8 @@
      &           NINT(rowspc)
   208           FORMAT(' PLANTING         ',A3,I3,I8,2X,I4,' plants/m2 '
      &          ,'in ',I3,' cm rows')
-                CALL CSYR_DOY(EYEARDOY,YEAR,DOY)
+!                CALL CSYR_DOY(EYEARDOY,YEAR,DOY)
+                CALL YR_DOY(EYEARDOY,YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 WRITE(FNUMOV,109) month,dom,eyeardoy                  
   109           FORMAT (' EMERGENCE        ',A3,I3,I8)
@@ -10778,7 +10822,8 @@
                 CALL Csopline(laic,laistg(l))
                 IF (STGYEARDOY(L).LT.9999999.AND.
      &              L.NE.10.AND.L.NE.11) THEN
-                  CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                  CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                  CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                   CALL Calendar(year,doy,dom,month)
                   CNCTMP = 0.0
                   IF (CWADSTG(L).GT.0.0)
@@ -10796,7 +10841,8 @@
               ! For harvest at specified date
               IF (YEARDOYHARF.EQ.YEARDOY) THEN
                 CALL Csopline(laic,lai)
-                  CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+!                  CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                  CALL YR_DOY(YEARDOYHARF,YEAR,DOY)
                   CALL Calendar(year,doy,dom,month)
                   CNCTMP = 0.0
                   IF (CWAD.GT.0.0)CNCTMP = CNAD/CWAD*100
@@ -12261,7 +12307,8 @@
               CALL Csopline(laic,laistg(l))
               IF (STGYEARDOY(L).LT.9999999.AND.
      &         L.NE.10.AND.L.NE.11) THEN
-                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWADSTG(L).GT.0.) 
@@ -12313,7 +12360,8 @@
               CALL Csopline(laic,laistg(l))
               IF (STGYEARDOY(L).LT.9999999.AND.
      &            L.NE.10.AND.L.NE.11) THEN
-                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWADSTG(L).GT.0.0)
@@ -12330,7 +12378,8 @@
             ! For harvest at specified date
             IF (YEARDOYHARF.EQ.YEARDOY) THEN
               CALL Csopline(laic,lai)
-                CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+!                CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                CALL YR_DOY(YEARDOYHARF,YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWAD.GT.0.0)CNCTMP = CNAD/CWAD*100
@@ -12643,8 +12692,8 @@
      &'-Nitrogen--|--Phosphorus-|',/,
      &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
      &'to         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ',
-     &'synth Growth  synth Growth',/,110('-'))
+     &25X,'days    Ã¸C    Ã¸C MJ/m2     hr     mm     mm  synth Growth ',
+     &' synth Growth  synth Growth',/,110('-'))
   270 FORMAT(/,'------------------------------------------------------',
      &'--------------------------------------------------------')
   300 FORMAT(/,10X,A," YIELD : ",I8," kg/ha    [",F4.1,"%Moisture] ",/)
@@ -13107,12 +13156,14 @@
       PARAMETER     (SHAIR=1005.0)     ! MJ/kg/K?? or need*10-5
 
       TCAN = -99.0
-
-      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
-        CALL Getlun ('WORK.OUT',fnumwrk)
-        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
-      ENDIF
+      
+! FO - 11/20/2020 - Removed unused statement for WORKS.OUT
+!      CSYCA uses this subroutine as well.
+!      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
+!        CALL Getlun ('WORK.OUT',fnumwrk)
+!        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!      ENDIF
 
       RT = 8.314 * ((TMAX+TMIN)*0.5 + 273.0)             ! N.m/mol ??
       VPAIR = CSVPSAT(TDEW)                              ! Pa

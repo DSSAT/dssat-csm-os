@@ -65,7 +65,6 @@ C-----------------------------------------------------------------------
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KCAN_ECO, KC_SLOPE
-!     REAL SKC, KCBMIN, KCBMAX
 
 !     Species parameters for N stress  9/11/2008
 !     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
@@ -327,17 +326,7 @@ C-----------------------------------------------------------------------
           CALL ERROR(SECTION, 42, FILECC, LNUM)
         ELSE
           CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-!          IF (MEEVP .EQ. 'A' .OR. MEEVP .EQ. 'G') THEN !ASCE dual Kc ET
-!            READ(CHAR,'(5F6.0)',IOSTAT=ERR)KEP,EORATIO,SKC,KCBMIN,KCBMAX
-!            SKC    = MAX(0.50,MIN(1.0,SKC))
-!            KCBMIN = MAX(0.00,MIN(1.1,KCBMIN))
-!            KCBMAX = MAX(0.25,MIN(1.5,KCBMAX))
-!            CALL PUT('SPAM', 'SKC', SKC)
-!            CALL PUT('SPAM', 'KCBMIN', KCBMIN)
-!            CALL PUT('SPAM', 'KCBMAX', KCBMAX)
-!          ELSE
-            READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
-!          ENDIF
+          READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         ENDIF
 
@@ -474,8 +463,6 @@ C-----------------------------------------------------------------------
 !            line to read, 2 - End of Section in file encountered, denoted 
 !            by * in column 1
 ! ISWDIS   Pest damage simulation switch (Y or N) 
-! KCBMAX   Maximum basal crop coefficient for ASCE dual Kc ET method
-! KCBMIN   Minimum basal crop coefficient for ASCE dual Kc ET method
 ! LUNCRP   Logical unit number for FILEC (*.spe file) 
 ! MODEL    Name of CROPGRO executable file 
 ! NL       maximum number of soil layers = 20 
@@ -522,7 +509,6 @@ C-----------------------------------------------------------------------
 !            (g[CH2O] / g[product])
 ! RPRO     Respiration required for re-synthesizing protein from mobilized 
 !            N (g[CH2O] / g[protein])
-! SKC      Shaping coefficient for ASCE dual Kc ET approach
 ! TTFIX    Physiological days delay in nodule initiation
 !            (photo-thermal days / day)
 !-----------------------------------------------------------------------
