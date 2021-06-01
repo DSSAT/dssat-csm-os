@@ -48,7 +48,7 @@ C=======================================================================
       TILNO    = 0.0
       YPTILNO  = 0.0 
       ITDUR    = 0
-      TPLA     = 0.5
+    ! TPLA     = 0.5
       TPLA     = 0.1!TEF
 
 !***********************************************************************
@@ -61,7 +61,7 @@ C=======================================================================
       TRSM     = 1.0
 
       IF (FLOOD .LE. 0.0) THEN
-         SWTIL = 1.5*EXP(TURFAC-1.0)-0.5
+        !SWTIL = 1.5*EXP(TURFAC-1.0)-0.5
          SWTIL = 1.5*EXP(TURFAC-1.0)-0.25!TEF
       ENDIF
       SWTIL = AMAX1 (SWTIL,0.0)
@@ -92,8 +92,7 @@ C=======================================================================
          TILNO   = TILNO + DTILNO
          TILNO   = AMAX1 (TILNO,0.0)
       ENDIF
- !    WRITE (*,*) 'AGEFAC TEMF TSHOCK DPTILNO DTILNO TILNO',
- !    & AGEFAC, TEMF, TSHOCK, DPTILNO, DTILNO, TILNO
+
       IF (MGROLF .GT. 0.0 .AND. MPLAG .GT. 0.0) THEN
         SLW = MGROLF / MPLAG
       ELSEIF (TGROLF .GT. 0.0 .AND. TPLAG .GT. 0.0) THEN
@@ -101,7 +100,7 @@ C=======================================================================
       ELSE
         SLW = 0.0120
       ENDIF
-  !   WRITE(*,*) 'RLTIL SLW', SLW
+
       SELECT CASE (ISTAGE)
         CASE (1)
           TSTAGE  = 0.
@@ -117,14 +116,13 @@ C=======================================================================
           TGROLF  = TPLAG  * AMAX1 (0.0055,SLW)
           TGROSTM = TCARBO - TGROLF
           TPLA    = TPLA   + TPLAG
+
         CASE (3)
-  !      WRITE(*,*) 'ISTAGE TCARBO', ISTAGE,TCARBO
           TSTAGE  = 0   !1.5+3.0*SUMDTT/P3
           SENTIL  = TILNO*0.010*((SUMDTT/(P3+P4+P5))**2)
           TILS    = AMAX1(TILNO*(1.0-AMIN1(SLFW,SLFT,SLFN)),SENTIL)
           TILNO   = AMAX1(0.0,TILNO-TILS)
           B       = AMAX1((0.75-0.00005*SUMDTT-0.000002*SUMDTT**2),0.35)
- !       WRITE (*,*)' SUMDTT B', SUMDTT,B
          !IF (B .GT. 0.15 .AND. SUMDTT .GT. 0.75*P3) THEN
           !   B = 0.15
          !ENDIF   ! use only for Rice
@@ -149,7 +147,7 @@ C=======================================================================
              TGROLF  = AMIN1 (TGROLF,B*TCARBO)
              TGROSTM = TCARBO - TGROLF
              TPLAG   = TGROLF / 0.0120 * 
-     &		       AMIN1 (TURFAC,NSTRES,TEMF,PSTRES1,KSTRES)
+     &		         AMIN1 (TURFAC,NSTRES,TEMF,PSTRES1,KSTRES)
              TPLA    = TPLA   + TPLAG
            ELSE
              TGROSTM = TCARBO

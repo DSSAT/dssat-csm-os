@@ -153,7 +153,7 @@ C=======================================================================
       END DO
 
       P1T   = P1      
-      TBASE = 9.0     !IN SPP FILE MAR17
+    ! TBASE = 9.0     !IN SPP FILE MAR17
       TBASE = 8.0 !TEF
       TAGE  = SDAGE   
 
@@ -174,12 +174,6 @@ C=======================================================================
       ENDIF
 
       NEW_PHASE = .FALSE.
-
-!! temp chp
-!      write(3000,'(A)') 
-!     & "   yrdoy  xstage icsdur     dtt    sind     tn    tmpi" //
-!     &  "  idur1     lai"
-
 
 !***********************************************************************
 !***********************************************************************
@@ -221,7 +215,7 @@ C=======================================================================
             !END PHASEI STUFF
 
            CASE (2,3)
-             CALL TRNSPL_PHENOL ( 
+             CALL TEFF_TRNSPL_PHENOL ( 
      &        ATEMP, ITRANS, P1T, SDEPTH, TAGE, TBASE,        !Input
      &        CDTT_TP, CUMDTT, ISTAGE, P1, P8, P9, SDTT_TP,   !Output
      &        SUMDTT, XSTAGE, XST_TP)                         !Output
@@ -358,9 +352,9 @@ C=======================================================================
 
           !FROM PHASEI
           ISTAGE = 8      !GERMINATION
-          P8     = 150.0*EXP(-0.055*TEMPM)
-          P8     = AMIN1 (P8,85.0)
-          P8     = AMAX1 (P8,28.0)
+        ! P8     = 150.0*EXP(-0.055*TEMPM)
+        ! P8     = AMIN1 (P8,85.0)
+        ! P8     = AMAX1 (P8,28.0)
           P8=20.0 !Tef
           SUMDTT = 0.0
           CUMDTT = 0.0
@@ -553,13 +547,8 @@ C=======================================================================
 !               IF (TN .GT. TMPNPI*G5) THEN
              IF (TMPI .LT. TCLDP) THEN  ! AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
                 IF (TN .GT. TCLDP) THEN
-                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15c)
+                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
                 ENDIF
-
-!! temp chp
-!      write(3000,3000) yrdoy, xstage, icsdur, dtt,sind,tn,tmpi,idur1,lai
-! 3000 format(i8,f8.3,i7,2f8.3,f7.2,f8.3,I7,f8.3)
-
                 RETURN
              ENDIF
 

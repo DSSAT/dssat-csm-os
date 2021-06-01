@@ -136,6 +136,7 @@ C     RLNEW  = GRORT*PLANTS*1.05
          ENDIF
 
          RLDF(L) = AMIN1(SWDF,RNFAC)*SHF(L)*DLAYR(L)
+         
          IF (CUMDEP .GE. RTDEP) THEN
             RTDEP   = RTDEP + DTT*0.18*AMIN1((SWFAC*2.5),SWDF)
             RTDEP   = AMIN1 (RTDEP,DEPMAX)
