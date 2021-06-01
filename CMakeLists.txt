@@ -305,6 +305,7 @@ set(
         "Plant/CERES-TEFF/TEFF_Rootgr.for"
         "Plant/CERES-TEFF/TEFF_Tillsub.for"
         "Plant/CERES-TEFF/TEFF_Transpl_g.for"
+        "Plant/CERES-TEFF/TEFF_Transpl_p.for"
         "Plant/CERES-SharedFiles/HResCeres.for"
         "Plant/CERES-SharedFiles/SLigCeres.for"
         "Plant/CERES-Sorghum/SG_CERES.for"

@@ -465,8 +465,7 @@ C
              STMWT   = MSTMWT + TSTMWT
           ENDIF
           PANIWT  = PANIWT + TPANIWT
-          RESERVE = PANFAC * PANIWT   
-                         ! 0.40
+          RESERVE = PANFAC * PANIWT                  ! 0.40
           RESERVE = AMIN1 (RESERVE,STMWT)
 
           IF (GPP .GT. 0.0) THEN
@@ -588,7 +587,7 @@ CCCCC-PW
       Y1      = EXP(-0.625*LAI)                      ! .625
       Y2      = EXP(-TL*LAI)                         ! -0.7
       EPLANTS = PLANTS**0.975
-      RUEA    = 5.85   !6.85      UPS UH 03/21/03
+    ! RUEA    = 5.85   !6.85      UPS UH 03/21/03
       RUEA    = 3.2   ! Tef
       RUEX    = 0.65
       PCARB   = RUEA*PAR/EPLANTS*(1.0-AMIN1(Y1,Y2)) 
@@ -621,27 +620,6 @@ CCCCC-PW
       TEMF  = 1.0
       TEMPM = (TMAX + TMIN)*0.5
 
-      !IF (TMIN .LT. 14.0 .OR. TMAX .GT. 32.0) THEN
-      !  IF (TMAX .LT. TBASE) THEN
-      !      TEMF = 0.0
-      !  ENDIF
-      !   IF (TEMF .NE. 0.0) THEN
-      !      TEMF = 0.0
-      !     DO I = 1, 8
-      !         TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
-      !        IF (TTMP .GT. 14.0  .AND. TTMP .LE. 32.0) THEN
-      !             TEMF = TEMF + 1.0/8.0
-      !        ENDIF
-      !         IF (TTMP .GE. TBASE .AND. TTMP .LT. 14.0) THEN
-      !            TEMF = TEMF + 0.0210*(TTMP-TBASE)
-      !         ENDIF
-      !         IF (TTMP .GT. 32.0  .AND. TTMP .LT. 42.0) THEN
-      !             TEMF = TEMF + 0.0125*(42.0-TTMP)
-      !         ENDIF
-      !      END DO
-      !   ENDIF
-      !ENDIF
-      ! TEF
       IF (TMIN .LT. 14.0 .OR. TMAX .GT. 28.0) THEN
          IF (TMAX .LT. TBASE) THEN
             TEMF = 0.0
@@ -912,7 +890,7 @@ CCCCC-PW
              TCARBO  = 0.0
              MGROSTM = CARBO - GRORT
           END IF
-          GRF = 0.1*CARBO*G3*AMIN1(AGEFAC,PSTRES2,KSTRES)
+        ! GRF = 0.1*CARBO*G3*AMIN1(AGEFAC,PSTRES2,KSTRES)
           GRF = 0.1*CARBO*(-0.0012*PLANTS+1.6)*G3*
      &    AMIN1(AGEFAC,PSTRES2,KSTRES) ! Tef 0.25
           IF (TCARBO .LT. GRF) THEN
@@ -976,8 +954,8 @@ CCCCC-PW
              IF (GNO .GT. GPP) THEN
                 GROGRN = 0.0
              ENDIF
-             GRORT   = CARBO*(0.2-0.1*SWFAC)  !RICE
-             !GRORT   = CARBO*0.10 !TEF
+             !GRORT   = CARBO*(0.2-0.1*SWFAC)  !RICE
+             GRORT   = CARBO*0.10 !TEF
              GROSTM  = CARBO - GROGRN - GRORT
              TGROGRN = 0.0
              GROLF   = 0.0
@@ -1483,7 +1461,8 @@ C-----------------------------------------------------------------------
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
       READ (LUNIO,70, IOSTAT=ERR) 
      &        PLANTS, PLTPOP, ROWSPC, SDWTPL, ATEMP, PLPH
-   70 FORMAT (18X,2(1X,F5.1),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
+C   70 FORMAT (18X,2(1X,F5.1),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
+   70 FORMAT (18X,2(F6.0),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
