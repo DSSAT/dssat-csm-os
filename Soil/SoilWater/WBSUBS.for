@@ -100,6 +100,7 @@ C  08/12/2003 CHP Added I/O error checking
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      SAVE
 
       REAL, DIMENSION(NL), INTENT(IN) :: DLAYR, LL, SAT
       INTEGER, INTENT(IN) :: NLAYR
