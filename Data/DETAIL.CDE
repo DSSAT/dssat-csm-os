@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.7; 09/18/2020
+! DSSAT v4.7; 05/28/2021
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -275,7 +275,6 @@ SC       Sugarcane                                                            IB
 SF       Safflower                                                            IB
 SG       Grain sorghum                                                        IB
 SI       Switch grass                                                         IB
-SQ       Sequence                                                             IB
 SS       Sesame                                                               IB
 SU       Sunflower                                                            IB
 SW       Sweetcorn                                                            IB
