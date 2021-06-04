@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.7.5.39 chp 06/04/2021 Bugfix SW init for static memory
 !       4.7.5.38 chp 06/01/2021 Allow TMAX=TMIN
 !       4.7.5.37 chp 05/14/2021 Update genotype files, cassava, fresh weight to summary
 !       4.7.5.36 chp 04/23/2021 Major update to MANIHOT model. Fresh wt update.
