@@ -42,7 +42,7 @@ C=======================================================================
      &           FILEIO,FROP,ECONO,ATLINE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX)
+     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX, PMWD)
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -69,7 +69,7 @@ C=======================================================================
       INTEGER LN
 
       REAL    SWINIT(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
-      REAL    PLTFOR 
+      REAL    PLTFOR, PMWD
       INTEGER LNSIMTMP,TVILENT
 
       PARAMETER (LUNIO = 21)
@@ -385,11 +385,11 @@ C
 C-----------------------------------------------------------------------
       WRITE (LUNIO,'(/,"*FIELDS")')
       WRITE(LUNIO,'("@L  ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD",
-     & 2X,"FLDS  FLST SLTX   SLDP ID_SOIL")')
+     & 2X,"FLDS  FLST SLTX   SLDP ID_SOIL     PMWD PMALB")')
       WRITE(LUNIO,57,IOSTAT=ERRNUM) LNFLD,FLDNAM,FILEW(1:8),SLOPE,
-     &   FLOB, DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO
+     &   FLOB, DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,PMWD,PMALB
  57   FORMAT(I3,1X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
-     &       2(1X,A5),1X,F5.0,1X,A10)
+     &       2(1X,A5),1X,F5.0,1X,A10,1X,F5.1,F6.2)
        
       WRITE(LUNIO,'("@L             XCRD            YCRD      ",
      &      "ELEV              AREA  SLEN  FLWR  SLAS PRMGT")')

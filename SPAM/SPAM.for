@@ -187,7 +187,7 @@ C=======================================================================
         CASE ('R')  !Original soil evaporation routine
           CALL SOILEV(SEASINIT,
      &      DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
-     &      U, WINF,                                      !Input
+     &      U, WINF,SOILPROP,                             !Input
      &      ES)                                           !Output
 !     ----------------------------
 !        CASE ('S')  !SALUS soil evaporation routine
@@ -354,7 +354,7 @@ C       and total potential water uptake rate.
               ENDDO
               CALL SOILEV(RATE,
      &          DLAYR, DUL, EOS_SOIL, LL, SW,             !Input
-     &          SW_AVAIL(1), U, WINF,                     !Input
+     &          SW_AVAIL(1), U, WINF, SOILPROP,           !Input
      &          ES)                                       !Output
 
 !           ------------------------

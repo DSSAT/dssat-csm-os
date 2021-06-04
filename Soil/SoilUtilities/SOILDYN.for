@@ -970,6 +970,8 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       SOILPROP % COARSE = COARSE
       
+      CALL SETPM(SOILPROP)
+
       CALL PUT(SOILPROP)
 
       IF (ISWWAT == 'N') RETURN
@@ -2168,3 +2170,102 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       RETURN      
       END SUBROUTINE SoilLayerText
 C=======================================================================
+
+!==============================================================================
+!     Subroutine SETPM
+!     Initialization for cell structure and initial conditions
+      SUBROUTINE SETPM(SOILPROP)                        !input/output
+!   ---------------------------------------------------------
+      USE ModuleData
+      Implicit NONE
+
+      Type (SoilType) SOILPROP
+
+      CHARACTER*6 SECTION
+      CHARACTER*8, PARAMETER :: ERRKEY = 'SETPM'
+      CHARACTER*125 MSG(50)
+      CHARACTER*180 CHAR
+      INTEGER ERR, FOUND, LNUM, LUNIO
+      REAL PMWD, ROWSPC_CM
+      REAL PMALB, PMFRACTION, MSALB
+      LOGICAL PMCover
+    
+      TYPE (ControlType) CONTROL
+      CALL GET(CONTROL)
+
+!   ---------------------------------------------------------
+!     Get bed dimensions and row spacing
+      CALL GETLUN('FILEIO', LUNIO)
+      OPEN (LUNIO, FILE = CONTROL%FILEIO,STATUS = 'OLD',IOSTAT=ERR)
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,0)
+      LNUM = 0
+
+!-----------------------------------------------------------------------
+      PMALB = -99.
+
+!     Read plastic mulch albedo from FIELDS section
+      SECTION = '*FIELD'
+      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
+      IF (FOUND /= 0)  THEN
+      READ(LUNIO,'(79X,1x,F5.1, F6.2)',IOSTAT=ERR)PMWD, PMALB
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
+        IF ((ERR == 0) .AND. (PMALB .eq. 0.)) THEN
+          PMALB = -99.
+        ENDIF
+      ENDIF
+
+!     Read Planting Details Section
+      SECTION = '*PLANT'
+      CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
+      IF (FOUND == 0) CALL ERROR(SECTION, 42, CONTROL%FILEIO, LNUM)
+      READ(LUNIO,'(42X,F6.0,42X,2F6.0)',IOSTAT=ERR) ROWSPC_CM !, BEDWD, BEDHT
+      LNUM = LNUM + 1
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
+
+      CLOSE(LUNIO)
+ 
+      IF (PMALB .GT. 0) THEN
+        IF (PMWD .GT. 0 .AND. PMWD .GE. ROWSPC_CM) THEN
+          PMWD = ROWSPC_CM
+          PMCover   = .TRUE.
+          MSG(1)= "Flat surface with full plastic mulch covered."
+          call warning(2,errkey,msg)
+        ELSEIF (PMWD .GT. 0 .AND. PMWD .GT. 0) THEN
+          PMCover   = .TRUE.
+          MSG(1)= "Flat surface with partial plastic mulch covered."
+          call warning(2,errkey,msg)
+        ELSE
+          PMWD = ROWSPC_CM
+          PMCover   = .TRUE.
+          MSG(1)= "Missing PMWD, set PMWD = ROWSPC_CM"
+          MSG(2)= "Flat surface with full plastic mulch covered by default."
+          call warning(2,errkey,msg)
+        ENDIF
+      ELSE
+        IF (PMWD .GT. 0) THEN
+          PMCover   = .FALSE.
+          MSG(1)= "Missing PMALB, disabled plastic mulch"
+          MSG(2)= "Flat surface with no plastic mulch covered."
+          call warning(2,errkey,msg)
+        ELSE
+          PMCover   = .FALSE.
+          MSG(1)= "Flat surface with no plastic mulch covered."
+          call warning(2,errkey,msg)
+        ENDIF
+      ENDIF
+    
+      SOILPROP % PMCover = PMCover
+      SOILPROP % PMFRACTION = 0
+      IF (PMCover) THEN
+        if (PMWD .GE. ROWSPC_CM) THEN
+          SOILPROP % SALB   = PMALB
+        ENDIF
+        PMFRACTION = PMWD / ROWSPC_CM
+        MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1. - PMFRACTION)
+        SOILPROP % PMFRACTION = PMFRACTION
+        SOILPROP % MSALB  = MSALB
+        SOILPROP % CMSALB = MSALB
+      ENDIF
+
+      RETURN      
+      END SUBROUTINE SETPM

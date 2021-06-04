@@ -64,7 +64,7 @@ C=======================================================================
      &           NFORC,PLTFOR,NDOF,PMTYPE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
+     &           CONTROL, ISWITCH, UseSimCtr, MODELARG,PMWD)
 
       USE ModuleDefs
       USE ModuleData    
@@ -101,6 +101,7 @@ C=======================================================================
       INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+      REAL    PMWD
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -567,8 +568,8 @@ C-----------------------------------------------------------------------
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
 
         CALL IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,
-     &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur)
+     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,PMWD,
+     &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur,PMALB)
 
 C-----------------------------------------------------------------------
 C     Select soil profile input file
@@ -1086,8 +1087,8 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &           SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,
-     &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDUR)
+     &           SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,PMWD,
+     &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDUR,PMALB)
 
       IMPLICIT NONE
 
@@ -1098,11 +1099,12 @@ C=======================================================================
       CHARACTER*8  FLDNAM
       CHARACTER*10 SLNO
       CHARACTER*12 FILEX
+      CHARACTER*78 MSG(2)
       CHARACTER*92 CHARTEST
 
       INTEGER LUNEXP,LNFLD,LN,LINEXP,ISECT,IFIND,ERRNUM,I, FHDUR
 
-      REAL    FLDD,SFDRN,FLOB,SLDP,SLOPE
+      REAL    FLDD,SFDRN,FLOB,SLDP,SLOPE,PMWD,PMALB
       REAL    XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
 
       PARAMETER (ERRKEY='IPFLD ')
@@ -1141,7 +1143,8 @@ C=======================================================================
       IF (SFDRN .LE. 0.0) THEN
         SFDRN = 100.
       ENDIF
-
+      Write(msg(1),'("Plastic mulch cover albedo =",F7.2)') PMALB 
+      call info(1,errkey,msg)
 C
 C    New section
 C
@@ -1167,6 +1170,30 @@ C
 C
 C    End New section
 
+C
+C    New section (3rd)
+C
+C    Find header and read second line of field information
+C
+      HFNDCH='PMALB'
+      CALL HFIND(LUNEXP,HFNDCH,LINEXP,IFIND)
+      IF (IFIND .EQ. 1) THEN
+ 71     CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
+        IF (ISECT .EQ. 1) THEN
+           READ (CHARTEST,90,IOSTAT=ERRNUM) LN,
+     &                PMWD,PMALB
+           IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+         ELSE
+           CALL ERROR (ERRKEY,2,FILEX,LINEXP)
+         ENDIF
+         IF (LN .NE. LNFLD) GO TO 71
+      ENDIF
+      IF (PMWD .LE. 0.0) PMWD = -99
+      IF (PMALB .LE. 0.0) PMALB = -99
+
+C
+C    End New section (3rd)
+
       REWIND(LUNEXP)
 
       RETURN
@@ -1180,6 +1207,7 @@ C-----------------------------------------------------------------------
 !     chp 7/26/2006
 ! 80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0))
  80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0),1X,A5,I6)
+ 90   FORMAT (I3, F6.0, F6.2)
 
       END SUBROUTINE IPFLD
 
