@@ -656,8 +656,12 @@ C-------------------------------------------------------------------
 !       Not used
         N2OGC_TXT= PRINT_TXT(N2OEC*1000., "(F6.1)")   !g/ha
 
+        IF (FBWAH .GT. 1.E-3) THEN
+          FBWAH = FBWAH * 10.
+        ENDIF
+
         WRITE (NOUTDS,503) LAIX, 
-     &    FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH*10.), FPWAM,
+     &    FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH), FPWAM,
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
      &    NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, 
      &    N2OEC_TXT,

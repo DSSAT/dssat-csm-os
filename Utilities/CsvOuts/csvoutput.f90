@@ -1199,7 +1199,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    cHWAH1 = NINT(HWAH)
    cBWAH1 = NINT(BWAH * 10.0)
    cHWAHF1 = NINT(HWAHF)
-   cFBWAH1 = NINT(FBWAH * 10.0)
+   cFBWAH1 = NINT(FBWAH)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
            
    Write(tmp,'(91(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
