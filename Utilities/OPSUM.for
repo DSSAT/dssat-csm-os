@@ -153,6 +153,7 @@ C-----------------------------------------------------------------------
 !     Added 05/28/2021 Latitude, Longitude and elevation data
       CHARACTER*9  ELEV 
       CHARACTER*15 LATI, LONG
+      INTEGER HYEAR
 
 !     2020-12-30 CHP added WYEAR - weather year corresponding to YRSIM date
 !     For forecast mode may be different than simulation year
@@ -501,6 +502,7 @@ C     Initialize OPSUM variables.
       LATI = ADJUSTR(LATI)
       LONG = ADJUSTR(LONG)
       ELEV = ADJUSTR(ELEV)
+      HYEAR= INT(YRDOY/1000)
 C-------------------------------------------------------------------
 C
 C  Simulation Summary File
@@ -596,7 +598,7 @@ C-------------------------------------------------------------------
      &    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, 
      &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, WYEAR,
      &    SLNO,LATI, LONG, ELEV,
-     &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, INT(YRDOY/1000), 
+     &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
 !       RUN, TRTNUM, ROTNO, ROTOPT, REPNO (was CRPNO), 
@@ -738,8 +740,9 @@ C-------------------------------------------------------------------
             
 !           CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
             CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP,
-     &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT,WYEAR,SLNO,YRSIM,
-     &YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, 
+     &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT,WYEAR,SLNO,
+     &LATI,LONG,ELEV,YRSIM,YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, 
+     &CWAM, HWAM, HWAH, BWAH, 
 !     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
      &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, FCWAM, FHWAM, HWAHF, 
      &FBWAH, FPWAM, IRNUM, IRCM, PRCM, ETCM,
