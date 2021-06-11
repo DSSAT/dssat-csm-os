@@ -320,7 +320,7 @@ C-----------------------------------------------------------------------
      &            YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &            SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,MODEL,
      &            RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,TRTN,
-     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMBD,PMALB)
+     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMBD)
       
         CALL OPTEMPXY2K (YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &           SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,
