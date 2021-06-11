@@ -19,7 +19,7 @@ C  09/01/1999  GH Incorporated into CROPGRO
 !  Calls:     None
 C=======================================================================
       SUBROUTINE RNOFF( 
-     &    CN, LL, MEINF, MULCH, SAT, SW, WATAVL,          !Input
+     &    CN, LL, MEINF, MULCH, SAT, SW, WATAVL,SOILPROP, !Input
      &    RUNOFF)                                         !Output
 
 C-----------------------------------------------------------------------
@@ -27,6 +27,7 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 
+      TYPE (SoilType), INTENT(IN) :: SOILPROP !Soil properties
       CHARACTER*1 MEINF
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'RNOFF')
@@ -95,16 +96,23 @@ C-----------------------------------------------------------------------
 
       PB = WATAVL - IABS * SMX
 
+      IF (SOILPROP % PMcover) THEN
+          RUNOFF = WATAVL * SOILPROP % PMFRACTION
+          WATAVL = WATAVL * (1 - SOILPROP % PMFRACTION)
+      ELSE
+          RUNOFF = 0.0
+      ENDIF
+      
       IF (WATAVL .GT. 0.001) THEN
         IF (PB .GT. 0) THEN
-          RUNOFF = PB**2/(WATAVL + (1.0-IABS) * SMX)
-        ELSE
-          RUNOFF = 0.0
+          RUNOFF = RUNOFF + PB**2/(WATAVL + (1.0-IABS) * SMX)
+!        ELSE
+!          RUNOFF = 0.0
         END IF
-      ELSE
-        RUNOFF = 0.0
+!      ELSE
+!        RUNOFF = 0.0
       ENDIF
-
+      
 !!     Temporary
 !      CUMRO = CUMRO + RUNOFF
 !      WRITE (LUN,1300)YEAR, DOY, CONTROL.DAS, 

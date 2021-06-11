@@ -319,8 +319,8 @@ C=======================================================================
           ENDIF
 
           CALL RNOFF(
-     &        CN, LL, MEINF, MULCH, SAT, SW, WATAVL,      !Input
-     &        RUNOFF)                                     !Output
+     &        CN, LL, MEINF, MULCH, SAT, SW, WATAVL, SOILPROP, !Input
+     &        RUNOFF)                                          !Output
           
           WINF = WATAVL - RUNOFF + IRRAMT     !(mm)
         ENDIF
