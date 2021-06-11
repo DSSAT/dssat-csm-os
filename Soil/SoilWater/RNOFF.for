@@ -33,7 +33,7 @@ C-----------------------------------------------------------------------
       PARAMETER (ERRKEY = 'RNOFF')
 
       REAL CN, IABS
-      REAL PB, WATAVL, SMX
+      REAL PB, WATAVL, SMX, WATAVL_T
       REAL RUNOFF, SWABI
 
 !     Maximum initial abstraction ratio
@@ -93,19 +93,20 @@ C-----------------------------------------------------------------------
 !       No mulch effects on runoff
         IABS = SWABI
       ENDIF
-
-      PB = WATAVL - IABS * SMX
-
+      
       IF (SOILPROP % PMcover) THEN
           RUNOFF = WATAVL * SOILPROP % PMFRACTION
-          WATAVL = WATAVL * (1 - SOILPROP % PMFRACTION)
+          WATAVL_T = WATAVL - RUNOFF
       ELSE
           RUNOFF = 0.0
+          WATAVL_T = WATAVL
       ENDIF
       
-      IF (WATAVL .GT. 0.001) THEN
+      PB = WATAVL_T - IABS * SMX
+      
+      IF (WATAVL_T .GT. 0.001) THEN
         IF (PB .GT. 0) THEN
-          RUNOFF = RUNOFF + PB**2/(WATAVL + (1.0-IABS) * SMX)
+          RUNOFF = RUNOFF + PB**2/(WATAVL_T + (1.0-IABS) * SMX)
 !        ELSE
 !          RUNOFF = 0.0
         END IF
