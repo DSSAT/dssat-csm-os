@@ -1104,14 +1104,12 @@ C
               ! Conversion efficiency
               !
 1200          GRAINN = GRAINN + (NSINK + NSINKT)
-              write(*,*) GROGRN, GRAINN, NSINK, NSINKT
               IF (GROGRN .GT. 0.0) THEN
                  GNC = (NSINK + NSINKT)/GROGRN*100.0
               ENDIF
               IF (GRNWT .GT. 0.0) THEN
                  GNP = GRAINN/GRNWT*100.0
               ENDIF
-              WRITE(*,*) GNC, GNP
           ENDIF
       END SELECT
 
