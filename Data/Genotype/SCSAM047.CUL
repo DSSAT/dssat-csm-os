@@ -1,5 +1,52 @@
-! Crop Parameters for SAMUCA model
+*SUGARCANE CULTIVAR COEFFICIENTS: SCSAM047 MODEL
+!
+! Crop Coefficients for the SAMUCA (Sugarcane) model
+! Scientific documentation in Appendix A of Vianna et al (2020): 
+! https://doi.org/10.1016/j.compag.2020.105361
+!
+! COEFF   		   	DEFINITIONS
+! =====   		   	===========
+! MAXGL            	Maximum number of green leaf a tiller can hold (#/tiller)
+! N_LF_STK_EM      	Number of leaves appeared before stalks emerges at soil 
+!					surface (#/tiller)
+! N_LF_IT_FORM     	Number of leaves appeared before internode formation 
+!					(#/tiller)
+! MAXDGL           	Maximum number of developed (dewlap formed) green leaf 
+!					a tiller can hold (#/tiller)
+! AMAX             	Assimilation rate at light saturation point (μmol/m2/s)
+! EFF              	Carboxylation efficiency
+!					(μmol[CO2]/m2/s (μmol[PPFD]/m2/s)-1)
+! CHUSTK           	TT for stalk emergence (°Cdays)
+! CHUPEAK          	TT for tillering peak (only used when competition for light 
+!					is switched-off, method_pop = 1) (°Cdays)
+! CHUDEC           	TT for tillering senescence (°Cdays)
+! CHUMAT           	TT for population stabilization (°Cdays)
+! POPMAT           	Tiller population at tillering stabilization (tillers/m2)
+! POPPEAK          	Number of tillers at peak of population (tillers/m2, only 
+! 					used if competition for light is switched-off,method_pop=1)
+! TILLOCHRON       	Thermal time required for the emergence of one new 
+!					tiller (°Cdays/tiller)
+! PHYLLOCHRON      	Thermal time required for the appearance of one new 
+!					leaf (°Cdays/leaf)
+! SLA              	Specific Leaf Area (cm2/g)
+! MLA              	Maximum leaf area (cm2)
+! PLASTOCHRON      	Thermal time required for the appearance of one new 
+! 					phytomer (°Cdays/phytomer)
+! INIT_LF_AREA     	Initial leaf area of first appeared leaf (cm2)
+! MAX_INI_LA       	Initial leaf area of leaves appeared after top parts 
+!					formation (n_lf_max_ini_la) (cm2)
+! MAX_IT_DW        	Maximum Dry Biomass of Internodes (g)
+! MID_TT_IT_GRO    	Thermal time where internodes can achieve half of its 
+!					maximum biomass (°Cdays)
+! END_TT_IT_GRO    	Thermal time for completion of internode growth (°Cdays)
+! MID_TT_LF_GRO    	Thermal time where leaves can achieve half of its maximum 
+!					biomass (°Cdays)
+! END_TT_LF_GRO    	Thermal time for completion of leaf growth (°Cdays)
+!
 ! Notes: 
 !	(i)	Values are being read with a precision of 4 decimals
-@VAR#  VAR-NAME........ EXPNO   ECO#          maxgl    n_lf_stk_em   n_lf_it_form         maxdgl           amax            eff         chustk        chupeak         chudec         chumat         popmat        poppeak     tillochron    phyllochron            sla            mla    plastochron   init_lf_area     max_ini_la      max_it_dw  mid_tt_it_gro  end_tt_it_gro  mid_tt_lf_gro  end_tt_lf_gro
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#          MAXGL    N_LF_STK_EM   N_LF_IT_FORM         MAXDGL           AMAX            EFF         CHUSTK        CHUPEAK         CHUDEC         CHUMAT         POPMAT        POPPEAK     TILLOCHRON    PHYLLOCHRON            SLA            MLA    PLASTOCHRON   INIT_LF_AREA     MAX_INI_LA      MAX_IT_DW  MID_TT_IT_GRO  END_TT_IT_GRO  MID_TT_LF_GRO  END_TT_LF_GRO
 RB7515         RB867515       SC0001           12.0            4.0            3.0            6.0           44.9          0.069          650.0         1400.0         1600.0         3200.0            9.5           22.0           69.0          132.0          120.0          600.0          132.0           15.0          120.0           28.0          400.0         1200.0          700.0         1300.0
