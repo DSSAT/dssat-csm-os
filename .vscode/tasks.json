@@ -6,8 +6,8 @@
         //Configure targets
             "label": "dssat-csm: Run DSSAT (without debugging)",
             "options": { "cwd": "/DSSAT48/TEFF"},                   //<- Set execution working directory
-            "args": ["C", "ETJD1106.TFX", "6"],                      //<- Set program's arguments
-            //"args": ["A", "ETJD1106.TFX"],
+            "args": ["C", "ETGA0211.TFX", "3"],                      //<- Set program's arguments
+           // "args": ["A", "ETGA0211.TFX"],
             "command": "${workspaceRoot}/build/bin/dscsm048.exe",    //<- Set executable target
             "type": "shell",
         },

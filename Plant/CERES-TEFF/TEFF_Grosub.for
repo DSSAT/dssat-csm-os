@@ -1016,7 +1016,7 @@ c              RGNFIL = 4.929666-3.90*DTT+0.55*(TMAX-TMIN)+5.0067*TEMPM
               NSINK  = RGNFIL*(MGPP+TGPP)*1.E-7
               NSINK  = AMAX1 (NSINK,0.0)
 c             NSINK  = NSINK*AMIN1(NDEF3,SWFAC)
-              IF (NSINK .LT. 0.001) GO TO 1200
+              IF (NSINK .EQ. 0) GO TO 1200 ! We change from .lt. 0.001 
       
               NSINK  = AMIN1 (NSINK,0.015*GROGRN)
               NSINKT = TGROGRN/GROGRN*NSINK
@@ -1104,12 +1104,14 @@ C
               ! Conversion efficiency
               !
 1200          GRAINN = GRAINN + (NSINK + NSINKT)
+              write(*,*) GROGRN, GRAINN, NSINK, NSINKT
               IF (GROGRN .GT. 0.0) THEN
                  GNC = (NSINK + NSINKT)/GROGRN*100.0
               ENDIF
               IF (GRNWT .GT. 0.0) THEN
                  GNP = GRAINN/GRNWT*100.0
               ENDIF
+              WRITE(*,*) GNC, GNP
           ENDIF
       END SELECT
 
