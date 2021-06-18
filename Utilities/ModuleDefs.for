@@ -32,6 +32,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !  11/19/2010 CHP Added "branch" to version to keep track of non-release branches
 !  08/08/2017 WP  Version identification moved to CSMVersion.for
 !  08/08/2017 WP  Definitions related with OS platform moved to OSDefinitions.for
+!  05/28/2021 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
 !=======================================================================
 
       MODULE ModuleDefs
@@ -470,6 +471,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       Type WeathType
         INTEGER WYEAR
         Character*8 WSTAT
+        Character*9 CELEV
+        Character*15 CYCRD, CXCRD
       End Type WeathType
 
       TYPE PDLABETATYPE
@@ -1026,6 +1029,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('FIELD')
+        SELECT CASE (VarName)
+        Case ('CXCRD'); Value = SAVE_data % WEATHER % CXCRD
+        Case ('CYCRD'); Value = SAVE_data % WEATHER % CYCRD
+        Case ('CELEV'); Value = SAVE_data % WEATHER % CELEV
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+        
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -1062,6 +1073,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('FIELD')
+        SELECT CASE (VarName)
+        Case ('CXCRD');  SAVE_data % WEATHER % CXCRD = Value
+        Case ('CYCRD');  SAVE_data % WEATHER % CYCRD = Value
+        Case ('CELEV');  SAVE_data % WEATHER % CELEV = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+        
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 
