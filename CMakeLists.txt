@@ -100,8 +100,8 @@ ELSE()
     SET(DSSAT_INSTALL_DIR $CMAKE_INSTALL_PREFIX)
     SET(OSDefinitions "Utilities/OSDefsLINUX.for")
     configure_file(
-        "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47.in"
-		"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47"
+        "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L48.in"
+		"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L48"
     )
 	configure_file(
 		"${PROJECT_SOURCE_DIR}/Utilities/run_dssat.in"

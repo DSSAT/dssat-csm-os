@@ -1154,9 +1154,11 @@ end Subroutine CsvOutEvOpsum
 !------------------------------------------------------------------------------
 ! Sub for csv output for summary.out
 ! 3/15/2018 CHP changed CRPNO to REPNO
+! 06/11/2021 FO Added LATI, LONG, ELEV and HYEAR to Summary.csv
 !Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
 Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
-   EXNAME, TITLET, FLDNAM, WSTAT, WYEAR, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
+   EXNAME, TITLET, FLDNAM, WSTAT, WYEAR, SLNO, LATI, LONG, ELEV, &
+   YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, &
    !CWAM, HWAM, HWAH, BWAH, PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM,&
    CWAM, HWAM, HWAH, BWAH, PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, &
    FCWAM, FHWAM, HWAHF, FBWAH, FPWAM, IRNUM, IRCM, &
@@ -1170,8 +1172,10 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    Integer, Intent(IN) :: RUN, TRTNUM, ROTNO, ROTOPT, REPNO, YRSIM, YRPLT  
    Character(Len=2), Intent(IN) :: CROP  
    Character(Len=8), Intent(IN) :: MODEL, FLDNAM, WSTAT, EXNAME
-   Character(Len=25), Intent(IN) :: TITLET 
+   Character(Len=9), Intent(IN) :: ELEV
    Character(Len=10), Intent(IN) :: SLNO 
+   Character(Len=15), Intent(IN) :: LATI,LONG
+   Character(Len=25), Intent(IN) :: TITLET 
    Integer, Intent(IN) :: EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, PWAM
    Integer, Intent(IN) :: FCWAM, FHWAM, FPWAM 
    Real, Intent (IN) :: HWAH, BWAH, HWAHF, FBWAH
@@ -1180,7 +1184,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    Integer :: HNUMAM, IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM 
    Integer :: NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, PINUMM
    Integer :: PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, ONTAM 
-   Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, CO2EC, WYEAR  
+   Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, CO2EC, WYEAR, HYEAR
    Real :: YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM,  TMAXA, TMINA, SRADA
    Real :: DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
    Real :: N2OEC
@@ -1202,8 +1206,9 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    cFBWAH1 = NINT(FBWAH * 10.0)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
            
-   Write(tmp,'(91(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
-   EXNAME, TITLET1, FLDNAM, WSTAT, WYEAR, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
+   Write(tmp,'(95(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
+   EXNAME, TITLET1, FLDNAM, WSTAT, WYEAR, SLNO, LATI, LONG, ELEV, &
+   YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, &
    !CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &
    CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, &
    FCWAM, FHWAM, cHWAHF1, cFBWAH1, FPWAM,IRNUM, &
