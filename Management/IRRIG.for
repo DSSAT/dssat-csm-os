@@ -549,6 +549,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Adjust IPERC values if necessary.
+      IF (PUDDLED) NPERC = MIN0(NPERC,1)
       DO I = 1, NPERC
         IF (DS(NLAYR) .LE. 20.0 .AND. IPERC(I) .GT. 0.) THEN
           IPERC(I) = IPERC(I) * 20.
@@ -618,7 +619,8 @@ C-----------------------------------------------------------------------
 
         IF (FLOODWAT % FLOOD <= 0.0) THEN
           NDAYS_DRY = NDAYS_DRY + 1
-          IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
+!         IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
+          IF (NDAYS_DRY > 29 .AND. YRDOY > YRPLT) PUDDLED = .FALSE.
         ELSE
           NDAYS_DRY = 0
         ENDIF
