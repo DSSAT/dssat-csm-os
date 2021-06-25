@@ -104,14 +104,14 @@ C       soil water balance and predicting measured ET.
               CALL GET('SPAM', 'PHTV' ,phtv)
       
               IF (phsv <= 0.0) THEN
-                  MSG(1) = "Photoperiod sensitivity parameter PHSV" //
+                  MSG(1) = "VPD sensitivity parameter PHSV" //
      &              " is not defined for EVAPO method (H)."
                   MSG(2) = "Program will stop."
                   CALL WARNING(2, ERRKEY, MSG)
                   CALL ERROR(ERRKEY,4,"",0)
               ENDIF
               IF (phtv <= 0.0) THEN
-                  MSG(1) = "Photoperiod threshold parameter PHTV is" //
+                  MSG(1) = "VPD threshold parameter PHTV is" //
      &              " not defined for EVAPO method (H)."
                   MSG(2) = "Program will stop."
                   CALL WARNING(2, ERRKEY, MSG)
