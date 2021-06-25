@@ -617,12 +617,13 @@ C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
       B = (QEFF*PARLF) + LFMAX
       C = QEFF * PARLF * LFMAX
 !     CHP Added checks for floating underflow 1/16/03
-!      IF (LFMAX .GT. 0.0) THEN
-      IF (LFMAX .GT. 0.0 .AND. (QEFF*PARLF/LFMAX) .LT. 20.) THEN
+      IF (LFMAX .GT. 0.0) THEN
+        IF ((QEFF*PARLF/LFMAX) .LT. 20.) THEN
 C       PGLF = (B - SQRT(B**2-4.*A*C)) / (2.*A)
-        PGLF = LFMAX * (1.0 - EXP(-QEFF*PARLF/LFMAX))
-      ELSE
-        PGLF = MAX(LFMAX, 0.0)
+          PGLF = LFMAX * (1.0 - EXP(-QEFF*PARLF/LFMAX))
+        ELSE
+          PGLF = MAX(LFMAX, 0.0)
+        ENDIF
       ENDIF
       PNLF = PGLF
 
