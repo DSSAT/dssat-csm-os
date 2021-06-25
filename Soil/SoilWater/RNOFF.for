@@ -33,7 +33,7 @@ C-----------------------------------------------------------------------
       PARAMETER (ERRKEY = 'RNOFF')
 
       REAL CN, IABS
-      REAL PB, WATAVL, SMX, WATAVL_T
+      REAL PB, WATAVL, SMX
       REAL RUNOFF, SWABI
 
 !     Maximum initial abstraction ratio
@@ -94,26 +94,22 @@ C-----------------------------------------------------------------------
         IABS = SWABI
       ENDIF
       
-      IF (SOILPROP % PMcover) THEN
-          RUNOFF = WATAVL * SOILPROP % PMFRACTION
-          WATAVL_T = WATAVL - RUNOFF
-      ELSE
-          RUNOFF = 0.0
-          WATAVL_T = WATAVL
-      ENDIF
+      PB = WATAVL - IABS * SMX
       
-      PB = WATAVL_T - IABS * SMX
-      
-      IF (WATAVL_T .GT. 0.001) THEN
+      IF (WATAVL .GT. 0.001) THEN
         IF (PB .GT. 0) THEN
-          RUNOFF = RUNOFF + PB**2/(WATAVL_T + (1.0-IABS) * SMX)
-!        ELSE
-!          RUNOFF = 0.0
+          RUNOFF = PB**2/(WATAVL + (1.0-IABS) * SMX)
+        ELSE
+          RUNOFF = 0.0
         END IF
-!      ELSE
-!        RUNOFF = 0.0
+      ELSE
+        RUNOFF = 0.0
       ENDIF
       
+      IF (SOILPROP % PMcover) THEN
+          RUNOFF = WATAVL * SOILPROP % PMFRACTION + RUNOFF * (1 - SOILPROP % PMFRACTION)
+      ENDIF
+
 !!     Temporary
 !      CUMRO = CUMRO + RUNOFF
 !      WRITE (LUN,1300)YEAR, DOY, CONTROL.DAS, 
