@@ -624,6 +624,8 @@ C       PGLF = (B - SQRT(B**2-4.*A*C)) / (2.*A)
         ELSE
           PGLF = MAX(LFMAX, 0.0)
         ENDIF
+      ELSE
+        PGLF = MAX(LFMAX, 0.0)
       ENDIF
       PNLF = PGLF
 
