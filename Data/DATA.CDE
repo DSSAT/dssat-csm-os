@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.8; 2021-04-23
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -40,6 +40,7 @@ B4DAT  Branch 4 date   Date of fourth branching (YrDoy)                         
 B5DAT  Branch 5 date   Date of fifth branching (YrDoy)                          B5DAT
 BADMF  Biomass@forcing Above-ground biomass at forcing (pineapple, t/ha)        .
 BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
+BR#SH  SHOOT NO #/m2   Shoot (apex) number at harvest (no/m2)                   .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                  .
@@ -72,15 +73,15 @@ ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) 
 ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. (g)     Eye weight (g)                                           .
+FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
+FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .
 FDAT   Forcing date    Forcing or flowering date (YrDoy)                        .
+FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
 FNAM   Field name      Field name                                               .
+FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
 FRN%M  Fruit N% @ mat  Fruit N concentration at maturity (%)                    .
 FRNAM  Fruit N @ mat   Fruit N content at maturity (kg/ha)                      .
-FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
-FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
-FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
-FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
 FWAH   Fresh wt @ harv Yield fresh weight at harvest (t/ha)                     .
 GL%M   Grain oil%,matu Grain oil at maturity (%)                                .
 GN%M   Grain N%,mature Grain N at maturity (%)                                  .
@@ -739,11 +740,22 @@ DSH#   DIS SHL #/m2.d  Daily shell number consumed                              
 DSHM   DIS SHL kg/ha.d Daily shell mass consumed                                .
 DSTM   DIS STEM kg/ha  Daily stem mass consumed                                 .
 FAW    FAW #/m         Fall armyworm                                            .
+IBCUT  Cutworm, no. m-2                                                         .
+LFMIN  Leafminer (Aproaerema Modicella-Deventer) no.m-2, m2 m-2 leaf damage     .
+PCLA   Defoliation, %                                                           .
+PDLA   Diseased leaf area, %                                                    .
+PRP    Reduction in photosynthetic rate, %                                      .
+PSTDS  General pest and diseases losses due to rot, tikka, leafminer, etc.      .
 RTWM   RTWM #/m        Root worm                                                .
 SGSB   SGSB #/m        Southern green stinkbug                                  .
 SL     SB LOOPER #/m   Soybean looper                                           .
 VBC5   VBC5 #/m        5 instar velvetbean caterpillar                          .
 VBC6   VBC6 #/m        6 instar velvetbean caterpillar                          .
+UFCEW  Corn earworm (Heliothis zea), no. m-2                                    .
+UFRKN  Root-knot nematode (Meloidogyne spp.), no. cm-3 soil                     .
+UFSBL  Soybean looper (Pseudoplusia includens), no. m-2                         .
+UFSKB  Southern green stinkbug (Mezara viridula), no. m-2                       .
+UFVBC  Velvetbean caterpillar (Anticarsia gemmatalis), no. m-2                  .
 
 *EXPERIMENTAL DATA
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -857,6 +869,7 @@ TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     
 CLDD   CLOUD FRAC      Relative cloudiness factor (0-1)                         .
 CO2D   CO2 ppm         Atmospheric CO2 concentration (ppm)                      .
 DAYLD  DAYLENGTH hr    Day length sunrise to sunset (hr)                        .
+OZON7  Ozone ppb       Daily 7-hour mean ozone concentration (9:00-15:59), ppb  .
 PARD   PAR             Daily PAR or photon flux density (moles[quanta]/(m2.d))  .
 PRED   PRECIP mm/d     Precipitation depth (mm/d)                               .
 SRAD   SRAD MJ/m2.d    Solar radiation (MJ/(m2.d))                              .

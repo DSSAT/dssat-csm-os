@@ -77,6 +77,14 @@
             ELSE
                 PD(L) = PDL(4)
             ENDIF
+            IF (PD(L) == 0.0 .AND. L > 0) THEN
+                  MESSAGE(1) = "Coefficient BxyND should be" // &
+                      " greater than zero. Correct the cultivar file."
+                  MESSAGE(2) = "Program will stop."
+                  CALL WARNING(2, 'CSYCA',MESSAGE)
+                  CALL ERROR('IPCUL',3,"",0)
+            ENDIF
+            
         ENDDO
             
             !IF (MSTG > 2) THEN !LPM 07MAR15 MSTG to PSX

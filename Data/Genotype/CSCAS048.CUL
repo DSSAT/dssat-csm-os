@@ -1,0 +1,86 @@
+$CULTIVARS:CSCAS048.20200721   Last edit: 2021-05-06 GH
+!
+! Coefficients used in the Cropsim cassava module differ from those used
+! in the earlier DSSAT cassava model. It is best,therefore,not to attempt
+! to convert 'old' coefficients, but to calibrate anew using the available
+! experiments. And even with a fresh calibration,it is good practice to 
+! test any set of coefficients by using them with real experiments that
+! were not used for calibration,and then comparing model outputs to 
+! measured values. 
+
+! Users should also be aware that some of the coefficients (eg.PHINT) may 
+! vary from region to region,and perhaps even from sowing date to sowing 
+! date,reflecting not only the current incomplete understanding of the 
+! environmental physiology of the crop, but also deficiencies in defining 
+! the initial conditions and computing the microbial release of nitrogen 
+! and other nutrients.
+!
+! COEFF       DEFINITION
+! ========    ==========
+! BxyND       Duration from branch x to branch y (ie.tier x,node number)
+! ECO#        Ecotype code for this cultivar,points to entry in the ECO file
+! EXP#        Number of experiments used for calibration.
+! HMPC        Harvest product moisture content (%)
+! LA1S        Area/leaf (cm2) of the first leaves when growing without stress.
+! LAFND       Node # at which the end of cycle area/leaf reached (#)
+! LAFS        End of cycle area/leaf (cm2)
+! LAXND       Node # at which maximum potential area/leaf reached (#)
+! LAXN2       Node # at which potential area/leaf begins to decline (#)
+! LAXS        Area/leaf at maximum area/leaf (cm2)
+! LLIFA       Leaf life,from full expansion to start senescence (Thermal units)
+! LPEFR       Leaf petiole fraction (fr of lamina+petiole)
+! PHINT       Interval between leaf tip appearances for first leaves (oC.d)
+! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
+! SLAS        Specific leaf lamina area when crop growing without stress (cm2/g)
+! SRFR        Fr.of assimilate designated for tops sent to storage root (#)
+! SR#W        Storage root number per unit canopy weight at initiation (#/g)
+! STFR        Stem fraction of assimilate destined for canopy growth (#)
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+*CULTIVARS:CSCAS048
+!                                    PPSEN ------------ BRANCHING ------------ - STORAGE ROOTS - ---- LEAF PRODUCTION,SIZES,SP.AREA,LONGEVITY,PETIOLES -----  STEM  
+@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND B23ND B34ND B45ND B56ND SR#WT  SRFR  HMPC PHINT  LA1S  LAXS LAXND LAXN2  LAFS LAFND  SLAS LLIFA LPEFR  STFR
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21
+!Calibration                             P     P     P     P     P     P     P     G     G     G     G     G     G     G     G     G     G     G     G     G     G
+!                                            Nd#   Nd#   Nd#   Nd#   Nd#   Nd#   #/g    fr     %  oC.d   cm2   cm2     #     #   cm2     # cm2/g    Tu    fr    fr         
+999991 MINIMA               . 999991     0  25.0  25.0  25.0  25.0  25.0  25.0  0.20  0.00    40    15   200  1000    80    80    20   100   100   300  0.20  0.25 
+999992 MAXIMA               . 999992     0  35.0  35.0  35.0 300.0  35.0  35.0  0.35  0.35    80    30   400  2000   200   200    50   350   400  1200  0.40  0.45 
+                                                                                                                                                                  
+DFAULT DEFAULT              . DFAULT     0    10    20    20    30   200   200  0.25  0.30    50    24   300  1900   100   100    30   150   200   800  0.33  0.35
+                                                                                                                                                                        
+! The following cultivars have not been calibrated well and the coefficiefficients are                                                                            
+! present merely to allow the experiments to be run. A user should spend time calibrating for                                                                    
+! his/her own data.                                                                                                                                               
+                                                                                                                                                                  
+UC0002 MCol-22              . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17    50   120    60    80    70   150   180   900  0.33  0.35
+UC0004 MMEX-59              . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17    50   120    60    80    70   150   180   900  0.33  0.35
+UC0006 MCol-1684            . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17    50   200    60    80    50   150   180   600  0.33  0.45
+UC0007 MVen-77              . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    50   400    60    80    70   150   180   800  0.33  0.35
+UC0008 MPtr-26              . 990003     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    50   400    60    80    70   150   180   800  0.33  0.35
+UC0009 MCol-638             . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    50   400    60    80    70   150   180   800  0.33  0.35
+
+!Thai
+@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND B23ND B34ND B45ND B56ND SR#WT  SRFR  HMPC PHINT  LA1S  LAXS LAXND LAXN2  LAFS LAFND  SLAS LLIFA LPEFR  STFR
+TH0001 Rayong1 (RY1)        . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    50   400    60    80    70   150   180   800  0.33  0.35  
+TH0002 Rayong90 (RY90)      . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17   400   120    60    80    70   150   180   900  0.33  0.35  
+TH0003 Rayong5 (RY5)        . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17    50   200    60    80    50   150   180   600  0.33  0.45  
+TH0004 KU50 (KU50)          . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17    50   300    60    80   100   150   180   900  0.33  0.45  
+TH0005 Rayong3 (RY3)        . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    30   200    60    80    70   150   180   800  0.33  0.35  
+TH0006 Rayong72 (RY72)      . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    50   400    60    80    70   150   180   800  0.33  0.35  
+!                                                                                                                                                                       
+TH0002 Rayong90 (RY90)      . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17   400   120    60    80    70   150   180   900  0.33  0.35  
+TH0003 Rayong5 (RY5)        . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17    50   200    60    80    50   150   180   600  0.33  0.45  
+TH0004 KU50 (KU50)          . 990001     0  25.0  25.0  25.0 255.0  25.0  25.0  0.25  0.00    50    17    50   300    60    80   100   150   180   900  0.33  0.45  
+TH0005 Rayong3 (RY3)        . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    30   200    60    80    70   150   180   800  0.33  0.35 
+TH0006 Rayong3 (RY3)        . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    30   200    60    80    70   150   180   800  0.33  0.35 
+TH0007 RY11(try)            . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    30   200    60    80    70   150   180   800  0.33  0.35 
+TH0009 RY9 (try)            . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    30   200    60    80    70   150   180   600  0.33  0.35 
+!
+TH0051 RY72                 . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    30   200    60    80    70   150   180   800  0.33  0.35 
+TH0052 RY72                 . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    30   200    60    80    70   150   180   800  0.33  0.35 
+TH0053 RY72                 . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  0.25  0.00    50    17    30   200    60    80    70   150   180   800  0.33  0.35 
+
+

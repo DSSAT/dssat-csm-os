@@ -26,7 +26,7 @@
         !         Update nitrogen amounts
         !-----------------------------------------------------------------------
         Lcounth = 0
-        DO BR = 0, BRSTAGE                                                                                        
+        DO BR = 0, BRSTAGEINT                                                                                        
             DO LF = 1, LNUMSIMSTG(BR)
                 IF (isLeafAlive(node(BR,LF))) THEN
                     Lcounth = Lcounth + 1
@@ -39,7 +39,7 @@
         node%LEAFNEXCESSN = 0.0
         !IF (LANC > LNCX) LEAFNEXCESS = (LFWT-leafTotalSenescedWeight())*(LANC-LNCX)                                          !EQN 245 !LPM 25OCT2015 to consider N by cohort LANC has to be by cohort
         LEAFN = 0.0
-        DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
+        DO BR = 0, BRSTAGEINT                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
             DO LF = 1, LNUMSIMSTG(BR)
                 !LPM Define excess of N for the leaves that are not growing
                 IF (isLeafAlive(node(BR,LF))) THEN
@@ -63,7 +63,7 @@
         !IF (SANC > SNCX) STEMNEXCESS = (woodyWeight())*(SANC-SNCX)                                                     !EQN 246
         !STEMN = STEMN + SNUSE(0) - SNPH - STEMNEXCESS                                                               !EQN 247
         STEMN = 0.0
-        DO BR = 0, BRSTAGE                                                                                                                                                          
+        DO BR = 0, BRSTAGEINT                                                                                                                                                          
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   
                 IF (node(BR,LF)%SANC > node(BR,LF)%SNCX) THEN 
                     node(BR,LF)%STEMNEXCESSN = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*(node(BR,LF)%SANC-node(BR,LF)%SNCX)

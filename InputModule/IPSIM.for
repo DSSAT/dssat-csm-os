@@ -341,15 +341,31 @@ C
 
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
+              WRITE(MSG(1),'("Automatic harvest option ",
+     &          "is not valid for crop type: ",A2)') CROP
+              CALL WARNING(1, ERRKEY, MSG)
               CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+           ENDIF
+         ENDIF
+          
+         IF ((INDEX('CS',CROP)) .GT. 0) THEN
+           IF (IHARI .EQ. 'M') THEN
+             WRITE(MSG(1),'("Harvest at maturity option is ",
+     &         "not valid for crop type: ",A2)') CROP
+             CALL WARNING(1, ERRKEY, MSG)
+             CALL ERROR ('IPSIM ',11,FILEX,LINEXP)
            ENDIF
          ENDIF
 
          IF ((INDEX('PT',CROP)) .GT. 0) THEN
            IF (IPLTI .EQ. 'A') THEN
+              WRITE(MSG(1),'("Automatic planting option is ",
+     &    "not valid for crop type: ",A2)') CROP
+              CALL WARNING(1, ERRKEY, MSG)
               CALL ERROR (ERRKEY,5,FILEX,LINEXP)
            ENDIF
-         ENDIF
+      ENDIF
+      
 C
 !     ==============================================================
 C        Read FIFTH line of simulation control - OUTPUTS
@@ -1059,8 +1075,8 @@ C-----------------------------------------------------------------------
 !     1) Go to pull down menu Project -> Settings -> Fortran (Tab) ->
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
-D     INPUTX = 'C:\DSSAT47\DSCSM047.EXE'
-D     IPX = 23
+!D     INPUTX = 'C:\DSSAT47\DSCSM048.EXE'
+!D     IPX = 23
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             IF (IPX > 12) THEN
@@ -1589,6 +1605,16 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
      &    "crop type: ",A2)') CONTROL%CROP
           CALL WARNING(2, ERRKEY, MSG)
           CALL ERROR ('IPSIM ',4,FILEX,LINEXP)
+        ENDIF
+      ENDIF
+      
+      IF ((INDEX('CS',CONTROL % CROP)) .GT. 0) THEN
+        IF (IHARI .EQ. 'M') THEN
+          MSG(1) = "Default Simulation controls file used."
+          WRITE(MSG(2),'("Harvest at maturity option is not valid for ",
+     &    "crop type: ",A2)') CONTROL%CROP
+          CALL WARNING(1, ERRKEY, MSG)
+          CALL ERROR ('IPSIM ',11,FILEX,LINEXP)
         ENDIF
       ENDIF
 

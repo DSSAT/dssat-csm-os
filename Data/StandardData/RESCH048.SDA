@@ -1,0 +1,76 @@
+*Organic Matter Application PARAMETER FILE - DSCSM048 Model 2021-04-23
+
+@VERSION
+ 4.8.0.5
+
+! Model parameter file which externalizes many of the
+! coefficients needed for simulating the composition
+! of soil organic matter.
+!RETYP  Residue type code
+!CR     Crop type (if applicable)
+!AM     Area covered per unit dry weight of residue (cm2/g = ha/kg*10^5)
+!WATFAC Saturation water content of surface mulch (kg[H2O]/kg[DM] = mm-ha/kg * 10^4)
+!EXTFAC Mulch layer light extinction coefficient
+!PSLIG  Proportion of lignin in surface residue (fraction)
+!SCN    N content of initial surface (shoots) residue (%)
+!SCP    P content of initial surface (shoots) residue (%)
+!PRLIG  Proportion of lignin in subsurface residue (fraction)
+!RCN    N content of initial subsurface (roots) residue (%)
+!RCP    P content of initial subsurface (roots) residue (%)
+
+*CHARACTERISTICS
+!Res Crop |---------------- Surface ----------------| |-- Sub-surface --|
+!Type  ID   Cover  Satur.  Evapor  Lignin  Nitr  Phos  Lignin  Nitr  Phos
+@RETYP CR      AM  WATFAC  EXTFAC   PSLIG   SCN   SCP   PRLIG   RCN   RCP Description
+!Generic Crops
+ RE001 --      37     3.8    0.80    0.10  1.10  0.20    0.15  0.90  0.09 Generic crop residue
+ RE101 --      32     3.8    0.50    0.12  1.20  0.25    0.18  0.75  0.06 Generic legume residue
+ RE201 --      37     3.5    0.85    0.08  1.10  0.32    0.10  0.90  0.16 Generic cereal crop residue
+ RE301 --      40     3.5    0.80    0.07  1.10  0.13    0.11  0.90  0.06 Generic grass
+ RE999 DC      32     3.8    0.80    0.20  0.40  0.04    0.30  0.25  0.02 Decomposed crop residue
+
+!Manure/compost
+!RETYP CR      AM  WATFAC  EXTFAC   PSLIG   SCN   SCP   PRLIG   RCN   RCP Description
+ RE002 --      70     3.8    0.50    0.08  4.00  0.25     -99   -99   -99 Green manure
+ RE003 --      10     3.8    0.80    0.07  4.80  0.67     -99   -99   -99 Barnyard manure
+ RE004 --     140     3.8    0.50    0.02  5.00  1.60     -99   -99   -99 Liquid manure
+ RE005 --      32     3.8    0.80    0.10  1.00  0.17     -99   -99   -99 Compost
+ RE006 --       4     1.0    0.94    0.20  0.40  0.04     -99   -99   -99 Bark
+
+!Legumes
+!RETYP CR      AM  WATFAC  EXTFAC   PSLIG   SCN   SCP   PRLIG   RCN   RCP Description
+ RE102 CP      32     3.8    0.50    0.12  1.20  0.27    0.18  0.75  0.06 Cowpea residue
+ RE103 MC      32     3.8    0.50    0.08  3.00  0.70    0.12  2.00  0.18 Mucuna residue
+ RE104 PN      32     3.8    0.50    0.12  1.20  0.25    0.18  0.75  0.06 Peanut residue
+ RE105 PP      32     3.8    0.50    0.16  3.60  0.25    0.25  2.00  0.18 Pigeon Pea residue
+ RE106 SB      32     3.8    0.50    0.13  1.20  0.70    0.21  0.75  0.18 Soybean residue
+ RE107 AL      32     3.8    0.50    0.08  3.60  0.21    0.10  2.40  0.06 Alfalfa residue
+ RE108 CH      32     3.8    0.50    0.12  1.20  0.25    0.18  0.75  0.06 chickpea forage
+ RE109 FB      32     3.8    0.50    0.10  1.90  0.40    0.15  1.20  0.09 Faba bean
+ RE110 PE      32     3.8    0.50    0.09  1.90  0.40    0.13  1.20  0.09 Pea residue
+ RE111 --      69     3.8    0.50    0.08  3.20  0.60    0.12  2.00  0.14 Hairy vetch
+
+!Cereals
+!RETYP CR      AM  WATFAC  EXTFAC   PSLIG   SCN   SCP   PRLIG   RCN   RCP Description
+ RE202 ML      30     3.5    0.85    0.09  1.10  0.32    0.10  0.90  0.16 Pearl millet residue
+ RE203 MZ      30     3.5    0.86    0.10  1.10  0.32    0.10  0.90  0.16 Maize residue
+ RE204 SG      30     3.5    0.85    0.06  1.10  0.20    0.10  0.90  0.10 Sorghum residue
+ RE205 WH      45     5.0    0.85    0.06  0.59  0.16    0.10  0.50  0.08 Wheat residue
+ RE206 BA      40     3.8    0.85    0.03  1.90  0.54    0.06  1.50  0.27 Barley
+ RE207 RI      40     3.8    0.85    0.04  0.75  0.10    0.07  0.60  0.10 rice
+ RE208 --      42     3.8    0.81    0.03  2.00  0.55    0.06  1.50  0.27 rye
+
+!Grasses
+!RETYP CR      AM  WATFAC  EXTFAC   PSLIG   SCN   SCP   PRLIG   RCN   RCP Description
+ RE302 BH      40     3.5    0.80    0.07  1.10  0.13    0.11  0.90  0.06 Bahiagrass
+ RE303 BG      40     3.5    0.80    0.07  1.10  0.13    0.11  0.90  0.06 Bermudagrass
+ RE304 SI      40     3.5    0.80    0.10  1.10  0.13    0.16  0.90  0.06 Switchgrass
+ RE305 BR      40     3.5    0.80    0.05  1.10  0.13    0.08  0.90  0.06 brachiaria
+ RE306 --      40     3.5    0.80    0.10  1.10  0.13    0.16  0.90  0.06 forage grasses
+
+!Other
+!RETYP CR      AM  WATFAC  EXTFAC   PSLIG   SCN   SCP   PRLIG   RCN   RCP Description
+ RE401 BF      40     3.5    0.80    0.16  1.10  0.19    0.24  0.90  0.09 Bush fallow residue
+ RE402 SC      40     3.5    0.80    0.07  0.34  0.03    0.11  0.30  0.01 Sugarcane
+ RE403 PI      30     3.5    0.80    0.10  0.88  0.08    0.15  0.90  0.04 Pineapple
+ RE404 CS      32     2.7    0.80    0.17  1.56  0.10    0.15  1.59  0.15 Cassava

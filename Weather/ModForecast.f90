@@ -375,10 +375,10 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
 !   First assume last weather record has the same century as the FODAT
     CenturyForecast = AINT(FLOAT(FODAT) / 100000.)
     WeathRecLast = CenturyForecast * 100000 + WeathRecLast
-!   If the last weather date is before FODAT, then need to incrment the century
-    DO WHILE (WeathRecLast .LT. FODAT)
-      WeathRecLast = WeathRecLast + 100000
-    ENDDO
+!!   If the last weather date is before FODAT, then need to incrment the century
+!    DO WHILE (WeathRecLast .LT. FODAT)
+!      WeathRecLast = WeathRecLast + 100000
+!    ENDDO
     
 !   Now we have the correct century for the last weather date,
 !     calculate first weather date based on number of records
@@ -399,6 +399,12 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
 !    CALL YR_DOY(WeathRecFirst, YR0, DOY0)
 !    CALL YR_DOY(WFirstDate, YR1, DOY1)
 !    IF (DOY1 - DOY0 .GT. 300) THEN
+
+!CONCLUSION:  !!!!!
+! MUST use 4-digit weather data to guarantee that weather forecasting
+! works when weather data crosses a century boundary or has more than 
+! 100 years.
+
   ENDIF
   
 !--------------------------------------------------------------

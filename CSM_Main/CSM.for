@@ -34,23 +34,17 @@ C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C
-C     CROPPING SYSTEM MODEL Version 4.7.5
+C     CROPPING SYSTEM MODEL Version 4.8.0
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     November 2020  CSM Version 4.7.5
+C     May 2021  CSM Version 4.8.0
 C
-C     Gerrit Hoogenboom, J.W. Jones, Cheryl Porter, K.J. Boote, 
-C
-C     Tony Hunt, Jon Lizaso, Vakhtang Shelia,
-C
-C     Upendra Singh, Jeff W. White
-C
-C     Willingthon Pavan, Fabio Oliveira
-C
-C     Special contributions by others including:
-C     Arjan Gijsman
-C
+C     Hoogenboom, G., C.H. Porter, V. Shelia, K.J. Boote, U. Singh,  
+C     J.W. White, W. Pavan, F.A. de Oliveira, L.P. Moreno, J.I. Lizaso, 
+C     S. Asseng, D.N.L. Pequeno, B.A. Kimball, P. Alderman, K.R. Thorp, 
+C     M.R. Jones, S.V. Cuadra, M. Vianna, F.J. Villalobos, T.B. Ferreira,  
+C     J. Koo, L.A. Hunt, and J.W. Jones
 C=======================================================================
 C
 C=======================================================================
@@ -131,7 +125,7 @@ C     The variable "ISWITCH" is of type "SwitchType".
       CALL OPCLEAR
 
       CALL GETLUN('FILEIO', LUNIO)
-      FILEIO = 'DSSAT47.INP'
+      FILEIO = 'DSSAT48.INP'
 
 C-----------------------------------------------------------------------
 C    Get argument from runtime module to determine path of the EXE files

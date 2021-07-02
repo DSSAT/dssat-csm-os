@@ -1471,9 +1471,9 @@
 
         IF (RUNCRP.LE.0) THEN          ! First time through
 
-          MODNAME(1:8) = 'CSCAS047'
+          MODNAME(1:8) = 'CSCAS048'
           VERSION = 010115
-          GENFLCHK(1:15) = 'CSCAS047.081017'
+          GENFLCHK(1:15) = 'CSCAS048.20200721'
 
 !-----------------------------------------------------------------------
 !         Set parameters (Most should be placed in input files!)
@@ -7830,12 +7830,12 @@ c           ENDIF
               IF (RUN.EQ.1) THEN
                 EVALOUT = 0
                 EVHEADNM = 0
-                EVHEADNMMAX = 7
+                EVHEADNMMAX = 1
               ENDIF
               IF (EXCODE.NE.EXCODEPREV) THEN
                 EVHEADNM = EVHEADNM + 1
                 OPEN (UNIT=FNUMEVAL,FILE=FNAMEEVAL,POSITION='APPEND')
-                IF (EVHEADNM.LT.EVHEADNMMAX.AND.EVHEADNMMAX.GT.1) THEN
+                IF (EVHEADNM.LE.EVHEADNMMAX.AND.EVHEADNMMAX.GE.1) THEN
                   LENENAME = TVILENT(ENAME)
                   WRITE (FNUMEVAL,*) ' '
                   WRITE (FNUMEVAL,993) 

@@ -109,39 +109,34 @@ C-----------------------------------------------------------------------
 !     'BWAM' or 'BWAH' and interpret data as 'BWAM'
 
 !     Define headings for observed data file (FILEA)
-      DATA OLAB / !Pred.          Obs.   Definition
-                  !------------   -----  -----------
-     & 'ADAT  ', ! 1 DNR1           DFLR   Anthesis date
-     & 'PD1T  ', ! 2 DNR3           DFPD   First Pod        
-     & 'PDFT  ', ! 3 DNR5           DFSD   First Seed       
-     & 'MDAT  ', ! 4 DNR7           DMAT   Physiological Maturity
-     & 'HWAM  ', ! 5 NINT(SDWT*10)  XGWT   Seed Yield (kg/ha;dry)
-     & 'PWAM  ', ! 6 NINT(PODWT*10) XPDW   Pod Yield (kg/ha;dry) 
-     & 'H#AM  ', ! 7 NINT(SEEDNO)   XNOGR  Seed Number (Seed/m2)
-     & 'HWUM  ', ! 8 PSDWT          XGWU   Weight Per Seed (g;dry)
-     & 'H#UM  ', ! 9 PSPP           XNOGU  Seeds/Pod
-     & 'CWAM  ', !10 NINT(TOPWT*10) XCWT   Biomass (kg/ha) Harvest Mat.
-
-!     & 'BWAH', !11 (STMWT)*10    XSWT   Stem weight (kg/ha) at Mat.
-! KJB, LAH, CHP 12/16/2004  change BWAH to BWAM
-!     & 'BWAM', !11 (TOPWT-SDWT)*10 XSWT  Tops - seed (kg/ha) at Mat.
-! CHP/GH 08/11/2005 Change BWAM = TOPWT - PODWT
-     & 'BWAM  ', !11 (TOPWT-PODWT)*10 XSWT Tops - seed (kg/ha) at Mat.
-
-     & 'LAIX  ', !12 LAIMX          XLAM   Maximum LAI (m2/m2)
-     & 'HIAM  ', !13 HI             XHIN   Harvest Index (kg/kg)
-     & 'THAM  ', !14 THRES          XTHR   Shelling Percentage (%)
-     & 'GNAM  ', !15 NINT(WTNSD*10) XNGR   Seed N (kg N/ha)
-     & 'CNAM  ', !16 NINT(WTNCAN*10)XNTP   Biomass N (kg N/ha)
-     & 'SNAM  ', !17 NINT(WTNST*10) XNST   Stalk N (kg N/ha)
-     & 'GN%M  ', !18 PCNSD          XNPS   Seed N (%)
-     & 'CWAA  ', !19 NINT(CANWAA*10)XCWAA  Biomass (kg/ha) at Anthesis
-     & 'CNAA  ', !20                XCNAA 
-     & 'L#SM  ', !21 VSTAGE         XLFNO  Final Leaf Number (Main Stem)
-     & 'GL%M  ', !22 PCLSD          XLPS   Seed Lipid (%)
-     & 'CHTA  ', !23 CANHT          XCNHT  Canopy Height (m)
-     & 'R8AT  ', !24 DNR8           DHRV   Harvest Maturity (dap)
-     & 'EDAT  ', !25 EDAT                  Emergence date
+      DATA OLAB / !Pred.                 Obs.   Definition
+                  !------------          -----  -----------
+                  !new!old!
+     & 'EDAT  ',  ! 1 !25 EDAT                  Emergence date
+     & 'ADAT  ',  ! 2 ! 1 DNR1           DFLR   Anthesis date
+     & 'PD1T  ',  ! 3 ! 2 DNR3           DFPD   First Pod        
+     & 'PDFT  ',  ! 4 ! 3 DNR5           DFSD   First Seed       
+     & 'MDAT  ',  ! 5 ! 4 DNR7           DMAT   Physiological Maturity
+     & 'R8AT  ',  ! 6 !24 DNR8           DHRV   Harvest Maturity (dap)
+     & 'HWAM  ',  ! 7 ! 5 NINT(SDWT*10)  XGWT   Seed Yield (kg/ha;dry)
+     & 'PWAM  ',  ! 8 ! 6 NINT(PODWT*10) XPDW   Pod Yield (kg/ha;dry) 
+     & 'CWAA  ',  ! 9 !19 NINT(CANWAA*10)XCWAA  Biomass (kg/ha) at Anth
+     & 'CWAM  ',  !10 !10 NINT(TOPWT*10) XCWT   Biomass (kg/ha) Harv Mat
+     & 'BWAM  ',  !11 !11 (TOPWT-PODWT)*10 XSWT Tops - seed (kg/ha) @Mat
+     & 'H#AM  ',  !12 ! 7 NINT(SEEDNO)   XNOGR  Seed Number (Seed/m2)
+     & 'HWUM  ',  !13 ! 8 PSDWT          XGWU   Weight Per Seed (g;dry)
+     & 'H#UM  ',  !14 ! 9 PSPP           XNOGU  Seeds/Pod
+     & 'HIAM  ',  !15 !13 HI             XHIN   Harvest Index (kg/kg)
+     & 'THAM  ',  !16 !14 THRES          XTHR   Shelling Percentage (%)
+     & 'LAIX  ',  !17 !12 LAIMX          XLAM   Maximum LAI (m2/m2)
+     & 'L#SM  ',  !18 !21 VSTAGE         XLFNO  Final Leaf # Main Stem
+     & 'CHTA  ',  !19 !23 CANHT          XCNHT  Canopy Height (m)
+     & 'CNAA  ',  !20 !20                XCNAA  Biomass N at anth (kg/ha)
+     & 'CNAM  ',  !21 !16 NINT(WTNCAN*10)XNTP   Biomass N (kg N/ha)
+     & 'SNAM  ',  !22 !17 NINT(WTNST*10) XNST   Stalk N (kg N/ha)
+     & 'GNAM  ',  !23 !15 NINT(WTNSD*10) XNGR   Seed N (kg N/ha)
+     & 'GN%M  ',  !24 !18 PCNSD          XNPS   Seed N (%)
+     & 'GL%M  ',  !25 !22 PCLSD          XLPS   Seed Lipid (%)
      & 15*'      '/
 !     GWAH    !Grain weight at harvest (kg/ha)
 !     CWAH    !Canopy weight at harvest (kg/ha)
@@ -357,65 +352,71 @@ C-----------------------------------------------------------------------
          CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !     Convert from YRDOY format to DAP.  Change descriptions to match.
-        CALL READA_Dates(X(1), YRSIM, IFLR)  !X is text, IFLR is integer
+!       Anthesis
+        CALL READA_Dates(X(2), YRSIM, IFLR)  !X is text, IFLR is integer
         IF (IFLR .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DFLR = TIMDIF(YRPLT,IFLR)   !dap
         ELSE
           DFLR  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(1)) 
-        OLAP(1) = 'ADAP  '
-        CALL GetDesc(1,OLAP(1), DESCRIP(1))
+        OLAP(2) = 'ADAP  '
+        CALL GetDesc(1,OLAP(2), DESCRIP(2))
 
-        CALL READA_Dates(X(2), YRSIM, IFPD)
+!       First pod
+        CALL READA_Dates(X(3), YRSIM, IFPD)
         IF (IFPD .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DFPD = TIMDIF(YRPLT,IFPD)
         ELSE
           DFPD  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(2)) 
-        OLAP(2) = 'PD1P  '
-        CALL GetDesc(1,OLAP(2), DESCRIP(2))
+        OLAP(3) = 'PD1P  '
+        CALL GetDesc(1,OLAP(3), DESCRIP(3))
 
-        CALL READA_Dates(X(3), YRSIM, IFSD)
+!       First seed
+        CALL READA_Dates(X(4), YRSIM, IFSD)
         IF (IFSD .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DFSD = TIMDIF(YRPLT,IFSD)
         ELSE
           DFSD  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(3))
-        OLAP(3) = 'PDFP  '
-        CALL GetDesc(1,OLAP(3), DESCRIP(3))
+        OLAP(4) = 'PDFP  '
+        CALL GetDesc(1,OLAP(4), DESCRIP(4))
 
-        CALL READA_Dates(X(4), YRSIM, IMAT)
+!       Physiological maturity
+        CALL READA_Dates(X(5), YRSIM, IMAT)
         IF (IMAT .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DMAT = TIMDIF(YRPLT,IMAT)
         ELSE
           DMAT  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(4)) 
-        OLAP(4) = 'MDAP  '
-        CALL GetDesc(1,OLAP(4), DESCRIP(4))
+        OLAP(5) = 'MDAP  '
+        CALL GetDesc(1,OLAP(5), DESCRIP(5))
 
-        CALL READA_Dates(X(24), YRSIM, IHRV)
+!       Harvest maturity
+        CALL READA_Dates(X(6), YRSIM, IHRV)
         IF (IHRV .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DHRV = TIMDIF(YRPLT,IHRV)
         ELSE
           DHRV  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(24)) 
-        OLAP(24) = 'R8AP  '
-        CALL GetDesc(1,OLAP(24), DESCRIP(24))
+        OLAP(6) = 'R8AP  '
+        CALL GetDesc(1,OLAP(6), DESCRIP(6))
 
+!       Emergence date
 !       08/28/2009 CHP added EDAT, EDAP 
-        CALL READA_Dates(X(25), YRSIM, IEMRG)  
+        CALL READA_Dates(X(1), YRSIM, IEMRG)  
         IF (IEMRG .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DEMRG = TIMDIF(YRPLT,IEMRG)   !dap
         ELSE
           DEMRG  = -99
         ENDIF
-        OLAP(25) = 'EDAP  '
-        CALL GetDesc(1,OLAP(25), DESCRIP(25))
+        OLAP(1) = 'EDAP  '
+        CALL GetDesc(1,OLAP(1), DESCRIP(1))
 
         DNR1 = TIMDIF(YRPLT,YRNR1)
         IF (DNR1 .LE. 0) THEN
@@ -455,46 +456,45 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
 !     Store Simulated and Measured data for this season.
-      WRITE(Simulated(1),' (I8)') DNR1;  WRITE(Measured(1),'(I8)') DFLR
-      WRITE(Simulated(2),' (I8)') DNR3;  WRITE(Measured(2),'(I8)') DFPD
-      WRITE(Simulated(3),' (I8)') DNR5;  WRITE(Measured(3),'(I8)') DFSD
-      WRITE(Simulated(4),' (I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT
-      WRITE(Simulated(5),' (I8)') NINT(SDWT*10);  
-                                         WRITE(Measured(5),'(A8)') X(5)
-      WRITE(Simulated(6),' (I8)') NINT(PODWT*10); 
-                                         WRITE(Measured(6),'(A8)') X(6)
-      WRITE(Simulated(7),' (I8)') NINT(SEEDNO);   
+      WRITE(Simulated(1),' (I8)') DNR0;  WRITE(Measured(1),'(I8)') DEMRG
+      WRITE(Simulated(2),' (I8)') DNR1;  WRITE(Measured(2),'(I8)') DFLR
+      WRITE(Simulated(3),' (I8)') DNR3;  WRITE(Measured(3),'(I8)') DFPD
+      WRITE(Simulated(4),' (I8)') DNR5;  WRITE(Measured(4),'(I8)') DFSD
+      WRITE(Simulated(5),' (I8)') DNR7;  WRITE(Measured(5),'(I8)') DMAT
+      WRITE(Simulated(6),' (I8)') DNR8;  WRITE(Measured(6),'(I8)') DHRV
+      WRITE(Simulated(7),' (I8)') NINT(SDWT*10);  
                                          WRITE(Measured(7),'(A8)') X(7)
-      WRITE(Simulated(8),'(F8.4)')PSDWT; WRITE(Measured(8),'(A8)') X(8)
-      WRITE(Simulated(9),'(F8.2)')PSPP;  WRITE(Measured(9),'(A8)') X(9)
+      WRITE(Simulated(8),' (I8)') NINT(PODWT*10); 
+                                         WRITE(Measured(8),'(A8)') X(8)
+      WRITE(Simulated(9), '(I8)') NINT(CANWAA*10);
+                                         WRITE(Measured(9),'(A8)') X(9)
       WRITE(Simulated(10),'(I8)') NINT(TOPWT*10); 
                                          WRITE(Measured(10),'(A8)')X(10)
-!      WRITE(Simulated(11),'(I8)') NINT(STMWT*10); 
-!                                         WRITE(Measured(11),'(A8)')X(11)
+!     WRITE(Simulated(11),'(I8)') NINT(STMWT*10); 
+!                                        WRITE(Measured(11),'(A8)')X(11)
 ! KJB, LAH, CHP 12/16/2004  change BWAH to BWAM
       WRITE(Simulated(11),'(I8)') NINT(TOPWT-SDWT)*10; 
                                          WRITE(Measured(11),'(A8)')X(11)
-      WRITE(Simulated(12),'(F8.2)')LAIMX;WRITE(Measured(12),'(A8)')X(12)
-      WRITE(Simulated(13),'(F8.3)')HI;   WRITE(Measured(13),'(A8)')X(13)
-      WRITE(Simulated(14),'(F8.2)')THRES;WRITE(Measured(14),'(A8)')X(14)
-      WRITE(Simulated(15),'(I8)') NINT(WTNSD*10); 
-                                         WRITE(Measured(15),'(A8)')X(15)
-      WRITE(Simulated(16),'(I8)') NINT(WTNCAN*10);
-                                         WRITE(Measured(16),'(A8)')X(16)
-      WRITE(Simulated(17),'(I8)') NINT(WTNST*10); 
-                                         WRITE(Measured(17),'(A8)')X(17)
-      WRITE(Simulated(18),'(F8.2)')PCNSD;WRITE(Measured(18),'(A8)')X(18)
-      WRITE(Simulated(19),'(I8)') NINT(CANWAA*10);
-                                         WRITE(Measured(19),'(A8)')X(19)
+      WRITE(Simulated(12),'(I8)') NINT(SEEDNO);   
+                                         WRITE(Measured(12),'(A8)')X(12)
+      WRITE(Simulated(13),'(F8.4)')PSDWT;WRITE(Measured(13),'(A8)')X(13)
+      WRITE(Simulated(14),'(F8.2)')PSPP; WRITE(Measured(14),'(A8)')X(14)
+      WRITE(Simulated(15),'(F8.3)')HI;   WRITE(Measured(15),'(A8)')X(15)
+      WRITE(Simulated(16),'(F8.2)')THRES;WRITE(Measured(16),'(A8)')X(16)
+      WRITE(Simulated(17),'(F8.2)')LAIMX;WRITE(Measured(17),'(A8)')X(17)
+      WRITE(Simulated(18),'(F8.2)')VSTAGE
+                                         WRITE(Measured(18),'(A8)')X(18)
+      WRITE(Simulated(19),'(F8.2)')CANHT;WRITE(Measured(19),'(A8)')X(18)
       WRITE(Simulated(20),'(I8)') NINT(CANNAA*10);
                                          WRITE(Measured(20),'(A8)')X(20)
-      WRITE(Simulated(21),'(F8.2)')VSTAGE
+      WRITE(Simulated(21),'(I8)') NINT(WTNCAN*10);
                                          WRITE(Measured(21),'(A8)')X(21)
-      WRITE(Simulated(22),'(F8.2)')PCLSD;WRITE(Measured(22),'(A8)')X(22)
-      WRITE(Simulated(23),'(F8.2)')CANHT;WRITE(Measured(23),'(A8)')X(23)
-      WRITE(Simulated(24),'(I8)')  DNR8; WRITE(Measured(24),'(I8)')DHRV
-      WRITE(Simulated(25),'(I8)')  DNR0; WRITE(Measured(25),'(I8)')DEMRG
-     
+      WRITE(Simulated(22),'(I8)') NINT(WTNST*10); 
+                                         WRITE(Measured(22),'(A8)')X(22)
+      WRITE(Simulated(23),'(I8)') NINT(WTNSD*10); 
+                                         WRITE(Measured(23),'(A8)')X(23)
+      WRITE(Simulated(24),'(F8.2)')PCNSD;WRITE(Measured(24),'(A8)')X(24)
+      WRITE(Simulated(25),'(F8.2)')PCLSD;WRITE(Measured(25),'(A8)')X(25)
       ENDIF  
 
       IF (CONTROL % ERRCODE > 0) THEN

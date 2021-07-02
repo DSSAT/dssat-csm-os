@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.7; 09/18/2020
+! DSSAT v4.8; 05/28/2021
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -230,52 +230,40 @@ CH102    Ethylene [Growth Regulator]                                          IB
 *Crop and Weed Species
 @CDE     DESCRIPTION                                                          SO
 AL       Alfalfa                                                              IB
-AR       Aroid                                                                IB
 BA       Barley                                                               IB
 BM       Bermuda grass                                                        IB
 BH       Bahia grass                                                          IB
 BN       Dry bean                                                             IB
 BR       Brachiaria                                                           IB
 BS       Sugar beet                                                           IB
-BW       Broad leaf weeds                                                     IB
 CB       Cabbage                                                              IB
 CH       Chickpea                                                             IB
 CI       Chia                                                                 IB
-CT       Citrus                                                               IB
 CN       Canola                                                               IB
 CO       Cotton                                                               IB
 CP       Cowpea                                                               IB
 CS       Cassava                                                              IB
-CU       Cucumber                                                             IB
-CV       Clover                                                               IB
 FA       Fallow                                                               IB
 FB       Faba bean                                                            IB
 GB       Green bean                                                           IB
-GR       Grass vegetation                                                     IB
-GW       Grass weeds                                                          IB
 LT       Lentil                                                               IB
 ML       Pearl millet                                                         IB
 MZ       Maize                                                                IB
-NN       Banana                                                               IB
 NP       Napier grass                                                         IB
-OA       Oats                                                                 IB
 PE       Pea                                                                  IB
 PI       Pineapple                                                            IB
 PN       Peanut                                                               IB
 PO       Perennial peanut                                                     IB
 PP       Pigeon pea                                                           IB
-PR       Pepper                                                               IB
+PR       Bell pepper                                                          IB
 PT       Potato                                                               IB
 QU       Quinoa                                                               IB
-RG       Ryegrass                                                             IB
 RI       Rice                                                                 IB
-RP       Rhizoma peanut                                                       IB
 SB       Soybean                                                              IB
 SC       Sugarcane                                                            IB
 SF       Safflower                                                            IB
 SG       Grain sorghum                                                        IB
 SI       Switch grass                                                         IB
-SQ       Sequence                                                             IB
 SS       Sesame                                                               IB
 SU       Sunflower                                                            IB
 SW       Sweetcorn                                                            IB
@@ -284,8 +272,8 @@ TM       Tomato                                                               IB
 TN       Tanier                                                               IB
 TR       Taro                                                                 IB
 VB       Velvet bean                                                          IB
-VI       Vine                                                                 IB
 WH       Wheat                                                                IB
+SR       Strawberry
 
 *Disease and Pest Organisms
 @CDE     DESCRIPTION                                                          SO

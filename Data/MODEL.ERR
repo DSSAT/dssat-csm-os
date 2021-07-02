@@ -362,7 +362,7 @@ IPPLNT    2
 Error in planting inputs.  Check format.
 
 IPPLNT   10
-Error in planting date input.  Check format.
+Planting Date is Before Start of Simulation.  Please Fix Input File.
 
 IPPLNT   11
 Error in plant population input.  Check format.
@@ -453,6 +453,9 @@ Automatic planting date is defined prior to the start of simulation.
 
 IPSIM    10
 Automatic harvest date is defined prior to the start of simulation.
+
+IPSIM    11
+Harvest at maturity option not available for this crop.  Correct input file.
 
 SIMCTR    1
 Error in start simulation date input.  Check format.

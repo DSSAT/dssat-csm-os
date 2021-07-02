@@ -549,6 +549,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Adjust IPERC values if necessary.
+      IF (PUDDLED) NPERC = MIN0(NPERC,1)
       DO I = 1, NPERC
         IF (DS(NLAYR) .LE. 20.0 .AND. IPERC(I) .GT. 0.) THEN
           IPERC(I) = IPERC(I) * 20.
@@ -618,7 +619,8 @@ C-----------------------------------------------------------------------
 
         IF (FLOODWAT % FLOOD <= 0.0) THEN
           NDAYS_DRY = NDAYS_DRY + 1
-          IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
+!         IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
+          IF (NDAYS_DRY > 29 .AND. YRDOY > YRPLT) PUDDLED = .FALSE.
         ELSE
           NDAYS_DRY = 0
         ENDIF
@@ -733,8 +735,11 @@ C-----------------------------------------------------------------------
           DEPIR  = 0.0
       ELSE
 !       There is water available, check for demand
-        IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
-     &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
+!       2021-06-18 CHP change from after YRPLT to after YRSIM for auto-irrig
+!       IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
+!    &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
+        IF ((YRDOY .GE. YRSIM .AND. YRDOY .LE. MDATE ).OR. 
+     &      (YRDOY .GE. YRSIM .AND. MDATE .LE.  -99)) THEN
 
 
 !         Soil water irrigation
