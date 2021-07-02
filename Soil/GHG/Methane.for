@@ -19,8 +19,8 @@ C   drain      : percolation rate (mm/d)
 C Output:
 C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
 C=======================================================================
-      SUBROUTINE MethaneDynamics(CONTROL, SOILPROP,       !Input
-     &    FLOOD, SW, RLV, CSubstrate, DRAIN)              !Input
+      SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
+     &    FLOOD, SW, RLV, CSubstrate, DRAIN)                  !Input
 
       USE ModuleDefs
      	USE MethaneConstants
@@ -28,7 +28,7 @@ C=======================================================================
 	IMPLICIT NONE
       SAVE
 
-	INTEGER n1,NLAYR,i,j, DYNAMIC, DAS, LUN
+	INTEGER n1,NLAYR,i,j, DYNAMIC
 	REAL dlayr(NL),SW(NL),DLL(NL),RLV(NL),CSubstrate(NL),BD(NL),
      &     Buffer(NL,2),afp(NL)
 	REAL drain,flood,x,CO2_Cflux,CH4Emission,spd,buffconc,rCO2,
@@ -39,9 +39,9 @@ C=======================================================================
      &     CH4Diffusion,CH4Leaching,CH4Stored
 
       REAL TCO2, TCH4, FloodCH4
-      LOGICAL FEXIST
 
       TYPE (ControlType) CONTROL
+      TYPE (SwitchType) ISWITCH
       TYPE (SoilType) SOILPROP
 
       DYNAMIC = CONTROL % DYNAMIC
@@ -96,29 +96,13 @@ C-----------------------------------------------------------------------
 !    40   -99 0.280 0.397 0.412 0.200  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 !    50   -99 0.280 0.397 0.412 0.100  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 
-
-!     Initialize daily growth output file
-        CALL GETLUN('Methane.OUT',LUN)
-!       CLOSE (LUN)
-
-        INQUIRE (FILE = 'Methane.OUT', EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = LUN, FILE = 'Methane.OUT', STATUS = 'OLD',
-     &      POSITION = 'APPEND')
-        ELSE
-          OPEN (UNIT = LUN, FILE = 'Methane.OUT', STATUS = 'NEW')
-!         OPEN (UNIT = LUN, FILE = 'Methane.OUT')
-          WRITE(LUN,'("*Methane Daily output file")')
-        ENDIF
-
-        !Write headers
-        CALL HEADER(SEASINIT, LUN, CONTROL%RUN)
-
-      write(LUN,'(5a)') "   DAS",
-     &  "      Prod   Consump     Plant     Ebull    Diffus     Leach",
-     &  "     Storage Substrate   CH4prod   CH4cons  CH4emis",
-     &  " CH4plflux   CH4ebul   CH4diff  CH4leach  StorFlux", 
-     &  " itr           Diff"
+      CALL OpMethane(CONTROL, ISWITCH,  
+     &  ProductionFrac, ConsumptionFrac,
+     &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
+     &  meth%StorageFlux, TSubstrate,
+     &  CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
+     &  CH4Ebullition,CH4Diffusion,CH4Leaching,
+     &  iterations1,difference1)
 
 C***********************************************************************
 C***********************************************************************
@@ -257,29 +241,19 @@ c Calculate emissions from dissolved CH4 on draining
 	    CH4Stored =	CH4Stored - x
 	  endif
 
-
 !***********************************************************************
 !***********************************************************************
-!     OUTPUT
+!     OUTPUT or SEASEND
 !***********************************************************************
-      ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
+      ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------
-
-      write(LUN,'(i6,6f10.4,f12.3,f10.3,8f10.5,i4,f15.10)') CONTROL%DAS,
+      CALL OpMethane(CONTROL, ISWITCH,  
      &  ProductionFrac, ConsumptionFrac,
      &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
-     &  meth%StorageFlux*86400.*12.*10., TSubstrate*1.e6,
-     &    CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
-     &    CH4Ebullition,CH4Diffusion,CH4Leaching,
-     &    meth%StorageFlux*12.*10.,iterations1,difference1
-
-!***********************************************************************
-!***********************************************************************
-!     SEASEND - seasonal output and close files
-!***********************************************************************
-      ELSEIF (DYNAMIC .EQ. SEASEND) THEN
-C-----------------------------------------------------------------------
-      CLOSE (LUN)
+     &  meth%StorageFlux, TSubstrate,
+     &  CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
+     &  CH4Ebullition,CH4Diffusion,CH4Leaching,
+     &  iterations1,difference1)
 
 C***********************************************************************
 C***********************************************************************
@@ -291,3 +265,159 @@ C***********************************************************************
 	RETURN
 	END
 
+C=======================================================================
+C  OpMethane, Subroutine, C.H.Porter, P. Grace
+C  Generates daily output for methane emissions
+C-----------------------------------------------------------------------
+C  REVISION       HISTORY
+C  07/02/2021 CHP Written
+!=======================================================================
+
+      SUBROUTINE OpMethane(CONTROL, ISWITCH,  
+     &  ProductionFrac, ConsumptionFrac,
+     &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
+     &  StorageFlux, TSubstrate,
+     &  CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
+     &  CH4Ebullition,CH4Diffusion,CH4Leaching,
+     &  iterations1,difference1) 
+!-------------------------------------------------------------------
+      USE ModuleDefs
+      IMPLICIT NONE
+      SAVE
+!-----------------------------------------------------------------------
+
+      TYPE (ControlType) CONTROL
+      TYPE (SwitchType)  ISWITCH
+
+      CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
+      CHARACTER*50 FMT
+      INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, REPNO
+      INTEGER LUN, RUN, YEAR, YRDOY
+      LOGICAL FEXIST
+
+      REAL ProductionFrac, ConsumptionFrac,
+     &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
+     &  StorageFlux, TSubstrate,
+     &  CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
+     &  CH4Ebullition,CH4Diffusion,CH4Leaching,difference1
+      REAL StorFlux
+      INTEGER iterations1
+
+
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 2
+      CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
+
+!-----------------------------------------------------------------------
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+
+      IDETN  = ISWITCH % IDETN
+      ISWWAT = ISWITCH % ISWWAT
+      ISWNIT = ISWITCH % ISWNIT
+
+      IF (ISWWAT == 'N' .OR. ISWNIT == 'N') RETURN
+
+      DAS     = CONTROL % DAS
+      YRDOY   = CONTROL % YRDOY
+      CALL YR_DOY(YRDOY, YEAR, DOY) 
+
+!***********************************************************************
+!***********************************************************************
+!***********************************************************************
+!     Seasonal initialization - run once per season
+!***********************************************************************
+      IF (DYNAMIC .EQ. SEASINIT) THEN
+C-----------------------------------------------------------------------
+C     Variable heading for N2O.OUT
+C-----------------------------------------------------------------------
+      IF (IDETN .EQ. 'Y') THEN
+
+        FROP    = CONTROL % FROP
+        RNMODE  = CONTROL % RNMODE
+        REPNO   = CONTROL % REPNO
+        RUN     = CONTROL % RUN
+
+!       Initialize daily growth output file
+        CALL GETLUN('Methane.OUT',LUN)
+        INQUIRE (FILE = 'Methane.OUT', EXIST = FEXIST)
+        IF (FEXIST) THEN
+          OPEN (UNIT = LUN, FILE = 'Methane.OUT', STATUS = 'OLD',
+     &      POSITION = 'APPEND')
+        ELSE
+          OPEN (UNIT = LUN, FILE = 'Methane.OUT', STATUS = 'NEW',
+     &      IOSTAT = ERRNUM)
+          WRITE(LUN,'("*Methane Daily output file")')
+        ENDIF
+
+        IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
+          !For first run of a sequenced run, use replicate
+          ! number instead of run number in header.
+          IF (RNMODE .EQ. 'Q') THEN
+            CALL HEADER(SEASINIT, LUN, REPNO)
+          ELSE
+            CALL HEADER(SEASINIT, LUN, RUN)
+          ENDIF
+
+          write(LUN,'(5a)') 
+     & "@YEAR DOY   DAS",
+     &  "      Prod   Consump     Plant     Ebull    Diffus     Leach",
+     &  "     Storage Substrate   CH4prod   CH4cons  CH4emis",
+     &  " CH4plflux   CH4ebul   CH4diff  CH4leach  StorFlux", 
+     &  " itr           Diff"
+
+        ENDIF
+      ENDIF
+
+!***********************************************************************
+!***********************************************************************
+!     DAILY OUTPUT
+!***********************************************************************
+      ELSE IF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASINIT) THEN
+C-----------------------------------------------------------------------
+      IF (IDETN .EQ. 'Y') THEN
+
+!        IF (ABS(StorageFlux) .LT. 1.E-8) THEN
+!          StorFlux = 0.0
+!        ENDIF
+
+        write(LUN,100)
+     &    YEAR, DOY, DAS,
+     &    ProductionFrac, ConsumptionFrac,
+     &    PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
+     &    StorFlux*86400.*12.*10., TSubstrate*1.e6,
+     &    CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
+     &    CH4Ebullition,CH4Diffusion,CH4Leaching,
+     &    StorFlux*12.*10.,iterations1,difference1
+
+  100   FORMAT(1X,I4,1X,I3.3,I6,6f10.4,f12.3,f10.3,8f10.5,i4,f15.10)
+
+      ENDIF
+!***********************************************************************
+!***********************************************************************
+!     SEASEND
+!***********************************************************************
+      ELSE IF (DYNAMIC .EQ. SEASEND) THEN
+C-----------------------------------------------------------------------
+!      IF (INDEX('AD',IDETL) == 0) RETURN
+      !Close daily output files.
+      CLOSE (LUN)
+
+!     Store Summary.out labels and values in arrays to send to
+!     OPSUM routines for printing.  Integers are temporarily 
+!     saved as real numbers for placement in real array.
+      LABEL(1)  = 'MTHEC'; VALUE(1)  = CH4Emission  
+
+!     Send labels and values to OPSUM
+      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+
+!***********************************************************************
+!***********************************************************************
+!     END OF DYNAMIC IF CONSTRUCT
+!***********************************************************************
+      ENDIF
+!***********************************************************************
+      RETURN
+      END SUBROUTINE OpMethane
+C=======================================================================

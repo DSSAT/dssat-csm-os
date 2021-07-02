@@ -176,7 +176,7 @@ C=====================================================================
 
       FLOOD = FLOODWAT % FLOOD
 
-      CALL MethaneDynamics(CONTROL, SOILPROP,       !Input
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,    !Input
      &    FLOOD, SW, RLV, CSubstrate, DRAIN)              !Input
 
 !     Inorganic P
