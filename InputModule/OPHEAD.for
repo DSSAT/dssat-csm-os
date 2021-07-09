@@ -624,7 +624,7 @@ C=======================================================================
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('BH,BM,BR,CB,CN,CO,NP,PR,QU,SF,SU,TM',CROP)
+        ELSEIF (INDEX ('BH,BM,BR,CB,CI,CN,CO,NP,PR,QU,SF,SU,TM',CROP)
      &          .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
@@ -741,10 +741,10 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
 !     Cassava CIAT      
       CASE ('CSYCA')
           WRITE (HEADER(I),'(A,A)')
-     &     "  B01ND B12ND B23ND BR1FX BR2FX BR3FX BR4FX "
+     &     "  B01ND B12ND B23ND B34ND BR1FX BR2FX BR3FX BR4FX "
           I=I+1
-          WRITE (HEADER(I),'(3F6.0,4F6.2)') 
-     &     B01ND, B12ND, B23ND, BR1FX, BR2FX, BR3FX, BR4FX
+          WRITE (HEADER(I),'(4F6.0,4F6.2)') 
+     &     B01ND, B12ND, B23ND, B34ND, BR1FX, BR2FX, BR3FX, BR4FX
          I=I+1
          WRITE (HEADER(I),'(A,A)') 
      &     "  LAXS  SLAS",
@@ -779,6 +779,12 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
              WRITE (HEADER(I),915) P1,P2,P5,AX; I=I+1
              WRITE (HEADER(I),916) G2,G3,PHINT,LX; I=I+1
              
+!-----------------------------------------------------------------------
+!     CERES-Sugarbeet
+      CASE ('BSCER')
+            WRITE (HEADER(I),900) P1,P2,P5; I=I+1
+            WRITE (HEADER(I),901) G2,G3,PHINT; I=I+1
+
 !-----------------------------------------------------------------------
 !     Sorghum
       CASE ('SGCER')

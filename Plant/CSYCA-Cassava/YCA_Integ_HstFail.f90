@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_HstFail ( &   
-        BRSTAGE     , DOY         , STGYEARDOY  , SW          , YEAR        & 
+        BRSTAGE     , DOY         , STGYEARDOY  , SW          , YEAR        , LAI       & 
         )
         
         USE ModuleDefs
@@ -16,8 +16,8 @@
         
         IMPLICIT NONE
         
-        INTEGER DOY         , STGYEARDOY(0:19)            , YEAR 
-        REAL    BRSTAGE     , SW(NL)        
+        INTEGER DOY         , STGYEARDOY(0:19)            , YEAR  
+        REAL    BRSTAGE     , SW(NL)      , LAI  
         
     ! Harvesting conditions
         !IF (IHARI == 'A' .AND. CUMDU >= PSTART(MSTG)) THEN !LPM 04MAR15 MSTG TO PSX
@@ -38,12 +38,6 @@
             WRITE (Message(1),'(A40)') 'No germination within 30 days of sowing '
             CALL WARNING(1,'CSYCA',MESSAGE)
         ENDIF
-        IF (IHARI /= 'A'.AND.MDAT >= 0.AND.DAP-MDAP >= 300) THEN
-            CFLFAIL = 'Y'
-            WRITE (Message(1),'(A32)')'300 days after maturity         '
-            WRITE (Message(2),'(A21)')'Harvesting triggered.'
-            CALL WARNING(2,'CSYCA',MESSAGE)
-        ENDIF
         !IF (IHARI /= 'A'.AND.CUMDU >= PSTART(MSTG-1)) THEN !LPM 04MAR15 MSTG TO PSX
         !IF (IHARI /= 'A'.AND.CUMDU >= PSTART(PSX-1)) THEN !LPM 24APR2016 using DABR including water stress
         IF (IHARI /= 'A'.AND.DABR >= PSTART(PSX-1)) THEN
@@ -57,9 +51,7 @@
         ENDIF
         ! Determine if to harvest
         CFLHAR = 'N'
-        !LPM 12SEP2019 modified YEARDOY >= YEARDOYHARF instead of YEARDOYHARF ==YEARDOY
-        !to allow harvesting nad summary data for leap years
-        IF (IHARI == 'R'.AND.YEARDOY >= YEARDOYHARF.OR. IHARI == 'D'.AND.YEARDOYHARF == DAP .OR. IHARI == 'G'.AND. &
+        IF (IHARI == 'R'.AND.YEARDOY == YEARDOYHARF.OR. IHARI == 'D'.AND.YEARDOYHARF == DAP .OR. IHARI == 'G'.AND. &
             YEARDOYHARF <= BRSTAGE .OR. IHARI == 'A'.AND.YEARDOY >= YEARDOYHARF.OR. IHARI == 'M'.AND.DABR >=  &   
             PSTART(PSX)) THEN 
             !YEARDOYHARF <= BRSTAGE .OR. IHARI == 'A'.AND.YEARDOYHARF == YEARDOY .OR. IHARI == 'M'.AND.CUMDU >=  & !LPM 24APR2016 Using DABR instead of CUMDU
@@ -71,7 +63,7 @@
             !IF (CUMDU > PSTART(MSTG) .AND. CFLHARMSG  /=  'Y') THEN !LPM 04MAR15 MSTG TO PSX !LPM 24APR2016
             IF (DABR > PSTART(PSX) .AND. CFLHARMSG  /=  'Y') THEN
            
-                WRITE(Message(1),'(A54,I7)') 'Maturity reached but waiting for reported harvest on: ', YEARDOYHARF !LPM 04MAR15 Maybe this section it is not necessary for cassava
+                WRITE(Message(1),'(A68,I7)') 'Maximum branching level reached but waiting for reported harvest on: ', YEARDOYHARF !LPM 04MAR15 Maybe this section it is not necessary for cassava
                 CALL WARNING(1,'CSYCA',MESSAGE)
                 CFLHARMSG = 'Y'
             ENDIF
@@ -81,18 +73,22 @@
                     
             IF (CFLFAIL == 'Y' .AND. BRSTAGE <= PSX+2 .AND. BRSTAGE >= 0 ) THEN       
                 STGYEARDOY(PSX+2) = YEARDOY
-                TMAXPAV(PSX+2) = TMAXPAV(INT(BRSTAGE))
-                TMINPAV(PSX+2) = TMINPAV(INT(BRSTAGE))
-                SRADPAV(PSX+2) = SRADPAV(INT(BRSTAGE))
-                DAYLPAV(PSX+2) = DAYLPAV(INT(BRSTAGE))
-                RAINPAV(PSX+2) = RAINPAV(INT(BRSTAGE))
-                CO2PAV(PSX+2) = CO2PAV(INT(BRSTAGE))
-                NFPPAV(PSX+2) = NFPPAV(INT(BRSTAGE))
-                WFPPAV(PSX+2) = WFPPAV(INT(BRSTAGE))
-                WFGPAV(PSX+2) = WFGPAV(INT(BRSTAGE))
-                NFGPAV(PSX+2) = NFGPAV(INT(BRSTAGE))
+                TMAXPAV(PSX+2) = TMAXPAV(BRSTAGEINT)
+                TMINPAV(PSX+2) = TMINPAV(BRSTAGEINT)
+                SRADPAV(PSX+2) = SRADPAV(BRSTAGEINT)
+                DAYLPAV(PSX+2) = DAYLPAV(BRSTAGEINT)
+                RAINPAV(PSX+2) = RAINPAV(BRSTAGEINT)
+                CO2PAV(PSX+2) = CO2PAV(BRSTAGEINT)
+                NFPPAV(PSX+2) = NFPPAV(BRSTAGEINT)
+                WFPPAV(PSX+2) = WFPPAV(BRSTAGEINT)
+                WFGPAV(PSX+2) = WFGPAV(BRSTAGEINT)
+                NFGPAV(PSX+2) = NFGPAV(BRSTAGEINT)
             ENDIF
-            STGYEARDOY(PSX) = YEARDOY  ! Harvest
+            IF (CFLFAIL == 'Y') THEN
+                STGYEARDOY(PSX) = -99
+            ELSE
+                STGYEARDOY(PSX) = YEARDOY  ! Harvest
+            ENDIF
             STGYEARDOY(PSX+1) = YEARDOY  ! Crop End
             ! IF (HSTG > 0) THEN
             !    PSDAPFR(HSTG) = FLOAT(DAP)

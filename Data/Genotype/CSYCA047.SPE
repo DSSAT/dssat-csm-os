@@ -1,31 +1,18 @@
-$SPECIES:CSYCA047.20200730    Last edit: 2020-07-30 DA,LPM
+$SPECIES:CSYCA047.041621    Last edit: 04/16/2021 LPM
 
 
-! Coefficients differ from those used in the DSSAT V3.5 cassava model.
+! Coefficients differ from those used in the CROPSIM cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
-! embedded in the code of, the earlier model,and from the literature.
+!  of the CROPSIM model,and from the literature.
 ! They may change as experience is gained,and should not be taken as
-! 'fixed'. Some equivalences with the earlier model are:
-
-! RDGS  = RER/17.0*20.0
-! RLWR  = RLW/10000
-! SERX  = SER/17.0*20.0
-! PTFMN = 0.87 From root/shoot function in original model
-! PTFMX = 0.90 From root/shoot function in original model
-! (Root/shoot = 0.1+0.05*EXP(-0.0085*Lnum)
-! KCAN  = 0.27 From embeded parameter in original model
-! PHSV = PHSV = -0.35
-! PHTV = PHTV = 2.0    Changed to 5 to eliminate effect temporarily
+! 'fixed'. 
 
 ! Users should be extremely cautious in changing the stress response
-! thresholds (WFPU,LNCPU,etc). It is possible that there are differences
+! thresholds (WFGU,etc). It is possible that there are differences
 ! in these characteristics, but the extent of such differences is not
 ! well understood.
 
-! Users should also be aware that the algorithms using the following coefficients
-! are being worked upon, but have not yet been implemented in the model:
-! RATM,RCROP; LLOSA; SLATS,SLATR,SLAWR; RWUPM,WFS
-! Further,the coefficient SDSZ is a default that is used only if no planting-stick
+! The coefficient SDSZ is a default that is used only if no planting-stick
 ! size is entered in the experiment details file.
 
 *SPECIES:CSYCA047
@@ -45,8 +32,14 @@ $SPECIES:CSYCA047.20200730    Last edit: 2020-07-30 DA,LPM
     7      K B7DAT 7thBranch
     8      K B8DAT 8thBranch
     9      K B9DAT 9thBranch
-    9      K B9DAT 9thBranch
-   10      K B0DAT 10thBranch
+   10      K B10DT 10thBranch
+   11      K B11DT 11thBranch
+   12      K B12DT 12thBranch
+   13      K B13DT 13thBranch
+   14      K B14DT 14thBranch
+   15      K B15DT 15thBranch
+   16      K B16DT 16thBranch
+   17      K B17DT 17thBranch
 ! Phase durations
 @PEMRG  ! gr by cum. soil temperature                              
 !gCH2O/TT                                                              
@@ -56,22 +49,22 @@ $SPECIES:CSYCA047.20200730    Last edit: 2020-07-30 DA,LPM
 !  0-1     h  Code                                  
    1.0  15.5    LL 
 ! Roots
-@RLIG%  RLWR  RSEN RRESP RDGS   ! Lignin%,length/wt;sen,resp;dpth growth
-!    %  cm/g     %    fr cm/d                                        
-  10.0   1.0   1.0  0.15  2.6 
+@RLIG%  RSEN RRESP   ! Lignin%,sen,resp
+!    %     %    fr                                        
+  10.0   1.0  0.15 
 ! Leaves
-@LLIG% LPEAW ! Lignin%
-!    %  cm/g
-  10.0    45 
-@LLIFG LLIFS LLIFX  ! Growing,senescence durations;max.acceleration in shade 
-!   Tu    Tu    Tu
- 100.0  70.0 180.0
-@LLOSA LWLOS  ! Loss when accelerated,normal senescence   
-!   fr    fr
-   1.0  0.30  
+@LLIG% LPEAW ! Lignin%, petiole area/wt
+!    % cm2/g
+  16.8    45 
+@LLIFG LLIFS  ! Growing,senescence durations
+!   Tu    Tu
+ 100.0  70.0
+@LWLOS  ! Loss when normal senescence   
+!   fr
+  0.30  
 @SLATS SLATR   ! Specific leaf area temperature effect parameters
 !  oC     fr 
-  25.0 0.000   ! Set to zero so not working
+  30.0 0.022   
 @ TPAR TSRAD  ! Individual leaf transmission PAR, solar radiation  
 !   fr    fr
   0.07  0.25
@@ -81,24 +74,20 @@ $SPECIES:CSYCA047.20200730    Last edit: 2020-07-30 DA,LPM
 ! Shoots 
 @SGRO2  ! Relative size of 2nd shoot
 !   fr
-  1.00     
-! Reserves   
-@RS%O RSUSE  ! Standard concs (overall), fr utilizeable/day
-!   %    fr 
-  2.0   0.1 
+  0.75     
+
 ! Stems
-@SLIG%  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
-!    %  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
+@SLIG%  SESR ! Lignin%, elongation rate (shoot)
+!    %  cm/gCH2O 
   10.0   4.0
-! Seed
-@ SDSZ SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole seed)
+! Planting stick
+@ SDSZ SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole stake)
 ! g/cm     d     %
-   3.0    20    20
+   3.0    20  60.1
 ! Photosynthesis
-@ PHTV  PHSV  ! VPD sensitivity aspects
+@ PDTV  PDSV  ! VPD sensitivity aspects (daily effect)
 ! kPa fr/kPa
    0.8 -0.23
-!   0.8 -0.31
 @CO2RF  CO2F  ! CO2 response
 !  vpm     # 
      0  0.00
@@ -111,18 +100,22 @@ $SPECIES:CSYCA047.20200730    Last edit: 2020-07-30 DA,LPM
    880  1.38
    990  1.43
   9999  1.50
-CH2O distribution/mobilization
-@PTFA  ! Partition to tops (max,min,adjustment)
+!CH2O distribution/mobilization
+@PTFA  ! Partition to feeder roots
 !   fr
   0.10
-!  0.77  0.80  0.10 !LPM05SEP2015 Modified to define partitioning fraction for feeder roots
 ! Temperature responses
-@RRATE TRGEM TRDV1 TRLFG TRLFL TRPHS TRBRG  ! Germination/emergence,development,leaf growth,leaf life,phsis, branching
-!    #    oC    oC    oC    oC    oC    oC
-     0  13.0  13.0  13.0  13.0    10  17.0
-   1.0  30.0  30.0  24.0  30.0    25  22.0
-   1.0  35.0  35.0  24.0  30.0    40  25.0
-     0  42.5  42.5  24.0  30.0    50  42.5
+@RRATE TRGEM TRDV1 TRLFG TRLFL TRPHS TRBRG TRDMC  ! Germination/emergence,development,leaf growth,leaf life,phsis, branching, dry matter
+!    #    oC    oC    oC    oC    oC    oC    oC
+     0  13.0  13.0  13.0  13.0    10  17.0  18.0
+   1.0  30.0  30.0  24.0  30.0    25  22.0  26.0
+   1.0  35.0  35.0  24.0  30.0    40  25.0  26.0
+     0  42.5  42.5  24.0  30.0    50  42.5  26.0
+
+!Dry matter content(storage roots), increase temp, thermal age reduction, rate reduction by thermal age (1000 oCd)
+@ DMIC  DMAG  DMRD
+!    %   oCd     #
+   5.0  3000  1.35
 
 ! WATER loss,uptake,etc.
 ! Water uptake  
@@ -130,15 +123,12 @@ CH2O distribution/mobilization
 !   fr cm3/cm.d
   0.00  0.06 
 ! Water shortage effects
-! 1. Based on ratio of soil water content to field capacity 
-@ WFGU  WFGL  WFPU  WFPL  WFSU  WFEU  ! Growth,phs,senescence,evap
-!   fr    fr    fr    fr    fr    fr
-   1.0   0.0   0.5   0.0   0.6   1.5
-!   1.0   0.0   1.0   0.0   0.6   1.5 !LPM 25MAR2016 WFGU modified
-! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
+! Based on ratio of soil water content to field capacity 
+@ WFGU  WFGL  WFPU  WFPL  ! Growth,phs
+!   fr    fr    fr    fr
+  0.75   0.0   0.5   0.0
 @WFGEM WFRGU  ! Germination/emergence, root growth
 !   fr    fr
-!  0.25  0.25 !LPM 25MAR2016 WFGEM modified
   0.50  0.25
 
 ! NITROGEN uptake,distribution,etc.
@@ -146,26 +136,23 @@ CH2O distribution/mobilization
 @RTNO3 RTNH4 NH4MN NO3MN
 !   mg.cm.d     mg/Mg 
  0.006 0.006   0.5   0.5 
-! N demand 
-@NTUPF  ! Fraction of deficit that can be filled per day
-!   fr
-  0.10
+
 ! Nitrogen concentrations
-@ SDN% ! Seed
-!    %
-   1.9
+@ SDN% LN%SC ! Planting stick, N% fallen leaves
+!    %     %
+   1.9   1.6
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN  ! Standard,minima N% leaves,stems,roots
 !    %     %     %     %     %     %
-   4.5   2.4   3.5   1.7   1.0   1.0 
-   4.5   2.4   1.3   0.8   1.0   1.0 
+   5.1   4.5   3.5   1.7   1.0   1.0
+   4.1   3.3   1.4   0.8   1.0   1.0
 ! N distribution/mobilization
 @NLAB% ! Labile nitrogen
 !    %
     20
 ! N shortage effects (Fraction of span from lowest to upper N concentration)
-@ NFPU  NFPL  NFGU  NFGL  NFSU ! Photosynthesis,growth,senescence
-!   fr    fr    fr    fr    fr
-  0.90  0.10  1.00  0.00  0.40
+@ NFPU  NFPL  NFGU  NFGL ! Photosynthesis,growth
+!   fr    fr    fr    fr
+  0.90  0.10  1.00  0.00
 ! N limits for leaf growth (Fraction of upper N concentration)
 @ NLLG
 !   fr
@@ -175,97 +162,75 @@ CH2O distribution/mobilization
 !  ppm 
     30 
 
-! Photosynthesis (Alternative function)
-@PARFC CO2CC CO2EX  ! CO2 response function parameters 
-  2.05    80 0.005
-
-! Evapotranspiration (Resistances only used for comparison)
-@ RATM RCROP  ! Atmospheric,canopy resistances 
-   300   150 
-
-! Water uptake  (RWULF only used in stand-alone Cropsim)
-@RWULF ! Length factor
-   0.5 
-
 ! COEFF   DEFINITION
 ! =====   ==========
-! CHT%    Canopy ht % for lf area distribution (%)
-! CLA%    Canopy leaf area % associated with height fraction (%)
-! CO2CC   CO2 compensation concentration (vpm)
-! CO2EX   Exponent for relationship between CO2 and photosynthesis (#)
 ! CO2F    CO2 factor,photosynthesis,relative (0-2)
 ! CO2RF   CO2 reference (vpm)
+! DMAG    Thermal age threshold for reduction of dry matter in young plants (oCd)
+! DMIC    Maximum increase in the dry matter content of storage roots due to low temperatures (%)
+! DMRD    Dry matter reduction rate for young plants by 1000 oCd (%/1000 oCd)
+! HPROD   Harvest product (SR=Storage root)
 ! LLIFG   Leaf growth (expansion) period (Thermal units)  
 ! LLIFS   Leaf senescence period (Thermal units)  
-! LLIFX   Leaf ageing acceleration (max) if deep shade (Thermal units)  
 ! LLIG%   Leaf lignin (%)
-! LLOSA   Leaf dry matter loss,accelerated senescence (fr)
 ! LN%MN   Leaf N concentration,minimum,early and late in life cycle (fr)
 ! LN%S    Leaf N concentration,standard,early and late in life cycle (fr)
+! LN%SC   Leaf N concentration,fallen leaves(fr)
 ! LPEAW   Leaf petiole area/weight (cm2/g)
+! LWLOS   Leaf dry matter loss,normal senescence (fr)
+! NCRG    N stress factor,root growth based on soil NO3 or NH4 concentration (ppm)
 ! NFGL    N stress factor,growth,lower (fr)
 ! NFGU    N stress factor,growth,upper (fr)
 ! NLLG    N limit,leaf growth (fr.max.N%)
 ! NFPL    N stress factor,photosynthesis,lower (fr)
 ! NFPU    N stress factor,photosynthesis,upper (fr)
-! NFSU    N stress factor,senescence,upper (fr)
 ! NH4MN   NH4 minimum concentration for uptake (mg/MG)
+! NLAB%   N labile fraction,standard (%)
 ! NO3MN   NO3 minimum concentration for uptake (mg/MG)
-! NTUPF   N top-up fraction (/d)
-! PARFC   Maximum photosynthesis relative to phs at 330 vpm CO2 (#)
 ! PARIX   PAR interception beyond which accelerated ageing (fr)
+! PDSV    Photosynthesis,sensitivity to VPD, daily effect (fr/kPa)
+! PDTV    Photosynthesis,threshold VPD for reduction in rate, daily effect (kPa)
 ! PEMRG   Rate of reserves use by unit of thermal time during emergence (gCH2O/TT)
-! PGERM   Germination phase duration (Hydrothermal units)
-! PHSV    Photosynthesis,sensitivity to VPD (fr/kPa)
-! PHTV    Photosynthesis,threshold VPD for reduction in rate (kPa)
 ! PPFPE   Photoperiod factor,pre emergence (#,0-1,0=No development)
 ! PPSEN   Photoperiod sensitivity (SL=Short day response linear,LQ= long day quadratic, LL=long day linear)
-! PPTHR   Photoperiod threshold (h below which no effect)
+! PPTHR   Photoperiod threshold (h above which no effect)
 ! PSABV   Principal stage abbreviation (text)
 ! PSNAME  Principal stage name (text)
 ! PSNO    Principal stage number (#)
 ! PSTYP   Principal stage type (code;K=key,S=standard)
 ! PTFA    Partition fraction to the feeder roots (fr)
-! RATM    Boundary layer,air,resistance (s/m)
-! RCROP   Stomatal resistance,crop basis (s/m)
-! RDGS    Root depth growth rate,standard (cm/standard day)
 ! RLIG%   Root lignin (%)
-! RLWR    Root length/weight ratio (m/(0.01g)
 ! RN%MN   Root N concentration,minimum (fr)
-! RN%S    Root N concentration,maximum,sstage (fr)
+! RN%S    Root N concentration,maximum,stage (fr)
 ! RRATE   Relative process rate (#)
 ! RRESP   Root respiration fraction (fr)
-! RS%O    Reserves concentration above which overflow to storage root (%)
-! RSEN%   Root senescence rate (%/standard day)
-! RSFRS   Fraction of stem assimilates left as reserves (fr)    
-! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
+! RSEN    Root senescence rate (%/standard day)
 ! RTNO3   NO3 uptake/root length  (mg N/cm.day)
 ! RTNH4   NH4 uptake/root length  (mg N/cm.day)
-! RWULF   Root length factor,water uptake (cm/cm3) 
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
 ! RWUPM   Root water upake,minimum pore size for maximum uptake (fr SAT-DUL)
-! SDDUR   Seed duration if used only for roots (Standard day)
-! SDN%    Seed N (%)
-! SDRS%   Seed reserves (C) as fraction of seed (#)
-! SDSZ    Seed size (g/seed)
+! SDDUR   Planting stick reserves duration (Standard day)
+! SDN%    Planting stick N concentration (%)
+! SDRS%   Planting stick reserves (C) (%)
+! SDSZ    Planting stick size (g/cm)
 ! SESR    Shoot elongation rate (cm2/gCH2O) 
 ! SGRO2   Size of 2nd shoot relative to 1st (fr)
 ! SLATR   Specific leaf area,temperature response (fr change per oC)
-! SLATS   Specific leaf area,temperature standard (C)
+! SLATS   Specific leaf area,temperature standard (oC)
 ! SLIG%   Stem lignin (%)
 ! SN%MN   Stem N concentration,minimum (fr)
 ! SN%S    Stem N concentration,maximum,stage (fr)
 ! TPAR    Transmission,photosynthetically active radiation (fr)
 ! TRDVx   Temperature response,development,phase x and on until next x entry
 ! TRBRG   Temperature response, branching (oC)
+! TRDMC   Temperature response, dry matter content (oC)
 ! TRGEM   Temperature response,germination (oC)
 ! TRLFG   Temperature response,leaf growth (oC)
+! TRLFL   Temperature response,leaf life (oC)
 ! TRPHS   Temperature response,photosynthesis (oC)
 ! TSRAD   Transmission,solar radiation (fr)
-! WFEU    Water factor,evapotranspiration,upper (fr)
 ! WFGEM   Water factor,germination and emergence (fr)
 ! WFGL    Water factor,growth,lower (fr)
 ! WFGU    Water factor,growth,upper (fr)
 ! WFPL    Water factor,photosynthesis,lower (fr)
 ! WFPU    Water factor,photosynthesis,upper (fr)
-! WFSU    Water factor,senescence,upper (fr)
