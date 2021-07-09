@@ -1236,14 +1236,14 @@ Contains
   length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,EWAD,CWAD,G#AD,GWGD,HIAD,T#AD,WSPD,WSGD,EWSD,NSTD,KSTD,LN%D,' &
   //'SH%D,SLAD,CHTD,CWID,RDPD,'&   
-  //'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
+  //'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C,DTTC,')+ Len(Trim(Adjustl(tmp)))
 
       Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,EWAD,CWAD,G#AD,GWGD,HIAD,T#AD,WSPD,WSGD,EWSD,NSTD,KSTD,LN%D,' &
   //'SH%D,SLAD,CHTD,CWID,RDPD,'&   
-  //'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C,DTTD,' // Trim(Adjustl(tmp)) 
+  //'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C,DTTC,' // Trim(Adjustl(tmp)) 
         
       fn = 'plantgro.csv'
       Call GETLUN (fn,nf)

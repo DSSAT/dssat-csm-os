@@ -590,7 +590,7 @@ Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    SEEDNO, SDSIZE, HI, cTILNO, SWF_AV,            &
    TUR_AV, SAT_AV, NST_AV, KST_AV, PCNL, SHELPC,   &
    SLA, CANHT, CANWH, cRTDEP, RLV,                &
-   CUMSENSURF, CUMSENSOIL, DTT,                    &
+   CUMSENSURF, CUMSENSOIL, DTTC,                    &
    Csvline, pCsvline, lngth)
 
 !  Input vars
@@ -600,13 +600,13 @@ Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !        INTEGER,Intent(in)      :: ON      ! Option number (sequence runs)  #
 !        INTEGER,Intent(in)      :: CN      ! Crop component (multicrop)     #
    Real,Intent(IN) :: VSTAGE, XLAI, cWTLF, cSTMWT, cSDWT, cRTWT, cPANWT, cTOPWT  
-   Integer,Intent(IN) :: RSTAGE                            
+   Integer,Intent(IN) :: RSTAGE, DTTC                            
    Real,Intent(IN) :: SEEDNO, SDSIZE, HI, cTILNO, SWF_AV, TUR_AV, SAT_AV, NST_AV     
    Real,Intent(IN) :: KST_AV, PCNL, SHELPC
    Real,Intent(IN) :: SLA, CANHT, CANWH, cRTDEP 
 !  Integer,Intent(IN) :: N_LYR
    Real, Dimension(5),Intent(IN) :: RLV 
-   Real :: CUMSENSURF,  CUMSENSOIL, DTT
+   Real :: CUMSENSURF,  CUMSENSOIL
      
 !  Recalculated vars
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1, cPANWT1
@@ -652,7 +652,7 @@ Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
       cSEEDNO1, SDSIZE, HI, cTILNO1, SWF_AV,          &
       TUR_AV, SAT_AV, NST_AV, KST_AV, PCNL, SHELPC,   &
       SLA, CANHT, CANWH, cRTDEP, RLV,                 &
-      cCUMSENSURF1, cCUMSENSOIL1, DTT
+      cCUMSENSURF1, cCUMSENSOIL1, DTTC
 
    Write(fmt,'(I2)') 5 - 1   
    fmt = '('//trim(adjustl(fmt))//'(g0,","),g0)'
