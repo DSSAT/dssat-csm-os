@@ -362,10 +362,10 @@ C-----------------------------------------------------------------------
 
           write(LUN,'(5a)') 
      & "@YEAR DOY   DAS",
-     &  "      Prod   Consump     Plant     Ebull    Diffus     Leach",
-     &  "     Storage Substrate   CH4prod   CH4cons  CH4emis",
-     &  " CH4plflux   CH4ebul   CH4diff  CH4leach  StorFlux", 
-     &  " itr           Diff"
+     &  "    CH4PRF    CHPCOF    CH4PLF    CH4EBF    CH4DIF    CH4LCF",
+     &  "      CH4SFL    CH4SUB    CH4PRD    CH4COD    CH4EMD",
+     &  "    CH4PLD    CH4EBD    CH4DID    CH4LCD    CH4SFD", 
+     &  " CH4ITR          CH4DI"
 
         ENDIF
       ENDIF
@@ -391,7 +391,7 @@ C-----------------------------------------------------------------------
      &    CH4Ebullition,CH4Diffusion,CH4Leaching,
      &    StorFlux*12.*10.,iterations1,difference1
 
-  100   FORMAT(1X,I4,1X,I3.3,I6,6f10.4,f12.3,f10.3,8f10.5,i4,f15.10)
+  100   FORMAT(1X,I4,1X,I3.3,I6,6f10.4,f12.3,f10.3,8f10.5,i7,f15.10)
 
       ENDIF
 !***********************************************************************
