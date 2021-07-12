@@ -106,24 +106,44 @@ This folder contains model-specific data for genotypes pest, standard model data
 
 ## Configuring the build ##
 
-It is usually preferred that you do an out-of-source build.  To do this, create a `build/` directory at the top level of your project and build there.  
+### Toolchain ###
 
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ make
-    
+Both cmake and a fortran compiler are needed for the build.  We provide
+a [nix-shell](https://nixos.org/nixos/nix-pills/developing-with-nix-shell.html)
+environment with these.
+
+```
+$ nix-shell
+```
+
+### Build steps ###
+
+It is usually preferred that you do an out-of-source build.  To do this, create
+a `build/` directory at the top level of your project and build there.  
+
+```
+$ mkdir build
+$ cd build
+$ cmake ..
+```
+
 When you do this, temporary CMake files will not be created in your `src/` directory.  
 
-As written, this template will allow you to specify one of three different sets of compiler flags.  The default is RELEASE.  You can change this using to TESTING or DEBUG using
+As written, this template will allow you to specify one of three different sets
+of compiler flags.  The default is RELEASE.  You can change this using to
+TESTING or DEBUG using
 
-    $ cmake .. -DCMAKE_BUILD_TYPE=DEBUG
-    
+```
+$ cmake .. -DCMAKE_BUILD_TYPE=DEBUG
+```
 or
 
-    $ cmake .. -DCMAKE_BUILD_TYPE=TESTING
+```
+$ cmake .. -DCMAKE_BUILD_TYPE=TESTING
+```
 
-You can provide all kind of information CMake. Some examples can be find at [[CMake Command-Line Options](https://cmake.org/cmake/help/cmake-2.4.html)].
+You can provide all kind of information CMake. Some examples can be find at
+[[CMake Command-Line Options](https://cmake.org/cmake/help/cmake-2.4.html)].
 
 One usable examples could be:
 
