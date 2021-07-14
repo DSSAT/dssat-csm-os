@@ -28,7 +28,7 @@
     real function canopyWeight()
         implicit none
         
-        canopyWeight = woodyWeight()+LFWT
+        canopyWeight = woodyWeight()+(LFWT*(1.0-LPEFR))
     end function canopyWeight
     
     ! real value of the total weight of the plant: leaves, stem, crown, reserves and root storage organ
