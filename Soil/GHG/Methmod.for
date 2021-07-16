@@ -19,7 +19,7 @@ c   L       : leaching rate m3 m-3 s-1
 c
 c Following are (4) arrays for each substance:
 c   alpha   : solubility constant (aqueous/gaseous)	(mol/m3 aq : mol/m3 g)
-c   solub   : solubility at 25�C (mol m-3)  
+c   solub   : solubility at 25°C (mol m-3)  
 c   rate    : reaction rate mol m-2 s-1
 c
 c Following are (4,4) arrays for interactions between each substance:
@@ -46,7 +46,7 @@ C ***********************************************************************
 	  DATA steps,niterations/51,100/
 !       ebullition coefficient (1/d)
 	  DATA ebullk/86400./
-!       solubility of substances in water (mol/m3 at 25�C)
+!       solubility of substances in water (mol/m3 at 25°C)
         DATA solub/0.0,1.23,0.0,1.31/
 !       solubility constants (aqueous / gaseous)
 	  DATA alpha/0., 0.03, 1.e9, 0.03/ 
@@ -275,7 +275,7 @@ C ***********************************************************************
 	s = sub%ID
 	sub%Leaching = L(steps)	* ys(ch4,steps,yy)
 	sub%RootFluxIn = 0.0
-      sub%Production = 0.0
+        sub%Production = 0.0
 	sub%Consumption = 0.0
 	sub%RootFluxOut = 0.0
 	sub%Ebullition = 0.0

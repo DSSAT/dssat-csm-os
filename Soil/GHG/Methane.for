@@ -111,120 +111,121 @@ C***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 C-----------------------------------------------------------------------
 ! Arah model parameters for flood-water layer
-	n1 = 2
-	z(1) = (RefHeight - flood)/1000. ! mm-->m
-	z(n1) = RefHeight/1000.	   
+      n1 = 2
+      z(1) = (RefHeight - flood)/1000. ! mm-->m
+      z(n1) = RefHeight/1000.	   
       DO i =1,n1
-        theta(i) = 1.0		   ! water content 
-        epsilon(i) = 0.0         ! air-filled porosity
-	  lamda(i) = 0.0		   ! root transmissivity
-	  VV(om,i) = 0.0		   ! maximum methanogenesis rate
-	  VV(o2,i) = 0.0		   ! maximum aerobic respiration rate
-	  VV(ch4,i) = 1.5e-5	   ! maximum CH4 oxidation rate
-	ENDDO
+        theta(i) = 1.0            ! water content 
+        epsilon(i) = 0.0          ! air-filled porosity
+        lamda(i) = 0.0            ! root transmissivity
+        VV(om,i) = 0.0            ! maximum methanogenesis rate
+        VV(o2,i) = 0.0            ! maximum aerobic respiration rate
+        VV(ch4,i) = 1.5e-5        ! maximum CH4 oxidation rate
+      ENDDO
 
 ! Parameters for soil layers
-        CO2_Cflux = 0.0
-	  TCH4Substrate = 0.0
+      CO2_Cflux = 0.0
+      TCH4Substrate = 0.0
 
-	  DO i=1,NLAYR
+      DO i=1,NLAYR
 
-	    ! calculate air-filled porosity (v/v)
-	    IF (FLOOD.GT.0.0) THEN			 
-	      afp(i) = 0.0
-		ELSE 				 
-	      afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))
-	    ENDIF
-	    afpmax = 1.0 - BD(i)/2.65 - DLL(i)
+        ! calculate air-filled porosity (v/v)
+        IF (FLOOD.GT.0.0) THEN			 
+          afp(i) = 0.0
+        ELSE 				 
+          afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))
+        ENDIF
+        afpmax = 1.0 - BD(i)/2.65 - DLL(i)
 
-	    ! calculate buffer concentration (molCeq/m3)
-	    buffconc = Buffer(i,1)/10./12./(dlayr(i)/100.)  
+        ! calculate buffer concentration (molCeq/m3)
+        buffconc = Buffer(i,1)/10./12./(dlayr(i)/100.)  
 
 c	if(i.eq.1) write(29,'(i6,3f10.6)') dap,flood,afp(1),buffconc
 
-		! calculate reoxidisation of buffer if soil is aerated
-		IF (afp(i).GT.0.0) THEN
-	      rCH4 = 0.0		      ! no CH4 production
-	      rCO2 = CSubstrate(i)	  ! aerobic respiration
-	      rbuff = -MIN(BufferRegenRate*afp(i)/afpmax*Buffer(i,2),
-     &                     Buffer(i,2))	 
-	    ELSE
-	    ! calculate methane production
-            if (buffconc.gt.0.0) then
-	        rCH4 = 0.2 * (1.0 - buffconc/24.0)   ! mol C m3/d	 was 0.2
-		    rCH4 = rCH4 * dlayr(i)/100.*12.*10.	 ! kgC/ha/d
-		  else  
-		    rCH4 = CSubstrate(i) / 2.0		 ! kgC/ha/d
-	      endif								 
-	      rCH4 = max(0.0,min(rCH4,CSubstrate(i)/2.0))
-	      rCO2 = CSubstrate(i) - (2.0 * rCH4)
-	      if (rCO2.gt.Buffer(i,1)) then
-	        rCO2 = Buffer(i,1)
-	        rCH4 = (CSubstrate(i) - rCO2)/2.0
-	      endif
-	      rbuff	= rCO2  
-	    ENDIF
-	    Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidised buffer pool
-	    Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool
-	    CO2_Cflux = CO2_Cflux + (rCO2 + rCH4)	! total CO2-C flux
+        ! calculate reoxidisation of buffer if soil is aerated
+        IF (afp(i).GT.0.0) THEN
+          rCH4 = 0.0              ! no CH4 production
+          rCO2 = CSubstrate(i)    ! aerobic respiration
+          rbuff = -MIN(BufferRegenRate*afp(i)/afpmax*Buffer(i,2),
+     &                     Buffer(i,2))
+        ELSE
+!         calculate methane production
+          if (buffconc.gt.0.0) then
+            rCH4 = 0.2 * (1.0 - buffconc/24.0)    ! mol C m3/d	 was 0.2
+            rCH4 = rCH4 * dlayr(i)/100.*12.*10.   ! kgC/ha/d
+          else  
+            rCH4 = CSubstrate(i) / 2.0            ! kgC/ha/d
+          endif
+          rCH4 = max(0.0,min(rCH4,CSubstrate(i)/2.0))
+          rCO2 = CSubstrate(i) - (2.0 * rCH4)
+          if (rCO2.gt.Buffer(i,1)) then
+            rCO2 = Buffer(i,1)
+            rCH4 = (CSubstrate(i) - rCO2)/2.0
+          endif
+          rbuff = rCO2  
+        ENDIF
+        Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidised buffer pool
+        Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool
+
+        CO2_Cflux = CO2_Cflux + (rCO2 + rCH4)	! total CO2-C flux
 ! should this subtract rCH4?	    CO2_Cflux = CO2_Cflux + (rCO2 + rCH4)	! total CO2-C flux
-	    TCH4Substrate = TCH4Substrate + rCH4	! total CH4 substrate (kgC/ha)
 
-          ! Calculate soil profile parameters for Arah model
-!!! n needs a value - takes N=1 value from ModuleDefs. Change name of variable .!!!
-!chp 7/11/2017
-	    j = i + n
-	    z(j) = z(j-1) + dlayr(i)/100.	 ! depth of each layer
-	    theta(j) = SW(i)	             ! soil water content (v/v)
-	    epsilon(j) = afp(i)				 ! air-filled porosity (v/v)
-	    lamda(j) = RLV(i) * lamda_rho	 ! root transmissivity
-	    ! maximum rate of methanogenesis (Vm, mol CH4/m3/s)
-	    ! (assume all is consumed in a day)
-	    ! (i.e. convert kgC/ha/d -->moleCH2O/m3/s)
-	    VV(om,j) = rCH4/10./12./(dlayr(i)/100.)/spd
-		! maximum rate of aerobic respiration (Vr, mol CO2/m3/s)
-	    ! (convert kgC/ha/d -->moleCH2O/m3/s)
-		VV(o2,j) = rCH4/10./12./(dlayr(i)/100.)/spd 
-	    ! maximum rate of methane oxidation	(Vo, mol CH4/m3/s)
-	    VV(ch4,j) = 1.5e-5
-		
-	  ENDDO
+!       Total CH4 substrate (kgC/ha)
+        TCH4Substrate = TCH4Substrate + rCH4  
 
-	! Leaching rate
-	  Lz = drain * 1.e-3/spd    ! mm/d --> m3/m2/s
+!       Calculate soil profile parameters for Arah model
+        j = i + n1
+        z(j) = z(j-1) + dlayr(i)/100.     ! depth of each layer
+        theta(j) = SW(i)                  ! soil water content (v/v)
+        epsilon(j) = afp(i)               ! air-filled porosity (v/v)
+        lamda(j) = RLV(i) * lamda_rho     ! root transmissivity
+        ! maximum rate of methanogenesis (Vm, mol CH4/m3/s)
+        ! (assume all is consumed in a day)
+        ! (i.e. convert kgC/ha/d -->moleCH2O/m3/s)
+        VV(om,j) = rCH4/10./12./(dlayr(i)/100.)/spd
+        ! maximum rate of aerobic respiration (Vr, mol CO2/m3/s)
+        ! (convert kgC/ha/d -->moleCH2O/m3/s)
+        VV(o2,j) = rCH4/10./12./(dlayr(i)/100.)/spd 
+        ! maximum rate of methane oxidation   (Vo, mol CH4/m3/s)
+        VV(ch4,j) = 1.5e-5
+      ENDDO
+
+!     Leaching rate
+      Lz = drain * 1.e-3/spd    ! mm/d --> m3/m2/s
 
 C Call the steady-state routine of the Arah model
-	  CALL setup(NLAYR+n)
-	  CALL SteadyState
+      CALL setup(NLAYR+n1)
+      CALL SteadyState
 
-c	IF(DAP.eq.20) CALL Report(29)
+c     IF(DAP.eq.20) CALL Report(29)
 
 C Calculate fractions of C in each methane flux
-	  IF(TSubstrate.GT.0.0) THEN
-		ProductionFrac = meth%Production/TSubstrate
-		ConsumptionFrac = meth%Consumption/TSubstrate
-	    PlantFrac = meth%RootFluxOut/TSubstrate
-	    EbullitionFrac = meth%Ebullition/TSubstrate
-	    LeachingFrac = meth%Leaching/TSubstrate
-	  ELSE
-	    ProductionFrac = 0.0
-	    ConsumptionFrac = 0.0
-	    PlantFrac = 0.0
-	    EbullitionFrac = 0.0
-	    LeachingFrac = 0.0
-	  ENDIF
-	  EmissionFrac = ProductionFrac - ConsumptionFrac - LeachingFrac
-	  DiffusionFrac = EmissionFrac - (PlantFrac + EbullitionFrac)
+      IF(TSubstrate.GT.0.0) THEN
+        ProductionFrac  = meth%Production /TSubstrate
+        ConsumptionFrac = meth%Consumption/TSubstrate
+        PlantFrac       = meth%RootFluxOut/TSubstrate
+        EbullitionFrac  = meth%Ebullition /TSubstrate
+        LeachingFrac    = meth%Leaching   /TSubstrate
+      ELSE
+        ProductionFrac = 0.0
+        ConsumptionFrac = 0.0
+        PlantFrac = 0.0
+        EbullitionFrac = 0.0
+        LeachingFrac = 0.0
+      ENDIF
+      EmissionFrac = ProductionFrac - ConsumptionFrac - LeachingFrac
+      DiffusionFrac = EmissionFrac - (PlantFrac + EbullitionFrac)
 
 c Calculate actual flux rates (kgC/ha/d) based on CERES-Rice substrate calculations
-	  CH4Production = TCH4Substrate * ProductionFrac
-	  CH4Consumption = TCH4Substrate * ConsumptionFrac
-	  CH4PlantFlux = TCH4Substrate * PlantFrac
-	  CH4Ebullition = TCH4Substrate * EbullitionFrac
-	  CH4Diffusion = TCH4Substrate * DiffusionFrac
-	  CH4Leaching = TCH4Substrate * LeachingFrac
-	  CH4Emission = TCH4Substrate * EmissionFrac		
-        CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - EmissionFrac))
+      CH4Production  = TCH4Substrate * ProductionFrac
+      CH4Consumption = TCH4Substrate * ConsumptionFrac
+      CH4PlantFlux   = TCH4Substrate * PlantFrac
+      CH4Ebullition  = TCH4Substrate * EbullitionFrac
+      CH4Diffusion   = TCH4Substrate * DiffusionFrac
+      CH4Leaching    = TCH4Substrate * LeachingFrac
+      CH4Emission    = TCH4Substrate * EmissionFrac		
+
+      CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - EmissionFrac))
 
 C***********************************************************************
 C***********************************************************************
@@ -233,13 +234,13 @@ C***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 C-----------------------------------------------------------------------
 c Calculate emissions from dissolved CH4 on draining
-        if (FLOOD.gt.0.0) then
-	    CH4Stored = meth%Storage * 12. * 10.	! kgC/ha
-	  else
-	    x = CH4Stored * 0.5
-	    CH4Emission = CH4Emission + x
-	    CH4Stored =	CH4Stored - x
-	  endif
+      if (FLOOD.gt.0.0) then
+        CH4Stored = meth%Storage * 12. * 10.	! kgC/ha
+      else
+        x = CH4Stored * 0.5
+        CH4Emission = CH4Emission + x
+        CH4Stored =	CH4Stored - x
+      endif
 
 !***********************************************************************
 !***********************************************************************
@@ -262,8 +263,8 @@ C***********************************************************************
       ENDIF
 C***********************************************************************
 
-	RETURN
-	END
+      RETURN
+      END
 
 C=======================================================================
 C  OpMethane, Subroutine, C.H.Porter, P. Grace
@@ -290,7 +291,6 @@ C  07/02/2021 CHP Written
       TYPE (SwitchType)  ISWITCH
 
       CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
-      CHARACTER*50 FMT
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, REPNO
       INTEGER LUN, RUN, YEAR, YRDOY
       LOGICAL FEXIST
@@ -378,9 +378,11 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
       IF (IDETN .EQ. 'Y') THEN
 
-!        IF (ABS(StorageFlux) .LT. 1.E-8) THEN
-!          StorFlux = 0.0
-!        ENDIF
+        IF (ABS(StorageFlux) .LT. 1.E-8) THEN
+          StorFlux = 0.0
+        ELSE
+          StorFlux = StorageFlux
+        ENDIF
 
         write(LUN,100)
      &    YEAR, DOY, DAS,
