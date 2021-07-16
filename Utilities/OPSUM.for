@@ -509,7 +509,8 @@ C  Simulation Summary File
 C
 C-------------------------------------------------------------------
       IF (INDEX('ADY',IDETS) .GT. 0) THEN
-        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+! TEMP CHP - always write out ascii version temporarily
+!        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN   ! VSH
         INQUIRE (FILE = OUTS, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN (UNIT = NOUTDS, FILE = OUTS, STATUS = 'OLD',
@@ -587,13 +588,14 @@ C-------------------------------------------------------------------
      &   '  NDCH TMAXA TMINA SRADA DAYLA   CO2A   PRCP   ETCP',
      &   '   ESCP   EPCP')
         ENDIF
-        END IF   ! VSH
+!temp chp        END IF   ! VSH
 
         IF (BWAH < -1) BWAH = -9.9
 
         MODEL = CONTROL % MODEL
 
-        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+! TEMP CHP - always write out ascii version temporarily
+!        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, 
      &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, WYEAR,
@@ -733,7 +735,7 @@ C-------------------------------------------------------------------
      &  I6,9A)
 
         CLOSE (NOUTDS)
-        END IF   ! VSH
+!temp chp        END IF   ! VSH
         
 !       VSH summary.csv header
         IF (FMOPT == 'C') THEN
