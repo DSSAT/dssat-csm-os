@@ -7791,7 +7791,7 @@ C-GH      IF (snow.GT.0) THEN
             IF (IDETO.NE.'N'.OR.IDETL.EQ.'A') THEN
             
               ! PLANT EVALUATION (MEASURED - SIMULATED COMPARISONS)
-C  FO - 07/09/2021 Added more characters for H#AMS because of GLUE error.
+C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE error.
               
               WRITE (fnumwrk,*) 'Writing EVALUATION'
               
@@ -7835,8 +7835,8 @@ C  FO - 07/09/2021 Added more characters for H#AMS because of GLUE error.
      x            ' MDAPS MDAPM',
      x            ' HWAMS HWAMM',
      x            ' HWUMS HWUMM',
-     x            '   H#AMS H#AMM',
-     x            ' H#GMS H#GMM',
+     x            '    H#AMS H#AMM',
+     x            '    H#GMS H#GMM',
      x            ' LAIXS LAIXM',
      x            ' L#SMS L#SMM',
      x            ' T#AMS T#AMM',
@@ -7900,8 +7900,8 @@ C  FO - 07/09/2021 Added more characters for H#AMS because of GLUE error.
      x        I6,I6,
      x        I6,I6,
      x        A6,A6,
-     x        1X,I7,I6,
-     x        F6.1,F6.1,
+     x        1X,I8,I6,
+     x        1X,F8.1,F6.1,
      x        F6.1,F6.1,
      x        F6.1,F6.1,
      x        I6,I6,
