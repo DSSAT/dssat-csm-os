@@ -569,7 +569,7 @@ C-------------------------------------------------------------------
   400     FORMAT ('@   RUNNO   TRNO R# O# P# CR MODEL... ',
      &   'EXNAME.. TNAM..................... ',
      &   'FNAM.... WSTA.... WYEAR SOIL_ID... ',
-     &   'LATI............ LONG........... ELEV.....  ',
+     &   'LAT............. LONG........... ELEV.....  ',
      &   '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT   HYEAR',
      &   '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
 !    &   '    HWUM  H#AM    H#UM  HIAM  LAIX',
