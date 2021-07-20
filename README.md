@@ -56,11 +56,11 @@ source code directory and the build directory.
     ├── build
     │   └── ...
     └── Data
-        ├── Documentation
-        ├── Cotton
-        ├── ... 
-        └── Wheat
-         
+        ├── Genotype
+        ├── Pest
+        └── StandardData 
+
+        
 ### CMakeLists.txt ###
 
 This file contains all the configuration needed to set up the project.  
@@ -102,7 +102,7 @@ This folder is created to organize all working files inside it, avoiding messing
 
 ### Data ###
 
-This folder contains data, documentation, DSSAT configuration files, and crop-specific experiment files.
+This folder contains model-specific data for genotypes pest, standard model data, code files, DSSATPRO files, etc.
 
 ## Configuring the build ##
 
