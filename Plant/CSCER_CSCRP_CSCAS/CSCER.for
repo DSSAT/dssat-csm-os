@@ -7806,14 +7806,14 @@ C-GH      IF (snow.GT.0) THEN
                EVHEADNM = 0
               ENDIF
               
-              IF (EVHEADNM.LT.7) THEN
+              IF (EVHEADNM.EQ.0) THEN
                 IF (EXCODE.NE.EXCODEP.AND.EVALOUT.GT.1 .OR.
      &              RUN.EQ.1.AND.RUNI.EQ.1) THEN
                  EVHEADNM = EVHEADNM + 1
                  OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,
      &            POSITION = 'APPEND')
                  WRITE (FNUMTMP,*) ' '
-                 IF (EVHEADNM.LT.7) THEN
+                 IF (EVHEADNM.EQ.1) THEN
                    WRITE (FNUMTMP,993) EVHEADER,EXCODE,
      &              ENAME(1:25),MODNAME
   993              FORMAT (A14,A10,'  ',A25,2X,A8,/)

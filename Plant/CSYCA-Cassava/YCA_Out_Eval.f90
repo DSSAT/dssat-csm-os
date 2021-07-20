@@ -565,12 +565,12 @@
                     IF (RUN == 1) THEN
                         EVALOUT = 0
                         EVHEADNM = 0
-                        EVHEADNMMAX = 7
+                        EVHEADNMMAX = 1
                     ENDIF
                     IF (EXCODE /= EXCODEPREV) THEN
                         EVHEADNM = EVHEADNM + 1
                         OPEN (UNIT=FNUMEVAL,FILE=FNAMEEVAL,POSITION='APPEND')
-                        IF (EVHEADNM < EVHEADNMMAX.AND.EVHEADNMMAX > 1) THEN
+                        IF (EVHEADNM <= EVHEADNMMAX.AND.EVHEADNMMAX >= 1) THEN
                             LENENAME = TVILENT(ENAME)
                             WRITE (FNUMEVAL,*) ' '
                             WRITE (FNUMEVAL, FMT993) EVHEADER,EXCODE,ENAME(1:25),MODNAME
