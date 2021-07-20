@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.7.5.42 chp 07/20/2021 Fix bug with incorporated OM
 !       4.7.5.41 chp 06/18/2021 Lat-long in Summary, wheat evaluate fix
 !       4.7.5.40 chp 06/08/2021 Freshweight headers in Summary.CSV
 !       4.7.5.39 chp 06/04/2021 SW init for static memory
