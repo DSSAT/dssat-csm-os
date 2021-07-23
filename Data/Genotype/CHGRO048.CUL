@@ -34,9 +34,15 @@
 !         (Threshing percentage).
 ! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
 ! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
+!             P/G/N:Phenology/Growth/Not used for calbration
 !
 @VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             N     N     P     P     P     P     N     G     G     N     P     G     N     N     N     N     N     N
+
+999991 MINIMA               . DFAULT 11.00 -.143  28.0   6.0  13.5 26.00 34.00 1.000  130.  10.0  0.96 0.150  22.0  1.00  18.0  82.0  .216  .048
+999992 MAXIMA               . DFAULT 11.00 -.143  42.0  11.0  15.5 40.00 44.00 1.700  180.  10.0  1.00 0.300  29.0  1.80  18.0  85.0  .216  .048
+
 ! NOTE from K. Boote.  Annigeri (IB001) and JG74 (IB004) are the only ones that are calibrated with confidence.
 ! Other cultivars are left there for contrast.  In fact, values for Kabuli and Desi type and the others may no longer be good.
 ! Notice especially that SDPM and WTPSD had to be increased for Annigeri and JG 74.  So values for other cultivars may not be trusted
