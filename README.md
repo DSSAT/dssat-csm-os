@@ -1,8 +1,8 @@
 # dssat-csm-os
-DSSAT Cropping System Model
+The SSAT Cropping System Model
 
 The Decision Support System for Agrotechnology Transfer (DSSAT) Version is a software 
-application program that comprises crop simulation models for over 42 crops (as of Version 4.7).
+application program that comprises crop simulation models for over 42 crops (as of Version 4.8).
 
 For DSSAT to be functional it is supported by data base management programs for soil, 
 weather, and crop management and experimental data, and by utilities and application 
@@ -11,13 +11,14 @@ function of the soil-plant-atmosphere dynamics.
 
 DSSAT and its crop simulation models have been used for many applications ranging from 
 on-farm and precision management to regional assessments of the impact of climate 
-variability and climate change. It has been in use for more than 20 years by researchers, 
+variability and climate change. It has been in use for more than 25 years by researchers, 
 educators, consultants, extension agents, growers, and policy and decision makers 
-in over 100 countries worldwide.
+in over 179 countries worldwide.
 
 Read more about DSSAT at http://dssat.net/about
 
-See also: [The DSSAT Crop Modeling Ecosystem](https://dssat.net/wp-content/uploads/2020/03/The-DSSAT-Crop-Modeling-Ecosystem.pdf)
+See also: [The DSSAT Crop Modeling Ecosystem](https://dssat.net/wp-content/uploads/2020/03/The-DSSAT-Crop-Modeling-Ecosystem.pdf) and
+[The DSSAT cropping system model](https://dssat.net/jones_2003_the_dssat_cropping_system_model).
 
 and: [Non-threatening best practice DSSAT Fortran coding guidelines](https://dssat.net/non-threatening-best-practice-dssat-fortran-coding-guidelines). 
 
@@ -28,12 +29,12 @@ DSSAT cropping system model (CSM) design is a modular structure in which compone
 separate along scientific discipline lines and are structured to allow easy replacement 
 or addition of modules. It has one Soil module, a Crop Template module which can simulate 
 different crops by defining species input files, an interface to add individual crop 
-models if they have the same design and interface, a Weather module, and a module for 
+models if they have the same design and interface, a weather module, and a module for 
 dealing with competition for light and water among the soil, plants, and atmosphere. 
 It is also designed for incorporation into various application packages, ranging from 
 those that help researchers adapt and test the CSM to those that operate the DSSAT /CSM 
 to simulate production over time and space for different purposes.
-[The DSSAT cropping system model](https://dssat.net/jones_2003_the_dssat_cropping_system_model).
+
 
 ## Compiling the code ##
 
