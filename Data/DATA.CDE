@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2021-04-23
+! DSSAT v4.8; 2021-07-16
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -65,6 +65,7 @@ E#AM   Number #/m2     Eye number at maturity (no/m2)                           
 E#UM   Number #/unit   Eye number at maturity (no/fruit)                        .
 EDAP   Emergence day   Emergence day (dap)                                      .
 EDAT   Emergence date  Emergence date (YrDoy)                                   .
+ELEV   Elevation  m    Elevation (m) 
 EPCM   EP total mm     Total season transpiration (mm)                          .
 EPCP   EP plant seas   Total transpiration, planting to harvest (mm)            .
 ESCM   ES total mm     Total season soil evaporation (mm)                       .
@@ -72,7 +73,7 @@ ESCP   ES plant seas   Total soil evaporation, planting to harvest (mm)         
 ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) .
 ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
-EWUM   Eye wt. (g)     Eye weight (g)                                           .
+EWUM   Eye wt. g       Eye weight (g)                                           .
 FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
 FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .
@@ -100,6 +101,7 @@ HWAHF  Fresh yield     Harvested yield (fresh weight) (kg/ha)                   
 HWAM   Mat Yield kg/ha Yield at harvest maturity (kg [dm]/ha)                   .
 HWUM   Weight g/unit   Unit wt at maturity (g [dm]/unit)                        .
 HYAH   Field wt Mg/ha  Field weight at harvest (Mg [fm]/ha)                     .
+HYEAR  Harvest year    Year at harvest                                          .  
 IDAP   Panicle in day  Panicle Initiation day (dap)                             .
 IDAT   Panicle in date Panicle Initiation date (YrDoy)                          .
 IR#M   Irrig apps #    Irrigation applications (no)                             .
@@ -111,7 +113,9 @@ L#SM   Leaf number #   Leaf number per stem at maturity                         
 L#SX   Leaf number #   Leaf number per stem, maximum                            .
 LAIH   LAI harvest     Leaf area index, at harvest                              .
 LAIX   LAI maximum     Leaf area index, maximum                                 .
+LATI   Latitude °      Latitude (degrees)                                       .
 LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      .
+LONG   Longitude °     Longitude (degrees)                                      .
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .

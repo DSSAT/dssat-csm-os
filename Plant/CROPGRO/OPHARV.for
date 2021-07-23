@@ -221,7 +221,7 @@ C-----------------------------------------------------------------------
       PlantStres % ACTIVE = .FALSE.
       PlantStres % StageName = '                       '
       SELECT CASE (CROP)
-      CASE ('BN','CH','CN','CO','CP','FB','GB','PE','LT',
+      CASE ('BG','BN','CH','CN','CO','CP','FB','GB','PE','LT',
      &      'PN','PP','PR','QU','SB','SF','SU','TM','VB')
         PlantStres % NSTAGES = 4
         PlantStres % StageName(1)  = 'Emergence -First Flower'
@@ -265,7 +265,7 @@ C-----------------------------------------------------------------------
 
 !     Set ACTIVE variable to indicate that current phase is active
       SELECT CASE (CROP)
-      CASE ('BN','CH','CN','CO','CP','FB','GB','LT',
+      CASE ('BG','BN','CH','CN','CO','CP','FB','GB','LT',
      &     'PE','PN','PP','PR','QU','SB','SF','SU','TM','VB')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(5)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
@@ -690,7 +690,7 @@ C-----------------------------------------------------------------------
         STNAME(16)= 'Harvest   '
         
 ! KJB
-      CASE ('PN')
+      CASE ('BG','PN')
         STNAME(1) = 'Emergence '
         STNAME(2) = 'Unifoliate'
         STNAME(3) = 'End Juven.'

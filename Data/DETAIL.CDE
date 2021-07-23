@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.8; 05/28/2021
+! DSSAT v4.8; 07/16/2021
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -231,7 +231,7 @@ CH102    Ethylene [Growth Regulator]                                          IB
 @CDE     DESCRIPTION                                                          SO
 AL       Alfalfa                                                              IB
 BA       Barley                                                               IB
-BM       Bermuda grass                                                        IB
+BM       Bermudagrass                                                         IB
 BH       Bahia grass                                                          IB
 BN       Dry bean                                                             IB
 BR       Brachiaria                                                           IB
@@ -262,18 +262,19 @@ RI       Rice                                                                 IB
 SB       Soybean                                                              IB
 SC       Sugarcane                                                            IB
 SF       Safflower                                                            IB
-SG       Grain sorghum                                                        IB
-SI       Switch grass                                                         IB
+SG       Sorghum                                                              IB
+SQ       Sequence                                                             IB
 SS       Sesame                                                               IB
 SU       Sunflower                                                            IB
-SW       Sweetcorn                                                            IB
+SW       Sweet corn                                                           IB
 TF       Teff                                                                 IB
 TM       Tomato                                                               IB
-TN       Tanier                                                               IB
+TN       Tannier                                                              IB
 TR       Taro                                                                 IB
 VB       Velvet bean                                                          IB
 WH       Wheat                                                                IB
 SR       Strawberry
+RY       Rye
 
 *Disease and Pest Organisms
 @CDE     DESCRIPTION                                                          SO
