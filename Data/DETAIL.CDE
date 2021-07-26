@@ -342,7 +342,6 @@ FE026    Calcium hydroxide (hydrated lime)                                    IB
 FE027    NPK - ammonium nitrate                                               IB
 FE028    NPK - urea                                                           IB
 FE029    NPK - ammonium nitrate urea                                          IB
-FE030    NPK - user blend                                                     IB
 FE036    32% UAN (35% urea + 45% A.N.)                                        IB
 FE037    30% UAN (33% urea + 42% A.N.)                                        IB
 FE038    28% UAN (30% urea + 40% A.N.)                                        IB
@@ -402,7 +401,7 @@ FE401    Potassium carbonate K2CO3 solid                                      IB
 FE402    Potassium carbonate K2CO3 liquid                                     IB
 FE403    Potassium magnesium sulfate**                                        IB
 FE404    Manure salts                                                         IB
-FE405    Kainite KMg(SO4)Cl·3H2O                                              IB
+FE405    Kainite KMg(SO4)ClÂ·3H2O                                              IB
 FE406    Carnallite (hydrated potassium magnesium chloride)                   IB
 FE407    Lime-potash mixtures                                                 IB
 FE408    Greensand                                                            IB
