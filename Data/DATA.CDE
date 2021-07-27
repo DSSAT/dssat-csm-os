@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2021-07-16
+! DSSAT v4.8; 2021-07-27
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -113,7 +113,6 @@ L#SM   Leaf number #   Leaf number per stem at maturity                         
 L#SX   Leaf number #   Leaf number per stem, maximum                            .
 LAIH   LAI harvest     Leaf area index, at harvest                              .
 LAIX   LAI maximum     Leaf area index, maximum                                 .
-LATI   Latitude °      Latitude (degrees)                                       .
 LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      .
 LONG   Longitude °     Longitude (degrees)                                      .
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
@@ -188,6 +187,7 @@ VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
 WYEAR  Weather year    Year for weather data (for forecast ensembles)           .
+XLAT   Latitude °      Latitude (degrees)                                       .
 YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
