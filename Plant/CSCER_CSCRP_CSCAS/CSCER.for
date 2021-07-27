@@ -7791,6 +7791,7 @@ C-GH      IF (snow.GT.0) THEN
             IF (IDETO.NE.'N'.OR.IDETL.EQ.'A') THEN
             
               ! PLANT EVALUATION (MEASURED - SIMULATED COMPARISONS)
+C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE error.
               
               WRITE (fnumwrk,*) 'Writing EVALUATION'
               
@@ -7806,14 +7807,14 @@ C-GH      IF (snow.GT.0) THEN
                EVHEADNM = 0
               ENDIF
               
-              IF (EVHEADNM.LT.7) THEN
+              IF (EVHEADNM.EQ.0) THEN
                 IF (EXCODE.NE.EXCODEP.AND.EVALOUT.GT.1 .OR.
      &              RUN.EQ.1.AND.RUNI.EQ.1) THEN
                  EVHEADNM = EVHEADNM + 1
                  OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,
      &            POSITION = 'APPEND')
                  WRITE (FNUMTMP,*) ' '
-                 IF (EVHEADNM.LT.7) THEN
+                 IF (EVHEADNM.EQ.1) THEN
                    WRITE (FNUMTMP,993) EVHEADER,EXCODE,
      &              ENAME(1:25),MODNAME
   993              FORMAT (A14,A10,'  ',A25,2X,A8,/)
@@ -7834,8 +7835,8 @@ C-GH      IF (snow.GT.0) THEN
      x            ' MDAPS MDAPM',
      x            ' HWAMS HWAMM',
      x            ' HWUMS HWUMM',
-     x            ' H#AMS H#AMM',
-     x            ' H#GMS H#GMM',
+     x            '    H#AMS H#AMM',
+     x            '    H#GMS H#GMM',
      x            ' LAIXS LAIXM',
      x            ' L#SMS L#SMM',
      x            ' T#AMS T#AMM',
@@ -7899,8 +7900,8 @@ C-GH      IF (snow.GT.0) THEN
      x        I6,I6,
      x        I6,I6,
      x        A6,A6,
-     x        I6,I6,
-     x        F6.1,F6.1,
+     x        1X,I8,I6,
+     x        1X,F8.1,F6.1,
      x        F6.1,F6.1,
      x        F6.1,F6.1,
      x        I6,I6,

@@ -559,18 +559,19 @@
                 CALL Csopline(laixmchar,AMAX1(-99.0,laixm))
                     
                 ! Evaluate
+                !LPM 21jul2021 Add more space to harvested weight
                 EVHEADER = ' '
                 EVHEADER(1:14) = '*EVALUATION : '
                 IF (RUN == 1.OR.(EXCODE /= EXCODEPREV.AND.EVALOUT > 1))THEN
                     IF (RUN == 1) THEN
                         EVALOUT = 0
                         EVHEADNM = 0
-                        EVHEADNMMAX = 7
+                        EVHEADNMMAX = 1
                     ENDIF
                     IF (EXCODE /= EXCODEPREV) THEN
                         EVHEADNM = EVHEADNM + 1
                         OPEN (UNIT=FNUMEVAL,FILE=FNAMEEVAL,POSITION='APPEND')
-                        IF (EVHEADNM < EVHEADNMMAX.AND.EVHEADNMMAX > 1) THEN
+                        IF (EVHEADNM <= EVHEADNMMAX.AND.EVHEADNMMAX >= 1) THEN
                             LENENAME = TVILENT(ENAME)
                             WRITE (FNUMEVAL,*) ' '
                             WRITE (FNUMEVAL, FMT993) EVHEADER,EXCODE,ENAME(1:25),MODNAME
@@ -596,7 +597,7 @@
                             ENDIF 
                         ENDDO
                         WRITE (FNUMEVAL,'(5A)') &
-                            ' HWAMS HWAMM FWAMS FWAMM',' LAIXS LAIXM L#SMS L#SMM BR#SS BR#SM', &
+                            '   HWAMS   HWAMM   FWAMS   FWAMM',' LAIXS LAIXM L#SMS L#SMM BR#SS BR#SM', &
                             ' CWAMS CWAMM VWAMS VWAMM',' HIAMS HIAMM HN%MS HN%MM VN%MS VN%MM', &
                             ' CNAMS CNAMM HNAMS HNAMM HINMS HINMM'
                         CLOSE(FNUMEVAL)
@@ -615,7 +616,7 @@
                         WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') PSDAPM(KEYPS(L))
                     ENDIF
                 ENDDO
-                WRITE (FNUMEVAL,'(4I6, 6F6.1, 4I6, 6A6, 4I6, 2A6)')NINT(hwam),NINT(hwamm),NINT(fhwam),NINT(fhwamm), &
+                WRITE (FNUMEVAL,'(4I8, 6F6.1, 4I6, 6A6, 4I6, 2A6)')NINT(hwam),NINT(hwamm),NINT(fhwam),NINT(fhwamm), &
                     laix,laixm,lnumsm,lnumsmm, brnam, brnumshmm,NINT(cwam),NINT(cwamm),NINT(vwam), &
                     NINT(vwamm),hiamchar,hiammchar,hnpcmchar,hnpcmmchar,vnpcmchar,vnpcmmchar,NINT(cnam),NINT(cnamm), &
                     NINT(hnam),NINT(hnamm),hinmchar,hinmmchar

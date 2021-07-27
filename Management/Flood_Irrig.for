@@ -24,6 +24,8 @@ C=======================================================================
       SAVE
 
       CHARACTER*1 IIRRI
+      CHARACTER*6, PARAMETER :: ERRKEY = "FIRRIG"
+      CHARACTER*78, DIMENSION(3) :: MSG
       INTEGER  DYNAMIC, J,K,L, YRDOY, YRPLT
       REAL     DEPIR,TDSW,RAIN
 
@@ -192,6 +194,15 @@ C-----------------------------------------------------------------------
 
 !     Every day check for permanent water level
       IF (PERMW. GT. 0.0) THEN
+        IF (.NOT. PUDDLED) THEN
+          MSG(1)=
+     &      "Must set puddling and bund height to maintain a " // 
+     &      "permanent flood pool."
+          MSG(2)="IROP 11 must also include IROP 9 & 10."
+          MSG(3)="Model will stop."
+          CALL WARNING(3, ERRKEY, MSG)
+          CALL ERROR(ERRKEY,1,"",0)
+        ENDIF
         CALL SW_DEF(DLAYR, NLAYR, SW, SAT, TDSW)
         DEPIR = PERMW + TDSW - FLOOD - RAIN
 

@@ -76,7 +76,7 @@
                             node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
                         ENDIF
                         !LPM 01FEB2021 adding restriction to avoid considering leaves that are almost falling
-                        IF (isLeafActive(node(BR,LF))) THEN
+                        IF (isLeafActive(node(BR,LF)) .AND. leafAreaLeftToSenesce(node(BR,LF)) > 0.0) THEN
                             node(BR,LF)%LANC = node(BR,LF)%LEAFNN / ((leafAreaLeftToSenesce(node(BR,LF))/LAWL(1)) / (1.0-LPEFR)) 
                             IF (node(BR,LF)%LANC < 0.0) THEN 
                                 WRITE(Message(1),'(A27,F4.1)') 'LANC below 0 with value of ',node(BR,LF)%LANC

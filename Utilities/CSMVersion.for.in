@@ -19,10 +19,14 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-release'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
-!       4.8.0.7  chp 2021-05-14 v4.8 (=v4.7.5.37)  May 2021 Release
+!       4.8.0.11 chp 2021-07-23 July 2021 Sprint version 
+!       4.8.0.10 chp 2021-06-25 FP protections, cassava minor, Mow file path 
+!       4.8.0.9  chp 2021-06-04 v4.8 (=v4.7.5.41) Summary: Lat-long, freshweight
+!       4.8.0.8  chp 2021-06-04 v4.8 (=v4.7.5.39) Bugfix SW_INIT, Allow TMAX = TMIN
+!       4.8.0.7  chp 2021-05-14 v4.8 (=v4.7.5.37) May 2021 Workshop
 !       4.8.0.6  chp 2021-05-04 v4.8 (=v4.7.5.36+) Pre-release test version
 !       4.8.0.5  chp 2021-04-23 v4.8 (=v4.7.5.36)
 !       4.8.0.4  chp 2021-04-04 v4.8 (=v4.7.5.33)

@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 0)
-SET(BUILD 7)
+SET(BUILD 11)
 
 # Get the current working branch
 execute_process(
@@ -100,8 +100,8 @@ ELSE()
     SET(DSSAT_INSTALL_DIR $CMAKE_INSTALL_PREFIX)
     SET(OSDefinitions "Utilities/OSDefsLINUX.for")
     configure_file(
-        "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47.in"
-		"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47"
+        "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L48.in"
+		"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L48"
     )
 	configure_file(
 		"${PROJECT_SOURCE_DIR}/Utilities/run_dssat.in"
