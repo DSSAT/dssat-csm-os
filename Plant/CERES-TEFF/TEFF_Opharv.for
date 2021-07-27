@@ -392,9 +392,9 @@ C-----------------------------------------------------------------------
       WRITE(Simulated(5),'(F8.4)')SKERWT; WRITE(Measured(5),'(A8)') X(5)
       WRITE(Simulated(6), '(I8)') NINT(GPSM)                            
                                           WRITE(Measured(6),'(A8)') X(6)
-      WRITE(Simulated(7),'(F8.2)') (TILNO+1.)*PLTPOP                    
+      WRITE(Simulated(7),'(F8.1)') (TILNO+1.)*PLTPOP                    
                                           WRITE(Measured(7),'(A8)') X(7)
-      WRITE(Simulated(8),'(F8.2)')MAXLAI; WRITE(Measured(8),'(A8)') X(8)
+      WRITE(Simulated(8),'(F8.1)')MAXLAI; WRITE(Measured(8),'(A8)') X(8)
       WRITE(Simulated(9),'(I8)') NINT(CANWAA*10)                        
                                           WRITE(Measured(9),'(A8)') X(9)
       WRITE(Simulated(10),'(I8)') NINT(CANNAA*10)                       
