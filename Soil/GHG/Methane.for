@@ -65,12 +65,12 @@ C***********************************************************************
 C-----------------------------------------------------------------------
 	TCO2 = 0.0
 	TCH4 = 0.0
-      CumProduction = 0.0
-      CumEmission   = 0.0
-      CumTCH4Sub    = 0.0
+      CumCH4Emission= 0.0
+      CumCH4Consumpt= 0.0
+      CumCH4Leaching= 0.0
+      CumCO2Emission= 0.0
+      CumNewCO2     = 0.0
       CH4Stored     = 0.0
-      CumConsumpt   = 0.0
-      CumLeaching   = 0.0
 
 	spd = 24.*3600.   ! seconds per day
 
@@ -109,14 +109,11 @@ C-----------------------------------------------------------------------
 !    50   -99 0.280 0.397 0.412 0.100  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 
       CALL OpMethane(CONTROL, ISWITCH,  
-     &  ProductionFrac, ConsumptionFrac,
-     &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
-     &  meth%StorageFlux, TSubstrate,
-     &  CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
-     &  CH4Ebullition,CH4Diffusion,CH4Leaching,
-     &  iterations1,difference1,
-     &  CumProduction, CumEmission, CH4Stored, StorageFrac,
-     &  TCH4Substrate, CH4Stored_ORIG)
+     &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
+     &  CH4Production, CH4Consumption, CH4Leaching, CH4Emission,
+     &  CH4PlantFlux, CH4Ebullition, CH4Diffusion, CH4_balance, 
+     &  CumNewCO2, CumCO2Emission, CumCH4Emission, CumCH4Consumpt, 
+     &  CumCH4Leaching, Cum_CH4_bal)
 
 C***********************************************************************
 C***********************************************************************
@@ -154,8 +151,9 @@ C-----------------------------------------------------------------------
       ENDDO
 
 ! Parameters for soil layers
-      CO2_Cflux = 0.0
+!     CO2_Cflux = 0.0
       TCH4Substrate = 0.0
+      CO2emission   = 0.0
 
       DO i=1,NLAYR
 
@@ -197,15 +195,16 @@ c	if(i.eq.1) write(29,'(i6,3f10.6)') dap,flood,afp(1),buffconc
         Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidised buffer pool
         Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool
 
-        CO2_Cflux = CO2_Cflux + (rCO2 + rCH4)	! total CO2-C flux
+!chp        CO2_Cflux = CO2_Cflux + (rCO2 + rCH4)	! total CO2-C flux
 ! should this subtract rCH4?	    CO2_Cflux = CO2_Cflux + (rCO2 + rCH4)	! total CO2-C flux
 
 !       Total CH4 substrate (kgC/ha)
         TCH4Substrate = TCH4Substrate + rCH4  
+        CO2emission   = CO2emission   + rCO2
 
 !       TEMP CHP
-        WRITE(5555, '(i7,i4,3f10.4)') 
-     &    control.yrdoy, i, csubstrate(i), rch4, rco2
+!       WRITE(5555, '(i7,i4,3f10.4)') 
+!    &    control.yrdoy, i, csubstrate(i), rch4, rco2
 
 !       Calculate soil profile parameters for Arah model
         j = i + n1
@@ -242,11 +241,11 @@ C Calculate fractions of C in each methane flux
         EbullitionFrac  = meth%Ebullition /TSubstrate
         LeachingFrac    = meth%Leaching   /TSubstrate
       ELSE
-        ProductionFrac = 0.0
+        ProductionFrac  = 0.0
         ConsumptionFrac = 0.0
-        PlantFrac = 0.0
-        EbullitionFrac = 0.0
-        LeachingFrac = 0.0
+        PlantFrac       = 0.0
+        EbullitionFrac  = 0.0
+        LeachingFrac    = 0.0
       ENDIF
       EmissionFrac = ProductionFrac - ConsumptionFrac - LeachingFrac
       DiffusionFrac = EmissionFrac - (PlantFrac + EbullitionFrac)
@@ -273,19 +272,23 @@ c Calculate emissions from dissolved CH4 on draining
         x = CH4Stored * 0.5
         CH4Emission = CH4Emission + x
         CH4Stored =	CH4Stored - x
-!        CH4Stored_ORIG =	CH4Stored_ORIG - x
       endif
 
-      CumTCH4Sub    = CumTCH4Sub + TCH4Substrate
-      CumProduction = CumProduction + CH4Production
-      CumEmission   =  CumEmission  + CH4Emission
-      CumConsumpt   = CumConsumpt + CH4Consumption
-      CumLeaching   = CumLeaching + CH4Leaching
+      StorageFlux = meth % StorageFlux
 
-!      CH4Stored = CumTCH4Sub - (CumEmission + CumConsumpt + CumLeaching)
+      CumCH4Emission   = CumCH4Emission   + CH4Emission
+      CumCH4Consumpt   = CumCH4Consumpt   + CH4Consumption
+      CumCH4Leaching   = CumCH4Leaching   + CH4Leaching
+      CumCO2Emission   = CumCO2Emission   + CO2emission
+
+      CH4_balance = newCO2Tot - (CO2emission + CH4Emission + CH4stored +
+     &                           CH4Leaching + CH4Consumption)
+
+      Cum_CH4_bal = CumNewCO2 - (CumCO2Emission + CumCH4Emission + 
+     &                      CH4stored + CumCH4Leaching + CumCH4Consumpt)
 
 !     CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - EmissionFrac))
-      CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - ProductionFrac))
+!     CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - ProductionFrac))
 
 !***********************************************************************
 !***********************************************************************
@@ -293,15 +296,12 @@ c Calculate emissions from dissolved CH4 on draining
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------
-      CALL OpMethane(CONTROL, ISWITCH,  
-     &  ProductionFrac, ConsumptionFrac,
-     &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
-     &  meth%StorageFlux, TSubstrate,
-     &  CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
-     &  CH4Ebullition,CH4Diffusion,CH4Leaching,
-     &  iterations1,difference1,
-     &  CumProduction, CumEmission, CH4Stored, StorageFrac,
-     &  TCH4Substrate, CH4Stored_ORIG)
+      CALL OpMethane(CONTROL, ISWITCH, 
+     &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
+     &  CH4Production, CH4Consumption, CH4Leaching, CH4Emission,
+     &  CH4PlantFlux, CH4Ebullition, CH4Diffusion, CH4_balance, 
+     &  CumNewCO2, CumCO2Emission, CumCH4Emission, CumCH4Consumpt, 
+     &  CumCH4Leaching, Cum_CH4_bal)
 
 C***********************************************************************
 C***********************************************************************
@@ -322,14 +322,12 @@ C  07/02/2021 CHP Written
 !=======================================================================
 
       SUBROUTINE OpMethane(CONTROL, ISWITCH,  
-     &  ProductionFrac, ConsumptionFrac,
-     &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
-     &  StorageFlux, TSubstrate,
-     &  CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
-     &  CH4Ebullition,CH4Diffusion,CH4Leaching,
-     &  iterations1,difference1,
-     &  CumProduction, CumEmission, CH4Stored, StorageFrac,
-     &  TCH4Substrate, CH4Stored_ORIG)
+     &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
+     &  CH4Production, CH4Consumption, CH4Leaching, CH4Emission,
+     &  CH4PlantFlux, CH4Ebullition, CH4Diffusion, CH4_balance, 
+     &  CumNewCO2, CumCO2Emission, CumCH4Emission, CumCH4Consumpt, 
+     &  CumCH4Leaching, Cum_CH4_bal)
+
 !-------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
@@ -344,14 +342,12 @@ C  07/02/2021 CHP Written
       INTEGER LUN, RUN, YEAR, YRDOY
       LOGICAL FEXIST
 
-      REAL ProductionFrac, ConsumptionFrac,
-     &  PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
-     &  StorageFlux, TSubstrate,
-     &  CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
-     &  CH4Ebullition,CH4Diffusion,CH4Leaching,difference1
-      REAL CumProduction, CumEmission, CH4Stored
-      REAL StorFlux, StorageFrac, TCH4Substrate, CH4Stored_ORIG
-      INTEGER iterations1
+      REAL 
+     &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
+     &  CH4Production, CH4Consumption, CH4Leaching, CH4Emission,
+     &  CH4PlantFlux, CH4Ebullition, CH4Diffusion, CH4_balance, 
+     &  CumNewCO2, CumCO2Emission, CumCH4Emission, CumCH4Consumpt, 
+     &  CumCH4Leaching, Cum_CH4_bal
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 2
@@ -409,14 +405,12 @@ C-----------------------------------------------------------------------
             CALL HEADER(SEASINIT, LUN, RUN)
           ENDIF
 
-          write(LUN,'(6a)') 
+          write(LUN,'(5a)') 
      & "@YEAR DOY   DAS",
-     &  "    CH4PRF    CHPCOF    CH4PLF    CH4EBF    CH4DIF    CH4LCF",
-     &  "      CH4SFL    CH4SUB    CH4PRD    CH4COD    CH4EMD",
-     &  "    CH4PLD    CH4EBD    CH4DID    CH4LCD    CH4SFD", 
-     &  "    CH4PRC    CH4EMC   CH4STOR    CH4SFR   TCH4SUB",
-     &  "    STORIG CH4ITR          CH4DI"
-
+     &  "     DCO2D     CO2ED    CH4SBD    CH4SFD    CH4STD    CH4PRD",
+     &  "    CH4COD    CH4LCD    CH4EMD    CH4PLD    CH4EBD    CH4DID",
+     &  "    CHRBLD     DCO2C     CO2EC    CH4EMC    CH4COC    CH4LCC",
+     &  "    CHRBLC" 
         ENDIF
       ENDIF
 
@@ -428,25 +422,15 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
       IF (IDETN .EQ. 'Y') THEN
 
-        IF (ABS(StorageFlux) .LT. 1.E-8) THEN
-          StorFlux = 0.0
-        ELSE
-          StorFlux = StorageFlux
-        ENDIF
-
         write(LUN,100)
      &    YEAR, DOY, DAS,
-     &    ProductionFrac, ConsumptionFrac,
-     &    PlantFrac, EbullitionFrac, DiffusionFrac, LeachingFrac,
-     &    StorFlux*86400.*12.*10., TSubstrate*1.e6,
-     &    CH4Production,CH4Consumption,CH4Emission,CH4PlantFlux,
-     &    CH4Ebullition,CH4Diffusion,CH4Leaching,
-     &    StorFlux*12.*10.,
-     &    CumProduction, CumEmission, CH4Stored, StorageFrac,
-     &    TCH4Substrate, CH4Stored_ORIG,
-     &    iterations1,difference1
+     &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
+     &  CH4Production, CH4Consumption, CH4Leaching, CH4Emission,
+     &  CH4PlantFlux, CH4Ebullition, CH4Diffusion, CH4_balance, 
+     &  CumNewCO2, CumCO2Emission, CumCH4Emission, CumCH4Consumpt, 
+     &  CumCH4Leaching, Cum_CH4_bal
 
-  100   FORMAT(1X,I4,1X,I3.3,I6,6f10.4,f12.3,f10.3,14f10.5,i7,f15.10)
+  100   FORMAT(1X,I4,1X,I3.3,I6,20F10.4)
 
       ENDIF
 !***********************************************************************
@@ -463,6 +447,7 @@ C-----------------------------------------------------------------------
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
       LABEL(1)  = 'CH4EC'; VALUE(1)  = CH4Emission  
+      LABEL(2)  = 'CO2EC'; VALUE(2)  = CO2emission
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
@@ -476,7 +461,32 @@ C-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE OpMethane
 C=======================================================================
-! Output Variable        Definition
+!    Output Variable        Definition
+! DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter
+! CO2ED  CO2emission     Daily CO2 emission 
+! CH4SBD TCH4Substrate   Daily portion of new CO2 that is proportioned to methane generation 
+! CH4SFD StorageFlux     Daily CH4 Storage flux 
+! CH4STD CH4Stored       CH4 stored in soil and floodwater                       |
+! CH4PRD CH4Production   Daily CH4 Production 
+! CH4COD CH4Consumption  Daily CH4 Consumption
+! CH4LCD CH4Leaching     Daily CH4 Leaching 
+! CH4EMD CH4Emission     Daily CH4 Emission 
+! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux   
+! CH4EBD CH4Ebullition   Daily CH4 Ebullition  
+! CH4DID CH4Diffusion    Daily CH4 Diffusion  
+! CHRBLD CH4_balance     Daily CH4 balance 
+
+! DCO2C  CumNewCO2       Cumulative CO2 from decomposition
+! CO2EC  CumCO2Emission  Cumulative CO2 emissions
+! CH4EMC CumCH4Emission  Cumulative CH4 emissions
+! CH4COC CumCH4Consumpt  Cumulative CH4 consumption
+! CH4LCC CumCH4Leaching  Cumulative CH4 leaching
+! CHRBLC Cum_CH4_bal     Cumulative CH4 balance
+
+
+
+! No longer used:
+! CH4SUB TSubstrate      Daily CH4 TSubstrate
 ! CH4PRF ProductionFrac  Daily CH4 Production fraction      
 ! CH4COF ConsumptionFrac Daily CH4 Consumption fraction
 ! CH4PLF PlantFrac       Daily CH4 Plant fraction      
@@ -484,19 +494,6 @@ C=======================================================================
 ! CH4DIF DiffusionFrac   Daily CH4 Diffusion fraction  
 ! CH4LCF LeachingFrac    Daily CH4 Leaching fraction  
 ! CH4SFL StorFlux        Daily CH4 Storage flux
-! CH4SUB TSubstrate      Daily CH4 TSubstrate
-! CH4PRD CH4Production   Daily CH4 Production  
-! CH4COD CH4Consumption  Daily CH4 Consumption 
-! CH4EMD CH4Emission     Daily CH4 Emission    
-! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux   
-! CH4EBD CH4Ebullition   Daily CH4 Ebullition  
-! CH4DID CH4Diffusion    Daily CH4 Diffusion   
-! CH4LCD CH4Leaching     Daily CH4 Leaching    
-! CH4SFD StorFlux        Daily CH4 Storage flux
-
-! CH4PRC CumProduction   Cumulative CH4 production
-! CH4EMC CumEmission     Cumulative CH4 emissions
-
 
 ! CH4ITR iterations1     Daily iterations1    
 ! CH4DI  difference1     Daily difference1    
