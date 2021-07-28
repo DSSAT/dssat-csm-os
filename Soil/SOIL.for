@@ -167,17 +167,8 @@ C=====================================================================
      &    FLOODN,                                         !I/O
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
-!     Transfer newCO2 from soil organic matter modules to CSubstrate variable
-      CSubstrate = 0.0
-      CSubstrate(1) = newCO2(0) + newCO2(1)
-      DO L = 2, SOILPROP % NLAYR
-        CSubstrate(L) = newCO2(L)
-      ENDDO
-
-      FLOOD = FLOODWAT % FLOOD
-
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,    !Input
-     &    FLOOD, SW, RLV, CSubstrate, DRAIN)              !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN)               !Input
 
 !     Inorganic P
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 

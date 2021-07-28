@@ -20,9 +20,10 @@ C Output:
 C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
-     &    FLOOD, SW, RLV, CSubstrate, DRAIN)                  !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN)                   !Input
 
       USE ModuleDefs
+      USE FloodModule
      	USE MethaneConstants
 	USE MethaneVariables
 	IMPLICIT NONE
@@ -31,20 +32,23 @@ C=======================================================================
 	INTEGER n1,NLAYR,i,j, DYNAMIC
 	REAL dlayr(NL),SW(NL),DLL(NL),RLV(NL),CSubstrate(NL),BD(NL),
      &     Buffer(NL,2),afp(NL)
-	REAL drain,flood,x,CO2_Cflux,CH4Emission,spd,buffconc,rCO2,
+      REAL, DIMENSION(0:NL) :: newCO2
+	REAL drain,flood,x,CH4Emission,spd,buffconc,rCO2,
      &     rCH4,TCH4Substrate,rbuff,afpmax,BufferRegenRate,RefHeight,
      &     ProductionFrac,ConsumptionFrac,EmissionFrac,PlantFrac,
      &     EbullitionFrac,DiffusionFrac,LeachingFrac,
      &     CH4Production,CH4Consumption,CH4PlantFlux,CH4Ebullition,
      &     CH4Diffusion,CH4Leaching,CH4Stored
-      REAL CumProduction, CumEmission, StorageFrac, CumTCH4Sub
-      REAL CumConsumpt, CumLeaching, CH4Stored_ORIG
+      REAL CumCH4Consumpt, CumCH4Leaching, newCO2Tot, CH4_balance
+      REAL CumCH4Emission, CumCO2Emission, CO2emission, CumNewCO2
+      REAL StorageFlux, Cum_CH4_bal
 
       REAL TCO2, TCH4, FloodCH4
 
       TYPE (ControlType) CONTROL
-      TYPE (SwitchType) ISWITCH
-      TYPE (SoilType) SOILPROP
+      TYPE (SwitchType)  ISWITCH
+      TYPE (SoilType)    SOILPROP
+      TYPE (FloodWatType)FLOODWAT
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -120,6 +124,22 @@ C     Rate Calculations
 C***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 C-----------------------------------------------------------------------
+!     Calculate total CO2 coming in from decomposition of organic matter, newCO2Tot
+!     Transfer newCO2 from soil organic matter modules to CSubstrate variable
+      CSubstrate = 0.0
+      newCO2Tot = 0.0
+      DO i = 1, SOILPROP % NLAYR
+        IF (i == 1) THEN
+          newCO2Tot = newCO2(0) + newCO2(1)
+          CSubstrate(1) = newCO2Tot
+        ELSE
+          CSubstrate(i) = newCO2(i)
+          newCO2Tot = newCO2Tot + newCO2(i)
+        ENDIF
+      ENDDO
+
+      FLOOD = FLOODWAT % FLOOD
+
 ! Arah model parameters for flood-water layer
       n1 = 2
       z(1) = (RefHeight - flood)/1000. ! mm-->m
