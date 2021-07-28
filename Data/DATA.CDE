@@ -119,6 +119,7 @@ LONG   Longitude °     Longitude (degrees)                                      
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
+CH4EC  Cum CH4 emitted Cumulative methane emitted kg[C]/ha                      .
 N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 NDCH   Days to harvest Number of days from planting to harvest (d)              .
 NFXM   N fixed kg/h    N fixed during season (kg/ha)                            .

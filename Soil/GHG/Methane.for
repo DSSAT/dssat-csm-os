@@ -442,7 +442,7 @@ C-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
-      LABEL(1)  = 'MTHEC'; VALUE(1)  = CH4Emission  
+      LABEL(1)  = 'CH4EC'; VALUE(1)  = CH4Emission  
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
