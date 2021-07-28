@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.8; 07/16/2021
+! DSSAT v4.8; 07/27/2021
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -273,8 +273,6 @@ TN       Tannier                                                              IB
 TR       Taro                                                                 IB
 VB       Velvet bean                                                          IB
 WH       Wheat                                                                IB
-SR       Strawberry
-RY       Rye
 
 *Disease and Pest Organisms
 @CDE     DESCRIPTION                                                          SO
