@@ -68,6 +68,13 @@ C=======================================================================
 
 !       Added 2019-19-17 CHP Cumulative net mineralization
         REAL NMINC
+        
+!       Added 05/28/2021 Latitude, Longitude and elevation
+        REAL XCRD, YCRD, ELEV
+
+!       Added 2021-20-04 LPM Fresh weight variables
+        INTEGER FCWAM, FHWAM, FPWAM
+        REAL HWAHF, FBWAH
 
       End Type SummaryType
 
@@ -143,10 +150,18 @@ C-----------------------------------------------------------------------
       REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
       REAL N2OEC  !kg/ha
       INTEGER CO2EC
+!     Added 05/28/2021 Latitude, Longitude and elevation data
+      CHARACTER*9  ELEV 
+      CHARACTER*15 LATI, LONG
+      INTEGER HYEAR
 
 !     2020-12-30 CHP added WYEAR - weather year corresponding to YRSIM date
 !     For forecast mode may be different than simulation year
       INTEGER WYEAR
+      
+!       Added 2021-20-04 LPM Fresh weight variables
+        INTEGER FCWAM, FHWAM, FPWAM
+        REAL HWAHF, FBWAH
 
       LOGICAL FEXIST
 
@@ -349,6 +364,13 @@ C     Initialize OPSUM variables.
       SUMDAT % KICM   = -99
       SUMDAT % KUPC   = -99
       SUMDAT % SKAM   = -99
+      
+!     Fresh weight values -LPM added 04/20/2021
+      SUMDAT % FCWAM  = -99   !Fresh tops weight at maturity (kg/ha)
+      SUMDAT % FHWAM  = -99   !Harvest product fresh wt at maturity (kg/ha)
+      SUMDAT % HWAHF  = -99.0 !Harvested yield (fresh weight) (kg/ha)
+      SUMDAT % FBWAH  = -99.0 !By-product removed during harvest fresh wt (kg/ha)
+      SUMDAT % FPWAM  = -99   !Fresh pod (ear) weight at maturity (kg/ha)
 
       SUMDAT % DMPPM  = -99.0 !Dry matter-rain productivity(kg[DM]/m3[P]
       SUMDAT % DMPEM  = -99.0 !Dry matter-ET productivity(kg[DM]/m3[ET]
@@ -402,6 +424,11 @@ C     Initialize OPSUM variables.
       HNUMUM=SUMDAT % HNUMUM  !Number at Maturity (no./unit)
       HIAM = SUMDAT % HIAM    !Harvest index
       LAIX = SUMDAT % LAIX    !Leaf area index (mm2/mm2)
+      FCWAM= SUMDAT % FCWAM   !Fresh tops weight at maturity (kg/ha)
+      FHWAM= SUMDAT % FHWAM   !Harvest product fresh wt at maturity (kg/ha)
+      HWAHF= SUMDAT % HWAHF   !Harvested yield (fresh weight) (kg/ha)
+      FBWAH= SUMDAT % FBWAH   !By-product removed during harvest fresh wt (kg/ha)
+      FPWAM= SUMDAT % FPWAM   !Fresh pod (ear) weight at maturity (kg/ha)
 
       IRNUM= SUMDAT % IRNUM   !Irrigation Applications (no.)
       IRCM = SUMDAT % IRCM    !Season Irrigation (mm)
@@ -469,6 +496,13 @@ C     Initialize OPSUM variables.
       EPCP   = SUMDAT % EPCP  !Cumul transp (mm), planting to harvest
 
       CALL GET('WEATHER','WYEAR',WYEAR)
+      CALL GET('FIELD','CYCRD',LATI)
+      CALL GET('FIELD','CXCRD',LONG)
+      CALL GET('FIELD','CELEV',ELEV)
+      LATI = ADJUSTR(LATI)
+      LONG = ADJUSTR(LONG)
+      ELEV = ADJUSTR(ELEV)
+      HYEAR= INT(YRDOY/1000)
 C-------------------------------------------------------------------
 C
 C  Simulation Summary File
@@ -514,10 +548,12 @@ C-------------------------------------------------------------------
   310     FORMAT(/,
      &'!IDENTIFIERS......................... ',
      &'EXPERIMENT AND TREATMENT.......... ', 
-     &'SITE INFORMATION.................. ',
-     &'DATES..........................................  ',
+     &'SITE INFORMATION.....................',
+     &'........................................ ',
+     &'DATES..................................................  ',
      &'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
-     &'....................  ',
+     &'....................   ',
+     &'FRESH WEIGHT.........................  ',
      &'WATER...............................................  ',
      &'NITROGEN..................................................  ',
      &'PHOSPHORUS............  ',
@@ -532,11 +568,13 @@ C-------------------------------------------------------------------
 ! CHP 3/14/2018 USE P# for REPNO instead of C# for CRPNO, which isn't used.
   400     FORMAT ('@   RUNNO   TRNO R# O# P# CR MODEL... ',
      &   'EXNAME.. TNAM..................... ',
-     &   'FNAM.... WSTA.... WYEAR SOIL_ID...  ',
-     &   '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
+     &   'FNAM.... WSTA.... WYEAR SOIL_ID... ',
+     &   'LATI............ LONG........... ELEV.....  ',
+     &   '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT   HYEAR',
      &   '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
 !    &   '    HWUM  H#AM    H#UM  HIAM  LAIX',
      &   '    HWUM    H#AM    H#UM  HIAM  LAIX',
+     &   '   FCWAM   FHWAM   HWAHF   FBWAH   FPWAM',
      &   '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
      &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM NMINC  CNAM  GNAM N2OEC',
 !    &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
@@ -559,7 +597,8 @@ C-------------------------------------------------------------------
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, 
      &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, WYEAR,
-     &    SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
+     &    SLNO,LATI, LONG, ELEV,
+     &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
 !       RUN, TRTNUM, ROTNO, ROTOPT, REPNO (was CRPNO), 
@@ -568,8 +607,11 @@ C-------------------------------------------------------------------
 !       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, WYEAR, SLNO,
      &  1X,A2,1X,A8,1X,A8,1X,A25,1X,A8,1X,A8,1X,I5,1X,A10,      
 
+!       LATI, LONG, ELEV
+     &  1X,2(1X,A15),1X,A9,
+     
 !       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
-     &  6(1X,I7),
+     &  7(1X,I7),
 
 !       DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM,
      &  1X,I5,4(1X,I7),1X,I5)
@@ -634,7 +676,12 @@ C-------------------------------------------------------------------
 !       Not used
         N2OGC_TXT= PRINT_TXT(N2OEC*1000., "(F6.1)")   !g/ha
 
+        IF (FBWAH .GT. 1.E-3) THEN
+          FBWAH = FBWAH * 10.
+        ENDIF
+
         WRITE (NOUTDS,503) LAIX, 
+     &    FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH), FPWAM,
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
      &    NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, 
      &    N2OEC_TXT,
@@ -654,7 +701,10 @@ C-------------------------------------------------------------------
 !!       HNUMAM, HNUMUM, HIAM, LAIX,
 !     &  1X,I5,1X,F7.1, F6.2, F6.1,    
 !       LAIX,
-     &  F6.1,    
+     &  F6.1, 
+                                              
+!       FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH*10.), FPWAM
+     &  5(1X,I7),
 
 !       IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
 !       NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, 
@@ -690,9 +740,12 @@ C-------------------------------------------------------------------
             
 !           CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
             CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP,
-     &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT,WYEAR,SLNO,YRSIM,
-     &YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, 
-     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
+     &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT,WYEAR,SLNO,
+     &LATI,LONG,ELEV,YRSIM,YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, 
+     &CWAM, HWAM, HWAH, BWAH, 
+!     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
+     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, FCWAM, FHWAM, HWAHF, 
+     &FBWAH, FPWAM, IRNUM, IRCM, PRCM, ETCM,
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
      &NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, 
      &KICM, KUPC, SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
@@ -984,6 +1037,12 @@ C=======================================================================
         CASE ('PWAM'); SUMDAT % PWAM   = NINT(VALUE(I)) 
         CASE ('LAIX'); SUMDAT % LAIX   = VALUE(I) !Float
         CASE ('HIAM'); SUMDAT % HIAM   = VALUE(I) !Float
+        !LPM 2021-04-20 Add fresh weight variables
+        CASE ('FCWAM'); SUMDAT % FCWAM   = NINT(VALUE(I))
+        CASE ('FHWAM'); SUMDAT % FHWAM   = NINT(VALUE(I))
+        CASE ('HWAHF'); SUMDAT % HWAHF   = VALUE(I) !Float
+        CASE ('FBWAH'); SUMDAT % FBWAH   = VALUE(I) !Float
+        CASE ('FPWAM'); SUMDAT % FPWAM   = NINT(VALUE(I))
 
         !From MgmtOps:
         CASE ('IR#M'); SUMDAT % IRNUM    = NINT(VALUE(I))
@@ -1057,6 +1116,12 @@ C=======================================================================
 !       From N2O_Mod
         CASE ('N2OEC');SUMDAT % N2OEC  = VALUE(I)
         CASE ('CO2EC');SUMDAT % CO2EC  = VALUE(I)
+        
+        
+        !From Ipexp or Ipwth:
+        CASE ('YCRD'); SUMDAT % YCRD  = VALUE(I)
+        CASE ('XCRD'); SUMDAT % XCRD  = VALUE(I)
+        CASE ('ELEV'); SUMDAT % ELEV  = VALUE(I)
 
         END SELECT
       ENDDO

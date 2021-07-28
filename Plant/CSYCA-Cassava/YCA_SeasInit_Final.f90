@@ -104,10 +104,17 @@
                 ENDIF        
             ENDIF        
         ENDIF        
-        IF (MEPHO /= 'I'.AND. MEPHO /= 'M' .AND. MEPHO /='R' .AND. MEPHO /='V') THEN ! if photosynthesis method doesn't exists
-                    WRITE(MESSAGE(1),'(A22,A1,A15,A19)')'Photosynthesis method ',MEPHO,' not an option ',' Changed to R (RUE)'
-                    CALL WARNING(1,'CSYCA',MESSAGE)
-                    MEPHO = 'R'
+        IF (MEPHO /='R' .AND. MEPHO /='V') THEN ! if photosynthesis method doesn't exists
+                    WRITE(MESSAGE(1),'(A22,A1,A15)')'Photosynthesis method ',MEPHO,' not an option '
+                    WRITE(MESSAGE(2),'(A42)')' changed to V (RUE with hourly VPD effect)'
+                    CALL WARNING(2,'CSYCA',MESSAGE)
+                    MEPHO = 'V'
+        ENDIF
+        !LPM 06FEB2021 Add a warning to recommend the use of MEEVP= H when MEPHO = V
+        IF (MEPHO == 'V'.AND. MEEVP /='H') THEN 
+                    WRITE(MESSAGE(1),'(A26,A1,A51)')'Evapotranspiration method ',MEEVP,' is not recommended when photosynthesis method is V.'
+                    WRITE(MESSAGE(2),'(A66)')'Consider using method H (Priestley-Taylor with hourly VPD effect).'
+                    CALL WARNING(2,'CSYCA',MESSAGE)
         ENDIF
         ! Other CSM codes are:
         !  C Canopy photosynthesis curve.

@@ -2573,7 +2573,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         CALL YR_DOY(YEARDOYHARF,HYEAR,HDAY)
         PLTOHARYR = HYEAR - PLYEARREAD
         ! Upgrade harvest date for seasonal and sequential runs
-        yeardoyharf = (plyear+pltoharyr)*1000 +hday
+        !yeardoyharf = (plyear+pltoharyr)*1000 +hday
+      !LPM 10FEB2021 Move yeardoyharf after updating the PLYEAR when date of simulation is 
+      !the year before planting
 
 !       IF (IPLTI.NE.'A') THEN
         IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
@@ -2581,6 +2583,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             PLYEARDOYT = PLYEARTMP*1000 + PLDAY
           ELSEIF (PLDAY.LT.DOY) THEN
             PLYEARDOYT = (YEAR+1)*1000 + PLDAY
+            PLYEAR = YEAR+1
           ENDIF
         ELSE
           PLYEARDOYT = 9999999
@@ -2592,6 +2595,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             IF (HLAST.GT.0)  HLAST  = HLAST + (TVI1+1)*1000
           ENDIF
         ENDIF
+        yeardoyharf = (plyear+pltoharyr)*1000 +hday
 
 !-----------------------------------------------------------------------
 !       Set control flags if not already done
@@ -7826,12 +7830,12 @@ c           ENDIF
               IF (RUN.EQ.1) THEN
                 EVALOUT = 0
                 EVHEADNM = 0
-                EVHEADNMMAX = 7
+                EVHEADNMMAX = 1
               ENDIF
               IF (EXCODE.NE.EXCODEPREV) THEN
                 EVHEADNM = EVHEADNM + 1
                 OPEN (UNIT=FNUMEVAL,FILE=FNAMEEVAL,POSITION='APPEND')
-                IF (EVHEADNM.LT.EVHEADNMMAX.AND.EVHEADNMMAX.GT.1) THEN
+                IF (EVHEADNM.LE.EVHEADNMMAX.AND.EVHEADNMMAX.GE.1) THEN
                   LENENAME = TVILENT(ENAME)
                   WRITE (FNUMEVAL,*) ' '
                   WRITE (FNUMEVAL,993) 

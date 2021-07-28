@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.7; 09/18/2020
+! DSSAT v4.7; 02/06/2021
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
@@ -49,6 +49,7 @@ R        Priestley-Taylor/Ritchie                                             IB
 !Z       Hourly energy bal. method                                            IB
 S        ASCE Standardized Reference ET - Short reference                     IB
 T        ASCE Standardized Reference ET - Tall reference                      IB
+!H       Hourly Priestley-Taylor/Ritchie                                      IB
 
 *Simulation/Methods/Infiltration
 @CDE     DESCRIPTION                                                          SO
@@ -177,7 +178,7 @@ CSCER    BA   CROPSIM-CERES-Barley
 CSCER    WH   CROPSIM-CERES-Wheat
 CSCRP    BA   CSCRP-Barley
 CSCAS    CS   CSCAS-Cassava
-CSYCA    CS   CSYCA-Cassava
+CSYCA    CS   MANIHOT-Cassava
 CSCRP    WH   CSCRP-Wheat
 MLCER    ML   CERES-Millet
 MZCER    MZ   CERES-Maize

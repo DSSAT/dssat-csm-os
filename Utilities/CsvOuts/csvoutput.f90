@@ -34,6 +34,10 @@ Character(:), allocatable, Target :: vCsvlineSUOIL
 Character (:), Pointer :: vpCsvlineSUOIL
 Integer :: vlngthSUOIL
 
+! for RICER
+Character(:), allocatable, Target :: vCsvlineRICER
+Character (:), Pointer :: vpCsvlineRICER
+Integer :: vlngthRICER
 !------------------------------------------------------------------------------
 ! for PlNCrGro
 Character(:), allocatable, Target :: vCsvlinePlNCrGro
@@ -59,6 +63,11 @@ Integer :: vlngthSoilNi
 Character(:), allocatable, Target :: vCsvlinePlNMzCer
 Character (:), Pointer :: vpCsvlinePlNMzCer
 Integer :: vlngthPlNMzCer
+!!------------------------------------------------------------------------------
+!! for PlNRICer
+!Character(:), allocatable, Target :: vCsvlinePlNRICer
+!Character (:), Pointer :: vpCsvlinePlNRICer
+!Integer :: vlngthPlNRICer
 !------------------------------------------------------------------------------
 ! for weather.out
 Character(:), allocatable, Target :: vCsvlineWth
@@ -189,7 +198,7 @@ Subroutine CsvOut_cscer(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
    CHARACTER(6),Intent(in) :: SENW0C, SENWSC, HWUDC
 
    ! Temp vars
-   integer :: length
+!  integer :: length
    ! Recalculated vars
    REAL :: cCARBOA1,cRSCD1,cRTDEP1, cWAVR1, cWUPR1, cWFT1, cWFP1, cWFG1, &     
            cNFT1, cNFP1, cNFG1, cNUPR1, cTFP1, cTFG1, cVF1, cDF1, LAISAI
@@ -348,7 +357,7 @@ Subroutine CsvOutSW_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, TSW, 
    Integer,Intent(IN) :: N_LYR
    Real, Dimension(N_LYR), Intent(IN) :: SW
   
-   Integer :: length      
+!  Integer :: length      
 !  Recalculated vars
    Integer :: cTSW1, cPESW1, cTRUNOF1, cTDRAIN1, cCRAIN1, cTOTIR1, cAVWTD1
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
@@ -407,7 +416,7 @@ Subroutine CsvOutTemp_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    Integer,Intent(IN)      :: N_LYR
    Real, Dimension(N_LYR), Intent(IN) :: ST
   
-   Integer :: length      
+!  Integer :: length      
 !  Recalculated vars 
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
    Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
@@ -596,7 +605,7 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !        INTEGER,Intent(in)      :: SN      ! Sequence number,crop rotation  #
 !        INTEGER,Intent(in)      :: ON      ! Option number (sequence runs)  #
 !        INTEGER,Intent(in)      :: CN      ! Crop component (multicrop)     #
-   Real,Intent(IN) :: VSTAGE, XLAI, WTLF, STMWTO, SDWT, RTWT, PLTPOP, TOPWT  
+  Real,Intent(IN) :: VSTAGE, XLAI, WTLF, STMWTO, SDWT, RTWT, PLTPOP, TOPWT  
    Integer,Intent(IN) :: RSTAGE, VWAD                            
    Real,Intent(IN) :: SEEDNO, SDSIZE, HI, OILWT, OILPC, SWF_AV, TUR_AV, NST_AV     
    Real,Intent(IN) :: EXW_AV, PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIO
@@ -610,8 +619,8 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
    Real :: cDWNOD1, cRTDEP1,cOILWT1,COILPC
    Integer :: cWTCO1, cWTLO1, cWTSO1
-  
-   Integer :: i
+
+  Integer :: i
   
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
@@ -620,10 +629,8 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Character(Len=800) :: tmp
    Character(Len=300) :: tmp1
    Character(Len=20) :: fmt      
-!  End of vars
-          
-!  Recalculation
-   cWTLF1 = NINT(WTLF*10.)
+!  End of vars 
+  cWTLF1 = NINT(WTLF*10.)
    cSTMWT1 = NINT(STMWTO*10.)
    cSDWT1 = NINT(SDWT*10.)
    cRTWT1 = NINT(RTWT*10.*PLTPOP)
@@ -648,6 +655,95 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    fmt=trim(adjustl(fmt))
    
    Write(tmp1,fmt) (RLV(i), i = 1, N_LYR)
+
+     tmp = trim(tmp) // trim(adjustl(tmp1))  
+   
+   lngth = Len(Trim(tmp))
+   Allocate(Character(Len=Len(Trim(tmp)))::Csvline)
+   Csvline = Trim(tmp)
+   pCsvline => Csvline
+   return
+
+end Subroutine CsvOut_SUOIL
+
+   
+! Sub for csv output RICER PlantGro.csv
+Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
+   VSTAGE, RSTAGE, XLAI,                           &
+   cWTLF, cSTMWT, cSDWT,                        &
+   cRTWT, cPANWT, cTOPWT,                       &
+   SEEDNO, SDSIZE, HI, cTILNO, SWF_AV,            &
+   TUR_AV, SAT_AV, NST_AV, KST_AV, PCNL, SHELPC,   &
+   SLA, CANHT, CANWH, cRTDEP, RLV,                &
+   CUMSENSURF, CUMSENSOIL, DTT,                    &
+   Csvline, pCsvline, lngth)
+
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer,Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP                     
+!        INTEGER,Intent(in)      :: SN      ! Sequence number,crop rotation  #
+!        INTEGER,Intent(in)      :: ON      ! Option number (sequence runs)  #
+!        INTEGER,Intent(in)      :: CN      ! Crop component (multicrop)     #
+   Real,Intent(IN) :: VSTAGE, XLAI, cWTLF, cSTMWT, cSDWT, cRTWT, cPANWT, cTOPWT  
+   Integer,Intent(IN) :: RSTAGE                            
+   Real,Intent(IN) :: SEEDNO, SDSIZE, HI, cTILNO, SWF_AV, TUR_AV, SAT_AV, NST_AV     
+   Real,Intent(IN) :: KST_AV, PCNL, SHELPC
+   Real,Intent(IN) :: SLA, CANHT, CANWH, cRTDEP 
+!  Integer,Intent(IN) :: N_LYR
+   Real, Dimension(5),Intent(IN) :: RLV 
+   Real :: CUMSENSURF,  CUMSENSOIL, DTT
+     
+!  Recalculated vars
+   Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1, cPANWT1
+   Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
+   Real :: cDWNOD1, cRTDEP1
+   Integer :: cWTCO1, cWTLO1, cWTSO1, cTILNO1
+  
+   Integer :: i
+  
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+  
+   Character(Len=800) :: tmp
+   Character(Len=300) :: tmp1
+   Character(Len=20) :: fmt      
+!  End of vars
+          
+!  Recalculation
+   cWTLF1  = NINT(cWTLF)
+   cSTMWT1 = NINT(cSTMWT)
+   cSDWT1  = NINT(cSDWT)
+   cRTWT1  = NINT(cRTWT)
+   cPANWT1 = NINT(cPANWT)
+   cTOPWT1 = NINT(cTOPWT)
+   cSEEDNO1= NINT(SEEDNO)
+   cTILNO1 = NINT(cTILNO)
+!   cPODWT1 = NINT(PODWT*10.)
+!   cPODNO1 = NINT(PODNO)
+!   cPODWTD1 = NINT(PODWTD*10.)
+!   cPodSum = NINT((PODWTD+PODWT)*10.)
+!   cRTDEP1 = RTDEP/100.
+!   cWTCO1 = NINT(WTCO*10.)
+!   cWTLO1 = NINT(WTLO*10.)
+!   cWTSO1 = NINT(WTSO*10.)
+   cCUMSENSURF1 = NINT(CUMSENSURF)  
+   cCUMSENSOIL1 = NINT(CUMSENSOIL) 
+
+   Write(tmp,'(45(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,& 
+      VSTAGE, RSTAGE, XLAI,                           &
+      cWTLF1, cSTMWT1, cSDWT1,                        &
+      cRTWT1, cPANWT1, cTOPWT1,                       &
+      cSEEDNO1, SDSIZE, HI, cTILNO1, SWF_AV,          &
+      TUR_AV, SAT_AV, NST_AV, KST_AV, PCNL, SHELPC,   &
+      SLA, CANHT, CANWH, cRTDEP, RLV,                 &
+      cCUMSENSURF1, cCUMSENSOIL1, DTT
+
+   Write(fmt,'(I2)') 5 - 1   
+   fmt = '('//trim(adjustl(fmt))//'(g0,","),g0)'
+   fmt=trim(adjustl(fmt))
+   
+   Write(tmp1,fmt) (RLV(i), i = 1, 5)
       
    tmp = trim(tmp) // trim(adjustl(tmp1))  
    
@@ -657,7 +753,7 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    pCsvline => Csvline
    
    return
-end Subroutine CsvOut_SUOIL
+end Subroutine CsvOut_RIcer
 !------------------------------------------------------------------------------
 ! Sub for plantn.csv output
 Subroutine CsvOutPlNCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
@@ -972,7 +1068,7 @@ Subroutine CsvOutPlGr2(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    REAL, Dimension(20), Intent(in) :: RLV  ! Root length volume by layer    /cm2
    
 !  Temp vars
-   integer :: length
+!  integer :: length
 !  Recalculated vars
    REAL :: cLAISD, cRTDEP1
    Integer :: cGRNUMAD1
@@ -1029,7 +1125,7 @@ Subroutine CsvOutPlGrf(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    REAL,Intent(in) :: SNO3PROFILE, LCNF, SCNF, RCNF          
    
 !  Temp vars
-   Integer :: length
+!  Integer :: length
 !  Recalculated vars
    REAL :: cVF1, cDF1, cTFGEM1, cWFGE1, cTFP1, cWFP1, cNFP1, cCO2FP1
    REAL :: cRSFP1, cTFG1, cWFG1, cNFG1, cWFT1, cNFT1, cWAVR1, cWUPR1, cPROFILE    
@@ -1187,10 +1283,14 @@ end Subroutine CsvOutEvOpsum
 !------------------------------------------------------------------------------
 ! Sub for csv output for summary.out
 ! 3/15/2018 CHP changed CRPNO to REPNO
+! 06/11/2021 FO Added LATI, LONG, ELEV and HYEAR to Summary.csv
 !Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
 Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
-   EXNAME, TITLET, FLDNAM, WSTAT, WYEAR, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
-   CWAM, HWAM, HWAH, BWAH, PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM,&
+   EXNAME, TITLET, FLDNAM, WSTAT, WYEAR, SLNO, LATI, LONG, ELEV, &
+   YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, &
+   !CWAM, HWAM, HWAH, BWAH, PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM,&
+   CWAM, HWAM, HWAH, BWAH, PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, &
+   FCWAM, FHWAM, HWAHF, FBWAH, FPWAM, IRNUM, IRCM, &
    PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, &
    NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, &
    ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, &
@@ -1201,16 +1301,19 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    Integer, Intent(IN) :: RUN, TRTNUM, ROTNO, ROTOPT, REPNO, YRSIM, YRPLT  
    Character(Len=2), Intent(IN) :: CROP  
    Character(Len=8), Intent(IN) :: MODEL, FLDNAM, WSTAT, EXNAME
-   Character(Len=25), Intent(IN) :: TITLET 
+   Character(Len=9), Intent(IN) :: ELEV
    Character(Len=10), Intent(IN) :: SLNO 
+   Character(Len=15), Intent(IN) :: LATI,LONG
+   Character(Len=25), Intent(IN) :: TITLET 
    Integer, Intent(IN) :: EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, PWAM
-   Real, Intent (IN) :: HWAH, BWAH
+   Integer, Intent(IN) :: FCWAM, FHWAM, FPWAM 
+   Real, Intent (IN) :: HWAH, BWAH, HWAHF, FBWAH
   
    Real :: HWUM, HNUMUM, HIAM, LAIX, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM
    Integer :: HNUMAM, IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM 
    Integer :: NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, PINUMM
    Integer :: PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, ONTAM 
-   Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, CO2EC, WYEAR  
+   Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, CO2EC, WYEAR, HYEAR
    Real :: YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM,  TMAXA, TMINA, SRADA
    Real :: DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
    Real :: N2OEC
@@ -1223,16 +1326,21 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
 !  End of vars
   
 !  Recalculated vars
-   Integer :: cHWAH1, cBWAH1 
+   Integer :: cHWAH1, cBWAH1, cHWAHF1, cFBWAH1 
    Character(Len=25) :: TITLET1   
   
    cHWAH1 = NINT(HWAH)
    cBWAH1 = NINT(BWAH * 10.0)
+   cHWAHF1 = NINT(HWAHF)
+   cFBWAH1 = NINT(FBWAH)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
            
-   Write(tmp,'(86(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
-   EXNAME, TITLET1, FLDNAM, WSTAT, WYEAR, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
-   CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &
+   Write(tmp,'(95(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
+   EXNAME, TITLET1, FLDNAM, WSTAT, WYEAR, SLNO, LATI, LONG, ELEV, &
+   YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, &
+   !CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &
+   CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, &
+   FCWAM, FHWAM, cHWAHF1, cFBWAH1, FPWAM,IRNUM, &
    IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, &
    NLCM, NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM,&
    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, DMPPM, DMPEM, DMPTM, DMPIM, &
@@ -2038,6 +2146,10 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofileSUOIL(nlayers)        ! plantgro.csv
                  Call ListtofilePlNSUOIL              ! plantn.csv
                  Call ListtofileEvOpsum               ! evaluate.csv    
+             Case('RICER')
+                 Call ListtofileRICER(nlayers)        ! plantgro.csv
+!                Call ListtofilePlNMzCer              ! plantn.csv
+!                Call ListtofileEvOpsum               ! evaluate.csv
              Case('MLCER')
                  Call ListtofileMLCER(nlayers)        ! plantgro.csv
                  Call ListtofilePlNMzCer              ! plantn.csv

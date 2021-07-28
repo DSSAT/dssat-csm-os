@@ -26,6 +26,8 @@
         REAL    :: RTDEPTMP                ! Root depth,temporary value     cm/d       ! (From Growth)    
 
         INTEGER CSIDLAYR                                                                     ! Integer function call.
+        INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
+        INTEGER :: LF                      ! Loop counter leaves            #          
 
         !-----------------------------------------------------------------------
         !           Reserves growth
@@ -37,34 +39,42 @@
 
         ! Reserves to STORAGE ROOT if conc too great (overflow!)
         SRWTGRS = 0.0
+        !LPM 14SEP2020 initialize temporary variable
+        TVR1 = 0.0 
         ! Determine potential new concentration
-        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) THEN
-            TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))  !EQN 310
+        IF (LFWT+GROLFADJ+STWT+GROSTADJ+CRWT+GROCRADJ > 0.0) THEN
+            TVR1 = GRORS/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+GRORS)  !EQN 310
         ENDIF
         IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
             TVR1 = 0.0
         END IF
-        IF (TVR1 > RSPCO/100.0) THEN   ! If potential>standard 
-            TVR2 = RSWT+GRORS             ! What rswt could be                                                         !EQN 311
-            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-leafTotalSenescedWeight()+woodyWeight()+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
-            SRWTGRS = (TVR2 - TVR3)                                                                                    !EQN 313
-            ! Determine FINAL new concentration
-            IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
-                (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
-        ENDIF
+        !LPM 15DEC2020 Keep SRWTGRS instead of SRWTGRSADJ to consider additional CHO going to the roots when N is the most 
+        !restrictive factor (diluted N in storage roots)
+        SRWTGRS = GRORS
+        ! Determine FINAL new concentration
+        IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ > 0.0) TVR5 = (GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
+            (STWT+GROSTADJ+CRWT+GROCRADJ)+(GRORS-SRWTGRS))
+
         
                 
         !-----------------------------------------------------------------------
         !           Height growth
         !-----------------------------------------------------------------------
-
+        CANHTG = 0.0
         IF(GROSTP > 0.0) THEN
-            !LPM06JUL2017 It is assumed an branching angle of 60 from the vertical line (cos(60)=0.5) 
-            IF(BRSTAGE>=1.0) THEN
-                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP)*0.5)
-            ELSE
-                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP))
-            ENDIF
+            !LPM06JUL2017 It is assumed a branching angle of 60 from the vertical line (cos(60)=0.5)
+            !LPM 15JUL2020 Adjust canopy height to m instead of cm and use NODLT instead of SESR 
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
+                DO LF = 1, LNUMSIMSTG(BR)
+                    IF (isLeafExpanding(node(BR,LF))) THEN
+                        IF(BRSTAGE>=1.0) THEN
+                            CANHTG = CANHTG + MAX(0.0,NODLT*(dailyGrowth()/LLIFGTT)*AMIN1(WFG,node(0,0)%NFLF2)*0.5)/100.0
+                        ELSE
+                            CANHTG = CANHTG + MAX(0.0,NODLT*(dailyGrowth()/LLIFGTT)*AMIN1(WFG,node(0,0)%NFLF2))/100.0
+                        ENDIF
+                    ENDIF
+                ENDDO
+            ENDDO
         ELSE
             CANHTG = 0.0
         !CANHTG = SERX*DU !LPM 06JUL2017 CANHTG modified to avoid fixed maximum height HTSTD                                                                                                !EQN 316

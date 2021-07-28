@@ -733,8 +733,11 @@ C-----------------------------------------------------------------------
           DEPIR  = 0.0
       ELSE
 !       There is water available, check for demand
-        IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
-     &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
+!       2021-06-18 CHP change from after YRPLT to after YRSIM for auto-irrig
+!       IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
+!    &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
+        IF ((YRDOY .GE. YRSIM .AND. YRDOY .LE. MDATE ).OR. 
+     &      (YRDOY .GE. YRSIM .AND. MDATE .LE.  -99)) THEN
 
 
 !         Soil water irrigation

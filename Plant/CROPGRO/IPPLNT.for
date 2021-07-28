@@ -65,7 +65,6 @@ C-----------------------------------------------------------------------
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KCAN_ECO, KC_SLOPE
-!     REAL SSKC, SKCBMAX, TSKC, TKCBMAX
 
 !     Species parameters for N stress  9/11/2008
 !     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
@@ -510,10 +509,6 @@ C-----------------------------------------------------------------------
 !            (g[CH2O] / g[product])
 ! RPRO     Respiration required for re-synthesizing protein from mobilized 
 !            N (g[CH2O] / g[protein])
-! SKCBMAX  Maximum basal crop coefficient, ASCE dual Kc short crop ET method
-! SSKC     Shaping coefficient, ASCE dual Kc short crop ET method
-! TKCBMAX  Maximum basal crop coefficient, ASCE dual Kc tall crop ET method
-! TSKC     Shaping coefficient, ASCE dual Kc tall crop ET method
 ! TTFIX    Physiological days delay in nodule initiation
 !            (photo-thermal days / day)
 !-----------------------------------------------------------------------

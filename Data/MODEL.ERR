@@ -170,7 +170,7 @@ INPUT     1
 Error in Selection entry.  Fix entry or batch file.
 
 INPUT     2
-Planting Date is Before Start of Simulation.  Please Fix Input File.
+Planting date is defined prior to the start of simulation.
 
 INPUTX    0
 Input module failed.  Program execution halted.
@@ -196,11 +196,11 @@ Error in Ecotype entry.  Fix entry or batch file.
 IPECO     2
 Error in Ecotype entry.  Fix ecotype input file.
 
-IPECO     2
-Error in Ecotype entry.  Fix ecotype input file.
-
 IPECO     3
 DEFAULT Ecotype not found. Fix ecotype input file.
+
+IPECO     4
+Missing ecotype coefficients. Fix ecotype input file.
 
 IPECO    21
 Ecotype input section not found.  Please correct file.
@@ -308,7 +308,7 @@ IPHAR     5
 Reported harvest date after planting not found.  Please add to input file.
 
 IPHAR    6
-Harvest input date is defined prior to the start of simulation.
+Harvest date is defined prior to the start of simulation.
 
 IPHAR    10
 Error in date of harvest input.  Correct input file.
@@ -454,6 +454,9 @@ Automatic planting date is defined prior to the start of simulation.
 IPSIM    10
 Automatic harvest date is defined prior to the start of simulation.
 
+IPSIM    11
+Harvest at maturity option not available for this crop.  Correct input file.
+
 SIMCTR    1
 Error in start simulation date input.  Check format.
 
@@ -482,7 +485,7 @@ IPSLIN    2
 Initial soil conditions input level not found. Please correct input file.
 
 IPSLIN    3
-Initial conditions date is lower than start simulation date.
+Initial conditions date is defined prior to the start of simulation.
 
 IPSLIN   10
 Error in initial soil water inputs.  Please check data.
@@ -557,7 +560,7 @@ IPTILL    2
 Tillage input level not found. Please correct input file.
 
 IPTILL    3
-First tillage application date is defined prior to the start of simulation.
+First tillage application date is defined prior to the start of simulation date.
 
 IPVAR     1
 Error in Cultivar entry.  Fix entry or batch file.
@@ -647,7 +650,7 @@ IRRIG    10
 Incompatibility between Century SOM method and flooded field management.
 
 LAND      2
-Planting date is before start of simulation date.  Please fix input file.
+Planting date is defined prior to the start of simulation date.
 
 MODELN    1
 Error opening file. Please check file.
@@ -737,16 +740,16 @@ SENS      1
 Error in Sensitivity Selection entry.  Fix entry or batch file.
 
 ENTFER    1
-Error in fertilizer data entry is defined prior to the start of simulation.
+First fertilizer application date is defined prior to the start of simulation.
 
 ENTIRR    1
-Error in interactive irrigation data entry is defined prior to the start of simulation.
+First irrigation application date is defined prior to the start of simulation.
 
 ENTRES    1
-Error in residue data entry is defined prior to the start of simulation.
+First residue application date is defined prior to the start of simulation.
 
 SOILDY   10
-Organic carbon in soil file is zero or undefined.  Please check file.
+Organic carbon in soil file is zero or undefined. Please check file.
 
 SOILDY   11
 Missing data in soil file.  Please check file.

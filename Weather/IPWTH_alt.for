@@ -18,6 +18,7 @@ C                   a sequence occurs on Jan 1.
 !  08/25/2011 CHP Read vapor pressure (VAPR or VPRS) 
 !  07/25/2014 CHP Added daily CO2 read from weather file (DCO2)
 !  10/18/2016 CHP Read daily ozone values (ppb)
+!  05/28/2021 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
 C-----------------------------------------------------------------------
 C  Called by: WEATHR
 C  Calls:     None
@@ -36,6 +37,8 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       USE Forecast
+      USE SumModule
+
       IMPLICIT NONE
       SAVE
 
@@ -43,8 +46,10 @@ C=======================================================================
       CHARACTER*4  INSI
       CHARACTER*6  SECTION, ERRKEY, SOURCE
       CHARACTER*8  WSTAT
+      CHARACTER*9  CELEV
       CHARACTER*10 TEXT
       CHARACTER*12 FILEW, LastFILEW, FILEWC, FILEWG
+      CHARACTER*15 CXCRD, CYCRD      
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(8)
       CHARACTER*80 PATHWTC, PATHWTG, PATHWTW, WPath
@@ -89,6 +94,11 @@ C=======================================================================
       INTEGER COL(MAXCOL,2), ICOUNT, C1, C2, ISECT
 
       DATA LastFileW /" "/
+
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 3
+      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE      
 
 C     The variable "CONTROL" is of constructed type "ControlType" as 
 C     defined in ModuleDefs.for, and contains the following variables.
@@ -389,6 +399,7 @@ C     The components are copied into local variables for use here.
 
               CASE('LAT')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XLAT
+                READ(LINE(C1:C2),*,IOSTAT=ERR) CYCRD
                 IF (ERR .NE. 0) THEN
                   XLAT = 0.0
                   MSG(1) = 'Error reading latitude, value of zero'
@@ -398,10 +409,12 @@ C     The components are copied into local variables for use here.
 
               CASE('LONG')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XLONG
+                READ(LINE(C1:C2),*,IOSTAT=ERR) CXCRD
                 IF (ERR .NE. 0) XLONG = -99.0
 
               CASE('ELEV')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XELEV
+                READ(LINE(C1:C2),*,IOSTAT=ERR) CELEV
                 IF (ERR .NE. 0) XELEV = -99.0
 
               CASE('TAV')
@@ -427,6 +440,40 @@ C     The components are copied into local variables for use here.
           ENDIF
         ENDDO
 
+!  05/28/2021 FO  Added code for LAT,LONG and ELEV in Summary.OUT
+!     Check if LAT and LONG are correct in FileX   
+      IF(SUMDAT%YCRD .LE. -99.0 .OR. SUMDAT%XCRD .LE. -999.0) THEN
+        
+        IF(XLAT .GE. -90.0 .AND. XLAT .LE. 90.0 .AND.
+     &     XLONG .GE.-180.0 .AND. XLONG .LE. 180.0 .AND.
+     &   LEN_TRIM(CYCRD).GT.0.0 .AND. LEN_TRIM(CXCRD).GT.0.0)THEN
+!     Transfer data to the modules
+         CALL PUT('FIELD','CYCRD',CYCRD)
+         CALL PUT('FIELD','CXCRD',CXCRD)      
+         LABEL(1) = 'YCRD'; VALUE(1) = XLAT 
+         LABEL(2) = 'XCRD'; VALUE(2) = XLONG
+        ELSE
+          !     Transfer data to the modules
+          CALL PUT('FIELD','CYCRD','            -99')
+          CALL PUT('FIELD','CXCRD','            -99')
+          LABEL(1) = 'YCRD'; VALUE(1) = -99.0 
+          LABEL(2) = 'XCRD'; VALUE(2) = -999.0 
+        ENDIF
+        CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+      ENDIF
+
+!     Check if ELEV are correct in FileX      
+      IF(SUMDAT%ELEV .LE. -99.0) THEN
+        IF(XELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
+          CALL PUT('FIELD','CELEV',CELEV)
+          LABEL(3) = 'ELEV'; VALUE(3) = XELEV
+        ELSE
+          CALL PUT('FIELD','CELEV','      -99')
+          LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+        ENDIF
+        CALL SUMVALS (SUMNUM, LABEL, VALUE)
+      ENDIF
+      
 C       Substitute default values if REFHT or WINDHT are missing.
         IF (REFHT <= 0.) REFHT = 1.5
         IF (WINDHT <= 0.) WINDHT = 2.0
@@ -1217,7 +1264,15 @@ C         Read in weather file header.
       IF (TMAX .LT. TMIN) THEN 
         ErrCode = 6
       ELSEIF (TMAX - TMIN .LT. 0.05) THEN
-        ErrCode = 5
+!       was ErrCode = 5
+        MSG(1) = "Warning: TMAX ~= TMIN"
+        NChar = MIN(78,LEN_Trim(FILEWW))
+        WRITE(MSG(2),'(A)') FILEWW(1:NChar)
+        WRITE(MSG(3),'(A,I8)') "Line ", RecNum
+        WRITE(MSG(4),'("TMAX = ",F6.2," TMIN = ",F6.2)') TMAX, TMIN
+!        MSG(5)="TMAX will be set equal to TMIN + 0.1 degrees-C"
+!        TMAX = TMIN + 0.1
+        CALL WARNING(4,ERRKEY,MSG) 
       ENDIF
 
       IF (ErrCode .GT. 0) THEN
