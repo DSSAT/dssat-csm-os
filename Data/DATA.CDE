@@ -1367,3 +1367,22 @@ RSWAH  Resid. Stem Wt. Residual stem weight after forage harvest (kg/ha)
 RSRWH  Resid. Stor.Wt. Residual storage organ weight after forage harvest (kg/ha)
 RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)
 RLAIH  Resid. LAI      Residual leaf area index after forage harvest
+
+CH4PRF ProductionFrac  CH4 Production fraction      
+CH4COF ConsumptionFrac CH4 Consumption fraction
+CH4PLF PlantFrac       CH4 Plant fraction      
+CH4EBF EbullitionFrac  CH4 Ebullition fraction 
+CH4DIF DiffusionFrac   CH4 Diffusion fraction  
+CH4LCF LeachingFrac    CH4 Leaching fraction  
+CH4SFL StorFlux        CH4 Storage flux
+CH4SUB TSubstrate      CH4 TSubstrate
+CH4PRD CH4Production   CH4 Production  
+CH4COD CH4Consumption  CH4 Consumption 
+CH4EMD CH4Emission     CH4 Emission    
+CH4PLD CH4PlantFlux    CH4 PlantFlux   
+CH4EBD CH4Ebullition   CH4 Ebullition  
+CH4DID CH4Diffusion    CH4 Diffusion   
+CH4LCD CH4Leaching     CH4 Leaching    
+CH4SFD StorFlux        CH4 Storage flux
+CH4ITR iterations1     iterations1    
+CH4DIF difference1     difference1    
