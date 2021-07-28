@@ -1002,7 +1002,8 @@ c              RGNFIL = 4.929666-3.90*DTT+0.55*(TMAX-TMIN)+5.0067*TEMPM
               NSINK  = RGNFIL*(MGPP+TGPP)*1.E-7
               NSINK  = AMAX1 (NSINK,0.0)
 c             NSINK  = NSINK*AMIN1(NDEF3,SWFAC)
-              IF (NSINK .LT. 0.001) GO TO 1200
+c US,MB,WP    Change from .LT. 0.001 to .LE. 0 to avoid large variability in Grain N content
+              IF (NSINK .LE. 0) GO TO 1200
       
               NSINK  = AMIN1 (NSINK,0.015*GROGRN)
               NSINKT = TGROGRN/GROGRN*NSINK
