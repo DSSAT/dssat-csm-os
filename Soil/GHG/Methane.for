@@ -20,7 +20,10 @@ C Output:
 C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN)                   !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
 
       USE ModuleDefs
       USE FloodModule
@@ -413,8 +416,8 @@ C-----------------------------------------------------------------------
           write(LUN,'(5a)') 
      & "@YEAR DOY   DAS",
      &  "     DCO2D     CO2ED    CH4SBD    CH4SFD    CH4STD    CH4PRD",
-     &  "    CH4COD    CH4LCD    CH4EMD    CH4PLD    CH4EBD    CH4DID",
-     &  "    CH4BLD     DCO2C     CO2EC    CH4EMC    CH4COC    CH4LCC",
+     &  "    CH4COD    CH4LCD     CH4ED    CH4PLD    CH4EBD    CH4DID",
+     &  "    CH4BLD     DCO2C     CO2EC     CH4EC    CH4COC    CH4LCC",
      &  "    CH4BLC" 
         ENDIF
       ENDIF
@@ -475,7 +478,7 @@ C=======================================================================
 ! CH4PRD CH4Production   Daily CH4 Production 
 ! CH4COD CH4Consumption  Daily CH4 Consumption
 ! CH4LCD CH4Leaching     Daily CH4 Leaching 
-! CH4EMD CH4Emission     Daily CH4 Emission 
+! CH4ED  CH4Emission     Daily CH4 Emission 
 ! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux   
 ! CH4EBD CH4Ebullition   Daily CH4 Ebullition  
 ! CH4DID CH4Diffusion    Daily CH4 Diffusion  
@@ -483,7 +486,7 @@ C=======================================================================
 
 ! DCO2C  CumNewCO2       Cumulative CO2 from decomposition
 ! CO2EC  CumCO2Emission  Cumulative CO2 emissions
-! CH4EMC CumCH4Emission  Cumulative CH4 emissions
+! CH4EC  CumCH4Emission  Cumulative CH4 emissions
 ! CH4COC CumCH4Consumpt  Cumulative CH4 consumption
 ! CH4LCC CumCH4Leaching  Cumulative CH4 leaching
 ! CH4BLC Cum_CH4_bal     Cumulative CH4 balance

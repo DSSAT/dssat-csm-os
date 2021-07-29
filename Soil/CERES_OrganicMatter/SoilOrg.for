@@ -54,7 +54,8 @@
 !=======================================================================
 
       SUBROUTINE SoilOrg (CONTROL, ISWITCH, 
-     &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
+     &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
+     &    OMAData, RLV,                                   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
      &    SomLitE, SSOMC)                                 !Output
@@ -134,12 +135,16 @@
       REAL CN_SOM(0:NL), CN_FOM(0:NL)
 
 !     Methane variables:
-      REAL FOMContrib, HUMContrib
+!     REAL FOMContrib, HUMContrib
       REAL Immob_OM
-      REAL TFOMSubstrateC
-      REAL THUMSubstrateC
+!     REAL TFOMSubstrateC
+!     REAL THUMSubstrateC
 !     REAL, DIMENSION(NL) :: CSubstrate
-      REAL CO2FOMFac
+!     REAL CO2FOMFac
+      REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
+     &    CumCH4Leaching, CumCO2Emission
+      REAL RLV(NL), DRAIN
 
       REAL, PARAMETER :: FOMCFrac = 0.4
       REAL, PARAMETER :: HumusCFrac = 0.526 !(=1/1.9)
@@ -220,6 +225,12 @@
       newCO2_HUM = 0.0
       newCO2 = 0.0
 
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -292,10 +303,10 @@
 
       PREV_CROP = CONTROL % CROP  !Save crop name for harvest residue
 
-!     Substrate for methanogenesis
-      TFOMSubstrateC = 0.0
-      THUMSubstrateC = 0.0
-!     CSubstrate = 0.0
+!!     Substrate for methanogenesis
+!      TFOMSubstrateC = 0.0
+!      THUMSubstrateC = 0.0
+!!     CSubstrate = 0.0
 
       ACCCO2 = 0.0 !Cumulative CO2 released from SOM, FOM decomposition
       newCO2_FOM = 0.0
@@ -477,8 +488,8 @@
       TOMINSOM = 0.0
       TNIMBSOM = 0.0
 
-      TFOMSubstrateC = 0.0
-      THUMSubstrateC = 0.0 
+!      TFOMSubstrateC = 0.0
+!      THUMSubstrateC = 0.0 
       newCO2 = 0.0
 
       DO L = 1, NLAYR
@@ -673,6 +684,11 @@ C         recruit (NREQ-N CONC) g of N
         newCO2_HUM(L) = HUMFRAC * SSOMC(L)
         newCO2(L) = newCO2_HUM(L) + newCO2_FOM(L)
 
+!     temp chp
+        write(3001,'(i7,i3,3f12.4)') 
+     &    control%yrdoy, L, newCO2_FOM(L), newCO2_HUM(L), newCO2(L)
+
+
 !       chp 2019-03-07 Add 20% of C, regardless of N movement. Let C decomposition
 !         drive the mass transfer.
         DLTHUMC(L) = DLTHUMC(L) + 0.2 * FOMCFrac * DLTFOM
@@ -732,39 +748,45 @@ C         recruit (NREQ-N CONC) g of N
 !         MINERALIZE(L,P) = PNOM
         ENDIF
 
-!       --------------------------------------------------------------------------------------
-!       Calculate total amt of C (kg[C]/ha/d) released by decay for methanogenesis
-!       Convert from kg[DM]/ha to kg[C]/ha
-        CO2FOMFac = (FPOOL(L,1) * 0.55 
-     &            +  FPOOL(L,2) * 0.55 
-     &            +  FPOOL(L,3) * 0.30) / FOM(L)
-
-        FOMContrib = FOMFRAC * FOM(L) * FOMCFrac * CO2FOMFac
-!       C released =  Frac   * FOM    *    0.4   *   Same as
-!       from FOM    decomposed                      FOMCFrac?
-
-!       already in units of kg[C]/ha
-        HUMContrib = SSOMC(L) * HUMFRAC * 0.55
-!     the 0.55 value = portion of decomposed humus that goes to CO2 (value from Century model)
-!                  = amount of humus decomposed 
-    ! &             - 0.2 * FOMFRAC * FON(L) * HumusCNRatio 
-!                  - minus [C] moving from FOM to Humus 
-!        HUMFRAC = DMINR * TFSOM * CMF * DMOD1 * PHMIN
-!        DLTHUMC(L) = DLTHUMC(L) - HUMFRAC * SSOMC(L)  !change to humus C
-
-        TFOMSubstrateC = TFOMSubstrateC + FOMContrib
-        THUMSubstrateC = THUMSubstrateC + HUMContrib 
-
-!       CSubstrate (methane routine) = newCO2 (N2O routine) - verify with PG!
-!       CSubstrate(L)  = FOMContrib + HUMContrib  !substrate for methane production
-        newCO2(L) = FOMContrib + HUMContrib     !new CO2 production
-
-!     temp chp
-        write(3000,'(i7,i3,3f12.4)') 
-     &    control%yrdoy, L, FOMContrib, HUMContrib, newCO2(L)
-!       --------------------------------------------------------------------------------------
+!!       --------------------------------------------------------------------------------------
+!!       Calculate total amt of C (kg[C]/ha/d) released by decay for methanogenesis
+!!       Convert from kg[DM]/ha to kg[C]/ha
+!        CO2FOMFac = (FPOOL(L,1) * 0.55 
+!     &            +  FPOOL(L,2) * 0.55 
+!     &            +  FPOOL(L,3) * 0.30) / FOM(L)
+!
+!        FOMContrib = FOMFRAC * FOM(L) * FOMCFrac * CO2FOMFac
+!!       C released =  Frac   * FOM    *    0.4   *   Same as
+!!       from FOM    decomposed                      FOMCFrac?
+!
+!!       already in units of kg[C]/ha
+!        HUMContrib = SSOMC(L) * HUMFRAC * 0.55
+!!     the 0.55 value = portion of decomposed humus that goes to CO2 (value from Century model)
+!!                  = amount of humus decomposed 
+!    ! &             - 0.2 * FOMFRAC * FON(L) * HumusCNRatio 
+!!                  - minus [C] moving from FOM to Humus 
+!!        HUMFRAC = DMINR * TFSOM * CMF * DMOD1 * PHMIN
+!!        DLTHUMC(L) = DLTHUMC(L) - HUMFRAC * SSOMC(L)  !change to humus C
+!
+!!        TFOMSubstrateC = TFOMSubstrateC + FOMContrib
+!!        THUMSubstrateC = THUMSubstrateC + HUMContrib 
+!
+!!       CSubstrate (methane routine) = newCO2 (N2O routine) - verify with PG!
+!!       CSubstrate(L)  = FOMContrib + HUMContrib  !substrate for methane production
+!        newCO2(L) = FOMContrib + HUMContrib     !new CO2 production
+!
+!!     temp chp
+!        write(3000,'(i7,i3,3f12.4)') 
+!     &    control%yrdoy, L, FOMContrib, HUMContrib, newCO2(L)
+!!       --------------------------------------------------------------------------------------
 
       END DO   !End of soil layer loop.
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
 
 !     Transfer daily mineralization values for use by Cassava model
       CALL PUT('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
@@ -889,6 +911,12 @@ C         recruit (NREQ-N CONC) g of N
 !     Compute mulch properties
       CALL MULCHLAYER (MULCH)
 
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
+
 C***********************************************************************
 C***********************************************************************
 C     END OF INTEGR
@@ -916,6 +944,12 @@ C     Write seasonal output
       CALL SoilNoPoBal (CONTROL, ISWITCH, 
      &    FON, HARVRES, IMM, LITE, MNR, MULCH, N_ELEMS,   !Input
      &    NLAYR, OMADATA, SENESCE, TLITE, TSOME)          !Input
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
 
 C***********************************************************************
 C***********************************************************************

@@ -101,7 +101,6 @@ C=====================================================================
       INTEGER DYNAMIC, L
 
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
-      REAL, DIMENSION(NL) :: CSubstrate
       REAL, DIMENSION(NL) :: DRN
       REAL, DIMENSION(NL) :: SPi_Labile, NO3, NH4
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
@@ -111,8 +110,8 @@ C=====================================================================
       REAL TDFC
       INTEGER TDLNO
 
-!     Added for methane model:
-      REAL DRAIN, FLOOD
+!     Added for methane
+      REAL DRAIN
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -152,7 +151,8 @@ C=====================================================================
 !      ELSEIF (MESOM .EQ. 'G') THEN
 !       Godwin (Ceres-based) soil organic matter module (formerly NTRANS)
         CALL SoilOrg (CONTROL, ISWITCH, 
-     &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
+     &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
+     &    OMAData, RLV,                                   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
      &    SomLitE, SSOMC)                                 !Output
@@ -166,9 +166,6 @@ C=====================================================================
      &    XHLAI,                                          !Input
      &    FLOODN,                                         !I/O
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
-
-!      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,    !Input
-!     &    FLOODWAT, SW, RLV, newCO2, DRAIN)               !Input
 
 !     Inorganic P
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 

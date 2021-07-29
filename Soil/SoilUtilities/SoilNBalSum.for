@@ -112,7 +112,6 @@
 !        TotLastSenes = TotLastSenes + SENESCE % ResE(L,N)
 !      ENDDO
 
-
 !     Inorganic
       IF (PRESENT(N_inorganic)) THEN
         State(6) = N_inorganic
