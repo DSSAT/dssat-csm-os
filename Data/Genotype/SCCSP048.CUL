@@ -39,10 +39,10 @@
 !              |             |                       |             |                                                                  |                                                                                |
 ! LIshd        |0.85 - 0.95  | Canopy                | proportion  | PAR intercepted by direct-sun plus mid-level canopy zone         |                                                                                |
 ! -------------+-------------+-----------------------+-------------+------------------------------------------------------------------+--------------------------------------------------------------------------------+
-! TB(1)        |     9       | Leaf phenology        | °C          | Base temperature for leaf appearance and primary stalk emergence |                                                                                |
-! TO1(1)       |    27       | Leaf phenology        | °C          | Lower optimum temperature, leaf development                      |                                                                                |
-! TO2(1)       |    32       | Leaf phenology        | °C          | Upper optimum temperature, leaf development                      |                                                                                |
-! TM(1)        |    45       | Leaf phenology        | °C          | Maximum temperature, leaf development                            |                                                                                |
+! TB_1         |     9       | Leaf phenology        | °C          | Base temperature for leaf appearance and primary stalk emergence |                                                                                |
+! TO1_1        |    27       | Leaf phenology        | °C          | Lower optimum temperature, leaf development                      |                                                                                |
+! TO2_1        |    32       | Leaf phenology        | °C          | Upper optimum temperature, leaf development                      |                                                                                |
+! TM_1         |    45       | Leaf phenology        | °C          | Maximum temperature, leaf development                            |                                                                                |
 ! PI1          | 85 - 120    | Leaf phenology        | °C-day      | Phyllocron interval 1                                            |                                                                                |
 ! PI2          | 85 - 170    | Leaf phenology        | °C-day      | Phyllocron interval 2                                            |                                                                                |
 ! DTPI         | 900 - 1600  | Leaf phenology        | °C-day      | Thermal time threshold at which phyllocron interval changes      |                                                                                |
@@ -54,10 +54,10 @@
 !              |             |                       |             |    light among tillers                                           |                                                                                |
 ! TELOM        | 130 - 300   | Tiller phenology      | °C-day      | Threshold to tiller emergence (telomechron interval) during early| Concept from Bezuidenhout et al 2003 p 592 (values not based on same paper)    |
 !              |             |                       |             |    growth prior to light competition among tillers. [TB(2)]      |                                                                                |
-! TB(2)        |    16       | Tiller phenology      | °C          | Base temperature for tiller appearance                           |                                                                                |
-! TO1(2)       |    27       | Tiller phenology      | °C          | Lower optimum temperature, tiller development                    |                                                                                |
-! TO2(2)       |    32       | Tiller phenology      | °C          | Upper optimum temperature, tiller development                    |                                                                                |
-! TM(2)        |    45       | Tiller phenology      | °C          | Maximum temperature, tiller development                          |                                                                                |
+! TB_2         |    16       | Tiller phenology      | °C          | Base temperature for tiller appearance                           |                                                                                |
+! TO1_2        |    27       | Tiller phenology      | °C          | Lower optimum temperature, tiller development                    |                                                                                |
+! TO2_2        |    32       | Tiller phenology      | °C          | Upper optimum temperature, tiller development                    |                                                                                |
+! TM_2         |    45       | Tiller phenology      | °C          | Maximum temperature, tiller development                          |                                                                                |
 ! Ph1P         | 168- 348    | Tiller phenology      | °C-day      | threshold to sprouting, plant cane    [TB(1)]                    | Robertson et al. 1998 Pg 822 (8 deg base temp)                                 |
 ! Ph1R         |  90 - 110   | Tiller phenology      | °C-day      | threshold to sprouting, ratoon cane                              |                                                                                |
 ! Ph2          | 0.7 - 1.5   | Tiller phenology      | mm/°C-day   | Growth rate of primary stalk (rate of emergence for plant cane)  | Robertson et al. 1998 Pg 823                                                   |
@@ -65,16 +65,16 @@
 !              |             |                       |             |    and first leaves above the ground surface                     |                                                                                |
 ! Ph4          | 6000-6600   | Tiller phenology      | °C-day      | Threshold  for tillering and establishment of the foliage        |                                                                                |
 !              |             |                       |             |    (currently continuation of Phase 3)                           |                                                                                |
-! StkHrNO      |             | Tiller phenology      | tillers     | Number of mature stalks per stool at most recent harvest         |   (will be removed to experimental file)                                       |
-! RTNFAC       |             | Tiller phenology      | tillers     | Number of primary shoots to develop from each mature stalk cut   |                                                                                |
+! StHrv        |             | Tiller phenology      | tillers     | Number of mature stalks per stool at most recent harvest         |   (will be removed to experimental file)                                       |
+! RTNFC        |             | Tiller phenology      | tillers     | Number of primary shoots to develop from each mature stalk cut   |                                                                                |
 !              |             |                       |             |   during the previous harvest (ratoon growth only)               |                                                                                |
 ! MinGr        |  40 - 100   | Tiller phenology      | kg/tiller   | Weight below which a tiller having more than CAB X 2 nodes       |   CAB - number of leaves in spindle cluster at top of stalk ("cabbage").       |
 !              |             |                       |             |    senesces (g)                                                  |         Defined in ecotype file.                                               |
 ! -------------+-------------+-----------------------+-------------+------------------------------------------------------------------+--------------------------------------------------------------------------------+                                                                                                                                                  
-! RES30C       | 0.21 - 0.4  | Respiration/Senescence| g CH2O used | Respiration coefficient that depends on stalk & root mass        | Singels et al 2005 pg 295 (lower value)                                        |
+! RE30C        | 0.21 - 0.4  | Respiration/Senescence| g CH2O used | Respiration coefficient that depends on stalk & root mass        | Singels et al 2005 pg 295 (lower value)                                        |
 !              |             |                       | /kg DW/hr   |    at 30C (related in CASUPRO to shade-induced senescence)       | from MZIXM045  RES30C = 0.000158                                               |
 !              |             |                       |             |                                                                  |                                                                                |
-! RLF30C       | 0.6 - 0.7   | Respiration/Senescence| g CH2O used | Respiration coefficient that depends on leaf mass                |                                                                                |
+! RL30C        | 0.6 - 0.7   | Respiration/Senescence| g CH2O used | Respiration coefficient that depends on leaf mass                |                                                                                |
 !              |             |                       | /kg DW/hr   |    at 30C (related in CASUPRO to shade-induced senescence)       | Singels et al 2005 pg 295 (mid-value)                                          |
 !              |             |                       |             |                                                                  |                                                                                |
 ! R30C2        | 3.5 - 4.5   | Respiration/Senescence| g CH2O used | Respiration coefficient that depends on gross photosynthesis     | from MZIXM045  R30C2 = 0.0026                                                  |
@@ -88,7 +88,7 @@
 !
 !             P/G/N:Phenology/Growth/Not used for calbration
 !
-@VAR#  VAR-NAME........ EXPNO   ECO# LFMAX PHTMX|Stalk Sucro|Null1  PLF1  PLF2 Gamma  StkB  StkM Null3 SIZLF LIsun LIshd Null4 TB(1)TO1(1)TO2(1) TM(1)   PI1   PI2  DTPI LSFAC Null5   LI1 TELOM TB(2)TO1(2)TO2(2) TM(2)  Ph1P  Ph1R   Ph2   Ph3   Ph4 StHrvRTNFAC MinGr Null7RES30CRLF30C R30C2            
+@VAR#  VAR-NAME........ EXPNO   ECO# LFMAX PHTMX Stalk Sucro Null1  PLF1  PLF2 Gamma  StkB  StkM Null3 SIZLF LIsun LIshd Null4  TB_1 TO1_1 TO2_1  TM_1   PI1   PI2  DTPI LSFAC Null5   LI1 TELOM  TB_2 TO1_2 TO2_2  TM_2  Ph1P  Ph1R   Ph2   Ph3   Ph4 StHrv RTNFC MinGr Null7 RE30C RL30C R30C2            
 !Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    28    29    30    31    32    33    34    35    36    37    38    39    40    41    42
 !Calibration                             G     G     G     G     G     G     G     G     G     G     G     G     G     G     N     N     N     N     N     G     G     G     N     N     G     G     N     N     N     N     G     N     N    G     N      N     N     G     N     G     G     G
 

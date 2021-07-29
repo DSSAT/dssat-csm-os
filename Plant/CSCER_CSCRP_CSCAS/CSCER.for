@@ -7948,7 +7948,9 @@ C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE err
               WRITE (fnumwrk,*) 'Writing OVERVIEW'
               
               FNAMETMP = ' '
-              FNAMETMP(1:12) = 'Overview.'//out
+              ! TF - Updated OVERVIEW.OUT name to avoid issues
+              ! with case sensitive systems (07/27/2021) 
+              FNAMETMP(1:12) = 'OVERVIEW.'//out
               
               IF (FILEIOT(1:2).EQ.'DS') THEN
                 IF (RUN.EQ.1 .AND. RUNI.EQ.1) THEN
