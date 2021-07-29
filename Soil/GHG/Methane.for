@@ -41,7 +41,7 @@ C=======================================================================
      &     CH4Diffusion,CH4Leaching,CH4Stored
       REAL CumCH4Consumpt, CumCH4Leaching, newCO2Tot, CH4_balance
       REAL CumCH4Emission, CumCO2Emission, CO2emission, CumNewCO2
-      REAL StorageFlux, Cum_CH4_bal
+      REAL StorageFlux, Cum_CH4_bal, CH4Stored_Y
 
       REAL TCO2, TCH4, FloodCH4
 
@@ -71,6 +71,7 @@ C-----------------------------------------------------------------------
       CumCO2Emission= 0.0
       CumNewCO2     = 0.0
       CH4Stored     = 0.0
+      CH4Stored_Y   = 0.0
 
 	spd = 24.*3600.   ! seconds per day
 
@@ -200,7 +201,6 @@ c	if(i.eq.1) write(29,'(i6,3f10.6)') dap,flood,afp(1),buffconc
 
 !       Total CH4 substrate (kgC/ha)
         TCH4Substrate = TCH4Substrate + rCH4  
-        CO2emission   = CO2emission   + rCO2
 
 !       TEMP CHP
 !       WRITE(5555, '(i7,i4,3f10.4)') 
@@ -267,22 +267,27 @@ C***********************************************************************
 C-----------------------------------------------------------------------
 c Calculate emissions from dissolved CH4 on draining
       if (FLOOD.gt.0.0) then
-        CH4Stored = meth%Storage !chp* 12. * 10.	! kgC/ha
+        CH4Stored = meth%Storage !chp * 12. * 10.	! kgC/ha
       else
         x = CH4Stored * 0.5
         CH4Emission = CH4Emission + x
         CH4Stored =	CH4Stored - x
       endif
 
-      StorageFlux = meth % StorageFlux
+      StorageFlux = CH4Stored - CH4Stored_Y
+      CH4Stored_Y = CH4Stored
 
+      CO2Emission    = newCO2Tot - CH4Production - StorageFlux
+      CO2Emission = AMIN1(CO2Emission, newCO2Tot)
+
+      CumNewCO2        = CumNewCO2        + newCO2Tot
       CumCH4Emission   = CumCH4Emission   + CH4Emission
       CumCH4Consumpt   = CumCH4Consumpt   + CH4Consumption
       CumCH4Leaching   = CumCH4Leaching   + CH4Leaching
       CumCO2Emission   = CumCO2Emission   + CO2emission
 
-      CH4_balance = newCO2Tot - (CO2emission + CH4Emission + CH4stored +
-     &                           CH4Leaching + CH4Consumption)
+      CH4_balance = newCO2Tot - (CO2emission + CH4Emission + 
+     &                       StorageFlux + CH4Leaching + CH4Consumption)
 
       Cum_CH4_bal = CumNewCO2 - (CumCO2Emission + CumCH4Emission + 
      &                      CH4stored + CumCH4Leaching + CumCH4Consumpt)
@@ -409,8 +414,8 @@ C-----------------------------------------------------------------------
      & "@YEAR DOY   DAS",
      &  "     DCO2D     CO2ED    CH4SBD    CH4SFD    CH4STD    CH4PRD",
      &  "    CH4COD    CH4LCD    CH4EMD    CH4PLD    CH4EBD    CH4DID",
-     &  "    CHRBLD     DCO2C     CO2EC    CH4EMC    CH4COC    CH4LCC",
-     &  "    CHRBLC" 
+     &  "    CH4BLD     DCO2C     CO2EC    CH4EMC    CH4COC    CH4LCC",
+     &  "    CH4BLC" 
         ENDIF
       ENDIF
 
@@ -474,14 +479,14 @@ C=======================================================================
 ! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux   
 ! CH4EBD CH4Ebullition   Daily CH4 Ebullition  
 ! CH4DID CH4Diffusion    Daily CH4 Diffusion  
-! CHRBLD CH4_balance     Daily CH4 balance 
+! CH4BLD CH4_balance     Daily CH4 balance 
 
 ! DCO2C  CumNewCO2       Cumulative CO2 from decomposition
 ! CO2EC  CumCO2Emission  Cumulative CO2 emissions
 ! CH4EMC CumCH4Emission  Cumulative CH4 emissions
 ! CH4COC CumCH4Consumpt  Cumulative CH4 consumption
 ! CH4LCC CumCH4Leaching  Cumulative CH4 leaching
-! CHRBLC Cum_CH4_bal     Cumulative CH4 balance
+! CH4BLC Cum_CH4_bal     Cumulative CH4 balance
 
 
 
