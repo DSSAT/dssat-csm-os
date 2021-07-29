@@ -338,6 +338,7 @@ C        Branch to menu choice
          CASE (6); CALL GETREAL (PHINT,'PHINT',1.0,200.0)
          END SELECT
 
+
 !=======================================================================
 C**WDB 12/2015 Added this section for Sugarbeet
 
@@ -371,6 +372,39 @@ C        Branch to menu choice
          CASE (4); CALL GETREAL (G2,'G2   ',170.0,220.0)
          CASE (5); CALL GETREAL (G3,'G3   ', 20.0,  50.0)
          CASE (6); CALL GETREAL (PHINT,'PHINT',1.0,200.0)
+         END SELECT
+
+!=======================================================================
+!     FV added case for sunflower model OilcropSun 10/20/2020
+      CASE ('SUOIL')
+
+        WRITE (*,5410) P1,P2,P5,G2,G3,PHINT
+5410    FORMAT (12X,'0. End of changes',//,
+     1  12X,'1. P1 (Growing degree days from emergence to',/,
+     2  12X,'       end of juvenile phase)...................[',F7.1,/,
+     3  12X,'2. P2 (Photoperiod sensitivity).................[',F7.1,/,
+     4  12X,'3. P5 (Cumulative growing degree days from',/,
+     5  12X,'       anthesis to maturity).....................[',F7.1,/,
+     6  12X,'4. G2 (Potential grain number).................[',F7.1,/,
+     7  12X,'5. G3 (Potential kernel growth rate)............[',F7.1,/,
+     8  12X,'6. O1 (Oil kernel concentration)........[',F7.1,/)
+
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,6,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE (IPARAM)
+         CASE (0); RETURN
+         CASE (1); CALL GETREAL (P1,'P1   ',250.0, 450.0)
+         CASE (2); CALL GETREAL (P2,'P2   ',  0.5,  12.0)
+         CASE (3); CALL GETREAL (P5,'P5   ',550.0, 750.0)
+         CASE (4); CALL GETREAL (G2,'G2   ',900.0,3000.0)
+         CASE (5); CALL GETREAL (G3,'G3   ',  1.2,   2.4)
+         CASE (6); CALL GETREAL (O1,'O1   ', 35.0,  70.0)
          END SELECT
          
 !=======================================================================

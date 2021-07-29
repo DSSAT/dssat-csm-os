@@ -356,7 +356,6 @@ WSGD   H20 stress,ex   Water stress - expansion/partioning/development (0-1)    
 WSPAV  H2O stress (av) Water stress (avg) - photosynthesis (0-1,0=none)         .
 WSPD   H20 stress,ph   Water stress - photosynthesis (0-1)                      .
 WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         .
-
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 AMLC   NH3vol kgN/ha   Cumulative ammonia volatilization (kg [N]/ha)            .

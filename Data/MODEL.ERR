@@ -362,7 +362,7 @@ IPPLNT    2
 Error in planting inputs.  Check format.
 
 IPPLNT   10
-Planting Date is Before Start of Simulation.  Please Fix Input File.
+Error in planting date input.  Check format.
 
 IPPLNT   11
 Error in plant population input.  Check format.
