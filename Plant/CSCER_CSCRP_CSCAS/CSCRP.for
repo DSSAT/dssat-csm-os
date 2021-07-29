@@ -1950,7 +1950,9 @@
 
           ! IDETO FILES
           ! NB. Renaming of Overview and Evaluate handled by CSM
-          FNAMEOV = 'Overview.'//out
+          ! TF - Updated OVERVIEW.OUT name to avoid issues
+          ! with case sensitive systems (07/27/2021) 
+          FNAMEOV = 'OVERVIEW.'//out
           FNAMEEVAL = 'Evaluate.'//out
           FNAMEMEAS = 'Measured.'//out
           CALL GETLUN (FNAMEEVAL,fnumeval)
