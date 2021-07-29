@@ -167,8 +167,8 @@ C=====================================================================
      &    FLOODN,                                         !I/O
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
-      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,    !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN)               !Input
+!      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,    !Input
+!     &    FLOODWAT, SW, RLV, newCO2, DRAIN)               !Input
 
 !     Inorganic P
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 
