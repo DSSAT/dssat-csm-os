@@ -82,6 +82,8 @@ C=======================================================================
       
 !     P Stress on photosynthesis
       REAL PSTRES1
+!     Hourly transpiration for MEEVP=H      
+      REAL, DIMENSION(TS)    :: ET0
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -134,7 +136,7 @@ C=======================================================================
       IF (MEPHO .EQ. 'L' .OR. MEEVP .EQ. 'Z') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
+     &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
       
@@ -160,6 +162,8 @@ C=======================================================================
       ES_LYR = 0.0
       SWDELTX = 0.0
       TRWU = 0.0
+      XHLAI = 0.0
+      ET0 = 0.0
 
 !     ---------------------------------------------------------
       IF (meevp .NE.'Z') THEN   !LPM 02dec14 to use the values from ETPHOT
@@ -198,9 +202,10 @@ C=======================================================================
         END SELECT
 
 !       Initialize plant transpiration variables
-        CALL TRANS(DYNAMIC, 
-     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+        CALL TRANS(DYNAMIC, MEEVP, 
+     &    CO2, CROP, EO, ET0, EVAP, KTRANS,               !Input
      &    WINDSP, XHLAI,                                  !Input
+     &    WEATHER,                                        !Input
      &    EOP)                                            !Output
       ENDIF
 
@@ -294,12 +299,13 @@ C       and total potential water uptake rate.
           ELSE
             ET_ALB = MSALB
           ENDIF
-
-          CALL PET(CONTROL, 
-     &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
-     &      EORATIO, !Needed by Penman-Monteith
-     &      CANHT,   !Needed by dynamic Penman-Monteith
-     &      EO)      !Output
+          
+           CALL PET(CONTROL, 
+     &       ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
+     &       EORATIO, !Needed by Penman-Monteith
+     &       CANHT,   !Needed by dynamic Penman-Monteith
+     &       EO,      !Output
+     &       ET0)     !Output hourly Priestly-Taylor with VPD effect
 
 !-----------------------------------------------------------------------
 !         POTENTIAL SOIL EVAPORATION
@@ -389,9 +395,10 @@ C       and total potential water uptake rate.
 
 !            CASE DEFAULT
 !             For all models except ORYZA
-              CALL TRANS(RATE, 
-     &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
+              CALL TRANS(RATE, MEEVP, 
+     &        CO2, CROP, EO, ET0, EVAP, KTRANS,           !Input
      &        WINDSP, XHLAI,                              !Input
+     &        WEATHER,                                    !Input
      &        EOP)                                        !Output
 !            END SELECT
             

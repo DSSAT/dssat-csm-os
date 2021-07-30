@@ -63,6 +63,7 @@ readme*
 CMakeFiles/
 CMakeCache.txt
 Data/DSSATPRO.L47
+Data/DSSATPRO.L48
 Utilities/run_dssat
 Utilities/CSMVersion.for
 Plant/ORYZA

@@ -41,14 +41,15 @@
         ! And weights are in kg/ha
         CWAD = (canopyWeight())*plantPopulation()                                                                       !EQN 318
         SRWAD = SRWT*plantPopulation()
-        LLWAD = LFWT*(1.0-LPEFR)*plantPopulation()
+        FHWAD = SRWTF*plantPopulation()
+        LLWAD = LFWT*plantPopulation()
         LPEWAD = LFWT*LPEFR*plantPopulation()
         RWAD = RTWT*plantPopulation()
         IF (SEEDRS < 0.0) THEN 
             SEEDRS = SDSZ*(SDRS/100.0)*SPRL   !LPM 23MAR2016  to initialize the value of SEEDRS
         ENDIF
         SDWT = (SEEDRS+SDCOAT)*plantPopulation()
-        TWAD = (SEEDRS+SDCOAT+totalWeight())* plantPopulation()
+        TWAD = totalWeight()* plantPopulation()
 
         
         ! Leaf petioles NOT included in stem here
@@ -61,9 +62,9 @@
         !CRRSWAD = CRRSWT*plantPopulation()
                 
         ! Need to CHECK these
-        SENROOTA = SENROOT*10.0*PLTPOP
-        SENCAS = SENCS*10.0*PLTPOP
-        SENLAS = SENLS*10.0*PLTPOP
+        SENROOTA = SENROOT*plantPopulation()
+        SENCAS = SENCS*plantPopulation()
+        SENLAS = SENLS*plantPopulation()
         SENTOPLITTERA = SENTOPLITTER*plantPopulation()
         DO L =1,NLAYR
             RTWTAL(L) = RTWTL(L)*plantPopulation()
@@ -72,7 +73,7 @@
                 
         
                 
-        VWAD = (canopyWeight())*PLTPOP * 10.0                                                                     !EQN 019
+        VWAD = (canopyWeight())*plantPopulation()                                                                    !EQN 019
                 
         SHNUMAD = SHNUM*PLTPOP
                 
@@ -94,13 +95,19 @@
         ! LAH Note that no reserves included in sancout
         ! SANCOUT = SNAD/(STWAD+STRSWAD + LPEWAD+LPERSWAD)  ! With rs
         IF (STWAD > ZERO) SANCOUT = SNAD/STWAD
+        IF (LLWAD > ZERO) LANCM = LLNAD/LLWAD
                 
         HWAD = SRWAD
+        !LPM 14apr2021 Adding the % of dry matter 
+        IF (FHWAD > 0.0) THEN
+            PDMCD = HWAD / FHWAD
+        ENDIF
+        
         ! HWUD = SRWUD ! issue 50
         ! HNUMAD = SRNOPD * PLTPOP ! issue 50
         HNAD = SRNAD
         HNC = SRANC
-        SENNAS = SENNS*10.0*PLTPOP
+        SENNAS = SENNS*plantPopulation()
         SENNAL(0) = SENNL(0)*plantPopulation()
         SENNATC = SENNAL(0)+SENNAS
         DO L =1,NLAYR

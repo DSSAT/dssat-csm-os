@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.7; 09/18/2020
+! DSSAT v4.8; 07/27/2021
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -230,60 +230,48 @@ CH102    Ethylene [Growth Regulator]                                          IB
 *Crop and Weed Species
 @CDE     DESCRIPTION                                                          SO
 AL       Alfalfa                                                              IB
-AR       Aroid                                                                IB
 BA       Barley                                                               IB
-BM       Bermuda grass                                                        IB
+BM       Bermudagrass                                                         IB
 BH       Bahia grass                                                          IB
 BN       Dry bean                                                             IB
 BR       Brachiaria                                                           IB
 BS       Sugar beet                                                           IB
-BW       Broad leaf weeds                                                     IB
 CB       Cabbage                                                              IB
 CH       Chickpea                                                             IB
-CT       Citrus                                                               IB
+CI       Chia                                                                 IB
 CN       Canola                                                               IB
 CO       Cotton                                                               IB
 CP       Cowpea                                                               IB
 CS       Cassava                                                              IB
-CU       Cucumber                                                             IB
-CV       Clover                                                               IB
 FA       Fallow                                                               IB
 FB       Faba bean                                                            IB
 GB       Green bean                                                           IB
-GR       Grass vegetation                                                     IB
-GW       Grass weeds                                                          IB
 LT       Lentil                                                               IB
 ML       Pearl millet                                                         IB
 MZ       Maize                                                                IB
-NN       Banana                                                               IB
 NP       Napier grass                                                         IB
-OA       Oats                                                                 IB
 PE       Pea                                                                  IB
 PI       Pineapple                                                            IB
 PN       Peanut                                                               IB
 PO       Perennial peanut                                                     IB
 PP       Pigeon pea                                                           IB
-PR       Pepper                                                               IB
+PR       Bell pepper                                                          IB
 PT       Potato                                                               IB
 QU       Quinoa                                                               IB
-RG       Ryegrass                                                             IB
 RI       Rice                                                                 IB
-RP       Rhizoma peanut                                                       IB
 SB       Soybean                                                              IB
 SC       Sugarcane                                                            IB
 SF       Safflower                                                            IB
-SG       Grain sorghum                                                        IB
-SI       Switch grass                                                         IB
+SG       Sorghum                                                              IB
 SQ       Sequence                                                             IB
 SS       Sesame                                                               IB
 SU       Sunflower                                                            IB
-SW       Sweetcorn                                                            IB
+SW       Sweet corn                                                           IB
 TF       Teff                                                                 IB
 TM       Tomato                                                               IB
-TN       Tanier                                                               IB
+TN       Tannier                                                              IB
 TR       Taro                                                                 IB
 VB       Velvet bean                                                          IB
-VI       Vine                                                                 IB
 WH       Wheat                                                                IB
 
 *Disease and Pest Organisms
@@ -329,26 +317,141 @@ FE002    Ammonium sulfate                                                     IB
 FE003    Ammonium nitrate sulfate                                             IB
 FE004    Anhydrous ammonia                                                    IB
 FE005    Urea                                                                 IB
-FE006    Diammnoium phosphate                                                 IB
-FE007    Monoammonium phosphate                                               IB
+FE006    Diammonium phosphate (DAP)                                           IB
+FE007    Monoammonium phosphate (MAP)                                         IB
 FE008    Calcium nitrate                                                      IB
 FE009    Aqua ammonia                                                         IB
-FE010    Urea ammonium nitrate solution                                       IB
-FE011    Calcium ammonium nitrate solution                                    IB
-FE012    Ammonium polyphosphate                                               IB
+FE010    Urea ammonium nitrate                                                IB
+FE011    Calcium ammonium nitrate                                             IB
+FE012    Ammonium poly-phosphate                                              IB
 FE013    Single super phosphate                                               IB
-FE014    Triple super phosphate                                               IB
+FE014    Triple super phosphate (TSP)                                         IB
 FE015    Liquid phosphoric acid                                               IB
-FE016    Potassium chloride                                                   IB
-FE017    Potassium nitrate                                                    IB
+FE016    Potassium chloride (muriate of potash, MOP)                          IB
+FE017    Potassium nitrate (nitrate of potash)                                IB
 FE018    Potassium sulfate                                                    IB
 FE019    Urea super granules                                                  IB
 FE020    Dolomitic limestone                                                  IB
 FE021    Rock phosphate                                                       IB
 FE022    Calcitic limestone                                                   IB
+FE023    Urea ammonium sulfate                                                IB
 FE024    Rhizobium                                                            IB
-FE026    Calcium hydroxide                                                    IB
-FE051    Urea super granules (Control release)                                IB
+FE026    Calcium hydroxide (hydrated lime)                                    IB
+FE027    NPK - ammonium nitrate                                               IB
+FE028    NPK - urea                                                           IB
+FE029    NPK - ammonium nitrate urea                                          IB
+FE036    32% UAN (35% urea + 45% A.N.)                                        IB
+FE037    30% UAN (33% urea + 42% A.N.)                                        IB
+FE038    28% UAN (30% urea + 40% A.N.)                                        IB
+FE039    21% AN (60% A.N. + 40% water)                                        IB
+FE040    19% AN (54% A.N. + 46% water)                                        IB
+FE041    Ammonium nitrate limestone                                           IB
+FE042    Ammonionated super phosphate                                         IB
+FE043    Ammonium phosphate nitrate                                           IB
+FE044    Ammonium phosphate sulfate                                           IB
+FE045    Urea ammonium phosphate                                              IB
+FE046    Urea phosphate                                                       IB
+FE050    Calcium cyanamide                                                    IB
+FE051    Calcium nitrate-urea                                                 IB
+FE055    Sodium nitrate                                                       IB
+FE056    Magnesium nitrate                                                    IB
+FE057    Ammonium thiosulfate** (60% solution)                                IB
+FE058    Ammonium polysulfide                                                 IB
+FE059    Ammonium sulfate solution                                            IB
+FE060    Ammonium sulfate - nitrate                                           IB
+FE061    Ferrous ammonium sulfate                                             IB
+FE062    Liquid ammonium polyphosphate                                        IB
+FE063    Nitric phosphate                                                     IB
+FE064    Nitric acid                                                          IB
+FE065    Urea solution                                                        IB
+FE066    Zinc ammonium sulfate solution                                       IB
+FE067    Zinc manganese ammonium sulfate                                      IB
+FE068    Ammonium metaphosphate                                               IB
+FE069    Ammonium phosphate                                                   IB
+FE070    Potassium - sodium nitrate                                           IB
+FE201    ESN                                                                  IB
+FE202    NBTPT                                                                IB
+FE203    DCD (dicyandiamide)                                                  IB
+FE204    SuperU                                                               IB
+FE205    DMPP (3,4-Dimethylpyrazole phosphate)                                IB
+FE206    Sulfur coated urea (thin coat)                                       IB
+FE207    Sulfur coated urea (thick coat)                                      IB
+FE208    ESN + NBTPT                                                          IB
+FE209    Ureaform (urea + formaldehyde)                                       IB
+FE210    Crotonylidene diurea (CDU)                                           IB
+FE211    Isobutylidene diurea (IBDU)                                          IB
+FE212    Methylene ureas                                                      IB
+FE300    Mono potassium phosphate (MKP)                                       IB
+FE301    Superphosphoric acid                                                 IB
+FE302    Calcium metaphosphate                                                IB
+FE303    Potassium metaphosphate                                              IB
+FE304    Precipitated phosphate                                               IB
+FE305    Magnesium ammonium phosphate (struvite)                              IB
+FE306    Bone meal (steamed)                                                  IB
+FE307    Superphosphate, enriched                                             IB
+FE308    Basic Lime phosphate                                                 IB
+FE309    Magnesium phosphate                                                  IB
+FE310    Limestone, phosphatic                                                IB
+FE311    Basic slag                                                           IB
+FE312    Colloidal phosphate (Soft)                                           IB
+FE400    Potash suspensions                                                   IB
+FE401    Potassium carbonate K2CO3 solid                                      IB
+FE402    Potassium carbonate K2CO3 liquid                                     IB
+FE403    Potassium magnesium sulfate**                                        IB
+FE404    Manure salts                                                         IB
+FE405    Kainite KMg(SO4)Cl·3H2O                                              IB
+FE406    Carnallite (hydrated potassium magnesium chloride)                   IB
+FE407    Lime-potash mixtures                                                 IB
+FE408    Greensand                                                            IB
+FE500    Wettable S                                                           IB
+FE501    Flowable S                                                           IB
+FE502    Flowers of S                                                         IB
+FE503    Gypsum                                                               IB
+FE504    Magnesium sulfate (epsom salt)                                       IB
+FE505    Magnesium sulfate (Kieserite)                                        IB
+FE506    Sulfuric acid                                                        IB
+FE507    Copper sulfate                                                       IB
+FE508    Aluminum sulfate                                                     IB
+FE509    Cobalt sulfate                                                       IB
+FE510    Ferric sulfate                                                       IB
+FE511    Ferrous sulfate                                                      IB
+FE512    Calcium sulfate (hydrous)                                            IB
+FE513    Lime sulfur solution                                                 IB
+FE600    Magnesia (Magnesium oxide)                                           IB
+FE601    Brucite (Magnesium hydroxide)                                        IB
+FE602    Magnesium chelate                                                    IB
+FE620    Calcium chloride                                                     IB
+FE621    Calcium oxide (burned lime, quicklime)                               IB
+FE622    Selma chalk                                                          IB
+FE623    Calcium chelate                                                      IB
+FE640    Borax                                                                IB
+FE641    Boric acid                                                           IB
+FE660    Zinc sulfate monohydrate                                             IB
+FE661    Zinc sulfate heptahydrate                                            IB
+FE662    Zinc oxysulfate                                                      IB
+FE663    Basic zinc sulfate                                                   IB
+FE664    Zinc oxide                                                           IB
+FE665    Zinc carbonate                                                       IB
+FE666    Zinc chloride                                                        IB
+FE667    Zinc nitrate                                                         IB
+FE668    Zinc phosphate                                                       IB
+FE669    Zonc frits                                                           IB
+FE670    Ammoniated zinc                                                      IB
+FE680    Manganese agstone                                                    IB
+FE681    Manganese chelate                                                    IB
+FE682    Manganese oxide                                                      IB
+FE683    Manganese slag                                                       IB
+FE684    Manganese sulfate                                                    IB
+FE685    Manganous oxide                                                      IB
+FE700    Iron chelate                                                         IB
+FE701    Iron compound                                                        IB
+FE702    Ferric oxide                                                         IB
+FE720    Copper oxide, black                                                  IB
+FE721    Copper oxide, red                                                    IB
+FE722    Copper chelate                                                       IB
+FE723    Copper compound                                                      IB
+FE740    Sodium molybdonate                                                   IB
+FE900    Generic fertilizer                                                   IB
 
 *Harvest components
 @CDE     DESCRIPTION                                                          SO
@@ -479,6 +582,7 @@ RE306    forage grasses                                                       IB
 RE401    Bush fallow residue                                                  IB
 RE402    Sugarcane                                                            IB
 RE403    Pineapple                                                            IB
+RE404    Cassava                                                              IB
 
 *Rotation
 @CDE     DESCRIPTION                                                          SO

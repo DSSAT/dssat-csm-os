@@ -20,9 +20,9 @@ PROJECT(DSSAT-CSM Fortran)
 ##########################################################################################
 
 SET(MAJOR 4)
-SET(MINOR 7)
-SET(MODEL 5)
-SET(BUILD 29)
+SET(MINOR 8)
+SET(MODEL 0)
+SET(BUILD 11)
 
 # Get the current working branch
 execute_process(
@@ -100,8 +100,8 @@ ELSE()
     SET(DSSAT_INSTALL_DIR $CMAKE_INSTALL_PREFIX)
     SET(OSDefinitions "Utilities/OSDefsLINUX.for")
     configure_file(
-        "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47.in"
-		"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47"
+        "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L48.in"
+		"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L48"
     )
 	configure_file(
 		"${PROJECT_SOURCE_DIR}/Utilities/run_dssat.in"
@@ -356,7 +356,6 @@ set(
         "Plant/CSYCA-Cassava/YCA_Control_Leaf.f90"
         "Plant/CSYCA-Cassava/YCA_Control_Photosynthesis.f90"
         "Plant/CSYCA-Cassava/YCA_Control_Plant.f90"
-        "Plant/CSYCA-Cassava/YCA_Control_VPDEffect.f90"
         "Plant/CSYCA-Cassava/YCA_First_Trans_m.f90"
         "Plant/CSYCA-Cassava/YCA_Formats_m.f90"
         "Plant/CSYCA-Cassava/YCA_Growth.f90"
@@ -368,6 +367,7 @@ set(
         "Plant/CSYCA-Cassava/YCA_Growth_Photo.f90"
         "Plant/CSYCA-Cassava/YCA_Growth_Rates.f90"
         "Plant/CSYCA-Cassava/YCA_Growth_Senesce.f90"
+        "Plant/CSYCA-Cassava/YCA_Growth_VPD.f90"
         "Plant/CSYCA-Cassava/YCA_Integrate.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_AgesWts.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_EndCrop.f90"
@@ -378,11 +378,13 @@ set(
         "Plant/CSYCA-Cassava/YCA_Integ_SeasEnd.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_Stages.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_WthrSum.f90"
+        "Plant/CSYCA-Cassava/YCA_Model_VPD_Interface.f90"
         "Plant/CSYCA-Cassava/YCA_Node.f90"
         "Plant/CSYCA-Cassava/YCA_Output.f90"
         "Plant/CSYCA-Cassava/YCA_Out_CrpSim.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Error.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Eval.f90"
+		"Plant/CSYCA-Cassava/YCA_Out_FreshWt.f90"
         "Plant/CSYCA-Cassava/YCA_Out_LfTier.f90"
         "Plant/CSYCA-Cassava/YCA_Out_ModFail.f90"
         "Plant/CSYCA-Cassava/YCA_Out_PlantSum.f90"

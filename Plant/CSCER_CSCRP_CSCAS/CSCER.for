@@ -1475,9 +1475,9 @@
 
         IF (DYNAMIC.EQ.RUNINIT) THEN
 
-          MODNAME = 'CSCER047'
+          MODNAME = 'CSCER048'
           VERSION = 010115
-          GENFLCHK(3:15) = 'CER047.08102017'
+          GENFLCHK(3:15) = 'CER048.20200721'
 
           ! Parameters
           STDAY = 20.0    ! TT in standard day
@@ -3674,7 +3674,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 
           ! Mean temperature
           TMEAN = (TMAX+TMIN)/2.0
-          IF (snow.GT.0) THEN
+C-GH      IF (snow.GT.0) THEN
+          IF (snow .GT. 0.0) THEN
             tmeans = 0.0
           ELSE
             tmeans = tmean
@@ -7790,6 +7791,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             IF (IDETO.NE.'N'.OR.IDETL.EQ.'A') THEN
             
               ! PLANT EVALUATION (MEASURED - SIMULATED COMPARISONS)
+C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE error.
               
               WRITE (fnumwrk,*) 'Writing EVALUATION'
               
@@ -7805,14 +7807,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
                EVHEADNM = 0
               ENDIF
               
-              IF (EVHEADNM.LT.7) THEN
+              IF (EVHEADNM.EQ.0) THEN
                 IF (EXCODE.NE.EXCODEP.AND.EVALOUT.GT.1 .OR.
      &              RUN.EQ.1.AND.RUNI.EQ.1) THEN
                  EVHEADNM = EVHEADNM + 1
                  OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,
      &            POSITION = 'APPEND')
                  WRITE (FNUMTMP,*) ' '
-                 IF (EVHEADNM.LT.7) THEN
+                 IF (EVHEADNM.EQ.1) THEN
                    WRITE (FNUMTMP,993) EVHEADER,EXCODE,
      &              ENAME(1:25),MODNAME
   993              FORMAT (A14,A10,'  ',A25,2X,A8,/)
@@ -7833,8 +7835,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      x            ' MDAPS MDAPM',
      x            ' HWAMS HWAMM',
      x            ' HWUMS HWUMM',
-     x            ' H#AMS H#AMM',
-     x            ' H#GMS H#GMM',
+     x            '    H#AMS H#AMM',
+     x            '    H#GMS H#GMM',
      x            ' LAIXS LAIXM',
      x            ' L#SMS L#SMM',
      x            ' T#AMS T#AMM',
@@ -7898,8 +7900,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      x        I6,I6,
      x        I6,I6,
      x        A6,A6,
-     x        I6,I6,
-     x        F6.1,F6.1,
+     x        1X,I8,I6,
+     x        1X,F8.1,F6.1,
      x        F6.1,F6.1,
      x        F6.1,F6.1,
      x        I6,I6,
@@ -7946,7 +7948,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               WRITE (fnumwrk,*) 'Writing OVERVIEW'
               
               FNAMETMP = ' '
-              FNAMETMP(1:12) = 'Overview.'//out
+              ! TF - Updated OVERVIEW.OUT name to avoid issues
+              ! with case sensitive systems (07/27/2021) 
+              FNAMETMP(1:12) = 'OVERVIEW.'//out
               
               IF (FILEIOT(1:2).EQ.'DS') THEN
                 IF (RUN.EQ.1 .AND. RUNI.EQ.1) THEN

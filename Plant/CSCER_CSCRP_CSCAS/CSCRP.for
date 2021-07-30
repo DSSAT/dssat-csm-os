@@ -1783,9 +1783,9 @@
 
        IF (RUNCRP.LE.0) THEN          ! First time through
 
-          MODNAME(1:8) = 'CSCRP047'
+          MODNAME(1:8) = 'CSCRP048'
           VERSION = 010115         
-          GENFLCHK(3:15) = 'CRP047.08102017'
+          GENFLCHK(3:15) = 'CRP048.20200721'
           ! Control flags/switches
           CFLPDATE = 'P'      ! P=at planting;I=at first irrigation;
                               ! E=relative to emergence
@@ -1950,7 +1950,9 @@
 
           ! IDETO FILES
           ! NB. Renaming of Overview and Evaluate handled by CSM
-          FNAMEOV = 'Overview.'//out
+          ! TF - Updated OVERVIEW.OUT name to avoid issues
+          ! with case sensitive systems (07/27/2021) 
+          FNAMEOV = 'OVERVIEW.'//out
           FNAMEEVAL = 'Evaluate.'//out
           FNAMEMEAS = 'Measured.'//out
           CALL GETLUN (FNAMEEVAL,fnumeval)
@@ -2958,7 +2960,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           ! Additional controls that not handled by CSM
           ! To get name and location of x-file to -> special controls.
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'AFILE',filea)
-          FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+
+!     CHP 2021-03-19
+          IF (INDEX(FILEADIR,"-99") > 0) THEN
+            FILEX = FILEA(1:TVILENT(FILEA))
+          ELSE
+            FILEX=FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+          ENDIF
+
           CALL LTRIM2 (FILEX,filenew)
           FILELEN = TVILENT(FILENEW)
           FILENEW(FILELEN:FILELEN)= 'X'
@@ -10567,12 +10576,12 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               IF (RUN.EQ.1) THEN
                 EVALOUT = 0
                 EVHEADNM = 0
-                EVHEADNMMAX = 7
+                EVHEADNMMAX = 1
               ENDIF
               IF (EXCODE.NE.EXCODEPREV) THEN
                 EVHEADNM = EVHEADNM + 1
                 OPEN (UNIT=FNUMEVAL,FILE=FNAMEEVAL,POSITION='APPEND')
-                IF (EVHEADNM.LT.EVHEADNMMAX.AND.EVHEADNMMAX.GT.1) THEN
+                IF (EVHEADNM.LE.EVHEADNMMAX.AND.EVHEADNMMAX.GE.1) THEN
                   LENENAME = TVILENT(ENAME)
                   WRITE (FNUMEVAL,*) ' '
                   WRITE (FNUMEVAL,993) 

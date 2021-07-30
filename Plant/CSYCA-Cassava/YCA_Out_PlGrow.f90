@@ -49,10 +49,10 @@
                 ENDIF
                 WRITE (NOUTPG, FMT2201)
             ENDIF  ! End Plantgro header writes
-            L = INT(BRSTAGE)
+            !L = INT(BRSTAGE)
             WRITE (NOUTPG, FMT501)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,LNUM,PARIOUT,PARIUE,AMIN1(999.9,CARBOBEG*plantPopulation()), &
                 LAIC,SAID,CAIC,NINT(TWAD),NINT(SDWADOUT),NINT(RWAD),NINT(CWAD),NINT(LLWADOUT),NINT(STWADOUT),NINT(HWAD), &
-                HIAD, NINT(RSWAD),SENTOPLITTERAC,SENROOTC,RSCD*100.0,NINT(BRNUMST(L)), & !issue 50
+                HIAD, NINT(RSWAD),SENTOPLITTERAC,SENROOTC,RSCD*100.0,BRNUMSHM, & !issue 50
                 !SLAOUT, RTDEP/100.0,PTF,H2OA,AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),1.0-WFP,1.0-WFG,1.0-NFP,1.0-NFG, & !LPM 19MAY2015 to delete PTF
                 SLAOUT, RTDEP/100.0,H2OA,AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),1.0-WFP,1.0-WFG,1.0-NFP,1.0-NFG, &
                 AMIN1(2.0,NUPRATIO),1.0-TFP,1.0-TFG,1.0-DFOUT
@@ -90,7 +90,7 @@
             WRITE (NOUTPGF, FMT507)YEAR,DOY,DAS,DAP,TMEAN,TCDIF,BRSTAGEC,DU,1.0-DFOUT,1.0-TFP,1.0-WFP,1.0-NFP, &
                 1.0-CO2FP,1.0-RSFP,1.0-TFG,1.0-WFG,1.0-NFG,AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),H2OA,EOP, &
                 !SNO3PROFILE+SNH4PROFILE,LNCR,SNCR,RNCR  !LPM 25MAY2015 SNCR to SNCRM
-                SNO3PROFILE+SNH4PROFILE,LNCR,SNCRM,RNCR
+                SNO3PROFILE+SNH4PROFILE,LNCRM,SNCRM,RNCR
             ! End Plantgro reduction factor writes
                          
             ! PlantGr2
@@ -142,9 +142,9 @@
                 CALL Csopline(senn0c,sennal(0))
                 CALL Csopline(sennsc,sennas)
                 WRITE (NOUTPN, FMT503)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,NUPAC,TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD,HNAD, &
-                    HINDC,RSNAD,SENN0C,SENNSC,RANC*100.0,LANC*100.0,SANCOUT*100.0,AMIN1(9.9,HNC*100.0), &
+                    HINDC,RSNAD,SENN0C,SENNSC,RANC*100.0,LANCM*100.0,SANCOUT*100.0,AMIN1(9.9,HNC*100.0), &
                     !SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCR,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &        !LPM 25MAY2015 SNCR to SNCRM
-                    SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCRM,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &
+                    SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCRM,SNCRM,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &
                     ANDEM,1.0-node(0,0)%NFLF2                                                                                !LPM 21MAR15 NFLF2(0) as NFLF2(0,0)
                                      
             ENDIF  ! ISWNIT  Plantn writes
@@ -155,6 +155,8 @@
                 OPEN (UNIT=FNUMTMP, FILE=OUTPG, STATUS = 'UNKNOWN', IOSTAT = IOCHECK)
                 CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
                 OPEN (UNIT=FNUMTMP, FILE=OUTPG2, STATUS = 'UNKNOWN')
+                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+                OPEN (UNIT=FNUMTMP, FILE=OUTPG3, STATUS = 'UNKNOWN')
                 CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
                 OPEN (UNIT=FNUMTMP, FILE=OUTPGF, STATUS = 'UNKNOWN')
                 CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')

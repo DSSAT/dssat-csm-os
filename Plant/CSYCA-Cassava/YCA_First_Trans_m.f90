@@ -37,12 +37,16 @@ Module YCA_First_Trans_m
     REAL    :: BASELAYER               ! Depth at base of layer         cm         ! (From Integrate) 
     INTEGER :: BRDAE(PSX)              ! DAE when a new branch appears  d          ! LPM 11APR15 To save the date of branch appearance
     REAL    :: BRFX(0:PSX)             ! Branch # per fork at each fork #          ! (From SeasInit)  
-    REAL    :: BRNUMSH(0:PSX)          ! Branch number/shoot at harvest #          ! (From Integrate) !LPM 28MAR15 to have the apex number by branch level 
-    REAL    :: BRNUMSHM                ! Branch #/shoot,harvest,measurd #          ! (From Output)    
+    REAL    :: BRNAM                   ! Branch #, all shoots at harvest#          ! (From Output)
+    REAL    :: BRNUMSH(0:25)           ! Branch number/shoot            #          ! (From Integrate) !LPM 28MAR15 to have the apex number by branch level 
+    REAL    :: BRNUMSHM                ! Branch #, all shoots           #          ! (From Output)    
+    REAL    :: BRNUMSHMM               ! Branch #,harv,all shoots obs   #          ! (From Output)
     REAL    :: BRNUMST(0:PSX)          ! Branch number/shoot (>forking) #          ! (From RunInit) !LPM 23MAR15 to have the apex number by branch level   
     REAL    :: BRNUMSTPREV(0:PSX)      ! Branch number/shoot,previous   #          ! (From Output)  !LPM 23MAR15 to have the apex number by branch level      
     INTEGER :: BROLDESTA               ! Br with Leaf  ,oldest active   #          ! (From Integrate)
-    REAL    :: BRSTAGEPREV             ! Branching stage,previous       #          ! (From SeasInit)  
+    INTEGER :: BRSTAGEINT              ! Branching stage,integer        #          
+    REAL    :: BRSTAGEPREV             ! Branching stage,previous       #          ! (From SeasInit)
+    REAL    :: CAID                    ! Canopy leaf area index         #          ! (From SeasInit)
     REAL    :: CANHTG                  ! Canopy height growth           cm         ! (From SeasInit)  
     REAL    :: CARBOADJ                ! Ch2o adjustment for LAI change g/p        ! (From SeasInit)  
     REAL    :: CARBOBEG                ! Ch2o available,beginning day   g/p        ! (From SeasInit)  
@@ -66,8 +70,8 @@ Module YCA_First_Trans_m
     REAL    :: CO2AIR                  ! CO2 concentration in air       g/m3       ! (From Growth)    
     REAL    :: CO2CAV                  ! Average co2 for crop cycle     vpm        ! (From Integrate) 
     REAL    :: CO2CC                   ! CO2 sum for cycle              vpm        ! (From SeasInit)  
-    REAL    :: CO2COMPC                ! CO2 compensation conc (vpm)    #          ! (From SeasInit)  
-    REAL    :: CO2EX                   ! Exponent for CO2-phs function  #          ! (From SeasInit)  
+    !REAL    :: CO2COMPC                ! CO2 compensation conc (vpm)    #          ! (From SeasInit)  
+    !REAL    :: CO2EX                   ! Exponent for CO2-phs function  #          ! (From SeasInit)  
     REAL    :: CO2F(10)                ! CO2 factor rel values 0-2      #          ! (From SeasInit)  
     REAL    :: CO2FP                   ! CO2 factor,photosynthesis      #          ! (From SeasInit)  
     REAL    :: CO2FPI                  ! CO2 factor,phs,internal Co2    #          ! (From Growth)    
@@ -110,7 +114,7 @@ Module YCA_First_Trans_m
     REAL    :: DAYLPAV(0:19)           ! Daylength (6deg) av for tier   h          ! (From SeasInit)  
     REAL    :: DAYLPC                  ! Daylength (6deg),cumulative    h          ! (From SeasInit)  
     REAL    :: DAYLPREV                ! Daylength previous day         h          ! (From Output)    
-    REAL    :: DAYLS(PSX)                  ! Daylength sensitivity,tier     %/10h      ! (From SeasInit)  
+    REAL    :: DAYLS(0:PSX)             ! Daylength sensitivity,tier     %/10h      ! (From SeasInit)  
     REAL    :: DAYLST(0:PSX)            ! Daylength (6deg) at stage      h          ! (From SeasInit)  
     REAL    :: DAYSUM                  ! Days accumulated in month      #          ! (From SeasInit)  
     INTEGER :: DCDAT(DCNX)             ! Disease control application    YrDoy      ! (From SeasInit)  
@@ -126,12 +130,15 @@ Module YCA_First_Trans_m
     REAL    :: DIFFACR(DINX)           ! Dis favourability requirement  #          ! (From SeasInit)  
     REAL    :: DIGFAC(DINX)            ! Disease growth factor 0-1      #          ! (From SeasInit)  
     REAL    :: DLAYRTMP(20)            ! Depth of soil layers with root cm         ! (From Integrate) 
+    REAL    :: DMAG                    ! Thermal age threshold dry mat. oCd        ! (From SeasInit)
+    REAL    :: DMIC                    ! Dry matter c. increase by temp %          ! (From SeasInit)
     REAL    :: DMP_EP                  ! Dry matter per unit EP         g/mm       ! (From Output)    
     REAL    :: DMP_ET                  ! Dry matter per unit ET         g/mm       ! (From Output)    
     REAL    :: DMP_Irr                 ! Dry matter per unit irrigation g/mm       ! (From Output)    
     REAL    :: DMP_NApp                ! Dry matter per unit N applied  kg/kg      ! (From Output)    
     REAL    :: DMP_NUpt                ! Dry matter per unit N taken uo kg/kg      ! (From Output)    
     REAL    :: DMP_Rain                ! Dry matter per unit water      g/mm       ! (From Output)    
+    REAL    :: DMRD                    ! Dry matter reduction by age    %/1000 oCd ! (From SeasInit)
     INTEGER :: DOM                     ! Day of month                   #          ! (From Integrate) 
     INTEGER :: DOYCOL                  ! Day of year column number      #          ! (From Output)    
     REAL    :: DRAINC                  ! Drainage from profile,cumulat  mm         ! (From SeasInit)  
@@ -187,7 +194,12 @@ Module YCA_First_Trans_m
     REAL    :: FAC(20)                 ! Factor ((g/Mg)/(kg/ha))        #          ! (From Growth)    
     INTEGER :: FAPPNUM                 ! Fertilization application number          ! (From SeasInit)  
     INTEGER :: FDAY(200)               ! Dates of fertilizer appn       YrDoy      ! (From SeasInit)  
-    REAL    :: FERNITPREV              ! Fertilizer N applied to ystday kg/ha      ! (From SeasInit)  
+    REAL    :: FERNITPREV              ! Fertilizer N applied to ystday kg/ha      ! (From SeasInit)
+    REAL    :: FHWAD                   ! Harvest product (fresh)        kg/ha
+    INTEGER :: FHWADCOL                ! Product wt column number       #          ! (From Output)
+    REAL    :: FHWADT                  ! Harvest weight (fresh) t file  kg/ha      ! (From Output)
+    REAL    :: FHWAM                   ! Harvest product wt.,maturity   kg/ha      !
+    REAL    :: FHWAMM                  ! Harvest wt.(fresh),measured    kg/ha      ! (From SeasInit) 
     INTEGER :: FILELEN                 ! Length of file name            #          ! (From SeasInit)  
     INTEGER :: FLDAP                   ! Final leaf date                Yrdoy      ! (From SeasInit)  
     REAL    :: FLN                     ! Final leaf #                   #          ! (From SeasInit)  
@@ -234,13 +246,15 @@ Module YCA_First_Trans_m
     REAL    :: GROLS                   ! Leaf+stem growth               g/p        ! (From Growth)    
     REAL    :: GROLSA                  ! Leaf+stem gr from assimilates  g/p        ! (From Growth)    
     REAL    :: GROLSP                  ! Leaf+stem growth potential     g/p        ! (From Growth)    
-    REAL    :: GROLSRS                 ! Leaf+stem growth from reserves g/p        ! (From Growth)    
+    REAL    :: GROLSRS                 ! Leaf+stem growth from reserves g/p        ! (From Growth) 
+    REAL    :: GROLSRS05S(5)           ! GROLSRS values for last 5 days g/p  
     REAL    :: GROLSRT                 ! Leaf+stem gr from root dmatter g/p        ! (From Growth)    
     REAL    :: GROLSRTN                ! Leaf+stem N growth from root N g/p        ! (From Growth)    
     REAL    :: GROLSSD                 ! Leaf+stem gr from seed         g/p        ! (From Growth)    
     REAL    :: GROLSSEN                ! Leaf+stem growth from senesnce g/p        ! (From Growth) 
     REAL    :: GRORP                   ! Potential root growth          g/p        ! (From SeasInit) !LPM 22DEC2016 potential root growth
     REAL    :: GRORS                   ! Reserves growth                g/p        ! (From SeasInit)  
+    REAL    :: GRORSP                  ! Reserves growth potential      g/p        ! (From SeasInit)
     REAL    :: GROST                   ! Stem growth rate               g/p        ! (From SeasInit)  
     REAL    :: GROSTADJ                ! Stem growth rate N adjusted    g/p        ! (From SeasInit)  
     REAL    :: GROSTCR                 ! Stem+Plant. stick growth rate         g/p ! (From SeasInit)  
@@ -282,7 +296,7 @@ Module YCA_First_Trans_m
     REAL    :: HINM                    ! Harvest index,N,abground,mat   #          ! (From SeasInit)  
     REAL    :: HINMM                   ! Harvest N index,mature,meas    %          ! (From SeasInit)  
     INTEGER :: HLAST                   ! Last date for harvest          #          ! (From SeasInit)  
-    ! REAL    :: HMPC                    ! Harvest moisture percent,std.. #          ! (From SeasInit)  ! issue 49
+    REAL    :: HMPC                    ! Harvest dry percent,std..      #          ! (From SeasInit)  ! issue 49
     REAL    :: HNAD                    ! Product N                      kg/ha      ! (From SeasInit)  
     REAL    :: HNAM                    ! Harvest N at maturity          kg/ha      ! (From SeasInit)  
     REAL    :: HNAMERR                 ! Harvest N,error                %          ! (From Output)    
@@ -317,7 +331,8 @@ Module YCA_First_Trans_m
     REAL    :: HWAHM                   ! Harvest wt,harvest,measured    kg/ha      ! (From Output)    
     REAL    :: HWAM                    ! Harvest product wt.,maturity   kg/ha      ! (From SeasInit)  
     REAL    :: HWAMM                   ! Harvest product wt.,measured   kg/ha      ! (From SeasInit)  
-    INTEGER :: HWTUCOL                 ! Harvest weight per unit column #          ! (From Output)    
+    REAL    :: HWFMM                   ! Harvest prod.(fresh) measured  kg/ha      ! (From SeasInit)
+    INTEGER :: HWTUCOL                 ! Harvest weight per unit column #          ! (From Output)   
     ! REAL    :: HWUD                    ! Harvest wt/unit                g          ! (From Integrate) ! issue 50
     REAL    :: HWUM                    ! Harvest product size,maturity  g          ! (From SeasInit)  
     REAL    :: HWUMERR                 ! Harvest wt per unit error      %          ! (From Output)    
@@ -344,7 +359,7 @@ Module YCA_First_Trans_m
     INTEGER :: L1                      ! Loop counter                   #          ! (From SeasInit)  
     INTEGER :: L2                      ! Loop counter                   #          ! (From Output)    
     REAL    :: LA1S                    ! Area of leaf 1,standard        cm2        ! (From SeasInit)  
-    REAL    :: LAI                     ! Leaf area index                #          ! (From SeasInit)  
+    !REAL    :: LAI                     ! Leaf area index                #          ! (From SeasInit)  
     REAL    :: LAIA                    ! Leaf area index,active         #          ! (From Output)    
     INTEGER :: LAIDCOL                 ! Leaf area index column         #          ! (From Output)    
     REAL    :: LAIPREV                 ! Leaf area index,previous day   #          ! (From SeasInit)  
@@ -355,16 +370,16 @@ Module YCA_First_Trans_m
     REAL    :: LAIXM                   ! Lf lamina area index,mx,meas   m2/m2      ! (From SeasInit)  
     REAL    :: LAIXT                   ! Leaf area index,max,t-file     m2/m2      ! (From Output)    
     REAL    :: LAIXX                   ! Leaf area index,max posible    #          ! (From SeasInit)  
-    REAL    :: LANC                    ! Leaf actual N concentration    #          ! (From SeasInit)  
+    REAL    :: LANCM                   ! Leaf actual mean N conc.       #
     REAL    :: LANCRS                  ! Leaf N+rsN concentration       #          ! (From Growth)    
     REAL    :: LAPD                    ! Leaf area (green) per plant    cm2        ! (From Growth)    
     REAL    :: LAPH                    ! Leaf area (green) harvested    cm2/d      ! (From Growth)    
     REAL    :: LAPHC                   ! Leaf area (green) harvested,cu cm2/p      ! (From SeasInit)  
     REAL    :: LAWL(2)                 ! Area to wt ratio,n=youngest lf cm2/g      ! (From Growth)    
-    REAL    :: LAWS                    ! Leaf area/wt ratio,standard    cm2/g      ! (From SeasInit)  
-    REAL    :: LAWTR                   ! Leaf area/weight,temp response fr/C       ! (From SeasInit)  
-    REAL    :: LAWTS                   ! Leaf area/weight,temp standard C          ! (From SeasInit)  
+    REAL    :: LAWS                    ! Leaf area/wt ratio,standard    cm2/g      ! (From SeasInit)     
     REAL    :: LAXS                    ! Area of biggest leaf,main stem cm2        ! (From SeasInit)  
+    REAL    :: LCNCT                   ! Leaf critical max N conc       #          !
+    REAL    :: LCNMT                   ! Leaf critical min N conc       #          !
     REAL    :: LEAFN                   ! Leaf N                         g/p        ! (From SeasInit)  
     REAL    :: LEAFNEXCESS             ! Leaf N > critical              g/p        ! (From Integrate) 
     INTEGER :: LENDIS                  ! Length,ISWDIS flag             #          ! (From SeasInit)  
@@ -382,24 +397,22 @@ Module YCA_First_Trans_m
     REAL    :: LLIFGTT                 ! Leaf expansion duration        C.d        ! (From SeasInit)  
     REAL    :: LLIFS                   ! Leaf senescence dur,as read    d          ! (From SeasInit)  
     REAL    :: LLIFSTT                 ! Leaf senescence duration,Ttime C.d        ! (From SeasInit)  
-    REAL    :: LLIFX                   ! Leaf ageing acceleration,max   Tu         ! (From SeasInit)  
+    !REAL    :: LLIFX                   ! Leaf ageing acceleration,max   Tu         ! (From SeasInit)  
     !REAL    :: LLIFXUnused             ! Leaf ageing accel.unused       Tu         ! (From Integrate) 
     REAL    :: LLIGP                   ! Leaf lignin percentage         #          ! (From SeasInit)  
     REAL    :: LLNAD                   ! Leaf lamina nitrogen           kg/ha      ! (From SeasInit)  
-    REAL    :: LLOSA                   ! Leaf area loss,accelerated sen fr         ! (From SeasInit)  
+    !REAL    :: LLOSA                   ! Leaf area loss,accelerated sen fr         ! (From SeasInit)  
     !REAL    :: LLRSWAD                 ! Leaf lamina reserves weight    kg/ha      ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
     !REAL    :: LLRSWT                  ! Leaf lamina reserves           g/p        ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
     REAL    :: LLWAD                   ! Leaf lamina weight             kg/ha      ! (From SeasInit)  
     REAL    :: LLWADOUT                ! Leaf lamina weight for output  kg/ha      ! (From Output)    
     REAL    :: LNCGL                   ! N concentration,growth,lower   fr         ! (From Growth)    
-    REAL    :: LNCGU                   ! N concentration,growth,upper   fr         ! (From Growth)    
-    REAL    :: LNCM                    ! Leaf N conc,minimum            fr         ! (From SeasInit)  
+    REAL    :: LNCGU                   ! N concentration,growth,upper   fr         ! (From Growth)      
     REAL    :: LNCMN(0:1)              ! Leaf N conc,minimum            fr         ! (From SeasInit)  
     REAL    :: LNCPL                   ! Leaf N concentration,phs,lower fr         ! (From Growth)    
-    REAL    :: LNCPU                   ! Leaf N concentration,phs,upper fr         ! (From Growth)    
-    REAL    :: LNCR                    ! Leaf N relative to maximum     #          ! (From SeasInit)  
-    REAL    :: LNCSEN                  ! N conc.for senescence          fr         ! (From Growth)    
-    REAL    :: LNCX                    ! Leaf N conc,maximum            fr         ! (From SeasInit)  
+    REAL    :: LNCPU                   ! Leaf N concentration,phs,upper fr         ! (From Growth)      
+    REAL    :: LNCRM                   ! Leaf N relative to maximum (mean)#        !
+    REAL    :: LNCSEN                  ! N conc.for senescence          fr         ! (From Growth)      
     REAL    :: LNCXS(0:1)              ! Leaf N conc,maximum,stage      fr         ! (From SeasInit)  
     REAL    :: LNDEM                   ! Leaf demand for N              g/p        ! (From SeasInit)  
     REAL    :: LNDEMG                  ! Leaf demand for N,for growth   g/p        ! (From Growth)    
@@ -408,6 +421,7 @@ Module YCA_First_Trans_m
     REAL    :: LNPCS(0:1)              ! Leaf N conc,standard,stage     %          ! (From SeasInit)  
     REAL    :: LNPH                    ! Leaf N harvested               g/p        ! (From Growth)    
     REAL    :: LNPHC                   ! Leaf N harvested,cumulative    g/p        ! (From SeasInit)  
+    REAL    :: LNSC                    ! N conc.at senescence           %          !
     REAL    :: LNSLP                   ! Slope for leaf production      #          ! LPM 08JUN2015 New cultivar coefficient 
     REAL    :: LNUM                    ! Leaf number,Haun stage         #          ! (From SeasInit)  
     INTEGER :: LNUMCOL                 ! Leaf number column             #          ! (From Output)    
@@ -417,7 +431,7 @@ Module YCA_First_Trans_m
     REAL    :: LNUMPREV                ! Leaf number,Haun stage         #          ! (From SeasInit)  
     REAL    :: LNUMSERR                ! Leaf #,error                   %          ! (From Output)    
     INTEGER :: LNUMSG                  ! Leaf number produced on axis   #          ! (From SeasInit)  
-    REAL    :: LNUMSIMSTG(0:PSX)       ! Leaf numbers by br level sim   #          ! LPM 21MAR15 to save the number of leaves by cohort
+    INTEGER :: LNUMSIMSTG(0:PSX)       ! Leaf numbers by br level sim   #          ! LPM 21MAR15 to save the number of leaves by cohort
     REAL    :: LNUMSIMTOSTG(0:PSX)     ! Leaf numbers,fork,simul        #          ! (From Integrate) 
     REAL    :: LNUMSM                  ! Leaf #/shoot,Haun,maturity     #          ! (From SeasInit)  
     REAL    :: LNUMSMM                 ! Leaf #,mature,measured         #/s        ! (From SeasInit)  
@@ -425,7 +439,8 @@ Module YCA_First_Trans_m
     REAL    :: LNUMSTG(20)             ! Leaf number,specific stage     #          ! (From SeasInit)  
     REAL    :: LNUMT                   ! Leaf number from t file        #          ! (From Output)    
     REAL    :: LNUMTOSTG(0:PSX)        ! Leaf numbers at fork stages    #          ! (From SeasInit)  
-    REAL    :: LNUSE(0:3)              ! Leaf N use,overall and parts   g          ! (From SeasInit)  
+    REAL    :: LNUSE(0:3)              ! Leaf N use,overall and parts   g          ! (From SeasInit)
+    REAL    :: LNUSEN(0:2,0:PSX,0:LCNUMX)!Leaf N use by canopy level    g
     REAL    :: LPEAI                   ! Leaf petiole area index        m2/m2      ! (From SeasInit)  
     REAL    :: LPEAW                   ! Leaf petiole area/wt,veg.ph    cm2/g      ! (From SeasInit)  
     REAL    :: LPEFR                   ! Leaf petiole fraction of total #          ! (From SeasInit)  
@@ -450,7 +465,8 @@ Module YCA_First_Trans_m
     REAL    :: MDATT                   ! Maturity date from t file      YrDoy      ! (From Output)    
     REAL    :: MDAYFR                  ! Maturity,fraction of day       #          ! (From SeasInit)  
     INTEGER :: MDOY                    ! Maturity day of year           d          ! (From SeasInit)  
-    REAL    :: MJPERE                  ! Energy per Einstein (300-170)  MJ/E       ! (From RunInit)   
+    REAL    :: MJPERE                  ! Energy per Einstein (300-170)  MJ/E       ! (From RunInit) 
+    REAL    :: MSWT                    ! Water weight storage roots     g/p        ! (From Integrate)
     !INTEGER :: MSTG                    ! Maturity stage(eg.black layer) #          ! (From SeasInit) !LPM 05JAN2015 MSTG is not used  
     REAL    :: NCRG                    ! N factor,root growth           ppm        ! (From SeasInit)  
     REAL    :: NDEM2                   ! N demand for growth>minimum    g/p        ! (From Growth)    
@@ -469,7 +485,7 @@ Module YCA_First_Trans_m
     REAL    :: NFPPC                   ! N factor,phs,cumulative,tier   #          ! (From SeasInit)  
     REAL    :: NFPU                    ! N factor,phs,upper limit       #          ! (From SeasInit)  
     REAL    :: NFRG                    ! N factor,root growth 0-1       #          ! (From Growth)    
-    REAL    :: NFSU                    ! N factor,senescence,upper lim  #          ! (From SeasInit)  
+    !REAL    :: NFSU                    ! N factor,senescence,upper lim  #          ! (From SeasInit)  
     INTEGER :: NG                      ! Index for group number/cohorts #          ! DA 13DIC2016
     REAL    :: NH4CF                   ! NH4 uptake concentration fac   #          ! (From SeasInit)  
     REAL    :: NH4MN                   ! NH4 conc minimum for uptake    g/Mg       ! (From SeasInit)  
@@ -481,14 +497,14 @@ Module YCA_First_Trans_m
     REAL    :: NODLT                   ! internode length Br=0 lignified cm        ! LPM 08JUN2015
     REAL    :: NODWT                   ! Node wt Br=0  at 3400 ˚Cd      g/node     ! LPM 08JUN2015
     INTEGER :: NOUTPG                  ! Number for growth output file  #          ! (From RunInit)   
-    INTEGER :: NOUTPG2                 ! Number for growth output file2 #          ! (From RunInit)   
+    INTEGER :: NOUTPG2                 ! Number for growth output file2 #          ! (From RunInit)
+    INTEGER :: NOUTPF                  ! Number for fresh growth output #          ! (From RunInit)
     INTEGER :: NOUTPGF                 ! Number for growth factors file #          ! (From RunInit)   
     INTEGER :: NOUTPN                  ! Number for growthN output file #          ! (From RunInit)   ! Stem N pool (ie.above minimum) g/p        !
     REAL    :: NPOOLL                  ! Leaf N pool (ie.above minimum) g/p        ! (From Growth)    
     REAL    :: NPOOLR                  ! Root N pool (ie.above minimum) g/p        ! (From Growth)    
     REAL    :: NPOOLS                  ! Stem N pool (ie.above minimum) g/p        ! (From Growth)    
-    INTEGER :: NSDAYS                  ! N stress days                  #          ! (From SeasInit)  
-    REAL    :: NTUPF                   ! N top-up fraction              /d         ! (From SeasInit)  
+    INTEGER :: NSDAYS                  ! N stress days                  #          ! (From SeasInit)   
     REAL    :: NUF                     ! Plant N supply/demand,max=1.0  #          ! (From SeasInit)  
     REAL    :: NULEFT                  ! N uptake remaining for use     g          ! (From Growth)    
     REAL    :: NUPAC                   ! N uptake,cumulative            kg/ha      ! (From SeasInit)  
@@ -505,7 +521,7 @@ Module YCA_First_Trans_m
     INTEGER :: ONI                     ! Option number,initial value    #          ! (From SeasInit)  
     INTEGER :: OUTCHOICE               ! Output choice (+reserves,etc)  #          ! (From SeasInit)  
     INTEGER :: OUTCOUNT                ! Output counter                 #          ! (From Output)    
-    REAL    :: PARFC                   ! Max photosynthesis/phs at 330  #          ! (From SeasInit)  
+    !REAL    :: PARFC                   ! Max photosynthesis/phs at 330  #          ! (From SeasInit)  
     REAL    :: PARI                    ! PAR interception fraction      #          ! (From SeasInit)  
     REAL    :: PARI1                   ! PAR interception fr,1-crop mdl #          ! (From SeasInit)  
     REAL    :: PARIOUT                 ! PAR interception fr for output #          ! (From Output)    
@@ -526,7 +542,10 @@ Module YCA_First_Trans_m
     REAL    :: PDADJ                   ! Tier duration adjustment       deg.d      ! (From SeasInit)  
     INTEGER :: PDATE                   ! Planting Yrdoy from X-file     #          ! (From SeasInit)  
     INTEGER :: PDAYS(0:PSX)             ! Tier durations                 PVoCd      ! (From SeasInit)  
-    REAL    :: PDL(0:PSX)              ! Tier durations,phint units     #          ! (From SeasInit)  
+    REAL    :: PDL(0:PSX)              ! Tier durations,phint units     #          ! (From SeasInit)
+    REAL    :: PDMCD                   ! Dry matter cont. storage roots %          ! (From Integrate)
+    REAL    :: PDSV                    ! Phs,fr reduction with VPD daily  /KPa    ! (From SeasInit)  
+    REAL    :: PDTV                    ! Phs,threshold VPD for reduction daily KPa! (From SeasInit)  
     REAL    :: PECM                    ! Emergence duration             Cd/cm      ! (From SeasInit)  
     !REAL    :: PEGD                    ! Duration,germ                  deg.d      ! (From SeasInit) !LPM 21MAR2016 Deleted, instead use PGERM 
     REAL    :: PEMRG                   ! Reserves use by TT for emerg   g/Cd       ! (From SeasInit)
@@ -542,8 +561,8 @@ Module YCA_First_Trans_m
     REAL    :: PHINTFAC                ! Phylochron interval factor     #          ! (From SeasInit)  
     !REAL    :: PHINTS                  ! Phylochron interval,standard   deg.d      ! (From SeasInit) !LPM 21MAY2015 PHINT is not used 
     REAL    :: PHOTQR                  ! Photon requirement,calculated  E/mol      ! (From SeasInit)  
-    REAL    :: PHSV                    ! Phs,fr reduction with VPD       /KPa      ! (From SeasInit)  
-    REAL    :: PHTV                    ! Phs,threshold VPD for reduction KPa       ! (From SeasInit)  
+    REAL    :: PHSV                    ! Phs,fr reduction with VPD hourly  /KPa    ! (From SeasInit)  
+    REAL    :: PHTV                    ! Phs,threshold VPD for reduction hourly KPa! (From SeasInit)  
     REAL    :: PLA                     ! Plant leaf area                cm2        ! (From SeasInit)  
     !REAL    :: PLAGS2                  ! Plant lf area g,sh+br,H2oNT cm2/p         ! (From SeasInit) !LPM 23MAR15 non necessary PLAGSB2 considers all the branches and shoots  
     REAL    :: PLAGSB2                 ! Plant lf area g,sh+br,H2oNT    cm2/p      ! (From SeasInit)!LPM 23MAR15  
@@ -600,8 +619,7 @@ Module YCA_First_Trans_m
     REAL    :: RAINCC                  ! Precipitation cycle sum        mm         ! (From SeasInit)  
     REAL    :: RAINPAV(0:19)           ! Rainfall,average for tier      mm         ! (From SeasInit)  
     REAL    :: RAINPC(0:PSX)            ! Precipitation tier sum         mm         ! (From SeasInit)  
-    REAL    :: RANC                    ! Roots actual N concentration   #          ! (From SeasInit)  
-    REAL    :: RATM                    ! Boundary layer,air,resistance  s/m        ! (From SeasInit)  
+    REAL    :: RANC                    ! Roots actual N concentration   #          ! (From SeasInit)   
     REAL    :: RAW                     ! Total soil water 'potential'   #          ! (From Growth)
     REAL    :: RCROP                   ! Stomatal res,crop basis        s/m        ! (From SeasInit)  
     REAL    :: RDGS                    ! Root depth growth rate,standrd cm/d       ! (From SeasInit)  
@@ -616,10 +634,9 @@ Module YCA_First_Trans_m
     REAL    :: RFAC                    ! Root length & H2O fac,N uptake #          ! (From SeasInit)  
     REAL    :: RLDF(20)                ! Root length density fac,new gr #          ! (From Growth)    
     REAL    :: RLF                     ! Leaf stomatal res,330.0 ppmCO2 s/m        ! (From SeasInit)  
-    REAL    :: RLFC                    ! Leaf stomatal resistance       s/m        ! (From SeasInit)  
-    REAL    :: RLFWU                   ! Root length factor,water uptk  /cm2       ! (From SeasInit)  
+    REAL    :: RLFC                    ! Leaf stomatal resistance       s/m        ! (From SeasInit)    
     REAL    :: RLIGP                   ! Root lignin concentration      %          ! (From SeasInit)  
-    REAL    :: RLWR                    ! Root length/weight ratio     m/10mg       ! (From SeasInit)  
+    REAL    :: RLWR                    ! Root length/weight ratio       m/g        ! (From SeasInit)  
     REAL    :: RM                      ! Mesophyll resistance           d/m        ! (From Growth)    
     REAL    :: RNAD                    ! Root N                         kg/ha      ! (From SeasInit)  
     REAL    :: RNAM                    ! Root N at maturity             kg/ha      ! (From SeasInit)  
@@ -657,8 +674,7 @@ Module YCA_First_Trans_m
     REAL    :: RSNAD                   ! Reserve N                      kg/ha      ! (From SeasInit)  
     REAL    :: RSNPH                   ! Reserves N harvested           g/p        ! (From SeasInit)  
     REAL    :: RSNPHC                  ! Reserves N harvested,cum       g/p        ! (From SeasInit)  
-    REAL    :: RSNUSED                 ! Reserve N used                 g/p        ! (From SeasInit)  
-    REAL    :: RSPCO                   ! Res conc.above which overflow  %          ! (From SeasInit)  
+    REAL    :: RSNUSED                 ! Reserve N used                 g/p        ! (From SeasInit)    
     REAL    :: RSSRWTGLFADJ            ! Reserves+storage from lf N adj g/p        ! (From Growth)    
     REAL    :: RSUSE                   ! Reserves utilisation fraction  #          ! (From SeasInit)  
     REAL    :: RSWAD                   ! Reserves weight                kg/ha      ! (From SeasInit)  
@@ -708,7 +724,7 @@ Module YCA_First_Trans_m
     REAL    :: SDNPCI                  ! Seed N concentration,initial   %          ! (From SeasInit)  
     REAL    :: SDRATE                  ! Seeding 'rate'                 kg/ha      ! (From SeasInit)  
     REAL    :: SDRS                    ! Seed reserves fraction of seed #          ! (From SeasInit)  !LPM 22MAR2016 Keep value SDRS  
-    REAL    :: SDSZ                    ! Seed size                      g          ! (From SeasInit) !LPM 22MAR2016 Keep value SDWT  
+    REAL    :: SDSZ                    ! Seed size                      g/cm       ! (From SeasInit) !LPM 22MAR2016 Keep value SDWT  
     REAL    :: SDWAD                   ! Seed/Stick weight              kg/ha      ! (From SeasInit)  
     REAL    :: SDWADOUT                ! Seed/Stick weight for output   kg/ha      ! (From Output)    
     REAL    :: SDWAM                   ! Seed at maturity               kg/ha      ! (From SeasInit)  
@@ -766,7 +782,7 @@ Module YCA_First_Trans_m
     REAL    :: SESR                    ! Shoot elongation rate+reserves cm2/g      ! (From SeasInit) !LPM 21MAR2016 Added SESR   
     INTEGER :: SHDAP                   ! Shoot prodn.start DAP          #          ! (From Integrate) 
     INTEGER :: SHDAT                   ! Shoot prodn.startdate YEARDOY  #          ! (From SeasInit)  
-    REAL    :: SHGR(22)                ! Shoot size relative to 1       #          ! (From SeasInit)  
+    REAL    :: SHGR(25)                ! Shoot size relative to 1       #          ! (From SeasInit)  
     REAL    :: SHLA(25)                ! Shoot leaf area produced       cm2        ! (From SeasInit)  
     REAL    :: SHLAG2(25)              ! Shoot lf area gr,all axis,H2oN cm2        ! (From SeasInit)  
     REAL    :: SHLAG2B(0:PSX)          ! Shoot lf area gr by br         cm2        ! (From SeasInit)
@@ -781,7 +797,9 @@ Module YCA_First_Trans_m
     REAL    :: SHRTM                   ! Shoot/root ratio,maturity      #          ! (From SeasInit)  
     REAL    :: SHRTMM                  ! Shoot/root ratio,maturity,meas #          ! (From Output)    
     REAL    :: SLA                     ! Specific leaf area             cm2/g      ! (From SeasInit)  
-    REAL    :: SLAOUT                  ! Specific leaf area for output  cm2/g      ! (From Output)    
+    REAL    :: SLAOUT                  ! Specific leaf area for output  cm2/g      ! (From Output) 
+    REAL    :: SLATR                   ! Leaf area/weight,temp response fr/C       ! (From SeasInit)
+    REAL    :: SLATS                   ! Leaf area/weight,temp standard C          ! (From SeasInit) 
     REAL    :: SLIGP                   ! Stem lignin concentration      %          ! (From SeasInit)  
     REAL    :: SNAD                    ! Stem N (stem+petiole+rs)       kg/ha      ! (From SeasInit)  
     REAL    :: SNCMN(0:1)              ! Stem N conc,minimum            fr         ! (From SeasInit)  
@@ -834,8 +852,15 @@ Module YCA_First_Trans_m
     REAL    :: SROOTN                  ! Storage root N                 g/p        ! (From SeasInit)  
     REAL    :: SRPRS                   ! Storage protein standard %     #          ! (From SeasInit)  
     REAL    :: SRWAD                   ! Storage root weight            kg/ha      ! (From Integrate) 
-    REAL    :: SRWT                    ! Root storage organ weight      g/p        ! (From SeasInit)  
+    REAL    :: SRWFAD                  ! Storage root weight (fresh)    kg/ha      ! (From Integrate)
+    REAL    :: SRWT                    ! Root storage organ weight      g/p        ! (From SeasInit)
+    REAL    :: SRWTF                   ! Root storage weight (fresh)    g/p        ! (From SeasInit)
+    REAL    :: SRWTFPREV               ! Root storage wt(fresh)last day g/p        ! (From SeasInit)
+    REAL    :: SRWTG                   ! Root storage growth            g/p        ! (From SeasInit)
     REAL    :: SRWTGRS                 ! Root storage,reserves>std.%    g/p        ! (From SeasInit)  
+    REAL    :: SRWTGRSP                ! Root storage potential         g/p        ! (From SeasInit)
+    REAL    :: SRWTGRSADJ              ! Root storage adjusted          g/p        ! (From SeasInit)
+    REAL    :: SRWTPREV                ! Root storage wt(dry) last day  g/p        ! (From SeasInit)
     ! REAL    :: SRWUD                   ! Storage root size              g          ! (From SeasInit)   ! issue 50
     REAL    :: SRWUM                   ! Storage root wt/unit,maturity  g          ! (From SeasInit)  
     REAL    :: SRWUMM                  ! Storage root wt/unit,mat,meas  g          ! (From SeasInit)  
@@ -893,7 +918,8 @@ Module YCA_First_Trans_m
     REAL    :: TFD                     ! Temperature factor,development #          ! (From SeasInit)  
     INTEGER :: TFDAP                   ! T-file days after planting     #          ! (From Output)    
     INTEGER :: TFDAPCOL                ! T-file DAP column #            #          ! (From Output)    
-    REAL    :: TFDF                    ! Temperature factor,dayl sens   #          ! (From Growth)    
+    REAL    :: TFDF                    ! Temperature factor,dayl sens   #          ! (From Growth)
+    REAL    :: TFDMC                   ! Temperature factor, dry matter #          ! (From Growth)
     REAL    :: TFDNEXT                 ! Temperature factor,development #          ! (From Growth)    
     REAL    :: TFG                     ! Temperature factor,growth 0-1  #          ! (From SeasInit)  
     REAL    :: TFGEM                   ! Temperature factor,germ,emrg   #          ! (From Growth)    
@@ -952,6 +978,7 @@ Module YCA_First_Trans_m
     REAL    :: TPAR                    ! Transmission,PAR,fraction      #          ! (From SeasInit)  
     REAL    :: TRATIO                  ! Function,relative tr rate      #          ! (From SeasInit)  
     REAL    :: TRBRG(4)                ! Temp response,development br   #          ! (From SeasInit) !LPM 19APR2016 new variable for the cardinal temperatures for branching
+    REAL    :: TRDMC(4)                ! Temp response,dry matter       #          ! (From SeasInit)
     REAL    :: TRDV1(4)                ! Temp response,development 1    #          ! (From SeasInit)  
     REAL    :: TRDV2(4)                ! Temp response,development 2    #          ! (From SeasInit)  
     REAL    :: TRDV3(4)                ! Temp response,leaf size Tb cul #          ! LPM 28feb15 new variable to change base temperature for leaf size
@@ -972,7 +999,8 @@ Module YCA_First_Trans_m
     REAL    :: TTCUM                   ! Cumulative thermal time        C.d        ! (From SeasInit)  
     REAL    :: TTCUMLS                 ! Cumulative thermal time lf sizeC.d        ! LPM 12JUL2015 new variable to change optimum temperature for potential leaf size
     REAL    :: TTCUMWS                 ! Cumulative TT with water stressC.d        ! LPM 31JUL2015 new variable to create an additional clock under water stress
-    REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit)  
+    REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit) 
+    REAL    :: TTDMC                   ! Daily thermal time, dry matter #          ! (From Growth)
     REAL    :: TTGEM                   ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
     REAL    :: TTL                     ! Daily thermal time, leaves     C.d        ! LPM 19APR2016 Added to separate the thermal clock for branching and leaf development
     !REAL    :: TTLFGROWTH              ! Daily thermal time,leaf growth C.d        ! (From Growth) !LPM 14SEP2017 Adding new cardinal temperatures for leaf growth
@@ -1011,7 +1039,6 @@ Module YCA_First_Trans_m
     REAL    :: VWAMERR                 ! Vegetative wt,error            %          ! (From Output)    
     REAL    :: VWAMM                   ! Veg wt,mature,measured         kg/ha      ! (From SeasInit)  
     REAL    :: WAVR                    ! Water available/demand         #          ! (From Integrate) 
-    REAL    :: WFEU                    ! Water factor,evaptp,upper      #          ! (From SeasInit)  
     REAL    :: WFG                     ! Water factor,growth 0-1        #          ! (From SeasInit)  
     REAL    :: WFGCAV                  ! Water factor,growth,av.,cylcle #          ! (From Integrate) 
     REAL    :: WFGCC                   ! H20 factor,growh,cycle sum     #          ! (From SeasInit)  
@@ -1020,19 +1047,20 @@ Module YCA_First_Trans_m
     REAL    :: WFGL                    ! Water factor,growth,lower      #          ! (From SeasInit)  
     REAL    :: WFGPAV(0:19)            ! Water factor,growth,average    #          ! (From SeasInit)  
     REAL    :: WFGPC                   ! Water factor,growth,cumulative #          ! (From SeasInit)  
+    REAL    :: WFGREA                  ! Water factor, reallocation     #               
     REAL    :: WFGU                    ! Water factor,growth,upper      #          ! (From SeasInit)  
     !REAL    :: WFLAW                   ! Water factor,leaf area/weight  #          ! (From Growth)    !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
     REAL    :: WFNU                    ! Water factor,N uptake          #          ! (From Growth)    
     REAL    :: WFP                     ! Water factor,photosynthsis 0-1 #          ! (From SeasInit)  
     REAL    :: WFPCAV                  ! Water factor,phs,av 0-1,cycle  #          ! (From SeasInit)  
     REAL    :: WFPCC                   ! H20 factor,phs,cycle sum       #          ! (From SeasInit)  
-    REAL    :: WFPL                    ! Water factor,phs,lower         #          ! (From SeasInit)  
+    REAL    :: WFPL                    ! Water factor,phs,lower         #          ! (From SeasInit) !LPM 15SEP2020 No water stress factor on photosynthesis 
     REAL    :: WFPPAV(0:19)            ! Water factor,phs,average 0-1   #          ! (From SeasInit)  
     REAL    :: WFPPC                   ! Water factor,phs,cumulative    #          ! (From SeasInit)  
     REAL    :: WFPU                    ! Water factor,phs,upper         #          ! (From SeasInit)  
     REAL    :: WFRG                    ! Water factor,root growth,0-1   #          ! (From Growth)    
     REAL    :: WFRTG                   ! Water factor,root gr           #          ! (From SeasInit)  
-    REAL    :: WFSU                    ! Water fac,senescence,upper 0-1 #          ! (From SeasInit)  
+    REAL    :: WFSU                    ! Water fac,leaf senescence,0-1  #          ! (From SeasInit)  
     INTEGER :: WSDAYS                  ! Water stress days              #          ! (From SeasInit)  
     REAL    :: WTDEP                   ! Water table depth              cm         ! (From SeasInit)  
     REAL    :: WUPR                    ! Water pot.uptake/demand        #          ! (From SeasInit)  
@@ -1149,6 +1177,7 @@ Module YCA_First_Trans_m
     CHARACTER (LEN=79)  OUTHED        ! Output file heading                       ! (From SeasInit) 
     CHARACTER (LEN=12)  OUTPG         ! Growth output file code                   ! (From RunInit)  
     CHARACTER (LEN=12)  OUTPG2        ! Growth output file2 code                  ! (From RunInit)  
+    CHARACTER (LEN=12)  OUTPG3        ! Growth output file3 code                  ! (From RunInit)
     CHARACTER (LEN=12)  OUTPGF        ! Growth factors file2 code                 ! (From RunInit)  
     CHARACTER (LEN=12)  OUTPN         ! GrowthN output file code                  ! (From RunInit)  
     CHARACTER (LEN=80)  PATHCR        ! Path to genotype (CUL) files              ! (From SeasInit) 
@@ -1197,7 +1226,7 @@ Module YCA_First_Trans_m
     INTEGER ::          IOCHECK       ! File open indicator                       ! (From Output)
 
     ! Arrays for passing variables to OPSUM subroutine, CSM model only             ! (From Output)
-    INTEGER,      PARAMETER :: SUMNUM = 37                                         ! (From Output)
+    INTEGER,      PARAMETER :: SUMNUM = 42                                         ! (From Output)
     CHARACTER*5,  DIMENSION(SUMNUM) :: LABEL                                       ! (From Output)
     REAL,         DIMENSION(SUMNUM) :: VALUE                                       ! (From Output)
     
@@ -1227,7 +1256,13 @@ Module YCA_First_Trans_m
         
         amtnit = 0.0
         andem = 0.0
+        brfx = 0.0
+        BRNAM = -99.0
         brnumst = 1.0
+        BRNUMSHM = 0.0
+        BRNUMSHMM = -99.0
+        BRSTAGEINT = 0
+        caid = 0.0
         canhtg = 0.0
         carboadj = 0.0
         carbobeg = 0.0
@@ -1319,6 +1354,8 @@ Module YCA_First_Trans_m
         fappline = ' '
         fappnum = 0
         fernitprev = 0.0
+        fhwam = -99.0
+        FHWAMM = -99.0
         fldap = 0
         fln = 0.0
         gdap = -99
@@ -1335,7 +1372,10 @@ Module YCA_First_Trans_m
         grocradj = 0.0
         grolf = 0.0
         grolfadj = 0.0
+        GROLSRS = 0.0
+        GROLSRS05S = 1.0
         grors = 0.0
+        grorsp = 0.0
         grost = 0.0
         grostadj = 0.0
         grostcr = 0.0
@@ -1371,24 +1411,23 @@ Module YCA_First_Trans_m
         hyeardoy = -99
         idetgnum = 0
         irramtc = 0.0
-        lai = 0.0
         laiprev = 0.0
         laistg = 0.0
         laix = 0.0
         laixm = -99.0
-        lanc = 0.0
+        !lanc = 0.0
+        LANCM = 0.0
         laphc = 0.0
         leafn = 0.0
         lfwt = 0.0
         lfwtm = 0.0
         llnad = 0.0
         llwad = 0.0
-        lncr = 0.0
-        lncx = 0.0
+        !lncr = 0.0
         lndem = 0.0
         lnphc = 0.0
         lnum = 0.0
-        lnumsimstg = 0.0   !LPM 09AGO2015 To initialize the variable lnumsimstg
+        lnumsimstg = 0     !LPM 09AGO2015 To initialize the variable lnumsimstg
         lnumsimtostg = 0.0 !LPM 09AGO2015 To initialize the variable lnumsimtostg
         lnumg = 0.0
         lnumprev = 0.0
@@ -1407,6 +1446,7 @@ Module YCA_First_Trans_m
         mdat = -99
         mdayfr = -99
         mdoy = -99
+        MSWT = 0.0
         nfg = 1.0
         nfgcc = 0.0
         nfgcc = 0.0
@@ -1435,6 +1475,7 @@ Module YCA_First_Trans_m
         paru = 0.0
         pdadj = -99.0
         pdays  = 0
+        PDMCD = 0.0
         photqr = 0.0
         pla = 0.0
         plagsb2 = 0.0
@@ -1592,7 +1633,12 @@ Module YCA_First_Trans_m
         srnuse = 0.0
         srootn = 0.0
         srwt = 0.0
+        srwtf = 0.0
+        SRWTFPREV = 0.0
+        SRWTG = 0.0
+        SRWTPREV = 0.0
         srwtgrs = 0.0
+        SRWTGRSADJ = 0.0
         srwum = 0.0
         srwum = 0.0
         stai = 0.0
@@ -1601,6 +1647,7 @@ Module YCA_First_Trans_m
         stemn = 0.0
         stgedat = 0
         stwad = 0.0
+        STRESSW = 1.0
         stwt = 0.0
         stwtp = 0.0 !LPM 23MAY2015 Added to keep the potential stem weight
         stwtm = 0.0
@@ -1678,6 +1725,7 @@ Module YCA_First_Trans_m
         wfppav = 1.0
         wfpcc = 0.0
         wfppc = 0.0
+        WFGREA = 1.0
         wsdays = 0
         wupr = 1.0
         

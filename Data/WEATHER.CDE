@@ -1,5 +1,5 @@
 *WEATHER DATA CODES
-! DSSAT v4.7; 11/20/2020
+! DSSAT v4.8; 07/16/2021
 
 ! Headers used in the @ line to identify variables are listed first; codes
 ! ('flags') used to designate data types are listed next.
@@ -12,8 +12,6 @@
 !        the code should be entered as a comment (ie.with a '!' in column 1)
 !        below this note. This is important to ensure that information from
 !        different workers can be easily integrated.
-
-TAV TRANGE REFHT WNDHT SITE
 
 *Headers
 @CDE     DESCRIPTION                                                          SO
@@ -33,7 +31,7 @@ EVAP     Daily pan evaporation (mm d-1)                                       IB
 GSDU     Growing season duration, Day                                         IB
 GSST     Growing season start day, Doy                                        IB
 INSI     Institute and site code                                              IB
-Ku 	     Upper limit of the clearness index K = H/H0 (Daily solar irradiance  IB
+Ku       Upper limit of the clearness index K = H/H0 (Daily solar irradiance  IB
          (H), irradiance above the earth's atmosphere (H0))                   IB
 LAT      Latitude, degrees (decimals)                                         IB
 LONG     Longitude, degrees (decimals)                                        IB
@@ -42,10 +40,10 @@ NAMN     Temperature minimum, all days, monthly average, C                    IB
 NASD     Temperature minimum, all days, monthly standard deviation, C         IB
 PAR      Daily photosynthetic radiation, moles m-2 day-1                      IB
 PDDW     Probability of a wet day following two dry days                      IB
-PDW      Probability of a dry-wet sequence                                    IB   
+PDW      Probability of a dry-wet sequence                                    IB
 PWDW     Probability of a wet day following a dry, preceded by a wet day      IB
-PWW      Probability of wet day following a wet day                           IB 
-PW       Probability of wet day                                               IB                
+PWW      Probability of wet day following a wet day                           IB
+PW       Probability of wet day                                               IB
 PDW      Probability of a dry-wet sequence                                    IB
 PWSDC    Low-frequency correction standard deviation for PW                   IB
 RAIN     Daily rainfall (incl. snow), mm day-1                                IB
@@ -53,11 +51,12 @@ RAIY     Rainfall, yearly total, mm                                           IB
 RaPhi    Auto-correlation coefficient for RAIN                                IB
 RTxTn    Cross-correlation coefficient among TMAX and TMIN                    IB
 RTx_X    Cross-correlation coefficient TMAX and SRAD                          IB
-RTxRa    Cross-correlation coefficient TMAX and RAIN                          IB 
-RTn_X    Cross-correlation coefficient TMIN and SRAD                          IB 
+RTxRa    Cross-correlation coefficient TMAX and RAIN                          IB
+RTn_X    Cross-correlation coefficient TMIN and SRAD                          IB
 RTnRa    Cross-correlation coefficient TMIN and RAIN                          IB
 R_XRa    Cross-correlation coefficient RAD and RAIN                           IB
 REFHT    Reference height for weather measurements, m                         IB
+RH2M     Relative humidity at 2 m, %                                          IB
 RHUM     Relative humidity average, %                                         IB
 RNUM     Rainy days, # month-1                                                IB
 RTOT     Rainfall total, mm month-1                                           IB
@@ -72,8 +71,10 @@ START    Start of summary period for climate (CLI) files, Year                IB
 SUNH     Daily sunshine duration, percent                                     IB
 SWMN     Solar radiation,wet days,monthly average, MJ m-2 d-1                 IB
 SWSD     Solar radiation,wet days,monthly standard deviation, MJ m-2 d-1      IB
+T2M      Temperature at 2 meter, C                                            IB
 TAMP     Temperature amplitude (range), monthly averages [long-term], C       IB
 TAV      Temperature average for whole year [long-term], C                    IB
+TDEW     Dew/Frost point temperature at 2 m, C                                IB
 TDRY     Daily dry-bulb temperature, C                                        IB
 TMAX     Daily temperature maximum, C                                         IB
 TMIN     Daily temperature minimum, C                                         IB
@@ -81,11 +82,11 @@ TMNY     Temperature minimum, yearly average, C                               IB
 TMXY     Temperature maximum, yearly average, C                               IB
 TRANGE   Temperature amplitude (range), monthly averages [long-term], C       IB
 TWET     Daily wet-bulb temperature, C                                        IB
-TnMND    Temperature min, dry days, monthly average, C                        IB 
+TnMND    Temperature min, dry days, monthly average, C                        IB
 TnSDD    Temperature min, dry days, high-frequency standard deviation, C      IB
-TnMNW    Temperature min, wet days, monthly average, C                        IB   
+TnMNW    Temperature min, wet days, monthly average, C                        IB
 TnSDW    Temperature min, wet days, high-frequency standard deviation, C      IB
-TxMND    Temperature maximum, dry days, monthly average, C                    IB  
+TxMND    Temperature maximum, dry days, monthly average, C                    IB
 TxSDD    Temperature maximum, dry days, high-frequency standard deviation, C  IB
 TxMNW    Temperature maximum, wet days, monthly average, C                    IB
 TxSDW    Temperature maximum, wet days, high-frequency standard deviation, C  IB
@@ -93,8 +94,11 @@ TxPHI    Auto-correlation coefficient for TMAX                                IB
 TnPHI    Auto-correlation coefficient for TMIN                                IB
 TxSDC    Low-frequency correction standard deviation for TMAX                 IB 
 TnSDC    Low-frequency correction standard deviation for TMIN                 IB
+WELEV    Elevation, m                                                         IB
 WIND     Daily wind speed (km d-1)                                            IB
 WNDHT    Reference height for windspeed measurements, m                       IB
+WTHLAT   Latitude, degrees (decimals)                                         IB
+WTHLONG  Longitude, degrees (decimals)                                        IB
 XAMN     Temperature maximum,all days,monthly average, C                      IB
 XDMN     Temperature maximum,dry days,monthly average, C                      IB
 XDSD     Temperature maximum,dry days,standard deviation, C                   IB
@@ -102,7 +106,7 @@ XPhi     Auto-correlation coefficient for SRAD                                IB
 XSDC     Low-frequency correction standard deviation for SRAD                 IB 
 XWMN     Temperature maximum,wet days,monthly average, C                      IB
 XWSD     Temperature maximum,wet days,standard deviation, C                   IB
-XMND     Solar radiation, dry days, monthly average, MJ m-2 d-1               IB 
+XMND     Solar radiation, dry days, monthly average, MJ m-2 d-1               IB
 XSDD     Solar radiation, dry days, monthly high-frequency SD, MJ m-2 d-1     IB
 XMNW     Solar radiation, wet days, monthly average, MJ m-2 d-1               IB
 XSDW     Solar radiation, wet days, monthly high-frequency SD, MJ m-2 d-1     IB

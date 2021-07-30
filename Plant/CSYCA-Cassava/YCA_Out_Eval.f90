@@ -10,7 +10,7 @@
     SUBROUTINE YCA_Out_Eval ( & 
         CN          , DOY         , DYNAMIC     , IDETG       , IDETL       , IDETO       , ISWNIT      , ISWWAT      , &
         MESOM       , ON          , RN          , RUN         , RUNI        , SN          , STGYEARDOY  , TN          , &
-        TNIMBSOM    , TOMINSOM1   , YEAR        &
+        TNIMBSOM    , TOMINSOM1   , YEAR        , LAI         &
         )
         
         USE ModuleDefs                                                                        ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
@@ -23,7 +23,7 @@
         INTEGER :: STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: CSTIMDIF    , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT            ! Integer function calls
 
-        REAL    :: TNIMBSOM    , TOMINSOM1          
+        REAL    :: TNIMBSOM    , TOMINSOM1   , LAI       
         REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
         REAL    :: HIAMMTMP                ! Harvest index,mature,temporary #          ! (From Output)    
 
@@ -79,8 +79,9 @@
                 ! Variables from time-course file
                 LAIXT = -99.0 
                 LNUMT = -99.0 
-                CWADT = -99.0 
-                HWADT = -99.0 
+                CWADT = -99.0
+                FHWADT = -99.0
+                HWADT = -99.0
                 HIADT = -99.0 
                 HWUT = -99.0 
                 HNUMAT = -99.0 
@@ -113,6 +114,8 @@
                     ! Yield at harvest   
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HWAM',hwamm)
                     IF (hwamm > 0.0.AND.HWAMM < 50.0) HWAMM = HWAMM*1000.0
+                    CALL AREADR (FILEA,TN,RN,SN,ON,CN,'FHWAM',fhwamm)
+                    IF (fhwamm > 0.0.AND.FHWAMM < 50.0) FHWAMM = FHWAMM*1000.0
                     IF (HWAMM <= 0.0) THEN
                         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HYAM',hyamm)
                         IF (hyamm <= 0.0) THEN
@@ -133,7 +136,7 @@
                     IF (hnumgmm.le.0.0)CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HNOUM',hnumgmm)
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'L#SM',lnumsmm)
                     IF (lnumsmm.le.0.0)CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LNOSM',lnumsmm)
-                    CALL AREADR (FILEA,TN,RN,SN,ON,CN,'BR#SH',brnumshm)
+                    CALL AREADR (FILEA,TN,RN,SN,ON,CN,'BR#SH',brnumshmm)
                         
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CNAM',cnamm)
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'VNAM',vnamm)
@@ -230,6 +233,7 @@
                                         LNUMCOL = Tvicolnm(linet,'L#SD')
                                         CWADCOL = Tvicolnm(linet,'CWAD')
                                         HWADCOL = Tvicolnm(linet,'HWAD')
+                                        FHWADCOL = Tvicolnm(linet,'FHWAD')
                                         HIADCOL = Tvicolnm(linet,'HIAD')
                                         HWTUCOL = Tvicolnm(linet,'HWUD')
                                         HNUMACOL = Tvicolnm(linet,'H#AD')
@@ -305,6 +309,8 @@
                                                     IF (VALUER > 0.0) CWADT = VALUER
                                                     CALL Getstrr (LINET,HWADCOL,VALUER)
                                                     IF (VALUER > 0.0) HWADT = VALUER
+                                                    CALL Getstrr (LINET,FHWADCOL,VALUER)
+                                                    IF (VALUER > 0.0) FHWADT = VALUER
                                                     CALL Getstrr (LINET,HIADCOL,VALUER)
                                                     IF (VALUER > 0.0) HIADT = VALUER
                                                     IF (HIADT >= 1.0) HIADT = HIADT/100.0
@@ -342,6 +348,11 @@
                             IF (HWAMM <= 0.0) THEN
                                 IF (HWADT > 0.0) THEN
                                     HWAMM = HWADT
+                                ENDIF
+                            ENDIF
+                            IF (HWFMM <= 0.0) THEN
+                                IF (FHWADT > 0.0) THEN
+                                    HWFMM = FHWADT
                                 ENDIF
                             ENDIF
                             IF (CWAMM <= 0.0) THEN
@@ -548,18 +559,19 @@
                 CALL Csopline(laixmchar,AMAX1(-99.0,laixm))
                     
                 ! Evaluate
+                !LPM 21jul2021 Add more space to harvested weight
                 EVHEADER = ' '
                 EVHEADER(1:14) = '*EVALUATION : '
                 IF (RUN == 1.OR.(EXCODE /= EXCODEPREV.AND.EVALOUT > 1))THEN
                     IF (RUN == 1) THEN
                         EVALOUT = 0
                         EVHEADNM = 0
-                        EVHEADNMMAX = 7
+                        EVHEADNMMAX = 1
                     ENDIF
                     IF (EXCODE /= EXCODEPREV) THEN
                         EVHEADNM = EVHEADNM + 1
                         OPEN (UNIT=FNUMEVAL,FILE=FNAMEEVAL,POSITION='APPEND')
-                        IF (EVHEADNM < EVHEADNMMAX.AND.EVHEADNMMAX > 1) THEN
+                        IF (EVHEADNM <= EVHEADNMMAX.AND.EVHEADNMMAX >= 1) THEN
                             LENENAME = TVILENT(ENAME)
                             WRITE (FNUMEVAL,*) ' '
                             WRITE (FNUMEVAL, FMT993) EVHEADER,EXCODE,ENAME(1:25),MODNAME
@@ -584,8 +596,8 @@
                                 WRITE (FNUMEVAL,'(A5,A1)',ADVANCE='NO') PSABVO(KEYPS(L)),'M'
                             ENDIF 
                         ENDDO
-                        WRITE (FNUMEVAL,'(6A)') &
-                            ' HWAMS HWAMM HWUMS HWUMM',' H#AMS H#AMM H#GMS H#GMM',' LAIXS LAIXM L#SMS L#SMM', &
+                        WRITE (FNUMEVAL,'(5A)') &
+                            '   HWAMS   HWAMM   FWAMS   FWAMM',' LAIXS LAIXM L#SMS L#SMM BR#SS BR#SM', &
                             ' CWAMS CWAMM VWAMS VWAMM',' HIAMS HIAMM HN%MS HN%MM VN%MS VN%MM', &
                             ' CNAMS CNAMM HNAMS HNAMM HINMS HINMM'
                         CLOSE(FNUMEVAL)
@@ -604,8 +616,8 @@
                         WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') PSDAPM(KEYPS(L))
                     ENDIF
                 ENDDO
-                WRITE (FNUMEVAL,'(2I6, 2A6, 2I6, 6F6.1, 4I6, 6A6, 4I6, 2A6)')NINT(hwam),NINT(hwamm),hwumchar,hwummchar, &
-                    NINT(hnumam),NINT(hnumamm),hnumgm,hnumgmm,laix,laixm,lnumsm,lnumsmm,NINT(cwam),NINT(cwamm),NINT(vwam), &
+                WRITE (FNUMEVAL,'(4I8, 6F6.1, 4I6, 6A6, 4I6, 2A6)')NINT(hwam),NINT(hwamm),NINT(fhwam),NINT(fhwamm), &
+                    laix,laixm,lnumsm,lnumsmm, brnam, brnumshmm,NINT(cwam),NINT(cwamm),NINT(vwam), &
                     NINT(vwamm),hiamchar,hiammchar,hnpcmchar,hnpcmmchar,vnpcmchar,vnpcmmchar,NINT(cnam),NINT(cnamm), &
                     NINT(hnam),NINT(hnamm),hinmchar,hinmmchar
                 Close(FNUMEVAL)

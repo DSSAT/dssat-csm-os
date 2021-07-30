@@ -72,15 +72,23 @@
 
             
         DO L = 0,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
-            IF (L <= 3)THEN
+            IF (L <= 4)THEN
                 PD(L) = PDL(L)
             ELSE
-                PD(L) = PDL(3)
+                PD(L) = PDL(4)
             ENDIF
+            IF (PD(L) == 0.0 .AND. L > 0) THEN
+                  MESSAGE(1) = "Coefficient BxyND should be" // &
+                      " greater than zero. Correct the cultivar file."
+                  MESSAGE(2) = "Program will stop."
+                  CALL WARNING(2, 'CSYCA',MESSAGE)
+                  CALL ERROR('IPCUL',3,"",0)
+            ENDIF
+            
         ENDDO
             
             !IF (MSTG > 2) THEN !LPM 07MAR15 MSTG to PSX
-            IF (PSX > 3) THEN
+            IF (PSX > 4) THEN
                 Ctrnumpd = 0
                 !DO L = 2,MSTG-1  !LPM 04MAR15 It is not necessary the -1 because there is not a MSTG with a different value 
                 DO L = 1,PSX
@@ -123,6 +131,8 @@
             RNCMN(L) = RNPCMN(L)/100.0
         ENDDO
         
+        LNSC =  LNSC/100.0
+        
         IF (DFPE < 0.0) THEN  
             DFPE = 1.0
             WRITE(MESSAGE(1),'(A51)') 'Pre-emergence development factor missing. Set to 1.'
@@ -151,8 +161,8 @@
         IF (RSEN < 0.0) RSEN = 5.0
         
         ! Reduction factor limits
-        IF (WFPL < 0.0) WFPL = 0.0
-        IF (WFPU < 0.0) WFPU = 1.0
+        !IF (WFPL < 0.0) WFPL = 0.0
+        !IF (WFPU < 0.0) WFPU = 1.0
         IF (WFGL < 0.0) WFGL = 0.0
         IF (WFGU < 0.0) WFGU = 1.0
         IF (NFPL < 0.0) NFPL = 0.0
@@ -160,15 +170,15 @@
         IF (NFGL < 0.0) NFGL = 0.0
         IF (NFGU < 0.0) NFGU = 1.0
         IF (NLLG <= 0.0) NLLG = 0.95
-        IF (NFSU < 0.0) NFSU = 0.2
+        !IF (NFSU < 0.0) NFSU = 0.2
         
         ! Various
         !IF (RSFRS < 0.0) RSFRS = 0.05 !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
         IF (LSENI < 0.0) LSENI = 0.0
         IF (PARIX <= 0.0) PARIX = 0.995
-        IF (NTUPF < 0.0) NTUPF = 0.2
+        !LPM 15NOV2020 Remove the N top-up fraction
+        !IF (NTUPF < 0.0) NTUPF = 0.2
         IF (PPEXP < 0.0) PPEXP = 2.0
-        IF (RLFWU < 0.0) RLFWU = 0.5  
         IF (RTUFR < 0.0) RTUFR = 0.05
         IF (SHGR(20) < 0.0) THEN 
             DO L = 3,22
@@ -239,10 +249,10 @@
         ENDIF
         
         ! Critical and starting N concentrations
-        LNCX = LNCXS(0)
+        node%LNCX = LNCXS(0)
         node%SNCX = SNCXS(0)
         RNCX = RNCXS(0)
-        LNCM = LNCMN(0)
+        node%LNCM = LNCMN(0)
         node%SNCM = SNCMN(0)
         RNCM = RNCMN(0)
         
@@ -266,8 +276,8 @@
         IF (ISWWATCROP == 'N') THEN
             ! Plant water status effects on growth turned off
             WFGU = 0.0
-            WFPU = 0.0
-            WFSU = 0.0
+            !WFPU = 0.0
+            !WFSU = 0.0
             WFRTG = 0.0
         ENDIF
         
@@ -288,9 +298,6 @@
         SEEDNI = (SDNPCI/100.0)*(SDRATE/(PPOP*10.0))                                                                !EQN 027
         IF (ISWNIT /= 'N') THEN
             SEEDN = SEEDNI
-            WRITE(MESSAGE(1),'(A39)') 'Simulations with N are under evaluation'
-            WRITE(MESSAGE(2),'(A68)') 'it could affect your results, consider to turn off N for simulations'
-            CALL WARNING(2,'CSYCA',MESSAGE)
         ELSE
             SEEDN = 0.0
             SDNAP = 0.0

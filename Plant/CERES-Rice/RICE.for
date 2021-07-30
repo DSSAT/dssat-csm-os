@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2020 
+C COPYRIGHT 1998-2021 
 C                     DSSAT Foundation
 C                     International Fertilizer Development Center
 C                     University of Florida, Gainesville, Florida
@@ -413,8 +413,13 @@ C-----------------------------------------------------------------------
 !     Seasonal output
 !***********************************************************************
         IF (DYNAMIC .EQ. SEASEND) THEN
-          STOVWT = STOVER / PLTPOP / 10.0 
+          IF (PLTPOP .GT. .00001) THEN
+            STOVWT = STOVER / PLTPOP / 10.0 
 !           g/pl     kg/ha   pl/m2
+          ELSE
+            STOVWT = 0.0
+          ENDIF
+
           CALL HRes_Ceres(CONTROL,
      &    CROP, DLAYR, GRNWT, HARVFRAC, NLAYR,            !Input
      &    PConc_Shut, PConc_Root, PConc_Shel,             !Input

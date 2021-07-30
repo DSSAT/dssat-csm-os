@@ -155,7 +155,7 @@ C  Calls:     None
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
         IF (YRDOY .GE. YRPLT) THEN
 
-          PODWTD = 0
+          PODWTD = 0.0
 !         DAS = MAX(0, TIMDIF(YRSIM, YRDOY))
           DAP = MAX(0, TIMDIF(YRPLT, YRDOY))
 

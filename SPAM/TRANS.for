@@ -26,26 +26,41 @@ C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  Called by: WATBAL
 !  Calls:     None
 C=======================================================================
-      SUBROUTINE TRANS(DYNAMIC, 
-     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+      SUBROUTINE TRANS(DYNAMIC, MEEVP,
+     &    CO2, CROP, EO, ET0, EVAP, KTRANS,              !Input
      &    WINDSP, XHLAI,                                  !Input
+     &    WEATHER,                                        !Input
      &    EOP)                                            !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
+      USE YCA_Growth_VPD
       IMPLICIT NONE
+      
+      TYPE (WeatherType) WEATHER
 
       CHARACTER*2  CROP
+      CHARACTER*1  MEEVP
+      CHARACTER(len=6), PARAMETER :: ERRKEY = 'IPECO'
+      CHARACTER(len=78)  MSG(2)
 
       INTEGER DYNAMIC
+      INTEGER hour
 
       REAL CO2, EO, EVAP, FDINT, KTRANS, TAVG, WINDSP, XHLAI
       REAL EOP, TRAT, EOP_reduc, EOP_max
       REAL KCB, REFET
+      REAL PHSV, PHTV, TDEW, TMIN
+      REAL, DIMENSION(TS)    ::TAIRHR ,ET0  
 
 !     FUNCTION SUBROUTINES:
       REAL TRATIO
+       
+      TAVG   = WEATHER % TAVG  
+      TDEW   = WEATHER % TDEW   
+      TMIN   = WEATHER % TMIN 
+      TAIRHR = WEATHER % TAIRHR
       
       CALL GET('SPAM', 'KCB', KCB)
       CALL GET('SPAM', 'REFET', REFET)
@@ -81,8 +96,34 @@ C       soil water balance and predicting measured ET.
         IF (KCB .GE. 0.0) THEN
           EOP = KCB * REFET !KRT added for ASCE dual Kc ET approach
         ELSE  
-          FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
-          EOP = EO * FDINT
+          FDINT = 1.0 - EXP(-(KTRANS) * XHLAI) 
+            IF (meevp .NE.'H') THEN 
+                EOP = EO * FDINT
+            ELSE
+              CALL GET('SPAM', 'PHSV' ,phsv)
+              CALL GET('SPAM', 'PHTV' ,phtv)
+      
+              IF (phsv <= 0.0) THEN
+                  MSG(1) = "VPD sensitivity parameter PHSV" //
+     &              " is not defined for EVAPO method (H)."
+                  MSG(2) = "Program will stop."
+                  CALL WARNING(2, ERRKEY, MSG)
+                  CALL ERROR(ERRKEY,4,"",0)
+              ENDIF
+              IF (phtv <= 0.0) THEN
+                  MSG(1) = "VPD threshold parameter PHTV is" //
+     &              " not defined for EVAPO method (H)."
+                  MSG(2) = "Program will stop."
+                  CALL WARNING(2, ERRKEY, MSG)
+                  CALL ERROR(ERRKEY,4,"",0)
+              ENDIF
+              DO hour = 1,TS 
+                  VPDFPHR(hour) =  get_Growth_VPDFPHR(PHSV, PHTV, TDEW, 
+     &                     TMIN, TAIRHR, hour)
+                  EOPH(hour) = (ET0(hour) * FDINT) * VPDFPHR(hour)
+                  EOP = EOP + EOPH(hour)
+              ENDDO
+          ENDIF
           EOP_reduc = EOP * (1. - TRAT)  
           EOP = EOP * TRAT
 

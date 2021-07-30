@@ -95,10 +95,10 @@
             ELSE
                 IF (BRSTAGE < 1.0) THEN
                     DF = 1.0 - AMIN1(1.0,DAYLS(INT(BRSTAGETMP))*(PPTHR-DAYL)) 
-                ELSE
+                ELSEIF (BRSTAGETMP < FLOAT(PSX)) THEN
                     DF = 1.0 - AMIN1(1.0,DAYLS(INT(BRSTAGETMP+1))*(PPTHR-DAYL)) 
                 ENDIF 
-                IF (BRSTAGETMP < FLOAT(PSX)) THEN
+                IF ((BRSTAGETMP+ 2.0) < FLOAT(PSX)) THEN
                     IF (BRSTAGE < 1.0) THEN
                         DFNEXT = 1.-AMIN1(1.0,DAYLS(INT(BRSTAGETMP+1))*(PPTHR-DAYL))
                     ELSE

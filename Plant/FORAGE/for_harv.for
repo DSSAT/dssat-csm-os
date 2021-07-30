@@ -8,6 +8,7 @@ C
 C  --/--/---- DP  Written.
 C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C  10/15/2020 FO  Fixed path issue for MOWFILE.
+C  06/23/2021 FO  Update MOWFILE to handle paths with spaces.
 C-----------------------------------------------------------------------
 C  INPUT  : 
 C
@@ -107,7 +108,8 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
       IF (PATHL .LE. 1) THEN
          FILEMOW = mowfile
       ELSE
-         FILEMOW = PATHEX(1:(PATHL-1)) // mowfile
+         PATHL = LEN(TRIM(PATHEX))
+         FILEMOW = PATHEX(1:(PATHL)) // mowfile
       ENDIF
       
       CLOSE(LUNIO)

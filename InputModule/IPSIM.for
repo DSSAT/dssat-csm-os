@@ -341,15 +341,31 @@ C
 
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
+              WRITE(MSG(1),'("Automatic harvest option ",
+     &          "is not valid for crop type: ",A2)') CROP
+              CALL WARNING(1, ERRKEY, MSG)
               CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+           ENDIF
+         ENDIF
+          
+         IF ((INDEX('CS',CROP)) .GT. 0) THEN
+           IF (IHARI .EQ. 'M') THEN
+             WRITE(MSG(1),'("Harvest at maturity option is ",
+     &         "not valid for crop type: ",A2)') CROP
+             CALL WARNING(1, ERRKEY, MSG)
+             CALL ERROR ('IPSIM ',11,FILEX,LINEXP)
            ENDIF
          ENDIF
 
          IF ((INDEX('PT',CROP)) .GT. 0) THEN
            IF (IPLTI .EQ. 'A') THEN
+              WRITE(MSG(1),'("Automatic planting option is ",
+     &    "not valid for crop type: ",A2)') CROP
+              CALL WARNING(1, ERRKEY, MSG)
               CALL ERROR (ERRKEY,5,FILEX,LINEXP)
            ENDIF
-         ENDIF
+      ENDIF
+      
 C
 !     ==============================================================
 C        Read FIFTH line of simulation control - OUTPUTS
@@ -575,21 +591,28 @@ C
             FWFILE = "-99"
 
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
-            READ (CHARTEST,'(I3,9X,5I8,1X,A15)',IOSTAT=ERRNUM) 
-     &        LN, ENDAT, SeasDur, FODAT, FStartYear, FEndYear, FWFILE
+!            READ (CHARTEST,'(I3,9X,5I8,1X,A15)',IOSTAT=ERRNUM) 
+!     &        LN, ENDAT, SeasDur, FODAT, FStartYear, FEndYear, FWFILE
+            READ (CHARTEST,'(I3,25X,I8)',IOSTAT=ERRNUM) LN, FODAT
 
-            IF (ERRNUM .NE. 0 .AND. RNMODE .EQ. 'Y') THEN
-              MSG(1) = 
-     &          "Error in forecast data, check simulation controls."
-              WRITE(MSG(2),'("End simulation date = ",I8)') ENDAT
-              WRITE(MSG(3),'("Maximum season duration = ",I8)') SeasDur
-              WRITE(MSG(4),'("Simulated forecast start date=",I8)')FODAT
-              WRITE(MSG(5),'("Forecast start year = ",I8)') FStartYear
-              WRITE(MSG(6),'("Forecast end year = ",I8)') FEndYear
-              WRITE(MSG(7),'("Short term forecast weather file = ",A5)')
-     &          FWFILE
-              CALL WARNING(7, ERRKEY, MSG)
+! CHP 2021-03-29 Allow  11th line of simcontrols to be missing.
+! In this case, FODAT will be set equal to either last date in weather file or YRSIM.
+            IF (ERRNUM .NE. 0 .OR. LN .NE. LNSIM) THEN
+              FODAT = -99
             ENDIF
+
+!            IF (ERRNUM .NE. 0 .AND. RNMODE .EQ. 'Y') THEN
+!              MSG(1) = 
+!     &          "Error in forecast data, check simulation controls."
+!              WRITE(MSG(2),'("End simulation date = ",I8)') ENDAT
+!              WRITE(MSG(3),'("Maximum season duration = ",I8)') SeasDur
+!              WRITE(MSG(4),'("Simulated forecast start date=",I8)')FODAT
+!              WRITE(MSG(5),'("Forecast start year = ",I8)') FStartYear
+!              WRITE(MSG(6),'("Forecast end year = ",I8)') FEndYear
+!              WRITE(MSG(7),'("Short term forecast weather file = ",A5)')
+!     &          FWFILE
+!              CALL WARNING(7, ERRKEY, MSG)
+!            ENDIF
             CONTROL % FODAT = FODAT
             
 !     ==============================================================
@@ -1052,8 +1075,8 @@ C-----------------------------------------------------------------------
 !     1) Go to pull down menu Project -> Settings -> Fortran (Tab) ->
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
-D     INPUTX = 'C:\DSSAT47\DSCSM047.EXE'
-D     IPX = 23
+!D     INPUTX = 'C:\DSSAT47\DSCSM048.EXE'
+!D     IPX = 23
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             IF (IPX > 12) THEN
@@ -1582,6 +1605,16 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
      &    "crop type: ",A2)') CONTROL%CROP
           CALL WARNING(2, ERRKEY, MSG)
           CALL ERROR ('IPSIM ',4,FILEX,LINEXP)
+        ENDIF
+      ENDIF
+      
+      IF ((INDEX('CS',CONTROL % CROP)) .GT. 0) THEN
+        IF (IHARI .EQ. 'M') THEN
+          MSG(1) = "Default Simulation controls file used."
+          WRITE(MSG(2),'("Harvest at maturity option is not valid for ",
+     &    "crop type: ",A2)') CONTROL%CROP
+          CALL WARNING(1, ERRKEY, MSG)
+          CALL ERROR ('IPSIM ',11,FILEX,LINEXP)
         ENDIF
       ENDIF
 
