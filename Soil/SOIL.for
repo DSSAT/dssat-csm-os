@@ -96,9 +96,8 @@ C=====================================================================
 
 !-----------------------------------------------------------------------
 !     Local variables:
+      INTEGER DYNAMIC
       CHARACTER*1  MESOM
-
-      INTEGER DYNAMIC, L
 
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
@@ -141,12 +140,11 @@ C=====================================================================
       IF (MESOM .EQ. 'P') THEN
 !       Parton (Century-based) soil organic matter module
         CALL CENTURY(CONTROL, ISWITCH, 
-     &    FERTDATA, FLOODWAT, FLOODN, HARVRES, NH4,       !Input
-     &    NO3, OMADATA, SENESCE, SOILPROP, SPi_Labile,    !Input
-     &    ST, SW, TILLVALS,                               !Input
-     &    IMM, LITC, MNR, MULCH, SomLit, SomLitC,         !Output
-     &    SomLitE, SSOMC,                                 !Output
-     &    newCO2)             !for DayCent in SOILNI added by PG
+     &  DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,   !Input
+     &  NH4, NO3, OMADATA, RLV, SENESCE,              !Input
+     &  SOILPROP, SPi_Labile, ST, SW, TILLVALS,       !Input
+     &  IMM, LITC, MNR, MULCH, newCO2, SomLit,        !Output
+     &  SomLitC, SomLitE, SSOMC)                      !Output
       ELSE
 !      ELSEIF (MESOM .EQ. 'G') THEN
 !       Godwin (Ceres-based) soil organic matter module (formerly NTRANS)

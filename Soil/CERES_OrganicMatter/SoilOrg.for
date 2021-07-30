@@ -135,12 +135,7 @@
       REAL CN_SOM(0:NL), CN_FOM(0:NL)
 
 !     Methane variables:
-!     REAL FOMContrib, HUMContrib
       REAL Immob_OM
-!     REAL TFOMSubstrateC
-!     REAL THUMSubstrateC
-!     REAL, DIMENSION(NL) :: CSubstrate
-!     REAL CO2FOMFac
       REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
      &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
      &    CumCH4Leaching, CumCO2Emission
@@ -931,8 +926,11 @@ C***********************************************************************
      &        DYNAMIC == SEASEND) THEN
 C-----------------------------------------------------------------------
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
+     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
+     &  CumCH4Leaching, CumCO2Emission,                       !Input
+     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
       IF (ISWWAT == 'N') RETURN
 

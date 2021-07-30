@@ -41,12 +41,11 @@
 !=======================================================================
 
       SUBROUTINE CENTURY (CONTROL, ISWITCH, 
-     &  FERTDATA, FLOODWAT, FLOODN, HARVRES, NH4,         !Input
-     &  NO3, OMADATA, SENESCE, SOILPROP, SPi_Labile,      !Input
-     &  ST, SW, TILLVALS,                                 !Input
-     &  IMM, LITC, MNR, MULCH, SomLit, SomLitC,           !Output
-     &  SomLitE, SSOMC,                                   !Output
-     &  newCO2)                         !added newCO2 from DayCent  PG
+     &  DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,   !Input
+     &  NH4, NO3, OMADATA, RLV, SENESCE,              !Input
+     &  SOILPROP, SPi_Labile, ST, SW, TILLVALS,       !Input
+     &  IMM, LITC, MNR, MULCH, newCO2, SomLit,        !Output
+     &  SomLitC, SomLitE, SSOMC)                      !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
@@ -137,6 +136,12 @@
 
 !     Added for tillage
       REAL MIXPCT
+
+!     Methane variables:
+      REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
+     &    CumCH4Leaching, CumCO2Emission
+      REAL RLV(NL), DRAIN
 
       DATA ADDMETABEFLAG /.FALSE./
       DATA FRMETFLAG /.FALSE./
@@ -403,9 +408,18 @@
 !     &  ACCCO2, LITC, OMAData, SENESCE,                   !Input
 !     &    SOM1C, TLITC, TSOMC, YRDOY)                     !Input
 
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
+
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
+     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
+     &  CumCH4Leaching, CumCO2Emission,                       !Input
+     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
       CALL SoilNoBal_C (CONTROL, ISWITCH, 
      &  HARVRES, IMM, LITE, MNR, NLAYR, OMAData,          !Input
@@ -704,6 +718,12 @@
      &  METABE, NLAYR, SOM1C, SOM1E, SOM2C,               !Input
      &  SOM2E, SOM23E, SOM3C, SOM3E, STRUCC, STRUCE)      !Input
 
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY INTEGRATION
@@ -818,14 +838,23 @@
      &  METABE, NLAYR, SOM1C, SOM1E, SOM2C,               !Input
      &  SOM2E, SOM23E, SOM3C, SOM3E, STRUCC, STRUCE)      !Input
 
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
+
 !     Soil carbon balance.
 !      CALL SOILCBAL_C (CONTROL, ISWITCH, 
 !     &  ACCCO2, LITC, OMAData, SENESCE,                   !Input
 !     &    SOM1C, TLITC, TSOMC, YRDOY)                     !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
+     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
+     &  CumCH4Leaching, CumCO2Emission,                       !Input
+     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************
 !***********************************************************************
@@ -834,6 +863,12 @@
       ELSEIF (DYNAMIC == OUTPUT) THEN
 !---------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
 
 !       Get detailed SOM and litter output.
       IF (INDEX('AD',IDETL) > 0) THEN
@@ -868,8 +903,11 @@
      &  SENESCE, SOM1E, TLITE, TSOME, TSOM1E, TSOM23E)    !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
+     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
+     &  CumCH4Leaching, CumCO2Emission,                       !Input
+     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************
 !***********************************************************************
@@ -878,6 +916,12 @@
       ELSEIF (DYNAMIC == SEASEND) THEN
 !     ------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
+     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
+     &    CumCH4Leaching, CumCO2Emission)                     !Output
 
 !     Close output files.
       IF (INDEX('AD',IDETL) > 0) THEN
@@ -912,8 +956,11 @@
      &  SENESCE, SOM1E, TLITE, TSOME, TSOM1E, TSOM23E)    !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
+     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
+     &  CumCH4Leaching, CumCO2Emission,                       !Input
+     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************
 !***********************************************************************
