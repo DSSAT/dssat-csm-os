@@ -5,10 +5,10 @@
         {
         //Configure targets
             "label": "dssat-csm: Run DSSAT (without debugging)",
-            "options": { "cwd": "/DSSAT48/TEFF"},                   //<- Set execution working directory
-            "args": ["C", "ETGA0211.TFX", "3"],                      //<- Set program's arguments
-           // "args": ["A", "ETGA0211.TFX"],
-            "command": "${workspaceRoot}/build/bin/dscsm048.exe",    //<- Set executable target
+            "options": { "cwd": "/DSSAT47/Maize"},                   //<- Set execution working directory
+            "args": ["C", "UFGA8201.MZX", "1"],                      //<- Set program's arguments
+            //"args": ["A", "UFGA8201.MZX"],
+            "command": "${workspaceRoot}/build/bin/dscsm047.exe",    //<- Set executable target
             "type": "shell",
         },
         {
