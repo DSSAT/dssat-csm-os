@@ -454,8 +454,8 @@ C-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
-      LABEL(1)  = 'CH4EC'; VALUE(1)  = CH4Emission  
-      LABEL(2)  = 'CO2EC'; VALUE(2)  = CO2emission
+      LABEL(1)  = 'CH4EC'; VALUE(1)  = CumCH4Emission  
+      LABEL(2)  = 'CO2EC'; VALUE(2)  = CumCO2emission
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
@@ -470,38 +470,24 @@ C-----------------------------------------------------------------------
       END SUBROUTINE OpMethane
 C=======================================================================
 !    Output Variable        Definition
-! DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter
-! CO2ED  CO2emission     Daily CO2 emission 
-! CH4SBD TCH4Substrate   Daily portion of new CO2 that is proportioned to methane generation 
-! CH4SFD StorageFlux     Daily CH4 Storage flux 
-! CH4STD CH4Stored       CH4 stored in soil and floodwater                       |
-! CH4PRD CH4Production   Daily CH4 Production 
-! CH4COD CH4Consumption  Daily CH4 Consumption
-! CH4LCD CH4Leaching     Daily CH4 Leaching 
-! CH4ED  CH4Emission     Daily CH4 Emission 
-! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux   
-! CH4EBD CH4Ebullition   Daily CH4 Ebullition  
-! CH4DID CH4Diffusion    Daily CH4 Diffusion  
-! CH4BLD CH4_balance     Daily CH4 balance 
+! DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter (kg[C]/ha)
+! CO2ED  CO2emission     Daily CO2 emission (kg/ha)
+! CH4SBD TCH4Substrate   Daily portion of new CO2 that is proportioned to methane generation (kg[C]/ha)
+! CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)
+! CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)
+! CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)
+! CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)
+! CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha) 
+! CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha) 
+! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)   
+! CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)  
+! CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)  
+! CH4BLD CH4_balance     Daily CH4 balance (kg[C]/ha) 
 
-! DCO2C  CumNewCO2       Cumulative CO2 from decomposition
-! CO2EC  CumCO2Emission  Cumulative CO2 emissions
-! CH4EC  CumCH4Emission  Cumulative CH4 emissions
-! CH4COC CumCH4Consumpt  Cumulative CH4 consumption
-! CH4LCC CumCH4Leaching  Cumulative CH4 leaching
-! CH4BLC Cum_CH4_bal     Cumulative CH4 balance
+! DCO2C  CumNewCO2       Cumulative CO2 from decomposition (kg[C]/ha)
+! CO2EC  CumCO2Emission  Cumulative CO2 emissions (kg[C]/ha)
+! CH4EC  CumCH4Emission  Cumulative CH4 emissions (kg[C]/ha)
+! CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)
+! CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)
+! CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)
 
-
-
-! No longer used:
-! CH4SUB TSubstrate      Daily CH4 TSubstrate
-! CH4PRF ProductionFrac  Daily CH4 Production fraction      
-! CH4COF ConsumptionFrac Daily CH4 Consumption fraction
-! CH4PLF PlantFrac       Daily CH4 Plant fraction      
-! CH4EBF EbullitionFrac  Daily CH4 Ebullition fraction 
-! CH4DIF DiffusionFrac   Daily CH4 Diffusion fraction  
-! CH4LCF LeachingFrac    Daily CH4 Leaching fraction  
-! CH4SFL StorFlux        Daily CH4 Storage flux
-
-! CH4ITR iterations1     Daily iterations1    
-! CH4DI  difference1     Daily difference1    

@@ -116,7 +116,7 @@
 
 !     Plant senesced matter(surface-soil, carbon-lignin-nitrogen)
       REAL SenWt(0:NL)        !kg[dry matter]/ha
-!      REAL SenLig(0:NL)       !kg[lignin]/ha
+!     REAL SenLig(0:NL)       !kg[lignin]/ha
       REAL SenE(0:NL,NELEM)   !kg[E]/ha (E=N, P, S,...)
       REAL SEN_AM, SEN_PRCEL, SEN_PRCHO, SEN_PRLIG,SEN_EXTFAC,SEN_WATFAC
       REAL SENSUM
@@ -169,7 +169,6 @@
       NLAYR  = SOILPROP % NLAYR  
       PH     = SOILPROP % PH     
       SAT    = SOILPROP % SAT   
-
 
       FLOOD = FLOODWAT % FLOOD
 
@@ -297,11 +296,6 @@
       ENDDO
 
       PREV_CROP = CONTROL % CROP  !Save crop name for harvest residue
-
-!!     Substrate for methanogenesis
-!      TFOMSubstrateC = 0.0
-!      THUMSubstrateC = 0.0
-!!     CSubstrate = 0.0
 
       ACCCO2 = 0.0 !Cumulative CO2 released from SOM, FOM decomposition
       newCO2_FOM = 0.0
@@ -483,8 +477,6 @@
       TOMINSOM = 0.0
       TNIMBSOM = 0.0
 
-!      TFOMSubstrateC = 0.0
-!      THUMSubstrateC = 0.0 
       newCO2 = 0.0
 
       DO L = 1, NLAYR
@@ -679,11 +671,6 @@ C         recruit (NREQ-N CONC) g of N
         newCO2_HUM(L) = HUMFRAC * SSOMC(L)
         newCO2(L) = newCO2_HUM(L) + newCO2_FOM(L)
 
-!     temp chp
-        write(3001,'(i7,i3,3f12.4)') 
-     &    control%yrdoy, L, newCO2_FOM(L), newCO2_HUM(L), newCO2(L)
-
-
 !       chp 2019-03-07 Add 20% of C, regardless of N movement. Let C decomposition
 !         drive the mass transfer.
         DLTHUMC(L) = DLTHUMC(L) + 0.2 * FOMCFrac * DLTFOM
@@ -694,7 +681,6 @@ C         recruit (NREQ-N CONC) g of N
 
 !         Change in humus N = reduction based on decomposition of humus
 !           plus addition of 20% of fresh organic matter
-!!!!! - HERE IS WHERE C:N RATIO IS CHANGED !!!
           DLTNI2 = - HUMFRAC * SSOME(L,N) + 0.2 * FOMFRAC * FON(L)
           DLTHUME(L,N) = DLTHUME(L,N) + DLTNI2
           IF (DLTNI2.LT.0.0) THEN
@@ -742,39 +728,6 @@ C         recruit (NREQ-N CONC) g of N
           PNOM = 0.0
 !         MINERALIZE(L,P) = PNOM
         ENDIF
-
-!!       --------------------------------------------------------------------------------------
-!!       Calculate total amt of C (kg[C]/ha/d) released by decay for methanogenesis
-!!       Convert from kg[DM]/ha to kg[C]/ha
-!        CO2FOMFac = (FPOOL(L,1) * 0.55 
-!     &            +  FPOOL(L,2) * 0.55 
-!     &            +  FPOOL(L,3) * 0.30) / FOM(L)
-!
-!        FOMContrib = FOMFRAC * FOM(L) * FOMCFrac * CO2FOMFac
-!!       C released =  Frac   * FOM    *    0.4   *   Same as
-!!       from FOM    decomposed                      FOMCFrac?
-!
-!!       already in units of kg[C]/ha
-!        HUMContrib = SSOMC(L) * HUMFRAC * 0.55
-!!     the 0.55 value = portion of decomposed humus that goes to CO2 (value from Century model)
-!!                  = amount of humus decomposed 
-!    ! &             - 0.2 * FOMFRAC * FON(L) * HumusCNRatio 
-!!                  - minus [C] moving from FOM to Humus 
-!!        HUMFRAC = DMINR * TFSOM * CMF * DMOD1 * PHMIN
-!!        DLTHUMC(L) = DLTHUMC(L) - HUMFRAC * SSOMC(L)  !change to humus C
-!
-!!        TFOMSubstrateC = TFOMSubstrateC + FOMContrib
-!!        THUMSubstrateC = THUMSubstrateC + HUMContrib 
-!
-!!       CSubstrate (methane routine) = newCO2 (N2O routine) - verify with PG!
-!!       CSubstrate(L)  = FOMContrib + HUMContrib  !substrate for methane production
-!        newCO2(L) = FOMContrib + HUMContrib     !new CO2 production
-!
-!!     temp chp
-!        write(3000,'(i7,i3,3f12.4)') 
-!     &    control%yrdoy, L, FOMContrib, HUMContrib, newCO2(L)
-!!       --------------------------------------------------------------------------------------
-
       END DO   !End of soil layer loop.
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
@@ -1086,4 +1039,27 @@ C-----------------------------------------------------------------------
 !                 50% reduction for SW = SAT) 
 ! XL            Excess water (above DUL) as a fraction of the maximum 
 !                 amount of excess water (i.e. saturated). (fraction)
+
+!Methane variables
+! DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter (kg[C]/ha)
+! CO2ED  CO2emission     Daily CO2 emission (kg/ha)
+! CH4SBD TCH4Substrate   Daily portion of new CO2 that is proportioned to methane generation (kg[C]/ha)
+! CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)
+! CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)
+! CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)
+! CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)
+! CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha) 
+! CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha) 
+! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)   
+! CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)  
+! CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)  
+! CH4BLD CH4_balance     Daily CH4 balance (kg[C]/ha) 
+
+! DCO2C  CumNewCO2       Cumulative CO2 from decomposition (kg[C]/ha)
+! CO2EC  CumCO2Emission  Cumulative CO2 emissions (kg[C]/ha)
+! CH4EC  CumCH4Emission  Cumulative CH4 emissions (kg[C]/ha)
+! CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)
+! CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)
+! CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)
+
 !***********************************************************************
