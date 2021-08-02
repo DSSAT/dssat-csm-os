@@ -2601,7 +2601,7 @@ C       WTN = WTNCAN*10. / BIOMAS * 100.
 
 !          WTNUP = WTNUP + TRNU*PLTPOP  
               !Total N uptake, g/m2  Moved to mz_roots.for
-          YIELD = GRNWT*10.0*PLTPOP/.91
+          YIELD = GRNWT*10.0*PLTPOP
           IF (GPP.GT. 0) THEN
             SKERWT = GRNWT/GPP
           ELSE
@@ -2919,7 +2919,7 @@ C       WTN = WTNCAN*10. / BIOMAS * 100.
 ! XNF         !Modified nitrogen factor based on critical N concentration in vegetative biomass
 ! XNTI        !Number of leaves at tassel initiation
 ! XSTAGE      !Non-integer growth stage indicator
-! YIELD       !Yield in kg/ha at 9% moisture content
+! YIELD       !Yield in kg/ha at 0% moisture content
 ! YRDOY       !Year and day of year
 
 
