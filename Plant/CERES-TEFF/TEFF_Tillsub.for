@@ -76,7 +76,7 @@ C=======================================================================
          PTILNO  = (-0.10+TSLOPE*(XN-4.0/G3)-0.376*(XN-4.0/G3)**2 +
 !     &               0.0458*(XN-4.0/G3)**3)*G3                
      &               0.0458*(XN-4.0/G3)**3)*(G3**0.5)  !US 
-         PTILNO   = PTILNO * AMIN1 ((1.0 + 2.5*(XN-4.0)),850.0*G3/PLANTS)  !TEF EFFECT OF PLANT POP
+         PTILNO  = PTILNO * AMIN1((1.0 + 2.5*(XN-4.0)),850.0*G3/PLANTS)  !TEF EFFECT OF PLANT POP
          IF (LAI .GT. 7.0) THEN
            TRSM    = EXP (-1.1*(LAI-7.0))
          ELSE 

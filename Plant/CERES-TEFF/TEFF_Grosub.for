@@ -944,7 +944,8 @@ CCCCC-PW
              ! minimum of water or N
              !
              IF (SUMDTT .LT. 75 .AND. MGPP .GT. MFILL) THEN
-                GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*(0.0067*SUMDTT+0.5)*SWFAC ! in tef (0.0067*SUMDTT+0.5)
+                GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*
+     &                   (0.0067*SUMDTT+0.5)*SWFAC ! in tef (0.0067*SUMDTT+0.5)
              !  GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC !tef no water stress +TGPP
               ELSE
                 GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC !tef no water stress +TGPP
