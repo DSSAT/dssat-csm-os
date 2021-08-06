@@ -1,7 +1,7 @@
 C=======================================================================
-C  RI_GROSUB, Subroutine
+C  TEFF_GROSUB, Subroutine
 C
-C  Determines rice growth
+C  Determines teff growth
 C-----------------------------------------------------------------------
 C  Revision history
 C
@@ -11,6 +11,8 @@ C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
 C  04/02/2008 US/CHP Added P and K models
 C  02/25/2012 JZW PHINT from CUL file (remove from SPE)
+!  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
+C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
@@ -19,7 +21,7 @@ C           when false then growth without stress as in seedbed
 C  LTRANS : True if transplanted (itrans=2 or 3)
 C=======================================================================
 
-      SUBROUTINE RI_GROSUB (CONTROL, ISWITCH,
+      SUBROUTINE TEFF_GROSUB (CONTROL, ISWITCH,
      &    CO2, CDTT_TP, CUMDTT, DTT, FERTILE, FIELD,      !Input
      &    FLOOD, FracRts, ISTAGE, ITRANS, LTRANS,         !Input
      &    NEW_PHASE, NH4, NO3, P1, P1T, P3, P4, PHEFAC,   !Input     
@@ -58,7 +60,7 @@ C=======================================================================
 	CHARACTER*92 FILECC
 
       CHARACTER*6     ERRKEY          
-      PARAMETER       (ERRKEY='RI_GRO')   
+      PARAMETER       (ERRKEY='TEFF_GRO')   
 
       CHARACTER*80 PATHCR
       INTEGER   I,YEAR
@@ -153,11 +155,11 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      CALL RI_IPGROSUB (CONTROL, 
+      CALL TEFF_IPGROSUB (CONTROL, 
      &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
      &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
 
-      CALL RI_IPCROP (FILEC, PATHCR, CROP, 
+      CALL TEFF_IPCROP (FILEC, PATHCR, CROP, 
      &    CO2X, CO2Y, MODELVER, PORMIN, 
         !&    CO2X, CO2Y, MODELVER, PHINT, PORMIN,  
      &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
@@ -170,7 +172,7 @@ C=======================================================================
 
       STMWT    = 0.001
       LEAFNO   = 0
-      SEEDRV   = G2
+      SEEDRV   = 0.0003  
       RANC     = 0.022
       SEEDNI   = 0.0
       GPP    = 1.0
@@ -181,19 +183,19 @@ C=======================================================================
       LAI      = 0.0  !chp 8/12/2003 - prevents early N stress
       MAXLAI   = 0.0
       PTF      = 0.0
-      PLA      = 0.5 
-      MPLA     = 0.5
+      PLA      = 0.1
+      MPLA     = 0.1
       MPLAG    = 0.0
       TPLAG    = 0.0
       SLAN     = 0.0    
       SNLFWT   = 0.0    
       LFWT     = 0.001  
-      MLFWT    = 0.001  
+      MLFWT    = 0.001 
       TLFWT    = 0.0    
       RTWT     = 0.001  
-      STMWT    = 0.001  
-      MSTMWT   = 0.001  
-      TSTMWT   = 0.001  
+      STMWT    = 0.001 
+      MSTMWT   = 0.001 
+      TSTMWT   = 0.001 
       PANWT    = 0.0    
       PANIWT   = 0.0    
       TGRNWT   = 0.0
@@ -240,7 +242,7 @@ C=======================================================================
       SENESCE % ResE   = 0.0
 
 
-      CALL RI_NFACTO(DYNAMIC, FIELD, XSTAGE, 
+      CALL TEFF_NFACTO(DYNAMIC, FIELD, XSTAGE, 
      &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TANC, TCNP, TMNC)  !Output
 
       IF (ISWNIT .EQ. 'Y') THEN
@@ -265,21 +267,21 @@ C=======================================================================
      &    TMIN, YRDOY, YRSOW,                             !Input
      &    CARBO, CUMDTT,                                  !I/O
      &    TSHOCK)                                         !Output
-      CALL RI_TILLSUB (DYNAMIC,
+      CALL TEFF_TILLSUB (DYNAMIC,
      &    AGEFAC, DTT, FLOOD, G2, G3, GPP, GRNWT, ISTAGE, !Input
      &    LAI, MGPP, MGROLF, MPLAG, NSTRES, P3, P4, P5,   !Input
      &    RGFILL, RTR, SLFN, SLFT, SLFW, SUMDTT, TCARBO,  !Input
      &    TEMF, TFILL, TGPP, TMPFIL, TSHOCK, TURFAC, XN,  !Input
-     &    PSTRES1, PSTRES2, KSTRES,                       !Input
+     &    PLANTS, PSTRES1, PSTRES2, KSTRES,               !Input
      &    TGROGRN, TGROLF, TGROSTM, TPLAG,                !I/O
      &    TILNO, TLFWT, TSTMWT, TPLA)                     !Output
-      CALL RI_NUPTAK (DYNAMIC, 
+      CALL TEFF_NUPTAK (DYNAMIC, 
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
      &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT, CumNUptake)     !Output
 
-      CALL RI_KUPTAK(
+      CALL TEFF_KUPTAK(
      &       ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,        !Input
      &       KUPTAKE, KSTRES)                             !Output
       CALL P_Ceres (DYNAMIC, ISWPHO,                        !Input
@@ -312,7 +314,7 @@ C=======================================================================
 
       IF (FIRST) THEN
         FIRST = .FALSE.
-        CALL PlantInit(
+        CALL TEFF_PlantInit(
      &    GRAINN, NPPH, PLPH, ROOTN, STOVN,               !Input
      &    PLANTS, PLTPOP,                                 !I/O
      &    ITRANS, ROWSPC, SEEDNI, SPACE, TPLANTS)         !Output
@@ -370,7 +372,7 @@ C=======================================================================
             CUMDEP = 0.0
             DO L = 1, NLAYR
               CUMDEP = CUMDEP + DLAYR(L)
-              RLV(L) = AMIN1(0.20*PLANTS/DLAYR(L),0.5) 
+              RLV(L) = AMIN1(0.02*PLANTS/DLAYR(L),0.5)
               IF (CUMDEP .GT. RTDEP) then
                 EXIT
               ELSE
@@ -393,7 +395,7 @@ C=======================================================================
           SPIKE   = G1*ANTSTM
           GPP     = SPIKE*AMIN1 (STRCOLD,STRHEAT)      !HSNSTRES)
           MGPP    = G1*MSTMWT*AMIN1 (STRCOLD,STRHEAT)  !,HSNSTRES)
-          PTF    = 1.0    
+          PTF    = 1.0   
           TILNO  = AMIN1 (TILNO,SPACE)   
           IF (MGPP .GT. 0.0 .AND. GPP/MGPP .LT. 2.0) THEN
              GPP    = MGPP*2.0
@@ -408,12 +410,12 @@ C=======================================================================
 C
 C         Calculate single grain-filling rate: g/degree C
 C
-          RGFILL = G2/(P5 *0.95)     ! LINEAR GRAIN FILL
+          RGFILL = G2/(P5 *0.95)     ! LINEAR GRAIN FILL FOR TEF X100
 C
 C         Lower rate for varieties with lower grain number
 C
-          IF (G1 .LT. 50.0) THEN
-             RGFILL = G2/P5*(G1/50.0)
+          IF (G1 .LT. 7500.0) THEN
+             RGFILL = G2/P5*(G1/7500.0) !TEF X100
           ENDIF
           
           MFILL   = 0.0
@@ -430,27 +432,23 @@ C
           ENDIF
 
           TILNO   = AMIN1 (TILNO,TILRAT)
-          SWMIN   = 35.0*G2
-
+          SWMIN   = 350.0*G2
           IF (STMWT .LT. SWMIN) THEN
              SWMIN = STMWT          
           ENDIF                     
 
           PANIWT  = 0.0
-          G1FAC   = AMIN1 (1.0,G1/50.0)
-          PANFAC  = 0.65*G1FAC    
+          G1FAC   = AMIN1 (1.0,G1/7500.0)
+          PANFAC  = 0.45*G1FAC 
           IF (STRHEAT .LT. 1.0) THEN
              PANFAC = PANFAC * STRHEAT
-             !WRITE(*,*)'PNF STRH', PANFAC,STRHEAT,G1
-             !PAUSE
           ENDIF
           !STRESSW = AMAX1 (SI2(3),SI2(4))
-          PANIWT  = (MSTMWT*0.4+MLFWT*0.20)*G1FAC*(1.0-0.5*STRESSW) 
-
+          PANIWT  = (MSTMWT*0.4+MLFWT*0.20)*G1FAC*(1.0+0.5*STRESSW) !+.5bias water stress -0.5 for rice
+          
           IF ((MSTMWT-PANIWT) .LT. ((1.0-PANFAC)*MSTMWT)) THEN
              PANIWT = PANFAC*MSTMWT
           ENDIF
-
           TPANIWT = PANIWT*(TSTMWT/(MSTMWT*G3))
           TPANIWT = AMAX1 (TPANIWT,0.0)
 
@@ -466,7 +464,6 @@ C
              TSTMWT  = TSTMWT - TPANIWT
              STMWT   = MSTMWT + TSTMWT
           ENDIF
-
           PANIWT  = PANIWT + TPANIWT
           RESERVE = PANFAC * PANIWT                  ! 0.40
           RESERVE = AMIN1 (RESERVE,STMWT)
@@ -577,20 +574,23 @@ CCCCC-PW
       ENDIF
 
       IF (ISWNIT .EQ. 'Y' .AND. ISTAGE .LT. 7) THEN
-        CALL RI_NFACTO(DYNAMIC, FIELD, XSTAGE, 
+        CALL TEFF_NFACTO(DYNAMIC, FIELD, XSTAGE, 
      &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TANC, TCNP, TMNC)  !Output
       ENDIF
 
       PAR     = 0.5*SRAD     !PAR local variable
      
-      PLSC    = AMIN1((0.5+0.001*PLANTS),1.0)
-      TL      = EXP(-0.85*ROWSPC*PLSC)               ! .65
+    ! PLSC    = AMIN1((0.5+0.001*PLANTS),1.0) 
+      PLSC    = 0.5+0.001*PLANTS
+    ! TL      = EXP(-0.85*ROWSPC*PLSC)               ! .65
+      TL      = AMAX1(1.5-PLSC,0.001)                ! Tef
       Y1      = EXP(-0.625*LAI)                      ! .625
-      Y2      = EXP(-TL*LAI)
+      Y2      = EXP(-TL*LAI)                         ! -0.7
       EPLANTS = PLANTS**0.975
-      RUEA    = 5.85   !6.85      UPS UH 03/21/03
+    ! RUEA    = 5.85   !6.85      UPS UH 03/21/03
+      RUEA    = 3.2   ! Tef
       RUEX    = 0.65
-      PCARB   = RUEA*PAR**RUEX/EPLANTS*(1.0-AMIN1(Y1,Y2))
+      PCARB   = RUEA*PAR/EPLANTS*(1.0-AMIN1(Y1,Y2)) 
       !
       ! PCARB2  = 2.95*PAR/EPLANTS*(1-AMAX1(Y1,Y2))
       !
@@ -598,7 +598,7 @@ CCCCC-PW
       !
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
       PCARB = PCARB*PCO2
-      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-26.0)**2   !need to lower so temp is 10 for prft=0 mar17
+      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-20.0)**2   !need to lower so temp is 10 for prft=0 mar17 
       PRFT  = AMAX1 (PRFT,0.0)
       IF (PRFT .GT. 1.0) THEN
           PRFT = 1.0                                
@@ -620,7 +620,7 @@ CCCCC-PW
       TEMF  = 1.0
       TEMPM = (TMAX + TMIN)*0.5
 
-      IF (TMIN .LT. 14.0 .OR. TMAX .GT. 32.0) THEN
+      IF (TMIN .LT. 14.0 .OR. TMAX .GT. 28.0) THEN
          IF (TMAX .LT. TBASE) THEN
             TEMF = 0.0
          ENDIF
@@ -628,19 +628,18 @@ CCCCC-PW
             TEMF = 0.0
             DO I = 1, 8
                TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
-               IF (TTMP .GT. 14.0  .AND. TTMP .LE. 32.0) THEN
+               IF (TTMP .GT. 14.0  .AND. TTMP .LE. 28.0) THEN
                    TEMF = TEMF + 1.0/8.0
                ENDIF
                IF (TTMP .GE. TBASE .AND. TTMP .LT. 14.0) THEN
                    TEMF = TEMF + 0.0210*(TTMP-TBASE)
                ENDIF
-               IF (TTMP .GT. 32.0  .AND. TTMP .LT. 42.0) THEN
+               IF (TTMP .GT. 28.0  .AND. TTMP .LT. 42.0) THEN
                    TEMF = TEMF + 0.0125*(42.0-TTMP)
                ENDIF
             END DO
          ENDIF
       ENDIF
-
 !     Calculate radiation to temperature ratio for tillering and senescence
       IF (DTT .GT. 0) THEN
         RTR = SRAD / DTT
@@ -652,7 +651,7 @@ CCCCC-PW
       PC    =  1.0
       IF     (CUMPH .LT. 5.0) THEN
 !        PC = 0.56 + 0.068*CUMPH  ! J.Padilla
-         PC = 0.48 + 0.068*CUMPH  ! J.Padilla  0.56 v4  UPS UH 03/21/03
+         PC = 0.48 + 0.068*CUMPH  ! J.Padilla  0.56 v4  UPS UH 03/21/03 
       ELSEIF (CUMPH .GT. 9.0) THEN
          PC = 0.10 + 0.100*CUMPH        !0.25
       ENDIF
@@ -678,7 +677,7 @@ CCCCC-PW
       IF (ISTAGE .LT. 4) THEN
          LEAFNO = AMAX1 (CUMPH,1.0)
       ENDIF
-      BF    = 0.12                                   ! 0.12
+      BF    = 0.18
       XTN   = -9.678*EXP(-BF*CUMPH)
       A     = 3800.0       !3800
 
@@ -689,7 +688,7 @@ CCCCC-PW
           !
           ! Need to incorporate shock effect
           !
-          MGROLF = MPLAG*0.0055
+          MGROLF = MPLAG*0.0060
           GRORT  = CARBO - MGROLF
           GRORT  = AMAX1 (GRORT,CARBO*0.35)
           IF (SEEDRV .GT. 0.0) THEN
@@ -699,17 +698,17 @@ CCCCC-PW
              SEEDRV = 0.0
              MGROLF = CARBO*0.65
              GRORT  = CARBO - MGROLF
-             MPLAG  = MGROLF/0.0055*TSHOCK*
+             MPLAG  = MGROLF/0.0060*TSHOCK*
      &		        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
           ENDIF
-          IF (CUMPH .LE. 5.0/G3 .OR. TSHOCK .LT. 1.0) THEN
+          IF (CUMPH .LE. 5.0/G3 .OR. TSHOCK .LT. 1.0) THEN !G3 not needed
              MPLA  = MPLA  + MPLAG
              PLA   = MPLA
              MLFWT = MLFWT + MGROLF
              LFWT  = MLFWT
              STMWT = MSTMWT
           ENDIF
-          IF (CUMPH .GT. 5.0/G3 .AND. TSHOCK .GE. 1.0) THEN
+          IF (CUMPH .GT. 5.0/G3 .AND. TSHOCK .GE. 1.0) THEN !G3 not needed
              IF (MGROLF .GT. 0.60*CARBO) THEN
                 MGROLF = 0.60*CARBO
                 MPLAG  = MGROLF/0.0060*
@@ -719,19 +718,23 @@ CCCCC-PW
              IF (MGROLF .LT. (0.30*CARBO*TSHOCK)) THEN
                 MGROLF = 0.35*TSHOCK*CARBO
                 MPLAG  = MGROLF/0.0060*
-     &			       AMIN1 (TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
+     &			       AMIN1 (TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) 
              ENDIF
              MGROSTM = MGROLF*0.85   !0.15
              TCARBO  = CARBO - MGROLF - GRORT - MGROSTM
+             IF (TCARBO .LT. 0.0) THEN    ! NEW FOR RICE AND TEF
+                MGROSTM = CARBO - MGROLF - GRORT
+                TCARBO  = 0.0
+             ENDIF
              IF (TCARBO .GT. 0.0) THEN
                 GRORT  = GRORT + TCARBO*(1.0-TSHOCK)
                 TCARBO = TCARBO*TSHOCK
-                CALL RI_TILLSUB (DYNAMIC,
+                CALL TEFF_TILLSUB (DYNAMIC,
      &            AGEFAC, DTT, FLOOD, G2, G3, GPP, GRNWT, ISTAGE,!Input
      &            LAI, MGPP, MGROLF, MPLAG, NSTRES, P3, P4, P5,  !Input
      &            RGFILL, RTR, SLFN, SLFT, SLFW, SUMDTT, TCARBO, !Input
      &            TEMF, TFILL, TGPP, TMPFIL, TSHOCK, TURFAC, XN, !Input
-     &            PSTRES1, PSTRES2, KSTRES,                      !Input 
+     &            PLANTS, PSTRES1, PSTRES2, KSTRES,              !Input 
      &            TGROGRN, TGROLF, TGROSTM, TPLAG,               !I/O
      &            TILNO, TLFWT, TSTMWT, TPLA)                    !Output
               ELSE
@@ -751,7 +754,7 @@ CCCCC-PW
      &             AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)*TSHOCK
           XPLAG1 = MPLAG
           MGROLF = MPLAG*0.0060
-          IF (CUMPH .LE. 6.0) THEN
+          IF (CUMPH .LE. 6.0/G3) THEN ! G3
              IF (MGROLF .GT. CARBO*0.60) THEN
                 MGROLF = CARBO*0.60
                 MPLAG  = MGROLF/0.0060*TSHOCK*
@@ -774,23 +777,24 @@ CCCCC-PW
              ENDIF
              MGROSTM = MGROLF*0.85   !0.15
              TCARBO  = CARBO - MGROLF - MGROSTM - GRORT
-             GRF     = 0.25*CARBO*G3*AGEFAC
+             GRF     = 0.15*CARBO*(-0.0012*PLANTS+1.6)*G3*AGEFAC 
              IF (TCARBO .LT. GRF) THEN
-                TCARBO  = TCARBO  + GRF
-                MGROLF  = MGROLF  - (0.5*GRF)
-                MGROSTM = MGROSTM - (0.5*GRF)
-                MPLAG   = MGROLF/0.0055*TSHOCK*
+               !TCARBO  = TCARBO  + GRF
+                MGROLF  = MGROLF  - (0.25*GRF)!0.5
+                MGROSTM = MGROSTM - (0.25*GRF)!0.5
+                MPLAG   = MGROLF/0.0060*TSHOCK*
      &			        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
+                TCARBO  = CARBO - MGROLF - MGROSTM - GRORT
              END IF
              IF (TCARBO .GT. 0.0) THEN
                 GRORT  = GRORT + TCARBO*(1.0-TSHOCK)
                 TCARBO = TCARBO* TSHOCK
-                CALL RI_TILLSUB (DYNAMIC,
+                CALL TEFF_TILLSUB (DYNAMIC,
      &            AGEFAC, DTT, FLOOD, G2, G3, GPP, GRNWT, ISTAGE,!Input
      &            LAI, MGPP, MGROLF, MPLAG, NSTRES, P3, P4, P5,  !Input
      &            RGFILL, RTR, SLFN, SLFT, SLFW, SUMDTT, TCARBO, !Input
      &            TEMF, TFILL, TGPP, TMPFIL, TSHOCK, TURFAC, XN, !Input
-     &            PSTRES1, PSTRES2, KSTRES,                      !Input 
+     &            PLANTS, PSTRES1, PSTRES2, KSTRES,              !Input 
      &            TGROGRN, TGROLF, TGROSTM, TPLAG,               !I/O
      &            TILNO, TLFWT, TSTMWT, TPLA)                    !Output
               ELSE
@@ -806,30 +810,31 @@ CCCCC-PW
              STMWT  = MSTMWT + TSTMWT
           END IF
           TCARB1 = 0.0
-
         CASE (3)  ! Heading and end of leaf growth
           MPLAG   = A/CUMPH*(-BF)*XTN*EXP(XTN)*TI*
      &              AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES) +
      &              (0.65*TCARB1)/0.0055
-          GRORT   = CARBO*0.15
-          MGROLF  = MPLAG*0.0060
-          MGROSTM = 0.0015*DTT*AMIN1(TURFAC,TEMF)+0.35*TCARB1
-          MGROSTM = AMIN1 (MGROSTM,0.65*CARBO)
+          GRORT   = CARBO*(0.20-SWFAC*0.05)
+          MGROLF  = MPLAG*0.0060 
+          MGROSTM = 0.0015*DTT*AMIN1(TURFAC,TEMF)+0.35*TCARB1 
+          MGROSTM = AMIN1 (MGROSTM,0.65*CARBO) 
           IF (MGROLF .GT. 0.35*CARBO .AND. SUMDTT .GT. 249.0) THEN
-             MGROLF = 0.35*CARBO
-             MPLAG  = MGROLF/0.0060*
+           MGROLF = 0.35*CARBO
+            MPLAG  = MGROLF/0.0060*
      &        		AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
-          END IF
+          END IF   
           TILCAR = CARBO - MGROLF - MGROSTM - GRORT
-          IF (TILCAR .LE. 0.0) THEN
-             TILCAR  = (MGROSTM*0.5+MGROLF*0.3)*G3    !US
-             MGROLF  = (MGROLF*0.7)/G3
-             MGROSTM = CARBO - GRORT - MGROLF - TILCAR
+          GRF     = 0.15*CARBO*(-0.0012*PLANTS+1.6)*G3*AGEFAC
+          IF (GRF .GE. TILCAR .AND. GRF .LE. CARBO-GRORT) THEN 
+             MGROLF  = (MGROLF*0.5)/G3 
+             MGROSTM  = (MGROSTM*0.5)/G3
+             TILCAR = CARBO - GRORT - MGROLF - MGROSTM
+           ! MGROSTM = CARBO - GRORT - MGROLF - TILCAR
              MPLAG   = MGROLF/0.0060*
      &		         AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
-          END IF
+          END IF 
           TCARBO = TILCAR
-          GRF    = TILCAR     !US
+         !GRF    = TILCAR     !US
           IF (GRF .GT. CARBO-GRORT) THEN
              GRF     = CARBO - GRORT
              MGROLF  = 0.0
@@ -837,26 +842,28 @@ CCCCC-PW
              MPLAG   = 0.0
              TCARBO  = GRF
           ENDIF
-          IF (TCARBO .NE. GRF) THEN
-             ADDTIL  = GRF     - TCARBO
-             SHORAT  = MGROLF  / (MGROLF+MGROSTM)
-             TPART   = SHORAT  * ADDTIL
-             MGROLF  = MGROLF  - TPART
-             MGROSTM = MGROSTM - (ADDTIL-TPART)
-             TCARBO  = GRF
-             MPLAG   = MGROLF/0.0060*
-     &                 AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
-          ENDIF
+       !  IF (TCARBO .NE. GRF) THEN                !Rice
+       !     ADDTIL  = GRF     - TCARBO            !Rice
+       !     SHORAT  = MGROLF  / (MGROLF+MGROSTM)  !Rice
+       !     TPART   = SHORAT  * ADDTIL            !Rice
+       !     MGROLF  = MGROLF  - TPART             !Rice
+       !     MGROSTM = MGROSTM - (ADDTIL-TPART)    !Rice
+       !     TCARBO  = GRF                         !Rice
+       !     MPLAG   = MGROLF/0.0060*              !Rice
+    !&                 AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)!Rice
+    !        MPLAG   = MGROLF/0.0060*
+   ! &                 AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)!Tef
+   !      ENDIF
           MLFWT  = MLFWT  + MGROLF
           MSTMWT = MSTMWT + MGROSTM
           MPLA   = MPLA   + MPLAG
           IF (TCARBO .GT. 0.0) THEN
-            CALL RI_TILLSUB (DYNAMIC,
+            CALL TEFF_TILLSUB (DYNAMIC,
      &        AGEFAC, DTT, FLOOD, G2, G3, GPP, GRNWT, ISTAGE, !Input
      &        LAI, MGPP, MGROLF, MPLAG, NSTRES, P3, P4, P5,   !Input
      &        RGFILL, RTR, SLFN, SLFT, SLFW, SUMDTT, TCARBO,  !Input
      &        TEMF, TFILL, TGPP, TMPFIL, TSHOCK, TURFAC, XN,  !Input
-     &        PSTRES1, PSTRES2, KSTRES,                       !Input
+     &        PLANTS, PSTRES1, PSTRES2, KSTRES,               !Input
      &        TGROGRN, TGROLF, TGROSTM, TPLAG,                !I/O
      &        TILNO, TLFWT, TSTMWT, TPLA)                     !Output
            ELSE
@@ -873,8 +880,7 @@ CCCCC-PW
 !          SLAN   = PLA*(0.005*(SUMDTT/P3)**2)       
           SLAN   = (PLA-SENLA)*(0.005*(SUMDTT/P3)**2) !US
           CHK    = TCARBO + MGROLF + MGROSTM + GRORT
-
-        CASE (4)  ! Beginning of effective grain filling period
+      CASE (4)  ! Beginning of effective grain filling period
           CARBO   = CARBO*(1.0-0.25*(SUMDTT/(P4+P5)))
           MGROSTM = 0.001*DTT*AMIN1(SWFAC,TEMF)
           MGROLF  = 0.0
@@ -884,18 +890,23 @@ CCCCC-PW
              TCARBO  = 0.0
              MGROSTM = CARBO - GRORT
           END IF
-          GRF = 0.1*CARBO*G3*AMIN1(AGEFAC,PSTRES2,KSTRES)
+        ! GRF = 0.1*CARBO*G3*AMIN1(AGEFAC,PSTRES2,KSTRES)
+          GRF = 0.1*CARBO*(-0.0012*PLANTS+1.6)*G3*
+     &    AMIN1(AGEFAC,PSTRES2,KSTRES) ! Tef 0.25
           IF (TCARBO .LT. GRF) THEN
-             TCARBO  = TCARBO  + GRF
-             MGROSTM = MGROSTM - GRF
+             IF (GRF .GT. TCARBO+MGROSTM) THEN
+               GRF = TCARBO+MGROSTM
+             END IF
+             MGROSTM = MGROSTM - GRF + TCARBO
+             TCARBO  = GRF
           END IF
           IF (TCARBO .GT. 0.0) THEN
-            CALL RI_TILLSUB (DYNAMIC,
+            CALL TEFF_TILLSUB (DYNAMIC,
      &        AGEFAC, DTT, FLOOD, G2, G3, GPP, GRNWT, ISTAGE, !Input
      &        LAI, MGPP, MGROLF, MPLAG, NSTRES, P3, P4, P5,   !Input
      &        RGFILL, RTR, SLFN, SLFT, SLFW, SUMDTT, TCARBO,  !Input
      &        TEMF, TFILL, TGPP, TMPFIL, TSHOCK, TURFAC, XN,  !Input
-     &        PSTRES1, PSTRES2, KSTRES,                       !Input
+     &        PLANTS, PSTRES1, PSTRES2, KSTRES,               !Input
      &        TGROGRN, TGROLF, TGROSTM, TPLAG,                !I/O
      &        TILNO, TLFWT, TSTMWT, TPLA)                     !Output
            ELSE
@@ -914,14 +925,14 @@ CCCCC-PW
         CASE (5)  ! End of main culm grain filling
           IF (PLANTS .LE. 0.01) RETURN
           TCARB1  = CARBO
-          CARBO  = CARBO*(1.0-0.45*(SUMDTT/P5))
+          CARBO  = CARBO*(1.0-0.45*(SUMDTT/P5)) ! FOR RICE ONLY
 !          SLAN   = PLA*(0.015+0.85*((SUMDTT+P4)/(P4+P5))**2)
           !0.85--> 0.25   US 
           SLAN   = (PLA-SENLA)*(0.005+0.01*((SUMDTT+P4)/(P4+P5))**2)   
           TMPFIL = 1.0
 
-          IF (TEMPM .LT. 20.0) THEN
-             TMPFIL = (TEMPM-7.0)/13.0
+          IF (TEMPM .LT. 15.0) THEN     !20 FOR RICE 15 FOR TEF
+             TMPFIL = (TEMPM-7.0)/8.0  !/13 FOR RICE 8 FOR TEF
            ELSEIF (TEMPM .GT. 32.0) THEN
              TMPFIL = 1.0 - ((TEMPM-32.0)/40.0)
           ENDIF
@@ -933,23 +944,27 @@ CCCCC-PW
              ! minimum of water or N
              !
              IF (SUMDTT .LT. 75 .AND. MGPP .GT. MFILL) THEN
-                GROGRN = (MGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC
+                GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*
+     &                   (0.0067*SUMDTT+0.5)*SWFAC ! in tef (0.0067*SUMDTT+0.5)
+             !  GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC !tef no water stress +TGPP
               ELSE
-                GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC
+                GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC !tef no water stress +TGPP
+             !  GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*(0.0067*SUMDTT+0.5)*SWFAC ! in tef (0.0067*SUMDTT+0.5)
              ENDIF
              GNO     = GRNWT/(G2*1.05)               ! V2.1 - 1.05
              IF (GNO .GT. GPP) THEN
                 GROGRN = 0.0
              ENDIF
-             GRORT   = CARBO*(0.2-0.1*SWFAC)
+             !GRORT   = CARBO*(0.2-0.1*SWFAC)  !RICE
+             GRORT   = CARBO*0.10 !TEF
              GROSTM  = CARBO - GROGRN - GRORT
              TGROGRN = 0.0
              GROLF   = 0.0
              IF (GROSTM .LT. 0.0) THEN
                 IF (RESERVE .GT. 0.0) THEN
                    RESERVE = RESERVE + GROSTM
-                   GROLF   = 0.15*GROSTM
-                   GROSTM  = 0.85*GROSTM
+                   !GROLF   = 0.15*GROSTM
+                   GROSTM  = 0.0 !0.85*GROSTM
                    IF (RESERVE .LT. 0.0) THEN
                       GROGRN  = GROGRN + RESERVE
                       RESERVE = 0.0
@@ -977,12 +992,12 @@ CCCCC-PW
              TGROSTM = 0.0
              TGROLF  = 0.0
              IF (TCARBO .GT. 0.0) THEN
-               CALL RI_TILLSUB (DYNAMIC,
+               CALL TEFF_TILLSUB (DYNAMIC,
      &           AGEFAC, DTT, FLOOD, G2, G3, GPP, GRNWT, ISTAGE, !Input
      &           LAI, MGPP, MGROLF, MPLAG, NSTRES, P3, P4, P5,   !Input
      &           RGFILL, RTR, SLFN, SLFT, SLFW, SUMDTT, TCARBO,  !Input
      &           TEMF, TFILL, TGPP, TMPFIL, TSHOCK, TURFAC, XN,  !Input
-     &           PSTRES1, PSTRES2, KSTRES,                       !Input 
+     &           PLANTS, PSTRES1, PSTRES2, KSTRES,               !Input 
      &           TGROGRN, TGROLF, TGROSTM, TPLAG,                !I/O
      &           TILNO, TLFWT, TSTMWT, TPLA)                     !Output
              ENDIF
@@ -992,7 +1007,7 @@ CCCCC-PW
              GRNWT   = GRNWT  + GROGRN
              TFILL   = MFILL  + TGRNWT/G2*0.55       ! 0.65
           ENDIF
-
+          
           IF (GROGRN .NE. 0.0 .AND. ISWNIT .EQ. 'Y') THEN
               !
               ! Need to confirm this relationship
@@ -1003,7 +1018,7 @@ c              RGNFIL = 4.929666-3.90*DTT+0.55*(TMAX-TMIN)+5.0067*TEMPM
               NSINK  = AMAX1 (NSINK,0.0)
 c             NSINK  = NSINK*AMIN1(NDEF3,SWFAC)
 c US,MB,WP    Change from .LT. 0.001 to .LE. 0 to avoid large variability in Grain N content
-              IF (NSINK .LE. 0.0) GO TO 1200
+              IF (NSINK .LE. 0) GO TO 1200 ! We change from .lt. 0.001 
       
               NSINK  = AMIN1 (NSINK,0.015*GROGRN)
               NSINKT = TGROGRN/GROGRN*NSINK
@@ -1129,10 +1144,10 @@ C
       ! SLFC
       !
       SLFC   = 1.0
-
-      IF (LAI .GT. 5.0 .AND. RTR. LT. 1.5) THEN
-          SLFC = AMAX1 (0.995,1.0-0.015*(LAI-5.0))
-      ENDIF
+   
+      IF (LAI .GT. 5.0 ) THEN
+          SLFC = AMAX1 (0.900,1.0-0.015*(LAI-5.0))
+      ENDIF  
       IF (ISTAGE .GE. 4 .AND. LAI .GT. 2.0) THEN
           SLFC = AMAX1 (0.825,1.0-0.02*LAI)
       ENDIF
@@ -1199,7 +1214,7 @@ C
 !      IF (ISWNIT .EQ. 'Y' .AND. XSTAGE .LT. 10.0 .AND. FIELD) THEN
       IF (XSTAGE .LT. 10.0 .AND. FIELD) THEN
          IF (ISWNIT .EQ. 'Y' ) THEN
-         CALL RI_NUPTAK (DYNAMIC, 
+         CALL TEFF_NUPTAK (DYNAMIC, 
      &      FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &      RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &      FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
@@ -1236,6 +1251,8 @@ C
       STOVWT = LFWT + STMWT + PANWT
       TANC = STOVN/STOVWT
       RANC = ROOTN/RTWT
+      IF (MSTMWT. LE. 0.0) THEN
+      ENDIF
 
 !         Compute N lost in leaf senescence
 !         N in senesced leaves - calculate based on today's N content
@@ -1282,11 +1299,11 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ENDIF
       RETURN
-      END SUBROUTINE RI_GROSUB
+      END SUBROUTINE TEFF_GROSUB
 C=======================================================================
 
 C=======================================================================
-C  PlantInit, Subroutine
+C  TEFF_PlantInit, Subroutine
 C
 C  Initialization at the beginning of planting
 C-----------------------------------------------------------------------
@@ -1294,9 +1311,9 @@ C  Revision history
 C
 C  05/07/2002 CHP Written
 C-----------------------------------------------------------------------
-C  Called : RI_GROSUB
+C  Called : TEFF_GROSUB
 C=======================================================================
-      SUBROUTINE PlantInit(
+      SUBROUTINE TEFF_PlantInit(
      &    GRAINN, NPPH, PLPH, ROOTN, STOVN,               !Input
      &    PLANTS, PLTPOP,                                 !I/O
      &    ITRANS, ROWSPC, SEEDNI, SPACE, TPLANTS)         !Output
@@ -1375,23 +1392,22 @@ C     Set up hill population from plant population
           SPACE = SPACE*PDIST/(0.1*ROWSPC)        !FROM INGROW
         ENDIF
       ENDIF
-
 !     CHP added this in 7/31/2003 as per email from UPS
       PLTPOP = PLANTS
 
       RETURN
-      END SUBROUTINE PlantInit
+      END SUBROUTINE TEFF_PlantInit
 
 C=======================================================================
 
 C=======================================================================
-C  RI_IPGROSUB, Subroutine
+C  TEFF_IPGROSUB, Subroutine
 C
 C  Reads FILEIO for GROSUB routine
 C  05/07/2002 CHP Written
 C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
-      SUBROUTINE RI_IPGROSUB (CONTROL, 
+      SUBROUTINE TEFF_IPGROSUB (CONTROL, 
      &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
      &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
 
@@ -1402,7 +1418,7 @@ C=======================================================================
 
       CHARACTER*2 CROP
       CHARACTER*6  ERRKEY, SECTION
-      PARAMETER (ERRKEY = 'IPRICE')
+      PARAMETER (ERRKEY = 'TEFIPGR')
       CHARACTER*12 FILEC
       CHARACTER*30 FILEIO
       CHARACTER*80 PATHCR
@@ -1465,8 +1481,171 @@ C-----------------------------------------------------------------------
   100 FORMAT (42X,F6.0,6X,4F6.0)
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
-
       CLOSE (LUNIO)
+      G2 = 0.0003  !tef
       RETURN
-      END SUBROUTINE RI_IPGROSUB
+      END SUBROUTINE TEFF_IPGROSUB
 C=======================================================================
+
+!------------------------------------------------------------------------------------------------------------------------------------------
+!                         DEFINITIONS
+!-----------------------------------------------------------------------------------------------------------------------------------------
+!AGEFAC		  Nitrogen stress factor affecting expansion (0-1)
+!APTNUP   	  Nitrogen in stover (above ground biomass) kg N/ha
+!BIOMAS       Above ground biomass, g/m2
+!CANNAA 	     Stover N at anthesis, g N/M2
+!CANWAA  	  Canopy weight at anthesis, g/m2
+!CARBO     	  Daily biomass production, g/plant/day
+!CO2X(10)  	  CO2 effect on photosynthesis, X axis is CO2 level, ppm
+!CO2Y(10)     CO2 effect on photosynthesis, Y axis is relative effect
+!CO2          Atmospheric CO2, ppm
+!CUMDEP	     Cumulative depth of soil, cm
+!CUMDTT 	     Cumulative daily thermal time after germination, C
+!CUMPH 	     Cumulative phyllochron intervals or fully expanded leaves
+!DLAYR(L)	  Soil thickness in layer L (cm) DM          !Total above ground biomass, kg/ha
+!DOY		     Day of year
+!DTT          Growing degree days today, C
+!DYNAMIC      Main control variable to tell each module which section of code to run
+!EMAT         Flag used in grosub to determine if relative grain fill is below 0.1 for 2 consecutive days
+!ERR  	     Determines if error in reading file (0=ok, 1=error)
+!ERRKEY       Variable containing routine where error occurred
+!FILEC        Filename of .SPE or species file
+!FILEIO       Filename containing model inputs (IBSNAT35.INP)
+!FSLFN        Fraction of leaf area senesced due to 100% nitrogen stress, 1/daY
+!G2    		  Potential kernel number, kernels/plant
+!G3  		     Potential kernel growth rate mg/kernel/day
+!GNP 		     Nitrogen concentration in new grain growth, gN/g dry matter
+!GNUP   		  Total grain N uptake, kg N/ha
+!GPP   		  Grain number per plant, grains/plant
+!GPSM    	  Grain numbers, grains/m2
+!GRAINN   	  Grain nitrogen content, g N/plant
+!GRF   	 	  Fraction of today's carbon allocated to above ground biomass
+!GRNWT	  	  Grain weight, g/plant
+!GROGRN	     Daily growth of the grain - g
+!GROLF   	  Leaf growth rate, g/plant/day
+!GRORT   	  Root growth rate, g/plant/day
+!GROSTM 	     Stem growth rate, g/plant/day
+!I         	  Counter
+!INTEGR		  Program control variable to execute code to integrate daily rate 
+!             variables(value=4)
+!ISTAGE 		  Growth stage (integer)
+!ISWNIT  	  Nitrogen balance switch (Y/N) 
+!ISWPHO	     Phosphorus simulation (stress) switch
+!ISWPOT		  Potassium simulation (stress) switch
+!ISWWAT 	     Soil water balance on/off switch (Y for yes, N for no)
+!L  		     Index counter
+!LAI   		  Leaf area index, m2/m2
+!LEAFNO		  Number of oldest leaf per plant (same as XN)
+!LFWT		     Leaf weight, g/plant
+!LINC 		  Indicates if a line is a good line
+!LNUM 		  Line number in an input file
+!LUNIO        Logical input number for model input file
+!LUNIO        Assign value to LUNIO for local use
+!MAXLAI  	  Maximum leaf area index, m2/m2
+!MDATE 		  Year and day of year of maturity
+!NDEF3 		  Nitrogen stress factor affecting grains per plant (0-1)
+!NFAC 		  Nitrogen stress factor based on actual and critical nitrogen 
+!             content in vegetative tissue
+!NH4 (L) 	  Ammonium in soil layer L, mg elemental N/kg soil
+!NLAYR 		  Number of soil layer
+!NO3 (L) 	  Nitrate in soil layer L (mg elemental N/kg soil)
+!NPOOL 		  Total plant N available for translocation to grain (g/plant)
+!NPOOL1	     Tops N available for translocation to grain (g/plant)
+!NPOOL2, 	  Root N available for translocation to grain (g/plant)
+!NSDR 		  Plant N supply/demand ratio used to modify grain N content
+!NSINK		  Demand for N associated with grain filling (g/plant/day)
+!NSTRES 	     Nitrogen stress factor affecting growth (0-1)
+!OUTPUT   	  Program control variable to output state and rate variables to output file (value=5)
+!P1 		     GDD from seedling emergence to end of juvenile phase, C
+!P3     		  Cumulative GDD required to complete ISTAGE 3, C
+!P5 		     GDD from silking to physiological maturity, C
+!PAR  		  Daily photosynthetically active radiation, calculated as half
+!PATHCR 	     Pathname of species file
+!PCARB   	  Potential dry matter production under optimum water, nitrogen and temperature,  
+!             g/plant
+!PCNVEG	     Percent nitrogen in vegetative tissue (leaf and stem), kg N/ha
+!PCNGRN       Percent nitrogen in grain,%
+!PCO2      	  Effect of CO2 on plant growth rate
+!PDWI  		  Potential increment in new shoot growth, g/plant
+!PGRORT 	     Potential increment in new root growth, g/plant
+!PHINT 		  Phyllochron interval. Number of GDD required for new leaf emergence, C.
+!PLA     	  Plant leaf area, cm2/plant
+!PLAS 		  The rate of senescence of leaf area on one plant - sq. cm/day
+!PLTPOP 	     Plant population, plants/m2
+!PODWT		  Dry mass of seeds plus shells, including C and N (g[pods] / m2[ground])
+!PORMIN 	     Minimum pore space volume required for supplying oxygen
+!             to roots for optimum
+!PRFT  		  Photosynthetic reduction factor for low and high temperatures
+!PRFTC        Array containing base, optimum and maximum temperature for function 
+!             reducing photosynthesis due to temperature
+!PTF  		  Ratio of above ground biomass to total biomass
+!RANCE        Root nitrogen concentration at emergence, g N/g root dry weight
+!RCNP 		  Root critical nitrogen concentration, g N/g root dry weight
+!RGFILL  	  Rate of grain fill - mg/day
+!RLV (L) 	  Root length density for soil layer L, cm root/cm3 soil 
+!RLWR 		  Root length weight ratio
+!RMNC  		  Root minimum nitrogen concentration (g N/g root dry weight
+!RNLOSS 	     Loss of N from the plant via root exudation in one layer (g N/m2)
+!ROOTN  	     Root nitrogen content, g N/plant
+!ROWSPC 	     Row spacing, cm
+!RTDEP 		  Root depth (cm)
+!RTWT     	  Root weight, g/plant
+!RTWTO 	     Root weight, g/m2
+!RUE          Radiation use efficiency, g CH2O/MJ Par
+!RWUEP1 	     Factor to modify water stress for cell expansion (in species
+!             file), mm/day
+!RWUMX  	     Max root water uptake
+!SDEPTH    	  Sowing depth, cm
+!SDWT      	  Seed weight, g/m2
+!SEEDRV  	  Carbohydrate reserve in seed, g/plant
+!SENLA    	  Normal leaf senescence today, cm2/plant
+!SI3(6)       Nitrogen stress during a growth stage used for output
+!SKERWT       Weight per kernel, g/kernel
+!SLAN         Normal leaf senescence since emergence, cm2/plant
+!SLFC         Leaf senescence factor due to competition for light(0-1
+!SLFN         Leaf senescence factor due to nitrogen stress (0-1)
+!SLFP    	  Leaf senescence factor due to phosphorus stress (0-1)
+!SLFT  	     Leaf senescence factor due to temperature (0-1)
+!SLFW	        Leaf senescence factor due to water sterss (0-1)
+!SLPF  	     Relative reduction in growth due to poor soil fertility (0-1.0) that is not related to nitrogen.
+!SRAD 	     Daily solar radiation, MJ/M2/day
+!STMWT        Stem weight, g/plant
+!STMWTO 	     Dry mass of stem tissue, including C and N (g[stem] / m2[ground)
+!STOVER 	     Stover weight (leaf+stem), kg/ha
+!STOVN 		  Nitrogen content in stover, g N/plant
+!STOVWT	     Stover weight (Stem + leaf), g/plant
+!SUMDTT  	  Sum of GDD for a given stage, C
+!SW(L)        Soil water content in layer L, cm3 water/cm3 soil
+!SWFAC  	     Soil water stress effect on growth (0-1), 1 is no stress, 0 is full
+!SWIDOT	     Seed loss due to pests, g seed/m2/day
+!SWMIN 	     Minimum value stem weight can reach during linear grain filling g/plant
+!TABEX 		  Table lookup function
+!TANC 		  Nitrogen content in above ground biomass, g N/g dry weight
+!TBASE 		  Base temperature for development from ecotype file, C
+!TCNP   		  Critical nitrogen concentration in tops, g N/g dry weight
+!TEMPM  	     Mean daily temperature, C
+!TI 		     Fraction of a phyllochron interval which occurred as a fraction of today's daily thermal  
+!             time
+!TMAX         Maximum daily temperture, C
+!TMIN         Minimum daily temperature
+!TMNC         Plant top minimum N concentration g N/g dry matter
+!TNLAB        Total potential daily plant water uptake, cm/d
+!TOTNUP       Total shoot N uptake at maturity, kg N/ha
+!TRNLOS		  Total plant N lost by root exudation (g N/m2)
+!TURFAC		  Soil water stress effect on expansion (0-1), 1 is no 
+!             stress, 0 is full stress
+!UNH4 (L)	  Plant uptake of ammonium from layer (kg N/ha/day)
+!UNO3 (L) 	  Plant uptake of nitrate from a layer (kg N/ha/day
+!VANC 		  Plant vegetative actual N concentration, g N/g plant
+!VMNC   	     Plant vegetative minimum nitrogen concentration, g N/g plant
+!WLIDOT	     Leaf loss due to pests, g/m2/day
+!WRIDOT	     Root loss due to pests, g root/m2/day
+!WSIDOT	     Stem loss due to pests, g stem/m2/day
+!WTLF  		  Dry mass of leaf tissue including C and N (g[leaf] / m2[ground])
+!XANC 		  Nitrogen concentration in above ground biomass %
+!XGNP  		  Nitrogen content of grain, 
+!XN   		  Number of oldest expanding leaf
+!XNF    		  Modified nitrogen factor based on critical N concentration in vegetative biomass
+!XSTAGE		  Non-integer growth stage indicator 
+!YR_DOY  	  Year and day of year
+!YRPLT    	  Planting date (YYDDD)                             

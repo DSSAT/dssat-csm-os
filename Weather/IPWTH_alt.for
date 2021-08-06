@@ -1257,8 +1257,10 @@ C         Read in weather file header.
 
 !     Error checking
       ErrCode = 0
-!     IF (SRAD < 1.E-2) ErrCode = 2
-      IF (RAIN .LT. 0.) ErrCode = 3
+      IF (SRAD < 0.0)  ErrCode = 2
+      IF (SRAD > 100.) ErrCode = 2
+!      Check for negative solar radiation and extreme high values
+      IF (RAIN .LT. 0.0) ErrCode = 3
       IF (NINT(TMAX * 100.) .EQ. 0 .AND. NINT(TMIN * 100.) .EQ. 0)
      &  ErrCode = 4
       IF (TMAX .LT. TMIN) THEN 
