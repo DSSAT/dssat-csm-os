@@ -59,6 +59,8 @@
       REAL A, B, RedFac, SW_threshold
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
+      LOGICAL PMcover
+      REAL PMFRACTION
 
 !-----------------------------------------------------------------------
 !     ProfileType:
@@ -73,9 +75,11 @@
       DUL   = SOILPROP % DUL
       LL    = SOILPROP % LL
       NLAYR = SOILPROP % NLAYR
+      PMcover = SOILPROP % PMcover
+      PMFRACTION = SOILPROP % PMFRACTION
 
       ES = 0.0
-
+      
 !**********************************************************************
 !     NEW 4/18/2008
       ProfileType = 3   !assume dry profile until proven wet
@@ -150,6 +154,9 @@
 
 !       Limit to negative values (decrease SW)
         SWDELTU(L) = AMIN1(0.0, SWDELTU(L))
+        
+!       Apply the fraction of plastic mulch coverage        
+        SWDELTU(L) = SWDELTU(L) * (1 - PMFRACTION)
 
 !       Aggregate soil evaporation from each layer
         ES_LYR(L) = -SWDELTU(L) * DLAYR(L) * 10.      !mm
@@ -170,6 +177,18 @@
       DO L = NLAYR-1, 1, -1
         UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10.     !cm/d
       ENDDO
+      
+      IF (PMCover) THEN
+        ES = ES * (1 - PMFRACTION)
+        ES_LYR = ES_LYR * (1 - PMFRACTION)
+        SWDELTU = SWDELTU * (1 - PMFRACTION)
+        UPFLOW = UPFLOW * (1 - PMFRACTION)
+!        DO L = 1, NLAYR
+!          ES_LYR(L) = ES_LYR(L) * (1 - PMFRACTION)
+!          SWDELTU(L) = SWDELTU(L) * (1 - PMFRACTION)
+!          UPFLOW(L) = UPFLOW(L) * (1 - PMFRACTION)
+!        ENDDO
+      ENDIF
 
 !-----------------------------------------------------------------------
       RETURN

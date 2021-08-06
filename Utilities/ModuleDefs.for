@@ -206,6 +206,10 @@ C             CHP Added TRTNUM to CONTROL variable.
 !        REAL, DIMENSION(NL) :: EXTAL, EXTFE, EXTMN, 
 !        REAL, DIMENSION(NL) :: EXMG, EXTS, SLEC
 
+        ! Flag for plastic mulch
+        LOGICAL PMCover
+        REAL PMFRACTION
+
       END TYPE SoilType
 
 !=======================================================================

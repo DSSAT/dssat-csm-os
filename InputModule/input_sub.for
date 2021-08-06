@@ -125,7 +125,7 @@ C-SUN INTEGER       LNBLNK
       REAL          INO3(NL),INH4(NL),EFINOC,EFNFIX
       REAL          AINO3,AINH4,TNMIN,ANO3,ANH4,TSWINI
       REAL          ESW(NL),SW(NL),TLL,TSW,TDUL,TSAT,TPESW,CUMDEP,PESW
-      REAL          PLTFOR
+      REAL          PLTFOR, PMBD
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
@@ -184,7 +184,7 @@ C-----------------------------------------------------------------------
      &     IIRV,FTYPEN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,
      &     LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &     LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES, 
-     &     CONTROL, ISWITCH, UseSimCtr, MODELARG)
+     &     CONTROL, ISWITCH, UseSimCtr, MODELARG, PMBD)
 
 C-----------------------------------------------------------------------
 C     Call IPSOIL
@@ -320,14 +320,14 @@ C-----------------------------------------------------------------------
      &            YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &            SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,MODEL,
      &            RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,TRTN,
-     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS)
+     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMBD)
       
         CALL OPTEMPXY2K (YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &           SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,
      &           FILEIO,FROP,ECONO,ATLINE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX)
+     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX,PMBD)
 
 C-----------------------------------------------------------------------
 C     Write DSSAT Format Version 4 Output files

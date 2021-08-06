@@ -19,7 +19,7 @@ C  09/01/1999  GH Incorporated into CROPGRO
 !  Calls:     None
 C=======================================================================
       SUBROUTINE RNOFF( 
-     &    CN, LL, MEINF, MULCH, SAT, SW, WATAVL,          !Input
+     &    CN, LL, MEINF, MULCH, SAT, SW, WATAVL,SOILPROP, !Input
      &    RUNOFF)                                         !Output
 
 C-----------------------------------------------------------------------
@@ -27,6 +27,7 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 
+      TYPE (SoilType), INTENT(IN) :: SOILPROP !Soil properties
       CHARACTER*1 MEINF
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'RNOFF')
@@ -92,9 +93,9 @@ C-----------------------------------------------------------------------
 !       No mulch effects on runoff
         IABS = SWABI
       ENDIF
-
+      
       PB = WATAVL - IABS * SMX
-
+      
       IF (WATAVL .GT. 0.001) THEN
         IF (PB .GT. 0) THEN
           RUNOFF = PB**2/(WATAVL + (1.0-IABS) * SMX)
@@ -103,6 +104,10 @@ C-----------------------------------------------------------------------
         END IF
       ELSE
         RUNOFF = 0.0
+      ENDIF
+      
+      IF (SOILPROP % PMcover) THEN
+          RUNOFF = WATAVL * SOILPROP % PMFRACTION + RUNOFF * (1 - SOILPROP % PMFRACTION)
       ENDIF
 
 !!     Temporary
