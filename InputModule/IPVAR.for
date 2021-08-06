@@ -298,7 +298,7 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
           CALL ERROR(ERRKEY,ERRNUM,FILEGG,LINVAR)
         ENDIF
 
-!     Ceres Rice **
+!     Ceres Teff **
       CASE ('TFCER')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
 !    &            P1,P2R,P5,P2O,G1,G2,G3,G4, PHINT, G5
