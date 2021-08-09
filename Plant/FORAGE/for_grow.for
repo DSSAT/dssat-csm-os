@@ -1550,7 +1550,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net growth rate of nitrogen in the roots
 C-----------------------------------------------------------------------
-      NRDOT = NGRRT - NRUSRT - NSROFF
+      NRDOT = NGRRT - NRUSRT - NROFF
       IF (RTWT .GT. 0.0) THEN
         NRDOT = NRDOT + NADRT - RTNADDM
       ENDIF
