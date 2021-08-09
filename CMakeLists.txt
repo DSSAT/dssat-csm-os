@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 0)
-SET(BUILD 11)
+SET(BUILD 12)
 
 # Get the current working branch
 execute_process(
@@ -293,6 +293,19 @@ set(
         "Plant/CERES-Rice/RI_Tillsub.for"
         "Plant/CERES-Rice/RI_Transpl_g.for"
         "Plant/CERES-Rice/RI_Transpl_p.for"
+        "Plant/CERES-TEFF/TEFF.for"
+        "Plant/CERES-TEFF/TEFF_Grosub.for"
+        "Plant/CERES-TEFF/TEFF_Ipcrop.for"
+        "Plant/CERES-TEFF/TEFF_KUPTAK.for"
+        "Plant/CERES-TEFF/TEFF_Nfacto.for"
+        "Plant/CERES-TEFF/TEFF_Nuptak.for"
+        "Plant/CERES-TEFF/TEFF_Opgrow.for"
+        "Plant/CERES-TEFF/TEFF_Opharv.for"
+        "Plant/CERES-TEFF/TEFF_Phenol.for"
+        "Plant/CERES-TEFF/TEFF_Rootgr.for"
+        "Plant/CERES-TEFF/TEFF_Tillsub.for"
+        "Plant/CERES-TEFF/TEFF_Transpl_g.for"
+        "Plant/CERES-TEFF/TEFF_Transpl_p.for"
         "Plant/CERES-SharedFiles/HResCeres.for"
         "Plant/CERES-SharedFiles/SLigCeres.for"
         "Plant/CERES-Sorghum/SG_CERES.for"
