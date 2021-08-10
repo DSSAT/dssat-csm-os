@@ -59,7 +59,6 @@
       REAL A, B, RedFac, SW_threshold
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
-      LOGICAL PMcover
       REAL PMFRACTION
 
 !-----------------------------------------------------------------------
@@ -75,8 +74,7 @@
       DUL   = SOILPROP % DUL
       LL    = SOILPROP % LL
       NLAYR = SOILPROP % NLAYR
-      PMcover = SOILPROP % PMcover
-      PMFRACTION = SOILPROP % PMFRACTION
+      CALL GET("PM", "PMFRACTION", PMFRACTION)
 
       ES = 0.0
       

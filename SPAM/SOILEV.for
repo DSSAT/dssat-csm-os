@@ -28,14 +28,14 @@ C  03/30/2000 CHP Keep original value of WINF for export to soil N module
 !  Calls:     ESUP
 C=======================================================================
       SUBROUTINE SOILEV(DYNAMIC,
-     &    DLAYR, DUL, EOS, LL, SW,                        !Input
-     &    SW_AVAIL,U, WINF, SOILPROP,                     !Input
+     &    DLAYR, DUL, EOS, LL, SW, SW_AVAIL, U, WINF,     !Input
      &    ES)                                             !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
@@ -49,8 +49,7 @@ C=======================================================================
       REAL ES, T
       REAL AWEV1, ESX, SWR, USOIL
       REAL DLAYR(NL), DUL(NL), LL(NL), SW(NL)
-      TYPE (SoilType), INTENT(IN) :: SOILPROP !Soil properties
-      LOGICAL PMcover
+!      LOGICAL PMcover
       REAL PMFRACTION
 
 !***********************************************************************
@@ -79,8 +78,8 @@ C-----------------------------------------------------------------------
               T= (SUMES2/3.5)**2
           ENDIF
 
-          PMcover = SOILPROP % PMcover
-          PMFRACTION = SOILPROP % PMFRACTION
+!          CALL GET("PM", "PMcover", PMcover)
+          CALL GET("PM", "PMFRACTION", PMFRACTION)
           
 !-----------------------------------------------------------------------
 !     Set air dry water content for top soil layer
@@ -172,7 +171,7 @@ C-----------------------------------------------------------------------
       
       
 !     Apply the fraction of plastic mulch coverage        
-      IF (PMCover) THEN
+      IF (PMFRACTION .GT. 0) THEN
         ES = ES * (1 - PMFRACTION)
       ENDIF
 

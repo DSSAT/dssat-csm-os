@@ -2254,18 +2254,17 @@ C=======================================================================
         ENDIF
       ENDIF
     
-      SOILPROP % PMCover = PMCover
-      SOILPROP % PMFRACTION = 0
+      PMFRACTION = 0
       IF (PMCover) THEN
         if (PMWD .GE. ROWSPC_CM) THEN
           SOILPROP % SALB   = PMALB
         ENDIF
         PMFRACTION = PMWD / ROWSPC_CM
         MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1. - PMFRACTION)
-        SOILPROP % PMFRACTION = PMFRACTION
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
       ENDIF
+      CALL PUT("PM", "PMFRACTION", PMFRACTION)
 
       RETURN      
       END SUBROUTINE SETPM

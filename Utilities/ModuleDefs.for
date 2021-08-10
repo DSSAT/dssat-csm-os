@@ -206,10 +206,6 @@ C             CHP Added TRTNUM to CONTROL variable.
 !        REAL, DIMENSION(NL) :: EXTAL, EXTFE, EXTMN, 
 !        REAL, DIMENSION(NL) :: EXMG, EXTS, SLEC
 
-        ! Flag for plastic mulch
-        LOGICAL PMCover
-        REAL PMFRACTION
-
       END TYPE SoilType
 
 !=======================================================================
@@ -484,6 +480,10 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL BETALS
       END TYPE
 
+      TYPE PMDataType
+        REAL PMFRACTION
+      END TYPE
+
 !     Data which can be transferred between modules
       Type TransferType
         Type (ControlType) CONTROL
@@ -498,6 +498,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (WatType)     WATER
         Type (WeathType)   WEATHER
         TYPE (PDLABETATYPE) PDLABETA
+        TYPE (PMDataType) PM
       End Type TransferType
 
 !     The variable SAVE_data contains all of the components to be 
@@ -737,6 +738,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         CASE('BETA'); Value = SAVE_data % PDLABETA % BETALS
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
+
+      CASE ('PM')
+        SELECT CASE(VarName)
+        CASE('PMFRACTION'); Value = SAVE_data % PM % PMFRACTION
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT
             
       Case DEFAULT; ERR = .TRUE.
       END SELECT
@@ -850,6 +857,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         SELECT CASE(VarName)
         CASE('PDLA'); SAVE_data % PDLABETA % PDLA = Value
         CASE('BETA'); SAVE_data % PDLABETA % BETALS = Value
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      CASE ('PM')
+        SELECT CASE(VarName)
+            CASE('PMFRACTION'); SAVE_data % PM % PMFRACTION = Value
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
             
