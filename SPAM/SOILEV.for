@@ -157,6 +157,11 @@ C-----------------------------------------------------------------------
          ENDIF
       ENDIF
 
+!     Apply the fraction of plastic mulch coverage        
+      IF (PMFRACTION .GT. 0.0) THEN
+        ES = ES * (1.0 - PMFRACTION)
+      ENDIF
+      
 !-----------------------------------------------------------------------
 !     Available water = SW - air dry limit + infil. or sat. flow
       SWMIN = MAX(0.0, SW_AVAIL - SWEF * LL(1))
@@ -167,12 +172,6 @@ C-----------------------------------------------------------------------
       ENDIF
       ES = MAX(ES, 0.0)
       
-      
-!     Apply the fraction of plastic mulch coverage        
-      IF (PMFRACTION .GT. 0) THEN
-        ES = ES * (1 - PMFRACTION)
-      ENDIF
-
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
