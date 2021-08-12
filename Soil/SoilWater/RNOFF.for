@@ -19,15 +19,15 @@ C  09/01/1999  GH Incorporated into CROPGRO
 !  Calls:     None
 C=======================================================================
       SUBROUTINE RNOFF( 
-     &    CN, LL, MEINF, MULCH, SAT, SW, WATAVL,SOILPROP, !Input
+     &    CN, LL, MEINF, MULCH, SAT, SW, WATAVL,          !Input
      &    RUNOFF)                                         !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs   
+      USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
-      TYPE (SoilType), INTENT(IN) :: SOILPROP !Soil properties
       CHARACTER*1 MEINF
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'RNOFF')
@@ -44,6 +44,9 @@ C-----------------------------------------------------------------------
 
 !     Mulch layer
       Type (MulchType) MULCH
+      
+!     Plastic Mulch
+      REAL PMFRACTION
 
 !!     Temporary for printing
 !      INTEGER DOY, YEAR, LUN
@@ -106,8 +109,9 @@ C-----------------------------------------------------------------------
         RUNOFF = 0.0
       ENDIF
       
-      IF (SOILPROP % PMcover) THEN
-          RUNOFF = WATAVL * SOILPROP % PMFRACTION + RUNOFF * (1 - SOILPROP % PMFRACTION)
+      CALL GET("PM", "PMFRACTION", PMFRACTION)
+      IF (PMFRACTION .GT. 0.0) THEN
+          RUNOFF = WATAVL * PMFRACTION + RUNOFF * (1.0 - PMFRACTION)
       ENDIF
 
 !!     Temporary

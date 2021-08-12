@@ -59,7 +59,6 @@
       REAL A, B, RedFac, SW_threshold
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
-      LOGICAL PMcover
       REAL PMFRACTION
 
 !-----------------------------------------------------------------------
@@ -75,8 +74,7 @@
       DUL   = SOILPROP % DUL
       LL    = SOILPROP % LL
       NLAYR = SOILPROP % NLAYR
-      PMcover = SOILPROP % PMcover
-      PMFRACTION = SOILPROP % PMFRACTION
+      CALL GET("PM", "PMFRACTION", PMFRACTION)
 
       ES = 0.0
       
@@ -145,6 +143,11 @@
 !-----------------------------------------------------------------------
 
         SWDELTU(L) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) !mm3/mm3
+        
+!       Apply the fraction of plastic mulch coverage
+        IF (PMFRACTION .GT. 0.0) THEN
+          SWDELTU(L) = SWDELTU(L) * (1.0 - PMFRACTION)
+        END IF
 
 !       Limit to available water
         SW_AVAIL(L) = SW(L) + SWDELTS(L) - SWAD(L)
@@ -154,9 +157,6 @@
 
 !       Limit to negative values (decrease SW)
         SWDELTU(L) = AMIN1(0.0, SWDELTU(L))
-        
-!       Apply the fraction of plastic mulch coverage        
-        SWDELTU(L) = SWDELTU(L) * (1 - PMFRACTION)
 
 !       Aggregate soil evaporation from each layer
         ES_LYR(L) = -SWDELTU(L) * DLAYR(L) * 10.      !mm
@@ -177,18 +177,6 @@
       DO L = NLAYR-1, 1, -1
         UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10.     !cm/d
       ENDDO
-      
-      IF (PMCover) THEN
-        ES = ES * (1 - PMFRACTION)
-        ES_LYR = ES_LYR * (1 - PMFRACTION)
-        SWDELTU = SWDELTU * (1 - PMFRACTION)
-        UPFLOW = UPFLOW * (1 - PMFRACTION)
-!        DO L = 1, NLAYR
-!          ES_LYR(L) = ES_LYR(L) * (1 - PMFRACTION)
-!          SWDELTU(L) = SWDELTU(L) * (1 - PMFRACTION)
-!          UPFLOW(L) = UPFLOW(L) * (1 - PMFRACTION)
-!        ENDDO
-      ENDIF
 
 !-----------------------------------------------------------------------
       RETURN
