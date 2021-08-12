@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.8.0.13 chp 2021-08-12 Forage model minor mods
 !       4.8.0.12 chp 2021-08-06 Ceres-teff added, Changes to CSYCA and PRFRM models 
 !                               update genotype files for GLUE compatibility
 !       4.8.0.11 chp 2021-07-23 July 2021 Sprint version 
