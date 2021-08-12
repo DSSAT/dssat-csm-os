@@ -2238,7 +2238,7 @@ C=======================================================================
           PMWD = ROWSPC_CM
           PMCover   = .TRUE.
           MSG(1)= "Missing PMWD, set PMWD = ROWSPC_CM"
-          MSG(2)= "Flat surface with full plastic mulch covered by default."
+          MSG(2)= "Flat surface with full plastic mulch covered."
           call warning(2,errkey,msg)
         ENDIF
       ELSE
