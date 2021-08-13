@@ -9,7 +9,7 @@ $ECOTYPES:CSYCA048.041621    Last edit: 04/13/2021 LPM
 ! because of variation in the proportion of diffuse radiation
 ! in the incoming solar and sky components.
 
-*ECOTYPE:CSYCA047
+*ECOTYPE:CSYCA048
 @ECO#  ECONAME.......... PARUE TBLSZ SRN%S  KCAN PGERM  PPS1  PPS2  PPS3  PHTV  PHSV  RDGS  RLWR  WFSU RSUSE  HMPC
 !                            1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
 !                         g/MJ    ˚C     %     #    Tu                     kPa fr/kPa cm/d   m/g     #    fr     %
