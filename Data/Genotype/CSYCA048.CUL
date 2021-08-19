@@ -1,4 +1,4 @@
-﻿$CULTIVARS:CSYCA048.041621    Last edit: 03/21/2021 LPM
+﻿$CULTIVARS:CSYCA048.041621    Last edit: 07/26/2021 LPM
 
 
 ! Users should be aware that some of the coefficients may 
@@ -7,14 +7,15 @@
 ! environmental physiology of the crop, but also deficiencies in defining 
 ! the initial conditions.
 
-*CULTIVARS:CSYCA47
+*CULTIVARS:CSYCA048
 ! The following cultivars have not been calibrated well and the coefficients are                                                                            
 ! present merely to allow the experiments to be run. A user should spend time calibrating for                                                                    
 ! his/her own data. 
 
 !                                    ---------------BRANCHING----------------------- -------------- LEAVES ------- ---STEM----
 @VAR#  VAR-NAME........  EXP#   ECO# B01ND B12ND B23ND B34ND BR1FX BR2FX BR3FX BR4FX  LAXS  SLAS LLIFA LPEFR LNSLP NODWT NODLT
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+!Calibration                             P     P     P     P     G     G     G     G     G     G     G     G     G     G     G 
 !                                       Tu    Tu    Tu    Tu    F#    F#    F#    F#   cm2 cm2/g    Tu    fr     #     g    cm
 999991 MINIMA               . 999991 100.0 100.0 100.0 100.0   1.0   1.0   1.0   1.0   300   150   600  0.20  0.70  3.00   1.0
 999992 MAXIMA               . 999992 1800. 1800. 1800. 1800.   4.0   4.0   4.0   4.0   900   280  1800  0.35  1.80 15.00   4.0

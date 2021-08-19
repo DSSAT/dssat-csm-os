@@ -20,7 +20,8 @@
    0.0   0.0   1.0   0.4   0.0   0.0       YLMAXT (6 VALUES)                                        
   -0.4  11.7  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG                      
  .0541  0.20  0.80   3.0                   PGEFF SCV KDIF, LFANGB                                   
- .0026 .0004 .3000  3.03 2.000             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF                         
+! .0026 .0004 .3000  3.03 2.000             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !def                         
+ .0022 .0004 .3000  3.03 2.000             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !kjb                        
                                                                                                     
    0.0  .001  .002  .003 .0035  .004  .005  .006  .008  .010  XPGSLW(1-10)                          
   .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10)                          
@@ -59,14 +60,18 @@
                                                                                                     
 !*VEGETATIVE PARTITIONING PARAMETERS                                                                
    0.0   3.0   6.6  10.0  15.6  21.0  48.0  80.0  XLEAF VALUES                                      
-  0.47  0.46  0.44  0.42  0.40  0.36  0.30  0.29  YLEAF VALUES                                      
-  0.09  0.12  0.19  0.26  0.36  0.55  0.63  0.63  YSTEM VALUES                                      
-  0.55  0.00  0.63  0.22  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD                          
+!  0.47  0.46  0.44  0.42  0.40  0.36  0.30  0.29  YLEAF VALUES   !def                                    
+!  0.09  0.12  0.19  0.26  0.36  0.55  0.63  0.63  YSTEM VALUES   !def                                     
+  0.60  0.56  0.51  0.46  0.39  0.33  0.26  0.26  YLEAF VALUES   !kjb                                     
+  0.09  0.12  0.19  0.27  0.37  0.54  0.63  0.63  YSTEM VALUES    !kjb                                   
+  0.55  0.00  0.65  0.22  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD  !kjb                          
+!  0.55  0.00  0.63  0.22  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD                          
   0.70                                FRLFMX                                                        
                                                                                                     
 !*LEAF GROWTH PARAMETERS                                                                            
-  120.  240. 200.0   8.5   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC                            
-  580.  240. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA                                   
+  120.  260. 200.0   8.5   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC                            
+!  580.  240. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA  !def                                 
+  580.  320. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA  !kjb                                 
                                                                                                     
    0.0   2.0   4.5   7.0   9.5  12.0  XVGROW(1-6), VSTAGE VALUES                                    
    0.0  18.8  62.4 160.0 424.2 580.0  YVREF(1-6), LEAF AREA VALUES,CM2                              
