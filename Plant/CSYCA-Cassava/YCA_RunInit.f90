@@ -197,7 +197,8 @@
             
             ! IDETO FILES
             ! NB. Renaming of Overview and Evaluate handled by CSM
-            FNAMEOV = 'Overview.'//out
+            !LPM 30JUL2021 Change to uppercase the overview.out file
+            FNAMEOV = 'OVERVIEW.'//out
             FNAMEEVAL = 'Evaluate.'//out
             FNAMEMEAS = 'Measured.'//out
             CALL GETLUN (FNAMEEVAL,fnumeval)
