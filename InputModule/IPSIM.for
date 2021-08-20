@@ -132,7 +132,7 @@ C=======================================================================
          NSWITCH =  1
          MESOM   = 'G'
          MESOL   = '2'    !was '1'
-         MESEV   = 'S'    !new Sulieman-Ritchie (2006)
+         MESEV   = 'R'    !old Ritchie two-stage method
          METMP   = 'D'    !DSSAT original soil temperature
 !        METMP   = 'E'    ! EPIC soil temp routine.
          MEGHG   = '0'
@@ -313,7 +313,8 @@ C
 
          SELECT CASE(MESEV)
          CASE('R','r'); MESEV = 'R'
-         CASE DEFAULT;  MESEV = 'S'   !Default method -- use NEW
+         CASE('s','S'); MESEV = 'S'
+         CASE DEFAULT;  MESEV = 'R'   !Default method Ritchie
          END SELECT
 
          IF (MEEVP == 'Z' .AND. MEPHO /= 'L') CALL ERROR(ERRKEY,3,' ',0)
