@@ -1617,11 +1617,15 @@ C FO/GH 11/14/2020 Code protections for divisions by zero.
 C FO/GH 11/14/2020 Code protections for divisions by zero.
         IF(ROWSPC .GT. 0.0 .AND. BETN .GT. 0.0) THEN
           FRACSH = MIN(SHADE/(ROWSPC*BETN),1.0)
+        ELSE
+!         chp 2021-08-20 should never get here.
+          CALL ERROR('SHADOW',1,0,0)
         ENDIF
 
       ENDIF
 
-      FRACSH = MIN(MAX(FRACSH,1.0E-6),1.0)
+!     FRACSH = MIN(MAX(FRACSH,1.0E-6),1.0)
+      FRACSH = MIN(MAX(FRACSH,0.0),1.0)
 
       RETURN
       END SUBROUTINE SHADOW
