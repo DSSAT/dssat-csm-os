@@ -55,7 +55,8 @@ C  08/09/2012 GH  Added CSCAS model
 !  05/10/2017 CHP removed SALUS model
 !  12/01/2015 WDB added Sugarbeet
 !  09/01/2018  MJ modified Canegro interface, IRRAMT added.
-!  03/17/2020  WP Model TEFF from Mulugeta called on plant (added).
+!  02/19/2020 FV Added OilcropSun
+!  03/17/2020 WP Model TEFF from Mulugeta called on plant (added).
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
@@ -95,6 +96,7 @@ C-----------------------------------------------------------------------
 !         'TFCER' - CERES Teff
 !         'PRFRM' - Perennial forage model
 !         'BSCER' - Sugarbeet
+!         'SUOIL' - Sunflower (OilcropSun)
 C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -656,6 +658,22 @@ c     Total LAI must exceed or be equal to healthy LAI:
           XHLAI = XLAI
         ENDIF
 
+!     -------------------------------------------------
+!     Sunflower
+      CASE('SUOIL')
+        CALL SU_CERES (CONTROL, ISWITCH,              !Input
+     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     SPi_AVAIL, SNOW,                               !Input
+     &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
+     &     CANHT, HARVRES, KCAN, KEP,KUptake,  MDATE,     !Output
+     &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
+     &     STGDOY, FracRts, UNH4, UNO3, XLAI, XHLAI)      !Output
+
+        IF (DYNAMIC < RATE) THEN
+          KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
+          KSEVAP = KEP
+        ENDIF
+        
 !     -------------------------------------------------
 !     Aroids-taro
       CASE('TRARO','TNARO')
