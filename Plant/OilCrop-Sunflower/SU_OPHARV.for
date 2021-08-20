@@ -99,7 +99,7 @@ C  02/09/2007 GH  Add path for FileA
      &    'PD1T  ',     !2  IFPD 
      &    'PDFT  ',     !3  IFSD 
      &    'MDAT  ',     !4  DMAT 
-     &    'HSAM  ',     !5  XGWT 
+     &    'HWAM  ',     !5  XGWT 
      &    'PWAM  ',     !6  XPDW 
      &    'H#AM  ',     !7  XNOGR
      &    'HWUM  ',     !8  XGWU 
@@ -278,12 +278,12 @@ C  02/09/2007 GH  Add path for FileA
 !     modified to handle automatic management
 !-----------------------------------------------------------------------
       IF (SEEDNO .GT. 0.0) THEN
-         PSDWT = YIELD*.91/(SEEDNO*10.)
+         PSDWT = YIELD/(SEEDNO*10.)
       ELSE
          PSDWT = 0.0
       ENDIF
       IF (TOPWT .GT. 0.0 .AND. YIELD .GE. 0.0) THEN
-         HI = YIELD*.91/(TOPWT*10.0)
+         HI = YIELD/(TOPWT*10.0)
        ELSE
          HI = 0.0
       ENDIF
@@ -292,7 +292,7 @@ C  02/09/2007 GH  Add path for FileA
 !     Actual yield harvested (default is 100 %)
 !-----------------------------------------------------------------------
 
-      SDWT   = YIELD*.91  / 10.0
+      SDWT   = YIELD  / 10.0
       SDWTAM = SDWT
       SDWTAH = SDWT * HARVFRAC(1)
 
@@ -392,7 +392,7 @@ C  02/09/2007 GH  Add path for FileA
       WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT
       WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT    !MDAT
       WRITE(Simulated(5),'(I8)') NINT(YIELD)
-                                        WRITE(Measured(5),'(A8)') X(5)    !HSAM
+                                        WRITE(Measured(5),'(A8)') X(5)    !HWAM
       WRITE(Simulated(6),'(I8)') -99 ;  WRITE(Measured(6),'(I8)') -99     !PWAM
       WRITE(Simulated(7),'(I8)') NINT(GPSM)
                                         WRITE(Measured(7),'(A8)') X(7)    !H#AM
@@ -440,7 +440,7 @@ C  02/09/2007 GH  Add path for FileA
       LABEL(2)  = 'MDAT'; VALUE(2)  = FLOAT(MDATE)
       LABEL(3)  = 'DWAP'; VALUE(3)  = SDRATE
       LABEL(4)  = 'CWAM'; VALUE(4)  = TOPWT*10.
-      LABEL(5)  = 'HSAM'; VALUE(5)  = YIELD
+      LABEL(5)  = 'HWAM'; VALUE(5)  = YIELD
       LABEL(6)  = 'HWAH'; VALUE(6)  = SDWTAH*10.
 ! BWAH multiplied by 10.0 in OPSUM - divide by 10. here to preserve units.
       LABEL(7)  = 'BWAH'; VALUE(7)  = BWAH / 10. 
