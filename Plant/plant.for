@@ -55,8 +55,8 @@ C  08/09/2012 GH  Added CSCAS model
 !  05/10/2017 CHP removed SALUS model
 !  12/01/2015 WDB added Sugarbeet
 !  09/01/2018  MJ modified Canegro interface, IRRAMT added.
-!  02/19/2020 FV Added OilcropSun
-!  03/17/2020 WP Model TEFF from Mulugeta called on plant (added).
+!  03/17/2020  WP Model TEFF from Mulugeta called on plant (added).
+!  08/19/2021 FV Added OilcropSun
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
