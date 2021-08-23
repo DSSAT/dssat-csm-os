@@ -160,7 +160,36 @@ Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
     Type (lin_valuePlNMzCer), Pointer :: tailPlNMzCer   
     Type (lin_valuePlNMzCer), Pointer :: ptrPlNMzCer    
     
-    Integer :: istatPlNMzCer                            
+    Integer :: istatPlNMzCer
+
+!------------------------------------------------------------------------------
+
+!   for SUOIL
+    Type :: lin_valueSUOIL
+       Character(:), Allocatable :: pclineSUOIL
+       Type (lin_valueSUOIL), Pointer :: pSUOIL
+    End Type
+
+    Type (lin_valueSUOIL), Pointer :: headSUOIL      
+    Type (lin_valueSUOIL), Pointer :: tailSUOIL      
+    Type (lin_valueSUOIL), Pointer :: ptrSUOIL       
+    
+    Integer :: istatSUOIL
+
+!------------------------------------------------------------------------------
+
+!   for PlNSUOIL
+    Type :: lin_valuePlNSUOIL
+       Character(:), Allocatable :: pclinePlNSUOIL
+       Type (lin_valuePlNSUOIL), Pointer :: pPlNSUOIL
+    End Type
+
+    Type (lin_valuePlNSUOIL), Pointer :: headPlNSUOIL   
+    Type (lin_valuePlNSUOIL), Pointer :: tailPlNSUOIL   
+    Type (lin_valuePlNSUOIL), Pointer :: ptrPlNSUOIL    
+    
+    Integer :: istatPlNSUOIL                            
+                                     
 !!------------------------------------------------------------------------------
 !
 !!   for PlNRICer
@@ -602,6 +631,60 @@ Contains
     End If
 
  End Subroutine LinklstMLCER
+!------------------------------------------------------------------------------
+ Subroutine LinklstSUOIL(ptxtlineSUOIL)
+
+    Character(:), Allocatable :: ptxtlineSUOIL            
+        
+    If(.Not. Associated(headSUOIL)) Then          
+      Allocate(headSUOIL, Stat=istatSUOIL)        
+      If(istatSUOIL==0) Then                      
+        tailSUOIL => headSUOIL                    
+        Nullify(tailSUOIL%pSUOIL)                 
+        tailSUOIL%pclineSUOIL = ptxtlineSUOIL
+      Else
+        ! Error message
+      End If
+
+    Else
+      Allocate(tailSUOIL%pSUOIL, Stat=istatSUOIL)      
+      If(istatSUOIL==0) Then                           
+        tailSUOIL=> tailSUOIL%pSUOIL                   
+        Nullify(tailSUOIL%pSUOIL)                      
+        tailSUOIL%pclineSUOIL = ptxtlineSUOIL                
+      Else
+      ! Error message
+      End If
+    End If
+    
+End Subroutine LinklstSUOIL     
+!------------------------------------------------------------------------------
+ Subroutine LinklstPlNSUOIL(ptxtlinePlNSUOIL)
+
+    Character(:), Allocatable :: ptxtlinePlNSUOIL            
+        
+    If(.Not. Associated(headPlNSUOIL)) Then             
+      Allocate(headPlNSUOIL, Stat=istatPlNSUOIL)        
+      If(istatPlNSUOIL==0) Then                         
+        tailPlNSUOIL => headPlNSUOIL                    
+        Nullify(tailPlNSUOIL%pPlNSUOIL)                 
+        tailPlNSUOIL%pclinePlNSUOIL = ptxtlinePlNSUOIL  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailPlNSUOIL%pPlNSUOIL, Stat=istatPlNSUOIL)      
+      If(istatPlNSUOIL==0) Then                                 
+        tailPlNSUOIL=> tailPlNSUOIL%pPlNSUOIL                   
+        Nullify(tailPlNSUOIL%pPlNSUOIL)                         
+        tailPlNSUOIL%pclinePlNSUOIL = ptxtlinePlNSUOIL           
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstPlNSUOIL
+ 
 !------------------------------------------------------------------------------
 
  Subroutine LinklstPlNCrGro(ptxtlinePlNCrGro)
@@ -1321,6 +1404,95 @@ Contains
       Nullify(ptrMLCER, headMLCER, tailMLCER)
       Close(nf)
   End Subroutine ListtofileMLCER
+!-----------------------------------------------------------------------  
+  Subroutine ListtofileSUOIL(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Character(Len=12):: fn 
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=100) :: tmp
+      Character(:),Allocatable :: Header 
+      
+      If(.Not. Associated(headSUOIL)) Return
+
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,' // Trim(Adjustl(tmp)) 
+        
+      fn = 'plantgro.csv'
+      Call GETLUN (fn,nf)
+   
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+
+      ptrSUOIL => headSUOIL
+      Do
+        If(.Not. Associated(ptrSUOIL)) Exit                
+        Write(nf,'(A)') ptrSUOIL % pclineSUOIL            
+        ptrSUOIL => ptrSUOIL % pSUOIL                      
+      End Do
+
+      Nullify(ptrSUOIL, headSUOIL, tailSUOIL)
+      Close(nf)
+  End Subroutine ListtofileSUOIL
+!------------------------------------------------------------------------------
+   Subroutine ListtofilePlNSUOIL
+      Integer          :: nf, ErrNum, length        
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header         
+  
+      If(.Not. Associated(headPlNSUOIL)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
+  //'NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C') 
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
+  //'NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C' 
+  
+      fn = 'plantn.csv'
+      Call GETLUN (fn,nf)
+   
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+        Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
+      ptrPlNSUOIL => headPlNSUOIL
+      Do
+        If(.Not. Associated(ptrPlNSUOIL)) Exit                
+        Write(nf,'(A)') ptrPlNSUOIL % pclinePlNSUOIL          
+        ptrPlNSUOIL => ptrPlNSUOIL % pPlNSUOIL                
+      End Do
+
+      Nullify(ptrPlNSUOIL, headPlNSUOIL, tailPlNSUOIL)
+      Close(nf)
+   End Subroutine ListtofilePlNSUOIL      
 !------------------------------------------------------------------------------
   Subroutine ListtofilePlNCrGro
       Integer          :: nf, ErrNum, length       

@@ -41,6 +41,11 @@
 ! SSingh CREATED A LONG DAY TYPE, BUT PPSEN should be NEGATIVE, SO MAY NOT WORK. 
 ! 2nd and 3rd cultivars were evaluated, but were not calibrated to be different, and data not shown.
 !
+!!8/13/2021 kjb, decreased slwref from 0.0025 to 0.0019, and SLAMAX to 750.  Needed because 
+!removing LAIprotection reduced LAI and productivity.  Calibrated with 0.050 wtpsd.
+!No modification of cultivar
+!KJB - edited NM cultivar.  Strange, why does 2014 have very slow start?  No reason.  I pushed SLA, LFMAX, WTPSD to help that
+!Personally, I think the soil file is not very good.  But everything improved (RMSE & D) when switched from S-R to Ritchie Stage 1 soil evap.
 
 @VAR#  VAR-NAME........ EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
 !Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
@@ -48,8 +53,9 @@
 
 999991 MINIMA               . DFAULT 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
 999992 MAXIMA               . DFAULT 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
-
-IB0001 PI8311               . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
+!
+IB0001 PI8311               . SF0401 23.00 0.001  16.5   3.2  14.7 31.50 20.25  1.60  275. 115.0  0.66 0.058  29.0 18.00  18.0  46.0  .140  .330
+!IB0001 PI8311               . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
 IB0002 99OL                 . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
 IB0003 Nutrisaff            . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.50  250. 115.0  0.64 0.054  29.0 18.00  18.0  47.0  .140  .330
 ! following are two cultivars from Kathrin Steberl, grown at Stuttgart, Germany

@@ -19,6 +19,7 @@ C                   a sequence occurs on Jan 1.
 !  07/25/2014 CHP Added daily CO2 read from weather file (DCO2)
 !  10/18/2016 CHP Read daily ozone values (ppb)
 !  05/28/2021 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
+!  08/20/2021 FO  Added support for LAT, LONG and ELEV to NASA format files.
 C-----------------------------------------------------------------------
 C  Called by: WEATHR
 C  Calls:     None
@@ -397,7 +398,7 @@ C     The components are copied into local variables for use here.
               CASE('INSI')
                 INSI = ADJUSTL(TEXT)
 
-              CASE('LAT')
+              CASE('LAT','WTHLAT')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XLAT
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CYCRD
                 IF (ERR .NE. 0) THEN
@@ -407,12 +408,12 @@ C     The components are copied into local variables for use here.
                   CALL WARNING(1, ERRKEY, MSG)
                 ENDIF
 
-              CASE('LONG')
+              CASE('LONG','WTHLONG')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XLONG
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CXCRD
                 IF (ERR .NE. 0) XLONG = -99.0
 
-              CASE('ELEV')
+              CASE('ELEV','WELEV')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XELEV
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CELEV
                 IF (ERR .NE. 0) XELEV = -99.0
