@@ -84,8 +84,8 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      SRDOT = 0.0    
-      SRNDOT = 0.0   
+!      SRDOT = 0.0    Already initialized in for_senmob.for PDA
+!      SRNDOT = 0.0   Already initialized in for_senmob.for PDA
       RLV   = 0.0
       RTDEP = 0.0       
       SENRT = 0.0
@@ -162,7 +162,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !-----------------------------------------------------------------------
-      SRNDOT = 0.0
+!      SRNDOT = 0.0 Already calculated in for_senmob.for
       TRLDF  = 0.0
       CUMDEP = 0.0
       SUMEX = 0.0

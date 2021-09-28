@@ -160,6 +160,9 @@ Error in forage harvest. Mow input date is defined prior to the start of simulat
 GETDSC   29
 Detail.CDE file not found.  Program will stop.
 
+FIRRIG    1
+Invalid combination of flooded field parameters. 
+
 IDWTH     1
 Error in Weather Sensitivity Selection entry.  Fix entry or batch file.
 

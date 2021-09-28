@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 0)
-SET(BUILD 11)
+SET(BUILD 16)
 
 # Get the current working branch
 execute_process(
@@ -293,6 +293,19 @@ set(
         "Plant/CERES-Rice/RI_Tillsub.for"
         "Plant/CERES-Rice/RI_Transpl_g.for"
         "Plant/CERES-Rice/RI_Transpl_p.for"
+        "Plant/CERES-TEFF/TEFF.for"
+        "Plant/CERES-TEFF/TEFF_Grosub.for"
+        "Plant/CERES-TEFF/TEFF_Ipcrop.for"
+        "Plant/CERES-TEFF/TEFF_KUPTAK.for"
+        "Plant/CERES-TEFF/TEFF_Nfacto.for"
+        "Plant/CERES-TEFF/TEFF_Nuptak.for"
+        "Plant/CERES-TEFF/TEFF_Opgrow.for"
+        "Plant/CERES-TEFF/TEFF_Opharv.for"
+        "Plant/CERES-TEFF/TEFF_Phenol.for"
+        "Plant/CERES-TEFF/TEFF_Rootgr.for"
+        "Plant/CERES-TEFF/TEFF_Tillsub.for"
+        "Plant/CERES-TEFF/TEFF_Transpl_g.for"
+        "Plant/CERES-TEFF/TEFF_Transpl_p.for"
         "Plant/CERES-SharedFiles/HResCeres.for"
         "Plant/CERES-SharedFiles/SLigCeres.for"
         "Plant/CERES-Sorghum/SG_CERES.for"
@@ -384,7 +397,7 @@ set(
         "Plant/CSYCA-Cassava/YCA_Out_CrpSim.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Error.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Eval.f90"
-		"Plant/CSYCA-Cassava/YCA_Out_FreshWt.f90"
+        "Plant/CSYCA-Cassava/YCA_Out_FreshWt.f90"
         "Plant/CSYCA-Cassava/YCA_Out_LfTier.f90"
         "Plant/CSYCA-Cassava/YCA_Out_ModFail.f90"
         "Plant/CSYCA-Cassava/YCA_Out_PlantSum.f90"
@@ -491,6 +504,16 @@ set(
         "Plant/NWHEAT/WH_ROOTS.for"
         "Plant/NWHEAT/WH_SW_SUBS.for"
         "Plant/NWHEAT/WH_temp.for"
+        "Plant/Oilcrop-Sunflower/SU_CERES.for"
+        "Plant/Oilcrop-Sunflower/SU_GROSUB.for"
+        "Plant/Oilcrop-Sunflower/SU_KUPTAK.for"
+        "Plant/Oilcrop-Sunflower/SU_NFACTO.for"
+        "Plant/Oilcrop-Sunflower/SU_NUPTAK.for"
+        "Plant/Oilcrop-Sunflower/SU_OPGROW.for"
+        "Plant/Oilcrop-Sunflower/SU_OPHARV.for"
+        "Plant/Oilcrop-Sunflower/SU_OPNIT.for"
+        "Plant/Oilcrop-Sunflower/SU_PHENOL.for"
+        "Plant/Oilcrop-Sunflower/SU_ROOTS.for"
         "Plant/SAMUCA-Sugarcane/SC_admit1.f90"
         "Plant/SAMUCA-Sugarcane/SC_astro.f90"
         "Plant/SAMUCA-Sugarcane/SC_Det_outputs.f90"

@@ -1,22 +1,24 @@
 *SAFFLOWER SPECIES COEFFICIENTS: CRGRO048 MODEL                                                       
                                                                                                     
 !*PHOTOSYNTHESIS PARAMETERS                                                                         
-! KJB modified next line to run for C version. No other changes, but see notes
+! KJB modified next line to run for C version. Do not trust the C version is calibrated.  kjb 9/1/21
  39.00 65.00  0.77  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE                             
 !Kc_slope is the slope of Kcan with ratio of Rowsp:PlantSp (see DEMAND subroutine).                 
 !Kc_slope is optional, default value is 0.10.                                                       
   79.0  2.08 .0106                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN                    
   1.50  4.50  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG                      
   6.00  22.0  34.0  45.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG                    
-!  0.0   5.0  35.0  40.0  45.0  55.0       XLMAXT (6 VALUES)                                        
    0.0   4.0  35.0  40.0  45.0  55.0       XLMAXT (6 VALUES)                                        
    0.0   0.0   1.0   0.8   0.0   0.0       YLMAXT (6 VALUES)                                        
-! 0.00 19.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG                      
   -2.0 14.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG                      
  .0541  0.20  0.80   2.0                   PGEFF SCV KDIF, LFANGB                                   
-!  Soybean values for SLWREF=.0035. 0.0025 is too low and LFMAX too high.  Work on it.
-! .0035 .0004 .3000  4.90 1.030             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF                        
- .0025 .0004 .3000  4.50 1.700             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF                                                                                                                             
+!  Soybean values for SLWREF=.0035. 0.0025 is low and LFMAX too high.  Work on it?
+ .0025 .0004 .3000  4.50 1.700             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF                                                                                                                           
+!
+!8/13/2021 kjb, increased SLAMAX from 650 to 750 to slightly increase SLA and LAI
+!Needed because removing LAI protection reduced LAI and productivity.  Calibrated with ~0.050 wtpsd 
+!Used the LA vs V-stage of soybean.  May need more work later.
+!
    0.0  .001  .002  .003 .0035  .004  .005  .006  .008  .010  XPGSLW(1-10)                          
   .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10)                          
                                                                                                     
@@ -26,14 +28,11 @@
  1.242 3.106 2.174  .929  0.05  1.13    RCH20,RLIP,RLIG,ROA,RMIN,PCH2O                              
                                                                                                     
 !*PLANT COMPOSITION VALUES                                                                          
-! fixed for salflower by KJB. PROLFI,plus CAR, LIP, LIG, OA, MIN must sum to 1.0,do not for root                  
-! .356  .140  .112  .150  .100  .035   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF  
   .306  .140  .090  .150  .100  .035   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF                       
-! .092  .064  .056  .250  .150  .050   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF   
   .092  .064  .056  .200  .150  .050   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF     
   .140  .140  .300  .030  .080  .800   SDPROS,SDPROG,PRONOD,PROMIN,PROMAX,THETA                     
-! .405  .572  .711  .500  .470  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO                    
-  .455  .572  .711  .550  .420  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO                    
+!  .455  .572  .711  .550  .420  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO                    
+  .455  .572  .711  .550  .470  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO !kjb 9/15/21 to make sum to 1.00                   
   .025  .010  .020  .050  .050         PLIPLF,PLIPST,PLIPRT,PLIPSH,PLIPNO                           
   .070  .169  .070  .152  .020  .070   PLIGLF,PLIGST,PLIGRT,PLIGSH,PLIGSD,PLIGNO                    
   .050  .050  .050  .013  .020  .050   POALF,POAST,POART,POASH,POASD,POANO                          
@@ -41,7 +40,13 @@
                                                                                                     
                                                                                                     
 !*SEED  COMPOSITION VALUES                                                                          
- 7.168 23.65 0.908 0.180               LIPTB,LIPOPT,SLOSUM*100,CARMIN                               
+! 7.168 23.65 0.908 0.180               LIPTB,LIPOPT,SLOSUM*100,CARMIN                               
+ 1.168 23.65 0.999 0.180               LIPTB,LIPOPT,SLOSUM*100,CARMIN  !KJB,9/14/21                             
+!modified because % N and % oil were not well predicted.  This change (mostly 1.168C
+!to give lower grain %N from 3.24 to 2.98, and higher % oil 26.27 to 28.73)
+!This with SDPRO at 0.14 (2.24%N) and SDLIP at 0.33.  Even so, high on %N and low on % oil
+!Actually drought stress causes increased grain %N in all of Singh's treatments, also German experiments
+!Source code is designed to take the mobilized N even if not enough assimilate to drive grain growth.
                                                                                                     
 !*CARBON AND NITROGEN MINING PARAMETERS                                                             
  0.024  0.75  .260  .200  0.40  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR                     
@@ -57,21 +62,6 @@
   0.00  0.10  1.00  0.00   INL         FNFXA(4),TYPFXA-AGE EFF ON N FIX                             
                                                                                                     
 !*VEGETATIVE PARTITIONING PARAMETERS                                                                
-!   0.0   1.5   3.3   5.0   7.8  10.5  30.0  40.0  XLEAF VALUES                                      
-!  0.43  0.44  0.45  0.44  0.39  0.35  0.34  0.34  YLEAF VALUES                                      
-!  0.09  0.12  0.19  0.26  0.34  0.46  0.46  0.46  YSTEM VALUES                                      
-!  0.55  0.58  0.54  0.25  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD                          
-!  0.70                                FRLFMX                                                        
-!   0.0   2.0   4.0   6.5   9.8  15.0  40.0  50.0  XLEAF VALUES   !chg 1                                   
-!  0.43  0.44  0.45  0.44  0.40  0.37  0.34  0.34  YLEAF VALUES                                      
-!  0.09  0.12  0.19  0.26  0.33  0.44  0.46  0.46  YSTEM VALUES                                      
-!  0.55  0.30  0.54  0.25  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD                          
-!  0.70                                FRLFMX                                                        
-!   0.0   2.0   4.0   6.5   9.8  15.0  35.0  50.0  XLEAF VALUES   !chg 2                                   
-!  0.43  0.44  0.45  0.44  0.42  0.39  0.36  0.34  YLEAF VALUES                                      
-!  0.09  0.12  0.19  0.26  0.31  0.42  0.44  0.46  YSTEM VALUES                                      
-!  0.55  0.30  0.58  0.25  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD                          
-!  0.70                                FRLFMX                     
    0.0   2.0   4.0   6.5   9.8  15.0  35.0  50.0  XLEAF VALUES   !chg 3                                   
   0.43  0.44  0.45  0.44  0.43  0.40  0.37  0.34  YLEAF VALUES                                      
   0.09  0.12  0.19  0.26  0.30  0.41  0.43  0.46  YSTEM VALUES                                      
@@ -79,32 +69,21 @@
   0.70                                FRLFMX        
   
 !*LEAF GROWTH PARAMETERS                                                                            
-! 150.  270. 115.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC
   200.  260. 115.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC       
-  650.  260. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA
-! 650.  285. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA   
-! 650.  110. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA                                  
-                                                                                                    
+  750.  260. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA !kjb 8/31/21
+! was 650 previously                                                                                                    
    0.0   1.0   2.0   3.0   4.0   5.0  XVGROW(1-6), VSTAGE VALUES                                    
    0.0  20.0  55.0 110.0 200.0 320.0  YVREF(1-6), LEAF AREA VALUES,CM2                              
  -50.0  00.0   8.0  21.0  50.0        XSLATM(1-5),TEMP VALUES 
   0.25  0.25  0.30  1.00  0.1         YSLATM(1-5),EFFECT ON SLA
-!-50.0  00.0   8.0  22.0  50.0        XSLATM(1-5),TEMP VALUES 
-! 0.25  0.25  0.37  1.00  0.2         YSLATM(1-5),EFFECT ON SLA
-!-50.0  00.0  12.0  22.0  60.0        XSLATM(1-5),TEMP VALUES                                     
-! 0.25  0.25  0.25  1.00  1.0         YSLATM(1-5),EFFECT ON SLA                                     
                                                                                                     
 !*LEAF SENESCENCE FACTORS                                                                           
-! 1.00  0.20  0.06 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2                            
-! 0.80  10.0                          ICMP,TCMP(Light comp, time constant-senes) 
   1.10  0.10  0.06 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2                            
   0.40  10.0                          ICMP,TCMP(Light comp, time constant-senes)   
                                                                                                     
 ! .......XSTAGE.........  .......XSENMX.........                                                    
-!  0.0   5.0  14.0  30.0   3.0   5.0  10.0  30.0                                                    
    0.0   5.0  18.0  40.0   3.0   5.0  18.0  40.0                                                    
 ! .......SENPOR.........  .......SENMAX.........                                                    
-!  0.0   0.0  0.12  0.12   0.0   0.2   0.6   0.6                                                    
    0.0   0.0  0.04  0.06   0.0   0.2   0.5   0.5                                                    
                                                                                                     
 !*ROOT PARAMETERS                                                                                   
@@ -117,10 +96,6 @@
   15.0   0.0   0.0                     DSWBAR,XFRMAX,SHLAG                                          
    9.0  24.0  26.5  40.0   QDR         FNPDT(1-4),TYPPDT-TEMP EFFECT ON POD SET                     
    6.0  21.0  23.5  41.0   QDR         FNSDT(1-4),TYPSDT-TEMP EFFECT ON SD GRWTH 
-!  9.0  21.0  26.5  40.0   QDR         FNPDT(1-4),TYPPDT-TEMP EFFECT ON POD SET                     
-!  6.0  21.0  23.5  41.0   QDR         FNSDT(1-4),TYPSDT-TEMP EFFECT ON SD GRWTH 
-! 14.0  21.0  26.5  40.0   QDR         FNPDT(1-4),TYPPDT-TEMP EFFECT ON POD SET                     
-!  6.0  21.0  23.5  41.0   QDR         FNSDT(1-4),TYPSDT-TEMP EFFECT ON SD GRWTH                       
   0.00  5.00 20.00 35.00 45.00 60.00   XXFTEM(1-6),TEMPERATURES                                     
   1.00  1.00  1.00  1.00  0.00  0.00   YXFTEM(1-6),REL CHG IN PARTIT                                
   0.00  0.50  1.00  1.00               XSWFAC(1-4)                                                  
@@ -135,7 +110,6 @@
                                                                                                     
 !*PHENOLOGY PARAMETERS                                                                              
 !  TB   TO1   TO2    TM                I                                                            
-!  3.0  28.0  30.0  38.0               1 VEGETATIVE DEVELOPMENT
    3.0  22.0  30.0  38.0               1 VEGETATIVE DEVELOPMENT                                                                          
    3.0  28.0  32.0  43.0               2 EARLY REPRODUCTIVE DEVELOPMENT                             
    3.0  28.0  38.0  45.0               3 LATE REPRODUCTIVE DEVELOPMENT                              
@@ -159,9 +133,6 @@
 !*CANOPY HEIGHT AND WIDTH GROWTH PARAMETERS                                                         
                                                                                                     
 ! VSTAGE, FOLLOWED BY INTERNODE LENGTH PER NODE, THEN CANOPY WIDTH PER NODE                         
-! 0.00  1.00  4.00  6.00  8.00 10.00 14.00 16.00 20.00 40.00  XVSHT(1-10)                           
-!.0300 .0530 .0630 .0660 .0690 .0660 .0620 .0510 .0340 .0060  YVSHT(1-10)                           
-!.0300 .0510 .0620 .0640 .0660 .0630 .0590 .0460 .0250 .0010  YVSWH(1-10)                           
   0.00  1.00  4.00  6.00  8.00 10.00 14.00 18.00 26.00 40.00  XVSHT(1-10)                           
  .0200 .0230 .0340 .0380 .0420 .0450 .0490 .0520 .0520 .0450  YVSHT(1-10)                           
  .0200 .0210 .0300 .0300 .0300 .0280 .0230 .0210 .0140 .0010  YVSWH(1-10)                           

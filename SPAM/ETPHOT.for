@@ -1561,6 +1561,10 @@ C       Calculate shadow length assuming elliptical plant.
 
         SHLEN = CANHT * COS(RBETA-GAMMA) / SIN(RBETA) *
      &    SQRT((1.0+C2)/(1.0+C1))
+
+!       CHP 2021-08-20
+        SHLEN = MAX (0.0, SHLEN)
+
         B = (SHLEN/CANWH)**2
         C3 = B*(TAN(AZIMD))**2
         C4 = (B*TAN(AZIMD))**2
@@ -1601,8 +1605,8 @@ C           Limit shadow length to within one ROWSPC.
 C FO/GH 11/14/2020 Code protections for divisions by zero.
             IF (SHPERP .GT. 0.0 .AND. SHPERP .GT. ROWSPC) THEN
               SHLEN = SHLEN * ROWSPC/SHPERP
-            ELSE
-              SHLEN = 0.0
+!            ELSE
+!              SHLEN = 0.0
             ENDIF
             
             SHADE = 0.25 * PI * SHLEN * CANWH
@@ -1613,11 +1617,15 @@ C FO/GH 11/14/2020 Code protections for divisions by zero.
 C FO/GH 11/14/2020 Code protections for divisions by zero.
         IF(ROWSPC .GT. 0.0 .AND. BETN .GT. 0.0) THEN
           FRACSH = MIN(SHADE/(ROWSPC*BETN),1.0)
+        ELSE
+!         chp 2021-08-20 should never get here.
+          CALL ERROR('SHADOW',1,0,0)
         ENDIF
 
       ENDIF
 
-      FRACSH = MIN(MAX(FRACSH,1.0E-6),1.0)
+!     FRACSH = MIN(MAX(FRACSH,1.0E-6),1.0)
+      FRACSH = MIN(MAX(FRACSH,0.0),1.0)
 
       RETURN
       END SUBROUTINE SHADOW
