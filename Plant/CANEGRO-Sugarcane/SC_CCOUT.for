@@ -46,7 +46,7 @@ c     Total seasonal cumulative rainfall (mm)
       REAL RAIN_TOT
 c     Severe stress days (count of days with SWDF1 < 0.05)
       INTEGER STRESS_DAYS
-c     Frost days (count of days with TMIN < -1.5 �C)
+c     Frost days (count of days with TMIN < -1.5 °C)
       INTEGER FROST_DAYS
 c     Fibre mass calcd here as STKDM - SUCDM
       REAL FIBDM
@@ -115,7 +115,7 @@ c         A new file if not existing
           WRITE(CCOUT,'("*CLIMATE CHANGE SUMMARY OUTPUT FILE")')
           WRITE(CCOUT,'("! IRRC - Cumulative irrigation (mm)")')
           WRITE(CCOUT,'("! PRCM - Cumulative rainfall (mm)")')
-          WRITE(CCOUT,'("! FDAYS - # frost days (TMIN < 1.5�C)")')
+          WRITE(CCOUT,'("! FDAYS - # frost days (TMIN < 1.5°C)")')
           WRITE(CCOUT,'("! SDAYS - # stress days (SWDF1 < 0.05)")')
           WRITE(CCOUT,'("! D80Fi - # days to 80% canopy cover")')
           WRITE(CCOUT,'("! SMFMH - Fresh cane yield WM (t/ha)")')
@@ -173,7 +173,7 @@ c       Severe stress days (count of days with SWDF1 < 0.05)
         IF (SWDF1 .LT. 0.05) THEN 
           STRESS_DAYS = STRESS_DAYS + 1
         ENDIF
-c       Frost days (count of days with TMIN < -1.5 �C)
+c       Frost days (count of days with TMIN < -1.5 °C)
         IF (TMIN .LT. -1.5) THEN 
           FROST_DAYS = FROST_DAYS + 1
         ENDIF
