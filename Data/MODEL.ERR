@@ -742,6 +742,9 @@ Error in Weather Sensitivity Analysis Selection entry. Fix entry or batch file.
 SENS      1
 Error in Sensitivity Selection entry.  Fix entry or batch file.
 
+SHADOW    1
+Error in Fraction shaded for sun and row geometry using ellipses.
+
 ENTFER    1
 First fertilizer application date is defined prior to the start of simulation.
 
