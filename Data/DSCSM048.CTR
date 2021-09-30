@@ -19,19 +19,9 @@ $SIMULATION_CONTROLS
 @N CONTROLS_TITLE
  2 Summary, evaluate files only (VBOSE='0' - zero)
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
- 2 OU              .     E     Y     .     N     N     N     N     N     N     N     N     N     .
-!Bug introduced with csv inputs - can't use VBOSE="0" or no summary.out is produced.
-!  - fixed with v4.7.1.5!
-!  - instead supress outputs using "N" in each file output switch
-!  - OVVEW = 'E' forces evaluate.out file.
+ 2 OU              .     E     Y     .     N     N     N     N     N     N     0     N     N     .
 
-!!-----------------------------------------------------------------------------------------
-!@N CONTROLS_TITLE
-! 2 Summary, evaluate files only (VBOSE='0' - zero)
-!@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
-! 2 OU              .     .     .     .     .     .     .     .     .     .     0     .     .     .
 !-----------------------------------------------------------------------------------------
-
 @N CONTROLS_TITLE
  3 Minimum output (VBOSE='N') 
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
@@ -80,34 +70,6 @@ $SIMULATION_CONTROLS
 12 OP              N     N     N     N     N     N     N     .     .
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
 12 OU              N     Y     Y     .     N     N     N     N     N     N     N     N     N     .
-
-!-----------------------------------------------------------------------------------------
-@N CONTROLS_TITLE
-21 Equivalent to v4.02 default methods, with specified outputs
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
-21 OP              .     .     .     N     N     .     .     N     D
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
-21 ME              .     .     .     .     N     .     .     .     .     R     1
-
-!-----------------------------------------------------------------------------------------
-@N CONTROLS_TITLE
-22 Equivalent to v4.02 default methods, outputs off for testing
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
-22 OP              .     .     .     N     N     .     .     N     D
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
-22 ME              .     .     .     .     N     .     .     .     .     R     1
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
-22 OU              .     .     .     .     .     .     .     .     .     .     0     .     .     .
-
-!-----------------------------------------------------------------------------------------
-@N CONTROLS_TITLE
-23 Equivalent to v4.02 default methods, outputs on for comparison
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
-23 OP              .     .     .     N     N     .     .     N     D
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
-23 ME              .     .     .     .     N     .     .     .     .     R     1
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
-23 OU              .     .     .     1     .     .     .     .     .     .     D     .     .     .
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
@@ -213,7 +175,7 @@ $SIMULATION_CONTROLS
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
-60 CO2 read from file CO2046.WDA
+60 CO2 read from file CO2xxx.WDA
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
 60 OP              .     .     .     .     .     .     .     .     M
 

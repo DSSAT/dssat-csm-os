@@ -308,20 +308,22 @@
 !     update nitrogen and residue applications after routines have been
 !     modified to handle automatic management
 !-----------------------------------------------------------------------
-      IF (SEEDNO .GT. 0.0) THEN
-         !PSDWT equation reformulated and added/fixed the grain number (GPSM) calculation (TF & DP 07/18/2019)
+      IF (SEEDNO .GT. 0.0 .AND. PLTPOP .GT. 0.0) THEN
+! TF & DP 07/18/2019 PSDWT equation reformulated and added/fixed the 
+!     grain number (GPSM) calculation
          PSDWT = SDWT/(SEEDNO*PLTPOP) *1000.
-         GPSM = SEEDNO * PLTPOP
+         GPSM  = SEEDNO * PLTPOP
       ELSE
          PSDWT = 0.0
+         GPSM  = 0.0
       ENDIF
-      IF (TOPWT .GT. 0.0 .AND. YIELD .GE. 0.0) THEN
+      IF (TOPWT .GT. 0.0) THEN
          HI = YIELD/(TOPWT*10.0)
        ELSE
          HI = 0.0
       ENDIF
 
-      !Fixed the variables (TF & DP 07/16/2019)
+! TF & DP 07/16/2019 Fixed the variables
       SKERWT = PSDWT
 !-----------------------------------------------------------------------
 !     Actual byproduct harvested (default is 0 %)
