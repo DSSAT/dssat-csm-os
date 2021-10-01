@@ -18,6 +18,12 @@ C   Csubstrate : available CH2O for methanogenesis (kgCH2O/ha per soil layer.
 C   drain      : percolation rate (mm/d)
 C Output:
 C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
+
+! Still to do:
+!  - Clean up outputs - probably don't need all these variables output.
+!  - Consider a GHG output file that includes N2O variables plus CO2 and CH4.
+!  - Soil Alternative Electron Acceptors input from soil file or otherwise
+!      estimated from soil properties. Currently hardwired at 26.5.
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
@@ -470,15 +476,15 @@ C-----------------------------------------------------------------------
       END SUBROUTINE OpMethane
 C=======================================================================
 !    Output Variable        Definition
-! DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter (kg[C]/ha)
-! CO2ED  CO2emission     Daily CO2 emission (kg/ha)
+!* DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter (kg[C]/ha)
+!* CO2ED  CO2emission     Daily CO2 emission (kg/ha)
 ! CH4SBD TCH4Substrate   Daily portion of new CO2 that is proportioned to methane generation (kg[C]/ha)
 ! CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)
-! CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)
+!* CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)
 ! CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)
 ! CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)
-! CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha) 
-! CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha) 
+!* CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha) 
+!* CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha) 
 ! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)   
 ! CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)  
 ! CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)  
