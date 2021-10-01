@@ -1515,6 +1515,8 @@ C  REVISION HISTORY
 C  03/14/91 NBP Written
 C  11/15/91 NBP Modified
 C  11/23/93 NBP Included more error checks and limits
+C  08/20/21 CHP Added error protection
+C  09/13/21 FO  Updated error call because of compiler issue.
 C-----------------------------------------------------------------------
 C  Called from: RADABS
 C  Calls:
@@ -1526,10 +1528,12 @@ C=======================================================================
 
       IMPLICIT NONE
       SAVE
-
+      
+      CHARACTER*6 ERRKEY
       REAL A,B,C1,C2,C3,C4,AZIMD,AZIR,AZZON,BETA,BETN,CANHT,CANWH,ETA,
      &  FRACSH,GAMMA,PI,RAD,RBETA,ROWSPC,SHADE,SHLEN,SHPERP,STOUCH,ZERO
       PARAMETER (PI=3.14159, RAD=PI/180.0, ZERO=1.0E-6)
+      PARAMETER (ERRKEY = 'SHADOW')
 
 C     Set fraction shaded to 0.0 for zero width or height.
 
@@ -1618,8 +1622,8 @@ C FO/GH 11/14/2020 Code protections for divisions by zero.
         IF(ROWSPC .GT. 0.0 .AND. BETN .GT. 0.0) THEN
           FRACSH = MIN(SHADE/(ROWSPC*BETN),1.0)
         ELSE
-!         chp 2021-08-20 should never get here.
-          CALL ERROR('SHADOW',1,0,0)
+!         chp 2021-08-20 Added error protection.
+          CALL ERROR(ERRKEY,1,'SHADOW',0)
         ENDIF
 
       ENDIF
