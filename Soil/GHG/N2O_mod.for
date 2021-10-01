@@ -1,6 +1,8 @@
 !=======================================================================
 C  MODULE N2O_mod
 C  06/15/2014 CHP Written
+!  10/01/2021 CHP Remove CO2 outputs from here. These are now reported
+!                 by the methane module.
 !=======================================================================
 
       MODULE N2O_mod
@@ -251,7 +253,7 @@ C  06/15/2014 CHP Written
       REAL n2o_emitted, n2_emitted, CN2O_emitted, CN2_emitted  
       REAL no_emitted, CNO_emitted  
      
-      REAL TOTCO2, CumTotCO2  !NDN20, NIT20, N2O20, N2F20, NOF20, 
+!     REAL TOTCO2, CumTotCO2  !NDN20, NIT20, N2O20, N2F20, NOF20, 
       REAL newCO2(0:NL)
       real wfps(nl)         ! PG   !bd(nl),sw(nl),poros(nl)
 
@@ -310,7 +312,7 @@ C  06/15/2014 CHP Written
 C-----------------------------------------------------------------------
 C     Variable heading for N2O.OUT
 C-----------------------------------------------------------------------
-      CumTotCO2 = 0.0
+!     CumTotCO2 = 0.0
 
 !     chp 10/20/2017. At FAO request. Temporarily hide N2O output
 !     No output unless detail switch is on.
@@ -387,9 +389,11 @@ C-----------------------------------------------------------------------
 
           WRITE(NOUTDN,"(A)",ADVANCE='NO') 
      & "@YEAR DOY   DAS" //
-     & "   N2OEC    N2EC    NOEC   CO2TC    NDNC" // 
+!    & "   N2OEC    N2EC    NOEC   CO2TC    NDNC" // 
+     & "   N2OEC    N2EC    NOEC    NDNC" // 
      & "    NITC   N2ODC   N2ONC   N2FLC   NOFLC" // 
-     & "   N2OED    N2ED    NOED   CO2TD    NDND" // 
+!    & "   N2OED    N2ED    NOED   CO2TD    NDND" // 
+     & "   N2OED    N2ED    NOED    NDND" // 
      & "   NITRD   N2ODD   N2OND   N2FLD   NOFLD"
           IF (N_LYR < 10) THEN
             WRITE (NOUTDN,105)
@@ -425,8 +429,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 !      IF (INDEX('AD',IDETL) == 0) RETURN
 
-      TOTCO2 = SUM(newCO2)
-      CumTotCO2 = CumTotCO2 + TOTCO2
+!     TOTCO2 = SUM(newCO2)
+!     CumTotCO2 = CumTotCO2 + TOTCO2
 
       n2o_emitted  = N2O_data % n2o_emitted  
       n2_emitted   = N2O_data % n2_emitted   
@@ -448,10 +452,11 @@ C-----------------------------------------------------------------------
 
         IF (IDETN .EQ. 'Y') THEN
           WRITE (NOUTDN,TRIM(FRMT2)) YEAR, DOY, DAS, 
-     &      CN2O_emitted, CN2_emitted, CNO_emitted, NINT(CumTotCO2),
+!    &      CN2O_emitted, CN2_emitted, CNO_emitted, NINT(CumTotCO2),
+     &      CN2O_emitted, CN2_emitted, CNO_emitted, 
      &      CNOX, CNITRIFY, CN2Odenit, CN2Onitrif, CN2, CNOflux,
      &      N2O_emitted*1000., N2_emitted*1000., NO_emitted*1000., 
-     &      NINT(TOTCO2*1000.), 
+!    &      NINT(TOTCO2*1000.), 
      &      TNOXD*1000., NINT(TNITRIFY*1000.), TN2OdenitD*1000., 
      &         TN2OnitrifD*1000., TN2D*1000., TNOfluxD*1000., 
      &      (DENITRIF(I)*1000., i=1,N_LYR), (NITRIF(I)*1000.,I=1,N_LYR),
@@ -473,7 +478,7 @@ C-----------------------------------------------------------------------
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
       LABEL(1)  = 'N2OEC'; VALUE(1)  = CN2O_emitted  !kg/ha
-      LABEL(2)  = 'CO2EC'; VALUE(2)  = NINT(CumTotCO2)
+!     LABEL(2)  = 'CO2EC'; VALUE(2)  = NINT(CumTotCO2)
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
