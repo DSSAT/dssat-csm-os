@@ -421,9 +421,9 @@ C-----------------------------------------------------------------------
 
           write(LUN,'(5a)') 
      & "@YEAR DOY   DAS",
-     &  "     DCO2D     CO2ED    CH4SBD    CH4SFD    CH4STD    CH4PRD",
+     &  "     CO2TD     CO2ED    CH4SBD    CH4SFD    CH4STD    CH4PRD",
      &  "    CH4COD    CH4LCD     CH4ED    CH4PLD    CH4EBD    CH4DID",
-     &  "    CH4BLD     DCO2C     CO2EC     CH4EC    CH4COC    CH4LCC",
+     &  "    CH4BLD     CO2TC     CO2EC     CH4EC    CH4COC    CH4LCC",
      &  "    CH4BLC" 
         ENDIF
       ENDIF
@@ -476,24 +476,31 @@ C-----------------------------------------------------------------------
       END SUBROUTINE OpMethane
 C=======================================================================
 !    Output Variable        Definition
-!* DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter (kg[C]/ha)
-!* CO2ED  CO2emission     Daily CO2 emission (kg/ha)
+! DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter (kg[C]/ha)
+!  replace DCO2D with the one from N2O module: CO2TD
+! CO2TD  SoilCO2(g/h/d)  Daily CO2 from surface + soil OM decomp. (g[C]/ha)       . 
+!*CO2ED  CO2emission     Daily CO2 emission (kg/ha)
+!*CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha) 
+! CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)
+! CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha) 
+! CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)
+
 ! CH4SBD TCH4Substrate   Daily portion of new CO2 that is proportioned to methane generation (kg[C]/ha)
 ! CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)
-!* CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)
 ! CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)
-! CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)
-!* CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha) 
-!* CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha) 
 ! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)   
 ! CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)  
 ! CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)  
-! CH4BLD CH4_balance     Daily CH4 balance (kg[C]/ha) 
 
 ! DCO2C  CumNewCO2       Cumulative CO2 from decomposition (kg[C]/ha)
-! CO2EC  CumCO2Emission  Cumulative CO2 emissions (kg[C]/ha)
-! CH4EC  CumCH4Emission  Cumulative CH4 emissions (kg[C]/ha)
+!  replace DCO2C with the one from N2O module: CO2TC
+!*CO2TC  TotSoilCO2(k/h) Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     . 
+!*CO2EC  CumCO2Emission  Cumulative CO2 emissions (kg[C]/ha)
+!*CH4EC  CumCH4Emission  Cumulative CH4 emissions (kg[C]/ha)
 ! CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)
 ! CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)
+
+! CH4BLD Day_CH4_bal     Daily CH4 Balance (kg[C]/ha)
 ! CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)
 
+* to GHG.OUT daily output file
