@@ -4,7 +4,7 @@
 # Define the project and the dependencies that it has
 ##########################################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
    message(FATAL_ERROR "DSSAT in-source builds are not permitted. \nMake a separate folder"
@@ -504,22 +504,22 @@ set(
         "Plant/NWHEAT/WH_ROOTS.for"
         "Plant/NWHEAT/WH_SW_SUBS.for"
         "Plant/NWHEAT/WH_temp.for"
-        "Plant/Oilcrop-Sunflower/SU_CERES.for"
-        "Plant/Oilcrop-Sunflower/SU_GROSUB.for"
-        "Plant/Oilcrop-Sunflower/SU_KUPTAK.for"
-        "Plant/Oilcrop-Sunflower/SU_NFACTO.for"
-        "Plant/Oilcrop-Sunflower/SU_NUPTAK.for"
-        "Plant/Oilcrop-Sunflower/SU_OPGROW.for"
-        "Plant/Oilcrop-Sunflower/SU_OPHARV.for"
-        "Plant/Oilcrop-Sunflower/SU_OPNIT.for"
-        "Plant/Oilcrop-Sunflower/SU_PHENOL.for"
-        "Plant/Oilcrop-Sunflower/SU_ROOTS.for"
+        "Plant/OilCrop-Sunflower/SU_CERES.for"
+        "Plant/OilCrop-Sunflower/SU_GROSUB.for"
+        "Plant/OilCrop-Sunflower/SU_KUPTAK.for"
+        "Plant/OilCrop-Sunflower/SU_NFACTO.for"
+        "Plant/OilCrop-Sunflower/SU_NUPTAK.for"
+        "Plant/OilCrop-Sunflower/SU_OPGROW.for"
+        "Plant/OilCrop-Sunflower/SU_OPHARV.for"
+        "Plant/OilCrop-Sunflower/SU_OPNIT.for"
+        "Plant/OilCrop-Sunflower/SU_PHENOL.for"
+        "Plant/OilCrop-Sunflower/SU_ROOTS.for"
         "Plant/SAMUCA-Sugarcane/SC_admit1.f90"
         "Plant/SAMUCA-Sugarcane/SC_astro.f90"
         "Plant/SAMUCA-Sugarcane/SC_Det_outputs.f90"
         "Plant/SAMUCA-Sugarcane/SC_find_inp_sam.for"
         "Plant/SAMUCA-Sugarcane/SC_functions.f90"
-		"Plant/SAMUCA-Sugarcane/SC_OPHARV_SAM.f90"
+		    "Plant/SAMUCA-Sugarcane/SC_OPHARV_SAM.f90"
         "Plant/SAMUCA-Sugarcane/SC_OUTPUT_SAM.for"
         "Plant/SAMUCA-Sugarcane/SC_PGS.f90"
         "Plant/SAMUCA-Sugarcane/SC_radiat.f90"
