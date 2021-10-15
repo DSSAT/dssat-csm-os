@@ -383,6 +383,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         IF (DYNAMIC .EQ. SEASINIT) THEN
           KTRANS = KEP
           KSEVAP = KEP
+          XHLAI = XLAI
         ELSEIF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI
         ENDIF
