@@ -65,7 +65,7 @@ C=======================================================================
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
 !-----------------------------------------------------------------------
-      USE N2O_mod 
+      USE GHG_mod 
       USE FertType_mod
       USE ModuleData
       USE FloodModule

@@ -1120,11 +1120,9 @@ C=======================================================================
         CASE ('ESCP'); SUMDAT % ESCP   = VALUE(I)
         CASE ('EPCP'); SUMDAT % EPCP   = VALUE(I)
 
-!       From N2O_Mod
+!       From GHG_Mod
         CASE ('N2OEC');SUMDAT % N2OEC  = VALUE(I)
         CASE ('CO2EC');SUMDAT % CO2EC  = VALUE(I)
-
- !      From Methane
         CASE ('CH4EC');SUMDAT % CH4EC  = VALUE(I)
                
         !From Ipexp or Ipwth:
