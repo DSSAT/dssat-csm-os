@@ -17,6 +17,7 @@
 !  11/10/2020 CHP Need to make revisions here like in IPEXP for forecast mode
 !       This mode needs to keep FILEW (WTH file) and potentially also 
 !       FILEWC (CLI) file and FILEWG (WTG file).
+!  10/21/2021 FO  Updated GETLUN for weather file unit
 !-----------------------------------------------------------------------
 !  INPUT  : DSSATP, PATHEX, FILEX
 !
@@ -332,7 +333,7 @@
         DOY     = -99
         YEARDOY = -99
         
-        CALL GETLUN('FILEW', UNIT)
+        CALL GETLUN('LUNMFW', UNIT)
         
         INQUIRE(FILE=FILEWW, EXIST = FEXIST)
         IF(FEXIST) THEN
