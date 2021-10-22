@@ -57,10 +57,10 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE SoilNi (CONTROL, ISWITCH, 
-     &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
-     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
-     &    XHLAI,                                          !Input
+     &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
+     &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
+     &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
+     &    WEATHER, XHLAI,                                 !Input
      &    FLOODN,                                         !I/O
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
@@ -133,6 +133,7 @@ C=======================================================================
       REAL CN2,       TN2D,                    N2flux(NL)   !N2 detnitr
 
 !     Added for GHG model
+      TYPE (CH4_type) CH4_data
       REAL, DIMENSION(NL) :: dD0, NO_N2O_ratio
       REAL, DIMENSION(0:NL) :: newCO2
       REAL pn2onitrif, NH4_to_NO, NITRIF_to_NO
@@ -297,7 +298,9 @@ C=======================================================================
 
       CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
+      CALL OPGHG(CONTROL, ISWITCH, N2O_data, CH4_data)
 
       IF (CONTROL%RUN .EQ. 1 .OR. INDEX('QF',CONTROL%RNMODE) .LE. 0)THEN
         call nox_pulse (dynamic, rain, snow, nox_puls)
@@ -995,7 +998,9 @@ C     Write daily output
      &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &	  N2O_data) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
+      CALL OPGHG(CONTROL, ISWITCH, N2O_data, CH4_data)
 
 C***********************************************************************
 C***********************************************************************

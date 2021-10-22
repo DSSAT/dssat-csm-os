@@ -57,8 +57,8 @@
      &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
      &    OMAData, RLV,                                   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
-     &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
-     &    SomLitE, SSOMC)                                 !Output
+     &    CH4_data, IMM, LITC, MNR, MULCH, newCO2, SomLit,!Output
+     &    SomLitC, SomLitE, SSOMC)                        !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -66,6 +66,7 @@
       USE Interface_IpSoil
       USE FloodModule
       USE ModSoilMix
+      USE GHG_MOD
 
       IMPLICIT  NONE
       SAVE
@@ -140,6 +141,7 @@
      &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
      &    CumCH4Leaching, CumCO2Emission
       REAL RLV(NL), DRAIN
+      TYPE (CH4_type) CH4_data
 
       REAL, PARAMETER :: FOMCFrac = 0.4
       REAL, PARAMETER :: HumusCFrac = 0.526 !(=1/1.9)
@@ -221,9 +223,7 @@
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -732,9 +732,7 @@ C         recruit (NREQ-N CONC) g of N
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
 !     Transfer daily mineralization values for use by Cassava model
       CALL PUT('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
@@ -861,9 +859,7 @@ C         recruit (NREQ-N CONC) g of N
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
 C***********************************************************************
 C***********************************************************************
@@ -898,9 +894,8 @@ C     Write seasonal output
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
+
 
 C***********************************************************************
 C***********************************************************************

@@ -44,13 +44,14 @@
      &  DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,   !Input
      &  NH4, NO3, OMADATA, RLV, SENESCE,              !Input
      &  SOILPROP, SPi_Labile, ST, SW, TILLVALS,       !Input
-     &  IMM, LITC, MNR, MULCH, newCO2, SomLit,        !Output
-     &  SomLitC, SomLitE, SSOMC)                      !Output
+     &  CH4_data, IMM, LITC, MNR, MULCH, newCO2,      !Output
+     &  SomLit,SomLitC, SomLitE, SSOMC)               !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
       USE FloodModule             
       USE ModSoilMix
+      USE GHG_mod
 
       IMPLICIT  NONE
       SAVE
@@ -142,6 +143,7 @@
      &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
      &    CumCH4Leaching, CumCO2Emission
       REAL RLV(NL), DRAIN
+      TYPE (CH4_type) CH4_data
 
       DATA ADDMETABEFLAG /.FALSE./
       DATA FRMETFLAG /.FALSE./
@@ -410,9 +412,7 @@
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
      &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
@@ -720,9 +720,7 @@
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -840,9 +838,7 @@
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
 !     Soil carbon balance.
 !      CALL SOILCBAL_C (CONTROL, ISWITCH, 
@@ -866,9 +862,7 @@
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
 !       Get detailed SOM and litter output.
       IF (INDEX('AD',IDETL) > 0) THEN
@@ -919,9 +913,7 @@
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
 !     Close output files.
       IF (INDEX('AD',IDETL) > 0) THEN

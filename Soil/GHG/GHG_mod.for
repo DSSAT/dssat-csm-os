@@ -1,11 +1,11 @@
 !=======================================================================
-C  MODULE N2O_mod
+C  MODULE GHG_mod
 C  06/15/2014 CHP Written
 !  10/01/2021 CHP Remove CO2 outputs from here. These are now reported
 !                 by the methane module.
 !=======================================================================
 
-      MODULE N2O_mod
+      MODULE GHG_mod
 !     Contains data definitions for N2O generation routines in SOILNI
       USE ModuleDefs
 
@@ -33,6 +33,12 @@ C  06/15/2014 CHP Written
         REAL, DIMENSION(NL) :: WFPS 
       END TYPE N2O_type
 
+      TYPE CH4_type
+        REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored
+        REAL CO2emission, CumCH4Consumpt, CumCH4Emission
+        REAL CumCH4Leaching, CumCO2Emission                      
+      END TYPE CH4_type
+
       CONTAINS
 
 C=======================================================================
@@ -57,7 +63,7 @@ C  09/18/2015 CHP Written, based on PG code.
 
 !     CHARACTER*1  IDETL  
       CHARACTER*1  IDETN, ISWNIT, ISWWAT  
-      CHARACTER*10, PARAMETER :: OUTSN2O = 'N2O.OUT'
+      CHARACTER*10, PARAMETER :: OUTGHG = 'N2O.OUT'
 
       INTEGER DAS, DYNAMIC, L, NLAYR, YRDOY
 
@@ -219,7 +225,7 @@ C  REVISION       HISTORY
 C  06/15/2014 CHP Written
 !=======================================================================
 
-      SUBROUTINE OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      SUBROUTINE OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
@@ -231,11 +237,11 @@ C  06/15/2014 CHP Written
       TYPE (N2O_type)    N2O_DATA
 
       CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
-      CHARACTER*10, PARAMETER :: OUTSN2O = 'N2O.OUT'
+      CHARACTER*10, PARAMETER :: OUTGHG = 'N2O.OUT'
       CHARACTER*500 FRMT, FRMT2
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, I, L, REPNO
-      INTEGER N_LYR, NOUTDN, RUN, YEAR, YRDOY, SPACES
+      INTEGER N_LYR, GHGLUN, RUN, YEAR, YRDOY, SPACES
 
 !          Cumul      Daily     Layer         
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
@@ -254,7 +260,7 @@ C  06/15/2014 CHP Written
       REAL no_emitted, CNO_emitted  
      
 !     REAL TOTCO2, CumTotCO2  !NDN20, NIT20, N2O20, N2F20, NOF20, 
-      REAL newCO2(0:NL)
+!     REAL newCO2(0:NL)
       real wfps(nl)         ! PG   !bd(nl),sw(nl),poros(nl)
 
       LOGICAL FEXIST
@@ -328,29 +334,29 @@ C-----------------------------------------------------------------------
         RUN     = CONTROL % RUN
 
 
-        CALL GETLUN(OUTSN2O, NOUTDN)
-        INQUIRE (FILE = OUTSN2O, EXIST = FEXIST)
+        CALL GETLUN(OUTGHG, GHGLUN)
+        INQUIRE (FILE = OUTGHG, EXIST = FEXIST)
         IF (FEXIST) THEN
-          OPEN (UNIT = NOUTDN, FILE = OUTSN2O, STATUS = 'OLD',
+          OPEN (UNIT = GHGLUN, FILE = OUTGHG, STATUS = 'OLD',
      &      IOSTAT = ERRNUM, POSITION = 'APPEND')
         ELSE
-          OPEN (UNIT = NOUTDN, FILE = OUTSN2O, STATUS = 'NEW',
+          OPEN (UNIT = GHGLUN, FILE = OUTGHG, STATUS = 'NEW',
      &      IOSTAT = ERRNUM)
-          WRITE(NOUTDN,'("*N2O emissions output file")')
+          WRITE(GHGLUN,'("*N2O emissions output file")')
         ENDIF
 
         IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
           !For first run of a sequenced run, use replicate
           ! number instead of run number in header.
           IF (RNMODE .EQ. 'Q') THEN
-            CALL HEADER(SEASINIT, NOUTDN, REPNO)
+            CALL HEADER(SEASINIT, GHGLUN, REPNO)
           ELSE
-            CALL HEADER(SEASINIT, NOUTDN, RUN)
+            CALL HEADER(SEASINIT, GHGLUN, RUN)
           ENDIF
 
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
-          WRITE(NOUTDN,'("!",14X,A,A,A)')
+          WRITE(GHGLUN,'("!",14X,A,A,A)')
      & "|---------------------------------- Cumulative ---------------",
      & "------------------|---------------------------------- Daily --",
      & "------------------------------------|"
@@ -375,9 +381,9 @@ C-----------------------------------------------------------------------
      & 'T',(SPACES+4*N_LYR*8),
      & ',"NO flux (g[N]/ha) by soil depth (cm):")'
 
-          WRITE(NOUTDN,TRIM(FRMT))
+          WRITE(GHGLUN,TRIM(FRMT))
 
-          WRITE(NOUTDN,'("!",17X,A,A,A,T176,50A8)')
+          WRITE(GHGLUN,'("!",17X,A,A,A,T176,50A8)')
      &"kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha  ",
      &" kg/ha   kg/ha    g/ha    g/ha    g/ha    g/ha    g/ha ",
      &"   g/ha    g/ha    g/ha    g/ha    g/ha",
@@ -387,7 +393,7 @@ C-----------------------------------------------------------------------
      &        (SoilProp%LayerText(L),L=1,N_LYR),
      &        (SoilProp%LayerText(L),L=1,N_LYR) 
 
-          WRITE(NOUTDN,"(A)",ADVANCE='NO') 
+          WRITE(GHGLUN,"(A)",ADVANCE='NO') 
      & "@YEAR DOY   DAS" //
 !    & "   N2OEC    N2EC    NOEC   CO2TC    NDNC" // 
      & "   N2OEC    N2EC    NOEC    NDNC" // 
@@ -396,7 +402,7 @@ C-----------------------------------------------------------------------
      & "   N2OED    N2ED    NOED    NDND" // 
      & "   NITRD   N2ODD   N2OND   N2FLD   NOFLD"
           IF (N_LYR < 10) THEN
-            WRITE (NOUTDN,105)
+            WRITE (GHGLUN,105)
      &        ('NDN',L,'D',L=1,N_LYR), 
      &        ('NIT',L,'D',L=1,N_LYR),
      &        ('N2O',L,'D',L=1,N_LYR), 
@@ -404,7 +410,7 @@ C-----------------------------------------------------------------------
      &        ('NOF',L,'D',L=1,N_LYR) 
   105       FORMAT(50("   ",A,I1,A))
           ELSE
-            WRITE (NOUTDN,110)
+            WRITE (GHGLUN,110)
      &        ('NDN',L,'D',L=1,9),'   NDN10', 
      &        ('NIT',L,'D',L=1,9),'   NIT10',
      &        ('N2O',L,'D',L=1,9),'   N2O10', 
@@ -451,7 +457,7 @@ C-----------------------------------------------------------------------
      &   N_LYR, 'F8.1,', N_LYR,'F8.0,', 3*N_LYR, 'F8.1)'
 
         IF (IDETN .EQ. 'Y') THEN
-          WRITE (NOUTDN,TRIM(FRMT2)) YEAR, DOY, DAS, 
+          WRITE (GHGLUN,TRIM(FRMT2)) YEAR, DOY, DAS, 
 !    &      CN2O_emitted, CN2_emitted, CNO_emitted, NINT(CumTotCO2),
      &      CN2O_emitted, CN2_emitted, CNO_emitted, 
      &      CNOX, CNITRIFY, CN2Odenit, CN2Onitrif, CN2, CNOflux,
@@ -472,7 +478,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 !      IF (INDEX('AD',IDETL) == 0) RETURN
       !Close daily output files.
-      CLOSE(NOUTDN)
+      CLOSE(GHGLUN)
 
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
@@ -493,7 +499,165 @@ C-----------------------------------------------------------------------
       END SUBROUTINE OpN2O
 C-------------------------------------------------------------------
 C
+
+C=======================================================================
+C  OpGHG, Subroutine, C.H.Porter, P. Grace
+C  Generates output for daily soil N2O routines
+C-----------------------------------------------------------------------
+C  REVISION       HISTORY
+C  06/15/2014 CHP Written
+!=======================================================================
+
+      SUBROUTINE OpGHG(CONTROL, ISWITCH, N2O_data, CH4_data) 
+!-------------------------------------------------------------------
+      IMPLICIT NONE
+      SAVE
+!-----------------------------------------------------------------------
+
+      TYPE (ControlType) CONTROL
+      TYPE (SwitchType)  ISWITCH
+      TYPE (N2O_type)    N2O_DATA
+      TYPE (CH4_type)    CH4_DATA
+
+      CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
+      CHARACTER*10, PARAMETER :: OUTGHG = 'GHG.OUT'
+
+      INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, REPNO
+      INTEGER GHGLUN, RUN, YEAR, YRDOY
+
+      REAL CO2ED, N2OED, CH4ED, CO2EC, N2OEC, CH4EC
+      REAL CCEQC, NCEQC, MCEQC, TCEQC
+     
+      LOGICAL FEXIST
+
+!-----------------------------------------------------------------------
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+
+      IDETN  = ISWITCH % IDETN
+      ISWWAT = ISWITCH % ISWWAT
+      ISWNIT = ISWITCH % ISWNIT
+
+      IF (ISWWAT == 'N' .OR. ISWNIT == 'N') RETURN
+
+      DAS     = CONTROL % DAS
+      YRDOY   = CONTROL % YRDOY
+
+!***********************************************************************
+!***********************************************************************
+!***********************************************************************
+!     Seasonal initialization - run once per season
+!***********************************************************************
+      IF (DYNAMIC .EQ. SEASINIT) THEN
+C-----------------------------------------------------------------------
+C     Variable heading for GHG.OUT
+C-----------------------------------------------------------------------
+      IF (IDETN .EQ. 'Y') THEN
+
+        FROP    = CONTROL % FROP
+        RNMODE  = CONTROL % RNMODE
+        REPNO   = CONTROL % REPNO
+        RUN     = CONTROL % RUN
+
+        CALL GETLUN(OUTGHG, GHGLUN)
+        INQUIRE (FILE = OUTGHG, EXIST = FEXIST)
+        IF (FEXIST) THEN
+          OPEN (UNIT = GHGLUN, FILE = OUTGHG, STATUS = 'OLD',
+     &      IOSTAT = ERRNUM, POSITION = 'APPEND')
+        ELSE
+          OPEN (UNIT = GHGLUN, FILE = OUTGHG, STATUS = 'NEW',
+     &      IOSTAT = ERRNUM)
+          WRITE(GHGLUN,'("*GHG emissions output file")')
+        ENDIF
+
+        IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
+          !For first run of a sequenced run, use replicate
+          ! number instead of run number in header.
+          IF (RNMODE .EQ. 'Q') THEN
+            CALL HEADER(SEASINIT, GHGLUN, REPNO)
+          ELSE
+            CALL HEADER(SEASINIT, GHGLUN, RUN)
+          ENDIF
+
+          WRITE(GHGLUN,'("!",15X,A,A)')
+     &"|------ Daily (g/ha) -----|--- Cumulative (kg/ha) ---",
+     &"|---- Cum CO2-equiv kg[CO2eq]/ha ---|"
+
+          WRITE(GHGLUN,'("!",14X,A,A)')
+     &"      CO2      N2O      CH4      CO2      N2O      CH4",
+     &"      CO2      N2O      CH4    Total"
+
+          WRITE(GHGLUN,'("!",14X,A,A,A,T176,50A8)')
+     &"  g[C]/ha  g[N]/ha  g[C]/ha kg[C]/ha kg[N]/ha kg[C]/ha",
+     &"    CO2eq    CO2eq    CO2eq    CO2eq"
+
+          WRITE(GHGLUN,'(A,A,A)') "@YEAR DOY   DAS",
+     &"    CO2ED    N2OED    CH4ED    CO2EC    N2OEC    CH4EC",
+     &"    CCEQC    NCEQC    MCEQC    TCEQC"
+
+        ENDIF
+      ENDIF
+
+!***********************************************************************
+!***********************************************************************
+!     DAILY OUTPUT
+!***********************************************************************
+      ELSE IF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASINIT) THEN
+C-----------------------------------------------------------------------
+!      IF (INDEX('AD',IDETL) == 0) RETURN
+
+      IF (IDETN == 'N') RETURN
+      IF (MOD(DAS, FROP) .NE. 0) RETURN
+
+      CALL YR_DOY(YRDOY, YEAR, DOY) 
+
+      CO2ED = CH4_data % CO2emission
+      N2OED = N2O_data % N2O_emitted
+      CH4ED = CH4_data % CH4Emission
+
+      CO2EC = CH4_data % CumCO2Emission
+      N2OEC = N2O_data % CN2O_emitted
+      CH4EC = CH4_data % CumCH4Emission
+
+!     Calculation of cumulative CO2-equivalent emissions
+!     CO2 - convert from units of C to units of CO2
+      CCEQC = CO2EC * 3.67 
+
+!     N2O - convert from N to N2O and multiply by 298
+      NCEQC = N2OEC * 1.571 * 298.
+
+!     CH4 - convert from C to CH4 and multiply by 25
+      MCEQC = CH4EC * 1.33 * 25.
+
+!     Total CO2-equivalent
+      TCEQC = CCEQC + NCEQC + MCEQC
+
+        IF (IDETN .EQ. 'Y') THEN
+          WRITE (GHGLUN,'(I5,I4.3,I6,6F9.2,4I9)') YEAR, DOY, DAS, 
+     &      CO2ED, N2OED, CH4ED, CO2EC, N2OEC, CH4EC,
+     &      NINT(CCEQC), NINT(NCEQC), NINT(MCEQC), NINT(TCEQC)
+        ENDIF
+
+!***********************************************************************
+!***********************************************************************
+!     SEASEND
+!***********************************************************************
+      ELSE IF (DYNAMIC .EQ. SEASEND) THEN
+C-----------------------------------------------------------------------
+!      IF (INDEX('AD',IDETL) == 0) RETURN
+      !Close daily output files.
+      CLOSE(GHGLUN)
+
+!***********************************************************************
+!***********************************************************************
+!     END OF DYNAMIC IF CONSTRUCT
+!***********************************************************************
+      ENDIF
+!***********************************************************************
+      RETURN
+      END SUBROUTINE OpGHG
+C-------------------------------------------------------------------
 !======================================================================
-      END MODULE N2O_mod
+      END MODULE GHG_mod
 !======================================================================
 

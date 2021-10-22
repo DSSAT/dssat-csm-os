@@ -45,6 +45,7 @@ C=====================================================================
 !-----------------------------------------------------------------------
       USE ModuleDefs
       USE FloodModule
+      USE GHG_mod
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -111,6 +112,7 @@ C=====================================================================
 
 !     Added for methane
       REAL DRAIN
+      TYPE (CH4_type) CH4_data
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -143,8 +145,8 @@ C=====================================================================
      &  DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,   !Input
      &  NH4, NO3, OMADATA, RLV, SENESCE,              !Input
      &  SOILPROP, SPi_Labile, ST, SW, TILLVALS,       !Input
-     &  IMM, LITC, MNR, MULCH, newCO2, SomLit,        !Output
-     &  SomLitC, SomLitE, SSOMC)                      !Output
+     &  CH4_data, IMM, LITC, MNR, MULCH, newCO2,      !Output
+     &  SomLit, SomLitC, SomLitE, SSOMC)              !Output
       ELSE
 !      ELSEIF (MESOM .EQ. 'G') THEN
 !       Godwin (Ceres-based) soil organic matter module (formerly NTRANS)
@@ -152,16 +154,16 @@ C=====================================================================
      &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
      &    OMAData, RLV,                                   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
-     &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
-     &    SomLitE, SSOMC)                                 !Output
+     &    CH4_data, IMM, LITC, MNR, MULCH, newCO2,        !Output
+     &    SomLit, SomLitC, SomLitE, SSOMC)                !Output
       ENDIF
 
 !     Inorganic N (formerly NTRANS)
       CALL SoilNi (CONTROL, ISWITCH, 
-     &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
-     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
-     &    XHLAI,                                          !Input
+     &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
+     &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
+     &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
+     &    WEATHER, XHLAI,                                 !Input
      &    FLOODN,                                         !I/O
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 

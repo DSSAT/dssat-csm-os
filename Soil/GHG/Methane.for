@@ -27,11 +27,9 @@ C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
-     &    CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,!Output 
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission,        !Output
-     &    CumCH4Leaching, CumCO2Emission)                     !Output
+     &    CH4_data)                                           !Output
 
-      USE ModuleDefs
+      USE GHG_mod
       USE FloodModule
      	USE MethaneConstants
 	USE MethaneVariables
@@ -58,6 +56,7 @@ C=======================================================================
       TYPE (SwitchType)  ISWITCH
       TYPE (SoilType)    SOILPROP
       TYPE (FloodWatType)FLOODWAT
+      TYPE (CH4_type)    CH4_data
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -82,8 +81,19 @@ C-----------------------------------------------------------------------
       CH4Stored     = 0.0
       CH4Stored_Y   = 0.0
 
+      CH4_data % CO2emission    = 0.0
+      CH4_data % CH4Emission    = 0.0
+      CH4_data % CH4Consumption = 0.0
+      CH4_data % CH4Leaching    = 0.0
+      CH4_data % CH4Stored      = 0.0
+      CH4_data % CumCO2Emission = 0.0
+      CH4_data % CumCH4Emission = 0.0
+      CH4_data % CumCH4Consumpt = 0.0
+      CH4_data % CumCH4Leaching = 0.0                    
+
 	spd = 24.*3600.   ! seconds per day
 
+!-----------------------------------------------------------------------
 ! Define reference height for the Arah model to be the top of the bund
 	RefHeight = 100. ! mm
 
@@ -303,6 +313,17 @@ c Calculate emissions from dissolved CH4 on draining
 
 !     CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - EmissionFrac))
 !     CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - ProductionFrac))
+
+      CH4_data % CO2emission = CO2Emission
+      CH4_data % CH4Emission = CH4Emission
+      CH4_data % CH4Consumption=CH4Consumption
+      CH4_data % CH4Leaching = CH4Leaching
+      CH4_data % CH4Stored   = CH4Stored
+
+      CH4_data % CumCO2Emission = CumCO2Emission
+      CH4_data % CumCH4Emission = CumCH4Emission
+      CH4_data % CumCH4Consumpt = CumCH4Consumpt
+      CH4_data % CumCH4Leaching = CumCH4Leaching                    
 
 !***********************************************************************
 !***********************************************************************
