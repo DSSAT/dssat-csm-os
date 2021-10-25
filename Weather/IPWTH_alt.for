@@ -1137,9 +1137,14 @@ C         Read in weather file header.
           LastWeatherDay = YRDOYW
           IF (FOUND .EQ. 0 .AND. YRDOY .GT. LastWeatherDay  
      &        .AND. LongFile) THEN
-            ErrCode = 10
-            CALL WeatherError(CONTROL, ErrCode, FILEWW, 
+!           For forecast mode, we can have last weather day < today
+            IF (CONTROL % RNMODE .EQ. 'Y') THEN
+              EXIT
+            ELSE
+              ErrCode = 10
+              CALL WeatherError(CONTROL, ErrCode, FILEWW, 
      &                  LINWTH, YRDOYW, YREND)
+            ENDIF
           ENDIF
           EXIT  
         ENDIF
@@ -1379,7 +1384,7 @@ c                   available.
       CHARACTER*78 MSG(4)
       CHARACTER*92 FILEWW
 
-      INTEGER DOYY, ErrCode, I, LNUM, YRDOYW, YREND, YRY
+      INTEGER DOYY, ErrCode, I, J, LNUM, YRDOYW, YREND, YRY
       INTEGER LenString, NCHAR, NMSG
       TYPE (ControlType) CONTROL
 
@@ -1460,7 +1465,9 @@ c                   available.
 
       IF (INDEX('FQY',CONTROL%RNMODE) > 0) THEN
         I = LEN_TRIM(FILEWW)
-        CALL ERROR(ERRKEY,ErrCode,FILEWW(I-11:I),LNUM)
+!       CHP 2021-10-25 Allow 4-character weather filename
+        J = MAX(I-11,1)
+        CALL ERROR(ERRKEY,ErrCode,FILEWW(J:I),LNUM)
       ENDIF
 
       RETURN
