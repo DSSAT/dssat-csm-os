@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.8.0.17 chp 2021-10-25 Pre-season forecast enabled, portability issues 
 !       4.8.0.16 chp 2021-09-24 OilCropSun model added, 
 !                               updated calibration quinoa, chia, safflower
 !       4.8.0.15 chp 2021-08-20 Roll back some ETPHOT protections 
