@@ -40,8 +40,8 @@ C=======================================================================
 	REAL dlayr(NL),SW(NL),DLL(NL),RLV(NL),CSubstrate(NL),BD(NL),
      &     Buffer(NL,2),afp(NL)
       REAL, DIMENSION(0:NL) :: newCO2
-	REAL drain,flood,x,CH4Emission,spd,buffconc,rCO2,
-     &     rCH4,TCH4Substrate,rbuff,afpmax,BufferRegenRate,RefHeight,
+	REAL drain,flood,x,CH4Emission,buffconc,rCO2,
+     &     rCH4,TCH4Substrate,rbuff,afpmax,
      &     ProductionFrac,ConsumptionFrac,EmissionFrac,PlantFrac,
      &     EbullitionFrac,DiffusionFrac,LeachingFrac,
      &     CH4Production,CH4Consumption,CH4PlantFlux,CH4Ebullition,
@@ -58,6 +58,13 @@ C=======================================================================
       TYPE (FloodWatType)FLOODWAT
       TYPE (CH4_type)    CH4_data
 
+
+!-----------------------------------------------------------------------
+	REAL, PARAMETER :: spd = 24.*3600.   ! seconds per day
+!     Reference height for the Arah model to be the top of the bund
+	REAL, PARAMETER :: RefHeight = 100. ! mm
+!     Soil buffer regeneration rate after drainage
+	REAL, PARAMETER :: BufferRegenRate = 0.06 ! 1/d	  0.02
       DYNAMIC = CONTROL % DYNAMIC
 
       DLAYR = SOILPROP % DLAYR
@@ -78,42 +85,28 @@ C-----------------------------------------------------------------------
       CumCH4Leaching= 0.0
       CumCO2Emission= 0.0
       CumNewCO2     = 0.0
-      CH4Stored     = 0.0
-      CH4Stored_Y   = 0.0
 
-      CH4_data % CO2emission    = 0.0
-      CH4_data % CH4Emission    = 0.0
-      CH4_data % CH4Consumption = 0.0
-      CH4_data % CH4Leaching    = 0.0
-      CH4_data % CH4Stored      = 0.0
-      CH4_data % CumCO2Emission = 0.0
-      CH4_data % CumCH4Emission = 0.0
-      CH4_data % CumCH4Consumpt = 0.0
-      CH4_data % CumCH4Leaching = 0.0                    
+      IF (CONTROL % RUN .EQ. 1 .OR. 
+     &    INDEX('QF',CONTROL % RNMODE) .LE. 0) THEN
+        CH4Stored     = 0.0
+        CH4Stored_Y   = 0.0
 
-	spd = 24.*3600.   ! seconds per day
+!       Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
+!       Temporarily hard-wire Buffer(NL,1) to 26.5 until we read initial values from soil file.
+	  FloodCH4 = 0.0
+	  DO i=1,NLAYR
+!         Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+!         Temporarily set SAEA (new soil input - Soil Alternative Electron Acceptors) values to 26.5
+!         Need to introduce new soil input parameter, or find a way to estimate from other inputs?
+          Buffer(i,1) = 26.5 * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+	    Buffer(i,2) = 0.0
+	  ENDDO
 
-!-----------------------------------------------------------------------
-! Define reference height for the Arah model to be the top of the bund
-	RefHeight = 100. ! mm
+!       proportionality constant for root transmissivity and RLV	(0.00015 m air/(m root))
+!	  lamda_rho = lamdarho  ! 0.00015
+	  lamda_rho = 0.00015
 
-! Soil buffer regeneration rate after drainage
-	BufferRegenRate = 0.06 ! 1/d	  0.02
-
-! proportionality constant for root transmissivity and RLV	(0.00015 m air/(m root))
-!	lamda_rho = lamdarho  ! 0.00015
-	lamda_rho = 0.00015
-
-! Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
-!     Temporarily hard-wire Buffer(NL,1) to 26.5 until we read initial values from soil file.
-	FloodCH4 = 0.0
-	DO i=1,NLAYR
-!       Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
-!       Temporarily set SAEA (new soil input - Soil Alternative Electron Acceptors) values to 26.5
-!       Need to introduce new soil input parameter, or find a way to estimate from other inputs?
-        Buffer(i,1) = 26.5 * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
-	  Buffer(i,2) = 0.0
-	ENDDO
+      ENDIF
 
 ! Sample soil profile used in MERES example from IRRI with SAEA values.
 !*IBRI910025  IRRI-UNDP   -99      50  
@@ -127,6 +120,16 @@ C-----------------------------------------------------------------------
 !    30   -99 0.280 0.397 0.412 0.200  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 !    40   -99 0.280 0.397 0.412 0.200  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 !    50   -99 0.280 0.397 0.412 0.100  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
+
+      CH4_data % CO2emission    = 0.0
+      CH4_data % CH4Emission    = 0.0
+      CH4_data % CH4Consumption = 0.0
+      CH4_data % CH4Leaching    = 0.0
+      CH4_data % CH4Stored      = 0.0
+      CH4_data % CumCO2Emission = 0.0
+      CH4_data % CumCH4Emission = 0.0
+      CH4_data % CumCH4Consumpt = 0.0
+      CH4_data % CumCH4Leaching = 0.0                    
 
       CALL OpMethane(CONTROL, ISWITCH,  
      &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
@@ -157,7 +160,7 @@ C-----------------------------------------------------------------------
 
       FLOOD = FLOODWAT % FLOOD
 
-! Arah model parameters for flood-water layer
+!     Arah model parameters for flood-water layer
       n1 = 2
       z(1) = (RefHeight - flood)/1000. ! mm-->m
       z(n1) = RefHeight/1000.	   
@@ -170,14 +173,13 @@ C-----------------------------------------------------------------------
         VV(ch4,i) = 1.5e-5        ! maximum CH4 oxidation rate
       ENDDO
 
-! Parameters for soil layers
+!     Parameters for soil layers
 !     CO2_Cflux = 0.0
       TCH4Substrate = 0.0
       CO2emission   = 0.0
 
       DO i=1,NLAYR
-
-        ! calculate air-filled porosity (v/v)
+!       calculate air-filled porosity (v/v)
         IF (FLOOD.GT.0.0) THEN			 
           afp(i) = 0.0
         ELSE 				 
@@ -185,12 +187,10 @@ C-----------------------------------------------------------------------
         ENDIF
         afpmax = 1.0 - BD(i)/2.65 - DLL(i)
 
-        ! calculate buffer concentration (molCeq/m3)
+!       calculate buffer concentration (molCeq/m3)
         buffconc = Buffer(i,1)/10./12./(dlayr(i)/100.)  
 
-c	if(i.eq.1) write(29,'(i6,3f10.6)') dap,flood,afp(1),buffconc
-
-        ! calculate reoxidisation of buffer if soil is aerated
+!       calculate reoxidisation of buffer if soil is aerated
         IF (afp(i).GT.0.0) THEN
           rCH4 = 0.0              ! no CH4 production
           rCO2 = CSubstrate(i)    ! aerobic respiration
@@ -215,15 +215,8 @@ c	if(i.eq.1) write(29,'(i6,3f10.6)') dap,flood,afp(1),buffconc
         Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidised buffer pool
         Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool
 
-!chp        CO2_Cflux = CO2_Cflux + (rCO2 + rCH4)	! total CO2-C flux
-! should this subtract rCH4?	    CO2_Cflux = CO2_Cflux + (rCO2 + rCH4)	! total CO2-C flux
-
 !       Total CH4 substrate (kgC/ha)
         TCH4Substrate = TCH4Substrate + rCH4  
-
-!       TEMP CHP
-!       WRITE(5555, '(i7,i4,3f10.4)') 
-!    &    control.yrdoy, i, csubstrate(i), rch4, rco2
 
 !       Calculate soil profile parameters for Arah model
         j = i + n1
@@ -245,14 +238,12 @@ c	if(i.eq.1) write(29,'(i6,3f10.6)') dap,flood,afp(1),buffconc
 !     Leaching rate
       Lz = drain * 1.e-3/spd    ! mm/d --> m3/m2/s
 
-C Call the steady-state routine of the Arah model
+!     Call the steady-state routine of the Arah model
 !     TSubstrate comes out of these routines, ~10% of TCH4Substrate for IRLB9701.RIX, trt 4
       CALL setup(NLAYR+n1)
       CALL SteadyState
 
-c     IF(DAP.eq.20) CALL Report(29)
-
-C Calculate fractions of C in each methane flux
+!     Calculate fractions of C in each methane flux
       IF(TSubstrate.GT.0.0) THEN
         ProductionFrac  = meth%Production /TSubstrate
         ConsumptionFrac = meth%Consumption/TSubstrate
@@ -269,7 +260,7 @@ C Calculate fractions of C in each methane flux
       EmissionFrac = ProductionFrac - ConsumptionFrac - LeachingFrac
       DiffusionFrac = EmissionFrac - (PlantFrac + EbullitionFrac)
 
-c Calculate actual flux rates (kgC/ha/d) based on CERES-Rice substrate calculations
+!     Calculate actual flux rates (kgC/ha/d) based on CERES-Rice substrate calculations
       CH4Production  = TCH4Substrate * ProductionFrac
       CH4Consumption = TCH4Substrate * ConsumptionFrac
       CH4PlantFlux   = TCH4Substrate * PlantFrac
@@ -284,7 +275,7 @@ C     Daily integration
 C***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 C-----------------------------------------------------------------------
-c Calculate emissions from dissolved CH4 on draining
+!     Calculate emissions from dissolved CH4 on draining
       if (FLOOD.gt.0.0) then
         CH4Stored = meth%Storage !chp * 12. * 10.	! kgC/ha
       else
@@ -310,9 +301,6 @@ c Calculate emissions from dissolved CH4 on draining
 
       Cum_CH4_bal = CumNewCO2 - (CumCO2Emission + CumCH4Emission + 
      &                      CH4stored + CumCH4Leaching + CumCH4Consumpt)
-
-!     CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - EmissionFrac))
-!     CO2_Cflux = CO2_Cflux + (TCH4Substrate * (1.0 - ProductionFrac))
 
       CH4_data % CO2emission = CO2Emission
       CH4_data % CH4Emission = CH4Emission
@@ -367,12 +355,11 @@ C  07/02/2021 CHP Written
       USE ModuleDefs
       IMPLICIT NONE
       SAVE
-!-----------------------------------------------------------------------
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
 
-      CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
+      CHARACTER*1  IDETL, IDETN, ISWNIT, ISWWAT, RNMODE
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, REPNO
       INTEGER LUN, RUN, YEAR, YRDOY
       LOGICAL FEXIST
@@ -393,14 +380,12 @@ C  07/02/2021 CHP Written
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
 
+      IDETL  = ISWITCH % IDETL
       IDETN  = ISWITCH % IDETN
       ISWWAT = ISWITCH % ISWWAT
       ISWNIT = ISWITCH % ISWNIT
-
-      IF (ISWWAT == 'N' .OR. ISWNIT == 'N') RETURN
-
-      DAS     = CONTROL % DAS
-      YRDOY   = CONTROL % YRDOY
+      DAS    = CONTROL % DAS
+      YRDOY  = CONTROL % YRDOY
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
 !***********************************************************************
@@ -409,9 +394,11 @@ C  07/02/2021 CHP Written
 !     Seasonal initialization - run once per season
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
-C-----------------------------------------------------------------------
-C     Variable heading for N2O.OUT
-C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
+!     Variable heading for N2O.OUT
+!-----------------------------------------------------------------------
+      IF (ISWWAT == 'N' .OR. ISWNIT == 'N' .OR. IDETL .NE. 'D') RETURN
+
       IF (IDETN .EQ. 'Y') THEN
 
         FROP    = CONTROL % FROP
@@ -454,7 +441,8 @@ C-----------------------------------------------------------------------
 !     DAILY OUTPUT
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASINIT) THEN
-C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
+      IF (ISWWAT == 'N' .OR. ISWNIT == 'N' .OR. IDETL .NE. 'D') RETURN
       IF (IDETN .EQ. 'Y') THEN
 
         write(LUN,100)

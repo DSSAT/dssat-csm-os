@@ -118,7 +118,7 @@ C-----------------------------------------------------------------------
 !     For sequenced runs, only read values for RUN 1
       IF (INDEX('QF',CONTROL%RNMODE) .LE. 0 .OR. CONTROL%RUN .EQ. 1)THEN
         NLAYR   = SOILPROP % NLAYR
-       n2o_soil = 0.0
+        n2o_soil = 0.0
         no_soil  = 0.0
         n2_soil  = 0.0
         TNGsoil = 0.0
