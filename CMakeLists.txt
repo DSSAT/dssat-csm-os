@@ -575,7 +575,7 @@ set(
         "Soil/GHG/Denit_Ceres.for"
         "Soil/GHG/Denit_DayCent.for"
         "Soil/GHG/diffusiv.for"
-        "Soil/GHG/N2O_mod.for"
+        "Soil/GHG/GHG_mod.for"
         "Soil/GHG/nox_pulse.f90"
         "Soil/GHG/Methane.for"
         "Soil/GHG/Methmod.for"
