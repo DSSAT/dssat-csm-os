@@ -594,6 +594,8 @@ C=======================================================================
      &  CONDLF, PGLF,                                     !Output
      &  CCNEFF, CICAD, PGPATH)                            !Input
 
+!     TEMP CHP
+      USE MODULEDATA
       IMPLICIT NONE
       SAVE
 
@@ -604,6 +606,10 @@ C=======================================================================
       REAL CCNEFF, CICAD
 
       PARAMETER (CVTURE=0.8, PATM=101300.0, RGAS=8.314)
+
+!     TEMP CHP
+      TYPE (CONTROLTYPE) CONTROL
+      CALL GET(CONTROL)
 
 C     Initialization.
 
@@ -618,12 +624,19 @@ C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
       C = QEFF * PARLF * LFMAX
 !     CHP Added checks for floating underflow 1/16/03
       IF (LFMAX .GT. 0.0) THEN
-        IF ((QEFF*PARLF/LFMAX) .LT. 20.) THEN
+!       TEMP CHP
+        IF (CONTROL.YRDOY == 2007227) THEN
+          write(*,'(3F10.3)') QEFF,PARLF,LFMAX
+        ENDIF
+        IF ((QEFF*PARLF/LFMAX) .LT. 20. .AND. 
+     &      (QEFF*PARLF/LFMAX) .GT. -20.) THEN
 C       PGLF = (B - SQRT(B**2-4.*A*C)) / (2.*A)
           PGLF = LFMAX * (1.0 - EXP(-QEFF*PARLF/LFMAX))
         ELSE
           PGLF = MAX(LFMAX, 0.0)
         ENDIF
+!       TEMP CHP
+        IF (CONTROL.YRDOY == 2007227) write(*,*)"after"
       ELSE
         PGLF = MAX(LFMAX, 0.0)
       ENDIF
