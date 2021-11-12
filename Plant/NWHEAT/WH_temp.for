@@ -1,3 +1,13 @@
+!======================================================================
+!  WH_temp, subroutines
+!
+!  WHAPS subroutines
+!----------------------------------------------------------------------
+!  Revision history
+!  11/01/2021 FO Added missing CONTROL type for nwheats_* subroutines
+!  11/01/2021 FO Added ERRKEY paramter for all nwheats_* subroutines
+!----------------------------------------------------------------------
+
 ! JZW note: need to read p_root_n_min, p_init_grain_nconc, g_uptake_source='apsim' or 'calc'
 !p_min_grain_nc_ratio = min_grain_nc_ratio, p_max_n_uptake
 ! where is pndem? it is ndmd
@@ -291,6 +301,8 @@ cnh to allow watching of these variables
 *+  Constant Values
       character  myname*(*)            ! name of subroutine
       parameter (myname = 'nwheats_grnit')
+      CHARACTER*6 ERRKEY
+      PARAMETER (ERRKEY = 'NWGRNI')
 
 *+  Local Variables	 ******OK*******
       real gndmd         ! grain N demand
@@ -330,6 +342,7 @@ cnh to allow watching of these variables
       REAL sen_la   ! Senesced leaf area, mm2/plant      nwheat
       TYPE (ControlType) CONTROL
       TYPE (SwitchType) ISWITCH
+      
 *- Implementation Section ----------------------------------
  
       !*! call push_routine (myname)
@@ -429,15 +442,15 @@ cnh added for watch purposes
 
           if (pnout(part) .lt. 0.) then
              msg(1) = "pnout bound check <0 error"
-             call warning(1, "NWheat", msg)
-             call error("NWheat",99," ",0)
+             call warning(1, ERRKEY, msg)
+             call error(ERRKEY,99," ",0)
           endif
 
           if  (pnout(part). gt. navl(part) ) then
               ! pnout is pntrans calculated by nwheats_grnit for finding actual grain uptake by translocation
               ! navl (mxpart) is N available for transfer to grain
               msg(1) = "pnout bound check >navl error"
-              call warning(1, "NWheat", msg)
+              call warning(1, ERRKEY, msg)
               pnout(part) = navl(part) !JZW add this case in Oct, 2014
           endif
 1000  continue
@@ -490,7 +503,7 @@ cnh added for watch purposes
       !JZW add the following
       REAL dlayr_nw(NL) 
       integer count_of_real_vals
-      CHARACTER*6, PARAMETER :: ERRKEY = '_lyrck'
+      CHARACTER*6, PARAMETER :: ERRKEY = 'NWLYRC'
 *- Implementation Section ----------------------------------
       !*! call push_routine(my_name)
  
@@ -549,6 +562,8 @@ cnh added for watch purposes
       character  myname*(*) ! name of subroutine
       parameter (myname = 'nwheats_ndmd')
       character*78 msg(1)
+      CHARACTER*6 ERRKEY
+      PARAMETER (ERRKEY = 'NWNDMD')
 *
       real       tolnce     ! tolerance for calculation errors
       parameter (tolnce = 1.0e-5)
@@ -587,8 +602,8 @@ cnh added for watch purposes
          !*! pgro(part) = pcarb* (growt(part)/ carbo)
           if (carbh .eq. 0.) then
               msg(1) = "carbh is zero"
-              call warning(1,"NWheat", msg)
-              call error("NWheat",99," ",0)
+              call warning(1,ERRKEY, msg)
+              call error(ERRKEY,99," ",0)
           endif
          pgro(part) = pcarbo* (gro_wt(part)/ carbh)
          !*! pgro(part) = bound (pgro(part), 0.0, pcarb)
@@ -655,7 +670,7 @@ cjh  end of correction
       end
 *     ==================================================================
       !*! subroutine nwheats_nuptk (snuptk_no3, snuptk_nh4, pnuptk)
-      subroutine nwheats_nuptk (SOILPROP,                         !Input
+      subroutine nwheats_nuptk (CONTROL, SOILPROP,                !Input
      &      carbh, cnc, EXNH4,     EXNO3,                         !Input
      &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
@@ -758,10 +773,13 @@ cjh  end of correction
       REAL        P2AF,P3AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN
       REAL        MXNCR,INGWT,INGNC,FREAR,MNNCR,GPPSS,GPPES,MXGWT
       REAL        MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,FOZ2,SFOZ1,SFOZ2
-      TYPE (ControlType) CONTROL
       ! JG end for ecotype variables
       
+C     The variable "CONTROL" is of type "ControlType".
+      TYPE (ControlType) CONTROL
       TYPE (SoilType)    SOILPROP
+      
+      PARAMETER (ERRKEY = 'NWNPTK')
       
 !  JG added section to read ecotype file
 !     Transfer values from constructed data types into local variables.
@@ -860,7 +878,7 @@ cjh  end of correction
             ! find potential N uptake (supply, available N)
          !*! call nwheats_nsupply (avail_NO3, avail_NH4)
 * ====================================================================
-         call nwheats_nsupply (SOILPROP, rlv_nw,                !Input
+         call nwheats_nsupply (CONTROL, SOILPROP, rlv_nw,       !Input
      &     sno3, snh4, swdep, EXNH4, MNNH4, EXNO3,              !Input
      &     MNNO3, WFNU, PNUPR,                                  !Input
      &     avail_no3, avail_nh4)                               !Output
@@ -935,7 +953,7 @@ cjh  end of correction
       end
 * ====================================================================
 !*!    subroutine nwheats_nsupply(avail_no3, avail_nh4)
-       subroutine nwheats_nsupply(SOILPROP, rlv_nw,             !Input
+       subroutine nwheats_nsupply(CONTROL, SOILPROP, rlv_nw,    !Input
      &     sno3, snh4, swdep, EXNH4, MNNH4, EXNO3,              !Input
      &     MNNO3, WFNU, PNUPR,                                  !Input
      &     avail_no3, avail_nh4)                               !Output
@@ -1032,6 +1050,8 @@ cbak      parameter (potrate = .9e-6)        ! (g n/mm root/day)
       ! JG end for ecotype variables
       
       TYPE (SoilType)  SOILPROP
+      
+      PARAMETER (ERRKEY = 'NWNSUP')
       
 !  JG added section to read ecotype file
 !     Transfer values from constructed data types into local variables.
@@ -1183,7 +1203,7 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
 *     ===========================================================
       !*! subroutine nwheats_plnin (plantn)
       !Initial PLant N
-      subroutine nwheats_plnin (istage, stgdur, plantwt,   !input
+      subroutine nwheats_plnin (CONTROL, istage, stgdur, plantwt,
  !   &    p_init_grain_nconc, p_root_n_min,                !input
      &    mnc,         INGNC,        MNRTN,                !input
      &    pl_nit )                                      !input & output
@@ -1247,6 +1267,9 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
       REAL        MXNUP,MXNCR,WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT
       REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,NOMOB,RTDP1,RTDP2
       REAL        FOZ1,FOZ2,SFOZ1,SFOZ2
+      
+      PARAMETER (ERRKEY = 'NWPLWI')
+      
       TYPE (ControlType) CONTROL
       ! JG end for ecotype variables
       
