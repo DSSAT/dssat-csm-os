@@ -384,6 +384,11 @@ C       and sum for day (TS=24 for hourly).
 
 C         Calculate real and solar time.
           
+!         temp chp
+          IF (CONTROL.YRDOY == 2007227) THEN
+            write(*,'(/,A,T45,2I10)') "DATE AND HOUR", control.YRDOY, H
+          ENDIF
+
           HS = REAL(H) * TINCR
           IF (HS.GT.SNUP .AND. HS.LT.SNDN) THEN
             DAYTIM = .TRUE.
@@ -1651,13 +1656,21 @@ C=======================================================================
      &  BETA, FRACSH, LFANGD, XLAI,                      !Input
      &  KDIFBL, KDIRBL, LAISH, LAISL, RNG)                !Output
 
+!     TEMP CHP
+      USE MODULEDATA
       IMPLICIT NONE
       SAVE
 
       REAL BETA,F15,F45,F75,FRACSH,K15,K45,K75,KDIRBL,KDIFBL,LAISH,
-     &  LAISL,LFANGD(3),O15,O45,O75,OAV,PI,RAD,RNG,SINB,VARSIN,XLAI,
+!     TEMP CHP
+!    &  LAISL,LFANGD(3),O15,O45,O75,OAV,PI,RAD,RNG,SINB,VARSIN,XLAI,
+     &  LAISL,LFANGD(3),O15,O45,O75,OAV,RNG,SINB,VARSIN,XLAI,
      &  FRAKDI
-      PARAMETER (PI = 3.14159, RAD = PI/180.0)
+!      PARAMETER (PI = 3.14159, RAD = PI/180.0)
+
+!     TEMP CHP
+      TYPE (CONTROLTYPE) CONTROL
+      CALL GET(CONTROL)
 
 C     Initialization.  F15, F45, and F75 are the proportion of leaves
 C     in the three leaf classes: 0-30, 30-60 and 60-90 degrees.
@@ -1725,6 +1738,12 @@ C FO/GH 11/14/2020 Code protections for divisions by zero.
       ELSE
           LAISH = 0.0
       ENDIF
+
+!     temp chp
+      IF (CONTROL.YRDOY == 2007227) THEN
+        write(*,'(A,T45,I10,5F10.3)') "LFEXTN, LAISH, XLAI, LAISL",
+     &                       CONTROL.YRDOY,LAISH, XLAI, LAISL
+      ENDIF
       
 C-KRT*******************************
       RETURN
@@ -1748,6 +1767,8 @@ C=======================================================================
      &  RNG, ROWSPC, SCVR,
      &  PCTABS, PCTINT, PCTREF, RADSH, RADSS, RADSUN)
 
+!     TEMP CHP
+      USE MODULEDATA
       IMPLICIT NONE
       SAVE
 
@@ -1756,10 +1777,18 @@ C=======================================================================
      &  ADDFSH,ADIFSL,ADIFSH,AREFSL,AREFSH,RDIFSL,ALBEDO,BETA,
      &  BETN,CANHT,CANWH,DELWP,DELWR,DIFP,DIFPR,DIFR,FRACSH,FRDIF,
      &  INCSOI,INTCAN,KDIFBL,KDIRBL,LAISH,LAISL,O,OAV,PATHP,PATHR,
-     &  PCTABS,PCTINT,PCTREF,PI,RAD,RADDIF,RADDIR,RADHR,
+!     TEMP CHP
+!     &  PCTABS,PCTINT,PCTREF,RADDIF,RADDIR,RADHR,     PI,RAD,
+     &  PCTABS,PCTINT,PCTREF,RADDIF,RADDIR,RADHR,     !PI,RAD,
      &  RADSH,RADSS,RADSUN(3),REFDF,REFDIF,REFDIR,REFDR,REFH,
      &  REFSOI,REFTOT,RNG,ROWSPC,SCVR,SINB,SQV,XLAI,RADTOT
-      PARAMETER (PI=3.14159, RAD=PI/180.0)
+
+!TEMP CHP
+!      PARAMETER (PI=3.14159, RAD=PI/180.0)
+
+!     TEMP CHP
+      TYPE (CONTROLTYPE) CONTROL
+      CALL GET(CONTROL)
 
 C     Initialization.
 
@@ -1908,6 +1937,12 @@ C FO/GH 11/14/2020 Code protections for divisions by zero.
       ELSE
           RADSH = 0.0
       ENDIF
+!       TEMP CHP
+        IF (CONTROL.YRDOY == 2007227) THEN
+          write(*,'(A,T45,I10,5F10.3)') 
+     &             "CANABS,RADSH,ADDFSH, ADIFSH, AREFSH, LAISH",
+     &       CONTROL.YRDOY,RADSH,ADDFSH, ADIFSH, AREFSH, LAISH
+        ENDIF
       
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       IF(LAISL .GT. 0.0) THEN

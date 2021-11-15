@@ -309,6 +309,8 @@ C=======================================================================
      &  CCNEFF,CICAD,CMXSF,CQESF,PGPATH,                  !Input
      &  AGEQESL,CO2QESL,QEFFSL)                           !Output
 
+!     TEMP CHP
+      USE MODULEDATA
       IMPLICIT  NONE
       SAVE
 
@@ -326,6 +328,9 @@ C=======================================================================
       REAL CCNEFF, CICAD, CMXSF, CQESF
       REAL AGEQESH, AGEQESL, CO2QESH, CO2QESL
 
+!     TEMP CHP
+      TYPE (CONTROLTYPE) CONTROL
+      CALL GET(CONTROL)
 
 C     Initialize.
 
@@ -367,6 +372,11 @@ C     over three leaf classes for sunlit leaves.
       PGSUM = 0.0
       CONSUM = 0.0
       DO I=1,3
+!       TEMP CHP
+        IF (CONTROL.YRDOY == 2007227) THEN
+          write(*,'(A,T45,I10,3F10.3)')"CANOPG1,PARSUN(I),CO2HR,LFMXSL",
+     &                        CONTROL.YRDOY,PARSUN(I),CO2HR, LFMXSL
+        ENDIF
         CALL PGLEAF(
      &    CO2HR, LFMXSL, PARSUN(I), QEFFSL, TEMPSL,       !Input
      &    CONSUN, PGSUN,                                  !Output
@@ -384,6 +394,11 @@ C     over three leaf classes for sunlit leaves.
 
 C     Compute photosynthesis and leaf CO2 conductance for shaded leaves
 
+!       TEMP CHP
+        IF (CONTROL.YRDOY == 2007227) THEN
+          write(*,'(A,T45,I10,3F10.3)')"CANOPG2,PARSH,CO2HR,LFMXSL",
+     &                          CONTROL.YRDOY,PARSH,CO2HR, LFMXSL
+        ENDIF
       CALL PGLEAF(
      &  CO2HR, LFMXSH, PARSH, QEFFSH, TEMPSH,             !Input
      &  CONDSH, PGSH,                                     !Output
@@ -626,7 +641,8 @@ C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
       IF (LFMAX .GT. 0.0) THEN
 !       TEMP CHP
         IF (CONTROL.YRDOY == 2007227) THEN
-          write(*,'(3F10.3)') QEFF,PARLF,LFMAX
+          write(*,'(A,T45,I10,3F10.3)') "PGLEAF,QEFF,PARLF,LFMAX", 
+     &                       CONTROL.YRDOY,QEFF,PARLF,LFMAX
         ENDIF
         IF ((QEFF*PARLF/LFMAX) .LT. 20. .AND. 
      &      (QEFF*PARLF/LFMAX) .GT. -20.) THEN
@@ -635,8 +651,6 @@ C       PGLF = (B - SQRT(B**2-4.*A*C)) / (2.*A)
         ELSE
           PGLF = MAX(LFMAX, 0.0)
         ENDIF
-!       TEMP CHP
-        IF (CONTROL.YRDOY == 2007227) write(*,*)"after"
       ELSE
         PGLF = MAX(LFMAX, 0.0)
       ENDIF
