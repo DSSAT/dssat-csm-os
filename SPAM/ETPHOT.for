@@ -1655,7 +1655,8 @@ C=======================================================================
       SAVE
 
       REAL BETA,F15,F45,F75,FRACSH,K15,K45,K75,KDIRBL,KDIFBL,LAISH,
-     &  LAISL,LFANGD(3),O15,O45,O75,OAV,PI,RAD,RNG,SINB,VARSIN,XLAI
+     &  LAISL,LFANGD(3),O15,O45,O75,OAV,PI,RAD,RNG,SINB,VARSIN,XLAI,
+     &  FRAKDI
       PARAMETER (PI = 3.14159, RAD = PI/180.0)
 
 C     Initialization.  F15, F45, and F75 are the proportion of leaves
@@ -1706,10 +1707,15 @@ C     Calculate sunlit and shaded leaf area indices.
 !CHP added check to prevent underflow 1/16/03
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       IF (KDIRBL .GT. 0.0 .AND. FRACSH .GT. 0.0) THEN    
-        LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XLAI/FRACSH))
+        !LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XLAI/FRACSH))
+        
+        FRAKDI = FRACSH/KDIRBL
+        LAISL = FRAKDI * (1.0-EXP(-XLAI/FRAKDI))
       ELSE
         LAISL = 0.0
       ENDIF
+      
+      LAISL = MIN(LAISL,XLAI)
 C-KRT*******************************
 C-KRT  LAISH = XLAI - LAISL
 !-CHP  LAISH = MAX(0.02,XLAI - LAISL)
