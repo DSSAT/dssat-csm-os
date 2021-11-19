@@ -1721,7 +1721,6 @@ C     Calculate sunlit and shaded leaf area indices.
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       IF (KDIRBL .GT. 0.0 .AND. FRACSH .GT. 0.0) THEN    
         !LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XLAI/FRACSH))
-        
         FRAKDI = FRACSH/KDIRBL
         LAISL = FRAKDI * (1.0-EXP(-XLAI/FRAKDI))
       ELSE
@@ -1829,6 +1828,7 @@ C-KRT****************************
 C-KRT   ADDF = ADIR - ADDR
 !-CHP   ADDF = MAX(0.0,ADIR-ADDR)
         ADDF = ADIR - ADDR
+!     CHP - PUT THIS BACK IN
 !        IF (ADDF < 0.0) THEN
 !          ADDF = 0.0
 !        ENDIF
@@ -1939,7 +1939,7 @@ C FO/GH 11/14/2020 Code protections for divisions by zero.
       ENDIF
 !       TEMP CHP
         IF (CONTROL.YRDOY == 2007227) THEN
-          write(*,'(A,T45,I10,5F10.3)') 
+          write(*,'(A,T45,I10,F10.3,4E10.3)') 
      &             "CANABS,RADSH,ADDFSH, ADIFSH, AREFSH, LAISH",
      &       CONTROL.YRDOY,RADSH,ADDFSH, ADIFSH, AREFSH, LAISH
         ENDIF

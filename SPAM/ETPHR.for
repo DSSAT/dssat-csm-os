@@ -641,8 +641,8 @@ C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
       IF (LFMAX .GT. 0.0) THEN
 !       TEMP CHP
         IF (CONTROL.YRDOY == 2007227) THEN
-          write(*,'(A,T45,I10,3F10.3)') "PGLEAF,QEFF,PARLF,LFMAX", 
-     &                       CONTROL.YRDOY,QEFF,PARLF,LFMAX
+          write(*,'(A,T45,I10,3F10.3)') "PGLEAF,PARLF,QEFF,LFMAX", 
+     &                       CONTROL.YRDOY,PARLF,QEFF,LFMAX
         ENDIF
         IF ((QEFF*PARLF/LFMAX) .LT. 20. .AND. 
      &      (QEFF*PARLF/LFMAX) .GT. -20.) THEN
