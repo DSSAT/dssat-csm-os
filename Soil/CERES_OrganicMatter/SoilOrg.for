@@ -137,9 +137,9 @@
 
 !     Methane variables:
       REAL Immob_OM
-      REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
-     &    CumCH4Leaching, CumCO2Emission
+!     REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
+!    &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
+!    &    CumCH4Leaching, CumCO2Emission
       REAL RLV(NL), DRAIN
       TYPE (CH4_type) CH4_data
 
@@ -875,10 +875,7 @@ C***********************************************************************
      &        DYNAMIC == SEASEND) THEN
 C-----------------------------------------------------------------------
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
-     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
-     &  CumCH4Leaching, CumCO2Emission,                       !Input
-     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
      &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
       IF (ISWWAT == 'N') RETURN

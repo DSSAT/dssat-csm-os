@@ -139,9 +139,9 @@
       REAL MIXPCT
 
 !     Methane variables:
-      REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
-     &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
-     &    CumCH4Leaching, CumCO2Emission
+!     REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
+!    &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
+!    &    CumCH4Leaching, CumCO2Emission
       REAL RLV(NL), DRAIN
       TYPE (CH4_type) CH4_data
 
@@ -415,10 +415,7 @@
      &    CH4_data)                                           !Output
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
-     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
-     &  CumCH4Leaching, CumCO2Emission,                       !Input
-     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
      &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
       CALL SoilNoBal_C (CONTROL, ISWITCH, 
@@ -846,10 +843,7 @@
 !     &    SOM1C, TLITC, TSOMC, YRDOY)                     !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
-     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
-     &  CumCH4Leaching, CumCO2Emission,                       !Input
-     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
      &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************
@@ -897,10 +891,7 @@
      &  SENESCE, SOM1E, TLITE, TSOME, TSOM1E, TSOM23E)    !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
-     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
-     &  CumCH4Leaching, CumCO2Emission,                       !Input
-     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
      &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************
@@ -948,10 +939,7 @@
      &  SENESCE, SOM1E, TLITE, TSOME, TSOM1E, TSOM23E)    !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
-     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
-     &  CumCH4Leaching, CumCO2Emission,                       !Input
-     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
      &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************

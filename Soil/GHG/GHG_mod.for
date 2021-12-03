@@ -35,8 +35,8 @@ C  06/15/2014 CHP Written
 
       TYPE CH4_type
         REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored
-        REAL CO2emission, CumCH4Consumpt, CumCH4Emission
-        REAL CumCH4Leaching, CumCO2Emission                      
+        REAL CumCH4Consumpt, CumCH4Emission, CumCH4Leaching
+        REAL CO2emission, CumCO2Emission                      
       END TYPE CH4_type
 
       CONTAINS

@@ -16,14 +16,12 @@
 !***********************************************************************
 
       SUBROUTINE SOILCBAL (CONTROL, ISWITCH, 
-     &  CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,  !Input
-     &  CO2emission, CumCH4Consumpt, CumCH4Emission,          !Input
-     &  CumCH4Leaching, CumCO2Emission,                       !Input
-     &  HARVRES, LITC, OMAData, SENESCE,                      !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
      &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
+      USE GHG_mod
       IMPLICIT  NONE
       SAVE
 !     ------------------------------------------------------------------
@@ -62,10 +60,10 @@
       REAL DayBal, CumBal, TotBal
 
 !     Methane
-      REAL CH4Stored, CH4Stored_init, CH4Stored_Y
-      REAL CO2emission, CH4Emission, CH4Leaching, CH4Consumption
-      REAL CumCO2Emission, CumCH4Emission, CumCH4Leaching
-      REAL CumCH4Consumpt
+      REAL CH4Stored_init, CH4Stored_Y   !, CH4Stored
+!     REAL CO2emission, CH4Emission, CH4Leaching, CH4Consumption
+!     REAL CumCO2Emission, CumCH4Emission, CumCH4Leaching
+!     REAL CumCH4Consumpt
       REAL CO2Emission_LastSeason, CO2Emission_Y, CO2Emission_init
       REAL CH4Emission_LastSeason, CH4Emission_Y, CH4Emission_init
 
@@ -77,6 +75,7 @@
       TYPE (OrgMatAppType) OMAData    !Organic matter application
       TYPE (ResidueType)   SENESCE
       TYPE (ResidueType)   HARVRES
+      TYPE (CH4_type)      CH4_data
 
 !     ------------------------------------------------------------------
       !Don't print unless C output requested.
@@ -194,8 +193,8 @@
         LC0D_init = LITC(0) - THRC0D
         LCTD_init = TLITC - THRC1D
 
-        TotalC_init = SSOMC(0) + TSOMC + LITC(0) + TLITC + CH4Stored
-     &              - HarvCTot 
+        TotalC_init = SSOMC(0) + TSOMC + LITC(0) + TLITC 
+     &              + CH4_data % CH4Stored- HarvCTot 
 
         SOMC0T_Y = SOMC0T_init
         SOMCT_Y  = SOMCT_init
@@ -213,14 +212,14 @@
 !        ACCCO2Y = 0.0
 !        ACCCO2_init = 0.0
 
-        CH4Stored_init = CH4Stored
-        CH4Stored_Y = CH4Stored
+        CH4Stored_init = CH4_data % CH4Stored
+        CH4Stored_Y = CH4_data % CH4Stored
 
-        CO2Emission_LastSeason = CO2Emission
+        CO2Emission_LastSeason = CH4_data % CO2Emission
         CO2Emission_Y = 0.0
         CO2Emission_init = 0.0
       
-        CH4Emission_LastSeason = CH4Emission
+        CH4Emission_LastSeason = CH4_data % CH4Emission
         CH4Emission_Y = 0.0
         CH4Emission_init = 0.0
       
@@ -269,9 +268,10 @@
         SNCLD = SENESCE % ResWt(0) * 0.4
         SNCSD = SUM(SENESCE % ResWt) * 0.4 - SNCLD
 
-        TotalC = SSOMC(0) + TSOMC + LITC(0) + TLITC + CH4Stored
+        TotalC = SSOMC(0) + TSOMC + LITC(0) + TLITC + CH4_data%CH4Stored
         TotalAdd = RESC0D + RESC1D + SNCLDY + SNCSDY + THRC0D + THRC1D
-        TotalSub = CO2emission + CH4Emission +CH4Leaching+CH4Consumption
+        TotalSub = CH4_data % CO2emission + CH4_data % CH4Emission + 
+     &             CH4_data % CH4Leaching + CH4_data % CH4Consumption
 
         DayBal = TotalC - TotalCY - TotalAdd + TotalSub
         CumBal = CumBal + DayBal
@@ -290,20 +290,20 @@
             WRITE (LUNSNC,'(1X,I4,1X,I3.3,I7, 
      &          4F12.2, F10.2, 4F12.2, F10.2, 10F10.2, 2F10.4)')
      &        YR, DOY, DAS, 
-     &        SOMC0T_Y, SOMCT_Y,   !SOM-C yesterday
-     &        LC0D_Y, LCTD_Y,      !Litter-C yesterday
-     &        CH4Stored_Y,         !Methane stored yesterday
-     &        SSOMC(0), TSOMC,     !SOM-C today
-     &        LITC(0), TLITC,      !Litter-C today
-     &        CH4Stored,           !Methane stored in soil and flood
-     &        RESC0D, RESC1D,      !Organic matter-C applied today
-     &        SNCLD, SNCSD,        !Senesced C today
-     &        THRC0D, THRC1D,      !Harvest residue-C added today
-     &        CO2emission,         !CO2 emissions today
-     &        CH4Emission,         !CH4 emissions today
-     &        CH4Leaching,         !CH4 leached today
-     &        CH4Consumption,      !CH4 net plant consumption today
-     &        DAYBAL, CUMBAL       !Balances
+     &        SOMC0T_Y, SOMCT_Y,       !SOM-C yesterday
+     &        LC0D_Y, LCTD_Y,          !Litter-C yesterday
+     &        CH4Stored_Y,             !Methane stored yesterday
+     &        SSOMC(0), TSOMC,         !SOM-C today
+     &        LITC(0), TLITC,          !Litter-C today
+     &        CH4_data % CH4Stored,    !Methane stored in soil and flood
+     &        RESC0D, RESC1D,          !Organic matter-C applied today
+     &        SNCLD, SNCSD,            !Senesced C today
+     &        THRC0D, THRC1D,          !Harvest residue-C added today
+     &        CH4_data%CO2emission,    !CO2 emissions today
+     &        CH4_data%CH4Emission,    !CH4 emissions today
+     &        CH4_data%CH4Leaching,    !CH4 leached today
+     &        CH4_data%CH4Consumption, !CH4 net plant consumption today
+     &        DAYBAL, CUMBAL           !Balances
           ENDIF
         ENDIF
 
@@ -314,7 +314,7 @@
         TotalCY = TotalC
         SNCLDY = SNCLD
         SNCSDY = SNCSD
-        CH4Stored_Y = CH4Stored
+        CH4Stored_Y = CH4_data % CH4Stored
 
 !       Set harvest residue back to zero after first day
         THRC0D = 0.0      !surface
@@ -338,8 +338,8 @@
 !      TotalSub = ACCCO2(0) + ACCCO2(1)
 !     &         - ACCCO2_LastSeason(0) - ACCCO2_LastSeason(1)
 
-      TotalSub = CumCO2emission + CumCH4Emission + CumCH4Leaching 
-     &         + CumCH4Consumpt
+      TotalSub = CH4_data % CumCO2emission + CH4_data % CumCH4Emission 
+     &         + CH4_data % CumCH4Leaching + CH4_data % CumCH4Consumpt
 
       TotBal = TotalC - TotalC_init - TotalAdd + TotalSub
 
@@ -361,7 +361,8 @@
       WRITE(LUNSNC,'("!",A,T40,F18.2,T60,F18.2)') 
      &   "   Surface Litter C", LC0D_init, LITC(0)
       WRITE(LUNSNC,'("!",A,T40,F18.2,T60,F18.2)') 
-     &   "   Soil methane C stored", CH4Stored_init, CH4Stored
+     &   "   Soil methane C stored", 
+     &   CH4Stored_init, CH4_data % CH4Stored
 
       WRITE(LUNSNC,'("!",T50,A,T70,A)') "--------","--------"
       WRITE(LUNSNC,'("!",A,T40,F18.2,T60,F18.2)') 
@@ -376,13 +377,13 @@
      &   "   C in returned senesced material", CumSenC
 
       WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   CO2-C emitted", CumCO2Emission
+     &   "   CO2-C emitted", CH4_data % CumCO2Emission
       WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   CH4-C emitted", CumCH4Emission
+     &   "   CH4-C emitted", CH4_data % CumCH4Emission
       WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   CH4-C leached", CumCH4Leaching
+     &   "   CH4-C leached", CH4_data % CumCH4Leaching
       WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   CH4-C plant uptake", CumCH4Consumpt
+     &   "   CH4-C plant uptake", CH4_data % CumCH4Consumpt
  
 !      WRITE(LUNSNC,'("!",A,T60,F18.2)') 
 !     &   "   CO2-C emitted", ACCCO2(0) + ACCCO2(1)  
@@ -408,13 +409,14 @@
      &  CH4Stored_init,               !Methane stored initial
      &  SSOMC(0), TSOMC,              !SOM-C final
      &  LITC(0), TLITC,               !Litter-C final
-     &  CH4Stored,                    !Methane stored final
+     &  CH4_data % CH4Stored,         !Methane stored final
      &  CumResC,                      !Organic matter-C applied cumul
      &  CumSenC,                      !Senesced C cumul
      &  HarvCTot,                     !Harvest residue-C cumul
 !       GHG emissions cumul
 !     &  ACCCO2(0) - ACCCO2_init(0) + ACCCO2(1) - ACCCO2_init(1),
-     &  CumCO2Emission, CumCH4Emission, CumCH4Leaching, CumCH4Consumpt,
+     &  CH4_data % CumCO2Emission, CH4_data % CumCH4Emission, 
+     &  CH4_data % CumCH4Leaching, CH4_data % CumCH4Consumpt,
      &  CUMBAL                        !Balances
 
 !     Set the initial amount of carbon in SOM+litter for the next season.
