@@ -610,7 +610,7 @@ C=======================================================================
 !     GENOTYPE
 !-----------------------------------------------------------------------
 !     Write genetic coefficients
-      WRITE (HEADER(I),800) CROPD(1:10),VARTY,VRNAME,ECONO; I=I+1
+      WRITE (HEADER(I),800) CROPD(1:16),VARTY,VRNAME,ECONO; I=I+1
 
       SELECT CASE (MODEL(1:5))
 
@@ -618,7 +618,7 @@ C=======================================================================
 !     CROPGRO
       CASE ('CRGRO','PRFRM')
 !      IF (INDEX (MODEL, 'CRGRO') > 0) THEN
-        IF (INDEX ('BN,CH,CP,FB,GB,LT,PE,PN,PP,SB,VB',CROP) 
+        IF (INDEX ('BN,CH,CP,FB,GB,LT,PE,PN,PP,SB,VB,BG',CROP) 
      &    > 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
@@ -897,7 +897,7 @@ C-----------------------------------------------------------------------
   711 FORMAT ('RUNOFF CURVE # :',F5.2,
      &        6X,'DRAINAGE RATE     :',F5.2,9X,'FERT. FACTOR :',F5.2)
 
-  800 FORMAT (1X,A10,1X,'CULTIVAR :',A6,'-',A16,3X,'ECOTYPE :',
+  800 FORMAT (1X,A16,1X,'CULTIVAR: ',A6,'-',A16,3X,'ECOTYPE: ',
      &        A6)
   850 FORMAT (1X,'CSDVAR :',F5.2,'  PPSEN  :',F5.2,
      &         '  EMG-FLW:',F5.2,'  FLW-FSD:',F5.2,'  FSD-PHM :',F6.2)

@@ -6683,7 +6683,8 @@ C-GH      IF (snow.GT.0) THEN
      &       '  Grain weight mg   ',GRWT/GRNUM*1000.0
             WRITE (fnumwrk,'(A20,F6.1)')
      &       '  Grain weight coeff',g2kwt
-            IF (GRNUM.GT.0.0.AND.G2KWT-GRWT/GRNUM*1000.0.GT.0.1) THEN
+! FO/GH - 11-13-2021 - Removed division by zero issue for GRNUM
+            IF (GRNUM.GT.0.0) THEN
               WRITE (fnumwrk,'(A34)')
      &         '  Some limitation on grain growth!'
               WRITE(fnumwrk,'(A22,I4)')'   Days of Ch2o limit ',ch2olim
