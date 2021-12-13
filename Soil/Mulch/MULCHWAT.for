@@ -7,6 +7,7 @@ C  REVISION HISTORY
 C  08/27/1998 AAA (A. Andales) Wrote TILLRAIN.     
 C  03/08/2001 CHP moved TILLRAIN to WATBAL module.
 C  05/22/2003 CHP Added mulch routine to current model.
+C  12/11/2021 FO  Initialized local variables for MULCHWAT Integr.
 C=======================================================================
 
       SUBROUTINE MULCHWATER(CONTROL, ISWITCH,
@@ -44,7 +45,12 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      CNRAIN = 0.0
+      CNRAIN    = 0.0
+      NRAIN     = 0.0
+      MULCHWAT  = 0.0
+      MULWATADD = 0.0
+      RESWATADD = 0.0
+      MULCHEVAP = 0.0
 
       !Mulch water balance not simulated
 !     IF (INDEX('RSN',MEINF) .GT. 0) THEN
