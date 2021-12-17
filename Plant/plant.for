@@ -300,20 +300,20 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Initialize output variables.
 !     Each plant routine may or may not re-compute these values.
       CANHT    = 0.0
-      EORATIO  = 1.0
+!      EORATIO  = 1.0
       FracRts  = 0.0
-      KCAN     = 0.85
-      KEP      = 1.0
-      KSEVAP   = -99.
-      KTRANS   = 1.0
+!      KCAN     = 0.85
+!      KEP      = 1.0
+!      KSEVAP   = -99.
+!      KTRANS   = 1.0
       KUptake = 0.0
       NSTRES   = 1.0
-      PORMIN   = 0.02
+!      PORMIN   = 0.02
       PSTRES1  = 1.0
       PUPTAKE  = 0.0
       RLV      = 0.0
-      RWUEP1   = 1.5
-      RWUMX    = 0.03
+!      RWUEP1   = 1.5
+!      RWUMX    = 0.03
       UH2O     = 0.0
       UNH4     = 0.0
       UNO3     = 0.0
