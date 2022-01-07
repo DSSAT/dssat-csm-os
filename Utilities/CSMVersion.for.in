@@ -22,6 +22,8 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-methane'
 
 !     Version history:  
+!       4.8.0.19 chp 2021-12-13 Remove plant.for initializations in seasinit 
+!       4.8.0.18 chp 2021-12-10 ETPHOT protections, FO 
 !       4.8.0.17 chp 2021-10-25 Pre-season forecast enabled, portability issues 
 !       4.8.0.16 chp 2021-09-24 OilCropSun model added, 
 !                               updated calibration quinoa, chia, safflower
