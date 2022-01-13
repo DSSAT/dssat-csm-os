@@ -366,9 +366,9 @@ C-----------------------------------------------------------------------
      &     '(A,A,A,A,A,A,I3.3,A,A,I3.3,A,A,I3.3,A,A,I3.3,A,A,I3.3,A)')
 
      & '("!",14X,',
-     & '" N2Oemit  N2emit  NOemit     CO2   Denit  Nitrif   ",',
+     & '" N2Oemit  N2emit  NOemit   Denit  Nitrif   ",',
      & '"N2O-denit+nit      N2      NO",',
-     & '" N2Oemit  N2emit  NOemit     CO2   Denit  Nitrif   ",',
+     & '" N2Oemit  N2emit  NOemit   Denit  Nitrif   ",',
      & '"N2O-denit+nit      N2      NO",',
      & 'T',SPACES,
      & ',"Denitrification (g[N]/ha) by soil depth (cm):",',
@@ -384,8 +384,8 @@ C-----------------------------------------------------------------------
           WRITE(GHGLUN,TRIM(FRMT))
 
           WRITE(GHGLUN,'("!",17X,A,A,A,T176,50A8)')
-     &"kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha  ",
-     &" kg/ha   kg/ha    g/ha    g/ha    g/ha    g/ha    g/ha ",
+     &"kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha  ",
+     &" kg/ha   kg/ha    g/ha    g/ha    g/ha    g/ha ",
      &"   g/ha    g/ha    g/ha    g/ha    g/ha",
      &        (SoilProp%LayerText(L),L=1,N_LYR),
      &        (SoilProp%LayerText(L),L=1,N_LYR),
@@ -452,8 +452,8 @@ C-----------------------------------------------------------------------
 
       WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
      &   '(1X,I4,1X,I3.3,I6,',
-     &   '3F8.2,I8, F8.2,F8.1,4F8.3,',
-     &   '3F8.1,I8, F8.1,I8,4F8.2,',
+     &   '3F8.2,F8.2,F8.1,4F8.3,',
+     &   '3F8.1, F8.1,I8,4F8.2,',
      &   N_LYR, 'F8.1,', N_LYR,'F8.0,', 3*N_LYR, 'F8.1)'
 
         IF (IDETN .EQ. 'Y') THEN
