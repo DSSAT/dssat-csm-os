@@ -67,6 +67,6 @@ Data/DSSATPRO.L48
 Utilities/run_dssat
 Utilities/CSMVersion.for
 Plant/ORYZA
-#.vscode/*
+.vscode/*
 .vs/*
 .history/*
