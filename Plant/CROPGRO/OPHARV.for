@@ -482,9 +482,9 @@ C-----------------------------------------------------------------------
       WRITE(Simulated(15),'(F8.3)')HI;   WRITE(Measured(15),'(A8)')X(15)
       WRITE(Simulated(16),'(F8.2)')THRES;WRITE(Measured(16),'(A8)')X(16)
       WRITE(Simulated(17),'(F8.2)')LAIMX;WRITE(Measured(17),'(A8)')X(17)
-      WRITE(Simulated(18),'(F8.2)')VSTAGE
+      WRITE(Simulated(18),'(F8.2)')VSTAGE;
                                          WRITE(Measured(18),'(A8)')X(18)
-      WRITE(Simulated(19),'(F8.2)')CANHT;WRITE(Measured(19),'(A8)')X(18)
+      WRITE(Simulated(19),'(F8.2)')CANHT;WRITE(Measured(19),'(A8)')X(19)
       WRITE(Simulated(20),'(I8)') NINT(CANNAA*10);
                                          WRITE(Measured(20),'(A8)')X(20)
       WRITE(Simulated(21),'(I8)') NINT(WTNCAN*10);

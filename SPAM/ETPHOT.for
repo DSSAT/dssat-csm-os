@@ -383,7 +383,6 @@ C       and sum for day (TS=24 for hourly).
         DO H=1,TS
 
 C         Calculate real and solar time.
-          
           HS = REAL(H) * TINCR
           IF (HS.GT.SNUP .AND. HS.LT.SNDN) THEN
             DAYTIM = .TRUE.
@@ -1642,6 +1641,8 @@ C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  ??/??/?? KJB Written
 C  05/14/91 NBP Removed COMMON and reorganized.
+C  11/14/20 FO/GH Code protections for divisions by zero.
+C  12/03/21 FO/GH/CHP Protections to avoid negative leaf are index (LAI)
 C-----------------------------------------------------------------------
 C  Called from: RADABS
 C  Calls:
@@ -1655,7 +1656,8 @@ C=======================================================================
       SAVE
 
       REAL BETA,F15,F45,F75,FRACSH,K15,K45,K75,KDIRBL,KDIFBL,LAISH,
-     &  LAISL,LFANGD(3),O15,O45,O75,OAV,PI,RAD,RNG,SINB,VARSIN,XLAI
+     &  LAISL,LFANGD(3),O15,O45,O75,OAV,PI,RAD,RNG,SINB,VARSIN,XLAI,
+     &  FRAKDI
       PARAMETER (PI = 3.14159, RAD = PI/180.0)
 
 C     Initialization.  F15, F45, and F75 are the proportion of leaves
@@ -1706,19 +1708,19 @@ C     Calculate sunlit and shaded leaf area indices.
 !CHP added check to prevent underflow 1/16/03
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       IF (KDIRBL .GT. 0.0 .AND. FRACSH .GT. 0.0) THEN    
-        LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XLAI/FRACSH))
+        !LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XLAI/FRACSH))
+        FRAKDI = FRACSH/KDIRBL
+        LAISL = FRAKDI * (1.0-EXP(-XLAI/FRAKDI))
       ELSE
         LAISL = 0.0
       ENDIF
+      
+      LAISL = MIN(LAISL,XLAI)
 C-KRT*******************************
 C-KRT  LAISH = XLAI - LAISL
 !-CHP  LAISH = MAX(0.02,XLAI - LAISL)
 C FO/GH 11/14/2020 Code protections for divisions by zero.
-      IF(XLAI .GT. LAISL) THEN
-         LAISH = XLAI - LAISL
-      ELSE
-          LAISH = 0.0
-      ENDIF
+      LAISH = MAX(0.0, XLAI - LAISL)
       
 C-KRT*******************************
       RETURN
@@ -1731,6 +1733,8 @@ C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  ??/??/?? KJB Written
 C  05/14/91 NBP Removed COMMON and reorganized.
+C  12/03/21 FO/GH/CHP Protections to compute diffuse/scattered
+C               components of the direct beam.
 C-----------------------------------------------------------------------
 C  Called from: RADABS
 C  Calls:
@@ -1750,9 +1754,10 @@ C=======================================================================
      &  ADDFSH,ADIFSL,ADIFSH,AREFSL,AREFSH,RDIFSL,ALBEDO,BETA,
      &  BETN,CANHT,CANWH,DELWP,DELWR,DIFP,DIFPR,DIFR,FRACSH,FRDIF,
      &  INCSOI,INTCAN,KDIFBL,KDIRBL,LAISH,LAISL,O,OAV,PATHP,PATHR,
-     &  PCTABS,PCTINT,PCTREF,PI,RAD,RADDIF,RADDIR,RADHR,
+     &  PCTABS,PCTINT,PCTREF,RADDIF,RADDIR,RADHR,     PI,RAD,
      &  RADSH,RADSS,RADSUN(3),REFDF,REFDIF,REFDIR,REFDR,REFH,
      &  REFSOI,REFTOT,RNG,ROWSPC,SCVR,SINB,SQV,XLAI,RADTOT
+
       PARAMETER (PI=3.14159, RAD=PI/180.0)
 
 C     Initialization.
@@ -1793,10 +1798,11 @@ C     (ADDR) and diffuse/scattered (ADDF) components of the direct beam.
 C-KRT****************************
 C-KRT   ADDF = ADIR - ADDR
 !-CHP   ADDF = MAX(0.0,ADIR-ADDR)
-        ADDF = ADIR - ADDR
-!        IF (ADDF < 0.0) THEN
-!          ADDF = 0.0
-!        ENDIF
+!-FO        ADDF = ADIR - ADDR
+
+        ADDR = MIN(ADDR, ADIR)
+        ADDF = MAX(0.0,ADIR-ADDR)
+        
 C-KRT****************************
 !        IF ((KDIRBL*SQV*LAISL/FRACSH) .LT. 20.) THEN
           ADIRSL = FRACSH * (1.0-REFDR) * RADDIR *
@@ -1816,14 +1822,17 @@ C-KRT   ADDFSL = ADIRSL - ADDRSL
 C-KRT   ADDFSH = ADDF - ADDFSL
 !-CHP   ADDFSL = MAX(0.0,ADIRSL - ADDRSL)
 !-CHP   ADDFSH = MAX(0.0,ADDF - ADDFSL)
-        ADDFSL = ADIRSL - ADDRSL
-!        IF (ADDFSL < 0.0) THEN
-!          ADDFSL = 0.0
-!        ENDIF
-        ADDFSH = ADDF - ADDFSL
-!        IF (ADDFSH < 0.0) THEN
-!          ADDFSH = 0.0
-!        ENDIF
+!-FO        ADDFSL = ADIRSL - ADDRSL
+
+        ADDRSL = MIN(ADDRSL, ADIRSL)
+        ADDFSL = MAX(0.0,ADIRSL - ADDRSL)
+        
+        
+!-FO        ADDFSH = ADDF - ADDFSL
+
+        ADDFSL = MIN(ADDFSL, ADDF)
+        ADDFSH = MAX(0.0,ADDF - ADDFSL)
+        
 C-KRT************************************
       ELSE
         ADIR   = 0.0
@@ -1862,10 +1871,11 @@ C     extended for both between plants (P) and rows (R).
 C-KRT********************************
 C-KRT ADIFSH = ADIF - ADIFSL
 !-CHP ADIFSH = MAX(0.0,ADIF - ADIFSL)
-      ADIFSH = ADIF - ADIFSL
-!      IF (ADIFSH < 0.0) THEN
-!        ADIFSH = 0.0
-!      ENDIF
+!-FO      ADIFSH = ADIF - ADIFSL
+
+      ADIFSL = MIN(ADIFSL, ADIF)
+      ADIFSH = MAX(0.0,ADIF - ADIFSL)
+      
 C-KRT********************************
 
 C     Light reflected from the soil assumed to be isotropic and diffuse.
@@ -1883,10 +1893,11 @@ C     Absorption handled in the same manner as diffuse skylight.
 C-KRT********************************
 C-KRT AREFSL = AREF - AREFSH
 !-CHP AREFSL = MAX(0.0,AREF - AREFSH)
-      AREFSL = AREF - AREFSH
-!      IF (AREFSL < 0.0) THEN
-!        AREFSL = 0.0
-!      ENDIF
+!-FO      AREFSL = AREF - AREFSH
+
+      AREFSH = MIN(AREFSH, AREF)
+      AREFSL = MAX(0.0,AREF - AREFSH)
+
 C-KRT********************************
       ATOT = ADIR + ADIF + AREF
       REFTOT = REFDIR + REFDIF + REFSOI - AREF

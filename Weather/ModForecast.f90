@@ -412,6 +412,8 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
 ! works when weather data crosses a century boundary or has more than 
 ! 100 years.
 
+  ELSE
+    WFirstDate = WeathRecFirst
   ENDIF
   
 !--------------------------------------------------------------

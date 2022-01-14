@@ -878,6 +878,7 @@ C         Read in weather file header.
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  08/10/2006 CHP Written
+!  12/22/2021 FO  Fix YRDOYW for long files with Y4K DOY. 
 !-----------------------------------------------------------------------
 !  Called by: IPWTH_alt
 !  Calls:     None
@@ -1058,12 +1059,14 @@ C         Read in weather file header.
           ENDDO
 
           YRDOYW_SAVE = YRDOYW
-          CALL Y2K_DOYW(MULTI, YRDOYWY, YRDOYW, CENTURY)
-          IF (NRecords == 0 .AND. YRDOY == YRSIM .AND.  !First record
-     &        YRDOYW > YRSIM .AND.                      ! > YRSIM
-     &        YRDOYW_SAVE < 99366) THEN       ! & century set by program
-            CENTURY = CENTURY - 1
-            YRDOYW = YRDOYW - 100000
+          IF(FirstWeatherDate .LE. 0) THEN
+            CALL Y2K_DOYW(MULTI, YRDOYWY, YRDOYW, CENTURY)
+            IF (NRecords == 0 .AND. YRDOY == YRSIM .AND.  !First record
+     &          YRDOYW > YRSIM .AND.                      ! > YRSIM
+     &          YRDOYW_SAVE < 99366) THEN       ! & century set by program
+              CENTURY = CENTURY - 1
+              YRDOYW = YRDOYW - 100000
+            ENDIF
           ENDIF
 
 !         Determination of century and weather file date for forecast mode. 
