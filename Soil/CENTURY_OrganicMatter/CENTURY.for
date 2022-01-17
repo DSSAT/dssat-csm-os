@@ -250,6 +250,7 @@
       MNR = 0.
 
       ACCCO2 = 0.0
+      newCO2 = 0.
 
 !     Set initial SOM and nitrogen conditions for each soil layer.
       CALL SoilCNPinit_C (CONTROL, ISWITCH,               !Input 
