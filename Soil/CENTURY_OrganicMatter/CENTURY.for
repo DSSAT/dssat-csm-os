@@ -716,6 +716,17 @@
      &  METABE, NLAYR, SOM1C, SOM1E, SOM2C,               !Input
      &  SOM2E, SOM23E, SOM3C, SOM3E, STRUCC, STRUCE)      !Input
 
+!     New CO2 produced from decomposition today
+      DO L = 0, NLAYR
+        IF (L == SRFC) THEN
+          newCO2(SRFC) = CO2FMET(SRFC) + CO2FSTR(SRFC,LIG) + 
+     &      CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
+        ELSE
+          newCO2(L) = CO2FMET(L) + CO2FSTR(L,LIG) + CO2FSTR(L,NONLIG) + 
+     &      CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
+        ENDIF   
+      ENDDO
+
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
      &    CH4_data)                                           !Output
@@ -803,17 +814,17 @@
           ACCCO2(SRFC) = ACCCO2(SRFC) + CO2FMET(SRFC) +
      &        CO2FSTR(SRFC,LIG) + CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
 
-!         microbial respiration for N2O/N2 loss in DayCent   PG/chp
-          newCO2(SRFC) = CO2FMET(SRFC) + CO2FSTR(SRFC,LIG) + 
-     &        CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
+!!         microbial respiration for N2O/N2 loss in DayCent   PG/chp
+!          newCO2(SRFC) = CO2FMET(SRFC) + CO2FSTR(SRFC,LIG) + 
+!     &        CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
 
         ELSE
           ACCCO2(SOIL) = ACCCO2(SOIL) + CO2FMET(L) + CO2FSTR(L,LIG) +
      &        CO2FSTR(L,NONLIG) + CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
 
-!         microbial respiration for N2O/N2 loss in DayCent   PG
-          newCO2(L) = CO2FMET(L) + CO2FSTR(L,LIG) + CO2FSTR(L,NONLIG) + 
-     &        CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
+!!         microbial respiration for N2O/N2 loss in DayCent   PG
+!          newCO2(L) = CO2FMET(L) + CO2FSTR(L,LIG) + CO2FSTR(L,NONLIG) + 
+!     &        CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
 
         ENDIF   !End of IF block on L == SRFC.
       END DO   !End of DO loop on L.
