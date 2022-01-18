@@ -28,6 +28,7 @@
 !  02/07/1993 PWW Header revision and minor changes   
 !  02/24/1993 BDB Changed call to WATBAL (Added AIRAMT)
 !  03/22/2017 CHP Adpated for CSM v4.6
+!  09/05/2020 JVJ Stages changes for inclusion in Overview         
 C=======================================================================
 
       Subroutine Aloha_Pineapple(CONTROL, ISWITCH, 
@@ -52,7 +53,7 @@ C=======================================================================
 
       REAL      CANNAA,CANWAA
       REAL      DTT
-      REAL    CUMDTT, SUMDTT 
+      REAL    CUMDTT, SUMDTT, SUMDTTGRO 
       REAL      XLAT
       REAL      EOP, EP1, TRWUP, RWUEP1
       REAL      SWFAC, TURFAC, TEMPM
@@ -112,16 +113,16 @@ C     Call PHENOLOGY initialization routine
 C-----------------------------------------------------------------------
 
       CALL Aloha_PHENOL (CONTROL, ISWITCH,
-     &    SW, WEATHER, SOILPROP, YRPLT,                       !Input
+     &    SW, WEATHER, SOILPROP, YRPLT, SUMDTTGRO,!Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
-     &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
+     &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)    !Output
 
       CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, !Output
      &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
@@ -195,11 +196,11 @@ C-----------------------------------------------------------------------
      &     RLV, RTDEP, RTWT)                                  !Output
 
         CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
-     &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
+     &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,!Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, !Output
      &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
@@ -208,9 +209,9 @@ C-----------------------------------------------------------------------
             CANWAA = BIOMAS
          ENDIF
 
-        IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
+        IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 10) THEN              ! IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           CALL Aloha_PHENOL (CONTROL, ISWITCH, 
-     &    SW, WEATHER, SOILPROP, YRPLT,                       !Input
+     &    SW, WEATHER, SOILPROP, YRPLT, SUMDTTGRO,   !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
      &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
         ENDIF
@@ -228,11 +229,11 @@ C-----------------------------------------------------------------------
      &     RLV, RTDEP, RTWT)                                  !Output
      
         CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
-     &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
+     &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,!Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, !Output
      &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 

@@ -22,7 +22,7 @@
       LOGICAL FEXIST
       REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV , PS2_AV, KST_AV
       REAL SWFAC, TURFAC, NSTRES, PSTRES1, PSTRES2, KSTRES
-      REAL LFWT, PLTPOP, SDWT, XLAI, LAI, CRWNWT, LN   
+      REAL LFWT, PLTPOP, SDWT, XLAI, LAI, CRWNWT, LN
       REAL GM2KG, HI, BIOMAS, VWAD, STMWT
       REAL RTWT, RTDEP, RLV(NL)
       REAL BASLFWT, SKWT, TOPWT 
@@ -189,19 +189,20 @@
 !-----------------------------------------------------------------------
           IF (IDETG == 'Y') THEN
 
-            LEAFNO = LN
-            VSTAGE = REAL (LEAFNO)
+           LEAFNO = LN
+           VSTAGE = REAL (LEAFNO)
 
 !           GM2KG converts gm/plant to kg/ha
             GM2KG  = PLTPOP * 10.0
-            
+                                   
             TOPWT  = BIOMAS * 10.    !topwt in kg/ha, biomas in g/m2
 
             WTLF = LFWT * PLTPOP      !leaf, g/m2
             LWAD = LFWT * GM2KG       !leaf, kg/ha
             SWAD = STMWT* GM2KG       !stem, kg/ha
             VWAD = LWAD + SWAD        !veg,  kg/ha
-
+                      
+            
             BWAD = BASLFWT * GM2KG    !basal, kg/ha
             SUGD = SKWT    * GM2KG    !sucker,kg/ha
             RWAD = RTWT    * GM2KG    !roots, kg/ha
@@ -236,8 +237,18 @@
             ENDIF        
             
             XLAI   = LAI
-            IF (WTLF .GT. 0.0) THEN
-               SLA  = LAI * 10000 / WTLF
+            IF (WTLF .GT. 0.0) THEN        ! En esta fórmula los valores de SLA obtenidos son 10 veces mayores a los de la literatura de Bartholomew pag 123
+               SLA  = LAI * 10000 / WTLF   !   pero es que en este libro en el gráfico las unidades son m2/kg. Esta fórmula calcula SLA en cm2/g.
+           !                               ! SLA es el área específica de la hoja dividida entre su peso seco.
+               
+        !    IF (LWAD .GT. 0.0) THEN         !  Estuve confundido con esto, pero luego descubrí que el asunto es que se debe reportar en                      
+        !       SLA  = LAI * 10000 / LWAD    !  cm2/g, si yo lo calculo como m2/kg entonces los valores deben ser 10 veces menores.
+                                            ! Esta fórmula calcula SLA en m2/kg
+               
+
+               
+               
+               
             ELSE
                SLA = 0.0
             ENDIF

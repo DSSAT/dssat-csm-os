@@ -10,19 +10,20 @@ C  2. Header revision and minor changes           P.W.W.      2-7-93
 C  3. Added switch block, code cleanup            P.W.W.      2-7-93
 C  4. Modified TT calculations to reduce line #'s P.W.W.      2-7-93
 C  5. Modified for MILLET model                   W.T.B.      MAY 94
+C  6. Stages changes for inclusion in Overview    J.V.J.      9-5-20      
 C=======================================================================
 
       SUBROUTINE Aloha_PHENOL (CONTROL, ISWITCH,
-     &    SW, WEATHER, SOILPROP, YRPLT,                       !Input
+     &    SW, WEATHER, SOILPROP, YRPLT, SUMDTTGRO,!Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
-     &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
+     &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output Si incluyo algo aqu� y en cualquier parte que diga Subrutina debo incluir en Aloha_Pine.for tambi�n.
 
       USE Aloha_mod
       IMPLICIT    NONE
       SAVE
 
-      INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0, TIMDIF, YRPLT
-      REAL        TTMP,SWSD,XLAT
+      INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0, TIMDIF, YRPLT, SRAD
+      REAL        TTMP,SWSD,XLAT,ROOTINGTIME   !ELIMINAR ROOTINGTIME SINO FUNCIONA LA IDEA
 
 !     REAL        YIELDB,PHOTOSYNEYE,PEYEWT,LAI, BIOMAS, MAXLAI, SUMP
 !     INTEGER     IDURP, ICSDUR
@@ -45,10 +46,11 @@ C=======================================================================
       REAL        TMFAC1(8)
       REAL        TMIN, TMAX, TEMPFMX, SUMDTT, CUMDEP, GPP
       REAL        FRTWT, TEMPFM, TOTPLTWT
-      REAL        P1, P2, P3, P4, P5, P6, TBASE1
-      REAL        CUMDTT
+      REAL        TC, P1, P2, P3, P4, P5, P6, P7, P8, G1, TBASE1
+      REAL        CUMDTT, SUMDTTGRO
       REAL, DIMENSION(NL) :: SW, LL, DLAYR
 
+      
       REAL PLTPOP, SDEPTH, PLANTSIZE
       INTEGER NFORCING, NDOF
 
@@ -62,6 +64,8 @@ C=======================================================================
 
       TMIN = WEATHER % TMIN
       TMAX = WEATHER % TMAX
+      
+      SRAD = WEATHER % SRAD
 
       LL    = SOILPROP % LL
       NLAYR = SOILPROP % NLAYR
@@ -87,10 +91,10 @@ C=======================================================================
       ISWWAT = ISWITCH % ISWWAT
       ISWNIT = ISWITCH % ISWNIT
 
-      ISTAGE = 7
+      ISTAGE = 10                                   ! ISTAGE = 7 JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
       XSTAGE = 0.1
 
-      STGDOY(14) = CONTROL%YRSIM
+      STGDOY(14) = CONTROL%YRSIM                    !REVISAR AQUI
       MDATE      = -99
       HAREND     = -99
       EDATE      = 9999999
@@ -120,14 +124,19 @@ C=======================================================================
       NFORCING = Planting % NFORCING
       NDOF     = Planting % NDOF
       PLTPOP   = Planting % PLTPOP
-
+      
+      
+      TC = Cultivar % TC
       P1 = Cultivar % P1
       P2 = Cultivar % P2
       P3 = Cultivar % P3
       P4 = Cultivar % P4
       P5 = Cultivar % P5
       P6 = Cultivar % P6
-      TBASE1  = 16. !????
+      P7 = Cultivar % P7
+      P8 = Cultivar % P8
+      G1 = Cultivar % G1
+      TBASE1  = 16. !???? creo que esto no tiene efecto TBASE1  = 16.
 
 !=================================================================
       CASE (RATE)
@@ -136,10 +145,10 @@ C=======================================================================
 !moved to grosub      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
 !moved to grosub      APTNUP = STOVN*10.0*PLTPOP
 !from FileX           SDEPTH = 5.0
-
+      
       DTT    = TEMPM - TBASE
       SELECT CASE (ISTAGE)
-        CASE (1,2,3,7,8,9)
+        CASE (1,2,3,4,5,10,11,12)                ! CASE (1,2,3,7,8,9) JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           IF (TMIN .GT. TBASE .AND. TMAX .LT. 35.0) THEN
              IF (XLAT .LT. 21.0 .and. XLAT .GT. -21.0) THEN
                 TEMPM = 0.6*TMIN+0.4*TMAX
@@ -147,14 +156,14 @@ C=======================================================================
                 TEMPM = (TMAX+TMIN)/2
              ENDIF
              DTT = TEMPM - TBASE
-           ELSEIF (TMIN .LE. TBASE .OR. TMAX .GE. 35.0) THEN
-             IF (TMAX .LT. TBASE) THEN
-                DTT = 0.0
-             ENDIF
-             IF (DTT .NE. 0.0) THEN
-                DTT = 0.0
-                DO I = 1, 8
-                   TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
+           ELSEIF (TMIN .LE. TBASE .OR. TMAX .GE. 35.0) THEN 
+             IF (TMAX .LT. TBASE .OR. SRAD .GE. 24) THEN     !AGREGU� AQU� LA RADIACI�N Y CON ESE VALOR LOGRE QUE LA ZONA CALIENTE SE ATRACE EN EL CICLO 1 A LA PERFECCI�N
+                DTT = 0.0                                    
+             ENDIF                                           
+             IF (DTT .NE. 0.0) THEN                          
+                DTT = 0.0                                    
+                DO I = 1, 8                                  
+                   TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)       
                    IF (TTMP .GT. TBASE .AND. TTMP .LE. 35.0) THEN
                       DTT = DTT + (TTMP-TBASE)/8.0
                    ENDIF
@@ -163,11 +172,12 @@ C=======================================================================
                    ENDIF
                 END DO
              ENDIF
-          ENDIF
+             ENDIF
+           
 !-----------------------------------------------------------------
 !       Reproductive Phase
-        CASE (4,5,6)
-          IF (TMAX .LT. TBASE) THEN
+        CASE (6,7,8,9)                  !CASE (4,5,6) JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          IF (TMAX .LT. TBASE) THEN     !Probar agregar 5 aqu� y quitarlo de la anterior
              DTT = 0.0
           ENDIF
           IF (DTT .GT. 0.0) THEN
@@ -190,6 +200,7 @@ C=======================================================================
                 ENDIF
                 DTT = TEMPFM-TBASE
                 GO TO 20
+          
              ENDIF
 
              IF (TEMPFMX .LT. TBASE) THEN
@@ -211,31 +222,34 @@ C=======================================================================
                 END DO
              ENDIF
           ENDIF
-      END SELECT
+           END SELECT
 
    20 SUMDTT  = SUMDTT  + DTT
+      
 
 !-----------------------------------------------------------------
-C     7 - Preplanting
-C     8 - Planting to root initiation
-C     9 - Root initiation to first new leaf emergence
-C     1 - First new leaf emergence to net zero root growth
-C     2 - Net zero stem growth to forcing
-C     3 - Forcing to sepals closed on youngest flowers
-C     4 - SCY to first open flower
-C     5 - Fruit growth
-C     6 - Physiological maturity
+!  ISTAGE Definition
+!     7 - Preplanting                                                 10
+!     8 - Planting to root initiation                                 11
+!     9 - Root initiation to first new leaf emergence                 12
+!     1 - First new leaf emergence to net zero root growth            1
+!     2 - Net zero stem growth to forcing                             2,3,4
+!     3 - Forcing to sepals closed on youngest flowers                5,6
+!     4 - SCY to first open flower                                    7
+!     5 - Fruit growth                                                8
+!     6 - Physiological maturity                                      9
+!-----------------------------------------------------------------
 
       SELECT CASE (ISTAGE)
 !-----------------------------------------------------------------
-        CASE (7)
+        CASE (10)               !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           !
           ! Stage 7 >> Preplanting
           !
           STGDOY(ISTAGE) = YRDOY
           NDAS           = 0
  !        CALL PHASEI (ISWWAT,ISWNIT)
-          ISTAGE = 8
+          ISTAGE = 11         ! ISTAGE = 8
           SUMDTT = 0.0       ! Cumulative growing degree days set to 0.0
 
           IF (ISWWAT .EQ. 'N') RETURN
@@ -248,7 +262,7 @@ C     6 - Physiological maturity
           RETURN
 
 !-----------------------------------------------------------------
-        CASE (8)
+        CASE (11)    !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           !
           ! Stage 8 >> Planting to root initiation
           !
@@ -262,14 +276,10 @@ C     6 - Physiological maturity
              ENDIF
           ENDIF
 
-          IF (PLANTING % NFORCING .GE. 2) THEN
-            NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY)
-          ENDIF
-
 !         After 140 days, give up
-          IF (NDAS .GT. 140) THEN  !<-- genotype parameter?
-             ISTAGE = 6       !"maturity"
-             PLTPOP = 0.0
+          IF (NDAS .GT. 140) THEN  !<-- genotype parameter?  IF (NDAS .GT. 140) THEN
+             ISTAGE = 12       !"maturity" ISTAGE = 6       !"maturity"  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+             PLTPOP = 0.0                                  ! Ojo en la fila de arriba dec�a ISTAGE=9 y funcionaba pero creo que es ISTAGE=12
              GPP    = 1.0
              FRTWT  = 0.0
              WRITE (     *,1399)
@@ -278,55 +288,142 @@ C     6 - Physiological maturity
              ENDIF
             RETURN
           ENDIF
-
+           
+          IF (SUMDTT .LT. (TC)) THEN      ! IF (SUMDTT .LT. (P6)) THEN
+             
+              RETURN                       ! 
+          ENDIF          
+          ROOTINGTIME = SUMDTT / TBASE    ! Variable creada para ajustar una fecha.  
+          SUMDTTGRO= SUMDTT               ! Variable creada para ser usada en GROSUB lo que hace es usar la variable SUMDTT porque abajo esta se fuerza a cero.
           STGDOY(ISTAGE) = YRDOY
-  !        CALL PHASEI (ISWWAT,ISWNIT)
-          ISTAGE =  9
-          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0
+          !        CALL PHASEI (ISWWAT,ISWNIT)
+          ISTAGE =  12                   !ISTAGE =  9  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          
+          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0 
           TBASE  = 12.0                 ! Tbase of 12.0 is used
           RETURN
 
 !-----------------------------------------------------------------
-        CASE (9)
+        CASE (12) !! JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           !
           ! Stage 9 >> Root initiation to first new leaf emergence
           !
-          NDAS   = NDAS + 1
-!MOVE TO GROSUB          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
-          IF (NDAS .LT. P6) THEN
-             RETURN                     ! P6: NDAS from root initiation to first leaf emerged
-          ENDIF
-          STGDOY(ISTAGE) = YRDOY
-          EDATE = YRDOY
-
-  !        CALL PHASEI (ISWWAT,ISWNIT)
+          NDAS   = NDAS + 1               !JVJ Necesario para que la fecha de forza salga correctamente
+ !
+          IF (SUMDTT .LT. (P1)) THEN   !IF (SUMDTT .LT. (P7)) THEN+30 porque la primera hoja sale con la aparicion de puntas de raices blancas m�s 30 GDD.
+             RETURN                       
+         
+             ENDIF          
+         
+          !         Ready for next stage         
+          STGDOY(ISTAGE) = YRDOY          ! Esto se traduce: despues de hacer la ecuaci�n inmediata anterior la fecha de cumplimiento de la etapa  
+          EDATE = YRDOY                   ! es el valor del dia del a�o resultante de ese calculo.
+          SUMDTTGRO= SUMDTT               ! Variable creada para ser usada en GROSUB lo que hace es usar la variable SUMDTT porque abajo esta se fuerza a cero.
+          
+          !        CALL PHASEI (ISWWAT,ISWNIT)
           ISTAGE  = 1
           TBASE   = TBASE1              ! Tbase1 used for calibration
-          SUMDTT  = 0.0                 ! Cumulative growing degree days set to 0.0
+          SUMDTT  = 0.0                 ! Cumulative growing degree days set to 0.0 DEBE ESTAR DESCOMENTADO SINO SUMA GDD EN CASE 1
           CUMDTT  = 0.0                 ! CUMDTT is also cumulative growing degree days but it is set to 0.0 only at root initiation crown weight when planting
           RETURN
 
 !-----------------------------------------------------------------
-        CASE (1)
+      CASE (1)           !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           !
-          ! Stage 1 >> First new leaf emergence to net zero root growth
+    ! Stage 1 >> First new leaf emergence to net zero root growth
           !
-          NDAS   = NDAS + 1
-          XSTAGE = SUMDTT / P1
-          IF (NDAS .LT. (P1+P6)) THEN
-             RETURN                     ! P1: NDAS from leaf emerged to end stem growth
-          ENDIF
-          STGDOY(ISTAGE) = YRDOY
-  !        CALL PHASEI (ISWWAT,ISWNIT)
-          ISTAGE = 2
-          RETURN
+          NDAS   = NDAS + 1               !JVJ Necesario para que la fecha de forza salga correctamente
+           
+          IF (YRDOY .EQ. PLANTING % ForcingYRDOY)THEN  ! Esta declaraci�n sirve para proyectar floraci�n natural, si hay NF antes de las 
+             GO TO 21                                  ! Etapas fenol�gicas, entonces se debe cortar la etapa fenol�gica y llega a forza               
+            ELSE                                       ! Esta mejora implica que si de un grupo de tratamientos voy a forzar solo uno de ellos 
+             IF (SUMDTT .LT. (P2)) THEN                ! entonces en Xbuild en Chemical aplication debe meterse una fecha de forza por ejemplo
+          RETURN                                       ! igual a la fecha de incio de la simulaci�n para que no se force, sino hago eso entonces
+             ENDIF                                        ! se le asigna por defecto la fecha de forza del tratamiento previo y eso es un error.
+          
+             ENDIF 
+           
+                                                                                            
+                                 !                                      
+!         Ready for next stage                                               
 
+          STGDOY(ISTAGE) = YRDOY
+          ISTAGE = 2                    !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          SUMDTTGRO= SUMDTT               ! Variable creada para ser usada en GROSUB lo que hace es usar la variable SUMDTT porque abajo esta se fuerza a cero.
+          
+          TBASE  = TBASE1                 ! TBASE of 10.0 is used in this stage
+          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0
+          
 !-----------------------------------------------------------------
-        CASE (2)
+!-----------------------------------------------------------------
+        CASE (2) !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          !
           !
           ! Stage 2 >> Net zero stem growth to forcing
+          NDAS   = NDAS + 1               !JVJ Necesario para que la fecha de forza salga correctamente
+          
+         IF (YRDOY .EQ. PLANTING % ForcingYRDOY)  THEN   ! Esta declaraci�n sirve para proyectar floraci�n natural, si hay NF antes de las
+             GO TO 21                                    ! Etapas fenol�gicas, entonces se debe cortar la etapa fenol�gica y llega a forza
+           ELSE
+             IF (SUMDTT .LT. (P3) ) THEN
+          
+              RETURN    
+           
+          ENDIF
+               
+          ENDIF
+
+!         Ready for next stage
+ 
+          STGDOY(ISTAGE) = YRDOY
+          
+          ISTAGE = 3                    !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          TBASE  = TBASE1               ! TBASE of 10.0 is used in this stage
+          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0 
+         
+!----------------------------------------------------------------- 
+          
+          CASE (3) !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          !
+         ! Stage 3 >> Forcing to sepals closed on youngest flowers
+          !
+          NDAS   = NDAS + 1               !JVJ Necesario para que la fecha de forza salga correctamente
+          
+          IF (YRDOY .EQ. PLANTING % ForcingYRDOY) THEN  ! Esta declaración sirve para proyectar floración natural, si hay NF antes de las
+             GO TO 21                                   ! Etapas fenológicas, entonces se debe cortar la etapa fenológica y llega a forza                       
+          ELSE   
+             IF (SUMDTT .LT. (P4) ) THEN
+          
+              RETURN       
+             ENDIF
+          
+          ENDIF
+
+!         Ready for next stage
+21        STGDOY(ISTAGE) = YRDOY        ! AquÍ llama go to para fijar la fecha de forza o natural en el Overview
+          ISTAGE = 4                    !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          TBASE  = TBASE1                 ! TBASE of 10.0 is used in this stage
+          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0 
+                 
+ !----------------------------------------------------------------- 
+          
+ 
+        CASE (4)                        ! CASE (2) JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          !
+          ! Stage 2 >> Net zero stem growth to forcing  ! JVJ Stage 4 >> Cicle 3 growth to forcing
           !
           NDAS   = NDAS + 1
+         
+                
+          IF (PLANTING % NFORCING .GE. 2) THEN  !
+          NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY) -ROOTINGTIME   !NDOF es el tiempo desde la siembra hasta el forzamiento (aplicaci�n qu�mica)
+                                                                       !pero por alguna raz�n suma el tiempo que se lleva en puntas de ra�ces blancas
+                                                                       !por esa raz�n en CASE(11) cree una variable que se llama ROOTINGTIME que simplemente
+                                                                       !calcula los d�as que se demor� en producir puntas de ra�ces blancas para poder restar
+                                                                       !esos d�as aqu�, y que la fecha de forza reportada coincida con la fecha de aplicaci�n qu�mica real de la forza.
+            
+        ENDIF
+            
           IF (NFORCING .GE. 2) THEN
              !
              ! Forcing by number of days after planting
@@ -344,74 +441,90 @@ C     6 - Physiological maturity
               ENDIF
           ENDIF
 
-          ISDATE = YRDOY                ! Record forcing date.
+        ISDATE = YRDOY                ! Record forcing date.
 
 !         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
-          ISTAGE = 3
+          ISTAGE = 5                    ! JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           TBASE  = 10.00                ! Base temperature of 6.25 is used during forcing to sepals closed on youngest flowers
           SUMDTT = 0.0                  ! Cumulative GDD set to 0.0
 
 !-----------------------------------------------------------------
-        CASE (3)
+      CASE (5)                          !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           !
-          ! Stage 3 >> Forcing to sepals closed on youngest flowers
+          ! Stage 3 >> Forcing to sepals closed on youngest flowers ! JVJ Stage 6 >> Forcing to Open Heart 
           !
-          IF (SUMDTT .LT. P2) THEN
+          IF (SUMDTT .LT. (P5)) THEN
              RETURN                       ! P2: GDD needed to complete this stage
           ENDIF
 
 !         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
-          ISTAGE = 4
+          ISTAGE = 6                    !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          TBASE  = 10.0                 ! TBASE of 10.0 is used in this stage
+          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0      
+          
+          
+        CASE (6)                        !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+          !
+          ! Stage 3 >> Forcing to sepals closed on youngest flowers  ! JVJ Stage 6 >> Open Heart to EarlyAnthesis 
+          !
+          IF (SUMDTT .LT. P6) THEN        !IF (SUMDTT .LT. P2) THEN
+             RETURN                       ! P2: GDD needed to complete this stage
+          ENDIF
+
+!         Ready for next stage
+          STGDOY(ISTAGE) = YRDOY
+          ISTAGE = 7                    !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           TBASE  = 10.0                 ! TBASE of 10.0 is used in this stage
           SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0
 
+     
 !-----------------------------------------------------------------
-        CASE (4)
+        CASE (7)                        !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           !
-          ! Stage 4 >> SCY to first open flower
+          ! Stage 4 >> SCY to first open flower   ! JVJ Stage 7 >> Early Anthesis to Last Anthesis 
           !
-          XSTAGE = 1.5+3.0*SUMDTT/P3      ! Used by CERES-MAIZE
-          IF (SUMDTT .LT. P3) THEN
+          XSTAGE = 1.5+3.0*SUMDTT/P7      ! Used by CERES-MAIZE   XSTAGE = 1.5+3.0*SUMDTT/P3
+          IF (SUMDTT .LT. P7) THEN        ! IF (SUMDTT .LT. P3) THEN
              RETURN                       ! P3: GDD needed to complete this stage
           ENDIF
 
 !         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
-          ISTAGE = 5
+          ISTAGE = 8                    !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           TBASE  = 4.0                  ! Tbase of 4.0 is used in the stage
           SUMDTT = 0.0                  ! Cumulative growing degree days set to 0.0
 
 !-----------------------------------------------------------------
-        CASE (5)
+        CASE (8)                        !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           !
           ! Stage 5 >> Fruit growth
           !
-          XSTAGE = 4.5+5.5*SUMDTT/(P4*.8)
-          IF (SUMDTT .LT. (P4+(PLTPOP-8.0)*2.4*16.95)) THEN
+          XSTAGE = 4.5+5.5*SUMDTT/(P8*.8)      ! XSTAGE = 4.5+5.5*SUMDTT/(P4*.8)
+          IF (SUMDTT .LT. (P8+(PLTPOP-8.0)*2.4*16.95)) THEN   ! IF (SUMDTT .LT. (P4+(PLTPOP-8.0)*2.4*16.95)) THEN
              RETURN                        ! P4: GDD needed to complete this stage
           ENDIF
-          FHDATE = YRDOY                   ! Fruit harvest date
+          PMDATE = YRDOY                   ! Fruit harvest date FHDATE = YRDOY
           STGDOY(ISTAGE) = YRDOY
 
 !         Ready for next stage
-          ISTAGE = 6
+          ISTAGE = 9                  !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           TBASE  = 12.0
 
 !-----------------------------------------------------------------
-        CASE (6)
+        CASE (9)                     !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           !
           ! Stage 6 >> Physiological maturity
           !
-          XSTAGE = 4.5+5.5*SUMDTT/P5
-          IF (SUMDTT .LT. (P5+P4)) THEN
+          XSTAGE = 4.5+5.5*SUMDTT/G1       ! XSTAGE = 4.5+5.5*SUMDTT/P5
+          IF (SUMDTT .LT. (G1+P8)) THEN    !  IF (SUMDTT .LT. (P5+P4)) THEN   G1+P8
              RETURN
           ENDIF
 
 !MOVE TO GROSUB          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
 
-          PMDATE = YRDOY                  ! physiological maturity date
+          FHDATE = YRDOY                  ! physiological maturity date PMDATE = YRDOY 
           MDATE  = YRDOY                  ! Set MDATE to stop model
           STGDOY(ISTAGE) = YRDOY
 
