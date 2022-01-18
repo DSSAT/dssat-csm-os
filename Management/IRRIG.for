@@ -70,8 +70,9 @@ C=======================================================================
 
 !  Added for flooded field management
       LOGICAL PUDDLED
-      INTEGER NBUND, NCOND, NPERC
+      INTEGER NBUND, NCOND, NPERC, NPUD
       INTEGER IBDAT(NAPPL), IIRRCV(NAPPL), IPDAT(NAPPL) !, IIRRP(100)
+      INTEGER PUDDAT(NAPPL)
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
@@ -152,6 +153,7 @@ C-----------------------------------------------------------------------
       NTBL   = 0  !# water tables
       NCOND  = 0  !# irrigation applications (same as NAPW??)
       NPERC  = 0  !# percs
+      NPUD   = 0  !# puddling events
 
       IRRAMT = 0.0
       TOTIR  = 0.
@@ -312,6 +314,7 @@ C
       JULAPL = 0
       JWTBRD = 0
       JULWTB = 0
+      PUDDAT = 0
 
       AMIR  = 0.0
       BUND  = 0.0
@@ -424,21 +427,32 @@ C
            CASE (10)
 !          Puddling for rice added
 
-             IF (AMT(I) < -1.E-6) THEN
-!            IF (AMT(I) < 1) THEN
-               AMT(I) = -1
-               NMSG = NMSG + 1
-               MSG(NMSG) = 
-     &      "Plowpan depth < zero; No plowpan wil be used (ORYZA only)."
-!            Remove CYCLE stmt (CHP 8/25/2014)
-             ENDIF
+!            chp 2022-01-14 
+             NPUD = NPUD + 1
+             PUDDAT(NPUD)  = IDLAPL(I)
 
+!            Realistically, puddling should only be set on the day specified,
+!              but to be consistent with previous simulations, keep this here.
+!              Puddling is now also set on the day specified, in case it is 
+!              greater than 29 days from start of simulation (when puddling 
+!              might be removed due to non-flooded conditions).
              PUDDLED = .TRUE.
-!            Depth of puddling input in cm, convert to m
-             PLOWPAN = AMT(I) / 100.   
-             IF (PLOWPAN < 0.01) THEN
-               PLOWPAN = -1.   
-             ENDIF
+
+!             The following code was for ORYZA
+!             IF (AMT(I) < -1.E-6) THEN
+!!            IF (AMT(I) < 1) THEN
+!               AMT(I) = -1
+!               NMSG = NMSG + 1
+!               MSG(NMSG) = 
+!     &      "Plowpan depth < zero; No plowpan wil be used (ORYZA only)."
+!!            Remove CYCLE stmt (CHP 8/25/2014)
+!             ENDIF
+
+!!            Depth of puddling input in cm, convert to m
+!             PLOWPAN = AMT(I) / 100.   
+!             IF (PLOWPAN < 0.01) THEN
+!               PLOWPAN = -1.   
+!             ENDIF
 
           !------------------------------
            CASE (11)
@@ -495,6 +509,13 @@ C
           ENDDO
         ENDIF
 
+        IF (NPUD .GT. 0 .AND. PUDDAT(1) .LT. YRSIM) THEN
+          DO I = 1, NPUD
+            CALL YR_DOY(PUDDAT(I),YR,IDATE)
+            PUDDAT(I) = (YR + MULTI - 1) * 1000 + IDATE
+          ENDDO
+        ENDIF
+
         IF (NCOND .GT. 0 .AND. CONDAT(1) .LT. YRSIM) THEN
           DO I = 1, NCOND
             CALL YR_DOY(CONDAT(I),YR,IDATE)
@@ -539,6 +560,14 @@ C-----------------------------------------------------------------------
           END DO
         ENDIF
 
+        IF (NPUD .GT. 0 .AND. PUDDAT(1) .LT. YRSIM .AND. IIRRI.NE.'D')
+     &      THEN
+          DO I = 1, NBUND
+            CALL YR_DOY(PUDDAT(I),YR,IDATE)
+            PUDDAT(I) = (YR + YRDIF) * 1000 + IDATE
+          END DO
+        ENDIF
+
         IF (NCOND .GT. 0 .AND. CONDAT(1) .LT. YRSIM .AND. IIRRI.NE.'D')
      &      THEN
           DO I = 1, NCOND
@@ -549,6 +578,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Adjust IPERC values if necessary.
+      IF (PUDDLED) NPERC = MIN0(NPERC,1)
       DO I = 1, NPERC
         IF (DS(NLAYR) .LE. 20.0 .AND. IPERC(I) .GT. 0.) THEN
           IPERC(I) = IPERC(I) * 20.
@@ -569,8 +599,9 @@ C-----------------------------------------------------------------------
 !      IF (NBUND .GT. 0) THEN
         CALL FLOOD_IRRIG (SEASINIT, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC, NTBL,!Input
-     &    PUDDLED, PWAT, RAIN, SOILPROP, SW, YRDOY, YRPLT,!Input
+     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
+     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
+     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
 !      ENDIF
@@ -610,15 +641,19 @@ C-----------------------------------------------------------------------
       IF (NBUND .GT. 0) THEN
         CALL FLOOD_IRRIG (RATE, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC, NTBL,!Input
-     &    PUDDLED, PWAT, RAIN, SOILPROP, SW, YRDOY, YRPLT,!Input
+     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
+     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
+     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
         IF (DEPIR > 1.E-3) NAP = NAP + 1
 
-        IF (FLOODWAT % FLOOD <= 0.0) THEN
+        IF (FLOODWAT % FLOOD <= 0.0 .AND. YRDOY > YRPLT) THEN
           NDAYS_DRY = NDAYS_DRY + 1
-          IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
+!         IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
+          IF (NDAYS_DRY > 29) THEN
+              PUDDLED = .FALSE.
+          ENDIF
         ELSE
           NDAYS_DRY = 0
         ENDIF
@@ -733,8 +768,11 @@ C-----------------------------------------------------------------------
           DEPIR  = 0.0
       ELSE
 !       There is water available, check for demand
-        IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
-     &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
+!       2021-06-18 CHP change from after YRPLT to after YRSIM for auto-irrig
+!       IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
+!    &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
+        IF ((YRDOY .GE. YRSIM .AND. YRDOY .LE. MDATE ).OR. 
+     &      (YRDOY .GE. YRSIM .AND. MDATE .LE.  -99)) THEN
 
 
 !         Soil water irrigation

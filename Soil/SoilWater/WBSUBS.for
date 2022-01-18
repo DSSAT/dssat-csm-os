@@ -57,6 +57,8 @@ C=======================================================================
          WATAVL = 0.0
       ENDIF
 
+      if(snow.lt.0.001) snow = 0
+
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
@@ -100,6 +102,7 @@ C  08/12/2003 CHP Added I/O error checking
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      SAVE
 
       REAL, DIMENSION(NL), INTENT(IN) :: DLAYR, LL, SAT
       INTEGER, INTENT(IN) :: NLAYR
@@ -117,7 +120,8 @@ C  08/12/2003 CHP Added I/O error checking
 
       INTEGER ERRNUM, FOUND, L, LINC, LNUM, RUN
 
-      REAL ICWD, SWEF
+      REAL, DIMENSION(NL) :: SW_INIT
+      REAL ICWD, SWEF, ICWD_INIT, SWAD
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -158,15 +162,24 @@ C     Find and Read Initial Conditions Section
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
 
             IF (SW(L) .LT. LL(L)) THEN
-              SW(L) = LL(L)
-            ENDIF
-            IF (SW(L) > SAT(L)) THEN
-              SW(L) = SAT(L)
+              IF (L == 1) THEN
+!               Layer 1 - check for SW < air dry
+                SWAD = 0.30 * LL(L)
+                IF (SW(L) < SWAD) THEN
+                  SW(L) = SWAD
+                ENDIF
+              ELSE
+!               Layers 2 thru NLAYR
+                SW(L) = LL(L)
+              ENDIF
             ENDIF
           ENDDO
 
         ENDIF
       ENDIF
+
+      SW_INIT   = SW
+      ICWD_INIT = ICWD
 
       CLOSE (LUNIO)
 
@@ -176,34 +189,37 @@ C     Find and Read Initial Conditions Section
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
-      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
-      SECTION = '*INITI'
-      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
-      IF (FOUND .EQ. 0) THEN
-        CALL ERROR(SECTION, 42, FILEIO, LNUM)
-      ELSE
-        READ(LUNIO,'(40X,F6.0)', IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
-        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-        WTDEP = ICWD
+!      OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
+!      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
+!      SECTION = '*INITI'
+!      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
+!      IF (FOUND .EQ. 0) THEN
+!        CALL ERROR(SECTION, 42, FILEIO, LNUM)
+!      ELSE
+!        READ(LUNIO,'(40X,F6.0)', IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
+!        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+!        WTDEP = ICWD
+!
+!        DO L = 1, NLAYR
+!          READ(LUNIO,'(9X,F5.3)',IOSTAT=ERRNUM) SW(L)
+!          LNUM = LNUM + 1
+!          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+!        ENDDO
+!      ENDIF
+!      CLOSE (LUNIO)
 
-        DO L = 1, NLAYR
-          READ(LUNIO,'(9X,F5.3)',IOSTAT=ERRNUM) SW(L)
-          LNUM = LNUM + 1
-          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-        ENDDO
-      ENDIF
+!!     Limit initial water content to wilting point
+!      DO L = 2, NLAYR
+!        IF (SW(L) .LT. LL(L)) SW(L) = LL(L)
+!      ENDDO
 
-      CLOSE (LUNIO)
+!     CHP - don't restrict SW in top layer.
+!!     Limit top soil layer to air dry water content
+!      SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
+!      IF (SW(1) .LT. SWEF * LL(1)) SW(1) = SWEF * LL(1)
 
-!     Limit initial water content to wilting point
-      DO L = 2, NLAYR
-        IF (SW(L) .LT. LL(L)) SW(L) = LL(L)
-      ENDDO
-
-!     Limit top soil layer to air dry water content
-      SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
-      IF (SW(1) .LT. SWEF * LL(1)) SW(1) = SWEF * LL(1)
+      SW   = SW_INIT   
+      ICWD = ICWD_INIT  
 
 !***********************************************************************
 !***********************************************************************

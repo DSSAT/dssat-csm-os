@@ -1,9 +1,9 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 Iowa State University, Ames, Iowa
+C  COPYRIGHT 1998-2021 
+C                      DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      The University of Georgia, Griffin, Georgia
 C                      International Fertilizer Development Center
-C                      University of Guelph
+C                      
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C======================================================================
@@ -581,8 +581,9 @@ C--------------------------------------------------------------------
               CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
               READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC,SDEPTH
-c60            FORMAT(19X,F5.2,19X,F5.2,7X,F5.2)
- 60           FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+C60            FORMAT(19X,F5.2,19X,F5.2,7X,F5.2)
+C-GH 60           FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+ 60           FORMAT(24X,F6.0,13X,F5.2,7X,F5.2)
               LNUM = LNUM + 1
               IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF

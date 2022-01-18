@@ -1002,7 +1002,8 @@ c              RGNFIL = 4.929666-3.90*DTT+0.55*(TMAX-TMIN)+5.0067*TEMPM
               NSINK  = RGNFIL*(MGPP+TGPP)*1.E-7
               NSINK  = AMAX1 (NSINK,0.0)
 c             NSINK  = NSINK*AMIN1(NDEF3,SWFAC)
-              IF (NSINK .LT. 0.001) GO TO 1200
+c US,MB,WP    Change from .LT. 0.001 to .LE. 0 to avoid large variability in Grain N content
+              IF (NSINK .LE. 0.0) GO TO 1200
       
               NSINK  = AMIN1 (NSINK,0.015*GROGRN)
               NSINKT = TGROGRN/GROGRN*NSINK
@@ -1446,7 +1447,8 @@ C-----------------------------------------------------------------------
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
       READ (LUNIO,70, IOSTAT=ERR) 
      &        PLANTS, PLTPOP, ROWSPC, SDWTPL, ATEMP, PLPH
-   70 FORMAT (18X,2(1X,F5.1),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
+C   70 FORMAT (18X,2(1X,F5.1),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
+   70 FORMAT (18X,2(F6.0),13X,F5.0,12X,1X,F5.0,6X,2(1X,F5.0))
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 

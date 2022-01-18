@@ -10,6 +10,8 @@ C  11/23/93 NBP Removed SLW effect from INVEG, all in PGLFEQ
 C  12/11/93 NBP Removed AWES1 from calc. of Rsoil.
 C  04/21/94 NBP Check in CANPET prevents small trans. amounts for LAI=0.
 C  01/10/00 NBP Modular version
+!  01/15/21 FO  ETPHOT - Second part of code protections for divisions by zero
+!                 and negative values.
 C-----------------------------------------------------------------------
 C  Called from: ETPHOT
 C  Calls:       CANPET,CANOPG,HSOILT
@@ -324,7 +326,6 @@ C=======================================================================
       REAL CCNEFF, CICAD, CMXSF, CQESF
       REAL AGEQESH, AGEQESL, CO2QESH, CO2QESL
 
-
 C     Initialize.
 
       TEMPSL = TSURF(1,1)
@@ -381,7 +382,6 @@ C     over three leaf classes for sunlit leaves.
       CONDSL = CONSUM / 3.6
 
 C     Compute photosynthesis and leaf CO2 conductance for shaded leaves
-
       CALL PGLEAF(
      &  CO2HR, LFMXSH, PARSH, QEFFSH, TEMPSH,             !Input
      &  CONDSH, PGSH,                                     !Output
@@ -402,7 +402,12 @@ C     Compute canopy photosynthesis (µmol CO2/m2/s).
         ENDIF
       ENDIF
       PGHR = PGSL*LAISL + PGSH*LAISH
-      AGEFAC = (LAISL*AGMXSL+LAISH*AGMXSH) / XLAI
+      
+      IF(XLAI .GT. 0.0) THEN
+        AGEFAC = (LAISL*AGMXSL+LAISH*AGMXSH) / XLAI
+      ELSE
+        AGEFAC = 0.0
+      ENDIF
 
       RETURN
       END SUBROUTINE CANOPG
@@ -610,10 +615,14 @@ C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
       B = (QEFF*PARLF) + LFMAX
       C = QEFF * PARLF * LFMAX
 !     CHP Added checks for floating underflow 1/16/03
-!      IF (LFMAX .GT. 0.0) THEN
-      IF (LFMAX .GT. 0.0 .AND. (QEFF*PARLF/LFMAX) .LT. 20.) THEN
+      IF (LFMAX .GT. 0.0) THEN
+        IF ((QEFF*PARLF/LFMAX) .LT. 20. .AND. 
+     &      (QEFF*PARLF/LFMAX) .GT. -20.) THEN
 C       PGLF = (B - SQRT(B**2-4.*A*C)) / (2.*A)
-        PGLF = LFMAX * (1.0 - EXP(-QEFF*PARLF/LFMAX))
+          PGLF = LFMAX * (1.0 - EXP(-QEFF*PARLF/LFMAX))
+        ELSE
+          PGLF = MAX(LFMAX, 0.0)
+        ENDIF
       ELSE
         PGLF = MAX(LFMAX, 0.0)
       ENDIF
@@ -774,13 +783,14 @@ C     Solve 3-zone model for ET and E (mm/h).
      &  ECAN, G, LH, LHEAT, SH, SHEAT, TCAN, TSURF)       !Output
       ETHR = LH / LHVAP * 3600.0
       EHR = LHEAT(3,1) / LHVAP * 3600.0
-      IF (XLAI .LE. ZERO) THEN
+      
+      IF(XLAI .GT. 0.0) THEN
+        THR = ETHR - EHR
+      ELSE
         TSURF(1,1) = 0.0
         TSURF(2,1) = 0.0
         THR = 0.0
         EHR = ETHR
-      ELSE
-        THR = ETHR - EHR
       ENDIF
 
       RETURN
@@ -1413,14 +1423,16 @@ C     weighted according to leaf area index.  NEED VIEW FACTOR FOR LEAVES!
 
       EMISAV = FRSHV*EMISL + (1.0-FRSHV)*EMISS
       RBACK =  EMISAV * SBZCON * (TK4CAN-TK4SKY)
-      IF (XLAI .LE. ZERO) THEN
-        RADBK(1) = 0.0
-        RADBK(2) = 0.0
-      ELSE
+      
+      IF(XLAI .GT. 0.0) THEN
         RBKLF = FRSHV * RBACK
         RADBK(1) = 0.7 * RBKLF
         RADBK(2) = 0.3 * RBKLF
+      ELSE
+        RADBK(1) = 0.0
+        RADBK(2) = 0.0
       ENDIF
+
       RADBK(3) = (1.0-FRSHV) * RBACK
 
       RETURN

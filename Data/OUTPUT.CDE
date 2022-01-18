@@ -1,5 +1,5 @@
 *CSM OUTPUT FILES
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.8; 2020-07-21
 !
 ! Output files currently created by DSSAT crop simulation models.
 !
@@ -108,3 +108,8 @@ LUN.LST            List of output files generated                     LUNLST
 ! MJ & SK Climate change summary output file
 CCSUMMRY.OUT    CC Climate change summary output file                 OUTCC
 ETSUMMRY.OUT    ET extended summary output file                       OUTEX
+
+! Sugarcane-SAMUCA Detailed outputs
+PlantGr_Det.OUT    Detailed phytomeric outputs                        SAMPHY
+Canopy_Phot.OUT    Layered canopy photosynthesis outputs              SAMCPH
+Crop_Stress.OUT    Crop abiotic stress factors                        SAMSTR

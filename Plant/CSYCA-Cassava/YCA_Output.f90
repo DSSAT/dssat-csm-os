@@ -10,7 +10,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Output ( & 
-        BRSTAGE     , CAID        , CANHT       , CN          , CO2         , DOY         , DYNAMIC     , EO          , &
+        BRSTAGE     , LAI        , CANHT       , CN          , CO2         , DOY         , DYNAMIC     , EO          , &
         EOP         , IDETG       , IDETL       , IDETO       , IDETS       , IRRAMT      , ISWNIT      , ISWWAT      , &
         KCAN        , MESOM       , NFP         , NLAYR       , ON          , RAIN        , REP         , RLV         , &
         RN          , RNMODE      , RUN         , RUNI        , SN          , SRAD        , STGYEARDOY  , TN          , &
@@ -26,7 +26,7 @@
         INTEGER :: CN          , DOY         , DYNAMIC     , NLAYR       , ON          , REP         , RN          
         INTEGER :: RUN         , RUNI        , SN          , STGYEARDOY(0:19)            , TN          , YEAR
 
-        REAL    :: BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , EO          , EOP         , IRRAMT
+        REAL    :: BRSTAGE     , LAI        , CANHT       , CO2         , DAYL        , EO          , EOP         , IRRAMT
         REAL    :: KCAN        , NFP         , RAIN        , RLV(NL)     , SRAD        , TNIMBSOM    , TOMINSOM1   , UNH4(NL)        
         REAL    :: UNO3(NL)    , WINDSP      
 
@@ -60,7 +60,7 @@
         !               ! If model failure so that cycle not completed
         !-------------------------------------------------------------------------------------------------------------------
         CALL YCA_Out_ModFail ( &
-            BRSTAGE     , CAID        , DYNAMIC     , KCAN        &
+            BRSTAGE     , LAI        , DYNAMIC     , KCAN        &
             )
 
         !-------------------------------------------------------------------------------------------------------------------
@@ -71,29 +71,19 @@
             (YEARDOY == STGYEARDOY(HSTG)).OR. (YEARDOY == STGYEARDOY(PSX+1))) THEN
             
             !---------------------------------------------------------------------------------------------------------------
-            !          Output WORK data (IDETL: Work details)
-            !---------------------------------------------------------------------------------------------------------------     
-
-            CALL YCA_Out_Work ( &
-                BRSTAGE     , CN          , CO2         , DOY         , EO          , IDETL       , IRRAMT      , NFP         , &
-                RAIN        , WINDSP      , YEAR        &
-                )
-            !---------------------------------------------------------------------------------------------------------------
             !         Output plant growth factors (Plantgro, gr2, grf, N) (IDETG NE N)
             !---------------------------------------------------------------------------------------------------------------
              CALL YCA_Out_PlGrow ( & 
                 BRSTAGE     , CANHT       , DOY         ,  EOP         , IDETG       , IDETL       , ISWNIT      , &
                 NFP         , RLV         , RUN         , TN          , YEAR        &
-                )  
+                ) 
+             CALL YCA_Out_FreshWt ( & 
+                DOY         ,  IDETG       , IDETL       , RUN         , YEAR        &
+                )
             
-        ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.IPLTI == 'A') THEN
+!       ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.IPLTI == 'A') THEN
+        ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.(IPLTI == 'A' .OR. IPLTI == 'F')) THEN
                 
-            !! Automatic planting                                                              ! MF Commented out bt LAH in original code. Left in case useful in debugging.
-            !WRITE (fnumwrk,*) 'Yeardoy ',yeardoy
-            !WRITE (fnumwrk,*) 'Water thresholds ',swpltl,swplth
-            !WRITE (fnumwrk,*) 'Water ',avgsw
-            !WRITE (fnumwrk,*) 'Temperature thresholds ',pttn,ptx
-            !WRITE (fnumwrk,*) 'Temperature ',tsdep
                 
         ENDIF  ! End time-course outputs (appropriate day, etc.)
         ! (MOD(DAS,FROPADJ) == 0.AND.YEARDOY >= PLYEARDOY),etc..
@@ -108,7 +98,7 @@
             CALL YCA_Out_Eval ( &  
                 CN          , DOY         , DYNAMIC     , IDETG       , IDETL       , IDETO       , ISWNIT      , ISWWAT      , &
                 MESOM       , ON          , RN          , RUN         , RUNI        , SN          , STGYEARDOY  , TN          , &
-                TNIMBSOM    , TOMINSOM1   , YEAR        &
+                TNIMBSOM    , TOMINSOM1   , YEAR        , LAI         &
                 )
                 
             !-----------------------------------------------------------------------------------------------------------
@@ -152,7 +142,7 @@
             !         Screens for sensitivity mode
             !-----------------------------------------------------------------------------------------------------------
             CALL YCA_Out_Sens ( & 
-                CN          , DOY         , RNMODE      , STGYEARDOY  , TN          , YEAR        &
+                CN          , DOY         , RNMODE      , STGYEARDOY  , TN          , YEAR        , LAI        &
                 )   
                 
             !-----------------------------------------------------------------------------------------------------------
@@ -169,7 +159,7 @@
         !---------------------------------------------------------------------------------------------------------------
         CALL YCA_Out_ReInit ( &  
             BRSTAGE     , CN          , DYNAMIC     , IDETL       , NFP         , RNMODE      , SRAD        , STGYEARDOY  , &
-            UNH4        , UNO3        &
+            UNH4        , UNO3        , LAI         &
             )
             
     END SUBROUTINE YCA_Output

@@ -237,13 +237,13 @@
             ENDIF        
             
             XLAI   = LAI
-            IF (WTLF .GT. 0.0) THEN        ! En esta fórmula los valores de SLA obtenidos son 10 veces mayores a los de la literatura de Bartholomew pag 123
-               SLA  = LAI * 10000 / WTLF   !   pero es que en este libro en el gráfico las unidades son m2/kg. Esta fórmula calcula SLA en cm2/g.
-           !                               ! SLA es el área específica de la hoja dividida entre su peso seco.
+            IF (WTLF .GT. 0.0) THEN        ! En esta fï¿½rmula los valores de SLA obtenidos son 10 veces mayores a los de la literatura de Bartholomew pag 123
+               SLA  = LAI * 10000 / WTLF   !   pero es que en este libro en el grï¿½fico las unidades son m2/kg. Esta fï¿½rmula calcula SLA en cm2/g.
+           !                               ! SLA es el ï¿½rea especï¿½fica de la hoja dividida entre su peso seco.
                
-        !    IF (LWAD .GT. 0.0) THEN         !  Estuve confundido con esto, pero luego descubrí que el asunto es que se debe reportar en                      
+        !    IF (LWAD .GT. 0.0) THEN         !  Estuve confundido con esto, pero luego descubrï¿½ que el asunto es que se debe reportar en                      
         !       SLA  = LAI * 10000 / LWAD    !  cm2/g, si yo lo calculo como m2/kg entonces los valores deben ser 10 veces menores.
-                                            ! Esta fórmula calcula SLA en m2/kg
+                                            ! Esta fï¿½rmula calcula SLA en m2/kg
                
 
                

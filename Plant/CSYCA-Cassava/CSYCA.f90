@@ -29,17 +29,18 @@
        SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                                                & !Run+loop
        SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,                                             & !Weather
        DRAIN, RUNOFF, IRRAMT,                                                                 & !Water
-       DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                              & !Weather        !TWILEN = DAYL; SOILTEMP = ST
+       DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                              & !Weather        !TWILEN = DAYL; SOILTEMP = ST 
        NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,                                     & !Soil states
        SW, NO3LEFT, NH4LEFT, FERNIT,                                                          & !H2O,N states
        TLCHD, TNIMBSOM, TNOXD, TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,           & !N components
        YEARPLTCSM, HARVFRAC,                                                                  & !Pl.date         ! YRPLT = YEARPLTCSM
        PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,                                            & !Resources       ! REPLACED ALBEDO WITH ALBEDOS
-       CAID, KCAN, KEP, RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,                           & !States          ! PORMIN = RWUMP
+       LAI, KCAN, KEP, RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,                           & !States          ! PORMIN = RWUMP
        UNO3, UNH4, UH2O,                                                                      & !Uptake
        SENCALG, SENNALG, SENLALG,                                                             & !Senescence
        RESCALG, RESNALG, RESLGALG,                                                            & !Residues
        STGYEARDOY, BRSTAGE,                                                                   & !Stage dates     !GSTAGE = BRSTAGE
+       WEATHER     , SOILPROP    , CONTROL     ,                                              & 
        DYNAMIC) !, WEATHER)                                                                        !Control
 
     USE ModuleDefs
@@ -49,14 +50,16 @@
       
     IMPLICIT NONE
       
-    TYPE (WeatherType) WEATHER                             
+    TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+    TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+    TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
     
     INTEGER :: CN       , DOY         , DYNAMIC     , FROP        , NLAYR       , ON          , REP        , RN          
     INTEGER :: RUN      , RUNI        , SN          , STEP        , STGYEARDOY(0:19)            , TN         , YEAR
     INTEGER :: YEARPLTCSM 
     INTEGER :: CSTIMDIF , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT     , CSIDLAYR    , CSYEARDOY              ! Integer function calls
 
-    REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CO2         , DAYL     ! REPLACED ALBEDO WITH ALBEDOS  
+    REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , LAI         , CANHT       , CLOUDS      , CO2         , DAYL      ! REPLACED ALBEDO WITH ALBEDOS
     REAL    DEPMAX      , DEWDUR      , DLAYR(NL)   , DRAIN       , DUL(NL)     , EO          , EOP         , EP          
     REAL    ES          , ET          , FERNIT      , HARVFRAC(2) , IRRAMT      , KCAN        , KEP         , LAIL(30)    
     REAL    LAILA(30)   , LL(NL)      , NFP         , NH4LEFT(NL) , NO3LEFT(NL) , PARIP       , PARIPA      , RAIN        
@@ -142,14 +145,7 @@
             CN          , DOY         , FILEIOIN    , FROP        , IDETL       , ISWNIT      , ON          , RN          , &
             RNMODE      , RUN         , SN          , TN          , YEAR        & 
             )
-        
-        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-        IF (.NOT.FOPEN) THEN
-            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',ACTION = 'READWRITE')
-        END IF
-        WRITE (fnumwrk,'(2A, 2F9.5)') 'ALBEDOS (soil albedo) and ALBEDO (canopy ',  &  ! MF 19JA15  For WORK.OUT   
-            'albedo) AFTER YCA_RunInit in CSYCA) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
-            
+                    
 !*******************************************************************************************************************************
     ELSEIF (DYNAMIC == SEASINIT) THEN    ! Initialization                      ! MF Equivalent to line 1824 in CSCAS.FOR
 !*******************************************************************************************************************************
@@ -164,7 +160,7 @@
         !-----------------------------------------------------------------------------------------------------------------------
           
         CALL YCA_SeasInit ( &
-            ALBEDOS     , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CN          , DEWDUR      , DOY         , &
+            ALBEDOS     , BRSTAGE     , LAI         , CANHT       , CLOUDS      , CN          , DEWDUR      , DOY         , &
             HARVFRAC    , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , KEP         , LAIL        , &
             LAILA       , NFP         , ON          , PARIP       , PARIPA      , RESCALG     , RESLGALG    , RESNALG     , &
             RLV         , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , RWUPM       , SENCALG     , &
@@ -189,13 +185,12 @@
                 ALBEDOS     , BD          , BRSTAGE     ,  CLOUDS     , CO2         , DAYL        , DLAYR       , DOY         , &
                 DUL         , EO          , EOP         , ES          , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
                 KEP         , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , &
-                RLV         , RNMODE      , RWUMX       , RWUPM       , SAT         , SENCALG     , SENLALG     , SENNALG     , &
+                RLV         , RNMODE      , SAT         , SENCALG     , SENLALG     , SENNALG     , &
                 SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
                 TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
-                !WEATHER     , 
-                WINDSP      , YEAR        , YEARPLTCSM  , &         !LPM 06MAR2016 Added to keep automatic planting
+                WEATHER     , SOILPROP    , CONTROL     , &  
+                WINDSP      , YEAR        , YEARPLTCSM  , LAI         ,&         !LPM 06MAR2016 Added to keep automatic planting
                 IDETG         )
-
         !!=======================================================================================================================
         !ENDIF  ! End of after planted (rate) section
         !!=======================================================================================================================
@@ -205,7 +200,7 @@
 !*******************************************************************************************************************************
 
             CALL YCA_Integrate ( &
-                ALBEDOS     , BD          , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX      , &
+                ALBEDOS     , BD          , BRSTAGE     , LAI         , CANHT       , CO2         , DAYL        , DEPMAX      , &
                 DLAYR       , DOY         , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , &
                 ISWNIT      , ISWWAT      , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , RAIN        , &
                 RESCALG     , RESLGALG    , RESNALG     , RLV         , RUNOFF      , SRAD        , STGYEARDOY  , SW          , &
@@ -226,7 +221,7 @@
         !-----------------------------------------------------------------------------------------------------------------------
   
         CALL YCA_Output ( & 
-            BRSTAGE     , CAID        , CANHT       , CN          , CO2         , DOY         , DYNAMIC     , EO          , &
+            BRSTAGE     , LAI         , CANHT       , CN          , CO2         , DOY         , DYNAMIC     , EO          , &
             EOP         , IDETG       , IDETL       , IDETO       , IDETS       , IRRAMT      , ISWNIT      , ISWWAT      , &
             KCAN        , MESOM       , NFP         , NLAYR       , ON          , RAIN        , REP         , RLV         , &
             RN          , RNMODE      , RUN         , RUNI        , SN          , SRAD        , STGYEARDOY  , TN          , &
@@ -237,19 +232,13 @@
       ELSEIF (DYNAMIC == SEASEND) THEN                                         ! MF Equivalent to line 9630 in CSCAS.FOR
 !*******************************************************************************************************************************
 
-        IF (STGYEARDOY(PSX+1) /= YEARDOY) THEN  ! End for non-crop reason
-          WRITE (fnumwrk,*)' '
-          WRITE (fnumwrk,'(A50)') &
-           ' Run terminated.(Usually because ran out of weather data).'
-        ENDIF
-
         EXCODEPREV = EXCODE
 
         CLOSE (NOUTPG)
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
+        CLOSE (NOUTPF)
         CLOSE (NOUTPN)
-        CLOSE (FNUMWRK)
 
 !*******************************************************************************************************************************
       ENDIF ! End of INITIATION-RATES-INTEGRATE-OUTPUT-SEASEND construct       ! MF Equivalent to line 9648 in CSCAS.FOR

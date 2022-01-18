@@ -639,36 +639,53 @@ C      remain at yesterday's C and N concentrations.  The rest of the
 C      tissues may have C annd N refill and, thus, have a different C
 C      and N concentration.
 C-----------------------------------------------------------------------
-!      EODLFC = (WCRLF + CADLF) / (WTLF + NADLF / 0.16 + CADLF)
-      EODLFC = (WCRLF + CADLF - LFSCMOB) / (WTLF + NADLF / 0.16 +
-     &    CADLF - SLMDOT)
-!      EODLFN = (WTNLF + NADLF) / (WTLF + NADLF / 0.16 + CADLF)
-      EODLFN = (WTNLF + NADLF - LFSNMOB) / (WTLF + NADLF / 0.16 +
-     &    CADLF - SLMDOT)
+      if((WTLF + NADLF / 0.16 + CADLF - SLMDOT) .gt. 0.0)then
+!     EODLFC = (WCRLF + CADLF) / (WTLF + NADLF / 0.16 + CADLF)
+         EODLFC = (WCRLF + CADLF - LFSCMOB) / (WTLF + NADLF / 0.16 +
+     &        CADLF - SLMDOT)
+!     EODLFN = (WTNLF + NADLF) / (WTLF + NADLF / 0.16 + CADLF)
+         EODLFN = (WTNLF + NADLF - LFSNMOB) / (WTLF + NADLF / 0.16 +
+     &        CADLF - SLMDOT)
+      else
+         EODLFC = 0.0
+         EODLFN = 0.0
+      end if
 
+      if((STMWT + NADST / 0.16 + CADST) .gt. 0.0)then
 !      EODSTC = (WCRST + CADST) / (STMWT + NADST / 0.16 + CADST)
-      EODSTC = (WCRST + CADST - STSCMOB) / (STMWT + NADST / 0.16 +
-     &    CADST - SSMDOT)
+         EODSTC = (WCRST + CADST - STSCMOB) / (STMWT + NADST / 0.16 +
+     &        CADST - SSMDOT)
 !      EODSTN = (WTNST + NADST) / (STMWT + NADST / 0.16 + CADST)
-      EODSTN = (WTNST + NADST - STSNMOB) / (STMWT + NADST / 0.16 + 
-     &    CADST - SSMDOT)
+         EODSTN = (WTNST + NADST - STSNMOB) / (STMWT + NADST / 0.16 + 
+     &        CADST - SSMDOT)
+      else
+         EODSTC = 0.0
+         EODSTN = 0.0
+      end if
 
+      if((RTWT + NADRT / 0.16 + CADRT) .gt. 0.0)then
 !      EODRTC = (WCRRT + CADRT) / (RTWT + NADRT / 0.16 + CADRT)
-      EODRTC = (WCRRT + CADRT - RTSCMOB) / (RTWT + NADRT / 0.16 + 
-     &    CADRT - SRMDOT)
+         EODRTC = (WCRRT + CADRT - RTSCMOB) / (RTWT + NADRT / 0.16 + 
+     &        CADRT - SRMDOT)
 !      EODRTN = (WTNRT + NADRT) / (RTWT + NADRT / 0.16 + CADRT)
-      EODRTN = (WTNRT + NADRT - RTSNMOB) / (RTWT + NADRT / 0.16 + 
-     &    CADRT - SRMDOT)
+         EODRTN = (WTNRT + NADRT - RTSNMOB) / (RTWT + NADRT / 0.16 + 
+     &        CADRT - SRMDOT)
+      else
+         EODRTC = 0.0
+         EODRTN = 0.0
+      end if
 
-
+      if((STRWT + NADSR / 0.16 + CADSR) .gt. 0.0)then
 !      EODSRC = (WCRSR + CADSR) / (STRWT + NADSR / 0.16 + CADSR)
-      EODSRC = (WCRSR + CADSR - SRSCMOB) / (STRWT + NADSR / 0.16 +
-     &    CADSR - SSRMDOT)
+         EODSRC = (WCRSR + CADSR - SRSCMOB) / (STRWT + NADSR / 0.16 +
+     &        CADSR - SSRMDOT)
 !      EODSRN = (WTNSR + NADSR) / (STRWT + NADSR / 0.16 + CADSR)
-      EODSRN = (WTNSR + NADSR - SRSNMOB) / (STRWT + NADSR / 0.16 +
-     &    CADSR - SSRMDOT)
-
-
+         EODSRN = (WTNSR + NADSR - SRSNMOB) / (STRWT + NADSR / 0.16 +
+     &        CADSR - SSRMDOT)
+      else
+         EODSRC = 0.0
+         EODSRN = 0.0
+      end if
 
 C-----------------------------------------------------------------------
 C    Use 1982 Penning de Vries book, p. 125, composition of tissue,
@@ -1533,7 +1550,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net growth rate of nitrogen in the roots
 C-----------------------------------------------------------------------
-      NRDOT = NGRRT - NRUSRT - NSROFF
+      NRDOT = NGRRT - NRUSRT - NROFF
       IF (RTWT .GT. 0.0) THEN
         NRDOT = NRDOT + NADRT - RTNADDM
       ENDIF
@@ -2218,9 +2235,10 @@ C-----------------------------------------------------------------------
         SECTION = '*PLANT'
         CALL FIND(LUNIO, SECTION, LNUM, FOUND)
         IF (FOUND .EQ. 0) THEN
-        CALL ERROR(ERRKEY, 1, FILEIO, LNUM)
+          CALL ERROR(ERRKEY, 1, FILEIO, LNUM)
         ELSE
-        READ(LUNIO,'(24X,F6.1,5X,A1,6X,F6.0,12X,F6.0)')
+C-GH      READ(LUNIO,'(24X,F6.1,5X,A1,6X,F6.0,12X,F6.0)')
+          READ(LUNIO,'(24X,F6.0,5X,A1,6X,F6.0,12X,F6.0)')
      &    PLTPOP, PLME, ROWSPC, SDWTPL
         ENDIF
 

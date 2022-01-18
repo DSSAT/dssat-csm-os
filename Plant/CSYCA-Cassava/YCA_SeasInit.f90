@@ -10,7 +10,7 @@
 ! information to the overview and work files.
 !***************************************************************************************************************************
     SUBROUTINE YCA_SeasInit ( &  
-        ALBEDOS     , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CN          , DEWDUR      , DOY         , &
+        ALBEDOS     , BRSTAGE     , LAI         , CANHT       , CLOUDS      , CN          , DEWDUR      , DOY         , &
         HARVFRAC    , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , KEP         , LAIL        , &
         LAILA       , NFP         , ON          , PARIP       , PARIPA      , RESCALG     , RESLGALG    , RESNALG     , &
         RLV         , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , RWUPM       , SENCALG     , &
@@ -26,7 +26,7 @@
         INTEGER STGYEARDOY(0:19)            , CN          , DOY         , ON          , RN          , RUN         , RUNI        
         INTEGER SN          , TN          , YEAR
         
-        REAL    ALBEDOS     , BRSTAGE     , CAID        , CANHT       , CLOUDS      , DEWDUR      , HARVFRAC(2) , KCAN        
+        REAL    ALBEDOS     , BRSTAGE     , LAI         , CANHT       , CLOUDS      , DEWDUR      , HARVFRAC(2) , KCAN        
         REAL    KEP         , LAIL(30)    , LAILA(30)   , NFP         , PARIP       , PARIPA      , RESCALG(0:NL)             
         REAL    RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)     , RWUMX       , RWUPM       
         REAL    SENCALG(0:NL)             , SENLALG(0:NL)             , SENNALG(0:NL)             , SLPF        , TAIRHR(24)   
@@ -39,7 +39,7 @@
         !-----------------------------------------------------------------------------------------------------------------------
         
         CALL YCA_SeasInit_VarInit ( &
-            BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
+            BRSTAGE     , LAI         , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
             PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
             STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3         &
             ) 

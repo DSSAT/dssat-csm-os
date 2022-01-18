@@ -76,6 +76,7 @@
 !
 !  06/15/1994 PWW Original written
 !  03/29/2017 CGO Revised for v4.6
+!  10/29/2021 FO  Fixed unit conflict on species file for gfortran
 !=======================================================================
       SUBROUTINE Aloha_IPCROP (CONTROL)
 
@@ -130,6 +131,8 @@
       CASE(2); EXIT   !End of section 
       END SELECT !ISECT
     ENDDO
+    CLOSE(LUNSPE)
+
     CLOSE(LUNSPE)
 
     RETURN

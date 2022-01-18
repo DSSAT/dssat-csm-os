@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.8; 2021-07-27
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -40,6 +40,7 @@ B4DAT  Branch 4 date   Date of fourth branching (YrDoy)                         
 B5DAT  Branch 5 date   Date of fifth branching (YrDoy)                          B5DAT
 BADMF  Biomass@forcing Above-ground biomass at forcing (pineapple, t/ha)        .
 BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
+BR#SH  SHOOT NO #/m2   Shoot (apex) number at harvest (no/m2)                   .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                  .
@@ -64,6 +65,7 @@ E#AM   Number #/m2     Eye number at maturity (no/m2)                           
 E#UM   Number #/unit   Eye number at maturity (no/fruit)                        .
 EDAP   Emergence day   Emergence day (dap)                                      .
 EDAT   Emergence date  Emergence date (YrDoy)                                   .
+ELEV   Elevation  m    Elevation (m) 
 EPCM   EP total mm     Total season transpiration (mm)                          .
 EPCP   EP plant seas   Total transpiration, planting to harvest (mm)            .
 ESCM   ES total mm     Total season soil evaporation (mm)                       .
@@ -71,10 +73,14 @@ ESCP   ES plant seas   Total soil evaporation, planting to harvest (mm)         
 ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) .
 ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
-EWUM   Eye wt. (g)     Eye weight (g)                                           .
+EWUM   Eye wt. g       Eye weight (g)                                           .
+FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
+FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .
 FDAT   Forcing date    Forcing or flowering date (YrDoy)                        .
+FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
 FNAM   Field name      Field name                                               .
+FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
 FRN%M  Fruit N% @ mat  Fruit N concentration at maturity (%)                    .
 FRNAM  Fruit N @ mat   Fruit N content at maturity (kg/ha)                      .
 FWAH   Fresh wt @ harv Yield fresh weight at harvest (t/ha)                     .
@@ -91,9 +97,11 @@ HINM   N harvest index Nitrogen harvest index at maturity (fr)                  
 HIPM   Pod index       Pod harvest index at maturity                            .
 HPRH   Purity %        Purity immediately after harvest (%)                     .
 HWAH   Harvested yield Harvested yield (kg [dm]/ha)                             .
+HWAHF  Fresh yield     Harvested yield (fresh weight) (kg/ha)                   .
 HWAM   Mat Yield kg/ha Yield at harvest maturity (kg [dm]/ha)                   .
 HWUM   Weight g/unit   Unit wt at maturity (g [dm]/unit)                        .
 HYAH   Field wt Mg/ha  Field weight at harvest (Mg [fm]/ha)                     .
+HYEAR  Harvest year    Year at harvest                                          .  
 IDAP   Panicle in day  Panicle Initiation day (dap)                             .
 IDAT   Panicle in date Panicle Initiation date (YrDoy)                          .
 IR#M   Irrig apps #    Irrigation applications (no)                             .
@@ -106,6 +114,7 @@ L#SX   Leaf number #   Leaf number per stem, maximum                            
 LAIH   LAI harvest     Leaf area index, at harvest                              .
 LAIX   LAI maximum     Leaf area index, maximum                                 .
 LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      .
+LONG   Longitude °     Longitude (degrees)                                      .
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
@@ -177,6 +186,8 @@ VN%M   Veg N% @ matur. Vegetative N at maturity (%)                             
 VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         .
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
+WYEAR  Weather year    Year for weather data (for forecast ensembles)           .
+XLAT   Latitude °      Latitude (degrees)                                       .
 YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
@@ -478,6 +489,7 @@ NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (ug [N]/g [soil])        
 NUAC   N Uptake kg/ha  N uptake, cumulative (kg [N]/ha)                         .
 NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
+NURTD  Urea-N kg/ha    Total soil urea (kg [N]/ha)                              .
 OXRN   Oxnitr kgN/ha/d Ox Layer Nitrif Rt (kg [N]/ha/d)                         .
 QNAD   Stolon N kg/ha  Stolon N (kg/ha)                                         .
 QN%D   Stolon N %        Stolon N concentration (%)       
@@ -732,11 +744,22 @@ DSH#   DIS SHL #/m2.d  Daily shell number consumed                              
 DSHM   DIS SHL kg/ha.d Daily shell mass consumed                                .
 DSTM   DIS STEM kg/ha  Daily stem mass consumed                                 .
 FAW    FAW #/m         Fall armyworm                                            .
+IBCUT  Cutworm, no. m-2                                                         .
+LFMIN  Leafminer (Aproaerema Modicella-Deventer) no.m-2, m2 m-2 leaf damage     .
+PCLA   Defoliation, %                                                           .
+PDLA   Diseased leaf area, %                                                    .
+PRP    Reduction in photosynthetic rate, %                                      .
+PSTDS  General pest and diseases losses due to rot, tikka, leafminer, etc.      .
 RTWM   RTWM #/m        Root worm                                                .
 SGSB   SGSB #/m        Southern green stinkbug                                  .
 SL     SB LOOPER #/m   Soybean looper                                           .
 VBC5   VBC5 #/m        5 instar velvetbean caterpillar                          .
 VBC6   VBC6 #/m        6 instar velvetbean caterpillar                          .
+UFCEW  Corn earworm (Heliothis zea), no. m-2                                    .
+UFRKN  Root-knot nematode (Meloidogyne spp.), no. cm-3 soil                     .
+UFSBL  Soybean looper (Pseudoplusia includens), no. m-2                         .
+UFSKB  Southern green stinkbug (Mezara viridula), no. m-2                       .
+UFVBC  Velvetbean caterpillar (Anticarsia gemmatalis), no. m-2                  .
 
 *EXPERIMENTAL DATA
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -850,6 +873,7 @@ TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     
 CLDD   CLOUD FRAC      Relative cloudiness factor (0-1)                         .
 CO2D   CO2 ppm         Atmospheric CO2 concentration (ppm)                      .
 DAYLD  DAYLENGTH hr    Day length sunrise to sunset (hr)                        .
+OZON7  Ozone ppb       Daily 7-hour mean ozone concentration (9:00-15:59), ppb  .
 PARD   PAR             Daily PAR or photon flux density (moles[quanta]/(m2.d))  .
 PRED   PRECIP mm/d     Precipitation depth (mm/d)                               .
 SRAD   SRAD MJ/m2.d    Solar radiation (MJ/(m2.d))                              .
@@ -865,6 +889,7 @@ TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     
 VPD    Vapor Pres Def  Vapor pressure deficit                                   .
 VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
 WDSD   WIND SPEED km/d Wind speed (km/d)                                        .
+WDATE  WEATHER DATE    Date for weather data (YYYYDDD, for forecast ensembles)  .
 
 *OTHER MODELS
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -939,6 +964,22 @@ WFSD   WATER FAC SENES Water factor for senescence (0-1)                        
 WFTD   WATER FAC TRANS Water factor for transpiration (0-1)                     .
 WSTD   H2O STRESS,TILR Water stress - tillering (0-1)                           .
 YEAR   YEAR            Year (4 digits)                                          .
+RCANE  Cane Type       PlantCane or Ratoon Cane                                 .
+DDLMD  Dead Leaf Biom. Dead Leaves Biomass (ton/ha)   							.
+DDTMD  Dead Tillers B. Dead Tillers Biomass (ton/ha)							.
+SEQR   Ratoon Seq.     Ratooning Cane Sequence                                  .
+TTTOT  Total TT        Total thermal time accumulated (oCdays)                  .
+BBDMD  Below Ground W  Total below ground dry weight (ton/ha)                   .
+CSTAT  Crop Status     Crop Status (1=alive, 0=dead)                            .
+GLI%D  Light Int. GL   Fraction of light intercepted by green leaves (0-1)      .
+TLI%D  Light Int. TL   Fraction of light intercepted by dry+green leaves (0-1)  .
+TRWUP  TotRootUpPot    Potential Root Water Uptake (mm/d)                       .
+EOP    PTranspiration  Potential Crop Transpiration (mm/d)                      .  
+COAD   Oil kg/ha       Total oil accumulated (kg/ha)                     .
+COAM   Oil kg/ha at PM Total oil accumulated at physiological maturity (kg/ha)                                    .
+XWAD   Oil kg /ha      Oil kg/ha                                               .
+XO%D   Seed oil %      Seed oil concentration (%)                               .
+HSAM   Seed Yield      Yield at harvest maturity (kg/ha 9% moisture)            .
 
 *SOIL ORGANIC MATTER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -1198,10 +1239,10 @@ ADPWM  DryWt g/fruit   Avg dry fruit (pod, ear) weight at maturity (g/fruit)    
 AFPWD  FreshWt g/fruit Average fresh fruit (pod, ear) weight (g/fruit)          .
 AFPWM  FreshWt g/fruit Avg fresh fruit (pod, ear) weight at maturity (g/fruit)  .
 FCULD  Fr wt cull      Fresh weight for cull fruit/pods (g/m2)                  .
-FPWAD  Tot Fr Wt kg/ha Total fresh fruit (pod, ear) weight (kg/ha)              .
-FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
-RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)
-RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)
+FHWAD  Fresh harvest   Harvest product fresh wt (kg/ha)                         .
+FPWAD  Tot Fr Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
+RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)         .
+RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)           .
 FSZ1D  Fr wt 1 g/m2    Fresh weight for size class 1 (g/m2)                     .
 FSZ2D  Fr wt 2 g/m2    Fresh weight for size class 2 (g/m2)                     .
 FSZ3D  Fr wt 3 g/m2    Fresh weight for size class 3 (g/m2)                     .
@@ -1214,8 +1255,9 @@ MFWAD  Mrkt Fr Wt k/h  Market fresh fruit (pod, ear) weight (kg/ha)             
 NFWAD  # market/ha     Market fruit (pod, ear) number (fruit/ha)                .
 PAGED  Pod age d       Age of oldest pod or ear (days)                          .
 PAGEM  Pod age d       Age of oldest pod or ear at maturity (days)              .
-PDMCD  DryWt frac      Fruit (pod, ear) dry matter concentration (fraction)     .
+PDMCD  DryMatter frac  Dry matter concentration of harvested product (fraction) .
 PDMCM  DryMatter frac  Avg dry matter concentration at maturity (fraction)      .
+PDMCH  DryMatter frac  Avg dry matter concentration at harvest (fraction)       .
 SMFMH  Stalk fresh massMillable cane fresh weight at harvest (t/ha)             .
 
 *CANEGRO - South Africa
