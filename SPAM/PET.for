@@ -140,22 +140,33 @@ C=======================================================================
 
       RETURN
       END SUBROUTINE PET
-      
+
 C=======================================================================
 
 C=======================================================================
 C  PETASCE, Subroutine, K. R. Thorp
 C  Calculates reference evapotranspiration for the short or tall
-C  reference crops using the ASCE Standardized Reference 
+C  reference crops using the ASCE Standardized Reference
 C  Evapotranspiration Equation.
-C  Adjusts reference evapotranspiration to potential soil water 
+C  Adjusts reference evapotranspiration to potential soil water
 C  evaporation and potential transpiration using FAO-56 dual crop
 C  coefficients, following FAO-56 (Allen et al., 1998) and the
 C  ASCE (2005) standardized reference ET algorithm.
 C  DeJonge K. C., Thorp, K. R., 2017. Implementing standardized
 C  reference evapotranspiration and dual crop coefficient approach
-C  in the DSSAT Cropping System Model. Transactions of the ASABE. 
+C  in the DSSAT Cropping System Model. Transactions of the ASABE.
 C  60(6):1965-1981.
+C  ASCE Task Committee on Standardization of Reference
+C  Evapotranspiration (Walter, I. A., Allen, R. G., Elliott, R.,
+C  Itenfisu, D., Brown, P., Jensen, M. E., Mecham, B., Howell, T. A.,
+C  Snyder, R., Eching, S., Spofford, T., Hattendorf, M., Martin, D.,
+C  Cuenca, R. H., Wright, J. L.), 2005. The ASCE Standardized Reference
+C  Evapotranspiration Equation. American Society of Civil Engineers,
+C  Reston, VA.
+C  Allen, R. G., Pereira, L. S., Raes, D., Smith, M., 1998.  FAO
+C  Irrigation and Drainage Paper No. 56. Crop Evapotranspiration:
+C  Guidelines for Computing Crop Water Requirements. Food and
+C  Agriculture Organization of the United Nations, Rome Italy.
 !-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  08/19/2013 KRT Added the ASCE Standardize Reference ET approach
@@ -195,32 +206,32 @@ C=======================================================================
       CHARACTER*78 MSG(2)
 !-----------------------------------------------------------------------
 
-!     ASCE Standardized Reference Evapotranspiration 
-!     Average temperature (ASCE Standard Eq. 2)
+!     ASCE Standardized Reference Evapotranspiration
+!     Average temperature, ASCE (2005) Eq. 2
       TAVG = (TMAX + TMIN) / 2.0 !deg C
 
-!     Atmospheric pressure (ASCE Standard Eq. 3)
+!     Atmospheric pressure, ASCE (2005) Eq. 3
       PATM = 101.3 * ((293.0 - 0.0065 * XELEV)/293.0) ** 5.26 !kPa
 
-!     Psychrometric constant (ASCE Standard Eq. 4)
+!     Psychrometric constant, ASCE (2005) Eq. 4
       PSYCON = 0.000665 * PATM !kPa/deg C
 
-!     Slope of the saturation vapor pressure-temperature curve 
-!     (ASCE Standard Eq. 5)                                !kPa/degC
+!     Slope of the saturation vapor pressure-temperature curve
+!     ASCE (2005) Eq. 5                                    !kPa/degC
       UDELTA = 2503.0*EXP(17.27*TAVG/(TAVG+237.3))/(TAVG+237.3)**2.0
 
-!     Saturation vapor pressure (ASCE Standard Eqs. 6 and 7)
+!     Saturation vapor pressure, ASCE (2005) Eqs. 6 and 7
       EMAX = 0.6108*EXP((17.27*TMAX)/(TMAX+237.3)) !kPa
       EMIN = 0.6108*EXP((17.27*TMIN)/(TMIN+237.3)) !kPa
       ES = (EMAX + EMIN) / 2.0                     !kPa
-      
-!     Actual vapor pressure (ASCE Standard Eq. 8)
+
+!     Actual vapor pressure, ASCE (2005) Eq. 8
       EA = 0.6108*EXP((17.27*TDEW)/(TDEW+237.3)) !kPa
 
-!     RHmin (ASCE Standard Eq. 13, RHmin limits from FAO-56 Eq. 70)
+!     RHmin, ASCE (2005) Eq. 13, RHmin limits from FAO-56 Eq. 70
       RHMIN = MAX(20.0, MIN(80.0, EA/EMAX*100.0))
-      
-!     Net shortwave radiation (ASCE Standard Eq. 16)
+
+!     Net shortwave radiation, ASCE (2005) Eq. 16
       IF (XHLAI .LE. 0.0) THEN
         ALBEDO = MSALB
       ELSE
@@ -228,7 +239,7 @@ C=======================================================================
       ENDIF
       RNS = (1.0-ALBEDO)*SRAD !MJ/m2/d
 
-!     Extraterrestrial radiation (ASCE Standard Eqs. 21,23,24,27)
+!     Extraterrestrial radiation, ASCE (2005) Eqs. 21,23,24,27
       PIE = 3.14159265359
       DR = 1.0+0.033*COS(2.0*PIE/365.0*DOY) !Eq. 23
       LDELTA = 0.409*SIN(2.0*PIE/365.0*DOY-1.39) !Eq. 24
@@ -237,11 +248,11 @@ C=======================================================================
       RA2 = COS(XLAT*PIE/180.0)*COS(LDELTA)*SIN(WS) !Eq. 21
       RA = 24.0/PIE*4.92*DR*(RA1+RA2) !MJ/m2/d Eq. 21
 
-!     Clear sky solar radiation (ASCE Standard Eq. 19)
+!     Clear sky solar radiation, ASCE (2005) Eq. 19
       RSO = (0.75+2E-5*XELEV)*RA !MJ/m2/d
 
-!     Net longwave radiation (ASCE Standard Eqs. 17 and 18)
-      RATIO = SRAD/RSO 
+!     Net longwave radiation, ASCE (2005) Eqs. 17 and 18
+      RATIO = SRAD/RSO
       IF (RATIO .LT. 0.3) THEN
         RATIO = 0.3
       ELSEIF (RATIO .GT. 1.0) THEN
@@ -251,18 +262,18 @@ C=======================================================================
       TK4 = ((TMAX+273.16)**4.0+(TMIN+273.16)**4.0)/2.0 !Eq. 17
       RNL = 4.901E-9*FCD*(0.34-0.14*SQRT(EA))*TK4 !MJ/m2/d Eq. 17
 
-!     Net radiation (ASCE Standard Eq. 15)
+!     Net radiation, ASCE (2005) Eq. 15
       RN = RNS - RNL !MJ/m2/d
 
-!     Soil heat flux (ASCE Standard Eq. 30)
+!     Soil heat flux, ASCE (2005) Eq. 30
       G = 0.0 !MJ/m2/d
 
-!     Wind speed (ASCE Standard Eq. 33)
+!     Wind speed, ASCE (2005) Eq. 33
       WINDSP = WINDRUN * 1000.0 / 24.0 / 60.0 / 60.0 !m/s
       WIND2m = WINDSP * (4.87/LOG(67.8*WINDHT-5.42))
 
 !     Aerodynamic roughness and surface resistance daily timestep constants
-!     (ASCE Standard Table 1)
+!     ASCE (2005) Table 1
       SELECT CASE(MEEVP) !
         CASE('S') !Short reference crop (12-cm grass)
           Cn = 900.0 !K mm s^3 Mg^-1 d^-1
@@ -272,7 +283,7 @@ C=======================================================================
           Cd = 0.38 !s m^-1
       END SELECT
 
-!     Standardized reference evapotranspiration (ASCE Standard Eq. 1)
+!     Standardized reference evapotranspiration, ASCE (2005) Eq. 1
       REFET =0.408*UDELTA*(RN-G)+PSYCON*(Cn/(TAVG+273.0))*WIND2m*(ES-EA)
       REFET = REFET/(UDELTA+PSYCON*(1.0+Cd*WIND2m)) !mm/d
       REFET = MAX(0.0001, REFET)
@@ -295,7 +306,7 @@ C=======================================================================
 
 !     Basal crop coefficient (Kcb)
 !     Also similar to FAO-56 Eq. 97
-!     KCB is zero when LAI is zero by hard coding KCBMIN = 0.0.      
+!     KCB is zero when LAI is zero by hard coding KCBMIN = 0.0.
       IF (XHLAI .LE. 0.0) THEN
          KCB = 0.0
       ELSE
@@ -321,7 +332,7 @@ C=======================================================================
       ELSE
          FC = ((KCB-KCBMIN)/(KCMAX-KCBMIN))**(1.0+0.5*CANHT)
       ENDIF
-      
+
       !Exposed and wetted soil fraction (FAO-56 Eq. 75)
       !Wetted soil fraction (FW) is hard-coded to 1.0.
       !FW should not be used to adjust demand.
@@ -341,14 +352,14 @@ C=======================================================================
 
       !Potential evapotranspiration (FAO-56 Eq. 69)
       EO = (KCB + KE) * REFET
-      
+
       EO = MAX(EO,0.0001)
-      
+
       CALL PUT('SPAM', 'REFET', REFET)
       CALL PUT('SPAM', 'KCB', KCB)
       CALL PUT('SPAM', 'KE', KE)
       CALL PUT('SPAM', 'KC', KC)
-      
+
 !-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE PETASCE
