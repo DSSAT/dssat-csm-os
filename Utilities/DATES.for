@@ -367,14 +367,17 @@ C=======================================================================
       CALL YR_DOY(YRDOY,YR,DOY)
       NDYR = ENDYR(YR)
       DOY = DOY + INC
-      IF (DOY .GT. NDYR) THEN
-        YR = YR + 1
-        DOY = DOY - NDYR
-      ELSE IF (DOY .LE. 0) THEN
-        YR = YR - 1
-        NDYR = ENDYR(YR)
-        DOY = NDYR + DOY
-      ENDIF
+      DO WHILE (DOY .GT. NDYR .OR. DOY .LE. 0)
+        IF (DOY .GT. NDYR) THEN
+          YR = YR + 1
+          DOY = DOY - NDYR
+          NDYR = ENDYR(YR)
+        ELSE IF (DOY .LE. 0) THEN
+          YR = YR - 1
+          NDYR = ENDYR(YR)
+          DOY = NDYR + DOY
+        ENDIF
+      END DO
       INCYD = YDOY(YR,DOY)
       
       END FUNCTION INCYD
