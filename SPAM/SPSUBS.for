@@ -241,14 +241,15 @@ C-----------------------------------------------------------------------
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             !Daily printout
-            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),12(F8.3),"
+            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),9(F8.3),"
             IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
      &         CES > 1000. .OR. CEF > 1000. .OR. CEM > 1000.) THEN
-              FMT = TRIM(FMT) // "6F8.0))"
+              FMT = TRIM(FMT) // "6F8.0,"
             ELSE 
-              FMT = TRIM(FMT) // "6F8.2))"
+              FMT = TRIM(FMT) // "6F8.2,"
             ENDIF
-            
+            FMT = TRIM(FMT) // "3F8.3))"
+
             IF (REFA .LT. 0.0) THEN
               KCAA = -99.
               KBSA = -99.
