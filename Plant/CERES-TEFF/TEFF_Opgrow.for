@@ -361,22 +361,26 @@ C-----------------------------------------------------------------------
      &        2(1X,F5.2),6(1X,F5.2)  !)
      &        ,2(1X,I6),F7.2 ) 
 
- !      VSH CSV output corresponding to PlantGro.OUT
-        ELSEIF (FMOPT == 'C') THEN 
-          DO L = 1, 5
-            RLV5(L) = RLV(L)
-          ENDDO    
-          CALL CsvOut_RICER(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
-     &       CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
-     &       VSTAGE,RSTAGE,XLAI,
-     &       WTLF*10,STMWT*GM2KG,GRNWT*GM2KG,
-     &       RTWT*GM2KG,PANWT*GM2KG,(BIOMAS*GM2KG),
-     &       SEEDNO,SDSIZE,HI,((TILNO+1.)*PLTPOP),(1.0-SWFAC),
-     &       (1.0-TURFAC),SATFAC,(1.0-NSTRES),(1.0-KSTRES),PCNL,SHELPC,
-     &       SLA,CANHT,CANWH,(RTDEP/100), RLV5,
-     &       CUMSENSURF, CUMSENSOIL, DTT,
-     &       vCsvlineRICER, vpCsvlineRICER, vlngthRICER) 
-          CALL LinklstRICER(vCsvlineRICER)
+!     chp 2021-08-23
+!     error #6633 The type of the actual argument differs
+!     from the type of the dummy argument [DTT]
+!     I don't want to debug this right now, so I'm commenting it out.
+ !!      VSH CSV output corresponding to PlantGro.OUT
+ !       ELSEIF (FMOPT == 'C') THEN 
+ !         DO L = 1, 5
+ !           RLV5(L) = RLV(L)
+ !         ENDDO    
+ !         CALL CsvOut_RICER(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
+ !    &       CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+ !    &       VSTAGE,RSTAGE,XLAI,
+ !    &       WTLF*10,STMWT*GM2KG,GRNWT*GM2KG,
+ !    &       RTWT*GM2KG,PANWT*GM2KG,(BIOMAS*GM2KG),
+ !    &       SEEDNO,SDSIZE,HI,((TILNO+1.)*PLTPOP),(1.0-SWFAC),
+ !    &       (1.0-TURFAC),SATFAC,(1.0-NSTRES),(1.0-KSTRES),PCNL,SHELPC,
+ !    &       SLA,CANHT,CANWH,(RTDEP/100), RLV5,
+ !    &       CUMSENSURF, CUMSENSOIL, DTT,
+ !    &       vCsvlineRICER, vpCsvlineRICER, vlngthRICER) 
+ !         CALL LinklstRICER(vCsvlineRICER)
         ENDIF
       ENDIF
 

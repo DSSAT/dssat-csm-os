@@ -54,10 +54,11 @@
 !=======================================================================
 
       SUBROUTINE SoilOrg (CONTROL, ISWITCH, 
-     &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
+     &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
+     &    OMAData, RLV,                                   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
-     &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
-     &    SomLitE, SSOMC)                                 !Output
+     &    CH4_data, IMM, LITC, MNR, MULCH, newCO2, SomLit,!Output
+     &    SomLitC, SomLitE, SSOMC)                        !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -65,6 +66,7 @@
       USE Interface_IpSoil
       USE FloodModule
       USE ModSoilMix
+      USE GHG_MOD
 
       IMPLICIT  NONE
       SAVE
@@ -115,7 +117,7 @@
 
 !     Plant senesced matter(surface-soil, carbon-lignin-nitrogen)
       REAL SenWt(0:NL)        !kg[dry matter]/ha
-!      REAL SenLig(0:NL)       !kg[lignin]/ha
+!     REAL SenLig(0:NL)       !kg[lignin]/ha
       REAL SenE(0:NL,NELEM)   !kg[E]/ha (E=N, P, S,...)
       REAL SEN_AM, SEN_PRCEL, SEN_PRCHO, SEN_PRLIG,SEN_EXTFAC,SEN_WATFAC
       REAL SENSUM
@@ -132,6 +134,18 @@
       REAL ACCCO2(0:1)
       REAL SOM1C(0:NL)
       REAL CN_SOM(0:NL), CN_FOM(0:NL)
+
+!     Methane variables:
+      REAL Immob_OM
+!     REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
+!    &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
+!    &    CumCH4Leaching, CumCO2Emission
+      REAL RLV(NL), DRAIN
+      TYPE (CH4_type) CH4_data
+
+      REAL, PARAMETER :: FOMCFrac = 0.4
+      REAL, PARAMETER :: HumusCFrac = 0.526 !(=1/1.9)
+      REAL, PARAMETER :: HumusCNRatio = 10.0
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -158,11 +172,10 @@
       PH     = SOILPROP % PH     
       SAT    = SOILPROP % SAT   
 
-
       FLOOD = FLOODWAT % FLOOD
 
       SenWt  = SENESCE % ResWt
-!      SenLig = SENESCE % ResLig
+!     SenLig = SENESCE % ResLig
       SenE   = SENESCE % ResE
 
 !***********************************************************************
@@ -207,6 +220,10 @@
       newCO2_FOM = 0.0
       newCO2_HUM = 0.0
       newCO2 = 0.0
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4_data)                                           !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -460,6 +477,8 @@
       TOMINSOM = 0.0
       TNIMBSOM = 0.0
 
+      newCO2 = 0.0
+
       DO L = 1, NLAYR
 !       ----------------------------------------------------------------
 !       Environmental limitation factors for the soil processes.
@@ -530,7 +549,7 @@
 !           C/N ratio of the fresh organic residue in the soil, including
 !           the mineral N that is present in the soil.
             IF (FON(L) + SNH4NO3(L) > 1.E-6) THEN
-                CNR = (0.4 * FOM(L)) / (FON(L) + SNH4NO3(L))
+                CNR = (FOMCFrac * FOM(L)) / (FON(L) + SNH4NO3(L))
             ELSE
                 CNR = 25.
             ENDIF
@@ -554,6 +573,7 @@
           FOMFRAC = DECFACT * (FPOOL(L,1) * RDCHO 
      &                      +  FPOOL(L,2) * RDCEL 
      &                      +  FPOOL(L,3) * RDLIG) / FOM(L)
+
 C         Add different switch point for immobln under flooded conditions
 C         REQN = N Req. ---> To decompose 1g of FOM (GRCOM) will have to
 C         recruit (NREQ-N CONC) g of N
@@ -606,8 +626,10 @@ C         recruit (NREQ-N CONC) g of N
 
 !           80% of FOM decomposition goes to CO2 (the remainder to HUM pool)
 !           Convert FOM to C units with 0.4 multiplier
-            newCO2_FOM(L) = 0.8 * 0.4 * DLTFOM
+            newCO2_FOM(L) = 0.8 * FOMCFrac * DLTFOM
 
+!           Amount of OM associated with immobilized N
+            Immob_OM = IMMOBN * HumusCNRatio / HumusCFrac
 !           Change to FON (also, change to inorganic N)
             DLTNI1 = IMMOBN - FOMFRAC * FON(L)
             DLTFON(L) = DLTFON(L) + DLTNI1
@@ -651,7 +673,7 @@ C         recruit (NREQ-N CONC) g of N
 
 !       chp 2019-03-07 Add 20% of C, regardless of N movement. Let C decomposition
 !         drive the mass transfer.
-        DLTHUMC(L) = DLTHUMC(L) + 0.2 * 0.4 * DLTFOM
+        DLTHUMC(L) = DLTHUMC(L) + 0.2 * FOMCFrac * DLTFOM
 
         IF (N_ELEMS > 0) THEN
 !          DLTHUMC(L) = DLTHUMC(L) + 0.2 * FOMFRAC * FON(L) * 10.0
@@ -659,7 +681,6 @@ C         recruit (NREQ-N CONC) g of N
 
 !         Change in humus N = reduction based on decomposition of humus
 !           plus addition of 20% of fresh organic matter
-!!!!! - HERE IS WHERE C:N RATIO IS CHANGED !!!
           DLTNI2 = - HUMFRAC * SSOME(L,N) + 0.2 * FOMFRAC * FON(L)
           DLTHUME(L,N) = DLTHUME(L,N) + DLTNI2
           IF (DLTNI2.LT.0.0) THEN
@@ -669,14 +690,16 @@ C         recruit (NREQ-N CONC) g of N
           ENDIF
         ENDIF
 
+!       Phosphorus
         IF (N_ELEMS > 1) THEN
 !         N:P ratio of 10 for new humus.
-          DLTPI2 = - HUMFRAC * SSOME(L,P) + 0.2 * FOMFRAC * FON(L) *0.10
+          DLTPI2 = -HUMFRAC*SSOME(L,P) + 0.2*FOMFRAC*FON(L)/HumusCNRatio
           IF (DLTPI2 + SSOME(L,P) < 1.E-5) THEN
             DLTPI2 = -SSOME(L,P)
           ENDIF
           DLTHUME(L,P) = DLTHUME(L,P) + DLTPI2
         ENDIF
+
         IF (N_ELEMS > 0) THEN
 !         Net N release from all SOM and FOM sources
 !         NNOM = HUMFRAC * SSOME(L,N) + 0.8 * FOMFRAC *FON(L) - IMMOBN 
@@ -705,14 +728,16 @@ C         recruit (NREQ-N CONC) g of N
           PNOM = 0.0
 !         MINERALIZE(L,P) = PNOM
         ENDIF
-
       END DO   !End of soil layer loop.
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4_data)                                           !Output
 
 !     Transfer daily mineralization values for use by Cassava model
       CALL PUT('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
       CALL PUT('ORGC','TOMINSOM' ,TOMINSOM) !Miner from SOM (kg/ha)
       CALL PUT('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
-
 
 !***********************************************************************
 !***********************************************************************
@@ -738,13 +763,14 @@ C         recruit (NREQ-N CONC) g of N
         FOM(L) = FPOOL(L,1) + FPOOL(L,2) + FPOOL(L,3)
 !       FOM is units of kg[OM]/ha, HUMC in units of kg[C]/ha
 !       Convert SSOMC at 1.9 kg[OM]/kg[C] (Adams, 1973)
-        SomLit(L)  = SSOMC(L) * 1.9 + FOM(L)       !kg[OM]/ha
+!       SomLit(L)  = SSOMC(L) * 1.9 + FOM(L)       !kg[OM]/ha
+        SomLit(L)  = SSOMC(L) / HumusCFrac + FOM(L)       !kg[OM]/ha
 
 !       CHP 3/1/2005. LITC in kg[C]/ha, FOM in kg[dry matter]/ha
 !       These are put into "Century" variable names to export to the
 !       inorganic soil routines.
 !       Convert FOM at 2.5 kg[OM]/kg[C] 
-        LITC(L) = FOM(L) * 0.4
+        LITC(L) = FOM(L) * FOMCFrac
         SomLitC(L) = SSOMC(L) + LITC(L) 
 
         IF (N_ELEMS > 0) THEN
@@ -766,12 +792,12 @@ C         recruit (NREQ-N CONC) g of N
         IF (SSOME(L,N) .GT. 1.E-6) THEN
           CN_SOM(L) = SSOMC(L) / SSOME(L,N)
         ELSE
-          CN_SOM(L) = 10.
+          CN_SOM(L) = HumusCNRatio
         ENDIF
         IF (LITE(L,N) .GT. 1.E-6) THEN
           CN_FOM(L) = LITC(L) / LITE(L,N)
         ELSE
-          CN_FOM(L) = 10.
+          CN_FOM(L) = HumusCNRatio
         ENDIF
       ENDDO
 
@@ -813,8 +839,8 @@ C         recruit (NREQ-N CONC) g of N
       IF (N_ELEMS > 0) MULCH % MULCHN = MULCH % MULCHN + DltSRFN !kg/ha
       IF (N_ELEMS > 1) MULCH % MULCHP = MULCH % MULCHP + DltSRFP !kg/ha
 
-      SomLitC(0)   = MULCH % MULCHMASS * 0.4
-      LITC(0)      = MULCH % MULCHMASS * 0.4
+      SomLitC(0)   = MULCH % MULCHMASS * FOMCFrac
+      LITC(0)      = MULCH % MULCHMASS * FOMCFrac
       LITE(0,1)    = MULCH % MULCHN
       LITE(0,2)    = MULCH % MULCHP
       SomLitE(0,N) = MULCH % MULCHN
@@ -825,11 +851,15 @@ C         recruit (NREQ-N CONC) g of N
       IF (LITE(0,N) .GT. 1.E-6) THEN
         CN_FOM(0) = LITC(0) / LITE(0,N)
       ELSE
-        CN_FOM(0) = 10.
+        CN_FOM(0) = HumusCNRatio
       ENDIF
 
 !     Compute mulch properties
       CALL MULCHLAYER (MULCH)
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4_data)                                           !Output
 
 C***********************************************************************
 C***********************************************************************
@@ -845,8 +875,8 @@ C***********************************************************************
      &        DYNAMIC == SEASEND) THEN
 C-----------------------------------------------------------------------
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
       IF (ISWWAT == 'N') RETURN
 
@@ -858,6 +888,11 @@ C     Write seasonal output
       CALL SoilNoPoBal (CONTROL, ISWITCH, 
      &    FON, HARVRES, IMM, LITE, MNR, MULCH, N_ELEMS,   !Input
      &    NLAYR, OMADATA, SENESCE, TLITE, TSOME)          !Input
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    CH4_data)                                           !Output
+
 
 C***********************************************************************
 C***********************************************************************
@@ -926,16 +961,16 @@ C-----------------------------------------------------------------------
 ! ISWITCH       Composite variable containing switches which control flow 
 !                 of execution for model.  The structure of the variable 
 !                 (SwitchType) is defined in ModuleDefs.for. 
-! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to µg [N] / g 
+! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to ï¿½g [N] / g 
 !                 [soil] for soil layer L 
 ! LL(L)         Volumetric soil water content in soil layer L at lower 
 !                 limit (cm3 [water] / cm3 [soil])
-! NH4(L)        Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)        Ammonium N in soil layer L (ï¿½g[N] / g[soil])
 ! NI_AVAIL      N available for immobilization (kg [N] / ha)
 ! NL            Maximum number of soil layers = 20 
 ! NLAYR         Actual number of soil layers 
 ! NNOM          Net mineral N release from all SOM sources (kg [N] / ha)
-! NO3(L)        Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)        Nitrate in soil layer L (ï¿½g[N] / g[soil])
 ! OXLAYR        Composite variable which contains data about oxidation 
 !                 layer.  See ModuleDefs.for for structure. 
 ! PH(L)         pH in soil layer L 
@@ -973,7 +1008,7 @@ C-----------------------------------------------------------------------
 ! SOILPROP      Composite variable containing soil properties including 
 !                 bulk density, drained upper limit, lower limit, pH, 
 !                 saturation water content.  Structure defined in ModuleDefs. 
-! ST(L)         Soil temperature in soil layer L (°C)
+! ST(L)         Soil temperature in soil layer L (ï¿½C)
 ! SW(L)         Volumetric soil water content in layer L
 !                (cm3 [water] / cm3 [soil])
 ! SWEF          Soil water evaporation fraction; fraction of lower limit 
@@ -996,4 +1031,27 @@ C-----------------------------------------------------------------------
 !                 50% reduction for SW = SAT) 
 ! XL            Excess water (above DUL) as a fraction of the maximum 
 !                 amount of excess water (i.e. saturated). (fraction)
+
+!Methane variables
+! DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter (kg[C]/ha)
+! CO2ED  CO2emission     Daily CO2 emission (kg/ha)
+! CH4SBD TCH4Substrate   Daily portion of new CO2 that is proportioned to methane generation (kg[C]/ha)
+! CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)
+! CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)
+! CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)
+! CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)
+! CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha) 
+! CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha) 
+! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)   
+! CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)  
+! CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)  
+! CH4BLD CH4_balance     Daily CH4 balance (kg[C]/ha) 
+
+! DCO2C  CumNewCO2       Cumulative CO2 from decomposition (kg[C]/ha)
+! CO2EC  CumCO2Emission  Cumulative CO2 emissions (kg[C]/ha)
+! CH4EC  CumCH4Emission  Cumulative CH4 emissions (kg[C]/ha)
+! CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)
+! CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)
+! CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)
+
 !***********************************************************************

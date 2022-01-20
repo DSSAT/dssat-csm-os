@@ -17,7 +17,7 @@ C=======================================================================
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
 !-----------------------------------------------------------------------
-      USE N2O_mod 
+      USE GHG_mod 
       USE ModuleData
       IMPLICIT  NONE
       SAVE
