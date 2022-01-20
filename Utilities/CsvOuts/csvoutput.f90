@@ -600,7 +600,7 @@ Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    SEEDNO, SDSIZE, HI, cTILNO, SWF_AV,            &
    TUR_AV, SAT_AV, NST_AV, KST_AV, PCNL, SHELPC,   &
    SLA, CANHT, CANWH, cRTDEP, RLV,                &
-   CUMSENSURF, CUMSENSOIL, DTT,                    &
+   CUMSENSURF, CUMSENSOIL, DTTC,                    &
    Csvline, pCsvline, lngth)
 
 !  Input vars
@@ -610,13 +610,13 @@ Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !        INTEGER,Intent(in)      :: ON      ! Option number (sequence runs)  #
 !        INTEGER,Intent(in)      :: CN      ! Crop component (multicrop)     #
    Real,Intent(IN) :: VSTAGE, XLAI, cWTLF, cSTMWT, cSDWT, cRTWT, cPANWT, cTOPWT  
-   Integer,Intent(IN) :: RSTAGE                            
+   Integer,Intent(IN) :: RSTAGE, DTTC                            
    Real,Intent(IN) :: SEEDNO, SDSIZE, HI, cTILNO, SWF_AV, TUR_AV, SAT_AV, NST_AV     
    Real,Intent(IN) :: KST_AV, PCNL, SHELPC
    Real,Intent(IN) :: SLA, CANHT, CANWH, cRTDEP 
 !  Integer,Intent(IN) :: N_LYR
    Real, Dimension(5),Intent(IN) :: RLV 
-   Real :: CUMSENSURF,  CUMSENSOIL, DTT
+   Real :: CUMSENSURF,  CUMSENSOIL
      
 !  Recalculated vars
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1, cPANWT1
@@ -662,7 +662,7 @@ Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
       cSEEDNO1, SDSIZE, HI, cTILNO1, SWF_AV,          &
       TUR_AV, SAT_AV, NST_AV, KST_AV, PCNL, SHELPC,   &
       SLA, CANHT, CANWH, cRTDEP, RLV,                 &
-      cCUMSENSURF1, cCUMSENSOIL1, DTT
+      cCUMSENSURF1, cCUMSENSOIL1, DTTC
 
    Write(fmt,'(I2)') 5 - 1   
    fmt = '('//trim(adjustl(fmt))//'(g0,","),g0)'
@@ -1292,7 +1292,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    FCWAM, FHWAM, HWAHF, FBWAH, FPWAM, IRNUM, IRCM, &
    PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, &
    NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, &
-   ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, &
+   ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, &
    YPEM, YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, &
    DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP, Csvline, pCsvline, lngth) 
       
@@ -1315,7 +1315,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, CO2EC, WYEAR, HYEAR
    Real :: YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM,  TMAXA, TMINA, SRADA
    Real :: DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-   Real :: N2OEC
+   Real :: N2OEC, CH4EC
    
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
@@ -1342,7 +1342,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    FCWAM, FHWAM, cHWAHF1, cFBWAH1, FPWAM,IRNUM, &
    IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, &
    NLCM, NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM,&
-   RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, DMPPM, DMPEM, DMPTM, DMPIM, &
+   RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC, DMPPM, DMPEM, DMPTM, DMPIM, &
    YPPM, YPEM, YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, &
    SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
    

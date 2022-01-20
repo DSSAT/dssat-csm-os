@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 0)
-SET(BUILD 20)
+SET(BUILD 21)
 
 # Get the current working branch
 execute_process(
@@ -575,8 +575,10 @@ set(
         "Soil/GHG/Denit_Ceres.for"
         "Soil/GHG/Denit_DayCent.for"
         "Soil/GHG/diffusiv.for"
-        "Soil/GHG/N2O_mod.for"
+        "Soil/GHG/GHG_mod.for"
         "Soil/GHG/nox_pulse.f90"
+        "Soil/GHG/Methane.for"
+        "Soil/GHG/Methmod.for"
         "Soil/Inorganic_K/OpSoilKi.for"
         "Soil/Inorganic_K/SoilKi.for"
         "Soil/Inorganic_K/SoilK_init.for"
