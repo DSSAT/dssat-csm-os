@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-methane'
 
 !     Version history:  
+!       4.8.0.21 chp 2022-01-20 Methane model. CROPGRO calibrations for v4.8. 
 !       4.8.0.20 chp 2022-01-14 More ETPHOT protections, mulch water initialization, 
 !                               fix puddling date, filepath length for linux, misc.
 !       4.8.0.19 chp 2021-12-13 Remove plant.for initializations in seasinit 
