@@ -24,7 +24,15 @@
 ! 1 PLmodame ISDA9901   -99   -99   -99   200   -99     0 S      200  ISDA250001 Sample field history
 !@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
 ! 1            13.1            2.14       250              1728    48   1.3     3 FH101    11
-!========================================================================================================
+!======================================================================================================== 
+! Summary of field history choices:
+! FH101 Cultivated with good management practices, initially cultivated land
+! FH102 Cultivated with poor management practices, initially cultivated land
+! FH201 Cultivated with good management practices, initially grassland/forest
+! FH202 Cultivated with poor management practices, initially grassland/forest
+! FH301 Cultivated with good management practices, initially degraded
+! FH302 Cultivated with poor management practices, initially degraded
+
 
 @FH101 Cultivated with good management practices, initially cultivated land
 !100 yr continuous simulation approach, irrigated, high N application rate
