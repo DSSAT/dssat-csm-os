@@ -3258,16 +3258,16 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
      &  (plantwt(leaf_part)) !cm2/m2
       ENDIF
       
-      IF(PLTPOP.GT.0.0) THEN
-        pl_nit(leaf_part) = pl_nit (leaf_part) - 
-     &  pl_nit(leaf_part) * (WLIDOT/PLTPOP) / plantwt(leaf_part)
-        plantwt(leaf_part) = plantwt(leaf_part) - WLIDOT/PLTPOP
-        plantwt(leaf_part) = MAX(plantwt(leaf_part),0.0)
-      ENDIF
-      pl_la = pl_la - (LAIDOT * 100/PLTPOP) !pl_la mm2/plant
-      pl_la = MAX(pl_la, 0.0)
-      LAI = LAI - LAIDOT/10000  ! LAI m2/m2
-      LAI = MAX(LAI, 0.0)
+      IF(PLTPOP .GT. 0.0 .AND. LAIDOT .GT. 0.0) THEN
+         pl_nit(leaf_part) = pl_nit (leaf_part) - 
+      &  pl_nit(leaf_part) * (WLIDOT/PLTPOP) / plantwt(leaf_part)
+         plantwt(leaf_part) = plantwt(leaf_part) - WLIDOT/PLTPOP
+         plantwt(leaf_part) = MAX(plantwt(leaf_part),0.0)
+         pl_la = pl_la - (LAIDOT * 100/PLTPOP) !pl_la mm2/plant
+         pl_la = MAX(pl_la, 0.0)
+         LAI = LAI - LAIDOT/10000  ! LAI m2/m2
+         LAI = MAX(LAI, 0.0)
+       ENDIF
 !----------------------------------------------------------------------
 !*! End WHAPS Leaf damage due to pests. 
 !======================================================================
