@@ -164,8 +164,8 @@ C  Calls:     None
           DO L = 1, NLAYR
             CUMSENSOIL = CUMSENSOIL + SENESCE % ResWt(L)
           ENDDO
-
-          IF (SEEDNO .GT. 0.0) THEN
+          !Added IF statement to void divisions by zero (TF - 01/21/2022)
+          IF (SEEDNO .GT. 0.0 .AND. PLTPOP .GT. 0.0) THEN
               !JZW changed
               SDSIZE = SDWT / (SEEDNO*PLTPOP) *1000.
               !SDSIZE = SDWT/SEEDNO*1000.
