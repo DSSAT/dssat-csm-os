@@ -6,6 +6,7 @@
 !  Revision history
 !  11/01/2021 FO Added missing CONTROL type for nwheats_* subroutines
 !  11/01/2021 FO Added ERRKEY paramter for all nwheats_* subroutines
+!  01/18/2022 TF Added statments to prevent divisions by zero
 !----------------------------------------------------------------------
 
 ! JZW note: need to read p_root_n_min, p_init_grain_nconc, g_uptake_source='apsim' or 'calc'
@@ -870,8 +871,11 @@ C     The variable "CONTROL" is of type "ControlType".
             ! not bound the "real" n demand, just the value here.
          !*! capped_n_demand = u_bound(n_demand,p_max_n_uptake/plants)
          ! capped_n_demand = min(n_demand,p_max_n_uptake/PLTPOP) !  btk 03/02/2017
-          capped_n_demand = min(n_demand,MXNUP/PLTPOP) ! changed by btk 03/02/2017
-         
+          IF (PLTPOP .GT. 0.0) THEN ! Added to void divisions by zero (TF - 01/18/2022)
+            capped_n_demand = min(n_demand,MXNUP/PLTPOP) ! changed by btk 03/02/2017
+          ELSE
+            capped_n_demand = 0
+          ENDIF             
          !                                  g/m2
          !          g   =                 ______
          !                               plant/m2
@@ -893,8 +897,11 @@ C     The variable "CONTROL" is of type "ControlType".
 !*!     :                   ,n_supply/ha2sm/gm2kg/plants
 !*!     :                   ,0.0)
          if (n_supply .gt. 0.) then
-           scalef = capped_n_demand
-     &                   /(n_supply/ha2sm/gm2kg/PLTPOP)
+           IF (PLTPOP .GT. 0.0) THEN ! Added to void divisions by zero (TF - 01/18/2022)
+            scalef = capped_n_demand/(n_supply/ha2sm/gm2kg/PLTPOP)
+           ELSE
+            scalef = 0
+           ENDIF
         !scalef = (capped_n_demand/n_supply)*ha2sm *  gm2kg  * PLTPOP
          !             g /plant             10000m2  0.001*kg   plant
          !      = (-------------------) *  -------* -------- *------
@@ -942,8 +949,12 @@ C     The variable "CONTROL" is of type "ControlType".
          endif
          ! pnuptk_tot is total plant N uptake (g/plant) Wrong ????
          !*! pnuptk (part) = pnuptk_tot*fr_part/ha2sm/gm2kg/plants
-         pnup (part) = pnuptk_tot*fr_part/ha2sm/gm2kg/PLTPOP
-         !    g           kg                      1
+         ! Added IF statment to void divisions by zero (TF - 01/18/2022)
+         IF (PLTPOP .GT. 0.0) THEN
+            pnup (part) = pnuptk_tot*fr_part/ha2sm/gm2kg/PLTPOP
+         ELSE
+            pnup (part) = 0
+         ENDIF         !    g           kg                      1
          ! --------  = ----------*     -------------------------------------- ?????
          !  plant         ha          (10000m2/ha) * (0.001kg/g) * (plant/m2)
 1300  continue

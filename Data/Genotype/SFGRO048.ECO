@@ -44,11 +44,8 @@
 @ECO#  ECONAME.......... MG TM THVAR PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNGSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI
 !                                  1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16
 
-!2/12/2019 - modified by K. Boote and K. Steberl, to go with modified spe and cul for 2 German cultivars and NM cultivar.
-!9/1/2021 - All work for V4.8, KJB.  Not sure I agree with R7-R8 of 26 (artifact of S. Singh's experiment)
-
-SF0401 MATURITY GROUP 4  04 01   0.0   5.0   3.0   0.0  05.0   0.0  0.35  10.0  26.0 14.00  1.00  0.75  0.75  .369  20.0  .035
-DFAULT DEFAULT           04 01   0.0   5.0   3.0   0.0  05.0   0.0  0.35  10.0  26.0 14.00  1.00  0.75  0.75  .369  20.0  .035
+SF0401 MATURITY GROUP 4  04 01   0.0   5.0   6.0   0.0  05.0   0.0  0.35  10.0  26.0  7.00  1.00  0.75  0.75  .369  20.0  .035
+DFAULT DEFAULT           04 01   0.0   5.0   6.0   0.0  05.0   0.0  0.35  10.0  26.0  7.00  1.00  0.75  0.75  .369  20.0  .035
 
 BW0001 Goldschopf        04 01   0.0   5.0   3.0   0.0  05.0   0.0  0.35  10.0  26.0 14.00  1.00   .75   .80  .369  20.0  .035
 BW0002 Thornless Saff    04 01   0.0   5.0   3.0   0.0  05.0   0.0  0.35  10.0  26.0 14.00  1.00  1.00  1.00  .369  20.0  .035
