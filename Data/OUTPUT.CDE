@@ -37,7 +37,7 @@ CSP_GrowCane.OUT   Casupro sugarcane output                           CSP_GRO
 CSP_PHEN.OUT       Casupro sugarcane output                           OUTPHNL
 PlantKg.OUT        Casupro sugarcane output                           OUTKG
 Generic.OUT        Generic (temporary) output file
-SALUS.OUT          Generic plant routine
+GHG.OUT            Greenhouse gas emissions report
 N2O.OUT         NO Soil N2O and N2 daily emissions output        
 Methane.OUT     MT Methane emissions daily output file
 Potential.OUT      Water potential - daily

@@ -13,6 +13,7 @@
 !  01/21/2020 JG moved some CUL parameters to ECO file
 !  07/24/2020 JG moved ozone parameters to ECO file, replaced OZONX with OZON7
 !  11/01/2021 FO Added missing CONTROL type for WH_temp.for subroutines
+!  01/18/2022 TF Added statments to prevent divisions by zero
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
 !
@@ -1860,9 +1861,14 @@ C         Calculate soil water table depth
       if (stgdur(grnfil).eq.1 .and. istage.eq.grnfil) then
  
          if (g_obs_gpsm.ne.0) then
-!*!         grpp = g_obs_gpsm/plants ! I assume plants =/= 0
-            grpp = g_obs_gpsm/PLTPOP ! NWheat plants = DSSAT PLTPOP
-            ! g_obs_gpsm  is Observed number of grains per plant
+            ! Added PLTPOP to void divisions by zero (TF - 01/18/2022)
+            IF(PLTPOP .GT. 0.0) THEN 
+!*!            grpp = g_obs_gpsm/plants ! I assume plants =/= 0
+               grpp = g_obs_gpsm/PLTPOP
+               ! g_obs_gpsm  is Observed number of grains per plant
+            ELSE 
+               grpp = 0 ! NWheat plants = DSSAT PLTPOP
+            ENDIF
          else
 cnh Senthold
 !**!        grpp = pl_wt(stem) * grnmx
@@ -3252,16 +3258,16 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
      &  (plantwt(leaf_part)) !cm2/m2
       ENDIF
       
-      IF(PLTPOP.GT.0.0) THEN
-        pl_nit(leaf_part) = pl_nit (leaf_part) - 
-     &  pl_nit(leaf_part) * (WLIDOT/PLTPOP) / plantwt(leaf_part)
-        plantwt(leaf_part) = plantwt(leaf_part) - WLIDOT/PLTPOP
-        plantwt(leaf_part) = MAX(plantwt(leaf_part),0.0)
-      ENDIF
-      pl_la = pl_la - (LAIDOT * 100/PLTPOP) !pl_la mm2/plant
-      pl_la = MAX(pl_la, 0.0)
-      LAI = LAI - LAIDOT/10000  ! LAI m2/m2
-      LAI = MAX(LAI, 0.0)
+      IF(PLTPOP .GT. 0.0 .AND. LAIDOT .GT. 0.0) THEN
+         pl_nit(leaf_part) = pl_nit (leaf_part) - 
+     &   pl_nit(leaf_part) * (WLIDOT/PLTPOP) / plantwt(leaf_part)
+         plantwt(leaf_part) = plantwt(leaf_part) - WLIDOT/PLTPOP
+         plantwt(leaf_part) = MAX(plantwt(leaf_part),0.0)
+         pl_la = pl_la - (LAIDOT * 100/PLTPOP) !pl_la mm2/plant
+         pl_la = MAX(pl_la, 0.0)
+         LAI = LAI - LAIDOT/10000  ! LAI m2/m2
+         LAI = MAX(LAI, 0.0)
+       ENDIF
 !----------------------------------------------------------------------
 !*! End WHAPS Leaf damage due to pests. 
 !======================================================================
