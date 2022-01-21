@@ -108,7 +108,6 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        EXNH4
       REAL        EXNO3
       REAL        FOZ1  ! Added by JG for ozone calculation
-      REAL        FOZ2  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -140,7 +139,6 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        RTDP1
       REAL        RTDP2
       REAL        SFOZ1  ! Added by JG for ozone calculation
-      REAL        SFOZ2  ! Added by JG for ozone calculation
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2 ! nwheat cultivar parameter
@@ -782,12 +780,12 @@ C60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+     &             FOZ1,SFOZ1
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+     &                2(1X,F5.0),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
