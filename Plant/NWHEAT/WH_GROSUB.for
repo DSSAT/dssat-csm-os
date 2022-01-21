@@ -3260,7 +3260,7 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
       
       IF(PLTPOP .GT. 0.0 .AND. LAIDOT .GT. 0.0) THEN
          pl_nit(leaf_part) = pl_nit (leaf_part) - 
-      &  pl_nit(leaf_part) * (WLIDOT/PLTPOP) / plantwt(leaf_part)
+     &   pl_nit(leaf_part) * (WLIDOT/PLTPOP) / plantwt(leaf_part)
          plantwt(leaf_part) = plantwt(leaf_part) - WLIDOT/PLTPOP
          plantwt(leaf_part) = MAX(plantwt(leaf_part),0.0)
          pl_la = pl_la - (LAIDOT * 100/PLTPOP) !pl_la mm2/plant
