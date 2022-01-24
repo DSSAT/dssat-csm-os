@@ -256,9 +256,9 @@ C-----------------------------------------------------------------------
               KEAA = -99.
             ENDIF
 
-            WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX, 
+            WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX,
      &        AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA,
-     &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA   
+     &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA
 !     &        ,SALB, SWALB, MSALB, CMSALB
 !  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
 !     &      8(F7.3),6(F8.2))     
@@ -274,25 +274,25 @@ C-----------------------------------------------------------------------
                 ENDDO
 !               WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
                 WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
-              ENDIF    
+              ENDIF
             ELSE
               WRITE(LUN,'(" ")')
             ENDIF
           ENDIF   ! VSH
 
 !         VSH CSV output corresponding to ET.OUT
-          IF (FMOPT == 'C') THEN 
+          IF (FMOPT == 'C') THEN
 !           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
             N_LYR = SOILPROP%NLAYR
             CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
-     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
-     &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
-     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR, TRWU,
-     &vCsvlineET, vpCsvlineET, vlngthET)
-     
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS,
+     &AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA,
+     &EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA,
+     &N_LYR, ES_LYR, TRWU, vCsvlineET, vpCsvlineET, vlngthET)
+
             CALL LinklstET(vCsvlineET)
           ENDIF
-      
+
           NAVWB = 0
           EFAA  = 0.
           EMAA  = 0.
