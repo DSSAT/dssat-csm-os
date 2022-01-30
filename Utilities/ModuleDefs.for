@@ -123,6 +123,11 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2, FMOPT
         INTEGER NSWI
+        LOGICAL ATMOW
+        ! FO/TF - Temporary Variables
+        INTEGER HMFRQ
+        INTEGER HMGDD
+        REAL HMCUT
       END TYPE SwitchType
 
 !Other switches and methods used by model:

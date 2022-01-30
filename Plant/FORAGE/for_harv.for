@@ -9,6 +9,9 @@ C  --/--/---- DP  Written.
 C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C  10/15/2020 FO  Fixed path issue for MOWFILE.
 C  06/23/2021 FO  Update MOWFILE to handle paths with spaces.
+C  01/28/2022 FO/DP/TF  Added AutomaticMOW
+C  01/28/2022 TF/DP  Added GDD option for AutomaticMOW
+C  01/29/2022 TF  Added protections and warnings for AutomaticMOW
 C-----------------------------------------------------------------------
 C  INPUT  : 
 C
@@ -18,14 +21,15 @@ C  Called :
 C
 C  Calls  :
 C=======================================================================
-      SUBROUTINE forage_harvest(CONTROL,FILECC,
+      SUBROUTINE forage_harvest(CONTROL,FILECC, ATMOW,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,MOWC,RSPLC,
+     &                fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                WTCO, WTLO, WTSO)
+     &                WTCO, WTLO, WTSO,TMAX,TMIN)
       
       USE MODULEDEFS
 
@@ -39,7 +43,7 @@ C=======================================================================
       INTEGER LNUM,FOUND
       INTEGER I,MOWCOUNT,j
       integer,dimension(8) :: date_time
-      INTEGER LUNEXP,ERRNUM,LINEXP,LNHAR,LUNIO,PATHL
+      INTEGER DYNAMIC,LUNEXP,ERRNUM,LINEXP,LNHAR,LUNIO,PATHL
 
       REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
       REAL FHLEAF,FHSTEM,FHVSTG
@@ -53,7 +57,29 @@ C=======================================================================
       real vstagp,MOWC,RSPLC,y,z,PELF,FMOW,RHMOW,CHMOW,FLFP,RHLFP,RSPLM
       REAL DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO
       REAL WTCO, WTLO, WTSO
-      REAL FREQ,CUHT,YHT
+      REAL FREQ,CUHT,YHT,MOWREF
+      REAL TABEX  ! Function subroutine - Lookup utility
+      REAL HMCUT, RSREF, CUTPL, CNHREF
+      INTEGER,dimension(6) :: IXFREQ
+      REAL,dimension(6) :: XFREQ
+      REAL,dimension(6) :: YFREQ
+      INTEGER,dimension(6) :: IXCUTHT
+      REAL,dimension(6) :: XCUTHT
+      REAL,dimension(6) :: YCUTHT
+      INTEGER,dimension(6) :: IXCHMOW
+      REAL,dimension(6) :: XCHMOW
+      REAL,dimension(6) :: YCHMOW
+      INTEGER,dimension(6) :: IXRSREF
+      REAL,dimension(6) :: XRSREF
+      REAL,dimension(6) :: YRSREF
+      INTEGER,dimension(6) :: IXCUTPL
+      REAL,dimension(6) :: XCUTPL
+      REAL,dimension(6) :: YCUTPL
+      REAL GDD, MOWGDD
+      INTEGER HMFRQ, HMGDD, CUTDAY
+      REAL TMAX
+      REAL TMIN
+      REAL TB(5), TO1(5), TO2(5), TM(5)
 !      REAL,ALLOCATABLE,DIMENSION(:) :: canht
       
       character(len=1)  BLANK
@@ -62,12 +88,13 @@ C=======================================================================
       character(len=10),parameter :: fhout='FORAGE.OUT'
       CHARACTER*12 MOWFILE
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(2)
+      CHARACTER*78 MSG(3)
       CHARACTER*80 FILECC
       CHARACTER*80 PATHEX
       character(len=60) ename
       CHARACTER*80 MOW80
       character(len=180) fhoutfmt
+      CHARACTER*80 C80
       CHARACTER*255 C255
       CHARACTER*80 CHARTEST
       CHARACTER*92 FILEX_P
@@ -76,20 +103,69 @@ C=======================================================================
       CHARACTER*12 FILEX
       CHARACTER*78 MESSAGE(2)
 
-      
+      LOGICAL ATMOW
       logical exists
       
       TYPE(CONTROLTYPE) CONTROL
       
+      SAVE MOWGDD
+      SAVE MOWCOUNT
+
+
       PARAMETER  (ERRKEY = 'FRHARV')
       PARAMETER (BLANK  = ' ')
 
+      DYNAMIC  = CONTROL % DYNAMIC
       FILEIO = CONTROL % FILEIO
       YRDOY  = CONTROL % YRDOY
       crop   = control % crop
       trtno  = control % trtnum
       run    = control % run
       ename  = control % ename
+
+C***********************************************************************
+C***********************************************************************
+!     Run Initialization - Called once per simulation
+C***********************************************************************
+      IF (DYNAMIC .EQ. RUNINIT) THEN
+
+        MOWGDD = 0.0
+
+        INQUIRE(FILE = MOWFILE, EXIST = exists)
+        IF (exists .EQV. .FALSE.) THEN
+          MSG(1) = "Warning: File not found."
+          WRITE(MSG(2), 100) MOWFILE
+  100     FORMAT('File: ', A12)
+          MSG(3) = "Automatic MOW will be used for this simulation."
+          CALL WARNING (3, ERRKEY, MSG)
+
+          IF(HMFRQ .LE. 0 .AND. HMGDD .LE. 0) THEN
+            MSG(1) = "Values of harvest frequency (day and GDD) are missing."
+            WRITE(MSG(2), 110)
+  110       FORMAT('A default value 28 harvest frequency (days) ',
+     &                "is being used for this simulation.")
+            MSG(3) = "Which may produce inaccurate results."
+            CALL WARNING(3,ERRKEY,MSG)
+          ELSEIF(HMFRQ .LE. 0) THEN
+            MSG(1) = "Value of harvest frequency (days) is missing."
+            MSG(3) = 'Value of harvest frequency (GDD) will be used.'
+            CALL WARNING(3,ERRKEY,MSG)
+          ELSEIF(HMGDD .LE. 0) THEN
+            MSG(1) = "Value of harvest frequency (GDD) is missing."
+            MSG(3) = 'Value of harvest frequency (days) will be used.'
+            CALL WARNING(3,ERRKEY,MSG)
+          ENDIF
+          
+          IF(HMCUT .LE. 0.0) THEN
+            MSG(1) = "Value of cutting height is missing. "
+            WRITE(MSG(2), 120)
+  120       FORMAT('A default value 0.10 is being used for ',
+     &                 "this simulation.")
+            MSG(3) = "Which may produce inaccurate results."
+            CALL WARNING(3,ERRKEY,MSG)
+          ENDIF
+        
+        ENDIF
 
 C----------------------------------------------------------      
 C     Open and read MOWFILE and PATH 
@@ -113,6 +189,14 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
       ENDIF
       
       CLOSE(LUNIO)
+
+!***********************************************************************
+!***********************************************************************
+!     Daily integration
+!***********************************************************************
+      ELSEIF (DYNAMIC .EQ. INTEGR) THEN
+C-----------------------------------------------------------------------
+
 C----------------------------------------------------------
       
 !      YHT=canht
@@ -203,8 +287,74 @@ C---------------------------------------------------------
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         END IF
 
+      !C----------------------------------------------------------
+      !!MOWC - Automatic MOW - post harvest stubble mass and %leaf
+      !!       in the stubble calculation (Diego):
+      !C----------------------------------------------------------
+      ! OPEN AND READ SPECIES FILE
+      CALL GETLUN('FILEC', LUNCRP)
+      OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
+      SECTION = '!*CANO'
+      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+      do j=1,8; CALL IGNORE(LUNCRP,LNUM,ISECT,C255); end do
+        READ(C255,'(F6.0)') MOWREF
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXFREQ(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YFREQ(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(F6.0)') CNHREF
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCUTHT(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCUTHT(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(F6.0)') CHMOW
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCHMOW(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCHMOW(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+
+
+        READ(C255,'(F6.0)') RSREF
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXRSREF(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YRSREF(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(F6.0)') CUTPL
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCUTPL(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCUTPL(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        CLOSE (LUNCRP) 
+
+!-----------------------------------------------------------------------
+!     Find Phenology Section in FILEC and read
+!-----------------------------------------------------------------------
+      CALL GETLUN('FILEC', LUNCRP)
+      OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
+      LNUM = 1
+      SECTION = '!*PHEN'
+      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+      READ(C80,'(4F6.1)') TB(1), TO1(1), TO2(1), TM(1)
+       CLOSE (LUNCRP)
+!----------------------------------------------------------------------
+
+        XFREQ = IXFREQ
+        XCUTHT = IXCUTHT
+        XCHMOW = IXCHMOW
+        XRSREF = IXRSREF
+        XCUTPL = IXCUTPL
+
+      INQUIRE(FILE = MOWFILE, EXIST = exists)
+      IF(exists .EQV. .FALSE.) ATMOW = .TRUE.
+      IF (.NOT.ALLOCATED(MOW) .AND. ATMOW .EQV. .FALSE.) THEN
+      
         CALL GETLUN('MOWFILE',MOWLUN)
-									  
         OPEN (UNIT=MOWLUN,FILE=FILEMOW,STATUS='OLD',IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,29,FILEMOW,LNUM)
         REWIND(MOWLUN)
@@ -393,5 +543,200 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             end if
         ENDIF
       ENDDO
-      
+
+      ENDIF
+
+!***********************************************************************
+! AUTOMOW
+!***********************************************************************
+      IF(HMFRQ .LE. 0 .AND. HMGDD .LE. 0) HMFRQ = 28
+      IF(HMCUT .LE. 0.0) HMCUT = 0.10
+
+      ! TF - 01/29/2022 Protection to avoid divisions and mod by zero 
+      IF(HMFRQ .GT. 0) THEN
+        CUTDAY = MOD(MOWCOUNT,HMFRQ)
+        MOWGDD = 0 !It will not accumalute GDD if there is HMFRQ 
+      ELSE
+        CUTDAY = 1
+      ENDIF
+      INQUIRE(FILE = MOWFILE, EXIST = exists)
+      ! TF/DP - 01/28/2022 Added degree days (GDD) option
+      IF(ATMOW .EQV. .TRUE. .OR. 
+     &  (exists .EQV. .FALSE. .AND. ATMOW .EQV. .FALSE.)) then
+            IF(CUTDAY .EQ. 0 .OR. 
+     &        (MOWGDD .GE. HMGDD .AND. HMGDD .GT. 0)) THEN 
+              IF(HMFRQ .GT. 0) THEN
+                FREQ = HMFRQ
+              ELSE
+                FREQ = HMGDD
+              ENDIF
+               MOWC = (TABEX(YFREQ, XFREQ, FREQ, 6) * MOWREF) *
+     &         (TABEX(YCUTHT, XCUTHT, HMCUT*100, 6)) *
+     &         (TABEX(YCHMOW, XCHMOW, topwt, 6))
+!     &          + (topwt*10.)/(canht*100)*HMCUT*100
+
+ !             WRITE(7500,'(1F10.1)') (TABEX(YCHMOW, XCHMOW, topwt, 6))
+              !MOWC = (MOWREF*HMFRQ)+(RHMOW*HMCUT*100)+(CHMOW*canht*100)
+!               WRITE(9000,'(1F10.1)') (topwt*10./canht*100)*HMCUT*100
+
+
+
+                RSPLC = (TABEX(YRSREF, XRSREF, FREQ, 6) * RSREF)
+ !    &                  (TABEX(YCUTPL, XCUTPL, (HMCUT*100),6)) *
+ !    &                  ((canht*100-HMCUT*100)/canht*100) + CUTPL
+                MOWGDD = 0.0
+!                RSPLC=(FLFP*HMFRQ)+((RHLFP*((canht-HMCUT)/canht*100))+
+!     &                      RSPLM)
+
+            ELSE
+                MOWCOUNT = MOWCOUNT + 1
+                GDD = (((TMAX+TMIN)/2) - TB(1))
+                IF (GDD .GT. TM(1)) GDD = TM(1)
+                GDD = MAX(GDD, 0.0)
+                MOWGDD = MOWGDD + GDD
+                RETURN
+            ENDIF
+
+            IF (MOWC.GE.0) THEN
+            IF(MOWC/10<topwt) THEN
+              FHLEAF=0
+              FHSTEM=0
+              FHVSTG=0
+              IF(RSPLC>=0)THEN
+                FHLEAF=WTLF-(MOWC/10)*RSPLC/100
+                FHSTEM=STMWT-(MOWC/10)*(1.0-RSPLC/100)
+              ELSE
+                FHLEAF=WTLF-(MOWC/10)*WTLF/(WTLF+STMWT)
+                FHSTEM=STMWT-(MOWC/10)*STMWT/(WTLF+STMWT)
+              END IF
+              FHLEAF = MAX(FHLEAF,0.0)
+              FHSTEM = MAX(FHSTEM,0.0)
+              FHVSTG = 3
+              canht  = max(HMCUT/100,0.0)
+              !             canht=max(rsht(i),0.0)     !enter rsht in cm
+
+
+              fhtot = fhleaf+fhstem
+
+              fhlfn = fhleaf*pcnl/100
+              fhstn = fhstem*pcnst/100
+              fhtotn = fhlfn+fhstn
+
+              fhcrlf = fhleaf*rhol
+              fhcrst = fhstem*rhos
+
+              fhpctn = fhtotn/fhtot*100
+              fhplig = (fhleaf*pliglf+fhstem*pligst)/fhtot*100
+              fhpcho = (fhcrlf+fhcrst)/fhtot*100
+              fhpctlf = fhleaf/fhtot*100
+
+              WTLF  = WTLF - FHLEAF
+              STMWT = STMWT - FHSTEM
+              TOPWT = TOPWT - FHLEAF - FHSTEM
+              TOTWT = TOTWT - FHLEAF - FHSTEM
+
+              WCRLF = WTLF*RHOL
+              WCRST = STMWT*RHOS
+
+              WTNLF  = WTLF*PCNL/100.
+              WTNST  = STMWT*PCNST/100.
+              WTNCAN = WTNCAN - FHLEAF*PCNL/100. - FHSTEM*PCNST/100.
+
+              IF ((WTLF - WCRLF) .GT. 0.0) THEN
+                WNRLF = MAX (WTNLF - PROLFF*0.16*(WTLF-WCRLF), 0.0)
+              ELSE
+                WNRLF = 0.0
+              ENDIF
+
+              IF ((STMWT - WCRST) .GT. 0.0) THEN
+                WNRST = MAX (WTNST - PROSTF*0.16*(STMWT-WCRST), 0.0)
+              ELSE
+                WNRST = 0.0
+              ENDIF
+
+              AREALF = WTLF*SLA
+              XLAI   = AREALF/10000.
+              XHLAI  = XLAI
+
+              VSTAGE = FHVSTG
+              vstagp = vstage
+
+            ELSE
+              fhtot = 0
+
+              fhlfn = 0
+              fhstn = 0
+              fhtotn = 0
+
+              fhcrlf = 0
+              fhcrst = 0
+
+              fhpctn = 0
+              fhplig = 0
+              fhpcho = 0
+
+              fhpctlf = 0
+
+            ENDIF
+
+
+             CALL GETLUN('FORHARV', FHLUN)
+
+            INQUIRE(file=FHOUT,EXIST=EXISTS)
+
+            IF (exists) THEN
+              OPEN(FILE=FHOUT,UNIT=FHLUN,POSITION='APPEND')
+            ELSE
+               CALL date_and_time(values=date_time)
+               OPEN(FILE=FHOUT,UNIT=FHLUN)
+               REWIND(FHLUN)
+               fhoutfmt =
+     &     "('*Forage Model Harvest Output: ',A8,A2,1X,A,1X,"//
+     &     "'DSSAT Cropping System Model Ver. '"//
+     &     ",I1,'.',I1,'.',I1,'.',"//
+     &     "I3.3,1X,A10,4X,"//
+     &     "A3,' ',I2.2,', ',I4,'; ',I2.2,':',I2.2,':',I2.2/)"
+               WRITE (fhlun,fhoutfmt) mowfile(1:8),crop,trim(ename),
+     &             Version,VBranch,
+     &             MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1),
+     &             DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
+               WRITE(fhlun,'(a)')
+     &           '@RUN FILEX    CR TRNO FHNO YEAR DOY'//
+     &           ' RCWAH RLWAH RSWAH RSRWH RRTWH RLAIH'//
+     &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H'//
+     &           '  MOWC RSPLC'
+            ENDIF
+
+               call yr_doy(yrdoy,year,doy)
+               write(fhoutfmt,'(a)') '(i4,x,a8,a3,2(i5),i5,i4,'//
+     &            '5(i6),f6.2,2(i6),3(f6.2),f6.1,x,f5.0,F6.1,F6.1)'
+            WRITE(fhlun,fhoutfmt)
+     &           run,mowfile(1:8),crop,trtno,i,year,doy,
+     &           Nint(topwt*10.),Nint(wtlf*10.),Nint(stmwt*10.),
+     &           Nint(strwt*10.),Nint(rtwt*10.),xlai,
+     &           Nint(fhtot*10.),Nint(fhtotn*10.),
+     &           fhpctn,fhpcho,fhplig,fhpctlf,
+     &           MOWC,RSPLC
+            close(fhlun)
+
+            IF(CUTDAY .EQ. 0) THEN
+              PWTCO = WTCO
+              PWTLO = WTLO
+              PWTSO = WTSO
+              DWTCO = WTCO - PWTCO
+              DWTLO = WTLO - PWTLO
+              DWTSO = WTSO - PWTSO
+
+              MOWCOUNT = 1
+            ENDIF
+          ENDIF
+
+      ENDIF
+!***********************************************************************
+!***********************************************************************
+!     END OF DYNAMIC IF CONSTRUCT
+!***********************************************************************
+      ENDIF
+!***********************************************************************
+
       END !SUBROUTINE FORAGEHARVEST
