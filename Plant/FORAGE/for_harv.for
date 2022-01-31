@@ -123,6 +123,9 @@ C=======================================================================
       run    = control % run
       ename  = control % ename
 
+      MOWC = 0.0
+      RSPLC = 0.0
+
 C***********************************************************************
 C***********************************************************************
 !     Run Initialization - Called once per simulation
@@ -130,6 +133,30 @@ C***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 
         MOWGDD = 0.0
+        MOWCOUNT = 1
+
+C----------------------------------------------------------      
+C     Open and read MOWFILE and PATH 
+C----------------------------------------------------------
+C FO - 10/15/2020 Fixed path issue for MOWFILE.
+        CALL GETLUN('FILEIO', LUNIO)
+        OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
+        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
+
+        READ (LUNIO,'(3(/),15X,A12,1X,A80)',IOSTAT=ERRNUM) mowfile,
+     &       PATHEX
+        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,5)
+        mowfile(10:12) = 'MOW'
+
+        PATHL  = INDEX(PATHEX,BLANK)
+        IF (PATHL .LE. 1) THEN
+           FILEMOW = mowfile
+        ELSE
+           PATHL = LEN(TRIM(PATHEX))
+           FILEMOW = PATHEX(1:(PATHL)) // mowfile
+        ENDIF
+
+        CLOSE(LUNIO)
 
         INQUIRE(FILE = MOWFILE, EXIST = exists)
         IF (exists .EQV. .FALSE.) THEN
@@ -154,6 +181,10 @@ C***********************************************************************
             MSG(1) = "Value of harvest frequency (GDD) is missing."
             MSG(3) = 'Value of harvest frequency (days) will be used.'
             CALL WARNING(3,ERRKEY,MSG)
+          ELSEIF(HMFRQ .GT. 0 .AND. HMGDD .GT. 0) THEN
+            MSG(1) = "Values of harvest frequency (day and GDD) were provided."
+            MSG(3) = 'Value of harvest frequency (days) will be used.'
+            CALL WARNING(3,ERRKEY,MSG)
           ENDIF
           
           IF(HMCUT .LE. 0.0) THEN
@@ -167,28 +198,6 @@ C***********************************************************************
         
         ENDIF
 
-C----------------------------------------------------------      
-C     Open and read MOWFILE and PATH 
-C----------------------------------------------------------
-C FO - 10/15/2020 Fixed path issue for MOWFILE.
-      CALL GETLUN('FILEIO', LUNIO)
-      OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
-      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
-      
-      READ (LUNIO,'(3(/),15X,A12,1X,A80)',IOSTAT=ERRNUM) mowfile,
-     &     PATHEX
-      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,5)
-      mowfile(10:12) = 'MOW'
-      
-      PATHL  = INDEX(PATHEX,BLANK)
-      IF (PATHL .LE. 1) THEN
-         FILEMOW = mowfile
-      ELSE
-         PATHL = LEN(TRIM(PATHEX))
-         FILEMOW = PATHEX(1:(PATHL)) // mowfile
-      ENDIF
-      
-      CLOSE(LUNIO)
 
 !***********************************************************************
 !***********************************************************************
@@ -266,7 +275,6 @@ C---------------------------------------------------------
       DWTLO = WTLO - PWTLO
       DWTSO = WTSO - PWTSO       
 
-      IF (.NOT.ALLOCATED(MOW)) THEN
 
         CALL GETLUN('FILEC', LUNCRP)
         OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
@@ -404,7 +412,6 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           END IF
         END DO
 
-      END IF
 
       DO I=1,SIZE(MOW)
            if(date(i)==yrdoy) then
