@@ -599,9 +599,6 @@ C FO/DP/TF - 2020-07-22 - AutoMOW Frequency and cut height initialization
               ISWITCH%HRSPL = -99
             ENDIF
 
-            WRITE(*,*) ISWITCH%ATMOW
-            WRITE(*,*) ISWITCH%HMMOW
-            WRITE(*,*) ISWITCH%HRSPL
 !     ==============================================================
 !           Read ELEVENTH line of simulation control - SIMULATION DATES
 !           2020-11-04 CHP added forecast mode inputs
