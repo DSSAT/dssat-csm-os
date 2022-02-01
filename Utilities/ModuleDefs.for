@@ -128,6 +128,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER HMFRQ
         INTEGER HMGDD
         REAL HMCUT
+        INTEGER HMMOW
+        INTEGER HRSPL
       END TYPE SwitchType
 
 !Other switches and methods used by model:

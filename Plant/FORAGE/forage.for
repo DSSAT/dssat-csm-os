@@ -251,6 +251,9 @@ C FO/DP/TF - 2020-07-22 - AutomaticMOW
       INTEGER HMFRQ
       INTEGER HMGDD
       REAL HMCUT
+C TF/DP 2022-01-31 Simple version AutoMOW 
+      INTEGER HMMOW, HRSPL 
+
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 2
@@ -304,6 +307,8 @@ C FO/DP/TF - 2020-07-22 - AutomaticMOW
       HMFRQ  = ISWITCH % HMFRQ
       HMGDD  = ISWITCH % HMGDD
       HMCUT  = ISWITCH % HMCUT
+      HMMOW  = ISWITCH % HMMOW
+      HRSPL  = ISWITCH % HRSPL
 
       CO2    = WEATHER % CO2   
       DAYL   = WEATHER % DAYL  
@@ -724,7 +729,7 @@ C-----------------------------------------------------------------------
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
      &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
-     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL, 
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &                WTCO, WTLO, WTSO, TMAX, TMIN)
      
@@ -2043,7 +2048,7 @@ C-----------------------------------------------------------------------
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
      &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
-     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &                WTCO, WTLO, WTSO, TMAX, TMIN)
 

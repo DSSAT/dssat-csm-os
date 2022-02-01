@@ -27,7 +27,7 @@ C=======================================================================
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
      &                fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,
-     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT, HMMOW,HRSPL, 
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &                WTCO, WTLO, WTSO,TMAX,TMIN)
       
@@ -77,6 +77,7 @@ C=======================================================================
       REAL,dimension(6) :: YCUTPL
       REAL GDD, MOWGDD
       INTEGER HMFRQ, HMGDD, CUTDAY
+      INTEGER HMMOW, HRSPL !TF 2022-01-31 Simple version AutoMOW 
       REAL TMAX
       REAL TMIN
       REAL TB(5), TO1(5), TO2(5), TM(5)
@@ -577,24 +578,10 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               ELSE
                 FREQ = HMGDD
               ENDIF
-               MOWC = (TABEX(YFREQ, XFREQ, FREQ, 6) * MOWREF) *
-     &         (TABEX(YCUTHT, XCUTHT, HMCUT*100, 6)) *
-     &         (TABEX(YCHMOW, XCHMOW, topwt, 6))
-!     &          + (topwt*10.)/(canht*100)*HMCUT*100
-
- !             WRITE(7500,'(1F10.1)') (TABEX(YCHMOW, XCHMOW, topwt, 6))
-              !MOWC = (MOWREF*HMFRQ)+(RHMOW*HMCUT*100)+(CHMOW*canht*100)
-!               WRITE(9000,'(1F10.1)') (topwt*10./canht*100)*HMCUT*100
-
-
-
-                RSPLC = (TABEX(YRSREF, XRSREF, FREQ, 6) * RSREF)
- !    &                  (TABEX(YCUTPL, XCUTPL, (HMCUT*100),6)) *
- !    &                  ((canht*100-HMCUT*100)/canht*100) + CUTPL
-                MOWGDD = 0.0
-!                RSPLC=(FLFP*HMFRQ)+((RHLFP*((canht-HMCUT)/canht*100))+
-!     &                      RSPLM)
-
+              !TF 2022-01-31 Simple version AutoMOW 
+               MOWC = MAX(HMMOW,0)
+               RSPLC = MAX(HRSPL,0)
+               MOWGDD = 0.0
             ELSE
                 MOWCOUNT = MOWCOUNT + 1
                 GDD = (((TMAX+TMIN)/2) - TB(1))
