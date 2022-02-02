@@ -19,7 +19,7 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-methane'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
 !       4.8.0.22 chp 2022-01-28 More CROPGRO calibrations,  NWheat & NTeff updates
