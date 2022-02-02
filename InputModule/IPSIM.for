@@ -348,6 +348,10 @@ C
 C FO & DP - 2020-07-22 - AutomaticMOW Switch
          IF(IHARI .EQ. 'A') THEN
            ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'A'
+         ELSEIF(IHARI .EQ. 'D') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'D'
          ELSE
            ISWITCH%ATMOW = .FALSE.
          ENDIF

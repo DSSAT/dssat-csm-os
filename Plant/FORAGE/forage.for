@@ -253,6 +253,7 @@ C FO/DP/TF - 2020-07-22 - AutomaticMOW
       REAL HMCUT
 C TF/DP 2022-01-31 Simple version AutoMOW 
       INTEGER HMMOW, HRSPL 
+      CHARACTER*1 ATTP
 
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
@@ -309,6 +310,7 @@ C TF/DP 2022-01-31 Simple version AutoMOW
       HMCUT  = ISWITCH % HMCUT
       HMMOW  = ISWITCH % HMMOW
       HRSPL  = ISWITCH % HRSPL
+      ATTP   = ISWITCH % ATTP
 
       CO2    = WEATHER % CO2   
       DAYL   = WEATHER % DAYL  
@@ -723,7 +725,7 @@ C-----------------------------------------------------------------------
         HARVRES % RESE   = 0.0
       ENDIF
 
-      call forage_harvest(CONTROL,FILECC, ATMOW,
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
@@ -2042,7 +2044,7 @@ C-----------------------------------------------------------------------
 !      fhpctn = 0.0
       MOWC =0.0
       RSPLC =0.0
-      call forage_harvest(CONTROL,FILECC, ATMOW,
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output

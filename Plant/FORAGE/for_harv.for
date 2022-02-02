@@ -21,7 +21,7 @@ C  Called :
 C
 C  Calls  :
 C=======================================================================
-      SUBROUTINE forage_harvest(CONTROL,FILECC, ATMOW,
+      SUBROUTINE forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
@@ -105,6 +105,7 @@ C=======================================================================
       CHARACTER*78 MESSAGE(2)
 
       LOGICAL ATMOW
+      CHARACTER*1 ATTP
       logical exists
       
       TYPE(CONTROLTYPE) CONTROL
@@ -188,6 +189,17 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
             CALL WARNING(3,ERRKEY,MSG)
           ENDIF
           
+          IF(HMMOW .LE. 0) THEN
+            MSG(1) = "Value of HMMOW empty or equal to zero."
+            MSG(3) = 'A default value of 3000 is being used.'
+            CALL WARNING(3,ERRKEY,MSG)
+          ENDIF
+          IF(HRSPL .LE. 0) THEN
+            MSG(1) = "Value of HRSPL empty or equal to zero."
+            MSG(3) = 'A default value of 30 is being used.'
+            CALL WARNING(3,ERRKEY,MSG)
+          ENDIF
+
           IF(HMCUT .LE. 0.0) THEN
             MSG(1) = "Value of cutting height is missing. "
             WRITE(MSG(2), 120)
@@ -559,6 +571,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 !***********************************************************************
       IF(HMFRQ .LE. 0 .AND. HMGDD .LE. 0) HMFRQ = 28
       IF(HMCUT .LE. 0.0) HMCUT = 0.10
+      IF(HMMOW .LE. 0) HMMOW = 3000
+      IF(HRSPL .LE. 0) HRSPL = 30
 
       ! TF - 01/29/2022 Protection to avoid divisions and mod by zero 
       IF(HMFRQ .GT. 0) THEN
@@ -579,9 +593,18 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
                 FREQ = HMGDD
               ENDIF
               !TF 2022-01-31 Simple version AutoMOW 
-               MOWC = MAX(HMMOW,0)
-               RSPLC = MAX(HRSPL,0)
-               MOWGDD = 0.0
+              IF(ATTP .EQ. 'A') THEN
+                MOWC = (TABEX(YFREQ, XFREQ, FREQ, 6) * MOWREF) *
+     &          (TABEX(YCUTHT, XCUTHT, HMCUT*100, 6)) *
+     &          (TABEX(YCHMOW, XCHMOW, topwt, 6))
+                RSPLC = (TABEX(YRSREF, XRSREF, FREQ, 6) * RSREF)              
+              ELSEIF(ATTP .EQ. 'D') THEN
+                MOWC = MAX(HMMOW,0)
+                RSPLC = MAX(HRSPL,0)
+              ENDIF
+              
+              MOWGDD = 0.0
+
             ELSE
                 MOWCOUNT = MOWCOUNT + 1
                 GDD = (((TMAX+TMIN)/2) - TB(1))

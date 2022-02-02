@@ -124,6 +124,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) IFERI, IRESI, ICO2, FMOPT
         INTEGER NSWI
         LOGICAL ATMOW
+        CHARACTER (len=1) ATTP
         ! FO/TF - Temporary Variables
         INTEGER HMFRQ
         INTEGER HMGDD

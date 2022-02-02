@@ -171,6 +171,28 @@
   0.55  0.55  0.55  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN                     
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES                         
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN                     
+  
+  2000                                    MOWREF
+     0    14    28    42    84   400      XFREQ (6 VALUES) Harvest frequency effect -  DP             
+   1.1   1.1   1.0   0.9   0.7   0.7      YFREQ (6 VALUES) on MOW kg/ha                                     
+
+  50.0                                    CNHREF, 
+     0     5    10    20    40   400      XCUTHT (6 VALUES) cutting height effect -  DP             
+   1.2   1.2   1.0   0.9   0.8   0.8      YCUTHT (6 VALUES) on MOW kg/ha
+
+  60.0                                    CHMOW, 
+     0   200   400   800  1000  1200      XCHMOW (6 VALUES) biomass g/m2 effect -  DP             
+   1.0   1.0   1.5   2.0   2.5   3.0      YCHMOW (6 VALUES) on MOW kg/ha
+
+  30.0                                    RSREF, 
+     0    14    28    42    84   400      XRSREF (6 VALUES) Harvest frequency effect -  DP             
+   1.2   1.2   1.0   0.9   0.8   0.8      YRSREF (6 VALUES) on stuble percent leaf
+
+  80.0                                    CUTPL, 
+     0     5    10    20    40   400      XCUTPL (6 VALUES)Modified Bahia values -  DP             
+   1.2   1.2   1.0   0.9   0.8   0.8      YCUTPL (6 VALUES) Soybean values
+
+
  -11.1    FMOW, EFFECT OF HARV. FREQUENCY ON MOW 
  159.6    RHMOW, EFFECT OF STUBBLE HEIGHT ON MOW 
   50.0    CHMOW, EFFECT OF CANOPY HEIGHT ON MOW
