@@ -452,9 +452,10 @@ end Subroutine CsvOutTemp_crgro
 !------------------------------------------------------------------------------
 ! Sub for et.csv output
 Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
-   AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, EMAA, CEO, CET, &
-   CEP, CES, CEF, CEM, N_LYR, ES_LYR, TRWU, Csvline, pCsvline, lngth) 
-    
+   AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, EMAA, CEO, &
+   CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, N_LYR, ES_LYR, TRWU, Csvline, &
+   pCsvline, lngth)
+
 !  Input vars
    Character(8),Intent(IN):: EXCODE    
    Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS         
@@ -463,6 +464,7 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
 !        INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
    REAL,Intent(IN) :: AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA 
    REAL,Intent(IN) :: EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, TRWU
+   REAL,Intent(IN) :: REFA, KCAA, KBSA, KEAA
    INTEGER,Intent(IN) :: N_LYR
    REAL, Dimension(N_LYR), Intent(IN) :: ES_LYR 
   
@@ -479,9 +481,9 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    Character(Len=20) :: cES10   
 !  End of vars
               
-   Write(tmp,'(26(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
-      AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA , EMAA, &
-      CEO, CET, CEP, CES, CEF, CEM, TRWU
+   Write(tmp,'(30(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+      AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, &
+      EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, TRWU
    
    If (N_LYR < 11) Then
    Write(fmt,'(I2)') N_LYR - 1  
@@ -1334,7 +1336,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    cFBWAH1 = NINT(FBWAH)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
            
-   Write(tmp,'(95(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
+   Write(tmp,'(97(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    EXNAME, TITLET1, FLDNAM, WSTAT, WYEAR, SLNO, LATI, LONG, ELEV, &
    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, &
    !CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &

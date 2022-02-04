@@ -1209,14 +1209,14 @@ End Subroutine LinklstSUOIL
       End If    
      
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
-  //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
-  //'EMAC,TRWUD,') + Len(Trim(Adjustl(tmp)))
+  //'REFA,EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
+  //'EMAC,KCAA,KBSA,KEAA,TRWUD,') + Len(Trim(Adjustl(tmp)))
   
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
-  //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
-  //'EMAC,TRWUD,' // Trim(Adjustl(tmp)) 
+  //'REFA,EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
+  //'EMAC,KCAA,KBSA,KEAA,TRWUD,' // Trim(Adjustl(tmp)) 
   
       fn = 'et.csv'
       Call GETLUN (fn,nf)
