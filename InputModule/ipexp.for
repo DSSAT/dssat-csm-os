@@ -1179,11 +1179,13 @@ C     saved as real numbers for placement in real array.
 
       READ(CXCRD,'(F15.0)') XCRD 
       READ(CYCRD,'(F15.0)') YCRD
-      READ(CELEV,'(F9.0)')   ELEV
+      READ(CELEV,'(F9.0)')  ELEV
       
       IF(YCRD .GE. -90.0 .AND. YCRD .LE. 90.0 .AND.
      &   XCRD .GE.-180.0 .AND. XCRD .LE. 180.0 .AND.
-     &   LEN_TRIM(CYCRD).GT.0.0 .AND. LEN_TRIM(CXCRD).GT.0.0)THEN
+     &   LEN_TRIM(CYCRD).GT. 0.0 .AND. LEN_TRIM(CXCRD).GT.0.0
+     &   .AND.
+     &   (YCRD .NE. 0.0 .OR. XCRD .NE. 0.0))THEN
 !     Transfer data to the modules
          CALL PUT('FIELD','CYCRD',CYCRD)
          CALL PUT('FIELD','CXCRD',CXCRD)   
