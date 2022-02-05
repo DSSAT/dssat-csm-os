@@ -5,15 +5,14 @@ C  Description
 C-----------------------------------------------------------------------
 C  Revision history
 C
-C  --/--/---- DP  Written.
+C  07/02/2003 KJB/SJR/PA?  Written.
 C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C  10/15/2020 FO  Fixed path issue for MOWFILE.
 C  06/23/2021 FO  Update MOWFILE to handle paths with spaces.
-C  01/28/2022 FO/DP/TF  Added AutomaticMOW
-C  01/28/2022 TF/DP  Added GDD option for AutomaticMOW
-C  01/29/2022 TF  Added protections and warnings for AutomaticMOW
+C  01/28/2022 DP/FO/TF Added AutomaticMOW
+C  01/28/2022 DP/TF  Added GDD option for AutomaticMOW
 C-----------------------------------------------------------------------
-C  INPUT  : 
+C  INPUT  :
 C
 C  OUTPUT :
 C-----------------------------------------------------------------------
@@ -27,10 +26,10 @@ C=======================================================================
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
      &                fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,
-     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT, HMMOW,HRSPL, 
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT, HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &                WTCO, WTLO, WTSO,TMAX,TMIN)
-      
+
       USE MODULEDEFS
 
       IMPLICIT NONE
@@ -54,12 +53,12 @@ C=======================================================================
       REAL PROLFF,PROSTF,pliglf,pligst
       real canht,fhcrlf,fhcrst,fhtotn,fhtot,fhlfn,fhstn
       real fhpcho,fhpctlf,fhpctn,fhplig
-      real vstagp,MOWC,RSPLC,y,z,PELF,FMOW,RHMOW,CHMOW,FLFP,RHLFP,RSPLM
+      real vstagp,MOWC,RSPLC,y,z,PELF,FMOW,RHMOW,FLFP,RHLFP,RSPLM
       REAL DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO
       REAL WTCO, WTLO, WTSO
       REAL FREQ,CUHT,YHT,MOWREF
       REAL TABEX  ! Function subroutine - Lookup utility
-      REAL HMCUT, RSREF, CUTPL, CNHREF
+      REAL HMCUT, RSREF
       INTEGER,dimension(6) :: IXFREQ
       REAL,dimension(6) :: XFREQ
       REAL,dimension(6) :: YFREQ
@@ -72,17 +71,14 @@ C=======================================================================
       INTEGER,dimension(6) :: IXRSREF
       REAL,dimension(6) :: XRSREF
       REAL,dimension(6) :: YRSREF
-      INTEGER,dimension(6) :: IXCUTPL
-      REAL,dimension(6) :: XCUTPL
-      REAL,dimension(6) :: YCUTPL
       REAL GDD, MOWGDD
       INTEGER HMFRQ, HMGDD, CUTDAY
-      INTEGER HMMOW, HRSPL !TF 2022-01-31 Simple version AutoMOW 
+      INTEGER HMMOW, HRSPL !TF 2022-01-31 Simple version AutoMOW
       REAL TMAX
       REAL TMIN
       REAL TB(5), TO1(5), TO2(5), TM(5)
 !      REAL,ALLOCATABLE,DIMENSION(:) :: canht
-      
+
       character(len=1)  BLANK
       character(len=2)  crop
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
@@ -107,9 +103,9 @@ C=======================================================================
       LOGICAL ATMOW
       CHARACTER*1 ATTP
       logical exists
-      
+
       TYPE(CONTROLTYPE) CONTROL
-      
+
       SAVE MOWGDD
       SAVE MOWCOUNT
 
@@ -137,8 +133,8 @@ C***********************************************************************
         MOWGDD = 0.0
         MOWCOUNT = 1
 
-C----------------------------------------------------------      
-C     Open and read MOWFILE and PATH 
+C----------------------------------------------------------
+C     Open and read MOWFILE and PATH
 C----------------------------------------------------------
 C FO - 10/15/2020 Fixed path issue for MOWFILE.
         CALL GETLUN('FILEIO', LUNIO)
@@ -188,7 +184,7 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
             MSG(3) = 'Value of harvest frequency (days) will be used.'
             CALL WARNING(3,ERRKEY,MSG)
           ENDIF
-          
+
           IF(HMMOW .LE. 0) THEN
             MSG(1) = "Value of HMMOW empty or equal to zero."
             MSG(3) = 'A default value of 3000 is being used.'
@@ -208,7 +204,7 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
             MSG(3) = "Which may produce inaccurate results."
             CALL WARNING(3,ERRKEY,MSG)
           ENDIF
-        
+
         ENDIF
 
 
@@ -219,74 +215,10 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 C-----------------------------------------------------------------------
 
-C----------------------------------------------------------
-      
-!      YHT=canht
-!      do j=1,size(canht); YHT(size(canht))=canht; end do
-!      WRITE(5000,'(F6.3)') YHT
-!C----------------------------------------------------------      
-!!MOWC - Automatic MOW - post harvest stubble mass and %leaf 
-!!       in the stubble calculation (Diego): 
-!C----------------------------------------------------------
-!! OPEN AND READ SPECIES FILE
-!      CALL GETLUN('FILEC', LUNCRP)      
-!      OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
-!        SECTION = '!*CANO'
-!      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
-!      do j=1,8; CALL IGNORE(LUNCRP,LNUM,ISECT,C255); end do
-!        READ(C255,'(F6.1)') FMOW
-!      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-!        READ(C255,'(F6.1)') RHMOW
-!      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-!        READ(C255,'(F6.1)') CHMOW
-!      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-!        READ(C255,'(F6.2)') FLFP
-!      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-!        READ(C255,'(F6.2)') RHLFP
-!      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-!        READ(C255,'(F6.1)') RSPLM
-!      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-!        CLOSE (LUNCRP)
-!        WRITE(1050,'(F10.3)') NHGT
-!C--------------------------------------------------
-!TEMPORARY AUTO-HARVEST ROUTINE
-!!OPEN AND READ FILEX
-!      !CALL IPHAR (LUNEXP) 
-!      !OPEN (LUNEXP,FILE=FILEX_P, STATUS = 'OLD',IOSTAT=ERRNUM)
-!      !    FINDCH='*HARVE'
-!      !CALL FIND (LUNEXP,FINDCH,LINEXP)
-!      !CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
-!      !READ (CHARTEST,'(44X,2F5.0)') FREQ,CUHT
-!      !CLOSE(LUNEXP)
-!      !WRITE(5000,'(2F5.0)') FREQ,RSHT 
-!      FREQ=42 !should be in the file X
-!      CUHT=0.10 !should be in the file X
-!C--------------------------------------------------      
-!!           MOWC = 209.69*rsht(i)+0.0
-!           !y = (209.69*rsht(i))
-!           !MOWC= (-11.084*28)+y
-!           !MOWC= (-11.084*28)+(209.69*rsht(i)*100) !original not dynamic
-!           !MOWC= (FMOW*28)+(RHMOW*rsht(i)*100)+(CHMOW*canht*100)
-!            MOWC= (FMOW*FREQ)+(RHMOW*CUHT*100)+(CHMOW*canht*100)
-!           if (canht*100 .GE. 0.0) then
-!!           RSPLC = -0.3373*rsht(i)+52.903
-!           !z = (-0.3373*rsht(i))+52.903
-!           !RSPLC= (-0.0418*28)+z
-!           !RSPLC= (-0.0418*28)+((-0.3373*rsht(i))+52.903)!original not dynamic
-!           !RSPLC=(FLFP*28)+((RHLFP*((canht-rsht(i))/canht*100))+RSPLM)
-!            RSPLC=(FLFP*FREQ)+((RHLFP*((canht-CUHT)/canht*100))+RSPLM)
-!           else
-!           RSPLC=0.0
-!           endif
-!           if (RSPLC .ge. RSPLM) then
-!           RSPLC=RSPLM    
-!           endif
-!!          WRITE(5000,'(2F10.0)') MOWC,RSPLC
-C---------------------------------------------------------              
       !Daily Senescence
       DWTCO = WTCO - PWTCO
       DWTLO = WTLO - PWTLO
-      DWTSO = WTSO - PWTSO       
+      DWTSO = WTSO - PWTSO
 
 
         CALL GETLUN('FILEC', LUNCRP)
@@ -309,8 +241,8 @@ C---------------------------------------------------------
         END IF
 
       !C----------------------------------------------------------
-      !!MOWC - Automatic MOW - post harvest stubble mass and %leaf
-      !!       in the stubble calculation (Diego):
+      !!       Automatic MOW - post harvest stubble mass and %leaf
+      !!       in the stubble calculation (DP,KJB,WP,FO,TF):
       !C----------------------------------------------------------
       ! OPEN AND READ SPECIES FILE
       CALL GETLUN('FILEC', LUNCRP)
@@ -324,13 +256,11 @@ C---------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YFREQ(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        READ(C255,'(F6.0)') CNHREF
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCUTHT(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCUTHT(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        READ(C255,'(F6.0)') CHMOW
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCHMOW(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
@@ -344,16 +274,11 @@ C---------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YRSREF(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        READ(C255,'(F6.0)') CUTPL
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCUTPL(I),I=1,6)
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCUTPL(I),I=1,6)
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        CLOSE (LUNCRP) 
+        CLOSE (LUNCRP)
 
 !-----------------------------------------------------------------------
-!     Find Phenology Section in FILEC and read
+!     Find Phenology Section in FILEC and read cardinal temperatures
+!     for GDD calculations as harvest frequency option
 !-----------------------------------------------------------------------
       CALL GETLUN('FILEC', LUNCRP)
       OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
@@ -367,19 +292,17 @@ C---------------------------------------------------------
 
         XFREQ = IXFREQ
         XCUTHT = IXCUTHT
-        XCHMOW = IXCHMOW
         XRSREF = IXRSREF
-        XCUTPL = IXCUTPL
 
       INQUIRE(FILE = MOWFILE, EXIST = exists)
       IF(exists .EQV. .FALSE.) ATMOW = .TRUE.
       IF (.NOT.ALLOCATED(MOW) .AND. ATMOW .EQV. .FALSE.) THEN
-      
+
         CALL GETLUN('MOWFILE',MOWLUN)
         OPEN (UNIT=MOWLUN,FILE=FILEMOW,STATUS='OLD',IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,29,FILEMOW,LNUM)
         REWIND(MOWLUN)
-        
+
         ISECT = 0
         MOWCOUNT = 0
         write(trtchar,'(i6)') trtno
@@ -394,7 +317,7 @@ C---------------------------------------------------------
           END IF
         END DO
         REWIND(MOWLUN)
-			 
+
 
         IF (MOWCOUNT.GT.0) THEN
           ALLOCATE(TRNO(MOWCOUNT),DATE(MOWCOUNT),MOW(MOWCOUNT))
@@ -406,7 +329,7 @@ C         MOW file has no data for this treatment
           MOW (1) = -99
           RETURN
         END IF
-     
+
         I = 0
         ISECT = 0
         DO WHILE (ISECT.EQ.0)
@@ -460,12 +383,12 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               fhplig = (fhleaf*pliglf+fhstem*pligst)/fhtot*100
               fhpcho = (fhcrlf+fhcrst)/fhtot*100
               fhpctlf = fhleaf/fhtot*100
-      
+
               WTLF  = WTLF - FHLEAF
               STMWT = STMWT - FHSTEM
               TOPWT = TOPWT - FHLEAF - FHSTEM
               TOTWT = TOTWT - FHLEAF - FHSTEM
- 
+
               WCRLF = WTLF*RHOL
               WCRST = STMWT*RHOS
 
@@ -488,8 +411,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               AREALF = WTLF*SLA
               XLAI   = AREALF/10000.
               XHLAI  = XLAI
-  
-              VSTAGE = FHVSTG     
+
+              VSTAGE = FHVSTG
               vstagp = vstage
 
           else
@@ -508,7 +431,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               fhpcho = 0
 
               fhpctlf = 0
-              
+
 
           ENDIF
 
@@ -521,7 +444,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
                call date_and_time(values=date_time)
                OPEN(FILE=FHOUT,UNIT=FHLUN)
                rewind(fhlun)
-               fhoutfmt = 
+               fhoutfmt =
      &     "('*Forage Model Harvest Output: ',A8,A2,1X,A,1X,"//
      &     "'DSSAT Cropping System Model Ver. '"//
      &     ",I1,'.',I1,'.',I1,'.',"//
@@ -529,7 +452,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &     "A3,' ',I2.2,', ',I4,'; ',I2.2,':',I2.2,':',I2.2/)"
                WRITE (fhlun,fhoutfmt) mowfile(1:8),crop,trim(ename),
      &             Version,VBranch,
-     &             MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1), 
+     &             MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1),
      &             DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
                WRITE(fhlun,'(a)')
      &           '@RUN FILEX    CR TRNO FHNO YEAR DOY'//
@@ -549,9 +472,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &           fhpctn,fhpcho,fhplig,fhpctlf
 !     &           -99,-99.0,MOWC,RSPLC
             close(fhlun)
-            
+
             if(date(i)==yrdoy.and.trno(i)==trtno) then
-             PWTCO = WTCO 
+             PWTCO = WTCO
              PWTLO = WTLO
              PWTSO = WTSO
              DWTCO = WTCO - PWTCO
@@ -567,48 +490,48 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
       ENDIF
 
 !***********************************************************************
-! AUTOMOW
+! AUTOMOW calculations (DP,KJB,WP,FO,TF)
 !***********************************************************************
       IF(HMFRQ .LE. 0 .AND. HMGDD .LE. 0) HMFRQ = 28
       IF(HMCUT .LE. 0.0) HMCUT = 0.10
       IF(HMMOW .LE. 0) HMMOW = 3000
       IF(HRSPL .LE. 0) HRSPL = 30
 
-      ! TF - 01/29/2022 Protection to avoid divisions and mod by zero 
+      ! TF - 01/29/2022 Protection to avoid divisions and mod by zero
       IF(HMFRQ .GT. 0) THEN
         CUTDAY = MOD(MOWCOUNT,HMFRQ)
-        MOWGDD = 0 !It will not accumalute GDD if there is HMFRQ 
+        MOWGDD = 0 !It will not accumulate GDD if there is HMFRQ
       ELSE
         CUTDAY = 1
       ENDIF
       INQUIRE(FILE = MOWFILE, EXIST = exists)
-      ! TF/DP - 01/28/2022 Added degree days (GDD) option
-      IF(ATMOW .EQV. .TRUE. .OR. 
+      ! DP/TF - 01/28/2022 Added degree days (GDD) option
+      IF(ATMOW .EQV. .TRUE. .OR.
      &  (exists .EQV. .FALSE. .AND. ATMOW .EQV. .FALSE.)) then
-            IF(CUTDAY .EQ. 0 .OR. 
-     &        (MOWGDD .GE. HMGDD .AND. HMGDD .GT. 0)) THEN 
+            IF(CUTDAY .EQ. 0 .OR.
+     &        (MOWGDD .GE. HMGDD .AND. HMGDD .GT. 0)) THEN
               IF(HMFRQ .GT. 0) THEN
                 FREQ = HMFRQ
               ELSE
                 FREQ = HMGDD
               ENDIF
-              !TF 2022-01-31 Simple version AutoMOW 
+            !DP/TF 2022-01-31 Switch to complete version AutoMOW
               IF(ATTP .EQ. 'A') THEN
                 MOWC = (TABEX(YFREQ, XFREQ, FREQ, 6) * MOWREF) *
      &          (TABEX(YCUTHT, XCUTHT, HMCUT*100, 6)) *
      &          (TABEX(YCHMOW, XCHMOW, topwt, 6))
-                RSPLC = (TABEX(YRSREF, XRSREF, FREQ, 6) * RSREF)              
+                RSPLC = (TABEX(YRSREF, XRSREF, FREQ, 6) * RSREF)
+            !DP/TF 2022-01-31 Switch to simple version AutoMOW
               ELSEIF(ATTP .EQ. 'D') THEN
                 MOWC = MAX(HMMOW,0)
                 RSPLC = MAX(HRSPL,0)
               ENDIF
-              
               MOWGDD = 0.0
-
             ELSE
                 MOWCOUNT = MOWCOUNT + 1
+                !DP/TF 2022-01-31 GDD calculations as harvest frequency option
                 GDD = (((TMAX+TMIN)/2) - TB(1))
-                IF (GDD .GT. TM(1)) GDD = TM(1)
+                IF (GDD .GT. TO1(1)-TB(1)) GDD = TO1(1)-TB(1)
                 GDD = MAX(GDD, 0.0)
                 MOWGDD = MOWGDD + GDD
                 RETURN
