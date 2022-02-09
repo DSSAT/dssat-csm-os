@@ -118,8 +118,9 @@ C=======================================================================
       REAL SLCADDOT, SRCADDOT, SSRCADDOT, SSCADDOT
       REAL SLNADDOT, SRNADDOT, SSRNADDOT, SSNADDOT 
       REAL SRDOT, SLAAD, SLNDOT, SSDOT, SSNDOT
-      REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TURFAC, TAVG, TURADD,
-     &    TRNH4U, TRNO3U, TRNU, TNLEAK, TRWUP, TTFIX, TOPWT, TOTWT
+      REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TMAX, TURFAC, 
+     &    TAVG, TURADD, TRNH4U, TRNO3U, TRNU, TNLEAK, TRWUP, 
+     &    TTFIX, TOPWT, TOTWT
       REAL VSTAGE
       REAL WLFDOT, WSIDOT, WRIDOT
       REAL WTNCAN, WTNFX, WTNLA, WTNLO, WTNNA, WTNNAG
@@ -245,6 +246,15 @@ C------------------------------------------------------------
       REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
       REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
       LOGICAL RUNYET
+C FO/DP/TF - 2020-07-22 - AutomaticMOW
+      LOGICAL ATMOW
+      INTEGER HMFRQ
+      INTEGER HMGDD
+      REAL HMCUT
+C TF/DP 2022-01-31 Simple version AutoMOW 
+      INTEGER HMMOW, HRSPL 
+      CHARACTER*1 ATTP
+
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 2
@@ -294,6 +304,13 @@ C------------------------------------------------------------
       ISWSYM = ISWITCH % ISWSYM
       ISWWAT = ISWITCH % ISWWAT
       MEPHO  = ISWITCH % MEPHO
+      ATMOW  = ISWITCH % ATMOW
+      HMFRQ  = ISWITCH % HMFRQ
+      HMGDD  = ISWITCH % HMGDD
+      HMCUT  = ISWITCH % HMCUT
+      HMMOW  = ISWITCH % HMMOW
+      HRSPL  = ISWITCH % HRSPL
+      ATTP   = ISWITCH % ATTP
 
       CO2    = WEATHER % CO2   
       DAYL   = WEATHER % DAYL  
@@ -303,6 +320,7 @@ C------------------------------------------------------------
       TGRO   = WEATHER % TGRO  
       TGROAV = WEATHER % TGROAV
       TMIN   = WEATHER % TMIN  
+      TMAX   = WEATHER % TMAX
 
 ! Disable P stress
       pstres1 = 1
@@ -707,6 +725,15 @@ C-----------------------------------------------------------------------
         HARVRES % RESE   = 0.0
       ENDIF
 
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
+     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
+     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL, 
+     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &                WTCO, WTLO, WTSO, TMAX, TMIN)
      
 !***********************************************************************
 !***********************************************************************
@@ -2017,14 +2044,15 @@ C-----------------------------------------------------------------------
 !      fhpctn = 0.0
       MOWC =0.0
       RSPLC =0.0
-      call forage_harvest(CONTROL,FILECC,
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,MOWC,RSPLC,
+     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                WTCO, WTLO, WTSO)
+     &                WTCO, WTLO, WTSO, TMAX, TMIN)
 
       Cumul_FHTOT  = Cumul_FHTOT  + FHWAH
       Cumul_FHTOTN = Cumul_FHTOTN + FHTOTN

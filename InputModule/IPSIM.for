@@ -85,6 +85,13 @@ C=======================================================================
 
       LOGICAL UseSimCtr, MulchWarn, SimLevel
 
+C FO/DP/TF - 2020-07-22 - AutomaticMOW FILEX variables
+      INTEGER HMFRQ
+      INTEGER HMGDD
+      REAL HMCUT   
+C TF/DP 2022-01-31 Simple version AutoMOW 
+      INTEGER HMMOW, HRSPL 
+
 !     2020-11-04 CHP Added for yield forecast mode, RNMODE = 'Y'
       INTEGER ENDAT, SeasDur, FODAT, FStartYear, FEndYear
       CHARACTER*15 FWFILE
@@ -338,6 +345,17 @@ C
          IRESI = UPCASE(IRESI)
          IHARI = UPCASE(IHARI)
 
+C FO & DP - 2020-07-22 - AutomaticMOW Switch
+         IF(IHARI .EQ. 'A') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'A'
+         ELSEIF(IHARI .EQ. 'D') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'D'
+         ELSE
+           ISWITCH%ATMOW = .FALSE.
+         ENDIF
+
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
               WRITE(MSG(1),'("Automatic harvest option ",
@@ -565,10 +583,26 @@ C
 C           Read TENTH line of simulation control - AUTOMATIC HARVEST
 C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
-            READ (CHARTEST,66,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
-     &           HPP,HRP
+            READ (CHARTEST,71,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
+     &           HPP,HRP,ISWITCH%HMFRQ,ISWITCH%HMGDD,ISWITCH%HMCUT,
+     &           ISWITCH%HMMOW, ISWITCH%HRSPL
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             
+C FO/DP/TF - 2020-07-22 - AutoMOW Frequency and cut height initialization
+            IF(ISWITCH%ATMOW .EQV. .TRUE.) THEN
+              ISWITCH%HMFRQ = MAX(ISWITCH%HMFRQ, 0)
+              ISWITCH%HMGDD = MAX(ISWITCH%HMGDD, 0)
+              ISWITCH%HMCUT = MAX(ISWITCH%HMCUT, 0.0)
+              ISWITCH%HMMOW = MAX(ISWITCH%HMMOW, 0)
+              ISWITCH%HRSPL = MAX(ISWITCH%HRSPL, 0)
+            ELSE
+              ISWITCH%HMFRQ = -99
+              ISWITCH%HMGDD = -99
+              ISWITCH%HMCUT = -99
+              ISWITCH%HMMOW = -99
+              ISWITCH%HRSPL = -99
+            ENDIF
+
 !     ==============================================================
 !           Read ELEVENTH line of simulation control - SIMULATION DATES
 !           2020-11-04 CHP added forecast mode inputs
@@ -900,6 +934,8 @@ C-----------------------------------------------------------------------
 !    &        1X,I5,1x,F5.0, 2(1x, F5.3))
   69  FORMAT(I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,F6.0)
   70  FORMAT (3X,I2)
+! FO/TF - New reading format for AutomaticMOW
+  71  FORMAT (I3,11X,2(1X,I5),2(1X,F5.0),1X,I5,1X,I5,1X,F5.2,2(1X,I5))
 
       END SUBROUTINE IPSIM
 
