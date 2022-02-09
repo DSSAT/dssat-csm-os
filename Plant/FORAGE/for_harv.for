@@ -256,24 +256,20 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YFREQ(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCUTHT(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCUTHT(I),I=1,6)
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCHMOW(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCHMOW(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
 
-
         READ(C255,'(F6.0)') RSREF
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXRSREF(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YRSREF(I),I=1,6)
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         CLOSE (LUNCRP)
 
 !-----------------------------------------------------------------------
@@ -292,6 +288,7 @@ C-----------------------------------------------------------------------
 
         XFREQ = IXFREQ
         XCUTHT = IXCUTHT
+        XCHMOW = IXCHMOW
         XRSREF = IXRSREF
 
       INQUIRE(FILE = MOWFILE, EXIST = exists)
