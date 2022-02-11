@@ -1270,6 +1270,7 @@ C=======================================================================
 
       CHARACTER*6  ERRKEY
       CHARACTER*10 FILECDE
+      CHARACTER*78 MSG(2)
       CHARACTER*80 CHARTEST
       CHARACTER*120 DATAX, PATHX
       CHARACTER(len=255) :: DSSAT_HOME
@@ -1325,7 +1326,10 @@ C=======================================================================
       ENDIF
 
       IF (.NOT. FEXIST) THEN
-        CALL ERROR (ERRKEY,2,DATAX,0)
+        MSG(1) = "OUTPUT.CDE file not found"
+        MSG(2) = "Error in subroutine OUTFILES"
+        CALL WARNING(2, ERRKEY, MSG)
+!        CALL ERROR (ERRKEY,2,DATAX,0)
       ENDIF
 
       IF (FEXIST) THEN
