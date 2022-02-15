@@ -533,7 +533,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
      &     XLONG .GE.-180.0 .AND. XLONG .LE. 180.0 .AND.
      &   LEN_TRIM(CYCRD).GT.0.0 .AND. LEN_TRIM(CXCRD).GT.0.0
      &   .AND.
-     &   (XLAT .NE. 0.0 .OR. XLONG .NE. 0.0))THEN
+     &   (ABS(XLAT) .GT. 1.E-15 .OR. ABS(XLONG) .GT. 1.E-15))THEN
 !     Transfer data to the modules
          CALL PUT('FIELD','CYCRD',CYCRD)
          CALL PUT('FIELD','CXCRD',CXCRD)      

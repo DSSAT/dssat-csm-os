@@ -1102,6 +1102,7 @@ C=======================================================================
       CHARACTER*10 SLNO
       CHARACTER*12 FILEX
       CHARACTER*15 CXCRD, CYCRD
+      CHARACTER*78 MSG(2)
       CHARACTER*92 CHARTEST
 
       INTEGER LUNEXP,LNFLD,LN,LINEXP,ISECT,IFIND,ERRNUM,I, FHDUR
@@ -1177,15 +1178,34 @@ C FO - Store Summary.out labels and values in arrays to send to
 C     OPSUM routines for printing.  Integers are temporarily 
 C     saved as real numbers for placement in real array.
 
-      READ(CXCRD,'(F15.0)') XCRD 
-      READ(CYCRD,'(F15.0)') YCRD
-      READ(CELEV,'(F9.0)')  ELEV
+      READ(CXCRD,'(F15.0)', IOSTAT=ERRNUM) XCRD
+      IF(ERRNUM .EQ. 0) THEN
+         XCRD = -999.0
+         MSG(1) = 'Error reading latitude from experimental file'
+         MSG(2) = FILEX
+         CALL WARNING(2, ERRKEY, MSG)
+      ENDIF
+      READ(CYCRD,'(F15.0)', IOSTAT=ERRNUM) YCRD
+      IF(ERRNUM .EQ. 0) THEN
+         YCRD = -99.0
+         MSG(1) = 'Error reading longitude from experimental file'
+         MSG(2) = FILEX
+         CALL WARNING(2, ERRKEY, MSG)
+      ENDIF
+      READ(CELEV,'(F9.0)', IOSTAT=ERRNUM)  ELEV
+      IF(ERRNUM .EQ. 0) THEN
+        ELEV = -99.0
+        MSG(1) = 'Error reading elevation from experimental file'
+        MSG(2) = FILEX
+        CALL WARNING(2, ERRKEY, MSG)
+      ENDIF
       
       IF(YCRD .GE. -90.0 .AND. YCRD .LE. 90.0 .AND.
      &   XCRD .GE.-180.0 .AND. XCRD .LE. 180.0 .AND.
      &   LEN_TRIM(CYCRD).GT. 0.0 .AND. LEN_TRIM(CXCRD).GT.0.0
      &   .AND.
-     &   (YCRD .NE. 0.0 .OR. XCRD .NE. 0.0))THEN
+     &   (ABS(YCRD) .GT. 1.E-15 .OR. ABS(XCRD) .GT. 1.E-15).AND.
+     &   ERRNUM .NE. 0)THEN
 !     Transfer data to the modules
          CALL PUT('FIELD','CYCRD',CYCRD)
          CALL PUT('FIELD','CXCRD',CXCRD)   
@@ -1196,7 +1216,7 @@ C     saved as real numbers for placement in real array.
         CALL PUT('FIELD','CYCRD','            -99')
         CALL PUT('FIELD','CXCRD','            -99')
         LABEL(1) = 'YCRD'; VALUE(1) = -99.0 
-        LABEL(2) = 'XCRD'; VALUE(2) = -999.0 
+        LABEL(2) = 'XCRD'; VALUE(2) = -999.0         
       ENDIF
       
       IF(ELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
