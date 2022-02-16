@@ -289,6 +289,15 @@ Field input section not found.  Please add to input file.
 IPFLD     2
 Field input level not found. Please correct input file.
 
+IPFLD     3
+Latitude input has wrong format. Please correct input file.
+
+IPFLD     4
+Longitude input has wrong format. Please correct input file.
+
+IPFLD     5
+Elevation input has wrong format. Please correct input file.
+
 IPFLD    10
 Error in weather station input.  Correct input file.
 

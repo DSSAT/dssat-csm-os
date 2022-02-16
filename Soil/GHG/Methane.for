@@ -343,7 +343,7 @@ C***********************************************************************
       CH4_data % CumCO2Emission = CumCO2Emission
       CH4_data % CumCH4Emission = CumCH4Emission
       CH4_data % CumCH4Consumpt = CumCH4Consumpt
-      CH4_data % CumCH4Leaching = CumCH4Leaching                    
+      CH4_data % CumCH4Leaching = CumCH4Leaching
 
 
       RETURN

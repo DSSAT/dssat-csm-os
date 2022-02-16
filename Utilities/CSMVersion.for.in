@@ -19,9 +19,11 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-methane'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.8.0.23 chp 2022-02-15 More CROPGRO calibrations. Lat-long fix. Methane updates.
+!       4.8.0.22 chp 2022-01-28 More CROPGRO calibrations. NWheat & NTeff updates.
 !       4.8.0.21 chp 2022-01-20 Methane model. CROPGRO calibrations for v4.8. 
 !       4.8.0.20 chp 2022-01-14 More ETPHOT protections, mulch water initialization, 
 !                               fix puddling date, filepath length for linux, misc.
