@@ -846,12 +846,12 @@ C         Read in weather file header.
 !!        CALL ERROR(ERRKEY,9,FILEW,RecNum)
 !!      ENDIF
 
-      IF (I > NRecords) THEN
-        ErrCode = 64
-        CALL WeatherError(CONTROL, ErrCode, FILEWW, 
-     &                  LINWTH, YRDOY, YREND)
-        RETURN
-      ENDIF
+!      IF (I > NRecords) THEN
+!        ErrCode = 64
+!        CALL WeatherError(CONTROL, ErrCode, FILEWW, 
+!     &                  LINWTH, YRDOY, YREND)
+!        RETURN
+!      ENDIF
 
 !***********************************************************************
 !***********************************************************************
