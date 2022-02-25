@@ -33,7 +33,7 @@ C-----------------------------------------------------------------------
       CHARACTER*30  LayerText
       CHARACTER*220 GROHEAD(4), NITHEAD
 
-      INTEGER LUNOV,YRPLT,DAP,DAS
+      INTEGER LUNOV,YRPLT,DAP,DAS, DTTC
       INTEGER RSTAGE,ISTAGE,YRDOY
 
       CHARACTER*1 IDETG, ISWNIT
@@ -133,7 +133,7 @@ C-----------------------------------------------------------------------
      &  '@YEAR DOY   DAS   DAP  L#SD  GSTD  LAID  LWAD  SWAD  GWAD' //
      &  '  RWAD  EWAD  CWAD  G#AD  GWGD  HIAD  T#AD  WSPD  WSGD' //
      &  '  EWSD  NSTD  KSTD   LN%D   SH%D  SLAD  CHTD  CWID  RDPD' //
-     &  '  RL1D  RL2D  RL3D  RL4D  RL5D  SNW0C  SNW1C   DTTD' 
+     &  '  RL1D  RL2D  RL3D  RL4D  RL5D  SNW0C  SNW1C   DTTC' 
 
 !-----------------------------------------------------------------------
 !         Initialize daily growth output file
@@ -210,6 +210,8 @@ C-----------------------------------------------------------------------
       CUMSENSURFN = 0.0
       CUMSENSOILN = 0.0   
 
+      DTTC = 0  !Cumulative thermal days (integer)
+
 !***********************************************************************
 !***********************************************************************
 !     Daily OUTPUT
@@ -224,6 +226,8 @@ C-----------------------------------------------------------------------
         CUMSENSOIL  = CUMSENSOIL  + SENESCE % ResWt(L)
         CUMSENSOILN = CUMSENSOILN + SENESCE % ResE(L,1)
       ENDDO
+
+      DTTC = DTTC + NINT(DTT)  !Accumulate thermal days
 
 !-----------------------------------------------------------------------
 C     Check for output frequency
@@ -353,12 +357,12 @@ C-----------------------------------------------------------------------
      &       NINT(SEEDNO),SDSIZE,HI,NINT((TILNO+1.)*PLTPOP),(1.0-SWFAC),
      &       (1.0-TURFAC),SATFAC,(1.0-NSTRES),(1.0-KSTRES),PCNL,SHELPC,
      &       SLA,CANHT,CANWH,(RTDEP/100),(RLV(I),I=1,5),
-     &       NINT(CUMSENSURF), NINT(CUMSENSOIL), DTT
+     &       NINT(CUMSENSURF), NINT(CUMSENSOIL), DTTC
  400      FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &        1X,F5.1,1X,I5,1X,F5.2,7(1X,I5),
      &        1X,F5.1,1X,F5.3,1X,I5,5(1X,F5.3),2(1X,F6.2),1X,F5.1,
      &        2(1X,F5.2),6(1X,F5.2)  !)
-     &        ,2(1X,I6),F7.2 ) 
+     &        ,2(1X,I6),I7) 
 
  !      VSH CSV output corresponding to PlantGro.OUT
         ELSEIF (FMOPT == 'C') THEN 
@@ -373,7 +377,7 @@ C-----------------------------------------------------------------------
      &       SEEDNO,SDSIZE,HI,((TILNO+1.)*PLTPOP),(1.0-SWFAC),
      &       (1.0-TURFAC),SATFAC,(1.0-NSTRES),(1.0-KSTRES),PCNL,SHELPC,
      &       SLA,CANHT,CANWH,(RTDEP/100), RLV5,
-     &       CUMSENSURF, CUMSENSOIL, DTT,
+     &       CUMSENSURF, CUMSENSOIL, DTTC,
      &       vCsvlineRICER, vpCsvlineRICER, vlngthRICER) 
           CALL LinklstRICER(vCsvlineRICER)
         ENDIF

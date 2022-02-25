@@ -16,7 +16,7 @@
 !***********************************************************************
 
 !     ------------------------------------------------------------------
-      USE N2O_mod 
+      USE GHG_mod 
       USE ModuleData
       IMPLICIT NONE
       SAVE
@@ -111,7 +111,6 @@
 !      DO L = 0, NL
 !        TotLastSenes = TotLastSenes + SENESCE % ResE(L,N)
 !      ENDDO
-
 
 !     Inorganic
       IF (PRESENT(N_inorganic)) THEN

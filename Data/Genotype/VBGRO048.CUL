@@ -1,0 +1,72 @@
+*VELVETBEAN CULTIVAR COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! EXPNO   Number of experiments used to estimate cultivar parameters
+! ECO#    Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL    Critical Short Day Length below which reproductive development
+!         progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN   Slope of the relative response of development to photoperiod with time
+!         (positive for shortday plants) (1/hour)
+! EM-FL   Time between plant emergence and flower appearance (R1)
+!         (photothermal days)
+! Fl-SH   Time between first flower and first pod (R3) (photothermal days)
+! Fl-SD   Time between first flower and first seed (R5) (photothermal days)
+! SD-PM   Time between first seed (R5) and physiological maturity (R7)
+!         (photothermal days)
+! Fl-LF   Time between first flower (R1) and end of leaf expansion
+!         (photothermal days)
+! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!         (mg CO2/m2-s)
+! SLAVR   Specific leaf area of cultivar under standard growth conditions
+!         (cm2/g)
+! SIZLF   Maximum size of full leaf (three leaflets) (cm2)
+! XFRT    Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD   Maximum weight per seed (g)
+! SFDUR   Seed filling duration for pod cohort at standard growth conditions
+!         (photothermal days)
+! SDPDV   Average seed per pod under standard growing conditions (#/pod)
+! PODUR   Time required for cultivar to reach final pod load under optimal
+!         conditions (photothermal days)
+! THRSH   Threshing percentage. The maximum ratio of (seed/(seed+shell))at
+!         maturity. Causes seed to stop growing as their dry weight
+!         increases until shells are filled in a cohort.
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             P     P     P     P     P     P     P     G     G     G     N     G     P     G     P     G     G     G
+
+999991 MINIMA               . 999991 12.00 .6000 30.00 5.000 10.00 40.00 15.00 1.030 400.0 200.0 1.000 .7000 20.00 4.500 20.00  70.0  .265  .043
+999992 MAXIMA               . 999992 12.00 .6000 90.00 6.000 15.00 80.00 15.00 1.030 500.0 500.0 1.000 1.100 22.00 5.000 20.00  70.0  .265  .043
+
+CC0001 Georgia              . VB0002 12.00 .6000 30.00 5.000 10.00 60.00 15.00 1.030 400.0 235.0 1.000 .7000 20.00 5.000 20.00  70.0  .265  .043
+CC0002 Rayada               . VB0001 12.00 .6000 60.00 6.000 13.00 70.00 15.00 1.030 400.0 325.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CC0003 Tlaltizapan        2,3 VB0001 12.00 .3864 59.07 6.000 13.00 44.95 15.00 1.030 450.0 500.0 1.000 .9000 22.00 4.800 20.00  70.0  .265  .043
+CC0004 Honduras             . VB0001 12.00 .6000 85.00 6.000 13.00 70.00 15.00 1.030 450.0 400.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CC0005 Ghana                . VB0001 12.00 .6000 85.00 6.000 13.00 70.00 15.00 1.030 400.0 485.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CC0006 Br.IITABenin         . VB0001 12.00 .6000 85.00 6.000 13.00 70.00 15.00 1.030 400.0 400.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CC0007 Litoral Atlant       . VB0001 12.00 .6000 85.00 6.000 13.00 70.00 15.00 1.030 400.0 400.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CC0008 CIAT 9394            . VB0001 12.00 .6000 85.00 6.000 13.00 70.00 15.00 1.030 400.0 400.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+
+
+!Cc0003 Tlaltizapan originates from CIMMYTExp.StationTlaltizapan but data first came from CIAT trial so cc in stead of ci
+
+CI0003 Veracruz Mottle      . VB0001 12.00 .6000 62.00 6.000 13.00 70.00 15.00 1.000 455.0 540.0 1.000 .9000 22.00 4.800 20.00  70.0  .265  .043
+CI0004 Veracruz Black     2,4 VB0001 12.00 .6595 57.92 6.000 15.00 55.49 15.00 1.000 500.0 400.0 1.000 1.100 22.00 4.500 20.00  70.0  .265  .043
+CI0005 Veracruz White     2,3 VB0001 12.00 .6241 55.77 6.000 13.00 60.00 15.00 1.000 500.0 500.0 1.000 1.100 22.00 4.800 20.00  70.0  .265  .043
+
+CI0006 Malawi Black         . VB0002 12.00 .6000 30.00 5.000 10.00 65.00 15.00 1.030 270.0 400.0 1.000 .9000 20.00 5.000 20.00  70.0  .265  .043
+CI0007 Zim.BlackMottle      . VB0002 12.00 .6000 45.00 6.000 13.00 65.15 15.00 1.030 400.0 400.0 1.000 .9000 20.00 5.000 20.00  70.0  .265  .043
+
+CI0008 Tamulte              . VB0001 12.00 .6000 62.00 6.000 13.00 80.00 15.00 1.030 455.0 545.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CI0009 Frailesca            . VB0001 12.00 .6000 60.00 6.000 13.00 80.00 15.00 1.030 455.0 400.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CI0010 Braziljaspeada       . VB0001 12.00 .6000 58.00 6.000 13.00 80.00 15.00 1.030 455.0 500.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CI0011 Brazil               . VB0001 12.00 .6000 58.00 6.000 13.00 80.00 15.00 1.030 455.0 500.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CI0012 Cochinensis          . VB0001 12.00 .6000 58.00 6.000 13.00 80.00 15.00 1.030 455.0 500.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+CI0013 Africa Utilis        . VB0001 12.00 .6000 58.00 6.000 13.00 80.00 15.00 1.030 455.0 500.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043
+!all oblong
+IT0002 IRZ                  . VB0001 12.00 .6000 58.00 6.000 13.00 80.00 15.00 1.030 455.0 500.0 1.000 .9000 22.00 4.500 20.00  70.0  .265  .043

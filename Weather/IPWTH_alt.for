@@ -19,6 +19,7 @@ C                   a sequence occurs on Jan 1.
 !  07/25/2014 CHP Added daily CO2 read from weather file (DCO2)
 !  10/18/2016 CHP Read daily ozone values (ppb)
 !  05/28/2021 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
+!  08/20/2021 FO  Added support for LAT, LONG and ELEV to NASA format files.
 C-----------------------------------------------------------------------
 C  Called by: WEATHR
 C  Calls:     None
@@ -269,9 +270,9 @@ C     The components are copied into local variables for use here.
 !     Forecast mode: Set weather file name for historical weather data for forecast
 !     - when IPWTH is called from the forecast module, don't change weather file name
 !     If it's a multi-year weather file, no need to change the name.
-      IF (RNMODE .EQ. 'Y' .AND.               !Yield forecast mode
-     &    SOURCE .EQ. "WEATHR" .AND.          !Getting data from historical ensemble
-     &    NYEAR .EQ. 1) THEN                  !Single-season weather file
+      IF (RNMODE .EQ. 'Y' .AND.      !Yield forecast mode
+     &    SOURCE .EQ. "WEATHR" .AND. !Using historical ensemble
+     &    NYEAR .EQ. 1) THEN         !Single-season weather file
         PATHL  = INDEX(WPath,BLANK)
         CALL YR_DOY(CONTROL % YRDOY, WYEAR, WDOY)
         WYEAR = MOD(WYEAR,100)
@@ -307,11 +308,11 @@ C     The components are copied into local variables for use here.
 
 !     Forecast mode - check bounds of weather file. Needed to determine
 !     that correct century is read for files with 2-digit years
-      IF (RNMODE .EQ. 'Y' .AND.               !Yield forecast mode
-     &    SOURCE .EQ. "FORCST" .AND.          !Getting in-season data for storage
-!    &    INDEX('MG',MEWTH) .GT. 0 .AND.      !Measured or generated data files
-!    &    NYEAR .GT. 1 .AND.                  !Multi-year weather file
-     &    CONTROL % ENDYRS .EQ. 1) THEN       !First year simulation
+      IF (RNMODE .EQ. 'Y' .AND.           !Yield forecast mode
+     &    SOURCE .EQ. "FORCST" .AND.      !Getting in-season data 
+!    &    INDEX('MG',MEWTH) .GT. 0 .AND.  !Measured or generated data 
+!    &    NYEAR .GT. 1 .AND.              !Multi-year weather file
+     &    CONTROL % ENDYRS .EQ. 1) THEN   !First year simulation
         WFPASS = 0
         CenturyWRecord = -99
         CALL FCAST_ScanWeathData(CONTROL, FileWW, LunWth,CenturyWRecord)
@@ -397,7 +398,7 @@ C     The components are copied into local variables for use here.
               CASE('INSI')
                 INSI = ADJUSTL(TEXT)
 
-              CASE('LAT')
+              CASE('LAT','WTHLAT')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XLAT
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CYCRD
                 IF (ERR .NE. 0) THEN
@@ -407,12 +408,12 @@ C     The components are copied into local variables for use here.
                   CALL WARNING(1, ERRKEY, MSG)
                 ENDIF
 
-              CASE('LONG')
+              CASE('LONG','WTHLONG')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XLONG
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CXCRD
                 IF (ERR .NE. 0) XLONG = -99.0
 
-              CASE('ELEV')
+              CASE('ELEV','WELEV')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XELEV
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CELEV
                 IF (ERR .NE. 0) XELEV = -99.0
@@ -439,40 +440,6 @@ C     The components are copied into local variables for use here.
             END SELECT
           ENDIF
         ENDDO
-
-!  05/28/2021 FO  Added code for LAT,LONG and ELEV in Summary.OUT
-!     Check if LAT and LONG are correct in FileX   
-      IF(SUMDAT%YCRD .LE. -99.0 .OR. SUMDAT%XCRD .LE. -999.0) THEN
-        
-        IF(XLAT .GE. -90.0 .AND. XLAT .LE. 90.0 .AND.
-     &     XLONG .GE.-180.0 .AND. XLONG .LE. 180.0 .AND.
-     &   LEN_TRIM(CYCRD).GT.0.0 .AND. LEN_TRIM(CXCRD).GT.0.0)THEN
-!     Transfer data to the modules
-         CALL PUT('FIELD','CYCRD',CYCRD)
-         CALL PUT('FIELD','CXCRD',CXCRD)      
-         LABEL(1) = 'YCRD'; VALUE(1) = XLAT 
-         LABEL(2) = 'XCRD'; VALUE(2) = XLONG
-        ELSE
-          !     Transfer data to the modules
-          CALL PUT('FIELD','CYCRD','            -99')
-          CALL PUT('FIELD','CXCRD','            -99')
-          LABEL(1) = 'YCRD'; VALUE(1) = -99.0 
-          LABEL(2) = 'XCRD'; VALUE(2) = -999.0 
-        ENDIF
-        CALL SUMVALS (SUMNUM, LABEL, VALUE) 
-      ENDIF
-
-!     Check if ELEV are correct in FileX      
-      IF(SUMDAT%ELEV .LE. -99.0) THEN
-        IF(XELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
-          CALL PUT('FIELD','CELEV',CELEV)
-          LABEL(3) = 'ELEV'; VALUE(3) = XELEV
-        ELSE
-          CALL PUT('FIELD','CELEV','      -99')
-          LABEL(3) = 'ELEV'; VALUE(3) = -99.0
-        ENDIF
-        CALL SUMVALS (SUMNUM, LABEL, VALUE)
-      ENDIF
       
 C       Substitute default values if REFHT or WINDHT are missing.
         IF (REFHT <= 0.) REFHT = 1.5
@@ -556,6 +523,45 @@ C       Substitute default values if REFHT or WINDHT are missing.
           IF (FOUND == 0) CALL ERROR(ERRKEY,-1,WFile,LINWTH)
         ENDIF
       ENDIF
+
+!-----------------------------------------------------------------------
+!  05/28/2021 FO  Added code for LAT,LONG and ELEV in Summary.OUT
+!     Check if LAT and LONG are correct in FileX     
+      IF(SUMDAT%YCRD .LE. -99.0 .OR. SUMDAT%XCRD .LE. -999.0) THEN
+        
+        IF(XLAT .GE. -90.0 .AND. XLAT .LE. 90.0 .AND.
+     &     XLONG .GE.-180.0 .AND. XLONG .LE. 180.0 .AND.
+     &   LEN_TRIM(CYCRD).GT.0.0 .AND. LEN_TRIM(CXCRD).GT.0.0
+     &   .AND.
+     &   (ABS(XLAT) .GT. 1.E-15 .OR. ABS(XLONG) .GT. 1.E-15))THEN
+!     Transfer data to the modules
+         CALL PUT('FIELD','CYCRD',CYCRD)
+         CALL PUT('FIELD','CXCRD',CXCRD)      
+         LABEL(1) = 'YCRD'; VALUE(1) = XLAT 
+         LABEL(2) = 'XCRD'; VALUE(2) = XLONG
+        ELSE
+          !     Transfer data to the modules
+          CALL PUT('FIELD','CYCRD','            -99')
+          CALL PUT('FIELD','CXCRD','            -99')
+          LABEL(1) = 'YCRD'; VALUE(1) = -99.0 
+          LABEL(2) = 'XCRD'; VALUE(2) = -999.0 
+        ENDIF
+      ENDIF
+  
+!     Check if ELEV are correct in FileX      
+      IF(SUMDAT%ELEV .LE. -99.0) THEN
+        IF(XELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
+          CALL PUT('FIELD','CELEV',CELEV)
+          LABEL(3) = 'ELEV'; VALUE(3) = XELEV
+        ELSE
+          CALL PUT('FIELD','CELEV','      -99')
+          LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+        ENDIF
+      ENDIF
+
+C     Send labels and values to OPSUM      
+      CALL SUMVALS (SUMNUM, LABEL, VALUE)
+!-----------------------------------------------------------------------      
 
       YRDOYWY = INCYD(YRSIM,-1)
       IF (MULTI > 1) THEN 
@@ -840,12 +846,12 @@ C         Read in weather file header.
 !!        CALL ERROR(ERRKEY,9,FILEW,RecNum)
 !!      ENDIF
 
-      IF (I > NRecords) THEN
-        ErrCode = 64
-        CALL WeatherError(CONTROL, ErrCode, FILEWW, 
-     &                  LINWTH, YRDOY, YREND)
-        RETURN
-      ENDIF
+!      IF (I > NRecords) THEN
+!        ErrCode = 64
+!        CALL WeatherError(CONTROL, ErrCode, FILEWW, 
+!     &                  LINWTH, YRDOY, YREND)
+!        RETURN
+!      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -877,6 +883,7 @@ C         Read in weather file header.
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  08/10/2006 CHP Written
+!  12/22/2021 FO  Fix YRDOYW for long files with Y4K DOY. 
 !-----------------------------------------------------------------------
 !  Called by: IPWTH_alt
 !  Calls:     None
@@ -909,7 +916,7 @@ C         Read in weather file header.
       INTEGER CENTURY, ERR, ErrCode, FOUND, LINWTH, LUNWTH, MULTI, RUN  
       INTEGER YRDOY, YRDOYW, YRDOYWY, YRDOY_start, YREND, YRSIM
       INTEGER YRDOYW_SAVE, YEAR, DOY, WFPASS, YRDOY0
-      INTEGER CenturyWRecord !Century associated with first weather record
+      INTEGER CenturyWRecord !Century for first weather record
 
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
       REAL OZON7
@@ -1057,12 +1064,14 @@ C         Read in weather file header.
           ENDDO
 
           YRDOYW_SAVE = YRDOYW
-          CALL Y2K_DOYW(MULTI, YRDOYWY, YRDOYW, CENTURY)
-          IF (NRecords == 0 .AND. YRDOY == YRSIM .AND.  !First record
-     &        YRDOYW > YRSIM .AND.                      ! > YRSIM
-     &        YRDOYW_SAVE < 99366) THEN       ! & century set by program
-            CENTURY = CENTURY - 1
-            YRDOYW = YRDOYW - 100000
+          IF(FirstWeatherDate .LE. 0) THEN
+            CALL Y2K_DOYW(MULTI, YRDOYWY, YRDOYW, CENTURY)
+            IF (NRecords == 0 .AND. YRDOY == YRSIM .AND.  !First record
+     &          YRDOYW > YRSIM .AND.                      ! > YRSIM
+     &          YRDOYW_SAVE < 99366) THEN       ! & century set by program
+              CENTURY = CENTURY - 1
+              YRDOYW = YRDOYW - 100000
+            ENDIF
           ENDIF
 
 !         Determination of century and weather file date for forecast mode. 
@@ -1136,9 +1145,14 @@ C         Read in weather file header.
           LastWeatherDay = YRDOYW
           IF (FOUND .EQ. 0 .AND. YRDOY .GT. LastWeatherDay  
      &        .AND. LongFile) THEN
-            ErrCode = 10
-            CALL WeatherError(CONTROL, ErrCode, FILEWW, 
+!           For forecast mode, we can have last weather day < today
+            IF (CONTROL % RNMODE .EQ. 'Y') THEN
+              EXIT
+            ELSE
+              ErrCode = 10
+              CALL WeatherError(CONTROL, ErrCode, FILEWW, 
      &                  LINWTH, YRDOYW, YREND)
+            ENDIF
           ENDIF
           EXIT  
         ENDIF
@@ -1257,8 +1271,10 @@ C         Read in weather file header.
 
 !     Error checking
       ErrCode = 0
-!     IF (SRAD < 1.E-2) ErrCode = 2
-      IF (RAIN .LT. 0.) ErrCode = 3
+      IF (SRAD < 0.0)  ErrCode = 2
+      IF (SRAD > 100.) ErrCode = 2
+!      Check for negative solar radiation and extreme high values
+      IF (RAIN .LT. 0.0) ErrCode = 3
       IF (NINT(TMAX * 100.) .EQ. 0 .AND. NINT(TMIN * 100.) .EQ. 0)
      &  ErrCode = 4
       IF (TMAX .LT. TMIN) THEN 
@@ -1376,7 +1392,7 @@ c                   available.
       CHARACTER*78 MSG(4)
       CHARACTER*92 FILEWW
 
-      INTEGER DOYY, ErrCode, I, LNUM, YRDOYW, YREND, YRY
+      INTEGER DOYY, ErrCode, I, J, LNUM, YRDOYW, YREND, YRY
       INTEGER LenString, NCHAR, NMSG
       TYPE (ControlType) CONTROL
 
@@ -1457,7 +1473,9 @@ c                   available.
 
       IF (INDEX('FQY',CONTROL%RNMODE) > 0) THEN
         I = LEN_TRIM(FILEWW)
-        CALL ERROR(ERRKEY,ErrCode,FILEWW(I-11:I),LNUM)
+!       CHP 2021-10-25 Allow 4-character weather filename
+        J = MAX(I-11,1)
+        CALL ERROR(ERRKEY,ErrCode,FILEWW(J:I),LNUM)
       ENDIF
 
       RETURN

@@ -160,6 +160,9 @@ Error in forage harvest. Mow input date is defined prior to the start of simulat
 GETDSC   29
 Detail.CDE file not found.  Program will stop.
 
+FIRRIG    1
+Invalid combination of flooded field parameters. 
+
 IDWTH     1
 Error in Weather Sensitivity Selection entry.  Fix entry or batch file.
 
@@ -285,6 +288,15 @@ Field input section not found.  Please add to input file.
 
 IPFLD     2
 Field input level not found. Please correct input file.
+
+IPFLD     3
+Latitude input has wrong format. Please correct input file.
+
+IPFLD     4
+Longitude input has wrong format. Please correct input file.
+
+IPFLD     5
+Elevation input has wrong format. Please correct input file.
 
 IPFLD    10
 Error in weather station input.  Correct input file.
@@ -738,6 +750,9 @@ Error in Weather Sensitivity Analysis Selection entry. Fix entry or batch file.
 
 SENS      1
 Error in Sensitivity Selection entry.  Fix entry or batch file.
+
+SHADOW    1
+Error in Fraction shaded for sun and row geometry using ellipses.
 
 ENTFER    1
 First fertilizer application date is defined prior to the start of simulation.

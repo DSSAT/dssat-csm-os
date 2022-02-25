@@ -34,7 +34,7 @@
         IF (RUNCRP <= 0) THEN
             MODNAME(1:8) = 'CSYCA' // ModelVerTxt 
             VERSIONCSCAS = 010114                                                             ! MF 15SE14 Changed from VERSION, conflict with ModuleDefs 
-            GENFLCHK(1:15) = 'CSYCA047.041621'
+            GENFLCHK(1:15) = 'CSYCA048.041621'
             
             !-----------------------------------------------------------------------
             !         Set parameters (Most should be placed in input files!)
@@ -197,7 +197,8 @@
             
             ! IDETO FILES
             ! NB. Renaming of Overview and Evaluate handled by CSM
-            FNAMEOV = 'Overview.'//out
+            !LPM 30JUL2021 Change to uppercase the overview.out file
+            FNAMEOV = 'OVERVIEW.'//out
             FNAMEEVAL = 'Evaluate.'//out
             FNAMEMEAS = 'Measured.'//out
             CALL GETLUN (FNAMEEVAL,fnumeval)

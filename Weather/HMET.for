@@ -425,7 +425,6 @@ C       1980).  Lower end adjusted to give smooth transition.
 !        ENDIF
 
 ! JIL 09/11/2007 Using single logistic equation instead of discontinous function
-
         FRDFH = 0.156 + (0.86/(1.0+EXP(11.1*(AMTRH - 0.53))))
         FRDFH = AMIN1 (FRDFH,1.0)
 
