@@ -1089,7 +1089,7 @@ C=======================================================================
 
       SUBROUTINE IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
      &           SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,PMWD,
-     &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDUR,PMALB)
+     &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist,FHDUR,PMALB)
 
       USE ModuleData
       IMPLICIT NONE
@@ -1102,7 +1102,6 @@ C=======================================================================
       CHARACTER*9  CELEV
       CHARACTER*10 SLNO
       CHARACTER*12 FILEX
-      CHARACTER*78 MSG(2)
       CHARACTER*15 CXCRD, CYCRD
       CHARACTER*78 MSG(2)
       CHARACTER*92 CHARTEST

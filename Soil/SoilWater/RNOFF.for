@@ -107,7 +107,8 @@ C-----------------------------------------------------------------------
       ENDIF
       
       IF (SOILPROP % PMcover) THEN
-          RUNOFF = WATAVL * SOILPROP % PMFRACTION + RUNOFF * (1 - SOILPROP % PMFRACTION)
+          RUNOFF = WATAVL * SOILPROP % PMFRACTION 
+     &           + RUNOFF * (1 - SOILPROP % PMFRACTION)
       ENDIF
 
 !!     Temporary
