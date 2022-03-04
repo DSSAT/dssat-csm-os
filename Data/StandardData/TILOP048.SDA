@@ -305,3 +305,12 @@
  15.00  -5.0   5.0
  30.00  10.0  -5.0
 
+! 2022-02-26: JWW added for CAF LTAR simulations
+! https://www.sare.org/publications/steel-in-the-field/dryland-crop-tools/red-weeder
+*TI043 Wide-blade sweep plow 20 cm      One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    10    10     5     0
+@  SLB  SBDT  SKST
+ 10.00   2.0   0.0
+ 20.00  10.0  -5.0
+
