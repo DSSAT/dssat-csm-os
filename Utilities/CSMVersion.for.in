@@ -22,6 +22,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.8.0.24 chp 2022-03-04 More CROPGRO calibrations. Methane zero-divide check.
 !       4.8.0.23 chp 2022-02-15 More CROPGRO calibrations. Lat-long fix. Methane updates.
 !       4.8.0.22 chp 2022-01-28 More CROPGRO calibrations. NWheat & NTeff updates.
 !       4.8.0.21 chp 2022-01-20 Methane model. CROPGRO calibrations for v4.8. 
