@@ -1089,12 +1089,7 @@ C=======================================================================
 
       SUBROUTINE IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
      &           SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,PMWD,
-<<<<<<< HEAD
-     &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDUR,
-     &           PMALB)
-=======
      &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist,FHDUR,PMALB)
->>>>>>> develop-testMerge
 
       USE ModuleData
       IMPLICIT NONE
