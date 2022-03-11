@@ -18,8 +18,8 @@
       END TYPE VersionType
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
-!     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
+!     CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
 !       4.8.0.24 chp 2022-03-04 More CROPGRO calibrations. Methane zero-divide check.
