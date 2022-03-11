@@ -1,0 +1,52 @@
+*TEFF CULTIVAR COEFFICIENTS: TFAPS048 MODEL
+!
+!********** NWheat transition Cultivar Coefficient File ***************
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code of this cultivar, points to the Ecotype in the
+!
+! VSEN	      sensitivity to vernalisation
+! PPSEN       sensitivity to photoperiod (keep <= 19.0 for prevent LAI from spiking)
+! P1	        Thermal time from seedling emergence to the end of the juvenile phase
+! P5	        Thermal time (base 0oC) from beginning of grainfill to maturity: range 500 to 700
+! PHINT       Phyllochron interval
+! GRNO        Coefficient of 100 kernels per stem weight at the beginning of grain filling [100 kernels (g stem)-1] 
+! MXFIL       Potential kernel growth rate [mg kernel-1 day-1]:  Values between 1.0 and 3.0
+! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) values 1.0 - 3.0
+! SLAP1       ratio of leaf area to mass at emergence (cm2/g)
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1
+!Coeffient #                             1     2     3     4     5     6     7     8     9
+!Calibration                             P     P     P     P     P     G     G     G     N
+
+999991 MINIMA               . DFAULT  1.00  14.0 100.0 100.0  70.0  16.0  1.00  1.00 400.0
+999992 MAXIMA               . DFAULT  1.00  19.0 100.0 700.0 120.0  36.0  1.80  3.00 400.0
+
+IB0135 Keyh (local)         . IB0004  1.00  18.0 100.0 600.0 110.0  16.0  1.00  3.00 400.0
+IB0136 DZ-974 & Keyh        . IB0004  1.00  18.0 100.0 500.0 105.0  16.0  1.00  1.00 400.0
+IB0157 DZ-Cr-387            . IB0004  1.00  18.0 100.0 100.0 120.0  32.0  1.30  3.00 400.0
+IB0161 DZ-01-354            . IB0004  1.00  18.0 100.0 550.0 100.0  16.0  1.00  3.00 400.0
+IB0221 UK Brown             . IB0004  1.00  16.5 100.0 450.0 100.0  16.0  1.00  1.00 400.0
+IB0244 PI 193508            . IB0004  1.00  19.0 100.0 200.0 100.0  28.0  1.10  1.00 400.0
+IB0245 PI 193514            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0
+IB0246 PI 557457            . IB0004  1.00  17.0 100.0 600.0  75.0  16.0  1.00  1.00 400.0
+IB0247 PI 494366            . IB0004  1.00  14.0 100.0 700.0  70.0  16.0  1.00  1.00 400.0
+IB0248 UK White             . IB0004  1.00  18.0 100.0 450.0  85.0  16.0  1.00  1.00 400.0
+IB0249 PI 494465            . IB0004  1.00  19.0 100.0 140.0 120.0  16.0  1.00  1.00 400.0
+IB0250 PI 273889            . IB0004  1.00  19.0 100.0 190.0 105.0  27.0  1.00  1.00 400.0
+IB0251 Dessie               . IB0004  1.00  16.5 100.0 500.0  80.0  32.0  1.20  1.00 400.0
+IB0252 PI 347632            . IB0004  1.00  19.0 100.0 190.0 105.0  32.0  1.80  1.00 400.0
+IB0253 PI 494432            . IB0004  1.00  15.5 100.0 500.0 100.0  26.0  1.00  1.00 400.0
+
+IB0254 PI 195932            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0
+IB0255 PI 329680            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0
+IB0256 PI 494479            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0
+IB0257 PI 494433            . IB0004  1.00  19.0 100.0 140.0 120.0  16.0  1.00  1.00 400.0
+
+IB0304 Wajera (local)       . IB0004  1.00  18.0 100.0 200.0 80.00  36.0  1.00  3.00 400.0

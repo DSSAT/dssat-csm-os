@@ -46,7 +46,7 @@ c     Total seasonal cumulative rainfall (mm)
       REAL RAIN_TOT
 c     Severe stress days (count of days with SWDF1 < 0.05)
       INTEGER STRESS_DAYS
-c     Frost days (count of days with TMIN < -1.5 °C)
+c     Frost days (count of days with TMIN < -1.5 Â°C)
       INTEGER FROST_DAYS
 c     Fibre mass calcd here as STKDM - SUCDM
       REAL FIBDM
@@ -56,6 +56,8 @@ c     Cumulative PAR interception
       REAL IPARC
 c     Cumulative transpiration + evaporation
       REAL EPC, ETC
+c     Recalculate Bio-Physical variables to output
+      REAL cBADMD, cSMDMD, cSMFMD
 c     Average Fi
       REAL AvgFi, FiTOT
 c     Days to 80% canopy cover
@@ -113,7 +115,7 @@ c         A new file if not existing
           WRITE(CCOUT,'("*CLIMATE CHANGE SUMMARY OUTPUT FILE")')
           WRITE(CCOUT,'("! IRRC - Cumulative irrigation (mm)")')
           WRITE(CCOUT,'("! PRCM - Cumulative rainfall (mm)")')
-          WRITE(CCOUT,'("! FDAYS - # frost days (TMIN < 1.5°C)")')
+          WRITE(CCOUT,'("! FDAYS - # frost days (TMIN < 1.5Â°C)")')
           WRITE(CCOUT,'("! SDAYS - # stress days (SWDF1 < 0.05)")')
           WRITE(CCOUT,'("! D80Fi - # days to 80% canopy cover")')
           WRITE(CCOUT,'("! SMFMH - Fresh cane yield WM (t/ha)")')
@@ -171,7 +173,7 @@ c       Severe stress days (count of days with SWDF1 < 0.05)
         IF (SWDF1 .LT. 0.05) THEN 
           STRESS_DAYS = STRESS_DAYS + 1
         ENDIF
-c       Frost days (count of days with TMIN < -1.5 °C)
+c       Frost days (count of days with TMIN < -1.5 Â°C)
         IF (TMIN .LT. -1.5) THEN 
           FROST_DAYS = FROST_DAYS + 1
         ENDIF
@@ -204,6 +206,17 @@ c         green leaf DM and trash DM
         FIBDM = SMDMD - SUCMD + LGDMD + LDDMD
 c       Averaage Fi
         AvgFi = FiTOT / (COUNTER * 1.0)
+c       Recalculate Bio-physical variables to output
+        IF(ETC .GT. 0.0) THEN
+          cBADMD = BADMD / ETC*100.0
+          cSMDMD = SMDMD / ETC*100.0
+          cSMFMD = SMFMD / ETC*100.0
+        ELSE
+          cBADMD = -99.0          
+          cSMDMD = -99.0        
+          cSMFMD = -99.0          
+        ENDIF
+                        
 c       Write summary data to file.
           WRITE(CCOUT, '(A8, 1H , I4, 1H , I5, 1H , ' //
           ! Irrigation and rainfall
@@ -221,8 +234,7 @@ c       Write summary data to file.
      &      FROST_DAYS, STRESS_DAYS, DAYS80Fi, SMFMD,
      &      BADMD, SMDMD, SUCMD, FIBDM, CMDMD, LGDMD, LDDMD, RDMD,
      &      SWDF1_TOT / (1.0*COUNTER), AvgFi, IPARC, EPC, ETC,
-     &      BADMD*100.0 / IPARC, BADMD / ETC*100.0,
-     &      SMDMD / ETC*100.0, SMFMD / ETC*100.0
+     &      BADMD*100.0 / IPARC, cBADMD, cSMDMD, cSMFMD
              
 c       Close the output file
         CLOSE(UNIT=CCOUT)

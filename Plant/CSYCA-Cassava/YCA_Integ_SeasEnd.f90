@@ -42,7 +42,7 @@
         CWAD = (canopyWeight())*plantPopulation()                                                                       !EQN 318
         SRWAD = SRWT*plantPopulation()
         FHWAD = SRWTF*plantPopulation()
-        LLWAD = LFWT*(1.0-LPEFR)*plantPopulation()
+        LLWAD = LFWT*plantPopulation()
         LPEWAD = LFWT*LPEFR*plantPopulation()
         RWAD = RTWT*plantPopulation()
         IF (SEEDRS < 0.0) THEN 

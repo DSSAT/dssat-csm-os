@@ -2228,29 +2228,34 @@ C=======================================================================
         IF (PMWD .GT. 0 .AND. PMWD .GE. ROWSPC_CM) THEN
           PMWD = ROWSPC_CM
           PMCover   = .TRUE.
-          MSG(1)= "Flat surface with full plastic mulch covered."
-          call warning(2,errkey,msg)
-        ELSEIF (PMWD .GT. 0 .AND. PMWD .GT. 0) THEN
+          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+          MSG(3) = "Simulating flat surface entirely covered " //
+     &             "by by plastic mulch."
+          call warning(3,errkey,msg)
+        ELSEIF (PMWD .GT. 0.) THEN 
           PMCover   = .TRUE.
-          MSG(1)= "Flat surface with partial plastic mulch covered."
-          call warning(2,errkey,msg)
+          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+          MSG(3)= "Simulating flat surface partially covered " // 
+     &            "by plastic mulch."
+          call warning(3,errkey,msg)
         ELSE
-          PMWD = ROWSPC_CM
-          PMCover   = .TRUE.
-          MSG(1)= "Missing PMWD, set PMWD = ROWSPC_CM"
-          MSG(2)= "Flat surface with full plastic mulch covered."
+          PMCover   = .FALSE.
+          MSG(1)= "Missing mulch cover width."
+          MSG(2) = "Simulating flat surface with no plastic mulch."
           call warning(2,errkey,msg)
         ENDIF
       ELSE
         IF (PMWD .GT. 0) THEN
           PMCover   = .FALSE.
-          MSG(1)= "Missing PMALB, disabled plastic mulch"
-          MSG(2)= "Flat surface with no plastic mulch covered."
+          MSG(1)= "Missing albedo for plastic mulch. "
+          MSG(2)= "Simulating flat surface with no plastic mulch."
           call warning(2,errkey,msg)
         ELSE
           PMCover   = .FALSE.
-          MSG(1)= "Flat surface with no plastic mulch covered."
-          call warning(2,errkey,msg)
+          MSG(1)= "Simulating flat surface with no plastic mulch."
+          call warning(1,errkey,msg)
         ENDIF
       ENDIF
     

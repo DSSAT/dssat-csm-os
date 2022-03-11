@@ -13,6 +13,10 @@ Module Forecast
 ! Track years of ensemble weather data
   INTEGER EnsYearFirst, EnsYearLast, EnsYearCurrent, ForecastYear
 ! Weather data from historical file
+
+! Indicates that start of sim date = FODAT > last weather date
+! Entire simulation is forecast, we have no in-season weather data.
+  LOGICAL Preseason
   
 
 CONTAINS
@@ -37,7 +41,7 @@ SUBROUTINE FCAST_STORE(                                 &
   CHARACTER*1  MEWTH
   CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
   CHARACTER*12 FILEW, FILEWC, FILEWG
-  CHARACTER*78 MSG(2)
+  CHARACTER*78 MSG(10)
   CHARACTER*80 PATHWTC, PATHWTG, PATHWTW
   CHARACTER*92 FILEWW
 
@@ -277,7 +281,7 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
   USE ModuleDefs
   USE ModuleData
   CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
-  CHARACTER*78,DIMENSION(6) :: MSG
+  CHARACTER*78,DIMENSION(10) :: MSG
   CHARACTER*92 FileW
   CHARACTER*120 LINE
   Integer ERR, ErrCode, ISECT, LINWTH, LUNWTH, NMSG
@@ -340,29 +344,32 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
 ! Check for missing FODAT. Set it equal to last weather record. 
   IF (FODAT .EQ. -99) THEN
     FODAT = INCDAT(WeathRecLast,1)
+!   Check for 2-digit year, use century of YRSIM.
+    IF (FODAT .LE. 99365) THEN
+      SCENTURY = AINT(FLOAT(CONTROL%YRSIM)/100000.)
+      FODAT = FODAT + SCENTURY * 100000
+      !IF (TIMDIF(CONTROL%YRSIM,FODAT) < 0) THEN
+      !  SCENTURY = SCENTURY + 1
+      !  FODAT = FODAT + SCENTURY * 100000
+      !ENDIF
+      !NMSG = NMSG + 1
+      !WRITE(MSG(NMSG),'("Forecast date = ",I8)') FODAT
+    ENDIF
+
     MSG(1) = "Forecast date is missing."
     MSG(2) = "Set forecast date to last weather record."
     WRITE(MSG(3),'("Forecast date = ",I8)') FODAT
     NMSG = 3
 
-!   Check for 2-digit year, use century of YRSIM.
-    IF (FODAT .LE. 99365) THEN
-      SCENTURY = AINT(FLOAT(CONTROL%YRSIM)/100000.)
-      FODAT = FODAT + SCENTURY * 100000
-      IF (TIMDIF(CONTROL%YRSIM,FODAT) < 0) THEN
-        SCENTURY = SCENTURY + 1
-        FODAT = FODAT + SCENTURY * 100000
-      ENDIF
-      NMSG = NMSG + 1
-      WRITE(MSG(NMSG),'("Forecast date = ",I8)') FODAT
-    ENDIF
-
 !   Check for FODAT >= YRSIM
     IF (TIMDIF(CONTROL%YRSIM,FODAT) < 0) THEN
       FODAT = CONTROL % YRSIM
       NMSG = NMSG + 1
-      MSG(NMSG) = "Forecast date must be on or after simulation start date."
-      NMSG = NMSG + 1
+      MSG(NMSG) = "Pre-season forecast."
+      Preseason = .TRUE.
+      MSG(NMSG+1)="Start of simulation date is after last weather date."
+      MSG(NMSG+2)="Set forecast date to start of simulation date."
+      NMSG = NMSG + 3
       WRITE(MSG(NMSG),'("Forecast date = ",I8)') FODAT
       CALL WARNING(NMSG, ERRKEY, MSG)
     ENDIF
@@ -399,6 +406,14 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
 !    CALL YR_DOY(WeathRecFirst, YR0, DOY0)
 !    CALL YR_DOY(WFirstDate, YR1, DOY1)
 !    IF (DOY1 - DOY0 .GT. 300) THEN
+
+!CONCLUSION:  !!!!!
+! MUST use 4-digit weather data to guarantee that weather forecasting
+! works when weather data crosses a century boundary or has more than 
+! 100 years.
+
+  ELSE
+    WFirstDate = WeathRecFirst
   ENDIF
   
 !--------------------------------------------------------------

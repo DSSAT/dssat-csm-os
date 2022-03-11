@@ -1783,9 +1783,9 @@
 
        IF (RUNCRP.LE.0) THEN          ! First time through
 
-          MODNAME(1:8) = 'CSCRP047'
+          MODNAME(1:8) = 'CSCRP048'
           VERSION = 010115         
-          GENFLCHK(3:15) = 'CRP047.08102017'
+          GENFLCHK(3:15) = 'CRP048.20200721'
           ! Control flags/switches
           CFLPDATE = 'P'      ! P=at planting;I=at first irrigation;
                               ! E=relative to emergence
@@ -1950,7 +1950,9 @@
 
           ! IDETO FILES
           ! NB. Renaming of Overview and Evaluate handled by CSM
-          FNAMEOV = 'Overview.'//out
+          ! TF - Updated OVERVIEW.OUT name to avoid issues
+          ! with case sensitive systems (07/27/2021) 
+          FNAMEOV = 'OVERVIEW.'//out
           FNAMEEVAL = 'Evaluate.'//out
           FNAMEMEAS = 'Measured.'//out
           CALL GETLUN (FNAMEEVAL,fnumeval)
@@ -10542,7 +10544,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               vnpcm = -99
               cnam = -99
               hnam = -99
-              hinm = -99
+!             hinm = -99
               sdnap = -99
               rnam = -99
               nupac = -99
@@ -10550,8 +10552,12 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 
             ! Calculate N% without dead matter            
             VNPCM = 100.0*(LEAFN+STEMN+RSN)/(LFWT+STWT+RSWT)
-            HINM = GRAINN/(GRAINN+LEAFN+STEMN+RSN)
-          
+C-GH 1/20/2022 For ISWNI set to N
+            IF (ISWNIT.EQ.'N') THEN
+               hinm = -99
+            ELSE
+               HINM = GRAINN/(GRAINN+LEAFN+STEMN+RSN)
+            ENDIF       
            
             ! Create character equivalents for outputing
             CALL Csopline(hwumchar,hwum)

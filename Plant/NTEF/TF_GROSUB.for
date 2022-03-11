@@ -16,6 +16,8 @@
 !  09/14/2018 KEP increased the base growth temperature from -4 C to 7.8 C for calculating prft.
 !  01/21/2020 JG moved some CUL parameters to ECO file
 !  07/24/2020 JG moved ozone parameters to ECO file
+!  11/01/2021 FO Added missing CONTROL type for WH_temp.for subroutines
+!  01/18/2022 TF Added statements to prevent divisions by zero
 !----------------------------------------------------------------------
 !  Called by : TF_APSIM
 !
@@ -1849,8 +1851,13 @@ C         Calculate soil water table depth
 
          if (g_obs_gpsm.ne.0) then
 !*!         grpp = g_obs_gpsm/plants ! I assume plants =/= 0
-            grpp = g_obs_gpsm/PLTPOP ! NWheat plants = DSSAT PLTPOP
+            !Added IF statement to void divisions by zero (TF - 01/21/2022)
+            IF(PLTPOP .GT. 0.0) THEN
+               grpp = g_obs_gpsm/PLTPOP ! NWheat plants = DSSAT PLTPOP
+            ELSE 
+               grpp = 0 
             ! g_obs_gpsm  is Observed number of grains per plant
+            ENDIF
             !g_obs_gpsm is currently set to 0, and therefore this if statement is irrelevant
          else
 cnh Senthold
@@ -2040,7 +2047,7 @@ c senthold
 !*!      (from APSIM NWheat subroutine nwheats_plwin and nwheats_crppr)
 *======================================================================
       !*! subroutine nwheats_plnin (plantn) initial plant N
-      CALL nwheats_plnin (istage, stgdur, plantwt,               !input
+      CALL nwheats_plnin (CONTROL, istage, stgdur, plantwt,      !input
      &    mnc, INGNC, MNRTN,                                     !input
      &    pl_nit )                                       !input & output
 *======================================================================
@@ -2905,7 +2912,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
             ! find actual plant uptake
       g_uptake_source = 'calc'
 *     ==================================================================
-      CALL nwheats_nuptk (SOILPROP,                               !Input
+      CALL nwheats_nuptk (CONTROL, SOILPROP,                      !Input
      &      carbh, cnc, EXNH4/100, EXNO3/100,                     !Input
      &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
@@ -3131,7 +3138,7 @@ cbak  adjust the green leaf ara of the leaf that is dying
       else
          Tcnpy = vpdf * (TCSlope + TCInt) + Tmax  ! because EO is not availabe (there is no CALL PET in SPAM.for)
       endif
-         weather % TGROAV = Tcnpy !Average daily canopy temperature (°C)
+         weather % TGROAV = Tcnpy !Average daily canopy temperature (Â°C)
          slft = ALIN (SENST, SENSF, 4, Tcnpy)
        Weather % VPD_TRANSP = vpd_transp
        Weather % VPDF = vpdf
@@ -3507,7 +3514,7 @@ cjh quick fix for maturity stage
 ! TANC        Nitrogen content in above ground biomass, g N/g dry weight
 ! TAVGD       Average temperature during daylight hours, C
 ! TCNP        Critical nitrogen concentration in tops, g N/g dry weight
-! TEMPM       Mean daily temperature (°C)
+! TEMPM       Mean daily temperature (Â°C)
 ! TFAC        Temperature stress factor for grain nitrogen concentration
 ! TI          Fraction of a phyllochron interval which occurred as a fraction of today's daily thermal time
 ! TLNO        Total number of leaves that the plant produces

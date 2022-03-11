@@ -326,7 +326,6 @@ C=======================================================================
       REAL CCNEFF, CICAD, CMXSF, CQESF
       REAL AGEQESH, AGEQESL, CO2QESH, CO2QESL
 
-
 C     Initialize.
 
       TEMPSL = TSURF(1,1)
@@ -383,7 +382,6 @@ C     over three leaf classes for sunlit leaves.
       CONDSL = CONSUM / 3.6
 
 C     Compute photosynthesis and leaf CO2 conductance for shaded leaves
-
       CALL PGLEAF(
      &  CO2HR, LFMXSH, PARSH, QEFFSH, TEMPSH,             !Input
      &  CONDSH, PGSH,                                     !Output
@@ -617,10 +615,14 @@ C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
       B = (QEFF*PARLF) + LFMAX
       C = QEFF * PARLF * LFMAX
 !     CHP Added checks for floating underflow 1/16/03
-!      IF (LFMAX .GT. 0.0) THEN
-      IF (LFMAX .GT. 0.0 .AND. (QEFF*PARLF/LFMAX) .LT. 20.) THEN
+      IF (LFMAX .GT. 0.0) THEN
+        IF ((QEFF*PARLF/LFMAX) .LT. 20. .AND. 
+     &      (QEFF*PARLF/LFMAX) .GT. -20.) THEN
 C       PGLF = (B - SQRT(B**2-4.*A*C)) / (2.*A)
-        PGLF = LFMAX * (1.0 - EXP(-QEFF*PARLF/LFMAX))
+          PGLF = LFMAX * (1.0 - EXP(-QEFF*PARLF/LFMAX))
+        ELSE
+          PGLF = MAX(LFMAX, 0.0)
+        ENDIF
       ELSE
         PGLF = MAX(LFMAX, 0.0)
       ENDIF
