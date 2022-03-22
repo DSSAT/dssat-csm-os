@@ -377,10 +377,10 @@ C     6 - Physiological maturity
           !
           NDAS   = NDAS + 1
          
-                
-          IF (PLANTING % NFORCING .GE. 2) THEN  !
-!         NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY) - ROOTINGTIME  
-          NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY) - 
+          IF (PLANTING % NFORCING .GE. 2) THEN
+!           chp 2022-03-21 use Forcing date here directly. No need to back calculate.
+!           NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY) - ROOTINGTIME  
+            NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY) - 
      &           FLOOR(ROOTINGTIME) + 1
 !NDOF es el tiempo desde la siembra hasta el forzamiento (aplicación química)
 !pero por alguna razón suma el tiempo que se lleva en puntas de raíces blancas
@@ -388,7 +388,7 @@ C     6 - Physiological maturity
 !calcula los días que se demoró en producir puntas de raíces blancas para poder restar
 !esos días aquí, y que la fecha de forza reportada coincida con la fecha de aplicación química real de la forza.
             
-        ENDIF
+          ENDIF
           
         IF (NFORCING .GE. 2) THEN
            !
