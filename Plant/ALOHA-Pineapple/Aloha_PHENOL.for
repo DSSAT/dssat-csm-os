@@ -379,38 +379,41 @@ C     6 - Physiological maturity
          
                 
           IF (PLANTING % NFORCING .GE. 2) THEN  !
-          NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY) -ROOTINGTIME   !NDOF es el tiempo desde la siembra hasta el forzamiento (aplicación química)
-                                                                       !pero por alguna razón suma el tiempo que se lleva en puntas de raíces blancas
-                                                                       !por esa razón en CASE(11) cree una variable que se llama ROOTINGTIME que simplemente
-                                                                       !calcula los días que se demoró en producir puntas de raíces blancas para poder restar
-                                                                       !esos días aquí, y que la fecha de forza reportada coincida con la fecha de aplicación química real de la forza.
+!         NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY) - ROOTINGTIME  
+          NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY) - 
+     &           FLOOR(ROOTINGTIME) + 1
+!NDOF es el tiempo desde la siembra hasta el forzamiento (aplicación química)
+!pero por alguna razón suma el tiempo que se lleva en puntas de raíces blancas
+!por esa razón en CASE(11) cree una variable que se llama ROOTINGTIME que simplemente
+!calcula los días que se demoró en producir puntas de raíces blancas para poder restar
+!esos días aquí, y que la fecha de forza reportada coincida con la fecha de aplicación química real de la forza.
             
         ENDIF
           
-          IF (NFORCING .GE. 2) THEN
-             !
-             ! Forcing by number of days after planting
-             !
-             IF (NDAS .LT. NDOF) THEN
-                RETURN
-             ENDIF
-!moved to grosub             PLANTSIZE = TOTPLTWT
-           ELSE
-              !
-              ! Forcing by Plant Size (200 to 350 grams usually)
-              !
-              IF (TOTPLTWT .LT. PLANTSIZE) THEN
-                 RETURN
-              ENDIF
-          ENDIF
+        IF (NFORCING .GE. 2) THEN
+           !
+           ! Forcing by number of days after planting
+           !
+!          IF (NDAS .LT. NDOF) THEN
+           IF (YRDOY .LT. PLANTING % ForcingYRDOY) THEN
+              RETURN
+           ENDIF
+         ELSE
+            !
+            ! Forcing by Plant Size (200 to 350 grams usually)
+            !
+            IF (TOTPLTWT .LT. PLANTSIZE) THEN
+               RETURN
+            ENDIF
+        ENDIF
 
-          ISDATE = YRDOY                ! Record forcing date.
+        ISDATE = YRDOY                ! Record forcing date.
 
-!         Ready for next stage
-          STGDOY(ISTAGE) = YRDOY
-          ISTAGE = 5                    ! JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
-          TBASE  = 10.00                ! Base temperature of 6.25 is used during forcing to sepals closed on youngest flowers
-          SUMDTT = 0.0                  ! Cumulative GDD set to 0.0
+!       Ready for next stage
+        STGDOY(ISTAGE) = YRDOY
+        ISTAGE = 5                    ! JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+        TBASE  = 10.00                ! Base temperature of 6.25 is used during forcing to sepals closed on youngest flowers
+        SUMDTT = 0.0                  ! Cumulative GDD set to 0.0
 
 !-----------------------------------------------------------------
       CASE (5)                          !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
