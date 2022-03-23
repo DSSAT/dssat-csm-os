@@ -109,9 +109,9 @@ C-----------------------------------------------------------------------
         RUNOFF = 0.0
       ENDIF
       
-      IF (SOILPROP % PMcover) THEN
-          RUNOFF = WATAVL * SOILPROP % PMFRACTION 
-     &           + RUNOFF * (1 - SOILPROP % PMFRACTION)
+      CALL GET("PM","PMFRAC",PMFRACTION)
+      IF (PMFRACTION .GT. 1.E-6) THEN
+          RUNOFF = WATAVL * PMFRACTION + RUNOFF * (1 - PMFRACTION)
       ENDIF
 
 !!     Temporary

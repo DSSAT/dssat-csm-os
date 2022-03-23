@@ -145,7 +145,7 @@
         SWDELTU(L) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) !mm3/mm3
         
 !       Apply the fraction of plastic mulch coverage
-        IF (PMFRACTION .GT. 0.0) THEN
+        IF (PMFRACTION .GT. 1.E-6) THEN
           SWDELTU(L) = SWDELTU(L) * (1.0 - PMFRACTION)
         END IF
 

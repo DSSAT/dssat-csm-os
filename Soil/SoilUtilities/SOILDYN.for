@@ -1178,9 +1178,10 @@ C  tillage and rainfall kinetic energy
 !           Limit BD to realistic values
 !           BD_SOM(L) = MIN(BD_SOM(L), 1.8)
 !           BD_SOM(L) = MAX(BD_SOM(L), 0.25)
-            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) !Upper limit for BD_SOM
-            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) !Lower limit for BD_SOM
-
+!           Upper limit for BD_SOM
+            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) 
+!           Lower limit for BD_SOM
+            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) 
             dBD_SOM = BD_SOM(L) - BD_INIT(L)
 
 !           -------------------------------------------------------
@@ -2265,7 +2266,7 @@ C=======================================================================
           SOILPROP % SALB   = PMALB
         ENDIF
         PMFRACTION = PMWD / ROWSPC_CM
-        MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 - PMFRACTION)
+        MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 -PMFRACTION)
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
       ENDIF
