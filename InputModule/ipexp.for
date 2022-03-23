@@ -1179,21 +1179,21 @@ C     OPSUM routines for printing.  Integers are temporarily
 C     saved as real numbers for placement in real array.
 
       READ(CXCRD,'(F15.0)', IOSTAT=ERRNUM) XCRD
-      IF(ERRNUM .EQ. 0) THEN
+      IF(ERRNUM .NE. 0) THEN
          XCRD = -999.0
          MSG(1) = 'Error reading latitude from experimental file'
          MSG(2) = FILEX
          CALL WARNING(2, ERRKEY, MSG)
       ENDIF
       READ(CYCRD,'(F15.0)', IOSTAT=ERRNUM) YCRD
-      IF(ERRNUM .EQ. 0) THEN
+      IF(ERRNUM .NE. 0) THEN
          YCRD = -99.0
          MSG(1) = 'Error reading longitude from experimental file'
          MSG(2) = FILEX
          CALL WARNING(2, ERRKEY, MSG)
       ENDIF
       READ(CELEV,'(F9.0)', IOSTAT=ERRNUM)  ELEV
-      IF(ERRNUM .EQ. 0) THEN
+      IF(ERRNUM .NE. 0) THEN
         ELEV = -99.0
         MSG(1) = 'Error reading elevation from experimental file'
         MSG(2) = FILEX

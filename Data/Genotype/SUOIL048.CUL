@@ -28,9 +28,9 @@
 
 !             P/G/N:Phenology/Growth/Not used for calibration 
 
-@VAR#  VRNAME...........EXPNO   ECO#    P1    P2    P5    G2    G3    O1
+@VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3    O1
 !Coeffient #                             1     2     3     4     5     6
-!Calibration                             P     P     P     N     N     N
+!Calibration                             P     P     P     G     G     N
 
 999991 MINIMA               . DFAULT 100.0  0.00 300.0  500.  1.50 60.00
 999992 MAXIMA               . DFAULT 450.0 15.00 950.0 4000.  3.50 87.00
@@ -50,3 +50,4 @@ IB0022 Melody               . DFAULT 290.0  3.74 850.0 1500.  3.40 65.00
 IB0018 Hysun-33             . DFAULT 435.0  1.00 585.0 1193.  2.33 54.00
 IB0029 Hysun-38             . DFAULT 438.0  1.00 570.0 1276.  2.33 56.00
 IB0020 Pioneer 64A93        . DFAULT 444.0  1.00 560.0 1260.  2.44 65.00
+IB0030 E-353 long           . DFAULT 300.0  3.74 600.0 1500.  3.35 85.00
