@@ -14,6 +14,7 @@ C  02/21/2006 GH  Removed crop model selection
 !  02/11/2010 CHP Added checks for P model linked with crop models.
 !  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 !  05/07/2020 FO  Added check for SimLevel to set YRSIM using YRPLT
+!  93/22/2022 GH Fix forecast issue
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
@@ -596,7 +597,9 @@ C
 
 ! CHP 2021-03-29 Allow  11th line of simcontrols to be missing.
 ! In this case, FODAT will be set equal to either last date in weather file or YRSIM.
-            IF (ERRNUM .NE. 0 .OR. LN .NE. LNSIM) THEN
+            IF (ERRNUM .NE. 0 .OR. LN .NE. LNSIM
+     &       .OR. ISECT .EQ. 0) THEN
+! GH 03/2022 Fix issue with no blank lines at the end of FileX
               FODAT = -99
             ENDIF
 
