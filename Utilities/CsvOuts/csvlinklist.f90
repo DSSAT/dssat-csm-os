@@ -1001,14 +1001,14 @@ End Subroutine LinklstSUOIL
       Write(numtoch2,'(I2)') nl  
       tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
        
-  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
   //'PST1A,PST2A,KSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,')&
   + Len('SNW0C,SNW1C,') + Len(Trim(Adjustl(tmp)))
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
   //'PST1A,PST2A,KSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,'&
   // 'SNW0C,SNW1C,' // Trim(Adjustl(tmp))
@@ -1057,12 +1057,12 @@ End Subroutine LinklstSUOIL
       Write(numtoch2,'(I2)') nl  
       tmp = Trim(Adjustl(tmp)) // "SW" // Trim(Adjustl(numtoch2)) // "D"  
        
-  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
   //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,') + Len(Trim(Adjustl(tmp)))
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
   //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,' // Trim(Adjustl(tmp)) 
   
       fn = 'soilwat.csv'
@@ -1108,12 +1108,12 @@ End Subroutine LinklstSUOIL
        Write(numtoch2,'(I2)') nl  
        tmp = Trim(Adjustl(tmp)) // "TS" // Trim(Adjustl(numtoch2)) // "D" 
        
-  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,') + &
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,TS0D,') + &
           Len(Trim(Adjustl(tmp)))
   
        Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,' // & 
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,TS0D,' // & 
             Trim(Adjustl(tmp))
              
       fn = 'soiltemp.csv'
@@ -1208,13 +1208,13 @@ End Subroutine LinklstSUOIL
           tmp = Trim(Adjustl(tmp)) // "ES10D" 
       End If    
      
-  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
   //'REFA,EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
   //'EMAC,KCAA,KBSA,KEAA,TRWUD,') + Len(Trim(Adjustl(tmp)))
   
        Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
   //'REFA,EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
   //'EMAC,KCAA,KBSA,KEAA,TRWUD,' // Trim(Adjustl(tmp)) 
   
@@ -2338,7 +2338,7 @@ End Subroutine LinklstPlGroPrFrm
       Write(numtoch2,'(I2)') nl  
       tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
        
-  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,QWAD,QS%D,Q1%D,GWAD,RWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,' &
   //'WSGD,NSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,' &
   //'CDAD,LDAD,SDAD,QDAD,HERB,FHL%,LF%D,DWTCO,DWTLO,DWTSO,CHTCM,CPROT,') &
@@ -2346,7 +2346,7 @@ End Subroutine LinklstPlGroPrFrm
   
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,QWAD,QS%D,Q1%D,GWAD,RWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,' &
   //'WSGD,NSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,' &
   //'CDAD,LDAD,SDAD,QDAD,HERB,FHL%,LF%D,DWTCO,DWTLO,DWTSO,CHTCM,CPROT,' &
