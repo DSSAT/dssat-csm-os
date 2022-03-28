@@ -89,7 +89,7 @@ C ***********************************************************************
 	  REAL h,Lz,lamda_rho,difference1,TSubstrate
 	  LOGICAL FirstTime
 	  DATA oxy%ID,meth%ID/2,4/
-	  DATA FirstTime/.TRUE./
+!	  DATA FirstTime/.TRUE./
 	END MODULE MethaneVariables
 
 C ***********************************************************************

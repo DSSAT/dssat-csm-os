@@ -50,6 +50,7 @@ C=======================================================================
       REAL CumCH4Consumpt, CumCH4Leaching, newCO2Tot, CH4_balance
       REAL CumCH4Emission, CumCO2Emission, CO2emission, CumNewCO2
       REAL StorageFlux, Cum_CH4_bal, CH4Stored_Y
+      REAL CH4_correction !, ReductFact
 
       REAL TCO2, TCH4, FloodCH4
 
@@ -79,6 +80,7 @@ C    Input and Initialization
 C***********************************************************************
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
+      FirstTime = 0.0
       TCO2 = 0.0
       TCH4 = 0.0
       newCO2Tot = 0.0
@@ -155,6 +157,11 @@ C-----------------------------------------------------------------------
       CH4emission = 0.0
       CH4Consumption = 0.0
       CH4Leaching    = 0.0
+
+      CH4Production  = 0.0
+      CH4PlantFlux   = 0.0
+      CH4Ebullition  = 0.0
+      CH4Diffusion   = 0.0
 
 !     Calculate total CO2 coming in from decomposition of organic matter, newCO2Tot
 !     Transfer newCO2 from soil organic matter modules to CSubstrate variable
@@ -269,6 +276,14 @@ C-----------------------------------------------------------------------
         EbullitionFrac  = 0.0
         LeachingFrac    = 0.0
       ENDIF
+
+!!     Limit leaching fraction + consumption fraction to no more than production
+!      IF (ConsumptionFrac + LeachingFrac .GT. ProductionFrac) THEN
+!        ReductFact = ProductionFrac / (ConsumptionFrac + LeachingFrac)
+!        ConsumptionFrac = ConsumptionFrac * ReductFact
+!        LeachingFrac = LeachingFrac * ReductFact
+!      ENDIF
+
       EmissionFrac = ProductionFrac - ConsumptionFrac - LeachingFrac
       DiffusionFrac = EmissionFrac - (PlantFrac + EbullitionFrac)
 
@@ -298,6 +313,14 @@ C-----------------------------------------------------------------------
 
       StorageFlux = CH4Stored - CH4Stored_Y
       CH4Stored_Y = CH4Stored
+
+!     chp 2022-03-23 prevent negative CH4 emissions
+      IF (CH4Emission < -1.E-6) THEN
+        CH4_correction = CH4Emission  ! value is negative
+        CH4Emission = 0.0
+        CH4Diffusion = CH4Diffusion - CH4_correction
+        CH4Production = CH4Production - CH4_correction
+      ENDIF
 
       CO2Emission    = newCO2Tot - CH4Production - StorageFlux
       CO2Emission = AMIN1(CO2Emission, newCO2Tot)
