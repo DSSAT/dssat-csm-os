@@ -18,8 +18,7 @@
       END TYPE VersionType
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
-!     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:  
 !       4.8.0.26 chp 2022-03-28 Cross-over year 2035, limit neg CH4 emissions
