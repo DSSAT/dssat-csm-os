@@ -21,7 +21,8 @@ C  03/15/2000 GH  Modular version revisited
 C  08/20/2002 GH  Modified for Y2K
 C  08/20/2002 GH  Modified for Seasonal and Sequence runs
 C  08/12/2003 CHP Added I/O error checking
-!  09/01/2009 CHP Added call to error checking routine, including YREND
+C  09/01/2009 CHP Added call to error checking routine, including YREND
+C  03/25/2022 GH  Fix environmental modification for crop rotations
 C-----------------------------------------------------------------------
 C  Called by: WEATHR
 C  Calls:     DECL, WTHSET
@@ -53,6 +54,7 @@ C=======================================================================
       INTEGER LINWTH
       PARAMETER (LINWTH=0)
       INTEGER I, NEV, WMDATE(NMODS), YYDDD, YRDIF
+      INTEGER ISIM, YRS, WYRDIF
       INTEGER LNUM, LUNIO, FOUND, ERR
       INTEGER DYNAMIC,MULTI,YRSIM,YR,WDATE, YREND
 
@@ -138,9 +140,12 @@ C     Adjust for crop rotations
 C-----------------------------------------------------------------------
       IF (RNMODE .EQ. 'Q') THEN
         IF (WMDATE(1) .LT. YRSIM .AND. NEV .GT. 0) THEN
+          CALL YR_DOY(YRSIM, YRS, ISIM)
+          CALL YR_DOY(WMDATE(1), YR, WDATE)
+          WYRDIF  =  YRS - YR
           DO I = 1, NEV
             CALL YR_DOY(WMDATE(I),YR,WDATE)
-            WMDATE(I) = (YR + YRDIF) * 1000 + WDATE
+            WMDATE(I) = (YR + WYRDIF) * 1000 + WDATE
           END DO
         ENDIF
       ENDIF
