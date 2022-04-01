@@ -50,7 +50,7 @@ C=======================================================================
       REAL CumCH4Consumpt, CumCH4Leaching, newCO2Tot, CH4_balance
       REAL CumCH4Emission, CumCO2Emission, CO2emission, CumNewCO2
       REAL StorageFlux, Cum_CH4_bal, CH4Stored_Y
-      REAL CH4_correction !, ReductFact
+!     REAL CH4_correction !, ReductFact
 
       REAL TCO2, TCH4, FloodCH4
 
@@ -314,13 +314,13 @@ C-----------------------------------------------------------------------
       StorageFlux = CH4Stored - CH4Stored_Y
       CH4Stored_Y = CH4Stored
 
-!     chp 2022-03-23 prevent negative CH4 emissions
-      IF (CH4Emission < -1.E-6) THEN
-        CH4_correction = CH4Emission  ! value is negative
-        CH4Emission = 0.0
-        CH4Diffusion = CH4Diffusion - CH4_correction
-        CH4Production = CH4Production - CH4_correction
-      ENDIF
+!!     chp 2022-03-23 prevent negative CH4 emissions
+!      IF (CH4Emission < -1.E-6) THEN
+!        CH4_correction = CH4Emission  ! value is negative
+!        CH4Emission = 0.0
+!        CH4Diffusion = CH4Diffusion - CH4_correction
+!        CH4Production = CH4Production - CH4_correction
+!      ENDIF
 
       CO2Emission    = newCO2Tot - CH4Production - StorageFlux
       CO2Emission = AMIN1(CO2Emission, newCO2Tot)
