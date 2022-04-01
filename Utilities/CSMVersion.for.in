@@ -19,9 +19,10 @@
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-!     CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.8.0.26 chp 2022-03-28 Cross-over year 2035, methane init
+!       4.8.0.25 chp 2022-02-25 Merge develop_4.8 into develop branch
 !       4.8.0.24 chp 2022-03-04 More CROPGRO calibrations. Methane zero-divide check.
 !       4.8.0.23 chp 2022-02-15 More CROPGRO calibrations. Lat-long fix. Methane updates.
 !       4.8.0.22 chp 2022-01-28 More CROPGRO calibrations. NWheat & NTeff updates.
