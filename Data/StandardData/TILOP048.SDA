@@ -5,11 +5,13 @@
 !  JWW/CP/BB
 !  13/05/2003 - JWW Created
 !  21/08/2008 - JWW minor edits, added roller harrow
-!   7/11/2008 - JWW changed CN effect to reduce values for most tillage
+!  07/11/2008 - JWW changed CN effect to reduce values for most tillage
 !  Implement names are changed substantially from Details.Cde
 !
 !  Initial values are from Table 5-5 of RUSLE manual (which in turn relates to ASAE nomenclature)
-!  and the SWAT manual (www.brc.tamus.edu/swat/manual2000/tilldb/dflt_tableA9.html)
+!  (https://www.ars.usda.gov/southeast-area/oxford-ms/national-sedimentation-laboratory/watershed
+!  -physical-processes-research/docs/revised-universal-soil-loss-equation-106-documentation/)
+!  and the SWAT manual (https://swat.tamu.edu/docs/)
 !  RUSLE was used for Residue incorporated (presented in Table 5-5 as the inverse -- residue
 !    left on the surface) and percent soil surface disturbed.
 !  SWAT was the source of mixing efficiency and depth.
@@ -304,4 +306,13 @@
   5.00 -10.0  10.0
  15.00  -5.0   5.0
  30.00  10.0  -5.0
+
+! 2022-02-26: JWW added for CAF LTAR simulations
+! https://www.sare.org/publications/steel-in-the-field/dryland-crop-tools/red-weeder
+*TI043 Wide-blade sweep plow 20 cm             One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    10    10     5     0
+@  SLB  SBDT  SKST
+ 10.00   2.0   0.0
+ 20.00  10.0  -5.0
 

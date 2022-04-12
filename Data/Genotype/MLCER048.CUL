@@ -33,8 +33,8 @@
 !Coeffient #                             1     2     3     4     5     6     7     8     9
 !Calibration                             P     P     P     P     G     G     N     G     G
 
-999991 MINIMA               . DFAULT 120.0 10.00 100.0 350.0  1.00  0.50 43.00  1.00  10.0
-999992 MAXIMA               . DFAULT 200.0 15.00 200.0 600.0  2.50  1.50 43.00  1.50  11.0
+999991 MINIMA               . DFAULT 100.0 10.00  50.0 100.0  0.10  0.50 43.00  1.00  10.0
+999992 MAXIMA               . DFAULT 400.0 15.00 900.0 700.0  3.00 20.00 43.00  1.50  11.0
 !
 ! The sample 3 varieties were estimated to give increasing days to maturity
 ! moving from north to south

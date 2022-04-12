@@ -13,8 +13,9 @@ C=======================================================================
 
       SUBROUTINE FLOOD_IRRIG (DYNAMIC, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC, NTBL,!Input
-     &    PUDDLED, PWAT, RAIN, SOILPROP, SW, YRDOY, YRPLT,!Input
+     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
+     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
+     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
 
@@ -29,9 +30,9 @@ C=======================================================================
       INTEGER  DYNAMIC, J,K,L, YRDOY, YRPLT
       REAL     DEPIR,TDSW,RAIN
 
-      INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC, NTBL
+      INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC, NTBL, NPUD
       INTEGER IBDAT(NAPPL), BUNDDAT(NAPPL), IIRRCV(NAPPL)
-      INTEGER CONDAT(NAPPL), IRRDAT(NAPPL)
+      INTEGER CONDAT(NAPPL), IRRDAT(NAPPL), PUDDAT(NAPPL), PUDAT(NAPPL)
       INTEGER JULWTB(NAPPL), WTDAT(NAPPL)
       INTEGER IPDAT(NAPPL), PERCDAT(NAPPL)
       REAL ABUND, APWAT, CUMDEP, EF
@@ -93,6 +94,15 @@ C-----------------------------------------------------------------------
             ENDIF
           ENDDO
 
+          !Convert puddling dates
+          DO J = 1, NPUD
+            IF (IIRRI .EQ. 'D') THEN
+              PUDAT(J) = INCDAT(YRPLT, PUDDAT(J))
+            ELSE
+              PUDAT(J) = PUDDAT(J)
+            ENDIF
+          ENDDO
+
           !Convert irrigation dates
           DO J = 1, NCOND
             IF (IIRRI .EQ. 'D') THEN    
@@ -114,6 +124,13 @@ C-----------------------------------------------------------------------
           CONVERTED = .TRUE.
         ENDIF
       ENDIF
+
+!     Puddling
+      DO J = 1, NPUD
+        IF (YRDOY .EQ. PUDAT(J)) THEN
+          PUDDLED = .TRUE.
+        ENDIF
+      ENDDO
 
       !Get daily percolation rate
       DO J = 1, NPERC

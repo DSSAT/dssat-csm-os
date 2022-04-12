@@ -315,6 +315,8 @@
         SNCLDY = SNCLD
         SNCSDY = SNCSD
         CH4Stored_Y = CH4_data % CH4Stored
+        CO2Emission_Y = CH4_data % CumCO2Emission
+        CH4Emission_Y = CH4_data % CH4Emission
 
 !       Set harvest residue back to zero after first day
         THRC0D = 0.0      !surface

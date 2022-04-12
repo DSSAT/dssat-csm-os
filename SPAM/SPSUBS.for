@@ -31,7 +31,7 @@ C=======================================================================
 
       CHARACTER*1  IDETW, ISWWAT, RNMODE
       CHARACTER*8  OUTET
-      CHARACTER*50 FMT
+      CHARACTER*56 FMT
 
       INTEGER DAS, DOY, DYNAMIC, FROP, LUN
       INTEGER NAVWB, RUN, YEAR, YRDOY, L
@@ -41,7 +41,7 @@ C=======================================================================
       REAL REFET, KCB, KE, KC
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
-      REAL REFA, KCAA, KCBA, KEAA
+      REAL REFA, KCAA, KBSA, KEAA
       REAL AVTMX, AVTMN, AVSRAD
       REAL TMAX, TMIN, SRAD
 !      REAL SALB, SWALB, MSALB, CMSALB
@@ -137,9 +137,9 @@ C-----------------------------------------------------------------------
 
             WRITE (LUN,120,ADVANCE='NO')
   120       FORMAT('@YEAR DOY   DAS   SRAA  TMAXA  TMINA',
-     &      '    REFA    EOAA    EOPA    EOSA    KCAA    KCBA    KEAA',
-     &      '    ETAA    EPAA    ESAA    EFAA    EMAA',
-     &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC')
+     &      '    REFA    EOAA    EOPA    EOSA    ETAA    EPAA',
+     &      '    ESAA    EFAA    EMAA    EOAC    ETAC    EPAC',
+     &      '    ESAC    EFAC    EMAC    KCAA    KBSA    KEAA')
 
             IF (N_LYR < 10) THEN
 !              VSH
@@ -177,7 +177,7 @@ C-----------------------------------------------------------------------
         AVTMN = 0.
         AVSRAD= 0.
         KEAA = 0.
-        KCBA = 0.
+        KBSA = 0.
         KCAA = 0.
         REFA = 0.
 
@@ -202,7 +202,7 @@ C-----------------------------------------------------------------------
       AVTMN  = AVTMN  + TMIN
       AVSRAD = AVSRAD + SRAD
       KEAA   = KEAA   + (ES+EM+EF)/REFET
-      KCBA   = KCBA   + (EP/REFET)
+      KBSA   = KBSA   + (EP/REFET)
       KCAA   = KCAA   + (ET/REFET)
       REFA   = REFA   + REFET
 
@@ -233,7 +233,7 @@ C-----------------------------------------------------------------------
           AVTMN = AVTMN / NAVWB
           AVSRAD= AVSRAD / NAVWB
           KEAA  = KEAA  / NAVWB
-          KCBA  = KCBA  / NAVWB
+          KBSA  = KBSA  / NAVWB
           KCAA  = KCAA  / NAVWB
           REFA  = REFA  / NAVWB
 
@@ -241,24 +241,24 @@ C-----------------------------------------------------------------------
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             !Daily printout
-            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),12(F8.3),"
-            IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
+            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),9(F8.3),"
+            IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR.
      &         CES > 1000. .OR. CEF > 1000. .OR. CEM > 1000.) THEN
-              FMT = TRIM(FMT) // "6F8.0))"
+              FMT = TRIM(FMT) // "6(F8.0),"
             ELSE 
-              FMT = TRIM(FMT) // "6F8.2))"
+              FMT = TRIM(FMT) // "6(F8.2),"
             ENDIF
-            
+            FMT = TRIM(FMT) // "3(F8.3))"
+
             IF (REFA .LT. 0.0) THEN
               KCAA = -99.
-              KCBA = -99.
+              KBSA = -99.
               KEAA = -99.
             ENDIF
 
-            WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX, 
-     &        AVTMN, REFA, EOAA, EOPA, EOSA, KCAA, 
-     &        KCBA, KEAA, ETAA, EPAA, ESAA, EFAA, EMAA,  
-     &        CEO, CET, CEP, CES, CEF, CEM   
+            WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX,
+     &        AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA,
+     &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA
 !     &        ,SALB, SWALB, MSALB, CMSALB
 !  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
 !     &      8(F7.3),6(F8.2))     
@@ -274,25 +274,25 @@ C-----------------------------------------------------------------------
                 ENDDO
 !               WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
                 WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
-              ENDIF    
+              ENDIF
             ELSE
               WRITE(LUN,'(" ")')
             ENDIF
           ENDIF   ! VSH
 
 !         VSH CSV output corresponding to ET.OUT
-          IF (FMOPT == 'C') THEN 
+          IF (FMOPT == 'C') THEN
 !           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
             N_LYR = SOILPROP%NLAYR
             CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
-     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
-     &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
-     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR, TRWU,
-     &vCsvlineET, vpCsvlineET, vlngthET)
-     
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS,
+     &AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA,
+     &EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA,
+     &N_LYR, ES_LYR, TRWU, vCsvlineET, vpCsvlineET, vlngthET)
+
             CALL LinklstET(vCsvlineET)
           ENDIF
-      
+
           NAVWB = 0
           EFAA  = 0.
           EMAA  = 0.
@@ -306,7 +306,7 @@ C-----------------------------------------------------------------------
           AVTMN = 0.
           AVSRAD= 0.
           KEAA = 0.
-          KCBA = 0.
+          KBSA = 0.
           KCAA = 0.
           REFA = 0.
 
@@ -365,9 +365,9 @@ C-----------------------------------------------------------------------
 ! EP      Actual plant transpiration rate (mm/d)
 ! ES      Actual soil evaporation rate (mm/d)
 ! ET      Actual evapotranspiration rate (mm/d)
-! KCBA    Actual basal crop coefficient (Kcb)
-! KCAA    Actual crop coefficient (Kc)
-! KEAA    Actual evaporation coefficient (Ke)
+! KBSA    FAO-56 basal crop coefficient * stress coefficient (Kcb*Ks)
+! KCAA    FAO-56 single crop coefficient (Kc)
+! KEAA    FAO-56 evaporation coefficient (Ke)
 ! MODEL   Name of CROPGRO executable file 
 ! NAP     Number of irrigation applications  
 ! NAVWB   Number of days since last printout (d)

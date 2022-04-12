@@ -552,9 +552,9 @@ H2OA   H2O in root zn  Water available in root zone (mm)                        
 IR#C   Irrigation #    Irrigation applications (no)                             .
 IRRC   Irrig effect mm Cumulative effective irrigation (mm)                     .
 IRRAC  Irrig apply mm  Cumulative applied irrigation (includes losses) (mm)     .
-KCAA   Crop coef       FAO-56 single crop coefficient                           .
-KCBA   Basal crop coef FAO-56 basal crop coefficient                            .
-KEAA   Evap coef       FAO-56 evaporation coefficient                           .
+KCAA   Kc              FAO-56 single crop coefficient (Kc=ETAA/REFA)            .
+KBSA   Kcb*Ks          FAO-56 basal crop coef * stress coef (Kcb*Ks=EPAA/REFA)  .
+KEAA   Ke              FAO-56 evaporation coefficient (Ke=(ESAA+EFAA+EMAA)/REFA).
 MCFD   Mulch coverage  Fraction of soil covered by mulch                        .
 MDEPD  Mulch thick cm  Thickness of mulch layer (cm)                            .
 MWAD   Mulch mass k/h  Mass of mulch layer (kg/ha)                              .

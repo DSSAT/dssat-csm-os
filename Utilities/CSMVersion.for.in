@@ -18,10 +18,17 @@
       END TYPE VersionType
       TYPE (VersionType) Version
 !     CMake no longer able to change the branch name, do it manually.      
-!     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-      CHARACTER(len=*), PARAMETER :: VBranch = '-methane'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:  
+!       4.8.0.26 chp 2022-03-28 Cross-over year 2035, limit neg CH4 emissions
+!       4.8.0.25 chp 2022-02-25 Merge develop_4.8 into develop branch
+!       4.8.0.24 chp 2022-03-04 More CROPGRO calibrations. Methane zero-divide check.
+!       4.8.0.23 chp 2022-02-15 More CROPGRO calibrations. Lat-long fix. Methane updates.
+!       4.8.0.22 chp 2022-01-28 More CROPGRO calibrations. NWheat & NTeff updates.
+!       4.8.0.21 chp 2022-01-20 Methane model. CROPGRO calibrations for v4.8. 
+!       4.8.0.20 chp 2022-01-14 More ETPHOT protections, mulch water initialization, 
+!                               fix puddling date, filepath length for linux, misc.
 !       4.8.0.19 chp 2021-12-13 Remove plant.for initializations in seasinit 
 !       4.8.0.18 chp 2021-12-10 ETPHOT protections, FO 
 !       4.8.0.17 chp 2021-10-25 Pre-season forecast enabled, portability issues 
@@ -45,9 +52,6 @@
 !       4.8.0.2  chp 2020-07-21 v4.8 (=v4.7.5.28)
 !       4.8.0.1  chp 2020-07-21 v4.8 (=v4.7.5.14)
 !       4.7.5.0  chp 2018-12-18 Pre-release version
-!       4.7.2.3  chp 2018-10-25 Rice - G5 parameter (rolled back for v4.7.5)  
-!       4.7.2.2  chp 2018-10-25 Sugarbeet, Forage, Cassava,    
-!       4.7.2.1  chp 2018-07-08 Use CSMVersion, minor bug fixes, Linux hacks, 
 !       4.7.2.0  chp 2018-05-07 v4.7.2 Release 2018 Workshop
 !       4.7.1.0  chp 2017-10-27 v4.7.1 Release
 !       4.7.0.0  chp 2017-08-09 v4.7.0 Release

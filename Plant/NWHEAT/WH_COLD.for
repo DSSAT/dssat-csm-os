@@ -217,7 +217,9 @@ cbak "dehardening" proceeds at twice the sspeed in stage 2 hardening
          endif
  
       endif
- 
+      
+      !Prevent negative values in cold weather scenarios (TF - 01/18/2022)
+      hi = MAX(hi,0.0) 
 C-----------------------------------------------------------------------
 ! Senesce leaf area due to frost
 C-----------------------------------------------------------------------
@@ -304,9 +306,14 @@ C-----------------------------------------------------------------------
  
             if (temkil .gt. tempcr) then
                if (tiln .ge. 1.) then
-                  tiln = tiln * (0.9 - 0.02 * (tempcr - temkil)**2)
-                  !tiln = tiln * (0.9 - crownT * (tempcr - temkil)**2)
-      
+                  ! Prevent negative values in cold weather scenarios (TF - 01/18/2022)
+                  if(tempcr - temkil .gt. 0.0) then
+                     tiln = tiln * (0.9 - 0.02 * (tempcr - temkil)**2)
+                     !tiln = tiln * (0.9 - crownT * (tempcr - temkil)**2)
+                  else
+                     tiln = 0
+                  endif
+                  
                 write (MSG(1),*) ' Killing tillers due to frost'
                 CALL WARNING(1,"NWheat",MSG)
                else
@@ -317,6 +324,10 @@ C-----------------------------------------------------------------------
                   CALL WARNING(1,"NWheat",MSG)
                  ! PLTPOP = PLTPOP * (0.95 - 0.02 * (tempcr - temkil)**2)
                   PLTPOP = PLTPOP*(0.95 - crownT * (tempcr - temkil)**2)
+                  ! Fixed PLTPOP of reaching negative values in extreme cold weather (TF - 01/18/2022)
+                  IF (PLTPOP .LT. 0.0) THEN 
+                     PLTPOP = 0
+                  ENDIF
                   tiln = 1.
                else
                endif

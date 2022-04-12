@@ -7,22 +7,22 @@
             "name": "Debug DSSAT-CSM",
             //Select plataform
             "windows": {
-                "cwd": "C:\\DSSAT47\\Maize",                          //<- Set execution working directory
+                "cwd": "C:\\DSSAT48\\Maize",                          //<- Set execution working directory
                 "args": ["C", "UFGA8201.MZX", "1"],                   //<- Set program's arguments
                 "miDebuggerPath": "gdb.exe",                          //<- Set Debugger path    
             },
             "osx": {
-                "cwd": "/DSSAT47/Maize",                             //<- Set execution working directory
+                "cwd": "/Applications/DSSAT48/Maize",                             //<- Set execution working directory
                 "args": ["C", "UFGA8201.MZX", "1"],                  //<- Set program's arguments
-                "miDebuggerPath": "/usr/bin/gdb",                    //<- Set Debugger path    
+                "miDebuggerPath": "/usr/local/bin/gdb",                    //<- Set Debugger path    
             },
             "linux": {
-                "cwd": "/DSSAT47/Maize",                             //<- Set execution working directory
+                "cwd": "/DSSAT48/Maize",                             //<- Set execution working directory
                 "args": ["C", "UFGA8201.MZX", "1"],                  //<- Set program's arguments
                 "miDebuggerPath": "/usr/bin/gdb",                    //<- Set Debugger path    
             },
             
-            "program": "${workspaceRoot}/build/bin/dscsm047.exe",    //<- Set executable target
+            "program": "${workspaceRoot}/build/bin/dscsm048",    //<- Set executable target
             
             "MIMode": "gdb",
             "type": "cppdbg",

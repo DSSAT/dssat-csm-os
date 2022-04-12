@@ -89,7 +89,7 @@ C ***********************************************************************
 	  REAL h,Lz,lamda_rho,difference1,TSubstrate
 	  LOGICAL FirstTime
 	  DATA oxy%ID,meth%ID/2,4/
-	  DATA FirstTime/.TRUE./
+!	  DATA FirstTime/.TRUE./
 	END MODULE MethaneVariables
 
 C ***********************************************************************
@@ -929,7 +929,18 @@ C Thomas algorithm - solves tridiagonal matrices
          mu (i) = b (i) - a (i) * c (i-1) / mu (i-1)
          nu (i) = -d (i) - a (i) * nu (i-1) / mu (i-1)
       ENDDO
-      e (steps) = nu (steps) / mu (steps)
+
+!     CHP 2022-02-07 Added logic to prevent zero-divide
+!     e (steps) = nu (steps) / mu (steps)
+      IF(abs(nu(steps)) < 1.E-30) THEN
+        e(steps) = 0.0
+      ELSEIF(abs(mu(steps)) > 1.E-30) THEN
+        e (steps) = nu (steps) / mu (steps) !<-original eqn.
+      ELSE
+        e(steps) = e(steps-1)
+        mu(steps) = mu(steps-1)
+      ENDIF
+
       DO i = steps-1,1,-1
          e (i) = (nu (i) - c (i) * e (i+1)) / mu (i)
 	ENDDO
