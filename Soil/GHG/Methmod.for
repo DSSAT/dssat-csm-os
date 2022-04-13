@@ -923,11 +923,24 @@ C Thomas algorithm - solves tridiagonal matrices
 	INTEGER i
 	REAL a(51),b(51),c(51),d(51),mu(51),nu(51),e(51)
  
-      mu(1) = b(1)
-      nu(1) = -d(1)
-      DO i = 2,steps
-         mu (i) = b (i) - a (i) * c (i-1) / mu (i-1)
-         nu (i) = -d (i) - a (i) * nu (i-1) / mu (i-1)
+!     more zero divide checks 2022-04-13 chp / gh
+      DO i = 1,steps
+        if (i==1) then
+          mu(1) = b(1)
+          nu(1) = -d(1)
+        else
+          mu (i) = b (i) - a (i) * c (i-1) / mu (i-1)
+          nu (i) = -d (i) - a (i) * nu (i-1) / mu (i-1)
+        endif
+
+        if (abs(mu(i)) .LT. 1.E-30) then
+          if (mu(i) .LT. 1.E-30 .AND. mu(i) .GT. 0.0) THEN
+            mu(i) = 1.E-30
+          else
+            mu(i) = -1.E-30
+          endif
+        endif
+
       ENDDO
 
 !     CHP 2022-02-07 Added logic to prevent zero-divide
