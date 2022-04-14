@@ -78,7 +78,6 @@ C    Input and Initialization
 C***********************************************************************
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
-!     temp chp change batch 2
       FirstTime = .TRUE.
 
       TCO2 = 0.0
@@ -95,7 +94,6 @@ C-----------------------------------------------------------------------
       CumCH4Leaching = 0.0                    
       CumNewCO2     = 0.0
 
-!     temp chp change batch 1
       CH4_data % CO2emission    = 0.0
       CH4_data % CH4Emission    = 0.0
       CH4_data % CH4Consumption = 0.0

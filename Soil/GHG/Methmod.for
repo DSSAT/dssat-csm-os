@@ -90,8 +90,8 @@ C ***********************************************************************
 	  LOGICAL FirstTime
 	  DATA oxy%ID,meth%ID/2,4/
 
-!     temp chp change batch 2
-!	  DATA FirstTime/.TRUE./
+!      CHP - need to reset for every run
+!      DATA FirstTime/.TRUE./
 
 	END MODULE MethaneVariables
 
@@ -165,7 +165,6 @@ c	  lamda(i) = rho(i) * lamda_rho
         ENDDO
       ENDDO
 
-!     temp chp change batch 2
       FirstTime = .false.
 
 	RETURN
@@ -927,8 +926,7 @@ C Thomas algorithm - solves tridiagonal matrices
 	INTEGER i
 	REAL a(51),b(51),c(51),d(51),mu(51),nu(51),e(51)
  
-!     temp chp change batch 3
-!     more zero divide checks 2022-04-13 chp / gh
+!     zero divide checks 2022-04-13 chp / gh
       DO i = 1,steps
         if (i==1) then
           mu(1) = b(1)
