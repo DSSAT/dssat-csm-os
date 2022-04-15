@@ -857,9 +857,11 @@ C         recruit (NREQ-N CONC) g of N
 !     Compute mulch properties
       CALL MULCHLAYER (MULCH)
 
-      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+      IF (DYNAMIC .EQ. INTEGR) THEN
+        CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,      !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
      &    CH4_data)                                           !Output
+      ENDIF
 
 C***********************************************************************
 C***********************************************************************
