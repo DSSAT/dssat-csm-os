@@ -937,7 +937,7 @@ C Thomas algorithm - solves tridiagonal matrices
         endif
 
         if (abs(mu(i)) .LT. 1.E-30) then
-          if (mu(i) .LT. 1.E-30 .AND. mu(i) .GT. 0.0) THEN
+          if (mu(i) .GT. 0.0) THEN
             mu(i) = 1.E-30
           else
             mu(i) = -1.E-30
