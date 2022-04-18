@@ -65,7 +65,6 @@ CMakeCache.txt
 CMakeLists.txt
 distclean.cmake
 cmake/
-
 Data/DSSATPRO.L47
 Plant/ORYZA
 .vscode
