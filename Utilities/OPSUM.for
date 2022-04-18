@@ -723,7 +723,7 @@ C-------------------------------------------------------------------
      &  9(1X,I5),
        
 !       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC,
-     &  4(1X,I6),3(1X,I7), F7.2,      
+     &  4(1X,I6),3(1X,I7), F7.1,      
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
 !    &  4F9.1,4F9.2,

@@ -21,8 +21,6 @@ C Output:
 C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
 
 ! Still to do:
-!  - Clean up outputs - probably don't need all these variables output.
-!  - Consider a GHG output file that includes N2O variables plus CO2 and CH4.
 !  - Soil Alternative Electron Acceptors input from soil file or otherwise
 !      estimated from soil properties. Currently hardwired at 26.5.
 C=======================================================================
@@ -80,7 +78,8 @@ C    Input and Initialization
 C***********************************************************************
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
-      FirstTime = 0.0
+      FirstTime = .TRUE.
+
       TCO2 = 0.0
       TCH4 = 0.0
       newCO2Tot = 0.0
@@ -95,19 +94,29 @@ C-----------------------------------------------------------------------
       CumCH4Leaching = 0.0                    
       CumNewCO2     = 0.0
 
+      CH4_data % CO2emission    = 0.0
+      CH4_data % CH4Emission    = 0.0
+      CH4_data % CH4Consumption = 0.0
+      CH4_data % CH4Leaching    = 0.0
+      CH4_data % CumCO2Emission = 0.0
+      CH4_data % CumCH4Emission = 0.0
+      CH4_data % CumCH4Consumpt = 0.0
+      CH4_data % CumCH4Leaching = 0.0                    
+
       IF (CONTROL % RUN .EQ. 1 .OR. 
      &    INDEX('QF',CONTROL % RNMODE) .LE. 0) THEN
         CH4Stored     = 0.0
         CH4Stored_Y   = 0.0
+        CH4_data % CH4Stored = 0.0
 
 !     Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
 !     Temporarily hard-wire Buffer(NL,1) to 26.5 until we read initial values from soil file.
       FloodCH4 = 0.0
       DO i=1,NLAYR
-!         Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
-!         Temporarily set SAEA (new soil input - Soil Alternative Electron Acceptors) values to 26.5
-!         Need to introduce new soil input parameter, or find a way to estimate from other inputs?
-          Buffer(i,1) = 26.5 * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+!       Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+!       Temporarily set SAEA (new soil input - Soil Alternative Electron Acceptors) values to 26.5
+!       Need to introduce new soil input parameter, or find a way to estimate from other inputs?
+        Buffer(i,1) = 26.5 * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,2) = 0.0
       ENDDO
 
@@ -129,16 +138,6 @@ C-----------------------------------------------------------------------
 !    30   -99 0.280 0.397 0.412 0.200  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 !    40   -99 0.280 0.397 0.412 0.200  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 !    50   -99 0.280 0.397 0.412 0.100  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
-
-      CH4_data % CO2emission    = 0.0
-      CH4_data % CH4Emission    = 0.0
-      CH4_data % CH4Consumption = 0.0
-      CH4_data % CH4Leaching    = 0.0
-      CH4_data % CH4Stored      = 0.0
-      CH4_data % CumCO2Emission = 0.0
-      CH4_data % CumCH4Emission = 0.0
-      CH4_data % CumCH4Consumpt = 0.0
-      CH4_data % CumCH4Leaching = 0.0                    
 
       CALL OpMethane(CONTROL, ISWITCH,  
      &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
