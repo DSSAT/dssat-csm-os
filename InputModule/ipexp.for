@@ -1104,6 +1104,8 @@ C=======================================================================
       CHARACTER*15 CXCRD, CYCRD
       CHARACTER*78 MSG(2)
       CHARACTER*92 CHARTEST
+      LOGICAL      CKELEV
+      DATA CKELEV /.TRUE./
 
       INTEGER LUNEXP,LNFLD,LN,LINEXP,ISECT,IFIND,ERRNUM,I, FHDUR
 
@@ -1179,21 +1181,21 @@ C     OPSUM routines for printing.  Integers are temporarily
 C     saved as real numbers for placement in real array.
 
       READ(CXCRD,'(F15.0)', IOSTAT=ERRNUM) XCRD
-      IF(ERRNUM .EQ. 0) THEN
+      IF(ERRNUM .NE. 0) THEN
          XCRD = -999.0
          MSG(1) = 'Error reading latitude from experimental file'
          MSG(2) = FILEX
          CALL WARNING(2, ERRKEY, MSG)
       ENDIF
       READ(CYCRD,'(F15.0)', IOSTAT=ERRNUM) YCRD
-      IF(ERRNUM .EQ. 0) THEN
+      IF(ERRNUM .NE. 0) THEN
          YCRD = -99.0
          MSG(1) = 'Error reading longitude from experimental file'
          MSG(2) = FILEX
          CALL WARNING(2, ERRKEY, MSG)
       ENDIF
       READ(CELEV,'(F9.0)', IOSTAT=ERRNUM)  ELEV
-      IF(ERRNUM .EQ. 0) THEN
+      IF(ERRNUM .NE. 0) THEN
         ELEV = -99.0
         MSG(1) = 'Error reading elevation from experimental file'
         MSG(2) = FILEX
@@ -1204,30 +1206,43 @@ C     saved as real numbers for placement in real array.
      &   XCRD .GE.-180.0 .AND. XCRD .LE. 180.0 .AND.
      &   LEN_TRIM(CYCRD).GT. 0.0 .AND. LEN_TRIM(CXCRD).GT.0.0
      &   .AND.
-     &   (ABS(YCRD) .GT. 1.E-15 .OR. ABS(XCRD) .GT. 1.E-15).AND.
-     &   ERRNUM .NE. 0)THEN
+     &   (ABS(YCRD) .GT. 1.E-15 .OR. ABS(XCRD) .GT. 1.E-15))THEN
 !     Transfer data to the modules
          CALL PUT('FIELD','CYCRD',CYCRD)
          CALL PUT('FIELD','CXCRD',CXCRD)   
          LABEL(1) = 'YCRD'; VALUE(1) = YCRD 
          LABEL(2) = 'XCRD'; VALUE(2) = XCRD
+         CKELEV = .TRUE.
       ELSE
         !     Transfer data to the modules
         CALL PUT('FIELD','CYCRD','            -99')
         CALL PUT('FIELD','CXCRD','            -99')
         LABEL(1) = 'YCRD'; VALUE(1) = -99.0 
         LABEL(2) = 'XCRD'; VALUE(2) = -999.0         
+        CKELEV = .FALSE.
       ENDIF
-      
-      IF(ELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
-        CALL PUT('FIELD','CELEV',CELEV)
-        LABEL(3) = 'ELEV'; VALUE(3) = ELEV      
+  
+!     Check elevation (CKELEV) based on latitude and longitude  
+      IF(CKELEV .EQV. .TRUE.) THEN
+         IF(ELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
+           CALL PUT('FIELD','CELEV',CELEV)
+           LABEL(3) = 'ELEV'; VALUE(3) = ELEV      
+         ELSE
+           CALL PUT('FIELD','CELEV','      -99')
+           LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+           
+         ENDIF
       ELSE
-        CALL PUT('FIELD','CELEV','      -99')
-        LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+        IF(ELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0 .AND.
+     &     ABS(ELEV) .GT. 1.E-15) THEN
+          CALL PUT('FIELD','CELEV',CELEV)
+          LABEL(3) = 'ELEV'; VALUE(3) = ELEV      
+        ELSE
+          CALL PUT('FIELD','CELEV','      -99')
+          LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+        ENDIF
       ENDIF
-      
-      
+               
 C     Send labels and values to OPSUM      
       CALL SUMVALS (SUMNUM, LABEL, VALUE)    
 C

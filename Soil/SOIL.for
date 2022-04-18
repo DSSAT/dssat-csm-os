@@ -1,10 +1,9 @@
 !=======================================================================
-!  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+!  COPYRIGHT 1998-2021
+!                      DSSAT Foundation
 !                      University of Florida, Gainesville, Florida
-!                      Iowa State University, Ames, Iowa
-!                      International Center for Soil Fertility and 
-!                       Agricultural Development, Muscle Shoals, Alabama
-!                      University of Guelph, Guelph, Ontario
+!                      International Fertilizer Development Center
+!                     
 !  ALL RIGHTS RESERVED
 !=======================================================================
 !  SOIL, Subroutine

@@ -21,8 +21,6 @@ C Output:
 C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
 
 ! Still to do:
-!  - Clean up outputs - probably don't need all these variables output.
-!  - Consider a GHG output file that includes N2O variables plus CO2 and CH4.
 !  - Soil Alternative Electron Acceptors input from soil file or otherwise
 !      estimated from soil properties. Currently hardwired at 26.5.
 C=======================================================================
@@ -50,6 +48,7 @@ C=======================================================================
       REAL CumCH4Consumpt, CumCH4Leaching, newCO2Tot, CH4_balance
       REAL CumCH4Emission, CumCO2Emission, CO2emission, CumNewCO2
       REAL StorageFlux, Cum_CH4_bal, CH4Stored_Y
+!     REAL CH4_correction !, ReductFact
 
       REAL TCO2, TCH4, FloodCH4
 
@@ -79,6 +78,8 @@ C    Input and Initialization
 C***********************************************************************
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
+      FirstTime = .TRUE.
+
       TCO2 = 0.0
       TCH4 = 0.0
       newCO2Tot = 0.0
@@ -93,19 +94,29 @@ C-----------------------------------------------------------------------
       CumCH4Leaching = 0.0                    
       CumNewCO2     = 0.0
 
+      CH4_data % CO2emission    = 0.0
+      CH4_data % CH4Emission    = 0.0
+      CH4_data % CH4Consumption = 0.0
+      CH4_data % CH4Leaching    = 0.0
+      CH4_data % CumCO2Emission = 0.0
+      CH4_data % CumCH4Emission = 0.0
+      CH4_data % CumCH4Consumpt = 0.0
+      CH4_data % CumCH4Leaching = 0.0                    
+
       IF (CONTROL % RUN .EQ. 1 .OR. 
      &    INDEX('QF',CONTROL % RNMODE) .LE. 0) THEN
         CH4Stored     = 0.0
         CH4Stored_Y   = 0.0
+        CH4_data % CH4Stored = 0.0
 
 !     Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
 !     Temporarily hard-wire Buffer(NL,1) to 26.5 until we read initial values from soil file.
       FloodCH4 = 0.0
       DO i=1,NLAYR
-!         Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
-!         Temporarily set SAEA (new soil input - Soil Alternative Electron Acceptors) values to 26.5
-!         Need to introduce new soil input parameter, or find a way to estimate from other inputs?
-          Buffer(i,1) = 26.5 * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+!       Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+!       Temporarily set SAEA (new soil input - Soil Alternative Electron Acceptors) values to 26.5
+!       Need to introduce new soil input parameter, or find a way to estimate from other inputs?
+        Buffer(i,1) = 26.5 * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,2) = 0.0
       ENDDO
 
@@ -128,16 +139,6 @@ C-----------------------------------------------------------------------
 !    40   -99 0.280 0.397 0.412 0.200  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 !    50   -99 0.280 0.397 0.412 0.100  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 
-      CH4_data % CO2emission    = 0.0
-      CH4_data % CH4Emission    = 0.0
-      CH4_data % CH4Consumption = 0.0
-      CH4_data % CH4Leaching    = 0.0
-      CH4_data % CH4Stored      = 0.0
-      CH4_data % CumCO2Emission = 0.0
-      CH4_data % CumCH4Emission = 0.0
-      CH4_data % CumCH4Consumpt = 0.0
-      CH4_data % CumCH4Leaching = 0.0                    
-
       CALL OpMethane(CONTROL, ISWITCH,  
      &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
      &  CH4Production, CH4Consumption, CH4Leaching, CH4Emission,
@@ -155,6 +156,11 @@ C-----------------------------------------------------------------------
       CH4emission = 0.0
       CH4Consumption = 0.0
       CH4Leaching    = 0.0
+
+      CH4Production  = 0.0
+      CH4PlantFlux   = 0.0
+      CH4Ebullition  = 0.0
+      CH4Diffusion   = 0.0
 
 !     Calculate total CO2 coming in from decomposition of organic matter, newCO2Tot
 !     Transfer newCO2 from soil organic matter modules to CSubstrate variable
@@ -269,6 +275,14 @@ C-----------------------------------------------------------------------
         EbullitionFrac  = 0.0
         LeachingFrac    = 0.0
       ENDIF
+
+!!     Limit leaching fraction + consumption fraction to no more than production
+!      IF (ConsumptionFrac + LeachingFrac .GT. ProductionFrac) THEN
+!        ReductFact = ProductionFrac / (ConsumptionFrac + LeachingFrac)
+!        ConsumptionFrac = ConsumptionFrac * ReductFact
+!        LeachingFrac = LeachingFrac * ReductFact
+!      ENDIF
+
       EmissionFrac = ProductionFrac - ConsumptionFrac - LeachingFrac
       DiffusionFrac = EmissionFrac - (PlantFrac + EbullitionFrac)
 
@@ -298,6 +312,14 @@ C-----------------------------------------------------------------------
 
       StorageFlux = CH4Stored - CH4Stored_Y
       CH4Stored_Y = CH4Stored
+
+!!     chp 2022-03-23 prevent negative CH4 emissions
+!      IF (CH4Emission < -1.E-6) THEN
+!        CH4_correction = CH4Emission  ! value is negative
+!        CH4Emission = 0.0
+!        CH4Diffusion = CH4Diffusion - CH4_correction
+!        CH4Production = CH4Production - CH4_correction
+!      ENDIF
 
       CO2Emission    = newCO2Tot - CH4Production - StorageFlux
       CO2Emission = AMIN1(CO2Emission, newCO2Tot)
