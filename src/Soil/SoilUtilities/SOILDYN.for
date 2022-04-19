@@ -2260,7 +2260,7 @@ C=======================================================================
           SOILPROP % SALB   = PMALB
         ENDIF
         PMFRACTION = PMWD / ROWSPC_CM
-        MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 - PMFRACTION)
+        MSALB = PMALB * PMFRACTION + SOILPROP % SALB*(1.0-PMFRACTION)
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
       ENDIF
