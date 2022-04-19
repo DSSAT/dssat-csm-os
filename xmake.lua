@@ -51,7 +51,7 @@ target('dsscsm047')
     add_fcflags("-fbacktrace")
 
     -- add_linkdirs
-    add_includedirs("include/InputModule/")
+    add_includedirs("include")
     -- add_libdirs
     add_files("lib/Utilities/CSMVersion.for")
     add_files("lib/Utilities/**|OSDefsLINUX.for|OSDefsWINDOWS.for|CSMVersion.for.in")
