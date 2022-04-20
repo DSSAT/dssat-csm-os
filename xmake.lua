@@ -56,10 +56,12 @@ target('dsscsm047')
     add_files("lib/Utilities/CSMVersion.for")
     add_files("lib/Utilities/**|OSDefsLINUX.for|OSDefsWINDOWS.for|CSMVersion.for.in")
     add_files('lib/InputModule/*.for') 
-    add_files('lib/Soil/**')
+    add_files('lib/Soil/GHG/*',
+              'lib/Soil/SoilUtilities/*')
     add_files('lib/Management/*for')
     add_files('lib/Weather/*.f90')
-    add_files('lib/Plant/**')
+    add_files('lib/Plant/CSYCA-Cassava/YCA_Node.f90')
+    add_files('lib/Plant/**|YCA_Node.f90')
   -- add_srcdirs
     add_files('src/Utilities/*.for',
               'src/Utilities/*.f90') 
@@ -74,8 +76,3 @@ target('dsscsm047')
     add_files('src/Weather/*for')  
     add_files('src/InputModule/**')
     add_files('src/CSM_Main/*.for')
-
-    
-    
-
-    
