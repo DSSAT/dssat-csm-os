@@ -10,14 +10,14 @@ v4.8.0.24 2022-03-11
 
 2. **Plant model revisions**
     - Major revisions to MANIHOT (YCA) Cassava model:
-        •	Include dry matter content dynamics in the storage roots allowing the reallocation of assimilates from the storage roots to aboveground growth. Dry matter              content is affected by temperature and soil water dynamics.
-        •	Modify cardinal temperatures for branching. 
-        •	Updated photoperiod effect by branch level. 
-        •	Modify dynamics of leaf senescence due to water stress.
-        •	Hourly VPD effect in potential transpiration and photosynthesis.
-        •	Changes to the N dynamics with new concentrations in the different organs and organic matter composition (RESCH047.SDA file).
-        •	Modification in the cultivar and ecotype files: new parameters for dry matter content, leaf senescence, and photoperiod effect. 
-        •	Remove parameters no longer used in the species file. 
+       - Include dry matter content dynamics in the storage roots allowing the reallocation of assimilates from the storage roots to aboveground growth. Dry matter              content is affected by temperature and soil water dynamics.
+       - Modify cardinal temperatures for branching.
+       - Updated photoperiod effect by branch level. 
+       - Modify dynamics of leaf senescence due to water stress.
+       - Hourly VPD effect in potential transpiration and photosynthesis.
+       - Changes to the N dynamics with new concentrations in the different organs and organic matter composition (RESCH047.SDA file).
+       - Modification in the cultivar and ecotype files: new parameters for dry matter content, leaf senescence, and photoperiod effect. 
+       - Remove parameters no longer used in the species file. 
  
     - Ozone effects added to NWheat model
     - Pest damage routines coupled to NWheat model
