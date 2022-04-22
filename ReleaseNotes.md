@@ -4,10 +4,12 @@ v4.8.0.27 2022-04-22
 (previous release v4.7.5.8 2019-04-18)
 
 1. **New Crop models**
-    - Ceres-Teff 
-    - Quinoa
-    - Samuca - sugarcane
-    - Sunflower
+    - Teff-Ceres
+    - Teff-NWheat
+    - Quinoa-CROPGRO
+    - Chia-CROPGRO
+    - Sugarcane-SAMUCA
+    - Sunflower-OilCropSun
 
 2. **Plant model revisions**
     - Major revisions to MANIHOT (YCA) Cassava model 
