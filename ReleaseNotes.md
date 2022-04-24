@@ -1,6 +1,6 @@
 # Release notes
 
-v4.8.0.27 2022-04-22
+v4.8.0.27, 2022-04-22
 (previous release v4.7.5.8, 2019-04-18)
 
 - **New Crop models**
