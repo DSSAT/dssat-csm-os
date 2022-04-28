@@ -164,7 +164,8 @@ C  Calls:     None
             CUMSENSOIL = CUMSENSOIL + SENESCE % ResWt(L)
           ENDDO
 
-          IF (SEEDNO .GT. 0.0) THEN
+          ! Added PLTPOP to void divisions by zero (TF - 01/18/2022) 
+          IF (SEEDNO .GT. 0.0 .AND. PLTPOP .GT. 0.0) THEN
               !JZW changed
               SDSIZE = SDWT / (SEEDNO*PLTPOP) *1000.
               !SDSIZE = SDWT/SEEDNO*1000.

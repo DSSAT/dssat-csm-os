@@ -1475,9 +1475,9 @@
 
         IF (DYNAMIC.EQ.RUNINIT) THEN
 
-          MODNAME = 'CSCER047'
+          MODNAME = 'CSCER048'
           VERSION = 010115
-          GENFLCHK(3:15) = 'CER047.08102017'
+          GENFLCHK(3:15) = 'CER048.20200721'
 
           ! Parameters
           STDAY = 20.0    ! TT in standard day
@@ -6683,7 +6683,8 @@ C-GH      IF (snow.GT.0) THEN
      &       '  Grain weight mg   ',GRWT/GRNUM*1000.0
             WRITE (fnumwrk,'(A20,F6.1)')
      &       '  Grain weight coeff',g2kwt
-            IF (GRNUM.GT.0.0.AND.G2KWT-GRWT/GRNUM*1000.0.GT.0.1) THEN
+! FO/GH - 11-13-2021 - Removed division by zero issue for GRNUM
+            IF (GRNUM.GT.0.0) THEN
               WRITE (fnumwrk,'(A34)')
      &         '  Some limitation on grain growth!'
               WRITE(fnumwrk,'(A22,I4)')'   Days of Ch2o limit ',ch2olim
@@ -7791,6 +7792,7 @@ C-GH      IF (snow.GT.0) THEN
             IF (IDETO.NE.'N'.OR.IDETL.EQ.'A') THEN
             
               ! PLANT EVALUATION (MEASURED - SIMULATED COMPARISONS)
+C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE error.
               
               WRITE (fnumwrk,*) 'Writing EVALUATION'
               
@@ -7834,8 +7836,8 @@ C-GH      IF (snow.GT.0) THEN
      x            ' MDAPS MDAPM',
      x            ' HWAMS HWAMM',
      x            ' HWUMS HWUMM',
-     x            ' H#AMS H#AMM',
-     x            ' H#GMS H#GMM',
+     x            '    H#AMS H#AMM',
+     x            '    H#GMS H#GMM',
      x            ' LAIXS LAIXM',
      x            ' L#SMS L#SMM',
      x            ' T#AMS T#AMM',
@@ -7899,8 +7901,8 @@ C-GH      IF (snow.GT.0) THEN
      x        I6,I6,
      x        I6,I6,
      x        A6,A6,
-     x        I6,I6,
-     x        F6.1,F6.1,
+     x        1X,I8,I6,
+     x        1X,F8.1,F6.1,
      x        F6.1,F6.1,
      x        F6.1,F6.1,
      x        I6,I6,
@@ -7947,7 +7949,9 @@ C-GH      IF (snow.GT.0) THEN
               WRITE (fnumwrk,*) 'Writing OVERVIEW'
               
               FNAMETMP = ' '
-              FNAMETMP(1:12) = 'Overview.'//out
+              ! TF - Updated OVERVIEW.OUT name to avoid issues
+              ! with case sensitive systems (07/27/2021) 
+              FNAMETMP(1:12) = 'OVERVIEW.'//out
               
               IF (FILEIOT(1:2).EQ.'DS') THEN
                 IF (RUN.EQ.1 .AND. RUNI.EQ.1) THEN

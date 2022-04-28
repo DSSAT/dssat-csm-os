@@ -1,5 +1,5 @@
 *WEATHER DATA CODES
-! DSSAT v4.7; 11/20/2020
+! DSSAT v4.8; 07/16/2021
 
 ! Headers used in the @ line to identify variables are listed first; codes
 ! ('flags') used to designate data types are listed next.
@@ -56,6 +56,7 @@ RTn_X    Cross-correlation coefficient TMIN and SRAD                          IB
 RTnRa    Cross-correlation coefficient TMIN and RAIN                          IB
 R_XRa    Cross-correlation coefficient RAD and RAIN                           IB
 REFHT    Reference height for weather measurements, m                         IB
+RH2M     Relative humidity at 2 m, %                                          IB
 RHUM     Relative humidity average, %                                         IB
 RNUM     Rainy days, # month-1                                                IB
 RTOT     Rainfall total, mm month-1                                           IB
@@ -70,8 +71,10 @@ START    Start of summary period for climate (CLI) files, Year                IB
 SUNH     Daily sunshine duration, percent                                     IB
 SWMN     Solar radiation,wet days,monthly average, MJ m-2 d-1                 IB
 SWSD     Solar radiation,wet days,monthly standard deviation, MJ m-2 d-1      IB
+T2M      Temperature at 2 meter, C                                            IB
 TAMP     Temperature amplitude (range), monthly averages [long-term], C       IB
 TAV      Temperature average for whole year [long-term], C                    IB
+TDEW     Dew/Frost point temperature at 2 m, C                                IB
 TDRY     Daily dry-bulb temperature, C                                        IB
 TMAX     Daily temperature maximum, C                                         IB
 TMIN     Daily temperature minimum, C                                         IB
@@ -91,8 +94,11 @@ TxPHI    Auto-correlation coefficient for TMAX                                IB
 TnPHI    Auto-correlation coefficient for TMIN                                IB
 TxSDC    Low-frequency correction standard deviation for TMAX                 IB 
 TnSDC    Low-frequency correction standard deviation for TMIN                 IB
+WELEV    Elevation, m                                                         IB
 WIND     Daily wind speed (km d-1)                                            IB
 WNDHT    Reference height for windspeed measurements, m                       IB
+WTHLAT   Latitude, degrees (decimals)                                         IB
+WTHLONG  Longitude, degrees (decimals)                                        IB
 XAMN     Temperature maximum,all days,monthly average, C                      IB
 XDMN     Temperature maximum,dry days,monthly average, C                      IB
 XDSD     Temperature maximum,dry days,standard deviation, C                   IB

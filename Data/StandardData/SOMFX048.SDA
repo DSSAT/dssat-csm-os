@@ -1,0 +1,163 @@
+*SOMFX048.SDA Coefficients - DSCSM048 Model 2020-07-21
+======================================================
+This is an input file for the CENTURY-based soil organic matter/residue 
+module. These variables and parameters can be considered as constant. 
+The user does not have to modify these under normal circumstances.
+
+The variables CES1(L,IEL), CES2(L,IEL) an CES3(L,IEL), as given here,
+are only used to initialize the model; their value is modified during
+the model run. Even though these variables exist for each soil layer 
+independently, only one common start value is given here as array 
+element number 1.
+
+NAME           VALUE        UNITS
+====           =====        =====
+'CEDAM(1)'     15.          ratio (unitless)
+'CEDAM(2)'     150.         ratio (unitless)
+'CEDAM(3)'     150.         ratio (unitless)
+'CES1(0,1)'    13.          ratio (unitless); only for intialization
+'CES1(0,2)'    50.          ratio (unitless); only for intialization  ![AG;4/06; was 100]
+'CES1(0,3)'    50.          ratio (unitless); only for intialization
+'CES1(1,1)'    10.          ratio (unitless); only for intialization
+'CES1(1,2)'    50.          ratio (unitless); only for intialization
+'CES1(1,3)'    50.          ratio (unitless); only for initialization
+'CES1M(0,1)'   10.          ratio (unitless)
+'CES1M(0,2)'   99.          ratio (unitless)
+'CES1M(0,3)'   50.          ratio (unitless)
+'CES1M(1,1)'   6.           ratio (unitless)
+'CES1M(1,2)'   30.          ratio (unitless)
+'CES1M(1,3)'   50.          ratio (unitless)
+'CES1T(0,1)'   0.02         fraction (unitless)
+'CES1T(0,2)'   0.0015       fraction (unitless)
+'CES1T(0,3)'   0.0015       fraction (unitless)
+'CES1T(1,1)'   50.          kg [N] / ha
+'CES1T(1,2)'   20.          kg [P] / ha
+'CES1T(1,3)'   20.          kg [S] / ha
+'CES1X(0,1)'   16.          ratio (unitless)
+'CES1X(0,2)'   200.         ratio (unitless)
+'CES1X(0,3)'   150.         ratio (unitless)
+'CES1X(1,1)'   14.          ratio (unitless)
+'CES1X(1,2)'   150.         ratio (unitless)
+'CES1X(1,3)'   200.         ratio (unitless)
+'CES2(1,1)'    17.          ratio (unitless); only for initialization
+'CES2(1,2)'    117.         ratio (unitless); only for initialization
+'CES2(1,3)'    117.         ratio (unitless); only for initialization
+'CES21I(0,1)'  12.          ratio (unitless)
+'CES21I(0,2)'  220.         ratio (unitless)
+'CES21I(0,3)'  220.         ratio (unitless)
+'CES21M(0,1)'  12.          ratio (unitless)
+'CES21M(0,2)'  100.         ratio (unitless)
+'CES21M(0,3)'  100.         ratio (unitless)
+'CES21M(1,1)'  12.          ratio (unitless)
+'CES21M(1,2)'  100.         ratio (unitless)
+'CES21M(1,3)'  100.         ratio (unitless)
+'CES21S(0,1)'  3.           unitless multiplier
+'CES21S(0,2)'  5.           unitless multiplier
+'CES21S(0,3)'  5.           unitless multiplier
+'CES21T(1,1)'  20.          kg [N] / ha
+'CES21T(1,2)'  20.          kg [P] / ha
+'CES21T(1,3)'  20.          kg [S] / ha
+'CES21X(0,1)'  20.          ratio (unitless)
+'CES21X(0,2)'  400.         ratio (unitless)
+'CES21X(0,3)'  400.         ratio (unitless)
+'CES21X(1,1)'  20.          ratio (unitless)
+'CES21X(1,2)'  400.         ratio (unitless)
+'CES21X(1,3)'  400.         ratio (unitless)
+'CES2LI(0,1)'  12.          ratio (unitless)
+'CES2LI(0,2)'  220.         ratio (unitless)
+'CES2LI(0,3)'  220.         ratio (unitless)
+'CES2LI(1,1)'  12.          ratio (unitless)
+'CES2LI(1,2)'  220.         ratio (unitless)
+'CES2LI(1,3)'  220.         ratio (unitless)
+'CES2LM(0,1)'  12.          ratio (unitless)
+'CES2LM(0,2)'  100.         ratio (unitless)
+'CES2LM(0,3)'  100.         ratio (unitless)
+'CES2LM(1,1)'  12.          ratio (unitless)
+'CES2LM(1,2)'  100.         ratio (unitless)
+'CES2LM(1,3)'  100.         ratio (unitless)
+'CES2LS(0,1)'  3.           unitless multiplier
+'CES2LS(0,2)'  5.           unitless multiplier
+'CES2LS(0,3)'  5.           unitless multiplier
+'CES2LS(1,1)'  3.           unitless multiplier
+'CES2LS(1,2)'  5.           unitless multiplier
+'CES2LS(1,3)'  5.           unitless multiplier
+'CES2LX(0,1)'  20.          ratio (unitless)
+'CES2LX(0,2)'  400.         ratio (unitless)
+'CES2LX(0,3)'  400.         ratio (unitless)
+'CES2LX(1,1)'  20.          ratio (unitless)
+'CES2LX(1,2)'  400.         ratio (unitless)
+'CES2LX(1,3)'  400.         ratio (unitless)
+'CES3(1,1)'    7.           ratio (unitless); only for initialization
+'CES3(1,2)'    62.          ratio (unitless); only for initialization
+'CES3(1,3)'    62.          ratio (unitless); only for initialization
+'CES3M(1,1)'   6.           ratio (unitless)
+'CES3M(1,2)'   50.          ratio (unitless)
+'CES3M(1,3)'   50.          ratio (unitless)
+'CES3T(1,1)'   20.          kg [N] / ha
+'CES3T(1,2)'   20.          kg [P] / ha
+'CES3T(1,3)'   20.          kg [S] / ha
+'CES3X(1,1)'   8.           ratio (unitless)
+'CES3X(1,2)'   200.         ratio (unitless)
+'CES3X(1,3)'   200.         ratio (unitless)
+'CESTR(1)'     150.         ratio (unitless) ![AG;4/06; was 200]
+'CESTR(2)'     500.         ratio (unitless)
+'CESTR(3)'     500.         ratio (unitless)
+'CO2MET(0)'    0.55         fraction (unitless)
+'CO2MET(1)'    0.55         fraction (unitless)
+'CO2S1(0)'     0.60         fraction (unitless)  !no longer used in v4.5.0.24, value set to soil layer 1 value
+'CO2S1I'       0.17         fraction (unitless)
+'CO2S1S'       0.68         unitless multiplier
+'CO2S2'        0.55         fraction (unitless)
+'CO2S3'        0.55         fraction (unitless)
+'CO2STR(0,1)'  0.45         fraction (unitless)
+'CO2STR(1,1)'  0.55         fraction (unitless)
+'CO2STR(0,2)'  0.3          fraction (unitless)
+'CO2STR(1,2)'  0.3          fraction (unitless)
+'CULMETQ'      1.0          unitless multiplier
+'CULS1Q'       1.6          unitless multiplier
+'CULS2Q'       1.6          unitless multiplier
+'CULS3Q'       1.6          unitless multiplier
+'CULSTRQ'      1.6          unitless multiplier
+'DECMET(0)'    0.04055      d-1
+'DECMET(1)'    0.05068      d-1
+'DECS1(0)'     0.01644      d-1
+'DECS1(1)'     0.02000      d-1
+'DECS2(1)'     0.000548     d-1
+'DECS3(1)'     0.000012     d-1
+'DECSTR(0)'    0.01068      d-1 [JWJ-new 0.001989]  
+'DECSTR(1)'    0.01342      d-1 [JWJ-new 0.002500]  
+'FRDAE(1)'     0.02         fraction (unitless)
+'FRDAE(2)'     0.02         fraction (unitless)
+'FRDAE(3)'     0.04         fraction (unitless)
+'FRMETI'       0.85         fraction (unitless)
+'FRMETS'       0.013        fraction (unitless)
+'LIGSTR(0)'    3.           unitless multiplier
+'LIGSTR(1)'    3.           unitless multiplier
+'RESDAX'       1000.        kg [C] / ha
+'S1S3I'        0.003        fraction (unitless)
+'S1S3S'        0.032        fraction (unitless)
+'S2S3I'        0.003        fraction (unitless)
+'S2S3S'        0.009        fraction (unitless)
+'TXS1I'        0.25         unitless multiplier
+'TXS1S'        0.75         unitless multiplier
+
+'CES23(1,2)'    100.
+'CES23LM(0,2)'  100.
+'CES23LM(1,2)'  100.
+
+'CES23LX(0,2)'  400.
+'CES23LX(1,2)'  400.
+
+'CES23M(0,2)'   100.
+'CES23M(1,2)'   100.
+
+'CES23T(1,2)'    20.               !with conversion g/m2 to kg/ha
+                                                              
+'CES23X(0,2)'   400.
+'CES23X(1,2)'   400.
+
+
+
+CES23a and CES23La are set to the same value, but yet given separately in case it needs to be changed during calibration.
+
+

@@ -57,7 +57,7 @@ C=======================================================================
 !       IF (INDEX('BNSBPNTMPECHPPPRC3C4BHG1G2G3G4G5G6G7G8BRVBCPFBCOCT',
 !    &             CROP) .GT. 0) THEN
           CASE('BN','SB','PN','TM','PE','CH','PP','PR','C3','C4','BH',
-     &          'BR','VB','CP','FB','CO','CT','NP','GB','LT')
+     &          'BR','VB','CP','FB','CO','CT','NP','GB','LT', 'SU')
            HSTAGE = 16
 !       ELSE IF (INDEX('CS',CROP) .GT. 0) THEN
           CASE('CS')

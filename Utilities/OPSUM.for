@@ -65,6 +65,7 @@ C=======================================================================
 !       Added 7/19/2016 N2O emissions
         REAL N2OEC  !kg/ha
         INTEGER CO2EC
+        REAL CH4EC  !kg[C]/ha chp 2021-07-28
 
 !       Added 2019-19-17 CHP Cumulative net mineralization
         REAL NMINC
@@ -148,7 +149,7 @@ C-----------------------------------------------------------------------
 !     Added 02/23/2011 Seasonal average environmental data
       INTEGER NDCH
       REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-      REAL N2OEC  !kg/ha
+      REAL N2OEC, CH4EC  !kg/ha
       INTEGER CO2EC
 !     Added 05/28/2021 Latitude, Longitude and elevation data
       CHARACTER*9  ELEV 
@@ -342,8 +343,9 @@ C     Initialize OPSUM variables.
       SUMDAT % GNAM   = -99
       
 !     N2O emissions
-      SUMDAT % N2OEC  = -99. !N2O emissions (kg/ha)
-      SUMDAT % CO2EC  = -99  !CO2 emissions from OM decomp (kg/ha)
+      SUMDAT % N2OEC  = -99. !N2O emissions (kg[N]/ha)
+      SUMDAT % CO2EC  = -99  !CO2 emissions from OM decomp (kg[C]/ha)
+      SUMDAT % CH4EC  = -99. !CH4 emissions (kg[C]/ha)
       
       SUMDAT % RECM   = -99
       SUMDAT % ONTAM  = -99
@@ -449,8 +451,9 @@ C     Initialize OPSUM variables.
       NMINC= SUMDAT % NMINC   !Net mineralized N (kg N/ha)
       CNAM = SUMDAT % CNAM    !Tops N at Maturity (kg/ha)
       GNAM = SUMDAT % GNAM    !Grain N at Maturity (kg/ha)
-      N2OEC= SUMDAT % N2OEC   !N2O emissions (kg/ha)
-      CO2EC= SUMDAT % CO2EC   !CO2 emissions (kg/ha)
+      N2OEC= SUMDAT % N2OEC   !N2O emissions (kg[N]/ha)
+      CO2EC= SUMDAT % CO2EC   !CO2 emissions (kg[C]/ha)
+      CH4EC= SUMDAT % CH4EC   !CH4 emissions (kg[C]/ha)
 
       RECM = SUMDAT % RECM    !Residue Applied (kg/ha)
       ONTAM= SUMDAT % ONTAM   !Organic N at maturity, soil & surf (kg/h)
@@ -509,7 +512,7 @@ C  Simulation Summary File
 C
 C-------------------------------------------------------------------
       IF (INDEX('ADY',IDETS) .GT. 0) THEN
-        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN   ! VSH
         INQUIRE (FILE = OUTS, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN (UNIT = NOUTDS, FILE = OUTS, STATUS = 'OLD',
@@ -558,7 +561,8 @@ C-------------------------------------------------------------------
      &'NITROGEN..................................................  ',
      &'PHOSPHORUS............  ',
      &'POTASSIUM.............  ',
-     &'ORGANIC MATTER..........................................    ',
+     &'ORGANIC MATTER.................................................',
+     &'    ',
      &'WATER PRODUCTIVITY..................................',
      &'................    ',
      &'NITROGEN PRODUCTIVITY...........  ',
@@ -569,7 +573,7 @@ C-------------------------------------------------------------------
   400     FORMAT ('@   RUNNO   TRNO R# O# P# CR MODEL... ',
      &   'EXNAME.. TNAM..................... ',
      &   'FNAM.... WSTA.... WYEAR SOIL_ID... ',
-     &   'LATI............ LONG........... ELEV.....  ',
+     &   '            XLAT            LONG      ELEV  ',
      &   '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT   HYEAR',
      &   '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
 !    &   '    HWUM  H#AM    H#UM  HIAM  LAIX',
@@ -580,7 +584,8 @@ C-------------------------------------------------------------------
 !    &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
      &   '  PI#M  PICM  PUPC  SPAM',
      &   '  KI#M  KICM  KUPC  SKAM',
-     &   '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM   CO2EC',
+     &   '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM',
+     &   '   CO2EC  CH4EC',
      &   '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
      &   '     YPTM     YPIM',
      &   '    DPNAM    DPNUM    YPNAM    YPNUM',
@@ -593,7 +598,7 @@ C-------------------------------------------------------------------
 
         MODEL = CONTROL % MODEL
 
-        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, 
      &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, WYEAR,
@@ -688,7 +693,7 @@ C-------------------------------------------------------------------
 !    &    N2OGC_TXT,
      &    PINUMM, PICM, PUPC, SPAM,        !P data
      &    KINUMM, KICM, KUPC, SKAM,        !K data
-     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC,
+     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC,
 !         Water productivity
      &    DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT, 
      &                 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT,
@@ -717,8 +722,8 @@ C-------------------------------------------------------------------
 !       KINUMM, KICM, KUPC, SKAM, RECM, 
      &  9(1X,I5),
        
-!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC,
-     &  4(1X,I6),3(1X,I7),       
+!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC,
+     &  4(1X,I6),3(1X,I7), F7.1,      
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
 !    &  4F9.1,4F9.2,
@@ -749,9 +754,9 @@ C-------------------------------------------------------------------
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
      &NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, 
      &KICM, KUPC, SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
-     &CO2EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, DPNAM, 
-     &DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, DAYLA, CO2A, 
-     &PRCP, ETCP, ESCP, EPCP,   
+     &CO2EC, CH4EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, 
+     &DPNAM, DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, DAYLA, 
+     &CO2A, PRCP, ETCP, ESCP, EPCP,   
      &vCsvlineSumOpsum, vpCsvlineSumOpsum, vlngthSumOpsum) 
             
             CALL LinklstSumOpsum(vCsvlineSumOpsum) 
@@ -1113,11 +1118,11 @@ C=======================================================================
         CASE ('ESCP'); SUMDAT % ESCP   = VALUE(I)
         CASE ('EPCP'); SUMDAT % EPCP   = VALUE(I)
 
-!       From N2O_Mod
+!       From GHG_Mod
         CASE ('N2OEC');SUMDAT % N2OEC  = VALUE(I)
         CASE ('CO2EC');SUMDAT % CO2EC  = VALUE(I)
-        
-        
+        CASE ('CH4EC');SUMDAT % CH4EC  = VALUE(I)
+               
         !From Ipexp or Ipwth:
         CASE ('YCRD'); SUMDAT % YCRD  = VALUE(I)
         CASE ('XCRD'); SUMDAT % XCRD  = VALUE(I)

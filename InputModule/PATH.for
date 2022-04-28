@@ -416,131 +416,62 @@ C=======================================================================
       RETURN
       END FUNCTION ValidModel
 !======================================================================
+!  MODEL and CROP should be modified when model versions change
+!     or when a crop specific model is created.
 
-
-C-----------------------------------------------------------------------
-
-C     OLD CODE:
-
-C-----------------------------------------------------------------------
-
-c         IF (INDEX ('SBPNBNCHPPPEVBTMPRCBFACPFB',CROP) .GT. 0) THEN
-c           CRMODEL = 'CRGRO'
-c         ELSEIF (INDEX ('C3C4G0G1G2G3G4G5G6G7BR',CROP) .GT. 0) THEN
-c           CRMODEL = 'CRGRO'
-c         ELSEIF (INDEX ('COCT',CROP) .GT. 0) THEN
-c           CRMODEL = 'CRGRO'
-!         ELSEIF (INDEX ('BASGML',CROP) .GT. 0) THEN
-!           CRMODEL = 'GECER'
-c         ELSEIF (INDEX ('SG',CROP) .GT. 0) THEN
-c           CRMODEL = 'SGCER'
-c         ELSEIF (INDEX ('ML',CROP) .GT. 0) THEN
-c           CRMODEL = 'MLCER'
-c         ELSEIF (INDEX ('MZ',CROP) .GT. 0) THEN
-c           CRMODEL = 'MZCER'
-c         ELSEIF (INDEX ('RI',CROP) .GT. 0) THEN
-c           CRMODEL = 'RICER'
-c         ELSEIF (INDEX ('CS',CROP) .GT. 0) THEN
-c           CRMODEL = 'CSSIM'
-cc       ELSEIF (INDEX ('WH',CROP) .GT. 0) THEN
-cc           CRMODEL = 'WHCSM'
-c        ELSEIF (INDEX ('BAWH',CROP) .GT. 0) THEN
-c           CRMODEL = 'WHCER'
-c         ELSEIF (INDEX ('PT',CROP) .GT. 0) THEN
-c           CRMODEL = 'PTSUB'
-c         ELSEIF (INDEX ('SC',CROP) .GT. 0) THEN
-c           CRMODEL = 'SCCAN'
-!           CRMODEL = 'SCCSP'
-c         ELSEIF (INDEX ('SU',CROP) .GT. 0) THEN
-c           CRMODEL = 'SUOIL'
-c         ELSEIF (INDEX ('PI',CROP) .GT. 0) THEN
-c           CRMODEL = 'PIALO'
-c         ELSEIF (INDEX ('TNTA',CROP) .GT. 0) THEN
-c           CRMODEL = 'ARSUB'
-c        ELSE
-c          WRITE (*,260)
-c 260       FORMAT( ' No models have currently been defined for this',
-c     &             ' crop. !',/,
-c     &            ' Please contact the CSM Model developers for'
-c     &            ' additional information.')
-c          STOP
-c         ENDIF
-c      ENDIF
-
-
-C-----------------------------------------------------------------------
-C    MODEL and CROP should be modified when model versions change
-C     or when a crop specific model is created.
-C
-C     GRO  - generic cropGRO model Version 4.7.5 (2019)
-C     CROP = BN for CROPGRO - DRY BEAN    Version 4.7.5 (2019)
-C     CROP = PN for CROPGRO - PEANUT      Version 4.7.5 (2019)
-C     CROP = SB for CROPGRO - SOYBEAN     Version 4.7.5 (2019)
-C     CROP = FA for CROPGRO - FALLOW      Version 4.7.5 (2019)
-C     CROP = TM for CROPGRO - TOMATO      Version 4.7.5 (2019)
-C     CROP = PR for CROPGRO - PEPPER      Version 4.7.5 (2019)
-C     CROP = PE for CROPGRO - PEA         Version 4.7.5 (2019)
-C     CROP = CH for CROPGRO - CHICKPEA    Version 4.7.5 (2019)
-C     CROP = PP for CROPGRO - PIGEONPEA   Version 4.7.5 (2019)
-C     CROP = VB for CROPGRO - VELVETBEAN  Version 4.7.5 (2019)
-C     CROP = CP for CROPGRO - COWPEA      Version 4.7.5 (2019)
-C     CROP = CB for CROPGRO - CABBAGE     Version 4.7.5 (2019)
-C     CROP = C3 for CROPGRO - C4 CROPS    Version 4.7.5 (2019)
-C     CROP = C4 for CROPGRO - C3 CROPS    Version 4.7.5 (2019)
-C     CROP = G0 for CROPGRO - BAHIA       Version 4.7.5 (2019)
-C     CROP = G1 for CROPGRO - GRASSES     Version 4.7.5 (2019)
-C     CROP = G2 for CROPGRO - GRASSES     Version 4.7.5 (2019)
-C     CROP = G3 for CROPGRO - GRASSES     Version 4.7.5 (2019)
-C     CROP = G4 for CROPGRO - GRASSES     Version 4.7.5 (2019)
-C     CROP = G5 for CROPGRO - GRASSES     Version 4.7.5 (2019)
-C     CROP = G6 for CROPGRO - GRASSES     Version 4.7.5 (2019)
-C     CROP = G7 for CROPGRO - GRASSES     Version 4.7.5 (2019)
-C     CROP = G8 for CROPGRO - GRASSES     Version 4.7.5 (2019)
-C     CROP = BR for CROPGRO - Brachiaria             
-C                               decumbens Version 4.7.5 (2019)
-C     CROP = FB for CROPGRO - FABA BEAN   Version 4.7.5 (2019)
-C     CROP = CO for CROPGRO - COTTON      Version 4.7.5 (2019)
-C     CROP = NP for CROPGRO - Napier grassVersion 4.7.5 (2019)
-C     CROP = GB for CROPGRO - Green Bean  Version 4.7.5 (2019)
-C     CROP = PE for CROPGRO - Pea         Version 4.7.5 (2019)
-
-
-
-
-C     CROP = CT for CROPGRO - CITRUS      Version 4.7.5 (2019)
-C
-C     CER  - generic CEReal model Version 4.7.5 (2019)
-C
-C     CROP = MZ for CERES - Maize   Version 4.7.5 (2019)
-C     CROP = WH for CERES - Wheat   Version 4.7.5 (2019)
-C     CROP = BA for CERES - Barley  Version 4.7.5 (2019)
-C     CROP = ML for CERES - Millet  Version 4.7.5 (2019)
-C     CROP = SG for CERES - Sorghum Version 4.7.5 (2019)
-C     CROP = RI for CERES - Rice    Version 4.7.5 (2019)
-C
-C     SIM  - generic cropSIM model  Version 4.7.5 (2019)
-C     CROP = CS for CROPSIM Cassava Version 4.7.5 (2019)
-C
-C     SUB  - generic SUBstor model Version 4.7.5 (2019)
-C     CROP = PT for SUBSTOR Potato Version 4.7.5 (2019)
-C
-C     CAN  - CANegro model    Version 4.7.5 (2019)
-C     CROP = SC for Sugarcane Version 4.7.5 (2019)
-C
-C     OIL  - OILcrop model    Version 4.7.5 (2019)
-C     CROP = SU for Sunflower Version 4.7.5 (2019)
-C
-C     ALO  - ALOha model      Version 4.7.5 (2019)
-C     CROP = PI for Pineapple Version 4.7.5 (2019)
-C
-C     ARO  - AROid model   Version 4.7.5 (2019)
-C     CROP = TR for Taro   Version 4.7.5 (2019)
-C     CROP = TN for Tanier Version 4.7.5 (2019)
-C
-C     COT  - COTton model  Version 4.7.5 (2019)
-C     CROP = CO for Cotton Version 4.7.5 (2019)
-C
-C     CSP  - CaSuPro Cane and Sucrose Production ModelVersion 4.7.5 (2019)
-C     CROP = SC for CaSuPro Sugarcane Version 4.7.5 (2019)
-C
-C-----------------------------------------------------------------------
+!  MODEL   CROP  Description
+!  BSCER    BS   CERES-Sugarbeet
+!  CRGRO    BM   CROPGRO-Bermuda
+!  CRGRO    BH   CROPGRO-Bahia
+!  CRGRO    BN   CROPGRO-Dry bean
+!  CRGRO    BR   CROPGRO-Brachiaria
+!  CRGRO    CB   CROPGRO-Cabbage
+!  CRGRO    CH   CROPGRO-Chickpea
+!  CRGRO    CI   CROPGRO-Chia
+!  CRGRO    CN   CROPGRO-Canola
+!  CRGRO    CO   CROPGRO-Cotton
+!  CRGRO    CP   CROPGRO-Cowpea
+!  CRGRO    FA   CROPGRO-Fallow
+!  CRGRO    FB   CROPGRO-Faba bean
+!  CRGRO    GB   CROPGRO-Grean bean
+!  CRGRO    LT   CROPGRO-Lentil
+!  CRGRO    NP   CROPGRO-Napier grass
+!  CRGRO    PN   CROPGRO-Peanut
+!  CRGRO    PP   CROPGRO-Pigeonpea
+!  CRGRO    PR   CROPGRO-Bellpepper
+!  CRGRO    QU   CROPGRO-Quinoa
+!  CRGRO    SF   CROPGRO-Safflower
+!  CRGRO    SB   CROPGRO-Soybean
+!  CRGRO    SU   CROPGRO-Sunflower
+!  CRGRO    TM   CROPGRO-Tomato
+!  CRGRO    VB   CROPGRO-Velvetbean
+!  CSCER    BA   CROPSIM-CERES-Barley
+!  CSCER    WH   CROPSIM-CERES-Wheat
+!  CSCRP    BA   CSCRP-Barley
+!  CSCAS    CS   CSCAS-Cassava
+!  CSYCA    CS   MANIHOT-Cassava
+!  CSCRP    WH   CSCRP-Wheat
+!  MLCER    ML   CERES-Millet
+!  MZCER    MZ   CERES-Maize
+!  MZIXM    MZ   IXIM-Maize
+!  PTSUB    PT   SUBSTOR-Potato
+!  RICER    RI   CERES-Rice
+!  SCCAN    SC   CANEGRO-Sugarcane
+!  SCCSP    SC   CASUPRO-Sugarcane
+!  SCSAM    SC   SAMUCA-Sugarcane
+!  SGCER    SG   CERES-Sorghum
+!  SWCER    SW   CERES-Sweetcorn
+!  PIALO    PI   ALOHA-Pineapple
+!  TRARO    TR   AROIDS-Taro
+!  TNARO    TN   AROIDS-Tanier
+!  TFAPS    TF   NWHEAT-Teff
+!  WHAPS    WH   NWHEAT-Wheat
+!  PRFRM    BM   FORAGE-Bermudagrass
+!  PRFRM    BR   FORAGE-Brachiaria
+!  PRFRM    BH   FORAGE-Bahiagrass
+!  PRFRM    AL   FORAGE-Alfalfa
+!  SUOIL    SU   OILCROP-Sunflower
+!  CRGRO    SR   CRGRO-Strawberry
+!  CRGRO    SQ   CRGRO-WinterSquash
+!  CRGRO    CI   CRGRO-Chia
+!-----------------------------------------------------------------------

@@ -141,7 +141,7 @@ C-----------------------------------------------------------------------
       CALL GETARG (0,INPUTX)
 !      call path_adj(inputx)
       IPX = LEN_TRIM(INPUTX)
-D     INPUTX = STDPATH // 'DSCSM047.EXE'
+!D     INPUTX = STDPATH // 'DSCSM048.EXE'
       CALL PATHD  (DSSATP,INPUTX,IPX)
       CONTROL % DSSATP = DSSATP
 
