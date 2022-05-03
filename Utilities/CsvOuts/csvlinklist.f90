@@ -415,6 +415,18 @@ Type :: lin_valuePlantP
     
     Integer :: istatSomN 
 !--------------------------------------------------------------------------------------
+!   for N2O.csv
+    Type :: lin_valueN2O
+       Character(:), Allocatable :: pclineN2O
+       Type (lin_valueN2O), Pointer :: pN2O
+    End Type
+
+    Type (lin_valueN2O), Pointer :: headN2O
+    Type (lin_valueN2O), Pointer :: tailN2O    
+    Type (lin_valueN2O), Pointer :: ptrN2O     
+    
+    Integer :: istatN2O
+!--------------------------------------------------------------------------------------
 Contains
 !------------------------------------------------------------------------------
 
@@ -2701,5 +2713,98 @@ Subroutine LinklstSomN(ptxtlineSomN)
     End If
 
 End Subroutine LinklstSomN
+!------------------------------------------------------------------------------
+Subroutine ListtofileN2O(nlayers)
+      Integer          :: nf       
+      Character(Len=12):: fn  
+      Character(Len=30):: fmt  
+      Character(Len=1000) :: tmp
+      Character(:),Allocatable :: Header 
+      Integer :: ErrNum, length, nlayers, i
+      
+      If(.Not. Associated(headN2O)) Return
+      
+      IF (nlayers < 10) THEN
+        WRITE(fmt,'(I2)') 5 * nlayers
+        fmt = '('//trim(adjustl(fmt))//'(",",g0,I1,g0))'
+        WRITE (tmp,fmt)                     &
+             ('NDN',i,'D',i=1,nlayers),     &
+             ('NIT',i,'D',i=1,nlayers),     &
+             ('N2O',i,'D',i=1,nlayers),     & 
+             ('N2F',i,'D',i=1,nlayers),     &
+             ('NOF',i,'D',i=1,nlayers)     
+      ELSE
+        fmt = '(5(9(",",A,I1,A),",",A5))'
+        WRITE (tmp,fmt)                     &                
+             ('NDN',i,'D',i=1,9),'NDN10',   &
+             ('NIT',i,'D',i=1,9),'NIT10',   &
+             ('N2O',i,'D',i=1,9),'N2O10',   &
+             ('N2F',i,'D',i=1,9),'N2F10',   &
+             ('NOF',i,'D',i=1,9),'NOF10'   
+      ENDIF
+      
+      tmp = Trim(Adjustl(tmp)) 
+      
+    length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
+      //'N2OEC,N2EC,NOEC,NDNC,' &
+      //'NITC,N2ODC,N2ONC,N2FLC,NOFLC,' &
+      //'N2OED,N2ED,NOED,NDND,' &
+      //'NITRD,N2ODD,N2OND,N2FLD,NOFLD') &
+      + Len(Trim(Adjustl(tmp)))
+    
+        Allocate(character(LEN=length) :: Header)
+
+    Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
+      //'N2OEC,N2EC,NOEC,NDNC,' &
+      //'NITC,N2ODC,N2ONC,N2FLC,NOFLC,' &
+      //'N2OED,N2ED,NOED,NDND,' &
+      //'NITRD,N2ODD,N2OND,N2FLD,NOFLD' &
+      // Trim(Adjustl(tmp))
+  
+      fn = 'n2o.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrN2O => headN2O
+      Do
+        If(.Not. Associated(ptrN2O)) Exit          
+        Write(nf,'(A)') ptrN2O % pclineN2O
+        ptrN2O => ptrN2O % pN2O
+      End Do
+
+      Nullify(ptrN2O, headN2O, tailN2O)
+      Close(nf)
+End Subroutine ListtofileN2O
+!------------------------------------------------------------------------------
+Subroutine LinklstN2O(ptxtlineN2O)
+
+    Character(:), Allocatable :: ptxtlineN2O
+        
+    If(.Not. Associated(headN2O)) Then             
+      Allocate(headN2O, Stat=istatN2O)        
+      If(istatN2O==0) Then                         
+        tailN2O => headN2O
+        Nullify(tailN2O%pN2O)                 
+        tailN2O%pclineN2O = ptxtlineN2O  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailN2O%pN2O, Stat=istatN2O)   
+      If(istatN2O==0) Then                              
+        tailN2O=> tailN2O%pN2O                
+        Nullify(tailN2O%pN2O)                      
+        tailN2O%pclineN2O = ptxtlineN2O       
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstN2O
 !------------------------------------------------------------------------------
 End Module Linklist

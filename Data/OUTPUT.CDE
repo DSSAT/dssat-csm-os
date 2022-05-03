@@ -65,6 +65,7 @@ etphot.csv         Daily evapotranspiration output file in CSV
 mulch.csv          Daily surface mulch output file in CSV format
 plantp.csv         Daily plant phosphorus output in CSV format
 soilpi.csv         Daily inorganic soil phosphorus output file, CSV
+n2o.csv            Daily N2O output file, CSV
 
 !Seasonal summary output files
 Environ.OUT     EN Environmental modifications output file            SOUTE
