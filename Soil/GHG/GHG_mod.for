@@ -223,10 +223,13 @@ C  Generates output for daily soil N2O routines
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  06/15/2014 CHP Written
+C  05/01/2022 FO  Added N2O.csv output
 !=======================================================================
 
       SUBROUTINE OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 !-------------------------------------------------------------------
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -258,6 +261,13 @@ C  06/15/2014 CHP Written
 
       REAL n2o_emitted, n2_emitted, CN2O_emitted, CN2_emitted  
       REAL no_emitted, CNO_emitted  
+      
+!     Convert Variables
+      REAL cvN2O_emitted, cvN2_emitted, cvNO_emitted, cvTNOXD
+      INTEGER cvTNITRIFY
+      REAL cvTN2OdenitD, cvTN2OnitrifD, cvTN2D, cvTNOfluxD
+      REAL cvDENITRIF(NL), cvNITRIF(NL), cvN2Oflux(NL) 
+      REAL cvN2flux(NL), cvNOflux(NL)  
      
 !     REAL TOTCO2, CumTotCO2  !NDN20, NIT20, N2O20, N2F20, NOF20, 
 !     REAL newCO2(0:NL)
@@ -270,6 +280,7 @@ C  06/15/2014 CHP Written
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
+      FMOPT  = ISWITCH % FMOPT
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -308,7 +319,8 @@ C  06/15/2014 CHP Written
       CN2ONITRIF = N2O_data % CN2ONITRIF
       TN2ONITRIFD= N2O_data % TN2ONITRIFD
       N2ONitrif  = N2O_data % N2ONitrif
-
+      
+      N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 !***********************************************************************
 !***********************************************************************
 !***********************************************************************
@@ -318,7 +330,27 @@ C  06/15/2014 CHP Written
 C-----------------------------------------------------------------------
 C     Variable heading for N2O.OUT
 C-----------------------------------------------------------------------
-!     CumTotCO2 = 0.0
+!     CumTotCO2  = 0.0
+      CNOX       = -99.0      
+      TNOXD      = -99.0  
+      DENITRIF   = -99.0   
+      CN2        = -99.0 
+      TN2D       = -99.0
+      N2Oflux    = -99.0
+      CNOflux    = -99.0   
+      TNOfluxD   = -99.0    
+      N2flux     = -99.0 
+      NOflux     = -99.0 
+      Cn2odenit  = -99.0
+      Tn2odenitd = -99.0
+      n2odenit   = -99.0
+      CNITRIFY   = -99.0
+      TNITRIFY   = -99.0
+      NITRIF     = -99.0  
+      WFPS       = -99.0  
+      CN2ONITRIF = -99.0
+      TN2ONITRIFD= -99.0
+      N2ONitrif  = -99.0
 
 !     chp 10/20/2017. At FAO request. Temporarily hide N2O output
 !     No output unless detail switch is on.
@@ -333,7 +365,7 @@ C-----------------------------------------------------------------------
         REPNO   = CONTROL % REPNO
         RUN     = CONTROL % RUN
 
-
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN
         CALL GETLUN(OUTGHG, GHGLUN)
         INQUIRE (FILE = OUTGHG, EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -353,8 +385,6 @@ C-----------------------------------------------------------------------
           ELSE
             CALL HEADER(SEASINIT, GHGLUN, RUN)
           ENDIF
-
-          N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
           WRITE(GHGLUN,'("!",14X,A,A,A)')
      & "|------------------------------ Cumulative -----------",
@@ -420,6 +450,8 @@ C-----------------------------------------------------------------------
           ENDIF
         ENDIF
       ENDIF
+      
+      ENDIF ! Close FMOPT
 
 !     NDN20 = 0.0
 !     NIT20 = 0.0
@@ -431,7 +463,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     DAILY OUTPUT
 !***********************************************************************
-      ELSE IF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASINIT) THEN
+      ELSE IF (DYNAMIC .EQ. OUTPUT) THEN
 C-----------------------------------------------------------------------
 !      IF (INDEX('AD',IDETL) == 0) RETURN
 
@@ -449,6 +481,27 @@ C-----------------------------------------------------------------------
       IF (MOD(DAS, FROP) .NE. 0) RETURN
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
+      
+      
+!     Conver Variables (CV)
+      cvN2O_emitted =  N2O_emitted*1000.
+      cvN2_emitted = N2_emitted*1000. 
+      cvNO_emitted = NO_emitted*1000. 
+      cvTNOXD = TNOXD*1000. 
+      cvTNITRIFY = NINT(TNITRIFY*1000.)
+      cvTN2OdenitD = TN2OdenitD*1000.
+      cvTN2OnitrifD = TN2OnitrifD*1000.
+      cvTN2D = TN2D*1000.
+      cvTNOfluxD = TNOfluxD*1000.
+      DO I = 1, N_LYR
+        cvDENITRIF(I) = DENITRIF(I)*1000.
+        cvNITRIF(I)   = NITRIF(I)*1000.
+        cvN2Oflux(I)  = N2Oflux(I)*1000.
+        cvN2flux(I)   = N2flux(I)*1000.
+        cvNOflux(I)   = NOflux(I)*1000.
+      END DO
+      
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! FO-OPEN FILE
 
       WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
      &   '(1X,I4,1X,I3.3,I6,',
@@ -458,18 +511,36 @@ C-----------------------------------------------------------------------
 
         IF (IDETN .EQ. 'Y') THEN
           WRITE (GHGLUN,TRIM(FRMT2)) YEAR, DOY, DAS, 
-!    &      CN2O_emitted, CN2_emitted, CNO_emitted, NINT(CumTotCO2),
      &      CN2O_emitted, CN2_emitted, CNO_emitted, 
      &      CNOX, CNITRIFY, CN2Odenit, CN2Onitrif, CN2, CNOflux,
-     &      N2O_emitted*1000., N2_emitted*1000., NO_emitted*1000., 
-!    &      NINT(TOTCO2*1000.), 
-     &      TNOXD*1000., NINT(TNITRIFY*1000.), TN2OdenitD*1000., 
-     &         TN2OnitrifD*1000., TN2D*1000., TNOfluxD*1000., 
-     &      (DENITRIF(I)*1000., i=1,N_LYR), (NITRIF(I)*1000.,I=1,N_LYR),
-     &      (N2Oflux(i)*1000., i=1,n_lyr), (N2flux(i)*1000.,i=1,n_lyr), 
-     &      (NOflux(i)*1000.,i=1,n_lyr)
+     &      cvN2O_emitted, cvN2_emitted, cvNO_emitted, 
+     &      cvTNOXD, cvTNITRIFY, cvTN2OdenitD, 
+     &      cvTN2OnitrifD, cvTN2D, cvTNOfluxD, 
+     &      (cvDENITRIF(I), i=1,N_LYR), (cvNITRIF(I),I=1,N_LYR),
+     &      (cvN2Oflux(i), i=1,n_lyr), (cvN2flux(i),i=1,n_lyr), 
+     &      (cvNOflux(i),i=1,n_lyr)
         ENDIF
 
+
+      ENDIF ! Close FMOPT
+
+C     05/01/2022 FO Added csv output for N2O.csv
+!     CSV output corresponding to N2O.csv
+      IF (FMOPT == 'C') THEN
+          CALL CsvOutN2O(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &      CONTROL%ROTNUM, CONTROL%REPNO,YEAR, DOY, DAS,
+     &      CN2O_emitted, CN2_emitted, CNO_emitted, 
+     &      CNOX, CNITRIFY, CN2Odenit, CN2Onitrif, CN2, CNOflux,
+     &      cvN2O_emitted, cvN2_emitted, cvNO_emitted, 
+     &      cvTNOXD, cvTNITRIFY, cvTN2OdenitD, 
+     &      cvTN2OnitrifD, cvTN2D, cvTNOfluxD, 
+     &      cvDENITRIF, cvNITRIF,
+     &      cvN2Oflux, cvN2flux, 
+     &      cvNOflux, N_LYR,
+     &      vCsvline, vpCsvline, vlngth)
+     
+          CALL LinklstN2O(vCsvline)
+      END IF      
 !***********************************************************************
 !***********************************************************************
 !     SEASEND
