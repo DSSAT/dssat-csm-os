@@ -21,7 +21,7 @@ C  01/13/2000 NBP Added DYNAMIC contruct to input KCAN and calc. FDINT
 C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  06/19/2003 JWJ/CHP Replaced KEP with KTRANS
 !  10/31/2011 CHP Use EVAP instead of ES (can include flood and mulch evap)
-!   1/18/2018 KRT Added KCB and REFET for ASCE dual Kc ET method
+!  01/18/2018 KRT Added KCB and REFET for ASCE dual Kc ET method
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !  Calls:     None
@@ -164,7 +164,7 @@ C         will depend on whether actual soil evapo (EVAP) meets EOS
 ! KCB     Basal crop coefficient for ASCE dual Kc ET method
 ! LNUM    Current line number of input file
 ! REFET   ASCE Standardized Reference Evapotranspiration (alfalfa or grass)
-! TAVG    Average daily temperature (°C)
+! TAVG    Average daily temperature (ï¿½C)
 ! TRAT    Relative transpiration rate for CO2 values other than 330 ppm
 ! TRATIO  Function subroutine which calculates relative transpiration rate.
 !
@@ -187,6 +187,7 @@ C  10/18/95 GH  Modified for multiple species.
 !               be consistent with FAO-56 assumptions. 
 !               Remove call to BLRRES subroutine.
 !  08/31/2011 CHP Added C4 crops to list.
+!  11/01/2020 FV Added sunflower to 1.5 m crops, might reflect better current shorter cultivars
 !-----------------------------------------------------------------------
 !  Called by: TRANS
 !  Calls:     BLRRES
@@ -221,7 +222,7 @@ C     Initialize.
 !     Need to look at how to add new crops -- put this in species file?
 !     Other new crop modules: TR, TN, ....???
 
-      IF (INDEX('MZMLSGSC',CROP) .GT. 0) THEN
+      IF (INDEX('MZMLSGSCSU',CROP) .GT. 0) THEN
         CHIGHT = 1.5
       ELSE IF (INDEX('WHBA',CROP) .GT. 0) THEN
         CHIGHT = 1.0
@@ -305,7 +306,7 @@ C     Compute delta and gamma.
 ! RLF      Leaf stomatal resistance at 330.0 ppm CO2 (s/m)
 ! RLFC     Leaf stomatal resistance at other CO2 concentration (s/m)
 ! RS1, RS2
-! TAVG     Average daily temperature (°C)
+! TAVG     Average daily temperature (ï¿½C)
 ! TRATIO   Function subroutine which calculates relative transpiration
 !            rate.
 ! UAVG     Average wind speed (m/s)

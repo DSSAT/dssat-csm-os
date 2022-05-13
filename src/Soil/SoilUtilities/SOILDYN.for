@@ -1178,9 +1178,10 @@ C  tillage and rainfall kinetic energy
 !           Limit BD to realistic values
 !           BD_SOM(L) = MIN(BD_SOM(L), 1.8)
 !           BD_SOM(L) = MAX(BD_SOM(L), 0.25)
-            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) !Upper limit for BD_SOM
-            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) !Lower limit for BD_SOM
-
+!           Upper limit for BD_SOM
+            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) 
+!           Lower limit for BD_SOM
+            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) 
             dBD_SOM = BD_SOM(L) - BD_INIT(L)
 
 !           -------------------------------------------------------
@@ -2228,29 +2229,34 @@ C=======================================================================
         IF (PMWD .GT. 0 .AND. PMWD .GE. ROWSPC_CM) THEN
           PMWD = ROWSPC_CM
           PMCover   = .TRUE.
-          MSG(1)= "Flat surface with full plastic mulch covered."
-          call warning(2,errkey,msg)
-        ELSEIF (PMWD .GT. 0 .AND. PMWD .GT. 0) THEN
+          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+          MSG(3) = "Simulating flat surface entirely covered " //
+     &             "by by plastic mulch."
+          call warning(3,errkey,msg)
+        ELSEIF (PMWD .GT. 0.) THEN 
           PMCover   = .TRUE.
-          MSG(1)= "Flat surface with partial plastic mulch covered."
-          call warning(2,errkey,msg)
+          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+          MSG(3)= "Simulating flat surface partially covered " // 
+     &            "by plastic mulch."
+          call warning(3,errkey,msg)
         ELSE
-          PMWD = ROWSPC_CM
-          PMCover   = .TRUE.
-          MSG(1)= "Missing PMWD, set PMWD = ROWSPC_CM"
-          MSG(2)= "Flat surface with full plastic mulch covered."
+          PMCover   = .FALSE.
+          MSG(1)= "Missing mulch cover width."
+          MSG(2) = "Simulating flat surface with no plastic mulch."
           call warning(2,errkey,msg)
         ENDIF
       ELSE
         IF (PMWD .GT. 0) THEN
           PMCover   = .FALSE.
-          MSG(1)= "Missing PMALB, disabled plastic mulch"
-          MSG(2)= "Flat surface with no plastic mulch covered."
+          MSG(1)= "Missing albedo for plastic mulch. "
+          MSG(2)= "Simulating flat surface with no plastic mulch."
           call warning(2,errkey,msg)
         ELSE
           PMCover   = .FALSE.
-          MSG(1)= "Flat surface with no plastic mulch covered."
-          call warning(2,errkey,msg)
+          MSG(1)= "Simulating flat surface with no plastic mulch."
+          call warning(1,errkey,msg)
         ENDIF
       ENDIF
     
@@ -2260,7 +2266,11 @@ C=======================================================================
           SOILPROP % SALB   = PMALB
         ENDIF
         PMFRACTION = PMWD / ROWSPC_CM
+<<<<<<< HEAD:src/Soil/SoilUtilities/SOILDYN.for
         MSALB = PMALB * PMFRACTION + SOILPROP % SALB*(1.0-PMFRACTION)
+=======
+        MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 -PMFRACTION)
+>>>>>>> 58cf64ab60d41da78615c7e061f9edf1dc681b86:Soil/SoilUtilities/SOILDYN.for
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
       ENDIF

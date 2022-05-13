@@ -158,7 +158,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Apply the fraction of plastic mulch coverage        
-      IF (PMFRACTION .GT. 0.0) THEN
+      IF (PMFRACTION .GT. 1.E-6) THEN
         ES = ES * (1.0 - PMFRACTION)
       ENDIF
       

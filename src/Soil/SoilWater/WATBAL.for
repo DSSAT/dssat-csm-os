@@ -50,7 +50,7 @@ C=======================================================================
      &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
-     &    DRN, SNOW, SW, SWDELTS,                         !Output
+     &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
 
 !-----------------------------------------------------------------------

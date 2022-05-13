@@ -109,9 +109,9 @@ C-----------------------------------------------------------------------
         RUNOFF = 0.0
       ENDIF
       
-      CALL GET("PM", "PMFRACTION", PMFRACTION)
-      IF (PMFRACTION .GT. 0.0) THEN
-          RUNOFF = WATAVL * PMFRACTION + RUNOFF * (1.0 - PMFRACTION)
+      CALL GET("PM","PMFRAC",PMFRACTION)
+      IF (PMFRACTION .GT. 1.E-6) THEN
+          RUNOFF = WATAVL * PMFRACTION + RUNOFF * (1 - PMFRACTION)
       ENDIF
 
 !!     Temporary
