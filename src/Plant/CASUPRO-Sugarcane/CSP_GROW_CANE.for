@@ -733,7 +733,7 @@ C comprising "cabbage" have formed, therefore no sugars should be produced.
 ! 
 !             Within these IF statements, remaining CH2O in each
 !             stalk (CAV - CDEMND)is computed and converted into as 
-!             much as another day’s demand (for that day) of sucrose 
+!             much as another dayï¿½s demand (for that day) of sucrose 
 !             or stalk DM. The GAMMA parameter determines the
 !             partition for CH2O to stalk DM or sucrose.  
 
@@ -1671,7 +1671,7 @@ C-----------------------------------------------------------------------
 !          partitioned to potential sucrose production
 ! XLAI     Leaf area (one side) per unit of ground area: (m2[leaf] / m2[ground])
 ! XSLATM(I) Temperature values for function that reduces specific leaf area 
-!             (SLA) (°C)
+!             (SLA) (ï¿½C)
 ! YSLATM(I) Array which describes the effect of temperature on specific 
 !             leaf area 
 ! ZVSDI    Node diameter; to be used for tiller weight; not used yet (cm)

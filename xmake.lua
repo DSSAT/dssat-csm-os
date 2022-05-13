@@ -1,6 +1,7 @@
 set_defaultmode("releasedbg")
 -- add supported extension name
 add_rules("fortran", {extensions = {"f90", "for"}})
+-- add_toolchains('cuda','gfortran','ifort')
 -- set config variable 
 -- version
 set_configvar("MAJOR", 4)
@@ -10,7 +11,7 @@ set_configvar("BUILD", 42)
 -- branch
 set_configvar("BRANCH", 'xmake')
 -- default install path
-set_configvar("CMAKE_INSTALL_PREFIX", '/DSSAT47')
+set_configvar("CMAKE_INSTALL_PREFIX", 'DSSAT47')
 
 -- setup domain --
 target('dsscsm047')
@@ -25,6 +26,7 @@ target('dsscsm047')
     add_configfiles("src/Data/DSSATPRO.L47.in", {pattern = "@([^\n]-)@",filename = "DSSATPRO.L47",prefixdir="src/Data/"})
     -- set_policy("check.auto_ignore_flags", false)
 
+   
 
     if is_plat('linux') then 
         add_files('lib/Utilities/OSDefsLINUX.for')
@@ -33,22 +35,46 @@ target('dsscsm047')
         add_files('lib/Utilities/OSDefsWINDOW.for')
     end
    
-    -- add_fcflags
-    add_fcflags("-fd-lines-as-comments")
-    add_fcflags("-fbounds-check")
-    add_fcflags("-ffree-line-length-none")
-    add_fcflags("-finit-character=32")
-    -- add_fcflags("-noexternal")
-    add_fcflags("-cpp")
-    add_fcflags("-ffpe-trap=invalid,zero,overflow")
+    -- if is_arch('gcc') then
+    -- print('1')
+        -- add_fcflags
+        -- gnu
+        -- add_fcflags("-fd-lines-as-comments")
+        -- add_fcflags("-fbounds-check")
+        -- add_fcflags("-ffixed-line-length-none")
+        -- add_fcflags("-ffree-line-length-none")
+        -- add_fcflags("-finit-character=32")
+        -- add_fcflags("-noexternal")
+        -- add_fcflags("-cpp")
+        -- add_fcflags("-ffpe-trap=invalid,zero,overflow")
+        -- nvidia
+        add_fcflags("-Mbackslash")
+        add_fcflags("-traceback")
+        add_fcflags("-Mbounds")
+        -- -- add_fcflags("-Mextend")  
+        -- add_fcflags("-fpic")
+        -- add_fcflags("-i8")
+        -- add_fcflags("-Minfo=ccff")
+        -- add_fcflags("-Munroll")
+        -- add_fcflags("-Minline")
+        -- add_fcflags("-Mbackslash")
+        -- ifort
+        -- add_fcflags("-132")
+        -- add_fcflags("-fpp")
+        -- add_fcflags("-libs:static")
+        -- add_fcflags("-threads")
+        -- add_fcflags("-fpe0")
+    -- end 
+        before_build(function(target)
+            os.mv('./*.mod','$(buildir)/mod/')
+        end)
+   
     
-    add_fcflags("-static")
-    add_fcflags("-static-libgcc")
-    add_fcflags("-static-libgfortran")
+    
 
-    add_fcflags("-Og")
-    add_fcflags("-Wall")
-    add_fcflags("-fbacktrace")
+    -- add_fcflags("-Og")
+    -- add_fcflags("-Wall")
+    -- add_fcflags("-fbacktrace")
 
     -- add_linkdirs
     add_includedirs("include")
