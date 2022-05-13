@@ -5,9 +5,9 @@ add_rules("fortran", {extensions = {"f90", "for"}})
 -- set config variable 
 -- version
 set_configvar("MAJOR", 4)
-set_configvar("MINOR", 7)
-set_configvar("MODEL", 5)
-set_configvar("BUILD", 42)
+set_configvar("MINOR", 8)
+set_configvar("MODEL", 0)
+set_configvar("BUILD", 27)
 -- branch
 set_configvar("BRANCH", 'xmake')
 -- default install path
@@ -39,18 +39,18 @@ target('dsscsm047')
     -- print('1')
         -- add_fcflags
         -- gnu
-        -- add_fcflags("-fd-lines-as-comments")
-        -- add_fcflags("-fbounds-check")
-        -- add_fcflags("-ffixed-line-length-none")
-        -- add_fcflags("-ffree-line-length-none")
-        -- add_fcflags("-finit-character=32")
-        -- add_fcflags("-noexternal")
-        -- add_fcflags("-cpp")
-        -- add_fcflags("-ffpe-trap=invalid,zero,overflow")
-        -- nvidia
-        add_fcflags("-Mbackslash")
-        add_fcflags("-traceback")
-        add_fcflags("-Mbounds")
+        add_fcflags("-fd-lines-as-comments")
+        add_fcflags("-fbounds-check")
+        add_fcflags("-ffixed-line-length-none")
+        add_fcflags("-ffree-line-length-none")
+        add_fcflags("-finit-character=32")
+        add_fcflags("-noexternal")
+        add_fcflags("-cpp")
+        add_fcflags("-ffpe-trap=invalid,zero,overflow")
+        -- -- nvidia
+        -- add_fcflags("-Mbackslash")
+        -- add_fcflags("-traceback")
+        -- add_fcflags("-Mbounds")
         -- -- add_fcflags("-Mextend")  
         -- add_fcflags("-fpic")
         -- add_fcflags("-i8")

@@ -120,11 +120,7 @@ C
              NSENS = 0
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
-<<<<<<< HEAD:src/InputModule/SEVAR.for
-	       IF (INDEX('GRO,CAS,CSM,CSP,CER,YCA',MODEL(3:5)) .GT. 0)THEN 
-=======
 	       IF (INDEX('GRO,CAS,CSM,CSP,CER,YCA,OIL',MODEL(3:5)) .GT. 0) THEN 
->>>>>>> 58cf64ab60d41da78615c7e061f9edf1dc681b86:InputModule/SEVAR.for
                  CALL IPECO(FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &               ECONO,IVRGRP,MODEL)
              ENDIF

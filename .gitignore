@@ -62,7 +62,6 @@ cluster.patch
 readme*
 CMakeFiles/
 CMakeCache.txt
-CMakeLists.txt
 distclean.cmake
 cmake/
 .xmake

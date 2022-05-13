@@ -125,13 +125,8 @@ C     The variable "ISWITCH" is of type "SwitchType".
       CALL OPCLEAR
 
       CALL GETLUN('FILEIO', LUNIO)
-<<<<<<< HEAD:src/CSM_Main/CSM.for
-      FILEIO = 'DSSAT47.INP'
-      
-=======
       FILEIO = 'DSSAT48.INP'
 
->>>>>>> 58cf64ab60d41da78615c7e061f9edf1dc681b86:CSM_Main/CSM.for
 C-----------------------------------------------------------------------
 C    Get argument from runtime module to determine path of the EXE files
 C-----------------------------------------------------------------------

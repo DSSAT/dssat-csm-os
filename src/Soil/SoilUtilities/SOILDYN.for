@@ -2266,11 +2266,7 @@ C=======================================================================
           SOILPROP % SALB   = PMALB
         ENDIF
         PMFRACTION = PMWD / ROWSPC_CM
-<<<<<<< HEAD:src/Soil/SoilUtilities/SOILDYN.for
-        MSALB = PMALB * PMFRACTION + SOILPROP % SALB*(1.0-PMFRACTION)
-=======
         MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 -PMFRACTION)
->>>>>>> 58cf64ab60d41da78615c7e061f9edf1dc681b86:Soil/SoilUtilities/SOILDYN.for
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
       ENDIF
