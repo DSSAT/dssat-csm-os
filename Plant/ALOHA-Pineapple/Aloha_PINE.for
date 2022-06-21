@@ -53,8 +53,8 @@ C=======================================================================
 
       REAL      CANNAA,CANWAA
       REAL      DTT
-      REAL    CUMDTT, SUMDTT, SUMDTTGRO 
-      REAL      XLAT
+      REAL    CUMDTT, SUMDTT, SUMDTTGRO, SUMTMAXGRO, SUMTMAX, TMAXGRO, GDDFR
+      REAL      XLAT, SUMSRADGRO, SUMSRAD, SRADGRO, PARGRO, SUMPARGRO, SUMPAR
       REAL      EOP, EP1, TRWUP, RWUEP1
       REAL      SWFAC, TURFAC, TEMPM
 
@@ -113,17 +113,17 @@ C     Call PHENOLOGY initialization routine
 C-----------------------------------------------------------------------
 
       CALL Aloha_PHENOL (CONTROL, ISWITCH,
-     &    SW, WEATHER, SOILPROP, YRPLT, SUMDTTGRO,!Input
-     &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
+     &    SW, WEATHER, SOILPROP, YRPLT, SUMDTTGRO, SUMTMAXGRO, SUMTMAX,!Input
+     &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE, SUMSRADGRO, SUMSRAD, SUMPARGRO, SUMPAR,!Output
      &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)    !Output
 
       CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
-     &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT, SUMSRADGRO, SUMSRAD, SRADGRO, PARGRO, SUMPARGRO, SUMPAR,    !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, SUMTMAXGRO, !Output
+     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM, SUMTMAX, TMAXGRO, GDDFR,       !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
       CALL Aloha_ROOTGR (CONTROL,
@@ -135,9 +135,9 @@ C-----------------------------------------------------------------------
      &  BASLFWT, BIOMAS, CRWNWT, EYEWT, FLRWT, FRTWT,     
      &  FRUITS, GPP, GPSM, ISTAGE, LAI, LFWT, LN, MDATE,  
      &  NSTRES, PLTPOP, RLV, ROOTN,  RTDEP, RTWT, SKWT,   
-     &  STMWT, STOVN, STOVWT, SWFAC, TURFAC, WTNCAN,      
-     &  WTNGRN, WTNUP, YRPLT,                             
-     &  VNAM, VWATM, CNAM)    !Output for Overview.OUT 
+     &  STMWT, STOVN, STOVWT, SWFAC, TURFAC, WTNCAN, SRADGRO, PARGRO, SUMSRADGRO, SUMSRAD, SUMPARGRO, SUMPAR,    
+     &  WTNGRN, WTNUP, YRPLT, TMAXGRO, SUMTMAXGRO, SUMTMAX,                
+     &  VNAM, VWATM, CNAM, TBASE, SUMDTT, DTT, SUMDTTGRO, GDDFR)    !Output for Overview.OUT 
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   AGEFAC, BIOMAS, CNAM, CRWNWT, EYEWT, FBIOM,      !Input
@@ -199,9 +199,9 @@ C-----------------------------------------------------------------------
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,!Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
-     &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT, SUMSRADGRO, SUMSRAD, SRADGRO, PARGRO, SUMPARGRO, SUMPAR,   !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, SUMTMAXGRO, !Output
+     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM, SUMTMAX, TMAXGRO, GDDFR,      !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
          IF (YRDOY .EQ. STGDOY(3)) THEN
@@ -211,8 +211,8 @@ C-----------------------------------------------------------------------
 
         IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 10) THEN              ! IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           CALL Aloha_PHENOL (CONTROL, ISWITCH, 
-     &    SW, WEATHER, SOILPROP, YRPLT, SUMDTTGRO,   !Input
-     &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
+     &    SW, WEATHER, SOILPROP, YRPLT, SUMDTTGRO, SUMTMAXGRO, SUMTMAX,   !Input
+     &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE, SUMSRADGRO, SUMSRAD, SUMPARGRO, SUMPAR, !Output
      &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
         ENDIF
 
@@ -232,9 +232,9 @@ C-----------------------------------------------------------------------
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,!Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
-     &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT, SUMSRADGRO, SUMSRAD, SRADGRO, PARGRO, SUMPARGRO, SUMPAR,    !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SUMDTTGRO, SUMTMAXGRO, !Output
+     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM, SUMTMAX, TMAXGRO, GDDFR,      !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
 !=======================================================================
@@ -247,9 +247,9 @@ C-----------------------------------------------------------------------
      &  BASLFWT, BIOMAS, CRWNWT, EYEWT, FLRWT, FRTWT,     
      &  FRUITS, GPP, GPSM, ISTAGE, LAI, LFWT, LN, MDATE,  
      &  NSTRES, PLTPOP, RLV, ROOTN,  RTDEP, RTWT, SKWT,   
-     &  STMWT, STOVN, STOVWT, SWFAC, TURFAC, WTNCAN,      
-     &  WTNGRN, WTNUP, YRPLT,                             
-     &  VNAM, VWATM, CNAM)    !Output for Overview.OUT 
+     &  STMWT, STOVN, STOVWT, SWFAC, TURFAC, WTNCAN, SRADGRO, PARGRO, SUMSRADGRO, SUMSRAD, SUMPARGRO, SUMPAR,    
+     &  WTNGRN, WTNUP, YRPLT, TMAXGRO, SUMTMAXGRO, SUMTMAX,                          
+     &  VNAM, VWATM, CNAM, TBASE, SUMDTT, DTT, SUMDTTGRO, GDDFR)    !Output for Overview.OUT 
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   AGEFAC, BIOMAS, CNAM, CRWNWT, EYEWT, FBIOM,      !Input
@@ -268,9 +268,9 @@ C-----------------------------------------------------------------------
      &  BASLFWT, BIOMAS, CRWNWT, EYEWT, FLRWT, FRTWT,     
      &  FRUITS, GPP, GPSM, ISTAGE, LAI, LFWT, LN, MDATE,  
      &  NSTRES, PLTPOP, RLV, ROOTN,  RTDEP, RTWT, SKWT,   
-     &  STMWT, STOVN, STOVWT, SWFAC, TURFAC, WTNCAN,      
-     &  WTNGRN, WTNUP, YRPLT,                             
-     &  VNAM, VWATM, CNAM)    !Output for Overview.OUT 
+     &  STMWT, STOVN, STOVWT, SWFAC, TURFAC, WTNCAN, SRADGRO, PARGRO, SUMSRADGRO, SUMSRAD, SUMPARGRO, SUMPAR,    
+     &  WTNGRN, WTNUP, YRPLT, TMAXGRO, SUMTMAXGRO, SUMTMAX,                          
+     &  VNAM, VWATM, CNAM, TBASE, SUMDTT, DTT, SUMDTTGRO, GDDFR)    !Output for Overview.OUT 
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH,
      &   AGEFAC, BIOMAS, CNAM, CRWNWT, EYEWT, FBIOM,      !Input

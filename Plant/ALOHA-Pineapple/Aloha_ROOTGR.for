@@ -86,7 +86,7 @@
         CASE (1)
           IF (ISWWAT .NE. 'Y') RETURN
           RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
-        CASE (12)                        !CASE (9) JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+        CASE (13)                        !CASE (9) JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
           RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
       END SELECT
 
