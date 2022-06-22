@@ -257,13 +257,25 @@ C=======================================================================
           NDAS           = 0
  !        CALL PHASEI (ISWWAT,ISWNIT)
           ISTAGE = 12         ! ISTAGE = 8
-          SUMDTT = 0.0       ! Cumulative growing degree days set to 0.0
-          SUMTMAX= 0.0
-          SUMSRAD= 0.0
-          SUMPAR = 0.0
-          SUMTMAXGRO= 0
-          SUMSRADGRO= 0
-          SUMPARGRO = 0
+          !SUMDTT = 0.0       ! Cumulative growing degree days set to 0.0
+          !SUMTMAX= 0.0
+          !SUMSRAD= 0.0
+          !SUMPAR = 0.0
+          !SUMTMAXGRO= 0
+          !SUMSRADGRO= 0
+          !SUMPARGRO = 0
+          
+          SUMDTT =  DTT
+          SUMTMAX= TMAX
+          SUMSRAD= SRAD
+          SUMPAR = PAR
+
+          SUMDTTGRO= SUMDTT               ! Variable creada para ser usada en GROSUB lo que hace es usar la variable SUMDTT porque abajo esta se fuerza a cero.
+          SUMTMAXGRO= SUMTMAX
+          SUMSRADGRO= SUMSRAD
+          SUMPARGRO= SUMPAR
+
+
           IF (ISWWAT .EQ. 'N') RETURN
           CUMDEP = 0.0
           DO L = 1, NLAYR
@@ -367,16 +379,16 @@ C=======================================================================
           
              ENDIF 
            
-                                                                                            
+          SUMDTTGRO= SUMDTT               ! Variable creada para ser usada en GROSUB lo que hace es usar la variable SUMDTT porque abajo esta se fuerza a cero.
+          SUMTMAXGRO= SUMTMAX
+          SUMSRADGRO= SUMSRAD
+          SUMPARGRO = SUMPAR                                                                                 
                                  !                                      
 !         Ready for next stage                                               
 
           STGDOY(ISTAGE) = YRDOY
           ISTAGE = 2                    !JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
-          SUMDTTGRO= SUMDTT               ! Variable creada para ser usada en GROSUB lo que hace es usar la variable SUMDTT porque abajo esta se fuerza a cero.
-          SUMTMAXGRO= SUMTMAX
-          SUMSRADGRO= SUMSRAD
-          SUMPARGRO = SUMPAR
+          
           TBASE  = TBASE1                 ! TBASE of 10.0 is used in this stage
           SUMDTT =  DTT                 ! Cumulative growing degree days set to 0.0
           SUMTMAX= TMAX

@@ -77,10 +77,10 @@
       CHARACTER*6, PARAMETER :: ERRKEY ='GROSUB'
       CHARACTER*78 MSG(2)
       INTEGER I, ISTAGE, ISTAGE_old, IDURP, YRDOY
-      INTEGER STGDOY(20), DAP1, DAP2, DAP3, DAP4, DAP5, DAP6, DAP7, DAP8, DAP9, DAP10, DAP11, DAP12, DAP13, DAP14, DAP15, DAP16, DAP17, DAP18, DAP19, YRPLT
+      INTEGER STGDOY(20), DAP0, DAP1, DAP2, DAP3, DAP4, DAP5, DAP6, DAP7, DAP8, DAP9, DAP10, DAP11, DAP12, DAP13, DAP14, DAP15, DAP16, DAP17, DAP18, DAP19, YRPLT
       INTEGER DYNAMIC
       REAL    PLA, LAI, BIOMAS, LFWT, BASLFWT, STMWT, STOVWT, WTINITIAL, WTNEWCASE12
-      REAL    RLAE13, RLDW13, RBWTDW13, RSTMWT13, LAI13, GDDFR13, PLA12, PLA13, LFWT12, LFWT13, BASLFWT12, BASLFWT13, STMWT12, STMWT13 !CASE 13
+      REAL    RLAE13, RLDW13, RBWTDW13, RSTMWT13, LAI13, GDDFR12, GDDFR13, PLA12, PLA13, LFWT12, LFWT13, BASLFWT12, BASLFWT13, STMWT12, STMWT13 !CASE 13
       REAL    RLAE1, RLDW1, RBWTDW1, RSTMWT1, LAI1, GDDFR1, PLA1, LFWT1, BASLFWT1, STMWT1 !CASE 1
       REAL    PLAG, RTWT, FLRWT, GROSTM, SENLA, SLAN, GRORT, GDDFR, TMAXGRO, PLACASE12
       REAL    GROBSL, GROLF, CUMPH, LN, CUMDEP, SUMP, PLAMX, GROFLR, BASLFWTCASE12
@@ -923,11 +923,7 @@ C-----------------------------------------------------------------------
         CASE (1)      ! CASE (1)
           PLAG    = 0.0
 
-          PLA     = PLA13
-          LFWT    = LFWT13
-          BASLFWT = BASLFWT13
-          STMWT   = STMWT13
-
+         
 
           RTWT    = 0.20                !Es el peso de la raíz         
           FLRWT   = 0.0
@@ -942,26 +938,32 @@ C-----------------------------------------------------------------------
           LN      = 1                   
           CUMDEP  = 0.0
           
-         YRDOY   = CONTROL % YRDOY   ! Esto hala la fecha del día que se cumple la etapa primera hoja en emerger
-         DAP2     = YRDOY-YRPLT      ! Estos son los días desde la siembra hasta que se cumple la etapa que hala de Phenol según su ubicación
-         DAP3     = DAP2 - DAP1      !Resta los días pasados de la siembra a la etapa que hala de Phenol a los días que habían pasado de la etapa anterior
-         GDDFR   = (SUMDTTGRO-DTT)/(DAP3)  !Estos es promedio de GDD que se acumulan desde la iniciación de la raíz hasta la emergencia de la primera hoja.
-         GDDFR1  = GDDFR
-         TMAXGRO = (SUMTMAXGRO-TMAX)/(DAP3)
-         SRADGRO = (SUMSRADGRO-SRAD)/(DAP3)
-         PARGRO  = (SUMPARGRO-PAR)/(DAP3)
+         
+         
+          YRDOY   = CONTROL % YRDOY   ! Esto hala la fecha del dia que se cumple la etapa iniciacion de la raiz
+          
+          DAP2     = YRDOY-YRPLT      ! Estos son los días desde la siembra hasta que se cumple la etapa que hala de Phenol según su ubicación
+          DAP3     = DAP2 - DAP1      !Resta los días pasados de la siembra a la etapa que hala de Phenol a los días que habían pasado de la etapa anterior
+          
+          
+          GDDFR   = (SUMDTTGRO - SUMDTT)/(DAP3)  ! Esto es el promedio de GDD que se acumulan desde la siembra hasta que Phenol detona el evento iniciacion de la raiz.
+          GDDFR1 = GDDFR
+          TMAXGRO = (SUMTMAXGRO - SUMTMAX)/(DAP3)  ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario la temperatura maxima promedio es mayor a lo correcto
+          SRADGRO = (SUMSRADGRO - SUMSRAD)/(DAP3)  ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario la radiacion promedio es mayor a lo correcto
+          PARGRO =  (SUMPARGRO - SUMPAR)/(DAP3)    ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario PAR promedio es mayor a lo correcto
+      
         
-         RLAE1    = (LOG(PLA)-LOG(PLA13))/((GDDFR1*TMAXGRO)-(0))
-         PLA1     = PLA*EXP((RLAE1*((GDDFR1*TMAXGRO)-(0))))      
+         RLAE1    = 0.002 * (LOG(GDDFR1/TMAXGRO)) + 0.0018               !r2= 0.8955  Listo variable calibrada en CASE (13)
+         PLA1     = PLA13*EXP((RLAE1*((GDDFR1*TMAXGRO)-0)))                  
          
-         RLDW1    = (LOG(LFWT)-LOG(LFWT13))/((GDDFR1*TMAXGRO)-(0)) !AHORA TENGO QUE DARLE UN NOMBRE A GDDFR1*TMAXGRO PARA COLOCARLO EN LUGAR DE TODO ESO
-         LFWT1    = LFWT13*EXP(((RLDW1)*((GDDFR1*TMAXGRO)-(0))))
+         RLDW1    = 3.8534 * (LOG(GDDFR1/TMAXGRO)) + 3.3698                 !r2= 0.9488 Listo variable calibrada en CASE (13) 
+         LFWT1    = LFWT13*EXP(((RLDW1/1000)*((GDDFR13*TMAXGRO)-0)))        
          
-         RBWTDW1  = (LOG(BASLFWT)-LOG(BASLFWT13))/((GDDFR1*TMAXGRO)-(0))
-         BASLFWT1 = BASLFWT13*EXP(((RBWTDW1)*((GDDFR1*TMAXGRO)-(0))))
+         RBWTDW1   = -4.0651 * (LOG(GDDFR1/TMAXGRO)) - 3.2231               !r2= 0.9357 Listo variable calibrada en CASE (13)
+         BASLFWT1 = BASLFWT13*EXP(((RBWTDW1/1000)*((GDDFR1*TMAXGRO)-0)))
          
-         RSTMWT1  = (LOG(STMWT)-LOG(STMWT13))/((GDDFR1*TMAXGRO)-(0))
-         STMWT1   = STMWT13*EXP(((RSTMWT1)*((GDDFR1*TMAXGRO)-(0))))
+         RSTMWT1  = 1.3401 * (LOG(GDDFR1/TMAXGRO)) + 1.5783                !r2= 0.9171 Listo variable calibrada en CASE (13)
+         STMWT1   = STMWT13*EXP(((RSTMWT1/1000)*((GDDFR1*TMAXGRO)-0)))
          
          
          LAI1    = PLTPOP*PLA1*0.0001
@@ -971,8 +973,10 @@ C-----------------------------------------------------------------------
           BASLFWT     = BASLFWT1                 
           STMWT       = STMWT1                   
           STOVWT= STMWT
-          BIOMAS   = DAP3!(LFWT + STMWT + BASLFWT)*PLTPOP                     
-     
+          BIOMAS= (LFWT + STMWT + BASLFWT)*PLTPOP 
+         
+         
+             
     
       CASE (2)       !CASE (2)
           GROSTM = 0.0  ! Daily stem growth (g/plant/day) 
@@ -1240,34 +1244,36 @@ C         ABIOMS      = BIOMAS
           YRDOY   = CONTROL % YRDOY
           YRPLT   = YRDOY
           
+          DAP0 = CONTROL % DAS
+
+          GDDFR   = 0     ! Esto es el dia de la siembra solamente, no se acumula nada.
+          GDDFR12 = GDDFR ! Esto es el dia de la siembra solamente, no se acumula nada.
+          TMAXGRO = 0     ! Esto es el dia de la siembra solamente, no se acumula nada. 
+          SRADGRO = 0     ! Esto es el dia de la siembra solamente, no se acumula nada.
+          PARGRO  = 0      ! Esto es el dia de la siembra solamente, no se acumula nada.
+      
          
       
       CASE (13)        !CASE (12)                   
           YRDOY   = CONTROL % YRDOY   ! Esto hala la fecha del dia que se cumple la etapa iniciacion de la raiz
           DAP1     = YRDOY-YRPLT      ! Estos son los dias desde la siembra hasta que se cumple la etapa iniciacion de la raiz
-          GDDFR   = SUMDTTGRO/(DAP1)  ! Esto es el promedio de GDD que se acumulan desde la siembra hasta que Phenol detona el evento iniciacion de la raiz.
+          GDDFR   = (SUMDTTGRO - SUMDTT)/(DAP1)  ! Esto es el promedio de GDD que se acumulan desde la siembra hasta que Phenol detona el evento iniciacion de la raiz.
           GDDFR13 = GDDFR
-          TMAXGRO = SUMTMAXGRO/(DAP1)  ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario la temperatura maxima promedio es mayor a lo correcto
-          SRADGRO = SUMSRADGRO/(DAP1)  ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario la radiacion promedio es mayor a lo correcto
-          PARGRO = SUMPARGRO/(DAP1)    ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario PAR promedio es mayor a lo correcto
+          TMAXGRO = (SUMTMAXGRO - SUMTMAX)/(DAP1)  ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario la temperatura maxima promedio es mayor a lo correcto
+          SRADGRO = (SUMSRADGRO - SUMSRAD)/(DAP1)  ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario la radiacion promedio es mayor a lo correcto
+          PARGRO =  (SUMPARGRO - SUMPAR)/(DAP1)    ! Este esta ok asi porque el dia de la siembra no acumula GDD pero en la etapa siguiente se le debe restar el dia presente de lo contrario PAR promedio es mayor a lo correcto
       
-         ! Mi idea es crear una regresión para cada etapa de los 
-         ! valores de tasa relativa de expansion y crecimiento de 
-         ! cada tejido para colocarla en el exponente "e" y en lugar
-         ! del promedio de unidade de crecimeinto usar el total de
-         ! unidades de crecimeinto por etapa multiplicado por TMAX
-         ! como la forma de crear la separacion entre las zonas
-
-         RLAE13    = 0.0019 * (LOG(GDDFR13/TMAXGRO)) + 0.0018               !r2= 0.8994  Listo variable calibrada en CASE (13)
+        
+         RLAE13    = 0.002 * (LOG(GDDFR13/TMAXGRO)) + 0.0018               !r2= 0.8955  Listo variable calibrada en CASE (13)
          PLA13     = PLA*EXP((RLAE13*((GDDFR13*TMAXGRO)-0)))                  
          
-         RLDW13    = 3.79 * (LOG(GDDFR13/TMAXGRO)) + 3.3437                 !r2= 0.9540 Listo variable calibrada en CASE (13) 
+         RLDW13    = 3.8534 * (LOG(GDDFR13/TMAXGRO)) + 3.3698                 !r2= 0.9488 Listo variable calibrada en CASE (13) 
          LFWT13    = LFWT12*EXP(((RLDW13/1000)*((GDDFR13*TMAXGRO)-0)))        
          
-         RBWTDW13   = -3.89 * (LOG(GDDFR13/TMAXGRO)) - 3.0861               !r2= 0.9008 Listo variable calibrada en CASE (13)
+         RBWTDW13   = -4.0651 * (LOG(GDDFR13/TMAXGRO)) - 3.2231               !r2= 0.9357 Listo variable calibrada en CASE (13)
          BASLFWT13 = BASLFWT12*EXP(((RBWTDW13/1000)*((GDDFR13*TMAXGRO)-0)))
          
-         RSTMWT13  = 1.3531 * (LOG(GDDFR13/TMAXGRO)) + 1.6061                !r2= 0.9306 Listo variable calibrada en CASE (13)
+         RSTMWT13  = 1.3401 * (LOG(GDDFR13/TMAXGRO)) + 1.5783                !r2= 0.9171 Listo variable calibrada en CASE (13)
          STMWT13   = STMWT12*EXP(((RSTMWT13/1000)*((GDDFR13*TMAXGRO)-0)))
          
          
@@ -1278,7 +1284,7 @@ C         ABIOMS      = BIOMAS
           BASLFWT     = BASLFWT13                 
           STMWT       = STMWT13                   
           STOVWT= STMWT
-          BIOMAS= DAP1!(LFWT + STMWT + BASLFWT)*PLTPOP                     
+          BIOMAS= (LFWT + STMWT + BASLFWT)*PLTPOP                     
      
           
 !          NSTRES     = 1.0
