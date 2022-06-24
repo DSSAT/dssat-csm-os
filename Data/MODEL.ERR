@@ -374,7 +374,7 @@ IPPLNT    2
 Error in planting inputs.  Check format.
 
 IPPLNT   10
-Planting date is before start of simulation.  Please fix input file.
+Planting date is before start of simulation.  Please correct input file.
 
 IPPLNT   11
 Error in plant population input.  Check format.
@@ -573,6 +573,9 @@ Tillage input level not found. Please correct input file.
 
 IPTILL    3
 First tillage application date is defined prior to the start of simulation date.
+
+IPTILL    4
+Tillage implement is not defined or missing. Please correct input file.
 
 IPVAR     1
 Error in Cultivar entry.  Fix entry or batch file.
