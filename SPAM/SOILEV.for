@@ -35,6 +35,7 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
@@ -48,6 +49,7 @@ C=======================================================================
       REAL ES, T
       REAL AWEV1, ESX, SWR, USOIL
       REAL DLAYR(NL), DUL(NL), LL(NL), SW(NL)
+      REAL PMFRACTION
 
 !***********************************************************************
 !***********************************************************************
@@ -75,6 +77,8 @@ C-----------------------------------------------------------------------
               T= (SUMES2/3.5)**2
           ENDIF
 
+          CALL GET("PM", "PMFRACTION", PMFRACTION)
+          
 !-----------------------------------------------------------------------
 !     Set air dry water content for top soil layer
           SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
@@ -153,6 +157,11 @@ C-----------------------------------------------------------------------
          ENDIF
       ENDIF
 
+!     Apply the fraction of plastic mulch coverage        
+      IF (PMFRACTION .GT. 1.E-6) THEN
+        ES = ES * (1.0 - PMFRACTION)
+      ENDIF
+      
 !-----------------------------------------------------------------------
 !     Available water = SW - air dry limit + infil. or sat. flow
       SWMIN = MAX(0.0, SW_AVAIL - SWEF * LL(1))
@@ -162,7 +171,7 @@ C-----------------------------------------------------------------------
         ES = SWMIN * DLAYR(1) * 10.
       ENDIF
       ES = MAX(ES, 0.0)
-
+      
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT

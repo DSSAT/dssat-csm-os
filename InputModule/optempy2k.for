@@ -59,7 +59,7 @@ C=======================================================================
       SUBROUTINE OPTEMPY2K (RNMODE, FILEX,PATHEX,
      & YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
      & NYRS,VARNO,VRNAME,CROP,MODEL,RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,
-     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS)
+     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMWD)
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -84,7 +84,7 @@ C=======================================================================
       INTEGER NYRS,RUN,I,EXPN,LUNIO,LINIO,ERRNUM,FROP,YRIC,TRTALL
       INTEGER TRTN,NFORC,NDOF,PMTYPE,ISENS
 
-      REAL    PLTFOR
+      REAL    PLTFOR, PMWD
       REAL    SWINIT(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
 
       PARAMETER (LUNIO = 21)
@@ -285,7 +285,7 @@ C-----------------------------------------------------------------------
       WRITE (LUNIO,40)'*FIELDS             '
       LINIO = LINIO + 1
       WRITE (LUNIO,59,IOSTAT=ERRNUM) FLDNAM,FILEW(1:8),SLOPE,FLOB,DFDRN,
-     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO
+     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,PMWD,PMALB
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
       WRITE (LUNIO,60,IOSTAT=ERRNUM) XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
      &            , FldHist, FHDur
@@ -759,7 +759,7 @@ C-----------------------------------------------------------------------
    56 FORMAT (3X,A2,1X,A6,1X,A16)
 !chp   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
    59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,1X,F5.0,1X,F5.1,
-     &        2(1X,A5),1X,F5.0,1X,A10)
+     &        2(1X,A5),1X,F5.0,1X,A10,1X,F5.1,F6.2)
 !chp   60 FORMAT (3X,2(F15.5,1X),F9.2,1X,F17.1,1X,F5.0,2(1X,F5.1))
    60 FORMAT (3X,2(F15.10,1X),F9.3,1X,F17.1,1X,F5.0,2(1X,F5.1),1X,A5,I6)
 C  61 FORMAT (3X,A2,4X,I5,2(1X,F5.0),2(1X,F5.2),1X,F5.1,1X,F5.0,
