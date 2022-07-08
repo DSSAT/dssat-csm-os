@@ -68,7 +68,8 @@ C=======================================================================
       REAL ADCOEF(NL)
       REAL, DIMENSION(MaxRows,MaxCols) ::  DLTSNH4_2D, DLTSNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) ::  DLTUREA_2D !, HFlux, VFlux
-      REAL KG2PPM(NL), LITC(0:NL), WCR(NL), NH4(NL), NO3(NL), UPPM(NL), SNO3(NL), DLTSNO3(NL), SW(NL)
+      REAL KG2PPM(NL), LITC(0:NL), WCR(NL), NH4(NL), NO3(NL), UPPM(NL), 
+     &         SNO3(NL), DLTSNO3(NL), SW(NL)
       REAL, DIMENSION(MaxRows,MaxCols) :: NH4_2D, NO3_2D,SNH4_2D,SNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UREA_2D, UPPM_2D
       REAL PH(NL), LL(NL), DUL(NL), SAT(NL), BD(NL), DLAYR(NL)
@@ -93,7 +94,8 @@ C=======================================================================
 !      REAL TOMINFOM, TOMINSOM, TNIMBSOM
       
       REAL, DIMENSION(MaxRows,MaxCols) ::NFlux_L,NFlux_R,NFlux_D,NFlux_U
-      REAL, DIMENSION(MaxRows,MaxCols) ::NFlux_UREA_L,NFlux_UREA_R,NFlux_UREA_D,NFlux_UREA_U
+      REAL, DIMENSION(MaxRows,MaxCols) ::NFlux_UREA_L,NFlux_UREA_R,
+     &          NFlux_UREA_D,NFlux_UREA_U
       REAL TLeachD_UREA
 
 !     *** TEMP CHP DEBUGGIN
@@ -358,11 +360,11 @@ C=======================================================================
             J = BedDimension % DripCol(FERTDATA%DrpRefIdx)
             I = BedDimension % DripRow(FERTDATA%DrpRefIdx)
             If (I .EQ. L) THEN
-                DLTSNO3_2D(I,J) = DLTSNO3_2D(I,J) + FERTDATA % ADDSNO3(L)
+                DLTSNO3_2D(I,J) = DLTSNO3_2D(I,J) + FERTDATA %ADDSNO3(L)
      &              / ColFrac(I,J)
-                DLTSNH4_2D(I,J) = DLTSNH4_2D(I,J) + FERTDATA % ADDSNH4(L)
+                DLTSNH4_2D(I,J) = DLTSNH4_2D(I,J) + FERTDATA %ADDSNH4(L)
      &              / ColFrac(I,J)
-                DLTUREA_2D(I,J) = DLTUREA_2D(I,J) + FERTDATA % ADDUREA(L)
+                DLTUREA_2D(I,J) = DLTUREA_2D(I,J) + FERTDATA %ADDUREA(L)
      &              / ColFrac(I,J)
             END IF
       ! Changed by JZW
@@ -702,7 +704,8 @@ C=======================================================================
       CALL NFLUX_2D (DYNAMIC, 
      &    ADCOEF, BD, CELLS, ColFrac, DUL, SNO3_2D,       !Input
      &    NSOURCE, SWV,                                   !Input
-     &    DLTSNO3_2D, CLeach, TLeachD, NFlux_L, NFlux_R, NFlux_D, NFlux_U)!Output
+     &    DLTSNO3_2D, CLeach, TLeachD, NFlux_L, NFlux_R,  !Output
+     &    NFlux_D, NFlux_U)                               !Output
      
       IF (IUON) THEN
         TLeachD = TLeachD + TLeachD_UREA
@@ -793,7 +796,7 @@ C=======================================================================
           TNO3  = TNO3  + SNO3_2D(L, J) * ColFrac(L, J)
           TUREA = TUREA + UREA_2D(L, J) * ColFrac(L, J)
 !         WTNUP in g[N]/m2 - convert to kg/ha in CNUPTAKE (below) 
-          WTNUP = WTNUP + (UNO3_2D(L,J) + UNH4_2D(L, J)) /10.*ColFrac(L, J)
+          WTNUP = WTNUP + (UNO3_2D(L,J) + UNH4_2D(L,J))/10.*ColFrac(L,J)
 
 !          if (L == Cell_detail%row .and. J == Cell_detail%col) then
 !             Cell_Ndetail % NFlux_L_out  = NFlux_L(L, J) !CELLS % RATE % SWFlux_L
@@ -816,21 +819,21 @@ C=======================================================================
           if (L > 1) then
               if (Cell_Type(L - 1, J) .NE. 0) then
                 Cell_Ndetail % NFlux_U_in(L, J)  = NFlux_D(L - 1, J)
-     &                                       * ColFrac(L-1, j) / ColFrac(L, J)
+     &                          * ColFrac(L-1, j) / ColFrac(L, J)
               endif
           endif
           if (L < NRowsTot) then
               Cell_Ndetail % NFlux_D_in(L, J)  = NFlux_U(L + 1, J)
-     &                                       * ColFrac(L+1, j) / ColFrac(L, J)
+     &                           * ColFrac(L+1, j) / ColFrac(L, J)
           endif
           if (J > 1) then
               Cell_Ndetail % NFlux_L_in(L, J)  = NFlux_R(L, J - 1)
-     &                                       * ColFrac(L, j-1) / ColFrac(L, J)
+     &                           * ColFrac(L, j-1) / ColFrac(L, J)
           endif
           if (J < NColsTot) then
               if (Cell_Type(L, J + 1) .NE. 0) then
                 Cell_Ndetail % NFlux_R_in(L, J)  = NFlux_L(L, J + 1)
-     &                                       * ColFrac(L, j+1) / ColFrac(L, J)
+     &                               * ColFrac(L, j+1) / ColFrac(L, J)
               endif
           Endif
         ENDDO
@@ -883,7 +886,7 @@ C=======================================================================
      &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
         Call SoilNiBal_2D (CONTROL, ISWITCH, Cells, DENITRIF, IMM,
-     &    MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,
+     &    MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA,NBUND,CLeach,
      &    TNH4, TNO3, CNOX, TOTAML, TUREA, WTNUP) 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
@@ -922,7 +925,7 @@ C     Write daily output
      &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &	  N2O_data) 
       Call SoilNiBal_2D (CONTROL, ISWITCH, Cells, DENITRIF, IMM,
-     &   MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach, 
+     &   MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND,CLeach,
      &    TNH4, TNO3, CNOX, TOTAML, TUREA, WTNUP) 
       
 !      CALL ArrayHandler(CELLS,CONTROL,SOILPROP,SNO3_2D,"NO3",0.0,200.)

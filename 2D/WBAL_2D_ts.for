@@ -51,12 +51,14 @@
       Double Precision swij, swijcm2
       Double Precision rwuij, wbalij, esij
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
-      Double Precision, DIMENSION(MaxRows,MaxCols) :: swijcm2y,vOutijCum,hOutijCum,RWUijCum, ESijCum
+      Double Precision, DIMENSION(MaxRows,MaxCols) :: swijcm2y,
+     &          vOutijCum,hOutijCum,RWUijCum, ESijCum
       INTEGER L, J
 
       Double Precision DRAIN, IRRAMT, RAIN, RUNOFF
       Double Precision TEP, TES, TSW, TSWY
-      Double Precision, DIMENSION(MaxRows,MaxCols) :: SWV_D, ep_vf, es_vf_ts, INF_vol_dtal
+      Double Precision, DIMENSION(MaxRows,MaxCols) :: SWV_D, ep_vf, 
+     &          es_vf_ts, INF_vol_dtal
       Double Precision IrrVol(NDrpLn)
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
@@ -146,11 +148,11 @@
 
       
       IF (CONTROL%TRTNUM < 10) THEN
-          write (SWCellBAL, '("CellDetailW_", I1, ".OUT")') CONTROL%TRTNUM
+         write (SWCellBAL, '("CellDetailW_", I1, ".OUT")')CONTROL%TRTNUM
       ELSE IF (CONTROL%TRTNUM < 100) THEN
-          write (SWCellBAL, '("CellDetailW_", I2, ".OUT")') CONTROL%TRTNUM
+         write (SWCellBAL, '("CellDetailW_", I2, ".OUT")')CONTROL%TRTNUM
       ELSE
-          write (SWCellBAL, '("CellDetailW_", I3, ".OUT")') CONTROL%TRTNUM
+         write (SWCellBAL, '("CellDetailW_", I3, ".OUT")')CONTROL%TRTNUM
       END IF
       CALL GETLUN(SWCellBAL, CLun)
       OPEN (UNIT = CLun, FILE = SWCellBAL, STATUS = 'REPLACE')
@@ -171,7 +173,8 @@
       JJ = 1
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
-          IF (L .LT. BedDimension%FurRow1 .AND. J .GE. BedDimension%FurCol1) CYCLE
+          IF (L .LT. BedDimension%FurRow1 .AND. 
+     &          J .GE. BedDimension%FurCol1) CYCLE
           
           IF (PTFLG .EQ. 5) THEN
               IF (JJ .GT. MAXCELLS) CYCLE
@@ -182,8 +185,10 @@
           SWij     = SWV_D(L, J)
 
           IF ((detailRow .EQ. L .AND. detailCol .EQ. J) .OR. 
-     &         (L .LE. detailRow + MULTI .AND. L .GE. detailRow - MULTI .AND. PTFLG .EQ. 1) .OR.
-     &         (J .LE. detailCol + MULTI .AND. J .GE. detailCol - MULTI .AND. PTFLG .EQ. 2) .OR.
+     &         (L .LE. detailRow + MULTI .AND. 
+     &          L .GE. detailRow - MULTI .AND. PTFLG .EQ. 1) .OR.
+     &         (J .LE. detailCol + MULTI .AND. 
+     &          J .GE. detailCol - MULTI .AND. PTFLG .EQ. 2) .OR.
      &         PTFLG .EQ. 3 .OR. PTFLG .EQ. 5) THEN
             WRITE (CLUN,1320) YR2, DY2, DAS, 0.0, 0.0, L, J,
      &            SWV_D(L, J),                !State variables
@@ -226,7 +231,7 @@
      &         - RUNOFF - TES - TEP   !Outflows
      &         - (TSW - TSWY)                 !Change in soil water 
         Endif
-        ! for 1st timestep, LatFlow include the portion which is calculated in WaterTable_2D
+!       for 1st timestep, LatFlow include the portion which is calculated in WaterTable_2D
         If (Count .eq. 1)  WBALAN =  WBALAN - LatFlow_ts + LatFlow
         CUMWBAL = CUMWBAL + WBALAN
 
@@ -285,7 +290,7 @@
         L = DripRow(IDL)
         J = DripCol(IDL)
         Cell_detail%v_in(L, J) = Cell_detail%v_in(L, J) + IrrVol(IDL)
-        Cell_detail%IrrVol(L, J) = Cell_detail%IrrVol(L, J) + IrrVol(IDL)
+        Cell_detail%IrrVol(L, J) = Cell_detail%IrrVol(L, J) +IrrVol(IDL)
       END DO
       JJ = 1
       TimeIncrCum = TimeIncrCum + TimeIncr
@@ -295,11 +300,14 @@
               IF (JJ .GT. MAXCELLS) CYCLE
               IF (L .NE. rows(jj) .OR. J .NE. cols(jj)) CYCLE
           END IF
-          IF (L .LT. BedDimension%FurRow1 .AND. J .GE. BedDimension%FurCol1) CYCLE
+          IF (L .LT. BedDimension%FurRow1 
+     &          .AND. J .GE. BedDimension%FurCol1) CYCLE
 
 !         Within furrow, add infiltration to top cells
-          Cell_detail%v_in(L, J) = Cell_detail%v_in(L, J) + INF_vol_dtal(L, J) * CellArea(L, J)
-          Cell_detail%InfVol(L, J) = Cell_detail%InfVol(L, J) + INF_vol_dtal(L, J) * CellArea(L, J)
+          Cell_detail%v_in(L, J) = Cell_detail%v_in(L, J) + 
+     &          INF_vol_dtal(L, J) * CellArea(L, J)
+          Cell_detail%InfVol(L, J) = Cell_detail%InfVol(L, J) + 
+     &          INF_vol_dtal(L, J) * CellArea(L, J)
           !INF_vol = WINF_col(j) * 0.1 * DayIncr / Thick(FurRow1,j)
 !           cm3[water]   mm[water]   cm         1           
 !           ---------- = --------- * -- * d * --------
@@ -316,7 +324,7 @@
           ESij = es_vf_ts(L, J) * CellArea(L, J)
           if (abs(Cell_detail%v_in(L, J) - 999999) .LT. 0.00001) then 
             WBALij = -999999
-          elseif (abs(Cell_detail%v_out(L, J) - 999999) .LT. 0.00001) then 
+          elseif (abs(Cell_detail%v_out(L, J) - 999999).LT.0.00001)then 
             WBALij = -999999
           else 
             WBALij = 
@@ -331,12 +339,22 @@
             ESijCum(L, J) = ESijCum(L, J) + ESij
           endif
 
-          IF ((PTFLG .EQ. 4 .AND. (WBALij .LT. -1e-6 .OR. WBALij .GT. 1e-6)) .OR.
-     &        (PTFLG .EQ. 0 .AND. detailRow .EQ. L .AND. detailCol .EQ. J) .OR. 
-     &        (PTFLG .EQ. 1 .AND. L .LE. detailRow + MULTI .AND. L .GE. detailRow - MULTI) .OR.
-     &        (PTFLG .EQ. 2 .AND. J .LE. detailCol + MULTI .AND. J .GE. detailCol - MULTI) .OR.
-     &        (PTFLG .EQ. 3 .AND. DAS .GE. cell_detail%start .AND. DAS .LE. cell_detail%fin) .OR. 
-     &        (PTFLG .EQ. 5 .AND. DAS .GE. cell_detail%start .AND. DAS .LE. cell_detail%fin)) THEN
+          IF ((PTFLG .EQ. 4 .AND. 
+     &          (WBALij .LT. -1e-6 .OR. WBALij .GT. 1e-6)) .OR.
+     &        (PTFLG .EQ. 0 .AND. 
+     &          detailRow .EQ. L .AND. detailCol .EQ. J) .OR. 
+     &        (PTFLG .EQ. 1 .AND. 
+     &          L .LE. detailRow + MULTI .AND. L .GE. detailRow - MULTI)
+     &           .OR.
+     &        (PTFLG .EQ. 2 .AND. 
+     &          J .LE. detailCol + MULTI .AND. J .GE. detailCol - MULTI)
+     &           .OR.
+     &        (PTFLG .EQ. 3 .AND. 
+     &          DAS .GE. cell_detail%start 
+     &          .AND. DAS .LE. cell_detail%fin) .OR. 
+     &        (PTFLG .EQ. 5 .AND. 
+     &          DAS .GE. cell_detail%start 
+     &          .AND. DAS .LE. cell_detail%fin)) THEN
             IF (MINTS .LE. 0) THEN
               WRITE (CLUN,1320) YR2, DY2, DAS, Time, TimeIncr, L, J,
      &            SWV_D(L, J),                                             !State vars
@@ -348,7 +366,8 @@
      &            RWUijCum(L, J), ESijCum(L, J)                        !Cumulative
 !     &            Diffus(L, J), Kunsat(L, J),                          !Extra
 !     &            Cell_detail%vdiff(L, J), Cell_detail%vgrav(L, J)     !Extra
-            ELSE IF((NEXTTS .NE. 24 .AND. ABS(Time - NEXTTS) .LE. 0.01) .OR.
+            ELSE IF((NEXTTS .NE. 24 
+     &          .AND. ABS(Time - NEXTTS) .LE. 0.01) .OR.
      &              (Time .EQ. 24 .AND. NEXTTS .EQ. 24)) THEN
               WRITE (CLUN,1320) YR2, DY2, DAS, Time, TimeIncrCum, L, J,
      &            SWV_D(L, J),                                             !State vars
@@ -404,7 +423,8 @@
       END IF
 
 !1320  FORMAT(I4,1X,1X,I3.3,1X,I5,1X,F6.2,1X,F6.1,1X,I3,1X,I3,9F10.6,F10.2,3F10.6)
-1320  FORMAT(I4,1X,1X,I3.3,1X,I5,1X,F6.2,1X,F6.1,1X,I3,1X,I3,9F10.6,4(1X,F10.5))
+1320  FORMAT(I4,1X,1X,I3.3,1X,I5,1X,F6.2,1X,
+     &          F6.1,1X,I3,1X,I3,9F10.6,4(1X,F10.5))
 !***********************************************************************
 !***********************************************************************
 !     SEASEND - Seasonal output

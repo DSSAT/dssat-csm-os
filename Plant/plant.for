@@ -155,7 +155,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       LOGICAL, PARAMETER :: OR_OUTPUT = .FALSE.
       
 !     2D variables
-      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, NO3Uptake_2D, NH4Uptake_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, NO3Uptake_2D, 
+     &          NH4Uptake_2D
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -859,7 +860,7 @@ C-----------------------------------------------------------------------
             IF (rowAveN .LE. 0) THEN
               Uptake_2D(L, J) = Uptake_2D(L, J)
             ELSE
-              Uptake_2D(L, J) = Uptake_2D(L, J) * NSTATE_2D(L, J) / rowAveN
+              Uptake_2D(L,J) = Uptake_2D(L,J) * NSTATE_2D(L,J) / rowAveN
             END IF
             
             IF (NSTATE_2D(L, J) .LT. Uptake_2D(L, J)) THEN

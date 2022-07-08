@@ -14,7 +14,7 @@
      &    AUTO, IRRAPL, DripDat, DripEvntEntr, 
      &    DripDur, DripInt, DripNum, DripRefLN, DripLN, DripOfset, !Input if not auto
      &    DripDep, DripRate, DripSpc, DripStart, EFFIRR, IIRRI, !Input
-     &    MEHYD, NDRIP, YRDOY, YRPLT, IRRAPL_cm2,                           !Input
+     &    MEHYD, NDRIP, YRDOY, YRPLT, IRRAPL_cm2,               !Input
      &    DEPIR)                                                !Output
 
       USE ModuleDefs
@@ -72,7 +72,7 @@ C-----------------------------------------------------------------------
       TotIrrRate = 0.0
       DEPIR = 0.0
 
-!      IF (INDEX('GC',MEHYD) < 1 .OR. NDRIP < 1) RETURN
+!     IF (INDEX('GC',MEHYD) < 1 .OR. NDRIP < 1) RETURN
       IF (NDRIP < 1) RETURN
 
 !-----------------------------------------------------------------------
@@ -151,16 +151,16 @@ C-----------------------------------------------------------------------
             temp = IRRAPL_cm2/(DripRate(1,J)* EFFIRR)*DripSpc(1)/3600.
             !IrrRate = IRRAPL
             !DripIrrig % IrrRate = IRRAPL    
-            DripIrrig(1) % DripNum(1)   = nint(temp/0.67) !rounding assume irrigation duration is about 40. minutes, 0.67hr
-            if (DripIrrig(1) % DripNum(1).EQ.0) DripIrrig(1) % DripNum(1)=1
-            if (DripIrrig(1) % DripNum(1).EQ.1) DripIrrig(1) % DripInt(J) = 0.  !in hr
-            DripIrrig(1) % DripDur(1) = temp /DripIrrig(1) % DripNum(1) 
-            SPD = DripIrrig(1)% DripNum(1) * DripIrrig(1) % DripDur(1) * 3600.
-!             s/d =    #/day     *   hr        * s/hr 
-            !This will be used for output water balance
-            IrrRate = IrrRate + 
-     &                  DripRate(1,J)/ (DripSpc(1) * ROWSPC_CM) * 10. * SPD
-            Write(99,*)YRDOY, "IRR DUR=", DripIrrig(1) % DripDur(1),
+       DripIrrig(1) % DripNum(1)   = nint(temp/0.67) !rounding assume irrigation duration is about 40. minutes, 0.67hr
+       if (DripIrrig(1)%DripNum(1).EQ.0)DripIrrig(1)%DripNum(1)=1
+       if (DripIrrig(1)%DripNum(1).EQ.1)DripIrrig(1)%DripInt(J)=0.  !in hr
+       DripIrrig(1) % DripDur(1) = temp /DripIrrig(1) % DripNum(1) 
+       SPD = DripIrrig(1)% DripNum(1) * DripIrrig(1) % DripDur(1) *3600.
+!        s/d =    #/day     *   hr        * s/hr 
+       !This will be used for output water balance
+       IrrRate = IrrRate + 
+     &    DripRate(1,J)/ (DripSpc(1) * ROWSPC_CM) * 10. * SPD
+       Write(99,*)YRDOY, "IRR DUR=", DripIrrig(1) % DripDur(1),
      &          "DripNum=", DripIrrig(1) % DripNum(1), "IRRAPL=", IRRAPL
           ELSE
             DripIrrig(1) % IrrRate = 0.0    
@@ -192,23 +192,23 @@ C-----------------------------------------------------------------------
             Do J = 1, DripEvntEntr(I)
               DO IDL = 1, NDripLnTOT
                 IF (DripRefLN(I, J) .EQ. DripIrrig(IDL)%DripLN) THEN
-                  JJ = DripIrrig(IDL) % DripEvntEntr
-                  JJ = JJ + 1
-                  DripIrrig(IDL) % DripEvntEntr = JJ ! # of event entry on current day
-                  DripIrrig(IDL) % DripRate(JJ)  = DripRate(I, J) * EFFIRR
-                  DripIrrig(IDL) % DripNum(JJ)   = DripNum(I, J)
-                  DripIrrig(IDL) % DripStart(JJ) = DripStart(I, J)  
-                  DripIrrig(IDL) % DripDur(JJ)   = DripDur(I, J)    
-                  DripIrrig(IDL) % DripInt(JJ)   = DripInt(I, J)    
-                  SPD = DripNum(I, J) * DripDur(I, J) * 3600. 
-!                 s/d =    #/day     *   hr        * s/hr 
-                  IrrRate = DripRate(I,J)/ (DripSpc(IDL) * ROWSPC_CM) * 10. * SPD
-                  !IrrRate = DripRate(I)/ (DripSpc * ROWSPC_CM) * 10. * SPD
-!                             cm3/s              emitter         mm     s
-!                   mm/d  =   -------   /        -------        * --  * -
-!                            emitter             cm * cm         cm     d
-                  DEPIR = DEPIR + IrrRate
-                  DripIrrig(IDL) % IrrRate = DripIrrig(IDL) % IrrRate + IrrRate                
+          JJ = DripIrrig(IDL) % DripEvntEntr
+          JJ = JJ + 1
+          DripIrrig(IDL) % DripEvntEntr = JJ ! # of event entry on current day
+          DripIrrig(IDL) % DripRate(JJ)  = DripRate(I, J) * EFFIRR
+          DripIrrig(IDL) % DripNum(JJ)   = DripNum(I, J)
+          DripIrrig(IDL) % DripStart(JJ) = DripStart(I, J)  
+          DripIrrig(IDL) % DripDur(JJ)   = DripDur(I, J)    
+          DripIrrig(IDL) % DripInt(JJ)   = DripInt(I, J)    
+          SPD = DripNum(I, J) * DripDur(I, J) * 3600. 
+!         s/d =    #/day     *   hr        * s/hr 
+          IrrRate = DripRate(I,J)/ (DripSpc(IDL) * ROWSPC_CM) * 10. *SPD
+          !IrrRate = DripRate(I)/ (DripSpc * ROWSPC_CM) * 10. * SPD
+!                     cm3/s              emitter         mm     s
+!           mm/d  =   -------   /        -------        * --  * -
+!                    emitter             cm * cm         cm     d
+          DEPIR = DEPIR + IrrRate
+          DripIrrig(IDL) % IrrRate = DripIrrig(IDL) % IrrRate + IrrRate    
                 END IF
               END DO
             end do

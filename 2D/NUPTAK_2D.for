@@ -199,7 +199,8 @@ C-----------------------------------------------------------------------
               RNH4U_2D(L, J) = MAX(0.0,RNH4U_2D(L, J))
 
 !             kg[N]/ha
-              TRNU = TRNU + (RNO3U_2D(L, J) + RNH4U_2D(L, J))*ColFrac(L, J)
+              TRNU = TRNU + (RNO3U_2D(L, J) + RNH4U_2D(L, J))*
+     &              ColFrac(L, J)
             ENDIF
           ENDDO
         ENDDO

@@ -171,7 +171,8 @@ C-----------------------------------------------------------------------
              RNH4U_2D(L, J) = RFAC * FNH4 * 0.006
              RNO3U_2D(L, J) = MAX(0.0, RNO3U_2D(L, J))
              RNH4U_2D(L, J) = MAX(0.0, RNH4U_2D(L, J))
-             TRNU = TRNU + (RNO3U_2D(L, J) + RNH4U_2D(L, J)) * ColFrac(L, J) !kg[N]/ha
+             TRNU = TRNU + (RNO3U_2D(L, J) + RNH4U_2D(L, J)) * 
+     &              ColFrac(L, J) !kg[N]/ha
 
           ENDIF
         END DO

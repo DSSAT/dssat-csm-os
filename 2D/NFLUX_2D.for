@@ -128,11 +128,12 @@
             WFluxFrac = MAX(0.0, MIN(1.0,
      &        SWFlux_R(i,j) / (SWV(i,j) * CellArea(i,j))))
             Nflux_R(i,j) = MAX(0.0, NTEMP(i,j) * FRAC_SOLN(i))*WFluxFrac
-     &        * SWFlux_R(i,j) / (SWFlux_R(i,j) + SWFlux_L(i,j) + SWFlux_D(i,j) + SWFlux_U(i,j))
+     &        * SWFlux_R(i,j) / 
+     &   (SWFlux_R(i,j) + SWFlux_L(i,j) + SWFlux_D(i,j) + SWFlux_U(i,j))
 
             NTEMP(i,j)   = NTEMP(i,j)   - Nflux_R(i,j)
             NTEMP(i,j+1) = NTEMP(i,j+1) + Nflux_R(i,j) 
-     &                                       * ColFrac(i, j) / ColFrac(i, j+1)
+     &                      * ColFrac(i, j) / ColFrac(i, j+1)
           ENDIF
 
 !!           Check that we are not concentrating N at the boundaries
@@ -160,12 +161,15 @@
           ELSE
             WFluxFrac = MAX(0.0, MIN(1.0,
      &        SWFlux_D(i,j) / (SWV(i,j) * CellArea(i,j))))
-            Nflux_D(i,j) = MAX(0.0, NTEMP(i,j) * FRAC_SOLN(i)) * WFluxFrac
-     &          * SWFlux_D(i,j) / (SWFlux_R(i,j) + SWFlux_L(i,j) + SWFlux_D(i,j) + SWFlux_U(i,j))
+            Nflux_D(i,j) = MAX(0.0, NTEMP(i,j) * FRAC_SOLN(i)) 
+     &          * WFluxFrac * SWFlux_D(i,j) / 
+     &         (SWFlux_R(i,j) + SWFlux_L(i,j) + 
+     &          SWFlux_D(i,j) + SWFlux_U(i,j))
 
             NTEMP(i,j)   = NTEMP(i,j)   - Nflux_D(i,j)
             IF (i < NRowsTot) THEN
-              NTEMP(i+1,j) = NTEMP(i+1,j) + Nflux_D(i,j) * ColFrac(i, j) / ColFrac(i + 1, j)
+              NTEMP(i+1,j) = NTEMP(i+1,j) + Nflux_D(i,j) * ColFrac(i, j)
+     &              / ColFrac(i + 1, j)
             ELSE
 !             Accumulate the N lost by leaching below profile depth.
               NLeach(j) = NFlux_D(NRowsTot,j)
@@ -194,12 +198,14 @@
             ELSE
               WFluxFrac = MAX(0.0, MIN(1.0,
      &          SWFlux_L(i,j) / (SWV(i,j) * CellArea(i,j))))
-              Nflux_L(i,j) = MAX(0.0, NTEMP(i,j) * FRAC_SOLN(i))*WFluxFrac
-     &          * SWFlux_R(i,j) / (SWFlux_R(i,j) + SWFlux_L(i,j) + SWFlux_D(i,j) + SWFlux_U(i,j))
+              Nflux_L(i,j) = MAX(0.0, NTEMP(i,j) * FRAC_SOLN(i))*
+     &            WFluxFrac
+     &          * SWFlux_R(i,j) / (SWFlux_R(i,j) + SWFlux_L(i,j) +
+     &            SWFlux_D(i,j) + SWFlux_U(i,j))
             
               NTEMP(i,j)   = NTEMP(i,j)   - Nflux_L(i,j)
               NTEMP(i,j-1) = NTEMP(i,j-1) + Nflux_L(i,j)
-     &                                       * ColFrac(i,j) / ColFrac(i,j-1)
+     &                                  * ColFrac(i,j) / ColFrac(i,j-1)
 
 !           Check that we are not moving N from low to high concentration
 !            IF (NFlux_L(i,j) > 1.E-6 .AND. NTEMP(i,j-1) > NTEMP(i,j)) 
@@ -226,17 +232,20 @@
 !         --------------------------------------------------------------
 !         Calculate movement upward (all soil cells except top boundary)
           IF (i > 1) THEN
-            IF (Cell_Type(i - 1, j) > 2 .AND. Cell_Type(i - 1, j) < 6) THEN    
+            IF (Cell_Type(i-1, j) > 2 .AND. Cell_Type(i-1, j) < 6) THEN
               IF (SWFlux_U(i,j) .EQ. 0) THEN
                 Nflux_U(i,j) = 0
               ELSE
                   WFluxFrac = MAX(0.0, MIN(1.0,
      &                SWFlux_U(i,j) / (SWV(i,j) * CellArea(i,j))))
-                  Nflux_U(i,j) = MAX(0.0, NTEMP(i,j) * FRAC_SOLN(i))*WFluxFrac
-     &              * SWFlux_R(i,j) / (SWFlux_R(i,j) + SWFlux_L(i,j) + SWFlux_D(i,j) + SWFlux_U(i,j))
+                  Nflux_U(i,j) = MAX(0.0, NTEMP(i,j) * FRAC_SOLN(i))
+     &              *WFluxFrac * SWFlux_R(i,j) / 
+     &              (SWFlux_R(i,j) + SWFlux_L(i,j) + 
+     &              SWFlux_D(i,j) + SWFlux_U(i,j))
 
                   NTEMP(i,j)   = NTEMP(i,j)   - Nflux_U(i,j)
-                  NTEMP(i-1,j) = NTEMP(i-1,j) + Nflux_U(i,j) * ColFrac(i, j) / ColFrac(i - 1, j)
+                  NTEMP(i-1,j) = NTEMP(i-1,j) + Nflux_U(i,j) * 
+     &              ColFrac(i, j) / ColFrac(i - 1, j)
               ENDIF
             ENDIF
           ENDIF

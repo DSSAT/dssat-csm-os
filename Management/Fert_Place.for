@@ -852,7 +852,8 @@ C     Need to make provision for USG as a source
           CASE (3,4,18); AppType = 'BANDED '
           CASE (5)
             DO J = 1, NDrpLn
-              IF (DripIrrig(J)%DripDep .EQ. FERDEPTH .AND. DripIrrig(J)%IrrRate > 1.E-6) THEN
+              IF (DripIrrig(J)%DripDep .EQ. FERDEPTH 
+     &          .AND. DripIrrig(J)%IrrRate > 1.E-6) THEN
                  AppType = 'DRIP   '
                  DrpRefIdx = J
                  exit

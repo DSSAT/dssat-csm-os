@@ -50,8 +50,9 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !      REAL YCelNtot, NO3UY, NH4UY, CCelNBal
       REAL, DIMENSION(MaxRows,MaxCols) :: YCelNtot,NO3UY,NH4UY,CCelNBal
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM), CelMNR, CelIMM
-      REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, swv, rlv, es_rate, ep_rate
-      REAL, DIMENSION(MaxRows,MaxCols) :: swflux_d, swflux_u, swflux_r, swflux_l
+      REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, swv, rlv, es_rate
+      REAL, DIMENSION(MaxRows,MaxCols) :: ep_rate, swflux_d, swflux_u
+      REAL, DIMENSION(MaxRows,MaxCols) ::  swflux_r, swflux_l
       REAL, DIMENSION(MaxRows,MaxCols) :: swflux_h, swflux_v
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type   
 !     ------------------------------------------------------------------
@@ -161,11 +162,11 @@ C  03/04/2005 CHP wrote based on SoilNBal
         CCelNBal = 0.
         Ntot = 0
         IF (CONTROL%TRTNUM < 10) THEN
-            write (SNiCellBAL, '("CellDetailN_", I1, ".OUT")') CONTROL%TRTNUM
+          write (SNiCellBAL,'("CellDetailN_", I1,".OUT")')CONTROL%TRTNUM
         ELSE IF (CONTROL%TRTNUM < 100) THEN
-            write (SNiCellBAL, '("CellDetailN_", I2, ".OUT")') CONTROL%TRTNUM
+          write(SNiCellBAL,'("CellDetailN_", I2, ".OUT")')CONTROL%TRTNUM
         ELSE
-            write (SNiCellBAL, '("CellDetailN_", I3, ".OUT")') CONTROL%TRTNUM
+          write(SNiCellBAL,'("CellDetailN_", I3, ".OUT")')CONTROL%TRTNUM
         END IF
         CALL GETLUN(SNiCellBAL, CLunn)
    !   OPEN (UNIT = CLunn, FILE = "CellDetailN.OUT", STATUS = 'OLD',
@@ -180,15 +181,18 @@ C  03/04/2005 CHP wrote based on SoilNBal
         DO L = 1, NRowsTot
           DO J = 1, NColsTot
             CellDetail = Cells(L, J)
-            IF (CellDetail%STRUC%CellType > 5 .OR. CellDetail%STRUC%CellType < 3) CYCLE
+            IF (CellDetail%STRUC%CellType > 5 .OR. 
+     &          CellDetail%STRUC%CellType < 3) CYCLE
 
             CelNtot = (
      &        CellDetail % state % SNO3 +
      &        CellDetail % state % SNH4 +
      &        CellDetail % state % UREA )
             if ((L .EQ. detailRow .AND. J .EQ. detailCol) .OR.
-     &          (L .LE. detailRow + MULTI .AND. L .GE. detailRow - MULTI .AND. PTFLG .EQ. 1) .OR.
-     &          (J .LE. detailCol + MULTI .AND. J .GE. detailCol - MULTI .AND. PTFLG .EQ. 2) .OR.
+     &          (L .LE. detailRow + MULTI .AND. L .GE. detailRow - MULTI
+     &           .AND. PTFLG .EQ. 1) .OR.
+     &          (J .LE. detailCol + MULTI .AND. J .GE. detailCol - MULTI
+     &           .AND. PTFLG .EQ. 2) .OR.
      &          PTFLG .EQ. 3 ) THEN
               WRITE (CLunn,1325) YR, DOY, 0, L,J, 
      &          CelNtot,
@@ -201,9 +205,12 @@ C  03/04/2005 CHP wrote based on SoilNBal
     ! BALANCE
      &          0.0, 0.0,
     ! STATE
-     &          CellDetail%state%rlv, CellDetail%state%dul*CellDetail%STRUC%CellArea,CellDetail%state%dul,
+     &          CellDetail%state%rlv, 
+     &          CellDetail%state%dul*CellDetail%STRUC%CellArea,
+     &          CellDetail%state%dul,
     ! RATE
-     &          CellDetail%rate%es_rate, CellDetail%rate%ep_rate, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+     &          CellDetail%rate%es_rate, CellDetail%rate%ep_rate, 
+     &          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
             end if
             YCelNtot(L,J) = CelNtot
             Ntot = Ntot + CelNtot * ColFrac(L, J)
@@ -223,7 +230,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
           WRITE(Clunn1D2D,'(/,"!",79("="))') 
         ELSE
           OPEN (UNIT = Clunn1D2D, FILE = SNiBAL2D, STATUS = 'NEW')
-          WRITE(Clunn1D2D,'("Nitrate BALANCE FOR 1D and 2D comparison")')
+         WRITE(Clunn1D2D,'("Nitrate BALANCE FOR 1D and 2D comparison")')
         ENDIF
         CALL HEADER(SEASINIT, Clunn1D2D, CONTROL % RUN)
         WRITE (Clunn1D2D, 1131)
@@ -234,10 +241,11 @@ C  03/04/2005 CHP wrote based on SoilNBal
         DO L = 1, NRowsTot
           DO J = 1, NColsTot
             CellDetail = Cells(L, J)
-            IF (CellDetail%STRUC%CellType > 5 .OR. CellDetail%STRUC%CellType < 3) CYCLE
-            TNO3_2D = TNO3_2D + CellDetail % state % SNO3 * ColFrac(L, J)
-            TNH4_2D = TNH4_2D + CellDetail % state % SNH4 * ColFrac(L, J)
-            TUREA_2D = TUREA_2D + CellDetail % state % UREA * ColFrac(L, J)
+            IF (CellDetail%STRUC%CellType > 5 .OR. 
+     &          CellDetail%STRUC%CellType < 3) CYCLE
+            TNO3_2D = TNO3_2D + CellDetail % state % SNO3 * ColFrac(L,J)
+            TNH4_2D = TNH4_2D + CellDetail % state % SNH4 * ColFrac(L,J)
+            TUREA_2D= TUREA_2D+ CellDetail % state % UREA * ColFrac(L,J)
           enddo
         enddo
         WRITE (Clunn1D2D,1326) YR, DOY, 0,
@@ -264,26 +272,30 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       
       ! JZW NHFlux, NVFlux represen Nitrogen; WHFlux, WVFlux, represent water
- 1130 FORMAT('!',15X,'           STATE   --------------------------- ADDED ',
-     & '-----------------------   --------------------- REMOVED TODAY ',
-     & '-----------------------------------------   -- DAILY CUMUL ---',/,
+ 1130 FORMAT('!',15X,'           STATE   --------------------------- A',
+     & 'DDED -----------------------   --------------------- REMOVED T',
+     & 'ODAY -----------------------------------------   -- DAILY CUMU',
+     & 'L ---',/,
      & '@YEAR DOY   DAS ROW COL   TotalN   AFERT     CelNom', ! NH4(i,j)    NO3(i,j)   
 !     & '    NFluxL    NFluxD    NFluxR    NFluxU  ', !State vars
-     & '    NFluxR    NFluxL    NFluxD    NFluxU    NFluxR    NFluxL    NFluxD    NFluxU  ' ! State vars
-     & ' NH4UpTak  NO3UpTak   NOX       CelIMM   CellNBal   CumNBal      ' !Inflows
-     & ' RLV   SWV_CM2       SWV  ES_RATE   EP_RATE   IrrVol    InfVol   '
-     & ' WFluxH    WFluxV    WFluxL    WFluxD    WFluxR    WFluxU   WFluxVH   WFluxVV')
+     & '    NFluxR    NFluxL    NFluxD    NFluxU    NFluxR    NFluxL',
+     & '    NFluxD    NFluxU  ' ! State vars
+     & ' NH4UpTak  NO3UpTak   NOX       CelIMM   CellNBal   CumNBal' !Inflows
+     & '       RLV   SWV_CM2       SWV  ES_RATE   EP_RATE   IrrVol'
+     & '    InfVol    WFluxH    WFluxV    WFluxL    WFluxD    WFluxR',
+     & '    WFluxU   WFluxVH   WFluxVV')
  1131 FORMAT('!',15X,'|------------------ STATE ----------------------',
-     & '|ADDED-------------------------------------------------------------   ',
-     & 'REMOVED TODAY----------------------------------------------------------------   ',
-     & 'DAILY CUMUL-------',/,
-     & '@YEAR DOY   DAS      NO3   NO32D     NH4   NH42D   TUREA TUREA2D',
-     & '   AFERT     CelNom', ! NH4(i,j)    NO3(i,j)   
+     & '|ADDED--------------------------------------------------------',
+     & '-----   REMOVED TODAY-----------------------------------------',
+     & '-----------------------   DAILY CUMUL-------',/,
+     & '@YEAR DOY   DAS      NO3   NO32D     NH4   NH42D   TUREA TUREA',
+     & '2D   AFERT     CelNom', ! NH4(i,j)    NO3(i,j)   
 !     & '    NFluxL    NFluxD    NFluxR    NFluxU  ', !State vars
-     & '    NFluxR    NFluxL    NFluxD    NFluxU    NFluxR    NFluxL    NFluxD    NFluxU  ' ! State vars
-     & ' NH4UpTak  NO3UpTak   NOX       CelIMM   CellNBal   CumNBal      ' !Inflows
-     & ' RLV   SWV_CM2       SWV  ES_RATE   EP_RATE   IrrVol    InfVol   '
-     & ' WFluxH    WFluxV    WFluxL    WFluxD    WFluxR    WFluxU   WFluxVH   WFluxVV')
+     & '    NFluxR    NFluxL    NFluxD    NFluxU    NFluxR    NFluxL' ! State vars
+     & '    NFluxD    NFluxU   NH4UpTak  NO3UpTak   NOX       CelIMM' !Inflows
+     & '   CellNBal   CumNBal       RLV   SWV_CM2       SWV  ES_RATE'
+     & '   EP_RATE   IrrVol    InfVol    WFluxH    WFluxV    WFluxL ',
+     & '   WFluxD    WFluxR    WFluxU   WFluxVH   WFluxVV')
 
 !      WRITE (CLUNN,1320) YR2, DY2, DAS, 0.0, 0.0, 
   !   &      SWijcm2,                       !State variables
@@ -370,7 +382,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !      L = detailRow
 !      J = detailCol
           CellDetail = Cells(L, J)
-          IF (CellDetail%STRUC%CellType > 5 .OR. CellDetail%STRUC%CellType < 3) CYCLE
+          IF (CellDetail%STRUC%CellType > 5 .OR. 
+     &        CellDetail%STRUC%CellType < 3) CYCLE
       
       CelNtot =(
 !      CelNtot =10.* (1/CelHT) * CelWD * CelHT * (
@@ -478,10 +491,12 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !      if (DOY .EQ. 108) THEN
 !          CCelNBal(L, J) = CCelNBal(L, J) + 0
 !      endif
-      if (((CelNBal > 1.E-5 .OR. CelNBal < -1.E-5) .AND. PTFLG .EQ. 4) .OR. 
-     &    (L .EQ. detailRow .AND. J .EQ. detailCol .AND. PTFLG .EQ. 0) .OR.
-     &    (L .LE. detailRow + MULTI .AND. L .GE. detailRow - MULTI .AND. PTFLG .EQ. 1) .OR.
-     &    (J .LE. detailCol + MULTI .AND. J .GE. detailCol - MULTI .AND. PTFLG .EQ. 2) .OR.
+      if (((CelNBal > 1.E-5 .OR. CelNBal < -1.E-5) .AND. PTFLG.EQ.4).OR.
+     &    (L .EQ. detailRow .AND. J .EQ. detailCol .AND. PTFLG.EQ.0).OR.
+     &    (L .LE. detailRow + MULTI .AND. L .GE. detailRow - MULTI .AND.
+     &         PTFLG .EQ. 1) .OR.
+     &    (J .LE. detailCol + MULTI .AND. J .GE. detailCol - MULTI .AND.
+     &         PTFLG .EQ. 2) .OR.
      &    PTFLG .EQ. 3 ) THEN
 !        if (DAS .EQ. 29 .and. L .eq. 7 .and. j .eq. 12) then
 !          DAS = DAS + 0
@@ -504,8 +519,9 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &    ES_RATE(L, J), EP_RATE(L, J),
      &    Cell_detail%IrrVol(L, J), Cell_detail%InfVol(L, J),
      &    SWFlux_H(L, J), SWFlux_V(L, J),
-     &    SWFlux_L(L, J), SWFlux_D(L, J), SWFlux_R(L, J), SWFlux_U(L, J),
-     &    SWFlux_H(L, J) / CellDetail%STRUC%CellArea, SWFlux_V(L, J) / CellDetail%STRUC%CellArea
+     &    SWFlux_L(L, J), SWFlux_D(L, J), SWFlux_R(L, J), SWFlux_U(L,J),
+     &    SWFlux_H(L, J) / CellDetail%STRUC%CellArea, SWFlux_V(L, J) 
+     &        / CellDetail%STRUC%CellArea
       endif
  1325   FORMAT(I4,2X,I3.3,1X,I5,1X,I3,1X,I3,F9.2,31(1X,F9.5))
 ! 1325   FORMAT(1X,I4,1X,I3.3,1X,I5,F9.2,16F10.5)
@@ -523,8 +539,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
         YCelNtot(L,J) = CelNtot
         Ntot = Ntot + CelNtot * ColFrac(L, J)
-        CumNH4U = CumNH4U + CellDetail % Rate % NH4Uptake * ColFrac(L, J)
-        CumNO3U = CumNO3U + CellDetail % Rate % NO3Uptake * ColFrac(L, J)
+        CumNH4U = CumNH4U + CellDetail % Rate % NH4Uptake * ColFrac(L,J)
+        CumNO3U = CumNO3U + CellDetail % Rate % NO3Uptake * ColFrac(L,J)
         NO3UY(L,J) = CellDetail % Rate % NO3Uptake
         NH4UY(L,J) = CellDetail % Rate % NH4Uptake
         enddo
@@ -536,10 +552,11 @@ C  03/04/2005 CHP wrote based on SoilNBal
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           CellDetail = Cells(L, J)
-          IF (CellDetail%STRUC%CellType > 5 .OR. CellDetail%STRUC%CellType < 3) CYCLE
+          IF (CellDetail%STRUC%CellType > 5 .OR. 
+     &         CellDetail%STRUC%CellType < 3) CYCLE
           TNO3_2D = TNO3_2D + CellDetail % state % SNO3 * ColFrac(L, J)
           TNH4_2D = TNH4_2D + CellDetail % state % SNH4 * ColFrac(L, J)
-          TUREA_2D = TUREA_2D + CellDetail % state % UREA * ColFrac(L, J)
+          TUREA_2D= TUREA_2D+ CellDetail % state % UREA * ColFrac(L, J)
         enddo
       enddo
       WRITE (Clunn1D2D,1326) YR, DOY, 0,

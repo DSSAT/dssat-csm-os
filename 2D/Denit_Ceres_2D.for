@@ -41,7 +41,8 @@ C=======================================================================
 
       REAL DUL(NL), KG2PPM(NL) 
       REAL SAT(NL)
-      REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, SNO3_2D, DLTSNO3_2D, SWV
+      REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, SNO3_2D, DLTSNO3_2D, 
+     &    SWV
       INTEGER, DIMENSION(MaxRows,MaxCols) :: DLAG_2D
       REAL wfps(NL), Rn2n2o(MaxRows,MaxCols)
 

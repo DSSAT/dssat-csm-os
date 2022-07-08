@@ -100,17 +100,18 @@
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFh_ts, RWUP_2D, Se
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, Kunsat, Diffus
       REAL, DIMENSION(MaxRows,MaxCols) :: EvapFlow, SWA
-      REAL, ALLOCATABLE :: IrrigSched(:,:,:), DripRate(:,:), DripInt(:,:)
+      REAL, ALLOCATABLE :: IrrigSched(:,:,:), DripRate(:,:),DripInt(:,:)
 !      REAL, ALLOCATABLE :: DripDep(:,:), DripStart(:,:), DripDur(:,:)
       
       Double Precision DRAIN_ts, EOP_ts, ES_avg, ES_day, ES_ts
-      Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn), Rain_ts, Runoff_ts
+      Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn),Rain_ts,Runoff_ts
       Double Precision TRWU_ts,TRWUP_ts,SW_VOL_tot
 
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
       Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_D, SWV_avail
       Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_ts, RWU_2D_ts
-      Double precision, DIMENSION(MaxRows,MaxCols) :: RWUP_2D_ts, EP_vf, ES_vf_ts, INF_vol_dtal
+      Double precision, DIMENSION(MaxRows,MaxCols) :: RWUP_2D_ts, EP_vf,
+     &       ES_vf_ts, INF_vol_dtal
 !      Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_LAST
       Double Precision, DIMENSION(MaxRows,MaxCols,0:24) :: ES_Hr
 
@@ -526,7 +527,8 @@
       DripNumTotArr = 0                    !# of irrigs today
       DO IDL = 1, NDripLnTOT
         do J = 1, DripIrrig(IDL) % DripEvntEntr
-          DripNumTotArr(IDL) = DripNumTotArr(IDL) + DripIrrig(IDL) % DripNum(J)
+          DripNumTotArr(IDL) = DripNumTotArr(IDL) + 
+     &          DripIrrig(IDL) % DripNum(J)
         End do
       END DO
       !DripIrrig % DripEvntEntr
@@ -548,8 +550,8 @@
             DO i = 1, DripIrrig(IDL) % DripNum(J)
               JJ = JJ + 1
               IrrigSched(IDL,JJ,1) = DripIrrig(IDL) % DripStart(J) +
-     &            (DripIrrig(IDL) % DripInt(J) + DripIrrig(IDL) % DripDur(J)) *
-     &            (i - 1)
+     &            (DripIrrig(IDL) % DripInt(J) + 
+     &             DripIrrig(IDL) % DripDur(J)) * (i - 1)
               IrrigSched(IDL,JJ,2) = IrrigSched(IDL,JJ,1) +
      &            DripIrrig(IDL) % DripDur(J)
               DripInt(IDL,JJ) = DripIrrig(IDL) % DripInt(J)
@@ -589,7 +591,7 @@
            elseif (JJ .GT. 1) then 
              if (IrrigSched(IDL,JJ,1) .LT. IrrigSched(IDL,JJ-1,2)) then
                WRITE(MSG(1),'(A)')
-     &           "Check starting time with ending time of previous event"
+     &          "Check starting time with ending time of previous event"
                CALL INFO(1,ERRKEY,MSG)
              endif
            endif
@@ -700,7 +702,8 @@
           IF (DripNumTot > 0 .AND. IrrigIndex <= DripNumTot) THEN
             IF (IRRIG) THEN
 !             Currently in irrig cycle.  Check for end of irrig. 
-              IF (StartTime - IrrigSched(IDL,IrrigIndex,2) > -0.5/60.)THEN
+              IF (StartTime - IrrigSched(IDL,IrrigIndex,2) > -0.5/60.)
+     &                THEN
 !               End of irrig cycle
 !       NOTE: should change this logic. For very small time steps we should
 !       continue to irrigate.  could add irrigation over a partial time step.
@@ -709,7 +712,8 @@
               ENDIF
             ELSE
 !             Currently in drying cycle.  Check for start of next irrig. 
-              IF (StartTime - IrrigSched(IDL,IrrigIndex,1) > -0.5/60.)THEN
+              IF (StartTime - IrrigSched(IDL,IrrigIndex,1) > -0.5/60.)
+     &                THEN
 !               Start new irrig cycle
                 IRRIG = .TRUE.
               ENDIF
@@ -745,16 +749,17 @@
             DeltaT = Time_interval(IrrigSched(IDL,IrrigIndex,2) 
      &              - IrrigSched(IDL,IrrigIndex,1), TSI)  !minutes
             TimeIncr = MIN(TimeIncr, DeltaT)
-            IF (StartTime + TimeIncr/60. > IrrigSched(IDL,IrrigIndex,2)) THEN
+            IF (StartTime + TimeIncr/60. > IrrigSched(IDL,IrrigIndex,2))
+     &                THEN
 !             Don't let time step go beyond end of irrigation
-              TimeIncr = (IrrigSched(IDL,IrrigIndex,2) - StartTime) * 60.
+              TimeIncr = (IrrigSched(IDL,IrrigIndex,2) - StartTime) *60.
             ENDIF
           ELSEIF (IrrigIndex <= DripNumTot) THEN
 !           Non-irrigated time step and another irrigation coming up today
-            IF (StartTime + TimeIncr/60. > IrrigSched(IDL,IrrigIndex,1)) 
+            IF (StartTime + TimeIncr/60. > IrrigSched(IDL,IrrigIndex,1))
      &         THEN
   !           Don't let time step go beyond start of next irrigation
-              TimeIncr = (IrrigSched(IDL,IrrigIndex,1) - StartTime) * 60.
+              TimeIncr = (IrrigSched(IDL,IrrigIndex,1) - StartTime) *60.
             ENDIF
           ENDIF
           IrrIdxArr(IDL) = IrrigIndex
@@ -774,10 +779,12 @@
           DripNumTot = DripNumTotArr(IDL)
           IF (DripNumTot > 0 .AND. IrrigIndex <= DripNumTot) THEN
             IF (.NOT. IRRIG .AND.
-     &          ABS(EndTime - IrrigSched(IDL,IrrigIndex,1)) < 0.5/60.) THEN
+     &          ABS(EndTime - IrrigSched(IDL,IrrigIndex,1)) < 0.5/60.) 
+     &                THEN
               EndTime = IrrigSched(IDL,IrrigIndex,1)
             ELSEIF (IRRIG .AND.
-     &          ABS(EndTime - IrrigSched(IDL,IrrigIndex,2)) < 0.5/60.) THEN
+     &          ABS(EndTime - IrrigSched(IDL,IrrigIndex,2)) < 0.5/60.) 
+     &                THEN
               EndTime = IrrigSched(IDL,IrrigIndex,2)
             ENDIF
           ENDIF
@@ -812,14 +819,15 @@
             DripCol = BedDimension % DripCol(IDL)
             DripRow = BedDimension % DripRow(IDL)
 !           Irrigation volume is half dripper rate because only half row is being modeled
-            IrrVol(IDL) = (DripRate(IDL,IrrigIndex)/ 2.) / DripSpc(IDL) * TimeIncr * 60.
+            IrrVol(IDL) = (DripRate(IDL,IrrigIndex)/ 2.) / DripSpc(IDL) 
+     &                * TimeIncr * 60.
 !             cm3[water]     cm3[water]          1                s
 !           ------------  =  ---------- * -------------- * min * ---
 !           cm[row length]       s        cm[row length]         min
 
 !           Apply all irrigation to top row, DripCol column
             SWV_avail(DripRow,DripCol) = SWV_avail(DripRow,DripCol) + 
-     &                                 IrrVol(IDL)/ CellArea(DripRow,DripCol)
+     &                           IrrVol(IDL)/ CellArea(DripRow,DripCol)
 !          SWV_avail(1,DripCol) = SWV_avail(1,DripCol) + IrrVol(IDL)
 !     &                                          / CellArea(1,DripCol)
             IRR_ts = IRR_ts + IrrVol(IDL) / HalfRow * 10.     !mm
