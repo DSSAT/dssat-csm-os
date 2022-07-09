@@ -20,6 +20,7 @@ C  08/12/2003 CHP Added I/O error checking and changed call to READA
 C  02/09/2007 GH  Add path for FileA
 !  08/28/2009 CHP added EDAT, EDAP 
 !  09/17/2019 CHP remove crop CT
+C  07/08/2022 GH  Add CU
 C=======================================================================
 
       SUBROUTINE OPHARV(CONTROL, ISWITCH, 
@@ -131,7 +132,7 @@ C-----------------------------------------------------------------------
      & 'LAIX  ',  !17 !12 LAIMX          XLAM   Maximum LAI (m2/m2)
      & 'L#SM  ',  !18 !21 VSTAGE         XLFNO  Final Leaf # Main Stem
      & 'CHTA  ',  !19 !23 CANHT          XCNHT  Canopy Height (m)
-     & 'CNAA  ',  !20 !20                XCNAA  Biomass N at anth (kg/ha)
+     & 'CNAA  ',  !20 !20                XCNAA  Biomass N @ anth (kg/ha)
      & 'CNAM  ',  !21 !16 NINT(WTNCAN*10)XNTP   Biomass N (kg N/ha)
      & 'SNAM  ',  !22 !17 NINT(WTNST*10) XNST   Stalk N (kg N/ha)
      & 'GNAM  ',  !23 !15 NINT(WTNSD*10) XNGR   Seed N (kg N/ha)
@@ -221,8 +222,9 @@ C-----------------------------------------------------------------------
       PlantStres % ACTIVE = .FALSE.
       PlantStres % StageName = '                       '
       SELECT CASE (CROP)
-      CASE ('BG','BN','CH','CI','CN','CO','CP','FB','GB','PE',
-     &      'LT','PN','PP','PR','QU','SB','SF','SU','TM','VB')
+      CASE ('BG','BN','CH','CI','CN','CO','CP','CU','FB','GB',
+     &      'LT','PE','PN','PP','PR','QU','SB','SF','SU', 
+     &      'TM','VB')
         PlantStres % NSTAGES = 4
         PlantStres % StageName(1)  = 'Emergence -First Flower'
         PlantStres % StageName(2)  = 'First Flower-First Seed'
@@ -265,8 +267,9 @@ C-----------------------------------------------------------------------
 
 !     Set ACTIVE variable to indicate that current phase is active
       SELECT CASE (CROP)
-      CASE ('BG','BN','CH','CI','CN','CO','CP','FB','GB','LT',
-     &     'PE','PN','PP','PR','QU','SB','SF','SU','TM','VB')
+      CASE ('BG','BN','CH','CI','CN','CO','CP','CU','FB','GB',
+     &      'LT','PE','PN','PP','PR','QU','SB','SF','SU',
+     &      'TM','VB')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(5)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -535,7 +538,8 @@ C     Byproduct not harvested is incorporated
          PSPP  = 0.
       ENDIF
 
-      IF ((CROP .EQ. 'TM') .OR. (CROP .EQ. 'PR')) THEN
+      IF ((CROP .EQ. 'TM') .OR. (CROP .EQ. 'PR') .OR. 
+     &    (CROP .EQ. 'CU')) THEN
         HWAM = PODWT * 10.
         HWAH = PODWT * 10.
       ELSE
@@ -627,8 +631,8 @@ C-----------------------------------------------------------------------
       ENDDO
 
       SELECT CASE (CROP)
-      CASE ('BN','CH','CI','CN','CP','FB','GB','PE','PP',
-     &      'PR','SB','TM','VB','LT')
+      CASE ('BN','CH','CI','CN','CP','CU','FB','GB','PE',
+     &      'PP','PR','SB','TM','VB','LT')
 !     For stage-dependant irrigation - send GSTAGE back to irrig routine
         STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
         STNAME(2) = 'Unifoliate'
