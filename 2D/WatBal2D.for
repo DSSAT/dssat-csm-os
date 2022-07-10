@@ -105,12 +105,14 @@
       
       Double Precision DRAIN_ts, EOP_ts, ES_avg, ES_day, ES_ts
       Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn), Rain_ts, Runoff_ts
+      Double Precision IrrVol_temp(NDrpLn)  !chp
       Double Precision TRWU_ts,TRWUP_ts,SW_VOL_tot
 
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
       Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_D, SWV_avail
       Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_ts, RWU_2D_ts
       Double precision, DIMENSION(MaxRows,MaxCols) :: RWUP_2D_ts, EP_vf, ES_vf_ts, INF_vol_dtal
+      Double precision, DIMENSION(MaxRows,MaxCols) :: INF_vol_dtal_temp  !chp
 !      Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_LAST
       Double Precision, DIMENSION(MaxRows,MaxCols,0:24) :: ES_Hr
 
@@ -389,12 +391,22 @@
 !      call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
 !      call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
 
+!     chp 2022-07-10
+      INF_vol_dtal_temp = 0.0
+
       Call Wbal_2D_ts(CONTROL, ISWITCH, 0.0, 0.0, 
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, Diffus, Kunsat, 0.0,
      &    0, 0.0,
 !         Temp chp
-     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, 0.d0)
+!    &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, 0.d0)
+     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal_temp)
+!      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
+!     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
+!     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input  dp, dp, dp, int(2), real(r,c), real(r,c), real
+!     &    Count, LatFlow,                                       !Input  int, real
+!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input real(r,c), dp(r,c), dp(r,c), dp(r,c), dp(nd), dp(r,c)
+!     ------------------------------------------------------------------
 
       print *, " "
       print *, "Start 2D, variable time-step model"
@@ -1118,14 +1130,14 @@
 !-----------------------------------------------------------------------
       IF (ISWITCH%ISWWAT == 'N') RETURN
 
-      ! ThetaCap calculated in the morning of the day from CapFringe is SW. We assume that the water balance is reached imediately for the area between water table and Limit_2D 
-      ! Calculation the distribution to each layer (the model of distribution used here should be improved later)
-      !We still use 2D SWV below LIMIT_2D, thus we may use the code for WBSUM_2D and do not need to create WBSUM_1D 
- !       DO i = LIMIT_2D + 1 , NLAYR 
- !         DO j = 1, NColsTot 
-  !          SWV(i,j) = SW(i) 
- !         end do
-  !      enddo
+!!       ThetaCap calculated in the morning of the day from CapFringe is SW. We assume that the water balance is reached imediately for the area between water table and Limit_2D 
+!!       Calculation the distribution to each layer (the model of distribution used here should be improved later)
+!      !We still use 2D SWV below LIMIT_2D, thus we may use the code for WBSUM_2D and do not need to create WBSUM_1D 
+! !       DO i = LIMIT_2D + 1 , NLAYR 
+! !         DO j = 1, NColsTot 
+!  !          SWV(i,j) = SW(i) 
+! !         end do
+!  !      enddo
      
       CELLS % State % SWV = SWV
 
@@ -1186,12 +1198,24 @@ C-----------------------------------------------------------------------
      &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
      &    LatFlow, StdIrrig, ES, ES_DAY)
 
+!     chp 2022-07-10 can't use an array of zeros in the argument. 
+!     I don't want to set the original variables to zero, so use a dummy argument here.
+      IrrVol_temp = 0.0
+      INF_vol_dtal_temp = 0.0
       Call Wbal_2D_ts(CONTROL, ISWITCH, 24.0, 0.0, 
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, 
      &    Diffus, Kunsat, LatFlow, 0, 0.0,
 !         Temp chp
-     &    CellArea, SWV_D, EP_vf, ES_vf_ts, 0.d0, 0.d0)
+!    &    CellArea, SWV_D, EP_vf, ES_vf_ts, 0.d0, 0.d0)
+     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol_temp, 
+     &    INF_vol_dtal_temp)
+
+!      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
+!     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
+!     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input  dp, dp, dp, int(2), real(r,c), real(r,c), real
+!     &    Count, LatFlow,                                       !Input  int, real
+!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input real(r,c), dp(r,c), dp(r,c), dp(r,c), dp(nd), dp(r,c)
 
 !***********************************************************************
 !***********************************************************************
