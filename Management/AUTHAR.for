@@ -167,7 +167,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C Harvest within specified window if conditions are met
 C-----------------------------------------------------------------------
-      ELSE IF (IHARI .EQ. 'A') THEN
+      ELSE IF (IHARI .EQ. 'A' .OR. IHARI .EQ. 'T' .OR.
+     &   IHARI .EQ. 'P' .OR. IHARI .EQ. 'C') THEN
 
 !       Havest maturity not reached yet.
         IF (YRDOY .LT. MDATE .OR. MDATE .EQ. -99) THEN

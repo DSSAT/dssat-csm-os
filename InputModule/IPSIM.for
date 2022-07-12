@@ -346,13 +346,23 @@ C
          IRESI = UPCASE(IRESI)
          IHARI = UPCASE(IHARI)
 
-C FO & DP - 2020-07-22 - AutomaticMOW Switch
+C TF, FO & DP - 2022-07-12 - AutomaticMOW Switch
+! A - AutoMOW days frequency (.SPE files)
+! T - AutoMOW GDD (.SPE files) (T - Termal)
+! C - SmartMOW days frequency (fileX) (C - Calendar)
+! P - SmartMOW GDD (fileX) (P - physiological)
          IF(IHARI .EQ. 'A') THEN
            ISWITCH%ATMOW = .TRUE.
            ISWITCH%ATTP = 'A'
-         ELSEIF(IHARI .EQ. 'D') THEN
+         ELSEIF(IHARI .EQ. 'T') THEN
            ISWITCH%ATMOW = .TRUE.
-           ISWITCH%ATTP = 'D'
+           ISWITCH%ATTP = 'T'
+         ELSEIF(IHARI .EQ. 'C') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'C'
+        ELSEIF(IHARI .EQ. 'P') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'P'
          ELSE
            ISWITCH%ATMOW = .FALSE.
          ENDIF
