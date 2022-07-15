@@ -604,13 +604,20 @@ C       Assign daily values.
         CANWH = HOLDWH
 
         IF (MEEVP .EQ. 'Z') THEN
-          IF (XLAI .GT. 0.0) THEN
+! FO - 06/30/2022 - Protections on DAYRAD for higher XLATs
+          IF (XLAI .GT. 0.0 .AND. DAYRAD .GT. 0.0) THEN
             DAYKR = -LOG((DAYRAD-DYINTR)/DAYRAD) / XLAI
           ELSE
             DAYKR = 0.0
           ENDIF
-          PCABRD = DYABSR / DAYRAD * 100.0
-          PCINRD = DYINTR / DAYRAD * 100.0
+          IF(DAYRAD .GT. 0.0) THEN
+            PCABRD = DYABSR / DAYRAD * 100.0
+            PCINRD = DYINTR / DAYRAD * 100.0
+          ELSE
+            PCABRD = 0.0
+            PCINRD = 0.0
+          ENDIF
+          
           DO I=1,NLAYR
             ST2(I) = ST2(I) / TS
           ENDDO
@@ -618,7 +625,11 @@ C       Assign daily values.
             TSRF(I) = TSRF(I) / TS
           ENDDO
           TCANAV = TCANAV / TS
-          TCANDY = TCANDY / NHOUR
+          IF(NHOUR .GT. 0) THEN
+            TCANDY = TCANDY / NHOUR
+          ELSE
+            TCANDY = 0.0
+          ENDIF
           TGRODY = TCANDY
           TGROAV = TCANAV
           DO  I=1,TS
@@ -649,15 +660,25 @@ C          ES = MAX(MIN(EDAY,AWEV1),0.0)
         ENDIF
 
         IF (MEPHO .EQ. 'L') THEN
-          IF (XLAI .GT. 0.0) THEN
+! FO - 06/30/2022 - Protections on DAYRAD for higher XLATs
+          IF (XLAI .GT. 0.0 .AND. DAYPAR .GT. 0.0) THEN
             DAYKP = -LOG((DAYPAR-DYINTP)/DAYPAR) / XLAI
           ELSE
             DAYKP = 0.0
           ENDIF
-
-          PCABPD = DYABSP / DAYPAR * 100.0
-          PCINPD = DYINTP / DAYPAR * 100.0
-          FRSHAV = FRSHAV / NHOUR
+          
+          IF(DAYPAR .GT. 0.0) THEN
+            PCABPD = DYABSP / DAYPAR * 100.0
+            PCINPD = DYINTP / DAYPAR * 100.0
+          ELSE
+            PCABPD = 0.0 
+            PCINPD = 0.0
+          ENDIF
+          IF(NHOUR .GT. 0) THEN
+            FRSHAV = FRSHAV / NHOUR
+          ELSE
+            FRSHAV = 0.0
+          ENDIF
           PG = PGDAY/44.0*30.0 * SLPF
           PGCO2 = PGDAY * SLPF
 
