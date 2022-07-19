@@ -220,6 +220,9 @@ C      REAL            PRLF
 !     Added for K model   
       REAL KUptake(NL), SKi_AVAIL(NL), KSTRES
 
+!     Ozone input added by JG 11/23/2021
+      REAL OZON7
+
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -267,6 +270,7 @@ C      REAL            PRLF
       TMAX   = WEATHER % TMAX
       TMIN   = WEATHER % TMIN
       TWILEN = WEATHER % TWILEN
+      OZON7  = WEATHER % OZON7
 
       DATA MZSTGNAM /
      &  'End Juveni',   !1
@@ -348,7 +352,7 @@ C----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -501,7 +505,7 @@ C-----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -665,7 +669,7 @@ C----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -766,7 +770,7 @@ C----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -874,7 +878,7 @@ C----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -1051,6 +1055,7 @@ C----------------------------------------------------------------------
 ! NPLTD      Number of plants destroyed (#/m2/d)
 ! NO3(20)     !Nitrate in soil layer L (mg elemental N/kg soil) 
 ! NSTRES      !Nitrogen stress factor affecting growth (0-1) 
+! OZON7       !Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
 ! P1          !Growing degree days (base 8C) from seedling emergence to end of Juvenile phase    
 ! P2          !Photoperiod sensitivity coefficient, 1/hr    
 ! PATHCR  !Path to species filee

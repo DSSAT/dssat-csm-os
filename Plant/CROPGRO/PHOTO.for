@@ -23,7 +23,7 @@ C=======================================================================
 
       SUBROUTINE PHOTO(CONTROL, 
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
-     &    NR5, PAR, PStres1, SLPF, RNITP, SLAAD,          !Input
+     &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
      &  AGEFAC, PG)                                       !Output
 
@@ -55,6 +55,12 @@ C=======================================================================
 !     Added with P module
       REAL PStres1
 
+!     JG added ozone functionality 11/18/2021
+      REAL OZON7
+      REAL FO3
+      REAL FOZ1
+      REAL PRFO3
+
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -75,7 +81,8 @@ C***********************************************************************
 C-----------------------------------------------------------------------
       CALL PHOTIP(FILEIO,  
      &  CCEFF, CCMAX, CCMP, FNPGN, FNPGT, LMXSTD, LNREF, PARMAX,   
-     &  PGREF, PHTHRS10, PHTMAX, ROWSPC, TYPPGN, TYPPGT, XPGSLW, YPGSLW)
+     &  PGREF, PHTHRS10, PHTMAX, ROWSPC, TYPPGN, TYPPGT, XPGSLW, YPGSLW,
+     &  FOZ1)                                                           !JG added for ozone
 
 C-----------------------------------------------------------------------
 C     Adjust canopy photosynthesis for GENETIC input value of
@@ -160,6 +167,24 @@ C-----------------------------------------------------------------------
       A0 = -CCMAX * (1. - EXP(-CCK * CCMP))
       PRATIO = A0 + CCMAX * (1. - EXP(-CCK * CO2))
 
+C-----------------------------------------------------------------------
+C     Effect of ozone stress on photosynthesis added by JG 11/18/2021.
+C     FO3 ranges between 0.0-1.0, 1.0 = no stress, 0.0 = max stress.
+C     Ozone interacts with CO2 (PRATIO) and water stress (SWFAC) in PG.
+C     PRATIO is always > 1.0 and SWFAC is between 0.0-1.0.
+C-----------------------------------------------------------------------
+      IF (OZON7 .GT. 25.0) THEN
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
+          FO3 = MAX(FO3, 0.0)
+      ELSE
+          FO3 = 1.0
+      ENDIF
+      IF (SWFAC .LT. 0.0001) THEN  ! added to prevent dividing by 0
+          PRFO3 = 1.0
+      ELSE
+          PRFO3 = MIN(1.0, (FO3*PRATIO)/SWFAC)
+      ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     Daily integration
@@ -191,8 +216,10 @@ C-----------------------------------------------------------------------
         E_FAC = MIN(AGEFCC, PStres1)
       ENDIF
 
+!     JG added FO3 into PG for ozone effect on photosynthesis and
+!     interaction with CO2 (PRATIO) and water stress (SWFAC)
       PG =  PTSMAX * SLPF * PGFAC * TPGFAC * E_FAC * 
-     &            PGSLW * PRATIO * PGLFMX * SWFAC
+     &            PGSLW * PRATIO * PGLFMX * MIN(SWFAC, PRFO3)
 
 !From WDB (chp 10/21/03):
 !        PG = PG * MIN(SWFAC ,2*(1-SATFAC) )
@@ -255,7 +282,8 @@ C=======================================================================
 
       SUBROUTINE PHOTIP(FILEIO,  
      &  CCEFF, CCMAX, CCMP, FNPGN, FNPGT, LMXSTD, LNREF, PARMAX,   
-     &  PGREF, PHTHRS10, PHTMAX, ROWSPC, TYPPGN, TYPPGT, XPGSLW, YPGSLW)
+     &  PGREF, PHTHRS10, PHTMAX, ROWSPC, TYPPGN, TYPPGT, XPGSLW, YPGSLW,
+     &  FOZ1)                                                           !JG added for ozone
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
@@ -277,6 +305,7 @@ C=======================================================================
 
       REAL FNPGN(4),FNPGT(4)
       REAL YPGSLW(15)
+      REAL FOZ1             !JG added for ozone
 
       PARAMETER (BLANK  = ' ')
       PARAMETER (ERRKEY = 'PHOTIP')
@@ -374,6 +403,13 @@ C-----------------------------------------------------------------------
       READ(CHAR,'(10F6.0)',IOSTAT=ERR) (YPGSLW(II),II = 1,10)
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
+!     JG read ozone parameter from species file
+      SECTION = '!*OZON'
+      CALL FIND(LUNCRP,SECTION,LNUM,FOUND)
+      CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+      READ(CHAR,'(F6.2)',IOSTAT=ERR) FOZ1
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+      
 C-----------------------------------------------------------------------
       CLOSE (LUNCRP)
 
@@ -417,8 +453,11 @@ C-----------------------------------------------------------------------
 !            CURV) 
 ! FNPGT(I) Critical values of temperature for the functions to reduce 
 !            canopy PG under non-optimal temperatures (in function CURV) 
+! FO3      Ozone concentration effect on photosynthesis, 1.0 = no stress, 
+!            0.0 = max stress
 ! FOUND    Indicator that good data was read from file by subroutine FIND 
 !            (0 - End-of-file encountered, 1 - NAME was found) 
+! FOZ1     Ozone stress factor for photosynthesis
 ! ISECT    Indicator of completion of IGNORE routine: 0 - End of file 
 !            encountered, 1 - Found a good line to read, 2 - End of Section 
 !            in file encountered denoted by * in column 1.  
@@ -434,6 +473,7 @@ C-----------------------------------------------------------------------
 ! LUNCRP   Logical unit number for FILEC (*.spe file) 
 ! LUNIO    Logical unit number for FILEIO 
 ! NR5      Day when 50% of plants have pods with beginning seeds (days)
+! OZON7    Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
 ! PAR      Daily photosynthetically active radiation or photon flux density
 !            (moles[quanta]/m2-d)
 ! PARMAX   Value of PAR at which photosynthesis is 63% of the maximum value 

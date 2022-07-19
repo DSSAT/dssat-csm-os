@@ -17,7 +17,7 @@ C=======================================================================
       SUBROUTINE RI_IPCROP (FILEC, PATHCR, !CROP, 
      &    CO2X, CO2Y, MODELVER, PORMIN, 
        !&    CO2X, CO2Y, MODELVER, PHINT, PORMIN, 
-     &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
+     &    RLWR, RWUEP1, RWUMX, SHOCKFAC, FOZ1, SFOZ1)   !JG added ozone parameters 06/07/2022
 
       IMPLICIT    NONE
       EXTERNAL GETLUN, ERROR
@@ -39,8 +39,9 @@ C=======================================================================
       
       PARAMETER (BLANK  = ' ')
 
+!JG added ozone parameters to ACRO
       DATA ACRO /'SHME','SHFC','PHIN','CO2X','CO2Y',
-     &           'RWEP','PORM','RWMX','RLWR'/
+     &           'RWEP','PORM','RWMX','RLWR','FOZ1','SFOZ'/
 !      !
 !      ! Default CO2 response of Rice
 !      !
@@ -89,7 +90,8 @@ C-----------------------------------------------------------------------
         LNUM = LNUM + 1
         READ (LUNCRP,'(A180)',IOSTAT=ERR, END = 200) CHAR
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEC,LNUM)
-        DO J = 1, 9
+!        DO J = 1, 9    !JG updated for ozone parameters
+        DO J = 1, 11
           IF (CHAR(10:13) .EQ. ACRO(J)) THEN
             SELECT CASE (J)
             CASE ( 1); READ (CHAR(16:20),'(  I5  )',IOSTAT=ERR) MODELVER
@@ -104,6 +106,8 @@ C-----------------------------------------------------------------------
             CASE ( 7); READ (CHAR(16:21),'(  F5.2)',IOSTAT=ERR) PORMIN
             CASE ( 8); READ (CHAR(16:21),'(  F5.2)',IOSTAT=ERR) RWUMX
             CASE ( 9); READ (CHAR(16:21),'(  F5.2)',IOSTAT=ERR) RLWR
+            CASE (10); READ (CHAR(16:21),'(  F5.2)',IOSTAT=ERR) FOZ1   !JG added for ozone stress
+            CASE (11); READ (CHAR(16:21),'(  F5.2)',IOSTAT=ERR) SFOZ1  !JG added for ozone stress
             END SELECT
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEC,LNUM)
           ENDIF

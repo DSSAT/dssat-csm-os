@@ -11,13 +11,14 @@ C  05/11/1999 GH  Incorporated in CROPGRO
 C  06/19/2001 GH  Fix SSNDOT, SSDOT
 C  08/12/2003 CHP Added I/O error checking
 C  06/30/2006 CHP/CDM Added optional KCAN to ECO file.
+C  12/15/2021 JG  Added ozone stress
 C-----------------------------------------------------------------------
 C  Called : PLANT
 C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
 
       SUBROUTINE SENES(DYNAMIC,
-     &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, PAR,       !Input
+     &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
      &    SLDOT, SLNDOT, SSDOT, SSNDOT)                   !Output
 
@@ -48,6 +49,11 @@ C-----------------------------------------------------------------------
       REAL LCMP, LTSEN, PORLFT, LFSEN, SWFAC, WSLOSS, TABEX
       REAL SENMAX(4), SENPOR(4), XSENMX(4), XSTAGE(4)
       REAL SWFCAB(NSWAB)
+      
+      !JG added ozone input 11/18/2021
+      REAL OZON7
+      REAL SFOZ1
+      REAL SLFO3
 
       TYPE (ControlType) CONTROL
 
@@ -138,6 +144,17 @@ C-----------------------------------------------------------------------
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
       ENDIF
 
+!     JG read ozone parameter from species file
+      SECTION = '!*OZON'
+      CALL FIND(LUNCRP, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+      IF (FOUND .EQ. 0) THEN
+        CALL ERROR(SECTION, 42, FILECC, LNUM)
+      ELSE
+        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+        READ(CHAR,'(6X,F6.2)',IOSTAT=ERR) SFOZ1
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+      ENDIF
+      
       CLOSE (LUNCRP)
 
 !***********************************************************************
@@ -225,6 +242,20 @@ C-----------------------------------------------------------------------
           WSLOSS = MAX(WSLOSS, 0.0)
           SLNDOT = WSLOSS
         ENDIF
+C-----------------------------------------------------------------------
+C     Calculate senescence due to ozone stress. Added by JG 12/15/2021.
+C     Limit interaction between ozone stress and water stress by using
+C     maximum senescence from either ozone or water stress.
+C-----------------------------------------------------------------------
+        IF (OZON7 .GT. 25.0) THEN
+          SLFO3 = (SFOZ1/1000 * OZON7 - (SFOZ1/1000 * 25.0)) * WTLF
+          SLFO3 = MIN(SLFO3, WTLF)
+          SLFO3 = MAX(SLFO3, 0.0)
+        ELSE
+          SLFO3 = 0.0
+        ENDIF
+        SLNDOT = MAX(SLNDOT, SLFO3)
+
         SLDOT = SLDOT + SLNDOT
         SSDOT = SLDOT * PORPT
         SSDOT = MIN(SSDOT,0.1*STMWT)
@@ -289,6 +320,7 @@ C-----------------------------------------------------------------------
 ! NR7       Day when 50% of plants first have yellowing or maturing pods
 !             (days)
 ! NRUSLF    N actually mobilized from leaves in a day (g[N]/m2-d)
+! OZON7     Daily 7-hour mean ozone concentration (9:00-15:59), ppb
 ! PAR       Daily photosynthetically active radiation or photon flux 
 !             density (moles[quanta]/m2-d)
 ! PORLFT    Proportion of leaf weight grown which will have been senesced 
@@ -312,9 +344,11 @@ C-----------------------------------------------------------------------
 ! SENRTE    Factor by which protein mined from leaves each day is 
 !             multiplied to determine LEAF senescence.
 !             (g(leaf) / g(protein loss))
+! SFOZ1     Ozone stress factor for leaf senescence
 ! LFSEN     Leaf senescence due to N mobilization (g[leaf] / m2[ground])
 ! SLAAD     Specific leaf area, excluding weight of C stored in leaves
 !             (cm2[leaf] / g[leaf])
+! SLFO3     Leaf senescence due to ozone stress (g/m2/day)
 ! SLDOT     Defoliation due to daily leaf senescence (g/m2/day)
 ! SLNDOT    Leaf senescence due to water stress (g/m2/day)
 ! SSDOT     Daily senescence of petioles (g / m2 / d)

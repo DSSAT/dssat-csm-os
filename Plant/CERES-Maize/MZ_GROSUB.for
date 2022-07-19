@@ -46,7 +46,7 @@
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -360,6 +360,14 @@
 !     K model
       REAL, DIMENSION(NL) :: KUptake, SKi_Avail
       REAL KSTRES
+
+!     JG added ozone functionality 11/23/2021
+      REAL OZON7
+      REAL FO3
+      REAL FOZ1
+      REAL PRFO3
+      REAL SFOZ1
+      REAL SLFO3
        
       TYPE (ResidueType) SENESCE 
       TYPE (SwitchType)  ISWITCH
@@ -642,7 +650,25 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
         READ(C80,'(9X,F6.3)',IOSTAT=ERR) RWUEP1
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
       ENDIF
+      REWIND(LUNCRP)
 
+      !----------------------------------------------------------------
+      !        Find and Read Ozone parameters added by JG
+      !----------------------------------------------------------------
+      SECTION = '*OZONE'
+      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+      IF (FOUND .EQ. 0) THEN
+        CALL ERROR(SECTION, 42, FILECC, LNUM)
+      ELSE
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(9X,F6.3)',IOSTAT=ERR) FOZ1
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(9X,F6.3)',IOSTAT=ERR) SFOZ1
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+      ENDIF
+      
       CLOSE (LUNCRP)
 
 !** Initialize variables
@@ -1161,8 +1187,24 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 !** WDB 10/20/03 CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES,(1.0-SATFAC))*SLPF
 !          CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES)*SLPF
 
+!   Effect of ozone on photosynthesis added by JG 11/23/2021
+      IF (OZON7 .GT. 25.0) THEN
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
+          FO3 = AMAX1(FO3, 0.0)
+      ELSE
+          FO3 = 1.0
+      ENDIF
+!   Ozone, CO2, water stress interaction
+      IF (SWFAC .LT. 0.0001) THEN  ! added to prevent dividing by 0
+          PRFO3 = 1.0
+      ELSE
+          PRFO3 = AMIN1(1.0, (FO3*PCO2)/SWFAC) ! ozone effect added by JG
+      ENDIF
+
 !     CHP 9/5/04 Added P stress
-          CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES, PStres1,KSTRES)*SLPF
+!     JG 11/23/2021 added ozone stress
+          CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES, PStres1,KSTRES,PRFO3)*
+     &            SLPF
           !Reduce CARBO for assimilate pest damage
           CARBO = CARBO - ASMDOT
           CARBO = MAX(CARBO,0.0)
@@ -1624,8 +1666,18 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
           ENDIF
           SLFT  = AMAX1 (SLFT,0.0)
 
+!         Senescence due to ozone stress, JG 11/23/2021
+          IF (OZON7 .GT. 25.0) THEN
+              SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * 25.0))
+              SLFO3 = AMAX1(SLFO3, 0.0)
+          ELSE
+              SLFO3 = 1.0
+          ENDIF
+
 !          PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFC,SLFT,SLFN)) 
-          PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFC,SLFT,SLFN,SLFP)) 
+!         JG added ozone stress to senescence 11/23/2021
+          PLAS  = (PLA-SENLA)*
+     &            (1.0-AMIN1(SLFW,SLFC,SLFT,SLFN,SLFP,SLFO3)) 
 !         Daily rate of leaf senescence
           SENLA = SENLA + PLAS
           SENLA = AMAX1 (SENLA,SLAN)
@@ -2141,6 +2193,8 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! EOP         !Potential plant transpiration, mm/d
 ! EP1         !Potential plant transpiration, cm/d
 ! SEASEND     !Program control variable to execute code to complet model run (value=6)
+! FO3         !Ozone concentration effect on photosynthesis, 1.0 = no stress, 0.0 = max stress
+! FOZ1        !Ozone stress factor for photosynthesis
 ! FSLFW       !Fraction of leaf area senesced due to 100% water stress, 1/day
 ! FSLFN       !Fraction of leaf area senesced due to 100% nitrogen stress, 1/day
 ! G3          !Potential kernel growth rate mg/kernel/day
@@ -2193,6 +2247,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! NSTRES      !Nitrogen stress factor affecting growth (0-1)
 ! NWSD        !No. of consecutive days with severe water stress
 ! OUTPUT      !Program control variable to output state and rate variables to output file (value=5)
+! OZON7       !Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
 ! P5          !GDD from silking to physiological maturity, C
 ! PAR         !Daily photosynthetically active radiation, calculated as half
 ! PARSR       !Conversion of solar radiation to PAR, (MJ PAR/m2/d)/(MJ SRAD/m2/d)
@@ -2217,6 +2272,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! PORMIN      !Minimum pore space volume required for supplying oxygen to roots for optimum
 !             ! growth and function (0-100%) 
 ! PPLTD       ! Percent of plants destroyed today, %/m2/d
+! PRFO3       !Ozone concentration effect on photosynthesis (FO3) with CO2 and water stress interaction
 ! PRFTC       !Array containing base, optimum and maximum temperature for function reducing photosynthesis due to temperature.
 ! PRFT        !Photosynthetic reduction factor for low and high temperatures
 ! PTF         !Ratio of above ground biomass to total biomass
@@ -2250,6 +2306,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! SEEDRVE     !Carbohydrate reserve in seed at emergence, g/plant
 ! SENLA       !Normal leaf senescence today, cm2/plant
 ! SFAC        !Drought stress factor for grain nitrogen concentration
+! SFOZ1       !Ozone stress factor for leaf senescence
 ! SHF(L)      !Relative root distribution in soil layer L (0-1)
 ! SHELPC      !Shelling percent
 ! SI1(6)      !Water stress during a growth stage used for output
@@ -2261,6 +2318,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! SLAN        !Normal leaf senescence since emergence, cm2/plant
 ! SLFC        !Leaf senescence factor due to competition for light(0-1)
 ! SLFN        !Leaf senescence factor due to nitrogen stress (0-1)
+! SLFO3       !Leaf senescence factor due to ozone stress (0-1)
 ! SLFP        !Leaf senescence factor due to phosphorus stress (0-1)
 ! SLFT        !Leaf senescence factor due to temperature (0-1)
 ! SLFW        !Leaf senescence factor due to water sterss (0-1)

@@ -28,7 +28,7 @@ C=======================================================================
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW,                                          !Input
+     &    YRSOW, OZON7,                                   !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -120,6 +120,14 @@ C=======================================================================
       REAL PLIGLF, PLIGRT
       REAL SLPF
 
+!     JG added ozone functionality 11/24/2021
+      REAL OZON7
+      REAL FO3
+      REAL FOZ1
+      REAL PRFO3
+      REAL SFOZ1
+      REAL SLFO3
+
       LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO, FIRST
 
 !     The variable "CONTROL" is of type "ControlType".
@@ -163,7 +171,7 @@ C=======================================================================
       CALL RI_IPCROP (FILEC, PATHCR, !CROP, 
      &    CO2X, CO2Y, MODELVER, PORMIN, 
         !&    CO2X, CO2Y, MODELVER, PHINT, PORMIN,  
-     &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
+     &    RLWR, RWUEP1, RWUMX, SHOCKFAC, FOZ1, SFOZ1)   !JG added ozone parameters
 
       FILECC   = TRIM(PATHCR) // FILEC
       FSLFP    = 0.050  
@@ -619,7 +627,22 @@ CCCCC-PW
      &    CARBO, CUMDTT,                                  !I/O
      &    TSHOCK)                                         !Output
 
-      CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES,TSHOCK,PStres1,KSTRES)
+!     Effect of ozone on photosynthesis added by JG 11/24/2021
+      IF (OZON7 .GT. 25.0) THEN
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
+          FO3 = AMAX1(FO3, 0.0)
+      ELSE
+          FO3 = 1.0
+      ENDIF
+!     Ozone, CO2, water stress interaction
+      IF (SWFAC .LT. 0.0001) THEN  ! added to prevent dividing by 0
+          PRFO3 = 1.0
+      ELSE
+          PRFO3 = AMIN1(1.0, (FO3*PCO2)/SWFAC) ! ozone effect added by JG
+      ENDIF
+
+!     JG added ozone stress 11/24/2021
+      CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES,TSHOCK,PStres1,KSTRES,PRFO3)
      &       * SLPF
 
       TEMF  = 1.0
@@ -1158,10 +1181,19 @@ C
       SLFP   = (1-FSLFP) + FSLFP*PSTRES1 
       SLFK   = (1-FSLFP) + FSLFK*KSTRES 
 
+!     Senescence due to ozone stress, JG 11/24/2021
+      IF (OZON7 .GT. 25.0 ) THEN
+          SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * 25.0))
+          SLFO3 = AMAX1(SLFO3, 0.0)
+      ELSE
+          SLFO3 = 1.0
+      ENDIF
+
       !
       ! Senescence
       !
-      PLAS   = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFC,SLFT,SLFN,SLFP,SLFK))
+      PLAS   = (PLA-SENLA)*
+     &         (1.0-AMIN1(SLFW,SLFC,SLFT,SLFN,SLFP,SLFK,SLFO3))
       IF  (PLAS .GT. 0.025*PLA) THEN
           PLAS =  PLA*0.015
       ENDIF
