@@ -481,12 +481,10 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &          (TABEX(YCUTHT, XCUTHT, HMCUT*100, 6)) *
      &          (TABEX(YCHMOW, XCHMOW, topwt, 6))
                 RSPLC = (TABEX(YRSREF, XFREQ, FREQ, 6) * RSREF)
-                WRITE(*,*) 'AUTOMOW VERSION - FREQ', FREQ
             !DP/TF 2022-01-31 Switch to simple version AutoMOW
               ELSEIF(ATTP .EQ. 'C' .OR. ATTP .EQ. 'P') THEN
                 MOWC = MAX(HMMOW,0)
                 RSPLC = MAX(HRSPL,0)
-                WRITE(*,*) 'SMART VERSION - FREQ', FREQ
               ENDIF
               MOWGDD = 0.0
             ELSE
@@ -496,7 +494,6 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
                 IF (GDD .GT. TO1(1)-TB(1)) GDD = TO1(1)-TB(1)
                 GDD = MAX(GDD, 0.0)
                 MOWGDD = MOWGDD + GDD
-                WRITE(*,*) 'yrdoy', yrdoy, 'MOWGDD', MOWGDD, 'MOWCOUNT', MOWCOUNT
                 RETURN
             ENDIF
             IF (MOWC.GE.0) THEN
