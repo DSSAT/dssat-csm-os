@@ -74,9 +74,11 @@ C
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             
 C-GH 6/24/2022 Check for missing tillage implement
-            READ (TIMPL(NTIL)(3:5),'(I3)')TIMPLN
-            ERRNUM = 4
-            IF (TIMPLN .LE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+            READ (TIMPL(NTIL)(3:5),'(I3)',IOSTAT=ERRNUM) TIMPLN
+            IF (TIMPLN .LE. 0 .OR. TIMPLN .GE. 999 .OR.
+     &          ERRNUM .NE. 0) THEN
+               CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+            ENDIF 
 
             IF ((TDATE(NTIL) .LT. 1)  .OR.
      &         (MOD(TDATE(NTIL),1000) .GT. 366)) THEN

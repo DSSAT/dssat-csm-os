@@ -187,6 +187,9 @@ Chemical input level not found. Please correct input file.
 IPCHEM    3
 First chemical application date is defined prior to the start of simulation.
 
+IPCHEM   4
+Error in chemical code.  Correct input file.
+
 IPCHEM   11
 No input amount defined for chemical applications.
 
@@ -414,6 +417,9 @@ Residue input level not found. Please correct input file.
 
 IPRES     3
 First residue application date is defined prior to the start of simulation.
+
+IPFERT   4
+Error in residue code.  Correct input file.
 
 IPRES    10
 Error in date of residue application input.  Correct input file.

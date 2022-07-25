@@ -272,7 +272,7 @@ C=======================================================================
       CHARACTER*80 CHARTEST
 
       INTEGER      LNRES,LUNEXP,ISECT,LINEXP,RESDAY(NAPPL),NRESAP
-      INTEGER      ERRNUM,J,IFIND,LN,NARES,YRSIM,LNSIM
+      INTEGER      ERRNUM,J,IFIND,LN,NARES,YRSIM,LNSIM,IRESCD
 
       REAL         RESN(NAPPL),RESP(NAPPL),RESK(NAPPL),RESIDUE(NAPPL),
      &             RINP(NAPPL),DEPRES(NAPPL),RESAMT
@@ -333,7 +333,18 @@ C
 C           Set minimum lower than 1000 KG .. PWW
 C
 C-PW        RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),10.0)
-            RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),0.0)
+
+C-GH 7/25/2022 Remove MAX statement; error checking below
+C-GH        RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),0.0)
+            
+            
+            READ (RESCOD(NRESAP)(3:5),'(I3)',IOSTAT=ERRNUM) IRESCD
+            IF (IRESCD .LT. 1 .OR. IRESCD .GE. 999 .OR.
+     &          ERRNUM .NE. 0) THEN
+               CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+            ENDIF
+                      
+C-GH 7/25/2022 Check for missing residue code        
             IF ((RESDAY(NRESAP) .LT. 0) .OR.
      &          (IRESI .EQ. 'R' .AND. MOD(RESDAY(NRESAP),1000)
      &           .GT. 366)) THEN
