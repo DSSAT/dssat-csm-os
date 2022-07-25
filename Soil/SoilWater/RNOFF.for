@@ -14,6 +14,7 @@ C                  and made SMX input variables) (old WBSUBS code)
 C  10/11/1997 CHP Updated for modular format.
 C  09/01/1999  GH Incorporated into CROPGRO
 !  06/12/2007 CHP Increase initial abstraction if mulch layer present.
+!  07/22/2022  FO Updated 'PMFRAC' to 'PMFRACTION' to avoid get warning
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !  Calls:     None
@@ -109,7 +110,7 @@ C-----------------------------------------------------------------------
         RUNOFF = 0.0
       ENDIF
       
-      CALL GET("PM","PMFRAC",PMFRACTION)
+      CALL GET("PM","PMFRACTION",PMFRACTION)
       IF (PMFRACTION .GT. 1.E-6) THEN
           RUNOFF = WATAVL * PMFRACTION + RUNOFF * (1 - PMFRACTION)
       ENDIF
