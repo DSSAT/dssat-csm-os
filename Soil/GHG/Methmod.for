@@ -89,7 +89,10 @@ C ***********************************************************************
 	  REAL h,Lz,lamda_rho,difference1,TSubstrate
 	  LOGICAL FirstTime
 	  DATA oxy%ID,meth%ID/2,4/
-	  DATA FirstTime/.TRUE./
+
+!      CHP - need to reset for every run
+!      DATA FirstTime/.TRUE./
+
 	END MODULE MethaneVariables
 
 C ***********************************************************************
@@ -923,13 +926,37 @@ C Thomas algorithm - solves tridiagonal matrices
 	INTEGER i
 	REAL a(51),b(51),c(51),d(51),mu(51),nu(51),e(51)
  
-      mu(1) = b(1)
-      nu(1) = -d(1)
-      DO i = 2,steps
-         mu (i) = b (i) - a (i) * c (i-1) / mu (i-1)
-         nu (i) = -d (i) - a (i) * nu (i-1) / mu (i-1)
+!     zero divide checks 2022-04-13 chp / gh
+      DO i = 1,steps
+        if (i==1) then
+          mu(1) = b(1)
+          nu(1) = -d(1)
+        else
+          mu (i) = b (i) - a (i) * c (i-1) / mu (i-1)
+          nu (i) = -d (i) - a (i) * nu (i-1) / mu (i-1)
+        endif
+
+        if (abs(mu(i)) .LT. 1.E-30) then
+          if (mu(i) .GT. 0.0) THEN
+            mu(i) = 1.E-30
+          else
+            mu(i) = -1.E-30
+          endif
+        endif
+
       ENDDO
-      e (steps) = nu (steps) / mu (steps)
+
+!     CHP 2022-02-07 Added logic to prevent zero-divide
+!     e (steps) = nu (steps) / mu (steps)
+      IF(abs(nu(steps)) < 1.E-30) THEN
+        e(steps) = 0.0
+      ELSEIF(abs(mu(steps)) > 1.E-30) THEN
+        e (steps) = nu (steps) / mu (steps) !<-original eqn.
+      ELSE
+        e(steps) = e(steps-1)
+        mu(steps) = mu(steps-1)
+      ENDIF
+
       DO i = steps-1,1,-1
          e (i) = (nu (i) - c (i) * e (i+1)) / mu (i)
 	ENDDO

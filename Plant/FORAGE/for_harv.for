@@ -68,12 +68,12 @@ C=======================================================================
       INTEGER,dimension(6) :: IXCHMOW
       REAL,dimension(6) :: XCHMOW
       REAL,dimension(6) :: YCHMOW
-      INTEGER,dimension(6) :: IXRSREF
-      REAL,dimension(6) :: XRSREF
+      INTEGER,dimension(6) :: IXFRGDD
+      REAL,dimension(6) :: XFRGDD
       REAL,dimension(6) :: YRSREF
       REAL GDD, MOWGDD
       INTEGER HMFRQ, HMGDD, CUTDAY
-      INTEGER HMMOW, HRSPL !TF 2022-01-31 Simple version AutoMOW
+      INTEGER HMMOW, HRSPL !TF 2022-01-31 Smart version AutoMOW
       REAL TMAX
       REAL TMIN
       REAL TB(5), TO1(5), TO2(5), TM(5)
@@ -106,8 +106,11 @@ C=======================================================================
 
       TYPE(CONTROLTYPE) CONTROL
 
+      !using SAVE because for some reason, every time dynamic changes,'
+      !it lose the value
       SAVE MOWGDD
       SAVE MOWCOUNT
+      SAVE FILEMOW
 
 
       PARAMETER  (ERRKEY = 'FRHARV')
@@ -137,74 +140,44 @@ C----------------------------------------------------------
 C     Open and read MOWFILE and PATH
 C----------------------------------------------------------
 C FO - 10/15/2020 Fixed path issue for MOWFILE.
-        CALL GETLUN('FILEIO', LUNIO)
-        OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
-        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
+        IF (ATMOW .EQV. .FALSE.) THEN
+          CALL GETLUN('FILEIO', LUNIO)
+          OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
 
-        READ (LUNIO,'(3(/),15X,A12,1X,A80)',IOSTAT=ERRNUM) mowfile,
+          READ (LUNIO,'(3(/),15X,A12,1X,A80)',IOSTAT=ERRNUM) mowfile,
      &       PATHEX
-        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,5)
-        mowfile(10:12) = 'MOW'
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,5)
+          mowfile(10:12) = 'MOW'
 
-        PATHL  = INDEX(PATHEX,BLANK)
-        IF (PATHL .LE. 1) THEN
-           FILEMOW = mowfile
+          PATHL  = INDEX(PATHEX,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEMOW = mowfile
+          ELSE
+            PATHL = LEN(TRIM(PATHEX))
+            FILEMOW = PATHEX(1:(PATHL)) // mowfile
+          ENDIF
+
+          CLOSE(LUNIO)
+
+          INQUIRE(FILE = MOWFILE, EXIST = exists)
+    
+          IF (.NOT. exists) THEN
+            CALL ERROR (ERRKEY,29,MOWFILE,1)
+          ENDIF
         ELSE
-           PATHL = LEN(TRIM(PATHEX))
-           FILEMOW = PATHEX(1:(PATHL)) // mowfile
-        ENDIF
-
-        CLOSE(LUNIO)
-
-        INQUIRE(FILE = MOWFILE, EXIST = exists)
-        IF (exists .EQV. .FALSE.) THEN
-          MSG(1) = "Warning: File not found."
-          WRITE(MSG(2), 100) MOWFILE
-  100     FORMAT('File: ', A12)
-          MSG(3) = "Automatic MOW will be used for this simulation."
-          CALL WARNING (3, ERRKEY, MSG)
-
-          IF(HMFRQ .LE. 0 .AND. HMGDD .LE. 0) THEN
-            MSG(1) = "Values of harvest frequency (day and GDD) are missing."
-            WRITE(MSG(2), 110)
-  110       FORMAT('A default value 28 harvest frequency (days) ',
-     &                "is being used for this simulation.")
-            MSG(3) = "Which may produce inaccurate results."
-            CALL WARNING(3,ERRKEY,MSG)
-          ELSEIF(HMFRQ .LE. 0) THEN
-            MSG(1) = "Value of harvest frequency (days) is missing."
-            MSG(3) = 'Value of harvest frequency (GDD) will be used.'
-            CALL WARNING(3,ERRKEY,MSG)
-          ELSEIF(HMGDD .LE. 0) THEN
-            MSG(1) = "Value of harvest frequency (GDD) is missing."
-            MSG(3) = 'Value of harvest frequency (days) will be used.'
-            CALL WARNING(3,ERRKEY,MSG)
-          ELSEIF(HMFRQ .GT. 0 .AND. HMGDD .GT. 0) THEN
-            MSG(1) = "Values of harvest frequency (day and GDD) were provided."
-            MSG(3) = 'Value of harvest frequency (days) will be used.'
-            CALL WARNING(3,ERRKEY,MSG)
+          IF(ATTP .EQ. 'P' .AND. HMGDD .LE. 0) THEN
+            CALL ERROR (ERRKEY,50,MOWFILE,1)
           ENDIF
-
-          IF(HMMOW .LE. 0) THEN
-            MSG(1) = "Value of HMMOW empty or equal to zero."
-            MSG(3) = 'A default value of 3000 is being used.'
-            CALL WARNING(3,ERRKEY,MSG)
+          IF(ATTP .EQ. 'C' .AND. HMFRQ .LE. 0) THEN
+            CALL ERROR (ERRKEY,50,MOWFILE,1)
           ENDIF
-          IF(HRSPL .LE. 0) THEN
-            MSG(1) = "Value of HRSPL empty or equal to zero."
-            MSG(3) = 'A default value of 30 is being used.'
-            CALL WARNING(3,ERRKEY,MSG)
-          ENDIF
-
-          IF(HMCUT .LE. 0.0) THEN
-            MSG(1) = "Value of cutting height is missing. "
-            WRITE(MSG(2), 120)
-  120       FORMAT('A default value 0.10 is being used for ',
-     &                 "this simulation.")
-            MSG(3) = "Which may produce inaccurate results."
-            CALL WARNING(3,ERRKEY,MSG)
-          ENDIF
-
+          !IF(ATTP .EQ. 'P' .AND. HMGDD .LE. 0) THEN
+          !  CALL ERROR (ERRKEY,50,MOWFILE,1)
+          !ENDIF
+          !IF(ATTP .EQ. 'C' .AND. HMFRQ .LE. 0) THEN
+          !  CALL ERROR (ERRKEY,50,MOWFILE,1)
+          !ENDIF
         ENDIF
 
 
@@ -215,10 +188,10 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 C-----------------------------------------------------------------------
 
-      !Daily Senescence
-      DWTCO = WTCO - PWTCO
-      DWTLO = WTLO - PWTLO
-      DWTSO = WTSO - PWTSO
+        !Daily Senescence
+        DWTCO = WTCO - PWTCO
+        DWTLO = WTLO - PWTLO
+        DWTSO = WTSO - PWTSO
 
 
         CALL GETLUN('FILEC', LUNCRP)
@@ -239,22 +212,26 @@ C-----------------------------------------------------------------------
           CLOSE(LUNCRP)
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         END IF
-
-      !C----------------------------------------------------------
-      !!       Automatic MOW - post harvest stubble mass and %leaf
-      !!       in the stubble calculation (DP,KJB,WP,FO,TF):
-      !C----------------------------------------------------------
-      ! OPEN AND READ SPECIES FILE
-      CALL GETLUN('FILEC', LUNCRP)
-      OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
-      SECTION = '!*CANO'
-      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
-      do j=1,8; CALL IGNORE(LUNCRP,LNUM,ISECT,C255); end do
-        READ(C255,'(F6.0)') MOWREF
+      IF(ATTP .EQ. 'A' .OR. ATTP .EQ. 'T') THEN
+        !C----------------------------------------------------------
+        !!       Automatic MOW - post harvest stubble mass and %leaf
+        !!       in the stubble calculation (DP,KJB,WP,FO,TF):
+        !C----------------------------------------------------------
+        ! OPEN AND READ SPECIES FILE
+        CALL GETLUN('FILEC', LUNCRP)
+        OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
+        SECTION = '!*STUB'
+        CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(2F6.0)',IOSTAT=ERRNUM)  MOWREF, RSREF
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXFREQ(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXFRGDD(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YFREQ(I),I=1,6)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YRSREF(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCUTHT(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
@@ -263,14 +240,8 @@ C-----------------------------------------------------------------------
         READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXCHMOW(I),I=1,6)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCHMOW(I),I=1,6)
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-
-        READ(C255,'(F6.0)') RSREF
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        READ(C255,'(6I6)',IOSTAT=ERRNUM) (IXRSREF(I),I=1,6)
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
-        READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YRSREF(I),I=1,6)
         CLOSE (LUNCRP)
+      ENDIF
 
 !-----------------------------------------------------------------------
 !     Find Phenology Section in FILEC and read cardinal temperatures
@@ -285,14 +256,16 @@ C-----------------------------------------------------------------------
       READ(C80,'(4F6.1)') TB(1), TO1(1), TO2(1), TM(1)
        CLOSE (LUNCRP)
 !----------------------------------------------------------------------
-
-        XFREQ = IXFREQ
+        IF(ATTP .EQ. 'A') THEN
+          XFREQ = IXFREQ
+        ELSEIF( ATTP .EQ. 'T') THEN
+          XFREQ = IXFRGDD
+        ENDIF
         XCUTHT = IXCUTHT
         XCHMOW = IXCHMOW
-        XRSREF = IXRSREF
+        XFRGDD = IXFRGDD
 
-      INQUIRE(FILE = MOWFILE, EXIST = exists)
-      IF(exists .EQV. .FALSE.) ATMOW = .TRUE.
+      
       IF (.NOT.ALLOCATED(MOW) .AND. ATMOW .EQV. .FALSE.) THEN
 
         CALL GETLUN('MOWFILE',MOWLUN)
@@ -489,37 +462,27 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 !***********************************************************************
 ! AUTOMOW calculations (DP,KJB,WP,FO,TF)
 !***********************************************************************
-      IF(HMFRQ .LE. 0 .AND. HMGDD .LE. 0) HMFRQ = 28
-      IF(HMCUT .LE. 0.0) HMCUT = 0.10
-      IF(HMMOW .LE. 0) HMMOW = 3000
-      IF(HRSPL .LE. 0) HRSPL = 30
-
-      ! TF - 01/29/2022 Protection to avoid divisions and mod by zero
-      IF(HMFRQ .GT. 0) THEN
-        CUTDAY = MOD(MOWCOUNT,HMFRQ)
-        MOWGDD = 0 !It will not accumulate GDD if there is HMFRQ
-      ELSE
-        CUTDAY = 1
-      ENDIF
-      INQUIRE(FILE = MOWFILE, EXIST = exists)
       ! DP/TF - 01/28/2022 Added degree days (GDD) option
-      IF(ATMOW .EQV. .TRUE. .OR.
-     &  (exists .EQV. .FALSE. .AND. ATMOW .EQV. .FALSE.)) then
+      IF(ATMOW .EQV. .TRUE.) THEN
+            IF(ATTP .EQ. 'A' .OR. ATTP .EQ. 'C') THEN
+              FREQ = HMFRQ
+              CUTDAY = MOD(MOWCOUNT,HMFRQ)
+              MOWGDD = 0 !It will not accumulate GDD if there is HMFRQ
+            ENDIF
+            IF(ATTP .EQ. 'P' .OR. ATTP .EQ. 'T') THEN
+              FREQ = HMGDD
+              CUTDAY = 1
+            ENDIF
             IF(CUTDAY .EQ. 0 .OR.
      &        (MOWGDD .GE. HMGDD .AND. HMGDD .GT. 0)) THEN
-              IF(HMFRQ .GT. 0) THEN
-                FREQ = HMFRQ
-              ELSE
-                FREQ = HMGDD
-              ENDIF
             !DP/TF 2022-01-31 Switch to complete version AutoMOW
-              IF(ATTP .EQ. 'A') THEN
+              IF(ATTP .EQ. 'A' .OR. ATTP .EQ. 'T') THEN            
                 MOWC = (TABEX(YFREQ, XFREQ, FREQ, 6) * MOWREF) *
      &          (TABEX(YCUTHT, XCUTHT, HMCUT*100, 6)) *
      &          (TABEX(YCHMOW, XCHMOW, topwt, 6))
-                RSPLC = (TABEX(YRSREF, XRSREF, FREQ, 6) * RSREF)
+                RSPLC = (TABEX(YRSREF, XFREQ, FREQ, 6) * RSREF)
             !DP/TF 2022-01-31 Switch to simple version AutoMOW
-              ELSEIF(ATTP .EQ. 'D') THEN
+              ELSEIF(ATTP .EQ. 'C' .OR. ATTP .EQ. 'P') THEN
                 MOWC = MAX(HMMOW,0)
                 RSPLC = MAX(HRSPL,0)
               ENDIF
@@ -533,7 +496,6 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
                 MOWGDD = MOWGDD + GDD
                 RETURN
             ENDIF
-
             IF (MOWC.GE.0) THEN
             IF(MOWC/10<topwt) THEN
               FHLEAF=0

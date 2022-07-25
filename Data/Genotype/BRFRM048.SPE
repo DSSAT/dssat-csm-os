@@ -171,18 +171,18 @@
   0.55  0.55  0.55  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN                     
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES                         
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN                     
-  
-  2000                                    MOWREF reference stuble mass (kg/ha)
-     0    14    28    42    84   800      XFREQ (6 VALUES) harvest frequency in days or GDD               
-   1.1   1.1   1.0   0.9   0.9   0.9      YFREQ (6 VALUES) rate change on MOWREF kg/ha                                     
+ 
+!*STUBBLE MASS AND PERCENT LEAF FORAGE HARVEST 
+  2000  30.0                              MOWREF RSREF (2 VALUES) reference stuble mass (kg/ha) and harvest frequency in days
+     0    14    28    42    84   400      XFREQ (6 VALUES) harvest frequency in days
+     0   100   350   500   700   800      XFRGDD (6 VALUES) harvest frequency in GDD
+   1.1   1.1   1.0   0.9   0.9   0.9      YFREQ (6 VALUES) relative change on MOWREF  
+   1.2   1.2   1.0   0.9   0.8   0.8      YRSREF (6 VALUES) relative change on RSREF                                    
+ 
      0     5    10    20    40   400      XCUTHT (6 VALUES) cutting height in cm               
-   1.2   1.2   1.0   0.9   0.8   0.8      YCUTHT (6 VALUES) rate change on MOWREF kg/ha
-     0   200   400   800  1000  1200      XCHMOW (6 VALUES) pre-harvest biomass g/m2               
-   1.0   1.0   1.5   2.0   2.5   3.0      YCHMOW (6 VALUES) rate change on MOWREF kg/ha
-
-  30.0                                    RSREF  reference stuble percent leaf (%) 
-     0    14    28    42    84   800      XRSREF (6 VALUES) harvest frequency in days or GDD               
-   1.2   1.2   1.0   0.9   0.8   0.8      YRSREF (6 VALUES) rate change on RSREF 
+   1.2   1.2   1.0   0.9   0.8   0.8      YCUTHT (6 VALUES) relative change on MOWREF
+     0   200   400   800  1000  1200      XCHMOW (6 VALUES) pre-harvest biomass kg/m2               
+   1.0   1.0   1.5   2.0   2.5   3.0      YCHMOW (6 VALUES) relative change on MOWREF
 
                                                                                                     
 !*EVAPOTRANSPIRATION                                                                                

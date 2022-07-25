@@ -175,6 +175,11 @@
           HARVRES % RESE   = 0.0
 !          HARVRES % CumResWt= 0.0
 !          HARVRES % CumResE = 0.0
+          CH4Stored_init= 0.0
+          CH4Stored_Y   = 0.0
+        ELSE
+          CH4Stored_init = CH4_data % CH4Stored
+          CH4Stored_Y = CH4_data % CH4Stored
         ENDIF
 
 !       Harvest residue from previous crop has already been added to soil
@@ -194,7 +199,7 @@
         LCTD_init = TLITC - THRC1D
 
         TotalC_init = SSOMC(0) + TSOMC + LITC(0) + TLITC 
-     &              + CH4_data % CH4Stored- HarvCTot 
+     &              + CH4Stored_init - HarvCTot 
 
         SOMC0T_Y = SOMC0T_init
         SOMCT_Y  = SOMCT_init
@@ -211,10 +216,6 @@
 !        ACCCO2_LastSeason = ACCCO2
 !        ACCCO2Y = 0.0
 !        ACCCO2_init = 0.0
-
-        CH4Stored_init = CH4_data % CH4Stored
-        CH4Stored_Y = CH4_data % CH4Stored
-
         CO2Emission_LastSeason = CH4_data % CO2Emission
         CO2Emission_Y = 0.0
         CO2Emission_init = 0.0

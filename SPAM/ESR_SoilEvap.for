@@ -59,6 +59,7 @@
       REAL A, B, RedFac, SW_threshold
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
+      REAL PMFRACTION
 
 !-----------------------------------------------------------------------
 !     ProfileType:
@@ -73,9 +74,10 @@
       DUL   = SOILPROP % DUL
       LL    = SOILPROP % LL
       NLAYR = SOILPROP % NLAYR
+      CALL GET("PM", "PMFRACTION", PMFRACTION)
 
       ES = 0.0
-
+      
 !**********************************************************************
 !     NEW 4/18/2008
       ProfileType = 3   !assume dry profile until proven wet
@@ -141,6 +143,11 @@
 !-----------------------------------------------------------------------
 
         SWDELTU(L) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) !mm3/mm3
+        
+!       Apply the fraction of plastic mulch coverage
+        IF (PMFRACTION .GT. 1.E-6) THEN
+          SWDELTU(L) = SWDELTU(L) * (1.0 - PMFRACTION)
+        END IF
 
 !       Limit to available water
         SW_AVAIL(L) = SW(L) + SWDELTS(L) - SWAD(L)

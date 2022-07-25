@@ -164,6 +164,11 @@ Character(:), allocatable, Target :: vCsvlineSomN
 Character (:), Pointer :: vpCsvlineSomN
 Integer :: vlngthSomN
 !------------------------------------------------------------------------------
+! for N2O.csv
+Character(:), allocatable, Target :: vCsvlineN2O
+Character (:), Pointer :: vpCsvlineN2O
+Integer :: vlngthN2O
+!------------------------------------------------------------------------------
 !------------------------------------------------------------------------------
 ! Generic subroutine CsvOut
 ! 
@@ -1336,7 +1341,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    cFBWAH1 = NINT(FBWAH)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
            
-   Write(tmp,'(97(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
+   Write(tmp,'(96(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    EXNAME, TITLET1, FLDNAM, WSTAT, WYEAR, SLNO, LATI, LONG, ELEV, &
    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, &
    !CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &
@@ -2120,6 +2125,80 @@ Subroutine CsvOutSomN(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    
   Return
 end Subroutine CsvOutSomN
+!------------------------------------------------------------------------------
+! Sub for N2O.out
+Subroutine CsvOutN2O(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+   CN2O_emitted, CN2_emitted, CNO_emitted, &
+   CNOX, CNITRIFY, CN2Odenit, CN2Onitrif, CN2, CNOflux, &
+   N2O_emitted, N2_emitted, NO_emitted, & 
+   TNOXD, TNITRIFY, TN2OdenitD, &
+   TN2OnitrifD, TN2D, TNOfluxD, &
+   DENITRIF, NITRIF, &
+   N2Oflux, N2flux, &
+   NOflux, N_LYR, &
+   Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer,Intent(in) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS 
+   INTEGER N_LYR
+!          Cumul      Daily     Layer         
+   REAL CNOX,      TNOXD,    DENITRIF(N_LYR)  !Denitrification
+   REAL CNITRIFY,            NITRIF(N_LYR)
+   INTEGER         TNITRIFY
+   REAL CN2,       TN2D,     N2flux(N_LYR)    !N2
+   REAL                      N2Oflux(N_LYR)   
+   REAL CNOflux,   TNOfluxD, NOflux(N_LYR)    !NO total flux
+   REAL CN2Odenit, TN2OdenitD, N2Odenit(N_LYR)   
+   REAL CN2Onitrif, TN2OnitrifD, N2ONitrif(N_LYR)     
+   REAL N2O_emitted, N2_emitted, CN2O_emitted, CN2_emitted  
+   REAL NO_emitted, CNO_emitted     
+  
+!  Csv control vars  
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Character(Len=1000) :: tmp
+   Character(Len=750) :: tmp1, tmp2
+   Character(Len=20) :: fmt
+  
+   Integer :: i, size      
+!  End of vars
+            
+   WRITE(tmp1,'(26(g0,","))') RUN,EXCODE,TN,ROTNUM,REPNO,YEAR,DOY,DAS, &
+      CN2O_emitted, CN2_emitted, CNO_emitted, &
+      CNOX, CNITRIFY, CN2Odenit, CN2Onitrif, CN2, CNOflux, &
+      N2O_emitted, N2_emitted, NO_emitted, & 
+      TNOXD, TNITRIFY, TN2OdenitD, &
+      TN2OnitrifD, TN2D, TNOfluxD
+      
+    IF (N_LYR < 10) THEN
+      WRITE(fmt,'(I2)') 5 * N_LYR - 1
+      fmt = '('//trim(adjustl(fmt))//'(g0,","),g0)'
+      WRITE (tmp2,fmt)                  &
+           (DENITRIF(i), i = 1, N_LYR), &
+           (NITRIF(i),   i = 1, N_LYR), &
+           (N2Oflux(i),  i = 1, N_LYR), &
+           (N2flux(i),   i = 1, N_LYR), &
+           (NOflux(i),   i = 1, N_LYR) 
+    ELSE
+      WRITE (tmp2,'(49(g0,","),g0)')    &                
+           (DENITRIF(i), i = 1, 10),    &
+           (NITRIF(i),   i = 1, 10),    &
+           (N2Oflux(i),  i = 1, 10),    &
+           (N2flux(i),   i = 1, 10),    &
+           (NOflux(i),   i = 1, 10)
+    ENDIF
+      
+   tmp = Trim(Adjustl(tmp1)) // Trim(Adjustl(tmp2))
+   
+   lngth = Len(Trim(Adjustl(tmp)))
+   size = lngth
+   Allocate(Character(Len = size)::Csvline)
+   Csvline = Trim(Adjustl(tmp))
+   
+   Return
+end Subroutine CsvOutN2O
 !---------------------------------------------------------------------------------
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
@@ -2175,6 +2254,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
          Call ListtofilePlantP              ! PlantP.csv
          Call ListtofileSoilPi              ! SoilPi.csv
          Call ListtofileSomN                ! somlitn.csv
+         Call ListtofileN2O(nlayers)        ! N2O.csv
          
          Return
 End Subroutine CsvOutputs

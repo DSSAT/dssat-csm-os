@@ -11,6 +11,7 @@ C  08/19/2002 GH  Modified for Y2K
 C  08/23/2002 GH  Expanded array tillage applications to 200
 C  02/03/2005 GH  Corrected error checking for missing levels
 C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C  06/24/2022 GH  Check for missing tillage implement
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNCHE,CDATE,CHCOD,CHAMT,CHMET,CHDEP,CHT
 C           YRSIM,ISWWAT,NCHEM,FOLFR,SOLFR
@@ -39,7 +40,7 @@ C=======================================================================
       CHARACTER*80 CHARTEST
 
       INTEGER      LNTIL,LUNEXP,ISECT,LINEXP,TDATE(NAPPL),NTIL
-      INTEGER      ERRNUM,J,IFIND,LN,YRSIM,LNSIM
+      INTEGER      ERRNUM,J,IFIND,LN,YRSIM,LNSIM,TIMPLN
       REAL         TDEP(NAPPL)
 
       PARAMETER   (ERRKEY ='IPTILL')
@@ -71,6 +72,11 @@ C
             READ (CHARTEST,60,IOSTAT=ERRNUM) LN,TDATE(NTIL),
      &            TIMPL(NTIL),TDEP(NTIL)
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+            
+C-GH 6/24/2022 Check for missing tillage implement
+            READ (TIMPL(NTIL)(3:5),'(I3)')TIMPLN
+            ERRNUM = 4
+            IF (TIMPLN .LE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
 
             IF ((TDATE(NTIL) .LT. 1)  .OR.
      &         (MOD(TDATE(NTIL),1000) .GT. 366)) THEN

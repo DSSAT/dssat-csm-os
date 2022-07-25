@@ -23,7 +23,8 @@ C=======================================================================
      &    RUNOFF)                                         !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs   
+      USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
@@ -43,6 +44,9 @@ C-----------------------------------------------------------------------
 
 !     Mulch layer
       Type (MulchType) MULCH
+      
+!     Plastic Mulch
+      REAL PMFRACTION
 
 !!     Temporary for printing
 !      INTEGER DOY, YEAR, LUN
@@ -92,9 +96,9 @@ C-----------------------------------------------------------------------
 !       No mulch effects on runoff
         IABS = SWABI
       ENDIF
-
+      
       PB = WATAVL - IABS * SMX
-
+      
       IF (WATAVL .GT. 0.001) THEN
         IF (PB .GT. 0) THEN
           RUNOFF = PB**2/(WATAVL + (1.0-IABS) * SMX)
@@ -103,6 +107,11 @@ C-----------------------------------------------------------------------
         END IF
       ELSE
         RUNOFF = 0.0
+      ENDIF
+      
+      CALL GET("PM","PMFRAC",PMFRACTION)
+      IF (PMFRACTION .GT. 1.E-6) THEN
+          RUNOFF = WATAVL * PMFRACTION + RUNOFF * (1 - PMFRACTION)
       ENDIF
 
 !!     Temporary
