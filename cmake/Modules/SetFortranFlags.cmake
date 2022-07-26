@@ -23,10 +23,10 @@ ELSEIF(BT STREQUAL "TESTING")
       "Choose the type of build, options are DEBUG, RELEASE, or TESTING."
       FORCE)
 ELSEIF(NOT BT)
-    SET(CMAKE_BUILD_TYPE DEBUG CACHE STRING
+    SET(CMAKE_BUILD_TYPE RELEASE CACHE STRING
       "Choose the type of build, options are DEBUG, RELEASE, or TESTING."
       FORCE)
-    MESSAGE(STATUS "CMAKE_BUILD_TYPE not given, defaulting to DEBUG")
+    MESSAGE(STATUS "CMAKE_BUILD_TYPE not given, defaulting to RELEASE")
 ELSE()
     MESSAGE(FATAL_ERROR "CMAKE_BUILD_TYPE not valid, choices are DEBUG, RELEASE, or TESTING")
 ENDIF(BT STREQUAL "RELEASE")
@@ -118,6 +118,13 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                  Fortran "-mmacosx-version-min=10.10.0"
                 )
+
+# Set install directory for Linux same as STDPATH in OSDefsLINUX.for
+# This will create the appropriate DSSATPRO.Lxx file that works with STDPATH
+IF(UNIX)
+    SET(CMAKE_INSTALL_PREFIX "/DSSAT48" CACHE PATH "Path to installation directory" FORCE)
+ENDIF(UNIX)
+
 ####################
 ### LINKER FLAGS ###
 ####################
