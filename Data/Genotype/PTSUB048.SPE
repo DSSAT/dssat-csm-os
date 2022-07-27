@@ -29,3 +29,8 @@ PT OPT   SENSF     1.    1.   0.7    0.0     !Factor of leaf senescense rate ...
 !32= 1
 !41=0.7
 
+!*EVAPOTRANSPIRATION
+  0.68   1.0       KEP, EORATIO
+  0.50  1.00       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.77       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+
