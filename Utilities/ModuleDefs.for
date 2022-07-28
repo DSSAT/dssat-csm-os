@@ -143,6 +143,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    SRAD, TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
      &    TMAX, TMIN, TWILEN, VAPR, WINDRUN, WINDSP, VPDF, VPD_TRANSP,
      &    OZON7
+        LOGICAL NOTDEW, NOWIND
 
 !       Hourly weather data
         REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR

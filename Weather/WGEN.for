@@ -208,8 +208,8 @@ C     Set default values for dew point temp and windspeed
 !      WINDSP = 86.4
 
       CALL DailyWeatherCheck(CONTROL, 
-     &    ERRKEY, FILEW, RAIN, 0, RHUM,                   !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    ERRKEY, FILEW, RAIN, 0,                         !Input
+     &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
 
 !***********************************************************************
