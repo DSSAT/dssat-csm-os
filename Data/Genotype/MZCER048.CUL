@@ -248,3 +248,8 @@ CYMA01 wh403                . IB0001 265.0 0.760 685.0 760.0  7.60 38.90
 
 ! Added by Camilo Andrade from Embrapa Maize and Sorghum
 EBSL06 BRS1030-SL2009       . IB0001 263.8 0.500 1034  700.0  5.20 44.22 !Single-cross hybrid from Embrapa
+
+!Kingaroy sequence
+IB0200 32P55                . IB0004 215.0 0.500 650.0 740.0  8.19 45.90
+
+
