@@ -465,7 +465,7 @@ C     PARAMETER (SHAIR = 1005.0)
 C-----------------------------------------------------------------------
 C     Compute air properties.
       LHVAP = (2501.0-2.373*TAVG) * 1000.0                ! J/kg
-C     PSYCON = SHAIR * PATM / (0.622*1.E-6LHVAP)               ! Pa/K
+C     PSYCON = SHAIR * PATM / (0.622*LHVAP)               ! Pa/K
       PSYCON = SHAIR * PATM / (0.622*LHVAP) * 1000000     ! Pa/K
 
 !     Previous code:
