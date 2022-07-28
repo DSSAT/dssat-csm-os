@@ -98,7 +98,8 @@
       
 !     Compute separate soil evaporation for each soil column
       IF (BedDimension % PMCover) then
-        jj = FurCol1 ! If there is plastic cover, the infiltration is in the furrow
+!       If there is plastic cover, the infiltration is in the furrow
+        jj = FurCol1 
       else
         jj = 1
       endif

@@ -111,12 +111,12 @@
         CALL YR_DOY(INCDAT(YRDOY,-1),YR2,DY2)
       
         WRITE (LUNWBL,1300) YR2, DY2, DAS, 
-     &    TSW,                                 !State variables
-     &    0.0, 0.0, 0.0,                       !Inflows
-     &    0.0, 0.0, 0.0, 0.0,                  !Outflows
-     &    0.0, 0.0,                            !Balance
-     &    COUNT, 0.0, 0.0,                     !Extras
-     &    LIMIT_2D, MgmtWTD                    !LIMIT_2D, WaterTableDepth
+     &    TSW,                              !State variables
+     &    0.0, 0.0, 0.0,                    !Inflows
+     &    0.0, 0.0, 0.0, 0.0,               !Outflows
+     &    0.0, 0.0,                         !Balance
+     &    COUNT, 0.0, 0.0,                  !Extras
+     &    LIMIT_2D, MgmtWTD                 !LIMIT_2D, WaterTableDepth
 
 !***********************************************************************
 !***********************************************************************
@@ -135,13 +135,14 @@
           SolProfDrain = Drain_Limit2D
         else
           SolProfDrain =0
-        !  LatFlow = LatFlow  + Drain_Limit2D It is already counted in Dainage_2D
+!          LatFlow = LatFlow  + Drain_Limit2D It is already counted in Dainage_2D
         endif
-          ! rain water from plastic cover run to furrow, thus use full rain data from weather 
-          ! The following variables are in mm and are on teh average of the ROW space
+!         rain water from plastic cover run to furrow, thus use full rain data from weather 
+!         The following variables are in mm and are on teh average of the ROW space
           WBALAN = 
-     &         + IRRAMT + RAIN !Inflows in mm. IRRAMT include the drip & spinkle
-   ! &         + IRRAMT + StdIrrig + RAIN     !Inflows  JZW remove teh IRR amount
+!              Inflows in mm. IRRAMT include the drip & spinkle
+     &         + IRRAMT + RAIN 
+!    &         + IRRAMT + StdIrrig + RAIN     !Inflows  JZW remove teh IRR amount
      &         + LatFlow                      !Lateral flow
      &         - SolProfDrain - RUNOFF - TES - TEP   !Outflows
      &         - (TSW - TSWY)                 !Change in soil water 

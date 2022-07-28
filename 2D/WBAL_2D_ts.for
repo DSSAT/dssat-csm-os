@@ -21,6 +21,11 @@
 !         Temp chp
      &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input
 
+!      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
+!     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
+!     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input  dp, dp, dp, int(2), real(r,c), real(r,c), real
+!     &    Count, LatFlow,                                       !Input  int, real
+!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input real(r,c), dp(r,c), dp(r,c), dp(r,c), dp(nd), dp(r,c)
 !     ------------------------------------------------------------------
 !      USE ModuleDefs 
       USE Cells_2D  !temp chp
@@ -328,10 +333,15 @@
             WBALij = -999999
           else 
             WBALij = 
-     &         + Cell_detail%h_in(L, J) + Cell_detail%v_in(L, J)     !Inflows
-     &         - Cell_detail%h_out(L, J) - Cell_detail%v_out(L, J)   !Outflows
-     &         - RWUij - ESij                                        !Outflows
-     &         - (SWijcm2 - SWijcm2y(L, J))                          !Change in soil water
+!             Inflows
+     &         + Cell_detail%h_in(L, J) + Cell_detail%v_in(L, J)     
+!             Outflows
+     &         - Cell_detail%h_out(L, J) - Cell_detail%v_out(L, J)   
+!             Outflows
+     &         - RWUij - ESij                                        
+!             Change in soil water
+     &         - (SWijcm2 - SWijcm2y(L, J)) 
+                         
             WCellCBal(L, J) = WCellCBal(L, J) + WBALij 
             vOutijCum(L, J) = vOutijCum(L, J) + Cell_detail%v_out(L, J)
             hOutijCum(L, J) = hOutijCum(L, J) + Cell_detail%h_out(L, J)
@@ -362,8 +372,8 @@
 !     &            Cell_detail%h_out(L, J), Cell_detail%v_out(L, J),    !Outflows
 !     &            RWUij, ESij,                                         !Outflows
 !     &            WBALij, WCellCBal(L, J),                             !Balance
-     &            hOutijCum(L, J), vOutijCum(L, J),                    !Cumulative
-     &            RWUijCum(L, J), ESijCum(L, J)                        !Cumulative
+     &            hOutijCum(L, J), vOutijCum(L, J),       !Cumulative
+     &            RWUijCum(L, J), ESijCum(L, J)           !Cumulative
 !     &            Diffus(L, J), Kunsat(L, J),                          !Extra
 !     &            Cell_detail%vdiff(L, J), Cell_detail%vgrav(L, J)     !Extra
             ELSE IF((NEXTTS .NE. 24 
@@ -375,8 +385,8 @@
 !     &            Cell_detail%h_out(L, J), Cell_detail%v_out(L, J),    !Outflows
 !     &            RWUij, ESij,                                         !Outflows
 !     &            WBALij, WCellCBal(L, J),                             !Balance
-     &            hOutijCum(L, J), vOutijCum(L, J),                    !Cumulative
-     &            RWUijCum(L, J), ESijCum(L, J)                        !Cumulative
+     &            hOutijCum(L, J), vOutijCum(L, J),      !Cumulative
+     &            RWUijCum(L, J), ESijCum(L, J)          !Cumulative
 !     &            Diffus(L, J), Kunsat(L, J),                          !Extra
 !     &            Cell_detail%vdiff(L, J), Cell_detail%vgrav(L, J)     !Extra
             ELSE IF(Time .GT. NEXTTS) THEN
@@ -386,8 +396,8 @@
 !     &            Cell_detail%h_out(L, J), Cell_detail%v_out(L, J),    !Outflows
 !     &            RWUij, ESij,                                         !Outflows
 !     &            WBALij, WCellCBal(L, J),                             !Balance
-     &            hOutijCum(L, J), vOutijCum(L, J),                    !Cumulative
-     &            RWUijCum(L, J), ESijCum(L, J)                        !Cumulative
+     &            hOutijCum(L, J), vOutijCum(L, J),        !Cumulative
+     &            RWUijCum(L, J), ESijCum(L, J)            !Cumulative
 !     &            Diffus(L, J), Kunsat(L, J),                          !Extra
 !     &            Cell_detail%vdiff(L, J), Cell_detail%vgrav(L, J)     !Extra
             END IF

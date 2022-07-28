@@ -20,20 +20,20 @@
       
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
       !CHARACTER*8, PARAMETER :: ERRKEY = 'SW_SensorD'
-      CHARACTER*78 MSG(30) 
-      INTEGER i, j, L, DYNAMIC, NLAYR, LIMIT_2D, iPDAT, iHDAT
+!     CHARACTER*78 MSG(30) 
+      INTEGER i, j, L, DYNAMIC    !, NLAYR, LIMIT_2D, iPDAT, iHDAT
       INTEGER LUNIO
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
+!     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
 
-      REAL, DIMENSION(NL) :: BD, DLAYR, DS
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
-      REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width
+!     REAL, DIMENSION(NL) :: BD, DLAYR, DS
+!     REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
+!     REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width
       LOGICAL FEXIST
       
       REAL, DIMENSION(8):: SS_SW
       Integer LUNWBLxmlD, YR2, DY2, FurCol1
-      Integer CellDTLx, CellDTLy, RowIndx(10,2), ColIndx(10,2)
-      CHARACTER*6  SSLayerText(4)
+      Integer RowIndx(10,2), ColIndx(10,2)    !CellDTLx, CellDTLy, 
+!     CHARACTER*6  SSLayerText(4)
       CHARACTER*30 FILEIO
       CHARACTER*6 X(EvaluateNum)
       INTEGER TRTNUM
@@ -138,9 +138,9 @@ C-----------------------------------------------------------------------
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
 C-----------------------------------------------------------------------
 !-----------------------------------------------------------------
-      !  SWV    = CELLS % State % SWV
-       ! Call CalSS_SW(SOILPROP, SWV, SSDS, SS_SW )
-    !   Call CalSS_CellIndex(SOILPROP, SSDep, SSOfset, RowIndx, ColIndx )
+!        SWV    = CELLS % State % SWV
+!        Call CalSS_SW(SOILPROP, SWV, SSDS, SS_SW )
+!       Call CalSS_CellIndex(SOILPROP, SSDep, SSOfset, RowIndx, ColIndx )
         DO i = 1, 8
           SS_SW(i) =( SWV(RowIndx(i,1),ColIndx(i,1)) + 
      &               SWV(RowIndx(i,2),ColIndx(i,2)) )/2
@@ -182,7 +182,7 @@ C=====================================================================
 !-----------------------------------------------------------------------
 !=======================================================================
 
-      SUBROUTINE SW_SensorH(SOILPROP, CONTROL, Cells,SWV,iHr)       !Input
+      SUBROUTINE SW_SensorH(SOILPROP, CONTROL, Cells,SWV,iHr)  
 !-----------------------------------------------------------------------
       USE Cells_2D
       USE ModuleData
@@ -195,21 +195,21 @@ C=====================================================================
       
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
       CHARACTER*8, PARAMETER :: ERRKEY = 'SW_SensorH'
-      CHARACTER*78 MSG(30)
-      INTEGER i, j, L, DYNAMIC, NLAYR, LIMIT_2D, iHr, iPDAT, iHDAT
+!     CHARACTER*78 MSG(30)
+      INTEGER i, j, L, DYNAMIC, iHr, iHDAT !, NLAYR, LIMIT_2D, iPDAT
       INTEGER LUNIO
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
-      Integer CellDTLx, CellDTLy, RowIndx(10,2), ColIndx(10,2)
+!     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
+      Integer RowIndx(10,2), ColIndx(10,2)    !CellDTLx, CellDTLy, 
 
-      REAL, DIMENSION(NL) :: BD, DLAYR, DS
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
-      REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width
+!     REAL, DIMENSION(NL) :: BD, DLAYR, DS
+!     REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
+!     REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width
       LOGICAL FEXIST
       
       REAL, DIMENSION(8) :: SS_SW
       !REAL, DIMENSION(4):: SS_SWmax, SS_SWmin, SS_SWavg 
       Integer LUNWBLxmlH, YR2, DY2, FurCol1
-      CHARACTER*6  SSLayerText(4)
+!     CHARACTER*6  SSLayerText(4)
       !CHARACTER*12 FILEA
       CHARACTER*30 FILEIO
 	!CHARACTER*80 PATHEX
@@ -389,15 +389,15 @@ C=====================================================================
       TYPE (SoilType) SOILPROP
       Real SSDS(4), SS_SW(4, NColsTot), Top, Bottom !, Thick
       INTEGER i, j, L, NLAYR, FurCol1 
-      REAL HalfFurrow, HalfRow
-      Real, Dimension(MaxRows,MaxCols) :: CellArea, SWV
-      REAL, DIMENSION(NL) :: DLAYR, DS
+!     REAL HalfFurrow, HalfRow
+      Real, Dimension(MaxRows,MaxCols) :: SWV !CellArea, 
+      REAL, DIMENSION(NL) :: DS   !DLAYR, 
       
-   !   CellArea = CELLS % Struc % CellArea !CELLS % Struc % Width , CELLS % Struc % Thick
+!     CellArea = CELLS % Struc % CellArea !CELLS % Struc % Width , CELLS % Struc % Thick
       DS    = SOILPROP % DS 
       NLAYR = SOILPROP % NLAYR 
       FurCol1 = BedDimension % FurCol1
-   !   DLAYR = SOILPROP % DLAYR
+!     DLAYR = SOILPROP % DLAYR
      
       DO i = 1, 4
          DO j = 1, Furcol1-1
@@ -444,23 +444,23 @@ C=====================================================================
       Implicit None
       
       TYPE (SoilType) SOILPROP
-      Real SSDS(4), SS_SW(4, NColsTot), Top, Bottom, Left, Right !, Thick
+      Real Top, Bottom, Left, Right !Thick, SSDS(4), SS_SW(4, NColsTot), 
       INTEGER i, j, L, NLAYR, FurCol1, RowIndx(10,2), ColIndx(10,2)
-      REAL HalfFurrow, HalfRow, SSDep(10), SSOfset(10)
+      REAL SSDep(10), SSOfset(10) !HalfFurrow, HalfRow, 
       REAL, DIMENSION(MaxRows,MaxCols) :: Width
       !Real, Dimension(MaxRows,MaxCols) :: CellArea, SWV
-      REAL, DIMENSION(NL) :: DLAYR, DS
+      REAL, DIMENSION(NL) :: DS   !DLAYR, 
       TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CELLS
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
+!     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
       
-   !   CellArea = CELLS % Struc % CellArea !CELLS % Struc % Width , CELLS % Struc % Thick
+!      CellArea = CELLS % Struc % CellArea !CELLS % Struc % Width , CELLS % Struc % Thick
       DS    = SOILPROP % DS 
       NLAYR = SOILPROP % NLAYR 
       FurCol1 = BedDimension % FurCol1
       Width = CELLS % Struc % Width
       RowIndx = 1
       ColIndx = 1 ! set default value if there is no A file available
-   !   DLAYR = SOILPROP % DLAYR
+!      DLAYR = SOILPROP % DLAYR
      
       DO i = 1, 8
            DO L = 1, NLAYR 
@@ -502,7 +502,8 @@ C=====================================================================
 !               This sensor layer is in between of two simulation layers; 
                 ColIndx(j,1) = L 
                 ! if (L == (FurCol1-1) ) then
-                if (L == MaxCols ) then ! bug, need handle if last col of Furrow or last row of bed
+!               bug, need handle if last col of Furrow or last row of bed
+                if (L == MaxCols ) then 
                   ColIndx(j,2) = L
                 else 
                   ColIndx(j,2) = L+1
@@ -545,12 +546,12 @@ C  02/09/2007 GH  Add path for fileA
       IMPLICIT NONE
 
       INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,ISECT,NTR,I, J
-      INTEGER YR,ISIM
+!     INTEGER YR,ISIM
       INTEGER COUNT, LUNIO, ISENS, LNUM
 !     Headers with aliases -- save column
-      INTEGER HWAM, HWAH, BWAM, BWAH, PDFT, R5AT  
+!     INTEGER HWAM, HWAH, BWAM, BWAH, PDFT, R5AT  
 
-      REAL TESTVAL
+!     REAL TESTVAL
 
       CHARACTER*6   OLABS(EvaluateNum), HD
       CHARACTER*6   HEAD(EvaluateNum)
@@ -584,12 +585,11 @@ C  02/09/2007 GH  Add path for fileA
      & 'DTLRW  ', !17 Row index for detail output cll (integer)
      & 'DTLCL  ', !18 Col index for detail output cll (integer)
      &  22 * '      '/   
-      !       Read FILEIO
-        !     Read FILEIO
-       !INQUIRE (FILE = FILEIO,OPENED = FOPEN) ! check if the file was not closed?
+
+!     INQUIRE (FILE = FILEIO,OPENED = FOPEN) ! check if the file was not closed?
       OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
-!
+
       READ (LUNIO,'(55X,I5)',IOSTAT=ERRNUM) ISENS; LNUM = 1   
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
       READ (LUNIO,'(3(/),15X,A12,1X,A80)',IOSTAT=ERRNUM) FILEA,

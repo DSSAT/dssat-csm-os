@@ -67,7 +67,7 @@ C=======================================================================
       SAVE
       
       Type (CellType) Cells(MaxRows,MaxCols)
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
+!     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
       REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
 
       INTEGER DYNAMIC, ISTAGE, L, NLAYR
@@ -82,7 +82,7 @@ C=======================================================================
       REAL TUBSINK, TUBSN, TUBWT
       REAL WTNUP, XMIN, XNDEM
 
-      REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
+      REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL  !, NH4, NO3
       REAL, DIMENSION(NL) :: SAT, UNO3, UNH4
       
       INTEGER J, FurCol1
@@ -415,11 +415,11 @@ C-----------------------------------------------------------------------
           XMIN          = 0.5 / KG2PPM(L)
           UNH4_2D(L, J) = AMIN1 (UNH4_2D(L, J),SNH4_2D(L, J) - XMIN)
           UNH4_2D(L, J) = MAX(0.0, UNH4_2D(L, J))
-          TRNU          = TRNU + UNO3_2D(L, J) + UNH4_2D(L, J)       !kg[N]/ha
+          TRNU          = TRNU + UNO3_2D(L, J) + UNH4_2D(L, J) !kg[N]/ha
         END DO
       END DO
 
-      TRNU = TRNU/(PLTPOP*10.0)                       !g[N]/plant
+      TRNU = TRNU/(PLTPOP*10.0)             !g[N]/plant
 
       CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
       CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha

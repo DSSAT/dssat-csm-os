@@ -132,28 +132,29 @@ C-----------------------------------------------------------------------
 !          DripIrrig % DripStart(J) = DripStart(NDRIP, J)  
 !          DripIrrig % DripInt(J)   = DripInt(NDRIP, J) 
             temp= 0.
-!           Calculate drip duration based on known quantity and drip rate
-            !DripIrrig % DripDur(J) = 
-   ! &        IRRAPL/DripRate(NDRIP,J)*DripSpc * ROWSPC_CM / 10. / 3600.        
-            !!!If (IRRAPL . LE. BEDHT*10.) Then  
-              !!!temp = IRRAPL /
-     &          !!!(DripRate(1,J)* EFFIRR)*DripSpc * BEDWD / 10./3600. !half bed
-     
-!           hr          mm/d        cm/emitter * cm
-!           -- =    ------------- * ---------------
-!            d      cm3/s-emitter     mm/cm * s/hr
-            !!!else 
-              !!!temp = DripSpc * BEDWD * BEDHT/3600./
-     &        !!!       (DripRate(1,J)* EFFIRR)
-              !!!temp = temp + (IRRAPL- BEDHT*10.)/(EFFIRR*
-     &        !!!  DripRate(1,J))*DripSpc * BEDWD / 10./3600.
-            !!!endif 
+!!           Calculate drip duration based on known quantity and drip rate
+!            !DripIrrig % DripDur(J) = 
+!   ! &        IRRAPL/DripRate(NDRIP,J)*DripSpc * ROWSPC_CM / 10. / 3600.        
+!            !!!If (IRRAPL . LE. BEDHT*10.) Then  
+!              !!!temp = IRRAPL /
+!     &          !!!(DripRate(1,J)* EFFIRR)*DripSpc * BEDWD / 10./3600. !half bed
+!     
+!!           hr          mm/d        cm/emitter * cm
+!!           -- =    ------------- * ---------------
+!!            d      cm3/s-emitter     mm/cm * s/hr
+!            !!!else 
+!              !!!temp = DripSpc * BEDWD * BEDHT/3600./
+!     &        !!!       (DripRate(1,J)* EFFIRR)
+!              !!!temp = temp + (IRRAPL- BEDHT*10.)/(EFFIRR*
+!     &        !!!  DripRate(1,J))*DripSpc * BEDWD / 10./3600.
+!            !!!endif 
             temp = IRRAPL_cm2/(DripRate(1,J)* EFFIRR)*DripSpc(1)/3600.
             !IrrRate = IRRAPL
             !DripIrrig % IrrRate = IRRAPL    
-       DripIrrig(1) % DripNum(1)   = nint(temp/0.67) !rounding assume irrigation duration is about 40. minutes, 0.67hr
+!      rounding assume irrigation duration is about 40. minutes, 0.67hr
+       DripIrrig(1) % DripNum(1)   = nint(temp/0.67) 
        if (DripIrrig(1)%DripNum(1).EQ.0)DripIrrig(1)%DripNum(1)=1
-       if (DripIrrig(1)%DripNum(1).EQ.1)DripIrrig(1)%DripInt(J)=0.  !in hr
+       if (DripIrrig(1)%DripNum(1).EQ.1)DripIrrig(1)%DripInt(J)=0. !in hr
        DripIrrig(1) % DripDur(1) = temp /DripIrrig(1) % DripNum(1) 
        SPD = DripIrrig(1)% DripNum(1) * DripIrrig(1) % DripDur(1) *3600.
 !        s/d =    #/day     *   hr        * s/hr 
@@ -243,7 +244,7 @@ C-----------------------------------------------------------------------
 
       SUBROUTINE SWDEFICIT_bed(
      &    DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,       !Input
-     &    ATHETA, SWDEF, SWDEF_cm2)                                  !Output
+     &    ATHETA, SWDEF, SWDEF_cm2)                       !Output
 
       USE ModuleDefs
       USE Cells_2D
@@ -277,7 +278,8 @@ C-----------------------------------------------------------------------
             XDEPL  = DEPMAX
             DEPMAX = DEPMAX + DLAYR(L)
             IF (DEPMAX .GT. DSOIL) THEN
-              XDEP = (DSOIL - XDEPL) ! DSOIL(cm) Is from IMDEP, in @Auto management of X file
+!             DSOIL(cm) Is from IMDEP, in @Auto management of X file
+              XDEP = (DSOIL - XDEPL) 
             ELSE
               XDEP = DLAYR(L)
             ENDIF

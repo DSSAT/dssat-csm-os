@@ -23,7 +23,7 @@
       INTEGER DYNAMIC, i, j, NSOURCE
       INTEGER FurRow1, FurCol1
 
-      REAL TLCH, TLCHD, WFluxFrac, NTEMP_AVG
+      REAL TLCH, TLCHD, WFluxFrac !, NTEMP_AVG
       REAL, DIMENSION(NL) :: ADCOEF, BD, DUL, FRAC_SOLN
       REAL, DIMENSION(MaxCols) :: NLeach
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, DLTN, ColFrac,
@@ -173,7 +173,8 @@
             ELSE
 !             Accumulate the N lost by leaching below profile depth.
               NLeach(j) = NFlux_D(NRowsTot,j)
-              TLCHD = TLCHD + NLeach(j) * ColFrac(i, j)   !Today's leached N
+!             Today's leached N
+              TLCHD = TLCHD + NLeach(j) * ColFrac(i, j)   
             ENDIF
           ENDIF
 

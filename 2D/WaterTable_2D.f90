@@ -342,7 +342,7 @@
     TYPE (SwitchType)   ISWITCH
 
     REAL, DIMENSION(NL):: ThetaCap, DUL, LL, SAT, LrTop, DS !NLAYR
-    REAL ThetaCa(25)
+!   REAL ThetaCa(25)
     CHARACTER*17, PARAMETER :: ThetaCapOut = 'ThetaCap.OUT'
     LOGICAL FEXIST, DOPRINT
     !    CALL GET('MGMT','WATTAB',MgmtWTD)

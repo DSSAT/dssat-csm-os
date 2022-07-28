@@ -102,7 +102,8 @@ C=======================================================================
       INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-      REAL    BEDHT, BEDWD, DripLN(NDrpLn), DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
+      REAL    BEDHT, BEDWD, DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
+      INTEGER DripLN(NDrpLn)
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 

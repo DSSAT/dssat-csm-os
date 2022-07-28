@@ -128,7 +128,8 @@ C-SUN INTEGER       LNBLNK
       REAL          AINO3,AINH4,TNMIN,ANO3,ANH4,TSWINI
       REAL          ESW(NL),SW(NL),TLL,TSW,TDUL,TSAT,TPESW,CUMDEP,PESW
       REAL          PLTFOR, BEDHT, BEDWD
-      REAL          DripLN(NDrpLn), DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
+      REAL          DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
+      INTEGER       DripLN(NDrpLn)
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH

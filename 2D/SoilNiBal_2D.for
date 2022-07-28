@@ -29,7 +29,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       CHARACTER*18, PARAMETER ::  SNiBAL2D = 'SoilNiBal2D.OUT'
 
       INTEGER DAS, DYNAMIC, INCDAT, YRDOY
-      INTEGER YRSIM, RUN, LUNSNC, NBUND, Clunn, Clunn1D2D
+      INTEGER YRSIM, RUN, NBUND, Clunn, Clunn1D2D !LUNSNC, 
       INTEGER YR, DOY, YRI, DOYI, detailRow, detailCol, PTFLG, MULTI
       INTEGER L, J
 
@@ -271,16 +271,17 @@ C  03/04/2005 CHP wrote based on SoilNBal
       ENDIF
 
       
-      ! JZW NHFlux, NVFlux represen Nitrogen; WHFlux, WVFlux, represent water
+!       JZW NHFlux, NVFlux represen Nitrogen; WHFlux, WVFlux, represent water
  1130 FORMAT('!',15X,'           STATE   --------------------------- A',
      & 'DDED -----------------------   --------------------- REMOVED T',
      & 'ODAY -----------------------------------------   -- DAILY CUMU',
      & 'L ---',/,
-     & '@YEAR DOY   DAS ROW COL   TotalN   AFERT     CelNom', ! NH4(i,j)    NO3(i,j)   
+     & '@YEAR DOY   DAS ROW COL   TotalN   AFERT     CelNom',  
 !     & '    NFluxL    NFluxD    NFluxR    NFluxU  ', !State vars
      & '    NFluxR    NFluxL    NFluxD    NFluxU    NFluxR    NFluxL',
      & '    NFluxD    NFluxU  ' ! State vars
-     & ' NH4UpTak  NO3UpTak   NOX       CelIMM   CellNBal   CumNBal' !Inflows
+!     Inflows
+     & ' NH4UpTak  NO3UpTak   NOX       CelIMM   CellNBal   CumNBal' 
      & '       RLV   SWV_CM2       SWV  ES_RATE   EP_RATE   IrrVol'
      & '    InfVol    WFluxH    WFluxV    WFluxL    WFluxD    WFluxR',
      & '    WFluxU   WFluxVH   WFluxVV')
@@ -291,8 +292,10 @@ C  03/04/2005 CHP wrote based on SoilNBal
      & '@YEAR DOY   DAS      NO3   NO32D     NH4   NH42D   TUREA TUREA',
      & '2D   AFERT     CelNom', ! NH4(i,j)    NO3(i,j)   
 !     & '    NFluxL    NFluxD    NFluxR    NFluxU  ', !State vars
-     & '    NFluxR    NFluxL    NFluxD    NFluxU    NFluxR    NFluxL' ! State vars
-     & '    NFluxD    NFluxU   NH4UpTak  NO3UpTak   NOX       CelIMM' !Inflows
+!     State vars
+     & '    NFluxR    NFluxL    NFluxD    NFluxU    NFluxR    NFluxL' 
+!     Inflows
+     & '    NFluxD    NFluxU   NH4UpTak  NO3UpTak   NOX       CelIMM' 
      & '   CellNBal   CumNBal       RLV   SWV_CM2       SWV  ES_RATE'
      & '   EP_RATE   IrrVol    InfVol    WFluxH    WFluxV    WFluxL ',
      & '   WFluxD    WFluxR    WFluxU   WFluxVH   WFluxVV')
@@ -390,9 +393,9 @@ C  03/04/2005 CHP wrote based on SoilNBal
      & CellDetail % state % SNO3 +
      & CellDetail % state % SNH4 +
      & CellDetail % state % UREA )
-      !10 * ug/cm = (1/cm) * cm * cm * kg/ha
-      ! TNH4  = TNH4  + SNH4_2D(L, J) * ColFrac(j)
-      ! ! SNH4_2D(L,J)   Total extractable ammonium N in soil layer L (kg [N] / ha)
+!      10 * ug/cm = (1/cm) * cm * cm * kg/ha
+!       TNH4  = TNH4  + SNH4_2D(L, J) * ColFrac(j)
+!       ! SNH4_2D(L,J)   Total extractable ammonium N in soil layer L (kg [N] / ha)
 !      FertAdd = (
 !!      FertAdd = 10.* (1/CelHT) * CelWD * CelHT * (
 !     & FERTDATA % ADDSNO3(L) + 
@@ -635,8 +638,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &     /,'!', 3X, 'Soil Urea',            T48, F10.2, T68, F10.2)
 
 300     FORMAT (
-     &       '!', 3X, 'Flood water N',        T48, F10.2, T68, F10.2, ! JW, JZW how to change?
-    !    &       '!', 3X, 'Flood water N',        T48, F10.2, T68, F10.2,
+     &       '!', 3X, 'Flood water N',        T48, F10.2, T68, F10.2, 
      &     /,'!', 3X, 'Algae N',              T48, F10.2, T68, F10.2)
 
 600     FORMAT (

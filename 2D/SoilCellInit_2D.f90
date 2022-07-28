@@ -64,7 +64,7 @@
     CHARACTER*14 FMT
     ! CHARACTER*17 bedSOILLAYERTYPE 
     CHARACTER*125 MSG(50)
-    CHARACTER*180 CHAR
+!   CHARACTER*180 CHAR
     INTEGER L, M, NLayr, Row, Col
     INTEGER ERR, FOUND, LNUM, LUNIO
     INTEGER N_Bed_Cols, N_Fur_Cols, N_Bed_Rows  !, NRowsTOT, NColsTOT
@@ -86,7 +86,7 @@
     REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
     REAL Bed_BD, Bed_CEC, Bed_Clay, Bed_DUL, Bed_LL, Bed_OC, Bed_PH, Bed_NH4, Bed_NO3
     REAL Bed_Sand, Bed_SAT, Bed_Silt, Bed_SWCN, Bed_ADCOEF, Bed_TOTN, Bed_WR, Bed_TotOrgN
-    REAL Bed_WCR, Bed_alphaVG, Bed_mVG, Bed_nVG, Bed_CACO3, Bed_DMOD
+    REAL Bed_WCR, Bed_alphaVG, Bed_mVG, Bed_nVG, Bed_CACO3  !, Bed_DMOD
     Real Bed_SASC, Bed_TOTBAS, Bed_EXCA, Bed_EXNA, Bed_EXK, Bed_EXTP, Bed_TOTP, Bed_ORGP
     REAL LayerThick
 

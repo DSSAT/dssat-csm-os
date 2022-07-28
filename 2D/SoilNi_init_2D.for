@@ -23,17 +23,17 @@ C=======================================================================
       SAVE
 
       CHARACTER*1 RNMODE 
-      CHARACTER*6 ERRKEY, SECTION, DUMMY
+      CHARACTER*6 ERRKEY  !, SECTION, DUMMY
       CHARACTER*30 FILEIO
       PARAMETER (ERRKEY = 'SOILNI')
 
-      INTEGER ERRNUM, FOUND, FurRow1, J, L, LNUM, M
-      INTEGER LUNIO, NLAYR, NL_init, RUN
+      INTEGER FurRow1, J, L  !ERRNUM, FOUND, LNUM, M,
+      INTEGER LUNIO, NLAYR, RUN   !, NL_init
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
 
-      REAL BedHt, BedNH4, BedNO3, DepAdjust, DigDep
-      REAL, DIMENSION(NL) :: Depth, DS, KG2PPM, NH4, NO3, ST
-      REAL, DIMENSION(NL) :: DEP_Adj, NH4_Adj, NO3_Adj
+      REAL BedHt, DigDep   !, BedNH4, BedNO3, DepAdjust
+      REAL, DIMENSION(NL) :: DS, KG2PPM, NH4, NO3, ST !Depth, 
+!     REAL, DIMENSION(NL) :: DEP_Adj, NH4_Adj, NO3_Adj
       REAL, DIMENSION(MaxRows,MaxCols) :: NH4_2D, NO3_2D,TFNITY
       REAL, DIMENSION(MaxRows,MaxCols) :: SNH4_2D, SNO3_2D, UREA_2D 
 
@@ -111,7 +111,7 @@ C=======================================================================
 !
 !!         DepAdjust is the additional height above native soil profile 
 !!         due to construction of bed
- !         DepAdjust = BedHt - DigDep    ! Jin : bed width may not equal to furrow width??
+!          DepAdjust = BedHt - DigDep    ! Jin : bed width may not equal to furrow width??
 !          DO L = 1, NL_init
 !            IF (Depth(L) < DigDep) CYCLE
 !            M = M + 1

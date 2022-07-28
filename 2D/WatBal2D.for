@@ -76,8 +76,8 @@
       REAL RAIN, RUNOFF, ES
       REAL TEP, TES, SRAD_TOT
       REAL TDRAIN, TRUNOF, TSW, TSWINI
-      !INTEGER, PARAMETER :: MaxNEvent = 20  !Max number of irrigation event
-      !REAL, DIMENSION(MaxNEvent) :: DripStart, DripDur, DripInt, DripRate
+!     INTEGER, PARAMETER :: MaxNEvent = 20  !Max number of irrigation event
+!     REAL, DIMENSION(MaxNEvent) :: DripStart, DripDur, DripInt, DripRate
       REAL IrrRate(NDrpLn), RWUEP1
 
       REAL TimeIncr, MinTimeIncr, ROWSPC_cm, DayIncr
@@ -104,7 +104,8 @@
 !      REAL, ALLOCATABLE :: DripDep(:,:), DripStart(:,:), DripDur(:,:)
       
       Double Precision DRAIN_ts, EOP_ts, ES_avg, ES_day, ES_ts
-      Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn),Rain_ts,Runoff_ts
+      Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn), Rain_ts
+      Double Precision IrrVol_temp(NDrpLn), Runoff_ts  !chp
       Double Precision TRWU_ts,TRWUP_ts,SW_VOL_tot
 
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
@@ -112,6 +113,7 @@
       Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_ts, RWU_2D_ts
       Double precision, DIMENSION(MaxRows,MaxCols) :: RWUP_2D_ts, EP_vf,
      &       ES_vf_ts, INF_vol_dtal
+      Double precision, DIMENSION(MaxRows,MaxCols) :: INF_vol_dtal_temp  !chp
 !      Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_LAST
       Double Precision, DIMENSION(MaxRows,MaxCols,0:24) :: ES_Hr
 
@@ -187,7 +189,8 @@
       BedDimension % DripCol = -99
       BedDimension % DripRow = -99
       DO IDL = 1, NDripLnTOT
-        BedDimension % DripCol(IDL) = 1 !default drip emitter located at center of bed
+!       default drip emitter located at center of bed
+        BedDimension % DripCol(IDL) = 1 
         BedDimension % DripRow(IDL) = 1
         WidTot = 0.
         DO j = 1, FurCol1-1
@@ -210,8 +213,8 @@
       IF (BedDimension % RaisedBed) THEN
         DO i = 1, NRowsTot
           DO j = 1, NColsTot
-  !         Set all initial soil water contents to DUL (soil will be wet after
-  !           construction of raised bed).
+!           Set all initial soil water contents to DUL (soil will be wet after
+!             construction of raised bed).
             SELECT CASE(CELLS(i,j)%Struc%CellType)
               CASE (3,4,5)
                 SWV(i,j) = SOILPROP%DUL(i)
@@ -225,8 +228,8 @@
       ELSE
         DO i = 1, NRowsTot
           DO j = 1, NColsTot
-  !         Set all initial soil water contents to DUL (soil will be wet after
-  !           construction of raised bed).
+!           Set all initial soil water contents to DUL (soil will be wet after
+!             construction of raised bed).
             SELECT CASE(CELLS(i,j)%Struc%CellType)
               CASE (3,4,5)
                 SWV(i,j) = SW(i)
@@ -245,7 +248,7 @@
       CALL WaterTable_2D(SEASINIT,                        
      &  CELLS, SOILPROP, SWV,                   !Input
      &  LatFlow, MgmtWTD, ThetaCap)             !Output
-      ! If there is water table, set the initial condition of SWV as ThetaCap  
+!     If there is water table, set the initial condition of SWV as ThetaCap  
       IF (MgmtWTD .LT. 9999.) THEN
         Do i =1, NLAYR
           DO j = 1, NColsTot
@@ -390,12 +393,22 @@
 !      call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
 !      call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
 
+!     chp 2022-07-10
+      INF_vol_dtal_temp = 0.0
+
       Call Wbal_2D_ts(CONTROL, ISWITCH, 0.0, 0.0, 
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, Diffus, Kunsat, 0.0,
      &    0, 0.0,
 !         Temp chp
-     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, 0.d0)
+!    &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, 0.d0)
+     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal_temp)
+!      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
+!     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
+!     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input  dp, dp, dp, int(2), real(r,c), real(r,c), real
+!     &    Count, LatFlow,                                       !Input  int, real
+!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input real(r,c), dp(r,c), dp(r,c), dp(r,c), dp(nd), dp(r,c)
+!     ------------------------------------------------------------------
 
       print *, " "
       print *, "Start 2D, variable time-step model"
@@ -457,7 +470,8 @@
 !     Upflow needed for N movement, units are cm2 to match flux units
       EvapFlow = 0.0
       IF (BedDimension % PMCover) then
-        jj = FurCol1 ! If there is plastic cover, the infiltration is in the furrow
+!       If there is plastic cover, the infiltration is in the furrow
+        jj = FurCol1 
       else
         jj = 1
       endif
@@ -485,15 +499,15 @@
      &  CELLS, SOILPROP, SWV,                   !Input
      &  LatFlow, MgmtWTD, ThetaCap)             !Output
 
-      ! SWV should be previous'days SWV and is input. It is used to calculate the LatFlow due to water table depth change
-      ! Here LatFlow is due to daily change of MgmtWTD
+!     SWV should be previous'days SWV and is input. It is used to calculate the LatFlow due to water table depth change
+!     Here LatFlow is due to daily change of MgmtWTD
         
-      ! After call WaterTable_2D to get theLIMIT_2D, set the soil water content below LIMIT_2D as ThetaCap
+!     After call WaterTable_2D to get theLIMIT_2D, set the soil water content below LIMIT_2D as ThetaCap
       LIMIT_2D = BedDimension % LIMIT_2D
       if (LIMIT_2D .LT. NLAYR) then
         DO i = LIMIT_2D+1, NLAYR
           DO j = 1, NColsTot
-            !SWV_avail is Double precision cell soil water content at the beginning of time step in mm3/mm3
+!           SWV_avail is Double precision cell soil water content at the beginning of time step in mm3/mm3
             SWV_avail(i,j) = ThetaCap(i)
           !  SWV_D(i, j) = DBLE(SWV_avail(i.j))
           Enddo
@@ -587,7 +601,7 @@
              WRITE(MSG(1),'(A)')
      &         "ending time is invalid"
              CALL INFO(1,ERRKEY,MSG)
-           ! Chek if the starting time of certain event is earlier than the end time of previous event
+!          Check if the starting time of certain event is earlier than the end time of previous event
            elseif (JJ .GT. 1) then 
              if (IrrigSched(IDL,JJ,1) .LT. IrrigSched(IDL,JJ-1,2)) then
                WRITE(MSG(1),'(A)')
@@ -602,7 +616,8 @@
 
 !     Can also use conventional irrigation, if no drip irrig entries
 !     IF (.NOT. BedDimension % RaisedBed .AND. DripNum == 0) THEN
-      IF (MAXVAL(DripNumTotArr) == 0) THEN ! Removed by Jin Wu on March, 2013 , StdIrrig is for dripper and non-dripper
+!     Removed by Jin Wu on March, 2013 , StdIrrig is for dripper and non-dripper
+      IF (MAXVAL(DripNumTotArr) == 0) THEN 
         StdIrrig = IRRAMT ! for non-drip irrigation
         IF (StdIrrig < 1.E-6) THEN
           StdIrrig = 0.0
@@ -612,9 +627,9 @@
             IF (BedDimension % PMCover) then
               WINF_col(j) = WINF_col(j) + 
      &           StdIrrig * ROWSPC_cm/(ROWSPC_cm - BedDimension % BEDWD)
-              !Standard one dimension effective irrigation amount(mm)
-              !The irrigation water on plastic cover run to furrow area
-              !Rnoff_furrow calculated the iffitration for rain, here add the iffitration of sprinkle
+!              Standard one dimension effective irrigation amount(mm)
+!              The irrigation water on plastic cover run to furrow area
+!              Rnoff_furrow calculated the iffitration for rain, here add the iffitration of sprinkle
             else 
               WINF_col(j) = WINF_col(j) + StdIrrig 
             Endif
@@ -723,20 +738,20 @@
           ENDIF
         
           IF (RAIN > 1.E-6) THEN  ! check if both irr and rain exist
-             ! Actually, under above if statement, the TimeIncr is overwrite by the next if (IRRIG) elseif 
-             !IF (DripInt(J) > 1.E-6) THEN
-!            if (IrrigIndex < DripNumTot) Then
-!              DripIntNow =  ! Check if it  is correct ?????
-!     &          IrrigSched(IrrigIndex+1,1) - IrrigSched(IrrigIndex,2)
-!            else 
+!           Actually, under above if statement, the TimeIncr is overwrite by the next if (IRRIG) elseif 
+!           IF (DripInt(J) > 1.E-6) THEN
+!             if (IrrigIndex < DripNumTot) Then
+!               DripIntNow =  ! Check if it  is correct ?????
+!     &         IrrigSched(IrrigIndex+1,1) - IrrigSched(IrrigIndex,2)
+!             else 
 !               DripIntNow = 0
-!            endif
-!          IF ( DripIntNow > 1.E-6) THEN
-           !IF ( DripInt(IrrigIndex) > 1.E-6) THEN
+!             endif
+!           IF ( DripIntNow > 1.E-6) THEN
+!           IF ( DripInt(IrrigIndex) > 1.E-6) THEN
             IF (IrrigIndex .LT. DripNumTot) then 
               IF (DripInt(IDL,IrrigIndex) > 1.E-6) DeltaT =
-     &                 Time_interval(DripInt(IDL,IrrigIndex), TSN)  !minutes !TSN:Approximate time interval, min
-              ! DeltaT = Time_interval(DripInt, TSN)  !minutes !TSN:Approximate time interval, min
+     &                 Time_interval(DripInt(IDL,IrrigIndex), TSN)  
+!             DeltaT = Time_interval(DripInt, TSN)  !minutes !TSN:Approximate time interval, min
             ELSE
               DeltaT = TSN
             ENDIF
@@ -839,7 +854,8 @@
 !       Add infiltration to top furrow cells evenly throughout day.
         IF (RAIN > 1.E-6 .OR. StdIrrig > 1.E-6) THEN
           IF (BedDimension % PMCover) then
-            jj = FurCol1 ! If there is plastic cover, the infiltration is in the furrow
+!           If there is plastic cover, the infiltration is in the furrow
+            jj = FurCol1 
             i = FurRow1
           else
             jj = 1
@@ -885,7 +901,8 @@
 !       Soil Evaporation
         ES_ts = 0.0
         IF (BedDimension % PMCover) then
-          jj = FurCol1 ! If there is plastic cover, the infiltration is in the furrow
+!         If there is plastic cover, the infiltration is in the furrow
+          jj = FurCol1 
         else
           jj = 1
         endif
@@ -1015,7 +1032,7 @@
 !               Negative vertical flow = upward flow from (i+1,j)
                 SWFlux_U(i+1,j) = SWFLUX_U(i+1,j) - SWFv_ts(i,j) 
 !     &                  + EvapFlow(i,j) 
-      !JZW here may be double countine with the line 876? EvapFlow(i,j) is daily instead of time step?
+!      JZW here may be double countine with the line 876? EvapFlow(i,j) is daily instead of time step?
               ELSEIF (SWFv_ts(i,j) > 1.E-10) THEN
 !               Positive vertical flow = downward flow from (i,j)
 !                SWFlux_D(i,j+1) = SWFLUX_D(i,j+1) + SWFv_ts(i,j)
@@ -1036,14 +1053,17 @@
         Call Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr, !Input
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,              !Input
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,              !Input
-     &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input for the 1st timestep, should not be LatFlow_ts
+     &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
+!         for the 1st timestep, should not be LatFlow_ts
 !         Temp chp
-     &    CellArea, SWV_ts, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input
+     &    CellArea, SWV_ts, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !I
 
 !       ---------------------------------------------------------------
-       !       Update time for next iteration
-        StartTime = EndTime ! if time step >1 hr, then start time = 0 will be missing
-        iHr = nint(StartTime-TimeIncr/120.0-0.0001) !       Output arrays only once per hour
+!       Update time for next iteration
+!       if time step >1 hr, then start time = 0 will be missing
+        StartTime = EndTime 
+!       Output arrays only once per hour
+        iHr = nint(StartTime-TimeIncr/120.0-0.0001) 
         if (((iHr < 23) .OR.
      &       (iHr >= 23 .AND. NextUpdate == 23.)) .AND. 
      &      (iHr . GE. float(NextUpdate)))    then
@@ -1126,14 +1146,14 @@
 !-----------------------------------------------------------------------
       IF (ISWITCH%ISWWAT == 'N') RETURN
 
-      ! ThetaCap calculated in the morning of the day from CapFringe is SW. We assume that the water balance is reached imediately for the area between water table and Limit_2D 
-      ! Calculation the distribution to each layer (the model of distribution used here should be improved later)
-      !We still use 2D SWV below LIMIT_2D, thus we may use the code for WBSUM_2D and do not need to create WBSUM_1D 
- !       DO i = LIMIT_2D + 1 , NLAYR 
- !         DO j = 1, NColsTot 
-  !          SWV(i,j) = SW(i) 
- !         end do
-  !      enddo
+!!       ThetaCap calculated in the morning of the day from CapFringe is SW. We assume that the water balance is reached imediately for the area between water table and Limit_2D 
+!!       Calculation the distribution to each layer (the model of distribution used here should be improved later)
+!      !We still use 2D SWV below LIMIT_2D, thus we may use the code for WBSUM_2D and do not need to create WBSUM_1D 
+! !       DO i = LIMIT_2D + 1 , NLAYR 
+! !         DO j = 1, NColsTot 
+!  !          SWV(i,j) = SW(i) 
+! !         end do
+!  !      enddo
      
       CELLS % State % SWV = SWV
 
@@ -1194,12 +1214,24 @@ C-----------------------------------------------------------------------
      &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
      &    LatFlow, StdIrrig, ES, ES_DAY)
 
+!     chp 2022-07-10 can't use an array of zeros in the argument. 
+!     I don't want to set the original variables to zero, so use a dummy argument here.
+      IrrVol_temp = 0.0
+      INF_vol_dtal_temp = 0.0
       Call Wbal_2D_ts(CONTROL, ISWITCH, 24.0, 0.0, 
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, 
      &    Diffus, Kunsat, LatFlow, 0, 0.0,
 !         Temp chp
-     &    CellArea, SWV_D, EP_vf, ES_vf_ts, 0.d0, 0.d0)
+!    &    CellArea, SWV_D, EP_vf, ES_vf_ts, 0.d0, 0.d0)
+     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol_temp, 
+     &    INF_vol_dtal_temp)
+
+!      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
+!     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
+!     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input  dp, dp, dp, int(2), real(r,c), real(r,c), real
+!     &    Count, LatFlow,                                       !Input  int, real
+!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input real(r,c), dp(r,c), dp(r,c), dp(r,c), dp(nd), dp(r,c)
 
 !***********************************************************************
 !***********************************************************************
@@ -1395,8 +1427,10 @@ C=====================================================================
       WINF_col = 0.0
 
       IF (RAIN > 1.E-6) THEN
-        IF (BedDimension % PMCover .AND. FurCol1 > NColsTot) THEN ! JZ : no furrow?
-          RUNOFF = RAIN ! CHP does not remember why this statement. Thus we may remove
+!         JZ : no furrow?
+        IF (BedDimension % PMCover .AND. FurCol1 > NColsTot) THEN 
+!         CHP does not remember why this statement. Thus we may remove
+          RUNOFF = RAIN 
           RETURN
         ENDIF
 

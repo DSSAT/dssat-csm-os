@@ -32,7 +32,7 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 C-----------------------------------------------------------------------
-      INTEGER DYNAMIC, I, L, LUN2, NLAYR, N_HRS
+      INTEGER DYNAMIC, I, L, NLAYR, N_HRS     !, LUN2
       INTEGER TSS(NL)
 
       REAL Scale2Hour, EXPONENT

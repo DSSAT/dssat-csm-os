@@ -107,7 +107,7 @@ C=======================================================================
       V_in  = 0.0
       V_out = 0.0
       WatTable = .FALSE.
-      ! At the beginning of the day, watertable_2D was called, thus LIMIT_2D has been defined  
+!     At the beginning of the day, watertable_2D was called, thus LIMIT_2D has been defined  
       LIMIT_2D = BedDimension % LIMIT_2D
 !      DO i = LIMIT_2D + 1,  NLayr
 !        if (LIMIT_2D .GE. NLayr) exit 
@@ -251,7 +251,7 @@ C=======================================================================
               Diff_limit = MAX(0.0, 
      &                  (SWV_D(i+1,j) - WCr(i+1)) * CellArea(i+1,j))
               V_diff = MAX(V_diff, -Diff_limit)
-              !Should set upper flow limit (or negative H_out limit) as SAT-SWV_D ?
+!             Should set upper flow limit (or negative H_out limit) as SAT-SWV_D ?
 
             ELSE
 !             Zero vertical diffusion rate
@@ -286,22 +286,22 @@ C=======================================================================
      &                (H_in(i,j) - H_out(i,j) + V_in(i,j) - V_out(i,j)) 
      &                 / CellArea(i,j)
           
-          ! Limit vertical Flow not making next layer above saturation
+!         Limit vertical Flow not making next layer above saturation
           if ((SWV_ts(i,j).GT. SAT(i)).and.(i.GT.1).and.(j.GT.1)) then 
              if (i.LT. LIMIT_2D) then 
-          ! If water is down flow shall we set V_in_hold? How to send the extra water back to above layer?
-            ! Do not assume to flow out horizentally
-       !     if (V_out(i,j) .LE. 0.) then
-                V_out(i,j) = V_out(i,j) + 
+!              If water is down flow shall we set V_in_hold? How to send the extra water back to above layer?
+!              Do not assume to flow out horizentally
+!            if (V_out(i,j) .LE. 0.) then
+               V_out(i,j) = V_out(i,j) + 
      &                     (SWV_ts(i,j) - SAT(i)) * CellArea(i,j)
                SWV_ts(i,j) = SAT(i)
              elseif (i.eq.LIMIT_2D) then 
-              ! if today's water table is lower then yesterday, to avoid the SW in layer LIMIT_2D to go to above SAT 
-                LatFlow_ts = LatFlow_ts -
+!              if today's water table is lower then yesterday, to avoid the SW in layer LIMIT_2D to go to above SAT 
+               LatFlow_ts = LatFlow_ts -
      &          (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
-              SWV_ts(LIMIT_2D,j) = SAT(LIMIT_2D)
-              SWFv_ts(LIMIT_2D,j) = SWFv_ts(LIMIT_2D,j) +
-     &         (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
+               SWV_ts(LIMIT_2D,j) = SAT(LIMIT_2D)
+               SWFv_ts(LIMIT_2D,j) = SWFv_ts(LIMIT_2D,j) +
+     &          (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
              Endif
         !    Endif
           Endif
@@ -328,7 +328,8 @@ C=======================================================================
           Cell_detail%Vgrav(i,j) = V_grav
         ENDDO ! Drainage column by column
       ENDDO ! Drainage row by row
-      ! Below LIMIT_2D, set subroutine output water content equal to subroutine input water content 
+
+!     Below LIMIT_2D, set subroutine output water content equal to subroutine input water content 
       if (LIMIT_2D .LT. NLayr) then 
         DO i = LIMIT_2D+1, NLAYR
           DO j = 1, NColsTot

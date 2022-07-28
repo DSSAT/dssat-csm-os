@@ -52,11 +52,11 @@ C=======================================================================
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type   
 
       REAL HalfRow, BEDWD, FertFactor
-      REAL AD, AK, ALGFIX, CW  
+      REAL AD, AK, ALGFIX !, CW  
       REAL NFAC, NNOM
       REAL SNH4_AVAIL, SNO3_AVAIL, SUMFERT
-      REAL SWEF, TFDENIT, TFUREA
-      REAL WFDENIT, WFSOM, WFUREA, XL, XMIN
+      REAL SWEF, TFUREA   !, TFDENIT
+      REAL WFSOM, WFUREA, XL, XMIN    !WFDENIT, 
       ! REAL TMINERN(MaxCols), TIMMOBN(MaxCols), TLCH, TLCHD
       ! REAL TNH4(MaxCols), TNH4NO3, TNO3(MaxCols), UHYDR
       ! REAL, DIMENSION(MaxCols) :: WTNUP, TNITRIFY, TUREA
@@ -113,12 +113,12 @@ C=======================================================================
 !          Cumul,     Daily,    Layer ppm,     Layer kg
       REAL CNOX,      TNOXD,                   DENITRIF(MaxRows,MaxCols) !Denitrification
       REAL CNITRIFY,  TNITRIFY, NITRIFppm,     NITRIF(MaxRows,MaxCols)   !Nitrification 
-      REAL CMINERN,   TMINERN                               !Mineralization
-      REAL CIMMOBN,   TIMMOBN                               !Immobilization
-      REAL CNETMINRN                                        !Net mineralization
-      REAL CNUPTAKE,  WTNUP                                 !N uptake
-      REAL CLeach,    TLeachD                               !N leaching
-      REAL CNTILEDR,  NTILEDR                               !N loss to tile (HJ added)
+      REAL CMINERN,   TMINERN              !Mineralization
+      REAL CIMMOBN,   TIMMOBN              !Immobilization
+      REAL CNETMINRN                       !Net mineralization
+      REAL CNUPTAKE,  WTNUP                !N uptake
+      REAL CLeach,    TLeachD              !N leaching
+      REAL CNTILEDR,  NTILEDR              !N loss to tile (HJ added)
 !      REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
 !      REAL CN2Odenit, TN2OdenitD,              N2ODenit(NL) !N2O from denitrification
 !      REAL CNOflux,   TNOfluxD,                NOflux(NL)   !NO flux
@@ -126,12 +126,12 @@ C=======================================================================
 !      REAL                                     dNOflux(NL)  !NO from denitrification
 !      REAL CN2,       TN2D,                    N2flux(NL)   !N2 (all from detnitrification)
       
-      !     Added for GHG model
-      REAL, DIMENSION(NL) :: dD0, NO_N2O_ratio
-      REAL, DIMENSION(0:NL) :: newCO2
-      REAL pn2onitrif, NH4_to_NO, NITRIF_to_NO
-      real nox_puls, krainNO, potential_NOflux, NITRIF_remaining
-      real canopy_reduction, NOAbsorp
+!     Added for GHG model
+!     REAL, DIMENSION(NL) :: dD0, NO_N2O_ratio
+!     REAL, DIMENSION(0:NL) :: newCO2
+!     REAL pn2onitrif, NH4_to_NO, NITRIF_to_NO
+!     real nox_puls, krainNO, potential_NOflux, NITRIF_remaining
+!     real canopy_reduction, NOAbsorp
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -617,7 +617,8 @@ C=======================================================================
             NITRIF(L, J) = 0.0
           ELSE
 !           NITRIFppm in ppm; NITRIF in kg/ha
-            NITRIF(L, J)  = NITRIFppm / KG2PPM(L) ! changed by PG from * kg2ppm
+!           changed by PG from * kg2ppm
+            NITRIF(L, J)  = NITRIFppm / KG2PPM(L) 
           ENDIF
 
           IF (NH4_2D(L, J).LE. 0.01) THEN
@@ -694,10 +695,10 @@ C=======================================================================
       IF (IUON) THEN
         NSOURCE = 1    !Urea.
         CALL NFLUX_2D (DYNAMIC, 
-     &    ADCOEF, BD, CELLS, ColFrac, DUL, UREA_2D,                   !Input
-     &    NSOURCE, SWV,                                               !Input
-     &    DLTUREA_2D, CLeach, TLeachD_UREA,                           !Output
-     &    NFlux_UREA_L, NFlux_UREA_R, NFlux_UREA_D, NFlux_UREA_U)     !Output
+     &    ADCOEF, BD, CELLS, ColFrac, DUL, UREA_2D,              !Input
+     &    NSOURCE, SWV,                                          !Input
+     &    DLTUREA_2D, CLeach, TLeachD_UREA,                      !Output
+     &    NFlux_UREA_L, NFlux_UREA_R, NFlux_UREA_D, NFlux_UREA_U)!Output
       ENDIF
 
       NSOURCE = 2   !NO3.
@@ -812,7 +813,8 @@ C=======================================================================
 !          elseif (L == Cell_detail%row .and. J == Cell_detail%col + 1) then
 !              Cell_Ndetail % NFlux_R_in  = NFlux_L(L, J)
 !          Endif
-             Cell_Ndetail % NFlux_L_out(L, J)  = NFlux_L(L, J) !CELLS % RATE % SWFlux_L
+
+             Cell_Ndetail % NFlux_L_out(L, J)  = NFlux_L(L, J) 
              Cell_Ndetail % NFlux_R_out(L, J)  = NFlux_R(L, J)
              Cell_Ndetail % NFlux_D_out(L, J)  = NFlux_D(L, J)
              Cell_Ndetail % NFlux_U_out(L, J)  = NFlux_U(L, J) 
@@ -844,10 +846,9 @@ C=======================================================================
       CELLS%State%SNH4 = SNH4_2D
       CELLS%State%SNO3 = SNO3_2D
       
-      ! Convert 2D to 1D
-      ! Integrated cell variable into layer variable   
-      ! JZW require MaxRows > NLAYR
-      ! JZW: the following is wrong  both NH4_2D and NH4 are kg/ha !!!???
+!     Convert 2D to 1D
+!     Integrated cell variable into layer variable   
+!     JZW require MaxRows > NLAYR
       CAll Interpolate2Layers_2D(NH4_2D, Cells%Struc, NLAYR,  !input
      &         NH4)                                           !Output
       CAll Interpolate2Layers_2D(NO3_2D, Cells%Struc, NLAYR,  !input

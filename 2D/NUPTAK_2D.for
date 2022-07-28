@@ -28,7 +28,7 @@ C=======================================================================
       SAVE
       
       Type (CellType) Cells(MaxRows,MaxCols)
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
+!     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
       REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'NUPTAK')

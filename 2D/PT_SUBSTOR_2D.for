@@ -44,7 +44,7 @@ C=======================================================================
       CHARACTER*2  CROP
       CHARACTER*30 FILEIO
 
-      INTEGER DYNAMIC, YREND, ISDATE, ISTAGE, I
+      INTEGER DYNAMIC, YREND, ISDATE, ISTAGE  !, I
       INTEGER MDATE, NLAYR, RUN, YRDOY, YREMRG, YRPLT, YRSIM
       INTEGER STGDOY(20)
 
@@ -220,12 +220,12 @@ C=======================================================================
 
 !     ROOTGR was called from main program between WATBAL and NTRANS
       IF (ISWWAT .EQ. 'Y') THEN
-        !
-        ! WRESR growth and depth routine
-        !
-        ! In the plant subroutine, initialize the RLV=0 for the days RLV are not calculated
-        !IF (DTT .GT. 0.0) THEN 
-        ! root growth routine should not be called until emergence day.
+!        
+!       WRESR growth and depth routine
+!        
+!       In the plant subroutine, initialize the RLV=0 for the days RLV are not calculated
+!       IF (DTT .GT. 0.0) THEN 
+!       root growth routine should not be called until emergence day.
         IF (GRORT .GT. 0.0) THEN
           CALL PT_ROOTGR_2D(RATE, ISWWAT, CELLS, YRDOY,
      &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input

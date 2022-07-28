@@ -427,7 +427,8 @@
       DO Row = FirstRow, LastRow
         DO Col = 1, LastCol
           IF (TRLDF .LT. 0.00001) THEN
-            RRLF(Row,Col) = 1.0  ! JZW: this is wrong, it should be zero, otherwise root will not be balanced
+!           JZW: this is wrong, it should be zero, otherwise root will not be balanced
+            RRLF(Row,Col) = 1.0  
           ELSE
             RRLF(Row,Col) = RLDF(Row,Col) / TRLDF
           ENDIF
@@ -458,7 +459,8 @@
 !       cm[row length]   cm3[ground]               
         ENDDO
       ENDDO
-      RLSENTOT = RLSENTOT   !cm[root]/cm[row length]   ! JZW question, this statement is non-sense??
+!     JZW question, this statement is non-sense??
+      RLSENTOT = RLSENTOT   !cm[root]/cm[row length]   
 
 !     If senescence too high (results in TRLV < TRLV_MIN) then
 !       reduce senescence in each layer by factor.
@@ -638,7 +640,8 @@
 
 !       Optional minimum root mass for senescence (g/m2)
         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-        READ(CHAR,'(F6.0,T45,A7)',IOSTAT=ERR) RTWTMIN, RWMTXT ! Cheryl let use ignore RWMTXT, *spe file do not have this variable 
+!       Cheryl let use ignore RWMTXT, *spe file do not have this variable 
+        READ(CHAR,'(F6.0,T45,A7)',IOSTAT=ERR) RTWTMIN, RWMTXT 
         IF (ERR /= 0 .OR. RWMTXT /= 'RTWTMIN' .OR. RTWTMIN < 0.) THEN
           RTWTMIN = 0.0
         ENDIF
@@ -688,7 +691,8 @@
       RootArea = 0.  !cell area containing roots
       TotRootArea = 0.0
       RTDEP = RTDEPI
-      RTWID = RTWIDI ! JZW should times 0.5, because we only consider half of bed
+!     JZW should times 0.5, because we only consider half of bed
+      RTWID = RTWIDI 
       RTWIDr = 0.0
       X = 0.0
       Z = 0.0
@@ -742,8 +746,8 @@
       DO Row = FirstRow, NRowsTot
         DO Col = 1, NColsTot
           IF (RootArea(Row,Col) > 1.E-6) THEN
-          ! JZW question should be RLV_2D(Row,Col) = RLV_2D(Row,Col) + RLINIT  * RootArea(Row,Col) / TotRootArea
-          ! RLV_2D(Row,Col) should not be zero before RLINIT ?????
+!           JZW question should be RLV_2D(Row,Col) = RLV_2D(Row,Col) + RLINIT  * RootArea(Row,Col) / TotRootArea
+!           RLV_2D(Row,Col) should not be zero before RLINIT ?????
             RLV_2D(Row,Col) = RLINIT  * RootArea(Row,Col) / TotRootArea
             RLV_2D(Row,Col) = RLV_2D(Row,Col) / CellArea(Row,Col)
 !            cm[root]         cm[root]      1  
@@ -807,7 +811,8 @@
           CASE(3)
             RLV(L) = RLV(L) / HalfBed / DLAYR(L)
           CASE(4,5)
-            RLV(L) = RLV(L) / HalfRow / DLAYR(L) ! JZW for bed area, it is wrong
+!           JZW for bed area, it is wrong
+            RLV(L) = RLV(L) / HalfRow / DLAYR(L) 
         END SELECT
 !    cm[root]       cm[root]            1               1
 !  ----------- = -------------- * ------------- * -----------------
