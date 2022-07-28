@@ -59,6 +59,7 @@ C=======================================================================
       REAL WINDRUN, XLAT, XELEV
       REAL, DIMENSION(TS)    ::RADHR, TAIRHR, ET0
       LOGICAL NOTDEW, NOWIND
+      CHARACTER*78  MSG(2)
       
       CLOUDS = WEATHER % CLOUDS
       SRAD   = WEATHER % SRAD  
@@ -82,6 +83,12 @@ C=======================================================================
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
       SELECT CASE (MEEVP)
+!         ------------------------
+          !Priestley-Taylor potential evapotranspiration
+          CASE ('R')
+            CALL PETPT(
+     &        ET_ALB, SRAD, TMAX, TMIN, XHLAI,          !Input
+     &        EO)                                       !Output
 !         ------------------------
           !FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
 !             with KC = 1.0
@@ -127,18 +134,18 @@ C=======================================================================
           !CASE ('O')
           !    EO = EOMEAS
 !         ------------------------
-          !Priestly-Taylor potential evapotranspiration hourly
+          !Priestley-Taylor potential evapotranspiration hourly
           !including a VPD effect on transpiration
           CASE ('H')
               CALL PETPTH(
      &        ET_ALB, TMAX, XHLAI, RADHR, TAIRHR,       !Input
      &        EO, ET0)                                  !Output
 !         ------------------------
-          !Priestly-Taylor potential evapotranspiration
-          CASE DEFAULT !Default - MEEVP = 'R' 
-            CALL PETPT(
-     &        ET_ALB, SRAD, TMAX, TMIN, XHLAI,          !Input
-     &        EO)                                       !Output
+          CASE DEFAULT
+              MSG(1) = "Undefined EVAPO parameter in FileX."
+              MSG(2) = "Unknown MEEVP in PET.for."
+              CALL WARNING(2,"PET",MSG)
+              CALL ERROR("CSM",64,"",0)
 !         ------------------------
       END SELECT
 
