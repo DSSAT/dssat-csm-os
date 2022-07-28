@@ -23,10 +23,10 @@ ELSEIF(BT STREQUAL "TESTING")
       "Choose the type of build, options are DEBUG, RELEASE, or TESTING."
       FORCE)
 ELSEIF(NOT BT)
-    SET(CMAKE_BUILD_TYPE RELEASE CACHE STRING
+    SET(CMAKE_BUILD_TYPE DEBUG CACHE STRING
       "Choose the type of build, options are DEBUG, RELEASE, or TESTING."
       FORCE)
-    MESSAGE(STATUS "CMAKE_BUILD_TYPE not given, defaulting to RELEASE")
+    MESSAGE(STATUS "CMAKE_BUILD_TYPE not given, defaulting to DEBUG")
 ELSE()
     MESSAGE(FATAL_ERROR "CMAKE_BUILD_TYPE not valid, choices are DEBUG, RELEASE, or TESTING")
 ENDIF(BT STREQUAL "RELEASE")

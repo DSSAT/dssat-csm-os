@@ -116,7 +116,7 @@ It is usually preferred that you do an out-of-source build.  To do this, create 
     
 When you do this, temporary CMake files will not be created in your `src/` directory.  
 
-As written, this template will allow you to specify one of three different sets of compiler flags.  The default is RELEASE.  You can change this using to TESTING or DEBUG using
+As written, this template will allow you to specify one of three different sets of compiler flags.  The default is DEBUG.  You can change this using to TESTING or DEBUG using
 
     $ cmake .. -DCMAKE_BUILD_TYPE=DEBUG
     
