@@ -511,8 +511,20 @@
   310   FORMAT (1X,I4,1X,I3.3,1X,I5, 2(I8,F8.3), 27I8, 21F8.2, I8)
         END IF    ! VSH
         
-      !     VSH CSV output corresponding to somlitn.outs
+!     VSH CSV output corresponding to somlitn.out
+!       and SOMLITC.OUT CHP
       IF (FMOPT == 'C') THEN
+       Call CsvOutSomC(EXPNAME, RUN, CONTROL%TRTNUM,
+     & CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
+     & SOC_20CM, SOC_20CM_P, SOC_40CM, SOC_40CM_P,
+     & SLC_20CM, SLC_20CM_P, SLC_40CM, SLC_40CM_P,
+     & TCTD, TC0D, TCSD, TC,
+     & SOM1C, TSOM1C, S1C, TSOM2C, S2C, TSOM3C, S3C, LITC, TLITC, LIT, 
+     & METABC, TMETABC, MET, STRUCC, TSTRUCC, STR, CUMRESC, 
+     & ACCCO2, NL, vCsvlineSomC, vpCsvlineSomC, vlngthSomC)
+
+       CALL LinklstSomC(vCsvlineSomC)
+
        Call CsvOutSomN(EXPNAME, RUN, CONTROL%TRTNUM,
      & CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
      & SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD, TN,
@@ -521,6 +533,7 @@
      & vCsvlineSomN, vpCsvlineSomN, vlngthSomN)
        CALL LinklstSomN(vCsvlineSomN)
       END IF
+
 !!       C:N ratios
 !        TCNTD = 0.0; TCN0D = 0.0; TCNSD = 0.0
 !        IF (TNTD > 1.E-9) TCNTD = TCTD / TNTD

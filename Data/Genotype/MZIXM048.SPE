@@ -95,3 +95,7 @@
     0.10          FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
     0.80          FracPUptake - Maximum fraction of available P which can be taken up / day
 
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.15       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.96       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)

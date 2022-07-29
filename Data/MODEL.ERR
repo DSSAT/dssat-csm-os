@@ -418,7 +418,7 @@ Residue input level not found. Please correct input file.
 IPRES     3
 First residue application date is defined prior to the start of simulation.
 
-IPFERT   4
+IPRES     4
 Error in residue code.  Correct input file.
 
 IPRES    10
