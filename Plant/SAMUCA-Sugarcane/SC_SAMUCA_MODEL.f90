@@ -2389,22 +2389,34 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             lai_ass  = lai
                         
             !--- Total assimilation for three canopy layers on hourly-step (Gaussian Integration) - Groudriaan
-            call totass(doy,                &
-                        dayl,               &
-                        amax_mod,           &
-                        eff_mod,            &
-                        lai_ass,            &
-                        kdif,               &
-                        c_scattering,       &
-                        srad * 1.e6,        & ! Solar Radiation [J/m2/day] - PAR [W/m2] is computed within radiat()
-                        sinld,              &
-                        cosld,              &
-                        dtg,                & ! Output
-                        Acanopy,            & ! Output
-                        Qleaf,              & ! Output
-                        incpar,             & ! Output
-                        photo_layer_act,    & ! Output
-                        frac_li)              ! Output  
+            if(dayl .gt. 0.d0) then
+                call totass(doy,                &
+                            dayl,               &
+                            amax_mod,           &
+                            eff_mod,            &
+                            lai_ass,            &
+                            kdif,               &
+                            c_scattering,       &
+                            srad * 1.e6,        & ! Solar Radiation [J/m2/day] - PAR [W/m2] is computed within radiat()
+                            sinld,              &
+                            cosld,              &
+                            dtg,                & ! Output
+                            Acanopy,            & ! Output
+                            Qleaf,              & ! Output
+                            incpar,             & ! Output
+                            photo_layer_act,    & ! Output
+                            frac_li)              ! Output
+            else
+            
+                !--- no radiation [polar zone]
+                dtg             = 0.d0
+                Acanopy         = 0.d0
+                Qleaf           = 0.d0
+                incpar          = 0.d0
+                photo_layer_act = 0.d0
+                frac_li         = 0.d0
+            
+            endif
             
             !--- Convert CO2 assimilation to CH2O assimilation rate [kgCH2O ha-1] (stoichiometric conversion)
             dtg             = dtg               * 30.d0/44.d0

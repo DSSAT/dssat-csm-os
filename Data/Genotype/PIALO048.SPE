@@ -53,3 +53,8 @@ $SPECIES:PIALO048 ALOHA pineapple model
 ! CO2X - atmospheric CO2 concentration, ppm
 ! CO2Y - multiplier for photosynthetic effect
 
+!*EVAPOTRANSPIRATION
+  0.68   0.5       KEP, EORATIO
+  0.50  0.45       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.38       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+

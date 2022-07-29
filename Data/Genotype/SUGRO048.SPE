@@ -144,9 +144,11 @@
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN                     
                                                                                                     
 !*EVAPOTRANSPIRATION                                                                                
-  0.69   1.1       KEP, EORATIO                                                                     
-                                                                                                    
-*PHOSPHORUS CONTENT                                                                                 
+  0.69   1.1       KEP, EORATIO
+  0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.92       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+
+  *PHOSPHORUS CONTENT                                                                                 
 ! Two options for Optimum and minimum P concentrations for shoots:                                  
 ! (1) supply values for shoots (leaf plus stem)                                                     
 ! (2) supply values individually for leaf and for stem                                              
