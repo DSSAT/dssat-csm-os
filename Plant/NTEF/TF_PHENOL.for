@@ -69,7 +69,6 @@ C-----------------------------------------------------------------------
       REAL        FDSW2
       REAL        FDSW3
       REAL        FOZ1  ! Added by JG for ozone calculation
-      REAL        FOZ2  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -106,7 +105,6 @@ C-----------------------------------------------------------------------
       REAL        RTDP1
       REAL        RTDP2
       REAL        SFOZ1  ! Added by JG for ozone calculation
-      REAL        SFOZ2  ! Added by JG for ozone calculation
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2
@@ -536,32 +534,32 @@ C-----------------------------------------------------------------------
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+     &             FOZ1,SFOZ1
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+     &                2(1X,F5.0),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
 
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter.
 !               Default to TSEN = 6.0 if no value given.
                 ! JG changed column numbers to match updated ecotype file
-                IF (C255(327:331) == '     ') THEN
+                IF (C255(315:319) == '     ') THEN
                   TSEN = 6.0
                 ELSE
-                  READ(C255(327:331),'(F5.0)',IOSTAT=ERRNUM) TSEN
+                  READ(C255(315:319),'(F5.0)',IOSTAT=ERRNUM) TSEN
                   IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
                 ENDIF
 
 !               Read optional number of cold days paramter.
 !               Default to CDAY = 15.0 if no value given.
                 ! JG changed column numbers to match updated ecotype file
-                IF (C255(333:337) == '     ') THEN
+                IF (C255(321:325) == '     ') THEN
                   CDAY = 15
                 ELSE
-                  READ(C255(333:337),'(I5)',IOSTAT=ERRNUM) CDAY
+                  READ(C255(321:325),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
                 ENDIF
 
@@ -1011,7 +1009,7 @@ cbak  ears that is not included in lai calculation.
 !*!          alternatively, could use TWILEN (DSSAT)
 !*!                  ppfac = 1. -   p1d * (20. - hrlt)**2
             ! nwheats_ppfac = 1. - PPSEN * (20. - DAYL)**2
-            !n Apsim: The parameter “twilight?is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.
+            !n Apsim: The parameter twilight is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.
 !             nwheats_ppfac = 1. - PPSEN * (20. - TWILEN)**2
 ! Swap 20 and TWILEN to go from long to short day response
 !Added if statements to account for TWILEN being less than the critical day length of 11 h
