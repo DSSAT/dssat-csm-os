@@ -91,7 +91,7 @@ C FO/DP/TF - 2020-07-22 - AutomaticMOW FILEX variables
       INTEGER HMGDD
       REAL HMCUT   
 C TF/DP 2022-01-31 Simple version AutoMOW 
-      INTEGER HMMOW, HRSPL 
+      INTEGER HMMOW, HRSPL, AMVS
 
 !     2020-11-04 CHP Added for yield forecast mode, RNMODE = 'Y'
       INTEGER ENDAT, SeasDur, FODAT, FStartYear, FEndYear
@@ -360,7 +360,7 @@ C TF, FO & DP - 2022-07-12 - AutomaticMOW Switch
          ELSEIF(IHARI .EQ. 'C') THEN
            ISWITCH%ATMOW = .TRUE.
            ISWITCH%ATTP = 'C'
-        ELSEIF(IHARI .EQ. 'P') THEN
+         ELSEIF(IHARI .EQ. 'P') THEN
            ISWITCH%ATMOW = .TRUE.
            ISWITCH%ATTP = 'P'
          ELSE
@@ -596,7 +596,7 @@ C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,71,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
      &           HPP,HRP,ISWITCH%HMFRQ,ISWITCH%HMGDD,ISWITCH%HMCUT,
-     &           ISWITCH%HMMOW, ISWITCH%HRSPL
+     &           ISWITCH%HMMOW, ISWITCH%HRSPL, ISWITCH%AMVS
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             
 C FO/DP/TF - 2020-07-22 - AutoMOW Frequency and cut height initialization
@@ -606,12 +606,14 @@ C FO/DP/TF - 2020-07-22 - AutoMOW Frequency and cut height initialization
               ISWITCH%HMCUT = MAX(ISWITCH%HMCUT, 0.0)
               ISWITCH%HMMOW = MAX(ISWITCH%HMMOW, 0)
               ISWITCH%HRSPL = MAX(ISWITCH%HRSPL, 0)
+              ISWITCH%AMVS = MAX(ISWITCH%AMVS, 0)
             ELSE
               ISWITCH%HMFRQ = -99
               ISWITCH%HMGDD = -99
               ISWITCH%HMCUT = -99
               ISWITCH%HMMOW = -99
               ISWITCH%HRSPL = -99
+              ISWITCH%AMVS  = -99
             ENDIF
 
 !     ==============================================================
@@ -948,7 +950,7 @@ C-----------------------------------------------------------------------
   69  FORMAT(I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,F6.0)
   70  FORMAT (3X,I2)
 ! FO/TF - New reading format for AutomaticMOW
-  71  FORMAT (I3,11X,2(1X,I5),2(1X,F5.0),1X,I5,1X,I5,1X,F5.2,2(1X,I5))
+  71  FORMAT (I3,11X,2(1X,I5),2(1X,F5.0),1X,I5,1X,I5,1X,F5.2,3(1X,I5))
 
       END SUBROUTINE IPSIM
 
