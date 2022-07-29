@@ -37,6 +37,11 @@
   RWMX    0.03      !Maximum water uptake per unit root lenght, cm3 water/cm root
   RLWR    0.98      !Root length to weight ratio, cm/g
   RWUEP1  1.50      !Factor to modify water stress for cell expansion
+  
+!*EVAPOTRANSPIRATION
+  0.68   1.0       KEP, EORATIO
+  0.50  0.95       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.79       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
 
 
 
