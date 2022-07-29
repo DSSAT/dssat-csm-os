@@ -54,16 +54,20 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       CHARACTER*1 MEEVP
       INTEGER YRDOY, YEAR, DOY
-      REAL CANHT, CLOUDS, EO, EORATIO, ET_ALB, SRAD, TAVG               
+      REAL CANHT, CLOUDS, EO, EORATIO, ET_ALB, RHUM, SRAD, TAVG               
       REAL TDEW, TMAX, TMIN, VAPR, WINDHT, WINDSP, XHLAI
       REAL WINDRUN, XLAT, XELEV
       REAL, DIMENSION(TS)    ::RADHR, TAIRHR, ET0
+      LOGICAL NOTDEW, NOWIND
       CHARACTER*78  MSG(2)
       CHARACTER*12 FILEX
       CHARACTER*6, PARAMETER :: ERRKEY = "PET   "
       
       CLOUDS = WEATHER % CLOUDS
       SRAD   = WEATHER % SRAD  
+      NOTDEW = WEATHER % NOTDEW
+      NOWIND = WEATHER % NOWIND
+      RHUM   = WEATHER % RHUM
       TAVG   = WEATHER % TAVG  
       TDEW   = WEATHER % TDEW  
       TMAX   = WEATHER % TMAX  
@@ -103,9 +107,9 @@ C=======================================================================
           !FAO-56 crop coefficient method.
           CASE ('S','T')
             CALL PETASCE(
-     &        CANHT, DOY, ET_ALB, MEEVP, SRAD, TDEW,      !Input 
-     &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
-     &        XLAT, XELEV,                                !Input
+     &        CANHT, DOY, ET_ALB, MEEVP, NOTDEW, NOWIND,  !Input
+     &        RHUM, SRAD, TDEW, TMAX, TMIN, WINDHT,       !Input  
+     &        WINDRUN, VAPR, XHLAI, XLAT, XELEV,          !Input
      &        EO)                                         !Output
 !         ------------------------
           !Dynamic Penman-Monteith, pot. evapotranspiration, with
@@ -188,9 +192,9 @@ C  07/23/2020 KRT Changed flags to S and T for short and tall references
 !  Calls:         None
 C=======================================================================
       SUBROUTINE PETASCE(
-     &        CANHT, DOY, MSALB, MEEVP, SRAD, TDEW,       !Input 
-     &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
-     &        XLAT, XELEV,                                !Input
+     &        CANHT, DOY, MSALB, MEEVP, NOTDEW, NOWIND,   !Input
+     &        RHUM, SRAD, TDEW, TMAX, TMIN, WINDHT,       !Input
+     &        WINDRUN, VAPR, XHLAI, XLAT, XELEV,          !Input
      &        EO)                                         !Output
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -199,9 +203,11 @@ C=======================================================================
       SAVE
 !-----------------------------------------------------------------------
 !     INPUT VARIABLES:
-      REAL CANHT, MSALB, SRAD, TDEW, TMAX, TMIN, WINDHT, WINDRUN
+      REAL CANHT, MSALB, RHUM, SRAD, TDEW, TMAX, TMIN
+      REAL VAPR, WINDHT, WINDRUN
       REAL XHLAI, XLAT, XELEV
       INTEGER DOY
+      LOGICAL NOTDEW, NOWIND
       CHARACTER*1 MEEVP
 !-----------------------------------------------------------------------
 !     OUTPUT VARIABLES:
@@ -234,8 +240,20 @@ C=======================================================================
       EMIN = 0.6108*EXP((17.27*TMIN)/(TMIN+237.3)) !kPa
       ES = (EMAX + EMIN) / 2.0                     !kPa
 
-!     Actual vapor pressure, ASCE (2005) Eq. 8
-      EA = 0.6108*EXP((17.27*TDEW)/(TDEW+237.3)) !kPa
+!     Actual vapor pressure, ASCE (2005) Table 3
+      IF (VAPR.GT.1.E-6) THEN
+        EA = VAPR !kPa
+      ELSEIF (.NOT.NOTDEW) THEN
+!       ASCE (2005) Eq. 8 
+        EA = 0.6108*EXP((17.27*TDEW)/(TDEW+237.3)) !kPa
+      ELSEIF (RHUM.GT.1.E-6) THEN 
+!       RHUM is relative humidity at TMIN (or max rel. hum) (%)
+!       ASCE (2005) Eq. 12
+        EA = EMIN * RHUM / 100. !kPa
+      ELSE
+!       ASCE (2005) Appendix E, assume TDEW=TMIN-2.0
+        EA = 0.6108*EXP((17.27*(TMIN-2.0))/((TMIN-2.0)+237.3)) !kPa
+      ENDIF
 
 !     RHmin, ASCE (2005) Eq. 13, RHmin limits from FAO-56 Eq. 70
       RHMIN = MAX(20.0, MIN(80.0, EA/EMAX*100.0))
@@ -277,9 +295,13 @@ C=======================================================================
 !     Soil heat flux, ASCE (2005) Eq. 30
       G = 0.0 !MJ/m2/d
 
-!     Wind speed, ASCE (2005) Eq. 33
-      WINDSP = WINDRUN * 1000.0 / 24.0 / 60.0 / 60.0 !m/s
-      WIND2m = WINDSP * (4.87/LOG(67.8*WINDHT-5.42))
+!     Wind speed, ASCE (2005) Eq. 33 and Appendix E
+      IF (NOWIND) THEN         
+        WIND2m = 2.0 !m/s
+      ELSE
+        WINDSP = WINDRUN * 1000.0 / 24.0 / 60.0 / 60.0 !m/s
+        WIND2m = WINDSP * (4.87/LOG(67.8*WINDHT-5.42))
+      ENDIF
 
 !     Aerodynamic roughness and surface resistance daily timestep constants
 !     ASCE (2005) Table 1
