@@ -11,3 +11,8 @@ RI OPT   RWEP   1.50
 RI OPT   PORM   0.00                   ! Minimum pore space
 RI OPT   RWMX   0.03                   ! Max root water uptake
 RI OPT   RLWR   1.05                   ! Root length weight ratio
+
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.15       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.96       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
