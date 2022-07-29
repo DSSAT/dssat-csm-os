@@ -103,3 +103,8 @@ CO2Y_7 = 1.00
 CO2Y_8 = 1.00
 CO2Y_9 = 1.00
 CO2Y_10 = 1.00
+
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.20       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  1.00       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)

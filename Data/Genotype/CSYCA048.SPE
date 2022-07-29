@@ -162,6 +162,11 @@ $SPECIES:CSYCA048.041621    Last edit: 04/16/2021 LPM
 !  ppm 
     30 
 
+!*EVAPOTRANSPIRATION
+  0.68   1.0       KEP, EORATIO
+  0.50  1.00       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.83       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+
 ! COEFF   DEFINITION
 ! =====   ==========
 ! CO2F    CO2 factor,photosynthesis,relative (0-2)
