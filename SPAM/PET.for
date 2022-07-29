@@ -295,7 +295,8 @@ C=======================================================================
 
 !     Wind speed, ASCE (2005) Eq. 33
       IF (NOWIND) THEN
-        WIND2m = 1.0 !m/s
+!       ASCE Appendix E, page E-7         
+        WIND2m = 2.0 !m/s
       ELSE
         WINDSP = WINDRUN * 1000.0 / 24.0 / 60.0 / 60.0 !m/s
         WIND2m = WINDSP * (4.87/LOG(67.8*WINDHT-5.42))
