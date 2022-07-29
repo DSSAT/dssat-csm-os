@@ -59,6 +59,8 @@ C=======================================================================
       REAL WINDRUN, XLAT, XELEV
       REAL, DIMENSION(TS)    ::RADHR, TAIRHR, ET0
       CHARACTER*78  MSG(2)
+      CHARACTER*12 FILEX
+      CHARACTER*6, PARAMETER :: ERRKEY = "PET   "
       
       CLOUDS = WEATHER % CLOUDS
       SRAD   = WEATHER % SRAD  
@@ -76,6 +78,7 @@ C=======================================================================
       TAIRHR = WEATHER % TAIRHR
       
       YRDOY = CONTROL % YRDOY
+      FILEX = CONTROL % FILEX
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
       SELECT CASE (MEEVP)
@@ -140,8 +143,8 @@ C=======================================================================
           CASE DEFAULT
               MSG(1) = "Undefined EVAPO parameter in FileX."
               MSG(2) = "Unknown MEEVP in PET.for."
-              CALL WARNING(2,"PET",MSG)
-              CALL ERROR("CSM",64,"",0)
+              CALL WARNING(2,ERRKEY,MSG)
+              CALL ERROR(ERRKEY,1,FILEX,0)
 !         ------------------------
       END SELECT
 
@@ -211,6 +214,7 @@ C=======================================================================
       REAL WND, CHT
       REAL REFET, SKC, KCBMIN, KCBMAX, KCB, KE, KC
       CHARACTER*78 MSG(2)
+      CHARACTER*6, PARAMETER :: ERRKEY = "PETASC"
 !-----------------------------------------------------------------------
 
 !     ASCE Standardized Reference Evapotranspiration
@@ -302,13 +306,13 @@ C=======================================================================
       CALL GET('SPAM', 'KCBMAX', KCBMAX)
       IF (SKC .LT. 0.30 .OR. SKC .GT. 1.0) THEN
           MSG(1) = "SKC for ASCE PET method is out of range."
-          CALL WARNING(2,"PET",MSG)
-          CALL ERROR("CSM",64,"",0)
+          CALL WARNING(2,ERRKEY,MSG)
+          CALL ERROR(ERRKEY,1,"",0)
       ENDIF
       IF (KCBMAX .LT. 0.25 .OR. KCBMAX .GT. 1.5) THEN
           MSG(1) = "KCBMAX for ASCE PET method is out of range."
-          CALL WARNING(2,"PET",MSG)
-          CALL ERROR("CSM",64,"",0)
+          CALL WARNING(2,ERRKEY,MSG)
+          CALL ERROR(ERRKEY,2,"",0)
       ENDIF
 
 !     Basal crop coefficient (Kcb)
