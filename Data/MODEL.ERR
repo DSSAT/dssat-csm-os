@@ -706,15 +706,6 @@ Path error in configuration file. Please correct file.
 PET       1
 Undefined EVAPO parameter in FileX.
 
-PETASC    1
-SKC for ASCE PET method is out of range. Check species file.
-
-PETASC    2
-KCBMAX for ASCE PET method is out of range. Check species file.
-
-PETASC   50
-ASCE reference ET method is not available for this crop.
-
 PPLANT   10
 Review P parameters in species file.
 

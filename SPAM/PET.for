@@ -213,8 +213,6 @@ C=======================================================================
       REAL FCD, TK4, RNL, RN, G, WINDSP, WIND2m, Cn, Cd, KCMAX, RHMIN
       REAL WND, CHT
       REAL REFET, SKC, KCBMIN, KCBMAX, KCB, KE, KC
-      CHARACTER*78 MSG(2)
-      CHARACTER*6, PARAMETER :: ERRKEY = "PETASC"
 !-----------------------------------------------------------------------
 
 !     ASCE Standardized Reference Evapotranspiration
@@ -304,16 +302,6 @@ C=======================================================================
       CALL GET('SPAM', 'SKC', SKC)
       KCBMIN = 0.0
       CALL GET('SPAM', 'KCBMAX', KCBMAX)
-      IF (SKC .LT. 0.30 .OR. SKC .GT. 1.0) THEN
-          MSG(1) = "SKC for ASCE PET method is out of range."
-          CALL WARNING(2,ERRKEY,MSG)
-          CALL ERROR(ERRKEY,1,"",0)
-      ENDIF
-      IF (KCBMAX .LT. 0.25 .OR. KCBMAX .GT. 1.5) THEN
-          MSG(1) = "KCBMAX for ASCE PET method is out of range."
-          CALL WARNING(2,ERRKEY,MSG)
-          CALL ERROR(ERRKEY,2,"",0)
-      ENDIF
 
 !     Basal crop coefficient (Kcb)
 !     Also similar to FAO-56 Eq. 97
