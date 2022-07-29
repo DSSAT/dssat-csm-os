@@ -293,9 +293,8 @@ C=======================================================================
 !     Soil heat flux, ASCE (2005) Eq. 30
       G = 0.0 !MJ/m2/d
 
-!     Wind speed, ASCE (2005) Eq. 33
-      IF (NOWIND) THEN
-!       ASCE Appendix E, page E-7         
+!     Wind speed, ASCE (2005) Eq. 33 and Appendix E
+      IF (NOWIND) THEN         
         WIND2m = 2.0 !m/s
       ELSE
         WINDSP = WINDRUN * 1000.0 / 24.0 / 60.0 / 60.0 !m/s
