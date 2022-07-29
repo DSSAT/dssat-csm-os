@@ -53,6 +53,10 @@ subroutine astro(doy, lat, dayl, daylp, sinld, cosld, dsinb, dsinbe, &
       real ::   pi = 3.14159265
 
       data    angle /-4.0d0/
+      
+      !--- Constrain latitude for stability of astro calculations
+      lat = min(89.9999,max(-89.9999,lat))
+      
 ! ----------------------------------------------------------------------
 ! --- declination of the sun as a function of daynr
 !     (see ref.manual: Radiation term: 23.45*rad=0.409 en (90-10)*rad=1.39)
@@ -66,13 +70,13 @@ subroutine astro(doy, lat, dayl, daylp, sinld, cosld, dsinb, dsinbe, &
 ! --- calculation of daylenght and photoperiodic daylength
 !     solution for polar circle altutude adopted from 
 !     Daniel van Kraalingen (routine Sastro, dd 12-june-1996,version 1.1)
-      if (aob.lt.-1.0d0) then
+      if (aob.le.-1.0d0) then
         !msg = 'Warning: latitude above polar circle, daylength= 0hrs'
         
         dayl = 0.0d0
         zzcos =  0.0d0
         zzsin =  1.0d0
-      else if (aob.gt.1.0d0) then
+      else if (aob.ge.1.0d0) then
         !messag = 'Warning: latitude within polar circle,daylength=24hrs'
         
         dayl = 24.0d0
@@ -91,6 +95,9 @@ subroutine astro(doy, lat, dayl, daylp, sinld, cosld, dsinb, dsinbe, &
         zzcos = cos (zza)
         zzsin = sin (zza)
       endif
+      
+      !--- limit aob similarly to SOC in SOLAR SUBROUTINE
+      aob = min(1.d0, max(-1.d0, aob))
 
 !     Daily integral of sine of solar height (DSINB) with a
 !     correction for lower atmospheric transmission at lower solar
