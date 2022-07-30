@@ -9,12 +9,13 @@ C  05/28/1993 PWW Header revision and minor changes
 C  11/19/2003 CHP Added check for MEPHO and incompatible models.
 C  02/21/2006 GH  Removed crop model selection
 !  10/25/2006 CHP CRMODEL from FILEX overrides MODEL in DSSATPRO 
-!  05/09/2007 CHP Make Sulieman-Ritchie the default soil evaporation method
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2009 CHP IPSIM separate file.  
 !  02/11/2010 CHP Added checks for P model linked with crop models.
 !  08/15/2011 Add the case of MESEV = 'N'
-
+!  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+!  05/07/2020 FO  Added check for SimLevel to set YRSIM using YRPLT
+!  93/22/2022 GH Fix forecast issue
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
@@ -37,17 +38,19 @@ C
 C  HDLAY  :
 C=======================================================================
 
-      SUBROUTINE IPSIM (LUNEXP,LNSIM,TITSIM,NYRS,RUN,NREPSQ,
+      SUBROUTINE IPSIM (LUNEXP,LNSIM,SimLevel,TITSIM,NYRS,RUN,NREPSQ,
      & ISIMI,PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
      & RSEED1,LINEXP,AIRAMT,EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
-     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
+     & CONTROL,ISWITCH,UseSimCtr,FILECTL,MODELARG,YRPLT)
 
       USE ModuleDefs
       USE ModuleData
       USE CsvOutput
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, IGNORE, UPCASE, WARNING, IGNORE2, Y4K_DOY, 
+     &  YR_DOY, MODEL_NAME, FILL_ISWITCH, DEFAULT_SIMCONTROLS, GET_CROPD
       SAVE
 
       INCLUDE 'COMSWI.blk'
@@ -68,12 +71,13 @@ C=======================================================================
       INTEGER PLDATE,PWDINF,PWDINL,HLATE,HDLAY,NRESDL
       INTEGER IFIND,LN,ERRNUM,FTYPEN,YRSIM,YEAR,RUN,RSEED1,RRSEED1
       INTEGER YRPLT
-      INTEGER FIST1, FIST2
+!     INTEGER FIST1, FIST2
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
-      REAL LDIFF, PREV_LINEXP
-      REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
+!     REAL LDIFF, PREV_LINEXP
+      REAL V_AVWAT(20)    
+!     Vectors to save growth stage based irrigation
       REAL V_IMDEP(20)
       REAL V_ITHRL(20)
       REAL V_ITHRU(20), IFREQ
@@ -84,7 +88,11 @@ C=======================================================================
       REAL V_IREFF(20)
       INTEGER GSIRRIG, I, STAT, CHARLEN
 
-      LOGICAL UseSimCtr, MulchWarn
+      LOGICAL UseSimCtr, MulchWarn, SimLevel
+
+!     2020-11-04 CHP Added for yield forecast mode, RNMODE = 'Y'
+      INTEGER ENDAT, SeasDur, FODAT, FStartYear, FEndYear
+      CHARACTER*15 FWFILE
 
       TYPE (SwitchType)  ISWITCH
       TYPE (ControlType) CONTROL
@@ -94,12 +102,14 @@ C=======================================================================
                  
       DATA MulchWarn /.FALSE./
 
-      IF (LNSIM .EQ. 0) THEN
+      !FO - IF SimLevel is not present set defaults
+      IF (LNSIM .EQ. 0 .OR. .NOT. SimLevel) THEN
          LNSIM   = 0
          NYRS    = 1
          NREPSQ  = 1
          ISIMI   = 'S'
-         YRSIM   = -99
+         !FO - YRPLT was already read and can be updated.
+         YRSIM   = YRPLT
          RSEED1  = 2150
          ISWWAT  = 'Y'
          ISWNIT  = 'Y'
@@ -126,7 +136,7 @@ C=======================================================================
          NSWITCH =  1
          MESOM   = 'G'
          MESOL   = '2'    !was '1'
-         MESEV   = 'S'    !new Sulieman-Ritchie (2006)
+         MESEV   = 'R'    !old Ritchie two-stage method
          METMP   = 'D'    !DSSAT original soil temperature
 !        METMP   = 'E'    ! EPIC soil temp routine.
          MEGHG   = '0'
@@ -164,6 +174,9 @@ C=======================================================================
          NCODE = "-99  "
          NEND  = "-99  "
        ELSE
+
+!     ==============================================================
+!     Read first line of simulation controls - GENERAL
  40      CALL FIND (LUNEXP,FINDCH,LINEXP,IFIND)
          IF (IFIND .EQ. 0) CALL ERROR (ERRKEY,1,FILEX,LINEXP)
  50      CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
@@ -182,14 +195,18 @@ C=======================================================================
                  RSEED1 = 2150
                ENDIF
             ENDIF
-            CALL Y2K_DOY (YRSIM)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY (YRSIM)
+            CALL Y4K_DOY (YRSIM,FILEX,LINEXP,ERRKEY,8)
+            !Call Error before first weather day (RANGELH(1))
             CALL YR_DOY (YRSIM,YEAR,ISIM)
           ELSE
             BACKSPACE (LUNEXP)
             GO TO 40
          ENDIF
 C
-C        Read SECOND line of simulation control
+!     ==============================================================
+C        Read SECOND line of simulation control - OPTIONS
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,ISWWAT,ISWNIT,ISWSYM,
@@ -209,9 +226,8 @@ C
 !        IF (INDEX ('BNSBPNPECHPPVBCPCBFB',CROP) .EQ. 0) THEN
          SELECT CASE (CROP)
          CASE ('BN','SB','PN','PE','CH','PP',
-     &          'VB','CP','CB','FB','GB','LT','AL')
+     &          'VB','CP','CB','FB','GB','LT','AL','BG')
 C     &          'VB','CP','CB','FB','GB','LT')
-C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
 !          Do nothing -- these crops fix N and can have Y or N
          CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
          END SELECT
@@ -236,7 +252,8 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
            IF (INDEX ('WMD', ICO2) < 1) ICO2 = 'M'
          ENDIF
 
-C        Read THIRD line of simulation control
+!     ==============================================================
+C        Read THIRD line of simulation control - METHODS
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,61,IOSTAT=ERRNUM) LN,MEWTH,MESIC,
@@ -300,7 +317,8 @@ C
          SELECT CASE(MESEV)
          CASE('R','r'); MESEV = 'R'
          CASE('N','n'); MESEV = 'N'
-         CASE DEFAULT;  MESEV = 'S'   !Default method -- use NEW
+         CASE('s','S'); MESEV = 'S'
+         CASE DEFAULT;  MESEV = 'R'   !Default method Ritchie
          END SELECT
 
          IF (MEEVP == 'Z' .AND. MEPHO /= 'L') CALL ERROR(ERRKEY,3,' ',0)
@@ -322,7 +340,8 @@ C
            NSWITCH = 1
          ENDIF
 C
-C        Read FOURTH line of simulation control
+!     ==============================================================
+C        Read FOURTH line of simulation control - MANAGEMENT
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,IPLTI,IIRRI,
@@ -336,17 +355,34 @@ C
 
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
+              WRITE(MSG(1),'("Automatic harvest option ",
+     &          "is not valid for crop type: ",A2)') CROP
+              CALL WARNING(1, ERRKEY, MSG)
               CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+           ENDIF
+         ENDIF
+          
+         IF ((INDEX('CS',CROP)) .GT. 0) THEN
+           IF (IHARI .EQ. 'M') THEN
+             WRITE(MSG(1),'("Harvest at maturity option is ",
+     &         "not valid for crop type: ",A2)') CROP
+             CALL WARNING(1, ERRKEY, MSG)
+             CALL ERROR ('IPSIM ',11,FILEX,LINEXP)
            ENDIF
          ENDIF
 
          IF ((INDEX('PT',CROP)) .GT. 0) THEN
            IF (IPLTI .EQ. 'A') THEN
+              WRITE(MSG(1),'("Automatic planting option is ",
+     &    "not valid for crop type: ",A2)') CROP
+              CALL WARNING(1, ERRKEY, MSG)
               CALL ERROR (ERRKEY,5,FILEX,LINEXP)
            ENDIF
-         ENDIF
+      ENDIF
+      
 C
-C        Read FIFTH line of simulation control
+!     ==============================================================
+C        Read FIFTH line of simulation control - OUTPUTS
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          IF (INDEX('FQ',RNMODE) < 1 .OR. RUN == 1) THEN
@@ -404,9 +440,9 @@ C
               IDETH = 'N' 
               IDETR = 'N' 
               IDETO = 'E'
-!             Seasonal and spatial runs do not get evaluate file when IDETL=0
-              IF (INDEX('SN',RNMODE) > 0) IDETO = 'N'
-            ELSEIF (IDETL == 'A') THEN
+!             Seasonal, Spatial, and Yield forecast runs do not get evaluate file when IDETL=0
+              IF (INDEX('SNY',RNMODE) > 0) IDETO = 'N'
+            ELSEIF (IDETL == 'A' .OR. IDETL == 'D') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
               IDETO = 'Y'
@@ -426,22 +462,34 @@ C
             IF (FROP .LE. 0) FROP = 10
          ENDIF
 C
-C        Read SIXTH line of simulation control
+!     ==============================================================
+C        Read SIXTH line of simulation control - AUTOMATIC PLANTING
 C
          CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
          IF (ISECT .EQ. 1) THEN
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,PWDINF,PWDINL,
      &           SWPLTL,SWPLTH,SWPLTD,PTX,PTTN
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-            IF (PWDINF .LT. 1000) PWDINF = YEAR * 1000 + PWDINF
-            IF (PWDINL .LT. 1000) PWDINL = YEAR * 1000 + PWDINL
-            CALL Y2K_DOY (PWDINF)
-            CALL Y2K_DOY (PWDINL)
+!            IF (PWDINF .LT. 1000) PWDINF = YEAR * 1000 + PWDINF
+!            IF (PWDINL .LT. 1000) PWDINL = YEAR * 1000 + PWDINL
+            
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY (PWDINF)
+            !CALL Y2K_DOY (PWDINL)
+            IF(IPLTI .EQ. 'A' .OR. IPLTI .EQ. 'F') THEN
+              CALL Y4K_DOY (PWDINF,FILEX,LINEXP,ERRKEY,9)
+              CALL Y4K_DOY (PWDINL,FILEX,LINEXP,ERRKEY,9)
+            ELSE
+              PWDINF = -99
+              PWDINL = -99
+            ENDIF
+            
 C
-C           Read SEVENTH line of simulation control
+!     ==============================================================
+C           Read SEVENTH line of simulation control - AUTOMATIC IRRIGATION
 C
            DO I=1,20
-                V_IMDEP (I) = -99       ! Assighn default values to variable
+                V_IMDEP (I) = -99 
                 V_ITHRL (I) = -99
                 V_ITHRU (I) = -99
                 V_IRON  (I) = -99
@@ -451,7 +499,7 @@ C
                 V_AVWAT (I) = -99
            END DO
 
-           GSIRRIG = 1                                ! Start Growth Stage index
+           GSIRRIG = 1         ! Start Growth Stage index
 
            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
 
@@ -461,16 +509,20 @@ C
      &               IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, IFREQ
                IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 
-               READ(CHARTEST,'(57x,A5)') TEXT     ! Read value of AVWAT in text to check if blank or missing
+!              Read value of AVWAT in text to check if blank or missing
+               READ(CHARTEST,'(57x,A5)') TEXT     
                CHARLEN = LEN_TRIM(TEXT)
-               IF (CHARLEN==0) AVWAT = -99.       ! If TXAVWAT blank or missing set AVWAT -99 (for compatability with old files)
+!              If TXAVWAT blank or missing set AVWAT -99 (for compatability with old files)
+               IF (CHARLEN==0) AVWAT = -99.       
 
-               READ(CHARTEST,'(63x,A5)') TEXT     ! Read value of IFREQ in text to check if blank or missing
+!              Read value of IFREQ in text to check if blank or missing
+               READ(CHARTEST,'(63x,A5)') TEXT     
                CHARLEN = LEN_TRIM(TEXT)
-               IF (CHARLEN==0) IFREQ = 0.0        ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
+!              If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
+               IF (CHARLEN==0) IFREQ = 0.0        
 
-
-              V_IMDEP(GSIRRIG) = DSOIL                   ! Save growth stage specific variables in data vectors
+!             Save growth stage specific variables in data vectors
+              V_IMDEP(GSIRRIG) = DSOIL                   
               V_ITHRL(GSIRRIG) = THETAC
               V_ITHRU(GSIRRIG) = IEPT
               READ(IOFF(4:5), *, IOSTAT = STAT) V_IRON (GSIRRIG)
@@ -481,14 +533,17 @@ C
               V_IFREQ(GSIRRIG) = NINT(IFREQ)
               V_AVWAT(GSIRRIG) = AVWAT
 
-              CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)                ! Read next line until a second tier header is found
+!             Read next line until a second tier header is found
+              CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)                
 
               IF(ISECT .NE. 3) THEN
-                  GSIRRIG = GSIRRIG + 1                                 ! Increase the counter by 1
+!                 Increase the counter by 1
+                  GSIRRIG = GSIRRIG + 1                                 
               END IF
            END DO
            
-           DSOIL  = V_IMDEP(1)                         ! Save value of first line as default for compatibility with old files
+!          Save value of first line as default for compatibility with old files
+           DSOIL  = V_IMDEP(1)                         
            THETAC = V_ITHRL(1)
            IEPT   = V_ITHRU(1)
            IOFF   = V_IRONC(1)
@@ -510,7 +565,8 @@ C
            SAVE_data % MGMT % GSIRRIG = GSIRRIG
 
 C
-C           Read EIGHTH line of simulation control
+!     ==============================================================
+C           Read EIGHTH line of simulation control - AUTOMATIC N APPLICTION (not currently used)
 
 C
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
@@ -520,20 +576,78 @@ C
             READ (NCODE,70,IOSTAT=ERRNUM) FTYPEN
 
 C
-C           Read NINTH line of simulation control
+!     ==============================================================
+C           Read NINTH line of simulation control - AUTOMATIC RESIDUE APPLICAITON (not currently used)
 C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,68,IOSTAT=ERRNUM) LN,RIP,NRESDL,DRESMG
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 C
-C           Read TENTH line of simulation control
+!     ==============================================================
+C           Read TENTH line of simulation control - AUTOMATIC HARVEST
 C
-
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
      &           HPP,HRP
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-            CALL Y2K_DOY (HLATE)
+            
+!     ==============================================================
+!           Read ELEVENTH line of simulation control - SIMULATION DATES
+!           2020-11-04 CHP added forecast mode inputs
+!           Also additional inputs to be implemented later
+
+!     ENDAT = End of simulation date - for future use
+!     SDUR  = Maximum duration of one season - for future use
+!     FODAT = Forecast start date, i.e., day after last weather data available
+!     FSTART= Ensemble start year - for future use
+!     FEND  = Ensemble end year -for future use
+!     FWFILE= Forecast weather file (for short term forecast) - for future use
+!     FONAME= Forecast level name
+
+            ENDAT = -99
+            SeasDur = -99
+            FODAT = -99
+            FStartYear = -99
+            FEndYear = -99
+            FWFILE = "-99"
+
+            CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
+!            READ (CHARTEST,'(I3,9X,5I8,1X,A15)',IOSTAT=ERRNUM) 
+!     &        LN, ENDAT, SeasDur, FODAT, FStartYear, FEndYear, FWFILE
+            READ (CHARTEST,'(I3,25X,I8)',IOSTAT=ERRNUM) LN, FODAT
+
+! CHP 2021-03-29 Allow  11th line of simcontrols to be missing.
+! In this case, FODAT will be set equal to either last date in weather file or YRSIM.
+            IF (ERRNUM .NE. 0 .OR. LN .NE. LNSIM
+     &       .OR. ISECT .EQ. 0) THEN
+! GH 03/2022 Fix issue with no blank lines at the end of FileX
+              FODAT = -99
+            ENDIF
+
+!            IF (ERRNUM .NE. 0 .AND. RNMODE .EQ. 'Y') THEN
+!              MSG(1) = 
+!     &          "Error in forecast data, check simulation controls."
+!              WRITE(MSG(2),'("End simulation date = ",I8)') ENDAT
+!              WRITE(MSG(3),'("Maximum season duration = ",I8)') SeasDur
+!              WRITE(MSG(4),'("Simulated forecast start date=",I8)')FODAT
+!              WRITE(MSG(5),'("Forecast start year = ",I8)') FStartYear
+!              WRITE(MSG(6),'("Forecast end year = ",I8)') FEndYear
+!              WRITE(MSG(7),'("Short term forecast weather file = ",A5)')
+!     &          FWFILE
+!              CALL WARNING(7, ERRKEY, MSG)
+!            ENDIF
+            CONTROL % FODAT = FODAT
+            
+!     ==============================================================
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY (HLATE)
+!            IF(HLATE .LE. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+            IF(IHARI .EQ. 'A' .OR. IHARI .EQ. 'F') THEN
+              CALL Y4K_DOY (HLATE,FILEX,LINEXP,ERRKEY,10)
+            ELSE
+              HLATE = -99
+            ENDIF
+            
             IF (HPP   .LT. 0.0)  HPP   = 100.
             IF (HRP   .LT. 0.0)  HRP   = 0.0
           ELSE
@@ -594,6 +708,7 @@ C-----------------------------------------------------------------------
 
       CALL FILL_ISWITCH(
      &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
+
 
 !     Planting date needed for generic start of simulation
       SELECT CASE(IPLTI)
@@ -664,7 +779,7 @@ C-----------------------------------------------------------------------
 !     Check for N model compatible with crop model
       IF (ISWNIT /= 'N') THEN
         SELECT CASE(MODEL(1:5))
-        CASE ('SALUS', 'SCCAN', 'SCCSP')
+        CASE ('SALUS', 'SCCAN', 'SCCSP', 'SCSAM')
 !           N model has NOT been linked for these models
 !           Print a warning message.
             CALL GET_CROPD(CROP, CROPD)
@@ -927,6 +1042,9 @@ C-----------------------------------------------------------------------
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, IGNORE, UPCASE, WARNING, IGNORE2, 
+     &  Y4K_DOY, YR_DOY, MODEL_NAME, GETLUN, FIND_IN_FILE, LENSTRING, 
+     &  CHECK_I, CHECK_A, INFO, MSG_TEXT
       SAVE
 
       CHARACTER*1 UPCASE,ISIMI, MEPHO_SAVE, ISWSYM_SAVE
@@ -983,8 +1101,8 @@ C-----------------------------------------------------------------------
 !     1) Go to pull down menu Project -> Settings -> Fortran (Tab) ->
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
-D     INPUTX = 'C:\DSSAT47\DSCSM047.EXE'
-D     IPX = 23
+!D     INPUTX = 'C:\DSSAT47\DSCSM048.EXE'
+!D     IPX = 23
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             IF (IPX > 12) THEN
@@ -1159,7 +1277,9 @@ D     IPX = 23
             IF (YRSIM == -99) YRSIM = PLDATE
             CALL CHECK_I('YRSIM', YRSIM, ERRNUM, MSG, NMSG)
             IF (ERRNUM == 0) THEN
-              CALL Y2K_DOY (YRSIM)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+              !CALL Y2K_DOY (YRSIM)
+              CALL Y4K_DOY (YRSIM,FILEX,LINEXP,ERRKEY,1)
               CALL YR_DOY (YRSIM,YEAR,ISIM)
             ENDIF
 
@@ -1427,10 +1547,10 @@ D     IPX = 23
               IDETO = 'E'
 !             FMOPT = 'N' ! VSH  !CHP FMOPT is not tied to IDETL
 
-!             Seasonal and spatial runs do not get evaluate file when IDETL=0
-              IF (INDEX('SN',CONTROL%RNMODE) > 0) IDETO = 'N'
+!             Seasonal, Spatial, and Yield forecast runs do not get evaluate file when IDETL=0
+              IF (INDEX('SNY',CONTROL%RNMODE) > 0) IDETO = 'N'
 
-            ELSEIF (IDETL == 'A') THEN
+            ELSEIF (IDETL == 'A' .OR. IDETL == 'D') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
               IDETO = 'Y'
@@ -1526,6 +1646,16 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
           CALL ERROR ('IPSIM ',4,FILEX,LINEXP)
         ENDIF
       ENDIF
+      
+      IF ((INDEX('CS',CONTROL % CROP)) .GT. 0) THEN
+        IF (IHARI .EQ. 'M') THEN
+          MSG(1) = "Default Simulation controls file used."
+          WRITE(MSG(2),'("Harvest at maturity option is not valid for ",
+     &    "crop type: ",A2)') CONTROL%CROP
+          CALL WARNING(1, ERRKEY, MSG)
+          CALL ERROR ('IPSIM ',11,FILEX,LINEXP)
+        ENDIF
+      ENDIF
 
       IF ((INDEX('PT',CONTROL % CROP)) .GT. 0) THEN
         IF (IPLTI .EQ. 'A') THEN
@@ -1595,6 +1725,7 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
 
       SUBROUTINE CHECK_A(LABEL, VALUE, ERRNUM, MSG, NMSG)
       IMPLICIT NONE
+      EXTERNAL MSG_TEXT
 
       CHARACTER*(*) VALUE
       CHARACTER*(*) LABEL
@@ -1619,6 +1750,7 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
 
       SUBROUTINE CHECK_I(LABEL, VALUE, ERRNUM, MSG, NMSG)
       IMPLICIT NONE
+      EXTERNAL MSG_TEXT
 
       INTEGER VALUE
       CHARACTER*(*) LABEL

@@ -19,9 +19,7 @@ C=======================================================================
      &  TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       IMPLICIT NONE
       SAVE
 

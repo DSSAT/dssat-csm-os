@@ -467,15 +467,48 @@ C        Branch to menu choice
          END SELECT
 
 !=======================================================================
+!     FV added case for sunflower model OilcropSun 10/20/2020
+      CASE ('SUOIL')
+
+        WRITE (*,5410) P1,P2,P5,G2,G3,PHINT
+5410    FORMAT (12X,'0. End of changes',//,
+     1  12X,'1. P1 (Growing degree days from emergence to',/,
+     2  12X,'       end of juvenile phase)...................[',F7.1,/,
+     3  12X,'2. P2 (Photoperiod sensitivity).................[',F7.1,/,
+     4  12X,'3. P5 (Cumulative growing degree days from',/,
+     5  12X,'       anthesis to maturity).....................[',F7.1,/,
+     6  12X,'4. G2 (Potential grain number).................[',F7.1,/,
+     7  12X,'5. G3 (Potential kernel growth rate)............[',F7.1,/,
+     8  12X,'6. O1 (Oil kernel concentration)........[',F7.1,/)
+
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,6,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE (IPARAM)
+         CASE (0); RETURN
+         CASE (1); CALL GETREAL (P1,'P1   ',250.0, 450.0)
+         CASE (2); CALL GETREAL (P2,'P2   ',  0.5,  12.0)
+         CASE (3); CALL GETREAL (P5,'P5   ',550.0, 750.0)
+         CASE (4); CALL GETREAL (G2,'G2   ',900.0,3000.0)
+         CASE (5); CALL GETREAL (G3,'G3   ',  1.2,   2.4)
+         CASE (6); CALL GETREAL (O1,'O1   ', 35.0,  70.0)
+         END SELECT
+         
+!=======================================================================
 !     Potato
       CASE ('PTSUB')
         WRITE (*,5700) G2,G3,PD,P2,TC
 5700    FORMAT (12X,'0. End of changes ',//,
-     2  12X,'1. G2 (Leaf expansion rate (cmý/mý/d))..........[',F7.1,/,
-     3  12X,'2. G3 (Tuber growth rate (g/mý/d))..............[',F7.1,/,
+     2  12X,'1. G2 (Leaf expansion rate (cmÂ²/mÂ²/d))..........[',F7.1,/,
+     3  12X,'2. G3 (Tuber growth rate (g/mÂ²/d))..............[',F7.1,/,
      4  12X,'3. PD (Determinancy)............................[',F7.1,/,
      5  12X,'4. P2 (Photoperiod sensitivity (dimensionless)).[',F7.2,/,
-     6  12X,'5. TC (Critical temperature (øC)................[',F7.1,/)
+     6  12X,'5. TC (Critical temperature (ËšC)................[',F7.1,/)
 
          WRITE (*,5100)
 C
@@ -750,7 +783,7 @@ C         Branch to menu choice
           CASE(16);  CALL GETREAL (LAFS  ,'LAFS', 20.0,  50.0)
           CASE(17);  CALL GETREAL (LAFND ,'LAFND ',100.0, 350.0)
           CASE(18);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
-          CASE(19);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) !LPM redefine limit values
+          CASE(19);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0)
           CASE(20);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
           CASE(21);  CALL GETREAL (STFR  ,'STFR ',0.250, 0.450)
           END SELECT
@@ -761,7 +794,7 @@ C         Branch to menu choice
             
          
           WRITE(*,5941)  
-     &     B01ND, B12ND, B23ND, 
+     &     B01ND, B12ND, B23ND, B34ND,
      &     BR1FX, BR2FX, BR3FX, BR4FX, 
      &     LAXS, SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT
           
@@ -770,17 +803,18 @@ C         Branch to menu choice
      3  12X,' 1. B01ND ( 10.0 -  100.0).......................[',F6.0,/,
      2  12X,' 2. B12ND ( 10.0 -  100.0).......................[',F6.0,/,
      2  12X,' 3. B23ND ( 10.0 -  100.0).......................[',F6.0,/,
-     4  12X,' 4. BR1FX ( 00.0 -   10.0).......................[',F7.3,/,
-     5  12X,' 5. BR2FX ( 00.0 -   10.0).......................[',F7.3,/,
-     6  12X,' 6. BR3FX ( 00.0 -   10.0).......................[',F7.3,/,
-     7  12X,' 7. BR4FX ( 00.0 -   10.0).......................[',F7.3,/,
-     8  12X,' 8. LAXS  ( 1000 -   2000).......................[',F7.1,/,
-     9  12X,' 9. SLAS  (100.0 -  400.0).......................[',F7.2,/,
-     1  12X,'10. LLIFA (300.0 - 1200.0).......................[',F7.1,/,  !LPM redefine limit values
-     2  12X,'11. LPEFR (0.250 -  0.400).......................[',F7.2,/,
-     3  12X,'12. LNSLP (0.60 -    1.60).......................[',F7.2,/,
-     4  12X,'13. NODWT (3.00 -    7.00).......................[',F7.2,/,
-     5  12X,'14. NODLT (1.00 -    4.00).......................[',F7.1,/)
+     2  12X,' 4. B34ND ( 10.0 -  100.0).......................[',F6.0,/,
+     4  12X,' 5. BR1FX ( 00.0 -   10.0).......................[',F7.3,/,
+     5  12X,' 6. BR2FX ( 00.0 -   10.0).......................[',F7.3,/,
+     6  12X,' 7. BR3FX ( 00.0 -   10.0).......................[',F7.3,/,
+     7  12X,' 8. BR4FX ( 00.0 -   10.0).......................[',F7.3,/,
+     8  12X,' 9. LAXS  ( 1000 -   2000).......................[',F7.1,/,
+     9  12X,'10. SLAS  (100.0 -  400.0).......................[',F7.2,/,
+     1  12X,'11. LLIFA (300.0 - 1200.0).......................[',F7.1,/,  !LPM redefine limit values
+     2  12X,'12. LPEFR (0.250 -  0.400).......................[',F7.2,/,
+     3  12X,'13. LNSLP (0.60 -    1.60).......................[',F7.2,/,
+     4  12X,'14. NODWT (3.00 -    7.00).......................[',F7.2,/,
+     5  12X,'15. NODLT (1.00 -    4.00).......................[',F7.1,/)
  
           WRITE (*,5100)
 C
@@ -795,17 +829,18 @@ C         Branch to menu choice
           CASE( 1);  CALL GETREAL (B01ND ,'B01ND ', 10.0, 100.0)
           CASE( 2);  CALL GETREAL (B12ND ,'B12ND ', 10.0, 100.0)
           CASE( 3);  CALL GETREAL (B23ND ,'B23ND ', 10.0, 100.0)
-          CASE( 4);  CALL GETREAL (BR1FX ,'BR1FX ', 0.0, 10.0)
-          CASE( 5);  CALL GETREAL (BR2FX ,'BR2FX ', 0.0, 10.0)
-          CASE( 6);  CALL GETREAL (BR3FX ,'BR3FX ', 0.0, 10.0)
-          CASE( 7);  CALL GETREAL (BR4FX ,'BR4FX ', 0.0, 10.0)
-          CASE( 8);  CALL GETREAL (LAXS  ,'LAXS',1000.,2000.0)
-          CASE( 9);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
-          CASE(10);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) !LPM redefine limit values
-          CASE(11);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
-          CASE(12);  CALL GETREAL (LNSLP ,'LNSLP ', 0.60, 1.60)
-          CASE(13);  CALL GETREAL (NODWT ,'NODWT ', 3.00, 7.00)
-          CASE(14);  CALL GETREAL (NODLT ,'NODLT ', 1.00, 4.00) 
+          CASE( 4);  CALL GETREAL (B34ND ,'B34ND ', 10.0, 100.0)
+          CASE( 5);  CALL GETREAL (BR1FX ,'BR1FX ', 0.0, 10.0)
+          CASE( 6);  CALL GETREAL (BR2FX ,'BR2FX ', 0.0, 10.0)
+          CASE( 7);  CALL GETREAL (BR3FX ,'BR3FX ', 0.0, 10.0)
+          CASE( 8);  CALL GETREAL (BR4FX ,'BR4FX ', 0.0, 10.0)
+          CASE( 9);  CALL GETREAL (LAXS  ,'LAXS',1000.,2000.0)
+          CASE(10);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
+          CASE(11);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) 
+          CASE(12);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
+          CASE(13);  CALL GETREAL (LNSLP ,'LNSLP ', 0.60, 1.60)
+          CASE(14);  CALL GETREAL (NODWT ,'NODWT ', 3.00, 7.00)
+          CASE(15);  CALL GETREAL (NODLT ,'NODLT ', 1.00, 4.00) 
         END SELECT
 
     

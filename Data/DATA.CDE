@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.8; 2021-07-27
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -40,6 +40,7 @@ B4DAT  Branch 4 date   Date of fourth branching (YrDoy)                         
 B5DAT  Branch 5 date   Date of fifth branching (YrDoy)                          B5DAT
 BADMF  Biomass@forcing Above-ground biomass at forcing (pineapple, t/ha)        .
 BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
+BR#SH  SHOOT NO #/m2   Shoot (apex) number at harvest (no/m2)                   .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                  .
@@ -64,6 +65,7 @@ E#AM   Number #/m2     Eye number at maturity (no/m2)                           
 E#UM   Number #/unit   Eye number at maturity (no/fruit)                        .
 EDAP   Emergence day   Emergence day (dap)                                      .
 EDAT   Emergence date  Emergence date (YrDoy)                                   .
+ELEV   Elevation  m    Elevation (m) 
 EPCM   EP total mm     Total season transpiration (mm)                          .
 EPCP   EP plant seas   Total transpiration, planting to harvest (mm)            .
 ESCM   ES total mm     Total season soil evaporation (mm)                       .
@@ -71,10 +73,14 @@ ESCP   ES plant seas   Total soil evaporation, planting to harvest (mm)         
 ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) .
 ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
-EWUM   Eye wt. (g)     Eye weight (g)                                           .
+EWUM   Eye wt. g       Eye weight (g)                                           .
+FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
+FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .
 FDAT   Forcing date    Forcing or flowering date (YrDoy)                        .
+FHWAM  Fresh harvest   Harvest product fresh wt at maturity (kg/ha)             .
 FNAM   Field name      Field name                                               .
+FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
 FRN%M  Fruit N% @ mat  Fruit N concentration at maturity (%)                    .
 FRNAM  Fruit N @ mat   Fruit N content at maturity (kg/ha)                      .
 FWAH   Fresh wt @ harv Yield fresh weight at harvest (t/ha)                     .
@@ -91,9 +97,11 @@ HINM   N harvest index Nitrogen harvest index at maturity (fr)                  
 HIPM   Pod index       Pod harvest index at maturity                            .
 HPRH   Purity %        Purity immediately after harvest (%)                     .
 HWAH   Harvested yield Harvested yield (kg [dm]/ha)                             .
+HWAHF  Fresh yield     Harvested yield (fresh weight) (kg/ha)                   .
 HWAM   Mat Yield kg/ha Yield at harvest maturity (kg [dm]/ha)                   .
 HWUM   Weight g/unit   Unit wt at maturity (g [dm]/unit)                        .
 HYAH   Field wt Mg/ha  Field weight at harvest (Mg [fm]/ha)                     .
+HYEAR  Harvest year    Year at harvest                                          .  
 IDAP   Panicle in day  Panicle Initiation day (dap)                             .
 IDAT   Panicle in date Panicle Initiation date (YrDoy)                          .
 IR#M   Irrig apps #    Irrigation applications (no)                             .
@@ -106,9 +114,11 @@ L#SX   Leaf number #   Leaf number per stem, maximum                            
 LAIH   LAI harvest     Leaf area index, at harvest                              .
 LAIX   LAI maximum     Leaf area index, maximum                                 .
 LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      .
+LONG   Longitude °     Longitude (degrees)                                      .
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
+CH4EC  Cum CH4 emitted Cumulative methane emitted kg[C]/ha                      .
 N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 NDCH   Days to harvest Number of days from planting to harvest (d)              .
 NFXM   N fixed kg/h    N fixed during season (kg/ha)                            .
@@ -177,6 +187,8 @@ VN%M   Veg N% @ matur. Vegetative N at maturity (%)                             
 VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         .
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
+WYEAR  Weather year    Year for weather data (for forecast ensembles)           .
+XLAT   Latitude °      Latitude (degrees)                                       .
 YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
@@ -374,23 +386,6 @@ N2F6D  N2 flux layer 6 Daily N2 flux, soil layer 6 (g[N]/ha)                    
 N2F7D  N2 flux layer 7 Daily N2 flux, soil layer 7 (g[N]/ha)                    .
 N2F8D  N2 flux layer 8 Daily N2 flux, soil layer 8 (g[N]/ha)                    .
 N2F9D  N2 flux layer 9 Daily N2 flux, soil layer 9 (g[N]/ha)                    .
-N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
-N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
-N2OED  N2O emitted/d   Daily N2O emissions from soil (g[N]/ha)                  .
-N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
-N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
-N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
-N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
-N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .
-N2O1D  N2O flux lyr 1  Daily N2O flux, soil layer 1 (g[N]/ha)                   .
-N2O2D  N2O flux lyr 2  Daily N2O flux, soil layer 2 (g[N]/ha)                   .
-N2O3D  N2O flux lyr 3  Daily N2O flux, soil layer 3 (g[N]/ha)                   .
-N2O4D  N2O flux lyr 4  Daily N2O flux, soil layer 4 (g[N]/ha)                   .
-N2O5D  N2O flux lyr 5  Daily N2O flux, soil layer 5 (g[N]/ha)                   .
-N2O6D  N2O flux lyr 6  Daily N2O flux, soil layer 6 (g[N]/ha)                   .
-N2O7D  N2O flux lyr 7  Daily N2O flux, soil layer 7 (g[N]/ha)                   .
-N2O8D  N2O flux lyr 8  Daily N2O flux, soil layer 8 (g[N]/ha)                   .
-N2O9D  N2O flux lyr 9  Daily N2O flux, soil layer 9 (g[N]/ha)                   .
 NAPC   N Applied kg/ha Inorganic N applied (kg/ha)                              .
 NFact1 Nstress (0-1)   Nstress on grain N potential (0-1)                       .
 NFact2 Nstress (0-1)   Nstress photosynthesis (0-1)                             .
@@ -478,6 +473,7 @@ NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (ug [N]/g [soil])        
 NUAC   N Uptake kg/ha  N uptake, cumulative (kg [N]/ha)                         .
 NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
+NURTD  Urea-N kg/ha    Total soil urea (kg [N]/ha)                              .
 OXRN   Oxnitr kgN/ha/d Ox Layer Nitrif Rt (kg [N]/ha/d)                         .
 QNAD   Stolon N kg/ha  Stolon N (kg/ha)                                         .
 QN%D   Stolon N %        Stolon N concentration (%)       
@@ -556,9 +552,9 @@ H2OA   H2O in root zn  Water available in root zone (mm)                        
 IR#C   Irrigation #    Irrigation applications (no)                             .
 IRRC   Irrig effect mm Cumulative effective irrigation (mm)                     .
 IRRAC  Irrig apply mm  Cumulative applied irrigation (includes losses) (mm)     .
-KCAA   Crop coef       FAO-56 single crop coefficient                           .
-KCBA   Basal crop coef FAO-56 basal crop coefficient                            .
-KEAA   Evap coef       FAO-56 evaporation coefficient                           .
+KCAA   Kc              FAO-56 single crop coefficient (Kc=ETAA/REFA)            .
+KBSA   Kcb*Ks          FAO-56 basal crop coef * stress coef (Kcb*Ks=EPAA/REFA)  .
+KEAA   Ke              FAO-56 evaporation coefficient (Ke=(ESAA+EFAA+EMAA)/REFA).
 MCFD   Mulch coverage  Fraction of soil covered by mulch                        .
 MDEPD  Mulch thick cm  Thickness of mulch layer (cm)                            .
 MWAD   Mulch mass k/h  Mass of mulch layer (kg/ha)                              .
@@ -732,11 +728,22 @@ DSH#   DIS SHL #/m2.d  Daily shell number consumed                              
 DSHM   DIS SHL kg/ha.d Daily shell mass consumed                                .
 DSTM   DIS STEM kg/ha  Daily stem mass consumed                                 .
 FAW    FAW #/m         Fall armyworm                                            .
+IBCUT  Cutworm, no. m-2                                                         .
+LFMIN  Leafminer (Aproaerema Modicella-Deventer) no.m-2, m2 m-2 leaf damage     .
+PCLA   Defoliation, %                                                           .
+PDLA   Diseased leaf area, %                                                    .
+PRP    Reduction in photosynthetic rate, %                                      .
+PSTDS  General pest and diseases losses due to rot, tikka, leafminer, etc.      .
 RTWM   RTWM #/m        Root worm                                                .
 SGSB   SGSB #/m        Southern green stinkbug                                  .
 SL     SB LOOPER #/m   Soybean looper                                           .
 VBC5   VBC5 #/m        5 instar velvetbean caterpillar                          .
 VBC6   VBC6 #/m        6 instar velvetbean caterpillar                          .
+UFCEW  Corn earworm (Heliothis zea), no. m-2                                    .
+UFRKN  Root-knot nematode (Meloidogyne spp.), no. cm-3 soil                     .
+UFSBL  Soybean looper (Pseudoplusia includens), no. m-2                         .
+UFSKB  Southern green stinkbug (Mezara viridula), no. m-2                       .
+UFVBC  Velvetbean caterpillar (Anticarsia gemmatalis), no. m-2                  .
 
 *EXPERIMENTAL DATA
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -850,6 +857,7 @@ TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     
 CLDD   CLOUD FRAC      Relative cloudiness factor (0-1)                         .
 CO2D   CO2 ppm         Atmospheric CO2 concentration (ppm)                      .
 DAYLD  DAYLENGTH hr    Day length sunrise to sunset (hr)                        .
+OZON7  Ozone ppb       Daily 7-hour mean ozone concentration (9:00-15:59), ppb  .
 PARD   PAR             Daily PAR or photon flux density (moles[quanta]/(m2.d))  .
 PRED   PRECIP mm/d     Precipitation depth (mm/d)                               .
 SRAD   SRAD MJ/m2.d    Solar radiation (MJ/(m2.d))                              .
@@ -865,6 +873,7 @@ TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     
 VPD    Vapor Pres Def  Vapor pressure deficit                                   .
 VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
 WDSD   WIND SPEED km/d Wind speed (km/d)                                        .
+WDATE  WEATHER DATE    Date for weather data (YYYYDDD, for forecast ensembles)  .
 
 *OTHER MODELS
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -939,6 +948,22 @@ WFSD   WATER FAC SENES Water factor for senescence (0-1)                        
 WFTD   WATER FAC TRANS Water factor for transpiration (0-1)                     .
 WSTD   H2O STRESS,TILR Water stress - tillering (0-1)                           .
 YEAR   YEAR            Year (4 digits)                                          .
+RCANE  Cane Type       PlantCane or Ratoon Cane                                 .
+DDLMD  Dead Leaf Biom. Dead Leaves Biomass (ton/ha)   							.
+DDTMD  Dead Tillers B. Dead Tillers Biomass (ton/ha)							.
+SEQR   Ratoon Seq.     Ratooning Cane Sequence                                  .
+TTTOT  Total TT        Total thermal time accumulated (oCdays)                  .
+BBDMD  Below Ground W  Total below ground dry weight (ton/ha)                   .
+CSTAT  Crop Status     Crop Status (1=alive, 0=dead)                            .
+GLI%D  Light Int. GL   Fraction of light intercepted by green leaves (0-1)      .
+TLI%D  Light Int. TL   Fraction of light intercepted by dry+green leaves (0-1)  .
+TRWUP  TotRootUpPot    Potential Root Water Uptake (mm/d)                       .
+EOP    PTranspiration  Potential Crop Transpiration (mm/d)                      .  
+COAD   Oil kg/ha       Total oil accumulated (kg/ha)                     .
+COAM   Oil kg/ha at PM Total oil accumulated at physiological maturity (kg/ha)                                    .
+XWAD   Oil kg /ha      Oil kg/ha                                               .
+XO%D   Seed oil %      Seed oil concentration (%)                               .
+HSAM   Seed Yield      Yield at harvest maturity (kg/ha 9% moisture)            .
 
 *SOIL ORGANIC MATTER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -1198,10 +1223,10 @@ ADPWM  DryWt g/fruit   Avg dry fruit (pod, ear) weight at maturity (g/fruit)    
 AFPWD  FreshWt g/fruit Average fresh fruit (pod, ear) weight (g/fruit)          .
 AFPWM  FreshWt g/fruit Avg fresh fruit (pod, ear) weight at maturity (g/fruit)  .
 FCULD  Fr wt cull      Fresh weight for cull fruit/pods (g/m2)                  .
-FPWAD  Tot Fr Wt kg/ha Total fresh fruit (pod, ear) weight (kg/ha)              .
-FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
-RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)
-RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)
+FHWAD  Fresh harvest   Harvest product fresh wt (kg/ha)                         .
+FPWAD  Tot Fr Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
+RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)         .
+RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)           .
 FSZ1D  Fr wt 1 g/m2    Fresh weight for size class 1 (g/m2)                     .
 FSZ2D  Fr wt 2 g/m2    Fresh weight for size class 2 (g/m2)                     .
 FSZ3D  Fr wt 3 g/m2    Fresh weight for size class 3 (g/m2)                     .
@@ -1214,8 +1239,9 @@ MFWAD  Mrkt Fr Wt k/h  Market fresh fruit (pod, ear) weight (kg/ha)             
 NFWAD  # market/ha     Market fruit (pod, ear) number (fruit/ha)                .
 PAGED  Pod age d       Age of oldest pod or ear (days)                          .
 PAGEM  Pod age d       Age of oldest pod or ear at maturity (days)              .
-PDMCD  DryWt frac      Fruit (pod, ear) dry matter concentration (fraction)     .
+PDMCD  DryMatter frac  Dry matter concentration of harvested product (fraction) .
 PDMCM  DryMatter frac  Avg dry matter concentration at maturity (fraction)      .
+PDMCH  DryMatter frac  Avg dry matter concentration at harvest (fraction)       .
 SMFMH  Stalk fresh massMillable cane fresh weight at harvest (t/ha)             .
 
 *CANEGRO - South Africa
@@ -1310,17 +1336,58 @@ RSPLF  Residual leaf   Residual leaf after mowing (%)                           
 
 *FORAGES
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
-FHC%H  Harv. For.%CH2O Harvested forage carbohydrate concentration at harvest (percent CH2O)
-FHLGH  Harv. For. Lig. Harvested forage lignin concentration at forage harvest (percent lignin)
-FHL%H  Harv. For. %Lf  Harvested forage leaf percentage at forage harvest (percent leaf)
-FHN%H  Harv. For. %N   Harvested forage nitrogen concentration at forage harvest (percent N)
-FHNAH  Harv. For. N    Harvested forage nitrogen weight at forage harvest (kg N/ha)
-FHNO   Forage harvest  Count of forage harvests within current run
-FHWAH  Harv. For. Wt.  Harvested forage weight (leaf + stem) at forage harvest (kg/ha)
-RCWAH  Resid. Can. Wt. Residual canopy weight after forage harvest (kg/ha)
-RLAIH  Resid. LAI      Residual leaf area index after forage harvest
-RLWAH  Resid. Leaf Wt. Residual leaf weight after forage harvest (kg/ha)
-RSWAH  Resid. Stem Wt. Residual stem weight after forage harvest (kg/ha)
-RSRWH  Resid. Stor.Wt. Residual storage organ weight after forage harvest (kg/ha)
-RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)
-RLAIH  Resid. LAI      Residual leaf area index after forage harvest
+FHC%H  Harv. For.%CH2O Harvested forage carbohydrate conc. at harvest (% CH2O)  .
+FHLGH  Harv. For. Lig. Harvested forage lignin conc. at forage harv. (% lignin) .
+FHL%H  Harv. For. %Lf  Harvested forage leaf percentage at forage harv. (% leaf).
+FHN%H  Harv. For. %N   Harvested forage nitrogen conc. at forage harvest (% N)  .
+FHNAH  Harv. For. N    Harvested forage N weight at forage harvest (kg N/ha)    .
+FHNO   Forage harvest  Count of forage harvests within current run              .
+FHWAH  Harv. For. Wt.  Harvested forage wt. (leaf+stem) @ forage harv. (kg/ha)  .
+RCWAH  Resid. Can. Wt. Residual canopy weight after forage harvest (kg/ha)      .
+RLAIH  Resid. LAI      Residual leaf area index after forage harvest            .
+RLWAH  Resid. Leaf Wt. Residual leaf weight after forage harvest (kg/ha)        .
+RSWAH  Resid. Stem Wt. Residual stem weight after forage harvest (kg/ha)        .
+RSRWH  Resid. Stor.Wt. Residual storage organ weight after forage harv. (kg/ha) .
+RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)        .
+RLAIH  Resid. LAI      Residual leaf area index after forage harvest            .
+
+*Greenhouse Gas Emissions
+CCEQC  CO2eq-CO2      CO2 emissions as CO2 equivalent (kg[CO2eq]/ha)            .
+CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)                        .
+CH4BLD CH4_balance     Daily CH4 Balance (kg[C]/ha)                             .
+CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)                    .
+CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)                         .
+CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)                           .
+CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)                          .
+CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha)                            .
+CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)                       .
+CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha)                            .
+CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)                           .
+CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)                          .
+CH4SBD TCH4Substrate   Daily portion of new CO2 proportioned to CH4 (kg[C]/ha)  .
+CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)                        .
+CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             .
+CO2ED  CO2emission     Daily CO2 emission (kg/ha)                               .
+CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
+CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
+MCEQC  CO2eq-CH4      Methane emissions as CO2 equivalent (kg[CO2eq]/ha)        .
+N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
+N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
+N2OED  N2O emitted/d   Daily N2O emissions from soil (g[N]/ha)                  .
+N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
+N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
+N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
+N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
+N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .
+N2O1D  N2O flux lyr 1  Daily N2O flux, soil layer 1 (g[N]/ha)                   .
+N2O2D  N2O flux lyr 2  Daily N2O flux, soil layer 2 (g[N]/ha)                   .
+N2O3D  N2O flux lyr 3  Daily N2O flux, soil layer 3 (g[N]/ha)                   .
+N2O4D  N2O flux lyr 4  Daily N2O flux, soil layer 4 (g[N]/ha)                   .
+N2O5D  N2O flux lyr 5  Daily N2O flux, soil layer 5 (g[N]/ha)                   .
+N2O6D  N2O flux lyr 6  Daily N2O flux, soil layer 6 (g[N]/ha)                   .
+N2O7D  N2O flux lyr 7  Daily N2O flux, soil layer 7 (g[N]/ha)                   .
+N2O8D  N2O flux lyr 8  Daily N2O flux, soil layer 8 (g[N]/ha)                   .
+N2O9D  N2O flux lyr 9  Daily N2O flux, soil layer 9 (g[N]/ha)                   .
+NCEQC  CO2eq-N2O      N2O emissions as CO2 equivalent (kg[CO2eq]/ha)            .
+TCEQC  CO2eq-Total    Total GHG emissions as CO2 equivalent (kg[CO2eq]/ha)      .
+

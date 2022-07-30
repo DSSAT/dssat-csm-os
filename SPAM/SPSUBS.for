@@ -13,14 +13,12 @@ C  Called from:   SPAM
 C  Calls:         None
 C=======================================================================
       SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
+     &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs 
       USE ModuleData
       USE FloodModule
 !     VSH
@@ -28,11 +26,12 @@ C=======================================================================
       USE Linklist
       
       IMPLICIT NONE
+      EXTERNAL GETLUN, YR_DOY, HEADER, SUMVALS
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT, RNMODE
       CHARACTER*8  OUTET
-      CHARACTER*55 FMT
+      CHARACTER*56 FMT
 
       INTEGER DAS, DOY, DYNAMIC, FROP, LUN
       INTEGER NAVWB, RUN, YEAR, YRDOY, L
@@ -40,9 +39,9 @@ C=======================================================================
 
       REAL EF, EM, EO, EP, ES, ET, EOS, EOP, TRWU !JZW add TRWU
       REAL REFET, KCB, KE, KC
-      REAL CEF, CEM, CEO, CEP, CES, CET
+      REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
-      REAL REFA, KCAA, KCBA, KEAA
+      REAL REFA, KCAA, KBSA, KEAA
       REAL AVTMX, AVTMN, AVSRAD, AVRWUP
       REAL TMAX, TMIN, SRAD, TRWUP
 !      REAL SALB, SWALB, MSALB, CMSALB
@@ -138,9 +137,9 @@ C-----------------------------------------------------------------------
 
             WRITE (LUN,120,ADVANCE='NO')
   120       FORMAT('@YEAR DOY   DAS   SRAA  TMAXA  TMINA',
-     &      '    REFA    EOAA    EOPA    EOSA    KCAA    KCBA    KEAA',
-     &      '    ETAA   EPAA   ESAA   EFAA   EMAA   RWUPA',
-     &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC')
+     &      '    REFA    EOAA    EOPA    EOSA    ETAA    EPAA',
+     &      '    ESAA    EFAA    EMAA   RWUPA    EOAC    ETAC    EPAC',
+     &      '    ESAC    EFAC    EMAC    KCAA    KBSA    KEAA')
 
             IF (N_LYR < 10) THEN
 !              VSH
@@ -178,7 +177,7 @@ C-----------------------------------------------------------------------
         AVTMN = 0.
         AVSRAD= 0.
         KEAA = 0.
-        KCBA = 0.
+        KBSA = 0.
         KCAA = 0.
         REFA = 0.
         AVRWUP= 0.
@@ -204,7 +203,7 @@ C-----------------------------------------------------------------------
       AVTMN  = AVTMN  + TMIN
       AVSRAD = AVSRAD + SRAD
       KEAA   = KEAA   + (ES+EM+EF)/REFET
-      KCBA   = KCBA   + (EP/REFET)
+      KBSA   = KBSA   + (EP/REFET)
       KCAA   = KCAA   + (ET/REFET)
       REFA   = REFA   + REFET
       AVRWUP = AVRWUP + TRWUP * 10.
@@ -236,7 +235,7 @@ C-----------------------------------------------------------------------
           AVTMN = AVTMN / NAVWB
           AVSRAD= AVSRAD / NAVWB
           KEAA  = KEAA  / NAVWB
-          KCBA  = KCBA  / NAVWB
+          KBSA  = KBSA  / NAVWB
           KCAA  = KCAA  / NAVWB
           REFA  = REFA  / NAVWB
           AVRWUP= AVRWUP / NAVWB
@@ -245,24 +244,25 @@ C-----------------------------------------------------------------------
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             !Daily printout
-            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),12(F8.3),F9.2,"
-            IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
+            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),9(F8.3),"
+            IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR.
      &         CES > 1000. .OR. CEF > 1000. .OR. CEM > 1000.) THEN
-              FMT = TRIM(FMT) // "6F8.0))"
+              FMT = TRIM(FMT) // "6(F8.0),"
             ELSE 
-              FMT = TRIM(FMT) // "6F8.2))"
+              FMT = TRIM(FMT) // "6(F8.2),"
             ENDIF
-            
+            FMT = TRIM(FMT) // "3(F8.3))"
+
             IF (REFA .LT. 0.0) THEN
               KCAA = -99.
-              KCBA = -99.
+              KBSA = -99.
               KEAA = -99.
             ENDIF
 
-            WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX, 
-     &        AVTMN, REFA, EOAA, EOPA, EOSA, KCAA, 
-     &        KCBA, KEAA, ETAA, EPAA, ESAA, EFAA, EMAA,  
-     &        AVRWUP, CEO, CET, CEP, CES, CEF, CEM   
+            WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX,
+     &        AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA,
+     &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA
+
 !     &        ,SALB, SWALB, MSALB, CMSALB
 !  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
 !     &      8(F7.3),6(F8.2))     
@@ -278,25 +278,25 @@ C-----------------------------------------------------------------------
                 ENDDO
 !               WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
                 WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
-              ENDIF    
+              ENDIF
             ELSE
               WRITE(LUN,'(" ")')
             ENDIF
           ENDIF   ! VSH
 
 !         VSH CSV output corresponding to ET.OUT
-          IF (FMOPT == 'C') THEN 
+          IF (FMOPT == 'C') THEN
 !           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
             N_LYR = SOILPROP%NLAYR
             CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
-     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
-     &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
-     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR, TRWU,
-     &vCsvlineET, vpCsvlineET, vlngthET)
-     
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS,
+     &AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA,
+     &EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA,
+     &N_LYR, ES_LYR, TRWU, vCsvlineET, vpCsvlineET, vlngthET)
+
             CALL LinklstET(vCsvlineET)
           ENDIF
-      
+
           NAVWB = 0
           EFAA  = 0.
           EMAA  = 0.
@@ -310,7 +310,7 @@ C-----------------------------------------------------------------------
           AVTMN = 0.
           AVSRAD= 0.
           KEAA = 0.
-          KCBA = 0.
+          KBSA = 0.
           KCAA = 0.
           REFA = 0.
           AVRWUP= 0.
@@ -330,7 +330,7 @@ C-----------------------------------------------------------------------
 !           saved aS real numbers for placement in real array.
             LABEL(1)  = 'ETCM'; VALUE(1)  = CET
             LABEL(2)  = 'EPCM'; VALUE(2)  = CEP
-            LABEL(3)  = 'ESCM'; VALUE(3)  = CES
+            LABEL(3)  = 'ESCM'; VALUE(3)  = CEVAP
 
             !Send labels and values to OPSUM
             CALL SUMVALS (SUMNUM, LABEL, VALUE) 
@@ -370,9 +370,9 @@ C-----------------------------------------------------------------------
 ! EP      Actual plant transpiration rate (mm/d)
 ! ES      Actual soil evaporation rate (mm/d)
 ! ET      Actual evapotranspiration rate (mm/d)
-! KCBA    Actual basal crop coefficient (Kcb)
-! KCAA    Actual crop coefficient (Kc)
-! KEAA    Actual evaporation coefficient (Ke)
+! KBSA    FAO-56 basal crop coefficient * stress coefficient (Kcb*Ks)
+! KCAA    FAO-56 single crop coefficient (Kc)
+! KEAA    FAO-56 evaporation coefficient (Ke)
 ! MODEL   Name of CROPGRO executable file 
 ! NAP     Number of irrigation applications  
 ! NAVWB   Number of days since last printout (d)
@@ -432,7 +432,7 @@ C=======================================================================
       REAL  SWDELTX(NL),    !Change in SW due to root extraction
      &      SWTEMP(NL),     !New SW value based only on root extraction
      &      SW_AVAIL(NL),   !Water available for root extraction
-     &      UH2O(NL)        !Root water uptake from plant routine (optional)
+     &      UH2O(NL)        !Root water uptake from plant routine (opt.)
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
         SWDELTX(L) = 0.0

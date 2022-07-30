@@ -13,6 +13,7 @@ C  12/01/1993 WTB Modifed to read soil test P
 C  08/19/2002 GH  Modified for Y2K
 C  02/07/2007 GH  Add path to FileX
 !  08/15/2011 JW  Improve the handling of INH4 and INO3
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : FILEX,LNIC,NLAYR,DUL,SWINIT,PEDON,SLNO
 C
@@ -31,11 +32,12 @@ C=======================================================================
 
       SUBROUTINE IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &        WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM) 
+     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
 !     &        SOM1I, SOM2I, SOM3I)
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH
 
       CHARACTER*2  PRCROP
       CHARACTER*6  ERRKEY,FINDCH
@@ -44,8 +46,8 @@ C=======================================================================
       CHARACTER*80 CHARTEST
 	CHARACTER*92 FILEX_P
 
-      INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC,
-     &             YRIC,ERRNUM,IFIND,YRSIM
+      INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC, !,FWY1P,
+     &             YRIC,ERRNUM,IFIND   !,YRSIM, YRICYEAR, YR, DOY
       REAL         DS(NL),DLAYRI(NL),SWINIT(NL)
       REAL         DUL(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
       REAL         ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID !, TOTSOM
@@ -102,10 +104,14 @@ C
          CALL ERROR (ERRKEY,2,FILEX,LINEXP)
       ENDIF
       
-      IF (YRIC .LT. 0) THEN
-        YRIC = YRSIM
-      ENDIF
-      CALL  Y2K_DOY (YRIC)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+      !CALL  Y2K_DOY (YRIC)
+      CALL  Y4K_DOY (YRIC,FILEX,LINEXP,ERRKEY,3)
+!      IF (YRIC .LT. YRSIM) THEN
+!        !FO - Initial Condition raise an error if is lower than YRSIM.
+!        CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+!      ENDIF
+      
       IF (ISWITCH%ISWNIT .EQ. 'Y') THEN
          WRESR = MAX(WRESR,0.0)
 C-GH     IF (WRESR  .LT. 1.0) WRESR  = 1.0
@@ -156,7 +162,6 @@ C
           INO3(NLAYRI) = 0.0
           NLAYRI = NLAYRI + 1
         ENDIF
-
       
       NLAYRI = NLAYRI - 1
 
@@ -225,6 +230,7 @@ C 05/28/1993 PWW Header revision and minor changes
 ! 03/31/2005 CHP Return method of P extraction (SMPX) if any P values
 !                (SAPX) are read.
 C 02/07/2007 GH  Add path to File_X
+C 05/07/2020 FO  Add new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : FILEX,LNSA,PEDON,SLNO,BD,OC,PH
 C
@@ -245,10 +251,11 @@ C=======================================================================
 
       SUBROUTINE IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)
+     &            SASC, NLAYR)    !, YRSIM)
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH
 
       CHARACTER*5  SMHB, SMKE, SMPX, SMHBtemp, SMKEtemp, SMPXtemp
       CHARACTER*6  ERRKEY, FINDCH
@@ -258,7 +265,7 @@ C=======================================================================
 	CHARACTER*92 FILEX_P
 
       INTEGER      LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNSA
-      INTEGER      ERRNUM,SADAT,IFIND,L
+      INTEGER      ERRNUM,SADAT,IFIND,L   !,YRSIM
 
       REAL         SABL(NL),SADM(NL),SAOC(NL),SANI(NL),SAPHW(NL)
       REAL         SAPX(NL),SAKE(NL),BD(NL),OC(NL),DS(NL),SAPHB(NL)
@@ -300,7 +307,11 @@ C=======================================================================
        ELSE
          CALL ERROR (ERRKEY,2,FILEX,LINEXP)
       ENDIF
-      CALL Y2K_DOY (SADAT)
+      
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+      !CALL Y2K_DOY (SADAT)
+      CALL Y4K_DOY (SADAT,FILEX,LINEXP,ERRKEY,3)
+      
 C
 C     Read layer information for the correct soil analysis number
 C
@@ -409,7 +420,7 @@ C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
- 55   FORMAT (I3,2X,I3,3(1X,A5))
+ 55   FORMAT (I3,I5,3(1X,A5))
  60   FORMAT (I3,F5.0,8(1X,F5.0))
 
       END SUBROUTINE IPSLAN

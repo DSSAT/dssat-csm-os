@@ -617,7 +617,7 @@ C-----------------------------------------------------------------------
         LSTSR = CADSRF/(1-CADSRF)
         LSTR = (1.-CADSTF)/CADSTF
 !      ENDIF
-      IF (STMWT+WTLF .GT. 0.0) THEN
+      IF (STMWT-SSDOT+WTLF-SLDOT .GT. 0.0) THEN
 C      5/16/05 SJR added WTLF to calculation of LSTSR to be consistent 
 C            with the definition - ratio of CH2O to be added to stem 
 C            relative to that added to leaf + stem

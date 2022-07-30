@@ -14,7 +14,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &    N2O_data) 
 
 !     ------------------------------------------------------------------
-      USE N2O_mod
+      USE GHG_mod
       USE FertType_mod
       USE Interface_SoilNBalSum
       IMPLICIT NONE

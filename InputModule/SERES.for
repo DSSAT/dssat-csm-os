@@ -251,7 +251,7 @@ C  Revision history
 C
 C  11/20/1995 PWW Written
 C  07/16/2002 CHP Increased number of applications to 200 (NAPPL)
-C  
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : NARES,RESDAY,RESCOD,RESIDUE,RESN,RESP,RESK,RINP,DEPRES,
 C           RNMODE,IRESI
@@ -284,6 +284,8 @@ C=======================================================================
       INTEGER      RESDAY(*),RESTYPE(NAPPL)
       REAL         RINP(*),RESP(*),RESK(*),RESN(*),DEPRES(*)
       REAL         RESIDUE(*),EFF,FLAG,RESAMT
+      
+      PARAMETER (ERRKEY = 'ENTRES')
 
       NLOOP = 0
   100 CONTINUE
@@ -350,7 +352,9 @@ C
 	  IF (EFF .GT. -0.0001 .AND. EFF .LE. 9999999. .AND.
      &    FLAG .LE. 0) THEN
 	    YRTEMP = NINT(EFF)
-	    CALL Y2K_DOY(YRTEMP)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+	    !CALL Y2K_DOY(YRTEMP)
+      CALL Y4K_DOY(YRTEMP,'ENTRES',0,ERRKEY,1)
 	    IF (IRESI .EQ. 'R') THEN
 	      CALL YR_DOY (YRTEMP,YRT,DOYT)
 	      IF (DOYT .GT. 0 .AND. DOYT .LE. 366 .AND. 
@@ -393,8 +397,10 @@ C
 	 CALL VERIFY (LINE,EFF,FLAG)
 	 IF (EFF .GT. -0.0001 .AND. EFF .LE. 9999999. .AND. FLAG .LE. 0)
      &   THEN
-	   YRTEMP = NINT(EFF)
-	   CALL Y2K_DOY(YRTEMP)
+      YRTEMP = NINT(EFF)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+      !CALL Y2K_DOY(YRTEMP)
+      CALL Y4K_DOY(YRTEMP,'ENTRES',0,ERRKEY,1)
 	   IF (IRESI .EQ. 'R') THEN
 	     CALL YR_DOY (YRTEMP,YRT,DOYT)
 	     IF (DOYT .GT. 0 .AND. DOYT .LE. 366 .AND.YRT .LT. 3000) THEN
@@ -542,23 +548,23 @@ C-----------------------------------------------------------------------
   200 FORMAT (  10X,'INTERACTIVE DATA ENTRY FOR RESIDUE',
      &        /,10X,'==================================')
   250 FORMAT (
-     & 1X,'ÚÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ',
-     &    'ÂÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄ¿',/,
-     & 1X,'³ # ³ Date    ³ Amount ³ Depth ³ Residue Mater.³ Incorp.% ',
-     &    '³  N% ³  P% ³  K% ³',/,
-     & 1X,'³   ³         ³  Kg/Ha ³   cm  ³               ³          ',
-     &    '³     ³     ³     ³',/,
-     & 1X,'ÃÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄ',
-     &    'ÅÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄ´')
+     & 1X,'|---|---------|--------|-------|---------------|----------',
+     &    '|-----|-----|-----|',/,
+     & 1X,'| # | Date    | Amount | Depth | Residue Mater.| Incorp.% ',
+     &    '|  N% |  P% |  K% |',/,
+     & 1X,'|   |         |  Kg/Ha |   cm  |               |          ',
+     &    '|     |     |     |',/,
+     & 1X,'|---|---------|--------|-------|---------------|----------',
+     &    '|-----|-----|-----|')
   275 FORMAT (
-     & 1X,'ÀÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ',
-     &    'ÁÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÙ',/)
+     & 1X,'|---|---------|--------|-------|---------------|----------',
+     &    '|-----|-----|-----|',/)
 
   285 FORMAT (
-     & 1X,'³',I2,1X,'³',I4,1X,I3,1X,'³',F7.1,1X,'³',F6.1,1X,'³ ',A14,
-     &    '³ ',F5.1,4X,'³',F5.1,'³',F5.1,'³',F5.1,'³')
+     & 1X,'|',I2,1X,'|',I4,1X,I3,1X,'|',F7.1,1X,'|',F6.1,1X,'| ',A14,
+     &    '| ',F5.1,4X,'|',F5.1,'|',F5.1,'|',F5.1,'|')
   295 FORMAT (/9X,
-     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (ÄÄÙ = Done) ', $)
+     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (Enter = Done)',$)
   296 FORMAT (//,9X,
      &    'This option is not available for the current Residue',/,
      & 9X,'management selection.  Please change selection first.', $)
@@ -586,11 +592,11 @@ C-----------------------------------------------------------------------
      &        /,9X,'New phosphorus % ?        --->',3X,' ',$)
   940 FORMAT (/,9X,'Residue % potassium       ===>',1X,F7.3,' %',
      &        /,9X,'New potassium % ?         --->',3X,' ',$)
- 4900 FORMAT (//,9X,'ÚÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿',/,
-     &           9X,'³ # ³   Residue Type              ³',/,
-     &           9X,'ÃÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´',/,
-     &           4(9X,'³',I2,' ³',1X,A17,10X,' ³',/),
-     &           9X,'ÀÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ',//,
+ 4900 FORMAT (//,9X,'|---|-----------------------------|',/,
+     &           9X,'| # |   Residue Type              |',/,
+     &           9X,'|---|-----------------------------|',/,
+     &           4(9X,'|',I2,' |',1X,A17,10X,' |',/),
+     &           9X,'|---|-----------------------------|',//,
      &           9X,'Residue type selected     ===>',1X,I3,
      &         /,9X,'New type ?                --->  ',$)
 

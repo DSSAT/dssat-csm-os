@@ -1,0 +1,21 @@
+*TARO CULTIVAR COEFFICIENTS: TRARO048 MODEL
+!
+! EXPNO       Number of experiments used to estimate cultivar parameters
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1    P3    P4    P5    G2    G3    G4 PHINT PCINT  PCGRD
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10
+!Calibration                             P     P     P     P     G     G     G     N     N     N
+
+999991 MINIMA               . DFAULT   700   900   600   700  1.00  1.00  1.00 150.0 120.0  1.00
+999992 MAXIMA               . DFAULT  1200  1500  1600  1000  2.00  1.30  1.50 150.0 120.0  1.00
+
+IB0001 LEHUA                . IB0001   800  1130   940   980  1.00  1.00  1.00 150.0 120.0  1.00
+IB0002 BUN LONG             . IB0001   700   900  1600   800  1.00  1.30  1.50 150.0 120.0  1.00
+IB0003 SAMOA HYBRID         . IB0001  1200  1000   900   700  1.00  1.00  1.00 150.0 120.0  1.00
+IB0004 TAUSALA-SAMOA        . IB0001  1200  1000   900   700  1.00  1.00  1.00 150.0 120.0  1.00
+IB0008 BLANCA               . IB0001  1200  1500   600   900  1.00  0.85  1.00 150.0 120.0  1.00
+IB0009 LILA                 . IB0001  1200   900  1300  1000  1.00  1.30  1.00 150.0 120.0  1.00
+IB0010 LEHUA-MAUI           . IB0001  1150  1200  1050   900  2.50  0.65  1.10 150.0 120.0  1.00
+                                                                     

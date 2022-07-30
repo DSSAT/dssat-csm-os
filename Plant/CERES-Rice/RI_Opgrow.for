@@ -13,6 +13,7 @@ C  11/22/2004 CHP Changed output file names from *.out to *.OUT
 C                   for case-sensitive OS's.
 !  02/13/2015 chp N-uptake from ri_Nuptak.for routine instead of calculated
 !                 here as tops N
+!  04/14/2021 chp Added CSV output for PlantGro.OUT (but not yet PlantN.OUT)
 C=======================================================================
 
       SUBROUTINE RI_OPGROW (CONTROL, ISWITCH, SOILPROP,
@@ -23,9 +24,8 @@ C=======================================================================
      &    CANHT, KSTRES, DTT)                                  
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE CsvOutput   ! VSH,chp
       IMPLICIT  NONE
       SAVE
 
@@ -33,7 +33,7 @@ C-----------------------------------------------------------------------
       CHARACTER*30  LayerText
       CHARACTER*220 GROHEAD(4), NITHEAD
 
-      INTEGER LUNOV,YRPLT,DAP,DAS
+      INTEGER LUNOV,YRPLT,DAP,DAS, DTTC
       INTEGER RSTAGE,ISTAGE,YRDOY
 
       CHARACTER*1 IDETG, ISWNIT
@@ -43,7 +43,7 @@ C-----------------------------------------------------------------------
       REAL BIOMAS, RTWT, LFWT, GRNWT, HI, GM2KG
       REAL LAI, GPSM, PANWT, GPP, PCNGRN, PCNSH, PCNVEG
       REAL PLTPOP, PLANTS, STOVN, GRAINN, ROOTN
-      REAL TURFAC, RTDEP, STMWT,  RLV(NL), SWFAC, NSTRES
+      REAL TURFAC, RTDEP, STMWT,  RLV(NL), SWFAC, NSTRES, RLV5(5)
       REAL TILNO, CumNUptake, SATFAC, SDSIZE, SHELPC
       REAL WTNGRN, WTNVEG
 
@@ -85,6 +85,8 @@ C-----------------------------------------------------------------------
       RUN     = CONTROL % RUN
       YRDOY   = CONTROL % YRDOY
 
+      FMOPT   = ISWITCH % FMOPT   ! VSH, CHP
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -92,11 +94,6 @@ C-----------------------------------------------------------------------
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       IF (IDETG .EQ. 'Y') THEN
-        OUTG  = 'PlantGro.OUT'
-        CALL GETLUN('OUTG',  NOUTDG)
-        OUTPN  = 'PlantN.OUT  '
-        CALL GETLUN('OUTPN', NOUTPN)
-
 !       Text describing soil layer depths
         LayerText = "                              "
         DO L = 1, MIN(5,NLAYR)
@@ -109,6 +106,10 @@ C-----------------------------------------------------------------------
           J = L*6
           LayerText(I:J) = CHAR8(3:8)
         ENDDO
+
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN
+          OUTG  = 'PlantGro.OUT'
+          CALL GETLUN('OUTG',  NOUTDG)
 
       GROHEAD(1) =
      &  '!YR        Days  Days              Leaf  <--------- Dry Wei' //
@@ -132,40 +133,43 @@ C-----------------------------------------------------------------------
      &  '@YEAR DOY   DAS   DAP  L#SD  GSTD  LAID  LWAD  SWAD  GWAD' //
      &  '  RWAD  EWAD  CWAD  G#AD  GWGD  HIAD  T#AD  WSPD  WSGD' //
      &  '  EWSD  NSTD  KSTD   LN%D   SH%D  SLAD  CHTD  CWID  RDPD' //
-     &  '  RL1D  RL2D  RL3D  RL4D  RL5D  SNW0C  SNW1C   DTTD' 
-
-C-----------------------------------------------------------------------
-      NITHEAD = '@YEAR DOY   DAS   DAP' //
-     &  '  CNAD  GNAD  VNAD  GN%D  VN%D  NUPC  LNAD' //
-     &  '  SNAD  LN%D  SN%D  SHND  RN%D  SNN0C  SNN1C'
+     &  '  RL1D  RL2D  RL3D  RL4D  RL5D  SNW0C  SNW1C   DTTC' 
 
 !-----------------------------------------------------------------------
-!       Initialize daily growth output file
-        INQUIRE (FILE = OUTG, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'OLD',
-     &      IOSTAT = ERRNUM, POSITION = 'APPEND')
-          FIRST = .FALSE.  
-        ELSE
-          OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'NEW',
-     &      IOSTAT = ERRNUM)
-          WRITE(NOUTDG,'("*GROWTH ASPECTS OUTPUT FILE")')
-          FIRST = .TRUE.  
+!         Initialize daily growth output file
+          INQUIRE (FILE = OUTG, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'OLD',
+     &        IOSTAT = ERRNUM, POSITION = 'APPEND')
+            FIRST = .FALSE.  
+          ELSE
+            OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'NEW',
+     &        IOSTAT = ERRNUM)
+            WRITE(NOUTDG,'("*GROWTH ASPECTS OUTPUT FILE")')
+            FIRST = .TRUE.  
+          ENDIF
+          
+          !Write headers
+          CALL HEADER(SEASINIT, NOUTDG, RUN)
+          
+!         Variable heading for GROWTH.OUT
+          WRITE (NOUTDG,2192) GROHEAD(1)
+          WRITE (NOUTDG,2192) GROHEAD(2)
+          WRITE (NOUTDG,2192) GROHEAD(3)
+          WRITE (NOUTDG,2192) GROHEAD(4)
+ 2192     FORMAT (A220)
+
         ENDIF
-
-        !Write headers
-        CALL HEADER(SEASINIT, NOUTDG, RUN)
-
-!       Variable heading for GROWTH.OUT
-        WRITE (NOUTDG,2192) GROHEAD(1)
-        WRITE (NOUTDG,2192) GROHEAD(2)
-        WRITE (NOUTDG,2192) GROHEAD(3)
-        WRITE (NOUTDG,2192) GROHEAD(4)
- 2192   FORMAT (A220)
-
 !-----------------------------------------------------------------------
-!     Initialize daily plant nitrogen output file
+!       Initialize daily plant nitrogen output file
         IF (ISWNIT .EQ. 'Y') THEN
+C-----------------------------------------------------------------------
+          OUTPN  = 'PlantN.OUT  '
+          CALL GETLUN('OUTPN', NOUTPN)
+          NITHEAD = '@YEAR DOY   DAS   DAP' //
+     &      '  CNAD  GNAD  VNAD  GN%D  VN%D  NUPC  LNAD' //
+     &      '  SNAD  LN%D  SN%D  SHND  RN%D  SNN0C  SNN1C'
+        
           INQUIRE (FILE = OUTPN, EXIST = FEXIST)
           IF (FEXIST) THEN
             OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'OLD',
@@ -177,21 +181,18 @@ C-----------------------------------------------------------------------
             WRITE(NOUTPN,'("*PLANT N OUTPUT FILE")')
             FIRST = .TRUE.  
           ENDIF
-
+        
           !Write headers
           CALL HEADER(SEASINIT, NOUTPN, RUN)
-
           WRITE (NOUTPN,2240) NITHEAD
  2240     FORMAT (A140)
         ENDIF
       ENDIF
-
 !-----------------------------------------------------------------------
-
       SEEDNO = 0.0
       GPP   = 0.0
       WTNUP = 0.0
-!      YIELD = 0.0
+!     YIELD = 0.0
       CANHT = 0.0
       CANWH = 0.0
 
@@ -209,6 +210,8 @@ C-----------------------------------------------------------------------
       CUMSENSURFN = 0.0
       CUMSENSOILN = 0.0   
 
+      DTTC = 0  !Cumulative thermal days (integer)
+
 !***********************************************************************
 !***********************************************************************
 !     Daily OUTPUT
@@ -223,6 +226,8 @@ C-----------------------------------------------------------------------
         CUMSENSOIL  = CUMSENSOIL  + SENESCE % ResWt(L)
         CUMSENSOILN = CUMSENSOILN + SENESCE % ResE(L,1)
       ENDDO
+
+      DTTC = DTTC + NINT(DTT)  !Accumulate thermal days
 
 !-----------------------------------------------------------------------
 C     Check for output frequency
@@ -334,33 +339,51 @@ C-----------------------------------------------------------------------
           ENDIF
 
           WRITE (NOUTPN,310)YEAR, DOY, DAS, DAP,
-     &    (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0), PCNGRN, PCNVEG,
-!    &    (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0), PCNL,
-     &    CumNUptake, (WTNLF*10.0), (WTNST*10.0), PCNL,
-     &    PCNST, PCNSH, PCNRT, CUMSENSURFN, CUMSENSOILN
+     &      (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0), PCNGRN, PCNVEG,
+!    &      (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0), PCNL,
+     &      CumNUptake, (WTNLF*10.0), (WTNST*10.0), PCNL,
+     &      PCNST, PCNSH, PCNRT, CUMSENSURFN, CUMSENSOILN
  
-  310     FORMAT (1X,I4,1X,I3.3,2(1X,I5),
+  310       FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &        3(1X,F5.1),2(1X,F5.2),1X,F5.1,
      &        2(1X,F5.1),4(1X,F5.2),2(1X,F6.2))
         ENDIF
 
-        WRITE (NOUTDG,400)YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH, CHP
+
+          WRITE (NOUTDG,400)YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
      &       NINT(WTLF*10),NINT(STMWT*GM2KG),NINT(GRNWT*GM2KG),
      &       NINT(RTWT*GM2KG),NINT(PANWT*GM2KG),NINT(BIOMAS*GM2KG),
      &       NINT(SEEDNO),SDSIZE,HI,NINT((TILNO+1.)*PLTPOP),(1.0-SWFAC),
      &       (1.0-TURFAC),SATFAC,(1.0-NSTRES),(1.0-KSTRES),PCNL,SHELPC,
      &       SLA,CANHT,CANWH,(RTDEP/100),(RLV(I),I=1,5),
-     &       NINT(CUMSENSURF), NINT(CUMSENSOIL), DTT
- 400    FORMAT (1X,I4,1X,I3.3,2(1X,I5),
+     &       NINT(CUMSENSURF), NINT(CUMSENSOIL), DTTC
+ 400      FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &        1X,F5.1,1X,I5,1X,F5.2,7(1X,I5),
      &        1X,F5.1,1X,F5.3,1X,I5,5(1X,F5.3),2(1X,F6.2),1X,F5.1,
      &        2(1X,F5.2),6(1X,F5.2)  !)
-     &        ,2(1X,I6),F7.2 ) 
+     &        ,2(1X,I6),I7) 
+
+ !      VSH CSV output corresponding to PlantGro.OUT
+        ELSEIF (FMOPT == 'C') THEN 
+          DO L = 1, 5
+            RLV5(L) = RLV(L)
+          ENDDO    
+          CALL CsvOut_RICER(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
+     &       CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &       VSTAGE,RSTAGE,XLAI,
+     &       WTLF*10,STMWT*GM2KG,GRNWT*GM2KG,
+     &       RTWT*GM2KG,PANWT*GM2KG,(BIOMAS*GM2KG),
+     &       SEEDNO,SDSIZE,HI,((TILNO+1.)*PLTPOP),(1.0-SWFAC),
+     &       (1.0-TURFAC),SATFAC,(1.0-NSTRES),(1.0-KSTRES),PCNL,SHELPC,
+     &       SLA,CANHT,CANWH,(RTDEP/100), RLV5,
+     &       CUMSENSURF, CUMSENSOIL, DTTC,
+     &       vCsvlineRICER, vpCsvlineRICER, vlngthRICER) 
+          CALL LinklstRICER(vCsvlineRICER)
+        ENDIF
       ENDIF
 
 !***********************************************************************
-!***********************************************************************
-!     Daily OUTPUT
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 !***********************************************************************

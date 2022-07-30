@@ -1,14 +1,12 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2021 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
+C                      International Fertilizer Development Center
+C                    
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
-C  WATBAL, Subroutine, J.T. Ritchie
+C  WATBAL, Subroutine
 C  Calculates water balance components.
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
@@ -37,6 +35,7 @@ C  06/12/2002 CHP/US  Added flooded field options
 !                 MEINF = 'M', Mulch effects modelled.
 !  04/05/2006 CHP Added mixing of SW and variable soil layer depths
 !                 due to tillage
+!  04/10/2021 GH Corrected snowfall for very small amounts
 C-----------------------------------------------------------------------
 C  Called by: SOIL module
 C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.for)
@@ -51,7 +50,7 @@ C=======================================================================
      &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
-     &    DRN, SNOW, SW, SWDELTS,                         !Output
+     &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
 
 !-----------------------------------------------------------------------
@@ -59,6 +58,9 @@ C=======================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL IPWBAL, TILEDRAIN, WATERTABLE, WBSUM, SNOWFALL, 
+     &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
+     &  SOILMIXING, SUMSW
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -156,7 +158,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
 !     Call IPWBAL to read in values from input file
-      CALL IPWBAL (CONTROL, DLAYR, LL, NLAYR, SAT,        !Input
+      CALL IPWBAL (CONTROL, LL, NLAYR,                    !Input
      &    SW, MgmtWTD)                                    !Output
 
 !     Read tile drainage variables from FILEIO
@@ -183,9 +185,9 @@ C=======================================================================
       MEEVP  = ISWITCH % MEEVP
 
       IF (ISWWAT .EQ. 'Y') THEN
-        IF (CONTROL%MULTI .GT. 1) THEN
-        !Re-read initial conditions if multi-season run
-          CALL IPWBAL (CONTROL, DLAYR, LL, NLAYR, SAT,    !Input
+        IF (CONTROL%MULTI .GT. 1 .OR. CONTROL%RNMODE .EQ. 'Y') THEN
+        !Re-read initial conditions if multi-season or forecast run
+          CALL IPWBAL (CONTROL, LL, NLAYR,                !Input
      &    SW, MgmtWTD)                                    !Output
         ENDIF
       ENDIF
@@ -255,7 +257,9 @@ C=======================================================================
 !-----------------------------------------------------------------------
       !Convert snowfall into precip ( = rain)
       !This is needed for winter crops even if water not simulated.
-      IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.001) THEN
+C-GH   IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.001) THEN
+C     Conflict with CERES-Wheat
+      IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.0) THEN
         CALL SNOWFALL (RATE,
      &    TMAX, RAIN,                                 !Input
      &    SNOW, WATAVL)                               !Output

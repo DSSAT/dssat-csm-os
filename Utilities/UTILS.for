@@ -104,7 +104,7 @@ C
          IF (LINE(I) .NE. ' ') GO TO 100
       END DO
       !
-      ! Nothing entered .. spaces or ÄÄÙ .. set FLAG to 1.0 and exit
+      ! Nothing entered .. set FLAG to 1.0 and exit
       !
       FLAG = 1.0
       GO TO 1300
@@ -544,7 +544,7 @@ C-------------------------------------------------------------------------------
 C     Curve type Q10 - basic Q10 function
 C	XB=Tref, reference temperature
 C	X1=k, te response at Tref
-C	X2= Q10 increase in the response for every 10°K increase in temperature
+C	X2= Q10 increase in the response for every 10Â°K increase in temperature
 C	XM is not used
 C-------------------------------------------------------------------------------
       IF(CTYPE .EQ. 'Q10' .OR. CTYPE .EQ. 'q10') THEN
@@ -714,10 +714,8 @@ C========================================================================
       CASE ('FILETMP'); LUN = 23  !Tony Hunt temp file
       CASE ('SIMCNTL'); LUN = 24  !Simulation Control file
       CASE ('DSPRO');   LUN = 25  !DSSATPRO file
-
-!     RESERVE FOR ORYZA
-      CASE ('ORYZA1');  LUN = 26  !ORYZA
-      CASE ('ORYZA1A'); LUN = 27  !Prevent ORYZA1+1 from being used
+      CASE ('FILEWC');  LUN = 26  !*.cli - climate summary files
+      CASE ('FILEWG');  LUN = 27  !*.wtg - generated weather files
 
 !     Currently 30 is the highest number for reserved logical units
 !     Change value in subroutine OUTFILES if necessary
@@ -1262,6 +1260,7 @@ C=======================================================================
 !  REVISION HISTORY
 !  03/09/2005 CHP Written.
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
+!  01/07/2022 FO  Find *.OUT files for MacOS and Linux systems
 !=======================================================================
       SUBROUTINE OUTFILES(FileData)
       USE ModuleDefs 
@@ -1269,15 +1268,19 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
+      CHARACTER*6  ERRKEY
       CHARACTER*10 FILECDE
+      CHARACTER*78 MSG(2)
       CHARACTER*80 CHARTEST
       CHARACTER*120 DATAX, PATHX
+      CHARACTER(len=255) :: DSSAT_HOME
 
       INTEGER ERR, I, ISECT, LNUM, LUN
       LOGICAL FEXIST      !EOF, 
       TYPE (OutputType) FileData
 
       DATA FILECDE /'OUTPUT.CDE'/
+      PARAMETER (ERRKEY = 'OUTFLE')
 
 !-----------------------------------------------------------------------
 !     Initialize
@@ -1305,9 +1308,28 @@ C=======================================================================
       ENDIF        
 
       IF (.NOT. FEXIST) THEN
-!       Last, check for file in C:\DSSAT45 directory
+!       Check for file in C:\DSSAT48 directory
         DATAX = trim(STDPATH) // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
+      ENDIF
+      
+! FO - 01/07/2022 - Update for MacOS and Linux systems.
+!     This is check at DSSAT_HOME is neede to remove old *.OUT
+!     files for new runs.
+      IF (.NOT. FEXIST) THEN
+        CALL get_environment_variable("DSSAT_HOME", DSSAT_HOME)
+        IF(TRIM(DSSAT_HOME) .NE. '') THEN
+            STDPATH = TRIM(DSSAT_HOME)
+        ENDIF
+        DATAX = trim(STDPATH) // FILECDE
+        INQUIRE (FILE = DATAX,EXIST = FEXIST)
+      ENDIF
+
+      IF (.NOT. FEXIST) THEN
+        MSG(1) = "OUTPUT.CDE file not found"
+        MSG(2) = "Error in subroutine OUTFILES"
+        CALL WARNING(2, ERRKEY, MSG)
+!        CALL ERROR (ERRKEY,2,DATAX,0)
       ENDIF
 
       IF (FEXIST) THEN

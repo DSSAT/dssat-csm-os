@@ -13,6 +13,7 @@ C  11/29/2004 CHP Added ETAD_NAILUJ for Ponding routine -- provides
 C                   integer month given date.
 !  10/11/2005 CHP Fix problem in Y2K_DOYW, sequenced runs spanning Y2K 
 !  11/16/2007 CHP Added leap year function
+!  03/23/2022 GH  Updated crossover year to 2035
 C=======================================================================
 C=======================================================================
 C  DOYC, Integer function, N.B. Pickering, 09/13/91
@@ -77,7 +78,8 @@ C=======================================================================
 !     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
 !     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
 !     CHP 07/06/2017 - change "cross-over" year from 2020 to 2025
-          IF (YR .LE. 25) THEN
+!     GH  03/23/2022 - change "cross-over" year from 2025 to 2035
+          IF (YR .LE. 35) THEN
             YRDOY = (2000 + YR) * 1000 + DOY
           ELSE
             YRDOY = (1900 + YR) * 1000 + DOY
@@ -86,6 +88,87 @@ C=======================================================================
       ENDIF
         
       END SUBROUTINE Y2K_DOY
+      
+C=======================================================================
+C  4-digit Year, Subroutine, Fabio Oliveira, Willingthon Pavan, Gerrit Hoogenboom
+C  Converts YRDOY to YEARDOY
+C-----------------------------------------------------------------------
+C  Input : YRDOY
+C  Output: 
+C=======================================================================
+
+      SUBROUTINE Y4K_DOY(YRDOY,FILE,LINE,IERRKEY,IERRNUM)
+        
+      USE ModuleDefs
+      IMPLICIT NONE
+      
+      CHARACTER*6   ERRKEY,IERRKEY
+      CHARACTER*(*) FILE
+      CHARACTER*78  MSG(4)
+      
+      INTEGER DOY,YR,YRDOY,LINE,IERRNUM
+      INTEGER NEWYRDOY,CROVER
+      
+      PARAMETER (ERRKEY = 'Y4KDOY')
+      PARAMETER (CROVER = 35)
+      
+!-----------------------------------------------------------------------
+!    Convert input date (YRDOY) to 7-digit
+!-----------------------------------------------------------------------  
+      IF (FirstWeatherDate .GT. 0 .AND. 
+     &    YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
+        
+        !Convert dates
+        NEWYRDOY = INT(FirstWeatherDate/100000) * 100000 + YRDOY
+        
+        IF(NEWYRDOY .GE. FirstWeatherDate) THEN
+          YRDOY = NEWYRDOY
+        ELSE
+          YRDOY = INT((FirstWeatherDate+99000)/100000) * 100000 + YRDOY
+        ENDIF
+        
+!-----------------------------------------------------------------------
+!    Check the new YRDOY converted
+!-----------------------------------------------------------------------          
+        ! Error Checking
+        IF(YRDOY .LT. FirstWeatherDate .OR. 
+     &     YRDOY .GT. FirstWeatherDate+99000) THEN
+          CALL ERROR (ERRKEY,1,FILE,LINE)
+        ENDIF
+        
+        IF(YRDOY .LT. NEWSDATE) THEN
+          CALL ERROR (IERRKEY,IERRNUM,FILE,LINE)
+        ENDIF
+        
+        IF(YRDOY .GT. NEWSDATE + CROVER * 1000) THEN
+          WRITE(MSG(1),*) "WARNING - Y4K Date - Cross-over"
+          WRITE(MSG(2),*) "Please check file: ",FILE
+          WRITE(MSG(3),*) "Line: ",LINE
+          WRITE(MSG(4),*) "Date: ",YRDOY
+          CALL WARNING(4,IERRKEY,MSG)
+        ENDIF
+        
+!-----------------------------------------------------------------------
+!    Convert input date (YRDOY) to 7-digit using the old code
+!-----------------------------------------------------------------------           
+      ELSE IF (YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
+        YR  = INT(YRDOY / 1000)
+        DOY = YRDOY - YR * 1000
+        IF (YRDOY .GT. 0) THEN
+!     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
+!     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
+!     CHP 07/06/2017 - change "cross-over" year from 2020 to 2025
+!     GH  03/23/2022 - change "cross-over" year from 2025 to 2035
+          IF (YR .LE. 35) THEN
+            YRDOY = (2000 + YR) * 1000 + DOY
+          ELSE
+            YRDOY = (1900 + YR) * 1000 + DOY
+          ENDIF 
+        ENDIF
+        
+      ENDIF
+      
+      END SUBROUTINE Y4K_DOY
 
 C=======================================================================
 C  Y2K_DOYW, Subroutine, C. Porter, 02/05/2004
@@ -102,14 +185,18 @@ C=======================================================================
       SUBROUTINE Y2K_DOYW(MULTI, YRDOYWY, YRDOYW, CENTURY)
 
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
 
-!      CHARACTER*1 RNMODE
       INTEGER MULTI   !, RUN
       INTEGER CENTURY,  DOY,  YEAR,  YR,  YRDOYW
       INTEGER CENTURYY, DOYY, YEARY, YRY, YRDOYWY !, YRINC
 
+      TYPE (ControlType) CONTROL
+
       DATA YRY /0/
+
+      CALL GET(CONTROL)
 
       IF (MULTI .LE. 1) YRY = 0
 
@@ -157,18 +244,18 @@ C=======================================================================
 
 !     10/10/2006 CHP
 !     Fixes problem with model going from 2010 to 1911 during simulation
-      IF (CENTURYY > CENTURY) THEN
-        CENTURY = CENTURYY
-        YEAR = CENTURY * 100 + YR
-        YRDOYW = YEAR * 1000 + DOY
-
-!     Fixes problem with crossing centuries
-      ELSEIF (CENTURYY == CENTURY .AND. 
-     &        YEAR < YEARY .AND. MOD(YEARY,100) == 99) THEN
-        CENTURY = CENTURY + 1
-        YEAR = CENTURY * 100 + YR
-        YRDOYW = YEAR * 1000 + DOY
-      ENDIF
+        IF (CENTURYY > CENTURY) THEN
+          CENTURY = CENTURYY
+          YEAR = CENTURY * 100 + YR
+          YRDOYW = YEAR * 1000 + DOY
+        
+!       Fixes problem with crossing centuries
+        ELSEIF (CENTURYY == CENTURY .AND. 
+     &          YEAR < YEARY .AND. MOD(YEARY,100) == 99) THEN
+          CENTURY = CENTURY + 1
+          YEAR = CENTURY * 100 + YR
+          YRDOYW = YEAR * 1000 + DOY
+        ENDIF
 
       RETURN
       END SUBROUTINE Y2K_DOYW
@@ -283,14 +370,17 @@ C=======================================================================
       CALL YR_DOY(YRDOY,YR,DOY)
       NDYR = ENDYR(YR)
       DOY = DOY + INC
-      IF (DOY .GT. NDYR) THEN
-        YR = YR + 1
-        DOY = DOY - NDYR
-      ELSE IF (DOY .LE. 0) THEN
-        YR = YR - 1
-        NDYR = ENDYR(YR)
-        DOY = NDYR + DOY
-      ENDIF
+      DO WHILE (DOY .GT. NDYR .OR. DOY .LE. 0)
+        IF (DOY .GT. NDYR) THEN
+          YR = YR + 1
+          DOY = DOY - NDYR
+          NDYR = ENDYR(YR)
+        ELSE IF (DOY .LE. 0) THEN
+          YR = YR - 1
+          NDYR = ENDYR(YR)
+          DOY = NDYR + DOY
+        ENDIF
+      END DO
       INCYD = YDOY(YR,DOY)
       
       END FUNCTION INCYD

@@ -85,6 +85,19 @@ Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
     Integer :: istatMZCER                            
 !------------------------------------------------------------------------------
 
+!   for RICER
+    Type :: lin_valueRICER
+       Character(:), Allocatable :: pclineRICER
+       Type (lin_valueRICER), Pointer :: pRICER
+    End Type
+
+    Type (lin_valueRICER), Pointer :: headRICER      
+    Type (lin_valueRICER), Pointer :: tailRICER      
+    Type (lin_valueRICER), Pointer :: ptrRICER       
+    
+    Integer :: istatRICER                            
+
+!------------------------------------------------------------------------------
 !   for MLCER
     Type :: lin_valueMLCER
        Character(:), Allocatable :: pclineMLCER
@@ -147,7 +160,49 @@ Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
     Type (lin_valuePlNMzCer), Pointer :: tailPlNMzCer   
     Type (lin_valuePlNMzCer), Pointer :: ptrPlNMzCer    
     
-    Integer :: istatPlNMzCer                            
+    Integer :: istatPlNMzCer
+
+!------------------------------------------------------------------------------
+
+!   for SUOIL
+    Type :: lin_valueSUOIL
+       Character(:), Allocatable :: pclineSUOIL
+       Type (lin_valueSUOIL), Pointer :: pSUOIL
+    End Type
+
+    Type (lin_valueSUOIL), Pointer :: headSUOIL      
+    Type (lin_valueSUOIL), Pointer :: tailSUOIL      
+    Type (lin_valueSUOIL), Pointer :: ptrSUOIL       
+    
+    Integer :: istatSUOIL
+
+!------------------------------------------------------------------------------
+
+!   for PlNSUOIL
+    Type :: lin_valuePlNSUOIL
+       Character(:), Allocatable :: pclinePlNSUOIL
+       Type (lin_valuePlNSUOIL), Pointer :: pPlNSUOIL
+    End Type
+
+    Type (lin_valuePlNSUOIL), Pointer :: headPlNSUOIL   
+    Type (lin_valuePlNSUOIL), Pointer :: tailPlNSUOIL   
+    Type (lin_valuePlNSUOIL), Pointer :: ptrPlNSUOIL    
+    
+    Integer :: istatPlNSUOIL                            
+                                     
+!!------------------------------------------------------------------------------
+!
+!!   for PlNRICer
+!    Type :: lin_valuePlNRICer
+!       Character(:), Allocatable :: pclinePlNRICer
+!       Type (lin_valuePlNRICer), Pointer :: pPlNRICer
+!    End Type
+!
+!    Type (lin_valuePlNRICer), Pointer :: headPlNRICer   
+!    Type (lin_valuePlNRICer), Pointer :: tailPlNRICer   
+!    Type (lin_valuePlNRICer), Pointer :: ptrPlNRICer    
+!    
+!    Integer :: istatPlNRICer                            
 !------------------------------------------------------------------------------
 
 !   for PlNMzCer
@@ -360,6 +415,32 @@ Type :: lin_valuePlantP
     
     Integer :: istatSomN 
 !--------------------------------------------------------------------------------------
+!   for SOM C 
+    Type :: lin_valueSomC
+       Character(:), Allocatable :: pclineSomC
+       Type (lin_valueSomC), Pointer :: pSomC
+    End Type
+
+    Type (lin_valueSomC), Pointer :: headSomC    
+    Type (lin_valueSomC), Pointer :: tailSomC    
+    Type (lin_valueSomC), Pointer :: ptrSomC     
+    
+    Integer :: istatSomC 
+
+!--------------------------------------------------------------------------------------
+!   for N2O.csv
+    Type :: lin_valueN2O
+       Character(:), Allocatable :: pclineN2O
+       Type (lin_valueN2O), Pointer :: pN2O
+    End Type
+
+    Type (lin_valueN2O), Pointer :: headN2O
+    Type (lin_valueN2O), Pointer :: tailN2O    
+    Type (lin_valueN2O), Pointer :: ptrN2O     
+    
+    Integer :: istatN2O
+
+!--------------------------------------------------------------------------------------
 Contains
 !------------------------------------------------------------------------------
 
@@ -524,6 +605,33 @@ Contains
 
  End Subroutine LinklstMZCER
 !------------------------------------------------------------------------------
+
+ Subroutine LinklstRICER(ptxtlineRICER)
+
+    Character(:), Allocatable :: ptxtlineRICER            
+        
+    If(.Not. Associated(headRICER)) Then          
+      Allocate(headRICER, Stat=istatRICER)        
+      If(istatRICER==0) Then                      
+        tailRICER => headRICER                    
+        Nullify(tailRICER%pRICER)                 
+        tailRICER%pclineRICER = ptxtlineRICER     
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailRICER%pRICER, Stat=istatRICER)      
+      If(istatRICER==0) Then                           
+        tailRICER=> tailRICER%pRICER                   
+        Nullify(tailRICER%pRICER)                      
+        tailRICER%pclineRICER = ptxtlineRICER          
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstRICER
+!------------------------------------------------------------------------------
  Subroutine LinklstMLCER(ptxtlineMLCER)
 
     Character(:), Allocatable :: ptxtlineMLCER            
@@ -549,6 +657,60 @@ Contains
     End If
 
  End Subroutine LinklstMLCER
+!------------------------------------------------------------------------------
+ Subroutine LinklstSUOIL(ptxtlineSUOIL)
+
+    Character(:), Allocatable :: ptxtlineSUOIL            
+        
+    If(.Not. Associated(headSUOIL)) Then          
+      Allocate(headSUOIL, Stat=istatSUOIL)        
+      If(istatSUOIL==0) Then                      
+        tailSUOIL => headSUOIL                    
+        Nullify(tailSUOIL%pSUOIL)                 
+        tailSUOIL%pclineSUOIL = ptxtlineSUOIL
+      Else
+        ! Error message
+      End If
+
+    Else
+      Allocate(tailSUOIL%pSUOIL, Stat=istatSUOIL)      
+      If(istatSUOIL==0) Then                           
+        tailSUOIL=> tailSUOIL%pSUOIL                   
+        Nullify(tailSUOIL%pSUOIL)                      
+        tailSUOIL%pclineSUOIL = ptxtlineSUOIL                
+      Else
+      ! Error message
+      End If
+    End If
+    
+End Subroutine LinklstSUOIL     
+!------------------------------------------------------------------------------
+ Subroutine LinklstPlNSUOIL(ptxtlinePlNSUOIL)
+
+    Character(:), Allocatable :: ptxtlinePlNSUOIL            
+        
+    If(.Not. Associated(headPlNSUOIL)) Then             
+      Allocate(headPlNSUOIL, Stat=istatPlNSUOIL)        
+      If(istatPlNSUOIL==0) Then                         
+        tailPlNSUOIL => headPlNSUOIL                    
+        Nullify(tailPlNSUOIL%pPlNSUOIL)                 
+        tailPlNSUOIL%pclinePlNSUOIL = ptxtlinePlNSUOIL  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailPlNSUOIL%pPlNSUOIL, Stat=istatPlNSUOIL)      
+      If(istatPlNSUOIL==0) Then                                 
+        tailPlNSUOIL=> tailPlNSUOIL%pPlNSUOIL                   
+        Nullify(tailPlNSUOIL%pPlNSUOIL)                         
+        tailPlNSUOIL%pclinePlNSUOIL = ptxtlinePlNSUOIL           
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstPlNSUOIL
+ 
 !------------------------------------------------------------------------------
 
  Subroutine LinklstPlNCrGro(ptxtlinePlNCrGro)
@@ -657,6 +819,33 @@ Contains
     End If
 
  End Subroutine LinklstPlNMzCER
+!!------------------------------------------------------------------------------
+!
+! Subroutine LinklstPlNRICer(ptxtlinePlNRICer)
+!
+!    Character(:), Allocatable :: ptxtlinePlNRICER            
+!        
+!    If(.Not. Associated(headPlNRICER)) Then             
+!      Allocate(headPlNRICER, Stat=istatPlNRICER)        
+!      If(istatPlNRICER==0) Then                         
+!        tailPlNRICER => headPlNRICER                    
+!        Nullify(tailPlNRICER%pPlNRICER)                 
+!        tailPlNRICER%pclinePlNRICER = ptxtlinePlNRICER  
+!      Else
+!        ! Error message
+!      End If
+!    Else
+!      Allocate(tailPlNRICER%pPlNRICER, Stat=istatPlNRICER)      
+!      If(istatPlNRICER==0) Then                                 
+!        tailPlNRICER=> tailPlNRICER%pPlNRICER                   
+!        Nullify(tailPlNRICER%pPlNRICER)                         
+!        tailPlNRICER%pclinePlNRICER = ptxtlinePlNRICER           
+!      Else
+!      ! Error message
+!      End If
+!    End If
+!
+! End Subroutine LinklstPlNRICER
 !------------------------------------------------------------------------------
 
  Subroutine LinklstWth(ptxtlineWth)
@@ -981,7 +1170,8 @@ Contains
       
       If(.Not. Associated(headCsCer)) Return
 
-  length= Len('RUN,EXP,TR,RN,SN,ON,REP,CN,YEAR,DOY,DAS,DAP,TMEAN,TKILL,GSTD,' &
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,ON,REP,CN,YEAR,DOY,DAS,DAP,' &
+    //'TMEAN,TKILL,GSTD,' &
     //'L#SD,PARID,PARUD,AWAD,LAID,SAID,CAID,TWAD,SDWAD,RWAD,CWAD,LWAD,SWAD,' &
     //'HWAD,HIAD,CHWAD,EWAD,RSWAD,SNWPD,SNWLD,SNWSD,RS%D,H#AD,HWUD,T#AD,SLAD,' &
     //'RDPD,PTFD,SWXD,WAVRD,WUPRD,WFTD,WFPD,WFGD,NFTD,NFPD,NFGD,NUPRD,TFPD,' &
@@ -989,7 +1179,8 @@ Contains
   
        Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,SN,ON,REP,CN,YEAR,DOY,DAS,DAP,TMEAN,TKILL,GSTD,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,ON,REP,CN,YEAR,DOY,DAS,DAP,' &
+    //'TMEAN,TKILL,GSTD,' &
     //'L#SD,PARID,PARUD,AWAD,LAID,SAID,CAID,TWAD,SDWAD,RWAD,CWAD,LWAD,SWAD,' &
     //'HWAD,HIAD,CHWAD,EWAD,RSWAD,SNWPD,SNWLD,SNWSD,RS%D,H#AD,HWUD,T#AD,SLAD,' &
     //'RDPD,PTFD,SWXD,WAVRD,WUPRD,WFTD,WFPD,WFGD,NFTD,NFPD,NFGD,NUPRD,TFPD,' &
@@ -1046,14 +1237,14 @@ Contains
       End If    
      
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
-  //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
-  //'EMAC,TRWUD,') + Len(Trim(Adjustl(tmp)))
+  //'REFA,EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
+  //'EMAC,KCAA,KBSA,KEAA,TRWUD,') + Len(Trim(Adjustl(tmp)))
   
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
-  //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
-  //'EMAC,TRWUD,' // Trim(Adjustl(tmp)) 
+  //'REFA,EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
+  //'EMAC,KCAA,KBSA,KEAA,TRWUD,' // Trim(Adjustl(tmp)) 
   
       fn = 'et.csv'
       Call GETLUN (fn,nf)
@@ -1098,14 +1289,14 @@ Contains
       Write(numtoch2,'(I2)') nl  
       tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
        
-  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
   //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
   //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
   //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
   //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,' // Trim(Adjustl(tmp)) 
@@ -1131,6 +1322,61 @@ Contains
   End Subroutine ListtofileMZCER
 !------------------------------------------------------------------------------
 
+  Subroutine ListtofileRICER(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Character(Len=12):: fn 
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=100) :: tmp
+      Character(:),Allocatable :: Header 
+      
+      If(.Not. Associated(headRICER)) Return
+
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,EWAD,CWAD,G#AD,GWGD,HIAD,T#AD,WSPD,WSGD,EWSD,NSTD,KSTD,LN%D,' &
+  //'SH%D,SLAD,CHTD,CWID,RDPD,'&   
+  //'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C,DTTC,')+ Len(Trim(Adjustl(tmp)))
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,EWAD,CWAD,G#AD,GWGD,HIAD,T#AD,WSPD,WSGD,EWSD,NSTD,KSTD,LN%D,' &
+  //'SH%D,SLAD,CHTD,CWID,RDPD,'&   
+  //'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C,DTTC,' // Trim(Adjustl(tmp)) 
+        
+      fn = 'plantgro.csv'
+      Call GETLUN (fn,nf)
+   
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+
+      ptrRICER => headRICER
+      Do
+        If(.Not. Associated(ptrRICER)) Exit                
+        Write(nf,'(A)') ptrRICER % pclineRICER            
+        ptrRICER => ptrRICER % pRICER                      
+      End Do
+
+      Nullify(ptrRICER, headRICER, tailRICER)
+      Close(nf)
+  End Subroutine ListtofileRICER
+!------------------------------------------------------------------------------
+
   Subroutine ListtofileMLCER(nlayers)
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn 
@@ -1153,7 +1399,7 @@ Contains
       Write(numtoch2,'(I2)') nl  
       tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
        
-  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
   //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&
   //'MLAG1,TLAG1,MPLAG,TPLAG,MPLA,TPLA,PLA,MLFWT,TLFWT,MSTMWT,TSTMWT,AMLWT,ATLWT,' &   
@@ -1161,7 +1407,7 @@ Contains
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
   //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&
   //'MLAG1,TLAG1,MPLAG,TPLAG,MPLA,TPLA,PLA,MLFWT,TLFWT,MSTMWT,TSTMWT,AMLWT,ATLWT,'&    
@@ -1186,6 +1432,95 @@ Contains
       Nullify(ptrMLCER, headMLCER, tailMLCER)
       Close(nf)
   End Subroutine ListtofileMLCER
+!-----------------------------------------------------------------------  
+  Subroutine ListtofileSUOIL(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Character(Len=12):: fn 
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=100) :: tmp
+      Character(:),Allocatable :: Header 
+      
+      If(.Not. Associated(headSUOIL)) Return
+
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,' // Trim(Adjustl(tmp)) 
+        
+      fn = 'plantgro.csv'
+      Call GETLUN (fn,nf)
+   
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+
+      ptrSUOIL => headSUOIL
+      Do
+        If(.Not. Associated(ptrSUOIL)) Exit                
+        Write(nf,'(A)') ptrSUOIL % pclineSUOIL            
+        ptrSUOIL => ptrSUOIL % pSUOIL                      
+      End Do
+
+      Nullify(ptrSUOIL, headSUOIL, tailSUOIL)
+      Close(nf)
+  End Subroutine ListtofileSUOIL
+!------------------------------------------------------------------------------
+   Subroutine ListtofilePlNSUOIL
+      Integer          :: nf, ErrNum, length        
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header         
+  
+      If(.Not. Associated(headPlNSUOIL)) Return
+      
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
+  //'NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C') 
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
+  //'NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C' 
+  
+      fn = 'plantn.csv'
+      Call GETLUN (fn,nf)
+   
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+        Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
+      ptrPlNSUOIL => headPlNSUOIL
+      Do
+        If(.Not. Associated(ptrPlNSUOIL)) Exit                
+        Write(nf,'(A)') ptrPlNSUOIL % pclinePlNSUOIL          
+        ptrPlNSUOIL => ptrPlNSUOIL % pPlNSUOIL                
+      End Do
+
+      Nullify(ptrPlNSUOIL, headPlNSUOIL, tailPlNSUOIL)
+      Close(nf)
+   End Subroutine ListtofilePlNSUOIL      
 !------------------------------------------------------------------------------
   Subroutine ListtofilePlNCrGro
       Integer          :: nf, ErrNum, length       
@@ -1194,12 +1529,12 @@ Contains
       
       If(.Not. Associated(headPlNCrGro)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
   //'VN%D,NFXC,NUPC,LNAD,SNAD,LN%D,SN%D,SHND,RN%D,NFXD,SNN0C,SNN1C')
   
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
   //'VN%D,NFXC,NUPC,LNAD,SNAD,LN%D,SN%D,SHND,RN%D,NFXD,SNN0C,SNN1C' 
   
       fn = 'plantn.csv'
@@ -1230,13 +1565,13 @@ Contains
       
       If(.Not. Associated(headPlNCsCer)) Return
       
-        length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TMEAN,GSTD,NUAD,TNAD,SDNAD,' &
+        length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,TMEAN,GSTD,NUAC,TNAD,SDNAD,' &
   //'RNAD,CNAD,LNAD,SNAD,HNAD,HIND,RSNAD,SNNPD,SNN0D,SNN1D,RN%D,LN%D,SN%D,' &
   //'HN%D,SDN%D,VN%D,LN%RD,SN%RD,RN%RD,VCN%,VMN%,NUPRD,NDEMD')
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TMEAN,GSTD,NUAD,TNAD,SDNAD,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,TMEAN,GSTD,NUAC,TNAD,SDNAD,' &
   //'RNAD,CNAD,LNAD,SNAD,HNAD,HIND,RSNAD,SNNPD,SNN0D,SNN1D,RN%D,LN%D,SN%D,' &
   //'HN%D,SDN%D,VN%D,LN%RD,SN%RD,RN%RD,VCN%,VMN%,NUPRD,NDEMD'
   
@@ -1289,13 +1624,13 @@ Contains
       tmp1 = Trim(Adjustl(tmp1)) // "NH" // Trim(Adjustl(numtoch2)) // "D,"
       
      
-  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,') + &
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,') + &
           Len(Trim(Adjustl(tmp)))  + Len(Trim(Adjustl(tmp1))) + &
           Len('NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM')
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,' &
   // Trim(Adjustl(tmp)) // Trim(Adjustl(tmp1)) &
   // 'NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM' 
         
@@ -1327,12 +1662,12 @@ Contains
   
       If(.Not. Associated(headPlNMzCer)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
   //'NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C') 
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
   //'NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C' 
   
       fn = 'plantn.csv'
@@ -1363,12 +1698,12 @@ Contains
       
       If(.Not. Associated(headWth)) Return
       
-  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,PRED,DAYLD,TWLD,SRAD,' &
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,PRED,DAYLD,TWLD,SRAD,' &
   //'PARD,CLDD,TMXD,TMND,TAVD,TDYD,TDWD,TGAD,TGRD,WDSD,CO2D,VPDF,VPD') 
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,PRED,DAYLD,TWLD,SRAD,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,PRED,DAYLD,TWLD,SRAD,' &
   //'PARD,CLDD,TMXD,TMND,TAVD,TDYD,TDWD,TGAD,TGRD,WDSD,CO2D,VPDF,VPD' 
   
       fn = 'weather.csv'
@@ -1398,13 +1733,13 @@ Contains
         
       If(.Not. Associated(headPlGr2)) Return
   
-  length= Len('RUN,EXP,TR,RN,REP,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,RSTD,' &
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,RSTD,' &
   //'LAIPD,LAISD,LAID,CHTD,SDWAD,SNWLD,SNWSD,H#AD,HWUD,SHRTD,PTFD,RDPD,RL1D,' &
   //'RL2D,RL3D,RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,RL10D') 
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,RSTD,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,RSTD,' &
   //'LAIPD,LAISD,LAID,CHTD,SDWAD,SNWLD,SNWSD,H#AD,HWUD,SHRTD,PTFD,RDPD,RL1D,' &
   //'RL2D,RL3D,RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,RL10D' 
         
@@ -1435,13 +1770,13 @@ Contains
       
       If(.Not. Associated(headPlGrf)) Return  
       
-  length= Len('RUN,EXP,TR,RN,REP,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,DU,' &
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,DU,' &
   //'VRNFD,DYLFD,TFGEM,WFGE,TFPD,WFPD,NFPD,CO2FD,RSFPD,TFGD,WFGD,NFGD,WFTD,' &
   //'NFTD,WAVRD,WUPRD,SWXD,EOPD,SNXD,LN%RD,SN%RD,RN%RD')
   
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,DU,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,DU,' &
   //'VRNFD,DYLFD,TFGEM,WFGE,TFPD,WFPD,NFPD,CO2FD,RSFPD,TFGD,WFGD,NFGD,WFTD,' &
   //'NFTD,WAVRD,WUPRD,SWXD,EOPD,SNXD,LN%RD,SN%RD,RN%RD' 
         
@@ -1554,22 +1889,24 @@ Contains
       If(.Not. Associated(headSumOpsum)) Return
       
 !  length= Len('RUNNO,TRNO,R#,O#,C#,CR,MODEL,EXNAME,TNAM,FNAM,WSTA,SOIL_ID,' &
-   length= Len('RUNNO,TRNO,R#,O#,P#,CR,MODEL,EXNAME,TNAM,FNAM,WSTA,SOIL_ID,' &
-  // 'SDAT,PDAT,EDAT,ADAT,MDAT,HDAT,DWAP,CWAM,HWAM,HWAH,BWAH,PWAM,HWUM,' &
-  // 'H#AM,H#UM,HIAM,LAIX,IR#M,IRCM,PRCM,ETCM,EPCM,ESCM,ROCM,DRCM,SWXM,' &
-  // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,NMINC,CNAM,GNAM,PI#M,PICM,PUPC,SPAM,KI#M,' &
-  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,DMPPM,DMPEM,' &
+   length= Len('RUNNO,TRNO,R#,O#,P#,CR,MODEL,EXNAME,TNAM,'& 
+  // 'FNAM,WSTA,WYEAR,SOIL_ID,LAT,LONG,ELEV,' &
+  // 'SDAT,PDAT,EDAT,ADAT,MDAT,HDAT,HYEAR,DWAP,CWAM,HWAM,HWAH,BWAH,PWAM,HWUM,' &
+  // 'H#AM,H#UM,HIAM,LAIX,FCWAM,FHWAM,HWAHF,FBWAH,FPWAM,IR#M,IRCM,PRCM,ETCM,EPCM,ESCM,ROCM,DRCM,SWXM,' &
+  // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,NMINC,CNAM,GNAM,N2OEC,PI#M,PICM,PUPC,SPAM,KI#M,' &
+  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,CO2EC,CH4EC,DMPPM,DMPEM,' &
   // 'DMPTM,DMPIM,YPPM,YPEM,YPTM,YPIM,DPNAM,DPNUM,YPNAM,YPNUM,NDCH,TMAXA,' &
   // 'TMINA,SRADA,DAYLA,CO2A,PRCP,ETCP,ESCP,EPCP')
 
       Allocate(character(LEN=length) :: Header)
 
 ! Header = 'RUNNO,TRNO,R#,O#,C#,CR,MODEL,EXNAME,TNAM,FNAM,WSTA,SOIL_ID,' &
-  Header = 'RUNNO,TRNO,R#,O#,P#,CR,MODEL,EXNAME,TNAM,FNAM,WSTA,SOIL_ID,' &
-  // 'SDAT,PDAT,EDAT,ADAT,MDAT,HDAT,DWAP,CWAM,HWAM,HWAH,BWAH,PWAM,HWUM,' &
-  // 'H#AM,H#UM,HIAM,LAIX,IR#M,IRCM,PRCM,ETCM,EPCM,ESCM,ROCM,DRCM,SWXM,' &
+  Header = 'RUNNO,TRNO,R#,O#,P#,CR,MODEL,EXNAME,TNAM,'& 
+  // 'FNAM,WSTA,WYEAR,SOIL_ID,LAT,LONG,ELEV,' &
+  // 'SDAT,PDAT,EDAT,ADAT,MDAT,HDAT,HYEAR,DWAP,CWAM,HWAM,HWAH,BWAH,PWAM,HWUM,' &
+  // 'H#AM,H#UM,HIAM,LAIX,FCWAM,FHWAM,HWAHF,FBWAH,FPWAM,IR#M,IRCM,PRCM,ETCM,EPCM,ESCM,ROCM,DRCM,SWXM,' &
   // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,NMINC,CNAM,GNAM,N2OEC,PI#M,PICM,PUPC,SPAM,KI#M,' &
-  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,CO2EC,DMPPM,DMPEM,' &
+  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,CO2EC,CH4EC,DMPPM,DMPEM,' &
   // 'DMPTM,DMPIM,YPPM,YPEM,YPTM,YPIM,DPNAM,DPNUM,YPNAM,YPNUM,NDCH,TMAXA,' &
   // 'TMINA,SRADA,DAYLA,CO2A,PRCP,ETCP,ESCP,EPCP'      
       
@@ -1601,12 +1938,12 @@ Contains
       
       If(.Not. Associated(headPlCCrGro)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,CMAD,CGRD,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,TWAD,PHAD,CMAD,CGRD,' &
   //'GRAD,MRAD,CHAD,CL%D,CS%D,TGNN,TGAV,GN%D,GL%D,GC%D') 
 
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,CMAD,CGRD,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,TWAD,PHAD,CMAD,CGRD,' &
   //'GRAD,MRAD,CHAD,CL%D,CS%D,TGNN,TGAV,GN%D,GL%D,GC%D' 
   
       fn = 'plantc.csv'
@@ -1690,23 +2027,23 @@ Contains
       If(.Not. Associated(headSoilOrg)) Return
       
       If (N_ELEMS > 1) Then 
-         length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,OMAC,SCDD,SOCD,' &
+         length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,OMAC,SCDD,SOCD,' &
          //'SC0D,SCTD,SOMCT,LCTD,ONAC,SNDD,SOND,SN0D,SNTD,' &
          //'SOMNT,LNTD,OPAC,SPDD,SOPD,SP0D,SPTD,SOMPT,LPTD') 
 
          Allocate(character(LEN=length) :: Header)
 
-         Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,OMAC,SCDD,SOCD,' &
+         Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,OMAC,SCDD,SOCD,' &
          //'SC0D,SCTD,SOMCT,LCTD,ONAC,SNDD,SOND,SN0D,SNTD,' &
          //'SOMNT,LNTD,OPAC,SPDD,SOPD,SP0D,SPTD,SOMPT,LPTD' 
       Else
-         length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+         length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
          //'OMAC,SCDD,SOCD,SC0D,SCTD,SOMCT,LCTD,ONAC,SNDD,' &
          //'SOND,SN0D,SNTD,SOMNT,LNTD')
 
          Allocate(character(LEN=length) :: Header)
 
-         Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+         Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
          //'OMAC,SCDD,SOCD,SC0D,SCTD,SOMCT,LCTD,ONAC,SNDD,' &
          //'SOND,SN0D,SNTD,SOMNT,LNTD' 
       End If 
@@ -1763,12 +2100,12 @@ Contains
             
       If (.NOT. Associated(headETPhot)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
      //'LI%D,PHAD,PHAN,LI%N,SLLN,SLHN,N%LN,N%HN,LMLN,LMHN,TGNN,TGAV') 
 
       Allocate(character(LEN=length) :: Header)
 
-      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+      Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
      //'LI%D,PHAD,PHAN,LI%N,SLLN,SLHN,N%LN,N%HN,LMLN,LMHN,TGNN,TGAV' 
       
       fn = 'etphot.csv'
@@ -1824,11 +2161,11 @@ Contains
       
       If(.Not. Associated(headMulch)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,MCFD,MDEPD,MWAD,MWTD') 
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,MCFD,MDEPD,MWAD,MWTD') 
 
       Allocate(character(LEN=length) :: Header)
 
-      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,MCFD,MDEPD,MWAD,MWTD' 
+      Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,MCFD,MDEPD,MWAD,MWTD' 
       
       fn = 'mulch.csv'
       Call GETLUN (fn,nf)
@@ -1882,14 +2219,14 @@ Contains
     
     If (.NOT. Associated(headPlantP)) Return
     
-    length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+    length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,' &
      //'PSHOD,PRTOD,PSLOD,PSDOD,PSHMD,PRTMD,PSLMD,PSDMD,SHPPD,RTPPD,SLPPD,' &
      //'SDPPD,PLPPD,SHPAD,RTPAD,SLPAD,SDPAD,PPAD,PST1A,PST2A,PUPD,PUPC,' &
      //'SNP0C,SNP1C,PHFR1,PHFR2,SHWAD,RWAD,SHAD,GWAD,PSTRAT,NTOPD,PTDD')
      
       Allocate(character(LEN=length) :: Header) 
 
-     Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+     Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,' &
      //'PSHOD,PRTOD,PSLOD,PSDOD,PSHMD,PRTMD,PSLMD,PSDMD,SHPPD,RTPPD,SLPPD,' &
      //'SDPPD,PLPPD,SHPAD,RTPAD,SLPAD,SDPAD,PPAD,PST1A,PST2A,PUPD,PUPC,' &
      //'SNP0C,SNP1C,PHFR1,PHFR2,SHWAD,RWAD,SHAD,GWAD,PSTRAT,NTOPD,PTDD'
@@ -1947,14 +2284,14 @@ Contains
     
     If (.NOT. Associated(headSoilPi)) Return
     
-    length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+    length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
      //'PIAD,PAVLD,PSOLD,PLABD,PACTD,PSTAD,PAPC,PMNC,PIMC,' &
      //'PUPC,PAV1D,PAV2D,PAV3D,PAV4D,PAV5D,PUP1D,PUP2D,PUP3D,' &
      //'PUP4D,PUP5D,PLAB1,PLAB2,PLAB3,PLAB4,PLAB5') 
 
       Allocate(character(LEN=length) :: Header)
 
-    Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+    Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
      //'PIAD,PAVLD,PSOLD,PLABD,PACTD,PSTAD,PAPC,PMNC,PIMC,' &
      //'PUPC,PAV1D,PAV2D,PAV3D,PAV4D,PAV5D,PUP1D,PUP2D,PUP3D,' &
      //'PUP4D,PUP5D,PLAB1,PLAB2,PLAB3,PLAB4,PLAB5'
@@ -2071,12 +2408,14 @@ End Subroutine LinklstPlGroPrFrm
       
       If(.Not. Associated(headPlNPrFrm)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,' &
+  //'CNAD,GNAD,VNAD,GN%D,' &
   //'VN%D,NFXC,NUPC,LNAD,SNAD,QNAD,LN%D,SN%D,QN%D,SHND,RN%D,NFXD')
   
       Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,' &
+  //'CNAD,GNAD,VNAD,GN%D,' &
   //'VN%D,NFXC,NUPC,LNAD,SNAD,QNAD,LN%D,SN%D,QN%D,SHND,RN%D,NFXD' 
   
       fn = 'plantn.csv'
@@ -2132,13 +2471,13 @@ End Subroutine LinklstPlNPrFrm
       
       If(.Not. Associated(headPlCPrFrm)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
   //'CMAD,CGRD,GRAD,MRAD,CHAD,QHAD,CL%D,CS%D,QC%D,CR%D,TGNN,TGAV,'&
   //'GN%D,GL%D,GC%D')
   
       Allocate(character(LEN=length) :: Header)
 
-      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
+      Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
   //'CMAD,CGRD,GRAD,MRAD,CHAD,QHAD,CL%D,CS%D,QC%D,CR%D,TGNN,TGAV,'&
   //'GN%D,GL%D,GC%D' 
   
@@ -2195,12 +2534,12 @@ End Subroutine LinklstPlCPrFrm
       
       If(.Not. Associated(headDormPrFrm)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,' &
   //'QDSD,PPGF,PPMF,PPTF,TSRD,TS1D,FRZ2,LV%D,SV%D,QV%D,RV%D')
   
       Allocate(character(LEN=length) :: Header)
 
-      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+      Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,' &
   //'QDSD,PPGF,PPMF,PPTF,TSRD,TS1D,FRZ2,LV%D,SV%D,QV%D,RV%D' 
   
       fn = 'dormancy.csv'
@@ -2256,7 +2595,7 @@ End Subroutine LinklstDormPrFrm
       
       If(.Not. Associated(headStorPrFrm)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,' &
   //'QCQD,QHAD,QC%M,QRAD,QMAD,QCFD,QCAD,QCDD,QDTD,QN%X,'&
   //'QN%I,QV%D,QV%T,QNAA,QNRX,QNRN,QNAR,QNAM,QNAG,QNAN,'&
   //'QNAL,QN%N,QN%D,QW%C,QP%W,QL%S,QL%1,QS%D,Q1%D,QC%D,'&
@@ -2265,7 +2604,7 @@ End Subroutine LinklstDormPrFrm
   
       Allocate(character(LEN=length) :: Header)
 
-      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+      Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,' &
   //'QCQD,QHAD,QC%M,QRAD,QMAD,QCFD,QCAD,QCDD,QDTD,QN%X,'&
   //'QN%I,QV%D,QV%T,QNAA,QNRX,QNRN,QNAR,QNAM,QNAG,QNAN,'&
   //'QNAL,QN%N,QN%D,QW%C,QP%W,QL%S,QL%1,QS%D,Q1%D,QC%D,'&
@@ -2325,23 +2664,23 @@ End Subroutine LinklstStorPrFrm
       
       If(.Not. Associated(headSomN)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+      length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
   //'SNS20D,SN%20D,SNS40D,SN%40D,SOND,SN0D,SNTD,SN1D,SN2D,'&
-  //'SN3D,SN4D,SN5+D,S1N0D,S1NTD,S1N1D,S1N2D,S1N3D,S1N4D,' &
-  //'S1N5+D,S2NTD,S2N1D,S2N2D,S2N3D,S2N4D,S2N5+D,S3NTD,S3N1D,'&
-  //'S3N2D,S3N3D,S3N4D,S3N5+D,LN0D,LNTD,LN1D,LN2D,LN3D,LN4D,' &
-  //'LN5+D,MEN0D,MENTD,MEN1D,MEN2D,MEN3D,MEN4D,MEN5+D,STN0D,' &
-  //'STNTD,STN1D,STN2D,STN3D,STN4D,STN5+D,RESNC')
+  //'SN3D,SN4D,SN5D,S1N0D,S1NTD,S1N1D,S1N2D,S1N3D,S1N4D,' &
+  //'S1N5D,S2NTD,S2N1D,S2N2D,S2N3D,S2N4D,S2N5D,S3NTD,S3N1D,'&
+  //'S3N2D,S3N3D,S3N4D,S3N5D,LN0D,LNTD,LN1D,LN2D,LN3D,LN4D,' &
+  //'LN5D,MEN0D,MENTD,MEN1D,MEN2D,MEN3D,MEN4D,MEN5D,STN0D,' &
+  //'STNTD,STN1D,STN2D,STN3D,STN4D,STN5D,RESNC')
   
       Allocate(character(LEN=length) :: Header)
 
-      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+      Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
   //'SNS20D,SN%20D,SNS40D,SN%40D,SOND,SN0D,SNTD,SN1D,SN2D,'&
-  //'SN3D,SN4D,SN5+D,S1N0D,S1NTD,S1N1D,S1N2D,S1N3D,S1N4D,' &
-  //'S1N5+D,S2NTD,S2N1D,S2N2D,S2N3D,S2N4D,S2N5+D,S3NTD,S3N1D,'&
-  //'S3N2D,S3N3D,S3N4D,S3N5+D,LN0D,LNTD,LN1D,LN2D,LN3D,LN4D,' &
-  //'LN5+D,MEN0D,MENTD,MEN1D,MEN2D,MEN3D,MEN4D,MEN5+D,STN0D,' &
-  //'STNTD,STN1D,STN2D,STN3D,STN4D,STN5+D,RESNC' 
+  //'SN3D,SN4D,SN5D,S1N0D,S1NTD,S1N1D,S1N2D,S1N3D,S1N4D,' &
+  //'S1N5D,S2NTD,S2N1D,S2N2D,S2N3D,S2N4D,S2N5D,S3NTD,S3N1D,'&
+  //'S3N2D,S3N3D,S3N4D,S3N5D,LN0D,LNTD,LN1D,LN2D,LN3D,LN4D,' &
+  //'LN5D,MEN0D,MENTD,MEN1D,MEN2D,MEN3D,MEN4D,MEN5D,STN0D,' &
+  //'STNTD,STN1D,STN2D,STN3D,STN4D,STN5D,RESNC' 
   
       fn = 'somlitn.csv'
       Call GETLUN (fn,nf)
@@ -2388,5 +2727,181 @@ Subroutine LinklstSomN(ptxtlineSomN)
     End If
 
 End Subroutine LinklstSomN
+
+!------------------------------------------------------------------------------
+  Subroutine ListtofileSomC
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headSomC)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,'   &
+       //'SCS20D,C%20D,SCS40D,SC%40D'                 &
+       //'SLC20D,L%20D,SLC40D,SL%40D,SOCD'            &
+       //'SC0D,SCTD,SC1D,SC2D,SC3D,SC4D,SC5D'         &
+       //'S1C0D,S1CTD,S1C1D,S1C2D,S1C3D,S1C4D,S1C5D'  &
+       //',S2CTD,S2C1D,S2C2D,S2C3D,S2C4D,S2C5D'       &
+       //',S3CTD,S3C1D,S3C2D,S3C3D,S3C4D,S3C5D'       &
+       //'LC0D,LCTD,LC1D,LC2D,LC3D,LC4D,LC5D'         &
+       //'MEC0D,MECTD,MEC1D,MEC2D,MEC3D,MEC4D,MEC5D'  &
+       //'STC0D,STCTD,STC1D,STC2D,STC3D,STC4D,STC5D'  &
+       //'RESC,CO20C,CO2SC')                          
+
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,'      &
+       //'SCS20D,C%20D,SCS40D,SC%40D'                 &
+       //'SLC20D,L%20D,SLC40D,SL%40D,SOCD'            &
+       //'SC0D,SCTD,SC1D,SC2D,SC3D,SC4D,SC5D'         &
+       //'S1C0D,S1CTD,S1C1D,S1C2D,S1C3D,S1C4D,S1C5D'  &
+       //',S2CTD,S2C1D,S2C2D,S2C3D,S2C4D,S2C5D'       &
+       //',S3CTD,S3C1D,S3C2D,S3C3D,S3C4D,S3C5D'       &
+       //'LC0D,LCTD,LC1D,LC2D,LC3D,LC4D,LC5D'         &
+       //'MEC0D,MECTD,MEC1D,MEC2D,MEC3D,MEC4D,MEC5D'  &
+       //'STC0D,STCTD,STC1D,STC2D,STC3D,STC4D,STC5D'  &
+       //'RESC,CO20C,CO2SC'                           
+  
+      fn = 'somlitc.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrSomC => headSomC
+      Do
+        If(.Not. Associated(ptrSomC)) Exit          
+        Write(nf,'(A)') ptrSomC % pclineSomC    
+        ptrSomC => ptrSomC % pSomC          
+      End Do
+
+      Nullify(ptrSomC, headSomC, tailSomC)
+      Close(nf)
+  End Subroutine ListtofileSomC
+
+!------------------------------------------------------------------------------
+Subroutine LinklstSomC(ptxtlineSomC)
+
+    Character(:), Allocatable :: ptxtlineSomC            
+        
+    If(.Not. Associated(headSomC)) Then             
+      Allocate(headSomC, Stat=istatSomC)        
+      If(istatSomC==0) Then                         
+        tailSomC => headSomC                    
+        Nullify(tailSomC%pSomC)                 
+        tailSomC%pclineSomC = ptxtlineSomC  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailSomC%pSomC, Stat=istatSomC)      
+      If(istatSomC==0) Then                                 
+        tailSomC=> tailSomC%pSomC                   
+        Nullify(tailSomC%pSomC)                         
+        tailSomC%pclineSomC = ptxtlineSomC          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstSomC
+
+!------------------------------------------------------------------------------
+Subroutine ListtofileN2O(nlayers)
+      Integer          :: nf       
+      Character(Len=12):: fn  
+      Character(Len=30):: fmt  
+      Character(Len=1000) :: tmp
+      Character(:),Allocatable :: Header 
+      Integer :: ErrNum, length, nlayers, i
+      
+      If(.Not. Associated(headN2O)) Return
+      
+      IF (nlayers < 10) THEN
+        WRITE(fmt,'(I2)') 5 * nlayers
+        fmt = '('//trim(adjustl(fmt))//'(",",g0,I1,g0))'
+        WRITE (tmp,fmt)                     &
+             ('NDN',i,'D',i=1,nlayers),     &
+             ('NIT',i,'D',i=1,nlayers),     &
+             ('N2O',i,'D',i=1,nlayers),     & 
+             ('N2F',i,'D',i=1,nlayers),     &
+             ('NOF',i,'D',i=1,nlayers)     
+      ELSE
+        fmt = '(5(9(",",A,I1,A),",",A5))'
+        WRITE (tmp,fmt)                     &                
+             ('NDN',i,'D',i=1,9),'NDN10',   &
+             ('NIT',i,'D',i=1,9),'NIT10',   &
+             ('N2O',i,'D',i=1,9),'N2O10',   &
+             ('N2F',i,'D',i=1,9),'N2F10',   &
+             ('NOF',i,'D',i=1,9),'NOF10'   
+      ENDIF
+      
+      tmp = Trim(Adjustl(tmp)) 
+      
+    length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
+      //'N2OEC,N2EC,NOEC,NDNC,' &
+      //'NITC,N2ODC,N2ONC,N2FLC,NOFLC,' &
+      //'N2OED,N2ED,NOED,NDND,' &
+      //'NITRD,N2ODD,N2OND,N2FLD,NOFLD') &
+      + Len(Trim(Adjustl(tmp)))
+    
+        Allocate(character(LEN=length) :: Header)
+
+    Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,' &
+      //'N2OEC,N2EC,NOEC,NDNC,' &
+      //'NITC,N2ODC,N2ONC,N2FLC,NOFLC,' &
+      //'N2OED,N2ED,NOED,NDND,' &
+      //'NITRD,N2ODD,N2OND,N2FLD,NOFLD' &
+      // Trim(Adjustl(tmp))
+  
+      fn = 'n2o.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrN2O => headN2O
+      Do
+        If(.Not. Associated(ptrN2O)) Exit          
+        Write(nf,'(A)') ptrN2O % pclineN2O
+        ptrN2O => ptrN2O % pN2O
+      End Do
+
+      Nullify(ptrN2O, headN2O, tailN2O)
+      Close(nf)
+End Subroutine ListtofileN2O
+
+!------------------------------------------------------------------------------
+Subroutine LinklstN2O(ptxtlineN2O)
+
+    Character(:), Allocatable :: ptxtlineN2O
+        
+    If(.Not. Associated(headN2O)) Then             
+      Allocate(headN2O, Stat=istatN2O)        
+      If(istatN2O==0) Then                         
+        tailN2O => headN2O
+        Nullify(tailN2O%pN2O)                 
+        tailN2O%pclineN2O = ptxtlineN2O  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailN2O%pN2O, Stat=istatN2O)   
+      If(istatN2O==0) Then                              
+        tailN2O=> tailN2O%pN2O                
+        Nullify(tailN2O%pN2O)                      
+        tailN2O%pclineN2O = ptxtlineN2O       
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstN2O
 !------------------------------------------------------------------------------
 End Module Linklist

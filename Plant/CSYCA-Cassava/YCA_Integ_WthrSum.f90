@@ -131,17 +131,23 @@
             STRESS20W = STRESS20WS/20.0
         ELSE
             SRAD20 = 0.0
-            IF (TMEANNUM == 1) THEN       !CHP
+            IF (TMEANNUM <= 1) THEN       !CHP
               TT20 = TT20S                !CHP
             ELSE                          !CHP
-              TT20 = TT20S/(TMEANNUM-1)   !LPM 28FEB15 to have a value different than 0  
+              TT20 = TT20S/(TMEANNUM)     ! 
             ENDIF                         !CHP
             TMEAN20 = 0.0
             STRESS20 = 0.0
             STRESS20N = 0.0
-            STRESS20N = 0.0
+            STRESS20W = 1.0
         ENDIF
-                
+        
+        IF (STRESS20W < 0.5 .AND. (SUM(STRESSW(1:5))/5.0) > 0.5) THEN
+            WFGREA = 1 + (SUM(STRESSW(1:5))/5.0)-(SUM(STRESSW(6:20))/15.0) 
+        ELSE
+            WFGREA = 1
+        ENDIF
+            
         ! Monthly means
         CALL Calendar (year,doy,dom,month)
         IF (DOM > 1) THEN
@@ -168,7 +174,7 @@
         IF (PARMJIC > 0.0) THEN
             PARIUED = AMAX1(0.0,(totalWeight()+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJIC)
         ENDIF
-        IF (CARBOBEG > 0.0) THEN
+        IF (CARBOBEG > 0.0 .AND. PARMJFAC > 0.0 .AND. SRAD > 0.0 .AND. PARI > 0.0) THEN
             PARIUE = (CARBOBEG*PLTPOP)/(PARMJFAC*SRAD*PARI)
         ENDIF
                 

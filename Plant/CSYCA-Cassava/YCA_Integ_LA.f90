@@ -9,7 +9,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_LA ( &
-        CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        , BRSTAGE    & 
+        LAI        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        , BRSTAGE    & 
         )
         
         USE ModuleDefs
@@ -23,7 +23,7 @@
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         
-        REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
+        REAL    LAI        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
         REAL    :: leafAreaSenesced                 !PLASTMP Leaf area senesced,temporary   cm2/p      ! (From Integrate) 
        
         !-----------------------------------------------------------------------
@@ -78,7 +78,7 @@
         leafAreaSenesced = PLAS - PLASP
         IF (LNUMSG > 0 .AND. leafAreaSenesced > 0) THEN
             !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
-            DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR) 
                     IF (leafAreaLeftToSenesce(node(BR,LF)) > leafAreaSenesced) THEN                                                                     ! DA If the leaf can senesce more
                         node(BR,LF)%LAPS = node(BR,LF)%LAPS + leafAreaSenesced                                                                        !EQN 459a
@@ -97,7 +97,7 @@
             !DO L = 1, LNUMSG
             !    IF (LAP(L)-LAPS(L) > 0.0) LAPS(L) = LAPS(L) + (LAP(L)-LAPS(L)) * HAFR                                 !EQN 461
             !ENDDO
-            DO BR = 0, BRSTAGE                                                                                        !LPM 28MAR15 Change to include cohorts
+            DO BR = 0, BRSTAGEINT                                                                                        !LPM 28MAR15 Change to include cohorts
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (leafAreaLeftToSenesce(node(BR,LF)) > 0.0) THEN
                         node(BR,LF)%LAPS = node(BR,LF)%LAPS + (leafAreaLeftToSenesce(node(BR,LF))) * HAFR     !EQN 461
@@ -126,7 +126,7 @@
         STAI = STAI + STAIG - STAIS                                                                                    !EQN 467
         
         SAID = STAI+LPEAI                                                                                              !EQN 468
-        CAID = LAI + SAID                                                                                              !EQN 469
+        CAID = LAI + SAID                                                                                                    !EQN 469
         
         !-----------------------------------------------------------------------
         !         Update height
@@ -142,7 +142,11 @@
         IF (SDEPTH > 0.0 .AND.RTDEP <= 0.0) RTDEP = AMAX1(0.0,SDEPTH)   
         RTDEP = AMIN1 (RTDEP+RTDEPG,DEPMAX)                                                                            !EQN 390
         DO L = 1, NLAYR
-            RLV(L)=RTWTL(L)*RLWR*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
+            IF (WFG > 0.0 .AND. WFG < 0.5) THEN
+                RLV(L)=RTWTL(L)*((RLWR/100.)/(WFG/0.5))*PLTPOP/DLAYR(L)
+            ELSE
+                RLV(L)=RTWTL(L)*(RLWR/100.)*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
+            ENDIF
             IF (L == NLAYR.AND.RLV(L) > 0.0)THEN
                 IF (RTSLXDATE <= 0.0) RTSLXDATE = YEARDOY
             ENDIF

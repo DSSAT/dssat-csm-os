@@ -1,10 +1,9 @@
 !=======================================================================
-!  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+!  COPYRIGHT 1998-2021
+!                      DSSAT Foundation
 !                      University of Florida, Gainesville, Florida
-!                      Iowa State University, Ames, Iowa
-!                      International Center for Soil Fertility and 
-!                       Agricultural Development, Muscle Shoals, Alabama
-!                      University of Guelph, Guelph, Ontario
+!                      International Fertilizer Development Center
+!                     
 !  ALL RIGHTS RESERVED
 !=======================================================================
 !  SOIL, Subroutine
@@ -35,6 +34,7 @@
 C=====================================================================
 
       SUBROUTINE SOIL(CONTROL, ISWITCH, 
+<<<<<<< HEAD
      &    EOP, ES, FERTDATA, HARVRES, IRRAMT, KTRANS,     !Input
      &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
@@ -43,11 +43,22 @@ C=====================================================================
      &    SomLitC, SomLitE,                               !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
+=======
+     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
+     &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
+     &    WEATHER, XHLAI,                                 !Input
+     &    FLOODN, FLOODWAT, MULCH, UPFLOW,                !I/O
+     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
+     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
+>>>>>>> develop
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
       USE Cells_2D
       USE FloodModule
+      USE GHG_mod
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -58,15 +69,16 @@ C=====================================================================
       TYPE (SwitchType)  , INTENT(IN) :: ISWITCH
       REAL               , INTENT(IN) :: ES, EOP
       TYPE (FertType)    , INTENT(IN) :: FERTDATA
+      REAL, DIMENSION(NL), INTENT(IN) :: FracRts
       Type (ResidueType) , INTENT(IN) :: HARVRES
       REAL               , INTENT(IN) :: IRRAMT
       REAL               , INTENT(IN) :: KTRANS
       TYPE (OrgMatAppType),INTENT(IN) :: OMAData
       REAL, DIMENSION(NL), INTENT(IN) :: PUptake, KUptake
+      REAL, DIMENSION(NL), INTENT(IN) :: RLV
       Type (ResidueType) , INTENT(IN) :: SENESCE
 !     REAL               , INTENT(IN) :: SRFTEMP 
       REAL, DIMENSION(NL), INTENT(IN) :: ST
-      REAL, DIMENSION(NL), INTENT(IN) :: FracRts
       REAL, DIMENSION(NL), INTENT(IN) :: SWDELTX
       TYPE (TillType)    , INTENT(IN) :: TILLVALS
       REAL, DIMENSION(NL), INTENT(IN) :: UNH4, UNO3
@@ -77,35 +89,42 @@ C=====================================================================
 
 !     Input/Output:
       REAL, DIMENSION(NL), INTENT(INOUT) :: UPFLOW
-      TYPE (FloodNType)   FLOODN
-      TYPE (FloodWatType) FLOODWAT
-      TYPE (MulchType)    MULCH
+      TYPE (FloodNType),   INTENT(INOUT) :: FLOODN
+      TYPE (FloodWatType), INTENT(INOUT) :: FLOODWAT
+      TYPE (MulchType),    INTENT(INOUT) :: MULCH
 
 !     Output:
-      REAL, DIMENSION(NL), INTENT(OUT) :: NH4
-      REAL, DIMENSION(NL), INTENT(OUT) :: NO3
-      REAL, DIMENSION(NL), INTENT(OUT) :: UPPM
+      REAL, DIMENSION(NL), INTENT(OUT) :: NH4_plant
+      REAL, DIMENSION(NL), INTENT(OUT) :: NO3_plant
       REAL, DIMENSION(NL), INTENT(OUT) :: SPi_AVAIL, SKi_AVAIL
       REAL               , INTENT(OUT) :: SNOW
       TYPE (SoilType)    , INTENT(OUT) :: SOILPROP
+      REAL,DIMENSION(0:NL),INTENT(OUT) :: SomLitC
+      REAL,DIMENSION(0:NL,NELEM),INTENT(OUT) :: SomLitE
       REAL, DIMENSION(NL), INTENT(OUT) :: SW
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTS
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
       REAL               , INTENT(OUT) :: WINF
+<<<<<<< HEAD
       REAL               , INTENT(OUT) :: SWFAC, TRWU, TRWUP, TURFAC
+=======
+      REAL, DIMENSION(NL), INTENT(OUT) :: UPPM
+>>>>>>> develop
       INTEGER            , INTENT(OUT) :: YREND
-      REAL, DIMENSION(0:NL) :: SomLitC
-      REAL, DIMENSION(0:NL,NELEM) :: SomLitE
 
 !-----------------------------------------------------------------------
 !     Local variables:
+<<<<<<< HEAD
       CHARACTER*1  MESOM, MEHYD
 
+=======
+>>>>>>> develop
       INTEGER DYNAMIC
+      CHARACTER*1  MESOM
 
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
-      REAL, DIMENSION(NL) :: SPi_Labile
+      REAL, DIMENSION(NL) :: SPi_Labile, NO3, NH4
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
       REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
       TYPE (SoilType) SOILPROP_furrow, SOILPROP_profile
@@ -113,6 +132,10 @@ C=====================================================================
 !     Added for tile drainage:
       REAL TDFC
       INTEGER TDLNO
+
+!     Added for methane
+      REAL DRAIN
+      TYPE (CH4_type) CH4_data
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -143,7 +166,7 @@ C=====================================================================
      &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
-     &    DRN, SNOW, SW, SWDELTS,                         !Output
+     &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
         END SELECT
       ENDIF
@@ -154,23 +177,29 @@ C=====================================================================
 !       When DYNAMIC = RUNINIT, NH4 and NO3 are from SOILDYN. 
 !       When DYNAMIC = RATE, NH4 and NO3 are from previous day's SoilOrg and Soilni
         CALL CENTURY(CONTROL, ISWITCH, 
-     &    FERTDATA, FLOODWAT, FLOODN, HARVRES, NH4,       !Input
-     &    NO3, OMADATA, SENESCE, SOILPROP, SPi_Labile,    !Input
-     &    ST, SW, TILLVALS,                               !Input
-     &    IMM, LITC, MNR, MULCH, SomLit, SomLitC,         !Output
-     &    SomLitE, SSOMC,                                 !Output
-     &    newCO2)             !for DayCent in SOILNI added by PG
+     &  DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,   !Input
+     &  NH4, NO3, OMADATA, RLV, SENESCE,              !Input
+     &  SOILPROP, SPi_Labile, ST, SW, TILLVALS,       !Input
+     &  CH4_data, IMM, LITC, MNR, MULCH, newCO2,      !Output
+     &  SomLit, SomLitC, SomLitE, SSOMC)              !Output
       ELSE
 !      ELSEIF (MESOM .EQ. 'G') THEN
 !       Godwin (Ceres-based) soil organic matter module (formerly NTRANS)
+<<<<<<< HEAD
         CALL SoilOrg (CONTROL, ISWITCH, CELLS,
      &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
+=======
+        CALL SoilOrg (CONTROL, ISWITCH, 
+     &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
+     &    OMAData, RLV,                                   !Input
+>>>>>>> develop
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
-     &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
-     &    SomLitE, SSOMC)                                 !Output
+     &    CH4_data, IMM, LITC, MNR, MULCH, newCO2,        !Output
+     &    SomLit, SomLitC, SomLitE, SSOMC)                !Output
       ENDIF
 
 !     Inorganic N (formerly NTRANS)
+<<<<<<< HEAD
       SELECT CASE (MEHYD)
       CASE('G','C')   !2D method - drip irrigation
         CALL SoilNi_2D (CONTROL, ISWITCH, 
@@ -187,6 +216,15 @@ C=====================================================================
      &    FLOODN,                                         !I/O
      &    NH4, NO3, UPPM)                                 !Output
       END SELECT
+=======
+      CALL SoilNi (CONTROL, ISWITCH, 
+     &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
+     &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
+     &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
+     &    WEATHER, XHLAI,                                 !Input
+     &    FLOODN,                                         !I/O
+     &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
+>>>>>>> develop
 
 !     Inorganic P
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 
@@ -214,7 +252,7 @@ C=====================================================================
      &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
-     &    DRN, SNOW, SW, SWDELTS,                         !Output
+     &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
         END SELECT
       ENDIF

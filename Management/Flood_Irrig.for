@@ -15,8 +15,14 @@ C=======================================================================
 
       SUBROUTINE FLOOD_IRRIG (DYNAMIC, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
+<<<<<<< HEAD
      &    IPDAT, IPERC, NBUND, NCOND, NPERC,              !Input
      &    PUDDLED, RAIN, SOILPROP, SW, YRDOY, YRPLT,      !Input
+=======
+     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
+     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
+     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
+>>>>>>> develop
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
 
@@ -26,12 +32,24 @@ C=======================================================================
       SAVE
 
       CHARACTER*1 IIRRI
+<<<<<<< HEAD
       INTEGER  DYNAMIC, J, YRDOY, YRPLT
       REAL     DEPIR,TDSW,RAIN
 
       INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC
       INTEGER IBDAT(NAPPL), BUNDDAT(NAPPL), IIRRCV(NAPPL)
       INTEGER CONDAT(NAPPL), IRRDAT(NAPPL)
+=======
+      CHARACTER*6, PARAMETER :: ERRKEY = "FIRRIG"
+      CHARACTER*78, DIMENSION(3) :: MSG
+      INTEGER  DYNAMIC, J,K,L, YRDOY, YRPLT
+      REAL     DEPIR,TDSW,RAIN
+
+      INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC, NTBL, NPUD
+      INTEGER IBDAT(NAPPL), BUNDDAT(NAPPL), IIRRCV(NAPPL)
+      INTEGER CONDAT(NAPPL), IRRDAT(NAPPL), PUDDAT(NAPPL), PUDAT(NAPPL)
+      INTEGER JULWTB(NAPPL), WTDAT(NAPPL)
+>>>>>>> develop
       INTEGER IPDAT(NAPPL), PERCDAT(NAPPL)
       REAL ABUND, APWAT, EF
       REAL FLOOD, INFILT, PERC, PERMW, PUDPERC
@@ -92,6 +110,15 @@ C-----------------------------------------------------------------------
             ENDIF
           ENDDO
 
+          !Convert puddling dates
+          DO J = 1, NPUD
+            IF (IIRRI .EQ. 'D') THEN
+              PUDAT(J) = INCDAT(YRPLT, PUDDAT(J))
+            ELSE
+              PUDAT(J) = PUDDAT(J)
+            ENDIF
+          ENDDO
+
           !Convert irrigation dates
           DO J = 1, NCOND
             IF (IIRRI .EQ. 'D') THEN    
@@ -113,6 +140,13 @@ C-----------------------------------------------------------------------
           CONVERTED = .TRUE.
         ENDIF
       ENDIF
+
+!     Puddling
+      DO J = 1, NPUD
+        IF (YRDOY .EQ. PUDAT(J)) THEN
+          PUDDLED = .TRUE.
+        ENDIF
+      ENDDO
 
       !Get daily percolation rate
       DO J = 1, NPERC
@@ -193,6 +227,15 @@ C-----------------------------------------------------------------------
 
 !     Every day check for permanent water level
       IF (PERMW. GT. 0.0) THEN
+        IF (.NOT. PUDDLED) THEN
+          MSG(1)=
+     &      "Must set puddling and bund height to maintain a " // 
+     &      "permanent flood pool."
+          MSG(2)="IROP 11 must also include IROP 9 & 10."
+          MSG(3)="Model will stop."
+          CALL WARNING(3, ERRKEY, MSG)
+          CALL ERROR(ERRKEY,1,"",0)
+        ENDIF
         CALL SW_DEF(DLAYR, NLAYR, SW, SAT, TDSW)
         DEPIR = PERMW + TDSW - FLOOD - RAIN
 

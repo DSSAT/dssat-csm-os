@@ -1,10 +1,8 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2021 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
+C                      International Fertilizer Development Center
+C    
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=====================================================================
@@ -513,7 +511,7 @@ C-----------------------------------------------------------------------
           WRITE(DLUN2,'("*MANAGEMENT OPERATIONS EVENT SUMMARY")')
         ENDIF
 
-        IF (INDEX('FQN',RNMODE) <= 0 .OR. RUN == 1) THEN
+        IF (INDEX('FQNY',RNMODE) <= 0 .OR. RUN == 1) THEN
           CALL HEADER(SEASINIT, DLUN2, RUN)  
         ENDIF
 

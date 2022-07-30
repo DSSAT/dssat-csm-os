@@ -223,7 +223,7 @@ C-----------------------------------------------------------------------
           READ(FERTYPE_CDE(I),'(2X,I3)') FERTYP(I)
           IF (FertFile(FerTyp(I)) % Check .EQ. 0) THEN
             MSG(1) = "Invalid fertilizer code specified."
-            WRITE(MSG(2),'(I7,A)') FDAY(I), CHAR(1:78)
+            WRITE(MSG(2),'(I7,A)') FDAY(I), CHAR(1:71)
             MSG(3) = "This fertilizer application will be ignored."
             CALL WARNING(3, ERRKEY, MSG)
             CYCLE

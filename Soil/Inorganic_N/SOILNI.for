@@ -57,15 +57,15 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE SoilNi (CONTROL, ISWITCH, 
-     &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
-     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
-     &    XHLAI,                                          !Input
+     &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
+     &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
+     &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
+     &    WEATHER, XHLAI,                                 !Input
      &    FLOODN,                                         !I/O
-     &    NH4, NO3, UPPM)                                 !Output
+     &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
 !-----------------------------------------------------------------------
-      USE N2O_mod 
+      USE GHG_mod 
       USE FertType_mod
       USE ModuleData
       USE FloodModule
@@ -96,6 +96,7 @@ C=======================================================================
       REAL NH4(NL), NO3(NL), PH(NL), SAT(NL), SNH4(NL)
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
+      REAL NH4_plant(NL), NO3_plant(NL)
       
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
@@ -132,6 +133,7 @@ C=======================================================================
       REAL CN2,       TN2D,                    N2flux(NL)   !N2 detnitr
 
 !     Added for GHG model
+      TYPE (CH4_type) CH4_data
       REAL, DIMENSION(NL) :: dD0, NO_N2O_ratio
       REAL, DIMENSION(0:NL) :: newCO2
       REAL pn2onitrif, NH4_to_NO, NITRIF_to_NO
@@ -296,7 +298,9 @@ C=======================================================================
 
       CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
+      CALL OPGHG(CONTROL, ISWITCH, N2O_data, CH4_data)
 
       IF (CONTROL%RUN .EQ. 1 .OR. INDEX('QF',CONTROL%RNMODE) .LE. 0)THEN
         call nox_pulse (dynamic, rain, snow, nox_puls)
@@ -321,6 +325,9 @@ C=======================================================================
         SNH4(L) = SNH4(L) - UNH4(L)
         NO3(L)  = SNO3(L) * KG2PPM(L)
         NH4(L)  = SNH4(L) * KG2PPM(L)
+!       Must calculate WTNUP here or it won't be guaranteed to match N
+!       removed from the soil today and the balance will be off.
+        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
       ENDDO
 
 !     Check for fertilizer added today or active slow release fertilizers 
@@ -550,7 +557,7 @@ C=======================================================================
 !         available, take all NH4, leaving behind a minimum amount of
 !         NH4 equal to XMIN (NNOM is negative!).
 
-          IF (ABS(NNOM) .GT. (SNH4(L) - XMIN)) THEN
+          IF (ABS(NNOM) .GT. (SNH4(L) + DLTSNH4(L) - XMIN)) THEN
             NNOM_a = -(SNH4(L) - XMIN + DLTSNH4(L))
             NNOM_b = NNOM - NNOM_a
 
@@ -559,7 +566,7 @@ C=======================================================================
             NNOM = NNOM_b
 
             SNO3_AVAIL = SNO3(L) + DLTSNO3(L)
-            IF (ABS(NNOM) .GT. (SNO3_AVAIL - XMIN)) THEN
+            IF (ABS(NNOM) .GT. (SNO3_AVAIL + DLTSNO3(L) - XMIN)) THEN
               !Not enough SNO3 to fill remaining NNOM, leave residual
               DLTSNO3(L) = DLTSNO3(L) + XMIN - SNO3_AVAIL
               !TIMMOBILIZE(N) = TIMMOBILIZE(N) + (SNO3_AVAIL - XMIN)
@@ -836,6 +843,12 @@ C=======================================================================
       
       CALL PUT('NITR','TLCHD',TLeachD) 
 
+!     Psuedo-integration - for plant-available N
+      DO L = 1, NLAYR
+        NO3_plant(L) = (SNO3(L) + DLTSNO3(L)) * KG2PPM(L)
+        NH4_plant(L) = (SNH4(L) + DLTSNH4(L)) * KG2PPM(L)
+      ENDDO
+
 !***********************************************************************
 !***********************************************************************
 !     END OF FIRST DYNAMIC IF CONSTRUCT
@@ -871,8 +884,8 @@ C=======================================================================
 
 !     Loop through soil layers for integration
       DO L = 1, NLAYR
-        SNO3(L) = SNO3(L) + DLTSNO3(L)    !plant uptake added to DLTSNO3
-        SNH4(L) = SNH4(L) + DLTSNH4(L)    !plant uptake added to DLTSNH4
+        SNO3(L) = SNO3(L) + DLTSNO3(L)
+        SNH4(L) = SNH4(L) + DLTSNH4(L)
         UREA(L) = UREA(L) + DLTUREA(L)
 
 !       Underflow trapping
@@ -900,7 +913,8 @@ C=======================================================================
         TNO3  = TNO3  + SNO3(L)
         TUREA = TUREA + UREA(L)
         TN2OnitrifD = TN2OnitrifD + N2Onitrif(L)
-        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
+!       Calculate this where uptake is removed from the soil.
+!       WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
         IF (L ==1) THEN
           TMINERN = MNR(0,N) + MNR(1,N)
           TIMMOBN = IMM(0,N) + IMM(1,N)
@@ -949,8 +963,11 @@ C=======================================================================
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
+     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, TUREA, CNOX, TOTAML)
       ENDIF
+
+      NO3_plant = NO3
+      NH4_plant = NH4
 
 !***********************************************************************
 !***********************************************************************
@@ -965,7 +982,7 @@ C     Write daily output
       CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
+     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, TUREA, CNOX, TOTAML)
 
       IF (NBUND > 0) THEN
         CALL FLOOD_CHEM(CONTROL, ISWITCH, 
@@ -975,12 +992,15 @@ C     Write daily output
      &    ALGFIX, BD1, CUMFNRO, TOTAML, TOTFLOODN)        !Output
       ENDIF
 
+
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
      &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &	  N2O_data) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
+      CALL OPGHG(CONTROL, ISWITCH, N2O_data, CH4_data)
 
 C***********************************************************************
 C***********************************************************************
@@ -988,7 +1008,6 @@ C     END OF SECOND DYNAMIC IF CONSTRUCT
 C***********************************************************************
       ENDIF
 C-----------------------------------------------------------------------
-  
       RETURN
       END SUBROUTINE SoilNi
 

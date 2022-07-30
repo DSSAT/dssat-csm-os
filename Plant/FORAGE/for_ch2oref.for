@@ -87,18 +87,23 @@ C-----------------------------------------------------------------------
       READ(LUNIO,50) FILEC, PATHCR, FILEE, PATHEC
    50 FORMAT(/////,2(/,15X,A12,1X,A80))
 
+!!-----------------------------------------------------------------------
+!C    Read Soil Section - this caused an error for a crop rotation because
+!       there is no soil section after first rotation.
+!!-----------------------------------------------------------------------
+!      SECTION = '*SOIL'
+!      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
+!      IF (FOUND .EQ. 0) THEN
+!        CALL ERROR(ERRKEY, 1, FILEIO, LINC)
+!       ENDIF
 !-----------------------------------------------------------------------
-C    Read Soil Section
+C    Read Cultivars Section (need 2nd occurance!)
 !-----------------------------------------------------------------------
-      SECTION = '*SOIL'
+      SECTION = '*CULTI'
       CALL FIND(LUNIO, SECTION, LNUM, FOUND)
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(ERRKEY, 1, FILEIO, LINC)
-       ENDIF
-!-----------------------------------------------------------------------
-C    Read Cultivars Section
-!-----------------------------------------------------------------------
-      SECTION = '*CULTI'
+      ENDIF
       CALL FIND(LUNIO, SECTION, LNUM, FOUND)
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(ERRKEY, 1, FILEIO, LINC)
@@ -285,31 +290,61 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C      C Status is current CH2O concentration as a proportion of Max CH2O capacity
 C-----------------------------------------------------------------------
-      CSTATUS = (WCRLF + WCRRT + WCRSR + WCRST  -
-     &    (SLDOT * WCRLF/RTWT - LFSCMOB) - (SSDOT * WCRST/STMWT 
-     &    - STSCMOB) -
-     &    (SRDOT * WCRRT/RTWT - RTSCMOB) - (SSRDOT * WCRSR/STRWT 
-     &    - SRSCMOB)) / (LFMCCAP + STMCCAP + RTMCCAP + SRMCCAP)
-
+      CSTATUS = WCRLF + WCRRT + WCRSR + WCRST
+      if(CSTATUS .gt. 0.0)then
+         if(WTLF .gt. 0.0)then
+            CSTATUS = CSTATUS - SLDOT*WCRLF/WTLF + LFSCMOB
+         end if
+         if(STMWT .gt. 0.0)then
+            CSTATUS = CSTATUS - SSDOT*WCRST/STMWT + STSCMOB
+         end if
+         if(RTWT .gt. 0.0)then
+            CSTATUS = CSTATUS - SRDOT*WCRRT/RTWT + RTSCMOB
+         end if
+         if(STRWT .gt. 0.0)then
+            CSTATUS = CSTATUS - SSRDOT*WCRSR/STRWT + SRSCMOB
+         end if
+      end if
+      if(CSTATUS .le. 0.0 .or.
+     &   (LFMCCAP + STMCCAP + RTMCCAP + SRMCCAP) .le. 0.0)then
+         CSTATUS = 0.0
+      else
+         CSTATUS = CSTATUS / (LFMCCAP + STMCCAP + RTMCCAP + SRMCCAP)
+      end if
+      
 C-----------------------------------------------------------------------
 C      CH2O REFILL capacity is the Max CH2O capacity described above minus 
 C      today's CH2O content.
 C-----------------------------------------------------------------------
 
-      LFCCAP = LFMCCAP - WCRLF - (SLDOT * WCRLF/WTLF - LFSCMOB)
-        IF (LFCCAP .LE. 0.0) LFCCAP = 0.0
+      if(WTLF .gt. 0.0)then
+         LFCCAP = LFMCCAP - WCRLF - (SLDOT * WCRLF/WTLF - LFSCMOB)
+         IF (LFCCAP .LE. 0.0) LFCCAP = 0.0
+      else
+         LFCCAP = 0.0
+      end if
 
 
-      STCCAP = STMCCAP - WCRST - (SSDOT * WCRST/STMWT - STSCMOB)
-        IF (STCCAP .LE. 0.0) STCCAP = 0.0
+      if(STMWT .gt. 0.0)then
+         STCCAP = STMCCAP - WCRST - (SSDOT * WCRST/STMWT - STSCMOB)
+         IF (STCCAP .LE. 0.0) STCCAP = 0.0
+      else
+         STCCAP = 0.0
+      end if
 
+      if(RTWT .gt. 0.0)then
+         RTCCAP = RTMCCAP - WCRRT - (SRDOT * WCRRT/RTWT - RTSCMOB)
+         IF (RTCCAP .LE. 0.0) RTCCAP = 0.0
+      else
+         RTCCAP = 0.0
+      end if
 
-      RTCCAP = RTMCCAP - WCRRT - (SRDOT * WCRRT/RTWT - RTSCMOB)
-        IF (RTCCAP .LE. 0.0) RTCCAP = 0.0
-
-
-      SRCCAP = SRMCCAP - WCRSR - (SSRDOT * WCRSR/STRWT - SRSCMOB)
-        IF (SRCCAP .LE. 0.0) SRCCAP = 0.0
+      if(STRWT .gt. 0.0)then
+         SRCCAP = SRMCCAP - WCRSR - (SSRDOT * WCRSR/STRWT - SRSCMOB)
+         IF (SRCCAP .LE. 0.0) SRCCAP = 0.0
+      else
+         SRCCAP = 0.0
+      end if
 
 
 !      CDEBIT = (ALPHL * WTLF + ALPHR * RTWT + ALPHS * STMWT + 
@@ -319,20 +354,20 @@ C-----------------------------------------------------------------------
 
 
       IF (CDEBIT .GT. 0.0) THEN
-      LFCDEBT = LFCCAP / CDEBIT
-        IF (LFCDEBT .LE. 0.0) LFCDEBT = 0.0
+         LFCDEBT = LFCCAP / CDEBIT
+         IF (LFCDEBT .LE. 0.0) LFCDEBT = 0.0
 
 
-      STCDEBT = STCCAP / CDEBIT
-        IF (STCDEBT .LE. 0.0) STCDEBT = 0.0
+         STCDEBT = STCCAP / CDEBIT
+         IF (STCDEBT .LE. 0.0) STCDEBT = 0.0
 
 
-      RTCDEBT = RTCCAP / CDEBIT
-        IF (RTCDEBT .LE. 0.0) RTCDEBT = 0.0
+         RTCDEBT = RTCCAP / CDEBIT
+         IF (RTCDEBT .LE. 0.0) RTCDEBT = 0.0
 
 
-      SRCDEBT = SRCCAP / CDEBIT
-        IF (SRCDEBT .LE. 0.0) SRCDEBT = 0.0
+         SRCDEBT = SRCCAP / CDEBIT
+         IF (SRCDEBT .LE. 0.0) SRCDEBT = 0.0
 
 
       ELSE 

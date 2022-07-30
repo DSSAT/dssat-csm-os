@@ -5,21 +5,29 @@
 !  Includes subroutines:
 
 !  MEEVP Routine Description
-!   R  PETPT   Calculates Priestly-Taylor potential evapotranspiration
-!                (default method)
-!   A  PETASCE ASCE Standardized Reference Evapotranspiration Equation
-!                for tall reference (alfalfa) with dual FAO-56 crop 
-!                coefficient
-!   F  PETPEN  FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
-!                with KC = 1.0
-!   G  PETASCE ASCE Standardized Reference Evapotranspiration Equation
-!                for short reference (grass) with dual FAO-56 crop
-!                coefficient
+!   S  PETASCE ASCE Standardized Reference Evapotranspiration Equation
+!                for the short reference crop (12-cm grass) with dual
+!                FAO-56 crop coefficient method (potential E and T 
+!                calculated independently).
+!   T  PETASCE ASCE Standardized Reference Evapotranspiration Equation
+!                for the tall reference crop (50-cm alfalfa) with dual
+!                FAO-56 crop coefficient method (potential E and T
+!                calculated independently).
+!   R  PETPT   Calculates Priestley-Taylor potential evapotranspiration
+!                (default method with potential E and T partitioned as a
+!                function of LAI).
+!   F  PETPEN  FAO Penman-Monteith (FAO-56) reference evapotranspiration 
+!                with EORATIO adjustment for CROPGRO models and KC = 1.0
+!                for non-CROPGRO models (potential E and T partioned as 
+!                a function of LAI).
 !   D  PETDYN  Dynamic Penman-Monteith, pot. evapotranspiration, with
 !                dynamic input of LAI, crop height effects on Ra and Rs
 !   P  PETPNO  FAO Penman (FAO-24) potential evapotranspiration 
 !   M  PETMEY  "Standard reference evaporation calculation for inland 
 !                south eastern Australia" By Wayne Meyer 1993
+!   H  PETPTH Calculates Priestly-Taylor potential evapotranspiration
+!             using hourly temperature and radiation. Also includes a VPD 
+!             effect to the transpiration
 
 !  Also includes these subroutines:
 !      PSE        Potential soil evaporation
@@ -35,7 +43,8 @@ C=======================================================================
      &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
      &      EORATIO, !Needed by Penman-Monteith
      &      CANHT,   !Needed by dynamic Penman-Monteith
-     &      EO)      !Output
+     &      EO,      !Output
+     &      ET0)     !Output hourly Priestly-Taylor with VPD effect
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -45,9 +54,10 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       CHARACTER*1 MEEVP
       INTEGER YRDOY, YEAR, DOY
-      REAL CANHT, CLOUDS, EO, EORATIO, ET_ALB, SRAD, TAVG, TDEW
-      REAL TMAX, TMIN, VAPR, WINDHT, WINDSP, XHLAI
+      REAL CANHT, CLOUDS, EO, EORATIO, ET_ALB, SRAD, TAVG               
+      REAL TDEW, TMAX, TMIN, VAPR, WINDHT, WINDSP, XHLAI
       REAL WINDRUN, XLAT, XELEV
+      REAL, DIMENSION(TS)    ::RADHR, TAIRHR, ET0
       
       CLOUDS = WEATHER % CLOUDS
       SRAD   = WEATHER % SRAD  
@@ -61,27 +71,13 @@ C=======================================================================
       WINDRUN= WEATHER % WINDRUN
       XLAT   = WEATHER % XLAT
       XELEV  = WEATHER % XELEV
+      RADHR  = WEATHER % RADHR
+      TAIRHR = WEATHER % TAIRHR
       
       YRDOY = CONTROL % YRDOY
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
-          SELECT CASE (MEEVP)
-!          !Penman-Monteith reference ET based on the ASCE Standardized
-!          !Reference Evapotranspiration Equation
-! CHP 2018-07-20 A and G methods require changes to species file.
-!     We need to figure out a better way to do this. 
-!     The way the routine is written,  
-!     either parameters for A and G are in the species file, 
-!     OR parameters for all other methods are in the species file.
-!     This requires that different species files are used for the
-!     different methods.
-!          CASE ('A','G')
-!            CALL PETASCE(
-!     &        CANHT, DOY, ET_ALB, MEEVP, SRAD, TDEW,      !Input 
-!     &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
-!     &        XLAT, XELEV,                                !Input
-!     &        EO)                                         !Output
-     
+      SELECT CASE (MEEVP)
 !         ------------------------
           !FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
 !             with KC = 1.0
@@ -90,7 +86,17 @@ C=======================================================================
      &        CLOUDS, EORATIO, ET_ALB, SRAD, TAVG, TDEW,  !Input
      &        TMAX, TMIN, VAPR, WINDSP, WINDHT, XHLAI,    !Input
      &        EO)                                         !Output
-
+!         ------------------------
+          !ASCE Standardized Reference Evapotranspiration Equation
+          !for the short reference crop (12-cm grass, "S") or the
+          !tall reference crop (50-cm grass, "T") with dual 
+          !FAO-56 crop coefficient method.
+          CASE ('S','T')
+            CALL PETASCE(
+     &        CANHT, DOY, ET_ALB, MEEVP, SRAD, TDEW,      !Input 
+     &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
+     &        XLAT, XELEV,                                !Input
+     &        EO)                                         !Output
 !         ------------------------
           !Dynamic Penman-Monteith, pot. evapotranspiration, with
 !             dynamic input of LAI, crop height effects on Ra and Rs
@@ -117,33 +123,56 @@ C=======================================================================
           !CASE ('O')
           !    EO = EOMEAS
 !         ------------------------
+          !Priestly-Taylor potential evapotranspiration hourly
+          !including a VPD effect on transpiration
+          CASE ('H')
+              CALL PETPTH(
+     &        ET_ALB, TMAX, XHLAI, RADHR, TAIRHR,       !Input
+     &        EO, ET0)                                  !Output
+!         ------------------------
           !Priestly-Taylor potential evapotranspiration
           CASE DEFAULT !Default - MEEVP = 'R' 
             CALL PETPT(
      &        ET_ALB, SRAD, TMAX, TMIN, XHLAI,          !Input
      &        EO)                                       !Output
 !         ------------------------
-          END SELECT
+      END SELECT
 
       RETURN
       END SUBROUTINE PET
-      
+
 C=======================================================================
 
 C=======================================================================
 C  PETASCE, Subroutine, K. R. Thorp
-C  Calculates reference evapotranspiration using the ASCE
-C  Standardized Reference Evapotranspiration Equation.
-C  Adjusts reference evapotranspiration to potential evapotranspiration
-C  using dual crop coefficients.
-C  DeJonge K. C., Thorp, K. R., 2017. Implementing standardized refernce
-C  evapotranspiration and dual crop coefficient approach in the DSSAT
-C  Cropping System Model. Transactions of the ASABE. 60(6):1965-1981.
+C  Calculates reference evapotranspiration for the short or tall
+C  reference crops using the ASCE Standardized Reference
+C  Evapotranspiration Equation.
+C  Adjusts reference evapotranspiration to potential soil water
+C  evaporation and potential transpiration using FAO-56 dual crop
+C  coefficients, following FAO-56 (Allen et al., 1998) and the
+C  ASCE (2005) standardized reference ET algorithm.
+C  DeJonge K. C., Thorp, K. R., 2017. Implementing standardized
+C  reference evapotranspiration and dual crop coefficient approach
+C  in the DSSAT Cropping System Model. Transactions of the ASABE.
+C  60(6):1965-1981.
+C  ASCE Task Committee on Standardization of Reference
+C  Evapotranspiration (Walter, I. A., Allen, R. G., Elliott, R.,
+C  Itenfisu, D., Brown, P., Jensen, M. E., Mecham, B., Howell, T. A.,
+C  Snyder, R., Eching, S., Spofford, T., Hattendorf, M., Martin, D.,
+C  Cuenca, R. H., Wright, J. L.), 2005. The ASCE Standardized Reference
+C  Evapotranspiration Equation. American Society of Civil Engineers,
+C  Reston, VA.
+C  Allen, R. G., Pereira, L. S., Raes, D., Smith, M., 1998.  FAO
+C  Irrigation and Drainage Paper No. 56. Crop Evapotranspiration:
+C  Guidelines for Computing Crop Water Requirements. Food and
+C  Agriculture Organization of the United Nations, Rome Italy.
 !-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  08/19/2013 KRT Added the ASCE Standardize Reference ET approach
 C  01/26/2015 KRT Added the dual crop coefficient (Kc) approach
 C  01/18/2018 KRT Merged ASCE dual Kc ET method into develop branch
+C  07/23/2020 KRT Changed flags to S and T for short and tall references
 !-----------------------------------------------------------------------
 !  Called from:   PET
 !  Calls:         None
@@ -174,34 +203,35 @@ C=======================================================================
       REAL FCD, TK4, RNL, RN, G, WINDSP, WIND2m, Cn, Cd, KCMAX, RHMIN
       REAL WND, CHT
       REAL REFET, SKC, KCBMIN, KCBMAX, KCB, KE, KC
+      CHARACTER*78 MSG(2)
 !-----------------------------------------------------------------------
 
-!     ASCE Standardized Reference Evapotranspiration 
-!     Average temperature (ASCE Standard Eq. 2)
+!     ASCE Standardized Reference Evapotranspiration
+!     Average temperature, ASCE (2005) Eq. 2
       TAVG = (TMAX + TMIN) / 2.0 !deg C
 
-!     Atmospheric pressure (ASCE Standard Eq. 3)
+!     Atmospheric pressure, ASCE (2005) Eq. 3
       PATM = 101.3 * ((293.0 - 0.0065 * XELEV)/293.0) ** 5.26 !kPa
 
-!     Psychrometric constant (ASCE Standard Eq. 4)
+!     Psychrometric constant, ASCE (2005) Eq. 4
       PSYCON = 0.000665 * PATM !kPa/deg C
 
-!     Slope of the saturation vapor pressure-temperature curve 
-!     (ASCE Standard Eq. 5)                                !kPa/degC
+!     Slope of the saturation vapor pressure-temperature curve
+!     ASCE (2005) Eq. 5                                    !kPa/degC
       UDELTA = 2503.0*EXP(17.27*TAVG/(TAVG+237.3))/(TAVG+237.3)**2.0
 
-!     Saturation vapor pressure (ASCE Standard Eqs. 6 and 7)
+!     Saturation vapor pressure, ASCE (2005) Eqs. 6 and 7
       EMAX = 0.6108*EXP((17.27*TMAX)/(TMAX+237.3)) !kPa
       EMIN = 0.6108*EXP((17.27*TMIN)/(TMIN+237.3)) !kPa
       ES = (EMAX + EMIN) / 2.0                     !kPa
-      
-!     Actual vapor pressure (ASCE Standard Eq. 8)
+
+!     Actual vapor pressure, ASCE (2005) Eq. 8
       EA = 0.6108*EXP((17.27*TDEW)/(TDEW+237.3)) !kPa
 
-!     RHmin (ASCE Standard Eq. 13, RHmin limits from FAO-56 Eq. 70)
+!     RHmin, ASCE (2005) Eq. 13, RHmin limits from FAO-56 Eq. 70
       RHMIN = MAX(20.0, MIN(80.0, EA/EMAX*100.0))
-      
-!     Net shortwave radiation (ASCE Standard Eq. 16)
+
+!     Net shortwave radiation, ASCE (2005) Eq. 16
       IF (XHLAI .LE. 0.0) THEN
         ALBEDO = MSALB
       ELSE
@@ -209,7 +239,7 @@ C=======================================================================
       ENDIF
       RNS = (1.0-ALBEDO)*SRAD !MJ/m2/d
 
-!     Extraterrestrial radiation (ASCE Standard Eqs. 21,23,24,27)
+!     Extraterrestrial radiation, ASCE (2005) Eqs. 21,23,24,27
       PIE = 3.14159265359
       DR = 1.0+0.033*COS(2.0*PIE/365.0*DOY) !Eq. 23
       LDELTA = 0.409*SIN(2.0*PIE/365.0*DOY-1.39) !Eq. 24
@@ -218,11 +248,11 @@ C=======================================================================
       RA2 = COS(XLAT*PIE/180.0)*COS(LDELTA)*SIN(WS) !Eq. 21
       RA = 24.0/PIE*4.92*DR*(RA1+RA2) !MJ/m2/d Eq. 21
 
-!     Clear sky solar radiation (ASCE Standard Eq. 19)
+!     Clear sky solar radiation, ASCE (2005) Eq. 19
       RSO = (0.75+2E-5*XELEV)*RA !MJ/m2/d
 
-!     Net longwave radiation (ASCE Standard Eqs. 17 and 18)
-      RATIO = SRAD/RSO 
+!     Net longwave radiation, ASCE (2005) Eqs. 17 and 18
+      RATIO = SRAD/RSO
       IF (RATIO .LT. 0.3) THEN
         RATIO = 0.3
       ELSEIF (RATIO .GT. 1.0) THEN
@@ -232,43 +262,56 @@ C=======================================================================
       TK4 = ((TMAX+273.16)**4.0+(TMIN+273.16)**4.0)/2.0 !Eq. 17
       RNL = 4.901E-9*FCD*(0.34-0.14*SQRT(EA))*TK4 !MJ/m2/d Eq. 17
 
-!     Net radiation (ASCE Standard Eq. 15)
+!     Net radiation, ASCE (2005) Eq. 15
       RN = RNS - RNL !MJ/m2/d
 
-!     Soil heat flux (ASCE Standard Eq. 30)
+!     Soil heat flux, ASCE (2005) Eq. 30
       G = 0.0 !MJ/m2/d
 
-!     Wind speed (ASCE Standard Eq. 33)
+!     Wind speed, ASCE (2005) Eq. 33
       WINDSP = WINDRUN * 1000.0 / 24.0 / 60.0 / 60.0 !m/s
       WIND2m = WINDSP * (4.87/LOG(67.8*WINDHT-5.42))
 
 !     Aerodynamic roughness and surface resistance daily timestep constants
-!     (ASCE Standard Table 1)
+!     ASCE (2005) Table 1
       SELECT CASE(MEEVP) !
-        CASE('A') !Alfalfa reference
-          Cn = 1600.0 !K mm s^3 Mg^-1 d^-1
-          Cd = 0.38 !s m^-1
-        CASE('G') !Grass reference
+        CASE('S') !Short reference crop (12-cm grass)
           Cn = 900.0 !K mm s^3 Mg^-1 d^-1
           Cd = 0.34 !s m^-1
+        CASE('T') !Tall reference crop (50-cm alfalfa)
+          Cn = 1600.0 !K mm s^3 Mg^-1 d^-1
+          Cd = 0.38 !s m^-1
       END SELECT
 
-!     Standardized reference evapotranspiration (ASCE Standard Eq. 1)
+!     Standardized reference evapotranspiration, ASCE (2005) Eq. 1
       REFET =0.408*UDELTA*(RN-G)+PSYCON*(Cn/(TAVG+273.0))*WIND2m*(ES-EA)
       REFET = REFET/(UDELTA+PSYCON*(1.0+Cd*WIND2m)) !mm/d
       REFET = MAX(0.0001, REFET)
 
 !     FAO-56 dual crop coefficient approach
+!     First step is to obtain crop coefficient parameters.
+      CALL GET('SPAM', 'SKC', SKC)
+      KCBMIN = 0.0
+      CALL GET('SPAM', 'KCBMAX', KCBMAX)
+      IF (SKC .LT. 0.30 .OR. SKC .GT. 1.0) THEN
+          MSG(1) = "SKC for ASCE PET method is out of range."
+          CALL WARNING(2,"PET",MSG)
+          CALL ERROR("CSM",64,"",0)
+      ENDIF
+      IF (KCBMAX .LT. 0.25 .OR. KCBMAX .GT. 1.5) THEN
+          MSG(1) = "KCBMAX for ASCE PET method is out of range."
+          CALL WARNING(2,"PET",MSG)
+          CALL ERROR("CSM",64,"",0)
+      ENDIF
+
 !     Basal crop coefficient (Kcb)
 !     Also similar to FAO-56 Eq. 97
-!     KCB is zero when LAI is zero
-      CALL GET('SPAM', 'SKC', SKC)
-      CALL GET('SPAM', 'KCBMIN', KCBMIN)
-      CALL GET('SPAM', 'KCBMAX', KCBMAX)
+!     KCB is zero when LAI is zero by hard coding KCBMIN = 0.0.
       IF (XHLAI .LE. 0.0) THEN
          KCB = 0.0
       ELSE
-         !DeJonge et al. (2012) equation
+         !Equation from DeJonge et al. (2012) Agricultural Water
+         !Management 115, 92-103 and revised in DeJonge and Thorp (2017)
          KCB = MAX(0.0,KCBMIN+(KCBMAX-KCBMIN)*(1.0-EXP(-1.0*SKC*XHLAI)))
       ENDIF
 
@@ -276,11 +319,11 @@ C=======================================================================
       WND = MAX(1.0,MIN(WIND2m,6.0))
       CHT = MAX(0.001,CANHT)
       SELECT CASE(MEEVP)
-        CASE('A') !Alfalfa reference
-            KCMAX = MAX(1.0,KCB+0.05)
-        CASE('G') !Grass reference
+        CASE('S') !Short reference crop (12-cm grass)
             KCMAX = MAX((1.2+(0.04*(WND-2.0)-0.004*(RHMIN-45.0))
      &                      *(CHT/3.0)**(0.3)),KCB+0.05)
+        CASE('T') !Tall reference crop (50-cm alfalfa)
+            KCMAX = MAX(1.0,KCB+0.05)
       END SELECT
 
       !Effective canopy cover (fc) (FAO-56 Eq. 76)
@@ -289,17 +332,19 @@ C=======================================================================
       ELSE
          FC = ((KCB-KCBMIN)/(KCMAX-KCBMIN))**(1.0+0.5*CANHT)
       ENDIF
-      
-      !Exposed and wetted soil fraction (FAO-56 Eq. 75) 
-      !Unresolved issue with FW (fraction wetted soil surface).
-      !Some argue FW should not be used to adjust demand.
-      !Rather wetting fraction issue should be addressed on supply side.
-      !Difficult to do with a 1-D soil water model
+
+      !Exposed and wetted soil fraction (FAO-56 Eq. 75)
+      !Wetted soil fraction (FW) is hard-coded to 1.0.
+      !FW should not be used to adjust demand.
+      !Rather wetting fraction should be addressed on supply side.
+      !Difficult to do with a 1-D soil water model, but 2-D models
+      !offer opportunity for this.
       FW = 1.0
       FEW = MIN(1.0-FC,FW)
 
       !Potential evaporation coefficient (Ke) (Based on FAO-56 Eq. 71)
-      !Kr = 1.0 since this is potential Ke. Model routines handle stress
+      !Kr = 1.0 since this is for potential E. Other model routines
+      !handle reductions from potential.
       KE = MAX(0.0, MIN(1.0*(KCMAX-KCB), FEW*KCMAX))
 
       !Potential crop coefficient (Kc) (FAO-56 Eqs. 58 & 69)
@@ -307,14 +352,14 @@ C=======================================================================
 
       !Potential evapotranspiration (FAO-56 Eq. 69)
       EO = (KCB + KE) * REFET
-      
+
       EO = MAX(EO,0.0001)
-      
+
       CALL PUT('SPAM', 'REFET', REFET)
       CALL PUT('SPAM', 'KCB', KCB)
       CALL PUT('SPAM', 'KE', KE)
       CALL PUT('SPAM', 'KC', KC)
-      
+
 !-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE PETASCE
@@ -1252,7 +1297,102 @@ c
       end Subroutine Petmey
 !=======================================================================
 
+C=======================================================================
+C  PETPTH, Subroutine, based on J.T. Ritchie
+C  Calculates Priestly-Taylor potential evapotranspiration
+C  using hourly data and adding a VPD effect on transpiration
+C-----------------------------------------------------------------------
+C  REVISION HISTORY
+C  ??/??/19?? JR  Written
+C  11/04/1993 NBP Modified
+C  10/17/1997 CHP Updated for modular format.
+C  09/01/1999 GH  Incorporated into CROPGRO
+!  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil 
+!                 water effects on albedo)
+!  09/01/2020 LPM  Modified PETPT to use hourly variables 
+!-----------------------------------------------------------------------
+!  Called by:   WATBAL
+!  Calls:       None
+C=======================================================================
+      SUBROUTINE PETPTH(
+     &    MSALB, TMAX, XHLAI, RADHR, TAIRHR,              !Input
+     &    EO,ET0)                                         !Output
 
+!-----------------------------------------------------------------------
+      USE ModuleDefs
+      USE ModuleData
+      IMPLICIT NONE
+
+!-----------------------------------------------------------------------
+!     INPUT VARIABLES:
+      REAL MSALB, TMAX, XHLAI
+      REAL, DIMENSION(TS)    ::RADHR, TAIRHR 
+!-----------------------------------------------------------------------
+!     OUTPUT VARIABLES:
+      REAL EO
+      REAL, DIMENSION(TS)    :: ET0
+!-----------------------------------------------------------------------
+!     LOCAL VARIABLES:
+      REAL ALBEDO, EEQ, SLANG
+      INTEGER hour
+      REAL EOP
+!-----------------------------------------------------------------------
+
+
+      IF (XHLAI .LE. 0.0) THEN
+        ALBEDO = MSALB
+      ELSE
+        ALBEDO = 0.23-(0.23-MSALB)*EXP(-0.75*XHLAI)
+      ENDIF
+
+      EO = 0.0
+      EOP = 0.0 
+      DO hour = 1,TS 
+          SLANG = (RADHR(hour)*3.6/1000.)*23.923
+          EEQ = SLANG*(2.04E-4-1.83E-4*ALBEDO)*(TAIRHR(hour)+29.0)
+          ET0(hour) = EEQ*1.1
+          IF (TMAX .GT. 35.0) THEN
+            ET0(hour) = EEQ*((TMAX-35.0)*0.05+1.1)
+          ELSE IF (TMAX .LT. 5.0) THEN
+            ET0(hour) = EEQ*0.01*EXP(0.18*(TMAX+20.0))
+          ENDIF
+          EO = EO + ET0(hour)
+      ENDDO
+
+
+
+!###  EO = MAX(EO,0.0)   !gives error in DECRAT_C
+      EO = MAX(EO,0.0001)
+
+!-----------------------------------------------------------------------
+      RETURN
+      END SUBROUTINE PETPTH
+!-----------------------------------------------------------------------
+!     PETPTH VARIABLES:
+!-----------------------------------------------------------------------
+! ALBEDO  Reflectance of soil-crop surface (fraction)
+! EEQ     Equilibrium evaporation (mm/d)
+! EO      Potential evapotranspiration rate (mm/d)
+! EOPH    Hourly potential transpiration (mm/h)
+! EOP     Potential transpiration (mm/h)
+! EOS     Potential evaporation (mm/h)
+! ET0     Hourly reference transpiration (mm/m2/hr)
+! MSALB   Soil albedo with mulch and soil water effects (fraction)
+! PHTV          VPD response threshold, kPa                (set in CSYCA047.SPE. PHTV >= 5 shuts off the response)
+! PHSV          Slope of VPD response, #/kPa               (negative, set in CSYCA047.SPE)
+! RADHR         Solar radiation, hourly                    (from WEATHER % RADHR  in ModuleDefs)
+! SLANG   Solar radiation 
+! TAIRHR        Air temperature, hourly, °C                (from WEATHER % TAIRHR in ModuleDefs)
+! TDEW          Dew point tempreature,°C                   (from WEATHER % TDEW   in ModuleDefs)
+! TMAX    Maximum daily temperature (°C)
+! TMIN    Minimum daily temperature (°C)
+! XHLAI   Leaf area index (m2[leaf] / m2[ground])
+! VPDFPHR       VPD factor, hourly (#, 0-1)                
+!-----------------------------------------------------------------------
+!     END SUBROUTINE PETPTH
+C=======================================================================
+
+      
 !=======================================================================
 !  PSE, Subroutine, J.T. Ritchie
 !  Calculates soil potential evaporation from total PET and LAI.

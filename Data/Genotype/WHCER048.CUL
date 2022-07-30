@@ -1,0 +1,56 @@
+$CULTIVARS:WHCER048.20200721   Last edit: 20210-05-06 GH
+
+! Coefficients used in the Cropsim-Ceres model differ from those used
+! in DSSAT Versions 3.5 and 4.0. They can be calculated (approximately) from 
+! V3.5 coefficients as follows:
+
+! P1V   = P1V(v3.5)*10 
+! P1D   = P1D(V3.5)*20
+! P5    = P5(V3.5)*20 + 430
+! G1    = G1(V3.5)*5 + 5
+! G2    = (G2(V3.5)*0.35+0.65) * P5/20
+! G3    = G3(V3.5)*0.7 
+! PHINT = PHINT(V3.5)
+
+! Converted coefficients,and those listed below,should always be
+! tested by using them with real experiments and comparing model 
+! outputs with measured values. 
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+*CULTIVARS:WHCER048
+@VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
+!Coeffient #                             1     2     3     4     5     6     7
+!Calibration                             P     P     P     G     G     G     N
+!                                     Vday %/10h  oC.d   #/g    mg     g  oC.d
+999991 MINIMA               . 999991     0     0   100    10    10   0.5    30
+999992 MAXIMA               . 999992    60   200   999    50    80   8.0   150
+                                                                            
+DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
+
+IB1500 MANITOU           1,14 CAWH01     8   100   320    23    23   2.5    86 
+IB0488 NEWTON             1,6 USWH01    45    75   500    25    30   2.0    95  
+IB1015 MARIS FUNDIN       1,8 UKWH01    30    83   515    15    44   3.2   100
+
+AW0071 Yecora_Rojo      16,33 AZWH18    10  40.0   450    20    60  1.50    95
+CI0001 Yecora_Rojo        1,2 CI0001    02    40   570    27    45   4.0   100 
+
+KZ0001 North KAZAK1           DFAULT    10   120   670    16    42   2.0    90
+
+TX0001 TAMU112              . TXWH01    10  68.0   450    30    30   1.0    30
+990015 Hartog_KY          1,4 TWKG01    20    94   700    22    39   1.0   120
+                                                                                                                                                                                                             
+! COEFF       DEFINITION
+! ========    ==========
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+! EXP#        Number of experiments used to generate parameters
+! ECO#        Ecotype code for this cultivar,points to entry in ECO file
+! P1V         Days,optimum vernalizing temperature,required for vernalization
+! P1D         Photoperiod response (% reduction in rate/10 h drop in pp)
+! P5          Grain filling (excluding lag) phase duration (oC.d)
+! G1          Kernel number per unit canopy weight at anthesis (#/g)
+! G2          Standard kernel size under optimum conditions (mg)
+! G3          Standard,non-stressed mature tiller wt (incl grain) (g dwt)
+! PHINT       Interval between successive leaf tip appearances (oC.d)
+
