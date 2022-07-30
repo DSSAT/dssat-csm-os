@@ -34,25 +34,15 @@
 C=====================================================================
 
       SUBROUTINE SOIL(CONTROL, ISWITCH, 
-<<<<<<< HEAD
-     &    EOP, ES, FERTDATA, HARVRES, IRRAMT, KTRANS,     !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-     &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SomLitC, SomLitE,                               !Output
-     &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
-=======
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    EOP, ES, FERTDATA, FracRts, HARVRES, IRRAMT,    !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
-     &    FLOODN, FLOODWAT, MULCH, UPFLOW,                !I/O
+     &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
-     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
->>>>>>> develop
+     &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
+     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs

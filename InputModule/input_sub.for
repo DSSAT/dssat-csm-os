@@ -87,6 +87,10 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, YR_DOY, CLEAR, OPHEAD, PATHD, INTRO, JOIN_TRIM, 
+     &  IPEXP, IPSOIL_INP, IPVAR, IPSLIN, IPSLAN, SENS, INSOIL, 
+     &  WEATHR_INP, OPTEMPY2K, OPTEMPXY2K, OPGEN
+
       SAVE
 
       INCLUDE 'COMSOI.blk'
@@ -323,12 +327,10 @@ C
 C-----------------------------------------------------------------------
       
         CALL OPTEMPY2K(RNMODE,FILEX,PATHEX,
-     &            YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
-     &            SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,MODEL,
-     &            RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,TRTN,
-     &            TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS, 
-     &            PMWD, BEDHT, BEDWD, 
-     &            DripLN, DripSpc, DripOfset, DripDep)  
+     &   YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
+     &   NYRS,VARNO,VRNAME,CROP,MODEL,RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,
+     &   TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMWD, BEDHT, BEDWD,
+     &   DripLN, DripSpc, DripOfset, DripDep)  
       
         CALL OPTEMPXY2K (YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &           SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,
