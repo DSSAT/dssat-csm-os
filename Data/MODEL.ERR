@@ -703,8 +703,8 @@ Configuration file not found.
 PATH      3
 Path error in configuration file. Please correct file.
 
-PETASCE  50
-ASCE reference ET method is not available for this crop.
+PET       1
+Undefined EVAPO parameter in FileX.
 
 PPLANT   10
 Review P parameters in species file.
