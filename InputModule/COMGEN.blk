@@ -77,6 +77,7 @@
       INTEGER       LA
       REAL          PBASE, PSAT  !Sorghum
       REAL          THRESH, SDPRO, SDLIP
+      REAL          XMPAGE
 
       CHARACTER*360 PLAINTXT
 
