@@ -5,7 +5,7 @@
   80.0  2.09 .0105                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN
   1.20  3.50  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG
   0.00  15.0  25.0  45.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG
-   0.0   0.0  35.0  39.0  43.0  55.0       XLMAXT (6 VALUES)
+ -10.0   0.0  35.0  39.0  43.0  55.0       XLMAXT (6 VALUES)
    0.0   0.0   1.0   0.8   0.0   0.0       YLMAXT (6 VALUES)
  -6.00 10.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG
  .0541  0.15  0.80   2.0                   PGEFF SCV KDIF, LFANGB
@@ -128,4 +128,5 @@
 
 !*EVAPOTRANSPIRATION
   0.75   1.0       KEP, EORATIO
-
+  0.50  0.95       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.79       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)

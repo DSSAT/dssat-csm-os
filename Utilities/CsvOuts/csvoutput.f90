@@ -159,10 +159,15 @@ Character(:), allocatable, Target :: vCsvlineStorPrFrm
 Character (:), Pointer :: vpCsvlineStorPrFrm
 Integer :: vlngthStorPrFrm
 !------------------------------------------------------------------------------
-! for SOM N Forage
+! for SOM N Century
 Character(:), allocatable, Target :: vCsvlineSomN
 Character (:), Pointer :: vpCsvlineSomN
 Integer :: vlngthSomN
+!------------------------------------------------------------------------------
+! for SOM C Century
+Character(:), allocatable, Target :: vCsvlineSomC
+Character (:), Pointer :: vpCsvlineSomC
+Integer :: vlngthSomC
 !------------------------------------------------------------------------------
 ! for N2O.csv
 Character(:), allocatable, Target :: vCsvlineN2O
@@ -2064,7 +2069,7 @@ Subroutine CsvOutStorPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
   Return
    end Subroutine CsvOutStorPrFrm
 !---------------------------------------------------------------------------------
-! Sub for somlitn.csv output PRFRM
+! Sub for somlitn.csv output Parton Soil Organic Matter output
 Subroutine CsvOutSomN(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD, TN, SOM1E, &
    TSOM1E, S1N, TSOM2E, S2N, TSOM3E, S3N, LITE, TLITE, LIN, METABE, TMETABE,  &
@@ -2200,6 +2205,89 @@ Subroutine CsvOutN2O(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    Return
 end Subroutine CsvOutN2O
 !---------------------------------------------------------------------------------
+! Sub for somlitC.csv output Parton Soil Organic Matter output
+Subroutine CsvOutSomC(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS,     &
+      SOC_20CM, SOC_20CM_P, SOC_40CM, SOC_40CM_P,                          &
+      SLC_20CM, SLC_20CM_P, SLC_40CM, SLC_40CM_P,                          &
+      TCTD, TC0D, TCSD, TC,                                                &
+      SOM1C, TSOM1C, S1C, TSOM2C, S2C, TSOM3C, S3C, LITC, TLITC, LIT,      &
+      METABC, TMETABC, MET, STRUCC, TSTRUCC, STR, CUMRESC,                 &
+      ACCCO2, NLR, Csvline, pCsvline, lngth)
+
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, NLR
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   REAL,Intent(IN) :: SOC_20CM, SOC_20CM_P, SOC_40CM, SOC_40CM_P
+   REAL,Intent(IN) :: SLC_20CM, SLC_20CM_P, SLC_40CM, SLC_40CM_P
+   REAL,Intent(IN) :: TCTD, TC0D, TCSD
+   
+   REAL,Dimension(5),Intent(IN) :: TC, S1C, S2C, S3C, LIT, MET, STR 
+   REAL,Intent(IN) :: SOM1C(0:NLR), LITC(0:NLR), METABC(0:NLR), STRUCC(0:NLR) 
+   REAL,Intent(IN) :: TSOM1C, TSOM2C, TSOM3C, TMETABC, TSTRUCC, &
+       TLITC, CUMRESC, ACCCO2(0:1)
+   
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=1000) :: tmp      
+!  End of vars
+  
+!  Recalculated vars
+   Integer :: k, SOC_20CM1, SOC_40CM1, SLC_20CM1, SLC_40CM1, TCTD1, TC0D1, TCSD1
+   Integer, Dimension(NLR) :: TC1, S1C1, S2C1, S3C1, LIT1, MET1, STR1
+   Integer :: SOM1C1(0:NLR), LITC1(0:NLR), METABC1(0:NLR), STRUCC1(0:NLR) 
+   Integer :: TSOM1C1, TSOM2C1, TSOM3C1, CUMRESC1 
+   Integer :: TMETABC1, TSTRUCC1, TLITC1, ACCCO21(0:1)
+
+   SOC_20CM1 = NINT(SOC_20CM)
+   SOC_40CM1 = NINT(SOC_40CM)
+   SLC_20CM1 = NINT(SLC_20CM)
+   SLC_40CM1 = NINT(SLC_40CM)
+   TCTD1 = NINT(TCTD) 
+   TC0D1 = NINT(TC0D)
+   TCSD1 = NINT(TCSD)
+   TC1 = NINT(TC)
+   SOM1C1 = NINT(SOM1C)
+   TSOM1C1 = NINT(TSOM1C)
+   S1C1 = NINT(S1C)
+   TSOM2C1 = NINT(TSOM2C)
+   S2C1 = NINT(S2C)
+   TSOM3C1 = NINT(TSOM3C)
+   S3C1 = NINT(S3C)
+
+   LITC1    = NINT(LITC)
+   TLITC1   = NINT(TLITC)
+   LIT1     = NINT(LIT)
+   METABC1  = NINT(METABC)
+   TMETABC1 = NINT(TMETABC)
+   MET1     = NINT(MET)    
+   STRUCC1  = NINT(STRUCC) 
+   TSTRUCC1 = NINT(TSTRUCC)
+   STR1     = NINT(STR)    
+   ACCCO21  = NINT(ACCCO2) 
+   CUMRESC1 = NINT(CUMRESC)
+
+   Write(tmp,'(67(g0,","),g0)') RUN, EXCODE, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     SOC_20CM1, SOC_20CM_P, SOC_40CM1, SOC_40CM_P,                               &
+     SLC_20CM1, SLC_20CM_P, SLC_40CM1, SLC_40CM_P,                               &
+     TCTD1, TC0D1, TCSD1, &
+     ((TC1(k)), k=1, 5), SOM1C1(0), TSOM1C1, ((S1C1(k)), k=1, 5),                & 
+     TSOM2C1, ((S2C1(k)), k=1, 5), TSOM3C1, ((S3C1(k)), k=1, 5), LITC1(0), TLITC1, &
+     ((LIT1(k)), k=1, 5), METABC1(0), TMETABC1, ((MET(k)), k=1, 5), STRUCC1(0),  &
+     TSTRUCC, ((STR(k)), k=1, 5), CUMRESC1, ACCCO21(0), ACCCO21(1)
+   
+  lngth = Len(Trim(Adjustl(tmp)))
+  size = lngth
+  Allocate(Character(Len = size)::Csvline)
+  Csvline = Trim(Adjustl(tmp))
+   
+  Return
+end Subroutine CsvOutSomC
+!---------------------------------------------------------------------------------
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
     Character(Len=5) :: CropModel
@@ -2254,6 +2342,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
          Call ListtofilePlantP              ! PlantP.csv
          Call ListtofileSoilPi              ! SoilPi.csv
          Call ListtofileSomN                ! somlitn.csv
+         Call ListtofileSomC                ! somlitc.csv
          Call ListtofileN2O(nlayers)        ! N2O.csv
          
          Return

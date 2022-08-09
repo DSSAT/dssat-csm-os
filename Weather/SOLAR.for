@@ -50,13 +50,23 @@ C     average solar constant (elliptical orbit ignored).
 C     Calculate daily atmospheric transmission from global
 C     and normal extra-terrestial radiation.
       S0D = S0N * DSINB
-      AMTRD = SRADJ / S0D     
+C FO 06/05/2022 Added protection in S0D for division by zero.      
+      IF(S0D .GT. 0.0) THEN
+        AMTRD = SRADJ / S0D     
+      ELSE
+        AMTRD = 0.0
+      ENDIF
 
 C     Calculate clear sky radiation (0.77*S0D) in MJ.
       SCLEAR = AMTRCS * S0D * 1.E-6
 
 C     Calculate daily cloudiness factor (range = 0-1).
-      CLOUDS = MIN(MAX(1.0-SRAD/SCLEAR,0.0),1.0)
+C FO 06/05/2022 Added protection in SCLEAR for division by zero.
+      IF(SCLEAR .GT. 0) THEN
+        CLOUDS = MIN(MAX(1.0-SRAD/SCLEAR,0.0),1.0)
+      ELSE
+        CLOUDS = 0.0
+      ENDIF
 
 C     Integral in Eqn. 6 (used in HMET)
       ISINB = 3600.0 * (DAYL*(SSIN+0.4*(SSIN**2+0.5*CCOS**2)) +
@@ -121,6 +131,9 @@ C     Sun angles.  SOC limited for latitudes above polar circles.
 
 C     Calculate daylength, sunrise and sunset (Eqn. 17)
       DAYL = 12.0 + 24.0*ASIN(SOC)/PI
+C FO 06/05/2022 Added protection to avoid day length less than 0.0
+C               and greater than 24.0 hours.      
+      DAYL = MIN(MAX(DAYL,0.0),24.0)
       SNUP = 12.0 - DAYL/2.0
       SNDN = 12.0 + DAYL/2.0
 
@@ -223,7 +236,7 @@ C=======================================================================
       C1 = COS(XLAT*0.01745)
       DEC    = 0.4093*SIN(0.0172*(DOY-82.2))
       DLV    = ((-S1*SIN(DEC)-0.1047)/(C1*COS(DEC)))
-      DLV    = AMAX1 (DLV,-0.87)
+      DLV    = MIN(MAX(DLV,-0.87), 1.0)
       TWILEN = 7.639*ACOS(DLV)
 
       RETURN

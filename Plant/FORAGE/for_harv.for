@@ -28,7 +28,7 @@ C=======================================================================
      &                fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,
      &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT, HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                WTCO, WTLO, WTSO,TMAX,TMIN)
+     &                AMVS, WTCO, WTLO, WTSO,TMAX,TMIN)
 
       USE MODULEDEFS
 
@@ -73,7 +73,7 @@ C=======================================================================
       REAL,dimension(6) :: YRSREF
       REAL GDD, MOWGDD
       INTEGER HMFRQ, HMGDD, CUTDAY
-      INTEGER HMMOW, HRSPL !TF 2022-01-31 Smart version AutoMOW
+      INTEGER HMMOW, HRSPL, AMVS !TF 2022-01-31 Smart version AutoMOW
       REAL TMAX
       REAL TMIN
       REAL TB(5), TO1(5), TO2(5), TM(5)
@@ -162,9 +162,6 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
 
           INQUIRE(FILE = MOWFILE, EXIST = exists)
     
-          IF (.NOT. exists) THEN
-            CALL ERROR (ERRKEY,29,MOWFILE,1)
-          ENDIF
         ELSE
           IF(ATTP .EQ. 'P' .AND. HMGDD .LE. 0) THEN
             CALL ERROR (ERRKEY,50,MOWFILE,1)
@@ -172,12 +169,12 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
           IF(ATTP .EQ. 'C' .AND. HMFRQ .LE. 0) THEN
             CALL ERROR (ERRKEY,50,MOWFILE,1)
           ENDIF
-          !IF(ATTP .EQ. 'P' .AND. HMGDD .LE. 0) THEN
-          !  CALL ERROR (ERRKEY,50,MOWFILE,1)
-          !ENDIF
-          !IF(ATTP .EQ. 'C' .AND. HMFRQ .LE. 0) THEN
-          !  CALL ERROR (ERRKEY,50,MOWFILE,1)
-          !ENDIF
+          IF(HRSPL .GT. 100) THEN
+            CALL ERROR (ERRKEY,59,MOWFILE,1)
+          ENDIF
+          IF(HMFRQ .LE. 0 .AND. HMGDD .LE. 0) THEN
+            CALL ERROR (ERRKEY,50,MOWFILE,1)
+          ENDIF
         ENDIF
 
 
@@ -241,6 +238,15 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCHMOW(I),I=1,6)
         CLOSE (LUNCRP)
+
+        XCUTHT = IXCUTHT
+        XCHMOW = IXCHMOW
+        XFRGDD = IXFRGDD
+        IF(ATTP .EQ. 'A') THEN
+          XFREQ = IXFREQ
+        ELSEIF( ATTP .EQ. 'T') THEN
+          XFREQ = IXFRGDD
+        ENDIF
       ENDIF
 
 !-----------------------------------------------------------------------
@@ -256,15 +262,6 @@ C-----------------------------------------------------------------------
       READ(C80,'(4F6.1)') TB(1), TO1(1), TO2(1), TM(1)
        CLOSE (LUNCRP)
 !----------------------------------------------------------------------
-        IF(ATTP .EQ. 'A') THEN
-          XFREQ = IXFREQ
-        ELSEIF( ATTP .EQ. 'T') THEN
-          XFREQ = IXFRGDD
-        ENDIF
-        XCUTHT = IXCUTHT
-        XCHMOW = IXCHMOW
-        XFRGDD = IXFRGDD
-
       
       IF (.NOT.ALLOCATED(MOW) .AND. ATMOW .EQV. .FALSE.) THEN
 
@@ -510,7 +507,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               END IF
               FHLEAF = MAX(FHLEAF,0.0)
               FHSTEM = MAX(FHSTEM,0.0)
-              FHVSTG = 3
+              FHVSTG = AMVS
               canht  = max(HMCUT/100,0.0)
               !             canht=max(rsht(i),0.0)     !enter rsht in cm
 

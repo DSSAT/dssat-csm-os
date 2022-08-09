@@ -7,6 +7,7 @@
 !  05/09/2007     Written. KJB, CHP, JIL, RR
 !  02/27/2008     Added pod quality for snap bean. JIL
 !  10/02/2020     Add fresh weight for bell pepper
+!  07/09/2022     Add fresh weight for cucumber using tomato
 !-----------------------------------------------------------------------
 !  Called from:  PODS
 !=======================================================================
@@ -61,10 +62,10 @@
 
       CROP   = CONTROL%CROP
 
-!     Currently only works for tomato, green bean, bell pepper, and strawberry. 
-!     Add other crops later. 
+!     Currently only works for tomato, green bean, bell pepper, strawberry,
+!         and cucumber. Add other crops later. 
 !     Send a message if not available crop
-      IF (INDEX('TM,GB,PR',CROP) < 0) THEN
+      IF (INDEX('TM,GB,PR,CU',CROP) .EQ. 0) THEN
         CALL GET_CROPD(CROP, CROPD)
         WRITE(MSG(1),'(A)') 
      &  "Fresh weight calculations not currently available for "
@@ -99,8 +100,10 @@
             WRITE (NOUTPF,230)
           CASE ('GB')       ! Snap bean
             WRITE (NOUTPF,231)
-            CASE ('PR')       ! Bell pepper
-         WRITE (NOUTPF,230)
+          CASE ('PR')       ! Bell pepper
+           WRITE (NOUTPF,230)
+          CASE ('CU')       ! Cucumber
+            WRITE (NOUTPF,230)
         END SELECT
 
   230 FORMAT('@YEAR DOY   DAS   DAP',
@@ -155,6 +158,8 @@
             DMC(NPP) = 0.023 + 0.0277 * EXP(0.116 * PAGE)
           CASE ('PR')       ! Snap bean
 ! GB        DMC(NPP) = 0.023 + 0.0277 * EXP(0.116 * PAGE)
+            DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
+          CASE ('CU')       ! Tomato
             DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
         END SELECT
 
@@ -251,7 +256,11 @@
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge
-      CASE ('PR')           ! Bell pepper
+         CASE ('PR')        ! Bell pepper
+            WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
+     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      PodAge
+         CASE ('CU')        ! Cucumber
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge

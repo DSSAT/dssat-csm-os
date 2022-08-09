@@ -512,6 +512,7 @@ C  03/11/2005 GH  Remove ANS, RNMODE and NYRS
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
 C  08/09/2012 GH  Updated for cassava
 C  09/18/2020 GH  Update for quinoa, safflower, sunflower
+C  07/08/2022 GH  Update for cucumber
 C-----------------------------------------------------------------------
 C  INPUT  : IDETO,NOUTDO,NYRS,LL,DUL,SAT,DLAYR,SWINIT,DS,NLAYR,ESW
 C           SHF,BD,PH,INO3,INH4,OC,TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4
@@ -624,7 +625,7 @@ C=======================================================================
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('BH,BM,BR,CB,CI,CN,CO,NP,PR,QU,SF,SU,TM',CROP)
+        ELSEIF (INDEX ('BH,BM,BR,CB,CI,CN,CO,CU,NP,PR,QU,SF,SU,TM',CROP)
      &          .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
