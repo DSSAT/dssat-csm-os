@@ -16,6 +16,7 @@
 !The following is line 1546 in *tmp
 ! JG moved some CUL parameters to ECO file 01/21/2020
 ! JG moved ozone parameters to ECO file 07/24/2020
+! JG cleaned ozone parameters in ECO file 01/18/2022
 
 *     ===========================================================
       !*! real function nwheats_fac (layer)
@@ -773,7 +774,7 @@ cjh  end of correction
       REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
       REAL        P2AF,P3AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN
       REAL        MXNCR,INGWT,INGNC,FREAR,MNNCR,GPPSS,GPPES,MXGWT
-      REAL        MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,FOZ2,SFOZ1,SFOZ2
+      REAL        MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,SFOZ1
       ! JG end for ecotype variables
       
 C     The variable "CONTROL" is of type "ControlType".
@@ -823,12 +824,12 @@ C     The variable "CONTROL" is of type "ControlType".
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+     &             FOZ1,SFOZ1
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+     &                2(1X,F5.0),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -1056,7 +1057,7 @@ cbak      parameter (potrate = .9e-6)        ! (g n/mm root/day)
       REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
       REAL        P2AF,P3AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN
       REAL        MXNUP,MXNCR,INGWT,INGNC,FREAR,MNNCR,GPPSS,GPPES
-      REAL        MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,FOZ2,SFOZ1,SFOZ2
+      REAL        MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,SFOZ1
       TYPE (ControlType) CONTROL
       ! JG end for ecotype variables
       
@@ -1105,12 +1106,12 @@ cbak      parameter (potrate = .9e-6)        ! (g n/mm root/day)
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+     &             FOZ1,SFOZ1
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+     &                2(1X,F5.0),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -1277,7 +1278,7 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
       REAL        P2AF,P3AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN
       REAL        MXNUP,MXNCR,WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT
       REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,NOMOB,RTDP1,RTDP2
-      REAL        FOZ1,FOZ2,SFOZ1,SFOZ2
+      REAL        FOZ1,SFOZ1
       
       PARAMETER (ERRKEY = 'NWPLWI')
       
@@ -1325,12 +1326,12 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+     &             FOZ1,SFOZ1
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+     &                2(1X,F5.0),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN

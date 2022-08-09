@@ -845,7 +845,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 
       CHARACTER*12 FILEC
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(6)
+      CHARACTER*78 MSG(10)
       CHARACTER*80 PATHCR, CHAR
       CHARACTER*92 FILECC
 
@@ -929,11 +929,29 @@ c     Total LAI must exceed or be equal to healthy LAI:
 
         CLOSE (LUNCRP)
 
-!       Check for value with valid ranges.
-        SSKC    = MAX(0.30,MIN(1.0,SSKC))
-        SKCBMAX = MAX(0.25,MIN(1.5,SKCBMAX))
-        TSKC    = MAX(0.30,MIN(1.0,TSKC))
-        TKCBMAX = MAX(0.25,MIN(1.5,TKCBMAX))
+!       Check for values with valid ranges.
+        IF (MEEVP .EQ. 'S') THEN
+          IF (SSKC .LT. 0.30 .OR. SSKC .GT. 1.0) THEN
+            NMSG = NMSG + 1
+            MSG(NMSG) = "SSKC for ASCE PET method is out of range."
+          ENDIF
+          IF (SKCBMAX .LT. 0.25 .OR. SKCBMAX .GT. 1.5) THEN
+            NMSG = NMSG + 1
+            MSG(NMSG) = "SKCBMAX for ASCE PET method is out of range."
+          ENDIF
+        ENDIF
+        
+        IF (MEEVP .EQ. 'T') THEN
+          IF (TSKC .LT. 0.30 .OR. TSKC .GT. 1.0) THEN
+            NMSG = NMSG + 1
+            MSG(NMSG) = "TSKC for ASCE PET method is out of range."
+          ENDIF
+          IF (TKCBMAX .LT. 0.25 .OR. TKCBMAX .GT. 1.5) THEN
+            NMSG = NMSG + 1
+            MSG(NMSG) = "TKCBMAX for ASCE PET method is out of range."
+          ENDIF
+        ENDIF
+        
       ELSE
 !       If fallow, use minimum values
         SSKC    = 0.30
