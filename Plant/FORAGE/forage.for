@@ -2,7 +2,7 @@ C=======================================================================
 C  COPYRIGHT 1998-2003 The University of Georgia, Griffin, Georgia
 C                      University of Florida, Gainesville, Florida
 C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
+C                      International Center for Soil Fertility and
 C                       Agricultural Development, Muscle Shoals, Alabama
 C                      University of Guelph, Guelph, Ontario
 C  ALL RIGHTS RESERVED
@@ -30,7 +30,7 @@ C  05/31/2005 SJR Added CH2OREF to senesce organs at minimum CH2O conc.
 C  09/28/2005 SJR Added SENMOB to senesce organs earlier in the day.
 C=======================================================================
 
-      subroutine FORAGE(CONTROL, ISWITCH, 
+      subroutine FORAGE(CONTROL, ISWITCH,
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
@@ -39,7 +39,7 @@ C=======================================================================
      &    STGDOY, UNH4, UNO3, XHLAI, XLAI)                !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
         ! which contain control information, soil
         ! parameters, hourly weather data.
       USE ModuleData
@@ -116,10 +116,10 @@ C=======================================================================
      &    SLA, SLDOT, STMWT, SWIDOT, SEEDNO
       REAL SLPF
       REAL SLCADDOT, SRCADDOT, SSRCADDOT, SSCADDOT
-      REAL SLNADDOT, SRNADDOT, SSRNADDOT, SSNADDOT 
+      REAL SLNADDOT, SRNADDOT, SSRNADDOT, SSNADDOT
       REAL SRDOT, SLAAD, SLNDOT, SSDOT, SSNDOT
-      REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TMAX, TURFAC, 
-     &    TAVG, TURADD, TRNH4U, TRNO3U, TRNU, TNLEAK, TRWUP, 
+      REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TMAX, TURFAC,
+     &    TAVG, TURADD, TRNH4U, TRNO3U, TRNU, TNLEAK, TRWUP,
      &    TTFIX, TOPWT, TOTWT
       REAL VSTAGE
       REAL WLFDOT, WSIDOT, WRIDOT
@@ -140,7 +140,7 @@ C=======================================================================
       REAL PHTHRS(20)
       REAL TGRO(TS)
       REAL SDDES(NCOHORTS)
-      REAL WTSD(NCOHORTS), WTSHE(NCOHORTS), SDNO(NCOHORTS) 
+      REAL WTSD(NCOHORTS), WTSHE(NCOHORTS), SDNO(NCOHORTS)
       REAL SHELN(NCOHORTS)
       REAL PHTIM(365)
       REAL PNTIM(365)
@@ -158,32 +158,32 @@ C      Storage organ parameters for forage model
 
       CHARACTER*3   TYPPGD,TYPPTD, TYPPMD, TYPHRD, TYPDHD
 
-      REAL AGRSTR, ALPHSR, CADSR, CADSRF, CLAIT, CMOBSR, 
+      REAL AGRSTR, ALPHSR, CADSR, CADSRF, CLAIT, CMOBSR,
      &   CMOBSRN, CMOBSRX, CPFSTR, CRUSSR, CSRFRZ, CSRW, CSTRM,
      &   DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRF, FRSTRM,
      &   FRSTRMX, FRZDC, FRZDL, HARD1, HARD2, NADSR,
      &   NGRSR, NGRSRG, NMOBSR, NMOBSRN, NMOBSRX, NRUSSR, NSRALL,
      &   NSRDOT, NSROFF, PCARSR, PCNSR, PCSTRD,
      &   PLIGSR, PLIPSR, PMINSR, POASR, PPGFAC, PPMFAC,
-     &   PPTFAC, PROSRF, PROSRG, PROSRI, PROSRT, 
-     &   PSRLYR1, PSRLYRD, PSRSRFD, PSRSRFL, RCHDP, RDRMG, 
+     &   PPTFAC, PROSRF, PROSRG, PROSRI, PROSRT,
+     &   PSRLYR1, PSRLYRD, PSRSRFD, PSRSRFL, RCHDP, RDRMG,
      &   RDRMM, RDRMT, RHOSR, SENSR, SRDAM, SRFTEMP, SRLYRD,
      &   SRSRFD, SSRDOT, SSRNDOT, STRLYR1, STRSRFL, STRWT,
      &   TPSRLYR1, TPSRSRFL, WCRSR, WNRSR, WRCSRDT, WSFDOT,
-     &   WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, WTNSR, 
+     &   WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, WTNSR,
      &   WTNSRA, WTNSRO, WTSRO, XSTR
 
       REAL FNPGD(4), FNPMD(4), FNPTD(4), FRZDHD(4), FRZHRD(4),
      &   YSTOR(8)
 
-      REAL CADRT, CADSH, NADSH, NRUSTOT 
+      REAL CADRT, CADSH, NADSH, NRUSTOT
       REAL PNMLF, PNMRT, PNMSH, PNMSR, PNMST
       REAL CSFRZ
       REAL NVSTL, NVSTR, NVSTS, NVSTSR
       REAL NUPNH4(NL), NUPNO3(NL)
 
       REAL LAIMOBR, VNMOBR, VEGNCNT, VEGNCMX
-      CHARACTER*3 TYPLMOB, TYPNMOB 
+      CHARACTER*3 TYPLMOB, TYPNMOB
       REAL LRMOB(4), NRMOB(4), VEGNPCT, VEGNPMX, VNSTAT
 
       CHARACTER*1 MRSWITCH, TRSWITCH
@@ -192,7 +192,7 @@ C      Storage organ parameters for forage model
       REAL LFMRC, mft, RTMRC, SDMRC, SHELMRC, STMMRC,
      &   STRMRC, TRST(4)
 
-      CHARACTER*3 TYPCREF, TYPLREF, TYPPREF 
+      CHARACTER*3 TYPCREF, TYPLREF, TYPPREF
       REAL CRREF(4), LRREF(4), PRREF(4)
       REAL ALPHL, ALPHR, ALPHS, ALPHSH
       REAL CADPV, CDEBIT
@@ -200,7 +200,7 @@ C      Storage organ parameters for forage model
       REAL PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF
 
       REAL LFSCMOB, RTSCMOB, SRSCMOB, STSCMOB, TSCMOB
-      REAL LFSNMOB, RTSNMOB, SLMDOT, SRMDOT,             
+      REAL LFSNMOB, RTSNMOB, SLMDOT, SRMDOT,
      &  SRSNMOB, SSMDOT, SSRMDOT, STSNMOB, TSNMOB
 
       REAL ACMINELF, ACMINERT, ACMINESH, ACMINESR, ACMINEST
@@ -215,8 +215,8 @@ C      Storage organ parameters for forage model
       REAL LFSENWT, RLSEN(NL), SRNDOT
       REAL STLTSEN, STSENWT
 
-      REAL RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,            
-     &  WRDOT, WSDOT                                                            
+      REAL RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,
+     &  WRDOT, WSDOT
 
       REAL CADVG, CHORECOVER, NLKSPENT, NLKNUSED
       REAL NLKCHK, TNLKCHK
@@ -251,7 +251,7 @@ C FO/DP/TF - 2020-07-22 - AutomaticMOW
       INTEGER HMFRQ
       INTEGER HMGDD
       REAL HMCUT
-C TF/DP 2022-01-31 Simple version AutoMOW 
+C TF/DP 2022-01-31 Simple version AutoMOW
       INTEGER HMMOW, HRSPL, AMVS
       CHARACTER*1 ATTP
 
@@ -288,15 +288,15 @@ C TF/DP 2022-01-31 Simple version AutoMOW
       RUN     = CONTROL % RUN
       RNMODE  = CONTROL % RNMODE
 
-      BD     = SOILPROP % BD     
-      DLAYR  = SOILPROP % DLAYR  
-      DS     = SOILPROP % DS     
-      DUL    = SOILPROP % DUL    
-      LL     = SOILPROP % LL     
-      NLAYR  = SOILPROP % NLAYR  
-      SAT    = SOILPROP % SAT    
-      SLPF   = SOILPROP % SLPF  
-      WR     = SOILPROP % WR     
+      BD     = SOILPROP % BD
+      DLAYR  = SOILPROP % DLAYR
+      DS     = SOILPROP % DS
+      DUL    = SOILPROP % DUL
+      LL     = SOILPROP % LL
+      NLAYR  = SOILPROP % NLAYR
+      SAT    = SOILPROP % SAT
+      SLPF   = SOILPROP % SLPF
+      WR     = SOILPROP % WR
 
       IDETO  = ISWITCH % IDETO
       ISWDIS = ISWITCH % ISWDIS
@@ -313,14 +313,14 @@ C TF/DP 2022-01-31 Simple version AutoMOW
       AMVS   = ISWITCH % AMVS
       ATTP   = ISWITCH % ATTP
 
-      CO2    = WEATHER % CO2   
-      DAYL   = WEATHER % DAYL  
-      PAR    = WEATHER % PAR   
-      TAVG   = WEATHER % TAVG  
-      TDAY   = WEATHER % TDAY  
-      TGRO   = WEATHER % TGRO  
+      CO2    = WEATHER % CO2
+      DAYL   = WEATHER % DAYL
+      PAR    = WEATHER % PAR
+      TAVG   = WEATHER % TAVG
+      TDAY   = WEATHER % TDAY
+      TGRO   = WEATHER % TGRO
       TGROAV = WEATHER % TGROAV
-      TMIN   = WEATHER % TMIN  
+      TMIN   = WEATHER % TMIN
       TMAX   = WEATHER % TMAX
 
 ! Disable P stress
@@ -334,7 +334,7 @@ C TF/DP 2022-01-31 Simple version AutoMOW
 !-----------------------------------------------------------------------
 !     Call input routine for CROPGRO module parameters
 !-----------------------------------------------------------------------
-      CALL FOR_IPPLNT(CONTROL, 
+      CALL FOR_IPPLNT(CONTROL,
      &  CADPR1, CMOBMX, CROP, DETACH, ECONO, EORATIO,     !Output
      &  FILECC, FILEGC, FRCNOD, FREEZ1, FREEZ2, KCAN, KEP,!Output
      &  NOUTDO, PCARSH, PCH2O, PLIPSH, PLIGSD, PLIGSH,    !Output
@@ -351,7 +351,7 @@ C TF/DP 2022-01-31 Simple version AutoMOW
 
 
       IF (CROP .NE. 'FA' .AND. MEPHO .EQ. 'C') THEN
-        CALL FOR_PHOTO(CONTROL, 
+        CALL FOR_PHOTO(CONTROL,
      &   BETN, CO2, DXR57, EXCESS, NR5, PAR, SLPF,    !Input
      &   RNITP, SLAAD, SWFAC, TDAY, XHLAI, XPOD,      !Input
      &   AGEFAC, PG)                                                      !Output
@@ -359,7 +359,7 @@ C TF/DP 2022-01-31 Simple version AutoMOW
       ENDIF
 
 !-----------------------------------------------------------------------
-      CALL FOR_PHENOL(CONTROL, ISWITCH, 
+      CALL FOR_PHENOL(CONTROL, ISWITCH,
      &    DAYL, NSTRES, SOILPROP, ST, SW, SWFAC, TGRO,    !Input
      &    TGROAV, TMIN, TURFAC, XPOD, YRPLT,              !Input
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
@@ -369,9 +369,9 @@ C TF/DP 2022-01-31 Simple version AutoMOW
      &    YRNR7)                                                                  !Output
 
 C-----------------------------------------------------------------------
-C     Read initial Dormancy data 
+C     Read initial Dormancy data
 C-----------------------------------------------------------------------
-      CALL FOR_DORMANCY( CONTROL, 
+      CALL FOR_DORMANCY( CONTROL,
      &    DAYL, TMIN,                                           !Input
      &    DRMST, FREEZ2, FRZDC, PPGFAC, PPTFAC, PPMFAC,         !Output
 
@@ -382,7 +382,7 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
       IF (ISWDIS .EQ. 'Y') THEN
-        CALL FOR_PEST(CONTROL, ISWITCH, 
+        CALL FOR_PEST(CONTROL, ISWITCH,
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, PGAVL,    !Input
      &    PHTIM, PLTPOP, RTWT, SLA, SLDOT, SOILPROP,      !Input
      &    SSDOT, STMWT, TOPWT, WLFDOT, WTLF, YRPLT,       !Input
@@ -406,7 +406,7 @@ C-----------------------------------------------------------------------
      &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
      &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
      &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,  !Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
+     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input
      &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
      &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,    !Input
      &  WTSHE, XPOD, YRDOY,                               !Input
@@ -434,17 +434,17 @@ C-----------------------------------------------------------------------
      &    AGRLF, AGRNOD, AGRRT, AGRSD1, AGRSD2,           !Output
      &    AGRSH1, AGRSH2, AGRSTM, AGRVG, AGRVG2,          !Output
      &  SDPROR,                                       !Output
-     &  AGRSTR, FRSTR,                                !Output      
+     &  AGRSTR, FRSTR,                                !Output
      &  RUNINIT)
 C-----------------------------------------------------------------------
 C      09/23/05 SJR Added subroutine
-C    Call Subroutine to calculate Nitrogen mobilized from natural 
+C    Call Subroutine to calculate Nitrogen mobilized from natural
 C      senescence and light stress
 C-----------------------------------------------------------------------
 
       CALL FOR_SENMOB(
      &  FILECC, CLW, DAYL, DLAYR, DTX, DUL, DXR57, FNINL,      !Input
-     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,             !Input 
+     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,             !Input
      &  NR7, NSTRES, PAR, PCNL, PCNRT, PCNSR, PCNST,             !Input
      &  PPMFAC, RHOL, RLV, RTWT, SAT, SLAAD, STMWT,             !Input
      &  STRWT, SW, SWFAC, TDUMX, TDUMX2, VSTAGE, WCRLF,       !Input
@@ -457,8 +457,8 @@ C-----------------------------------------------------------------------
      &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,                  !Output
      &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,      !Output
      &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,                   !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,      !Output      
-     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output      
+     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,      !Output
+     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output
      &  STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,             !Output
      &  TSNMOB, VNMOBR,                                         !Output
      &  RUNINIT)                                              !Control
@@ -480,7 +480,7 @@ C-----------------------------------------------------------------------
      &    SAT, ST, SW, TURFAC, YRDOY, YRSIM,          !Input
      &    CNOD, DWNOD, DWNODA, NDTH, NFIXN,           !Output
      &    NODGR, WTNFX, SENNOD,                       !Output
-     &    RUNINIT) 
+     &    RUNINIT)
         ENDIF
         !ENDIF
 
@@ -591,7 +591,7 @@ C-----------------------------------------------------------------------
 
 !      ENDIF
 !-----------------------------------------------------------------------
-      CALL FOR_GROW(CONTROL, ISWITCH, RUNINIT, SOILPROP, 
+      CALL FOR_GROW(CONTROL, ISWITCH, RUNINIT, SOILPROP,
      &  AGEFAC, CADLF, CADST, CRUSLF, CRUSRT, CRUSSH,     !Input
      &  CRUSST, DISLA, F, FILECC, FILEGC, FRLF, FRSTM,    !Input
      &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NADLF, NADRT,   !Input
@@ -633,7 +633,7 @@ C-----------------------------------------------------------------------
      &  WSFDOT, WSRFDOT,                                  !Input/Output
      &  CSRW, PCNSR, PLIGSR, RHOSR, STRWT, WCRSR,         !Output
      &  WNRSR, WTNSR, WTNSRA, WTNSRO, WTSRO,              !Output
-     
+
      &  ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, PCARSR,      !Output
      &  PLIPSR, PMINSR, POASR, PROSRF,CPFSTR, NSRALL,     !Output
      &  NSRDOT, NSROFF, TPSRLYR1,TPSRSRFL, WRCSRDT,       !Output
@@ -647,69 +647,69 @@ C-----------------------------------------------------------------------
      &  VSTAGE, DWTCO, DWTLO, DWTSO,
      &  PWTCO, PWTLO, PWTSO)                         !Input/Output
 
-      CALL FOR_OPMOB(CONTROL, ISWITCH, 
-     &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC, 
-     &  NMOBR, NMOBSR, MAINR, ASMDOT, RSPNO3, RSPNH4, RPRO,       
-     &  CNOD, CGRSD, CGRSH, CADVG, CSAVEV, AGRVG, PCH2O, WTLF, WLDOT, 
-     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,          
-     &  WSIDOT, WSFDOT, WSDOTN, 
+      CALL FOR_OPMOB(CONTROL, ISWITCH,
+     &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC,
+     &  NMOBR, NMOBSR, MAINR, ASMDOT, RSPNO3, RSPNH4, RPRO,
+     &  CNOD, CGRSD, CGRSH, CADVG, CSAVEV, AGRVG, PCH2O, WTLF, WLDOT,
+     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,
+     &  WSIDOT, WSFDOT, WSDOTN,
      &  STRWT, WSRDOT, WSRIDOT, WSRFDOT, WSRDOTN,
-     &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT, 
-     &  SLDOT, SRMDOT, SRNDOT, SRCADDOT, SRNADDOT, SRDOT, 
-     &  SSMDOT, STSENWT, STLTSEN, SSNDOT, SSCADDOT, SSNADDOT, 
+     &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT,
+     &  SLDOT, SRMDOT, SRNDOT, SRCADDOT, SRNADDOT, SRDOT,
+     &  SSMDOT, STSENWT, STLTSEN, SSNDOT, SSCADDOT, SSNADDOT,
      &  SSDOT, SSRMDOT, SSRNDOT, SSRCADDOT, SSRNADDOT, SSRDOT,
-     &  NDMVEG, NDMNEW, NDMOLD, NDMTOT, NMINEP, NMINEA, SDNPL, TRNU, 
+     &  NDMVEG, NDMNEW, NDMOLD, NDMTOT, NMINEP, NMINEA, SDNPL, TRNU,
      &  NFIXN, NGRSD, NGRSH, TSNMOB,
-     &  WTNLF, WNRLF, LFSNMOB, NMINELF, ANMINELF, 
+     &  WTNLF, WNRLF, LFSNMOB, NMINELF, ANMINELF,
      &  NGRLF, NLALL, NADLF, NRUSLF, PCNL,
-     &  WTNRT, WNRRT, RTSNMOB, NMINERT, ANMINERT, 
+     &  WTNRT, WNRRT, RTSNMOB, NMINERT, ANMINERT,
      &  NGRRT, NRALL, NADRT, NRUSRT, PCNRT,
-     &  WTNST, WNRST, STSNMOB, NMINEST, ANMINEST, 
+     &  WTNST, WNRST, STSNMOB, NMINEST, ANMINEST,
      &  NGRST, NSALL, NADST, NRUSST, PCNST,
-     &  WTNSR, WNRSR, SRSNMOB, NMINESR, ANMINESR, 
+     &  WTNSR, WNRSR, SRSNMOB, NMINESR, ANMINESR,
      &  NGRSR, NSRALL, NADSR, NRUSSR, PCNSR,
-     &  WTNSH, WNRSH, SHNMINE, NRUSSH,    
+     &  WTNSH, WNRSH, SHNMINE, NRUSSH,
      &  TSCMOB, WCRLF, WRCLDT, LFSCMOB, CMINELF, CADLF, CRUSLF, RHOL,
-     &  WCRRT, WRCRDT, RTSCMOB, CMINERT, CADRT, CRUSRT, RHOR,          
-     &  WCRST, WRCSDT, STSCMOB, CMINEST, CADST, CRUSST, RHOS,     
+     &  WCRRT, WRCRDT, RTSCMOB, CMINERT, CADRT, CRUSRT, RHOR,
+     &  WCRST, WRCSDT, STSCMOB, CMINEST, CADST, CRUSST, RHOS,
      &  WCRSR, WRCSRDT, SRSCMOB, CMINESR, CADSR, CRUSSR, RHOSR,
      &  WCRSH, WRCSHD, SHCMINE, CRUSSH, CHORECOVER, NLKSPENT, NLKNUSED,
-     &  NLKCHK, TNLKCHK, CMOBSR, LAIMOBR, VNMOBR)     
+     &  NLKCHK, TNLKCHK, CMOBSR, LAIMOBR, VNMOBR)
 
-      CALL FOR_OPGROW(CONTROL, ISWITCH, 
-     &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD,  
-     &    GROWTH, GRWRES, MAINR, MDATE, NFIXN, NSTRES, 
-     &    PCLSD, PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, 
-     &    PG, PODNO, PODWT, PODWTD, RHOL, RHOS, RLV, RSTAGE, 
-     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SLA, STMWT, SWFAC, 
-     &    TGRO, TGROAV, TOPWT, TOTWT, TURFAC, VSTAGE, WTCO, 
-     &    WTLF, WTLO, WTNCAN, WTNLF, WTNST, WTNSD, WTNUP, 
+      CALL FOR_OPGROW(CONTROL, ISWITCH,
+     &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD,
+     &    GROWTH, GRWRES, MAINR, MDATE, NFIXN, NSTRES,
+     &    PCLSD, PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,
+     &    PG, PODNO, PODWT, PODWTD, RHOL, RHOS, RLV, RSTAGE,
+     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SLA, STMWT, SWFAC,
+     &    TGRO, TGROAV, TOPWT, TOTWT, TURFAC, VSTAGE, WTCO,
+     &    WTLF, WTLO, WTNCAN, WTNLF, WTNST, WTNSD, WTNUP,
      &    WTNFX, WTSO, XLAI, YRPLT,
 !     &    CADSR, PCNSR, PSRSRFD, PSRSRFL, RHOSR, STRWT,
 !     &    WTNSR, WTSRO,
 
      &    DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST, FREEZ2,
 
-     &    AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, 
-     &    CSTRM, DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR, 
-     &    NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, NSRDOT, NSROFF, 
-     &    NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, 
-     &    PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, 
-     &    SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, 
-     &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
+     &    AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW,
+     &    CSTRM, DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR,
+     &    NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, NSRDOT, NSROFF,
+     &    NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD,
+     &    PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT,
+     &    SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR,
+     &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT,
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
 
-     &    PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR, 
+     &    PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR,
      &    PLIPSR, POASR, PMINSR, ALPHSR, CMOBSRX, CADSRF,NMOBSRX,CLAIT,
      &    YSTOR, FRSTRF, FRSTRMX, STRSRFL, STRLYR1, SENSR,
      &    FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
-     &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
+     &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT,
      &    RCHDP,
      &    FRLF, FRSTM, FRRT,
      &    FHWAH,FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 !!     Initialize Overview.out file.
-!      CALL FOR_OPHARV(CONTROL, ISWITCH, 
+!      CALL FOR_OPHARV(CONTROL, ISWITCH,
 !     &    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
 !     &    MDATE, NSTRES, PCLSD, PCNSD, PODNO, PODWT,      !Input
 !     &    SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
@@ -732,10 +732,10 @@ C-----------------------------------------------------------------------
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
      &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
-     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL, 
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &                AMVS, WTCO, WTLO, WTSO, TMAX, TMIN)
-     
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -771,7 +771,7 @@ C-----------------------------------------------------------------------
         CALL GET('SPAM', 'AGEFAC', AGEFAC)
         CALL GET('SPAM', 'PG'    , PG)
         ELSEIF (MEPHO .EQ. 'C') THEN
-        CALL FOR_PHOTO(CONTROL, 
+        CALL FOR_PHOTO(CONTROL,
      &    BETN, CO2, DXR57, EXCESS, NR5, PAR, SLPF,     !Input
      &    RNITP, SLAAD, SWFAC, TDAY, XHLAI, XPOD,       !Input
      &    AGEFAC, PG)                               !Output
@@ -780,7 +780,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !-----------------------------------------------------------------------
-      CALL FOR_PHENOL(CONTROL, ISWITCH, 
+      CALL FOR_PHENOL(CONTROL, ISWITCH,
      &    DAYL, NSTRES, SOILPROP, ST, SW, SWFAC, TGRO,    !Input
      &    TGROAV, TMIN, TURFAC, XPOD, YRPLT,              !Input
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
@@ -803,13 +803,13 @@ C-----------------------------------------------------------------------
      &    TYPPGD, TYPPMD, TYPPTD)                           !Output
 
 
- 
+
 !-----------------------------------------------------------------------
 C     Initialize pest coupling point and damage variables, first day only
 !         Moved to FOR_PEST module - CHP
 !-----------------------------------------------------------------------
       IF (CROP .NE. 'FA' .AND. ISWDIS .EQ. 'Y') THEN
-        CALL FOR_PEST(CONTROL, ISWITCH, 
+        CALL FOR_PEST(CONTROL, ISWITCH,
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, PGAVL,    !Input
      &    PHTIM, PLTPOP, RTWT, SLA, SLDOT, SOILPROP,      !Input
      &    SSDOT, STMWT, TOPWT, WLFDOT, WTLF, YRPLT,       !Input
@@ -836,7 +836,7 @@ C     Initialize pest coupling point and damage variables, first day only
      &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
      &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
      &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,  !Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
+     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input
      &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
      &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,    !Input
      &  WTSHE, XPOD, YRDOY,                               !Input
@@ -867,12 +867,12 @@ C     Initialize pest coupling point and damage variables, first day only
      &    AGRLF, AGRNOD, AGRRT, AGRSD1, AGRSD2,           !Output
      &    AGRSH1, AGRSH2, AGRSTM, AGRVG, AGRVG2,          !Output
      &  SDPROR,                                       !Output
-     &  AGRSTR, FRSTR,                                !Output      
+     &  AGRSTR, FRSTR,                                !Output
      &  SEASINIT)
       ENDIF
 
 !-----------------------------------------------------------------------
-      CALL FOR_GROW(CONTROL, ISWITCH, SEASINIT, SOILPROP, 
+      CALL FOR_GROW(CONTROL, ISWITCH, SEASINIT, SOILPROP,
      &  AGEFAC, CADLF, CADST, CRUSLF, CRUSRT, CRUSSH,     !Input
      &  CRUSST, DISLA, F, FILECC, FILEGC, FRLF, FRSTM,    !Input
      &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NADLF, NADRT,   !Input
@@ -914,7 +914,7 @@ C     Initialize pest coupling point and damage variables, first day only
      &  WSFDOT, WSRFDOT,                                  !Input/Output
      &  CSRW, PCNSR, PLIGSR, RHOSR, STRWT, WCRSR,         !Output
      &  WNRSR, WTNSR, WTNSRA, WTNSRO, WTSRO,              !Output
-     
+
      &  ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, PCARSR,      !Output
      &  PLIPSR, PMINSR, POASR, PROSRF,CPFSTR, NSRALL,     !Output
      &  NSRDOT, NSROFF, TPSRLYR1,TPSRSRFL, WRCSRDT,       !Output
@@ -930,12 +930,12 @@ C     Initialize pest coupling point and damage variables, first day only
 
 C-----------------------------------------------------------------------
 C      09/23/05 SJR Added subroutine
-C    Call Subroutine to calculate Nitrogen mobilized from natural 
+C    Call Subroutine to calculate Nitrogen mobilized from natural
 C      senescence and light stress
 C-----------------------------------------------------------------------
       CALL FOR_SENMOB(
      &  FILECC, CLW, DAYL, DLAYR, DTX, DUL, DXR57, FNINL,      !Input
-     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,       !Input 
+     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,       !Input
      &  NR7, NSTRES, PAR, PCNL, PCNRT, PCNSR, PCNST,             !Input
      &  PPMFAC, RHOL, RLV, RTWT, SAT, SLAAD, STMWT,             !Input
      &  STRWT, SW, SWFAC, TDUMX, TDUMX2, VSTAGE, WCRLF,       !Input
@@ -948,8 +948,8 @@ C-----------------------------------------------------------------------
      &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,           !Output
      &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,      !Output
      &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,           !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB,SRSNMOB,SSMDOT,!Output      
-     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output      
+     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB,SRSNMOB,SSMDOT,!Output
+     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output
      &  STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,         !Output
      &  TSNMOB, VNMOBR,                                     !Output
      &  SEASINIT)                                              !Control
@@ -961,7 +961,7 @@ C-----------------------------------------------------------------------
      &  NUPNH4, NUPNO3, TRNH4U, TRNO3U, TRNU, TSNMOB,     !Output
      &  UNH4, UNO3,                                       !Output
      &    SEASINIT)                                       !Control
- 
+
       ENDIF
 
 !-----------------------------------------------------------------------
@@ -1073,71 +1073,71 @@ C-----------------------------------------------------------------------
      &  SRNDOT, SRCADDOT, SRNADDOT)                   !Output
 !ENDIF
 
-      CALL FOR_OPMOB(CONTROL, ISWITCH, 
-     &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC, 
-     &  NMOBR, NMOBSR, MAINR, ASMDOT, RSPNO3, RSPNH4, RPRO,       
-     &  CNOD, CGRSD, CGRSH, CADVG, CSAVEV, AGRVG, PCH2O, WTLF, WLDOT, 
-     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,          
-     &  WSIDOT, WSFDOT, WSDOTN, 
+      CALL FOR_OPMOB(CONTROL, ISWITCH,
+     &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC,
+     &  NMOBR, NMOBSR, MAINR, ASMDOT, RSPNO3, RSPNH4, RPRO,
+     &  CNOD, CGRSD, CGRSH, CADVG, CSAVEV, AGRVG, PCH2O, WTLF, WLDOT,
+     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,
+     &  WSIDOT, WSFDOT, WSDOTN,
      &  STRWT, WSRDOT, WSRIDOT, WSRFDOT, WSRDOTN,
-     &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT, 
-     &  SLDOT, SRMDOT, SRNDOT, SRCADDOT, SRNADDOT, SRDOT, 
-     &  SSMDOT, STSENWT, STLTSEN, SSNDOT, SSCADDOT, SSNADDOT, 
+     &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT,
+     &  SLDOT, SRMDOT, SRNDOT, SRCADDOT, SRNADDOT, SRDOT,
+     &  SSMDOT, STSENWT, STLTSEN, SSNDOT, SSCADDOT, SSNADDOT,
      &  SSDOT, SSRMDOT, SSRNDOT, SSRCADDOT, SSRNADDOT, SSRDOT,
-     &  NDMVEG, NDMNEW, NDMOLD, NDMTOT, NMINEP, NMINEA, SDNPL, TRNU, 
+     &  NDMVEG, NDMNEW, NDMOLD, NDMTOT, NMINEP, NMINEA, SDNPL, TRNU,
      &  NFIXN, NGRSD, NGRSH, TSNMOB,
-     &  WTNLF, WNRLF, LFSNMOB, NMINELF, ANMINELF, 
+     &  WTNLF, WNRLF, LFSNMOB, NMINELF, ANMINELF,
      &  NGRLF, NLALL, NADLF, NRUSLF, PCNL,
-     &  WTNRT, WNRRT, RTSNMOB, NMINERT, ANMINERT, 
+     &  WTNRT, WNRRT, RTSNMOB, NMINERT, ANMINERT,
      &  NGRRT, NRALL, NADRT, NRUSRT, PCNRT,
-     &  WTNST, WNRST, STSNMOB, NMINEST, ANMINEST, 
+     &  WTNST, WNRST, STSNMOB, NMINEST, ANMINEST,
      &  NGRST, NSALL, NADST, NRUSST, PCNST,
-     &  WTNSR, WNRSR, SRSNMOB, NMINESR, ANMINESR, 
+     &  WTNSR, WNRSR, SRSNMOB, NMINESR, ANMINESR,
      &  NGRSR, NSRALL, NADSR, NRUSSR, PCNSR,
-     &  WTNSH, WNRSH, SHNMINE, NRUSSH,    
+     &  WTNSH, WNRSH, SHNMINE, NRUSSH,
      &  TSCMOB, WCRLF, WRCLDT, LFSCMOB, CMINELF, CADLF, CRUSLF, RHOL,
-     &  WCRRT, WRCRDT, RTSCMOB, CMINERT, CADRT, CRUSRT, RHOR,          
-     &  WCRST, WRCSDT, STSCMOB, CMINEST, CADST, CRUSST, RHOS,     
+     &  WCRRT, WRCRDT, RTSCMOB, CMINERT, CADRT, CRUSRT, RHOR,
+     &  WCRST, WRCSDT, STSCMOB, CMINEST, CADST, CRUSST, RHOS,
      &  WCRSR, WRCSRDT, SRSCMOB, CMINESR, CADSR, CRUSSR, RHOSR,
      &  WCRSH, WRCSHD, SHCMINE, CRUSSH, CHORECOVER, NLKSPENT, NLKNUSED,
-     &  NLKCHK, TNLKCHK, CMOBSR, LAIMOBR, VNMOBR)     
+     &  NLKCHK, TNLKCHK, CMOBSR, LAIMOBR, VNMOBR)
 
 !-----------------------------------------------------------------------
 !     Write headings to output file GROWTH.OUT
 !-----------------------------------------------------------------------
-      CALL FOR_OPGROW(CONTROL, ISWITCH, 
-     &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD,  
-     &    GROWTH, GRWRES, MAINR, MDATE, NFIXN, NSTRES, 
-     &    PCLSD, PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, 
-     &    PG, PODNO, PODWT, PODWTD, RHOL, RHOS, RLV, RSTAGE, 
-     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SLA, STMWT, SWFAC, 
-     &    TGRO, TGROAV, TOPWT, TOTWT, TURFAC, VSTAGE, WTCO, 
-     &    WTLF, WTLO, WTNCAN, WTNLF, WTNST, WTNSD, WTNUP, 
+      CALL FOR_OPGROW(CONTROL, ISWITCH,
+     &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD,
+     &    GROWTH, GRWRES, MAINR, MDATE, NFIXN, NSTRES,
+     &    PCLSD, PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,
+     &    PG, PODNO, PODWT, PODWTD, RHOL, RHOS, RLV, RSTAGE,
+     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SLA, STMWT, SWFAC,
+     &    TGRO, TGROAV, TOPWT, TOTWT, TURFAC, VSTAGE, WTCO,
+     &    WTLF, WTLO, WTNCAN, WTNLF, WTNST, WTNSD, WTNUP,
      &    WTNFX, WTSO, XLAI, YRPLT,
 !     &  CADSR, PCNSR, PSRSRFD, PSRSRFL, RHOSR, STRWT,
 !     &  WTNSR, WTSRO,
 
      &    DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST, FREEZ2,
 
-     &    AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, 
-     &    CSTRM, DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR, 
-     &    NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, NSRDOT, NSROFF, 
-     &    NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, 
-     &    PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, 
-     &    SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, 
-     &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
+     &    AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW,
+     &    CSTRM, DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR,
+     &    NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, NSRDOT, NSROFF,
+     &    NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD,
+     &    PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT,
+     &    SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR,
+     &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT,
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
 
-     &    PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR, 
+     &    PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR,
      &    PLIPSR,POASR,PMINSR,ALPHSR,CMOBSRX,CADSRF, NMOBSRX, CLAIT,
      &    YSTOR, FRSTRF, FRSTRMX, STRSRFL, STRLYR1, SENSR,
      &    FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
-     &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
+     &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT,
      &    RCHDP,
      &    FRLF, FRSTM, FRRT,
      &    FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
-! CALL FOR_OPHARV (CONTROL, ISWITCH, 
+! CALL FOR_OPHARV (CONTROL, ISWITCH,
 !&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
 !&    MDATE, NSTRES, PCLSD, PCNSD, PODNO, PODWT,      !Input
 !&    SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
@@ -1146,8 +1146,8 @@ C-----------------------------------------------------------------------
 !&    YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
 !&    BWAH, SDWTAH)                                   !Output
 
-! Zero the value of HARVRES composite variable here 
-!!!NOTE: At this time, the variable has already been used to 
+! Zero the value of HARVRES composite variable here
+!!!NOTE: At this time, the variable has already been used to
 !     initialize soil properties for this season.
         HARVRES % RESWT  = 0.0
         HARVRES % RESLIG = 0.0
@@ -1159,7 +1159,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. RATE) THEN
 !***********************************************************************
-      IF (YRDOY .GT. YREMRG .AND. YREMRG .GT. 0 
+      IF (YRDOY .GT. YREMRG .AND. YREMRG .GT. 0
      &    .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate daily water stess factors (from SWFACS)
         SWFAC  = 1.0
@@ -1179,7 +1179,7 @@ C-----------------------------------------------------------------------
 !     CALL vegetative and reproductive development subroutine
 !-----------------------------------------------------------------------
       IF (CROP .NE. 'FA') THEN
-        CALL FOR_PHENOL(CONTROL, ISWITCH, 
+        CALL FOR_PHENOL(CONTROL, ISWITCH,
      &    DAYL, NSTRES, SOILPROP, ST, SW, SWFAC, TGRO,    !Input
      &    TGROAV, TMIN, TURFAC, XPOD, YRPLT,              !Input
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
@@ -1204,7 +1204,7 @@ C-----------------------------------------------------------------------
 
 !----------------------------------------------------------------------
       IF (ISWDIS .EQ. 'Y') THEN
-        CALL FOR_PEST(CONTROL, ISWITCH, 
+        CALL FOR_PEST(CONTROL, ISWITCH,
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, PGAVL,    !Input
      &    PHTIM, PLTPOP, RTWT, SLA, SLDOT, SOILPROP,      !Input
      &    SSDOT, STMWT, TOPWT, WLFDOT, WTLF, YRPLT,       !Input
@@ -1224,17 +1224,17 @@ C-----------------------------------------------------------------------
         CALL GET('SPAM', 'AGEFAC', AGEFAC)
         CALL GET('SPAM', 'PG'    , PG)
         ELSEIF (MEPHO .EQ. 'C') THEN
-        CALL FOR_PHOTO(CONTROL, 
+        CALL FOR_PHOTO(CONTROL,
      &    BETN, CO2, DXR57, EXCESS, NR5, PAR, SLPF,     !Input
      &    RNITP, SLAAD, SWFAC, TDAY, XHLAI, XPOD,       !Input
      &    AGEFAC, PG)                                   !Output
- 
+
         ENDIF
       ENDIF
 
 !***********************************************************************
 !***********************************************************************
-!     DAILY INTEGRATION 
+!     DAILY INTEGRATION
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. INTEGR .AND. CROP .NE. 'FA') THEN
 !***********************************************************************
@@ -1243,7 +1243,7 @@ C-----------------------------------------------------------------------
 !     Need to set NVEG0 before test for DAS = NVEG0, otherwise,
 !     initialization on day of emergence will never occur.
 !-----------------------------------------------------------------------
-      CALL FOR_PHENOL(CONTROL, ISWITCH, 
+      CALL FOR_PHENOL(CONTROL, ISWITCH,
      &    DAYL, NSTRES, SOILPROP, ST, SW, SWFAC, TGRO,    !Input
      &    TGROAV, TMIN, TURFAC, XPOD, YRPLT,              !Input
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
@@ -1268,7 +1268,7 @@ C-----------------------------------------------------------------------
 !----------------------------------------------------------------------
 !     On day of emergence, initialize:
 !-----------------------------------------------------------------------
-      CALL FOR_DEMAND(EMERG, 
+      CALL FOR_DEMAND(EMERG,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
      &  LFSCMOB, LFSNMOB, LNGPEG, NDLEAF, NMINEP, NSTRES,!Input
@@ -1276,7 +1276,7 @@ C-----------------------------------------------------------------------
      &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
      &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
      &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,  !Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
+     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input
      &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
      &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,    !Input
      &  WTSHE, XPOD, YRDOY,                               !Input
@@ -1296,7 +1296,7 @@ C-----------------------------------------------------------------------
      &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)           !Output
 
 !-----------------------------------------------------------------------
-      CALL FOR_GROW(CONTROL, ISWITCH, EMERG, SOILPROP, 
+      CALL FOR_GROW(CONTROL, ISWITCH, EMERG, SOILPROP,
      &  AGEFAC, CADLF, CADST, CRUSLF, CRUSRT, CRUSSH,     !Input
      &  CRUSST, DISLA, F, FILECC, FILEGC, FRLF, FRSTM,    !Input
      &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NADLF, NADRT,   !Input
@@ -1338,7 +1338,7 @@ C-----------------------------------------------------------------------
      &  WSFDOT, WSRFDOT,                                  !Input/Output
      &  CSRW, PCNSR, PLIGSR, RHOSR, STRWT, WCRSR,         !Output
      &  WNRSR, WTNSR, WTNSRA, WTNSRO, WTSRO,              !Output
-     
+
      &  ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, PCARSR,      !Output
      &  PLIPSR, PMINSR, POASR, PROSRF,CPFSTR, NSRALL,     !Output
      &  NSRDOT, NSROFF, TPSRLYR1,TPSRSRFL, WRCSRDT,       !Output
@@ -1356,9 +1356,9 @@ C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
-C      2/21/05 - SJR - move conditional call for water stress from CROPGRO 
-C      to FOR_ROOTS.  Allows root senescence when Water dynamics option is 
-C      turned off.  Water stress options set to no stress levels. 
+C      2/21/05 - SJR - move conditional call for water stress from CROPGRO
+C      to FOR_ROOTS.  Allows root senescence when Water dynamics option is
+C      turned off.  Water stress options set to no stress levels.
 C-----------------------------------------------------------------------
 !        IF (ISWWAT .EQ. 'Y') THEN
       CALL FOR_ROOTS(EMERG,
@@ -1464,13 +1464,13 @@ C DSSAT4 code for CMINEP
 
 C-----------------------------------------------------------------------
 C      09/23/05 SJR Added subroutine
-C    Call Subroutine to calculate Nitrogen mobilized from natural 
+C    Call Subroutine to calculate Nitrogen mobilized from natural
 C      senescence and light stress
 C-----------------------------------------------------------------------
 
       CALL FOR_SENMOB(
      &  FILECC, CLW, DAYL, DLAYR, DTX, DUL, DXR57, FNINL,      !Input
-     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,             !Input 
+     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,             !Input
      &  NR7, NSTRES, PAR, PCNL, PCNRT, PCNSR, PCNST,             !Input
      &  PPMFAC, RHOL, RLV, RTWT, SAT, SLAAD, STMWT,             !Input
      &  STRWT, SW, SWFAC, TDUMX, TDUMX2, VSTAGE, WCRLF,       !Input
@@ -1483,8 +1483,8 @@ C-----------------------------------------------------------------------
      &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,                  !Output
      &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,      !Output
      &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,                   !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,      !Output      
-     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output      
+     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,      !Output
+     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output
      &  STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,             !Output
      &  TSNMOB, VNMOBR,                                         !Output
      &  INTEGR)                                                    !Control
@@ -1510,11 +1510,11 @@ C-----------------------------------------------------------------------
 C      Increase mobilization from storage if N status of plant is high.
 C-----------------------------------------------------------------------
 
-!      VEGNCNT = PCNL/100*WTLF + PCNST/100*STMWT +  
+!      VEGNCNT = PCNL/100*WTLF + PCNST/100*STMWT +
 !     &              PCNRT/100*RTWT + PCNSR/100*STRWT
 !      VEGNCMX = FNINL*WTLF + FNINS*STMWT + FNINR*RTWT + FNINSR*STRWT
 !      VNSTAT = MIN((VEGNCNT / VEGNCMX),  1.0)
-      
+
 !      VNMOBR = CURV(TYPNMOB,NRMOB(1),NRMOB(2),NRMOB(3),NRMOB(4),VNSTAT)
 C-----------------------------------------------------------------------
 C      Set N mobilization rate from storage
@@ -1567,7 +1567,7 @@ C-----------------------------------------------------------------------
 !     Call PEST Module for INTEGRATION calculations
 !-----------------------------------------------------------------------
       IF (ISWDIS.EQ.'Y') THEN
-        CALL FOR_PEST(CONTROL, ISWITCH, 
+        CALL FOR_PEST(CONTROL, ISWITCH,
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, PGAVL,    !Input
      &    PHTIM, PLTPOP, RTWT, SLA, SLDOT, SOILPROP,      !Input
      &    SSDOT, STMWT, TOPWT, WLFDOT, WTLF, YRPLT,       !Input
@@ -1592,14 +1592,14 @@ C     5/23/05 SJR Add call to CH2O Refill Module for routine refilling
 C      of mobile CH2O during vegetaive stages
 C      10/30/05 SJR - Move routine here.  Had been just prior to FOR_VEGGR
 C      because that is where CSAVEV had been in CROPGRO.  Problem was
-C      that we calculate DEMAND on PG+CMINEP-MAINR then reduce PGAVL by 
+C      that we calculate DEMAND on PG+CMINEP-MAINR then reduce PGAVL by
 C      CSAVEV.  This results in slightly lower growth in FOR_VEGGR with
-C      a correspondingly lower N requirement - leaving NLEAK.  This 
+C      a correspondingly lower N requirement - leaving NLEAK.  This
 C      takes cake of NLEAK.
-C      10/31/05 Change output variable name from CSAVEV to CADVG to 
+C      10/31/05 Change output variable name from CSAVEV to CADVG to
 C      to prevent confusion with CH2O reserved for refill after NR1
 C      and used for later seed development.
-!-----------------------------------------------------------------------      
+!-----------------------------------------------------------------------
 
 
       IF (DAS .LT. NR1) THEN
@@ -1614,10 +1614,10 @@ C      and used for later seed development.
      &  CDEBIT, CADVG, PGAVL,                              !INPUT/OUTPUT
      &  LFCDEBT, RTCDEBT, SRCDEBT, STCDEBT )               !OUTPUT
 
-      ELSE 
+      ELSE
         CADVG = 0.0
       ENDIF
-      PGAVL = PGAVL - CADVG 
+      PGAVL = PGAVL - CADVG
 
         CSAVEV = CADPR1  * FRACDN* MIN(PG,PGAVL)
 !-----------------------------------------------------------------------
@@ -1631,7 +1631,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C    Call Subroutine to calculate Nitrogen and Carbon Demand for new growth
 C-----------------------------------------------------------------------
-      CALL FOR_DEMAND(INTEGR, 
+      CALL FOR_DEMAND(INTEGR,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
      &  LFSCMOB, LFSNMOB, LNGPEG, NDLEAF, NMINEP, NSTRES,!Input
@@ -1639,7 +1639,7 @@ C-----------------------------------------------------------------------
      &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
      &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
      &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,  !Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
+     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input
      &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
      &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,    !Input
      &  WTSHE, XPOD, YRDOY,                               !Input
@@ -1669,7 +1669,7 @@ C-----------------------------------------------------------------------
         SDNPL = 0.0
         NAVL = 0.0
       ENDIF
-        
+
 C-----------------------------------------------------------------------
 C    If ISWNIT = Y - Call soil N routines. Balance Available C and N
 C    If ISWNIT = N - Do not call soil N routines, N assumed to be limited by C
@@ -1766,7 +1766,7 @@ C-----------------------------------------------------------------------
      &  SAT, ST, SW, TURFAC, YRDOY, YRSIM,            !Input
      &  CNOD, DWNOD, DWNODA, NDTH, NFIXN,             !Output
      &  NODGR, WTNFX, SENNOD,                         !Output
-     &  INTEGR)  
+     &  INTEGR)
         ENDIF
       ENDIF
 C-----------------------------------------------------------------------
@@ -1883,11 +1883,11 @@ C DSSAT4 code
 C-----------------------------------------------------------------------
 C Deduct cost of new storage tissue from PGAVL and NAVL
 C-----------------------------------------------------------------------
-      PGAVL = PGAVL + CHORECOVER - AGRVG * (WLDOTN + WSDOTN + WRDOTN 
+      PGAVL = PGAVL + CHORECOVER - AGRVG * (WLDOTN + WSDOTN + WRDOTN
      &    + WSRDOTN) - (CMINEP - CMINEA)
       NAVL = NAVL - NLKSPENT - (NGRLF + NGRST + NGRRT + NGRSR)
       NAVL = NAVL - (NADLF + NADST + NADRT + NADSR)
-      PGAVL = PGAVL - (CADST + CADLF + CADSR + CADRT) * PCH2O + 
+      PGAVL = PGAVL - (CADST + CADLF + CADSR + CADRT) * PCH2O +
      &    CADVG + CSAVEV
 C-----------------------------------------------------------------------
 C     Call leaf senescence routine to compute leaf loss variables
@@ -1919,7 +1919,7 @@ C-----------------------------------------------------------------------
      &    FRZDC, NRUSSR, NRUSST, PSRSRFL, PSRLYR1,      !Input
      &    SRFTEMP, SSDOT, SSRDOT, ST, STMWT, STRWT,     !Input
      &    PSRLYRD, PSRSRFD, WSFDOT, WSRFDOT,            !Output
-     &    FRZDL, SRLYRD, SRSRFD, VSTAGE)                !Output 
+     &    FRZDL, SRLYRD, SRSRFD, VSTAGE)                !Output
 
       ELSE
       WLFDOT = 0.0
@@ -1930,9 +1930,9 @@ C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 !-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
-C      2/21/05 - SJR - move conditional call for water stress from CROPGRO 
-C      to FOR_ROOTS.  Allows root senescence when Water dynamics option is 
-C      turned off.  Water stress options set to no stress levels. 
+C      2/21/05 - SJR - move conditional call for water stress from CROPGRO
+C      to FOR_ROOTS.  Allows root senescence when Water dynamics option is
+C      turned off.  Water stress options set to no stress levels.
 C-----------------------------------------------------------------------
 !     IF (ISWWAT .EQ. 'Y') THEN
         CALL FOR_ROOTS(INTEGR,
@@ -1951,12 +1951,12 @@ C-----------------------------------------------------------------------
 C       Calculate the respiration required for seed, shell, and veg tissue
 C       depending on the source of N uptake
 C-----------------------------------------------------------------------
-C      10/31/05 SJR dropped NMINEA from condition to use today's N cost 
-C            tomorrow.  With natural senescence coming out in the morning, 
-C            there will always be some NMINEA.  When there is only NMINEA, 
-C            RPROAV is very low, DEMAND overpredicts new growth and we get 
-C            NLEAK, which is returned to the soil.  Using the average of 
-C            NO3 and NH4 uptake costs, the odds are that growth will be 
+C      10/31/05 SJR dropped NMINEA from condition to use today's N cost
+C            tomorrow.  With natural senescence coming out in the morning,
+C            there will always be some NMINEA.  When there is only NMINEA,
+C            RPROAV is very low, DEMAND overpredicts new growth and we get
+C            NLEAK, which is returned to the soil.  Using the average of
+C            NO3 and NH4 uptake costs, the odds are that growth will be
 C            better predicted and reduce the chance of NLEAK.
 C-----------------------------------------------------------------------
       IF ((TRNU + NFIXN + NMINEA) .GT. 0.0) THEN
@@ -1987,7 +1987,7 @@ C-----------------------------------------------------------------------
 C     Call routine to integrate growth and damage
 C-----------------------------------------------------------------------
 
-      CALL FOR_GROW(CONTROL, ISWITCH, INTEGR, SOILPROP, 
+      CALL FOR_GROW(CONTROL, ISWITCH, INTEGR, SOILPROP,
      &  AGEFAC, CADLF, CADST, CRUSLF, CRUSRT, CRUSSH,     !Input
      &  CRUSST, DISLA, F, FILECC, FILEGC, FRLF, FRSTM,    !Input
      &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NADLF, NADRT,   !Input
@@ -2090,7 +2090,7 @@ C-----------------------------------------------------------------------
      &    TYPPGD, TYPPMD, TYPPTD)                            !Output
 
         IF (ISWDIS.EQ.'Y') THEN
-        CALL FOR_PEST(CONTROL, ISWITCH, 
+        CALL FOR_PEST(CONTROL, ISWITCH,
      &  AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, PGAVL,    !Input
      &  PHTIM, PLTPOP, RTWT, SLA, SLDOT, SOILPROP,      !Input
      &  SSDOT, STMWT, TOPWT, WLFDOT, WTLF, YRPLT,       !Input
@@ -2103,70 +2103,70 @@ C-----------------------------------------------------------------------
      &  CSFRZ, CSRFRZ, CSTRM, DSTOR, SRDAM)             !Output
         ENDIF
 
-      CALL FOR_OPMOB(CONTROL, ISWITCH, 
-     &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC, 
-     &  NMOBR, NMOBSR, MAINR, ASMDOT, RSPNO3, RSPNH4, RPRO,       
-     &  CNOD, CGRSD, CGRSH, CADVG, CSAVEV, AGRVG, PCH2O, WTLF, WLDOT, 
-     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,          
-     &  WSIDOT, WSFDOT, WSDOTN, 
+      CALL FOR_OPMOB(CONTROL, ISWITCH,
+     &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC,
+     &  NMOBR, NMOBSR, MAINR, ASMDOT, RSPNO3, RSPNH4, RPRO,
+     &  CNOD, CGRSD, CGRSH, CADVG, CSAVEV, AGRVG, PCH2O, WTLF, WLDOT,
+     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,
+     &  WSIDOT, WSFDOT, WSDOTN,
      &  STRWT, WSRDOT, WSRIDOT, WSRFDOT, WSRDOTN,
-     &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT, 
-     &  SLDOT, SRMDOT, SRNDOT, SRCADDOT, SRNADDOT, SRDOT, 
-     &  SSMDOT, STSENWT, STLTSEN, SSNDOT, SSCADDOT, SSNADDOT, 
+     &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT,
+     &  SLDOT, SRMDOT, SRNDOT, SRCADDOT, SRNADDOT, SRDOT,
+     &  SSMDOT, STSENWT, STLTSEN, SSNDOT, SSCADDOT, SSNADDOT,
      &  SSDOT, SSRMDOT, SSRNDOT, SSRCADDOT, SSRNADDOT, SSRDOT,
-     &  NDMVEG, NDMNEW, NDMOLD, NDMTOT, NMINEP, NMINEA, SDNPL, TRNU, 
+     &  NDMVEG, NDMNEW, NDMOLD, NDMTOT, NMINEP, NMINEA, SDNPL, TRNU,
      &  NFIXN, NGRSD, NGRSH, TSNMOB,
-     &  WTNLF, WNRLF, LFSNMOB, NMINELF, ANMINELF, 
+     &  WTNLF, WNRLF, LFSNMOB, NMINELF, ANMINELF,
      &  NGRLF, NLALL, NADLF, NRUSLF, PCNL,
-     &  WTNRT, WNRRT, RTSNMOB, NMINERT, ANMINERT, 
+     &  WTNRT, WNRRT, RTSNMOB, NMINERT, ANMINERT,
      &  NGRRT, NRALL, NADRT, NRUSRT, PCNRT,
-     &  WTNST, WNRST, STSNMOB, NMINEST, ANMINEST, 
+     &  WTNST, WNRST, STSNMOB, NMINEST, ANMINEST,
      &  NGRST, NSALL, NADST, NRUSST, PCNST,
-     &  WTNSR, WNRSR, SRSNMOB, NMINESR, ANMINESR, 
+     &  WTNSR, WNRSR, SRSNMOB, NMINESR, ANMINESR,
      &  NGRSR, NSRALL, NADSR, NRUSSR, PCNSR,
-     &  WTNSH, WNRSH, SHNMINE, NRUSSH,    
+     &  WTNSH, WNRSH, SHNMINE, NRUSSH,
      &  TSCMOB, WCRLF, WRCLDT, LFSCMOB, CMINELF, CADLF, CRUSLF, RHOL,
-     &  WCRRT, WRCRDT, RTSCMOB, CMINERT, CADRT, CRUSRT, RHOR,          
-     &  WCRST, WRCSDT, STSCMOB, CMINEST, CADST, CRUSST, RHOS,     
+     &  WCRRT, WRCRDT, RTSCMOB, CMINERT, CADRT, CRUSRT, RHOR,
+     &  WCRST, WRCSDT, STSCMOB, CMINEST, CADST, CRUSST, RHOS,
      &  WCRSR, WRCSRDT, SRSCMOB, CMINESR, CADSR, CRUSSR, RHOSR,
      &  WCRSH, WRCSHD, SHCMINE, CRUSSH, CHORECOVER, NLKSPENT, NLKNUSED,
-     &  NLKCHK, TNLKCHK, CMOBSR, LAIMOBR, VNMOBR)     
+     &  NLKCHK, TNLKCHK, CMOBSR, LAIMOBR, VNMOBR)
 
 
-      CALL FOR_OPGROW(CONTROL, ISWITCH, 
-     &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD,  
-     &    GROWTH, GRWRES, MAINR, MDATE, NFIXN, NSTRES, 
-     &    PCLSD, PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, 
-     &    PG, PODNO, PODWT, PODWTD, RHOL, RHOS, RLV, RSTAGE, 
-     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SLA, STMWT, SWFAC, 
-     &    TGRO, TGROAV, TOPWT, TOTWT, TURFAC, VSTAGE, WTCO, 
-     &    WTLF, WTLO, WTNCAN, WTNLF, WTNST, WTNSD, WTNUP, 
+      CALL FOR_OPGROW(CONTROL, ISWITCH,
+     &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD,
+     &    GROWTH, GRWRES, MAINR, MDATE, NFIXN, NSTRES,
+     &    PCLSD, PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,
+     &    PG, PODNO, PODWT, PODWTD, RHOL, RHOS, RLV, RSTAGE,
+     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SLA, STMWT, SWFAC,
+     &    TGRO, TGROAV, TOPWT, TOTWT, TURFAC, VSTAGE, WTCO,
+     &    WTLF, WTLO, WTNCAN, WTNLF, WTNST, WTNSD, WTNUP,
      &    WTNFX, WTSO, XLAI, YRPLT,
 !     &  CADSR, PCNSR, PSRSRFD, PSRSRFL, RHOSR, STRWT,
 !     &  WTNSR, WTSRO,
 
      &  DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST, FREEZ2,
 
-     &  AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, 
-     &  CSTRM, DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR, 
-     &  NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, NSRDOT, NSROFF, 
-     &  NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, 
-     &  PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, 
-     &  SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, 
-     &  WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
+     &  AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW,
+     &  CSTRM, DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR,
+     &  NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, NSRDOT, NSROFF,
+     &  NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD,
+     &  PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT,
+     &  SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR,
+     &  WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT,
      &  WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
 
-     &  PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR, 
-     &  PLIPSR,POASR,PMINSR,ALPHSR,CMOBSRX,CADSRF, NMOBSRX, CLAIT,      
+     &  PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR,
+     &  PLIPSR,POASR,PMINSR,ALPHSR,CMOBSRX,CADSRF, NMOBSRX, CLAIT,
      &  YSTOR, FRSTRF, FRSTRMX, STRSRFL, STRLYR1, SENSR,
      &  FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
-     &  FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
+     &  FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT,
      &  RCHDP,
      &  FRLF, FRSTM, FRRT,
      &  FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 !     !!   ! Write to Overview.out and summary.out files.
-!     !!   CALL FOR_OPHARV (CONTROL, ISWITCH, 
+!     !!   CALL FOR_OPHARV (CONTROL, ISWITCH,
 !!!    !!&  SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
 !     !!&  TOPWT, TURFAC, VSTAGE, WTNCAN, WTNFX, WTNSD,    !Input
 !     !!&  WTNST, WTNUP, XLAI,                             !Input
@@ -2185,7 +2185,7 @@ C-----------------------------------------------------------------------
      &    TYPPGD, TYPPMD, TYPPTD)                            !Output
 
         IF (CROP .NE. 'FA') THEN
-        CALL FOR_PLANTNBAL (CONTROL, ISWITCH, 
+        CALL FOR_PLANTNBAL (CONTROL, ISWITCH,
      &  SEEDNI, TNLEAK, WTNFX, WTNLA, WTNLF, WTNLO,     !Input
      &  WTNNA, WTNNO, WTNNOD, WTNRA, WTNRO, WTNRT,      !Input
      &  WTNSA, WTNSD, WTNSDA, WTNSDO, WTNSH, WTNSHA,    !Input
@@ -2218,13 +2218,13 @@ C-----------------------------------------------------------------------
 
       IF (DYNAMIC == SEASEND) THEN
 !     Store Summary.out labels and values in arrays to send to
-!     OPSUM routines for printing.  Integers are temporarily 
+!     OPSUM routines for printing.  Integers are temporarily
 !     saved as real numbers for placement in real array.
       LABEL(1) = 'HWAH'; VALUE(1) = Cumul_FHTOT*10.
       LABEL(2) = 'CNAM'; VALUE(2) = Cumul_FHTOTN*10.
 
       !Send labels and values to OPSUM
-      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+      CALL SUMVALS (SUMNUM, LABEL, VALUE)
       ENDIF
 
 !***********************************************************************
@@ -2237,11 +2237,11 @@ C-----------------------------------------------------------------------
       Call PUT('PLANT', 'CANWH', CANWH)
       Call PUT('PLANT', 'DXR57', DXR57)
       Call PUT('PLANT', 'EXCESS', EXCESS)
-      Call PUT('PLANT', 'NR5', NR5)   
+      Call PUT('PLANT', 'NR5', NR5)
       Call PUT('PLANT', 'PLTPOP', PLTPOP)
-      Call PUT('PLANT', 'RNITP', RNITP) 
-      Call PUT('PLANT', 'SLAAD', SLAAD) 
-      Call PUT('PLANT', 'XPOD', XPOD)  
+      Call PUT('PLANT', 'RNITP', RNITP)
+      Call PUT('PLANT', 'SLAAD', SLAAD)
+      Call PUT('PLANT', 'XPOD', XPOD)
 
       RETURN
       END ! SUBROUTINE CROPGRO
@@ -2250,23 +2250,23 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     Variable listing
 !***********************************************************************
-! AGEFAC    Reduction in photosynthesis, correlated to a decrease in 
+! AGEFAC    Reduction in photosynthesis, correlated to a decrease in
 !             percentage of Nitrogen in leaves (0-1) (fraction)
 ! AGRLF     Mass of CH2O required for new leaf growth (g[CH2O] / g[leaf])
 ! AGRNOD    CH2O requirement for nodule growth (g[CH2O] / g[nodule])
 ! AGRRT     Mass of CH2O required for new root growth (g[CH2O] / g[root])
-! AGRSD1    CH2O requirement for seed growth, excluding cost for protein 
+! AGRSD1    CH2O requirement for seed growth, excluding cost for protein
 !             content (g[CH2O] / g[seed])
-! AGRSD2    CH2O requirement for seed growth, including cost for protein 
+! AGRSD2    CH2O requirement for seed growth, including cost for protein
 !             content (g[CH2O] / g[seed])
 ! AGRSD3    CH2O requirement for seed growth, with reduced N content
 !             (g[CH2O] / g[seed])
-! AGRSH1    CH2O required for shell growth, excluding cost for protein 
+! AGRSH1    CH2O required for shell growth, excluding cost for protein
 !             content (g[CH2O] / g[shell])
-! AGRSH2    CH2O requirement for shell growth, including cost for protein 
+! AGRSH2    CH2O requirement for shell growth, including cost for protein
 !             content (g[CH2O] / g[shell])
 ! AGRSTM    Mass of CH2O required for new stem growth (g[CH2O] / g[stem])
-! AGRVG     Mass of CH2O required for vegetative tissue growth including 
+! AGRVG     Mass of CH2O required for vegetative tissue growth including
 !             stoichiometry and respiration (g[CH2O] / g[tissue])
 ! AGRVG2    Total mass of CH2O required for vegetative tissue growth
 !             (g[CH2O] / g[tissue])
@@ -2276,11 +2276,11 @@ C-----------------------------------------------------------------------
 ! BETN      Spacing between plants in a row (m / plant)
 ! CADLF     Mass of CH2O added to leaf reserves after growth
 !             (g[CH2O] / m2 / d)
-! CADPR1    Maximum fraction of stem growth after flowering that can be 
-!             allocated to carbohydrate storage just before a full seed 
+! CADPR1    Maximum fraction of stem growth after flowering that can be
+!             allocated to carbohydrate storage just before a full seed
 !             load is set. ( fraction)
-! CADPV    Maximum fraction of PGAVL for vegetative growth that can be 
-!            allocated to mobile carbohydrate storage under non-stress   
+! CADPV    Maximum fraction of PGAVL for vegetative growth that can be
+!            allocated to mobile carbohydrate storage under non-stress
 !            conditions during vegetative growth stages. ( fraction)
 ! CADST     Mass of CH2O added to stems (g[CH2O] / m2 / d)
 ! CANHT     Canopy height (m)
@@ -2301,80 +2301,80 @@ C-----------------------------------------------------------------------
 ! CMINEST   Potential mobile CH2O avaialable today from stem (g [CH2O] m-2)
 ! CMOBMX    Maximum C pool mobilization rate (g[CH2O] / m2 / d)
 ! CMOBSRN   Minimum fraction of C which can be mobilized from
-!                  storage organ in a day 
+!                  storage organ in a day
 ! CMOBSRX   Maximum fraction of C which can be mobilized from
-!                  storage organ in a day 
-! CNDFX     Carbon needed to fix N needed but not supplied by uptake or 
+!                  storage organ in a day
+! CNDFX     Carbon needed to fix N needed but not supplied by uptake or
 !             mining (g[CH2O] / m2 / d)
-! CNOD      C used in N-Fixation and nodule growth (including respiration 
+! CNOD      C used in N-Fixation and nodule growth (including respiration
 !             costs) today (g[CH2O] / m2 / d)
 ! CNODMN    Minimum C reserved for nodule growth (g[CH2O] / m2 / d)
-! CROP      Crop identification code 
-! CROPD     Name of crop 
-! CRREF(4)  CURV response of routine refill of mobile CH2O during 
+! CROP      Crop identification code
+! CROPD     Name of crop
+! CRREF(4)  CURV response of routine refill of mobile CH2O during
 !                  vegetaive stages to current mobile CH2O status
 ! CRUSLF    C mobilized from leaf tissue in a day (g[CH2O] / m2 / d)
 ! CRUSRT    C mobilized from root tissue in a day (g[CH2O] / m2 / d)
 ! CRUSSH    C mobilized from shell tissue in a day (g[CH2O] / m2 / d)
 ! CRUSST    C mobilized from stem tissue in a day (g[CH2O] / m2 / d)
-! CSAVEV    Fraction of PG for VEG that is stored as CH2O 
+! CSAVEV    Fraction of PG for VEG that is stored as CH2O
 ! CSFRZ      Cumulative frozen stem tissue (g[stem]/m2)
 ! CSW       Cumulative stem growth (g[stem]/m2)
-! CTONOD    C to allocate to nodules to fix N needed for reproductive and 
+! CTONOD    C to allocate to nodules to fix N needed for reproductive and
 !             vegetative growth (g[CH2O] / m2 / d)
-! CTONODR   CH2O allocated to nodules for fixing N needed for reproductive 
+! CTONODR   CH2O allocated to nodules for fixing N needed for reproductive
 !             growth (g[CH2O] / m2 / d)
 ! CUMDEP    Cumulative depth of soil profile (cm)
 ! DAS       Days after start of simulation (days)
 ! DAYL      Day length on day of simulation (from sunrise to sunset) (hr)
-! DETACH    Switch to determine if pod detachment will be simulated (Y or 
-!             N) 
+! DETACH    Switch to determine if pod detachment will be simulated (Y or
+!             N)
 ! DISLA     Diseased leaf area (cm2/m2/d)
 ! DLAYR(L)  Soil Depth in layer L (cm)
-! DRMST        Dormancy status (NODORM=not dormant, DORM=dormant - reversible, 
+! DRMST        Dormancy status (NODORM=not dormant, DORM=dormant - reversible,
 !              COLDHD= cold-hardened - dormancy no longer reversible until spring)
 ! DRPP      Photoperiod days which occur in a real day
 !             (photoperiod days / day)
-! DTX       Thermal time that occurs in a real day based on vegetative 
+! DTX       Thermal time that occurs in a real day based on vegetative
 !             development temperature function (thermal days / day)
-! DUL(L)    Volumetric soil water content at Drained Upper Limit in soil 
+! DUL(L)    Volumetric soil water content at Drained Upper Limit in soil
 !             layer L (cm3 [H2O] /cm3 [soil])
 ! DWNOD     Current nodule mass (g[nodule] / m2)
 ! DWNODA    Cumulative nodule growth (g[nodule] / m2)
-! DXR57     Relative time between first seed (NR5) and physiological 
-!             maturity (NR7) 
-! DYNAMIC   Module control variable; =RUNINIT, SEASINIT, RATE, EMERG, 
-!             INTEGR, OUTPUT, or SEASEND 
-! ECONO     Ecotype code - used to match ECOTYP in .ECO file 
-! ENAME     Experiment description 
-! EXCESS    Factor based on excess PG used to affect tomorrow's PG 
-!             calculation 
-! EXPER     Experiment code (prefix of input files) 
+! DXR57     Relative time between first seed (NR5) and physiological
+!             maturity (NR7)
+! DYNAMIC   Module control variable; =RUNINIT, SEASINIT, RATE, EMERG,
+!             INTEGR, OUTPUT, or SEASEND
+! ECONO     Ecotype code - used to match ECOTYP in .ECO file
+! ENAME     Experiment description
+! EXCESS    Factor based on excess PG used to affect tomorrow's PG
+!             calculation
+! EXPER     Experiment code (prefix of input files)
 ! F         Specific leaf area of new leaf tissue growth, including N
 !             (cm2[leaf] / g[leaf])
-! FILECC    Path plus filename for species file (*.spe) 
-! FILEGC    Pathname plus filename for ECO file 
-! FILEIO    Filename for INP file (e.g., IBSNAT35.INP) 
+! FILECC    Path plus filename for species file (*.spe)
+! FILEGC    Pathname plus filename for ECO file
+! FILEIO    Filename for INP file (e.g., IBSNAT35.INP)
 ! FLWN(J)   Number of flowers added for cohort J (# / m2)
 ! FNINL     Maximum fraction of N for growing leaf tissue (g[N] / g[leaf])
 ! FNINR     Maximum fraction of N for growing root tissue (g[N] / g[root])
 ! FNINS     Maximum fraction of N for growing stem tissue (g[N] / g[stem])
-! FNINSD    Maximum fraction of N for growing seed tissue based on 
+! FNINSD    Maximum fraction of N for growing seed tissue based on
 !             temperature (g[N] / g[seed])
 ! FNINSH    Maximum fraction of N for growing shell tissue
 !             (g[N] / g[shell])
-! FRACDN    Relative time between flowering (NR1) and last leaf appearance 
-!             (NDLEAF) 
-! FRCNOD    Fraction of new root dry matter allocation that is diverted to 
-!             nodule growth 
-! FREEZ1    Temperature below which plant loses all leaves, but development 
-!             continues (�C)
-! FREEZ2    Temperature below which plant growth stops completely. (�C)
-! FRLF      Fraction of vegetative tissue growth that goes to leaves on a 
+! FRACDN    Relative time between flowering (NR1) and last leaf appearance
+!             (NDLEAF)
+! FRCNOD    Fraction of new root dry matter allocation that is diverted to
+!             nodule growth
+! FREEZ1    Temperature below which plant loses all leaves, but development
+!             continues (°C)
+! FREEZ2    Temperature below which plant growth stops completely. (°C)
+! FRLF      Fraction of vegetative tissue growth that goes to leaves on a
 !             day (g[leaf] / g[veg])
-! FRRT      Fraction of vegetative tissue growth that goes to roots on a 
+! FRRT      Fraction of vegetative tissue growth that goes to roots on a
 !             day (g[root] / g[veg])
-! FRSTM     Fraction of vegetative tissue growth that goes to stems on a 
+! FRSTM     Fraction of vegetative tissue growth that goes to stems on a
 !             day (g[stem] / g[veg])
 ! FRZDL        Todays death loss of storage tissue/plant population due to freezing (proportion of STRWT and PLNTPOP)
 ! GDMSD     Seed growth demand based on temperature and photoperiod
@@ -2383,42 +2383,42 @@ C-----------------------------------------------------------------------
 ! GRRAT1    Maximum growth per individual shell (g / shell / d)
 ! GRWRES    Growth respiration (g[CH2O]/m2-d)
 ! HPDAM         Harvest removal (proportion of TOPWT)
-! IDETO     Switch for printing OVERVIEW.OUT file 
-! ISWDIS    Pest damage simulation switch (Y or N) 
-! ISWNIT    Nitrogen simulation switch (Y or N) 
-! ISWSYM    Nitrogen fixation simulation switch (Y = simulate nodule 
-!             growth, N = no nodule growth, U = N-fixation occurs at a rate 
-!             that carbon will allow, and nodules are not grown explicitly) 
-! ISWWAT    Water simulation control switch (Y or N) 
+! IDETO     Switch for printing OVERVIEW.OUT file
+! ISWDIS    Pest damage simulation switch (Y or N)
+! ISWNIT    Nitrogen simulation switch (Y or N)
+! ISWSYM    Nitrogen fixation simulation switch (Y = simulate nodule
+!             growth, N = no nodule growth, U = N-fixation occurs at a rate
+!             that carbon will allow, and nodules are not grown explicitly)
+! ISWWAT    Water simulation control switch (Y or N)
 ! LAGSD     Time required between shell growth and seed growth, per cohort
 !             (Photo-thermal days)
-! LAIMOBR        Effect of LAI on N & C mobilization. (0= no effect, 
+! LAIMOBR        Effect of LAI on N & C mobilization. (0= no effect,
 !              mobilization at minimum rate, 1.0 = increase mobilization
 !              to maximum rate.  Increases mobilization after harvest, damage.
 ! LAIMX     Maximum leaf area index this season (m2[leaf] / m2[ground])
 ! LFCMINE        Today's maximum potential CH2O mobilization from leaf (g [CH2O] m-2)
 ! LFMRC   Maintenance respiration cost for leaves (g[CH2O] / g leaf protein / hr)
 ! LFNMINE   Today's maximum potential N mobilization from leaf (g [N] m-2)
-! LFSCMOB   Mass of leaf CH2O mobilized from tissue lost to natural 
+! LFSCMOB   Mass of leaf CH2O mobilized from tissue lost to natural
 !              senescence (g [CH2O] m-2 d-1)
 ! LFSENWT   Leaf senescence due to N mobilization (g[leaf] / m2[ground])
-! LFSNMOB   Mass of leaf N mobilized from tissue lost to natural  
+! LFSNMOB   Mass of leaf N mobilized from tissue lost to natural
 !              senescence (g [N] m-2 d-1)
 ! LL(L)     Volumetric soil water content in soil layer L at lower limit
 !             ( cm3/cm3)
-! LNGPEG    Time between start of peg and rapid shell formation (for 
+! LNGPEG    Time between start of peg and rapid shell formation (for
 !             peanuts only).  Defines slow growth period. (Photo-thermal days)
 ! LRMOB(4)  CURV response of mobilization to current LAI
-! LRREF(4)  CURV response of routine refill of mobile CH2O during 
+! LRREF(4)  CURV response of routine refill of mobile CH2O during
 !                  vegetaive stages to current LAI
 ! MAINR     Maintenance respiration (g[CH2O] / m2 / d)
-! MEEVP     Method of evapotranspiration (P=Penman, R=Priestly-Taylor, 
-!             Z=Zonal) 
-! MODEL     Name of CROPGRO executable file 
-! MRSWITCH Parameter to select the method of calculating portion of 
+! MEEVP     Method of evapotranspiration (P=Penman, R=Priestly-Taylor,
+!             Z=Zonal)
+! MODEL     Name of CROPGRO executable file
+! MRSWITCH Parameter to select the method of calculating portion of
 !            Maintenance Respiration (MR) associated with plant mass.
-!            If MRSWITCH="P" then calculate MR based on prgan protein content 
-!            If MRSWITCH="M"or otherwise, calculate the mass associated portion  
+!            If MRSWITCH="P" then calculate MR based on prgan protein content
+!            If MRSWITCH="M"or otherwise, calculate the mass associated portion
 !            of MR based on plant mass (original CROPGRO approach).
 ! NADLF     N added to leaf N reserves (g[N] / m2 / d)
 ! NADRT     N added to root N reserves (g[N] / m2 / d)
@@ -2434,7 +2434,7 @@ C-----------------------------------------------------------------------
 ! NDMSDR    Amount of Mobilized N which can be used for seed growth
 !             (g[N] / m2 / d)
 ! NDMTOT    Total N demand (g[N] / m2 / d)
-! NDMVEG    N required for vegetative growth if all PGAVL is used as 
+! NDMVEG    N required for vegetative growth if all PGAVL is used as
 !             computed (g[N] / m2 / d)
 ! NDSET     Day when last pod can form (days)
 ! NDTH      Nodule death rate (g[nodule] / m2 / d)
@@ -2444,23 +2444,23 @@ C-----------------------------------------------------------------------
 ! NGRSD     Rate of N accumulation in new seeds (g[N] / m2 / d)
 ! NGRSH     Rate of N accumulation in new shells (g[N] / m2 / d)
 ! NGRST     Maximum N demand for stem growth (g[stem N] / m2[ground] / d)
-! NH4(L)    Ammonium N in soil layer L (�g[N] / g[soil])
-! NL        Maximum number of soil layers = 20 
-! NLAYR     Number of soil layers 
+! NH4(L)    Ammonium N in soil layer L (µg[N] / g[soil])
+! NL        Maximum number of soil layers = 20
+! NLAYR     Number of soil layers
 ! NMINEA    Actual Nitrogen mined from existing tissue (g[N] / m2 / d)
 ! NMINELF   Potential mobile N avaialable today from leaf (g [N] m-2)
 ! NMINEP    Potential N mobilization from storage (g[N] / m2 / d)
 ! NMINERT   Potential mobile N avaialable today from root (g [N] m-2)
 ! NMINESR   Potential mobile N avaialable today from STOR (g [N] m-2)
 ! NMINEST   Potential mobile N avaialable today from stem (g [N] m-2)
-! NMOBR     Stage dependent N mining rate 
+! NMOBR     Stage dependent N mining rate
 ! NMOBSRN   Minimum/ "normal" fraction of N which can be mobilized from
-!                  storage organ in a day 
+!                  storage organ in a day
 ! NMOBSRX   Maximum fraction of N which can be mobilized from
-!                  storage organ in a day 
-! NO3(L)    Nitrate in soil layer L (�g[N] / g[soil])
+!                  storage organ in a day
+! NO3(L)    Nitrate in soil layer L (µg[N] / g[soil])
 ! NODGR     New nodule growth (g[nod] / m2 / d)
-! NOUTDO    Logical unit for OVERVIEW.OUT file 
+! NOUTDO    Logical unit for OVERVIEW.OUT file
 ! NPLTD     Number of plants destroyed (#/m2/d)
 ! NR1       Day when 50% of plants have at least one flower (days)
 ! NR2       Day when 50% of plants have one peg (peanuts only) (days)
@@ -2471,11 +2471,11 @@ C-----------------------------------------------------------------------
 ! NRUSRT    N actually mobilized from roots in a day (g[N]/m2-d)
 ! NRUSSH    N actually mobilized from shells in a day (g[N]/m2-d)
 ! NRUSST    N actually mobilized from stems in a day (g[N]/m2-d)
-! NSTRES    Nitrogen stress factor (1=no stress, 0=max stress) 
+! NSTRES    Nitrogen stress factor (1=no stress, 0=max stress)
 ! NVEG0     Day of emergence (days)
-! OUTD      File name for pest damage output file 
-! OUTG      Growth output file name (typically 'GROWTH.OUT') 
-! PAR       Daily photosynthetically active radiation or photon flux 
+! OUTD      File name for pest damage output file
+! OUTG      Growth output file name (typically 'GROWTH.OUT')
+! PAR       Daily photosynthetically active radiation or photon flux
 !             density (moles[quanta]/m2-d)
 ! PCARSH    Proportion of shell tissue that is carbohydrate (fraction)
 ! PCCSD     Percentage of carbohydrate in seed tissue (100 g[C] / g[seed])
@@ -2491,15 +2491,15 @@ C-----------------------------------------------------------------------
 ! PCNSD     Percentage of N in seed tissue (100 g[N] / g[seed])
 ! PCNSH     Percentage of N in shell tissue (100 g[N] / g[shell])
 ! PCNST     Percent N in stem tissue (100 g[N] / g[stem])
-! PCTMAT    Fraction of pods that are mature (seed are 90% of final size) 
+! PCTMAT    Fraction of pods that are mature (seed are 90% of final size)
 ! PG        Daily gross photosynthesis (g[CH2O] / m2 / d)
 ! PGAVL     Total available CH2O available for growth & respiration
 !             (g[CH2O] / m2)
-! PHTHRS(I) Threshold time that must accumulate in phase I for the next 
+! PHTHRS(I) Threshold time that must accumulate in phase I for the next
 !             stage to occur  (thermal or photothermal days)
-! PHTIM(I)  Cumulative photothermal time ages of seeds and shells 
-! PHTMAX   Maximum amount of CH20 which can be produced if 
-!            photosynthetically active radiation (PAR) is very high (3 
+! PHTIM(I)  Cumulative photothermal time ages of seeds and shells
+! PHTMAX   Maximum amount of CH20 which can be produced if
+!            photosynthetically active radiation (PAR) is very high (3
 !            times PARMAX) and all other factors are optimal (g[CH2O]/m2-d)
 ! PLIGSD    Proportion of seed tissue that is lignin (fraction)
 ! PLIGSH    Proportion of shell tissue that is lignin (fraction)
@@ -2512,7 +2512,7 @@ C-----------------------------------------------------------------------
 ! PNMRT      Proportion of actually mobilized N mobilized from roots in a day
 ! PNMSR      Proportion of actually mobilized N mobilized from storage organ in a day
 ! PNMSH      Proportion of actually mobilized N mobilized from shells in a day
-! PNTIM(I)  Photothermal days from first flower when flowers in age group I 
+! PNTIM(I)  Photothermal days from first flower when flowers in age group I
 !             formed (p-t-d)
 ! POASD     Proportion of seed tissue that is organic acid (fraction)
 ! POASH     Proportion of shell tissue that is organic acid (fraction)
@@ -2524,33 +2524,33 @@ C-----------------------------------------------------------------------
 !             (fraction)
 ! POTLIP    Potential lipid composition of seed based on temperature
 !             (fraction)
-! PPGFAC        Reduction in photosynthetic rate due to dormancy 
+! PPGFAC        Reduction in photosynthetic rate due to dormancy
 ! PPLTD     Percent plants destroyed (%/m2/d)
-! PPMFAC        Reduction in mobilization rate due to dormancy 
+! PPMFAC        Reduction in mobilization rate due to dormancy
 ! PPTFAC        Reduction in partitioning to vegetative tissues during dormancy
-! PROLFI    Maximum protein composition in leaves during growth with 
+! PROLFI    Maximum protein composition in leaves during growth with
 !             luxurious supply of N (g[protein] / g[leaf tissue])
-! PRORTI    Maximum protein composition in roots during growth with 
+! PRORTI    Maximum protein composition in roots during growth with
 !             luxurious supply of N (g[protein] / g[root])
-! PROSHI    Maximum protein composition in shells during growth with 
+! PROSHI    Maximum protein composition in shells during growth with
 !             luxurious supply of N ( g[protein] / g[shell tissue])
-! PROSTI    Maximum protein composition in stems during growth with 
+! PROSTI    Maximum protein composition in stems during growth with
 !             luxurious supply of N (g[protein] / g[stem])
 ! PROVEG    Average protein composition of growing tissue today
 !             (g[protein] / g[veget. tissue])
-! PRREF(4)  CURV response of routine refill of mobile CH2O during 
+! PRREF(4)  CURV response of routine refill of mobile CH2O during
 !                  vegetaive stages to today's canopy PG rate
 ! PSRLYRD        Proportion of total storage organ tissue loss from below ground tissue
 ! PSRLYR1   Proportion of storage organ tissue in soil layer 1 (below soil surface)
 ! PSRSRFD   Proportion of total storage organ tissue loss from above ground tissue
 ! PSRSRFL   Proportion of storage organ tissue on/above soil surface
-! PUNCSD    Cumulative puncture damage to seed (not yet implemented) 
-! PUNCTR    Cumulative puncture damage (not yet implemented) 
-! R30C2     Respiration coefficient that depends on total plant mass, value 
+! PUNCSD    Cumulative puncture damage to seed (not yet implemented)
+! PUNCTR    Cumulative puncture damage (not yet implemented)
+! R30C2     Respiration coefficient that depends on total plant mass, value
 !             at 30C (g[CH2O] used / g[CH2O] fixed / hr)
 ! RCH2O     Respiration required for synthesizing CH2O structure
 !             (g[CH2O] / g[tissue])
-! RES30C    Respiration coefficient that depends on gross photosynthesis, 
+! RES30C    Respiration coefficient that depends on gross photosynthesis,
 !             value at 30C (g CH2O/g DW/hr)
 ! RFIXN     CH2O required for biological N fixation (g[CH2O] / g[protein])
 ! RHOL      Fraction of leaf which is carbohydrate (g [CH20] / g[leaf])
@@ -2563,9 +2563,9 @@ C-----------------------------------------------------------------------
 ! RLV(L)    Root length density for soil layer L ((cm root / cm3 soil))
 ! RMIN      Respiration required for synthesizing mineral structure
 !             (g[CH2O] / g[mineral])
-! RNH4C     CH2O required for protein synthesis when source of N is 
+! RNH4C     CH2O required for protein synthesis when source of N is
 !             ammonium uptake (g[CH2O] / g[protein])
-! RNITP     True nitrogen concentration in leaf tissue for photosynthesis 
+! RNITP     True nitrogen concentration in leaf tissue for photosynthesis
 !             reduction. (%)
 ! RNO3C     Respiration required for reducing NO3 to protein
 !             (g[CH2O] / g[protein])
@@ -2574,11 +2574,11 @@ C-----------------------------------------------------------------------
 ! ROA       Respiration required for synthesizing organic acids
 !             (g[CH2O] / g[product])
 ! ROWSPC    Row spacing (m)
-! RP        proportion of the day's photosynthesis which is respired in the 
-!             maintenance process 
-! RPRO      Respiration required for re-synthesizing protein from mobilized 
+! RP        proportion of the day's photosynthesis which is respired in the
+!             maintenance process
+! RPRO      Respiration required for re-synthesizing protein from mobilized
 !             N (g[CH2O] / g[protein])
-! RPROAV    Respiration required for protein synthesis, average based on 
+! RPROAV    Respiration required for protein synthesis, average based on
 !             sources of N (g[CH2O] / g[protein])
 ! RSPNH4    Respiration required for reducing NH4 to protein
 !             (g[CH2O] / m2 / d)
@@ -2586,11 +2586,11 @@ C-----------------------------------------------------------------------
 !             (g[CH2O] / m2 / d)
 ! RTCMINE        Today's maximum potential CH2O mobilization from root (g [CH2O] m-2)
 ! RTNMINE   Today's maximum potential N mobilization from root (g [N] m-2)
-! RTSCMOB   Mass of root CH2O mobilized from tissue lost to natural senescence 
+! RTSCMOB   Mass of root CH2O mobilized from tissue lost to natural senescence
 !              (g [CH2O] m-2 d-1)
-! RTSNMOB   Mass of root N mobilized from tissue lost to natural senescence 
+! RTSNMOB   Mass of root N mobilized from tissue lost to natural senescence
 !              (g [N] m-2 d-1)
-! RSTAGE    Number of RSTAGES which have occurred. 
+! RSTAGE    Number of RSTAGES which have occurred.
 ! RTDEP     Root depth (cm)
 ! RTMRC   Maintenance respiration cost for roots (g[CH2O] / g root protein / hr)
 ! RTWT      Dry mass of root tissue, including C and N
@@ -2598,19 +2598,19 @@ C-----------------------------------------------------------------------
 ! RVSTGE    Rate of VSTAGE change (nodes/day)
 ! SAT(L)    Volumetric soil water content in layer L at saturation
 !             (cm3 [water] / cm3 [soil])
-! SATFAC    Root length weighted soil water excess stress factor ( 0 = no 
-!             stress; 1 = saturated stress ) 
-! SDDES(J)  Number of seeds destroyed today in cohort J when shells are 
+! SATFAC    Root length weighted soil water excess stress factor ( 0 = no
+!             stress; 1 = saturated stress )
+! SDDES(J)  Number of seeds destroyed today in cohort J when shells are
 !             not destroyed (#/m2/day)
 ! SDGR      Potential growth rate per seed (g / seed / d)
 ! SDIDOT    Number of seeds destroyed on the current day (#/m2/d)
 ! SDNO(J)   Number of seeds for cohort J (#/m2)
-! SDMRC   Maintenance respiration cost for the portion of seed subject to 
+! SDMRC   Maintenance respiration cost for the portion of seed subject to
 !            maintenance respiration (g[CH2O] / g seed protein / hr)
 ! SDNPL     Seed N (g[N] / m2)
-! SDPROR    Ratio to adjust lipid and carbohydrate proportions when seed 
-!             protein differs from protein composition of standard cultivar 
-!             (SDPROS) 
+! SDPROR    Ratio to adjust lipid and carbohydrate proportions when seed
+!             protein differs from protein composition of standard cultivar
+!             (SDPROS)
 ! SDRATE    Seeding rate, mass of seed sown (g[seed] / m2[ground])
 ! SDVAR     Maximum cultivar-dependent seed growth rate, per seed
 !             (g / seed / d)
@@ -2625,11 +2625,11 @@ C-----------------------------------------------------------------------
 !             (g[lignin] / m2 / day)
 ! SENSOILN  Daily contribution of senesced plant matter to soil nitrogen
 !             (g[N] / m2 / day)
-! SENSURFC  Daily contribution of senesced and frozen plant matter to 
+! SENSURFC  Daily contribution of senesced and frozen plant matter to
 !             surface carbon  (g[C] / m2 / day)
-! SENSURFL  Daily contribution of senesced and frozen plant matter to 
+! SENSURFL  Daily contribution of senesced and frozen plant matter to
 !             surface lignin (g[lignin] / m2 / day)
-! SENSURFN  Daily contribution of senesced and frozen plant matter to 
+! SENSURFN  Daily contribution of senesced and frozen plant matter to
 !             surface nitrogen (g[N] / m2 / day)
 ! SHCMINE   Potential mobile CH2O avaialable today from shell (g [CH2O] m-2)
 ! SHELMRC Maintenance respiration cost for shell (g[CH2O] / g shell protein / hr)
@@ -2650,46 +2650,46 @@ C-----------------------------------------------------------------------
 ! SRDOT     Daily root senescence (g / m2 / d)
 ! SRNADDOT  Today's NADRT lost with senescing root tissue (g [CP]/m2/d)
 ! SRNMINE   Today's maximum potential N mobilization from STOR (g [N] m-2)
-! SRSCMOB   Mass of STOR CH2O mobilized from tissue lost to natural senescence 
+! SRSCMOB   Mass of STOR CH2O mobilized from tissue lost to natural senescence
 !              (g [CH2O] m-2 d-1)
-! SRSNMOB   Mass of STOR N mobilized from tissue lost to natural senescence 
+! SRSNMOB   Mass of STOR N mobilized from tissue lost to natural senescence
 !              (g [N] m-2 d-1)
 ! SSRNADDOT Today's NADSR lost with senescing STOR tissue (g [CP]/m2/d)
 ! SSDOT     Daily senescence of petioles (g / m2 / d)
 ! SSNADDOT  Today's NADST lost with senescing stem tissue (g [CP]/m2/d)
 ! SSNDOT    Petiole senescence due to water stress (g/m2/day)
-! ST(L)     Soil temperature in soil layer L (�C)
+! ST(L)     Soil temperature in soil layer L (°C)
 ! STCMINE        Today's maximum potential CH2O mobilization from stem (g [CH2O] m-2)
 ! STGDOY(I) Day when stage I occurred (YYDDD)
 ! STLTSEN   Stem senescence corresponding to LTSEN
 ! STMMRC  Maintenance respiration cost for stem (g[CH2O] / g stem protein / hr)
 ! STMWT     Dry mass of stem tissue, including C and N
 !             (g[stem] / m2[ground)
-! STNAME(I) Output headings for specified crops 
+! STNAME(I) Output headings for specified crops
 ! STNMINE   Today's maximum potential N mobilization from stem (g [N] m-2)
-! STRMRC  Maintenance respiration cost for storage 
+! STRMRC  Maintenance respiration cost for storage
 !            (g[CH2O] / g storage protein / hr)
-! STSCMOB   Mass of petiole CH2O mobilized from tissue lost to natural senescence 
+! STSCMOB   Mass of petiole CH2O mobilized from tissue lost to natural senescence
 !              (g [CH2O] m-2 d-1)
 ! STSENWT   Stem senescence corresponding to SENWT
-! STSNMOB   Mass of petiole N mobilized from tissue lost to natural senescence 
+! STSNMOB   Mass of petiole N mobilized from tissue lost to natural senescence
 !              (g [N] m-2 d-1)
 ! SW(L)     Volumetric soil water content in layer L
 !             (cm3 [water] / cm3 [soil])
-! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
-!             0.0=max stress 
+! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress,
+!             0.0=max stress
 ! SWIDOT    Daily seed mass damage (g/m2/day)
-! TAVG      Average daily temperature (�C)
-! TDUMX     Photo-thermal time that occurs in a real day based on early 
+! TAVG      Average daily temperature (°C)
+! TDUMX     Photo-thermal time that occurs in a real day based on early
 !             reproductive development temperature function
 !             (photo-thermal days / day)
-! TDUMX2    Photo-thermal time that occurs in a real day based on late 
+! TDUMX2    Photo-thermal time that occurs in a real day based on late
 !             reproductive development temperature function
 !             (photo-thermal days / day)
-! TGRO(I)   Hourly air temperature (�C)
-! TGROAV    Average daily air temperature (�C)
-! TITLET    Description of treatment for this simulation 
-! TMIN      Minimum daily temperature (�C)
+! TGRO(I)   Hourly air temperature (°C)
+! TGROAV    Average daily air temperature (°C)
+! TITLET    Description of treatment for this simulation
+! TMIN      Minimum daily temperature (°C)
 ! TNLEAK    Total nitrogen leak (g[N] / m2 / d)
 ! TOPWT     Total weight of above-ground portion of crop, including pods
 !             (g[tissue] / m2)
@@ -2697,47 +2697,47 @@ C-----------------------------------------------------------------------
 ! TRNH4U    Total N uptake in ammonium form in a day (g[N] / m2 / d)
 ! TRNO3U    Total N uptake in nitrate form in a day (g[N] / m2 / d)
 ! TRNU      Total N uptake in a day (g[N] / m2 / d)
-! TS        Number of intermediate time steps (=24) 
+! TS        Number of intermediate time steps (=24)
 ! TTFIX     Physiological days delay in nodule initiation
 !             (photo-thermal days / day)
-! TURADD    Water stress factor (TURFAC) effect on reproductive growth and 
-!             pod addition.  Stress is defined to INCREASE growth and 
-!             addition. 
-! TURFAC    Water stress factor for expansion (0 - 1) 
+! TURADD    Water stress factor (TURFAC) effect on reproductive growth and
+!             pod addition.  Stress is defined to INCREASE growth and
+!             addition.
+! TURFAC    Water stress factor for expansion (0 - 1)
 ! TYPCREF        Shape of CURV response for refilling mobile CH2O to CH2O status
 ! TYPLMOB        Shape of CURV response for mobilization to LAI
 ! TYPLREF        Shape of CURV response for refilling mobile CH2O to LAI
-! TYPNMOB        Shape of CURV response for mobilization to current vegetative N 
+! TYPNMOB        Shape of CURV response for mobilization to current vegetative N
 !              status of plant relative to maximum N concentration
 ! TYPPREF        Shape of CURV response for refilling mobile CH2O to canopy PG rate
 ! UNH4      Uptake of NH4 from soil (interim value) (kg N/ha)
 ! UNO3      Uptake of NO3 from soil (interim value) (kg N/ha)
 ! VEGNCNT        Current proportion of total vegetative tissue that is N
-! VEGNCMX        Maximun possible proportion of total vegetative tissue that 
+! VEGNCMX        Maximun possible proportion of total vegetative tissue that
 !              can be N
-! VNMOBR        Effect of N status on N & C mobilization. (0= no effect, 
+! VNMOBR        Effect of N status on N & C mobilization. (0= no effect,
 !              mobilization at minimum rate, 1.0 = increase mobilization
-!              to maximum rate      
-! VNSTAT        Current N status of vegetative tissues compared to maximum 
+!              to maximum rate
+! VNSTAT        Current N status of vegetative tissues compared to maximum
 !              possible N content
-! VSTAGE    Number of nodes on main stem of plant 
+! VSTAGE    Number of nodes on main stem of plant
 ! WCRLF     Mass of CH2O reserves in leaves (g[leaf CH2O] / m2[ground])
 ! WCRRT     Mass of CH2O reserves in roots (g[root CH2O] / m2[ground])
 ! WCRSH     Mass of CH2O reserves in shells (g[shell CH2O] / m2[ground])
 ! WCRSR        Mass of CH2O reserves in storage organ (g[storage CH2O] / m2[ground])
 ! WCRST     Mass of CH2O reserves in stems (g[stem CH2O] / m2[ground])
 ! WLDOT    Net leaf growth rate (g[leaf] / m2 / d)
-! WLDOTN    Dry weight growth rate of new leaf tissue including N but not C 
+! WLDOTN    Dry weight growth rate of new leaf tissue including N but not C
 !             reserves (g[leaf] / m2[ground]-d)
 ! WLFDOT    Leaf weight losses due to freezing (g[leaf]/m2-d)
 ! WLIDOT    Daily pest or freeze damage to leaf mass (g/m2/day)
-! WNRLF     N available for mobilization from leaves above lower limit of 
+! WNRLF     N available for mobilization from leaves above lower limit of
 !             mining (g[N] / m2)
-! WNRRT     N available for mobilization from roots above lower limit of 
+! WNRRT     N available for mobilization from roots above lower limit of
 !             mining (g[N] / m2)
-! WNRSH     N available for mobilization from shells above lower limit of 
+! WNRSH     N available for mobilization from shells above lower limit of
 !             mining (g[N] / m2)
-! WNRST     N available for mobilization from stems above lower limit of 
+! WNRST     N available for mobilization from stems above lower limit of
 !             mining (g[N] / m2)
 ! WRCLDT   Net C addition for leaves (g[CH2O] / m2 /d)
 ! WRCRDT   Net C addition for roots (g[CH2O] / m2 /d)
@@ -2745,12 +2745,12 @@ C-----------------------------------------------------------------------
 ! WRCSHD   Net C addition for shells (g[CH2O] / m2 /d)
 ! WRCSRDT  Net C addition for storage organ (g[CH2O] / m2 /d)
 ! WRDOT    Net root growth rate (g[root] / m2 / d)
-! WRDOTN    Dry weight growth rate of new root tissue including N but not C 
+! WRDOTN    Dry weight growth rate of new root tissue including N but not C
 !             reserves (g[root] / m2[ground]-d)
 ! WRIDOT    Daily pest damage to root mass ( g/m2/day)
 ! WSDDTN    New seed growth today (g[seed] / m2 / d)
 ! WSDOT    Net stem growth rate (g[stem] / m2 / d)
-! WSDOTN    Dry weight growth rate of new stem tissue including N but not C 
+! WSDOTN    Dry weight growth rate of new stem tissue including N but not C
 !             reserves (g[stem] / m2[ground]-d)
 ! WSFDOT        Stem weight losses due to freezing (g[stem]/m2-d)
 ! WSHDTN    New shell growth today (g[shell] / m2 / d)
