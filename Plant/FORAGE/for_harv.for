@@ -162,9 +162,6 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
 
           INQUIRE(FILE = MOWFILE, EXIST = exists)
     
-          IF (.NOT. exists) THEN
-            CALL ERROR (ERRKEY,29,MOWFILE,1)
-          ENDIF
         ELSE
           IF(ATTP .EQ. 'P' .AND. HMGDD .LE. 0) THEN
             CALL ERROR (ERRKEY,50,MOWFILE,1)
@@ -174,6 +171,9 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
           ENDIF
           IF(HRSPL .GT. 100) THEN
             CALL ERROR (ERRKEY,59,MOWFILE,1)
+          ENDIF
+          IF(HMFRQ .LE. 0 .AND. HMGDD .LE. 0) THEN
+            CALL ERROR (ERRKEY,50,MOWFILE,1)
           ENDIF
         ENDIF
 
@@ -238,6 +238,15 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
         READ(C255,'(6F6.2)',IOSTAT=ERRNUM) (YCHMOW(I),I=1,6)
         CLOSE (LUNCRP)
+
+        XCUTHT = IXCUTHT
+        XCHMOW = IXCHMOW
+        XFRGDD = IXFRGDD
+        IF(ATTP .EQ. 'A') THEN
+          XFREQ = IXFREQ
+        ELSEIF( ATTP .EQ. 'T') THEN
+          XFREQ = IXFRGDD
+        ENDIF
       ENDIF
 
 !-----------------------------------------------------------------------
@@ -253,15 +262,6 @@ C-----------------------------------------------------------------------
       READ(C80,'(4F6.1)') TB(1), TO1(1), TO2(1), TM(1)
        CLOSE (LUNCRP)
 !----------------------------------------------------------------------
-        IF(ATTP .EQ. 'A') THEN
-          XFREQ = IXFREQ
-        ELSEIF( ATTP .EQ. 'T') THEN
-          XFREQ = IXFRGDD
-        ENDIF
-        XCUTHT = IXCUTHT
-        XCHMOW = IXCHMOW
-        XFRGDD = IXFRGDD
-
       
       IF (.NOT.ALLOCATED(MOW) .AND. ATMOW .EQV. .FALSE.) THEN
 
