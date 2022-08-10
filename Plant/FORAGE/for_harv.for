@@ -161,12 +161,12 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
           CLOSE(LUNIO)
 
           INQUIRE(FILE = MOWFILE, EXIST = exists)
-    
+
         ELSE
-          IF(ATTP .EQ. 'P' .AND. HMGDD .LE. 0) THEN
+          IF(ATTP .EQ. 'Z' .AND. HMGDD .LE. 0) THEN
             CALL ERROR (ERRKEY,50,MOWFILE,1)
           ENDIF
-          IF(ATTP .EQ. 'C' .AND. HMFRQ .LE. 0) THEN
+          IF(ATTP .EQ. 'Y' .AND. HMFRQ .LE. 0) THEN
             CALL ERROR (ERRKEY,50,MOWFILE,1)
           ENDIF
           IF(HRSPL .GT. 100) THEN
@@ -209,7 +209,7 @@ C-----------------------------------------------------------------------
           CLOSE(LUNCRP)
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         END IF
-      IF(ATTP .EQ. 'A' .OR. ATTP .EQ. 'T') THEN
+      IF(ATTP .EQ. 'W' .OR. ATTP .EQ. 'X') THEN
         !C----------------------------------------------------------
         !!       Automatic MOW - post harvest stubble mass and %leaf
         !!       in the stubble calculation (DP,KJB,WP,FO,TF):
@@ -242,9 +242,9 @@ C-----------------------------------------------------------------------
         XCUTHT = IXCUTHT
         XCHMOW = IXCHMOW
         XFRGDD = IXFRGDD
-        IF(ATTP .EQ. 'A') THEN
+        IF(ATTP .EQ. 'W') THEN
           XFREQ = IXFREQ
-        ELSEIF( ATTP .EQ. 'T') THEN
+        ELSEIF( ATTP .EQ. 'X') THEN
           XFREQ = IXFRGDD
         ENDIF
       ENDIF
@@ -262,7 +262,7 @@ C-----------------------------------------------------------------------
       READ(C80,'(4F6.1)') TB(1), TO1(1), TO2(1), TM(1)
        CLOSE (LUNCRP)
 !----------------------------------------------------------------------
-      
+
       IF (.NOT.ALLOCATED(MOW) .AND. ATMOW .EQV. .FALSE.) THEN
 
         CALL GETLUN('MOWFILE',MOWLUN)
@@ -461,25 +461,25 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 !***********************************************************************
       ! DP/TF - 01/28/2022 Added degree days (GDD) option
       IF(ATMOW .EQV. .TRUE.) THEN
-            IF(ATTP .EQ. 'A' .OR. ATTP .EQ. 'C') THEN
+            IF(ATTP .EQ. 'W' .OR. ATTP .EQ. 'Y') THEN
               FREQ = HMFRQ
               CUTDAY = MOD(MOWCOUNT,HMFRQ)
               MOWGDD = 0 !It will not accumulate GDD if there is HMFRQ
             ENDIF
-            IF(ATTP .EQ. 'P' .OR. ATTP .EQ. 'T') THEN
+            IF(ATTP .EQ. 'Z' .OR. ATTP .EQ. 'X') THEN
               FREQ = HMGDD
               CUTDAY = 1
             ENDIF
             IF(CUTDAY .EQ. 0 .OR.
      &        (MOWGDD .GE. HMGDD .AND. HMGDD .GT. 0)) THEN
             !DP/TF 2022-01-31 Switch to complete version AutoMOW
-              IF(ATTP .EQ. 'A' .OR. ATTP .EQ. 'T') THEN            
+              IF(ATTP .EQ. 'W' .OR. ATTP .EQ. 'X') THEN
                 MOWC = (TABEX(YFREQ, XFREQ, FREQ, 6) * MOWREF) *
      &          (TABEX(YCUTHT, XCUTHT, HMCUT*100, 6)) *
      &          (TABEX(YCHMOW, XCHMOW, topwt, 6))
                 RSPLC = (TABEX(YRSREF, XFREQ, FREQ, 6) * RSREF)
             !DP/TF 2022-01-31 Switch to simple version AutoMOW
-              ELSEIF(ATTP .EQ. 'C' .OR. ATTP .EQ. 'P') THEN
+              ELSEIF(ATTP .EQ. 'Y' .OR. ATTP .EQ. 'Z') THEN
                 MOWC = MAX(HMMOW,0)
                 RSPLC = MAX(HRSPL,0)
               ENDIF
@@ -487,7 +487,12 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             ELSE
                 MOWCOUNT = MOWCOUNT + 1
                 !DP/TF 2022-01-31 GDD calculations as harvest frequency option
-                GDD = (((TMAX+TMIN)/2) - TB(1))
+!                GDD = (((TMAX+TMIN)/2) - TB(1))
+                IF((TMAX+TMIN)/2 .GT. TB(1)) THEN
+                  GDD = (((TMAX+TMIN)/2) - TB(1))
+                ELSE
+                  GDD = 0
+                ENDIF
                 IF (GDD .GT. TO1(1)-TB(1)) GDD = TO1(1)-TB(1)
                 GDD = MAX(GDD, 0.0)
                 MOWGDD = MOWGDD + GDD

@@ -8,7 +8,7 @@ C  09/01/1991 WTB Written
 C  12/31/1996 GH  Delete stop condition; set last window
 C  12/01/1999 CHP Modular format.
 C  07/01/2000 GH  Incorporated in CROPGRO
-C  03/19/2001 GH  Corrected YREND initialization 
+C  03/19/2001 GH  Corrected YREND initialization
 C  04/17/2002 GH  Modified for sequence analysis
 C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 C  08/20/2002 GH  Modified for Y2K
@@ -19,9 +19,9 @@ C=======================================================================
      &    DLAYR, DUL, IDETO, IHARI, LL, STGDOY,           !Input
      &    SW, MDATE, YRPLT,                               !Input
      &    YREND, HARVFRAC, HDATE, NHAR)                   !Output
-      
+
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
@@ -36,8 +36,8 @@ C=======================================================================
       INTEGER MULTI, TIMDIF, YRPLT, YRDIF, YRSIM
       INTEGER YRDOY, MDATE, DAP, NOUTDO
       INTEGER DYNAMIC, RUN
-      INTEGER HDATE(3), HSTG(3) 
-      INTEGER STGDOY(20) 
+      INTEGER HDATE(3), HSTG(3)
+      INTEGER STGDOY(20)
 
       REAL AVGSW, CUMSW, DTRY, SWPLTD
       REAL SWPLTH, SWPLTL, XDEP, XDEPL
@@ -45,7 +45,7 @@ C=======================================================================
       REAL HARVFRAC(2)
       REAL DLAYR(NL), DUL(NL), LL(NL), SW(NL)
 
-!     The variable "CONTROL" is of constructed type "ControlType" as 
+!     The variable "CONTROL" is of constructed type "ControlType" as
 !     defined in ModuleDefs.for, and contains the following variables.
 !     The components are copied into local variables for use here.
 
@@ -61,7 +61,7 @@ C=======================================================================
 
 C***********************************************************************
 C***********************************************************************
-C    Input and Initialization 
+C    Input and Initialization
 C***********************************************************************
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
@@ -94,14 +94,14 @@ C     Adjust for crop rotations
 C-----------------------------------------------------------------------
 !      IF (RNMODE .EQ. 'Q') THEN
       IF (INDEX('FQ',RNMODE) > 0) THEN
-        IF (NHAR .GT. 0 .AND. HDATE(1) .LT. YRSIM .AND. 
+        IF (NHAR .GT. 0 .AND. HDATE(1) .LT. YRSIM .AND.
      &          IHARI .NE. 'D') THEN
           DO I = 1, NHAR
             CALL YR_DOY(HDATE(I), YR, IDATE)
             HDATE(I) = (YR + YRDIF) * 1000 + IDATE
           END DO
-        ENDIF  
- 
+        ENDIF
+
         IF (IHARI .EQ. 'A' .AND. HLATE .LT. YRSIM) THEN
           CALL YR_DOY(HLATE, YR, IDATE)
           HLATE = (YR +  YRDIF) * 1000 + IDATE
@@ -167,8 +167,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C Harvest within specified window if conditions are met
 C-----------------------------------------------------------------------
-      ELSE IF (IHARI .EQ. 'A' .OR. IHARI .EQ. 'T' .OR.
-     &   IHARI .EQ. 'P' .OR. IHARI .EQ. 'C') THEN
+      ELSE IF (IHARI .EQ. 'A' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
 
 !       Havest maturity not reached yet.
         IF (YRDOY .LT. MDATE .OR. MDATE .EQ. -99) THEN
@@ -184,18 +184,18 @@ C-----------------------------------------------------------------------
 C         Check window for automatic harvest, HEARLY < YRDOY < HLATE
           IF (YRDOY .LT. HEARLY) RETURN       !too early
 
-!         Too late for harvest. Print error message to screen and to 
+!         Too late for harvest. Print error message to screen and to
 !             Overview.OUT and Warning.OUT files.
           IF (YRDOY .GT. HLATE) THEN
             CALL YR_DOY(HEARLY, YREARLY, DEARLY)
             CALL YR_DOY(HLATE, YR, IDATE)
 
             !Warning.out
-            WRITE(MESSAGE(1), 110) 
+            WRITE(MESSAGE(1), 110)
             WRITE(MESSAGE(2), 115) YREARLY,DEARLY,YR,IDATE
             CALL WARNING(2, ERRKEY, MESSAGE)
 
-            !Screen 
+            !Screen
             WRITE (*,120) MESSAGE(1), MESSAGE(2)
 
             !Overview.out
@@ -207,8 +207,8 @@ C         Check window for automatic harvest, HEARLY < YRDOY < HLATE
   115 FORMAT('between DAY ',I4,1X,I3,' and DAY ',I4,1X,I3)
   120 FORMAT(/,5X,A78,/,5X,A78,/)
 
-C           Assume harvest to occur on the first day after the defined 
-C           window to terminate the simulation. This needs to be changed 
+C           Assume harvest to occur on the first day after the defined
+C           window to terminate the simulation. This needs to be changed
 C           to account for harvest loss of the crop;
             YREND     = YRDOY
 !            STGDOY(16) = YRDOY
@@ -277,15 +277,15 @@ C========================================================================
      &    NHAR, SWPLTL, SWPLTH, SWPLTD)                   !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
 
       CHARACTER*5 HCOM(3), HSIZ(3)
-      CHARACTER*6 SECTION, ERRKEY 
+      CHARACTER*6 SECTION, ERRKEY
       PARAMETER (ERRKEY = 'IPAHAR')
-      CHARACTER*30 FILEIO 
+      CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
 
       INTEGER ERRNUM
@@ -296,7 +296,7 @@ C-----------------------------------------------------------------------
       REAL HPP, HRP, SWPLTL, SWPLTH, SWPLTD
       REAL HPC(3), HBPC(3)
 
-!     The variable "CONTROL" is of constructed type "ControlType" as 
+!     The variable "CONTROL" is of constructed type "ControlType" as
 !     defined in ModuleDefs.for, and contains the following variables.
 !     The components are copied into local variables for use here.
       TYPE (ControlType) CONTROL
@@ -317,7 +317,7 @@ C-----------------------------------------------------------------------
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
-        READ(LUNIO,'(30X,3(1X,F5.0))',IOSTAT=ERRNUM) 
+        READ(LUNIO,'(30X,3(1X,F5.0))',IOSTAT=ERRNUM)
      &    SWPLTL, SWPLTH, SWPLTD
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
@@ -337,11 +337,11 @@ C-----------------------------------------------------------------------
       ELSE
         NHAR = 0
         DO I = 1,3
-          READ(LUNIO,'(3X,I7,4X,A90)',ERR=4102,END=4102) HDATE(I), CHAR 
+          READ(LUNIO,'(3X,I7,4X,A90)',ERR=4102,END=4102) HDATE(I), CHAR
           LNUM = LNUM + 1
 
-          READ(CHAR,4100,IOSTAT=ERRNUM) 
-     &         HSTG(I), HCOM(I), HSIZ(I), HPC(I), HBPC(I) 
+          READ(CHAR,4100,IOSTAT=ERRNUM)
+     &         HSTG(I), HCOM(I), HSIZ(I), HPC(I), HBPC(I)
  4100     FORMAT(I2,2(1X,A5),2(1X,F5.0))
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
           NHAR = NHAR + 1
@@ -369,58 +369,58 @@ C-----------------------------------------------------------------------
 !=======================================================================
 ! AUTHAR and IPAHAR Variable Definitions
 !=======================================================================
-! AVGSW     Average soil moisture as percent of depth SWPLTD; Also, in 
+! AVGSW     Average soil moisture as percent of depth SWPLTD; Also, in
 !             WDCONT, average volumetric soil water in top 30 cm.
 !             (%; cm3/cm3 for WDCONT))
-! CUMSW     Cumulative soil moisture to depth of SWPLTD, calculated as 
-!             fraction of moisture content between lower limit and drained 
+! CUMSW     Cumulative soil moisture to depth of SWPLTD, calculated as
+!             fraction of moisture content between lower limit and drained
 !             upper limit multiplied by layer depth. (cm)
 ! DAP       Number of days after planting (d)
 ! DLAYR(L)  Soil thickness in layer L (cm)
 ! DS(L)     Cumulative depth in soil layer L (cm)
 ! DTRY      Effective depth of current soil layer (cm)
-! DUL(L)    Volumetric soil water content at Drained Upper Limit in soil 
+! DUL(L)    Volumetric soil water content at Drained Upper Limit in soil
 !             layer L (cm3[water]/cm3[soil])
-! ERRKEY    Subroutine name for error file 
-! ERRNUM    Error number for input 
-! FILEIO    Filename for input file (e.g., IBSNAT35.INP) 
-! FOUND     Indicator that good data was read from file by subroutine FIND 
-!             (0 - End-of-file encountered, 1 - NAME was found) 
+! ERRKEY    Subroutine name for error file
+! ERRNUM    Error number for input
+! FILEIO    Filename for input file (e.g., IBSNAT35.INP)
+! FOUND     Indicator that good data was read from file by subroutine FIND
+!             (0 - End-of-file encountered, 1 - NAME was found)
 ! YREND    Computed harvest date (YYDDD)
 ! HDATE(I)  Harvest dates (normally only the first is used) (YYDDD)
 ! HDLAY     Earliest day after harvest maturity (R8) for harvest window
 !             (da)
 ! HEARLY    First day of harvest window (YYDDD)
 ! HLATE     Latest day of the year to harvest; last day of window (YYDDD)
-! HSTG      Growth stage which triggers automatic harvesting for IHARI='G' 
+! HSTG      Growth stage which triggers automatic harvesting for IHARI='G'
 ! IDATE     Day of irrigation or fertilizer application (d)
-! LNUM      Line number of input file 
+! LNUM      Line number of input file
 ! LL(L)     Volumetric soil water content in soil layer L at lower limit
 !             (cm3 [water] / cm3 [soil])
-! LUNIO     Logical unit number for FILEIO 
-! MULTI     Current simulation year (=1 for first or single simulation, 
-!             =NYRS for last seasonal simulation) 
-! NHAR      Number harvest dates read 
-! NL        Maximum number of soil layers  
-! NOUTDO    Logical unit for OVERVIEW.OUT file 
-! SECTION   Section name in input file 
+! LUNIO     Logical unit number for FILEIO
+! MULTI     Current simulation year (=1 for first or single simulation,
+!             =NYRS for last seasonal simulation)
+! NHAR      Number harvest dates read
+! NL        Maximum number of soil layers
+! NOUTDO    Logical unit for OVERVIEW.OUT file
+! SECTION   Section name in input file
 ! STGDOY(I) Day when stage I occurred (YYDDD)
 ! SW(L)     Volumetric soil water content in layer L
 !             (cm3 [water] / cm3 [soil])
-! SWPLTD    Depth to which average soil moisture is determined for 
+! SWPLTD    Depth to which average soil moisture is determined for
 !             automatic planting and harvest conditions (cm)
-! SWPLTH    Upper limit on soil moisture for automatic planting and harvest 
+! SWPLTH    Upper limit on soil moisture for automatic planting and harvest
 !             conditions (%)
-! SWPLTL    Lower limit on soil moisture for automatic planting and harvest 
+! SWPLTL    Lower limit on soil moisture for automatic planting and harvest
 !             conditions (%)
-! TIMDIF    Integer function which calculates the number of days between 
+! TIMDIF    Integer function which calculates the number of days between
 !             two Julian dates (da)
 ! XDEP      Depth to bottom of current soil layer (cm)
 ! XDEPL     Depth to top of current soil layer (cm)
-! YR        Year portion of date 
-! YR_DOY    Function subroutine converts date in YYDDD format to integer 
-!             year (YY) and day (DDD). 
-! YRDIF     Function subroutine which calculates number of days between two 
+! YR        Year portion of date
+! YR_DOY    Function subroutine converts date in YYDDD format to integer
+!             year (YY) and day (DDD).
+! YRDIF     Function subroutine which calculates number of days between two
 !             dates (da)
 ! YRDOY     Current day of simulation (YYDDD)
 ! YRNR8     Date of harvest maturity (YYDDD)
