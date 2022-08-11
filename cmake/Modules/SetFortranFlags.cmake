@@ -119,12 +119,6 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                  Fortran "-mmacosx-version-min=10.10.0"
                 )
 
-# Set install directory for Linux same as STDPATH in OSDefsLINUX.for
-# This will create the appropriate DSSATPRO.Lxx file that works with STDPATH
-IF(UNIX)
-    SET(CMAKE_INSTALL_PREFIX "/DSSAT48" CACHE PATH "Path to installation directory" FORCE)
-ENDIF(UNIX)
-
 ####################
 ### LINKER FLAGS ###
 ####################
