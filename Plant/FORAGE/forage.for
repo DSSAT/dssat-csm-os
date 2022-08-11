@@ -1137,6 +1137,15 @@ C-----------------------------------------------------------------------
      &    FRLF, FRSTM, FRRT,
      &    FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
+     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
+     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &                AMVS, WTCO, WTLO, WTSO, TMAX, TMIN)
 ! CALL FOR_OPHARV (CONTROL, ISWITCH,
 !&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
 !&    MDATE, NSTRES, PCLSD, PCNSD, PODNO, PODWT,      !Input
