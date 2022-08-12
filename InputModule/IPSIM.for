@@ -86,6 +86,14 @@ C=======================================================================
 
       LOGICAL UseSimCtr, MulchWarn, SimLevel
 
+C FO/DP/TF - 2020-07-22 - AutomaticMOW FILEX variables
+      INTEGER HMFRQ
+      INTEGER HMGDD
+      REAL HMCUT
+C TF/DP 2022-01-31 Simple version AutoMOW
+      INTEGER HMMOW, HRSPL, AMVS
+
+
 !     2020-11-04 CHP Added for yield forecast mode, RNMODE = 'Y'
       INTEGER ENDAT, SeasDur, FODAT, FStartYear, FEndYear
       CHARACTER*15 FWFILE
@@ -339,6 +347,27 @@ C
          IRESI = UPCASE(IRESI)
          IHARI = UPCASE(IHARI)
 
+C TF, FO & DP - 2022-07-12 - AutomaticMOW Switch
+! W - AutoMOW days frequency
+! X - AutoMOW GDD
+! Y - SmartMOW days frequency
+! Z - SmartMOW GDD
+         IF(IHARI .EQ. 'W') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'W'
+         ELSEIF(IHARI .EQ. 'X') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'X'
+         ELSEIF(IHARI .EQ. 'Y') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'Y'
+         ELSEIF(IHARI .EQ. 'Z') THEN
+           ISWITCH%ATMOW = .TRUE.
+           ISWITCH%ATTP = 'Z'
+         ELSE
+           ISWITCH%ATMOW = .FALSE.
+         ENDIF
+
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
               WRITE(MSG(1),'("Automatic harvest option ",
@@ -566,8 +595,9 @@ C
 C           Read TENTH line of simulation control - AUTOMATIC HARVEST
 C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
-            READ (CHARTEST,66,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
-     &           HPP,HRP
+            READ (CHARTEST,71,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
+     &           HPP,HRP,ISWITCH%HMFRQ,ISWITCH%HMGDD,ISWITCH%HMCUT,
+     &           ISWITCH%HMMOW, ISWITCH%HRSPL, ISWITCH%AMVS
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             
 !     ==============================================================
@@ -903,7 +933,8 @@ C-----------------------------------------------------------------------
 !    &        1X,I5,1x,F5.0, 2(1x, F5.3))
   69  FORMAT(I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,F6.0)
   70  FORMAT (3X,I2)
-
+! FO/TF - New reading format for AutomaticMOW
+  71  FORMAT (I3,11X,2(1X,I5),2(1X,F5.0),1X,I5,1X,I5,1X,F5.2,3(1X,I5))
       END SUBROUTINE IPSIM
 
 

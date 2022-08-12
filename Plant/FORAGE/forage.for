@@ -118,7 +118,7 @@ C=======================================================================
       REAL SLCADDOT, SRCADDOT, SSRCADDOT, SSCADDOT
       REAL SLNADDOT, SRNADDOT, SSRNADDOT, SSNADDOT 
       REAL SRDOT, SLAAD, SLNDOT, SSDOT, SSNDOT
-      REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TURFAC, TAVG, TURADD,
+      REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TMAX, TURFAC, TAVG, TURADD,
      &    TRNH4U, TRNO3U, TRNU, TNLEAK, TRWUP, TTFIX, TOPWT, TOTWT
       REAL VSTAGE
       REAL WLFDOT, WSIDOT, WRIDOT
@@ -246,6 +246,16 @@ C------------------------------------------------------------
       REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
       LOGICAL RUNYET
 
+C FO/DP/TF - 2020-07-22 - AutomaticMOW
+      LOGICAL ATMOW
+      INTEGER HMFRQ
+      INTEGER HMGDD
+      REAL HMCUT
+C TF/DP 2022-01-31 Simple version AutoMOW
+      INTEGER HMMOW, HRSPL, AMVS
+      CHARACTER*1 ATTP
+
+
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 2
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
@@ -294,6 +304,14 @@ C------------------------------------------------------------
       ISWSYM = ISWITCH % ISWSYM
       ISWWAT = ISWITCH % ISWWAT
       MEPHO  = ISWITCH % MEPHO
+      ATMOW  = ISWITCH % ATMOW
+      HMFRQ  = ISWITCH % HMFRQ
+      HMGDD  = ISWITCH % HMGDD
+      HMCUT  = ISWITCH % HMCUT
+      HMMOW  = ISWITCH % HMMOW
+      HRSPL  = ISWITCH % HRSPL
+      AMVS   = ISWITCH % AMVS
+      ATTP   = ISWITCH % ATTP
 
       CO2    = WEATHER % CO2   
       DAYL   = WEATHER % DAYL  
@@ -303,6 +321,7 @@ C------------------------------------------------------------
       TGRO   = WEATHER % TGRO  
       TGROAV = WEATHER % TGROAV
       TMIN   = WEATHER % TMIN  
+      TMAX   = WEATHER % TMAX
 
 ! Disable P stress
       pstres1 = 1
@@ -699,7 +718,7 @@ C-----------------------------------------------------------------------
 !     &    YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
 !     &    BWAH, SDWTAH)                                   !Output
 
-!     If this is not a sequenced run, don't use any previously calculated
+!     If this is not a sequenced run, do not use any previously calculated
 !       harvest residue.
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
         HARVRES % RESWT  = 0.0
@@ -707,6 +726,15 @@ C-----------------------------------------------------------------------
         HARVRES % RESE   = 0.0
       ENDIF
 
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
+     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
+     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &                AMVS, WTCO, WTLO, WTSO, TMAX, TMIN)
      
 !***********************************************************************
 !***********************************************************************
@@ -2017,14 +2045,15 @@ C-----------------------------------------------------------------------
 !      fhpctn = 0.0
       MOWC =0.0
       RSPLC =0.0
-      call forage_harvest(CONTROL,FILECC,
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,MOWC,RSPLC,
+     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                WTCO, WTLO, WTSO)
+     &                AMVS, WTCO, WTLO, WTSO, TMAX, TMIN)
 
       Cumul_FHTOT  = Cumul_FHTOT  + FHWAH
       Cumul_FHTOTN = Cumul_FHTOTN + FHTOTN
@@ -2339,8 +2368,8 @@ C-----------------------------------------------------------------------
 ! FRCNOD    Fraction of new root dry matter allocation that is diverted to 
 !             nodule growth 
 ! FREEZ1    Temperature below which plant loses all leaves, but development 
-!             continues (°C)
-! FREEZ2    Temperature below which plant growth stops completely. (°C)
+!             continues (ï¿½C)
+! FREEZ2    Temperature below which plant growth stops completely. (ï¿½C)
 ! FRLF      Fraction of vegetative tissue growth that goes to leaves on a 
 !             day (g[leaf] / g[veg])
 ! FRRT      Fraction of vegetative tissue growth that goes to roots on a 
@@ -2415,7 +2444,7 @@ C-----------------------------------------------------------------------
 ! NGRSD     Rate of N accumulation in new seeds (g[N] / m2 / d)
 ! NGRSH     Rate of N accumulation in new shells (g[N] / m2 / d)
 ! NGRST     Maximum N demand for stem growth (g[stem N] / m2[ground] / d)
-! NH4(L)    Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)    Ammonium N in soil layer L (ï¿½g[N] / g[soil])
 ! NL        Maximum number of soil layers = 20 
 ! NLAYR     Number of soil layers 
 ! NMINEA    Actual Nitrogen mined from existing tissue (g[N] / m2 / d)
@@ -2429,7 +2458,7 @@ C-----------------------------------------------------------------------
 !                  storage organ in a day 
 ! NMOBSRX   Maximum fraction of N which can be mobilized from
 !                  storage organ in a day 
-! NO3(L)    Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)    Nitrate in soil layer L (ï¿½g[N] / g[soil])
 ! NODGR     New nodule growth (g[nod] / m2 / d)
 ! NOUTDO    Logical unit for OVERVIEW.OUT file 
 ! NPLTD     Number of plants destroyed (#/m2/d)
@@ -2629,7 +2658,7 @@ C-----------------------------------------------------------------------
 ! SSDOT     Daily senescence of petioles (g / m2 / d)
 ! SSNADDOT  Today's NADST lost with senescing stem tissue (g [CP]/m2/d)
 ! SSNDOT    Petiole senescence due to water stress (g/m2/day)
-! ST(L)     Soil temperature in soil layer L (°C)
+! ST(L)     Soil temperature in soil layer L (ï¿½C)
 ! STCMINE        Today's maximum potential CH2O mobilization from stem (g [CH2O] m-2)
 ! STGDOY(I) Day when stage I occurred (YYDDD)
 ! STLTSEN   Stem senescence corresponding to LTSEN
@@ -2650,17 +2679,17 @@ C-----------------------------------------------------------------------
 ! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
 ! SWIDOT    Daily seed mass damage (g/m2/day)
-! TAVG      Average daily temperature (°C)
+! TAVG      Average daily temperature (ï¿½C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
 ! TDUMX2    Photo-thermal time that occurs in a real day based on late 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
-! TGRO(I)   Hourly air temperature (°C)
-! TGROAV    Average daily air temperature (°C)
+! TGRO(I)   Hourly air temperature (ï¿½C)
+! TGROAV    Average daily air temperature (ï¿½C)
 ! TITLET    Description of treatment for this simulation 
-! TMIN      Minimum daily temperature (°C)
+! TMIN      Minimum daily temperature (ï¿½C)
 ! TNLEAK    Total nitrogen leak (g[N] / m2 / d)
 ! TOPWT     Total weight of above-ground portion of crop, including pods
 !             (g[tissue] / m2)
