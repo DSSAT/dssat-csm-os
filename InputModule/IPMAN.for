@@ -675,13 +675,9 @@ C=======================================================================
 
       NHAR  = 0
 
-!     VSH      
-!      DO J = 1, 3
-               !HAGE(J) = -99 !AH
-!multiharvest  
       DO J = 1, NHAR         
-        HSTG(J)  = '     '
-        HCOM(J)  = '     '
+         HSTG(J)  = '     '
+         HCOM(J)  = '     '
          HSIZ(J)  = '     '
          HPC(J)   = 100.0
          HDATE(J) = -99

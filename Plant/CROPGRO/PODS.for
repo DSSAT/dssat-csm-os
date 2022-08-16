@@ -31,6 +31,7 @@
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
      &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
      &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
      &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
@@ -38,7 +39,8 @@
      &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
      &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
-     &    WTSHE, WTSHMT, FLWN)                            !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -73,9 +75,12 @@
       REAL WTSHMT, TURADD, SDGR, DSWBAR, SWBAR, SWADD1, SWADD2
       REAL SHVAR, LNGSH, GRRAT1, LNGPEG, AGRSH1, FNINSH, NLEFT, SHLAG
       REAL PROSHI, SHELWT, NRUSSH, WTABRT, TDUMX, SWFAC, SETMAX, DRPP
+      REAL CRUSSH, CHMINE
       REAL SDPDVR, RFLWAB, PMAX, SDVAR, PODUR, MNESPM, RNITP
       REAL PROLFF, FNINL, SEEDNO, PODNO, XMPAGE
-      REAL WTPSD, SFDUR, PROSHF
+      REAL WTPSD, SFDUR, PROSHF, XMAGE
+      REAL TOSHMINE,TOCHMINE
+      REAL HPODWT,HSDWT,HSHELWT
 
       REAL NAVPOD, ADDSHL, FLWADD
       REAL PGLEFT, PODMAT, AFLW, FLWRDY, PODADD, SHMINE, ACCAGE, PGAVLR
@@ -243,8 +248,8 @@
      &        (C255(1:1) .NE. '*')) THEN
 !          READ (C255,'(A6,66X,F6.0,30X,F6.0)',IOSTAT=ERR)
 !     &        ECOTYP, LNGSH, THRESH
-          READ (C255,'(A6,66X,F6.0)',IOSTAT=ERR)
-     &        ECOTYP, LNGSH
+          READ (C255,'(A6,66X,F6.0,48X,F6.0)',IOSTAT=ERR)
+     &        ECOTYP, LNGSH, XMAGE
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
           IF (ECOTYP .EQ. ECONO) THEN
             EXIT
@@ -321,8 +326,9 @@
       SHELN  = 0.0
       FLWN   = 0.0
 
-      CALL FreshWt(SEASINIT, ISWFWT, NR2TIM, PHTIM, SDNO, SHELN, 
-     &    WTSD, WTSHE, YRPLT)
+      CALL FRESHWT(DYNAMIC, ISWFWT,                
+     &        NR2TIM, PHTIM, WTSD,WTSHE,YRPLT,XMAGE,            !Input 
+     &        HPODWT,HSDWT,HSHELWT)                             !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -343,6 +349,8 @@
         TEMPOD  = 0.0
         TRIGGR  = 0
         WTSHM   = 0.0
+        TOSHMINE= 0.0
+        TOCHMINE= 0.0
 
         DO NPP = 1, NCOHORTS
           SHELN(NPP) = 0.0
@@ -375,7 +383,9 @@
       NGRSH  = 0.0
       NLEFT  = 0.0
       PGLEFT = 0.0
-
+      TOSHMINE= 0.0
+      TOCHMINE= 0.0
+      
 !     DAS   = MAX(0,TIMDIF(YRSIM,YRDOY))
       CALL GET(CONTROL)
       DAS = CONTROL % DAS
@@ -619,6 +629,7 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
 !     Grow shells if greater than 1 day old
 !-----------------------------------------------------------------------
             SHMINE = 0.0
+            CHMINE = 0.0
             IF (SDDES(NPP) .GT. 0.0) THEN
               REDSHL = WTSHE(NPP)*SDDES(NPP)/(SDDES(NPP)+SDNO(NPP))
             ELSE
@@ -627,9 +638,18 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
             SDMAXX = (WTSHE(NPP)-REDSHL) * THRESH/(100. - THRESH)
             IF (SHELWT-WTSHM .GT. 0.0 .AND. SDMAXX .GE. WTSD(NPP)) THEN
               SHMINE = NRUSSH/0.16 * WTSHE(NPP)/(SHELWT - WTSHM)
+              SHMINE = MAX(SHMINE,0.0)              
+              CHMINE = CRUSSH * WTSHE(NPP)/(SHELWT - WTSHM)
+              CHMINE = MAX(CHMINE,0.0)
             ENDIF
-            WTSHE(NPP) = WTSHE(NPP) + ADDSHL - MAX(SHMINE,0.0)
+
+              TOSHMINE = TOSHMINE + SHMINE
+              TOCHMINE = TOCHMINE + CHMINE
+! FO - IMPORTANT check if ADDSHL is lower than SHMINE and CHMINE.
+            WTSHE(NPP) = WTSHE(NPP) + ADDSHL - SHMINE - CHMINE
+            WTSHE(NPP) = MAX(0.0,WTSHE(NPP))
  2100     ENDDO
+ 
 !-----------------------------------------------------------------------
 !     Set seeds based on ratio of supply to demand for shells,
 !     average temperature and night length effect
@@ -660,6 +680,7 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
                 WTABR = (START-SHELN(NPP))*WTSHE(NPP)/START
               ENDIF
               WTSHE(NPP) = WTSHE(NPP) - WTABR
+              WTSHE(NPP) = MAX(0.0,WTSHE(NPP))
               WTABRT = WTABRT + WTABR
             ENDIF
  2200     ENDDO
@@ -746,10 +767,7 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
 
 !-----------------------------------------------------------------------
         IF (YRDOY .GE. YRNR2 .AND. YRNR2 .GT. 0) THEN
-
-          CALL FreshWt(INTEGR, ISWFWT, NR2TIM, PHTIM, SDNO, SHELN, 
-     &       WTSD, WTSHE, YRPLT)
-
+          
           DO 2900 NPP = 1, NR2TIM + 1
 !-----------------------------------------------------------------------
             PAGE = PHTIM(NR2TIM + 1) - PHTIM(NPP)
@@ -773,6 +791,12 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
               ENDIF
             ENDIF
  2900     ENDDO
+ 
+ 
+          CALL FRESHWT(DYNAMIC, ISWFWT,                
+     &        NR2TIM, PHTIM, WTSD,WTSHE,YRPLT,XMAGE,            !Input 
+     &        HPODWT,HSDWT,HSHELWT)                             !Output
+     
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -797,8 +821,9 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
         
 !-----------------------------------------------------------------------
       IF (YRDOY .GE. YRNR2 .AND. YRNR2 .GT. 0) THEN
-        CALL FreshWt(DYNAMIC, ISWFWT, NR2TIM, PHTIM, SDNO, SHELN, 
-     &       WTSD, WTSHE, YRPLT)
+          CALL FRESHWT(DYNAMIC, ISWFWT,                
+     &        NR2TIM, PHTIM, WTSD,WTSHE,YRPLT,XMAGE,            !Input 
+     &        HPODWT,HSDWT,HSHELWT)                             !Output
       ENDIF
 
 !***********************************************************************
@@ -1238,8 +1263,7 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
 ! FNINSH    Maximum fraction of N for growing shell tissue
 !             (g[N] / g[shell])
 ! FNPDT(I)  Critical values of temperature for function to reduce pod 
-!             addition and seed setting rates under non-optimal temperatures
-!             (°C)
+!             addition and seed setting rates under non-optimal temperatures (Â°C)
 ! GDMSD     Seed growth demand based on temperature and photoperiod
 !             (g[seed] / m2 / d)
 ! GRRAT1    Maximum growth per individual shell (g / shell / d)
@@ -1387,7 +1411,7 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
 !             reproductive development temperature function
 !             (photo-thermal days / day)
 ! TEMPOD    Factor for modifying pod setting based on temperature 
-! TGRO(I)   Hourly air temperature (°C)
+! TGRO(I)   Hourly air temperature (Â°C)
 ! THETA     Curvature of rectangular hyperbola to limit seed growth rate to 
 !             hold minimum seed N concentration. 
 ! THRESH    The maximum ratio mass of seed to mass of seed plus shell at 

@@ -26,7 +26,7 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
-      USE MultiHar
+      USE ModuleData
       
       IMPLICIT NONE
       EXTERNAL YR_DOY, ERROR, FIND, TIMDIF, GETLUN, WARNING, IPAHAR
@@ -49,6 +49,7 @@ C=======================================================================
       REAL HPC(NAPPL), HBPC(NAPPL)
       REAL HARVFRAC(2)
       REAL DLAYR(NL), DUL(NL), LL(NL), SW(NL)
+      REAL HARVF, NPHAR
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -124,6 +125,8 @@ C-----------------------------------------------------------------------
       HARVFRAC(1) = HPC(1)  / 100.
       HARVFRAC(2) = HBPC(1) / 100.
 
+! 08/15/2022 FO Multi-Harvest index to the reported harvests
+      NPHAR = 1
 C***********************************************************************
 C***********************************************************************
 C     Daily integration
@@ -144,23 +147,19 @@ C-----------------------------------------------------------------------
 C Harvest on specified day of year, HDATE
 C-----------------------------------------------------------------------
       ELSE IF (IHARI .EQ. 'R') THEN
-!        IF (YRDOY .GE. HDATE(1)) THEN
         IF (YRDOY .GE. HDATE(NHAR)) THEN
-!C-GH    IF (YRDOY .GE. HDATE(1) .OR. MDATE .EQ. YRDOY) THEN
-!           YREND     = YRDOY
           YREND = HDATE(NHAR)
           CONTROL % CropStatus = 2 !harvest on reported date
         ENDIF
-
-       HARV_AH = 0
-       IF (YRDOY .GE. HDATE(iHARV)) THEN
-         WRITE(7202,'(I7, 5X, A)') YRDOY, '<-Harvested_Today'
-         HARV_AH = 1
-         if (iHARV < NHAR)Then
-            iHARV = iHARV + 1
-         end if  
-       ENDIF
-       
+        
+        HARVF = 0
+        IF (YRDOY .GE. HDATE(NPHAR)) THEN
+         HARVF = 1
+         IF (NPHAR < NHAR) THEN
+            NPHAR = NPHAR + 1
+         ENDIF
+        ENDIF
+        CALL PUT('MULTIHARVE','HARVF',HARVF)
 C-----------------------------------------------------------------------
 C Harvest on specified day after planting, HDATE
 C-----------------------------------------------------------------------
@@ -304,7 +303,6 @@ C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
-      Use MultiHar
       
       IMPLICIT NONE
       EXTERNAL ERROR, FIND
