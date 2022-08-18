@@ -15,8 +15,9 @@
 !=======================================================================
 
       SUBROUTINE FRESHWT(DYNAMIC, ISWFWT,                
-     &    NR2TIM, PHTIM, WTSD,WTSHE,YRPLT,XMAGE,                 !Input 
-     &    HPODWT,HSDWT,HSHELWT)                                  !Output
+     &        YRPLT, XMAGE, NR2TIM, PHTIM,                      !Input 
+     &        WTSD,SDNO,WTSHE,SHELN,                            !Input 
+     &        HPODWT,HSDWT,HSHELWT)                             !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -136,12 +137,12 @@
         END SELECT
         
   230   FORMAT('@YEAR DOY   DAS   DAP',
-     &    '   FPWAD   PDMCD   AFPWD',
-     &    '   ADPWD   PAGED   HARV   HARVF   P#AD     G#AD   TWTSH',
-     &    '    TDSW    TDPW  RPODNO  RSEEDN   HSHELWT   HSDWT   HPODWT',
-     &    '   RUDPW   RTFPW      HRVF     CHRVF'   
-     &    '    HRVD   CHRVD ARFPW ARDPW ARDSD ',
-     &    'PRDSH PRDSD ARDSP ARSNP   HRSN   HRPN  HRDSD  HRDSH  NR2TIM')
+     &    '  NR2TIM  PodAge   HARVF',   
+     &    '   TOSDN   TOWSD   MTDSD   HSDWT',
+     &    '   TOSHN   TOWSH   MTDSH HSHELWT',
+     &    '   TOPOW  HPODWT',   
+     &    '   TOFPW   MTFPW   MTDPW',
+     &    ' RSEEDNO  RPODNO')     
      
   231   FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
@@ -202,8 +203,8 @@
         HSDWT   = 0.0 
         HSHELWT = 0.0
         HPODWT  = 0.0
-        HARVF   = 0.0
-        CALL GET('MULTIHARVE','HARVF',HARVF)   
+        HARVF   = 0
+        CALL GET('MHARVEST','HARVF',HARVF)   
            
         DO I = 1, 7
           CLASS(I) = 0.0
@@ -290,13 +291,13 @@
           ! Accumulating in the basket for harvesting (MultiHarvest)
           IF (page >= XMAGE) THEN
              !Fresh weight of mature fruits
-             MTFPW = RTFPW + (WTSD(NPP) + WTSHE(NPP)) / DMC(NPP)
+             MTFPW = MTFPW + (WTSD(NPP) + WTSHE(NPP)) / DMC(NPP)
              !Dry weight of mature fruits (seed and shell)
-             MTDPW = HPODWT + WTSD(NPP) + WTSHE(NPP)
+             MTDPW = MTDPW + WTSD(NPP) + WTSHE(NPP)
              !Seed mass of mature fruits - wtsd = seed mass for cohort
-             MTDSD = HSDWT + WTSD(NPP)
+             MTDSD = MTDSD + WTSD(NPP)
              !Shell mass of mature fruits - wtshe = shell mass for cohort
-             MTDSH = HSHELWT + WTSHE(NPP)
+             MTDSH = MTDSH + WTSHE(NPP)
           ENDIF
           
           ! Apply Harvest
@@ -342,17 +343,6 @@
           ShelPC = 0.0
         ENDIF
 
-        IF (RPODNO > 1.E-6) THEN
-          AvgRFPW = RTFPW / RPODNO
-          AvgRDPW = HPODWT / RPODNO
-          AvgRDSP = HSDWT / RPODNO
-          AvgRSNP = RSEEDNO / RPODNO
-        ELSE
-          AvgRFPW = 0.0
-          AvgRDPW = 0.0
-          AvgRDSP = 0.0
-          AvgRSNP = 0.0
-        ENDIF
         IF (RSEEDNO > 1.E-6) THEN
           AvgRDSD = 1000.0* HSDWT / RSEEDNO
         ELSE
@@ -402,58 +392,62 @@
 
           SELECT CASE (CROP)
            CASE ('CU')        ! Cucumber
-              WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge, HARV, HARVF, PODNO, SEEDNO, 
-     &      TWTSH*10.,TDSW*10.,TDPW*10., 
-     &      RPODNO, RSEEDNO, HSHELWT*10., HSDWT*10., HPODWT*10.,  
-     &      RUDPW*10., RTFPW*10., HRVF*10.0, CHRVF*10.0,
-     &      HRVD*10.0, CHRVD*10.0, AvgRFPW, 
-     &      AvgRDPW, AvgRDSD, PRDSH, PRDSD, AvgRDSP, AvgRSNP, 
-     &      HRSN, HRPN, HRDSD*10.0, HRDSH*10.0, NR2TIM
+              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
+     &          NR2TIM,PodAge,HARVF,   
+     &          TOSDN, TOWSD,MTDSD,HSDWT,
+     &          TOSHN, TOWSH,MTDSH, HSHELWT,
+     &          TOPOW,HPODWT,
+     &          TOFPW, MTFPW,MTDPW,
+     &          RSEEDNO,RPODNO 
           
             CASE ('GB')       ! Snap bean
-              WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge,NINT(CLASS(7)*10.),NINT(CLASS(1)*10.),
-     &      NINT(CLASS(2)*10.),NINT(CLASS(3)*10.),NINT(CLASS(4)*10.),
-     &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.)          
-          ! add aditional values  for more than one harvest
+              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
+     &          NR2TIM,PodAge,HARVF,   
+     &          TOSDN, TOWSD,MTDSD,HSDWT,
+     &          TOSHN, TOWSH,MTDSH, HSHELWT,
+     &          TOPOW,HPODWT,
+     &          TOFPW, MTFPW,MTDPW,
+     &          RSEEDNO,RPODNO 
+     
             CASE ('PR')       ! Bell pepper
-              WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge
+              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
+     &          NR2TIM,PodAge,HARVF,   
+     &          TOSDN, TOWSD,MTDSD,HSDWT,
+     &          TOSHN, TOWSH,MTDSH, HSHELWT,
+     &          TOPOW,HPODWT,
+     &          TOFPW, MTFPW,MTDPW,
+     &          RSEEDNO,RPODNO 
 
             CASE ('SR')       ! Strawberry
-              WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge, HARV, HARVF, PODNO, SEEDNO, 
-     &      TWTSH*10.,TDSW*10.,TDPW*10., 
-     &      RPODNO, RSEEDNO, HSHELWT*10., HSDWT*10., HPODWT*10.,  
-     &      RUDPW*10., RTFPW*10., HRVF*10.0, CHRVF*10.0,
-     &      HRVD*10.0, CHRVD*10.0, AvgRFPW, 
-     &      AvgRDPW, AvgRDSD, PRDSH, PRDSD, AvgRDSP, AvgRSNP, 
-     &      HRSN, HRPN, HRDSD*10.0, HRDSH*10.0, NR2TIM
+              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
+     &          NR2TIM,PodAge,HARVF,   
+     &          TOSDN, TOWSD,MTDSD,HSDWT,
+     &          TOSHN, TOWSH,MTDSH, HSHELWT,
+     &          TOPOW,HPODWT,
+     &          TOFPW, MTFPW,MTDPW,
+     &          RSEEDNO,RPODNO 
      
-           CASE ('TM')        ! Cucumber
-              WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge, HARV, HARVF, PODNO, SEEDNO, 
-     &      TWTSH*10.,TDSW*10.,TDPW*10., 
-     &      RPODNO, RSEEDNO, HSHELWT*10., HSDWT*10., HPODWT*10.,  
-     &      RUDPW*10., RTFPW*10., HRVF*10.0, CHRVF*10.0,
-     &      HRVD*10.0, CHRVD*10.0, AvgRFPW, 
-     &      AvgRDPW, AvgRDSD, PRDSH, PRDSD, AvgRDSP, AvgRSNP, 
-     &      HRSN, HRPN, HRDSD*10.0, HRDSH*10.0, NR2TIM
+            CASE ('TM')        ! Tomato
+              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
+     &          NR2TIM,PodAge,HARVF,   
+     &          TOSDN, TOWSD,MTDSD,HSDWT,
+     &          TOSHN, TOWSH,MTDSH, HSHELWT,
+     &          TOPOW,HPODWT,
+     &          TOFPW, MTFPW,MTDPW,
+     &          RSEEDNO,RPODNO   
           END SELECT
 
-  ! Alwin Hopf / VSH - for FreshWt output
-  ! strawberry, but maybe also for other crops where fresh weight is of interest
-1000      FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    I8,F8.3,F8.1,F8.2,F8.1,I7,I10,F7.2,F9.2,3(F8.1),7(F8.2),
-     &    2(F10.2),2(F8.2),2(F6.1),
-     &    F6.1, 2(F6.1), 2(F6.1), 2(F7.1), 2(F7.1), I8)
-       
+
+
+
+1000      FORMAT(1X,I4,1X,I3,2(1X,I5))
+
+1001      FORMAT(1X,I4,1X,I3,2(1X,I5),
+     &           I8,1X,F7.2,1X,I7,4(1X,F7.2),
+     &           6(1X,F7.2),
+     &           5(1X,F7.2))
+
+            
 2000      FORMAT(1X,I4,1X,I3.3,2(1X,I5),
      &    I8,F8.3,F8.1,F8.2,F8.1,
      &    7(1X,I5))

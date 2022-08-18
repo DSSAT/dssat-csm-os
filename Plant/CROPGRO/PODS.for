@@ -327,7 +327,8 @@
       FLWN   = 0.0
 
       CALL FRESHWT(DYNAMIC, ISWFWT,                
-     &        NR2TIM, PHTIM, WTSD,WTSHE,YRPLT,XMAGE,            !Input 
+     &        YRPLT, XMAGE, NR2TIM, PHTIM,                      !Input 
+     &        WTSD,SDNO,WTSHE,SHELN,                            !Input 
      &        HPODWT,HSDWT,HSHELWT)                             !Output
 
 !***********************************************************************
@@ -794,7 +795,8 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
  
  
           CALL FRESHWT(DYNAMIC, ISWFWT,                
-     &        NR2TIM, PHTIM, WTSD,WTSHE,YRPLT,XMAGE,            !Input 
+     &        YRPLT, XMAGE, NR2TIM, PHTIM,                      !Input 
+     &        WTSD,SDNO,WTSHE,SHELN,                            !Input 
      &        HPODWT,HSDWT,HSHELWT)                             !Output
      
         ENDIF
@@ -822,7 +824,8 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
 !-----------------------------------------------------------------------
       IF (YRDOY .GE. YRNR2 .AND. YRNR2 .GT. 0) THEN
           CALL FRESHWT(DYNAMIC, ISWFWT,                
-     &        NR2TIM, PHTIM, WTSD,WTSHE,YRPLT,XMAGE,            !Input 
+     &        YRPLT, XMAGE, NR2TIM, PHTIM,                      !Input 
+     &        WTSD,SDNO,WTSHE,SHELN,                            !Input 
      &        HPODWT,HSDWT,HSHELWT)                             !Output
       ENDIF
 

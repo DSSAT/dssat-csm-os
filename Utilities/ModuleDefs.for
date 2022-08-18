@@ -490,7 +490,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL PMFRACTION
       END TYPE
       
-      TYPE MULTIHARVE
+      TYPE MHarveType
         INTEGER HARVF
       END TYPE 
 
@@ -510,7 +510,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (WeathType)   WEATH    !Supplemental weather data
         TYPE (PDLABETATYPE)PDLABETA
         TYPE (PMDataType)  PM
-        TYPE (MULTIHARVE)  MHARVEST
+        TYPE (MHarveType)  MHARVEST
       End Type TransferType
 
 !     The variable SAVE_data contains all of the components to be 
@@ -987,7 +987,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
-      CASE ('MULTIHARVE')
+      CASE ('MHARVEST')
         SELECT CASE(VarName)
         CASE('HARVF'); Value = SAVE_data % MHARVEST % HARVF
         CASE DEFAULT; ERR = .TRUE.
@@ -1033,7 +1033,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
         
-      CASE ('MULTIHARVE')
+      CASE ('MHARVEST')
         SELECT CASE(VarName)
         CASE('HARVF'); SAVE_data % MHARVEST % HARVF = Value
         CASE DEFAULT; ERR = .TRUE.

@@ -42,14 +42,13 @@ C=======================================================================
       INTEGER YRDOY, MDATE, DAP, NOUTDO
       INTEGER DYNAMIC, RUN
       INTEGER HDATE(NAPPL), HSTG(NAPPL) 
-      INTEGER STGDOY(20) 
+      INTEGER STGDOY(20), HARVF, NPHAR
 
       REAL AVGSW, CUMSW, DTRY, SWPLTD
       REAL SWPLTH, SWPLTL, XDEP, XDEPL
       REAL HPC(NAPPL), HBPC(NAPPL)
       REAL HARVFRAC(2)
       REAL DLAYR(NL), DUL(NL), LL(NL), SW(NL)
-      REAL HARVF, NPHAR
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -125,7 +124,7 @@ C-----------------------------------------------------------------------
       HARVFRAC(1) = HPC(1)  / 100.
       HARVFRAC(2) = HBPC(1) / 100.
 
-! 08/15/2022 FO Multi-Harvest index to the reported harvests
+!     08/15/2022 FO Multi-Harvest index to the reported harvests
       NPHAR = 1
 C***********************************************************************
 C***********************************************************************
@@ -159,7 +158,7 @@ C-----------------------------------------------------------------------
             NPHAR = NPHAR + 1
          ENDIF
         ENDIF
-        CALL PUT('MULTIHARVE','HARVF',HARVF)
+        CALL PUT('MHARVEST','HARVF',HARVF)
 C-----------------------------------------------------------------------
 C Harvest on specified day after planting, HDATE
 C-----------------------------------------------------------------------
