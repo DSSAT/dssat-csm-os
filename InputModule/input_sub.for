@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2020 
+C COPYRIGHT 1998-2022
 C                     DSSAT Foundation                      
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -9,9 +9,9 @@ C=======================================================================
 C=======================================================================
 C  INPUT, Subroutine
 C
-C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.5
+C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.8
 C
-C  October 2007      Gerrit Hoogenboom, Cheryl Porter and Jim Jones
+C  Gerrit Hoogenboom, Cheryl Porter and Jim Jones
 C
 C
 C  Reads FileX, includes sensitivity analysis and writes a

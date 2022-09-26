@@ -42,7 +42,7 @@ C=======================================================================
       CHARACTER*80 CHARTEST
 
       INTEGER      LNCHE,LUNEXP,ISECT,LINEXP,CDATE(NAPPL),NCHEM
-      INTEGER      ERRNUM,J,IFIND,LN,YRSIM,LNSIM
+      INTEGER      ERRNUM,J,IFIND,LN,YRSIM,LNSIM,ICHCOD
       REAL         CHAMT(NAPPL),CHDEP(NAPPL)
 
       PARAMETER   (ERRKEY ='IPCHEM')
@@ -97,6 +97,14 @@ C  FO 05/07/2020 - Add new Y4K subroutine call to convert YRDOY
      &          (CHAMT(NCHEM) .GT. 9999999.)) THEN
                CALL ERROR (ERRKEY,11,FILEX,LINEXP)
             ENDIF
+            
+C-GH 7/25/2022 Check for missing chemical code
+            READ (CHCOD(NCHEM)(3:5),'(I3)',IOSTAT=ERRNUM) ICHCOD
+            IF (ICHCOD .LE. 0 .OR. ICHCOD .GE. 999 .OR.
+     &          ERRNUM .NE. 0) THEN
+               CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+            ENDIF 
+            
             NCHEM = NCHEM + 1
             IF (NCHEM .GT. NAPPL) GO TO 120
           ELSE

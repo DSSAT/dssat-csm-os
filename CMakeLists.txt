@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 0)
-SET(BUILD 27)
+SET(BUILD 28)
 
 # Get the current working branch
 execute_process(
@@ -645,7 +645,6 @@ set(
         "Weather/weathr.for"
         "Weather/WGEN.for"
         "Weather/WTHMOD.for"
-        2D/Denit_Ceres_2D.for
         2D/Drainage_2D.for
         2D/Drip_Irrig.for
         2D/ESR_SoilEvap_2D.for
