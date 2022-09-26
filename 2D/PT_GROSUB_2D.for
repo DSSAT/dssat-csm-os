@@ -40,6 +40,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL PT_IPGRO, PT_NUPTAK_2D, PT_NFACTO, ALIN, TABEX
       SAVE
 
       Type (CellType) Cells(MaxRows,MaxCols)

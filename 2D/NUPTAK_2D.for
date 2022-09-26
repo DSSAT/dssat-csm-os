@@ -16,7 +16,7 @@ C=======================================================================
 
       SUBROUTINE NUPTAK_2D(DYNAMIC,
      &    CELLS, DLAYR, DUL, FILECC, KG2PPM, LL,          !Input
-     &    NDMSDR, NDMTOT, SAT, NLAYR,                     !Input  
+     &    NDMSDR, NDMTOT, SAT,                            !Input  
      &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)               !Output
 
 !-----------------------------------------------------------------------
@@ -25,6 +25,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE
       SAVE
       
       Type (CellType) Cells(MaxRows,MaxCols)
@@ -37,7 +38,7 @@ C=======================================================================
       CHARACTER*92 FILECC
 
       INTEGER I, J, LUNCRP, ERR, LNUM, ISECT, FOUND, L, DYNAMIC, FurCol1
-      INTEGER NLAYR
+!     INTEGER NLAYR
 
       REAL NUF, XMIN, HalfRow, BEDWD
       REAL DLAYR(NL), LL(NL), DUL(NL), SAT(NL) !, SW(NL)

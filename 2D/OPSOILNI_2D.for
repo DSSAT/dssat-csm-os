@@ -33,6 +33,7 @@ C
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT, SUMVALS
       SAVE
 !-----------------------------------------------------------------------
 

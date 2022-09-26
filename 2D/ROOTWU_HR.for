@@ -30,6 +30,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL WATERSTRESS
       SAVE
 C-----------------------------------------------------------------------
       INTEGER DYNAMIC, I, L, NLAYR, N_HRS     !, LUN2

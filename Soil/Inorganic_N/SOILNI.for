@@ -71,6 +71,10 @@ C=======================================================================
       USE FloodModule
       USE ModSoilMix
       IMPLICIT  NONE
+      EXTERNAL DENIT_CERES, INCDAT, YR_DOY, SOILNIBAL, OPSOILNI, 
+     &  SOILNI_INIT, NCHECK_INORG, FLOOD_CHEM, OXLAYER, DENIT_DAYCENT, 
+     &  NOX_PULSE, INCYD, DAYCENT_DIFFUSIVITY, NFLUX
+
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT, MEGHG

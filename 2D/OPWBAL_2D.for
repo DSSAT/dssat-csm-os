@@ -16,6 +16,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL YR_DOY, GETLUN, HEADER, INCDAT, SUMSW, SUMVALS
       SAVE
 
       CHARACTER*1 IDETW, IDETL, ISWWAT, RNMODE

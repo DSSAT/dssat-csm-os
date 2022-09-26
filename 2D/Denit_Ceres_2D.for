@@ -5,7 +5,8 @@ C  Determines denitrification based on Ceres model
 
 C-----------------------------------------------------------------------
 C  Revision history
-C  07/09/2018 PG / CHP / MZ Written
+C  06/12/2014 PG / CHP Written
+C  07/09/2018 MZ Modified for 2D
 C-----------------------------------------------------------------------
 C  Called : SOIL
 C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,

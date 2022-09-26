@@ -24,13 +24,11 @@ C                   as defined in ModuleDefs.for
 C=======================================================================
 
       SUBROUTINE PT_SUBSTOR_2D(CONTROL, ISWITCH,
-     &    CO2, EOP, CELLS, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input 
-    ! &    CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
-     &    ST, SW, TMAX, TMIN,SWFAC, TURFAC, TRWUP, TWILEN, YREND, YRPLT,!Input  
-   !   &    ST, SW, TMAX, TMIN, TRWUP, TWILEN, YREND, YRPLT,!Input  
-     &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output 1D does not has RLV2
-    ! &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV2,     !Output JZW change RLV to RLV2
-     &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
+     &  CO2, EOP, CELLS, HARVFRAC, NH4, NO3,          !Input
+     &  SOILPROP, SRAD, ST, SW, TMAX, TMIN,           !Input 
+     &  SWFAC, TURFAC, TRWUP, TWILEN, YREND, YRPLT,   !Input  
+     &  CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,   !Output 
+     &  RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)     !Output
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -38,6 +36,9 @@ C=======================================================================
       USE Cells_2D
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL PT_OPGROW, PT_OPHARV, PT_IPSPE, PT_ROOTGR_2D, 
+     &  PT_PHENOL, PT_GROSUB_2D, HRES_CERES
+
       SAVE
 
       CHARACTER*1  IDETG, ISWNIT, ISWWAT

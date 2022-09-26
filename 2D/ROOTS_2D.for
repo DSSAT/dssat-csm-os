@@ -1,5 +1,5 @@
 !=======================================================================
-!  ROOTY_2D, Subroutine, G. Hoogenboom, J.W. Jones
+!  ROOTY_2D, Subroutine, 
 !     C.H.Porter modified for simple 2D algorithm
 !-----------------------------------------------------------------------
 !
@@ -12,7 +12,7 @@
 
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
-!  01/09/1989 GH  Written.
+!  01/09/1989 GH  Written. (ROOTS.for)
 !  09/29/1995 KJB Changed to lessen effect of water deficit on root depth
 !                 increase.
 !  01/19/1996 JWJ Added effects of excess water.
@@ -45,6 +45,7 @@
       USE Cells_2D
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL IPROOT_2D, TABEX, OPROOTS_2D, INROOT_2D, AGGREGATE_ROOTS
       SAVE
 
       CHARACTER*1 ISWWAT
@@ -570,6 +571,8 @@
 !     NL defined in ModuleDefs.for
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE, WARNING
+      SAVE
 
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = '2DROOT')
@@ -1001,6 +1004,7 @@
       USE Cells_2D
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL YR_DOY, GETLUN, HEADER, INCDAT
       SAVE
 
       REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: RLV_2D,Thick,Width
