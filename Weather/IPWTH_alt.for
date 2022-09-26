@@ -619,8 +619,8 @@ C     Send labels and values to OPSUM
 
 !     Error checking
       CALL DailyWeatherCheck(CONTROL,
-     &    "WTHINIT", FILEWW, RAIN, RecNum, RHUM,          !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    "WTHINIT", FILEWW, RAIN, RecNum,                !Input
+     &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
 
       IF (YREND > 0) THEN
@@ -640,8 +640,8 @@ C     Send labels and values to OPSUM
       
 !       Error checking
         CALL DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, RecNum, RHUM,             !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    ERRKEY, FILEWW, RAIN, RecNum,                   !Input
+     &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
 
       ENDIF
@@ -796,8 +796,8 @@ C         Read in weather file header.
 
 !     Error checking
       CALL DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, RecNum, RHUM,             !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    ERRKEY, FILEWW, RAIN, RecNum,                   !Input
+     &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
 
 !      ERR = 0
@@ -1252,8 +1252,8 @@ C         Read in weather file header.
 ! 09/01/2009 CHP Written
 !-----------------------------------------------------------------------
       Subroutine DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, RecNum, RHUM,             !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOYW,         !Input
+     &    ERRKEY, FILEWW, RAIN, RecNum,                   !Input
+     &    SRAD, TMAX, TMIN, YRDOYW,                       !Input
      &    YREND)                                          !Output
 
 !     Checks validity of daily weather for observed or generated values.
@@ -1265,8 +1265,7 @@ C         Read in weather file header.
       CHARACTER*(*) ERRKEY, FILEWW
       CHARACTER*78 MSG(10)
       Integer ErrCode, NChar, RecNum, YRDOYW, YREND
-      REAL RAIN, RHUM, SRAD, TDEW, TMAX, TMIN, WINDSP
-      REAL CALC_TDEW
+      REAL RAIN, SRAD, TMAX, TMIN
       TYPE (ControlType) CONTROL
 
 !     Error checking
@@ -1342,29 +1341,6 @@ C         Read in weather file header.
         WRITE(MSG(4),'("SRAD = ",F6.2," MJ.m-2.d-1")') SRAD
         CALL WARNING(4,ERRKEY,MSG) 
       ENDIF
-
-!     Substitute default values if TDEW or WINDSP are missing.
-      IF (TDEW <= -90.)  THEN 
-c               MJ, 2007-04-05: set TDEW to TMIN if TDEW not otherwise available.  This is not
-c               appropriate to South African (and presumably other) conditions
-c               --> suggest replacing with a better calculation based on relative humidity, if
-c                   available.
-          IF (RHUM .GT. 0.01) THEN
-              TDEW = CALC_TDEW(TMIN, RHUM)
-          ELSE
-             TDEW = TMIN
-          ENDIF
-      ENDIF
-
-!      IF (WINDSP <= 0.) WINDSP = 86.4
-!      IF (WINDSP <= -1.E-6) THEN
-!        WINDSP = 86.4
-!      ELSEIF (WINDSP < 1.0) THEN
-!        MSG(1) = "Unlikely value for WINDSP in weather file."
-!        WRITE(MSG(2),'("WINDSP = ",F8.2," km/d")') WINDSP
-!        CALL WARNING(2,ERRKEY,MSG)
-!        CALL ERROR(ERRKEY,9,FILEW,RecNum)
-!      ENDIF
 
       Return
       End Subroutine DailyWeatherCheck
@@ -1487,8 +1463,6 @@ c                   available.
 
 !-----------------------------------------------------------------------
 ! BLANK   blank character 
-! CALC_TDEW Function that calculates dew point temperature from min and
-!           max temperatures and relative humidity.
 ! CCO2    Atmospheric CO2 concentration read from input file (ppm)
 ! ERRKEY  Subroutine name for error file 
 ! ERR  Error number for input 

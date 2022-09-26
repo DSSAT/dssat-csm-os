@@ -71,6 +71,8 @@ C=======================================================================
      &  TA, TAMP, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDRUN, WINDSP,
      &  XELEV, XLAT, XLONG
+      LOGICAL NOTDEW, NOWIND
+      REAL CALC_TDEW
 
       REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR
       REAL, DIMENSION(TS) :: RADHR, RHUMHR, TAIRHR, TGRO, WINDHR
@@ -263,10 +265,28 @@ C     Calculate daily solar parameters.
 C     Adjust wind speed from reference height to 2m height.
       WINDRUN = WINDSP
       IF (WINDSP > 0.0) THEN
+        NOWIND = .FALSE.
 !       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
         WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
       ELSE
+        NOWIND = .TRUE.
         WINDSP = 86.4   ! Equivalent to average of 1.0 m/s
+      ENDIF
+      
+!     Substitute default values if TDEW is missing.
+      IF (TDEW <= -90.)  THEN 
+c               MJ, 2007-04-05: set TDEW to TMIN if TDEW not otherwise available.  This is not
+c               appropriate to South African (and presumably other) conditions
+c               --> suggest replacing with a better calculation based on relative humidity, if
+c                   available.
+          NOTDEW = .TRUE.
+          IF (RHUM .GT. 0.01) THEN
+              TDEW = CALC_TDEW(TMIN, RHUM)
+          ELSE
+             TDEW = TMIN
+          ENDIF
+      ELSE
+          NOTDEW = .FALSE.
       ENDIF
 
 C     Calculate hourly weather data.
@@ -379,12 +399,30 @@ C     Calculate daily solar parameters.
 C     Adjust wind speed from reference height to 2m height.
       WINDRUN = WINDSP
       IF (WINDSP > 0.0) THEN
+        NOWIND = .FALSE.
 !       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
         WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
       ELSE
+        NOWIND = .TRUE.
         WINDSP = 86.4
       ENDIF
 
+!     Substitute default values if TDEW is missing.
+      IF (TDEW <= -90.)  THEN 
+c               MJ, 2007-04-05: set TDEW to TMIN if TDEW not otherwise available.  This is not
+c               appropriate to South African (and presumably other) conditions
+c               --> suggest replacing with a better calculation based on relative humidity, if
+c                   available.
+          NOTDEW = .TRUE.
+          IF (RHUM .GT. 0.01) THEN
+              TDEW = CALC_TDEW(TMIN, RHUM)
+          ELSE
+             TDEW = TMIN
+          ENDIF
+      ELSE
+          NOTDEW = .FALSE.
+      ENDIF      
+      
 C     Calculate hourly weather data.
       CALL HMET(
      &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
@@ -456,7 +494,9 @@ C-----------------------------------------------------------------------
       WEATHER % AMTRH  = AMTRH
       WEATHER % CLOUDS = CLOUDS
       WEATHER % CO2    = CO2   
-      WEATHER % DAYL   = DAYL  
+      WEATHER % DAYL   = DAYL
+      WEATHER % NOTDEW = NOTDEW
+      WEATHER % NOWIND = NOWIND
       WEATHER % OZON7  = OZON7  
       WEATHER % PAR    = PAR   
       WEATHER % RAIN   = RAIN  
@@ -522,7 +562,9 @@ C-----------------------------------------------------------------------
 ! MULTI      Current simulation year (=1 for first or single simulation, 
 !              =NYRS for last seasonal simulation) 
 ! NEV        Number of environmental modification records 
-! RUN       Report number for sequenced or multi-season runs 
+! NOTDEW     No TDEW read from weather file
+! NOWIND     No WIND read from weather file
+! RUN        Report number for sequenced or multi-season runs 
 ! PAR        Daily photosynthetically active radiation or photon flux 
 !              density (moles[quanta]/m2-d)
 ! PARHR(TS)  hourly PAR (J / m2 - s)
