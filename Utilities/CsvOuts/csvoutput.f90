@@ -2206,6 +2206,7 @@ Subroutine CsvOutN2O(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
 end Subroutine CsvOutN2O
 !---------------------------------------------------------------------------------
 ! Sub for somlitC.csv output Parton Soil Organic Matter output
+! 09/02/2022 FO - Updated array size REAL due to array bound mismatch
 Subroutine CsvOutSomC(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS,     &
       SOC_20CM, SOC_20CM_P, SOC_40CM, SOC_40CM_P,                          &
       SLC_20CM, SLC_20CM_P, SLC_40CM, SLC_40CM_P,                          &
@@ -2224,7 +2225,7 @@ Subroutine CsvOutSomC(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS,     &
    REAL,Intent(IN) :: SLC_20CM, SLC_20CM_P, SLC_40CM, SLC_40CM_P
    REAL,Intent(IN) :: TCTD, TC0D, TCSD
    
-   REAL,Dimension(5),Intent(IN) :: TC, S1C, S2C, S3C, LIT, MET, STR 
+   REAL,Dimension(NLR),Intent(IN) :: TC, S1C, S2C, S3C, LIT, MET, STR 
    REAL,Intent(IN) :: SOM1C(0:NLR), LITC(0:NLR), METABC(0:NLR), STRUCC(0:NLR) 
    REAL,Intent(IN) :: TSOM1C, TSOM2C, TSOM3C, TMETABC, TSTRUCC, &
        TLITC, CUMRESC, ACCCO2(0:1)
