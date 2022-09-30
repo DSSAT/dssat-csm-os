@@ -184,7 +184,7 @@ C
 
 C-GH Remove cassava
 !     CropSim: wheat, barley
-      CASE ('CSCRP')
+      CASE ('CSCRP','XXCRP')
         READ (C360,810,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
      &      P1, P2, P3, P4, P5, P6, P7, P8, VREQ, VBASE, VEFF,
      &      PPS1, PPS2, PHINT, LA1S, LAFV, LAFR, SHWTS, GNOWT, GWTS,
