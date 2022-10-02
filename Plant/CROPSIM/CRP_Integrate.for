@@ -2,26 +2,21 @@
 ! This is the code from the section (DYNAMIC == INTEGR) lines 7649 - 9224 of the original CSCRP code.
 !***************************************************************************************************************************
 
-      SUBROUTINE CRP_Integrate (ALBEDOS, BD, BRSTAGE, CLOUDS, CO2,
-     &    DAYL, DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT,
-     &    ISWWAT, KCAN, KEP, LL, NFP, NH4LEFT, NLAYR, NO3LEFT,
-     &    PARIP, PARIPA, RLV, RNMODE, SAT, SENCALG, SENLALG,
-     &    SENNALG, SHF, SLPF, SRAD, ST, STGYEARDOY, SW, TAIRHR,
-     &    TDEW, TMIN, TRWUP, UH2O, UNH4, UNO3,
-     &    WEATHER, SOILPROP, CONTROL,      
-     &    WINDSP, YEAR, YEARPLTCSM, LAI, IDETG)
+      SUBROUTINE CRP_Integrate (ALBEDOS, BD, GSTAGE, LAI, CANHT, CO2,
+     &     DEPMAX, DLAYR, DOY, DRAIN, EOP, EP, ET, FERNIT,
+     &     IRRAMT, ISWNIT, ISWWAT, LL, NFP, NH4LEFT, NLAYR,
+     &     NO3LEFT, RAIN, RESCALG, RESLGALG, RESNALG, RLV, RUNOFF,
+     &     SRAD, STGYEARDOY, SW, TLCHD, TMAX, TMIN, TNIMBSOM,
+     &     TNOXD, TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2,
+     &     TOMINSOM3, YEAR)
     
       USE ModuleDefs
       USE CRP_First_Trans_m
       IMPLICIT NONE
 
-      TYPE (ControlType) CONTROL    ! Defined in ModuleDefs
-      TYPE (WeatherType) WEATHER    ! Defined in ModuleDefs
-      TYPE (SoilType) SOILPROP   ! Defined in ModuleDefsR     ! MF Defined in ModuleDefs
-  
-      INTEGER DOY, NLAYR, STGYEARDOY(0:19), YEAR, YEARPLTCSM                  
+      INTEGER DOY, NLAYR, STGYEARDOY(20), YEAR                  
       INTEGER CSIDLAYR, CSTIMDIF                 
-      REAL ALBEDOS, BD(NL), BRSTAGE, CANHT, CLOUDS, CO2, DAYL
+      REAL ALBEDOS, BD(NL), GSTAGE, CANHT, CLOUDS, CO2
       REAL DUL(NL), EO, EOP, ES, KCAN, kep, LL(NL), NFP, NH4LEFT(NL)
       REAL NO3LEFT(NL), PARIP, PARIPA, RLV(NL), SAT(NL)      
       REAL SENCALG(0:NL), SENLALG(0:NL), SENNALG(0:NL), SHF(NL), SLPF
@@ -33,8 +28,8 @@
       REAL RESNALG(0:NL), RESCALG(0:NL), RESLGALG(0:NL) 
       
       REAL CSVPSAT, CSYVAL, TFAC4                             ! Real function calls 
-      REAL YVALXY, TFAC5                                           ! Real function calls !LPM 15sep2017 Added TFAC5 
-      CHARACTER(LEN=1) IDETG, ISWDIS, ISWNIT, ISWWAT, RNMODE  
+      REAL YVALXY
+      CHARACTER(LEN=1) ISWDIS, ISWNIT, ISWWAT, RNMODE  
 
 !=======================================================================
         IF (YEARDOY.GE.PLYEARDOY) THEN
@@ -156,6 +151,7 @@
           ENDIF
 
           SEEDRS = AMAX1(0.0,SEEDRS-CARBOLSD-SEEDRSAVR)
+          !WRITE(*,*) "SEEDRS: ", SEEDRS, " CARBOLSD: ", CARBOLSD, " SEEDRSAVR: ", SEEDRSAVR
           IF (CFLSDRSMSG.NE.'Y'.AND.SEEDRS.LE.0.0.AND.LNUM.LT.4.0) THEN
             CFLSDRSMSG = 'Y'
             IF (LAI.LE.0.0) THEN
@@ -533,6 +529,7 @@
             DO L = HSTG,1,-1
               IF (CUMDU.GE.PSTART(L).AND.PD(L).GT.0.0) THEN
                 RSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L)
+                !WRITE(*,*) "ENTROU: ", RSTAGE, FLOAT(HSTG)
                 ! Rstage cannot go above harvest stage 
                 RSTAGE = AMIN1(FLOAT(HSTG),RSTAGE)
                 EXIT
@@ -1228,6 +1225,7 @@
           TWAD = 
      &      (SEEDRS+SDCOAT+RTWT+LFWT+STWT+GRWT+RSWT+SENTOPRETAINED)
      &         * PLTPOP*10.0
+          !WRITE(*,*) "TWAD: ", TWAD, " SEEDRS: ", SEEDRS, " SDCOAT: ", SDCOAT, " RTWT: ", RTWT, " LFWT: ", LFWT, " STWT: ", STWT, " GRWT: ", GRWT, " RSWT: ", RSWT, " SENTOPRETAINED: ", SENTOPRETAINED
 
           VWAD = (LFWT+STWT+RSWT+SENTOPRETAINED)*PLTPOP * 10.0
           EWAD = (GRWT+CHWT)*PLTPOP * 10.0

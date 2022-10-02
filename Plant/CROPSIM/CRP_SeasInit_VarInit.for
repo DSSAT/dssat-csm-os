@@ -7,7 +7,7 @@
 ! Subroutine CRP_SeasInit_VarInit initializes state and rate variables.
 !**********************************************************************************************************************
     
-      SUBROUTINE CRP_SeasInit_VarInit (BRSTAGE, LAI, CANHT, DEWDUR,
+      SUBROUTINE CRP_SeasInit_VarInit (GSTAGE, LAI, CANHT, DEWDUR,
      &   LAIL, LAILA, NFP, PARIP, PARIPA, RESCALG, RESLGALG, RESNALG,
      &   RLV, SENCALG, SENLALG, SENNALG, STGYEARDOY, TRWUP, UH2O,
      &   UNH4, UNO3)
@@ -17,9 +17,9 @@
 
         IMPLICIT     NONE
         
-        INTEGER STGYEARDOY(0:19)            
+        INTEGER STGYEARDOY(20)            
         
-        REAL BRSTAGE, LAI, CANHT, DEWDUR, LAIL(30), LAILA(30), NFP       
+        REAL GSTAGE, LAI, CANHT, DEWDUR, LAIL(30), LAILA(30), NFP       
         REAL PARIP, PARIPA , RESCALG(0:NL), RESLGALG(0:NL) 
         REAL RESNALG(0:NL), RLV(NL), SENCALG(0:NL), SENLALG(0:NL)  
         REAL SENNALG(0:NL), TRWUP, UH2O(NL), UNH4(NL), UNO3(NL)
@@ -644,5 +644,6 @@
         rtnup = -99.0
         no3mn = -99.0
         nh4mn = -99.0
+     
 
       END SUBROUTINE CRP_SeasInit_VarInit
