@@ -11,6 +11,7 @@ C  3. Added switch block, code cleanup            P.W.W.      2-7-93
 C  4. Modified TT calculations to reduce line #'s P.W.W.      2-7-93
 C  5. Modified for MILLET model                   W.T.B.      MAY 94
 C  6. Stages changes for inclusion in Overview    J.V.J.      9-5-20      
+!  04/14/2021 CHP Added CONTROL % CropStatus
 C=======================================================================
 
       SUBROUTINE Aloha_PHENOL (CONTROL, ISWITCH,
@@ -36,7 +37,6 @@ C=======================================================================
 
       INTEGER      DYNAMIC, EDATE, MDATE,HAREND
       REAL         XSTAGE
-!TEMP      REAL         GRAINN
 
       CHARACTER*1 ISWWAT, IDETO, ISWNIT
       INTEGER     ISTAGE, NLAYR, NOUTDO, ISDATE, FHDATE, PMDATE
@@ -492,6 +492,7 @@ C     6 - Physiological maturity
 
           FHDATE = YRDOY                  ! physiological maturity date PMDATE = YRDOY 
           MDATE  = YRDOY                  ! Set MDATE to stop model
+          CONTROL % CropStatus = 1
           STGDOY(ISTAGE) = YRDOY
 
 !         Ready for next stage

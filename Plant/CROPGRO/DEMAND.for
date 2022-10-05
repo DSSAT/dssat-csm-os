@@ -30,11 +30,11 @@ C=======================================================================
      &  WCRRT, WCRST, WNRLF, WNRRT, WNRSH, WNRST, WTLF,   !Input
      &  WTSD, WTSHE, XPOD, NVEG0, NR1, NR2, NR5, NR7,     !Input
 
-     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
-     &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
+     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, CropStatus,!Output
+     &  F, FNINL, FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM,!Output
+     &  GDMSD, GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR,   !Output
+     &  NDMTOT, NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM,      !Output
+     &  POTCAR, POTLIP, SDGR, TURADD, XFRT, YREND)        !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -51,7 +51,7 @@ C=======================================================================
       CHARACTER*92 FILECC, FILEGC
 
       INTEGER DYNAMIC   !, TIMDIF
-      INTEGER NPP, I, NAGE, DAS
+      INTEGER NPP, I, NAGE, DAS, CropStatus
       INTEGER NDLEAF, NR1, NR2, NR5, NR7, NVEG0, YREND
 
       REAL FRLFM, FRSTMM, YY, XX, TMPFAC
@@ -248,6 +248,7 @@ C=======================================================================
      &      'Number of flower cohorts exceeds maximum limit of',NCOHORTS
           CALL WARNING(1,ERRKEY,MSG)
           CALL ErrorCode(CONTROL, 100, ERRKEY, YREND)
+          CropStatus = 100
           RETURN
         ENDIF
 

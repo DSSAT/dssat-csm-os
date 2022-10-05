@@ -1356,6 +1356,7 @@ C         Read in weather file header.
 !-----------------------------------------------------------------------
 ! REVISION HISTORY
 ! 09/01/2009 CHP Written
+! 06/15/2022 CHP Added CropStatus
 !-----------------------------------------------------------------------
       SUBROUTINE WeatherError(CONTROL, ErrCode, FILEWW, LNUM, 
      &      YRDOYW, YREND)
@@ -1438,6 +1439,7 @@ C         Read in weather file header.
       MSG(NMSG) = "Simulation will end."
       YREND = CONTROL%YRDOY
       CONTROL % ErrCode = ErrCode
+      CONTROL % CropStatus = 200
       CALL PUT(CONTROL)
       CALL WARNING(NMSG,ERRKEY,MSG)
 

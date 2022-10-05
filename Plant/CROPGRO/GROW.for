@@ -19,6 +19,7 @@ C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  03/24/2004 CHP Added P component of senesced matter
 C  01/19/2006 CHP N in senesced roots lost at actual N%, not minimum.
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  Called by:  PLANT
 C  Calls:      IPGROW, STRESS
@@ -39,13 +40,13 @@ C=======================================================================
 
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
 
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT,                !Output
-     &  SEEDNI, SEEDNO, SENESCE, SHELWT, SLA,              !Output
+     &  SEEDNI, SEEDNO, SENESCE, SHELWT, SLA,             !Output
      &  SLAAD, STMWT, TOPWT, TOTWT, WCRLF, WCRRT, WCRSH,  !Output
      &  WCRST, WNRLF, WNRRT, WNRSH, WNRST, WTCO,          !Output
      &  WTLF, WTLO, WTMAIN, WTNCAN, WTNEW, WTNLA, WTNLF,  !Output
@@ -72,7 +73,7 @@ C=======================================================================
 
       INTEGER DYNAMIC, NOUTDO, L, NLAYR
       INTEGER YRDOY, YRNR1, MDATE
-      INTEGER YRPLT
+      INTEGER YRPLT, CropStatus
 
       REAL WTNUP,WTNFX,WTNMOB,WTNCAN,TGROW
       REAL WRCSHD,DISLA,WSDMAN
@@ -1087,7 +1088,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,     !Input
      &    RTWT, SDWT, SHELWT, STMWT, TOPWT,               !Input
      &    TOTWT, TURFAC, WTLF, YRDOY, YRPLT,              !Input
-     &    MDATE)                                          !Output
+     &    MDATE, CropStatus)                              !Output
         RETURN
       ENDIF
 
@@ -1097,7 +1098,7 @@ C-----------------------------------------------------------------------
      &      AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,   !Input
      &      RTWT, SDWT, SHELWT, STMWT, TOPWT,             !Input
      &      TOTWT, TURFAC, WTLF, YRDOY, YRPLT,            !Input
-     &      MDATE)                                        !Output
+     &      MDATE, CropStatus)                            !Output
           RETURN
         ENDIF
       ENDIF
@@ -1133,6 +1134,7 @@ C  Plant death due to stress
 C-----------------------------------------------------------------------
 C  REVISION        HISTORY
 C  09/18/1998 CHP  Written based on code in GROW subroutine
+!  06/15/2022 CHP Added CropStatus
 !-----------------------------------------------------------------------
 !  Called by:  GROW
 !  Calls:      None
@@ -1141,14 +1143,14 @@ C=======================================================================
      &  AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,       !Input
      &  RTWT, SDWT, SHELWT, STMWT, TOPWT,                 !Input
      &  TOTWT, TURFAC, WTLF, YRDOY, YRPLT,                !Input
-     &  MDATE)                                            !Output
+     &  MDATE, CropStatus)                                !Output
 !-----------------------------------------------------------------------
       IMPLICIT NONE
 !-----------------------------------------------------------------------
       CHARACTER*1  IDETO, IHARI
       CHARACTER*78 MESSAGE(10)
       INTEGER NOUTDO, YRDOY, YRPLT, MDATE, DAP, TIMDIF
-      INTEGER YR, DOY
+      INTEGER YR, DOY, CropStatus
       REAL AGEFAC, DWNOD, PODWT, RTWT, SDWT,
      &  SHELWT, STMWT, TOPWT, TOTWT, TURFAC, WTLF
 
@@ -1168,6 +1170,7 @@ C=======================================================================
       IF (MDATE < 0) THEN
 !        NR8   = MAX(0,TIMDIF(YRSIM,YRDOY))
         MDATE = YRDOY
+        CropStatus = 39
       ENDIF
 C-----------------------------------------------------------------------
       IF (IHARI == 'M') THEN

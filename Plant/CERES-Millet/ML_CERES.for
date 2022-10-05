@@ -22,7 +22,7 @@ C                   as defined in ModuleDefs.for
 C  08/12/2003 CHP Added I/O error checking
 !  12/17/2004 CHP Modified HRESCeres call for harvest residue
 !  April-May 2015 - KJB major revisions
-C
+!  06/15/2022 CHP Added CropStatus
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -35,12 +35,17 @@ C----------------------------------------------------------------------
      &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,            !Input
      &     SNOW, SOILPROP, SRAD, SW, TMAX, TMIN,          !Input
      &     TRWUP, TWILEN, YREND, YRPLT,                   !Input
+     &     CropStatus,                                    !Output
      $     CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,    !Output
      &     RWUMX, SENESCE, STGDOY, UNO3, UNH4, XLAI,KCAN,KEP) !Output
 
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, HRES_CERES, IGNORE, ML_GROSUB 
+      EXTERNAL ML_OPGROW, ML_OPHARV, ML_PHENOL, ML_ROOTGR, MZ_OPNIT
+      EXTERNAL PEST, YR_DOY
+
       SAVE
 !----------------------------------------------------------------------
 !      Programming Notes  W.D.B
@@ -68,7 +73,8 @@ C----------------------------------------------------------------------
       REAL            CO2      
       REAL            CO2X(10)  
       REAL            CO2Y(10)
-      CHARACTER*2     CROP   
+      CHARACTER*2     CROP 
+      INTEGER         CropStatus  
       INTEGER         CTYPE    
       REAL            CUMDEP      
       REAL            CUMDTT    
@@ -872,7 +878,7 @@ C         Variables passed through PHENOL to phasei but not used in phenol
      &    TGROPAN, TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC,
      &    TPANWT, TPLA, TPLAG, TSIZE, TSTMWT, VANC, VMNC, WSTR1, 
      &    XNTI,SWFAC,TURFAC,DGET,SWCG,DJTI,
-     &    DAYL, TWILEN, CANWAA, CANNAA)
+     &    DAYL, TWILEN, CANWAA, CANNAA, CropStatus)
 
         ENDIF
 

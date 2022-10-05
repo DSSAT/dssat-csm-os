@@ -21,6 +21,7 @@ C=======================================================================
       SUBROUTINE PHENOL(CONTROL, ISWITCH, 
      &    DAYL, NSTRES, PStres2, SOILPROP, ST,            !Input
      &    SW, SWFAC, TGRO, TMIN, TURFAC, XPOD, YRPLT,     !Input
+     &    CropStatus,                                     !Output
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    RSTAGE, RVSTGE, STGDOY, SeedFrac, TDUMX,        !Output
@@ -42,7 +43,7 @@ C=======================================================================
       CHARACTER*3 CTMP(20), DLTYP(20)
 
       INTEGER JPEND, NDVST, NVEG1, YREMRG
-      INTEGER DAS, YRDOY, YRPLT, YRSIM
+      INTEGER DAS, YRDOY, YRPLT, YRSIM, CropStatus
       INTEGER DYNAMIC
       INTEGER I, J, K, NLAYR
       INTEGER NDLEAF, NDSET, NR1, NR2, NR5, NR7, NVEG0, RSTAGE
@@ -150,6 +151,7 @@ C       Number of days from flowering to harvest maturity
       CALL RSTAGES(CONTROL,
      &    FNSTR, FPSTR, FSW, FT, FUDAY, ISIMI, NPRIOR,    !Input
      &    PHTHRS, PLME, SDEPTH, YRDOY, YRPLT, YRSIM,      !Input
+     &    CropStatus,                                     !Output
      &    JPEND, MDATE, NDLEAF, NDSET, NDVST, NVALPH,     !Output
      &    NVEG0, NVEG1, NR1, NR2, NR5, NR7, PHZACC,       !Output
      &    RSTAGE, STGDOY, SeedFrac, VegFrac, YREMRG,      !Output
@@ -308,6 +310,7 @@ C----------------------------------------------------------------------
       CALL RSTAGES(CONTROL,
      &    FNSTR, FPSTR, FSW, FT, FUDAY, ISIMI, NPRIOR,    !Input
      &    PHTHRS, PLME, SDEPTH, YRDOY, YRPLT, YRSIM,      !Input
+     &    CropStatus,                                     !Output
      &    JPEND, MDATE, NDLEAF, NDSET, NDVST, NVALPH,     !Output
      &    NVEG0, NVEG1, NR1, NR2, NR5, NR7, PHZACC,       !Output
      &    RSTAGE, STGDOY, SeedFrac, VegFrac, YREMRG,      !Output
