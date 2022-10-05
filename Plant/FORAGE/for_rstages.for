@@ -14,6 +14,7 @@ C=======================================================================
       SUBROUTINE FOR_RSTAGES(CONTROL,
      &    FNSTR, FPSTR, FSW, FT, FUDAY, ISIMI, NPRIOR,    !Input
      &    PHTHRS, PLME, SDEPTH, YRDOY, YRPLT, YRSIM,      !Input
+     &    CropStatus,                                     !Output
      &    JPEND, NDLEAF, NDSET, NDVST, NVALPH, NVEG0,     !Output
      &    NVEG1, NR1, NR2, NR5, NR7, PHZACC, RSTAGE,      !Output
      &    STGDOY, YREMRG, YRNR1, YRNR2, YRNR3,            !Output
@@ -30,8 +31,8 @@ C=======================================================================
       CHARACTER*1 ISIMI, PLME
 
       INTEGER DYNAMIC
-      INTEGER I, J, NVALP0, DAS, YRDOY, YRPLT, YRSIM
-      INTEGER NDLEAF, NDSET, NDVST, JPEND, TIMDIF
+      INTEGER I, J, NVALP0, DAS, YRDOY, YRPLT, YRSIM, CropStatus
+      INTEGER NDLEAF, NDSET, NDVST, JPEND !, TIMDIF
       INTEGER RSTAGE, NVEG0, NVEG1, NR0, NR1, NR2, NR3, NR5, NR7
       INTEGER YRNR1, YRNR2, YRNR3, YRNR5, YRNR7, MDATE, YREMRG
       INTEGER NPRIOR(20), STGDOY(20), NVALPH(20)
@@ -378,7 +379,8 @@ C-------------------------------------------------------------------------------
 !          NVALPH(12) = NR8
         NVALPH(12) = DAS
         MDATE      = YRDOY
-        RSTAGE    = 8
+        CropStatus = 1
+        RSTAGE     = 8
 C-------------------------------------------------------------------------------
 C       Account for the part of today that contributes to the next phase(s)
 C-------------------------------------------------------------------------------

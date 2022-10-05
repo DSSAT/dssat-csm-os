@@ -69,7 +69,6 @@ C-----------------------------------------------------------------------
       REAL        FDSW2
       REAL        FDSW3
       REAL        FOZ1  ! Added by JG for ozone calculation
-      REAL        FOZ2  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -106,7 +105,6 @@ C-----------------------------------------------------------------------
       REAL        RTDP1
       REAL        RTDP2
       REAL        SFOZ1  ! Added by JG for ozone calculation
-      REAL        SFOZ2  ! Added by JG for ozone calculation
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2
@@ -536,32 +534,32 @@ C-----------------------------------------------------------------------
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+     &             FOZ1,SFOZ1
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+     &                2(1X,F5.0),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
 
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter.
 !               Default to TSEN = 6.0 if no value given.
                 ! JG changed column numbers to match updated ecotype file
-                IF (C255(327:331) == '     ') THEN
+                IF (C255(315:319) == '     ') THEN
                   TSEN = 6.0
                 ELSE
-                  READ(C255(327:331),'(F5.0)',IOSTAT=ERRNUM) TSEN
+                  READ(C255(315:319),'(F5.0)',IOSTAT=ERRNUM) TSEN
                   IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
                 ENDIF
 
 !               Read optional number of cold days paramter.
 !               Default to CDAY = 15.0 if no value given.
                 ! JG changed column numbers to match updated ecotype file
-                IF (C255(333:337) == '     ') THEN
+                IF (C255(321:325) == '     ') THEN
                   CDAY = 15
                 ELSE
-                  READ(C255(333:337),'(I5)',IOSTAT=ERRNUM) CDAY
+                  READ(C255(321:325),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
                 ENDIF
 
@@ -664,10 +662,10 @@ cbak  ears that is not included in lai calculation.
      &    pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,          !Input/Outpt
      &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
 !-----------------------------------------------------------------------
-      CALL StageFlags (CONTROL, ISWITCH, FILEIO,
+      CALL StageFlags (CONTROL, FILEIO,
       ! fstage is output
      &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
+     &    PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,                !INPUT
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
 !-----------------------------------------------------------------------
@@ -828,11 +826,12 @@ cbak  ears that is not included in lai calculation.
                ! from nwheats_phase: JZW add in Aug, 2014
               sumstgdtt(istage) = sumstgdtt(istage) + dtt
 !----------------------------------------------------------------------
-               CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &         dc_code, fstage, istage, istageno, pgdd, pl_la,    !INPUT
-     &         plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,     !INPUT
-     &         lstage, nwheats_dc_code, nwheats_pstag,            !OUTPT
-     &         stage_gpla, stagno, stgdur, xstag_nw, zstage)      !OUTPT
+              CALL StageFlags (CONTROL, FILEIO,
+              ! fstage is output
+     &            dc_code, fstage, istage, istageno, pgdd, pl_la, !INPUT
+     &            PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,        !INPUT
+     &            lstage, nwheats_dc_code, nwheats_pstag,         !OUTPT
+     &            stage_gpla, stagno, stgdur, xstag_nw, zstage)   !OUTPT
 !-----------------------------------------------------------------------
               ISTAGE = 8
               STGDOY(istage) = YRDOY ! JZW add this in Feb, 2015, istage=8 is sowing day, not germ day !
@@ -883,11 +882,12 @@ cbak  ears that is not included in lai calculation.
               ! from nwheats_phase: JZW add in Aug, 2014
               sumstgdtt(istage) = sumstgdtt(istage) + dtt
 !----------------------------------------------------------------------
-               CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &         plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,     !INPUT
-     &         lstage, nwheats_dc_code, nwheats_pstag,            !OUTPT
-     &         stage_gpla, stagno, stgdur, xstag_nw, zstage)      !OUTPT
+              CALL StageFlags (CONTROL, FILEIO,
+              ! fstage is output
+     &            dc_code, fstage, istage, istageno, pgdd, pl_la, !INPUT
+     &            PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,        !INPUT
+     &            lstage, nwheats_dc_code, nwheats_pstag,         !OUTPT
+     &            stage_gpla, stagno, stgdur, xstag_nw, zstage)   !OUTPT
 !-----------------------------------------------------------------------
               IF (ISWWAT .NE. 'N') THEN
                   IF (SW(L0) .LE. LL(L0)) THEN
@@ -960,11 +960,11 @@ cbak  ears that is not included in lai calculation.
      &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
       !-----------------------------------------------------------------
       !-----------------------------------------------------------------
-          CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
-     &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
-     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
+          CALL StageFlags (CONTROL, FILEIO,
+     &        dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &        PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &        lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &        stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
       !-----------------------------------------------------------------
               ! Emerge when P9 GDD's have been accumulated
               IF (YREMRG .LE. 0) THEN
@@ -1011,7 +1011,7 @@ cbak  ears that is not included in lai calculation.
 !*!          alternatively, could use TWILEN (DSSAT)
 !*!                  ppfac = 1. -   p1d * (20. - hrlt)**2
             ! nwheats_ppfac = 1. - PPSEN * (20. - DAYL)**2
-            !n Apsim: The parameter “twilight?is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.
+            !n Apsim: The parameter twilight is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.
 !             nwheats_ppfac = 1. - PPSEN * (20. - TWILEN)**2
 ! Swap 20 and TWILEN to go from long to short day response
 !Added if statements to account for TWILEN being less than the critical day length of 11 h
@@ -1067,11 +1067,11 @@ cbak  ears that is not included in lai calculation.
               ! Stage occurs when GDD threshold reached
               !Return if end of juvenile stage is not reached
       !-----------------------------------------------------------------
-          CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
-     &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
-     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
+              CALL StageFlags (CONTROL, FILEIO,
+     &        dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &        PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &        lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &        stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
       !-----------------------------------------------------------------
               IF (sumstgdtt(emergence) .LT. pgdd(emergence)) RETURN
 
@@ -1110,11 +1110,11 @@ cbak  ears that is not included in lai calculation.
                 !cumph_nw(istage) = cumph_nw(2)
               endif
       !-----------------------------------------------------------------
-          CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
-     &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
-     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
+          CALL StageFlags (CONTROL, FILEIO,
+     &        dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &        PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &        lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &        stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
       !-----------------------------------------------------------------
 !*!           PDTT = DTT_M
               IF (ISWWAT .EQ. 'N') THEN
@@ -1171,11 +1171,11 @@ cbak  ears that is not included in lai calculation.
                 cumph_nw(istage) = cumph_nw(lstage) !JZW this will not need if we are not use array for cumph_nw
               endif                                                    !
       !-----------------------------------------------------------------
-          CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
-     &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
-     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
+          CALL StageFlags (CONTROL, FILEIO,
+     &        dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &        PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &        lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &        stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
       !-----------------------------------------------------------------
               IF (sumstgdtt(endveg) .LT. pgdd(endveg)) RETURN
 
@@ -1211,11 +1211,11 @@ cbak  ears that is not included in lai calculation.
                 cumph_nw(istage) = cumph_nw(lstage)
               endif                                                    !
       !-----------------------------------------------------------------
-          CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
-     &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
-     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
+          CALL StageFlags (CONTROL, FILEIO,
+     &        dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &        PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &        lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &        stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
       !-----------------------------------------------------------------
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
               SeedFrac = SUMDTT / P5
@@ -1252,11 +1252,11 @@ cbak  ears that is not included in lai calculation.
                 cumph_nw(istage) = cumph_nw(lstage)
               endif                                                    !
       !-----------------------------------------------------------------
-          CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
-     &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
-     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
+          CALL StageFlags (CONTROL, FILEIO,
+     &        dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &        PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &        lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &        stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
       !-----------------------------------------------------------------
 
               IF (sumstgdtt(grnfil) .LT. pgdd(grnfil)) RETURN
@@ -1273,11 +1273,11 @@ cbak  ears that is not included in lai calculation.
               ! from nwheats_phase:
               sumstgdtt(istage) = sumstgdtt(istage) + dtt
       !-----------------------------------------------------------------
-          CALL StageFlags (CONTROL, ISWITCH, FILEIO,
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
-     &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
-     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
+          CALL StageFlags (CONTROL, FILEIO,
+     &        dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &        PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &        lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &        stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
       !-----------------------------------------------------------------
 
   !**!            IF (SUMDTT .LT. P5)  RETURN

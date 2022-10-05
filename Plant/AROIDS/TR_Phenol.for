@@ -9,6 +9,7 @@ C                 Written
 C  08-07-1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
+!  06/15/2022 CHP Added CropStatus
 C=======================================================================
 
       SUBROUTINE TR_PHENOL (CONTROL, ISWITCH, 
@@ -16,6 +17,7 @@ C=======================================================================
      &    SRAD, SW, SWFAC, TGROCOM, TILNO, TMAX, TMIN,    !Input
      &    TURFAC, YRPLT,                                  !Input
      &    CUMDTT, EMAT, PLANTS, RTDEP, YRSOW,             !I/O
+     &    CropStatus,                                     !Output
      &    CDTT_TP, DTT, FIELD, ISTAGE, ITRANS, LTRANS,    !Output
      &    MDATE, NDAT, NEW_PHASE, P1, P1T,P3, P4,         !Output
      &    SDTT_TP,SEEDNI, SI3, STGDOY, STNAME, SUMDTT,    !Output
@@ -36,7 +38,7 @@ C=======================================================================
       INTEGER DOY, DYNAMIC, EMAT, ICSDUR, IDUR1, ISIM, ISTAGE
       INTEGER ISM, ITDATE, ITRANS   !, IMXDAT
       INTEGER LEAFNO, MDATE, NDAS, NDAT, NLAYR
-      INTEGER YR, YRPLT, YRSIM, YRSOW
+      INTEGER YR, YRPLT, YRSIM, YRSOW, CropStatus
 
       REAL AGEFAC, ATEMP, CDTT_TP, CNSD1, CNSD2, CSD1, CSD2
       REAL CUMDEP, CUMDTT, CUMTMP, DTT
@@ -493,6 +495,7 @@ C=======================================================================
           STGDOY (ISTAGE) = YRDOY
           NDAS = NDAS + 1
 		MDATE  = YRDOY
+          CropStatus = 1
 
           CALL TR_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  

@@ -19,6 +19,10 @@ subroutine radiat(daynr,hour,dayl,sinld,cosld,avrad,sinb,pardir,pardif)
 ! --- calculations on solar elevation
 ! --- sine of solar elevation sinb
       aob = sinld/cosld
+      
+! --- limit aob similarly to SOC in SOLAR SUBROUTINE
+      aob = min(1.d0, max(-1.d0, aob))
+      
       sinb = max (0.0d0,sinld+cosld*cos(2.0*pi*(hour+12.0d0)/24.0))
 ! --- integral of sinb
       dsinb = 3600.*(dayl*sinld+24.*cosld*sqrt(1.0d0-aob*aob)/pi)
@@ -31,16 +35,26 @@ subroutine radiat(daynr,hour,dayl,sinld,cosld,avrad,sinb,pardir,pardif)
       dso = sc*dsinb
 
 ! --- diffuse light fraction from atmospheric transmission
-      atmtr = avrad/dso
-      if (atmtr.gt.0.75d0)  frdif = 0.23d0
-      if (atmtr.le.0.75d0.and.atmtr.gt.0.35d0) frdif = 1.33d0-1.46*atmtr
-      if (atmtr.le.0.35d0.and.atmtr.gt.0.07d0) frdif = 1.0d0-2.3*(atmtr-0.07d0)**2
-      if (atmtr.le.0.07d0) frdif = 1.0d0
-
-! --- photosynthetic active radiation, diffuse and direct
-      par = 0.5*avrad*sinb*(1.0d0+0.4*sinb)/dsinbe
-      pardif = min (par,sinb*frdif*atmtr*0.5*sc)
-      pardir = par-pardif
+      if (dso .gt. 0.d0) then
+        atmtr = avrad/dso
+        if (atmtr.gt.0.75d0)  frdif = 0.23d0
+        if (atmtr.le.0.75d0.and.atmtr.gt.0.35d0) frdif = 1.33d0-1.46*atmtr
+        if (atmtr.le.0.35d0.and.atmtr.gt.0.07d0) frdif = 1.0d0-2.3*(atmtr-0.07d0)**2
+        if (atmtr.le.0.07d0) frdif = 1.0d0
+            
+        ! --- photosynthetic active radiation, diffuse and direct
+        par = 0.5*avrad*sinb*(1.0d0+0.4*sinb)/dsinbe
+        pardif = min (par,sinb*frdif*atmtr*0.5*sc)
+        pardir = par-pardif            
+        
+      else
+      
+        !--- no radiation for dayl=0
+        par     = 0.d0
+        pardif  = 0.d0
+        pardir  = 0.d0
+        
+      endif
 
       return
 

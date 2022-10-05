@@ -10,6 +10,7 @@
 !  03/15/2017 Removed old equations for HI 
 !  03/15/2017 Model equation updated for parameter G2 and G3.These parameters in original CERES-Beet were linked to
 !      grain production. These parameters were modified to link with leaf growth and root growth respectively.
+!  06/15/2022 CHP Added CropStatus
 ! 
 !----------------------------------------------------------------------
 !
@@ -19,14 +20,15 @@
 !----------------------------------------------------------------------
 
       SUBROUTINE BS_GROSUB (DYNAMIC, ISWITCH, 
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      ASMDOT, CO2, DLAYR, DS, DTT, EOP, FILEIO,         !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
-     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
+     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, VegFrac,         !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
+     &      CropStatus,                                       !Output
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -43,6 +45,9 @@
       USE ModuleDefs
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
+      EXTERNAL FIND, GETLUN, YR_DOY, ERROR, IGNORE, WARNING, 
+     &  BS_NFACTO, BS_NUPTAK, P_CERES, TABEX, CURV
+
       SAVE
 !----------------------------------------------------------------------
 !                         Variable Declaration
@@ -65,13 +70,14 @@
       REAL        CANWH     
       REAL        CARBO       
       REAL        CARBOT       
-      INTEGER     CDAY     
+!     INTEGER     CDAY     
       INTEGER     CMAT
       REAL        CNSD1       
       REAL        CNSD2        
-      REAL        CPSD1       
-      REAL        CPSD2        
-      REAL        CUMPH       
+!     REAL        CPSD1       
+!     REAL        CPSD2        
+      REAL        CUMPH 
+      INTEGER     CropStatus      
       REAL        CO2X(10)    
       REAL        CO2Y(10)    
       REAL        CO2         
@@ -164,7 +170,7 @@
       INTEGER     NWSD 
       REAL        P1             
       REAL        P2    
-      REAL        P3         
+!     REAL        P3         
       REAL        P5          
       REAL        PAR         
       REAL        PARSR
@@ -245,7 +251,7 @@
       REAL        SLFW        
       REAL        SRAD        
       INTEGER     STGDOY(20) 
-      REAL        Stg2CLS 
+!     REAL        Stg2CLS 
       REAL        STMWTO
       REAL        STMWT   
       REAL        STMWTE    
@@ -280,7 +286,7 @@
       REAL        TOTNUP      
       REAL        TRNU    
       REAL        TRWUP
-      REAL        TSEN
+!     REAL        TSEN
       REAL        TSS(NL)    
       REAL        TURFAC      
       REAL        UNH4(NL)    
@@ -321,7 +327,7 @@
       INTEGER     YRPLT
       REAL        SPi_AVAIL(NL), PUptake(NL)    !, RWU(NL)
 !      REAL        SPi_Labile(NL)
-      REAL        FSLFP, PStres1
+      REAL        PStres1 !FSLFP, 
       REAL        PStres2, SeedFrac, VegFrac, SLFP      
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
 !      REAL        CPSD1, CPSD2, SI5(6), SI6(6)  
@@ -334,7 +340,7 @@
       REAL CTCNP1, CTCNP2
 
 !     K model
-      REAL, DIMENSION(NL) :: SKi_Avail
+!     REAL, DIMENSION(NL) :: SKi_Avail
        
       TYPE (ResidueType) SENESCE 
       TYPE (SwitchType)  ISWITCH
@@ -1422,6 +1428,7 @@ C-GH              ENDIF                                               !
               ENDIF   
               ISTAGE = 6           
               MDATE = YRDOY
+              CropStatus = 33 
           ENDIF
 
 !--------------------------------------------------------------

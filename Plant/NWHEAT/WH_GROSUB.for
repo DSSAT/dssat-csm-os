@@ -14,6 +14,7 @@
 !  07/24/2020 JG moved ozone parameters to ECO file, replaced OZONX with OZON7
 !  11/01/2021 FO Added missing CONTROL type for WH_temp.for subroutines
 !  01/18/2022 TF Added statments to prevent divisions by zero
+!  01/18/2022 JG cleaned ozone parameters in ECO file
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
 !
@@ -106,7 +107,6 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        EXNH4
       REAL        EXNO3
       REAL        FOZ1  ! Added by JG for ozone calculation
-      REAL        FOZ2  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -138,7 +138,6 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        RTDP1
       REAL        RTDP2
       REAL        SFOZ1  ! Added by JG for ozone calculation, formerly SLFOZ1
-      REAL        SFOZ2  ! Added by JG for ozone calculation, formerly SLFOZ2
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2 ! nwheat cultivar parameter
@@ -792,12 +791,12 @@ C 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,FOZ2,SFOZ1,SFOZ2
+     &             FOZ1,SFOZ1
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
+     &                2(1X,F5.0),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -2241,18 +2240,22 @@ cbak optimum of 18oc for photosynthesis
          prft = 0.0
       endif
 
-          !Effect of Ozone on photosynthesis added by BTK, JG
+         ! Effect of ozone on photosynthesis added by BTK, JG
+         ! JG divided FOZ1 by 100 to clean parameter value 7/24/20
+         ! JG replaced FOZ2 with (1 + (FOZ1/100 * 25)) 01/18/2022
+         !    same value, but one less parameter needed in ECO file
       if (OZON7 .gt. 25.0) then
-          FO3 = (-(FOZ1/100) * OZON7) + FOZ2  ! JG divided FOZ1 by 100 to clean parameter value 7/24/20
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
           !FO3 = (-0.0006 * OZON7) + 1.015  !Ozone Tolerant cultivars
           !FO3 = (-0.005 * OZON7) + 1.125   !Ozone Sensitive cultivars
           !FO3 = (-0.001 * OZON7) + 1.025   !Ozone Intermediate cultivars
+          FO3 = MAX(FO3, 0.0)
       else
           FO3 = 1.0
       Endif
 
-      if (swdef(photo_nw) .eq. 0.0) then
-          PRFO3 = min(1.0, (FO3*rue_factor)/(swdef(photo_nw)+0.00001)) ! added to prevent dividing by 0
+      if (swdef(photo_nw) .lt. 0.0001) then  ! added to prevent dividing by 0
+          PRFO3 = 1.0
       else
           PRFO3 = min(1.0, (FO3*rue_factor)/swdef(photo_nw)) ! ozone effect added by JG
       endif
@@ -3196,8 +3199,11 @@ cbak  adjust the green leaf ara of the leaf that is dying
       sfactor = max (slfw, slfn, slft)
 
       ! Ozone effect on leaf senescence added by BTK, JG
+      ! JG divided SFOZ1 by 10 to clean parameter value 7/24/20
+      ! JG replaced SFOZ2 with (1 - (SFOZ1/10 * 25)) 01/18/2022
+      !    same value, but one less parameter needed in ECO file
       if (OZON7 .gt. 25.0 ) then
-          SLFO3 = (SFOZ1/10) * OZON7 + SFOZ2  ! JG divided SFOZ1 by 10 to clean parameter value 7/24/20
+          SLFO3 = (SFOZ1/10) * OZON7 + (1.0 - (SFOZ1/10 * 25.0))
           !SLFO3 = 0.008 * OZON7 + 0.8    !Ozone Tolerant cultivars
           !SLFO3 = 0.04 * OZON7 + 0.0     !Ozone Sensitive cultivars
           !SLFO3 = 0.025 * OZON7 + 0.375  !Ozone Intermediate cultivars
