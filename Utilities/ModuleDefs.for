@@ -49,8 +49,8 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    NL       = 30,  !Maximum number of soil layers 
      &    TS       = 24,  !Number of hourly time steps per day
      &    NAPPL    = 9000,!Maximum number of applications or operations
-     &    NDrpEvnt = 10,  ! Maximum # of dripper irrigation event entries per day 
-     &    NDrpLn   = 10,  ! Maximum # of drip line entries per treatment 
+     &    NDrpEvnt = 10,  !Max # dripper irrigs per day 
+     &    NDrpLn   = 10,  !Maximum # of drip line entries per treatment 
      &    NCOHORTS = 300, !Maximum number of cohorts
      &    NELEM    = 3,   !Number of elements modeled (currently N & P)
 !         Note: set NELEM to 3 for now so Century arrays will match
@@ -109,6 +109,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER   NYRS, REPNO, ROTNUM, RUN, TRTNUM
         INTEGER   YRDIF, YRDOY, YRSIM
         INTEGER   FODAT, ENDYRS  !Forecast start date and ensemble #
+        INTEGER   CropStatus
       END TYPE ControlType
 
 !=======================================================================
@@ -264,7 +265,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !======================================================================
 !     Fertilizer application data
       TYPE FertType
-        CHARACTER*7 AppType != 'UNIFORM', 'BANDED ', 'HILL   ', 'POINT  ', 'DRIP   '
+        CHARACTER*7 AppType 
+!        AppType = 'UNIFORM','BANDED ','HILL   ','POINT  ','DRIP   '
         INTEGER DrpRefIdx
         INTEGER FERTDAY, FERTYPE
         INTEGER, DIMENSION(NELEM) :: NAPFER
@@ -328,15 +330,16 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE DripIrrType
         REAL DripSpc    !emitter spacing (cm)
         REAL DripOfset  !emitter offset from centerline of bed (cm)
-        REAL DripDep    !emitter depth from surface of bed under center line (cm)
+        REAL DripDep    !emitter depth (cm)
         INTEGER DripLN  !emitter identify number
         ! following are Drip irrigation data on current day
-        INTEGER DripEvntEntr !Total number of drip irrigation data entries on current day
-        INTEGER, DIMENSION(NDrpEvnt) ::  DripNum !number of drip irrigations per day
-        REAL, DIMENSION(NDrpEvnt) :: DripRate   !emitter rate (ml/s) for each ebent
-        REAL, DIMENSION(NDrpEvnt) :: DripStart  !start time (1.=1am, 12.=noon, 13.5=1:30pm)
-        REAL, DIMENSION(NDrpEvnt) :: DripDur    !duration of ea. irrigation, emitters on (hr)
-        REAL, DIMENSION(NDrpEvnt) :: DripInt    !duration of interval between irrigation (hr)
+        INTEGER DripEvntEntr !Total # drip irrigs today
+        INTEGER, DIMENSION(NDrpEvnt) ::  DripNum !# drip irrigs per day
+        REAL, DIMENSION(NDrpEvnt) :: DripRate   !emitter rate (ml/s) 
+        REAL, DIMENSION(NDrpEvnt) :: DripStart  
+!         start time (1.=1am, 12.=noon, 13.5=1:30pm)
+        REAL, DIMENSION(NDrpEvnt) :: DripDur !duration of irrig (hr)
+        REAL, DIMENSION(NDrpEvnt) :: DripInt !interval betw irrig (hr)
         REAL IrrRate    !daily irrigation (mm)
       END TYPE
 

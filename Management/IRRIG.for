@@ -52,7 +52,7 @@ C=======================================================================
 !      CHARACTER*70 IrrText
       PARAMETER (ERRKEY = 'IRRIG')
 
-      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MEHYD, MESOM
+      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MEHYD !, MESOM
       CHARACTER*5 IOFF   ! old IRON, for compatibility with old files
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
@@ -93,23 +93,23 @@ C=======================================================================
 	REAL IRAMT(20)
 	REAL IREFF(20)
       INTEGER IFREQ(20)
-	CHARACTER*5 V_IRONC(20)
+!     CHARACTER*5 V_IRONC(20)
 	CHARACTER*5 IRONC(20)
       INTEGER DaysSinceIrrig
-!      REAL IRRFREQ       !IRRFREQ as real value at request of IK 9/4/2017
-      INTEGER IRRFREQ     !Change back to integer, converted from real input 9/27/2017
+
+      INTEGER IRRFREQ     
 	REAL AVWATT         ! Water available for irrigation today (mm)
-	INTEGER NGSIrrigs   ! The number of irrigation inputs entered by the user
-	INTEGER IRINC       ! Counter keeping track of irrigation input been used
-	REAL THETAU         ! Threshold, % of available water stopping irrigation
+	INTEGER NGSIrrigs   ! # of irrigation inputs entered by the user
+	INTEGER IRINC       ! Counter for irrigation input been used
+	REAL THETAU         ! Threshold, % of avail water upper
       INTEGER NWaterLimits !Number of water limit entrees
-      LOGICAL SeasonalWL  ! T or F - only one water limitation for the entire season?
-      REAL GSWatUsed      ! Water used to date in current growth stage
+      LOGICAL SeasonalWL  ! Water limitation n
+      REAL GSWatUsed      ! Water used so far in current growth stage
       REAL, PARAMETER :: VeryLargeNumber = 99999999.
 
 !     ET-based auto-irrig
       REAL ET_THRESH, ACCUM_ET
-      REAL ET     !, EP, ES, E0
+!     REAL ET     !, EP, ES, E0
       REAL EOP, EVAP, RUNOFF
 
 !  Added for drip irrigation
@@ -133,7 +133,7 @@ C=======================================================================
       TYPE (SwitchType)   ISWITCH
       TYPE (SoilType)     SOILPROP
       TYPE (FloodWatType) FLOODWAT
-      Type (MgmtType)     MGMT
+!     Type (MgmtType)     MGMT
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -177,11 +177,8 @@ C-----------------------------------------------------------------------
       NTBL   = 0  !# water tables
       NCOND  = 0  !# irrigation applications (same as NAPW??)
       NPERC  = 0  !# percs
-<<<<<<< HEAD
       NDRIP  = 0  !# drip irrigation days
-=======
       NPUD   = 0  !# puddling events
->>>>>>> develop
 
       IRRAMT = 0.0
       TOTIR  = 0.
@@ -315,7 +312,7 @@ C-----------------------------------------------------------------------
           JIRR = 0
           DO I = 1,NAPPL
 !           READ(LUNIO,'(3X,I7,3X,I3,1X,F5.0,1X,I5)',IOSTAT=ERRNUM,
-!     &        ERR=50)  IDLAPL(I), IRRCOD(I), AMT(I)   !, 2N,2777777(I)
+!     &        ERR=50)  IDLAPL(I), IRRCOD(I), AMT(I)
             READ(LUNIO,'(3X,I7,3X,A90)',ERR=50, END=50) IDLAPL(I),CHAR
             ! Read irrigation date one by one
             LNUM = LNUM + 1
@@ -346,9 +343,10 @@ C-----------------------------------------------------------------------
 
             JIRR = JIRR + 1
             If (JIRR == NAPPL) then
-              MSG(1) ="Total # of irrigation events is more then defind"
+              MSG(1) ="Total # of irrigation events is too large."
               CALL WARNING(1,ERRKEY,MSG)
-              CALL ERROR(ERRKEY,59,FILEIO,LNUM) ! 59: Error in drip irrigation inputs. 
+!             Error 59: Error in drip irrigation inputs. 
+              CALL ERROR(ERRKEY,59,FILEIO,LNUM) 
             Endif
           ENDDO
 
@@ -357,15 +355,15 @@ C-----------------------------------------------------------------------
 !        ENDIF
 
 !     Import array values for growth stage based irrigation directly from input module
-      IMDEP = SAVE_data % MGMT % V_IMDEP       ! Depth
-      ITHRL = SAVE_data % MGMT % V_ITHRL       ! Lower threshold triggering irrigation
-      ITHRU = SAVE_data % MGMT % V_ITHRU       ! Upper threshold triggering irrigation
-      IRONC = SAVE_data % MGMT % V_IRONC       ! IRON in text (for compatibility)
-      IRON  = SAVE_data % MGMT % V_IRON        ! Growth Stage for parameters
-      IRAMT = SAVE_data % MGMT % V_IRAMT       ! Automatic irrigation with fixed amount
-      IREFF = SAVE_data % MGMT % V_IREFF       ! Irrigation Efficiency fraction
-      AVWATI =SAVE_data % MGMT % V_AVWAT       ! Water available for irrigation
-      IFREQ = SAVE_data % MGMT % V_IFREQ       ! Frequency limitation for irrigation
+      IMDEP = SAVE_data % MGMT % V_IMDEP ! Depth
+      ITHRL = SAVE_data % MGMT % V_ITHRL ! Lower threshold trigger irrig
+      ITHRU = SAVE_data % MGMT % V_ITHRU ! Upper threshold irrigation
+      IRONC = SAVE_data % MGMT % V_IRONC ! IRON in text (for compatibil)
+      IRON  = SAVE_data % MGMT % V_IRON  ! Growth Stage for parameters
+      IRAMT = SAVE_data % MGMT % V_IRAMT ! Auto irrigation fixed amt
+      IREFF = SAVE_data % MGMT % V_IREFF ! Irrigation Efficiency frac
+      AVWATI =SAVE_data % MGMT % V_AVWAT ! Water avail for irrigation
+      IFREQ = SAVE_data % MGMT % V_IFREQ ! Frequency limit for irrig
       NGSIrrigs  =SAVE_data % MGMT % GSIRRIG
 
 !-----------------------------------------------------------------------
@@ -375,7 +373,7 @@ C-----------------------------------------------------------------------
       NWaterLimits = 0
       DO i = 1, NGSIrrigs
         IF (ABS(AVWATI(i) - -99.) < 1.E-3) THEN
-          AVWATI(i) = VeryLargeNumber  !Set to something huge, no limitation
+          AVWATI(i) = VeryLargeNumber  !no limitation
         ELSE
           NWaterLimits = NWaterLimits + 1
         ENDIF
@@ -429,16 +427,14 @@ C
       JULAPL = 0
       JWTBRD = 0
       JULWTB = 0
-<<<<<<< HEAD
       DripDat= 0
-=======
       PUDDAT = 0
->>>>>>> develop
 
       AMIR  = 0.0
       BUND  = 0.0
       COND  = 0.0
       IPERC = 0.0
+!     PWAT  = 0.0
       WTABL = -99.
 
       PUDDLED = .FALSE.
@@ -475,7 +471,8 @@ C
            CASE (1:6)    
 !          Regular irrigation (bunded or upland)
 
-             IF (AMT(I) < -1.E-6 .AND. IRRCOD(I) .NE. 5) THEN !IRR05 need 0 input for stopping routine irrigation on the certain day
+!            IR005 need 0 input for stopping routine irrigation on the certain day
+             IF (AMT(I) < -1.E-6 .AND. IRRCOD(I) .NE. 5) THEN 
                AMT(I) = 0.0
                NMSG = NMSG + 1
                MSG(NMSG)=
@@ -483,7 +480,7 @@ C
                CYCLE
              ENDIF
 
-!             IF (INDEX('GC',MEHYD) > 0 .AND. IRRCOD(I) == 5) THEN
+!            IF (INDEX('GC',MEHYD) > 0 .AND. IRRCOD(I) == 5) THEN
              IF (IRRCOD(I) == 5 .AND. DRIP2D) THEN
                 !------------------------------
                 !Drip irrigation
@@ -491,7 +488,7 @@ C
                   NDRIP = NDRIP + 1 
                   j = 1
                 else If (I.GT.1) then
-                  ! IR007 can not insert in the IR005 on same day in X file
+!                 IR007 can not insert in the IR005 on same day in X file
                   if ((IDLAPL(I-1).EQ.IDLAPL(I)).and.(IRRCOD(I-1)== 5))
      &                then
                       J = J + 1
@@ -783,14 +780,8 @@ C-----------------------------------------------------------------------
 !      IF (NBUND .GT. 0) THEN
         CALL FLOOD_IRRIG (SEASINIT, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-<<<<<<< HEAD
      &    IPDAT, IPERC, NBUND, NCOND, NPERC,              !Input
      &    PUDDLED, RAIN, SOILPROP, SW, YRDOY, YRPLT,      !Input
-=======
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
-     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
-     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
->>>>>>> develop
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
 !      ENDIF
@@ -801,11 +792,12 @@ C-----------------------------------------------------------------------
 
       IF (DRIP2D) THEN
         CALL DRIP_IRRIG (CONTROL, ! Shoud be call only drip=true?? 
-     &    AUTO, IRRAPL, DripDat, DripEvntEntr,
-     &    DripDur, DripInt, DripNum, DripRefLN, DripLN, DripOfset,!Input
-     &    DripDep, DripRate, DripSpc, DripStart, EFFIRR, IIRRI,   !Input
-     &    MEHYD, NDRIP, YRDOY, YRPLT, IRRAPL_cm2, ! JZW have to have interface to make optional                     !Input
-     &    DEPIR)                                          !Output
+     &    AUTO, IRRAPL, DripDat, DripEvntEntr,    !Input
+     &    DripDur, DripInt, DripNum, DripRefLN,   !Input
+     &    DripLN, DripOfset, DripDep, DripRate,   !Input
+     &    DripSpc, DripStart, EFFIRR, IIRRI,      !Input
+     &    NDRIP, YRDOY, YRPLT, IRRAPL_cm2,        !Input
+     &    DEPIR)                                  !Output
       ENDIF
 
 !     Transfer data to ModuleData
@@ -840,14 +832,8 @@ C-----------------------------------------------------------------------
       IF (NBUND .GT. 0) THEN
         CALL FLOOD_IRRIG (RATE, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-<<<<<<< HEAD
      &    IPDAT, IPERC, NBUND, NCOND, NPERC,              !Input
      &    PUDDLED, RAIN, SOILPROP, SW, YRDOY, YRPLT,      !Input
-=======
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
-     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
-     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
->>>>>>> develop
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
         IF (DEPIR > 1.E-3) NAP = NAP + 1
@@ -919,8 +905,10 @@ C-----------------------------------------------------------------------
 !     Check for growth stage dependent irrigation
       IF (IRINC < NGSIrrigs) THEN
         IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
-          IRINC = IRINC + 1  ! If you reach the next GS specified, add 1 to IRINC
-          GSWatUsed = 0.0    ! reset accumulator for water used in this growth stage
+!         If you reach the next GS specified, add 1 to IRINC
+          IRINC = IRINC + 1  
+!         reset accumulator for water used in this growth stage
+          GSWatUsed = 0.0    
         END IF
       ENDIF
 
@@ -989,9 +977,9 @@ C-----------------------------------------------------------------------
            
             CALL SWDEFICIT_bed(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
-     &        ATHETA, SWDEF, SWDEF_cm2)  ! Soil water deficit (cm)   ! Output
-              IRRAPL_cm2 = SWDEF_cm2
-              IRRAPL_cm2 = MAX(0.,IRRAPL_cm2)
+     &        ATHETA, SWDEF, SWDEF_cm2)                   !Output
+            IRRAPL_cm2 = SWDEF_cm2
+            IRRAPL_cm2 = MAX(0.,IRRAPL_cm2)
           ELSE
             CALL SWDEFICIT(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
@@ -1050,7 +1038,8 @@ C             Apply fixed irrigation amount
           END SELECT
 
           IF (IRRAPL .GT. AVWATT) THEN  
-            IRRAPL = AVWATT   ! IF irrigation greater than water available, limit irrigation
+!           IF irrigation greater than water available, limit irrigation
+            IRRAPL = AVWATT   
           ENDIF
           
           SELECT CASE(AIRRCOD)
@@ -1107,13 +1096,13 @@ C-----------------------------------------------------------------------
 !             method for calculating volume of water deficit
            
               CALL SWDEFICIT_bed(
-     &          DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
-     &          ATHETA, SWDEF, SWDEF_cm2)  ! Soil water deficit (cm)   ! Output
-                IRRAPL_cm2 = SWDEF_cm2
-                IRRAPL_cm2 = MAX(0.,IRRAPL_cm2)
+     &          DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU, !Input
+     &          ATHETA, SWDEF, SWDEF_cm2)                 !Output
+              IRRAPL_cm2 = SWDEF_cm2
+              IRRAPL_cm2 = MAX(0.,IRRAPL_cm2)
             ELSE
               CALL SWDEFICIT(
-     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
+     &          DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
      &          ATHETA, SWDEF)                              !Output
             ENDIF
 
@@ -1152,11 +1141,12 @@ C               Apply fixed irrigation amount
 !-----------------------------------------------------------------------
       IF (DRIP2D) THEN
         CALL DRIP_IRRIG (CONTROL, 
-     &    AUTO, IRRAPL, DripDat, DripEvntEntr, 
-     &    DripDur, DripInt, DripNum, DripRefLN, DripLN, DripOfset, !Input
-     &    DripDep, DripRate, DripSpc, DripStart, EFFIRR, IIRRI,    !Input
-     &    MEHYD, NDRIP, YRDOY, YRPLT, IRRAPL_cm2,!Input, IRRAPL_cm2
-     &    DEPIR)                                          !Output
+     &    AUTO, IRRAPL, DripDat, DripEvntEntr,    !Input
+     &    DripDur, DripInt, DripNum, DripRefLN,   !Input
+     &    DripLN, DripOfset, DripDep, DripRate,   !Input
+     &    DripSpc, DripStart, EFFIRR, IIRRI,      !Input
+     &    NDRIP, YRDOY, YRPLT, IRRAPL_cm2,        !Input
+     &    DEPIR)                                  !Output
 
           IF (DEPIR > 1.E-4) THEN
             NAP = NAP + 1
@@ -1208,29 +1198,18 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Transfer data to ModuleData
-      CALL PUT('MGMT','DEPIR', DEPIR)   !Total applied irrig amt today (mm) (includes losses)
-      CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
-      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
-      CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) !Total effective irrigation (mm)
-      CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
-      
-!***********************************************************************
-!***********************************************************************
-!     DAILY INTEGRATION CALCULATIONS
-!***********************************************************************
-      ELSEIF (DYNAMIC .EQ. INTEGR) THEN
-C-----------------------------------------------------------------------
-    ! IF (DEPIR .GT. 0.0) THEN  ! Jin move to Daily Rate
-        !!NAP    = NAP + 1
-    !    TOTIR  = TOTIR + DEPIR
-    !    TOTEFFIRR = TOTEFFIRR + IRRAMT
-    !  ENDIF
+      CALL PUT('MGMT','DEPIR', DEPIR)   
+      CALL PUT('MGMT','IRRAMT',IRRAMT)
+      CALL PUT('MGMT','TOTIR', TOTIR) 
+      CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) 
+      CALL PUT('MGMT','EFFIRR',EFFIRR)
 
-!     Transfer data to ModuleData
- !     CALL PUT('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm)
- !     CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigAtion (mm)
- !     CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
- !     CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
+! DEPIR     = Total applied irrig amt today (mm) (includes losses)
+! IRRAMT    = Effective irrig amt today (mm)
+! TOTIR     = Total applied irrigation (mm) (includes losses)
+! TOTEFFIRR = Total effective irrigation (mm)
+! EFFIRR    = Effective irrigation %
+
 !***********************************************************************
       ENDIF
 !***********************************************************************

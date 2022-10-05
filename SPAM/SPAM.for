@@ -21,12 +21,9 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !  08/25/2006 CHP Add SALUS soil evaporation routine, triggered by new
 !                 FILEX parameter MESEV
 !  12/09/2008 CHP Remove METMP
-<<<<<<< HEAD
-!  10/20/2009 CHP Soil water stress factors computed in SPAM to accomodate
+! 10/20/2009 CHP Soil water stress factors computed in SPAM to accomodate
 !                   2D, variable time step model.
-=======
 !  10/16/2020 CHP Cumulative "soil" evaporation includes mulch and flood evap
->>>>>>> develop
 C-----------------------------------------------------------------------
 C  Called by: Main
 C  Calls:     XTRACT, OPSPAM    (File SPSUBS.for)
@@ -61,8 +58,8 @@ C=======================================================================
 
       INTEGER DYNAMIC, L, NLAYR
 
-      REAL CANHT, CO2, SRAD, TAVG, 
-     &    TMAX, TMIN, WINDSP, XHLAI, XLAI
+      REAL CANHT, CO2 
+      REAL SRAD, TAVG, TMAX, TMIN, WINDSP, XHLAI, XLAI
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP 
       REAL EF, EM, EO, EP, ES, ET, EVAP 
       REAL TRWU, TRWUP, U
@@ -76,10 +73,8 @@ C=======================================================================
      &    SWDELTS(NL), SWDELTU(NL), SWDELTX(NL), UPFLOW(NL)
       REAL ES_LYR(NL)
 
-!     ORYZA model
 !     Root water uptake computed by some plant routines (optional)
       REAL UH2O(NL)
-      REAL ETRD, ETAE, TRAT, TRATIO
 
 !     Species-dependant variables imported from PLANT module:
       REAL PORMIN, RWUMX
@@ -96,11 +91,11 @@ C=======================================================================
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
       TYPE (ControlType) CONTROL
-      TYPE (SoilType) SOILPROP
-      TYPE (SwitchType) ISWITCH
-      TYPE (FloodWatType) FLOODWAT
+      TYPE (SoilType)    SOILPROP
+      TYPE (SwitchType)  ISWITCH
+      TYPE (FloodWatType)FLOODWAT
       TYPE (MulchType)   MULCH
-      TYPE (WeatherType)  WEATHER
+      TYPE (WeatherType) WEATHER
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -179,17 +174,17 @@ C=======================================================================
       CALL GET('PLANT','RWUEP1',RWUEP1)
 
 !     ---------------------------------------------------------
-      IF (meevp .NE.'Z') THEN   !LPM 02dec14 to use the values from ETPHOT
-          SELECT CASE (METMP)
-          CASE ('E')    !EPIC soil temperature routine
-            CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  !DSSAT soilt temperature
-           CALL STEMP(CONTROL, ISWITCH,
-     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &    SRFTEMP, ST)   !Output
-     	   END SELECT
+      IF (MEEVP .NE.'Z') THEN   !LPM 02dec14 use values from ETPHOT
+        SELECT CASE (METMP)
+        CASE ('E')    !EPIC soil temperature routine
+          CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &      SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,    !Input
+     &      SRFTEMP, ST)                                     !Output
+        CASE DEFAULT  !DSSAT soil temperature
+          CALL STEMP(CONTROL, ISWITCH,
+     &      SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP, !Input
+     &      SRFTEMP, ST)                                     !Output
+        END SELECT
       ENDIF
 !     ---------------------------------------------------------
       IF (MEEVP .NE. 'Z') THEN
@@ -214,19 +209,12 @@ C=======================================================================
      &      U, WINF,                                      !Input
      &      ES)                                           !Output
 !     ----------------------------
-!        CASE ('S')  !SALUS soil evaporation routine
-         !CALL ESR_SoilEvap(SEASINIT,
-     &   ! EOS, Pond_EV, SOILPROP, SW, SW_AVAIL,           !Input
-     &   ! ES, SWDELTU, SWAD, UPFLOW)                      !Output
-
-!     ----------------------------
         END SELECT
 
 !       Initialize plant transpiration variables
         CALL TRANS(DYNAMIC, MEEVP, 
      &    CO2, CROP, EO, ET0, EVAP, KTRANS,               !Input
-     &    WINDSP, XHLAI,                                  !Input
-     &    WEATHER,                                        !Input
+     &    WINDSP, XHLAI, WEATHER,                         !Input
      &    EOP)                                            !Output
       ENDIF
 
@@ -237,7 +225,7 @@ C=======================================================================
         IF (MEPHO .EQ. 'L' .OR. MEEVP .EQ. 'Z') THEN
           CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
+     &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
         ENDIF
       ENDIF
@@ -245,13 +233,8 @@ C=======================================================================
 !     Call OPSPAM to open and write headers to output file
       IF (IDETW .EQ. 'Y') THEN
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-<<<<<<< HEAD
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
-=======
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
->>>>>>> develop
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
       ENDIF
 
@@ -278,19 +261,19 @@ C=======================================================================
 !-----------------------------------------------------------------------
       SWDELTX = 0.0
 !     ---------------------------------------------------------
-      IF (meevp .NE.'Z') THEN  !LPM 02dec14 to use the values from ETPHOT
-          SELECT CASE (METMP)
-          CASE ('E')    !EPIC soil temperature routine
-            CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  
-!     7/21/2016 - DSSAT method is default, per GH
-!     CASE ('D')  !DSSAT soil temperature
-        CALL STEMP(CONTROL, ISWITCH,
-     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &    SRFTEMP, ST)                                    !Output
-          END SELECT
+      IF (MEEVP .NE.'Z') THEN  !LPM 02dec14 use values from ETPHOT
+        SELECT CASE (METMP)
+        CASE ('E')    !EPIC soil temperature routine
+          CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &      SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &      SRFTEMP, ST)                                    !Output
+        CASE DEFAULT  
+!       7/21/2016 - DSSAT method is default, per GH
+!       CASE ('D')  !DSSAT soil temperature
+          CALL STEMP(CONTROL, ISWITCH,
+     &      SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &      SRFTEMP, ST)                                    !Output
+        END SELECT
       ENDIF
 !-----------------------------------------------------------------------
 !     POTENTIAL ROOT WATER UPTAKE
@@ -304,17 +287,6 @@ C=======================================================================
 !       These processes are done by ETPHOT for hourly (Zonal) energy
 !       balance method.
         IF (MEEVP .NE. 'Z') THEN
-C       Calculate potential root water uptake rate for each soil layer
-C       and total potential water uptake rate.
-!          IF (XHLAI .GT. 0.0) THEN
-!            CALL ROOTWU(RATE,
-!     &          DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
-!     &          RWU, TRWUP)                           !Output
-!          ELSE
-!            RWU   = 0.0
-!            TRWUP = 0.0
-!          ENDIF
-
 !         Calculate potential root water uptake rate for each soil layer
 !         and total potential water uptake rate.
           IF (XHLAI .GT. 0.0) THEN
@@ -330,11 +302,11 @@ C       and total potential water uptake rate.
             CASE DEFAULT
               CALL ROOTWU(RATE,
      &          DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
-     &          RWU, TRWUP)   
+     &          RWU, TRWUP)                                   !Output
 
               CALL WaterStress(EOP, RWUEP1, TRWUP, SWFAC, TURFAC)
             END SELECT
-         ELSE
+          ELSE
             RWU   = 0.0
             TRWUP = 0.0
           ENDIF
@@ -350,7 +322,7 @@ C       and total potential water uptake rate.
             ET_ALB = MSALB
           ENDIF
           
-           CALL PET(CONTROL, 
+          CALL PET(CONTROL, 
      &       ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
      &       EORATIO, !Needed by Penman-Monteith
      &       CANHT,   !Needed by dynamic Penman-Monteith
@@ -402,7 +374,14 @@ C       and total potential water uptake rate.
           IF (EOS_SOIL > 1.E-6) THEN
             SELECT CASE(MESEV)
 !           ------------------------
-            CASE ('R')  !Ritchie soil evaporation routine
+            CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
+!             Note that this routine calculates UPFLOW, unlike the SOILEV.
+              CALL ESR_SoilEvap(
+     &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
+     &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+!           ------------------------
+            CASE DEFAULT 
+!           CASE ('R')  !Ritchie soil evaporation routine
 !             Calculate the availability of soil water for use in SOILEV.
               DO L = 1, NLAYR
                 SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
@@ -411,14 +390,6 @@ C       and total potential water uptake rate.
      &          DLAYR, DUL, EOS_SOIL, LL, SW,             !Input
      &          SW_AVAIL(1), U, WINF,                     !Input
      &          ES)                                       !Output
-
-!           ------------------------
-            CASE DEFAULT ! Sulieman-Ritchie soil evaporation routine is default
-!             Note that this routine calculates UPFLOW, unlike the SOILEV.
-!             Calculate the availability of soil water for use in SOILEV.
-              CALL ESR_SoilEvap(
-     &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
-     &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
             END SELECT
 !           ------------------------
           ENDIF
@@ -430,27 +401,11 @@ C       and total potential water uptake rate.
 !         Potential transpiration - model dependent
 !-----------------------------------------------------------------------
           IF (XHLAI > 1.E-6) THEN
-!            SELECT CASE (CONTROL % MODEL(1:5))
-!            CASE ('RIORZ')    !ORYZA2000 Rice
-!!             07/22/2011 CHP/TL replace TRANS with this (from ET2.F90 in ORYZA2000) 
-!!             Estimate radiation-driven and wind- and humidity-driven part
-!              ETRD = EO * 0.75  !s/b 1st term in FAO energy balance eqn
-!              ETAE = EO - ETRD
-!              EOP = ETRD*(1. - EXP(-KTRANS*XHLAI)) +ETAE*MIN(2.0, XHLAI)
-!              EOP = MAX(0.0, EOP)
-!              EOP = MIN(EO, EOP)
-!
-!              TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
-!              EOP = EOP * TRAT
-
-!            CASE DEFAULT
-!             For all models except ORYZA
-              CALL TRANS(RATE, MEEVP, 
-     &        CO2, CROP, EO, ET0, EVAP, KTRANS,           !Input
-     &        WINDSP, XHLAI,                              !Input
-     &        WEATHER,                                    !Input
-     &        EOP)                                        !Output
-!            END SELECT
+            CALL TRANS(RATE, MEEVP, 
+     &      CO2, CROP, EO, ET0, EVAP, KTRANS,           !Input
+     &      WINDSP, XHLAI,                              !Input
+     &      WEATHER,                                    !Input
+     &      EOP)                                        !Output
             
           ELSE
             EOP = 0.0
@@ -545,24 +500,13 @@ C       and total potential water uptake rate.
         CEP = CEP + EP
         CES = CES + ES
         CEVAP=CEVAP + EVAP
-C JULY 11 2017, KB AND BK TO GET CUM ET OUT  
-            !    IF (MEEVP .EQ. 'Z') THEN
-            !      CET = CET + EP + ES
-            !    ELSE
-                  CET = CET + ET
-            !    ENDIF
-C KB 
+        CET = CET + ET
       ENDIF
 
       IF (IDETW .EQ. 'Y') THEN
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-<<<<<<< HEAD
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
-=======
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
->>>>>>> develop
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
       ENDIF
 
@@ -586,7 +530,7 @@ C-----------------------------------------------------------------------
       EF = FLOODWAT % EF
 
 !     ---------------------------------------------------------
-      IF (meevp .NE.'Z') THEN  !LPM 02dec14 to use the values from ETPHOT
+      IF (MEEVP .NE.'Z') THEN  !LPM 02dec14 use values from ETPHOT
           SELECT CASE (METMP)
           CASE ('E')    !EPIC soil temperature routine
             CALL STEMP_EPIC(CONTROL, ISWITCH,  
@@ -599,33 +543,15 @@ C-----------------------------------------------------------------------
           END SELECT
       ENDIF
 
-!      SELECT CASE (METMP)
-!      CASE ('E')    !EPIC soil temperature routine
-!        CALL STEMP_EPIC(CONTROL, ISWITCH,  
-!     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-!     &    SRFTEMP, ST)                                    !Output
-!      CASE DEFAULT  
-!!     7/21/2016 - DSSAT method is default, per GH
-!!     CASE ('D')  !DSSAT soil temperature
-!        CALL STEMP(CONTROL, ISWITCH,
-!     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-!     &    SRFTEMP, ST)                                    !Output
-!      END SELECT
-!
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-<<<<<<< HEAD
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
-=======
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
->>>>>>> develop
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
       IF (CROP .NE. 'FA' .AND. MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
+     &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
 
@@ -636,19 +562,14 @@ C-----------------------------------------------------------------------
 !     SEASEND - seasonal output
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
-C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-<<<<<<< HEAD
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
-=======
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
->>>>>>> develop
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
 !     ---------------------------------------------------------
-      IF (meevp .NE.'Z') THEN  !LPM 02dec14 to use the values from ETPHOT
+      IF (MEEVP .NE.'Z') THEN  !LPM 02dec14 use values from ETPHOT
           SELECT CASE (METMP)
           CASE ('E')    !EPIC soil temperature routine
             CALL STEMP_EPIC(CONTROL, ISWITCH,  
