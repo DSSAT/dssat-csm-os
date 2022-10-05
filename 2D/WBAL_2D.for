@@ -18,7 +18,7 @@
       SUBROUTINE Wbal_2D(CONTROL, ISWITCH, COUNT,
      &    CES, CEP, Drain_Limit2D, RUNOFF, IRRAMT, RAIN, 
      &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
-     &    LatFlow, StdIrrig, 
+     &    LatFlow, !StdIrrig, 
      &    ES, ES_DAY)
 
 !     ------------------------------------------------------------------
@@ -37,7 +37,7 @@
 
       REAL CEO, CES, CEP, TEP, TES, CRAIN, EFFIRR 
       REAL TDRAIN, TOTIR, TRUNOF, TSW, TSWINI
-      REAL LatFlow, CumLatFlow, StdIrrig
+      REAL LatFlow, CumLatFlow    !, StdIrrig
       REAL WBALAN, MgmtWTD, SolProfDrain
 
 !     Temporary daily balance

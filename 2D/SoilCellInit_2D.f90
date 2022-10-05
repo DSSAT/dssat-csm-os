@@ -11,14 +11,13 @@
 ! There are five options:
 
 ! CASE 1: Flat surface, no plastic mulch cover
-!   CASE 1a: Bed Width=0, Furrow width = ROWSPC_CM
-!   CASE 1b: Bed Width>0, Furrow width >0,  Bed Width+Furrow width=ROWSPC_CM
-!   CASE 1c: Bed Width=ROWSPC_CM, Furrow width = 0
+! - CASE 1a: Bed Width=0, Furrow width = ROWSPC_CM
+! - CASE 1b: Bed Width>0, Furrow width >0,  Bed Width+Furrow width=ROWSPC_CM
+! - CASE 1c: Bed Width=ROWSPC_CM, Furrow width = 0
 ! CASE 2: Flat surface, partial plastic mulch cover
 ! CASE 3: Flat surface, full plastic mulch cover (not handled yet)
 ! CASE 4: Raised bed, plastic mulch cover over bed
 ! CASE 5: Raised bed, no plastic mulch 
-! Case Table is as bellow
 !------------------------------------------------------------------------------------------
 !                 |                      Bed Width (cm)                                   |
 !                 |-----------------------------------------------------------------------|
@@ -53,6 +52,8 @@
 	USE Cells_2D
     USE ModuleData
     Implicit NONE
+    EXTERNAL INFO, ERROR, FIND, GETLUN, WARNING, MIXMASSMASS,   &
+        MIXMASSTOT, TEXTURECLASS, CALBROKCRYPARA, RETC_VG, LYRSET4, LMATCH_MASS
 
     Type (CellType) Cells(MaxRows,MaxCols)
     Type (SoilType) SOILPROP, SoilProp_Bed, SoilProp_Furrow

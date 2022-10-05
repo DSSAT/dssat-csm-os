@@ -10,7 +10,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !=======================================================================
 
       SUBROUTINE SoilNiBal_2D (CONTROL, ISWITCH, Cells, DENITRIF, IMM,  
-     &    MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, TLCH,
+     &    MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, TLCH,
      &    TNH4, TNO3, TNOX, TOTAML, TUREA, WTNUP) 
 !     ------------------------------------------------------------------
       USE Cells_2D
@@ -19,6 +19,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
                          !parameters, hourly weather data.
       USE Interface_SoilNBalSum
       IMPLICIT NONE
+      EXTERNAL YR_DOY, INCDAT, GETLUN, HEADER
       SAVE
 !     ------------------------------------------------------------------
       LOGICAL FEXIST
@@ -29,7 +30,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       CHARACTER*18, PARAMETER ::  SNiBAL2D = 'SoilNiBal2D.OUT'
 
       INTEGER DAS, DYNAMIC, INCDAT, YRDOY
-      INTEGER YRSIM, RUN, NBUND, Clunn, Clunn1D2D !LUNSNC, 
+      INTEGER YRSIM, RUN, Clunn, Clunn1D2D !LUNSNC, NBUND, 
       INTEGER YR, DOY, YRI, DOYI, detailRow, detailCol, PTFLG, MULTI
       INTEGER L, J
 

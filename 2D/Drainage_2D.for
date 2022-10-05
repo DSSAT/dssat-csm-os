@@ -18,11 +18,9 @@ C  Called by: Watbal2D module
 C=======================================================================
 
       SUBROUTINE Drainage_2D(DYNAMIC, 
-     &    CELLS, Diffus, FurCol1, FurRow1, Kunsat,        !Input
-     &    MgmtWTD, SOILPROP, SWV_D, TimeIncr, WCr,        !Input
-     &    ThetaCap, Ksat,                                 !Input
-     &    LatFlow_ts,                                        !Output
-     &    SWV_ts, SWFh_ts, SWFv_ts)                       !Output
+     &    CELLS, Diffus, FurCol1, Kunsat,             !Input
+     &    SOILPROP, SWV_D, TimeIncr, WCr,             !Input
+     &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D     
@@ -33,10 +31,10 @@ C=======================================================================
 !     Interface variables:
 !-----------------------------------------------------------------------
 !     Input:
-      INTEGER, INTENT(IN) :: DYNAMIC, FurCol1, FurRow1
-      REAL, INTENT(IN) :: MgmtWTD, TimeIncr
+      INTEGER, INTENT(IN) :: DYNAMIC, FurCol1 !, FurRow1
+      REAL, INTENT(IN) :: TimeIncr    !MgmtWTD, 
       TYPE (SoilType), INTENT(IN) :: SOILPROP
-      REAL, DIMENSION(NL), INTENT(IN) :: ThetaCap
+!     REAL, DIMENSION(NL), INTENT(IN) :: ThetaCap
       Double Precision, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: SWV_D
       TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CELLS
       Double Precision, DIMENSION(MaxRows,MaxCols), INTENT(OUT) ::SWV_ts
@@ -57,12 +55,12 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: Width
       Double Precision, Dimension(MaxRows,MaxCols+1) :: H_in, H_out
       Double Precision, Dimension(MaxRows+1,MaxCols) :: V_in, V_out
-      REAL, DIMENSION(NL) :: Ksat
+!     REAL, DIMENSION(NL) :: Ksat
 
 !     Water table
       Logical WatTable
-      REAL FracWT, TargetSWV !, Deficit
-!      REAL Bottom, Top
+!     REAL FracWT, TargetSWV !, Deficit
+!     REAL Bottom, Top
       
 !***********************************************************************
 !***********************************************************************
@@ -271,7 +269,8 @@ C=======================================================================
                 LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2
               ELSEIF (V_out(i,j) < -1.E-10) THEN
 !               Flow up from water table cell - lateral inflow to balance
-                LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2 !What is the difference for this two cases?
+!               What is the difference for this two cases?
+                LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2 
               ENDIF
             Endif
 

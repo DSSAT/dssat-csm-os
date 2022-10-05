@@ -14,8 +14,9 @@ C  06/01/2010 CHP / JZW Written
 C=======================================================================
 
       SUBROUTINE SoilNi_init_2D(CONTROL, 
-     &    Cell_Type, SOILPROP, SOILPROP_profile, ST, NH4, NO3,!Input
-     &    NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, TFNITY, UREA_2D) !Output
+     &    Cell_Type, SOILPROP, ST, NH4, NO3,      !Input
+     &    NH4_2D, NO3_2D, SNH4_2D, SNO3_2D,       !Input
+     &    TFNITY, UREA_2D)                        !Output
       
 !-----------------------------------------------------------------------
       USE Cells_2D
@@ -39,7 +40,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       TYPE (ControlType) CONTROL
-      TYPE (SoilType)    SOILPROP, SOILPROP_profile
+      TYPE (SoilType)    SOILPROP !, SOILPROP_profile
 
       FILEIO  = CONTROL % FILEIO
       LUNIO   = CONTROL % LUNIO

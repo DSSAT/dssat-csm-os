@@ -11,22 +11,24 @@
 !=======================================================================
 
       SUBROUTINE Drip_IRRIG (CONTROL,  
-     &    AUTO, IRRAPL, DripDat, DripEvntEntr, 
-     &    DripDur, DripInt, DripNum, DripRefLN, DripLN, DripOfset, !Input if not auto
-     &    DripDep, DripRate, DripSpc, DripStart, EFFIRR, IIRRI, !Input
-     &    MEHYD, NDRIP, YRDOY, YRPLT, IRRAPL_cm2,               !Input
-     &    DEPIR)                                                !Output
+     &    AUTO, IRRAPL, DripDat, DripEvntEntr,    !Input
+     &    DripDur, DripInt, DripNum, DripRefLN,   !Input
+     &    DripLN, DripOfset, DripDep, DripRate,   !Input
+     &    DripSpc, DripStart, EFFIRR, IIRRI,      !Input
+     &    NDRIP, YRDOY, YRPLT, IRRAPL_cm2,        !Input
+     &    DEPIR)                                  !Output
 
       USE ModuleDefs
       USE ModuleData
       USE Cells_2D
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, TIMDIF, SWDEFICIT
       SAVE
 
       !REAL,               Intent(IN), Optional :: IRRAPL_cm2
-      CHARACTER*1 IIRRI, MEHYD
+      CHARACTER*1 IIRRI   !, MEHYD
       CHARACTER*7, PARAMETER :: ERRKEY = 'DRIPIRR'
-      CHARACTER*78 MSG(1)
+!     CHARACTER*78 MSG(1)
       INTEGER DAP, DYNAMIC, I, J, IDL, JJ
       INTEGER NDRIP, TIMDIF, YRDOY, YRPLT
       INTEGER, DIMENSION(NAPPL) :: DripDat, DripEvntEntr
@@ -123,7 +125,8 @@ C-----------------------------------------------------------------------
            IrrRate = 0.
            TotIrrRate = 0.
         DO J = 1, 1 ! Jin assume only one drip event entry
-          IF (IRRAPL > 1.E-6) THEN !IRRAPL is Supplemental irrigation amount for auto irr
+!         IRRAPL is Supplemental irrigation amount for auto irr
+          IF (IRRAPL > 1.E-6) THEN 
             DripIrrig(1) % DripEvntEntr = 1
             DripIrrig(1) % DripRate(J)  = DripRate(1, J) * EFFIRR
             DripIrrig(1) % DripStart(J) = 8.0  
@@ -154,7 +157,7 @@ C-----------------------------------------------------------------------
 !      rounding assume irrigation duration is about 40. minutes, 0.67hr
        DripIrrig(1) % DripNum(1)   = nint(temp/0.67) 
        if (DripIrrig(1)%DripNum(1).EQ.0)DripIrrig(1)%DripNum(1)=1
-       if (DripIrrig(1)%DripNum(1).EQ.1)DripIrrig(1)%DripInt(J)=0. !in hr
+       if (DripIrrig(1)%DripNum(1).EQ.1)DripIrrig(1)%DripInt(J)=0. !hr
        DripIrrig(1) % DripDur(1) = temp /DripIrrig(1) % DripNum(1) 
        SPD = DripIrrig(1)% DripNum(1) * DripIrrig(1) % DripDur(1) *3600.
 !        s/d =    #/day     *   hr        * s/hr 
@@ -195,7 +198,8 @@ C-----------------------------------------------------------------------
                 IF (DripRefLN(I, J) .EQ. DripIrrig(IDL)%DripLN) THEN
           JJ = DripIrrig(IDL) % DripEvntEntr
           JJ = JJ + 1
-          DripIrrig(IDL) % DripEvntEntr = JJ ! # of event entry on current day
+!         # of event entry on current day
+          DripIrrig(IDL) % DripEvntEntr = JJ 
           DripIrrig(IDL) % DripRate(JJ)  = DripRate(I, J) * EFFIRR
           DripIrrig(IDL) % DripNum(JJ)   = DripNum(I, J)
           DripIrrig(IDL) % DripStart(JJ) = DripStart(I, J)  

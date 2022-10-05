@@ -44,6 +44,10 @@
       USE Cells_2D
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL WATERTABLE_2D, THETACAPOP, DRAINAGE_2D, ROOTWU_2D, 
+     &  WBSUM_2D, WBAL_2D, OPWBAL_2D, CALC_SW_VOL, WBAL_2D_TS, 
+     &  RNOFF_FURROW, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
+     &  WATERSTRESS
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -274,11 +278,9 @@
       CELLS%RATE%EP_Rate = 0.0
 
       CALL Drainage_2D(SEASINIT,  
-     &    CELLS, Diffus, FurCol1, FurRow1, Kunsat,        !Input
-     &    MgmtWTD, SOILPROP, SWV_D, TimeIncr, WCr,        !Input
-     &    ThetaCap, Ksat,                                 !Input
-     &    LatFlow,                          !Output
-     &    SWV_ts, SWFh_ts, SWFv_ts)          !Output
+     &    CELLS, Diffus, FurCol1, Kunsat,             !Input
+     &    SOILPROP, SWV_D, TimeIncr, WCr,             !Input
+     &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
 
 !!     -------------------------------------------------------------------
 !!     If a water table is present, need to calculate stable initial water
@@ -357,7 +359,7 @@
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
      &    CES, CEP, DRAIN_2D, RUNOFF, IRRAMT, RAIN, 
      &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
-     &    LatFlow, StdIrrig, ES, ES_DAY)
+     &    LatFlow, ES, ES_DAY)
      
 !     Call OPWBAL to write headers to output file
       CALL OPWBAL_2D(CONTROL, ISWITCH, 
@@ -972,11 +974,10 @@
 !       HORIZONTAL AND VERTICAL WATER MOVEMENT
 !       Drainage_2D computes both runoff and drainage for bed and furrow
         CALL Drainage_2D(RATE, 
-     &    CELLS, Diffus, FurCol1, FurRow1, Kunsat,        !Input
-     &    MgmtWTD, SOILPROP, SWV_avail, TimeIncr, WCr,    !Input
-     &    ThetaCap, Ksat,                                 !Input
-     &    LatFlow_ts,                                     !Output
-     &    SWV_ts, SWFh_ts, SWFv_ts)                       !Output
+     &    CELLS, Diffus, FurCol1, Kunsat,             !Input
+     &    SOILPROP, SWV_D, TimeIncr, WCr,             !Input
+     &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
+
         ! Here LatFlow_ts is due to the drainage of layer LIMIT_2D 
         ! here the drainage is from first layer to LIMIT_2D
         DRAIN_ts = 0.0
@@ -1187,7 +1188,7 @@ C-----------------------------------------------------------------------
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
      &    CES, CEP, DRAIN_2D, RUNOFF, IRRAMT, RAIN, 
      &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
-     &    LatFlow, StdIrrig, ES, ES_DAY)
+     &    LatFlow, ES, ES_DAY)
 !-----------------------------------------------------------------
 !          call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
 !------------------------------------------------------------
@@ -1212,7 +1213,7 @@ C-----------------------------------------------------------------------
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
      &    CES, CEP, DRAIN_2D, RUNOFF, IRRAMT, RAIN, 
      &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
-     &    LatFlow, StdIrrig, ES, ES_DAY)
+     &    LatFlow, ES, ES_DAY)
 
 !     chp 2022-07-10 can't use an array of zeros in the argument. 
 !     I don't want to set the original variables to zero, so use a dummy argument here.

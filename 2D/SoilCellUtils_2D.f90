@@ -1,11 +1,15 @@
 !==============================================================================
 ! Utility subroutines for 2-D cell data
-!-----------------------------------------------------------
-! 02/30/2011  
-!              Increase MaxRows to 30 to match the change of NL
-!              Replace RowFrac to ColFrac
+! -----------------------------------------------------------------------------
+! 09/13/2006 CHP Written
+! 04/16/2007 CHP Convert from 1D to 2D
+! 02/30/2011 CHP Increase MaxRows to 30 to match the change of NL
+!                Replace RowFrac to ColFrac
+! -----------------------------------------------------------------------------
   Module Cells_2D
   USE ModuleDefs
+  IMPLICIT NONE
+  EXTERNAL MIXMASSVOL, LMATCH
   SAVE
   
 ! Cell arrays -- fixed maximum dimensions for now
@@ -68,13 +72,13 @@
       TYPE CellStrucType 
         Sequence
         Integer*4 CellType                
-        ! 0 = no cell data (e.g., in furrow)      1,2     -99     1,2
-        ! 1 = surface water                      ------|       |------
-        ! 2 = surface litter                       3   |   0   |   3
-        ! 3 = soil in bed                        _  _  |_______|  _  _
-        ! 4 = soil below bed                                        
-        ! 5 = soil below furrow                    4   |   5   |   4
-        !-99= not simulated                       -99     -99     -99
+        ! 0 = no cell data (e.g., in furrow)      1,2     -99  
+        ! 1 = surface water                      ------|       
+        ! 2 = surface litter                       3   |   0   
+        ! 3 = soil in bed                        _  _  |_______
+        ! 4 = soil below bed                                   
+        ! 5 = soil below furrow                    4   |   5   
+        !-99= not simulated                       -99     -99  
         Real*4 Thick       !cm
         Real*4 Width       !cm
         Real*4 CellArea    !cm3[soil]/cm[row length]
@@ -86,7 +90,7 @@
         Real RLV                         !Root len dens cm/cm3 (PLANT)
         REAL SNO3, SNH4, UREA            !Soil N (kg[N]/ha)
         REAL BD, DUL, LL, SAT, SWCN, WR  !Soil properties 
-        ! WR(L)     Root hospitality factor, used to compute root distribution
+!       WR(L)     Root hospitality factor, used to compute root distribution
 !       REAL OC, SPi_Labile, SRP         !Not used currently
 !       Real STemp                       !Soil temperature (SPAM)
       END TYPE CellStateType 
