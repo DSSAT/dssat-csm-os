@@ -55,14 +55,9 @@
 !  Calls  : IPSOIL, MULCHLAYER, NCHECK_organic, OpSoilOrg, SoilOrg_init
 !=======================================================================
 
-<<<<<<< HEAD
-      SUBROUTINE SoilOrg (CONTROL, ISWITCH, CELLS,
-     &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
-=======
       SUBROUTINE SoilOrg (CONTROL, ISWITCH, 
      &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
      &    OMAData, RLV,                                   !Input
->>>>>>> develop
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    CH4_data, IMM, LITC, MNR, MULCH, newCO2, SomLit,!Output
      &    SomLitC, SomLitE, SSOMC)                        !Output
@@ -77,12 +72,15 @@
       USE GHG_MOD
 
       IMPLICIT  NONE
+      EXTERNAL METHANEDYNAMICS, SOILORG_INIT, NCHECK_ORGANIC, 
+     &  MULCHLAYER, SOILCBAL, OPSOILORG, SOILNOPOBAL
+
       SAVE
 
 !-----------------------------------------------------------------------
 !     Added with 2D model - this routine is not yet 2D, but accounts for
 !     bed width in bedded systems for computing quantities of organic matter
-      Type (CellType) Cells(MaxRows,MaxCols)
+!     Type (CellType) Cells(MaxRows,MaxCols)
       REAL, DIMENSION(NL) :: BWRATIO
 
 !-----------------------------------------------------------------------
@@ -323,15 +321,6 @@
       ENDDO
 
       PREV_CROP = CONTROL % CROP  !Save crop name for harvest residue
-
-      TOMINFOM = 0.0
-      TOMINSOM = 0.0
-      TNIMBSOM = 0.0
-
-!     Transfer daily mineralization values for use by Cassava model
-      CALL PUT('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
-      CALL PUT('ORGC','TOMINSOM' ,TOMINSOM) !Miner from SOM (kg/ha)
-      CALL PUT('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
 
       ACCCO2 = 0.0 !Cumulative CO2 released from SOM, FOM decomposition
       newCO2_FOM = 0.0
@@ -927,15 +916,9 @@ C     Write seasonal output
      &    FON, HARVRES, IMM, LITE, MNR, MULCH, N_ELEMS,   !Input
      &    NLAYR, OMADATA, SENESCE, TLITE, TSOME)          !Input
 
-<<<<<<< HEAD
-      write(777,'(i8,60f8.2)')
-     &   yrdoy, cn_som(1:nlayr), cn_fom(1:nlayr)
-=======
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
      &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
      &    CH4_data)                                           !Output
-
->>>>>>> develop
 
 C***********************************************************************
 C***********************************************************************

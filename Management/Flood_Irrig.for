@@ -15,14 +15,8 @@ C=======================================================================
 
       SUBROUTINE FLOOD_IRRIG (DYNAMIC, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-<<<<<<< HEAD
      &    IPDAT, IPERC, NBUND, NCOND, NPERC,              !Input
      &    PUDDLED, RAIN, SOILPROP, SW, YRDOY, YRPLT,      !Input
-=======
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
-     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
-     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
->>>>>>> develop
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
 
@@ -32,24 +26,15 @@ C=======================================================================
       SAVE
 
       CHARACTER*1 IIRRI
-<<<<<<< HEAD
-      INTEGER  DYNAMIC, J, YRDOY, YRPLT
-      REAL     DEPIR,TDSW,RAIN
-
-      INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC
-      INTEGER IBDAT(NAPPL), BUNDDAT(NAPPL), IIRRCV(NAPPL)
-      INTEGER CONDAT(NAPPL), IRRDAT(NAPPL)
-=======
       CHARACTER*6, PARAMETER :: ERRKEY = "FIRRIG"
       CHARACTER*78, DIMENSION(3) :: MSG
-      INTEGER  DYNAMIC, J,K,L, YRDOY, YRPLT
+      INTEGER  DYNAMIC, J,YRDOY, YRPLT
       REAL     DEPIR,TDSW,RAIN
 
-      INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC, NTBL, NPUD
+      INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC, NPUD        !, NTBL
       INTEGER IBDAT(NAPPL), BUNDDAT(NAPPL), IIRRCV(NAPPL)
       INTEGER CONDAT(NAPPL), IRRDAT(NAPPL), PUDDAT(NAPPL), PUDAT(NAPPL)
-      INTEGER JULWTB(NAPPL), WTDAT(NAPPL)
->>>>>>> develop
+!     INTEGER JULWTB(NAPPL), WTDAT(NAPPL)
       INTEGER IPDAT(NAPPL), PERCDAT(NAPPL)
       REAL ABUND, APWAT, EF
       REAL FLOOD, INFILT, PERC, PERMW, PUDPERC
