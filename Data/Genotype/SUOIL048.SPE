@@ -84,3 +84,8 @@
 !Emergence was defined as growth stage 0 (X = 0), end of leaf growth as growth stage 4, and 
 !physiological maturity as growth stage 10 (Jones, 1983). Minimum shoot P concentration was 
 !taken as 60% of the estimated optimum (Daroub et al., 2003).
+
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.92       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)

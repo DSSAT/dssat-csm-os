@@ -129,6 +129,11 @@
 *#EVAPOTRANSPIRATION
   KEP         0.60     Energy extinction coefficient for partitioning EO [potential evapotranspiration rate (mm/d)]to EP [actual plant transpiration rate](--)
   EORATIO     1.05     Ratio of increase in EO with increase in LAI (up to LAI=6.0) for use with FAO-56 Penman reference EO. (--)
+  
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.20       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  1.00       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
 
 *#CANOPY HEIGHT AND WIDTH AS MODIFIED BY TEMPERATURE AND PAR (from CropGro; the main canopy H & W section was moved to the ECO input file)
  -50.0  00.0  20.0  28.0  40.0                       XHWTEM(1-5),TEMPERATURES

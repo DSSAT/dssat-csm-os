@@ -204,6 +204,11 @@ $SPECIES:WHCRP048.20200721   Last edit: 2020-07-21 CHP
   1.00   4.0  20.0   0.0   5.0    21  10.0  25.0  30.0  34.0   -99   0.2   4.5
 ! 1.00   4.0  20.0   0.0   5.0    21  10.0  25.0  30.0  34.0   -99   0.2   4.5
 
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  1.03       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+
 ! COEFF   DEFINITION
 ! =====   ==========
 ! CHFR    Chaff growth rate as a fraction of stem growth (#)
