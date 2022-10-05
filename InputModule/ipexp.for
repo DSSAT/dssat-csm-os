@@ -1194,8 +1194,7 @@ C
       IF (AREA .LE. 0.0) AREA = 1.0
       IF (FLWR .LE. 0.0) FLWR = 1.0
       IF (SLEN .LE. 0.0) SLEN = SQRT(AREA*FLWR*10000.0)
-      IF (SLEN > 9999.) SLEN = 100.
-
+      
 C FO - Store Summary.out labels and values in arrays to send to
 C     OPSUM routines for printing.  Integers are temporarily 
 C     saved as real numbers for placement in real array.
@@ -1273,14 +1272,12 @@ C    New section (3rd)
 C
 C    Find header and read second line of field information
 C
-!     HFNDCH='BDWD'
       HFNDCH='PMALB'
       CALL HFIND(LUNEXP,HFNDCH,LINEXP,IFIND)
       IF (IFIND .EQ. 1) THEN
  71     CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
         IF (ISECT .EQ. 1) THEN
            READ (CHARTEST,90,IOSTAT=ERRNUM) LN,
-!    &                BEDWD,BEDHT,PMALB
      &                PMWD, PMALB, BEDWD, BEDHT
 
            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
@@ -1308,8 +1305,6 @@ C-----------------------------------------------------------------------
 
  60   FORMAT (I3,A8,1X,2A4,1X,F5.0,1X,F5.0,1X,A5,2(1X,F5.0),
      &         2(1X,A5),1X,F5.0,1X,A10)
-!     &         2(1X,A5),1X,F5.0,1X,A10,2(1x,F5.1), F6.2)
- !    &         2(1X,A5),1X,F5.0,1X,A10)
 !     chp 7/26/2006
 ! 80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0))
  80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0),1X,A5,I6)

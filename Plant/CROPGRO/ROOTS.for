@@ -353,7 +353,7 @@ C     respiration, and update root length density for each layer.
 !     10/3/2005 SJR
 !      SRDOT = (TRTDY + RLNEW - TRLV) * 10000.0 / RFAC3    !g/m2
       SRDOT = AMAX1(SRDOT, 0.0)
-!RFAC3     Ratio of root length to root weight at the current time (cm/g)
+
       TotRootMass = TRLV / RFAC3 * 1.E5
 !                   cm[root]   g[root]   10000 cm2   10(kg/ha)
 !          kg/ha  = -------- * ------- * -------- * ---------

@@ -441,7 +441,6 @@ C-----------------------------------------------------------------------
           LABEL(10) = 'H#UM'; VALUE(10) = GPP
           LABEL(11) = 'NFXM'; VALUE(11) = WTNFX*10.
           LABEL(12) = 'NUCM'; VALUE(12) = WTNUP   !WTNUP in kg/ha
-!          LABEL(12) = 'NUCM'; VALUE(12) = WTNUP*10!WTNUP in g/m2
           LABEL(13) = 'CNAM'; VALUE(13) = WTNCAN*10.
           LABEL(14) = 'GNAM'; VALUE(14) = WTNSD*10.
           LABEL(15) = 'PWAM'; VALUE(15) = 0.0

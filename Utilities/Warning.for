@@ -98,11 +98,12 @@ C=======================================================================
         CALL YR_DOY(YRDOY, YEAR, DOY)
         WRITE(LUN,'(/,1X,A,"  YEAR DOY = ",I4,1X,I3)')ERRKEY,YEAR,DOY
         DO I = 1, ICOUNT
-            WRITE(LUN,'(1X,A)') MESSAGE(I)
+          WRITE(LUN,'(1X,A78)') MESSAGE(I)
         ENDDO
       ENDIF
 
-      IF (INDEX(ERRKEY,'ENDRUN') > 0) THEN    !ERRKEY = 'ENDRUN' -> End of season
+!     ERRKEY = 'ENDRUN' -> End of season
+      IF (INDEX(ERRKEY,'ENDRUN') > 0) THEN    
         FIRST = .TRUE.
         CLOSE(LUN)
       ENDIF
