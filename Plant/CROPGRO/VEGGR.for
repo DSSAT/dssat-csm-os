@@ -82,7 +82,7 @@ C========================================================================
       REAL TGRO(TS)
       
 !     FO - Cotton-Nitrogen
-      REAL NSTFAC
+      REAL NSTFAC, PNSTRES, XNSTRES
 
 !     P module
       REAL PStres2
@@ -138,7 +138,6 @@ C========================================================================
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
         READ(C80,'(6X,F6.0)',IOSTAT=ERR) NSTFAC
-        WRITE(*,*) 'NSTFAC:', NSTFAC
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
       ENDIF
 !-----------------------------------------------------------------------
@@ -200,7 +199,10 @@ C========================================================================
       WLDOTN = 0.0  
       WRDOTN = 0.0  
       WSDOTN = 0.0  
-
+!     FO/KJB - Running average      
+      PNSTRES= 1.0
+      XNSTRES= 1.0
+      
       CALL CANOPY(SEASINIT,
      &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
      &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
@@ -239,12 +241,19 @@ C-----------------------------------------------------------------------
 !    chp added check for YRDOY = YREMRG, but on the next day, it still
 !     shows N stress because there is little supply.  Force a lag time?
 !      IF (SUPPN .LT. 0.70 * NDMNEW .AND. NDMNEW .GT. 0.) THEN
+!     FO/KJB - Running average
+      PNSTRES = XNSTRES
+
       IF (SUPPN .LT. NSTFAC * NDMNEW .AND. NDMNEW .GT. 0. .AND. 
      &        YRDOY .NE. YREMRG) THEN
-        NSTRES = MIN(1.0,SUPPN/(NDMNEW * NSTFAC))
+        XNSTRES = MIN(1.0,SUPPN/(NDMNEW * NSTFAC))
       ELSE
-        NSTRES = 1.0
+        XNSTRES = 1.0
       ENDIF
+      
+!     FO/KJB - Running average
+      NSTRES = XNSTRES * 0.5 + PNSTRES * 0.5
+      
 !      FRRT  = ATOP * (1.0 - (MIN(TURFAC,NSTRES)))*(1.0-FRRT) + FRRT
       FRRT  = ATOP * (1.0 - (MIN(TURFAC, NSTRES, PStres2))) * 
      &                    (1.0 - FRRT) + FRRT
