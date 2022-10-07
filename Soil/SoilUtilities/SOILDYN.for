@@ -813,7 +813,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         IF (.NOT. VG_OK) THEN
 !         van Genuchten parameters fit from known soil properties based on RETC code
           CALL RETC_VG(TEXTURE(L), SWCN(L), LL(L), DUL(L),  !Input
-     &      SAT(L), wcr(L), Hb(L), lambda(L),               !Input
+     &      SAT(L), wcr(L), Hb(L),                          !Input
      &      alphaVG(L), mVG(L), nVG(L))                     !Output
         ENDIF
       ENDDO

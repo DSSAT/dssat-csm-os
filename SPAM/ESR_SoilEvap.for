@@ -74,12 +74,7 @@
       DUL   = SOILPROP % DUL
       LL    = SOILPROP % LL
       NLAYR = SOILPROP % NLAYR
-<<<<<<< HEAD
-!!      01/23/2010 CHP replace with residual water content
-!      SWAD  = SOILPROP % WCR
-=======
       CALL GET("PM", "PMFRACTION", PMFRACTION)
->>>>>>> develop
 
       ES = 0.0
       

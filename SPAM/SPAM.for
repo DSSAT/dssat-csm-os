@@ -48,6 +48,9 @@ C=======================================================================
       USE FloodModule
 
       IMPLICIT NONE
+      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS
+      EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
+      EXTERNAL XTRACT, ROOTWU_HR, WATERSTRESS
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT
@@ -58,8 +61,8 @@ C=======================================================================
 
       INTEGER DYNAMIC, L, NLAYR
 
-      REAL CANHT, CO2 
-      REAL SRAD, TAVG, TMAX, TMIN, WINDSP, XHLAI, XLAI
+      REAL CANHT, CO2, SRAD, TAVG, 
+     &    TMAX, TMIN, WINDSP, XHLAI, XLAI
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP 
       REAL EF, EM, EO, EP, ES, ET, EVAP 
       REAL TRWU, TRWUP, U
@@ -585,7 +588,7 @@ C-----------------------------------------------------------------------
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
+     &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
 

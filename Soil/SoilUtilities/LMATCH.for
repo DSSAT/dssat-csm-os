@@ -410,7 +410,6 @@ C----------------------------------------------------------------------
           CYCLE
 
         ELSEIF (THICKNESS .LT. 2.0) THEN
-!        ELSEIF (THICKNESS .LT. 5.0) THEN
           !Add to next layer if thin
           CYCLE
 

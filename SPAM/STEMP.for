@@ -40,26 +40,25 @@ C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
-      USE CELLS_2D
       IMPLICIT  NONE
       SAVE
 
       CHARACTER*1  RNMODE, ISWWAT !, IDETL
-      CHARACTER*6  SECTION
+!     CHARACTER*6  SECTION
       CHARACTER*6, PARAMETER :: ERRKEY = "STEMP "
       CHARACTER*30 FILEIO
 
-      INTEGER DOY, DYNAMIC, I, L, NLAYR, NLAYRi
+      INTEGER DOY, DYNAMIC, I, L, NLAYR
       INTEGER RUN, YRDOY, YEAR
-      INTEGER ERRNUM, FOUND, LNUM, LUNIO
+      INTEGER LUNIO  !,ERRNUM, FOUND, LNUM 
 
-      REAL ABD, ALBEDO, ATOT, B, CUMDPT, BEDHT 
-      REAL DP, FX, HDAY, ICWD, PESW, MSALB, SRAD, SRFTEMP 
+      REAL ABD, ALBEDO, ATOT, B, CUMDPT 
+      REAL DP, FX, HDAY, PESW, MSALB, SRAD, SRFTEMP   !, ICWD 
       REAL TAMP, TAV, TAVG, TBD, TMAX, XLAT, WW
       REAL TDL, TLL, TSW
       REAL TMA(5)
-      REAL, DIMENSION(NL) :: BD, DLAYR, DS, DSi, DSMID
-      REAL, DIMENSION(NL) :: DUL, LL, ST, SW, SWI
+      REAL, DIMENSION(NL) :: BD, DLAYR, DLI, DS, DSI, DSMID, DUL, LL, 
+     &      ST, SW, SWI
 
 !-----------------------------------------------------------------------
       TYPE (ControlType) CONTROL
@@ -108,55 +107,6 @@ C-----------------------------------------------------------------------
 
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
 
-<<<<<<< HEAD
-        IF (ISWWAT .NE. 'N') THEN
-!         Read inital soil water values from FILEIO 
-!         (not yet done in WATBAL, so need to do here)
-          OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
-          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
-          REWIND (LUNIO)
-          SECTION = '*INITI'
-          CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
-          IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-
-!         Initial depth to water table (not currently used)
-          READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
-          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-
-!         Initial soil water content
-          SELECT CASE(ISWITCH%MEHYD)
-          CASE ('G','C')    !2D soils
-            DO L = 1, NL
-              READ(LUNIO,'(F8.0,F6.0)',IOSTAT=ERRNUM) DSi(L), SWI(L)
-              LNUM = LNUM + 1
-              IF (ERRNUM .NE. 0) EXIT
-            ENDDO
-            NLAYRi = L - 1
-            IF (BedDimension%RaisedBed) THEN
-              CALL BedLayerAdjust(SOILPROP, NLAYRi, DSi, SWI, BEDHT)
-            ENDIF
-            DO L = 1, SOILPROP%NLAYR
-!!             Set SW content in bed to DUL
-!              IF (DS(L) < BEDHT) SWI(L) = SOILPROP%DUL(L)
-              IF (SWI(L) < SOILPROP%LL(L)) SWI(L) = SOILPROP%LL(L)
-            ENDDO
-          
-          CASE DEFAULT  !1D soils 
-            DO L = 1, NLAYR
-              READ(LUNIO,'(9X,F5.3)',IOSTAT=ERRNUM) SWI(L)
-              LNUM = LNUM + 1
-              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-              IF (SWI(L) .LT. LL(L)) SWI(L) = LL(L)
-            ENDDO
-          END SELECT
-
-          CLOSE (LUNIO)
-        ELSE
-          SWI = DUL
-        ENDIF
-        
-        SW = SWI
-=======
 !        IF (ISWWAT .NE. 'N') THEN
 !!         Read inital soil water values from FILEIO 
 !!         (not yet done in WATBAL, so need to do here)
@@ -186,7 +136,6 @@ C-----------------------------------------------------------------------
 
         SWI = SW
         DSI = SOILPROP % DS
->>>>>>> develop
 
         IF (XLAT .LT. 0.0) THEN
           HDAY =  20.0           !DOY (hottest) for southern hemisphere

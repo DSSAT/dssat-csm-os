@@ -21,6 +21,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:  
+!       4.8.1.00 chp 2022-10-05 Update model version
 !       4.8.0.29 chp 2022-10-04 SDATE issue, MgmtEvent output, minor updates
 !       4.8.0.28  FO 2022-07-29 Make ASCE ET robust for various weather file formats
 !       4.8.0.27 chp 2022-04-15 Methane initialization, error checking

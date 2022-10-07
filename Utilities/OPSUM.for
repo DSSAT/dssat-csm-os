@@ -73,6 +73,9 @@ C=======================================================================
 !       Added 05/28/2021 Latitude, Longitude and elevation
         REAL XCRD, YCRD, ELEV
 
+!       Added 2021-04-14 CHP End of season crop status
+        INTEGER CRST
+
 !       Added 2021-20-04 LPM Fresh weight variables
         INTEGER FCWAM, FHWAM, FPWAM
         REAL HWAHF, FBWAH
@@ -149,8 +152,8 @@ C-----------------------------------------------------------------------
 !     Added 02/23/2011 Seasonal average environmental data
       INTEGER NDCH
       REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
+      INTEGER CO2EC, CRST
       REAL N2OEC, CH4EC  !kg/ha
-      INTEGER CO2EC
 !     Added 05/28/2021 Latitude, Longitude and elevation data
       CHARACTER*9  ELEV 
       CHARACTER*15 LATI, LONG
@@ -160,9 +163,9 @@ C-----------------------------------------------------------------------
 !     For forecast mode may be different than simulation year
       INTEGER WYEAR
       
-!       Added 2021-20-04 LPM Fresh weight variables
-        INTEGER FCWAM, FHWAM, FPWAM
-        REAL HWAHF, FBWAH
+!     Added 2021-20-04 LPM Fresh weight variables
+      INTEGER FCWAM, FHWAM, FPWAM
+      REAL HWAHF, FBWAH
 
       LOGICAL FEXIST
 
@@ -400,6 +403,8 @@ C     Initialize OPSUM variables.
       SUMDAT % ESCP   = -99.9 !Cumul soil evap (mm), planting to harvest
       SUMDAT % EPCP   = -99.9 !Cumul transp (mm), planting to harvest
 
+      SUMDAT % CRST   = -99   !End of season crop status code
+
       CALL GET('WEATHER','WSTA',WSTAT)
 !      IF (LenString(WSTAT) < 1) THEN
 !        WSTAT = WSTATION
@@ -498,6 +503,8 @@ C     Initialize OPSUM variables.
       ESCP   = SUMDAT % ESCP  !Cumul soil evap (mm), planting to harvest
       EPCP   = SUMDAT % EPCP  !Cumul transp (mm), planting to harvest
 
+      CRST   = SUMDAT % CRST  !End of season crop status code
+
       CALL GET('WEATHER','WYEAR',WYEAR)
       CALL GET('FIELD','CYCRD',LATI)
       CALL GET('FIELD','CXCRD',LONG)
@@ -566,7 +573,8 @@ C-------------------------------------------------------------------
      &'WATER PRODUCTIVITY..................................',
      &'................    ',
      &'NITROGEN PRODUCTIVITY...........  ',
-     &'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..............')
+     &'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..............',
+     &'STATUS')
 
           WRITE (NOUTDS,400)
 ! CHP 3/14/2018 USE P# for REPNO instead of C# for CRPNO, which isn't used.
@@ -590,7 +598,8 @@ C-------------------------------------------------------------------
      &   '     YPTM     YPIM',
      &   '    DPNAM    DPNUM    YPNAM    YPNUM',
      &   '  NDCH TMAXA TMINA SRADA DAYLA   CO2A   PRCP   ETCP',
-     &   '   ESCP   EPCP')
+     &   '   ESCP   EPCP',
+     &   '  CRST')
         ENDIF
         END IF   ! VSH
 
@@ -699,7 +708,8 @@ C-------------------------------------------------------------------
      &                 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT,
      &    DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT,
      &    NDCH, TMAXA_TXT, TMINA_TXT, SRADA_TXT, DAYLA_TXT, 
-     &                 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
+     &                 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT,
+     &    CRST
 
   503   FORMAT(     
                                               
@@ -735,7 +745,10 @@ C-------------------------------------------------------------------
 
 !       NDCH, TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
 !    &  I6,3F6.1,F6.2,5F7.1)
-     &  I6,9A)
+     &  I6,9A,
+
+!       CRST
+     &  I6)
 
         CLOSE (NOUTDS)
         END IF   ! VSH
@@ -754,11 +767,12 @@ C-------------------------------------------------------------------
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
      &NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, 
      &KICM, KUPC, SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
+
      &CO2EC, CH4EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, 
      &DPNAM, DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, DAYLA, 
-     &CO2A, PRCP, ETCP, ESCP, EPCP,   
+     &CO2A, PRCP, ETCP, ESCP, EPCP, CRST,   
      &vCsvlineSumOpsum, vpCsvlineSumOpsum, vlngthSumOpsum) 
-            
+
             CALL LinklstSumOpsum(vCsvlineSumOpsum) 
         END IF
                 
@@ -1107,8 +1121,7 @@ C=======================================================================
         CASE ('YPNUM');SUMDAT % YPNUM  = VALUE(I)
 
         CASE ('NDCH'); SUMDAT % NDCH   = NINT(VALUE(I))
-        CASE ('TMINA')
-                       SUMDAT % TMINA  = VALUE(I)
+        CASE ('TMINA');SUMDAT % TMINA  = VALUE(I)
         CASE ('TMAXA');SUMDAT % TMAXA  = VALUE(I)
         CASE ('SRADA');SUMDAT % SRADA  = VALUE(I)
         CASE ('DAYLA');SUMDAT % DAYLA  = VALUE(I)
@@ -1127,6 +1140,9 @@ C=======================================================================
         CASE ('YCRD'); SUMDAT % YCRD  = VALUE(I)
         CASE ('XCRD'); SUMDAT % XCRD  = VALUE(I)
         CASE ('ELEV'); SUMDAT % ELEV  = VALUE(I)
+
+!       Crop status
+        CASE ('CRST') ;SUMDAT % CRST   = VALUE(I)
 
         END SELECT
       ENDDO

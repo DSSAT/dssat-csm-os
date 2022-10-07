@@ -10,7 +10,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       SUBROUTINE SoilNiBal (CONTROL, ISWITCH, 
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
 
 !     ------------------------------------------------------------------
@@ -35,7 +35,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       REAL STATEN, BALANCE
 
 !     Not used
-      REAL CNOX   !, NOXTODAY, CNOXY, 
+!     REAL CNOX   !, NOXTODAY, CNOXY, 
 
       REAL LCHTODAY, NTILEDRTODAY, IMMOBTODAY, MINERTODAY !HJ
       REAL WTNUPTODAY, AMLTODAY, FNROTODAY, AMTFERTODAY

@@ -48,38 +48,52 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       USE FloodModule
 
       IMPLICIT NONE
+      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS
+      EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
+      EXTERNAL XTRACT, ROOTWU_HR, WATERSTRESS, ESR_SoilEvap_2D
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT
-      CHARACTER*1  MEEVP, MEPHO, MESEV, METMP 
+      CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV, METMP
       CHARACTER*2  CROP
       CHARACTER*6, PARAMETER :: ERRKEY = "2DSPAM"
 
-      INTEGER DYNAMIC
+      INTEGER DYNAMIC, NLAYR
 
       REAL CANCOV, CANHT, CMSALB, CO2, MSALB
       REAL SRAD, TAVG, TMAX, TMIN, WINDSP, XHLAI, XLAI
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP 
       REAL EF, EM, EO, EP, ES, ET, EVAP 
       REAL TRWU, TRWUP, U
-      REAL EOS, EOP
+      REAL EOS, EOP, WINF
       REAL XLAT, TAV, TAMP, SRFTEMP
       REAL EORATIO, KSEVAP, KTRANS
 
-!!     Local variables in this routine.  Actual water stress variables 
-!!     are calcualted in WatBal2D
-!      REAL SWFAC, TURFAC
+!     Local variables in this routine.  Actual water stress variables 
+!     are calcualted in WatBal2D
+      REAL SWFAC, TURFAC
 
       REAL, DIMENSION(NL) :: ES_LYR, RLV, RWU, ST, SW, SWDELTX
       
       Type (CellType) CELLS(MaxRows,MaxCols)
       REAL, DIMENSION(MaxRows,MaxCols) :: ES_mm
 
+      REAL DLAYR(NL), DUL(NL), LL(NL),   
+     &    SAT(NL), SW_AVAIL(NL), UPFLOW(NL) 
+!    &    SWAD(NL),SWDELTS(NL), SWDELTU(NL)
+
+!     Root water uptake computed by some plant routines (optional)
+!     REAL UH2O(NL)
+
 !     Species-dependant variables imported from PLANT module:
       REAL PORMIN, RWUMX
+!     Flood management variables:
+      REAL EOS_SOIL
       
 !     P Stress on photosynthesis
       REAL PSTRES1
+!     Hourly transpiration for MEEVP=H      
+      REAL, DIMENSION(TS)    :: ET0
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -95,9 +109,18 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       CROP    = CONTROL % CROP
       DYNAMIC = CONTROL % DYNAMIC
 
+      DLAYR  = SOILPROP % DLAYR
+      DUL    = SOILPROP % DUL
+      LL     = SOILPROP % LL
+      MSALB  = SOILPROP % MSALB
+      NLAYR  = SOILPROP % NLAYR
+      SAT    = SOILPROP % SAT
+      U      = SOILPROP % U
+
       ISWWAT = ISWITCH % ISWWAT
       IDETW  = ISWITCH % IDETW
       MEEVP  = ISWITCH % MEEVP
+      MEINF  = ISWITCH % MEINF
       MEPHO  = ISWITCH % MEPHO
       METMP  = ISWITCH % METMP
       MESEV  = ISWITCH % MESEV
@@ -284,54 +307,55 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       CALL PSE(EO, KSEVAP, XLAI, EOS)
 
 !-----------------------------------------------------------------------
-!         ACTUAL SOIL, MULCH AND FLOOD EVAPORATION
+!     ACTUAL SOIL, MULCH AND FLOOD EVAPORATION
 !-----------------------------------------------------------------------
-!         Initialize soil, mulch and flood evaporation
-          ES = 0.; EM = 0.; EF = 0.; EVAP = 0.0
-          UPFLOW = 0.0; ES_LYR = 0.0
+!     Initialize soil, mulch and flood evaporation
+      ES = 0.; EM = 0.; EF = 0.; EVAP = 0.0
+      UPFLOW = 0.0; ES_LYR = 0.0
 
 !     Switch off evaporation
       IF (ISWITCH % MESEV == 'N') THEN
         ES = 0.0
         ES_mm = 0.0
       ELSE
-!     Actual soil evaporation 
-          EOS_SOIL = EOS
-!         First meet evaporative demand from mulch
-          IF (EOS_SOIL > 1.E-6 .AND. INDEX('RSM',MEINF) > 0) THEN
-            CALL MULCH_EVAP(DYNAMIC, MULCH, EOS_SOIL, EM)
-            IF (EOS_SOIL > EM) THEN
-!             Some evaporative demand leftover for soil
-              EOS_SOIL = EOS_SOIL - EM
-            ELSE
-              EOS_SOIL = 0.0
-            ENDIF
+!       Actual soil evaporation 
+        EOS_SOIL = EOS
+!       First meet evaporative demand from mulch
+        IF (EOS_SOIL > 1.E-6 .AND. INDEX('RSM',MEINF) > 0) THEN
+          CALL MULCH_EVAP(DYNAMIC, MULCH, EOS_SOIL, EM)
+          IF (EOS_SOIL > EM) THEN
+!           Some evaporative demand leftover for soil
+            EOS_SOIL = EOS_SOIL - EM
+          ELSE
+            EOS_SOIL = 0.0
           ENDIF
+        ENDIF
 
-!         Soil evaporation after flood and mulch evaporation
-          IF (EOS_SOIL > 1.E-6) THEN
-            SELECT CASE(MESEV)
-!           ------------------------
-            CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
-!             Note that this routine calculates UPFLOW, unlike the SOILEV.
-              CALL ESR_SoilEvap_2D(RATE,
-     &          CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
-     &          ES, ES_mm)                        !Output
-!           ------------------------
-            CASE DEFAULT 
-	    
+!       Soil evaporation after flood and mulch evaporation
+        IF (EOS_SOIL > 1.E-6) THEN
+          SELECT CASE(MESEV)
+!         ------------------------
+          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
+!           Note that this routine calculates UPFLOW, unlike the SOILEV.
+            CALL ESR_SoilEvap_2D(RATE,
+     &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
+     &        ES, ES_mm)                        !Output
+!         ------------------------
+          CASE DEFAULT 
+	  
 !!!!!   NOTE CHP: NEED 2D SOILEV   !!!!!
-!           CASE ('R')  !Ritchie soil evaporation routine
-!             Calculate the availability of soil water for use in SOILEV.
-              DO L = 1, NLAYR
-                SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
-              ENDDO
-              CALL SOILEV_2D(RATE,
-     &          CELLS, DLAYR, DUL, EOS_SOIL, LL, SW,      !Input
-     &          SW_AVAIL(1), U, WINF,                     !Input
-     &          ES, ES_mm)                                !Output
-            END SELECT
+!         CASE ('R')  !Ritchie soil evaporation routine
+!           Calculate the availability of soil water for use in SOILEV.
+!            DO L = 1, NLAYR
+!              SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+!            ENDDO
+!            CALL SOILEV_2D(RATE,
+!     &        CELLS, DLAYR, DUL, EOS_SOIL, LL, SW,      !Input
+!     &        SW_AVAIL(1), U, WINF,                     !Input
+!     &        ES, ES_mm)                                !Output
+          END SELECT
 !           ------------------------
+        ENDIF
       ENDIF
      
       CELLS%RATE%ES_Rate = ES_mm
@@ -422,16 +446,16 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !-----------------------------------------------------------------------
 !     ---------------------------------------------------------
       IF (MEEVP .NE.'Z') THEN  !LPM 02dec14 use values from ETPHOT
-          SELECT CASE (METMP)
-          CASE ('E')    !EPIC soil temperature routine
-            CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  !DSSAT soilt temperature
-            CALL STEMP(CONTROL, ISWITCH,
-     &        SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &        SRFTEMP, ST)                                    !Output
-          END SELECT
+        SELECT CASE (METMP)
+        CASE ('E')    !EPIC soil temperature routine
+          CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &      SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &      SRFTEMP, ST)                                    !Output
+        CASE DEFAULT  !DSSAT soilt temperature
+          CALL STEMP(CONTROL, ISWITCH,
+     &      SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &      SRFTEMP, ST)                                    !Output
+        END SELECT
       ENDIF
 
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
@@ -459,16 +483,16 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 
 !     ---------------------------------------------------------
       IF (MEEVP .NE.'Z') THEN  !LPM 02dec14 use values from ETPHOT
-          SELECT CASE (METMP)
-          CASE ('E')    !EPIC soil temperature routine
-            CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  !DSSAT soilt temperature
-            CALL STEMP(CONTROL, ISWITCH,
-     &        SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &        SRFTEMP, ST)                                    !Output
-          END SELECT
+        SELECT CASE (METMP)
+        CASE ('E')    !EPIC soil temperature routine
+          CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &      SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &      SRFTEMP, ST)                                    !Output
+        CASE DEFAULT  !DSSAT soilt temperature
+          CALL STEMP(CONTROL, ISWITCH,
+     &      SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &      SRFTEMP, ST)                                    !Output
+        END SELECT
       ENDIF
 
       IF (MEPHO .EQ. 'L') THEN

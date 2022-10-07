@@ -50,6 +50,8 @@ C=====================================================================
       USE FloodModule
       USE GHG_mod
       IMPLICIT NONE
+      EXTERNAL SOILDYN, WATBAL2D, WATBAL, CENTURY, SOILORG, SOILNI_2D, 
+     &  SOILNI, SOILPI, SOILKI
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -95,22 +97,14 @@ C=====================================================================
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTS
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
       REAL               , INTENT(OUT) :: WINF
-<<<<<<< HEAD
       REAL               , INTENT(OUT) :: SWFAC, TRWU, TRWUP, TURFAC
-=======
       REAL, DIMENSION(NL), INTENT(OUT) :: UPPM
->>>>>>> develop
       INTEGER            , INTENT(OUT) :: YREND
 
 !-----------------------------------------------------------------------
 !     Local variables:
-<<<<<<< HEAD
       CHARACTER*1  MESOM, MEHYD
-
-=======
->>>>>>> develop
       INTEGER DYNAMIC
-      CHARACTER*1  MESOM
 
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
@@ -175,46 +169,34 @@ C=====================================================================
       ELSE
 !      ELSEIF (MESOM .EQ. 'G') THEN
 !       Godwin (Ceres-based) soil organic matter module (formerly NTRANS)
-<<<<<<< HEAD
-        CALL SoilOrg (CONTROL, ISWITCH, CELLS,
-     &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
-=======
         CALL SoilOrg (CONTROL, ISWITCH, 
      &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
      &    OMAData, RLV,                                   !Input
->>>>>>> develop
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    CH4_data, IMM, LITC, MNR, MULCH, newCO2,        !Output
      &    SomLit, SomLitC, SomLitE, SSOMC)                !Output
       ENDIF
 
 !     Inorganic N (formerly NTRANS)
-<<<<<<< HEAD
       SELECT CASE (MEHYD)
       CASE('G','C')   !2D method - drip irrigation
         CALL SoilNi_2D (CONTROL, ISWITCH, 
      &    FERTDATA, IMM, MNR, SOILPROP,           !Input
-     &    SOILPROP_profile, SSOMC, ST, WEATHER,   !Input
+!    &    SOILPROP_profile, SSOMC, ST, WEATHER,   !Input
+     &    SSOMC, ST, WEATHER,                     !Input
      &    Cells,                                  !Input,Output
      &    NH4, NO3, UPPM)                         !Output
+        NH4_plant = NH4
+        NO3_plant = NO3
       CASE DEFAULT
         CALL SoilNi (CONTROL, ISWITCH, 
-     &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
-     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
-     &    XHLAI,                                          !Input
-     &    FLOODN,                                         !I/O
-     &    NH4, NO3, UPPM)                                 !Output
-      END SELECT
-=======
-      CALL SoilNi (CONTROL, ISWITCH, 
      &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
      &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
      &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN,                                         !I/O
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
->>>>>>> develop
+      END SELECT
 
 !     Inorganic P
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 

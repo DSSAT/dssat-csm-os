@@ -24,18 +24,19 @@
 !  Calls:     SUBROUTINE Retention
 !=======================================================================
       SUBROUTINE RETC_VG( 
-     &  TEXTURE, Ksat, LL, DUL, SAT, wcr, h_bub, lambda,  !Input
-     &  alphaVG_R, mVG_R, nVG_R)                          !Output
+     &  TEXTURE, Ksat, LL, DUL, SAT, wcr, h_bub,  !Input
+     &  alphaVG_R, mVG_R, nVG_R)                  !Output
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL RETENTION, MODEL_RETC, MATINV
       SAVE
 
       INTEGER i, j, K, kin, kiter, kout, kp, kwater, method, mit, mtype
       Integer IOR, KLOG, NEXP, NIT, NOB, NP, NWC, NWC1, NW
       REAL Ksat, LL, DUL, SAT, STOPCR, WCR
       REAL alphaVG_R, mVG_R, nVG_R
-      Double Precision h_bub, lambda
+      Double Precision h_bub  !, lambda
       Double Precision alphaVG, ARG, ARG1, ANGLE, DERL, EXPO, GA 
       Double Precision nVG, mVG, RPF, RPZ, RLF, RLX, RLY, RSQ 
       Double Precision SDEV, SECOEF, SSQ, SSQW, SSQ1, SSQ2, SSQW1, SSQW2
@@ -57,11 +58,12 @@
       
       ! Rawls data is considered as observation data
     !my retc inputs
-      mtype = 3 !hydraulic conductivity uses Mualem's model, Retention uses VG model with m=1-1/n
-      !mtype = 4 !hydraulic conductivity uses Burdine's model, Retention uses VG model with m=1-2/n
-      !mtype = 5 !hydraulic conductivity uses Mualem's model, Retention uses Brook & Corey model with m=1-1/n
-      !mtype = 6 !hydraulic conductivity uses Burdine's model, Retention uses Brook & Corey model with m=1-2/n 
-      method = 5 !outputs diffusivity vs. water content eq. 33 of RETC.pdf
+!     Method for hydraulic conductivity (COND), retention (RET)
+      mtype = 3 !HC: Mualem's model, RET: VG model m=1-1/n
+!     mtype = 4 !HC: Burdine's model, RET: VG model m=1-2/n
+!     mtype = 5 !HC: Mualem's model, RET: Brook & Corey model m=1-1/n
+!     mtype = 6 !HC: Burdine's model, RET: Brook & Corey model m=1-2/n 
+      method = 5 !output diffusivity vs. water content eq. 33 RETC.pdf
       kwater = 1 !fitting only water retention data
       kin = 1 !number of iterations to be printed
       kout = 1 !tells to print hydraulic properties
@@ -77,12 +79,15 @@
 
       B(8) = wcr !residual water content
       B(9) = SAT !saturation water content
-      B(10) = 0.059545455  !initial alpha guess - average value of alpha from RETC manual
-      B(11) = 1.258181818 !initial n guess - average value of n from RETC manual
+!     initial alpha guess - average value of alpha from RETC manual
+      B(10) = 0.059545455  
+!     initial n guess - average value of n from RETC manual
+      B(11) = 1.258181818 
       B(12) = 1.-1./B(11) !sets m = 1-1/n
       B(13) = .5 !L
       B(14) = Ksat !saturated hydraulic conductivity
-      indx(1) = 0 !0-variable will not be fitted 1-variable will be fitted
+!     0-variable will not be fitted 1-variable will be fitted
+      indx(1) = 0 
       indx(2) = 0
       indx(3) = 1
       indx(4) = 1
@@ -93,15 +98,16 @@
       kp = 0
     
     ! Rawls data is considered as observation data
-      Call Retention(TEXTURE, Ksat, LL, DUL, SAT, H_bub,  !Input
-     &  SW_Rawls, h_Rawls )                               !Output
+      Call Retention(TEXTURE, LL, DUL, SAT, H_bub,    !Input
+     &  SW_Rawls, h_Rawls )                           !Output
+
       NOB = 0
       do i = 1,38
       ! Write(444,*) "Retention",",", SW_Rawls(i),",",h_rawls(i)
         x(i) = h_Rawls(i) !tension data from rawls
         y(i) = SW_Rawls(i) !water content data
         w(i) = 1 !weighting coefficient
-        NOB = NOB + 1 !number of observations(could include conductivity)
+        NOB = NOB + 1 !# observations(could include conductivity)
 !        write(*,fmt='(F25.17,3x,F25.17)')h_Rawls(i),SW_Rawls(i) !delme
       end do
     
@@ -404,7 +410,7 @@
       mVG_R = sngl(mVG)
 
       RETURN
-      END
+      END SUBROUTINE RETC_VG
 !
 !=====================================================================
 !-----------------------------------------------------------------------
@@ -520,8 +526,16 @@
 !
 !     PURPOSE: TO CALCULATE THE HYDRAULIC PROPERTIES
 !
-      IMPLICIT real*8 (A-H,O-Z)
+!     IMPLICIT real*8 (A-H,O-Z)
+      IMPLICIT NONE
+      EXTERNAL BINC
+      INTEGER IOR, I, IND, K, METHOD, MTYPE, NOB, NWC
       Double Precision B(14),Y(200),X(200),indx(7)
+      Double Precision A, AA, ALPHA, AX, BB, BETA, BINC, CONDS, EX, EXPO
+      Double Precision DIF, DW, RWC, COND, WCL
+      Double Precision DLG1, DLG2, DLG3, DLG4, DLGC, DLGA, DLGD, DLGW
+      Double Precision RELK, RN, RM, RMN, RMT, TERM, WCR, WCS
+
       K = 0
       IOR = 0
       DO 2 I = 8,14
@@ -554,7 +568,8 @@
       IF(BB.GT.0.004) GO TO 8
       IOR = 1
       GO TO 60
-    8 BETA = GAMMA(AA) * GAMMA(BB)/GAMMA(RM + 1.) !JZW We should not use this
+!     JZW We should not use this
+    8 BETA = GAMMA(AA) * GAMMA(BB)/GAMMA(RM + 1.) 
       WCL = DMAX1(2./(2. + RM),0.2D0)
       DLG1 = (3.0-RMT) * DLOG10(RN/(BETA * (RMN + RMT)))
    10 DLG2 = 3.0-RMT + EXPO + 2.0/RMN
@@ -647,7 +662,7 @@
    54 CONTINUE
    60 CONTINUE
       RETURN
-      END
+      END SUBROUTINE MODEL_retc
 !
 !=====================================================================
 !-----------------------------------------------------------------------
@@ -675,7 +690,10 @@
 !     PURPOSE: TO INVERT THE MATRIX FOR PARAMETER ESTIMATION
 !
       IMPLICIT real*8 (A-H,O-Z)
+      INTEGER I, IC, IR, J, K, L, NP
       Double Precision A(7,7),B(7),indx(7,2)
+      Double Precision AMAX, P
+
       DO 2 J = 1,7
     2 indx(J,1) = 0
       I = 0
@@ -753,6 +771,8 @@
 !     PURPOSE:  TO CALCULATE THE GAMMA FUNCTION FOR POSITIVE Z
 !
       IMPLICIT real*8 (A-H,O-Z)
+      DOUBLE PRECISION FY, GAMMA, X, Y, Z
+
       IF(Z.LT.33.) GO TO 2
       GAMMA = 1.D36
       RETURN
@@ -797,6 +817,8 @@
 !     PURPOSE: TO CALCULATE THE INCOMPLETE BETA-FUNCTION
 !
       IMPLICIT real*8 (A-H,O-Z)
+      INTEGER I, K, NT, NT1
+      DOUBLE PRECISION A, B, BETA, BINC, T, X, Y, Y2
       DIMENSION T(200)
       DATA NT/10/
       NT1 = NT + 1
@@ -836,21 +858,21 @@
 !=======================================================================
 
 !=======================================================================
-      SUBROUTINE Retention(TEXTURE, Ksat, LL, DUL, SAT, H_bub,   !Input
-     &  SW_Rawls, h_Rawls )                                      !Output
+      SUBROUTINE Retention(TEXTURE, LL, DUL, SAT, H_bub,  !Input
+     &  SW_Rawls, h_Rawls )                               !Output
      
       IMPLICIT NONE
     !  SAVE
 
       INTEGER i
-      Double Precision NBD, DensFact, BDadj, Aparam, Bparam, tempStep
-      Double Precision  H_bub, lambda
-      REAL LL, DUL, DUL_DFAdj, SAT, SAT_DFadj, Ksat
+      Double Precision Aparam, Bparam, tempStep
+      Double Precision  H_bub
+      REAL LL, DUL, SAT 
       Double Precision :: SW_Rawls(38), h_Rawls(38) 
       CHARACTER*12 TEXTURE
       
       
-      !checks whether soil is coarse to determine what kPa value to use for SDUL
+!     Checks whether soil is coarse to determine what kPa value to use for SDUL
       LOGICAL coarse
       coarse = .FALSE.
       IF (TEXTURE == 'Sand') THEN
@@ -868,15 +890,13 @@
       !BDadj = NBD * DensFact 
       !SAT_DFadj = 1 - BDadj / 2.65 
       !DUL_DFAdj = DUL - 0.2 * (SAT- SAT_DFadj) 
-      ! Here we assume that the DUL is at 33 kPa for fine texture soil. (Page 467 Hillel 1998) 
-      ! For coarse-textured soil, field capacity is at 10kPa, log(33.) should be replaced by log(10.)
+!       Here we assume that the DUL is at 33 kPa for fine texture soil. (Page 467 Hillel 1998) 
+!       For coarse-textured soil, field capacity is at 10kPa, log(33.) should be replaced by log(10.)
       
       !calculations for non-coarse soils
       IF (.not.coarse) THEN
           Bparam = (log(1500.) - log(33.)) / (log(DUL) - log(LL))
           Aparam = exp( log(33.) + ( Bparam * log(DUL) ) )
-          !     Write(444,*) "N",",", TEXTURE ,",",SAT ,",",LL,",",DUL,",",wcr,
-          !     * ",",H_bub,",",lambda
       
           !Range of retention: 1500kPa to 33 kPa
           SW_Rawls(1) = LL
@@ -901,8 +921,6 @@
        ELSE
           Bparam = (log(1500.) - log(10.)) / (log(DUL) - log(LL))
           Aparam = exp( log(10.) + ( Bparam * log(DUL) ) )
-          !     Write(444,*) "N",",", TEXTURE ,",",SAT ,",",LL,",",DUL,",",wcr,
-          !     * ",",H_bub,",",lambda
       
           !Range of retention: 1500kPa to 10 kPa
           SW_Rawls(1) = LL
@@ -962,12 +980,13 @@
 !	CHARACTER*70 errmsg
 	Real wcs, wcpwp, wcfc, wcr,temp
 	Double Precision hb, lambda 
+	Double Precision wcr_wcpwp
 	LOGICAL coarse
 ! define file reading variables
 !	CHARACTER*78 MSG
-	! Air dry water content (wcr here) is set as SWAD(L) = 0.30 * LL(L) in SUBROUTINE ESR_SoilEvap_2D
-      ! Data are from table 4-2 in thesis of LESLIE C. GOWDISH 
-      ! van Genuchten water characteristic curve parameters used in Richards¡¯numerical solutions
+!	 Air dry water content (wcr here) is set as SWAD(L) = 0.30 * LL(L) in SUBROUTINE ESR_SoilEvap_2D
+!       Data are from table 4-2 in thesis of LESLIE C. GOWDISH 
+!       van Genuchten water characteristic curve parameters used in Richards¡¯numerical solutions
       coarse = .FALSE.
       
       SELECT CASE(Trim(TEXTURE))
@@ -1003,7 +1022,7 @@
           !write(*,*) "unknown soil texture 2", TEXTURE
 	END SELECT  
       wcr = wcr_wcpwp * wcpwp
-      ! temp = ln(h_pwp/h_fc) based on Eq. 2-9 in thesis of LESLIE C. GOWDISH 
+!       temp = ln(h_pwp/h_fc) based on Eq. 2-9 in thesis of LESLIE C. GOWDISH 
       if (COARSE) then
         temp = 5.0106 ! ln(1500/10)
       else
@@ -1086,14 +1105,14 @@ C=======================================================================
 !  
 !=======================================================================
 
-      Subroutine PotentialOp(CONTROL, ISWITCH, SOILPROP, WPkPa) !MgmtWTD,
-      ! JKZW should change the MgmtWTD to Flood depth
+      Subroutine PotentialOp(CONTROL, ISWITCH, SOILPROP, WPkPa) 
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 !-----------------------------------------------------------------------
-      integer DYNAMIC, YR2, DY2, DAS, LUNPotential, LIMIT_2D, L
+      integer DYNAMIC, YR2, DY2, DAS, LUNPotential, L !, LIMIT_2D
       INTEGER INCDAT, N1_LYR, N2_LYR
       ! REAL, INTENT(IN) :: MgmtWTD
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -1101,7 +1120,7 @@ C=======================================================================
       TYPE (SwitchType)   ISWITCH
 
       REAL, DIMENSION(NL):: WPkPa, DUL, LL, SAT, LrTop, DS !NLAYR
-      REAL ThetaCa(25)
+!     REAL ThetaCa(25)
       CHARACTER*17, PARAMETER :: PotentialOut = 'Potential.OUT'
       LOGICAL FEXIST, DOPRINT
       !    CALL GET('MGMT','WATTAB',MgmtWTD)

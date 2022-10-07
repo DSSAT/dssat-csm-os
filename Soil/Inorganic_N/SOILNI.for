@@ -288,9 +288,9 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
-     &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data)                      !Output
+     &    dD0, newCO2, NO3, SNO3, SOILPROP,       !Input
+     &    DLTSNO3,                                !I/O
+     &    CNOX, TNOXD, N2O_data)                  !Output
 
         CASE DEFAULT
           CALL Denit_Ceres (CONTROL, ISWNIT, 
@@ -724,9 +724,9 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1","2")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
-     &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data)                      !Output
+     &    dD0, newCO2, NO3, SNO3, SOILPROP,       !Input
+     &    DLTSNO3,                                !I/O
+     &    CNOX, TNOXD, N2O_data)                  !Output
 
         CASE DEFAULT
           CALL Denit_Ceres (CONTROL, ISWNIT, 
@@ -961,7 +961,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
@@ -999,8 +999,8 @@ C     Write daily output
 
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
-     &	  N2O_data) 
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    N2O_data) 
 
       CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 

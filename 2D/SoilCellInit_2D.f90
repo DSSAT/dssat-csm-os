@@ -393,8 +393,8 @@
 
 !     van Genuchten parameters fit from known soil properties based on RETC code
       CALL RETC_VG(BedTEXTURE, Bed_SWCN, Bed_LL,           & !Input
-          Bed_DUL, Bed_SAT, Bed_WCR, Bed_Hb, Bed_lambda, & !Input
-          Bed_alphaVG, Bed_mVG, Bed_nVG)                   !Output
+          Bed_DUL, Bed_SAT, Bed_WCR, Bed_Hb,               & !Input
+          Bed_alphaVG, Bed_mVG, Bed_nVG)                     !Output
 
 ! ---------------------------------------------------------------------
 !     Properties of soil in furrow:
@@ -506,11 +506,11 @@
           SoilProp_Furrow%WCR(M), Furrow_HB, Furrow_lambda)                     !output
 
 !     van Genuchten parameters fit from known soil properties based on RETC code
-        CALL RETC_VG(SoilProp_Furrow%TEXTURE(M), SoilProp_Furrow%SWCN(M),          & !Input
+        CALL RETC_VG(SoilProp_Furrow%TEXTURE(M), SoilProp_Furrow%SWCN(M),           & !Input
            SoilProp_Furrow%LL(M), SoilProp_Furrow%DUL(M), SoilProp_Furrow%SAT(M),   & !Input
-           SoilProp_Furrow%WCR(M), Furrow_Hb, Furrow_lambda,                  & !Input                                   & ! input
-           SoilProp_Furrow%alphaVG(M),                                        & ! Output
-           SoilProp_Furrow%mVG(M), SoilProp_Furrow%nVG(M))                          !Output
+           SoilProp_Furrow%WCR(M), Furrow_Hb,                                       & !Input                                   & ! input
+           SoilProp_Furrow%alphaVG(M),                                              & !Output
+           SoilProp_Furrow%mVG(M), SoilProp_Furrow%nVG(M))                            !Output
 
       ENDDO
 

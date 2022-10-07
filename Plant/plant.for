@@ -62,10 +62,9 @@ C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
-     &    NH4, NO3, SKi_Avail, SomLitC, SomLitE,          !Input
-     &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
-     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
-     &    IRRAMT,                                         !Input
+     &    IRRAMT, NH4, NO3, SKi_Avail, SPi_AVAIL,         !Input
+     &    SNOW, SOILPROP, SRFTEMP, ST, SW,                !Input
+     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -115,6 +114,7 @@ C-----------------------------------------------------------------------
      &  RICE,SAMUCA,SC_CNGRO,SG_CERES,SU_CERES,SUMVALS,TEFF,TF_APSIM,
      &  TR_SUBSTOR,WARNING,WH_APSIM
       EXTERNAL INCDAT, ERROR
+      EXTERNAL PT_SUBSTOR_2D, SYNC_NUPTAKE_TO2D
 
       SAVE
 
@@ -140,7 +140,7 @@ C-----------------------------------------------------------------------
       REAL SWFAC, TURFAC
 
       REAL, DIMENSION(2)  :: HARVFRAC
-      REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM  !, RWU
+      REAL, DIMENSION(NL) :: NH4, NO3, RLV !, RWU, UPPM 
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
       LOGICAL FixCanht, BUNDED    !, CRGRO
@@ -167,6 +167,11 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !      REAL, DIMENSION(0:NL) :: SomLitC
 !      REAL, DIMENSION(0:NL,NELEM) :: SomLitE
 !      LOGICAL, PARAMETER :: OR_OUTPUT = .FALSE.
+
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 1
+      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
 
 !     2D variables
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, NO3Uptake_2D, 
@@ -664,14 +669,11 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     -------------------------------------------------
 !     Sugarcane - SAMUCA
       CASE('SCSAM')
-          call SAMUCA(
-     &    CONTROL, ISWITCH,                                      !Input
-     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,  !Input
-     &    SOILPROP, ST, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,  !Input
-     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,         !Input
-     $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,           !Output
-     &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,              !Output
-     &    UNO3, XLAI, XHLAI, EORATIO)                            !Output
+        CALL SAMUCA(CONTROL, ISWITCH,
+     &    CO2, DAYL, EOP, SOILPROP, ST, SRAD, TMAX,       !Input
+     &    TMIN, TRWUP, RWUEP1, YREND, YRPLT, WEATHER,     !Input
+     &    CANHT, KCAN, KTRANS, MDATE, NSTRES, RLV,        !Output
+     &    RWUMX, STGDOY, XLAI, XHLAI, EORATIO)            !Output
           
 !     -------------------------------------------------
 !     Sugarcane - CASUPRO
