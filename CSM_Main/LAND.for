@@ -31,6 +31,8 @@ C-----------------------------------------------------------------------
       USE CsvOutput   ! VSH 
       USE Cells_2D
       IMPLICIT NONE
+      EXTERNAL INFO, ERROR, WARNING, IPIBS, WEATHR, SOIL, SPAM, PLANT, 
+     &  OPSUM, MGMTOPS, SPAM_2D
       SAVE
 C-----------------------------------------------------------------------
 C     Crop, Experiment, Command line Variables
@@ -63,7 +65,7 @@ C-----------------------------------------------------------------------
       REAL SNOW, WINF
       REAL, DIMENSION(NL) :: NH4_plant, NO3_plant, SPi_Avail, SKi_Avail
       REAL, DIMENSION(NL) :: ST, UPPM, SW, SWDELTS, UPFLOW
-      TYPE (SoilType) SOILPROP, SoilProp_Furrow    !type defined in ModuleDefs
+      TYPE (SoilType) SOILPROP, SoilProp_Furrow   
       TYPE (FloodWatType) FLOODWAT
       TYPE (FloodNType)   FloodN
       TYPE (MulchType)    MULCH
@@ -185,9 +187,10 @@ C-----------------------------------------------------------------------
       SELECT CASE(ISWITCH%MEHYD)
       CASE ('G','C')
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
+     &    SoilProp_Furrow,                                !Input
+     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -206,17 +209,16 @@ C     Read initial plant module data
 C-----------------------------------------------------------------------
       CALL PLANT(CONTROL, ISWITCH, 
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
-     &    NH4_plant, NO3_plant, SKi_Avail, SomLitC, SomLitE, !Input
+     &    IRRAMT, NH4_plant, NO3_plant, SKi_Avail,        !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
-     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
-     &    IRRAMT,                                         !Input
+     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
 
-C-----------------------------------------------------------------------
+C---------------------------------------------------   --------------------
 C     Initialize summary.out information
 C-----------------------------------------------------------------------
       CALL OPSUM (CONTROL, ISWITCH, YRPLT)
@@ -252,14 +254,15 @@ C-----------------------------------------------------------------------
 C     Seasonal initialization for soil processes
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    EOP, ES, FERTDATA, FracRts, HARVRES, IRRAMT,    !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
-     &    FLOODN, FLOODWAT, MULCH, UPFLOW,                !I/O
+     &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
-     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
+     &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
+     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
 C-----------------------------------------------------------------------
 C     Seasonal initialization for soil-plant-atmosphere processes
@@ -269,9 +272,10 @@ C-----------------------------------------------------------------------
       SELECT CASE(ISWITCH%MEHYD)
       CASE ('G','C')
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
+     &    SoilProp_Furrow,                                !Input
+     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -317,15 +321,15 @@ C     Initialize PLANT routines (including phenology and pest)
 C-----------------------------------------------------------------------
       CALL PLANT(CONTROL, ISWITCH, 
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
-     &    NH4_plant, NO3_plant, SKi_Avail, SomLitC, SomLitE, !Input
+     &    IRRAMT, NH4_plant, NO3_plant, SKi_Avail,        !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
-     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
-     &    IRRAMT,                                         !Input
+     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
+
 C-----------------------------------------------------------------------
 C     Initialize summary output file - possible output from 
 C     various modules.
@@ -364,9 +368,10 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       IF (INDEX('GC',ISWITCH%MEHYD) > 0) THEN
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
+     &    SoilProp_Furrow,                                !Input
+     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -376,12 +381,13 @@ C     Call Soil processes module to determine today's rates of
 C     change of soil properties.
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
-     &    EOP, ES, FERTDATA, HARVRES, IRRAMT, KTRANS,     !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-     &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SomLitC, SomLitE,                               !Output
+     &    EOP, ES, FERTDATA, FracRts, HARVRES, IRRAMT,    !Input
+     &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
+     &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
+     &    WEATHER, XHLAI,                                 !Input
+     &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
+     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
+     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
@@ -408,10 +414,9 @@ C-----------------------------------------------------------------------
 !     &    YRDOY .GE. YRPLT .AND. YRPLT .NE. -99) THEN
         CALL PLANT(CONTROL, ISWITCH, 
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
-     &    NH4_plant, NO3_plant, SKi_Avail, SomLitC, SomLitE, !Input
+     &    IRRAMT, NH4_plant, NO3_plant, SKi_Avail,        !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
-     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
-     &    IRRAMT,                                         !Input
+     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -427,12 +432,13 @@ C***********************************************************************
 C     Integrate soil state variables
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
-     &    EOP, ES, FERTDATA, HARVRES, IRRAMT, KTRANS,     !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-     &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SomLitC, SomLitE,                               !Output
+     &    EOP, ES, FERTDATA, FracRts, HARVRES, IRRAMT,    !Input
+     &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
+     &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
+     &    WEATHER, XHLAI,                                 !Input
+     &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
+     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
+     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
@@ -442,9 +448,10 @@ C-----------------------------------------------------------------------
       SELECT CASE(ISWITCH%MEHYD)
       CASE ('G','C')
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
+     &    SoilProp_Furrow,                                !Input
+     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -466,10 +473,9 @@ C-----------------------------------------------------------------------
      &        YRDOY .GE. YRPLT .AND. YRPLT .NE. -99) THEN
         CALL PLANT(CONTROL, ISWITCH, 
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
-     &    NH4_plant, NO3_plant, SKi_Avail, SomLitC, SomLitE, !Input
+     &    IRRAMT, NH4_plant, NO3_plant, SKi_Avail,        !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
-     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
-     &    IRRAMT,                                         !Input
+     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -495,40 +501,29 @@ C***********************************************************************
 
       CALL WEATHR(CONTROL, ISWITCH, WEATHER, YREND)
 
-        CALL SOIL(CONTROL, ISWITCH, 
-<<<<<<< HEAD
-     &    EOP, ES, FERTDATA, HARVRES, IRRAMT, KTRANS,     !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-     &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SomLitC, SomLitE,                               !Output
+      CALL SOIL(CONTROL, ISWITCH, 
+     &    EOP, ES, FERTDATA, FracRts, HARVRES, IRRAMT,    !Input
+     &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
+     &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
+     &    WEATHER, XHLAI,                                 !Input
+     &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
+     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
+     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
-        SELECT CASE(ISWITCH%MEHYD)
+      SELECT CASE(ISWITCH%MEHYD)
         CASE ('G','C')
           CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
+     &    SoilProp_Furrow,                                !Input
+     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
         CASE DEFAULT
           CALL SPAM(CONTROL, ISWITCH,
-=======
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
-     &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
-     &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
-     &    WEATHER, XHLAI,                                 !Input
-     &    FLOODN, FLOODWAT, MULCH, UPFLOW,                !I/O
-     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
-     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
-
-        CALL SPAM(CONTROL, ISWITCH,
->>>>>>> develop
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
@@ -543,10 +538,9 @@ C-----------------------------------------------------------------------
         IF (CROP .NE. 'FA') THEN
           CALL PLANT(CONTROL, ISWITCH, 
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
-     &    NH4_plant, NO3_plant, SKi_Avail, SomLitC, SomLitE, !Input
+     &    IRRAMT, NH4_plant, NO3_plant, SKi_Avail,        !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
-     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
-     &    IRRAMT,                                         !Input
+     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -571,39 +565,28 @@ C     Call WEATHER module to close current weather file
 
 C     Print seasonal summaries and close files.
       CALL SOIL(CONTROL, ISWITCH, 
-<<<<<<< HEAD
-     &    EOP, ES, FERTDATA, HARVRES, IRRAMT, KTRANS,     !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-     &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SomLitC, SomLitE,                               !Output
+     &    EOP, ES, FERTDATA, FracRts, HARVRES, IRRAMT,    !Input
+     &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
+     &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
+     &    WEATHER, XHLAI,                                 !Input
+     &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
+     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
+     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
       SELECT CASE(ISWITCH%MEHYD)
       CASE ('G','C')
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
+     &    SoilProp_Furrow,                                !Input
+     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
       CASE DEFAULT
         CALL SPAM(CONTROL, ISWITCH,
-=======
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
-     &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
-     &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
-     &    WEATHER, XHLAI,                                 !Input
-     &    FLOODN, FLOODWAT, MULCH, UPFLOW,                !I/O
-     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
-     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
-
-      CALL SPAM(CONTROL, ISWITCH,
->>>>>>> develop
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
@@ -614,10 +597,9 @@ C     Print seasonal summaries and close files.
 
       CALL PLANT(CONTROL, ISWITCH, 
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
-     &    NH4_plant, NO3_plant, SKi_Avail, SomLitC, SomLitE, !Input
+     &    IRRAMT, NH4_plant, NO3_plant, SKi_Avail,        !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
-     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
-     &    IRRAMT,                                         !Input
+     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -671,25 +653,15 @@ C     End of Run
 C*********************************************************************** 
       ELSE IF (DYNAMIC .EQ. ENDRUN) THEN
         CALL SOIL(CONTROL, ISWITCH, 
-<<<<<<< HEAD
-     &    EOP, ES, FERTDATA, HARVRES, IRRAMT, KTRANS,     !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-     &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SomLitC, SomLitE,                               !Output
-     &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
-=======
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    EOP, ES, FERTDATA, FracRts, HARVRES, IRRAMT,    !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
-     &    FLOODN, FLOODWAT, MULCH, UPFLOW,                !I/O
+     &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
-     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
->>>>>>> develop
+     &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
+     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
 !!     Temporary timer function
 !      CALL DATE_AND_TIME (VALUES=DATE_TIME)
