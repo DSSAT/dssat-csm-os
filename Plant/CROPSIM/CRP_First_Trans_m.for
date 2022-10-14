@@ -1,6 +1,4 @@
         Module CRP_First_Trans_m
-        USE CRP_Node        ! DA 17MAR2017
-        
         
         
       INTEGER,PARAMETER::DINX =   3 ! Disease number,maximum
@@ -28,9 +26,6 @@
       !REAL,PARAMETER::PATM=101300.0! Pressure of air,Pa
       !REAL,PARAMETER::SHAIR=1005.0 ! Specific heat of air,MJ/kg
       !REAL,PARAMETER::SBZCON=4.903E-9 !Stefan Boltzmann,MJ/K4/m2/d
-      
-      TYPE (Node_type),DIMENSION(0:PSX,0:LCNUMX)  :: node
-
       
       INTEGER       ADAP          ! Anthesis,days after planting   d
       REAL          ADAPFR        ! Anthesis DAP+fraction          #
@@ -1634,7 +1629,6 @@
         subroutine clear_CRP_First_Trans_m()
             USE CRP_First_Trans_m
             implicit none
-            node=Node_type_constructor()
             
             
             L = 0
@@ -1909,7 +1903,7 @@
             sdnc = 0.0
             sdwad = 0.0
             sdwam = -99.0
-            seedrs = -99.0 !LPM 22MAR2016 to define initially the reserves based on stick length (YCA_Growth_init.f90)
+            seedrs = -99.0
             seeduse = 0.0 
             seeduser = 0.0
             seeduset = 0.0

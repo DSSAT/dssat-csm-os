@@ -2158,7 +2158,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         WRITE(fnumwrk,*)' '
         WRITE(fnumwrk,*)' MODEL      ',MODEL
         WRITE(fnumwrk,*)' MODULE     ',MODNAME
-        WRITE(fnumwrk,'(A13,I6)')'  VERSION    ',VERSION
+        !WRITE(fnumwrk,'(A13,I6)')'  VERSION    ',VERSIONCSCRP
+        WRITE(fnumwrk, "(A13,I1,'.',I1,'.',I1,'.',I3.3)")
+     &   '  VERSION    ', VERSION
         WRITE(fnumwrk,*)' RNMODE     ',RNMODE
         IF (RUN.LT.10) THEN
           WRITE(fnumwrk,'(A13,I1)')' RUN        ',RUN   

@@ -367,7 +367,6 @@ set(
         "Plant/CROPSIM/CRP_First_Trans_m.for"
         "Plant/CROPSIM/CRP_Growth.for"
         "Plant/CROPSIM/CRP_Integrate.for"
-        "Plant/CROPSIM/CRP_Node.for"
         "Plant/CROPSIM/CRP_Output.for"
         "Plant/CROPSIM/CRP_RunInit.for"
         "Plant/CROPSIM/CRP_SeasInit.for"

@@ -1,14 +1,15 @@
 !***************************************************************************************************************************
 ! This is the code from the section (DYNAMIC == RATE) lines 5255 - 7649 of the original CSCRP code.
 !***************************************************************************************************************************
-
-      SUBROUTINE CRP_Growth (ALBEDOS, BD, GSTAGE,  CLOUDS, CO2, DAYLT, DLAYR, DOY,
-     &    DUL, EO, EOP, ES, ISWDIS, ISWNIT, ISWWAT, KCAN,
-     &    KEP, LL, NFP, NH4LEFT, NLAYR  , NO3LEFT, PARIP, PARIPA,
-     &    RLV, RNMODE, SAT, SENCALG, SENLALG, SENNALG,
-     &    SHF, SLPF, SRAD, ST, STGYEARDOY, SW, TAIRHR, TDEW,
-     &    TMAX, TMIN, TRWUP, UH2O, UNH4, UNO3,
-     &    WEATHER, SOILPROP, CONTROL, WINDSP, YEAR, YEARPLTCSM, LAI, IDETG)
+ 
+      SUBROUTINE CRP_Growth (ALBEDOS, BD, GSTAGE, CLOUDS, CO2, DAYLT,
+     &    DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
+     &    KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT, PARIP,
+     &    PARIPA, RLV, RNMODE, SAT , SENCALG, SENLALG, SENNALG,
+     &    SHF, SLPF, SNOW, SRAD, ST, STGYEARDOY, SW, TAIRHR, TDEW,
+     &    TMAX, TMIN, TRWUP, UH2O, UNH4, UNO3, WEATHER,
+     &    SOILPROP, CONTROL, WINDSP, YEAR, YEARPLTCSM, LAI,
+     &    IDETG)
 
       USE ModuleDefs
       USE CRP_First_Trans_m
@@ -295,8 +296,6 @@
 !-----------------------------------------------------------------------
 !         Calculate thermal time
 !-----------------------------------------------------------------------
-          !WRITE(*,*) "TT: ", TT !, " TTWHEAT: ", TTWHEAT, " TTOLD ", TTOLD
-          !WRITE(*,*) "RSTAGE: ", RSTAGE
           Tfd = TFAC4(trdv1,tmean,TT)
           ! Used when when working with Doug Stewart's function
           !TTOLD = TT  
@@ -465,7 +464,6 @@
 !-----------------------------------------------------------------------
 !           Calculate daylength factors for development
 !-----------------------------------------------------------------------
-            WRITE(*,*) " YEARDOY GROWTH: ", YEARDOY, " DAYLT: ", DAYLT
             DF = 1.0
             DFNEXT = 1.0
             ! To ensure correct sensitivity on emergence day
@@ -482,7 +480,6 @@
                DFNEXT = DF
               ENDIF 
             ELSEIF (PPSEN.EQ.'LQ') THEN  ! Long day response,quadratic
-              WRITE(*,*) "DF1.1: ", DF, " RSTAGETMP ", RSTAGETMP, " PPS(INT(RSTAGETMP) ", PPS(INT(RSTAGETMP)), " PPTHR ", PPTHR, " DAYLT ", DAYLT, " PPEXP ", PPEXP
               DF = AMAX1(0.0,AMIN1(1.0,1.0-
      &        (PPS(INT(RSTAGETMP))/10000.*(PPTHR-DAYLT)**PPEXP)))
               IF (RSTAGETMP.LT.10) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-
@@ -528,18 +525,15 @@
                 !DU = TT*VF*DF*LIF2    ! NB. Changed from Ceres 3.5
                 TIMENEED = 1.0
                 DUPNEXT = 0.0
-                !WRITE(*,*) "ENTROU1: ",YEARDOY, DUPHASE
               ELSE  
                 DUPHASE = DUNEED
                 TIMENEED = DUNEED/
      &           (TT*VF*(PPFPE*(GERMFR-EMRGFR)+DF*EMRGFR))
                 DUPNEXT = TTNEXT*(1.0-TIMENEED)*VFNEXT*DFNEXT
-                !WRITE(*,*) "ENTROU2: ",YEARDOY, DUPHASE
               ENDIF
             ENDIF
             
             DU = DUPHASE+DUPNEXT
-            WRITE(*,*) YEARDOY, " DUPHASE ", DUPHASE, " TT ", TT, " VF", VF, " PPFPE ", PPFPE, " GERMFR ", GERMFR, " EMRGFR ", EMRGFR, " DF ", DF 
 
             ! Leaf growth units
             IF (CUMDU.LT.LGPHASEDU(2)) THEN
@@ -648,7 +642,6 @@
             ENDIF
             ! Seed reserves available
             SEEDRSAV = SEEDRSAV-SEEDRSAVR
-            !WRITE(*,*) "SEEDRSAV: ", SEEDRSAV, " SEEDRSAVR" , SEEDRSAVR, " SEEDRSI: ", SEEDRSI, " SDDUR ", SDDUR, " TT ", TT, " STDAY ", STDAY, " GERMFR ", GERMFR
 
 !=======================================================================
             IF (GEUCUM+TTGEM*WFGE.GT.PGERM+PEMRG*SDEPTHU) THEN  !If emrg
@@ -2378,15 +2371,19 @@
                 GRWTTMP = GRWT + GROGRPA
                 GRAINNTMP = GRAINN + (GRAINNGU+GRAINNGR+GRAINNGL+
      &            GRAINNGS+GRAINNGRS)
-                IF (GRWTTMP > 1.E-6 .AND. 
-     &           GRAINNTMP/GRWTTMP*100.0 .LT. GNPCMN) THEN
-                  GRWTTMP = GRAINNTMP*(100.0/GNPCMN)
+                IF (GRWTTMP > 1.E-6) THEN
+                  ! TF - new if statment to protect from divisions by 0
+                  ! on GRAINNTMP/GRWTTMP
+                  IF (GRAINNTMP/GRWTTMP*100.0 .LT. GNPCMN) THEN
+                    GRWTTMP = GRAINNTMP*(100.0/GNPCMN)
+                  ENDIF
                   GROGR = GRWTTMP - GRWT
                   GRORSGR = GROGRPA - GROGR
                   NLIMIT = NLIMIT + 1
                 ELSE
                   GROGR = GROGRPA
                 ENDIF
+                WRITE(*,*) GRWTTMP, GROGR, GRORSGR, NLIMIT
               ENDIF
             ENDIF
 

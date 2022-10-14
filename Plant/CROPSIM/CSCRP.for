@@ -2,19 +2,20 @@
       
 C=======================================================================    
       SUBROUTINE XXCRP(FILEIOIN, RUN, TN, RN, RNMODE,                                        
-     &  ISWWAT, ISWNIT, ISWDIS, MESOM, IDETS, IDETO, IDETG,                                     !Controls
-     &  IDETL, FROP,                                                                            !Controls
+     &  ISWWAT, ISWNIT, ISWDIS, MESOM,                                     !Controls
+     &  IDETS, IDETO, IDETG, IDETL, FROP,                                                                            !Controls
      &  SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                                                 !Run+loop
      &  SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,                                              !Weather
      &  DRAIN, RUNOFF, IRRAMT,                                                                  !Water
      &  DAYLT, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                               !Weather        
      &  NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,                                      !Soil states
      &  SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                                                           !H2O,N states
-     &  TLCHD, TNIMBSOM, TNOXD, TOMINFOM, TOMINSOM, TOMINSOM1,                                  !N components
-     &   TOMINSOM2, TOMINSOM3,                                                                  !N components
+     &  TLCHD, TNIMBSOM, TNOXD,                                  !N components
+     &  TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,                                                                  !N components
      &  YEARPLTCSM, HARVFRAC,                                                                   !Pl.date         ! YRPLT = YEARPLTCSM
      &  PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,                                             !Resources       ! REPLACED ALBEDO WITH ALBEDOS
-     &  LAI, KCAN, KEP, RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,                             !States          ! PORMIN = RWUMP
+     &  LAI, KCAN, KEP, 
+     &  RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,                             !States          ! PORMIN = RWUMP
      &  UNO3, UNH4, UH2O,                                                                       !Uptake
      &  SENCALG, SENNALG, SENLALG,                                                              !Senescence
      &  RESCALG, RESNALG, RESLGALG,                                                             !Residues
@@ -109,7 +110,7 @@ C=======================================================================
      &     DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
      &     KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT, PARIP,
      &     PARIPA, RLV, RNMODE, SAT , SENCALG, SENLALG, SENNALG,
-     &     SHF, SLPF, SRAD, ST, STGYEARDOY, SW, TAIRHR, TDEW, 
+     &     SHF, SLPF, SNOW, SRAD, ST, STGYEARDOY, SW, TAIRHR, TDEW,
      &     TMAX, TMIN, TRWUP, UH2O, UNH4, UNO3, WEATHER,
      &     SOILPROP, CONTROL, WINDSP, YEAR, YEARPLTCSM, LAI,
      &     IDETG)
@@ -122,7 +123,7 @@ C=======================================================================
 !*******************************************************************************************************************************
 
         CALL CRP_Integrate (ALBEDOS, BD, GSTAGE, LAI, CANHT, CO2,
-     &     DEPMAX, DLAYR, DOY, DRAIN, EOP, EP, ET, FERNIT,
+     &     DAYLT, DEPMAX, DLAYR, DOY, DRAIN, EOP, EP, ET, FERNIT,
      &     IRRAMT, ISWNIT, ISWWAT, LL, NFP, NH4LEFT, NLAYR,
      &     NO3LEFT, RAIN, RESCALG, RESLGALG, RESNALG, RLV, RUNOFF,
      &     SRAD, STGYEARDOY, SW, TLCHD, TMAX, TMIN, TNIMBSOM,

@@ -3,7 +3,7 @@
 !***************************************************************************************************************************
 
       SUBROUTINE CRP_Integrate (ALBEDOS, BD, GSTAGE, LAI, CANHT, CO2,
-     &     DEPMAX, DLAYR, DOY, DRAIN, EOP, EP, ET, FERNIT,
+     &     DAYLT, DEPMAX, DLAYR, DOY, DRAIN, EOP, EP, ET, FERNIT,
      &     IRRAMT, ISWNIT, ISWWAT, LL, NFP, NH4LEFT, NLAYR,
      &     NO3LEFT, RAIN, RESCALG, RESLGALG, RESNALG, RLV, RUNOFF,
      &     SRAD, STGYEARDOY, SW, TLCHD, TMAX, TMIN, TNIMBSOM,
@@ -151,7 +151,6 @@
           ENDIF
 
           SEEDRS = AMAX1(0.0,SEEDRS-CARBOLSD-SEEDRSAVR)
-          !WRITE(*,*) "SEEDRS: ", SEEDRS, " CARBOLSD: ", CARBOLSD, " SEEDRSAVR: ", SEEDRSAVR
           IF (CFLSDRSMSG.NE.'Y'.AND.SEEDRS.LE.0.0.AND.LNUM.LT.4.0) THEN
             CFLSDRSMSG = 'Y'
             IF (LAI.LE.0.0) THEN
@@ -529,7 +528,6 @@
             DO L = HSTG,1,-1
               IF (CUMDU.GE.PSTART(L).AND.PD(L).GT.0.0) THEN
                 RSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L)
-                !WRITE(*,*) "ENTROU: ", RSTAGE, FLOAT(HSTG)
                 ! Rstage cannot go above harvest stage 
                 RSTAGE = AMIN1(FLOAT(HSTG),RSTAGE)
                 EXIT
@@ -1225,7 +1223,6 @@
           TWAD = 
      &      (SEEDRS+SDCOAT+RTWT+LFWT+STWT+GRWT+RSWT+SENTOPRETAINED)
      &         * PLTPOP*10.0
-          !WRITE(*,*) "TWAD: ", TWAD, " SEEDRS: ", SEEDRS, " SDCOAT: ", SDCOAT, " RTWT: ", RTWT, " LFWT: ", LFWT, " STWT: ", STWT, " GRWT: ", GRWT, " RSWT: ", RSWT, " SENTOPRETAINED: ", SENTOPRETAINED
 
           VWAD = (LFWT+STWT+RSWT+SENTOPRETAINED)*PLTPOP * 10.0
           EWAD = (GRWT+CHWT)*PLTPOP * 10.0

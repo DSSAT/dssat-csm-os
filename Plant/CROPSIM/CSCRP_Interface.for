@@ -32,7 +32,6 @@ C=======================================================================
       INTEGER MDATE, NLAYR !, L TF*
       INTEGER MULTI, FROP, SN, YEAR, DOY
       INTEGER STGYEARDOY(20), STGDOY(20), YRPLT
-      INTEGER YEARPLTCSM !TF*
 
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
       REAL SNOW 
@@ -195,22 +194,22 @@ C=======================================================================
       TMIN   = WEATHER % TMIN
       WINDSP = WEATHER % WINDSP
 
-      WRITE(*,*) " YEARDOY INTERFACE: ", YEAR*1000 + DOY, " DAYLT: ", DAYLT, DAYL
 C-----------------------------------------------------------------------
       CALL XXCRP(FILEIOIN, RUN, TN, RN, RNMODE,                                        
-     &  ISWWAT, ISWNIT, ISWDIS, MESOM, IDETS, IDETO, IDETG,      
-     &  IDETL, FROP,                                             
+     &  ISWWAT, ISWNIT, ISWDIS, MESOM,    
+     &  IDETS, IDETO, IDETG, IDETL, FROP,                                             
      &  SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                  
      &  SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,              
      &  DRAIN, RUNOFF, IRRAMT,                           
-     &  DAYLT, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                        
+     &  TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,                                        
      &  NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,     
      &  SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                           
-     &  TLCHD, TNIMBSOM, TNOXD, TOMINFOM, TOMINSOM, TOMINSOM1,  
-     &   TOMINSOM2, TOMINSOM3,                                  
-     &  YEARPLTCSM, HARVFRAC,                                                           
-     &  PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,  
-     &  LAI, KCAN, KEP, RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,                      
+     &  TLCHD, TNIMBSOM, TNOXD, 
+     &  TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,                                  
+     &  YRPLT, HARVFRAC,                                                           
+     &  PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDO,
+     &  LAI, KCAN, KEP, 
+     &  RLV, NFP, PORMIN, RWUMX, CANHT, LAIL, LAILA,                      
      &  UNO3, UNH4, UH2O,                                      
      &  SENCALG, SENNALG, SENLALG,                                 
      &  RESCALG, RESNALG, RESLGALG,                              

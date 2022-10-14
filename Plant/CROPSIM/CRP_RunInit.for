@@ -26,7 +26,8 @@
        IF (RUNCRP.LE.0) THEN          ! First time through
 
           MODNAME(1:8) = 'CSCRP048'
-          VERSIONCSCRP = 010115       ! TF 010115 Changed from VERSION, conflict with ModuleDefs 
+          !VERSIONCSCRP = 010115       ! TF 010115 Changed from VERSION, 
+          !                            !  conflict with ModuleDefs 
           GENFLCHK(3:15) = 'CRP048.20200721'
           ! Control flags/switches
           CFLPDATE = 'P'      ! P=at planting;I=at first irrigation;
