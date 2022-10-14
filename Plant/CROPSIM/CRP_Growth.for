@@ -2383,7 +2383,6 @@
                 ELSE
                   GROGR = GROGRPA
                 ENDIF
-                WRITE(*,*) GRWTTMP, GROGR, GRORSGR, NLIMIT
               ENDIF
             ENDIF
 
