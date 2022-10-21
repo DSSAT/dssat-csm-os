@@ -223,12 +223,6 @@ $SIMULATION_CONTROLS
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
-94 XXCRP wheat, barley, cassava
-@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
-94 GE              .     .     .     .     . XXCRP                     XXCRP 
-
-!-----------------------------------------------------------------------------------------
-@N CONTROLS_TITLE
 95 CSCER wheat, barley
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
 95 GE              .     .     .     .     . CSCER                     CSCER

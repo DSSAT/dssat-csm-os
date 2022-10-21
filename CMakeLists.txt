@@ -357,8 +357,6 @@ set(
         "Plant/CSCER_CSCRP_CSCAS/CSCAS_Interface.for"
         "Plant/CSCER_CSCRP_CSCAS/CSCER.for"
         "Plant/CSCER_CSCRP_CSCAS/CSCERES_Interface.for"
-        "Plant/CSCER_CSCRP_CSCAS/CSCRP.for"
-        "Plant/CSCER_CSCRP_CSCAS/CSCRP_Interface.for"
         "Plant/CSCER_CSCRP_CSCAS/CSDISEASE.for"
         "Plant/CSCER_CSCRP_CSCAS/CSREADS.for"
         "Plant/CSCER_CSCRP_CSCAS/CSUTS.for"

@@ -266,7 +266,7 @@ C-----------------------------------------------------------------------
   162   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
      &          5(1X,F5.1),1X,F5.2,1X,F5.1,A)
 
-      CASE ('CSCRP', 'XXCRP')
+      CASE ('CSCRP')
 !       CSCRP Wheat,Barley
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
 

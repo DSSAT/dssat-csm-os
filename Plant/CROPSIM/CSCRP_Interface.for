@@ -7,7 +7,7 @@ C  04/16/2002 LAH/CHP Written.
 C  03-12-2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C=======================================================================
-      SUBROUTINE XXCRP_Interface (CONTROL, ISWITCH,       !Input
+      SUBROUTINE CSCRP_Interface (CONTROL, ISWITCH,       !Input
      &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
@@ -195,7 +195,7 @@ C=======================================================================
       WINDSP = WEATHER % WINDSP
 
 C-----------------------------------------------------------------------
-      CALL XXCRP(FILEIOIN, RUN, TN, RN, RNMODE,                                        
+      CALL CSCRP(FILEIOIN, RUN, TN, RN, RNMODE,                                        
      &  ISWWAT, ISWNIT, ISWDIS, MESOM,    
      &  IDETS, IDETO, IDETG, IDETL, FROP,                                             
      &  SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                  
@@ -247,4 +247,4 @@ C-----------------------------------------------------------------------
       ENDIF
 
       RETURN
-      END SUBROUTINE XXCRP_Interface
+      END SUBROUTINE CSCRP_Interface

@@ -599,7 +599,7 @@ C        Branch to menu choice
 
 !=======================================================================
 !     CSCRP - CropSim wheat, barley
-      CASE ('CSCRP', 'XXCRP')
+      CASE ('CSCRP')
         SELECT CASE (CROP)
 
 !     --------------------------------------------------------------
