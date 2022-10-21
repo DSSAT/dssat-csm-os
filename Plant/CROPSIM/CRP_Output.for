@@ -4,8 +4,8 @@
 !**********************************************************************
 
 
-      SUBROUTINE CRP_Output (GSTAGE, LAI, CANHT, CN, CO2, DOY,
-     &     DYNAMIC, EO, EOP, IDETG, IDETL, IDETO, IDETS , IRRAMT,
+      SUBROUTINE CRP_Output (GSTAGE, LAI, CANHT, CN, CO2, DAYLT, DOY,
+     &     DYNAMIC, EO, EOP, IDETG, IDETL, IDETO, IDETS, IRRAMT,
      &     ISWNIT, ISWWAT, KCAN, MESOM , NFP, NLAYR, ON, RAIN, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, SRAD, STGYEARDOY, TN,
      &     TNIMBSOM, TOMINSOM1, UNH4, UNO3, WINDSP, YEAR)
