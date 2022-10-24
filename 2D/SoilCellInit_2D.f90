@@ -11,27 +11,24 @@
 ! There are five options:
 
 ! CASE 1: Flat surface, no plastic mulch cover
-! - CASE 1a: Bed Width=0, Furrow width = ROWSPC_CM
-! - CASE 1b: Bed Width>0, Furrow width >0,  Bed Width+Furrow width=ROWSPC_CM
-! - CASE 1c: Bed Width=ROWSPC_CM, Furrow width = 0
 ! CASE 2: Flat surface, partial plastic mulch cover
-! CASE 3: Flat surface, full plastic mulch cover (not handled yet)
+! CASE 3: Flat surface, full plastic mulch cover 
 ! CASE 4: Raised bed, plastic mulch cover over bed
 ! CASE 5: Raised bed, no plastic mulch 
-!------------------------------------------------------------------------------------------
-!                 |                      Bed Width (cm)                                   |
-!                 |-----------------------------------------------------------------------|
-!                 |    BW < 2    |    2 < BW < ROWSPC - 2     |    BW > ROWSPC - 2        |
-!-----------------|--------------|----------------------------|---------------------------|
-!                 |              | PMALB > 0   |  PMALB <= 0  | PMALB > 0   | PMALB <= 0  |
-!-----------------|--------------|----------------------------|-------------|-------------|
-!  Bed  | BH < 2  |    CASE 1a   |     CASE 2  |    CASE 1b   |    CASE 3   |    CASE 1c  |
-! Height|---------|--------------|----------------------------|-------------|-------------|
-!  (cm) | BH > 2  |    CASE 1a   |     CASE 4  |    CASE 5    |    CASE 3   |    CASE 1c  |
-!                 !set RaisedBed !    set RaisedBed = .TRUE.  !  set RaisedBed=  .FALSE.  !        
-!                 != .FALSE.     !                            !                           !
-!------------------------------------------------------------------------------------------
-
+!-------------------------------------------------------------------------------------------------------
+!                                                     Bed Width (cm)                                   |
+!                 -------------------------------------------------------------------------------------|
+!                 |          BW < 2           |    2 < BW < ROWSPC - 2     |     BW > ROWSPC - 2       |
+!-----------------|---------------------------|----------------------------|---------------------------|
+!                 |  PMALB > 0  | PMALB <= 0  |  PMALB > 0  |  PMALB <= 0  |  PMALB > 0  | PMALB <= 0  |
+!-----------------|-------------|-------------|----------------------------|-------------|-------------|
+!  Bed  | BH < 2  |   CASE 3    |    CASE 1   |     CASE 2  |    CASE 1    |   CASE 3    |    CASE 1   |
+! Height|---------|-------------|-------------|----------------------------|-------------|-------------|
+!  (cm) | BH > 2  |   CASE 3    |    CASE 1   |     CASE 4  |    CASE 5    |   CASE 3    |    CASE 1   |
+!-----------------|---------------------------|----------------------------|---------------------------|
+!                 |       set RaisedBed       |        set RaisedBed       |       set RaisedBed       |        
+!                 |          = .FALSE.        |          = .TRUE.          |          = .FALSE.        |
+!------------------------------------------------------------------------------------------------------|
 !==============================================================================
 !   Subroutine CellInit_2D
 !   Initialization for cell structure and initial conditions
@@ -141,112 +138,73 @@
     IF (BEDWD > ROWSPC_CM) Then
       MSG(1) = "Bed width > Row Spacing"
       MSG(2) = "Check planting data in experiment file."
-      write(msg(3),'(A)') "Program still continue."
-      call warning(3,errkey,msg)
-     ! IF (BEDWD >ROWSPC_CM) 
+      write(msg(3),'(A)') "Program will end."
+      call warning(2,errkey,msg)
       CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
-      ! If we do not exit program, we need to have handling: 
-      !  FurrowColumn=0, totBedRows#=0, totBedCol#=0; then line 746FMT="I2,F8.2,0I5", crash
     ENDIF
+
 !--------------------------------------------------------------------------
-!   Column widths in bed and furrow for the cases in case table above
+!   Column widths in bed and furrow 
 !---------------------------------------------------------------------------  
-    IF (BEDWD < 2.) THEN ! BH<2 or BH >2
-    !zero bed width, Case 1a (1st case column) in case table above
-      IF (PMALB > 1.E-2 .AND. BEDWD < 0) THEN
-        BedCase = 3  !case 3A, Flat surface, full plastic mulch cover
-        MSG(1)= "Flat surface with no plastic mulch cover."
+!   CASE 1: Flat surface, no plastic mulch cover (all "furrow")
+!   CASE 2: Flat surface, partial plastic mulch cover (mixture of "bed" and "furrow")
+!   CASE 3: Flat surface, full plastic mulch cover (all "bed")
+!   CASE 4: Raised bed, plastic mulch cover over bed
+!   CASE 5: Raised bed, no plastic mulch 
+!---------------------------------------------------------------------------  
+    IF (BEDWD < 2. .OR. ROWSPC_CM - BEDWD < 2.) THEN 
+!     Flat surface with or without plastic mulch
+      RaisedBed = .FALSE.
+      BEDHT = 0.
+      IF (PMALB > 1.E-2) THEN
+!       Case 3, Flat surface, full plastic mulch cover
+        BedCase = 3  
         BEDWD = ROWSPC_CM
-        BEDHT = 0.
-        RaisedBed = .FALSE.
-        PMCover   = .TRUE.
-        MSG(1)= "Missing BEDWD, set BEDWD = ROWSPC_CM。"
-        MSG(2)= "Flat surface with full plastic cover by default."
-        call warning(2,errkey,msg)
-      ELSEIF (BEDWD .GE. 0) THEN
-        BedCase = 3  !Flat surface, full plastic mulch cover
-        PMCover   = .TRUE.
-        BEDWD = ROWSPC_CM
-        BEDHT = 0.
-        RaisedBed = .FALSE.  
-        PMCover   = .TRUE.
-        MSG(1)= "Flat surface with plastic cover."
-        MSG(2) = "BEDWD is too small to simulate in experiment file."
-        write(msg(3),'(A)') "Program will stop."
-        call warning(3,errkey,msg)
-        CALL ERROR(ERRKEY,0,"",0)
+        PMCover = .TRUE.
+        MSG(1)= "Flat surface with full plastic cover."
+        call INFO(1,errkey,msg)
       ELSE
-        BedCase = 1 !case 1C, Flat surface, no plastic mulch cover
-        BEDWD = ROWSPC_CM
-        BEDHT = 0.
-        MSG(1)= "Flat surface no plastic mulch cover."
-        MSG(2) = "ROWSPC <= BEDWD in experiment file."
-        call warning(2,errkey,msg)
-        RaisedBed = .FALSE.
-        PMCover   = .FALSE.
+!       Case 1, Flat surface, no plastic mulch cover
+        BedCase = 1 
+        BEDWD = 0.0
+        PMCover = .FALSE.
+        MSG(1)= "Flat surface, no plastic mulch cover."
+        call INFO(1,errkey,msg)
       ENDIF
 
-    ELSEIF (ROWSPC_CM - BEDWD < 2.) THEN ! BH<2 or BH>2
-    !  Bed width=ROWSPC, Case 3 or 1C, last case colmn in case table above
-    ! 03/29/2019 Meng remove the limitation and start to use case 3
+!   Bed width is specified (2 < BEDWT < ROWSPC -2)
+    ELSEIF (BEDHT < 2.) THEN 
+!     Flat surface
+      RaisedBed = .FALSE.
+      BEDHT = 0.
       IF (PMALB > 1.E-2) THEN
-        BedCase = 3  !Flat surface, full plastic mulch cover
-        PMCover   = .TRUE.
-        BEDWD = ROWSPC_CM
-        BEDHT = 0.
-        RaisedBed = .FALSE.  
-        PMCover   = .TRUE.
-        MSG(1)= "Flat surface with full plastic cover."
-        MSG(2) = "ROWSPC = BEDWD in experiment file."
-        call warning(2,errkey,msg)
-!        write(msg(3),'(A)') "Program will stop."
-!        call warning(3,errkey,msg)
-!        CALL ERROR(ERRKEY,0,"",0)
-      ELSE
-        BedCase = 1 !case 1C, Flat surface, no plastic mulch cover
-        BEDWD = ROWSPC_CM
-        MSG(1)= "Flat surface no plastic mulch cover."
-        MSG(2) = "ROWSPC <= BEDWD in experiment file."
-        call warning(2,errkey,msg)
-        RaisedBed = .FALSE.
-        PMCover   = .FALSE.
-      ENDIF
-    ! the following cases are finate bed width
-    ELSEIF (BEDHT < 2.) THEN ! 2 < BW < ROWSPC -2
-    ! Case 2 or 1b middle case colmn, 1t case row in case table above
-      IF (PMALB > 1.E-2) THEN
-        BedCase = 2  !Flat surface, partial plastic mulch cover
-        MSG(1)= "Flat surface, partial plastic cover."
+!       Flat surface, partial plastic mulch cover
+        BedCase = 2  
+        PMCover = .TRUE.
         BEDWD = BEDWD
-        BEDHT = 0.
-        RaisedBed = .FALSE.
-        PMCover   = .TRUE.
+        MSG(1)= "Flat surface, partial plastic cover."
       Else
-        BedCase = 1 !Case 1b, Flat surface, no plastic mulch cover
+!       Case 1, Flat surface, no plastic mulch cover
+        BedCase = 1 
+        PMCover = .FALSE.
+        BEDWD = 0.0  !no bed, treat as all "furrow"
         MSG(1)= "Flat surface with no plastic mulch cover."
-        ! BEDWD = 0. 
-        BEDWD = BEDWD !jin changed in Mar, 2014
-        BEDHT = 0.
-        RaisedBed = .FALSE.
-        PMCover   = .FALSE.
       Endif
 
-    ELSE ! 2 < BW < ROWSPC -2
-    ! case 4 or 5
+!   Raised bed
+    ELSE 
+      BEDWD = BEDWD
+      BEDHT = BEDHT
+      RaisedBed = .TRUE.
       IF (PMALB > 1.E-2) THEN
-        BedCase = 4 ! Raised bed, plastic mulch cover over bed
+!       Raised bed, plastic mulch cover over bed
+        BedCase = 4 
+        PMCover = .TRUE.
         MSG(1)= "Raised bed with plastic mulch cover."
-        BEDWD = BEDWD
-        BEDHT = BEDHT
-        RaisedBed = .TRUE.
-        PMCover   = .TRUE.
       ELSE
         BedCase = 5 ! Raised bed, no plastic mulch 
+        PMCover = .FALSE.
         MSG(1)= "Raised bed without plastic mulch cover."
-        BEDWD = BEDWD
-        BEDHT = BEDHT
-        RaisedBed = .TRUE.
-        PMCover   = .FALSE.
       Endif
     ENDIF
     
@@ -254,33 +212,31 @@
     Call PUT('PLANT', 'BEDHT',  BEDHT)
     Call PUT('PLANT', 'BEDWD',  BEDWD)
 
-    IF (PMCover .AND. PMALB < 1.E-2) THEN ! JZW These should be removed. We set PMCover=true only if PMALB>1.E-2
-      PMALB = 0.05
-      WRITE(MSG(1),'(A,F5.2,A)')'Default value of ',PMALB,' used for albedo of plastic mulch.'
-      MSG(2) ='Actual value can be input in FIELDS section of experiment file.'
-      CALL WARNING(2,ERRKEY,MSG)
-    ENDIF
+!    IF (PMCover .AND. PMALB < 1.E-2) THEN ! JZW These should be removed. We set PMCover=true only if PMALB>1.E-2
+!      PMALB = 0.05
+!      WRITE(MSG(1),'(A,F5.2,A)')'Default value of ',PMALB,' used for albedo of plastic mulch.'
+!      MSG(2) ='Actual value can be input in FIELDS section of experiment file.'
+!      CALL WARNING(2,ERRKEY,MSG)
+!    ENDIF
 
 ! ---------------------------------------------------------------------------
 !   Define column dimensions
 !   Half of the bed is simulated area because of the symmetry vertically
-!    IF (( RaisedBed ) .or. ((BedCase .EQ. 1) .AND. (BEDWD > 2.) )) Then
-    ! 03/29/2019 Meng remove the extra condition to always set correct 
-    ! bed/farrow based on input data
-    IF (BEDWD > 2.) Then
-   ! IF (PMCover) THEN
-!     Plastic mulch, Need to establish "bed" and "furrow" columns, even if no raised bed
-       N_Bed_Cols = nint(BEDWD/10.)  ! half of the bed is simulated, ~5cm columns
-!       N_Bed_Cols = nint(BEDWD/7.5)  ! JZW Potato project
-      N_Bed_Cols = MIN(N_Bed_Cols, MaxCols - 1) !Reserve at least one column for furrow
+!   IF (( RaisedBed ) .or. ((BedCase .EQ. 1) .AND. (BEDWD > 2.) )) Then
+!   03/29/2019 Meng remove the extra condition to always set correct 
+!   bed/furrow based on input data
+    IF (BEDWD > 2.) THEN
+!     Half of the bed is simulated, ~5cm columns
+      N_Bed_Cols = nint(BEDWD/10.)  
+!     Reserve at least one column for furrow
+      N_Bed_Cols = MIN(N_Bed_Cols, MaxCols - 1) 
       Bed_Col_Width = BEDWD / N_Bed_Cols / 2.
     ELSE
-!     No plastic mulch - CASE 1 !JZW BedCase 1,2,3 Flat bed
       N_Bed_Cols = 0
       Bed_Col_Width = 0.
     ENDIF
 
-    N_Fur_Cols = nint((ROWSPC_CM - BEDWD) / 2. / 10.)  !~10cm columns
+    N_Fur_Cols = NINT((ROWSPC_CM - BEDWD) / 2. / 10.)  !~10cm columns
     N_Fur_Cols = MIN(N_Fur_Cols, MaxCols - N_Bed_Cols)
     IF (N_Fur_Cols > 0) THEN
       Fur_Col_Width = (ROWSPC_CM - BEDWD) / 2. / N_Fur_Cols
@@ -295,7 +251,6 @@
 !   Define row dimensions
     IF (RaisedBed) THEN
 !     Calculate bed row thickness
-      !N_Bed_Rows = nint(BEDHT/4.0) !JZW For Potato project
       N_Bed_Rows = nint(BEDHT/5.0)
       Bed_Row_Thick = BEDHT / N_Bed_Rows    !cm
 !     Depth of native soil excavated and blended to create beds
@@ -306,7 +261,6 @@
       DigDep = 0.0 
     ENDIF
 
-!   JZW: we may set FurCol1 = N_Bed_Cols + 1 and FurRow1 = N_Bed_Rows + 1 to replace the selected case 
     SELECT CASE(BedCase)
     CASE (1) !Flat surface, no plastic
       FurRow1 = 1
@@ -796,7 +750,7 @@
       DO Col = 1, NColsTot
 !       conversion from mm[water] to volumetric fraction for each cell
         mm_2_vf(Row,Col) = 1.0 / 10. * HalfRow / CellArea(Row,Col)  
-!                       1.0    /    10.    *    HalfRow     / (thick*width) 
+!                          1.0 / 10. * HalfRow / (thick*width) 
 
 !       cm3[water]               cm[water]     cm2[soil]      cm[row length] 
 !       ---------- = mm[water] * --------- * -------------- * --------------
