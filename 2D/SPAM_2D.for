@@ -198,6 +198,29 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
      &      SRFTEMP, ST)                                     !Output
         END SELECT
       ENDIF
+
+!     ---------------------------------------------------------
+          SELECT CASE(MESEV)
+!         ------------------------
+          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
+            CALL ESR_SoilEvap_2D(SEASINIT,
+     &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
+     &        ES, ES_mm)                        !Output
+!         ------------------------
+          CASE DEFAULT 
+	  
+!!!!!   NOTE CHP: NEED 2D SOILEV   !!!!!
+!         CASE ('R')  !Ritchie soil evaporation routine
+!           Calculate the availability of soil water for use in SOILEV.
+!            DO L = 1, NLAYR
+!              SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+!            ENDDO
+!            CALL SOILEV_2D(RATE,
+!     &        CELLS, DLAYR, DUL, EOS_SOIL, LL, SW,      !Input
+!     &        SW_AVAIL(1), U, WINF,                     !Input
+!     &        ES, ES_mm)                                !Output
+          END SELECT
+
 !     ---------------------------------------------------------
       IF (MEEVP .NE. 'Z') THEN
         SELECT CASE (CONTROL % MESIC)
