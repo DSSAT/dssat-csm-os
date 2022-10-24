@@ -131,7 +131,7 @@ C-SUN INTEGER       LNBLNK
       REAL          INO3(NL),INH4(NL),EFINOC,EFNFIX
       REAL          AINO3,AINH4,TNMIN,ANO3,ANH4,TSWINI
       REAL          ESW(NL),SW(NL),TLL,TSW,TDUL,TSAT,TPESW,CUMDEP,PESW
-      REAL          PLTFOR, PMBD, BEDHT, BEDWD, PMWD
+      REAL          PLTFOR, BEDHT, BEDWD    !, PMWD, PMBD
       REAL          DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
       INTEGER       DripLN(NDrpLn)
 
@@ -192,7 +192,7 @@ C-----------------------------------------------------------------------
      &     FTYPEN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,
      &     LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &     LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES, 
-     &     CONTROL, ISWITCH, UseSimCtr, MODELARG, PMBD, BEDHT, BEDWD, 
+     &     CONTROL, ISWITCH, UseSimCtr, MODELARG, BEDHT, BEDWD, !PMBD, 
      &     DripLN, DripSpc, DripOfset, DripDep)
 
 C-----------------------------------------------------------------------
@@ -329,7 +329,7 @@ C-----------------------------------------------------------------------
         CALL OPTEMPY2K(RNMODE,FILEX,PATHEX,
      &   YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
      &   NYRS,VARNO,VRNAME,CROP,MODEL,RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,
-     &   TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMWD, BEDHT, BEDWD,
+     &   TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS, BEDHT, BEDWD, !PMWD
      &   DripLN, DripSpc, DripOfset, DripDep)  
       
         CALL OPTEMPXY2K (YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
@@ -337,7 +337,7 @@ C-----------------------------------------------------------------------
      &           FILEIO,FROP,ECONO,ATLINE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX, PMWD,
+     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX, !PMWD,
      &           BEDHT, BEDWD)
 
 C-----------------------------------------------------------------------

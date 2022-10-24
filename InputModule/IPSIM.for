@@ -1418,12 +1418,12 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             IF (INDEX('ED' ,METMP) == 0) METMP = 'D' !7/21/2016
             IF (INDEX('01' ,MEGHG) == 0) MEGHG = '0'
 
-            IF (INDEX('RGC',MEHYD) == 0) MEHYD = ' '
+            IF (INDEX('RGC',MEHYD) == 0) MEHYD = 'R' !default 1D Ritchie
             SELECT CASE(MEHYD)
             CASE ('G', 'C')
               MESOL  = 'D'     !2D soil
               ISWTIL = 'N'
-!              ISWNIT = 'N'
+!             ISWNIT = 'N'
               MEEVP  = 'R'
             CASE ('R')
               IF (INDEX('123',MESOL) < 1) THEN

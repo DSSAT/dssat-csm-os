@@ -946,8 +946,12 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       ENDIF
 !--------------------------------------------------------------------
-      
-      CALL SETPM(SOILPROP)
+!     Use this to handle plastic mulch for 1D case.
+      SELECT CASE (ISWITCH % MEHYD)
+      CASE('G','C')   !2d - drip irrigation, do nothing
+      CASE DEFAULT    !1d - set up plastic mulch routines
+        CALL SETPM(SOILPROP)
+      END SELECT
 
       CALL PUT(SOILPROP)
 
@@ -2318,7 +2322,8 @@ C=======================================================================
       SECTION = '*FIELD'
       CALL FIND(LUNIO, SECTION, LNUM, FOUND)
       IF (FOUND /= 0)  THEN
-      READ(LUNIO,'(79X,1x,F5.1, F6.2)',IOSTAT=ERR)PMWD, PMALB
+!     For 1D model, plastic mulch width is read from "bed width" variable in FileX
+      READ(LUNIO,'(79X,F6.0,6X,F6.0)',IOSTAT=ERR) PMWD, PMALB
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
         IF ((ERR == 0) .AND. (PMALB .eq. 0.)) THEN
           PMALB = -99.

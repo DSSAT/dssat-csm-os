@@ -65,7 +65,7 @@ C=======================================================================
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
      &           CONTROL, ISWITCH, UseSimCtr, MODELARG, 
-     &           PMBD, BEDHT, BEDWD, 
+     &           BEDHT, BEDWD, !PMBD, 
      &           DripLN, DripSpc, DripOfset, DripDep)
 
       USE ModuleDefs
@@ -113,7 +113,7 @@ C=======================================================================
       REAL    BEDHT, BEDWD, DripSpc(NDrpLn), DripOfset(NDrpLn)
       INTEGER DripLN(NDrpLn)
       REAL    DripDep(NDrpLn)
-      REAL    PMWD, PMBD
+!     REAL    PMWD, PMBD
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -580,7 +580,7 @@ C-----------------------------------------------------------------------
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
 
         CALL IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,PMWD,BEDHT, BEDWD,
+     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,BEDHT, BEDWD,!PMWD
      &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur, PMALB)
 
 C-----------------------------------------------------------------------
@@ -1103,7 +1103,7 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,PMWD,BEDHT, BEDWD,
+     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,BEDHT, BEDWD, !PMWD,
      &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur, PMALB)
 
       USE ModuleData
@@ -1127,7 +1127,7 @@ C=======================================================================
 
       INTEGER LUNEXP,LNFLD,LN,LINEXP,ISECT,IFIND,ERRNUM,I, FHDUR
 
-      REAL    FLDD,SFDRN,FLOB,SLDP,SLOPE, PMWD, PMALB, BEDHT, BEDWD
+      REAL    FLDD,SFDRN,FLOB,SLDP,SLOPE, PMALB, BEDHT, BEDWD !PMWD, 
       REAL    XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
@@ -1278,7 +1278,7 @@ C
  71     CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
         IF (ISECT .EQ. 1) THEN
            READ (CHARTEST,90,IOSTAT=ERRNUM) LN,
-     &                PMWD, PMALB, BEDWD, BEDHT
+     &         BEDWD, BEDHT, PMALB
 
            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          ELSE
@@ -1289,9 +1289,8 @@ C
 
       IF (BEDWD .LE. 0.0) BEDWD = -99
       IF (BEDHT .LE. 0.0) BEDHT = -99
-      IF (PMWD .LE. 0.0) PMWD = -99
+!     IF (PMWD .LE. 0.0) PMWD = -99
       IF (PMALB .LE. 0.0) PMALB = -99
-
 C
 C    End New section (3rd)
 

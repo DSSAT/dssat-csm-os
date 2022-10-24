@@ -60,7 +60,7 @@ C=======================================================================
       SUBROUTINE OPTEMPY2K (RNMODE, FILEX,PATHEX,
      & YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
      & NYRS,VARNO,VRNAME,CROP,MODEL,RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,
-     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMWD, BEDHT, BEDWD, 
+     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,BEDHT, BEDWD, !PMWD, 
      & DripLN, DripSpc, DripOfset, DripDep)  
 
       USE ModuleDefs
@@ -88,7 +88,7 @@ C=======================================================================
       INTEGER TRTN,NFORC,NDOF,PMTYPE,ISENS
       INTEGER DripLN(NDrpLn)
 
-      REAL    PLTFOR, BEDHT, BEDWD, PMWD
+      REAL    PLTFOR, BEDHT, BEDWD !, PMWD
       REAL    DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
       REAL    SWINIT(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
 
@@ -291,9 +291,9 @@ C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,59,IOSTAT=ERRNUM) FLDNAM,FILEW(1:8),SLOPE,
      &       FLOB,DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,
-     &       PMWD,PMALB, BEDWD, BEDHT
+     &       BEDWD, BEDHT, PMALB
    59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
-     &        2(1X,A5),1X,F5.0,1X,A10,4F6.1)
+     &        2(1X,A5),1X,F5.0,1X,A10,2F6.1,F6.2)
 
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
       WRITE (LUNIO,60,IOSTAT=ERRNUM) XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
@@ -800,7 +800,7 @@ C-----------------------------------------------------------------------
      &        I6,1(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
    74 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
      &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
-   75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1)
+   75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1,I6)
    76 FORMAT (3X,I7,1X,A5,1X,F5.1)
    77 FORMAT (3X,I7,2(1X,A5),6(1X,F5.0),1X,A5)
    78 FORMAT (3X,I7,1X,A5,1X,F5.2,1X,A5,1X,F5.1,1X,A5,A42)
