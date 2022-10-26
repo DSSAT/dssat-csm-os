@@ -635,6 +635,7 @@ set(
         "SPAM/STEMP.for"
         "SPAM/STEMP_EPIC.for"
         "SPAM/TRANS.for"
+        "SPAM/TRANS_old.for"
         "Weather/CO2VAL.for"
         "Weather/HMET.for"
         "Weather/IPWTH_alt.for"
@@ -644,6 +645,7 @@ set(
         "Weather/weathr.for"
         "Weather/WGEN.for"
         "Weather/WTHMOD.for"
+        2D/DENIT_CERES_2D.for
         2D/Drainage_2D.for
         2D/Drip_Irrig.for
         2D/ESR_SoilEvap_2D.for

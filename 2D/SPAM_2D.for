@@ -22,6 +22,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !                 FILEX parameter MESEV
 !  12/09/2008 CHP Remove METMP
 !  02/26/2009 CHP Modified and simplified for 2D
+!  10/26/2022 chp Go back to old TRANS for 2D (temporary?)
 !=======================================================================
 
 ! Order of calculations for evapotranspiration:
@@ -34,10 +35,9 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !       2. SPAM - Summarize daily ET calculations
 
       SUBROUTINE SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SoilProp_Furrow,                                !Input
-     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -48,38 +48,38 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       USE FloodModule
 
       IMPLICIT NONE
-      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS
+      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS_old
       EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
       EXTERNAL XTRACT, ROOTWU_HR, WATERSTRESS, ESR_SoilEvap_2D
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT
-      CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV, METMP
+      CHARACTER*1  MEEVP, MEPHO, MESEV, METMP !, MEINF
       CHARACTER*2  CROP
       CHARACTER*6, PARAMETER :: ERRKEY = "2DSPAM"
 
-      INTEGER DYNAMIC, NLAYR
+      INTEGER DYNAMIC !, NLAYR
 
       REAL CANCOV, CANHT, CMSALB, CO2, MSALB
       REAL SRAD, TAVG, TMAX, TMIN, WINDSP, XHLAI, XLAI
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP 
       REAL EF, EM, EO, EP, ES, ET, EVAP 
-      REAL TRWU, TRWUP, U
-      REAL EOS, EOP, WINF
+      REAL TRWU, TRWUP    !, U
+      REAL EOS, EOP   !, WINF
       REAL XLAT, TAV, TAMP, SRFTEMP
       REAL EORATIO, KSEVAP, KTRANS
 
 !     Local variables in this routine.  Actual water stress variables 
 !     are calcualted in WatBal2D
-      REAL SWFAC, TURFAC
+!     REAL SWFAC, TURFAC
 
       REAL, DIMENSION(NL) :: ES_LYR, RLV, RWU, ST, SW, SWDELTX
       
       Type (CellType) CELLS(MaxRows,MaxCols)
       REAL, DIMENSION(MaxRows,MaxCols) :: ES_mm
 
-      REAL DLAYR(NL), DUL(NL), LL(NL),   
-     &    SAT(NL), SW_AVAIL(NL), UPFLOW(NL) 
+!     REAL DLAYR(NL), DUL(NL), LL(NL),   
+!    &    SAT(NL), UPFLOW(NL)!, SW_AVAIL(NL) 
 !    &    SWAD(NL),SWDELTS(NL), SWDELTU(NL)
 
 !     Root water uptake computed by some plant routines (optional)
@@ -102,25 +102,25 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       TYPE (SoilType)    SOILPROP, SoilProp_furrow
       TYPE (SwitchType)  ISWITCH
       TYPE (FloodWatType)FLOODWAT
-      TYPE (MulchType)   MULCH
+!     TYPE (MulchType)   MULCH
       TYPE (WeatherType) WEATHER
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
       DYNAMIC = CONTROL % DYNAMIC
 
-      DLAYR  = SOILPROP % DLAYR
-      DUL    = SOILPROP % DUL
-      LL     = SOILPROP % LL
-      MSALB  = SOILPROP % MSALB
-      NLAYR  = SOILPROP % NLAYR
-      SAT    = SOILPROP % SAT
-      U      = SOILPROP % U
+!      DLAYR  = SOILPROP % DLAYR
+!      DUL    = SOILPROP % DUL
+!      LL     = SOILPROP % LL
+!      MSALB  = SOILPROP % MSALB
+!      NLAYR  = SOILPROP % NLAYR
+!      SAT    = SOILPROP % SAT
+!      U      = SOILPROP % U
 
       ISWWAT = ISWITCH % ISWWAT
       IDETW  = ISWITCH % IDETW
       MEEVP  = ISWITCH % MEEVP
-      MEINF  = ISWITCH % MEINF
+!     MEINF  = ISWITCH % MEINF
       MEPHO  = ISWITCH % MEPHO
       METMP  = ISWITCH % METMP
       MESEV  = ISWITCH % MESEV
@@ -177,7 +177,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       SWDELTX = 0.0
       TRWU = 0.0
       XHLAI = 0.0
-      ET0 = 0.0
+!     ET0 = 0.0
 
 !!     Soil water stress variables
 !      SWFAC  = 1.0
@@ -199,16 +199,16 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
         END SELECT
       ENDIF
 
-!     ---------------------------------------------------------
-          SELECT CASE(MESEV)
-!         ------------------------
-          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
+!!     ---------------------------------------------------------
+!          SELECT CASE(MESEV)
+!!         ------------------------
+!          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
             CALL ESR_SoilEvap_2D(SEASINIT,
      &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
      &        ES, ES_LYR, ES_mm)                     !Output
-!         ------------------------
-          CASE DEFAULT 
-	  
+!!         ------------------------
+!          CASE DEFAULT 
+!	  
 !!!!!   NOTE CHP: NEED 2D SOILEV   !!!!!
 !         CASE ('R')  !Ritchie soil evaporation routine
 !           Calculate the availability of soil water for use in SOILEV.
@@ -219,41 +219,41 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !     &        CELLS, DLAYR, DUL, EOS_SOIL, LL, SW,      !Input
 !     &        SW_AVAIL(1), U, WINF,                     !Input
 !     &        ES, ES_mm)                                !Output
-          END SELECT
+!          END SELECT
 
-!     ---------------------------------------------------------
-      IF (MEEVP .NE. 'Z') THEN
-        SELECT CASE (CONTROL % MESIC)
-        CASE ('H')
-          CALL ROOTWU_HR(SEASINIT,  
-     &      DLAYR, EOP, ES_LYR, LL, NLAYR, RLV,           !Input
-     &      SAT, SW, WEATHER,                             !Input
-     &      EP, RWU, SWDELTX, SWFAC, TRWU, TRWUP, TURFAC) !Output
-        CASE DEFAULT
-          CALL ROOTWU(SEASINIT,
-     &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
-     &      RWU, TRWUP)                                   !Output
-        END SELECT
+!!     ---------------------------------------------------------
+!      IF (MEEVP .NE. 'Z') THEN
+!        SELECT CASE (CONTROL % MESIC)
+!        CASE ('H')
+!          CALL ROOTWU_HR(SEASINIT,  
+!     &      DLAYR, EOP, ES_LYR, LL, NLAYR, RLV,           !Input
+!     &      SAT, SW, WEATHER,                             !Input
+!     &      EP, RWU, SWDELTX, SWFAC, TRWU, TRWUP, TURFAC) !Output
+!        CASE DEFAULT
+!          CALL ROOTWU(SEASINIT,
+!     &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
+!     &      RWU, TRWUP)                                   !Output
+!        END SELECT
 
-!       Initialize soil evaporation variables
-        SELECT CASE (MESEV)
-!     ----------------------------
-        CASE ('R')  !Original soil evaporation routine
-          CALL SOILEV(SEASINIT,
-     &      DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
-     &      U, WINF,                                      !Input
-     &      ES)                                           !Output
-!     ----------------------------
-        END SELECT
+!!       Initialize soil evaporation variables
+!        SELECT CASE (MESEV)
+!!     ----------------------------
+!        CASE ('R')  !Original soil evaporation routine
+!          CALL SOILEV(SEASINIT,
+!     &      DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
+!     &      U, WINF,                                      !Input
+!     &      ES)                                           !Output
+!!     ----------------------------
+!        END SELECT
 
 !       Initialize plant transpiration variables
-        CALL TRANS(DYNAMIC, MEEVP, 
-     &    CO2, CROP, EO, ET0, EVAP, KTRANS,               !Input
-     &    WINDSP, XHLAI, WEATHER,                         !Input
+        CALL TRANS_old(DYNAMIC,  
+     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+     &    WINDSP, XHLAI,                                  !Input
      &    EOP)                                            !Output
-      ENDIF
+!     ENDIF
 
-      CALL MULCH_EVAP(DYNAMIC, MULCH, EOS, EM)
+!     CALL MULCH_EVAP(DYNAMIC, MULCH, EOS, EM)
 
 !     ---------------------------------------------------------
       IF (CROP .NE. 'FA') THEN
@@ -334,7 +334,8 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !-----------------------------------------------------------------------
 !     Initialize soil, mulch and flood evaporation
       ES = 0.; EM = 0.; EF = 0.; EVAP = 0.0
-      UPFLOW = 0.0; ES_LYR = 0.0
+!     UPFLOW = 0.0
+      ES_LYR = 0.0
 
 !     Switch off evaporation
       IF (ISWITCH % MESEV == 'N') THEN
@@ -343,29 +344,29 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       ELSE
 !       Actual soil evaporation 
         EOS_SOIL = EOS
-!       First meet evaporative demand from mulch
-        IF (EOS_SOIL > 1.E-6 .AND. INDEX('RSM',MEINF) > 0) THEN
-          CALL MULCH_EVAP(DYNAMIC, MULCH, EOS_SOIL, EM)
-          IF (EOS_SOIL > EM) THEN
-!           Some evaporative demand leftover for soil
-            EOS_SOIL = EOS_SOIL - EM
-          ELSE
-            EOS_SOIL = 0.0
-          ENDIF
-        ENDIF
+!!       First meet evaporative demand from mulch
+!        IF (EOS_SOIL > 1.E-6 .AND. INDEX('RSM',MEINF) > 0) THEN
+!          CALL MULCH_EVAP(DYNAMIC, MULCH, EOS_SOIL, EM)
+!          IF (EOS_SOIL > EM) THEN
+!!           Some evaporative demand leftover for soil
+!            EOS_SOIL = EOS_SOIL - EM
+!          ELSE
+!            EOS_SOIL = 0.0
+!          ENDIF
+!        ENDIF
 
 !       Soil evaporation after flood and mulch evaporation
         IF (EOS_SOIL > 1.E-6) THEN
-          SELECT CASE(MESEV)
-!         ------------------------
-          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
+!          SELECT CASE(MESEV)
+!!         ------------------------
+!          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
 !           Note that this routine calculates UPFLOW, unlike the SOILEV.
             CALL ESR_SoilEvap_2D(RATE,
      &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
      &        ES, ES_LYR, ES_mm)                     !Output
-!         ------------------------
-          CASE DEFAULT 
-	  
+!!         ------------------------
+!          CASE DEFAULT 
+!
 !!!!!   NOTE CHP: NEED 2D SOILEV   !!!!!
 !         CASE ('R')  !Ritchie soil evaporation routine
 !           Calculate the availability of soil water for use in SOILEV.
@@ -376,8 +377,8 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !     &        CELLS, DLAYR, DUL, EOS_SOIL, LL, SW,      !Input
 !     &        SW_AVAIL(1), U, WINF,                     !Input
 !     &        ES, ES_mm)                                !Output
-          END SELECT
-!           ------------------------
+!          END SELECT
+!!           ------------------------
         ENDIF
       ENDIF
      
@@ -389,11 +390,10 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !---------------------------------------------------------------------
 !     Potential transpiration
       IF (XHLAI > 1.E-6) THEN
-        CALL TRANS(RATE, MEEVP, 
-     &      CO2, CROP, EO, ET0, EVAP, KTRANS,           !Input
-     &      WINDSP, XHLAI,                              !Input
-     &      WEATHER,                                    !Input
-     &      EOP)                                        !Output
+        CALL TRANS_old(RATE,  
+     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+     &    WINDSP, XHLAI,                                  !Input
+     &    EOP)                                            !Output
       ELSE
         EOP = 0.0
       ENDIF
@@ -452,6 +452,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       ENDIF
 
 !     Transfer data to storage routine
+      CALL PUT('SPAM', 'EP',  EP)
       CALL PUT('SPAM', 'CEF', CEF)
       CALL PUT('SPAM', 'CEM', CEM)
       CALL PUT('SPAM', 'CEO', CEO)

@@ -187,10 +187,9 @@ C-----------------------------------------------------------------------
       SELECT CASE(ISWITCH%MEHYD)
       CASE ('G','C')
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SoilProp_Furrow,                                !Input
-     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -272,10 +271,9 @@ C-----------------------------------------------------------------------
       SELECT CASE(ISWITCH%MEHYD)
       CASE ('G','C')
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SoilProp_Furrow,                                !Input
-     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -368,10 +366,9 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       IF (INDEX('GC',ISWITCH%MEHYD) > 0) THEN
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SoilProp_Furrow,                                !Input
-     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -448,10 +445,9 @@ C-----------------------------------------------------------------------
       SELECT CASE(ISWITCH%MEHYD)
       CASE ('G','C')
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SoilProp_Furrow,                                !Input
-     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -515,10 +511,9 @@ C***********************************************************************
       SELECT CASE(ISWITCH%MEHYD)
         CASE ('G','C')
           CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SoilProp_Furrow,                                !Input
-     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
@@ -578,10 +573,9 @@ C     Print seasonal summaries and close files.
       SELECT CASE(ISWITCH%MEHYD)
       CASE ('G','C')
         CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SoilProp_Furrow,                                !Input
-     &    TRWU, WEATHER, XHLAI, XLAI,                     !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
      &    FLOODWAT,                                       !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
      &    SWDELTX)                                        !Output
