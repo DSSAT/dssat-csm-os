@@ -205,7 +205,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
           CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
             CALL ESR_SoilEvap_2D(SEASINIT,
      &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
-     &        ES, ES_mm)                        !Output
+     &        ES, ES_LYR, ES_mm)                     !Output
 !         ------------------------
           CASE DEFAULT 
 	  
@@ -362,7 +362,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !           Note that this routine calculates UPFLOW, unlike the SOILEV.
             CALL ESR_SoilEvap_2D(RATE,
      &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
-     &        ES, ES_mm)                        !Output
+     &        ES, ES_LYR, ES_mm)                     !Output
 !         ------------------------
           CASE DEFAULT 
 	  

@@ -33,7 +33,7 @@
 !=======================================================================
       SUBROUTINE ESR_SoilEvap_2D(DYNAMIC,   
      &   CELLS, EOS, SOILPROP_FURROW,                     !Input
-     &   ES, ES_mm)                                       !Output
+     &   ES, ES_LYR, ES_mm)                               !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D; USE ModuleData
@@ -47,6 +47,7 @@
       TYPE (SoilType), INTENT(IN) :: SOILPROP_FURROW !Soil properties
       
       REAL, INTENT(OUT):: ES           !Actual soil evaporation (mm/d)
+      REAL, INTENT(OUT):: ES_LYR(NL)   !Actual soil evap by layer (mm/d)
 !     ------------------------------------------------
 
       INTEGER L, NLAYR, ProfileType, jj
@@ -78,7 +79,8 @@
 
       ES = 0.0
       ES_mm = 0.0
-      
+      ES_LYR = 0.0
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE CALCULATIONS
@@ -95,7 +97,8 @@
 !-----------------------------------------------------------------------
       ES = 0.0
       ES_mm = 0.0
-      
+      ES_LYR = 0.0
+
 !     Compute separate soil evaporation for each soil column
       IF (BedDimension % PMCover) then
 !       If there is plastic cover, the infiltration is in the furrow
@@ -175,6 +178,7 @@
 !         Aggregate soil evaporation from each cell.  Scale with half row
 !           spacing.
           ES_mm(Row,Col) = -SWDELTU(Row,Col) / mm_2_vf(Row,Col)
+          ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col)
           ES = ES + ES_mm(Row,Col)         !profile sum (mm)
         ENDDO
       ENDDO

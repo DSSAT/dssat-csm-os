@@ -14,17 +14,17 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE Denit_Ceres_2D (CONTROL, ISWNIT,  
-!     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3_2D,    !Input
+!    &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3_2D,    !Input
      &    DUL, KG2PPM, LITC, NLAYR, NO3_2D,           !Input
      &    SAT, SSOMC, SNO3_2D, ST, SWV, Cells,        !Input
      &    ColFrac,                                    !Input
      &    DLTSNO3_2D,                                 !I/O
-!     &    CNOX, TNOXD, DENITRIF, N2O_data)            !Output
+!    &    CNOX, TNOXD, DENITRIF, N2O_data)            !Output
      &    CNOX, TNOXD, DENITRIF)                      !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D
-!      USE N2O_mod 
+!     USE N2O_mod 
       USE ModuleData
       IMPLICIT  NONE
       SAVE
@@ -91,11 +91,11 @@ C=======================================================================
 !     Loop through soil layers for rate calculations
 !     ------------------------------------------------------------------
       TNOXD = 0.0
-!      TN2OdenitD = 0.0     ! PG
-!      TN2D  = 0.0
+!     TN2OdenitD = 0.0     ! PG
+!     TN2D  = 0.0
       DENITRIF = 0.0
-!      N2FLUX   = 0.0
-!      n2odenit  = 0.0
+!     N2FLUX   = 0.0
+!     n2odenit  = 0.0
 
       DO J = 1, NColsTot
         DO L = 1, NRowsTot

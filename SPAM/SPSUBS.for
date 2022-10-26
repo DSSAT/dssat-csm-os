@@ -44,7 +44,7 @@ C=======================================================================
       REAL REFA, KCAA, KBSA, KEAA
       REAL AVTMX, AVTMN, AVSRAD, AVRWUP
       REAL TMAX, TMIN, SRAD, TRWUP
-!      REAL SALB, SWALB, MSALB, CMSALB
+!     REAL SALB, SWALB, MSALB, CMSALB
       REAL ES_LYR(NL), ES10
       LOGICAL FEXIST
 
@@ -131,14 +131,14 @@ C-----------------------------------------------------------------------
 !           Include soil evap by soil layer for Suleiman-Ritchie method
 
             IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-            WRITE(LUN,'("!",T195,
+            WRITE(LUN,'("!",T186,
      &        "Soil evaporation (mm/d) by soil depth (cm):"
-     &        ,/,"!",T190,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
+     &        ,/,"!",T181,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
 
             WRITE (LUN,120,ADVANCE='NO')
   120       FORMAT('@YEAR DOY   DAS   SRAA  TMAXA  TMINA',
      &      '    REFA    EOAA    EOPA    EOSA    ETAA    EPAA',
-     &      '    ESAA    EFAA    EMAA   RWUPA    EOAC    ETAC    EPAC',
+     &      '    ESAA    EFAA    EMAA    EOAC    ETAC    EPAC',
      &      '    ESAC    EFAC    EMAC    KCAA    KBSA    KEAA')
 
             IF (N_LYR < 10) THEN
@@ -149,7 +149,7 @@ C-----------------------------------------------------------------------
                FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A8)'
                WRITE (LUN,FRMT) ("ES",L,"D",L=1,N_LYR), 'TRWUD' 
             ELSE
-!              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+!             WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
               WRITE (LUN,122)("ES",L,"D",L=1,9), "  ES10D   TRWUD"  !VSH
   122         FORMAT(9("    ",A2,I1,A1),A16)
             ENDIF
@@ -262,11 +262,6 @@ C-----------------------------------------------------------------------
             WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX,
      &        AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA,
      &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA
-
-!     &        ,SALB, SWALB, MSALB, CMSALB
-!  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
-!     &      8(F7.3),6(F8.2))     
-!     &    ,4F7.2 ,10(F7.3))
           
             IF (ISWITCH % MESEV == 'S') THEN
               IF (SOILPROP % NLAYR < 11) THEN
