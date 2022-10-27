@@ -667,7 +667,6 @@ set(
         2D/SOILNI_2D.for
         2D/SoilNi_init_2D.for
         2D/SPAM_2D.for
-        2D/SW_Sensor.for
         2D/WatBal2D.for
         2D/WaterTable_2D.f90
         2D/WBAL_2D.for
