@@ -133,8 +133,9 @@
       REAL, PARAMETER :: TSI = 5.0, TSN = 30.0, Max_Time_Step=60.
 !                         irrig        rain        default  
 
-!      Cell_detail%row = 10
-!      Cell_detail%col = 4
+!     temp chp
+      Cell_detail%row = 7 !FurRow1
+      Cell_detail%col = 9 !FurCol1
 
 
       DYNAMIC = CONTROL % DYNAMIC
@@ -479,8 +480,9 @@
       endif
       !DO j = FurCol1, NColsTot
       DO j = jj, NColsTot
+
         EvapFlow(NLAYR,j) = ES_mm(NLAYR,j)/10. * Width(FurRow1,j)
-!          cm2               =            cm        *    cm
+!          cm2            =          cm        *    cm
         DO i = NLAYR-1, 1, -1
           EvapFlow(i,j) = EvapFlow(i+1,j) + 
      &                         ES_mm(i,j) / 10. * Width(i,j)

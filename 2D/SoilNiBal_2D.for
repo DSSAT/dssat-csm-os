@@ -48,7 +48,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       REAL CelNtotI, CumNH4U, CumNO3U, FertAdd
       REAL CelTotAdd, CelTotRemove, FertFactor, BEDWD
       REAL TNO3_2D, TNH4_2D, TUREA_2D, Ntot, NtotI
-!      REAL YCelNtot, NO3UY, NH4UY, CCelNBal
+!     REAL YCelNtot, NO3UY, NH4UY, CCelNBal
       REAL, DIMENSION(MaxRows,MaxCols) :: YCelNtot,NO3UY,NH4UY,CCelNBal
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM), CelMNR, CelIMM
       REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, swv, rlv, es_rate
