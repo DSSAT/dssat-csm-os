@@ -1,8 +1,7 @@
 !**********************************************************************
-! Subroutine CRP_Output takes all the code from CSCAS lines 
-! 9223 - 12630.
+! Subroutine CRP_Output takes all the code from original CSCRP code 
+! lines 9225 - 12628.
 !**********************************************************************
-
 
       SUBROUTINE CRP_Output (GSTAGE, LAI, CANHT, CN, CO2, DAYLT, DOY,
      &     DYNAMIC, EO, EOP, IDETG, IDETL, IDETO, IDETS, IRRAMT,

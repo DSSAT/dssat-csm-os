@@ -23,13 +23,12 @@ C=======================================================================
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
       CHARACTER*1   ISWDIS, ISWWAT, ISWNIT, MESOM, RNMODE
-      !CHARACTER*2   CROP TF*
       !CHARACTER*78  MESSAGE(10)
       CHARACTER (LEN=250) FILEIOIN      ! Name of input file
 
       INTEGER DYNAMIC, RUN, TN, RUNI, RN, ON
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY
-      INTEGER MDATE, NLAYR !, L TF*
+      INTEGER MDATE, NLAYR
       INTEGER MULTI, FROP, SN, YEAR, DOY
       INTEGER STGYEARDOY(20), STGDOY(20), YRPLT
 
@@ -40,7 +39,6 @@ C=======================================================================
       REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP, TWILEN
       REAL CANHT, EO, WINDSP, PARIP, PARIPA
       REAL GSTAGE, LAI, RWUPM
-      !REAL GSTAGE !, CAID TF*
       REAL TAIRHR(TS), TDEW, SLPF
 !     REAL LAIL, LAILA, TWILEN
 

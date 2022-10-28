@@ -1,6 +1,7 @@
-!***************************************************************************************************************************
-! This is the code from the section (DYNAMIC == SEASINIT) lines 2168 - 5249 of the original CSCRP code.
-!***************************************************************************************************************************
+!***********************************************************************
+! This is the code from the section (DYNAMIC == SEASINIT) 
+! lines 2161 - 5249 of the original CSCRP code.
+!***********************************************************************
 
       SUBROUTINE CRP_SeasInit (ALBEDOS, GSTAGE, LAI, CANHT, CLOUDS,
      &     CN, DEWDUR, DOY, HARVFRAC, IDETG, ISWDIS, ISWNIT,
@@ -20,16 +21,17 @@
       INTEGER STGYEARDOY(20), CN, DOY, ON, RN, RUN, RUNI        
       INTEGER SN, TN, YEAR
       
-      REAL    ALBEDOS, GSTAGE, LAI, CANHT, CLOUDS, DEWDUR, HARVFRAC(2), KCAN        
-      REAL    KEP, LAIL(30), LAILA(30), NFP, PARIP, PARIPA, RESCALG(0:NL)             
-      REAL    RESLGALG(0:NL), RESNALG(0:NL), RLV(NL), RWUMX, RWUPM       
-      REAL    SENCALG(0:NL), SENLALG(0:NL), SENNALG(0:NL), SLPF, TAIRHR(24)   
-      REAL    TRWUP, UH2O(NL), UNH4(NL), UNO3(NL)
+      REAL ALBEDOS, GSTAGE, LAI, CANHT, CLOUDS, DEWDUR, HARVFRAC(2)
+      REAL KCAN        
+      REAL KEP, LAIL(30), LAILA(30), NFP, PARIP, PARIPA, RESCALG(0:NL)             
+      REAL RESLGALG(0:NL), RESNALG(0:NL), RLV(NL), RWUMX, RWUPM       
+      REAL SENCALG(0:NL), SENLALG(0:NL), SENNALG(0:NL), SLPF, TAIRHR(24)  
+      REAL TRWUP, UH2O(NL), UNH4(NL), UNO3(NL)
       
-      CHARACTER(LEN=1) IDETG, ISWDIS, ISWNIT, ISWWAT, RNMODE !TF* - Originally in SeasInit_Final
-!-----------------------------------------------------------------------------------------------------------------------
-!       Initialize both state and rate variables                       ! MF Equivalent to line 1828 in CSCAS.FOR
-!-----------------------------------------------------------------------------------------------------------------------
+      CHARACTER(LEN=1) IDETG, ISWDIS, ISWNIT, ISWWAT, RNMODE
+!-----------------------------------------------------------------------
+!       Initialize both state and rate variables                       
+!-----------------------------------------------------------------------
         
       CALL CRP_SeasInit_VarInit (GSTAGE, LAI, CANHT, DEWDUR, LAIL,
      &   LAILA, NFP, PARIP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,

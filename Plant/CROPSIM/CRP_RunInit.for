@@ -1,6 +1,7 @@
-!***************************************************************************************************************************
-! This is the code from the section (DYNAMIC == RUNINIT) lines 1781 - 2161 of the original CSCRP code.
-!***************************************************************************************************************************
+!***********************************************************************
+! This is the code from the section (DYNAMIC == RUNINIT) 
+! lines 1781 - 2158 of the original CSCRP code.
+!***********************************************************************
 
       SUBROUTINE CRP_RunInit (CN, DOY, FILEIOIN, FROP, IDETL, ISWNIT,
      &     ON, RN, RNMODE, RUN, SN, TN, YEAR)
@@ -11,7 +12,7 @@
       SAVE
 
       INTEGER CN, DOY, FROP, ON, RN, RUN, SN, TN
-      INTEGER NLAYR, DLAYR(NL) !TF* CHECK VALUES
+      INTEGER NLAYR, DLAYR(NL)
       INTEGER YEAR
       !INTEGER VERSIONCSCRP
       INTEGER TVILENT          ! Integer function call
@@ -20,9 +21,6 @@
       CHARACTER (LEN=250) FILEIOIN  
       CHARACTER(LEN=10)  TL10FROMI      
         
-        !-----------------------------------------------------------------------
-        !         The body of CRP_RunInit
-        !-----------------------------------------------------------------------
        IF (RUNCRP.LE.0) THEN          ! First time through
 
           MODNAME(1:8) = 'CSCRP048'

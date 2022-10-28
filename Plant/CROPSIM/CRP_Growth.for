@@ -1,6 +1,7 @@
-!***************************************************************************************************************************
-! This is the code from the section (DYNAMIC == RATE) lines 5255 - 7649 of the original CSCRP code.
-!***************************************************************************************************************************
+!***********************************************************************
+! This is the code from the section (DYNAMIC == RATE) 
+! lines 5252 - 7645 of the original CSCRP code.
+!***********************************************************************
  
       SUBROUTINE CRP_Growth (ALBEDOS, BD, GSTAGE, CLOUDS, CO2, DAYLT,
      &    DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
@@ -17,9 +18,9 @@
       IMPLICIT NONE
       
       
-      TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
-      TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
-      TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefsR                                                                                          ! MF Defined in ModuleDefs
+      TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
+      TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
+      TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
   
       INTEGER DOY, NLAYR, STGYEARDOY(20), YEAR, YEARPLTCSM          
       INTEGER CSIDLAYR                 
@@ -29,7 +30,7 @@
       REAL SENCALG(0:NL), SENLALG(0:NL), SENNALG(0:NL), SHF(NL), SLPF
       REAL SRAD, ST(0:NL), SW(NL), TAIRHR(24), TDEW, TMAX, TMIN, TRWUP
       REAL UH2O(NL), UNH4(NL), UNO3(NL), WINDSP, LAI
-      REAL DAYLT, RWUMX, RWUPM, SNOW !TF*
+      REAL DAYLT, RWUMX, RWUPM, SNOW
       
       REAL CSVPSAT, CSYVAL, TFAC4             ! Real function calls 
       REAL YVALXY

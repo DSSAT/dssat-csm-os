@@ -1,8 +1,5 @@
 !**********************************************************************************************************************
 ! This is the code from the section (DYNAMIC == RUNINIT) ! Initialization, lines 1827 - 2336 of the original CRCRP code.
-! The names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared 
-! here. The variables that are not arguments are declared in module CRP_First_Trans_m. Unless identified as by TF, all 
-! comments are those of the original CSCRP.FOR code.
 !
 ! Subroutine CRP_SeasInit_VarInit initializes state and rate variables.
 !**********************************************************************************************************************

@@ -1620,8 +1620,6 @@
       !INTRINSIC AMAX1,AMIN1,EXP,FLOAT,INDEX,INT,LEN,MAX,MIN,MOD,NINT
       !INTRINSIC SQRT,ABS,TRIM
 
-        !TF* END
-
     
         End Module CRP_First_Trans_m
         

@@ -1,6 +1,7 @@
-!***************************************************************************************************************************
-! This is the code from the section (DYNAMIC == INTEGR) lines 7649 - 9224 of the original CSCRP code.
-!***************************************************************************************************************************
+!***********************************************************************
+! This is the code from the section (DYNAMIC == INTEGR) 
+! lines 7649 - 9221 of the original CSCRP code.
+!***********************************************************************
 
       SUBROUTINE CRP_Integrate (ALBEDOS, BD, GSTAGE, LAI, CANHT, CO2,
      &     DAYLT, DEPMAX, DLAYR, DOY, DRAIN, EOP, EP, ET, FERNIT,
@@ -27,7 +28,7 @@
       REAL TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3, VPENDFR
       REAL RESNALG(0:NL), RESCALG(0:NL), RESLGALG(0:NL) 
       
-      REAL CSVPSAT, CSYVAL, TFAC4                             ! Real function calls 
+      REAL CSVPSAT, CSYVAL, TFAC4
       REAL YVALXY
       CHARACTER(LEN=1) ISWDIS, ISWNIT, ISWWAT, RNMODE  
 
