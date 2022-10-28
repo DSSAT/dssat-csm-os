@@ -977,7 +977,7 @@
 !       Drainage_2D computes both runoff and drainage for bed and furrow
         CALL Drainage_2D(RATE, 
      &    CELLS, Diffus, FurCol1, Kunsat,             !Input
-     &    SOILPROP, SWV_D, TimeIncr, WCr,             !Input
+     &    SOILPROP, SWV_avail, TimeIncr, WCr,             !Input
      &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
 
         ! Here LatFlow_ts is due to the drainage of layer LIMIT_2D 
