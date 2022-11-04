@@ -1858,6 +1858,13 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
           WRITE(DLUN,'("*SOIL DYNAMICS OUTPUT FILE")')
         ENDIF
 
+!       For sequenced run, use replicate number instead of run number in header.
+        IF (CONTROL % RNMODE .EQ. 'Q') THEN
+          CALL HEADER(SEASINIT, DLUN, CONTROL % REPNO)
+        ELSE
+          CALL HEADER(SEASINIT, DLUN, CONTROL % RUN)
+        ENDIF
+
        IF (INDEX('FQ',CONTROL%RNMODE) > 0 .AND. CONTROL%RUN /= 1)RETURN
         CALL HEADER(SEASINIT, DLUN, CONTROL % RUN)
         WRITE(DLUN,"(/,
