@@ -563,7 +563,7 @@ C        Branch to menu choice
 
 !=======================================================================
 !     CSCER - Wheat, barley
-      CASE ('CSCER')
+      CASE ('CSCER', 'XXCER')
 	  WRITE (*,5600) P1V,P1D,P5,G1,G2,G3,PHINT
 5600    FORMAT (12X,'0. End of changes',//,
      1  12X,'1. P1V (Vernalization, days)....................[',F7.2,/,

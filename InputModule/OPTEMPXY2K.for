@@ -249,7 +249,7 @@ C-----------------------------------------------------------------------
       ATLINE(2:23) = 'C  CR INGENO CNAME... '
 
       SELECT CASE (MODEL(1:5))
-      CASE ('CSCER')
+      CASE ('CSCER', 'XXCER')
 !       CSCER - Wheat & barley
         ! Below taken out LAH Dec 2009
 !       WRITE (LUNIO,'(/,"*CULTIVARS",/,"@C  CR INGENO CNAME...",1X,

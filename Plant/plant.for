@@ -389,6 +389,23 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         ENDIF
 
 !     -------------------------------------------------
+!     Wheat and Barley CSCER
+      CASE('XXCER')
+        CALL XXCERES_Interface (CONTROL, ISWITCH,          !Input
+     &     EOP, YREND, NH4, NO3, SNOW, SOILPROP,           !Input
+     &     SRFTEMP, ST, SW, TRWUP, WEATHER, YRPLT, HARVFRAC,!Input
+     &     CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,PORMIN,!Output
+     &     RLV, RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)  !Output
+
+        IF (DYNAMIC .EQ. SEASINIT) THEN
+          KTRANS = KEP
+          KSEVAP = KEP
+          XHLAI = XLAI
+        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
 !     Wheat and Barley CSCRP
       CASE('CSCRP')
         CALL CSCRP_Interface (CONTROL, ISWITCH,           !Input

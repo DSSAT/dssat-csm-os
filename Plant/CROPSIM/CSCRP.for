@@ -247,7 +247,6 @@
 !***********************************************************************
 !    Call other modules
 !***********************************************************************
-      !TF - Disease subroutine not being used
       IF (LENDIS.GT.0.AND.LENDIS.LT.3) THEN
         IF (ISWDIS(LENDIS:LENDIS).NE.'N')
      X   CALL Disease(Spdirfle,run,runi,step,  ! Run+crop component
