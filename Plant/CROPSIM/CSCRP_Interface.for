@@ -16,27 +16,29 @@ C=======================================================================
 
       USE ModuleDefs
       USE ModuleData
+      USE CRP_First_Trans_m
+
       IMPLICIT NONE
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
       CHARACTER*1   ISWDIS, ISWWAT, ISWNIT, MESOM, RNMODE
-      CHARACTER*2   CROP
-      CHARACTER*78  MESSAGE(10)
+      !CHARACTER*78  MESSAGE(10)
       CHARACTER (LEN=250) FILEIOIN      ! Name of input file
 
       INTEGER DYNAMIC, RUN, TN, RUNI, RN, ON
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY
-      INTEGER MDATE, L, NLAYR
+      INTEGER MDATE, NLAYR
       INTEGER MULTI, FROP, SN, YEAR, DOY
       INTEGER STGYEARDOY(20), STGDOY(20), YRPLT
 
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
-      REAL SNOW, KCAN, KEP, DEPMAX, DAYLT, DEWDUR
-      REAL NSTRES, XLAI, NFP, MSALB, ALBEDO
+      REAL SNOW 
+      REAL KCAN, KEP, DEPMAX, DAYLT, DEWDUR
+      REAL NSTRES, XLAI, NFP, MSALB, ALBEDOS
       REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP, TWILEN
       REAL CANHT, EO, WINDSP, PARIP, PARIPA
-      REAL GSTAGE, CAID 
+      REAL GSTAGE, LAI, RWUPM
       REAL TAIRHR(TS), TDEW, SLPF
 !     REAL LAIL, LAILA, TWILEN
 
@@ -44,10 +46,12 @@ C=======================================================================
 
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SAT, SHF, NO3LEFT, NH4LEFT
-      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
+      REAL, DIMENSION(NL) :: SW, UNO3, UNH4, UH2O
       REAL, DIMENSION(0:NL) :: SENCALG, SENNALG, SENLALG
       REAL, DIMENSION(0:NL) :: RESCALG, RESNALG, RESLGALG
       REAL, DIMENSION(0:NL) :: SOILTEMP
+      
+      REAL          ST(0:NL)
 
 !     Not used here, but keep for Tony's interface
       REAL          LAIL(30)      ! Leaf area index by layer       m2/m2
@@ -189,26 +193,27 @@ C=======================================================================
       WINDSP = WEATHER % WINDSP
 
 C-----------------------------------------------------------------------
-      CALL CSCRP (FILEIOIN, RUN, TN, RN, RNMODE,          !Command line
-     & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols
-     & IDETS, IDETO, IDETG, IDETL, FROP,                   !Controls
-     & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
-     & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather
-     & DRAIN, RUNOFF, IRRAMT,                              !Water
-     & TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,   !Weather
-     & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
-     & SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                 !H2o,N states
-     & TLCHD, TNIMBSOM, TNOXD,                             !N components
-     & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components
-     & YRPLT, HARVFRAC,                                    !Pl.date
-     & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDO,          !Resources
-     & CAID, KCAN, KEP,                                    !States
-     & RLV, NFP, PORMIN, RWUMX, CANHT, LAIL, LAILA,        !States
-     & UNO3, UNH4, UH2O,                                   !Uptake
-     & SENCALG, SENNALG, SENLALG,                          !Senescence
-     & RESCALG, RESNALG, RESLGALG,                         !Residues
-     & STGYEARDOY, GSTAGE,                                 !Stage dates
-     & DYNAMIC)                                            !Control
+      CALL CSCRP(FILEIOIN, RUN, TN, RN, RNMODE,                                        
+     &  ISWWAT, ISWNIT, ISWDIS, MESOM,    
+     &  IDETS, IDETO, IDETG, IDETL, FROP,                                             
+     &  SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                  
+     &  SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,              
+     &  DRAIN, RUNOFF, IRRAMT,                           
+     &  TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,                                        
+     &  NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,     
+     &  SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                           
+     &  TLCHD, TNIMBSOM, TNOXD, 
+     &  TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,                                  
+     &  YRPLT, HARVFRAC,                                                           
+     &  PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDO,
+     &  LAI, KCAN, KEP, 
+     &  RLV, NFP, PORMIN, RWUMX, CANHT, LAIL, LAILA,                      
+     &  UNO3, UNH4, UH2O,                                      
+     &  SENCALG, SENNALG, SENLALG,                                 
+     &  RESCALG, RESNALG, RESLGALG,                              
+     &  STGYEARDOY, GSTAGE,                                                              
+     &  WEATHER, SOILPROP, CONTROL,                                               
+     &  DYNAMIC) !, WEATHER
 
       XLAI   = CAID
       NSTRES = NFP
