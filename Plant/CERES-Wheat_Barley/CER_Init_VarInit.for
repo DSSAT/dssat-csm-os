@@ -5,7 +5,7 @@
 !**********************************************************************************************************************
     
       SUBROUTINE CER_Init_VarInit (LAI, CANHT, DEWDUR,
-     &   NFP, PARIP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,
+     &   NFP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,
      &   SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
      &   UNH4, UNO3)
         
@@ -14,10 +14,10 @@
 
         IMPLICIT     NONE
         
-        INTEGER STGDOY(20), ADAT10, YEARPLT            
+        INTEGER STGDOY(20), ADAT10            
         
         REAL LAI, CANHT, DEWDUR, NFP, KCAN       
-        REAL PARIP, PARIPA , RESCALG(0:20), RESLGALG(0:20) 
+        REAL PARIPA , RESCALG(0:20), RESLGALG(0:20) 
         REAL RESNALG(0:20), RLV(20), SENCALG(0:20), SENLALG(0:20)  
         REAL SENNALG(0:20), TRWUP, UH2O(20), UNH4(20), UNO3(20)
         REAL RESLGAL(0:20), RESNAL(0:20), RESWAL(0:20), RESWALG(0:20)
@@ -32,14 +32,14 @@
         !       Initialize both state and rate variables                   
         !-----------------------------------------------------------------------
         
-        YEARPLT = 9999999
+        !YEARPLT = 9999999
         
         adat10 = -99
         canht = 0.0
         dewdur = -99.0
         lai = 0.0
         nfp = 1.0
-        parip = -99.0
+        !parip = -99.0
         rescalg = 0.0
         reslgal = 0.0
         reslgalg = 0.0

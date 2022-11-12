@@ -49,7 +49,7 @@
      & DAYLT, WINDSP, ST, EO,                              !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
      & SNOW, SW, NO3LEFT, NH4LEFT,                         !H2o,N states
-     & YEARPLT, YEARPLTCSM, HARVFRAC,                      !Pl.date
+     & YEARPLTCSM, HARVFRAC,                      !Pl.date
      & EOP, EP, ET, TRWUP,                                 !Resources
      & LAI, KCAN, KEP,                                     !States
      & RLV, NFP, RWUPM, RWUMX, CANHT,                      !States
@@ -183,17 +183,17 @@
       TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
     
       INTEGER ADAT10, CSTIMDIF, CSINCDAT, DAPCALC
-      INTEGER GSTAGE, HARVFRAC
+      INTEGER GSTAGE
       INTEGER CN, DOY, DYNAMIC, DYNAMICI, FROP, NLAYR, ON, REP, RN          
       INTEGER RUN, RUNI, SN, STEP, STGDOY(20), TN, YEAR
       INTEGER TVICOLNM
-      INTEGER CSYDOY, YEARPLTCSM, YEARPLT, TVILENT
+      INTEGER CSYDOY, YEARPLTCSM, TVILENT
       
       REAL CANHT, EO, EP, EOP, ET, LAI, KCAN, KEP, NFP
       REAL BD(NL), DAYLT, DEPMAX, LL(NL), SAT(NL)
       REAL DLAYR(20), DUL(20), UNO3ALG(20), SENLGALG(0:20), UNH4ALG(20)
       REAL RESWALG(0:20), RESWAL(0:20), RESNAL(0:20), RESLGAL(0:20)
-      REAL PARIP
+      REAL HARVFRAC(2)
       REAL RESCALG(0:NL), RESLGALG(0:NL), RESNALG(0:NL), RLV(NL)
       REAL RAIN, RWUPM, RWUMX, SLPF, SHF(NL)
       REAL ST(0:NL), SENNALG(0:NL), SENCALG(0:NL), TRWUP, UH2O(NL)
@@ -231,12 +231,11 @@
         CALL CER_Init (LAI, CANHT,
      &     CN, DOY, HARVFRAC, ISWNIT,
      &     FILEIOIN, FROP, IDETL,
-     &     ISWWAT, KCAN, KEP, NFP, ON, PARIP,
+     &     ISWWAT, KCAN, KEP, NFP, ON,
      &     RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
      &     RUN, RUNI, RWUMX, RWUPM, SENCALG,
      &     UH2O, UNH4, UNO3, YEAR, SENNALG, SLPF, SN,
-     &     STGDOY, TN, TRWUP, BASTGNAM, WHSTGNAM, DYNAMIC)
-        WRITE(*,*) "PASSOOOIUUU"
+     &     STGDOY, TN, TRWUP, DYNAMIC)
 
       ELSEIF (DYNAMIC.EQ.RATE) THEN
       
@@ -537,6 +536,7 @@ C-GH      IF (snow.GT.0) THEN
 !          stop
 !         End of stuff to investigate temperature responses          
           ! Radiation interception (if from competition model)
+          WRITE(*,*) "PARIP", PARIP, "PARI", PARI
           IF (PARIP.GE.0.0) THEN
             PARI = PARIP/100.0
             WRITE(fnumwrk,'(A39,F6.2,A11,I2)')

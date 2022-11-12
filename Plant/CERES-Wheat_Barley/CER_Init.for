@@ -6,7 +6,7 @@
       SUBROUTINE CER_Init (LAI, CANHT,
      &     CN, DOY, HARVFRAC, ISWNIT,
      &     FILEIOIN, FROP, IDETL,
-     &     ISWWAT, KCAN, KEP, NFP, ON, PARIP,
+     &     ISWWAT, KCAN, KEP, NFP, ON,
      &     RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
      &     RUN, RUNI, RWUMX, RWUPM, SENCALG,
      &     UH2O, UNH4, UNO3, YEAR, SENNALG, SLPF, SN,
@@ -22,7 +22,7 @@
         INTEGER YEAR, STGDOY(20), DYNAMIC, TVILENT
         
         REAL LAI, CANHT, CLOUDS, DEWDUR, HARVFRAC(2)
-        REAL KCAN, KEP, NFP, PARIP, PARIPA
+        REAL KCAN, KEP, NFP, PARIPA
         REAL RESCALG(0:20), RESLGALG(0:20), RESNALG(0:20), RLV(20)
         REAL SENCALG(0:20), SENNALG(0:20), SLPF, TAIRHR(24)
         REAL RWUMX, RWUPM
@@ -112,7 +112,7 @@
 !-----------------------------------------------------------------------
         
         CALL CER_Init_VarInit (LAI, CANHT, DEWDUR,
-     &   NFP, PARIP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,
+     &   NFP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,
      &   SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
      &   UNH4, UNO3)
 !-----------------------------------------------------------------------

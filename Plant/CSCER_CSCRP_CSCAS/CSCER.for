@@ -3820,6 +3820,7 @@ C-GH      IF (snow.GT.0) THEN
 !          stop
 !         End of stuff to investigate temperature responses          
           ! Radiation interception (if from competition model)
+          WRITE(*,*) "PARIP", PARIP, "PARI", PARI
           IF (PARIP.GE.0.0) THEN
             PARI = PARIP/100.0
             WRITE(fnumwrk,'(A39,F6.2,A11,I2)')

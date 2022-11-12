@@ -635,7 +635,7 @@
       REAL          PARADFAC      ! PAR conversion factor          MJ/MJ
       REAL          PARI          ! PAR interception fraction      #
       REAL          PARIOUT       ! PAR interception for output    #
-      !REAL          PARIP         ! PAR interception percentage    %
+      REAL          PARIP         ! PAR interception percentage    %
       REAL          PART          ! PAR transmission fraction      #
       REAL          PARUED        ! PAR utilization effic,actual   g/MJ
       REAL          PARIUEM       ! PARUE,actual,at maturity       g/MJ
@@ -1120,7 +1120,7 @@
       INTEGER       YEARCOL       ! Colum number for year data     #
       INTEGER       YEARDOY       ! Year+Doy (7digits)             #
       INTEGER       YEARHARF      ! Harvest year+doy,fixed         #
-      !INTEGER       YEARPLT       ! Year(or Yr)+Doy,planting date  #
+      INTEGER       YEARPLT       ! Year(or Yr)+Doy,planting date  #
       INTEGER       YEARPLTP      ! Year(or Yr)+Doy,planting trget #
       INTEGER       YEARSIM       ! Year+Doy for simulation start  #
       INTEGER       YRHARF        ! Harvest date,fixed             #
@@ -1228,7 +1228,7 @@
             
         ISTAGE = 7   ! Pre-planting
         XSTAGE = 7.0 ! Pre-planting
-        !YEARPLT = 9999999
+        YEARPLT = 9999999
         YEARPLTP = 9999999
         
 
@@ -1344,7 +1344,7 @@
         paradcum = 0.0               
         paradicum = 0.0               
         pari = 0.0
-        !parip = -99.0
+        parip = -99.0
         parued = 0.0
         pdadj = -99.0
         pla = 0.0
