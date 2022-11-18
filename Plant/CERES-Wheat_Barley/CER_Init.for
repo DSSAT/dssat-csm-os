@@ -22,9 +22,9 @@
         INTEGER YEAR, STGDOY(20), DYNAMIC, TVILENT
         
         REAL LAI, CANHT, CLOUDS, DEWDUR, HARVFRAC(2)
-        REAL KCAN, KEP, NFP, PARIPA
+        REAL KCAN, KEP, NFP
         REAL RESCALG(0:20), RESLGALG(0:20), RESNALG(0:20), RLV(20)
-        REAL SENCALG(0:20), SENNALG(0:20), SLPF, TAIRHR(24)
+        REAL SENCALG(0:20), SENNALG(0:20), SLPF
         REAL RWUMX, RWUPM
         REAL TRWUP, UH2O(NL), UNH4(NL), UNO3(NL)
         
@@ -112,7 +112,7 @@
 !-----------------------------------------------------------------------
         
         CALL CER_Init_VarInit (LAI, CANHT, DEWDUR,
-     &   NFP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,
+     &   NFP, RESCALG, RESLGALG, RESNALG, RLV,
      &   SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
      &   UNH4, UNO3)
 !-----------------------------------------------------------------------

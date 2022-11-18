@@ -5,8 +5,8 @@
 !**********************************************************************************************************************
     
       SUBROUTINE CER_Init_VarInit (LAI, CANHT, DEWDUR,
-     &   NFP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,
-     &   SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
+     &   NFP, RESCALG, RESLGALG, RESNALG, RLV,
+     &  SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
      &   UNH4, UNO3)
         
         USE ModuleDefs
@@ -17,8 +17,8 @@
         INTEGER STGDOY(20), ADAT10            
         
         REAL LAI, CANHT, DEWDUR, NFP, KCAN       
-        REAL PARIPA , RESCALG(0:20), RESLGALG(0:20) 
-        REAL RESNALG(0:20), RLV(20), SENCALG(0:20), SENLALG(0:20)  
+        REAL RESCALG(0:20), RESLGALG(0:20) 
+        REAL RESNALG(0:20), RLV(20), SENCALG(0:20)
         REAL SENNALG(0:20), TRWUP, UH2O(20), UNH4(20), UNO3(20)
         REAL RESLGAL(0:20), RESNAL(0:20), RESWAL(0:20), RESWALG(0:20)
         REAL SNOW
@@ -32,7 +32,10 @@
         !       Initialize both state and rate variables                   
         !-----------------------------------------------------------------------
         
-        !YEARPLT = 9999999
+        ISTAGE = 7   ! Pre-planting
+        XSTAGE = 7.0 ! Pre-planting
+        YEARPLT = 9999999
+        YEARPLTP = 9999999
         
         adat10 = -99
         canht = 0.0

@@ -355,6 +355,7 @@ set(
         "Plant/CROPGRO/VEGGR.for"
         "Plant/CERES-Wheat_Barley/CSCER.for"
         "Plant/CERES-Wheat_Barley/CSCERES_Interface.for"
+        "Plant/CERES-Wheat_Barley/CER_Growth.for"
         "Plant/CERES-Wheat_Barley/CER_First_Trans_m.for"
         "Plant/CERES-Wheat_Barley/CER_Init.for"
         "Plant/CERES-Wheat_Barley/CER_Init_VarInit.for"
