@@ -9,7 +9,7 @@
      &     ISWWAT, KCAN, KEP, NFP, ON,
      &     RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
      &     RUN, RUNI, RWUMX, RWUPM, SENCALG,
-     &     UH2O, UNH4, UNO3, YEAR, SENNALG, SLPF, SN,
+     &     UH2O, UNH4ALG, UNO3ALG, YEAR, SENNALG, SLPF, SN,
      &     STGDOY, TN, TRWUP, DYNAMIC)
 
         USE ModuleDefs
@@ -26,7 +26,7 @@
         REAL RESCALG(0:20), RESLGALG(0:20), RESNALG(0:20), RLV(20)
         REAL SENCALG(0:20), SENNALG(0:20), SLPF
         REAL RWUMX, RWUPM
-        REAL TRWUP, UH2O(NL), UNH4(NL), UNO3(NL)
+        REAL TRWUP, UH2O(NL), UNH4ALG(NL), UNO3ALG(NL)
         
         CHARACTER*1   IDETL, ISWNIT, ISWWAT, RNMODE      
         CHARACTER*250 FILEIOIN  
@@ -114,7 +114,7 @@
         CALL CER_Init_VarInit (LAI, CANHT, DEWDUR,
      &   NFP, RESCALG, RESLGALG, RESNALG, RLV,
      &   SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
-     &   UNH4, UNO3)
+     &   UNH4ALG, UNO3ALG)
 !-----------------------------------------------------------------------
 
 

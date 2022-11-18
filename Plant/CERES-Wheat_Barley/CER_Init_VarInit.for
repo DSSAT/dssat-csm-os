@@ -1,13 +1,12 @@
-!**********************************************************************************************************************
-! This is the code from the section (DYNAMIC == RUNINIT) ! Initialization, lines 1827 - 2336 of the original CRCRP code.
-!
-! Subroutine CRP_SeasInit_VarInit initializes state and rate variables.
-!**********************************************************************************************************************
+!***********************************************************************
+! This is the code from the section (DYNAMIC == RUNINIT)
+! Subroutine CER_Init_VarInit initializes state and rate variables.
+!***********************************************************************
     
       SUBROUTINE CER_Init_VarInit (LAI, CANHT, DEWDUR,
      &   NFP, RESCALG, RESLGALG, RESNALG, RLV,
-     &  SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
-     &   UNH4, UNO3)
+     &   SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
+     &   UNH4ALG, UNO3ALG)
         
         USE ModuleDefs
         USE CER_First_Trans_m
@@ -16,21 +15,21 @@
         
         INTEGER STGDOY(20), ADAT10            
         
-        REAL LAI, CANHT, DEWDUR, NFP, KCAN       
+        REAL LAI, CANHT, DEWDUR, NFP, KCAN, HARVFRAC(2)  
         REAL RESCALG(0:20), RESLGALG(0:20) 
         REAL RESNALG(0:20), RLV(20), SENCALG(0:20)
-        REAL SENNALG(0:20), TRWUP, UH2O(20), UNH4(20), UNO3(20)
+        REAL SENNALG(0:20), TRWUP, UH2O(20), UNH4ALG(20), UNO3ALG(20)
         REAL RESLGAL(0:20), RESNAL(0:20), RESWAL(0:20), RESWALG(0:20)
         REAL SNOW
         
         
-        !-----------------------------------------------------------------------
+        !---------------------------------------------------------------
         !       Reinitializing plant variables
-        !-----------------------------------------------------------------------        
+        !---------------------------------------------------------------       
         CALL clear_CER_First_Trans_m()
-        !-----------------------------------------------------------------------
+        !---------------------------------------------------------------
         !       Initialize both state and rate variables                   
-        !-----------------------------------------------------------------------
+        !---------------------------------------------------------------
         
         ISTAGE = 7   ! Pre-planting
         XSTAGE = 7.0 ! Pre-planting
@@ -42,7 +41,8 @@
         dewdur = -99.0
         lai = 0.0
         nfp = 1.0
-        !parip = -99.0
+        pari = 0.0
+        parip = -99.0
         rescalg = 0.0
         reslgal = 0.0
         reslgalg = 0.0

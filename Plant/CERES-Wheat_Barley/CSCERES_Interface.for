@@ -131,7 +131,7 @@ C-----------------------------------------------------------------------
      & TWILEN, WINDSP, SOILTEMP, EO,                       !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
      & SNOW, SW, NO3, NH4,                                 !H2o,N states
-     & YRPLT, HARVFRAC,                           !Pl.date
+     & YRPLT, HARVFRAC,                                    !Pl.date
      & EOP, EP, ET, TRWUP,                                 !Resources
      & LAI, KCAN, KEP,                                     !States
      & RLV, NFP, PORMIN, RWUMX, CANHT,                     !States
