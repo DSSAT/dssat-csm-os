@@ -3,7 +3,7 @@
 ! lines 3524 - 5005 of the original CSCER code.
 !***********************************************************************
 
-      SUBROUTINE CER_Growth (BD, CO2, DAYLT,
+      SUBROUTINE CER_Growth (BD, CANHT, CO2, DAYLT,
      &     DLAYR, DOY, DUL, EO, EOP, ISWNIT, ISWWAT,
      &     KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT,
      &     RLV, RNMODE, SAT , SENCALG, SENNALG,

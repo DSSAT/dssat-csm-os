@@ -30,7 +30,6 @@
         
         CHARACTER*1   IDETL, ISWNIT, ISWWAT, RNMODE      
         CHARACTER*250 FILEIOIN  
-        CHARACTER*10  BASTGNAM(20), WHSTGNAM(20)
                
         FROPADJ = FROP
         IF (RNMODE.EQ.'T') FROPADJ = 1
@@ -789,7 +788,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         WRITE(fnumwrk,'(A18)')' RUN OVERVIEW     '
         WRITE(fnumwrk,*)' MODEL   ',MODEL
         WRITE(fnumwrk,*)' MODULE  ',MODNAME
-        WRITE(fnumwrk,'(A10,I6)')'  VERSION ',VERSION
+        !WRITE(fnumwrk,'(A10,I6)')'  VERSION ',VERSION
+        WRITE(fnumwrk, "(A10,I1,'.',I1,'.',I1,'.',I3.3)")
+     &   '  VERSION ', VERSION
         WRITE(fnumwrk,*)' RNMODE  ',RNMODE
 
         WRITE(fnumwrk,*)' '

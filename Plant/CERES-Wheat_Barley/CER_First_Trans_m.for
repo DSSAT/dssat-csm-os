@@ -47,7 +47,7 @@
       REAL          AWNS          ! Awn score,1-10                 #
       INTEGER       AYEAR         ! Anthesis year                  #
       INTEGER       AYEARM        ! Anthesis year,measured         #
-      !CHARACTER*10  BASTGNAM(20)  ! Barley stage names             text
+      CHARACTER*10  BASTGNAM(20)  ! Barley stage names             text
       !REAL          BD(20)        ! Bulk density (moist)           g/cm3
       !CHARACTER*1   BLANK         ! Blank character                text
       REAL          BLAYER        ! Depth at base of layer         cm
@@ -1106,7 +1106,7 @@
       REAL          WFT           ! Water factor,tillering 0-1     #
       REAL          WFTL          ! Water factor,tillering,lower   #
       REAL          WFTU          ! Water factor,tillering,upper   #
-      !CHARACTER*10  WHSTGNAM(20)  ! Wheat stage names              text
+      CHARACTER*10  WHSTGNAM(20)  ! Wheat stage names              text
       !REAL          WINDSP        ! Wind speed                     km/d
       REAL          WUPR          ! Water pot.uptake/demand        #
       REAL          XDEP          ! Depth to bottom of layer       cm
@@ -1215,6 +1215,23 @@
 !!     2021-02-14 chp
 !      REAL          Nuptake_daily !Daily N uptake (kg [N]/ha)
 !      REAL          NUAD_Y        !Yesterdays cumulative N uptake
+
+      ! Condition at end of phase
+      DATA BASTGNAM/'Max Prim  ','End Veg   ','End Ear Gr',
+     1              'Bg Gr Fill','End Gr Fil','Harvest   ',
+     2              'Sowing    ','Germinate ','Emergence ',
+     3              'Failure   ','End Crop  ','          ',
+     4              '          ','          ','          ',
+     5              '          ','          ','          ',
+     6              '          ','          '/
+
+      DATA WHSTGNAM/'Term Spklt','End Veg   ','End Ear Gr',
+     1              'Beg Gr Fil','End Gr Fil','Harvest   ',
+     2              'Sowing    ','Germinate ','Emergence ',
+     3              'Failure   ','End crop  ','          ',
+     4              '          ','          ','          ',
+     5              '          ','          ','          ',
+     6              '          ','          '/
 
 
     

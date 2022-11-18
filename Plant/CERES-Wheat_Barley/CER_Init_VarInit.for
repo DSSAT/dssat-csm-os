@@ -38,6 +38,7 @@
         
         adat10 = -99
         canht = 0.0
+        canhtg = 0.0
         dewdur = -99.0
         lai = 0.0
         nfp = 1.0
