@@ -159,6 +159,7 @@ C=======================================================================
 
       REAL TOSHMINE, TOCHMINE
       REAL HPODWT,HSDWT,HSHELWT
+      REAL NHSHWT, NHSDWT
 !-----------------------------------------------------------------------
 !     Constructed variable types defined in ModuleDefs.for.
       TYPE (ControlType) CONTROL
@@ -343,6 +344,8 @@ C-----------------------------------------------------------------------
       SDPDOT = 0.0    !CHP - not used
       PUNDOT = 0.0    !CHP - not used
 
+      NHSHWT = 0.0    !CHP - N loss due to Multi-Harvest for shell wt
+      NHSDWT = 0.0    !CHP - N loss due to Multi-Harvest for seed wt
       NLPEST = 0.0    !CHP - N loss due to pest damage
 
 !-----------------------------------------------------------------------
@@ -449,7 +452,20 @@ C     Initial seedling or transplant weight
       SLAAD  = AREALF / (WTLF - WCRLF)
       XLAI   = AREALF / 10000.
       XHLAI  = XLAI
-
+      
+!      OPEN (7774, FILE = 'OUT_GROW_SHELWT.OUT',STATUS = 'REPLACE')
+!      WRITE(7774,'(A)') 
+!     & '  YRDOY     SHELWT      WSHDOT      WSHDTN'//
+!     & '      WSHIDT      WTABRT'//
+!     & '    TOSHMINE    TOCHMINE     HSHELWT'
+!      OPEN (7775, FILE = 'OUT_GROW_SDWT.OUT',STATUS = 'REPLACE')
+!      WRITE(7775,'(A)') 
+!     & '  YRDOY       SDWT      WSDDOT      WSDDTN'//
+!     & '      SWIDOT       HSDWT'
+!      OPEN (7776, FILE = 'OUT_GROW_PODWT.OUT',STATUS = 'REPLACE')
+!      WRITE(7776,'(A)') 
+!     & '  YRDOY      PODWT       WPDOT      WSHDOT'//
+!     & '      WSDDOT      HPODWT'
 C***********************************************************************
 C***********************************************************************
 C     Daily integration
@@ -535,17 +551,29 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net shell growth rate
 C-----------------------------------------------------------------------
-      WSHIDT = MIN(WSHIDT,SHELWT)     ! pest damage to shells
-! FO - IMPORTANT Check the reason WSHDOT goes negative.      
+      WSHIDT = MIN(WSHIDT,SHELWT)     ! pest damage to shells      
       WSHDOT = WSHDTN - WSHIDT - WTABRT - TOSHMINE - TOCHMINE - HSHELWT
-      WSHDOT = MAX(0.0,WSHDOT)      
+      
+!      WRITE(7774,'(I7,1X,8(F10.3,2X))') 
+!     &  YRDOY,SHELWT,WSHDOT,WSHDTN,WSHIDT,
+!     &  WTABRT,TOSHMINE,TOCHMINE,HSHELWT
+     
+      IF (WSHDOT .LT. 0.0) THEN
+        WSHDOT = MAX(WSHDOT, -SHELWT)
+      ENDIF      
       ShelMob = (TOSHMINE + TOCHMINE) * 10.    !kg/ha
 C-----------------------------------------------------------------------
 C     Net seed growth rate
 C-----------------------------------------------------------------------
       SWIDOT = MIN(SWIDOT,SDWT)       ! pest damage to seeds
       WSDDOT = WSDDTN - SWIDOT - HSDWT
-      WSDDOT = MAX(0.0,WSDDOT)       
+      IF (WSDDOT .LT. 0.0) THEN
+        WSDDOT = MAX(WSDDOT, -SDWT)
+      ENDIF
+      
+!      WRITE(7775,'(I7,1X,5(F10.3,2X))') 
+!     &  YRDOY,SDWT,WSDDOT,WSDDTN,SWIDOT,HSDWT
+            
       WTLSD  = WTLSD + WSDDOT * POTLIP    !lipids in seed
       WTCSD  = WTCSD + WSDDOT * POTCAR    !carbohydrates in seed
 
@@ -557,8 +585,13 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net pod growth rate
 C-----------------------------------------------------------------------
-      WPDOT = WSHDOT + WSDDOT - HPODWT        
-      WPDOT = MAX(0.0,WPDOT)
+      WPDOT = WSHDOT + WSDDOT
+      IF (WPDOT .LT. 0.0) THEN
+        WPDOT = MAX(WPDOT, -PODWT)
+      ENDIF
+      
+!      WRITE(7776,'(I7,1X,5(F10.3,2X))') 
+!     &  YRDOY,PODWT,WPDOT,WSHDOT,WSDDOT,HPODWT         
 C-----------------------------------------------------------------------
 C     Total Net plant growth rate
 C-----------------------------------------------------------------------
@@ -751,6 +784,7 @@ C-----------------------------------------------------------------------
 C     Shell nitrogen senescence, abortion and pest damage loss
 C-----------------------------------------------------------------------
       NSHOFF = (WTABRT+WSHIDT+HSHELWT) * (PCNSH/100.)
+      NHSHWT = NHSHWT + HSHELWT * PCNSH/100.
       NLPEST = NLPEST + WSHIDT * PCNSH/100.
       IF (NSHOFF < 0.0) THEN
         NSHOFF = 0.0
@@ -764,7 +798,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Seed nitrogen senescence, abortion and pest damage loss
 C-----------------------------------------------------------------------
-        NSDOFF = (SWIDOT+HSDWT) * (PCNSD/100.)
+      NSDOFF = (SWIDOT+HSDWT) * (PCNSD/100.)
+      NHSDWT = NHSDWT + HSDWT * PCNSH/100.
       IF (NSDOFF < 0.0) THEN
          NSDOFF = 0.0
       ENDIF

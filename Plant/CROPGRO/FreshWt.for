@@ -172,7 +172,13 @@
         HRSN    = 0.0
         HRPN    = 0.0
         HRDSD   = 0.0
-        HRDSH   = 0.0
+        HRDSH   = 0.0      
+!      OPEN (7773, FILE = 'OUT_FRESH.OUT',STATUS = 'REPLACE')
+!      WRITE(7773,'(A)') 
+!     & '  YRDOY NPP HAR        PAGE       TOSDN'//
+!     & '       TOWSD       TOSHN       TOWSH       TOPOW'//
+!     & '       TOFPW       MTFPW       MTDPW       MTDSD'//
+!     & '       MTDSH     HSHELWT       HSDWT      HPODWT'
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE/INTEGRATION
@@ -302,16 +308,20 @@
           
           ! Apply Harvest
           IF(HARVF == 1 .AND. page >= XMAGE) THEN
+            HSHELWT = MTDSH 
+            HSDWT   = MTDSD
+            HPODWT  = MTDPW 
             SHELN(NPP) = 0.0
             WTSHE(NPP) = 0.0
             WTSD(NPP)  = 0.0
-            SDNO(NPP)  = 0.0
-            
-            HSHELWT = MTDSH 
-            HSDWT   = MTDSD
-            HPODWT  = MTDPW                       
+            SDNO(NPP)  = 0.0                      
           ENDIF
         
+!          WRITE(7773,'(I7,1X,I3,1X,I3,2X,14(F10.3,2X))') 
+!     &          YRDOY,NPP,HARVF,PAGE,
+!     &          TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
+!     &          MTFPW,MTDPW,MTDSD,MTDSH,
+!     &          HSHELWT,HSDWT,HPODWT        
         ENDDO  ! NPP
 
 !***********************************************************************
