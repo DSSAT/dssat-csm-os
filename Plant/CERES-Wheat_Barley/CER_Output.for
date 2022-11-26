@@ -7,7 +7,7 @@
      &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS,
      &     ISWNIT, ISWWAT, NFP, NLAYR, ON, RAIN, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, STEP, STGDOY,
-     &     TN, UNH4ALG, UNO3ALG, YEAR)
+     &     TOTIR, TN, UNH4ALG, UNO3ALG, YEAR)
 
         USE ModuleDefs
         USE CSVOUTPUT  ! VSH

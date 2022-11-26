@@ -230,6 +230,28 @@
      &     SOILPROP, CONTROL, WINDSP, YEAR,
      &     YEARPLTCSM, LAI, IDETG)
 
+        IF (YEARDOY.GE.YEARPLT) THEN   
+
+          IF (XSTAGE.LT.LRETS) THEN
+            SENWALG(0) = (SENLFG+SENSTG) * PLTPOP*10.0
+            SENNALG(0) = (SENNLFG+SENNSTG) * PLTPOP*10.0
+            SENCALG(0) = (SENLFG+SENSTG) * 0.4 * PLTPOP*10.0
+            SENLGALG(0) =
+     &       (SENLFG*LLIGP/100+SENSTG*SLIGP/100) * PLTPOP*10.0
+          ENDIF
+
+          ! Root senescence
+          DO L = 1, NLAYR
+            SENWALG(L) = RTWTSL(L) * PLTPOP*10.0
+            SENNALG(L) = RTNSL(L) * PLTPOP*10.0
+            SENCALG(L) = SENWALG(L) * 0.4
+            SENLGALG(L) = SENWALG(L) * RLIGP/100.0
+          ENDDO
+
+          DYNAMICI = 0
+
+        ENDIF
+
       ELSEIF (DYNAMIC.EQ.INTEGR) THEN
 
         CALL CER_Integrate (BD, LAI, CANHT, CO2,
@@ -248,7 +270,7 @@
      &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS,
      &     ISWNIT, ISWWAT, NFP, NLAYR, ON, RAIN, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, STEP, STGDOY,
-     &     TN, UNH4ALG, UNO3ALG, YEAR)
+     &     TOTIR, TN, UNH4ALG, UNO3ALG, YEAR)
      
       ELSEIF (DYNAMIC.EQ.SEASEND) THEN
 

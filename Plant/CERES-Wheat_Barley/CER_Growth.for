@@ -1493,22 +1493,6 @@ C-GH      IF (snow.GT.0) THEN
           SENNALG(0) = 0.0
           SENCALG(0) = 0.0
           SENLGALG(0) = 0.0
-          IF (XSTAGE.LT.LRETS) THEN
-            SENWALG(0) = (SENLFG+SENSTG) * PLTPOP*10.0
-            SENNALG(0) = (SENNLFG+SENNSTG) * PLTPOP*10.0
-            SENCALG(0) = (SENLFG+SENSTG) * 0.4 * PLTPOP*10.0
-            SENLGALG(0) =
-     &       (SENLFG*LLIGP/100+SENSTG*SLIGP/100) * PLTPOP*10.0
-          ENDIF
-          ! Root senescence
-          DO L = 1, NLAYR
-            SENWALG(L) = RTWTSL(L) * PLTPOP*10.0
-            SENNALG(L) = RTNSL(L) * PLTPOP*10.0
-            SENCALG(L) = SENWALG(L) * 0.4
-            SENLGALG(L) = SENWALG(L) * RLIGP/100.0
-          ENDDO
-
-          DYNAMICI = 0
 
         ENDIF
 

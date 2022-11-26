@@ -35,6 +35,7 @@
         XSTAGE = 7.0 ! Pre-planting
         YEARPLT = 9999999
         YEARPLTP = 9999999
+        stgdoy = 9999999
         
         adat10 = -99
         canht = 0.0
