@@ -58,7 +58,6 @@
         uh2o = 0.0
 
       
-        !Line 2035 - 2110 !TF* Maybe need to move this back
         ! Ecotype coefficients re-set
         PD = -99
         PD2FR = -99 

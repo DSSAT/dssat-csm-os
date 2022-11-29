@@ -7,7 +7,7 @@ C  04/16/2002 LAH/CHP Written.
 C  03-12-2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C=======================================================================
-      SUBROUTINE XXCERES_Interface (CONTROL, ISWITCH,      !Input
+      SUBROUTINE CSCERES_Interface (CONTROL, ISWITCH,      !Input
      &     EOP, YREND, NH4, NO3, SNOW, SOILPROP,           !Input
      &     SRFTEMP, ST, SW, TRWUP, WEATHER, YRPLT, HARVFRAC,!Input
      &     CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,PORMIN,!Output
@@ -124,7 +124,7 @@ C=======================================================================
       WINDSP= WEATHER % WINDSP
 
 C-----------------------------------------------------------------------
-      CALL XXCER (FILEIOCS, RUN, TN, RN, RNMODE,           !Command line
+      CALL CSCER (FILEIOCS, RUN, TN, RN, RNMODE,           !Command line
      & ISWWAT, ISWNIT, IDETS, IDETO, IDETG, IDETL, FROP,   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, CO2, RAIN, TOTIR,                 !Weather
@@ -170,4 +170,4 @@ C-----------------------------------------------------------------------
       ENDIF
 
       RETURN
-      END SUBROUTINE XXCERES_Interface
+      END SUBROUTINE CSCERES_Interface

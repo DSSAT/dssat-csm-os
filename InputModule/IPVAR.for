@@ -216,7 +216,7 @@ C-LPM  Add CIAT cassava model
      &      LAXS, SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT 
 
 !     Ceres-wheat: wheat, barley **
-      CASE ('CSCER', 'XXCER')
+      CASE ('CSCER')
 !       READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
 !     &            P1V,P1D,P5,G1,G2,G3,PHINT, PLAINTXT
 !       READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, PLAINTXT

@@ -2301,7 +2301,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofilePlNCrGro              ! plantn.csv
                  Call ListtofilePlCCrGro              ! plantc.csv
                  Call ListtofileEvOpsum               ! evaluate.csv            
-             Case('CSCER', 'XXCER')
+             Case('CSCER')
                  Call ListtofilePlantGrCsCer          ! plantgro.csv
                  Call ListtofilePlNCsCer              ! plantn.csv
                  Call ListtofilePlGr2                 ! plantgr2.csv

@@ -363,8 +363,6 @@ set(
         "Plant/CERES-Wheat_Barley/CER_Init_VarInit.for"
         "Plant/CSCER_CSCRP_CSCAS/CSCAS.for"
         "Plant/CSCER_CSCRP_CSCAS/CSCAS_Interface.for"
-        "Plant/CSCER_CSCRP_CSCAS/CSCER.for"
-        "Plant/CSCER_CSCRP_CSCAS/CSCERES_Interface.for"
         "Plant/CSCER_CSCRP_CSCAS/CSDISEASE.for"
         "Plant/CSCER_CSCRP_CSCAS/CSREADS.for"
         "Plant/CSCER_CSCRP_CSCAS/CSUTS.for"

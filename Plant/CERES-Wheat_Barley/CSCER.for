@@ -24,7 +24,7 @@
 !=======================================================================
 
       ! For Cropsim
-!     SUBROUTINE XXCER (FILEIOIN, RUN, TN, RN,             !Command line
+!     SUBROUTINE CSCER (FILEIOIN, RUN, TN, RN,             !Command line
 !    & ISWWAT, ISWNIT, IDETO, IDETG, IDETL, FROP,          !Controls
 !    & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
 !    & SRAD, TMAX, TMIN, CO2, RAIN, DEWDUR,                !Weather
@@ -42,7 +42,7 @@
 !    & DYNAMIC)                                            !Control
 
       ! For CSM
-      SUBROUTINE XXCER (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
+      SUBROUTINE CSCER (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
      & ISWWAT, ISWNIT, IDETS, IDETO, IDETG, IDETL, FROP,   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, CO2, RAIN, TOTIR,                 !Weather
