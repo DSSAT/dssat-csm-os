@@ -539,8 +539,9 @@
 !      DripInt   = DripIrrig % DripInt   !interval between irrig (hr)
 !      DripNum   = DripIrrig % DripNum   !# of irrigs for J'th entries today
 !      DripRate  = DripIrrig % DripRate  !emitter rate (ml/s)* efficiency
-      DripSpc   = DripIrrig % DripSpc   !emitter spacing (cm)
 !      DripStart = DripIrrig % DripStart !start time (hr)
+
+      DripSpc   = DripIrrig % DripSpc   !emitter spacing (cm)
       IrrRate   = DripIrrig % IrrRate   !daily irrigation (mm)
       DripNumTotArr = 0                    !# of irrigs today
       DO IDL = 1, NDripLnTOT
