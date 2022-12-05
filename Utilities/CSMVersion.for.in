@@ -20,7 +20,8 @@
 !     CMake no longer able to change the branch name, do it manually.      
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
-!     Version history:  
+!     Version history:
+!       4.8.1.0   FO 2022-10-28 Separated DSSAT-CSM-CROPSIM main file into multiple files  
 !       4.8.0.29 chp 2022-10-04 SDATE issue, MgmtEvent output, minor updates
 !       4.8.0.28  FO 2022-07-29 Make ASCE ET robust for various weather file formats
 !       4.8.0.27 chp 2022-04-15 Methane initialization, error checking
