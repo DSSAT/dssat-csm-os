@@ -1,4 +1,4 @@
-subroutine waterstress_SC(method_ws,     &
+subroutine waterstress(method_ws,     &
                         ndws,         &
                         ndews,        &
                         eop,          &
@@ -119,4 +119,4 @@ subroutine waterstress_SC(method_ws,     &
       
     return
     
-end subroutine waterstress_SC
+end subroutine waterstress

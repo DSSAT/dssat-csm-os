@@ -266,7 +266,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Fertilizer application data
       TYPE FertType
         CHARACTER*7 AppType 
-!        AppType = 'UNIFORM','BANDED ','HILL   ','POINT  ','DRIP   '
+!       AppType = 'UNIFORM','BANDED ','HILL   ','POINT  ','DRIP   '
         INTEGER DrpRefIdx
         INTEGER FERTDAY, FERTYPE
         INTEGER, DIMENSION(NELEM) :: NAPFER

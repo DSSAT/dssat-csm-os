@@ -1,16 +1,10 @@
 subroutine SAMUCA(CONTROL, ISWITCH,                                 &
-         CO2, DAYL, EOP,                                            &  !Input
-         SOILPROP, tsoil, SRAD, TMAX, TMIN, TRWUP,                  &  !Input
-         RWUEP1, YREND, YRPLT, WEATHER,                             &  !Input
-         CANHT, KCAN, KTRANS, MDATE, NSTRES,                        &  !Output
-         RLV, RWUMX, STGDOY,                                        &  !Output
-         XLAI, XHLAI, EORATIO)
- !        CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,      &  !Input
- !        SOILPROP, tsoil, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   &  !Input
- !        RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,             &  !Input
- !        CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,               &  !Output
- !        PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,                  &  !Output
- !        UNO3, XLAI, XHLAI, EORATIO)
+         CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,      &  !Input
+         SOILPROP, tsoil, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   &  !Input
+         RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,             &  !Input
+         CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,               &  !Output
+         PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,                  &  !Output
+         UNO3, XLAI, XHLAI, EORATIO)
  
     !-------------------------------------------------------------------------
     !---------- Agronomic Modular Simulator for Sugarcane (SAMUCA) -----------
@@ -32,7 +26,6 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !  Edited in: Feb-2016 by Murilo dos S. Vianna  -> Coupled to SWAP: https://scisoc.confex.com/crops/2017am/webprogram/Paper105395.html
     !  Edited in: Dec-2017 by Murilo dos S. Vianna  -> New Version Including Layered Photosynthesis, Source-Sink at Phytomer Level, Tillering
     !  Edited in: Jan-2020 by Murilo dos S. Vianna  -> Coupled into DSSAT
-    !  Edited in: Oct-2020 by CHP -> removed unused variables, added EXTERNAL statements
     !------------------------------------------------------------------------
     
     !--- Global variables
@@ -40,8 +33,6 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     use SAM_ModuleDefs
     
     Implicit None
-    EXTERNAL FIND_INP_SAM, SC_OPGROW_SAM_DETAILED, GET_CULTIVAR_COEFF, GET_SPECIES_COEFF, SC_OPHARV_SAM
-    EXTERNAL SC_OPGROW_SAM, TEMPERATURE_FACTOR, WATERSTRESS_SC, TILLER_SENES, FGROWTH, ASTRO, TOTASS, PGS, SUBS_BALANCE, IT_STRUC_PFAC, ROOT_PROFILE, SUCROSE_CONTENT
     save
     
     integer     DYNAMIC         ! This is the dynamic call initialization, rate, integration (~task) (IN) 
@@ -53,34 +44,34 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
 	real    	CO2             ! (IN)
     real    	DAYL            ! (IN)
     real    	EOP             ! (IN)
-!   real    	EP              ! (IN)
-!   real		EP1             ! (IN)
+    real    	EP              ! (IN)
+	real		EP1             ! (IN)
 	real		RWUEP1          ! (IN)
 	real		RWUEP2          ! (IN)
-!   real    	EO              ! (IN)
-!   real		EOS             ! (IN)
-!   real		ES              ! (IN)
-!   real    	HARVFRAC(2)     ! (IN)
-!   real    	NH4(NL)         ! (IN)
-!   real    	NO3(NL)         ! (IN)
-!   real    	SNOW            ! (IN)
-    real    	SRAD            ! (IN)
-!   real    	SW(NL)          ! (IN)
+    real    	EO              ! (IN)
+	real		EOS             ! (IN)
+	real		ES              ! (IN)
+    real    	HARVFRAC(2)     ! (IN)
+    real    	NH4(NL)         ! (IN)
+    real    	NO3(NL)         ! (IN)
+    real    	SNOW            ! (IN)
+    real    	SRAD            ! (IN)    
+    real    	SW(NL)          ! (IN)
     real    	TMAX            ! (IN)
     real    	TMIN            ! (IN)
     real    	TRWUP           ! (IN)
-!   real    	TRWU            ! (IN)
-!   real    	TWILEN          ! (IN)
-!   real 		IRRAMT          ! (IN)	
+    real    	TRWU            ! (IN)
+    real    	TWILEN          ! (IN)
+    real 		IRRAMT          ! (IN)	
 	real     	CANHT			! (OUT)
     real     	KCAN            ! (OUT)
     real     	KTRANS          ! (OUT)
     real     	NSTRES			! (OUT)
-!   real     	PORMIN			! (OUT)
+    real     	PORMIN			! (OUT)
     real     	RLV(NL)			! (OUT)	    
     real        RWUMX           ! (OUT)
-!   real        UNH4(NL)        ! (OUT)
-!   real        UNO3(NL)        ! (OUT)
+    real        UNH4(NL)        ! (OUT)
+    real        UNO3(NL)        ! (OUT)
     real        XLAI            ! (OUT)
     real        XHLAI           ! (OUT)
     
@@ -88,8 +79,8 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
 	TYPE (ControlType) CONTROL
 	TYPE (SoilType)    SOILPROP
 	TYPE (SwitchType)  ISWITCH
-!   Type (ResidueType) HARVRES 
-!   Type (ResidueType) SENESCE
+	Type (ResidueType) HARVRES 
+	Type (ResidueType) SENESCE
 	Type (WeatherType) WEATHER
     
     !--- Local composite variables:
@@ -107,8 +98,8 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     integer		atln                                      		! 
     integer		atln_now                                  		! 
     integer		dn_lf_alive_dewlap                        		! 
-!   integer		ghour                                     		! 
-!   integer		glai                                      		! 
+    integer		ghour                                     		! 
+    integer		glai                                      		! 
     integer		maxdgl                                    		! 
     integer		maxgl                                     		! 
     integer		n_it                                      		! 
@@ -155,9 +146,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real		agefactor_fac_amax                        		! 
     real		agefactor_fac_rue                         		! 
     real		agefactor_fac_per                         		! 
-!   real		a_pl                                      		! 
-!   real		b_pl                                      		! 
-!   real		c_pl                                      		! 
+    real		a_pl                                      		! 
+    real		b_pl                                      		! 
+    real		c_pl                                      		! 
     real		max_lf_dw                                 		! 
     real		init_stalkfw                              		! 
     real		init_stalkht                              		! 
@@ -187,7 +178,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real		agefactor_rue                             		! 
     real		amax_conv                                 		! 
     real		amax_mod                                  		! 
-!   real		amax_out                                  		! 
+    real		amax_out                                  		! 
     real		amaxfbfac                                 		! 
     real		avail_subs_crop                           		! 
     real		c_check_tol                               		! 
@@ -306,7 +297,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real		dwat_it_ag_dead                           		! 
     real		eff_conv                                  		! 
     real		eff_mod                                   		! 
-!   real		eff_out                                   		! 
+    real		eff_out                                   		! 
     real		effective_rd                              		! 
     real		end_tt_it_growth                          		! 
     real		end_tt_lf_growth                          		! 
@@ -566,14 +557,14 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
 
     !--- Arrays Variables
     real        phprof(200,60)                                  ! Phytomer profile and attributes dimensions    
-!   real        drld_sl(nl)                                     !
-!   real        dw_rt_sl(nl)                                    !
+    real        drld_sl(nl)                                     !
+    real        dw_rt_sl(nl)                                    !
     real        ddw_rt_sl(nl)                                   !
-!   real        srl_prof(1000)                                  !
-!   real        ddw_rt_prof(1000)                               !
-!   real        drld_prof(1000)                                 !
+    real        srl_prof(1000)                                  !
+    real        ddw_rt_prof(1000)                               !
+    real        drld_prof(1000)                                 !
     real        geot(SOILPROP%NLAYR)                            !
-!   real        rootprof(1000)                                  ! Root profile (index = cm comparment)    Up to 10 meters
+    real        rootprof(1000)                                  ! Root profile (index = cm comparment)    Up to 10 meters
     real        dw_rt_prof(SOILPROP%NLAYR)                      !
     real        tillerageprof(100,2)                            !
     real        tempfac_h_per(24)                               ! 24 hours
@@ -583,7 +574,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real        photo_layer_act(3)                              ! Actual Total Daily Photosynthesis per canopy Layer  
     real        rgf(SOILPROP%NLAYR+1,3)                                   !
     real        lroot(SOILPROP%NLAYR)                                     !
-!   real        dlroot(SOILPROP%NLAYR)                                    !
+    real        dlroot(SOILPROP%NLAYR)                                    !
     real        drld(nl)                                    !
     real        drld_dead(nl)                               !
     logical     fl_it_AG(200)                               ! Above Ground Internode Flag
@@ -591,9 +582,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     logical     fl_lf_alive(200) 
     
     !--- Real Functions
-!   real        afgen                                           ! Interpolation function (The Fortran Simulation Translator, FST version 2.0)
+    real        afgen                                           ! Interpolation function (The Fortran Simulation Translator, FST version 2.0)
     real        fgrowth                                         ! Flexible growth function
-!   real        asy_ws                                          ! Flexible function for water stress response
+    real        asy_ws                                          ! Flexible function for water stress response
     real        tiller_senes                                    ! Tiller senescence function    
     
     !--- Coupling to DSSAT
@@ -629,9 +620,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real	MAXLAI_EO	
     real	TBM			
     real	THRESHEWS	
-!   real	SWCON1		
-!   real	SWCON2		
-!   real	SWCON3		
+    real	SWCON1		
+    real	SWCON2		
+    real	SWCON3		
     real	RWUMAX			
     real	T_MAX_WS_FPF
     real	T_MID_WS_FPF
@@ -657,14 +648,14 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     integer NDWS	
     integer NDEWS	
     logical FLEMERGED	
-!   integer OUTP		                ! i/o   !
-!   integer outdph                      ! i/o   !
-!   integer outd                        ! i/o   !
-!   integer outdpp                      ! i/o   !
-!   integer outpfac                     ! i/o   !
-!   integer outstres                    ! i/o   !    
+    integer OUTP		                ! i/o   !
+    integer outdph                      ! i/o   !
+    integer outd                        ! i/o   !
+    integer outdpp                      ! i/o   !
+    integer outpfac                     ! i/o   !
+    integer outstres                    ! i/o   !    
     logical writedcrop                  ! ctrl	!
-!   logical writeactout                 ! ctrl	!
+    logical writeactout                 ! ctrl	!
     logical usetsoil                    ! ctrl	!
     logical mulcheffect                 ! ctrl	!
     logical ratoon				        ! plan	! 
@@ -692,20 +683,22 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     integer year
     real    pol
     real    kc
-!   real    trasw  
+    real    trasw  
     real    daylp
     real    dsinb
     real    dsinbe
     real    sc
     real    dso
-!   real    watdmd
+    real    watdmd
+    real    DEC, SNDN, SNUP, CLOUDS, ISINB, S0N ! DSSAT astro calculations
+    real    par_sim
     
     character 	(len = 6)	pltype      ! plan	!  Planting type (Ratoon or PlCane)    
     character 	(len = 6)	cropstatus  ! plan	!  Dead or Alive
 	character 	(len = 6)	cropdstage  ! plan	!  Development Stage - Only Sprout or Emergd
-!   character   (len=100)   CROPFILE(50)
-!   character   (len=100)   prjname            				! ctrl 	! 
-!   character   (len=1000)  pathwork
+    character   (len=100)   CROPFILE(50)
+    character   (len=100)   prjname            				! ctrl 	! 
+    character   (len=1000)  pathwork
     character   (len=7)     YRDOY_ch    ! year and doy as character used to extract year and doy from CONTROL%YRDOY
     
     integer nratoon
@@ -723,7 +716,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real        maxlai  ! Maximum LAI hit throughout the season (needed for SC_OPHARV_SAM)
     
     logical     flcropalive
-!   logical	    writedetphoto
+    logical	    writedetphoto
     
     save
     
@@ -1776,7 +1769,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     if(.not. fl_potential)then
         
         !--- Water Stress ---!
-        call waterstress_SC(   2,         & 
+        call waterstress(   2,            & 
                             ndws,         &
                             ndews,        &
                             eop,          &
@@ -2379,9 +2372,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             !--- CO2 Assimilation by Canopy Layer ---!
             !----------------------------------------!
             
-            !--- Astrological calculations for difuse and direct PAR interception on hourly-step
-            call astro(doy, lat_sim, dayl, daylp, sinld, cosld, dsinb, dsinbe, &
-                    sc, dso) 
+            !--- Astrological calculations for difuse and direct PAR interception on hourly-step            
+            call DAYLEN(doy, lat_sim, dayl, DEC, SNDN, SNUP)               
+            call SOLAR(dayl, DEC, srad, lat_sim, CLOUDS, ISINB, S0N)
                         
             !--- Convert CO2 Assimilation rate to kgCO2 ha-1 h-1
             amax_conv   = amax / 1.e3 * 1.e4 * 3600 * 44.d0 / 1.e6
@@ -2394,27 +2387,38 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             amax_mod = amax_conv * tempfac_pho * swfacp * amaxfbfac * pho_fac_co2
             eff_mod  = eff_conv
             
-            !--- LAI for assimilation
+            !--- LAI for CO2 assimilation
             lai_ass  = lai
-                        
+             
+            !--- get daily PAR in moles[quanta]/m2-d from WEATHER % PAR
+            !--- Note: WEATHER % PAR = 0.42*SRAD, to use PAR = 0.50*SRAD use: par_sim = srad * 0.5 * 4.6  ! (moles[quanta]/m2-d) [MV 2022-08-02]
+            par_sim = WEATHER % PAR     ! (moles[quanta]/m2-d)
+            
             !--- Total assimilation for three canopy layers on hourly-step (Gaussian Integration) - Groudriaan
             if(dayl .gt. 0.d0) then
                 call totass(doy,                &
                             dayl,               &
+                            lat_sim,            &
+                            DEC,                &
+                            SNDN,               &
+                            SNUP,               &
+                            CLOUDS,             &
+                            ISINB,              &
+                            S0N,                &
                             amax_mod,           &
                             eff_mod,            &
                             lai_ass,            &
                             kdif,               &
                             c_scattering,       &
-                            srad * 1.e6,        & ! Solar Radiation [J/m2/day] - PAR [W/m2] is computed within radiat()
-                            sinld,              &
-                            cosld,              &
+                            srad,               & ! 
+                            par_sim,            &                            
                             dtg,                & ! Output
                             Acanopy,            & ! Output
                             Qleaf,              & ! Output
                             incpar,             & ! Output
                             photo_layer_act,    & ! Output
                             frac_li)              ! Output
+                            
             else
             
                 !--- no radiation [polar zone]

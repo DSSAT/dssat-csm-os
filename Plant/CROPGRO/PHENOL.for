@@ -10,6 +10,7 @@ C  07/09/1997 CHP modified for CROPGRO restructuring
 C             Added DYNAMIC variable for model control
 !  07/13/2006 CHP Added P model
 !  06/11/2007 CHP PStres2 affects growth
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 !     Called from:    Main program
 !     Calls:          IPPHENOL

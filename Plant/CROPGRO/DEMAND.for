@@ -14,7 +14,7 @@ C  01/10/1997 GH  Added TURFAC effect on seed growth and pod addition
 C  09/15/1998 CHP Modified for modular format
 C  05/10/1999 GH  Incorporated in CROPGRO
 C  04/02/2021 GH  Adjust growth rate for small seeded crops
-C
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  Called by:  PLANT
 C  Calls:      SDCOMP, IPDMND

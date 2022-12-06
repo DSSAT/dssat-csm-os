@@ -8,6 +8,7 @@ C  01/01/1993 Written J.W. Jones, K.J. Boote, G. Hoogenboom
 !  08/../1997 CHP modified for CROPGRO restructuring
 C  03/24/2004 CHP Calculate SeedFrac for P partitioning (Bostick model)
 !  07/13/2006 CHP Added P model
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 !     Called from: PHENOL
 !     Calls:       None

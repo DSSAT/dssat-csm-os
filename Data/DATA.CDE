@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2021-07-27
+! DSSAT v4.8; 2022-11-18
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -1352,7 +1352,7 @@ RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)        
 RLAIH  Resid. LAI      Residual leaf area index after forage harvest            .
 
 *Greenhouse Gas Emissions
-CCEQC  CO2eq-CO2      CO2 emissions as CO2 equivalent (kg[CO2eq]/ha)            .
+CCEQC  CO2eq-CO2       CO2 emissions as CO2 equivalent (kg[CO2eq]/ha)           .
 CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)                        .
 CH4BLD CH4_balance     Daily CH4 Balance (kg[C]/ha)                             .
 CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)                    .
@@ -1370,7 +1370,7 @@ CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             
 CO2ED  CO2emission     Daily CO2 emission (kg/ha)                               .
 CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
 CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
-MCEQC  CO2eq-CH4      Methane emissions as CO2 equivalent (kg[CO2eq]/ha)        .
+MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .
 N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
 N2OED  N2O emitted/d   Daily N2O emissions from soil (g[N]/ha)                  .
@@ -1388,6 +1388,6 @@ N2O6D  N2O flux lyr 6  Daily N2O flux, soil layer 6 (g[N]/ha)                   
 N2O7D  N2O flux lyr 7  Daily N2O flux, soil layer 7 (g[N]/ha)                   .
 N2O8D  N2O flux lyr 8  Daily N2O flux, soil layer 8 (g[N]/ha)                   .
 N2O9D  N2O flux lyr 9  Daily N2O flux, soil layer 9 (g[N]/ha)                   .
-NCEQC  CO2eq-N2O      N2O emissions as CO2 equivalent (kg[CO2eq]/ha)            .
-TCEQC  CO2eq-Total    Total GHG emissions as CO2 equivalent (kg[CO2eq]/ha)      .
+NCEQC  CO2eq-N2O       N2O emissions as CO2 equivalent (kg[CO2eq]/ha)           .
+TCEQC  CO2eq-Total     Total GHG emissions as CO2 equivalent (kg[CO2eq]/ha)     .
 
