@@ -46,12 +46,11 @@ C=======================================================================
 
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SAT, SHF, NO3LEFT, NH4LEFT
-      REAL, DIMENSION(NL) :: SW, UNO3, UNH4, UH2O
+      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
       REAL, DIMENSION(0:NL) :: SENCALG, SENNALG, SENLALG
       REAL, DIMENSION(0:NL) :: RESCALG, RESNALG, RESLGALG
       REAL, DIMENSION(0:NL) :: SOILTEMP
       
-      REAL          ST(0:NL)
 
 !     Not used here, but keep for Tony's interface
       REAL          LAIL(30)      ! Leaf area index by layer       m2/m2
