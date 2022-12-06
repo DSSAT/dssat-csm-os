@@ -230,7 +230,6 @@ set(
         "Plant/CASUPRO-Sugarcane/CSP_CANOPY.for"
         "Plant/CASUPRO-Sugarcane/CSP_CASUPRO.for"
         "Plant/CASUPRO-Sugarcane/CSP_DEMAND.for"
-        "Plant/CASUPRO-Sugarcane/CSP_GROW.for"
         "Plant/CASUPRO-Sugarcane/CSP_GROW_CANE.for"
         "Plant/CASUPRO-Sugarcane/CSP_HRes.for"
         "Plant/CASUPRO-Sugarcane/CSP_INCOMP.for"
