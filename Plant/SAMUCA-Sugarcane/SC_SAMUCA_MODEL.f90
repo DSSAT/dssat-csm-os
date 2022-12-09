@@ -1769,7 +1769,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     if(.not. fl_potential)then
         
         !--- Water Stress ---!
-        call waterstress(   2,            & 
+        call sc_waterstress(   2,            & 
                             ndws,         &
                             ndews,        &
                             eop,          &
