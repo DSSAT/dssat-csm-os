@@ -137,7 +137,6 @@
       Cell_detail%row = 7 !FurRow1
       Cell_detail%col = 9 !FurCol1
 
-
       DYNAMIC = CONTROL % DYNAMIC
       RAIN    = WEATHER % RAIN
       IF (DYNAMIC .EQ. RUNINIT) THEN
@@ -406,11 +405,6 @@
 !         Temp chp
 !    &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, 0.d0)
      &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal_temp)
-!      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
-!     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
-!     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input  dp, dp, dp, int(2), real(r,c), real(r,c), real
-!     &    Count, LatFlow,                                       !Input  int, real
-!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input real(r,c), dp(r,c), dp(r,c), dp(r,c), dp(nd), dp(r,c)
 !     ------------------------------------------------------------------
 
       print *, " "
@@ -643,9 +637,6 @@
       ELSE
         StdIrrig = 0.0 ! If there is drip irrigation, then no sprinkle
       ENDIF
-
-!!     TEMP CHP
-!      PRINT *, CONTROL.DAS
 
 !-----------------------------------------------------------------
 !     Time Loop

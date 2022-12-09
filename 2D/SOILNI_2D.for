@@ -60,14 +60,14 @@ C=======================================================================
       REAL SNH4_AVAIL, SNO3_AVAIL, SUMFERT
       REAL SWEF, TFUREA   !, TFDENIT
       REAL WFSOM, WFUREA, XL, XMIN    !WFDENIT, 
-      ! REAL TMINERN(MaxCols), TIMMOBN(MaxCols), TLCH, TLCHD
-      REAL TLCH, TNOX
-      ! REAL TNH4(MaxCols), TNH4NO3, TNO3(MaxCols), UHYDR
-      ! REAL, DIMENSION(MaxCols) :: WTNUP, TNITRIFY, TUREA
-      !REAL, DIMENSION(MaxRows) :: TNH4, TNO3, TMINERN, TIMMOBN
-      !REAL, DIMENSION(MaxRows) :: WTNUP, TNITRIFY, TUREA
+!     REAL TMINERN(MaxCols), TIMMOBN(MaxCols), TLCH, TLCHD
+!     REAL TLCH, TNOX
+!     REAL TNH4(MaxCols), TNH4NO3, TNO3(MaxCols), UHYDR
+!     REAL, DIMENSION(MaxCols) :: WTNUP, TNITRIFY, TUREA
+!     REAL, DIMENSION(MaxRows) :: TNH4, TNO3, TMINERN, TIMMOBN
+!     REAL, DIMENSION(MaxRows) :: WTNUP, TNITRIFY, TUREA
       REAL TNH4, TNO3,TUREA
-      !Real TNOXD_Lr(NL)
+!     Real TNOXD_Lr(NL)
       Real TNH4NO3, UHYDR
       REAL ADCOEF(NL)
       REAL, DIMENSION(MaxRows,MaxCols) ::  DLTSNH4_2D, DLTSNO3_2D
@@ -909,11 +909,11 @@ C=======================================================================
 !     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
 !     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
 !     &    N2O_data) 
-        Call SoilNiBal_2D (CONTROL, ISWITCH, Cells, DENITRIF, IMM,
-!    &    MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA,NBUND,CLeach,
-     &    MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, TLCH,
-!    &    TNH4, TNO3, CNOX, TOTAML, TUREA, WTNUP) 
-     &    TNH4, TNO3, TNOX, TOTAML, TUREA, WTNUP) 
+        Call SoilNiBal_2D (CONTROL, ISWITCH, 
+     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TUREA, WTNUP,
+!         for cell detail output:
+     &    Cells, DENITRIF, IMM, MNR) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
@@ -955,11 +955,11 @@ C     Write daily output
 !     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
 !     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
 !     &	  N2O_data) 
-        Call SoilNiBal_2D (CONTROL, ISWITCH, Cells, DENITRIF, IMM,
-!    &    MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA,NBUND,CLeach,
-     &    MNR, ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, TLCH,
-!    &    TNH4, TNO3, CNOX, TOTAML, TUREA, WTNUP) 
-     &    TNH4, TNO3, TNOX, TOTAML, TUREA, WTNUP) 
+        Call SoilNiBal_2D (CONTROL, ISWITCH, 
+     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TUREA, WTNUP,
+!         for cell detail output:
+     &    Cells, DENITRIF, IMM, MNR) 
 
 !      CALL ArrayHandler(CELLS,CONTROL,SOILPROP,SNO3_2D,"NO3",0.0,200.)
 

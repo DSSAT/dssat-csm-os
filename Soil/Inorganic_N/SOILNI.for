@@ -996,7 +996,6 @@ C     Write daily output
      &    ALGFIX, BD1, CUMFNRO, TOTAML, TOTFLOODN)        !Output
       ENDIF
 
-
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
      &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,

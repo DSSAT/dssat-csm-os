@@ -18,6 +18,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       USE FertType_mod
       USE Interface_SoilNBalSum
       IMPLICIT NONE
+      EXTERNAL YR_DOY, INCDAT, GETLUN, HEADER
       SAVE
 !     ------------------------------------------------------------------
       LOGICAL FEXIST
@@ -33,10 +34,6 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &  TNO3, TNO3I,  TUREA, TUREAI, WTNUP, CNTILEDR   !HJ added
       REAL TOTAML, CUMFNRO, TOTFLOODN, TOTFLOODNI
       REAL STATEN, BALANCE
-
-!     Not used
-!     REAL CNOX   !, NOXTODAY, CNOXY, 
-
       REAL LCHTODAY, NTILEDRTODAY, IMMOBTODAY, MINERTODAY !HJ
       REAL WTNUPTODAY, AMLTODAY, FNROTODAY, AMTFERTODAY
       REAL N2Otoday, N2today, NOtoday
@@ -141,7 +138,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       TOTSTATY = TNO3I + TNH4I + TUREAI + ALGFIXI + TOTFLOODNI 
      &            + N2O_DATA % TNGSoil
-        !FLOODNY  = TOTFLOODNI
+!     FLOODNY  = TOTFLOODNI
 
       CALL SoilNBalSum (CONTROL, N_inorganic=TOTSTATY)
 
@@ -151,72 +148,72 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !***********************************************************************
       ELSEIF (DYNAMIC == OUTPUT) THEN
 !     ------------------------------------------------------------------
-      IF (INDEX('AD',IDETL) > 0) THEN
-        !Compute daily rates from cumulative values
+!     Daily output only when detail switch is on
+      IF (INDEX('AD',IDETL) .LE. 0) RETURN
 
-!       Additions:
-        AMTFERTODAY = AMTFER  - AMTFERY
-        MINERTODAY  = CMINERN - CMINERY
+!     Compute daily rates from cumulative values
+!     Additions:
+      AMTFERTODAY = AMTFER  - AMTFERY
+      MINERTODAY  = CMINERN - CMINERY
 
-!       Subtractions:
-        IMMOBTODAY = CIMMOBN - CIMMOBY
-        LCHTODAY   = CLeach - CLeachY
-        NTILEDRTODAY = CNTILEDR - TNTILEDRY             !HJ added
-        WTNUPTODAY = (WTNUP - WTNUPY) * 10.  
-        FNROTODAY  = CUMFNRO - CUMFNROY
-        AMLTODAY   = TOTAML - TOTAMLY
-        N2Otoday   = N2O_data % CN2O_emitted - N2OY
-        N2today    = N2O_data % CN2_emitted  - N2Y 
-        NOtoday    = N2O_data % CNO_emitted  - NOY
+!     Subtractions:
+      IMMOBTODAY = CIMMOBN - CIMMOBY
+      LCHTODAY   = CLeach - CLeachY
+      NTILEDRTODAY = CNTILEDR - TNTILEDRY             !HJ added
+      WTNUPTODAY = (WTNUP - WTNUPY) * 10.  
+      FNROTODAY  = CUMFNRO - CUMFNROY
+      AMLTODAY   = TOTAML - TOTAMLY
+      N2Otoday   = N2O_data % CN2O_emitted - N2OY
+      N2today    = N2O_data % CN2_emitted  - N2Y 
+      NOtoday    = N2O_data % CNO_emitted  - NOY
 
-        !FLOODNTODAY = TOTFLOODN - FLOODNY
+!     FLOODNTODAY = TOTFLOODN - FLOODNY
 
-!       For slow release fertilizers, keep track of unreleased N
-        UnreleasedN = 0.0
-        IF (NActiveSR .GT. 0) THEN
-          DO I = 1, NSlowRelN
-            IF (SlowRelN(I) % ACTIVE) THEN
-              UnreleasedN = UnreleasedN + 
-     &           SlowRelN(I) % N0 - SlowRelN(I) % CumRelToday
-            ENDIF
-          ENDDO
-        ENDIF
-
-        TOTSTATE = TNO3 + TNH4 + TUREA + ALGFIX + TOTFLOODN 
-     &           + N2O_DATA % TNGSoil + UnreleasedN
-        TOTADD   = AMTFERTODAY + MINERTODAY
-        TOTSUB   = IMMOBTODAY + LCHTODAY + WTNUPTODAY + FNROTODAY 
-     &           + AMLTODAY + N2Otoday + N2today + NOtoday
-     &           + NTILEDRTODAY !HJ added
-	 
-        DAYBAL = TOTSTATE - TOTSTATY - TOTADD + TOTSUB
-        CUMBAL   = CUMBAL + DAYBAL
-
-        CALL YR_DOY(YRDOY, YR, DOY)
-!       Write daily output to SoilNiBal.OUT.
-        WRITE (LUNSNC,50) YR, DOY, DAS, 
-     &    TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 
-     &    UnreleasedN,
-     &    AMTFERTODAY, MINERTODAY, 
-     &    IMMOBTODAY, LCHTODAY, NTILEDRTODAY, WTNUPTODAY, !HJ
-     &    FNROTODAY, AMLTODAY, N2Otoday, N2today, NOtoday,
-     &    DAYBAL, CUMBAL
-   50     FORMAT(I5, I4.3, I5, 7F8.3, F8.1, 10F8.4, 2F10.4)
-
-!       Save today's cumulative values for use tomorrow
-        AMTFERY  = AMTFER
-        CMINERY  = CMINERN
-        CIMMOBY  = CIMMOBN
-        CLeachY  = CLeach
-        TNTILEDRY = CNTILEDR            !HJ added
-        WTNUPY   = WTNUP
-        CUMFNROY = CUMFNRO
-        TOTAMLY  = TOTAML
-        N2OY     = N2O_data % CN2O_emitted
-        N2Y      = N2O_data % CN2_emitted 
-        NOY      = N2O_data % CNO_emitted 
-        TOTSTATY = TOTSTATE
+!     For slow release fertilizers, keep track of unreleased N
+      UnreleasedN = 0.0
+      IF (NActiveSR .GT. 0) THEN
+        DO I = 1, NSlowRelN
+          IF (SlowRelN(I) % ACTIVE) THEN
+            UnreleasedN = UnreleasedN + 
+     &         SlowRelN(I) % N0 - SlowRelN(I) % CumRelToday
+          ENDIF
+        ENDDO
       ENDIF
+
+      TOTSTATE = TNO3 + TNH4 + TUREA + ALGFIX + TOTFLOODN 
+     &         + N2O_DATA % TNGSoil + UnreleasedN
+      TOTADD   = AMTFERTODAY + MINERTODAY
+      TOTSUB   = IMMOBTODAY + LCHTODAY + WTNUPTODAY + FNROTODAY 
+     &         + AMLTODAY + N2Otoday + N2today + NOtoday
+     &         + NTILEDRTODAY !HJ added
+
+      DAYBAL = TOTSTATE - TOTSTATY - TOTADD + TOTSUB
+      CUMBAL   = CUMBAL + DAYBAL
+
+      CALL YR_DOY(YRDOY, YR, DOY)
+!     Write daily output to SoilNiBal.OUT.
+      WRITE (LUNSNC,50) YR, DOY, DAS, 
+     &  TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 
+     &  UnreleasedN,
+     &  AMTFERTODAY, MINERTODAY, 
+     &  IMMOBTODAY, LCHTODAY, NTILEDRTODAY, WTNUPTODAY, !HJ
+     &  FNROTODAY, AMLTODAY, N2Otoday, N2today, NOtoday,
+     &  DAYBAL, CUMBAL
+   50 FORMAT(I5, I4.3, I5, 7F8.3, F8.1, 10F8.4, 2F10.4)
+
+!     Save today's cumulative values for use tomorrow
+      AMTFERY  = AMTFER
+      CMINERY  = CMINERN
+      CIMMOBY  = CIMMOBN
+      CLeachY  = CLeach
+      TNTILEDRY = CNTILEDR            !HJ added
+      WTNUPY   = WTNUP
+      CUMFNROY = CUMFNRO
+      TOTAMLY  = TOTAML
+      N2OY     = N2O_data % CN2O_emitted
+      N2Y      = N2O_data % CN2_emitted 
+      NOY      = N2O_data % CNO_emitted 
+      TOTSTATY = TOTSTATE
 
 !***********************************************************************
 !***********************************************************************
@@ -332,8 +329,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
 700     FORMAT ('!',3X,'N in runoff over bund',           T68, F10.2)
 
-800     FORMAT (/,'!',3X, 'Total N balance',     T48, F10.2, T68, F10.2)
-900     FORMAT ('!',3X,'Balance',                            T68, F10.3)
+800     FORMAT (/,'!',3X, 'Total N balance',  T48, F10.2, T68, F10.2)
+900     FORMAT (  '!',3X,'Balance',                       T68, F10.3)
 
       NGasLoss = TOTAML + N2O_data % CN2O_emitted +
      &    N2O_data % CN2_emitted + N2O_data % CNO_emitted

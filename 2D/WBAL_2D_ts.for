@@ -152,12 +152,12 @@
       NEXTTS    = Cell_detail%NEXTTS
 
       
-      IF (CONTROL%TRTNUM < 10) THEN
-         write (SWCellBAL, '("CellDetailW_", I1, ".OUT")')CONTROL%TRTNUM
-      ELSE IF (CONTROL%TRTNUM < 100) THEN
-         write (SWCellBAL, '("CellDetailW_", I2, ".OUT")')CONTROL%TRTNUM
+      IF (CONTROL%RUN < 10) THEN
+         write (SWCellBAL, '("CellDetailW_", I1, ".OUT")')CONTROL%RUN
+      ELSE IF (CONTROL%RUN < 100) THEN
+         write (SWCellBAL, '("CellDetailW_", I2, ".OUT")')CONTROL%RUN
       ELSE
-         write (SWCellBAL, '("CellDetailW_", I3, ".OUT")')CONTROL%TRTNUM
+         write (SWCellBAL, '("CellDetailW_", I3, ".OUT")')CONTROL%RUN
       END IF
       CALL GETLUN(SWCellBAL, CLun)
       OPEN (UNIT = CLun, FILE = SWCellBAL, STATUS = 'REPLACE')
