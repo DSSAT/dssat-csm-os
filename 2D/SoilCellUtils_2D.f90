@@ -40,7 +40,6 @@
   END TYPE
   TYPE (BedDimType) BedDimension
 
-! TEMP CHP
   type Cell_detail_type
     integer :: row = 1, col = 9  !cm
     integer, DIMENSION(MaxCells) :: rows = (/ 2, 2, 3, 4, 5, 5, 6, 7, 8, 9 /) !cm
@@ -381,79 +380,81 @@
   REAL, DIMENSION(MaxRows,NL)     :: Temp_LCD
   REAL, DIMENSION(MaxRows,MaxCols):: Temp_WF
 
-!----------------------------------------------------------------------
-    DLAYR = SOILPROP % DLAYR
-    DS    = SOILPROP % DS
-    NLAYR = SOILPROP % NLAYR
-    FirstSoilRow = 1
-
-!   Find fraction of total surface per each surface cell
-    Surf_Cell_Frac = 0.0
-    TotSurfXSArea = 0.0
-    DO Row = 1, NRowsTot
-      DO Col = 1, NColsTot
-        IF (CellStruc(Row,Col) % CellType == 2) THEN       !surface cell
-          Surf_Cell_Frac(Row,Col) = CellStruc(Row,Col) % Thick * CellStruc(Row,Col) % Width
-          TotSurfXSArea = TotSurfXSArea + Surf_Cell_Frac(Row,Col)
-        ENDIF
-      ENDDO
-    ENDDO 
-    
-    IF (TotSurfXSArea > 0.) THEN
-      Surf_Cell_Frac = Surf_Cell_Frac / TotSurfXSArea
-    ELSE 
-      Surf_Cell_Frac = 0.0
-    ENDIF
-        
-!----------------------------------------------------------------------
-!   Find fraction of total width per each column for soil cells
-    WidthFrac = 0.0
-    TotWidth = 0.0
-    DO Row = 1, NRowsTot
-      DO Col = 1, NColsTot
-        SELECT CASE(CellStruc(Row,Col) % CellType)
-        CASE(3,4,5)
-          TotWidth(Row) = TotWidth(Row) + CellStruc(Row,Col) % Width
-          WidthFrac(Row,Col) = CellStruc(Row,Col) % Width 
-        CASE DEFAULT
-          WidthFrac(Row,Col) = 0.0
-        END SELECT
-      ENDDO
-      IF (TotWidth(Row) > 1.E-6) THEN
-        DO Col = 1, NColsTot
-          WidthFrac(Row,Col) = WidthFrac(Row,Col) / TotWidth(Row)
-        ENDDO
-      ENDIF
-    ENDDO 
+  REAL, PARAMETER :: SmallNumber = 1.E-6
 
 !----------------------------------------------------------------------
-!   Already know number of soil layers = NLAYR
-!   Maximum depth of soil profile = DS(NLAYR)
+  DLAYR = SOILPROP % DLAYR
+  DS    = SOILPROP % DS
+  NLAYR = SOILPROP % NLAYR
+  FirstSoilRow = 1
 
-!   Find first row that is soil (for column 1)
-    DO Row = 1, NRowsTot
-      IF (CellStruc(Row,1) % CellType == 3) THEN       !soil cell
-        FirstSoilRow = Row
-        EXIT
+! Find fraction of total surface per each surface cell
+  Surf_Cell_Frac = 0.0
+  TotSurfXSArea = 0.0
+  DO Row = 1, NRowsTot
+    DO Col = 1, NColsTot
+      IF (CellStruc(Row,Col) % CellType == 2) THEN       !surface cell
+        Surf_Cell_Frac(Row,Col) = CellStruc(Row,Col) % Thick * CellStruc(Row,Col) % Width
+        TotSurfXSArea = TotSurfXSArea + Surf_Cell_Frac(Row,Col)
       ENDIF
     ENDDO
+  ENDDO 
+  
+  IF (TotSurfXSArea > 0.) THEN
+    Surf_Cell_Frac = Surf_Cell_Frac / TotSurfXSArea
+  ELSE 
+    Surf_Cell_Frac = 0.0
+  ENDIF
+        
+!----------------------------------------------------------------------
+! Find fraction of total width per each column for soil cells
+  WidthFrac = 0.0
+  TotWidth = 0.0
+  DO Row = 1, NRowsTot
+    DO Col = 1, NColsTot
+      SELECT CASE(CellStruc(Row,Col) % CellType)
+      CASE(3,4,5)
+        TotWidth(Row) = TotWidth(Row) + CellStruc(Row,Col) % Width
+        WidthFrac(Row,Col) = CellStruc(Row,Col) % Width 
+      CASE DEFAULT
+        WidthFrac(Row,Col) = 0.0
+      END SELECT
+    ENDDO
+    IF (TotWidth(Row) > 1.E-6) THEN
+      DO Col = 1, NColsTot
+        WidthFrac(Row,Col) = WidthFrac(Row,Col) / TotWidth(Row)
+      ENDDO
+    ENDIF
+  ENDDO 
 
-!   Find maximum depth of cells and last cell soil row
-    LastSoilRow = MaxRows
-    CumCellDep = 0.0
-!   DO Row = FirstSoilRow, MaxRows
-    DO Row = 1, MaxRows
-      IF (CellStruc(Row,1) % Thick > 1.E-6) THEN
-        CumCellDep = CumCellDep + CellStruc(Row,1) % Thick
-      ELSE
-        LastSoilRow = Row - 1
-        EXIT
-      ENDIF
-    ENDDO 
+!----------------------------------------------------------------------
+! Already know number of soil layers = NLAYR
+! Maximum depth of soil profile = DS(NLAYR)
+
+! Find first row that is soil (for column 1)
+  DO Row = 1, NRowsTot
+    IF (CellStruc(Row,1) % CellType == 3) THEN       !soil cell
+      FirstSoilRow = Row
+      EXIT
+    ENDIF
+  ENDDO
+
+! Find maximum depth of cells and last cell soil row
+  LastSoilRow = MaxRows
+  CumCellDep = 0.0
+! DO Row = FirstSoilRow, MaxRows
+  DO Row = 1, MaxRows
+    IF (CellStruc(Row,1) % Thick > 1.E-6) THEN
+      CumCellDep = CumCellDep + CellStruc(Row,1) % Thick
+    ELSE
+      LastSoilRow = Row - 1
+      EXIT
+    ENDIF
+  ENDDO 
 
 ! Force soil layer data to match bottom specified by cell data.
 ! Skip surface cells
-  IF (CumCellDep > DS(NLAYR)) THEN
+  IF (CumCellDep - DS(NLAYR) .GT. SmallNumber) THEN
 !   Expand lowest layer to match profile depth for cells
     DLAYR(NLAYR) = DLAYR(NLAYR) + CumCellDep - DS(NLAYR)
     DS(NLAYR) = CumCellDep

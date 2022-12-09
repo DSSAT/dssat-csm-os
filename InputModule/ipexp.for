@@ -1171,9 +1171,7 @@ C=======================================================================
       IF (SFDRN .LE. 0.0) THEN
         SFDRN = 100.
       ENDIF
-      Write(msg(1),'("Plastic mulch cover albedo =",F7.2)') PMALB 
-      call info(1,errkey,msg)
-C
+
 C    New section
 C
 C    Find header and read second line of field information
@@ -1285,6 +1283,10 @@ C
            CALL ERROR (ERRKEY,2,FILEX,LINEXP)
          ENDIF
          IF (LN .NE. LNFLD) GO TO 71
+      ELSE
+        BEDWD = -99
+        BEDHT = -99
+        PMALB = -99
       ENDIF
 
       IF (BEDWD .LE. 0.0) BEDWD = -99

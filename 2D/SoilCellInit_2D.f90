@@ -114,13 +114,14 @@
     CALL FIND(LUNIO, SECTION, LNUM, FOUND)
     IF (FOUND /= 0)  THEN
       READ(LUNIO,'(79X,2(1x,F5.1), F6.2)',IOSTAT=ERR)BEDWD, BEDHT, PMALB
-     ! READ(LUNIO,'(/,A)', IOSTAT=ERR) CHAR
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
       IF ((ERR == 0) .AND. (PMALB .eq. 0.)) THEN
-        !READ(CHAR,'(92X,F6.2)',IOSTAT=ERR) PMALB
-        !(ERR /= 0) 
         PMALB = -99.
       ENDIF
+    ELSE
+      BEDWD = -99
+      BEDHT = -99
+      PMALB = -99
     ENDIF
 
 !   Read Planting Details Section
@@ -211,13 +212,6 @@
     CALL WARNING(1,ERRKEY,MSG)
     Call PUT('PLANT', 'BEDHT',  BEDHT)
     Call PUT('PLANT', 'BEDWD',  BEDWD)
-
-!    IF (PMCover .AND. PMALB < 1.E-2) THEN ! JZW These should be removed. We set PMCover=true only if PMALB>1.E-2
-!      PMALB = 0.05
-!      WRITE(MSG(1),'(A,F5.2,A)')'Default value of ',PMALB,' used for albedo of plastic mulch.'
-!      MSG(2) ='Actual value can be input in FIELDS section of experiment file.'
-!      CALL WARNING(2,ERRKEY,MSG)
-!    ENDIF
 
 ! ---------------------------------------------------------------------------
 !   Define column dimensions
@@ -442,6 +436,7 @@
       CALL LMATCH (M, DS_shift, SoilProp_Furrow%CACO3  ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
 
       CALL LMATCH_MASS(M, DS_shift, SoilProp_Furrow%TotOrgN,SoilProp_Furrow%NLAYR,SoilProp_Furrow%DS)
+
 !-----------------------------------------------------------------------
       DO M = 1, SoilProp_Furrow%NLAYR
         IF (M == 1) THEN
@@ -489,11 +484,20 @@
       WITHIN_BED = .FALSE.
     ENDIF
 
+!   Initialize some variables to prevent carry-over of info from last run
+    Thick = 0.0
+    Width = 0.0
+    ColFrac = 0.0
+    BedFrac = 0.0
+    Cell_type = 0 
+    CellArea = 0.0
+
     PREV_DEPTH = 0.  !DEPTH is measured from top of bed    !cm 
     L = 1            !Index of original Soil layer before digging
     M = 0            !Index for furrow layers, referenced to bottom of bed
 !   Row is indexed to top of bed and is used for both
 !     cell row depths and SoilProp_Bed layer depths
+
 
     DO Row = 1, MaxRows     !Cell row index
       IF (WITHIN_BED) THEN
@@ -726,7 +730,7 @@
 !      BedDimension % LIMIT_2D = L
 !      EXIT
 !    ENDDO
-!   temp chp
+
     BedDimension % LIMIT_2D = NRowsTot
     BedDimension % ColFrac  = ColFrac
     BedDimension % BedFrac  = BedFrac
@@ -789,6 +793,7 @@
 !------------------------------
     NH4I = NewPropNH4I 
     NO3I = NewPropNO3I 
+
     Return
     End Subroutine CellInit_2D
 !==============================================================================

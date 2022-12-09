@@ -43,9 +43,7 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
       USE Cells_2D
-      USE ModuleDefs 
       USE ModuleData
-      USE FloodModule
 
       IMPLICIT NONE
       EXTERNAL ERROR, FIND, WARNING, INFO, TEXTURECLASS, SOILLAYERCLASS,
@@ -166,15 +164,15 @@ C-----------------------------------------------------------------------
 !     ---------------------------------------------------------------
 !     Composite variables
       TYPE (SoilType)   , INTENT(OUT):: SOILPROP !Soil properties
-      TYPE (CellType)   , INTENT(OUT):: CELLS(MaxRows,MaxCols)
-                                                 !2D soil cell info
       TYPE (MulchType)  , INTENT(IN) :: MULCH    !Surface mulch propert.
       TYPE (SwitchType) , INTENT(IN) :: ISWITCH  !Simulation options 
       TYPE (ControlType), INTENT(IN) :: CONTROL  !Control variables
       TYPE (TillType)   , INTENT(IN) :: TILLVALS !Tillage operation vars
       TYPE (WeatherType), INTENT(IN) :: WEATHER  !Weather variables
+
+!     2d MODEL
+      TYPE (CellType)   , INTENT(OUT):: CELLS(MaxRows,MaxCols)
       TYPE (SoilType) SoilProp_Bed, SoilProp_Furrow, SOILPROP_profile
-!     TYPE (FloodWatType) FLOODWAT
 
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
@@ -909,22 +907,24 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       SOILPROP % COARSE = COARSE
 
-      CALL PRINT_SOILPROP(SOILPROP)
-      
-!    2D:
+!=====================================================================
+!    2D model:
       IF (ISWITCH%MESOL == 'D') THEN  !MESOL = 'D' for 2D raised bed 
         CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, 
      &        SoilProp_Bed, SoilProp_Furrow)
-!       call 
+
         SOILPROP_profile = SOILPROP  !Save original profile info
         SOILPROP = SoilProp_Bed      !this is the new soil profile data
+
         Call SoilLayerClass(ISWITCH, MULTI, SOILPROP%DS, SOILPROP%NLAYR, !Input
      &    SOILPROP%SLDESC, SOILPROP% TAXON, SOILPROP%CaCO3, SOILPROP%PH, !Input
      &    SOILPROP%CEC, SOILPROP%Clay, SOILPROP%SOILLAYERTYPE)           !Output 
 
         CALL SoilLayerText(SOILPROP%DS, SOILPROP%NLAYR, 
      &          SOILPROP%LayerText)
+
         CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP) 
+
 !-----------------------------------------------------------------------
 !    
 !-----------------------------------------------------------------------
@@ -944,6 +944,8 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         TotOrgN= SOILPROP % TotOrgN
         TEXTURE = SOILPROP % TEXTURE
 
+      ELSE
+        CALL PRINT_SOILPROP(SOILPROP)
       ENDIF
 !--------------------------------------------------------------------
 !     Use this to handle plastic mulch for 1D case.
@@ -957,8 +959,6 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       IF (ISWWAT == 'N') RETURN
 
-      CALL PRINT_SOILPROP(SOILPROP)
-      
 !-----------------------------------------------------------------------
 !     Initialization
 C  Designate the CN2, BD, and SWCN values from CROPGRO as the settled
@@ -1856,13 +1856,6 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
           CALL GETLUN('OUTSOL', DLUN)
           OPEN (UNIT=DLUN, FILE=OUTSOL, STATUS='NEW')
           WRITE(DLUN,'("*SOIL DYNAMICS OUTPUT FILE")')
-        ENDIF
-
-!       For sequenced run, use replicate number instead of run number in header.
-        IF (CONTROL % RNMODE .EQ. 'Q') THEN
-          CALL HEADER(SEASINIT, DLUN, CONTROL % REPNO)
-        ELSE
-          CALL HEADER(SEASINIT, DLUN, CONTROL % RUN)
         ENDIF
 
        IF (INDEX('FQ',CONTROL%RNMODE) > 0 .AND. CONTROL%RUN /= 1)RETURN
