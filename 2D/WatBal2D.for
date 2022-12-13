@@ -460,7 +460,6 @@
         continue
       endif
 
-
 !     Convert soil evaporation to volumetric fraction units, 
       ES_mm = CELLS%Rate%ES_rate
 

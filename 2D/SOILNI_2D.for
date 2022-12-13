@@ -36,12 +36,12 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE Cells_2D
-      USE N2O_mod
+      USE GHG_mod
       USE ModuleData
       USE ModSoilMix
       IMPLICIT  NONE
       EXTERNAL SOILNI_INIT_2D, NCHECK_INORG_2D, NFLUX_2D, DENIT_CERES, 
-     &  INCDAT, YR_DOY, DENIT_CERES_2D, SOILNIBAL, SOILNIBAL_2D,OPSOILNI
+     &  INCDAT, YR_DOY, DENIT_CERES_2D, SOILNIBAL_2D,OPSOILNI
 
       SAVE
 !-----------------------------------------------------------------------
@@ -113,7 +113,7 @@ C=======================================================================
 !      data TotN /0.0/
 !      data TotDeltN /0.0/
 
-!     TYPE (N2O_type) N2O_DATA
+      TYPE (N2O_type) N2O_DATA
 !          Cumul,     Daily,    Layer ppm,     Layer kg
       REAL CNOX,      TNOXD,                   DENITRIF(MaxRows,MaxCols) !Denitrification
       REAL CNITRIFY,  TNITRIFY, NITRIFppm,     NITRIF(MaxRows,MaxCols)   !Nitrification 
@@ -146,6 +146,23 @@ C=======================================================================
       TYPE (WeatherType) WEATHER
       Type (CellType) Cells(MaxRows,MaxCols)
       !TYPE (CellStrucType) Struc(MaxRows,MaxCols)
+
+      INTERFACE
+        SUBROUTINE SoilNiBal(CONTROL, ISWITCH, 
+     &      ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &      N2O_data) 
+          USE GHG_mod
+          USE FertType_mod
+          TYPE (ControlType), INTENT(IN) :: CONTROL
+          TYPE (SwitchType),  INTENT(IN) :: ISWITCH
+          TYPE (FertType),    INTENT(IN) :: FertData
+          TYPE (N2O_type), INTENT(IN), OPTIONAL :: N2O_DATA
+          INTEGER, INTENT(IN) :: NBUND
+          REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
+        END SUBROUTINE SoilNiBal
+      END INTERFACE
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -903,16 +920,13 @@ C=======================================================================
 !         TOTAML is not assigned yet. It should be sum of cell value when assign
 
 !**********************************************************************************
-!     temp chp - can't get rid of error with N2O_data declaration. For now
-!         comment this call out
-!        CALL SoilNiBal (CONTROL, ISWITCH,
-!     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-!     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
-!     &    N2O_data) 
-        Call SoilNiBal_2D (CONTROL, ISWITCH, 
+        CALL SoilNiBal (CONTROL, ISWITCH, 
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, TOTAML, TUREA, WTNUP,
-!         for cell detail output:
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    N2O_data) 
+
+        Call SoilNiBal_2D (CONTROL, ISWITCH, 
+     &    FERTDATA, TNH4, TNO3, TUREA,   
      &    Cells, DENITRIF, IMM, MNR) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
@@ -949,16 +963,13 @@ C     Write daily output
 !     &    FertData, NH4_2D, NO3_2D, 
 !     &    CLeach, TNH4, TNH4NO3, TNO3, TNOXD, TOTAML)
 !**********************************************************************************
-!     temp chp - can't get rid of error with N2O_data declaration. For now
-!         comment this call out
-!      CALL SoilNiBal (CONTROL, ISWITCH,
-!     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-!     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
-!     &	  N2O_data) 
-        Call SoilNiBal_2D (CONTROL, ISWITCH, 
+        CALL SoilNiBal (CONTROL, ISWITCH, 
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, TOTAML, TUREA, WTNUP,
-!         for cell detail output:
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    N2O_data) 
+
+        Call SoilNiBal_2D (CONTROL, ISWITCH, 
+     &    FERTDATA, TNH4, TNO3, TUREA,   
      &    Cells, DENITRIF, IMM, MNR) 
 
 !      CALL ArrayHandler(CELLS,CONTROL,SOILPROP,SNO3_2D,"NO3",0.0,200.)

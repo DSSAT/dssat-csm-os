@@ -21,35 +21,39 @@ C  03/04/2005 CHP wrote based on SoilNBal
       EXTERNAL YR_DOY, INCDAT, GETLUN, HEADER
       SAVE
 !     ------------------------------------------------------------------
+      TYPE (ControlType), INTENT(IN) :: CONTROL
+      TYPE (SwitchType),  INTENT(IN) :: ISWITCH
+      TYPE (FertType),    INTENT(IN) :: FertData
+      TYPE (N2O_type), INTENT(IN), OPTIONAL :: N2O_DATA
+
+      INTEGER, INTENT(IN) :: NBUND
+      REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,   
+     &  CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
       LOGICAL FEXIST
 
       CHARACTER*1  IDETN, IDETL, ISWNIT
       CHARACTER*13, PARAMETER :: SNiBAL = 'SoilNiBal.OUT'
 
       INTEGER DAS, DYNAMIC, INCDAT, YRDOY, I
-      INTEGER YRSIM, RUN, LUNSNC, NBUND
+      INTEGER YRSIM, RUN, LUNSNC
       INTEGER YR, DOY, YRI, DOYI
 
-      REAL ALGFIX, ALGFIXI, AMTFER, TALLN, TALLNI, CLeach, TNH4, TNH4I,
-     &  TNO3, TNO3I,  TUREA, TUREAI, WTNUP, CNTILEDR   !HJ added
-      REAL TOTAML, CUMFNRO, TOTFLOODN, TOTFLOODNI
+      REAL ALGFIXI, AMTFER, TALLN, TALLNI, TNH4I, TNO3I, TUREAI
+      REAL TOTFLOODNI
       REAL STATEN, BALANCE
-      REAL LCHTODAY, NTILEDRTODAY, IMMOBTODAY, MINERTODAY !HJ
+      REAL LCHTODAY, NTILEDRTODAY, IMMOBTODAY, MINERTODAY
       REAL WTNUPTODAY, AMLTODAY, FNROTODAY, AMTFERTODAY
       REAL N2Otoday, N2today, NOtoday
-      REAL CLeachY, TNTILEDRY, WTNUPY, CIMMOBY, CMINERY !HJ
+      REAL CLeachY, TNTILEDRY, WTNUPY, CIMMOBY, CMINERY 
       REAL TOTAMLY, CUMFNROY, AMTFERY
       REAL TOTSTATE, TOTADD, TOTSUB, DAYBAL, TOTSTATY, CUMBAL
-      REAL CIMMOBN, CMINERN, NGasLoss, TNGSOILI
+      REAL NGasLoss, TNGSOIL, TNGSOILI, TotNEmitted,
+     &    CN2O_emitted, CN2_emitted, CNO_emitted 
 
       REAL N2OY, N2Y, NOY
       REAL UnreleasedN  !Slow release fertilizer
 
 !     ------------------------------------------------------------------
-      TYPE (ControlType) CONTROL
-      TYPE (SwitchType)  ISWITCH
-      TYPE (FertType)    FertData
-      TYPE (N2O_type)    N2O_DATA
 
 !     ------------------------------------------------------------------
 !     Return if detail not requested.
@@ -94,7 +98,14 @@ C  03/04/2005 CHP wrote based on SoilNBal
       TNO3I  = TNO3
       TNH4I  = TNH4
       TUREAI = TUREA
-      TNGSOILI = N2O_DATA % TNGSoil
+
+      IF (PRESENT(N2O_DATA)) THEN
+        TNGSOIL  = N2O_DATA % TNGSoil
+        TNGSOILI = TNGSoil
+      ELSE
+        TNGSOIL  = 0.0
+        TNGSOILI = 0.0
+      ENDIF
 
 !     Sum the initial value of all abiotic N pools (soil, air)
       TALLNI = TNO3I + TNH4I + TUREA + TNGSOILI
@@ -131,13 +142,13 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &   'FIX  UNFERT   AFERT  AMINER  RIMMOB    RLCH    RLTD    RNUP',
      &   '    RNRO    RAML   N2OED    N2ED    NOED      DBAL      CBAL')
         WRITE (LUNSNC,50) YR, DOY, 0, 
-     &    TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 0.0,
+     &    TNO3, TNH4, TUREA, TNGSoil, TOTFLOODN, ALGFIX, 0.0,
      &    0.0, 0.0, 
      &    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
       ENDIF
 
       TOTSTATY = TNO3I + TNH4I + TUREAI + ALGFIXI + TOTFLOODNI 
-     &            + N2O_DATA % TNGSoil
+     &            + TNGSoil
 !     FLOODNY  = TOTFLOODNI
 
       CALL SoilNBalSum (CONTROL, N_inorganic=TOTSTATY)
@@ -163,9 +174,16 @@ C  03/04/2005 CHP wrote based on SoilNBal
       WTNUPTODAY = (WTNUP - WTNUPY) * 10.  
       FNROTODAY  = CUMFNRO - CUMFNROY
       AMLTODAY   = TOTAML - TOTAMLY
-      N2Otoday   = N2O_data % CN2O_emitted - N2OY
-      N2today    = N2O_data % CN2_emitted  - N2Y 
-      NOtoday    = N2O_data % CNO_emitted  - NOY
+
+      IF (PRESENT(N2O_data)) THEN
+        N2Otoday   = N2O_data % CN2O_emitted - N2OY
+        N2today    = N2O_data % CN2_emitted  - N2Y 
+        NOtoday    = N2O_data % CNO_emitted  - NOY
+      ELSE
+        N2Otoday   = 0.0
+        N2today    = 0.0
+        NOtoday    = 0.0
+      ENDIF
 
 !     FLOODNTODAY = TOTFLOODN - FLOODNY
 
@@ -181,7 +199,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       ENDIF
 
       TOTSTATE = TNO3 + TNH4 + TUREA + ALGFIX + TOTFLOODN 
-     &         + N2O_DATA % TNGSoil + UnreleasedN
+     &         + TNGSoil + UnreleasedN
       TOTADD   = AMTFERTODAY + MINERTODAY
       TOTSUB   = IMMOBTODAY + LCHTODAY + WTNUPTODAY + FNROTODAY 
      &         + AMLTODAY + N2Otoday + N2today + NOtoday
@@ -193,7 +211,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       CALL YR_DOY(YRDOY, YR, DOY)
 !     Write daily output to SoilNiBal.OUT.
       WRITE (LUNSNC,50) YR, DOY, DAS, 
-     &  TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 
+     &  TNO3, TNH4, TUREA, TNGSoil, TOTFLOODN, ALGFIX, 
      &  UnreleasedN,
      &  AMTFERTODAY, MINERTODAY, 
      &  IMMOBTODAY, LCHTODAY, NTILEDRTODAY, WTNUPTODAY, !HJ
@@ -210,9 +228,17 @@ C  03/04/2005 CHP wrote based on SoilNBal
       WTNUPY   = WTNUP
       CUMFNROY = CUMFNRO
       TOTAMLY  = TOTAML
-      N2OY     = N2O_data % CN2O_emitted
-      N2Y      = N2O_data % CN2_emitted 
-      NOY      = N2O_data % CNO_emitted 
+
+      IF (PRESENT(N2O_data)) THEN
+        N2OY = N2O_data % CN2O_emitted
+        N2Y  = N2O_data % CN2_emitted 
+        NOY  = N2O_data % CNO_emitted 
+      ELSE
+        N2OY  = 0.0
+        N2Y   = 0.0
+        NOY   = 0.0
+      ENDIF
+
       TOTSTATY = TOTSTATE
 
 !***********************************************************************
@@ -248,7 +274,18 @@ C  03/04/2005 CHP wrote based on SoilNBal
         ENDIF
 
 !       Sum state N at end of season
-        STATEN = TNO3 + TNH4 + TUREA + N2O_DATA % TNGSoil + UnreleasedN
+        STATEN = TNO3 + TNH4 + TUREA + TNGSoil + UnreleasedN
+
+        IF (PRESENT(N2O_data)) THEN
+          CN2O_emitted = N2O_data % CN2O_emitted
+          CN2_emitted  = N2O_data % CN2_emitted
+          CNO_emitted  = N2O_data % CNO_emitted 
+        ELSE
+          CN2O_emitted = 0.0
+          CN2_emitted  = 0.0
+          CNO_emitted  = 0.0 
+        ENDIF
+        TotNEmitted = CN2O_emitted + CN2_emitted + CNO_emitted
 
 !       Sum the initial value of all abiotic N pools (soil, air,
 !       fertilizer), SOM and N uptake (WTNUP multiplied by 10 to
@@ -259,15 +296,14 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !    &          CLeach + CNOX + WTNUP * 10. +       !Losses
 !    &          TOTAML + CIMMOBN           !Losses
 !               HJ adeed CNTILEDR
-     &          CIMMOBN + CLeach + CNTILEDR + WTNUP * 10. + TOTAML +       
-     &          N2O_data % CN2O_emitted + N2O_data % CN2_emitted + 
-     &          N2O_data % CNO_emitted     
+     &          CIMMOBN + CLeach + CNTILEDR + WTNUP * 10. + TOTAML +
+     &          TotNEmitted     
 
 !       Write output to NBAL.OUT.
         WRITE (LUNSNC,100) YRI, DOYI, YR, DOY
 
         WRITE (LUNSNC, 200) TNO3I, TNO3, TNH4I, TNH4, TUREAI, TUREA
-        WRITE (LUNSNC, 210) TNGSOILI, N2O_DATA % TNGSoil,
+        WRITE (LUNSNC, 210) TNGSOILI, TNGSoil,
      &        UnreleasedN
 
         IF (NBUND .GT. 0) THEN
@@ -278,8 +314,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !       HJ adeed CNTILEDR
         WRITE (LUNSNC,600) AMTFER, CMINERN, 
      &    CIMMOBN, CLeach, CNTILEDR, WTNUP * 10., TOTAML, 
-     &    N2O_data % CN2O_emitted, N2O_data % CN2_emitted,
-     &    N2O_data % CNO_emitted 
+     &    CN2O_emitted, CN2_emitted, CNO_emitted 
 
         IF (NBUND .GT. 0) THEN
           TALLN = TALLN + CUMFNRO     !Factor in runoff over bund
@@ -332,8 +367,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
 800     FORMAT (/,'!',3X, 'Total N balance',  T48, F10.2, T68, F10.2)
 900     FORMAT (  '!',3X,'Balance',                       T68, F10.3)
 
-      NGasLoss = TOTAML + N2O_data % CN2O_emitted +
-     &    N2O_data % CN2_emitted + N2O_data % CNO_emitted
+      NGasLoss = TOTAML + TotNEmitted
+
 !     HJ added CNTILEDR
       CALL SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, 
