@@ -41,7 +41,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
       REAL ALGFIXI, AMTFER, TALLN, TALLNI, TNH4I, TNO3I, TUREAI
       REAL TOTFLOODNI
       REAL STATEN, BALANCE
-      REAL LCHTODAY, NTILEDRTODAY, IMMOBTODAY, MINERTODAY
+
+      REAL LCHTODAY, NTILEDRTODAY, IMMOBTODAY, MINERTODAY !HJ
       REAL WTNUPTODAY, AMLTODAY, FNROTODAY, AMTFERTODAY
       REAL N2Otoday, N2today, NOtoday
       REAL CLeachY, TNTILEDRY, WTNUPY, CIMMOBY, CMINERY 
@@ -52,8 +53,6 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       REAL N2OY, N2Y, NOY
       REAL UnreleasedN  !Slow release fertilizer
-
-!     ------------------------------------------------------------------
 
 !     ------------------------------------------------------------------
 !     Return if detail not requested.

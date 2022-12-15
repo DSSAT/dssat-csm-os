@@ -1171,7 +1171,9 @@ C=======================================================================
       IF (SFDRN .LE. 0.0) THEN
         SFDRN = 100.
       ENDIF
-
+      Write(msg(1),'("Plastic mulch cover albedo =",F7.2)') PMALB 
+      call info(1,errkey,msg)
+C
 C    New section
 C
 C    Find header and read second line of field information

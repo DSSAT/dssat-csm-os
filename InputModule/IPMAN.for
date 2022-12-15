@@ -110,21 +110,6 @@ C
             IF (IAMEX(1:3) .EQ. '-99' .OR. IAMEX(3:5) .EQ. '-99')
      &          IAMEX = 'IR001'
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-
-!!           Read optional drip irrigation emitter spacing
-!            READ (CHARTEST,'(45X,I6)',IOSTAT=ERRNUM) DripLnNum
-!            IF (ERRNUM .NE. 0) DripLnNum = -99.
-!            !READ (CHARTEST,'(44X,F6.0)',IOSTAT=ERRNUM) DripSpc
-!            READ (CHARTEST,'(45X,F6.0)',IOSTAT=ERRNUM) DripSpc
-!            IF (ERRNUM .NE. 0) DripSpc = -99.
-!!           Read optional drip irrigation emitter offset from center of bed
-!            !READ (CHARTEST,'(50X,F6.0)',IOSTAT=ERRNUM) DripOfset
-!            READ (CHARTEST,'(51X,F6.0)',IOSTAT=ERRNUM) DripOfset
-!            IF (ERRNUM .NE. 0) DripOfset = 0.
-!!            Read optional drip irrigation emitter depth from surface of bed
-!            READ (CHARTEST,'(57X,F6.0)',IOSTAT=ERRNUM) DripDep
-!            !READ (CHARTEST,'(56X,F6.0)',IOSTAT=ERRNUM) DripDep
-!!            IF (ERRNUM .NE. 0) DripDep = 0.
          ELSE
             CALL ERROR (ERRKEY,2,FILEX,LINEXP)
          ENDIF

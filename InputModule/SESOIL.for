@@ -31,7 +31,7 @@ C=======================================================================
      &     SWCON,CN2,SALB,DEPMAX,PEDON,SLNO,SLTX,LL,DUL,SAT,WR,BD,OC,PH,
      &     DLAYR,NLAYR,DS,LNIC,LNSA,YRIC,PRCROP,WRESR,WRESND,EFINOC,
      &     EFNFIX,PATHSL,SWINIT,INO3,INH4,EXTP,
-     &     ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,SWCN,ADCOEF,TOTN,YRSIM,
+     &     ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,SWCN,ADCOEF,TOTN,  !YRSIM,
      &     SMPX, EXK, PHKCL, SMHB, SMKE, ISWITCH)
 
       USE ModuleDefs
@@ -46,7 +46,7 @@ C=======================================================================
       CHARACTER*80 PATHSL
       CHARACTER*92 FILESS,FILEX_P
 
-      INTEGER      MENU,NSENS,NLAYR,NLOOP,LNIC,LNSA,YRIC,PATHL,I,YRSIM
+      INTEGER      MENU,NSENS,NLAYR,NLOOP,LNIC,LNSA,YRIC,PATHL,I !,YRSIM
       LOGICAL      FEXIST
 
       REAL         LL(NL),DUL(NL),SAT(NL),BD(NL),WR(NL),PH(NL)

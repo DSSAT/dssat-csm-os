@@ -244,8 +244,6 @@ C=======================================================================
      &  R30C2, RCH2O, RES30C, RFIXN, RLIG, RLIP, RMIN,    !Output
      &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX)    !Output
 
-!      Call PUT('PLANT', 'BEDHT',  BEDHT)
-!      Call PUT('PLANT', 'BEDWD',  BEDWD)
       KTRANS = KEP
       KSEVAP = -99.   !Defaults to old method of light
                       !  extinction calculation for soil evap.

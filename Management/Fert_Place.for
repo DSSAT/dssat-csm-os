@@ -48,6 +48,8 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT  NONE
+      EXTERNAL INCDAT, YR_DOY, ERROR, FIND, TIMDIF, WARNING, 
+     &  FERTLAYERS, FERTAPPLY, IDLAYR
       SAVE
 !     ------------------------------------------------------------------
 
@@ -667,6 +669,7 @@ C=======================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL IDLAYR, WARNING
       SAVE
 
 !     ------------------------------------------------------------------

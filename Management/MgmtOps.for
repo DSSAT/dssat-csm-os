@@ -385,7 +385,7 @@ C     ModuleDefs.for.
       TYPE (SoilType)     SOILPROP
       TYPE (FertType)     FERTDATA
       TYPE (OrgMatAppType)OMAData
-      Type (ResidueType)  HARVRES  
+      Type (ResidueType)  HARVRES
 
       CROP    = CONTROL % CROP 
       DAS     = CONTROL % DAS 

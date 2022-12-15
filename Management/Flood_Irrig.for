@@ -23,6 +23,7 @@ C=======================================================================
       USE ModuleDefs
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL INCDAT, SW_DEF, WARNING, ERROR
       SAVE
 
       CHARACTER*1 IIRRI
@@ -113,7 +114,7 @@ C-----------------------------------------------------------------------
             ENDIF
           ENDDO
 
-!          !Convert water table dates
+!          Convert water table dates
 !          DO K = 1, NTBL
 !            IF (IIRRI .EQ. 'D') THEN
 !              WTDAT(J) = INCDAT(YRPLT, JULWTB(K))

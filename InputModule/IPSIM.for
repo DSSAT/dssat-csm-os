@@ -76,8 +76,8 @@ C=======================================================================
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
 !     REAL LDIFF, PREV_LINEXP
-      REAL V_AVWAT(20)    
 !     Vectors to save growth stage based irrigation
+      REAL V_AVWAT(20)    
       REAL V_IMDEP(20)
       REAL V_ITHRL(20)
       REAL V_ITHRU(20), IFREQ

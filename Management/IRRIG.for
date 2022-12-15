@@ -46,6 +46,8 @@ C=======================================================================
       USE FloodModule
       USE Cells_2D
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, FIND, TIMDIF, SWDEFICIT, WARNING, 
+     &  FLOOD_IRRIG
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*6 ERRKEY
@@ -98,13 +100,13 @@ C=======================================================================
       INTEGER DaysSinceIrrig
 
       INTEGER IRRFREQ     
-	REAL AVWATT         ! Water available for irrigation today (mm)
-	INTEGER NGSIrrigs   ! # of irrigation inputs entered by the user
-	INTEGER IRINC       ! Counter for irrigation input been used
-	REAL THETAU         ! Threshold, % of avail water upper
+        REAL AVWATT         ! Water available for irrigation today (mm)
+        INTEGER NGSIrrigs   ! # of irrigation inputs entered by the user
+        INTEGER IRINC       ! Counter for irrigation input used
+        REAL THETAU         ! Threshold, % of avail water to end irrig
       INTEGER NWaterLimits !Number of water limit entrees
-      LOGICAL SeasonalWL  ! Water limitation n
-      REAL GSWatUsed      ! Water used so far in current growth stage
+      LOGICAL SeasonalWL  ! Water limitation
+      REAL GSWatUsed      ! Water used to date in current growth stage
       REAL, PARAMETER :: VeryLargeNumber = 99999999.
 
 !     ET-based auto-irrig
@@ -355,15 +357,15 @@ C-----------------------------------------------------------------------
 !        ENDIF
 
 !     Import array values for growth stage based irrigation directly from input module
-      IMDEP = SAVE_data % MGMT % V_IMDEP ! Depth
-      ITHRL = SAVE_data % MGMT % V_ITHRL ! Lower threshold trigger irrig
-      ITHRU = SAVE_data % MGMT % V_ITHRU ! Upper threshold irrigation
-      IRONC = SAVE_data % MGMT % V_IRONC ! IRON in text (for compatibil)
-      IRON  = SAVE_data % MGMT % V_IRON  ! Growth Stage for parameters
-      IRAMT = SAVE_data % MGMT % V_IRAMT ! Auto irrigation fixed amt
-      IREFF = SAVE_data % MGMT % V_IREFF ! Irrigation Efficiency frac
-      AVWATI =SAVE_data % MGMT % V_AVWAT ! Water avail for irrigation
-      IFREQ = SAVE_data % MGMT % V_IFREQ ! Frequency limit for irrig
+      IMDEP = SAVE_data % MGMT % V_IMDEP   !Depth
+      ITHRL = SAVE_data % MGMT % V_ITHRL   !Lower thresh trigger irrig
+      ITHRU = SAVE_data % MGMT % V_ITHRU   !Upper thresh trigger irrig
+      IRONC = SAVE_data % MGMT % V_IRONC   !IRON in text (for compatib)
+      IRON  = SAVE_data % MGMT % V_IRON    !Growth Stage for parameters
+      IRAMT = SAVE_data % MGMT % V_IRAMT   !Auto irrigation fixed amt
+      IREFF = SAVE_data % MGMT % V_IREFF   !Irrigation Efficiency frac
+      AVWATI =SAVE_data % MGMT % V_AVWAT   !Water available for irrig
+      IFREQ = SAVE_data % MGMT % V_IFREQ   !Frequency limit for irrig
       NGSIrrigs  =SAVE_data % MGMT % GSIRRIG
 
 !-----------------------------------------------------------------------
@@ -373,7 +375,7 @@ C-----------------------------------------------------------------------
       NWaterLimits = 0
       DO i = 1, NGSIrrigs
         IF (ABS(AVWATI(i) - -99.) < 1.E-3) THEN
-          AVWATI(i) = VeryLargeNumber  !no limitation
+          AVWATI(i) = VeryLargeNumber  !Set to something huge, no limit
         ELSE
           NWaterLimits = NWaterLimits + 1
         ENDIF
@@ -1198,11 +1200,11 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Transfer data to ModuleData
-      CALL PUT('MGMT','DEPIR', DEPIR)   
-      CALL PUT('MGMT','IRRAMT',IRRAMT)
-      CALL PUT('MGMT','TOTIR', TOTIR) 
+      CALL PUT('MGMT','DEPIR', DEPIR)  
+      CALL PUT('MGMT','IRRAMT',IRRAMT) 
+      CALL PUT('MGMT','TOTIR', TOTIR)  
       CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) 
-      CALL PUT('MGMT','EFFIRR',EFFIRR)
+      CALL PUT('MGMT','EFFIRR',EFFIRR) 
 
 ! DEPIR     = Total applied irrig amt today (mm) (includes losses)
 ! IRRAMT    = Effective irrig amt today (mm)

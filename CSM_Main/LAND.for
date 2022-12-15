@@ -30,6 +30,7 @@ C-----------------------------------------------------------------------
       USE FloodModule      
       USE CsvOutput   ! VSH 
       USE Cells_2D
+
       IMPLICIT NONE
       EXTERNAL INFO, ERROR, WARNING, IPIBS, WEATHR, SOIL, SPAM, PLANT, 
      &  OPSUM, MGMTOPS, SPAM_2D
@@ -286,33 +287,6 @@ C-----------------------------------------------------------------------
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
       END SELECT
-
-!<<<<<<< HEAD
-!C-----------------------------------------------------------------------
-!C     Seasonal initialization for soil processes
-!C-----------------------------------------------------------------------
-!      CALL SOIL(CONTROL, ISWITCH, 
-!     &    EOP, ES, FERTDATA, HARVRES, IRRAMT, KTRANS,     !Input
-!     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-!     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-!     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-!     &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-!     &    SomLitC, SomLitE,                               !Output
-!     &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-!     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
-!=======
-!C-----------------------------------------------------------------------
-!C     Seasonal initialization for soil processes
-!C-----------------------------------------------------------------------
-!      CALL SOIL(CONTROL, ISWITCH, 
-!     &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-!     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
-!     &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
-!     &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
-!     &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-!     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
-!     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
-!>>>>>>> develop
 
 C-----------------------------------------------------------------------
 C     Initialize PLANT routines (including phenology and pest)
