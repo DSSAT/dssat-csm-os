@@ -149,20 +149,6 @@ C
       ENDIF
 
       CLOSE (LUNEXP)
-      
-       !Force input depths to go to bottom of profile
-        IF (NLAYRI == 1) THEN
-          DLAYRI(NLAYRI) = DS(NLAYR)
-          INH4(NLAYRI) = 0.0
-          INO3(NLAYRI) = 0.0
-          NLAYRI = NLAYRI + 1
-        ELSEIF (DLAYRI(NLAYRI - 1) < DS(NLAYR)) THEN
-          DLAYRI(NLAYRI) = DS(NLAYR)
-          INH4(NLAYRI) = 0.0
-          INO3(NLAYRI) = 0.0
-          NLAYRI = NLAYRI + 1
-        ENDIF
-      
       NLAYRI = NLAYRI - 1
 
 !     Match layers first!
