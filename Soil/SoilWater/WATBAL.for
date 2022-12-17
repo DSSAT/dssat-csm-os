@@ -270,7 +270,7 @@ C     Conflict with CERES-Wheat
 !     Rates not calculated unless water switch is on.
       IF (ISWWAT .NE. 'Y') RETURN
 
-!     Maintain water table depth acn calculate capillary rise
+!     Maintain water table depth and calculate capillary rise
       IF (FLOOD < 1.E-6) THEN
         Call WaterTable(RATE,   
      &    SOILPROP,  SWDELTU,                             !Input
