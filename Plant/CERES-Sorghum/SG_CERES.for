@@ -47,6 +47,9 @@ C----------------------------------------------------------------------
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL FIND,GETLUN,YR_DOY,ERROR,HRES_CERES,IGNORE,SG_PHENOL,
+     &  SG_GROSUB,MZ_OPGROW,MZ_OPNIT,SG_OPHARV,PEST,SG_ROOTGR
+
       SAVE
 
       REAL            AGEFAC

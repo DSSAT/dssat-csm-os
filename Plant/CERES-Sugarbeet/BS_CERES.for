@@ -20,16 +20,17 @@
 
 
       SUBROUTINE BS_CERES (CONTROL, ISWITCH,              !Input
-     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
-     &     SPi_AVAIL, SNOW,                               !Input
+     &     EOP, HARVFRAC, NH4, NO3, SPi_AVAIL, SNOW,      !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, MDATE,              !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
-     &     STGDOY, FracRts, XLAI, XHLAI)       !Output
+     &     STGDOY, FracRts, XLAI, XHLAI)                  !Output
 
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, HRES_CERES, PEST, BS_PHENOL, BS_GROSUB, 
+     &  BS_ROOTGR, BS_OPGROW, BS_OPNIT, BS_OPHARV
       SAVE
 
 !----------------------------------------------------------------------
@@ -47,7 +48,7 @@
 !      REAL            CNSD1    
 !      REAL            CNSD2    
       REAL            CO2      
-      CHARACTER*2     CROP   
+      CHARACTER*2     CROP  
       REAL            CUMDEP      
       REAL            CUMDTT    
       REAL            DAYL 
@@ -63,7 +64,7 @@
       REAL            ESW(NL)     
       CHARACTER*30    FILEIO
       INTEGER         FROP    
-      REAL            GDDAE
+!     REAL            GDDAE
       REAL            GNUP      
       REAL            GPP    
       REAL            GPSM     
@@ -107,9 +108,9 @@
       REAL            PODWT   
       REAL            PORMIN  
       REAL            PLTPOP    
-      REAL            PEAR
+!     REAL            PEAR
 C      REAL            PRLF
-      REAL            PSTM
+!     REAL            PSTM
       REAL            PTF        
       REAL            RLV(NL)   
       REAL            RLWR      
@@ -178,7 +179,7 @@ C      REAL            PRLF
       INTEGER         YREMRG   
       INTEGER         YRPLT 
       INTEGER         YRSIM    
-	REAL            Z2STAGE
+!     REAL            Z2STAGE
 
 !     Added by W.D.B. for pest damage at CIMMYT 4/14/2001
 
@@ -198,7 +199,7 @@ C      REAL            PRLF
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
 
 !     Added for K model   
-      REAL SKi_AVAIL(NL)
+!     REAL SKi_AVAIL(NL)
 
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -299,26 +300,26 @@ C----------------------------------------------------------------------
           !-------------------------------------------------------------
           !Call phenology routine
           !-------------------------------------------------------------
-            CALL BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,             !C
-     &      CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
-     &      SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
-     &      XN,YRDOY,YRSIM,                                         !I
-     &      CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &      XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &      SeedFrac, VegFrac)                                      !O
+            CALL BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,              !C
+     &        CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
+     &        SNOW, SRAD,SW,TMAX,TMIN, TWILEN,                        !I
+     &        XN,YRDOY,YRSIM,                                         !I
+     &        CUMDTT,DTT,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT,      !O
+     &        XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &        SeedFrac, VegFrac)                                      !O
 
 
           !-------------------------------------------------------------
           !Call growth routine
           !-------------------------------------------------------------
           CALL BS_GROSUB (DYNAMIC, ISWITCH, 
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      ASMDOT, CO2, DLAYR, DS, DTT, EOP, FILEIO,         !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
-     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
+     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, VegFrac,         !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -401,22 +402,22 @@ C-----------------------------------------------------------------------
 !         CHP 5/18/2011
           MDATE      = -99      
 
-            CALL BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,             !C
-     &      CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
-     &      SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
-     &      XN,YRDOY,YRSIM,                                         !I
-     &      CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &      XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &      SeedFrac, VegFrac)                                      !O
+            CALL BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,               !C
+     &        CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
+     &        SNOW, SRAD,SW,TMAX,TMIN, TWILEN,                        !I
+     &        XN,YRDOY,YRSIM,                                         !I
+     &        CUMDTT,DTT,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT,      !O
+     &        XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &        SeedFrac, VegFrac)                                      !O
 
           CALL BS_GROSUB (DYNAMIC, ISWITCH, 
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      ASMDOT, CO2, DLAYR, DS, DTT, EOP, FILEIO,         !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
-     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
+     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, VegFrac,         !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -508,9 +509,9 @@ C----------------------------------------------------------------------
           IF (CROP .NE. 'FA') THEN
               CALL BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,             !C
      &        CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
-     &        SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+     &        SNOW, SRAD,SW,TMAX,TMIN, TWILEN,                        !I
      &        XN,YRDOY,YRSIM,                                         !I
-     &        CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &        CUMDTT,DTT,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT,      !O
      &        XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &        SeedFrac, VegFrac)                                      !O
 
@@ -522,13 +523,13 @@ C----------------------------------------------------------------------
         IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN  
 
           CALL BS_GROSUB (DYNAMIC, ISWITCH, 
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      ASMDOT, CO2, DLAYR, DS, DTT, EOP, FILEIO,         !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
-     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
+     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, VegFrac,         !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -574,13 +575,13 @@ C----------------------------------------------------------------------
 
         IF (YRDOY .GE. YRPLT) THEN
           CALL BS_GROSUB (DYNAMIC, ISWITCH, 
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      ASMDOT, CO2, DLAYR, DS, DTT, EOP, FILEIO,         !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
-     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
+     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, VegFrac,         !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -638,13 +639,13 @@ C----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
 
           CALL BS_GROSUB (DYNAMIC, ISWITCH, 
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      ASMDOT, CO2, DLAYR, DS, DTT, EOP, FILEIO,         !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
-     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
+     &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, VegFrac,         !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output

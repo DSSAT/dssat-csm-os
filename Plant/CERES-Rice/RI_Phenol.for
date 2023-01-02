@@ -32,6 +32,10 @@ C=======================================================================
       USE FloodModule    ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE 
+      EXTERNAL FIND,GETLUN,WARNING,YR_DOY,STNAMEFILL,RI_IPPHEN,
+     &  PHASEINIT,RICEINIT,TRNSPL_PHENOL,RI_STRESS,TOPTD,TFERT,
+     &  INCDAT,ERROR
+
       SAVE
       
       CHARACTER ISWWAT*1,ISWNIT*1,IDETO*1,PLME*1
@@ -44,7 +48,8 @@ C=======================================================================
       INTEGER LEAFNO, MDATE, NDAS, NDAT, NLAYR
       INTEGER YR, YRPLT, YRSIM, YRSOW
 
-      REAL TOPTMX, TOPTD, TOPTDX, TDELAYMX, TMPNPI, TMPNFL, TMPXFL   ! NEW VARIABLE TO BE READ IN SPP FILE
+!     NEW VARIABLE TO BE READ IN SPP FILE
+      REAL TOPTMX, TOPTD, TOPTDX, TDELAYMX, TMPNPI, TMPNFL, TMPXFL   
       REAL AGEFAC, ATEMP, BIOMAS, CDTT_TP, CNSD1, CNSD2, CSD1, CSD2
       REAL CUMDEP, CUMDTT, CUMTMP, DTT, FERTILE
 
@@ -241,7 +246,8 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IF (TF_GRO) THEN
-         !TOPT = TOPT            !  MADE TOPT -- CROP SPECIFIC G4 > 1 FOR HEAT SENSITIVE CUL Mar17
+!         MADE TOPT -- CROP SPECIFIC G4 > 1 FOR HEAT SENSITIVE CUL Mar17
+         !TOPT = TOPT            
          !TOPTMX = TOPTMX
          !tmax = 55.0   ! high temp test mar17
           !TMIN = 32.0 !
@@ -304,7 +310,8 @@ C=======================================================================
              TH = TBASE
              ENDIF
              IF (TH .GT. TOPTMX) THEN
-                TH = TOPT - (TH - TOPT)  !Development delay VARIABLE FOR SPP FILE MAR17
+!               Development delay VARIABLE FOR SPP FILE MAR17
+                TH = TOPT - (TH - TOPT)  
              ELSEIF (TH .GT. TOPT .AND. TH .LE. TOPTMX) THEN
                 TH = TOPT
              ENDIF
@@ -322,7 +329,8 @@ C=======================================================================
             ELSEIF(ISTAGE .EQ. 3) THEN
                 DTT    = AMIN1 ((DTT * PHEFAC**1.33),TMPDTT)
             ELSEIF (ISTAGE .GT. 3 .AND. ISTAGE .LT. 6) THEN
-                DTT = DTT * AMIN1 (1.5,(1.5 - PHEFAC))   !need to check mar17
+!               need to check mar17
+                DTT = DTT * AMIN1 (1.5,(1.5 - PHEFAC))   
                 DTT = AMAX1 (DTT, TMPDTT)
             ENDIF
          ENDIF
@@ -542,9 +550,11 @@ C=======================================================================
              ENDIF
 !            IF (TMPI .LT. TMPNPI*G5) THEN  ! AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
 !               IF (TN .GT. TMPNPI*G5) THEN
-             IF (TMPI .LT. TCLDP) THEN  ! AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
+!            AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
+             IF (TMPI .LT. TCLDP) THEN  
                 IF (TN .GT. TCLDP) THEN
-                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
+!                  CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
+                   IDUR1 = IDUR1 + 1  
                 ENDIF
                 RETURN
              ENDIF
@@ -598,7 +608,8 @@ C=======================================================================
    
 !            IF (TCANOPY .LE. TMPNFL*G5) THEN    !TMPMNFL CRITICAL LOW TEMP FOR STERILITY SPP FILE MAR17
 !               CUMTMP = CUMTMP + (TMPNFL*G5-TCANOPY)
-             IF (TCANOPY .LE. TCLDF) THEN    !TMPMNFL CRITICAL LOW TEMP FOR STERILITY SPP FILE MAR17
+!            TMPMNFL CRITICAL LOW TEMP FOR STERILITY SPP FILE MAR17
+             IF (TCANOPY .LE. TCLDF) THEN    
                 CUMTMP = CUMTMP + (TCLDF-TCANOPY)
              ENDIF
           ENDIF

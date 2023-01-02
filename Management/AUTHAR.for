@@ -25,6 +25,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, FIND, TIMDIF, GETLUN, WARNING, IPAHAR
       SAVE
 
       CHARACTER*1 IHARI, IDETO, ISWWAT, RNMODE
@@ -280,6 +281,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND
 
       CHARACTER*5 HCOM(3), HSIZ(3)
       CHARACTER*6 SECTION, ERRKEY 

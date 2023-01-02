@@ -561,9 +561,11 @@
                           PLTPOP = 0.00
                           GPP    = 1.0
 
-                          WRITE(MESSAGE(1),3500)
+                          WRITE(MESSAGE(1),3500) DSGT
+3500  FORMAT ('Crop failure because of lack of germination ',
+     &           'within',I5,' days of sowing.')
                           CALL WARNING(1,'MZPHEN',MESSAGE)
-                          WRITE (     *,3500)
+!                         WRITE (*,3500)
                           IF (IDETO .EQ. 'Y') THEN
                               WRITE (NOUTDO,3500)
                           ENDIF
@@ -571,7 +573,6 @@
                           RETURN
                       ENDIF
                  !Germinate when soil water > 0.02 cm3/cm3
-
                   IF (SWSD .LT. SWCG) RETURN  
                   ENDIF
               ENDIF
@@ -607,9 +608,11 @@
                   GPP    = 1.0
 
                   WRITE(MESSAGE(1),1399)
+!1399     FORMAT (10X,'Seed ran out of metabolite due to deep planting')
+1399      FORMAT (10X,'No emergence. Seed ran out of metabolite.')
                   CALL WARNING(1,'MZPHEN',MESSAGE)
 
-                  WRITE (     *,1399)
+!                 WRITE (*,1399)
                   IF (IDETO .EQ. 'Y') THEN
                       WRITE (NOUTDO,1399)
                   ENDIF
@@ -909,9 +912,6 @@
 !     Format Strings
 !-----------------------------------------------------------------------
 
-1399  FORMAT (10X,'Seed ran out of metabolite due to deep planting')
-3500  FORMAT ('Crop failure because of lack of germination ',
-     &           'within 15 days of sowing')
 
       END SUBROUTINE MZ_PHENOL
 

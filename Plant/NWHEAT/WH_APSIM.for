@@ -35,18 +35,21 @@ C The statements begining with !*! are refer to APSIM source codes
 
 
       SUBROUTINE WH_APSIM (CONTROL, ISWITCH,              !Input
-     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,    !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
-     &     NSTRES, PORMIN, PUptake, rlv_nw,                  !Output
+     &     NSTRES, PORMIN, PUptake, rlv_nw,               !Output
      &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
-     &     UNH4, UNO3, XLAI, XHLAI, UH2O)                  !Output
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O)                 !Output
         !JZW note: KCAN/KEP  ic calculated in WH_PHENO. RWUMX is not used 
         !PUptake/FracRts is not calculated for Nwheat, 
       USE ModuleDefs
       USE WH_module
       IMPLICIT NONE
+      EXTERNAL GETLUN, HRES_CERES, PEST, WH_PHENOL, WH_GROSUB, 
+     &  WH_OPGROW, WH_OPNIT, WH_OPHARV
+
       SAVE
 
 !----------------------------------------------------------------------
@@ -82,11 +85,11 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL            EO, ES !JZW add in May, 2014
       REAL            EOP           
       CHARACTER*6     ERRKEY  
-      REAL            ESW(NL)     
+!     REAL            ESW(NL)     
       CHARACTER*30    FILEIO
       INTEGER         FROP  
       real            fstage  
-      REAL            GDDAE
+!     REAL            GDDAE
       REAL            GNUP      
       REAL            GPP    
       REAL            GPSM     
@@ -137,8 +140,8 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL            PODWT   
       REAL            PORMIN  
       REAL            PLTPOP    
-      REAL            PEAR
-      REAL            PSTM
+!     REAL            PEAR
+!     REAL            PSTM
       REAL            PTF        
       REAL            rlv_nw(NL)   
       REAL            RLWR      
@@ -225,7 +228,7 @@ C The statements begining with !*! are refer to APSIM source codes
       INTEGER         YREMRG   
       INTEGER         YRPLT 
       INTEGER         YRSIM    
-	REAL            Z2STAGE
+!      REAL            Z2STAGE
       REal GAD2 ! Grain# if there wwas no temperature effect
 
 !     Added by W.D.B. for pest damage at CIMMYT 4/14/2001
@@ -347,12 +350,12 @@ C The statements begining with !*! are refer to APSIM source codes
      &  'Failure   ',   !19 (not in original Nwheat)
      &  'Harvest   '/   !20 (not in original Nwheat)
 
-      !Note: NR2 variable is used in SEEDM subroutine in PEST module. 
-      !If the default value 0 is used an error occurs when on the day after 
-      !the simulation start (DAS) is greater than 300 and PEST module is 
-      !connected. Only the CROPGRO model uses NR2, so the initialized 
-      !value refers to this. In this way NWheat model runs normally.
-      !(Fabio - 09/10/2018)
+!      Note: NR2 variable is used in SEEDM subroutine in PEST module. 
+!      If the default value 0 is used an error occurs when on the day after 
+!      the simulation start (DAS) is greater than 300 and PEST module is 
+!      connected. Only the CROPGRO model uses NR2, so the initialized 
+!      value refers to this. In this way NWheat model runs normally.
+!      (Fabio - 09/10/2018)
       NR2 = 10000
 C----------------------------------------------------------------------
 C
@@ -387,11 +390,10 @@ C----------------------------------------------------------------------
      &    FILEIO, IDETO,  CUMDEP, DAYL, DLAYR,                   !INPUT
      &    fstage, LEAFNO, LL, NLAYR, nwheats_dc_code,            !INPUT
      &    nwheats_vfac,  pl_la, plsc, PLTPOP, SDEPTH,            !INPUT
-     &    sen_la, SI1, SI3, SNOW, SRAD, stage_gpla,              !INPUT
-     &    stgdur, SUMP, SW,                                      !INPUT
+     &    sen_la, SNOW, stage_gpla, stgdur, SW,                  !INPUT
      &    TBASE,  tiln, TMAX, TMIN, TWILEN, weather,             !INPUT
      &    vd, vd1, vd2, VSEN, XN,  YRDOY, YRSIM,                 !INPUT
-     &    CUMDTT, DTT, EARS, GPP, ISDATE, ISTAGE,                !OUTPT
+     &    CUMDTT, DTT, GPP, ISDATE, ISTAGE,                      !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
      &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw,                   !OUTPT 
@@ -402,8 +404,8 @@ C-----------------------------------------------------------------------
           !-------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,   !Input
-     &      fstage, FracRts, ISTAGE, zstage,                  !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
+     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
@@ -466,7 +468,7 @@ C-----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH, PLTPOP)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                           !Output
 
           CALL PEST(CONTROL, ISWITCH, 
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
@@ -511,11 +513,10 @@ C-----------------------------------------------------------------------
      &    FILEIO, IDETO,  CUMDEP, DAYL, DLAYR,                   !INPUT
      &    fstage, LEAFNO, LL, NLAYR, nwheats_dc_code,            !INPUT
      &    nwheats_vfac,  pl_la, plsc, PLTPOP, SDEPTH,            !INPUT
-     &    sen_la, SI1, SI3, SNOW, SRAD, stage_gpla,              !INPUT
-     &    stgdur, SUMP, SW,                                      !INPUT
+     &    sen_la, SNOW, stage_gpla, stgdur, SW,                  !INPUT
      &    TBASE,  tiln, TMAX, TMIN, TWILEN, weather,             !INPUT
      &    vd, vd1, vd2, VSEN, XN,  YRDOY, YRSIM,                 !INPUT
-     &    CUMDTT, DTT, EARS, GPP, ISDATE, ISTAGE,                !OUTPT
+     &    CUMDTT, DTT, GPP, ISDATE, ISTAGE,                      !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
      &    KCAN, KEP, P3, TSEN, CDAY,  cumph_nw,                  !OUTPT 
@@ -523,8 +524,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
-     &      fstage, FracRts, ISTAGE, zstage,                  !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
+     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
@@ -585,7 +586,7 @@ C-----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH, PLTPOP)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                           !Output
 
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
@@ -598,16 +599,16 @@ C----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.RATE) THEN
 
 !*!     if (stgdur(sowing) .eq. 0
- !Replace JZW code by FRED       if (stgdur(sowing) .le. 2
- !Replace JZW code by Fred    &    .and. istage .eq. sowing) then ! we have just planted the seed
+! Replace JZW code by FRED       if (stgdur(sowing) .le. 2
+! Replace JZW code by Fred    &    .and. istage .eq. sowing) then ! we have just planted the seed
       if (istage .eq. sowing .or. istage .eq. germ) then
           !seed planted and germinated
           !Call growth routine
           !-------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
-     &      fstage, FracRts, ISTAGE, zstage,                  !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
+     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
@@ -681,11 +682,10 @@ C----------------------------------------------------------------------
      &    FILEIO, IDETO,  CUMDEP, DAYL, DLAYR,                   !INPUT
      &    fstage, LEAFNO, LL, NLAYR, nwheats_dc_code,            !INPUT
      &    nwheats_vfac,  pl_la, plsc, PLTPOP, SDEPTH,            !INPUT
-     &    sen_la, SI1, SI3, SNOW, SRAD, stage_gpla,              !INPUT
-     &    stgdur, SUMP, SW,                                      !INPUT
+     &    sen_la, SNOW, stage_gpla, stgdur, SW,                  !INPUT
      &    TBASE,  tiln, TMAX, TMIN, TWILEN, weather,             !INPUT
      &    vd, vd1, vd2, VSEN, XN,  YRDOY, YRSIM,                 !INPUT
-     &    CUMDTT, DTT, EARS, GPP, ISDATE, ISTAGE,                !OUTPT
+     &    CUMDTT, DTT, GPP, ISDATE, ISTAGE,                      !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
      &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw,                   !OUTPT 
@@ -699,8 +699,8 @@ C-----------------------------------------------------------------------
         IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN   
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
-     &      fstage, FracRts, ISTAGE, zstage,                  !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
+     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
@@ -768,8 +768,8 @@ C----------------------------------------------------------------------
         IF (YRDOY .GE. YRPLT) THEN
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
-     &      fstage, FracRts, ISTAGE, zstage,                  !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
+     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
@@ -823,7 +823,7 @@ C----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH, PLTPOP)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                           !Output
 
       IF (ISWDIS.EQ.'Y') THEN
         CALL PEST(CONTROL, ISWITCH, 
@@ -845,8 +845,8 @@ C----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
-     &      fstage, FracRts, ISTAGE, zstage,                  !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
+     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
@@ -900,7 +900,7 @@ C----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH, PLTPOP)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                           !Output
 
       IF (ISWDIS.EQ.'Y') THEN
         CALL PEST(CONTROL, ISWITCH, 

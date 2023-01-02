@@ -1107,8 +1107,7 @@ C=======================================================================
         CASE ('YPNUM');SUMDAT % YPNUM  = VALUE(I)
 
         CASE ('NDCH'); SUMDAT % NDCH   = NINT(VALUE(I))
-        CASE ('TMINA')
-                       SUMDAT % TMINA  = VALUE(I)
+        CASE ('TMINA');SUMDAT % TMINA  = VALUE(I)
         CASE ('TMAXA');SUMDAT % TMAXA  = VALUE(I)
         CASE ('SRADA');SUMDAT % SRADA  = VALUE(I)
         CASE ('DAYLA');SUMDAT % DAYLA  = VALUE(I)

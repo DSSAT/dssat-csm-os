@@ -41,6 +41,10 @@ C----------------------------------------------------------------------
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, HRES_CERES, IGNORE, ML_GROSUB 
+      EXTERNAL ML_OPGROW, ML_OPHARV, ML_PHENOL, ML_ROOTGR, MZ_OPNIT
+      EXTERNAL PEST, YR_DOY
+
       SAVE
 !----------------------------------------------------------------------
 !      Programming Notes  W.D.B
@@ -68,7 +72,7 @@ C----------------------------------------------------------------------
       REAL            CO2      
       REAL            CO2X(10)  
       REAL            CO2Y(10)
-      CHARACTER*2     CROP   
+      CHARACTER*2     CROP 
       INTEGER         CTYPE    
       REAL            CUMDEP      
       REAL            CUMDTT    

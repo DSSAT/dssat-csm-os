@@ -17,9 +17,7 @@ C=======================================================================
      &    ES_LYR, SOILPROP)
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs 
       USE ModuleData
       USE FloodModule
 !     VSH
@@ -27,6 +25,7 @@ C=======================================================================
       USE Linklist
       
       IMPLICIT NONE
+      EXTERNAL GETLUN, YR_DOY, HEADER, SUMVALS
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT, RNMODE
@@ -259,10 +258,6 @@ C-----------------------------------------------------------------------
             WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX,
      &        AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA,
      &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA
-!     &        ,SALB, SWALB, MSALB, CMSALB
-!  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
-!     &      8(F7.3),6(F8.2))     
-!     &    ,4F7.2 ,10(F7.3))
           
             IF (ISWITCH % MESEV == 'S') THEN
               IF (SOILPROP % NLAYR < 11) THEN
@@ -427,7 +422,7 @@ C=======================================================================
       REAL  SWDELTX(NL),    !Change in SW due to root extraction
      &      SWTEMP(NL),     !New SW value based only on root extraction
      &      SW_AVAIL(NL),   !Water available for root extraction
-     &      UH2O(NL)        !Root water uptake from plant routine (optional)
+     &      UH2O(NL)        !Root water uptake from plant routine (opt.)
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
         SWDELTX(L) = 0.0

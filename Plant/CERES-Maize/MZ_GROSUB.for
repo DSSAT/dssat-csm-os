@@ -94,7 +94,7 @@
       REAL        CUMPH       
       REAL        CO2X(10)    
       REAL        CO2Y(10)    
-      REAL        CO2         
+      REAL        CO2 
       REAL        CSD1        
       REAL        CSD2        
       REAL        CUMDTTEG      
@@ -1654,11 +1654,13 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 !         sensitivity.
 !              IF (ICOLD .GE. 15) THEN
               IF (ICOLD .GE. CDAY) THEN
-                  WRITE(MESSAGE(1),2800)
-                  CALL WARNING(1,ERRKEY, MESSAGE)
-                  WRITE (*,2800)
+                  WRITE(MESSAGE(1),'(A,I3,A,F6.1,A)')
+     &              "Crop experienced ",CDAY," days below",TSEN,"C"
+                  MESSAGE(2) = "Growth program terminated."
+                  CALL WARNING(2,ERRKEY, MESSAGE)
+!                 WRITE (*,2800)
                   IF (IDETO .EQ. 'Y') THEN
-                      WRITE (NOUTDO,2800)
+                      WRITE (NOUTDO,'(A)') MESSAGE(1)
                   ENDIF
                   ISTAGE = 6
                   MDATE = YRDOY

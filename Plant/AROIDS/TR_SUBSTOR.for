@@ -106,7 +106,7 @@ C-----------------------------------------------------------------------
       REAL PODWT, GRNWT
 
 !     For output to PlantGro.OUT
-      REAL DEADLF, SATFAC, PETWT, STOVWT, TUBN, TUBWT, WTNCAN
+      REAL DEADLF, SATFAC, PETWT, STOVWT, WTNCAN   !TUBN, TUBWT, 
       REAL WTNUP, XLAI
 
       LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO

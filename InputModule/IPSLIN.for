@@ -31,11 +31,12 @@ C=======================================================================
 
       SUBROUTINE IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &        WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM) 
+     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
 !     &        SOM1I, SOM2I, SOM3I)
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH
 
       CHARACTER*2  PRCROP
       CHARACTER*6  ERRKEY,FINDCH
@@ -44,8 +45,8 @@ C=======================================================================
       CHARACTER*80 CHARTEST
 	CHARACTER*92 FILEX_P
 
-      INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC,FWY1P,
-     &             YRIC,ERRNUM,IFIND,YRSIM, YRICYEAR, YR, DOY
+      INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC, !,FWY1P,
+     &             YRIC,ERRNUM,IFIND   !,YRSIM, YRICYEAR, YR, DOY
       REAL         DS(NL),DLAYRI(NL),SWINIT(NL)
       REAL         DUL(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
       REAL         ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID !, TOTSOM
@@ -234,10 +235,11 @@ C=======================================================================
 
       SUBROUTINE IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR, YRSIM)
+     &            SASC, NLAYR)    !, YRSIM)
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH
 
       CHARACTER*5  SMHB, SMKE, SMPX, SMHBtemp, SMKEtemp, SMPXtemp
       CHARACTER*6  ERRKEY, FINDCH
@@ -247,7 +249,7 @@ C=======================================================================
 	CHARACTER*92 FILEX_P
 
       INTEGER      LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNSA
-      INTEGER      ERRNUM,SADAT,IFIND,L,YRSIM
+      INTEGER      ERRNUM,SADAT,IFIND,L   !,YRSIM
 
       REAL         SABL(NL),SADM(NL),SAOC(NL),SANI(NL),SAPHW(NL)
       REAL         SAPX(NL),SAKE(NL),BD(NL),OC(NL),DS(NL),SAPHB(NL)

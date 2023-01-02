@@ -14,15 +14,20 @@ C-----------------------------------------------------------------------
 C  Called by  : CROPGRO
 C  Calls      : None
 C========================================================================
-      SUBROUTINE FOR_FREEZE(FILEIO, RUN,
-     &    FREEZ1, FREEZ2, IDETO, NOUTDO, NRUSLF, SLDOT,   !Input
-     &    TMIN, WTLF, YRDOY,  YRPLT,                      !Input
-     &    MDATE,                                          !Input/Output
-     &    WLFDOT,                                         !Output
-     &      FRZDC, NRUSSR, NRUSST, PSRSRFL, PSRLYR1,      !Input
-     &      SRFTEMP, SSDOT, SSRDOT, ST, STMWT, STRWT,     !Input
-     &      PSRLYRD, PSRSRFD, WSFDOT, WSRFDOT,            !Output
-     &      FRZDL, SRLYRD, SRSRFD, VSTAGE)                !Output 
+      SUBROUTINE FOR_FREEZE(
+     &    FREEZ1, FREEZ2, FRZDC, NRUSLF, NRUSST,      !Input
+     &    SLDOT, SSDOT, STMWT, TMIN, WTLF, YRDOY,     !Input
+     &    YRPLT,                                      !Input
+     &    MDATE,                                      !Input/Output
+     &    FRZDL, PSRLYRD, PSRSRFD,                    !Output
+     &    WLFDOT, WSFDOT, WSRFDOT)                    !Output 
+
+!      variables previously in argument list, but not used:
+!      FILEIO, RUN
+!      IDETO, NOUTDO, 
+!      NRUSSR, PSRSRFL, PSRLYR1,
+!      SRFTEMP, SSRDOT, ST, STRWT,
+!      SRLYRD, SRSRFD, , VSTAGE
 
       USE ModuleDefs     !Definitions of constructed variable types, 
 
@@ -31,15 +36,15 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 C-----------------------------------------------------------------------
-      CHARACTER*1  IDETO
-      CHARACTER*30 FILEIO
+!     CHARACTER*1  IDETO
+!     CHARACTER*30 FILEIO
       CHARACTER*78 MESSAGE(10)
-      INTEGER MDATE, YRDOY, DAP, NOUTDO, YRPLT, TIMDIF, RUN
+      INTEGER MDATE, YRDOY, DAP, YRPLT, TIMDIF      !NOUTDO, 
       REAL  WLFDOT, WTLF, SLDOT, NRUSLF, TMIN, FREEZ1, FREEZ2
-      REAL  FRZDC, FRZDL, NRUSSR, NRUSST, PSRSRFL, PSRLYR1, PSRSRFD, 
-     &          PSRLYRD, SRLYRD,SRFTEMP, SRSRFD, SSRDOT, SSDOT, STMWT,
-     &          STRWT, VSTAGE, WSFDOT, WSRFDOT
-      REAL, DIMENSION(NL) :: ST
+      REAL  FRZDC, FRZDL, NRUSST, PSRSRFD,  !NRUSSR, PSRSRFL, PSRLYR1, 
+     &  PSRLYRD, SSDOT, STMWT,   !SRLYRD, SRFTEMP, SRSRFD, SSRDOT, 
+     &  WSFDOT, WSRFDOT       !STRWT, VSTAGE, 
+!     REAL, DIMENSION(NL) :: ST
 C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C      Set storage organ freeze damage variables to 0.0

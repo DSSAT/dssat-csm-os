@@ -41,6 +41,7 @@ C=====================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL IPAPLT, GETLUN, YR_DOY, WARNING, ERROR, FIND
       SAVE
 
       CHARACTER*1  IDETO, RNMODE, IPLTI, ISWWAT
@@ -380,6 +381,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND
 
       CHARACTER*1 PLME
       CHARACTER*2 CROP

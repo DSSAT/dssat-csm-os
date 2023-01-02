@@ -57,8 +57,8 @@ C      Variables passed through PHENOL to phasei but not used in phenol
      &    DAYL, TWILEN, CANWAA, CANNAA)
 
       USE MODULEDEFS
-
       IMPLICIT  NONE
+      EXTERNAL ML_PHASEI, WARNING, CURV
       SAVE
 C -----------------------------------------------------------------------
 C VARIABLES ONLY USED IN PHASEI. THEY ARE PASSED THROUGH PHENOL TO PHASEI

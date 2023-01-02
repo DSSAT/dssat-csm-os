@@ -78,6 +78,10 @@ C=======================================================================
       USE HeaderMod
 
       IMPLICIT NONE
+      EXTERNAL CHECKRUNMODE, ERROR, FIND, GETLUN, IGNORE, INCYD, INFO, 
+     &  INPUT_SUB, LAND, OPCLEAR, OPNAMES, PATHD, RUNLIST, TIMDIF, 
+     &  UPCASE, YR_DOY
+
 C-----------------------------------------------------------------------
       CHARACTER*1   ANS,RNMODE,BLANK,UPCASE
       CHARACTER*6   ERRKEY,FINDCH,TRNARG
@@ -113,7 +117,7 @@ C     The variable "CONTROL" is of type "ControlType".
 C     The variable "ISWITCH" is of type "SwitchType".
       TYPE (SwitchType) ISWITCH
 
-!C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
 
       DONE = .FALSE.
       YRDOY_END = 9999999

@@ -10,7 +10,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       SUBROUTINE SoilNiBal (CONTROL, ISWITCH, 
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
 
 !     ------------------------------------------------------------------
@@ -18,41 +18,41 @@ C  03/04/2005 CHP wrote based on SoilNBal
       USE FertType_mod
       USE Interface_SoilNBalSum
       IMPLICIT NONE
+      EXTERNAL YR_DOY, INCDAT, GETLUN, HEADER
       SAVE
 !     ------------------------------------------------------------------
+      TYPE (ControlType), INTENT(IN) :: CONTROL
+      TYPE (SwitchType),  INTENT(IN) :: ISWITCH
+      TYPE (FertType),    INTENT(IN) :: FertData
+      TYPE (N2O_type), INTENT(IN), OPTIONAL :: N2O_DATA
+
+      INTEGER, INTENT(IN) :: NBUND
+      REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,   
+     &  CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
       LOGICAL FEXIST
 
       CHARACTER*1  IDETN, IDETL, ISWNIT
       CHARACTER*13, PARAMETER :: SNiBAL = 'SoilNiBal.OUT'
 
       INTEGER DAS, DYNAMIC, INCDAT, YRDOY, I
-      INTEGER YRSIM, RUN, LUNSNC, NBUND
+      INTEGER YRSIM, RUN, LUNSNC
       INTEGER YR, DOY, YRI, DOYI
 
-      REAL ALGFIX, ALGFIXI, AMTFER, TALLN, TALLNI, CLeach, TNH4, TNH4I,
-     &  TNO3, TNO3I,  TUREA, TUREAI, WTNUP, CNTILEDR   !HJ added
-      REAL TOTAML, CUMFNRO, TOTFLOODN, TOTFLOODNI
+      REAL ALGFIXI, AMTFER, TALLN, TALLNI, TNH4I, TNO3I, TUREAI
+      REAL TOTFLOODNI
       REAL STATEN, BALANCE
-
-!     Not used
-      REAL CNOX   !, NOXTODAY, CNOXY, 
 
       REAL LCHTODAY, NTILEDRTODAY, IMMOBTODAY, MINERTODAY !HJ
       REAL WTNUPTODAY, AMLTODAY, FNROTODAY, AMTFERTODAY
       REAL N2Otoday, N2today, NOtoday
-      REAL CLeachY, TNTILEDRY, WTNUPY, CIMMOBY, CMINERY !HJ
+      REAL CLeachY, TNTILEDRY, WTNUPY, CIMMOBY, CMINERY 
       REAL TOTAMLY, CUMFNROY, AMTFERY
       REAL TOTSTATE, TOTADD, TOTSUB, DAYBAL, TOTSTATY, CUMBAL
-      REAL CIMMOBN, CMINERN, NGasLoss, TNGSOILI
+      REAL NGasLoss, TNGSOIL, TNGSOILI, TotNEmitted,
+     &    CN2O_emitted, CN2_emitted, CNO_emitted 
 
       REAL N2OY, N2Y, NOY
       REAL UnreleasedN  !Slow release fertilizer
-
-!     ------------------------------------------------------------------
-      TYPE (ControlType) CONTROL
-      TYPE (SwitchType)  ISWITCH
-      TYPE (FertType)    FertData
-      TYPE (N2O_type)    N2O_DATA
 
 !     ------------------------------------------------------------------
 !     Return if detail not requested.

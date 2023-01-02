@@ -160,15 +160,15 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) TEXTURE(NL)
         CHARACTER (len=17) SOILLAYERTYPE(NL)
         CHARACTER*50 SLDESC, TAXON
-        
+
         LOGICAL COARSE(NL)
-        
+
         REAL ALES, DMOD, SLPF         !DMOD was SLNF
         REAL CMSALB, MSALB, SWALB, SALB      !Albedo 
         REAL, DIMENSION(NL) :: BD, CEC, CLAY, DLAYR, DS, DUL
         REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL, POROS
         REAL, DIMENSION(NL) :: SAND, SAT, SILT, STONES, SWCN
-        
+
       !Residual water content
         REAL, DIMENSION(NL) :: WCR
 
@@ -420,7 +420,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL CET, CEVAP                   !Cumulative ET - mm
         REAL  EF,  EM,  EO,  EP,  ES,  ET !Daily ET - mm/d
         REAL  EOP, EVAP                   !Daily mm/d
-        REAL, DIMENSION(NL) :: UH2O       !Root water uptake
+        REAL, DIMENSION(NL) :: UH2O       !Root water uptake - cm/d
         !ASCE reference ET with FAO-56 dual crop coefficient (KRT)
         REAL REFET, SKC, KCBMAX, KCB, KE, KC
         !VPD parameters for CSYCA model (LPM)
@@ -439,7 +439,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Data transferred from management routine 
       Type MgmtType
         REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR
-        REAL V_AVWAT(20) !Create vectors for growth stage based irrig
+!       Vectors to save growth stage based irrigation
+        REAL V_AVWAT(20)    
         REAL V_IMDEP(20)
         REAL V_ITHRL(20)
         REAL V_ITHRU(20)
@@ -630,6 +631,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Retrieves real variable from SAVE_data.  Variable must be
 !         included as a component of SAVE_data. 
       IMPLICIT NONE
+      EXTERNAL WARNING
       Character*(*) ModuleName, VarName
       Character*78 MSG(2)
       Real Value
@@ -705,7 +707,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); Value = SAVE_data % NITR % TNOXD
-       Case ('TLCHD'); Value = SAVE_data % NITR % TLeachD
+        Case ('TLCHD'); Value = SAVE_data % NITR % TLeachD
 !       Case ('TN2OD'); Value = SAVE_data % NITR % TN2OD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
@@ -763,6 +765,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SUBROUTINE PUT_Real(ModuleName, VarName, Value)
 !     Stores real variable SAVE_data.  
       IMPLICIT NONE
+      EXTERNAL WARNING
       Character*(*) ModuleName, VarName
       Character*78 MSG(2)
       Real Value
@@ -884,6 +887,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SUBROUTINE GET_Real_Array_NL(ModuleName, VarName, Value)
 !     Retrieves array of dimension(NL) 
       IMPLICIT NONE
+      EXTERNAL WARNING
       Character*(*) ModuleName, VarName
       Character*78 MSG(2)
       REAL, DIMENSION(NL) :: Value
@@ -896,7 +900,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       CASE ('SPAM')
         SELECT CASE (VarName)
-          CASE ('UH2O'); ; Value = SAVE_data % SPAM % UH2O
+          CASE ('UH2O'); Value = SAVE_data % SPAM % UH2O
           CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -917,6 +921,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SUBROUTINE PUT_Real_Array_NL(ModuleName, VarName, Value)
 !     Stores array of dimension NL
       IMPLICIT NONE
+      EXTERNAL WARNING
       Character*(*) ModuleName, VarName
       Character*78 MSG(2)
       REAL, DIMENSION(NL) :: Value
@@ -948,6 +953,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       Subroutine GET_Integer(ModuleName, VarName, Value)
 !     Retrieves Integer variable as needed
       IMPLICIT NONE
+      EXTERNAL WARNING
       Character*(*) ModuleName, VarName
       Character*78  MSG(2)
       Integer Value
@@ -988,6 +994,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SUBROUTINE PUT_Integer(ModuleName, VarName, Value)
 !     Stores Integer variable
       IMPLICIT NONE
+      EXTERNAL WARNING
       Character*(*) ModuleName, VarName
       Character*78 MSG(2)
       Integer Value
@@ -1027,6 +1034,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       Subroutine GET_Char(ModuleName, VarName, Value)
 !     Retrieves Integer variable as needed
       IMPLICIT NONE
+      EXTERNAL WARNING
       Character*(*) ModuleName, VarName, Value
       Character*78  MSG(2)
       Logical ERR
@@ -1072,6 +1080,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SUBROUTINE PUT_Char(ModuleName, VarName, Value)
 !     Stores Character variable
       IMPLICIT NONE
+      EXTERNAL WARNING
       Character*(*) ModuleName, VarName, Value
       Character*78 MSG(2)
       Logical ERR

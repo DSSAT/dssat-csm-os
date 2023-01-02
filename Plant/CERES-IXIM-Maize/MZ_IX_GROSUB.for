@@ -1828,11 +1828,13 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
 !         sensitivity.
 !              IF (ICOLD .GE. 15) THEN
               IF (ICOLD .GE. CDAY) THEN
-                  WRITE(MESSAGE(1),2800)
-                  CALL WARNING(1,ERRKEY, MESSAGE)
-                  WRITE (*,2800)
+                  WRITE(MESSAGE(1),'(A,I3,A,F6.1,A)')
+     &              "Crop experienced ",CDAY," days below",TSEN,"C"
+                  MESSAGE(2) = "Growth program terminated."
+                  CALL WARNING(2,ERRKEY, MESSAGE)
+!                 WRITE (*,2800)
                   IF (IDETO .EQ. 'Y') THEN
-                      WRITE (NOUTDO,2800)
+                      WRITE (NOUTDO,'(A)') MESSAGE(1)
                   ENDIF
                   ISTAGE = 6
                   MDATE = YRDOY

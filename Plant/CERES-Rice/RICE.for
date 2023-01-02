@@ -60,6 +60,9 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data and flooded
                          ! conditions.
       IMPLICIT NONE
+      EXTERNAL YR_DOY,RI_OPHARV,RI_PHENOL,RI_ROOTGR,
+     &  RI_GROSUB,RI_OPGROW,GNURSE,HRES_CERES
+
       SAVE
 
       CHARACTER*1  ISWWAT, ISWNIT

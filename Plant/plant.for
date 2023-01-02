@@ -61,10 +61,9 @@ C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
      &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
-     &    NH4, NO3, SKi_Avail, SomLitC, SomLitE,          !Input
-     &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
-     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
-     &    IRRAMT,                                         !Input
+     &    IRRAMT, NH4, NO3, SKi_Avail, SPi_AVAIL,         !Input
+     &    SNOW, SOILPROP, SRFTEMP, ST, SW,                !Input
+     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -107,6 +106,13 @@ C-----------------------------------------------------------------------
       USE FloodModule
 
       IMPLICIT NONE
+      EXTERNAL ALOHA_PINEAPPLE,BS_CERES,CROPGRO,CSCAS_INTERFACE,
+     &  CSCERES_INTERFACE,CSCRP_INTERFACE,CSP_CASUPRO,CSYCA_INTERFACE,
+     &  FIND,FORAGE,GETLUN,ML_CERES,MZ_CERES,PT_SUBSTOR,READ_ASCE_KT,
+     &  RICE,SAMUCA,SC_CNGRO,SG_CERES,SU_CERES,SUMVALS,TEFF,TF_APSIM,
+     &  TR_SUBSTOR,WARNING,WH_APSIM
+      EXTERNAL INCDAT, ERROR
+
       SAVE
 
       CHARACTER*1  MEEVP, RNMODE
@@ -127,7 +133,7 @@ C-----------------------------------------------------------------------
       REAL TRWUP, TWILEN, XLAI, XHLAI
 
       REAL, DIMENSION(2)  :: HARVFRAC
-      REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM  !, RWU
+      REAL, DIMENSION(NL) :: NH4, NO3, RLV  !, RWU, UPPM
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
       LOGICAL FixCanht, BUNDED    !, CRGRO
@@ -151,9 +157,10 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       REAL, DIMENSION(NL) :: KUptake, SKi_Avail
 
 !     ORYZA Rice model
-      REAL, DIMENSION(0:NL) :: SomLitC
-      REAL, DIMENSION(0:NL,NELEM) :: SomLitE
-      LOGICAL, PARAMETER :: OR_OUTPUT = .FALSE.
+!      REAL, DIMENSION(0:NL) :: SomLitC
+!      REAL, DIMENSION(0:NL,NELEM) :: SomLitE
+!      LOGICAL, PARAMETER :: OR_OUTPUT = .FALSE.
+
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -510,9 +517,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     -------------------------------------------------
 !     Sugarbeet
       CASE('BSCER')
-        CALL BS_CERES (CONTROL, ISWITCH,              !Input
-     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
-     &     SPi_AVAIL, SNOW,                               !Input
+        CALL BS_CERES (CONTROL, ISWITCH,                  !Input
+     &     EOP, HARVFRAC, NH4, NO3, SPi_AVAIL, SNOW,      !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, MDATE,              !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
@@ -833,7 +839,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     SSKC, SKCBmax ASCE short ref (12 cm grass)
 
       USE ModuleData
-      External IGNORE, WARNING, ERROR
+      External IGNORE, WARNING, ERROR, GETLUN, FIND
 
       CHARACTER*1  BLANK, MEEVP
       PARAMETER (BLANK  = ' ')

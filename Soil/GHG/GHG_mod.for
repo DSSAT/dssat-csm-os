@@ -231,6 +231,7 @@ C  05/01/2022 FO  Added N2O.csv output
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
       SAVE
 !-----------------------------------------------------------------------
 
@@ -582,6 +583,7 @@ C  06/15/2014 CHP Written
       SUBROUTINE OpGHG(CONTROL, ISWITCH, N2O_data, CH4_data) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
 

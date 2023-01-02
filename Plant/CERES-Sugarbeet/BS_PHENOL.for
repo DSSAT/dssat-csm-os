@@ -10,25 +10,26 @@
 !  03/15/2017 G2 modified, that was related to GPP in original CERES-Beet at ISTAGE 4
 
 !----------------------------------------------------------------------
-      SUBROUTINE BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
-     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+      SUBROUTINE BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,           !C
+     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
+     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,                        !I
      &    XN,YRDOY,YRSIM,                                         !I
-     &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    CUMDTT,DTT,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT,      !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &    SeedFrac, VegFrac)                                      !O
 
       USE ModuleDefs
       IMPLICIT  NONE
+      EXTERNAL FIND,GETLUN,ERROR,IGNORE,WARNING
       SAVE
 !----------------------------------------------------------------------
 !                             Define Variables
 !----------------------------------------------------------------------
       INTEGER         DYNAMIC         
 
-!      REAL            ABSTRES         
+!     REAL            ABSTRES         
       REAL            ACOEF           
-      REAL            BARFAC 
+!     REAL            BARFAC 
       CHARACTER*1     BLANK         
       REAL            C1   
       INTEGER         CDAY 
@@ -45,7 +46,7 @@
       REAL            DSGFT
       REAL            DTT             
       REAL            DUMMY           
-      REAL            EARS            
+!     REAL            EARS            
       CHARACTER*6     ECONO           
       INTEGER         ERR             
       CHARACTER*6     ERRKEY          
@@ -99,8 +100,8 @@
       REAL            SDEPTH         
       CHARACTER*6     SECTION        
       REAL            S1    
-      REAL            SI1(6)         
-      REAL            SI3(6)         
+!     REAL            SI1(6)         
+!     REAL            SI3(6)         
       REAL            SIND           
       REAL            SNDN           
       REAL            SNOW           
@@ -109,7 +110,7 @@
       INTEGER         STGDOY(20)     
       REAL            SUMDTT
       REAL            SUMDTT_2 !introduced for plant P routine         
-      REAL            SUMP           
+!     REAL            SUMP           
       REAL            SW(NL)         
       REAL            SWCG
       REAL            SWSD           
@@ -694,9 +695,9 @@
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
               VegFrac = 1.0
 
-      !-----------------------------------------------------------------
-      !       ISTAGE = 4:End of Leaf Growth to Beginning Effective Growth
-      !-----------------------------------------------------------------
+!      -----------------------------------------------------------------
+!             ISTAGE = 4:End of Leaf Growth to Beginning Effective Growth
+!      -----------------------------------------------------------------
           ELSEIF (ISTAGE .EQ. 4) THEN
               NDAS = NDAS + 1
               IDURP  = IDURP + 1
@@ -707,13 +708,13 @@
 
               IF (SUMDTT .LT. DSGFT) RETURN
 
-              !---------------------------------------------------------
-              !   New Growth Stage Occurred Today. Initialize Some Varia
-              !---------------------------------------------------------
+!             ---------------------------------------------------------
+!                New Growth Stage Occurred Today. Initialize Some Varia
+!             ---------------------------------------------------------
 
-              ! When Silking phase ends and beginning of effective growth
-              !  begins.  Compute grains per plant, ears per pla
-              !  and barrenness
+!              When Silking phase ends and beginning of effective growth
+!               begins.  Compute grains per plant, ears per pla
+!               and barrenness
 
               !PSKER = SUMP*1000.0/IDURP*3.4/5.0
               !GPP   = G2*(PSKER-195.)/(1213.2+PSKER-195.)
@@ -740,10 +741,11 @@
               XSTAGE = 4.5 + 5.5*SUMDTT/P5
               SeedFrac = SUMDTT / P5
           
-              IF (SUMDTT .LT. P5*0.95) RETURN  !End of EFP assumed to be 95%
-              !-------------------------------------------------------------
-              !   New Growth Stage Occurred Today. Initialize Some Variables
-              !-------------------------------------------------------------
+!             End of EFP assumed to be 95%
+              IF (SUMDTT .LT. P5*0.95) RETURN  
+!             -------------------------------------------------------------
+!                New Growth Stage Occurred Today. Initialize Some Variables
+!             -------------------------------------------------------------
               STGDOY (ISTAGE) = YRDOY
               ISTAGE = 6
 

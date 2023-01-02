@@ -48,6 +48,8 @@ C=======================================================================
       USE ModuleData
       USE CsvOutput
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, IGNORE, UPCASE, WARNING, IGNORE2, Y4K_DOY, 
+     &  YR_DOY, MODEL_NAME, FILL_ISWITCH, DEFAULT_SIMCONTROLS, GET_CROPD
       SAVE
 
       INCLUDE 'COMSWI.blk'
@@ -68,11 +70,11 @@ C=======================================================================
       INTEGER PLDATE,PWDINF,PWDINL,HLATE,HDLAY,NRESDL
       INTEGER IFIND,LN,ERRNUM,FTYPEN,YRSIM,YEAR,RUN,RSEED1,RRSEED1
       INTEGER YRPLT
-      INTEGER FIST1, FIST2
+!     INTEGER FIST1, FIST2
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
-      REAL LDIFF, PREV_LINEXP
+!     REAL LDIFF, PREV_LINEXP
       REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
       REAL V_IMDEP(20)
       REAL V_ITHRL(20)
@@ -475,7 +477,7 @@ C
 C           Read SEVENTH line of simulation control - AUTOMATIC IRRIGATION
 C
            DO I=1,20
-                V_IMDEP (I) = -99       ! Assighn default values to variable
+                V_IMDEP (I) = -99 
                 V_ITHRL (I) = -99
                 V_ITHRU (I) = -99
                 V_IRON  (I) = -99
@@ -495,16 +497,20 @@ C
      &               IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, IFREQ
                IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 
-               READ(CHARTEST,'(57x,A5)') TEXT     ! Read value of AVWAT in text to check if blank or missing
+!              Read value of AVWAT in text to check if blank or missing
+               READ(CHARTEST,'(57x,A5)') TEXT     
                CHARLEN = LEN_TRIM(TEXT)
-               IF (CHARLEN==0) AVWAT = -99.       ! If TXAVWAT blank or missing set AVWAT -99 (for compatability with old files)
+!              If TXAVWAT blank or missing set AVWAT -99 (for compatability with old files)
+               IF (CHARLEN==0) AVWAT = -99.       
 
-               READ(CHARTEST,'(63x,A5)') TEXT     ! Read value of IFREQ in text to check if blank or missing
+!              Read value of IFREQ in text to check if blank or missing
+               READ(CHARTEST,'(63x,A5)') TEXT     
                CHARLEN = LEN_TRIM(TEXT)
-               IF (CHARLEN==0) IFREQ = 0.0        ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
+!              If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
+               IF (CHARLEN==0) IFREQ = 0.0        
 
-
-              V_IMDEP(GSIRRIG) = DSOIL                   ! Save growth stage specific variables in data vectors
+!             Save growth stage specific variables in data vectors
+              V_IMDEP(GSIRRIG) = DSOIL                   
               V_ITHRL(GSIRRIG) = THETAC
               V_ITHRU(GSIRRIG) = IEPT
               READ(IOFF(4:5), *, IOSTAT = STAT) V_IRON (GSIRRIG)
@@ -515,14 +521,17 @@ C
               V_IFREQ(GSIRRIG) = NINT(IFREQ)
               V_AVWAT(GSIRRIG) = AVWAT
 
-              CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)                ! Read next line until a second tier header is found
+!             Read next line until a second tier header is found
+              CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)                
 
               IF(ISECT .NE. 3) THEN
-                  GSIRRIG = GSIRRIG + 1                                 ! Increase the counter by 1
+!                 Increase the counter by 1
+                  GSIRRIG = GSIRRIG + 1                                 
               END IF
            END DO
            
-           DSOIL  = V_IMDEP(1)                         ! Save value of first line as default for compatibility with old files
+!          Save value of first line as default for compatibility with old files
+           DSOIL  = V_IMDEP(1)                         
            THETAC = V_ITHRL(1)
            IEPT   = V_ITHRU(1)
            IOFF   = V_IRONC(1)
@@ -1021,6 +1030,9 @@ C-----------------------------------------------------------------------
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, IGNORE, UPCASE, WARNING, IGNORE2, 
+     &  Y4K_DOY, YR_DOY, MODEL_NAME, GETLUN, FIND_IN_FILE, LENSTRING, 
+     &  CHECK_I, CHECK_A, INFO, MSG_TEXT
       SAVE
 
       CHARACTER*1 UPCASE,ISIMI, MEPHO_SAVE, ISWSYM_SAVE
@@ -1688,6 +1700,7 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
 
       SUBROUTINE CHECK_A(LABEL, VALUE, ERRNUM, MSG, NMSG)
       IMPLICIT NONE
+      EXTERNAL MSG_TEXT
 
       CHARACTER*(*) VALUE
       CHARACTER*(*) LABEL
@@ -1712,6 +1725,7 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
 
       SUBROUTINE CHECK_I(LABEL, VALUE, ERRNUM, MSG, NMSG)
       IMPLICIT NONE
+      EXTERNAL MSG_TEXT
 
       INTEGER VALUE
       CHARACTER*(*) LABEL

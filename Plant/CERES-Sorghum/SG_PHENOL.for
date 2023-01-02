@@ -66,6 +66,7 @@ C      Variables passed through PHENOL to phasei but not used in phenol
 
       USE ModuleDefs
       IMPLICIT  NONE
+      EXTERNAL SG_PHASEI, WARNING
       SAVE
 C -----------------------------------------------------------------------
 C VARIABLES ONLY USED IN PHASEI. THEY ARE PASSED THROUGH PHENOL TO PHASEI
@@ -593,7 +594,8 @@ C-GH     IF (SIND .LT. 1.0) RETURN
            RETURN
         ELSE
               STGDOY(ISTAGE) = YRDOY
-              SUMDTT_2 = SUMDTT  ! SUMDTT_2 = p1 + adapted P2 without PANTH --MA
+!             SUMDTT_2 = p1 + adapted P2 without PANTH --MA
+              SUMDTT_2 = SUMDTT  
               VegFrac= max (VegFrac,SUMDTT_2/(SUMDTT_2+PANTH+P4))
         ENDIF
 
@@ -622,7 +624,8 @@ C-GH      IF (SUMDTT .LT. P3) THEN
           ELSE
             STGDOY(ISTAGE) = YRDOY
             MAXLAI = LAI
-            SUMDTT_3 = SUMDTT_2 + SUMDTT ! SUMDDT_3 = P1 +P2 adapted + (PANTH -P3)
+!           SUMDDT_3 = P1 +P2 adapted + (PANTH -P3)
+            SUMDTT_3 = SUMDTT_2 + SUMDTT 
             VegFrac = max (VegFrac,SUMDTT_3 /
      &                       (SUMDTT_3 + P3+P4)) 
           ENDIF

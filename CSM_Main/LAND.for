@@ -31,6 +31,8 @@ C-----------------------------------------------------------------------
       USE CsvOutput   ! VSH 
 
       IMPLICIT NONE
+      EXTERNAL INFO, ERROR, WARNING, IPIBS, WEATHR, SOIL, SPAM, PLANT, 
+     &  OPSUM, MGMTOPS
       SAVE
 C-----------------------------------------------------------------------
 C     Crop, Experiment, Command line Variables
