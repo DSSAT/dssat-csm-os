@@ -175,13 +175,15 @@ C  03/04/2005 CHP wrote based on SoilNBal
       AMLTODAY   = TOTAML - TOTAMLY
 
       IF (PRESENT(N2O_data)) THEN
-        N2Otoday   = N2O_data % CN2O_emitted - N2OY
-        N2today    = N2O_data % CN2_emitted  - N2Y 
-        NOtoday    = N2O_data % CNO_emitted  - NOY
+        TNGSOIL  = N2O_DATA % TNGSoil
+        N2Otoday = N2O_data % CN2O_emitted - N2OY
+        N2today  = N2O_data % CN2_emitted  - N2Y 
+        NOtoday  = N2O_data % CNO_emitted  - NOY
       ELSE
-        N2Otoday   = 0.0
-        N2today    = 0.0
-        NOtoday    = 0.0
+        TNGSOIL  = 0.0
+        N2Otoday = 0.0
+        N2today  = 0.0
+        NOtoday  = 0.0
       ENDIF
 
 !     FLOODNTODAY = TOTFLOODN - FLOODNY
