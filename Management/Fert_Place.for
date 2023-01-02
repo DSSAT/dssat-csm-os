@@ -862,7 +862,7 @@ C     Need to make provision for USG as a source
                  exit
               ENDIF
             Enddo
-!          CASE (7,8,9) ; AppType = 'HILL   '
+!         CASE (7,8,9) ; AppType = 'HILL   '
           CASE (7,8,9,19,20); AppType = 'POINT  '
           CASE DEFAULT ; AppType = 'UNIFORM'
         END SELECT

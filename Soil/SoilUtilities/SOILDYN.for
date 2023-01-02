@@ -374,9 +374,9 @@ C-----------------------------------------------------------------------
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
-        ! Jin Wu add the following two statements
-        NH4(L) = MAX(NH4(L), 0.0)
-        NO3(L) = MAX(NO3(L), 0.0)
+!!        Jin Wu add the following two statements
+!         NH4(L) = MAX(NH4(L), 0.01)
+!         NO3(L) = MAX(NO3(L), 0.01)
 
         IF (SW(L) .LT. LL(L)) THEN
           IF (NMSG == 0) THEN
