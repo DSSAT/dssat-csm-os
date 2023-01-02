@@ -167,6 +167,24 @@ C=======================================================================
       TYPE (TillType)    TILLVALS
       TYPE (WeatherType) WEATHER
       
+!     Interface required because N2O_data is optional variable
+      INTERFACE
+        SUBROUTINE SoilNiBal(CONTROL, ISWITCH, 
+     &      ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &      N2O_data) 
+          USE GHG_mod
+          USE FertType_mod
+          TYPE (ControlType), INTENT(IN) :: CONTROL
+          TYPE (SwitchType),  INTENT(IN) :: ISWITCH
+          TYPE (FertType),    INTENT(IN) :: FertData
+          TYPE (N2O_type), INTENT(IN), OPTIONAL :: N2O_DATA
+          INTEGER, INTENT(IN) :: NBUND
+          REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
+        END SUBROUTINE SoilNiBal
+      END INTERFACE
+
 !      PI = 3.1416
       
 !     Transfer values from constructed data types into local variables.
