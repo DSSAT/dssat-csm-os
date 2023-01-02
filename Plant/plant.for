@@ -370,10 +370,10 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !-----------------------------------------------------------------------
 !     Forage model
       CASE('PRFRM')
-      call FORAGE(CONTROL, ISWITCH,
+        CALL FORAGE(CONTROL, ISWITCH,
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
-     &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
+     &    CANHT, EORATIO, HARVRES, MDATE,                 !Output
      &    NSTRES, PSTRES1,                                !Output
      &    PORMIN, RLV, RWUMX, SENESCE,                    !Output
      &    STGDOY, UNH4, UNO3, XHLAI, XLAI)                !Output
