@@ -220,7 +220,7 @@ C=======================================================================
       IF (IDETW .EQ. 'Y') THEN
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
       ENDIF
 
@@ -472,7 +472,7 @@ C=======================================================================
       IF (IDETW .EQ. 'Y') THEN
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
       ENDIF
 
@@ -511,7 +511,7 @@ C-----------------------------------------------------------------------
 
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
       IF (CROP .NE. 'FA' .AND. MEPHO .EQ. 'L') THEN
@@ -531,7 +531,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
 !     ---------------------------------------------------------

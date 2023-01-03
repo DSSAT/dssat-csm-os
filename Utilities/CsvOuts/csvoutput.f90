@@ -463,7 +463,7 @@ end Subroutine CsvOutTemp_crgro
 ! Sub for et.csv output
 Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, EMAA, CEO, &
-   CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, N_LYR, ES_LYR, TRWU, Csvline, &
+   CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, N_LYR, ES_LYR, AVRWU, AVRWUP, Csvline, &
    pCsvline, lngth)
 
 !  Input vars
@@ -473,7 +473,7 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
 !        INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
 !        INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
    REAL,Intent(IN) :: AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA 
-   REAL,Intent(IN) :: EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, TRWU
+   REAL,Intent(IN) :: EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, AVRWU, AVRWUP
    REAL,Intent(IN) :: REFA, KCAA, KBSA, KEAA
    INTEGER,Intent(IN) :: N_LYR
    REAL, Dimension(N_LYR), Intent(IN) :: ES_LYR 
@@ -493,7 +493,7 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
               
    Write(tmp,'(30(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
       AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, &
-      EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, TRWU
+      EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, AVRWU, AVRWUP
    
    If (N_LYR < 11) Then
    Write(fmt,'(I2)') N_LYR - 1  
