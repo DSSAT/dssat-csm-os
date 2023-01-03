@@ -499,7 +499,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (SoilType)    SOILPROP
         Type (SPAMType)    SPAM
         Type (WatType)     WATER
-        Type (WeathType)   WEATHER
+        Type (WeatherType) WEATHER  !Full weather data structure
+        Type (WeathType)   WEATH    !Supplemental weather data
         TYPE (PDLABETATYPE) PDLABETA
         TYPE (PMDataType) PM
       End Type TransferType
@@ -516,11 +517,11 @@ C             CHP Added TRTNUM to CONTROL variable.
      &                  , GET_ISWITCH 
      &                  , GET_Output 
      &                  , GET_SOILPROP
-!     &                  , GET_Weather
      &                  , GET_Real 
      &                  , GET_Real_Array_NL
      &                  , GET_Integer
      &                  , GET_Char
+     &                  , GET_Weather
       END INTERFACE
 
       INTERFACE PUT
@@ -528,11 +529,11 @@ C             CHP Added TRTNUM to CONTROL variable.
      &                  , PUT_ISWITCH 
      &                  , PUT_Output 
      &                  , PUT_SOILPROP
-!     &                  , PUT_Weather
      &                  , PUT_Real 
      &                  , PUT_Real_Array_NL
      &                  , PUT_Integer
      &                  , PUT_Char
+     &                  , PUT_Weather
       END INTERFACE
 
       CONTAINS
@@ -609,23 +610,23 @@ C             CHP Added TRTNUM to CONTROL variable.
       RETURN
       END SUBROUTINE PUT_SOILPROP
 
-!!----------------------------------------------------------------------
-!      SUBROUTINE GET_WEATHER(WEATHER_ARG)
-!!     Retrieves WEATHER variable as needed
-!      IMPLICIT NONE
-!      TYPE (WeathType) WEATHER_ARG
-!      WEATHER_ARG = SAVE_data % WEATHER
-!      RETURN
-!      END SUBROUTINE GET_WEATHER
-!
-!!----------------------------------------------------------------------
-!      SUBROUTINE PUT_WEATHER(WEATHER_ARG)
-!!     Stores WEATHER variable 
-!      IMPLICIT NONE
-!      TYPE (WeathType) WEATHER_ARG
-!      SAVE_data % WEATHER = WEATHER_ARG
-!      RETURN
-!      END SUBROUTINE PUT_WEATHER
+!----------------------------------------------------------------------
+      SUBROUTINE GET_WEATHER(WEATHER_ARG)
+!     Retrieves WEATHER variable as needed
+      IMPLICIT NONE
+      TYPE (WeatherType) WEATHER_ARG
+      WEATHER_ARG = SAVE_data % WEATHER
+      RETURN
+      END SUBROUTINE GET_WEATHER
+
+!----------------------------------------------------------------------
+      SUBROUTINE PUT_WEATHER(WEATHER_ARG)
+!     Stores WEATHER variable 
+      IMPLICIT NONE
+      TYPE (WeatherType) WEATHER_ARG
+      SAVE_data % WEATHER = WEATHER_ARG
+      RETURN
+      END SUBROUTINE PUT_WEATHER
 
 !----------------------------------------------------------------------
       Subroutine GET_Real(ModuleName, VarName, Value)
@@ -974,7 +975,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('WEATHER')
         SELECT CASE (VarName)
-        Case ('WYEAR'); Value = SAVE_data % WEATHER % WYEAR
+        Case ('WYEAR'); Value = SAVE_data % WEATH % WYEAR
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1014,7 +1015,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('WEATHER')
         SELECT CASE (VarName)
-        Case ('WYEAR'); SAVE_data % WEATHER % WYEAR = Value
+        Case ('WYEAR'); SAVE_data % WEATH % WYEAR = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1046,7 +1047,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SELECT CASE (ModuleName)
       Case ('WEATHER')
         SELECT CASE (VarName)
-        Case ('WSTA');  Value = SAVE_data % WEATHER % WSTAT
+        Case ('WSTA');  Value = SAVE_data % WEATH % WSTAT
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1058,9 +1059,9 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('FIELD')
         SELECT CASE (VarName)
-        Case ('CXCRD'); Value = SAVE_data % WEATHER % CXCRD
-        Case ('CYCRD'); Value = SAVE_data % WEATHER % CYCRD
-        Case ('CELEV'); Value = SAVE_data % WEATHER % CELEV
+        Case ('CXCRD'); Value = SAVE_data % WEATH % CXCRD
+        Case ('CYCRD'); Value = SAVE_data % WEATH % CYCRD
+        Case ('CELEV'); Value = SAVE_data % WEATH % CELEV
         Case DEFAULT; ERR = .TRUE.
         END SELECT
         
@@ -1091,7 +1092,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SELECT CASE (ModuleName)
       Case ('WEATHER')
         SELECT CASE (VarName)
-        Case ('WSTA');  SAVE_data % WEATHER % WSTAT  = Value
+        Case ('WSTA');  SAVE_data % WEATH % WSTAT  = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1103,9 +1104,9 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('FIELD')
         SELECT CASE (VarName)
-        Case ('CXCRD');  SAVE_data % WEATHER % CXCRD = Value
-        Case ('CYCRD');  SAVE_data % WEATHER % CYCRD = Value
-        Case ('CELEV');  SAVE_data % WEATHER % CELEV = Value
+        Case ('CXCRD');  SAVE_data % WEATH % CXCRD = Value
+        Case ('CYCRD');  SAVE_data % WEATH % CYCRD = Value
+        Case ('CELEV');  SAVE_data % WEATH % CELEV = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
         
