@@ -274,6 +274,12 @@ C  03/04/2005 CHP wrote based on SoilNBal
           ENDDO
         ENDIF
 
+        IF (PRESENT(N2O_data)) THEN
+          TNGSOIL  = N2O_DATA % TNGSoil
+        ELSE
+          TNGSOIL  = 0.0
+        ENDIF
+
 !       Sum state N at end of season
         STATEN = TNO3 + TNH4 + TUREA + TNGSoil + UnreleasedN
 
