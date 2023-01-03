@@ -10,6 +10,7 @@
 !  03/15/2017 Removed old equations for HI 
 !  03/15/2017 Model equation updated for parameter G2 and G3.These parameters in original CERES-Beet were linked to
 !      grain production. These parameters were modified to link with leaf growth and root growth respectively.
+!  06/15/2022 CHP Added CropStatus
 ! 
 !----------------------------------------------------------------------
 !
@@ -27,6 +28,7 @@
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
+     &      CropStatus,                                       !Output
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -75,6 +77,7 @@
 !     REAL        CPSD1       
 !     REAL        CPSD2        
       REAL        CUMPH 
+      INTEGER     CropStatus      
       REAL        CO2X(10)    
       REAL        CO2Y(10)    
       REAL        CO2         
@@ -1425,6 +1428,7 @@ C-GH              ENDIF                                               !
               ENDIF   
               ISTAGE = 6           
               MDATE = YRDOY
+              CropStatus = 33 
           ENDIF
 
 !--------------------------------------------------------------

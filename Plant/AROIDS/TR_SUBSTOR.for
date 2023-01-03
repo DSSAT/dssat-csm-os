@@ -38,7 +38,7 @@ C-----------------------------------------------------------------------
 C  Revision history
 C
 C             Written - See above
-
+!  06/15/2022 CHP Added CropStatus
 C=======================================================================
 
       SUBROUTINE TR_SUBSTOR(CONTROL, ISWITCH,
@@ -46,6 +46,7 @@ C=======================================================================
      &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
      &    YRPLT,                                          !Input
      &    FLOODN,                                         !I/O
+     &    CropStatus,                                     !Output
      &    CANHT, HARVRES, LAI, MDATE, NSTRES, PORMIN,     !Output
      &    RWUEP1, RWUMX, RLV, SENESCE, STGDOY, UNH4, UNO3)!Output
 
@@ -61,7 +62,7 @@ C-----------------------------------------------------------------------
       CHARACTER*2  CROP
       CHARACTER*10 STNAME(20)
 
-      INTEGER DOY, DYNAMIC, EDATE, EMAT
+      INTEGER DOY, DYNAMIC, EDATE, EMAT, CropStatus
       INTEGER ISDATE, ISTAGE, ITRANS
       INTEGER LEAFNO, MDATE, NDAT, NLAYR
       INTEGER YRDOY, YRNURSE, YEAR, YRPLT, YRSIM, YRSOW
@@ -197,6 +198,7 @@ C-----------------------------------------------------------------------
      &    SRAD, SW, SWFAC, TGROCOM, TILNO, TMAX, TMIN,    !Input
      &    TURFAC, YRPLT,                                  !Input
      &    CUMDTT, EMAT, PLANTS, RTDEP, YRSOW,             !I/O
+     &    CropStatus,                                     !Output
      &    CDTT_TP, DTT, FIELD, ISTAGE, ITRANS, LTRANS,    !Output
      &    MDATE, NDAT, NEW_PHASE, P1, P1T, P3, P4,        !Output
      &    SDTT_TP,SEEDNI, SI3, STGDOY, STNAME, SUMDTT,    !Output
@@ -236,7 +238,7 @@ C-----------------------------------------------------------------------
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
      &    UNH4, UNO3, MDATE, WTNUP,                      !Output
-     &    CARBO,                                          !Output
+     &    CARBO, CropStatus,                              !Output
      &    PETWT)                              !addition RMO
 
       CALL TR_OPGROW (CONTROL, ISWITCH, SOILPROP, 
@@ -319,6 +321,7 @@ C-----------------------------------------------------------------------
      &    SRAD, SW, SWFAC, TGROCOM, TILNO, TMAX, TMIN,    !Input
      &    TURFAC, YRPLT,                                  !Input
      &    CUMDTT, EMAT, PLANTS, RTDEP, YRSOW,             !I/O
+     &    CropStatus,                                     !Output
      &    CDTT_TP, DTT, FIELD, ISTAGE, ITRANS, LTRANS,    !Output
      &    MDATE, NDAT, NEW_PHASE, P1, P1T,P3, P4,         !Output
      &    SDTT_TP,SEEDNI, SI3, STGDOY, STNAME, SUMDTT,    !Output
@@ -357,7 +360,7 @@ C--------------------------------------------------------------
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
      &    UNH4, UNO3, MDATE, WTNUP,                       !Output
-     &    CARBO,                                          !Output
+     &    CARBO, CropStatus,                              !Output
      &    PETWT)                              !addition RMO
 
       FLOODN % NDAT   = NDAT

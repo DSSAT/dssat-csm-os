@@ -10,6 +10,7 @@ C  01/01/1989     Written.
 C  12/31/1996 GH  Deleted phenology statements.
 C  09/15/1998 CHP Modified for modular format.
 C  05/10/1999 GH  Incorporaed in CROPGRO
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  Called by  : CROPGRO
 C  Calls      : None
@@ -19,7 +20,7 @@ C========================================================================
      &    SLDOT, SSDOT, STMWT, TMIN, WTLF, YRDOY,     !Input
      &    YRPLT,                                      !Input
      &    MDATE,                                      !Input/Output
-     &    FRZDL, PSRLYRD, PSRSRFD,                    !Output
+     &    CropStatus, FRZDL, PSRLYRD, PSRSRFD,        !Output
      &    WLFDOT, WSFDOT, WSRFDOT)                    !Output 
 
 !      variables previously in argument list, but not used:
@@ -39,7 +40,7 @@ C-----------------------------------------------------------------------
 !     CHARACTER*1  IDETO
 !     CHARACTER*30 FILEIO
       CHARACTER*78 MESSAGE(10)
-      INTEGER MDATE, YRDOY, DAP, YRPLT, TIMDIF      !NOUTDO, 
+      INTEGER MDATE, YRDOY, DAP, YRPLT, TIMDIF, CropStatus    !NOUTDO, 
       REAL  WLFDOT, WTLF, SLDOT, NRUSLF, TMIN, FREEZ1, FREEZ2
       REAL  FRZDC, FRZDL, NRUSST, PSRSRFD,  !NRUSSR, PSRSRFL, PSRLYR1, 
      &  PSRLYRD, SSDOT, STMWT,   !SRLYRD, SRFTEMP, SRSRFD, SSRDOT, 
@@ -83,6 +84,7 @@ C-----------------------------------------------------------------------
             IF (TMIN .LE. FREEZ2) THEN
                     IF (MDATE .LT. 0) THEN
                         MDATE = YRDOY
+                        CropStatus = 32 !cold stress
                         ENDIF
 
                   WLFDOT = WTLF - SLDOT - NRUSLF/0.16

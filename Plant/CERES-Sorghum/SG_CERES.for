@@ -29,6 +29,7 @@ C  05/19/2011 GH  Reorganized cultivar coefficients
 C  08/26/2011 GH  Add new tillering coefficient in Ecotype file
 C  05/31/2007 GH Added P-model (unfinished)
 C  02/07/2018 MA Externalized initial leaf area A (change name to PLAM, 11jan2019)
+!  06/15/2022 CHP Added CropStatus
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -42,7 +43,7 @@ C----------------------------------------------------------------------
      &     TRWUP, TWILEN, YREND, YRPLT,                         !Input
      &     CANHT, HARVRES, MDATE, NSTRES, PORMIN, PUptake,      !Output
      &     RLV, RWUMX, SENESCE, STGDOY, UNO3, UNH4,             !Ouput
-     &     XLAI, KCAN, KEP, FracRts)                            !Output
+     &     XLAI, KCAN, KEP, FracRts, CropStatus)                !Output
 
       USE ModuleDefs
 
@@ -70,6 +71,7 @@ C----------------------------------------------------------------------
       REAL            CO2X(10)
       REAL            CO2Y(10)
       CHARACTER*2     CROP
+      INTEGER         CropStatus
       INTEGER         CTYPE
       REAL            CUMDEP
       REAL            CUMDTT
@@ -782,7 +784,7 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
      &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
      &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)
+     &      SeedFrac, VegFrac, CropStatus)                                 
 
           CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
      &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
@@ -1191,7 +1193,7 @@ C--------------------------------------------------------------------
      &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
      &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)
+     &      SeedFrac, VegFrac, CropStatus) 
 
              CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
      &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
@@ -1313,7 +1315,7 @@ C----------------------------------------------------------------------
      &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
      &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)
+     &      SeedFrac, VegFrac, CropStatus) 
 
           ENDIF
         ENDIF

@@ -34,7 +34,7 @@ C=======================================================================
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, EORATIO, HARVRES, MDATE,                 !Output
-     &    NSTRES, PSTRES1,                                !Output
+     &    NSTRES, PSTRES1, CropStatus,                    !Output
      &    PORMIN, RLV, RWUMX, SENESCE,                    !Output
      &    STGDOY, UNH4, UNO3, XHLAI, XLAI)                !Output
 
@@ -58,7 +58,7 @@ C=======================================================================
       INTEGER DAS, DYNAMIC, RUN
       INTEGER NDLEAF, NDSET, NLAYR, NOUTDO,
      &    NR1, NR2, NR5, NR7, NVEG0
-      INTEGER RSTAGE, YREND
+      INTEGER RSTAGE, YREND, CropStatus
       INTEGER YREMRG, YRDOY, YRNR1, YRNR2,
      &    YRNR3, YRNR5, YRNR7, MDATE, YRPLT, YRSIM
       INTEGER STGDOY(20)
@@ -594,9 +594,9 @@ C-----------------------------------------------------------------------
 
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
 
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT, SDWTAM,        !Output
@@ -866,9 +866,9 @@ C     Initialize pest coupling point and damage variables, first day only
 
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
 
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT, SDWTAM,        !Output
@@ -1290,9 +1290,9 @@ C-----------------------------------------------------------------------
 
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
 
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT, SDWTAM,        !Output
@@ -1890,7 +1890,7 @@ C-----------------------------------------------------------------------
      &    SLDOT, SSDOT, STMWT, TMIN, WTLF, YRDOY,     !Input
      &    YRPLT,                                      !Input
      &    MDATE,                                      !Input/Output
-     &    FRZDL, PSRLYRD, PSRSRFD,                    !Output
+     &    CropStatus, FRZDL, PSRLYRD, PSRSRFD,        !Output
      &    WLFDOT, WSFDOT, WSRFDOT)                    !Output 
 
       ELSE
@@ -1979,9 +1979,9 @@ C-----------------------------------------------------------------------
 
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
 
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT, SDWTAM,        !Output

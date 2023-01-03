@@ -18,6 +18,7 @@ C  01/16/2008 GH  Rename DJTI to P2 and move to cultivar file
 C  01/16/2008 GH  Add cultivar coefficient PANTH
 C  06/01/2007 GH  Add P-model (unfinished)
 C  01/06/2014 MA  Change to couple the P model     
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  INPUT  : YRDOY
 C
@@ -62,7 +63,7 @@ C      Variables passed through PHENOL to phasei but not used in phenol
      & TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
      & XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
      & DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     & SeedFrac, VegFrac)                                 
+     & SeedFrac, VegFrac, CropStatus)                                 
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -73,6 +74,7 @@ C VARIABLES ONLY USED IN PHASEI. THEY ARE PASSED THROUGH PHENOL TO PHASEI
 C------------------------------------------------------------------------
       REAL AGEFAC
       REAL BIOMS1
+      INTEGER CropStatus
       REAL CUMDTT
       REAL CUMPH
       REAL DGET
@@ -476,6 +478,7 @@ C--------------------------------------------------------------------
                 WRITE (NOUTDO,1399)
              ENDIF
              MDATE = YRDOY
+             CropStatus = 12
              RETURN
           ENDIF
 
@@ -701,6 +704,7 @@ C--------------------------------------------------------------------
           STGDOY(ISTAGE) = YRDOY
           IPRINT         = 0
           MDATE          = YRDOY
+          CropStatus     = 1
           GRNWT  = PANWT  * 0.8
           GRAINN = GRAINN - 0.2  * PANWT*TANC
           STOVN  = STOVN  + 0.2  * PANWT*TANC

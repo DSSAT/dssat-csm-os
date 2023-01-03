@@ -12,6 +12,7 @@ C  02/19/2003 CHP Converted dates to YRDOY format
 !  02/20/2012 CHP/US Modify temperature response
 !  12/06/2016 CHP/US Add check for small LAI during grainfilling - triggers maturity
 !  04/24/2019 US/JF/CHP Replace G4, G5 with THOT, TCLDP, TCLDF
+!  06/15/2022 CHP Added CropStatus
 C=======================================================================
 
       SUBROUTINE RI_PHENOL (CONTROL, ISWITCH, 
@@ -25,7 +26,7 @@ C=======================================================================
      &    P3, P4, SDTT_TP, SEEDNI, SI3, STGDOY, STNAME,   !Output
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, TAGE,        !Output
      &    TBASE, TF_GRO, TSGRWT, WSTRES, XSTAGE, XST_TP,  !Output
-     &    SeedFrac, VegFrac)                              !Output
+     &    SeedFrac, VegFrac, CropStatus)                  !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -46,7 +47,7 @@ C=======================================================================
       INTEGER DOY, DYNAMIC, EMAT, ICSDUR, IDUR1, ISIM, ISTAGE
       INTEGER ISDATE, ISM, ITDATE, ITRANS
       INTEGER LEAFNO, MDATE, NDAS, NDAT, NLAYR
-      INTEGER YR, YRPLT, YRSIM, YRSOW
+      INTEGER YR, YRPLT, YRSIM, YRSOW, CropStatus
 
 !     NEW VARIABLE TO BE READ IN SPP FILE
       REAL TOPTMX, TOPTD, TOPTDX, TDELAYMX, TMPNPI, TMPNFL, TMPXFL   
@@ -577,7 +578,7 @@ C=======================================================================
           !FROM PHASEI
           ISTAGE = 3          !HEADING
          ! P3     = 374.0 
-          P4     = 120.0                        ! 120.0 MAKE THIS SPP MAR17
+          P4     = 120.0    ! 120.0 MAKE THIS SPP MAR17
           XNTI   = SUMDTT/PHINT
           P3     = 5.5*PHINT+0.135*SUMDTT      !SPP FILE
           SUMDTT_2 = SUMDTT 
@@ -810,6 +811,7 @@ C=======================================================================
           ! Determine physiological maturity
           STGDOY (ISTAGE) = YRDOY
           MDATE  = YRDOY
+          CropStatus = 1
 
           CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  

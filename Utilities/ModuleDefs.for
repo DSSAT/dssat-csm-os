@@ -107,6 +107,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER   NYRS, REPNO, ROTNUM, RUN, TRTNUM
         INTEGER   YRDIF, YRDOY, YRSIM
         INTEGER   FODAT, ENDYRS  !Forecast start date and ensemble #
+        INTEGER   CropStatus
       END TYPE ControlType
 
 !=======================================================================

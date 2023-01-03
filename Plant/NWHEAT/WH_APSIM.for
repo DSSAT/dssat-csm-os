@@ -28,6 +28,7 @@ C ALL RIGHTS RESERVED
 !  10/31/2007 CHP Added simple K model.
 !  06/08/2011 FSR NWheat migration to DSSAT based on MZ_CERES  
 !  07/21/2017 WP  Changes for pest damage
+!  06/15/2022 CHP Added CropStatus
 !----------------------------------------------------------------------
 !  Called by: Plant
 !----------------------------------------------------------------------
@@ -41,9 +42,9 @@ C The statements begining with !*! are refer to APSIM source codes
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, rlv_nw,               !Output
      &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
-     &     UNH4, UNO3, XLAI, XHLAI, UH2O)                 !Output
-        !JZW note: KCAN/KEP  ic calculated in WH_PHENO. RWUMX is not used 
-        !PUptake/FracRts is not calculated for Nwheat, 
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O, CropStatus)     !Output
+!        JZW note: KCAN/KEP  ic calculated in WH_PHENO. RWUMX is not used 
+!        PUptake/FracRts is not calculated for Nwheat, 
       USE ModuleDefs
       USE WH_module
       IMPLICIT NONE
@@ -70,7 +71,8 @@ C The statements begining with !*! are refer to APSIM source codes
       real            carbh  ! NWheat carb and carbo    
       INTEGER         CDAY   
       REAL            CO2      
-      CHARACTER*2     CROP   
+      CHARACTER*2     CROP  
+      INTEGER         CropStatus 
       REAL            CUMDEP      
       REAL            CUMDTT    
       REAL            DAYL 
@@ -396,7 +398,7 @@ C----------------------------------------------------------------------
      &    CUMDTT, DTT, GPP, ISDATE, ISTAGE,                      !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
-     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw,                   !OUTPT 
+     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw, CropStatus,       !OUTPT 
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
 
 C-----------------------------------------------------------------------
@@ -519,7 +521,7 @@ C-----------------------------------------------------------------------
      &    CUMDTT, DTT, GPP, ISDATE, ISTAGE,                      !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
-     &    KCAN, KEP, P3, TSEN, CDAY,  cumph_nw,                  !OUTPT 
+     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw, CropStatus,       !OUTPT 
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
 C-----------------------------------------------------------------------
 
@@ -688,7 +690,7 @@ C----------------------------------------------------------------------
      &    CUMDTT, DTT, GPP, ISDATE, ISTAGE,                      !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
-     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw,                   !OUTPT 
+     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw, CropStatus,       !OUTPT 
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
 C-----------------------------------------------------------------------
           ENDIF

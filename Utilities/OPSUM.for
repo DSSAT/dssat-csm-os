@@ -63,15 +63,18 @@ C=======================================================================
         REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
         
 !       Added 7/19/2016 N2O emissions
-        REAL N2OEC  !kg/ha
-        INTEGER CO2EC
-        REAL CH4EC  !kg[C]/ha chp 2021-07-28
+        REAL N2OEM  !kg/ha
+        INTEGER CO2EM
+        REAL CH4EM  !kg[C]/ha chp 2021-07-28
 
 !       Added 2019-19-17 CHP Cumulative net mineralization
         REAL NMINC
         
 !       Added 05/28/2021 Latitude, Longitude and elevation
         REAL XCRD, YCRD, ELEV
+
+!       Added 2021-04-14 CHP End of season crop status
+        INTEGER CRST
 
 !       Added 2021-20-04 LPM Fresh weight variables
         INTEGER FCWAM, FHWAM, FPWAM
@@ -149,8 +152,8 @@ C-----------------------------------------------------------------------
 !     Added 02/23/2011 Seasonal average environmental data
       INTEGER NDCH
       REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-      REAL N2OEC, CH4EC  !kg/ha
-      INTEGER CO2EC
+      INTEGER CO2EM, CRST
+      REAL N2OEM, CH4EM  !kg/ha
 !     Added 05/28/2021 Latitude, Longitude and elevation data
       CHARACTER*9  ELEV 
       CHARACTER*15 LATI, LONG
@@ -160,9 +163,9 @@ C-----------------------------------------------------------------------
 !     For forecast mode may be different than simulation year
       INTEGER WYEAR
       
-!       Added 2021-20-04 LPM Fresh weight variables
-        INTEGER FCWAM, FHWAM, FPWAM
-        REAL HWAHF, FBWAH
+!     Added 2021-20-04 LPM Fresh weight variables
+      INTEGER FCWAM, FHWAM, FPWAM
+      REAL HWAHF, FBWAH
 
       LOGICAL FEXIST
 
@@ -343,9 +346,9 @@ C     Initialize OPSUM variables.
       SUMDAT % GNAM   = -99
       
 !     N2O emissions
-      SUMDAT % N2OEC  = -99. !N2O emissions (kg[N]/ha)
-      SUMDAT % CO2EC  = -99  !CO2 emissions from OM decomp (kg[C]/ha)
-      SUMDAT % CH4EC  = -99. !CH4 emissions (kg[C]/ha)
+      SUMDAT % N2OEM  = -99. !N2O emissions (kg[N]/ha)
+      SUMDAT % CO2EM  = -99  !CO2 emissions from OM decomp (kg[C]/ha)
+      SUMDAT % CH4EM  = -99. !CH4 emissions (kg[C]/ha)
       
       SUMDAT % RECM   = -99
       SUMDAT % ONTAM  = -99
@@ -400,6 +403,8 @@ C     Initialize OPSUM variables.
       SUMDAT % ESCP   = -99.9 !Cumul soil evap (mm), planting to harvest
       SUMDAT % EPCP   = -99.9 !Cumul transp (mm), planting to harvest
 
+      SUMDAT % CRST   = -99   !End of season crop status code
+
       CALL GET('WEATHER','WSTA',WSTAT)
 !      IF (LenString(WSTAT) < 1) THEN
 !        WSTAT = WSTATION
@@ -451,9 +456,9 @@ C     Initialize OPSUM variables.
       NMINC= SUMDAT % NMINC   !Net mineralized N (kg N/ha)
       CNAM = SUMDAT % CNAM    !Tops N at Maturity (kg/ha)
       GNAM = SUMDAT % GNAM    !Grain N at Maturity (kg/ha)
-      N2OEC= SUMDAT % N2OEC   !N2O emissions (kg[N]/ha)
-      CO2EC= SUMDAT % CO2EC   !CO2 emissions (kg[C]/ha)
-      CH4EC= SUMDAT % CH4EC   !CH4 emissions (kg[C]/ha)
+      N2OEM= SUMDAT % N2OEM   !N2O emissions (kg[N]/ha)
+      CO2EM= SUMDAT % CO2EM   !CO2 emissions (kg[C]/ha)
+      CH4EM= SUMDAT % CH4EM   !CH4 emissions (kg[C]/ha)
 
       RECM = SUMDAT % RECM    !Residue Applied (kg/ha)
       ONTAM= SUMDAT % ONTAM   !Organic N at maturity, soil & surf (kg/h)
@@ -497,6 +502,8 @@ C     Initialize OPSUM variables.
       ETCP   = SUMDAT % ETCP  !Cumul ET (mm), planting to harvest
       ESCP   = SUMDAT % ESCP  !Cumul soil evap (mm), planting to harvest
       EPCP   = SUMDAT % EPCP  !Cumul transp (mm), planting to harvest
+
+      CRST   = SUMDAT % CRST  !End of season crop status code
 
       CALL GET('WEATHER','WYEAR',WYEAR)
       CALL GET('FIELD','CYCRD',LATI)
@@ -566,7 +573,8 @@ C-------------------------------------------------------------------
      &'WATER PRODUCTIVITY..................................',
      &'................    ',
      &'NITROGEN PRODUCTIVITY...........  ',
-     &'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..............')
+     &'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..............',
+     &'STATUS')
 
           WRITE (NOUTDS,400)
 ! CHP 3/14/2018 USE P# for REPNO instead of C# for CRPNO, which isn't used.
@@ -580,17 +588,18 @@ C-------------------------------------------------------------------
      &   '    HWUM    H#AM    H#UM  HIAM  LAIX',
      &   '   FCWAM   FHWAM   HWAHF   FBWAH   FPWAM',
      &   '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
-     &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM NMINC  CNAM  GNAM N2OEC',
+     &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM NMINC  CNAM  GNAM N2OEM',
 !    &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
      &   '  PI#M  PICM  PUPC  SPAM',
      &   '  KI#M  KICM  KUPC  SKAM',
      &   '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM',
-     &   '   CO2EC  CH4EC',
+     &   '   CO2EM  CH4EM',
      &   '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
      &   '     YPTM     YPIM',
      &   '    DPNAM    DPNUM    YPNAM    YPNUM',
      &   '  NDCH TMAXA TMINA SRADA DAYLA   CO2A   PRCP   ETCP',
-     &   '   ESCP   EPCP')
+     &   '   ESCP   EPCP',
+     &   '  CRST')
         ENDIF
         END IF   ! VSH
 
@@ -666,20 +675,20 @@ C-------------------------------------------------------------------
         EPCP_TXT = PRINT_TXT(EPCP, "(F7.1)")
 
 !       N2O emissions
-        IF (N2OEC .LT. -0.00001) THEN
+        IF (N2OEM .LT. -0.00001) THEN
           N2OEC_TXT = "   -99"
-        ELSEIF (N2OEC .LT. 1) THEN
-          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.3)")       !kg/ha
-        ELSEIF (N2OEC .LT. 10) THEN
-          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.2)")       !kg/ha
-        ELSEIF (N2OEC .LT. 100) THEN
-          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.1)")       !kg/ha
+        ELSEIF (N2OEM .LT. 1) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEM, "(F6.3)")       !kg/ha
+        ELSEIF (N2OEM .LT. 10) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEM, "(F6.2)")       !kg/ha
+        ELSEIF (N2OEM .LT. 100) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEM, "(F6.1)")       !kg/ha
         ELSE
-          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.0)")       !kg/ha
+          N2OEC_TXT= PRINT_TXT(N2OEM, "(F6.0)")       !kg/ha
         ENDIF
 
 !       Not used
-        N2OGC_TXT= PRINT_TXT(N2OEC*1000., "(F6.1)")   !g/ha
+        N2OGC_TXT= PRINT_TXT(N2OEM*1000., "(F6.1)")   !g/ha
 
         IF (FBWAH .GT. 1.E-3) THEN
           FBWAH = FBWAH * 10.
@@ -693,13 +702,14 @@ C-------------------------------------------------------------------
 !    &    N2OGC_TXT,
      &    PINUMM, PICM, PUPC, SPAM,        !P data
      &    KINUMM, KICM, KUPC, SKAM,        !K data
-     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC,
+     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EM, CH4EM,
 !         Water productivity
      &    DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT, 
      &                 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT,
      &    DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT,
      &    NDCH, TMAXA_TXT, TMINA_TXT, SRADA_TXT, DAYLA_TXT, 
-     &                 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
+     &                 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT,
+     &    CRST
 
   503   FORMAT(     
                                               
@@ -722,7 +732,7 @@ C-------------------------------------------------------------------
 !       KINUMM, KICM, KUPC, SKAM, RECM, 
      &  9(1X,I5),
        
-!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC,
+!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EM, CH4EM,
      &  4(1X,I6),3(1X,I7), F7.1,      
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
@@ -735,7 +745,10 @@ C-------------------------------------------------------------------
 
 !       NDCH, TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
 !    &  I6,3F6.1,F6.2,5F7.1)
-     &  I6,9A)
+     &  I6,9A,
+
+!       CRST
+     &  I6)
 
         CLOSE (NOUTDS)
         END IF   ! VSH
@@ -752,13 +765,13 @@ C-------------------------------------------------------------------
      &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, FCWAM, FHWAM, HWAHF, 
      &FBWAH, FPWAM, IRNUM, IRCM, PRCM, ETCM,
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
-     &NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, 
+     &NIAM, NMINC, CNAM, GNAM, N2OEM, PINUMM, PICM, PUPC, SPAM, KINUMM, 
      &KICM, KUPC, SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
-     &CO2EC, CH4EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, 
+     &CO2EM, CH4EM, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, 
      &DPNAM, DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, DAYLA, 
-     &CO2A, PRCP, ETCP, ESCP, EPCP,   
+     &CO2A, PRCP, ETCP, ESCP, EPCP, CRST,   
      &vCsvlineSumOpsum, vpCsvlineSumOpsum, vlngthSumOpsum) 
-            
+
             CALL LinklstSumOpsum(vCsvlineSumOpsum) 
         END IF
                 
@@ -1118,14 +1131,17 @@ C=======================================================================
         CASE ('EPCP'); SUMDAT % EPCP   = VALUE(I)
 
 !       From GHG_Mod
-        CASE ('N2OEC');SUMDAT % N2OEC  = VALUE(I)
-        CASE ('CO2EC');SUMDAT % CO2EC  = VALUE(I)
-        CASE ('CH4EC');SUMDAT % CH4EC  = VALUE(I)
+        CASE ('N2OEM');SUMDAT % N2OEM  = VALUE(I)
+        CASE ('CO2EM');SUMDAT % CO2EM  = VALUE(I)
+        CASE ('CH4EM');SUMDAT % CH4EM  = VALUE(I)
                
         !From Ipexp or Ipwth:
         CASE ('YCRD'); SUMDAT % YCRD  = VALUE(I)
         CASE ('XCRD'); SUMDAT % XCRD  = VALUE(I)
         CASE ('ELEV'); SUMDAT % ELEV  = VALUE(I)
+
+!       Crop status
+        CASE ('CRST') ;SUMDAT % CRST   = VALUE(I)
 
         END SELECT
       ENDDO

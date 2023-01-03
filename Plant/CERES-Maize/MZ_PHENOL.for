@@ -17,6 +17,7 @@
 !  10/12/2005 CHP/JIL Added optional temperature sensitivity parameter
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
+!  04/14/2021 CHP Added CropStatus
 !----------------------------------------------------------------------
       SUBROUTINE MZ_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
@@ -24,7 +25,7 @@
      &    XN,YRDOY,YRSIM,                                         !I
      &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac)                                      !O
+     &    SeedFrac, VegFrac, CropStatus)                          !O
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -40,6 +41,7 @@
       CHARACTER*1     BLANK         
       REAL            C1   
       INTEGER         CDAY 
+      INTEGER         CropStatus
       REAL            CUMDEP          
       REAL            CUMDTT          
       REAL            DAYL            
@@ -570,6 +572,7 @@
                               WRITE (NOUTDO,3500)
                           ENDIF
                           MDATE  = YRDOY
+                          CropStatus = 12  !failure to germinate
                           RETURN
                       ENDIF
                  !Germinate when soil water > 0.02 cm3/cm3
@@ -617,6 +620,7 @@
                       WRITE (NOUTDO,1399)
                   ENDIF
                   MDATE = YRDOY
+                  CropStatus = 12   ! failure to germinate
                   RETURN
               ENDIF
 
@@ -888,6 +892,7 @@
               !---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY
               MDATE          = YRDOY
+              CropStatus     = 1  !crop matured normally
               !ISTAGE = 7
               ISTAGE = 10  !CHP - Prevents growth parameters from being
                            ! set back to initial values.  08/11/03

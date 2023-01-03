@@ -18,13 +18,14 @@
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
 !  07/11/2007 JIL Adapted for IXIM model
+!  04/14/2021 CHP Added CropStatus
 !----------------------------------------------------------------------
       SUBROUTINE MZ_IX_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,        !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
      &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,XN,YRDOY,YRSIM,         !I
      &    CUMDTT,DTT,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT,      !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    PEAR,PSTM,GDDAE,SeedFrac,VegFrac,Z2STAGE)               !O
+     &    PEAR,PSTM,GDDAE,SeedFrac,VegFrac,Z2STAGE,CropStatus)    !O
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -39,6 +40,7 @@
       CHARACTER*1     BLANK         
       REAL            C1   
       INTEGER         CDAY 
+      INTEGER         CropStatus
       REAL            CUMDEP          
       REAL            CUMDTT          
       REAL            DAYL            
@@ -576,6 +578,7 @@ C      REAL            PRLF  ! JIL Prolificacy level
                               WRITE (NOUTDO,3500)
                           ENDIF
                           MDATE  = YRDOY
+                          CropStatus = 12  !failure to germinate
                           RETURN
                       ENDIF
                  !Germinate when soil water > 0.02 cm3/cm3
@@ -624,8 +627,9 @@ C      REAL            PRLF  ! JIL Prolificacy level
                   IF (IDETO .EQ. 'Y') THEN
                       WRITE (NOUTDO,1399)
                   ENDIF
-              MDATE = YRDOY
-              RETURN
+                MDATE = YRDOY
+                CropStatus = 12   ! failure to germinate
+                RETURN
               ENDIF
 
               !---------------------------------------------------------
@@ -888,6 +892,7 @@ C ** JIL Continuous phenological scale (0=Emergence; 1=Flowering; 2= Physiol Mat
               !---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY
               MDATE          = YRDOY
+              CropStatus = 1  !crop matured normally
               !ISTAGE = 7
               ISTAGE = 10  !CHP - Prevents growth parameters from being
                            ! set back to initial values.  08/11/03

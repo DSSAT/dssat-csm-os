@@ -13,6 +13,7 @@
 !
 !----------------------------------------------------------------------
 !  Revision history
+!  06/15/2022 CHP Added CropStatus
 !
 !----------------------------------------------------------------------
 !  Called : Alt_Plant
@@ -22,7 +23,7 @@
       SUBROUTINE BS_CERES (CONTROL, ISWITCH,              !Input
      &     EOP, HARVFRAC, NH4, NO3, SPi_AVAIL, SNOW,      !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
-     &     CANHT, HARVRES, KCAN, KEP, MDATE,              !Output
+     &     CANHT, CropStatus, HARVRES, KCAN, KEP, MDATE,  !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
      &     STGDOY, FracRts, XLAI, XHLAI)                  !Output
 
@@ -49,6 +50,7 @@
 !      REAL            CNSD2    
       REAL            CO2      
       CHARACTER*2     CROP  
+      INTEGER         CropStatus 
       REAL            CUMDEP      
       REAL            CUMDTT    
       REAL            DAYL 
@@ -306,7 +308,7 @@ C----------------------------------------------------------------------
      &        XN,YRDOY,YRSIM,                                         !I
      &        CUMDTT,DTT,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT,      !O
      &        XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &        SeedFrac, VegFrac)                                      !O
+     &        SeedFrac, VegFrac, CropStatus)                          !O
 
 
           !-------------------------------------------------------------
@@ -321,6 +323,7 @@ C----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
+     &      CropStatus,                                       !Output
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -408,7 +411,7 @@ C-----------------------------------------------------------------------
      &        XN,YRDOY,YRSIM,                                         !I
      &        CUMDTT,DTT,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT,      !O
      &        XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &        SeedFrac, VegFrac)                                      !O
+     &        SeedFrac, VegFrac, CropStatus)                          !O
 
           CALL BS_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CO2, DLAYR, DS, DTT, EOP, FILEIO,         !Input
@@ -419,6 +422,7 @@ C-----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
+     &      CropStatus,                                       !Output
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -513,7 +517,7 @@ C----------------------------------------------------------------------
      &        XN,YRDOY,YRSIM,                                         !I
      &        CUMDTT,DTT,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT,      !O
      &        XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &        SeedFrac, VegFrac)                                      !O
+     &        SeedFrac, VegFrac, CropStatus)                          !O
 
 	      ENDIF
           ENDIF
@@ -531,6 +535,7 @@ C----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
+     &      CropStatus,                                       !Output
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -583,6 +588,7 @@ C----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
+     &      CropStatus,                                       !Output
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -647,6 +653,7 @@ C----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
+     &      CropStatus,                                       !Output
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output

@@ -22,6 +22,7 @@
 !  01/21/2020 JG moved some CUL parameters to ECO file
 !  07/24/2020 JG moved ozone parameters to ECO file
 !  01/18/2022 JG cleaned ozone parameters in ECO file
+!  06/15/2022 CHP Added CropStatus
 !---------------------------------------------------------------------
 !  Called by : WH_APSIM 
 !  when DYNAMIC = RUNINIT, SEASINIT and INTEGRATE only
@@ -36,7 +37,7 @@
      &    CUMDTT, DTT, GPP, ISDATE, ISTAGE,                      !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
-     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw,                   !OUTPT 
+     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw, CropStatus,       !OUTPT 
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
 C-----------------------------------------------------------------------
       USE ModuleDefs
@@ -60,6 +61,7 @@ C-----------------------------------------------------------------------
 !     REAL        ADTIL
 !     REAL        AFS1
 !     REAL        AFS2     
+      INTEGER     CropStatus
       real   dc_code(7) ! Growth stage code, similar to Zadocs scale
       REAL        DTNP1
       REAL        EXNH4
@@ -915,6 +917,7 @@ cbak  ears that is not included in lai calculation.
                               WRITE (NOUTDO,3500)
                           ENDIF
                           MDATE  = YRDOY
+                          CropStatus = 12
                           RETURN
                       ENDIF
                  !Germinate when soil water > 0.02 cm3/cm3
@@ -994,6 +997,7 @@ cbak  ears that is not included in lai calculation.
                       WRITE (NOUTDO,1399)
                   ENDIF
                   MDATE = YRDOY
+                  CropStatus = 12
                   RETURN
               ENDIF
 
@@ -1020,7 +1024,7 @@ cbak  ears that is not included in lai calculation.
 !*!          alternatively, could use TWILEN (DSSAT)
 !*!                  ppfac = 1. -   p1d * (20. - hrlt)**2
 !             nwheats_ppfac = 1. - PPSEN * (20. - DAYL)**2 
-!            n Apsim: The parameter â€œtwilight?is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.  
+!            n Apsim: The parameter “twilight?is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.  
              nwheats_ppfac = 1. - PPSEN * (20. - TWILEN)**2 
         
 !             DSSAT and APSIM may calculate DAYL differently, thus affect DCCD slightly

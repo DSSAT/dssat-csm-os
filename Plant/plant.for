@@ -57,6 +57,7 @@ C  08/09/2012 GH  Added CSCAS model
 !  09/01/2018  MJ modified Canegro interface, IRRAMT added.
 !  03/17/2020  WP Model TEFF from Mulugeta called on plant (added).
 !  08/19/2021 FV Added OilcropSun
+!  06/15/2022 CHP Added CropStatus
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
@@ -122,7 +123,7 @@ C-----------------------------------------------------------------------
       CHARACTER*78 MESSAGE(10)    !Up to 10 lines of text to be output
 
       INTEGER DYNAMIC
-      INTEGER RUN !, NVALP0
+      INTEGER RUN, CropStatus !, NVALP0
       INTEGER YREND, MDATE, YRPLT  !, YRSIM, YREMRG
       INTEGER STGDOY(20)
 
@@ -161,6 +162,10 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !      REAL, DIMENSION(0:NL,NELEM) :: SomLitE
 !      LOGICAL, PARAMETER :: OR_OUTPUT = .FALSE.
 
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 1
+      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -286,6 +291,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       UNH4     = 0.0
       UNO3     = 0.0
       UH2O     = 0.0
+      CropStatus = -99
+      CONTROL % CropStatus = -99
 
       CALL READ_ASCE_KT(CONTROL, MEEVP)
 
@@ -329,6 +336,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       SENESCE % ResWt  = 0.0
       SENESCE % ResLig = 0.0
       SENESCE % ResE   = 0.0
+      CropStatus = -99
+      CONTROL % CropStatus = -99
 
 !***********************************************************************
 !***********************************************************************
@@ -363,8 +372,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         CALL CROPGRO(CONTROL, ISWITCH,
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
-     &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
-     &    NSTRES, PSTRES1,                                !Output
+     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,    !Output
+     &    KTRANS, MDATE, NSTRES, PSTRES1,                 !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
 !-----------------------------------------------------------------------
@@ -374,7 +383,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, EORATIO, HARVRES, MDATE,                 !Output
-     &    NSTRES, PSTRES1,                                !Output
+     &    NSTRES, PSTRES1, CropStatus,                    !Output
      &    PORMIN, RLV, RWUMX, SENESCE,                    !Output
      &    STGDOY, UNH4, UNO3, XHLAI, XLAI)                !Output
 
@@ -446,14 +455,14 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     -------------------------------------------------
 !     APSIM N-wheat WHAPS
       CASE('WHAPS')
-        CALL WH_APSIM (CONTROL, ISWITCH,              !Input
-     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+        CALL WH_APSIM (CONTROL, ISWITCH,                  !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,    !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, RLV,                  !Output
      &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
-     &     UNH4, UNO3, XLAI, XHLAI, UH2O)               !Output
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O, CropStatus)     !Output
 
         IF (DYNAMIC < RATE) THEN
 !          KTRANS = KCAN + 0.15        !Or use KEP here??
@@ -485,6 +494,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,            !Input
      &     SNOW, SOILPROP, SRAD, SW, TMAX, TMIN,          !Input
      &     TRWUP, TWILEN, YREND, YRPLT,                   !Input
+     &     CropStatus,                                    !Output
      $     CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,    !Output
      &     RWUMX, SENESCE, STGDOY, UNO3, UNH4, XLAI,      !Output
      &     KCAN, KEP)                                     !Output
@@ -504,6 +514,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
+     &     CropStatus,                                    !Output
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
      &     STGDOY, FracRts, UNH4, UNO3, XLAI, XHLAI)      !Output
@@ -520,7 +531,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         CALL BS_CERES (CONTROL, ISWITCH,                  !Input
      &     EOP, HARVFRAC, NH4, NO3, SPi_AVAIL, SNOW,      !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
-     &     CANHT, HARVRES, KCAN, KEP, MDATE,              !Output
+     &     CANHT, CropStatus, HARVRES, KCAN, KEP, MDATE,  !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
      &     STGDOY, FracRts,XLAI, XHLAI)          !Output
 
@@ -552,7 +563,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    TWILEN, YRPLT,                                  !Input
      &    FLOODN,                                         !I/O
      &    CANHT, HARVRES, XLAI, KUptake, MDATE, NSTRES,   !Output
-     &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
+     &    PORMIN, PUptake, RWUEP1, RWUMX, CropStatus,     !Output
      &    RLV, SENESCE, STGDOY, FracRts, UNH4, UNO3)      !Output
 
         IF (DYNAMIC .EQ. INTEGR) THEN
@@ -655,7 +666,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
      &     TRWUP, TWILEN, YREND, YRPLT,                         !Input
      &     CANHT, HARVRES, MDATE, NSTRES, PORMIN, PUptake,      !Output
      &     RLV, RWUMX, SENESCE, STGDOY, UNO3, UNH4,             !Ouput
-     &     XLAI, KCAN, KEP, FracRts)                            !Output
+     &     XLAI, KCAN, KEP, FracRts, CropStatus)                !Output
 
         IF (DYNAMIC .EQ. SEASINIT) THEN
 !          KTRANS = KCAN + 0.15        !Or use KEP here??
@@ -689,6 +700,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
      &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
      &    YRPLT,                                          !Input
      &    FLOODN,                                         !I/O
+     &    CropStatus,                                     !Output
      &    CANHT, HARVRES, XLAI, MDATE, NSTRES, PORMIN,    !Output
      &    RWUEP1, RWUMX, RLV, SENESCE, STGDOY, UNH4, UNO3)!Output
 
@@ -708,6 +720,14 @@ c     Total LAI must exceed or be equal to healthy LAI:
         XHLAI = LAI
 !     -------------------------------------------------
       END SELECT
+
+!     If the crop status (local value) from crop models was given a value, use it.
+!     Crop status may come in from other routines such as auto-planting and auto-harvest.
+!     Some crops may modify the CONTROL % CropStatus directly.
+      IF (CropStatus > 0) THEN
+        CONTROL % CropStatus = CropStatus
+        CALL PUT(CONTROL)
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -734,6 +754,40 @@ c     Total LAI must exceed or be equal to healthy LAI:
           CANHT = 0.5
           FixCanht = .FALSE.
         ENDIF
+
+!***********************************************************************
+!***********************************************************************
+      ELSEIF (DYNAMIC .EQ. SEASEND) THEN
+!-----------------------------------------------------------------------
+!     Store Summary.out labels and values in arrays to send to
+!     OPSUM routines for printing.  Integers are temporarily 
+!     saved as real numbers for placement in real array.
+      LABEL(1)  = 'CRST'; VALUE(1)  = CONTROL % CropStatus
+
+      !Send labels and values to OPSUM
+      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+
+! End of season crop status codes:
+! CRST - Definition                               Status **
+!    1 - crop matured normally                    NORMAL
+!    2 - crop harvested on reported date          NORMAL
+!    3 - crop harvested at reported growth stage  NORMAL
+!    6 - auto-harvest within window               NORMAL
+!   11 - failure to plant (automatic planting)    NO_SOW
+!   12 - failure to germinate                     NOGERM
+!   21 - crop mature due to slow grain filling    SLOGRN 
+!   31 - crop died due to heat stress             HOT
+!   32 - crop died due to cold stress             COLD
+!   33 - crop died due to deficit water stress    DRY
+!   34 - crop died due to excess water stress     WET
+!   39 - crop died due to excess stress           STRESS
+!   51 - crop died due to pest damage             PEST
+
+!  100 – crop season length exceeded limits       SEASON
+!  200 – weather data error                       WEATHER
+!  999 – unspecified error condition              UNKNOWN
+
+! ** Status text could be used in Summary.OUT if we want this to be more human readable.
 
 !***********************************************************************
       ENDIF

@@ -12,6 +12,7 @@ C  4. Modified TT calculations to reduce line #'s P.W.W.      2-7-93
 C  5. Modified for MILLET model                   W.T.B.      MAY 94
 C  6. Converted to modular format                 W.D.B.      7-31-02
 C  7. Major revisions to millet model             K.J.B April-May 2015
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  INPUT  : YRDOY
 C
@@ -54,7 +55,7 @@ C      Variables passed through PHENOL to phasei but not used in phenol
      & TGROPAN, TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC,
      & TPANWT, TPLA, TPLAG, TSIZE, TSTMWT, VANC, VMNC, WSTR1, 
      & XNTI,SWFAC,TURFAC,DGET,SWCG,DJTI,
-     &    DAYL, TWILEN, CANWAA, CANNAA)
+     &    DAYL, TWILEN, CANWAA, CANNAA, CropStatus)
 
       USE MODULEDEFS
       IMPLICIT  NONE
@@ -65,6 +66,7 @@ C VARIABLES ONLY USED IN PHASEI. THEY ARE PASSED THROUGH PHENOL TO PHASEI
 C------------------------------------------------------------------------
       REAL AGEFAC
       REAL BIOMS1
+      INTEGER CropStatus
       REAL CUMDTT
       REAL CUMPH
       REAL DGET
@@ -465,6 +467,7 @@ C--------------------------------------------------------------------
                 WRITE (NOUTDO,1399)
              ENDIF
              MDATE = YRDOY
+             CropStatus = 12
              RETURN
           ENDIF
 
@@ -630,6 +633,7 @@ C--------------------------------------------------------------------
           STGDOY(ISTAGE) = YRDOY
           IPRINT         = 0
           MDATE          = YRDOY
+          CropStatus     = 1
           GRNWT  = PANWT - 1.1 * PWA
           GRNWT  = AMAX1(GRNWT,0.0)
           YIELD  = GRNWT*10.0*PLTPOP
