@@ -742,7 +742,7 @@ C     Need to make provision for USG as a source
       PROF = 0.
 
       SELECT CASE (METFER)
-        CASE (1,3,5,11)
+        CASE (1,3,11)
 !         Surface placement
           KMAX = 1
           PROF(1) = 1.0
@@ -785,6 +785,13 @@ C     Need to make provision for USG as a source
             CALL WARNING(3, ERRKEY, MSG)
             KD = 2
           ENDIF
+          PROF(KD) = 1.0
+          KMAX     = KD
+          
+        CASE (5)
+!       This is applying with irrigation placement
+!       All fertilizer placed in layer KD with (PROF = 1.0)
+          KD = IDLAYR (NLAYR,DLAYR,FERDEPTH)
           PROF(KD) = 1.0
           KMAX     = KD
 
@@ -831,7 +838,8 @@ C     Need to make provision for USG as a source
 !       P available for uptake by roots.
         SELECT CASE (METFER)
           CASE (3,4,18); AppType = 'BANDED '
-          CASE (7,8,9) ; AppType = 'HILL   '
+!         CASE (7,8,9) ; AppType = 'HILL   '
+          CASE (7,8,9,19,20); AppType = 'POINT  '
           CASE DEFAULT ; AppType = 'UNIFORM'
         END SELECT
 

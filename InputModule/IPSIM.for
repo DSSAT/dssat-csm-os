@@ -487,7 +487,7 @@ C
                 V_AVWAT (I) = -99
            END DO
 
-           GSIRRIG = 1                                ! Start Growth Stage index
+           GSIRRIG = 1         ! Start Growth Stage index
 
            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
 
