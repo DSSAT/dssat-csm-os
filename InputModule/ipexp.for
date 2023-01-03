@@ -1277,6 +1277,9 @@ C
            CALL ERROR (ERRKEY,2,FILEX,LINEXP)
          ENDIF
          IF (LN .NE. LNFLD) GO TO 71
+      ELSE
+        PMWD = -99
+        PMALB = -99
       ENDIF
       IF (PMWD .LE. 0.0) PMWD = -99
       IF (PMALB .LE. 0.0) PMALB = -99
