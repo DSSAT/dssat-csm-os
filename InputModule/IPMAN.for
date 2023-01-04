@@ -35,6 +35,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, IGNORE, HFIND, IGNORE2, Y4K_DOY
 
       INTEGER      LNIR,NIRR,LUNEXP,IDLAPL(NAPPL),ISECT,LINEXP,LNSIM
       INTEGER      YRSIM,IFIND,LN,J,ERRNUM,NAPW,IIRV(NAPPL),IRRCD
@@ -70,6 +71,7 @@ C
          AMT(J)    = 0.0
          IRRCOD(J) = '     '
       END DO
+
       IF (LNIR .GT. 0) THEN
          IF (ISWWAT .EQ. 'N' .AND. LNSIM .EQ. 0) THEN
             IIRRI  = 'R'
