@@ -405,7 +405,7 @@ C-----------------------------------------------------------------------
 !         CHP 5/18/2011
           MDATE      = -99      
 
-            CALL BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,             !C
+            CALL BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,               !C
      &        CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
      &        SNOW, SRAD,SW,TMAX,TMIN, TWILEN,                        !I
      &        XN,YRDOY,YRSIM,                                         !I

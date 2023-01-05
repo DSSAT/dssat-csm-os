@@ -100,10 +100,10 @@ C=======================================================================
       INTEGER DaysSinceIrrig
 
       INTEGER IRRFREQ     
-        REAL AVWATT         ! Water available for irrigation today (mm)
-        INTEGER NGSIrrigs   ! # of irrigation inputs entered by the user
-        INTEGER IRINC       ! Counter for irrigation input used
-        REAL THETAU         ! Threshold, % of avail water to end irrig
+      REAL AVWATT         ! Water available for irrigation today (mm)
+      INTEGER NGSIrrigs   ! # of irrigation inputs entered by the user
+      INTEGER IRINC       ! Counter for irrigation input used
+      REAL THETAU         ! Threshold, % of avail water to end irrig
       INTEGER NWaterLimits !Number of water limit entrees
       LOGICAL SeasonalWL  ! Water limitation
       REAL GSWatUsed      ! Water used to date in current growth stage
@@ -148,11 +148,8 @@ C=======================================================================
       NLAYR  = SOILPROP % NLAYR  
 
       IIRRI  = ISWITCH % IIRRI
-
       PUDDLED= FLOODWAT % PUDDLED
-
       DAS = CONTROL % DAS
-
 
 C***********************************************************************
 C***********************************************************************

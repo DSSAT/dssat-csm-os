@@ -40,6 +40,7 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL IPDMND, TABEX, WARNING, ERRORCODE, CURV, SDCOMP
       SAVE
 
       CHARACTER*2 CROP
@@ -678,6 +679,7 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, ERROR, FIND, WARNING, IGNORE
 !-----------------------------------------------------------------------
       CHARACTER*3   TYPSDT
       CHARACTER*6   ERRKEY

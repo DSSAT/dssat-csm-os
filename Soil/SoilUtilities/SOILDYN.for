@@ -238,8 +238,6 @@ C-----------------------------------------------------------------------
       CN     = -99.
       WR     = -99.
       TOTN   = -99.
-      NH4    = -99.
-      NO3    = -99.
       TotOrgN= -99.
       ADCOEF = 0.
 
@@ -373,10 +371,6 @@ C-----------------------------------------------------------------------
 100     FORMAT (8X, 3 (1X, F5.1))
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
-
-!!        Jin Wu add the following two statements
-!         NH4(L) = MAX(NH4(L), 0.01)
-!         NO3(L) = MAX(NO3(L), 0.01)
 
         IF (SW(L) .LT. LL(L)) THEN
           IF (NMSG == 0) THEN

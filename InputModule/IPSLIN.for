@@ -12,7 +12,6 @@ C  05/28/1993 PWW Header revision and minor changes
 C  12/01/1993 WTB Modifed to read soil test P
 C  08/19/2002 GH  Modified for Y2K
 C  02/07/2007 GH  Add path to FileX
-!  08/15/2011 JW  Improve the handling of INH4 and INO3
 C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : FILEX,LNIC,NLAYR,DUL,SWINIT,PEDON,SLNO
@@ -142,8 +141,7 @@ C
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,DLAYRI(NLAYRI),
      &             SWINIT(NLAYRI),INH4(NLAYRI),INO3(NLAYRI)
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-!        INH4(NLAYRI) = MAX(INH4(NLAYRI), 0.01)
-!        INO3(NLAYRI) = MAX(INO3(NLAYRI), 0.01)
+
          NLAYRI = NLAYRI + 1
          GO TO 70
       ENDIF

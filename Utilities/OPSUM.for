@@ -63,9 +63,9 @@ C=======================================================================
         REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
         
 !       Added 7/19/2016 N2O emissions
-        REAL N2OEC  !kg/ha
-        INTEGER CO2EC
-        REAL CH4EC  !kg[C]/ha chp 2021-07-28
+        REAL N2OEM  !kg/ha
+        INTEGER CO2EM
+        REAL CH4EM  !kg[C]/ha chp 2021-07-28
 
 !       Added 2019-19-17 CHP Cumulative net mineralization
         REAL NMINC
@@ -107,6 +107,8 @@ C-----------------------------------------------------------------------
       USE CsvOutput
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, TIMDIF, GETLUN, LENSTRING, PrintText,  
+     &  PrintTxtNeg, CLEAR
       SAVE
 
       CHARACTER*1  IDETL, IDETO, IDETS, RNMODE
@@ -152,8 +154,8 @@ C-----------------------------------------------------------------------
 !     Added 02/23/2011 Seasonal average environmental data
       INTEGER NDCH
       REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-      INTEGER CO2EC, CRST
-      REAL N2OEC, CH4EC  !kg/ha
+      INTEGER CO2EM, CRST
+      REAL N2OEM, CH4EM  !kg/ha
 !     Added 05/28/2021 Latitude, Longitude and elevation data
       CHARACTER*9  ELEV 
       CHARACTER*15 LATI, LONG
@@ -170,7 +172,7 @@ C-----------------------------------------------------------------------
       LOGICAL FEXIST
 
 !     Text values for some variables that get overflow with "-99" values
-      CHARACTER*9 PRINT_TXT, PRINT_TXT_neg !Max field width for variable format printing
+!     CHARACTER*9 PRINT_TXT, PRINT_TXT_neg 
       CHARACTER*9 DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT
       CHARACTER*9 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT
       CHARACTER*9 DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT
@@ -346,9 +348,9 @@ C     Initialize OPSUM variables.
       SUMDAT % GNAM   = -99
       
 !     N2O emissions
-      SUMDAT % N2OEC  = -99. !N2O emissions (kg[N]/ha)
-      SUMDAT % CO2EC  = -99  !CO2 emissions from OM decomp (kg[C]/ha)
-      SUMDAT % CH4EC  = -99. !CH4 emissions (kg[C]/ha)
+      SUMDAT % N2OEM  = -99. !N2O emissions (kg[N]/ha)
+      SUMDAT % CO2EM  = -99  !CO2 emissions from OM decomp (kg[C]/ha)
+      SUMDAT % CH4EM  = -99. !CH4 emissions (kg[C]/ha)
       
       SUMDAT % RECM   = -99
       SUMDAT % ONTAM  = -99
@@ -372,10 +374,10 @@ C     Initialize OPSUM variables.
       
 !     Fresh weight values -LPM added 04/20/2021
       SUMDAT % FCWAM  = -99   !Fresh tops weight at maturity (kg/ha)
-      SUMDAT % FHWAM  = -99   !Harvest product fresh wt at maturity (kg/ha)
+      SUMDAT % FHWAM  = -99   !Harvest prod fresh wt at maturity (kg/ha)
       SUMDAT % HWAHF  = -99.0 !Harvested yield (fresh weight) (kg/ha)
-      SUMDAT % FBWAH  = -99.0 !By-product removed during harvest fresh wt (kg/ha)
-      SUMDAT % FPWAM  = -99   !Fresh pod (ear) weight at maturity (kg/ha)
+      SUMDAT % FBWAH  = -99.0 !By-prod fresh harvested (kg/ha)
+      SUMDAT % FPWAM  = -99   !Fresh pod (ear) wt at maturity (kg/ha)
 
       SUMDAT % DMPPM  = -99.0 !Dry matter-rain productivity(kg[DM]/m3[P]
       SUMDAT % DMPEM  = -99.0 !Dry matter-ET productivity(kg[DM]/m3[ET]
@@ -432,10 +434,10 @@ C     Initialize OPSUM variables.
       HIAM = SUMDAT % HIAM    !Harvest index
       LAIX = SUMDAT % LAIX    !Leaf area index (mm2/mm2)
       FCWAM= SUMDAT % FCWAM   !Fresh tops weight at maturity (kg/ha)
-      FHWAM= SUMDAT % FHWAM   !Harvest product fresh wt at maturity (kg/ha)
+      FHWAM= SUMDAT % FHWAM   !Harvest prod fresh wt at maturity (kg/ha)
       HWAHF= SUMDAT % HWAHF   !Harvested yield (fresh weight) (kg/ha)
-      FBWAH= SUMDAT % FBWAH   !By-product removed during harvest fresh wt (kg/ha)
-      FPWAM= SUMDAT % FPWAM   !Fresh pod (ear) weight at maturity (kg/ha)
+      FBWAH= SUMDAT % FBWAH   !By-prod harvested fresh wt (kg/ha)
+      FPWAM= SUMDAT % FPWAM   !Fresh pod (ear) weight @ maturity (kg/ha)
 
       IRNUM= SUMDAT % IRNUM   !Irrigation Applications (no.)
       IRCM = SUMDAT % IRCM    !Season Irrigation (mm)
@@ -456,9 +458,9 @@ C     Initialize OPSUM variables.
       NMINC= SUMDAT % NMINC   !Net mineralized N (kg N/ha)
       CNAM = SUMDAT % CNAM    !Tops N at Maturity (kg/ha)
       GNAM = SUMDAT % GNAM    !Grain N at Maturity (kg/ha)
-      N2OEC= SUMDAT % N2OEC   !N2O emissions (kg[N]/ha)
-      CO2EC= SUMDAT % CO2EC   !CO2 emissions (kg[C]/ha)
-      CH4EC= SUMDAT % CH4EC   !CH4 emissions (kg[C]/ha)
+      N2OEM= SUMDAT % N2OEM   !N2O emissions (kg[N]/ha)
+      CO2EM= SUMDAT % CO2EM   !CO2 emissions (kg[C]/ha)
+      CH4EM= SUMDAT % CH4EM   !CH4 emissions (kg[C]/ha)
 
       RECM = SUMDAT % RECM    !Residue Applied (kg/ha)
       ONTAM= SUMDAT % ONTAM   !Organic N at maturity, soil & surf (kg/h)
@@ -519,7 +521,7 @@ C  Simulation Summary File
 C
 C-------------------------------------------------------------------
       IF (INDEX('ADY',IDETS) .GT. 0) THEN
-        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN   ! VSH
+        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN
         INQUIRE (FILE = OUTS, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN (UNIT = NOUTDS, FILE = OUTS, STATUS = 'OLD',
@@ -588,12 +590,12 @@ C-------------------------------------------------------------------
      &   '    HWUM    H#AM    H#UM  HIAM  LAIX',
      &   '   FCWAM   FHWAM   HWAHF   FBWAH   FPWAM',
      &   '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
-     &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM NMINC  CNAM  GNAM N2OEC',
+     &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM NMINC  CNAM  GNAM N2OEM',
 !    &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
      &   '  PI#M  PICM  PUPC  SPAM',
      &   '  KI#M  KICM  KUPC  SKAM',
      &   '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM',
-     &   '   CO2EC  CH4EC',
+     &   '   CO2EM  CH4EM',
      &   '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
      &   '     YPTM     YPIM',
      &   '    DPNAM    DPNUM    YPNAM    YPNUM',
@@ -607,7 +609,7 @@ C-------------------------------------------------------------------
 
         MODEL = CONTROL % MODEL
 
-        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN   ! VSH
+        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, 
      &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, WYEAR,
@@ -648,47 +650,45 @@ C-------------------------------------------------------------------
         WRITE (NOUTDS,FMT,ADVANCE='NO') HIAM
 
 !       Handle formatting for real numbers which may have value of "-99"
-        DMPPM_TXT = PRINT_TXT(DMPPM, "(F9.1)")
-        DMPEM_TXT = PRINT_TXT(DMPEM, "(F9.1)")
-        DMPTM_TXT = PRINT_TXT(DMPTM, "(F9.1)")
-        DMPIM_TXT = PRINT_TXT(DMPIM, "(F9.1)")
+        CALL PrintText(DMPPM, "(F9.1)", DMPPM_TXT)
+        CALL PrintText(DMPPM, "(F9.1)", DMPPM_TXT)
+        CALL PrintText(DMPEM, "(F9.1)", DMPEM_TXT)
+        CALL PrintText(DMPTM, "(F9.1)", DMPTM_TXT)
+        CALL PrintText(DMPIM, "(F9.1)", DMPIM_TXT)
+        CALL PrintText(YPPM,  "(F9.1)", YPPM_TXT )
+        CALL PrintText(YPEM,  "(F9.1)", YPEM_TXT )
+        CALL PrintText(YPTM,  "(F9.1)", YPTM_TXT )
+        CALL PrintText(YPIM,  "(F9.1)", YPIM_TXT )
+        CALL PrintText(DPNAM, "(F9.1)", DPNAM_TXT)
+        CALL PrintText(DPNUM, "(F9.1)", DPNUM_TXT)
+        CALL PrintText(YPNAM, "(F9.1)", YPNAM_TXT)
+        CALL PrintText(YPNUM, "(F9.1)", YPNUM_TXT)
+        CALL PrintText(SRADA, "(F6.1)", SRADA_TXT)
+        CALL PrintText(DAYLA, "(F6.1)", DAYLA_TXT)
+        CALL PrintText(CO2A,  "(F7.1)", CO2A_TXT )
+        CALL PrintText(PRCP,  "(F7.1)", PRCP_TXT )
+        CALL PrintText(ETCP,  "(F7.1)", ETCP_TXT )
+        CALL PrintText(ESCP,  "(F7.1)", ESCP_TXT )
+        CALL PrintText(EPCP,  "(F7.1)", EPCP_TXT )
 
-        YPPM_TXT  = PRINT_TXT(YPPM,  "(F9.1)")
-        YPEM_TXT  = PRINT_TXT(YPEM,  "(F9.1)")
-        YPTM_TXT  = PRINT_TXT(YPTM,  "(F9.1)")
-        YPIM_TXT  = PRINT_TXT(YPIM,  "(F9.1)")
-
-        DPNAM_TXT = PRINT_TXT(DPNAM, "(F9.1)")
-        DPNUM_TXT = PRINT_TXT(DPNUM, "(F9.1)")
-        YPNAM_TXT = PRINT_TXT(YPNAM, "(F9.1)")
-        YPNUM_TXT = PRINT_TXT(YPNUM, "(F9.1)")
-
-        TMINA_TXT = PRINT_TXT_neg(TMINA, "(F6.1)")   !Allow negative numbers!
-        TMAXA_TXT = PRINT_TXT_neg(TMAXA, "(F6.1)")   !Allow negative numbers!
-        SRADA_TXT = PRINT_TXT(SRADA, "(F6.1)")
-        DAYLA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
-
-        CO2A_TXT = PRINT_TXT(CO2A, "(F7.1)")
-        PRCP_TXT = PRINT_TXT(PRCP, "(F7.1)")
-        ETCP_TXT = PRINT_TXT(ETCP, "(F7.1)")
-        ESCP_TXT = PRINT_TXT(ESCP, "(F7.1)")
-        EPCP_TXT = PRINT_TXT(EPCP, "(F7.1)")
+!       Allow negative values for TMAX and TMIN
+        CALL PrintTxtNeg(TMINA, "(F6.1)", TMINA_TXT)
+        CALL PrintTxtNeg(TMAXA, "(F6.1)", TMAXA_TXT)
 
 !       N2O emissions
-        IF (N2OEC .LT. -0.00001) THEN
+        IF (N2OEM .LT. -0.00001) THEN
           N2OEC_TXT = "   -99"
-        ELSEIF (N2OEC .LT. 1) THEN
-          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.3)")       !kg/ha
-        ELSEIF (N2OEC .LT. 10) THEN
-          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.2)")       !kg/ha
-        ELSEIF (N2OEC .LT. 100) THEN
-          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.1)")       !kg/ha
+        ELSEIF (N2OEM .LT. 1) THEN
+          CALL PrintText(N2OEM, "(F6.3)", N2OEC_TXT) !kg/ha
+        ELSEIF (N2OEM .LT. 10) THEN
+          CALL PrintText(N2OEM, "(F6.2)", N2OEC_TXT) !kg/ha
+        ELSEIF (N2OEM .LT. 100) THEN
+          CALL PrintText(N2OEM, "(F6.1)", N2OEC_TXT) !kg/ha
         ELSE
-          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.0)")       !kg/ha
+          CALL PrintText(N2OEM, "(F6.0)", N2OEC_TXT) !kg/ha
         ENDIF
 
-!       Not used
-        N2OGC_TXT= PRINT_TXT(N2OEC*1000., "(F6.1)")   !g/ha
+        CALL PrintText(N2OEM*1000.,"(F6.1)",N2OGC_TXT)   !g/ha
 
         IF (FBWAH .GT. 1.E-3) THEN
           FBWAH = FBWAH * 10.
@@ -702,7 +702,7 @@ C-------------------------------------------------------------------
 !    &    N2OGC_TXT,
      &    PINUMM, PICM, PUPC, SPAM,        !P data
      &    KINUMM, KICM, KUPC, SKAM,        !K data
-     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC,
+     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EM, CH4EM,
 !         Water productivity
      &    DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT, 
      &                 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT,
@@ -732,7 +732,7 @@ C-------------------------------------------------------------------
 !       KINUMM, KICM, KUPC, SKAM, RECM, 
      &  9(1X,I5),
        
-!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC,
+!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EM, CH4EM,
      &  4(1X,I6),3(1X,I7), F7.1,      
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
@@ -765,10 +765,9 @@ C-------------------------------------------------------------------
      &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, FCWAM, FHWAM, HWAHF, 
      &FBWAH, FPWAM, IRNUM, IRCM, PRCM, ETCM,
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
-     &NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, 
+     &NIAM, NMINC, CNAM, GNAM, N2OEM, PINUMM, PICM, PUPC, SPAM, KINUMM, 
      &KICM, KUPC, SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
-
-     &CO2EC, CH4EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, 
+     &CO2EM, CH4EM, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, 
      &DPNAM, DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, DAYLA, 
      &CO2A, PRCP, ETCP, ESCP, EPCP, CRST,   
      &vCsvlineSumOpsum, vpCsvlineSumOpsum, vlngthSumOpsum) 
@@ -947,17 +946,26 @@ C-------------------------------------------------------------------
 !***********************************************************************
       RETURN
       END SUBROUTINE OPSUM
-C=======================================================================
+!=======================================================================
 
 !=======================================================================
+!  PrintText, Subroutine, C.H.Porter
+!     Sends back a text string for a real value with format provided.
+!     Negative values return a "-99" string.
+!   Input:  
+!     VALUE = real value
+!     FTXT  = format for real value
+!   Output:
+!     PRINT_TXT = text string for real value
 !=======================================================================
-      Function PRINT_TXT(VALUE, FTXT)
+      Subroutine PrintText(VALUE, FTXT, PRINT_TXT)
 
-      CHARACTER(LEN=*) PRINT_TXT              !text string for real value
-      CHARACTER(LEN=*) FTXT                   !format for real value
-      CHARACTER(LEN=6) FTXT1                  !modified format for real value
-      CHARACTER(LEN=7) FTXT2                  !format for "-99"
-      REAL VALUE
+      REAL, INTENT(IN) :: VALUE
+      CHARACTER(LEN=*), INTENT(IN) :: FTXT      
+      CHARACTER(LEN=*), INTENT(OUT) :: PRINT_TXT
+
+      CHARACTER(LEN=6) FTXT1     !modified format for real value
+      CHARACTER(LEN=7) FTXT2     !format for "-99"
       INTEGER I, ERRNUM
 
       READ (FTXT,'(2X,I1)',IOSTAT=ERRNUM) I   !width of field
@@ -975,34 +983,36 @@ C=======================================================================
         WRITE(PRINT_TXT,FTXT2) "-99"
       ENDIF
 
-      End Function PRINT_TXT
+      End Subroutine PrintText
 !=======================================================================
 !=======================================================================
-      Function PRINT_TXT_neg(VALUE, FTXT)
+!  PrintTxtNeg, Subroutine, C.H.Porter
+!     Sends back a text string for a real value with format provided.
+!     Allows real negative values.
+!   Input:  
+!     VALUE = real value
+!     FTXT  = format for real value
+!   Output:
+!     PRINT_TXT_neg = text string for real value
+!=======================================================================
+      Subroutine PrintTxtNeg(VALUE, FTXT, PRINT_TXT_neg)
 
-      CHARACTER(LEN=*) PRINT_TXT_neg          !text string for real value
-      CHARACTER(LEN=*) FTXT                   !format for real value
-      CHARACTER(LEN=6) FTXT1                  !modified format for real value
-!     CHARACTER(LEN=7) FTXT2                  !format for "-99"
-      REAL VALUE
+      REAL, INTENT(IN) :: VALUE
+      CHARACTER(LEN=*), INTENT(IN) :: FTXT 
+      CHARACTER(LEN=*), INTENT(OUT) :: PRINT_TXT_neg 
+      CHARACTER(LEN=6) FTXT1 
       INTEGER I, ERRNUM
 
       READ (FTXT,'(2X,I1)',IOSTAT=ERRNUM) I   !width of field
-      IF (ERRNUM == 0 .AND. I > 0) THEN
+      IF (ERRNUM == 0) THEN
         FTXT1 = FTXT
-!       WRITE(FTXT2,'("(",I1,"X,A3)")') I-3   
       ELSE
         FTXT1 = "(F6.1)"
-!       FTXT2 = "(3X,A3)"
       ENDIF
 
-!     IF (VALUE > 1.E-6) THEN
-        WRITE(PRINT_TXT_neg,FTXT1) VALUE
-!     ELSE
-!       WRITE(PRINT_TXT,FTXT2) "-99"
-!     ENDIF
+      WRITE(PRINT_TXT_neg,FTXT1) VALUE
 
-      End Function PRINT_TXT_neg
+      End Subroutine PrintTxtNeg
 !=======================================================================
 !=======================================================================
 
@@ -1132,9 +1142,9 @@ C=======================================================================
         CASE ('EPCP'); SUMDAT % EPCP   = VALUE(I)
 
 !       From GHG_Mod
-        CASE ('N2OEC');SUMDAT % N2OEC  = VALUE(I)
-        CASE ('CO2EC');SUMDAT % CO2EC  = VALUE(I)
-        CASE ('CH4EC');SUMDAT % CH4EC  = VALUE(I)
+        CASE ('N2OEM');SUMDAT % N2OEM  = VALUE(I)
+        CASE ('CO2EM');SUMDAT % CO2EM  = VALUE(I)
+        CASE ('CH4EM');SUMDAT % CH4EM  = VALUE(I)
                
         !From Ipexp or Ipwth:
         CASE ('YCRD'); SUMDAT % YCRD  = VALUE(I)

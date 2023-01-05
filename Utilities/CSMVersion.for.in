@@ -21,6 +21,8 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.2  chp 2023-01-03 Fertigation at user-depth  
+!       4.8.1.1  chp 2023-01-02 Crop status in Summary.OUT, GHG summary variable names  
 !       4.8.1.0   FO 2022-10-28 Separated DSSAT-CSM-CROPSIM main file into multiple files  
 !       4.8.0.29 chp 2022-10-04 SDATE issue, MgmtEvent output, minor updates
 !       4.8.0.28  FO 2022-07-29 Make ASCE ET robust for various weather file formats

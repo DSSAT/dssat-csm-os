@@ -549,20 +549,20 @@ C-----------------------------------------------------------------------
 !               Read optional cold sensitivity paramter. 
 !               Default to TSEN = 6.0 if no value given.
 !               JG changed column numbers to match updated ecotype file
-                IF (C255(327:331) == '     ') THEN
+                IF (C255(315:319) == '     ') THEN
                   TSEN = 6.0
                 ELSE
-                  READ(C255(327:331),'(F5.0)',IOSTAT=ERRNUM) TSEN
+                  READ(C255(315:319),'(F5.0)',IOSTAT=ERRNUM) TSEN
                   IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
                 ENDIF
         
 !               Read optional number of cold days paramter. 
 !               Default to CDAY = 15.0 if no value given.
 !               JG changed column numbers to match updated ecotype file
-                IF (C255(333:337) == '     ') THEN
+                IF (C255(321:325) == '     ') THEN
                   CDAY = 15
                 ELSE
-                  READ(C255(333:337),'(I5)',IOSTAT=ERRNUM) CDAY
+                  READ(C255(321:325),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
                 ENDIF
         

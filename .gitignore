@@ -33,9 +33,6 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.orig
 *.aps
-resource.h
-Resources/
-Version047.rc
 *.wjf
 *.INH
 *.INP
@@ -51,7 +48,6 @@ Version047.rc
 *.ico
 .DS_Store
 Data/.DS_Store
-Resources/RC*
 build/
 nbproject/
 .metadata/
@@ -70,3 +66,4 @@ Plant/ORYZA
 .vscode/*
 .vs/*
 .history/*
+Resources/R*

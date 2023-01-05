@@ -57,7 +57,7 @@ C  08/09/2012 GH  Added CSCAS model
 !  09/01/2018  MJ modified Canegro interface, IRRAMT added.
 !  03/17/2020  WP Model TEFF from Mulugeta called on plant (added).
 !  08/19/2021 FV Added OilcropSun
-!  06/15/2022 CHP Added CropStatus - MZ, SW, CROPGRO
+!  06/15/2022 CHP Added CropStatus
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
@@ -833,7 +833,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
 ! End of season crop status codes:
-! CRST - Definition                               Status
+! CRST - Definition                               Status **
 !    1 - crop matured normally                    NORMAL
 !    2 - crop harvested on reported date          NORMAL
 !    3 - crop harvested at reported growth stage  NORMAL
@@ -841,16 +841,18 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !   11 - failure to plant (automatic planting)    NO_SOW
 !   12 - failure to germinate                     NOGERM
 !   21 - crop mature due to slow grain filling    SLOGRN 
-!   31 - crop died due to heat stress             HOT   
-!   32 - crop died due to cold stress             COLD  
-!   33 - crop died due to deficit water stress    DRY   
-!   34 - crop died due to excess water stress     WET   
-!   39 - crop died due to excess stress           STRESS   
-!   51 - crop died due to pest damage             PEST   
+!   31 - crop died due to heat stress             HOT
+!   32 - crop died due to cold stress             COLD
+!   33 - crop died due to deficit water stress    DRY
+!   34 - crop died due to excess water stress     WET
+!   39 - crop died due to excess stress           STRESS
+!   51 - crop died due to pest damage             PEST
 
-!  100 – crop season length exceeded limits	    SEASON
-!  200 – weather data error				        WEATHER
+!  100 – crop season length exceeded limits       SEASON
+!  200 – weather data error                       WEATHER
 !  999 – unspecified error condition              UNKNOWN
+
+! ** Status text could be used in Summary.OUT if we want this to be more human readable.
 
 !***********************************************************************
       ENDIF

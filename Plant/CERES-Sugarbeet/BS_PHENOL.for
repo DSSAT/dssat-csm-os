@@ -102,8 +102,8 @@
       REAL            SDEPTH         
       CHARACTER*6     SECTION        
       REAL            S1    
-!      REAL            SI1(6)         
-!      REAL            SI3(6)         
+!     REAL            SI1(6)         
+!     REAL            SI3(6)         
       REAL            SIND           
       REAL            SNDN           
       REAL            SNOW           

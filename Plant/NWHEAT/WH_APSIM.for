@@ -230,7 +230,7 @@ C The statements begining with !*! are refer to APSIM source codes
       INTEGER         YREMRG   
       INTEGER         YRPLT 
       INTEGER         YRSIM    
-!	REAL            Z2STAGE
+!     REAL            Z2STAGE
       REal GAD2 ! Grain# if there wwas no temperature effect
 
 !     Added by W.D.B. for pest damage at CIMMYT 4/14/2001

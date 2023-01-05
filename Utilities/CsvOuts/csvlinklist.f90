@@ -1005,6 +1005,7 @@ End Subroutine LinklstSUOIL
  End Subroutine LinklstSumOpsum
 !------------------------------------------------------------------------------
    Subroutine ListtofilePlantgrCrGro(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf       ! Number for growth output file  #
       Character(Len=12):: fn       ! Growth output file code  
       Character(Len=14) :: fmt
@@ -1062,6 +1063,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofileSW(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn
       Character(Len=14) :: fmt
@@ -1113,6 +1115,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofileTemp(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn         
       Character(Len=14) :: fmt
@@ -1164,6 +1167,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlantGrCsCer
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn 
       Character(:),Allocatable :: Header        
@@ -1208,6 +1212,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofileET (nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl        
       Character(Len=12):: fn         
       Character(Len=14) :: fmt
@@ -1238,13 +1243,13 @@ End Subroutine LinklstSUOIL
      
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
   //'REFA,EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
-  //'EMAC,KCAA,KBSA,KEAA,TRWUD,') + Len(Trim(Adjustl(tmp)))
+  //'EMAC,KCAA,KBSA,KEAA,TRWUD,TWUPD,') + Len(Trim(Adjustl(tmp)))
   
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
   //'REFA,EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
-  //'EMAC,KCAA,KBSA,KEAA,TRWUD,' // Trim(Adjustl(tmp)) 
+  //'EMAC,KCAA,KBSA,KEAA,TRWUD,TWUPD,' // Trim(Adjustl(tmp)) 
   
       fn = 'et.csv'
       Call GETLUN (fn,nf)
@@ -1268,6 +1273,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
   Subroutine ListtofileMZCER(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn 
       Character(Len=14) :: fmt
@@ -1323,6 +1329,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
   Subroutine ListtofileRICER(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn 
       Character(Len=14) :: fmt
@@ -1378,6 +1385,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
   Subroutine ListtofileMLCER(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn 
       Character(Len=14) :: fmt
@@ -1893,8 +1901,8 @@ End Subroutine LinklstSUOIL
   // 'FNAM,WSTA,WYEAR,SOIL_ID,LAT,LONG,ELEV,' &
   // 'SDAT,PDAT,EDAT,ADAT,MDAT,HDAT,HYEAR,DWAP,CWAM,HWAM,HWAH,BWAH,PWAM,HWUM,' &
   // 'H#AM,H#UM,HIAM,LAIX,FCWAM,FHWAM,HWAHF,FBWAH,FPWAM,IR#M,IRCM,PRCM,ETCM,EPCM,ESCM,ROCM,DRCM,SWXM,' &
-  // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,NMINC,CNAM,GNAM,N2OEC,PI#M,PICM,PUPC,SPAM,KI#M,' &
-  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,CO2EC,CH4EC,DMPPM,DMPEM,' &
+  // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,NMINC,CNAM,GNAM,N2OEM,PI#M,PICM,PUPC,SPAM,KI#M,' &
+  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,CO2EM,CH4EM,DMPPM,DMPEM,' &
   // 'DMPTM,DMPIM,YPPM,YPEM,YPTM,YPIM,DPNAM,DPNUM,YPNAM,YPNUM,NDCH,TMAXA,' &
   // 'TMINA,SRADA,DAYLA,CO2A,PRCP,ETCP,ESCP,EPCP,CRST')
 
@@ -1905,8 +1913,8 @@ End Subroutine LinklstSUOIL
   // 'FNAM,WSTA,WYEAR,SOIL_ID,LAT,LONG,ELEV,' &
   // 'SDAT,PDAT,EDAT,ADAT,MDAT,HDAT,HYEAR,DWAP,CWAM,HWAM,HWAH,BWAH,PWAM,HWUM,' &
   // 'H#AM,H#UM,HIAM,LAIX,FCWAM,FHWAM,HWAHF,FBWAH,FPWAM,IR#M,IRCM,PRCM,ETCM,EPCM,ESCM,ROCM,DRCM,SWXM,' &
-  // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,NMINC,CNAM,GNAM,N2OEC,PI#M,PICM,PUPC,SPAM,KI#M,' &
-  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,CO2EC,CH4EC,DMPPM,DMPEM,' &
+  // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,NMINC,CNAM,GNAM,N2OEM,PI#M,PICM,PUPC,SPAM,KI#M,' &
+  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,CO2EM,CH4EM,DMPPM,DMPEM,' &
   // 'DMPTM,DMPIM,YPPM,YPEM,YPTM,YPIM,DPNAM,DPNUM,YPNAM,YPNUM,NDCH,TMAXA,' &
   // 'TMINA,SRADA,DAYLA,CO2A,PRCP,ETCP,ESCP,EPCP,CRST'      
       

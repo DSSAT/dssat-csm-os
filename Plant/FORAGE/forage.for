@@ -426,24 +426,24 @@ C      senescence and light stress
 C-----------------------------------------------------------------------
 
       CALL FOR_SENMOB(
-     &  FILECC, CLW, DAYL, DLAYR, DTX, DUL, DXR57, FNINL,   !Input
-     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,          !Input 
-     &  NR7, NSTRES, PAR, PCNL, PCNRT, PCNSR, PCNST,          !Input
-     &  PPMFAC, RHOL, RLV, RTWT, SAT, SLAAD, STMWT,          !Input
+     &  FILECC, CLW, DAYL, DLAYR, DTX, DUL, DXR57, FNINL,  !Input
+     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,      !Input
+     &  NR7, NSTRES, PAR, PCNL, PCNRT, PCNSR, PCNST,       !Input
+     &  PPMFAC, RHOL, RLV, RTWT, SAT, SLAAD, STMWT,        !Input
      &  STRWT, SW, SWFAC, TDUMX, TDUMX2, VSTAGE, WCRLF,    !Input
      &  WCRRT,WCRSH, WCRSR, WCRST, WNRLF, WNRRT, WNRSH,    !Input
-     &  WNRSR,WNRST, WRDOTN, WTLF, XLAI, XPOD,               !Input
-     &  YRDOY, YRSIM,                                        !Input
-     &  CMINELF, CMINEP, CMINERT, CMINESH, CMINESR,          !Output
-     &  CMINEST, CMOBMX, CMOBSR, LAIMOBR, LFCMINE,           !Output
-     &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NMINELF,             !Output
-     &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,               !Output
+     &  WNRSR,WNRST, WRDOTN, WTLF, XLAI, XPOD,             !Input
+     &  YRDOY, YRSIM,                                      !Input
+     &  CMINELF, CMINEP, CMINERT, CMINESH, CMINESR,        !Output
+     &  CMINEST, CMOBMX, CMOBSR, LAIMOBR, LFCMINE,         !Output
+     &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NMINELF,         !Output
+     &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,          !Output
      &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,   !Output
-     &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,                !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,   !Output      
-     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,   !Output      
-     &  STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,          !Output
-     &  TSNMOB, VNMOBR,                                      !Output
+     &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,          !Output
+     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,   !Output
+     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,  !Output
+     &  STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,        !Output
+     &  TSNMOB, VNMOBR,                                    !Output
      &  RUNINIT)                                           !Control
 
 !-----------------------------------------------------------------------
@@ -506,19 +506,19 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
         CALL FOR_VEGGR(
      &    AGRLF, AGRRT, AGRSTM, CADVG, CMINELF, CMINEP,    !INPUT
-     &    CMINERT, CMINESH, CMINESR, CMINEST, CSAVEV,           !INPUT
-     &    DTX, DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,      !INPUT
-     &    FNINS, LFCDEBT, LFCMINE, LFSCMOB, LFSNMOB, NAVL,      !INPUT
-     &    NDMNEW, NDMOLD, NR1, NVSTL, NVSTR, NVSTS,         !Input
-     &    NVSTSR, PAR, PCH2O, PCNL, PCNST, PCNRT, PCNSR,    !INPUT
-     &    PG, PGAVL, ROWSPC, RTCDEBT, RTCMINE, RTSCMOB,     !INPUT
-     &    RTSNMOB, RTWT, RVSTGE, SHCMINE, SLDOT, SRCDEBT,      !INPUT
-     &    SRCMINE, SRDOT, SRSCMOB, SRSNMOB, SSDOT,              !INPUT
-     &    SSRDOT, STCDEBT, STCMINE, STMWT, STSCMOB,         !INPUT
-     &    STSNMOB, TGRO, TSCMOB, TSNMOB, TURFAC, VSTAGE,    !INPUT
-     &    WCRLF, WCRRT, WCRSH, WCRST,WTLF, WTNLF, WTNRT,    !INPUT
-     &    WTNSR, WTNST, XLAI,                               !INPUT
-     &    YRDOY, YREMRG, YRSIM,                           !INPUT
+     &    CMINERT, CMINESH, CMINESR, CMINEST, CSAVEV,      !INPUT
+     &    DTX, DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR, !INPUT
+     &    FNINS, LFCDEBT, LFCMINE, LFSCMOB, LFSNMOB, NAVL, !INPUT
+     &    NDMNEW, NDMOLD, NR1, NVSTL, NVSTR, NVSTS,        !Input
+     &    NVSTSR, PAR, PCH2O, PCNL, PCNST, PCNRT, PCNSR,   !INPUT
+     &    PG, PGAVL, ROWSPC, RTCDEBT, RTCMINE, RTSCMOB,    !INPUT
+     &    RTSNMOB, RTWT, RVSTGE, SHCMINE, SLDOT, SRCDEBT,  !INPUT
+     &    SRCMINE, SRDOT, SRSCMOB, SRSNMOB, SSDOT,         !INPUT
+     &    SSRDOT, STCDEBT, STCMINE, STMWT, STSCMOB,        !INPUT
+     &    STSNMOB, TGRO, TSCMOB, TSNMOB, TURFAC, VSTAGE,   !INPUT
+     &    WCRLF, WCRRT, WCRSH, WCRST,WTLF, WTNLF, WTNRT,   !INPUT
+     &    WTNSR, WTNST, XLAI,                              !INPUT
+     &    YRDOY, YREMRG, YRSIM,                            !INPUT
      &    AGRVG, ANMINELF, ANMINERT, ANMINESR, ANMINEST, !Input/Output
      &    FRLF, FRRT, FRSTM, NMINEA, NFIXN, NRUSLF,         !
      &    NRUSRT, NRUSSR, NRUSST, TRNU,                     !
@@ -529,8 +529,8 @@ C-----------------------------------------------------------------------
      &    NSTRES, TNLEAK, WLDOTN, WRDOTN, WSDOTN,               !
      &    CLAIT, NRUSTOT,                                   !Input
      &    PNMLF, PNMRT, PNMSH, PNMSR,PNMST,RPRO,            !
-     &    CADRT, CADSH, NADSH,                              !Output
-     &    AGRSTR, CDEBIT, CMOBSR, FNINSR, PPMFAC, STRWT,       !Input
+     &    CADRT, CADSH, NADSH,                           !Output
+     &    AGRSTR, CDEBIT, CMOBSR, FNINSR, PPMFAC, STRWT, !Input
      &    WCRSR,                                         !Input
      &    FRSTR,                                         !Input/Output
      &    CADSR, CRUSSR, NADSR, NGRSR, WSRDOTN,          !Output
