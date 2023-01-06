@@ -1005,6 +1005,7 @@ End Subroutine LinklstSUOIL
  End Subroutine LinklstSumOpsum
 !------------------------------------------------------------------------------
    Subroutine ListtofilePlantgrCrGro(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf       ! Number for growth output file  #
       Character(Len=12):: fn       ! Growth output file code  
       Character(Len=14) :: fmt
@@ -1062,6 +1063,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofileSW(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn
       Character(Len=14) :: fmt
@@ -1113,6 +1115,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofileTemp(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn         
       Character(Len=14) :: fmt
@@ -1164,6 +1167,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlantGrCsCer
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn 
       Character(:),Allocatable :: Header        
@@ -1208,6 +1212,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofileET (nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl        
       Character(Len=12):: fn         
       Character(Len=14) :: fmt
@@ -1268,6 +1273,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
   Subroutine ListtofileMZCER(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn 
       Character(Len=14) :: fmt
@@ -1323,6 +1329,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
   Subroutine ListtofileRICER(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn 
       Character(Len=14) :: fmt
@@ -1378,6 +1385,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
   Subroutine ListtofileMLCER(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn 
       Character(Len=14) :: fmt
