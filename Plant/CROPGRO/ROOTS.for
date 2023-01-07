@@ -539,6 +539,7 @@ C-----------------------------------------------------------------------
 !             layer L (cm3 [H2O] /cm3 [soil])
 ! ESW(L)    Plant extractable soil water by layer (= DUL - LL) (cm3/cm3)
 ! FILECC    Path plus filename for species file (*.spe) 
+! RFAC3     Ratio of root length to root weight at the current time (cm/g)
 ! FRRT      Fraction of vegetative tissue growth that goes to roots on a 
 !             day (g[root] / g[veg])
 ! GRESPR(L) Growth respiration for new root growth in layer L 

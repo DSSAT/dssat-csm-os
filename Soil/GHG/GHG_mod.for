@@ -231,6 +231,7 @@ C  05/01/2022 FO  Added N2O.csv output
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
       SAVE
 !-----------------------------------------------------------------------
 
@@ -554,8 +555,7 @@ C-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
-      LABEL(1)  = 'N2OEC'; VALUE(1)  = CN2O_emitted  !kg/ha
-!     LABEL(2)  = 'CO2EC'; VALUE(2)  = NINT(CumTotCO2)
+      LABEL(1)  = 'N2OEM'; VALUE(1)  = CN2O_emitted  !kg/ha
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
@@ -582,6 +582,7 @@ C  06/15/2014 CHP Written
       SUBROUTINE OpGHG(CONTROL, ISWITCH, N2O_data, CH4_data) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
 

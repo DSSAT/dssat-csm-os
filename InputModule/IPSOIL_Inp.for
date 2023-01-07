@@ -636,3 +636,9 @@ C-----------------------------------------------------------------------
      &        /,6X,'NEW SELECTION ?    --->',2X,' ',$)
 
       END SUBROUTINE IPSOIL_Inp
+C=======================================================================
+! IPSOIL_Inp Variables
+! NLAYR total # of layers in the converted soil layers
+! NLAYRI total # of layers in original soil file
+! ZLYR   Depth of bottom of original soil file
+!=======================================================================

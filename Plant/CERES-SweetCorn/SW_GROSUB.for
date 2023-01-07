@@ -30,6 +30,7 @@
 !  07/13/2006 CHP Added P model
 !  03/06/2006 JIL Modified to simulate sweet corn
 !  10/19/2007 CHP Added RS canopy height computation
+!  04/14/2021 CHP Added CropStatus
 !----------------------------------------------------------------------
 !
 !  Called : MAIZE
@@ -56,7 +57,7 @@
      &      SHELPC, SKERWT, SLA, STMWTO, STOVER, STOVN,       !Output
      &      STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4, UNO3,   !Output
      &      VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST, WTNUP, !Output
-     &      WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD)             !Output
+     &      WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD, CropStatus) !Output
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
@@ -94,7 +95,8 @@
       REAL        CUMPH       
       REAL        CO2X(10)    
       REAL        CO2Y(10)    
-      REAL        CO2         
+      REAL        CO2 
+      INTEGER     CropStatus        
       REAL        CSD1        
       REAL        CSD2        
       REAL        CUMDTTEG      
@@ -1583,20 +1585,24 @@
               ENDIF
               ISTAGE = 6
               MDATE = YRDOY
+              CropStatus = 32  !cold stress
           ELSE
 !         JIL/CHP Added optional CDAY from ecotype file for cold 
 !         sensitivity.
 !              IF (ICOLD .GE. 15) THEN
               IF (ICOLD .GE. CDAY) THEN
-                  WRITE(MESSAGE(1),2800)
-                  CALL WARNING(1,ERRKEY, MESSAGE)
-                  WRITE (*,2800)
+                  WRITE(MESSAGE(1),'(A,I3,A,F6.1,A)')
+     &              "Crop experienced ",CDAY," days below",TSEN,"C"
+                  MESSAGE(2) = "Growth program terminated."
+                  CALL WARNING(2,ERRKEY, MESSAGE)
+!                 WRITE (*,2800)
                   IF (IDETO .EQ. 'Y') THEN
-                      WRITE (NOUTDO,2800)
+                      WRITE (NOUTDO,'(A)') MESSAGE(1)
                   ENDIF
                   ISTAGE = 6
                   MDATE = YRDOY
-              ENDIF
+                  CropStatus = 32  !cold stress
+             ENDIF
           ENDIF
 
           !------------------------------------------------------------
@@ -1622,6 +1628,7 @@
               ENDIF   
               ISTAGE = 6           
               MDATE = YRDOY
+              CropStatus = 33  !water stress
           ENDIF
 
 !--------------------------------------------------------------

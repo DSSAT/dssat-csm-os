@@ -46,6 +46,8 @@ C=====================================================================
       USE FloodModule
       USE GHG_mod
       IMPLICIT NONE
+      EXTERNAL SOILDYN, WATBAL, CENTURY, SOILORG, 
+     &  SOILNI, SOILPI, SOILKI
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:

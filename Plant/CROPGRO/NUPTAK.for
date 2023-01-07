@@ -128,6 +128,7 @@ C-----------------------------------------------------------------------
             IF (FNH4 .LT. 0.04) FNH4 = 0.0  
             IF (FNH4 .GT. 1.0)  FNH4 = 1.0
 
+!           SMDFR = relative drought factor
             SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
             IF (SMDFR .LT. 0.0) THEN
               SMDFR = 0.0

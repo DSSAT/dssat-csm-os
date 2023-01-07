@@ -30,6 +30,7 @@ C-----------------------------------------------------------------------
       USE ModuleData
 
       IMPLICIT  NONE
+      EXTERNAL YR_DOY, SOILT_EPIC, OPSTEMP, WARNING
       SAVE
 
       CHARACTER*1  RNMODE, ISWWAT
@@ -312,7 +313,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       WC = AMAX1(0.01, PESW) / (WW * CUMDPT) * 10.0
-!     frac =              cm   / (    mm     ) * mm/cm
+!     frac =            cm   / (    mm     ) * mm/cm
         !WC (ratio)
         !PESW (cm)
         !WW (dimensionless)

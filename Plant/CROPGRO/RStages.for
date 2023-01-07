@@ -8,6 +8,7 @@ C  01/01/1993 Written J.W. Jones, K.J. Boote, G. Hoogenboom
 !  08/../1997 CHP modified for CROPGRO restructuring
 C  03/24/2004 CHP Calculate SeedFrac for P partitioning (Bostick model)
 !  07/13/2006 CHP Added P model
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 !     Called from: PHENOL
 !     Calls:       None
@@ -16,6 +17,7 @@ C=======================================================================
       SUBROUTINE RSTAGES(CONTROL,
      &    FNSTR, FPSTR, FSW, FT, FUDAY, ISIMI, NPRIOR,    !Input
      &    PHTHRS, PLME, SDEPTH, YRDOY, YRPLT, YRSIM,      !Input
+     &    CropStatus,                                     !Output
      &    JPEND, MDATE, NDLEAF, NDSET, NDVST, NVALPH,     !Output
      &    NVEG0, NVEG1, NR1, NR2, NR5, NR7, PHZACC,       !Output
      &    RSTAGE, STGDOY, SeedFrac, VegFrac, YREMRG,      !Output
@@ -31,7 +33,7 @@ C=======================================================================
       CHARACTER*1 ISIMI, PLME
 
       INTEGER DYNAMIC
-      INTEGER I, J, NVALP0, DAS, YRDOY, YRPLT, YRSIM
+      INTEGER I, J, NVALP0, DAS, YRDOY, YRPLT, YRSIM, CropStatus
       INTEGER NDLEAF,  NDSET, NDVST, JPEND  !, TIMDIF
       INTEGER RSTAGE,  NVEG0, NVEG1, NR0, NR1, NR2, NR3, NR5, NR7
       INTEGER YRNR1, YRNR2, YRNR3, YRNR5, YRNR7, MDATE, YREMRG
@@ -448,12 +450,13 @@ C-------------------------------------------------------------------------------
 C-------------------------------------------------------------------------------
 C       Stage NR8, harvest maturity, occurs on day DAS
 C-------------------------------------------------------------------------------
-!          NR8 = DAS
+!         NR8 = DAS
           STGDOY(11) = YRDOY
-!          NVALPH(12) = NR8
+!         NVALPH(12) = NR8
           NVALPH(12) = DAS
           MDATE      = YRDOY
-          RSTAGE    = 8
+          CropStatus = 1
+          RSTAGE     = 8
 C-------------------------------------------------------------------------------
 C       Account for the part of today that contributes to the next phase(s)
 C-------------------------------------------------------------------------------

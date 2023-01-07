@@ -372,7 +372,7 @@ Subroutine CsvOutSW_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, TSW, 
    Integer :: cTSW1, cPESW1, cTRUNOF1, cTDRAIN1, cCRAIN1, cTOTIR1, cAVWTD1
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
    Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1, cRTDEP1
+   Real :: cDWNOD11 !, cRTDEP1
    Integer :: i, size
   
    Character(:), allocatable, Target, Intent(Out) :: Csvline
@@ -428,9 +428,9 @@ Subroutine CsvOutTemp_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
   
 !  Integer :: length      
 !  Recalculated vars 
-   Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
-   Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1, cRTDEP1
+!  Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
+!  Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
+   Real :: cDWNOD1  !, cRTDEP1
   
    Integer :: i, size
   
@@ -463,7 +463,7 @@ end Subroutine CsvOutTemp_crgro
 ! Sub for et.csv output
 Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, EMAA, CEO, &
-   CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, N_LYR, ES_LYR, TRWU, Csvline, &
+   CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, N_LYR, ES_LYR, AVRWU, AVRWUP, Csvline, &
    pCsvline, lngth)
 
 !  Input vars
@@ -473,7 +473,7 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
 !        INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
 !        INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
    REAL,Intent(IN) :: AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA 
-   REAL,Intent(IN) :: EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, TRWU
+   REAL,Intent(IN) :: EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, AVRWU, AVRWUP
    REAL,Intent(IN) :: REFA, KCAA, KBSA, KEAA
    INTEGER,Intent(IN) :: N_LYR
    REAL, Dimension(N_LYR), Intent(IN) :: ES_LYR 
@@ -491,9 +491,9 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    Character(Len=20) :: cES10   
 !  End of vars
               
-   Write(tmp,'(30(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
-      AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, &
-      EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, TRWU
+   Write(tmp,'(50(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+       AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, &
+       EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA, AVRWU, AVRWUP
    
    If (N_LYR < 11) Then
    Write(fmt,'(I2)') N_LYR - 1  
@@ -633,7 +633,7 @@ Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !  Recalculated vars
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1, cPANWT1
    Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1, cRTDEP1
+   Real :: cDWNOD1  !, cRTDEP1
    Integer :: cWTCO1, cWTLO1, cWTSO1, cTILNO1
   
    Integer :: i
@@ -1272,7 +1272,10 @@ Subroutine CsvOutEvOpsum(EXCODE, RUNRUNI, CG, TN, ROTNUM, CR, Simulated, Measure
    Character(Len=1000) :: tmp 
    Character(Len=100) :: tmp1  
    Character (Len=20) :: fmt
-      
+
+!  chp 2023-01-05 If no observed data, don't try to print anything
+   if (ICOUNT == 0) RETURN
+
    Write(tmp1,'(6(g0,","))') RUNRUNI,  EXCODE, CG, TN, ROTNUM, CR      
     
    Write(fmt,'(I3)') 2*ICOUNT-1   
@@ -1303,10 +1306,10 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    CWAM, HWAM, HWAH, BWAH, PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, &
    FCWAM, FHWAM, HWAHF, FBWAH, FPWAM, IRNUM, IRCM, &
    PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, &
-   NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, &
-   ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, &
+   NIAM, NMINC, CNAM, GNAM, N2OEM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, &
+   ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EM, CH4EM, DMPPM, DMPEM, DMPTM, DMPIM, YPPM, &
    YPEM, YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, &
-   DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP, Csvline, pCsvline, lngth) 
+   DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP, CRST, Csvline, pCsvline, lngth) 
       
 !  Input vars
    Integer, Intent(IN) :: RUN, TRTNUM, ROTNO, ROTOPT, REPNO, YRSIM, YRPLT  
@@ -1324,10 +1327,10 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    Integer :: HNUMAM, IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM 
    Integer :: NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, PINUMM
    Integer :: PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, ONTAM 
-   Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, CO2EC, WYEAR, HYEAR
+   Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, CO2EM, WYEAR, CRST, HYEAR  
    Real :: YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM,  TMAXA, TMINA, SRADA
    Real :: DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-   Real :: N2OEC, CH4EC
+   Real :: N2OEM, CH4EM
    
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
@@ -1346,17 +1349,17 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    cFBWAH1 = NINT(FBWAH)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
            
-   Write(tmp,'(96(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
+   Write(tmp,'(1500(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    EXNAME, TITLET1, FLDNAM, WSTAT, WYEAR, SLNO, LATI, LONG, ELEV, &
    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, &
    !CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &
    CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, &
    FCWAM, FHWAM, cHWAHF1, cFBWAH1, FPWAM,IRNUM, &
    IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, &
-   NLCM, NIAM, NMINC, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM,&
-   RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, CH4EC, DMPPM, DMPEM, DMPTM, DMPIM, &
+   NLCM, NIAM, NMINC, CNAM, GNAM, N2OEM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM,&
+   RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EM, CH4EM, DMPPM, DMPEM, DMPTM, DMPIM, &
    YPPM, YPEM, YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, &
-   SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
+   SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP, CRST
    
    lngth = Len(Trim(Adjustl(tmp)))
    size = lngth
@@ -1733,7 +1736,7 @@ Subroutine CsvOut_mlcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !  Recalculated vars
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
    Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1, cRTDEP1, MPLA1, TPLA1, PLA1, AMLWT, ATLWT 
+   Real :: cRTDEP1, MPLA1, TPLA1, PLA1, AMLWT, ATLWT !cDWNOD1, 
    Integer :: cWTCO1, cWTLO1, cWTSO1
   
    Integer :: i
@@ -2225,7 +2228,7 @@ Subroutine CsvOutSomC(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS,     &
    REAL,Intent(IN) :: SLC_20CM, SLC_20CM_P, SLC_40CM, SLC_40CM_P
    REAL,Intent(IN) :: TCTD, TC0D, TCSD
    
-   REAL,Dimension(NLR),Intent(IN) :: TC, S1C, S2C, S3C, LIT, MET, STR 
+   REAL,Dimension(5),Intent(IN) :: TC, S1C, S2C, S3C, LIT, MET, STR 
    REAL,Intent(IN) :: SOM1C(0:NLR), LITC(0:NLR), METABC(0:NLR), STRUCC(0:NLR) 
    REAL,Intent(IN) :: TSOM1C, TSOM2C, TSOM3C, TMETABC, TSTRUCC, &
        TLITC, CUMRESC, ACCCO2(0:1)
@@ -2239,7 +2242,7 @@ Subroutine CsvOutSomC(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS,     &
   
 !  Recalculated vars
    Integer :: k, SOC_20CM1, SOC_40CM1, SLC_20CM1, SLC_40CM1, TCTD1, TC0D1, TCSD1
-   Integer, Dimension(NLR) :: TC1, S1C1, S2C1, S3C1, LIT1, MET1, STR1
+   Integer, Dimension(5) :: TC1, S1C1, S2C1, S3C1, LIT1, MET1, STR1
    Integer :: SOM1C1(0:NLR), LITC1(0:NLR), METABC1(0:NLR), STRUCC1(0:NLR) 
    Integer :: TSOM1C1, TSOM2C1, TSOM3C1, CUMRESC1 
    Integer :: TMETABC1, TSTRUCC1, TLITC1, ACCCO21(0:1)

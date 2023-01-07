@@ -23,6 +23,7 @@
       USE ModuleDefs
       USE GHG_mod
       IMPLICIT  NONE
+      EXTERNAL GETLUN, HEADER, ERROR, YR_DOY, INCDAT
       SAVE
 !     ------------------------------------------------------------------
       LOGICAL FEXIST
