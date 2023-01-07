@@ -1905,11 +1905,18 @@
      &           /(1.0-(RSPCX/100.0))
                 RTWTGRS = (TVR2 - TVR3) 
                 ! Determine FINAL new concentration
-                IF (LFWT+GROLF+STWT+CHWT+GROST+GROCH.GT.0.0) TVR5 = 
-     &            (RSWT+GRORS-SENRS-RTWTGRS)/
+                IF (LFWT+GROLF+STWT+CHWT+GROST+GROCH.GT.0.0
+     &           .AND. ((LFWT+GROLF-SENLFG-SENLFGRS)
+     &            +(STWT+GROST+CHWT+GROCH)
+     &            +(RSWT+GRORS-SENRS-RTWTGRS)).GT.0.0) THEN
+                !TF - Added protection for division by zero 
+                  TVR5 = (RSWT+GRORS-SENRS-RTWTGRS)/
      &            ((LFWT+GROLF-SENLFG-SENLFGRS)
      &            +(STWT+GROST+CHWT+GROCH)
      &            +(RSWT+GRORS-SENRS-RTWTGRS))
+                ELSE
+                  TVR5 = 0.0
+                ENDIF
               ENDIF
               
               IF (RSTAGE.GE.8.2) RTWTGRS = 0.0
