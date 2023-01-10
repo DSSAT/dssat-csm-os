@@ -20,6 +20,8 @@
 !-----------------------------------------------------------------------
       USE ModuleDefs   
       IMPLICIT NONE
+      EXTERNAL YR_DOY, INFO, GETLUN, WARNING, IGNORE, PATH, FIND2, 
+     &  CO2_ERROR, PARSE_HEADERS, LEAP, CO2HEADER
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -261,6 +263,7 @@
 !     Error handling routine for CO2 input 
 
       IMPLICIT NONE
+      EXTERNAL WARNING, ERROR
 
       CHARACTER* 6 ERRKEY
       CHARACTER*78 MSG(4)
