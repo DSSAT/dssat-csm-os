@@ -40,6 +40,8 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL AUTHAR, AUTPLT, CHEMICAL, FERT_PLACE, IPAHAR, IRRIG, 
+     &  OM_PLACE, OPMGMT, PADDY_MGMT, SUMVALS, TILLAGE, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1  IHARI, IIRRI, IPLTI, ISWCHE, RNMODE
@@ -349,6 +351,7 @@ C=======================================================================
       USE ModuleData
       USE SumModule
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, NAILUJ, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1  ISWCHE, IDETW, ISWTIL, IIRRI, RNMODE

@@ -1160,7 +1160,7 @@ C  tillage and rainfall kinetic energy
 !         on soil properties -- effects are applied in integr section.
         CALL TillEvent(CONTROL, 
      &    BD, BD_BASE, CN, CN_BASE, DLAYR, DL_BASE,       !Input
-     &    DS, DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,      !Input
+     &    DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,          !Input
      &    NLAYR, TILLVALS,                                !Input
      &    BD_TILLED, CN_TILLED, DL_TILLED,                !Output
      &    DS_TILLED, SAT_TILLED, SC_TILLED)               !OutpuT
