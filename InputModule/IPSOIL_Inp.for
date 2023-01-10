@@ -36,6 +36,8 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, WARNING, IGNORE2, IGNORE, CLEAR, UPCASE, VERIFY, 
+     &  PARSE_HEADERS, LYRSET, LYRSET3, LYRSET2, LMATCH
 
       INCLUDE 'COMSOI.blk'
 

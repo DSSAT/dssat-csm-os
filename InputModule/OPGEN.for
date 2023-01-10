@@ -37,6 +37,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL CLEAR, OPHEAD, OPSOIL
 
       INCLUDE 'COMSOI.blk'
       INCLUDE 'COMSWI.blk'
