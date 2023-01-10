@@ -15,6 +15,7 @@ C=======================================================================
       USE ModuleData
       USE HeaderMod
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       CHARACTER*(*) ERRKEY
