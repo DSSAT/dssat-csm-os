@@ -39,10 +39,11 @@ C=======================================================================
      &  AGEQESL, CO2QESL, QEFFSL)                         !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL CANOPG, CANPET, HSOILT
       SAVE
 
       CHARACTER MEEVP*1,MEPHO*1,TYPPGN*3,TYPPGL*3
@@ -129,7 +130,7 @@ C       Loop until evapotranspiration and photosynthesis are stable.
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
      &        RBSL, RBSL, RBSS)                           !Output
-C          added by BAK on 10DEC2015           
+C          added by BAK on 10DEC2015
 
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
@@ -272,7 +273,7 @@ C       SWE = SWE
 C        DULE = DULE
 C       LLE = LLE
 C       CEN = CEN
-C previous 4 lines commented out by BK and KB on 11Jul17       
+C previous 4 lines commented out by BK and KB on 11Jul17
         SWE = MAX(SWE-EHR,0.0)
         CEN = (DULE-SWE) / (DULE-LLE) * 100.0
 C previous two lines uncommented by BK and KB on 11Jul17
@@ -310,6 +311,7 @@ C=======================================================================
      &  AGEQESL,CO2QESL,QEFFSL)                           !Output
 
       IMPLICIT  NONE
+      EXTERNAL PGLFEQ, PGLEAF
       SAVE
 
       CHARACTER TYPPGN*3,TYPPGL*3
@@ -402,7 +404,7 @@ C     Compute canopy photosynthesis (µmol CO2/m2/s).
         ENDIF
       ENDIF
       PGHR = PGSL*LAISL + PGSH*LAISH
-      
+
       IF(XLAI .GT. 0.0) THEN
         AGEFAC = (LAISL*AGMXSL+LAISH*AGMXSH) / XLAI
       ELSE
@@ -445,8 +447,9 @@ C========================================================================
      &  CO2QE, AGEQE)                                     !Output
 
       USE MODULEDATA
-	 
+	
       IMPLICIT NONE
+      EXTERNAL TABEX, CURV
       SAVE
 
       CHARACTER TYPPGN*3,TYPPGL*3
@@ -461,7 +464,7 @@ C========================================================================
       PARAMETER (O2=210000.0,RGAS=8.314)
 
       REAL BETALS,PDLA,BETAMX
-        
+
 C     Initialization.  Convert LMXREF from mgCO2/m2/s to µmol/m2/s.
 
       TK = TEMPHR + 273.
@@ -502,7 +505,7 @@ C     CICA = 0.4+0.6*EXP(-0.002*CO2HR)
            CINT = CICA*CO2HR + (1.0-CICA)*GAMST
            CINT = MAX(CINT,GAMST)
            CO2MAX = CMXSF * (CINT-GAMST) / (4.0*CINT+8.0*GAMST)
-        ELSE 
+        ELSE
            CICA = 0.7
            CINT = CICA*CO2HR + (1.0-CICA)*GAMST
            CINT = MAX(CINT,GAMST)
@@ -558,7 +561,7 @@ C
       AGEQE =  (0.0094 + (1.0-EXP(-2.0*AGEMXL))) /
      &  (0.0094 + (1.0-EXP(-2.0*1.0)))
       AGEQE = MIN(MAX(AGEQE,0.0),1.0)
-        
+
 C    25 Apr 2011 KJB,PDA,MPS added code for beta function: PDLA effects on lfmax and QE
       CALL GET('PDLABETA','BETA',BETALS)
       CALL GET('PDLABETA','PDLA',PDLA)
@@ -584,7 +587,7 @@ C  12/10/90 NBP Modified to calculated leaf conductance to H2O
 C  11/23/93 NBP Modified for layer input of SLW
 C-----------------------------------------------------------------------
 C  Called from: CANOPG
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE PGLEAF(
@@ -593,6 +596,7 @@ C=======================================================================
      &  CCNEFF, CICAD, PGPATH)                            !Input
 
       IMPLICIT NONE
+
       SAVE
 
       REAL A,B,C,CICA,CINT,CO2HR,CCO2LF,CONDLF,CVTURE,GAMST,LFMAX,QEFF,
@@ -616,7 +620,7 @@ C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
       C = QEFF * PARLF * LFMAX
 !     CHP Added checks for floating underflow 1/16/03
       IF (LFMAX .GT. 0.0) THEN
-        IF ((QEFF*PARLF/LFMAX) .LT. 20. .AND. 
+        IF ((QEFF*PARLF/LFMAX) .LT. 20. .AND.
      &      (QEFF*PARLF/LFMAX) .GT. -20.) THEN
 C       PGLF = (B - SQRT(B**2-4.*A*C)) / (2.*A)
           PGLF = LFMAX * (1.0 - EXP(-QEFF*PARLF/LFMAX))
@@ -693,10 +697,11 @@ C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
 C       added by BAK on 10DEC15
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL ETRES, RADB, ETSOLV, VPSAT, VPSLOP
       SAVE
 
       INTEGER I
@@ -768,7 +773,7 @@ C     Calculate NET total by subtracting net (back) longwave radiation.
 
       CALL RADB(
      &  CLOUDS, EAIRHR, FRSHV, LAISHV,                    !Input
-     &  LAISLV, TAIRHR, TCAN,                             !Input 
+     &  LAISLV, TAIRHR, TCAN,                             !Input
      &  RADBK)                                            !Output
       RNET(1,1) = RABS(1) - RADBK(1)
       RNET(2,1) = RABS(2) - RADBK(2)
@@ -783,7 +788,7 @@ C     Solve 3-zone model for ET and E (mm/h).
      &  ECAN, G, LH, LHEAT, SH, SHEAT, TCAN, TSURF)       !Output
       ETHR = LH / LHVAP * 3600.0
       EHR = LHEAT(3,1) / LHVAP * 3600.0
-      
+
       IF(XLAI .GT. 0.0) THEN
         THR = ETHR - EHR
       ELSE
@@ -816,6 +821,7 @@ C========================================================================
 C        added RB and RSURF to output on 1DEC2014 by Bruce Kimball
 
       IMPLICIT NONE
+      EXTERNAL RESBLR
       SAVE
 
       INTEGER I,J
@@ -872,9 +878,9 @@ C  RESET JULY 10 2017 BK AND KJB
 C  set back to zero per DSSAT 3.5 on 11Jul17
       ELSE
         RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.37)-1.0)
-C  uncommented back to DSSAT 3.5 on 11Jul17 by BK and KB       
+C  uncommented back to DSSAT 3.5 on 11Jul17 by BK and KB
 C  RESET FOR RSSS ON JULY 10 2017 BK AND KJB
-C        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0) 
+C        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0)
 commented out by Bruce Kimball on 10DEC15
 C          RSSS = 10000
       ENDIF
@@ -907,7 +913,7 @@ C  02/09/93 NBP Written
 C  04/24/94 NBP Added check to prevent -ve wind speed at top of canopy.
 C-----------------------------------------------------------------------
 C  Called from: ETRES
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE RESBLR(
@@ -916,6 +922,7 @@ C=======================================================================
      &  RA, RB, USTAR)                                    !Output
 
       IMPLICIT NONE
+
       SAVE
 
       REAL CANHT,D,ETAK,ETAKMX,ETAW,ETAWMX,FRSHV,FRACSH,H,KDIRBL,
@@ -1054,7 +1061,8 @@ C=======================================================================
      &  ECAN, G, LH, LHEAT, SH, SHEAT, TCAN, TSURF)       !Output
 
       IMPLICIT NONE
-      SAVE 
+      EXTERNAL GAUSSJ, MATCON, MATADD, MATPRO, VPSLOP
+      SAVE
 
       REAL STCND1,DLAYR1,DZ1,EAIRHR,ECAN,G,PSYCON,RBLCN,SH,LH,
      &  TAIRHR,TCAN,TSHR1,VHCAIR,VP,VPSLOP,VSP,HOLD
@@ -1145,7 +1153,7 @@ C  ??/??/??     Written
 C  01/10/91 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: ETSOLV
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE GAUSSJ(
@@ -1153,7 +1161,8 @@ C=======================================================================
      &  AINV)                                             !Output
 
       IMPLICIT NONE
-      SAVE 
+      EXTERNAL WARNING
+      SAVE
 
       INTEGER NMAX
       PARAMETER (NMAX = 10)
@@ -1266,7 +1275,7 @@ C  ??/??/89 SSJ Written
 C  01/14/91 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: ETSOLV
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE MATADD(
@@ -1274,6 +1283,7 @@ C=======================================================================
      &  CMAT)                                           !Output
 
       IMPLICIT NONE
+
       SAVE
 
       CHARACTER*1 OPERND
@@ -1303,7 +1313,7 @@ C  REVISION HISTORY
 C  01/14/91 NBP Written
 C-----------------------------------------------------------------------
 C  Called from: ETSOLV
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE MATCON(
@@ -1311,6 +1321,7 @@ C=======================================================================
      &  CMAT)                                           !Output
 
       IMPLICIT NONE
+
       SAVE
 
       CHARACTER*1 OPERND
@@ -1341,7 +1352,7 @@ C  ??/??/89 SSJ Written
 C  01/14/91 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: ETSOLV
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE MATPRO(
@@ -1349,6 +1360,7 @@ C=======================================================================
      &  CMAT)                                           !Output
 
       IMPLICIT NONE
+
       SAVE
 
       INTEGER I,J,K,NROWA,NCOM,NCOLB
@@ -1386,15 +1398,16 @@ C  12/10/90 NBP Written
 C  02/09/93 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: CANPET
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE RADB(
      &  CLOUDS, EAIRHR, FRSHV, LAISHV,                    !Input
-     &  LAISLV, TAIRHR, TCAN,                             !Input 
+     &  LAISLV, TAIRHR, TCAN,                             !Input
      &  RADBK)                                            !Output
 
       IMPLICIT NONE
+
       SAVE
 
       REAL CLOUDS,DELT,EMISA,EMISA0,EMISL,EMISS,EMISS0,FRSHV,
@@ -1423,7 +1436,7 @@ C     weighted according to leaf area index.  NEED VIEW FACTOR FOR LEAVES!
 
       EMISAV = FRSHV*EMISL + (1.0-FRSHV)*EMISS
       RBACK =  EMISAV * SBZCON * (TK4CAN-TK4SKY)
-      
+
       IF(XLAI .GT. 0.0) THEN
         RBKLF = FRSHV * RBACK
         RADBK(1) = 0.7 * RBKLF
@@ -1448,7 +1461,7 @@ C  ??/??/89 SSJ Written
 C  01/14/91 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: ETPHR
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE HSOILT(
@@ -1456,10 +1469,11 @@ C=======================================================================
      &  TSHR)                                             !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+
       SAVE
 
       INTEGER I,NLAYR
