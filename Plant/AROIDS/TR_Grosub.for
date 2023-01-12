@@ -52,6 +52,9 @@ C=======================================================================
       USE FloodModule    ! parameters, hourly weather data.
 
       IMPLICIT  NONE
+      EXTERNAL YR_DOY, TR_IPGROSUB, TR_IPCROP, TR_NFACTO, TR_CALCSHK, 
+     &  TR_TILLSUB, TR_NUPTAK, TR_PlantInit, TR_TRNSPL_GROSUB
+      EXTERNAL TABEX, ERROR
       SAVE
 
       CHARACTER*1 ISWWAT, ISWNIT
@@ -1104,6 +1107,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND
 
       CHARACTER*2 CROP
       CHARACTER*6  ERRKEY, SECTION

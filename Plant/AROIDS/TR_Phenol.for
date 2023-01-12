@@ -27,7 +27,9 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
-      IMPLICIT  NONE 
+      IMPLICIT  NONE
+      EXTERNAL YR_DOY, TR_StnameFill, TR_IPPHEN, TR_PhaseI, TaroInit, 
+     &  GETLUN, TR_TRNSPL_PHENOL, WARNING, TR_Stress
       SAVE
       
       CHARACTER ISWWAT*1,ISWNIT*1,IDETO*1,PLME*1
@@ -647,6 +649,7 @@ C=======================================================================
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
       IMPLICIT NONE
+      EXTERNAL INCDAT
 
       CHARACTER*1 PLME
       INTEGER ITRANS, YRPLT
@@ -790,6 +793,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT     NONE
+      EXTERNAL FIND, ERROR
 
       CHARACTER*1  PLME
       CHARACTER*6  ERRKEY, SECTION

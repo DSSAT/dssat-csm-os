@@ -17,6 +17,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL INCDAT, TIMDIF
       SAVE
 
       REAL      TMAX, TSHOCK, DSHOCK, TROOT

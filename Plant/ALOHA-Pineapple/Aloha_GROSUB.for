@@ -53,12 +53,13 @@
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    SKWT, STMWT, STOVN, STOVWT,  TEMPM,                 !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
       USE Aloha_mod
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
+      EXTERNAL Aloha_NFACTO, Aloha_NUPTAK, TABEX, WARNING
       SAVE
 
       INTEGER   ICOLD
@@ -91,7 +92,7 @@
 
       REAL    CO2, SRAD, TMIN, TMAX
       REAL    PLTPOP, SDWTPL, PLANTSIZE
-      REAL    G2, G3, P8, PHINT, TBASE      !G2, G3, P4, PHINT, TBASE G2, G3, P7, PHINT, TBASE
+      REAL    G2, G3, P8, PHINT, TBASE      
       INTEGER PMTYPE, NFORCING
       REAL    GRNWT, SDWTAH, SDWTAM, WTNUP, BWAH
       REAL    WTNLF, WTNST, WTNSH, WTNRT, WTNLO
@@ -106,7 +107,7 @@
       TYPE (SwitchType)  ISWITCH
       TYPE (WeatherType) WEATHER
       TYPE (SoilType) SOILPROP
-      TYPE (ResidueType) SENESCE
+!     TYPE (ResidueType) SENESCE
 
       DYNAMIC = CONTROL % DYNAMIC
       CO2  = WEATHER % CO2
@@ -196,10 +197,10 @@
      &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
 
       CALL Aloha_NUPTAK(CONTROL, ISWITCH, 
-     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT,                 !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
-     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
+     &    ROOTN, STOVN, TANC, UNH4, UNO3, WTNUP)          !Output
 
 !=======================================================================
       CASE (SEASINIT)
@@ -218,7 +219,7 @@
 
       G2  = CULTIVAR % G2
       G3  = CULTIVAR % G3
-      P8  = CULTIVAR % P8                  ! P4  = CULTIVAR % P4   P7  = CULTIVAR % P7 
+      P8  = CULTIVAR % P8
       PHINT = CULTIVAR % PHINT
 
       PLA        = 0.0
@@ -243,10 +244,10 @@
      &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
 
       CALL Aloha_NUPTAK(CONTROL, ISWITCH, 
-     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT,                 !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
-     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
+     &    ROOTN, STOVN, TANC, UNH4, UNO3, WTNUP)          !Output
 
 !=======================================================================
       CASE (RATE)
@@ -258,14 +259,18 @@
         XANC   = TANC*100.0               
         APTNUP = STOVN*10.0*PLTPOP
 
-        IF (ISTAGE .LT. 10) THEN                      !IF (ISTAGE .LT. 7) THEN     JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!      JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!      IF (ISTAGE .LT. 7) THEN     
+       IF (ISTAGE .LT. 10) THEN                      
           CALL Aloha_NFACTO (DYNAMIC, 
      &      ISTAGE, TANC, XSTAGE,                           !Input
      &      AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
         ENDIF
       ENDIF
 
-      IF (ISTAGE .GT. 8) RETURN                     ! IF (ISTAGE .GT. 5) RETURN   JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!     JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!     IF (ISTAGE .GT. 5) RETURN   
+      IF (ISTAGE .GT. 8) RETURN                     
 
 !-----------------------------------------------------------------
 
@@ -280,7 +285,9 @@
 
       TEMPM = 0.6*TMIN + 0.4*TMAX
       SELECT CASE (ISTAGE)
-        CASE (1,2,3,4,5,10,11,12)                          ! CASE (1,2,3,7,8,9)  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!       JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!       CASE (1,2,3,7,8,9)  
+        CASE (1,2,3,4,5,10,11,12)                          
           IF (TEMPM .LE. 25.0) THEN
              PRFT = 1.0-0.001*(TEMPM-25.0)**2
            ELSEIF (TEMPM .LT. 29.0) THEN
@@ -288,7 +295,9 @@
            ELSE
              PRFT = 0.1
           ENDIF
-        CASE (6,7,8,9)                                   !CASE (4,5,6) JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!       JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!       CASE (4,5,6) 
+        CASE (6,7,8,9)                                   
           PRFT = 1.0-0.005*((0.4*TMIN+0.6*TMAX)-26.)**2
           PRFT = AMAX1 (PRFT,0.0)
       END SELECT
@@ -304,7 +313,9 @@
          TRF2 = 1.65
       ENDIF
 
-      IF (ISTAGE .GE. 8 .AND. ISTAGE .LT. 10) THEN                 !IF (ISTAGE .GE. 4 .AND. ISTAGE .LT. 7) THEN    JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!     JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!     IF (ISTAGE .GE. 4 .AND. ISTAGE .LT. 7) THEN    
+      IF (ISTAGE .GE. 8 .AND. ISTAGE .LT. 10) THEN                 
          CARBO = PCARB*AMIN1(PRFT,0.55+0.45*SWFAC,NSTRES)
        ELSE
          CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES)
@@ -312,9 +323,10 @@
       DTT = AMAX1 (DTT,0.0)
 
 !-----------------------------------------------------------------
-      IF (ISTAGE .LE. 4) THEN                                    ! IF (ISTAGE .LE. 3) THEN   JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
-!                                                                ! IF (ISTAGE .LE. 3) THEN  debe ser 4 para que deje de producir hojas a partir de forza.
-!        Calculate leaf emergence                                ! Originalmente lo había modificado como 5 pero era 4. Sucerá lo mismo más abajo?
+! IF (ISTAGE .LE. 3) THEN   JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+! IF (ISTAGE .LE. 3) THEN  debe ser 4 para que deje de producir hojas a partir de forza.
+! Originalmente lo había modificado como 5 pero era 4. Sucerá lo mismo más abajo?
+      IF (ISTAGE .LE. 4) THEN                                    
 !        The first 5 leaves grow faster than other leaves, used for maize
 !         
          PC = 1.0                       ! Calculate leaf emergence
@@ -327,10 +339,14 @@
 !        
 !        Correcting water stress effect and effect due to shading.
 !        
-         IF (ISTAGE .EQ. 5) THEN                             !  IF (ISTAGE .EQ. 3) THEN   JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
-            IF (TEMPM .GT. TBASE) THEN                       ! En el ISTAGE anterior note que no se cumple la regla de sumar 2 al ISTAGE original, así que
-               IF ((LN*PLTPOP) .GT. 550.0) THEN              ! debo recordar que si calibrar un dato que no es posible calibrar con los coeficientes PIALO              
-                  TI = TURFAC*(1.0/PHINT)*0.5*(DTT-2.0)/PC   ! debería intentar revisando si estos ISTAGES están bien colocados, o por ejemplo en lugar de 5 es 4 también.
+!  IF (ISTAGE .EQ. 3) THEN   JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+! En el ISTAGE anterior note que no se cumple la regla de sumar 2 al ISTAGE original, así que
+! debo recordar que si calibrar un dato que no es posible calibrar con los coeficientes PIALO              
+! debería intentar revisando si estos ISTAGES están bien colocados, o por ejemplo en lugar de 5 es 4 también.
+         IF (ISTAGE .EQ. 5) THEN                             
+            IF (TEMPM .GT. TBASE) THEN                       
+               IF ((LN*PLTPOP) .GT. 550.0) THEN              
+                  TI = TURFAC*(1.0/PHINT)*0.5*(DTT-2.0)/PC   
                 ELSEIF ((LN*PLTPOP) .GE. 50.0) THEN
                   TI = TURFAC*(1.0/PHINT)*(-0.001*LN*PLTPOP+1.05)*
      &                 (DTT-2.0)/PC
@@ -501,7 +517,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
 
 !-----------------------------------------------------------------
 !-----------------------------------------------------------------JVJ NEW
-      CASE (3)                                           !CASE (2)  JVJ  Case duplicated because 2 stages in vegetative phase were included 
+!CASE (2)  JVJ  Case duplicated because 2 stages in vegetative phase were included 
+      CASE (3)                                           
         ! Net zero stem growth to forcing
         !
         SELECT CASE (PMTYPE)
@@ -563,7 +580,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         LFWT = LFWT-SLAN/600.0
         
         
-      CASE (4)                                           !CASE (2)    JVJ  Case duplicated because 2 stages in vegetative phase were included 
+!CASE (2)    JVJ  Case duplicated because 2 stages in vegetative phase were included 
+      CASE (4)                                           
         !
         ! Net zero stem growth to forcing
         !
@@ -800,7 +818,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
            ENDIF
         ENDIF
 
-        IF (SUMDTT .GT. P8) THEN           !IF (SUMDTT .GT. P4) THEN   IF (SUMDTT .GT. P7) THEN 
+!                                 !IF (SUMDTT .GT. P4) THEN   IF (SUMDTT .GT. P7) THEN 
+        IF (SUMDTT .GT. P8) THEN           
            GROSK = CARBO*0.1
            STMWT = STMWT
            SKWT  = SKWT + GROSK
@@ -813,7 +832,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         RGFILL  = 1-0.0025*(TEMPM-26.)**2
 
         IF (PMTYPE .GE. 1) THEN
-           IF (SUMDTT .GT. 0.5*P8) THEN    !IF (SUMDTT .GT. 0.5*P4) THEN  IF (SUMDTT .GT. 0.5*P7) THEN
+!                                 IF (SUMDTT .GT. 0.5*P4) THEN  IF (SUMDTT .GT. 0.5*P7) THEN
+           IF (SUMDTT .GT. 0.5*P8) THEN    
               IF (SRAD .LT. 12.0) THEN
                  GROFRT = GPP*G3*0.001*(0.7+0.3*SWFAC)*(SRAD/12.)
                ELSEIF (SRAD .LT. 36.0) THEN
@@ -864,7 +884,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
 
 1700    SELECT CASE (PMTYPE)
           CASE (1:12)
-            IF (SUMDTT .LT. 0.8*P8) THEN      ! IF (SUMDTT .LT. 0.8*P4) THEN   IF (SUMDTT .LT. 0.8*P7) THEN 
+!           IF (SUMDTT .LT. 0.8*P4) THEN   IF (SUMDTT .LT. 0.8*P7) THEN 
+            IF (SUMDTT .LT. 0.8*P8) THEN      
                IF (SRAD .LT. 6.0) THEN
                   GROSTM  = CARBO
                 ELSEIF (SRAD .LT. 13.0) THEN
@@ -951,7 +972,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         !
         FRTWT = FRTWT + GROFRT
         FLRWT = FLRWT + GROFRT + GROCRWN
-        IF (SUMDTT .GT. 0.8*P8) THEN       !IF (SUMDTT .GT. 0.8*P4) THEN   IF (SUMDTT .GT. 0.8*P7) THEN  
+!       IF (SUMDTT .GT. 0.8*P4) THEN   IF (SUMDTT .GT. 0.8*P7) THEN  
+        IF (SUMDTT .GT. 0.8*P8) THEN       
            STMWT = AMIN1 (STMWT,SWMAX)
         ENDIF
 
@@ -980,7 +1002,9 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
  2400 SLFW = 1.0
       SLFN = 0.95+0.05*AGEFAC
       SLFC = 1.0
-      IF (ISTAGE .GT. 2 .AND. ISTAGE .LT. 10) THEN                    !  IF (ISTAGE .GT. 2 .AND. ISTAGE .LT. 7) THEN JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!     IF (ISTAGE .GT. 2 .AND. ISTAGE .LT. 7) THEN 
+      IF (ISTAGE .GT. 2 .AND. ISTAGE .LT. 10) THEN                    
          IF (LAI .GT. 6.0) THEN
             SLFC = 1.0-0.0005*(LAI-6.0)
          ENDIF
@@ -1013,7 +1037,9 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
 !         IF (IDETO .EQ. 'Y') THEN
 !            WRITE (NOUTDO,2800)
 !         ENDIF
-         ISTAGE = 6                                       ! ISTAGE = 4 JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!        ISTAGE = 4 
+         ISTAGE = 6                                       
        ELSE
          IF (ICOLD .GE. 7) THEN
             WRITE (MSG(1),   2800)
@@ -1021,7 +1047,9 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
 !            IF (IDETO .EQ. 'Y') THEN
 !               WRITE (NOUTDO,2800)
 !            ENDIF
-           ISTAGE = 7                                     !ISTAGE = 5 JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!          JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!          ISTAGE = 5 
+           ISTAGE = 7                                     
          ENDIF
       ENDIF
 !      
@@ -1037,7 +1065,9 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
 !       less than the plant population (PLTPOP). Need to differentiate
 !       for consistency with daily and seasonal outputs.
       SELECT CASE(ISTAGE)
-      CASE(8,9)                                             ! CASE(5,6)  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!     JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+!     CASE(5,6)  
+      CASE(8,9)                                             
 !       In this case FLRWT is fruit + crown
         BIOMAS   = (LFWT + STMWT + BASLFWT + SKWT)*PLTPOP 
      &                + (FLRWT * FRUITS) 
@@ -1053,10 +1083,10 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
       
       IF (ISWNIT .NE. 'N') THEN
         CALL Aloha_NUPTAK(CONTROL, ISWITCH, 
-     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT,                 !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
-     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
+     &    ROOTN, STOVN, TANC, UNH4, UNO3, WTNUP)          !Output
       ENDIF
 
 !-----------------------------------------------------------------
@@ -1204,7 +1234,9 @@ C         ABIOMS      = BIOMAS
           SWMAX  = 0.0
           SWMIN  = 0.0
 
-        CASE (8)                       !   CASE (5)  JVJ  Case duplicated because 1 stage in reproductive phase were included 
+!       JVJ  Case duplicated because 1 stage in reproductive phase were included 
+!       CASE (5)  
+        CASE (8)                       
 
 !         Move from Istage 4 because no actual fruits until stage 5
           FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  
@@ -1240,12 +1272,17 @@ C         ABIOMS      = BIOMAS
         CASE (11)                          !  CASE (8)
           WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
 
-          PLA        = WTINITIAL*49.61     !PLA        = WTINITIAL*0.6*63.0  OJO esta era la fórmula original agregué esa constante para cuadrar el resultado tengo un libro de excel con estos calculos.
+!         PLA        = WTINITIAL*0.6*63.0  OJO esta era la fórmula original agregué esa constante para cuadrar el resultado tengo un libro de excel con estos calculos.
+          PLA        = WTINITIAL*49.61     
           LAI        = PLTPOP*PLA*0.0001     !
-          BIOMAS     = WTINITIAL*PLTPOP      ! Este cambio quedó en el archivo dscsm047.exe que se ejecuta actualmente en esta máquina.
-          LFWT       = WTINITIAL*0.97        ! LFWT       = WTINITIAL*0.53 No encontré donde está la variable del archivo T  LWDA es esta o sale de aqui La definición en el archivo T es Leaf Weight  kg dm/ha
-          BASLFWT    = LFWT*0.66             ! Esto es un peso del tejido blanco basal (ojo yo no separé esto y parece muy buena idea) 
-          STMWT      = WTINITIAL*0.03       ! STMWT      = WTINITIAL*0.115 Tampoco está la variable del archivo T SWDA pero es esta o sale de aqui STMWT
+!         Este cambio quedó en el archivo dscsm047.exe que se ejecuta actualmente en esta máquina.
+          BIOMAS     = WTINITIAL*PLTPOP      
+!         LFWT       = WTINITIAL*0.53 No encontré donde está la variable del archivo T  LWDA es esta o sale de aqui La definición en el archivo T es Leaf Weight  kg dm/ha
+          LFWT       = WTINITIAL*0.97        
+!         Esto es un peso del tejido blanco basal (ojo yo no separé esto y parece muy buena idea) 
+          BASLFWT    = LFWT*0.66             
+!         STMWT      = WTINITIAL*0.115 Tampoco está la variable del archivo T SWDA pero es esta o sale de aqui STMWT
+          STMWT      = WTINITIAL*0.03       
           STOVWT     = WTINITIAL             ! 
 
 !          NSTRES     = 1.0
@@ -1268,10 +1305,10 @@ C               XPTN = XGNP*6.25
       ENDIF
 
       CALL Aloha_NUPTAK (CONTROL, ISWITCH, 
-     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT,                 !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
-     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
+     &    ROOTN, STOVN, TANC, UNH4, UNO3, WTNUP)          !Output
 
 !=======================================================================
       END SELECT
