@@ -16,7 +16,6 @@ C=======================================================================
       USE ModuleData
       USE Interface_IpSoil
       IMPLICIT  NONE
-      EXTERNAL PUT
       SAVE
 
       REAL AM, ATHICK, SURF, XMASS

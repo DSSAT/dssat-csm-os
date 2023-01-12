@@ -48,7 +48,7 @@ C-----------------------------------------------------------------------
       SAVE
 
       LOGICAL NOTEXTURE, PHFLAG, FIRST, NO_OC
-      CHARACTER*1 ISWTIL, ISWWAT, MEINF, MESOM, RNMODE, UPCASE
+      CHARACTER*1 ISWTIL, ISWWAT, MEINF, MESOM, RNMODE
       CHARACTER*6 SECTION
       CHARACTER*7, PARAMETER :: ERRKEY = 'SOILDYN'
       CHARACTER*30 FILEIO
@@ -57,7 +57,7 @@ C-----------------------------------------------------------------------
 
       INTEGER DAS, DYNAMIC, ERRNUM, FOUND, I, L, Length 
       INTEGER LNUM, LUNIO, MULTI, REPNO, RUN, YRDOY
-      INTEGER LEN1, LEN2, LENSTRING
+!     INTEGER LEN1, LEN2, LENSTRING
 !     ---------------------------------------------------------------
 !     Soil properties:
       CHARACTER*5 SLTXS, SMPX
@@ -941,7 +941,7 @@ C  tillage and rainfall kinetic energy
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
@@ -1387,7 +1387,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
 !***********************************************************************
 !***********************************************************************
@@ -1753,7 +1753,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !     SUBROUTINE OPSOILDYN -- output dynamic soil properties
       SUBROUTINE OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -1766,7 +1766,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       CHARACTER*11, PARAMETER :: OUTSOL = 'SoilDyn.OUT'
       INTEGER DLUN, DOY, DYNAMIC, YEAR   
       LOGICAL FEXIST, PrintDyn
-      LOGICAL Print_today, TILLED
+      LOGICAL Print_today !, TILLED
       REAL CN, CRAIN, SOILCOV, SUMKE, TOTAW
       REAL, DIMENSION(NL) :: BD, BD_SOM, DLAYR, DUL, LL, SAT, SWCN
       REAL, DIMENSION(0:NL) :: KECHGE

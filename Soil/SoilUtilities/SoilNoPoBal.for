@@ -25,7 +25,6 @@
                          !parameters, hourly weather data.
       USE Interface_SoilNBalSum
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, YR_DOY, SoilNBalSum
       EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 !     ------------------------------------------------------------------

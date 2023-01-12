@@ -16,7 +16,7 @@ C=======================================================================
       USE CsvOutput
       USE Linklist
       IMPLICIT NONE
-      EXTERNAL getlun, HEADER, YR_DOY
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 
       CHARACTER*1 IDETL, IDETW, ISWWAT
