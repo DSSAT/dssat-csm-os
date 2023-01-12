@@ -27,6 +27,7 @@ C=======================================================================
       USE ModuleDefs
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL OPFLOODN, EQUIL2
       SAVE
 
       INTEGER NSWITCH, YRDRY, DYNAMIC

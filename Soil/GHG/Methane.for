@@ -33,6 +33,7 @@ C=======================================================================
       USE MethaneConstants
       USE MethaneVariables
       IMPLICIT NONE
+      EXTERNAL OpMethane, SteadyState
       SAVE
 
       INTEGER n1,NLAYR,i,j, DYNAMIC
@@ -389,6 +390,7 @@ C  07/02/2021 CHP Written
 !-------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, SUMVALS, YR_DOY
       SAVE
 
       TYPE (ControlType) CONTROL

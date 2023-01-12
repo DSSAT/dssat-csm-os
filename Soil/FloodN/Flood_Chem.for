@@ -19,6 +19,7 @@ C=======================================================================
       USE ModuleDefs
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL FCHEM, PERC_N, NRUNOFF, DRYUP, FLOODI
       SAVE
 
       CHARACTER*1 ISWNIT

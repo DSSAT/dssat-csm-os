@@ -20,6 +20,7 @@ C=======================================================================
       USE ModuleDefs  
       USE FloodModule
       IMPLICIT  NONE
+      EXTERNAL EQUIL2
       SAVE
 
       REAL    BD1, FAC1
