@@ -54,6 +54,11 @@
       USE GHG_mod
 
       IMPLICIT  NONE
+      EXTERNAL YR_DOY, OPSOMLIT_C, SoilCNPinit_C, TSOMLIT_C, 
+     &  SOMLITPRINT_C, SENESADD_C, OpSoilOrg, MethaneDynamics, 
+     &  SOILCBAL, SoilNoBal_C, SoilPoBal_C, RPLACE_C, INCORPOR_C, 
+     &  DECRAT_C, CE_RATIO_C, LITDEC_C, SOMDEC_C, IMMOBLIMIT_C,
+     &  NCHECK_C, INCYD
       SAVE
 !     ------------------------------------------------------------------
 

@@ -29,6 +29,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL ERROR, YR_DOY, GETLUN
       SAVE
 !     ------------------------------------------------------------------
 !     The variable FIRSTTIME controls that it only prints the SOM 

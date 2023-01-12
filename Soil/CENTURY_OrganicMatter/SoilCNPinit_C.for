@@ -48,6 +48,8 @@
       USE Interface_IpSoil
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, INCYD, PARTIT_C, SOMFIX_C, 
+     &  SOMINIT_C, WARNING
       SAVE
 !     ------------------------------------------------------------------
       LOGICAL ADDMETABEFLAG, FRMETFLAG
