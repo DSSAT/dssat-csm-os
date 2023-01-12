@@ -24,6 +24,7 @@ C=====================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
@@ -239,7 +240,7 @@ C-----------------------------------------------------------------------
 !      CALL Get('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm) (includes losses)
 !      CALL Get('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
 !      CALL Get('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
-      CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrigation
+      CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrig
 
 !      IF (EFFIRR .GT. 0.0) THEN
 !        TOTEFFIRR = EFFIRR * TOTIR
