@@ -17,7 +17,8 @@ C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
-      IMPLICIT NONE 
+      IMPLICIT NONE
+      EXTERNAL WARNING
 !-----------------------------------------------------------------------
       CHARACTER*78  MSG(10)
       INTEGER L, NLAYR, YRDOY

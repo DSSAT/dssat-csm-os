@@ -38,6 +38,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL ERROR, FIND
       SAVE
 
       CHARACTER*1 RNMODE, ISWNIT
