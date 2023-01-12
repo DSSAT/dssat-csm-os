@@ -50,6 +50,7 @@ c     Define CANEGRO composite variables:
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     No implicit typing - yuck!
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, TIMDIF
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Maintain the value of internal variables between 
 c     calls to this subroutine (supports the modular 

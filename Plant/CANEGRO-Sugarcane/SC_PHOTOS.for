@@ -64,6 +64,7 @@ c     Use DSSAT modules
 c     :::::::::::::::::
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GET_SPECIES_COEFF, GET_CULTIVAR_COEFF, D_TT4, TABEX
       SAVE
 
 c     Declare composite variables:
@@ -187,14 +188,14 @@ c      :::::::::::::::
 c      Sunlit leaf fraction
        REAL, INTENT(IN) :: F_SL
 c      Delta canopy- and leaf-level PARCE       
-       REAL D_PRC_OC, D_PRC_OL
+!      REAL D_PRC_OC, D_PRC_OL
 c      Sunlit and shaded fraction efficiencies
 c      Calculated from: de Silva and de Costa, 2009
        REAL EPS_SL, EPS_SH       
 c      Reference PARCE for NCo376 [Species Parameter]
-       REAL PARCEMX376
+!      REAL PARCEMX376
 c      Revised MAX_PAR_CONV equivalent
-       REAL NMX_PAR_CONV
+!      REAL NMX_PAR_CONV
 c      :::::::::::::::
 
 
@@ -1014,7 +1015,7 @@ c     ::::::::::
        REAL ANAERF
        REAL SWC_RTD, DUL_RTD, SAT_RTD
        REAL AERSTp
-       INTEGER I
+       INTEGER I, NLAYR
        REAL SWC_RTDi, DUL_RTDi, SAT_RTDi
        REAL WTRLG, WTRLG_7
        INTEGER NROOTD

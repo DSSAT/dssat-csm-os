@@ -183,13 +183,13 @@
 ! of run (Once only initialization).
 !----------------------------------------------------------------------
       CALL CSP_IPPHENOL(CONTROL, FILECC,
-     &           CROP,  DTPI, Gmax, Go, ISIMI,                !Output
-     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,            !Output 
-     &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,         !Output
-     &           RTNFAC, ROWSPC, SDEPTH, Smax, So,            !Output
-     &           StkHrNO, TB, TELOM, TM, TO1,                 !Output
-     &           TO2, XLFNUM, XLI, XStkNum, YLfFac,           !Output
-     &           YLFSZ, YVTR)                                 !Output
+     &           CROP,  DTPI, ISIMI,                      !Output
+     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,        !Output 
+     &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,     !Output
+     &           RTNFAC, ROWSPC, SDEPTH, Smax,            !Output
+     &           StkHrNO, TB, TELOM, TM, TO1,             !Output
+     &           TO2, XLFNUM, XLI, XStkNum, YLfFac,       !Output
+     &           YLFSZ, YVTR)                             !Output
 
 ! PHTHRS calculate this here and make it input in CSP_INPHENOL
 

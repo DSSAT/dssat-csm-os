@@ -69,6 +69,10 @@ c     Define CANEGRO composite variables:
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 
       IMPLICIT NONE
+      EXTERNAL SC_OPGROW, GETLUN, HEADER, SC_OPHARV, POPLT3, 
+     &  SC_PARTIT, CANOP3, CARRYOVER_RATOON, GET_CULTIVAR_COEFF, 
+     &  ROOTGROWTH, GET_SPECIES_COEFF, FIND_INP, WARNING, InitCaneCrop, 
+     &  SC_PHENOLOGY, SC_P
       SAVE
       
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::

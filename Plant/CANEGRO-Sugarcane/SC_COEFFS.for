@@ -53,6 +53,8 @@ c     Use DSSAT modules:
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Declare, and save, all variables:
           IMPLICIT NONE
+          EXTERNAL GETLUN, WARNING, FIND, INFO, FINDNEXT, ERROR
+          EXTERNAL FIND_IN_FILE
           SAVE
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Declare variables:
@@ -113,7 +115,7 @@ c         The Code (IB***) of the cultivar (internal var) and eco type:
           CHARACTER*6 CULT_CODE, ECOTYPE
 
 c         The cultivar and ecotype file IO unit numbers:
-          INTEGER CFILE, ECOFILE
+          INTEGER ECOFILE !CFILE, 
 
 c         The Filex and fileio number:
 !          INTEGER FILEX
@@ -130,7 +132,7 @@ c         Temp cultivar number read from file:
 !          INTEGER CULTNUM
 
 c         Temp cultivar/ecotype names:
-          CHARACTER*6 CULTNAME, ECO_NAME
+          CHARACTER*6 CULTNAME    !, ECO_NAME
 
 c         Temp values:
           INTEGER BEGI, ENDI, I, PREVE, LINELEN
@@ -147,9 +149,9 @@ C-KRT     CHARACTER BLANK*1,ERRKEY*6,FILEC*12,FILECC*92,FILEIO*30,
 c                   Eco file name from INP
 C-KRT&              FILEE*12, FILEEE*92,
 C-KRT&    PATHCR*80,SECTION*6, ERRMSG*78(1)          
-	      CHARACTER BLANK*1,ERRKEY*6,FILEC*12,FILECC*92,FILEIO*30
+	      CHARACTER BLANK*1,ERRKEY*6,FILEIO*30 !,FILEC*12,FILECC*92
 	      CHARACTER FILEE*12, FILEEE*92
-	      CHARACTER PATHCR*80, PATHER*80, SECTION*6
+	      CHARACTER PATHER*80, SECTION*6  !PATHCR*80, 
 	      CHARACTER*78 ERRMSG(1)
 C-KRT *****************************************************************
           
@@ -780,6 +782,7 @@ c     Use DSSAT modules:
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Declare, and save, all variables:
           IMPLICIT NONE
+          EXTERNAL ERROR, GETLUN, FIND, WARNING
           SAVE
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Declare variables:

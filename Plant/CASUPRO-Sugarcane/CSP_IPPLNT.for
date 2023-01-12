@@ -26,12 +26,12 @@ C=======================================================================
       SUBROUTINE CSP_IPPLNT(CONTROL,
      &  CAB, CanLmtFac, CROP, ECONO, EORATIO, FILECC,          !Output  
      &  FILEGC, FINREF,                                        !Output
-     &  FREEZ1, FREEZ2, GAMMA, GRLF, GRRT, GRST, GRSU, KCAN,   !Output
-     &  KEP, LfShdFac, LMF, LSFAC, NOUTDO, PCARSU, PCH2O, PLF1,!Output 
+     &  GAMMA, GRLF, GRRT, GRST, GRSU, KCAN,                   !Output
+     &  KEP, LfShdFac, LSFAC, NOUTDO, PCARSU, PCH2O, PLF1,     !Output 
      &  PLF2, PLIGSU, PLIPSU, PLWT, PMINSU, POASU, PORMIN,     !Output
      &  PROLFI, PRORTI, PROSTI, PROSUI, R30C2, RCH2O, RES30C,  !Output
      &  RLF30C, RLIG, RLIP, RMIN, ROA, RWUEP1, RWUMX, SLAMAX,  !Output
-     &  SLAMIN, SLAPAR, SLAREF,                                !Output
+     &  SLAMIN, SLAPAR,                                        !Output
      &  SIZELF, SIZREF, StkB, StkM, StkH2OFac, SuH2OFac,       !Output
      &  TURSLA, XDAY,                                          !Output
      &  XFRRT, XFRSU, XSLATM, XSTKRT, XVSHT, YFRRT,            !Output
@@ -42,6 +42,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR, GETLUN, IGNORE
 
 !-----------------------------------------------------------------------
       CHARACTER*1  BLANK  ! , UPCASE, DETACH
@@ -64,10 +65,10 @@ C=======================================================================
       INTEGER II, XDAY(6)
 
       REAL
-     &  CanLmtFac, FINREF, FREEZ1, FREEZ2,
+     &  CanLmtFac, FINREF, !, FREEZ1, FREEZ2,
      &  LfShdFac, PCH2O, PROLFI, PRORTI, PROSTI, 
      &  R30C2, RCH2O, RES30C, RLF30C, RLIG, RLIP, 
-     &  RMIN, ROA, SLAREF, SIZELF, SIZREF,
+     &  RMIN, ROA, SIZELF, SIZREF,    !, SLAREF
      &  SLAMAX, SLAMIN, SLAPAR, TURSLA
 
 !      REAL CMOBMX, 
@@ -76,7 +77,7 @@ C=======================================================================
 
 !     Species-dependant variables exported to SPAM or WATBAL::
       REAL EORATIO, KCAN, KEP, PORMIN, RWUEP1, RWUMX 
-      REAL LMF, LSFAC, KCAN_ECO   !, KC_SLOPE
+      REAL LSFAC, KCAN_ECO   !KC_SLOPE, LMF, 
 
 !     List of variables added for the CASUPRO sugarcane model
       REAL empty, GAMMA, GRLF, GRRT, GRST, GRSU

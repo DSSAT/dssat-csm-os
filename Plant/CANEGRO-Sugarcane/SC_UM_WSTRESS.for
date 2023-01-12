@@ -21,8 +21,9 @@ c     setting certain CSM variables
       USE ModuleData
 
       IMPLICIT NONE
-      SAVE    
-      
+      EXTERNAL GET_SPECIES_COEFF, GET_CULTIVAR_COEFF, AQ_WSTRESS
+      SAVE
+
 c     Number of soil layers
       INTEGER NLAYR
 c     Stress factor affecting photosynthesis
@@ -455,7 +456,7 @@ c      :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c        Output: soil water deficit factor 'n'
          REAL SWDFN
          INTEGER I
-         REAL C_UP, P_UP, P_LOW , C_LOW, DREL_RAW
+         REAL C_UP, P_UP, P_LOW , DREL_RAW  !, C_LOW
          REAL, DIMENSION (NLAYR) ::  RSWD, DREL, AQWS_RLZ, AQWSTRESS,
 c          Normalised stress values per layer:
      &     NSTLAYR

@@ -8,6 +8,7 @@ c     Use the modules:
       USE MODULEDEFS
 
       IMPLICIT NONE
+      EXTERNAL GET_CULTIVAR_COEFF, GET_SPECIES_COEFF
       SAVE
 
 c     Declare modules in use:
