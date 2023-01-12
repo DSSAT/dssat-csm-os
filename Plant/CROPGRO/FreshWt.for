@@ -31,7 +31,7 @@
       CHARACTER*2   CROP
       CHARACTER*6   ERRKEY
       PARAMETER (ERRKEY = 'FRSHWT')
-      CHARACTER*11, PARAMETER :: FWFile = "FRESHWT.OUT"
+      CHARACTER*11, PARAMETER :: FWFile = "FreshWt.OUT"
       CHARACTER*16 CROPD
       CHARACTER*78 MSG(3)
 
@@ -136,15 +136,11 @@
             WRITE (NOUTPF,230)
         END SELECT
         
-  230   FORMAT('@YEAR DOY   DAS   DAP',
-     &    '  NR2TIM  PodAge   HARVF',   
-     &    '   TOSDN   TOWSD   MTDSD   HSDWT',
-     &    '   TOSHN   TOWSH   MTDSH HSHELWT',
-     &    '   TOPOW  HPODWT',   
-     &    '   TOFPW   MTFPW   MTDPW',
-     &    ' RSEEDNO  RPODNO')     
-     
-  231   FORMAT('@YEAR DOY   DAS   DAP',
+  230 FORMAT('@YEAR DOY   DAS   DAP',
+     &    '   FPWAD   PDMCD   AFPWD',
+     &    '   ADPWD   PAGED')
+
+  231 FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
      &    '   ADPWD   PAGED',
      &    ' FCULD FSZ1D FSZ2D FSZ3D FSZ4D FSZ5D FSZ6D')
@@ -173,12 +169,7 @@
         HRPN    = 0.0
         HRDSD   = 0.0
         HRDSH   = 0.0      
-!      OPEN (7773, FILE = 'OUT_FRESH.OUT',STATUS = 'REPLACE')
-!      WRITE(7773,'(A)') 
-!     & '  YRDOY NPP HAR        PAGE       TOSDN'//
-!     & '       TOWSD       TOSHN       TOWSH       TOPOW'//
-!     & '       TOFPW       MTFPW       MTDPW       MTDSD'//
-!     & '       MTDSH     HSHELWT       HSDWT      HPODWT'
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE/INTEGRATION
@@ -316,14 +307,29 @@
             WTSD(NPP)  = 0.0
             SDNO(NPP)  = 0.0                      
           ENDIF
-        
-!          WRITE(7773,'(I7,1X,I3,1X,I3,2X,14(F10.3,2X))') 
-!     &          YRDOY,NPP,HARVF,PAGE,
-!     &          TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
-!     &          MTFPW,MTDPW,MTDSD,MTDSH,
-!     &          HSHELWT,HSDWT,HPODWT        
+               
         ENDDO  ! NPP
 
+!       Prepare model outputs
+        PodAge = XPAGE(1)
+        IF (PODNO > 0.0) THEN
+          AvgFPW = TOFPW / PODNO
+          AvgDPW = TOPOW / PODNO
+        ELSE
+          AvgFPW = 0.0
+          AvgDPW = 0.0
+        ENDIF
+        IF (TOFPW > 0.0) THEN
+          AvgDMC = TOPOW / TOFPW
+        ELSE
+          AvgDMC = 0.0
+        ENDIF
+        IF (TDPW > 0.0) THEN
+          ShelPC = TDSW / TDPW * 100.
+        ELSE
+          ShelPC = 0.0
+        ENDIF
+        
 !***********************************************************************
 !***********************************************************************
 !     DAILY OUTPUT
@@ -332,133 +338,47 @@
 !-----------------------------------------------------------------------
         IF (INDEX('Y',ISWFWT) < 1 .OR. 
      &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
-
-!       Prepare model outputs
-        PodAge = XPAGE(1)
-        IF (PODNO > 1.E-6) THEN
-          AvgFPW = TFPW / PODNO
-          AvgDPW = TDPW / PODNO
-        ELSE
-          AvgFPW = 0.0
-          AvgDPW = 0.0
-        ENDIF
-        IF (TFPW > 1.E-6) THEN
-          AvgDMC = TDPW / TFPW
-        ELSE
-          AvgDMC = 0.0
-        ENDIF
-        IF (TDPW > 1.E-6) THEN
-          ShelPC = TDSW / TDPW * 100.
-        ELSE
-          ShelPC = 0.0
-        ENDIF
-
-        IF (RSEEDNO > 1.E-6) THEN
-          AvgRDSD = 1000.0* HSDWT / RSEEDNO
-        ELSE
-          AvgRDSD = 0.0
-        ENDIF
-        IF (HPODWT > 1.E-6) THEN
-          PRDSH = 100.0* HSHELWT / HPODWT
-          PRDSD = 100.0* HSDWT / HPODWT
-        ELSE
-          PRDSH = 0.0
-          PRDSD = 0.0
-        ENDIF
-
-        IF(HARVF == 1) THEN
-          HRVD = HPODWT 
-          HRVF = RTFPW 
-          CHRVD = CHRVD + HRVD
-          CHRVF = CHRVF + HRVF
-          HRSN = RSEEDNO
-          HRPN = RPODNO
-          HRDSD = HSDWT
-          HRDSH = HSHELWT
-        ELSE
-          HRVD = 0.0
-          HRVF = 0.0
-          HRSN = 0.0
-          HRPN = 0.0
-          HRDSD = 0.0
-          HRDSH = 0.0
-        ENDIF
-      
-        RUDPW = TDPW - HPODWT
-
-
+     
         YRDOY = CONTROL % YRDOY
         IF (YRDOY .LT. YRPLT .OR. YRPLT .LT. 0) RETURN
 
-!       DAS = MAX(0,TIMDIF(YRSIM,YRDOY))
         DAS = CONTROL % DAS
 
 !       Daily output every FROP days
         IF (MOD(DAS,CONTROL%FROP) == 0) THEN  
 
-          CALL YR_DOY(YRDOY, YEAR, DOY) 
-          DAP = MAX(0,TIMDIF(YRPLT,YRDOY))
-          IF (DAP > DAS) DAP = 0
+        CALL YR_DOY(YRDOY, YEAR, DOY) 
+        DAP = MAX(0,TIMDIF(YRPLT,YRDOY))
+        IF (DAP > DAS) DAP = 0
 
-          SELECT CASE (CROP)
-           CASE ('CU')        ! Cucumber
-              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
-     &          NR2TIM,PodAge,HARVF,   
-     &          TOSDN, TOWSD,MTDSD,HSDWT,
-     &          TOSHN, TOWSH,MTDSH, HSHELWT,
-     &          TOPOW,HPODWT,
-     &          TOFPW, MTFPW,MTDPW,
-     &          RSEEDNO,RPODNO 
-          
-            CASE ('GB')       ! Snap bean
-              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
-     &          NR2TIM,PodAge,HARVF,   
-     &          TOSDN, TOWSD,MTDSD,HSDWT,
-     &          TOSHN, TOWSH,MTDSH, HSHELWT,
-     &          TOPOW,HPODWT,
-     &          TOFPW, MTFPW,MTDPW,
-     &          RSEEDNO,RPODNO 
-     
-            CASE ('PR')       ! Bell pepper
-              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
-     &          NR2TIM,PodAge,HARVF,   
-     &          TOSDN, TOWSD,MTDSD,HSDWT,
-     &          TOSHN, TOWSH,MTDSH, HSHELWT,
-     &          TOPOW,HPODWT,
-     &          TOFPW, MTFPW,MTDPW,
-     &          RSEEDNO,RPODNO 
+        SELECT CASE (CROP)
+         CASE ('CU')        ! Cucumber
+            WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
+     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      PodAge
+          CASE ('GB')       ! Snap bean
+            WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
+     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      PodAge,NINT(CLASS(7)*10.),NINT(CLASS(1)*10.),
+     &      NINT(CLASS(2)*10.),NINT(CLASS(3)*10.),NINT(CLASS(4)*10.),
+     &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.)
+         CASE ('PR')        ! Bell pepper
+            WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
+     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      PodAge
+         CASE ('SR')        ! Strawberry
+            WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
+     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      PodAge     
+          CASE ('TM')       ! Tomato
+            WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
+     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      PodAge
+        END SELECT
 
-            CASE ('SR')       ! Strawberry
-              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
-     &          NR2TIM,PodAge,HARVF,   
-     &          TOSDN, TOWSD,MTDSD,HSDWT,
-     &          TOSHN, TOWSH,MTDSH, HSHELWT,
-     &          TOPOW,HPODWT,
-     &          TOFPW, MTFPW,MTDPW,
-     &          RSEEDNO,RPODNO 
-     
-            CASE ('TM')        ! Tomato
-              WRITE(NOUTPF, 1001) YEAR, DOY, DAS, DAP, 
-     &          NR2TIM,PodAge,HARVF,   
-     &          TOSDN, TOWSD,MTDSD,HSDWT,
-     &          TOSHN, TOWSH,MTDSH, HSHELWT,
-     &          TOPOW,HPODWT,
-     &          TOFPW, MTFPW,MTDPW,
-     &          RSEEDNO,RPODNO   
-          END SELECT
-
-
-
-
-1000      FORMAT(1X,I4,1X,I3,2(1X,I5))
-
-1001      FORMAT(1X,I4,1X,I3,2(1X,I5),
-     &           I8,1X,F7.2,1X,I7,4(1X,F7.2),
-     &           6(1X,F7.2),
-     &           5(1X,F7.2))
-
-            
-2000      FORMAT(1X,I4,1X,I3.3,2(1X,I5),
+ 1000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
+     &    I8,F8.3,F8.1,F8.2,F8.1)
+ 2000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
      &    I8,F8.3,F8.1,F8.2,F8.1,
      &    7(1X,I5))
 

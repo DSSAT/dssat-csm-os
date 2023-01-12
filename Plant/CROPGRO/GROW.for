@@ -452,20 +452,6 @@ C     Initial seedling or transplant weight
       SLAAD  = AREALF / (WTLF - WCRLF)
       XLAI   = AREALF / 10000.
       XHLAI  = XLAI
-      
-!      OPEN (7774, FILE = 'OUT_GROW_SHELWT.OUT',STATUS = 'REPLACE')
-!      WRITE(7774,'(A)') 
-!     & '  YRDOY     SHELWT      WSHDOT      WSHDTN'//
-!     & '      WSHIDT      WTABRT'//
-!     & '    TOSHMINE    TOCHMINE     HSHELWT'
-!      OPEN (7775, FILE = 'OUT_GROW_SDWT.OUT',STATUS = 'REPLACE')
-!      WRITE(7775,'(A)') 
-!     & '  YRDOY       SDWT      WSDDOT      WSDDTN'//
-!     & '      SWIDOT       HSDWT'
-!      OPEN (7776, FILE = 'OUT_GROW_PODWT.OUT',STATUS = 'REPLACE')
-!      WRITE(7776,'(A)') 
-!     & '  YRDOY      PODWT       WPDOT      WSHDOT'//
-!     & '      WSDDOT      HPODWT'
 C***********************************************************************
 C***********************************************************************
 C     Daily integration
@@ -553,11 +539,6 @@ C     Net shell growth rate
 C-----------------------------------------------------------------------
       WSHIDT = MIN(WSHIDT,SHELWT)     ! pest damage to shells      
       WSHDOT = WSHDTN - WSHIDT - WTABRT - TOSHMINE - TOCHMINE - HSHELWT
-      
-!      WRITE(7774,'(I7,1X,8(F10.3,2X))') 
-!     &  YRDOY,SHELWT,WSHDOT,WSHDTN,WSHIDT,
-!     &  WTABRT,TOSHMINE,TOCHMINE,HSHELWT
-     
       IF (WSHDOT .LT. 0.0) THEN
         WSHDOT = MAX(WSHDOT, -SHELWT)
       ENDIF      
@@ -570,9 +551,6 @@ C-----------------------------------------------------------------------
       IF (WSDDOT .LT. 0.0) THEN
         WSDDOT = MAX(WSDDOT, -SDWT)
       ENDIF
-      
-!      WRITE(7775,'(I7,1X,5(F10.3,2X))') 
-!     &  YRDOY,SDWT,WSDDOT,WSDDTN,SWIDOT,HSDWT
             
       WTLSD  = WTLSD + WSDDOT * POTLIP    !lipids in seed
       WTCSD  = WTCSD + WSDDOT * POTCAR    !carbohydrates in seed
@@ -588,10 +566,7 @@ C-----------------------------------------------------------------------
       WPDOT = WSHDOT + WSDDOT
       IF (WPDOT .LT. 0.0) THEN
         WPDOT = MAX(WPDOT, -PODWT)
-      ENDIF
-      
-!      WRITE(7776,'(I7,1X,5(F10.3,2X))') 
-!     &  YRDOY,PODWT,WPDOT,WSHDOT,WSDDOT,HPODWT         
+      ENDIF        
 C-----------------------------------------------------------------------
 C     Total Net plant growth rate
 C-----------------------------------------------------------------------

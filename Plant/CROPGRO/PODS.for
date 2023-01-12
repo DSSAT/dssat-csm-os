@@ -303,15 +303,6 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-!      OPEN (7771, FILE = 'OUT_PODS.OUT',STATUS = 'REPLACE')
-!      WRITE(7771,'(A)') 
-!     & '  YRDOY NPP        PAGE        WTSD' //
-!     & '        SDNO       WTSHE       SHELN'
-!     
-!      OPEN (7772, FILE = 'OUT_PODS_CHMINE.OUT',STATUS = 'REPLACE')
-!      WRITE(7772,'(A)') 
-!     & '  YRDOY NPP        PAGE       WTSHE' //
-!     & '      SHMINE    TOSHMINE      CHMINE    TOCHMINE'
       FNINSH = 0.0   
       NAVPOD = 0.0
       NGRSD  = 0.0   
@@ -667,14 +658,10 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
               CHMINE = CRUSSH * WTSHE(NPP)/(SHELWT - WTSHM)
               CHMINE = MAX(CHMINE,0.0)
             ENDIF
-
             TOSHMINE = TOSHMINE + SHMINE
             TOCHMINE = TOCHMINE + CHMINE
             WTSHE(NPP) = WTSHE(NPP) + ADDSHL - SHMINE - CHMINE
             WTSHE(NPP) = MAX(0.0,WTSHE(NPP))
-!            WRITE(7772,'(I7,1X,I3,2X,6(F10.3,2X))') 
-!     &          YRDOY,NPP,PAGE,WTSHE(NPP),
-!     &          SHMINE,TOSHMINE,CHMINE,TOCHMINE
  2100     ENDDO
  
 !-----------------------------------------------------------------------
@@ -817,10 +804,6 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
                 ENDIF
               ENDIF
             ENDIF
-            
-!          WRITE(7771,'(I7,1X,I3,2X,5(F10.3,2X))') 
-!     &          YRDOY,NPP,PAGE,WTSD(NPP),SDNO(NPP), 
-!     &          WTSHE(NPP), SHELN(NPP)
  2900     ENDDO
  
  
