@@ -10,6 +10,7 @@
 !  04/01/2021 FO  Added MultiHarvest. (FO, GH, VSH, AH, KJB)
 !  07/09/2022 GH  Add fresh weight for cucumber using tomato
 !  08/01/2022 FO  Updated source code format
+!  13/01/2023 FO  Updated variables in output file FreshWt.OUT
 !-----------------------------------------------------------------------
 !  Called from:  PODS
 !=======================================================================
@@ -58,8 +59,8 @@
       REAL :: HRVF 
       REAL :: DIFR 
       REAL :: RUDPW
-      REAL :: CHRVD
-      REAL :: CHRVF
+      REAL :: CHPDT
+      REAL :: CHFPW
       
       REAL    :: RPODNO 
       REAL    :: RSEEDNO
@@ -117,6 +118,48 @@
 
         CALL HEADER(SEASINIT, NOUTPF, CONTROL%RUN)
 
+!       2023-01-13 FO - Added Header variables description
+!       Note: Please follow the standard code. Comment of the section
+!       in the first line. Next line '!'variable name separed by two spaces 
+!       the description and units in parenthesis.
+        WRITE(NOUTPF,'(A)') '! Variables Description/units',
+     &  '!YEAR  Year of current date of simulation',
+     &  '!DOY  Day of year (d)',
+     &  '!DAS  Days after start of simulation (d)',
+     &  '!FPWAD  Total pod (ear) fresh weight (kg/ha)',
+     &  '!PDMCD  Dry matter con. of harvested product (fraction)',
+     &  '!AFPWD  Average fresh fruit (pod, ear) weight (g/fruit)',
+     &  '!ADPWD  Average dry fruit (pod, ear) weight (g/fruit)',
+     &  '!PAGED  Age of oldest pod or ear (days)'
+        SELECT CASE (CROP)
+          CASE ('GB')       ! Snap bean
+            WRITE(NOUTPF,'(A)')
+     &  '!FCULD  Culls ()',
+     &  '!FSZ1D  Sieve size 1 ()',
+     &  '!FSZ2D  Sieve size 2 ()',
+     &  '!FSZ3D  Sieve size 3 ()',
+     &  '!FSZ4D  Sieve size 4 ()',
+     &  '!FSZ5D  Sieve size 5 ()',
+     &  '!FSZ6D  Sieve size 6 ()'
+        END SELECT
+        WRITE(NOUTPF,'(A)')
+     &  '!TOSDN  Total Seed number ()',
+     &  '!TOWSD  Total weight seed ()',
+     &  '!TOSHN  Total shell number ()',
+     &  '!TOWSH  Total weight shell ()',
+     &  '!TOPOW  Total Pod weight ()',
+     &  '!TOFPW  Total Fresh Pod weight ()',
+     &  '!MTFPW  Fresh weight of mature fruits ()',
+     &  '!MTDPW  Dry weight of mature fruits (seed and shell) ()',
+     &  '!MTDSD  Seed mass of mature fruits ()',
+     &  '!MTDSH  Shell mass of mature fruits ()',
+     &  '!HSHELWT  Harvested shell weight ()',
+     &  '!HSDWT  Harvested seed weight ()',
+     &  '!HPODWT  Harvested pod weight ()',
+     &  '!CHPDT  Cummulative pod weight of mature fruits ()',
+     &  '!CHFPW  Cummulative fresh weight of mature fruits ()',
+     &  '' 
+     
 !     Change header to PWAD1 (was PWAD) because GBuild requires 
 !     unique headers (PlantGro also lists PWAD).  Should have same
 !     value, but slightly off. Why?
@@ -125,25 +168,48 @@
 
         SELECT CASE (CROP)
           CASE ('CU')       ! Cucumber
+            WRITE (NOUTPF,228)
             WRITE (NOUTPF,230)
           CASE ('GB')       ! Snap bean
+            WRITE (NOUTPF,229)
             WRITE (NOUTPF,231)
           CASE ('PR')       ! Bell pepper
+            WRITE (NOUTPF,228)
             WRITE (NOUTPF,230)            
           CASE ('SR')       ! Strawberry
+            WRITE (NOUTPF,228)
             WRITE (NOUTPF,230)                        
           CASE ('TM')       ! Tomato
+            WRITE (NOUTPF,228)
             WRITE (NOUTPF,230)
         END SELECT
+
+  228 FORMAT('!                                            ',
+     &       '                   Totals....................',
+     &       '...................   Mature.................',
+     &       '......   Harvested............   Cummulative..')
         
   230 FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
-     &    '   ADPWD   PAGED')
+     &    '   ADPWD   PAGED',
+     &    '   TOSDN   TOWSD   TOSHN   TOWSH   TOPOW   TOFPW',
+     &    '   MTFPW   MTDPW   MTDSD   MTDSH',
+     &    '   HSHEL   HSDWT   HPODW',
+     &    '   CHPDT   CHFPW')
 
+  229 FORMAT('!                                            ',
+     &       '                   Totals....................',
+     &       '...................   Mature.................',
+     &       '......   Harvested............   Cummulative..')
+     
   231 FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
      &    '   ADPWD   PAGED',
-     &    ' FCULD FSZ1D FSZ2D FSZ3D FSZ4D FSZ5D FSZ6D')
+     &    ' FCULD FSZ1D FSZ2D FSZ3D FSZ4D FSZ5D FSZ6D',
+     &    '   TOSDN   TOWSD   TOSHN   TOWSH   TOPOW   TOFPW',
+     &    '   MTFPW   MTDPW   MTDSD   MTDSH',
+     &    '   HSHEL   HSDWT   HPODW',
+     &    '   CHPDT   CHFPW')
     
         AvgDMC  = 0.0
         AvgDPW  = 0.0
@@ -163,8 +229,8 @@
 
         HRVD    = 0.0
         HRVF    = 0.0
-        CHRVD   = 0.0
-        CHRVF   = 0.0
+        CHPDT   = 0.0
+        CHFPW   = 0.0
         HRSN    = 0.0
         HRPN    = 0.0
         HRDSD   = 0.0
@@ -189,6 +255,10 @@
         TOWSH   = 0.0
         TOPOW   = 0.0
         TOFPW   = 0.0
+        
+        ! Cummulative values
+        CHPDT   = 0.0
+        CHFPW   = 0.0
         
         ! Mature in the basket
         MTFPW   = 0.0
@@ -329,6 +399,10 @@
         ELSE
           ShelPC = 0.0
         ENDIF
+        IF(HARVF .EQ. 1) THEN
+          CHPDT = CHPDT + HPODWT
+          CHFPW = CHFPW + MTFPW
+        ENDIF
         
 !***********************************************************************
 !***********************************************************************
@@ -355,32 +429,52 @@
          CASE ('CU')        ! Cucumber
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge
+     &      PodAge,
+     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
+     &      MTFPW,MTDPW,MTDSD,MTDSH,
+     &      HSHELWT,HSDWT,HPODWT,
+     &      CHPDT,CHFPW 
           CASE ('GB')       ! Snap bean
             WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,NINT(CLASS(7)*10.),NINT(CLASS(1)*10.),
      &      NINT(CLASS(2)*10.),NINT(CLASS(3)*10.),NINT(CLASS(4)*10.),
-     &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.)
+     &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.),
+     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
+     &      MTFPW,MTDPW,MTDSD,MTDSH,
+     &      HSHELWT,HSDWT,HPODWT,
+     &      CHPDT,CHFPW
          CASE ('PR')        ! Bell pepper
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge
+     &      PodAge,
+     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
+     &      MTFPW,MTDPW,MTDSD,MTDSH,
+     &      HSHELWT,HSDWT,HPODWT,
+     &      CHPDT,CHFPW
          CASE ('SR')        ! Strawberry
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge     
+     &      PodAge,
+     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
+     &      MTFPW,MTDPW,MTDSD,MTDSH,
+     &      HSHELWT,HSDWT,HPODWT,
+     &      CHPDT,CHFPW     
           CASE ('TM')       ! Tomato
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge
+     &      PodAge,
+     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
+     &      MTFPW,MTDPW,MTDSD,MTDSH,
+     &      HSHELWT,HSDWT,HPODWT,
+     &      CHPDT,CHFPW
         END SELECT
 
  1000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    I8,F8.3,F8.1,F8.2,F8.1)
+     &    I8,F8.3,F8.1,F8.2,F8.1,15(F8.2))
  2000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
      &    I8,F8.3,F8.1,F8.2,F8.1,
-     &    7(1X,I5))
+     &    7(1X,I5),15(F8.2))
 
       ENDIF
 
