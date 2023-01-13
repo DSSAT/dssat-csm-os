@@ -143,7 +143,7 @@
      &  '!FSZ6D  Sieve size 6 ()'
         END SELECT
         WRITE(NOUTPF,'(A)')
-     &  '!TOSDN  Total Seed number ()',
+     &  '!TOSDN  Total Seed number (#)',
      &  '!TOWSD  Total weight seed ()',
      &  '!TOSHN  Total shell number ()',
      &  '!TOWSH  Total weight shell ()',
@@ -156,8 +156,8 @@
      &  '!HSHELWT  Harvested shell weight ()',
      &  '!HSDWT  Harvested seed weight ()',
      &  '!HPODWT  Harvested pod weight ()',
-     &  '!CHPDT  Cummulative pod weight of mature fruits ()',
-     &  '!CHFPW  Cummulative fresh weight of mature fruits ()',
+     &  '!CHPDT  Cumulative pod weight of mature fruits ()',
+     &  '!CHFPW  Cumulative fresh weight of mature fruits ()',
      &  '' 
      
 !     Change header to PWAD1 (was PWAD) because GBuild requires 
@@ -187,7 +187,7 @@
   228 FORMAT('!                                            ',
      &       '                   Totals....................',
      &       '...................   Mature.................',
-     &       '......   Harvested............   Cummulative..')
+     &       '......   Harvested............   Cumulative...')
         
   230 FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
@@ -200,7 +200,7 @@
   229 FORMAT('!                                            ',
      &       '                   Totals....................',
      &       '...................   Mature.................',
-     &       '......   Harvested............   Cummulative..')
+     &       '......   Harvested............   Cumulative...')
      
   231 FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
