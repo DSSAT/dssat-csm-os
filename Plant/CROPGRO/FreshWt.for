@@ -256,10 +256,6 @@
         TOPOW   = 0.0
         TOFPW   = 0.0
         
-        ! Cummulative values
-        CHPDT   = 0.0
-        CHFPW   = 0.0
-        
         ! Mature in the basket
         MTFPW   = 0.0
         MTDPW   = 0.0
