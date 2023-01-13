@@ -47,7 +47,8 @@ C=======================================================================
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT, CumNUptake)     !Output
+     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT,    !Output
+     &    CumNUptake)                                     !Output
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -67,7 +68,7 @@ C=======================================================================
 
       REAL FLDH4, FLDH4C, FLDN3, FLDN3C, FLOOD, PDWI, PGRORT
       REAL RANC, RCNP, ROOTN, STOVN, STOVWT, TANC, TCNP, TRNU
-      REAL CUMFNU, CumNUptake !Cumulative flood N uptake, Cum N uptake total
+      REAL CUMFNU, CumNUptake !Cum flood N uptake, Cum N uptake total
       REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
       REAL, DIMENSION(NL) :: RLV, RNLOSS, SNH4, SNO3, ST, SW, UNO3, UNH4
 

@@ -580,7 +580,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    TWILEN, YRPLT,                                  !Input
      &    FLOODN,                                         !I/O
      &    CANHT, HARVRES, XLAI, KUptake, MDATE, NSTRES,   !Output
-     &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
+     &    PORMIN, PUptake, RWUEP1, RWUMX, CropStatus,     !Output
      &    RLV, SENESCE, STGDOY, FracRts, UNH4, UNO3)      !Output
 
         IF (DYNAMIC .EQ. INTEGR) THEN

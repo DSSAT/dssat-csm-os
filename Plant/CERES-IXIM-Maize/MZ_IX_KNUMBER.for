@@ -14,14 +14,15 @@ C  6. Modified source-limited KSet for IXIM model    JIL   Sep 2007
 C--------------------------------------------------------------------------
 C  Called : GROWTH
 C==========================================================================	
-	SUBROUTINE MZ_IX_KNUMBER (DYNAMIC,                        !Control
-     &      FILES,G2,ICSDUR,IPAR,ISTAGE,NSTRES,PATHSR,P3,       !Inputs
-     &      PLTPOP,SHCARB,SUMDTT,SWFAC,                         !Inputs
-     &      BSGDD,EARS,GPP,GPSM)                                !Outputs
+	SUBROUTINE MZ_IX_KNUMBER (DYNAMIC,                  !Control
+     &      FILES,G2,ICSDUR,IPAR,ISTAGE,PATHSR,P3,        !Inputs
+     &      PLTPOP,SHCARB,SUMDTT,                         !Inputs
+     &      BSGDD,EARS,GPP,GPSM)                          !Outputs
 
       USE ModuleDefs
 
 	IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE
       SAVE	
 
       REAL       ASGDD
@@ -39,7 +40,7 @@ C      REAL       CRV2
       REAL       EARS     
       INTEGER   ERR       
       CHARACTER*6     ERRKEY                
-      CHARACTER*12    FILEC     
+!     CHARACTER*12    FILEC     
       CHARACTER*92    FILECC
       CHARACTER*12    FILES      
       INTEGER    FOUND              
@@ -59,7 +60,7 @@ C      REAL       INT2
       REAL       KNIPAR   
       INTEGER    LNUM                      
       INTEGER    LUNCRP            
-      REAL       NSTRES   
+!     REAL       NSTRES   
       REAL       P3       
       CHARACTER*80    PATHSR            
       INTEGER    PLF
@@ -70,7 +71,7 @@ C      REAL       PRLF
       REAL       SHCARB   
 C      REAL       SLP2
       REAL       SUMDTT   
-      REAL       SWFAC    
+!     REAL       SWFAC    
 C      REAL       THRS1
 C      REAL       THRS2
 

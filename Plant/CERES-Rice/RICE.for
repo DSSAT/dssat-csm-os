@@ -61,9 +61,8 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data and flooded
                          ! conditions.
       IMPLICIT NONE
-      EXTERNAL YR_DOY,RI_OPHARV,RI_PHENOL,RI_ROOTGR,
-     &  RI_GROSUB,RI_OPGROW,GNURSE,HRES_CERES
-
+      EXTERNAL YR_DOY, RI_OPHARV, RI_PHENOL, RI_ROOTGR, RI_GROSUB, 
+     &  RI_OPGROW, GNURSE, HRes_Ceres
       SAVE
 
       CHARACTER*1  ISWWAT, ISWNIT
@@ -222,7 +221,7 @@ C-----------------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW,HARVFRAC,                                 !Input
+     &    YRSOW,                                          !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -349,7 +348,7 @@ C--------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW, HARVFRAC,                                 !Input
+     &    YRSOW,                                          !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -381,7 +380,7 @@ C-----------------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW, HARVFRAC,                                 !Input
+     &    YRSOW,                                          !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output

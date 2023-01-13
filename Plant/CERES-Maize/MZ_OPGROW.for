@@ -28,6 +28,7 @@ C  Calls:     None
       USE ModuleData
       USE CsvOutput   ! VSH
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 !----------------------------------------------------------------------
       INTEGER NOUTDG

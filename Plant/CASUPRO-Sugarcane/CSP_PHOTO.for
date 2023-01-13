@@ -26,9 +26,8 @@ C=======================================================================
      &    CANHT, CanLmtFac, CANWH, CO2, ECONO, EXCESS,    !Input
      &    DeltaLeafArea, DeltaLeafNum, FILECC,            !Input 
      &    DeltaLeafArealost, FILEGC, FRACSH, FRSHV,       !Input
-     &    KCAN, LeafArea,LeafAreaPlant, LeafNum,          !Input 
-     &    LfShdFac, PAR,                                  !Input
-     &	    PStres2, RNITP, SLAREF, SLAAD,                  !Input
+     &    KCAN, LeafAreaPlant, LeafNum, LfShdFac, PAR,    !Input 
+     &    PStres2, RNITP, SLAREF, SLAAD,                  !Input
      &    SLPF, Smax, StalkState, StkHt, SWFAC, TAVG,     !Input 
      &    TURFAC, WEATHER, XHLAI,                         !Input
      &    AGEFAC, LeafDist, LI, LITOTAL, PGT, PgRatio,    !Output
@@ -39,6 +38,7 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL CSP_PHOTIP, CSP_CANOPY, CURV, GETLUN, TABEX
       SAVE
 
       CHARACTER*3 TYPPGN, TYPPGT
@@ -49,7 +49,7 @@ C=======================================================================
 
       INTEGER DAS, DYNAMIC, H, PLUN, Smax, YRDOY, YRSIM, Zone
 
-      REAL AGEFAC, AGEFCC, A0, BETN, CANHT, CanLmtFac, CANWH, 
+      REAL AGEFAC, AGEFCC, A0, CANHT, CanLmtFac, CANWH, !, BETN
      &  CCEFF, CCK, CCMAX, CCMP, CO2, COLDSTR, CUMSTR, CURV, 
      &  E_FAC, FRACSH, FRSHAV, FRSHV, KCAN, LAITH1,  
      &  LAITH2, LAsun, LAshd, LAgnd, LIsun, LaiAllZone, LAI2, LIalt, 
@@ -74,7 +74,7 @@ C=======================================================================
       REAL, DIMENSION(0:NumOfDays) :: LeafAreaPlant, LAtmp, LAItmp 
       REAL, DIMENSION(1:NumOfStalks) :: EXCESS, PgRatio, 
      &           StkHt, TotalPG
-      REAL, DIMENSION(0:NumOfDays,NumOfStalks) :: LeafArea, LeafNum,
+      REAL, DIMENSION(0:NumOfDays,NumOfStalks) :: LeafNum, !LeafArea, 
      &           DeltaLeafArea, DeltaLeafArealost, DeltaLeafNum
 
       REAL, DIMENSION(1:NumOfStalks,CanopyLayers) :: LeafDist, StkLI,
@@ -935,6 +935,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE
 
       CHARACTER*1  BLANK
       CHARACTER*3  TYPPGN, TYPPGT

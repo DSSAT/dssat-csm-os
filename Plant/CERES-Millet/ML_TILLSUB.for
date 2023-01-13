@@ -44,7 +44,7 @@ c-------------------------------------------------------
 c      Variables that were in common blocks
 c      and should be passed as arguments
 c-------------------------------------------------------
-      REAL G1,G0,CUMDTT,TPLAG,TLAG1,TGROLF,TGROSTM,TCARBO
+      REAL G0,CUMDTT,TPLAG,TLAG1,TGROLF,TGROSTM,TCARBO !G1,
       REAL CARBO,SUMDTT,DTT,TEMF
       INTEGER ISTAGE
 c-------------------------------------------------------
