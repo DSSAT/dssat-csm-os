@@ -397,29 +397,38 @@ C       Convert character codes for fertilizer method into integer
         IF (HASN) THEN    !Do this only if NOT slow release
 !         Set the amount of N to be applied and sum total amount of
 !         N fertilizer
-          FERNIT    = FERNIT + ANFER(I)
+!         FERNIT    = FERNIT + ANFER(I) !CHP 2023-01-15
+          FERNIT    = ANFER(I)
           FERNO3    = ANFER(I) * FertFile(FerType) % NO3_N_pct / 100.
           FERNH4    = ANFER(I) * FertFile(FerType) % NH4_N_pct / 100.
           FERUREA   = ANFER(I) * FertFile(FerType) % UREA_N_pct / 100.
           AMTFER(N) = AMTFER(N) + ANFER(I)
           NAPFER(N) = NAPFER(N) + 1
+        ELSE 
+          FERNIT = 0.0
         ENDIF   !End of IF block on HASN.
 
 !       For now P and K are NOT slow release
         IF (HASP) THEN
 !         Set the amount of P to be applied and sum total amount of
 !         P fertilizer
+!         FERPHOS   = FERPHOS + APFER(I) !CHP 2023-01-15
           FERPHOS   = FERPHOS + APFER(I)
           AMTFER(P) = AMTFER(P) + APFER(I)
           NAPFER(P) = NAPFER(P) + 1
+        ELSE 
+          FERPHOS = 0.0
         ENDIF   !End of IF block on HASP.
 
         IF (HASK) THEN
 !         Set the amount of K to be applied and sum total amount of
 !         K fertilizer
+!         FERPOT   = FERPOT + AKFER(I) !CHP 2023-01-15
           FERPOT   = FERPOT + AKFER(I)
           AMTFER(Kel) = AMTFER(Kel) + AKFER(I)
           NAPFER(Kel) = NAPFER(Kel) + 1
+        ELSE 
+          FERPOT = 0.0
         ENDIF   !End of IF block on HASP.
 
         IF (HASCR) THEN
