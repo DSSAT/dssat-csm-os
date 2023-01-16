@@ -117,7 +117,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6, PARAMETER :: ERRKEY = 'OPSUM '
       CHARACTER*8  EXPER, FLDNAM, MODEL, MODEL_LAST
       CHARACTER*12 OUTS, SEVAL, FMT
-      PARAMETER (OUTS = 'Summary.OUT')
+!     PARAMETER (OUTS = 'Summary.OUT')
       CHARACTER*25 TITLET
       CHARACTER*30 FILEIO
       CHARACTER*60 ENAME
@@ -520,8 +520,13 @@ C
 C  Simulation Summary File
 C
 C-------------------------------------------------------------------
+!     For csv output, include a text file with the version information
+      SELECT CASE(FMOPT)
+        CASE('C');    OUTS = "Version.OUT"
+        CASE DEFAULT; OUTS = "Summary.OUT"
+      END SELECT
+
       IF (INDEX('ADY',IDETS) .GT. 0) THEN
-        IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN
         INQUIRE (FILE = OUTS, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN (UNIT = NOUTDS, FILE = OUTS, STATUS = 'OLD',
@@ -532,32 +537,54 @@ C-------------------------------------------------------------------
 
 !         Check for simulation control file -- note in header if used:
           SimLen = LenString(CONTROL % SimControl)
-          IF (SimLen < 1) THEN
-      
+          
+          SELECT CASE(FMOPT)
+!         For CSV output, write a text file with version and date inforamtion
+          CASE('C')
 !           Version information stored in ModuleDefs.for
-            WRITE (NOUTDS,300) EXPER, CG, ENAME, Version, VBranch,
+            WRITE (NOUTDS,200) Version, VBranch,
      &        MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1), 
      &             DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
-  300       FORMAT (
-     &      '*SUMMARY : ',A8,A2,1X,A60,1X,
-     &      'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',
-     &       I3.3,1X,A10,4X,
+  200       FORMAT ('*VERSION',/,
+     &       'DSSAT Cropping System Model Ver. ',    
+     &       I1,'.',I1,'.',I1,'.',I3.3,1X,A,/,
+     &       'Simulation date ',
      &       A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &         
+            IF (SimLen < 1) THEN
+              WRITE(NOUTDS,'(A,A)') 
+     &         "Simulation Control file: ", CONTROL%SimControl(1:SimLen)
+            ENDIF
 
-          ELSE
-            WRITE (NOUTDS,305) EXPER, CG, ENAME, 
-     &        "Simulation Control file: ", CONTROL%SimControl(1:SimLen),
-     &        Version, VBranch, MonthTxt(DATE_TIME(2)), DATE_TIME(3), 
-     &        DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
-  305       FORMAT (
-     &      '*SUMMARY : ',A8,A2,1X,A60,1X,A,A,5X,
-     &      'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',
-     &      I3.3,1X,A10,4X,
-     &      A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
-          ENDIF
+            CLOSE(NOUTDS)
 
-          WRITE(NOUTDS,310)
-  310     FORMAT(/,
+!         If not CSV output, print the standard Summary.OUT header
+          CASE DEFAULT
+            IF (SimLen < 1) THEN
+!             Version information stored in ModuleDefs.for
+              WRITE (NOUTDS,300) EXPER, CG, ENAME, Version, VBranch,
+     &          MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1), 
+     &               DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
+  300         FORMAT (
+     &        '*SUMMARY : ',A8,A2,1X,A60,1X,
+     &        'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',
+     &         I3.3,1X,A10,4X,
+     &         A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+            
+            ELSE
+              WRITE (NOUTDS,305) EXPER, CG, ENAME, 
+     &         "Simulation Control file: ",CONTROL%SimControl(1:SimLen),
+     &         Version, VBranch, MonthTxt(DATE_TIME(2)), DATE_TIME(3), 
+     &         DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
+  305         FORMAT (
+     &        '*SUMMARY : ',A8,A2,1X,A60,1X,A,A,5X,
+     &        'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',
+     &        I3.3,1X,A10,4X,
+     &        A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+            ENDIF
+          
+            WRITE(NOUTDS,310)
+  310       FORMAT(/,
      &'!IDENTIFIERS......................... ',
      &'EXPERIMENT AND TREATMENT.......... ', 
      &'SITE INFORMATION.....................',
@@ -578,9 +605,9 @@ C-------------------------------------------------------------------
      &'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..............',
      &'STATUS')
 
-          WRITE (NOUTDS,400)
+            WRITE (NOUTDS,400)
 ! CHP 3/14/2018 USE P# for REPNO instead of C# for CRPNO, which isn't used.
-  400     FORMAT ('@   RUNNO   TRNO R# O# P# CR MODEL... ',
+  400       FORMAT ('@   RUNNO   TRNO R# O# P# CR MODEL... ',
      &   'EXNAME.. TNAM..................... ',
      &   'FNAM.... WSTA.... WYEAR SOIL_ID... ',
      &   '            XLAT            LONG      ELEV  ',
@@ -602,8 +629,8 @@ C-------------------------------------------------------------------
      &   '  NDCH TMAXA TMINA SRADA DAYLA   CO2A   PRCP   ETCP',
      &   '   ESCP   EPCP',
      &   '  CRST')
+          END SELECT
         ENDIF
-        END IF   ! VSH
 
         IF (BWAH < -1) BWAH = -9.9
 
@@ -977,7 +1004,7 @@ C-------------------------------------------------------------------
         FTXT2 = "(3X,A3)"
       ENDIF
 
-      IF (VALUE > 1.E-6) THEN
+      IF (VALUE > 0.0) THEN
         WRITE(PRINT_TXT,FTXT1) VALUE
       ELSE
         WRITE(PRINT_TXT,FTXT2) "-99"

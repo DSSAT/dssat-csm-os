@@ -1272,7 +1272,10 @@ Subroutine CsvOutEvOpsum(EXCODE, RUNRUNI, CG, TN, ROTNUM, CR, Simulated, Measure
    Character(Len=1000) :: tmp 
    Character(Len=100) :: tmp1  
    Character (Len=20) :: fmt
-      
+
+!  chp 2023-01-05 If no observed data, don't try to print anything
+   if (ICOUNT == 0) RETURN
+
    Write(tmp1,'(6(g0,","))') RUNRUNI,  EXCODE, CG, TN, ROTNUM, CR      
     
    Write(fmt,'(I3)') 2*ICOUNT-1   
@@ -2225,7 +2228,7 @@ Subroutine CsvOutSomC(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS,     &
    REAL,Intent(IN) :: SLC_20CM, SLC_20CM_P, SLC_40CM, SLC_40CM_P
    REAL,Intent(IN) :: TCTD, TC0D, TCSD
    
-   REAL,Dimension(NLR),Intent(IN) :: TC, S1C, S2C, S3C, LIT, MET, STR 
+   REAL,Dimension(5),Intent(IN) :: TC, S1C, S2C, S3C, LIT, MET, STR 
    REAL,Intent(IN) :: SOM1C(0:NLR), LITC(0:NLR), METABC(0:NLR), STRUCC(0:NLR) 
    REAL,Intent(IN) :: TSOM1C, TSOM2C, TSOM3C, TMETABC, TSTRUCC, &
        TLITC, CUMRESC, ACCCO2(0:1)
@@ -2239,7 +2242,7 @@ Subroutine CsvOutSomC(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS,     &
   
 !  Recalculated vars
    Integer :: k, SOC_20CM1, SOC_40CM1, SLC_20CM1, SLC_40CM1, TCTD1, TC0D1, TCSD1
-   Integer, Dimension(NLR) :: TC1, S1C1, S2C1, S3C1, LIT1, MET1, STR1
+   Integer, Dimension(5) :: TC1, S1C1, S2C1, S3C1, LIT1, MET1, STR1
    Integer :: SOM1C1(0:NLR), LITC1(0:NLR), METABC1(0:NLR), STRUCC1(0:NLR) 
    Integer :: TSOM1C1, TSOM2C1, TSOM3C1, CUMRESC1 
    Integer :: TMETABC1, TSTRUCC1, TLITC1, ACCCO21(0:1)
