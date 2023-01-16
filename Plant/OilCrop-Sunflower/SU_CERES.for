@@ -33,7 +33,7 @@
 
       SUBROUTINE SU_CERES (CONTROL, ISWITCH,              !Input
      &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
-     &     SPi_AVAIL, SNOW,                               !Input
+     &     SPi_AVAIL,                                     !Input  , SNOW
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
@@ -42,6 +42,8 @@
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, SU_PHENOL, SU_GROSUB, SU_ROOTGR, SU_OPGROW, 
+     &  SU_OPNIT, SU_OPHARV, PEST, HRes_Ceres
       SAVE
 
 !----------------------------------------------------------------------
@@ -106,7 +108,7 @@
       INTEGER         NLAYR  
       REAL            NO3(NL)  
       REAL            NSTRES 
-      REAL            P3          
+!     REAL            P3          
       REAL            PCNGRN   
       REAL            PCNVEG     
       REAL            PCNL   
@@ -141,7 +143,7 @@
       REAL            SI3(6)   
       REAL            SKERWT    
       REAL            SLA      
-      REAL            SNOW          
+!     REAL            SNOW          
       REAL            SRAD     
       REAL            STOVER    
       REAL            STOVN      
@@ -202,7 +204,7 @@
       REAL EMBWT,EMBWTE,HEADWT
       REAL PERWT,PERWTE,POTGROPER
       REAL POTHEADWT,PPP,PSKER,GRNWTE,P3P,P9
-      INTEGER IDURP 
+!     INTEGER IDURP 
 !     CHP added for P model 
       REAL PUptake(NL), SPi_AVAIL(NL), FracRts(NL)       
       REAL SeedFrac, VegFrac, PSTRES1, PSTRES2
@@ -314,12 +316,12 @@ C----------------------------------------------------------------------
           
          
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
-     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
-     &    YRDOY,YRSIM,                                         !I
-     &    IDURP,                                !I
+     &    CUMDEP,DAYL,DLAYR,LL,NLAYR,PLTPOP,SDEPTH,      !I  LEAFNO,
+     &    SW,TMAX,TMIN, TWILEN,                          !I  SNOW, SRAD,
+     &    YRDOY,YRSIM,                                   !I
+!    &    IDURP,                                         !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, TSEN, CDAY,      !O !, P3
      &    SeedFrac,VegFrac,P3P,P9)
           
           !-------------------------------------------------------------
@@ -327,7 +329,7 @@ C----------------------------------------------------------------------
           !-------------------------------------------------------------
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
@@ -355,7 +357,7 @@ C----------------------------------------------------------------------
           !-------------------------------------------------------------
 
           CALL SU_ROOTGR (DYNAMIC,ISWNIT,                         !C
-     &        CUMDEP,CUMDTT,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,    !I
+     &        CUMDEP,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,           !I
      %        LL,DUL,NO3,NH4,NLAYR,PLTPOP,PORMIN,RLWR,SAT,SDEPTH, !I
      %        SHF,STGDOY,SW,SWFAC,YRDOY,                          !I
      %        RTDEP,RLV)            
@@ -420,17 +422,17 @@ C-----------------------------------------------------------------------
         
 
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
-     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
-     &    YRDOY,YRSIM,                                         !I
-     &    IDURP,                                !I
+     &    CUMDEP,DAYL,DLAYR,LL,NLAYR,PLTPOP,SDEPTH,      !I  LEAFNO,
+     &    SW,TMAX,TMIN, TWILEN,                          !I  SNOW, SRAD,
+     &    YRDOY,YRSIM,                                   !I
+!    &    IDURP,                                         !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, TSEN, CDAY,      !O !, P3
      &    SeedFrac,VegFrac,P3P,P9)
     
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
@@ -454,7 +456,7 @@ C-----------------------------------------------------------------------
 
                          
           CALL SU_ROOTGR (DYNAMIC,ISWNIT,                         !C
-     &        CUMDEP,CUMDTT,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,    !I
+     &        CUMDEP,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,           !I
      %        LL,DUL,NO3,NH4,NLAYR,PLTPOP,PORMIN,RLWR,SAT,SDEPTH, !I
      %        SHF,STGDOY,SW,SWFAC,YRDOY,                          !I
      %        RTDEP,RLV)            
@@ -531,12 +533,12 @@ C----------------------------------------------------------------------
           IF (CROP .NE. 'FA') THEN
             
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
-     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
-     &    YRDOY,YRSIM,                                         !I
-     &    IDURP,                                !I
+     &    CUMDEP,DAYL,DLAYR,LL,NLAYR,PLTPOP,SDEPTH,      !I  LEAFNO,
+     &    SW,TMAX,TMIN, TWILEN,                          !I  SNOW, SRAD,
+     &    YRDOY,YRSIM,                                   !I
+!    &    IDURP,                                         !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, TSEN, CDAY,      !O !, P3
      &    SeedFrac,VegFrac,P3P,P9)
           ENDIF
         ENDIF
@@ -547,7 +549,7 @@ C----------------------------------------------------------------------
         IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN  
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
@@ -583,7 +585,7 @@ C----------------------------------------------------------------------
 
             DEPMAX = DS(NLAYR)
             CALL SU_ROOTGR (DYNAMIC,ISWNIT,                       !C
-     &        CUMDEP,CUMDTT,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,    !I
+     &        CUMDEP,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,           !I
      %        LL,DUL,NO3,NH4,NLAYR,PLTPOP,PORMIN,RLWR,SAT,SDEPTH, !I
      %        SHF,STGDOY,SW,SWFAC,YRDOY,                          !I
      %        RTDEP,RLV)            
@@ -604,7 +606,7 @@ C----------------------------------------------------------------------
 
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
@@ -669,7 +671,7 @@ C----------------------------------------------------------------------
 
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input

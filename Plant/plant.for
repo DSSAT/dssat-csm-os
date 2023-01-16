@@ -638,13 +638,13 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Sugarcane - SAMUCA
       CASE('SCSAM')
           call SAMUCA(
-     &    CONTROL, ISWITCH,                                      !Input
-     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,  !Input
-     &    SOILPROP, ST, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,  !Input
-     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,         !Input
-     $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,           !Output
-     &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,              !Output
-     &    UNO3, XLAI, XHLAI, EORATIO)                            !Output
+     &    CONTROL, ISWITCH,                               !Input
+     &    CO2, DAYL, EOP,                                 !Input
+     &    SOILPROP, ST, SRAD, TMAX, TMIN, TRWUP,          !Input
+     &    RWUEP1, YREND, YRPLT, WEATHER,                  !Input
+     $    CANHT, KCAN, KTRANS, MDATE, NSTRES,             !Output
+     &    RLV, RWUMX, STGDOY,                             !Output
+     &    XLAI, XHLAI, EORATIO)                           !Output
           
 !     -------------------------------------------------
 !     Sugarcane - CASUPRO
@@ -681,7 +681,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
       CASE('SUOIL')
         CALL SU_CERES (CONTROL, ISWITCH,              !Input
      &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
-     &     SPi_AVAIL, SNOW,                               !Input
+     &     SPi_AVAIL,                                     !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP,KUptake,  MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output

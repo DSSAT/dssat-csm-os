@@ -23,6 +23,7 @@ C  Calls:     None
       USE ModuleDefs     
       USE CsvOutput   ! VSH
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 
       INTEGER DAS, DYNAMIC, MDATE, NOUTDN, YRSIM
