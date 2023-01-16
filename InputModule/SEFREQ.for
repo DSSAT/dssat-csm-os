@@ -28,6 +28,7 @@ C=======================================================================
      &                   IDETP,IDETD,IOX,FROP,RUN,IDETL)
 
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, UPCASE, VERIFY
 
       CHARACTER*1 RNMODE,IDETO,IDETS,IDETG,IDETC,IDETW,IDETN
       CHARACTER*1 IDETP,IDETD,IDETL,IOX,LINE(80),ANS,UPCASE

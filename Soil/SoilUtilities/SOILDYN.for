@@ -996,7 +996,7 @@ C  tillage and rainfall kinetic energy
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
@@ -1215,7 +1215,7 @@ C  tillage and rainfall kinetic energy
 !         on soil properties -- effects are applied in integr section.
         CALL TillEvent(CONTROL, 
      &    BD, BD_BASE, CN, CN_BASE, DLAYR, DL_BASE,       !Input
-     &    DS, DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,      !Input
+     &    DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,          !Input
      &    NLAYR, TILLVALS,                                !Input
      &    BD_TILLED, CN_TILLED, DL_TILLED,                !Output
      &    DS_TILLED, SAT_TILLED, SC_TILLED)               !OutpuT
@@ -1442,7 +1442,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
 !***********************************************************************
 !***********************************************************************
@@ -1813,7 +1813,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !     SUBROUTINE OPSOILDYN -- output dynamic soil properties
       SUBROUTINE OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -1826,7 +1826,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       CHARACTER*11, PARAMETER :: OUTSOL = 'SoilDyn.OUT'
       INTEGER DLUN, DOY, DYNAMIC, YEAR   
       LOGICAL FEXIST, PrintDyn
-      LOGICAL Print_today, TILLED
+      LOGICAL Print_today !, TILLED
       REAL CN, CRAIN, SOILCOV, SUMKE, TOTAW
       REAL, DIMENSION(NL) :: BD, BD_SOM, DLAYR, DUL, LL, SAT, SWCN
       REAL, DIMENSION(0:NL) :: KECHGE

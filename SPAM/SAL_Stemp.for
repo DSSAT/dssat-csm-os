@@ -6,18 +6,19 @@ C  Adapted from SALUS version (Ritchie et al)
 C  Revised and adpated for DSSAT4 by U.Singh and D.Godwin Feb 2004
 C-----------------------------------------------------------------------
 C  Called : Main
-C  Calls  : 
+C  Calls  :
 C=======================================================================
 
-      SUBROUTINE SALUS_T(CONTROL, ISWITCH,  
+      SUBROUTINE SALUS_T(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TMAX, TMIN, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL YR_DOY, FIND, WARNING, OPSTEMP, ERROR
       SAVE
 
       CHARACTER*1  RNMODE, ISWWAT
@@ -29,25 +30,25 @@ C-----------------------------------------------------------------------
       INTEGER DOY, DYNAMIC, I, L, MSGCOUNT, NLAYR
       INTEGER RUN, YRDOY, YEAR
       INTEGER ERRNUM, FOUND, LINC, LNUM, LUNIO
- 
+
       INTEGER DoyNH   !, COLDLAG
- 
+
       !REAL A(0:20),B(0:20),D(0:20),E(0:20)
       REAL DELT,F
       REAL THETA1, THETA2,THETA3,THETA4,SWL1REL,WATERFactor,TSOIL2cm
       REAL FRMIN, ATHETA, FQRZ, ACV, ALBD, FT, ZDAMP  !, FWTEMP
-            
+
       !Real Cvav,Fqrz,Frmin,Ft,Thetav
 	! ABD = BdAv, ACV=CVAV ATHETA = THETAV
- 
-	REAL ABD, CUMDPT    
-      REAL ICWD, SRFTEMP    
-      REAL TAMP, TAV, TBD, XLAT, TMAX, TMIN, SRAD 
-      REAL TTMP, TOT_TMP,TMEAN     
-	REAL TMFAC1(8)  
-      REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL, ST, SW, SWI  
+
+	REAL ABD, CUMDPT
+      REAL ICWD, SRFTEMP
+      REAL TAMP, TAV, TBD, XLAT, TMAX, TMIN, SRAD
+      REAL TTMP, TOT_TMP,TMEAN
+	REAL TMFAC1(8)
+      REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL, ST, SW, SWI
       REAL, DIMENSION(NL) :: SAND, CC1, C2, C3, C4, CD, LMBD, LBD, CP
-	REAL, DIMENSION(NL) :: CV,SW_A2DAY, A, B, D, E, ST_YEST, SW_YEST 
+	REAL, DIMENSION(NL) :: CV,SW_A2DAY, A, B, D, E, ST_YEST, SW_YEST
 	REAL, DIMENSION(NL) :: SAT       !, SWDELT_YEST, WTEMP
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -61,17 +62,17 @@ C-----------------------------------------------------------------------
       TYPE (SwitchType) ISWITCH
 
 !     Transfer values from constructed data types into local variables.
-      DYNAMIC = CONTROL % DYNAMIC  
-      YRDOY   = CONTROL % YRDOY    
+      DYNAMIC = CONTROL % DYNAMIC
+      YRDOY   = CONTROL % YRDOY
 
       ISWWAT = ISWITCH % ISWWAT
 
-      BD     = SOILPROP % BD     
-      DLAYR  = SOILPROP % DLAYR  
-      DS     = SOILPROP % DS     
-      DUL    = SOILPROP % DUL     
-      LL     = SOILPROP % LL     
-      NLAYR  = SOILPROP % NLAYR  
+      BD     = SOILPROP % BD
+      DLAYR  = SOILPROP % DLAYR
+      DS     = SOILPROP % DS
+      DUL    = SOILPROP % DUL
+      LL     = SOILPROP % LL
+      NLAYR  = SOILPROP % NLAYR
       SAT    = SOILPROP % SAT
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRDOY, YEAR, DOY)
@@ -89,15 +90,15 @@ C-----------------------------------------------------------------------
 !      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      FILEIO  = CONTROL % FILEIO    
-      LUNIO   = CONTROL % LUNIO    
-      RUN     = CONTROL % RUN    
+      FILEIO  = CONTROL % FILEIO
+      LUNIO   = CONTROL % LUNIO
+      RUN     = CONTROL % RUN
       RNMODE  = CONTROL % RNMODE
 
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
         IF (ISWWAT .NE. 'N') THEN
 
-!         Read inital soil water values from FILEIO 
+!         Read inital soil water values from FILEIO
 !         (not yet done in WATBAL, so need to do here)
           OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
@@ -150,8 +151,8 @@ C-----------------------------------------------------------------------
         IF (MSGCOUNT > 0) THEN
           CALL WARNING(MSGCOUNT, ERRKEY, MSG)
         ENDIF
-      
-C  ***If southern hemisiphere convert to DOY of northern hemisphere doyNH*******      
+
+C  ***If southern hemisiphere convert to DOY of northern hemisphere doyNH*******
 
    !     COLDLAG = 5
         IF (XLAT.gt.0) then
@@ -163,7 +164,7 @@ C  ***If southern hemisiphere convert to DOY of northern hemisphere doyNH*******
                DoyNH = DOY -182
            ENDIF
         ENDIF
-       
+
         TBD    = 0.0
         ATHETA = 0.3
         ALBD   = 800
@@ -224,7 +225,7 @@ C     *Theoretical DE solution (with temperature gradient):
         END DO
         DO I = 1, 8
           TMFAC1(I) = 0.931+0.114*I-0.0703*I**2+0.0053*I**3
-        END DO	  
+        END DO	
       ENDIF
 
 !     Print soil temperature data in STEMP.OUT
@@ -238,12 +239,12 @@ C     *Theoretical DE solution (with temperature gradient):
 !-----------------------------------------------------------------------
         TBD = 0.0
         DO L = 1, NLAYR
-           TBD = TBD + BD(L) * DLAYR(L) 
+           TBD = TBD + BD(L) * DLAYR(L)
         ENDDO
 
-        ABD   = TBD / DS(NLAYR)  
+        ABD   = TBD / DS(NLAYR)
 	  ACV   = ABD/2.65*2.25+ATHETA*4.186
-        ZDAMP = sqrt(2.*ALBD/ACV/0.0172)                  
+        ZDAMP = sqrt(2.*ALBD/ACV/0.0172)
 C     First calculate the soil temperature at the top two cm
 C
         THETA1      = 1
@@ -295,7 +296,7 @@ C     ***Initialize profile parameters for the day
      &              (CUMDPT+5.)/ZDAMP)
         ENDIF
 
- 
+
         DO L=1,NLAYR
            LMBD(L)   = (CC1(L)+C2(L)*SW_A2DAY(L)-(CC1(L)-C4(L))*
      &                 exp(-(C3(L)*SW_A2DAY(L))**4))*864.0
@@ -306,25 +307,25 @@ C     ***Initialize profile parameters for the day
 
         LMBD(NLAYR+1)=LMBD(NLAYR)
 
-!     ***Following line added to original code***      
+!     ***Following line added to original code***
       !  dlayr (L+1) = 5
- 
+
         DO L=1,NLAYR
            LBD(L)=LMBD(L)+DLAYR(L)/(DLAYR(L)+5.)*(LMBD(L+1)-LMBD(L))
         END DO
-c  
+c
 
 !       The convective term is excluded
 **********************************
 
-!**     Following 4 lines were modified, since this version uses predicted 
+!**     Following 4 lines were modified, since this version uses predicted
 !       soil T for layer1 (TSoil2cm)
         D(2) = LBD(1) /(DLAYR(2)*DS(1))+LBD(2)/(DLAYR(2)*DS(2))+
      &         (CP(2)/DELT)
         E(2) = -LBD(2)/(DLAYR(2)*DS(2))
         B(2) = CV(2)*ST_YEST(2)/DELT+(LBD(1) * TSoil2cm) /
      &	     (DLAYR(2)*DS(1))
-            
+
 
         DO L=3,NLAYR
            A(L) = -lbd(L-1)/(DLAYR(L)*DS(L-1))
@@ -338,7 +339,7 @@ c
      &            (DLAYR(NLAYR)*DS(NLAYR))*ST(NLAYR+1)
 
 c
-*     Solution of  tridiagonal matrix      
+*     Solution of  tridiagonal matrix
 c
         DO L=3,NLAYR
            F   = A(L)/D(L-1)
@@ -347,13 +348,13 @@ c
         END DO
 
         ST(NLAYR) = B(NLAYR)/D(NLAYR)
-      
+
         DO L=NLAYR-1,2,-1
            ST(L)     = (B(L)-E(L)*ST(L+1))/D(L)
            ST_YEST(L)= ST(L)
 	  ENDDO
- 
-!       CHP added 12/17/2004 -- Need to export surface temperature      
+
+!       CHP added 12/17/2004 -- Need to export surface temperature
         SRFTEMP = ST(1)
 
 !***********************************************************************

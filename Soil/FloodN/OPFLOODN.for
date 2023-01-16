@@ -11,6 +11,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT  NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       CHARACTER*1  IDETN, RNMODE, ISWNIT

@@ -465,6 +465,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       Type MgmtType
         REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR 
         REAL MgmtWTD, ICWD
+
 !       Vectors to save growth stage based irrigation
         REAL V_AVWAT(20)    
         REAL V_IMDEP(20)

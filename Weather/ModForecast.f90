@@ -52,7 +52,7 @@ SUBROUTINE FCAST_STORE(                                 &
   REAL WINDSP, XELEV, XLAT, XLONG
   TYPE (ControlType) CONTROL, CONTROL2
 
-  EXTERNAL IPWTH, YR_DOY
+  EXTERNAL IPWTH, YR_DOY, INCDAT, WARNING, TIMDIF, ERROR
 
   CALL GET(CONTROL)
   YRSIM = CONTROL % YRSIM
@@ -210,6 +210,7 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
         SRAD, WINDSP)                       !Output
 
   USE ModuleData
+  EXTERNAL :: YR_DOY, TIMDIF, INCDAT, WARNING, ERROR
   SAVE
   CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
   CHARACTER*78 MSG(4)
@@ -218,7 +219,6 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
   REAL RAIN, TMAX, TMIN, SRAD, PAR
   REAL DCO2, OZON7, RHUM, TDEW, VAPR, WINDSP
   TYPE (ControlType) CONTROL
-  EXTERNAL :: YR_DOY, TIMDIF, INCDAT
 
 ! FYRDOY = 0 - Use observed data (retrieve from array below).
 ! FYRDOY > 0 - This is the date to use for the historical ensemble.
@@ -280,6 +280,8 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
 
   USE ModuleDefs
   USE ModuleData
+  EXTERNAL IGNORE2, INCDAT, TIMDIF, WARNING, WeatherError, YR_DOY
+
   CHARACTER*6, PARAMETER :: ERRKEY = "FORCST"
   CHARACTER*78,DIMENSION(10) :: MSG
   CHARACTER*92 FileW

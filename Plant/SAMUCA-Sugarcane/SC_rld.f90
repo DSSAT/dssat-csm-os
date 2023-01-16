@@ -1,8 +1,10 @@
-subroutine root_len_dens(nlay, srlMax, srlMin, effective_rd, initcropdepth, rpup, ddw_rt, rgf, flemerged, dw_rt_prof, slthickness, drld)
+!This subroutine not used? chp 2023-01-16
+!subroutine root_len_dens(nlay, srlMax, srlMin, effective_rd, initcropdepth, rpup, ddw_rt, rgf, flemerged, dw_rt_prof, slthickness, drld)
+subroutine root_len_dens(nlay, srlMax, srlMin, effective_rd, initcropdepth, rpup, ddw_rt, rgf, dw_rt_prof, slthickness, drld)
     
     Implicit none
     
-    logical flemerged
+!   logical flemerged
     integer sl
     integer nlay
     

@@ -23,13 +23,13 @@ C  Calls    : ERROR, FIND, IGNORE
 C=========================================================================
 
       SUBROUTINE CSP_IPPHENOL(CONTROL, FILECC,
-     &           CROP,  DTPI, Gmax, Go, ISIMI,                !Output
-     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,            !Output 
-     &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,         !Output
-     &           RTNFAC, ROWSPC, SDEPTH, Smax, So,            !Output
-     &           StkHrNO, TB, TELOM, TM, TO1,                 !Output
-     &           TO2, XLFNUM, XLI, XStkNum, YLfFac,           !Output
-     &           YLFSZ, YVTR)                                 !Output
+     &           CROP,  DTPI, ISIMI,                      !Output
+     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,        !Output 
+     &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,     !Output
+     &           RTNFAC, ROWSPC, SDEPTH, Smax,            !Output
+     &           StkHrNO, TB, TELOM, TM, TO1,             !Output
+     &           TO2, XLFNUM, XLI, XStkNum, YLfFac,       !Output
+     &           YLFSZ, YVTR)                             !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -37,6 +37,7 @@ C=========================================================================
                          ! parameters, hourly weather data.
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE
 
 !-------------------------------------------------------------------------
       CHARACTER*1   ISIMI, PLME, BLANK
@@ -53,8 +54,8 @@ C=========================================================================
       CHARACTER*12 VARNAME
 
       INTEGER NPHS
-      INTEGER LUNIO, LUNCRP, LUNECO, ISECT, PATHL, Smax 
-      INTEGER II, WLUN
+      INTEGER LUNIO, LUNECO, ISECT, PATHL, Smax !LUNCRP, 
+      INTEGER II !, WLUN
       INTEGER ERR, LINC, LNUM, FOUND
 !     INTEGER M, 
 
@@ -63,7 +64,7 @@ C=========================================================================
       PARAMETER (NPHS = 4)          ! Number of plant phases = 4
 
       REAL AZIR, SDEPTH, PLANTS, PLTPOP, RTNFAC, ROWSPC
-      REAL PI1, PI2, DTPI, So, Gmax, Go, MinGr
+      REAL PI1, PI2, DTPI, MinGr !Go, Gmax, So, 
       REAL Ph1P, Ph1R, Ph2, Ph3, Ph4, PHTMAX
 
       REAL TB(5), TO1(5), TO2(5), TM(5), XLFNUM(7), YLFSZ(7) 

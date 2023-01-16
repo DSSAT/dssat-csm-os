@@ -20,6 +20,7 @@ c     ----------------------------------------------------------
       USE CNG_MODULEDEFS
 
       IMPLICIT NONE
+      EXTERNAL GET_CULTIVAR_COEFF, D_TT
       SAVE
 
 c     DSSAT control variable

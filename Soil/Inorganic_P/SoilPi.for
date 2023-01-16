@@ -25,6 +25,8 @@ C-----------------------------------------------------------------------
       USE ModSoilMix
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL SoilPi_init, P_ROOTS_INIT, INFO, P_FERTINDEX, 
+     &  PCHECK, OpSOILPi, SoilPiBal
       SAVE
 
       CHARACTER*1  ISWPHO, RNMODE
@@ -99,7 +101,6 @@ C-----------------------------------------------------------------------
      &    FracRts,                    !Output
      &    LAYER, AppType)      !Input from soil module (for banded fert)
           USE ModuleDefs
-          IMPLICIT NONE
           CHARACTER*1,         INTENT(IN)           :: ISWPHO
           INTEGER,             INTENT(IN)           :: DYNAMIC, NLAYR
           REAL, DIMENSION(NL), INTENT(IN)           :: DS, DLAYR
@@ -219,7 +220,7 @@ C-----------------------------------------------------------------------
         CALL SoilPi_init (CONTROL,       
      &    ISWPHO, SOILPROP,                               !Input
      &    K_ACT2LAB, K_ACT2STA, K_LAB2ACT, K_STA2ACT,     !Output
-     &    PiActive, PiLabile, PiStable, YREND)            !Output
+     &    PiActive, PiLabile, PiStable)                   !Output
 
 !       Error in initialization
         IF (YREND == YRDOY) RETURN
@@ -910,6 +911,7 @@ C***********************************************************************
 !     ------------------------------------------------------------------
       USE ModuleDefs 
       IMPLICIT  NONE
+      EXTERNAL WARNING
       SAVE
 !     ------------------------------------------------------------------
       CHARACTER*78  MSG(10)

@@ -1,6 +1,6 @@
 C=======================================================================
 C  MULCH_EVAP, Subroutine, C.H.Porter
-C  Potential and actual evaporation from mulch layer 
+C  Potential and actual evaporation from mulch layer
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  06/25/2008 CHP Written
@@ -71,19 +71,19 @@ C=======================================================================
         ELSE
           MAI = 0.0
         ENDIF
-        
-!       Potential mulch evaporation (mulched areas only)     
+
+!       Potential mulch evaporation (mulched areas only)
         EOM = EOS * (1. - EXP(-EXTFAC * MAI))
 
-!       Actual mulch evaporation (mulched areas only) 
+!       Actual mulch evaporation (mulched areas only)
         EM2 = MIN(EOM, MULCHWAT * 0.85)
 
-!       Adjust to whole field 
+!       Adjust to whole field
         EM2 = MAX(EM2, 0.0) * MULCHCOVER
 
-!       Adjust potential soil evaporation     
+!       Adjust potential soil evaporation
         EOS2 = EOS - EM2
-        EOS3 = EOS * EXP(-EXTFAC * MAI) * MULCHCOVER + 
+        EOS3 = EOS * EXP(-EXTFAC * MAI) * MULCHCOVER +
      &         EOS * (1.0 - MULCHCOVER)
         EOS3 = MIN(EOS2, EOS3)
 
@@ -94,7 +94,7 @@ C=======================================================================
         EM = 0.
         EM1=0.; EM2=0.; EOS1=0.; EOS2=0.; EOS3=0.
       ENDIF
-      
+
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT

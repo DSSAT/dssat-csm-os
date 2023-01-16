@@ -72,9 +72,8 @@
       USE GHG_MOD
 
       IMPLICIT  NONE
-      EXTERNAL METHANEDYNAMICS, SOILORG_INIT, NCHECK_ORGANIC, 
-     &  MULCHLAYER, SOILCBAL, OPSOILORG, SOILNOPOBAL
-
+      EXTERNAL MethaneDynamics, SoilOrg_init, 
+     &  NCHECK_organic, MULCHLAYER, SOILCBAL, OpSoilOrg, SoilNoPoBal
       SAVE
 
 !-----------------------------------------------------------------------

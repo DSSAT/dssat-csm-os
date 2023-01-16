@@ -32,7 +32,7 @@ C-----------------------------------------------------------------------
      & PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      & STMWT, STOVN, STOVWT, SW, SUMDTT,  
-     & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TILN, 
+     & SWFAC, TANC, TCNP,TEMF, TEMPM, TILN, 
      & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      & XN,XSTAGE, EOP, TRWUP, RWUEP1,DYNAMIC,UNO3,UNH4,KG2PPM,
      & PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
@@ -42,6 +42,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE Interface_SenLig_Ceres
       IMPLICIT NONE
+      EXTERNAL ML_NFACT, ML_TILLSUB, ML_NUPTAK, TABEX, CURV
       SAVE
 
 C----------------------------------------------------------------
@@ -117,7 +118,7 @@ C----------------------------------------------------------------
       REAL SUMDTT
       REAL SWFAC
       REAL TANC
-      REAL TBASE
+!     REAL TBASE
       REAL TCNP
       REAL TEMF
       REAL TEMPM

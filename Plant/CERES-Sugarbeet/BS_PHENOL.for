@@ -21,7 +21,7 @@
 
       USE ModuleDefs
       IMPLICIT  NONE
-      EXTERNAL FIND,GETLUN,ERROR,IGNORE,WARNING
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, WARNING
       SAVE
 !----------------------------------------------------------------------
 !                             Define Variables

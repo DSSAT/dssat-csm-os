@@ -29,6 +29,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, FIND, IGNORE
       SAVE
 
       CHARACTER*10 ERRKEY

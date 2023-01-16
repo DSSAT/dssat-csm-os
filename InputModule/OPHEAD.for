@@ -34,6 +34,8 @@
         SUBROUTINE MULTIRUN(RUN, YRPLT)
 !       Updates header for multi-year runs
         IMPLICIT NONE
+        EXTERNAL YR_DOY, NAILUJ, LENSTRING
+
         CHARACTER*3 RMS
         CHARACTER*8 WSTAT
         CHARACTER*11 TEXT
@@ -141,6 +143,7 @@ C=======================================================================
       USE ModuleDefs
       USE HeaderMod
       IMPLICIT NONE
+      EXTERNAL LENSTRING, NAILUJ, YR_DOY
       SAVE
 
       INCLUDE 'COMSWI.blk'
@@ -541,6 +544,7 @@ C=======================================================================
       USE ModuleDefs
       USE HeaderMod
       IMPLICIT NONE
+      EXTERNAL LenString
 
       INCLUDE 'COMGEN.blk'
 

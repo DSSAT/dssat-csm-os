@@ -35,6 +35,7 @@
       USE CsvOutput 
       USE Linklist
       IMPLICIT  NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS, INCDAT
       SAVE
 !     ------------------------------------------------------------------
 

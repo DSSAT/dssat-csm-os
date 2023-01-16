@@ -40,6 +40,8 @@ c     Use CPM modules:
           USE CNG_ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GET_SPECIES_COEFF, GET_CULTIVAR_COEFF, GETLUN, INFO, 
+     &  FIND_INP, D_TT
       SAVE
 c     ================================================================
 c                            VARIABLES
@@ -150,7 +152,7 @@ c     Temporary stress array:
       LOGICAL CF_ERR, SPC_ERR
 
 !     Unit number for output
-      INTEGER SCLUN, OU   !CHP
+      INTEGER SCLUN       !, OU   !CHP
 
       DATA RatCarryOver%RTDEP /0./
 
@@ -415,8 +417,8 @@ c             crop is initialised with higher RLV in layers lower
 c             than 40 cm otherwise.
               RLV(I) = AMAX1((0.2-0.005*CUMDEP),RLVMIN)
           ENDDO
-          ! MJ, Jan 2014: fudge to ensure that water stress is not super-sensitive to
-          ! a dry top layer:
+!           MJ, Jan 2014: fudge to ensure that water stress is not super-sensitive to
+!           a dry top layer:
           RLV(1) = 0.05
           RLV(2) = 0.25
           RTDEP = DEPMAX

@@ -14,6 +14,7 @@ C=======================================================================
      &                   YRSOW, YRNURSE)                  !Output
 
       IMPLICIT NONE
+      EXTERNAL TIMDIF
 
       INTEGER  ITRANS, TIMDIF, YRNURSE, YRPLT, YRSIM, YRSOW
       REAL     TAGE

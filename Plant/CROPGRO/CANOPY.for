@@ -26,7 +26,7 @@ C========================================================================
 C-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
-      EXTERNAL ERROR, FIND, TABEX, GETLUN, IGNORE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TABEX
       SAVE
 
       CHARACTER*6 ERRKEY

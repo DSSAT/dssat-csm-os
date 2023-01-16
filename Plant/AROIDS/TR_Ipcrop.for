@@ -35,6 +35,7 @@ C=======================================================================
      &    SEEDRV,MCORMWT,MPETWT,MLFWT,RLWR)
 
       IMPLICIT    NONE
+      EXTERNAL ERROR
       SAVE
 
       CHARACTER*1  BLANK

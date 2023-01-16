@@ -24,7 +24,9 @@ c     Canegro
       USE CNG_ModuleDefs      
 
       IMPLICIT NONE
-      SAVE  
+      EXTERNAL GETLUN, YR_DOY, NAILUJ, ETAD_NAILUJ, FIND_HDATE
+      EXTERNAL TIMDIF, MTHEND
+      SAVE
 
 c     Control variable:
       TYPE (ControlType), INTENT(IN) :: CONTROL        
@@ -54,7 +56,7 @@ c     Error status:
       INTEGER ERRNUM
 c     Days after planting
       INTEGER DAP
-      INTEGER DOY, YEAR, YR, YRDOY, NDAY, iMON, YEARPLT, DAYMON
+      INTEGER DOY, YEAR, YRDOY, NDAY, iMON, DAYMON !, YR, YEARPLT
       CHARACTER*3  RMON
       !For the why
       INTEGER TIMDIF
@@ -420,6 +422,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR
 
       CHARACTER*6 SECTION, ERRKEY 
       PARAMETER (ERRKEY = 'FIND_HDATE')

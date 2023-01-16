@@ -27,6 +27,7 @@
       USE Interface_IpSoil
 
       IMPLICIT  NONE
+      EXTERNAL PARTIT_C
       SAVE
 !     ------------------------------------------------------------------
 

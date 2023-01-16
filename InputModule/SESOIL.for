@@ -36,6 +36,8 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, IPSLAN, IPSLIN, IPSOIL_INP, SEDLYR, 
+     &  SEINIT, SEPROF, SESURF
 
       CHARACTER*1  RNMODE,BLANK,SWSPRF   !,ISWPHO
       CHARACTER*2  PRCROP
@@ -226,6 +228,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, SEPLYR
 
       CHARACTER*1  RNMODE
       CHARACTER*6  ERRKEY
@@ -357,6 +360,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1 RNMODE,LINE(80)
       CHARACTER*6 ERRKEY
@@ -472,6 +476,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80)
       CHARACTER*6  ERRKEY
@@ -577,6 +582,7 @@ C=======================================================================
       SUBROUTINE SESURF (RNMODE,U,CN2,SWCON,SALB,SLNF,SLPF)
 
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1 RNMODE,LINE(80)
       CHARACTER*6 ERRKEY

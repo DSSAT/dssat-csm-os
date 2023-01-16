@@ -30,6 +30,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE
 !-----------------------------------------------------------------------
       CHARACTER*1   PLME, BLANK
       CHARACTER*2   CROP

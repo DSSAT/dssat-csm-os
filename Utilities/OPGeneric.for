@@ -26,6 +26,7 @@
       USE ModuleDefs
       USE ModuleData
       IMPLICIT  NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       CHARACTER*80      , INTENT(IN) :: FormatTxt 

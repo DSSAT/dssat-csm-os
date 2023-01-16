@@ -58,9 +58,9 @@ C=======================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
-      EXTERNAL IPWBAL, TILEDRAIN, WATERTABLE, WBSUM, SNOWFALL, 
+      EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
      &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
-     &  SOILMIXING, SUMSW
+     &  SOILMIXING, SUMSW, WTDEPT, WaterTable
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:

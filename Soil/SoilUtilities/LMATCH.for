@@ -270,6 +270,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL WARNING
 
       INTEGER  J,K,L,M,NLAYRI,NLAYRO
 

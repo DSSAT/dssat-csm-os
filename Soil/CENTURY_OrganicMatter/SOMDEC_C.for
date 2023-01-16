@@ -46,6 +46,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL EFLOW_C
       SAVE
 !     ------------------------------------------------------------------
 !     The SRFC layer has array index '0' and the soil layers '1' to

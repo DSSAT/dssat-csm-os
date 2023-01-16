@@ -47,6 +47,7 @@ C=======================================================================
       USE Interface_IpSoil
 
       IMPLICIT  NONE
+      EXTERNAL ERROR, FIND, WARNING, MULCHLAYER
       SAVE
 
       CHARACTER*1 RNMODE 

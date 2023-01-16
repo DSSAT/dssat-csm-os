@@ -25,6 +25,7 @@ C=======================================================================
       USE FloodModule    ! parameters, hourly weather data.
 
       IMPLICIT  NONE
+      EXTERNAL TEFF_IPROOTGR
       SAVE
 
       CHARACTER*1 ISWNIT, ISWWAT
@@ -185,6 +186,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT     NONE
+      EXTERNAL FIND, ERROR
 
       CHARACTER*6  ERRKEY, SECTION
       PARAMETER (ERRKEY = 'IPRICE')

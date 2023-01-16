@@ -118,6 +118,7 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                  Fortran "-mmacosx-version-min=10.10.0"
                 )
+
 ####################
 ### LINKER FLAGS ###
 ####################

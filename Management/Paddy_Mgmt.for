@@ -17,6 +17,7 @@ C=======================================================================
       USE ModuleDefs
       USE FloodModule
       IMPLICIT  NONE
+      EXTERNAL INCYD, OPFLOOD
       SAVE
 
       INTEGER DYNAMIC, INCYD, NDAT, NDRY, NBUND

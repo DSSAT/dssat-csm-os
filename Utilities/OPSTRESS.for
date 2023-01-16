@@ -22,6 +22,7 @@
       USE SumModule
       USE ModuleData
       IMPLICIT  NONE
+      EXTERNAL GETLUN, SUMVALS
       SAVE
 
 !-----------------------------------------------------------------------

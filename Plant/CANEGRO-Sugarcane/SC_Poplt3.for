@@ -16,6 +16,7 @@ c     ::::::::::::::::::::::::::::::::::::::::::::::
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GET_CULTIVAR_COEFF, SC_GTP_SHOOTPOP
       SAVE
 
 c     The DSSAT simulation control object

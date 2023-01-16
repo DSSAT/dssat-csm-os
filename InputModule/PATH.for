@@ -30,6 +30,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, GETLUN, GET_NEXT_STRING
 
       CHARACTER*1  BLANK
       CHARACTER*3  PROCOD
@@ -127,6 +128,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR
 
 !     CHARACTER*12 DSSATF
       CHARACTER*102 DSSATP
@@ -196,6 +198,8 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, WARNING, IGNORE, UPCASE, LENSTRING, 
+     &  GET_NEXT_STRING, VALIDMODEL
 
       CHARACTER*1   UPCASE
       CHARACTER*2   CROP
@@ -301,6 +305,7 @@ C=======================================================================
       FUNCTION ValidModel(CROP, MODEL)
 
       IMPLICIT NONE
+      EXTERNAL ReadCropModels
       SAVE
 
       INTEGER ValidModel

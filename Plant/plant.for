@@ -140,7 +140,7 @@ C-----------------------------------------------------------------------
       REAL SWFAC, TURFAC
 
       REAL, DIMENSION(2)  :: HARVFRAC
-      REAL, DIMENSION(NL) :: NH4, NO3, RLV !, RWU, UPPM 
+      REAL, DIMENSION(NL) :: NH4, NO3, RLV  !, RWU, UPPM
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
       LOGICAL FixCanht, BUNDED    !, CRGRO
@@ -403,7 +403,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !-----------------------------------------------------------------------
 !     Forage model
       CASE('PRFRM')
-      call FORAGE(CONTROL, ISWITCH,
+        CALL FORAGE(CONTROL, ISWITCH,
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, EORATIO, HARVRES, MDATE,                 !Output
@@ -612,7 +612,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    TWILEN, YRPLT,                                  !Input
      &    FLOODN,                                         !I/O
      &    CANHT, HARVRES, XLAI, KUptake, MDATE, NSTRES,   !Output
-     &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
+     &    PORMIN, PUptake, RWUEP1, RWUMX, CropStatus,     !Output
      &    RLV, SENESCE, STGDOY, FracRts, UNH4, UNO3)      !Output
 
         IF (DYNAMIC .EQ. INTEGR) THEN
@@ -670,13 +670,13 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Sugarcane - SAMUCA
       CASE('SCSAM')
           call SAMUCA(
-     &    CONTROL, ISWITCH,                                      !Input
-     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,  !Input
-     &    SOILPROP, ST, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,  !Input
-     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,         !Input
-     $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,           !Output
-     &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,              !Output
-     &    UNO3, XLAI, XHLAI, EORATIO)                            !Output
+     &    CONTROL, ISWITCH,                           !Input
+     &    CO2, DAYL, EOP,                             !Input
+     &    SOILPROP, ST, SRAD, TMAX, TMIN, TRWUP,      !Input
+     &    RWUEP1, YREND, YRPLT, WEATHER,              !Input
+     $    CANHT, KCAN, KTRANS, MDATE, NSTRES,         !Output
+     &    RLV, RWUMX, STGDOY,                         !Output
+     &    XLAI, XHLAI, EORATIO)                       !Output
           
 !     -------------------------------------------------
 !     Sugarcane - CASUPRO
@@ -819,6 +819,40 @@ c     Total LAI must exceed or be equal to healthy LAI:
           CELLS%RATE%NH4Uptake = NH4Uptake_2D
           CELLS%STATE%RLV = RLV_2D
         END IF
+
+!***********************************************************************
+!***********************************************************************
+      ELSEIF (DYNAMIC .EQ. SEASEND) THEN
+!-----------------------------------------------------------------------
+!     Store Summary.out labels and values in arrays to send to
+!     OPSUM routines for printing.  Integers are temporarily 
+!     saved as real numbers for placement in real array.
+      LABEL(1)  = 'CRST'; VALUE(1)  = CONTROL % CropStatus
+
+      !Send labels and values to OPSUM
+      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+
+! End of season crop status codes:
+! CRST - Definition                               Status **
+!    1 - crop matured normally                    NORMAL
+!    2 - crop harvested on reported date          NORMAL
+!    3 - crop harvested at reported growth stage  NORMAL
+!    6 - auto-harvest within window               NORMAL
+!   11 - failure to plant (automatic planting)    NO_SOW
+!   12 - failure to germinate                     NOGERM
+!   21 - crop mature due to slow grain filling    SLOGRN 
+!   31 - crop died due to heat stress             HOT
+!   32 - crop died due to cold stress             COLD
+!   33 - crop died due to deficit water stress    DRY
+!   34 - crop died due to excess water stress     WET
+!   39 - crop died due to excess stress           STRESS
+!   51 - crop died due to pest damage             PEST
+
+!  100 – crop season length exceeded limits       SEASON
+!  200 – weather data error                       WEATHER
+!  999 – unspecified error condition              UNKNOWN
+
+! ** Status text could be used in Summary.OUT if we want this to be more human readable.
 
 !***********************************************************************
 !***********************************************************************

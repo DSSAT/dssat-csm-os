@@ -71,14 +71,16 @@ C=======================================================================
       SUBROUTINE WGEN(CONTROL,
      &    FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,        !Input
      &    RNMODE, RSEED1, YRDOY, YRSIM,                   !Input
-     &    PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,        !Output
-     &    TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)         !Output
+     &    PAR, RAIN, RSEED, SRAD, TAMP, TAV,              !Output
+     &    TMAX, TMIN, XLAT, XLONG, YREND)                 !Output
       
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, WGENIN, SIMMIN, YDOY, MTHMID, INCMTH, 
+     &  MTHEND, WGENPM, WGENGN, DAILYWEATHERCHECK
 
       SAVE Y,CF,MTH,MM,YMID,YMEND,WETPRV,XPRV
 
@@ -96,7 +98,7 @@ C=======================================================================
 
       REAL Y(NM,M),CF(NM,M),SRDMN,SRDSD,SRWMN,SRWSD,TXDMN,TXDSD,
      &  TXWMN,TXWSD,TNAMN,TNASD,PWW,PDW,ALPHA,BETA,PAR,SRAD, 
-     &  TMAX,TMIN,RAIN,XLAT,XLONG,XPRV(3),TDEW, WINDSP
+     &  TMAX,TMIN,RAIN,XLAT,XLONG,XPRV(3) !,TDEW, WINDSP
       REAL TAV, TAMP, RHUM
 
       TYPE (ControlType) CONTROL
@@ -324,6 +326,7 @@ C=======================================================================
       USE ModuleData
       USE SumModule
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, FIND, IGNORE, SUMVALS, CFACT
 
       CHARACTER BLANK*1,FILEW*12,FILEWW*92,LINE*100
       CHARACTER*6 ERRKEY,FINDCH
@@ -508,6 +511,8 @@ C=======================================================================
       USE ModuleData
       USE SumModule
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, FIND, IGNORE, SUMVALS, CFACT, AVG, 
+     &  FOURCF, FOURIN
 
       CHARACTER BLANK*1,FILEW*12,FILEWW*92,LINE*100
       CHARACTER*6 ERRKEY,FINDCH
@@ -739,6 +744,7 @@ C=======================================================================
       
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL CIRC, ENDYR, LININT
       SAVE
 
       INTEGER CIRC,DOY,ENDYR,I,NM,M,MTH,MM,YR,CC
@@ -797,6 +803,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL RADA, RANDN
       SAVE
 
       INTEGER DOY,RSEED(4),I,WET,WETPRV,J,K
@@ -1025,6 +1032,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL CIRC
       INTEGER J,NM,M,MTH,PRV,CIRC,CC
       PARAMETER (NM=12, M=14)
       REAL DIFX,X,Y(NM,M),XP,YP(M)
@@ -1064,6 +1072,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL CIRC
       INTEGER I,J,NM,M,NXT,PRV,CIRC,CC
       PARAMETER (NM=12, M=14)
       REAL Y(NM,M),CF(NM,M)

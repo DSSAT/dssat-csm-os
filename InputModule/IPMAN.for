@@ -257,7 +257,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             IF ((IRRCOD(NIRR)(3:5)) .NE. '007' .AND.
      &          (IRRCOD(NIRR)(3:5)) .NE. '008' .AND.
      &          (IRRCOD(NIRR)(3:5)) .NE. '009' .AND.
-     &          (IRRCOD(NIRR)(3:5)) .NE. '010') THEN  
+     &          (IRRCOD(NIRR)(3:5)) .NE. '010') THEN 
                 NAPW = NAPW + 1
                 IF (AMT(NAPW) .GT. 0.0) THEN
                   IF ((IRRCOD(NIRR)(3:5)) .NE. '005') THEN
@@ -727,7 +727,7 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &                  NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)
+     &                  NHAR,IHARI,YRSIM,CROP,HBPC)  !,FREQ,CUHT)
 !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       IMPLICIT     NONE
@@ -745,7 +745,7 @@ C=======================================================================
 !     INTEGER      HYR, HDAY
 
 !     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-      REAL         HPC(3),HBPC(3),FREQ,CUHT 
+      REAL         HPC(3),HBPC(3) !,FREQ,CUHT 
 
       PARAMETER   (ERRKEY='IPHAR ')
 

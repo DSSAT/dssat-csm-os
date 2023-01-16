@@ -23,6 +23,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE, ERROR
       SAVE
 !-----------------------------------------------------------------------
 

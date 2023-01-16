@@ -34,6 +34,8 @@ C=======================================================================
      &           NSWITCH,CROP,MEHYD,MESOM,MODEL)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, SENIT, SWEVAP, SWFIX, SWINSC, SWPHOT, 
+     &  SWSOM, SWWATB, SWWTH
 
       CHARACTER*1  RNMODE,ISWWAT,ISWNIT,ISWSYM,ISWPHO
       CHARACTER*1  ISWDIS,MEWTH,MESIC,MEEVP,MEPHO,MEHYD,MESOM
@@ -264,6 +266,7 @@ C=======================================================================
       SUBROUTINE SENIT (RNMODE,ISWNIT,NSWITCH)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,ISWNIT,ISW(10)
       CHARACTER*6  ERRKEY
@@ -399,6 +402,7 @@ C=======================================================================
       SUBROUTINE SWWTH (RNMODE,MEWTH,PATHWT)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,MEWTH
       CHARACTER*6  ERRKEY
@@ -490,6 +494,7 @@ C=======================================================================
       SUBROUTINE SWINSC (RNMODE,MESIC)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,MESIC
       CHARACTER*6  ERRKEY
@@ -573,6 +578,7 @@ C=======================================================================
       SUBROUTINE SWPHOT (RNMODE,MEPHO,MODEL)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,MEPHO
       CHARACTER*6  ERRKEY
@@ -666,6 +672,7 @@ C=======================================================================
       SUBROUTINE SWEVAP (RNMODE,MEEVP)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,MEEVP
       CHARACTER*6  ERRKEY
@@ -761,6 +768,7 @@ C=======================================================================
       SUBROUTINE SWWATB (RNMODE,MEHYD,ISWWAT,ISWNIT,NSWITCH)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,MEHYD,ISWWAT,ISWNIT
       CHARACTER*6  ERRKEY
@@ -858,6 +866,7 @@ C=======================================================================
       SUBROUTINE SWSOM (RNMODE,MESOM)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,MESOM
       CHARACTER*6  ERRKEY

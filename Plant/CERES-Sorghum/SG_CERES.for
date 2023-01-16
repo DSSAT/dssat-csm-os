@@ -787,7 +787,7 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
      &      SeedFrac, VegFrac, CropStatus)                                 
 
           CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -1196,7 +1196,7 @@ C--------------------------------------------------------------------
      &      SeedFrac, VegFrac, CropStatus) 
 
              CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -1326,7 +1326,7 @@ C----------------------------------------------------------------------
           IF (ISTAGE .LT. 6) THEN
 
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -1496,7 +1496,7 @@ c         WTNRT = ROOTN * PLTPOP
          ENDIF
          IF (YRDOY .GE. YRPLT) THEN
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -1564,7 +1564,7 @@ C----------------------------------------------------------------------
 
 
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,

@@ -49,6 +49,8 @@ C=======================================================================
       USE Forecast
 
       IMPLICIT NONE
+      EXTERNAL INCDAT, YR_DOY, ERROR, WARNING, IPWTH, WTHMOD, WGEN, 
+     &  DAYLEN, CO2VAL, SOLAR, CALC_TDEW, HMET, OPWEATH, TWILIGHT
       SAVE
 
       CHARACTER*1  MEWTH, RNMODE
@@ -184,10 +186,10 @@ C       Set default values FOR REFHT AND WINDHT
           PAR  = -99.0
           RHUM = -99.0
           CALL WGEN (CONTROL2,
-     &      FILEWC, MEWTH, MULTI, RUN, PATHWTC, REPNO,      !Input
+     &      FILEWC, MEWTH, MULTI, RUN, PATHWTC, REPNO,    !Input
      &      RNMODE, RSEED1, YRDOY, YRSIM,                 !Input
-     &      PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,      !Output
-     &      TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)       !Output
+     &      PAR, RAIN, RSEED, SRAD, TAMP, TAV,            !Output
+     &      TMAX, TMIN, XLAT, XLONG, YREND)               !Output
 !        ELSE
 !          CALL ERROR(ERRKEY,1,' ',0)
         ENDIF
@@ -357,10 +359,10 @@ C       Read new weather record.
           PAR  = -99.0
         
           CALL WGEN (CONTROL,
-     &      FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,        !Input
-     &      RNMODE, RSEED1, YRDOY, YRSIM,                   !Input
-     &      PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,        !Output
-     &      TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)         !Output
+     &      FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,      !Input
+     &      RNMODE, RSEED1, YRDOY, YRSIM,                 !Input
+     &      PAR, RAIN, RSEED, SRAD, TAMP, TAV,            !Output
+     &      TMAX, TMIN, XLAT, XLONG, YREND)               !Output
         ELSE
           CALL ERROR(ERRKEY,1,' ',0)
         ENDIF

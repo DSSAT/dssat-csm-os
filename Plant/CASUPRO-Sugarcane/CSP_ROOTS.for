@@ -43,6 +43,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL CSP_INROOT, CSP_IPROOT, IGNORE, TABEX
       SAVE
 
       CHARACTER*1 ISWWAT
@@ -173,12 +174,12 @@ C-----------------------------------------------------------------------
 !     once, so yesterday's value is stored in TRLV here.
       DO L = 1,NLAYR
 !       TRTDY = TRTDY + RLV(L) * DLAYR(L) ! cm[root] / cm2[ground]
-        RRLF(L)   = 0.0 !Root length density factor ratio (RLDF(L)/TRLDF)
-        RLSEN(L)  = 0.0 !Root length density senesced today (cm/cm3[soil])
-        RLGRW(L)  = 0.0 !Incremental root length density in soil layer L
-        MRESPR(L) = 0.0 !Maintenance respiration for new root growth in layer L
-        GRESPR(L) = 0.0 !Growth respiration for new root growth in layer L
-        RESPS(L)  = 0.0 !Total respiration for new root growth in layer L
+        RRLF(L)   = 0.0 !Root length dens factor ratio (RLDF(L)/TRLDF)
+        RLSEN(L)  = 0.0 !Root length dens senesced today (cm/cm3[soil])
+        RLGRW(L)  = 0.0 !Incremental root length density in layer L
+        MRESPR(L) = 0.0 !Maint respiration for new root growth, lyr L
+        GRESPR(L) = 0.0 !Growth respiration for new root growth in lyr L
+        RESPS(L)  = 0.0 !Total respiration for new root growth in lyr L
       ENDDO
 
 !     Update RFAC3 based on yesterday's root weight and TRLV
@@ -413,6 +414,7 @@ C=======================================================================
 !     NL defined in ModuleDefs.for
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, IGNORE, GETLUN
 
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'ROOTS')

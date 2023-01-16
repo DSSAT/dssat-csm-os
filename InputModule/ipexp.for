@@ -108,8 +108,7 @@ C=======================================================================
 
 !     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
       INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) 
-      REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT 
-
+      REAL    FLAG,EXP,TRT,PLTFOR !,FREQ,CUHT 
       REAL    BEDHT, BEDWD, DripSpc(NDrpLn), DripOfset(NDrpLn)
       INTEGER DripLN(NDrpLn)
       REAL    DripDep(NDrpLn)
@@ -827,7 +826,7 @@ C     Call IPHAR
 C-----------------------------------------------------------------------
 !     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
       CALL IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &     NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)
+     &     NHAR,IHARI,YRSIM,CROP,HBPC)    !,FREQ,CUHT
 
 C-----------------------------------------------------------------------
 C     Call IPIRR
@@ -854,8 +853,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call IPCHEM - Chemical applications
 C-----------------------------------------------------------------------
-      CALL IPCHEM (LUNEXP,FILEX,LNCHE,YRSIM,ISWWAT,NCHEM,CDATE,
-     &    CHCOD,CHAMT,CHMET,CHDEP,CHT,ISWCHE,LNSIM,CHEXTR)
+      CALL IPCHEM (LUNEXP,FILEX,LNCHE,YRSIM,NCHEM,CDATE,
+     &    CHCOD,CHAMT,CHMET,CHDEP,CHT,ISWCHE,CHEXTR)
 
 C-----------------------------------------------------------------------
 C     Call IPTILL - Tillage operations

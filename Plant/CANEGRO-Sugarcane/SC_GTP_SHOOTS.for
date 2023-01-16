@@ -43,7 +43,9 @@ c     Canegro
       USE CNG_ModuleDefs      
 
       IMPLICIT NONE
-      SAVE    
+      EXTERNAL FIND_INP, GET_CULTIVAR_COEFF, SHOOTPOPHA
+      EXTERNAL GET_PLTPOP
+      SAVE
 
     
 
@@ -64,7 +66,7 @@ c     INTENT statements (good practice!)
       INTENT(IN) :: FI_INTRA
       
 c     Planting depth (mm and cm) 
-      REAL PLTDEP_CM, PLTDEP
+!     REAL PLTDEP_CM, PLTDEP
 c     Number of viable buds, per linear metre of cane row
       REAL VIABLE_BUDS
 
@@ -73,7 +75,7 @@ c     (=0 for plant crop)
       REAL R_RATOON, RATOON_N
 
 c     IO error variable
-      LOGICAL CF_ERR, SPC_ERR
+      LOGICAL CF_ERR  !, SPC_ERR
 c     Reference final shoot (tiller, stalk) population parameter 
 c     tillers/ha and tillers/m2
       REAL POPN_m2
@@ -97,8 +99,8 @@ c     Verification counts of primary and tiller shoots:
       REAL VPN, VTN, TOTPOPV
 
 c     Number of leaves that must emerge before stick appears
-      INTEGER STKDELAYLFNO
-      REAL R_STKDELAYLF      
+!     INTEGER STKDELAYLFNO
+!     REAL R_STKDELAYLF      
 
 c     Change in the number of primary and secondary (tiller)
 c     shoot cohorts [cohorts/d]
@@ -127,7 +129,7 @@ c     Change in number of tillers per linear m per day [shoots/m]
        REAL D_N_TILLERS
       
 c     Counter
-      INTEGER I, K
+      INTEGER I   !, K
 
 c     Ti is 'tiller index', for the NEW tiller cohort (to be 
 c     integrated later today).  The index of the Cohorts
@@ -595,6 +597,8 @@ c     Canegro
       USE CNG_ModuleDefs 
               
       IMPLICIT NONE
+      EXTERNAL FIND_INP, GET_CULTIVAR_COEFF
+
 c     Final reference stalk population [plants/m2]  
 c     (genotype input)
       REAL POPN_m2

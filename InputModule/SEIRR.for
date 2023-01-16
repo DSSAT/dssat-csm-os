@@ -31,6 +31,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, CLEAR, VERIFY, SWIRR, AUTIRR, ENTIRR
 
       CHARACTER*1  RNMODE,IDETW,ISWWAT,ISWNIT,IIRRI,LINE(80)
       CHARACTER*5  IRRCOD(NAPPL)
@@ -227,6 +228,7 @@ C=======================================================================
       SUBROUTINE SWIRR (RNMODE,IIRRI,ISWWAT,IRMANT)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,IIRRI,ISWWAT
       CHARACTER*6  ERRKEY
@@ -328,6 +330,7 @@ C=======================================================================
       SUBROUTINE AUTIRR (RNMODE,THETAC,DSOIL)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80)
       CHARACTER*6  ERRKEY
@@ -426,6 +429,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL YR_DOY, ERROR, CLEAR, UPCASE, VERIFY, Y4K_DOY, SORT
 
       CHARACTER*1  RNMODE,LINE(80),IMENU,UPCASE,ANS,IIRRI
       CHARACTER*6  ERRKEY

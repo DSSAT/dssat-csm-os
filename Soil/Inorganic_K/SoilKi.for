@@ -15,6 +15,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModSoilMix
       IMPLICIT NONE
+      EXTERNAL SoilKi_init, OpSOILKi, WARNING
       SAVE
 
       CHARACTER*1  ISWPOT, RNMODE

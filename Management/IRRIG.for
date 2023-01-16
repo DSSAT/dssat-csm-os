@@ -48,6 +48,7 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL YR_DOY, ERROR, FIND, TIMDIF, SWDEFICIT, WARNING, 
      &  FLOOD_IRRIG
+      EXTERNAL DRIP_IRRIG, SWDEFICIT_bed
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*6 ERRKEY
@@ -76,7 +77,7 @@ C=======================================================================
       REAL DLAYR(NL), DS(NL), DUL(NL), LL(NL), SW(NL)
       REAL, DIMENSION(NAPPL) :: AMIR, AMT, WTABL
 
-!  Added for flooded field management
+!     Added for flooded field management
       LOGICAL PUDDLED
       INTEGER NBUND, NCOND, NPERC, NPUD
       INTEGER IBDAT(NAPPL), IIRRCV(NAPPL), IPDAT(NAPPL) !, IIRRP(100)

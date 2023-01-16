@@ -53,10 +53,11 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT NONE
-      EXTERNAL DEMAND, FREEZE, GROW, HRES_CGRO, INCOMP, IPPLNT, MOBIL, 
-     &  NFIX, NUPTAK, NUPTAK_2D, OPGROW, OPHARV, P_CGRO, PEST, PHENOL, 
-     &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, ROOTY_2D, SENES, 
+      EXTERNAL DEMAND, FREEZE, GROW, HRES_CGRO, INCOMP, IPPLNT, MOBIL,
+     &  NFIX, NUPTAK, OPGROW, OPHARV, P_CGRO, PEST, PHENOL,
+     &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, SENES,
      &  VEGGR
+      EXTERNAL NUPTAK_2D, ROOTY_2D
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 DETACH, IDETO, ISWNIT, ISWSYM,
