@@ -44,6 +44,8 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL IPPEST, IPPARM, IPPROG, PESTCP, ASMDM, SEEDDM, VEGDM, 
+     &  ROOTDM, OPPEST, LINDM, TIMDIF
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1   ISWDIS

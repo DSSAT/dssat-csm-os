@@ -28,6 +28,7 @@ subroutine sc_waterstress(method_ws,  &
     !----------------------------------------------!
     
     Implicit none
+    external asy_ws
     
     integer method_ws
     integer ndws

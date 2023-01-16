@@ -586,10 +586,10 @@ C=======================================================================
           SUMDTT_2 = SUMDTT 
           !VegFrac = MAX(VegFrac,SUMDTT_2 / (SUMDTT_2 + P3))
           VegFrac = MAX(VegFrac, XSTAGE/4.5)   
-    !  write(98,*) 'day',yrdoy,'xst=',xstage/10,'new',xstage/4.5
+!      write(98,*) 'day',yrdoy,'xst=',xstage/10,'new',xstage/4.5
           SUMDTT = 0.0       
-		! Need a check to ensure sumdtt is close to P1 + (1/ratein)
-          !END OF PHASEI STUFF
+!           Need a check to ensure sumdtt is close to P1 + (1/ratein)
+!          END OF PHASEI STUFF
 
 !-----------------------------------------------------------------------
         CASE (3)          !HEADING

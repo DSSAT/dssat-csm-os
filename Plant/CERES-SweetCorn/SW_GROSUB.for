@@ -62,6 +62,8 @@
       USE ModuleDefs
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, MZ_NFACTO, MZ_NUPTAK, 
+     &  P_Ceres, SW_FreshWt, YR_DOY, WARNING, TABEX, CURV
       SAVE
 !----------------------------------------------------------------------
 !                         Variable Declaration

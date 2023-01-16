@@ -33,6 +33,8 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL PT_OPGROW, PT_OPHARV, PT_IPSPE, PT_ROOTGR, PT_PHENOL, 
+     &  PT_GROSUB, HRes_Ceres
       SAVE
 
       CHARACTER*1  IDETG, ISWNIT, ISWWAT
@@ -334,6 +336,7 @@ C-----------------------------------------------------------------------
 !     ------------------------------------------------------------------
 
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, IGNORE
 
       CHARACTER*1, PARAMETER :: BLANK = ' '
       CHARACTER*6, PARAMETER :: ERRKEY = 'ROOTGR'

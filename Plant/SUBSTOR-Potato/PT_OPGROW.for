@@ -24,6 +24,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1   IDETG, ISWNIT
@@ -120,7 +121,6 @@ C-----------------------------------------------------------------------
 
 !      DATA NITHEAD(4)/  
      &'@YEAR DOY   DAS   DAP  TUNA  UNAD  VNAD  UN%D  
-!     &VN%D   NUPC  LNAD  SNAD  LN%D  SN%D  RN%D'/
      &VN%D   NUPC  LNAD  SNAD  LN%D  SN%D  RN%D  SNN0C  SNN1C'/
 
 !***********************************************************************

@@ -50,9 +50,9 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT NONE
-      EXTERNAL DEMAND, FREEZE, GROW, HRES_CGRO, INCOMP, IPPLNT, MOBIL, 
-     &  NFIX, NUPTAK, OPGROW, OPHARV, P_CGRO, PEST, PHENOL, 
-     &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, SENES, 
+      EXTERNAL DEMAND, FREEZE, GROW, HRES_CGRO, INCOMP, IPPLNT, MOBIL,
+     &  NFIX, NUPTAK, OPGROW, OPHARV, P_CGRO, PEST, PHENOL,
+     &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, SENES,
      &  VEGGR
       SAVE
 !-----------------------------------------------------------------------

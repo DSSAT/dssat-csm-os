@@ -44,6 +44,8 @@
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, PODCOMP, FreshWt, 
+     &  WARNING, TIMDIF, CURV, TABEX
       SAVE
 
       CHARACTER*1   ISWWAT, ISWFWT
@@ -847,6 +849,7 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE
       SAVE
 
       CHARACTER*6 ERRKEY
