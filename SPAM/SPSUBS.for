@@ -7,19 +7,18 @@ C  11/16/2001 CHP Written
 C  06/07/2002 GH  Modified for crop rotations
 C  08/20/2002 GH  Modified for Y2K
 C  02/04/2005 CHP Added new variables to Summary.out: EPCM, ESCM
+!  08/11/2009 CHP Added potential root water uptake to output
 C-----------------------------------------------------------------------
 C  Called from:   SPAM
 C  Calls:         None
 C=======================================================================
       SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs 
       USE ModuleData
       USE FloodModule
 !     VSH
@@ -27,6 +26,7 @@ C=======================================================================
       USE Linklist
       
       IMPLICIT NONE
+      EXTERNAL GETLUN, YR_DOY, HEADER, SUMVALS
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT, RNMODE
@@ -42,9 +42,9 @@ C=======================================================================
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
       REAL REFA, KCAA, KBSA, KEAA
-      REAL AVTMX, AVTMN, AVSRAD
-      REAL TMAX, TMIN, SRAD
-!      REAL SALB, SWALB, MSALB, CMSALB
+      REAL AVTMX, AVTMN, AVSRAD, AVRWUP, AVRWU
+      REAL TMAX, TMIN, SRAD, TRWUP
+!     REAL SALB, SWALB, MSALB, CMSALB
       REAL ES_LYR(NL), ES10
       LOGICAL FEXIST
 
@@ -146,12 +146,12 @@ C-----------------------------------------------------------------------
 !              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
 !  121         FORMAT(9("    ",A2,I1,A1), A8)
                WRITE(FRMT,'(I1)') N_LYR
-               FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A8)'
-               WRITE (LUN,FRMT) ("ES",L,"D",L=1,N_LYR), 'TRWUD' 
+               FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A)'
+               WRITE(LUN,FRMT) ("ES",L,"D",L=1,N_LYR),"   TRWUD   TWUPD"
             ELSE
-!              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
-              WRITE (LUN,122)("ES",L,"D",L=1,9), "  ES10D   TRWUD"  !VSH
-  122         FORMAT(9("    ",A2,I1,A1),A16)
+!             WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+              WRITE(LUN,122)("ES",L,"D",L=1,9),"  ES10D   TRWUD   TWUPD"
+  122         FORMAT(9("    ",A2,I1,A1),A)
             ENDIF
             END IF   ! VSH
           ELSE
@@ -180,6 +180,8 @@ C-----------------------------------------------------------------------
         KBSA = 0.
         KCAA = 0.
         REFA = 0.
+        AVRWUP= 0.
+        AVRWU = 0.
 
 !***********************************************************************
 !***********************************************************************
@@ -205,6 +207,8 @@ C-----------------------------------------------------------------------
       KBSA   = KBSA   + (EP/REFET)
       KCAA   = KCAA   + (ET/REFET)
       REFA   = REFA   + REFET
+      AVRWUP = AVRWUP + TRWUP   !cm
+      AVRWU  = AVRWU  + TRWU    !cm
 
 !***********************************************************************
 !***********************************************************************
@@ -236,6 +240,8 @@ C-----------------------------------------------------------------------
           KBSA  = KBSA  / NAVWB
           KCAA  = KCAA  / NAVWB
           REFA  = REFA  / NAVWB
+          AVRWUP= AVRWUP / NAVWB
+          AVRWU = AVRWU  / NAVWB
 
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
@@ -259,21 +265,17 @@ C-----------------------------------------------------------------------
             WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX,
      &        AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA,
      &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA
-!     &        ,SALB, SWALB, MSALB, CMSALB
-!  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
-!     &      8(F7.3),6(F8.2))     
-!     &    ,4F7.2 ,10(F7.3))
           
             IF (ISWITCH % MESEV == 'S') THEN
               IF (SOILPROP % NLAYR < 11) THEN
-                WRITE(LUN,'(11F8.3)') ES_LYR(1:N_LYR) , TRWU
+                WRITE(LUN,'(12F8.3)') ES_LYR(1:N_LYR) , AVRWU, AVRWUP
               ELSE
                 ES10 = 0.0
                 DO L = 10, SOILPROP % NLAYR
                   ES10 = ES10 + ES_LYR(L)
                 ENDDO
 !               WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
-                WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
+                WRITE(LUN,'(12F8.3)') ES_LYR(1:9), ES10, AVRWU, AVRWUP !VSH
               ENDIF
             ELSE
               WRITE(LUN,'(" ")')
@@ -288,7 +290,7 @@ C-----------------------------------------------------------------------
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS,
      &AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA,
      &EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA,
-     &N_LYR, ES_LYR, TRWU, vCsvlineET, vpCsvlineET, vlngthET)
+     &N_LYR, ES_LYR, AVRWU, AVRWUP, vCsvlineET, vpCsvlineET, vlngthET)
 
             CALL LinklstET(vCsvlineET)
           ENDIF
@@ -309,6 +311,8 @@ C-----------------------------------------------------------------------
           KBSA = 0.
           KCAA = 0.
           REFA = 0.
+          AVRWUP= 0.
+          AVRWU = 0.
 
         ENDIF
       ENDIF
@@ -427,7 +431,7 @@ C=======================================================================
       REAL  SWDELTX(NL),    !Change in SW due to root extraction
      &      SWTEMP(NL),     !New SW value based only on root extraction
      &      SW_AVAIL(NL),   !Water available for root extraction
-     &      UH2O(NL)        !Root water uptake from plant routine (optional)
+     &      UH2O(NL)        !Root water uptake from plant routine (opt.)
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
         SWDELTX(L) = 0.0

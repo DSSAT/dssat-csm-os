@@ -27,16 +27,16 @@ C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  Calls:     None
 C=======================================================================
       SUBROUTINE TRANS(DYNAMIC, MEEVP,
-     &    CO2, CROP, EO, ET0, EVAP, KTRANS,              !Input
-     &    WINDSP, XHLAI,                                  !Input
-     &    WEATHER,                                        !Input
-     &    EOP)                                            !Output
+     &    CO2, CROP, EO, ET0, EVAP, KTRANS,       !Input
+     &    WINDSP, XHLAI, WEATHER,                 !Input
+     &    EOP)                                    !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
       USE YCA_Growth_VPD
       IMPLICIT NONE
+      EXTERNAL TRATIO, WARNING, ERROR
       
       TYPE (WeatherType) WEATHER
 
@@ -195,6 +195,7 @@ C=======================================================================
       FUNCTION TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
 
       IMPLICIT NONE
+      EXTERNAL VPSLOP
 !-----------------------------------------------------------------------
       CHARACTER*2 CROP
       REAL CO2, TAVG, WINDSP, XHLAI

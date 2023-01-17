@@ -60,6 +60,7 @@ C  06/15/2014 CHP Written
       SUBROUTINE FertTypeRead(CONTROL) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL PATH, GETLUN, FIND2, IGNORE
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -204,6 +205,7 @@ C  06/15/2014 CHP Written
 
 !     ------------------------------------------------------------------
       IMPLICIT  NONE
+      EXTERNAL READ_DETAIL, WARNING
 
       LOGICAL HASN, HASP, HASK  ! N, P, K
       LOGICAL HASUI             ! Urease inhibitor
@@ -343,6 +345,7 @@ C  06/15/2014 CHP Written
 !     Error handling routine for fertilizer characteristics input 
 
       IMPLICIT NONE
+      EXTERNAL WARNING, ERROR
 
       CHARACTER* 6 ERRKEY
       CHARACTER*78 MSG(4)

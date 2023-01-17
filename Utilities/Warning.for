@@ -102,7 +102,8 @@ C=======================================================================
         ENDDO
       ENDIF
 
-      IF (INDEX(ERRKEY,'ENDRUN') > 0) THEN    !ERRKEY = 'ENDRUN' -> End of season
+!     ERRKEY = 'ENDRUN' -> End of season
+      IF (INDEX(ERRKEY,'ENDRUN') > 0) THEN    
         FIRST = .TRUE.
         CLOSE(LUN)
       ENDIF

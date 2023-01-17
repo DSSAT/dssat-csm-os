@@ -14,6 +14,7 @@ C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 C  08/20/2002 GH  Added YRDIF as a constructred variable
 !  06/10/2005 CHP Fixed initialization for automatic planting
 !  12/05/2014 DK  Forced planting for automatic planting ("F" option)
+!  04/14/2021 CHP Added CONTROL % CropStatus
 C-----------------------------------------------------------------------
 C  INPUT : JUL,DLAYR,LL,DUL,SW,ST,PWDINF,PWDINL,SWPLTL,
 C          SWPLTH,SWPLTD,PTX,PTTN,YRPLT
@@ -41,6 +42,7 @@ C=====================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL IPAPLT, GETLUN, YR_DOY, WARNING, ERROR, FIND
       SAVE
 
       CHARACTER*1  IDETO, RNMODE, IPLTI, ISWWAT
@@ -305,6 +307,7 @@ C-----------------------------------------------------------------------
       IF (YRDOY .GE. PWDINL .AND. YRPLT .NE. YRDOY) THEN
         YRPLT = -99
         MDATE = YRDOY
+        CONTROL % CropStatus = 11  !failure to plant
         CALL YR_DOY(PWDINF,PWDYR,PWDPLT)
         CALL YR_DOY(PWDINL,YR,IPLT)
 
@@ -380,6 +383,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND
 
       CHARACTER*1 PLME
       CHARACTER*2 CROP

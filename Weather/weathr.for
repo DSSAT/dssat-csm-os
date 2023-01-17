@@ -528,6 +528,7 @@ C-----------------------------------------------------------------------
       WEATHER % TAIRHR = TAIRHR
       WEATHER % TGRO   = TGRO  
       WEATHER % WINDHR = WINDHR
+      CALL PUT(WEATHER)
 
       CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
 

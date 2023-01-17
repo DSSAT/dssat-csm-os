@@ -55,7 +55,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real    	NH4(NL)         ! (IN)
     real    	NO3(NL)         ! (IN)
     real    	SNOW            ! (IN)
-    real    	SRAD            ! (IN)
+    real    	SRAD            ! (IN)    
     real    	SW(NL)          ! (IN)
     real    	TMAX            ! (IN)
     real    	TMIN            ! (IN)
@@ -690,6 +690,8 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real    sc
     real    dso
     real    watdmd
+    real    DEC, SNDN, SNUP, CLOUDS, ISINB, S0N ! DSSAT astro calculations
+    real    par_sim
     
     character 	(len = 6)	pltype      ! plan	!  Planting type (Ratoon or PlCane)    
     character 	(len = 6)	cropstatus  ! plan	!  Dead or Alive
@@ -1767,7 +1769,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     if(.not. fl_potential)then
         
         !--- Water Stress ---!
-        call waterstress(   2,            & 
+        call sc_waterstress(2,            & 
                             ndws,         &
                             ndews,        &
                             eop,          &
@@ -2370,9 +2372,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             !--- CO2 Assimilation by Canopy Layer ---!
             !----------------------------------------!
             
-            !--- Astrological calculations for difuse and direct PAR interception on hourly-step
-            call astro(doy, lat_sim, dayl, daylp, sinld, cosld, dsinb, dsinbe, &
-                    sc, dso) 
+            !--- Astrological calculations for difuse and direct PAR interception on hourly-step            
+            call DAYLEN(doy, lat_sim, dayl, DEC, SNDN, SNUP)               
+            call SOLAR(dayl, DEC, srad, lat_sim, CLOUDS, ISINB, S0N)
                         
             !--- Convert CO2 Assimilation rate to kgCO2 ha-1 h-1
             amax_conv   = amax / 1.e3 * 1.e4 * 3600 * 44.d0 / 1.e6
@@ -2385,27 +2387,38 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             amax_mod = amax_conv * tempfac_pho * swfacp * amaxfbfac * pho_fac_co2
             eff_mod  = eff_conv
             
-            !--- LAI for assimilation
+            !--- LAI for CO2 assimilation
             lai_ass  = lai
-                        
+             
+            !--- get daily PAR in moles[quanta]/m2-d from WEATHER % PAR
+            !--- Note: WEATHER % PAR = 0.42*SRAD, to use PAR = 0.50*SRAD use: par_sim = srad * 0.5 * 4.6  ! (moles[quanta]/m2-d) [MV 2022-08-02]
+            par_sim = WEATHER % PAR     ! (moles[quanta]/m2-d)
+            
             !--- Total assimilation for three canopy layers on hourly-step (Gaussian Integration) - Groudriaan
             if(dayl .gt. 0.d0) then
                 call totass(doy,                &
                             dayl,               &
+                            lat_sim,            &
+                            DEC,                &
+                            SNDN,               &
+                            SNUP,               &
+                            CLOUDS,             &
+                            ISINB,              &
+                            S0N,                &
                             amax_mod,           &
                             eff_mod,            &
                             lai_ass,            &
                             kdif,               &
                             c_scattering,       &
-                            srad * 1.e6,        & ! Solar Radiation [J/m2/day] - PAR [W/m2] is computed within radiat()
-                            sinld,              &
-                            cosld,              &
+                            srad,               & ! 
+                            par_sim,            &                            
                             dtg,                & ! Output
                             Acanopy,            & ! Output
                             Qleaf,              & ! Output
                             incpar,             & ! Output
                             photo_layer_act,    & ! Output
                             frac_li)              ! Output
+                            
             else
             
                 !--- no radiation [polar zone]

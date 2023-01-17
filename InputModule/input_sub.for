@@ -85,6 +85,10 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, YR_DOY, CLEAR, OPHEAD, PATHD, INTRO, JOIN_TRIM, 
+     &  IPEXP, IPSOIL_INP, IPVAR, IPSLIN, IPSLAN, SENS, INSOIL, 
+     &  WEATHR_INP, OPTEMPY2K, OPTEMPXY2K, OPGEN
+
       SAVE
 
       INCLUDE 'COMSOI.blk'
@@ -212,7 +216,7 @@ C-----------------------------------------------------------------------
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
          CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &        WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM) 
+     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
          IF (ISIMI .EQ. 'I') THEN
            IF (YRIC .LT. YRSIM .AND. YRIC .GT. 0) THEN
              YRSIM = YRIC
@@ -232,7 +236,7 @@ C-----------------------------------------------------------------------
          IF (ISWNIT .EQ. 'Y') THEN
             CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR,YRSIM)
+     &            SASC, NLAYR)    !,YRSIM)
          ENDIF
 !      ENDIF
       ENDIF
@@ -265,10 +269,10 @@ C-----------------------------------------------------------------------
                   CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,
      &                 PRCROP,WRESR,WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,
      &                 SWINIT,INH4,INO3,ISWITCH,
-     &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM) 
+     &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)    !,YRSIM) 
                   CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, 
      &            OC, PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR,YRSIM)
+     &            SASC, NLAYR)    !,YRSIM)
                   NSENS = 1
                ENDIF
             ENDIF

@@ -144,7 +144,10 @@ C=======================================================================
           WRITE(MSG(2),*) "Please check file: ",FILE
           WRITE(MSG(3),*) "Line: ",LINE
           WRITE(MSG(4),*) "Date: ",YRDOY
-          CALL WARNING(4,IERRKEY,MSG)
+!         2023-01-05 chp Replace error number 4 with IERRNUM from 
+!           calling subroutine
+!         CALL WARNING(4,IERRKEY,MSG)
+          CALL WARNING(IERRNUM,IERRKEY,MSG)
         ENDIF
         
 !-----------------------------------------------------------------------

@@ -231,7 +231,7 @@ C ***********************************************************************
 	USE MethaneConstants
 	USE MethaneVariables
       IMPLICIT NONE
-	INTEGER s,iterations2,i
+	INTEGER s,iterations2   !,i
 	REAL w(4,51),oldw(4,51)
 	REAL dv(51)
 	REAL olderror,error

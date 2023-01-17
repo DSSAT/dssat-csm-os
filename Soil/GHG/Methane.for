@@ -504,8 +504,8 @@ C-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
-      LABEL(1)  = 'CH4EC'; VALUE(1)  = CumCH4Emission  
-      LABEL(2)  = 'CO2EC'; VALUE(2)  = CumCO2emission
+      LABEL(1)  = 'CH4EM'; VALUE(1)  = CumCH4Emission  
+      LABEL(2)  = 'CO2EM'; VALUE(2)  = CumCO2emission
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
@@ -519,23 +519,23 @@ C-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE OpMethane
 C=======================================================================
-!Output Variable       Definition
-CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
-CO2ED  CO2emission     Daily CO2 emission (kg/ha)                               .
-CH4SBD TCH4Substrate   Daily portion of new CO2 proportioned to CH4 (kg[C]/ha)  .
-CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)                        .
-CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             .
-CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)                          .
-CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)                         .
-CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha)                            .
-CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha)                            .
-CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)                           .
-CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)                          .
-CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)                           .
-CH4BLD CH4_balance     Daily CH4 Balance (kg[C]/ha)                             .
-CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
-CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
-CH4EC  Cum CH4 emitted Cumulative methane emitted kg[C]/ha                      .
-CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)                    .
-CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)                       .
-CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)                        .
+! Output Variable        Definition
+! CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
+! CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
+! CO2ED  CO2emission     Daily CO2 emission (kg/ha)                               .
+! CH4SBD TCH4Substrate   Daily portion of new CO2 proportioned to CH4 (kg[C]/ha)  .
+! CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)                        .
+! CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             .
+! CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)                          .
+! CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)                         .
+! CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha)                            .
+! CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha)                            .
+! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)                           .
+! CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)                          .
+! CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)                           .
+! CH4BLD CH4_balance     Daily CH4 Balance (kg[C]/ha)                             .
+! CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
+! CH4EC  Cum CH4 emitted Cumulative methane emitted kg[C]/ha                      .
+! CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)                    .
+! CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)                       .
+! CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)                        .

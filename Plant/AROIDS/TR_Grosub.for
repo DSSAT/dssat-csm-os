@@ -7,7 +7,7 @@ C  Revision history
 C
 C  
 C  12/16/2004 CHP/US/RO Converted to modular format for inclusion in CSM.
-
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
@@ -42,8 +42,8 @@ C=======================================================================
      &    LAI, LEAFNO, LFWT, MAXLAI, NSTRES, PBIOMS,      !Output
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, MDATE, WTNUP,                         !Output
-     &    CARBO,                                          !Output
+     &    UNH4, UNO3, MDATE, WTNUP,                       !Output
+     &    CARBO, CropStatus,                              !Output
      &    PETWT)                              !addition RMO
 
 !-----------------------------------------------------------------------
@@ -58,7 +58,7 @@ C=======================================================================
       CHARACTER*2 CROP
       CHARACTER*12 FILEC
       CHARACTER*80 PATHCR
-      INTEGER   I,YEAR
+      INTEGER   I,YEAR, CropStatus
 !     Variable conversion RUEA = ceff
        
       REAL      SWFAC,TURFAC
@@ -563,6 +563,7 @@ C     TARO
              SUMDTT = P5 + 10  ! FORCED HARVEST 
 !            CHP 5/14/2008
              MDATE = YRDOY
+             CropStatus = 39
              RETURN
           ENDIF
         ENDIF
