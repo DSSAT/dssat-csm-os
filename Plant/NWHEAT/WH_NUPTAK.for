@@ -17,11 +17,14 @@
 !-----------------------------------------------------------------------
 !  Called by: WH_GroSub
 !=======================================================================
-      SUBROUTINE GrN_Ptl (CONTROL, ISWITCH,
+      SUBROUTINE GrN_Ptl (CONTROL, 
      &   mnc, nfact, nitmn, npot, optfr, part, pl_la, pl_nit,     !INPUT
      &   plantwt, sen_la,                                         !INPUT
      &   navl)                                                   !OUTPUT
 !-----------------------------------------------------------------------
+! 2023-01-17 chp removed unused variables from argument list:
+!  ISWITCH,
+
       USE ModuleDefs
       USE WH_module
       IMPLICIT NONE
@@ -51,8 +54,8 @@
 
 !     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
-      TYPE (ResidueType) SENESCE 
-      TYPE (SwitchType)  ISWITCH
+!     TYPE (ResidueType) SENESCE 
+!     TYPE (SwitchType)  ISWITCH
   
       DYNAMIC = CONTROL % DYNAMIC
 !----------------------------------------------------------------------- 

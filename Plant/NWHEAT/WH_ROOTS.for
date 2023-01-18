@@ -13,23 +13,27 @@ C  Called by: nwheats_crppr
 C  Calls    : integer nwheats_level, nwheats_ad_rtloss
 C=======================================================================
       SUBROUTINE nwheats_set_adf (CONTROL,
-     &    dlayr_nw, duldep, g_water_table, istage, nrlayr,       !Input 
+     &    dlayr_nw, duldep, g_water_table, nrlayr,       !Input 
      &    p3af, p4af, p5af, p6af, rtdep_nw,                      !Input
      &    satdep, swdep, xstag_nw, p_fdsw, p_adf, p_afs, p_stage, !Input
      &    nlayr_nw, adf, afs)                                    !Output
 
+! 2023-01-18 CHP removed unused variables from argument list:
+!  istage
 !     ------------------------------------------------------------------
       USE ModuleDefs
       USE WH_module    
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE, ERROR, nwheats_ad_rtloss, 
+     &  count_of_real_vals, TABEX, nwheats_level, sum_real_array
       SAVE
   
       integer count_of_real_vals
-      integer istage
+!     integer istage
       integer L         ! layer no.
       integer nlayr_nw  ! no. of layers
       integer nrlayr    ! no. of root layers
-      integer num_stage ! (maybe real?)
+!     integer num_stage ! (maybe real?)
       integer nwheats_level ! Function from nwheats. Returns layer  
                             ! number of depth in profile dlayr_nw
       integer YRDOY
@@ -45,14 +49,14 @@ C=======================================================================
       real af2_lai 
       real af2_tiller
       real af2_photo
-      real ALIN
+!     real ALIN
       real dlayr_nw(NL) !  
       real duldep(NL)   ! drained upper limit by soil layer      
       real fdsw             ! fraction of drainable soil water (0-1)
       real g_water_table    ! water table depth (soil parameter)
       real incorp_root(NL)   ! root to incorporate in each layer
       real incorp_rootn(NL)  ! root N to incorporate in each layer
-      real num_fdsw     !Number of parameter values returned for fdsw(?)
+!     real num_fdsw     !Number of parameter values returned for fdsw(?)
       real P3AF         ! Cul parameter: length of root not affected  
                         ! under aeration deficit
       real p4af         !Days until aeration deficit affects root growth
@@ -60,7 +64,7 @@ C=======================================================================
       real p6af         !          
       real p_adf(3)     ! aeration deficit (1 = no stress)
       real p_afs(2)     ! crop sensitivity to aeration deficit, as a 
-                        !  funct of phenol (1 = aeration deficit tolerant crop)
+                 !  funct of phenol (1 = aeration deficit tolerant crop)
       real p_fdsw(3)    ! fraction of drainable soil water in layer 
       real p_stage(2)   ! istage (growth stage): emergence - grain fill  
       real pl_nit(mxpart) !plant part nitrogen (g/plant)
@@ -211,7 +215,7 @@ C=======================================================================
  
       ! Get phenological sensitivity to AD
       if ((xstag_nw.ge.1).and.(xstag_nw.le.6)) then
-      ! afs is crop sensitivity to aeration deficit, as a funct of phenol (1 = aeration deficit tolerant crop)
+!       afs is crop sensitivity to aeration deficit, as a funct of phenol (1 = aeration deficit tolerant crop)
       afs = TABEX (p_afs, p_stage, xstag_nw, 2)
 !*!      afs = linear_interp_real (xstag, p_stage, p_afs, num_stage)
 !*! Temp solution - FSR   afs = ALIN (xstage, p_stage, p_afs, num_stage)
@@ -272,9 +276,11 @@ C=======================================================================
       USE ModuleDefs    
       USE WH_module
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE, ERROR, nwheats_root_distrib, 
+     &  nwheats_level
       SAVE
   
-      integer count_of_real_vals
+!     integer count_of_real_vals
       real dlayr_nw(NL)      ! Soil thickness in layer L (mm) NWHEAT
       real layer_top (NL)    ! depth of top of each layer
       real layer_bottom (NL) ! depth of bottom of each layer
@@ -466,7 +472,7 @@ C=======================================================================
          ! - - - - - - all root dry matter - - - - - - -
       root_sum = plantwt(root_part) * PLTPOP * gm2kg /sm2ha
 
-      call nwheats_root_distrib (CONTROL,
+      call nwheats_root_distrib (
      &  dlayr_nw, rtdep_nw, root_sum,                             !Input
      &  root_array)                                              !Output
 
@@ -474,7 +480,7 @@ C=======================================================================
          ! - - - - - - root N only - - - - - - -
       root_sum = pl_nit(root_part) * PLTPOP * gm2kg /sm2ha
 
-      call nwheats_root_distrib (CONTROL,
+      call nwheats_root_distrib (
      &  dlayr_nw, rtdep_nw, root_sum,                             !Input
      &  root_array)                                              !Output
 
@@ -577,13 +583,17 @@ C  03/02/2012  FSR adapted from nwheats
 C  Called by: nwheats_ad_rtloss, nwheats_add_sen_roots, nwheats_harvest_crop, 
 C  Calls    : nwheats_level, sum_real_array
 C=======================================================================
-      SUBROUTINE nwheats_root_distrib (CONTROL,
+      SUBROUTINE nwheats_root_distrib (
      &  dlayr_nw, rtdep_nw, root_sum,                             !Input
      &  root_array)                                              !Output
 !     ------------------------------------------------------------------
+! 2023-01-18 CHP removed unused variables from argument list:
+!  CONTROL
+
       USE ModuleDefs
       USE WH_module
       IMPLICIT NONE
+      EXTERNAL nwheats_level, sum_real_array
       SAVE
   
       real root_array(NL)   ! (OUTPUT) array to contain
@@ -597,19 +607,19 @@ C=======================================================================
       real root_distrb_sum      ! sum of root distribution array
       real dlayr_nw(NL)     ! Soil thickness in layer L (mm) NWHEAT
       real rtdep_nw
-      real pl_nit(mxpart)       ! plant part nitrogen (g/plant)
-      real plantwt(mxpart)      ! plant part weights (g/plant)
-      real PLTPOP
+!     real pl_nit(mxpart)       ! plant part nitrogen (g/plant)
+!     real plantwt(mxpart)      ! plant part weights (g/plant)
+!     real PLTPOP
       real sum_real_array
 !**!      integer NL            ! 
-      integer nrlayr            ! number of layers with roots
+!     integer nrlayr            ! number of layers with roots
       integer nwheats_level     ! Function from nwheats. Returns layer  
                                 ! number of depth in profile dlayr_nw
       REAL        gm2kg
       PARAMETER   (gm2kg = 0.001)   ! from NWheat.
       REAL        sm2ha
       PARAMETER   (sm2ha = 0.0001)  ! from NWheat.
-      TYPE (ControlType) CONTROL
+!     TYPE (ControlType) CONTROL
        
 ! distribute roots over profile to root_depth
 
@@ -665,14 +675,18 @@ C  Calls to : nwheats_level (function), nheats_swafc (function),
 C             nwheats_rtdp_swf (function)
 C=======================================================================
       SUBROUTINE nwheats_rtdp (CONTROL, SOILPROP, 
-     &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,      !Input
-     &  lldep, nrlayr, p3af, rtdep_nw,                            !Input
-     &  RTDEP, RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep, wr,    !Input
-     &  rtdnew)                                                   !Output
+     &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,  !Input
+     &  lldep, nrlayr, p3af, rtdep_nw,                        !Input
+     &  RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep,           !Input
+     &  rtdnew)                                               !Output
+! 2023-01-18 CHP removed unused variables from argument list:
+!  RTDEP, wr, 
 !     ------------------------------------------------------------------
       USE ModuleDefs
       USE WH_module
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE, ERROR, nwheats_level, nwheats_swafc, 
+     &  count_of_real_vals, nwheats_rtdp_swf
       SAVE
   
       integer count_of_real_vals
@@ -700,17 +714,17 @@ C=======================================================================
       real optfr    ! fraction of optimum conditions (0-1)
       real P3AF     ! Cul parameter: length of root not affected  
                           ! under aeration deficit       
-      REAL RTDEP
+!     REAL RTDEP
       real rtdep_nw
       real rtdnew    ! (OUTPUT) increase in root depth (mm)
       real rtrate(mxstag) !root growth rate potential(mm /deg day)
       REAL SDEPTH     ! Sowing depth, cm 
       real stress_factor
-      real sum_real_array
+!     real sum_real_array
       real swdep(NL)
       REAL swdef(10)
       real sw_factor   
-      real wr(NL) ! root weighting by soil layer
+!     real wr(NL) ! root weighting by soil layer
       real nem(NL) ! nem (9) changed by JZW 
 
 *+  Initial Data Values
@@ -827,27 +841,27 @@ C----------------------------------------------------------------------
 C----------------------------------------------------------------------
 C                 DYNAMIC = RATE
 C----------------------------------------------------------------------
-      ! JZW add the following. These should be called in the DYNAMIC = INTEGR
+!       JZW add the following. These should be called in the DYNAMIC = INTEGR
       ELSEIF(DYNAMIC.EQ.RATE) THEN
          ! increase root depth   ! sowing     = 8, stgdur(8) = 2
          if (stgdur(sowing).eq.1 .and. istage.eq.sowing) then
-             ! initialise root depth
-             ! this version (ceres wheat) does take account of sowing depth.
+!              initialise root depth
+!              this version (ceres wheat) does take account of sowing depth.
              rtdep_nw = SDEPTH * 10 ! Units from cm to mm.
          else if (istage .eq. germ) then !germ = 9
             ! soil moisture does not affect rooting depth early on
       !**!     nrlayr = nwheats_level(rtdep_nw)
             nrlayr = nwheats_level (rtdep_nw,dlayr_nw,NL)
 
- !*!        optfr = nem(nrlayr) ! Need to introduce nematode effect (0-1.0)
+!*!        optfr = nem(nrlayr) ! Need to introduce nematode effect (0-1.0)
        
             optfr = 1.0
             rtdnew = rtrate(germ) * dtt * optfr
          endif
       rtdnew  = rtrate(istage)*optfr*dtt !*95./phint in orig ceres wheat
  
-      ! This root depth increase must not take roots too far into any water table.
-      ! --------------------------------------------------------------------------
+!       This root depth increase must not take roots too far into any water table.
+!       --------------------------------------------------------------------------
       new_depth = rtdep_nw + rtdnew
 !*!   new_depth = u_bound (new_depth, g_water_table + p3af)
       new_depth = MIN (new_depth, g_water_table + p3af)
@@ -866,16 +880,17 @@ C----------------------------------------------------------------------
  
              ! increase root depth   ! sowing     = 8, stgdur(8) = 2
       if (stgdur(sowing).eq.1 .and. istage.eq.sowing) then
-             ! initialise root depth
-             ! this version (ceres wheat) does take account of sowing depth.
+!              initialise root depth
+!              this version (ceres wheat) does take account of sowing depth.
          rtdep_nw = SDEPTH * 10 ! Units from cm to mm.
 
-      else if (istage .eq. germ) then !germ = 9 JZW, istage 9 will not go es to Dynamic = INTEGR
+      else if (istage .eq. germ) then 
+!       germ = 9 JZW, istage 9 will not go es to Dynamic = INTEGR
          ! soil moisture does not affect rooting depth early on
 !**!     nrlayr = nwheats_level(rtdep_nw)
          nrlayr = nwheats_level (rtdep_nw,dlayr_nw,NL)
 
- !*!        optfr = nem(nrlayr) ! Need to introduce nematode effect (0-1.0)
+!*!        optfr = nem(nrlayr) ! Need to introduce nematode effect (0-1.0)
          optfr = 1.0
          rtdnew = rtrate(germ) * dtt * optfr
  
@@ -923,14 +938,15 @@ cnh senthold
 !*!      optfr = min(stress_factor, sw_factor, nem(nrlayr))
          !  replace nem by wr
          !optfr = min(stress_factor, sw_factor)        
-         optfr = min(stress_factor, sw_factor, nem(nrlayr))  ! remove nem() until 
-                                                ! further notice - FSR
+         optfr = min(stress_factor, sw_factor, nem(nrlayr))  
+                              ! remove nem() until further notice - FSR
       endif
  
-      rtdnew  = rtrate(istage)*optfr*dtt !*95./phint in orig ceres wheat
+      rtdnew  = rtrate(istage)*optfr*dtt 
+!               *95./phint in orig ceres wheat
  
-      ! This root depth increase must not take roots too far into any water table.
-      ! --------------------------------------------------------------------------
+!       This root depth increase must not take roots too far into any water table.
+!       --------------------------------------------------------------------------
       new_depth = rtdep_nw + rtdnew
 !*!   new_depth = u_bound (new_depth, g_water_table + p3af)
       new_depth = MIN (new_depth, g_water_table + p3af)
@@ -961,15 +977,20 @@ C  Calls to : nwheats_level (integer function), nheats_swafc (real function),
 C             nwheats_rnfac (real function)
 C=======================================================================
       SUBROUTINE nwheats_rtlv (CONTROL, SOILPROP, sno3, snh4, 
-     &  dlayr_nw, istage, nrlayr, p2af, p3af, PLTPOP,             !Input
-     &  nwheats_level, rtdep_nw, stgdur, wr,                      !Input
-     &  duldep, lldep, swdep, nlayr_nw, rlv_nw, gro_wt, adf,      !Input
-       ! duldep, lldep should be removed if we use SOILPROP !!!!!!!!!!!
-     &  rlvnew)                                                   !Output
+     &  dlayr_nw, istage, nrlayr, p2af, p3af, PLTPOP,            !Input
+     &  nwheats_level, rtdep_nw, stgdur, wr,                     !Input
+     &  duldep, lldep, swdep, rlv_nw, gro_wt, adf,               !Input
+     &  rlvnew)                                                  !Output
+
+! 2023-01-18 CHP removed unused variables from argument list:
+!  nlayr_nw
+
 !     ------------------------------------------------------------------
       USE ModuleDefs
       USE WH_module
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE, ERROR, warning, sum_real_array, 
+     &  nwheats_swafc, nwheats_rnfac
       SAVE
   
       integer istage
@@ -987,7 +1008,7 @@ C=======================================================================
       real gro_wt(mxpart)  ! root, leaf, lfsheath, stem, grain
       integer L ! layer number
 !**!      integer NL     
-      integer nlayr_nw  ! Number of layers in specific soil profile
+!     integer nlayr_nw  ! Number of layers in specific soil profile
       integer nrlayr ! number of layers with roots
       integer nwheats_level ! Function from nwheats. Returns layer  
                             ! number of depth in profile dlayr_nw
@@ -1006,7 +1027,7 @@ C=======================================================================
                 ! not effected under aeration deficit 
       real PLTPOP
       real rldf (NL) ! root length density factor for each soil 
-                         ! layer used to calculate new root growth distribution
+                ! layer used to calculate new root growth distribution
       real rlnew_nw ! new root growth to be added to total root system 
                     ! (mm root/mm^2 soil)
       
@@ -1016,7 +1037,7 @@ C=======================================================================
       real rtdep_nw
       real rtdepl ! root depth in deepest root layer (mm)
       real trldf_nw  ! the total root length density factor for root 
-                        ! growth for all layers in which roots occur. (0-NL)
+              ! growth for all layers in which roots occur. (0-NL)
       real rlvmax
       real sum_real_array
       real wr(NL) ! root weighting by soil layer 
@@ -1159,10 +1180,11 @@ C=======================================================================
       else
              ! we have increase in root length
  
-          ! convert the daily growth of the root system (g/plant) to root
-          ! length (mm root/mm^2 soil surface area)
+!           convert the daily growth of the root system (g/plant) to root
+!           length (mm root/mm^2 soil surface area)
          
-         rlnew_nw  = rlrate * gro_wt(root_part) *(PLTPOP/sm2smm) !JZW root_part  = 1, gro_wt is not given
+         rlnew_nw  = rlrate * gro_wt(root_part) *(PLTPOP/sm2smm) 
+!         JZW root_part  = 1, gro_wt is not given
         !   mm           mm             g              plant/m2
         !--------  = ------- *  --------------- *  ---------------
         !   mm3          g          plant             1000000 mm2/m2
@@ -1171,27 +1193,27 @@ C=======================================================================
 !*!      do 1000 layer = 1,nrlayr
          do L = 1,nrlayr
  
-             ! now, calculate the 0-1 root length density factor for root
-             ! growth in a layer.  It is calculated from the soil water
-             ! availability factor, a root growth weighting factor for
-             ! soil depth, and a 0-1 root growth factor dependent on mineral
-             ! N availability.
+!              now, calculate the 0-1 root length density factor for root
+!              growth in a layer.  It is calculated from the soil water
+!              availability factor, a root growth weighting factor for
+!              soil depth, and a 0-1 root growth factor dependent on mineral
+!              N availability.
 cnh senthold
          ! calculate the depth of the bottom of the layer
-         layer_bottom = layer_bottom + dlayr_nw(L) ! JZW layer_bottom is DS(L)?
+         layer_bottom = layer_bottom + dlayr_nw(L) 
  
-         ! No root growth in layers with AD.  Layers < p3af are
-         ! exempt from this criteria to make sure that some root is
-         ! always left behind in the top of the profile.
+!          No root growth in layers with AD.  Layers < p3af are
+!          exempt from this criteria to make sure that some root is
+!          always left behind in the top of the profile.
  
          if ((adf(L).lt.p2af).and.(layer_bottom.gt.p3af)) then
             ! there is AD and depth > p3af
             optfr = 0.0
             goto 1001
          else
-            ! no AD or layer too shallow so use original factors
-           ! optfr = nwheats_swafc(L, duldep, lldep, NL, swdep) ! add by JZW
-            !*! optfr = min (nwheats_swafc(L), nwheats_rnfac(L)) 
+!            no AD or layer too shallow so use original factors
+!            optfr = nwheats_swafc(L, duldep, lldep, NL, swdep) ! add by JZW
+!           *! optfr = min (nwheats_swafc(L), nwheats_rnfac(L)) 
             optfr = min (nwheats_swafc(L,duldep, lldep, NL, swdep),
      &             nwheats_rnfac(L, sno3, snh4, SOILPROP))
             continue
@@ -1207,9 +1229,9 @@ cnh senthold
  1001    continue
       endif
       
-          ! adjust the root length density factor of the deepest layer
-          ! in which roots are growing, for the fraction of that layer that
-          ! has been explored.
+!           adjust the root length density factor of the deepest layer
+!           in which roots are growing, for the fraction of that layer that
+!           has been explored.
       !rtdepl is root depth in deepest root layer (mm)
       ! JZW should be rtdep_nw - ds_nw(nrlayr-1)
       rtdepl = dlayr_nw(nrlayr) - (cumdep_nw - rtdep_nw)
@@ -1219,8 +1241,8 @@ cnh senthold
 !*!   rldf(nrlayr) = rldf(nrlayr)*divide (rtdepl, dlayr_nw(nrlayr), 0.0) 
       rldf(nrlayr) = rldf(nrlayr) * rtdepl / dlayr_nw(nrlayr)
  
-         ! get the total root length density factor for root growth for all
-         ! layers in which roots occur.
+!          get the total root length density factor for root growth for all
+!          layers in which roots occur.
  
       trldf_nw = sum_real_array (rldf, nrlayr)
 cnh senthold
@@ -1231,9 +1253,9 @@ cnh senthold
       else
       endif
  
-         ! distribute newly formed root length
-         ! throughout the soil profile from the amount of new root length
-         ! per unit area of soil.
+!          distribute newly formed root length
+!          throughout the soil profile from the amount of new root length
+!          per unit area of soil.
  
 !**!  call fill_real_array (rlvnew, 0.0, mxlayr)      
             do L=1, NL
@@ -1276,23 +1298,28 @@ C  20/09/2012  FSR adapted from nwheats
 C  Called by: nwheats_process, 
 C  Calls to : nwheats_root_distrib
 C=======================================================================
-      SUBROUTINE nwheats_add_sen_roots (CONTROL,
+      SUBROUTINE nwheats_add_sen_roots (
      &  dlayr_nw, rootsen, rtdep_nw,                             !Input
      &  deepest_layer, root_array)                              !Output
+
+! 2023-01-18 CHP removed unused variables from argument list:
+!  CONTROL
+
 !     ------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL nwheats_root_distrib, nwheats_level
       SAVE
         
-      integer istage
+!     integer istage
       integer deepest_layer   ! deepest layer in which roots grow
-      integer layer                 ! layer number
+!     integer layer                 ! layer number
 !**!      integer NL    ! max number of layers permitted in any soil(?)
       integer nwheats_level ! Function from nwheats. Returns layer  
                                ! number of depth in profile dlayr_nw
       real dlayr_nw(NL)! Thickness increment of soil layer L  (mm)
-      real dlt_dm_incorp(NL) ! root residue (kg/ha)
-      real dlt_N_incorp(NL)  ! root residue N (kg/ha)
+!     real dlt_dm_incorp(NL) ! root residue (kg/ha)
+!     real dlt_N_incorp(NL)  ! root residue N (kg/ha)
       real root_array(NL)   ! (OUTPUT) array to contain
                                 ! distributed material
       real rootsen  ! Senesced root
@@ -1302,7 +1329,7 @@ C=======================================================================
 !      real cum_depth            ! cumulative depth (mm)
 !      integer L                 ! layer number ()
       
-      TYPE (ControlType) CONTROL
+!     TYPE (ControlType) CONTROL
 
 *  Implementation Section ----------------------------------
 
@@ -1317,14 +1344,14 @@ C=======================================================================
 !*!      call nwheats_root_distrib (dlt_dm_incorp
 !*!  :                          , rootsen * plants * gm2kg /sm2ha)
      
-         call nwheats_root_distrib (CONTROL,
+         call nwheats_root_distrib (
      &      dlayr_nw, rtdep_nw, root_sum,                         !Input
      &      root_array)                                          !Output
 
 !*!      call nwheats_root_distrib (dlt_N_incorp
 !*!  :                          , rootnsen * plants * gm2kg /sm2ha)
      
-         call nwheats_root_distrib (CONTROL,
+         call nwheats_root_distrib (
      &      dlayr_nw, rtdep_nw, root_sum,                         !Input
      &      root_array)                                          !Output
 C=======================================================================

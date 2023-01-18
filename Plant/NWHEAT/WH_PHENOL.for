@@ -43,8 +43,8 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE WH_module
       IMPLICIT  NONE
-      EXTERNAL FIND, GETLUN, ERROR, IGNORE, WARNING, SNOWFALL, WH_COLD, 
-     &  STAGEFLAGS, NWHEATS_GERMN
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, WARNING, SNOWFALL, WH_COLD, 
+     &  StageFlags, nwheats_germn
 
       SAVE
 !----------------------------------------------------------------------
@@ -281,12 +281,15 @@ C-----------------------------------------------------------------------
 
       CHARACTER*6 ECOTYP
       INTEGER ISECT
-      CHARACTER*355 C255  ! JG incraesed for large ecotype file
+      CHARACTER*355 C255  ! JG increased for large ecotype file
       CHARACTER*16  ECONAM
       INTEGER LUNCRP
       CHARACTER*92 FILECC
       CHARACTER*80 C80
       CHARACTER*78 MESSAGE(10)
+
+!     Ecotype parameters read, but not used here
+      REAL P5AF, P6AF, ADLAI, ADTIL, ADPHO, STEMN, MXNUP, MXNCR, WFNU
 
 !     CHP added for P model
       REAL SeedFrac, VegFrac
@@ -535,6 +538,7 @@ C-----------------------------------------------------------------------
               READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
      &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
      &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1
@@ -666,12 +670,11 @@ cbak  ears that is not included in lai calculation.
         endif
 
 !----------------------------------------------------------------------
-      CALL WH_COLD (CONTROL, ISWITCH, FILEIO, IDETO,              !Input
-     &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
-     &    tempcr, tiln, VSEN, weather,                            !Input
-     &    YRDOY,                                                  !Input
-     &    pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,          !I/O
-     &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
+      CALL WH_COLD (CONTROL, ISWITCH, FILEIO,              !Input
+     &    istage, leafno, PLTPOP,  VREQ, tbase,            !Input
+     &    tempcr, tiln, VSEN, weather,                     !Input
+     &    pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,  !In/Out
+     &    nwheats_vfac, sen_la, vd, vd1, vd2)              !Output
 !-----------------------------------------------------------------------
       CALL StageFlags (CONTROL, FILEIO,
      &    dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
@@ -883,12 +886,11 @@ cbak  ears that is not included in lai calculation.
      &          ISTAGE)   !Input ISTAGE=8, & calculate output
               If (ISTAGE .eq. 9) then
                    !JZW add the following for the case of istage=9
-                CALL WH_COLD (CONTROL, ISWITCH, FILEIO, IDETO,    !Input
-     &           istage, leafno, PLTPOP,  VREQ, tbase,            !Input
-     &           tempcr, tiln, VSEN, weather,                     !Input
-     &           YRDOY,                                           !Input
-     &           pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,   !I/O
-     &           nwheats_vfac, sen_la, vd, vd1, vd2)              !Outpt
+          CALL WH_COLD (CONTROL, ISWITCH, FILEIO,              !Input
+     &        istage, leafno, PLTPOP,  VREQ, tbase,            !Input
+     &        tempcr, tiln, VSEN, weather,                     !Input
+     &        pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,  !In/Out
+     &        nwheats_vfac, sen_la, vd, vd1, vd2)              !Output
               endif
               ! from nwheats_phase: JZW add in Aug, 2014
               sumstgdtt(istage) = sumstgdtt(istage) + dtt
@@ -963,10 +965,9 @@ cbak  ears that is not included in lai calculation.
      &                            *  min(nwheats_vfac, nwheats_ppfac)  !
               endif                                                    !
       !----------------------------------------------------------------- 
-          CALL WH_COLD (CONTROL, ISWITCH, FILEIO, IDETO,          !Input
+          CALL WH_COLD (CONTROL, ISWITCH, FILEIO,                 !Input
      &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
      &    tempcr, tiln, VSEN, weather,                            !Input
-     &    YRDOY,                                                  !Input
      &    pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,          !I/O
      &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
       !----------------------------------------------------------------- 
@@ -1036,11 +1037,10 @@ cbak  ears that is not included in lai calculation.
 !*!       endif   
 !*! End NWheat function nwheats_ppfac
       !----------------------------------------------------------------- 
-          CALL WH_COLD (CONTROL, ISWITCH, FILEIO, IDETO,          !Input
+          CALL WH_COLD (CONTROL, ISWITCH, FILEIO,
      &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
      &    tempcr, tiln, VSEN, weather,                            !Input
-     &    YRDOY,                                                  !Input
-     &    pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,         !I/O
+     &    pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,          !I/O
      &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
       !-----------------------------------------------------------------  
             ! from nwheats_phase

@@ -57,10 +57,10 @@
       !! DSSAT: KG2PPM(1) = 1.0/(BD1*1.E-01*DLAYR(1))
 
       nwheats_fac = 100.0 /( bd(layer)*dlayr_nw(layer))
-      !   mg[N]      100             ha        m2      1000000mg   mm
-      !  ------   =------------ * --------*---------- * ---------*-------
-      !   kg[soil]  mm*  g/cm3     10000m2  10000cm2    kg         0.1cm
-      !*! call pop_routine (myname)
+!         mg[N]      100             ha        m2      1000000mg   mm
+!        ------   =------------ * --------*---------- * ---------*-------
+!         kg[soil]  mm*  g/cm3     10000m2  10000cm2    kg         0.1cm
+!      *! call pop_routine (myname)
       return
       end
 
@@ -74,12 +74,13 @@
       USE ModuleDefs
       USE WH_module
       implicit none
+      EXTERNAL nwheats_level
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
 
 *+  Sub-Program Arguments    *****OK******
-      integer    stagno                ! (OUTPUT) phenological stage number
+      integer    stagno            ! (OUTPUT) phenological stage number
 
 *+  Purpose
 *      determine germination date
@@ -103,14 +104,14 @@
       integer    nwheats_level          ! function
 
 *+  Constant Values
-      real       grmsw                 ! required mean plant extractable soil
-      parameter (grmsw = 0.02)         !   water for germination (mm/mm)
+      real       grmsw            ! required mean plant extractable soil
+      parameter (grmsw = 0.02)    !   water for germination (mm/mm)
 *
-      real       grmsw0                ! plant extractable soil water in
-      parameter (grmsw0 = 0.0)         !   seedling layer inadequate for
-                                       !   germination (mm/mm)
+      real       grmsw0           ! plant extractable soil water in
+      parameter (grmsw0 = 0.0)    !   seedling layer inadequate for
+                                  !   germination (mm/mm)
 *
-      character  myname*(*)            ! name of subroutine
+      character  myname*(*)       ! name of subroutine
       parameter (myname = 'nwheats_germn')
 *
       real       wtmean                ! weight for weighted mean
@@ -140,10 +141,10 @@
  
       !*! call push_routine (myname)
  
-          ! determine if soil water content is sufficient to allow germination.
-          ! either soil water content of the seeded layer must be > the
-          ! lower limit or a weighted average of the water content of the
-          ! seeded layer and next layer below must be adequate for germination.
+!           determine if soil water content is sufficient to allow germination.
+!           either soil water content of the seeded layer must be > the
+!           lower limit or a weighted average of the water content of the
+!           seeded layer and next layer below must be adequate for germination.
  
       if (      stagno.eq.sowing
      :    .and. stgdur(sowing).ge.1) then
@@ -270,22 +271,27 @@ cnh to allow watching of these variables
 
 *     ==================================================================
       ! find actual grain uptake by translocation
-      subroutine nwheats_grnit (CONTROL, ISWITCH,                 !Input
-     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input ! JG added MXNCR 7/23/20
+      subroutine nwheats_grnit (CONTROL,                  !Input
+     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        pnout)                                             !Output
+
+! 2023-01-18 CHP removed unused variables from argument list:
+!  ISWITCH,
+
 *     ==================================================================
 
       USE ModuleDefs
       USE WH_module
       implicit none
+      EXTERNAL nwheats_gndmd, GrN_Ptl, sum_real_array, warning, ERROR, count_of_real_vals
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
 
 *+  Sub-Program Arguments      ******OK*******
-      !*! real       pnout (*)             ! (OUTPUT) plant N taken out from plant parts ()
+!      *! real       pnout (*)             ! (OUTPUT) plant N taken out from plant parts ()
       real pnout (mxpart)
       CHARACTER*78 MSG(1)
 
@@ -320,20 +326,20 @@ cnh to allow watching of these variables
 
 
       real delta_N_fraction ! N as proportion of daily C transfer to
-                            ! today's increment in C in grain (growth + translocation)
+              ! today's increment in C in grain (growth + translocation)
       real delta_grainC     
       ! JZW add the following
       real gro_wt(mxpart), trans_wt (mxpart) 
-      ! Real p_max_grain_nc_ratio ! JZW get from crop.apr: ! JG replaced with MXNCR 7/23/20
-      ! max_grain_nc_ratio = 0.04;  0.035=20%;  .04=23% protein, max n:c ratio of grain growth 
-      ! parameter (p_max_grain_nc_ratio = 0.04) ! JG replaced with MXNCR 7/23/20
+!       Real p_max_grain_nc_ratio ! JZW get from crop.apr: ! JG replaced with MXNCR 7/23/20
+!       max_grain_nc_ratio = 0.04;  0.035=20%;  .04=23% protein, max n:c ratio of grain growth 
+!       parameter (p_max_grain_nc_ratio = 0.04) ! JG replaced with MXNCR 7/23/20
       Real MXNCR  ! JG added 7/23/20
       real sum_real_array 
-      real rgnfil
+!     real rgnfil
       REAL g_navl(mxpart) 
       REAL mnc(mxpart)  ! Minimum N concentration, by plant part
       INTEGER ISTAGE 
-      Real tempmx, tempmn, dtt, gpp, g_gndmd, g_rgnfil
+      Real tempmx, tempmn, dtt, gpp  !, g_gndmd, g_rgnfil
       REAL nfact(10) ! Nstress sensitivity by plant organ (0-1)
       REAL nitmn  ! nitrogen minimum level
       REAL npot   ! potential N available for transfer  (g/part) 
@@ -343,7 +349,7 @@ cnh to allow watching of these variables
       REAL plantwt(mxpart) 
       REAL sen_la   ! Senesced leaf area, mm2/plant      nwheat
       TYPE (ControlType) CONTROL
-      TYPE (SwitchType) ISWITCH
+!     TYPE (SwitchType) ISWITCH
       
 *- Implementation Section ----------------------------------
  
@@ -363,22 +369,24 @@ cnh to allow watching of these variables
          if (delta_grainC .gt. 0.) then
            delta_N_fraction = gndmd / delta_grainC
          else
-           delta_N_fraction = 0. !JZW add this case in Oct, 2014. On 1st day of emergence, goes here
+           delta_N_fraction = 0. 
+!          JZW add this case in Oct, 2014. On 1st day of emergence, goes here
          endif
          
+!          JG replaced p_max_grain_nc_ratio with MXNCR 7/23/20
 !         delta_N_fraction = u_bound (delta_N_fraction
 !     :                              ,p_max_grain_nc_ratio)
          delta_N_fraction = min(delta_N_fraction
-     &                              ,MXNCR)     ! JG replaced p_max_grain_nc_ratio with MXNCR 7/23/20
+     &                              ,MXNCR)     
          gndmd = delta_N_fraction * delta_grainC
  
-              ! -------------- get grain N potential (supply) -----------
+!               -------------- get grain N potential (supply) -----------
  
       !*! call nwheats_gnptl (navl) 
       ! FSR Created from NWheat subroutine "nwheats_gnptl"
       !Calculates N available for transfer to grain (g/plant) from each
       !       plant part. 
-      Call GrN_Ptl (CONTROL, ISWITCH,
+      Call GrN_Ptl (CONTROL, 
      &   mnc, nfact, nitmn, npot, optfr, part, pl_la, pl_nit,     !INPUT
      &   plantwt, sen_la,                                         !INPUT
      &   navl)            
@@ -411,8 +419,8 @@ cnh added for watch purposes
          pnout(leaf_part) = navl(leaf_part)
          pnout(stem_part) = navl(stem_part)
          pnout(lfsheath_part) = navl(lfsheath_part) 
-         !JZW run EEST, 1938198, when reach here, pnout(sten_part) is not assigned, until finish endif
-         !navl(stem_part) was 5.3382293*10-5, pnout(stem_part) is 5.338304x10-5
+!         JZW run EEST, 1938198, when reach here, pnout(sten_part) is not assigned, until finish endif
+!         navl(stem_part) was 5.3382293*10-5, pnout(stem_part) is 5.338304x10-5
  
 ! take the rest of the grain n uptake from the roots
          pnout(root_part)  =  gnuptk - tnavil
@@ -449,8 +457,8 @@ cnh added for watch purposes
           endif
 
           if  (pnout(part). gt. navl(part) ) then
-              ! pnout is pntrans calculated by nwheats_grnit for finding actual grain uptake by translocation
-              ! navl (mxpart) is N available for transfer to grain
+!               pnout is pntrans calculated by nwheats_grnit for finding actual grain uptake by translocation
+!               navl (mxpart) is N available for transfer to grain
               msg(1) = "pnout bound check >navl error"
               call warning(1, ERRKEY, msg)
               pnout(part) = navl(part) !JZW add this case in Oct, 2014
@@ -466,6 +474,7 @@ cnh added for watch purposes
 *     ===========================================================
       USE ModuleDefs
       implicit none
+      EXTERNAL count_of_real_vals, warning
       !*! include 'const.inc'              ! err_user
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -537,6 +546,7 @@ cnh added for watch purposes
 *     ===========================================================
       USE WH_module
       implicit none
+      external sum_real_array, error, warning
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
@@ -684,6 +694,8 @@ cjh  end of correction
       USE ModuleDefs
       USE WH_module
       implicit none
+      external count_of_real_vals, getlun, error, ignore, 
+     &  nwheats_ndmd, sum_real_array, nwheats_nsupply
       !*! include 'convert.inc'            ! gm2kg, sm2ha
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -731,7 +743,7 @@ cjh  end of correction
       REAL gro_wt(mxpart)
       REAL pl_nit(mxpart)
       REal cnc(mxpart)
-      real       cnit
+!     real       cnit
       real pcarbo
       REAL            carbh
       REAL            dlayr_nw(NL), swdep(NL)
@@ -743,8 +755,8 @@ cjh  end of correction
       REAL PLTPOP
       real EXNH4, MNNH4, EXNO3, MNNO3, WFNU, PNUPR
       real MXNUP
-      ! real p_max_n_uptake  , btk 03/02/2017
-      ! PARAMETER (p_max_n_uptake = .6)  !(g/m2) max N uptake per day ; commented out by btk, 03/02/2017
+!       real p_max_n_uptake  , btk 03/02/2017
+!       PARAMETER (p_max_n_uptake = .6)  !(g/m2) max N uptake per day ; commented out by btk, 03/02/2017
       character*5 G_UPTAKE_SOURCE
       Integer count_of_real_vals
       REAL  ha2sm
@@ -850,14 +862,14 @@ C     The variable "CONTROL" is of type "ControlType".
          snup_no3 = 0.0
          !*! call fill_real_array (snuptk_nh4, 0.0, mxlayr)
          snup_nh4 = 0.0
-            ! N demand by plant
+!             N demand by plant
  
-            ! pndem is in common and is being changed here
-            ! because it is needed for cumulative totals. It is not a state.
-            ! Needs to be fixed ????????????????? JNGH 230693
-            ! State variables must be only changed by deltas at the top level,
-            ! and deltas can be changed at lower levels if they are in
-            ! common blocks. Is this acceptable ????
+!             pndem is in common and is being changed here
+!             because it is needed for cumulative totals. It is not a state.
+!             Needs to be fixed ????????????????? JNGH 230693
+!             State variables must be only changed by deltas at the top level,
+!             and deltas can be changed at lower levels if they are in
+!             common blocks. Is this acceptable ????
       !*! call nwheats_ndmd (pndem)
 * ====================================================================
       CALL nwheats_ndmd (xstag_nw,  gro_wt, plantwt,       !Input
@@ -867,13 +879,15 @@ C     The variable "CONTROL" is of type "ControlType".
       n_demand = sum_real_array (pndem, mxpart)
  
       if (g_uptake_source .eq. 'calc') then
-            ! First we put a cap on the total uptake that can occur
-            ! on any given day by bounding the demand. Note: we do
-            ! not bound the "real" n demand, just the value here.
-         !*! capped_n_demand = u_bound(n_demand,p_max_n_uptake/plants)
-         ! capped_n_demand = min(n_demand,p_max_n_uptake/PLTPOP) !  btk 03/02/2017
-          IF (PLTPOP .GT. 0.0) THEN ! Added to void divisions by zero (TF - 01/18/2022)
-            capped_n_demand = min(n_demand,MXNUP/PLTPOP) ! changed by btk 03/02/2017
+!             First we put a cap on the total uptake that can occur
+!             on any given day by bounding the demand. Note: we do
+!             not bound the "real" n demand, just the value here.
+!         *! capped_n_demand = u_bound(n_demand,p_max_n_uptake/plants)
+!          capped_n_demand = min(n_demand,p_max_n_uptake/PLTPOP) !  btk 03/02/2017
+!         Added to void divisions by zero (TF - 01/18/2022)
+          IF (PLTPOP .GT. 0.0) THEN 
+!           changed by btk 03/02/2017
+            capped_n_demand = min(n_demand,MXNUP/PLTPOP) 
           ELSE
             capped_n_demand = 0
           ENDIF             
@@ -898,7 +912,8 @@ C     The variable "CONTROL" is of type "ControlType".
 !*!     :                   ,n_supply/ha2sm/gm2kg/plants
 !*!     :                   ,0.0)
          if (n_supply .gt. 0.) then
-           IF (PLTPOP .GT. 0.0) THEN ! Added to void divisions by zero (TF - 01/18/2022)
+!          Added to void divisions by zero (TF - 01/18/2022)
+           IF (PLTPOP .GT. 0.0) THEN 
             scalef = capped_n_demand/(n_supply/ha2sm/gm2kg/PLTPOP)
            ELSE
             scalef = 0
@@ -956,8 +971,8 @@ C     The variable "CONTROL" is of type "ControlType".
          ELSE
             pnup (part) = 0
          ENDIF         !    g           kg                      1
-         ! --------  = ----------*     -------------------------------------- ?????
-         !  plant         ha          (10000m2/ha) * (0.001kg/g) * (plant/m2)
+!          --------  = ----------*     -------------------------------------- 
+!           plant         ha          (10000m2/ha) * (0.001kg/g) * (plant/m2)
 1300  continue
  
       !*! call pop_routine (myname)

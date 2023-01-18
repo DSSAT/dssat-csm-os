@@ -32,6 +32,8 @@
       USE ModuleDefs 
       USE TF_module
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, OPVIEW, READA, READA_Dates, 
+     &   GetDesc, SUMVALS, EvaluateDat, TIMDIF
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE

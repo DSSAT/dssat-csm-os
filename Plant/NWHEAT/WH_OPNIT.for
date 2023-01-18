@@ -25,6 +25,7 @@ C  Calls:     None
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 
       INTEGER DAS, DYNAMIC, MDATE, NOUTDN, YRSIM
@@ -94,8 +95,9 @@ C  Calls:     None
   230   FORMAT('@YEAR DOY   DAS   DAP',
      &        '   CNAD   GNAD   GN%D   VN%D   NUPC',
  !     &        '   CNAD   GNAD   VNAD   GN%D   VN%D   NUPC',    
-     &        '   LNAD   SNAD   LN%D   SN%D   RN%D   SNN0C   SNN1C', !LNAD (WTNLF)is leaf N, SNAED (WTNST) is stem N
+     &        '   LNAD   SNAD   LN%D   SN%D   RN%D   SNN0C   SNN1C', 
      &        ' NFact1 NFact2 NFact3 NFact4  RootN lfshthN')
+!LNAD (WTNLF)is leaf N, SNAED (WTNST) is stem N
 !CNAD(WTNCAN)      !Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha    
         !cumul. senes. N soil and surface
         CUMSENSURFN = 0.0

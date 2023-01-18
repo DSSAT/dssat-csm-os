@@ -32,6 +32,7 @@ C  Calls:     None
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 !----------------------------------------------------------------------
       INTEGER NOUTDG

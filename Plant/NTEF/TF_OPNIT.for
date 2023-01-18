@@ -26,6 +26,7 @@ C  Calls:     None
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 
       INTEGER DAS, DYNAMIC, MDATE, NOUTDN, YRSIM

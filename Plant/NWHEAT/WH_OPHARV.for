@@ -31,6 +31,8 @@
       USE ModuleDefs 
       USE WH_module
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, OPVIEW, READA, READA_Dates, 
+     &  GetDesc, SUMVALS, EvaluateDat
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
