@@ -59,6 +59,8 @@
 !     ------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT  NONE
+      EXTERNAL P_IPPLNT, P_Demand, P_Uptake, OPPlantP, P_Partition, 
+     &  PValue
       SAVE
 !     ------------------------------------------------------------------
 !     Interface variables
