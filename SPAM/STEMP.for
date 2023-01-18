@@ -301,8 +301,11 @@ C=======================================================================
         TMA(K) = TMA(K-1)
       END DO
 
-      TMA(1) = (1.0 - ALBEDO) * (TAVG + (TMAX - TAVG) * 
-     &      SQRT(SRAD * 0.03)) + ALBEDO * TMA(1)
+C-KRT Bruce Kimball suggested soil temp edit.
+C      TMA(1) = (1.0 - ALBEDO) * (TAVG + (TMAX - TAVG) * 
+C     &      SQRT(SRAD * 0.03)) + ALBEDO * TMA(1)
+      TMA(1) = TAVG
+C-KRT End of edits
 
 !     Prevents differences between release & debug modes:
 !       Keep only 4 decimals. chp 06/03/03
