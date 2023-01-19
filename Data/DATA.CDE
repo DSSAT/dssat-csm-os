@@ -1377,8 +1377,6 @@ N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha)
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
 N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 N2OED  N2O emitted/d   Daily N2O emissions from soil (g[N]/ha)                  .
-N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
-N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
 N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
 N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
 N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .
