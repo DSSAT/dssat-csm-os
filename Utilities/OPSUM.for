@@ -178,7 +178,7 @@ C-----------------------------------------------------------------------
       CHARACTER*9 DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT
       CHARACTER*6 TMINA_TXT, TMAXA_TXT, SRADA_TXT, DAYLA_TXT
       CHARACTER*7 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
-      CHARACTER*6 N2OEC_TXT, N2OGC_TXT
+      CHARACTER*6 N2OEC_TXT  !, N2OGC_TXT
 
 !     Evaluate.OUT variables:
       INTEGER ICOUNT   !Number of observations for this crop
@@ -715,7 +715,7 @@ C-------------------------------------------------------------------
           CALL PrintText(N2OEM, "(F6.0)", N2OEC_TXT) !kg/ha
         ENDIF
 
-        CALL PrintText(N2OEM*1000.,"(F6.1)",N2OGC_TXT)   !g/ha
+!       CALL PrintText(N2OEM*1000.,"(F6.1)",N2OGC_TXT)   !g/ha
 
         IF (FBWAH .GT. 1.E-3) THEN
           FBWAH = FBWAH * 10.

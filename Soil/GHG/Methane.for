@@ -33,7 +33,7 @@ C=======================================================================
       USE MethaneConstants
       USE MethaneVariables
       IMPLICIT NONE
-      EXTERNAL OpMethane, SteadyState
+      EXTERNAL OpMethane, SteadyState, setup
       SAVE
 
       INTEGER n1,NLAYR,i,j, DYNAMIC
@@ -452,7 +452,8 @@ C  07/02/2021 CHP Written
         ELSE
           OPEN (UNIT = LUN, FILE = 'Methane.OUT', STATUS = 'NEW',
      &      IOSTAT = ERRNUM)
-          WRITE(LUN,'("*Methane Daily output file")')
+          WRITE(LUN,'("*Methane Daily output file",/,
+     &    "  All values are kg/ha")')
         ENDIF
 
         IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
@@ -464,7 +465,8 @@ C  07/02/2021 CHP Written
             CALL HEADER(SEASINIT, LUN, RUN)
           ENDIF
 
-          write(LUN,'(5a)') 
+          write(LUN,'(a,/,5a)') 
+     & "All values are kg[C]/ha."
      & "@YEAR DOY   DAS",
      &  "     CO2TD     CO2ED    CH4SBD    CH4SFD    CH4STD    CH4PRD",
      &  "    CH4COD    CH4LCD     CH4ED    CH4PLD    CH4EBD    CH4DID",

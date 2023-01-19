@@ -683,13 +683,13 @@ C-----------------------------------------------------------------------
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
-      CO2ED = CH4_data % CO2emission
-      N2OED = N2O_data % N2O_emitted
-      CH4ED = CH4_data % CH4Emission
+      CO2ED = CH4_data % CO2emission * 1000.  !g/d
+      N2OED = N2O_data % N2O_emitted * 1000.  !g/d
+      CH4ED = CH4_data % CH4Emission * 1000.  !g/d
 
-      CO2EC = CH4_data % CumCO2Emission
-      N2OEC = N2O_data % CN2O_emitted
-      CH4EC = CH4_data % CumCH4Emission
+      CO2EC = CH4_data % CumCO2Emission       !kg/d
+      N2OEC = N2O_data % CN2O_emitted         !kg/d
+      CH4EC = CH4_data % CumCH4Emission       !kg/d
 
 !     Calculation of cumulative CO2-equivalent emissions
 !     CO2 - convert from units of C to units of CO2
@@ -705,8 +705,9 @@ C-----------------------------------------------------------------------
       TCEQC = CCEQC + NCEQC + MCEQC
 
         IF (IDETN .EQ. 'Y') THEN
-          WRITE (GHGLUN,'(I5,I4.3,I6,6F9.2,4I9)') YEAR, DOY, DAS, 
-     &      CO2ED, N2OED, CH4ED, CO2EC, N2OEC, CH4EC,
+          WRITE (GHGLUN,'(I5,I4.3,I6,I9,2F9.2,I9,2F9.2,4I9)')  
+     &      YEAR, DOY, DAS, 
+     &      NINT(CO2ED), N2OED, CH4ED, NINT(CO2EC), N2OEC, CH4EC,
      &      NINT(CCEQC), NINT(NCEQC), NINT(MCEQC), NINT(TCEQC)
         ENDIF
 
