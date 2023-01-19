@@ -6,21 +6,25 @@ C  Called by: CROPGRO
 C  Calls    : None
 C=======================================================================
         SUBROUTINE FOR_CH2OREF(CONTROL,
-     &  ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, CADPV, CRREF,  !INPUT
-     &  LFSCMOB, LFSNMOB, LRREF, PG, PRREF, RTSCMOB,        !INPUT
-     &  RTSNMOB, RTWT, SHELWT, SLDOT, SRDOT, SRSCMOB,       !INPUT
-     &  SRSNMOB, SSDOT, SSRDOT, STMWT, STRWT, STSCMOB,      !INPUT
-     &  STSNMOB, TYPCREF, TYPLREF, TYPPREF, WCRLF, WCRRT,   !INPUT
-     &  WCRSH,WCRSR, WCRST,                                 !INPUT
-     &  WTLF, XLAI,                                         !INPUT
-     &  CDEBIT, CADVG, PGAVL,                               !INPUT/OUTPUT
-     &  LFCDEBT, RTCDEBT, SRCDEBT, STCDEBT )                !OUTPUT
+     &  ALPHL, ALPHR, ALPHS, ALPHSR, CADPV, CRREF,        !INPUT
+     &  LFSCMOB, LRREF, PG, PRREF, RTSCMOB,               !INPUT
+     &  RTWT, SLDOT, SRDOT, SRSCMOB,                      !INPUT
+     &  SSDOT, SSRDOT, STMWT, STRWT, STSCMOB,             !INPUT
+     &  TYPCREF, TYPLREF, TYPPREF, WCRLF, WCRRT,          !INPUT
+     &  WCRSR, WCRST,                                     !INPUT
+     &  WTLF, XLAI,                                       !INPUT
+     &  CDEBIT, CADVG, PGAVL,                             !INPUT/OUTPUT
+     &  LFCDEBT, RTCDEBT, SRCDEBT, STCDEBT )              !OUTPUT
+
+! 2023-01-18 CHP removed unused variables from argument list:
+! ALPHSH, LFSNMOB, RTSNMOB, SHELWT, SRSNMOB, STSNMOB, WCRSH,
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR, GETLUN, IGNORE, CURV
       SAVE
       CHARACTER*3 TYPCREF, TYPLREF, TYPPREF 
       CHARACTER*1  BLANK
@@ -34,17 +38,17 @@ C=======================================================================
       INTEGER LUNIO, LNUM, FOUND
       INTEGER DYNAMIC, II, PATHL, LUNCRP, ERR, LINC, ISECT
 
-      REAL ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, CADPV, CADVG,
-     &   PG, PGAVL, PGLFMX, PHTMAX, RTWT, SHELWT, STMWT,    
-     &   STRWT, WCRLF, WCRRT, WCRSH, WCRSR, WCRST, WTLF, XLAI
+      REAL ALPHL, ALPHR, ALPHS, ALPHSR, CADPV, CADVG,  !ALPHSH, 
+     &   PG, PGAVL, PGLFMX, PHTMAX, RTWT, STMWT,  !SHELWT,    
+     &   STRWT, WCRLF, WCRRT, WCRSR, WCRST, WTLF, XLAI  !WCRSH, 
 
       REAL CRREF(4), LRREF(4), PRREF(4)
       REAL CFILL, LFILL, PFILL, CSTATUS, CDEBIT, LFCCAP, 
      &   PGSTATUS, PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,
      &   RTCCAP, SRCCAP, STCCAP
       REAL LFMCCAP, RTMCCAP, SRMCCAP, STMCCAP
-      REAL LFSCMOB, LFSNMOB, RTSCMOB, RTSNMOB, 
-     &   SRSCMOB, SRSNMOB, STSCMOB, STSNMOB
+      REAL LFSCMOB, RTSCMOB, !LFSNMOB, RTSNMOB, 
+     &   SRSCMOB, STSCMOB   !SRSNMOB, , STSNMOB
 
       REAL LFCDEBT, RTCDEBT, SRCDEBT, STCDEBT
       REAL SLDOT, SRDOT, SSDOT, SSRDOT

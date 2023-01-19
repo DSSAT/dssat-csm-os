@@ -46,6 +46,12 @@ C=======================================================================
         ! parameters, hourly weather data.
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL FOR_IPPLNT, FOR_PHOTO, FOR_PHENOL, FOR_DORMANCY, 
+     &  FOR_PEST, FOR_DEMAND, FOR_INCOMP, FOR_SENMOB, FOR_NUPTAK, 
+     &  FOR_NFIX, FOR_PODS, FOR_PODDET, FOR_CH2OREF, FOR_VEGGR, 
+     &  FOR_ROOTS, FOR_GROW, for_opmod, for_opgrow, for_mobil, 
+     &  for_opmob, FOR_RESPIR, FOR_FREEZE, FORAGE_HARVEST,
+     &  SUMVALS, FOR_PLANTNBAL, FOR_HRES_CGRO
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 DETACH, IDETO, ISWNIT, ISWSYM,
@@ -384,29 +390,28 @@ C-----------------------------------------------------------------------
         CALL FOR_DEMAND(RUNINIT,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
-     &  LFSCMOB, LFSNMOB, LNGPEG, NDLEAF, NMINEP, NSTRES,!Input
-     &  PAR, PCNL, PCNRT, PCNST, PGAVL, PHZACC, PUNCSD,   !Input
-     &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
+     &  LNGPEG, NDLEAF, NMINEP, NSTRES,                   !Input
+     &  PAR, PGAVL, PHZACC, PUNCSD,                       !Input
+     &  PUNCTR, PLTPOP, RPROAV, RTWT,                     !Input
      &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
-     &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,  !Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
-     &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
-     &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,    !Input
-     &  WTSHE, XPOD, YRDOY,                               !Input
-     &  NVEG0, NR1, NR2, NR5, NR7, YRSIM,                 !Input
+     &  SSDOT, SSRDOT, STMWT,                             !Input
+     &  TAVG, TDUMX, TGRO, TURFAC,                        !Input 
+     &  VSTAGE, WCRLF, WCRRT, WCRST,                      !Input
+     &  WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,           !Input
+     &  WTSHE, YRDOY,                                     !Input
+     &  NVEG0, NR1, NR2, NR7, YRSIM,                      !Input
 
      &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMOBR, PHTIM, PNTIM, POTCAR,              !Output
+     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,   !Output
+     &  NDMVEG, PHTIM, PNTIM, POTCAR,                     !Output
      &  POTLIP, SDGR, TURADD, XFRT,                       !Output
-     &  NMOBSR, PPMFAC, PPTFAC, PCNSR, STRWT,             !Input
-     &  WCRSR, WLIDOT, WNRSR, XLAI,                       !Input
+     &  PPTFAC, STRWT,                                    !Input?
+     &  WCRSR,                                            !Input?
      &  AGRSTR, FNINSR, FRSTR,                            !Output
-
      &  FRSTRF, FRSTRM, FRSTRMX, LRMOB,                   !Output
      &  NMOBSRN, NMOBSRX, NRMOB, NVSTL, NVSTR, NVSTS,     !Output
-     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)           !Output
+     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)            !Output
 
 !-----------------------------------------------------------------------
 C    Call plant COMPosition INitialization (for data input)
@@ -492,15 +497,15 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 
         CALL FOR_CH2OREF(CONTROL,
-     &  ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, CADPV, CRREF, !INPUT
-     &  LFSCMOB, LFSNMOB, LRREF, PG, PRREF, RTSCMOB,       !INPUT
-     &  RTSNMOB, RTWT, SHELWT, SLDOT, SRDOT, SRSCMOB,      !INPUT
-     &  SRSNMOB, SSDOT, SSRDOT, STMWT, STRWT, STSCMOB,     !INPUT
-     &  STSNMOB, TYPCREF, TYPLREF, TYPPREF, WCRLF, WCRRT,  !INPUT
-     &  WCRSH,WCRSR, WCRST,                                !INPUT
-     &  WTLF, XLAI,                                        !INPUT
-     &  CDEBIT, CADVG, PGAVL,                              !INPUT/OUTPUT
-     &  LFCDEBT, RTCDEBT, SRCDEBT, STCDEBT )               !OUTPUT
+     &  ALPHL, ALPHR, ALPHS, ALPHSR, CADPV, CRREF,        !INPUT
+     &  LFSCMOB, LRREF, PG, PRREF, RTSCMOB,               !INPUT
+     &  RTWT, SLDOT, SRDOT, SRSCMOB,                      !INPUT
+     &  SSDOT, SSRDOT, STMWT, STRWT, STSCMOB,             !INPUT
+     &  TYPCREF, TYPLREF, TYPPREF, WCRLF, WCRRT,          !INPUT
+     &  WCRSR, WCRST,                                     !INPUT
+     &  WTLF, XLAI,                                       !INPUT
+     &  CDEBIT, CADVG, PGAVL,                             !INPUT/OUTPUT
+     &  LFCDEBT, RTCDEBT, SRCDEBT, STCDEBT )              !OUTPUT
 
 
 !-----------------------------------------------------------------------
@@ -805,29 +810,28 @@ C     Initialize pest coupling point and damage variables, first day only
       CALL FOR_DEMAND(SEASINIT,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
-     &  LFSCMOB, LFSNMOB, LNGPEG, NDLEAF, NMINEP, NSTRES,!Input
-     &  PAR, PCNL, PCNRT, PCNST, PGAVL, PHZACC, PUNCSD,   !Input
-     &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
+     &  LNGPEG, NDLEAF, NMINEP, NSTRES,                   !Input
+     &  PAR, PGAVL, PHZACC, PUNCSD,                       !Input
+     &  PUNCTR, PLTPOP, RPROAV, RTWT,                     !Input
      &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
-     &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,  !Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
-     &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
-     &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,    !Input
-     &  WTSHE, XPOD, YRDOY,                               !Input
-     &  NVEG0, NR1, NR2, NR5, NR7, YRSIM,                 !Input
+     &  SSDOT, SSRDOT, STMWT,                             !Input
+     &  TAVG, TDUMX, TGRO, TURFAC,                        !Input 
+     &  VSTAGE, WCRLF, WCRRT, WCRST,                      !Input
+     &  WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,           !Input
+     &  WTSHE, YRDOY,                                     !Input
+     &  NVEG0, NR1, NR2, NR7, YRSIM,                      !Input
 
      &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMOBR, PHTIM, PNTIM, POTCAR,              !Output
+     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,   !Output
+     &  NDMVEG, PHTIM, PNTIM, POTCAR,                     !Output
      &  POTLIP, SDGR, TURADD, XFRT,                       !Output
-     &  NMOBSR, PPMFAC, PPTFAC, PCNSR, STRWT,             !Input
-     &  WCRSR, WLIDOT, WNRSR, XLAI,                       !Input
+     &  PPTFAC, STRWT,                                    !Input?
+     &  WCRSR,                                            !Input?
      &  AGRSTR, FNINSR, FRSTR,                            !Output
-
      &  FRSTRF, FRSTRM, FRSTRMX, LRMOB,                   !Output
      &  NMOBSRN, NMOBSRX, NRMOB, NVSTL, NVSTR, NVSTS,     !Output
-     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)           !Output
+     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)            !Output
 
 !-----------------------------------------------------------------------
 !     Call plant COMPosition INitialization
@@ -1245,29 +1249,28 @@ C-----------------------------------------------------------------------
       CALL FOR_DEMAND(EMERG, 
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
-     &  LFSCMOB, LFSNMOB, LNGPEG, NDLEAF, NMINEP, NSTRES,!Input
-     &  PAR, PCNL, PCNRT, PCNST, PGAVL, PHZACC, PUNCSD,   !Input
-     &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
+     &  LNGPEG, NDLEAF, NMINEP, NSTRES,                   !Input
+     &  PAR, PGAVL, PHZACC, PUNCSD,                       !Input
+     &  PUNCTR, PLTPOP, RPROAV, RTWT,                     !Input
      &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
-     &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,  !Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
-     &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
-     &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,    !Input
-     &  WTSHE, XPOD, YRDOY,                               !Input
-     &  NVEG0, NR1, NR2, NR5, NR7, YRSIM,                 !Input
+     &  SSDOT, SSRDOT, STMWT,                             !Input
+     &  TAVG, TDUMX, TGRO, TURFAC,                        !Input 
+     &  VSTAGE, WCRLF, WCRRT, WCRST,                      !Input
+     &  WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,           !Input
+     &  WTSHE, YRDOY,                                     !Input
+     &  NVEG0, NR1, NR2, NR7, YRSIM,                      !Input
 
      &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMOBR, PHTIM, PNTIM, POTCAR,              !Output
+     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,   !Output
+     &  NDMVEG, PHTIM, PNTIM, POTCAR,                     !Output
      &  POTLIP, SDGR, TURADD, XFRT,                       !Output
-     &  NMOBSR, PPMFAC, PPTFAC, PCNSR, STRWT,             !Input
-     &  WCRSR, WLIDOT, WNRSR, XLAI,                       !Input
+     &  PPTFAC, STRWT,                                    !Input?
+     &  WCRSR,                                            !Input?
      &  AGRSTR, FNINSR, FRSTR,                            !Output
-
      &  FRSTRF, FRSTRM, FRSTRMX, LRMOB,                   !Output
      &  NMOBSRN, NMOBSRX, NRMOB, NVSTL, NVSTR, NVSTS,     !Output
-     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)           !Output
+     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)            !Output
 
 !-----------------------------------------------------------------------
       CALL FOR_GROW(CONTROL, ISWITCH, EMERG, SOILPROP, 
@@ -1578,15 +1581,15 @@ C      and used for later seed development.
 
       IF (DAS .LT. NR1) THEN
         CALL FOR_CH2OREF(CONTROL,
-     &  ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, CADPV, CRREF, !INPUT
-     &  LFSCMOB, LFSNMOB, LRREF, PG, PRREF, RTSCMOB,       !INPUT
-     &  RTSNMOB, RTWT, SHELWT, SLDOT, SRDOT, SRSCMOB,      !INPUT
-     &  SRSNMOB, SSDOT, SSRDOT, STMWT, STRWT, STSCMOB,     !INPUT
-     &  STSNMOB, TYPCREF, TYPLREF, TYPPREF, WCRLF, WCRRT,  !INPUT
-     &  WCRSH,WCRSR, WCRST,                                !INPUT
-     &  WTLF, XLAI,                                        !INPUT
-     &  CDEBIT, CADVG, PGAVL,                              !INPUT/OUTPUT
-     &  LFCDEBT, RTCDEBT, SRCDEBT, STCDEBT )               !OUTPUT
+     &  ALPHL, ALPHR, ALPHS, ALPHSR, CADPV, CRREF,        !INPUT
+     &  LFSCMOB, LRREF, PG, PRREF, RTSCMOB,               !INPUT
+     &  RTWT, SLDOT, SRDOT, SRSCMOB,                      !INPUT
+     &  SSDOT, SSRDOT, STMWT, STRWT, STSCMOB,             !INPUT
+     &  TYPCREF, TYPLREF, TYPPREF, WCRLF, WCRRT,          !INPUT
+     &  WCRSR, WCRST,                                     !INPUT
+     &  WTLF, XLAI,                                       !INPUT
+     &  CDEBIT, CADVG, PGAVL,                             !INPUT/OUTPUT
+     &  LFCDEBT, RTCDEBT, SRCDEBT, STCDEBT )              !OUTPUT
 
       ELSE 
         CADVG = 0.0
@@ -1608,29 +1611,28 @@ C-----------------------------------------------------------------------
       CALL FOR_DEMAND(INTEGR, 
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
-     &  LFSCMOB, LFSNMOB, LNGPEG, NDLEAF, NMINEP, NSTRES,!Input
-     &  PAR, PCNL, PCNRT, PCNST, PGAVL, PHZACC, PUNCSD,   !Input
-     &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
+     &  LNGPEG, NDLEAF, NMINEP, NSTRES,                   !Input
+     &  PAR, PGAVL, PHZACC, PUNCSD,                       !Input
+     &  PUNCTR, PLTPOP, RPROAV, RTWT,                     !Input
      &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
-     &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,  !Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
-     &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
-     &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,    !Input
-     &  WTSHE, XPOD, YRDOY,                               !Input
-     &  NVEG0, NR1, NR2, NR5, NR7, YRSIM,                 !Input
+     &  SSDOT, SSRDOT, STMWT,                             !Input
+     &  TAVG, TDUMX, TGRO, TURFAC,                        !Input 
+     &  VSTAGE, WCRLF, WCRRT, WCRST,                      !Input
+     &  WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,           !Input
+     &  WTSHE, YRDOY,                                     !Input
+     &  NVEG0, NR1, NR2, NR7, YRSIM,                      !Input
 
      &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMOBR, PHTIM, PNTIM, POTCAR,              !Output
+     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,   !Output
+     &  NDMVEG, PHTIM, PNTIM, POTCAR,                     !Output
      &  POTLIP, SDGR, TURADD, XFRT,                       !Output
-     &  NMOBSR, PPMFAC, PPTFAC, PCNSR, STRWT,             !Input
-     &  WCRSR, WLIDOT, WNRSR, XLAI,                       !Input
+     &  PPTFAC, STRWT,                                    !Input?
+     &  WCRSR,                                            !Input?
      &  AGRSTR, FNINSR, FRSTR,                            !Output
-
      &  FRSTRF, FRSTRM, FRSTRMX, LRMOB,                   !Output
      &  NMOBSRN, NMOBSRX, NRMOB, NVSTL, NVSTR, NVSTS,     !Output
-     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)           !Output
+     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)            !Output
 
 C-----------------------------------------------------------------------
 C    Compute N Available From Seed, During Early Growth

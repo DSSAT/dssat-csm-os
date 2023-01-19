@@ -19,6 +19,7 @@ C=======================================================================
      &    NPEST, PCPID, PCTID, PDCF1, PID)                !Output
 C----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE
       SAVE
 
       CHARACTER*1   BLANK

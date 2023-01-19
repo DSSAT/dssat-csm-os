@@ -19,17 +19,18 @@ C
 C  Calls  :
 C=======================================================================
       SUBROUTINE forage_harvest(CONTROL,FILECC,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
-     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
-     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,MOWC,RSPLC,
-     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                WTCO, WTLO, WTSO)
+     &     RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &     WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &     WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+     &     AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht, !Input/Output
+     &     fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,MOWC,RSPLC,
+     &     DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &     WTCO, WTLO, WTSO)
       
       USE MODULEDEFS
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, Y2K_DOY, Y4K_DOY, yr_doy
 
       INTEGER MOWLUN,ISECT,ERR
       INTEGER,ALLOCATABLE,DIMENSION(:) :: TRNO,DATE
