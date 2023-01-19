@@ -51,21 +51,21 @@
           RETURN
         ENDIF
 
-        ! Open Work.out file
-        IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) 
-     &    CALL Getlun ('WORK.OUT',fnumwrk)
-        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-        IF (.NOT.fopen) THEN
-          IF (RUN.EQ.1) THEN
-            OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
-            WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
-          ELSE
-            OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT',POSITION='APPEND',
-     &      ACTION = 'READWRITE')
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
-          ENDIF
-        ENDIF
+         ! Open Work.out file
+!         IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) 
+!      &    CALL Getlun ('WORK.OUT',fnumwrk)
+!         INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!         IF (.NOT.fopen) THEN
+!           IF (RUN.EQ.1) THEN
+!             OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!             WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
+!           ELSE
+!             OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT',POSITION='APPEND',
+!      &      ACTION = 'READWRITE')
+!             WRITE(fnumwrk,*) ' '
+!             WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
+!           ENDIF
+!         ENDIF
 
 ! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.          
 !        ! Set Reads file #
@@ -221,11 +221,11 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         CALL UCASE(MODEL)
         
         ! Re-open Work.out and Reads.out if only require 1 run info..   
-        IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
-          CLOSE (FNUMWRK, STATUS = 'DELETE')
-          OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
-     &      ACTION = 'READWRITE')
-          WRITE(FNUMWRK,*) 'CSCER  Cropsim-Ceres Crop Module '
+!         IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
+!           CLOSE (FNUMWRK, STATUS = 'DELETE')
+!           OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
+!      &      ACTION = 'READWRITE')
+!           WRITE(FNUMWRK,*) 'CSCER  Cropsim-Ceres Crop Module '
 ! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.          
 !          CLOSE (FNUMREA, STATUS = 'DELETE')
 !          OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
@@ -233,7 +233,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 !          WRITE(FNUMREA,*)' '
 !          WRITE(FNUMREA,*)
 !     &      ' File closed and re-opened to avoid generating huge file'
-        ENDIF
+!         ENDIF
 
         ! Create composite run variable
         IF (RUNI.LT.10) THEN
@@ -260,31 +260,31 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         GENFLCHK = CROP//GENFLCHK(3:15)
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'INGENO',varno)
         IF (varno.EQ.'-99   ') THEN
-          WRITE(fnumwrk,*)' '
-          WRITE(fnumwrk,*)'Cultivar number not found!'
-          WRITE(fnumwrk,*)'Maybe an error in the the X-file headings'
-          WRITE(fnumwrk,*)'(eg.@-line dots connected to next header)'
-          WRITE(fnumwrk,*)'Please check'
+!          WRITE(fnumwrk,*)' '
+!          WRITE(fnumwrk,*)'Cultivar number not found!'
+!          WRITE(fnumwrk,*)'Maybe an error in the the X-file headings'
+!          WRITE(fnumwrk,*)'(eg.@-line dots connected to next header)'
+!          WRITE(fnumwrk,*)'Please check'
           WRITE (*,*) ' Problem reading the X-file'
           WRITE (*,*) ' Cultivar number not found!'
           WRITE (*,*) ' Maybe an error in the the X-file headings'
           WRITE (*,*) ' (eg.@-line dots connected to next header)'
           WRITE (*,*) ' Program will have to stop'
-          WRITE (*,*) ' Check WORK.OUT for details of run'
+          !WRITE (*,*) ' Check WORK.OUT for details of run'
           STOP ' '
         ENDIF
         IF (varno.EQ.'-99   ') THEN
-          WRITE(fnumwrk,*)' '
-          WRITE(fnumwrk,*)'Cultivar number not found!'
-          WRITE(fnumwrk,*)'Maybe an error in the the X-file headings'
-          WRITE(fnumwrk,*)'(eg.@-line dots connected to next header)'
-          WRITE(fnumwrk,*)'Please check'
+!          WRITE(fnumwrk,*)' '
+!          WRITE(fnumwrk,*)'Cultivar number not found!'
+!          WRITE(fnumwrk,*)'Maybe an error in the the X-file headings'
+!          WRITE(fnumwrk,*)'(eg.@-line dots connected to next header)'
+!          WRITE(fnumwrk,*)'Please check'
           WRITE (*,*) ' Problem reading the X-file'
           WRITE (*,*) ' Cultivar number not found!'
           WRITE (*,*) ' Maybe an error in the the X-file headings'
           WRITE (*,*) ' (eg.@-line dots connected to next header)'
           WRITE (*,*) ' Program will have to stop'
-          WRITE (*,*) ' Check WORK.OUT for details of run'
+          !WRITE (*,*) ' Check WORK.OUT for details of run'
           STOP ' '
         ENDIF
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'CNAME',vrname)
@@ -476,14 +476,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             ENDIF
             INQUIRE (FILE = cfgdfile,EXIST = fflag)
             IF (.NOT.fflag) THEN
-              WRITE (fnumwrk,*)
-     &         'Could not find Cfgdfile: ',cfgdfile(1:60)
+!              WRITE (fnumwrk,*)
+!     &         'Could not find Cfgdfile: ',cfgdfile(1:60)
               WRITE (*,*) ' Could not find Cfgdfile: ',cfgdfile(1:60)
               WRITE (*,*) ' Program will have to stop'
-              WRITE (*,*) ' Check WORK.OUT for details of run'
+              !WRITE (*,*) ' Check WORK.OUT for details of run'
               STOP ' '
             ELSE
-              WRITE (fnumwrk,*) ' Config.file: ',CFGDFILE(1:60)
+!              WRITE (fnumwrk,*) ' Config.file: ',CFGDFILE(1:60)
             ENDIF
 
             cufile = crop//modname(3:8)//'.CUL'
@@ -527,7 +527,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         IF (FILEIOT .NE. 'DS4') THEN
           !IF (CUDIRFLE.NE.CUDIRFLP .OR. VARNO.NE.VARNOP) THEN
            IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
-            WRITE (fnumwrk,*) ' '
+!            WRITE (fnumwrk,*) ' '
             CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
             CALL CUREADR (CUDIRFLE,VARNO,'P1V',p1v)
             CALL CUREADR (CUDIRFLE,VARNO,'P1D',p1d)
@@ -764,9 +764,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         CALL SPREADRA (SPDIRFLE,'TRDV1','4',trdv1)
         CALL SPREADRA (SPDIRFLE,'TRDV2','4',trdv2)
         IF (tbam.gt.-90.0) THEN
-          WRITE (FNUMWRK,*)' '
-          WRITE (FNUMWRK,*)' Base temperature for post anthesis period'
-          WRITE (FNUMWRK,*)' changed from ',trdv2(1),' to ',tbam        
+!          WRITE (FNUMWRK,*)' '
+!          WRITE (FNUMWRK,*)' Base temperature for post anthesis period'
+!          WRITE (FNUMWRK,*)' changed from ',trdv2(1),' to ',tbam        
           trdv2(1) = tbam
           ! NB. TBAM is only used experimentally;should not be in coeff.files
         ENDIF
@@ -784,38 +784,38 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         LAFST = 1.6       ! Stage at which incremment in lf size changes
         RSCLX = 0.2       ! Reserves concentration in leaves,maximum   
         
-        WRITE(fnumwrk,*) ' '
-        WRITE(fnumwrk,'(A18)')' RUN OVERVIEW     '
-        WRITE(fnumwrk,*)' MODEL   ',MODEL
-        WRITE(fnumwrk,*)' MODULE  ',MODNAME
-        !WRITE(fnumwrk,'(A10,I6)')'  VERSION ',VERSION
-        WRITE(fnumwrk, "(A10,I1,'.',I1,'.',I1,'.',I3.3)")
-     &   '  VERSION ', VERSION
-        WRITE(fnumwrk,*)' RNMODE  ',RNMODE
-
-        WRITE(fnumwrk,*)' '
-        WRITE(fnumwrk,'(A13,A1)')'  N SWITCH   ',ISWNIT
-        WRITE(fnumwrk,'(A13,A1)')'  H2O SWITCH ',ISWWAT
-        WRITE(fnumwrk,'(A18,A1)')'  PLANTING SWITCH ',IPLTI
-
-        WRITE(fnumwrk,*)' '
-        WRITE(fnumwrk,'(A10,I8  )')'  RUN     ',RUN    
-        WRITE(fnumwrk,*)' '
-        WRITE(fnumwrk,'(A23,A10)')'  EXPERIMENT           ',excode
-        WRITE(fnumwrk,'(A21, I3)')'  TREATMENT          ',tn
-        WRITE(fnumwrk,'(A23,I1)') '  CROP COMPONENT       ',CN
+!        WRITE(fnumwrk,*) ' '
+!        WRITE(fnumwrk,'(A18)')' RUN OVERVIEW     '
+!        WRITE(fnumwrk,*)' MODEL   ',MODEL
+!        WRITE(fnumwrk,*)' MODULE  ',MODNAME
+!        !WRITE(fnumwrk,'(A10,I6)')'  VERSION ',VERSION
+!        WRITE(fnumwrk, "(A10,I1,'.',I1,'.',I1,'.',I3.3)")
+!     &   '  VERSION ', VERSION
+!        WRITE(fnumwrk,*)' RNMODE  ',RNMODE
+!
+!        WRITE(fnumwrk,*)' '
+!        WRITE(fnumwrk,'(A13,A1)')'  N SWITCH   ',ISWNIT
+!        WRITE(fnumwrk,'(A13,A1)')'  H2O SWITCH ',ISWWAT
+!        WRITE(fnumwrk,'(A18,A1)')'  PLANTING SWITCH ',IPLTI
+!
+!        WRITE(fnumwrk,*)' '
+!        WRITE(fnumwrk,'(A10,I8  )')'  RUN     ',RUN    
+!        WRITE(fnumwrk,*)' '
+!        WRITE(fnumwrk,'(A23,A10)')'  EXPERIMENT           ',excode
+!        WRITE(fnumwrk,'(A21, I3)')'  TREATMENT          ',tn
+!        WRITE(fnumwrk,'(A23,I1)') '  CROP COMPONENT       ',CN
 !       IF (IPLTI.NE.'A') THEN
         IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
-          WRITE(fnumwrk,'(A23,I7)') '  PLANTING DATE TARGET ',YEARPLTP
-        ELSE  
-          WRITE(fnumwrk,'(A40)')
-     &      '  AUTOMATIC PLANTING.  THRESHOLD DAYS:  '
+!          WRITE(fnumwrk,'(A23,I7)') '  PLANTING DATE TARGET ',YEARPLTP
+!        ELSE  
+!          WRITE(fnumwrk,'(A40)')
+!     &      '  AUTOMATIC PLANTING.  THRESHOLD DAYS:  '
 !          CALL CSYR_DOY(PWDINF,TVI1,TVI2)
           CALL YR_DOY(PWDINF,TVI1,TVI2)
-          WRITE(fnumwrk,'(A14,I7)') '   EARLIEST   ',TVI2
+!          WRITE(fnumwrk,'(A14,I7)') '   EARLIEST   ',TVI2
 !          CALL CSYR_DOY(PWDINL,TVI1,TVI2)
           CALL YR_DOY(PWDINL,TVI1,TVI2)
-          WRITE(fnumwrk,'(A14,I7)') '   LATEST     ',TVI2
+!          WRITE(fnumwrk,'(A14,I7)') '   LATEST     ',TVI2
         ENDIF
         
         ! The following are to allow examination of the functioning of 
@@ -834,9 +834,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 
           ! No tillering,no senescence,no reproductive development 
           
-          WRITE(fnumwrk,*)' '
-          WRITE(fnumwrk,*)' RUNNING EXAMINE. '
-          WRITE(fnumwrk,*)' '
+!          WRITE(fnumwrk,*)' '
+!          WRITE(fnumwrk,*)' RUNNING EXAMINE. '
+!          WRITE(fnumwrk,*)' '
           
           ! CSCER                                    !  CSCRP
           
@@ -1399,8 +1399,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         IF (LAXS.LE.0.0) LAXS = 900.0
         IF (LAWCF.LE.0.0) THEN
           LAWCF = 0.01    
-          WRITE (fnumwrk,*) ' '
-          WRITE (fnumwrk,*) ' Default of 0.01 used for LAWCF'
+!          WRITE (fnumwrk,*) ' '
+!          WRITE (fnumwrk,*) ' Default of 0.01 used for LAWCF'
         ENDIF
         IF (TRGEM(3).LE.0.0) TRGEM = TRDV1
         IF (PPEND.LE.0.0) PPEND = 2.0          
@@ -1431,13 +1431,13 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         ! For CSM N uptake routine 
         IF (rtno3.le.0.0) THEN
           RTNO3 = 0.006    ! N uptake/root length (mgN/cm,.006)
-          WRITE (fnumwrk,*) ' '
-          WRITE (fnumwrk,*) ' Default of 0.006 used for RTNO3'
+!          WRITE (fnumwrk,*) ' '
+!          WRITE (fnumwrk,*) ' Default of 0.006 used for RTNO3'
         ENDIF  
         IF (rtnh4.le.0.0) THEN
           RTNH4 = RTNO3     ! N uptake/root length (mgN/cm,.006)
-          WRITE (fnumwrk,*) ' '
-          WRITE (fnumwrk,*) ' Default of ',RTNO3,' used for RTNH4'
+!          WRITE (fnumwrk,*) ' '
+!          WRITE (fnumwrk,*) ' Default of ',RTNO3,' used for RTNH4'
         ENDIF  
         
         ! BASED ON ORIGINAL CERES -- FOR INITIAL CALIBRATION
@@ -1447,11 +1447,11 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             PD(2) = 3.0 * PHINTS
             PD(3) = 2.0 * PHINTS
             PD(4) = 200.0
-            Write (fnumwrk,*) ' '
-            Write (fnumwrk,*) 'CALCULATED phase duration being used'
-            Write (fnumwrk,'(2X,4(F5.1,2X))') PD(1),PD(2),PD(3),PD(4)
-            Write (fnumwrk,*) ' (P1=400*PHINT/95;P2=3.0*PHINT'
-            Write (fnumwrk,*) ' (P3=2.0*PHINT;P4=200.0)'
+!            Write (fnumwrk,*) ' '
+!            Write (fnumwrk,*) 'CALCULATED phase duration being used'
+!            Write (fnumwrk,'(2X,4(F5.1,2X))') PD(1),PD(2),PD(3),PD(4)
+!            Write (fnumwrk,*) ' (P1=400*PHINT/95;P2=3.0*PHINT'
+!            Write (fnumwrk,*) ' (P3=2.0*PHINT;P4=200.0)'
           ENDIF  
         ENDIF  
         IF (CROP.EQ.'BA') THEN
@@ -1460,16 +1460,16 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             PD(2) = 3.2 * PHINTS
             PD(3) = 2.15* PHINTS
             PD(4) = 200.0
-            Write (fnumwrk,*) ' '
-            Write (fnumwrk,*) 'CALCULATED phase duration being used'
-            Write (fnumwrk,'(2X,4(F5.1,2X))') PD(1),PD(2),PD(3),PD(4)
-            Write (fnumwrk,*) ' (P1=300*PHINT/70;P2=3.2*PHINT'
-            Write (fnumwrk,*) ' (P3=2.15*PHINT;P4=200.0)'
+!            Write (fnumwrk,*) ' '
+!            Write (fnumwrk,*) 'CALCULATED phase duration being used'
+!            Write (fnumwrk,'(2X,4(F5.1,2X))') PD(1),PD(2),PD(3),PD(4)
+!            Write (fnumwrk,*) ' (P1=300*PHINT/70;P2=3.2*PHINT'
+!            Write (fnumwrk,*) ' (P3=2.15*PHINT;P4=200.0)'
           ENDIF  
         ENDIF  
 
-        WRITE (fnumwrk,*) ' '
-        WRITE (fnumwrk,*) 'DERIVED COEFFICIENTS'
+!        WRITE (fnumwrk,*) ' '
+!        WRITE (fnumwrk,*) 'DERIVED COEFFICIENTS'
         
         ! NSFAC and NMNFAC are used for checking the component N concentrations only
         IF (nsfac.LE.0.0) NSFAC = 1.0
@@ -1484,35 +1484,35 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         ENDDO
 
         PD2(1) = PD2FR(1) * PD(2)
-        Write (fnumwrk,*) '  PD2,PD2FR1 ',
-     &     PD(2),PD2FR(1)
+!        Write (fnumwrk,*) '  PD2,PD2FR1 ',
+!     &     PD(2),PD2FR(1)
         PD4(1) = PD4FR(1) * PD(4)
         PD4(2) = PD4FR(2) * PD(4)
         PD4(3) = PD(4) -  PD4(1) - PD4(2)
-        Write (fnumwrk,*) '  PD4,PD4FR1,PD4FR2 ',
-     &     PD(4),PD4FR(1),PD4FR(2)
+!        Write (fnumwrk,*) '  PD4,PD4FR1,PD4FR2 ',
+!     &     PD(4),PD4FR(1),PD4FR(2)
         IF (PD4(3).LE.0.0) THEN
-          Write (fnumwrk,*) 'Lag phase duration <= 0.0!   '
+!          Write (fnumwrk,*) 'Lag phase duration <= 0.0!   '
           Write (*,*) 'Lag phase duration <= 0.0!   '
           WRITE (*,*) 'Program will have to stop'
-          WRITE (*,*) 'Check WORK.OUT for details of run'
+!          WRITE (*,*) 'Check WORK.OUT for details of run'
           STOP ' '
         ENDIF
         ! Kernel growing at half rate during lag period
         ! (=full rate for half period)
         G2 = G2KWT / (PD(5)+(PD(4)-PD4(1)-PD4(2))*0.50)
         
-        WRITE (fnumwrk,*) '  Pd2(1)      :  ',pd2(1)
-        WRITE (fnumwrk,*) '  Pd4(1)      :  ',pd4(1)
-        WRITE (fnumwrk,*) '  Pd4(2)      :  ',pd4(2)
-        WRITE (fnumwrk,*) '  Pd4(3)      :  ',pd4(3)
-        WRITE (fnumwrk,*) '  G2          :  ',g2
+!        WRITE (fnumwrk,*) '  Pd2(1)      :  ',pd2(1)
+!        WRITE (fnumwrk,*) '  Pd4(1)      :  ',pd4(1)
+!        WRITE (fnumwrk,*) '  Pd4(2)      :  ',pd4(2)
+!        WRITE (fnumwrk,*) '  Pd4(3)      :  ',pd4(3)
+!        WRITE (fnumwrk,*) '  G2          :  ',g2
 
         ! Critical stages
         ASTAGE = 4.0 + PD4(1) / PD(4)
         ASTAGEND = 4.0 + (PD4(1)+PD4(2)) / PD(4)
-        WRITE (fnumwrk,*) '  Astage      :  ',astage
-        WRITE (fnumwrk,*) '  Astagend    :  ',astagend
+!        WRITE (fnumwrk,*) '  Astage      :  ',astage
+!        WRITE (fnumwrk,*) '  Astagend    :  ',astagend
 
         ! Phase thresholds
         DO L = 0,10
@@ -1523,8 +1523,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           PTH(L) = PTH(L-1) + AMAX1(0.0,PD(L))
         ENDDO
 
-        WRITE (fnumwrk,*) ' '
-        WRITE (fnumwrk,*) 'DERIVED DATA'
+!        WRITE (fnumwrk,*) ' '
+!        WRITE (fnumwrk,*) 'DERIVED DATA'
         ! Check seedrate and calculate seed reserves
         IF (SDRATE.LE.0.0) SDRATE = SDSZ*PLTPOPP*10.0
         ! Reserves = 80% of seed (42% Ceres3.5)
@@ -1533,17 +1533,17 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         ! Seed N calculated from total seed
         SDNAP = (SDNPCI/100.0)*SDRATE
         SEEDNI = (SDNPCI/100.0)*(SDRATE/(PLTPOPP*10.0))
-        WRITE (fnumwrk,'(A16,2F7.1,A6)') '   Seedrs,Seedn:',
-     &        SEEDRSI*PLTPOPP*10.0,SEEDNI*PLTPOPP*10.0,' kg/ha'
+!        WRITE (fnumwrk,'(A16,2F7.1,A6)') '   Seedrs,Seedn:',
+!     &        SEEDRSI*PLTPOPP*10.0,SEEDNI*PLTPOPP*10.0,' kg/ha'
 
         ! Check dormancy
         IF (PLMAGE.LT.0.0) THEN
           PEGD = PGERM - (PLMAGE*STDAY)
-          WRITE (fnumwrk,*)' '
-          WRITE (fnumwrk,'(A30,F6.2)')
-     &     '   Planting material dormancy ',plmage
-          WRITE (fnumwrk,'(A30,F6.2)')
-     &     '   Emergence+dormancy degdays ',pegd
+!          WRITE (fnumwrk,*)' '
+!          WRITE (fnumwrk,'(A30,F6.2)')
+!     &     '   Planting material dormancy ',plmage
+!          WRITE (fnumwrk,'(A30,F6.2)')
+!     &     '   Emergence+dormancy degdays ',pegd
         ELSE
           PEGD = PGERM
         ENDIF
@@ -1561,25 +1561,25 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         END DO
         IF (SLPF.LE.0.0 .OR. SLPF.GT.1.0) SLPF = 1.0
         IF (SLPF.LT.1.0) THEN
-          WRITE (fnumwrk,*) ' '
-          WRITE (fnumwrk,*)
-     &     'WARNING  Soil fertility factor was less than 1.0: ',slpf
+!          WRITE (fnumwrk,*) ' '
+!          WRITE (fnumwrk,*)
+!     &     'WARNING  Soil fertility factor was less than 1.0: ',slpf
         ENDIF  
 
         ! Write-out inputs if required
-        WRITE (fnumwrk,*) ' '
-        WRITE (fnumwrk,*) 'EXPERIMENTAL DETAILS'
-        WRITE (fnumwrk,*) '  TRUNNAME      ',TRUNNAME
-        WRITE (fnumwrk,'(A18,2F7.1)')'   PLTPOP,ROWSPC  ',PLTPOPP,ROWSPC
-        WRITE (fnumwrk,'(A18,2F7.1)')'   SDEPTH,SDRATE  ',SDEPTH,SDRATE
-        WRITE (fnumwrk,'(A18,F7.4,F7.2)')
-     &                               '   SDSZ,SDNPCI    ',SDSZ,SDNPCI
-        WRITE (fnumwrk,'(A18, F7.1)')'   PLMAGE         ',PLMAGE
-        WRITE (fnumwrk,'(A18,I7,A7)')'   YRHARF,IHARI   ',YRHARF,IHARI
-        WRITE (fnumwrk,'(A18,2F7.1)')'   HPC,HBPC       ',HPC,HBPC
-        WRITE (fnumwrk,'(A18,2A7  )')'   CROP,VARNO     ',CROP,VARNO
- 
-        WRITE (fnumwrk,*) ' '
+!        WRITE (fnumwrk,*) ' '
+!        WRITE (fnumwrk,*) 'EXPERIMENTAL DETAILS'
+!        WRITE (fnumwrk,*) '  TRUNNAME      ',TRUNNAME
+!        WRITE (fnumwrk,'(A18,2F7.1)')'   PLTPOP,ROWSPC  ',PLTPOPP,ROWSPC
+!        WRITE (fnumwrk,'(A18,2F7.1)')'   SDEPTH,SDRATE  ',SDEPTH,SDRATE
+!        WRITE (fnumwrk,'(A18,F7.4,F7.2)')
+!     &                               '   SDSZ,SDNPCI    ',SDSZ,SDNPCI
+!        WRITE (fnumwrk,'(A18, F7.1)')'   PLMAGE         ',PLMAGE
+!        WRITE (fnumwrk,'(A18,I7,A7)')'   YRHARF,IHARI   ',YRHARF,IHARI
+!        WRITE (fnumwrk,'(A18,2F7.1)')'   HPC,HBPC       ',HPC,HBPC
+!        WRITE (fnumwrk,'(A18,2A7  )')'   CROP,VARNO     ',CROP,VARNO
+! 
+!        WRITE (fnumwrk,*) ' '
         !IF (CUFILE.EQ.CUDIRFLE) THEN
           ! Following not used because cfg file set as Cropsim.cfg        
           !IF (CROP.EQ.'WH') THEN
@@ -1588,174 +1588,174 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           !  CALL Finddir (fnumtmp,cfgdfile,'BAD',cufile,cudirfle)
           !ENDIF
         !ENDIF
-        IF (FILEIOT .EQ. 'DS4') THEN
-          WRITE (fnumwrk,*) 'CULTIVAR DETAILS FROM: ',FILEIO(1:12)
-          WRITE (fnumwrk,*) ' Originals from: ',CUDIRFLE(1:60)
-        ELSE  
-          WRITE (fnumwrk,*) 'CULTIVAR DETAILS FROM: ',CUDIRFLE
-        ENDIF
-        WRITE (fnumwrk,*) '  Varno,econo :  ',varno,' ',econo
-        WRITE (fnumwrk,*) '  P1v,p1d,p5  :  ',p1v,p1d,pd(5)
-        WRITE (fnumwrk,*) '  G1,g2kwt,g3 :  ',g1cwt,g2kwt,g3
-        WRITE (fnumwrk,*) '  G2 mg/oC.d  :  ',g2
-        WRITE (fnumwrk,*) '  Phint,Veff  :  ',phints,veff
+!        IF (FILEIOT .EQ. 'DS4') THEN
+!          WRITE (fnumwrk,*) 'CULTIVAR DETAILS FROM: ',FILEIO(1:12)
+!          WRITE (fnumwrk,*) ' Originals from: ',CUDIRFLE(1:60)
+!        ELSE  
+!          WRITE (fnumwrk,*) 'CULTIVAR DETAILS FROM: ',CUDIRFLE
+!        ENDIF
+!        WRITE (fnumwrk,*) '  Varno,econo :  ',varno,' ',econo
+!        WRITE (fnumwrk,*) '  P1v,p1d,p5  :  ',p1v,p1d,pd(5)
+!        WRITE (fnumwrk,*) '  G1,g2kwt,g3 :  ',g1cwt,g2kwt,g3
+!        WRITE (fnumwrk,*) '  G2 mg/oC.d  :  ',g2
+!        WRITE (fnumwrk,*) '  Phint,Veff  :  ',phints,veff
  
-        WRITE (fnumwrk,*) ' '
-        WRITE (fnumwrk,*) 'ECOTYPE DETAILS FROM: ',ECDIRFLE
-        WRITE (fnumwrk,*) '  TIl#S,TIPHE :  ',ti1lf,tilpe
-        WRITE (fnumwrk,*) '  P1,2,3      :  ',(pd(i),i = 1,3)
-        WRITE (fnumwrk,*) '  P4,5,6      :  ',(pd(i),i = 4,6)
-        WRITE (fnumwrk,*) '  P2(1)       :  ',pd2(1)
-        WRITE (fnumwrk,*) '  P4(1),P4(2) :  ',pd4(1),pd4(2)
-        WRITE (fnumwrk,*) '  P4(1),P4(2) :  ',pd4(1),pd4(2)
-        WRITE (fnumwrk,*) '  PHL1,PHF1   :  ',phintl(1),phintf(1)
-        WRITE (fnumwrk,*) '  PHL2,PHF2   :  ',phintl(2),phintf(2)
-        WRITE (fnumwrk,*) '  PHL3,PHF3   :  ',phintl(3),phintf(3)
-        WRITE (fnumwrk,*) '  PARUE,PARU2 :  ',paruv,parur
-        WRITE (fnumwrk,*) '  WFGU,WFPU   :  ',wfgu,wfpu
-        WRITE (fnumwrk,*) '  WFPGF       :  ',wfpgf
-        WRITE (fnumwrk,*) '  NFPU,NFPL   :  ',nfpu,nfpl
-        WRITE (fnumwrk,*) '  KCAN,KEP    :  ',kcan,kep
-        WRITE (fnumwrk,*) '  LA1S,LLIFE  :  ',lapot(1),llife
-        WRITE (fnumwrk,*) '  LAFV,LAFR   :  ',lafv,lafr      
-        WRITE (fnumwrk,*) '  AWNS,SGPHE  :  ',awns,p4sge
-        WRITE (fnumwrk,*) '  TKFH        :  ',lt50h
-        WRITE (fnumwrk,*) '  HTSTD       :  ',canhts
-        WRITE (fnumwrk,*) '  LAWS,LAWCF  :  ',laws,lawcf
-        WRITE (fnumwrk,*) '  RS%S,RS%X   :  ',rspcs,rspcx
-        WRITE (fnumwrk,*) '  RSUSE       :  ',rsuse        
-        WRITE (fnumwrk,*) '  NB.Rs%s is the percentage of stem ',
-     &                          'assimilates going to reserves'
-        WRITE (fnumwrk,*) '     instead of structural material.'
-        WRITE (fnumwrk,*) '  GN%S        :  ',grns 
-        WRITE (fnumwrk,*) '  LSPHS,LSPHE :  ',lsens,lsene
+!        WRITE (fnumwrk,*) ' '
+!        WRITE (fnumwrk,*) 'ECOTYPE DETAILS FROM: ',ECDIRFLE
+!        WRITE (fnumwrk,*) '  TIl#S,TIPHE :  ',ti1lf,tilpe
+!        WRITE (fnumwrk,*) '  P1,2,3      :  ',(pd(i),i = 1,3)
+!        WRITE (fnumwrk,*) '  P4,5,6      :  ',(pd(i),i = 4,6)
+!        WRITE (fnumwrk,*) '  P2(1)       :  ',pd2(1)
+!        WRITE (fnumwrk,*) '  P4(1),P4(2) :  ',pd4(1),pd4(2)
+!        WRITE (fnumwrk,*) '  P4(1),P4(2) :  ',pd4(1),pd4(2)
+!        WRITE (fnumwrk,*) '  PHL1,PHF1   :  ',phintl(1),phintf(1)
+!        WRITE (fnumwrk,*) '  PHL2,PHF2   :  ',phintl(2),phintf(2)
+!        WRITE (fnumwrk,*) '  PHL3,PHF3   :  ',phintl(3),phintf(3)
+!        WRITE (fnumwrk,*) '  PARUE,PARU2 :  ',paruv,parur
+!        WRITE (fnumwrk,*) '  WFGU,WFPU   :  ',wfgu,wfpu
+!        WRITE (fnumwrk,*) '  WFPGF       :  ',wfpgf
+!        WRITE (fnumwrk,*) '  NFPU,NFPL   :  ',nfpu,nfpl
+!        WRITE (fnumwrk,*) '  KCAN,KEP    :  ',kcan,kep
+!        WRITE (fnumwrk,*) '  LA1S,LLIFE  :  ',lapot(1),llife
+!        WRITE (fnumwrk,*) '  LAFV,LAFR   :  ',lafv,lafr      
+!        WRITE (fnumwrk,*) '  AWNS,SGPHE  :  ',awns,p4sge
+!        WRITE (fnumwrk,*) '  TKFH        :  ',lt50h
+!        WRITE (fnumwrk,*) '  HTSTD       :  ',canhts
+!        WRITE (fnumwrk,*) '  LAWS,LAWCF  :  ',laws,lawcf
+!        WRITE (fnumwrk,*) '  RS%S,RS%X   :  ',rspcs,rspcx
+!        WRITE (fnumwrk,*) '  RSUSE       :  ',rsuse        
+!        WRITE (fnumwrk,*) '  NB.Rs%s is the percentage of stem ',
+!     &                          'assimilates going to reserves'
+!        WRITE (fnumwrk,*) '     instead of structural material.'
+!        WRITE (fnumwrk,*) '  GN%S        :  ',grns 
+!        WRITE (fnumwrk,*) '  LSPHS,LSPHE :  ',lsens,lsene
 
-        WRITE(fnumwrk,*) ' '
-        WRITE(fnumwrk,*) 'SPECIES DETAILS  FROM: ',SPDIRFLE
+!        WRITE(fnumwrk,*) ' '
+!        WRITE(fnumwrk,*) 'SPECIES DETAILS  FROM: ',SPDIRFLE
 
-        WRITE(fnumwrk,'(A17,2F8.2)')'  PGERM,PEMRG :  ',pgerm,pemrg
-        WRITE(fnumwrk,*)            '  P0          :  ',pd(0)
-        WRITE(fnumwrk,*)            '  PPTHR,PPFPE :  ',p1dt,ppfpe
-        WRITE(fnumwrk,*)            '  PPEND       :  ',ppend
-        WRITE(fnumwrk,'(A17,2F8.2)')'   P6         : ',pd(6)
-        WRITE(fnumwrk,*)            '  TDFAC       :  ',tildf
-        WRITE(fnumwrk,*)            '  LWLOS,LRPHS :  ',lwlos,lrets
-        WRITE(fnumwrk,*)            '  TGO02       :  ',latfr(1)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRGEM',(trgem(i),i = 1,4)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRDV1',(trdv1(i),i = 1,4)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRDV2',(trdv2(i),i = 1,4)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRLFG',(trlfg(i),i = 1,4)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRPHS',(trphs(i),i = 1,4)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRVRN',(trvrn(i),i = 1,4)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRHAR',(trlth(i),i = 1,4)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRGFW',(trgfw(i),i = 1,4)
-        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRGFN',(trgfn(i),i = 1,4)
- 
-        WRITE(fnumwrk,'(A8,10F7.1)')   ' CO2RF',(co2rf(i),i = 1,10)
-        WRITE(fnumwrk,'(A8,10F7.1)')   ' CO2F ',(co2f(i),i = 1,10)
-        WRITE(fnumwrk,'(A8,10F7.2)')   ' PTFS ',(ptfs(i),i = 1,10)
-        WRITE(fnumwrk,'(A8,10F7.2)')   ' PTFA ',(ptfa(i),i = 1,10)
-        WRITE(fnumwrk,'(A8,10F7.2)')   ' STFR ',(stfr(i),i = 1,10)
-        WRITE(fnumwrk,'(A8,10F7.2)')   ' LASF ',(plasf(i),i = 1,10)
-        WRITE(fnumwrk,'(A8,10F7.2)')   ' CHT% ',(chtpc(i),i = 1,10)
-        WRITE(fnumwrk,'(A8,10F7.2)')   ' CLA% ',(clapc(i),i = 1,10)
-        WRITE(fnumwrk,'(A8, 7F7.4)')   ' LCNCS',(lcncs(i),i = 0,6)
-        WRITE(fnumwrk,'(A8, 7F7.4)')   ' SCNCS',(scncs(i),i = 0,6)
-        WRITE(fnumwrk,'(A8, 7F7.4)')   ' RCNCS',(rcncs(i),i = 0,6)
-        WRITE(fnumwrk,'(A8, 7F7.4)')   ' LMNCS',(lmncs(i),i = 0,6)
-        WRITE(fnumwrk,'(A8, 7F7.4)')   ' SMNCS',(smncs(i),i = 0,6)
-        WRITE(fnumwrk,'(A8, 7F7.4)')   ' RMNCS',(rmncs(i),i = 0,6)
-        WRITE(fnumwrk,'(A17,3F8.2)')   ' L,S,R LIGNIN  ',
-     &                                   lligp,sligp,rligp
-        WRITE(fnumwrk,'(A17, F8.2)')'   GRAIN LIGNIN  ',gligp
-        WRITE(fnumwrk,'(A17,2F8.2)')'   RWUMXS,RWUMX  ',rwumxs,rwumx
-        WRITE(fnumwrk,'(A17, F8.2)')'   RWUPM         ',rwupm 
-        WRITE(fnumwrk,'(A17, F8.2)')'   RLWR cm/g     ',rlwr
-        WRITE(fnumwrk,'(A17,2F8.4)')'   WFRGU,NCRG    ',wfrgu,ncrg
-        WRITE(fnumwrk,'(A17,2F8.2)')'   WFGEU,SDAFR   ',wfgeu,sdafr
-        WRITE(fnumwrk,'(A17,2F8.4)')'   SDWT,SDN%I    ',sdsz,sdnpci
-        WRITE(fnumwrk,'(A17,2F8.4)')'   SDRATE,SDNI   ',sdrate,seedni
-        WRITE(fnumwrk,'(A17, F8.2)')'   RDGTH         ',rdgth
-        WRITE(fnumwrk,'(A17,2F8.2)')'   RDGS,RDG2     ',rdgs1,rdgs2
-        WRITE(fnumwrk,'(A17,2F8.2)')'   RLDGR,RRESP   ',rldgr,rresp
-        WRITE(fnumwrk,'(A17,2F8.2)')'   WFTU,WFTL     ',wftu,wftl
-        WRITE(fnumwrk,'(A17,2F8.2)')'   NFTU,NFTL     ',nftu,nftl
-        WRITE(fnumwrk,'(A17,2F8.2)')'   NFGU,NFGL     ',nfgu,nfgl
-        WRITE(fnumwrk,'(A17,2F8.2)')'   WFSU,LLOSW    ',wfsu,llosw
-        WRITE(fnumwrk,'(A17,2F8.2)')'   NFSU,LLOSN    ',nfsu,llosn
-        WRITE(fnumwrk,'(A17, F8.2)')'   NFSF          ',nfsf
-        WRITE(fnumwrk,'(A17,2F8.2)')'   WFNUU,WFNUL   ',wfnuu,wfnul
-        WRITE(fnumwrk,'(A17,2F8.2)')'   NO3MN,NH4MN   ',no3mn,nh4mn
-        WRITE(fnumwrk,'(A17,2F8.2)')'   RLFNU,NCNU    ',rlfnu,ncnu
-        WRITE(fnumwrk,'(A17,2F8.2)')'   TKUH,HDUR     ',lt50s,hdur
-        WRITE(fnumwrk,'(A17, F8.2)')'   TKLF          ',tklf
-        WRITE(fnumwrk,'(A17,2F8.2)')'   PTFMX         ',ptfx
-        WRITE(fnumwrk,'(A17,2F8.2)')'   SSEN,RSEN     ',ssen,rsen
-        WRITE(fnumwrk,'(A17,2F8.2)')'   SAWS,LSHAWS   ',saws,lshaws
-        WRITE(fnumwrk,'(A17,2F8.2)')'   LSHFR,LAXS    ',lshfr,laxs
-        WRITE(fnumwrk,'(A17,2F8.2)')'   PHL1,PHF1     ',
-     &   phintl(1),phintf(1)
-        WRITE(fnumwrk,'(A17,2F8.2)')'   SSPHS         ',ssstg
-        WRITE(fnumwrk,'(A17,2F8.2)')'   NLAB%,GN%MX   ',xnfs,grnmx
-        WRITE(fnumwrk,'(A17,2F8.2)')'   NTUPF         ',ntupf       
-        WRITE(fnumwrk,'(A17,2F8.2)')'   CHFR,CHSTG    ',chfr,chstg
-        WRITE(fnumwrk,'(A17,2F8.2)')'   TPAR,TSRAD    ',part,sradt
+!        WRITE(fnumwrk,'(A17,2F8.2)')'  PGERM,PEMRG :  ',pgerm,pemrg
+!        WRITE(fnumwrk,*)            '  P0          :  ',pd(0)
+!        WRITE(fnumwrk,*)            '  PPTHR,PPFPE :  ',p1dt,ppfpe
+!        WRITE(fnumwrk,*)            '  PPEND       :  ',ppend
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   P6         : ',pd(6)
+!        WRITE(fnumwrk,*)            '  TDFAC       :  ',tildf
+!        WRITE(fnumwrk,*)            '  LWLOS,LRPHS :  ',lwlos,lrets
+!        WRITE(fnumwrk,*)            '  TGO02       :  ',latfr(1)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRGEM',(trgem(i),i = 1,4)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRDV1',(trdv1(i),i = 1,4)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRDV2',(trdv2(i),i = 1,4)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRLFG',(trlfg(i),i = 1,4)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRPHS',(trphs(i),i = 1,4)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRVRN',(trvrn(i),i = 1,4)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRHAR',(trlth(i),i = 1,4)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRGFW',(trgfw(i),i = 1,4)
+!        WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRGFN',(trgfn(i),i = 1,4)
+! 
+!        WRITE(fnumwrk,'(A8,10F7.1)')   ' CO2RF',(co2rf(i),i = 1,10)
+!        WRITE(fnumwrk,'(A8,10F7.1)')   ' CO2F ',(co2f(i),i = 1,10)
+!        WRITE(fnumwrk,'(A8,10F7.2)')   ' PTFS ',(ptfs(i),i = 1,10)
+!        WRITE(fnumwrk,'(A8,10F7.2)')   ' PTFA ',(ptfa(i),i = 1,10)
+!        WRITE(fnumwrk,'(A8,10F7.2)')   ' STFR ',(stfr(i),i = 1,10)
+!        WRITE(fnumwrk,'(A8,10F7.2)')   ' LASF ',(plasf(i),i = 1,10)
+!        WRITE(fnumwrk,'(A8,10F7.2)')   ' CHT% ',(chtpc(i),i = 1,10)
+!        WRITE(fnumwrk,'(A8,10F7.2)')   ' CLA% ',(clapc(i),i = 1,10)
+!        WRITE(fnumwrk,'(A8, 7F7.4)')   ' LCNCS',(lcncs(i),i = 0,6)
+!        WRITE(fnumwrk,'(A8, 7F7.4)')   ' SCNCS',(scncs(i),i = 0,6)
+!        WRITE(fnumwrk,'(A8, 7F7.4)')   ' RCNCS',(rcncs(i),i = 0,6)
+!        WRITE(fnumwrk,'(A8, 7F7.4)')   ' LMNCS',(lmncs(i),i = 0,6)
+!        WRITE(fnumwrk,'(A8, 7F7.4)')   ' SMNCS',(smncs(i),i = 0,6)
+!        WRITE(fnumwrk,'(A8, 7F7.4)')   ' RMNCS',(rmncs(i),i = 0,6)
+!        WRITE(fnumwrk,'(A17,3F8.2)')   ' L,S,R LIGNIN  ',
+!     &                                   lligp,sligp,rligp
+!        WRITE(fnumwrk,'(A17, F8.2)')'   GRAIN LIGNIN  ',gligp
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   RWUMXS,RWUMX  ',rwumxs,rwumx
+!        WRITE(fnumwrk,'(A17, F8.2)')'   RWUPM         ',rwupm 
+!        WRITE(fnumwrk,'(A17, F8.2)')'   RLWR cm/g     ',rlwr
+!        WRITE(fnumwrk,'(A17,2F8.4)')'   WFRGU,NCRG    ',wfrgu,ncrg
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   WFGEU,SDAFR   ',wfgeu,sdafr
+!        WRITE(fnumwrk,'(A17,2F8.4)')'   SDWT,SDN%I    ',sdsz,sdnpci
+!        WRITE(fnumwrk,'(A17,2F8.4)')'   SDRATE,SDNI   ',sdrate,seedni
+!        WRITE(fnumwrk,'(A17, F8.2)')'   RDGTH         ',rdgth
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   RDGS,RDG2     ',rdgs1,rdgs2
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   RLDGR,RRESP   ',rldgr,rresp
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   WFTU,WFTL     ',wftu,wftl
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   NFTU,NFTL     ',nftu,nftl
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   NFGU,NFGL     ',nfgu,nfgl
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   WFSU,LLOSW    ',wfsu,llosw
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   NFSU,LLOSN    ',nfsu,llosn
+!        WRITE(fnumwrk,'(A17, F8.2)')'   NFSF          ',nfsf
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   WFNUU,WFNUL   ',wfnuu,wfnul
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   NO3MN,NH4MN   ',no3mn,nh4mn
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   RLFNU,NCNU    ',rlfnu,ncnu
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   TKUH,HDUR     ',lt50s,hdur
+!        WRITE(fnumwrk,'(A17, F8.2)')'   TKLF          ',tklf
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   PTFMX         ',ptfx
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   SSEN,RSEN     ',ssen,rsen
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   SAWS,LSHAWS   ',saws,lshaws
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   LSHFR,LAXS    ',lshfr,laxs
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   PHL1,PHF1     ',
+!     &   phintl(1),phintf(1)
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   SSPHS         ',ssstg
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   NLAB%,GN%MX   ',xnfs,grnmx
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   NTUPF         ',ntupf       
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   CHFR,CHSTG    ',chfr,chstg
+!        WRITE(fnumwrk,'(A17,2F8.2)')'   TPAR,TSRAD    ',part,sradt
 
-        IF (CROP.EQ.'WH') THEN
-          WRITE(fnumwrk,*) ' '
-          WRITE(fnumwrk,'(A55)')
-     &     ' PHASE DURATIONS                                       '
-          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES INPUTS     = ',
-     &     PD(1),PD(2),PD(3),PD(4),PD(5)
-          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES from PHINT = ',
-     &     PHINTS*400.0/95.0,PHINTS*3.0,PHINTS*2.0,200.0,PD(5)
-          WRITE(fnumwrk,'(A38)')
-     &     '  ZADOKS FROM CERES INPUTS AND PHINT  '
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P1   ->TS  2 ',
-     &      PD(1),PHINTS*400.0/95.0  
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P2   ->Jt  3 ',
-     &      PD(2)*PD2FR(1),PHINTS*3.0*PD2FR(1)  
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P3  TS->LL 4 ',
-     &     PD(2)*(1.0-PD2FR(1)),PHINTS*3.0*(1.0-PD2FR(1))             
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P4  LL->SE 5 ',
-     &     PD(3),PHINTS*2.0      
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P5 ESG->AN 6 ',
-     &     PD(4)*PD4FR(1),200.0*PD4FR(1)           
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P6  AN->EA 7 ', 
-     &     PD(4)*PD4FR(2),200.0*PD4FR(2)
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P7  EA->EL 8 ',
-     &     PD(4)*(1.0-(PD4FR(1)+PD4FR(2))),200*(1.0-(PD4FR(1)+PD4FR(2)))
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P8  EL->PM 9 ',
-     &     PD(5),PD(5)
-        ENDIF
+!        IF (CROP.EQ.'WH') THEN
+!          WRITE(fnumwrk,*) ' '
+!          WRITE(fnumwrk,'(A55)')
+!     &     ' PHASE DURATIONS                                       '
+!          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES INPUTS     = ',
+!     &     PD(1),PD(2),PD(3),PD(4),PD(5)
+!          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES from PHINT = ',
+!     &     PHINTS*400.0/95.0,PHINTS*3.0,PHINTS*2.0,200.0,PD(5)
+!          WRITE(fnumwrk,'(A38)')
+!     &     '  ZADOKS FROM CERES INPUTS AND PHINT  '
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P1   ->TS  2 ',
+!     &      PD(1),PHINTS*400.0/95.0  
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P2   ->Jt  3 ',
+!     &      PD(2)*PD2FR(1),PHINTS*3.0*PD2FR(1)  
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P3  TS->LL 4 ',
+!     &     PD(2)*(1.0-PD2FR(1)),PHINTS*3.0*(1.0-PD2FR(1))             
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P4  LL->SE 5 ',
+!     &     PD(3),PHINTS*2.0      
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P5 ESG->AN 6 ',
+!     &     PD(4)*PD4FR(1),200.0*PD4FR(1)           
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P6  AN->EA 7 ', 
+!     &     PD(4)*PD4FR(2),200.0*PD4FR(2)
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P7  EA->EL 8 ',
+!     &     PD(4)*(1.0-(PD4FR(1)+PD4FR(2))),200*(1.0-(PD4FR(1)+PD4FR(2)))
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P8  EL->PM 9 ',
+!     &     PD(5),PD(5)
+!        ENDIF
 
-        IF (CROP.EQ.'BA') THEN
-          WRITE(fnumwrk,*) ' '
-          WRITE(fnumwrk,'(A55)')
-     &     ' PHASE DURATIONS                                       '
-          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES INPUTS     = ',
-     &     PD(1),PD(2),PD(3),PD(4),PD(5)
-          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES from PHINT = ',
-     &     PHINTS*300.0/75.0,225.0,150.0,200.0,PD(5)
-          WRITE(fnumwrk,'(A38)')
-     &     '  ZADOKS FROM CERES INPUTS AND PHINT  '
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P1   ->TS  2 ',
-     &      PD(1),PHINTS*300.0/75.0  
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P2   ->Jt  3 ',
-     &      PD(2)*PD2FR(1),225.0*PD2FR(1)  
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P3  TS->LL 4 ',
-     &     PD(2)*(1.0-PD2FR(1)),225.0*(1.0-PD2FR(1))             
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P4  LL->SE 5 ',
-     &     PD(3),150.0      
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P5 ESG->AN 6 ',
-     &     PD(4)*PD4FR(1),200.0*PD4FR(1)           
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P6  AN->EA 7 ', 
-     &     PD(4)*PD4FR(2),200.0*PD4FR(2)
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P7  EA->EL 8 ',
-     &     PD(4)*(1.0-(PD4FR(1)+PD4FR(2))),200*(1.0-(PD4FR(1)+PD4FR(2)))
-          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P8  EL->PM 9 ',
-     &     PD(5),PD(5)
-        ENDIF
+!        IF (CROP.EQ.'BA') THEN
+!          WRITE(fnumwrk,*) ' '
+!          WRITE(fnumwrk,'(A55)')
+!     &     ' PHASE DURATIONS                                       '
+!          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES INPUTS     = ',
+!     &     PD(1),PD(2),PD(3),PD(4),PD(5)
+!          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES from PHINT = ',
+!     &     PHINTS*300.0/75.0,225.0,150.0,200.0,PD(5)
+!          WRITE(fnumwrk,'(A38)')
+!     &     '  ZADOKS FROM CERES INPUTS AND PHINT  '
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P1   ->TS  2 ',
+!     &      PD(1),PHINTS*300.0/75.0  
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P2   ->Jt  3 ',
+!     &      PD(2)*PD2FR(1),225.0*PD2FR(1)  
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P3  TS->LL 4 ',
+!     &     PD(2)*(1.0-PD2FR(1)),225.0*(1.0-PD2FR(1))             
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P4  LL->SE 5 ',
+!     &     PD(3),150.0      
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P5 ESG->AN 6 ',
+!     &     PD(4)*PD4FR(1),200.0*PD4FR(1)           
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P6  AN->EA 7 ', 
+!     &     PD(4)*PD4FR(2),200.0*PD4FR(2)
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P7  EA->EL 8 ',
+!     &     PD(4)*(1.0-(PD4FR(1)+PD4FR(2))),200*(1.0-(PD4FR(1)+PD4FR(2)))
+!          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P8  EL->PM 9 ',
+!     &     PD(5),PD(5)
+!        ENDIF
 
         ! End of initiation flags,etc..
         CFLINIT = 'Y'
@@ -1798,17 +1798,17 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           TFLF(L) = 0.0
         ENDDO
 
-        IF (FILEIOT.EQ.'DS4') WRITE(fnumwrk,*)' '
-        WRITE(FNUMWRK,'(A22)')' OUTPUTS              '
+!        IF (FILEIOT.EQ.'DS4') WRITE(fnumwrk,*)' '
+!        WRITE(FNUMWRK,'(A22)')' OUTPUTS              '
         ! Control switch for OUTPUT file names
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'FNAME',fname)
-        IF (FNAME.EQ.'Y') THEN
-          WRITE(FNUMWRK,*)'File names switched from standard. '
-        ELSE  
-          WRITE(FNUMWRK,*)'Standard file names. '
-        ENDIF   
+!        IF (FNAME.EQ.'Y') THEN
+!          WRITE(FNUMWRK,*)'File names switched from standard. '
+!        ELSE  
+!          WRITE(FNUMWRK,*)'Standard file names. '
+!        ENDIF   
 
-        WRITE(FNUMWRK,*)' '
-        WRITE(FNUMWRK,'(A22)')' DURING RUN STATUS:   '
+!        WRITE(FNUMWRK,*)' '
+!        WRITE(FNUMWRK,'(A22)')' DURING RUN STATUS:   '
         
       END SUBROUTINE CER_Init

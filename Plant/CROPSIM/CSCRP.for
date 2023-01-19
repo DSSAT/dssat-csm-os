@@ -236,7 +236,7 @@
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
         CLOSE (NOUTPN)
-        CLOSE (FNUMWRK)
+!        CLOSE (FNUMWRK)
 
 !***********************************************************************
       ENDIF ! End of INITIATION-RATES-INTEGRATE-OUTPUT-SEASEND construct
@@ -382,9 +382,9 @@
             WRITE(Message(1),'(A57)') 
      &      'To avoid early stress,h2o uptake set equal to demand.  '
             CALL WARNING(1,'CSCRP',MESSAGE)
-            WRITE(Fnumwrk,*)' '
-            WRITE(Fnumwrk,'(A58)') 
-     &      ' To avoid early stress,h2o uptake set equal to demand.  '
+!            WRITE(Fnumwrk,*)' '
+!            WRITE(Fnumwrk,'(A58)') 
+!     &      ' To avoid early stress,h2o uptake set equal to demand.  '
           ENDIF
         ELSE
           RWUP = SWCON1*EXP(MIN((SWCON2(L)*(SW(L)-LL(L))),40.))/
@@ -408,10 +408,10 @@
      &           ' Water uptake resticted by saturation,layer',L,
      &           ' Uptake saturation factor ',wfewu
                  CALL WARNING(1,'CSCRP',MESSAGE)
-                 WRITE(Fnumwrk,*)' '
-                 WRITE(Fnumwrk,'(A52,I3,a26,F4.2)')
-     &           ' Water uptake resticted by saturation,layer',L,
-     &           ' Uptake saturation factor ',wfewu
+!                 WRITE(Fnumwrk,*)' '
+!                 WRITE(Fnumwrk,'(A52,I3,a26,F4.2)')
+!     &           ' Water uptake resticted by saturation,layer',L,
+!     &           ' Uptake saturation factor ',wfewu
                ENDIF
             ENDIF
           ENDIF
@@ -523,11 +523,11 @@
 
       IF(caid.LE.0.0)RETURN
 
-      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
-        CALL Getlun ('WORK.OUT',fnumwrk)
-        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
-      ENDIF
+!      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
+!        CALL Getlun ('WORK.OUT',fnumwrk)
+!        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!      ENDIF
 
       lfrutmp=1.0
       clthick=10.0                     ! Starting layer thickness (cm)
@@ -647,7 +647,7 @@
       REAL          VPSLOP        ! Sat vapor pressure v temp      Pa/K
       REAL          WFNFAO        ! FAO 24 hour wind function      #
       REAL          WINDSP        ! Wind speed                     m/s
-      INTEGER       FNUMWRK       ! File number,work file          #
+!      INTEGER       FNUMWRK       ! File number,work file          #
       LOGICAL       FOPEN         ! File open indicator            code
       REAL          emisa
       REAL          TAIR

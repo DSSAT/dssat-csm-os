@@ -164,7 +164,7 @@
           CALL GETLUN ('FILET',FNUMT)
 
           ! WORK,ERROR,AND TEMPORARY FILES
-          CALL GETLUN ('WORK.OUT',FNUMWRK)
+!          CALL GETLUN ('WORK.OUT',FNUMWRK)
           CALL GETLUN ('ERROR.OUT',FNUMERR)
           CALL GETLUN ('FNAMETMP',FNUMTMP)
 
@@ -327,17 +327,17 @@
 !       Open or close and re-open work and reads files  
 !-----------------------------------------------------------------------
 
-        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+!        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
         ! Normally is closed at the end of the program.
-        IF (.NOT.FOPEN) THEN
-          IF (RUN.EQ.1) THEN
-            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-            WRITE(FNUMWRK,*) 'CSCRP  Cropsim Cereal Crop Module '
-          ELSE
-            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',
-     &            ACTION = 'READWRITE')
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
+!        IF (.NOT.FOPEN) THEN
+!          IF (RUN.EQ.1) THEN
+!            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+!            WRITE(FNUMWRK,*) 'CSCRP  Cropsim Cereal Crop Module '
+!          ELSE
+!            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',
+!     &            ACTION = 'READWRITE')
+!            WRITE(fnumwrk,*) ' '
+!            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
             ! If do not wish to accumulate for all runs
             !IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
             !  CLOSE (FNUMWRK)
@@ -345,45 +345,45 @@
             !  WRITE(fnumwrk,*) ' '
             !  WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
             !ENDIF  
-            IF (IDETL.EQ.'A') THEN
-              CLOSE (FNUMWRK, STATUS = 'DELETE')
-              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-              WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
-            ENDIF  
+!            IF (IDETL.EQ.'A') THEN
+!              CLOSE (FNUMWRK, STATUS = 'DELETE')
+!              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+!              WRITE(fnumwrk,*) ' '
+!              WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
+!            ENDIF  
 ! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
 !            IF (FNUMREA.LE.0) CALL Getlun('READS.OUT',fnumrea)
-!            ! Close and re-open Reads file
+            ! Close and re-open Reads file
 !            CLOSE (FNUMREA, STATUS = 'DELETE')
 !            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
 !     &            ACTION = 'READWRITE')
 !            WRITE(fnumrea,*)' '
 !            WRITE(fnumrea,*)
 !     &      ' File closed and re-opened to avoid generating huge file'
-          ENDIF
-        ELSE  ! File is open .. not closed at end of run!        
-          IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
+!          ENDIF
+!        ELSE  ! File is open .. not closed at end of run!        
+!          IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
             ! IDETL is headed VBOSE
             ! Close and re-open Work file. 
-            CLOSE (FNUMWRK, STATUS = 'DELETE')
-            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
-     &            ACTION = 'READWRITE')
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
+!            CLOSE (FNUMWRK, STATUS = 'DELETE')
+!            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
+!     &            ACTION = 'READWRITE')
+!            WRITE(fnumwrk,*) ' '
+!            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
 ! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
 !            CALL Getlun('READS.OUT',fnumrea)
-!            ! Close and re-open Reads file
+            ! Close and re-open Reads file
 !            CLOSE (FNUMREA, STATUS = 'DELETE')
 !            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
 !     &            ACTION = 'READWRITE')
 !            WRITE(fnumrea,*)' '
 !            WRITE(fnumrea,*)
 !     &      ' File closed and re-opened to avoid generating huge file'
-          ELSE  
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
-          ENDIF
-        ENDIF  
+!          ELSE  
+!            WRITE(fnumwrk,*) ' '
+!            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
+!          ENDIF
+!        ENDIF  
           
 !-----------------------------------------------------------------------
 !       Record/set starting information

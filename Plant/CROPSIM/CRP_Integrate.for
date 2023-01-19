@@ -81,10 +81,10 @@
      &         'Leaf weight less than 0! Weight of ',lfwt,
      &         ' reset to zero'
               CALL WARNING(1,'CSCRP',MESSAGE)
-              WRITE(Fnumwrk,*)' '
-              WRITE(Fnumwrk,'(A36,F4.1,A14)')
-     &         ' Leaf weight less than 0! Weight of ',lfwt,
-     &         ' reset to zero'
+!              WRITE(Fnumwrk,*)' '
+!              WRITE(Fnumwrk,'(A36,F4.1,A14)')
+!     &         ' Leaf weight less than 0! Weight of ',lfwt,
+!     &         ' reset to zero'
               LFWT = 0.0
             ENDIF
             RSWT = RSWT + 
@@ -110,10 +110,10 @@
      &           'Reserves weight reset to zero.',
      &           'Weight was ',rswt
                 CALL WARNING(1,'CSCRP',MESSAGE)
-                WRITE(Fnumwrk,*)' '
-                WRITE(Fnumwrk,'(A31,A11,F12.9)')
-     &           ' Reserves weight reset to zero.',
-     &           'Weight was ',rswt
+!                WRITE(Fnumwrk,*)' '
+!                WRITE(Fnumwrk,'(A31,A11,F12.9)')
+!     &           ' Reserves weight reset to zero.',
+!     &           'Weight was ',rswt
                 RSWT = 0.0
               ENDIF
             ENDIF
@@ -121,8 +121,8 @@
             RSWTX = AMAX1(RSWTX,RSWT)
             STWT = STWT + GROST - SENSTG - SENSTGRS - SWPH
             IF (STWT.LT.1.0E-06) THEN
-              IF (STWT.LT.0.0) 
-     &         WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
+!              IF (STWT.LT.0.0) 
+!     &         WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
               STWT = 0.0
             ENDIF
             SWPHC = SWPHC +  SWPH
@@ -162,24 +162,24 @@
               WRITE (Message(3),'(A33,F8.3,F6.1)')
      &          '  Reserves %,plant population    ',sdrspc,pltpop 
               CALL WARNING(3,'CSCRP',MESSAGE)
-              WRITE (Fnumwrk,*)' '
-              WRITE (Fnumwrk,'(A55,I8)')
-     &        ' WARNING  Before emergence but no seed reserves left on',
-     &          Yeardoy
-              WRITE (Fnumwrk,*)
-     &          ' Initial seed reserves,seedrate ',seedrsi,sdrate
-              WRITE (Fnumwrk,*)
-     &          ' Reserves %                     ',sdrspc    
-              WRITE (Fnumwrk,*)
-     &          'Should reduce the rate at which reserves are used.'    
-              WRITE (Fnumwrk,*)
-     &          '(This is done by increasing the period over which '
-              WRITE (Fnumwrk,*)
-     &          ' reserves are used [SDUR in the species file])'    
-              WRITE (Fnumwrk,'(A53)')
-     &          ' Program should stop but to allow the run to continue'
-              WRITE (Fnumwrk,'(A43)')
-     &          ' the initial seed reserves will be doubled.'
+!              WRITE (Fnumwrk,*)' '
+!              WRITE (Fnumwrk,'(A55,I8)')
+!     &        ' WARNING  Before emergence but no seed reserves left on',
+!     &          Yeardoy
+!              WRITE (Fnumwrk,*)
+!     &          ' Initial seed reserves,seedrate ',seedrsi,sdrate
+!              WRITE (Fnumwrk,*)
+!     &          ' Reserves %                     ',sdrspc    
+!              WRITE (Fnumwrk,*)
+!     &          'Should reduce the rate at which reserves are used.'    
+!              WRITE (Fnumwrk,*)
+!     &          '(This is done by increasing the period over which '
+!              WRITE (Fnumwrk,*)
+!     &          ' reserves are used [SDUR in the species file])'    
+!              WRITE (Fnumwrk,'(A53)')
+!     &          ' Program should stop but to allow the run to continue'
+!              WRITE (Fnumwrk,'(A43)')
+!     &          ' the initial seed reserves will be doubled.'
               SEEDRS =  SEEDRS + SEEDRSI
               !CFLFAIL = 'Y'  ! Taken out to allow run to continue
             ELSE
@@ -190,14 +190,14 @@
               WRITE(Message(3),'(A55)')
      &        'Maybe seeds too small or specific leaf area set too low'
               CALL WARNING(3,'CSCRP',MESSAGE)
-              WRITE(Fnumwrk,*)' '
-              WRITE(Fnumwrk,'(A36,I7,A9,F3.1)')
-     &        ' WARNING  Seed reserves all used on ',yeardoy,
-     &        ' Leaf# = ',Lnum
-              WRITE(Fnumwrk,'(A54)')
-     &        ' For good establishment reserves should last to leaf 4'
-              WRITE(Fnumwrk,'(A56)')
-     &        'Maybe seeds too small or specific leaf area set too low'
+!              WRITE(Fnumwrk,*)' '
+!              WRITE(Fnumwrk,'(A36,I7,A9,F3.1)')
+!     &        ' WARNING  Seed reserves all used on ',yeardoy,
+!     &        ' Leaf# = ',Lnum
+!              WRITE(Fnumwrk,'(A54)')
+!     &        ' For good establishment reserves should last to leaf 4'
+!              WRITE(Fnumwrk,'(A56)')
+!     &        'Maybe seeds too small or specific leaf area set too low'
             ENDIF
           ENDIF
 
@@ -410,10 +410,10 @@
             Write (Message(2),'(A12,F4.1)') 'Plant loss: ',pltloss      
             WRITE (Message(3),'(A20)') 'Crop failure assumed'
             CALL WARNING(3,'CSCRP',MESSAGE)
-            Write (Fnumwrk,*) ' '
-            Write (Fnumwrk,'(A23)') ' Plant population < 0.0 '
-            Write (Fnumwrk,'(A13,F6.1)') ' Plant loss: ',pltloss      
-            WRITE (Fnumwrk,'(A21)') ' Crop failure assumed'
+!            Write (Fnumwrk,*) ' '
+!            Write (Fnumwrk,'(A23)') ' Plant population < 0.0 '
+!            Write (Fnumwrk,'(A13,F6.1)') ' Plant loss: ',pltloss      
+!            WRITE (Fnumwrk,'(A21)') ' Crop failure assumed'
           ENDIF
 
 !-----------------------------------------------------------------------
@@ -558,9 +558,9 @@
              WRITE (Message(1),'(A35)')
      &       'Maximum leaf number reached on day '
              CALL WARNING(1,'CSCRP',MESSAGE)
-             WRITE(Fnumwrk,*)' '
-             WRITE (Fnumwrk,'(A36,I8)')
-     &       ' Maximum leaf number reached on day ',yeardoy
+!             WRITE(Fnumwrk,*)' '
+!             WRITE (Fnumwrk,'(A36,I8)')
+!     &       ' Maximum leaf number reached on day ',yeardoy
             ENDIF
             CCOUNTV = CCOUNTV + 1
             IF (CCOUNTV.EQ.50.AND.VREQ.GT.0.0) THEN
@@ -572,13 +572,13 @@
               WRITE (Message(3),'(A25)')
      &         'Will assume crop failure.'
               CALL WARNING(3,'CSCRP',MESSAGE)
-              WRITE (Fnumwrk,*)' '
-              WRITE (Fnumwrk,'(A34)')
-     &         '50 days after maximum leaf number '
-              WRITE (Fnumwrk,'(A54)')
-     &         'Presumably vernalization requirement could not be met '
-              WRITE (Fnumwrk,'(A25)')
-     &         'Will assume crop failure.'
+!              WRITE (Fnumwrk,*)' '
+!              WRITE (Fnumwrk,'(A34)')
+!     &         '50 days after maximum leaf number '
+!              WRITE (Fnumwrk,'(A54)')
+!     &         'Presumably vernalization requirement could not be met '
+!              WRITE (Fnumwrk,'(A25)')
+!     &         'Will assume crop failure.'
             ENDIF
           ENDIF
 
@@ -592,10 +592,10 @@
           IF (DRDAT.EQ.-99 .AND. RSTAGE.GE.DRSTAGE) THEN
             DRDAT = YEARDOY
             DRDAP = MAX(0,CSTIMDIF(PLYEARDOY,YEARDOY))
-            WRITE(fnumwrk,*)' '
-            WRITE(fnumwrk,'(A37,3F7.2,I9)')
-     &       ' Double ridges. Rstage,Drtage,Leaf#: ',
-     &       RSTAGE,DRSTAGE,LNUM,YEARDOY
+!            WRITE(fnumwrk,*)' '
+!            WRITE(fnumwrk,'(A37,3F7.2,I9)')
+!     &       ' Double ridges. Rstage,Drtage,Leaf#: ',
+!     &       RSTAGE,DRSTAGE,LNUM,YEARDOY
              ! NB. Experimental. DR occurs at later apical stage when
              !     leaf # less, earlier when leaf # greater (ie.when
              !     early planting of winter type).
@@ -783,18 +783,18 @@
      &           '  Leaf area index       = ',lai
                 CALL WARNING(5,'CSCRP',MESSAGE)
                 Message = ' '
-                WRITE(Fnumwrk,*)' '
-                WRITE (Fnumwrk,'(A45)')
-     &           ' Very few grains set! Failure as a grain crop'
-                WRITE (Fnumwrk,'(A27,F6.1)')
-     &           '   Plant population      = ',pltpop
-                WRITE (Fnumwrk,'(A27,F6.1)')
-     &           '   Above ground  (kg/ha) = '
-     &           ,(LFWT+STWT+RSWT)*pltpop*10.0
-                WRITE (Fnumwrk,'(A27,F6.1)')
-     &           '   Grain number coeff    = ',gnowts
-                WRITE (Fnumwrk,'(A27,F6.1)')
-     &           '   Leaf area index       = ',lai
+!                WRITE(Fnumwrk,*)' '
+!                WRITE (Fnumwrk,'(A45)')
+!     &           ' Very few grains set! Failure as a grain crop'
+!                WRITE (Fnumwrk,'(A27,F6.1)')
+!     &           '   Plant population      = ',pltpop
+!                WRITE (Fnumwrk,'(A27,F6.1)')
+!     &           '   Above ground  (kg/ha) = '
+!     &           ,(LFWT+STWT+RSWT)*pltpop*10.0
+!                WRITE (Fnumwrk,'(A27,F6.1)')
+!     &           '   Grain number coeff    = ',gnowts
+!                WRITE (Fnumwrk,'(A27,F6.1)')
+!     &           '   Leaf area index       = ',lai
               ENDIF
             ENDIF
             IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN
@@ -847,18 +847,18 @@
             EDAPFR = FLOAT(DAP) + EDAYFR
             DAE = 0
             
-            WRITE(FNUMWRK,*)' '
-            WRITE(FNUMWRK,*)'EMERGENCE ',eyeardoy
-            IF (SEEDRSAV.GT.0.0) THEN
-            WRITE(FNUMWRK,*)'  Rtwtl(1)/seedrsi  ',rtwtl(1)/seedrsi
-            WRITE(FNUMWRK,*)'  Rtwtl(2)/seedrsi  ',rtwtl(2)/seedrsi
-            WRITE(FNUMWRK,*)'  Rtwtl(3)/seedrsi  ',rtwtl(3)/seedrsi
-            ENDIF
-            IF (SEEDNI.GT.0.0) THEN
-            WRITE(FNUMWRK,*)'  Rootn/seedni      ',rootn/seedni
-            ENDIF
-            WRITE(FNUMWRK,*)'  Rtdep            ',rtdep
-            WRITE(FNUMWRK,*)'  Rstage,Cumdu     ',rstage,cumdu
+!            WRITE(FNUMWRK,*)' '
+!            WRITE(FNUMWRK,*)'EMERGENCE ',eyeardoy
+!            IF (SEEDRSAV.GT.0.0) THEN
+!            WRITE(FNUMWRK,*)'  Rtwtl(1)/seedrsi  ',rtwtl(1)/seedrsi
+!            WRITE(FNUMWRK,*)'  Rtwtl(2)/seedrsi  ',rtwtl(2)/seedrsi
+!            WRITE(FNUMWRK,*)'  Rtwtl(3)/seedrsi  ',rtwtl(3)/seedrsi
+!            ENDIF
+!            IF (SEEDNI.GT.0.0) THEN
+!            WRITE(FNUMWRK,*)'  Rootn/seedni      ',rootn/seedni
+!            ENDIF
+!            WRITE(FNUMWRK,*)'  Rtdep            ',rtdep
+!            WRITE(FNUMWRK,*)'  Rstage,Cumdu     ',rstage,cumdu
 
           ENDIF
 
@@ -1026,11 +1026,11 @@
               WRITE(Message(2),'(A27,2F5.1)')
      &         'LEAFN,LFWT had values of   ',LEAFN,LFWT
               CALL WARNING(2,'CSCRP',MESSAGE)
-              WRITE(Fnumwrk,*)' '
-              WRITE(Fnumwrk,'(A28,F4.1)')
-     &         ' LANC below 0 with value of ',LANC
-              WRITE(Fnumwrk,'(A28,2F5.1)')
-     &         ' LEAFN,LFWT had values of   ',LEAFN,LFWT
+!              WRITE(Fnumwrk,*)' '
+!              WRITE(Fnumwrk,'(A28,F4.1)')
+!     &         ' LANC below 0 with value of ',LANC
+!              WRITE(Fnumwrk,'(A28,2F5.1)')
+!     &         ' LEAFN,LFWT had values of   ',LEAFN,LFWT
               LANC = AMAX1(0.0,LANC)
             ENDIF
             IF (LFWT+STWT.GT.0.0) VCNC = 
@@ -1086,26 +1086,26 @@
             WRITE (Message(1),'(A41)')
      &       ' No germination within 150 days of sowing '
              CALL WARNING(1,'CSCRP',MESSAGE)
-            WRITE (Fnumwrk,*) ' '
-            WRITE (Fnumwrk,'(A41)')
-     &       ' No germination within 150 days of sowing '
+!            WRITE (Fnumwrk,*) ' '
+!            WRITE (Fnumwrk,'(A41)')
+!     &       ' No germination within 150 days of sowing '
           ENDIF
           IF (IHARI.NE.'A'.AND.MDAT.GE.0.AND.DAP-MDAP.GE.90) THEN
             CFLFAIL = 'Y'
             WRITE (Message(1),'(A32)')'90 days after end of grain fill '
             WRITE (Message(2),'(A21)')'Harvesting triggered.'
             CALL WARNING(2,'CSCRP',MESSAGE)
-            WRITE (Fnumwrk,*) ' '
-            WRITE (Fnumwrk,'(A32)')'90 days after end of grain fill '
-            WRITE (Fnumwrk,'(A21)')'Harvesting triggered.'
+!            WRITE (Fnumwrk,*) ' '
+!            WRITE (Fnumwrk,'(A32)')'90 days after end of grain fill '
+!            WRITE (Fnumwrk,'(A21)')'Harvesting triggered.'
           ENDIF
           IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(MSTG-1)) THEN
             IF (TT20.LE.-98.0.AND.TT20.LE.0.0) THEN
               CFLFAIL = 'Y'
               WRITE (Message(1),'(A28)') '20day thermal time mean = 0 '
               CALL WARNING(1,'CSCRP',MESSAGE)
-              WRITE (Fnumwrk,*) ' '
-              WRITE (Fnumwrk,'(A28)') '20day thermal time mean = 0 '
+!              WRITE (Fnumwrk,*) ' '
+!              WRITE (Fnumwrk,'(A28)') '20day thermal time mean = 0 '
            ENDIF
           ENDIF
 
@@ -1126,10 +1126,10 @@
      &        'Maturity reached but waiting for reported harvest on: ',
      &        YEARDOYHARF 
               CALL WARNING(1,'CSCRP',MESSAGE)
-              WRITE(Fnumwrk,*)' '
-              WRITE(Fnumwrk,'(A55,I7)')
-     &        ' Maturity reached but waiting for reported harvest on: ',
-     &        YEARDOYHARF 
+!              WRITE(Fnumwrk,*)' '
+!              WRITE(Fnumwrk,'(A55,I7)')
+!     &        ' Maturity reached but waiting for reported harvest on: ',
+!     &        YEARDOYHARF 
             ENDIF
           ENDIF
      
@@ -1165,8 +1165,8 @@
                 WRITE(Message(1),'(A26)')
      &           'Harvest/failure triggered '                 
                 CALL WARNING(1,'CSCRP',MESSAGE)
-                WRITE(Fnumwrk,*)' '
-                WRITE(Fnumwrk,*)'Harvest/failure triggered on ',yeardoy
+!                WRITE(Fnumwrk,*)' '
+!                WRITE(Fnumwrk,*)'Harvest/failure triggered on ',yeardoy
               ENDIF  
             ENDIF
           ENDIF
@@ -1575,10 +1575,10 @@
           IF (EDATMX.GT.0.AND.CFLPDATE.EQ.'E') THEN
             IF (GEUCUM.LT.PEGD) GEUCUM = 0.0 
             IF (EDATMX.EQ.YEARDOY) THEN
-              WRITE(fnumwrk,*)' '
-              WRITE(fnumwrk,*)
-     &       'Planting date set relative to measured emergence date on '
-     &       ,yeardoy
+!              WRITE(fnumwrk,*)' '
+!              WRITE(fnumwrk,*)
+!     &       'Planting date set relative to measured emergence date on '
+!     &       ,yeardoy
               GEUCUM = PEGD
               GERMFR = 1.0
               EMRGFR = 1.0

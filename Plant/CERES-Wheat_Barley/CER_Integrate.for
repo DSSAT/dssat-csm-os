@@ -39,14 +39,14 @@
             RESPC = RESPC + RTRESP
             LFWT = LFWT + GROLF - SENLFG - SENLFGRS
             IF (LFWT.LT.1.0E-12) THEN
-              IF (LFWT.LT.0.0) 
-     &          WRITE(fnumwrk,*)'Leaf weight less than 0! ',LFWT
+!              IF (LFWT.LT.0.0) 
+!     &          WRITE(fnumwrk,*)'Leaf weight less than 0! ',LFWT
               LFWT = 0.0
             ENDIF
             STWT = STWT + GROST - SENSTG - GROGRST
             IF (STWT.LT.1.0E-06) THEN
-              IF (STWT.LT.0.0) 
-     &         WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
+!              IF (STWT.LT.0.0) 
+!     &         WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
               STWT = 0.0
             ENDIF
             GRWT = GRWT + GROGR - GROGRADJ
@@ -196,8 +196,8 @@
           IF (LFWT.GT.0) SLA = (PLA-SENLA) / (LFWT*(1.0-LSHFR))
           ! Warning if SLA too low
           IF (SLA.LT.0.0.AND.SLA.GT.-90.0) THEN
-            WRITE(fnumwrk,'(A21,F8.3,A12)')
-     X       '  SLA below zero at: ',sla,' Reset to 0'
+!            WRITE(fnumwrk,'(A21,F8.3,A12)')
+!     X       '  SLA below zero at: ',sla,' Reset to 0'
             SLA = -99.0
           ENDIF
 
@@ -220,8 +220,8 @@
           PLTPOP = PLTPOP - PLTLOSS   
 
           IF (PLTPOP < 1.E-5) THEN
-            WRITE(fnumwrk,'(I5,1X,I3.3,
-     &        " PLTPOP is zero or negative. Set to zero.",/)') YEAR, DOY
+!            WRITE(fnumwrk,'(I5,1X,I3.3,
+!     &        " PLTPOP is zero or negative. Set to zero.",/)') YEAR, DOY
             PLTPOP = AMAX1(PLTPOP, 1.E-5)
           ENDIF
 
@@ -382,13 +382,13 @@
           ENDIF
           IF (CROP.EQ.'MZ'.AND.PDADJ.LE.-99.0.AND.RSTAGE.GT.2.0) THEN
             PDADJ = (CUMTU-TT-PD(0))/(CUMDU-DU-PD(0))
-            WRITE(fnumwrk,'(A26,F6.1)')
-     &       ' Phase adjustment         ',(PDADJ-1.0)*PD(2)
-            WRITE(fnumwrk,'(A24)')'   PHASE OLD_END NEW_END'
+!            WRITE(fnumwrk,'(A26,F6.1)')
+!     &       ' Phase adjustment         ',(PDADJ-1.0)*PD(2)
+!            WRITE(fnumwrk,'(A24)')'   PHASE OLD_END NEW_END'
             DO L = 2,10
               PTHOLD = PTH(L)
               PTH(L) = PTH(L) + AMAX1(0.0,PDADJ-1.0)*PD(2)
-              WRITE(fnumwrk,'(I8,2F8.1)')L,PTHOLD,PTH(L)
+!              WRITE(fnumwrk,'(I8,2F8.1)')L,PTHOLD,PTH(L)
             ENDDO
           ENDIF
 
@@ -428,24 +428,24 @@
             ENDIF
           ENDIF
           IF (LNUMSD.GE.FLOAT(LNUMX-1)+0.9) THEN
-            IF (CCOUNTV.EQ.0) WRITE (fnumwrk,'(A35,I4)')
-     &       ' Maximum leaf number reached on day',DOY
+ !           IF (CCOUNTV.EQ.0) WRITE (fnumwrk,'(A35,I4)')
+ !    &       ' Maximum leaf number reached on day',DOY
             CCOUNTV = CCOUNTV + 1
             IF (CCOUNTV.EQ.50) THEN
-              WRITE (fnumwrk,'(A47,/,A44,/A26)')
-     &         ' 50 days after maximum leaf number! Presumably ',
-     &         ' vernalization requirement could not be met!',
-     &         ' Will assume crop failure.'
+!              WRITE (fnumwrk,'(A47,/,A44,/A26)')
+!     &         ' 50 days after maximum leaf number! Presumably ',
+!     &         ' vernalization requirement could not be met!',
+!     &         ' Will assume crop failure.'
               CFLFAIL = 'Y'
             ENDIF
           ENDIF
           LNUMSG = INT(LNUMSD)+1
           IF (LNUMSG.EQ.100) THEN
-           WRITE (fnumwrk,'(A47,/,A47,/,A47,/,A26)')
-     &      ' Maximum leaf number reached! Presumably       ',
-     &      ' vernalization requirement could not be met,   ',
-     &      ' or photoperiod too short.                     ',
-     &      ' Will assume crop failure.'
+!           WRITE (fnumwrk,'(A47,/,A47,/,A47,/,A26)')
+!     &      ' Maximum leaf number reached! Presumably       ',
+!     &      ' vernalization requirement could not be met,   ',
+!     &      ' or photoperiod too short.                     ',
+!     &      ' Will assume crop failure.'
             CFLFAIL = 'Y'
           ENDIF
           LCNUM = INT(LNUMSD)+1
@@ -616,9 +616,9 @@
           DRSTAGE = 1.6
           IF (DRDAT.EQ.-99 .AND. RSTAGE.GE.DRSTAGE) THEN
             DRDAT = YEARDOY
-            WRITE(fnumwrk,*)' '
-            WRITE(fnumwrk,*)'Double ridges. Stage,Leaf#: ',
-     &       DRSTAGE,LNUMSD
+!            WRITE(fnumwrk,*)' '
+!            WRITE(fnumwrk,*)'Double ridges. Stage,Leaf#: ',
+!     &       DRSTAGE,LNUMSD
              ! NB. Experimental. DR occurs at later apical stage when
              !     leaf # less, earlier when leaf # greater (ie.when
              !     early planting of winter type).
@@ -635,37 +635,37 @@
               FLN = FLOAT(INT(FLN))+0.999
             ENDIF
             PD2ADJ = ((FLN-LNUMTS)) * PHINTS
-            WRITE(fnumwrk,*)' '  
-            WRITE(fnumwrk,'(A25,I12)')' Terminal spikelet       ',tsdat
-            WRITE(fnumwrk,*)' Terminal spilelet leaf #       ',LNUMTS  
-            WRITE(fnumwrk,*)' Final leaf # (Aitken formula)  ',FLN      
-            WRITE(fnumwrk,*)' P2 Durations Input,From Aitken ',
-     &       PD(2),PD2ADJ
+!            WRITE(fnumwrk,*)' '  
+!            WRITE(fnumwrk,'(A25,I12)')' Terminal spikelet       ',tsdat
+!            WRITE(fnumwrk,*)' Terminal spilelet leaf #       ',LNUMTS  
+!            WRITE(fnumwrk,*)' Final leaf # (Aitken formula)  ',FLN      
+!            WRITE(fnumwrk,*)' P2 Durations Input,From Aitken ',
+!     &       PD(2),PD2ADJ
             IF (PD(2).LE.0.0) THEN
               PD(2) = PD2ADJ
               DO L = 2,10
                 PTH(L) = PTH(L-1) + PD(L)
               ENDDO
-              WRITE(fnumwrk,*)' AITKEN FORMULA USED TO CALCULATE P2  '
+!              WRITE(fnumwrk,*)' AITKEN FORMULA USED TO CALCULATE P2  '
             ENDIF 
           ENDIF  
           IF (JDAT.EQ.-99 .AND. RSTAGE.GE.2.0+PD2(1)/PD(2)) THEN
             JDAT = YEARDOY
-            WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A25,I12)') ' Jointing:               ',jdat
+!            WRITE (fnumwrk,*) ' '
+!            WRITE (fnumwrk,'(A25,I12)') ' Jointing:               ',jdat
           ENDIF
           IF (LLDAT.EQ.-99 .AND. RSTAGE.GE.3.0) THEN
             LLDAT = YEARDOY
             FLNMODEL = LNUMSD
-            WRITE (fnumwrk,'(A25,I12)')' Last leaf emergence:    ',lldat
+!            WRITE (fnumwrk,'(A25,I12)')' Last leaf emergence:    ',lldat
           ENDIF
           IF (IEDAT.EQ.-99 .AND. RSTAGE.GE.4.0) THEN
             IEDAT = YEARDOY
-            WRITE (fnumwrk,'(A25,I12)')' Inflorescence emergence:',iedat
+!            WRITE (fnumwrk,'(A25,I12)')' Inflorescence emergence:',iedat
           ENDIF
           IF (ADAT.LE.0.0 .AND. RSTAGE.GE.4.0+PD4(1)/PD(4)) THEN
             ADAT = YEARDOY
-            WRITE (fnumwrk,'(A25,I12)') ' Anthesis:               ',adat
+!            WRITE (fnumwrk,'(A25,I12)') ' Anthesis:               ',adat
             RSWAA = RSWAD
             RSCA = RSCD
             CWAA = CWAD
@@ -680,17 +680,17 @@
             SRAD20A = SRAD20
             STRESS20A = STRESS20
             GRNUM = (LFWT+STWT+RSWT)*G1CWT
-            WRITE (fnumwrk,'(A25,I12)')
-     &       ' End of anthesis:        ',adatend
-            WRITE (fnumwrk,'(A27,F7.1)')
-     &       ' Prior 20d mean temperature   ',tmean20a
-            WRITE (fnumwrk,'(A27,F7.1)')
-     &       ' Prior 20d mean stress factor ',stress20a
-            WRITE (fnumwrk,'(A27)')'  NB. 1.0 = 0 stress          '
-            WRITE (fnumwrk,*)'Grain #/m2,Nfg ',GRNUM*PLTPOP,NFG
-            IF ((GRNUM*PLTPOP).LT.100.0) THEN
-              WRITE (fnumwrk,*)'Crop failure - few grains set!'
-            ENDIF
+!            WRITE (fnumwrk,'(A25,I12)')
+!     &       ' End of anthesis:        ',adatend
+!            WRITE (fnumwrk,'(A27,F7.1)')
+!     &       ' Prior 20d mean temperature   ',tmean20a
+!            WRITE (fnumwrk,'(A27,F7.1)')
+!     &       ' Prior 20d mean stress factor ',stress20a
+!            WRITE (fnumwrk,'(A27)')'  NB. 1.0 = 0 stress          '
+!            WRITE (fnumwrk,*)'Grain #/m2,Nfg ',GRNUM*PLTPOP,NFG
+!            IF ((GRNUM*PLTPOP).LT.100.0) THEN
+!              WRITE (fnumwrk,*)'Crop failure - few grains set!'
+!            ENDIF
           ENDIF
           IF (RSTAGE.GT.ASTAGEND) THEN
             LAGSTAGE = AMAX1(0.0,
@@ -800,11 +800,11 @@
           ! Phyllochron intervals
           IF (CROP.EQ.'BA'.AND.ISTAGE.NE.ISTAGEP.AND.ISTAGE.EQ.1) THEN
             tvr1 = 77.5 - 232.6*(DAYLT-DAYLTP)
-            WRITE(FNUMWRK,*)' '
-            WRITE(FNUMWRK,*)
-     &       ' PHINT calculated from daylength change: ',tvr1
-            WRITE(FNUMWRK,*)
-     &       ' PHINT being used:                       ',phints 
+!            WRITE(FNUMWRK,*)' '
+!            WRITE(FNUMWRK,*)
+!     &       ' PHINT calculated from daylength change: ',tvr1
+!            WRITE(FNUMWRK,*)
+!     &       ' PHINT being used:                       ',phints 
           ENDIF
           IF (LNUMSG.GT.0) THEN
             IF (LNUMSD.LT.PHINTL(1)) THEN
@@ -851,8 +851,8 @@
           IF (STWT.GT.0.0) SANC = STEMN/STWT
           IF (VWAD.GT.0.0) VANC = VNAD/VWAD
           IF (LANC.LT.0.0) THEN
-            WRITE(fnumwrk,*)'LANC below 0 with value of ',LANC
-            WRITE(fnumwrk,*)'LEAFN,LFWT had values of   ',LEAFN,LFWT
+!            WRITE(fnumwrk,*)'LANC below 0 with value of ',LANC
+!            WRITE(fnumwrk,*)'LEAFN,LFWT had values of   ',LEAFN,LFWT
             LANC = AMAX1(0.0,LANC)
           ENDIF
           IF (LFWT+STWT.GT.0.0) VCNC = 
@@ -876,7 +876,7 @@
           RCNF = 0.0
           IF (LCNC.GT.0.0) LCNF = LANC/LCNC
           IF (LCNF.GT.1.0001 .OR. LCNF.LT.0.0) THEN
-            WRITE(fnumwrk,*)'LCNF out of limits with value of ',LCNF
+!            WRITE(fnumwrk,*)'LCNF out of limits with value of ',LCNF
             LCNF = AMAX1(0.0,AMIN1(1.0,LCNF))
           ENDIF
           IF (SCNC.GT.0.0.AND.STWT.GT.1.0E-10) SCNF = SANC/SCNC
@@ -897,20 +897,20 @@
           ! Harvesting or failure
           IF (DAP.GE.90 .AND. ISTAGE.EQ.8) THEN
             CFLFAIL = 'Y'
-            WRITE (FNUMWRK,*)'No germination within 90 days of sowing!'
+!            WRITE (FNUMWRK,*)'No germination within 90 days of sowing!'
           ENDIF
           
           IF (IHARI.NE.'A'.AND.DAPM.GE.90) THEN
             CFLFAIL = 'Y'
-            WRITE (FNUMWRK,*)'90 days after physiological maturity!'
-            WRITE (FNUMWRK,*)'Harvesting triggered!'
+!            WRITE (FNUMWRK,*)'90 days after physiological maturity!'
+!            WRITE (FNUMWRK,*)'Harvesting triggered!'
           ENDIF
           
           IF (IHARI.NE.'A'.AND.ISTAGE.GE.4.AND.ISTAGE.LT.7) THEN
             IF (TT20.NE.-99.0.AND.TT20.LE.0.0) THEN
               CFLFAIL = 'Y'
-              WRITE (FNUMWRK,*)'20day thermal time mean = 0!'
-              WRITE (FNUMWRK,*)'Harvesting triggered!'
+!              WRITE (FNUMWRK,*)'20day thermal time mean = 0!'
+!              WRITE (FNUMWRK,*)'Harvesting triggered!'
             ENDIF
           ENDIF
 
@@ -948,40 +948,40 @@
               hbpc = harvfrac(2)*100.0
             ENDIF  
  
-            WRITE(fnumwrk,*)' '
-            WRITE(fnumwrk,*)'HARVEST REACHED ',YEARDOY
+!            WRITE(fnumwrk,*)' '
+!            WRITE(fnumwrk,*)'HARVEST REACHED ',YEARDOY
             
             
             PARIUEM = -99.0
             IF (PARADCUM.GT.0.0.AND.PARADICUM.GT.0.0) THEN
-              WRITE (fnumwrk,*)' '
-              WRITE (fnumwrk,'(A53,F5.1,F4.1)')
-     &         ' OVERALL PAR USE EFFICIENCY (INCIDENT,INTERCEPTED) = ',
-     &         CWAD/PARADCUM/10.0, CWAD/PARADICUM/10.0 
+!              WRITE (fnumwrk,*)' '
+!              WRITE (fnumwrk,'(A53,F5.1,F4.1)')
+!     &         ' OVERALL PAR USE EFFICIENCY (INCIDENT,INTERCEPTED) = ',
+!     &         CWAD/PARADCUM/10.0, CWAD/PARADICUM/10.0 
                PARIUEM = CWAD/PARADICUM/10.0
             ENDIF  
                   
-            WRITE(FNUMWRK,*) ' '
-            WRITE(FNUMWRK,*) 'INORGANIC NO3 AND NH4 (kg/ha)'
-            WRITE(FNUMWRK,*) ' PROFILE:  '
-            WRITE(FNUMWRK,'(A15,2F6.1)')
-     &        '  SEASON START:',SNO3PROFILEI,SNH4PROFILEI
-            WRITE(FNUMWRK,'(A15,2F6.1)')
-     &        '  SEASON END:  ',SNO3PROFILE,SNH4PROFILE
-            WRITE(FNUMWRK,*) ' ROOTZONE: '
-            WRITE(FNUMWRK,'(A15,2F6.1)')
-     &        '  SEASON END:  ',SNO3ROOTZONE,SNH4ROOTZONE
+!            WRITE(FNUMWRK,*) ' '
+!            WRITE(FNUMWRK,*) 'INORGANIC NO3 AND NH4 (kg/ha)'
+!            WRITE(FNUMWRK,*) ' PROFILE:  '
+!            WRITE(FNUMWRK,'(A15,2F6.1)')
+!     &        '  SEASON START:',SNO3PROFILEI,SNH4PROFILEI
+!            WRITE(FNUMWRK,'(A15,2F6.1)')
+!     &        '  SEASON END:  ',SNO3PROFILE,SNH4PROFILE
+!            WRITE(FNUMWRK,*) ' ROOTZONE: '
+!            WRITE(FNUMWRK,'(A15,2F6.1)')
+!     &        '  SEASON END:  ',SNO3ROOTZONE,SNH4ROOTZONE
  
-            WRITE(FNUMWRK,*) ' '
-            WRITE(FNUMWRK,*) 'TOTAL AND AVAILABLE WATER (mm) '
-            WRITE(FNUMWRK,*) ' PROFILE:  '
-            WRITE(FNUMWRK,'(A15,2F6.1)')
-     &        '  SEASON START:',H2OPROFILEI,AH2OPROFILEI
-            WRITE(FNUMWRK,'(A15,2F6.1)') 
-     &       '  SEASON END:  ',H2OPROFILE,AH2OPROFILE
-            WRITE(FNUMWRK,*) ' ROOTZONE: '
-            WRITE(FNUMWRK,'(A15,2F6.1)')
-     &        '  SEASON END:  ',H2OROOTZONE,AH2OROOTZONE
+!            WRITE(FNUMWRK,*) ' '
+!            WRITE(FNUMWRK,*) 'TOTAL AND AVAILABLE WATER (mm) '
+!            WRITE(FNUMWRK,*) ' PROFILE:  '
+!            WRITE(FNUMWRK,'(A15,2F6.1)')
+!     &        '  SEASON START:',H2OPROFILEI,AH2OPROFILEI
+!            WRITE(FNUMWRK,'(A15,2F6.1)') 
+!     &       '  SEASON END:  ',H2OPROFILE,AH2OPROFILE
+!            WRITE(FNUMWRK,*) ' ROOTZONE: '
+!            WRITE(FNUMWRK,'(A15,2F6.1)')
+!     &        '  SEASON END:  ',H2OROOTZONE,AH2OROOTZONE
             
             ! Reset crop stage
             ISTAGE = 7
@@ -992,8 +992,8 @@
             IF (XSTAGE.GT.6.9 .AND. YRHARFF .NE. 'Y') THEN
               ! This loop is necessary because of non-sequential staging
               IF (XSTAGE.LT.7.0) THEN
-                WRITE(fnumwrk,*)
-     &           'WAITING FOR HARVEST! YEARDOY,YRHAR ',YEARDOY,YRHARF
+!                WRITE(fnumwrk,*)
+!     &           'WAITING FOR HARVEST! YEARDOY,YRHAR ',YEARDOY,YRHARF
                 YRHARFF = 'Y'
               ENDIF
             ENDIF
@@ -1077,18 +1077,18 @@
               IF (FDAY(I).LE.-99) EXIT
               AMTNIT = AMTNIT + ANFER(I)
             END DO
-            IF (FILEIOT.EQ.'XFL') WRITE(fnumwrk,*)' '
-            WRITE(fnumwrk,'(A24,I4,A6)')
-     &       ' Fertilizer N pre-plant ',NINT(amtnit),' kg/ha'
+!            IF (FILEIOT.EQ.'XFL') WRITE(fnumwrk,*)' '
+!            WRITE(fnumwrk,'(A24,I4,A6)')
+!     &       ' Fertilizer N pre-plant ',NINT(amtnit),' kg/ha'
           ENDIF
           IF (NFERT.GT.0.AND.IFERI.EQ.'R'.AND.YEARDOY.GT.YEARPLT) THEN
             DO I = 1, NFERT
               IF (FDAY(I).GT.YEARDOY) EXIT
               IF (FDAY(I).EQ.YEARDOY) THEN
                 AMTNIT = AMTNIT + ANFER(I)
-                WRITE(fnumwrk,'(A14,I4,A10,I9,A13,I4,A6)')
-     &          ' Fertilizer N ',NINT(anfer(i)),' kg/ha on ',
-     &          YEARDOY,'     To date ',NINT(amtnit),' kg/ha'
+!                WRITE(fnumwrk,'(A14,I4,A10,I9,A13,I4,A6)')
+!     &          ' Fertilizer N ',NINT(anfer(i)),' kg/ha on ',
+!     &          YEARDOY,'     To date ',NINT(amtnit),' kg/ha'
               ENDIF
             END DO
           ENDIF
@@ -1096,17 +1096,17 @@
           ! Adjustment of kernel growth rate
           ! Originally set temperature response here
           IF (ISTAGE.EQ.5.AND.ISTAGEP.EQ.4) THEN
-            WRITE(fnumwrk,*)'Start of linear kernel growth    '
-            WRITE(fnumwrk,*)' Original kernel growth rate (G2) ',g2
+!            WRITE(fnumwrk,*)'Start of linear kernel growth    '
+!            WRITE(fnumwrk,*)' Original kernel growth rate (G2) ',g2
 !           chp handle zero divide
             IF (GRNUM .GT. 1.E-6) THEN
               G2 = (G2KWT-(GRWT/GRNUM)*1000.0) / (PD(5)*(6.0-XSTAGE))
             ELSE
               G2 = (G2KWT) / (PD(5)*(6.0-XSTAGE))
             ENDIF
-            WRITE(fnumwrk,*)' Adjusted kernel growth rate (G2) ',g2
-            WRITE(fnumwrk,*)' (Adjustment because growing at lag rate',
-     &      ' for overlap into linear filling period)'
+!            WRITE(fnumwrk,*)' Adjusted kernel growth rate (G2) ',g2
+!            WRITE(fnumwrk,*)' (Adjustment because growing at lag rate',
+!     &      ' for overlap into linear filling period)'
           ENDIF
 
           ! Stored variables (For use next day or step)

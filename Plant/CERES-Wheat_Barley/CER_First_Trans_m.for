@@ -237,7 +237,7 @@
 !      INTEGER       FNUMREA       ! File number,reads.out file     #
       INTEGER       FNUMT         ! Number used for T-file         #
       INTEGER       FNUMTMP       ! File number,temporary file     #
-      INTEGER       FNUMWRK       ! File number,work file          #
+      !INTEGER       FNUMWRK       ! File number,work file          #
       LOGICAL       FOPEN         ! File open indicator            code
       !INTEGER       FROP          ! Frquency of outputs            d
       INTEGER       FROPADJ       ! Frquency of outputs,adjusted   d

@@ -279,7 +279,7 @@
         IF (FEXIST) CLOSE (NOUTPN)
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
-        CLOSE (FNUMWRK)
+!        CLOSE (FNUMWRK)
 
       ENDIF   ! Tasks
 
@@ -474,7 +474,7 @@
       INTEGER       DYNAMICI      ! Module control,internal        code
       REAL          DLAYR(20)     ! Depth of soil layers           cm
       REAL          EOP           ! Potential evaporation,plants   mm/d
-      INTEGER       FNUMWRK       ! File number,work file          #
+      !INTEGER       FNUMWRK       ! File number,work file          #
       CHARACTER*1   ISWWAT        ! Soil water balance switch Y/N  code
       INTEGER       L             ! Loop counter                   #
       REAL          LL(NL)        ! Lower limit,soil h2o           #
@@ -508,7 +508,7 @@
 
       IF (DYNAMICI.EQ.RUNINIT) THEN
 
-        CALL Getlun('WORK.OUT',fnumwrk)
+        !CALL Getlun('WORK.OUT',fnumwrk)
 
         ! Compute SWCON2 for each soil layer.  Adjust SWCON2 for very
         ! high LL to avoid water uptake limitations.
