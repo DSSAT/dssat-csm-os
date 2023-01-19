@@ -40,17 +40,20 @@ C=======================================================================
      &    RLV, SDNO, SHELN, SWIDOT,                       !Input/Output
      &    VSTAGE, WSHIDT, WTSD, WTSHE,                    !Input/Output
      &    ASMDOT, DISLA, HPDAM, NPLTD, PPLTD,             !Output
-     &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT,                        !Output
-     &  CSRW, SSRDOT, STRWT, WSFDOT, WSRFDOT,                  !Input
-     &  WSRIDOT,                                                            !Output
+     &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT,             !Output
+     &  CSRW, SSRDOT, STRWT, WSFDOT, WSRFDOT,             !Input
+     &  WSRIDOT,                                          !Output
 
-     &  CSFRZ, CSRFRZ, CSTRM, DSTOR, SRDAM)                        !Output
+     &  CSFRZ, CSRFRZ, CSTRM, DSTOR, SRDAM)               !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FOR_IPPEST, FOR_IPPARM, FOR_IPPROG, FOR_PESTCP, 
+     &  FOR_ASMDM, FOR_SEEDDM, FOR_VEGDM, FOR_ROOTDM, FOR_OPPEST, 
+     &  FOR_LINDM
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1   IDETD
@@ -249,17 +252,17 @@ C-----------------------------------------------------------------------
      &    TDLA, VSTGD, WLFDOT, WSTMD, WTLF,               !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
-     &    LAIDOT, WSIDOT,                                                      !Output
-     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,                        !Input
-     &  WSFDOT, WSRFDOT, WSTRD,                                          !Input
-     &  CSTRM, WSRIDOT,                                        !Output
+     &    LAIDOT, WSIDOT,                                 !Output
+     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,               !Input
+     &  WSFDOT, WSRFDOT, WSTRD,                           !Input
+     &  CSTRM, WSRIDOT,                                   !Output
 
-     &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                              !Output
+     &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                      !Output
 
      &    SEASINIT)                                       !Control
 
       CALL FOR_ROOTDM(
-     &    PRLV,PRTLF, PRTLV, PRTMD, RTWT, SOILPROP, TRTLF,     !Input
+     &    PRLV,PRTLF, PRTLV, PRTMD, RTWT, SOILPROP, TRTLF,    !Input
      &    RLV, TRTLV, WRTMD,                              !Input/Output
      &    CRLF, CRLV, CRTM, RLFDOT, RLVDOT, WRIDOT,       !Output
      &    SEASINIT)                                       !Control
@@ -304,7 +307,7 @@ C-----------------------------------------------------------------------
      &    PSHDL, PSHDM, PSHDS, PSTMD, PVSTGD,             !Output
      &    TDLA, TPSR, TRTLF, VSTGD, WSTMD,                !Output
 
-     &  PCSTRD, PSTRD, WSTRD,                                          !Output
+     &  PCSTRD, PSTRD, WSTRD,                             !Output
 
      &    RATE,WSDD,PSDD,PRLV)
 
@@ -330,19 +333,19 @@ C-----------------------------------------------------------------------
      &    TDLA, VSTGD, WLFDOT, WSTMD, WTLF,               !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
-     &    LAIDOT, WSIDOT,                                                      !Output
-     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,                        !Input
-     &  WSFDOT, WSRFDOT, WSTRD,                                          !Input
-     &  CSTRM, WSRIDOT,                                        !Output
+     &    LAIDOT, WSIDOT,                                 !Output
+     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,               !Input
+     &  WSFDOT, WSRFDOT, WSTRD,                           !Input
+     &  CSTRM, WSRIDOT,                                   !Output
 
-     &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                              !Output
+     &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                      !Output
 
      &    RATE)                                           !Control
 C-----------------------------------------------------------------------
 C     Call root pest damage routine and compute damage rates
 C-----------------------------------------------------------------------
       CALL FOR_ROOTDM(
-     &    PRLV,PRTLF, PRTLV, PRTMD, RTWT, SOILPROP, TRTLF,     !Input
+     &    PRLV,PRTLF, PRTLV, PRTMD, RTWT, SOILPROP, TRTLF,   !Input
      &    RLV, TRTLV, WRTMD,                              !Input/Output
      &    CRLF, CRLV, CRTM, RLFDOT, RLVDOT, WRIDOT,       !Output
      &    RATE)                                           !Control
@@ -385,10 +388,10 @@ C-----------------------------------------------------------------------
      &    TDLA, VSTGD, WLFDOT, WSTMD, WTLF,               !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
-     &    LAIDOT, WSIDOT,                                                      !Output
-     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,                        !Input
-     &  WSFDOT, WSRFDOT, WSTRD,                                          !Input
-     &  CSTRM, WSRIDOT,                                        !Output
+     &    LAIDOT, WSIDOT,                                 !Output
+     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,               !Input
+     &  WSFDOT, WSRFDOT, WSTRD,                           !Input
+     &  CSTRM, WSRIDOT,                                   !Output
 
      &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                              !Output
 

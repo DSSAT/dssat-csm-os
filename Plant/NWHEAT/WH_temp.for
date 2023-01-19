@@ -285,7 +285,8 @@ cnh to allow watching of these variables
       USE ModuleDefs
       USE WH_module
       implicit none
-      EXTERNAL nwheats_gndmd, GrN_Ptl, sum_real_array, warning, ERROR, count_of_real_vals
+      EXTERNAL nwheats_gndmd, GrN_Ptl, sum_real_array, warning, ERROR, 
+     &  count_of_real_vals
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
@@ -987,6 +988,7 @@ C     The variable "CONTROL" is of type "ControlType".
 * ====================================================================
       USE ModuleDefs
       implicit none
+      EXTERNAL GETLUN, ERROR, IGNORE, COUNT_OF_REAL_VALS, NWHEATS_FAC
       !*! include 'convert.inc'            ! gm2kg, sm2ha
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -1039,16 +1041,22 @@ cbak      parameter (potrate = .9e-6)        ! (g n/mm root/day)
       integer count_of_real_vals
       real duldep(NL), lldep(NL), satdep(NL), snh4(NL), sno3(NL)
       real rlv_nw(NL), swdep(NL), dlayr_nw(NL)
-      real nh4mn(NL) ! nh4ppm_min, minimum allowable NH4 (ppm) in soil n initial
+      real nh4mn(NL) ! nh4ppm_min, min allowable NH4 (ppm) soil n init
       real no3mn(NL) ! no3ppm_min, minimum allowable NO3 (ppm
       PARAMETER   (nh4mn = 0.0) ! from APSIM soiln.ini
       PARAMETER   (no3mn = 0.0) ! from APSIM soiln.ini
-      real EXNH4 ! it is APSIM p_enupf_nh4 exponent for NH4 supply factor, FSR: change this unwieldy parameter by a factor of 100
-      real MNNH4 ! it is APSIM p_mnupf_nh4, minimum for NH4 supply factor
-      real EXNO3 ! it is APSIM p_enupf_no3, exponent for NO3 supply factor, FSR: change this unwieldy parameter by a factor of 100
-      real MNNO3 ! it is APSIM p_mnupf_no3,  minimum for NO3 supply factor
-      real WFNU	 ! it is APSIM p_wfnu_power,  power term for water effect on N supply
-      real PNUPR ! it is APSIM p_pot_nuprate potential uptake rate (g/mm root/day)  [FSR: change this unwieldy parameter to 0.45 mg/m]
+      real EXNH4 
+      real MNNH4 
+      real EXNO3 
+      real MNNO3 
+      real WFNU  
+      real PNUPR 
+!EXNH4 = APSIM p_enupf_nh4 exponent for NH4 supply factor, FSR: change this unwieldy parameter by a factor of 100
+!MNNH4 = APSIM p_mnupf_nh4, minimum for NH4 supply factor
+!EXNO3 = APSIM p_enupf_no3, exponent for NO3 supply factor, FSR: change this unwieldy parameter by a factor of 100
+!MNNO3 = APSIM p_mnupf_no3,  minimum for NO3 supply factor
+!WFNU  = APSIM p_wfnu_power,  power term for water effect on N supply
+!PNUPR = APSIM p_pot_nuprate potential uptake rate (g/mm root/day)  [FSR: change this unwieldy parameter to 0.45 mg/m]
      
       ! JG added for ecotype file
       INTEGER         DYNAMIC         
@@ -1192,26 +1200,27 @@ cnh          fno3 = 1.0 - exp (-0.0675 * (no3 - 0.2))
          smdfr = max(smdfr, 0.0)
          smdfr = min(smdfr, 1.0)
  
-         ! note - the following equations are arranged just as the original
-         ! code. these need to be rearranged to show meaning.
+!          note - the following equations are arranged just as the original
+!          code. these need to be rearranged to show meaning.
  
-         ! units for rlength are mm per ha
-         !*! rlength = rlv(layer) * dlayr(layer) / smm2sm / sm2ha
+!          units for rlength are mm per ha
+!         *! rlength = rlv(layer) * dlayr(layer) / smm2sm / sm2ha
          rlength = rlv_nw(layer) * dlayr_nw(layer) / smm2sm / sm2ha
-         !  mm       mm                              1
-         ! ---- = ------------  *    mm          *--------* --------
-         !  ha       mm3                    0.000001* m2/mm2 0.0001 *ha/m2
+!           mm       mm                              1
+!          ---- = ------------  *    mm          *--------* --------
+!           ha       mm3                    0.000001* m2/mm2 0.0001 *ha/m2
 cnh         avail_no3(layer) = rlength * fno3 * smdfr**2 * potrate*gm2kg
 !*!         avail_no3(layer) = rlength * fno3 * smdfr**p_wfnu_power
 !*!     :                      * p_pot_nuprate*gm2kg
          avail_no3(layer) = rlength * fno3 * smdfr**WFNU
      :                      * PNUPR * gm2kg
-         !   kg               mm                        g          0.001kg
-         !--------------- = ------- *      *      * ----------- * ---------
-         !    ha               ha                     mm[root]*d      g
-         max_avail_no3 = sno3(layer) - no3mn(layer) ! no3ppm_min in soiln.ini is in ppm
-         ! kg/ha        = kg/ha   - mg/MG ! NO3MN in *spe is in mg/MG ????????
-         !*! avail_no3(layer) = u_bound (avail_no3(layer),max_avail_no3)
+!            kg               mm                        g          0.001kg
+!         --------------- = ------- *      *      * ----------- * ---------
+!             ha               ha                     mm[root]*d      g
+!         no3ppm_min in soiln.ini is in ppm
+         max_avail_no3 = sno3(layer) - no3mn(layer) 
+!          kg/ha        = kg/ha   - mg/MG ! NO3MN in *spe is in mg/MG ????????
+!         *! avail_no3(layer) = u_bound (avail_no3(layer),max_avail_no3)
          avail_no3(layer) = min (avail_no3(layer),max_avail_no3)
 cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
 !*!         avail_nh4(layer) = rlength * fnh4 * smdfr**p_wfnu_power
@@ -1219,7 +1228,7 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
          avail_nh4(layer) = rlength * fnh4 * smdfr**WFNU
      :                      * PNUPR*gm2kg
          max_avail_nh4 = snh4(layer) - nh4mn(layer)
-         !*! avail_nh4(layer) = u_bound (avail_nh4(layer), max_avail_nh4)
+!         *! avail_nh4(layer) = u_bound (avail_nh4(layer), max_avail_nh4)
          avail_nh4(layer) = min (avail_nh4(layer), max_avail_nh4)
   100 continue
  
@@ -1238,12 +1247,13 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
       USE ModuleDefs  ! JG added for ecotype file
       USE WH_module
       implicit none
+      EXTERNAL GETLUN, ERROR, IGNORE, WARNING
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
 
 *+  Sub-Program Arguments  *******OK********
-      !*!real       plantn (*)            ! (INPUT/OUTPUT) plant part nitrogen
+!      *!real       plantn (*)            ! (INPUT/OUTPUT) plant part nitrogen
                                        !   (g/plant)
 
 *+  Purpose
@@ -1260,9 +1270,9 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
       real avail_stem_n
       real avail_root_n, avail_leaf_n, avail_lfsheath_n
       real INGNC  ! p_init_grain_nconc from APSIM
-          ! .CUL parameter INGNC = initial grain N conc(g N/g biomass) 17.1% protein
+!           .CUL parameter INGNC = initial grain N conc(g N/g biomass) 17.1% protein
       real MNRTN  ! p_root_n_min from APSIM, * 1000
-          ! .CUL parameter MNRTN = min root n due to grain n initialisation (0=off)
+!           .CUL parameter MNRTN = min root n due to grain n initialisation (0=off)
       real root_n_moved, lfsheath_n_moved, leaf_n_moved 
       ! JZW add the following variables
       Integer istage, stgdur(20)
@@ -1405,11 +1415,11 @@ cnh need to initialise plant n after these weights are initialised.
 !*!      plantn(stem) = plantn(stem) - min(avail_stem_n, plantn(grain))    
          pl_nit(stem_part) = pl_nit(stem_part) - 
      &                  min(avail_stem_n, pl_nit(grain_part))
-         ! If there is no enough available N from stem, take N from lfsheath 
+!          If there is no enough available N from stem, take N from lfsheath 
          lfsheath_n_moved = max(0.0, pl_nit(grain_part) - avail_stem_n)
          lfsheath_n_moved = min(lfsheath_n_moved, avail_lfsheath_n)
          pl_nit(lfsheath_part) = pl_nit(lfsheath_part)- lfsheath_n_moved
-         ! If there is no enough available N from lfsheath, take N from leaf 
+!          If there is no enough available N from lfsheath, take N from leaf 
          leaf_n_moved = max(0.0, pl_nit(grain_part) - avail_stem_n-
      :                  avail_lfsheath_n)
          leaf_n_moved = min(leaf_n_moved, avail_leaf_n)
@@ -1431,15 +1441,16 @@ cnh need to initialise plant n after these weights are initialised.
       end subroutine nwheats_plnin
  !*******************************************
 !TODO: where does this come from? I am taking a total guess that this is what it does.
-       !TODO: I am guessing that it checks if it is between the bounds and then sends a warning to the summary file it is outside
-       !      the bounds. I assume that is why they have the final parameter which is a string. 
-       !      I am guessing it is used in the message to the summary file to specify which variable was outside the bounds. 
-       !      Unlike u_bound and l_bound it does not force the variable to be between the bounds. It just warns the user in the summary file.
+!       TODO: I am guessing that it checks if it is between the bounds and then sends a warning to the summary file it is outside
+!             the bounds. I assume that is why they have the final parameter which is a string. 
+!             I am guessing it is used in the message to the summary file to specify which variable was outside the bounds. 
+!             Unlike u_bound and l_bound it does not force the variable to be between the bounds. It just warns the user in the summary file.
       subroutine bound_check_real_var(Variable, LowerBound, 
      &            UpperBound, VariableName, ERRKEY)
-      ! JZW if pass IDETO in the argument, the warning will go to the summary.out
-      ! IDETO  = ISWITCH % IDETO   
+!       JZW if pass IDETO in the argument, the warning will go to the summary.out
+!       IDETO  = ISWITCH % IDETO   
           IMPLICIT  NONE
+          EXTERNAL GETLUN, WARNING
           
           real Variable, LowerBound, UpperBound
           Integer NOUTDO

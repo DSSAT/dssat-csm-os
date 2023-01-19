@@ -26,13 +26,13 @@
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH, PLTPOP)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                           !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
       USE TF_module
       IMPLICIT NONE
-      EXTERNAL GETLUN, FIND, ERROR, OPVIEW, READA, READA_Dates, 
+      EXTERNAL GETLUN, ERROR, FIND, OPVIEW, READA, READA_Dates, 
      &   GetDesc, SUMVALS, EvaluateDat, TIMDIF
       SAVE
 

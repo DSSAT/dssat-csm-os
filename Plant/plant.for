@@ -456,7 +456,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     APSIM N-wheat WHAPS
       CASE('WHAPS')
         CALL WH_APSIM (CONTROL, ISWITCH,                  !Input
-     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,    !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3,               !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
@@ -472,14 +472,14 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     -------------------------------------------------
 !     APSIM Tef TFAPS
       CASE('TFAPS')
-        CALL TF_APSIM (CONTROL, ISWITCH,              !Input
-     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+        CALL TF_APSIM (CONTROL, ISWITCH,                  !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3,               !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, RLV,                  !Output
      &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
-     &     UNH4, UNO3, XLAI, XHLAI, UH2O)               !Output
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O, CropStatus)     !Output
 
         IF (DYNAMIC < RATE) THEN
 !          KTRANS = KCAN + 0.15        !Or use KEP here??

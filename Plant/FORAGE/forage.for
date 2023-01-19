@@ -46,10 +46,10 @@ C=======================================================================
         ! parameters, hourly weather data.
       USE ModuleData
       IMPLICIT NONE
-      EXTERNAL FOR_IPPLNT, FOR_PHOTO, FOR_PHENOL, FOR_DORMANCY, 
-     &  FOR_PEST, FOR_DEMAND, FOR_INCOMP, FOR_SENMOB, FOR_NUPTAK, 
-     &  FOR_NFIX, FOR_PODS, FOR_PODDET, FOR_CH2OREF, FOR_VEGGR, 
-     &  FOR_ROOTS, FOR_GROW, for_opmod, for_opgrow, for_mobil, 
+      EXTERNAL FOR_IPPLNT, FOR_PHOTO, FOR_PHENOL, FOR_DORMANCY,
+     &  FOR_PEST, FOR_DEMAND, FOR_INCOMP, FOR_SENMOB, FOR_NUPTAK,
+     &  FOR_NFIX, FOR_PODS, FOR_PODDET, FOR_CH2OREF, FOR_VEGGR,
+     &  FOR_ROOTS, FOR_GROW, for_opgrow, for_mobil,
      &  for_opmob, FOR_RESPIR, FOR_FREEZE, FORAGE_HARVEST,
      &  SUMVALS, FOR_PLANTNBAL, FOR_HRES_CGRO
       SAVE
@@ -343,7 +343,7 @@ C------------------------------------------------------------
         CALL FOR_PHOTO(CONTROL, 
      &   BETN, CO2, DXR57, EXCESS, NR5, PAR, SLPF,    !Input
      &   RNITP, SLAAD, SWFAC, TDAY, XHLAI, XPOD,      !Input
-     &   AGEFAC, PG)                                                      !Output
+     &   AGEFAC, PG)                                  !Output
 
       ENDIF
 
@@ -354,8 +354,8 @@ C------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,            !Output
-     &    YRNR7)                                                                  !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5, !Output
+     &    YRNR7)                                          !Output
 
 C-----------------------------------------------------------------------
 C     Read initial Dormancy data 
@@ -639,7 +639,7 @@ C-----------------------------------------------------------------------
      &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC, 
      &  NMOBR, NMOBSR, MAINR, ASMDOT, RSPNO3, RSPNH4, RPRO,       
      &  CNOD, CGRSD, CGRSH, CADVG, CSAVEV, AGRVG, PCH2O, WTLF, WLDOT, 
-     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,          
+     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,
      &  WSIDOT, WSFDOT, WSDOTN, 
      &  STRWT, WSRDOT, WSRIDOT, WSRFDOT, WSRDOTN,
      &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT, 
@@ -1055,7 +1055,7 @@ C-----------------------------------------------------------------------
      &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC, 
      &  NMOBR, NMOBSR, MAINR, ASMDOT, RSPNO3, RSPNH4, RPRO,       
      &  CNOD, CGRSD, CGRSH, CADVG, CSAVEV, AGRVG, PCH2O, WTLF, WLDOT, 
-     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,          
+     &  WLIDOT, WLFDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT, 
      &  WSIDOT, WSFDOT, WSDOTN, 
      &  STRWT, WSRDOT, WSRIDOT, WSRFDOT, WSRDOTN,
      &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT, 
@@ -2168,14 +2168,6 @@ C-----------------------------------------------------------------------
         ENDIF
 
 !-----------------------------------------------------------------------
-!     Calculate harvest residue left in field
-!        CALL FOR_HRES_CGRO(CONTROL,
-!     &    BWAH, CROP, DWNOD, NLAYR, PLIGLF, PLIGNO,     !Input
-!     &    PLIGRT, PLIGSD, PLIGSH, PLIGST, RLV, RTWT,    !Input
-!     &    SDWT, SDWTAH, SENESCE, SHELWT, TOPWT, WTNLF,  !Input
-!     &    WTNNOD, WTNRT, WTNSD, WTNSH, WTNST,           !Input
-!     &    HARVRES)                                      !Output
-
         CALL FOR_HRES_CGRO(CONTROL,
      &    CROP, DLAYR, DWNOD, HARVFRAC, NLAYR, PLIGLF,    !Input
      &    PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST, RLV,    !Input
@@ -2649,7 +2641,7 @@ C-----------------------------------------------------------------------
 !              (g [N] m-2 d-1)
 ! SW(L)     Volumetric soil water content in layer L
 !             (cm3 [water] / cm3 [soil])
-! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
+! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress,
 !             0.0=max stress 
 ! SWIDOT    Daily seed mass damage (g/m2/day)
 ! TAVG      Average daily temperature (°C)

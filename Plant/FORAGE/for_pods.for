@@ -40,6 +40,8 @@ C=======================================================================
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, FOR_PODCOMP, WARNING, 
+     &  for_PODCOMP
       SAVE
 
       CHARACTER*1   ISWWAT
@@ -783,6 +785,7 @@ C-----------------------------------------------------------------------
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
 
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'PODCOM')

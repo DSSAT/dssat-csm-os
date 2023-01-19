@@ -302,7 +302,7 @@ C=======================================================================
 !     ------------------------------------------------------------------
       USE ModuleDefs    
       IMPLICIT NONE
-      EXTERNAL respond2get_real_var, count_of_real_vals, sum_real_array
+      EXTERNAL count_of_real_vals, sum_real_array
       SAVE
 
       integer count_of_real_vals

@@ -23,6 +23,8 @@ C      USE DFLIB
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, HEADER, YR_DOY, NAILUJ, GET_CROPD,
+     &  TIMDIF, CLEAR
       SAVE
 
       CHARACTER*1 IDETO, RNMODE, ANS
