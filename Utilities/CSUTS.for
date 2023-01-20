@@ -1019,7 +1019,8 @@
       CHARACTER (LEN=*)    tlineini, atlinein, widthc
       INTEGER              i,j,k,l,itmp,tvilent,blanks,width,start
       INTEGER              tvifromc,lenout,lenafter,kk,lendata
-      INTEGER              lentchar,fnumerr,fnumwrk,enddot
+      INTEGER              lentchar,fnumerr,enddot
+      !INTEGER              fnumwrk
       LOGICAL              FOPEN         
 
       INTRINSIC            CHAR,LEN,MAX0,MIN,MIN0
@@ -1983,7 +1984,7 @@
       CHARACTER (LEN=10) newchar
       CHARACTER (LEN=78) message(10)
       INTEGER            number,pos,i,lenchar,tvifromc,tvilent,fnumerr
-      INTEGER            fnumwrk
+!      INTEGER            fnumwrk
       LOGICAL            fopen
 
       SAVE
@@ -2093,7 +2094,8 @@
       CHARACTER (LEN=*)  charnum
       CHARACTER (LEN=10) newchar
       CHARACTER (LEN=78) message(10)
-      INTEGER            pos,i,lenchar,tvilent,fnumerr,fnumwrk
+      INTEGER            pos,i,lenchar,tvilent,fnumerr
+!      INTEGER            fnumwrk
       REAL               tvrfromc,number
       LOGICAL            fopen
 
@@ -2199,7 +2201,8 @@
       CHARACTER (LEN=*)  charnum,code
       CHARACTER (LEN=10) newchar
       CHARACTER (LEN=78) message(10)
-      INTEGER            pos,i,lenchar,tvilent,fnumerr,fnumwrk
+      INTEGER            pos,i,lenchar,tvilent,fnumerr
+!      INTEGER            fnumwrk
       REAL               tvrfromc,number,tvrfromccde
       LOGICAL            fopen
 

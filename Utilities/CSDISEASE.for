@@ -71,7 +71,7 @@
       INTEGER       dynamic       ! Program control variable       #
       INTEGER       fnumdis(0:5)  ! File number,disease outputs    #
       INTEGER       fnumlfdi      ! File number,leaves,disease mod #
-      INTEGER       fnumwrk       ! File number,work file          #
+!      INTEGER       fnumwrk       ! File number,work file          #
       INTEGER       i             ! Loop counter                   #
       INTEGER       l             ! Loop counter                   #
       INTEGER       lfcnum        ! Leaf cohort number             #
@@ -183,11 +183,11 @@
 
         IF (DYNAMIC.EQ.RUNINIT) THEN
           YEARSIM = YEARDOY
-          IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
-            CALL Getlun ('WORK.OUT',fnumwrk)
-            INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-            IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
-          ENDIF
+!          IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
+!            CALL Getlun ('WORK.OUT',fnumwrk)
+!            INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!            IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!          ENDIF
           CALL Getlun ('DISEASE0',fnumdis(0))
           CALL Getlun ('DISEASE1',fnumdis(1))
           CALL Getlun ('DISEASE2',fnumdis(2))
@@ -256,25 +256,25 @@
         CALL SPREADRA (SPDIRFLE,'TKILL',dinxc,tkill)
         CALL SPREADRA (SPDIRFLE,'DINCO',dinxc,dinco)
 
-        WRITE (fnumwrk,*) 'DISEASE DETAILS '
-        WRITE (fnumwrk,'(A13,A12)') '  DISEASE 1  ',DINAME(1)
-        WRITE (fnumwrk,'(A13,A12)') '  DISEASE 2  ',DINAME(2)
-        WRITE (fnumwrk,'(A13,A12)') '  DISEASE 3  ',DINAME(3)
+!        WRITE (fnumwrk,*) 'DISEASE DETAILS '
+!        WRITE (fnumwrk,'(A13,A12)') '  DISEASE 1  ',DINAME(1)
+!        WRITE (fnumwrk,'(A13,A12)') '  DISEASE 2  ',DINAME(2)
+!        WRITE (fnumwrk,'(A13,A12)') '  DISEASE 3  ',DINAME(3)
 
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  TBASE',(tbase(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  TOPT1',(topt2(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  TOPT2',(topt2(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  TTOP',(ttop(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  TBASE',(tbase(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  TOPT1',(topt2(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  TOPT2',(topt2(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  TTOP',(ttop(i),i = 1,3)
 
-        WRITE (fnumwrk,'(A7, 3F7.3)') '  psizx',(psizex(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3I7  )') '  psizf',(psizegf(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3I7  )') '  DITY2',(ditype2(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  DLDUR',(didl(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  DSDUR',(dids(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  DDEWN',(dewmin(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  DINMX',(pnumgx(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  TKILL',(tkill(i),i = 1,3)
-        WRITE (fnumwrk,'(A7, 3F7.1)') '  DINCO',(dinco(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.3)') '  psizx',(psizex(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3I7  )') '  psizf',(psizegf(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3I7  )') '  DITY2',(ditype2(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  DLDUR',(didl(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  DSDUR',(dids(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  DDEWN',(dewmin(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  DINMX',(pnumgx(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  TKILL',(tkill(i),i = 1,3)
+!        WRITE (fnumwrk,'(A7, 3F7.1)') '  DINCO',(dinco(i),i = 1,3)
 
         DO dinum=1,dinx
          diiscfi(dinum)=digfac(dinum)/10.0
@@ -347,8 +347,8 @@
             IF (dctar(dcnum).EQ.dinum) THEN
               IF (dcdat(dcnum).EQ.yeardoy) THEN
                 dicfac(dinum) = dcfac(dinum)
-                WRITE(fnumwrk,'(A33,I1)')
-     &           ' Control application for disease ',dinum
+!                WRITE(fnumwrk,'(A33,I1)')
+!     &           ' Control application for disease ',dinum
                 IF (dcdur(dinum).GT.0.0) THEN
                   dicfacd(dinum) = dicfac(dinum)/(dcdur(dinum)*0.25)
                 ENDIF
@@ -357,12 +357,12 @@
             ENDIF
           ENDDO
 
-          IF (dinum.EQ.dinx) THEN
-            WRITE(fnumwrk,*)' '
-            WRITE(fnumwrk,'(A34,3F7.3)')
-     &       ' Control factors for diseases 123 ',
-     &       dicfac(1),dicfac(2),dicfac(3)
-          ENDIF
+!          IF (dinum.EQ.dinx) THEN
+!            WRITE(fnumwrk,*)' '
+!            WRITE(fnumwrk,'(A34,3F7.3)')
+!     &       ' Control factors for diseases 123 ',
+!     &       dicfac(1),dicfac(2),dicfac(3)
+!          ENDIF
 
           ! Temperature factors
           tresp(1) = tbase(dinum)
@@ -489,9 +489,9 @@
             IF (pnumc(dinum)/(llapd-llapsd).GT.pnumcs)THEN
                pcnum(dinum)=pcnum(dinum)+1
                IF(pcnum(dinum).EQ.pcnumx)THEN
-                 Write (fnumwrk,*) ' Working with disease: ',dinum
-                 Write (fnumwrk,*)
-     &            ' Disease cohort # reached : ',pcnum(dinum)
+!                 Write (fnumwrk,*) ' Working with disease: ',dinum
+!                 Write (fnumwrk,*)
+!     &            ' Disease cohort # reached : ',pcnum(dinum)
                  Write (*,*) ' Working with disease: ',dinum
                  Write (*,*) ' Disease cohort # reached : ',pcnum(dinum)
                  WRITE (*,*) ' Program will have to stop'
@@ -582,8 +582,8 @@
                LLAPSFR = (LLAPS(lfnum)-LLAPSY(lfnum))
      &                 / (LLAPY(lfnum)-LLAPSY(lfnum))
                IF (LLAPSFR.GT.1.0) THEN
-                 WRITE(fnumwrk,*)
-     &            '  Warning. New senesent leaf greater than green area'
+!                 WRITE(fnumwrk,*)
+!     &            '  Warning. New senesent leaf greater than green area'
                  llapsfr = 1.0
                ENDIF
                DO cnum = 1,pcnum(dinum)
@@ -688,9 +688,9 @@
          favfacsm(dinum) = favfacsm(dinum) + favfac(dinum)
          IF (didat(dinum).GT.0.AND.didate(dinum).LE.0) THEN
            IF (didat(dinum).EQ.yeardoy) THEN
-             WRITE(fnumwrk,'(A36,I1,A4,I7)')
-     &        ' Initiation (fixed date) of disease ',dinum,' on ',
-     &        yeardoy
+!             WRITE(fnumwrk,'(A36,I1,A4,I7)')
+!     &        ' Initiation (fixed date) of disease ',dinum,' on ',
+!     &        yeardoy
              dinuminit = dinuminit + 1
              didate(dinum) = yeardoy
              didoy(dinum) = doy
@@ -699,9 +699,9 @@
          ELSE
            IF (favfacsm(dinum).GT.diffacr(dinum).AND.
      &       didate(dinum).LE.0) THEN
-             WRITE(fnumwrk,'(A35,I1,A4,I7)')
-     &        ' Initiation (automatic) of disease ',dinum,' on ',
-     &        yeardoy
+!             WRITE(fnumwrk,'(A35,I1,A4,I7)')
+!     &        ' Initiation (automatic) of disease ',dinum,' on ',
+!     &        yeardoy
              dinuminit = dinuminit + 1
              didate(dinum) = yeardoy
              didoy(dinum) = doy
