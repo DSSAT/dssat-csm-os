@@ -494,7 +494,6 @@ set(
         "Plant/NTEF/TF_OPNIT.for"
         "Plant/NTEF/TF_PHENOL.for"
         "Plant/NTEF/TF_ROOTS.for"
-        "Plant/NTEF/TF_SW_SUBS.for"
         "Plant/NTEF/TF_temp.for"
         "Plant/NWHEAT/WH_APSIM.for"
         "Plant/NWHEAT/WH_COLD.for"

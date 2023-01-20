@@ -76,6 +76,7 @@ C========================================================================
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, FOR_CANOPY, NLKDIST
       SAVE
 
       CHARACTER*6  ERRKEY

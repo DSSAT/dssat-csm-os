@@ -27,7 +27,7 @@ C=======================================================================
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
-      EXTERNAL FOR_PHOTIP
+      EXTERNAL FOR_PHOTIP, CURV, TABEX
       SAVE
 
       CHARACTER*3  TYPPGN, TYPPGT

@@ -12,20 +12,22 @@ C  Called by: PEST
 C  Calls:     None
 C=======================================================================
       SUBROUTINE FOR_VEGDM(
-     &    AREALF, CLW, CSW, PCLMA, PCLMT,                 !Input
+     &    AREALF, CLW, CSW, PCLMT,                        !Input
      &    PCSTMD, PDLA, PLFAD, PLFMD, PSTMD,              !Input
      &    PVSTGD, SLA, SLDOT, SSDOT, STMWT,               !Input
      &    TDLA, VSTGD, WLFDOT, WSTMD, WTLF,               !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
-     &    LAIDOT, WSIDOT,                                                      !Output
-     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,                        !Input
-     &  WSFDOT, WSRFDOT, WSTRD,                                          !Input
-     &  CSTRM, WSRIDOT,                                        !Output
-
-     &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                              !Output
-
+     &    LAIDOT, WSIDOT,                                 !Output
+     &    CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,             !Input
+     &    WSFDOT, WSRFDOT, WSTRD,                         !Input
+     &    CSTRM, WSRIDOT,                                 !Output
+     &    CSFRZ, CSRFRZ, DSTOR, SRDAM,                    !Output
      &    DYNAMIC)                                        !Control
+
+!     2023-01-20 CHP Remove unused variables from argument list:
+!     PCLMA, 
+
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -35,7 +37,7 @@ C=======================================================================
       SAVE
 
 C     Leaf Variables
-      REAL TLFAD,PLFAD,TLFMD,PLFMD,PCLMT,PCLMA
+      REAL TLFAD,PLFAD,TLFMD,PLFMD,PCLMT  !,PCLMA
       REAL CLSEN,CLAI,CLFM,LAIDOT
       REAL DISLA, DISLAP, AREALF
       REAL PDLA, TDLA

@@ -10,24 +10,27 @@ C  02/25/1998  CHP Modified for PEST Module
 C  01/12/1999  GH  Incorporated into CROPGRO
 C  04/15/2002  GH  Modified number of pests to 100
 C  05/09/2003  CHP Modified number of pests to 200
+C  06/18/2015  GH  Moved MaxPest to ModuleDefs
 C-----------------------------------------------------------------------
 C  Called by: PEST
 C  Calls:     None
 C=======================================================================
       SUBROUTINE FOR_IPPARM(
-     &    FILEP, PATHPE,                                  !Input
+     &    FILEP, PATHPE, ISWDIS,                          !Input
      &    NPEST, PCPID, PCTID, PDCF1, PID)                !Output
-C----------------------------------------------------------------------
+!-----------------------------------------------------------------------
+      USE ModuleDefs  
       IMPLICIT NONE
       EXTERNAL GETLUN, IGNORE, ERROR
       SAVE
+!-----------------------------------------------------------------------
 
-      CHARACTER*1   BLANK
+      CHARACTER*1   BLANK, ISWDIS
       CHARACTER*2   NEWLIN
-      CHARACTER*5   PID(200),PCPID(200,6)
+      CHARACTER*5   PID(MAXPEST),PCPID(MAXPEST,6)
       CHARACTER*6   ERRKEY
       CHARACTER*12  FILEP
-      CHARACTER*20  PNAME(200)
+      CHARACTER*20  PNAME(MAXPEST)
       CHARACTER*80  PATHPE
       CHARACTER*92  FILEPP
       CHARACTER*200 C200
@@ -36,9 +39,9 @@ C----------------------------------------------------------------------
       INTEGER LN,LNUM,ISECT
       INTEGER CPN, LUN, NPEST
       INTEGER I, J
-      INTEGER PCTID(200)
+      INTEGER PCTID(MAXPEST)
 
-      REAL PDCF1(200,6)
+      REAL PDCF1(MAXPEST,6)
 
       PARAMETER  (BLANK  = ' ')
       PARAMETER  (ERRKEY = 'IPPARM')
@@ -54,13 +57,15 @@ C----------------------------------------------------------------------
       LNUM = 0
       LN=0
 
-      DO I = 1, 200
+      DO I = 1, MAXPEST
         PCTID(I) = 0
         DO J = 1, 6
         PCPID(I,J) = 'xxxxx'
         PDCF1(I,J) = 0.0
         ENDDO
       ENDDO
+
+      IF (ISWDIS .EQ. 'N') RETURN
 C----------------------------------------------------------------------
 C     Open pest coefficient file
 C----------------------------------------------------------------------
