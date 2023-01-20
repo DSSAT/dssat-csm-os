@@ -164,19 +164,22 @@ FRHARV    3
 Error in Automatic Management section (FileX). Correct mow harvest frequency (days).
 
 FRHARV    4
-Error in Automatic Management section (FileX). Correct mow harvest frequency (GDD).
+Error in Automatic Management section. Correct mow harvest frequency (GDD).
 
 FRHARV    5
-Error in Automatic Management section (FileX). Correct the stubble percent leaf.
+Error in Automatic Management section. Correct the stubble percent leaf.
 
 FRHARV    6
-Error in Automatic Management section (FileX). Correct the cutting height.
+Error in Automatic Management section. Correct the cutting height.
 
 FRHARV    7
-Error in Automatic Management section (FileX). Correct the stubble mass.
+Error in Automatic Management section. Correct the stubble mass.
 
 FRHARV    8
-Error in Automatic Management section (FileX). Correct the residual vegetative stage after mowing.
+Error in Automatic Management section. Correct residual vegetative stage after mowing.
+
+FRHARV    9
+Missing AutoMOW section in the species file.
 
 GETDSC   29
 Detail.CDE file not found.  Program will stop.

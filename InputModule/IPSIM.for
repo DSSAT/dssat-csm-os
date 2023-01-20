@@ -94,7 +94,7 @@ C FO/DP/TF - 2020-07-22 - AutomaticMOW FILEX variables
       INTEGER HMGDD
       REAL HMCUT
 C TF/DP 2022-01-31 Simple version AutoMOW
-      INTEGER HMMOW, HRSPL, AMVS
+      INTEGER HMMOW, HRSPL, HMVS
 
 
 !     2020-11-04 CHP Added for yield forecast mode, RNMODE = 'Y'
@@ -607,7 +607,7 @@ C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,71,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
      &           HPP,HRP,ISWITCH%HMFRQ,ISWITCH%HMGDD,ISWITCH%HMCUT,
-     &           ISWITCH%HMMOW, ISWITCH%HRSPL, ISWITCH%AMVS
+     &           ISWITCH%HMMOW, ISWITCH%HRSPL, ISWITCH%HMVS
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             
 !     ==============================================================

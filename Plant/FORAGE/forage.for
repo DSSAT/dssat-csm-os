@@ -272,7 +272,7 @@ C FO/DP/TF - 2020-07-22 - AutomaticMOW
       
       REAL PROLFF,PROSTF
 C TF/DP 2022-01-31 Simple version AutoMOW
-      INTEGER HMMOW, HRSPL, AMVS
+      INTEGER HMMOW, HRSPL, HMVS
       CHARACTER*1 ATTP
 
 
@@ -330,7 +330,7 @@ C TF/DP 2022-01-31 Simple version AutoMOW
       HMCUT  = ISWITCH % HMCUT
       HMMOW  = ISWITCH % HMMOW
       HRSPL  = ISWITCH % HRSPL
-      AMVS   = ISWITCH % AMVS
+      HMVS   = ISWITCH % HMVS
       ATTP   = ISWITCH % ATTP
 
       CO2    = WEATHER % CO2   
@@ -754,7 +754,7 @@ C-----------------------------------------------------------------------
      &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
      &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                AMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &                HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
      &                MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
      &                RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
      &                XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
@@ -1263,7 +1263,7 @@ C-----------------------------------------------------------------------
      &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
      &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                AMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &                HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
      &                MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
      &                RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
      &                XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
@@ -2088,7 +2088,7 @@ C-----------------------------------------------------------------------
      &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
      &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                AMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &                HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
      &                MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
      &                RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
      &                XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
