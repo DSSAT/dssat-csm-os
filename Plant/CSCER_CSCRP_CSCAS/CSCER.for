@@ -174,6 +174,13 @@
       USE CSVOUTPUT  ! VSH
       
       IMPLICIT NONE
+      EXTERNAL YR_DOY, GETLUN, SUMVALS, Y4K_DOY, HEADER, TVILENT, 
+     &  TVICOLNM, TL10FROMI, LTRIM, XREADC, XREADT, SPREADRA, TFAC4, 
+     &  CSTIMDIF, CSOPLINE, XREADI, XREADR, UCASE, XREADIA, XREADRA, 
+     &  FVCHECK, FINDDIR, CUREADC, CUREADR, ECREADR, SPREADR, CSINCDAT, 
+     &  CSTRANS, CSROOTWU, YVALXY, CSLAYERS, YVAL1, CALENDAR, DAPCALC, 
+     &  LTRIM2, AREADR, AREADI, CSYDOY, GETSTRI, CSCLEAR5, GETSTR, 
+     &  GETSTRR
       SAVE
       
       INTEGER       NL            ! Maximum number of soil layers  #
@@ -189,14 +196,14 @@
       INTEGER       ADAPM         ! Anthesis,DAP,measured          d
       INTEGER       ADAT          ! Anthesis date (Year+doy)       #
       INTEGER       ADAT10        ! Anthesis date (Year+doy) + 10  #
-      INTEGER       ADATEAA       ! Anthesis date abs error avg    #
-      INTEGER       ADATEAV       ! Anthesis date average error    #
+!     INTEGER       ADATEAA       ! Anthesis date abs error avg    #
+!     INTEGER       ADATEAV       ! Anthesis date average error    #
       INTEGER       ADATEND       ! Anthesis end date (Year+doy)   #
       INTEGER       ADATERR       ! Anthesis date error            d
       INTEGER       ADATM         ! Anthesis date,measured         #
-      INTEGER       ADATNUM       ! Anthesis date error #          #
-      INTEGER       ADATSUA       ! Anthesis date abs error #      #
-      INTEGER       ADATSUM       ! Anthesis date error sum        #
+!     INTEGER       ADATNUM       ! Anthesis date error #          #
+!     INTEGER       ADATSUA       ! Anthesis date abs error #      #
+!     INTEGER       ADATSUM       ! Anthesis date error sum        #
       REAL          ADATT         ! Anthesis date from t file      YrDoy
       INTEGER       ADAY          ! Anthesis day of year           d
       INTEGER       ADAYH         ! Anthesis harvest d>anthesis    d
@@ -252,13 +259,13 @@
       INTEGER       CN            ! Crop component (multicrop)     #
       REAL          CNAAM         ! Canopy N,anthesis,measured     kg/ha
       REAL          CNAM          ! Canopy N at maturity           kg/ha
-      REAL          CNAMEAA       ! Canopy N/area abs error avg    #
-      REAL          CNAMEAV       ! Canopy N/area average error    #
+!     REAL          CNAMEAA       ! Canopy N/area abs error avg    #
+!     REAL          CNAMEAV       ! Canopy N/area average error    #
       REAL          CNAMERR       ! Canopy N,maturity,error        %
       REAL          CNAMM         ! Canopy N,mature,measured       kg/ha
-      INTEGER       CNAMNUM       ! Canopy N/area error #          #
-      REAL          CNAMSUA       ! Canopy N/area abs error #      #
-      REAL          CNAMSUM       ! Canopy N/area error sum        #
+!     INTEGER       CNAMNUM       ! Canopy N/area error #          #
+!     REAL          CNAMSUA       ! Canopy N/area abs error #      #
+!     REAL          CNAMSUM       ! Canopy N/area error sum        #
       CHARACTER*10  CNCHAR        ! Crop component (multicrop)     text
       CHARACTER*2   CNCHAR2       ! Crop component (multicrop)     text
       REAL          CNCTMP        ! Canopy N concentration,temp    %
@@ -279,7 +286,7 @@
       INTEGER       CSTIMDIF      ! Time difference function       #
       CHARACTER*1   CSWDIS        ! Control switch,disease         code
       INTEGER       CSYDOY        ! Yr+Doy output from function    #
-      INTEGER       CSYEARDOY     ! Cropsim function ouptut        #
+!     INTEGER       CSYEARDOY     ! Cropsim function ouptut        #
       CHARACTER*250 CUDIRFLE      ! Cultivar directory+file        text
       CHARACTER*250 CUDIRFLP      ! Cultivar directory+file,prev   text
       CHARACTER*12  CUFILE        ! Cultivar file                  text
@@ -293,13 +300,13 @@
       REAL          CWAAM         ! Canopy wt,anthesis,measured    kg/ha
       REAL          CWADT         ! Canopy weight from t file      kg/ha
       REAL          CWAM          ! Canopy weight at maturity      kg/ha
-      REAL          CWAMEAA       ! Canopy wt/area abs error avg   #
-      REAL          CWAMEAV       ! Canopy wt/area average error   #
+!     REAL          CWAMEAA       ! Canopy wt/area abs error avg   #
+!     REAL          CWAMEAV       ! Canopy wt/area average error   #
       REAL          CWAMERR       ! Canopy weight,maturity,error   %
       REAL          CWAMM         ! Canopy wt,mature,measured      kg/ha
-      INTEGER       CWAMNUM       ! Canopy wt/area error #         #
-      REAL          CWAMSUA       ! Canopy wt/area abs error #     #
-      REAL          CWAMSUM       ! Canopy wt/area error sum       #
+!     INTEGER       CWAMNUM       ! Canopy wt/area error #         #
+!     REAL          CWAMSUA       ! Canopy wt/area abs error #     #
+!     REAL          CWAMSUM       ! Canopy wt/area error sum       #
       INTEGER       DAE           ! Days after emergence           #
       INTEGER       DAP           ! Days after planting            #
       INTEGER       DAPCALC       ! DAP output from funcion        #
@@ -360,13 +367,13 @@
       INTEGER       EDAP          ! Emergence DAP                  #
       INTEGER       EDAPM         ! Emergence DAP measured         #
       INTEGER       EDATM         ! Emergence date,measured (Afle) #
-      INTEGER       EMDATEAA      ! Emergence date abs error avg   #
-      INTEGER       EMDATEAV      ! Emergence date average error   #
+!     INTEGER       EMDATEAA      ! Emergence date abs error avg   #
+!     INTEGER       EMDATEAV      ! Emergence date average error   #
       INTEGER       EMDATERR      ! Emergence date error           d
       INTEGER       EMDATM        ! Emergence yr+d,measured (Xfle) #
-      INTEGER       EMDATNUM      ! Emergence date error #         #
-      INTEGER       EMDATSUA      ! Emergence date abs error #     #
-      INTEGER       EMDATSUM      ! Emergence date error sum       #
+!     INTEGER       EMDATNUM      ! Emergence date error #         #
+!     INTEGER       EMDATSUA      ! Emergence date abs error #     #
+!     INTEGER       EMDATSUM      ! Emergence date error sum       #
       CHARACTER*60  ENAME         ! Experiment description         text
       REAL          EO            ! Potential evapotranspiration   mm/d
       REAL          EOP           ! Potential evaporation,plants   mm/d
@@ -431,23 +438,23 @@
       REAL          GMTMEAN       ! Grain maturity temperature av  C
       REAL          GMTSUM        ! Grain maturity temperature sum C
       REAL          GNAM          ! Harvest N,mature               kg/ha
-      REAL          GNAMEAA       ! Grain N/area abs error avg     #
-      REAL          GNAMEAV       ! Grain N/area average error     #
+!     REAL          GNAMEAA       ! Grain N/area abs error avg     #
+!     REAL          GNAMEAV       ! Grain N/area average error     #
       REAL          GNAMERR       ! Harvest N,error                %
       REAL          GNAMM         ! Harvest N,mature,measured      kg/ha
-      INTEGER       GNAMNUM       ! Grain N/area error #           #
-      REAL          GNAMSUA       ! Grain N/area abs error #       #
-      REAL          GNAMSUM       ! Grain N/area error sum         #
+!     INTEGER       GNAMNUM       ! Grain N/area error #           #
+!     REAL          GNAMSUA       ! Grain N/area abs error #       #
+!     REAL          GNAMSUM       ! Grain N/area error sum         #
       REAL          GNPCM         ! Harvest N%,measured            %
       CHARACTER*6   GNPCMC        ! Harvest N,mature               char
-      REAL          GNPCMEAA      ! Grain N% abs error avg         #
-      REAL          GNPCMEAV      ! Grain N% average error         #
+!     REAL          GNPCMEAA      ! Grain N% abs error avg         #
+!     REAL          GNPCMEAV      ! Grain N% average error         #
       REAL          GNPCMERR      ! Harvest N%,error               %
       REAL          GNPCMM        ! Harvest N,mature,measured      %
       CHARACTER*6   GNPCMMC       ! Harvest N,mature,measured      char
-      INTEGER       GNPCMNUM      ! Grain N% error #               #
-      REAL          GNPCMSUA      ! Grain N% abs error #           #
-      REAL          GNPCMSUM      ! Grain N% error sum             #
+!     INTEGER       GNPCMNUM      ! Grain N% error #               #
+!     REAL          GNPCMSUA      ! Grain N% abs error #           #
+!     REAL          GNPCMSUM      ! Grain N% error sum             #
       REAL          GPLA(10)      ! Green leaf area                cm2/p
       REAL          GPLASENF      ! Green leaf area,final sen strt #
       REAL          GPLASENS      ! Green leaf area,senesce stage  cm2/p
@@ -500,14 +507,14 @@
       REAL          GWUD          ! Grain size                     g
       REAL          GWUM          ! Grain wt per unit,maturity     g
       CHARACTER*6   GWUMC         ! Grain wt/unit,mat              text
-      REAL          GWUMEAA       ! Grain wt/unit abs error avg    #
-      REAL          GWUMEAV       ! Grain wt/unit average error    #
+!     REAL          GWUMEAA       ! Grain wt/unit abs error avg    #
+!     REAL          GWUMEAV       ! Grain wt/unit average error    #
       REAL          GWUMERR       ! Grain wt per unit error        %
       REAL          GWUMM         ! Grain wt/unit,mat,measured     g
       CHARACTER*6   GWUMMC        ! Grain wt/unit,mat,measured     text
-      INTEGER       GWUMNUM       ! Grain wt/unit error #          #
-      REAL          GWUMSUA       ! Grain wt/unit abs error #      #
-      REAL          GWUMSUM       ! Grain wt/unit error sum        #
+!     INTEGER       GWUMNUM       ! Grain wt/unit error #          #
+!     REAL          GWUMSUA       ! Grain wt/unit abs error #      #
+!     REAL          GWUMSUM       ! Grain wt/unit error sum        #
       REAL          GWUMYLD       ! Grain wt,mature,calculated     g/#
       REAL          GWUT          ! Grain weight/unit,t file       mg
       REAL          H2OA          ! Water available in root zone   mm
@@ -531,49 +538,49 @@
       REAL          HIADT         ! Harvest index from t file      #
       REAL          HIAM          ! Harvest index,mature           %
       CHARACTER*6   HIAMC         ! Harvest index,mature           char
-      REAL          HIAMEAA       ! Harvest index abs error avg    #
-      REAL          HIAMEAV       ! Harvest index average error    #
+!     REAL          HIAMEAA       ! Harvest index abs error avg    #
+!     REAL          HIAMEAV       ! Harvest index average error    #
       REAL          HIAMERR       ! Harvest index,maturity,error   %
       REAL          HIAMM         ! Harvest index,mature,measure   #
       CHARACTER*6   HIAMMC        ! Harvest index,mature,measure   char
       REAL          HIAMMTMP      ! Harvest index,mature,temporary #
-      INTEGER       HIAMNUM       ! Harvest index error #          #
-      REAL          HIAMSUA       ! Harvest index abs error #      #
-      REAL          HIAMSUM       ! Harvest index error sum        #
+!     INTEGER       HIAMNUM       ! Harvest index error #          #
+!     REAL          HIAMSUA       ! Harvest index abs error #      #
+!     REAL          HIAMSUM       ! Harvest index error sum        #
       REAL          HIND          ! Harvest index,N,above ground   #
       REAL          HINM          ! Harvest index,N,abground,mat   #
       CHARACTER*6   HINMC         ! Harvest index,N,abground,mat   char
       REAL          HINMM         ! Harvest N index,mature,meas    %
       CHARACTER*6   HINMMC        ! Harvest N index,mature,meas    char
       INTEGER       HLAST         ! Last date for harvest          #
-      REAL          HNUMAEAA      ! Harvest #/area abs error avg   #
-      REAL          HNUMAEAV      ! Harvest #/area average error   #
+!     REAL          HNUMAEAA      ! Harvest #/area abs error avg   #
+!     REAL          HNUMAEAV      ! Harvest #/area average error   #
       REAL          HNUMAERR      ! Harvest #,maturity,error       %
       REAL          HNUMAM        ! Harvest #,maturity             #/m2
       REAL          HNUMAMM       ! Harvest #,mature,measured      #/m2
-      INTEGER       HNUMANUM      ! Harvest #/area error #         #
-      REAL          HNUMASUA      ! Harvest #/area abs error #     #
-      REAL          HNUMASUM      ! Harvest #/area error sum       #
+!     INTEGER       HNUMANUM      ! Harvest #/area error #         #
+!     REAL          HNUMASUA      ! Harvest #/area abs error #     #
+!     REAL          HNUMASUM      ! Harvest #/area error sum       #
       REAL          HNUMAT        ! Harvest number/area,t file     #/m2
       REAL          HNUMET        ! Harvest number/ear,t file      #/s
-      REAL          HNUMGEAA      ! Harvest #/group abs error avg  #
-      REAL          HNUMGEAV      ! Harvest #/group average error  #
+!     REAL          HNUMGEAA      ! Harvest #/group abs error avg  #
+!     REAL          HNUMGEAV      ! Harvest #/group average error  #
       REAL          HNUMGERR      ! Harvest #/group,error          %
       REAL          HNUMGM        ! Harvest #,maturity             #/g
       REAL          HNUMGMM       ! Harvest #,mature,measured      #/g
-      INTEGER       HNUMGNUM      ! Harvest #/group error #        #
-      REAL          HNUMGSUA      ! Harvest #/group abs error #    #
-      REAL          HNUMGSUM      ! Harvest #/group error sum      #
+!     INTEGER       HNUMGNUM      ! Harvest #/group error #        #
+!     REAL          HNUMGSUA      ! Harvest #/group abs error #    #
+!     REAL          HNUMGSUM      ! Harvest #/group error sum      #
       REAL          HPC           ! Harvest percentage             %
       REAL          CHTPC(10)     ! Canopy ht % assoc with lf area %
       REAL          HWADM         ! Harvest wt,measured            kg/ha
-      REAL          HWAHEAA       ! Harvest wt/area abs error avg  #
-      REAL          HWAHEAV       ! Harvest wt/area average error  #
+!     REAL          HWAHEAA       ! Harvest wt/area abs error avg  #
+!     REAL          HWAHEAV       ! Harvest wt/area average error  #
       REAL          HWAHERR       ! Harvest wt,harvest,error       %
       REAL          HWAHM         ! Harvest wt,harvest,measured    kg/ha
-      INTEGER       HWAHNUM       ! Harvest wt/area error #        #
-      REAL          HWAHSUA       ! Harvest wt/area abs error #    #
-      REAL          HWAHSUM       ! Harvest wt/area error sum      #
+!     INTEGER       HWAHNUM       ! Harvest wt/area error #        #
+!     REAL          HWAHSUA       ! Harvest wt/area abs error #    #
+!     REAL          HWAHSUM       ! Harvest wt/area error sum      #
       CHARACTER*6   HWUDC         ! Harvest wt/unit                g
       INTEGER       HYEAR         ! Harvest year as read           #
       INTEGER       HYEARF        ! Earliest year for harvest      #
@@ -607,7 +614,7 @@
       INTEGER       L0            ! Layer with seed                #
       INTEGER       L1            ! Loop counter                   #
       INTEGER       L2            ! Loop counter                   #
-      REAL          LA1FAC        ! Area of early leaves increment #
+!     REAL          LA1FAC        ! Area of early leaves increment #
       CHARACTER*5   LABEL(SUMNUM) ! Name of variables passed       text
       REAL          LAFR          ! Leaf area increase factor,rep  #
       REAL          LAFST         ! Leaf area factor change stage  #
@@ -620,28 +627,28 @@
       CHARACTER*6   LAIPRODC      ! Leaf area index produced       m2/m2
       REAL          LAISTG(20)    ! Leaf area index,specific stage #
       REAL          LAIX          ! Leaf area index,maximum        #
-      REAL          LAIXEAA       ! Leaf area index,max,abs err av #
-      REAL          LAIXEAV       ! Leaf area index,max,average er #
+!     REAL          LAIXEAA       ! Leaf area index,max,abs err av #
+!     REAL          LAIXEAV       ! Leaf area index,max,average er #
       REAL          LAIXERR       ! Leaf area index,max,error      %
       REAL          LAIXM         ! Lf lamina area index,mx,meas   m2/m2
-      INTEGER       LAIXNUM       ! Leaf area index,max, error #   #
-      REAL          LAIXSUA       ! Leaf area index,max, abs error #
-      REAL          LAIXSUM       ! Leaf area index,max, error sum #
+!     INTEGER       LAIXNUM       ! Leaf area index,max, error #   #
+!     REAL          LAIXSUA       ! Leaf area index,max, abs error #
+!     REAL          LAIXSUM       ! Leaf area index,max, error sum #
       REAL          LAIXT         ! Leaf area index,max,t-file     m2/m2
       REAL          LALOSSF       ! Leaf area lost if tillers die  fr
       REAL          LANC          ! Leaf N concentration           #
       REAL          LAP(LNUMX)    ! Leaf area at leaf position     cm2/p
       REAL          LAPOT(LNUMX)  ! Leaf area potentials           cm2/l
-      REAL          LAPOTNXT      ! Leaf area potential of next lf cm2/l
+!     REAL          LAPOTNXT      ! Leaf area potential of next lf cm2/l
       REAL          LAPP(LNUMX)   ! Leaf area diseased,leaf posn   cm2/p
       REAL          LAPS(LNUMX)   ! Leaf area senesced,leaf posn   cm2/p
-      REAL          LARFAC        ! Area of later leaves increment #
+!     REAL          LARFAC        ! Area of later leaves increment #
       REAL          LASENLF       ! Leaf area of senescing leaf ch cm2/p
       REAL          LASWITCH      ! Leaf area at increment change  cm2/l
       REAL          LATFR(20)     ! Leaf area of tillers,fr main   #
       REAL          LATL(1,LNUMX) ! Leaf area,tiller1,leaf pos     cm2/l
       REAL          LAWCF         ! Leaf area/wt change,fr         fr/lf
-      REAL          LAWCFCALC     ! Leaf area/wt change,fr,calc    #
+!     REAL          LAWCFCALC     ! Leaf area/wt change,fr,calc    #
       REAL          LAWFRMN       ! Leaf area/wt min.,fr.standard  #
       REAL          LAW           ! Area to weight ratio,lamina    cm2/g
       REAL          LAWS          ! Leaf area/wt ratio,standard    cm2/g
@@ -686,15 +693,15 @@
       REAL          LNPCS(0:9)    ! Leaf standard N conc,stage     %
       REAL          LNSWITCH      ! Leaf # at increment change     #
       REAL          LNUMSD        ! Leaf number,Haun stage         #
-      REAL          LNUMSEAA      ! Leaf #/shoot abs error avg     #
-      REAL          LNUMSEAV      ! Leaf #/shoot average error     #
+!     REAL          LNUMSEAA      ! Leaf #/shoot abs error avg     #
+!     REAL          LNUMSEAV      ! Leaf #/shoot average error     #
       REAL          LNUMSERR      ! Leaf #,error                   %
       INTEGER       LNUMSG        ! Growing leaf number            #
       REAL          LNUMSM        ! Leaf #/shoot,maturity          #
       REAL          LNUMSMM       ! Leaf #,mature,measured         #/s
-      INTEGER       LNUMSNUM      ! Leaf #/shoot error #           #
-      REAL          LNUMSSUA      ! Leaf #/shoot abs error #       #
-      REAL          LNUMSSUM      ! Leaf #/shoot error sum         #
+!     INTEGER       LNUMSNUM      ! Leaf #/shoot error #           #
+!     REAL          LNUMSSUA      ! Leaf #/shoot abs error #       #
+!     REAL          LNUMSSUM      ! Leaf #/shoot error sum         #
       REAL          LNUMSTG(20)   ! Leaf number,specific stage     #
       REAL          LNUMT         ! Leaf number from t file        #
       REAL          LNUMTS        ! Leaf number,Terminal spikelet  #
@@ -714,13 +721,13 @@
       REAL          LWAAM         ! Leaf wt,anthesis,measured      kg/ha
       INTEGER       MDAP          ! Maturity days after planting   #
       INTEGER       MDAPM         ! Maturity DAP,measured          #
-      INTEGER       MDATEAA       ! Maturity date abs error avg    #
-      INTEGER       MDATEAV       ! Maturity date average error    #
+!     INTEGER       MDATEAA       ! Maturity date abs error avg    #
+!     INTEGER       MDATEAV       ! Maturity date average error    #
       INTEGER       MDATERR       ! Maturity date error            d
       INTEGER       MDATM         ! Maturity date,measured yr+d    #
-      INTEGER       MDATNUM       ! Maturity date error #          #
-      INTEGER       MDATSUA       ! Maturity date abs error #      #
-      INTEGER       MDATSUM       ! Maturity date error sum        #
+!     INTEGER       MDATNUM       ! Maturity date error #          #
+!     INTEGER       MDATSUA       ! Maturity date abs error #      #
+!     INTEGER       MDATSUM       ! Maturity date error sum        #
       REAL          MDATT         ! Maturity date from t file      YrDoy
       INTEGER       MDAY          ! Maturity day of year           d
       INTEGER       MDAYM         ! Maturity day of year,measured  d
@@ -756,7 +763,7 @@
       REAL          NH4LEFT(20)   ! NH4 concentration in soil      mg/Mg
       REAL          NH4MN         ! NH4 conc minimum for uptake    mg/Mg
       INTEGER       NLAYR         ! Number of layers in soil       #
-      REAL          NLAYRROOT
+!     REAL          NLAYRROOT
       INTEGER       NLIMIT        ! Number of days N limited gr gr #
       REAL          NO3LEFT(20)   ! NO3 concentration in soil      mg/Mg
       REAL          NO3MN         ! NO3 conc minimum for uptake    mg/Mg
@@ -778,7 +785,7 @@
       REAL          NUAM          ! N uptake,cumulative,maturity   kg/ha
       REAL          NUF           ! Plant N supply/demand ratio    ft
       REAL          NUFACM        ! N uptake factor,maturation,0-1 #
-      REAL          NUPAP         ! N uptake potential             g/p
+!     REAL          NUPAP         ! N uptake potential             g/p
       REAL          NUPC          ! N uptake,cumulative            g/p
       REAL          NUPD          ! N uptake                       g/p
       REAL          NUPR          ! N uptake ratio to demand       #
@@ -820,7 +827,7 @@
       REAL          PD2(3)        ! Phase 2 sub-durations;1<joint  deg.d
       REAL          PD2ADJ        ! Phase 2 adjusted               deg.d
       REAL          PD2FR(3)      ! Phase 2 sub-durations;1<joint  fr
-      REAL          PD3FR(3)      ! Phase 3 sub-durations;1<headng fr
+!     REAL          PD3FR(3)      ! Phase 3 sub-durations;1<headng fr
       REAL          PD4(3)        ! Phase 4 sub-durations;1<anthes deg.d
       REAL          PD4FR(3)      ! Phase 4 sub-durations;1<anthes fr
       REAL          PDADJ         ! Phase duration adjustment      deg.d
@@ -1103,12 +1110,12 @@
       REAL          TFGF          ! Temperature factor,gr fill 0-1 #
       REAL          TFGN          ! Temperature factor,grain N 0-1 #
       REAL          TFH           ! Temperature factor,hardening   #
-      REAL          TFLEAVA(10)   ! ERT-file average absolute err  #
-      REAL          TFLEAVE(10)   ! ERT-file average error         #
-      INTEGER       TFLECOL(10)   ! ERT-file error column          #
-      REAL          TFLENUM(10)   ! ERT-file error number          #
-      REAL          TFLEVAA(10)   ! ERT-file error absoulte value  #
-      REAL          TFLEVAL(10)   ! ERT-file error value           #
+!     REAL          TFLEAVA(10)   ! ERT-file average absolute err  #
+!     REAL          TFLEAVE(10)   ! ERT-file average error         #
+!     INTEGER       TFLECOL(10)   ! ERT-file error column          #
+!     REAL          TFLENUM(10)   ! ERT-file error number          #
+!     REAL          TFLEVAA(10)   ! ERT-file error absoulte value  #
+!     REAL          TFLEVAL(10)   ! ERT-file error value           #
       REAL          TFLF(LNUMX)   ! Temp factor for leaf,average   #
       REAL          TFLFSUM(LNUMX)! Temp factor for leaf,sum       #
       REAL          TFOUT         ! Temperature factor,fn output   #
@@ -1166,15 +1173,15 @@
       REAL          TNIGHT        ! Temperature during night hours C
       REAL          TNUM          ! Tiller (incl.main stem) number #/p
       REAL          TNUMAD        ! Tiller (incl.main stem) number #/m2
-      REAL          TNUMAEAA      ! Shoot #/area abs error avg     #
-      REAL          TNUMAEAV      ! Shoot #/area average error     #
+!     REAL          TNUMAEAA      ! Shoot #/area abs error avg     #
+!     REAL          TNUMAEAV      ! Shoot #/area average error     #
       REAL          TNUMAERR      ! Shoot #,error                  %
       REAL          TNUMAFAC      ! Tiller # Aassimilates factor   #/p
       REAL          TNUMAM        ! Shoot #,maturity               #/m2
       REAL          TNUMAMM       ! Shoot #,mature,measured        #/m2
-      INTEGER       TNUMANUM      ! Shoot #/area error #           #
-      REAL          TNUMASUA      ! Shoot #/area abs error #       #
-      REAL          TNUMASUM      ! Shoot #/area error sum         #
+!     INTEGER       TNUMANUM      ! Shoot #/area error #           #
+!     REAL          TNUMASUA      ! Shoot #/area abs error #       #
+!     REAL          TNUMASUM      ! Shoot #/area error sum         #
       REAL          TNUMD         ! Tiller number death            #/p
       REAL          TNUMG         ! Tiller number growth           #/p
       REAL          TNUMIFF       ! Tiller number fibonacci factor #
@@ -1220,13 +1227,13 @@
       REAL          TVR1          ! Temporary real variable        #
       REAL          TVR2          ! Temporary real variable        #
       REAL          TVR3          ! Temporary real variable        #
-      REAL          TVR4          ! Temporary real variable        #
+!     REAL          TVR4          ! Temporary real variable        #
       REAL          TVR5          ! Temporary real variable        #
       REAL          UH2O(NL)      ! Uptake of water                cm/d
       REAL          VALUE(SUMNUM) ! Value of variable passed       #
       INTEGER       VALUEI        ! Output from Getstri function   #
       REAL          VALUER        ! Output from Getstrr function   #
-      REAL          VALUERR       ! Value of error                 #
+!     REAL          VALUERR       ! Value of error                 #
       REAL          VANC          ! Vegetative actual N conc       #
       CHARACTER*6   VARNO         ! Variety identification code    text
       CHARACTER*6   VARNOP        ! Variety identification code    text
@@ -1244,13 +1251,13 @@
       CHARACTER*6   VNPCMMC       ! Vegetative N,mature,measure    char
       CHARACTER*16  VRNAME        ! Variety name or identifier     text
       REAL          VWAM          ! Vegetative wt,mature           kg/ha
-      REAL          VWAMEAA       ! Vegetative wt/area abs err avg #
-      REAL          VWAMEAV       ! Vegetative wt/area average err #
+!     REAL          VWAMEAA       ! Vegetative wt/area abs err avg #
+!     REAL          VWAMEAV       ! Vegetative wt/area average err #
       REAL          VWAMERR       ! Vegetative wt,error            %
       REAL          VWAMM         ! Veg wt,mature,measured         kg/ha
-      INTEGER       VWAMNUM       ! Vegetative wt/area error #     #
-      REAL          VWAMSUA       ! Vegetative wt/area abs error # #
-      REAL          VWAMSUM       ! Vegetative wt/area error sum   #
+!     INTEGER       VWAMNUM       ! Vegetative wt/area error #     #
+!     REAL          VWAMSUA       ! Vegetative wt/area abs error # #
+!     REAL          VWAMSUM       ! Vegetative wt/area error sum   #
       REAL          WAVR          ! Water available/demand         #
       REAL          WFG           ! Water factor,growth 0-1        #
       REAL          WFGAV(0:9)    ! Water factor,growth,average    #
@@ -1262,8 +1269,8 @@
       REAL          WFLF(LNUMX)   ! H2O factor for leaf,average    #
       REAL          WFLFNUM(LNUMX)! H2O factor for leaf,# in sum   #
       REAL          WFLFSUM(LNUMX)! H2O factor for leaf,sum        #
-      REAL          WFNL          ! Water content,N uptake,lower   #
-      REAL          WFNU          ! Water content,N uptake,upper   #
+!     REAL          WFNL          ! Water content,N uptake,lower   #
+!     REAL          WFNU          ! Water content,N uptake,upper   #
       REAL          WFNUL         ! Water factor,N uptake,lower    #
       REAL          WFNUU         ! Water factor,N uptake,upper    #
       REAL          WFP           ! Water factor,photosynthsis 0-1 #
@@ -1811,15 +1818,15 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           CALL YR_DOY(PDATE,PLYEAR,PLDAY)
           PLYEARREAD = PLYEAR
           
-          ! CHP 2/13/2009 - increment yr for seasonal and sequence runs
-          ! IF (INDEX('FQN',RNMODE) > 0) THEN
-          ! What about multiple years with other RNMODE's?  This only 
-          !   fixes sequence and seasonal runs.
-          ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
-          ! 09/28/2009 CHP need to account for planting date >> simulation date.
-          !  IF (FILEIOT(1:2).EQ.'DS') THEN
-          !LPM 07/17/20 - account for simulation date when is a year before planting date
-          !Avoid wrong value of yeardoyharf
+!           CHP 2/13/2009 - increment yr for seasonal and sequence runs
+!           IF (INDEX('FQN',RNMODE) > 0) THEN
+!           What about multiple years with other RNMODE's?  This only 
+!             fixes sequence and seasonal runs.
+!           CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
+!           09/28/2009 CHP need to account for planting date >> simulation date.
+!            IF (FILEIOT(1:2).EQ.'DS') THEN
+!          LPM 07/17/20 - account for simulation date when is a year before planting date
+!          Avoid wrong value of yeardoyharf
           IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
               IF (YEAR < PLYEARREAD) THEN
                   PLYEAR = PLYEARREAD
@@ -2153,7 +2160,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NLAB%',xnfs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RDGS',rdgs1)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GN%MN',grnmn)
-          ! NB. TBAM is only used experimentally;should not be in coeff.files
+!           NB. TBAM is only used experimentally;should not be in coeff.files
           
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'ADIR',fileadir)
 
@@ -2282,15 +2289,15 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             CALL CUREADR (CUDIRFLE,VARNO,'NLAB%',xnfs)
             CALL CUREADR (CUDIRFLE,VARNO,'RDGS',rdgs1)
             CALL CUREADR (CUDIRFLE,VARNO,'GN%MN',grnmn)
-            ! NB. TBAM is only used experimentally;should not be in coeff.files
-            ! Below are 3.5 expressions
-            !P1V = P1V*0.0054545 + 0.0003
-            !P1D = P1D*0.002
-            !PD(5) = 430.0 + PD(5)*20.00
-            !IF (CROP.EQ.'BA') PD(5) = 300.0 + PD(5)*40.00
-            !IF (G1 .NE. 0.0) G1 = 5.0 + G1* 5.00
-            !IF (G2 .NE. 0.0) G2 = 0.65 + G2* 0.35
-            !IF (G3 .NE. 0.0) G3 = -0.005 + G3* 0.35
+!             NB. TBAM is only used experimentally;should not be in coeff.files
+!             Below are 3.5 expressions
+!            P1V = P1V*0.0054545 + 0.0003
+!            P1D = P1D*0.002
+!            PD(5) = 430.0 + PD(5)*20.00
+!            IF (CROP.EQ.'BA') PD(5) = 300.0 + PD(5)*40.00
+!            IF (G1 .NE. 0.0) G1 = 5.0 + G1* 5.00
+!            IF (G2 .NE. 0.0) G2 = 0.65 + G2* 0.35
+!            IF (G3 .NE. 0.0) G3 = -0.005 + G3* 0.35
           !ENDIF
         ENDIF
 
@@ -2480,7 +2487,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           WRITE (FNUMWRK,*)' Base temperature for post anthesis period'
           WRITE (FNUMWRK,*)' changed from ',trdv2(1),' to ',tbam        
           trdv2(1) = tbam
-          ! NB. TBAM is only used experimentally;should not be in coeff.files
+!           NB. TBAM is only used experimentally;should not be in coeff.files
         ENDIF
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
         CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
@@ -2616,8 +2623,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           LSHFR = 0.33                               !    LSHFR = 0.33  
           LRETS = 3.0                                !    LRPHS
           
-          LSHAWS = 50.0  ! LSHAW                     !    LSHAWV = 50.0   ! LSHAV
-                                                     !    LSHAWR = 50.0   ! LSHAR
+          LSHAWS = 50.0  ! LSHAW         !    LSHAWV = 50.0   ! LSHAV
+                                         !    LSHAWR = 50.0   ! LSHAR
 
           TKLF = -50.0                               !    TKDLF = 2.0 
           LT50S = -50.0                              !    TKUH = -50.0  
@@ -2637,13 +2644,13 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           
           SDAFR = 0.50  ! From 0.50
 
-          RTNO3 = 0.006  ! RTNUP                     !    RTNO3 = .006!RTNUP
-          RTNH4 = 0.006                              !    RTNH4 = .006
-                                                     !    NO3CF = 1.0 !NUPNF
-                                                     !    NUPWF = 1.0       
-          NH4MN = 0.5                                !    NH4MN = 0.5  
-          NO3MN = 0.5                                !    NO3MN = 0.5  
-          NTUPF = 0.05                               !    NTUPF = 0.05 
+          RTNO3 = 0.006  ! RTNUP         !    RTNO3 = .006!RTNUP
+          RTNH4 = 0.006                  !    RTNH4 = .006
+                                         !    NO3CF = 1.0 !NUPNF
+                                         !    NUPWF = 1.0       
+          NH4MN = 0.5                    !    NH4MN = 0.5  
+          NO3MN = 0.5                    !    NO3MN = 0.5  
+          NTUPF = 0.05                   !    NTUPF = 0.05 
 
              ! CSCER
           LNPCS(0) = 6.5                             !    LNPCS(0) = 6.5
@@ -2743,27 +2750,27 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           ! Leaf senescence 
           LLIFE = 6.0                                !     LLIFA = 4.0 
           ! Must be 6 because of senescence period differences (1 vs 3)
-          ! Growth = 1 phyllochron                   !     LLIFG = 1.0
-          ! Senescence =  1 phyllochron              !     LLIFS = 3.0
-          LWLOS = 0.5                                !     LWLOS = 0.5  
-          ! LNPCMN -> N loss                         !     LNPCMN -> N loss
+          ! Growth = 1 phyllochron          !     LLIFG = 1.0
+          ! Senescence =  1 phyllochron     !     LLIFS = 3.0
+          LWLOS = 0.5                       !     LWLOS = 0.5  
+          ! LNPCMN -> N loss                !     LNPCMN -> N loss
           ! Calculates LSENNF(fr N > min)        
         ENDIF    ! EXAMINE(2)  Senescence
 
         
         IF (EXAMINE(3).EQ.'Y') THEN                                    
           ! Tillering        
-          TI1LF = 3.5                                !    TI1LF = 4.45  
+          TI1LF = 3.5                  !    TI1LF = 4.45  
           TILPE = 2.5
-          TIFAC = 1.0                                !    TIFAC = 1.0   
-          TILDS = 2.5                                !    TDPHS = 3.0   
-          TILDE = 6.0                                !    TDPHE = 7.0   
-          TILDF = 4.0                                !    TDFAC = 5.0   
-          LATFR(1) = 0.80   ! TGR(2)                 !    TGR(2) = 0.80
-                                                     !    TGR(20) = 0.10                                                     
-                                                     !    TILIP = 6.0                                                        
-                                                     !    TINOX = 20 ! TIL#X                                               
-                                                     !    TDSF = 1.0                                                         
+          TIFAC = 1.0                  !    TIFAC = 1.0   
+          TILDS = 2.5                  !    TDPHS = 3.0   
+          TILDE = 6.0                  !    TDPHE = 7.0   
+          TILDF = 4.0                  !    TDFAC = 5.0   
+          LATFR(1) = 0.80   ! TGR(2)   !    TGR(2) = 0.80
+                                       !    TGR(20) = 0.10    
+                                       !    TILIP = 6.0       
+                                       !    TINOX = 20 ! TIL#X
+                                       !    TDSF = 1.0        
           !          CSCRP    CSCER
           LATFR(2)  = 0.80   ! 0.8  LATFR(1)       
           LATFR(3)  = 0.76   ! 0.8  LATFR(1)       
@@ -2799,19 +2806,19 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             PD2FR(1) = 0.25
             PD4FR(1) = 0.25
             PD4FR(2) = 0.10
-                                                 !    PD(5) =  60                                                        
-                                                 !    PD(6) =  25                                                        
-                                                 !    PD(7) = 150                                                        
-            ! PSNO PSNAME                        ! PSNO PSTYP PSABV PSNAME                                          
-            !   1  T.Spikelet                    !   1      S GDAT  Germinate                                       
-            !   2  EndVegetative                 !   2      K TSAT  T.Spikelet                                      
-            !   3  EndEarGrowth                  !   3      S PSDAT Pseudo_Stem                                     
-            !   4  BeginGrainFill                !   4      S LLDAT End_Leaf                                        
-            !   5  EndGrainFill                  !   5      S IEDAT Head_Emerge                                     
-            !   6  Harvest                       !   6      K ADAT  Anthesis                                        
-            !   7  Sowing                        !   7      S AEDAT EndAnthesis                                    
-            !   8  Germinate                     !   8      S GFDAT MilkToDough                                     
-            !   9  Emergance                     !   9      M MDAT  HardDough                                       
+                                   !    PD(5) =  60               
+                                   !    PD(6) =  25               
+                                   !    PD(7) = 150               
+            ! PSNO PSNAME          ! PSNO PSTYP PSABV PSNAME      
+            !   1  T.Spikelet      !   1      S GDAT  Germinate   
+            !   2  EndVegetative   !   2      K TSAT  T.Spikelet  
+            !   3  EndEarGrowth    !   3      S PSDAT Pseudo_Stem 
+            !   4  BeginGrainFill  !   4      S LLDAT End_Leaf    
+            !   5  EndGrainFill    !   5      S IEDAT Head_Emerge 
+            !   6  Harvest         !   6      K ADAT  Anthesis    
+            !   7  Sowing          !   7      S AEDAT EndAnthesis 
+            !   8  Germinate       !   8      S GFDAT MilkToDough 
+            !   9  Emergance       !   9      M MDAT  HardDough   
         ENDIF
             
         IF (EXAMINE(20).EQ.'Y') THEN  
@@ -2836,19 +2843,19 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             PD2FR(1) = 0.25
             PD4FR(1) = 0.25
             PD4FR(2) = 0.10
-                                                 !    PD(5) =  60                                                        
-                                                 !    PD(6) =  25                                                        
-                                                 !    PD(7) = 150                                                        
-            ! PSNO PSNAME                        ! PSNO PSTYP PSABV PSNAME                                          
-            !   1  T.Spikelet                    !   1      S GDAT  Germinate                                       
-            !   2  EndVegetative                 !   2      K TSAT  T.Spikelet                                      
-            !   3  EndEarGrowth                  !   3      S PSDAT Pseudo_Stem                                     
-            !   4  BeginGrainFill                !   4      S LLDAT End_Leaf                                        
-            !   5  EndGrainFill                  !   5      S IEDAT Head_Emerge                                     
-            !   6  Harvest                       !   6      K ADAT  Anthesis                                        
-            !   7  Sowing                        !   7      S AEDAT EndAnthesis                                    
-            !   8  Germinate                     !   8      S GFDAT MilkToDough                                     
-            !   9  Emergance                     !   9      M MDAT  HardDough                                       
+                                  !    PD(5) =  60               
+                                  !    PD(6) =  25               
+                                  !    PD(7) = 150               
+            ! PSNO PSNAME         ! PSNO PSTYP PSABV PSNAME      
+            !   1  T.Spikelet     !   1      S GDAT  Germinate   
+            !   2  EndVegetative  !   2      K TSAT  T.Spikelet  
+            !   3  EndEarGrowth   !   3      S PSDAT Pseudo_Stem 
+            !   4  BeginGrainFill !   4      S LLDAT End_Leaf    
+            !   5  EndGrainFill   !   5      S IEDAT Head_Emerge 
+            !   6  Harvest        !   6      K ADAT  Anthesis    
+            !   7  Sowing         !   7      S AEDAT EndAnthesis 
+            !   8  Germinate      !   8      S GFDAT MilkToDough 
+            !   9  Emergance      !   9      M MDAT  HardDough   
 
             LAPOT(1) = 5.0                       !    LA1S = 3.0        
             LAFV = 0.1                           !    LAFV = 0.1        
@@ -2889,14 +2896,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           ! Grain 
             GRNS = 3.0                           !    GNPCS = 2.0       
             GRNMN = 0.0
-                                                 !    GWTAA = 0.0    ! GWWF                                              
+!                                                     GWTAA = 0.0  ! GWWF
           ! Hardiness  
             LT50H = -10                          !    TKFH = -15        
             
           ! Stems  
-                                                 !    SSPHS = 8.0       
-                                                 !    SSPHE = 9.3                                                        
-                                                 !    GWTAT = 1.0    ! SHWTA                                             
+                                        !    SSPHS = 8.0       
+                                        !    SSPHE = 9.3 !   
+                                        !    GWTAT = 1.0 ! SHWTA
           ! N uptake                                                 
             RTNO3 = 0.006  ! RTNUP               !    RTNO3 = .006!RTNUP
                                                  !    NO3CF = 1.0! NUPNF
@@ -2950,14 +2957,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             LAWFRMN = 0.5  ! SLAMN
             LSHFR = 0.33                         !    LSHFR = 0.33      
             LRETS = 3.0        ! LRPHS
-            LSHAWS = 50.0      ! LSHAWS          !    LSHAWV =50.0    ! LSHAV
-                                                 !    LSHAWR = 80.0   ! LSHAR                                         
-            PHINTL(1) = 2.0    ! PHL             !    PHINTL(1) =2.0!PHL
-            PHINTF(1) = 0.8    ! PHF             !    PHINTF(1) =0.8!PHF
+            LSHAWS = 50.0      ! LSHAWS    !    LSHAWV =50.0    ! LSHAV
+                                           !    LSHAWR = 80.0   ! LSHAR
+            PHINTL(1) = 2.0    ! PHL       !    PHINTL(1) =2.0!PHL
+            PHINTF(1) = 0.8    ! PHF       !    PHINTF(1) =0.8!PHF
             
-            LLIFE = 4.0                          !    LLIFA = 4.0       
-                                                 !    LLIFG = 1.0                                                        
-                                                 !    LLIFS = 3.0                                                        
+            LLIFE = 4.0                          !    LLIFA = 4.0      
+                                                 !    LLIFG = 1.0      
+                                                 !    LLIFS = 3.0      
             !   LASF
             !   0.00
             !   0.10
@@ -2969,25 +2976,25 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             
             LWLOS = 0.50    ! LWLOS              !    LWLOS = 0.5!LWLOS
                                                  !    LAIXX = 14.0
-                                                                                                        
-            ! CHT%  CLA%                         !    ! CHT%  CLA%                                      
-            !    0     0                         !    !    0     0                                                       
-            !   50    50                         !    !   50    50                                                       
-            !  100   100                         !    !  100   100                                                       
+                                                                          
+            ! CHT%  CLA%                 !    ! CHT%  CLA%        
+            !    0     0                 !    !    0     0        
+            !   50    50                 !    !   50    50        
+            !  100   100                 !    !  100   100        
 
-            PART = 0.07  ! TPAR                  !    TPAR = 0.07       
-            SRADT = 0.25 ! TSRAD                 !    TSRAD = 0.25      
+            PART = 0.07  ! TPAR          !    TPAR = 0.07       
+            SRADT = 0.25 ! TSRAD         !    TSRAD = 0.25      
           ! Tillers      
-            LATFR(1) = 0.80   ! TGR(2)           !    TGR(2) = 0.80  
-                                                 !    TGR(20) = 0.10                                                     
-                                                 !    TILIP = 6.0                                                        
-                                                 !    TINOX = 20   ! TIL#X                                               
+            LATFR(1) = 0.80   ! TGR(2)   !    TGR(2) = 0.80  
+                                         !    TGR(20) = 0.10      
+                                         !    TILIP = 6.0         
+                                         !    TINOX = 20   ! TIL#X
           ! Reserves
-                                                 !    RSPCS = 20                                                         
-            RSPCX = 80.0                         !    RSPCX = 80.0      
-                                                 !    RSUSE = 0.1                                                        
-                                                 !    RSPCLX = 80.0                                                      
-          ! Stems                                                                                                        
+                                         !    RSPCS = 20          
+            RSPCX = 80.0                 !    RSPCX = 80.0      
+                                         !    RSUSE = 0.1         
+                                         !    RSPCLX = 80.0       
+          ! Stems                                                         
             SLIGP = 10.0  ! SLIG%                !    SLIGPC = 10.0     
             SAWS = 25.0                          !    SAWS = 25.0       
             P4SGE = 4.45   ! SGPHE
@@ -2996,14 +3003,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           ! Chaff                                !    ! Chaff                                                            
             CHFR = 0.65                          !    CHFR = 0.65       
             CHSTG = 3.8
-          ! Grain                                !    ! Grain                                                            
-            GLIGP = 10.0  ! GLIG%                !    GLIGPC = 10.0     
-                                                 !    GWLAGFR = 0.05  ! GWLAG                                            
-                                                 !    GWLINFR = 0.90  ! GWLIN                                            
-          ! Seed                                 !    ! Seed                                                             
-            SDSZ = 0.284   ! SDWT                !    SDWT = 0.28       
-                                                 !    SDDUR = 20.0                                                       
-                                                 !    SDRSPC = 80.0                                                      
+          ! Grain                       !    ! Grain                                                            
+            GLIGP = 10.0  ! GLIG%       !    GLIGPC = 10.0     
+                                        !    GWLAGFR = 0.05  ! GWLAG                                            
+                                        !    GWLINFR = 0.90  ! GWLIN                                            
+          ! Seed                        !    ! Seed                                                             
+            SDSZ = 0.284   ! SDWT       !    SDWT = 0.28       
+                                        !    SDDUR = 20.0                                                       
+                                        !    SDRSPC = 80.0                                                      
             SDAFR = 0.50  ! From 0.50
           ! Photosynthesis                       !    ! Photosynthesis                                                   
                                                  !    RSFPU = 3.0                                                        
@@ -3020,10 +3027,10 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !  990  1.43                         !    !  990  1.43                                                       
             ! 9999  1.50                         !    ! 9999  1.50                                                       
 
-          ! CH2O distribution/mobilizatio        !    ! CH2O distribution/mobilization                                   
-                                                 !    PTFMN = 0.75                                                       
-            PTFX = 0.98  ! PTFMX                 !    PTFMX = 0.98      
-                                                 !    PTFA = 0.10                                                        
+!           CH2O distribution/mobilizatio !    ! CH2O distribution/mobilization                                   
+                                          !    PTFMN = 0.75                                                       
+            PTFX = 0.98  ! PTFMX          !    PTFMX = 0.98      
+                                          !    PTFA = 0.10                                                        
             ! PTFS  PTFA  STFR
             ! 0.65  0.10  0.00
             ! 0.70  0.10  0.15
@@ -3040,19 +3047,19 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             HDUR = 10.0                          !    HDUR = 10.0       
                                                  !    HLOST = 10.0                                                       
                                                  !    HLOSF = 0.2                                                        
-            ! Temperature responses
-            ! CSCRP                                       
-            !RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN 
-            !    0     1     0     0     0     0     0    -5    -5     0     0 
-            !  1.0    26    26    26    30    10     5     0     0    16    16 
-            !  1.0    50    50    50    50    20    25     7     5    35    35 
-            !    0    60    60    60    60    35    35    15    10    45    45 
-            ! CSCER                              
-            !RRATE TRGEM TRDV1 TRDV2 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN             
-            !    0     1     0     0     0     0    -5    -5     0     0             
-            !  1.0    26    26    30    10     5     0     0    16    16             
-            !  1.0    50    50    50    20    25     7     5    35    35             
-            !    0    60    60    60    35    35    15    10    45    45             
+!             Temperature responses
+!             CSCRP                                       
+!            RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN 
+!                0     1     0     0     0     0     0    -5    -5     0     0 
+!              1.0    26    26    26    30    10     5     0     0    16    16 
+!              1.0    50    50    50    50    20    25     7     5    35    35 
+!                0    60    60    60    60    35    35    15    10    45    45 
+!             CSCER                              
+!            RRATE TRGEM TRDV1 TRDV2 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN             
+!                0     1     0     0     0     0    -5    -5     0     0             
+!              1.0    26    26    30    10     5     0     0    16    16             
+!              1.0    50    50    50    20    25     7     5    35    35             
+!                0    60    60    60    35    35    15    10    45    45             
                                                                                                                          
           ! Water shortage effects                                                                                     
             RWUPM = 0.02
@@ -3181,7 +3188,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         WRITE (fnumwrk,*) ' '
         WRITE (fnumwrk,*) 'DERIVED COEFFICIENTS'
         
-        ! NSFAC and NMNFAC are used for checking the component N concentrations only
+!         NSFAC and NMNFAC are used for checking the component N concentrations only
         IF (nsfac.LE.0.0) NSFAC = 1.0
         IF (nmnfc.LE.0.0) NMNFC = 1.0
         DO L =0,9
@@ -4084,17 +4091,17 @@ C-GH      IF (snow.GT.0) THEN
             LAW = AMAX1(LAWS*LAWFRMN,LAWS-(LAWS*LAWCF)*(LNUMSG-1))
             ! LAW=Leaf area/weight (specific leaf area).Chages with lf #
             IF (LNUMSG.GT.0) THEN
-              ! In Ceres overall temperature response for lf growth was:
-              ! EGFT = 1.2 - 0.0042*(TEMPM-17.0)**2 
-              ! Here, temperature response is a composite of temp response
-              ! of development (leaf # increase) and leaf expansion.
-              ! So, EGFT would equal TFD*TFG 
-              ! Assimilates may control expansion if no reserve available
-              ! Current leaf expands completely at current phint
-              ! Leaves expand for 1 PHINT
-              ! For leaf area growth (PLAG) Ceres 3.5 used: 
-              !  PLAG(1) = LA1S * (LNUMSD**0.5) * ....
-              ! (with LA1S = 7.5 (= LAPOT(1),potential area of leaf 1)
+!               In Ceres overall temperature response for lf growth was:
+!               EGFT = 1.2 - 0.0042*(TEMPM-17.0)**2 
+!               Here, temperature response is a composite of temp response
+!               of development (leaf # increase) and leaf expansion.
+!               So, EGFT would equal TFD*TFG 
+!               Assimilates may control expansion if no reserve available
+!               Current leaf expands completely at current phint
+!               Leaves expand for 1 PHINT
+!               For leaf area growth (PLAG) Ceres 3.5 used: 
+!                PLAG(1) = LA1S * (LNUMSD**0.5) * ....
+!               (with LA1S = 7.5 (= LAPOT(1),potential area of leaf 1)
               PLAG(1) = LAPOT(LNUMSG) * AMIN1(WFG,NFG) * TFG *
      &         AMIN1(TT/PHINT,(FLOAT(LNUMSG)-LNUMSD)) 
               ! NB. Temp response of development (TT) taken into acount 
@@ -4208,10 +4215,10 @@ C-GH      IF (snow.GT.0) THEN
      &     (CARBOAT-CARBOASD-GRORSSD)-GROLF-GROST-GROGRPA)
      
 
-              ! Reserves to ROOT if conc too great (overflow!)
+!               Reserves to ROOT if conc too great (overflow!)
               RTWTGRS = 0.0
-              ! Determine potential new concentration
-              ! NB. Chaff is simply a part of stem;hence not separate here
+!               Determine potential new concentration
+!               NB. Chaff is simply a part of stem;hence not separate here
 
 !----------------------------------------------------------------
 ! palderman commit of 2019-07-29 in private repo e5c680514bce4af85d9f463c11a3e5ad522252f8
@@ -4801,9 +4808,9 @@ C-GH      IF (snow.GT.0) THEN
                   SMDFR = 1.0
                 ENDIF
                 RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
-                !  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
-                !  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)  
-                !  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
+!                  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
+!                  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)  
+!                  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
                 RNO3U(L) = RFAC * FNO3 * RTNO3
                 RNH4U(L) = RFAC * FNH4 * RTNH4
                 RNO3U(L) = MAX(0.0,RNO3U(L))
@@ -9132,6 +9139,7 @@ C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE err
      & DYNAMICI)                                          !Control
 
       IMPLICIT NONE
+      EXTERNAL VPSLOP
       SAVE
 
       REAL          BLRESD        ! Boundary layer resistance      s/m
@@ -9286,6 +9294,7 @@ C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE err
      & DYNAMICI)                                           !Control
 
       IMPLICIT NONE
+      EXTERNAL GETLUN
       SAVE
 
       INTEGER       NL            ! Maximum number soil layers,20
@@ -9428,6 +9437,7 @@ C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE err
      X LAIL)                      ! Leaf area indices by layer
 
       IMPLICIT NONE
+      EXTERNAL YVALXY
       SAVE
 
       INTEGER       clx           ! Canopy layers,maximum          #

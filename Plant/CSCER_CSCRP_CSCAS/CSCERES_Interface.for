@@ -17,6 +17,7 @@ C=======================================================================
       USE ModuleData
       USE CsvOutput   ! VSH
       IMPLICIT NONE
+      EXTERNAL YR_DOY, CSCER
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS, ISWWAT, ISWNIT, RNMODE
