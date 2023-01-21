@@ -255,7 +255,7 @@ c     Temp:
       LOGICAL CERROR
 
 !     Unit number for output
-      INTEGER SCLUN   !CHP
+!      INTEGER SCLUN   !CHP
 
 
 c     Yesterday's value of delta sucrose mass:
@@ -374,24 +374,24 @@ c     ::::::::::
 
 
       IF (INDEX('YDA',ISWITCH % IDETL) > 0) THEN
-        TFILENAME = 'Work.OUT'
-        CALL GETLUN('WORK.OUT', SCLUN)
-        INQUIRE(FILE=TFILENAME, EXIST=FILE_EXISTS)
+!        TFILENAME = 'Work.OUT'
+!        CALL GETLUN('WORK.OUT', SCLUN)
+!        INQUIRE(FILE=TFILENAME, EXIST=FILE_EXISTS)
 
 c       Open the file
-        IF (FILE_EXISTS) THEN
+!        IF (FILE_EXISTS) THEN
 c         In append mode if the file already exists
-          OPEN(UNIT=SCLUN,FILE=TFILENAME,STATUS='OLD',POSITION='APPEND')
-        ELSE
+!          OPEN(UNIT=SCLUN,FILE=TFILENAME,STATUS='OLD',POSITION='APPEND')
+!        ELSE
 c         A new file if not existing
-          OPEN (UNIT=SCLUN, FILE=TFILENAME, STATUS='NEW')
-          WRITE(SCLUN,'("*CaneGro Supplemental Output File")')
-        ENDIF
+!          OPEN (UNIT=SCLUN, FILE=TFILENAME, STATUS='NEW')
+!          WRITE(SCLUN,'("*CaneGro Supplemental Output File")')
+!        ENDIF
 
 c       Output a header (treatment / run info, etc)
 c       ::::::::::::::::::::::::
 c        Use the predefined one:
-        CALL HEADER(SEASINIT, SCLUN, CONTROL%RUN)
+!        CALL HEADER(SEASINIT, SCLUN, CONTROL%RUN)
       ENDIF
 
 c     I don't know what this ought to be... 1 seems fine.
@@ -990,10 +990,10 @@ c     Set RLV (subroutine output to DSSAT CSM):
       RLV = WaterBal%RLV
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::
           
-      IF (INDEX('YDA',ISWITCH%IDETL) > 0) THEN
-        WRITE(SCLUN, '(I10, 2X, 2(F10.5, 2X))') Control%YRDOY, CHU10, 
-     &                                      CHUBaseEm
-      ENDIF
+!      IF (INDEX('YDA',ISWITCH%IDETL) > 0) THEN
+!        WRITE(SCLUN, '(I10, 2X, 2(F10.5, 2X))') Control%YRDOY, CHU10, 
+!     &                                      CHUBaseEm
+!      ENDIF
       
 c     Call the evaporation related output file subroutine (module).
       CALL SC_ETOUT(CONTROL, Out%PAR, 
@@ -1125,7 +1125,7 @@ c     Call the climate change summary output file subroutine (module).
 
 
 c     Temporary!!
-      CLOSE(SCLUN)
+!      CLOSE(SCLUN)
 
 
 
@@ -1147,7 +1147,7 @@ c     APPENDIX 1: DSSAT interface variables:
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     - Input variables -
 c     :::::::::::::::::::
-c      CONTROL:  ‘init’, ‘rate’, etc 
+c      CONTROL:  ï¿½initï¿½, ï¿½rateï¿½, etc 
 c      ISWITCH:  Indicates which processes (Soil, N, etc) are to be modelled 
 c      CO2:      Atmospheric CO2, ppm 
 c      DAYL:     Day length on day of simulation (from sunrise to sunset) (hr) 

@@ -53,7 +53,8 @@ C========================================================================
       INTEGER DAS, YRDOY, YRPLT, YRSIM
       INTEGER FOUND
       INTEGER NSWAB
-	INTEGER DAP, REPNO, RUN, WLUN, LUN
+	INTEGER DAP, REPNO, RUN, LUN
+      !INTEGER WLUN
 
       INTEGER, DIMENSION(1:NumOfStalks) :: Kill
 	INTEGER, PARAMETER :: CanopyLayers=3
@@ -211,38 +212,38 @@ C------ Find particular ECOTYPE ----------------------------------------
 ! Echoes input data  (OHD debugging and calibrating code)
 
 ! Open file to write results from CSP_SENES
-      CALL GETLUN('WORK.OUT',WLUN)
-      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
-     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
+!      CALL GETLUN('WORK.OUT',WLUN)
+!      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
+!     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
 
-      WRITE(WLUN,*)
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_SENES.for")')
-      WRITE(WLUN,'(1X,"-------------------------")')
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"RESULTS FROM CSP_SENES.for")')
+!      WRITE(WLUN,'(1X,"-------------------------")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
 
       SECTION = '*#PHOT'  
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"KCAN   : ",F6.2)') KCAN
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"KCAN   : ",F6.2)') KCAN
 
       SECTION = '*SENES'
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"SENDAY : ",F6.2)') SENDAY
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"SENDAY : ",F6.2)') SENDAY
 
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"I      : ",4I6)') (I,I=1,4)
-      WRITE(WLUN,'(1X,"XSTAGE : ",4F6.2)') (XSTAGE(II),II=1,4)
-      WRITE(WLUN,'(1X,"XSENMX : ",4F6.2)') (XSENMX(II),II=1,4)
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"I      : ",4I6)') (I,I=1,4)
-      WRITE(WLUN,'(1X,"SENPOR : ",4F6.2)') (SENPOR(II),II=1,4)
-      WRITE(WLUN,'(1X,"SENMAX : ",4F6.2)') (SENMAX(II),II=1,4)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"I      : ",4I6)') (I,I=1,4)
+!      WRITE(WLUN,'(1X,"XSTAGE : ",4F6.2)') (XSTAGE(II),II=1,4)
+!      WRITE(WLUN,'(1X,"XSENMX : ",4F6.2)') (XSENMX(II),II=1,4)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"I      : ",4I6)') (I,I=1,4)
+!      WRITE(WLUN,'(1X,"SENPOR : ",4F6.2)') (SENPOR(II),II=1,4)
+!      WRITE(WLUN,'(1X,"SENMAX : ",4F6.2)') (SENMAX(II),II=1,4)
 
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"END RESULTS FROM CSP_SENES.for")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"END RESULTS FROM CSP_SENES.for")')
 
 !      CLOSE (WLUN)
 

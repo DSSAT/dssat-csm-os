@@ -333,9 +333,9 @@
 
       IF (FNUMWRK.LE.0.0) THEN
 
-        CALL GETLUN ('WORK.OUT',FNUMWRK)
-        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-        IF (.NOT.FOPEN) OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+        !CALL GETLUN ('WORK.OUT',FNUMWRK)
+        !INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+        !IF (.NOT.FOPEN) OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
 
         ! Compute SWCON2 for each soil layer.  Adjust SWCON2 for very
         ! high LL to avoid water uptake limitations.
@@ -429,7 +429,11 @@
       ENDDO
 
       IF (TRWUP.GT.0.0) THEN
-        WUPR = TRWUP/(EOP*0.1)
+        IF (EOP.GT.0.0) THEN
+          WUPR = TRWUP/(EOP*0.1)
+        ELSE
+          WUPR = 0.0
+        ENDIF
         IF (WUPR.GE.WFEU) THEN
           WUF = (EOP*0.1) / TRWUP
         ELSEIF (WUPR.LT.WFEU) THEN

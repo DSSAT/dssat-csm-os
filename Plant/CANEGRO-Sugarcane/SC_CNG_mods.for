@@ -1268,25 +1268,25 @@ c     Print out soil properties:
           USE ModuleData
           Type(SoilType) SOILPROP
           TYPE (SwitchType) ISWITCH
-          INTEGER SCLUN
+!          INTEGER SCLUN
 
           CALL GET(ISWITCH)
           IF (INDEX('YDA',ISWITCH%IDETL)< 1) RETURN
 
-          CALL GETLUN('WORK.OUT',SCLUN)
+!          CALL GETLUN('WORK.OUT',SCLUN)
 c         Print soil layer properties in CANEGRO-compatible form:
 c         DLAYR:
-          WRITE(SCLUN, '(A5, 1X, 20(F4.0, 1X))') 'DLAYR', SOILPROP%DLAYR
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.0, 1X))') 'DLAYR', SOILPROP%DLAYR
 c         LL
-          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'LL', SOILPROP%LL
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'LL', SOILPROP%LL
 c         DUL
-          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'DUL', SOILPROP%DUL
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'DUL', SOILPROP%DUL
 c         SAT
-          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'SAT', SOILPROP%SAT
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'SAT', SOILPROP%SAT
 c         BD
-          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'BD', SOILPROP%BD
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'BD', SOILPROP%BD
 c         SWCN
-          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'SWCN', SOILPROP%SWCN
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'SWCN', SOILPROP%SWCN
 
       END
 
@@ -1887,7 +1887,7 @@ c     an optimal temperature (TOpt),
 c     and a final cutoff temperature (TFinal) above which the
 c     plant stops responding to temperature
 c     DTT |___/\__
-c            °C
+c            ï¿½C
 c     MJ, Dec 2012
       REAL FUNCTION D_TT(TMEAN, TBase, TOpt, TFinal)
 c     ===============================================================      
@@ -1927,7 +1927,7 @@ c     temperature range end (Topt2),
 c     and a final cutoff temperature (TFinal) above which the
 c     plant stops responding to temperature
 c     DTT |___/--\__
-c            °C
+c            ï¿½C
 c     MJ, Dec 2012
       REAL FUNCTION D_TT4(TMEAN, TBase, TOpt1, Topt2, TFinal)
 c     ===============================================================      

@@ -120,17 +120,17 @@ c     Vars used in the CLIMT common block, used here:
 
 c       Modification to calculation of delta thermal time, based on ASA 2013 work:
 c       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-c       Delta thermal time (°Cd) for stalk elongation
+c       Delta thermal time (ï¿½Cd) for stalk elongation
         REAL DTT_RER
 c       Function for calculating delta thermal time
         REAL D_TT
-c       Base, optimal and final temperatures for thermal time accum. (°C)
+c       Base, optimal and final temperatures for thermal time accum. (ï¿½C)
 c       These are cultivar params.
 c       For roots
         REAL TBaseREX, ToptREX, TFinREX
 c       Mean daily temperature
         REAL TMEAN
-c       Reference root elongation rate per unit thermal time (cm/°Cd)
+c       Reference root elongation rate per unit thermal time (cm/ï¿½Cd)
         REAL RER0
 
 
@@ -150,7 +150,8 @@ c     Temporary stress array:
       LOGICAL CF_ERR, SPC_ERR
 
 !     Unit number for output
-      INTEGER SCLUN, OU   !CHP
+      INTEGER OU   !CHP
+      !INTEGER SCLUN
 
       DATA RatCarryOver%RTDEP /0./
 
@@ -357,13 +358,13 @@ c     Reference root elongation rate:
 c     Switches:
 c     :::::::::
           IF (INDEX('YDA',ISWITCH%IDETL) > 0) THEN
-            CALL GETLUN('WORK.OUT',SCLUN)
+!            CALL GETLUN('WORK.OUT',SCLUN)
             IF (ISWITCH%ISWWAT .EQ. 'Y') THEN
                 ISWATBAL = .TRUE.
-                WRITE(SCLUN, '(A)') 'Water balance IS modeled.'
+!                WRITE(SCLUN, '(A)') 'Water balance IS modeled.'
             ELSE
                 ISWATBAL = .FALSE.
-                WRITE(SCLUN, '(A)') 'Water balance NOT modeled.'
+!                WRITE(SCLUN, '(A)') 'Water balance NOT modeled.'
                 SWDF1 = 1.
             ENDIF
           ENDIF
