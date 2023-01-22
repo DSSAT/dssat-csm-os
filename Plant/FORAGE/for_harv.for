@@ -76,8 +76,8 @@ C=======================================================================
       REAL,dimension(6) :: XFRGDD
       REAL,dimension(6) :: YRSREF
       REAL GDD, MOWGDD
-      INTEGER HMFRQ, HMGDD, CUTDAY
-      INTEGER HMMOW, HRSPL, HMVS !TF 2022-01-31 Smart version AutoMOW
+      INTEGER HMFRQ, HMGDD, CUTDAY, HMVS
+      INTEGER HMMOW, HRSPL !TF 2022-01-31 Smart version AutoMOW
       REAL TAVG, TGMIN
       REAL TB(5), TO1(5), TO2(5), TM(5)
       REAL VTO1, VTB1 !Vegetative coefficients
@@ -215,7 +215,6 @@ C   FO -  05/07/2020 Add new Y4K subroutine call to convert YRDOY
             END IF
           END DO
         ELSE
-          LNUM = 1
           IF(ATTP .EQ. 'W' .AND. HMFRQ .LE. 0) THEN
             CALL ERROR (ERRKEY,3,MOWFILE,LNUM)
           ENDIF
@@ -228,13 +227,17 @@ C   FO -  05/07/2020 Add new Y4K subroutine call to convert YRDOY
           IF(ATTP .EQ. 'Z' .AND. HMGDD .LE. 0) THEN
             CALL ERROR (ERRKEY,4,MOWFILE,LNUM)
           ENDIF
-          IF(HRSPL .GT. 100 .OR. HRSPL .LT. 0) THEN
-            CALL ERROR (ERRKEY,5,MOWFILE,LNUM)
-          ENDIF
-          !LNUM ---
           IF(HMCUT .LT. 0.0) CALL ERROR (ERRKEY,6,MOWFILE,LNUM)
-          IF(HMMOW .LT. 0.0) CALL ERROR (ERRKEY,7,MOWFILE,LNUM)
           IF(HMVS .LT. 0.0)  CALL ERROR (ERRKEY,8,MOWFILE,LNUM)
+
+          !HMMOW and HRSPL are used only for SmartMOW
+          IF(ATTP .EQ. 'Y' .OR. ATTP .EQ. 'Z') THEN
+            IF(HMMOW .LT. 0.0) CALL ERROR (ERRKEY,7,MOWFILE,LNUM)
+            IF(HRSPL .GT. 100 .OR. HRSPL .LT. 0) THEN
+              CALL ERROR (ERRKEY,5,MOWFILE,LNUM)
+            ENDIF
+          ENDIF
+          
         ENDIF
 
         ! OPEN AND READ SPECIES FILE
