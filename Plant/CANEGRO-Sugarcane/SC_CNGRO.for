@@ -1147,7 +1147,7 @@ c     APPENDIX 1: DSSAT interface variables:
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     - Input variables -
 c     :::::::::::::::::::
-c      CONTROL:  �init�, �rate�, etc 
+c      CONTROL:  init, rate, etc 
 c      ISWITCH:  Indicates which processes (Soil, N, etc) are to be modelled 
 c      CO2:      Atmospheric CO2, ppm 
 c      DAYL:     Day length on day of simulation (from sunrise to sunset) (hr) 

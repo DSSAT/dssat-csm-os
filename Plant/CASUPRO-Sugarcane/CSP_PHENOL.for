@@ -1115,7 +1115,7 @@
 ! SAT
 ! ST
 ! SW
-! TGROAV                    Average daily air temperature (�C)
+! TGROAV                    Average daily air temperature (°C)
 
 ! Tmin
 ! TURFAC  Water stress factor for expansion (0 - 1) 
@@ -1162,21 +1162,21 @@
 ! DAi,j    DeltaLeafArea(i,j) increment of leaf area in period i and 
 !                             stalk j                                   cm2
 ! DDi      DeltaTTD(i)        thermal time increment for leaf 
-!                             appearance in period i                    �C-day
+!                             appearance in period i                    °C-day
 ! DGi      DeltaTTG(i)        thermal time increment for stalk 
-!                             appearance in period i                    �C-day
+!                             appearance in period i                    °C-day
 !          [DTTG in CSP_PHENOL.OUT]
 ! Dli,j    DeltaLeafNum(i,j)  leaf number increase at period i in 
-!                             stalk j                                   leaves (�C-day)-1
+!                             stalk j                                   leaves (°C-day)-1
 ! Bd       BudPlantDensity    bud planting density                      # buds m-2
 ! Bs       BudDistance        bud spacing along the row of plants       m
-! Di       SumTTD(i)          accumulated thermal time up to period i      �C-day
+! Di       SumTTD(i)          accumulated thermal time up to period i      °C-day
 ! di,j     SumTTStalk(i,j)    accumulated thermal time in period i for 
-!                             stalk j                                   �C-day
+!                             stalk j                                   °C-day
 ! DLAR      DeltaLeafArea(DAS,Stalk) 
-! DTPI      Thermal time threshold (Tb = 9 �C) corresponding to a 
+! DTPI      Thermal time threshold (Tb = 9 °C) corresponding to a 
 !             given leaf number at which phyllochron interval changes 
-!             from Ph1 to Ph2, �C-day
+!             from Ph1 to Ph2, °C-day
 ! FNSTR(I) Nitrogen stress function (0 to 1) for phase I
 ! FPSTR(I) Phosphorus stress function (0 to 1) for phase I 
 ! FSW(I)   Water stress function (0.0 to 1.0) for phase I 
@@ -1185,11 +1185,11 @@
 ! FUDAY(I) Effect of daylength on development progress (0-1) for phase I 
 ! FROP     Frequency of output (d)
 ! Gi       SumTTGStalk(i)     accumulated thermal time for stalk 
-!                             appearance up to period i                 �C-day
+!                             appearance up to period i                 °C-day
 ! Gmax     Gmax               threshold thermal time at which the 
-!                             maximum stalk number is reached           �C-day
+!                             maximum stalk number is reached           °C-day
 ! Go       Go                 threshold thermal time at which the 
-!                             stable stalk number is set                �C-day
+!                             stable stalk number is set                °C-day
 ! i        i                  index denoting period      
 ! j        j                  index denoting stalk number      
 ! K        KmxStk             maximum number of stalks a stubble can 
@@ -1202,14 +1202,14 @@
 ! NewStalk Number of stalks produced per plant (including senesced) 
 ! NVEG0    Day of emergence (days)
 !                             number                                    cm2 leaf-1
-! P1       Ph1P               threshold to sprouting (Tb = 9 �C) 
-!                             - Plant cane                              �C-day
-! P1       Ph1R               threshold to sprouting (Tb = 9 �C) 
-!                             - Ratoon cane                             �C-day
+! P1       Ph1P               threshold to sprouting (Tb = 9 °C) 
+!                             - Plant cane                              °C-day
+! P1       Ph1R               threshold to sprouting (Tb = 9 °C) 
+!                             - Ratoon cane                             °C-day
 ! P2       Ph2                threshold to emergence - Plant and 
-!                             ratoon cane                               mm (�C-day)-1 
+!                             ratoon cane                               mm (°C-day)-1 
 ! PI1, PI2 inverse slopes of the linear relationship for phyllochron
-!          interval 1 and 2           # leaves (�C-day)-1
+!          interval 1 and 2           # leaves (°C-day)-1
 ! PHZACC   cumulative thermal time for phase I
 ! RTNFAC   Number of primary shoots to develop from each mature stalk 
 !           at previous harvest.
@@ -1224,14 +1224,14 @@
 !                  3 (LI zone: TOP, MID or GND);  4-10 unused  
 ! TELOM    Telomechron interval, or thermal period required for an existing tiller
 !                             to produce one higher order tiller.
-! Tb       Tbase              base temperature                          �C 
-! Ti       Tmean, TGROAV        mean daily temperature in period i        �C
-! Tm       Tm                 maximum critical temperature              �C
-! Tmax i   Tmax(i)            maximum daily temperature                 �C
-! Tmin i   Tmin(i)            minimum daily temperature                 �C
-! To1      To1                lower optimum temperature                 �C
-! To2      To2                upper optimum temperature                 �C
-! Tbs      TbaseStalk         base temperature for stalk appearance     �C
-! VT       Variable Telomechron (tiller emergence)   �C-day
+! Tb       Tbase              base temperature                          °C 
+! Ti       Tmean, TGROAV        mean daily temperature in period i        °C
+! Tm       Tm                 maximum critical temperature              °C
+! Tmax i   Tmax(i)            maximum daily temperature                 °C
+! Tmin i   Tmin(i)            minimum daily temperature                 °C
+! To1      To1                lower optimum temperature                 °C
+! To2      To2                upper optimum temperature                 °C
+! Tbs      TbaseStalk         base temperature for stalk appearance     °C
+! VT       Variable Telomechron (tiller emergence)   °C-day
 !-----------------------------------------------------------------------
 

@@ -538,7 +538,7 @@ C-----------------------------------------------------------------------
 !             (g[stem] / m2[ground)
 ! SUMTEM    Factor which affects protein composition based on average 
 !             temperature. 
-! TAVG      Average daily temperature (�C)
+! TAVG      Average daily temperature (°C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
@@ -568,7 +568,7 @@ C-----------------------------------------------------------------------
 ! XLEAF(I)  V-stage at which partitioning to leaves is YLEAF(I).
 !             (leaf nodes)
 ! XSLATM(I) Temperature values for function that reduces specific leaf area 
-!             (SLA) (�C)
+!             (SLA) (°C)
 ! XVGROW(I) V-stage at which maximum leaf area growth per plant since 
 !             emergence is YVGROW(I). (# leaf nodes)
 ! XX        Difference between partitioning fraction to stems at beginning 

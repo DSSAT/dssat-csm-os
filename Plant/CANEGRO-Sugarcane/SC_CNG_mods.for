@@ -1887,7 +1887,7 @@ c     an optimal temperature (TOpt),
 c     and a final cutoff temperature (TFinal) above which the
 c     plant stops responding to temperature
 c     DTT |___/\__
-c            �C
+c            °C
 c     MJ, Dec 2012
       REAL FUNCTION D_TT(TMEAN, TBase, TOpt, TFinal)
 c     ===============================================================      
@@ -1927,7 +1927,7 @@ c     temperature range end (Topt2),
 c     and a final cutoff temperature (TFinal) above which the
 c     plant stops responding to temperature
 c     DTT |___/--\__
-c            �C
+c            °C
 c     MJ, Dec 2012
       REAL FUNCTION D_TT4(TMEAN, TBase, TOpt1, Topt2, TFinal)
 c     ===============================================================      

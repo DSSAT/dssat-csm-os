@@ -120,17 +120,17 @@ c     Vars used in the CLIMT common block, used here:
 
 c       Modification to calculation of delta thermal time, based on ASA 2013 work:
 c       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-c       Delta thermal time (�Cd) for stalk elongation
+c       Delta thermal time (°Cd) for stalk elongation
         REAL DTT_RER
 c       Function for calculating delta thermal time
         REAL D_TT
-c       Base, optimal and final temperatures for thermal time accum. (�C)
+c       Base, optimal and final temperatures for thermal time accum. (°C)
 c       These are cultivar params.
 c       For roots
         REAL TBaseREX, ToptREX, TFinREX
 c       Mean daily temperature
         REAL TMEAN
-c       Reference root elongation rate per unit thermal time (cm/�Cd)
+c       Reference root elongation rate per unit thermal time (cm/°Cd)
         REAL RER0
 
 
