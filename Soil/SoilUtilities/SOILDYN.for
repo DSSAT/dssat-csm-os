@@ -92,6 +92,8 @@ C-----------------------------------------------------------------------
 !     Stable organic C, read from 2nd tier soil data in INP file.
 !     Value comes from soil analysis section of FILEX, but stored w/ soil profile data
       REAL, DIMENSION(NL) :: SASC
+!     Soil alternate electron acceptors (mol Ceq/m3)
+      REAL, DIMENSION(NL) :: SAEA
 
 !From DSSAT3.0 manual (second tier):
 ! EXTP    Extractable phosphorus (mg/kg)
@@ -216,6 +218,7 @@ C-----------------------------------------------------------------------
       STONES = -99.
       OC     = -99.
       SASC   = -99.
+      SAEA   = -99.
       PH     = -99.
       BD     = -99.
       LL     = -99.
@@ -319,7 +322,7 @@ C-----------------------------------------------------------------------
      &      EXTP(L), TOTP(L), ORGP(L), CACO(L), 
      &      EXTAL(L), EXTFE(L), EXTMN(L), TOTBAS(L), PTERMA(L),
      &      PTERMB(L), EXK(L), EXMG(L), EXNA(L), EXTS(L), SLEC(L),
-     &      EXCA(L), SASC(L)
+     &      EXCA(L), SASC(L), SAEA(L)
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
       ENDDO
@@ -856,6 +859,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       SOILPROP % SAND   = SAND   
       SOILPROP % SASC   = SASC   
+      SOILPROP % SAEA   = SAEA   
       SOILPROP % SAT    = SAT    
       SOILPROP % SILT   = SILT   
       SOILPROP % SLNO   = SLNO  
@@ -1583,6 +1587,8 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       REAL, DIMENSION(NL) :: CACO3, EXTP, ORGP, PTERMA, PTERMB
       REAL, DIMENSION(NL) :: TOTP, TOTBAS, EXCA, EXK, EXNA
       REAL, DIMENSION(NL) :: SASC   !stable organic C
+!     SAEA = soil alternate electron acceptors (mol Ceq/m3)
+      REAL, DIMENSION(NL) :: SAEA   
       REAL, DIMENSION(NL) :: WCR, alphaVG, mVG, nVG
 
       REAL CN, SWCON
@@ -1621,6 +1627,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
       SAND    = SOILPROP % SAND   
       SASC    = SOILPROP % SASC   
+      SAEA    = SOILPROP % SAEA   
       SAT     = SOILPROP % SAT    
       SILT    = SOILPROP % SILT   
       SLNO    = SOILPROP % SLNO   

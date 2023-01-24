@@ -55,7 +55,7 @@ C=======================================================================
       REAL         OC(NL),SLPF,U,SLNF,SWCON,CN2,SALB,DEPMAX,DLAYR(NL)
       REAL         DS(NL),WRESR,WRESND,EFINOC,EFNFIX,ADCOEF(NL),TOTN(NL)
       REAL         SWINIT(NL),INO3(NL),INH4(NL),EXTP(NL),SWCN(NL)
-      REAL         EXK(NL), PHKCL(NL), SASC(NL)
+      REAL         EXK(NL), PHKCL(NL), SASC(NL), SAEA(NL)
       REAL         ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID
 !      REAL, DIMENSION(NL) :: SOM1I, SOM2I, SOM3I
 
@@ -163,7 +163,7 @@ C
 !     &         SOM1I, SOM2I, SOM3I)
           CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)    !, YRSIM)
+     &            SASC, SAEA, NLAYR)    !, YRSIM)
       ELSE IF (MENU .EQ. 5) THEN
           CALL SEPROF (DLAYR,NLAYR,RNMODE,DS,DUL,LL,SAT,BD,WR,OC,PH,
      &         SWINIT,SWCN,ADCOEF,TOTN)

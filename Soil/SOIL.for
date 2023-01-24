@@ -151,8 +151,8 @@ C=====================================================================
 !      ELSEIF (MESOM .EQ. 'G') THEN
 !       Godwin (Ceres-based) soil organic matter module (formerly NTRANS)
         CALL SoilOrg (CONTROL, ISWITCH, 
-     &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
-     &    OMAData, RLV,                                   !Input
+     &    DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,     !Input
+     &    NH4, NO3, OMAData, RLV,                         !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    CH4_data, IMM, LITC, MNR, MULCH, newCO2,        !Output
      &    SomLit, SomLitC, SomLitE, SSOMC)                !Output

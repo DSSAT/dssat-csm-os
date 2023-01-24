@@ -236,7 +236,7 @@ C-----------------------------------------------------------------------
          IF (ISWNIT .EQ. 'Y') THEN
             CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)    !,YRSIM)
+     &            SASC, SAEA, NLAYR)    !, YRSIM)
          ENDIF
 !      ENDIF
       ENDIF
@@ -272,7 +272,7 @@ C-----------------------------------------------------------------------
      &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)    !,YRSIM) 
                   CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, 
      &            OC, PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)    !,YRSIM)
+     &            SASC, SAEA, NLAYR)    !, YRSIM)
                   NSENS = 1
                ENDIF
             ENDIF

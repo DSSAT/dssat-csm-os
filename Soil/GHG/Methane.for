@@ -25,7 +25,7 @@ C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
 !      estimated from soil properties. Currently hardwired at 26.5.
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
       USE GHG_mod
@@ -38,7 +38,7 @@ C=======================================================================
 
       INTEGER n1,NLAYR,i,j, DYNAMIC
       REAL dlayr(NL),SW(NL),DLL(NL),RLV(NL),CSubstrate(NL),BD(NL),
-     &     Buffer(NL,2),afp(NL)
+     &     Buffer(NL,2),afp(NL), SAEA(NL)
       REAL, DIMENSION(0:NL) :: newCO2
       REAL drain,flood,x,CH4Emission,buffconc,rCO2,
      &     rCH4,TCH4Substrate,rbuff,afpmax,
@@ -57,8 +57,8 @@ C=======================================================================
       TYPE (SwitchType)  ISWITCH
       TYPE (SoilType)    SOILPROP
       TYPE (FloodWatType)FLOODWAT
+      TYPE (FertType)    FERTDATA
       TYPE (CH4_type)    CH4_data
-
 
 !-----------------------------------------------------------------------
       REAL, PARAMETER :: spd = 24.*3600.   ! seconds per day
@@ -110,14 +110,15 @@ C-----------------------------------------------------------------------
         CH4Stored_Y   = 0.0
         CH4_data % CH4Stored = 0.0
 
+!     SAEA = Soil Alternative Electron Acceptors (mol Ceq/m3)
+!     SAEA = 26.5  
+      SAEA = SOILPROP % SAEA
+
 !     Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
-!     Temporarily hard-wire Buffer(NL,1) to 26.5 until we read initial values from soil file.
       FloodCH4 = 0.0
       DO i=1,NLAYR
 !       Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
-!       Temporarily set SAEA (new soil input - Soil Alternative Electron Acceptors) values to 26.5
-!       Need to introduce new soil input parameter, or find a way to estimate from other inputs?
-        Buffer(i,1) = 26.5 * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+        Buffer(i,1) = SAEA(i) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,2) = 0.0
       ENDDO
 
@@ -126,19 +127,6 @@ C-----------------------------------------------------------------------
       lamda_rho = 0.00015
 
       ENDIF
-
-! Sample soil profile used in MERES example from IRRI with SAEA values.
-!*IBRI910025  IRRI-UNDP   -99      50  
-!@SITE        COUNTRY          LAT     LONG SCS FAMILY
-! IRRI-UNDP   Philippines    14.18   121.25 Aquandic epiqualf
-!@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
-!   -99  0.13  12.0  0.60  67.0  1.00  1.00 IB001 IB001 IB001
-!@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SAEA
-!    10   -99 0.280 0.397 0.412 1.000  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
-!    20   -99 0.280 0.397 0.412 1.000  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
-!    30   -99 0.280 0.397 0.412 0.200  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
-!    40   -99 0.280 0.397 0.412 0.200  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
-!    50   -99 0.280 0.397 0.412 0.100  -9.0  1.00  1.20  0.43  0.53  0.04  0.13   6.6   -99   -99  26.5
 
       CALL OpMethane(CONTROL, ISWITCH,  
      &  newCO2Tot, CO2emission, TCH4Substrate, StorageFlux, CH4Stored,  
@@ -205,6 +193,9 @@ C-----------------------------------------------------------------------
           afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))
         ENDIF
         afpmax = 1.0 - BD(i)/2.65 - DLL(i)
+
+!       Update buffer from new fertilizer
+        Buffer(i,1) = Buffer(i,1) + FERTDATA % AddBuffer(i)
 
 !       calculate buffer concentration (molCeq/m3)
         buffconc = Buffer(i,1)/10./12./(dlayr(i)/100.)  
@@ -465,13 +456,32 @@ C  07/02/2021 CHP Written
             CALL HEADER(SEASINIT, LUN, RUN)
           ENDIF
 
-          write(LUN,'(a,/,5a)') 
-     & "All values are kg[C]/ha."
+          write(LUN,'(A,//,5A,/,5A,/,5A,/,5A)') 
+     & "*** All values are kg[C]/ha. ***",
+
+     & "!              ",
+     & "   -------------------------------------------------- Daily ",
+     & "kg[C]/ha ---------------------------------------------------",
+     & "----------   ------------------  Cumul  kg[C]/ha -----------",
+     & "----------",
+
+     & "!              ",
+     & "       New   Emitted Substrate   Storage       CH4       CH4",
+     & "       CH4       CH4       CH4     Plant       CH4       CH4",
+     & "       CH4       New   Emitted       CH4       CH4       CH4",
+     & "       CH4",
+
+     & "!              ",
+     & "       CO2       CO2   for CH4      Flux    Stored  Produced",
+     & "  Consumed   Leached   Emitted      Flux     Ebull    Diffus",
+     & "   Balance       CO2       CO2   Emitted  Consumed   Leached",
+     & "   Balance",
+
      & "@YEAR DOY   DAS",
-     &  "     CO2TD     CO2ED    CH4SBD    CH4SFD    CH4STD    CH4PRD",
-     &  "    CH4COD    CH4LCD     CH4ED    CH4PLD    CH4EBD    CH4DID",
-     &  "    CH4BLD     CO2TC     CO2EC     CH4EC    CH4COC    CH4LCC",
-     &  "    CH4BLC" 
+     & "     CO2TD     CO2ED    CH4SBD    CH4SFD    CH4STD    CH4PRD",
+     & "    CH4COD    CH4LCD     CH4ED    CH4PLD    CH4EBD    CH4DID",
+     & "    CH4BLD     CO2TC     CO2EC     CH4EC    CH4COC    CH4LCC",
+     & "    CH4BLC" 
         ENDIF
       ENDIF
 
@@ -501,10 +511,6 @@ C  07/02/2021 CHP Written
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
-!      IF (INDEX('AD',IDETL) == 0) RETURN
-      !Close daily output files.
-      CLOSE (LUN)
-
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
@@ -513,6 +519,27 @@ C-----------------------------------------------------------------------
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+
+!      IF (INDEX('AD',IDETL) == 0) RETURN
+!
+!! End of season CH4 balance
+!!                                                                             C-balance
+!! CO2 from decomposition of organic matter            CumNewCO2               CumNewCO2
+!! CO2 emitted                                             CumCO2Emission
+!! CH4 emitted                                             CumCH4Emission
+!!    Diffusion                           CumCH4Diffusion
+!!    Plant emission                      CumCH4PlantFlux
+!!    Ebullition                          CumCH4Ebullition
+!! CH4 storage                                                CH4stored
+!! CH4 leached                                                CumCH4Leaching
+!! CH4 taken up by methanotrophic bacteria                    CumCH4Consumpt
+!
+!      Cum_CH4_bal = CumNewCO2 - (CumCO2Emission + CumCH4Emission + 
+!     &                      CH4stored + CumCH4Leaching + CumCH4Consumpt)
+!
+
+      !Close daily output files.
+      CLOSE (LUN)
 
 !***********************************************************************
 !***********************************************************************

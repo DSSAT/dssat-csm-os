@@ -417,7 +417,7 @@
 !     &    SOM1C, TLITC, TSOMC, YRDOY)                     !Input
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
@@ -733,7 +733,7 @@
       ENDDO
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !***********************************************************************
@@ -851,7 +851,7 @@
      &  SOM2E, SOM23E, SOM3C, SOM3E, STRUCC, STRUCE)      !Input
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !     Soil carbon balance.
@@ -872,7 +872,7 @@
       IF (ISWWAT == 'N') RETURN
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !       Get detailed SOM and litter output.
@@ -920,7 +920,7 @@
       IF (ISWWAT == 'N') RETURN
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !     Close output files.
