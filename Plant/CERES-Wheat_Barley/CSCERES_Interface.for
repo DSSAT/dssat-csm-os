@@ -16,20 +16,22 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       USE CsvOutput   ! VSH
+      USE CER_First_Trans_m
+
       IMPLICIT NONE
       EXTERNAL YR_DOY, CSCER
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS, ISWWAT, ISWNIT, RNMODE
-      CHARACTER*2   CROP
-      CHARACTER*30  FILEIO
+      !CHARACTER*2   CROP
+      !CHARACTER*30  FILEIO
       CHARACTER*250 FILEIOCS
 
       INTEGER DYNAMIC, RUN, TN, RUNI, RN, ON
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY
-      INTEGER MDATE, L, NLAYR
+      INTEGER MDATE, NLAYR !, L
       INTEGER MULTI, FROP, SN, YEAR, DOY
-      INTEGER STGDOY(20), YEARPLT, YRPLT
+      INTEGER STGDOY(20), YRPLT
 
       REAL WUPT, EOP, EP, ET, TRWUP, SRAD, TMAX, TMIN, CO2
       REAL SNOW, KCAN, KEP, DEPMAX
@@ -130,7 +132,7 @@ C-----------------------------------------------------------------------
      & TWILEN, WINDSP, SOILTEMP, EO,                       !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
      & SNOW, SW, NO3, NH4,                                 !H2o,N states
-     & YEARPLT, YRPLT, HARVFRAC,                           !Pl.date
+     & YRPLT, HARVFRAC,                                    !Pl.date
      & EOP, EP, ET, TRWUP,                                 !Resources
      & LAI, KCAN, KEP,                                     !States
      & RLV, NFP, PORMIN, RWUMX, CANHT,                     !States
@@ -138,6 +140,7 @@ C-----------------------------------------------------------------------
      & SENC, SENN, SENLIG,                                 !Senescence
      & CRESC, CRESN, CRESLIG,                              !Residue
      & STGDOY,                                             !Stage dates
+     & WEATHER, SOILPROP, CONTROL,
      & DYNAMIC)                                            !Control 
 
       XLAI   = LAI

@@ -1351,8 +1351,12 @@
               nupac = -99
             ENDIF  
 
-            ! Calculate N% without dead matter            
-            VNPCM = 100.0*(LEAFN+STEMN+RSN)/(LFWT+STWT+RSWT)
+            ! Calculate N% without dead matter        
+            IF((LFWT+STWT+RSWT).GT.0.0) THEN       
+              VNPCM = 100.0*(LEAFN+STEMN+RSN)/(LFWT+STWT+RSWT)
+            ELSE
+              VNPCM = 0.0
+            ENDIF
 C-GH 1/20/2022 For ISWNI set to N
             IF (ISWNIT.EQ.'N') THEN
                hinm = -99
