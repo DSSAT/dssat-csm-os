@@ -19,6 +19,7 @@ C=======================================================================
       USE CRP_First_Trans_m
 
       IMPLICIT NONE
+      EXTERNAL YR_DOY, WARNING, CSCRP
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
@@ -35,10 +36,10 @@ C=======================================================================
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
       REAL SNOW 
       REAL KCAN, KEP, DEPMAX, DAYLT, DEWDUR
-      REAL NSTRES, XLAI, NFP, MSALB, ALBEDOS
+      REAL NSTRES, XLAI, NFP, MSALB !, ALBEDOS
       REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP, TWILEN
       REAL CANHT, EO, WINDSP, PARIP, PARIPA
-      REAL GSTAGE, LAI, RWUPM
+      REAL GSTAGE, LAI !, RWUPM
       REAL TAIRHR(TS), TDEW, SLPF
 !     REAL LAIL, LAILA, TWILEN
 
