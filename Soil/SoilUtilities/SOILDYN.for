@@ -566,6 +566,18 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
             ENDIF
           ENDIF
         ENDIF
+
+        IF (SAEA(L) .LT. 0.0) THEN
+          SAEA(L) = 26.5
+          Length = LEN(TRIM(MSG(3)))
+          IF (Length < 2) THEN
+            MSG(3) = '   SAEA'
+          ELSE
+            IF (INDEX(MSG(3),'SAEA') < 1) THEN
+              MSG(3) = TRIM(MSG(3)) // ', SAEA'
+            ENDIF
+          ENDIF
+        ENDIF
       ENDDO   !End of soil layer loop.
 
 !     Warning message for non-sequenced runs or any first run
