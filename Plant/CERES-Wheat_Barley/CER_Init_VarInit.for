@@ -5,20 +5,23 @@
     
       SUBROUTINE CER_Init_VarInit (LAI, CANHT, DEWDUR,
      &   NFP, RESCALG, RESLGALG, RESNALG, RLV,
-     &   SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
-     &   UNH4ALG, UNO3ALG)
+     &   STGDOY, TRWUP, UH2O)
+
+! 2023-01-25 CHP removed unused variables from argument list
+!     SENCALG, SENNALG, UNH4ALG, UNO3ALG
         
         USE ModuleDefs
         USE CER_First_Trans_m
 
         IMPLICIT     NONE
+        EXTERNAL clear_CER_First_Trans_m
         
         INTEGER STGDOY(20), ADAT10            
         
-        REAL LAI, CANHT, DEWDUR, NFP, KCAN, HARVFRAC(2)  
+        REAL LAI, CANHT, DEWDUR, NFP, KCAN !, HARVFRAC(2)  
         REAL RESCALG(0:20), RESLGALG(0:20) 
-        REAL RESNALG(0:20), RLV(20), SENCALG(0:20)
-        REAL SENNALG(0:20), TRWUP, UH2O(20), UNH4ALG(20), UNO3ALG(20)
+        REAL RESNALG(0:20), RLV(20)  !, SENCALG(0:20)
+        REAL TRWUP, UH2O(20)  !SENNALG(0:20), UNH4ALG(20), UNO3ALG(20),
         REAL RESLGAL(0:20), RESNAL(0:20), RESWAL(0:20), RESWALG(0:20)
         REAL SNOW
         

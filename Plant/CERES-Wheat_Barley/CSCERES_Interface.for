@@ -140,7 +140,6 @@ C-----------------------------------------------------------------------
      & SENC, SENN, SENLIG,                                 !Senescence
      & CRESC, CRESN, CRESLIG,                              !Residue
      & STGDOY,                                             !Stage dates
-     & WEATHER, SOILPROP, CONTROL,
      & DYNAMIC)                                            !Control 
 
       XLAI   = LAI

@@ -57,8 +57,10 @@
      & SENCALG, SENNALG, SENLGALG,                         !Senescence
      & RESCALG, RESNALG, RESLGALG,                         !Residues
      & STGDOY,                                             !Stage dates
-     & WEATHER, SOILPROP, CONTROL,
      & DYNAMIC)                                            !Control
+
+! 2023-01-25 CHP removed unused variables from argument list
+!    & WEATHER, SOILPROP, CONTROL,
 
       ! Substantive changes as worked on comparison
       !   1. Reserves overflow. Introduced
@@ -177,16 +179,17 @@
       USE CER_First_Trans_m
       
       IMPLICIT NONE
+      EXTERNAL CER_Init, CER_Growth, CER_Integrate, CER_Output
 
-      TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
-      TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
-      TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
+!      TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
+!      TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
+!      TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
     
-      INTEGER ADAT10, CSTIMDIF, CSINCDAT, DAPCALC
+!     INTEGER ADAT10, CSTIMDIF, CSINCDAT, DAPCALC
       INTEGER CN, DOY, DYNAMIC, DYNAMICI, FROP, NLAYR, ON, REP, RN          
       INTEGER RUN, RUNI, SN, STEP, STGDOY(20), TN, YEAR
-      INTEGER TVICOLNM
-      INTEGER CSYDOY, YEARPLTCSM, TVILENT
+!     INTEGER TVICOLNM
+      INTEGER YEARPLTCSM !, CSYDOY, TVILENT
       
       REAL CANHT, EO, EP, EOP, ET, LAI, KCAN, KEP, NFP
       REAL BD(NL), DAYLT, DEPMAX, LL(NL), SAT(NL)
@@ -198,12 +201,12 @@
       REAL ST(0:NL), SENNALG(0:NL), SENCALG(0:NL), TRWUP, UH2O(NL)
       REAL SW(20), NO3LEFT(20), NH4LEFT(NL)
       REAL CO2, TMAX, TMIN, SRAD, WINDSP, SNOW
-      REAL TFAC4, TOTIR, YVALXY, YVAL1
+      REAL TOTIR !, TFAC4, YVALXY, YVAL1
 
       CHARACTER*1   IDETG, ISWNIT, ISWWAT, IDETL, IDETO, IDETS
       CHARACTER*1   RNMODE
       CHARACTER*250 FILEIOIN
-      CHARACTER*10  TL10FROMI  
+!     CHARACTER*10  TL10FROMI  
 
 
       YEARDOY = YEAR*1000 + DOY
@@ -215,8 +218,8 @@
      &     FILEIOIN, FROP, IDETL,
      &     ISWWAT, KCAN, KEP, NFP, ON,
      &     RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
-     &     RUN, RUNI, RWUMX, RWUPM, SENCALG,
-     &     UH2O, UNH4ALG, UNO3ALG, YEAR, SENNALG, SLPF, SN,
+     &     RUN, RUNI, RWUMX, RWUPM, 
+     &     UH2O, YEAR, SLPF, SN,
      &     STGDOY, TN, TRWUP, DYNAMIC)
 
       ELSEIF (DYNAMIC.EQ.RATE) THEN
@@ -253,7 +256,7 @@
 
       ELSEIF (DYNAMIC.EQ.INTEGR) THEN
 
-        CALL CER_Integrate (BD, LAI, CANHT, CO2,
+        CALL CER_Integrate (LAI, CANHT, CO2,
      &     DAYLT, DEPMAX, DLAYR, DOY, EOP, EP, ET, KCAN,
      &     HARVFRAC, ISWWAT, LL, NFP, NLAYR,
      &     RAIN, RESCALG, RESLGALG, RESNALG, RLV,
@@ -261,15 +264,14 @@
      &     SRAD, STGDOY, SW, TMAX, TMIN,
      &     YEAR)
 
-
       ELSEIF (DYNAMIC.EQ.OUTPUT .OR. 
      &        DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
 
-        CALL CER_Output (LAI, CANHT, CN, CO2, DOY,
+        CALL CER_Output (LAI, CANHT, CN, DOY,
      &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS,
-     &     ISWNIT, ISWWAT, NFP, NLAYR, ON, RAIN, REP,
+     &     ISWNIT, ISWWAT, NFP, NLAYR, ON, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, STEP, STGDOY,
-     &     TOTIR, TN, UNH4ALG, UNO3ALG, YEAR)
+     &     TOTIR, TN, YEAR)
      
       ELSEIF (DYNAMIC.EQ.SEASEND) THEN
 
@@ -310,6 +312,7 @@
      & DYNAMICI)                                          !Control
 
       IMPLICIT NONE
+      EXTERNAL VPSLOP
       SAVE
 
       REAL          BLRESD        ! Boundary layer resistance      s/m
@@ -464,6 +467,7 @@
      & DYNAMICI)                                           !Control
 
       IMPLICIT NONE
+      EXTERNAL GETLUN
       SAVE
 
       INTEGER       NL            ! Maximum number soil layers,20
@@ -606,6 +610,7 @@
      X LAIL)                      ! Leaf area indices by layer
 
       IMPLICIT NONE
+      EXTERNAL YVALXY
       SAVE
 
       INTEGER       clx           ! Canopy layers,maximum          #
