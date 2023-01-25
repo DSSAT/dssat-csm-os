@@ -7,22 +7,7 @@ C  Revision history
 C
 C  1. Written     R.B.M. March 1998.
 ! 2021-06-30 CHP and US adapt for DSSAT-CSM v4.8
-C-----------------------------------------------------------------------
-C Inputs:
-C   DAP        : days after planting
-C   dlayr      : width of each soil layer (cm)
-C   flood      : depth of flood water (mm)
-C   SW         : soil water content (m3 water/m3 soil)
-C   RLV        : root length density (cm root/cm3 soil)
-C   BD         : bulk density of each soil layer (g soil cm-3 soil)
-C   Csubstrate : available CH2O for methanogenesis (kgCH2O/ha per soil layer.
-C   drain      : percolation rate (mm/d)
-C Output:
-C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
-
-! Still to do:
-!  - Soil Alternative Electron Acceptors input from soil file or otherwise
-!      estimated from soil properties. Currently hardwired at 26.5.
+! 2023-01-24 chp added SAEA to soil analysis in FileX 
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
      &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
@@ -519,24 +504,6 @@ C-----------------------------------------------------------------------
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
-
-!      IF (INDEX('AD',IDETL) == 0) RETURN
-!
-!! End of season CH4 balance
-!!                                                                             C-balance
-!! CO2 from decomposition of organic matter            CumNewCO2               CumNewCO2
-!! CO2 emitted                                             CumCO2Emission
-!! CH4 emitted                                             CumCH4Emission
-!!    Diffusion                           CumCH4Diffusion
-!!    Plant emission                      CumCH4PlantFlux
-!!    Ebullition                          CumCH4Ebullition
-!! CH4 storage                                                CH4stored
-!! CH4 leached                                                CumCH4Leaching
-!! CH4 taken up by methanotrophic bacteria                    CumCH4Consumpt
-!
-!      Cum_CH4_bal = CumNewCO2 - (CumCO2Emission + CumCH4Emission + 
-!     &                      CH4stored + CumCH4Leaching + CumCH4Consumpt)
-!
 
       !Close daily output files.
       CLOSE (LUN)

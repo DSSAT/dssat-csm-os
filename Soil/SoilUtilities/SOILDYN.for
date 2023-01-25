@@ -27,6 +27,7 @@ C  08/12/2003 CHP Added I/O error checking
 !  03/26/2007 CHP Soil layer depth labels added to SoilProp variable 
 !  02/11/2009 CHP Do not run SoilDyn when ISWWAT = 'N'
 !                 Changed condition for missing or zero OC.
+!  01/24/2023 chp added SAEA to soil analysis in FileX for methane
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -57,7 +58,6 @@ C-----------------------------------------------------------------------
 
       INTEGER DAS, DYNAMIC, ERRNUM, FOUND, I, L, Length 
       INTEGER LNUM, LUNIO, MULTI, REPNO, RUN, YRDOY
-!     INTEGER LEN1, LEN2, LENSTRING
 !     ---------------------------------------------------------------
 !     Soil properties:
       CHARACTER*5 SLTXS, SMPX

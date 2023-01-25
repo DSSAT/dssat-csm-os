@@ -36,7 +36,6 @@ C=======================================================================
       EXTERNAL YR_DOY, StnameFill, RI_IPPHEN, PhaseInit, RiceInit, 
      &  GETLUN, TRNSPL_PHENOL, WARNING, RI_Stress
       EXTERNAL FIND,TOPTD,TFERT,INCDAT,ERROR
-
       SAVE
       
       CHARACTER ISWWAT*1,ISWNIT*1,IDETO*1,PLME*1
