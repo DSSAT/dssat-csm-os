@@ -99,9 +99,9 @@ C-----------------------------------------------------------------------
 !     SAEA = 26.5  
       SAEA = SOILPROP % SAEA
 
-!     Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
       FloodCH4 = 0.0
       DO i=1,NLAYR
+!       Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
 !       Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,1) = SAEA(i) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,2) = 0.0
