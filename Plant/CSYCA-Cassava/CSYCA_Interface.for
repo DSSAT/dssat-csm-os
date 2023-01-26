@@ -10,9 +10,10 @@ C  08/09/2012 GH  Updated for cassava
 C  02/03/2014 MF/PM SNOW variable deleted.
 C  20/01/2015 MF Added module YCA_Albedo_Check_m to allow checks in WORK.OUT.
 C  20/01/2015 MF Updated some variables to be consistent with CSCAS.
+!  01/26/2023 chp removed unused variables from argument list: ES
 C=======================================================================
       SUBROUTINE CSYCA_Interface (CONTROL, ISWITCH,       !Input
-     &    EOP, ES, NH4, NO3,SOILPROP, SRFTEMP,            !Input
+     &    EOP, NH4, NO3,SOILPROP, SRFTEMP,                !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
 !         MF 20JA15 REPLACED PORMIN with RWUMP
@@ -42,7 +43,7 @@ C=======================================================================
 ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS 
 ! MF 26OC14 REPLACED PORMIN WITH RWUMP
 ! MF 26OC14 REPLACED GSTAGE WITH BRSTAGE
-      REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
+      REAL CLOUDS, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2  !ES, 
       REAL KCAN, KEP, DEPMAX, DAYLT, DEWDUR
       REAL NSTRES, XLAI, NFP, MSALB, ALBEDOS                            
       REAL DAYL, RWUPM, RAIN, RWUMX, SRFTEMP, TWILEN                    
@@ -195,7 +196,7 @@ C-----------------------------------------------------------------------
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather 
      & DRAIN, RUNOFF, IRRAMT,                              !Water   
-     & DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,           !Weather 
+     & DAYL, DEWDUR, CLOUDS, ST, EO,                       !Weather 
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states 
      & SW, NO3LEFT, NH4LEFT, FERNIT,                       !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                             !N components
@@ -215,7 +216,7 @@ C-----------------------------------------------------------------------
      & WEATHER     , SOILPROP    , CONTROL     , 
      & DYNAMIC) !, WEATHER)                                !Control         
 !     MF 10JA15 WEATHER IS NEEDED FOR HOURLY EVALUATIONS
-      
+
 !       MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of
 !          CSCAS_Interface of which there are only 31. The others can be passed in a Module (20JA15 still to do).
 

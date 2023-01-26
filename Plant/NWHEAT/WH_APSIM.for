@@ -463,7 +463,7 @@ C-----------------------------------------------------------------------
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
        
@@ -580,7 +580,7 @@ C-----------------------------------------------------------------------
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
 
@@ -817,7 +817,7 @@ C----------------------------------------------------------------------
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
 
@@ -894,7 +894,7 @@ C----------------------------------------------------------------------
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
 

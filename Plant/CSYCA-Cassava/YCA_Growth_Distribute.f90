@@ -18,6 +18,7 @@
         USE YCA_Control_Leaf
     
         IMPLICIT NONE
+        EXTERNAL CSIDLAYR
         
         CHARACTER(LEN=1) ISWNIT      , ISWWAT      
         INTEGER NLAYR       

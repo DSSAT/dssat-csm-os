@@ -32,11 +32,14 @@ C=======================================================================
      &  TSURF,                                            !Output
 !     Added by BAK DEC2014
      &  CONDSH, CONDSL, RA, RB, RSURF, RNET,              !Output
-     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
+     &  G, LH, LHEAT, SH, SHEAT,                          !Output
 !     Added by BAK on 10DEC15
      &                RBSH, RBSL, RBSS,                   !Output
      &  CCNEFF, CICAD, CMXSF, CQESF, PGPATH,              !Input
      &  AGEQESL, CO2QESL, QEFFSL)                         !Output
+
+! 2023-01-25 chp removed unused variables
+!       RSSH, RSSL, RSSS, 
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types,
@@ -64,7 +67,7 @@ C=======================================================================
 
 !     Added by BAK
       REAL RB(3),RSURF(3),RNET(3,1),
-     &  G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1),
+     &  G, LH, LHEAT(3,1), SH, SHEAT(3,1),  !RSSH, RSSL, RSSS, 
      &  RBSH, RBSL, RBSS
       CHARACTER PGPATH*2
       REAL CCNEFF, CICAD, CMXSF, CQESF

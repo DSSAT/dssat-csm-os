@@ -365,9 +365,9 @@ C ***********************************************************************
       REAL y(4,51)
       REAL a(51),b(51),c(51),d(51),NR_b(51),NR_d(51),dv(51)
 
-      CALL get_a (s,y,a)
+      CALL get_a (s,a)
       CALL get_b (s,y,b)
-      CALL get_c (s,y,c)
+      CALL get_c (s,c)
       CALL get_d (s,y,d)
       CALL getNR_b (s,y,NR_b)
       CALL getNR_d (s,y,a,b,c,d,NR_d)
@@ -384,13 +384,13 @@ C solution of nonlinear tridiagonal problem
 C ***********************************************************************
 
 !-----------------------------------------------------------------
-      SUBROUTINE get_a (s,y,a)
+      SUBROUTINE get_a (s,a) !2023-01-26 chp removed unused "y" argument
       USE MethaneConstants
       USE MethaneVariables
       IMPLICIT NONE
       EXTERNAL dys_dy
       INTEGER s,i
-      REAL y(4,51),a(51),dys_dy
+      REAL a(51),dys_dy  !y(4,51),
       a (1) = 0.
       DO i = 2,steps-1
           a (i) = DD (s, i-1) + 4. * DD (s, i) - DD (s, i+1)
@@ -413,25 +413,25 @@ C ***********************************************************************
         b (i) = - 8. * DD (s, i)
      &        - 2. * h * (L(i+1) - L(i-1)) * dys_dy(s,i) 
      &        - 4. * h*h * (Q_y (s,i,y)
-     &                        + R_y (s,i,y) 
+     &                        + R_y (s,i) 
      &                        + S_y (s,i,y))
       ENDDO
       b (steps) = - 8. * DD (s, steps)
      &        - 2. * h * (L(steps) - L(steps-1)) * dys_dy(s,steps) 
      &        - 4. * h*h * (Q_y (s,steps,y)
-     &                        + R_y (s,steps,y) 
+     &                        + R_y (s,steps) 
      &                        + S_y (s,steps,y))
       RETURN
       END
 
 !-----------------------------------------------------------------
-      SUBROUTINE get_c (s,y,c)
+      SUBROUTINE get_c (s,c) !2023-01-26 chp removed unused "y" argument
       USE MethaneConstants
       USE MethaneVariables
       IMPLICIT NONE
       EXTERNAL dys_dy
       INTEGER s,i
-      REAL y(4,51),dys_dy,c(51)
+      REAL dys_dy,c(51)  !y(4,51),
       c (1) = 0.
       DO i = 2,steps-1
           c (i) = DD (s, i+1) + 4. * DD (s, i) - DD (s, i-1)
@@ -469,19 +469,19 @@ C ***********************************************************************
       DO i = 2,steps-1
         d1 = dys_dy(s,i)
         q1 = dQ_dy (s,i,y)
-        r1 = dR_dy (s,i,y)
+        r1 = dR_dy (s,i)
         s1 = dS_dy (s,i,y)
 
         NR_b (i) = - 8. * DD (s, i)
      &          - 2. * h * (L(i+1) - L(i-1)) * dys_dy(s,i) 
      &          - 4. * h*h * (dQ_dy (s,i,y)
-     &                        + dR_dy (s,i,y) 
+     &                        + dR_dy (s,i) 
      &                        + dS_dy (s,i,y))
       ENDDO
       NR_b (steps) = - 8. * DD (s, steps)
      &          - 2. * h * (L(steps) - L(steps-1)) * dys_dy(s,steps) 
      &          - 4. * h*h * (dQ_dy (s,steps,y)
-     &                        + dR_dy (s,steps,y) 
+     &                        + dR_dy (s,steps) 
      &                        + dS_dy (s,steps,y))
       RETURN
       END
@@ -756,23 +756,25 @@ c Root-mediated transport
       END
 
 !-----------------------------------------------------------------
-      REAL function R_y (s,i,y)
+!2023-01-26 chp removed unused "y" argument
+      REAL function R_y (s,i) 
       USE MethaneVariables
       IMPLICIT NONE
       EXTERNAL dya_dy
       INTEGER s,i
-      REAL y(4,51),dya_dy
+      REAL dya_dy  !y(4,51),
         R_y = LL (s, i) * dya_dy (s, i)
       RETURN
       END
 
 !-----------------------------------------------------------------
-      REAL function dR_dy (s,i,y)
+!2023-01-26 chp removed unused "y" argument
+      REAL function dR_dy (s,i) 
       USE MethaneVariables
       IMPLICIT NONE
       EXTERNAL dya_dy
       INTEGER s,i
-      REAL y(4,51),dya_dy
+      REAL dya_dy  !y(4,51),
           dR_dy = LL (s, i) * dya_dy (s, i)
       RETURN
       END

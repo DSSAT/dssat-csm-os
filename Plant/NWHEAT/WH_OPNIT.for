@@ -18,9 +18,11 @@ C  Calls:     None
 
       SUBROUTINE WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
+
+! 2023-01-26 chp removed unused variables in argument list: WTNVEG
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -38,7 +40,7 @@ C  Calls:     None
       INTEGER TIMDIF, YEAR, YRDOY, YRPLT
 
       REAL PCNL, nfact(10)
-      REAL WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG
+      REAL WTNCAN,WTNSD,PCNGRN,PCNVEG  !,WTNVEG
       REAL WTNUP,WTNLF,WTNST,PCNST,PCNRT     
       REAL CUMSENSURFN, CUMSENSOILN   !cumul. senes. N soil and surface
       REAL pl_nit_root, pl_nit_lfsheath

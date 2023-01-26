@@ -445,15 +445,15 @@ C-----------------------------------------------------------------------
 
         CALL TF_OPGROW(CONTROL, ISWITCH,
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR,
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT,
-     &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT,
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODWT,
+     &  PSTRES1, PSTRES2, rlv_nw, rtdep_nw, RTWT, SATFAC, SDWT,
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
-     &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO,
+     &  TOPWT, swdef(cellxp), WTCO, WTLF, WTLO,
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL TF_OPNIT(CONTROL, ISWITCH,
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact,
      &    pl_nit_root, pl_nit_lfsheath)
 
@@ -561,15 +561,16 @@ C-----------------------------------------------------------------------
 
         CALL TF_OPGROW(CONTROL, ISWITCH,
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR,
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT,
-     &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT,
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODWT,
+     &  PSTRES1, PSTRES2, rlv_nw, rtdep_nw, RTWT, SATFAC, SDWT,
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
-     &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO,
+     &  TOPWT, swdef(cellxp), WTCO, WTLF, WTLO,
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
+
 
           CALL TF_OPNIT(CONTROL, ISWITCH,
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact,
      &    pl_nit_root, pl_nit_lfsheath)
 
@@ -796,15 +797,15 @@ C----------------------------------------------------------------------
         ENDIF
       CALL TF_OPGROW(CONTROL, ISWITCH,
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR,
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT,
-     &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT,
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODWT,
+     &  PSTRES1, PSTRES2, rlv_nw, rtdep_nw, RTWT, SATFAC, SDWT,
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
-     &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO,
+     &  TOPWT, swdef(cellxp), WTCO, WTLF, WTLO,
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL TF_OPNIT(CONTROL, ISWITCH,
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact,
      &    pl_nit_root, pl_nit_lfsheath)
 
@@ -872,15 +873,15 @@ C----------------------------------------------------------------------
 
         CALL TF_OPGROW(CONTROL, ISWITCH,
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR,
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT,
-     &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT,
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODWT,
+     &  PSTRES1, PSTRES2, rlv_nw, rtdep_nw, RTWT, SATFAC, SDWT,
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
-     &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO,
+     &  TOPWT, swdef(cellxp), WTCO, WTLF, WTLO,
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL TF_OPNIT(CONTROL, ISWITCH,
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact,
      &    pl_nit_root, pl_nit_lfsheath)
 

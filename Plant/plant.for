@@ -64,12 +64,14 @@ C=======================================================================
      &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
      &    IRRAMT, NH4, NO3, SKi_Avail, SPi_AVAIL,         !Input
      &    SNOW, SOILPROP, SRFTEMP, ST, SW,                !Input
-     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
+     &    TRWUP, WEATHER, YREND, YRPLT,                   !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
+
+! 2023-01-26 chp removed unused variables from argument list: TRWU
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:
@@ -130,7 +132,7 @@ C-----------------------------------------------------------------------
       REAL CANHT, CO2, DAYL, EO, EOP, EORATIO, EOS, EP, ES
       REAL KCAN, KEP, KSEVAP, KTRANS, LAI, NSTRES
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW, IRRAMT
-      REAL TMAX, TMIN, TRWU
+      REAL TMAX, TMIN !, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
 
       REAL, DIMENSION(2)  :: HARVFRAC
@@ -439,7 +441,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Cassava CSYCA (CIAT cassava model)
       CASE('CSYCA')
         CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
-     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
+     &    EOP, NH4, NO3, SOILPROP, SRFTEMP,               !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
      &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output
@@ -622,12 +624,12 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       !  MJ Added ES July 2015
       !  MJ added SATFAC Jan 2018
         CALL SC_CNGRO (
-     &    CONTROL, ISWITCH,                                   !Input
-     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,   !Input
-     &    SOILPROP, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   !Input
-     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,      !Input
-     $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,        !Output
-     &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,           !Output
+     &    CONTROL, ISWITCH,                           !Input
+     &    CO2, EOP, EP, EO, ES,                       !Input
+     &    SOILPROP, SW, TMAX, TMIN, TRWUP, EOS,       !Input
+     &    RWUEP1, YREND, YRPLT, WEATHER, IRRAMT,      !Input
+     &    CANHT, KCAN, KTRANS, MDATE, NSTRES,         !Output
+     &    PORMIN, RLV, RWUMX,STGDOY, UNH4,            !Output
      &    UNO3, XLAI, XHLAI, EORATIO)                 !Output
 
 c     Added by MJ, 2007-04-04:

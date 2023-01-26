@@ -2105,8 +2105,8 @@ cjh temp fix to avoid any further development during maturity stage
       IF (ISWNIT .NE. 'N') THEN
          !*! Call APSIM subroutine nwheats_set_nfact
          CALL  ntefs_set_nfact (xstag_nw, istage,              !Input
-     &         cnc, mnc, pl_nit, plantwt, zstage,                !Input
-     &         nfact)                                           !Output
+     &         cnc, mnc, pl_nit, plantwt,                      !Input
+     &         nfact)                                          !Output
       ELSE
           nfact = 1.0
       ENDIF
@@ -2272,20 +2272,20 @@ cnh      optfr = min (swdef(photo), nfact(1)) * prft
  !     if (istage.eq.germ) then
  !        !nwheats_topsfr=? initialize here
  !      endif
-      call nwheats_cwdmd (CONTROL, uptake_source,
+      call nwheats_cwdmd (uptake_source,
      &    carbh, nwheats_topsfr, PLTPOP,                   !Input
        ! nwheats_topsfr is available in line 2100
      &    pcarbo, TMAX, TMIN, transp_eff_coeff,            !Input
      &    cwdemand, vpd_transp)
 
-       call nwheats_cwpot (CONTROL, SOILPROP, rlv_nw, swdep,
-     &    cumph_nw, cwdemand, istage,                        !Input
+       call nwheats_cwpot (SOILPROP, rlv_nw, swdep,
+     &    cumph_nw, istage,                                       !Input
      &    nrlayr, pl_la, PLTPOP, sen_la,                          !Input
 !            sen_la is unknown in line 1646 ; pl_la is calculated in line 2494 also
      &    potntl)
 
       Call nwheats_watup_new (SOILPROP, swdep, uptake_water,
-     &    cwdemand, istage, nrlayr, potntl, uptake_source, !Input
+     &    cwdemand, nrlayr, potntl, uptake_source, !Input
 !    &    rlv_nw, above_gnd_pcarb, carbh, nwheats_topsfr, PLTPOP, pcarbo, temp_c, TMAX, TMIN,
 !     need above by call nwheats_cwdmd
 !    &  cumph_nw, cwdemand, istage,  nrlayr, pl_la, PLTPOP, sen_la,
