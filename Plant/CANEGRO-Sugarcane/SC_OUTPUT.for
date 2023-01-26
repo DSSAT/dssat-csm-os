@@ -36,9 +36,13 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE SC_OPGROW (CONTROL, CaneCrop, Growth,
-     - Part, Out, WaterBal, SW, SoilProp,
+     - Part, Out, WaterBal, SoilProp,
      - YRPLT, CELLSE_DM)
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+!     2023-01-26 chp removed unused variables from argument list: SW, 
+
+
 c     Define DSSAT composite variables:
 c     [Taken from MZ_CERES.for]
       USE ModuleDefs
@@ -76,7 +80,7 @@ c     local ?
       CHARACTER*20 FILEIO
 
 c     Soil water content
-      REAL SW(NL)
+!     REAL SW(NL)
 
 c     CANEGRO variables:
 c     ::::::::::::::::::

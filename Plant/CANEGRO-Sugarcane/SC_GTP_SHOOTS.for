@@ -31,10 +31,13 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      SUBROUTINE SC_GTP_SHOOTPOP(CONTROL, ISWITCH,  
+      SUBROUTINE SC_GTP_SHOOTPOP(CONTROL,  
      &  DTT_POP, DTT_EM, FI_INTRA, SWDF30,   ! Canegro inputs
      &  POPHA) ! outputs
-     
+
+!     2023-01-26 chp removed unused variables from argument list: 
+!         ISWITCH
+
 c     ***************************************************************      
 c     Instruct compiler to use module definitions:
 c     DSSAT
@@ -55,7 +58,7 @@ c     :::::::::::::::::::::::::::::
 c     Control variable:
       TYPE (ControlType), INTENT(IN) :: CONTROL        
 c     Simulation options (switches)
-      Type (SwitchType), INTENT(IN) :: ISWITCH
+!     Type (SwitchType), INTENT(IN) :: ISWITCH
       
 c     GTP MODEL composite variables:
 c     Array of primary stalks:

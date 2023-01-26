@@ -9,12 +9,14 @@ c     Matthew Jones, September-November 2006
 c     ::::::::::::::::::::::::::::::::::::::::
 c     ----------------------------------------------------------
 
-      SUBROUTINE SC_PHENOLOGY(CONTROL, ISWITCH, CaneCrop, CHU10, HU10, 
+      SUBROUTINE SC_PHENOLOGY(CONTROL, CaneCrop, CHU10, HU10, 
      -                        CHU16, HU16, CHUBaseLeaf, HUBaseLeaf, 
      -                        CHUBaseEm, HUBaseEm, CHUBasePop, 
      -                        HUBasePop, HU_CANESIM, CHU_CANESIM, Out, 
      -                        TT_EMERG, EMERGED, STGDOY,  
      -                        TBasePop, TBaseLeaf, TBaseEm, Climate)
+
+!     2023-01-26 chp removed unused variables from argument list: ISWITCH
 
       USE MODULEDEFS
       USE CNG_MODULEDEFS
@@ -27,7 +29,7 @@ c     DSSAT control variable
       TYPE(CONTROLTYPE) CONTROL
 
 c     DSSAT simulation control variable:
-      TYPE (SwitchType) ISWITCH  ! MJ: no longer used
+!     TYPE (SwitchType) ISWITCH  ! MJ: no longer used
 
 c     CANEGRO crop type
       TYPE (CANECROPTYPE) CANECROP
