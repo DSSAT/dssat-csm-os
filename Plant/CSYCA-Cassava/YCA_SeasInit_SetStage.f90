@@ -9,17 +9,20 @@
 !**********************************************************************************************************************
 
     SUBROUTINE YCA_SeasInit_SetStage( &
-        CN          , ISWNIT      , KCAN        , KEP         , RN          , RUN         , RUNI        , SLPF        , &
-        TN           &
+        ISWNIT      , KCAN        , KEP         , SLPF          &
         )
+
+! 2023-01-25 chp removed unused variables
+!       CN          , RN          , RUN         , RUNI        , TN           
 
         USE OSDefinitions
         USE YCA_First_Trans_m
 
         
         IMPLICIT NONE
+        EXTERNAL TVILENT, WARNING, ERROR
         
-        INTEGER CN          , RN          , RUN         , RUNI        , TN          
+!       INTEGER CN          , RN          , RUN         , RUNI        , TN          
         INTEGER TVILENT                                                                       ! Integer function call.        
         
         REAL    KCAN        , KEP         , SLPF        

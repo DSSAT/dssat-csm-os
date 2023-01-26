@@ -10,25 +10,30 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Output ( & 
-        BRSTAGE     , LAI        , CANHT       , CN          , CO2         , DOY         , DYNAMIC     , EO          , &
-        EOP         , IDETG       , IDETL       , IDETO       , IDETS       , IRRAMT      , ISWNIT      , ISWWAT      , &
-        KCAN        , MESOM       , NFP         , NLAYR       , ON          , RAIN        , REP         , RLV         , &
-        RN          , RNMODE      , RUN         , RUNI        , SN          , SRAD        , STGYEARDOY  , TN          , &
-        TNIMBSOM    , TOMINSOM1   , UNH4        , UNO3        , WINDSP      , YEAR        &
+        BRSTAGE     , LAI         , CANHT       , CN          , DOY         , DYNAMIC     , &
+        EOP         , IDETG       , IDETL       , IDETO       , IDETS       , ISWNIT      , ISWWAT      , &
+        KCAN        , MESOM       , NFP         , ON          , REP         , RLV         , &
+        RN          , RNMODE      , RUN         , RUNI        , SN          , SRAD        , STGYEARDOY  , &
+        TN          , TNIMBSOM    , TOMINSOM1   , UNH4        , UNO3        , YEAR        &
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       CO2         , EO          , IRRAMT      , NLAYR       , RAIN        , WINDSP      , 
+
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Formats_m
      
         IMPLICIT NONE 
+        EXTERNAL YCA_OUT_MODFAIL, YCA_OUT_PLGROW, YCA_OUT_FRESHWT, YCA_OUT_EVAL, YCA_OUT_PLANTSUM, YCA_OUT_LFTIER, &
+            YCA_OUT_WRKPHENRES, YCA_OUT_ERROR, YCA_OUT_CRPSIM, YCA_OUT_SENS, YCA_OUT_STOREVARS, YCA_OUT_REINIT
      
-        INTEGER :: CN          , DOY         , DYNAMIC     , NLAYR       , ON          , REP         , RN          
-        INTEGER :: RUN         , RUNI        , SN          , STGYEARDOY(0:19)            , TN          , YEAR
+        INTEGER :: CN          , DOY         , DYNAMIC     , ON          , REP         , RN          ! NLAYR       , 
+        INTEGER :: RUN         , RUNI        , SN          , STGYEARDOY(0:19)          , TN          , YEAR
 
-        REAL    :: BRSTAGE     , LAI        , CANHT       , CO2         , DAYL        , EO          , EOP         , IRRAMT
-        REAL    :: KCAN        , NFP         , RAIN        , RLV(NL)     , SRAD        , TNIMBSOM    , TOMINSOM1   , UNH4(NL)        
-        REAL    :: UNO3(NL)    , WINDSP      
+        REAL    :: BRSTAGE     , LAI         , CANHT       , EOP         ! , CO2         , DAYL        , EO          , IRRAMT    
+        REAL    :: KCAN        , NFP         , RLV(NL)     , SRAD        , TNIMBSOM    , TOMINSOM1   , UNH4(NL)    ! , RAIN        
+        REAL    :: UNO3(NL)   !, WINDSP      
 
         CHARACTER(LEN=1)  :: IDETG       , IDETL       , IDETO       , IDETS       , ISWNIT      , ISWWAT      
         CHARACTER(LEN=1)  :: MESOM       , RNMODE              
@@ -113,14 +118,14 @@
             !         Output leaves and tiers data (IDETL = Y or D)
             !-----------------------------------------------------------------------------------------------------------
             CALL YCA_Out_LfTier ( &  
-                IDETL       , RUN         , STGYEARDOY  ,  BRSTAGE &
+                IDETL       , RUN         , STGYEARDOY  &
                 )
                 
             !-----------------------------------------------------------------------------------------------------------
             !          Outputs work details, phenology and plant responses (IDETL = D).
             !-----------------------------------------------------------------------------------------------------------
             CALL YCA_Out_WrkPhenRes ( & 
-                DYNAMIC     , IDETL       , IDETO       , ISWNIT      , NLAYR       , RLV         , RN          , RUN         , TN          &
+                IDETL       , IDETO       , ISWNIT      , RN          , RUN         , TN          &
                 )
                 
             !-----------------------------------------------------------------------------------------------------------
@@ -158,8 +163,8 @@
         !       Store variables for possible use next day/step and re-initialize if harvest/fail
         !---------------------------------------------------------------------------------------------------------------
         CALL YCA_Out_ReInit ( &  
-            BRSTAGE     , CN          , DYNAMIC     , IDETL       , NFP         , RNMODE      , SRAD        , STGYEARDOY  , &
-            UNH4        , UNO3        , LAI         &
+        BRSTAGE     , CN          , DYNAMIC     , NFP         , RNMODE      , SRAD        , STGYEARDOY  , &
+        UNH4        , UNO3        , LAI         &
             )
             
     END SUBROUTINE YCA_Output
