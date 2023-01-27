@@ -977,7 +977,7 @@ C=======================================================================
 C        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN, OUTFILES, SYSTEM, WARNING
+      EXTERNAL GETLUN, OUTFILES, WARNING
 
       Type (OutputType) FileData
       CHARACTER*16, DIMENSION(MaxFiles) :: FileName
@@ -1062,7 +1062,7 @@ C=======================================================================
 C        USE IFPORT
 !!!!cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN, SYSTEM
+      EXTERNAL GETLUN
 
       SAVE
       INTEGER i, COUNT, LUNLST, LUNTMP, SYS, SYSTEM
