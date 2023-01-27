@@ -28,6 +28,8 @@ C  02/03/2003 CHP EORATIO and KEP now exported for ET routines.
 C  06/22/2003 SJR Added calls to DORMANT subroutine.
 C  05/31/2005 SJR Added CH2OREF to senesce organs at minimum CH2O conc.
 C  09/28/2005 SJR Added SENMOB to senesce organs earlier in the day.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       subroutine FORAGE(CONTROL, ISWITCH, 

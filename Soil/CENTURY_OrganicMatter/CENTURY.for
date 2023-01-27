@@ -32,6 +32,8 @@
 !  07/14/2006 CHP Put revised DSSAT-Century with P model into CSM v4.6
 !  02/11/2010 CHP No simulation of organic matter when water is not 
 !                   simulated.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !-----------------------------------------------------------------------
 !  Called: SOIL
 !  Calls : CE_RATIO_C, DECRAT_C, IMMOBLIMIT_C, INCORPOR_C, LITDEC_C, 

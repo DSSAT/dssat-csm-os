@@ -3,6 +3,8 @@ C  MODULE GHG_mod
 C  06/15/2014 CHP Written
 !  10/01/2021 CHP Remove CO2 outputs from here. These are now reported
 !                 by the methane module.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !=======================================================================
 
       MODULE GHG_mod

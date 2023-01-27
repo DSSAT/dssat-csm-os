@@ -54,6 +54,8 @@ C 02/21/2006 GH  Read Crop Module from DSSATPRO
 C 02/01/2007 GH  RNMODE=T option for Gencalc Batch files
 C 02/07/2007 GH  Include path for FileX and rotation number to command
 C                line
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C

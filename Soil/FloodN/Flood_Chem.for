@@ -6,6 +6,8 @@ C  REVISION HISTORY
 C  03/13/2002 CHP Written based on flooded conditions portions of NTRANS
 !  02/21/2006 CHP Limit flood N species to non-negative values.
 !  03/02/2006 CHP ALGFON instead of DLTFON for N content of algae
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 ! Called by: NTRANS_inorg
 ! Calls:     FCHEM, PERC_N, NRUNOFF, DRYUP, FLOODI

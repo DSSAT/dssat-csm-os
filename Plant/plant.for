@@ -58,6 +58,8 @@ C  08/09/2012 GH  Added CSCAS model
 !  03/17/2020  WP Model TEFF from Mulugeta called on plant (added).
 !  08/19/2021 FV Added OilcropSun
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
@@ -71,7 +73,8 @@ C=======================================================================
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
 
-! 2023-01-26 chp removed unused variables from argument list: TRWU
+!     2023-01-26 chp removed unused variables from argument list: 
+!       TRWU, SomLitC, SomLitE, UPPM
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:

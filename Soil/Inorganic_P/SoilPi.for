@@ -13,6 +13,8 @@ C  01/24/2005 CHP Written
 !  03/21/2007 CHP Keep FracRts as fraction of total layer depth, 
 !                 rather than SVRts as absolute volume. This is for 
 !                 conservation of mass with tillage and compaction.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=====================================================================
 
       SUBROUTINE SoilPi(CONTROL, ISWITCH, FLOODWAT,

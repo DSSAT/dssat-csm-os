@@ -2,6 +2,8 @@
 !  CROPSIM CASSAVA GROWTH AND DEVELOPMENT MODULE 010115  
 !  Last edit 040414 LAH 
 !  (After problems implementing fixes of GH 180214,260314;PM,MF 260214)
+!  2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.                    
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line

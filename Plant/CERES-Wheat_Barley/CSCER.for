@@ -21,6 +21,8 @@
 !
 !  The module is used within both the Cropsim and CSM models.
 ! 
+!  2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.                    
 !=======================================================================
 
       ! For Cropsim

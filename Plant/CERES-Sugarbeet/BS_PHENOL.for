@@ -19,6 +19,9 @@
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &    SeedFrac, VegFrac, CropStatus)                          !O
 
+!     2023-01-26 chp removed unused variables in argument list:
+!       SI1,SI3,SUMP,EARS,
+
       USE ModuleDefs
       IMPLICIT  NONE
       EXTERNAL GETLUN, FIND, ERROR, IGNORE, WARNING

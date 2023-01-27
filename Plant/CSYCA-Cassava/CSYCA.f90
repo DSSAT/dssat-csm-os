@@ -22,7 +22,8 @@
 !     the output did not change. The output of this final version was the same in all 26 .OUT files apart from the
 !     time stamp of each run.
 !     
-!     2023-01-25 chp added EXTERNAL stmts and removed unused variables
+!     2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.                    
 !*******************************************************************************************************************************
 
       SUBROUTINE  CSYCA (FILEIOIN, RUN, TN, RN, RNMODE,                                       & !Command line

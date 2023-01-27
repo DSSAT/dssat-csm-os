@@ -29,6 +29,8 @@ C ALL RIGHTS RESERVED
 !  06/08/2011 FSR NWheat migration to DSSAT based on MZ_CERES  
 !  07/21/2017 WP  Changes for pest damage
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !----------------------------------------------------------------------
 !  Called by: Plant
 !----------------------------------------------------------------------

@@ -30,6 +30,9 @@ C=======================================================================
 
       SUBROUTINE IPCHEM(LUNEXP,FILEX,LNCHE,YRSIM,NCHEM,CDATE,
      &    CHCOD,CHAMT,CHMET,CHDEP,CHT,ISWCHE,CHEXTR)
+     
+!     2023-01-26 chp removed unused variables in argument list:
+!       ISWWAT, LNSIM,
 
       USE ModuleDefs
       IMPLICIT     NONE

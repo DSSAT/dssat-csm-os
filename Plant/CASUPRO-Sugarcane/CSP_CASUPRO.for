@@ -30,6 +30,8 @@ C  07/26/2004 CHP Removed variables which were not being used
 C  03/24/2005 CHP Put weather variables in constructed variable. 
 C  05/16/2005 FSR Removed calls to NFIX and CSP_MOBIL
 C  06/30/2006 FSR Incorporated into CSM v.5
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE CSP_CASUPRO(CONTROL, ISWITCH, 

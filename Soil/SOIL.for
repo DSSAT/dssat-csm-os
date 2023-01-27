@@ -29,6 +29,8 @@
 !                 move fertilizer and organic matter placement routines
 !                 to management module.
 !  10/31/2007 CHP Added simple K model.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=====================================================================
 
       SUBROUTINE SOIL(CONTROL, ISWITCH, 

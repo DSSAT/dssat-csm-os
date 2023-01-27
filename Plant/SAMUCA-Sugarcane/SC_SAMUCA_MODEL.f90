@@ -11,7 +11,12 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
                  RLV, RWUMX,         STGDOY,                        &  !Output
 !        UNO3, XLAI, XHLAI, EORATIO)
                XLAI, XHLAI, EORATIO)
- 
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       EP, EO, ES, HARVFRAC, NH4, NO3, SNOW, 
+!       SW, TRWU, EOS, TWILEN, IRRAMT, HARVRES, 
+!       PORMIN, SENESCE, UNH4, UNO3, 
+
     !-------------------------------------------------------------------------
     !---------- Agronomic Modular Simulator for Sugarcane (SAMUCA) -----------
     !-------------------------------------------------------------------------
@@ -32,7 +37,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !  Edited in: Feb-2016 by Murilo dos S. Vianna  -> Coupled to SWAP: https://scisoc.confex.com/crops/2017am/webprogram/Paper105395.html
     !  Edited in: Dec-2017 by Murilo dos S. Vianna  -> New Version Including Layered Photosynthesis, Source-Sink at Phytomer Level, Tillering
     !  Edited in: Jan-2020 by Murilo dos S. Vianna  -> Coupled into DSSAT
-    !------------------------------------------------------------------------
+    !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove unused variables, shorten lines. 
+
+   !------------------------------------------------------------------------
     
     !--- Global variables
     use ModuleDefs

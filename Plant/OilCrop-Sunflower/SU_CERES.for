@@ -26,6 +26,8 @@
 !  07/13/2006 CHP Added P model
 !  09/11/2007 JIL Added IXIM model
 !  10/31/2007 CHP Added simple K model.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !----------------------------------------------------------------------
 !  Called : Alt_Plant
 !----------------------------------------------------------------------

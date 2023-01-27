@@ -43,7 +43,10 @@ C
 C  HDLAY  :
 C=======================================================================
       SUBROUTINE IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,
-     &                  PATHGE,ECONO, MODEL, ATLINE)  !, CROP
+     &                  PATHGE,ECONO, MODEL, ATLINE)  
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       CROP
 
       IMPLICIT NONE
       EXTERNAL CLEAR, ERROR, IGNORE, VERIFY, WARNING

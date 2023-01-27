@@ -10,7 +10,8 @@ C  08/09/2012 GH  Updated for cassava
 C  02/03/2014 MF/PM SNOW variable deleted.
 C  20/01/2015 MF Added module YCA_Albedo_Check_m to allow checks in WORK.OUT.
 C  20/01/2015 MF Updated some variables to be consistent with CSCAS.
-!  01/26/2023 chp removed unused variables from argument list: ES
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
       SUBROUTINE CSYCA_Interface (CONTROL, ISWITCH,       !Input
      &    EOP, NH4, NO3,SOILPROP, SRFTEMP,                !Input
@@ -19,6 +20,9 @@ C=======================================================================
 !         MF 20JA15 REPLACED PORMIN with RWUMP
      &    RWUPM, RLV, RWUMX, SENESCE, STGDOY,             !Output       
      &    UNH4, UNO3, XLAI)                               !Output
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       ES
 
       USE ModuleDefs
       USE ModuleData

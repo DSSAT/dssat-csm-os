@@ -84,6 +84,9 @@ C=======================================================================
      &  VSTAGE, DWTCO, DWTLO, DWTSO,
      &  PWTCO, PWTLO, PWTSO)                         !Input/Output
 
+!     2023-01-26 chp removed unused variables in argument list:
+!       PORPT, TSCMOB, SLCADDOT, SRCADDOT, SSCADDOT
+
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil

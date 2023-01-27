@@ -48,6 +48,8 @@
 !                   when N is not simulated.
 !  02/11/2010 CHP No simulation of organic matter when water is not 
 !                   simulated.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !-----------------------------------------------------------------------
 !  Called : SOIL
 !  Calls  : IPSOIL, MULCHLAYER, NCHECK_organic, OpSoilOrg, SoilOrg_init

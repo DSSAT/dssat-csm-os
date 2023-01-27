@@ -50,6 +50,8 @@ c     with external calculations like irrigation are
 c     handled OUTSIDE this module.
 c     [interface copied from MZ_CERES.for]
 !  Added IRRAMT July 2015
+!  2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE SC_CNGRO (
      &    CONTROL, ISWITCH,                           !Input

@@ -28,6 +28,8 @@ C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 !                 FPLACE_C in Century)
 !  07/14/2006 CHP Added OM_Place (replaces RPLACE in NTRANS and 
 !                 RPLACE_C in Century)
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=====================================================================
 
       SUBROUTINE MGMTOPS(CONTROL, ISWITCH, 

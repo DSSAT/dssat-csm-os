@@ -39,6 +39,10 @@
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
      &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw, CropStatus,       !OUTPT 
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       SI1, SI3, SRAD, SUMP, EARS, 
+
 C-----------------------------------------------------------------------
       USE ModuleDefs
       USE WH_module

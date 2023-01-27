@@ -36,6 +36,8 @@ C  06/02/2005 GH  Fixed call to WTHMOD in Seasinit section
 C  02/13/2006 JIL Export AMTRH (R/R0) for leaf rolling calculation
 !  04/28/2008 CHP Added option to read CO2 from file 
 !  07/25/2014 CHP Added daily CO2 read from weather file (DCO2)
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called by: Main
 c  Calls:     DAYLEN, ERROR, HMET, IPWTH, SOLAR, WGEN, WTHMDB, WTHMOD

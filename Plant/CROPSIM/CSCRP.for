@@ -4,6 +4,8 @@
 !  Version changed to accomodate new CUL,ECO files;minor other changes
 !
 !  Last edit 050415  Few more writes to Work.out 
+!  2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.                    
 !-----------------------------------------------------------------------
   
       SUBROUTINE CSCRP(FILEIOIN, RUN, TN, RN, RNMODE,                                        
