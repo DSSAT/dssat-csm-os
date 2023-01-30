@@ -409,7 +409,11 @@ C       Convert character codes for fertilizer method into integer
           AMTFER(N) = AMTFER(N) + ANFER(I)
           NAPFER(N) = NAPFER(N) + 1
         ELSE 
-          FERNIT = 0.0
+          FERNIT  = 0.0
+          FERNO3  = 0.0
+          FERNH4  = 0.0
+          FERUREA = 0.0
+
         ENDIF   !End of IF block on HASN.
 
 !       For now P and K are NOT slow release
