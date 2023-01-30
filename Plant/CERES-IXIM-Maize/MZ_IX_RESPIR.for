@@ -13,14 +13,14 @@ C-----------------------------------------------------------------------
 C  Called from:   PHOTSYNT
 C  Calls:         
 C=======================================================================
-      SUBROUTINE MZ_IX_RESPIR(DYNAMIC,                            !Control
+      SUBROUTINE MZ_IX_RESPIR(DYNAMIC,                          !Control
      &  PG, R30C2, RES30C, TAIRHR, WTMAIN,                        !Input
      &  PCARLF,PCARST,PCARRT,PCAREA,PCARSD,PPROLF,PPROST,PPRORT,  !Input
      &  PPROEA,PPROSD,PLIPLF,PLIPRT,PLIPST,PLIPEA,PLIPSD,PLIGLF,  !Input
      &  PLIGST,PLIGRT,PLIGEA,PLIGSD,POALF,POAST,POART,POAEA,POASD,!Input
      &  PMINLF,PMINST,PMINRT,PMINEA,PMINSD,                       !Input
      &  GRLF,GRRT,GRSTM,GREAR,GRGRN,                              !Input
-     &  MAINR, CVF)                                               !Output
+     &  MAINR, CVF)                                              !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs

@@ -33,6 +33,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, ENTRES, SENIT, SWRES
 
       CHARACTER*1  RNMODE,IRESI,IDETN,ISWWAT,ISWNIT
       CHARACTER*2  CROP
@@ -175,6 +176,7 @@ C=======================================================================
       SUBROUTINE SWRES (RNMODE,IRESI,ISWNIT,ISWWAT,REMANT)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,IRESI,ISWNIT,ISWWAT
       CHARACTER*6  ERRKEY
@@ -274,6 +276,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, UPCASE, VERIFY, Y4K_DOY, YR_DOY
 
       CHARACTER*1  RNMODE,LINE(80),IMENU,UPCASE,IRESI
       CHARACTER*6  ERRKEY

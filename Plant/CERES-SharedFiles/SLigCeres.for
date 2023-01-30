@@ -15,6 +15,7 @@
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, IGNORE, INFO, ERROR
       SAVE
 
 !     Output variables

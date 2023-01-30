@@ -41,11 +41,13 @@
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD)      !Output
   
+!     2023-01-26 chp removed unused variables in argument list:
+!       CDAY, P3, TSEN, SKi_Avail, 
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
-      EXTERNAL FIND, GETLUN, YR_DOY, ERROR, IGNORE, WARNING, 
+      EXTERNAL FIND, GETLUN, YR_DOY, ERROR, IGNORE, WARNING,
      &  BS_NFACTO, BS_NUPTAK, P_CERES, TABEX, CURV
 
       SAVE

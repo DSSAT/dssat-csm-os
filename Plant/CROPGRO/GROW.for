@@ -61,6 +61,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL IPGROW, ERROR, STRESS
       SAVE
 !-----------------------------------------------------------------------
 
@@ -1146,6 +1147,7 @@ C=======================================================================
      &  MDATE, CropStatus)                                !Output
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL YR_DOY, WARNING, TIMDIF
 !-----------------------------------------------------------------------
       CHARACTER*1  IDETO, IHARI
       CHARACTER*78 MESSAGE(10)
@@ -1227,6 +1229,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TIMDIF, UPCASE
 !-----------------------------------------------------------------------
       CHARACTER*1 PLME, UPCASE
       CHARACTER*2 XPODF, CROP

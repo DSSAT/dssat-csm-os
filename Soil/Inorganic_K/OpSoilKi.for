@@ -19,6 +19,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, INCDAT, YR_DOY, SUMVALS
       SAVE
 
       CHARACTER*1  ISWPOT, RNMODE

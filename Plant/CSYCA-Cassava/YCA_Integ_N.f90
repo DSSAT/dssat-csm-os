@@ -8,9 +8,12 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_N ( &
-        NLAYR    , BRSTAGE   & 
+        NLAYR       & 
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       BRSTAGE        
+
         USE YCA_First_Trans_m
         USE YCA_Control_Plant
         USE YCA_Control_Leaf
@@ -20,7 +23,7 @@
         INTEGER NLAYR 
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
-        REAL BRSTAGE
+!       REAL BRSTAGE
         INTEGER   :: Lcounth                   ! counter for iterations in leaves for harvesting
         !-----------------------------------------------------------------------
         !         Update nitrogen amounts

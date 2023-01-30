@@ -31,6 +31,8 @@ C  02/09/2007 GH  Add path for FileA
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, OPVIEW, READA, READA_Dates, 
+     &  GetDesc, SUMVALS, EvaluateDat, TIMDIF
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
@@ -53,7 +55,7 @@ C  02/09/2007 GH  Add path for FileA
       
       REAL AGEFAC, APTNUP, BWAH, BWAM, CANNAA, CANWAA
       REAL GNUP, GPP, GPSM, HI, StovSenes
-      REAL MAXLAI, NSTRES, PBIOMS, PODWT, PSDWT
+      REAL MAXLAI, NSTRES, PBIOMS, PSDWT !, PODWT
       REAL Pstres1, Pstres2   
       REAL SDRATE
       REAL SDWT, SDWTAH, SDWTAM, SEEDNO, SKERWT, STOVER

@@ -24,15 +24,16 @@ C=======================================================================
      &  PRORTI, PROSHI, PROSTI, R30C2, RCH2O, RES30C,     !Output
      &  RFIXN, RLIG, RLIP, RMIN, RNH4C, RNO3C, ROA,       !Output
      &  RPRO, RWUEP1, RWUMX, TTFIX,                       !Output
-     &  CADPV, PROSRI, STRSRFL, STRLYR1,                              !Output
-     &  LFMRC, mft, MRSWITCH, RTMRC, SDMRC,SHELMRC,            !Output
-     &  STMMRC, STRMRC, TRST, TRSTYP, TRSWITCH)                  !Output
+     &  CADPV, PROSRI, STRSRFL, STRLYR1,                  !Output
+     &  LFMRC, mft, MRSWITCH, RTMRC, SDMRC,SHELMRC,       !Output
+     &  STMMRC, STRMRC, TRST, TRSTYP, TRSWITCH)           !Output
 C-----------------------------------------------------------------------
 
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR, GETLUN, IGNORE, UPCASE
       SAVE
 
 !-----------------------------------------------------------------------
@@ -51,7 +52,7 @@ C-----------------------------------------------------------------------
       CHARACTER*92 FILECC, FILEGC
 
       INTEGER LUNCRP, LUNIO, NOUTDO
-      INTEGER PATHL, FOUND, ERR, LINC, ISECT, II
+      INTEGER PATHL, FOUND, ERR, LINC, ISECT  !, II
 
       REAL
      &  CADPR1, CMOBMX, FRCNOD, FREEZ1, FREEZ2,

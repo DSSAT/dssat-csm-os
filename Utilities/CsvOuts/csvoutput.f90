@@ -268,7 +268,7 @@ Subroutine CsvOut_cscer(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOut_cscer
 !---------------------------------------------------------------------------------   
@@ -370,9 +370,9 @@ Subroutine CsvOutSW_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, TSW, 
 !  Integer :: length      
 !  Recalculated vars
    Integer :: cTSW1, cPESW1, cTRUNOF1, cTDRAIN1, cCRAIN1, cTOTIR1, cAVWTD1
-   Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
-   Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD11 !, cRTDEP1
+!  Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
+!  Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
+!  Real :: cDWNOD11, cRTDEP1
    Integer :: i, size
   
    Character(:), allocatable, Target, Intent(Out) :: Csvline
@@ -408,7 +408,7 @@ Subroutine CsvOutSW_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, TSW, 
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutSW_crgro
 !---------------------------------------------------------------------------------
@@ -430,7 +430,7 @@ Subroutine CsvOutTemp_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
 !  Recalculated vars 
 !  Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
 !  Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1  !, cRTDEP1
+!  Real :: cDWNOD1, cRTDEP1
   
    Integer :: i, size
   
@@ -456,7 +456,7 @@ Subroutine CsvOutTemp_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutTemp_crgro
 !------------------------------------------------------------------------------
@@ -521,7 +521,7 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    size = lngth
    Allocate(Character(Len=size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutET
 !------------------------------------------------------------------------------
@@ -550,7 +550,7 @@ Subroutine CsvOut_mzcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !  Recalculated vars
    Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
    Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1, cRTDEP1
+   Real :: cRTDEP1  !cDWNOD1, 
    Integer :: cWTCO1, cWTLO1, cWTSO1
   
    Integer :: i
@@ -631,10 +631,10 @@ Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Real :: CUMSENSURF,  CUMSENSOIL
      
 !  Recalculated vars
-   Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1, cPANWT1
-   Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1  !, cRTDEP1
-   Integer :: cWTCO1, cWTLO1, cWTSO1, cTILNO1
+   Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPANWT1 !, cPODWT1
+   Integer :: cCUMSENSURF1, cCUMSENSOIL1 !cPODNO1, cPODWTD1, cPodSum, 
+!  Real :: cDWNOD1, cRTDEP1
+   Integer :: cTILNO1   !cWTCO1, cWTLO1, cWTSO1, 
   
    Integer :: i
   
@@ -715,9 +715,9 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Real :: CUMSENSURF,  CUMSENSOIL, DTT
      
 !  Recalculated vars
-   Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
-   Integer :: cPODNO1, cPODWTD1, cPodSum, cCUMSENSURF1, cCUMSENSOIL1 
-   Real :: cDWNOD1, cRTDEP1,cOILWT1,COILPC
+   Integer :: cWTLF1, cSTMWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1  !, cPODWT1
+   Integer :: cCUMSENSURF1, cCUMSENSOIL1 ! cPODNO1, cPODWTD1, cPodSum, 
+   Real :: cRTDEP1,cOILWT1,COILPC   !cDWNOD1, 
    Integer :: cWTCO1, cWTLO1, cWTSO1
 
   Integer :: i
@@ -737,6 +737,7 @@ Subroutine CsvOut_SUOIL(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    cTOPWT1 = NINT(TOPWT*10.)
    cSEEDNO1 = NINT(SEEDNO)
    cOILWT1 = NINT(OILWT*10.)
+   cOILPC = NINT(OILPC)
    cRTDEP1 = RTDEP/100.
    cWTCO1 = NINT(WTCO*10.)
    cWTLO1 = NINT(WTLO*10.)
@@ -806,7 +807,7 @@ Subroutine CsvOutPlNSUOIL(EXCODE, RUNRUNI, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutPlNSUOIL
 !------------------------------------------------------------------------------
@@ -855,7 +856,7 @@ Subroutine CsvOutPlNCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutPlNCrGro
 !------------------------------------------------------------------------------
@@ -908,7 +909,7 @@ Subroutine CsvOutPlNCsCer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,&
    size = lngth
    Allocate(Character(Len=size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutPlNCsCer
 !------------------------------------------------------------------------------
@@ -981,7 +982,7 @@ Subroutine CsvOutSoilNi(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, N, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutSoilNi
 !------------------------------------------------------------------------------
@@ -1025,7 +1026,7 @@ Subroutine CsvOutPlNMzCer(EXCODE, RUNRUNI, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutPlNMzCer
 !------------------------------------------------------------------------------
@@ -1058,7 +1059,7 @@ Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutWth
 !----------------------------------------------------------------------------------
@@ -1116,7 +1117,7 @@ Subroutine CsvOutPlGr2(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len=size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-  
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutPlGr2
 !------------------------------------------------------------------------------------ 
@@ -1176,7 +1177,7 @@ Subroutine CsvOutPlGrf(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len=size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-  
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutPlGrf
 !------------------------------------------------------------------------------------
@@ -1243,7 +1244,7 @@ Subroutine CsvOutEvalCsCer(EXCODE, RUN, TN, ROTNUM,  REPNO, CR, Edap, Edapm, &
    size = lngth
    Allocate(Character(Len=size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutEvalCsCer
 ! ----------------------------------------------------------------------------------
@@ -1291,7 +1292,7 @@ Subroutine CsvOutEvOpsum(EXCODE, RUNRUNI, CG, TN, ROTNUM, CR, Simulated, Measure
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutEvOpsum
 !------------------------------------------------------------------------------
@@ -1365,7 +1366,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutSumOpsum
 !---------------------------------------------------------------------------------
@@ -1407,7 +1408,7 @@ Subroutine CsvOutPlCCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
   size = lngth
   Allocate(Character(Len = size)::Csvline)
   Csvline = Trim(Adjustl(tmp))
-   
+  pCsvline => Csvline
   Return
 end Subroutine CsvOutPlCCrGro
 !---------------------------------------------------------------------------------
@@ -1465,7 +1466,7 @@ Subroutine CsvOutSoilOrg1(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,CumRes
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutSoilOrg1
 !---------------------------------------------------------------------------------
@@ -1503,7 +1504,7 @@ Subroutine CsvOutSoilOrg2(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
   
 !  Recalculated vars
    Integer :: CumRes1, SCDD1, SOCD1, SomLitC1, Var1, TSOMC1  
-   Real :: Var2, Var3 
+   Real :: Var2 !, Var3 
   
    CumRes1 = NINT(CumRes) 
    SCDD1 = NINT(SCDD) 
@@ -1521,7 +1522,7 @@ Subroutine CsvOutSoilOrg2(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutSoilOrg2
 !---------------------------------------------------------------------------------
@@ -1555,7 +1556,7 @@ Subroutine CsvOutETPhot(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, PCINPD,
     size = lngth
     Allocate(Character(Len=size)::Csvline)
     Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
     Return
 end Subroutine CsvOutETPhot
 !---------------------------------------------------------------------------------
@@ -1591,7 +1592,7 @@ Subroutine CsvOutMulch(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutMulch
 !---------------------------------------------------------------------------------
@@ -1660,7 +1661,7 @@ Subroutine CsvOutPlantP(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    size = lngth
    Allocate(Character(Len=size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutPlantP
 !---------------------------------------------------------------------------------
@@ -1702,7 +1703,7 @@ Subroutine CsvOutSoilPi(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len=size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutSoilPi
 !---------------------------------------------------------------------------------
@@ -1935,7 +1936,7 @@ Subroutine CsvOutPlNPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
    end Subroutine CsvOutPlNPrFrm
 !---------------------------------------------------------------------------------
@@ -1980,7 +1981,7 @@ Subroutine CsvOutPlCPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
   size = lngth
   Allocate(Character(Len = size)::Csvline)
   Csvline = Trim(Adjustl(tmp))
-   
+  pCsvline => Csvline
   Return
    end Subroutine CsvOutPlCPrFrm
 !---------------------------------------------------------------------------------
@@ -2014,7 +2015,7 @@ Subroutine CsvOutDormPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
   size = lngth
   Allocate(Character(Len = size)::Csvline)
   Csvline = Trim(Adjustl(tmp))
-   
+  pCsvline => Csvline
   Return
    end Subroutine CsvOutDormPrFrm
 !---------------------------------------------------------------------------------
@@ -2068,7 +2069,7 @@ Subroutine CsvOutStorPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
   size = lngth
   Allocate(Character(Len = size)::Csvline)
   Csvline = Trim(Adjustl(tmp))
-   
+  pCsvline => Csvline
   Return
    end Subroutine CsvOutStorPrFrm
 !---------------------------------------------------------------------------------
@@ -2130,7 +2131,7 @@ Subroutine CsvOutSomN(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
   size = lngth
   Allocate(Character(Len = size)::Csvline)
   Csvline = Trim(Adjustl(tmp))
-   
+  pCsvline => Csvline
   Return
 end Subroutine CsvOutSomN
 !------------------------------------------------------------------------------
@@ -2157,8 +2158,8 @@ Subroutine CsvOutN2O(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    REAL CN2,       TN2D,     N2flux(N_LYR)    !N2
    REAL                      N2Oflux(N_LYR)   
    REAL CNOflux,   TNOfluxD, NOflux(N_LYR)    !NO total flux
-   REAL CN2Odenit, TN2OdenitD, N2Odenit(N_LYR)   
-   REAL CN2Onitrif, TN2OnitrifD, N2ONitrif(N_LYR)     
+   REAL CN2Odenit, TN2OdenitD !, N2Odenit(N_LYR)   
+   REAL CN2Onitrif, TN2OnitrifD !, N2ONitrif(N_LYR)     
    REAL N2O_emitted, N2_emitted, CN2O_emitted, CN2_emitted  
    REAL NO_emitted, CNO_emitted     
   
@@ -2204,7 +2205,7 @@ Subroutine CsvOutN2O(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    size = lngth
    Allocate(Character(Len = size)::Csvline)
    Csvline = Trim(Adjustl(tmp))
-   
+   pCsvline => Csvline
    Return
 end Subroutine CsvOutN2O
 !---------------------------------------------------------------------------------
@@ -2288,7 +2289,7 @@ Subroutine CsvOutSomC(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS,     &
   size = lngth
   Allocate(Character(Len = size)::Csvline)
   Csvline = Trim(Adjustl(tmp))
-   
+  pCsvline => Csvline
   Return
 end Subroutine CsvOutSomC
 !---------------------------------------------------------------------------------
@@ -2337,7 +2338,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
          Call ListtofileSW(nlayers)         ! SoilWat.csv
          Call ListtofileTemp(nlayers)       ! SoilTemp.csv
          Call ListtofileET(nlayers)         ! et.csv
-         Call ListtoFileSoilNi(nlayers)     ! SoilNi.csv
+         Call ListtoFileSoilNi()            ! SoilNi.csv
          call ListtoFileWth                 ! weather.csv
          Call ListtofileSumOpsum            ! summary.csv
          Call ListtofileSoilOrg(numelem)    ! SoilOrg.csv

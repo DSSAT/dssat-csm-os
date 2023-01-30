@@ -14,6 +14,7 @@
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN
       SAVE
 
       CHARACTER*1  RNMODE

@@ -25,6 +25,9 @@ C-----------------------------------------------------------------------
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR, FOR_STNAMES, FOR_OPVIEW, READA, 
+     &  READA_Dates, CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat,
+     &  TIMDIF
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IDETS,IPLTI, PLME
@@ -62,7 +65,8 @@ C-----------------------------------------------------------------------
 
 !     Arrays which contain predicted and observed data for printing
 !       in OVERVIEW.OUT and EVALUATE.OUT files (FOR_OPVIEW subroutine)
-      CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP  !OLAP modified for dap
+!         OLAP modified for dap
+      CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP  
       CHARACTER*6  X(EvaluateNum)
       CHARACTER*8 PREDICTED(EvaluateNum), OBSERVED(EvaluateNum)
       CHARACTER*50 DESCRIP(EvaluateNum)

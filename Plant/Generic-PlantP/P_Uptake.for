@@ -25,6 +25,7 @@
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT  NONE
+      EXTERNAL WARNING
       SAVE
 !     ------------------------------------------------------------------
 !      CHARACTER*1  ISWPHO

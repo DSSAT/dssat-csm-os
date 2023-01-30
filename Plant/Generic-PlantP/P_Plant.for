@@ -34,6 +34,8 @@
 !  03/23/2004 CHP Removed soil components
 !  03/24/2004 CHP Added to CSM
 !  09/17/2004 CHP Made generic for all plant routines to use a single routine.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !-----------------------------------------------------------------------
 !  Called by: CROPGRO, MZ_CERES, RI_CERES...
 !  Calls:     P_UPTAKE, OPPHOS
@@ -59,6 +61,8 @@
 !     ------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT  NONE
+      EXTERNAL P_IPPLNT, P_Demand, P_Uptake, OPPlantP, P_Partition, 
+     &  PValue
       SAVE
 !     ------------------------------------------------------------------
 !     Interface variables

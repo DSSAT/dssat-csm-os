@@ -27,6 +27,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE CsvOutput   ! VSH,chp
       IMPLICIT  NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*8   CHAR8
@@ -305,7 +306,8 @@ C-----------------------------------------------------------------------
           WTNSD = GRAINN * PLTPOP
           WTNRT = ROOTN * PLTPOP        ! Is this right?
           WTNSH = 0.0
-          WTNUP = (STOVN+GRAINN)*PLANTS   !No longer used for output of Nuptake
+!         No longer used for output of Nuptake
+          WTNUP = (STOVN+GRAINN)*PLANTS   
           WTNFX = 0.0
           NFIXN = 0.0
 

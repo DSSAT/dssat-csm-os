@@ -39,6 +39,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, DAILYWEATHERCHECK, FIND, WTHSET, DECL
       SAVE
 
       INTEGER, PARAMETER :: NMODS = 100

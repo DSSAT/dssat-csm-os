@@ -28,6 +28,7 @@ C  Calls:     None
       USE ModuleData
       USE CsvOutput   ! VSH
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 !----------------------------------------------------------------------
       INTEGER NOUTDG
@@ -43,7 +44,7 @@ C  Calls:     None
       REAL VSTAGE, XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, OILWT, SEEDNO
       REAL SLA, PCNL, TURFAC, CANHT, CANWH, HI, SHELPC, SATFAC, KSTRES
       REAL SDSIZE,  PSTRES1, PSTRES2, RTDEP, NSTRES, SWFAC, HIO
-      REAL PLTPOP, PODWTD, DTT
+      REAL PLTPOP, DTT !, PODWTD
       REAL WTLO, WTSO, WTCO,OILPC
       REAL RLV(NL)
       REAL CUMSENSURF, CUMSENSOIL     !cumul. senes. soil and surface

@@ -28,6 +28,8 @@ C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 !                 FPLACE_C in Century)
 !  07/14/2006 CHP Added OM_Place (replaces RPLACE in NTRANS and 
 !                 RPLACE_C in Century)
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=====================================================================
 
       SUBROUTINE MGMTOPS(CONTROL, ISWITCH, 
@@ -40,6 +42,8 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL AUTHAR, AUTPLT, CHEMICAL, FERT_PLACE, IPAHAR, IRRIG, 
+     &  OM_PLACE, OPMGMT, PADDY_MGMT, SUMVALS, TILLAGE, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1  IHARI, IIRRI, IPLTI, ISWCHE, RNMODE
@@ -349,6 +353,7 @@ C=======================================================================
       USE ModuleData
       USE SumModule
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, NAILUJ, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1  ISWCHE, IDETW, ISWTIL, IIRRI, RNMODE

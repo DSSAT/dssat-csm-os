@@ -38,6 +38,7 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL CSP_IPDMND, PRNT_DEMAND_SC, TABEX
       SAVE
 
       CHARACTER*2 CROP
@@ -785,6 +786,7 @@ C=======================================================================
       
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
 !-----------------------------------------------------------------------
 !      CHARACTER*3   TYPSDT
       CHARACTER*6   ERRKEY

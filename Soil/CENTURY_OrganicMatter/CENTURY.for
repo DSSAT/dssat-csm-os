@@ -32,6 +32,8 @@
 !  07/14/2006 CHP Put revised DSSAT-Century with P model into CSM v4.6
 !  02/11/2010 CHP No simulation of organic matter when water is not 
 !                   simulated.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !-----------------------------------------------------------------------
 !  Called: SOIL
 !  Calls : CE_RATIO_C, DECRAT_C, IMMOBLIMIT_C, INCORPOR_C, LITDEC_C, 
@@ -54,6 +56,11 @@
       USE GHG_mod
 
       IMPLICIT  NONE
+      EXTERNAL YR_DOY, OPSOMLIT_C, SoilCNPinit_C, TSOMLIT_C, 
+     &  SOMLITPRINT_C, SENESADD_C, OpSoilOrg, MethaneDynamics, 
+     &  SOILCBAL, SoilNoBal_C, SoilPoBal_C, RPLACE_C, INCORPOR_C, 
+     &  DECRAT_C, CE_RATIO_C, LITDEC_C, SOMDEC_C, IMMOBLIMIT_C,
+     &  NCHECK_C, INCYD
       SAVE
 !     ------------------------------------------------------------------
 
@@ -412,7 +419,7 @@
 !     &    SOM1C, TLITC, TSOMC, YRDOY)                     !Input
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
@@ -728,7 +735,7 @@
       ENDDO
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !***********************************************************************
@@ -846,7 +853,7 @@
      &  SOM2E, SOM23E, SOM3C, SOM3E, STRUCC, STRUCE)      !Input
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !     Soil carbon balance.
@@ -867,7 +874,7 @@
       IF (ISWWAT == 'N') RETURN
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !       Get detailed SOM and litter output.
@@ -915,7 +922,7 @@
       IF (ISWWAT == 'N') RETURN
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !     Close output files.

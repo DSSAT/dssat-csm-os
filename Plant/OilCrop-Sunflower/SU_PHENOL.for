@@ -18,18 +18,19 @@
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
 !----------------------------------------------------------------------
-      SUBROUTINE SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
-     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
-     &    YRDOY,YRSIM,                                         !I
-     &    IDURP,                                !I
+      SUBROUTINE SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,  !C
+     &    CUMDEP,DAYL,DLAYR,LL,NLAYR,PLTPOP,SDEPTH,      !I  LEAFNO,
+     &    SW,TMAX,TMIN, TWILEN,                          !I  SNOW, SRAD,
+     &    YRDOY,YRSIM,                                   !I
+!    &    IDURP,                                         !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, TSEN, CDAY,      !O !, P3
      &    SeedFrac,VegFrac,P3P,P9)
    
 
       USE ModuleDefs
       IMPLICIT  NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, WARNING
       SAVE
 !----------------------------------------------------------------------
 !                             Define Variables
@@ -69,12 +70,12 @@
       REAL            GPP            
       INTEGER         I              
       CHARACTER*1     IDETO          
-      INTEGER         IDURP     
+!     INTEGER         IDURP     
       INTEGER         ISTAGE         
       CHARACTER*1     ISWWAT         
       REAL            KCAN
       REAL            KEP
-      INTEGER         LEAFNO         
+!     INTEGER         LEAFNO         
       INTEGER         L              
       INTEGER         L0             
       INTEGER         LINC           
@@ -88,8 +89,8 @@
       REAL            P1             
       REAL            P2             
       REAL            P2O            
-      REAL            P3   
-      REAL                  P3P          
+!     REAL            P3   
+      REAL            P3P          
       REAL            P5             
       REAL            P9             
       CHARACTER*80    PATHCR 
@@ -106,9 +107,9 @@
       REAL            S1    
       REAL            SIND           
       REAL            SNDN           
-      REAL            SNOW           
+!     REAL            SNOW           
       REAL            SNUP           
-      REAL            SRAD           
+!     REAL            SRAD           
       INTEGER         STGDOY(20)     
       REAL            SUMDTT
       REAL            SUMDTT_2 !introduced for plant P routine                
@@ -690,16 +691,16 @@ c
               SeedFrac = SUMDTT / P5
           
               IF (SUMDTT .LT. P5) RETURN  !End of EFP assumed to be P5
-              !-------------------------------------------------------------
-              !   New Growth Stage Occurred Today. Initialize Some Variables
-              !-------------------------------------------------------------
+!              -------------------------------------------------------------
+!                 New Growth Stage Occurred Today. Initialize Some Variables
+!              -------------------------------------------------------------
               STGDOY (ISTAGE) = YRDOY
               SUMDTT = 0.
               ISTAGE = 6
 
-      !-----------------------------------------------------------------
-      !       ISTAGE = 6 - End Effective Grain Filling to Harvest Maturity 
-      !-----------------------------------------------------------------
+!      -----------------------------------------------------------------
+!             ISTAGE = 6 - End Effective Grain Filling to Harvest Maturity 
+!      -----------------------------------------------------------------
           ELSEIF (ISTAGE .EQ. 6) THEN
               
 

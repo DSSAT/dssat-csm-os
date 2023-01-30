@@ -19,7 +19,8 @@
         USE YCA_First_Trans_m
         
         IMPLICIT NONE
-        
+        EXTERNAL XREADC, SPREADCA, SPREADRA, XREADR, FVCHECK, FINDDIR, CUREADC, CUREADR, ECREADR, SPREADR, SPREADC
+
         INTEGER CN          , ON          , RN          , SN          , TN          
         
         REAL    KCAN        , RWUMX       , RWUPM       

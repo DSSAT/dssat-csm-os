@@ -23,26 +23,27 @@ C-----------------------------------------------------------------------
 C  Called by: CASUPRO
 C  Calls:     None
 !=======================================================================
-      SUBROUTINE CSP_OPGROW(CONTROL, ISWITCH,						!Input
-     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,				!Input 
-     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,					!Input
-     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input 
-     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa, 				!Input
-     &  LSWTHalost, LFWTlost, LITOTAL,	                          !Input
-     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input 
+      SUBROUTINE CSP_OPGROW(CONTROL, ISWITCH,                     !Input
+     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,                !Input
+     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,                   !Input
+     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input
+     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa,                 !Input
+     &  LSWTHalost, LFWTlost, LITOTAL,                            !Input
+     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input
      &  PCLSD,PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,            !Input
-     &  PGT, RHOL, RHOS, RLV, RTDEP,								!Input
-     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input 
-     &  PHTMAX, STKFWTHa, STKFWT, STKWT, STKWTHa,                 !Input
+     &  PGT, RHOL, RHOS, RLV, RTDEP,                              !Input
+     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input
+     &  STKFWTHa, STKFWT, STKWT, STKWTHa,                         !Input
      &  STKWTHalost, SumTTD, SumTTG, SWFAC, SUWT, SUWTHa,         !Input
-     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input 
-     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,	!Input
-     &  BADMD)                                                    !Output
+     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input
+     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,   !Input
+     &  BADMD)                                                   !Output
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1  IDETG, ISWPHO
@@ -53,9 +54,9 @@ C  Calls:     None
       CHARACTER*12 OUTG, OUTPC, OUTPN, OUTKG
       CHARACTER*15 GROHEAD(4, 50)
       CHARACTER*15 GRO_OUT(50)
-      CHARACTER*20 FILEIO, OFILE
-      CHARACTER*100 G_FMT_STR, D_FMT_STR ! Strings for outputting comments 
-	                                   !         and daily values 
+!     CHARACTER*20 FILEIO, OFILE
+      CHARACTER*100 G_FMT_STR, D_FMT_STR ! Strings for outputting 
+	                                   !  comments and daily values 
       CHARACTER*1024 FMT_STR, T_FMT_STR  ! Runtime format strings
 
       INTEGER CountStalk, DAP, DAS, DOY, DYNAMIC, ERRNUM, FROP, I, J, L
@@ -68,11 +69,11 @@ C  Calls:     None
       INTEGER, DIMENSION(1:NumOfStalks):: Kill
 
       REAL BADMD, BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA 
-      REAL EOS, PHTMAX, GROWTH, GRWRES, HID, HIF, LAITD, LITOTAL  
+      REAL EOS, GROWTH, GRWRES, HID, HIF, LITOTAL  !, LAITD
       REAL MAINR, NSTRES, PCLSD, PCCSD, PCNL, PGT  
       REAL RHOL, RHOS, RTDEP  
       REAL SLAREF
-      REAL SATFAC, SMDMD, SMFMD, SUID, SUDMD, SUFMD, SumTTD, SumTTG
+      REAL SATFAC, SMDMD, SMFMD, SUID, SumTTD, SumTTG !, SUDMD, SUFMD
       REAL SWFAC, TGROAV, TOTWT, TRLV, TURFAC, XLAI, XLAIlost 
 	    !TOPWT, VSTAGE 
 
@@ -107,7 +108,7 @@ C  Calls:     None
 
 !     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
-	TYPE (SoilType) SOILPROP         !CHP not actually used yet
+!     TYPE (SoilType) SOILPROP         !CHP not actually used yet
 
 !     The variable "ISWITCH" is of type "SwitchType".
       TYPE (SwitchType) ISWITCH
@@ -919,8 +920,8 @@ C-----------------------------------------------------------------------
 
         IF (SUWTHa(DAS) .GE. 1E-4) THEN
 
-          HID = SUWTHa(DAS)/SMDMD  ! Harvest ratio: Sucrose / Millable DM
-          HIF = SUWTHa(DAS)/SMFMD  ! Harvest ratio: Sucrose / Millable FM
+          HID = SUWTHa(DAS)/SMDMD  !Harvest ratio: Sucrose / Millable DM
+          HIF = SUWTHa(DAS)/SMFMD  !Harvest ratio: Sucrose / Millable FM
 		SUID = SUWTHa(DAS) / BADMD ! sucrose/aerial biomass DM
 
         ELSE 

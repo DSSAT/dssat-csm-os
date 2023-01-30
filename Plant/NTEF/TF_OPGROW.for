@@ -20,18 +20,20 @@ C  Calls:     None
 !======================================================================
       SUBROUTINE TF_OPGROW(CONTROL, ISWITCH,
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR,
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT,
-!**! &  PSTRES1, PSTRES2, RLV, RSTAGE, RTDEP,    RTWT, SATFAC, SDWT,
-     &  PSTRES1, PSTRES2, RLV, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT,
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP,  PODWT,
+     &  PSTRES1, PSTRES2, RLV, rtdep_nw, RTWT, SATFAC, SDWT,
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt, SWFAC,
-     &  TOPWT, SWDEF2, VSTAGE, WTCO, WTLF, WTLO,
-       ! &  TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,  !JZW TURFAC is DSSAT variable, SWDEF(2) is APSIM variable
+     &  TOPWT, SWDEF2, WTCO, WTLF, WTLO,
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
+
+! 2023-01-26 chp removed unused variables in argument list:
+!         PODNO, RSTAGE, VSTAGE, 
 
 !----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 !----------------------------------------------------------------------
       INTEGER NOUTDG
@@ -41,13 +43,13 @@ C  Calls:     None
       CHARACTER*12 OUTG
 
       INTEGER TIMDIF, COUNT
-      INTEGER DAP, DAS, DOY, I, istage, N_LYR, RSTAGE, RUN
+      INTEGER DAP, DAS, DOY, I, istage, N_LYR, RUN  !, RSTAGE
       INTEGER MDATE, YEAR, YRDOY, YRPLT, YRSIM, VWAD
 
-      REAL VSTAGE, XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, PODWT, SEEDNO
+      REAL XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, PODWT, SEEDNO !VSTAGE, 
     ! REAL SLA, PCNL, TURFAC, CANHT, CANWH, HI, SHELPC, SATFAC, KSTRES
       REAL SLA, PCNL, SWDEF2, CANHT, CANWH, HI, SHELPC, SATFAC, KSTRES
-      REAL SDSIZE, PODNO, PSTRES1, PSTRES2, RTDEP, NSTRES, SWFAC, HIP
+      REAL SDSIZE, PSTRES1, PSTRES2, SWFAC, HIP  !, PODNO, RTDEP, NSTRES
       REAL rtdep_nw, nwheats_dc_code, PLTPOP, PODWTD, DTT
       REAL WTLO, WTSO, WTCO, GAD2
       REAL nfact(10) ! Nstress sensitivity by plant organ (0-1)
@@ -164,7 +166,7 @@ C  Calls:     None
           DO L = 1, NLAYR
             CUMSENSOIL = CUMSENSOIL + SENESCE % ResWt(L)
           ENDDO
-          !Added IF statement to void divisions by zero (TF - 01/21/2022)
+!          Added IF statement to void divisions by zero (TF - 01/21/2022)
           IF (SEEDNO .GT. 0.0 .AND. PLTPOP .GT. 0.0) THEN
               !JZW changed
               SDSIZE = SDWT / (SEEDNO*PLTPOP) *1000.
@@ -176,8 +178,8 @@ C  Calls:     None
 !         Compute average stress factors since last printout
           SWF_AV = SWF_AV + (1.0 - SWFAC)
           TUR_AV =  1 - SWDEF2
-          !TUR_AV = TUR_AV + (1.0 - TURFAC) !JZW, TUR_AV is initialed as zero every day
-          !TUR_AV = 1.0 - TURFAC
+!          TUR_AV = TUR_AV + (1.0 - TURFAC) !JZW, TUR_AV is initialed as zero every day
+!          TUR_AV = 1.0 - TURFAC
 !*!       NST_AV = NST_AV + (1.0 - NSTRES)
         !Avg N stress:
 !**!      NST_AV = (1.0 - (Nfact(1)+Nfact(2)+Nfact(3)+Nfact(4))/4)
@@ -234,14 +236,14 @@ C  Calls:     None
      &      !               PWTD      SLAD  CHTD  CWID    RDPD
      &        NINT((PODWTD+PODWT)*10.),SLA,CANHT,CANWH, (rtdep_nw/1000.)
 
-           !        @YEAR   DOY    DAS DAP    DCCD  GSTD    LAID
+!                   @YEAR   DOY    DAS DAP    DCCD  GSTD    LAID
  400        FORMAT (1X,I4,1X,I3.3,2(1X,I5),2X,F6.3,1X,I5,1X,F6.3,
-           !LWAD SWAD GWAD RWAD VWAD CWAD G#AD G#AD2 GWGD HIAD(real) SHAD,
+!           LWAD SWAD GWAD RWAD VWAD CWAD G#AD G#AD2 GWGD HIAD(real) SHAD,
      &        8(1X,I6),                           1X,I6,1X,F6.3, 1X, I6,
-      !    &        7(1X,I6),                         1X,I6,1X,F6.3, 2(1X,I6),
-           ! WSPD WSGD SLFT NSTD EWSD PST1A PST2A KSTD  LN%D   TPSM   HIPD
+!          &        7(1X,I6),                         1X,I6,1X,F6.3, 2(1X,I6),
+!            WSPD WSGD SLFT NSTD EWSD PST1A PST2A KSTD  LN%D   TPSM   HIPD
      &        8(1X,F6.2),                      1X,F6.2,1X,F6.1,1x,F6.2,
-           ! PWDD PWTD     SLAD  CHTD CWID    RDPD
+!            PWDD PWTD     SLAD  CHTD CWID    RDPD
      &         2(1X,I6),1X,F8.1,2(1X,F6.2),1X,F6.4)
 
             WRITE(NOUTDG,402,ADVANCE='NO')(RLV(I),I=1,N_LYR)

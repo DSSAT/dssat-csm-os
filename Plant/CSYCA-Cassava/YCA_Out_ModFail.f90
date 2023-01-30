@@ -18,6 +18,7 @@
         USE YCA_Control_Leaf
      
         IMPLICIT NONE 
+        EXTERNAL CSTIMDIF, CSOPLINE
      
         INTEGER :: DYNAMIC     
         INTEGER :: CSTIMDIF                                                                      ! Integer function calls

@@ -19,13 +19,18 @@ C  Calls:     None
 
       SUBROUTINE TF_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
+
+
+! 2023-01-25 chp removed unused variables
+!       WTNVEG,
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 
       INTEGER DAS, DYNAMIC, MDATE, NOUTDN, YRSIM
@@ -38,7 +43,7 @@ C  Calls:     None
       INTEGER TIMDIF, YEAR, YRDOY, YRPLT
 
       REAL PCNL, nfact(10)
-      REAL WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG
+      REAL WTNCAN,WTNSD,PCNGRN,PCNVEG  !,WTNVEG
       REAL WTNUP,WTNLF,WTNST,PCNST,PCNRT     
       REAL CUMSENSURFN, CUMSENSOILN   !cumul. senes. N soil and surface
       REAL pl_nit_root, pl_nit_lfsheath
@@ -95,7 +100,8 @@ C  Calls:     None
   230   FORMAT('@YEAR DOY   DAS   DAP',
      &        '   CNAD   GNAD   GN%D   VN%D   NUPC',
  !     &        '   CNAD   GNAD   VNAD   GN%D   VN%D   NUPC',    
-     &        '   LNAD   SNAD   LN%D   SN%D   RN%D   SNN0C   SNN1C', !LNAD (WTNLF)is leaf N, SNAED (WTNST) is stem N
+     &        '   LNAD   SNAD   LN%D   SN%D   RN%D   SNN0C   SNN1C', 
+!LNAD (WTNLF)is leaf N, SNAED (WTNST) is stem N
      &        ' NFact1 NFact2 NFact3 NFact4  RootN lfshthN')
 !CNAD(WTNCAN)      !Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha    
         !cumul. senes. N soil and surface

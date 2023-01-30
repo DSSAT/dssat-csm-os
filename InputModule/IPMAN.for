@@ -647,7 +647,7 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &                  NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)
+     &                  NHAR,IHARI,YRSIM,CROP,HBPC)  !,FREQ,CUHT)
 !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       IMPLICIT     NONE
@@ -665,7 +665,7 @@ C=======================================================================
 !     INTEGER      HYR, HDAY
 
 !     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-      REAL         HPC(3),HBPC(3),FREQ,CUHT 
+      REAL         HPC(3),HBPC(3) !,FREQ,CUHT 
 
       PARAMETER   (ERRKEY='IPHAR ')
 

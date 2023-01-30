@@ -38,6 +38,8 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR, STNAMES, OPVIEW, READA, READA_Dates, 
+     &  CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat, TIMDIF
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI, PLME

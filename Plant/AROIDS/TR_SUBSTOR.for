@@ -39,6 +39,8 @@ C  Revision history
 C
 C             Written - See above
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE TR_SUBSTOR(CONTROL, ISWITCH,
@@ -56,6 +58,8 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data and flooded
                          ! conditions.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, TR_OPGROW, TR_OPHARV, TR_PHENOL, TR_ROOTGR, 
+     &  TR_GROSUB, GNURSE, HRes_Ceres
       SAVE
 
       CHARACTER*1  ISWWAT, ISWNIT
@@ -101,7 +105,7 @@ C-----------------------------------------------------------------------
       REAL SLFCGRD, SLFNGRD, SLFNINT, SLFTGRD, SLFTINT, SLFWGRD, SLFWINT
       REAL SLGRD1, SLGRD2, SUFAC2, SUFAC3, TCARBC2, TGRAD, TIPGRAD
       REAL TIPGRAD3, TIPINT, XNFGRAD, XNFINT, XTNMAX
-	REAL TCORMWT    ! addition RMO
+!     REAL TCORMWT    ! addition RMO
 
       REAL CORMNUP, CORMLNO, CORMN, CORMWT, PCORMN, TGROCOM
       REAL PODWT, GRNWT
@@ -167,7 +171,7 @@ C-----------------------------------------------------------------------
      &    SKERWT, STGDOY, STNAME, STOVER, STOVN, SWFAC,   !Input
      &    TOTNUP, TURFAC, YRPLT,                          !Input
      &    BWAH, SDWT, SDWTAH, TOPWT, WTNSD,               !Output
-     &    MCORMWT, TCORMWT )        ! additions RMO
+     &    MCORMWT)    !, TCORMWT ) !additions RMO
 
 !***********************************************************************
 !***********************************************************************
@@ -257,7 +261,7 @@ C-----------------------------------------------------------------------
      &    SKERWT, STGDOY, STNAME, STOVER, STOVN, SWFAC,   !Input
      &    TOTNUP, TURFAC, YRPLT,                          !Input
      &    BWAH, SDWT, SDWTAH, TOPWT, WTNSD,               !Output
-     &    MCORMWT, TCORMWT )                      ! additions RMO
+     &    MCORMWT)    !, TCORMWT ) !additions RMO
 
 !     NOTE: TAGE is initialized in PHENOL
       CALL GNURSE (ITRANS, TAGE, YRPLT, YRSIM,            !Input
@@ -387,7 +391,7 @@ C-----------------------------------------------------------------------
      &    SKERWT, STGDOY, STNAME, STOVER, STOVN, SWFAC,   !Input
      &    TOTNUP, TURFAC, YRPLT,                          !Input
      &    BWAH, SDWT, SDWTAH, TOPWT, WTNSD,               !Output
-     &    MCORMWT, TCORMWT )                              !additions RMO
+     &    MCORMWT)    !, TCORMWT ) !additions RMO
 !***********************************************************************
 !***********************************************************************
 !     Seasonal output

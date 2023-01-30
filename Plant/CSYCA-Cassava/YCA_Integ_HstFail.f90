@@ -15,6 +15,7 @@
         USE YCA_First_Trans_m
         
         IMPLICIT NONE
+        EXTERNAL WARNING
         
         INTEGER DOY         , STGYEARDOY(0:19)            , YEAR  
         REAL    BRSTAGE     , SW(NL)      , LAI  

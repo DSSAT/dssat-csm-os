@@ -34,6 +34,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR, GETLUN, IGNORE, WARNING, UPCASE
 
 !-----------------------------------------------------------------------
       CHARACTER*1  BLANK, UPCASE, DETACH, MEEVP

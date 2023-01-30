@@ -27,6 +27,7 @@ C=======================================================================
       SUBROUTINE SEFLD (RNMODE,XCRD,YCRD,ELEV,SLOPE)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80)
       CHARACTER*6  ERRKEY

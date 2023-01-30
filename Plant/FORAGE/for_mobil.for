@@ -13,17 +13,16 @@ C-----------------------------------------------------------------------
 !  Calls:      None
 C=======================================================================
       SUBROUTINE FOR_MOBIL(
-     &    LFSNMOB, NDMNEW, NMINELF, NMINEP, NMINERT,      !Input
-     &    NMINESR, NMINEST, NMOBR, RPRO, RTSNMOB,        !Input
-     &    SHNMINE, SRSNMOB, STSNMOB, TRNU, TSNMOB, WNRLF, !Input
-     &    WNRRT, WNRSH, WNRST,                            !Input
-     &    ANMINELF, ANMINERT, ANMINESH, ANMINESR,         !Output
-     &    ANMINEST, NMINEA, NRUSLF, NRUSRT, NRUSSH,       !Output
-     &    NRUSST,                                         !Output
-     &    NMOBSR, PPMFAC, WNRSR,                          !Input
-     &    NRUSSR, PNMLF, PNMST, PNMRT, PNMSR, PNMSH,      !Output
+     &    LFSNMOB, RPRO, RTSNMOB, SRSNMOB, STSNMOB,       !Input
+     &    TSNMOB, ANMINELF, ANMINERT, ANMINESH,           !Output
+     &    ANMINESR, ANMINEST, NMINEA, NRUSLF,             !Output
+     &    NRUSRT, NRUSSH, NRUSST, NRUSSR,                 !Output
+     &    PNMLF, PNMST, PNMRT, PNMSR, PNMSH,              !Output
      &    DYNAMIC)                                        !Control
 
+! 2023-01-19 CHP Remove unused variables from argument list
+!  NDMNEW, NMINELF, NMINEP, NMINERT, NMINESR, NMINEST, NMOBR, SHNMINE, 
+!  TRNU, WNRLF, WNRRT, WNRSH, WNRST, NMOBSR, PPMFAC, WNRSR, 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
@@ -33,13 +32,13 @@ C=======================================================================
 
       INTEGER DYNAMIC
 
-      REAL CNMINE, NDMNEW, NMINEA, NMINEP, NMINER, NMOBR
+      REAL CNMINE, NMINEA   !NDMNEW, NMINEP, NMINER, NMOBR
       REAL NRUSLF, NRUSRT, NRUSSH, NRUSST, RPRO
-      REAL TRNU, WNRLF, WNRRT, WNRSH, WNRST
-      REAL NRUSSR, WNRSR, NMOBSR, PPMFAC
+!     REAL TRNU, WNRLF, WNRRT, WNRSH, WNRST
+      REAL NRUSSR  !, WNRSR, NMOBSR, PPMFAC
       REAL NRUSTOT, PNMLF, PNMST, PNMRT, PNMSR, PNMSH
       REAL ANMINELF, ANMINERT, ANMINESH, ANMINESR, ANMINEST, LFSNMOB, 
-     &   NMINELF, NMINERT, NMINESR, NMINEST, RTSNMOB, SHNMINE,
+     &   RTSNMOB, !NMINELF, NMINERT, NMINESR, NMINEST, SHNMINE,
      &   SRSNMOB, STSNMOB, TSNMOB  
 
 !***********************************************************************

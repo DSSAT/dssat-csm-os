@@ -27,6 +27,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, GETLUN, IGNORE, ERROR
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1   ISIMI, PLME, BLANK

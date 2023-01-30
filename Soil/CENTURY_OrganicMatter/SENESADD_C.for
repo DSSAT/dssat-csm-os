@@ -31,6 +31,7 @@
       USE Interface_IpSoil
 
       IMPLICIT NONE
+      EXTERNAL PARTIT_C
       SAVE
 
       LOGICAL ADDMETABEFLAG, FRMETFLAG

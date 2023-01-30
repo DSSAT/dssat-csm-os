@@ -32,6 +32,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY
 
       CHARACTER*5  TIMPL(NAPPL)
       CHARACTER*6  ERRKEY,FINDCH

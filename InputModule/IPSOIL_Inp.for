@@ -36,6 +36,8 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, WARNING, IGNORE2, IGNORE, CLEAR, UPCASE, VERIFY, 
+     &  PARSE_HEADERS, LYRSET, LYRSET3, LYRSET2, LMATCH
 
       INCLUDE 'COMSOI.blk'
 
@@ -227,9 +229,10 @@ C
       nVG = -99.
       WCR = -99.
 
-!     Stable organic C read from soil analysis section only
+!     Stable organic C and SAEA read from soil analysis section only.
 !     Output with 2nd tier soil data to INP file.
       SASC   = -99.
+      SAEA   = -99.
 
 !-----------------------------------------------------------------------
 !     Find correct soil within soil file

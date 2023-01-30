@@ -32,6 +32,8 @@ C=======================================================================
      &           SWPLTD,PTX,PTTN,PLME,SDAGE,ATEMP)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, JULIAN, MNPLT, NAILUJ, SELPLT, SWPLT, 
+     &  VERIFY, YDOY, YR_DOY
 
       CHARACTER*1  RNMODE,LINE(80),IPLTI,PLME
       CHARACTER*3  MSPLT
@@ -255,6 +257,7 @@ C=======================================================================
       SUBROUTINE SWPLT (RNMODE,IPLTI,PLTMAN)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,IPLTI
       CHARACTER*6  ERRKEY
@@ -332,6 +335,7 @@ C=======================================================================
       SUBROUTINE MNPLT (RNMODE,PLME,MTHMAN)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,PLME
       CHARACTER*6  ERRKEY
@@ -426,6 +430,7 @@ C=======================================================================
      &                   RNMODE,YEAR,YRSIM,YRPLT)
 
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, INCYD, JULIAN, NAILUJ, VERIFY, YDOY
 
       CHARACTER*1 RNMODE,LINE(80)
       CHARACTER*3 MFPLT,MLPLT

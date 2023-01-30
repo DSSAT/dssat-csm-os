@@ -18,6 +18,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL AMTHERM
       SAVE
 
       INTEGER  ISI, YRDOY, YRDRY, IHDAY, IBP

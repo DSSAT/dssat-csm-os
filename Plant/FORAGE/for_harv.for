@@ -19,41 +19,46 @@ C
 C  Calls  :
 C=======================================================================
       SUBROUTINE forage_harvest(CONTROL,FILECC,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
-     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
-     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,MOWC,RSPLC,
-     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                WTCO, WTLO, WTSO)
+     &     RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &     WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &     WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+     &     AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht, !Input/Output
+     &     fhtot,FHTOTN, fhpctlf,fhpctn,  
+     &     DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &     WTCO, WTLO, WTSO)
+
+!     2023-01-19 CHP removed unused variables from argument list:
+!     FREQ,CUHT,MOWC,RSPLC,
       
       USE MODULEDEFS
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, Y2K_DOY, Y4K_DOY, yr_doy
 
       INTEGER MOWLUN,ISECT,ERR
       INTEGER,ALLOCATABLE,DIMENSION(:) :: TRNO,DATE
       INTEGER TRTNO,YRDOY,year,doy,run
-      INTEGER SEASON
+!     INTEGER SEASON
       INTEGER LUNCRP,fhlun
       INTEGER LNUM,FOUND
       INTEGER I,MOWCOUNT,j
       integer,dimension(8) :: date_time
-      INTEGER LUNEXP,ERRNUM,LINEXP,LNHAR,LUNIO,PATHL
+      INTEGER ERRNUM,LUNIO,PATHL  !LUNEXP,LINEXP,LNHAR,
 
       REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
       REAL FHLEAF,FHSTEM,FHVSTG
       REAL RHOL,RHOS,PCNL,PCNST,SLA
       REAL WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST
       REAL WTNLF,WTNST,WNRLF,WNRST,WTNCAN,RTWT,STRWT
-      REAL AREALF,XLAI,AREAH,XHLAI,VSTAGE
+      REAL AREALF,XLAI,XHLAI,VSTAGE  !AREAH,
       REAL PROLFF,PROSTF,pliglf,pligst
       real canht,fhcrlf,fhcrst,fhtotn,fhtot,fhlfn,fhstn
       real fhpcho,fhpctlf,fhpctn,fhplig
-      real vstagp,MOWC,RSPLC,y,z,PELF,FMOW,RHMOW,CHMOW,FLFP,RHLFP,RSPLM
+      real vstagp
+! Unused variables: y,z,PELF,FMOW,RHMOW,CHMOW,FLFP,RHLFP,RSPLM,MOWC,RSPLC
       REAL DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO
       REAL WTCO, WTLO, WTSO
-      REAL FREQ,CUHT,YHT
+!     REAL FREQ,CUHT,YHT
 !      REAL,ALLOCATABLE,DIMENSION(:) :: canht
       
       character(len=1)  BLANK
@@ -62,19 +67,19 @@ C=======================================================================
       character(len=10),parameter :: fhout='FORAGE.OUT'
       CHARACTER*12 MOWFILE
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(2)
+!     CHARACTER*78 MSG(2)
       CHARACTER*80 FILECC
       CHARACTER*80 PATHEX
       character(len=60) ename
       CHARACTER*80 MOW80
       character(len=180) fhoutfmt
-      CHARACTER*255 C255
-      CHARACTER*80 CHARTEST
-      CHARACTER*92 FILEX_P
+!     CHARACTER*255 C255
+!     CHARACTER*80 CHARTEST
+!     CHARACTER*92 FILEX_P
       CHARACTER*92 FILEMOW
-      CHARACTER*6  FINDCH
-      CHARACTER*12 FILEX
-      CHARACTER*78 MESSAGE(2)
+!     CHARACTER*6  FINDCH
+!     CHARACTER*12 FILEX
+!     CHARACTER*78 MESSAGE(2)
 
       
       logical exists

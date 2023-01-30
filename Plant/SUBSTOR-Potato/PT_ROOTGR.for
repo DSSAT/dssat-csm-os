@@ -50,6 +50,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL PT_IPROOT
       SAVE
 
       LOGICAL FIRST
@@ -237,6 +238,7 @@ C-----------------------------------------------------------------------
 !     ------------------------------------------------------------------
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
 
       INTEGER LUNIO, LUNCRP
       CHARACTER*1, PARAMETER :: BLANK = ' '

@@ -45,6 +45,7 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data.
 
       IMPLICIT     NONE
+      EXTERNAL PATH, GETLUN, FIND2, IGNORE, WARNING
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL

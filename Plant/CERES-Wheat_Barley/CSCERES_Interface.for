@@ -19,6 +19,7 @@ C=======================================================================
       USE CER_First_Trans_m
 
       IMPLICIT NONE
+      EXTERNAL YR_DOY, CSCER
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS, ISWWAT, ISWNIT, RNMODE
@@ -139,7 +140,6 @@ C-----------------------------------------------------------------------
      & SENC, SENN, SENLIG,                                 !Senescence
      & CRESC, CRESN, CRESLIG,                              !Residue
      & STGDOY,                                             !Stage dates
-     & WEATHER, SOILPROP, CONTROL,
      & DYNAMIC)                                            !Control 
 
       XLAI   = LAI

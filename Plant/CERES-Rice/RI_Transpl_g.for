@@ -30,6 +30,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL RI_NFACTO
       SAVE
 
       CHARACTER*1 ISWNIT

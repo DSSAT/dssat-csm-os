@@ -1,5 +1,6 @@
    
-subroutine totass(daynr,dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai,kdif,scv,srad,par,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
+!ubroutine totass(daynr,dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai,kdif,scv,srad,par,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
+subroutine totass(      dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai,kdif,scv,srad,par,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
 ! ----------------------------------------------------------------------
 ! --- calculates daily total gross assimilation (dtga) by performing
 ! --- a gaussian integration over time at three different times of 
@@ -11,10 +12,12 @@ subroutine totass(daynr,dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai
       Implicit None    
  !     include 'constants.fi' ! (SAMUCA's Crop Modelling Shell)
       
+      external HANG, HRAD, HPAR, FRACD
+
       integer ghour
       integer glai
       integer gl
-      integer daynr       
+!     integer daynr       
     
       real dlaic
       real frac_li
@@ -31,7 +34,7 @@ subroutine totass(daynr,dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai
       real dtga
       real dvisabs
       real eff
-      real fgros      
+!     real fgros      
       real hour
       real par
       real pardif
@@ -50,9 +53,9 @@ subroutine totass(daynr,dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai
       real laic
       real kbl
       real kdrt     
-      real fgl    
-      real fgrsh
-      real fgrsun
+!     real fgl    
+!     real fgrsh
+!     real fgrsun
       real fslla     
       real refh
       real refs
@@ -75,7 +78,7 @@ subroutine totass(daynr,dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai
       
       !--- Gaussian arrangement for three points
       real :: gausr     = 0.3872983d0
-      real :: gaussx(3) = (/0.1127017,       0.5, 0.8872983/)
+!     real :: gaussx(3) = (/0.1127017,       0.5, 0.8872983/)
       real :: gaussw(3) = (/0.2777778, 0.4444444, 0.2777778/) 
       
       !--- Gaussian arrangement for five points
@@ -83,7 +86,7 @@ subroutine totass(daynr,dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai
       real :: gaussw_5(5) = (/0.1184635, 0.2393144, 0.2844444, 0.2393144, 0.1184635/) 
       
       !--- Daily Expected PAR Ratio [PAR/SRAD]
-      real :: expected_par_ratio = 0.5d0
+!     real :: expected_par_ratio = 0.5d0
       
       !--- deg2rad
       parameter (pi=3.14159, rad=PI/180.)

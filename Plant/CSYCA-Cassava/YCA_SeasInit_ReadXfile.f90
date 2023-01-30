@@ -15,12 +15,13 @@
       USE YCA_First_Trans_m
 
       IMPLICIT NONE
+      EXTERNAL YR_DOY, Y4K_DOY, TVILENT, LTRIM, XREADC, XREADT, XREADI, XREADR, XREADIA, XREADRA, LTRIM2, XREADCA, CSUCASE
 
       CHARACTER(LEN=1) ISWDIS
       CHARACTER(LEN=6),PARAMETER::ERRKEY = 'CSYCA '
       
       INTEGER CN          , ON          , RN          , SN          , TN  
-      INTEGER CSYEARDOY   , TVILENT                                                           ! Integer function calls.        
+      INTEGER TVILENT     ! CSYEARDOY   ,                                                     ! Integer function calls.        
       
       REAL    HARVFRAC(2) 
 

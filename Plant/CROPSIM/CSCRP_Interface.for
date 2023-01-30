@@ -19,6 +19,7 @@ C=======================================================================
       USE CRP_First_Trans_m
 
       IMPLICIT NONE
+      EXTERNAL YR_DOY, WARNING, CSCRP
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
@@ -35,10 +36,10 @@ C=======================================================================
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
       REAL SNOW 
       REAL KCAN, KEP, DEPMAX, DAYLT, DEWDUR
-      REAL NSTRES, XLAI, NFP, MSALB, ALBEDOS
+      REAL NSTRES, XLAI, NFP, MSALB !, ALBEDOS
       REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP, TWILEN
       REAL CANHT, EO, WINDSP, PARIP, PARIPA
-      REAL GSTAGE, LAI, RWUPM
+      REAL GSTAGE, LAI !, RWUPM
       REAL TAIRHR(TS), TDEW, SLPF
 !     REAL LAIL, LAILA, TWILEN
 
@@ -192,26 +193,26 @@ C=======================================================================
       WINDSP = WEATHER % WINDSP
 
 C-----------------------------------------------------------------------
-      CALL CSCRP(FILEIOIN, RUN, TN, RN, RNMODE,                                        
+      CALL CSCRP(FILEIOIN, RUN, TN, RN, RNMODE,             
      &  ISWWAT, ISWNIT, ISWDIS, MESOM,    
-     &  IDETS, IDETO, IDETG, IDETL, FROP,                                             
-     &  SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                  
-     &  SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,              
+     &  IDETS, IDETO, IDETG, IDETL, FROP,                   
+     &  SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             
+     &  SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          
      &  DRAIN, RUNOFF, IRRAMT,                           
-     &  TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,                                        
-     &  NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,     
-     &  SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                           
+     &  TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,   
+     &  NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  
+     &  SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                 
      &  TLCHD, TNIMBSOM, TNOXD, 
-     &  TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,                                  
-     &  YRPLT, HARVFRAC,                                                           
+     &  TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,
+     &  YRPLT, HARVFRAC,                                    
      &  PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDO,
      &  LAI, KCAN, KEP, 
-     &  RLV, NFP, PORMIN, RWUMX, CANHT, LAIL, LAILA,                      
-     &  UNO3, UNH4, UH2O,                                      
-     &  SENCALG, SENNALG, SENLALG,                                 
-     &  RESCALG, RESNALG, RESLGALG,                              
-     &  STGYEARDOY, GSTAGE,                                                              
-     &  WEATHER, SOILPROP, CONTROL,                                               
+     &  RLV, NFP, PORMIN, RWUMX, CANHT, LAIL, LAILA,        
+     &  UNO3, UNH4, UH2O,                                   
+     &  SENCALG, SENNALG, SENLALG,                          
+     &  RESCALG, RESNALG, RESLGALG,                         
+     &  STGYEARDOY, GSTAGE,                                 
+!    &  WEATHER, SOILPROP, CONTROL,                         
      &  DYNAMIC) !, WEATHER
 
       XLAI   = CAID

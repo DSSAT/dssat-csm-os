@@ -21,6 +21,8 @@ c     Define CANEGRO composite variables:
       USE CNG_ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GETDESC, OPVIEW, READA, SUMVALS, EvaluateDat, 
+     &  ERROR, TIMDIF
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI

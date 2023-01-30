@@ -170,6 +170,7 @@ real function it_struc_pfac(it_struc_tb_ini,            &   ! Input Parameter
     !------------------------------------------------!
     
     implicit none
+    external temperature_factor, fgrowth
     
     !--- Input parameters
     real it_struc_tb_ini    

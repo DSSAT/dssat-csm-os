@@ -34,7 +34,7 @@ C  06/21/2001 GH  Add seasonal initialization section
 C  09/17/2001 CHP PORMIN, RWUMX input from Plant Modules.
 C  01/09/2002 CHP SWFAC calculated here.
 C  06/11/2002 GH  Modified for Y2K
-!  10/24/2005 CHP Put weather variables in constructed variable. 
+!  10/24/2005 CHP Put weather variables in constructed variable.
 !                 Removed GETPUT_Weather subroutine.
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
 !  01/10/2019 CHP Remove KRT changes introduced with pull request #201
@@ -60,10 +60,12 @@ C     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL ETIND, ETINP, ETPHR, OPETPHOT, OPSTEMP, PGIND, PGINP, 
+     &  RADABS, ROOTWU, SOIL05, YR_DOY
       SAVE
 
       CHARACTER FILEIO*30,ISWWAT*1,MEEVP*1,MEPHO*1,METEMP*1,
@@ -108,13 +110,13 @@ C-----------------------------------------------------------------------
      &     GN, LHN, LHEATN(3), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3),
      &     GMT, LHT, LHEATT(3), RSSHT, RSSLT, RSSST, SHT, SHEATT(3),
      &     RNETN(3),RNETT(3),
-     &     TAnn, TAnit, TGROnn, TGROnit, 
+     &     TAnn, TAnit, TGROnn, TGROnit,
 C         previous 7 lines added by Bruce Kimball on 2DEC14
      &     RBSH,RBSL,RBSS,RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
 C         added by BAK on 10DEC2015
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
-      
+
       CHARACTER(len=2) PGPATH
       character(len=8) model
       REAL CCNEFF, CICAD, CMXSF, CQESF
@@ -162,38 +164,38 @@ C         added by BAK on 10DEC2015
       MEEVP  = ISWITCH % MEEVP
       MEPHO  = ISWITCH % MEPHO
 
-      AZZON  = WEATHER % AZZON 
-      BETA   = WEATHER % BETA   
+      AZZON  = WEATHER % AZZON
+      BETA   = WEATHER % BETA
       CLOUDS = WEATHER % CLOUDS
-      CO2    = WEATHER % CO2   
-      FRDIFP = WEATHER % FRDIFP 
-      FRDIFR = WEATHER % FRDIFR 
-      PARHR  = WEATHER % PARHR  
-      RADHR  = WEATHER % RADHR  
-      REFHT  = WEATHER % REFHT  
-      RHUMHR = WEATHER % RHUMHR 
-      SNDN   = WEATHER % SNDN   
-      SNUP   = WEATHER % SNUP   
-      SRAD   = WEATHER % SRAD  
-      TA     = WEATHER % TA    
-      TAIRHR = WEATHER % TAIRHR 
+      CO2    = WEATHER % CO2
+      FRDIFP = WEATHER % FRDIFP
+      FRDIFR = WEATHER % FRDIFR
+      PARHR  = WEATHER % PARHR
+      RADHR  = WEATHER % RADHR
+      REFHT  = WEATHER % REFHT
+      RHUMHR = WEATHER % RHUMHR
+      SNDN   = WEATHER % SNDN
+      SNUP   = WEATHER % SNUP
+      SRAD   = WEATHER % SRAD
+      TA     = WEATHER % TA
+      TAIRHR = WEATHER % TAIRHR
       TGRO   = WEATHER % TGRO     !I/O
       TGROAV = WEATHER % TGROAV   !I/O
-      TGRODY = WEATHER % TGRODY 
-      TMIN   = WEATHER % TMIN  
-      WINDHR = WEATHER % WINDHR 
+      TGRODY = WEATHER % TGRODY
+      TMIN   = WEATHER % TMIN
+      WINDHR = WEATHER % WINDHR
 
 !     Retrieve plant module data for use here.
       Call GET('PLANT', 'CANHT',  CANHT)
       Call GET('PLANT', 'CANWH',  CANWH)
       Call GET('PLANT', 'DXR57',  DXR57)
       Call GET('PLANT', 'EXCESS', EXCESS)
-      Call GET('PLANT', 'NR5',    NR5)   
+      Call GET('PLANT', 'NR5',    NR5)
       Call GET('PLANT', 'PLTPOP', PLTPOP)
-      Call GET('PLANT', 'RNITP',  RNITP) 
-      Call GET('PLANT', 'SLAAD',  SLAAD) 
-      Call GET('PLANT', 'XPOD',   XPOD)  
-      
+      Call GET('PLANT', 'RNITP',  RNITP)
+      Call GET('PLANT', 'SLAAD',  SLAAD)
+      Call GET('PLANT', 'XPOD',   XPOD)
+
       CALL YR_DOY(YRDOY, YEAR, DOY) !LPM 04DEC12 for OPSTEMP
 C========================================================================
 C MEPHO  MEEVP
@@ -236,19 +238,8 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
      &      CCNEFF, CICAD, cmxsf,cqesf,pgpath)            !Output
 
           CALL OpETPhot(CONTROL, ISWITCH,
-     &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon, ETNOON, WINDn,TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C            added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
 
 !***********************************************************************
@@ -261,7 +252,7 @@ C            added by BAK on 10DEC2015
           DO I=1,NLAYR
 !           TSHR(I) = TAV
             TSHR(I) = TA
-           ST(I) = TSHR(I) 
+           ST(I) = TSHR(I)
           ENDDO
           DO I = 1, TS
             TGRO(I) = TA
@@ -277,9 +268,9 @@ C            added by BAK on 10DEC2015
                TSRFN(I) = TA
             ENDDO
 !           LPM 04DEC14 to include the surface temperature as output
-            SRFTEMP = TSRFN(3)    
+            SRFTEMP = TSRFN(3)
             CALL OPSTEMP(CONTROL,ISWITCH,DOY,SRFTEMP,ST,TAV,TAMP)  !LPM
-          
+
           CALL ROOTWU(SEASINIT,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
      &      RWU,  TRWUP)                           !Output
@@ -302,19 +293,8 @@ C            added by BAK on 10DEC2015
 
         IF (MEPHO .EQ. 'L') THEN
           CALL OpETPhot(CONTROL, ISWITCH,
-     &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C            added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
 
 C***********************************************************************
@@ -377,8 +357,8 @@ C       and sum for day (TS=24 for hourly).
         DayRatio = 24.0 / (WEATHER % DAYL - 2.0)
 !                 Note that DayRatio will blow up when DAYL is two hours, but this would only occur at high and low lattitudes
 !                 on each side of winter when temperatures likely are too cold for crop growth. BAK.
-        
-!       Conpute index for mid-day time step added by Bruce Kimball on 9JAN17        
+
+!       Conpute index for mid-day time step added by Bruce Kimball on 9JAN17
         TSV2 = INT(TS/2)
         DO H=1,TS
 
@@ -393,7 +373,7 @@ C         Calculate real and solar time.
 
 C         Calculate hourly radiation absorption by canopy/soil.
 
-          CALL RADABS( 
+          CALL RADABS(
      &      AZIR, AZZON(H), BETA(H), BETN, CANHT, CANWH,  !Input
      &      DAYTIM, FRDIFP(H), FRDIFR(H), H, LFANGD,      !Input
      &      MEEVP, MEPHO, PALB, PARHR(H), RADHR(H),       !Input
@@ -448,7 +428,7 @@ C  KJB and SPSUM hourly.
      &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
      &      TSURF,                                        !Output
      &      CONDSH, CONDSL, RA, RB, RSURF, Rnet,          !Output
-     &      G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,    !Output
+     &      G, LH, LHEAT, SH, SHEAT,                      !Output
 C       CONDSH, CONDSL, RA, RB, RSURF, RNET output added by
 C           Bruce Kimball on 2DEC14
      &     RBSH, RBSL, RBSS,                              !Output
@@ -524,7 +504,7 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
                 TSRFN(I) = TSURF(I,1)
               ENDDO
 !             LPM 04DEC14 to include the surface temperature as output
-              SRFTEMP = TSRFN(3)           
+              SRFTEMP = TSRFN(3)
               DO I=1,NLAYR
                   TSHRn(I) = TSHR(I)
               ENDDO
@@ -532,7 +512,7 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
      &          TSHRn,0,NLAYR,                                  !Input
      &          STn)                                           !Output
 !             LPM 04DEC14 to include the temperature as output (OPSTEMP)
-              ST = STn           
+              ST = STn
 C       The following 8 variales added by Bruce Kimball on 1Dec2014
               Enoon = EHR
               Tnoon = THR
@@ -617,7 +597,7 @@ C       Assign daily values.
             PCABRD = 0.0
             PCINRD = 0.0
           ENDIF
-          
+
           DO I=1,NLAYR
             ST2(I) = ST2(I) / TS
           ENDDO
@@ -666,12 +646,12 @@ C          ES = MAX(MIN(EDAY,AWEV1),0.0)
           ELSE
             DAYKP = 0.0
           ENDIF
-          
+
           IF(DAYPAR .GT. 0.0) THEN
             PCABPD = DYABSP / DAYPAR * 100.0
             PCINPD = DYINTP / DAYPAR * 100.0
           ELSE
-            PCABPD = 0.0 
+            PCABPD = 0.0
             PCINPD = 0.0
           ENDIF
           IF(NHOUR .GT. 0) THEN
@@ -718,19 +698,8 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
           PG = PG * EXCESS
 
           CALL OpETPhot(CONTROL, ISWITCH,
-     &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C       preveious line added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
 !***********************************************************************
 !***********************************************************************
@@ -740,21 +709,10 @@ C       preveious line added by BAK on 10DEC2015
 !-----------------------------------------------------------------------
         IF (MEPHO .EQ. 'L') THEN
                 CALL OpETPhot(CONTROL, ISWITCH,
-     &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C       preveious line added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
-      
+
         IF(MEEVP .EQ. "Z") THEN
             CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
             ENDIF
@@ -818,10 +776,9 @@ C=======================================================================
      &    YSCOND, YSHCAP)                                 !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types,
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL FIND, GETLUN, IGNORE, SOIL10, ERROR
       SAVE
 
       CHARACTER BLANK*1,ERRKEY*6,FILEC*12,FILECC*92,FILEIO*30,
@@ -1055,6 +1012,7 @@ C=======================================================================
      &  ccneff, cicad, cmxsf, cqesf, pgpath)              !Output
 
       IMPLICIT NONE
+      EXTERNAL FIND, GETLUN, IGNORE, ERROR
       SAVE
 
       CHARACTER BLANK*1,ERRKEY*6,FILEC*12,FILECC*92,FILEIO*30,
@@ -1155,7 +1113,7 @@ C     Read species file.
          CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
          CALL IGNORE(LUNCRP,LNUM,ISECT,C80) !12th line
          READ(C80,'(4F6.0,2X,A)',IOSTAT=ERRNUM) CICAD,CCNEFF,
-     &        CMXSF,CQESF,PGPATH 
+     &        CMXSF,CQESF,PGPATH
          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
       else
          pgpath='  '
@@ -1221,6 +1179,7 @@ C=======================================================================
 !     NL, TS defined in ModuleDefs.for
 
       IMPLICIT NONE
+      EXTERNAL SOIL10, TABEX
       SAVE
 
       INTEGER I,J,NELAYR,NLAYR
@@ -1316,6 +1275,7 @@ C=======================================================================
 
       USE MODULEDEFS
       IMPLICIT NONE
+      EXTERNAL SOIL10
       SAVE
 
       INTEGER NLAYR
@@ -1371,7 +1331,7 @@ C  Called from: ETPHOT
 C  Calls:       CANABS,LFEXTN,SHADOW
 C=======================================================================
 
-      SUBROUTINE RADABS( 
+      SUBROUTINE RADABS(
      &  AZIR, AZZON, BETA, BETN, CANHT, CANWH,            !Input
      &  DAYTIM, FRDIFP, FRDIFR, H, LFANGD,                !Input
      &  MEEVP, MEPHO, PALB, PARHR, RADHR,                 !Input
@@ -1381,6 +1341,7 @@ C=======================================================================
      &  PCINTP, PCINTR, RABS)                             !Output
 
       IMPLICIT NONE
+      EXTERNAL WARNING, SHADOW, LFEXTN, CANABS
       SAVE
 
       CHARACTER MEEVP*1,MEPHO*1
@@ -1468,7 +1429,7 @@ C         Calculate infrared radiation absorbed by canopy during day.
               FRDIFI = MIN( (FRDIFR*RADHR-FRDIFP*PARW)/IRHR, 1.0)
             ELSE
               WRITE(MESSAGE(1),100) H
-              WRITE(MESSAGE(2),101) 
+              WRITE(MESSAGE(2),101)
   100         FORMAT('Error in RADHR or PARHR for hour ',I2,'.')
   101         FORMAT('Program will stop.')
               CALL WARNING(2, 'RADABS', MESSAGE)
@@ -1547,8 +1508,9 @@ C=======================================================================
      &  FRACSH)                                           !Output
 
       IMPLICIT NONE
+      EXTERNAL ERROR
       SAVE
-      
+
       CHARACTER*6 ERRKEY
       REAL A,B,C1,C2,C3,C4,AZIMD,AZIR,AZZON,BETA,BETN,CANHT,CANWH,ETA,
      &  FRACSH,GAMMA,PI,RAD,RBETA,ROWSPC,SHADE,SHLEN,SHPERP,STOUCH,ZERO
@@ -1632,7 +1594,7 @@ C FO/GH 11/14/2020 Code protections for divisions by zero.
 !            ELSE
 !              SHLEN = 0.0
             ENDIF
-            
+
             SHADE = 0.25 * PI * SHLEN * CANWH
 
           ENDIF
@@ -1687,7 +1649,7 @@ C     in the three leaf classes: 0-30, 30-60 and 60-90 degrees.
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       !SINB = MAX(0.00001,SIN(BETA*RAD))
       SINB = SIN(BETA*RAD)
-      
+
       F15 = LFANGD(1)
       F45 = LFANGD(2)
       F75 = LFANGD(3)
@@ -1699,14 +1661,14 @@ C     the range of sine of incidence (used in Gaussian integration).
       O45 = MAX(0.47,0.68*SINB)
       O75 = 1.0 - 0.268*O15 - 0.732*O45
       OAV = F15*O15 + F45*O45 + F75*O75
-      
+
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       IF(SINB .GT. 0.0) THEN
         KDIRBL = OAV / SINB
       ELSE
         KDIRBL = 0.0
       ENDIF
-      
+
       VARSIN = 0.06*F15+0.25*F45+0.467*F75 +
      +  (0.81*F15 + 0.25*F45 - 0.4*F75)*SINB**2 - OAV**2
       VARSIN = MAX(VARSIN,0.0)
@@ -1717,7 +1679,7 @@ C     Calculate diffuse light extinction coefficient for black leaves.
       K15 = 1.00*F15 + 1.82*F45 + 2.26*F75
       K45 = 0.93*F15 + 0.68*F45 + 0.67*F75
       K75 = 0.93*F15 + 0.68*F45 + 0.29*F75
-      
+
       IF(XLAI .GT. 0.0) THEN
         KDIFBL = -ALOG(0.25*EXP(-K15*XLAI)+0.5*EXP(-K45*XLAI)
      &           +0.25*EXP(-K75*XLAI)) / XLAI
@@ -1728,21 +1690,21 @@ C     Calculate diffuse light extinction coefficient for black leaves.
 C     Calculate sunlit and shaded leaf area indices.
 !CHP added check to prevent underflow 1/16/03
 C FO/GH 11/14/2020 Code protections for divisions by zero.
-      IF (KDIRBL .GT. 0.0 .AND. FRACSH .GT. 0.0) THEN    
+      IF (KDIRBL .GT. 0.0 .AND. FRACSH .GT. 0.0) THEN
         !LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XLAI/FRACSH))
         FRAKDI = FRACSH/KDIRBL
         LAISL = FRAKDI * (1.0-EXP(-XLAI/FRAKDI))
       ELSE
         LAISL = 0.0
       ENDIF
-      
+
       LAISL = MIN(LAISL,XLAI)
 C-KRT*******************************
 C-KRT  LAISH = XLAI - LAISL
 !-CHP  LAISH = MAX(0.02,XLAI - LAISL)
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       LAISH = MAX(0.0, XLAI - LAISL)
-      
+
 C-KRT*******************************
       RETURN
       END SUBROUTINE LFEXTN
@@ -1823,7 +1785,7 @@ C-KRT   ADDF = ADIR - ADDR
 
         ADDR = MIN(ADDR, ADIR)
         ADDF = MAX(0.0,ADIR-ADDR)
-        
+
 C-KRT****************************
 !        IF ((KDIRBL*SQV*LAISL/FRACSH) .LT. 20.) THEN
           ADIRSL = FRACSH * (1.0-REFDR) * RADDIR *
@@ -1847,13 +1809,13 @@ C-KRT   ADDFSH = ADDF - ADDFSL
 
         ADDRSL = MIN(ADDRSL, ADIRSL)
         ADDFSL = MAX(0.0,ADIRSL - ADDRSL)
-        
-        
+
+
 !-FO        ADDFSH = ADDF - ADDFSL
 
         ADDFSL = MIN(ADDFSL, ADDF)
         ADDFSH = MAX(0.0,ADDF - ADDFSL)
-        
+
 C-KRT************************************
       ELSE
         ADIR   = 0.0
@@ -1896,7 +1858,7 @@ C-KRT ADIFSH = ADIF - ADIFSL
 
       ADIFSL = MIN(ADIFSL, ADIF)
       ADIFSH = MAX(0.0,ADIF - ADIFSL)
-      
+
 C-KRT********************************
 
 C     Light reflected from the soil assumed to be isotropic and diffuse.
@@ -1934,7 +1896,7 @@ C FO/GH 11/14/2020 Code protections for divisions by zero.
       ELSE
           RADSH = 0.0
       ENDIF
-      
+
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       IF(LAISL .GT. 0.0) THEN
           RDIFSL = (ADDFSL+ADIFSL+AREFSL) / LAISL
@@ -1953,7 +1915,7 @@ C       RADSUN(I) = RADSH + (1.-SCVR)*RADDIR*O/SINB
       ELSE
           RADSUN = 0.0
       ENDIF
-      
+
 C     Set radiation array and calculate ratios of components.
 
       IF (RADHR .GT. 0.0) THEN
@@ -1970,13 +1932,13 @@ C     Energy balance check (RADTOT=RADHR).
 
       RADTOT = ATOT + REFTOT + RADSS
       RADTOT = RADSH*LAISH + RADSUN(2)*LAISL + REFTOT + RADSS
-      
+
 C FO/GH 11/14/2020 Code protections for divisions by zero.
       IF(SINB .GT. 0.0) THEN
         RADTOT = RADSH*LAISH + RDIFSL*LAISL + REFTOT + RADSS +
      &  (1.0-SCVR)*RADDIR*OAV/SINB*LAISL
       ENDIF
-     
+
 
       RETURN
       END SUBROUTINE CANABS

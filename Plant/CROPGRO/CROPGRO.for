@@ -35,6 +35,8 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 !  07/13/2006 CHP Added P model
 !  06/11/2007 CHP PStres1 affects photosynthesis, PStres2 affects growth
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE CROPGRO(CONTROL, ISWITCH, 
@@ -50,9 +52,9 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT NONE
-      EXTERNAL DEMAND, FREEZE, GROW, HRES_CGRO, INCOMP, IPPLNT, MOBIL, 
-     &  NFIX, NUPTAK, OPGROW, OPHARV, P_CGRO, PEST, PHENOL, 
-     &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, SENES, 
+      EXTERNAL DEMAND, FREEZE, GROW, HRES_CGRO, INCOMP, IPPLNT, MOBIL,
+     &  NFIX, NUPTAK, OPGROW, OPHARV, P_CGRO, PEST, PHENOL,
+     &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, SENES,
      &  VEGGR
       SAVE
 !-----------------------------------------------------------------------

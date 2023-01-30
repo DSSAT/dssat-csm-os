@@ -27,6 +27,7 @@
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL FIND, GETLUN, WARNING, ERROR, IGNORE, INFO
       SAVE
 
 !     Input (required)

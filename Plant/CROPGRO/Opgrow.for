@@ -34,6 +34,7 @@ C  Calls:     None
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1  IDETG, ISWPHO, ISWPOT
