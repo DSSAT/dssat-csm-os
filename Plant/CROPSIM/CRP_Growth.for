@@ -3,32 +3,36 @@
 ! lines 5252 - 7645 of the original CSCRP code.
 !***********************************************************************
  
-      SUBROUTINE CRP_Growth (ALBEDOS, BD, GSTAGE, CLOUDS, CO2, DAYLT,
+      SUBROUTINE CRP_Growth (BD, GSTAGE, CLOUDS, CO2, DAYLT,
      &    DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
      &    KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT, PARIP,
      &    PARIPA, RLV, RNMODE, SAT , SENCALG, SENLALG, SENNALG,
-     &    SHF, SLPF, SNOW, SRAD, ST, STGYEARDOY, SW, TAIRHR, TDEW,
-     &    TMAX, TMIN, TRWUP, UH2O, UNH4, UNO3, WEATHER,
-     &    SOILPROP, CONTROL, WINDSP, YEAR, YEARPLTCSM, LAI,
+     &    SHF, SLPF, SNOW, SRAD, ST, STGYEARDOY, SW, TDEW,
+     &    TMAX, TMIN, TRWUP, UH2O, UNH4, UNO3, 
+     &    WINDSP, YEAR, YEARPLTCSM, LAI,
      &    IDETG)
+
+!     2023-01-20 chp removed unused variables from argument list
+!     ALBEDOS, TAIRHR, WEATHER, SOILPROP, CONTROL, 
 
       USE ModuleDefs
       USE CRP_First_Trans_m
   
       IMPLICIT NONE
+      EXTERNAL WARNING, TFAC4, YVALXY, CSUCASE, EVAPO, CSCRPROOTWU, 
+     &  CSIDLAYR, CSVPSAT, CSYVAL
       
-      
-      TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
-      TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
-      TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
+!     TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
+!     TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
+!     TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
   
       INTEGER DOY, NLAYR, STGYEARDOY(20), YEAR, YEARPLTCSM          
       INTEGER CSIDLAYR                 
-      REAL ALBEDOS, BD(NL), GSTAGE, CLOUDS, CO2, DLAYR(NL)
+      REAL BD(NL), GSTAGE, CLOUDS, CO2, DLAYR(NL)  !ALBEDOS, 
       REAL DUL(NL), EO, EOP, ES, KCAN, kep, LL(NL), NFP, NH4LEFT(NL)
       REAL NO3LEFT(NL), PARIP, PARIPA, RLV(NL), SAT(NL)
       REAL SENCALG(0:NL), SENLALG(0:NL), SENNALG(0:NL), SHF(NL), SLPF
-      REAL SRAD, ST(0:NL), SW(NL), TAIRHR(24), TDEW, TMAX, TMIN, TRWUP
+      REAL SRAD, ST(0:NL), SW(NL), TDEW, TMAX, TMIN, TRWUP  !TAIRHR(24), 
       REAL UH2O(NL), UNH4(NL), UNO3(NL), WINDSP, LAI
       REAL DAYLT, RWUMX, RWUPM, SNOW
       
@@ -108,8 +112,8 @@
             ENDIF
           ELSE
             IF (FILEIOT.NE.'DS4') THEN
-              ! Automatic planting
-              ! Check window for automatic planting,PWDINF<PLYEART<PWDINL
+!               Automatic planting
+!               Check window for automatic planting,PWDINF<PLYEART<PWDINL
               IF (YEARDOY.GE.PWDINF.AND.YEARDOY.LE.PWDINL) THEN
                 ! Within planting window.
                 ! Determine if soil temperature and soil moisture ok
@@ -570,7 +574,7 @@
                   IF (CFLPHASEADJ.EQ.'Y') THEN  
                     ! Use Aitken formula for FLN 
                     FLN = FLNAITKEN               
-                    ! Re-calculate PD(3) and PD(4). PDADJ = PD(2+3)ADJUSTED     
+!                     Re-calculate PD(3) and PD(4). PDADJ = PD(2+3)ADJUSTED     
                     IF (PHINTL(2).GT.0..AND.FLN+1..LE.PHINTL(2)) THEN
                       ! Final leaf# < (leaf# for change in phint)
                       PDADJ = (FLN-LNUMTS) * PHINTS*PHINTF(2)
@@ -854,11 +858,11 @@
      &           VPDFP = AMAX1(0.0,1.0+PHSV*(VPD/1000.0-PHTV))
               ENDIF
 
-              ! Co2 factor using CROPGRO formula
-              ! CO2EX Exponent for CO2-PHS relationship (0.05)  
-              ! COCCC CO2 compensation concentration (80 vpm)
-              !CO2FP = PARFC*((1.-EXP(-CO2EX*CO2))-(1.-EXP(-CO2EX*CO2COMPC)))
-              ! CO2 factor
+!               Co2 factor using CROPGRO formula
+!               CO2EX Exponent for CO2-PHS relationship (0.05)  
+!               COCCC CO2 compensation concentration (80 vpm)
+!              CO2FP = PARFC*((1.-EXP(-CO2EX*CO2))-(1.-EXP(-CO2EX*CO2COMPC)))
+!               CO2 factor
               CO2FP = YVALXY(CO2RF,CO2F,CO2)
 
 !-----------------------------------------------------------------------
@@ -1027,7 +1031,7 @@
               ! If cold kill, other senescence not calculated
               IF (PLASC.LE.0.0) THEN
               
-                ! Leaf senescence - phyllochron (really thermal time) driven
+!                 Leaf senescence - phyllochron (really thermal time) driven
                 LAPSTMP = 0.0
                 IF (CUMDU+DU.LE.LGPHASEDU(2)) THEN
                   DO L = 1,LNUMSG

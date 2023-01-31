@@ -939,6 +939,7 @@ c     Instruct compiler to use CANEGRO module defns:
 c     ::::::::::::::::::::::::::::::::::::::::::::::
           USE CNG_ModuleDefs
       IMPLICIT NONE
+      EXTERNAL INFO
 
 c     The CaneCrop 'object'
 c     ::::::::::::::::::::
@@ -1266,6 +1267,9 @@ c     Print out soil properties:
       SUBROUTINE PrintSoil(SOILPROP)
           USE ModuleDefs 
           USE ModuleData
+
+          EXTERNAL GETLUN
+
           Type(SoilType) SOILPROP
           TYPE (SwitchType) ISWITCH
 !          INTEGER SCLUN
@@ -1300,8 +1304,8 @@ c     ===============================================================
       SUBROUTINE FIND_INP(var, varname, Control)
           USE ModuleDefs
           IMPLICIT NONE
+          EXTERNAL ERROR, FIND, GETLUN
           SAVE
-
 
           TYPE(CONTROLTYPE) CONTROL
           REAL var
@@ -1437,6 +1441,7 @@ c     ===============================================================
           USE CNG_ModuleDefs
           USE ModuleDefs
           IMPLICIT NONE
+          EXTERNAL GET_CULTIVAR_COEFF, INFO, WARNING
 
           TYPE(ControlType) CONTROL
           INTEGER CANOPY_ROUTINE, TRUECOUNT, I
@@ -1570,6 +1575,7 @@ c     ===============================================================
           USE ModuleDefs
           USE CNG_ModuleDefs
           IMPLICIT NONE
+          EXTERNAL GET_CULTIVAR_COEFF, INFO, WARNING
           SAVE
 
 c         Parameter variables

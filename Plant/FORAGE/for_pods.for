@@ -22,7 +22,7 @@ C  Calls:        FOR_PODCOMP
 C                ERROR, FIND, IGNORE
 C=======================================================================
 
-      SUBROUTINE FOR_PODS(DYNAMIC, RUN, 
+      SUBROUTINE FOR_PODS(DYNAMIC, !RUN, 
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
@@ -35,11 +35,15 @@ C=======================================================================
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
      &    WTSHE, WTSHMT, FLWN)                            !Output
 
+!     2023-01-20 CHP Remove unused variables in argument list:
+!     RUN
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, FOR_PODCOMP, WARNING, 
+     &  TIMDIF, CURV, TABEX
       SAVE
 
       CHARACTER*1   ISWWAT
@@ -59,7 +63,7 @@ C=======================================================================
       INTEGER NPP,NAGE,I,NLAYR
       INTEGER DYNAMIC, TIMDIF, NR1TIM, NR2TIM
       INTEGER YRDOY, YRNR1, YRNR2, YRSIM, DAS
-      INTEGER NDSET, RUN
+      INTEGER NDSET  !, RUN
       INTEGER TRIGGR
 
       REAL AGRSD1, FNINSD, GDMSD, NAVL, WSDDTN, WSHDTN, NGRSD, NGRSH
@@ -783,6 +787,7 @@ C-----------------------------------------------------------------------
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
 
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'PODCOM')

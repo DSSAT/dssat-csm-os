@@ -22,6 +22,7 @@ C=======================================================================
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       CHARACTER*1  IDETG, IDETL, RNMODE

@@ -1442,6 +1442,7 @@ End Subroutine LinklstSUOIL
   End Subroutine ListtofileMLCER
 !-----------------------------------------------------------------------  
   Subroutine ListtofileSUOIL(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn 
       Character(Len=14) :: fmt
@@ -1496,6 +1497,7 @@ End Subroutine LinklstSUOIL
   End Subroutine ListtofileSUOIL
 !------------------------------------------------------------------------------
    Subroutine ListtofilePlNSUOIL
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length        
       Character(Len=12):: fn 
       Character(:),Allocatable :: Header         
@@ -1531,6 +1533,7 @@ End Subroutine LinklstSUOIL
    End Subroutine ListtofilePlNSUOIL      
 !------------------------------------------------------------------------------
   Subroutine ListtofilePlNCrGro
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
@@ -1567,6 +1570,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlNCsCer
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
@@ -1603,8 +1607,9 @@ End Subroutine LinklstSUOIL
       Close(nf)
    End Subroutine ListtofilePlNCsCer
 !------------------------------------------------------------------------------
-   Subroutine ListtofileSoilNi(nlayers)
-      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+   Subroutine ListtofileSoilNi()  !(nlayers)
+      EXTERNAL GETLUN
+      Integer          :: nf, ErrNum, length, i, nl   !, nlayers    
       Character(Len=12):: fn
       Character(Len=14) :: fmt
       Character(Len=2) :: numtoch1, numtoch2 
@@ -1664,6 +1669,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlNMzCer
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length        
       Character(Len=12):: fn 
       Character(:),Allocatable :: Header         
@@ -1700,6 +1706,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofileWth
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn         
       Character(:),Allocatable :: Header
@@ -1735,6 +1742,7 @@ End Subroutine LinklstSUOIL
    End Subroutine ListtofileWth
 !------------------------------------------------------------------------------
    Subroutine ListtoFilePlGr2
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn 
       Character(:),Allocatable :: Header 
@@ -1772,6 +1780,7 @@ End Subroutine LinklstSUOIL
    End Subroutine ListtofilePlGr2
 !------------------------------------------------------------------------------
    Subroutine ListtoFilePlGrf
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn 
       Character(:),Allocatable :: Header 
@@ -1809,6 +1818,7 @@ End Subroutine LinklstSUOIL
    End Subroutine ListtofilePlGrf
 !------------------------------------------------------------------------------
    Subroutine ListtofileEvalCsCer
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn 
       Character(:),Allocatable :: Header        
@@ -1848,6 +1858,7 @@ End Subroutine LinklstSUOIL
    End Subroutine ListtofileEvalCsCer
 !------------------------------------------------------------------------------
    Subroutine ListtofileEvOpsum
+      EXTERNAL GETLUN
       Integer          :: nf, i, ErrNum, length       
       Character(Len=12):: fn         
       Character(:),Allocatable :: Header 
@@ -1890,6 +1901,7 @@ End Subroutine LinklstSUOIL
    End Subroutine ListtofileEvOpsum
 !------------------------------------------------------------------------------
    Subroutine ListtofileSumOpsum
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn  
       Character(:),Allocatable :: Header        
@@ -1940,6 +1952,7 @@ End Subroutine LinklstSUOIL
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlCCrGro
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn 
       Character(:),Allocatable :: Header         
@@ -2026,6 +2039,7 @@ End Subroutine LinklstSUOIL
  End Subroutine LinklstSoilOrg
 !------------------------------------------------------------------------------
    Subroutine ListtofileSoilOrg(N_ELEMS)
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn  
       Character(:),Allocatable :: Header        
@@ -2102,6 +2116,7 @@ End Subroutine LinklstSUOIL
  End Subroutine LinklstETPhot
 !------------------------------------------------------------------------------
    Subroutine ListtofileETPhot
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn  
       Character(:),Allocatable :: Header 
@@ -2163,6 +2178,7 @@ End Subroutine LinklstSUOIL
  End Subroutine LinklstMulch
 !------------------------------------------------------------------------------
   Subroutine ListtofileMulch
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header          
@@ -2221,6 +2237,7 @@ End Subroutine LinklstSUOIL
  End Subroutine LinklstPlantP
 !------------------------------------------------------------------------------
  Subroutine ListtofilePlantP
+    EXTERNAL GETLUN
     Integer          :: nf, ErrNum, length       
     Character(Len=12):: fn 
     Character(:),Allocatable :: Header       
@@ -2286,6 +2303,7 @@ End Subroutine LinklstSUOIL
  End Subroutine LinklstSoilPi
 !------------------------------------------------------------------------------
  Subroutine ListtofileSoilPi
+    EXTERNAL GETLUN
     Integer          :: nf, ErrNum, length       
     Character(Len=12):: fn 
     Character(:),Allocatable :: Header        
@@ -2352,6 +2370,7 @@ Subroutine LinklstPlGroPrFrm(ptxtlinePlGroPrFrm)
 End Subroutine LinklstPlGroPrFrm
 !------------------------------------------------------------------------------ 
    Subroutine ListtofilePlGroPrFrm(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf       ! Number for growth output file  #
       Character(Len=12):: fn       ! Growth output file code  
       Character(Len=14) :: fmt
@@ -2410,6 +2429,7 @@ End Subroutine LinklstPlGroPrFrm
    End Subroutine ListtofilePlGroPrFrm 
 !------------------------------------------------------------------------------ 
   Subroutine ListtofilePlNPrFrm
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
@@ -2473,6 +2493,7 @@ Subroutine LinklstPlNPrFrm(ptxtlinePlNPrFrm)
 End Subroutine LinklstPlNPrFrm
 !------------------------------------------------------------------------------
   Subroutine ListtofilePlCPrFrm
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
@@ -2536,6 +2557,7 @@ Subroutine LinklstPlCPrFrm(ptxtlinePlCPrFrm)
 End Subroutine LinklstPlCPrFrm
 !------------------------------------------------------------------------------
   Subroutine ListtofileDormPrFrm
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
@@ -2597,6 +2619,7 @@ Subroutine LinklstDormPrFrm(ptxtlineDormPrFrm)
 End Subroutine LinklstDormPrFrm
 !------------------------------------------------------------------------------
   Subroutine ListtofileStorPrFrm
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
@@ -2666,6 +2689,7 @@ Subroutine LinklstStorPrFrm(ptxtlineStorPrFrm)
 End Subroutine LinklstStorPrFrm
 !------------------------------------------------------------------------------
   Subroutine ListtofileSomN
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
@@ -2738,6 +2762,7 @@ End Subroutine LinklstSomN
 
 !------------------------------------------------------------------------------
   Subroutine ListtofileSomC
+      EXTERNAL GETLUN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
@@ -2819,6 +2844,7 @@ End Subroutine LinklstSomC
 
 !------------------------------------------------------------------------------
 Subroutine ListtofileN2O(nlayers)
+      EXTERNAL GETLUN
       Integer          :: nf       
       Character(Len=12):: fn  
       Character(Len=30):: fmt  

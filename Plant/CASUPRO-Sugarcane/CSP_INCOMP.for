@@ -26,6 +26,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE, CSP_INCOMP_OUT
       SAVE
 !-----------------------------------------------------------------------
 

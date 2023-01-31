@@ -48,11 +48,11 @@
       INTEGER       AYEAR         ! Anthesis year                  #
       INTEGER       AYEARM        ! Anthesis year,measured         #
       CHARACTER*10  BASTGNAM(20)  ! Barley stage names             text
-      !REAL          BD(20)        ! Bulk density (moist)           g/cm3
-      !CHARACTER*1   BLANK         ! Blank character                text
+!      REAL          BD(20)        ! Bulk density (moist)           g/cm3
+!      CHARACTER*1   BLANK         ! Blank character                text
       REAL          BLAYER        ! Depth at base of layer         cm
       REAL          CANANC        ! Canopy N concentration         %
-      !REAL          CANHT         ! Canopy height                  cm
+!      REAL          CANHT         ! Canopy height                  cm
       CHARACTER*6   CANHTC        ! Canopy height                  cm
       REAL          CANHTG        ! Canopy height growth           cm
       REAL          CANHTS        ! Canopy height standard         cm
@@ -581,12 +581,12 @@
       REAL          NFT           ! N factor,tillering 0-1         #
       REAL          NFTL          ! N factor,tillering,lower limit #
       REAL          NFTU          ! N factor,tillering,upper limit #
-      !REAL          NH4LEFT(20)   ! NH4 concentration in soil      mg/Mg
+!      REAL          NH4LEFT(20)   ! NH4 concentration in soil      mg/Mg
       REAL          NH4MN         ! NH4 conc minimum for uptake    mg/Mg
-      !INTEGER       NLAYR         ! Number of layers in soil       #
+!      INTEGER       NLAYR         ! Number of layers in soil       #
       REAL          NLAYRROOT
       INTEGER       NLIMIT        ! Number of days N limited gr gr #
-      !REAL          NO3LEFT(20)   ! NO3 concentration in soil      mg/Mg
+!      REAL          NO3LEFT(20)   ! NO3 concentration in soil      mg/Mg
       REAL          NO3MN         ! NO3 conc minimum for uptake    mg/Mg
       INTEGER       NOUTPG        ! Number for growth output file  #
       INTEGER       NOUTPN        ! Number for plant N output file #
@@ -792,15 +792,15 @@
       CHARACTER*8   RUNRUNI       ! Run+internal run number        text
       REAL          RWAM          ! Root wt at maturity            kg/ha
       REAL          RWAMM         ! Root wt at maturity,measured   kg/ha
-      !REAL          RWUMX         ! Root water uptake,maximum      mm2/m
+!      REAL          RWUMX         ! Root water uptake,maximum      mm2/m
       REAL          RWUMXI        ! Root water uptake,max,init.val mm2/m
       REAL          RWUMXS        ! Root water uptake,maximum,std  mm2/m
-      !REAL          RWUPM         ! Pore space threshold,pl effect #
+!      REAL          RWUPM         ! Pore space threshold,pl effect #
       REAL          RWUPMI        ! Pore space threshold,initial   #
       REAL          SAID          ! Stem area index                m2/m2
       REAL          SAIDOUT       ! Stem area index for output     m2/m2
       REAL          SANC          ! Stem N concentration           #
-      !REAL          SAT(20)       ! Saturated limit,soil           #
+!      REAL          SAT(20)       ! Saturated limit,soil           #
       REAL          SAWS          ! Stem area to wt ratio,standard cm2/g
       REAL          SCNC          ! Stem critical N conc           #
       REAL          SCNCS(0:9)    ! Stem critical N conc,stage     #
@@ -812,9 +812,9 @@
       REAL          SDNC          ! Seed N concentration           #
       REAL          SDNPCI        ! Seed N concentration,initial   %
       REAL          SDSZ          ! Seed size                      g
-      !INTEGER       SEASEND       ! Program control variable (= 6) #
+!      INTEGER       SEASEND       ! Program control variable (= 6) #
       CHARACTER*1   SEASENDOUT    ! Season end outputs flag        text
-      !INTEGER       SEASINIT      ! Program control variable (=2)  #
+!      INTEGER       SEASINIT      ! Program control variable (=2)  #
       REAL          SEEDN         ! Seed N                         g/p
       REAL          SEEDNI        ! Seed N,initial                 g/p
       REAL          SEEDNR        ! Seed N used by roots           g/p
@@ -851,16 +851,16 @@
       REAL          SENWATCM      ! Senesced om,litter+soil,cum    kg/ha
       REAL          SENWL(0:20)   ! Senesced om added by layer     g/p
       REAL          SENWS         ! Senesced weight,soil           g/p
-      !REAL          SHF(20)       ! Soil hospitality factor 0-1    #
+!      REAL          SHF(20)       ! Soil hospitality factor 0-1    #
       REAL          SHRTD         ! Shoot/root ratio               #
       REAL          SLA           ! Specific leaf area             cm2/g
       REAL          SLAOUT        ! Specific leaf area for output  cm2/g
       REAL          SLIGP         ! Stem lignin concentration      %
-      !REAL          SLPF          ! Soil factor for photosynthesis %
+!      REAL          SLPF          ! Soil factor for photosynthesis %
       REAL          SMDFR         ! Soil moisture factor,N uptake  #
       REAL          SMNC          ! Stem minimum N conc            #
       REAL          SMNCS(0:9)    ! Stem minimum N conc,stage      #
-      !INTEGER       SN            ! Sequence number,crop rotation  #
+!      INTEGER       SN            ! Sequence number,crop rotation  #
       REAL          SNDEM         ! Stem demand for N              g/p
       REAL          SNH4(20)      ! Soil NH4 N                     kg/ha
       REAL          SNH4PROFILE   ! NH4 N in soil profile          kg/ha
@@ -880,7 +880,7 @@
       CHARACTER*250 SPDIRFLE      ! Species directory+file         text
       CHARACTER*250 SPDIRFLP      ! Species directory+file,last    text
       CHARACTER*12  SPFILE        ! Species filename               text
-      !REAL          SRAD          ! Solar radiation                MJ/m2
+!      REAL          SRAD          ! Solar radiation                MJ/m2
       REAL          SRAD20        ! Solar radiation av,20 days     MJ/m2
       REAL          SRAD20A       ! Solar radn av,20 days,anthesis MJ/m2
       REAL          SRAD20S       ! Solar radiation sum            MJ/m2
@@ -894,17 +894,17 @@
       REAL          SSENF         ! Stem N loss when senesce       #
       REAL          SSSTG         ! Stem senescence start stage    #
       REAL          SSTAGE        ! Secondary stage of development #
-      !REAL          ST(0:NL)      ! Soil temperature in soil layer C
+!     REAL          ST(0:NL)      ! Soil temperature in soil layer C
       INTEGER       STARNUM       ! Star line number,as read file  #
       INTEGER       STARNUMM      ! Star line number,measured data #
       INTEGER       STARNUMO      ! Star line number,output file   #
       REAL          STDAY         ! Standard day                   C.d/d
       REAL          STEMN         ! Stem N                         g/p
-      !INTEGER       STEP          ! Step number                    #
+!     INTEGER       STEP          ! Step number                    #
       INTEGER       STEPNUM       ! Step number per day            #/d
       REAL          STFR(10)      ! Stem fractions of assimilates  #
       REAL          STFRSTG       ! Stem fraction,todays stage     #
-      !INTEGER       STGDOY(20)    ! Stage dates (Year+Doy)         #
+!     INTEGER       STGDOY(20)    ! Stage dates (Year+Doy)         #
       CHARACTER*10  STNAME(20)    ! Stage names                    text
       REAL          STRESS(20)    ! Minim H2O,N factors,last 20day # 
       REAL          STRESS20      ! Minim H2O,N factors,20day avg  #
@@ -912,7 +912,7 @@
       REAL          STRESS20S     ! Minim H2O,N factors,20day sum  #
       REAL          STRSWT        ! Stem reserves                  g/p
       REAL          STWT          ! Stem weight                    g/p
-      !REAL          SW(20)        ! Soil water content             #
+!     REAL          SW(20)        ! Soil water content             #
       REAL          SWDF          ! Soil water deficit factor 0-1  #
       REAL          SWP(0:20)     ! Soil water 'potential'         #
       REAL          SWPLTD        ! Depth for average soil water   cm
@@ -922,7 +922,7 @@
       CHARACTER*6   TCHAR         ! Temporary character string     #
       REAL          TCNP          ! Critical N concentration       %
       REAL          TDAY          ! Temperature during light hours C
-      !REAL          TFAC4         ! Temperature factor function    #
+!     REAL          TFAC4         ! Temperature factor function    #
       INTEGER       TFCOLNUM      ! T-file column number           #
       INTEGER       TFDAP         ! T-file days after planting     #
       INTEGER       TFDAPCOL      ! T-file DAP column #            #
@@ -954,14 +954,14 @@
       REAL          TILWT         ! Tiller weight                  g/s
       REAL          TKILL         ! Temperature for plant death    C
       REAL          TKLF          ! Temperature for leaf kill      C
-      !CHARACTER*10  TL10FROMI     ! Temporary line from integer    text
+!     CHARACTER*10  TL10FROMI     ! Temporary line from integer    text
       INTEGER       TLIMIT        ! Number of days temp limited gr #
       CHARACTER*180 TLINEGRO      ! Temporary line from GRO file   text
       INTEGER       TLINENUM      ! Temporary var,# lines in tfile #
       CHARACTER*180 TLINET        ! Temporary line from T-file     text
       CHARACTER*180 TLINETMP      ! Temporary line                 #
       INTEGER       TLPOS         ! Position on temporary line     #
-      !REAL          TMAX          ! Temperature maximum            C
+!     REAL          TMAX          ! Temperature maximum            C
       REAL          TMAXAV(0:9)   ! Average maximum temp in phase  C
       REAL          TMAXM         ! Temperature maximum,monthly av C
       REAL          TMAXSUM       ! Temperature maximum,summed     C
@@ -976,7 +976,7 @@
       REAL          TMEAND(20)    ! Temperature mean,specific day  C
       REAL          TMEANNUM      ! Temperature means in sum       #
       REAL          TMEANS        ! Temperature mean under snow    C
-      !REAL          TMIN          ! Temperature minimum            C
+!     REAL          TMIN          ! Temperature minimum            C
       REAL          TMINAV(0:9)   ! Average minimum temp in phase  C
       REAL          TMINM         ! Temperature minimum,monthly av C
       REAL          TMINN         ! Temperature min during season  C
@@ -984,7 +984,7 @@
       REAL          TMINSUMP      ! Tmin sum in phase              oC
       REAL          TMINSUMP0     ! Tmin sum for growth cycle      oC
       REAL          TMNC          ! Tmin cumulative                oC 
-      !INTEGER       TN            ! Treatment number               #
+!     INTEGER       TN            ! Treatment number               #
       CHARACTER*25  TNAME         ! Treatment name                 text
       REAL          TNAMM         ! Total N at maturity,measured   kg/ha
       CHARACTER*10  TNCHAR        ! Treatment number,characters    text
@@ -1010,7 +1010,7 @@
       REAL          TNUMLOSS      ! Tillers lost through death     #/p
       INTEGER       TNUMOUT       ! Tiller # warning op counter    #
       REAL          TNUMT         ! Shoot number from t file       #/m2
-      !REAL          TOTIR         ! Total irrigation during cycle  mm 
+!     REAL          TOTIR         ! Total irrigation during cycle  mm 
       REAL          TRDV1(4)      ! Temp response,development 1    #
       REAL          TRDV2(4)      ! Temp response,development 2    #
       REAL          TRGEM(4)      ! Temp response,germ.emergence   #
@@ -1024,7 +1024,7 @@
       REAL          TRPHS(4)      ! Temp response,photosynthesis   #
       CHARACTER*40  TRUNNAME      ! Treatment+run composite name   text
       REAL          TRVRN(4)      ! Temp response,vernalization    #
-      !REAL          TRWUP         ! Total water uptake,potential   cm
+!     REAL          TRWUP         ! Total water uptake,potential   cm
       INTEGER       TSDAP         ! Terminal spkelet date          #
       INTEGER       TSDAPM        ! Terminal spkelet date,measured #
       INTEGER       TSDAT         ! Terminal spkelet date          #
@@ -1043,14 +1043,14 @@
       INTEGER       TVI2          ! Temporary integer variable     #
       INTEGER       TVI3          ! Temporary integer variable     #
       INTEGER       TVI4          ! Temporary integer variable     #
-      !INTEGER       TVICOLNM      ! Column number function output  #
-      !INTEGER       TVILENT       ! Temporary integer,function op  #
+!     INTEGER       TVICOLNM      ! Column number function output  #
+!     INTEGER       TVILENT       ! Temporary integer,function op  #
       REAL          TVR1          ! Temporary real variable        #
       REAL          TVR2          ! Temporary real variable        #
       REAL          TVR3          ! Temporary real variable        #
       REAL          TVR4          ! Temporary real variable        #
       REAL          TVR5          ! Temporary real variable        #
-      !REAL          UH2O(NL)      ! Uptake of water                cm/d
+!     REAL          UH2O(NL)      ! Uptake of water                cm/d
       REAL          VALUE(SUMNUM) ! Value of variable passed       #
       INTEGER       VALUEI        ! Output from Getstri function   #
       REAL          VALUER        ! Output from Getstrr function   #
@@ -1107,7 +1107,7 @@
       REAL          WFTL          ! Water factor,tillering,lower   #
       REAL          WFTU          ! Water factor,tillering,upper   #
       CHARACTER*10  WHSTGNAM(20)  ! Wheat stage names              text
-      !REAL          WINDSP        ! Wind speed                     km/d
+!     REAL          WINDSP        ! Wind speed                     km/d
       REAL          WUPR          ! Water pot.uptake/demand        #
       REAL          XDEP          ! Depth to bottom of layer       cm
       REAL          XDEPL         ! Depth to top of layer          cm
@@ -1116,7 +1116,7 @@
       REAL          XSTAGE        ! Stage of development           #
       REAL          XSTAGEFS      ! Xstage when final sen started  #
       REAL          XSTAGEP       ! Stage of development,previous  #
-      !INTEGER       YEAR          ! Year                           #
+!     INTEGER       YEAR          ! Year                           #
       INTEGER       YEARCOL       ! Colum number for year data     #
       INTEGER       YEARDOY       ! Year+Doy (7digits)             #
       INTEGER       YEARHARF      ! Harvest year+doy,fixed         #
@@ -1125,21 +1125,21 @@
       INTEGER       YEARSIM       ! Year+Doy for simulation start  #
       INTEGER       YRHARF        ! Harvest date,fixed             #
       CHARACTER*1   YRHARFF       ! Year+Doy flag for message      text
-      !INTEGER       YEARPLTCSM    ! Year+Doy,planting date,CSM     #
+!     INTEGER       YEARPLTCSM    ! Year+Doy,planting date,CSM     #
       REAL          YSTAGE        ! Previous Zadoks calc variable  # 
-      !REAL          YVAL1         ! Output from array function     #
-      !REAL          YVALXY        ! Y value from function          #
+!     REAL          YVAL1         ! Output from array function     #
+!     REAL          YVALXY        ! Y value from function          #
       REAL          ZS2           ! Previous Zadoks calc variable  #
       REAL          ZS3           ! Previous Zadoks calc variable  #
       REAL          ZS4           ! Previous Zadoks calc variable  # 
       REAL          ZSTAGE        ! Zadoks stage of development    #
       REAL          ZSTAGEP       ! Zadoks stage,previous day      #
  
-      ! Variables expressed on a per hectare basis
-      ! Inputs
+!      Variables expressed on a per hectare basis
+!      Inputs
       REAL          AMTNIT        ! Cumulative amount of N applied kg/ha
       REAL          ANFER(200)    ! N amount in fertilizer appln   kg/ha
-      ! Outputs
+!      Outputs
       REAL          CHRSWAD       ! Chaff reserves                 kg/ha
       REAL          CNAA          ! Canopy N at anthesis           kg/ha
       REAL          CWAA          ! Canopy weight at anthesis      kg/ha
@@ -1163,14 +1163,14 @@
       REAL          LSHWADOUT     ! Leaf sheath weight for output  kg/ha
       REAL          LSHRSWAD      ! Leaf sheath reserves weight    kg/ha
       REAL          RESCAL(0:20)  ! Residue C at harvest,by layer  kg/ha
-      !REAL          RESCALG(0:20) ! Residue C added,by layer       kg/ha
-      !REAL          RESLGAL(0:20) ! Residue lignin,harvest,bylayer kg/ha
-      !REAL          RESLGALG(0:20)! Residue lignin added,layer     kg/ha
-      !REAL          RESNAL(0:20)  ! Residue N at harvest by layer  kg/ha
-      !REAL          RESNALG(0:20) ! Residue N added,by layer       kg/ha
+!     REAL          RESCALG(0:20) ! Residue C added,by layer       kg/ha
+!     REAL          RESLGAL(0:20) ! Residue lignin,harvest,bylayer kg/ha
+!     REAL          RESLGALG(0:20)! Residue lignin added,layer     kg/ha
+!     REAL          RESNAL(0:20)  ! Residue N at harvest by layer  kg/ha
+!     REAL          RESNALG(0:20) ! Residue N added,by layer       kg/ha
       REAL          RESPAC        ! Respiration,total,cumulative   kg/ha
-      !REAL          RESWAL(0:20)  ! Residue om added by layer      kg/ha
-      !REAL          RESWALG(0:20) ! Residue om at harvest,by layer kg/ha
+!     REAL          RESWAL(0:20)  ! Residue om added by layer      kg/ha
+!     REAL          RESWALG(0:20) ! Residue om at harvest,by layer kg/ha
       REAL          RNAD          ! Root N                         kg/ha
       REAL          RSNAD         ! Reserve N                      kg/ha
       REAL          RSWAA         ! Reserves weight at anthesis    kg/ha
@@ -1182,14 +1182,14 @@
       REAL          SDRATE        ! Seeding 'rate'                 kg/ha
       REAL          SDWAD         ! Seed weight                    kg/ha
       REAL          SENCAL(0:20)  ! Senesced C,by layer            kg/ha
-      !REAL          SENCALG(0:20) ! Senesced C added,by layer      kg/ha
+!     REAL          SENCALG(0:20) ! Senesced C added,by layer      kg/ha
       REAL          SENCAS        ! Senesced C added to soil       kg/ha
       REAL          SENLGAL(0:20) ! Senesced lignin added,by layer kg/ha
-      !REAL          SENLGALG(0:20)! Senesced lignin added,layer    kg/ha
+!     REAL          SENLGALG(0:20)! Senesced lignin added,layer    kg/ha
       REAL          SENLGAS       ! Senesced lignin added to soil  kg/ha
       CHARACTER*6   SENN0C        ! Senesced N added to litter     kg/ha
       REAL          SENNAL(0:20)  ! Senesced N,by layer            kg/ha
-      !REAL          SENNALG(0:20) ! Senesced N added,by layer      kg/ha
+!     REAL          SENNALG(0:20) ! Senesced N added,by layer      kg/ha
       REAL          SENNAS        ! Senesced N added to soil       kg/ha
       CHARACTER*6   SENNSC        ! Senesced N added to soil       kg/ha
       CHARACTER*6   SENWSC        ! Senesced Wt,soil,output char   kg/ha
@@ -1205,8 +1205,8 @@
       REAL          TBAM          ! Temporary temp base anth-mat   C    
       REAL          TNAD          ! Total nitrogen (tops+roots)    kg/ha
       REAL          TWAD          ! Total weight (tops+roots)      kg/ha
-      !REAL          UNH4ALG(20)   ! Uptake of NH4 N                kg/ha
-      !REAL          UNO3ALG(20)   ! Uptake of NO3 N                kg/ha
+!     REAL          UNH4ALG(20)   ! Uptake of NH4 N                kg/ha
+!     REAL          UNO3ALG(20)   ! Uptake of NO3 N                kg/ha
       REAL          VEFF          ! Vernalization effect,max.reduc fr
       REAL          VNAD          ! Vegetative canopy nitrogen     kg/ha
       REAL          VWAD          ! Vegetative canopy weight       kg/ha
@@ -1216,7 +1216,7 @@
 !      REAL          Nuptake_daily !Daily N uptake (kg [N]/ha)
 !      REAL          NUAD_Y        !Yesterdays cumulative N uptake
 
-      ! Condition at end of phase
+!      Condition at end of phase
       DATA BASTGNAM/'Max Prim  ','End Veg   ','End Ear Gr',
      1              'Bg Gr Fill','End Gr Fil','Harvest   ',
      2              'Sowing    ','Germinate ','Emergence ',
@@ -1252,7 +1252,7 @@
         SEASENDOUT = 'N'  ! Season end outputs flag     
         
         adat = -99
-        !adat10 = -99
+!       adat10 = -99
         adatend = -99
         amtnit = 0.
         awnai = 0.0          ! awns not yet used

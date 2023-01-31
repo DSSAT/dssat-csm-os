@@ -23,14 +23,14 @@ C  Called : CASUPRO
 C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
       SUBROUTINE CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, GRLF, GRSU, KCAN,    !Input
-     &    LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
-     &    MinGr, Ph1P, PhenoStage,                         !Input
-     &    PI1, RATTP, Smax,                                !Input
-     &	    StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
-     &    SumTTStalk, SWFAC, TMIN, XLAI,                   !Input
-     &    YRDOY, YRPLT, YRSIM,                             !Input
-     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)              !Output
+     &    CAB, ECONO, FILECC, FILEGC, KCAN,           !Input
+     &    LeafMaint, LeafNum, LFmntDEF,               !Input
+     &    MinGr, Ph1P, PhenoStage,                    !Input
+     &    PI1, RATTP, Smax,                           !Input
+     &    StalkState, STKmntDEF, STKWT, STKWTP,       !Input
+     &    SumTTStalk, SWFAC, TMIN, XLAI,              !Input
+     &    YRDOY, YRPLT,                               !Input
+     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)         !Output
 
 !OHD -  Include senescence of roots as SRDOT, SRNDOT
 !-----------------------------------------------------------------------
@@ -38,6 +38,7 @@ C========================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE, TABEX, TIMDIF
       SAVE
 
       CHARACTER*1  RNMODE  
@@ -50,7 +51,7 @@ C========================================================================
 
       INTEGER I, II, CAB, LUNCRP, LUNECO, ERR, ISECT, LNUM, Zone 
       INTEGER DYNAMIC, Smax, Stalk, TIMDIF
-      INTEGER DAS, YRDOY, YRPLT, YRSIM
+      INTEGER DAS, YRDOY, YRPLT !, YRSIM
       INTEGER FOUND
       INTEGER NSWAB
 	INTEGER DAP, REPNO, RUN, LUN
@@ -61,7 +62,7 @@ C========================================================================
 
       PARAMETER (NSWAB = 5)
 
-      REAL a, GRLF, GRSU  
+      REAL a  !, GRLF, GRSU  
       REAL KCAN, MinGr, Ph1P, PI1  
       REAL PORLOST, RATTP 
       REAL SENDAY, SLNDOT   
@@ -74,10 +75,10 @@ C========================================================================
 
 	REAL, DIMENSION(1:NumOfStalks) :: SenLfCld, 
      &                SenLfNat, SenLfShd, SenLfWat, SLDOT,  
-     &                SuDEF, TotalDEF, CanopyMaint
+     &                TotalDEF, CanopyMaint  !SuDEF, 
 	REAL, DIMENSION(0:NumOfDays) :: STKWTP          
-	REAL, DIMENSION(0:NumOfDays, NumOfStalks) :: LeafArea, LeafNum, 
-     &                STKmntDEF, STKWT, SumTTStalk
+	REAL, DIMENSION(0:NumOfDays, NumOfStalks) :: LeafNum, 
+     &                STKmntDEF, STKWT, SumTTStalk  !LeafArea, 
 	REAL, DIMENSION(1:NumOfStalks,CanopyLayers) :: CanopySenes,
      &                LeafMaint, LFmntDEF 
 	!LOGICAL FEXIST

@@ -19,10 +19,9 @@ C=======================================================================
      &    FILEP, PATHPE, ISWDIS,                          !Input
      &    PCPID, PCTID, PDCF1, PID)                       !Output
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs  
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE, ERROR
       SAVE
 !-----------------------------------------------------------------------
 
@@ -43,8 +42,6 @@ C=======================================================================
       INTEGER PCTID(MAXPEST)
 
       REAL PDCF1(MAXPEST,6)
-      
-!      LOGICAL EOF
 
       PARAMETER  (BLANK  = ' ')
       PARAMETER  (ERRKEY = 'IPPARM')
@@ -85,8 +82,6 @@ C----------------------------------------------------------------------
 C     Read each line of coefficient file, checking for comments
 C     or blank lines using the subroutine IGNORE.
 C----------------------------------------------------------------------
-!     EOF not portable. CHP 7/24/2007
-!     DO WHILE (.NOT. EOF(LUN))
       DO WHILE (ERRNUM == 0)
         CALL IGNORE(LUN,LNUM,ISECT,C200)
         IF (ISECT .EQ. 0) THEN

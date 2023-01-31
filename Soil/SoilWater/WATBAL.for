@@ -36,6 +36,8 @@ C  06/12/2002 CHP/US  Added flooded field options
 !  04/05/2006 CHP Added mixing of SW and variable soil layer depths
 !                 due to tillage
 !  04/10/2021 GH Corrected snowfall for very small amounts
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called by: SOIL module
 C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.for)
@@ -60,7 +62,7 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
      &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
-     &  SOILMIXING, SUMSW
+     &  SOILMIXING, SUMSW, WTDEPT
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:

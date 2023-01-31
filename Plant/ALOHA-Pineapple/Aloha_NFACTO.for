@@ -60,7 +60,9 @@
 
       NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)
       NFAC   = AMIN1 (NFAC,1.0)
-      IF (ISTAGE .EQ. 5 .OR. ISTAGE .EQ. 6) THEN        !IF (ISTAGE .EQ. 3 .OR. ISTAGE .EQ. 4) THEN  JVJ Value changed because 2 stages in vegetative phase were included
+!     JVJ Value changed because 2 stages in vegetative phase were included
+!     IF (ISTAGE .EQ. 3 .OR. ISTAGE .EQ. 4) THEN  
+      IF (ISTAGE .EQ. 5 .OR. ISTAGE .EQ. 6) THEN        
           NFAC = 1.0 - 1.80*EXP(-3.5*NFAC)
       ENDIF
       NFAC   = AMAX1 (NFAC,0.001)

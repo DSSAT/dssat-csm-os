@@ -14,15 +14,16 @@ C  02/25/2012 JZW PHINT from CUL file (remove from SPE)
 !  07/01/2012 CHP remove IPCREATE
 C=======================================================================
 
-      SUBROUTINE RI_IPCROP (FILEC, PATHCR, CROP, 
+      SUBROUTINE RI_IPCROP (FILEC, PATHCR, !CROP, 
      &    CO2X, CO2Y, MODELVER, PORMIN, 
        !&    CO2X, CO2Y, MODELVER, PHINT, PORMIN, 
      &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
 
       IMPLICIT    NONE
+      EXTERNAL GETLUN, ERROR
       SAVE
 
-      CHARACTER*2 CROP
+!     CHARACTER*2 CROP
       CHARACTER*4 ACRO(9)
       CHARACTER*6, PARAMETER :: ERRKEY = 'RI_IPC'
       CHARACTER   BLANK*1,FILEC*12,PATHCR*80,CHAR*180,FILECC*92
@@ -32,7 +33,7 @@ C=======================================================================
 
       REAL PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC
       ! REAL PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC
-      REAL, DIMENSION(10) :: CO2X, CO2Y, CO2X1, CO2Y1
+      REAL, DIMENSION(10) :: CO2X, CO2Y   !, CO2X1, CO2Y1
 
 !     LOGICAL EOF
       

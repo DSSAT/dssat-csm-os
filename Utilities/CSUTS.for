@@ -231,6 +231,7 @@
       ! Generates values for environmental adjustments from input string
 
       IMPLICIT NONE
+      EXTERNAL ltrim, Tvilent, GETLUN
 
       CHARACTER (LEN=*)  facadj(10), fac(10)
       REAL               adj(10)
@@ -321,6 +322,7 @@
       USE OSDefinitions
 
       IMPLICIT NONE
+      EXTERNAL Getstr, Tvilent, Ucase, GETLUN
 
       CHARACTER (LEN=80) tline
       CHARACTER (LEN=2)  tl2
@@ -393,13 +395,14 @@
       ! in header of file.
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, TVILENT
 
       CHARACTER (LEN=*)    DIRFILE, VCODE
       CHARACTER (LEN=80)   TLINE
-      CHARACTER (LEN=30)   TLINE2
+!     CHARACTER (LEN=30)   TLINE2
       CHARACTER (LEN=1)    COLON
       INTEGER              L,FNUMERR,FNUMTMP,TVILENT,ERRNUM
-      LOGICAL              FFLAG,FOPEN
+      LOGICAL              FFLAG  !,FOPEN
 
 !      INTRINSIC EOF   !portability
 
@@ -481,6 +484,7 @@
       ! Returns start position for specified string in line
 
       IMPLICIT NONE
+      EXTERNAL Getstr1
 
       CHARACTER (LEN=*)  tline
       CHARACTER (LEN=30) value
@@ -501,6 +505,7 @@
       ! Returns integer for specifed position in line
 
       IMPLICIT NONE
+      EXTERNAL Getstr1, TVIFROMC
 
       CHARACTER (LEN=*)  tline
       CHARACTER (LEN=10) value
@@ -522,6 +527,7 @@
       ! Returns real for specified position in line
 
       IMPLICIT NONE
+      EXTERNAL Getstr1, TVRFROMCCDE, TVRFROMC
 
       CHARACTER (LEN=*)  tline
       CHARACTER (LEN=10) value
@@ -545,6 +551,7 @@
       ! Returns variable string for specifed position in line
 
       IMPLICIT NONE
+      EXTERNAL Getstr1
 
       CHARACTER (LEN=*) tline,value
       INTEGER           number,epos,spos
@@ -563,6 +570,7 @@
       ! Returns variable string for specifed position in line
 
       IMPLICIT NONE
+      EXTERNAL tvinstr
 
       CHARACTER (LEN=*) tline, value
       INTEGER           number,pos1,pos2,i,loc,switch,spos,epos
@@ -642,6 +650,7 @@
       ! Reads a character string and returns individual components
 
       IMPLICIT NONE
+      EXTERNAL Tvilent
 
       INTEGER            ncol,l,istart,iend,i,l1,loop
       INTEGER            ineg,LENLINE,TVILENT,LENLINET
@@ -719,6 +728,7 @@
       ! Reads a character string and returns values to max of 20 items
 
       IMPLICIT NONE
+      EXTERNAL Tvilent
 
       INTEGER            ncol,l,istart,iend,i,l1,loop,ineg
       INTEGER            LENLINE,TVILENT,LENLINET,I2
@@ -824,6 +834,7 @@
       ! Left trims a character variable
 
       IMPLICIT NONE
+      EXTERNAL Tvilent, Getlun
 
       CHARACTER (LEN=*)   tchar
       CHARACTER (LEN=500) tchar2
@@ -873,6 +884,7 @@
       ! Left trims a character variable - used when string passed
 
       IMPLICIT NONE
+      EXTERNAL Tvilent
 
       CHARACTER(*)  tchar, tchar2
       INTEGER       l,i,k,tvilent
@@ -903,6 +915,7 @@
       ! Standardises variables along a string to widthc spaces each
 
       IMPLICIT NONE
+      EXTERNAL Tvilent, Tvifromc, Getlun
 
       CHARACTER (LEN=*)  tlinein,tlineout,widthc
       INTEGER            i,j,l,itmp,tvilent,blanks,width,tvifromc
@@ -1012,6 +1025,7 @@
       ! soil files.
 
       IMPLICIT NONE
+      EXTERNAL Tvilent, Tvifromc, Getlun, ltrim
 
       CHARACTER (LEN=1000) tlinetmp, atline, tlinein, tlineout
       CHARACTER (LEN=52)   tcharout
@@ -1019,9 +1033,8 @@
       CHARACTER (LEN=*)    tlineini, atlinein, widthc
       INTEGER              i,j,k,l,itmp,tvilent,blanks,width,start
       INTEGER              tvifromc,lenout,lenafter,kk,lendata
-      INTEGER              lentchar,fnumerr,enddot
-      !INTEGER              fnumwrk
-      LOGICAL              FOPEN         
+      INTEGER              lentchar,fnumerr,enddot  !fnumwrk,
+!     LOGICAL              FOPEN         
 
       INTRINSIC            CHAR,LEN,MAX0,MIN,MIN0
 
@@ -1212,6 +1225,7 @@
       ! Finds where first character on line is positioned
 
       IMPLICIT NONE
+      EXTERNAL Tvilent
 
       CHARACTER (LEN=*) tchar
       INTEGER           l,i,k,tvilent
@@ -1239,6 +1253,7 @@
       ! Returns the upper case of a string
 
       IMPLICIT  NONE
+      EXTERNAL Tvilent, ltrim, Tl1upcase
 
       CHARACTER (LEN=*) inchar
       CHARACTER (LEN=1) tl1upcase
@@ -1262,6 +1277,7 @@
       ! Returns the upper case of a string
 
       IMPLICIT  NONE
+      EXTERNAL Tvilent, ltrim, Tl1upcase
 
       CHARACTER (LEN=*) inchar
       CHARACTER (LEN=1) tl1upcase
@@ -1364,6 +1380,7 @@
       !  Looks up data from 'table'
 
       IMPLICIT NONE
+      EXTERNAL Getlun
 
       INTEGER   K,J,FNUMERR
       REAL      VAL(K),ARG(K),DUMMY,CSTABEX,CS
@@ -1400,6 +1417,7 @@
       ! Increases or decrease date (no restriction to 365 days)
 
       IMPLICIT NONE
+      EXTERNAL YR_DOY
 
       INTEGER NDYR, AYR, ADOY, ADATE, DELTA, CSENDYR, CSINCDAT
 
@@ -1529,7 +1547,8 @@
 
       IMPLICIT NONE
 
-      INTEGER   CSDOC,DOY1,DOY2,YR1,YR2,YRDOY1,YRDOY2,YRDOY1IN,YRDOY2IN
+!     INTEGER   CSDOC,DOY1,DOY2,YR1,YR2,YRDOY1,YRDOY2,YRDOY1IN,YRDOY2IN
+      INTEGER   DOY1,DOY2,YR1,YR2,YRDOY1,YRDOY2,YRDOY1IN,YRDOY2IN
       INTEGER   CSTIMDIF
       INTEGER   NLEAP,DOC1,DOC2
 
@@ -1572,9 +1591,10 @@
       ! Calculates days after planting from date and planting DATA
 
       IMPLICIT NONE
+      EXTERNAL CSTIMDIF
 
-      INTEGER   dapcalc,datein,year,day,yeartmp,dateinwr,dateinadj
-      INTEGER   pdoy,pdoyin,pyr,pyrin,pyeardoyin,cstimdif
+      INTEGER   dapcalc,datein,dateinadj !day,yeartmp,dateinwr,year,
+      INTEGER   pdoyin,pyrin,pyeardoyin,cstimdif  !pdoy,pyr,
 
       SAVE
 
@@ -1614,9 +1634,9 @@
 
       IMPLICIT NONE
 
-      REAL      tfac4,tcard(4),temp,tunit,topt,tfacbeta
+      REAL      tcard(4),temp,tunit,topt,tfacbeta  !tfac4,
 !      INTEGER   fnumwrk
-      LOGICAL   fopen
+!     LOGICAL   fopen
 
       INTRINSIC AMAX1,AMIN1
 
@@ -1841,6 +1861,7 @@
       ! Reads a character string and returns column # for identifier
 
       IMPLICIT NONE
+      EXTERNAL Tvilent
 
       CHARACTER (LEN=*)   header,tl
       CHARACTER (LEN=254) tl2541
@@ -1950,6 +1971,7 @@
       ! Returns number of strings in a line
 
       IMPLICIT NONE
+      EXTERNAL Tvilent
 
       CHARACTER (LEN=*) tline
       INTEGER           tvinstr,i,n,tint,tvilent,switch,psw
@@ -1979,13 +2001,14 @@
       ! Change character string to an integer
 
       IMPLICIT NONE
+      EXTERNAL Tvilent, Getlun, WARNING
 
       CHARACTER (LEN=*)  charnum
       CHARACTER (LEN=10) newchar
       CHARACTER (LEN=78) message(10)
       INTEGER            number,pos,i,lenchar,tvifromc,tvilent,fnumerr
-!      INTEGER            fnumwrk
-      LOGICAL            fopen
+!     INTEGER            fnumwrk
+!     LOGICAL            fopen
 
       SAVE
 
@@ -2090,6 +2113,7 @@
       ! Change character string to a real
 
       IMPLICIT NONE
+      EXTERNAL Tvilent, Getlun, WARNING
 
       CHARACTER (LEN=*)  charnum
       CHARACTER (LEN=10) newchar
@@ -2097,7 +2121,7 @@
       INTEGER            pos,i,lenchar,tvilent,fnumerr
 !      INTEGER            fnumwrk
       REAL               tvrfromc,number
-      LOGICAL            fopen
+!     LOGICAL            fopen
 
       SAVE
 
@@ -2197,6 +2221,7 @@
       ! Change character string to a real
 
       IMPLICIT NONE
+      EXTERNAL Tvilent, Getlun, WARNING
 
       CHARACTER (LEN=*)  charnum,code
       CHARACTER (LEN=10) newchar
@@ -2204,7 +2229,7 @@
       INTEGER            pos,i,lenchar,tvilent,fnumerr
 !      INTEGER            fnumwrk
       REAL               tvrfromc,number,tvrfromccde
-      LOGICAL            fopen
+!     LOGICAL            fopen
 
       SAVE
 
@@ -2333,6 +2358,7 @@
       ! Changes integer to character
 
       IMPLICIT NONE
+      EXTERNAL Tvilent, ltrim
 
       CHARACTER (LEN=10) tl10fromi
       CHARACTER (LEN=80) tchar
@@ -2386,6 +2412,7 @@
       ! Y value corresponding to input x
 
       IMPLICIT NONE
+      EXTERNAL Getlun
 
       INTEGER i,l,n,fnumerr
       REAL    xyvals(10,2),xval,yval
@@ -2442,6 +2469,7 @@
       ! Y value corresponding to input x using two input arrays
 
       IMPLICIT NONE
+      EXTERNAL Getlun
 
       REAL    xarray(10),yarray(10),yvalxy,xval
       INTEGER n,l,i,fnumerr
@@ -2502,6 +2530,7 @@
       ! are given at values that equal the indices of the y array.
 
       IMPLICIT NONE
+      EXTERNAL Tvifromc, GETLUN
 
       INTEGER           l,n,lower,upper,xvali,tvifromc,adjust,fnumerr
       INTEGER           loweradj,upperadj,xvaliadj,lowerpos,upperpos
@@ -2572,6 +2601,7 @@
       SUBROUTINE CSFIND(LUNUM,NAME,LNUM,FOUND)
 
       IMPLICIT NONE
+      EXTERNAL CSUPCASE
 
       INTEGER           FOUND,I,LNUM,LUNUM
       CHARACTER (LEN=6) SECTION,NAME
@@ -2660,6 +2690,7 @@
       USE OSDefinitions
 
       IMPLICIT NONE
+      EXTERNAL Tvilent, GETLUN, Finddir
 
       CHARACTER (LEN=*)   WTHSTA
       CHARACTER (LEN=128) ARG
@@ -2800,6 +2831,7 @@
       ! Returns number of layers in soil from array of layer bases
 
       IMPLICIT NONE
+      EXTERNAL TVRFROMCCDE, TVRFROMC
 
       CHARACTER (LEN=*)  ASIZE
       REAL               ARRAY(*), TVR1, TVRFROMC, TVRFROMCCDE
@@ -2833,6 +2865,7 @@
       ! Returns depth of soil profile
 
       IMPLICIT NONE
+      EXTERNAL TVRFROMCCDE, TVRFROMC
 
       CHARACTER (LEN=*)  ASIZE
       REAL               ARRAY(*), TVR1, TVRFROMC, SLDEPTH, TVRFROMCCDE
@@ -2862,6 +2895,7 @@
       ! Returns number of layers from an array of values
 
       IMPLICIT NONE
+      EXTERNAL TVRFROMCCDE, TVRFROMC
 
       CHARACTER (LEN=*)  ASIZE
       REAL               ARRAY(*), TVR1, TVRFROMC, TVRFROMCCDE
@@ -2946,6 +2980,7 @@
       FUNCTION CSCURV(CTYPE,XB,X1,X2,XM,X)
 
       IMPLICIT NONE
+      EXTERNAL Getlun
 
       CHARACTER (LEN=3) CTYPE
       REAL              CSCURV,XB,X1,X2,XM,X
@@ -3043,6 +3078,7 @@
       ! From Interpolate function in original Cassava model
 
       IMPLICIT NONE
+      EXTERNAL Getlun
 
       REAL     X,X1,Y1,X2,Y2
       INTEGER  FNUMERR

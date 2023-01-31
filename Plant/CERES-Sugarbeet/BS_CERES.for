@@ -14,7 +14,8 @@
 !----------------------------------------------------------------------
 !  Revision history
 !  06/15/2022 CHP Added CropStatus
-!
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !----------------------------------------------------------------------
 !  Called : Alt_Plant
 !----------------------------------------------------------------------
@@ -348,7 +349,7 @@ C----------------------------------------------------------------------
 
           CALL BS_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    PCNL, PLTPOP, PODNO, PODWT, RLV, RSTAGE, !PSTRES1, PSTRES2, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
@@ -361,9 +362,9 @@ C----------------------------------------------------------------------
           CALL BS_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, PODWT,                   !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
-     &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
+     &    TOPWT, TURFAC,WTNCAN, WTNUP, XLAI, XN,          !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
      &    BWAH, SDWTAH)                                   !Output
 
@@ -444,7 +445,7 @@ C-----------------------------------------------------------------------
 
           CALL BS_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    PCNL, PLTPOP, PODNO, PODWT, RLV, RSTAGE, !PSTRES1, PSTRES2, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
@@ -458,9 +459,9 @@ C-----------------------------------------------------------------------
           CALL BS_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, PODWT,                   !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
-     &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
+     &    TOPWT, TURFAC,WTNCAN, WTNUP, XLAI, XN,          !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
      &    BWAH, SDWTAH)                                   !Output
 
@@ -606,7 +607,7 @@ C----------------------------------------------------------------------
 
       CALL BS_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    PCNL, PLTPOP, PODNO, PODWT, RLV, RSTAGE, !PSTRES1, PSTRES2, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
@@ -619,9 +620,9 @@ C----------------------------------------------------------------------
       CALL BS_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, PODWT,                   !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
-     &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
+     &    TOPWT, TURFAC,WTNCAN, WTNUP, XLAI, XN,          !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
      &    BWAH, SDWTAH)                                   !Output
 
@@ -669,7 +670,7 @@ C----------------------------------------------------------------------
   
         CALL BS_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    PCNL, PLTPOP, PODNO, PODWT, RLV, RSTAGE, !PSTRES1, PSTRES2, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &    WTSO, XLAI, YRPLT)
@@ -682,9 +683,9 @@ C----------------------------------------------------------------------
         CALL BS_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, PODWT,                   !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
-     &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
+     &    TOPWT, TURFAC,WTNCAN, WTNUP, XLAI, XN,          !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
      &    BWAH, SDWTAH)                                   !Output
 

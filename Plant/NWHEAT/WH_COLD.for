@@ -26,16 +26,17 @@ C Call from nwheats_phase:
 !*!      nwheats_vfac
 C-----------------------------------------------------------------------
 C=======================================================================
-      SUBROUTINE WH_COLD (CONTROL, ISWITCH, FILEIO, IDETO,        !Input
-     &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
-     &    tempcr, tiln, VSEN, weather,                            !Input
-     &    YRDOY, !YRPLT, TMAX, TMIN,                              !Input
-     &    pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,         !Input/Outpt
-     &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
+      SUBROUTINE WH_COLD (CONTROL, ISWITCH, FILEIO,        !Input !IDETO
+     &    istage, leafno, PLTPOP,  VREQ, tbase,            !Input
+     &    tempcr, tiln, VSEN, weather,                     !Input
+!    &   !YRDOY, YRPLT, TMAX, TMIN,                        !Input
+     &    pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,  !In/Out
+     &    nwheats_vfac, sen_la, vd, vd1, vd2)              !Output
 C-----------------------------------------------------------------------
       USE ModuleDefs
       USE WH_module
       IMPLICIT NONE
+      EXTERNAL SNOWFALL, WARNING
       SAVE
 C----------------------------------------------------------------------
 
@@ -48,22 +49,23 @@ C  FSR added coefficients from WHAPS cultivar file
       REAL        cumvd
       REAL        frost_fr
       REAL        frost_temp
-      PARAMETER   (frost_temp = -6.0)  !Nwheat using Tthrshld to replace frost_temp
+!     Nwheat using Tthrshld to replace frost_temp
+      PARAMETER   (frost_temp = -6.0)  
       Real        Tthrshld, frostf, crownT
-      REAL        GRNO
+!     REAL        GRNO
       REAL        hi     ! Hardening Index ??  (deduced from context)
       REAL        hti    ! Total Hardening Index ??
       PARAMETER   (hti = 1.0)  ! from NWheat 
       REAL        maxsen
       REAL        nwheats_vfac
-      REAL        P5 
+!     REAL        P5 
       REAL        pl_la
       REAL        PLTPOP   !plant density per m2
       REAL        plsc(20) !Plant leaf area array by phylochron interval
-      REAL        PPSEN
+!     REAL        PPSEN
       REAL        VREQ
       REAL RAIN, WATAVL
-      REAL        RGFI
+!     REAL        RGFI
       REAL        sen_la  !Senesced leaf area for plant (NWheat)
       REAL        snow 
       integer     SNOWky
@@ -78,22 +80,22 @@ C  FSR added coefficients from WHAPS cultivar file
       REAL        vd2
       REAL        vfac
       REAL        VSEN
-      REAL        XLAT
-      INTEGER     DAP 
+!     REAL        XLAT
+!     INTEGER     DAP 
       INTEGER     istage
       INTEGER     leafno
-      INTEGER     YRDOY     
+!     INTEGER     YRDOY     
       CHARACTER*30 FILEIO  
-      CHARACTER*1  IDETO  
+!     CHARACTER*1  IDETO  
       CHARACTER*1  ISWWAT
       CHARACTER*78 MSG(10)
-      INTEGER MDATE, TIMDIF
-      !     ------------------------------------------------------------------
+!     INTEGER MDATE, TIMDIF
+!           ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
-      Type (ResidueType) SENESCE
+!     Type (ResidueType) SENESCE
       TYPE (WeatherType) WEATHER   
 
 !     Transfer values from constructed data types into local variables.
@@ -218,14 +220,15 @@ cbak "dehardening" proceeds at twice the sspeed in stage 2 hardening
  
       endif
       
-      !Prevent negative values in cold weather scenarios (TF - 01/18/2022)
+!      Prevent negative values in cold weather scenarios (TF - 01/18/2022)
       hi = MAX(hi,0.0) 
 C-----------------------------------------------------------------------
 ! Senesce leaf area due to frost
 C-----------------------------------------------------------------------
       if (istage .ge. emergence .and. istage .le. mature) then
+!       JZW change July, 2015, replace frost_temp by Tthrshld in *.spe 
         !if (TMIN .lt. frost_temp) then !APSIM code
-        if (TMIN .le. Tthrshld)  then !JZW change July, 2015, replace frost_temp by Tthrshld in *.spe 
+        if (TMIN .le. Tthrshld)  then 
  !            snow = 0.0 !APSIM code 
 cbak this next function appears to have a bug in it !!!!!!
 cbak temporarily replaced ..... i know the code is a mess !!!!!!!!!!
@@ -245,7 +248,7 @@ cbak   note hardening is inoperative
           else ! turn off snow effect switch frostf will not be used??
                !  ! 10 % of leaf area frosted for every degree less
                !frost_fr = (0.0-TMIN - 5) * 0.10 !APSIM code
-               frost_fr = (0.0-TMIN - 5) * frostf !JZW changed in July, 2015
+               frost_fr = (0.0-TMIN - 5) * frostf !JZW changed July 2015
           endif
  
 !*!         frost_fr = bound (frost_fr, 0.0, 0.96)
@@ -293,8 +296,9 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 
       if (istage .ge. emergence .and. istage .le. mature) then
+!        JZW replace frost_temp by Tthrshld in *.spe July 2015
          !if (TMIN .le. frost_temp) then apsim code
-         if (TMIN .le. Tthrshld)  then !JZW replace frost_temp by Tthrshld in *.spe July 2015
+         if (TMIN .le. Tthrshld)  then 
             ! it is cold enough to frost tillers depending on cold
             ! hardiness of the plant
 !*!            call nwheats_crown_temp (tempcn, tempcx)
@@ -306,10 +310,10 @@ C-----------------------------------------------------------------------
  
             if (temkil .gt. tempcr) then
                if (tiln .ge. 1.) then
-                  ! Prevent negative values in cold weather scenarios (TF - 01/18/2022)
+!                   Prevent negative values in cold weather scenarios (TF - 01/18/2022)
                   if(tempcr - temkil .gt. 0.0) then
                      tiln = tiln * (0.9 - 0.02 * (tempcr - temkil)**2)
-                     !tiln = tiln * (0.9 - crownT * (tempcr - temkil)**2)
+!                    tiln = tiln * (0.9 - crownT * (tempcr - temkil)**2)
                   else
                      tiln = 0
                   endif
@@ -322,9 +326,9 @@ C-----------------------------------------------------------------------
                if (tiln .lt. 1.) then
                   write (MSG(1),*) 'Killing tillers due to frost'
                   CALL WARNING(1,"NWheat",MSG)
-                 ! PLTPOP = PLTPOP * (0.95 - 0.02 * (tempcr - temkil)**2)
+!                 PLTPOP = PLTPOP * (0.95 - 0.02 * (tempcr - temkil)**2)
                   PLTPOP = PLTPOP*(0.95 - crownT * (tempcr - temkil)**2)
-                  ! Fixed PLTPOP of reaching negative values in extreme cold weather (TF - 01/18/2022)
+!                 Fixed PLTPOP of reaching negative values in extreme cold weather (TF - 01/18/2022)
                   IF (PLTPOP .LT. 0.0) THEN 
                      PLTPOP = 0
                   ENDIF
@@ -370,7 +374,8 @@ C-----------------------------------------------------------------------
        endif
 C-----------------------------------------------------------------------
       ENDIF
-      RETURN ! JZW strong: when vfacac=1.007694,nwheats_vfac=1, but when return nwheats_vfac=1.007694??  
+!     JZW strong: when vfacac=1.007694,nwheats_vfac=1, but when return nwheats_vfac=1.007694??  
+      RETURN 
       END SUBROUTINE WH_COLD
 
 C-----------------------------------------------------------------------

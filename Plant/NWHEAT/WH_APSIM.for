@@ -29,6 +29,8 @@ C ALL RIGHTS RESERVED
 !  06/08/2011 FSR NWheat migration to DSSAT based on MZ_CERES  
 !  07/21/2017 WP  Changes for pest damage
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !----------------------------------------------------------------------
 !  Called by: Plant
 !----------------------------------------------------------------------
@@ -36,13 +38,17 @@ C The statements begining with !*! are refer to APSIM source codes
 
 
       SUBROUTINE WH_APSIM (CONTROL, ISWITCH,              !Input
-     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,    !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3,               !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, rlv_nw,               !Output
      &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
      &     UNH4, UNO3, XLAI, XHLAI, UH2O, CropStatus)     !Output
+
+! 2023-01-17 chp removed unused variables
+!  SKi_Avail,
+
 !        JZW note: KCAN/KEP  ic calculated in WH_PHENO. RWUMX is not used 
 !        PUptake/FracRts is not calculated for Nwheat, 
       USE ModuleDefs
@@ -183,7 +189,7 @@ C The statements begining with !*! are refer to APSIM source codes
       CHARACTER*10    STNAME(20)      
       REAL            STMWTO
       REAL            sumstgdtt(20) !Sum of GDD for a given istage       
-      REAL            SUMDTT     
+!     REAL            SUMDTT     
       REAL            SUMP        
       REAL            SW(NL)     
       REAL            SWFAC    
@@ -230,7 +236,7 @@ C The statements begining with !*! are refer to APSIM source codes
       INTEGER         YREMRG   
       INTEGER         YRPLT 
       INTEGER         YRSIM    
-!      REAL            Z2STAGE
+!     REAL            Z2STAGE
       REal GAD2 ! Grain# if there wwas no temperature effect
 
 !     Added by W.D.B. for pest damage at CIMMYT 4/14/2001
@@ -251,7 +257,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
 
 !     Added for K model   
-      REAL KUptake(NL), SKi_AVAIL(NL), KSTRES
+      REAL KUptake(NL), KSTRES  !, SKi_AVAIL(NL)
       
       REAL cumph_nw(11) ! add by JZW
 
@@ -406,21 +412,21 @@ C-----------------------------------------------------------------------
           !-------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
-     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
+     &      ASMDOT, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,      !Input
+     &      FracRts, ISTAGE, zstage,                          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
-     &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      nwheats_kvalue,                                   !Input
+     &      OZON7, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,     !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
-     &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
-     &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
+     &      sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,          !Input
+     &      TRWUP, VegFrac, WLIDOT,                           !Input
      &      WRIDOT, WSIDOT, XNTI, xstag_nw, DISLA,            !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, AREAH, CANHT, CANNAA,     !Output
      &      CANWAA, CANWH, CARBO, carbh, dlayr_nw, GNUP,      !Output
-     &      GPSM, GRNWT, GRORT, HI, HIP, LEAFNO, NSTRES,      !Output      
+     &      GPSM, GRNWT, GRORT, HI, HIP, LEAFNO, NSTRES,      !Output
      &      nwheats_topsfr, PCNGRN, PCNL, PCNRT, PCNST,       !Output
      &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, pl_la, plsc,              !Output
@@ -434,7 +440,7 @@ C-----------------------------------------------------------------------
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
      &      WTNSD,      WTNST,  cumph_nw,                     !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
-     &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
+     &      KUptake, rwu_nw, swdef, nfact,                    !Output
      &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2,         !Output
      &      CLW, SLDOT)                                       !Output
 
@@ -451,15 +457,15 @@ C-----------------------------------------------------------------------
 
         CALL WH_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR, 
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT, 
-     &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODWT,  
+     &  PSTRES1, PSTRES2, rlv_nw, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
-     &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO, 
+     &  TOPWT, swdef(cellxp), WTCO, WTLF, WTLO, 
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
        
@@ -526,19 +532,19 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
-     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
+     &      ASMDOT, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,      !Input
+     &      FracRts, ISTAGE, zstage,                          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
-     &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      nwheats_kvalue,                                   !Input
+     &      OZON7, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,     !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
-     &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
-     &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
+     &      sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,          !Input
+     &      TRWUP, VegFrac, WLIDOT,                           !Input
      &      WRIDOT, WSIDOT, XNTI, xstag_nw, DISLA,            !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
-     &       AGEFAC, APTNUP, AREALF, AREAH, CANHT, CANNAA,     !Output
+     &      AGEFAC, APTNUP, AREALF, AREAH, CANHT, CANNAA,     !Output
      &      CANWAA, CANWH, CARBO, carbh, dlayr_nw, GNUP,      !Output
      &      GPSM, GRNWT, GRORT, HI, HIP, LEAFNO, NSTRES,      !Output
      &      nwheats_topsfr, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -552,9 +558,9 @@ C-----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST, cumph_nw,              !Output
+     &      WTNSD,      WTNST,  cumph_nw,                     !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
-     &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
+     &      KUptake, rwu_nw, swdef, nfact,                    !Output
      &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2,         !Output
      &      CLW, SLDOT)                                       !Output
 
@@ -568,15 +574,15 @@ C-----------------------------------------------------------------------
 
         CALL WH_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR, 
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT, 
-     &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODWT,  
+     &  PSTRES1, PSTRES2, rlv_nw, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
-     &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO, 
+     &  TOPWT, swdef(cellxp), WTCO, WTLF, WTLO, 
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
 
@@ -609,17 +615,17 @@ C----------------------------------------------------------------------
           !-------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
-     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
+     &      ASMDOT, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,      !Input
+     &      FracRts, ISTAGE, zstage,                          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
-     &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      nwheats_kvalue,                                   !Input
+     &      OZON7, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,     !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
-     &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
-     &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
+     &      sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,          !Input
+     &      TRWUP, VegFrac, WLIDOT,                           !Input
      &      WRIDOT, WSIDOT, XNTI, xstag_nw, DISLA,            !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, AREAH, CANHT, CANNAA,     !Output
      &      CANWAA, CANWH, CARBO, carbh, dlayr_nw, GNUP,      !Output
@@ -635,9 +641,9 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST, cumph_nw,              !Output
+     &      WTNSD,      WTNST,  cumph_nw,                     !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
-     &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
+     &      KUptake, rwu_nw, swdef, nfact,                    !Output
      &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2,         !Output
      &      CLW, SLDOT)                                       !Output
 
@@ -701,17 +707,17 @@ C-----------------------------------------------------------------------
         IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN   
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
-     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
+     &      ASMDOT, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,      !Input
+     &      FracRts, ISTAGE, zstage,                          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
-     &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      nwheats_kvalue,                                   !Input
+     &      OZON7, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,     !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
-     &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
-     &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
+     &      sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,          !Input
+     &      TRWUP, VegFrac, WLIDOT,                           !Input
      &      WRIDOT, WSIDOT, XNTI, xstag_nw, DISLA,            !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, AREAH, CANHT, CANNAA,     !Output
      &      CANWAA, CANWH, CARBO, carbh, dlayr_nw, GNUP,      !Output
@@ -727,9 +733,9 @@ C-----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST, cumph_nw,              !Output
+     &      WTNSD,      WTNST,  cumph_nw,                     !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
-     &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
+     &      KUptake, rwu_nw, swdef, nfact,                    !Output
      &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2,         !Output
      &      CLW, SLDOT)                                       !Output
 
@@ -768,19 +774,18 @@ C----------------------------------------------------------------------
         ENDIF
 
         IF (YRDOY .GE. YRPLT) THEN
-
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
-     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
+     &      ASMDOT, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,      !Input
+     &      FracRts, ISTAGE, zstage,                          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
-     &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      nwheats_kvalue,                                   !Input
+     &      OZON7, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,     !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
-     &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
-     &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
+     &      sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,          !Input
+     &      TRWUP, VegFrac, WLIDOT,                           !Input
      &      WRIDOT, WSIDOT, XNTI, xstag_nw, DISLA,            !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, AREAH, CANHT, CANNAA,     !Output
      &      CANWAA, CANWH, CARBO, carbh, dlayr_nw, GNUP,      !Output
@@ -796,9 +801,9 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST,  cumph_nw,             !Output
+     &      WTNSD,      WTNST,  cumph_nw,                     !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
-     &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
+     &      KUptake, rwu_nw, swdef, nfact,                    !Output
      &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2,         !Output
      &      CLW, SLDOT)                                       !Output
 
@@ -806,15 +811,15 @@ C----------------------------------------------------------------------
         ENDIF   
       CALL WH_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR, 
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT, 
-     &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODWT,  
+     &  PSTRES1, PSTRES2, rlv_nw, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
-     &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO, 
+     &  TOPWT, swdef(cellxp), WTCO, WTLF, WTLO, 
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
 
@@ -847,17 +852,17 @@ C----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES,   !Input
-     &      FILEIO, fstage, FracRts, ISTAGE, zstage,          !Input
+     &      ASMDOT, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,      !Input
+     &      FracRts, ISTAGE, zstage,                          !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
-     &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      nwheats_kvalue,                                   !Input
+     &      OZON7, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,     !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
-     &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
-     &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
+     &      sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,          !Input
+     &      TRWUP, VegFrac, WLIDOT,                           !Input
      &      WRIDOT, WSIDOT, XNTI, xstag_nw, DISLA,            !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, AREAH, CANHT, CANNAA,     !Output
      &      CANWAA, CANWH, CARBO, carbh, dlayr_nw, GNUP,      !Output
@@ -873,9 +878,9 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST,cumph_nw,               !Output
+     &      WTNSD,      WTNST,  cumph_nw,                     !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
-     &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
+     &      KUptake, rwu_nw, swdef, nfact,                    !Output
      &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2,         !Output
      &      CLW, SLDOT)                                       !Output
 
@@ -883,15 +888,15 @@ C----------------------------------------------------------------------
 
         CALL WH_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR, 
-     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT, 
-     &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
+     &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODWT,  
+     &  PSTRES1, PSTRES2, rlv_nw, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
-     &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO, 
+     &  TOPWT, swdef(cellxp), WTCO, WTLF, WTLO, 
      &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNCAN,WTNSD,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, nfact, 
      &    pl_nit_root, pl_nit_lfsheath)
 

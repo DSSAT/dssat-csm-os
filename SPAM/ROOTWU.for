@@ -14,7 +14,7 @@ C  01/12/2000 NBP Removed FILECC from input
 C  01/25/2000 NBP Added IOSTAT to READ statements to set ERRNUM.  Cleaned.
 C  06/21/2001 GH  Added seasonal initialiation
 C  09/17/2001 CHP Input PORMIN and RWUMX from Plant module.
-C                   
+C
 C-----------------------------------------------------------------------
 C Called by: SPAM, ETPHOT
 C Calls:     None
@@ -24,7 +24,7 @@ C=======================================================================
      &    RWU, TRWUP)                                     !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
@@ -34,7 +34,7 @@ C-----------------------------------------------------------------------
 
       INTEGER L, NLAYR
 
-      REAL SWEXF, TRWUP 
+      REAL SWEXF, TRWUP
       REAL SWCON1, SWCON3, PORMIN, RWUMX
       REAL DLAYR(NL), LL(NL), RLV(NL), RWU(NL)
       REAL SAT(NL), SW(NL), SWCON2(NL), TSS(NL)
@@ -52,11 +52,11 @@ C-----------------------------------------------------------------------
 C     Compute SWCON2 for each soil layer.  Adjust SWCON2 for extremely
 C     high LL to avoid water uptake limitations.
 !-----------------------------------------------------------------------
-      SWCON2 = 0.0        
-      RWU    = 0.0           
+      SWCON2 = 0.0
+      RWU    = 0.0
       TSS    = 0.0
       TRWUP  = 0.0
-      
+
 
 
 !***********************************************************************
@@ -85,7 +85,7 @@ C-----------------------------------------------------------------------
           RWU(L) = SWCON1*EXP(MIN((SWCON2(L)*(SW(L)-LL(L))),40.))/
      &      DENOMINATOR
 !           Previous denominator - could explode for large RLV - problem with RLV?
-!     &      (SWCON3-ALOG(RLV(L)))  
+!     &      (SWCON3-ALOG(RLV(L)))
 !           RWU in cm3[water]/cm[root]-d
 
 C-----------------------------------------------------------------------
@@ -114,8 +114,8 @@ C-----------------------------------------------------------------------
           RWU(L) = MIN(RWU(L),RWUMX*SWEXF)
           RWU(L) = MIN(RWU(L),RWUMX)
         ENDIF
-        RWU(L) = RWU(L) * DLAYR(L) * RLV(L) 
-!       cm[water]   cm3[water]   cm3[soil]   cm[root] 
+        RWU(L) = RWU(L) * DLAYR(L) * RLV(L)
+!       cm[water]   cm3[water]   cm3[soil]   cm[root]
 !       --------- = ---------- * --------- * ---------
 !           d       cm[root]-d   cm2[soil]   cm3[soil]
 
@@ -137,28 +137,28 @@ C-----------------------------------------------------------------------
 ! DLAYR(L)  Soil thickness in layer L (cm)
 ! LL(L)     Volumetric soil water content in soil layer L at lower limit
 !             (cm3/cm3)
-! NL        Maximum number of soil layers = 20 
-! NLAYR     Actual number of soil layers 
-! PORMIN    Minimum pore space required for supplying oxygen to roots for 
+! NL        Maximum number of soil layers = 20
+! NLAYR     Actual number of soil layers
+! PORMIN    Minimum pore space required for supplying oxygen to roots for
 !             optimal growth and function (cm3/cm3)
 ! RLV(L)    Root length density for soil layer L ((cm root / cm3 soil))
 ! RWU(L)    Root water uptake from soil layer L (cm/d)
-! RWUMX     Maximum water uptake per unit root length, constrained by soil 
+! RWUMX     Maximum water uptake per unit root length, constrained by soil
 !             water (cm3[water] / cm [root])
 ! SAT(L)    Volumetric soil water content in layer L at saturation
 !             (cm3 [water] / cm3 [soil])
-! SATFAC    Root length weighted soil water excess stress factor ( 0 = no 
-!             stress; 1 = saturated stress ) 
-! SUMEX     Sum of water excess factor times depth times root length 
-!             density 
-! SUMRL     Sum of root length density (integrated over depth) 
+! SATFAC    Root length weighted soil water excess stress factor ( 0 = no
+!             stress; 1 = saturated stress )
+! SUMEX     Sum of water excess factor times depth times root length
+!             density
+! SUMRL     Sum of root length density (integrated over depth)
 ! SW(L)     Volumetric soil water content in layer L
 !             (cm3 [water] / cm3 [soil])
-! SWCON1    Constant used in determining root water uptake 
-! SWCON2(L) Variable used in determining root water uptake, dependant on 
-!             lower limit in layer L 
-! SWCON3    Constant used in determining root water uptake 
-! SWEXF     Excess water stress factor for layer with deepest roots (0-1) 
+! SWCON1    Constant used in determining root water uptake
+! SWCON2(L) Variable used in determining root water uptake, dependant on
+!             lower limit in layer L
+! SWCON3    Constant used in determining root water uptake
+! SWEXF     Excess water stress factor for layer with deepest roots (0-1)
 ! TRWUP     Total potential daily root water uptake (cm/d)
 ! TSS(L)    Number of days soil layer L has been saturated (d)
 !-----------------------------------------------------------------------

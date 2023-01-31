@@ -5,34 +5,39 @@
 
       SUBROUTINE CER_Growth (BD, CANHT, CO2, DAYLT,
      &     DLAYR, DOY, DUL, EO, EOP, ISWNIT, ISWWAT,
-     &     KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT,
+     &     KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT,
      &     RLV, RNMODE, SAT , SENCALG, SENNALG,
      &     SHF, SLPF, SNOW, SRAD, ST, STGDOY, SW,
-     &     TMAX, TMIN, TRWUP, UH2O, UNH4ALG, UNO3ALG, WEATHER,
-     &     SOILPROP, CONTROL, WINDSP, YEAR,
-     &     YEARPLTCSM, LAI, IDETG)
+     &     TMAX, TMIN, TRWUP, UH2O, UNH4ALG, UNO3ALG, 
+     &     WINDSP, YEARPLTCSM, LAI)
+
+! 2023-01-25 chp removed unused variables in argument list
+!     KCAN, WEATHER, SOILPROP, CONTROL, YEAR, IDETG, 
      
         USE ModuleDefs
         USE CER_First_Trans_m
         IMPLICIT NONE
+        EXTERNAL CSTIMDIF, Y4K_DOY, CSINCDAT, TFAC4, CSROOTWU, CSTRANS, 
+     &    YVALXY
 
-        TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
-        TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
-        TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
+!!       Contructed types defined in ModuleDefs
+!        TYPE (ControlType), intent (in) :: CONTROL
+!        TYPE (WeatherType), intent (in) :: WEATHER
+!        TYPE (SoilType), intent (in) ::   SOILPROP
 
         INTEGER ADAT10, CSTIMDIF, CSINCDAT, DYNAMICI
-        INTEGER CN, DOY, NLAYR, STGDOY(20), YEAR
+        INTEGER CN, DOY, NLAYR, STGDOY(20)  !, YEAR
         INTEGER YEARPLTCSM!, YEARPLT         
         REAL BD(20), CANHT, CO2
         REAL DLAYR(20), UNO3ALG(20), SENLGALG(0:20), UNH4ALG(20)
-        REAL DUL(20), EO, EOP, KCAN, KEP, LL(20), NFP, NH4LEFT(20)
+        REAL DUL(20), EO, EOP, KEP, LL(20), NFP, NH4LEFT(20)  !, KCAN
         REAL NO3LEFT(20), RLV(20), SAT(20)
         REAL SENCALG(0:20), SENNALG(0:20), SHF(20), SLPF
         REAL SRAD, ST(0:20), SW(20), TMAX, TMIN, TRWUP
         REAL UH2O(20), WINDSP, LAI
         REAL DAYLT, RWUMX, RWUPM, SNOW, TFAC4, YVALXY
         
-        CHARACTER*1 IDETG, ISWNIT, ISWWAT, RNMODE
+        CHARACTER*1 ISWNIT, ISWWAT, RNMODE  !IDETG, 
         
         ! Update so that temporary outputs in rate have correct DAP
         DAE = MAX(0,CSTIMDIF(STGDOY(9),YEARDOY))
@@ -593,17 +598,17 @@ C-GH      IF (snow.GT.0) THEN
             LAW = AMAX1(LAWS*LAWFRMN,LAWS-(LAWS*LAWCF)*(LNUMSG-1))
             ! LAW=Leaf area/weight (specific leaf area).Chages with lf #
             IF (LNUMSG.GT.0) THEN
-              ! In Ceres overall temperature response for lf growth was:
-              ! EGFT = 1.2 - 0.0042*(TEMPM-17.0)**2 
-              ! Here, temperature response is a composite of temp response
-              ! of development (leaf # increase) and leaf expansion.
-              ! So, EGFT would equal TFD*TFG 
-              ! Assimilates may control expansion if no reserve available
-              ! Current leaf expands completely at current phint
-              ! Leaves expand for 1 PHINT
-              ! For leaf area growth (PLAG) Ceres 3.5 used: 
-              !  PLAG(1) = LA1S * (LNUMSD**0.5) * ....
-              ! (with LA1S = 7.5 (= LAPOT(1),potential area of leaf 1)
+!               In Ceres overall temperature response for lf growth was:
+!               EGFT = 1.2 - 0.0042*(TEMPM-17.0)**2 
+!               Here, temperature response is a composite of temp response
+!               of development (leaf # increase) and leaf expansion.
+!               So, EGFT would equal TFD*TFG 
+!               Assimilates may control expansion if no reserve available
+!               Current leaf expands completely at current phint
+!               Leaves expand for 1 PHINT
+!               For leaf area growth (PLAG) Ceres 3.5 used: 
+!                PLAG(1) = LA1S * (LNUMSD**0.5) * ....
+!               (with LA1S = 7.5 (= LAPOT(1),potential area of leaf 1)
               PLAG(1) = LAPOT(LNUMSG) * AMIN1(WFG,NFG) * TFG *
      &         AMIN1(TT/PHINT,(FLOAT(LNUMSG)-LNUMSD)) 
               ! NB. Temp response of development (TT) taken into acount 
@@ -717,10 +722,10 @@ C-GH      IF (snow.GT.0) THEN
      &     (CARBOAT-CARBOASD-GRORSSD)-GROLF-GROST-GROGRPA)
      
 
-              ! Reserves to ROOT if conc too great (overflow!)
+!               Reserves to ROOT if conc too great (overflow!)
               RTWTGRS = 0.0
-              ! Determine potential new concentration
-              ! NB. Chaff is simply a part of stem;hence not separate here
+!               Determine potential new concentration
+!               NB. Chaff is simply a part of stem;hence not separate here
 
 !----------------------------------------------------------------
 ! palderman commit of 2019-07-29 in private repo e5c680514bce4af85d9f463c11a3e5ad522252f8
@@ -1310,9 +1315,9 @@ C-GH      IF (snow.GT.0) THEN
                   SMDFR = 1.0
                 ENDIF
                 RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
-                !  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
-                !  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)  
-                !  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
+!                  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
+!                  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)  
+!                  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
                 RNO3U(L) = RFAC * FNO3 * RTNO3
                 RNH4U(L) = RFAC * FNH4 * RTNH4
                 RNO3U(L) = MAX(0.0,RNO3U(L))

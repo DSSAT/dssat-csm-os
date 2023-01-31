@@ -23,7 +23,7 @@
      &    YRPLT, YRSIM,                                      !Input
      &    CropTypeCode, DeltaLeafArea, DeltaLeafNum,         !Output
      &    DLFN, DPLARF, DRPP, DTX, TillerCount,              !Output 
-     &	    LeafNum, MinGr, MDATE,                             !Output
+     &    LeafNum, MinGr, MDATE,                             !Output
      &    NVEG0, PhenoStage, PHTHRS, Ph1P, PI1, PI2, ROWSPC, !Output
      &    Smax, StalkState, STNAME, STGDOY, StkHrNO,         !Output
      &    SumTTD, SumTTG, SumTTStalk, TDUMX, VSTAGE,         !Output
@@ -33,6 +33,8 @@
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL CSP_IPPHENOL, CSP_INPHENOL, CURV, GETLUN, HEADER, TABEX, 
+     &  TIMDIF, YR_DOY
       SAVE
 !----------------------------------------------------------------------
 
@@ -60,7 +62,7 @@
       INTEGER, DIMENSION(NumOfStages) :: DayOfStage, 
      &                   DaysAfterPlantOfStage, STGDOY
       INTEGER, DIMENSION(1:NumOfStalks) :: Kill    
-	REAL LI, LI1, VT, RTR, XLI(7), YVTR(7)   
+      REAL LI, LI1, RTR, XLI(7), YVTR(7)  !, VT   
       REAL XLFNUM(7), YLFSZ(7), XStkNum(9), YLfFac(9)  
       REAL TABEX  ! Function subroutine - Lookup utility
   
@@ -183,13 +185,13 @@
 ! of run (Once only initialization).
 !----------------------------------------------------------------------
       CALL CSP_IPPHENOL(CONTROL, FILECC,
-     &           CROP,  DTPI, Gmax, Go, ISIMI,                !Output
-     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,            !Output 
-     &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,         !Output
-     &           RTNFAC, ROWSPC, SDEPTH, Smax, So,            !Output
-     &           StkHrNO, TB, TELOM, TM, TO1,                 !Output
-     &           TO2, XLFNUM, XLI, XStkNum, YLfFac,           !Output
-     &           YLFSZ, YVTR)                                 !Output
+     &           CROP,  DTPI, ISIMI,                      !Output
+     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,        !Output 
+     &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,     !Output
+     &           RTNFAC, ROWSPC, SDEPTH, Smax,            !Output
+     &           StkHrNO, TB, TELOM, TM, TO1,             !Output
+     &           TO2, XLFNUM, XLI, XStkNum, YLfFac,       !Output
+     &           YLFSZ, YVTR)                             !Output
 
 ! PHTHRS calculate this here and make it input in CSP_INPHENOL
 

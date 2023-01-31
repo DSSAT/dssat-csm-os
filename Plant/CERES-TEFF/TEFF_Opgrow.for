@@ -28,6 +28,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE CsvOutput   ! VSH,chp
       IMPLICIT  NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*8   CHAR8
@@ -44,7 +45,7 @@ C-----------------------------------------------------------------------
       REAL BIOMAS, RTWT, LFWT, GRNWT, HI, GM2KG
       REAL LAI, GPSM, PANWT, GPP, PCNGRN, PCNSH, PCNVEG
       REAL PLTPOP, PLANTS, STOVN, GRAINN, ROOTN
-      REAL TURFAC, RTDEP, STMWT,  RLV(NL), SWFAC, NSTRES, RLV5(5)
+      REAL TURFAC, RTDEP, STMWT,  RLV(NL), SWFAC, NSTRES  !, RLV5(5)
       REAL TILNO, CumNUptake, SATFAC, SDSIZE, SHELPC
       REAL WTNGRN, WTNVEG
 
@@ -302,7 +303,8 @@ C-----------------------------------------------------------------------
           WTNSD = GRAINN * PLTPOP
           WTNRT = ROOTN * PLTPOP        ! Is this right?
           WTNSH = 0.0
-          WTNUP = (STOVN+GRAINN)*PLANTS   !No longer used for output of Nuptake
+!         No longer used for output of Nuptake
+          WTNUP = (STOVN+GRAINN)*PLANTS   
           WTNFX = 0.0
           NFIXN = 0.0
 

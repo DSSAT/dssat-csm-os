@@ -31,6 +31,8 @@ C=======================================================================
      &                   YRPLT)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, INCYD, INSTGE, JULIAN, NAILUJ, SELHRV, 
+     &  STHARV, SWHARV, VERIFY, YR_DOY
 
       CHARACTER*1  RNMODE,IHARI,LINE(80)
       CHARACTER*2  CROP
@@ -244,6 +246,7 @@ C=======================================================================
       SUBROUTINE SWHARV (RNMODE,IHARI,HARMAN)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,IHARI
       CHARACTER*6  ERRKEY
@@ -330,6 +333,7 @@ C=======================================================================
       SUBROUTINE SELHRV (HDLAY,HLATE,HPP,HRP,RNMODE,YEAR)
 
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, JULIAN, NAILUJ, VERIFY, YDOY, YR_DOY
 
       CHARACTER*1 RNMODE,LINE(80)
       CHARACTER*3 MLHRV
@@ -469,6 +473,7 @@ C=======================================================================
       SUBROUTINE STHARV (RNMODE,HSTG,STNAME,HSTAGE)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE
       CHARACTER*5  HSTG(3)

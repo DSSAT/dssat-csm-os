@@ -33,7 +33,7 @@ C=======================================================================
      &    PSHDL, PSHDM, PSHDS, PSTMD, PVSTGD,             !Output
      &    TDLA, TPSR, TRTLF, VSTGD, WSTMD,                !Output
 
-     &  PCSTRD, PSTRD, WSTRD,                                          !Output
+     &  PCSTRD, PSTRD, WSTRD,                             !Output
 
      &    DYNAMIC,WSDD,PSDD,PRLV)
 

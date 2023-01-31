@@ -26,6 +26,7 @@
       USE ModuleDefs
       USE Interface_SoilPBalSum
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, INCDAT, YR_DOY
       SAVE
 !     ------------------------------------------------------------------
       LOGICAL FEXIST

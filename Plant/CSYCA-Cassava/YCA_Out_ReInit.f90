@@ -9,10 +9,13 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Out_ReInit ( & 
-        BRSTAGE     , CN          , DYNAMIC     , IDETL       , NFP         , RNMODE      , SRAD        , STGYEARDOY  , &
+        BRSTAGE     , CN          , DYNAMIC     , NFP         , RNMODE      , SRAD        , STGYEARDOY  , &
         UNH4        , UNO3        , LAI         &
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       IDETL       , 
+
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Formats_m
@@ -23,7 +26,7 @@
         
         REAL    :: BRSTAGE     , NFP         , SRAD        , UNH4(NL)     , UNO3(NL)    , LAI
         
-        CHARACTER(LEN=1)  :: IDETL       , RNMODE      
+        CHARACTER(LEN=1)  :: RNMODE      ! IDETL       , 
 
         !INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator                             ! MF In ModuleDefs 
         

@@ -29,6 +29,7 @@ C=======================================================================
      &                  ECONO,IVRGRP,MODEL)
 
       IMPLICIT      NONE
+      EXTERNAL CLEAR, ERROR, IGNORE, VERIFY
 
       CHARACTER*1   LINE(80),RNMODE,BLANK,ANS
       CHARACTER*6   ERRKEY,ECOTYP,ECONO

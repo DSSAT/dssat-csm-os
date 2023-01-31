@@ -21,7 +21,7 @@ C  Calls  : None
 C----------------------------------------------------------------------
 
       SUBROUTINE SU_ROOTGR (DYNAMIC,ISWNIT,                       !C
-     &        CUMDEP,CUMDTT,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,    !I
+     &        CUMDEP,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,           !I
      %        LL,DUL,NO3,NH4,NLAYR,PLTPOP,PORMIN,RLWR,SAT,SDEPTH, !I
      %        SHF,STGDOY,SW,SWFAC,YRDOY,                          !I
      %        RTDEP,RLV)            
@@ -35,7 +35,7 @@ C----------------------------------------------------------------------
       INTEGER     DYNAMIC     
 
       REAL        CUMDEP     
-      REAL        CUMDTT      
+!     REAL        CUMDTT      
       REAL        DEPMAX      
       REAL        DLAYR(NL)   
       REAL        DTT    

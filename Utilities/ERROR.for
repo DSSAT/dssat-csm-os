@@ -23,6 +23,7 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       IMPLICIT      NONE
+      EXTERNAL GENERIC_MSG, GET_DIR, GETLUN, HEADER, WARNING
 
       CHARACTER*(*) ERRKEY,FILE
       CHARACTER*9   EFILE
@@ -272,6 +273,7 @@ C-GH      READ  (*, *)
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL ERROR, WARNING
 
       CHARACTER(*) ERRKEY 
       CHARACTER*78 MSG(4)

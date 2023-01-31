@@ -3,22 +3,26 @@
 ! lines 5010 - 6129 of the original CSCER code.
 !***********************************************************************
 
-      SUBROUTINE CER_Integrate (BD, LAI, CANHT, CO2,
+      SUBROUTINE CER_Integrate (LAI, CANHT, CO2,
      &     DAYLT, DEPMAX, DLAYR, DOY, EOP, EP, ET, KCAN,
      &     HARVFRAC, ISWWAT, LL, NFP, NLAYR,
      &     RAIN, RESCALG, RESLGALG, RESNALG, RLV,
      &     RESWALG, RESWAL, RESNAL, RESLGAL,
      &     SRAD, STGDOY, SW, TMAX, TMIN,
      &     YEAR)
-     
+
+! 2023-01-25 CHP removed unused variables from argument list
+!     BD
+
         USE ModuleDefs
         USE CER_First_Trans_m
         IMPLICIT NONE
+        EXTERNAL Cslayers, YVAL1, CALENDAR
 
         INTEGER DOY, NLAYR, STGDOY(20), YEAR  
         
-        REAL BD(20), CANHT, CO2, HARVFRAC(2)
-        REAL EO, EOP, ES, KCAN, LL(20), NFP, RLV(20)
+        REAL CANHT, CO2, HARVFRAC(2) ! BD(20), 
+        REAL EOP, KCAN, LL(20), NFP, RLV(20) !EO, ES, 
         REAL SRAD, SW(20), TMAX, TMIN, LAI
         REAL DLAYR(NL), DEPMAX, DAYLT, EP, ET, RAIN
         REAL RESNALG(0:NL), RESCALG(0:NL), RESLGALG(0:NL) 

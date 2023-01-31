@@ -38,7 +38,7 @@ C======================================================================
      & DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
      & GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
      & ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, 
-     & MGROPAN,MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
+     & MGROPAN,MGROSTM, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
      & NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
      & PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
      & RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
@@ -46,7 +46,7 @@ C======================================================================
      & TANC, TCARBO, TGROLF, TGROPAN,
      & TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
      & TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
-     & VMNC, WSTR1, XNTI)
+     & VMNC, XNTI)
 
       USE MODULEDEFS
       IMPLICIT  NONE
@@ -93,7 +93,7 @@ C======================================================================
       REAL MGROLF
       REAL MGROPAN
       REAL MGROSTM
-      REAL MLAG1
+!     REAL MLAG1
       REAL MLFWT
       REAL MPANWT
       REAL MPLAG
@@ -152,7 +152,7 @@ C======================================================================
       REAL SUMDTT
       REAL VANC
       REAL VMNC
-      REAL WSTR1
+!     REAL WSTR1
       REAL XNTI
 
 !------------------------------------------------------------------------

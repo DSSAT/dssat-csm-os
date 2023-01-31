@@ -25,7 +25,8 @@ c     Canegro
       USE CNG_ModuleDefs      
 
       IMPLICIT NONE
-      SAVE  
+      EXTERNAL GETLUN
+      SAVE
 
 c     Control variable:
       TYPE (ControlType), INTENT(IN) :: CONTROL        

@@ -17,6 +17,7 @@
         USE YCA_Control_Plant
         
         IMPLICIT NONE
+        EXTERNAL CALENDAR
         
         INTEGER DOY         , YEAR 
         

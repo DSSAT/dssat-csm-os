@@ -48,14 +48,16 @@
 !                   when N is not simulated.
 !  02/11/2010 CHP No simulation of organic matter when water is not 
 !                   simulated.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !-----------------------------------------------------------------------
 !  Called : SOIL
 !  Calls  : IPSOIL, MULCHLAYER, NCHECK_organic, OpSoilOrg, SoilOrg_init
 !=======================================================================
 
       SUBROUTINE SoilOrg (CONTROL, ISWITCH, 
-     &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
-     &    OMAData, RLV,                                   !Input
+     &    DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,     !Input
+     &    NH4, NO3, OMAData, RLV,                         !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    CH4_data, IMM, LITC, MNR, MULCH, newCO2, SomLit,!Output
      &    SomLitC, SomLitE, SSOMC)                        !Output
@@ -69,9 +71,8 @@
       USE GHG_MOD
 
       IMPLICIT  NONE
-      EXTERNAL METHANEDYNAMICS, SOILORG_INIT, NCHECK_ORGANIC, 
-     &  MULCHLAYER, SOILCBAL, OPSOILORG, SOILNOPOBAL
-
+      EXTERNAL MethaneDynamics, SoilOrg_init, 
+     &  NCHECK_organic, MULCHLAYER, SOILCBAL, OpSoilOrg, SoilNoPoBal
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWWAT
@@ -159,6 +160,7 @@
       Type (ResidueType) SENESCE
       TYPE (OrgMatAppType) OMAData
       TYPE (TillType)    TILLVALS
+      TYPE (FertType)    FERTDATA
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -225,7 +227,7 @@
       newCO2 = 0.0
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !***********************************************************************
@@ -734,7 +736,7 @@ C         recruit (NREQ-N CONC) g of N
       END DO   !End of soil layer loop.
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !     Transfer daily mineralization values for use by Cassava model
@@ -862,7 +864,7 @@ C         recruit (NREQ-N CONC) g of N
 
       IF (DYNAMIC .EQ. INTEGR) THEN
         CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,      !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
       ENDIF
 
@@ -895,7 +897,7 @@ C     Write seasonal output
      &    NLAYR, OMADATA, SENESCE, TLITE, TSOME)          !Input
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 C***********************************************************************

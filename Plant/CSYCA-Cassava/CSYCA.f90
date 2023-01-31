@@ -22,6 +22,8 @@
 !     the output did not change. The output of this final version was the same in all 26 .OUT files apart from the
 !     time stamp of each run.
 !     
+!     2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.                    
 !*******************************************************************************************************************************
 
       SUBROUTINE  CSYCA (FILEIOIN, RUN, TN, RN, RNMODE,                                       & !Command line
@@ -29,7 +31,7 @@
        SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                                                & !Run+loop
        SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,                                             & !Weather
        DRAIN, RUNOFF, IRRAMT,                                                                 & !Water
-       DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                              & !Weather        !TWILEN = DAYL; SOILTEMP = ST 
+       DAYL, DEWDUR, CLOUDS, ST, EO,                                              & !Weather        !TWILEN = DAYL; SOILTEMP = ST 
        NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,                                     & !Soil states
        SW, NO3LEFT, NH4LEFT, FERNIT,                                                          & !H2O,N states
        TLCHD, TNIMBSOM, TNOXD, TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,           & !N components
@@ -43,12 +45,16 @@
        WEATHER     , SOILPROP    , CONTROL     ,                                              & 
        DYNAMIC) !, WEATHER)                                                                        !Control
 
+! 2023-01-25 chp removed unused variables
+!       WINDSP, ES, 
+
     USE ModuleDefs
     USE YCA_First_Trans_m
     USE YCA_Albedo_Check_m                                                                     ! MF 18JA15 For WORK.OUT
 
       
     IMPLICIT NONE
+    EXTERNAL YCA_RunInit, YCA_SeasInit, YCA_Growth, YCA_Integrate, YCA_Output
       
     TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
     TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
@@ -57,24 +63,24 @@
     INTEGER :: CN       , DOY         , DYNAMIC     , FROP        , NLAYR       , ON          , REP        , RN          
     INTEGER :: RUN      , RUNI        , SN          , STEP        , STGYEARDOY(0:19)            , TN         , YEAR
     INTEGER :: YEARPLTCSM 
-    INTEGER :: CSTIMDIF , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT     , CSIDLAYR    , CSYEARDOY              ! Integer function calls
+!   INTEGER :: CSTIMDIF , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT     , CSIDLAYR    , CSYEARDOY              ! Integer function calls
 
     REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , LAI         , CANHT       , CLOUDS      , CO2         , DAYL      ! REPLACED ALBEDO WITH ALBEDOS
     REAL    DEPMAX      , DEWDUR      , DLAYR(NL)   , DRAIN       , DUL(NL)     , EO          , EOP         , EP          
-    REAL    ES          , ET          , FERNIT      , HARVFRAC(2) , IRRAMT      , KCAN        , KEP         , LAIL(30)    
+    REAL    ET          , FERNIT      , HARVFRAC(2) , IRRAMT      , KCAN        , KEP         , LAIL(30)    ! ES          , 
     REAL    LAILA(30)   , LL(NL)      , NFP         , NH4LEFT(NL) , NO3LEFT(NL) , PARIP       , PARIPA      , RAIN        
     REAL    RESCALG(0:NL)             , RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)     , RUNOFF      
     REAL    RWUMX       , RWUPM       , SAT(NL)     , SENCALG(0:NL)             , SENLALG(0:NL)             , TDEW
     REAL    SENNALG(0:NL)             , SHF(NL)     , SLPF        , SRAD        , ST(NL)      , SW(NL)       
     REAL    TLCHD       , TAIRHR(24)  , TMAX        , TMIN        , TNIMBSOM    , TNOXD       , TOMINFOM    , TOMINSOM                                                   
-    REAL    TOMINSOM1   , TOMINSOM2   , TOMINSOM3   , TRWUP       , UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP      
+    REAL    TOMINSOM1   , TOMINSOM2   , TOMINSOM3   , TRWUP       , UH2O(NL)    , UNH4(NL)    , UNO3(NL)    ! , WINDSP      
 !    REAL    PARHR(24)   , RADHR(24)   , RHUMHR(24)  , VPDHR(24)                                                        !MF 14SE14 Hourly weather data
-    REAL    CSVPSAT     , TFAC4       , TFAC5       ,YVALXY      , CSYVAL                                               ! Real function calls !LPM 15sep2017 Added TFAC5 
+!   REAL    CSVPSAT     , TFAC4       , TFAC5       ,YVALXY      , CSYVAL                                               ! Real function calls !LPM 15sep2017 Added TFAC5 
 
     CHARACTER(LEN=1)  :: IDETG, IDETL, IDETO, IDETS, ISWDIS, ISWNIT, ISWWAT      
     CHARACTER(LEN=1)  :: MESOM, RNMODE      
     CHARACTER(LEN=120):: FILEIOIN    
-    CHARACTER(LEN=10) :: TL10FROMI                                                                                     ! Character function call
+!   CHARACTER(LEN=10) :: TL10FROMI                                                                                     ! Character function call
 
     INTRINSIC AMAX1,AMIN1,EXP,FLOAT,INDEX,INT,LEN,MAX,MIN,MOD,NINT
     INTRINSIC SQRT,ABS,TRIM
@@ -161,7 +167,7 @@
           
         CALL YCA_SeasInit ( &
             ALBEDOS     , BRSTAGE     , LAI         , CANHT       , CLOUDS      , CN          , DEWDUR      , DOY         , &
-            HARVFRAC    , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , KEP         , LAIL        , &
+            HARVFRAC    , ISWDIS      , ISWNIT      , KCAN        , KEP         , LAIL        , &
             LAILA       , NFP         , ON          , PARIP       , PARIPA      , RESCALG     , RESLGALG    , RESNALG     , &
             RLV         , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , RWUPM       , SENCALG     , &
             UH2O        , UNH4        , UNO3        , YEAR        , SENLALG     , SENNALG     , SLPF        , SN          , &
@@ -182,15 +188,13 @@
         !-----------------------------------------------------------------------------------------------------------------------
            
             CALL YCA_Growth ( &  
-                ALBEDOS     , BD          , BRSTAGE     ,  CLOUDS     , CO2         , DAYL        , DLAYR       , DOY         , &
-                DUL         , EO          , EOP         , ES          , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
-                KEP         , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , &
-                RLV         , RNMODE      , SAT         , SENCALG     , SENLALG     , SENNALG     , &
-                SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
-                TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
-                WEATHER     , SOILPROP    , CONTROL     , &  
-                WINDSP      , YEAR        , YEARPLTCSM  , LAI         ,&         !LPM 06MAR2016 Added to keep automatic planting
-                IDETG         )
+                BD          , BRSTAGE     , CO2         , DAYL        , DLAYR       , DOY         , DUL         , &
+                EO          , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , LL          , &
+                NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , RLV         , &
+                RNMODE      , SAT         , SENCALG     , SENLALG     , SENNALG     , SHF         , SLPF        , &
+                SRAD        , ST          , STGYEARDOY  , SW          , TDEW        , TMAX        , &
+                TMIN        , UNH4        , UNO3        , WEATHER     , SOILPROP    , CONTROL     , &  !   MF WEATHER needed for VPD
+                YEAR        , YEARPLTCSM  , LAI         )         !LPM 06MAR2016 Added to keep automatic planting
         !!=======================================================================================================================
         !ENDIF  ! End of after planted (rate) section
         !!=======================================================================================================================
@@ -221,11 +225,11 @@
         !-----------------------------------------------------------------------------------------------------------------------
   
         CALL YCA_Output ( & 
-            BRSTAGE     , LAI         , CANHT       , CN          , CO2         , DOY         , DYNAMIC     , EO          , &
-            EOP         , IDETG       , IDETL       , IDETO       , IDETS       , IRRAMT      , ISWNIT      , ISWWAT      , &
-            KCAN        , MESOM       , NFP         , NLAYR       , ON          , RAIN        , REP         , RLV         , &
-            RN          , RNMODE      , RUN         , RUNI        , SN          , SRAD        , STGYEARDOY  , TN          , &
-            TNIMBSOM    , TOMINSOM1   , UNH4        , UNO3        , WINDSP      , YEAR        &
+            BRSTAGE     , LAI         , CANHT       , CN          , DOY         , DYNAMIC     , &
+            EOP         , IDETG       , IDETL       , IDETO       , IDETS       , ISWNIT      , ISWWAT      , &
+            KCAN        , MESOM       , NFP         , ON          , REP         , RLV         , &
+            RN          , RNMODE      , RUN         , RUNI        , SN          , SRAD        , STGYEARDOY  , &
+            TN          , TNIMBSOM    , TOMINSOM1   , UNH4        , UNO3        , YEAR        &
             )
 
 !*******************************************************************************************************************************

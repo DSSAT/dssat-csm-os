@@ -33,6 +33,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, IDWTH, PATH, SECLI, SWWTH, WTHMDI
 
       CHARACTER*1  RNMODE,MEWTH,BLANK,WMODI
       CHARACTER*3  PROCOD
@@ -231,6 +232,7 @@ C=======================================================================
       SUBROUTINE IDWTH (FILEW,PATHWT,RNMODE,FILEWT)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, IGNORE, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80),BLANK  !ANS,
       CHARACTER*4  YEARW

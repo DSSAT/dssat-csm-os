@@ -13,9 +13,12 @@
      X tmax,tmin,dewhr,                          ! Drivers - weather
      X llapd,llapsd,pltpop,                      ! States - leaves
      X lfcnum,llap,LLAPP,llaps,                  ! States - leaves
-     X stgdoy,                                   ! Stage dates
+!    X stgdoy,                                   ! Stage dates
      X didoy,                                    ! Disease initiation
      X dynamic)                                  ! Control
+
+!     2023-01-20 CHP removed unused variables in argument list:
+!    X stgdoy,                                   ! Stage dates
 
       ! Calculates daily progress of leaf disease of wheat as a function
       ! of cultivar resistance, amount of susceptible tissue and weather
@@ -40,6 +43,8 @@
 
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, TL10FROMI, SPREADCA, SPREADRA, SPREADIA, 
+     &  TFAC4, CSTIMDIF, CSOPLINE
 
       INTEGER,PARAMETER::DINX = 3  ! Disease #,maximum
       INTEGER,PARAMETER::DCNX = 10 ! Disease control #,max
@@ -84,7 +89,7 @@
       !INTEGER       sppnumo       ! Species number,overall         #
       INTEGER       step          ! Step                           #
       INTEGER       stepnum       ! Step number per day            #
-      INTEGER       stgdoy(20)    ! Stage dates (Year+Doy)         #
+!     INTEGER       stgdoy(20)    ! Stage dates (Year+Doy)         #
       INTEGER       year          ! Year (4 digits)                #
       INTEGER       yeardoy       ! Year+Doy (7digits)             #
       INTEGER       yearsim       ! Year+Doy for simulation start  #

@@ -45,6 +45,7 @@ C========================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, PRNT_VEGGR_SC
       SAVE
 
       CHARACTER*6  ERRKEY

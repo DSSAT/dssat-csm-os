@@ -586,9 +586,18 @@ C-----------------------------------------------------------------------
      &      EXTFE(I), EXTMN(I), TOTBAS(I), PTERMA(I), PTERMB(I),
      &      EXK(I), EXMG(I), EXNA(I), EXTS(I), SLEC(I), EXCA(I)
   991     FORMAT (1X,F5.0,F6.2,9(1X,F5.1),F6.2,5F6.1)
+
 !         04/21/2008 CHP added SASC - stable organic C (%)
           IF (SASC(I) > 0) THEN
-            WRITE (LUNIO,'(F6.3)',IOSTAT=ERRNUM) SASC(I)
+            WRITE (LUNIO,'(F6.3)',IOSTAT=ERRNUM,ADVANCE='NO') SASC(I)
+          ELSE
+            WRITE (LUNIO,'("  -99.")',IOSTAT=ERRNUM,ADVANCE='NO')
+          ENDIF
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+
+!         2023-01-24 CHP added SAEA - soil alternate electron acceptors (mol Ceq/m3)
+          IF (SAEA(I) > 0) THEN
+            WRITE (LUNIO,'(F6.1)',IOSTAT=ERRNUM) SAEA(I)
           ELSE
             WRITE (LUNIO,'("  -99.")',IOSTAT=ERRNUM)
           ENDIF

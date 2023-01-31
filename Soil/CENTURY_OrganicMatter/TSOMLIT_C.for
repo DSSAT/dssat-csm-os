@@ -29,6 +29,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL MULCHLAYER
       SAVE
 !     ------------------------------------------------------------------
       INTEGER IEL, L, N_ELEMS, NLAYR

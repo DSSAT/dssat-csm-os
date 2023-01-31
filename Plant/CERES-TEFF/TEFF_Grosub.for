@@ -30,7 +30,7 @@ C=======================================================================
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW,HARVFRAC,                                 !Input
+     &    YRSOW,                                          !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -52,6 +52,9 @@ C=======================================================================
       USE Interface_SenLig_Ceres
 
       IMPLICIT  NONE
+      EXTERNAL YR_DOY, TEFF_IPGROSUB, TEFF_IPCROP, TEFF_NFACTO, 
+     &  CALCSHK, TEFF_TILLSUB, TEFF_NUPTAK, TEFF_KUPTAK, P_Ceres, 
+     &  TEFF_PlantInit, TRNSPL_GROSUB, MZ_KUPTAK, TABEX
       SAVE
 
       CHARACTER*1 ISWWAT, ISWNIT, ISWPHO, ISWPOT
@@ -68,8 +71,8 @@ C=======================================================================
       REAL      SWFAC,TURFAC,PHEFAC
       REAL      NSINK,NPOOL1,NPOOL2,NPOOL,NSDR,NSINKT,TEMF
       REAL      TL,EPLANTS,RUEA,RUEX,TTMP,PC,TI,BF,XTN,A
-      REAL      SLFW,SLFT,SLFN,XPLAG1,GRF,TCARB1,TILCAR,ADDTIL,SHORAT
-      REAL      TPART,CHK,GROGRN,GNO,GROSTM,GROLF,STMGF,RGNFIL,RMNC
+      REAL      SLFW,SLFT,SLFN,XPLAG1,GRF,TCARB1,TILCAR !,ADDTIL,SHORAT
+      REAL      CHK,GROGRN,GNO,GROSTM,GROLF,STMGF,RGNFIL,RMNC !TPART,
       REAL      XNF,TNLAB,RNLAB,RNOUT,GNC,SLFC,PLAS,BIOMAX,YLFWT
       REAL      TABEX,PCO2,Y1,Y2,PLSC,YSTOVWT,YRTWT
 
@@ -98,7 +101,7 @@ C=======================================================================
       REAL TPLAG, TPLANTS, TRLOS, TRNLOS, TSGRWT, TSHOCK, TSTMWT
       REAL UNFILL, VANC, VMNC, WSTRES, WTLF, PCNVEG, CumNUptake
       REAL XANC, XGNP, XN, XSTAGE, XST_TP
-      REAL HARVFRAC(2)
+!     REAL HARVFRAC(2)
 
       REAL, DIMENSION(6) :: SI3
       REAL TMFAC1(8)
@@ -159,7 +162,7 @@ C=======================================================================
      &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
      &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
 
-      CALL TEFF_IPCROP (FILEC, PATHCR, CROP, 
+      CALL TEFF_IPCROP (FILEC, PATHCR, !CROP, 
      &    CO2X, CO2Y, MODELVER, PORMIN, 
         !&    CO2X, CO2Y, MODELVER, PHINT, PORMIN,  
      &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
@@ -279,7 +282,8 @@ C=======================================================================
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT, CumNUptake)     !Output
+     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT,    !Output
+     &    CumNUptake)                                     !Output
 
       CALL TEFF_KUPTAK(
      &       ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,        !Input
@@ -444,7 +448,8 @@ C
              PANFAC = PANFAC * STRHEAT
           ENDIF
           !STRESSW = AMAX1 (SI2(3),SI2(4))
-          PANIWT  = (MSTMWT*0.4+MLFWT*0.20)*G1FAC*(1.0+0.5*STRESSW) !+.5bias water stress -0.5 for rice
+!         +.5bias water stress -0.5 for rice
+          PANIWT  = (MSTMWT*0.4+MLFWT*0.20)*G1FAC*(1.0+0.5*STRESSW) 
           
           IF ((MSTMWT-PANIWT) .LT. ((1.0-PANFAC)*MSTMWT)) THEN
              PANIWT = PANFAC*MSTMWT
@@ -598,7 +603,8 @@ CCCCC-PW
       !
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
       PCARB = PCARB*PCO2
-      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-20.0)**2   !need to lower so temp is 10 for prft=0 mar17 
+!     need to lower so temp is 10 for prft=0 mar17 
+      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-20.0)**2   
       PRFT  = AMAX1 (PRFT,0.0)
       IF (PRFT .GT. 1.0) THEN
           PRFT = 1.0                                
@@ -701,14 +707,14 @@ CCCCC-PW
              MPLAG  = MGROLF/0.0060*TSHOCK*
      &		        AMIN1(TURFAC,TEMF,AGEFAC,PSTRES2,KSTRES)
           ENDIF
-          IF (CUMPH .LE. 5.0/G3 .OR. TSHOCK .LT. 1.0) THEN !G3 not needed
+          IF (CUMPH .LE. 5.0/G3 .OR. TSHOCK .LT. 1.0) THEN 
              MPLA  = MPLA  + MPLAG
              PLA   = MPLA
              MLFWT = MLFWT + MGROLF
              LFWT  = MLFWT
              STMWT = MSTMWT
           ENDIF
-          IF (CUMPH .GT. 5.0/G3 .AND. TSHOCK .GE. 1.0) THEN !G3 not needed
+          IF (CUMPH .GT. 5.0/G3 .AND. TSHOCK .GE. 1.0) THEN 
              IF (MGROLF .GT. 0.60*CARBO) THEN
                 MGROLF = 0.60*CARBO
                 MPLAG  = MGROLF/0.0060*
@@ -945,11 +951,13 @@ CCCCC-PW
              !
              IF (SUMDTT .LT. 75 .AND. MGPP .GT. MFILL) THEN
                 GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*
-     &                   (0.0067*SUMDTT+0.5)*SWFAC ! in tef (0.0067*SUMDTT+0.5)
-             !  GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC !tef no water stress +TGPP
+     &                   (0.0067*SUMDTT+0.5)*SWFAC 
+!                 in tef (0.0067*SUMDTT+0.5)
+!               GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC !tef no water stress +TGPP
               ELSE
-                GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC !tef no water stress +TGPP
-             !  GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*(0.0067*SUMDTT+0.5)*SWFAC ! in tef (0.0067*SUMDTT+0.5)
+                GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*SWFAC 
+!                       tef no water stress +TGPP
+!               GROGRN = (MGPP+TGPP-MFILL)*RGFILL*DTT*TMPFIL*(0.0067*SUMDTT+0.5)*SWFAC ! in tef (0.0067*SUMDTT+0.5)
              ENDIF
              GNO     = GRNWT/(G2*1.05)               ! V2.1 - 1.05
              IF (GNO .GT. GPP) THEN
@@ -1218,7 +1226,8 @@ C
      &      FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &      RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &      FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT, CumNUptake)     !Output
+     &      RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT,    !Output
+     &      CumNUptake)                                     !Output
          ENDIF
 	   ! Switches for P and K
          CALL MZ_KUPTAK(
@@ -1415,6 +1424,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT     NONE
+      EXTERNAL FIND, ERROR
 
       CHARACTER*2 CROP
       CHARACTER*6  ERRKEY, SECTION

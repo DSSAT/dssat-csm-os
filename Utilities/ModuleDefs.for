@@ -181,9 +181,11 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL, DIMENSION(NL) :: TOTP, TOTBAS, EXCA, EXK, EXNA
 
       !Soil analysis data 
-        REAL, DIMENSION(NL) :: SASC   !stable organic C
+        REAL, DIMENSION(NL) :: SASC  !stable organic C (g[C]/100g[soil])
+!       SAEA = soil alternate electron acceptors (mol Ceq/m3)
+        REAL, DIMENSION(NL) :: SAEA  
 
-      !Variables added with new soil format:
+!      Variables added with new soil format:
         REAL ETDR, PONDMAX, SLDN, SLOPE
 !       REAL, DIMENSION(NL) :: RCLPF, RGIMPF
 
@@ -273,6 +275,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL, DIMENSION(NL) :: ADDSNH4, ADDSNO3, ADDUREA
         REAL, DIMENSION(NL) :: ADDSPi
         REAL, DIMENSION(NL) :: ADDSKi
+        REAL, DIMENSION(NL) :: ADDBuffer
         LOGICAL UNINCO
       END TYPE FertType
 

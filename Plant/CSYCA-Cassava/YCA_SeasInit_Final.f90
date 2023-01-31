@@ -9,19 +9,23 @@
 !**********************************************************************************************************************
     
     SUBROUTINE YCA_SeasInit_Final ( &
-        ALBEDOS     , CLOUDS      , CN          , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
-        KEP         , ON          , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , SLPF        , &
-        SN          , TAIRHR      , TN           &                                                                                        
+        ALBEDOS     , CLOUDS      , CN          , KCAN        , KEP         , ON          , &
+        RN          , RUN         , RUNI        , RWUMX       , SN          , TAIRHR      , &
+        TN           &
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , RNMODE      , SLPF        , 
+
         USE YCA_Formats_m
         USE YCA_First_Trans_m
        
         IMPLICIT NONE
+        EXTERNAL LTRIM, TVILENT, WARNING, XREADC
         
-        CHARACTER(LEN=1) IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , RNMODE        
+!       CHARACTER(LEN=1) IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , RNMODE        
         INTEGER CN          , ON          , RN          , RUN         , RUNI        , SN          , TN         
-        REAL    ALBEDOS     , CLOUDS      , KCAN        , KEP         , RWUMX       , SLPF        , TAIRHR(24)           
+        REAL    ALBEDOS     , CLOUDS      , KCAN        , KEP         , RWUMX       , TAIRHR(24)  ! SLPF        ,          
         INTEGER TVILENT                                                                       ! Integer function call.
         
         

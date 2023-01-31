@@ -12,7 +12,7 @@ C  Calls:     None
 !======================================================================
       SUBROUTINE BS_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, MDATE, NLAYR, NSTRES, 
-     &  PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &  PCNL, PLTPOP, PODNO, PODWT, RLV, RSTAGE, !PSTRES1, PSTRES2, 
      &  RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &  STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &  WTSO, XLAI, YRPLT)
@@ -21,6 +21,7 @@ C  Calls:     None
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 !----------------------------------------------------------------------
       INTEGER NOUTDG
@@ -35,7 +36,7 @@ C  Calls:     None
 
       REAL VSTAGE, XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, PODWT, SEEDNO
       REAL SLA, PCNL, TURFAC, CANHT, CANWH, HI, SHELPC, SATFAC
-      REAL SDSIZE, PODNO, PSTRES1, PSTRES2, RTDEP, NSTRES, SWFAC, HIP
+      REAL SDSIZE, PODNO, RTDEP, NSTRES, SWFAC, HIP   !PSTRES1, PSTRES2, 
       REAL PLTPOP, PODWTD, DTT
       REAL WTLO, WTSO, WTCO
       REAL RLV(NL)

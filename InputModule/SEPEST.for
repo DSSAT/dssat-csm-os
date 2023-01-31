@@ -27,6 +27,7 @@ C=======================================================================
       SUBROUTINE SEPEST (IDETD,RNMODE,ISWDIS)
 
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1 RNMODE,IDETD,ISWDIS
       CHARACTER*6 ERRKEY

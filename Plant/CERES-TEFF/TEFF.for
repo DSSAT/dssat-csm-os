@@ -46,6 +46,9 @@ C  04/01/2004 CHP/US New PHEFAC calculation
 !  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
 !  03/17/2020 WP subroutine name changed to TEFF
 C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
+!  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE TEFF(CONTROL, ISWITCH,
@@ -55,7 +58,7 @@ C=======================================================================
      &    TWILEN, YRPLT,                                  !Input
      &    FLOODN,                                         !I/O
      &    CANHT, HARVRES, LAI, KUptake, MDATE, NSTRES,    !Output
-     &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
+     &    PORMIN, PUptake, RWUEP1, RWUMX, CropStatus,     !Output
      &    RLV, SENESCE, STGDOY, FracRts, UNH4, UNO3)      !Output
 
 C-----------------------------------------------------------------------
@@ -64,13 +67,15 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data and flooded
                          ! conditions.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, TEFF_OPHARV, TEFF_PHENOL, TEFF_ROOTGR, 
+     &  TEFF_GROSUB, TEFF_OPGROW, GNURSE, HRes_Ceres
       SAVE
 
       CHARACTER*1  ISWWAT, ISWNIT
       CHARACTER*2  CROP
       CHARACTER*10 STNAME(20)
 
-      INTEGER DOY, DYNAMIC, EDATE, EMAT
+      INTEGER DOY, DYNAMIC, EDATE, EMAT, CropStatus
       INTEGER ISDATE, ISTAGE, ITRANS
       INTEGER LEAFNO, MDATE, NDAT, NLAYR
       INTEGER YRDOY, YRNURSE, YEAR, YRPLT, YRSIM, YRSOW
@@ -204,7 +209,7 @@ C-----------------------------------------------------------------------
      &    P3, P4, SDTT_TP, SEEDNI, SI3, STGDOY, STNAME,   !Output
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, TAGE,        !Output
      &    TBASE, TF_GRO, TSGRWT, WSTRES, XSTAGE, XST_TP,  !Output
-     &    SeedFrac, VegFrac)                              !Output
+     &    SeedFrac, VegFrac, CropStatus)                  !Output
 
       CALL TEFF_ROOTGR (CONTROL, 
      &    DTT, FLOOD, GRORT, ISWNIT, ISWWAT,              !Input
@@ -222,7 +227,7 @@ C-----------------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW,HARVFRAC,                                 !Input
+     &    YRSOW,                                          !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -331,7 +336,7 @@ C-----------------------------------------------------------------------
      &    P3, P4, SDTT_TP, SEEDNI, SI3, STGDOY, STNAME,   !Output
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, TAGE,        !Output
      &    TBASE, TF_GRO, TSGRWT, WSTRES, XSTAGE, XST_TP,  !Output
-     &    SeedFrac, VegFrac)                              !Output
+     &    SeedFrac, VegFrac, CropStatus)                  !Output
          ENDIF
 !	WRITE(999,*) ' DAY=',YRDOY, 'VEG=',VEGFRAC, 'SEED=',SEEDFRAC
       ENDIF
@@ -349,7 +354,7 @@ C--------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW, HARVFRAC,                                 !Input
+     &    YRSOW,                                          !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -381,7 +386,7 @@ C-----------------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW, HARVFRAC,                                 !Input
+     &    YRSOW,                                          !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -417,8 +422,13 @@ C-----------------------------------------------------------------------
 !     Seasonal output
 !***********************************************************************
         IF (DYNAMIC .EQ. SEASEND) THEN
-          STOVWT = STOVER / PLTPOP / 10.0 
+          IF (PLTPOP .GT. .00001) THEN
+            STOVWT = STOVER / PLTPOP / 10.0 
 !           g/pl     kg/ha   pl/m2
+          ELSE
+            STOVWT = 0.0
+          ENDIF
+
           CALL HRes_Ceres(CONTROL,
      &    CROP, DLAYR, GRNWT, HARVFRAC, NLAYR,            !Input
      &    PConc_Shut, PConc_Root, PConc_Shel,             !Input

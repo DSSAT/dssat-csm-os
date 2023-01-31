@@ -21,6 +21,8 @@ C=======================================================================
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL MZ_IX_PLANTG, MZ_IX_RADABS, MZ_IX_RESPIR
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE
       SAVE
 
       REAL        AMPLT      
@@ -274,12 +276,12 @@ C=======================================================================
       SNUP          = 0.0
       TRSFAC        = 0.0
       
-      !chp 2/23/2009 added array index for tairhr -- I know this is wrong, but
-      !  what does it need to be?  Call subroutine in a loop from 1 to 24?
-        CALL MZ_IX_PLANTG(DYNAMIC,                                !Control
-     &      ASMAX, GDDAE, GLA, PLAISL, PLAISH, LAP, LFL, LFN,     !Input
-     &      LIGHT, PARSH, PARSUN, TAIRHR(1), YX,                     !Input
-     &      PGHR)                                                 !Output
+!      chp 2/23/2009 added array index for tairhr -- I know this is wrong, but
+!        what does it need to be?  Call subroutine in a loop from 1 to 24?
+        CALL MZ_IX_PLANTG(DYNAMIC,                              !Control
+     &      ASMAX, GDDAE, GLA, PLAISL, PLAISH, LAP, LFL, LFN,   !Input
+     &      LIGHT, PARSH, PARSUN, TAIRHR(1), YX,                !Input
+     &      PGHR)                                               !Output
 	  
 	  CALL MZ_IX_RESPIR(DYNAMIC,                              !Control
      &  PG, R30C2, RES30C, TAIRHR, WTMAIN,                        !Input
@@ -288,7 +290,7 @@ C=======================================================================
      &  PLIGST,PLIGRT,PLIGEA,PLIGSD,POALF,POAST,POART,POAEA,POASD,!Input
      &  PMINLF,PMINST,PMINRT,PMINEA,PMINSD,                       !Input
      &  GRLF,GRRT,GRSTM,GREAR,GRGRN,                              !Input
-     &  MAINR, CVF)                                               !Output
+     &  MAINR, CVF)                                              !Output
 	  
 !-----------------------------------------------------------------------
 !                     DYNAMIC = INTEGR
@@ -384,14 +386,14 @@ C         Calculate hourly radiation absorption by canopy/soil.
      &      AZIR, AZZON(H), BETA(H), BETN, CANHT, CANWH,          !Input
      &      DAYTIM, FRDIFP(H), FROLL, GLA, H, LFN, PALB,          !Input
      &      PARHR(H), PLTPOP, RSPC, SCVP, HLAI, XC,               !Input
-     &      PARSH, PARSUN, PLAISH, PLAISL)                        !Output
+     &      PARSH, PARSUN, PLAISH, PLAISL)                       !Output
 
 C         Calculate instantaneous gross assimilation
 
-          CALL MZ_IX_PLANTG(DYNAMIC,                              !Control
+          CALL MZ_IX_PLANTG(DYNAMIC,                            !Control
      &      ASMAX, GDDAE, GLA, PLAISL, PLAISH, LAP, LFL, LFN,     !Input
      &      LIGHT, PARSH, PARSUN, TAIRHR(H), YX,                  !Input
-     &      PGHR)                                                 !Output
+     &      PGHR)                                                !Output
 
 C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2 s)
 C         to get daily values (g CO2/m2 d)
@@ -414,7 +416,7 @@ C ** JIL Calculating maintenance and growth respiration
      &  PLIGST,PLIGRT,PLIGEA,PLIGSD,POALF,POAST,POART,POAEA,POASD,!Input
      &  PMINLF,PMINST,PMINRT,PMINEA,PMINSD,                       !Input
      &  GRLF,GRRT,GRSTM,GREAR,GRGRN,                              !Input
-     &  MAINR, CVF)                                               !Output
+     &  MAINR, CVF)                                              !Output
 
 	  IF(MAINR .GT. PG) THEN
 	    MAINR = PG

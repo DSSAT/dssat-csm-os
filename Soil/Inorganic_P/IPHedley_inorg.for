@@ -26,6 +26,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL ERROR, FIND, IGNORE2, PARSE_HEADERS, LMATCH, WARNING
 !     ------------------------------------------------------------------
       CHARACTER*6,  PARAMETER :: ERRKEY = 'IPHEDL'
       CHARACTER*6   FINDCH
@@ -214,6 +215,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL ERROR
 !     ------------------------------------------------------------------
       CHARACTER*6, PARAMETER :: ERRKEY = 'IPHEDL'
       INTEGER L

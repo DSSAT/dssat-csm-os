@@ -9,35 +9,40 @@
 !***************************************************************************************************************************
 
     SUBROUTINE YCA_Growth_Evapo ( & 
-        ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR       , DUL         , EO          , EOP         , &
-        ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , &
-        SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
-        UH2O        , &
-        WEATHER     , SOILPROP, CONTROL, &                                                                                                    ! MF WEATHER needed for VPD 
-        WINDSP      , YEAR        , ST         , LAI          &    !LPM20MAR2016 To consider ST for germination
-        )
-        
+        BRSTAGE     , CO2         , DLAYR       , DUL         , EO          ,     &
+        ISWWAT      , LL          , NLAYR       , SW          , YEAR        , ST)
+
+! 2023-01-25 chp removed unused variables
+!       ALBEDOS     , CLOUDS      , EOP         , ES          , KEP         , RLV         , 
+!       SAT         , SRAD        , TAIRHR      , TDEW        , TMAX        , TMIN        , 
+!       TRWUP       , UH2O        , WINDSP      , LAI         
+!       WEATHER     , SOILPROP    , CONTROL
+
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Control_Environment
    
         IMPLICIT NONE
+        EXTERNAL CSIDLAYR, TFAC4
         
-        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
-        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
-        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs                                                            ! MF Defined in ModuleDefs
+!        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+!        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+!        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs                                                            ! MF Defined in ModuleDefs
 
         INTEGER NLAYR       , YEAR         
         INTEGER CSIDLAYR                                                                      ! Integer function call.
         
-        REAL    ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR(NL)   , DUL(NL)     , EO          , EOP         
-        REAL    ES          , KEP         , LL(NL)      , RLV(NL)     , SAT(NL)     , SRAD        
-        REAL    SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       , UH2O(NL)    , WINDSP      
+!       REAL    ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR(NL)   , DUL(NL)     , EO          , EOP         
+        REAL    BRSTAGE     , CO2         , DLAYR(NL)   , DUL(NL)     , EO          
+!       REAL    ES          , KEP         , LL(NL)      , RLV(NL)     , SAT(NL)     , SRAD        
+        REAL    LL(NL)      
+!       REAL    SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       , UH2O(NL)    , WINDSP      
+        REAL    SW(NL)      
         REAL    ST(NL)                                  !LPM20MAR2016 To consider ST for germination
-        REAL    CSVPSAT     , TFAC4                     ! Real function call.  !LPM 19SEP2017 Added tfac5
-        REAL    LAI
+        REAL    TFAC4    !CSVPSAT     ,                  ! Real function call.  !LPM 19SEP2017 Added tfac5
+!       REAL    LAI
         
-        CHARACTER(LEN=1) IDETG       , ISWWAT      
+        CHARACTER(LEN=1) ISWWAT      !IDETG       , 
         
           IF (PLYEAR <= 0) PLYEAR = YEAR
 !-----------------------------------------------------------------------

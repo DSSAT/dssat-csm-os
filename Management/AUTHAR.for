@@ -216,7 +216,8 @@ C           Assume harvest to occur on the first day after the defined
 C           window to terminate the simulation. This needs to be changed 
 C           to account for harvest loss of the crop;
             YREND     = YRDOY
-            CONTROL % CropStatus = 11  !failure to plant (automatic planting)
+!           Failure to plant (automatic planting)
+            CONTROL % CropStatus = 11  
 !           STGDOY(16) = YRDOY
             RETURN
           ENDIF

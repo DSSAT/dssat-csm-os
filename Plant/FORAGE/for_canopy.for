@@ -27,6 +27,7 @@ C-----------------------------------------------------------------------
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TABEX
       SAVE
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'CANOPY')
@@ -36,8 +37,8 @@ C-----------------------------------------------------------------------
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*255 C255
       
-      CHARACTER*80  C80
-      CHARACTER*80 PATHCR,CHAR
+!     CHARACTER*80  C80
+!     CHARACTER*80 PATHCR,CHAR
 
 
       INTEGER I, II, LUNCRP, LUNECO, ERR, LNUM, ISECT
@@ -56,13 +57,13 @@ C-----------------------------------------------------------------------
       REAL CUMNHT
       REAL HNHGT
       REAL NSTRES
-      REAL NRATIO
+!     REAL NRATIO
       REAL NHGT                           
-      REAL SLAMAX
-      REAL SLAMIN
-      REAL SLAPAR
-      REAL TURSLA
-      REAL NSLA
+!     REAL SLAMAX
+!     REAL SLAMIN
+!    REAL SLAPAR
+!     REAL TURSLA
+!     REAL NSLA
        
 !***********************************************************************
 !***********************************************************************
@@ -218,7 +219,7 @@ C-----------------------------------------------------------------------
       HPAR = TABEX(YHWPAR,XHWPAR,PARNOD,8)
       WPAR = TABEX(YHWPAR,XHWPAR,PAR,8)
       
-      if (NHGT .GT. 1.4) then                              !To limit NSLA to 1.4
+      if (NHGT .GT. 1.4) then     !To limit NSLA to 1.4
           NHGT=1.4 
           endif
       HNHGT = MAX(0.1, (1.0 - (1.0 - NSTRES)*NHGT))

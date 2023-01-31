@@ -8,20 +8,24 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Out_WrkPhenRes ( & 
-        DYNAMIC     , IDETL       , IDETO       , ISWNIT      , NLAYR       , RLV         , RN          , RUN         , TN          &
+        IDETL       , IDETO       , ISWNIT      , RN          , RUN         , TN          &
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       DYNAMIC     , NLAYR       , RLV         , 
+
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Formats_m
         USE YCA_Control_Plant
      
         IMPLICIT NONE 
+        EXTERNAL WARNING, CSUCASE, TVILENT, DAPCALC
      
-        INTEGER :: DYNAMIC     , NLAYR       , RN          , RUN         , TN          
+        INTEGER :: RN          , RUN         , TN          ! DYNAMIC     , NLAYR       , 
         INTEGER :: DAPCALC     , TVILENT                                                      ! Integer function calls
 
-        REAL    :: RLV(NL)      
+!       REAL    :: RLV(NL)      
 
         CHARACTER(LEN=1)  :: IDETL       , IDETO       , ISWNIT      
         
