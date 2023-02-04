@@ -228,8 +228,9 @@ C   FO -  05/07/2020 Add new Y4K subroutine call to convert YRDOY
             CALL ERROR (ERRKEY,4,MOWFILE,LNUM)
           ENDIF
           IF(HMCUT .LT. 0.0) CALL ERROR (ERRKEY,6,MOWFILE,LNUM)
-          IF(HMVS .LT. 0.0)  CALL ERROR (ERRKEY,8,MOWFILE,LNUM)
-
+          IF(HMVS .LT. 0 .OR. HMVS .GT. 80) THEN
+            CALL ERROR (ERRKEY,8,MOWFILE,LNUM)
+          ENDIF
           !HMMOW and HRSPL are used only for SmartMOW
           IF(ATTP .EQ. 'Y' .OR. ATTP .EQ. 'Z') THEN
             IF(HMMOW .LT. 0.0) CALL ERROR (ERRKEY,7,MOWFILE,LNUM)

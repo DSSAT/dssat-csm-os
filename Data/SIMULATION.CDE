@@ -122,6 +122,10 @@ A        Automatic                                                            IB
 M        At maturity                                                          IB
 R        On reported date(s)                                                  IB
 D        Days after planting                                                  IB
+W        AutoMOW using days as harvest frequency                              IB
+X        AutoMOW using GDD as harvest frequency                               IB
+Y        SmartMOW using days as harvest frequency                             IB
+Z        SmartMOW using GDD as harvest frequency                              IB
 
 *Simulation/Outputs
 @CDE     DESCRIPTION                                                          SO

@@ -161,7 +161,7 @@ FRHARV    2
 Error reading stuble mass and percent leaf forage harvest in species file.
 
 FRHARV    3
-Error in Automatic Management section (FileX). Correct mow harvest frequency (days).
+Error in Automatic Management section. Correct mow harvest frequency (days).
 
 FRHARV    4
 Error in Automatic Management section. Correct mow harvest frequency (GDD).
@@ -176,7 +176,7 @@ FRHARV    7
 Error in Automatic Management section. Correct the stubble mass.
 
 FRHARV    8
-Error in Automatic Management section. Correct residual vegetative stage after mowing.
+Error in Automatic Management section. Correct residual veg. stage after mowing.
 
 FRHARV    9
 Missing AutoMOW section in the species file.
