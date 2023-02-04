@@ -25,6 +25,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI
       SAVE
 
       LOGICAL   COND, EMERGE
@@ -120,8 +121,9 @@ C=======================================================================
            ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+8.0) THEN
 !           ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+TCPLUS) THEN
 !             Use linear function between TC and TCPLUS
-              RTF = 1.0 - (1./64.)*(TEMP-TC)**2 !original_CUADRATIC FUNCTION
-!              RTF = 1.0 - (TEMP - TC)/TCPLUS    !linear function 
+              RTF = 1.0 - (1./64.)*(TEMP-TC)**2 
+!             original QUADRATIC FUNCTION
+!             RTF = 1.0 - (TEMP - TC)/TCPLUS    !linear function 
               RTF = AMAX1 (RTF,0.0)
            ELSE
               RTF = 0.0
@@ -298,8 +300,9 @@ C-----------------------------------------------------------------------
           MAXLAI = AMAX1 (MAXLAI,XLAI)      ! Maximum XLAI season
           GNUP   = GRAINN*PLTPOP*10.0
 
-          !IF (XLAI .LT. 0.1*MAXLAI .OR. YRDOY .EQ. MDATE) THEN !Original function
-          IF (XLAI .LT. 0.01*MAXLAI .OR. YRDOY .EQ. MDATE) THEN !modified by modified by RR 02/15/2016
+!         modified by modified by RR 02/15/2016
+!         IF (XLAI .LT. 0.1*MAXLAI .OR. YRDOY .EQ. MDATE) THEN !Original function
+          IF (XLAI .LT. 0.01*MAXLAI .OR. YRDOY .EQ. MDATE) THEN 
              STGDOY(ISTAGE) = YRDOY
              CALL PT_PHASEI (
      &         ISTAGE, CUMDTT, XPLANT, SPRLAP,            !I/O
@@ -341,6 +344,7 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR
 
       INTEGER LUNIO
       CHARACTER*1, PARAMETER :: BLANK = ' '

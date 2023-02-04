@@ -42,6 +42,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT  NONE
+      EXTERNAL HOME
 
       CHARACTER*1  ANS,BOX_SID
       CHARACTER*56 ZCG(15)

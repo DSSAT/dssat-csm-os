@@ -14,6 +14,7 @@ C  02/19/2003 CHP Converted dates to YRDOY format
 !  04/24/2019 US/JF/CHP Replace G4, G5 with THOT, TCLDP, TCLDF
 C  12/12/2019 MB/US Copyed from Rice model and modified for Teff 
 C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
+!  06/15/2022 CHP Added CropStatus
 C=======================================================================
 
       SUBROUTINE TEFF_PHENOL (CONTROL, ISWITCH, 
@@ -27,13 +28,16 @@ C=======================================================================
      &    P3, P4, SDTT_TP, SEEDNI, SI3, STGDOY, STNAME,   !Output
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, TAGE,        !Output
      &    TBASE, TF_GRO, TSGRWT, WSTRES, XSTAGE, XST_TP,  !Output
-     &    SeedFrac, VegFrac)                              !Output
+     &    SeedFrac, VegFrac, CropStatus)                  !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
       USE FloodModule    ! which contain control information, soil
                          ! parameters, hourly weather data.
-      IMPLICIT  NONE 
+      IMPLICIT  NONE
+      EXTERNAL YR_DOY, TEFF_StnameFill, TEFF_IPPHEN, TEFF_PhaseInit, 
+     &  TEFF_Init, GETLUN, TEFF_TRNSPL_PHENOL, WARNING, TEFF_Stress
+      EXTERNAL FIND,TOPTD,TFERT,INCDAT,ERROR
       SAVE
       
       CHARACTER ISWWAT*1,ISWNIT*1,IDETO*1,PLME*1
@@ -44,9 +48,10 @@ C=======================================================================
       INTEGER DOY, DYNAMIC, EMAT, ICSDUR, IDUR1, ISIM, ISTAGE
       INTEGER ISDATE, ISM, ITDATE, ITRANS
       INTEGER LEAFNO, MDATE, NDAS, NDAT, NLAYR
-      INTEGER YR, YRPLT, YRSIM, YRSOW
+      INTEGER YR, YRPLT, YRSIM, YRSOW, CropStatus
 
-      REAL TOPTMX, TOPTD, TOPTDX, TDELAYMX, TMPNPI, TMPNFL, TMPXFL   ! NEW VARIABLE TO BE READ IN SPP FILE
+!     NEW VARIABLE TO BE READ IN SPP FILE
+      REAL TOPTMX, TOPTD, TOPTDX, TDELAYMX, TMPNPI, TMPNFL, TMPXFL   
       REAL AGEFAC, ATEMP, BIOMAS, CDTT_TP, CNSD1, CNSD2, CSD1, CSD2
       REAL CUMDEP, CUMDTT, CUMTMP, DTT, FERTILE
 
@@ -244,7 +249,8 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IF (TF_GRO) THEN
-         !TOPT = TOPT            !  MADE TOPT -- CROP SPECIFIC G4 > 1 FOR HEAT SENSITIVE CUL Mar17
+!         MADE TOPT -- CROP SPECIFIC G4 > 1 FOR HEAT SENSITIVE CUL Mar17
+         !TOPT = TOPT            
          !TOPTMX = TOPTMX
          !tmax = 55.0   ! high temp test mar17
           !TMIN = 32.0 !
@@ -307,7 +313,8 @@ C=======================================================================
              TH = TBASE
              ENDIF
              IF (TH .GT. TOPTMX) THEN
-                TH = TOPT - (TH - TOPT)  !Development delay VARIABLE FOR SPP FILE MAR17
+!               Development delay VARIABLE FOR SPP FILE MAR17
+                TH = TOPT - (TH - TOPT)  
              ELSEIF (TH .GT. TOPT .AND. TH .LE. TOPTMX) THEN
                 TH = TOPT
              ENDIF
@@ -325,7 +332,8 @@ C=======================================================================
             ELSEIF(ISTAGE .EQ. 3) THEN
                 DTT    = AMIN1 ((DTT * PHEFAC**1.33),TMPDTT)
             ELSEIF (ISTAGE .GT. 3 .AND. ISTAGE .LT. 6) THEN
-                DTT = DTT * AMIN1 (1.5,(1.5 - PHEFAC))   !need to check mar17
+!               need to check mar17
+                DTT = DTT * AMIN1 (1.5,(1.5 - PHEFAC))   
                 DTT = AMAX1 (DTT, TMPDTT)
             ENDIF
          ENDIF
@@ -545,9 +553,11 @@ C=======================================================================
              ENDIF
 !            IF (TMPI .LT. TMPNPI*G5) THEN  ! AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
 !               IF (TN .GT. TMPNPI*G5) THEN
-             IF (TMPI .LT. TCLDP) THEN  ! AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
+!            AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
+             IF (TMPI .LT. TCLDP) THEN  
                 IF (TN .GT. TCLDP) THEN
-                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
+!                  CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
+                   IDUR1 = IDUR1 + 1  
                 ENDIF
                 RETURN
              ENDIF
@@ -570,16 +580,16 @@ C=======================================================================
           !FROM PHASEI
           ISTAGE = 3          !HEADING
          ! P3     = 374.0 
-          P4     = 120.0                        ! 120.0 MAKE THIS SPP MAR17
+          P4     = 120.0    ! 120.0 MAKE THIS SPP MAR17
           XNTI   = SUMDTT/PHINT
           P3     = 5.5*PHINT+0.135*SUMDTT      !SPP FILE
           SUMDTT_2 = SUMDTT 
           !VegFrac = MAX(VegFrac,SUMDTT_2 / (SUMDTT_2 + P3))
           VegFrac = MAX(VegFrac, XSTAGE/4.5)   
-    !  write(98,*) 'day',yrdoy,'xst=',xstage/10,'new',xstage/4.5
+!      write(98,*) 'day',yrdoy,'xst=',xstage/10,'new',xstage/4.5
           SUMDTT = 0.0       
-		! Need a check to ensure sumdtt is close to P1 + (1/ratein)
-          !END OF PHASEI STUFF
+!           Need a check to ensure sumdtt is close to P1 + (1/ratein)
+!          END OF PHASEI STUFF
 
 !-----------------------------------------------------------------------
         CASE (3)          !HEADING
@@ -601,7 +611,8 @@ C=======================================================================
    
 !            IF (TCANOPY .LE. TMPNFL*G5) THEN    !TMPMNFL CRITICAL LOW TEMP FOR STERILITY SPP FILE MAR17
 !               CUMTMP = CUMTMP + (TMPNFL*G5-TCANOPY)
-             IF (TCANOPY .LE. TCLDF) THEN    !TMPMNFL CRITICAL LOW TEMP FOR STERILITY SPP FILE MAR17
+!            TMPMNFL CRITICAL LOW TEMP FOR STERILITY SPP FILE MAR17
+             IF (TCANOPY .LE. TCLDF) THEN    
                 CUMTMP = CUMTMP + (TCLDF-TCANOPY)
              ENDIF
           ENDIF
@@ -802,6 +813,7 @@ C=======================================================================
           ! Determine physiological maturity
           STGDOY (ISTAGE) = YRDOY
           MDATE  = YRDOY
+          CropStatus = 1
 
           CALL TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
@@ -951,6 +963,7 @@ C=======================================================================
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
       IMPLICIT NONE
+      EXTERNAL INCDAT
 
       CHARACTER*1 PLME
       INTEGER ITRANS, YRPLT
@@ -1106,6 +1119,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND
 
       CHARACTER*1  PLME
       CHARACTER*6  ERRKEY, SECTION

@@ -11,10 +11,14 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Growth_Rates ( &
-        CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
-        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF        , &                                !LPM 26MAR2016 RLV added
+        CO2         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
+        PARIPA      , TDEW        , TMAX        , TMIN        , RLV         , SRAD        , SLPF        , &     !LPM 26MAR2016 RLV added
         LAI         , CONTROL     , WEATHER     , SOILPROP &  
         )
+
+! 2023-01-25 chp removed unused variables
+!   EOP         , TRWUP       , 
+
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Control_Photosyntesis
@@ -22,12 +26,13 @@
         USE YCA_Growth_VPD
 
         IMPLICIT NONE
+        EXTERNAL TFAC4, CSVPSAT, YVALXY
         
         TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
-        REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
-        REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
+        REAL    CO2         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        ! EOP         , 
+        REAL    TMIN        , RLV(NL)     , SRAD        , SLPF        ! TRWUP       , 
         REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
         REAL    availableCH2O , LAI
         
@@ -63,7 +68,7 @@
             case ('R')
                 availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP, WFP)
             case ('V')
-                availableCH2O = availableCarbohydrate_methodV(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, LAI, WFP, WEATHER, CONTROL, SOILPROP)
+                availableCH2O = availableCarbohydrate_methodV(PARMJFAC, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WFP, WEATHER, CONTROL, SOILPROP)
         end select
         CARBOEND = availableCH2O
             

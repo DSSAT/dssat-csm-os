@@ -47,7 +47,7 @@
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
-     &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
+     &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -64,6 +64,8 @@
       USE ModuleDefs
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, MZ_NFACTO, TABEX, 
+     &  MZ_NUPTAK, MZ_KUPTAK, P_Ceres, YR_DOY, WARNING, CURV
       SAVE
 !----------------------------------------------------------------------
 !                         Variable Declaration
@@ -160,7 +162,7 @@
       REAL        CumLeafSenes    !today's cumul. leaf senescence
       REAL        CumLeafSenesY   !yesterday's cumul. leaf senescence
       REAL        CumLfNSenes     !cumul. N loss in senesced leaves
-      REAL HARVFRAC(2)
+!     REAL HARVFRAC(2)
       INTEGER     LINC  
       REAL        LFWT        
       REAL        LFWTE

@@ -29,6 +29,7 @@ C  08/20/2002 GH  Modified for Y2K
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, INCDAT, SUMVALS, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
 

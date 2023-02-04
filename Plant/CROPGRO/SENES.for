@@ -25,6 +25,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TABEX
       SAVE
 
       CHARACTER*6  ERRKEY, SECTION

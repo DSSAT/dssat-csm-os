@@ -32,6 +32,8 @@ C=======================================================================
 
       USE ModuleData
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, IDWTH, PATH, SEWTH, SWWGEN, SWWTH, 
+     &  VERIFY, WTHMDI
 
       CHARACTER*1  RNMODE,MEWTH,LINE(80),BLANK,WMODI
       CHARACTER*3  PROCOD
@@ -252,6 +254,7 @@ C=======================================================================
       SUBROUTINE SWWGEN (RNMODE,MEWTH)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,MEWTH
       CHARACTER*6  ERRKEY

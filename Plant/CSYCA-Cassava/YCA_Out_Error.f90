@@ -15,6 +15,7 @@
         USE YCA_Formats_m
      
         IMPLICIT NONE 
+        EXTERNAL GETSTR, TVICOLNM, GETSTRI, GETSTRR
      
         INTEGER :: RN          , RUN         , TN          
         INTEGER :: TVICOLNM                                                                   ! Integer function calls

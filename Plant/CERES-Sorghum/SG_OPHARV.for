@@ -33,6 +33,8 @@ C  05/11/2007 GH  Added IDAT as output & renumber output variables
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, OPVIEW, READA, READA_Dates, 
+     &  GetDesc, SUMVALS, EvaluateDat, TIMDIF
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE

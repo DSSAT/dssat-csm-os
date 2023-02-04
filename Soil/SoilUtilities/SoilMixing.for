@@ -112,6 +112,7 @@
 !     ------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL SoilMixing
       SAVE
 
       INTEGER L, LB, NLAYR
@@ -153,6 +154,7 @@
 !     ------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL SoilMixing
       SAVE
 
       INTEGER IELEM, L, LB, NLAYR

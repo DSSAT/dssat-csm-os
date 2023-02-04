@@ -8,6 +8,7 @@
     USE SAM_ModuleDefs
 
     IMPLICIT NONE
+    EXTERNAL GETLUN, rm_file, open_file, HEADER, YR_DOY
     SAVE
 
     !     Declare composite variables:
@@ -20,9 +21,9 @@
     INTEGER         NOUTDG_pho      ! The file unit number for the layered canopy output file.
     INTEGER         NOUTDG_str      ! The file unit number for the crop stresses output file.
     INTEGER         RUN             ! local run number
-    INTEGER         ERRNUM          ! Error status
+!   INTEGER         ERRNUM          ! Error status
     INTEGER         DYNAMIC         ! Dynamic
-    LOGICAL         FILE_EXISTS     ! Does the file exist, is this the first run?
+!   LOGICAL         FILE_EXISTS     ! Does the file exist, is this the first run?
     CHARACTER*1     IDETG           ! Print Output flag
     CHARACTER*20    FILEIO          ! local ?
     CHARACTER*21    OFILE_det       ! Filename detailed (phytomers)
@@ -30,29 +31,29 @@
     CHARACTER*21    OFILE_str       ! Filename crop stresses
     CHARACTER*50    header_char     ! Filename crop stresses
 
-    real            SW(NL)                  ! Soil water content
-    real            watdmd                  ! water demand (TRWUP/Transp)
+!   real            SW(NL)                  ! Soil water content
+!   real            watdmd                  ! water demand (TRWUP/Transp)
     integer         glai
     integer         ghour
     integer         phy
 
     !--- Time control
     INTEGER DAP, DAS, FROP, YRDOY, YRPLT, YEAR, DOY
-    INTEGER TIMDIF
+!   INTEGER TIMDIF
 
     !--- Output setup
-    INTEGER I, J        ! Varible counters
+!   INTEGER I, J        ! Varible counters
     integer NUM_OVARS   ! Number of output variables
     integer VAR_WIDTH   ! Width of output columns
 
     !--- Number of variables and collumn widht
     parameter(NUM_OVARS = 45, VAR_WIDTH = 12)
 
-    CHARACTER*15 GROHEAD(4, NUM_OVARS)
-    CHARACTER*15 GRO_OUT(NUM_OVARS)
+!   CHARACTER*15 GROHEAD(4, NUM_OVARS)
+!   CHARACTER*15 GRO_OUT(NUM_OVARS)
 
-    CHARACTER*10 SKIP_STR, VLEN_STR, WIDTH_STR  ! String equivalents of VLEN and SKIP
-    CHARACTER*1024 FMT_STR, T_FMT_STR           ! Runtime format statement:
+!   CHARACTER*10 SKIP_STR, VLEN_STR, WIDTH_STR  ! String equivalents of VLEN and SKIP
+!   CHARACTER*1024 FMT_STR, T_FMT_STR           ! Runtime format statement:
     
     !--- Set files name:
     parameter(OFILE_det = 'PlantGr_Det.OUT')    ! Must be exactly the same as in OUTPUT.CDE

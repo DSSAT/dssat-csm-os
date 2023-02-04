@@ -33,6 +33,7 @@ C=======================================================================
      &           CO2,WTHSTR,NEV)
 
       IMPLICIT NONE
+      EXTERNAL WTHSUM
 
       CHARACTER*1   CO2FAC(10),DAYFAC(10),DPTFAC(10),WNDFAC(10)
       CHARACTER*1   PRCFAC(10),RADFAC(10),TMFAC(10),TXFAC(10)

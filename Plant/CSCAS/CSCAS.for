@@ -2,6 +2,8 @@
 !  CROPSIM CASSAVA GROWTH AND DEVELOPMENT MODULE 010115  
 !  Last edit 040414 LAH 
 !  (After problems implementing fixes of GH 180214,260314;PM,MF 260214)
+!  2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.                    
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
@@ -75,6 +77,14 @@
       USE OSDefinitions
       
       IMPLICIT NONE
+      EXTERNAL YR_DOY, WARNING, GETLUN, SUMVALS, Y4K_DOY, HEADER, 
+     &  TVILENT, TVICOLNM, TL10FROMI, LTRIM, XREADC, XREADT, SPREADCA, 
+     &  SPREADRA, TFAC4, CSTIMDIF, CSOPLINE, XREADI, XREADR, UCASE, 
+     &  XREADIA, XREADRA, FVCHECK, FINDDIR, CUREADC, CUREADR, ECREADR, 
+     &  SPREADR, YVALXY, CALENDAR, DAPCALC, LTRIM2, AREADR, AREADI, 
+     &  CSYDOY, GETSTRI, CSCLEAR5, GETSTR, GETSTRR, XREADCA, CSUCASE, 
+     &  SPREADC, EVAPO, CSCRPROOTWU, CSIDLAYR, CSVPSAT, CSYVAL, 
+     &  DISEASE, CSCRPLAYERS
 
       INTEGER,PARAMETER::DINX =   3 ! Disease number,maximum
       INTEGER,PARAMETER::PSX  =  20 ! Principal stages,maximum
@@ -107,7 +117,7 @@
       REAL          ALBEDO        ! Canopy+soil albedo             fr
       REAL          ALBEDOS       ! soil albedo                    fr
       REAL          AMTNIT        ! Cumulative amount of N applied kg/ha
-      REAL          AMTNITPREV    ! Cumulative N,previous treatmnt kg/ha
+!     REAL          AMTNITPREV    ! Cumulative N,previous treatmnt kg/ha
       REAL          ANDEM         ! Crop N demand                  kg/ha
       REAL          ANFER(200)    ! N amount in fertilizer appln   kg/ha
       REAL          AREAPOSSIBLE  ! Leaf area growth at SLA limit  cm2 
@@ -184,7 +194,7 @@
       INTEGER       CSTIMDIF      ! Time difference function       #
       REAL          CSVPSAT       ! Vapour pressure function op    mb
       INTEGER       CSYDOY        ! Yr+Doy output from function    #
-      INTEGER       CSYEARDOY     ! Year+Doy from function         #
+!     INTEGER       CSYEARDOY     ! Year+Doy from function         #
       REAL          CSYVAL        ! Y value from function          #
       INTEGER       CTRNUMPD      ! Control # missing tiers        #
       REAL          CUMDEP        ! Cumulative depth               cm
@@ -296,7 +306,7 @@
       REAL          EPCC          ! Transpiration cycle sum        mm 
       REAL          EPPC(0:12)    ! Transpiration cycle sum        mm 
       REAL          EPSRATIO      ! Function,plant/soil evap rate  #
-      INTEGER       ERRNUM        ! Error number from compiler     #
+!     INTEGER       ERRNUM        ! Error number from compiler     #
       REAL          ERRORVAL      ! Plgro-tfile values/Plgro       #
       REAL          ES            ! Actual soil evaporation rate   mm/d
       REAL          ET            ! Evapotranspiration daily       mm/d 
@@ -353,7 +363,7 @@
       REAL          GROCRFR       ! Crown growth rate,fraction st  #
       REAL          GROLF         ! Leaf growth rate               g/p
       REAL          GROLFADJ      ! Leaf growth rate N adjusted    g/p
-      REAL          GROLFNEEDED   ! Leaf growth rate for max SLA   g/p
+!     REAL          GROLFNEEDED   ! Leaf growth rate for max SLA   g/p
       REAL          GROLFP        ! Leaf growth,potential          g/p
       REAL          GROLS         ! Leaf+stem growth               g/p
       REAL          GROLSA        ! Leaf+stem gr from assimilates  g/p
@@ -364,7 +374,7 @@
       REAL          GROLSSEN      ! Leaf+stem growth from senesnce g/p
       REAL          GROLSSD       ! Leaf+stem gr from seed         g/p
       REAL          GRORS         ! Reserves growth                g/p
-      REAL          GRORSADJ      ! Reserves gr,adj to conc        g/p
+!     REAL          GRORSADJ      ! Reserves gr,adj to conc        g/p
       REAL          GROSR         ! Storage root growth            g/p
       REAL          GROST         ! Stem growth rate               g/p
       REAL          GROSTADJ      ! Stem growth rate N adjusted    g/p
@@ -533,12 +543,12 @@
       INTEGER       LENLINESTAR   ! Length of character string     #
       INTEGER       LENRNAME      ! Length of run description      #
       INTEGER       LENTNAME      ! Length,treatment description   #
-      REAL          LFGSDU        ! Leaf growth start,d.units      #
+!     REAL          LFGSDU        ! Leaf growth start,d.units      #
       REAL          LFWT          ! Leaf weight                    g/p
       REAL          LFWTM         ! Leaf weight,maturity           g/p
-      REAL          LGPHASE(2)    ! Leaf growth tier,start,end     #
-      REAL          LGPHASEDU(2)  ! Leaf growth tier,start,end     Du
-      INTEGER       LINENUM       ! Line number in RMSE values     #
+!     REAL          LGPHASE(2)    ! Leaf growth tier,start,end     #
+!     REAL          LGPHASEDU(2)  ! Leaf growth tier,start,end     Du
+!     INTEGER       LINENUM       ! Line number in RMSE values     #
       REAL          LL(20)        ! Lower limit,soil h2o           #
       REAL          LLIFA         ! Leaf life duration,active,read #    
       REAL          LLIFATT       ! Leaf life duration,active      C.d
@@ -563,11 +573,11 @@
       REAL          LNCPU         ! Leaf N concentration,phs,upper fr
       REAL          LNCR          ! Leaf N relative to maximum     #
       REAL          LNCSEN        ! N conc.for senescence          fr
-      REAL          LNCSENF       ! Leaf N con,senescence,final    fr
+!     REAL          LNCSENF       ! Leaf N con,senescence,final    fr
       REAL          LNCX          ! Leaf N conc,maximum            fr
       REAL          LNCXS(0:1)    ! Leaf N conc,maximum,stage      fr
       REAL          LNDEM         ! Leaf demand for N              g/p
-      REAL          LNDEM2        ! Leaf demand for N for growth   g/p
+!     REAL          LNDEM2        ! Leaf demand for N for growth   g/p
       REAL          LNDEMG        ! Leaf demand for N,for growth   g/p
       REAL          LNDEMTU       ! Leaf demand for N,for topup    g/p
       REAL          LNPCMN(0:1)   ! Leaf N conc,minimum            %
@@ -618,7 +628,7 @@
       REAL          MJPERE        ! Energy per Einstein (300-170)  MJ/E
       INTEGER       MSTG          ! Maturity stage(eg.black layer) #
       REAL          NCRG          ! N factor,root growth           ppm
-      REAL          NDEMG         ! N demand for growth min->max   g/p
+!     REAL          NDEMG         ! N demand for growth min->max   g/p
       REAL          NDEMMN        ! N demand for growth at minimum g/p
       REAL          NDEM2         ! N demand for growth>minimum    g/p
       REAL          NFG           ! N factor,growth 0-1            #
@@ -641,7 +651,7 @@
       REAL          NFRG          ! N factor,root growth 0-1       #
       REAL          NFSU          ! N factor,senescence,upper lim  #
       REAL          NH4CF         ! NH4 uptake concentration fac   #   
-      REAL          NH4FN         ! NH4 conc factor,NH4 uptake 0-1 #
+!     REAL          NH4FN         ! NH4 conc factor,NH4 uptake 0-1 #
       REAL          NH4LEFT(20)   ! NH4 concentration in soil      g/Mg
       REAL          NH4MN         ! NH4 conc minimum for uptake    g/Mg
       REAL          NLABPC        ! N labile fraction,standard     %
@@ -649,7 +659,7 @@
       INTEGER       NLAYRROOT     ! Number of layers with roots    #
       REAL          NLLG          ! N limit,leaf growth            #
       REAL          NO3CF         ! NO3 uptake concentration fac   #    
-      REAL          NO3FN         ! NO3 conc factor,NO3 uptake 0-1 #
+!     REAL          NO3FN         ! NO3 conc factor,NO3 uptake 0-1 #
       REAL          NO3LEFT(20)   ! NO3 concentration in soil      g/Mg
       REAL          NO3MN         ! NO3 conc minimum for uptake    g/Mg
       INTEGER       NOUTPG        ! Number for growth output file  #
@@ -696,14 +706,14 @@
       REAL          PARU2         ! PAR use efficiency,afterchange g/MJ
       REAL          PARUE         ! PAR use efficiency,standard    g/MJ
       REAL          PARUEC        ! PAR use efficiency to today    g/MJ
-      REAL          PARURFR       ! PAR utilize factor,reprod fr   #
+!     REAL          PARURFR       ! PAR utilize factor,reprod fr   #
       INTEGER       PATHL         ! Path length                    #
       REAL          PD(0:PSX)     ! Tier durations                 deg.d
-      REAL          PD2ADJ        ! Tier 2+3 adjusted              deg.d
+!     REAL          PD2ADJ        ! Tier 2+3 adjusted              deg.d
       REAL          PDADJ         ! Tier duration adjustment       deg.d
       INTEGER       PDATE         ! Planting Yrdoy from X-file     #
       INTEGER       PDAYS(0:12)   ! Tier durations                 PVoCd
-      REAL          PDFS          ! Final senescenc duration       deg.d
+!     REAL          PDFS          ! Final senescenc duration       deg.d
       REAL          PDL(0:PSX)    ! Tier durations,phint units     #    
       REAL          DUSRI         ! Degree days to st.root init.   oC.d
       REAL          PECM          ! Emergence duration             Cd/cm
@@ -719,7 +729,7 @@
       REAL          PHINT         ! Phylochron interval            deg.d
       REAL          PHINTFAC      ! Phylochron interval factor     #
       REAL          PHINTS        ! Phylochron interval,standard   deg.d
-      INTEGER       PHINTSTG      ! Phylochron stage               #    
+!     INTEGER       PHINTSTG      ! Phylochron stage               #    
       REAL          PHOTQR        ! Photon requirement,calculated  E/mol
       REAL          PHSV          ! Phs,fr reduction with VPD      /KPa
       REAL          PHTV          ! Phs,threshold VPD for reductin KPa
@@ -784,7 +794,7 @@
       REAL          RAINPC(0:12)  ! Precipitation tier sum         mm
       REAL          RANC          ! Roots actual N concentration   #
       REAL          RATM          ! Boundary layer,air,resistance  s/m
-      REAL          RB            ! Leaf resistance addition fac   s/m
+!     REAL          RB            ! Leaf resistance addition fac   s/m
       REAL          RCROP         ! Stomatal res,crop basis        s/m
       REAL          RDGAF         ! Root depth gr,acceleration fac #
       REAL          RDGS          ! Root depth growth rate,standrd cm/d
@@ -804,13 +814,13 @@
       REAL          RLDF(20)      ! Root length density fac,new gr #
       REAL          RLF           ! Leaf stomatal res,330.0 ppmCO2 s/m
       REAL          RLFC          ! Leaf stomatal resistance       s/m
-      REAL          RLFN          ! Root length factor,N           #
+!     REAL          RLFN          ! Root length factor,N           #
       REAL          RLFWU         ! Root length factor,water uptk  /cm2
       REAL          RLIGP         ! Root lignin concentration      %
       REAL          RLV(20)       ! Root length volume by layer    cm-2
       REAL          RLWR          ! Root length/weight ratio     m/10mg
       REAL          RM            ! Mesophyll resistance           d/m
-      REAL          RMSE(30)      ! Root mean square error values  #
+!     REAL          RMSE(30)      ! Root mean square error values  #
       INTEGER       RN            ! Treatment replicate            #
       REAL          RNAD          ! Root N                         kg/ha
       REAL          RNAM          ! Root N at maturity             kg/ha
@@ -828,7 +838,7 @@
       REAL          RNO3U(20)     ! Potential nitrate uptake       kg/ha
       REAL          RNPCMN(0:1)   ! Root N conc,minimum            %
       REAL          RNPCS(0:1)    ! Roots N conc,standard,by stage %
-      REAL          RNUMX         ! Root N uptake,maximum          mg/cm
+!     REAL          RNUMX         ! Root N uptake,maximum          mg/cm
       REAL          RNUSE(0:2)    ! Root N use,overall and parts   g   
       REAL          ROOTN         ! Root N                         g/p
       REAL          ROOTNEXCESS   ! Root N > critical              g/p
@@ -849,13 +859,13 @@
       REAL          RSFPU         ! Reserves conc.,phs upper bound fr
       REAL          RSN           ! Reserve N                      g/p
       REAL          RSNAD         ! Reserve N                      kg/ha
-      REAL          RSNEED        ! Reserves need to bring to min  g/p
+!     REAL          RSNEED        ! Reserves need to bring to min  g/p
       REAL          RSNPH         ! Reserves N harvested           g/p
       REAL          RSNPHC        ! Reserves N harvested,cum       g/p
       REAL          RSNUSED       ! Reserve N used                 g/p  
-      REAL          RSGLFADJ      ! Reserves from leaf adj to N    g/p
+!     REAL          RSGLFADJ      ! Reserves from leaf adj to N    g/p
       REAL          RSSRWTGLFADJ  ! Reserves+storage from lf N adj g/p
-      REAL          RSSRWTGSTADJ  ! Reserves+storage from st N adj g/p
+!     REAL          RSSRWTGSTADJ  ! Reserves+storage from st N adj g/p
       REAL          RSUSE         ! Reserves utilisation fraction  #
       REAL          RSWAD         ! Reserves weight                kg/ha
       REAL          RSWAM         ! Reserves at maturity           kg/ha
@@ -864,9 +874,9 @@
       REAL          RSWPHC        ! Reserves wt harvested,cum      g/p
       REAL          RSWT          ! Reserves weight                g/p
       REAL          RSWTGLFADJ    ! Reserves from lf N adjustment  g/p
-      REAL          RSWTPREV      ! Reserves weight,previous       g/p
+!     REAL          RSWTPREV      ! Reserves weight,previous       g/p
       REAL          RSWTM         ! Reserves weight,maturity       g/p
-      REAL          RSWTTMP       ! Reserves weight,temporary val  g/p
+!     REAL          RSWTTMP       ! Reserves weight,temporary val  g/p
       REAL          RSWTX         ! Reserves weight,maximum        g/p
       REAL          RTDEP         ! Root depth                     cm
       REAL          RTDEPG        ! Root depth growth              cm/d
@@ -954,7 +964,7 @@
       REAL          SENNLFGRS     ! Senesced N from leaves,to rs   g/p
       REAL          SENNS         ! Senesced N added to soil       g/p
       REAL          SENRTG        ! Senescent root material growth g/p
-      REAL          SENSTFR       ! Senesced stem fraction         fr/d
+!     REAL          SENSTFR       ! Senesced stem fraction         fr/d
       REAL          SENTOPLITTERG ! Senescent top->litter growth   g/p
       REAL          SENWACM       ! Senesced weight,total,cum to m kg/ha
       REAL          SENWACMM      ! Senesced om,litter+soil,cum,ms kg/ha
@@ -985,7 +995,7 @@
       REAL          SLAOUT        ! Specific leaf area for output  cm2/g
       REAL          SLIGP         ! Stem lignin concentration      %
       REAL          SLPF          ! Soil factor for photosynthesis %
-      REAL          SMDFR         ! Soil moisture factor,N uptake  #
+!     REAL          SMDFR         ! Soil moisture factor,N uptake  #
       INTEGER       SN            ! Sequence number,crop rotation  #
       REAL          SNAD          ! Stem N (stem+petiole+rs)       kg/ha
       REAL          SNCM          ! Stem N conc,minimum            fr
@@ -1046,22 +1056,22 @@
       REAL          SRWUM         ! Storage root wt/unit,maturity  g
       REAL          SRWUMM        ! Storage root wt/unit,mat,meas  g
       REAL          ST(0:NL)      ! Soil temperature in soil layer C
-      REAL          STADJ         ! Stem adjustment,N triggered    #
+!     REAL          STADJ         ! Stem adjustment,N triggered    #
       REAL          STAI          ! Stem area index                m2/m2
       REAL          STAIG         ! Stem area index,growth         m2/m2
       REAL          STAIS         ! Stem area index senesced       m2/m2
-      REAL          STAISS        ! Stem area index,start senesce  m2/m2
+!     REAL          STAISS        ! Stem area index,start senesce  m2/m2
       INTEGER       STARNUM       ! Star line number,as read file  #
       INTEGER       STARNUMM      ! Star line number,measured data #
       INTEGER       STARNUMO      ! Star line number,output file   #
-      INTEGER       STARTPOS      ! Starting position in line      #
+!     INTEGER       STARTPOS      ! Starting position in line      #
       REAL          STDAY         ! Standard day                   C.d/d
       REAL          STEMN         ! Stem N                         g/p
       REAL          STEMNEXCESS   ! Stem N > critical              g/p
       INTEGER       STEP          ! Step number                    #
       INTEGER       STEPNUM       ! Step number per day            #
       INTEGER       STGEDAT       ! Stem growth end date (Yrdoy)   #
-      REAL          STGEFR        ! Stem growth end time,fr day    #
+!     REAL          STGEFR        ! Stem growth end time,fr day    #
       INTEGER       STGYEARDOY(20)! Stage dates (Year+Doy)         #
       REAL          STRESS(20)    ! Min h2o,n factors for growth   #
       REAL          STRESS20      ! 20d av.,min h2o,n gr.factors   #
@@ -1116,7 +1126,7 @@
       REAL          TFGLF(LNUMX)  ! Temp factor,gr for leaf,av     #
       REAL          TFDLF(LNUMX)  ! Temp factor,dev for leaf,av    #
       REAL          TFP           ! Temperature factor,phs 0-1     #
-      REAL          TFV           ! Temperature factor,vernalizatn #
+!     REAL          TFV           ! Temperature factor,vernalizatn #
       REAL          TFVAL         ! T-file value                   #
       INTEGER       TIERNUM       ! Tier of data in t-file         #
       REAL          TIMENEED      ! Time needed to finish tier     fr
@@ -1217,9 +1227,9 @@
       INTEGER       VALUEI        ! Output from Getstri function   #
       REAL          VALUER        ! Output from Getstrr function   #
       REAL          VANC          ! Vegetative actual N conc       #
-      INTEGER       VARNUM(30)    ! Variable number in sum         #
-      REAL          VARSUM(30)    ! Temporary variables sum        #
-      REAL          VARVAL        ! Temporary variable             #
+!     INTEGER       VARNUM(30)    ! Variable number in sum         #
+!     REAL          VARSUM(30)    ! Temporary variables sum        #
+!     REAL          VARVAL        ! Temporary variable             #
       REAL          VCNC          ! Vegetative critical N conc     #
       INTEGER       VERSION       ! Version #                      #
       REAL          VMNC          ! Vegetative minimum N conc      #
@@ -1285,8 +1295,8 @@
       CHARACTER (LEN=1)   CFLLFLIFE     ! Control flag,leaf life D,P,C
       CHARACTER (LEN=1)   CFLHAR        ! Control flag for final harvest
       CHARACTER (LEN=1)   CFLHARMSG     ! Control flag,harvest message
-      CHARACTER (LEN=1)   CFLPDADJ      ! Control flag,tire adjustment 
-      CHARACTER (LEN=1)   CFLPRES       ! Control flag for headers,PRES
+!     CHARACTER (LEN=1)   CFLPDADJ      ! Control flag,tire adjustment 
+!     CHARACTER (LEN=1)   CFLPRES       ! Control flag for headers,PRES
       CHARACTER (LEN=1)   CFLSDRSMSG    ! Control flag,seed reserves msg
       CHARACTER (LEN=1)   CFLTFG        ! Control flag,temp.on lf area
       CHARACTER (LEN=10)  CNCHAR        ! Crop component (multicrop)
@@ -1370,7 +1380,7 @@
       CHARACTER (LEN=6)   LATL2C        ! Leaf area,h2o,N,temp stress
       CHARACTER (LEN=6)   LATL3C        ! Leaf area,stress+assim control
       CHARACTER (LEN=6)   LATL4C        ! Leaf area,stress+assim&Ncntrol
-      CHARACTER (LEN=354) LINEERA       ! Temporary line,error-a file
+!     CHARACTER (LEN=354) LINEERA       ! Temporary line,error-a file
       CHARACTER (LEN=80)  LINESTAR      ! Group header line (with star)
       CHARACTER (LEN=80)  LINESTAR2     ! Group header line (with star)
       CHARACTER (LEN=180) LINET         ! Line from T-file
@@ -1381,7 +1391,7 @@
       CHARACTER (LEN=3)   MERNU         ! Switch,root N uptake methd
       CHARACTER (LEN=1)   MESOM         ! Switch,OM decay method       
       CHARACTER (LEN=78)  MESSAGE(10)   ! Messages for Warning.out
-      CHARACTER (LEN=1)   MENU          ! Switch,root N uptake methd
+!     CHARACTER (LEN=1)   MENU          ! Switch,root N uptake methd
       CHARACTER (LEN=1)   MEWNU         ! Switch,root H2O/N uptake methd
       CHARACTER (LEN=8)   MODEL         ! Name of model
       CHARACTER (LEN=8)   MODNAME       ! Name of module
@@ -1414,14 +1424,14 @@
       CHARACTER (LEN=64)  SPDIRFLE      ! Species directory+file
       CHARACTER (LEN=64)  SPDIRFLPREV   ! Species directory+file,last
       CHARACTER (LEN=12)  SPFILE        ! Species filename
-      CHARACTER (LEN=5)   SSABV(SSX)    ! Secondary stage abbreviation
-      CHARACTER (LEN=5)   SSABVO(SSX)   ! Secondary stage abv,output
-      CHARACTER (LEN=13)  SSNAME(SSX)   ! Secondary stage names
-      CHARACTER (LEN=1)   SSTYP(SSX)    ! Secoudary stage type
+!     CHARACTER (LEN=5)   SSABV(SSX)    ! Secondary stage abbreviation
+!     CHARACTER (LEN=5)   SSABVO(SSX)   ! Secondary stage abv,output
+!     CHARACTER (LEN=13)  SSNAME(SSX)   ! Secondary stage names
+!     CHARACTER (LEN=1)   SSTYP(SSX)    ! Secoudary stage type
       CHARACTER (LEN=6)   TCHAR         ! Temporary character string
       CHARACTER (LEN=6)   THEAD(20)     ! T-file headings
       CHARACTER (LEN=1)   TIERNUMC      ! Tier number in t-file
-      CHARACTER (LEN=10)  TL10          ! Temporary line              
+!     CHARACTER (LEN=10)  TL10          ! Temporary line              
       CHARACTER (LEN=10)  TL10FROMI     ! Temporary line from integer
       CHARACTER (LEN=254) TLINEGRO      ! Temporary line from GRO file
       CHARACTER (LEN=180) TLINET        ! Temporary line from T-file
@@ -1429,8 +1439,8 @@
       CHARACTER (LEN=25)  TNAME         ! Treatment name
       CHARACTER (LEN=10)  TNCHAR        ! Treatment number,characters
       CHARACTER (LEN=40)  TRUNNAME      ! Treatment+run composite name
-      CHARACTER (LEN=5)   TVTRDV        ! Temporary temp response char
-      CHARACTER (LEN=8)   VARCHAR       ! Temporary variable,character
+!     CHARACTER (LEN=5)   TVTRDV        ! Temporary temp response char
+!     CHARACTER (LEN=8)   VARCHAR       ! Temporary variable,character
       CHARACTER (LEN=6)   VARNO         ! Variety identification code
       CHARACTER (LEN=6)   VARNOPREV     ! Variety identification code
       CHARACTER (LEN=6)   VNPCMCHAR     ! Vegetative N %,maturity     
@@ -2554,10 +2564,10 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 !       Set planting/harvesting dates (Will change if runs repeated)
 !-----------------------------------------------------------------------
 
-        ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
-        ! CHP 09/28/09 - account for planting date >> simulation date.
-        !LPM 07/17/20 - account for simulation date when is a year before planting date
-        !Avoid wrong value of yeardoyharf
+!         CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
+!         CHP 09/28/09 - account for planting date >> simulation date.
+!        LPM 07/17/20 - account for simulation date when is a year before planting date
+!        Avoid wrong value of yeardoyharf
         IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
             IF (YEAR < PLYEARREAD) THEN
                 PLYEAR = PLYEARREAD
@@ -2574,8 +2584,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         PLTOHARYR = HYEAR - PLYEARREAD
         ! Upgrade harvest date for seasonal and sequential runs
         !yeardoyharf = (plyear+pltoharyr)*1000 +hday
-      !LPM 10FEB2021 Move yeardoyharf after updating the PLYEAR when date of simulation is 
-      !the year before planting
+!      LPM 10FEB2021 Move yeardoyharf after updating the PLYEAR when date of simulation is 
+!      the year before planting
 
 !       IF (IPLTI.NE.'A') THEN
         IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
@@ -4035,8 +4045,8 @@ C-GH As per Tony Hunt 2017 for GenCalc
             ENDIF
           ELSE
             IF (FILEIOT.NE.'DS4') THEN
-              ! Automatic planting
-              ! Check window for automatic planting,PWDINF<PLYEART<PWDINL
+!               Automatic planting
+!               Check window for automatic planting,PWDINF<PLYEART<PWDINL
               IF (YEARDOY.GE.PWDINF.AND.YEARDOY.LE.PWDINL) THEN
                 ! Within planting window.
                 ! Determine if soil temperature and soil moisture ok
@@ -5010,10 +5020,10 @@ C-GH As per Tony Hunt 2017 for GenCalc
                 GROLF = 0.0
               ENDIF
               
-              ! Check if enough assimilates to maintain SLA within limits
+!               Check if enough assimilates to maintain SLA within limits
               AREAPOSSIBLE = GROLF*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))
                 
-              ! If not enough assim.set assimilate factor
+!               If not enough assim.set assimilate factor
               IF (PLAGSB2.GT.AREAPOSSIBLE.AND.PLAGSB2.GT.0.0)THEN
                 AFLF(0) = AREAPOSSIBLE/PLAGSB2
               ELSE  
@@ -6702,26 +6712,26 @@ c           ENDIF
      &        DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
 !***********************************************************************
 
-        ! Simulated outputs only
-        !  IDETG (GROUT in controls (Y,N))  Plant growth outputs
-        !   Y->Work_details+Plantgro+Plantgr2+Plantgrf
-        !      +PlantN(If N switched on)
-        !   FROUT->#=number of days between outputs
-        !  IDETS (SUMRY in controls (Y,N)) Summary outputs
-        !   Y->Summary+Plantsum+Work(Harvest)                        
-        !
-        ! Simulated+Measured outputs
-        !  IDETO (OVVEW in controls (Y,E,N)) Overview outputs
-        !   Y->Overview+Evaluate(+Measured if IDETG=Y)
-        !   E->Evaluate only
-        !  IDETL (VBOSE in controls (0,N,Y,D,A))
-        !   Y->Leaves+Tiers+Measured                 
-        !   D->+Phenols+Phenolm+Plantres+Plantrem
-        !   A->Errora+Errors+Errort+Full Reads
-        !   0,A are meta switches:
-        !     0 switches everything to N apart from IDETS,which given a Y,
-        !       and IDETO,which given an E when RNMODE is not N (seasonal)
-        !     A switches ALL outputs on  
+!         Simulated outputs only
+!          IDETG (GROUT in controls (Y,N))  Plant growth outputs
+!           Y->Work_details+Plantgro+Plantgr2+Plantgrf
+!              +PlantN(If N switched on)
+!           FROUT->#=number of days between outputs
+!          IDETS (SUMRY in controls (Y,N)) Summary outputs
+!           Y->Summary+Plantsum+Work(Harvest)                        
+!        
+!         Simulated+Measured outputs
+!          IDETO (OVVEW in controls (Y,E,N)) Overview outputs
+!           Y->Overview+Evaluate(+Measured if IDETG=Y)
+!           E->Evaluate only
+!          IDETL (VBOSE in controls (0,N,Y,D,A))
+!           Y->Leaves+Tiers+Measured                 
+!           D->+Phenols+Phenolm+Plantres+Plantrem
+!           A->Errora+Errors+Errort+Full Reads
+!           0,A are meta switches:
+!             0 switches everything to N apart from IDETS,which given a Y,
+!               and IDETO,which given an E when RNMODE is not N (seasonal)
+!             A switches ALL outputs on  
 
         ! If model failure so that cycle not completed
         IF (DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
@@ -9709,7 +9719,7 @@ c           ENDIF
      &    tmax,tmin,dewdur,                    ! Drivers - weather
      &    pla,plas,pltpop,                     ! States - leaves
      &    lnumsg,lap,LAPP,laps,                ! States - leaves
-     &    stgyeardoy,                          ! Stage dates
+!    &    stgyeardoy,                          ! Stage dates
      &    didoy,                               ! Disease initiation
      &    dynamic)                             ! Control
       ENDIF

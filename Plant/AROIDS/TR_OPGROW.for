@@ -20,6 +20,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1   IDETG, ISWNIT
@@ -251,11 +252,12 @@ C
 !     Local variable HI used in OPHARV with different formula
       HI = 0.0
       IF (BIOMAS .GT. 0.0 .AND. SDWT .GE. 0.0) THEN
-        HI = CORMWT/BIOMAS          ! 12/5/14 BIOMAS AND CORMWT IN G/PLANT
+        HI = CORMWT/BIOMAS       ! 12/5/14 BIOMAS AND CORMWT IN G/PLANT
       ENDIF
 !      YIELD  = CORMWT*10.*PLTPOP   
 !      FRYLD = (YIELD/1000.)/0.2    
-      FRYLD = (CORMWT*GM2KG/1000.)* 3  ! 12/5/14 Fresh yield with 200% moisture
+      FRYLD = (CORMWT*GM2KG/1000.)* 3  
+! 12/5/14 Fresh yield with 200% moisture
 
 !---------------------------------------------------------------------------
 !     Compute reported plant N variables

@@ -17,6 +17,7 @@
         USE YCA_First_Trans_m
         
         IMPLICIT NONE
+        EXTERNAL WARNING
         
         !TYPE (WeatherType) WEATHER    , WEATHER
         

@@ -26,11 +26,11 @@
 !=======================================================================
 
       SUBROUTINE MAKEFILEW(LUNEXP,DSSATP,PATHEX,FILEX,        &              
-                         SimLevel,LNSIM,LNPLT,LNFLD)               !Input - Factor Levels
+                    SimLevel,LNSIM,LNPLT,LNFLD)  !Input: Factor Levels
 
       USE ModuleDefs
-      
       IMPLICIT      NONE
+      EXTERNAL ERROR, WARNING, IGNORE2, GETLUN, FIND, HFIND, INFO, PATH
 
       CHARACTER*1   BLANK, WTHER
       CHARACTER*3   PROCOD
@@ -46,8 +46,8 @@
 
       LOGICAL       FEXIST,SimLevel
       
-      INTEGER       LUNEXP,LINEXP,LNUM,ISECT,ERRNUM,PATHL,IFIND,FOUND
-      INTEGER       ICASAF,LUNWTH,LINWTH,UNIT
+      INTEGER       LUNEXP,LINEXP,LNUM,ISECT,ERRNUM,PATHL,IFIND !,FOUND
+      INTEGER       ICASAF,UNIT  !,LINWTH,LUNWTH
       INTEGER       SDATE,PDATE,YRDOY
       INTEGER       LNFLD,TLNFLD
       INTEGER       LNSIM,TLNSIM

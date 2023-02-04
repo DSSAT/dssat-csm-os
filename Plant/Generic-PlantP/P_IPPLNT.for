@@ -17,6 +17,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL GETLUN, FIND, WARNING, ERROR, IGNORE
       SAVE
 !     ------------------------------------------------------------------
 

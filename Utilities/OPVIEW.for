@@ -22,6 +22,8 @@ C=======================================================================
 !                         ! which contain control information, soil
 !                         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL CLEAR, ERROR, FIND, GET_CROPD, GETLUN, HEADER, 
+     &  LENSTRING, NAILUJ, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1 IDETO, RNMODE, ANS

@@ -13,6 +13,7 @@ c     ===============================================================
       SUBROUTINE find_inp_sam(var, varname, Control)
           USE ModuleDefs
           IMPLICIT NONE
+          EXTERNAL GETLUN, FIND, ERROR
           SAVE
 
 
@@ -34,7 +35,7 @@ c         Planting method
           CHARACTER*80    PATHSR
           CHARACTER*80    PATHER 
 
-          REAL PLTPOP,ROWSPC, plantdepth, dummy
+          REAL PLTPOP,ROWSPC, plantdepth !, dummy
           CHARACTER*6     SECTION 
           INTEGER         LINC
           INTEGER         FOUND  

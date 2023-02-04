@@ -8,19 +8,23 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_Nconc ( &
-        ISWNIT    ,    BRSTAGE        & 
+        ISWNIT        & 
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       BRSTAGE        
+
         USE YCA_First_Trans_m
         USE YCA_Control_Plant
         USE YCA_Control_Leaf
         
         IMPLICIT NONE
+        EXTERNAL WARNING
         
         CHARACTER(LEN=1) ISWNIT   
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
-        REAL  BRSTAGE 
+!       REAL  BRSTAGE 
         INTEGER    :: Lcount                   ! counter for iterations in leaves alive
         
         !-----------------------------------------------------------------------

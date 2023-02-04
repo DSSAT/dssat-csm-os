@@ -10,9 +10,11 @@
       SUBROUTINE BS_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
      &    GPSM,HARVFRAC, IDETO, IDETS, IPLTI, ISDATE,     !Input
-     &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+!    &    ISTAGE, MDATE, NSTRES, PODWT, PSTRES1, PSTRES2, !Input
+     &    ISTAGE, MDATE, NSTRES, PODWT,                   !Input
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
-     &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
+!    &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
+     &    TOPWT, TURFAC,WTNCAN, WTNUP, XLAI, XN,          !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
      &    BWAH, SDWTAH)                                   !Output
 
@@ -21,6 +23,8 @@
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, OPVIEW, READA, READA_Dates, 
+     &  GetDesc, SUMVALS, EvaluateDat, TIMDIF
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
@@ -41,15 +45,15 @@
       INTEGER TRT_ROT
       INTEGER STGDOY(20)
       
-      REAL AGEFAC, APTNUP, BIOMAS, BWAH, BWAM, CANNAA, CANWAA
+      REAL AGEFAC, APTNUP, BWAH, BWAM, CANNAA, CANWAA !, BIOMAS
       REAL EARWT, LFWT, STMWT, PLTPOP
       REAL GNUP, GPP, GPSM, HI, StovSenes
       REAL MAXLAI, NSTRES, PBIOMS, PODWT, PSDWT
-      REAL Pstres1, Pstres2   
+!     REAL Pstres1, Pstres2   
       REAL SDRATE
       REAL SDWT, SDWTAH, SDWTAM, SEEDNO, SKERWT, STOVER
       REAL SWFAC, TOPWT, TURFAC
-      REAL WTNCAN, WTNUP, XGNP, XLAI, XN
+      REAL WTNCAN, WTNUP, XLAI, XN    !, XGNP
       REAL YIELD 
 
       REAL, DIMENSION(2) :: HARVFRAC

@@ -32,11 +32,10 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
       USE FloodModule    ! which contain control information, soil
                          ! parameters, hourly weather data.
-      IMPLICIT  NONE 
-      EXTERNAL FIND,GETLUN,WARNING,YR_DOY,STNAMEFILL,RI_IPPHEN,
-     &  PHASEINIT,RICEINIT,TRNSPL_PHENOL,RI_STRESS,TOPTD,TFERT,
-     &  INCDAT,ERROR
-
+      IMPLICIT  NONE
+      EXTERNAL YR_DOY, StnameFill, RI_IPPHEN, PhaseInit, RiceInit, 
+     &  GETLUN, TRNSPL_PHENOL, WARNING, RI_Stress
+      EXTERNAL FIND,TOPTD,TFERT,INCDAT,ERROR
       SAVE
       
       CHARACTER ISWWAT*1,ISWNIT*1,IDETO*1,PLME*1
@@ -961,6 +960,7 @@ C=======================================================================
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
       IMPLICIT NONE
+      EXTERNAL INCDAT
 
       CHARACTER*1 PLME
       INTEGER ITRANS, YRPLT
@@ -1116,6 +1116,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND
 
       CHARACTER*1  PLME
       CHARACTER*6  ERRKEY, SECTION

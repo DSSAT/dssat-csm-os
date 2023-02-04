@@ -36,6 +36,9 @@ C=======================================================================
      &  TMADJ,TMFAC,TXADJ,TXFAC,WMDATE,WMODI,WNDADJ,WNDFAC,
      &  WTHADJ)   !,YRSIM)
 
+!     2023-01-26 chp removed unused variables in argument list:
+!       YRSIM
+
       USE ModuleDefs
       IMPLICIT    NONE
       EXTERNAL FIND, ERROR, IGNORE, Y4K_DOY

@@ -39,6 +39,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL PT_IPGRO, PT_NUPTAK, PT_NFACTO, ALIN, TABEX
       SAVE
 
       LOGICAL FIRST
@@ -88,9 +89,9 @@ C-----------------------------------------------------------------------
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       CALL PT_IPGRO(
-     &    FILEIO,                                                 !Input
-     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,                   !Output
-     &    SDWTPL, RUE1, RUE2, SENSF, SENST)                       !Output
+     &    FILEIO,                                         !Input
+     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,           !Output
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST)               !Output
 
       IF (PLME .EQ. 'B') THEN
         !Bed width ratio = Bed width / Row Spacing
@@ -237,7 +238,7 @@ C-----------------------------------------------------------------------
 
       TEMPM = (TMAX + TMIN)/2.0         ! Mean temp. calculation
       !PRFT  = 1.2 - 0.0035*(TEMPM - 22.5)**2 !original funtion
-      !--------Beggin----effect of Tmean on PRFT, modified by RR 02/15/2016
+!      --------Begin----effect of Tmean on PRFT, modified by RR 02/15/2016
       IF (TEMPM .LE. 14) THEN
           PRFT  = 1.2 - 0.0035*(TEMPM - 22.5)**2
       ! The next 2 lines set the bounds of PRFT at 0.0 and 1.0
@@ -248,15 +249,16 @@ C-----------------------------------------------------------------------
       ELSEIF (TEMPM .GT. 14 .AND. TEMPM .LE. 24) THEN
           PRFT = 1.0
       ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
-          PRFT = -0.0909*(TEMPM) + 3.1818 !RR linear function from 24 to 40  y = -0.0909x + 3.1818      
+!         RR linear function from 24 to 40  y = -0.0909x + 3.1818      
+          PRFT = -0.0909*(TEMPM) + 3.1818 
       ELSE
           PRFT = 0
       END IF
-      !--------End-----effect of Tmean on PRFT, modified by RR 02/15/2016
-      !
+!      --------End-----effect of Tmean on PRFT, modified by RR 02/15/2016
+!      
     
-      ! Calculation of daily leaf senescence, begin
-      !
+!       Calculation of daily leaf senescence, begin
+!      
       SELECT CASE (ISTAGE)
         CASE (1)                        ! Natural senescence, SLAN
           SLAN = CUMDTT*PLA/10000.
@@ -337,27 +339,26 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
          DEADLN = DEADLN + (DDEADLF*TMNC)
       ENDIF
       
-      !This unction was merged with PRFT
-      !--------beggin----RR effect of Tmean on RUE 02/15/2016
-      !IF (TEMPM .LE. 24) THEN
-      !    TX_RUE = 1.0
-      !ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
-      !    TX_RUE = -0.0909*(TEMPM) + 3.1818 !RR linear function from 24 to 40  y = -0.0909x + 3.1818      
-      !ELSE
-      !   TX_RUE = 0
-      !END IF
-      !--------end----------
-      
-      ! Potential carbon fixation
-      !      
+!      This unction was merged with PRFT
+!      --------beggin----RR effect of Tmean on RUE 02/15/2016
+!      IF (TEMPM .LE. 24) THEN
+!          TX_RUE = 1.0
+!      ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
+!          TX_RUE = -0.0909*(TEMPM) + 3.1818 !RR linear function from 24 to 40  y = -0.0909x + 3.1818      
+!      ELSE
+!         TX_RUE = 0
+!      END IF
+!      --------end----------
+
+!       Potential carbon fixation
       PT_PAR = SRAD*0.5               ! PAR = SRAD*.02092
       IF (ISTAGE .LT. 2) THEN
          !PCARB = 3.5*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
          PCARB = RUE1*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
        ELSE
-         !PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+!        PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+!        PCARB = RUE2*TX_RUE*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
          PCARB = RUE2*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
-         !PCARB = RUE2*TX_RUE*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
       END IF
 
       IF (PLME .EQ. 'B') THEN                 !WM
@@ -369,8 +370,9 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
       PCO2   = TABEX (CO2Y,CO2X,CO2,10)
       !PCARB  = PCARB*PCO2 ! original function 02/15/2016
       PCARB  = PCARB*PCO2*PRFT
-      !CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES)*SLPF + 0.5*DDEADLF ! original function 02/15/2016
-      CARBO  = PCARB*AMIN1(SWFAC, NSTRES)*SLPF + 0.5*DDEADLF ! Modified by RR 02/15/2016
+!     Modified by RR 02/15/2016
+!     CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES)*SLPF + 0.5*DDEADLF ! original function 02/15/2016
+      CARBO  = PCARB*AMIN1(SWFAC, NSTRES)*SLPF + 0.5*DDEADLF 
       
       RVCUSD = 0.0                                   ! Reserve C used
 
@@ -465,7 +467,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           DTII(1) = DTII(2)
           DTII(2) = DTII(3)
           DTII(3) = RTF + 0.5 * (1.0 - AMIN1(SWFAC, NSTRES,1.0))
-          !DTII(3) = RTF + 0.5 * (1.0 - AMIN1(SWFAC, NSTRES, LFT,1.0)) !added tmax stress
+!         DTII(3) = RTF + 0.5 * (1.0 - AMIN1(SWFAC, NSTRES, LFT,1.0)) !added tmax stress
           DTII(3) = AMIN1 (DTII(3),1.0)
           !
           ! DEVEFF is used to limit carbon demand of tubers
@@ -689,15 +691,16 @@ C  08/27/2001 CHP Written
 C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
       SUBROUTINE PT_IPGRO(
-     &    FILEIO,                                                 !Input
-     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,                   !Output
-     &    SDWTPL, RUE1, RUE2, SENSF, SENST)                       !Output
+     &    FILEIO,                                         !Input
+     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,           !Output
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST)               !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
 
       INTEGER LUNIO, LUNCRP, LUNECO
       CHARACTER*1 PLME

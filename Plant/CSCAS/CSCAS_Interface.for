@@ -19,6 +19,7 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL YR_DOY, WARNING, CSCAS
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS

@@ -3,17 +3,24 @@
 ! lines 6134 - 8983.
 !**********************************************************************
 
-      SUBROUTINE CER_Output (LAI, CANHT, CN, CO2, DOY,
+      SUBROUTINE CER_Output (LAI, CANHT, CN, DOY,
      &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS,
-     &     ISWNIT, ISWWAT, NFP, NLAYR, ON, RAIN, REP,
+     &     ISWNIT, ISWWAT, NFP, NLAYR, ON, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, STEP, STGDOY,
-     &     TOTIR, TN, UNH4ALG, UNO3ALG, YEAR)
+     &     TOTIR, TN, YEAR)
+
+! 2023-01-25 CHP removed unused variables from argument list
+!     CO2, RAIN, UNH4ALG, UNO3ALG, 
 
         USE ModuleDefs
         USE CSVOUTPUT  ! VSH
         USE CER_First_Trans_m
 
         IMPLICIT NONE
+        EXTERNAL YR_DOY, GETLUN, SUMVALS, HEADER, TVILENT, TVICOLNM, 
+     &    TL10FROMI, LTRIM, CSTIMDIF, CSOPLINE, CALENDAR, DAPCALC, 
+     &    LTRIM2, AREADR, AREADI, CSYDOY, GETSTRI, CSCLEAR5, GETSTR, 
+     &    GETSTRR
         SAVE
         
         INTEGER CN, DOY, DYNAMIC, NLAYR, ON, REP, RN
@@ -21,8 +28,8 @@
         INTEGER CSTIMDIF, STEP
         INTEGER TVICOLNM, TVILENT, CSYDOY, DAPCALC
         
-        REAL LAI, CANHT, NFP, RAIN, RLV(20)
-        REAL UNH4ALG(20), CO2, EOP, UNO3ALG(20)
+        REAL LAI, CANHT, NFP, RLV(20) !, RAIN
+        REAL EOP !CO2, UNH4ALG(20), UNO3ALG(20), 
         REAL TOTIR
         
         CHARACTER(LEN=1) IDETG, IDETL, IDETO, IDETS, ISWNIT, ISWWAT 

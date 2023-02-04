@@ -29,6 +29,7 @@ C=======================================================================
      &           MESIC,YRSIM,YRPLT,IHARI,HDATE,NHAR,PATHWT)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, JULIAN, NAILUJ, SWINSC, VERIFY, YDOY,YR_DOY
 
       CHARACTER*1  RNMODE,IHARI,MESIC,LINE(80),BLANK
       CHARACTER*3  MSSIM,MESIM

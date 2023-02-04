@@ -13,6 +13,10 @@
       USE CRP_First_Trans_m
   
       IMPLICIT NONE
+      EXTERNAL YR_DOY, GETLUN, SUMVALS, HEADER, TVILENT, TVICOLNM, 
+     &    TL10FROMI, LTRIM, CSTIMDIF, CSOPLINE, CALENDAR, DAPCALC, 
+     &    LTRIM2, AREADR, AREADI, CSYDOY, GETSTRI, CSCLEAR5, GETSTR, 
+     &    GETSTRR, WARNING, CSUCASE
       SAVE
     
       INTEGER CN, DOY, DYNAMIC, NLAYR, ON, REP, RN          
@@ -27,26 +31,26 @@
       CHARACTER(LEN=1) MESOM, RNMODE 
       CHARACTER(LEN=10) :: TL10FROMI
          
-        ! Simulated outputs only
-        !  IDETG (GROUT in controls (Y,N))  Plant growth outputs
-        !   Y->Work_details+Plantgro+Plantgr2+Plantgrf
-        !      +PlantN(If N switched on)
-        !   FROUT->#=number of days between outputs
-        !  IDETS (SUMRY in controls (Y,N)) Summary outputs
-        !   Y->Summary+Plantsum+Work(Harvest)                        
-        !
-        ! Simulated+Measured outputs
-        !  IDETO (OVVEW in controls (Y,E,N)) Overview outputs
-        !   Y->Overview+Evaluate(+Measured if IDETG=Y)
-        !   E->Evaluate only
-        !  IDETL (VBOSE in controls (0,N,Y,D,A))
-        !   Y->Leaves+Phases+Measured                 
-        !   D->+Phenols+Phenolm+Plantres+Plantrem
-        !   A->Errora+Errors+Errort+Full Reads
-        !   0,A are meta switches:
-        !     0 switches everything to N apart from IDETS,which given a Y,
-        !       and IDETO,which given an E when RNMODE is not N (seasonal)
-        !     A switches ALL outputs on  
+!         Simulated outputs only
+!          IDETG (GROUT in controls (Y,N))  Plant growth outputs
+!           Y->Work_details+Plantgro+Plantgr2+Plantgrf
+!              +PlantN(If N switched on)
+!           FROUT->#=number of days between outputs
+!          IDETS (SUMRY in controls (Y,N)) Summary outputs
+!           Y->Summary+Plantsum+Work(Harvest)                        
+!        
+!         Simulated+Measured outputs
+!          IDETO (OVVEW in controls (Y,E,N)) Overview outputs
+!           Y->Overview+Evaluate(+Measured if IDETG=Y)
+!           E->Evaluate only
+!          IDETL (VBOSE in controls (0,N,Y,D,A))
+!           Y->Leaves+Phases+Measured                 
+!           D->+Phenols+Phenolm+Plantres+Plantrem
+!           A->Errora+Errors+Errort+Full Reads
+!           0,A are meta switches:
+!             0 switches everything to N apart from IDETS,which given a Y,
+!               and IDETO,which given an E when RNMODE is not N (seasonal)
+!             A switches ALL outputs on  
 
         ! If model failure so that cycle not completed
         IF (DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
@@ -1456,7 +1460,7 @@ C-GH 1/20/2022 For ISWNI set to N
  8404       FORMAT (I4,1X,A10,I6,I3,1X,A2,2I6)
             DO L = 1,KEYSTX
               IF (KEYSS(L).GT.0) THEN
-                !SSDAP(2) = DRDAP  ! If need to check formula calculation
+                !SSDAP(2) = DRDAP  !If need to check formula calculation
                 IF (SSABVO(KEYSS(L))(1:1).NE.' ') 
      &            WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
                 WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') SSDAP(KEYSS(L))

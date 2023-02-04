@@ -15,7 +15,11 @@
       USE CRP_First_Trans_m
 
       IMPLICIT NONE
-      
+        EXTERNAL YR_DOY, GETLUN, Y4K_DOY, TVILENT, LTRIM, XREADC, 
+     &    XREADT, SPREADRA, XREADI, XREADR, UCASE, XREADIA, XREADRA, 
+     &    FVCHECK, FINDDIR, CUREADC, CUREADR, ECREADR, SPREADR, 
+     &    CRP_SeasInit_VarInit, XREADCA, LTRIM2, CSUCASE, SPREADC,
+     &    SPREADCA, WARNING
       
       INTEGER TVILENT
       INTEGER STGYEARDOY(20), CN, DOY, ON, RN, RUN, RUNI        
@@ -301,10 +305,10 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 !       Set planting/harvesting dates (Will change if runs repeated)
 !-----------------------------------------------------------------------
 
-        ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
-        ! CHP 09/28/2009 account for planting date >> simulation date.
-        !LPM 07/17/20 - account for simulation date when is a year before planting date
-        !Avoid wrong value of yeardoyharf
+!         CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
+!         CHP 09/28/2009 account for planting date >> simulation date.
+!        LPM 07/17/20 - account for simulation date when is a year before planting date
+!        Avoid wrong value of yeardoyharf
         IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
             IF (YEAR < PLYEARREAD) THEN
                 PLYEAR = PLYEARREAD
@@ -982,12 +986,12 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         CALL SPREADRA (SPDIRFLE,'CO2RF','10',co2rf)
         CALL SPREADRA (SPDIRFLE,'CO2F','10',co2f)
         
-        ! Temperature responses
-        !RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
-        !    0     1     0     0     0     0     0    -5    -5     0     0  
-        !  1.0    26    26    26    30    10     5     0     0    16    16  
-        !  1.0    50    50    50    50    20    25     7     5    35    35
-        !    0    60    60    60    60    35    35    15    10    45    45
+!         Temperature responses
+!        RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
+!            0     1     0     0     0     0     0    -5    -5     0     0  
+!          1.0    26    26    26    30    10     5     0     0    16    16  
+!          1.0    50    50    50    50    20    25     7     5    35    35
+!            0    60    60    60    60    35    35    15    10    45    45
         CALL SPREADRA (SPDIRFLE,'TRDV1','4',trdv1)
         IF (trdv1(1).LT.-98.0) THEN
           OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
@@ -1194,21 +1198,21 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           !   P7  EA->EL 8 130.0  130.0
           !   P8  EL->PM 9 500.0  500.0
 
-          ! PSNO PSNAME                        ! PSNO PSTYP PSABV PSNAME                                          
-          !   1  T.Spikelet                    !   1      S GDAT  Germinate                                       
-          !   2  EndVegetative                 !   2      K TSAT  T.Spikelet                                      
-          !   3  EndEarGrowth                  !   3      S PSDAT Pseudo_Stem                                     
-          !   4  BeginGrainFill                !   4      S LLDAT End_Leaf                                        
-          !   5  EndGrainFill                  !   5      S IEDAT Head_Emerge                                     
-          !   6  Harvest                       !   6      K ADAT  Anthesis                                        
-          !   7  Sowing                        !   7      S AEDAT EndAnthesis                                    
-          !   8  Germinate                     !   8      S GFDAT MilkToDough                                     
-          !   9  Emergance                     !   9      M MDAT  HardDough                                       
+!           PSNO PSNAME                        ! PSNO PSTYP PSABV PSNAME                                          
+!             1  T.Spikelet                    !   1      S GDAT  Germinate                                       
+!             2  EndVegetative                 !   2      K TSAT  T.Spikelet                                      
+!             3  EndEarGrowth                  !   3      S PSDAT Pseudo_Stem                                     
+!             4  BeginGrainFill                !   4      S LLDAT End_Leaf                                        
+!             5  EndGrainFill                  !   5      S IEDAT Head_Emerge                                     
+!             6  Harvest                       !   6      K ADAT  Anthesis                                        
+!             7  Sowing                        !   7      S AEDAT EndAnthesis                                    
+!             8  Germinate                     !   8      S GFDAT MilkToDough                                     
+!             9  Emergance                     !   9      M MDAT  HardDough                                       
           
         ENDIF   ! Reproductive development
         
-        ! The 'Examine' section is to alllow standardisation of coefficients for
-        ! comparison with CERES. 
+!         The 'Examine' section is to alllow standardisation of coefficients for
+!         comparison with CERES. 
         IF (EXAMINE(20).EQ.'Y') THEN  
           ! Everything from all genotype files    
           WRITE(fnumwrk,*)' '
@@ -1280,23 +1284,23 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           
         ! SPECIES  
           GMPCH = 15
-          ! Secondary Stages (S=Standard,K=Key(those that outputed to Evaluate.out)
-          ! SSNO SSTYP  SSTG SSABV SSNAME
-          !   1      S   1.5 LAFST Lafac_change          
-          !   2      K   1.6 DRAT  DoubleRidges
-          !   3      S 3.143 JDAT  Jointing
-          !   4      S   3.3 SGPHS StemStart             
-          !   5      S   4.0 RUESG RUE_change            
-          !   6      S   4.0 LGPHE LeafEnd               
-          !   7      S   4.0 LRPHS LfRetention           
-          !   8      S   4.8 CHPHS ChaffStart            
-          !   9      S   5.2 SVPHS StemVisible           
-          !  10      S   6.5 SGPHE StemEnd               
-          !  11      S   6.7 CHPHE ChaffEnd              
-          !  12      S   7.0 GGPHS GrainStart            
-          !  13      S   8.0 GLPHS GrLinearStart         
-          !  14      S   8.7 GLPHE GrLinearEnd           
-          !  15      S   9.0 GGPHE GrainEnd              
+!           Secondary Stages (S=Standard,K=Key(those that outputed to Evaluate.out)
+!           SSNO SSTYP  SSTG SSABV SSNAME
+!             1      S   1.5 LAFST Lafac_change          
+!             2      K   1.6 DRAT  DoubleRidges
+!             3      S 3.143 JDAT  Jointing
+!             4      S   3.3 SGPHS StemStart             
+!             5      S   4.0 RUESG RUE_change            
+!             6      S   4.0 LGPHE LeafEnd               
+!             7      S   4.0 LRPHS LfRetention           
+!             8      S   4.8 CHPHS ChaffStart            
+!             9      S   5.2 SVPHS StemVisible           
+!            10      S   6.5 SGPHE StemEnd               
+!            11      S   6.7 CHPHE ChaffEnd              
+!            12      S   7.0 GGPHS GrainStart            
+!            13      S   8.0 GLPHS GrLinearStart         
+!            14      S   8.7 GLPHE GrLinearEnd           
+!            15      S   9.0 GGPHE GrainEnd              
           PGERM = 10.0
           PEMRG = 8.0
           Pd(0) = 0.0

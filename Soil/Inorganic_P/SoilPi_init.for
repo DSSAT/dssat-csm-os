@@ -31,13 +31,14 @@
       SUBROUTINE SoilPi_init (CONTROL, 
      &    ISWPHO, SOILPROP,                               !Input
      &    K_ACT2LAB, K_ACT2STA, K_LAB2ACT, K_STA2ACT,     !Output
-     &    PiActive, PiLabile, PiStable, YREND)            !Output
+     &    PiActive, PiLabile, PiStable)                   !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL IPHedley_inorg, WARNING, ErrorCode, ERROR, INFO
 !     ------------------------------------------------------------------
       CHARACTER*1  ISWPHO
       CHARACTER*6, PARAMETER :: ERRKEY = 'SPINIT'
@@ -45,7 +46,7 @@
       CHARACTER*78 MSG(20), WMSG(10)
 
       INTEGER I, L, NMSG
-      INTEGER NLAYR, YREND  
+      INTEGER NLAYR !, YREND  
 
 !     Soil properties:
       REAL, DIMENSION(NL) :: CaCO3, CEC, CLAY, EXK, KG2PPM 

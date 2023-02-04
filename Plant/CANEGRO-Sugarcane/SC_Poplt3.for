@@ -16,6 +16,7 @@ c     ::::::::::::::::::::::::::::::::::::::::::::::
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GET_CULTIVAR_COEFF, SC_GTP_SHOOTPOP
       SAVE
 
 c     The DSSAT simulation control object
@@ -330,7 +331,7 @@ c        Initialise the GTP shoot population module
          Y_POPHA_GTP = 0.0
          POPHA_GTP = 0.0
 
-         CALL SC_GTP_SHOOTPOP(CONTROL, ISWITCH,  
+         CALL SC_GTP_SHOOTPOP(CONTROL,  
      &     TT-T0, DTT_EM, FI, SWDF30, POPHA_GTP)
 
 c     ===============================================================
@@ -448,7 +449,7 @@ c       TT_POPGROWTH is 600 for NCo376
 c       ::::::::::::::::::::::::::::::::
         if(T1 .LT. TT_POPGROWTH) then
 c            Call the GTP shoot population module
-             CALL SC_GTP_SHOOTPOP(CONTROL, ISWITCH,  
+             CALL SC_GTP_SHOOTPOP(CONTROL,  
      &         TT-T0, DTT_EM, FI, SWDF30, POPHA_GTP)
 c            Calculate the GTP model shoots delta:
              GTP_DELTA = (POPHA_GTP - Y_POPHA_GTP) / 1000.0
@@ -747,7 +748,7 @@ c     ===============================================================
          Y_POPHA_GTP = POPHA_GTP
            if(T1 .LT. TT_POPGROWTH) then
 c            Call the GTP shoot population module
-             CALL SC_GTP_SHOOTPOP(CONTROL, ISWITCH,  
+             CALL SC_GTP_SHOOTPOP(CONTROL,  
      &         TT-T0, DTT_EM, FI, SWDF30, POPHA_GTP)
            ENDIF
 

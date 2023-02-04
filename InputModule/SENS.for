@@ -39,6 +39,10 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL CLEAR, DATEC, ERROR, FILL_ISWITCH, IPECO, IPVAR, NAILUJ, 
+     &  SECLI, SECROP, SEFERT, SEFLD, SEFREQ, SEHARV, SEINIT, SEIRR, 
+     &  SEPEST, SEPLT, SERES, SESIM, SESOIL, SETIME, SEVAR, SEWTH, 
+     &  YR_DOY
 
       INCLUDE 'COMIBS.blk'
       INCLUDE 'COMSOI.blk'
@@ -242,7 +246,7 @@ C
           CALL SECROP (FILEC,FILEE,FILEG,RNMODE,CROP,CROPD,PATHCR)
           IF (CROP .NE. CROPC) THEN
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,
-     &                  PATHGE,ECONO, MODEL, ATLINE, CROP)
+     &                  PATHGE,ECONO, MODEL, ATLINE) !, CROP)
              IF (INDEX('GRO,CSM,CAN,CER',MODEL(3:6)) .GT. 0) THEN 
                 NSENS =  0
                 CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
@@ -447,6 +451,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, IGNORE, Y4K_DOY, YR_DOY
 
       CHARACTER*1  BLANK,IIRRI,IFERI,IHARI,IRESI,ISWTIL,ISWCHE
       CHARACTER*6  ERRKEY

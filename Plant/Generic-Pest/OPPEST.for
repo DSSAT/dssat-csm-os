@@ -23,6 +23,7 @@ C-------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, INCDAT, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1 IDETD, ISWDIS, RNMODE

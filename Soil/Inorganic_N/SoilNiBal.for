@@ -18,7 +18,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       USE FertType_mod
       USE Interface_SoilNBalSum
       IMPLICIT NONE
-      EXTERNAL YR_DOY, INCDAT, GETLUN, HEADER
+      EXTERNAL GETLUN, HEADER, INCDAT, YR_DOY
       SAVE
 !     ------------------------------------------------------------------
       TYPE (ControlType), INTENT(IN) :: CONTROL

@@ -50,6 +50,7 @@ C=======================================================================
                          ! parameters, hourly weather data.
 !     TS defined in ModuleDefs.for
       IMPLICIT NONE
+      EXTERNAL HANG, HTEMP, VPSAT, HWIND, HRAD, FRACD, HPAR
       INTEGER H,NDAY
 
       REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR
@@ -667,6 +668,7 @@ C=======================================================================
       REAL FUNCTION VPSLOP(T)
 
       IMPLICIT NONE
+      EXTERNAL VPSAT
 
       REAL T,VPSAT
 

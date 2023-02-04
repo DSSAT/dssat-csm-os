@@ -18,11 +18,11 @@ C  Called from:   CSP_CASUPRO
 C  Calls:         None
 C=======================================================================
       SUBROUTINE CSP_RESPIR(CONTROL,
-     &    LeafArea, LeafDist, LFWT, LMF, R30C2,            !Input
-     &	RES30C, RLF30C, SLAREF, StalkState,              !Input
-     &    StkPG, SUWT, TGRO, TGROAV, TOTALWT,              !Input
-     &    RO, RP,                                          !Input/Output
-     &    LeafMaint, MAINTR)                               !Output
+     &    LeafArea, LeafDist, LFWT, R30C2,            !Input
+     &	RES30C, RLF30C, SLAREF, StalkState,         !Input
+     &    StkPG, SUWT, TGRO, TOTALWT,                 !Input
+     &    RO, RP,                                     !Input/Output
+     &    LeafMaint, MAINTR)                          !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -38,10 +38,10 @@ C=======================================================================
       INTEGER DAS, H, Stalk, Zone
 	INTEGER, PARAMETER :: CanopyLayers=3
 
-	REAL LMF, R30C2, RES30C, RLF30C, RL, RO, RP, SLAREF, SLASTK, SCLTS
+	REAL R30C2, RES30C, RLF30C, RL, RO, RP, SLAREF, SLASTK, SCLTS !LMF, 
 C             SCLTS added on 4 July 2017 by Bruce Kimball
 
-      REAL TGROAV, TGRO(TS), TRSFAC
+      REAL TGRO(TS), TRSFAC !TGROAV, 
 
 	REAL, DIMENSION(1:NumOfStalks) :: MAINTR,TOTALWT 
 	REAL, DIMENSION(0:NumOfDays,NumOfStalks) :: LeafArea, LFWT, SUWT

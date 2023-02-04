@@ -23,6 +23,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
       SAVE
 
       REAL      A3
@@ -347,7 +348,7 @@ C ** Calculating individual LA including stress & temperature and accumulating
           LATOT = LATOT + LA(I)
 
           IF (ISTAGE.LT.3.AND.LAP(I).EQ.YX(I).AND.LNEXP.LT.I) THEN
-            LNEXP = I               !Leaf number that has completed expansion
+            LNEXP = I    !Leaf number that has completed expansion
           ENDIF
 
         END DO
@@ -386,8 +387,8 @@ C ** Individual leaf demand for biomass
             LFWTD(I) = LAD(I) / LSLA(I)    !Leaf biomass demand,g/leaf d
 
 C	      LFND    = LFND + LFWTD(I)*0.05 !Leaf N demand, g N/plant
-                                           !New leaf tissue target: 5% [N]
-            LFWT(I) = LFWT(I)+LFWTD(I)     !For checking purposes only
+                                         !New leaf tissue target: 5% [N]
+            LFWT(I) = LFWT(I)+LFWTD(I)   !For checking purposes only
           ELSE
             LFWTD(I) = 0.0
           ENDIF

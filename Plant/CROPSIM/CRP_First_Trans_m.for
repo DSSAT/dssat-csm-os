@@ -54,7 +54,7 @@
       REAL          AWNAI         ! Awn area index                 m2/m2
       REAL          AWNS          ! Awn score,1-10                 #
       REAL          BASELAYER     ! Depth at base of layer         cm
-      !REAL          BD(20)        ! Bulk density (moist)           g/cm3
+      !REAL          BD(20)        ! Bulk density (moist)          g/cm3
       REAL          BLAYR(20)     ! Base of soil layers            cm
       REAL          CAID          ! Canopy area index              #
       !REAL          CANHT         ! Canopy height                  cm
@@ -282,7 +282,7 @@
       REAL          FAC(20)       ! Factor ((g/Mg)/(kg/ha))        #
       INTEGER       FAPPNUM       ! Fertilization application number
       INTEGER       FDAY(200)     ! Dates of fertilizer appn (YrDoy)
-      !REAL          FERNIT        ! Fertilizer N applied           kg/ha
+      !REAL          FERNIT        ! Fertilizer N applied          kg/ha
       REAL          FERNITPREV    ! Fertilizer N applied to ystday kg/ha
       INTEGER       FILELEN       ! Length of file name            #
       INTEGER       FLDAP         ! Final leaf date                Yrdoy
@@ -523,11 +523,11 @@
       REAL          LAGEDU(0:LNUMX)! Leaf age at leaf position     C.d
       REAL          LAGEG(0:LNUMX)! Leaf age increment             C.d
       REAL          LAGEP(0:LNUMX)! Leaf age (phyllochrons),lf pos #
-      !REAL          LAI           ! Leaf area index                #
+!      REAL          LAI           ! Leaf area index                #
       REAL          LAIA          ! Leaf area index,active         #
       INTEGER       LAIDCOL       ! Leaf area index column         #
-      !REAL          LAIL(30)      ! Leaf area index by layer       m2/m2
-      !REAL          LAILA(30)     ! Leaf area index,active,by layr m2/m2
+!      REAL          LAIL(30)      ! Leaf area index by layer       m2/m2
+!      REAL          LAILA(30)     ! Leaf area index,active,by layr m2/m2
       REAL          LAIPREV       ! Leaf area index,previous day   #
       REAL          LAIPROD       ! Leaf area index produced       #
       REAL          LAISTG(20)    ! Leaf area index,specific stage #
@@ -853,11 +853,11 @@
       REAL          RDGS          ! Root depth growth rate,standrd cm/d
       !INTEGER       REP           ! Number of run repetitions      #
       REAL          RESCAL(0:20)  ! Residue C at harvest,by layer  kg/ha
-      !REAL          RESCALG(0:20) ! Residue C added,by layer       kg/ha
+!      REAL          RESCALG(0:20) ! Residue C added,by layer       kg/ha
       REAL          RESLGAL(0:20) ! Residue lignin,harvest,bylayer kg/ha
-      !REAL          RESLGALG(0:20)! Residue lignin added,layer     kg/ha
+!      REAL          RESLGALG(0:20)! Residue lignin added,layer     kg/ha
       REAL          RESNAL(0:20)  ! Residue N at harvest by layer  kg/ha
-      !REAL          RESNALG(0:20) ! Residue N added,by layer       kg/ha
+!      REAL          RESNALG(0:20) ! Residue N added,by layer       kg/ha
       REAL          RESPC         ! Respiration,total,cumulative   g/p
       REAL          RESPGF        ! Respiration,grain fill         g/p
       REAL          RESPRC        ! Respiration,roots,cumulative   g/p
@@ -875,53 +875,53 @@
       REAL          RLWR          ! Root length/weight ratio     m/10mg
       REAL          RM            ! Mesophyll resistance           d/m
       REAL          RMSE(30)      ! Root mean square error values  #
-      !INTEGER       RN            ! Treatment replicate            #
-      REAL          RNAD          ! Root N                         kg/ha
-      REAL          RNAM          ! Root N at maturity             kg/ha
-      REAL          RNAMM         ! Root N at maturity,measured    kg/ha
-      REAL          RNCM          ! Root N conc,minimum            fr
+!      INTEGER       RN      !       Treatment replicate            #
+      REAL          RNAD    !       Root N                         kg/ha
+      REAL          RNAM    !       Root N at maturity             kg/ha
+      REAL          RNAMM   !       Root N at maturity,measured    kg/ha
+      REAL          RNCM    !       Root N conc,minimum            fr
       REAL          RNCMN(0:1)    ! Root N conc,minimum            fr
-      REAL          RNCR          ! Roots N relative to maximum    #
-      REAL          RNCX          ! Root N concentration,maximum   fr
+      REAL          RNCR    !       Roots N relative to maximum    #
+      REAL          RNCX    !       Root N concentration,maximum   fr
       REAL          RNCXS(0:1)    ! Roots N conc,maximum,by stage  fr
-      REAL          RNDEM         ! Root demand for N              g/p
+      REAL          RNDEM   !       Root demand for N              g/p
       REAL          RNH4U(20)     ! Potential ammonium uptake      kg/ha
-      INTEGER       RNI           ! Replicate number,initial value #
+      INTEGER       RNI     !       Replicate number,initial value #
       REAL          RNO3U(20)     ! Potential nitrate uptake       kg/ha
       REAL          RNPCMN(0:1)   ! Root N conc,minimum            %
       REAL          RNPCS(0:1)    ! Roots N conc,standard,by stage %
-      REAL          RNUMX         ! Root N uptake,maximum          mg/cm
+      REAL          RNUMX   !       Root N uptake,maximum          mg/cm
       REAL          RNUSE(0:2)    ! Root N use,overall and parts   g   
-      REAL          ROOTN         ! Root N                         g/p
+      REAL          ROOTN   !       Root N                         g/p
       REAL          ROOTNEXCESS   ! Root N > critical              g/p
-      REAL          ROOTNS        ! Root N senesced                g/p
-      REAL          ROWSPC        ! Row spacing                    cm
-      INTEGER       RPCOL         ! Replicate column number        #
-      REAL          RRESP         ! Root respiration fraction      #
-      REAL          RSPCA         ! Reserves conc,anthesis         %
-      REAL          RSCD          ! Reserves concentration,end day fr
-      REAL          RSPCLX        ! Reserves conc,leaves,max.      #
-      REAL          RSCM          ! Reserves concentration,mature  fr
-      REAL          RSCMM         ! Reserves conc,maturity,msured  #
-      REAL          RSPCX         ! Reserves conc.max.->overflow   #
-      REAL          RSCX          ! Reserves concentration,maximum fr
-      REAL          RSEN          ! Root senescence                %/d
-      REAL          RSFP          ! Reserves factor,photosynthesis fr
-      REAL          RSFPL         ! Reserves conc.,phs.lower bound fr
-      REAL          RSFPU         ! Reserves conc.,phs upper bound fr
-      REAL          RSN           ! Reserve N                      g/p
-      REAL          RSNAD         ! Reserve N                      kg/ha
-      REAL          RSNEED        ! Reserves need to bring to min  g/p
-      REAL          RSNPH         ! Reserves N harvested           g/p
-      REAL          RSNPHC        ! Reserves N harvested,cum       g/p
-      REAL          RSNUSED       ! Reserve N used                 g/p
-      REAL          RSTAGE        ! Reproductive develoment stage  #
-      REAL          RSTAGEFS      ! Rstage when final sen started  #
-      REAL          RSTAGEP       ! Reproductive dc stage,previous #
+      REAL          ROOTNS  !       Root N senesced                g/p
+      REAL          ROWSPC  !       Row spacing                    cm
+      INTEGER       RPCOL   !       Replicate column number        #
+      REAL          RRESP   !       Root respiration fraction      #
+      REAL          RSPCA   !       Reserves conc,anthesis         %
+      REAL          RSCD    !       Reserves concentration,end day fr
+      REAL          RSPCLX  !       Reserves conc,leaves,max.      #
+      REAL          RSCM    !       Reserves concentration,mature  fr
+      REAL          RSCMM   !       Reserves conc,maturity,msured  #
+      REAL          RSPCX   !       Reserves conc.max.->overflow   #
+      REAL          RSCX    !       Reserves concentration,maximum fr
+      REAL          RSEN    !       Root senescence                %/d
+      REAL          RSFP    !       Reserves factor,photosynthesis fr
+      REAL          RSFPL   !       Reserves conc.,phs.lower bound fr
+      REAL          RSFPU   !       Reserves conc.,phs upper bound fr
+      REAL          RSN     !       Reserve N                      g/p
+      REAL          RSNAD   !       Reserve N                      kg/ha
+      REAL          RSNEED  !       Reserves need to bring to min  g/p
+      REAL          RSNPH   !       Reserves N harvested           g/p
+      REAL          RSNPHC  !       Reserves N harvested,cum       g/p
+      REAL          RSNUSED !       Reserve N used                 g/p
+      REAL          RSTAGE  !       Reproductive develoment stage  #
+      REAL          RSTAGEFS!       Rstage when final sen started  #
+      REAL          RSTAGEP !       Reproductive dc stage,previous #
       REAL          RSTAGETMP     ! Reproductive develoment stage  #
-      REAL          RSUSE         ! Reserves utilisation fraction  #
-      REAL          RSWAA         ! Reserve weight,anthesis        g/p 
-      REAL          RSWAAM        ! Reserve wt,anthesis,measured   g/p
+      REAL          RSUSE   !       Reserves utilisation fraction  #
+      REAL          RSWAA   !       Reserve weight,anthesis        g/p 
+      REAL          RSWAAM  !       Reserve wt,anthesis,measured   g/p
       REAL          RSWAD         ! Reserves weight                kg/ha
       REAL          RSWADPM       ! Reserves weight,post maturity  kg/ha
       REAL          RSWAM         ! Reserves at maturity           kg/ha
@@ -951,22 +951,22 @@
       REAL          RTWTGL(20)    ! Root weight growth by layer    g/p
       REAL          RTWTL(20)     ! Root weight by layer           g/p
       REAL          RTWTM         ! Root weight,maturity           g/p
-      !REAL          RTWTSGE       ! Root weight,stem growth end    g/p
+!      REAL          RTWTSGE       ! Root weight,stem growth end    g/p
       REAL          RTWTSL(20)    ! Root weight senesced by layer  g/p
       REAL          RTWTUL(20)    ! Root weight used for tops,lyr  g/p
       REAL          RUESTG        ! Stage at which RUE changes     #
       REAL          RUESTGDU      ! Stage at which RUE changes     PVoCD
-      !INTEGER       RUN           ! Run (from command line) number #
+!      INTEGER       RUN           ! Run (from command line) number #
       INTEGER       RUNCRP        ! Run (internal within module)   #
-      !INTEGER       RUNI          ! Run (internal for sequences)   #
-      !REAL          RUNOFF        ! Calculated runoff              mm/d
+!      INTEGER       RUNI          ! Run (internal for sequences)   #
+!      REAL          RUNOFF        ! Calculated runoff              mm/d
       REAL          RUNOFFC       ! Calculated runoff,cumulative   mm   
       REAL          RWAD          ! Root weight                    kg/ha
       REAL          RWAM          ! Root weight,maturity           kg/ha
       REAL          RWAMM         ! Root wt at maturity,measured   kg/ha
-      !REAL          RWUMX         ! Root water uptake,max cm3/cm.d cm2.d
+!      REAL          RWUMX         ! Root water uptake,max cm3/cm.d cm2.d
       REAL          RWUMXI        ! Root water uptake,max,init.val cm2/d
-      !REAL          RWUPM         ! Pore size for maximum uptake   fr
+!      REAL          RWUPM         ! Pore size for maximum uptake   fr
       REAL          SAID          ! Stem area index                m2/m2
       REAL          SANC          ! Stem N concentration           #
       REAL          SANCOUT       ! Stem+LeafSheaths N conc        #
@@ -997,7 +997,7 @@
       REAL          SEEDUSER      ! Seed reserves use,roots        g/p
       REAL          SEEDUSET      ! Seed reserves use,tops         g/p
       REAL          SENCAGS       ! Senesced C added to soil       kg/ha
-      !REAL          SENCALG(0:20) ! Senesced C added,by layer      kg/ha
+!      REAL          SENCALG(0:20) ! Senesced C added,by layer      kg/ha
       REAL          SENCAS        ! Senesced C added to soil       kg/ha
       REAL          SENCL(0:20)   ! Senesced C,by layer            g/p
       REAL          SENCS         ! Senesced C added to soil       g/p
@@ -1007,7 +1007,7 @@
       REAL          SENLALITTER   ! Senesced leaf area,litter      cm2/p
       REAL          SENLARETAINED ! Senesced leaf area,retained    cm2/p
       REAL          SENLAGS       ! Senesced lignin added to soil  kg/ha
-      !REAL          SENLALG(0:20) ! Senesced lignin added,layer    kg/ha
+!      REAL          SENLALG(0:20) ! Senesced lignin added,layer    kg/ha
       REAL          SENLAS        ! Senesced lignin added to soil  kg/ha
       REAL          SENLFG        ! Senesced leaf                  g/p
       REAL          SENLFGRS      ! Senesced leaf to reserves      g/p
@@ -1015,7 +1015,7 @@
       REAL          SENLS         ! Senesced lignin added to soil  g/p
       REAL          SENNAGS       ! Senesced N added to soil       kg/ha
       REAL          SENNAL(0:20)  ! Senesced N,by layer            kg/ha
-      !REAL          SENNALG(0:20) ! Senesced N added,by layer      kg/ha
+!      REAL          SENNALG(0:20) ! Senesced N added,by layer      kg/ha
       REAL          SENNAS        ! Senesced N added to soil       kg/ha
       REAL          SENNATC       ! Senesced N,litter+soil,cum     kg/ha
       REAL          SENNATCM      ! Senesced N,litter+soil,cum,mes kg/ha
@@ -1087,7 +1087,7 @@
       REAL          SPNUMHCM      ! Spike # harvested,cum,measured #  
       REAL          SPNUMHFAC     ! Spike # harvestd factor (0-1)  #  
       REAL          SPRL          ! Sprout/cutting length          cm
-      !REAL          SRAD          ! Solar radiation                MJ/m2
+      !REAL          SRAD          ! Solar radiation               MJ/m2
       REAL          SRAD20        ! Solar radiation av,20 days     MJ/m2
       REAL          SRAD20ANTH    ! Solar radn av,20 days,anthesis MJ/m2
       REAL          SRAD20S       ! Solar radiation sum            MJ/m2
@@ -1236,7 +1236,7 @@
       REAL          TLAGP(25)     ! Tiller potential leaf area gr  cm2
       REAL          TLAS(25)      ! Tiller leaf area senesced      cm2
       REAL          TLCHC         ! Cumulative N leached>planting  kg/ha
-      !REAL          TLCHD         ! N leached this day             kg/ha
+      !REAL          TLCHD         ! N leached this day            kg/ha
       INTEGER       TLIMIT        ! Temp.limited grain gr (Days)   #
       INTEGER       TLINENUM      ! Temporary var,# lines in tfile #
       INTEGER       TLPOS         ! Position on temporary line     #
@@ -1278,9 +1278,9 @@
       REAL          TNAD          ! Total nitrogen (tops+roots)    kg/ha
       REAL          TNAMM         ! Total N at maturity,measured   kg/ha
       INTEGER       TNI           ! Treatment number,initial value #
-      !REAL          TNIMBSOM      ! Total N immobilised by SOM     kg/ha
+      !REAL          TNIMBSOM      ! Total N immobilised by SOM    kg/ha
       REAL          TNOXC         ! Cumulative N denitrified       kg/ha
-      !REAL          TNOXD         ! N denitrified this day         kg/ha
+      !REAL          TNOXD         ! N denitrified this day        kg/ha
       REAL          TNUM          ! Tiller (incl.main stem) number #/p
       REAL          TNUMAD        ! Tiller (incl.main stem) number #/m2
       REAL          TNUMAERR      ! Shoot #,error                  %
@@ -1300,14 +1300,14 @@
       REAL          TOFIXC        ! Cumulative inorganicN fixation kg/ha
       REAL          TOMIN         ! Daily N mineralized            kg/ha
       REAL          TOMINC        ! Cumulative N mineralized       kg/ha
-      !REAL          TOMINFOM      ! Daily mineralization,FOM       kg/ha
+      !REAL          TOMINFOM      ! Daily mineralization,FOM      kg/ha
       REAL          TOMINFOMC     ! Cumulative mineralization,FOM  kg/ha
-      !REAL          TOMINSOM      ! Daily mineralization,SOM       kg/ha
-      !REAL          TOMINSOM1     ! Daily mineralization,SOM1      kg/ha
+      !REAL          TOMINSOM      ! Daily mineralization,SOM      kg/ha
+      !REAL          TOMINSOM1     ! Daily mineralization,SOM1     kg/ha
       REAL          TOMINSOM1C    ! Cumulative mineralization,SOM1 kg/ha
-      !REAL          TOMINSOM2     ! Daily mineralization,SOM2      kg/ha
+      !REAL          TOMINSOM2     ! Daily mineralization,SOM2     kg/ha
       REAL          TOMINSOM2C    ! Cumulative mineralization,SOM2 kg/ha
-      !REAL          TOMINSOM3     ! Daily mineralization,SOM3      kg/ha
+      !REAL          TOMINSOM3     ! Daily mineralization,SOM3     kg/ha
       REAL          TOMINSOM3C    ! Cumulative mineralization,SOM3 kg/ha
       REAL          TOMINSOMC     ! Cumulative mineralization,SOM  kg/ha
       REAL          TPAR          ! Transmission,PAR,fraction      #
@@ -1357,9 +1357,9 @@
       REAL          TVR5          ! Temporary real variable        #
       REAL          TVR6          ! Temporary real variable        #
       REAL          TWAD          ! Total weight (tops+roots)      kg/ha
-      !REAL          UH2O(NL)      ! Uptake of water                cm/d
-      !REAL          UNH4(20)      ! Uptake of NH4 N                kg/ha
-      !REAL          UNO3(20)      ! Uptake of NO3 N                kg/ha
+      !REAL          UH2O(NL)      ! Uptake of water               cm/d
+      !REAL          UNH4(20)      ! Uptake of NH4 N               kg/ha
+      !REAL          UNO3(20)      ! Uptake of NO3 N               kg/ha
       INTEGER       VALUEI        ! Output from Getstri function   #
       REAL          VALUER        ! Output from Getstrr function   #
       REAL          VANC          ! Vegetative actual N conc       #
@@ -1520,10 +1520,10 @@
       CHARACTER (LEN=6)   HWUMCHAR      ! Harvest wt/unit
       CHARACTER (LEN=6)   HWUMMCHAR     ! Harvest wt/unit,mat,measured
       CHARACTER (LEN=1)   IDETD         ! Control flag,screen outputs
-      !CHARACTER (LEN=1)   IDETG         ! Control flag,growth outputs
-      !CHARACTER (LEN=1)   IDETL         ! Control switch,detailed output
-      !CHARACTER (LEN=1)   IDETO         ! Control flag,overview outputs
-      !CHARACTER (LEN=1)   IDETS         ! Control switch,summary outputs
+!      CHARACTER (LEN=1)   IDETG         ! Control flag,growth outputs
+!      CHARACTER (LEN=1)   IDETL         ! Control switch,detailed output
+!      CHARACTER (LEN=1)   IDETO         ! Control flag,overview outputs
+!      CHARACTER (LEN=1)   IDETS         ! Control switch,summary outputs
       CHARACTER (LEN=1)   IFERI         ! Fertilizer switch (A,F,R,D,N)
       CHARACTER (LEN=1)   IHARI         ! Control flag,harvest
       CHARACTER (LEN=1)   IPLTI         ! Code for planting date method

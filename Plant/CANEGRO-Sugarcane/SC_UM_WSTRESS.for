@@ -7,13 +7,17 @@ c     (3) CWSI
 c     (4) STDAYC (cumulative days since severe stress)
 c   Modified by MJ, Sept 2013, to implement Singels' suggestions
 c   for improving water stress modelling.
+
+!   2023-01-26 chp removed unused variables from argument list: TRWUP
+
 c ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE SC_UM_WSTRESS(
-     &  Control, ISWITCH, SoilProp, Weather, ! DSSAT CSM inputs
-     &  SW, TRWUP, EO, GLAI,                ! Plant and environ. inputs
+     &  Control, ISWITCH, SoilProp, Weather,  ! DSSAT CSM inputs
+     &  SW, EO, GLAI,                         ! Plant & environ. inputs
      &  SWDF1, SWDF2, SWDF30, CWSI, STDAYC,   ! Water stress outputs
      &  RLV)
 c ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 c     DSSAT module definitions
       USE ModuleDefs
 c     This module exposes access to functions for getting and
@@ -21,8 +25,9 @@ c     setting certain CSM variables
       USE ModuleData
 
       IMPLICIT NONE
-      SAVE    
-      
+      EXTERNAL GET_SPECIES_COEFF, GET_CULTIVAR_COEFF, AQ_WSTRESS
+      SAVE
+
 c     Number of soil layers
       INTEGER NLAYR
 c     Stress factor affecting photosynthesis
@@ -80,7 +85,7 @@ c     Green leaf area index[m²/m²]
 c     Potential evaporation [mm/d]
       REAL, INTENT(IN) :: EO
 c     Potential daily root water uptake over soil profile[cm/d]
-      REAL, INTENT(IN) :: TRWUP
+!     REAL, INTENT(IN) :: TRWUP
 c     Volumetric soil water content of soil layer, cm3 water/cm3 soil    [cm³/cm³]
       REAL, INTENT(IN) :: SW(NL)
 c     Volumetric soil water content of soil layer, cm3 water/cm3 soil    [cm³/cm³]
@@ -455,7 +460,7 @@ c      :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c        Output: soil water deficit factor 'n'
          REAL SWDFN
          INTEGER I
-         REAL C_UP, P_UP, P_LOW , C_LOW, DREL_RAW
+         REAL C_UP, P_UP, P_LOW , DREL_RAW  !, C_LOW
          REAL, DIMENSION (NLAYR) ::  RSWD, DREL, AQWS_RLZ, AQWSTRESS,
 c          Normalised stress values per layer:
      &     NSTLAYR

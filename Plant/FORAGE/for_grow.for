@@ -84,11 +84,15 @@ C=======================================================================
      &  VSTAGE, DWTCO, DWTLO, DWTSO,
      &  PWTCO, PWTLO, PWTSO)                         !Input/Output
 
+!     2023-01-26 chp removed unused variables in argument list:
+!       PORPT, TSCMOB, SLCADDOT, SRCADDOT, SSCADDOT
+
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FOR_IPGROW, ERROR, FOR_STRESS
       SAVE
 !-----------------------------------------------------------------------
 
@@ -2096,6 +2100,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL YR_DOY, WARNING, TIMDIF
 !-----------------------------------------------------------------------
       CHARACTER*1  IDETO, IHARI
       CHARACTER*78 MESSAGE(10)
@@ -2180,6 +2185,7 @@ C=======================================================================
      &  PLIGSR, PLIPSR, PMINSR, POASR, PROSRF, PROSRI)     !Output
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, UPCASE
 !-----------------------------------------------------------------------
       CHARACTER*1 PLME, UPCASE
       CHARACTER*2 XPODF, CROP

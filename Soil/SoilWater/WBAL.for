@@ -24,6 +24,7 @@ C=====================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
@@ -239,7 +240,7 @@ C-----------------------------------------------------------------------
 !      CALL Get('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm) (includes losses)
 !      CALL Get('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
 !      CALL Get('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
-      CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrigation
+      CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrig
 
 !      IF (EFFIRR .GT. 0.0) THEN
 !        TOTEFFIRR = EFFIRR * TOTIR
@@ -256,20 +257,21 @@ C-----------------------------------------------------------------------
      &                   TOTEFFIRR,
      &                   CRAIN, CUMRESWATADD, 
      &                   TDRAIN, TDFC*10., TRUNOF, CUMMULEVAP,
-     &                   CES, CEP, CEO
+     &                   CES, CEP, CES+CEP, CEO
   400 FORMAT(
      &    /,'!',5X,'Soil H20 (start) on Year/day',I5,'/',I3.3,T44,F10.2,
      &    /,'!',5X,'Soil H20 (final) on Year/day',I5,'/',I3.3,T44,F10.2,
-     &    /,'!',5X,'Effective Irrigation',         T44,F10.2,
-     &    /,'!',5X,'Precipitation',                T44,F10.2,
-     &    /,'!',5X,'Water added with new mulch',   T44,F10.2,
-     &    /,'!',5X,'Drainage',                     T44,F10.2,
-     &    /,'!',5X,'Tiledrain flow',               T44,F10.2,
-     &    /,'!',5X,'Runoff',                       T44,F10.2,
-     &    /,'!',5X,'Mulch evaporation',            T44,F10.2,
-     &    /,'!',5X,'Soil Evaporation',             T44,F10.2,
-     &    /,'!',5X,'Transpiration',                T44,F10.2,
-     &    /,'!',5X,'Potential ET',                 T44,F10.2)
+     &    /,'!',5X,'Effective Irrigation',                    T44,F10.2,
+     &    /,'!',5X,'Precipitation',                           T44,F10.2,
+     &    /,'!',5X,'Water added with new mulch',              T44,F10.2,
+     &    /,'!',5X,'Drainage',                                T44,F10.2,
+     &    /,'!',5X,'Tiledrain flow',                          T44,F10.2,
+     &    /,'!',5X,'Runoff',                                  T44,F10.2,
+     &    /,'!',5X,'Mulch evaporation',                       T44,F10.2,
+     &    /,'!',5X,'Soil Evaporation',                        T44,F10.2,
+     &    /,'!',5X,'Transpiration',                           T44,F10.2,
+     &    /,'!',5X,'Total evapotranspiration',                T44,F10.2,
+     &    /,'!',5X,'Total potential evapotranspiration',      T44,F10.2)
 
       WBALAN = (TSWINI * 10.) - (TSW * 10.) !Change in water content
      &       + TOTEFFIRR + CRAIN + CUMRESWATADD           !Inflows

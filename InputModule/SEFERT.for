@@ -35,6 +35,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, CLEAR, SENIT, SWFERT, AUTFER, ENTFER, SWFIX, SEFIX
 
       CHARACTER*1  RNMODE,IDETN,ISWWAT,ISWNIT,IFERI,ISWSYM
       CHARACTER*2  CROP
@@ -250,6 +251,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, CLEAR
 
       CHARACTER*1  RNMODE,IFERI,ISWNIT,ISWWAT
       CHARACTER*6  ERRKEY
@@ -347,6 +349,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80)
       CHARACTER*6  ERRKEY
@@ -471,6 +474,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, CLEAR
 
       CHARACTER*1  RNMODE,ISWNIT,ISWSYM,ISWWAT
       CHARACTER*6  ERRKEY
@@ -559,6 +563,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1 RNMODE,LINE(80)
       CHARACTER*6 ERRKEY
@@ -658,6 +663,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL YR_DOY, ERROR, CLEAR, UPCASE, VERIFY, HOME, Y4K_DOY, SORT
 
       CHARACTER*1  RNMODE,LINE(80),IMENU,UPCASE,ANS,IFERI
       CHARACTER*6  ERRKEY

@@ -13,20 +13,20 @@ C-----------------------------------------------------------------------
 !  Calls: 
 C=======================================================================
       SUBROUTINE CSP_GROW_CANE(CONTROL, DYNAMIC,
-     &  CAB, CropTypeCode, DeltaLeafArea,              !AGEFAC,!Input 
-     &  DeltaLeafNum, DTPI, ECONO, EXCESS, FILEIO, FILECC,     !Input
-     &  FILEGC, FINREF, FRSU, GAMMA, GRLF, GRRT, GRST,         !Input
-     &  GRSU, KCAN,Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
-     &  PAR, PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
-     &  PLTPOP, PLF1, PLF2, PLWT, ROWSPC, SLA,                 !Input
-     &  SLAMIN, SLAMAX, SLAPAR, SLAREF,                        !Input 
+     &  CAB, CropTypeCode, DeltaLeafArea,                 !Input 
+     &  DeltaLeafNum, DTPI, EXCESS, FILEIO,               !Input
+     &  FRSU, GAMMA, GRLF, GRRT, GRST,                    !Input
+     &  GRSU, Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
+     &  PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
+     &  PLTPOP, PLF1, PLF2, PLWT, SLA,                    !Input
+     &  SLAREF,                                           !Input 
      &  LSFAC, SENRT, SLDOT, Smax, SRDOT, StkHrNO, StalkState, !Input
-     &  StkB, StkM, SumTTStalk, TGRO,                          !Input
-     &  TURFAC, TURSLA, WEATHER, XDAY, XFRRT,                  !Input
-     &  XFRSU, XLAI, XLAIlost, XSLATM, XSTKRT, XVSHT, YFRRT,   !Input
-     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT, YVSHT, ZVSDI,       !Input
-     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI, YSLATM,       !Input/Output
-     &  BRDMD, CANHT, CANWH, CountStalk, DeltaLeafArealost,    !Output 
+     &  StkB, StkM, SumTTStalk,                           !Input
+     &  TURFAC, XDAY, XFRRT,                              !Input
+     &  XFRSU, XLAI, XLAIlost, XSTKRT, YFRRT,             !Input
+     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT,                !Input
+     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI,                !Input/Output
+     &  BRDMD, CountStalk, DeltaLeafArealost,                  !Output 
      &  LAIMX, LAIXD, LeafArea, LeafArealost, LeafAreaPlant,   !Output
      &  LFWT, LFWTHa, LSWTlost, LSWT, LSWTHa, LFWTHalost,      !Output 
      &  LFWTlost, LSWTHalost, StkH2OFac, STKmntDEF,            !Output
@@ -41,42 +41,43 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TABEX, TIMDIF, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1  RNMODE  
       CHARACTER*4 StalkState(NumOfStalks,10)
       !CHARACTER(11) :: CropTypeName
       CHARACTER*30 FILEIO
-      CHARACTER*92 FILECC, FILEGC
-      CHARACTER*6 ECONO
+!     CHARACTER*92 FILECC, FILEGC
+!     CHARACTER*6 ECONO
 
       INTEGER CAB, CountStalk, CropTypeCode 
-      INTEGER DAP, DAS, Day, DOY, DYNAMIC, H, I, L
-      INTEGER LAIXD, LUNCRP, NLAYR, NVEG0, OpenStatus  
+      INTEGER DAP, DAS, Day, DOY, DYNAMIC, I, L
+      INTEGER LAIXD, NLAYR, NVEG0, OpenStatus  
       INTEGER PhenoStage, REPNO, RUN, Smax, Stalk, TIMDIF
       INTEGER XDAY(6), YEAR, YRDOY, YRPLT, YRSIM, CGLUN
 
       INTEGER, DIMENSION(1:NumOfStalks) :: Kill
       
-      REAL BRDMD, CANHT, CANWH, CAVLF, CAVR, CDEF, DTPI, FRRT
-      REAL DUMFACF, FFVEG, FINREF, FRACSH, FRSU, FVEG, LAIMX 
-      REAL GAMMA, GRLF, GRLS, GRRT, GRST, GRSU, KCAN, LAIMX_Previous 
-      REAL LSFAC, PARSLA, PgAvalPD, PLF1, PLF2, PLTPOP, PLWT, RFPSTKG 
-      REAL RootFac, ROWSPC, SeedCH2O, ShootCTotDem, ShootCTotSup 
-      REAL SLA, SLAMAX, SLAMX, SLAMIN, SLAMN 
-      REAL Stk_H2O, StkHrNO, SLAPAR, SRDOT
+      REAL BRDMD, CAVLF, CAVR, CDEF, DTPI, FRRT !CANHT, CANWH, 
+      REAL FRSU, LAIMX !, FINREF
+      REAL GAMMA, GRLF, GRLS, GRRT, GRST, GRSU, LAIMX_Previous !, KCAN
+      REAL LSFAC, PgAvalPD, PLF1, PLF2, PLTPOP, PLWT, RFPSTKG 
+      REAL RootFac, SeedCH2O, ShootCTotDem, ShootCTotSup !, ROWSPC
+      REAL SLA !, SLAMIN, SLAMAX, SLAMX, SLAMN
+      REAL Stk_H2O, StkHrNO, SRDOT !, SLAPAR
       REAL STK, StkB, STKDMC, STKDWtmp, StkH2OFac, StkM, SUDWtmp 
       REAL SumLfWt, SumLSWt, SumRtWt, SuH2OFac 
-      REAL SumStkTiWt, SumStkSuWt, TPHFAC, TURFAC, TURFSL 
-      REAL TURSLA, XHLAI, XLAI, XLAIlost
-      REAL PAR, xTEMP 
+      REAL SumStkTiWt, SumStkSuWt, TURFAC !, TURFSL 
+      REAL XHLAI, XLAI, XLAIlost !TURSLA, 
+!      REAL xTEMP !PAR, 
 !     REAL AGEFAC, ,PGAVL,  DTX
 
-      REAL SLAREF, SLAVAR, StkEx, SuEx, TOPWT, TOTWT, VSTAGE
+      REAL SLAREF, SLAVAR, StkEx, SuEx, TOPWT, TOTWT !, VSTAGE
       REAL WholeLeaf
       REAL XFRRT(4), XFRSU(4), YFRRT(4), YFRSU(4), YSLA(6)
-      REAL TGRO(TS), XSLATM(10), XSTKRT(6), YSLATM(10), YSTKRT(6)
-      REAL XVSHT(10), YVSHT(10), ZVSDI(10)
+      REAL XSTKRT(6), YSTKRT(6) !TGRO(TS), XSLATM(10), YSLATM(10), 
+!     REAL XVSHT(10), YVSHT(10), ZVSDI(10)
       REAL TABEX  ! Function subroutine - Lookup utility
 !     REAL SIZELF, SIZREF, , SLNDOT 
       REAL DAYS(6)
@@ -118,7 +119,7 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       Type (ResidueType) SENESCE
       TYPE (SwitchType)  ISWITCH
-      Type (WeatherType) WEATHER
+!     Type (WeatherType) WEATHER
 
 !     Transfer values from constructed data types into local variables.
       DAS     = CONTROL % DAS
@@ -477,9 +478,9 @@ C and stalk does not become apparent until the "great growth" period begins.
           IF (StalkState(Stalk,1) .EQ. 'LIVE') THEN 
 
               LFDPW(DAS,Stalk) =  (1/SLAREF) * DeltaLeafArea(DAS,Stalk) 
-            LSDPW(DAS,Stalk) =  LSFAC * LFDPW(DAS,Stalk)  ! sheath as a 
-                                                          ! proportion of
-          ELSE                                            ! leaf DM
+            LSDPW(DAS,Stalk) =  LSFAC * LFDPW(DAS,Stalk) ! sheath as a 
+                                                         ! proportion of
+          ELSE                                           ! leaf DM
               LFDPW(DAS,Stalk) = 0.
             LSDPW(DAS,Stalk) = 0. 
           END IF  
@@ -595,7 +596,8 @@ C comprising "cabbage" have formed, therefore no sugars should be produced.
 !
             ShootCDEM(DAS,Stalk)  = (STKDPW(DAS,Stalk) * GRST) 
      &                            + (LFDPW(DAS,Stalk)  * GRLF) 
-     &                            + (LSDPW(DAS,Stalk)  * GRLF)! GRLF for sheath
+     &                            + (LSDPW(DAS,Stalk)  * GRLF)
+!                                                         GRLF for sheath
      &                            + (RTDPW(DAS,Stalk)  * GRRT)
      &                            + (SUDPW(DAS,Stalk)  * GRSU)
           
@@ -660,65 +662,66 @@ C comprising "cabbage" have formed, therefore no sugars should be produced.
 
       DO Stalk = 1, Smax
 
-          IF (LeafNum(DAS-1, Stalk) >= CAB .AND. PGAVAL(Stalk) < 0) THEN
-             STKmntDEF(DAS,Stalk) = PGAVAL(Stalk) 
+        IF (LeafNum(DAS-1, Stalk) >= CAB .AND. PGAVAL(Stalk) < 0) THEN
+          STKmntDEF(DAS,Stalk) = PGAVAL(Stalk) 
      &                            + (SUWT(DAS-1,Stalk) * GRSU)                  
 
 
-             IF (STKmntDEF(DAS,Stalk) >= 0) THEN !Sucrose covers deficit
+          IF (STKmntDEF(DAS,Stalk) >= 0) THEN !Sucrose covers deficit
 
-                SuDEF(Stalk) = PGAVAL(Stalk) / GRSU      
+            SuDEF(Stalk) = PGAVAL(Stalk) / GRSU      
                                                 
-                SuDEF(Stalk) = MIN(SuDEF(Stalk), 0.) ! No deficit
+            SuDEF(Stalk) = MIN(SuDEF(Stalk), 0.) ! No deficit
       
-              STKmntDEF(DAS,Stalk) = 0. 
+            STKmntDEF(DAS,Stalk) = 0. 
      
-             ELSE   ! Sucrose insufficient to cover deficit
+          ELSE   ! Sucrose insufficient to cover deficit
          
-             SuDEF(Stalk) = - SUWT(DAS-1,Stalk) !deficit absorbed all sucrose
-               ENDIF ! STKmntDEF(DAS,Stalk) >= 0
+!           deficit absorbed all sucrose
+            SuDEF(Stalk) = - SUWT(DAS-1,Stalk) 
+          ENDIF ! STKmntDEF(DAS,Stalk) >= 0
       
-      PGAVAL(Stalk) = 0.0
-      CAV(DAS,Stalk) = PGAVAL(Stalk)
+          PGAVAL(Stalk) = 0.0
+          CAV(DAS,Stalk) = PGAVAL(Stalk)
 
-          ELSE ! PGAVAL is sufficient to cover maintenance respiration
-               ! and plant growth can proceed.  CH2O available for each
-               ! stalk is saved as CAV(DAS,Stalk)
-               ! Or if [LeafNum(DAS-1, Stalk) < CAB]??  Is this correct (FSR)?
+        ELSE ! PGAVAL is sufficient to cover maintenance respiration
+!                and plant growth can proceed.  CH2O available for each
+!                stalk is saved as CAV(DAS,Stalk)
+!                Or if [LeafNum(DAS-1, Stalk) < CAB]??  Is this correct (FSR)?
 
           CAV(DAS,Stalk) = PGAVAL(Stalk)
-          END IF ! (LeafNum(DAS-1, Stalk) >= CAB .AND. PGAVAL(Stalk)
+        END IF ! (LeafNum(DAS-1, Stalk) >= CAB .AND. PGAVAL(Stalk)
 
-!     Ratio of Supply to Demand for Carbon, by stalk
-         IF (CDEMND(DAS,Stalk) > 0) THEN ! Eliminates young shoots
+!       Ratio of Supply to Demand for Carbon, by stalk
+        IF (CDEMND(DAS,Stalk) > 0) THEN ! Eliminates young shoots
           RatioSDC(DAS,Stalk) = MAX(0.,CAV(DAS,Stalk)/CDEMND(DAS,Stalk))
 
           RatioSDC(DAS,Stalk) = RatioSDC(DAS,Stalk)  ! temp for debuging
 
-          ELSE
+        ELSE
           RatioSDC(DAS,Stalk) = 0.0
-         END IF ! (CDEMND(DAS,Stalk)) > 0)
+        END IF ! (CDEMND(DAS,Stalk)) > 0)
 
       END DO ! Stalk = 1, Smax
 !-----------------------------------------------------------------------
-!  Calculate growth rates based on non-limiting CH2O 
+!     Calculate growth rates based on non-limiting CH2O 
 
       DO Stalk = 1, Smax  
 
-       IF (StalkState(Stalk,1) .EQ. 'LIVE') THEN       
+        IF (StalkState(Stalk,1) .EQ. 'LIVE') THEN       
 
-        IF (RatioSDC(DAS,Stalk) >= 1) THEN !CH2O is not limiting for 
+          IF (RatioSDC(DAS,Stalk) >= 1) THEN !CH2O is not limiting for 
 !                                           this stalk on this day
 
-              LFDW(DAS,Stalk)  = LFDPW(DAS,Stalk)
-              LSDW(DAS,Stalk)  = LSDPW(DAS,Stalk)
-              STKDW(DAS,Stalk) = STKDPW(DAS,Stalk)
-              RTDW(DAS,Stalk)  = RTDPW(DAS,Stalk)
-              SUDW(DAS,Stalk)  = SUDPW(DAS,Stalk)
-              ! Include ShootCDEM here?  Since no distinction
-              ! beween potential & actual, maybe not.
+            LFDW(DAS,Stalk)  = LFDPW(DAS,Stalk)
+            LSDW(DAS,Stalk)  = LSDPW(DAS,Stalk)
+            STKDW(DAS,Stalk) = STKDPW(DAS,Stalk)
+            RTDW(DAS,Stalk)  = RTDPW(DAS,Stalk)
+            SUDW(DAS,Stalk)  = SUDPW(DAS,Stalk)
+            ! Include ShootCDEM here?  Since no distinction
+            ! beween potential & actual, maybe not.
 
-           CAV(DAS,Stalk) = CAV(DAS,Stalk)
+            CAV(DAS,Stalk) = CAV(DAS,Stalk)
      &                      - (LFDW(DAS,Stalk)  * GRLF)
      &                      - (LSDW(DAS,Stalk)  * GRLF)
      &                      - (STKDW(DAS,Stalk) * GRST)
@@ -726,51 +729,51 @@ C comprising "cabbage" have formed, therefore no sugars should be produced.
      &                      - (SUDW(DAS,Stalk)  * GRSU)
      &                      - ShootCSUP(DAS,Stalk)
 
-          ShootCTotSup = ShootCTotSup + ShootCSUP(DAS,Stalk)
+            ShootCTotSup = ShootCTotSup + ShootCSUP(DAS,Stalk)
 !-----------------------------------------------------------------------
 ! Total amount of today's potential stalk, leaf, root and sucrose growth 
 ! for all stalks 
 ! 
-!             Within these IF statements, remaining CH2O in each
-!             stalk (CAV - CDEMND)is computed and converted into as 
-!             much as another day’s demand (for that day) of sucrose 
-!             or stalk DM. The GAMMA parameter determines the
-!             partition for CH2O to stalk DM or sucrose.  
+!           Within these IF statements, remaining CH2O in each
+!           stalk (CAV - CDEMND)is computed and converted into as 
+!           much as another day’s demand (for that day) of sucrose 
+!           or stalk DM. The GAMMA parameter determines the
+!           partition for CH2O to stalk DM or sucrose.  
 
-           IF (SUDW(DAS,Stalk) > 0) THEN  ! if sucrose exists, 
+            IF (SUDW(DAS,Stalk) > 0) THEN  ! if sucrose exists, 
                                            ! then a stalk must exist
-               SUDWtmp = ((1-GAMMA) * CAV(DAS,Stalk)) / GRSU
+              SUDWtmp = ((1-GAMMA) * CAV(DAS,Stalk)) / GRSU
                
- !             Limits daily sucrose accumulation from excess CH2O
-               SUDWtmp = MIN(SUDWtmp,SUDPW(DAS,Stalk)) 
+ !            Limits daily sucrose accumulation from excess CH2O
+              SUDWtmp = MIN(SUDWtmp,SUDPW(DAS,Stalk)) 
  
-               SUDW(DAS,Stalk)  = SUDW(DAS,Stalk)  + SUDWtmp 
+              SUDW(DAS,Stalk)  = SUDW(DAS,Stalk)  + SUDWtmp 
  
-               STKDWtmp =  (GAMMA * CAV(DAS,Stalk)) / GRST
+              STKDWtmp =  (GAMMA * CAV(DAS,Stalk)) / GRST
                
- !             Limits daily stalk DM accumulation from excess CH2O
-               STKDWtmp = MIN(STKDWtmp,STKDPW(DAS,Stalk)) 
+ !            Limits daily stalk DM accumulation from excess CH2O
+              STKDWtmp = MIN(STKDWtmp,STKDPW(DAS,Stalk)) 
                
-               STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
+              STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
  
             ELSE  
  
-            IF (STKDW(DAS,Stalk) > 0) THEN ! if stalk but no sucrose 
+              IF (STKDW(DAS,Stalk) > 0) THEN ! if stalk but no sucrose 
  
-               STKDWtmp =  (GAMMA * CAV(DAS,Stalk)) / GRST
+                STKDWtmp =  (GAMMA * CAV(DAS,Stalk)) / GRST
                
- !             Limits daily stalk DM accumulation from excess CH2O
-               STKDWtmp = MIN(STKDWtmp,STKDPW(DAS,Stalk)) 
+ !              Limits daily stalk DM accumulation from excess CH2O
+                STKDWtmp = MIN(STKDWtmp,STKDPW(DAS,Stalk)) 
                
-               STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
+                STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
                
-            END IF          
+              END IF          
             
-            CAV(DAS,Stalk) = CAV(DAS,Stalk)
+              CAV(DAS,Stalk) = CAV(DAS,Stalk)
      &                     -((SUDWtmp*GRSU) + (STKDWtmp*GRST))
 
-           END IF
-          temp(Stalk) = CAV(DAS,Stalk)   ! debugging 
+            END IF
+            temp(Stalk) = CAV(DAS,Stalk)   ! debugging 
 
           SUDWtmp  = 0.0
           STKDWtmp = 0.0
@@ -1290,7 +1293,8 @@ C-----------------------------------------------------------------------
           LSWTP(DAS)  = LSWTP(DAS)  + LSWT(DAS,Stalk)      
           STKWTP(DAS) = STKWTP(DAS) + STKWT(DAS,Stalk)
           SUWTP(DAS)  = SUWTP(DAS)  + SUWT(DAS,Stalk)
-          STKFWTP(DAS)= STKFWTP(DAS)+ STKFWT(DAS,Stalk) ! Fresh stalk weight  
+          STKFWTP(DAS)= STKFWTP(DAS)+ STKFWT(DAS,Stalk) 
+!                                         Fresh stalk weight  
 
 !     Senesced leaf & stalk mass from whole plant (cumulative)
           LFWTPlost(DAS)  = LFWTPlost(DAS)  + LFWTlost(DAS,Stalk)

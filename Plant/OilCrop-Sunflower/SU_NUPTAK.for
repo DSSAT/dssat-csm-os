@@ -350,7 +350,8 @@ C-----------------------------------------------------------------------
            DSTEMN = XSNDEM/NDEM*TRNU - PTFS*TRNLOS/(PLTPOP)
            DHEADN = XHNDEM/NDEM*TRNU - PTFH*TRNLOS/(PLTPOP)
            DSTOVN = DLEAFN + DSTEMN + DHEADN
-           DROOTN = RNDEM /NDEM*TRNU - (1.0-PTF)*TRNLOS/(PLTPOP)!          g N/pl =   fraction  *g N/pl- fraction*g N/m2/(pl/m2) 
+           DROOTN = RNDEM /NDEM*TRNU - (1.0-PTF)*TRNLOS/(PLTPOP)
+!          g N/pl = fraction  *g N/pl- fraction*g N/m2/(pl/m2) 
  
          ENDIF
       ENDIF

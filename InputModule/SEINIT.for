@@ -32,6 +32,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, SEPLYR, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80),SWSPRF
       CHARACTER*2  PRCROP

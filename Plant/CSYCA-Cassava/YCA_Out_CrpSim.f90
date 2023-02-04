@@ -16,6 +16,7 @@
         USE YCA_Formats_m
      
         IMPLICIT NONE 
+        EXTERNAL CSCLEAR5, CSOPLINE, YR_DOY, CALENDAR, DAPCALC
      
         INTEGER :: CN          , DOY         , ON          , REP         , RN          , RUN         , RUNI         
         INTEGER :: SN          , STGYEARDOY(0:PSX)            , TN          , YEAR

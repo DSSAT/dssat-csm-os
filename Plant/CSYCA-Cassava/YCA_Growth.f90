@@ -11,39 +11,43 @@
 !***************************************************************************************************************************
 
     SUBROUTINE YCA_Growth ( &  
-        ALBEDOS     , BD          , BRSTAGE     ,  CLOUDS     , CO2         , DAYL        , DLAYR       , DOY         , &
-        DUL         , EO          , EOP         , ES          , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
-        KEP         , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , &
-        RLV         , RNMODE      , SAT         , SENCALG     , SENLALG     , SENNALG     , &
-        SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
-        TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
-        WEATHER     , SOILPROP    , CONTROL     , &                                                                                                      ! MF WEATHER needed for VPD
-        WINDSP      , YEAR        , YEARPLTCSM  , LAI         ,&         !LPM 06MAR2016 Added to keep automatic planting
-        IDETG         )
-    
+        BD          , BRSTAGE     , CO2         , DAYL        , DLAYR       , DOY         , DUL         , &
+        EO          , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , LL          , &
+        NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , RLV         , &
+        RNMODE      , SAT         , SENCALG     , SENLALG     , SENNALG     , SHF         , SLPF        , &
+        SRAD        , ST          , STGYEARDOY  , SW          , TDEW        , TMAX        , &
+        TMIN        , UNH4        , UNO3        , WEATHER     , SOILPROP    , CONTROL     , &  !   MF WEATHER needed for VPD
+        YEAR        , YEARPLTCSM  , LAI         )         !LPM 06MAR2016 Added to keep automatic planting
+
+! 2023-01-25 chp removed unused variables
+!       ALBEDOS     , CLOUDS     , EOP          , ES          , KEP         , TAIRHR      , TRWUP       , 
+!       UH2O        , WINDSP     , IDETG
+
         USE ModuleDefs
         USE YCA_First_Trans_m
 
         IMPLICIT NONE
-        
+        EXTERNAL YCA_PREPLANT, YCA_GROWTH_EVAPO, YCA_GROWTH_INIT, YCA_GROWTH_RATES, YCA_GROWTH_SENESCE, & 
+          YCA_GROWTH_PHOTO, YCA_GROWTH_PART, YCA_GROWTH_NUPTAKE, YCA_GROWTH_DISTRIBUTE
+
         TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefsR                                                                                          ! MF Defined in ModuleDefs
     
         INTEGER DOY         , NLAYR       , STGYEARDOY(0:19)            , YEAR        , YEARPLTCSM      !LPM 25MAY2015 STGYEARDOY changed according to STGDOY(20) in plant.for            
-        INTEGER CSIDLAYR                 
+!       INTEGER CSIDLAYR                 
 
-        REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CLOUDS      , CO2         , DAYL        , DLAYR(NL)   , DUL(NL)     
-        REAL    EO          , EOP         , ES          , KCAN        , kep         , LL(NL)      , NFP         , NH4LEFT(NL) 
+        REAL    BD(NL)      , BRSTAGE     , CO2         , DAYL        , DLAYR(NL)   , DUL(NL)     ! ALBEDOS     , CLOUDS      , 
+        REAL    EO          , KCAN        , LL(NL)      , NFP         , NH4LEFT(NL) ! EOP         , ES          , kep         , 
         REAL    NO3LEFT(NL) , PARIP       , PARIPA      , RLV(NL)     , SAT(NL)      
         REAL    SENCALG(0:NL)             , SENLALG(0:NL)             , SENNALG(0:NL)             , SHF(NL)     , SLPF        
-        REAL    SRAD        , ST(NL)      , SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       
-        REAL    UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP      , LAI
+        REAL    SRAD        , ST(NL)      , SW(NL)      , TDEW        , TMAX        , TMIN       !, TAIRHR(24)  , TRWUP       
+        REAL    UNH4(NL)    , UNO3(NL)    , LAI         ! UH2O(NL)    , WINDSP      , 
         
-        REAL    CSVPSAT     , CSYVAL      , TFAC4                                                                          ! Real function calls 
-        REAL    YVALXY      , TFAC5                                                                                        ! Real function calls !LPM 15sep2017 Added TFAC5 
+!       REAL    CSVPSAT     , CSYVAL      , TFAC4                                                                          ! Real function calls 
+!       REAL    YVALXY      , TFAC5                                                                                        ! Real function calls !LPM 15sep2017 Added TFAC5 
 
-        CHARACTER(LEN=1) IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , RNMODE  
+        CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      , RNMODE  !IDETG       , 
     
         !-----------------------------------------------------------------------------------------------------------------------
         !     Set up the switches for establishment and determine whether today is a planting day.
@@ -63,13 +67,8 @@
         !----------------------------------------------------------------------------------------------------------------------
             
             CALL YCA_Growth_Evapo ( & 
-                ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR       , DUL         , EO          , EOP         , &
-                ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , &
-                SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
-                UH2O        , & 
-                WEATHER     , SOILPROP    , CONTROL      , &
-                WINDSP      , YEAR        , ST          , LAI         &         !LPM20MAR2016 To consider ST for germination
-                )
+              BRSTAGE     , CO2         , DLAYR       , DUL         , EO          ,     &
+              ISWWAT      , LL          , NLAYR       , SW          , YEAR        , ST)
             
             !=============================================================================================================
             IF (DAGERM+TTGEM*WFGE >= PGERM) THEN  ! If germinated by endday
@@ -86,17 +85,16 @@
                 !       Calcualate PAR interception and rate factors
                 !--------------------------------------------------------------------------------
                 CALL YCA_Growth_Rates ( &
-                    CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , &
-                    PARIP       , PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , &
-                    SRAD        , SLPF        , LAI         , CONTROL     , WEATHER     , &
-                    SOILPROP  &
+                    CO2         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
+                    PARIPA      , TDEW        , TMAX        , TMIN        , RLV         , SRAD        , SLPF        , &     !LPM 26MAR2016 RLV added
+                    LAI         , CONTROL     , WEATHER     , SOILPROP &  
                     )
         
                 !-----------------------------------------------------------------------
                 !           Calculate senescence of leaves,stems,etc..
                 !-----------------------------------------------------------------------
                 CALL YCA_Growth_Senesce ( &
-                    ISWNIT      , ISWWAT      , BRSTAGE      , LAI & 
+                    ISWNIT      , LAI & 
                     )
                 
                 
@@ -105,16 +103,14 @@
                 !-----------------------------------------------------------------------
                 
                 CALL YCA_Growth_Photo ( &
-                    CO2         , NFP         , SLPF        , SRAD        , TAIRHR      , TDEW        , TMAX        , &
-                    TMIN        , LAI        , CONTROL     , WEATHER     , SOILPROP &
-                    )
+                    SLPF        , SRAD        ,      &
+                    CONTROL     , WEATHER     , SOILPROP )
                 
                 !-----------------------------------------------------------------------
                 !           Partition C to above ground and roots (minimum) 
                 !-----------------------------------------------------------------------
                 CALL YCA_Growth_Part ( &
-                    BRSTAGE     , ISWNIT      , NFP         , LAI         , WEATHER     &
-                    )
+                    BRSTAGE     , ISWNIT      , NFP         , LAI         )
                 
                 !-----------------------------------------------------------------------
                 !           Calculate N uptake  -  and growth adjustments if inadequate N

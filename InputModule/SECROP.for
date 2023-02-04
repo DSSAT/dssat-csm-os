@@ -27,6 +27,7 @@ C=======================================================================
       SUBROUTINE SECROP (FILEC,FILEE,FILEG,RNMODE,CROP,CROPD,PATHCR)
 
       IMPLICIT NONE
+      EXTERNAL CLEAR, ERROR, IDCROP, SWCROP
 
       CHARACTER*1  RNMODE
       CHARACTER*2  CROP,CROPC
@@ -119,6 +120,7 @@ C=======================================================================
       SUBROUTINE SWCROP (FILEC,FILEE,FILEG,RNMODE,CROP,CROPD,PATHCR)
 
       IMPLICIT NONE
+      EXTERNAL CLEAR, ERROR, GET_CROPD, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80),BLANK
       CHARACTER*2  CROP,CROPID(50)
@@ -258,6 +260,7 @@ C=======================================================================
       SUBROUTINE IDCROP (FILEC,RNMODE,PATHCR)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, VERIFY
 
       CHARACTER*1  LINE(80),RNMODE,BLANK
       CHARACTER*12 FILEC,CROPFL

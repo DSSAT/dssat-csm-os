@@ -9,9 +9,12 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_LA ( &
-        LAI        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        , BRSTAGE    & 
+        LAI        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        & 
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       BRSTAGE        
+
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Control_Leaf
@@ -23,7 +26,7 @@
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         
-        REAL    LAI        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
+        REAL    LAI        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    !, BRSTAGE     
         REAL    :: leafAreaSenesced                 !PLASTMP Leaf area senesced,temporary   cm2/p      ! (From Integrate) 
        
         !-----------------------------------------------------------------------

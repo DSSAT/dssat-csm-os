@@ -30,6 +30,7 @@ C=======================================================================
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FOR_IPPHENOL, FOR_RSTAGES, FOR_VSTAGES, CURV
       SAVE
 !----------------------------------------------------------------------------
       INTEGER NPHS

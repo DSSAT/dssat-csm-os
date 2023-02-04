@@ -170,7 +170,8 @@
         integer, intent (in) :: hour
               
                 
-        hourlyRadiation = calculatateHourlyRadiation(hour, DAWN_TIME, this%dayRadiation_ , LIGHT_HOURS) 
+!       hourlyRadiation = calculatateHourlyRadiation(hour, DAWN_TIME, this%dayRadiation_ , LIGHT_HOURS) 
+        hourlyRadiation = calculatateHourlyRadiation(hour, DAWN_TIME, this%dayRadiation_ ) !, LIGHT_HOURS
         
     end function hourlyRadiation
     
@@ -181,7 +182,8 @@
         integer, intent (in) :: hour
         real, intent (in) :: extinctionCoefficient, LAI,radiationUseEfficiency,stomatalConductance
                
-        hourlyBiomass = calculateBiomass(calculatateHourlyRadiation(hour, DAWN_TIME, this%dayRadiation_ , LIGHT_HOURS) , extinctionCoefficient , LAI, radiationUseEfficiency, stomatalConductance )
+!       hourlyBiomass = calculateBiomass(calculatateHourlyRadiation(hour, DAWN_TIME, this%dayRadiation_ , LIGHT_HOURS) , extinctionCoefficient , LAI, radiationUseEfficiency, stomatalConductance )
+        hourlyBiomass = calculateBiomass(calculatateHourlyRadiation(hour, DAWN_TIME, this%dayRadiation_ ) , extinctionCoefficient , LAI, radiationUseEfficiency, stomatalConductance )
         
     end function hourlyBiomass
     
@@ -246,17 +248,17 @@
     real function calculatePortionOfRadiation(K, LAI)                                           ! fraction
         implicit none
         real, intent (in) :: K, LAI
-        real :: value = 0
+!       real :: value = 0
         
         calculatePortionOfRadiation = 1.0 - exp(-K*LAI)
 
     end function calculatePortionOfRadiation
     
     ! obtain the radiation at a given hour
-    real function calculatateHourlyRadiation(hour, dawnTime, dayRadiation, lightHours)          !MJ/m2
+    real function calculatateHourlyRadiation(hour, dawnTime, dayRadiation) !chp, lightHours)          !MJ/m2
         implicit none
         integer, intent (in) :: hour
-        real :: Amplitude, C, w, g, value, dawnTime, dayRadiation, lightHours
+        real :: Amplitude, C, w, g, value, dawnTime, dayRadiation !, lightHours
                
         w = (2*PI)/24   
         C = 0   
@@ -274,7 +276,7 @@
     real function calculateBiomass(radiation, extinctionCoefficient , LAI, radiationUseEfficiency, stomatalConductance)
         implicit none
         real, intent (in) :: radiation, extinctionCoefficient, LAI, radiationUseEfficiency, stomatalConductance
-        real :: value = 0
+!       real :: value = 0
         
         calculateBiomass = calculatePortionOfRadiation(extinctionCoefficient, LAI) * radiation * radiationUseEfficiency  * stomatalConductance
 

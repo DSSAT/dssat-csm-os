@@ -16,19 +16,21 @@ C  02/09/2007 GH  Add path for FileA
 C=======================================================================
 
       SUBROUTINE CSP_OPHARV(CONTROL, ISWITCH, 
-     &    AGEFAC, BADMD, CANHT, TillerCount, LAIMX,       !Input
-     &	LAIXD, LeafNum, LFWTHa, LSWTHa,                 !Input
+     &    AGEFAC, BADMD, TillerCount, LAIMX,              !Input
+     &    LAIXD, LeafNum, LFWTHa, LSWTHa,                 !Input
      &    HARVFRAC,NSTRES, PLTPOP, PLWT, PStres1,         !Input
      &    PStres2, PhenoStage, StalkPopul, StalkState,    !Input 
-     &	STGDOY, STKFWTHa, StkHt, STKWTHa,               !Input
+     &    STGDOY, STKFWTHa, StkHt, STKWTHa,               !Input
      &    STNAME, SUWTHa, SWFAC, TOPWT, TURFAC,           !Input
-     &    VSTAGE, WTNCAN, WTNST, WTNUP, XLAI, YRPLT)      !Input
+     &    WTNCAN, WTNUP, XLAI, YRPLT)                     !Input
 
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETDESC, OPVIEW, READA, READA_Dates, CHANGE_DESC, 
+     &   SUMVALS, EvaluateDat, ERROR, TIMDIF, INCDAT
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI
@@ -52,13 +54,13 @@ C-----------------------------------------------------------------------
       INTEGER DEM0, DEM1, DEM2, DLFX, DPOP, DSPT, DTMX 
       INTEGER IEM0, IEM1, IEM2, ILFX, IPOP, ISPT, ITMX   
 
-      REAL AELH, AvgHeight, AvgLfAr, AvgNode 
-	REAL AvgLfWt, BADMD, BIOMAS, BWAH, CANHT
+      REAL AvgHeight, AvgLfAr, AvgNode !AELH, 
+	REAL AvgLfWt, BADMD, BIOMAS, BWAH !, CANHT
       REAL CWAM, HeightSumA, HeightSumP, HIAM
 	REAL HWAH, HWAM, LAIH, LAIMX, LFNUM
       REAL MaxStkPop, NodeSum, PLTPOP, PLWT 
-	REAL SNAH, SMFMH, SSTKH, SUCH, TOPWT, TRSH, VSTAGE
-      REAL WTNCAN, WTNST, WTNUP, XLAI
+	REAL SNAH, SMFMH, SSTKH, SUCH, TOPWT, TRSH !, VSTAGE
+      REAL WTNCAN, WTNUP, XLAI !, WTNST
       REAL, DIMENSION(2) :: HARVFRAC
       REAL, DIMENSION(0:NumOfDays) :: LFWTHa, LSWTHa, 
      &      STKFWTHa, STKWTHa, SUWTHa,StalkPopul
@@ -109,27 +111,27 @@ C-----------------------------------------------------------------------
 !     Define headings for observed data file (FILEA)
       DATA OLAB / !  Definition
                !     -----------
-     & 'SMFMH ', ! 1   Millable cane fresh weight at harvest, (t/ha)
-     & 'SUCH  ', ! 2   Sucrose at harvest (t/ha) 
-     & 'SSTKH ', ! 3   Stalk (structure, no sucrose) dry weight at harvest (t/ha) 
-     & 'BADMH ', ! 4   Above-ground biomass (live+dead) at harvest (t/ha)
-     & 'TRSH  ', ! 5   Above-ground biomass minus stalks harvested (t/ha)
-     & 'LAIX  ', ! 6   Maximum leaf area index this season (m2[leaf]/m2[ground])
-     & 'LAIXD ', ! 7   Day of max leaf area index (DAP)
-     & 'LAIH  ', ! 8   Leaf area index, at harvest (m2[leaf]/m2[ground])
-     & 'LAASH ', ! 9   Leaf area: avg leaf area per stalk at harvest (cm2/stalk)
-     & 'LWASH ', ! 10  Leaf weight: avg leaf weight per stalk at harvest (g/stalk)
-     & 'NAPSH ', ! 11  Node number: avg nodes per stalk at harvest 
-     & 'SPDAT ', ! 12  Sprouting day, primary stalk bud from sett  (DAP)
-     & 'EDAT0 ', ! 13  Primary stalk emergence day (DAP)
-     & 'EDAT1 ', ! 14  First tiller emergence day (DAP) 
-     & 'EDAT2 ', ! 15  Second tiller emergence day (DAP)
-     & 'T#MX  ', ! 16  Tiller maximum population (stalks/m2)
-     & 'T#MXD ', ! 17  Day of tiller maximum population (DAP)
-     & 'TDECD ', ! 18  Initiation day, tiller population decline (DAP)
-     & 'S#AH  ', ! 19  Stalk population at harvest (stalks/m2)
-     & 'SHTH  ', ! 20  Stalk height: average at harvest (m) 
-     & 'HIAM  ', ! 21  Harvest index [sucrose/(stalk+sucrose)dm] 
+     & 'SMFMH ', ! 1  Millable cane fresh weight at harvest, (t/ha)
+     & 'SUCH  ', ! 2  Sucrose at harvest (t/ha) 
+     & 'SSTKH ', ! 3  Stalk (structure, no sucrose) dry wt @ harv (t/ha)
+     & 'BADMH ', ! 4  Above-ground biomass (live+dead) at harvest (t/ha)
+     & 'TRSH  ', ! 5  Above-ground biomass minus stalks harvested (t/ha)
+     & 'LAIX  ', ! 6  Max LAI this season (m2[leaf]/m2[ground])
+     & 'LAIXD ', ! 7  Day of max leaf area index (DAP)
+     & 'LAIH  ', ! 8  Leaf area index, at harvest (m2[leaf]/m2[ground])
+     & 'LAASH ', ! 9  Leaf area: avg leaf area /stalk @ harv (cm2/stalk)
+     & 'LWASH ', ! 10 Leaf weight: avg leaf wt / stalk @ harv (g/stalk)
+     & 'NAPSH ', ! 11 Node number: avg nodes per stalk @ harvest 
+     & 'SPDAT ', ! 12 Sprouting day, primary stalk bud from sett  (DAP)
+     & 'EDAT0 ', ! 13 Primary stalk emergence day (DAP)
+     & 'EDAT1 ', ! 14 First tiller emergence day (DAP) 
+     & 'EDAT2 ', ! 15 Second tiller emergence day (DAP)
+     & 'T#MX  ', ! 16 Tiller maximum population (stalks/m2)
+     & 'T#MXD ', ! 17 Day of tiller maximum population (DAP)
+     & 'TDECD ', ! 18 Initiation day, tiller population decline (DAP)
+     & 'S#AH  ', ! 19 Stalk population at harvest (stalks/m2)
+     & 'SHTH  ', ! 20 Stalk height: average at harvest (m) 
+     & 'HIAM  ', ! 21 Harvest index [sucrose/(stalk+sucrose)dm] 
      & 19*'      '/  !19 labels of 40 not used for sugarcane
 
 !***********************************************************************
@@ -387,7 +389,7 @@ C-----------------------------------------------------------------------
           DLFX  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(7)) 
-        OLAP(7) = 'LAIXD '  ! Finds this name in Data.cde. P=DAP; T=YRDOY
+        OLAP(7) = 'LAIXD '  !Finds this name in Data.cde. P=DAP; T=YRDOY
         CALL GetDesc(1,OLAP(7), DESCRIP(7))
 
 !     Convert primary stk bud sprouts from sett from YRDOY to DAP.  
@@ -399,7 +401,7 @@ C-----------------------------------------------------------------------
           DSPT  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(12)) 
-        OLAP(12) = 'SPDAP '  ! Finds this name in Data.cde. P=DAP; T=YRDOY
+        OLAP(12) = 'SPDAP ' !Finds this name in Data.cde. P=DAP; T=YRDOY
         CALL GetDesc(1,OLAP(12), DESCRIP(12))
 
 !     Convert primary stk emergence from soil from YRDOY to DAP.  
@@ -411,7 +413,7 @@ C-----------------------------------------------------------------------
           DEM0  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(13)) 
-        OLAP(13) = 'EDAT0 '  ! Finds this name in Data.cde. P=DAP; T=YRDOY
+        OLAP(13) = 'EDAT0 ' !Finds this name in Data.cde. P=DAP; T=YRDOY
         CALL GetDesc(1,OLAP(13), DESCRIP(13))
 
 !     Convert first tiller emergence from YRDOY to DAP.  
@@ -423,7 +425,7 @@ C-----------------------------------------------------------------------
           DEM1  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(14)) 
-        OLAP(14) = 'EDAT1 '  ! Finds this name in Data.cde. P=DAP; T=YRDOY
+        OLAP(14) = 'EDAT1 ' !Finds this name in Data.cde. P=DAP; T=YRDOY
         CALL GetDesc(1,OLAP(14), DESCRIP(14))
 
 !     Convert second tiller emergence from YRDOY to DAP.  
@@ -435,7 +437,7 @@ C-----------------------------------------------------------------------
           DEM2  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(15)) 
-        OLAP(15) = 'EDAT2 '  ! Finds this name in Data.cde. P=DAP; T=YRDOY
+        OLAP(15) = 'EDAT2 ' !Finds this name in Data.cde. P=DAP; T=YRDOY
         CALL GetDesc(1,OLAP(15), DESCRIP(15))
 
 !     Convert tiller maximum population from YRDOY to DAP.  
@@ -447,10 +449,10 @@ C-----------------------------------------------------------------------
           DTMX  = -99
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(17)) 
-        OLAP(17) = 'T#MXD '  ! Finds this name in Data.cde. P=DAP; T=YRDOY
+        OLAP(17) = 'T#MXD ' !Finds this name in Data.cde. P=DAP; T=YRDOY
         CALL GetDesc(1,OLAP(17), DESCRIP(17))
 
-!     Convert initiation of tiller population decline from YRDOY to DAP.  
+!     Convert initiation of tiller population decline from YRDOY to DAP
 !     and change descriptions to match.
         CALL READA_Dates(X(18), YRSIM, IPOP)
         IF (IPOP .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN

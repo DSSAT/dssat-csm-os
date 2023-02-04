@@ -10,9 +10,12 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Growth_Photo ( &
-        CO2         , NFP         , SLPF        , SRAD        , TAIRHR      , TDEW        , TMAX        , TMIN         , LAI      &
+        SLPF        , SRAD       &
         , CONTROL, WEATHER, SOILPROP)
-        
+
+! 2023-01-25 chp removed unused variables
+!   CO2         , LAI       , NFP         , TAIRHR      , TDEW        , TMAX        , TMIN         , 
+
         USE ModuleDefs
         USE ModuleData
         USE YCA_First_Trans_m
@@ -24,8 +27,8 @@
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
-        REAL    CO2         , NFP         , SLPF        , SRAD        , TAIRHR(24)  , TDEW        , TMAX        , TMIN        
-        REAL    CSVPSAT     , LAI                                                                       ! REAL function call
+        REAL    SLPF        , SRAD       !, CO2         , NFP         , TAIRHR(24)  , TDEW        , TMAX        , TMIN        
+!       REAL    LAI         ! CSVPSAT     ,                                                             ! REAL function call
         real availableCH2O
         
           
@@ -44,7 +47,7 @@
             case ('R')
                 availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP, WFP)
             case ('V')
-                availableCH2O = availableCarbohydrate_methodV(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, LAI, WFP, WEATHER, CONTROL, SOILPROP)
+                availableCH2O = availableCarbohydrate_methodV(PARMJFAC, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WFP, WEATHER, CONTROL, SOILPROP)
             end select
         CARBOBEG = availableCH2O
         

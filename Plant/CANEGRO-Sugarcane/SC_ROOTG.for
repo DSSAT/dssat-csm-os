@@ -11,6 +11,8 @@ c     This was taken from the CANEGRO
 c     WATBAL routine, and modified to
 c     work with the DSSAT CANEGRO Plant
 c     Module structure / variables
+
+!     2023-01-26 chp removed unused variables from argument list: HU16
 c     ****************************************************************
 
       SUBROUTINE ROOTGROWTH(
@@ -29,9 +31,9 @@ c      [I] Climate & meteorology variables
 c      [I] Cane crop variables
      - CaneCrop,
 c      [O] Max root water movement per cm of root
-     - RWUMX,
+     - RWUMX
 c      [I] Change in heat units, base 16 degrees
-     & HU16 
+!    & HU16 
      & )
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Use modules from DSSAT:
@@ -40,6 +42,8 @@ c     Use CPM modules:
           USE CNG_ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GET_SPECIES_COEFF, GET_CULTIVAR_COEFF, GETLUN, INFO, 
+     &  FIND_INP, D_TT
       SAVE
 c     ================================================================
 c                            VARIABLES
@@ -59,7 +63,7 @@ c     :::::::::::
       REAL               RWUMX
 
 c     Daily change in heat units base 16 degrees
-      REAL, INTENT(IN) :: HU16
+!     REAL, INTENT(IN) :: HU16
 
 c     Local variables (not part of any common blocks)
 c     :::::::::::::::::::::::::::::::::::::::::::::::
@@ -150,7 +154,7 @@ c     Temporary stress array:
       LOGICAL CF_ERR, SPC_ERR
 
 !     Unit number for output
-      INTEGER SCLUN, OU   !CHP
+      INTEGER SCLUN       !, OU   !CHP
 
       DATA RatCarryOver%RTDEP /0./
 
@@ -415,8 +419,8 @@ c             crop is initialised with higher RLV in layers lower
 c             than 40 cm otherwise.
               RLV(I) = AMAX1((0.2-0.005*CUMDEP),RLVMIN)
           ENDDO
-          ! MJ, Jan 2014: fudge to ensure that water stress is not super-sensitive to
-          ! a dry top layer:
+!           MJ, Jan 2014: fudge to ensure that water stress is not super-sensitive to
+!           a dry top layer:
           RLV(1) = 0.05
           RLV(2) = 0.25
           RTDEP = DEPMAX

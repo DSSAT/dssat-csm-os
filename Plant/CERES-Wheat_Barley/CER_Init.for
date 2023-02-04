@@ -8,25 +8,32 @@
      &     FILEIOIN, FROP, IDETL,
      &     ISWWAT, KCAN, KEP, NFP, ON,
      &     RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
-     &     RUN, RUNI, RWUMX, RWUPM, SENCALG,
-     &     UH2O, UNH4ALG, UNO3ALG, YEAR, SENNALG, SLPF, SN,
+     &     RUN, RUNI, RWUMX, RWUPM, 
+     &     UH2O, YEAR, SLPF, SN,
      &     STGDOY, TN, TRWUP, DYNAMIC)
+
+! 2023-01-25 CHP removed unused variables from argument list
+!     SENCALG, UNH4ALG, UNO3ALG, SENNALG
 
         USE ModuleDefs
         USE CER_First_Trans_m
         IMPLICIT NONE
+        EXTERNAL YR_DOY, GETLUN, Y4K_DOY, TVILENT, LTRIM, XREADC, 
+     &    XREADT, SPREADRA, XREADI, XREADR, UCASE, XREADIA, XREADRA, 
+     &    FVCHECK, FINDDIR, CUREADC, CUREADR, ECREADR, SPREADR, 
+     &    CER_INIT_VARINIT
         SAVE
         
         INTEGER CN, DOY, FROP, ON, RN, RUN, RUNI, SN, TN
         
         INTEGER YEAR, STGDOY(20), DYNAMIC, TVILENT
         
-        REAL LAI, CANHT, CLOUDS, DEWDUR, HARVFRAC(2)
+        REAL LAI, CANHT, DEWDUR, HARVFRAC(2)  !, CLOUDS
         REAL KCAN, KEP, NFP
         REAL RESCALG(0:20), RESLGALG(0:20), RESNALG(0:20), RLV(20)
-        REAL SENCALG(0:20), SENNALG(0:20), SLPF
+        REAL SLPF !SENCALG(0:20), SENNALG(0:20), 
         REAL RWUMX, RWUPM
-        REAL TRWUP, UH2O(NL), UNH4ALG(NL), UNO3ALG(NL)
+        REAL TRWUP, UH2O(NL) !, UNH4ALG(NL), UNO3ALG(NL)
         
         CHARACTER*1   IDETL, ISWNIT, ISWWAT, RNMODE      
         CHARACTER*250 FILEIOIN  
@@ -112,8 +119,7 @@
         
         CALL CER_Init_VarInit (LAI, CANHT, DEWDUR,
      &   NFP, RESCALG, RESLGALG, RESNALG, RLV,
-     &   SENCALG, SENNALG, STGDOY, TRWUP, UH2O,
-     &   UNH4ALG, UNO3ALG)
+     &   STGDOY, TRWUP, UH2O)
 !-----------------------------------------------------------------------
 
 
@@ -176,15 +182,15 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           CALL YR_DOY(PDATE,PLYEAR,PLDAY)
           PLYEARREAD = PLYEAR
           
-          ! CHP 2/13/2009 - increment yr for seasonal and sequence runs
-          ! IF (INDEX('FQN',RNMODE) > 0) THEN
-          ! What about multiple years with other RNMODE's?  This only 
-          !   fixes sequence and seasonal runs.
-          ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
-          ! 09/28/2009 CHP need to account for planting date >> simulation date.
-          !  IF (FILEIOT(1:2).EQ.'DS') THEN
-          !LPM 07/17/20 - account for simulation date when is a year before planting date
-          !Avoid wrong value of yeardoyharf
+!           CHP 2/13/2009 - increment yr for seasonal and sequence runs
+!           IF (INDEX('FQN',RNMODE) > 0) THEN
+!           What about multiple years with other RNMODE's?  This only 
+!             fixes sequence and seasonal runs.
+!           CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
+!           09/28/2009 CHP need to account for planting date >> simulation date.
+!            IF (FILEIOT(1:2).EQ.'DS') THEN
+!          LPM 07/17/20 - account for simulation date when is a year before planting date
+!          Avoid wrong value of yeardoyharf
           IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
               IF (YEAR < PLYEARREAD) THEN
                   PLYEAR = PLYEARREAD
@@ -441,7 +447,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NLAB%',xnfs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RDGS',rdgs1)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GN%MN',grnmn)
-          ! NB. TBAM is only used experimentally;should not be in coeff.files
+!           NB. TBAM is only used experimentally;should not be in coeff.files
           
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'ADIR',fileadir)
 
@@ -570,15 +576,15 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             CALL CUREADR (CUDIRFLE,VARNO,'NLAB%',xnfs)
             CALL CUREADR (CUDIRFLE,VARNO,'RDGS',rdgs1)
             CALL CUREADR (CUDIRFLE,VARNO,'GN%MN',grnmn)
-            ! NB. TBAM is only used experimentally;should not be in coeff.files
-            ! Below are 3.5 expressions
-            !P1V = P1V*0.0054545 + 0.0003
-            !P1D = P1D*0.002
-            !PD(5) = 430.0 + PD(5)*20.00
-            !IF (CROP.EQ.'BA') PD(5) = 300.0 + PD(5)*40.00
-            !IF (G1 .NE. 0.0) G1 = 5.0 + G1* 5.00
-            !IF (G2 .NE. 0.0) G2 = 0.65 + G2* 0.35
-            !IF (G3 .NE. 0.0) G3 = -0.005 + G3* 0.35
+!             NB. TBAM is only used experimentally;should not be in coeff.files
+!             Below are 3.5 expressions
+!            P1V = P1V*0.0054545 + 0.0003
+!            P1D = P1D*0.002
+!            PD(5) = 430.0 + PD(5)*20.00
+!            IF (CROP.EQ.'BA') PD(5) = 300.0 + PD(5)*40.00
+!            IF (G1 .NE. 0.0) G1 = 5.0 + G1* 5.00
+!            IF (G2 .NE. 0.0) G2 = 0.65 + G2* 0.35
+!            IF (G3 .NE. 0.0) G3 = -0.005 + G3* 0.35
           !ENDIF
         ENDIF
 
@@ -768,7 +774,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           WRITE (FNUMWRK,*)' Base temperature for post anthesis period'
           WRITE (FNUMWRK,*)' changed from ',trdv2(1),' to ',tbam        
           trdv2(1) = tbam
-          ! NB. TBAM is only used experimentally;should not be in coeff.files
+!           NB. TBAM is only used experimentally;should not be in coeff.files
         ENDIF
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
         CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
@@ -906,8 +912,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           LSHFR = 0.33                               !    LSHFR = 0.33  
           LRETS = 3.0                                !    LRPHS
           
-          LSHAWS = 50.0  ! LSHAW                     !    LSHAWV = 50.0   ! LSHAV
-                                                     !    LSHAWR = 50.0   ! LSHAR
+          LSHAWS = 50.0  ! LSHAW  !    LSHAWV = 50.0   ! LSHAV
+                                  !    LSHAWR = 50.0   ! LSHAR
 
           TKLF = -50.0                               !    TKDLF = 2.0 
           LT50S = -50.0                              !    TKUH = -50.0  
@@ -927,13 +933,13 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           
           SDAFR = 0.50  ! From 0.50
 
-          RTNO3 = 0.006  ! RTNUP                     !    RTNO3 = .006!RTNUP
-          RTNH4 = 0.006                              !    RTNH4 = .006
-                                                     !    NO3CF = 1.0 !NUPNF
-                                                     !    NUPWF = 1.0       
-          NH4MN = 0.5                                !    NH4MN = 0.5  
-          NO3MN = 0.5                                !    NO3MN = 0.5  
-          NTUPF = 0.05                               !    NTUPF = 0.05 
+          RTNO3 = 0.006  ! RTNUP             !    RTNO3 = .006!RTNUP
+          RTNH4 = 0.006                      !    RTNH4 = .006
+                                             !    NO3CF = 1.0 !NUPNF
+                                             !    NUPWF = 1.0       
+          NH4MN = 0.5                        !    NH4MN = 0.5  
+          NO3MN = 0.5                        !    NO3MN = 0.5  
+          NTUPF = 0.05                       !    NTUPF = 0.05 
 
              ! CSCER
           LNPCS(0) = 6.5                             !    LNPCS(0) = 6.5
@@ -1036,24 +1042,24 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           ! Growth = 1 phyllochron                   !     LLIFG = 1.0
           ! Senescence =  1 phyllochron              !     LLIFS = 3.0
           LWLOS = 0.5                                !     LWLOS = 0.5  
-          ! LNPCMN -> N loss                         !     LNPCMN -> N loss
+          ! LNPCMN -> N loss                         !  LNPCMN -> N loss
           ! Calculates LSENNF(fr N > min)        
         ENDIF    ! EXAMINE(2)  Senescence
 
         
         IF (EXAMINE(3).EQ.'Y') THEN                                    
           ! Tillering        
-          TI1LF = 3.5                                !    TI1LF = 4.45  
+          TI1LF = 3.5                             !    TI1LF = 4.45  
           TILPE = 2.5
-          TIFAC = 1.0                                !    TIFAC = 1.0   
-          TILDS = 2.5                                !    TDPHS = 3.0   
-          TILDE = 6.0                                !    TDPHE = 7.0   
-          TILDF = 4.0                                !    TDFAC = 5.0   
-          LATFR(1) = 0.80   ! TGR(2)                 !    TGR(2) = 0.80
-                                                     !    TGR(20) = 0.10                                                     
-                                                     !    TILIP = 6.0                                                        
-                                                     !    TINOX = 20 ! TIL#X                                               
-                                                     !    TDSF = 1.0                                                         
+          TIFAC = 1.0                             !    TIFAC = 1.0   
+          TILDS = 2.5                             !    TDPHS = 3.0   
+          TILDE = 6.0                             !    TDPHE = 7.0   
+          TILDF = 4.0                             !    TDFAC = 5.0   
+          LATFR(1) = 0.80   ! TGR(2)              !    TGR(2) = 0.80
+                                                  !    TGR(20) = 0.10    
+                                                  !    TILIP = 6.0       
+                                                  ! TINOX = 20 ! TIL#X
+                                                  !    TDSF = 1.0        
           !          CSCRP    CSCER
           LATFR(2)  = 0.80   ! 0.8  LATFR(1)       
           LATFR(3)  = 0.76   ! 0.8  LATFR(1)       
@@ -1089,19 +1095,19 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             PD2FR(1) = 0.25
             PD4FR(1) = 0.25
             PD4FR(2) = 0.10
-                                                 !    PD(5) =  60                                                        
-                                                 !    PD(6) =  25                                                        
-                                                 !    PD(7) = 150                                                        
-            ! PSNO PSNAME                        ! PSNO PSTYP PSABV PSNAME                                          
-            !   1  T.Spikelet                    !   1      S GDAT  Germinate                                       
-            !   2  EndVegetative                 !   2      K TSAT  T.Spikelet                                      
-            !   3  EndEarGrowth                  !   3      S PSDAT Pseudo_Stem                                     
-            !   4  BeginGrainFill                !   4      S LLDAT End_Leaf                                        
-            !   5  EndGrainFill                  !   5      S IEDAT Head_Emerge                                     
-            !   6  Harvest                       !   6      K ADAT  Anthesis                                        
-            !   7  Sowing                        !   7      S AEDAT EndAnthesis                                    
-            !   8  Germinate                     !   8      S GFDAT MilkToDough                                     
-            !   9  Emergance                     !   9      M MDAT  HardDough                                       
+                                                 !    PD(5) =  60
+                                                 !    PD(6) =  25
+                                                 !    PD(7) = 150
+            ! PSNO PSNAME                ! PSNO PSTYP PSABV PSNAME     
+            !   1  T.Spikelet            !   1      S GDAT  Germinate  
+            !   2  EndVegetative         !   2      K TSAT  T.Spikelet 
+            !   3  EndEarGrowth          !   3      S PSDAT Pseudo_Stem
+            !   4  BeginGrainFill        !   4      S LLDAT End_Leaf   
+            !   5  EndGrainFill          !   5      S IEDAT Head_Emerge
+            !   6  Harvest               !   6      K ADAT  Anthesis   
+            !   7  Sowing                !   7      S AEDAT EndAnthesis
+            !   8  Germinate             !   8      S GFDAT MilkToDough
+            !   9  Emergance             !   9      M MDAT  HardDough  
         ENDIF
             
         IF (EXAMINE(20).EQ.'Y') THEN  
@@ -1126,19 +1132,19 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             PD2FR(1) = 0.25
             PD4FR(1) = 0.25
             PD4FR(2) = 0.10
-                                                 !    PD(5) =  60                                                        
-                                                 !    PD(6) =  25                                                        
-                                                 !    PD(7) = 150                                                        
-            ! PSNO PSNAME                        ! PSNO PSTYP PSABV PSNAME                                          
-            !   1  T.Spikelet                    !   1      S GDAT  Germinate                                       
-            !   2  EndVegetative                 !   2      K TSAT  T.Spikelet                                      
-            !   3  EndEarGrowth                  !   3      S PSDAT Pseudo_Stem                                     
-            !   4  BeginGrainFill                !   4      S LLDAT End_Leaf                                        
-            !   5  EndGrainFill                  !   5      S IEDAT Head_Emerge                                     
-            !   6  Harvest                       !   6      K ADAT  Anthesis                                        
-            !   7  Sowing                        !   7      S AEDAT EndAnthesis                                    
-            !   8  Germinate                     !   8      S GFDAT MilkToDough                                     
-            !   9  Emergance                     !   9      M MDAT  HardDough                                       
+                                                 !    PD(5) =  60              
+                                                 !    PD(6) =  25              
+                                                 !    PD(7) = 150              
+            ! PSNO PSNAME                ! PSNO PSTYP PSABV PSNAME     
+            !   1  T.Spikelet            !   1      S GDAT  Germinate  
+            !   2  EndVegetative         !   2      K TSAT  T.Spikelet 
+            !   3  EndEarGrowth          !   3      S PSDAT Pseudo_Stem
+            !   4  BeginGrainFill        !   4      S LLDAT End_Leaf   
+            !   5  EndGrainFill          !   5      S IEDAT Head_Emerge
+            !   6  Harvest               !   6      K ADAT  Anthesis   
+            !   7  Sowing                !   7      S AEDAT EndAnthesis
+            !   8  Germinate             !   8      S GFDAT MilkToDough
+            !   9  Emergance             !   9      M MDAT  HardDough  
 
             LAPOT(1) = 5.0                       !    LA1S = 3.0        
             LAFV = 0.1                           !    LAFV = 0.1        
@@ -1179,14 +1185,14 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           ! Grain 
             GRNS = 3.0                           !    GNPCS = 2.0       
             GRNMN = 0.0
-                                                 !    GWTAA = 0.0    ! GWWF                                              
+                                                 ! GWTAA = 0.0    ! GWWF
           ! Hardiness  
             LT50H = -10                          !    TKFH = -15        
             
           ! Stems  
                                                  !    SSPHS = 8.0       
                                                  !    SSPHE = 9.3                                                        
-                                                 !    GWTAT = 1.0    ! SHWTA                                             
+                                                 ! GWTAT = 1.0  ! SHWTA                                             
           ! N uptake                                                 
             RTNO3 = 0.006  ! RTNUP               !    RTNO3 = .006!RTNUP
                                                  !    NO3CF = 1.0! NUPNF
@@ -1240,8 +1246,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             LAWFRMN = 0.5  ! SLAMN
             LSHFR = 0.33                         !    LSHFR = 0.33      
             LRETS = 3.0        ! LRPHS
-            LSHAWS = 50.0      ! LSHAWS          !    LSHAWV =50.0    ! LSHAV
-                                                 !    LSHAWR = 80.0   ! LSHAR                                         
+            LSHAWS = 50.0      ! LSHAWS          ! LSHAWV =50.0  ! LSHAV
+                                                 ! LSHAWR = 80.0 ! LSHAR                                         
             PHINTL(1) = 2.0    ! PHL             !    PHINTL(1) =2.0!PHL
             PHINTF(1) = 0.8    ! PHF             !    PHINTF(1) =0.8!PHF
             
@@ -1271,7 +1277,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             LATFR(1) = 0.80   ! TGR(2)           !    TGR(2) = 0.80  
                                                  !    TGR(20) = 0.10                                                     
                                                  !    TILIP = 6.0                                                        
-                                                 !    TINOX = 20   ! TIL#X                                               
+                                                 ! TINOX = 20   ! TIL#X                                               
           ! Reserves
                                                  !    RSPCS = 20                                                         
             RSPCX = 80.0                         !    RSPCX = 80.0      
@@ -1288,8 +1294,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             CHSTG = 3.8
           ! Grain                                !    ! Grain                                                            
             GLIGP = 10.0  ! GLIG%                !    GLIGPC = 10.0     
-                                                 !    GWLAGFR = 0.05  ! GWLAG                                            
-                                                 !    GWLINFR = 0.90  ! GWLIN                                            
+                                               ! GWLAGFR = 0.05 ! GWLAG                                            
+                                               ! GWLINFR = 0.90 ! GWLIN                                            
           ! Seed                                 !    ! Seed                                                             
             SDSZ = 0.284   ! SDWT                !    SDWT = 0.28       
                                                  !    SDDUR = 20.0                                                       
@@ -1310,7 +1316,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !  990  1.43                         !    !  990  1.43                                                       
             ! 9999  1.50                         !    ! 9999  1.50                                                       
 
-          ! CH2O distribution/mobilizatio        !    ! CH2O distribution/mobilization                                   
+          ! CH2O distribution/mobilization                                     
                                                  !    PTFMN = 0.75                                                       
             PTFX = 0.98  ! PTFMX                 !    PTFMX = 0.98      
                                                  !    PTFA = 0.10                                                        
@@ -1330,19 +1336,19 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             HDUR = 10.0                          !    HDUR = 10.0       
                                                  !    HLOST = 10.0                                                       
                                                  !    HLOSF = 0.2                                                        
-            ! Temperature responses
-            ! CSCRP                                       
-            !RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN 
-            !    0     1     0     0     0     0     0    -5    -5     0     0 
-            !  1.0    26    26    26    30    10     5     0     0    16    16 
-            !  1.0    50    50    50    50    20    25     7     5    35    35 
-            !    0    60    60    60    60    35    35    15    10    45    45 
-            ! CSCER                              
-            !RRATE TRGEM TRDV1 TRDV2 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN             
-            !    0     1     0     0     0     0    -5    -5     0     0             
-            !  1.0    26    26    30    10     5     0     0    16    16             
-            !  1.0    50    50    50    20    25     7     5    35    35             
-            !    0    60    60    60    35    35    15    10    45    45             
+!             Temperature responses
+!             CSCRP                                       
+!            RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN 
+!                0     1     0     0     0     0     0    -5    -5     0     0 
+!              1.0    26    26    26    30    10     5     0     0    16    16 
+!              1.0    50    50    50    50    20    25     7     5    35    35 
+!                0    60    60    60    60    35    35    15    10    45    45 
+!             CSCER                              
+!            RRATE TRGEM TRDV1 TRDV2 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN             
+!                0     1     0     0     0     0    -5    -5     0     0             
+!              1.0    26    26    30    10     5     0     0    16    16             
+!              1.0    50    50    50    20    25     7     5    35    35             
+!                0    60    60    60    35    35    15    10    45    45             
                                                                                                                          
           ! Water shortage effects                                                                                     
             RWUPM = 0.02
@@ -1471,7 +1477,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         WRITE (fnumwrk,*) ' '
         WRITE (fnumwrk,*) 'DERIVED COEFFICIENTS'
         
-        ! NSFAC and NMNFAC are used for checking the component N concentrations only
+!         NSFAC and NMNFAC are used for checking the component N concentrations only
         IF (nsfac.LE.0.0) NSFAC = 1.0
         IF (nmnfc.LE.0.0) NMNFC = 1.0
         DO L =0,9

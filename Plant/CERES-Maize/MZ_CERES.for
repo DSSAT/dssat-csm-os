@@ -27,6 +27,8 @@ C======================================================================
 !  09/11/2007 JIL Added IXIM model
 !  10/31/2007 CHP Added simple K model.
 !  04/14/2021 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !----------------------------------------------------------------------
 !  Called : Alt_Plant
 !----------------------------------------------------------------------
@@ -44,6 +46,9 @@ C======================================================================
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, MZ_PHENOL, MZ_IX_PHENOL, MZ_GROSUB, 
+     &  MZ_IX_GROSUB, SW_GROSUB, MZ_ROOTGR, MZ_OPGROW, MZ_OPNIT, 
+     &  MZ_OPHARV, PEST, HRes_Ceres
       SAVE
 
 !----------------------------------------------------------------------
@@ -316,12 +321,12 @@ C----------------------------------------------------------------------
           !-------------------------------------------------------------
           IF(MODEL(1:5).EQ.'MZCER'.OR.MODEL(1:5).EQ.'SWCER') THEN
             CALL MZ_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,             !C
-     &      CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
-     &      SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
-     &      XN,YRDOY,YRSIM,                                         !I
-     &      CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &      XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &      SeedFrac, VegFrac, CropStatus)                          !O
+     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
+     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,                   !I
+     &    XN,YRDOY,YRSIM,                                         !I
+     &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    SeedFrac, VegFrac, CropStatus)                          !O
           ELSEIF(MODEL(1:5).EQ.'MZIXM')THEN
             CALL MZ_IX_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,        !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
@@ -344,7 +349,7 @@ C----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
-     &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
+     &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -472,12 +477,12 @@ C-----------------------------------------------------------------------
 
           IF(MODEL(1:5).EQ.'MZCER'.OR.MODEL(1:5).EQ.'SWCER') THEN
             CALL MZ_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,             !C
-     &      CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
-     &      SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
-     &      XN,YRDOY,YRSIM,                                         !I
-     &      CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &      XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &      SeedFrac, VegFrac, CropStatus)                          !O
+     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
+     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,                   !I
+     &    XN,YRDOY,YRSIM,                                         !I
+     &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    SeedFrac, VegFrac, CropStatus)                          !O
 	    ELSEIF(MODEL(1:5).EQ.'MZIXM')THEN
             CALL MZ_IX_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,        !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
@@ -497,7 +502,7 @@ C-----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
-     &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
+     &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -631,12 +636,12 @@ C----------------------------------------------------------------------
           IF (CROP .NE. 'FA') THEN
             IF(MODEL(1:5).EQ.'MZCER'.OR.MODEL(1:5).EQ.'SWCER') THEN
               CALL MZ_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,             !C
-     &        CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
-     &        SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
-     &        XN,YRDOY,YRSIM,                                         !I
-     &        CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &        XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &        SeedFrac, VegFrac, CropStatus)                          !O
+     &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
+     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,                   !I
+     &    XN,YRDOY,YRSIM,                                         !I
+     &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    SeedFrac, VegFrac, CropStatus)                          !O
 	      ELSEIF(MODEL(1:5).EQ.'MZIXM')THEN
               CALL MZ_IX_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,      !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
@@ -661,7 +666,7 @@ C----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
-     &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
+     &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -762,7 +767,7 @@ C----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
-     &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
+     &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -870,7 +875,7 @@ C----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
-     &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
+     &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
