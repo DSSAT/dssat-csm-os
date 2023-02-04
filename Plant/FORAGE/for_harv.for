@@ -20,18 +20,20 @@ C  Called :
 C
 C  Calls  :
 C=======================================================================
-      SUBROUTINE forage_harvest(CONTROL,FILECC,
-     &     RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
-     &     WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
-     &     WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &     AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht, !Input/Output
-     &     fhtot,FHTOTN, fhpctlf,fhpctn,  
-     &     DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &     WTCO, WTLO, WTSO)
+      SUBROUTINE forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &              RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,   !Input
+     &              WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,    !Input/Output
+     &              WTNLF,WTNST,WNRLF,WNRST,WTNCAN,        !Input/Output
+     &              AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht, !Input/Output
+     &              fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,
+     &              MOWC,RSPLC,HMFRQ,HMGDD,HMCUT, HMMOW,HRSPL,
+     &              DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &              HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &              MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &              RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &              XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &              PROLFF, PROSTF, pliglf, pligst)
 
-!     2023-01-19 CHP removed unused variables from argument list:
-!     FREQ,CUHT,MOWC,RSPLC,
-      
       USE MODULEDEFS
 
       IMPLICIT NONE
@@ -45,7 +47,7 @@ C=======================================================================
       INTEGER LNUM,FOUND
       INTEGER I,MOWCOUNT,j
       integer,dimension(8) :: date_time
-      INTEGER ERRNUM,LUNIO,PATHL  !LUNEXP,LINEXP,LNHAR,
+      INTEGER DYNAMIC,ERRNUM,LUNIO,PATHL  !LUNEXP,LINEXP,LNHAR,
 
       REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
       REAL FHLEAF,FHSTEM,FHVSTG
@@ -56,13 +58,36 @@ C=======================================================================
       REAL PROLFF,PROSTF,pliglf,pligst
       real canht,fhcrlf,fhcrst,fhtotn,fhtot,fhlfn,fhstn
       real fhpcho,fhpctlf,fhpctn,fhplig
-      real vstagp
-! Unused variables: y,z,PELF,FMOW,RHMOW,CHMOW,FLFP,RHLFP,RSPLM,MOWC,RSPLC
+      real vstagp,MOWC,RSPLC
+! Unused variables: y,z,PELF,FMOW,RHMOW,CHMOW,FLFP,RHLFP,RSPLM
+
       REAL DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO
       REAL WTCO, WTLO, WTSO
-!     REAL FREQ,CUHT,YHT
-!      REAL,ALLOCATABLE,DIMENSION(:) :: canht
+      REAL FREQ,CUHT,MOWREF
+!     REAL YHT
 
+      REAL TABEX  ! Function subroutine - Lookup utility
+      REAL HMCUT, RSREF
+      INTEGER,dimension(6) :: IXFREQ
+      REAL,dimension(6) :: XFREQ
+      REAL,dimension(6) :: YFREQ
+      INTEGER,dimension(6) :: IXCUTHT
+      REAL,dimension(6) :: XCUTHT
+      REAL,dimension(6) :: YCUTHT
+      INTEGER,dimension(6) :: IXCHMOW
+      REAL,dimension(6) :: XCHMOW
+      REAL,dimension(6) :: YCHMOW
+      INTEGER,dimension(6) :: IXFRGDD
+      REAL,dimension(6) :: XFRGDD
+      REAL,dimension(6) :: YRSREF
+      REAL GDD, MOWGDD
+      INTEGER HMFRQ, HMGDD, CUTDAY, HMVS
+      INTEGER HMMOW, HRSPL !TF 2022-01-31 Smart version AutoMOW
+      REAL TAVG, TGMIN
+      REAL TB(5), TO1(5), TO2(5), TM(5)
+      REAL VTO1, VTB1 !Vegetative coefficients
+!      REAL,ALLOCATABLE,DIMENSION(:) :: canht
+      
       character(len=1)  BLANK
       character(len=2)  crop
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
@@ -75,7 +100,8 @@ C=======================================================================
       character(len=60) ename
       CHARACTER*80 MOW80
       character(len=180) fhoutfmt
-!     CHARACTER*255 C255
+      CHARACTER*80 C80
+      CHARACTER*255 C255
 !     CHARACTER*80 CHARTEST
 !     CHARACTER*92 FILEX_P
       CHARACTER*92 FILEMOW
@@ -363,12 +389,12 @@ C-----------------------------------------------------------------------
               fhplig = (fhleaf*pliglf+fhstem*pligst)/fhtot*100
               fhpcho = (fhcrlf+fhcrst)/fhtot*100
               fhpctlf = fhleaf/fhtot*100
-
+      
               WTLF  = WTLF - FHLEAF
               STMWT = STMWT - FHSTEM
               TOPWT = TOPWT - FHLEAF - FHSTEM
               TOTWT = TOTWT - FHLEAF - FHSTEM
-
+ 
               WCRLF = WTLF*RHOL
               WCRST = STMWT*RHOS
 
@@ -391,8 +417,8 @@ C-----------------------------------------------------------------------
               AREALF = WTLF*SLA
               XLAI   = AREALF/10000.
               XHLAI  = XLAI
-
-              VSTAGE = FHVSTG
+  
+              VSTAGE = FHVSTG     
               vstagp = vstage
 
           else

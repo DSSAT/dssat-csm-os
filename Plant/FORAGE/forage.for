@@ -252,7 +252,7 @@ C------------------------------------------------------------
       REAL DWTCO, DWTLO, DWTSO !DIEGO ADDED 11/22/2016
       REAL PWTCO, PWTLO, PWTSO !DP & FO & TF ADDED 07/16/2019
       REAL fhpctn !DIEGO ADDED 01/18/2017
-!     REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
+      REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
       REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
 !     LOGICAL RUNYET
 
@@ -349,7 +349,6 @@ C TF/DP 2022-01-31 Simple version AutoMOW
       TGRO   = WEATHER % TGRO  
       TGROAV = WEATHER % TGROAV
       TMIN   = WEATHER % TMIN  
-      TMAX   = WEATHER % TMAX
 
 ! Disable P stress
       pstres1 = 1
@@ -717,7 +716,7 @@ C-----------------------------------------------------------------------
      &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
+     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 !!     Initialize Overview.out file.
 !      CALL FOR_OPHARV(CONTROL, ISWITCH, 
@@ -729,7 +728,7 @@ C-----------------------------------------------------------------------
 !     &    YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
 !     &    BWAH, SDWTAH)                                   !Output
 
-!     If this is not a sequenced run, do not use any previously calculated
+!     If this is not a sequenced run, don't use any previously calculated
 !       harvest residue.
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
         HARVRES % RESWT  = 0.0
@@ -1129,7 +1128,7 @@ C-----------------------------------------------------------------------
      &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
+     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 ! CALL FOR_OPHARV (CONTROL, ISWITCH, 
 !&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
@@ -2034,14 +2033,19 @@ C-----------------------------------------------------------------------
 !      fhpctn = 0.0
       MOWC =0.0
       RSPLC =0.0
-      call forage_harvest(CONTROL,FILECC,
-     &     RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
-     &     WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
-     &     WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &     AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht, !Input/Output
-     &     FHWAH,FHTOTN, FHLPH,fhpctn,  
-     &     DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &     WTCO, WTLO, WTSO)
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
+     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
+     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &                HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &                MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &                RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &                XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &                PROLFF, PROSTF, pliglf, pligst)
 
       Cumul_FHTOT  = Cumul_FHTOT  + FHWAH
       Cumul_FHTOTN = Cumul_FHTOTN + FHTOTN
@@ -2140,7 +2144,7 @@ C-----------------------------------------------------------------------
      &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
+     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 !     !!   ! Write to Overview.out and summary.out files.
 !     !!   CALL FOR_OPHARV (CONTROL, ISWITCH, 
@@ -2645,7 +2649,7 @@ C-----------------------------------------------------------------------
 !              (g [N] m-2 d-1)
 ! SW(L)     Volumetric soil water content in layer L
 !             (cm3 [water] / cm3 [soil])
-! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress,
+! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
 ! SWIDOT    Daily seed mass damage (g/m2/day)
 ! TAVG      Average daily temperature (°C)
