@@ -1443,7 +1443,7 @@ C-----------------------------------------------------------------------
 !              (g[storage] / m2[ground)
 ! STMWT   Dry mass of stem tissue, including C and N (g[stem] / m2[ground)
 ! SUPPN   Total supply of N (g[N] / m2 / d)
-! TGRO(I) Hourly air temperature (�C)
+! TGRO(I) Hourly air temperature (°C)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
 ! TNLEAK  Total nitrogen leak (g[N] / m2 / d)
