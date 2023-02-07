@@ -14,7 +14,8 @@ C=======================================================================
       SUBROUTINE OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, WTDEP)                          !Input
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,   !Input
+     &    MgmtWTD, EXCS)
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -32,15 +33,22 @@ C=======================================================================
       PARAMETER (OUTWAT = 'SoilWat.OUT ')
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, L
-      INTEGER NAP, NAVWB, NLAYR, N_LYR, NOUTDW, RUN
+      INTEGER NAP, NLAYR, N_LYR, NOUTDW, RUN
       INTEGER YEAR, YRDOY, REPNO, YRSTART, INCDAT
 
-      REAL AVWTD, CRAIN, IRRAMT, PESW, TDFC, TDFD, TDRAIN, TLL
-      REAL TOTBUNDRO, TOTIR, TRUNOF, TSW, WTDEP, MULCHWAT
+      REAL CRAIN, IRRAMT, PESW, TDFC, TDFD, TDRAIN, TLL
+      REAL TOTBUNDRO, TOTIR, TRUNOF, TSW, MULCHWAT
       REAL, DIMENSION(NL) :: DLAYR, LL, SW
-      REAL RUNOFF        
+      REAL RUNOFF
+      REAL EXCS
 
       LOGICAL FEXIST, DOPRINT
+
+!     Water table
+      INTEGER NAVWB
+      REAL LatInflow, LatOutflow, ActWTD, MgmtWTD
+      REAL CumLatInflow, CumLatOutflow
+      REAL AVWTD, AVMWTD
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 4
@@ -83,11 +91,16 @@ C=======================================================================
 C-----------------------------------------------------------------------
 C   Set initial values to calculate average values
 C-----------------------------------------------------------------------
+      NAP   = 0
+      PESW  = 0.
       NAVWB = 0
       AVWTD = 0.
+      AVMWTD = 0.
       TOTIR = 0.
-      NAP   = 0
+      TRUNOF= 0.
       CRAIN = 0.
+      CumLatInflow = 0.
+      CumLatOutflow = 0.
 
       IF (IDETW == 'N' .OR. ISWWAT == 'N' .OR. IDETL == '0') THEN
         DOPRINT = .FALSE.
@@ -129,13 +142,14 @@ C-----------------------------------------------------------------------
 !       IF (INDEX('RSN',MEINF) <= 0) THEN   
         IF (INDEX('RSM',MEINF) > 0) THEN   
 !         New print format includes mulch, tiledrain and runoff info
-          WRITE (NOUTDW, '("!",T99,
+          WRITE (NOUTDW, '("!",T141,
      &    "Soil water content (mm3/mm3) by soil depth (cm):",
-     &    /,"!",T94,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
+     &    /,"!",T136,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
           WRITE (NOUTDW,1120, ADVANCE='NO')
  1120     FORMAT('@YEAR DOY   DAS',
-     &    '  SWTD  SWXD   ROFC   DRNC   PREC  IR#C  IRRC  DTWT',
-     &    '    MWTD  TDFD  TDFC   ROFD')
+     &    '    SWTD    SWXD    ROFC    DRNC    PREC    IR#C',
+     &    '    IRRC   LATFC   MDTWT    DTWT',
+     &    '    MWTD    TDFD    TDFC    ROFD    ROSD')
 
         ELSE      !Old print format
           WRITE (NOUTDW, '("!",T72,
@@ -170,13 +184,15 @@ C-----------------------------------------------------------------------
         IF (INDEX('RSM',MEINF) > 0) THEN   
 !         New print format includes mulch, tiledrain and runoff info
           WRITE (NOUTDW,1300)YEAR,DOY,DAS, NINT(TSW), 
-     &    NINT(PESW*10.),0,0,0,
-     &      0, 0,NINT(AVWTD), 
-     &      MULCHWAT, 0.0, 0.0, 0.0, 
+     &    NINT(PESW*10.),0,0,0,0,
+     &      0, 0, NINT(MgmtWTD), NINT(ActWTD), 
+     &      MULCHWAT, 0.0, 0.0, 0.0, 0.0,
      &      (SW(L),L=1,N_LYR)
- 1300     FORMAT(1X,I4,1X,I3.3,3(1X,I5),3(1X,I6),3(1X,I5),
-     &      F8.2,2F6.1,F7.2,
-     &      10(F8.3))  
+ 1300     FORMAT(1X,I4,1X,I3.3,1X,I5,10(1X,I7),
+     &      F8.2,2F8.1,F8.2,
+     &      F8.2,   !EXCS
+     &      10(F8.3))
+
 
         ELSE        !match old printout
           WRITE (NOUTDW,1302)YEAR,DOY,MOD(DAS,100000), NINT(TSW), 
@@ -236,9 +252,12 @@ C-----------------------------------------------------------------------
 C   Calculate average values as a function of the output interval
 C-----------------------------------------------------------------------
       IF (DOPRINT) THEN
- 
-        NAVWB  = NAVWB  + 1
-        AVWTD  = AVWTD  + WTDEP
+        IF (ActWTD > 1.E-6) THEN
+          NAVWB  = NAVWB  + 1
+          AVWTD  = AVWTD  + ActWTD
+          AVMWTD = AVMWTD + MgmtWTD
+        ENDIF
+
         IF (IRRAMT .GT. 1.E-4) THEN
           TOTIR = TOTIR + IRRAMT
           NAP  = NAP + 1
@@ -252,6 +271,9 @@ C-----------------------------------------------------------------------
           PESW = 0.0
         ENDIF
 
+        CumLatInflow = CumLatInflow + LatInflow
+        CumLatOutflow = CumLatOutflow + LatOutflow
+
 C-----------------------------------------------------------------------
 C  Generate output for file WATER.OUT
 C-----------------------------------------------------------------------
@@ -262,8 +284,10 @@ C-----------------------------------------------------------------------
 
           IF (NAVWB > 0) THEN
             AVWTD = AVWTD / NAVWB
+            AVMWTD= AVMWTD / NAVWB
           ELSE
-            AVWTD = WTDEP
+            AVWTD = ActWTD
+            AVMWTD= MgmtWTD
           ENDIF
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
@@ -271,9 +295,11 @@ C-----------------------------------------------------------------------
           IF (INDEX('RSM',MEINF) > 0) THEN   
 !           New print format includes mulch, tiledrain and runoff info
             WRITE (NOUTDW,1300)YEAR,DOY,MOD(DAS,100000), NINT(TSW), 
-     &      NINT(PESW*10),NINT(TRUNOF),NINT(TDRAIN),NINT(CRAIN),
-     &        NAP, NINT(TOTIR),NINT(AVWTD), 
-     &        MULCHWAT, TDFD*10., TDFC*10., RUNOFF, 
+     &        NINT(PESW*10),NINT(TRUNOF),NINT(TDRAIN),NINT(CRAIN),
+     &        NAP, NINT(TOTIR),
+     &        NINT(CumLatInflow+CumLatOutflow), 
+     &        NINT(MgmtWTD), NINT(AVWTD),
+     &        MULCHWAT, TDFD*10., TDFC*10., RUNOFF, EXCS,
      &        (SW(L),L=1,N_LYR)
 
           ELSE        !match old printout
@@ -297,9 +323,16 @@ C-----------------------------------------------------------------------
       
           NAVWB = 0
           AVWTD = 0.        
+          AVMWTD= 0.
         
         ENDIF
      
+      ENDIF
+      
+      IF (DYNAMIC .EQ. SEASINIT) THEN
+          NAVWB = 0
+          AVWTD = 0.        
+          AVMWTD= 0.
       ENDIF
 
 !***********************************************************************
@@ -346,6 +379,7 @@ C-----------------------------------------------------------------------
 !     OPWBAL VARIABLE DEFINITIONS:  updated 2/19/2004
 !-----------------------------------------------------------------------
 ! AVWTD     Average water table depth since last printout (cm)
+! AVMWTD    Average managed water table depth since last printout (cm)
 ! CONTROL   Composite variable containing variables related to control 
 !             and/or timing of simulation.    See Appendix A. 
 ! CRAIN     Cumulative precipitation (mm)
@@ -391,7 +425,7 @@ C-----------------------------------------------------------------------
 ! VALUE(I)  Array of values of variables sent to OPSUM for summary 
 !             printout; corresponds to LABEL array which identifies 
 !             variables being sent. (varies)
-! WTDEP     Depth to water table (cm)
+! ActWTD    Depth to water table (cm)
 ! YEAR      Year of current date of simulation 
 ! YRDOY     Current day of simulation (YYYYDDD)
 !-----------------------------------------------------------------------
