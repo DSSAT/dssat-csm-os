@@ -6,12 +6,14 @@
 !-----------------------------------------------------------------------
 !  REVISION       HISTORY
 !  01/23/2010 CHP Written
+!  02/10/2023 chp move SW integration to WATBAL
 !=======================================================================
 
-    Subroutine WaterTable(DYNAMIC,                    &
-      SOILPROP,  SWDELTU,                             &   !Input
-      SW,                                             &   !I/O
-      ActWTD, CAPRI, LatInflow, LatOutflow, MgmtWTD)      !Output
+    Subroutine WaterTable(DYNAMIC,              &
+      SOILPROP,  SWDELTU,                       &   !Input
+      SW,                                       &   !Input / Output (initialization done here)
+      ActWTD, CAPRI, LatInflow, LatOutflow,     &   !Output
+      MgmtWTD, SWDELTW)                             !Output
 
 !-----------------------------------------------------------------------
     USE ModuleDefs     
@@ -28,18 +30,23 @@
     REAL, DIMENSION(NL), INTENT(OUT):: CAPRI
     REAL               , INTENT(OUT):: ActWTD, MgmtWTD
     REAL               , INTENT(OUT):: LatInflow, LatOutflow
+!   SWDELT_WT = Change in SW due to water table changes
+    REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
 
 !   Local
     INTEGER L, K, L1, L2, NLAYR
     REAL Bottom, Top, Thick, Residual, TargetWTD
     REAL Excess1, Excess2, TotExcess
     REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR
-    REAL, DIMENSION(NL) :: Excess, SWDELTW, RWU
+    REAL, DIMENSION(NL) :: Excess, SW_temp !, RWU
 
-    REAL, PARAMETER :: TOL = 5.0    !tolerance for water table level (cm)
-    REAL, PARAMETER :: Kd = 0.5     !drawdown coefficient (1/day)
+    REAL, PARAMETER :: TOL = 5.0  !tolerance for water table level (cm)
+    REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (1/day)
 !   Kd should be a user specified input in the Fields section of FILEX
 !   based on field measurement.  For now assume a constant value.  
+
+!   temp chp
+    real x
 
 !***********************************************************************
 !***********************************************************************
@@ -47,6 +54,7 @@
     LatOutflow = 0.0
     SWDELTW    = 0.0
     CAPRI      = 0.0
+    SW_temp    = SW
 
 !***********************************************************************
 !***********************************************************************
@@ -91,10 +99,11 @@
 !         This layer is partially in managed water table.  
 !         Assume saturated water content below water table, DUL above.
           Thick = Bottom - MgmtWTD
-          SW(L) = (SAT(L) * Thick + DUL(L) * (DLAYR(L) - Thick)) / DLAYR(L)
+          SW_TEMP(L) = (SAT(L) * Thick + DUL(L) * (DLAYR(L) - Thick)) / DLAYR(L)
+          SW_TEMP(L) = MAX(SW_TEMP(L), SW(L))
         ELSE
 !         This layer is entirely within managed water table.
-          SW(L) = SAT(L)
+          SW_TEMP(L) = SAT(L)
         ENDIF 
       ENDDO
     ENDIF
@@ -219,9 +228,10 @@
     ENDIF 
 
 !-------------------------------------------------------------------------
-!   Update soil water content
+!   Update soil water content 
+!   (Pseudo-integration, the real integration occurs in WATBAL)
     DO L = 1, NLAYR
-      SW(L) = SW(L) + SWDELTW(L)
+      SW_temp(L) = SW_temp(L) + SWDELTW(L)
     ENDDO
 
 !***********************************************************************
@@ -238,26 +248,33 @@
 !        MgmtWTD,  SOILPROP,      &    !Input
 !        ThetaCap)                     !Output
 
-    CALL GET('SPAM','UH2O',RWU)
+
+!   Could do another pseudo integration here to account for RWU, evap, etc.
+!     but for now ignore. 
+!    CALL GET('SPAM','UH2O',RWU)
 
 !   Capillary flow    
-    CALL Capillary(DYNAMIC,                    &
-         SWDELTU, MgmtWTD, RWU, SOILPROP, SW,  &        !Input
-         Capri)                                         !Output
+    CALL Capillary(DYNAMIC,          &
+         ActWTD, SOILPROP, SW_TEMP,  &        !Input
+         Capri)                               !Output
 
     DO L = 1, NLAYR
+!     temp chp
+      x = capri(L)
       LatInflow = LatInflow + CAPRI(L)
-      IF (L < NLAYR) THEN
-        SW(L) = SW(L) + (CAPRI(L+1)-CAPRI(L)) / (DLAYR(L) * 10.)
-      ELSE
-        SW(L) = SW(L) - CAPRI(L) / (DLAYR(L) * 10.)
-      ENDIF
+      SW_TEMP(L) = SW_TEMP(L) + CAPRI(L) / (DLAYR(L) * 10.)
     ENDDO
 !
 !   Update actual depth to water table
     CALL WTDEPT(                                &
-         NLAYR, DLAYR, DS, DUL, SAT, SW,        &         !Input
+         NLAYR, DLAYR, DS, DUL, SAT, SW_TEMP,   &         !Input
          ActWTD)                                          !Output
+
+!   Calculate amount of water added to each layer based on today's 
+!     water table flux
+    DO L = 1, NLAYR
+      SWDELTW(L) = SW_TEMP(L) - SW(L)
+    ENDDO
 
 !-----------------------------------------------------------------------
     RETURN

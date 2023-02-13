@@ -127,7 +127,7 @@ C=======================================================================
 !     Water table variables:
       REAL ActWTD, MgmtWTD
       REAL LatInflow, LatOutflow
-      REAL, DIMENSION(NL) :: CAPRI
+      REAL, DIMENSION(NL) :: CAPRI, SWDELTW, SWDELTW_mm
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -198,7 +198,8 @@ C=======================================================================
       Call WaterTable(SEASINIT,  
      &  SOILPROP,  SWDELTU,                               !Input
      &  SW,                                               !I/O
-     &  ActWTD, CAPRI, LatInflow, LatOutflow, MgmtWTD)    !Output
+     &  ActWTD, CAPRI, LatInflow, LatOutflow,             !Output
+     &  MgmtWTD, SWDELTW)                                 !Output
 
 !     Initialize summary variables
       CALL WBSUM(SEASINIT,
@@ -277,7 +278,8 @@ C     Conflict with CERES-Wheat
         Call WaterTable(RATE,   
      &    SOILPROP,  SWDELTU,                             !Input
      &    SW,                                             !I/O
-     &    ActWTD, CAPRI, LatInflow, LatOutflow, MgmtWTD)  !Output
+     &    ActWTD, CAPRI, LatInflow, LatOutflow,           !Output
+     &    MgmtWTD, SWDELTW)                               !Output
       ENDIF
 
 !     Set process rates to zero.
@@ -471,11 +473,12 @@ C       extraction (based on yesterday's values) for each soil layer.
           SWDELTL_mm(L) = SWDELTL(L) * DLAYR_YEST(L) * 10. !tillage
           SWDELTU_mm(L) = SWDELTU(L) * DLAYR_YEST(L) * 10. !upflow
           SWDELTT_mm(L) = SWDELTT(L) * DLAYR_YEST(L) * 10. !tiledrain
+          SWDELTW_mm(L) = SWDELTW(L) * DLAYR_YEST(L) * 10. !water table
 
 !         Perform integration of soil water fluxes
           SW_mm_NEW(L) = SW_mm(L) + SWDELTS_mm(L) + SWDELTU_mm(L) 
      &        + SWDELTL_mm(L) + SWDELTX_mm(L) + SWDELTT_mm(L)
-     &        + Capri(L)    !capillary rise (mm/d)
+     &        + SWDELTW_mm(L) !(including capillary rise)
 
 !         Convert to volumetric content based on today's layer thickness
           SW(L) = SW_mm_NEW(L) / DLAYR(L) / 10.
