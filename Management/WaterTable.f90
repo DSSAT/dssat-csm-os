@@ -19,7 +19,7 @@
     USE ModuleDefs     
     USE ModuleData
     IMPLICIT NONE
-    EXTERNAL WTDEPT, CAPILLARY
+    EXTERNAL WTDEPT, CAPILLARY, CapFringe
     SAVE
 !-----------------------------------------------------------------------
 !   Interface:
@@ -34,16 +34,22 @@
     REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
 
 !   Local
-    INTEGER L, K, L1, L2, NLAYR
-    REAL Bottom, Top, Thick, Residual, TargetWTD
-    REAL Excess1, Excess2, TotExcess
+    INTEGER L, NLAYR !, K, L1, L2
+    REAL Bottom, Top, Thick, TargetWTD
+!   REAL Excess1, Excess2, TotExcess, Residual
     REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR, MaxRise
-    REAL, DIMENSION(NL) :: Excess, SW_temp !, RWU
+!   REAL, DIMENSION(NL) :: Excess
+    REAL, DIMENSION(NL) :: ThetaCap, SW_temp
 
-    REAL, PARAMETER :: TOL = 5.0  !tolerance for water table level (cm)
-    REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (1/day)
+    REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
+    REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
 !   Kd should be a user specified input in the Fields section of FILEX
-!   based on field measurement.  For now assume a constant value.  
+!   based on field measurement. Or it could be calculated from soil 
+!   properties. For now assume a constant value.  
+
+!   temp chp
+    integer run
+    data run /0/
 
 !***********************************************************************
 !***********************************************************************
@@ -59,6 +65,9 @@
 !***********************************************************************
   IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+!   TEMP CHP
+    RUN = RUN + 1
+
     DLAYR = SOILPROP % DLAYR
     DUL   = SOILPROP % DUL
     DS    = SOILPROP % DS
@@ -73,11 +82,13 @@
     IF (MgmtWTD < 1.E-6) THEN
       MgmtWTD = 10000.
     ENDIF
+    ActWTD    = MgmtWTD
+    TargetWTD = MgmtWTD
 
-!   Update actual depth to water table
-    CALL WTDEPT(                                &
-         NLAYR, DLAYR, DS, DUL, SAT, SW,        &         !Input
-         ActWTD)                                          !Output
+!!   Update actual depth to water table
+!    CALL WTDEPT(                                &
+!         NLAYR, DLAYR, DS, DUL, SAT, SW,        &         !Input
+!         ActWTD)                                          !Output
 
     IF (MgmtWTD < DS(NLAYR)) THEN
 !     Initialize soil water content with water table depth, starting at bottom of profile
@@ -119,11 +130,11 @@
       MgmtWTD = 10000.
     ENDIF
 
-!   Update actual depth to water table
-    CALL WTDEPT(                                &
-         NLAYR, DLAYR, DS, DUL, SAT, SW,        &         !Input
-         ActWTD)                                          !Output
-
+!!   Update actual depth to water table
+!    CALL WTDEPT(                                &
+!         NLAYR, DLAYR, DS, DUL, SAT, SW,        &         !Input
+!         ActWTD)                                          !Output
+!
 !-----------------------------------------------------------------------
 !   Compute lateral flow to maintain managed water table depth
 !   Use tolerance in cm to get target water table depth close to management 
@@ -132,8 +143,12 @@
 
 !   Actual water table lower than management.  Lateral Inflow calculations
     IF (ActWTD - MgmtWTD > TOL) THEN
-!     Calculate lateral inflow needed to raise water table to specified depth
+
+!     initial guess at today's water table depth
       TargetWTD = (ActWTD - MgmtWTD) * Kd + MgmtWTD
+
+!     Water content below the target water table will be set to SAT. 
+!     Calculate lateral inflow needed to raise water table to target depth
       DO L = NLAYR, 1, -1
         IF (L == 1) THEN 
           Top = 0.
@@ -142,13 +157,13 @@
         ENDIF
         Bottom = DS(L)
         IF (TargetWTD > Bottom) THEN
-!         This layer is entirely above the managed water table; done.
+!         This layer is entirely above the target water table; done.
           EXIT
         ELSEIF (TargetWTD > Top) THEN
-!         This layer is partially in managed water table
+!         This layer is partially in target water table
           Thick = Bottom - TargetWTD
         ELSE
-!         This layer is entirely within managed water table.
+!         This layer is entirely within target water table.
           Thick = DLAYR(L)
         ENDIF 
         SWDELTW(L) = MAX(0.0,(SAT(L) - SW(L)) * Thick / DLAYR(L))
@@ -159,10 +174,15 @@
 !   Actual water table higher than management - drawdown using Kd
     ELSEIF (MgmtWTD - ActWTD > TOL .AND. MgmtWTD < 9999.) THEN
 !     Calculate lateral outflow needed to draw water table down to specified depth
-!     Gradual drawdown using Kd
 
-!     First determine how much water (SAT-DUL) is between actual and 
-!       managed water table levels
+!     initial guess at today's water table depth
+      TargetWTD = (ActWTD - MgmtWTD) * Kd + MgmtWTD
+
+!     Water content above the target water table will be set to DUL. 
+!       The capillary rise routine will then reset theta values 
+!       just above the water table.
+
+!     Calculate lateral outflow needed to lower water table to target depth
       DO L = 1, NLAYR
         IF (L == 1) THEN 
           Top = 0.
@@ -170,58 +190,86 @@
           Top = DS(L-1)
         ENDIF
         Bottom = DS(L)
-        IF (ActWTD > Bottom) THEN
-!         This layer is entirely above the actual water table; do nothing.
-          CYCLE
-        ELSEIF (ActWTD > Top) THEN
-!         This layer is partially in water table
-          L1 = L
-          TotExcess = 0.0
-!         Work thru layers until management water table depth is reached.
-          DO K = L1, NLAYR
-            Bottom = DS(K)
-            IF (K == L) THEN
-              Top = ActWTD
-            ELSE
-              Top = DS(K-1)
-            ENDIF
-
-            IF (MgmtWTD < Bottom) THEN
-              Bottom = MgmtWTD
-              L2 = K
-            ENDIF
-            Thick = Bottom - Top
-
-!           Actual water table assumes a layer is divided into
-!           a saturated portion at the bottom and the remainder at DUL.
-!           (Wrong, I know!, but expedient for now -- fix later)
-!           Removal of water will act on the average water content of
-!           the layer.
-            Excess1 = Thick * (SAT(K) - DUL(K))   !saturated portion of layer
-            Excess2 = DLAYR(K) * (SW(K) - DUL(K)) !average water content above DUL for entire layer 
-            Excess(K) = MIN(Excess1, Excess2)     !cm
-            TotExcess = TotExcess + Excess(K)     !cm
-            IF (ABS(MgmtWTD - Bottom) < 1.) EXIT 
-          ENDDO     
+        IF (TargetWTD > Bottom) THEN
+!         This layer is entirely above the target water table. Set the 
+!           water content to DUL in the entire layer.
+          Thick = DLAYR(L)
+        ELSEIF (TargetWTD > Top) THEN
+!         This layer is partially in target water table. The top portion
+!           of the layer (above the TargetWTD) is set to DUL.
+          Thick = TargetWTD - Top
         ELSE
-!         This layer is entirely within water table; done.
+!         This layer is entirely within target water table. Do nothing 
+!           because it was in the water table yesterday, too.
           EXIT
         ENDIF 
-      ENDDO     
-
-!     Drawdown volume of water based on Kd
-      LatOutflow = -TotExcess * Kd * 10. !mm
-      Residual = -LatOutflow / 10. !cm
-      DO L = L1, L2
-        IF (Excess(L) < Residual) THEN
-          SWDELTW(L) = -Excess(L) / DLAYR(L)
-          Residual = Residual - Excess(L)
-        ELSE
-          SWDELTW(L) = -Residual / DLAYR(L)
-          Residual = 0.0
-          EXIT
-        ENDIF
+        SWDELTW(L) = MAX(0.0,-(SW(L) - DUL(L)) * Thick / DLAYR(L))
+!       Lateral outflow values are negative (so are SWDELTW here)
+        LatOutflow = LatOutflow + SWDELTW(L) * DLAYR(L) * 10. !mm 
       ENDDO
+
+! OLD METHOD
+!!     First determine how much water (SAT-DUL) is between actual and 
+!!       managed water table levels
+!      DO L = 1, NLAYR
+!        IF (L == 1) THEN 
+!          Top = 0.
+!        ELSE
+!          Top = DS(L-1)
+!        ENDIF
+!        Bottom = DS(L)
+!        IF (ActWTD > Bottom) THEN
+!!         This layer is entirely above the actual water table; do nothing.
+!          CYCLE
+!        ELSEIF (ActWTD > Top) THEN
+!!         This layer is partially in water table
+!          L1 = L
+!          TotExcess = 0.0
+!!         Work thru layers until management water table depth is reached.
+!          DO K = L1, NLAYR
+!            Bottom = DS(K)
+!            IF (K == L) THEN
+!              Top = ActWTD
+!            ELSE
+!              Top = DS(K-1)
+!            ENDIF
+!
+!            IF (MgmtWTD < Bottom) THEN
+!              Bottom = MgmtWTD
+!              L2 = K
+!            ENDIF
+!            Thick = Bottom - Top
+!
+!!           Actual water table assumes a layer is divided into
+!!           a saturated portion at the bottom and the remainder at DUL.
+!!           (Wrong, I know!, but expedient for now -- fix later)
+!!           Removal of water will act on the average water content of
+!!           the layer.
+!            Excess1 = Thick * (SAT(K) - DUL(K))   !saturated portion of layer
+!            Excess2 = DLAYR(K) * (SW(K) - DUL(K)) !average water content above DUL for entire layer 
+!            Excess(K) = MIN(Excess1, Excess2)     !cm
+!            TotExcess = TotExcess + Excess(K)     !cm
+!            IF (ABS(MgmtWTD - Bottom) < 1.) EXIT 
+!          ENDDO     
+!        ELSE
+!!         This layer is entirely within water table; done.
+!          EXIT
+!        ENDIF 
+!      ENDDO     
+!
+!!     Drawdown volume of water based on Kd
+!      LatOutflow = -TotExcess * Kd * 10. !mm
+!      Residual = -LatOutflow / 10. !cm
+!      DO L = L1, L2
+!        IF (Excess(L) < Residual) THEN
+!          SWDELTW(L) = -Excess(L) / DLAYR(L)
+!          Residual = Residual - Excess(L)
+!        ELSE
+!          SWDELTW(L) = -Residual / DLAYR(L)
+!          Residual = 0.0
+!          EXIT
+!        ENDIF
+!      ENDDO
     ENDIF 
 
 !-------------------------------------------------------------------------
@@ -238,13 +286,30 @@
   ENDIF
 !-----------------------------------------------------------------------
 
-    IF (MgmtWTD > 9999.) RETURN
+!   Set actual water table depth equal to target calculated above.
+!   Probably need a better way to do this, i.e., calculate the actual
+!   water table depth based on water table and drawdown dynamics, but
+!   previous attempts resulted in instability for daily model.
+    ActWTD = TargetWTD
 
+!   TEMP CHP
+!   For evaluation and debugging, run two identical treatments using two
+!   methods of capillary rise.
+    IF (RUN == 1) THEN
+
+
+! Method 2 seems to add way too much water to the upper layers, but need to check further.
+! - look at SW over time vs DUL and LL and actual and managed water table depth
+! - according to Dingman, the SW in the capillary fringe above a water table is at saturation. In Method 1, SW is limited to DUL, 
+!   so maybe it is too restricted in Method 1.
+
+!-----------------------------------------------------------------------
+!   Capillary rise - Method 1
 !   Set a limit on how much capillary rise can occur
 !   Plant uptake and soil evap are from yesterday.
     DO L = 1, NLAYR
 !     MaxRise    =   DUL   - SW    + uptake     + evap 
-      MaxRise(L) = (DUL(L) - SW(L) - SWDELTX(L) - SWDELTU(L)) * DLAYR(L) *10 !mm
+      MaxRise(L) = (SAT(L) - SW(L) - SWDELTX(L) - SWDELTU(L)) * DLAYR(L) *10 !mm
       MaxRise(L) = MAX(0.0, MaxRise(L))
     ENDDO 
 
@@ -257,11 +322,28 @@
       LatInflow = LatInflow + CAPRI(L)
       SW_TEMP(L) = SW_TEMP(L) + CAPRI(L) / (DLAYR(L) * 10.)
     ENDDO
+!-----------------------------------------------------------------------
 !
-!   Update actual depth to water table
-    CALL WTDEPT(                                &
-         NLAYR, DLAYR, DS, DUL, SAT, SW_TEMP,   &         !Input
-         ActWTD)                                          !Output
+    ELSE !RUN > 1
+!-----------------------------------------------------------------------
+!   Capillary rise - Method 2
+    CALL CapFringe(           &
+      ActWTD,  SOILPROP,      &   !Input
+      ThetaCap)                   !Output
+
+    DO L = 1, NLAYR
+!     ThetaCap(L) = MAX(SW_TEMP(L), ThetaCap(L))
+      LatInflow = LatInflow + (ThetaCap(L) - SW_TEMP(L))*DLAYR(L) * 10.
+      SW_TEMP(L) = ThetaCap(L)
+    ENDDO
+
+    ENDIF !RUN BLOCK
+!-----------------------------------------------------------------------
+!!   Update actual depth to water table
+!    CALL WTDEPT(                                &
+!         NLAYR, DLAYR, DS, DUL, SAT, SW_TEMP,   &         !Input
+!         ActWTD)                                          !Output
+!   Set the actual water table today to the Target WT
 
 !   Calculate amount of water added to each layer based on today's 
 !     water table flux
