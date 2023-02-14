@@ -1180,17 +1180,13 @@ C      Allocate N "returned for respiration" (CH2O) to layers as NO3&NH4
         DO L = 1,NLAYR
         IF (TRNO3U .GT. 0.0) THEN
         UNO3(L) = UNO3(L) - TRNURTRN * 10 * PNUPNO3 * 
-     &    UNO3(L)/TRNO3U
+     &    (UNO3(L)/(TRNO3U * 10))
         ENDIF
 
         IF (TRNH4U .GT. 0.0) THEN
         UNH4(L) = UNH4(L) - TRNURTRN * 10 * PNUPNH4 * 
-     &    UNH4(L)/TRNH4U
+     &    (UNH4(L)/(TRNH4U * 10))
         ENDIF
-        
-!       02/06/2023 TF - Avoid negative values in UNO3 and UNH4
-        IF(UNO3(L) .LT. 0.0) UNO3(L) = 0.0
-        IF(UNH4(L) .LT. 0.0) UNH4(L) = 0.0
         
         ENDDO
 
