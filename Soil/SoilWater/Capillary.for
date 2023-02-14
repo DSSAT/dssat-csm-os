@@ -12,8 +12,8 @@
 !****************************************************************************
 
       SUBROUTINE Capillary(DYNAMIC,
-     &      ActWTD, SOILPROP, SW,          !Input
-     &      Capri)                         !Output
+     &      ActWTD, SOILPROP, SW, MaxRise,    !Input
+     &      Capri)                            !Output
 
 !   4/8/2010 note: If water table depth < max root depth, then need to 
 !   handle. Caplillary rise mehtod may not be valid.  CHECK!!!
@@ -26,7 +26,7 @@
       INTEGER, INTENT(IN) :: DYNAMIC
       REAL, INTENT(IN) :: ActWTD
       TYPE (SoilType), INTENT(IN) :: SOILPROP
-      REAL, DIMENSION(NL), INTENT(IN) :: SW !, SWDELTU, RWU
+      REAL, DIMENSION(NL), INTENT(IN) :: SW, MaxRise !, SWDELTU, RWU
       REAL, DIMENSION(NL), INTENT(OUT) :: CAPRI
 
  !    Local variables:
@@ -188,24 +188,10 @@
             newSW = MAX(0.0, FLOWUP(I) - FLOWUP(I-1))
           ENDIF
 
-!         Don't allow newSW to result in SW > DUL
-          CAPRI(I) = MIN(newSW, WLFC(I) - WL(I))
+!         Limit capillary rise to maximum based on DUL, uptake, evap
+          CAPRI(I) = MIN(newSW, MaxRise(I))
           CAPRI(I) = MAX(0.0, CAPRI(I))
-
-!          Flow will not make the soil water content above DUL
-!           Write(*,*)"UpQ for layer at ",I,"th layer is ", FLOW
-!     &        ,"mm/d, MS(I)=", MS(I) , ",WCL=",WCL(I)
-!           IF (I.EQ.1) THEN	 
-!              CAPRI(I) = CAPRI(I-1) + MIN(
-!     &          FLOWUP(I) - CAPRI(I-1), 
-!     &          (WLST(I) - WL(I)) / DELT + 
-!     &          EVSWS(I) + TRWL(I) + FLOWUP(I+1) - FLOWUP(I))
-!           ELSE	
-!  
-!              CAPRI(I) = MIN(FLOW, (WLST(I)-WL(I))/DELT	 + EVSWS(I)
-!     &                   + TRWL(I)+  WLFL(I+1) - WLFL(I))
-!           END IF
-      ENDDO	
+      ENDDO
 
 !!     --------------------------------------------------------------------
 !!     Calculate change in water content in each layer

@@ -10,7 +10,7 @@
 !=======================================================================
 
     Subroutine WaterTable(DYNAMIC,              &
-      SOILPROP,  SWDELTU,                       &   !Input
+      SOILPROP,  SWDELTU, SWDELTX,              &   !Input
       SW,                                       &   !Input / Output (initialization done here)
       ActWTD, CAPRI, LatInflow, LatOutflow,     &   !Output
       MgmtWTD, SWDELTW)                             !Output
@@ -25,7 +25,7 @@
 !   Interface:
     INTEGER            , INTENT(IN) :: DYNAMIC
     TYPE(SoilType)     , INTENT(IN) :: SOILPROP
-    REAL, DIMENSION(NL), INTENT(IN) :: SWDELTU
+    REAL, DIMENSION(NL), INTENT(IN) :: SWDELTU, SWDELTX
     REAL, DIMENSION(NL), INTENT(INOUT) :: SW
     REAL, DIMENSION(NL), INTENT(OUT):: CAPRI
     REAL               , INTENT(OUT):: ActWTD, MgmtWTD
@@ -37,16 +37,13 @@
     INTEGER L, K, L1, L2, NLAYR
     REAL Bottom, Top, Thick, Residual, TargetWTD
     REAL Excess1, Excess2, TotExcess
-    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR
+    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR, MaxRise
     REAL, DIMENSION(NL) :: Excess, SW_temp !, RWU
 
     REAL, PARAMETER :: TOL = 5.0  !tolerance for water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (1/day)
 !   Kd should be a user specified input in the Fields section of FILEX
 !   based on field measurement.  For now assume a constant value.  
-
-!   temp chp
-    real x
 
 !***********************************************************************
 !***********************************************************************
@@ -243,24 +240,20 @@
 
     IF (MgmtWTD > 9999.) RETURN
 
-!!   Calculate water content within capillary fringe (for water table)
-!    CALL CapFringe(              & 
-!        MgmtWTD,  SOILPROP,      &    !Input
-!        ThetaCap)                     !Output
+!   Set a limit on how much capillary rise can occur
+!   Plant uptake and soil evap are from yesterday.
+    DO L = 1, NLAYR
+!     MaxRise    =   DUL   - SW    + uptake     + evap 
+      MaxRise(L) = (DUL(L) - SW(L) - SWDELTX(L) - SWDELTU(L)) * DLAYR(L) *10 !mm
+      MaxRise(L) = MAX(0.0, MaxRise(L))
+    ENDDO 
 
-
-!   Could do another pseudo integration here to account for RWU, evap, etc.
-!     but for now ignore. 
-!    CALL GET('SPAM','UH2O',RWU)
-
-!   Capillary flow    
-    CALL Capillary(DYNAMIC,          &
-         ActWTD, SOILPROP, SW_TEMP,  &        !Input
-         Capri)                               !Output
+!   Capillary flow
+    CALL Capillary(DYNAMIC,                   &
+         ActWTD, SOILPROP, SW_TEMP, MaxRise,  &     !Input
+         Capri)                                     !Output
 
     DO L = 1, NLAYR
-!     temp chp
-      x = capri(L)
       LatInflow = LatInflow + CAPRI(L)
       SW_TEMP(L) = SW_TEMP(L) + CAPRI(L) / (DLAYR(L) * 10.)
     ENDDO

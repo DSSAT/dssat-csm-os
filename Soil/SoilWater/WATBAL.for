@@ -196,7 +196,7 @@ C=======================================================================
 
 !     Initialize water table
       Call WaterTable(SEASINIT,  
-     &  SOILPROP,  SWDELTU,                               !Input
+     &  SOILPROP,  SWDELTU, SWDELTX,                      !Input
      &  SW,                                               !I/O
      &  ActWTD, CAPRI, LatInflow, LatOutflow,             !Output
      &  MgmtWTD, SWDELTW)                                 !Output
@@ -276,7 +276,7 @@ C     Conflict with CERES-Wheat
 !     Maintain water table depth and calculate capillary rise
       IF (FLOOD < 1.E-6) THEN
         Call WaterTable(RATE,   
-     &    SOILPROP,  SWDELTU,                             !Input
+     &    SOILPROP,  SWDELTU, SWDELTX,                    !Input
      &    SW,                                             !I/O
      &    ActWTD, CAPRI, LatInflow, LatOutflow,           !Output
      &    MgmtWTD, SWDELTW)                               !Output
