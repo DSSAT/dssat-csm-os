@@ -25,6 +25,7 @@ C=======================================================================
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
      &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
+     &    FOZ1, OBASE,                                    !Input
      &  AGEFAC, PG)                                       !Output
 
 !-----------------------------------------------------------------------
@@ -56,6 +57,7 @@ C=======================================================================
       REAL PStres1
 
 !     JG added ozone functionality 11/18/2021
+      REAL OBASE
       REAL OZON7
       REAL FO3
       REAL FOZ1
@@ -81,8 +83,7 @@ C***********************************************************************
 C-----------------------------------------------------------------------
       CALL PHOTIP(FILEIO,  
      &  CCEFF, CCMAX, CCMP, FNPGN, FNPGT, LMXSTD, LNREF, PARMAX,   
-     &  PGREF, PHTHRS10, PHTMAX, ROWSPC, TYPPGN, TYPPGT, XPGSLW, YPGSLW,
-     &  FOZ1)                                                           !JG added for ozone
+     &  PGREF, PHTHRS10, PHTMAX, ROWSPC, TYPPGN, TYPPGT, XPGSLW, YPGSLW)
 
 C-----------------------------------------------------------------------
 C     Adjust canopy photosynthesis for GENETIC input value of
@@ -173,8 +174,8 @@ C     FO3 ranges between 0.0-1.0, 1.0 = no stress, 0.0 = max stress.
 C     Ozone interacts with CO2 (PRATIO) and water stress (SWFAC) in PG.
 C     PRATIO is always > 1.0 and SWFAC is between 0.0-1.0.
 C-----------------------------------------------------------------------
-      IF (OZON7 .GT. 25.0) THEN
-          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
+      IF (OZON7 .GT. OBASE) THEN
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
           FO3 = MAX(FO3, 0.0)
       ELSE
           FO3 = 1.0
@@ -282,8 +283,7 @@ C=======================================================================
 
       SUBROUTINE PHOTIP(FILEIO,  
      &  CCEFF, CCMAX, CCMP, FNPGN, FNPGT, LMXSTD, LNREF, PARMAX,   
-     &  PGREF, PHTHRS10, PHTMAX, ROWSPC, TYPPGN, TYPPGT, XPGSLW, YPGSLW,
-     &  FOZ1)                                                           !JG added for ozone
+     &  PGREF, PHTHRS10, PHTMAX, ROWSPC, TYPPGN, TYPPGT, XPGSLW, YPGSLW)
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
@@ -305,7 +305,6 @@ C=======================================================================
 
       REAL FNPGN(4),FNPGT(4)
       REAL YPGSLW(15)
-      REAL FOZ1             !JG added for ozone
 
       PARAMETER (BLANK  = ' ')
       PARAMETER (ERRKEY = 'PHOTIP')
@@ -402,13 +401,6 @@ C-----------------------------------------------------------------------
       CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
       READ(CHAR,'(10F6.0)',IOSTAT=ERR) (YPGSLW(II),II = 1,10)
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-
-!     JG read ozone parameter from species file
-      SECTION = '!*OZON'
-      CALL FIND(LUNCRP,SECTION,LNUM,FOUND)
-      CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-      READ(CHAR,'(F6.2)',IOSTAT=ERR) FOZ1
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
       
 C-----------------------------------------------------------------------
       CLOSE (LUNCRP)
@@ -473,6 +465,7 @@ C-----------------------------------------------------------------------
 ! LUNCRP   Logical unit number for FILEC (*.spe file) 
 ! LUNIO    Logical unit number for FILEIO 
 ! NR5      Day when 50% of plants have pods with beginning seeds (days)
+! OBASE    Base mean 7 hour ozone damage threshold, set at 25.0 ppb
 ! OZON7    Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
 ! PAR      Daily photosynthetically active radiation or photon flux density
 !            (moles[quanta]/m2-d)

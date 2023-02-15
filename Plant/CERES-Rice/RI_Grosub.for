@@ -11,6 +11,7 @@ C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
 C  04/02/2008 US/CHP Added P and K models
 C  02/25/2012 JZW PHINT from CUL file (remove from SPE)
+C  02/03/2013 JG Added ozone parameters to CUL file
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
@@ -124,6 +125,7 @@ C=======================================================================
       REAL OZON7
       REAL FO3
       REAL FOZ1
+      REAL OBASE
       REAL PRFO3
       REAL SFOZ1
       REAL SLFO3
@@ -166,12 +168,12 @@ C=======================================================================
 !-----------------------------------------------------------------------
       CALL RI_IPGROSUB (CONTROL, 
      &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
-     &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
+     &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL, FOZ1, SFOZ1, OBASE)
 
       CALL RI_IPCROP (FILEC, PATHCR, !CROP, 
      &    CO2X, CO2Y, MODELVER, PORMIN, 
         !&    CO2X, CO2Y, MODELVER, PHINT, PORMIN,  
-     &    RLWR, RWUEP1, RWUMX, SHOCKFAC, FOZ1, SFOZ1)   !JG added ozone parameters
+     &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
 
       FILECC   = TRIM(PATHCR) // FILEC
       FSLFP    = 0.050  
@@ -628,8 +630,8 @@ CCCCC-PW
      &    TSHOCK)                                         !Output
 
 !     Effect of ozone on photosynthesis added by JG 11/24/2021
-      IF (OZON7 .GT. 25.0) THEN
-          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
+      IF (OZON7 .GT. OBASE) THEN
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
           FO3 = AMAX1(FO3, 0.0)
       ELSE
           FO3 = 1.0
@@ -1182,8 +1184,8 @@ C
       SLFK   = (1-FSLFP) + FSLFK*KSTRES 
 
 !     Senescence due to ozone stress, JG 11/24/2021
-      IF (OZON7 .GT. 25.0 ) THEN
-          SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * 25.0))
+      IF (OZON7 .GT. OBASE) THEN
+          SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * OBASE))
           SLFO3 = AMAX1(SLFO3, 0.0)
       ELSE
           SLFO3 = 1.0
@@ -1428,10 +1430,11 @@ C
 C  Reads FILEIO for GROSUB routine
 C  05/07/2002 CHP Written
 C  08/12/2003 CHP Added I/O error checking
+C  02/03/2023 JG Added ozone parameters
 C=======================================================================
       SUBROUTINE RI_IPGROSUB (CONTROL, 
      &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
-     &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
+     &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL, FOZ1, SFOZ1, OBASE)
 
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -1450,6 +1453,7 @@ C=======================================================================
 
       REAL ATEMP, G1, G2, G3, P5, PHINT
       REAL PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL
+      REAL FOZ1, SFOZ1, OBASE                  !JG added ozone parameters 02/03/2023
 
 C     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
@@ -1499,9 +1503,10 @@ C-----------------------------------------------------------------------
       SECTION = '*CULTI'
       CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-      READ (LUNIO,100, IOSTAT=ERR) P5, G1, G2, G3, PHINT
+      READ (LUNIO,100, IOSTAT=ERR) P5, G1, G2, G3, PHINT, FOZ1, SFOZ1,
+     &                             OBASE
 ! 100 FORMAT (42X,F6.0,6X,3F6.0,6X,F6.0)
-  100 FORMAT (42X,F6.0,6X,4F6.0)
+  100 FORMAT (42X,F6.0,6X,4F6.0,18X,3F6.0)
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 

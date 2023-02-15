@@ -90,7 +90,3 @@
 !Emergence was defined as growth stage 0 (X = 0), end of leaf growth as growth stage 4, and 
 !physiological maturity as growth stage 10 (Jones, 1983). Minimum shoot P concentration was 
 !taken as 60% of the estimated optimum (Daroub et al., 2003).
-
-*OZONE STRESS PARAMETERS
-  FOZ1    0.00      !Ozone stress on photosynthesis (0 = off)
-  SFOZ1   0.00      !Ozone stress on leaf senescence (0 = off)

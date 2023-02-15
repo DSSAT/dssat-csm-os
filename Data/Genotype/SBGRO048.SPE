@@ -170,7 +170,3 @@
     0.80    1.00  SRATPHOTO, SRATPART
     0.20          FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
   0.0020          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m)
-
-
-!*OZONE STRESS PARAMETERS
-  0.00  0.00    FOZ1, SFOZ1   !Ozone stress on photosynthesis and leaf senescence (0 = off)

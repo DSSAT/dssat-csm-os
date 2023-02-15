@@ -222,6 +222,7 @@ C      REAL            PRLF
 
 !     Ozone input added by JG 11/23/2021
       REAL OZON7
+      REAL FOZ1, SFOZ1, OBASE
 
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -330,7 +331,7 @@ C----------------------------------------------------------------------
      &    XN,YRDOY,YRSIM,                                         !I
      &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac, CropStatus)                          !O
+     &    SeedFrac, VegFrac, CropStatus, FOZ1, SFOZ1, OBASE)      !O
           ELSEIF(MODEL(1:5).EQ.'MZIXM')THEN
             CALL MZ_IX_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,        !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
@@ -352,7 +353,8 @@ C----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
+     &      OBASE,                                            !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -486,7 +488,7 @@ C-----------------------------------------------------------------------
      &    XN,YRDOY,YRSIM,                                         !I
      &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac, CropStatus)                          !O
+     &    SeedFrac, VegFrac, CropStatus, FOZ1, SFOZ1, OBASE)      !O
 	    ELSEIF(MODEL(1:5).EQ.'MZIXM')THEN
             CALL MZ_IX_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,        !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
@@ -505,7 +507,8 @@ C-----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
+     &      OBASE,                                            !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -645,7 +648,7 @@ C----------------------------------------------------------------------
      &    XN,YRDOY,YRSIM,                                         !I
      &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac, CropStatus)                          !O
+     &    SeedFrac, VegFrac, CropStatus, FOZ1, SFOZ1, OBASE)      !O
 	      ELSEIF(MODEL(1:5).EQ.'MZIXM')THEN
               CALL MZ_IX_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,      !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
@@ -669,7 +672,8 @@ C----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
+     &      OBASE,                                            !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -770,7 +774,8 @@ C----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
+     &      OBASE,                                            !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -878,7 +883,8 @@ C----------------------------------------------------------------------
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
+     &      OBASE,                                            !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output

@@ -46,7 +46,8 @@
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
-     &      YRDOY, YRPLT, SKi_Avail, OZON7,                   !Input
+     &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
+     &      OBASE,                                            !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -365,6 +366,7 @@
       REAL OZON7
       REAL FO3
       REAL FOZ1
+      REAL OBASE
       REAL PRFO3
       REAL SFOZ1
       REAL SLFO3
@@ -648,24 +650,6 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
         READ(C80,'(9X,F6.3)',IOSTAT=ERR) RWUEP1
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-      ENDIF
-      REWIND(LUNCRP)
-
-      !----------------------------------------------------------------
-      !        Find and Read Ozone parameters added by JG
-      !----------------------------------------------------------------
-      SECTION = '*OZONE'
-      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
-      IF (FOUND .EQ. 0) THEN
-        CALL ERROR(SECTION, 42, FILECC, LNUM)
-      ELSE
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(9X,F6.3)',IOSTAT=ERR) FOZ1
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(9X,F6.3)',IOSTAT=ERR) SFOZ1
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
       ENDIF
       
@@ -1188,8 +1172,8 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 !          CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES)*SLPF
 
 !   Effect of ozone on photosynthesis added by JG 11/23/2021
-      IF (OZON7 .GT. 25.0) THEN
-          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
+      IF (OZON7 .GT. OBASE) THEN
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
           FO3 = AMAX1(FO3, 0.0)
       ELSE
           FO3 = 1.0
@@ -1667,8 +1651,8 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
           SLFT  = AMAX1 (SLFT,0.0)
 
 !         Senescence due to ozone stress, JG 11/23/2021
-          IF (OZON7 .GT. 25.0) THEN
-              SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * 25.0))
+          IF (OZON7 .GT. OBASE) THEN
+              SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * OBASE))
               SLFO3 = AMAX1(SLFO3, 0.0)
           ELSE
               SLFO3 = 1.0
@@ -2247,6 +2231,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! NSTRES      !Nitrogen stress factor affecting growth (0-1)
 ! NWSD        !No. of consecutive days with severe water stress
 ! OUTPUT      !Program control variable to output state and rate variables to output file (value=5)
+! OBASE       !Base mean 7 hour ozone damage threshold, set at 25.0 ppb
 ! OZON7       !Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
 ! P5          !GDD from silking to physiological maturity, C
 ! PAR         !Daily photosynthetically active radiation, calculated as half

@@ -17,14 +17,16 @@
 ! KCAN    Canopy light extinction coefficient for daily PAR.
 ! TSEN    Critical temperature below which leaf damage occurs (default 6°C)
 ! CDAY    Number of cold days parameter (default 15.0 )
-!
-@ECO#  ECONAME.........  TBASE  TOPT ROPT   P20  DJTI  GDDE  DSGFT  RUE   KCAN  TSEN  CDAY
-!                            1     2    3     4     5     6     7     8      9    10    11
-IB0001 GENERIC MIDWEST1    8.0 34.0  34.0  12.5   4.0   6.0   170.  4.2   0.85
-IB0002 GENERIC MIDWEST2    8.0 34.0  34.0  12.5   4.0   6.0   170.  4.5   0.85
-IB0003 GENERIC MIDWEST3    8.0 34.0  34.0  12.5   4.0   6.0   170.  2.0   0.85
-IB0004 +5% RUE MIDWEST1    8.0 34.0  34.0  12.5   4.0   6.0   170.  4.4   0.85
-DFAULT DEFAULT             8.0 34.0  34.0  12.5   4.0   6.0   170.  4.2   0.85
+! FOZ1    Ozone stress factor for photosynthesis (0.00-1.00), 0.00 = off, 0.10 = ozone tolerant, 0.30 = intermediate, 0.70 = sensitive
+! SFOZ1   Ozone stress factor for leaf senescence (0.00-1.00), 0.00 = off, 0.05 = ozone tolerant, 0.10 = intermediate, 0.40 = sensitive
+! OBASE   Base mean 7-hour (M7) ozone damage threshold, default = 25.0 ppb
+@ECO#  ECONAME.........  TBASE  TOPT  ROPT   P20  DJTI  GDDE DSGFT   RUE  KCAN  TSEN  CDAY  FOZ1 SFOZ1 OBASE
+!                            1     2     3     4     5     6     7     8     9    10    11    12    13    14
+IB0001 GENERIC MIDWEST1    8.0  34.0  34.0  12.5   4.0   6.0 170.0   4.2  0.85   6.0  15.0  0.00  0.00  25.0
+IB0002 GENERIC MIDWEST2    8.0  34.0  34.0  12.5   4.0   6.0 170.0   4.5  0.85   6.0  15.0  0.00  0.00  25.0
+IB0003 GENERIC MIDWEST3    8.0  34.0  34.0  12.5   4.0   6.0 170.0   2.0  0.85   6.0  15.0  0.00  0.00  25.0
+IB0004 +5% RUE MIDWEST1    8.0  34.0  34.0  12.5   4.0   6.0 170.0   4.4  0.85   6.0  15.0  0.00  0.00  25.0
+DFAULT DEFAULT             8.0  34.0  34.0  12.5   4.0   6.0 170.0   4.2  0.85   6.0  15.0  0.00  0.00  25.0
 
 
 

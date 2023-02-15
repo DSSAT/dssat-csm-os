@@ -20,6 +20,7 @@ C========================================================================
       SUBROUTINE SENES(DYNAMIC,
      &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
+     &    SFOZ1, OBASE,                                   !Input
      &    SLDOT, SLNDOT, SSDOT, SSNDOT)                   !Output
 
 C-----------------------------------------------------------------------
@@ -51,6 +52,7 @@ C-----------------------------------------------------------------------
       REAL SWFCAB(NSWAB)
       
       !JG added ozone input 11/18/2021
+      REAL OBASE
       REAL OZON7
       REAL SFOZ1
       REAL SLFO3
@@ -141,17 +143,6 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
         READ(CHAR,'(8F6.0)',IOSTAT=ERR)
      &      (SENPOR(II),II=1,4),(SENMAX(II),II=1,4)
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-      ENDIF
-
-!     JG read ozone parameter from species file
-      SECTION = '!*OZON'
-      CALL FIND(LUNCRP, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
-      IF (FOUND .EQ. 0) THEN
-        CALL ERROR(SECTION, 42, FILECC, LNUM)
-      ELSE
-        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-        READ(CHAR,'(6X,F6.2)',IOSTAT=ERR) SFOZ1
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
       ENDIF
       
@@ -247,8 +238,8 @@ C     Calculate senescence due to ozone stress. Added by JG 12/15/2021.
 C     Limit interaction between ozone stress and water stress by using
 C     maximum senescence from either ozone or water stress.
 C-----------------------------------------------------------------------
-        IF (OZON7 .GT. 25.0) THEN
-          SLFO3 = (SFOZ1/1000 * OZON7 - (SFOZ1/1000 * 25.0)) * WTLF
+        IF (OZON7 .GT. OBASE) THEN
+          SLFO3 = (SFOZ1/1000 * OZON7 - (SFOZ1/1000 * OBASE)) * WTLF
           SLFO3 = MIN(SLFO3, WTLF)
           SLFO3 = MAX(SLFO3, 0.0)
         ELSE
@@ -320,6 +311,7 @@ C-----------------------------------------------------------------------
 ! NR7       Day when 50% of plants first have yellowing or maturing pods
 !             (days)
 ! NRUSLF    N actually mobilized from leaves in a day (g[N]/m2-d)
+! OBASE     Base mean 7 hour ozone damage threshold, set at 25.0 ppb
 ! OZON7     Daily 7-hour mean ozone concentration (9:00-15:59), ppb
 ! PAR       Daily photosynthetically active radiation or photon flux 
 !             density (moles[quanta]/m2-d)
