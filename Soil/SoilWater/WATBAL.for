@@ -127,7 +127,7 @@ C=======================================================================
 !     Water table variables:
       REAL ActWTD, MgmtWTD
       REAL LatInflow, LatOutflow
-      REAL, DIMENSION(NL) :: CAPRI, SWDELTW, SWDELTW_mm
+      REAL, DIMENSION(NL) :: SWDELTW, SWDELTW_mm
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -196,10 +196,15 @@ C=======================================================================
 
 !     Initialize water table
       Call WaterTable(SEASINIT,  
-     &  SOILPROP,  SWDELTU, SWDELTX,                      !Input
-     &  SW,                                               !I/O
-     &  ActWTD, CAPRI, LatInflow, LatOutflow,             !Output
+     &  SOILPROP, SW,                                     !Input
+     &  ActWTD, LatInflow, LatOutflow,                    !Output
      &  MgmtWTD, SWDELTW)                                 !Output
+
+!     Use inital water table depth and capillary rise to set initial
+!       soil water content
+      DO L = 1, NLAYR
+        SW(L) = SW(L) + SWDELTW(L)
+      ENDDO
 
 !     Initialize summary variables
       CALL WBSUM(SEASINIT,
@@ -245,10 +250,11 @@ C=======================================================================
 
 !     Set process rates to zero.
       SWDELTS = 0.0
-!      SWDELTX = 0.0
+!     SWDELTX = 0.0
       SWDELTU = 0.0
       SWDELTT = 0.0
       SWDELTL = 0.0
+      SWDELTW = 0.0
 
       DLAYR_YEST = DLAYR
 
@@ -276,9 +282,8 @@ C     Conflict with CERES-Wheat
 !     Maintain water table depth and calculate capillary rise
       IF (FLOOD < 1.E-6) THEN
         Call WaterTable(RATE,   
-     &    SOILPROP,  SWDELTU, SWDELTX,                    !Input
-     &    SW,                                             !I/O
-     &    ActWTD, CAPRI, LatInflow, LatOutflow,           !Output
+     &    SOILPROP, SW,                                   !Input
+     &    ActWTD, LatInflow, LatOutflow,                  !Output
      &    MgmtWTD, SWDELTW)                               !Output
       ENDIF
 

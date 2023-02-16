@@ -6,13 +6,13 @@
 !-----------------------------------------------------------------------
 !  REVISION       HISTORY
 !  01/23/2010 CHP Written
-!  02/10/2023 chp move SW integration to WATBAL
+!  02/10/2023 chp move SW integration to WATBAL, update for incorporation
+!                 into next release
 !=======================================================================
 
     Subroutine WaterTable(DYNAMIC,              &
-      SOILPROP,  SWDELTU, SWDELTX,              &   !Input
-      SW,                                       &   !Input / Output (initialization done here)
-      ActWTD, CAPRI, LatInflow, LatOutflow,     &   !Output
+      SOILPROP, SW,                             &   !Input
+      ActWTD, LatInflow, LatOutflow,            &   !Output
       MgmtWTD, SWDELTW)                             !Output
 
 !-----------------------------------------------------------------------
@@ -25,21 +25,22 @@
 !   Interface:
     INTEGER            , INTENT(IN) :: DYNAMIC
     TYPE(SoilType)     , INTENT(IN) :: SOILPROP
-    REAL, DIMENSION(NL), INTENT(IN) :: SWDELTU, SWDELTX
-    REAL, DIMENSION(NL), INTENT(INOUT) :: SW
-    REAL, DIMENSION(NL), INTENT(OUT):: CAPRI
+    REAL, DIMENSION(NL), INTENT(IN) :: SW
     REAL               , INTENT(OUT):: ActWTD, MgmtWTD
     REAL               , INTENT(OUT):: LatInflow, LatOutflow
 !   SWDELT_WT = Change in SW due to water table changes
     REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
 
+!   REAL, DIMENSION(NL), INTENT(IN) :: SWDELTU, SWDELTX
+!   REAL, DIMENSION(NL), INTENT(OUT):: CAPRI
+
 !   Local
     INTEGER L, NLAYR !, K, L1, L2
     REAL Bottom, Top, Thick, TargetWTD
 !   REAL Excess1, Excess2, TotExcess, Residual
-    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR, MaxRise
-!   REAL, DIMENSION(NL) :: Excess
-    REAL, DIMENSION(NL) :: ThetaCap, SW_temp
+    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR 
+!   REAL, DIMENSION(NL) :: Excess, MaxRise
+    REAL, DIMENSION(NL) :: ThetaCap, SW_temp, DeltaSW
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
@@ -47,16 +48,12 @@
 !   based on field measurement. Or it could be calculated from soil 
 !   properties. For now assume a constant value.  
 
-!   temp chp
-    integer run
-    data run /0/
-
 !***********************************************************************
 !***********************************************************************
     LatInflow  = 0.0
     LatOutflow = 0.0
     SWDELTW    = 0.0
-    CAPRI      = 0.0
+!   CAPRI      = 0.0
     SW_temp    = SW
 
 !***********************************************************************
@@ -65,9 +62,6 @@
 !***********************************************************************
   IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-!   TEMP CHP
-    RUN = RUN + 1
-
     DLAYR = SOILPROP % DLAYR
     DUL   = SOILPROP % DUL
     DS    = SOILPROP % DS
@@ -292,52 +286,43 @@
 !   previous attempts resulted in instability for daily model.
     ActWTD = TargetWTD
 
-!   TEMP CHP
-!   For evaluation and debugging, run two identical treatments using two
-!   methods of capillary rise.
-    IF (RUN == 1) THEN
-
-
-! Method 2 seems to add way too much water to the upper layers, but need to check further.
-! - look at SW over time vs DUL and LL and actual and managed water table depth
-! - according to Dingman, the SW in the capillary fringe above a water table is at saturation. In Method 1, SW is limited to DUL, 
-!   so maybe it is too restricted in Method 1.
-
-!-----------------------------------------------------------------------
-!   Capillary rise - Method 1
-!   Set a limit on how much capillary rise can occur
-!   Plant uptake and soil evap are from yesterday.
-    DO L = 1, NLAYR
-!     MaxRise    =   DUL   - SW    + uptake     + evap 
-      MaxRise(L) = (SAT(L) - SW(L) - SWDELTX(L) - SWDELTU(L)) * DLAYR(L) *10 !mm
-      MaxRise(L) = MAX(0.0, MaxRise(L))
-    ENDDO 
-
-!   Capillary flow
-    CALL Capillary(DYNAMIC,                   &
-         ActWTD, SOILPROP, SW_TEMP, MaxRise,  &     !Input
-         Capri)                                     !Output
-
-    DO L = 1, NLAYR
-      LatInflow = LatInflow + CAPRI(L)
-      SW_TEMP(L) = SW_TEMP(L) + CAPRI(L) / (DLAYR(L) * 10.)
-    ENDDO
-!-----------------------------------------------------------------------
+!!==================================
+!!   Capillary rise - Method 1
+!   This method resulted in very unstable water table depths in the top layers.
+!!==================================
+!!   Set a limit on how much capillary rise can occur
+!!   Plant uptake and soil evap are from yesterday.
+!    DO L = 1, NLAYR
+!!     MaxRise    =   DUL   - SW    + uptake     + evap 
+!      MaxRise(L) = (SAT(L) - SW(L) - SWDELTX(L) - SWDELTU(L)) * DLAYR(L) *10 !mm
+!      MaxRise(L) = MAX(0.0, MaxRise(L))
+!    ENDDO 
 !
-    ELSE !RUN > 1
-!-----------------------------------------------------------------------
+!!   Capillary flow
+!    CALL Capillary(DYNAMIC,                   &
+!         ActWTD, SOILPROP, SW_TEMP, MaxRise,  &     !Input
+!         Capri)                                     !Output
+!
+!    DO L = 1, NLAYR
+!      LatInflow = LatInflow + CAPRI(L)
+!      SW_TEMP(L) = SW_TEMP(L) + CAPRI(L) / (DLAYR(L) * 10.)
+!    ENDDO
+!!-----------------------------------------------------------------------
+
+!==================================
 !   Capillary rise - Method 2
+!==================================
     CALL CapFringe(           &
       ActWTD,  SOILPROP,      &   !Input
       ThetaCap)                   !Output
 
     DO L = 1, NLAYR
 !     ThetaCap(L) = MAX(SW_TEMP(L), ThetaCap(L))
-      LatInflow = LatInflow + (ThetaCap(L) - SW_TEMP(L))*DLAYR(L) * 10.
-      SW_TEMP(L) = ThetaCap(L)
+      DeltaSW(L) = MAX(0.0, ThetaCap(L) - SW_TEMP(L))
+      SW_TEMP(L) = SW_TEMP(L) + DeltaSW(L)
+      LatInflow = LatInflow + DeltaSW(L) * DLAYR(L) * 10.
     ENDDO
 
-    ENDIF !RUN BLOCK
 !-----------------------------------------------------------------------
 !!   Update actual depth to water table
 !    CALL WTDEPT(                                &
@@ -345,8 +330,7 @@
 !         ActWTD)                                          !Output
 !   Set the actual water table today to the Target WT
 
-!   Calculate amount of water added to each layer based on today's 
-!     water table flux
+!   flux in soil water content due to changes in water table and capillary flow
     DO L = 1, NLAYR
       SWDELTW(L) = SW_TEMP(L) - SW(L)
     ENDDO
@@ -360,6 +344,8 @@
 !  WTDEPT, Subroutine
 !  Determines actual water table depth
 !  Allows perched water table (uses highest free water surface in profile)
+!   This subroutine, as written still results in step-wise increments to water table.
+!   Maybe need to go back to original WTDEPT for non-managed water tables (i.e., perched)
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  01/06/1997 GH  Written
@@ -382,7 +368,11 @@
       IMPLICIT NONE
       SAVE
 
-      INTEGER L, NLAYR
+!     Interface variables:
+      INTEGER, INTENT(IN) :: NLAYR
+
+
+      INTEGER L
       REAL ActWTD, FACTOR             !Depth to Water table (cm)
       REAL, DIMENSION(NL) ::  DLAYR, DS, DUL, SAT, SW
       REAL, DIMENSION(NL) :: SATFRAC
