@@ -25,7 +25,8 @@
       USE ModuleData
       
       IMPLICIT NONE
-      EXTERNAL GET_CROPD, INFO, GETLUN, HEADER, YR_DOY, TIMDIF
+      EXTERNAL GET_CROPD, INFO, GETLUN, HEADER, YR_DOY, TIMDIF,
+     & ERROR
       SAVE
 
       CHARACTER*1   ISWFWT
@@ -38,34 +39,22 @@
 
       INTEGER DAP, DAS, DOY, DYNAMIC, ERRNUM, I
       INTEGER NOUTPF, NPP, NR2TIM, TIMDIF
-      INTEGER YEAR, YRDOY, YRPLT, HARVF, HARV
+      INTEGER YEAR, YRDOY, YRPLT, HARVF
 
       REAL AvgDMC, AvgDPW, AvgFPW, PodDiam, PodLen
-      REAL PAGE, XMAGE, PodAge, PODNO, SEEDNO, SHELPC
+      REAL PAGE, XMAGE, PodAge, PODNO, SHELPC
       REAL TDPW, TFPW, TDSW
       REAL CLASS(7)
 
       REAL, DIMENSION(NCOHORTS) :: DMC, DryPodWt, FreshPodWt, PHTIM
       REAL, DIMENSION(NCOHORTS) :: SDNO, SHELN, WTSD, WTSHE, XPAGE
       
-      REAL :: TWTSH
-      REAL :: AvgRDSD, PRDSH, PRDSD, AvgRDSP, AvgRSNP
+      REAL :: TWTSH,RPODNO,HRPN
       REAL :: HRSN, HRDSD, HRDSH 
       REAL :: TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW
       REAL :: MTFPW,MTDPW,MTDSD,MTDSH
       REAL :: RTFPW,HPODWT,HSDWT,HSHELWT
-      
-      REAL :: HRVD 
-      REAL :: HRVF 
-      REAL :: DIFR 
-      REAL :: RUDPW
-      REAL :: CHPDT
-      REAL :: CHFPW
-      
-      REAL    :: RPODNO 
-      REAL    :: RSEEDNO
-      INTEGER :: NPP0
-      REAL    :: HRPN, AvgRFPW, AvgRDPW
+      REAL :: HRVD, HRVF, CHPDT, CHFPW
 
       LOGICAL FEXIST
 
@@ -288,7 +277,9 @@
             CASE ('PR')       ! Bell pepper
               DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
             CASE ('SR')       ! Strawberry
-              DMC(NPP) = 0.16 !fixed value for Strawberry. From Code from Ken Boote / VSH
+              !Fixed value for Strawberry. 
+              !From Code from Ken Boote / VSH
+              DMC(NPP) = 0.16 
             CASE ('TM')       ! Tomato
               DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
           END SELECT
@@ -357,9 +348,11 @@
              MTFPW = MTFPW + (WTSD(NPP) + WTSHE(NPP)) / DMC(NPP)
              !Dry weight of mature fruits (seed and shell)
              MTDPW = MTDPW + WTSD(NPP) + WTSHE(NPP)
-             !Seed mass of mature fruits - wtsd = seed mass for cohort
+             !Seed mass of mature fruits - wtsd 
+             ! = seed mass for cohort
              MTDSD = MTDSD + WTSD(NPP)
-             !Shell mass of mature fruits - wtshe = shell mass for cohort
+             !Shell mass of mature fruits - wtshe 
+             ! = shell mass for cohort
              MTDSH = MTDSH + WTSHE(NPP)
           ENDIF
           

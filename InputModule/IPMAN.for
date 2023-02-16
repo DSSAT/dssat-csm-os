@@ -666,8 +666,8 @@ C=======================================================================
       INTEGER      ERRNUM,J,IFIND,LN,YRSIM
 !     INTEGER      HYR, HDAY
 
-!     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-      REAL         HPC(NAPPL),HBPC(NAPPL) !,FREQ,CUHT 
+      REAL         HPC(NAPPL),HBPC(NAPPL)
+!     REAL FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       PARAMETER   (ERRKEY='IPHAR ')
 

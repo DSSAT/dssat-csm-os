@@ -313,7 +313,7 @@ C-----------------------------------------------------------------------
       CHARACTER*90 CHAR
 
       INTEGER ERRNUM
-      INTEGER HDLAY, HLATE, I, NHAR, HDATE(NAPPL), HSTG(NAPPL)
+      INTEGER HDLAY, HLATE, NHAR, HDATE(NAPPL), HSTG(NAPPL)
       INTEGER LINC, LNUM, FOUND
       INTEGER LUNIO
 
