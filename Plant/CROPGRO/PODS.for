@@ -233,6 +233,11 @@
       ENDIF
 
       CLOSE (LUNCRP)
+      
+      CALL FRESHWT(DYNAMIC, ISWFWT,                
+     &        YRPLT, XMAGE, NR2TIM, PHTIM,                      !Input 
+     &        WTSD,SDNO,WTSHE,SHELN,                            !Input 
+     &        HPODWT,HSDWT,HSHELWT)                             !Output
 
 !-----------------------------------------------------------------------
 !    Read Ecotype Parameter File

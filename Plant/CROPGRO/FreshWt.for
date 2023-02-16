@@ -33,7 +33,7 @@
       CHARACTER*2   CROP
       CHARACTER*6   ERRKEY
       PARAMETER (ERRKEY = 'FRSHWT')
-      CHARACTER*11, PARAMETER :: FWFile = "FreshWt.OUT"
+      CHARACTER*12 FWFile
       CHARACTER*16 CROPD
       CHARACTER*78 MSG(3)
 
@@ -65,9 +65,20 @@
       YRDOY = CONTROL % YRDOY
 !***********************************************************************
 !***********************************************************************
+!     Run initialization - run once per simulation
+!***********************************************************************
+      IF (DYNAMIC .EQ. RUNINIT) THEN
+!-----------------------------------------------------------------------
+        IF (INDEX('Y',ISWFWT) < 1 .OR. 
+     &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
+        
+        FWFile  = 'FreshWt.OUT '
+        CALL GETLUN('FWOUT',  NOUTPF)
+!***********************************************************************
+!***********************************************************************
 !     Seasonal initialization - run once per season
 !***********************************************************************
-      IF (DYNAMIC .EQ. SEASINIT) THEN
+      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
         CALL GET(ISWITCH)
         
@@ -93,8 +104,6 @@
             CALL ERROR (ERRKEY,1,'',0)
         ENDIF      
 !::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-        CALL GETLUN(FWFile, NOUTPF)
         INQUIRE (FILE= FWFile, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN(UNIT = NOUTPF, FILE = FWFile, STATUS = 'OLD',
@@ -103,51 +112,54 @@
           OPEN (UNIT = NOUTPF, FILE = FWFile, STATUS = 'NEW',
      &    IOSTAT = ERRNUM)
           WRITE(NOUTPF,'("*Fresh Weight Output File")')
+          
+!         2023-01-13 FO - Added Header variables description
+!         Note: Please follow the standard code. Comment of the section
+!         in the first line. Next line '!'variable name separed by two spaces 
+!         the description and units in parenthesis.
+          WRITE(NOUTPF,'(A)') '',
+     &    '!----------------------------',
+     &    '! Variable Description (unit)',
+     &    '!----------------------------',
+     &    '!YEAR  Year of current date of simulation',
+     &    '!DOY  Day of year (d)',
+     &    '!DAS  Days after start of simulation (d)',
+     &    '!FPWAD  Total pod (ear) fresh weight (kg/ha)',
+     &    '!PDMCD  Dry matter con. of harvested product (fraction)',
+     &    '!AFPWD  Average fresh fruit (pod, ear) weight (g/fruit)',
+     &    '!ADPWD  Average dry fruit (pod, ear) weight (g/fruit)',
+     &    '!PAGED  Age of oldest pod or ear (days)'
+          SELECT CASE (CROP)
+            CASE ('GB')       ! Snap bean
+              WRITE(NOUTPF,'(A)')
+     &    '!FCULD  Culls ()',
+     &    '!FSZ1D  Sieve size 1 ()',
+     &    '!FSZ2D  Sieve size 2 ()',
+     &    '!FSZ3D  Sieve size 3 ()',
+     &    '!FSZ4D  Sieve size 4 ()',
+     &    '!FSZ5D  Sieve size 5 ()',
+     &    '!FSZ6D  Sieve size 6 ()'
+          END SELECT
+          WRITE(NOUTPF,'(A)')
+     &    '!TOSDN  Total Seed number (#)',
+     &    '!TOWSD  Total weight seed ()',
+     &    '!TOSHN  Total shell number ()',
+     &    '!TOWSH  Total weight shell ()',
+     &    '!TOPOW  Total Pod weight ()',
+     &    '!TOFPW  Total Fresh Pod weight ()',
+     &    '!MTFPW  Fresh weight of mature fruits ()',
+     &    '!MTDPW  Dry weight of mature fruits (seed and shell) ()',
+     &    '!MTDSD  Seed mass of mature fruits ()',
+     &    '!MTDSH  Shell mass of mature fruits ()',
+     &    '!HSHELWT  Harvested shell weight ()',
+     &    '!HSDWT  Harvested seed weight ()',
+     &    '!HPODWT  Harvested pod weight ()',
+     &    '!CHPDT  Cumulative pod weight of mature fruits ()',
+     &    '!CHFPW  Cumulative fresh weight of mature fruits ()'
         ENDIF
 
         CALL HEADER(SEASINIT, NOUTPF, CONTROL%RUN)
 
-!       2023-01-13 FO - Added Header variables description
-!       Note: Please follow the standard code. Comment of the section
-!       in the first line. Next line '!'variable name separed by two spaces 
-!       the description and units in parenthesis.
-        WRITE(NOUTPF,'(A)') '! Variables Description/units',
-     &  '!YEAR  Year of current date of simulation',
-     &  '!DOY  Day of year (d)',
-     &  '!DAS  Days after start of simulation (d)',
-     &  '!FPWAD  Total pod (ear) fresh weight (kg/ha)',
-     &  '!PDMCD  Dry matter con. of harvested product (fraction)',
-     &  '!AFPWD  Average fresh fruit (pod, ear) weight (g/fruit)',
-     &  '!ADPWD  Average dry fruit (pod, ear) weight (g/fruit)',
-     &  '!PAGED  Age of oldest pod or ear (days)'
-        SELECT CASE (CROP)
-          CASE ('GB')       ! Snap bean
-            WRITE(NOUTPF,'(A)')
-     &  '!FCULD  Culls ()',
-     &  '!FSZ1D  Sieve size 1 ()',
-     &  '!FSZ2D  Sieve size 2 ()',
-     &  '!FSZ3D  Sieve size 3 ()',
-     &  '!FSZ4D  Sieve size 4 ()',
-     &  '!FSZ5D  Sieve size 5 ()',
-     &  '!FSZ6D  Sieve size 6 ()'
-        END SELECT
-        WRITE(NOUTPF,'(A)')
-     &  '!TOSDN  Total Seed number (#)',
-     &  '!TOWSD  Total weight seed ()',
-     &  '!TOSHN  Total shell number ()',
-     &  '!TOWSH  Total weight shell ()',
-     &  '!TOPOW  Total Pod weight ()',
-     &  '!TOFPW  Total Fresh Pod weight ()',
-     &  '!MTFPW  Fresh weight of mature fruits ()',
-     &  '!MTDPW  Dry weight of mature fruits (seed and shell) ()',
-     &  '!MTDSD  Seed mass of mature fruits ()',
-     &  '!MTDSH  Shell mass of mature fruits ()',
-     &  '!HSHELWT  Harvested shell weight ()',
-     &  '!HSDWT  Harvested seed weight ()',
-     &  '!HPODWT  Harvested pod weight ()',
-     &  '!CHPDT  Cumulative pod weight of mature fruits ()',
-     &  '!CHFPW  Cumulative fresh weight of mature fruits ()',
-     &  '' 
      
 !     Change header to PWAD1 (was PWAD) because GBuild requires 
 !     unique headers (PlantGro also lists PWAD).  Should have same
