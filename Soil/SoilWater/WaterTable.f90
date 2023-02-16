@@ -19,7 +19,7 @@
     USE ModuleDefs     
     USE ModuleData
     IMPLICIT NONE
-    EXTERNAL WTDEPT, CAPILLARY, CapFringe
+    EXTERNAL WTDEPT, CapFringe !, CAPILLARY
     SAVE
 !-----------------------------------------------------------------------
 !   Interface:
@@ -123,6 +123,8 @@
     IF (MgmtWTD < 1.E-6) THEN
       MgmtWTD = 10000.
     ENDIF
+
+    IF (MgmtWTD > DS(NLAYR)) RETURN
 
 !!   Update actual depth to water table
 !    CALL WTDEPT(                                &
