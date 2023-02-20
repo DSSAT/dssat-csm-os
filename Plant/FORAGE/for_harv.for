@@ -250,7 +250,6 @@ C   FO -  05/07/2020 Add new Y4K subroutine call to convert YRDOY
         CALL GETLUN('FILEC', LUNCRP)
         OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,0)
-        LNUM = 1
         SECTION = '!*PLAN'
         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
         IF (FOUND .EQ. 0) THEN
@@ -266,7 +265,7 @@ C   FO -  05/07/2020 Add new Y4K subroutine call to convert YRDOY
 !-----------------------------------------------------------------------
           CALL GETLUN('FILEC', LUNCRP)
           OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
-          LNUM = 1
+
           SECTION = '!*PHEN'
           CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
           CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
