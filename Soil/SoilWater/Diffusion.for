@@ -1,5 +1,5 @@
 C=======================================================================
-C  Diffusion, Subroutine, C.H.Porter
+C  VertDiffusion, Subroutine, C.H.Porter
 C  Calculates diffusion of soil water - upward and downward flow. 
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
@@ -7,339 +7,184 @@ C  REVISION       HISTORY
 !                 Drainage.for module.
 C=======================================================================
 
-      SUBROUTINE Drainage_2D(DYNAMIC, 
-     &    ActWTD, Diffus, Kunsat,             !Input
-     &    SOILPROP, SWV_D, WCr,             !Input
-     &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
+      SUBROUTINE VertDiffusion( 
+     &    SOILPROP, SW,                       !Input
+     &    SWDELTU)                            !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL K_unsat, Diffus_Coef
       SAVE
 
 !-----------------------------------------------------------------------
 !     Interface variables:
 !-----------------------------------------------------------------------
 !     Input:
-      REAL, INTENT(IN) :: ActWTD
+!     INTEGER, INTENT(IN) :: DYNAMIC
       TYPE (SoilType), INTENT(IN) :: SOILPROP
-      Double Precision, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: SWV_D
-      TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CELLS
-      Double Precision, DIMENSION(MaxRows,MaxCols), INTENT(OUT) ::SWV_ts
-      REAL, DIMENSION(MaxRows,MaxCols), INTENT(OUT) :: SWFh_ts, SWFv_ts
-      REAL, INTENT(OUT) :: LatFlow_ts
+      REAL, DIMENSION(NL), INTENT(IN) :: SW
+      REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
 
 !-----------------------------------------------------------------------
       CHARACTER*6, PARAMETER :: ERRKEY = 'Diffus' 
 
-      INTEGER i, j, NLAYR, LIMIT_2D
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
-      REAL DiffusH, DiffusV, HalfRow
-      REAL Se1, Se2, KunsatV
-      Double Precision Diff_limit, DeltaTheta, Grav_limit, V_diff,V_grav
-      REAL, DIMENSION(NL) :: DLAYR, DUL, DS, SAT, WCr
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, Diffus
-      REAL, DIMENSION(MaxRows,MaxCols) :: Kunsat, Thick
-      REAL, DIMENSION(MaxRows,MaxCols) :: Width
-      Double Precision, Dimension(MaxRows,MaxCols+1) :: H_in, H_out
-      Double Precision, Dimension(MaxRows+1,MaxCols) :: V_in, V_out
-!     REAL, DIMENSION(NL) :: Ksat
+      INTEGER L, NLAYR, NT, LIMIT_Diff, LimitingL
+      REAL DiffusV, K_unsat, Diffus_Coef
+      REAL DeltaT, TimeIncr, StartTime, EndTime !, T
+      Double Precision DeltaSe
+      REAL, DIMENSION(NL) :: DLAYR, DUL, DS, Ksat, SAT, Se, WCr
+      REAL, DIMENSION(NL) :: Diffus, Kunsat, Thick, V_diff, SW_temp
 
-!     Water table
-      Logical WatTable
-!     REAL FracWT, TargetSWV !, Deficit
-!     REAL Bottom, Top
-      
+!     vanGenuchten parameters
+      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
+
 !***********************************************************************
 !***********************************************************************
 !     SEASONAL INITIALIZATION
 !***********************************************************************
-      IF (DYNAMIC .EQ. SEASINIT) THEN
+!      IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
-      DUL   = SOILPROP % DUL 
-      DLAYR = SOILPROP % DLAYR
-      NLAYR = SOILPROP % NLAYR
-      SAT   = SOILPROP % SAT
-      DS    = SOILPROP % DS
-      LIMIT_2D = BedDimension % LIMIT_2D
-!     Set process rates to zero.
-      SWFh_ts = 0.0
-      SWFv_ts = 0.0
-      
-      HalfRow = BedDimension % ROWSPC_cm / 2.
-      
-      Thick = CELLS % Struc % Thick
-      Width = CELLS % Struc % Width
-      CellArea = CELLS % Struc % CellArea
-      Cell_Type = CELLS % Struc % CellType
-       
-      LatFlow_ts = 0.0
-      WatTable = .FALSE.
+      DLAYR   = SOILPROP % DLAYR
+      DS      = SOILPROP % DS
+      DUL     = SOILPROP % DUL 
+      Ksat    = SOILPROP % SWCN 
+      NLAYR   = SOILPROP % NLAYR
+      SAT     = SOILPROP % SAT
+      WCR     = SOILPROP % WCR
+      alphaVG = SOILPROP % alphaVG
+      mVG     = SOILPROP % mVG
+      nVG     = SOILPROP % nVG
+
+      Diffus = 0.0
 
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE CALCULATIONS
 !***********************************************************************
-      ELSEIF (DYNAMIC .EQ. RATE) THEN
+!      ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
-      LatFlow_ts = 0.0
+      SW_temp = SW
 
-      SWFh_ts = 0.0
-      SWFv_ts = 0.0
+!     Limits diffusion to the unsaturated zone. 
+      LIMIT_Diff = NLAYR
+      DO L = NLAYR, 1, -1
+        IF ((SW(L) - DUL(L)) > (0.9 * (SAT(L) - DUL(L)))) THEN
+          LIMIT_Diff = L - 1
+        ELSE 
+          EXIT
+        ENDIF
+      ENDDO
 
-      H_in  = 0.0
-      H_out = 0.0
-      V_in  = 0.0
-      V_out = 0.0
-      WatTable = .FALSE.
-!     At the beginning of the day, watertable_2D was called, thus LIMIT_2D has been defined  
-      LIMIT_2D = BedDimension % LIMIT_2D  !Instead of Limit_2D, use ActWTD
-!      DO i = LIMIT_2D + 1,  NLayr
-!        if (LIMIT_2D .GE. NLayr) exit 
-!       Check for water table in this layer
-!       IF (DS(i) > MgmtWTD) THEN 
-!          WatTable = .TRUE.
-!          Bottom = DS(i)
-!          IF (i == 1) THEN
-!            Top = 0.
-!          ELSE
-!            Top = DS(i-1)
-!          ENDIF
-!          IF (MgmtWTD > Top) THEN
-            ! Water table surface is in this layer
-            !iWatTable = i
-!           FracWT = (Bottom - MgmtWTD) / DLAYR(i)
-!            TargetSWV = FracWT * SAT(i) + (1. - FracWT) * ThetaCap(i)
-!          ELSE
-            !For the layers below water table
-!            TargetSWV = SAT(i)
-!          ENDIF
+      DO L = 1, NLAYR
+!       Layer thickness
+        IF (L == 1) THEN
+          Thick(L) = DS(L)
+        ELSE
+          Thick(L) = DS(L) - DS(L-1)
+        ENDIF
+      ENDDO
+        
+      StartTime = 0.0 !hours
+      EndTime = 0.0 !hours
+      NT = 0
+!-------------------------------------------------
+!     Loop through time steps today
+      DO WHILE (StartTime < 23.95) !Close to 24 hours
+        NT = NT + 1
+        StartTime = EndTime
+        V_diff = 0.0
+        TimeIncr = 24. !hours
+!-------------------------------------------------
+!       Calculate parameters for diffusion calculations
+!       Need to do this in a separate loop because the next loop
+!         uses values for layers above and below.
+        DO L = 1, NLayr
+!         IF (L > LIMIT_Diff) EXIT
+        
+!         Normalized soil water content
+          Se(L) = (SW_temp(L) - WCr(L))/(SAT(L) - WCr(L))
+          Se(L) = MIN(1.0, Se(L))
+          Se(L) = MAX(0.0, Se(L))
+        
+!         Unsaturated hydraulic conductivity
+          Kunsat(L)= K_unsat(Ksat(L), mVG(L), Se(L))
+        
+!         Diffusion coefficient 
+          Diffus(L)= Diffus_Coef(Ksat(L), alphaVG(L), mVG(L), SAT(L),
+     &      Se(L), WCr(L))
 
-!        ELSE
-!          WatTable = .FALSE.
-!          if (i .GT. LIMIT_2D) TargetSWV =  ThetaCap(i)
-!        ENDIF
-!      End do
-      
-      DO i = 1, min(LIMIT_2D,  NLayr)
-        DO j = 1, NColsTot
+          IF (L < LIMIT_Diff .AND. 
+     &        Diffus(L) > 1.E-9 .AND. 
+     &        Kunsat(L) > 1.E-9) THEN
+            DeltaT = 1./(
+!    &        2.*Diffus(L)/(Width(L)*Width(L)) + 
+     &        2.*Diffus(L)/(Thick(L)*Thick(L)) + 
+     &        Kunsat(L)/Thick(L))  !hr 
 
-          SELECT CASE(CELLS(i,j)%STRUC%CellType)
-          CASE (3,4,5);CONTINUE
-          CASE DEFAULT; CYCLE
-          END SELECT
-
-!         -------------------------------------------------------------
-!         Horizontal flow - diffusion
-          IF (j == 1) THEN
-!           No lateral flow from center (symmetry)
-            H_in(i,j) = 0.0
-          ENDIF
-  
-          IF ((Cell_Type(i,j) == 3 .AND. j == FurCol1-1) .OR.
-     &        (Cell_Type(i,j) == 5 .AND. j == NColsTot)) THEN
-!           No lateral flow into furrow from bed (plastic cover) and
-!           no lateral flow at centerline of furrow (symmetry)
-            H_out(i,j) = 0.0
-          ELSE
-!!           Use arithmetic mean of diffusion coefficients in adjacent cells
-!            DiffusH = 0.5 * (Diffus(i,j) + Diffus(i,j+1)) 
-!           Use only diffus from cell (i,j)
-!           DiffusH =Diffus(i,j) 
-            DiffusH = SQRT(Diffus(i,j) * Diffus(i,j+1))
-
-!           Horizontal flow in cm3/cm[row length], total for this time step
-!           Driving force for homogeneous cells is difference in water content:
-            DeltaTheta = SWV_D(i,j) - SWV_D(i,j+1)
-
-            H_out(i,j) =  DiffusH / ((Width(i,j) + Width(i,j+1)) * 0.5)
-!               cm2    =   cm2/hr /     cm             
-     &                   * DeltaTheta  *  Thick(i,j) * (TimeIncr / 60.)
-!                        *   mm3/mm3   *     cm      *       hr
-
-!           Limit diffusion to available water
-            IF (H_out(i,j) > 1.E-10) THEN
-!             movement from column j to column j+1
-              Diff_limit = MAX(0.0, (SWV_D(i,j) - WCr(i))*CellArea(i,j))
-              H_out(i,j) = MIN (H_out(i,j), Diff_limit)
-            ELSEIF (H_out(i,j) < -1.E-10) THEN
-!             movement from column j+1 to column j
-              Diff_limit = MAX(0.0, 
-     &                    (SWV_D(i,j+1) - WCr(i)) * CellArea(i,j+1))
-              H_out(i,j) = MAX(H_out(i,j), -Diff_limit)
-            ELSE
-              H_out(i,j) = 0.0
+            IF (DeltaT < TimeIncr) THEN            
+              TimeIncr = DeltaT
+              LimitingL = L
             ENDIF
+          ENDIF
+        ENDDO
 
-            H_in(i,j+1) = H_out(i,j)
-          ENDIF ! End of if Cell_Type
+        EndTime = StartTime + TimeIncr
+        IF (EndTime > 24.) THEN
+          EndTime = 24.
+        ENDIF
+        write(*,*) NT, StartTime, EndTime
 
+!-------------------------------------------------
+!       Vertical diffusion flow for this time step
+        DO L = 1, NLAYR
 !         -------------------------------------------------------------
-!         Vertical flow - diffusion and gravity 
-          
-          IF (i == 1) THEN
-!           No vertical flow from top (irrig and infiltration already added)
-            V_in(i,j) = 0.0
-          ENDIF
+          DiffusV = SQRT(Diffus(L) * Diffus(L+1))
+        
+!         The normalized water content is the driving force for non-homogeneous soils
+          DeltaSe = (Se(L+1) - Se(L)) * 
+     &               0.5 * (SAT(L+1) - WCr(L+1) + SAT(L) - WCr(L))
+        
+!         Flux of water from layer L+1 to layer L in this time step
+          V_diff(L) =  DiffusV / ((Thick(L) + Thick(L+1)) * 0.5)
+!           cm   =  cm2/hr  /         cm               
+     &              * DeltaSe  *  TimeIncr 
+!                   * mm3/mm3  *     hr         
 
-!         Gravity flow from layer bottom to i+1 layer
-!         KunsatV = Kunsat(i,j)
-          IF (i < NRowsTot) THEN
-            KunsatV = SQRT(Kunsat(i,j) * Kunsat(i+1,j))
-          ELSE
-            KunsatV = Kunsat(i,j)
-          ENDIF
+!         To account for large time step, arbitrarily reduce V_diff, need to play around with the reduction factor
+          V_diff(L) = V_diff(L) / 10.0
 
-          V_grav = KunsatV * Width(i,j) * (TimeIncr / 60.) 
-!          V_grav = Ksat(i) * Width(i,j) * (TimeIncr / 60.) 
-!           cm2  =   cm/hr *     cm     *         hr  
+          IF (L == 1) THEN
+            SW_temp(L) = SW_temp(L) + V_diff(L) / Thick(L)  
+          ELSE 
+!           Change in SW for this layer = what comes up from layer below minus what goes up to layer above
+            SW_temp(L) = SW_temp(L) + (V_diff(L)-V_diff(L-1)) / Thick(L)
+          ENDIF   
 
-!         Limit gravity flow to amount > DUL
-          Grav_limit = MAX (0.0, (SWV_D(i,j) - DUL(i)) * CellArea(i,j))
-!     &          + H_in(i,j) + V_in(i,j))
-          V_grav = MIN(V_grav, Grav_limit)
+!         SW after diffusion limited to between residual and saturation
+          SW_temp(L) = MIN(SW_temp(L), SAT(L))
+          SW_temp(L) = MAX(SW_temp(L), WCR(L))
+        ENDDO 
+      ENDDO   !Time loop
 
-!         If this layer is within the water table, then no vertical drainage
-          !IF (WatTable) THEN
-          !  V_grav = 0.0
-          !ENDIF
-          
-!         Vertical diffusion flow in cm3/cm[row length], total for this time step
-!         For water table, use LIMIT_2D+1 to allow diffusion across 2D boundary.
-          IF (i < min(LIMIT_2D+1, NRowsTot)) THEN  
-!           DiffusV = Diffus(i,j) 
-            DiffusV = SQRT(Diffus(i,j) * Diffus(i+1,j))
-
-!           Driving force for non-homogeneous soils based on normalized water content
-            Se1 = (SWV_D(i,j) - WCr(i)) / (SAT(i) - WCr(i))
-            Se2 = (SWV_D(i+1,j) - WCr(i+1)) / (SAT(i+1) - WCr(i+1))
-            DeltaTheta = (Se1 - Se2) * 
-     &                 0.5 * (SAT(i) - WCr(i) + SAT(i+1) - WCr(i+1))
-
-            V_diff =  DiffusV / ((Thick(i,j) + Thick(i+1,j)) * 0.5)
-!             cm2  =   cm2/hr /         cm               
-     &                * DeltaTheta  *  Width(i,j) * (TimeIncr / 60.)
-!                     *   mm3/mm3   *     cm      *         hr
-
-!           Limit diffusion to available water, after gravity flow
-            IF (V_diff > 1.E-10) THEN
-!             downward flow to cell below
-!             limit of flow includes existing available water 
-!               + inflow from above - gravity flow to cell below.
-              Diff_limit = MAX (0.0, 
-     &          (SWV_D(i,j) - WCr(i)) * CellArea(i,j) !avail water 
-     &          + V_in(i,j) - V_grav)               ! + inflow - outflow
-              V_diff = MIN(V_diff, Diff_limit)
-            ELSEIF (V_diff < -1.E-10) THEN
-!             upward flow from cell below
-!             limit to available water in cell below
-              Diff_limit = MAX(0.0, 
-     &                  (SWV_D(i+1,j) - WCr(i+1)) * CellArea(i+1,j))
-              V_diff = MAX(V_diff, -Diff_limit)
-!             Should set upper flow limit (or negative H_out limit) as SAT-SWV_D ?
-
-            ELSE
-!             Zero vertical diffusion rate
-              V_diff = 0.0
-            ENDIF
-
-            V_out(i,j) = V_diff + V_grav
-
-!           Check for water table in cell below
-            !IF (DS(i+1) > MgmtWTD) THEN
-            IF (i .eq. LIMIT_2D) THEN ! If there is water table
-!             Water table found - compute lateral flows
-              V_in(i+1,j) = 0.0  !no net change to cell below
-!             Lateral inflow is positive, outflow is negative
-              IF (V_out(i,j) > 1.E-10) THEN
-!               Flow into water table from above - lateral outflow to balance
-                LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2
-              ELSEIF (V_out(i,j) < -1.E-10) THEN
-!               Flow up from water table cell - lateral inflow to balance
-!               What is the difference for this two cases?
-                LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2 
-              ENDIF
-            Endif
-
-          ELSE
-!           If there is no water table, this is Last row - gravity only, no diffusion. 
-!           If there is water table, this is layer LIMIT_2D+1 
-            V_diff = 0.0
-            V_out(i,j) = V_grav
-          ENDIF !for Row condition
-          
-           SWV_ts(i,j) = SWV_D(i,j) + 
-     &                (H_in(i,j) - H_out(i,j) + V_in(i,j) - V_out(i,j)) 
-     &                 / CellArea(i,j)
-          
-!         Limit vertical Flow not making next layer above saturation
-          if ((SWV_ts(i,j).GT. SAT(i)).and.(i.GT.1).and.(j.GT.1)) then 
-             if (i.LT. LIMIT_2D) then 
-!              If water is down flow shall we set V_in_hold? How to send the extra water back to above layer?
-!              Do not assume to flow out horizentally
-!            if (V_out(i,j) .LE. 0.) then
-               V_out(i,j) = V_out(i,j) + 
-     &                     (SWV_ts(i,j) - SAT(i)) * CellArea(i,j)
-               SWV_ts(i,j) = SAT(i)
-             elseif (i.eq.LIMIT_2D) then 
-!              if today's water table is lower then yesterday, to avoid the SW in layer LIMIT_2D to go to above SAT 
-               LatFlow_ts = LatFlow_ts -
-     &          (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
-               SWV_ts(LIMIT_2D,j) = SAT(LIMIT_2D)
-               SWFv_ts(LIMIT_2D,j) = SWFv_ts(LIMIT_2D,j) +
-     &          (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
-             Endif
-        !    Endif
-          Endif
-          V_in(i+1,j) = V_out(i,j)
-         
-         
-!         Cells within water table should remain saturated
-! This subroutine does not calculate SWV_ts(i,j) below LIMIT_2D, thus remove the following
-        !  IF (WatTable) THEN
-        !    Deficit = (TargetSWV - SWV_ts(i,j)) * CellArea(i,j)
-        !    LatFlow_ts = LatFlow_ts + Deficit
-        !    SWV_ts(i,j) = TargetSWV
-        !  ENDIF
-
-          SWFh_ts(i,j) = H_out(i,j) !cm2
-          SWFv_ts(i,j) = V_out(i,j) !cm2
-
-!         temp chp
-          Cell_detail%H_in(i,j)  = H_in(i,j)
-          Cell_detail%H_out(i,j) = H_out(i,j)
-          Cell_detail%V_in(i,j)  = V_in(i,j)
-          Cell_detail%V_out(i,j) = V_out(i,j)
-          Cell_detail%Vdiff(i,j) = V_diff
-          Cell_detail%Vgrav(i,j) = V_grav
-        ENDDO ! Drainage column by column
-      ENDDO ! Drainage row by row
-
-!     Below LIMIT_2D, set subroutine output water content equal to subroutine input water content 
-      if (LIMIT_2D .LT. NLayr) then 
-        DO i = LIMIT_2D+1, NLAYR
-          DO j = 1, NColsTot
-            SWV_ts(i,j) = SWV_D(i,j)
-          Enddo
-        Enddo
-      endif
-      
-      LatFlow_ts = LatFlow_ts / HalfRow * 10.   !mm
+      DO L = 1, NLAYR
+        SWDELTU(L) = SW_temp(L) - SW(L)
+      ENDDO 
 
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
-      ENDIF
+!      ENDIF
 !-----------------------------------------------------------------------
 
       RETURN
-      END SUBROUTINE Drainage_2D
+      END SUBROUTINE VertDiffusion
 !=====================================================================
 
 C=====================================================================
-!     Drainage_2D VARIABLE DEFINITIONS: (updated Oct 2009)
+!     VertDiffusion VARIABLE DEFINITIONS: (updated Oct 2009)
 !-----------------------------------------------------------------------
 ! DiffusH    Horizontal diffusivity in cm2/hr
 ! DiffusV    Vertical diffusivity in cm2/hr
@@ -366,4 +211,100 @@ C=====================================================================
 ! V_out(Row,Col) 2D Vertical water amount out of cell in current time step in cm2
 !-----------------------------------------------------------------------
 !     END SUBROUTINE Drainage_2D
+!=======================================================================
+
+!=====================================================================
+      Function Diffus_Coef(Ksat, alphaVG, mVG, SAT, Se, WCr)
+!     Computes diffusivity coefficient
+!       based on water content, water holding capacity
+!     Parameters for diffusion coefficient from RETC code
+!     Diffusivity coefficient in cm2/hr
+
+!     ----------------------------------------------------------------
+      Implicit None
+      REAL Diffus_Coef, SAT, Ksat, WCr
+
+!     RETC
+      REAL Coef1, Exponent, Coef2, Coef3, Se
+      REAL alphaVG, mVG
+
+      REAL, PARAMETER :: DiffusCap = 417. !cm2/hr  !Hillel 1. m2/d 
+      REAL, PARAMETER :: L = 0.5
+
+!--------------------------------------------------------------
+      IF (Se > 0.99) THEN
+        Diffus_Coef = DiffusCap
+      ELSEIF (Se > 1.E-9) THEN
+        Coef1 = (1-mVG)*Ksat / (alphaVG*mVG*(SAT-WCr))
+        Coef2 = (1-Se**(1./mVG))
+        Coef3 = Coef2**(-mVG) + Coef2**mVG - 2.
+        Exponent = L - 1./mVG
+        Diffus_Coef = (Coef1 * Se ** Exponent * Coef3)  !cm2/hr
+      ELSE
+        Diffus_Coef = 0.0
+      ENDIF
+
+!--------------------------------------------------------------
+!     Upper limit on diffusion = DiffusCap
+      IF (Diffus_Coef > DiffusCap) THEN
+        Diffus_Coef = DiffusCap
+      ENDIF
+
+!     Lower limit = 0.
+      IF (Diffus_Coef < 1.E-10) THEN
+        Diffus_Coef = 0.0
+      ENDIF
+
+      RETURN
+      END Function Diffus_Coef
+!=====================================================================
+!=======================================================================
+!  K_unsat, function, 
+!  Method 1.Based on paper "Soil Water Characteristic Estimates by Texture and Organic 
+!  Matter for Hydrologic Solutions" by K. E. Saxton and W. J. Rawls, Aug. 2006
+!  If soil structure is giving, use soil structure to calculate Ksat, otherwise
+!  using LL, DUL and SAT to calculate Ksat
+!  Method 2: RETC program: calculate hydraulic conductivity uses Mualem's model
+!  m = 1- 1/n
+!-----------------------------------------------------------------------
+!  REVISION HISTORY
+!  
+!-----------------------------------------------------------------------
+!  Called by: Subroutine RETC_VG
+!  Calls:     None
+!=====================================================================
+      Function K_unsat(Ksat, mVG, Se)
+!     Computes unsaturated hydraulic conductivity 
+!       based on Ksat, water content, water holding capacity
+!       in cm/hr
+!     ----------------------------------------------------------------
+      Implicit None
+      REAL K_unsat, Ksat
+      REAL Se, mVG
+!     L is a pore-connectivity parameter, be about 0.5 as an average for many soil
+      REAL, PARAMETER :: Lp = 0.5
+
+      IF (Se >= .9999) THEN
+        K_unsat = Ksat
+      ELSE
+!        RETC program: calculate hydraulic conductivity uses Mualem's model
+        ! Eq. 31 in RETC.pdf
+        K_unsat = Ksat * (Se**Lp) * (1. -(1. - Se **(1./mVG) )**mVG)**2.
+        ! in cm/h
+        K_unsat = Max(0., K_unsat) 
+        K_unsat = Min(Ksat, K_unsat) 
+        IF (K_unsat < 1.E-10) THEN
+          K_unsat = 0.0
+        ENDIF
+      ENDIF
+
+      RETURN
+      END Function K_unsat
+!=====================================================================
+!-----------------------------------------------------------------------
+!     Kunsat VARIABLE DEFINITIONS:
+!-----------------------------------------------------------------------
+! WCr      Residual water content
+!-----------------------------------------------------------------------
+!     END FUNCTION Kunsat
 !=======================================================================

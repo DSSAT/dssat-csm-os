@@ -62,7 +62,7 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
      &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
-     &  SOILMIXING, SUMSW, WTDEPT, WaterTable
+     &  SOILMIXING, SUMSW, WTDEPT, WaterTable, VertDiffusion
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -405,12 +405,16 @@ C     Conflict with CERES-Wheat
           SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L))
         ENDDO
 
-C       Calculate upward movement of water due to evaporation and root 
-C       extraction (based on yesterday's values) for each soil layer.
-!       Don't call when using SALUS soil evaporation routine (MESEV = 'S')
-        CALL UP_FLOW(    
-     &    NLAYR, DLAYR, DUL, LL, SAT, SW, SW_AVAIL,       !Input
-     &    UPFLOW, SWDELTU)                                !Output
+!C       Calculate upward movement of water due to evaporation and root 
+!C       extraction (based on yesterday's values) for each soil layer.
+!!       Don't call when using SALUS soil evaporation routine (MESEV = 'S')
+!        CALL UP_FLOW(    
+!     &    NLAYR, DLAYR, DUL, LL, SAT, SW, SW_AVAIL,       !Input
+!     &    UPFLOW, SWDELTU)                                !Output
+
+        CALL VertDiffusion( 
+     &    SOILPROP, SW,                       !Input
+     &    SWDELTU)                            !Output
       ENDIF
 
 !-----------------------------------------------------------------------
