@@ -1126,6 +1126,46 @@ C     Read species file.
 
       CLOSE(LUNCRP)
 
+! JG added to read ecotype file for ozone parameters 02/10/2023
+C-----------------------------------------------------------------------
+C     Open FILEE
+C-----------------------------------------------------------------------
+        LNUM = 0
+        PATHL  = INDEX(PATHEC,BLANK)
+        IF (PATHL .LE. 1) THEN
+          FILEGC = FILEE
+        ELSE
+          FILEGC = PATHEC(1:(PATHL-1)) // FILEE
+        ENDIF
+C-----------------------------------------------------------------------
+C    Read Ecotype Parameter File
+C-----------------------------------------------------------------------
+      CALL GETLUN('FILEE', LUNECO)
+      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEGC,0)
+      ECOTYP = '      '
+      LNUM = 0
+      DO WHILE (ECOTYP .NE. ECONO)
+        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+          IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
+     &        (C255(1:1) .NE. '*')) THEN
+          READ (C255,'(A6,120X,F6.0,6X,F6.0)',IOSTAT=ERRNUM)
+     &        ECOTYP, FOZ1, OBASE
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEGC,LNUM)
+          IF (ECOTYP .EQ. ECONO) THEN
+              EXIT
+          ENDIF
+
+        ELSE IF (ISECT .EQ. 0) THEN
+          IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+          ECONO = 'DFAULT'
+          REWIND(LUNECO)
+          LNUM = 0
+        ENDIF
+      ENDDO
+
+      CLOSE (LUNECO)
+
 C     Initialize some parameters.
 
       PALBW = 0.6 * SALBW
