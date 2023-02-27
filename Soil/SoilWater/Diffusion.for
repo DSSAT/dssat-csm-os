@@ -7,9 +7,8 @@ C  REVISION       HISTORY
 !                 Drainage.for module.
 C=======================================================================
 
-      SUBROUTINE VertDiffusion( 
-     &    SOILPROP, SW,                       !Input
-     &    SWDELTU)                            !Output
+      SUBROUTINE VertDiffusion(SOILPROP, SW_AVAIL, SWDELTU)  
+!                                  !Inputs         !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -23,7 +22,7 @@ C=======================================================================
 !     Input:
 !     INTEGER, INTENT(IN) :: DYNAMIC
       TYPE (SoilType), INTENT(IN) :: SOILPROP
-      REAL, DIMENSION(NL), INTENT(IN) :: SW
+      REAL, DIMENSION(NL), INTENT(IN) :: SW_AVAIL
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
 
 !-----------------------------------------------------------------------
@@ -32,7 +31,7 @@ C=======================================================================
       INTEGER L, NLAYR, NT, LIMIT_Diff, LimitingL
       REAL DiffusV, K_unsat, Diffus_Coef
       REAL DeltaT, TimeIncr, StartTime, EndTime !, T
-      Double Precision DeltaSe
+      REAL DeltaSe, DeltaSW, SW_check, Excess, Deficit
       REAL, DIMENSION(NL) :: DLAYR, DUL, DS, Ksat, SAT, Se, WCr
       REAL, DIMENSION(NL) :: Diffus, Kunsat, Thick, V_diff, SW_temp
 
@@ -65,12 +64,12 @@ C=======================================================================
 !***********************************************************************
 !      ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
-      SW_temp = SW
+      SW_temp = SW_AVAIL
 
 !     Limits diffusion to the unsaturated zone. 
       LIMIT_Diff = NLAYR
       DO L = NLAYR, 1, -1
-        IF ((SW(L) - DUL(L)) > (0.9 * (SAT(L) - DUL(L)))) THEN
+        IF ((SW_AVAIL(L) - DUL(L)) > (0.9 * (SAT(L) - DUL(L)))) THEN
           LIMIT_Diff = L - 1
         ELSE 
           EXIT
@@ -134,7 +133,7 @@ C=======================================================================
         IF (EndTime > 24.) THEN
           EndTime = 24.
         ENDIF
-        write(*,*) NT, StartTime, EndTime
+!        write(*,*) NT, StartTime, EndTime
 
 !-------------------------------------------------
 !       Vertical diffusion flow for this time step
@@ -156,12 +155,44 @@ C=======================================================================
           V_diff(L) = V_diff(L) / 10.0
 
           IF (L == 1) THEN
-            SW_temp(L) = SW_temp(L) + V_diff(L) / Thick(L)  
-          ELSE 
+            DeltaSW = V_diff(L) / Thick(L)
+          ELSE ! L > 1
 !           Change in SW for this layer = what comes up from layer below minus what goes up to layer above
-            SW_temp(L) = SW_temp(L) + (V_diff(L)-V_diff(L-1)) / Thick(L)
-          ENDIF   
+            DeltaSW = (V_diff(L)-V_diff(L-1)) / Thick(L)
+          ENDIF
 
+          SW_check = SW_temp(L) + DeltaSW
+
+!         Check for too much movement of water in one time step
+          IF (DeltaSW > 0.0) THEN
+!           DeltaSW is positive, net flow is upward from the layer below.
+            Excess = SW_check - SAT(L)
+            IF (Excess > 0.0) THEN
+!             Too much water moved into layer, get rid of excess
+              DeltaSW = DeltaSW - Excess
+              IF (L == 1) THEN
+                V_diff(L) = DeltaSW * Thick(L)
+              ELSE
+                V_diff(L) = DeltaSW * Thick(L) + V_Diff(L-1)
+              ENDIF
+            ENDIF
+            
+          ELSEIF (DeltaSW < 0.0) THEN
+!           DeltaSW is negative, net flow is downward to the layer below.
+            Deficit = WCr(L) - SW_check
+            IF (Deficit > 0.0) THEN
+!             Too much water was moved out of layer, need to reduce the negative flow
+!             V_diff(L) is negative in this case, ADD the deficit amount
+              DeltaSW = DeltaSW + Deficit
+              IF (L == 1) THEN
+                V_diff(L) = DeltaSW * Thick(L)
+              ELSE
+                V_diff(L) = DeltaSW * Thick(L) + V_Diff(L-1)
+              ENDIF
+            ENDIF
+          ENDIF
+
+          SW_temp(L) = SW_temp(L) + DeltaSW
 !         SW after diffusion limited to between residual and saturation
           SW_temp(L) = MIN(SW_temp(L), SAT(L))
           SW_temp(L) = MAX(SW_temp(L), WCR(L))
@@ -169,7 +200,7 @@ C=======================================================================
       ENDDO   !Time loop
 
       DO L = 1, NLAYR
-        SWDELTU(L) = SW_temp(L) - SW(L)
+        SWDELTU(L) = SW_temp(L) - SW_AVAIL(L)
       ENDDO 
 
 !***********************************************************************
