@@ -64,7 +64,7 @@
       CASE (RUNINIT, SEASINIT)
 !=======================================================================
       RTWT   =  0.0
-      RTDEP  = Planting % SDEPTH               ! Rooting depth = seeding depth (cm)
+      RTDEP  = Planting % SDEPTH    ! Rooting depth = seeding depth (cm)
 
       PLTPOP = Planting % PLTPOP
       NLAYR  = SOILPROP % NLAYR
@@ -97,7 +97,8 @@ C     models were insignificant considering the uncertainty of the value
 C     and the uncertainty of loss of assimilate by exudation and respiration.
 C     A compromise value of 0.98 was choosen for all crops.
 C
-      RLNEW  = GRORT * Species % RLWR * PLTPOP              ! Read in from species value
+!     Read in from species value
+      RLNEW  = GRORT * Species % RLWR * PLTPOP
 
       CUMDEP = 0.0
       RNFAC  = 1.0
@@ -138,7 +139,7 @@ C     -- root weighting factor -- to account for greater difficulty in growing
 C     downward in hard soil. Changes made by JTR 6/16/94.
 C
       DEPFAC = SQRT(SOILPROP % WR(L) * AMIN1(SWFAC * 2.0, SWDF))
-      IF (CUMDTT .LT. 275.0) THEN                                ! JTR 6/17/94
+      IF (CUMDTT .LT. 275.0) THEN                       ! JTR 6/17/94
          RTDEP = RTDEP + DTT * 0.1 * DEPFAC
        ELSE
          RTDEP = RTDEP + DTT * 0.2 * DEPFAC
