@@ -24,16 +24,16 @@
 !=======================================================================
 
       SUBROUTINE Aloha_NUPTAK(CONTROL, ISWITCH,
-     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT,                 !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
-     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
+     &    ROOTN, STOVN, TANC, UNH4, UNO3, WTNUP)          !Output
       USE ModuleDefs
       IMPLICIT  NONE
       SAVE
 
       REAL, DIMENSION(NL) :: ANO3, ANH4, DLAYR, KG2PPM, LL, NH4, NO3, 
-     &     RLV, RNO3U, RNH4U, SAT, SHF, SNH4, SNO3, SW, UNH4, UNO3, FON
+     &     RLV, RNO3U, RNH4U, SAT, SHF, SNH4, SNO3, SW, UNH4, UNO3
       INTEGER DYNAMIC
 
       REAL        ANDEM              
@@ -50,7 +50,7 @@
       INTEGER     NLAYR       
       REAL        PDWI        
       REAL        PGRORT 
-      REAL        PLIGRT    
+!      REAL        PLIGRT    
       REAL        PLTPOP      
       REAL        PTF         
       REAL        RANC        
@@ -78,7 +78,7 @@
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
-      TYPE (ResidueType) SENESCE
+!      TYPE (ResidueType) SENESCE
       TYPE (SoilType) SOILPROP
 
       DYNAMIC = CONTROL % DYNAMIC

@@ -304,8 +304,9 @@ C     6 - Physiological maturity
           ISTAGE  = 1
           TBASE   = TBASE1              ! Tbase1 used for calibration
           SUMDTT  = 0.0                 ! Cumulative growing degree days set to 0.0
-          CUMDTT  = 0.0                 ! CUMDTT is also cumulative growing degree days but it is set to 0.0 only at root initiation crown weight when planting
-          RETURN
+          CUMDTT  = 0.0                 ! CUMDTT is also cumulative growing degree days but 
+          RETURN                        ! it is set to 0.0 only at root initiation crown weight 
+                                        ! when planting
 
 !-----------------------------------------------------------------
         CASE (1)
