@@ -1180,12 +1180,12 @@ C      Allocate N "returned for respiration" (CH2O) to layers as NO3&NH4
         DO L = 1,NLAYR
         IF (TRNO3U .GT. 0.0) THEN
         UNO3(L) = UNO3(L) - TRNURTRN * 10 * PNUPNO3 * 
-     &    UNO3(L)/TRNO3U
+     &    (UNO3(L)/(TRNO3U * 10))
         ENDIF
 
         IF (TRNH4U .GT. 0.0) THEN
         UNH4(L) = UNH4(L) - TRNURTRN * 10 * PNUPNH4 * 
-     &    UNH4(L)/TRNH4U
+     &    (UNH4(L)/(TRNH4U * 10))
         ENDIF
         
         ENDDO
@@ -1439,7 +1439,7 @@ C-----------------------------------------------------------------------
 !              (g[storage] / m2[ground)
 ! STMWT   Dry mass of stem tissue, including C and N (g[stem] / m2[ground)
 ! SUPPN   Total supply of N (g[N] / m2 / d)
-! TGRO(I) Hourly air temperature (°C)
+! TGRO(I) Hourly air temperature (Â°C)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
 ! TNLEAK  Total nitrogen leak (g[N] / m2 / d)

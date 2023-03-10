@@ -4,7 +4,6 @@
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  06/24/2017 CHP Written, based on MZ_OPHARV
-!  09/05/2020 JVJ Modifying the PlantStres% NSTAGES names     
 !=======================================================================
 
       SUBROUTINE Aloha_OPHARV(CONTROL, ISWITCH,
@@ -194,11 +193,11 @@
       PlantStres % NSTAGES = 5
 
       PlantStres % StageName(0) = 'Planting to Harvest    '
-      PlantStres % StageName(1) = 'Emergence - Foliar C1  '
-      PlantStres % StageName(2) = 'Foliar C1 - Forcing    '
-      PlantStres % StageName(3) = 'Forcing - Open Heart   '
-      PlantStres % StageName(4) = 'Open Heart - EarlyAnthe'
-      PlantStres % StageName(5) = 'EarlyAnthe - Fruit Harv'
+      PlantStres % StageName(1) = 'Emergence - Zero Stem  '
+      PlantStres % StageName(2) = 'Zero Stem - Forcing    '
+      PlantStres % StageName(3) = 'Forcing - SCY          '
+      PlantStres % StageName(4) = 'SCY - Early Flwr       '
+      PlantStres % StageName(5) = 'Early Flwr - Fruit Harv'
 
       Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
 
@@ -304,10 +303,12 @@ C-----------------------------------------------------------------------
             PEYEWT = EYEWT * 1000.0       ! Eye weight (mg/eye)
          ENDIF
          GPSM   = GPP*FRUITS              ! # eyes/m2
-!        STOVER = Total plant weight except fruit (g/m2)
-         STOVER = BIOMAS*10.0-YIELD       
-         YIELDFresh  = YIELD / Species % FDMC !Fresh fruit yield (kg/ha)
-         YIELDB = YIELDFresh / 0.8914         !Fresh fruit yield (lb/ac)
+         ! Total plant weight except fruit(g/m2)
+         STOVER = BIOMAS*10.0-YIELD
+         ! Fresh fruit yield (kg/ha)       
+         YIELDFresh  = YIELD / Species % FDMC 
+         ! Fresh fruit yield (lb/acre)
+         YIELDB = YIELDFresh / 0.8914         
       ENDIF
 
       SDWT   = YIELD  / 10.0      !g/m2
@@ -319,10 +320,12 @@ C-----------------------------------------------------------------------
 !     CHP 10/17/2017
 !     Oddly, PSDWT = SDWT/GPSM is exactly equal to EYEWT = FRTWT/GPP
 !       Actually, not so odd:
-!       PSDWT = SDWT/GPSM = FRTWT*FRUITS/GPSM = (FRTWT*FRUITS)/(GPP*FRUITS) = FRTWT/GPP = EYEWT
+!       PSDWT = SDWT/GPSM = FRTWT*FRUITS/GPSM = (FRTWT*FRUITS)/(GPP*FRUITS) 
+!       = FRTWT/GPP = EYEWT
       PSDWT = 0.0
       IF (GPSM .GT. 0.0 .AND. SDWT  .GE. 0.0) THEN
-         PSDWT = SDWT/GPSM  !Unit weight of eye g/unit = (g/m2) / (#/m2)
+         ! Unit weight of eye g/unit = (g/m2) / (#/m2)
+         PSDWT = SDWT/GPSM           
       ENDIF
 
       IF (BIOMAS .GT. 0.0 .AND. YIELD .GE. 0.0) THEN
