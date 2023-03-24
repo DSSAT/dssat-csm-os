@@ -20,6 +20,7 @@ C=======================================================================
 !     NL defined in ModuleDefs.for
 
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR
       SAVE
 
       CHARACTER*2 CROP

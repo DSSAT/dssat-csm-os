@@ -74,6 +74,9 @@ C=======================================================================
      &    PAR, RAIN, RSEED, SRAD, TAMP, TAV,              !Output
      &    TMAX, TMIN, XLAT, XLONG, YREND)                 !Output
       
+!     2023-01-26 chp removed unused variables in argument list:
+!       TDEW, WINDSP
+
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil

@@ -20,24 +20,25 @@ Module YCA_Growth_VPD
     USE ModuleDefs
         
         IMPLICIT NONE
+        EXTERNAL VPSAT
         SAVE
-        TYPE (WeatherType) WEATHER 
+!       TYPE (WeatherType) WEATHER 
 
         INTEGER, intent (in) :: targetHour
         REAL, intent (in) :: PHSV
         REAL, intent (in) :: PHTV
         
         
-        REAL, DIMENSION(TS) ::   TAIRHR, PARHR   , RADHR  , RHUMHR  , VPDHR ! These are all declared in ModuleDefs
-        REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
-        REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
+        REAL, DIMENSION(TS) ::   TAIRHR, VPDHR ! PARHR   , RADHR  , RHUMHR  , These are all declared in ModuleDefs
+!       REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
+        REAL    TDEW        , TMIN  !SNDN        , SNUP        , TMAX        , 
         REAL    VPDFPPREV   , VPDMAXHRPREV
         REAL    VPSAT                                                                            ! REAL function
-        REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
-        REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
+!       REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
+!       REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
         INTEGER hour                                                                                  ! Loop counter
-        REAL ALBEDO
-        REAL VPDFP, INTEG_1, INTEG_2, VPD_TRANSP
+!       REAL ALBEDO
+        REAL VPD_TRANSP  !VPDFP, INTEG_1, INTEG_2, 
         
         SAVE
         
@@ -93,32 +94,33 @@ Module YCA_Growth_VPD
 ! VPD Factor for Photosynthesis function
 !****************************************************************************************
     
-    REAL function get_Growth_VPDFP(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+!   REAL function get_Growth_VPDFP(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+    REAL function get_Growth_VPDFP(PHSV, PHTV, WEATHER, SOILPROP)
     
     USE ModuleDefs
         
         IMPLICIT NONE
         SAVE
 
-        INTEGER, intent (in) :: DAP
-        REAL, intent (in) :: LAI
+!       INTEGER, intent (in) :: DAP
+!       REAL, intent (in) :: LAI
         REAL, intent (in) :: PHSV
         REAL, intent (in) :: PHTV
-        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+!       TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
         
-        REAL, DIMENSION(TS) ::   TAIRHR, PARHR   , RADHR  , RHUMHR  , VPDHR ! These are all declared in ModuleDefs
+        REAL, DIMENSION(TS) ::   TAIRHR, RADHR   ! PARHR   , RHUMHR  , VPDHR, These are all declared in ModuleDefs
         REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
-        REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
-        REAL    VPDFPPREV   , VPDMAXHRPREV
-        REAL    VPSAT                                                                            ! REAL function
-        REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
-        REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
+        REAL    TDEW        , TMAX        , TMIN  !SNDN        , SNUP        , 
+!       REAL    VPDFPPREV   , VPDMAXHRPREV
+!       REAL    VPSAT                                                                            ! REAL function
+!       REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
+        REAL    MSALB       , SRAD      ! , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
         INTEGER hour                                                                                  ! Loop counter
-        REAL ALBEDO
-        REAl VPDFP, INTEG_1, INTEG_2
+!       REAL ALBEDO
+!       REAl VPDFP, INTEG_1, INTEG_2
         
         SAVE
         TDEW   = WEATHER % TDEW

@@ -14,13 +14,13 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE Denit_Ceres_2D (CONTROL, ISWNIT,  
-!    &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3_2D,    !Input
-     &    DUL, KG2PPM, LITC, NLAYR, NO3_2D,           !Input
-     &    SAT, SSOMC, SNO3_2D, ST, SWV, Cells,        !Input
-     &    ColFrac,                                    !Input
+     &    DUL, KG2PPM, LITC, NO3_2D, SAT,             !Input
+     &    SSOMC, SNO3_2D, ST, SWV,  ColFrac,          !Input
      &    DLTSNO3_2D,                                 !I/O
-!    &    CNOX, TNOXD, DENITRIF, N2O_data)            !Output
      &    CNOX, TNOXD, DENITRIF)                      !Output
+
+!     2023-02-07 chp removed unused variables from argument list:
+!     NLAYR, Cells, FLOOD, N2O_data, 
 
 !-----------------------------------------------------------------------
       USE Cells_2D
@@ -32,8 +32,8 @@ C=======================================================================
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT
 
-      INTEGER DYNAMIC, L, NLAYR, J
-      Type (CellType) Cells(MaxRows,MaxCols)
+      INTEGER DYNAMIC, L, J !, NLAYR
+!     Type (CellType) Cells(MaxRows,MaxCols)
       real, dimension(MaxRows,MaxCols) :: ColFrac
 
       REAL CW, XMIN !,FLOOD
@@ -46,14 +46,14 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, SNO3_2D, DLTSNO3_2D, 
      &    SWV
       INTEGER, DIMENSION(MaxRows,MaxCols) :: DLAG_2D
-      REAL wfps(NL), Rn2n2o(MaxRows,MaxCols)
+!     REAL wfps(NL), Rn2n2o(MaxRows,MaxCols)
 
-      Real ratio1(MaxRows,MaxCols), ratio2(NL), Rn2odenit
+!     Real ratio1(MaxRows,MaxCols), ratio2(NL), Rn2odenit
       INTEGER NDAYS_WET(NL), yrdoy
 
 !      TYPE (N2O_type)    N2O_DATA
 !          Cumul      Daily     Layer kg
-      REAL CNOX,      TNOXD,    DENITRIF(MaxRows,MaxCols)   !Denitrification
+      REAL CNOX,      TNOXD,    DENITRIF(MaxRows,MaxCols)   !Denitrif
 !      REAL CN2,       TN2D,     N2FLUX(MaxRows,MaxCols)     !N2
 !      REAL CN2Odenit, TN2OdenitD, n2odenit(MaxRows,MaxCols) !N2O 
 

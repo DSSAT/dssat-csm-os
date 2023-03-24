@@ -28,6 +28,7 @@ C=======================================================================
 !     TS defined in ModuleDefs.for
 
       IMPLICIT NONE
+      EXTERNAL CURV
       SAVE
 
       INTEGER H

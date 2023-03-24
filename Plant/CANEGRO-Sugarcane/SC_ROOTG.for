@@ -11,6 +11,8 @@ c     This was taken from the CANEGRO
 c     WATBAL routine, and modified to
 c     work with the DSSAT CANEGRO Plant
 c     Module structure / variables
+
+!     2023-01-26 chp removed unused variables from argument list: HU16
 c     ****************************************************************
 
       SUBROUTINE ROOTGROWTH(
@@ -29,9 +31,9 @@ c      [I] Climate & meteorology variables
 c      [I] Cane crop variables
      - CaneCrop,
 c      [O] Max root water movement per cm of root
-     - RWUMX,
+     - RWUMX
 c      [I] Change in heat units, base 16 degrees
-     & HU16 
+!    & HU16 
      & )
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Use modules from DSSAT:
@@ -61,7 +63,7 @@ c     :::::::::::
       REAL               RWUMX
 
 c     Daily change in heat units base 16 degrees
-      REAL, INTENT(IN) :: HU16
+!     REAL, INTENT(IN) :: HU16
 
 c     Local variables (not part of any common blocks)
 c     :::::::::::::::::::::::::::::::::::::::::::::::

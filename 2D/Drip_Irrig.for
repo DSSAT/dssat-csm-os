@@ -253,6 +253,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE Cells_2D
       IMPLICIT NONE
+      EXTERNAL SWDEFICIT
 
       INTENT(IN) DSOIL, DLAYR, DUL, LL, NLAYR, SW
       INTENT(OUT) ATHETA, SWDEF

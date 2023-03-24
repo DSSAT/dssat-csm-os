@@ -1,8 +1,11 @@
 C*************************************************************************
 C  DRY MATTER PARTITIONING
        SUBROUTINE SC_PARTIT (WaterBal, Part, Climate, CaneCrop,
-     -                    Growth, Out, Control, ISWITCH,
+     -                    Growth, Out, Control, 
      -                    STGDOY, DSUCyest, CELLSE_DM, LEAFTT)
+
+!     2023-01-26 chp removed unused variables from argument list: ISWITCH
+
 c     Use the modules:
       USE CNG_MODULEDEFS
       USE MODULEDEFS
@@ -19,7 +22,7 @@ c     :::::::::::::::::::::::
       TYPE(CANECROPTYPE) CaneCrop
       TYPE(OUTTYPE)      Out
       TYPE(GROTHTYPE)    Growth
-      TYPE(SwitchType) ISWITCH ! MJ: no longer used
+!     TYPE(SwitchType) ISWITCH ! MJ: no longer used
 
 c     Dssat control variable:
       TYPE(ControlType) Control

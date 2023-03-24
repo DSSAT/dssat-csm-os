@@ -40,17 +40,20 @@ C=======================================================================
      &    RLV, SDNO, SHELN, SWIDOT,                       !Input/Output
      &    VSTAGE, WSHIDT, WTSD, WTSHE,                    !Input/Output
      &    ASMDOT, DISLA, HPDAM, NPLTD, PPLTD,             !Output
-     &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT,                        !Output
-     &  CSRW, SSRDOT, STRWT, WSFDOT, WSRFDOT,                  !Input
-     &  WSRIDOT,                                                            !Output
+     &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT,             !Output
+     &  CSRW, SSRDOT, STRWT, WSFDOT, WSRFDOT,             !Input
+     &  WSRIDOT,                                          !Output
 
-     &  CSFRZ, CSRFRZ, CSTRM, DSTOR, SRDAM)                        !Output
+     &  CSFRZ, CSRFRZ, CSTRM, DSTOR, SRDAM)               !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FOR_IPPEST, FOR_IPPARM, FOR_IPPROG, FOR_PESTCP, 
+     &  FOR_SEEDDM, FOR_VEGDM, FOR_ROOTDM, FOR_OPPEST, 
+     &  FOR_LINDM, TIMDIF, ASMDM
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1   IDETD
@@ -218,13 +221,13 @@ C-----------------------------------------------------------------------
      &    PSHDL, PSHDM, PSHDS, PSTMD, PVSTGD,             !Output
      &    TDLA, TPSR, TRTLF, VSTGD, WSTMD,                !Output
 
-     &  PCSTRD, PSTRD, WSTRD,                                          !Output
+     &  PCSTRD, PSTRD, WSTRD,                             !Output
 
      &    SEASINIT,WSDD,PSDD,PRLV)
 C-----------------------------------------------------------------------
 C  Initialize assimilate, seed, vegetative and root pest damage factors
 C-----------------------------------------------------------------------
-      CALL FOR_ASMDM(
+      CALL ASMDM(
      &    PGAVL, PPSR, TPSR,                              !Input
      &    ASMDOT, CASM,                                   !Output
      &    SEASINIT)                                       !Control
@@ -243,23 +246,21 @@ C-----------------------------------------------------------------------
      &    SEASINIT,WSDD,PSDD,SDWT)                             !Control
 
       CALL FOR_VEGDM(
-     &    AREALF, CLW, CSW, PCLMA, PCLMT,                 !Input
+     &    AREALF, CLW, CSW, PCLMT,                        !Input
      &    PCSTMD, PDLA, PLFAD, PLFMD, PSTMD,              !Input
      &    PVSTGD, SLA, SLDOT, SSDOT, STMWT,               !Input
      &    TDLA, VSTGD, WLFDOT, WSTMD, WTLF,               !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
-     &    LAIDOT, WSIDOT,                                                      !Output
-     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,                        !Input
-     &  WSFDOT, WSRFDOT, WSTRD,                                          !Input
-     &  CSTRM, WSRIDOT,                                        !Output
-
-     &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                              !Output
-
+     &    LAIDOT, WSIDOT,                                 !Output
+     &    CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,             !Input
+     &    WSFDOT, WSRFDOT, WSTRD,                         !Input
+     &    CSTRM, WSRIDOT,                                 !Output
+     &    CSFRZ, CSRFRZ, DSTOR, SRDAM,                    !Output
      &    SEASINIT)                                       !Control
 
       CALL FOR_ROOTDM(
-     &    PRLV,PRTLF, PRTLV, PRTMD, RTWT, SOILPROP, TRTLF,     !Input
+     &    PRLV,PRTLF, PRTLV, PRTMD, RTWT, SOILPROP, TRTLF,    !Input
      &    RLV, TRTLV, WRTMD,                              !Input/Output
      &    CRLF, CRLV, CRTM, RLFDOT, RLVDOT, WRIDOT,       !Output
      &    SEASINIT)                                       !Control
@@ -304,7 +305,7 @@ C-----------------------------------------------------------------------
      &    PSHDL, PSHDM, PSHDS, PSTMD, PVSTGD,             !Output
      &    TDLA, TPSR, TRTLF, VSTGD, WSTMD,                !Output
 
-     &  PCSTRD, PSTRD, WSTRD,                                          !Output
+     &  PCSTRD, PSTRD, WSTRD,                             !Output
 
      &    RATE,WSDD,PSDD,PRLV)
 
@@ -324,25 +325,23 @@ C-----------------------------------------------------------------------
 C     Call vegetative pest damage routine and compute damage rates
 C-----------------------------------------------------------------------
       CALL FOR_VEGDM(
-     &    AREALF, CLW, CSW, PCLMA, PCLMT,                 !Input
+     &    AREALF, CLW, CSW, PCLMT,                        !Input
      &    PCSTMD, PDLA, PLFAD, PLFMD, PSTMD,              !Input
      &    PVSTGD, SLA, SLDOT, SSDOT, STMWT,               !Input
      &    TDLA, VSTGD, WLFDOT, WSTMD, WTLF,               !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
-     &    LAIDOT, WSIDOT,                                                      !Output
-     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,                        !Input
-     &  WSFDOT, WSRFDOT, WSTRD,                                          !Input
-     &  CSTRM, WSRIDOT,                                        !Output
-
-     &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                              !Output
-
+     &    LAIDOT, WSIDOT,                                 !Output
+     &    CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,             !Input
+     &    WSFDOT, WSRFDOT, WSTRD,                         !Input
+     &    CSTRM, WSRIDOT,                                 !Output
+     &    CSFRZ, CSRFRZ, DSTOR, SRDAM,                    !Output
      &    RATE)                                           !Control
 C-----------------------------------------------------------------------
 C     Call root pest damage routine and compute damage rates
 C-----------------------------------------------------------------------
       CALL FOR_ROOTDM(
-     &    PRLV,PRTLF, PRTLV, PRTMD, RTWT, SOILPROP, TRTLF,     !Input
+     &    PRLV,PRTLF, PRTLV, PRTMD, RTWT, SOILPROP, TRTLF,   !Input
      &    RLV, TRTLV, WRTMD,                              !Input/Output
      &    CRLF, CRLV, CRTM, RLFDOT, RLVDOT, WRIDOT,       !Output
      &    RATE)                                           !Control
@@ -356,7 +355,7 @@ C-----------------------------------------------------------------------
 C     Call assimilative damage routine to update assimilative damage
 !          variables.
 C-----------------------------------------------------------------------
-      CALL FOR_ASMDM(
+      CALL ASMDM(
      &    PGAVL, PPSR, TPSR,                              !Input
      &    ASMDOT, CASM,                                   !Output
      &    INTEGR)                                         !Control
@@ -379,19 +378,17 @@ C-----------------------------------------------------------------------
 C     Call routine to apply damage to leaf and stem
 C-----------------------------------------------------------------------
       CALL FOR_VEGDM(
-     &    AREALF, CLW, CSW, PCLMA, PCLMT,                 !Input
+     &    AREALF, CLW, CSW, PCLMT,                        !Input
      &    PCSTMD, PDLA, PLFAD, PLFMD, PSTMD,              !Input
      &    PVSTGD, SLA, SLDOT, SSDOT, STMWT,               !Input
      &    TDLA, VSTGD, WLFDOT, WSTMD, WTLF,               !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
-     &    LAIDOT, WSIDOT,                                                      !Output
-     &  CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,                        !Input
-     &  WSFDOT, WSRFDOT, WSTRD,                                          !Input
-     &  CSTRM, WSRIDOT,                                        !Output
-
-     &  CSFRZ, CSRFRZ, DSTOR, SRDAM,                              !Output
-
+     &    LAIDOT, WSIDOT,                                 !Output
+     &    CSRW, PCSTRD, PSTRD, SSRDOT, STRWT,             !Input
+     &    WSFDOT, WSRFDOT, WSTRD,                         !Input
+     &    CSTRM, WSRIDOT,                                 !Output
+     &    CSFRZ, CSRFRZ, DSTOR, SRDAM,                    !Output
      &    INTEGR)                                         !Control
 C-----------------------------------------------------------------------
 C     Call root pest damage routine and compute damage factors

@@ -1607,9 +1607,9 @@ End Subroutine LinklstSUOIL
       Close(nf)
    End Subroutine ListtofilePlNCsCer
 !------------------------------------------------------------------------------
-   Subroutine ListtofileSoilNi(nlayers)
+   Subroutine ListtofileSoilNi()  !(nlayers)
       EXTERNAL GETLUN
-      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Integer          :: nf, ErrNum, length, i, nl   !, nlayers    
       Character(Len=12):: fn
       Character(Len=14) :: fmt
       Character(Len=2) :: numtoch1, numtoch2 

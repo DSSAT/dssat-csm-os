@@ -50,16 +50,23 @@ c     with external calculations like irrigation are
 c     handled OUTSIDE this module.
 c     [interface copied from MZ_CERES.for]
 !  Added IRRAMT July 2015
+!  2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE SC_CNGRO (
-     &    CONTROL, ISWITCH,                                   !Input
-     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,   !Input
-     &    SOILPROP, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   !Input
-     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,      !Input
-     &    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,        !Output
-     &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,           !Output
+     &    CONTROL, ISWITCH,                           !Input
+     &    CO2, EOP, EP, EO, ES,                       !Input
+     &    SOILPROP, SW, TMAX, TMIN, TRWUP, EOS,       !Input
+     &    RWUEP1, YREND, YRPLT, WEATHER, IRRAMT,      !Input
+     &    CANHT, KCAN, KTRANS, MDATE, NSTRES,         !Output
+     &    PORMIN, RLV, RWUMX,STGDOY, UNH4,            !Output
      &    UNO3, XLAI, XHLAI, EORATIO)                 !Output
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+!     2023-01-26 chp removed unused variables from argument list: 
+!         DAYL, HARVFRAC, NH4, NO3, SNOW, SRAD, TRWU, TWILEN, 
+!         HARVRES, SENESCE
+
 c     Define DSSAT composite variables:
 c     [Taken from MZ_CERES.for]
       USE ModuleDefs
@@ -72,7 +79,8 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       EXTERNAL SC_OPGROW, GETLUN, HEADER, SC_OPHARV, POPLT3, 
      &  SC_PARTIT, CANOP3, CARRYOVER_RATOON, GET_CULTIVAR_COEFF, 
      &  ROOTGROWTH, GET_SPECIES_COEFF, FIND_INP, WARNING, InitCaneCrop, 
-     &  SC_PHENOLOGY, SC_P
+     &  SC_PHENOLOGY
+      EXTERNAL SC_PHOTOS, SC_CCOUT, SC_ETOUT
       SAVE
       
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -84,21 +92,21 @@ c     :::::::::::::::::::::::
 c     & Input variables -
 c     :::::::::::::::::::
       REAL     CO2
-      REAL     DAYL
+!     REAL     DAYL
       REAL     EOP
       REAL     EP, EP1, RWUEP1, RWUEP2
       REAL     EO, EOS, ES
-      REAL     HARVFRAC(2)
-      REAL     NH4(NL)
-      REAL     NO3(NL)
-      REAL     SNOW
-      REAL     SRAD
+!     REAL     HARVFRAC(2)
+!     REAL     NH4(NL)
+!     REAL     NO3(NL)
+!     REAL     SNOW
+!     REAL     SRAD
       REAL     SW(NL)
       REAL     TMAX
       REAL     TMIN
       REAL     TRWUP
-      REAL     TRWU
-      REAL     TWILEN
+!     REAL     TRWU
+!     REAL     TWILEN
       INTEGER  YREND
       INTEGER	 YRPLT
 c     Daily irrigation amount (mm)
@@ -127,8 +135,8 @@ c     ::::::::::::::::::::::::::
       TYPE (ControlType) CONTROL
       TYPE (SoilType)    SOILPROP
       TYPE (SwitchType)  ISWITCH
-      Type (ResidueType) HARVRES 
-      Type (ResidueType) SENESCE
+!     Type (ResidueType) HARVRES 
+!     Type (ResidueType) SENESCE
       Type (WeatherType) WEATHER
 
 
@@ -267,7 +275,7 @@ c     t/ha/d
       REAL DSUCyest
 
 c     Soil water stress for tillering (not used in this sub):
-      REAL SWDF30
+!     REAL SWDF30
       
 c     Sunlit LAI fraction
       REAL F_SL      
@@ -373,7 +381,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Call the output routine, to initialise output
 c     ::::::::::
       CALL SC_OPGROW(CONTROL, CaneCrop, Growth,
-     &  Part, Out, WaterBal, SW, SoilProp,
+     &  Part, Out, WaterBal, SoilProp,
      &  YRPLT, CELLSE_DM)
 
 
@@ -429,7 +437,7 @@ c     :::::::::::::::::::::::::::::::::::
 c     Initialise Partitioning variables
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::
       CALL SC_PARTIT (WaterBal, Part, Climate, CaneCrop, Growth, 
-     &  Out, Control, ISWITCH,
+     &  Out, Control, 
      &  STGDOY, DSUCyest, CELLSE_DM, CHUBaseLeaf)
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -468,7 +476,7 @@ c     Set model number (CANEGRO dependency, to be removed eventually)
 
 c     Initialise root growth routine
       CALL ROOTGROWTH(Control, ISWITCH, Soil, WaterBal, 
-     &  Growth, Climate, CaneCrop, RWUMX, HU16)
+     &  Growth, Climate, CaneCrop, RWUMX)
 
 c     END of RUNINIT
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -497,7 +505,7 @@ c     Call the output routine, to initialise output files,
 c     and so on:
 c     ::::::::::
        CALL SC_OPGROW(CONTROL, CaneCrop, Growth,
-     &   Part, Out, WaterBal, SW, SoilProp,
+     &   Part, Out, WaterBal, SoilProp,
      &   YRPLT, CELLSE_DM)
 
 c     Until N is explcitly modeled, N stress will be 1 (no stress)
@@ -591,7 +599,7 @@ c     relating to the canopy / stalk population
 
 c     Initialise phenology variables:
 c     ::::::::::::::::::::::::::::::::::::::
-      CALL SC_PHENOLOGY(CONTROL, ISWITCH, CaneCrop, CHU10, HU10, 
+      CALL SC_PHENOLOGY(CONTROL, CaneCrop, CHU10, HU10, 
      &                        CHU16, HU16, CHUBaseLeaf, HUBaseLeaf, 
      &                        CHUBaseEm, HUBaseEm, CHUBasePop, 
      &                        HUBasePop,  HU_CANESIM, CHU_CANESIM, Out, 
@@ -626,8 +634,8 @@ c         Check this...
           SLPF = SOILPROP % SLPF  !CHP 2/14/2011
           CALL SC_PHOTOS(CWSI,MDL,
      &       WaterBal%ANAERF,
-     &      ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
-     &      rowspc,RUNOFF, allowlodg, F_SL, LODGE_LI, Part, Growth, 
+     &      IWS,NEGGRO,DWDT,coderd,
+     &      RUNOFF, allowlodg, LODGE_LI, Part, Growth, 
      &      Climate, SLPF,
      &      Out, ISWITCH, Control, CO2, DSUCyest, RM_AVG, TMEAN_AVG)
           
@@ -636,7 +644,7 @@ c         Check this...
 c     Initialise Partitioning variables
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::
       CALL SC_PARTIT (WaterBal, Part, Climate, CaneCrop, Growth, 
-     &             Out, Control, ISWITCH,
+     &             Out, Control, 
      &             STGDOY, DSUCyest, CELLSE_DM, CHUBaseLeaf)
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -648,7 +656,7 @@ c         Init RLV:
           Growth%RTCMPG = 0.
           Soil%WR = SoilProp%WR
           CALL ROOTGROWTH(Control, ISWITCH, Soil, WaterBal, 
-     &                     Growth, Climate, CaneCrop, RWUMX, HU16)
+     &                     Growth, Climate, CaneCrop, RWUMX)
 
 c         Set RLV (subroutine output to DSSAT CSM):
           RLV = WaterBal%RLV
@@ -680,8 +688,8 @@ c     Call the climate change summary output file subroutine (module).
      &  Growth%Li, EP, ES)
      
 c     Call the climate change summary output file subroutine (module).
-      CALL SC_ETOUT(CONTROL, Out%PAR, 
-     &  Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, MDATE, YREND)
+      CALL SC_ETOUT(CONTROL, 
+     &  Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, YREND)
 
 c	Water logging stress 
       PORMIN = 0.05 
@@ -720,7 +728,7 @@ c         Rainfall:
 
 c     Calculate heat units, etc, with the phenology routine:
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      CALL SC_PHENOLOGY(CONTROL, ISWITCH, CaneCrop, CHU10, HU10, 
+      CALL SC_PHENOLOGY(CONTROL, CaneCrop, CHU10, HU10, 
      &                        CHU16, HU16, CHUBaseLeaf, HUBaseLeaf, 
      &                        CHUBaseEm, HUBaseEm, CHUBasePop, 
      &                        HUBasePop,  HU_CANESIM, CHU_CANESIM, Out, 
@@ -949,8 +957,8 @@ c         Assign CWSI to canecrop variable:
 c        ... and calculate actual photosynthesis
          CALL SC_PHOTOS(CWSI,MDL,
      &    WaterBal%ANAERF,
-     &   ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
-     &   rowspc,RUNOFF, allowlodg, F_SL, LODGE_LI, Part, Growth, 
+     &   IWS,NEGGRO,DWDT,coderd,
+     &   RUNOFF, allowlodg, LODGE_LI, Part, Growth, 
      &   Climate, SLPF,
      &   Out, ISWITCH, Control, CO2, DSUCyest, RM_AVG, TMEAN_AVG)
 
@@ -964,7 +972,7 @@ c     And then calculate how this should be partitioned:
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::
           IF (EMERGED) THEN
           CALL SC_PARTIT (WaterBal, Part, Climate, CaneCrop, Growth, 
-     &             Out, Control, ISWITCH,
+     &             Out, Control, 
      &             STGDOY, DSUCyest, CELLSE_DM, CHUBaseLeaf)
           ENDIF
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -988,7 +996,7 @@ c     Root growth:
 c     ::::::::::::
 
           CALL ROOTGROWTH(Control, ISWITCH, Soil, WaterBal, 
-     &                    Growth, Climate, CaneCrop, RWUMX, HU16)
+     &                    Growth, Climate, CaneCrop, RWUMX)
 
 c     Set RLV (subroutine output to DSSAT CSM):
       RLV = WaterBal%RLV
@@ -1000,8 +1008,8 @@ c     ::::::::::::::::::::::::::::::::::::::::::::::::::
       ENDIF
       
 c     Call the evaporation related output file subroutine (module).
-      CALL SC_ETOUT(CONTROL, Out%PAR, 
-     &  Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, MDATE, YREND)
+      CALL SC_ETOUT(CONTROL, 
+     &  Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, YREND)
 
 c     END of RATE
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1020,7 +1028,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 !     &        CaneCrop%CWSI, STDAYC, RLV 
 !     &     )
 
-          CALL SC_PHENOLOGY(CONTROL, ISWITCH, CaneCrop, CHU10, HU10, 
+          CALL SC_PHENOLOGY(CONTROL, CaneCrop, CHU10, HU10, 
      &                        CHU16, HU16, CHUBaseLeaf, HUBaseLeaf, 
      &                        CHUBaseEm, HUBaseEm, CHUBasePop, 
      &                        HUBasePop,  HU_CANESIM, CHU_CANESIM, Out, 
@@ -1040,8 +1048,8 @@ c       Call the climate change summary output file subroutine (module).
      
      
 c        Call the evaporation related output file subroutine (module).
-         CALL SC_ETOUT(CONTROL, Out%PAR, 
-     &       Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, MDATE, YREND)
+         CALL SC_ETOUT(CONTROL, 
+     &       Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, YREND)
 
 c     END of INTEGRATE
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1055,7 +1063,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Write output of daily values:
 c     :::::::::::::::::::::::::::::
           CALL SC_OPGROW(CONTROL, CaneCrop, Growth,
-     & Part, Out, WaterBal, SW, SoilProp,
+     & Part, Out, WaterBal, SoilProp,
      & YRPLT, CELLSE_DM)
 
 !         chp 4/7/2009
@@ -1073,8 +1081,8 @@ c     :::::::::::::::::::::::::::::
      
      
 c     Call the evaporation related output file subroutine (module).
-      CALL SC_ETOUT(CONTROL, Out%PAR, 
-     &  Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, MDATE, YREND)
+      CALL SC_ETOUT(CONTROL, 
+     &  Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, YREND)
 
 c     END of OUTPUT
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1089,8 +1097,8 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 
          CALL SC_PHOTOS(CWSI,MDL,
      &    WaterBal%ANAERF,
-     &   ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
-     &   rowspc,RUNOFF, allowlodg, F_SL, LODGE_LI, Part, Growth, 
+     &   IWS,NEGGRO,DWDT,coderd,
+     &   RUNOFF, allowlodg, LODGE_LI, Part, Growth, 
      &   Climate, SLPF,
      &   Out, ISWITCH, Control, CO2, DSUCyest, RM_AVG, TMEAN_AVG)
 
@@ -1098,7 +1106,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Call the output routine, to close output files,
 c     ::::::::::::::::::::::::::::::::::::::::::::::
           CALL SC_OPGROW(CONTROL, CaneCrop, Growth,
-     & Part, Out, WaterBal, SW, SoilProp,
+     & Part, Out, WaterBal, SoilProp,
      & YRPLT, CELLSE_DM)
 
 !         chp added 2/13/07
@@ -1117,7 +1125,7 @@ c     Ratoon considerations
 c     Actual root information is put in carryover variable
 c     in this subroutine (for now)
           CALL ROOTGROWTH(Control, ISWITCH, Soil, WaterBal, 
-     &                    Growth, Climate, CaneCrop, RWUMX, HU16)
+     &                    Growth, Climate, CaneCrop, RWUMX)
 
 c     Call the climate change summary output file subroutine (module).
       CALL SC_CCOUT(CONTROL, Part%AERLDM, Part%STKDM, Part%SUCMAS, 

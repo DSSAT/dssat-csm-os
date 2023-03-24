@@ -17,6 +17,7 @@
     USE ModuleDefs     
     USE ModuleData
     IMPLICIT NONE
+    EXTERNAL WTDEPT, CAPILLARY
     SAVE
 !-----------------------------------------------------------------------
 !   Interface:

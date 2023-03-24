@@ -1102,8 +1102,10 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,BEDHT, BEDWD, !PMWD,
+     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,BEDHT, BEDWD, 
      &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur, PMALB)
+
+!     Unused variable removed from argument list: PMWD
 
       USE ModuleData
       IMPLICIT NONE

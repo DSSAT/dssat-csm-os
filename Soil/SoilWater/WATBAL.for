@@ -36,6 +36,8 @@ C  06/12/2002 CHP/US  Added flooded field options
 !  04/05/2006 CHP Added mixing of SW and variable soil layer depths
 !                 due to tillage
 !  04/10/2021 GH Corrected snowfall for very small amounts
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called by: SOIL module
 C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.for)
@@ -377,8 +379,7 @@ C     Conflict with CERES-Wheat
 
         ELSE
           CALL SATFLO(
-     &      DLAYR, DS, DUL, NLAYR, SAT, SW,               !Input
-     &      SWCN, SWCON, MgmtWTD,                         !Input
+     &      DLAYR, DUL, NLAYR, SAT, SW, SWCN, SWCON,      !Input
      &      DRAIN, DRN, SWDELTS)                          !Output
         ENDIF
 
@@ -655,7 +656,7 @@ C=====================================================================
 ! SWDELTX(L)  Change in soil water content due to root water uptake in 
 !               layer L (cm3 [water] / cm3 [soil])
 ! TDRAIN      Cumulative daily drainage from profile (mm)
-! TMAX        Maximum daily temperature (�C)
+! TMAX        Maximum daily temperature (°C)
 ! TRUNOF      Cumulative runoff (mm)
 ! TSW         Total soil water in profile (cm)
 ! TSWINI      Initial soil water content (cm)

@@ -50,6 +50,8 @@ C  04/20/2004 US  Modified DLAG, removed IFDENIT
 !  04/13/2005 CHP changed subroutine name to SoilNi.for (was SoilN_inorg)
 !  06/12/2014 CHP DayCent calcs for N2O emissions from Peter Grace
 !  11/21/2017 HJ  modified this subroutine to include N loss to tile
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called : SOIL
 C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,

@@ -58,18 +58,23 @@ C  08/09/2012 GH  Added CSCAS model
 !  03/17/2020  WP Model TEFF from Mulugeta called on plant (added).
 !  08/19/2021 FV Added OilcropSun
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
      &    IRRAMT, NH4, NO3, SKi_Avail, SPi_AVAIL,         !Input
      &    SNOW, SOILPROP, SRFTEMP, ST, SW,                !Input
-     &    TRWU, TRWUP, WEATHER, YREND, YRPLT,             !Input
+     &    TRWUP, WEATHER, YREND, YRPLT,                   !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
+
+!     2023-01-26 chp removed unused variables from argument list: 
+!       TRWU, SomLitC, SomLitE, UPPM
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:
@@ -132,7 +137,7 @@ C-----------------------------------------------------------------------
       REAL CANHT, CO2, DAYL, EO, EOP, EORATIO, EOS, EP, ES
       REAL KCAN, KEP, KSEVAP, KTRANS, LAI, NSTRES
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW, IRRAMT
-      REAL TMAX, TMIN, TRWU
+      REAL TMAX, TMIN !, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
 
 !     Water stress factors computed in SPAM now for variable time step 
@@ -396,8 +401,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         CALL CROPGRO(CONTROL, ISWITCH,
      &    EOP, CELLS, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
      &    ST, SW, SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,   !Input
-     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP, KTRANS,   !Output
-     &    MDATE, NSTRES, PSTRES1,                                !Output
+     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,           !Output
+     &    KTRANS, MDATE, NSTRES, PSTRES1,                        !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,                  !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)              !Output
 !-----------------------------------------------------------------------
@@ -463,7 +468,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Cassava CSYCA (CIAT cassava model)
       CASE('CSYCA')
         CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
-     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
+     &    EOP, NH4, NO3, SOILPROP, SRFTEMP,               !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
      &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output
@@ -480,7 +485,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     APSIM N-wheat WHAPS
       CASE('WHAPS')
         CALL WH_APSIM (CONTROL, ISWITCH,                  !Input
-     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,    !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3,               !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
@@ -496,14 +501,14 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     -------------------------------------------------
 !     APSIM Tef TFAPS
       CASE('TFAPS')
-        CALL TF_APSIM (CONTROL, ISWITCH,              !Input
-     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+        CALL TF_APSIM (CONTROL, ISWITCH,                  !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3,               !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, RLV,                  !Output
      &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
-     &     UNH4, UNO3, XLAI, XHLAI, UH2O)               !Output
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O, CropStatus)     !Output
 
         IF (DYNAMIC < RATE) THEN
 !          KTRANS = KCAN + 0.15        !Or use KEP here??
@@ -654,12 +659,12 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       !  MJ Added ES July 2015
       !  MJ added SATFAC Jan 2018
         CALL SC_CNGRO (
-     &    CONTROL, ISWITCH,                                   !Input
-     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,   !Input
-     &    SOILPROP, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   !Input
-     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,      !Input
-     $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,        !Output
-     &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,           !Output
+     &    CONTROL, ISWITCH,                           !Input
+     &    CO2, EOP, EP, EO, ES,                       !Input
+     &    SOILPROP, SW, TMAX, TMIN, TRWUP, EOS,       !Input
+     &    RWUEP1, YREND, YRPLT, WEATHER, IRRAMT,      !Input
+     &    CANHT, KCAN, KTRANS, MDATE, NSTRES,         !Output
+     &    PORMIN, RLV, RWUMX,STGDOY, UNH4,            !Output
      &    UNO3, XLAI, XHLAI, EORATIO)                 !Output
 
 c     Added by MJ, 2007-04-04:
@@ -670,13 +675,13 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Sugarcane - SAMUCA
       CASE('SCSAM')
           call SAMUCA(
-     &    CONTROL, ISWITCH,                           !Input
-     &    CO2, DAYL, EOP,                             !Input
-     &    SOILPROP, ST, SRAD, TMAX, TMIN, TRWUP,      !Input
-     &    RWUEP1, YREND, YRPLT, WEATHER,              !Input
-     $    CANHT, KCAN, KTRANS, MDATE, NSTRES,         !Output
-     &    RLV, RWUMX, STGDOY,                         !Output
-     &    XLAI, XHLAI, EORATIO)                       !Output
+     &    CONTROL, ISWITCH,                               !Input
+     &    CO2, DAYL, EOP,                                 !Input
+     &    SOILPROP, ST, SRAD, TMAX, TMIN, TRWUP,          !Input
+     &    RWUEP1, YREND, YRPLT, WEATHER,                  !Input
+     $    CANHT, KCAN, KTRANS, MDATE, NSTRES,             !Output
+     &    RLV, RWUMX, STGDOY,                             !Output
+     &    XLAI, XHLAI, EORATIO)                           !Output
           
 !     -------------------------------------------------
 !     Sugarcane - CASUPRO
@@ -713,7 +718,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
       CASE('SUOIL')
         CALL SU_CERES (CONTROL, ISWITCH,              !Input
      &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
-     &     SPi_AVAIL, SNOW,                               !Input
+     &     SPi_AVAIL,                                     !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP,KUptake,  MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
@@ -819,40 +824,6 @@ c     Total LAI must exceed or be equal to healthy LAI:
           CELLS%RATE%NH4Uptake = NH4Uptake_2D
           CELLS%STATE%RLV = RLV_2D
         END IF
-
-!***********************************************************************
-!***********************************************************************
-      ELSEIF (DYNAMIC .EQ. SEASEND) THEN
-!-----------------------------------------------------------------------
-!     Store Summary.out labels and values in arrays to send to
-!     OPSUM routines for printing.  Integers are temporarily 
-!     saved as real numbers for placement in real array.
-      LABEL(1)  = 'CRST'; VALUE(1)  = CONTROL % CropStatus
-
-      !Send labels and values to OPSUM
-      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
-
-! End of season crop status codes:
-! CRST - Definition                               Status **
-!    1 - crop matured normally                    NORMAL
-!    2 - crop harvested on reported date          NORMAL
-!    3 - crop harvested at reported growth stage  NORMAL
-!    6 - auto-harvest within window               NORMAL
-!   11 - failure to plant (automatic planting)    NO_SOW
-!   12 - failure to germinate                     NOGERM
-!   21 - crop mature due to slow grain filling    SLOGRN 
-!   31 - crop died due to heat stress             HOT
-!   32 - crop died due to cold stress             COLD
-!   33 - crop died due to deficit water stress    DRY
-!   34 - crop died due to excess water stress     WET
-!   39 - crop died due to excess stress           STRESS
-!   51 - crop died due to pest damage             PEST
-
-!  100 – crop season length exceeded limits       SEASON
-!  200 – weather data error                       WEATHER
-!  999 – unspecified error condition              UNKNOWN
-
-! ** Status text could be used in Summary.OUT if we want this to be more human readable.
 
 !***********************************************************************
 !***********************************************************************

@@ -21,7 +21,7 @@ C=======================================================================
 
       USE Aloha_mod
       IMPLICIT    NONE
-      EXTERNAL PHASEI, TIMDIF
+      EXTERNAL TIMDIF
       SAVE
 
       INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0, TIMDIF, YRPLT

@@ -17,6 +17,7 @@
         USE YCA_First_Trans_m
 
         IMPLICIT     NONE
+        EXTERNAL clear_YCA_First_Trans_m
         
         INTEGER STGYEARDOY(0:19)            
         

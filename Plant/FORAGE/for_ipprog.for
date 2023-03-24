@@ -29,6 +29,8 @@ C for the experiment being simulated.
 C----------------------------------------------------------------------
       USE MODULEDEFS
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE2, Y2K_DOY, Y4K_DOY, YR_DOY, WARNING, 
+     &  ERROR, TIMDIF
       SAVE
 C-----------------------------------------------------------------------
       CHARACTER*6 ERRKEY

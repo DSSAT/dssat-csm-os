@@ -56,6 +56,8 @@ C 02/07/2007 GH  Include path for FileX and rotation number to command
 C                line
 ! 09/02/2008 CHP Added bed width (for raised bed row) to input parameters
 ! 07/27/2010 CHP Drip irrigation emitter can be offset from centerline.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C

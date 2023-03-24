@@ -32,6 +32,7 @@
 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       CHARACTER*14, PARAMETER :: SWBAL = 'SoilWat_ts.OUT'

@@ -97,6 +97,9 @@ C  08/12/2003 CHP Added I/O error checking
       SUBROUTINE IPWBAL (CONTROL, LL, NLAYR,              !Input
      &    SW, ActWTD)                                     !Output
 
+!     2023-01-26 chp removed unused variables in argument list:
+!       DLAYR, SAT,
+
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE

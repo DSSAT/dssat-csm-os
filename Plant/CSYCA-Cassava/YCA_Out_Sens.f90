@@ -16,7 +16,8 @@
         USE YCA_Formats_m
      
         IMPLICIT NONE 
-     
+        EXTERNAL YR_DOY, CSOPLINE, CALENDAR, DAPCALC, CSCLEAR5
+
         INTEGER :: CN          , DOY         , STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
         

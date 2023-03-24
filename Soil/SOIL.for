@@ -31,6 +31,8 @@
 !  10/31/2007 CHP Added simple K model.
 !  08/15/2011 JW  Add NH4 and NO3 outputs for SOILDYN. 
 !                 They are calculated in RUNINIT an used by century 
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=====================================================================
 
       SUBROUTINE SOIL(CONTROL, ISWITCH, 
@@ -50,8 +52,8 @@ C=====================================================================
       USE FloodModule
       USE GHG_mod
       IMPLICIT NONE
-      EXTERNAL SOILDYN, WATBAL, CENTURY, SoilOrg, SoilNi, SoilPi, SoilKi
-     &  WATBAL2D, SOILNI_2D
+      EXTERNAL SOILDYN, WATBAL, CENTURY, SoilOrg, SoilNi, SoilPi, 
+     &  SoilKi, WATBAL2D, SOILNI_2D
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -170,8 +172,8 @@ C=====================================================================
 !      ELSEIF (MESOM .EQ. 'G') THEN
 !       Godwin (Ceres-based) soil organic matter module (formerly NTRANS)
         CALL SoilOrg (CONTROL, ISWITCH, 
-     &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
-     &    OMAData, RLV,                                   !Input
+     &    DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,     !Input
+     &    NH4, NO3, OMAData, RLV,                         !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    CH4_data, IMM, LITC, MNR, MULCH, newCO2,        !Output
      &    SomLit, SomLitC, SomLitE, SSOMC)                !Output

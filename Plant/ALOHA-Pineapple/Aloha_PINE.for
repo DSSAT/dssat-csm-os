@@ -29,6 +29,8 @@
 !  02/24/1993 BDB Changed call to WATBAL (Added AIRAMT)
 !  03/22/2017 CHP Adpated for CSM v4.6
 !  09/05/2020 JVJ Stages changes for inclusion in Overview         
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       Subroutine Aloha_Pineapple(CONTROL, ISWITCH, 

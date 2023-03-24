@@ -39,6 +39,8 @@ C  Revision history
 C
 C             Written - See above
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE TR_SUBSTOR(CONTROL, ISWITCH,

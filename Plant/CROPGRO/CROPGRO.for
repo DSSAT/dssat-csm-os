@@ -37,13 +37,15 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 !  10/20/2009 CHP Soil water stress factors computed in SPAM to accomodate
 !                   2D, variable time step model.
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE CROPGRO(CONTROL, ISWITCH, 
      &    EOP, CELLS, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
      &    ST, SW, SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,   !Input
-     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP, KTRANS,   !Output
-     &    MDATE, NSTRES, PSTRES1,                                !Output
+     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,           !Output
+     &    KTRANS, MDATE, NSTRES, PSTRES1,                        !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,                  !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)              !Output
 
@@ -176,10 +178,6 @@ C=======================================================================
 
 !     Drip irrigation bed witdth and depth
       REAL RTWID !BEDWD, BEDHT, 
-      
-!!     TEMP CHP for OpGeneric
-!      CHARACTER*80  FormatTxt
-!      CHARACTER*120 HeaderTxt
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in

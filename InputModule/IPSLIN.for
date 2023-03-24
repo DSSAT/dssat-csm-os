@@ -34,6 +34,9 @@ C=======================================================================
      &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
 !     &        SOM1I, SOM2I, SOM3I)
 
+!     2023-01-26 chp removed unused variables in argument list:
+!       YRSIM
+
       USE ModuleDefs
       IMPLICIT     NONE
       EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH

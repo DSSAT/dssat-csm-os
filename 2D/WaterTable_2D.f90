@@ -21,6 +21,7 @@
   USE Cells_2D     
   USE ModuleData
   IMPLICIT NONE
+  EXTERNAL CapFringe
   SAVE
 !-----------------------------------------------------------------------
 ! Interface:
@@ -332,6 +333,7 @@
     USE ModuleDefs
     USE Cells_2D
     IMPLICIT NONE
+    EXTERNAL GETLUN, HEADER, CAPFRINGE, YR_DOY, INCDAT
     SAVE
 !-----------------------------------------------------------------------
     integer DYNAMIC, YR2, DY2, DAS, LUNThetaCap, LIMIT_2D, L

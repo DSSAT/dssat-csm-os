@@ -26,6 +26,7 @@
       USE ModuleData
       USE Cells_2D
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
@@ -455,6 +456,7 @@ C=======================================================================
       USE Cells_2D
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL

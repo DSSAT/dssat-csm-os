@@ -14,6 +14,7 @@
       USE YCA_First_Trans_m
       
       IMPLICIT NONE
+      EXTERNAL YR_DOY
       
       INTEGER DOY         , YEAR 
       

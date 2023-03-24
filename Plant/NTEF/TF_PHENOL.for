@@ -24,28 +24,29 @@
 !  05/07/2018 KEP added if statements to ntef_ppfac routine to account for TWILEN < 1
 !  01/21/2020 JG moved some CUL parameters to ECO file
 !  07/24/2020 JG moved ozone parameters to ECO file
+!  06/15/2022 CHP Added CropStatus
 !---------------------------------------------------------------------
 !  Called by : TF_APSIM
 !  when DYNAMIC = RUNINIT, SEASINIT and INTEGRATE only
 !----------------------------------------------------------------------
       SUBROUTINE TF_PHENOL (CONTROL, ISWITCH,
      &    FILEIO, IDETO,  CUMDEP, DAYL, DLAYR,                   !INPUT
-        !fstage is output
      &    fstage, LEAFNO, LL, NLAYR, nwheats_dc_code,            !INPUT
      &    nwheats_vfac,  pl_la, plsc, PLTPOP, SDEPTH,            !INPUT
-     &    sen_la, SI1, SI3, SNOW, SRAD, stage_gpla,              !INPUT
-     &    stgdur, SUMP, SW,                                      !INPUT
+     &    sen_la, SNOW, stage_gpla, stgdur, SW,                  !INPUT
      &    TBASE,  tiln, TMAX, TMIN, TWILEN, weather,             !INPUT
      &    vd, vd1, vd2, VSEN, XN,  YRDOY, YRSIM,                 !INPUT
-     &    CUMDTT, DTT, EARS, GPP, ISDATE, ISTAGE,                !OUTPT
+     &    CUMDTT, DTT, GPP, ISDATE, ISTAGE,                      !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
-     &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
-     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw,                   !OUTPT
-     &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
+     &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG,                 !OUTPT
+     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw, CropStatus,       !OUTPT 
+     &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT 
 C-----------------------------------------------------------------------
       USE ModuleDefs
       USE TF_module
       IMPLICIT  NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, WARNING, SNOWFALL, TF_COLD, 
+     &  StageFlags, ntefs_germn
       SAVE
 !----------------------------------------------------------------------
 !                             Define Variables
@@ -53,21 +54,22 @@ C-----------------------------------------------------------------------
       INTEGER         DYNAMIC
 
 !  FSR added coefficients from WHAPS cultivar file
-      REAL        ADF1
-      REAL        ADF2
-      REAL        ADF3
+!     REAL        ADF1
+!     REAL        ADF2
+!     REAL        ADF3
       REAL        ADLAI
       REAL        ADPHO
       REAL        ADTIL
-      REAL        AFS1
-      REAL        AFS2
+!     REAL        AFS1
+!     REAL        AFS2     
+      INTEGER     CropStatus
       real   dc_code(7) ! Growth stage code, similar to Zadocs scale
       REAL        DTNP1
       REAL        EXNH4
       REAL        EXNO3
-      REAL        FDSW1
-      REAL        FDSW2
-      REAL        FDSW3
+!     REAL        FDSW1
+!     REAL        FDSW2
+!     REAL        FDSW3
       REAL        FOZ1  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
@@ -104,12 +106,13 @@ C-----------------------------------------------------------------------
       REAL        MXFIL
       REAL        RTDP1
       REAL        RTDP2
-      REAL        SFOZ1  ! Added by JG for ozone calculation
-      REAL        SLA
+      REAL        SFOZ1
+!     REAL        SFOZ2
+!     REAL        SLA
       REAL        SLAP1
       REAL        SLAP2
-      REAL        STAG1
-      REAL        STAG2
+!     REAL        STAG1
+!     REAL        STAG2
       INTEGER     stagno
       REAL        STEMN
       real        STMMX
@@ -138,18 +141,18 @@ C-----------------------------------------------------------------------
 ! End WHAPS/NWheat coefficients
 !     REAL            ABSTRES
       REAL            ACOEF
-      REAL            BARFAC
+!     REAL            BARFAC 
       CHARACTER*1     BLANK
       PARAMETER (BLANK = ' ')
       REAL            C1
       INTEGER         CDAY
       REAL            CUMDEP
       REAL            CUMDTT
-      REAL            CUMDTT_M ! to keep old maize code for comparison
+!     REAL            CUMDTT_M ! to keep old maize code for comparison 
       REAL            DAYL
       REAL            DEC
       REAL            DGET
-      REAL            DJTI
+!     REAL            DJTI
       REAL            DLAYR(NL)
       REAL            DLV
       REAL            DOPT
@@ -157,7 +160,7 @@ C-----------------------------------------------------------------------
       REAL            DSGFT
       REAL            DTT_M
       REAL            DUMMY
-      REAL            EARS
+!     REAL            EARS 
       CHARACTER*5  temp_Chr
       CHARACTER*6     ECONO
       INTEGER         ERR
@@ -172,8 +175,8 @@ C-----------------------------------------------------------------------
       CHARACTER*30    FILEIO
       CHARACTER*78 MSG(2)
       INTEGER         FOUND
-      REAL            G2
-      REAL            G3
+!     REAL            G2             
+!     REAL            G3             
       REAL            GDDE
       REAL            GPP
       INTEGER         grf_date   !*! WHAPS: grain fill date
@@ -200,7 +203,7 @@ C-----------------------------------------------------------------------
       INTEGER         NDAS
       INTEGER         NLAYR
       INTEGER         NOUTDO
-      INTEGER         nwheats_status
+!     INTEGER         nwheats_status         
       REAL            P2O
       REAL            P3
       REAL            P9
@@ -212,34 +215,34 @@ C-----------------------------------------------------------------------
                                 ! (from nwheats.for)
 !*!   REAL            PHINT
       REAL            PLTPOP
-      REAL            nwheats_ppfac !WHAPS wheat model day-length factor
+!     REAL            nwheats_ppfac !WHAPS wheat model day-length factor
       REAL            ntef_ppfac !TFAPS wheat model day-length factor
       REAL            PSKER
       REAL            RATEIN
       REAL            ROPT
-      REAL            RUE
+!     REAL            RUE
       REAL            RUE1  ! JG added for pre-anthesis RUE
       REAL            RUE2  ! JG added for post-anthesis RUE
       REAL            SDEPTH
       CHARACTER*6     SECTION
       REAL            S1
-      REAL            SI1(6)
-      REAL            SI3(6)
+!     REAL            SI1(6)         
+!     REAL            SI3(6)         
       REAL            SIND
       REAL            sen_la  ! Senesced leaf area
       REAL            SNDN
       REAL            SNOW
       integer SNOWky
       REAL            SNUP
-      INTEGER         sowmx  !Maximum sowing-to- days before plant dies
-      REAL            SRAD
+!     INTEGER         sowmx  !Maximum sowing-to- days before plant dies
+!     REAL            SRAD           
       INTEGER         STGDOY(20)
       INTEGER         stgdur(20)
       REAL            SUMDTT
-      REAL            SUMDTT_M  !to keep old maize code for comparison
+!     REAL            SUMDTT_M  !to keep old maize code for comparison
       REAL            sumstgdtt(20)   ! WHAPS wheat model real array
       REAL            SUMDTT_2 !introduced for plant P routine
-      REAL            SUMP
+!     REAL            SUMP           
       REAL            SW(NL)
       REAL            SWCG
       REAL            SWSD
@@ -264,7 +267,7 @@ C-----------------------------------------------------------------------
       CHARACTER*16    VRNAME
       REAL            XN
       REAL            XNTI
-      REAL            XS
+!     REAL            XS           
       real   xs_nw(6)
       REAL            XSTAGE
       REAL            xstag_nw
@@ -296,7 +299,7 @@ C-----------------------------------------------------------------------
 !     ModuleDefs.for.
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
-      Type (ResidueType) SENESCE
+!     Type (ResidueType) SENESCE
       TYPE (WeatherType) WEATHER
 
 !     Transfer values from constructed data types into local variables.
@@ -407,8 +410,8 @@ C-----------------------------------------------------------------------
             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            ! Temperature threshold for frost
-            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) Tthrshld ! TTHLD in *.spe
+            ! Temperature threshold for frost  ! TTHLD in *.spe
+            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) Tthrshld 
             READ(C80,'(2X, A5)')temp_Chr
             if (temp_Chr(1:5) .ne. "TTHLD") then
               ERR =1
@@ -418,7 +421,8 @@ C-----------------------------------------------------------------------
             endif
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) frostf !FRSTF in *.spe
+!           FRSTF in *.spe
+            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) frostf 
             READ(C80,'(2X, A5)')temp_Chr
               if (temp_Chr(1:5) .ne. "FRSTF") then
               ERR =1
@@ -426,12 +430,13 @@ C-----------------------------------------------------------------------
               WRITE(MSG(2),'(A)') "Program will stop."
               CALL WARNING(2,ERRKEY,MSG)
             endif
-            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)          
            ! crown temperature
             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) crownT !CRWNT in *.spe
+!           CRWNT in *.spe
+            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) crownT 
             READ(C80,'(2X, A5)')temp_Chr
-              if (temp_Chr(1:5) .ne. "CRWNT") then
+            if (temp_Chr(1:5) .ne. "CRWNT") then
               ERR =1
               WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,'instead of CRWNT'
               WRITE(MSG(2),'(A)') "Program will stop."
@@ -439,7 +444,8 @@ C-----------------------------------------------------------------------
             endif
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            READ(C80,'(9X,I3)',IOSTAT=ERR) SNOWky !SNOW in *.spe, switch for snow effect on frost
+!           SNOW in *.spe, switch for snow effect on frost
+            READ(C80,'(9X,I3)',IOSTAT=ERR) SNOWky 
             READ(C80,'(2X, A5)')temp_Chr
             if (temp_Chr(1:4) .ne. "SNOW") then
               ERR =1
@@ -545,7 +551,7 @@ C-----------------------------------------------------------------------
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter.
 !               Default to TSEN = 6.0 if no value given.
-                ! JG changed column numbers to match updated ecotype file
+!                 JG changed column numbers to match updated ecotype file
                 IF (C255(315:319) == '     ') THEN
                   TSEN = 6.0
                 ELSE
@@ -555,7 +561,7 @@ C-----------------------------------------------------------------------
 
 !               Read optional number of cold days paramter.
 !               Default to CDAY = 15.0 if no value given.
-                ! JG changed column numbers to match updated ecotype file
+!                 JG changed column numbers to match updated ecotype file
                 IF (C255(321:325) == '     ') THEN
                   CDAY = 15
                 ELSE
@@ -655,19 +661,17 @@ cbak  ears that is not included in lai calculation.
         endif
 
 !----------------------------------------------------------------------
-      CALL TF_COLD (CONTROL, ISWITCH, FILEIO, IDETO,              !Input
-     &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
-     &    tempcr, tiln, VSEN, weather,                            !Input
-     &    YRDOY,                                                  !Input
-     &    pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,          !Input/Outpt
-     &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
+      CALL TF_COLD (CONTROL, ISWITCH, FILEIO,              !Input
+     &    istage, leafno, PLTPOP,  VREQ, tbase,            !Input
+     &    tempcr, tiln, VSEN, weather,                     !Input
+     &    pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,  !In/Out
+     &    nwheats_vfac, sen_la, vd, vd1, vd2)              !Output
 !-----------------------------------------------------------------------
       CALL StageFlags (CONTROL, FILEIO,
-      ! fstage is output
-     &    dc_code, fstage, istage, istageno, pgdd, pl_la,         !INPUT
-     &    PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,                !INPUT
-     &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
-     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
+     &    dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &    PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &    lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &    stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
 !-----------------------------------------------------------------------
 
 !*! the following replaces Nwheats subroutine nwheats_pgdin
@@ -704,7 +708,7 @@ cbak  ears that is not included in lai calculation.
         snow = 0.0
       endif
 
-      ! Calculate max crown temperature, which is calculated in nwheats_crown_temp (tempcn, tempcx)
+!       Calculate max crown temperature, which is calculated in nwheats_crown_temp (tempcn, tempcx)
 !*!   if (tempmx .lt. 0.) then
 !*!      tempcx = 2.0 + tempmx * (0.4 + 0.0018 * (snow - 15.)**2)
       if (TMAX .lt. 0.) then
@@ -759,7 +763,8 @@ cbak  ears that is not included in lai calculation.
          if (tempcn .lt. topt) then
             ! min < opt and tmax < max  (tmax = tempcx)
             ! ------------------------
-            tcor = (tempcx - topt)/tdif  !JZW when I debug, stage 2 use this
+!           JZW when I debug, stage 2 use this
+            tcor = (tempcx - topt)/tdif  
             tt = (topt - tbase)/2. * (1. + tcor) + tempcn/2.*(1.-tcor)
          else
             ! opt < (min and max)< max
@@ -816,12 +821,12 @@ cbak  ears that is not included in lai calculation.
 !
 ! note that OLD Pannicle initiation has no direct NEW counterpart, and that NEW has "fallow".
 !----------------------------------------------------------------------
-      !---------------------------------------------------------
-      !     ISTAGE = 7 - No crop-to-Sowing date, start calling TF_PHENOL on Planting date
-      !---------------------------------------------------------
+!      ---------------------------------------------------------
+!           ISTAGE = 7 - No crop-to-Sowing date, start calling TF_PHENOL on Planting date
+!      ---------------------------------------------------------
              IF (ISTAGE .EQ. 7) THEN
 !*!          IF (istage .EQ. fallow) THEN
-              !STGDOY(istage) = YRDOY ! JZW This is wrong, call here on planting day
+!              STGDOY(istage) = YRDOY ! JZW This is wrong, call here on planting day
               NDAS           = 0.0   !NDAS - number of days after sowing
                ! from nwheats_phase: JZW add in Aug, 2014
               sumstgdtt(istage) = sumstgdtt(istage) + dtt
@@ -834,14 +839,15 @@ cbak  ears that is not included in lai calculation.
      &            stage_gpla, stagno, stgdur, xstag_nw, zstage)   !OUTPT
 !-----------------------------------------------------------------------
               ISTAGE = 8
-              STGDOY(istage) = YRDOY ! JZW add this in Feb, 2015, istage=8 is sowing day, not germ day !
-!*!           istage = germ
+!             JZW add this in Feb, 2015, istage=8 is sowing day, not germ day !
+              STGDOY(istage) = YRDOY 
+!*!           istage = germ 
               SUMDTT = 0.0
               IF (ISWWAT .EQ. 'N') RETURN
 
-              !---------------------------------------------------------
-              ! New Growth Stage Occurred Today. Initialize Some Variables
-              !---------------------------------------------------------
+!              ---------------------------------------------------------
+!               New Growth Stage Occurred Today. Initialize Some Variables
+!              ---------------------------------------------------------
               CUMDEP = 0.0
               DO L = 1, NLAYR
                   CUMDEP = CUMDEP + DLAYR(L)
@@ -855,39 +861,38 @@ cbak  ears that is not included in lai calculation.
       ! ISTAGE = 8 - Sowing to Germination
       ! Once water stress is introduces, include ntefs_germn below?
       !-----------------------------------------------------------------
-         ELSEIF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination ! JZW change elseif to if on Feb 17, 2015
-        ! IF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination
-              !*! compare to ntefs_germn() code
-              !*! This DSSAT code promotes seed to germination 1 DAP,
+!     8 = Sowing-to-Germination ! JZW change elseif to if on Feb 17, 2015
+         ELSEIF (ISTAGE .EQ. 8) THEN   
+        ! IF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination    
+              !*! compare to nwheats_germn() code
+              !*! This DSSAT code promotes seed to germination 1 DAP,  
               !*! IF seed-layer soil water is above LL
       !!*! The following IF statement delayed germination
       !!*! and helped align DTT with the original nwheat output.  FSR
       !       !---------------------------------------------------------
-      ! JZW move these lines from after CALL StageFlags to here in Sep, 2014
-              !if(YRDOY > STGDOY(7)+1) then !JZW istage 7 is starting on simulation day
-              !if(YRDOY > STGDOY(8)) then !JZW replace this code by codes bellow to determing the Germ stage
-              !  ISTAGE =    9 !*! germ (germination to emergence)
+!       JZW move these lines from after CALL StageFlags to here in Sep, 2014 
+!              if(YRDOY > STGDOY(7)+1) then !JZW istage 7 is starting on simulation day
+!              if(YRDOY > STGDOY(8)) then !JZW replace this code by codes bellow to determing the Germ stage
+!                ISTAGE =    9 !*! germ (germination to emergence)
             call ntefs_germn (sdepth, stgdur, SW,            !Input
      &          DLAYR*10, LL,                                    !Input
      &          ISTAGE)   !Input ISTAGE=8, & calculate output
               If (ISTAGE .eq. 9) then
                    !JZW add the following for the case of istage=9
-                CALL TF_COLD (CONTROL, ISWITCH, FILEIO, IDETO,    !Input
-     &           istage, leafno, PLTPOP,  VREQ, tbase,            !Input
-     &           tempcr, tiln, VSEN, weather,                     !Input
-     &           YRDOY,                                           !Input
-     &           pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,   !Input/Outpt
-     &           nwheats_vfac, sen_la, vd, vd1, vd2)              !Outpt
+                CALL TF_COLD (CONTROL, ISWITCH, FILEIO,        !Input
+     &        istage, leafno, PLTPOP,  VREQ, tbase,            !Input
+     &        tempcr, tiln, VSEN, weather,                     !Input
+     &        pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,  !In/Out
+     &        nwheats_vfac, sen_la, vd, vd1, vd2)              !Output
               endif
               ! from nwheats_phase: JZW add in Aug, 2014
               sumstgdtt(istage) = sumstgdtt(istage) + dtt
 !----------------------------------------------------------------------
               CALL StageFlags (CONTROL, FILEIO,
-              ! fstage is output
-     &            dc_code, fstage, istage, istageno, pgdd, pl_la, !INPUT
-     &            PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,        !INPUT
-     &            lstage, nwheats_dc_code, nwheats_pstag,         !OUTPT
-     &            stage_gpla, stagno, stgdur, xstag_nw, zstage)   !OUTPT
+     &        dc_code, fstage, istage, istageno, pgdd, pl_la,     !INPUT
+     &        PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,            !INPUT
+     &        lstage, nwheats_dc_code, nwheats_pstag,             !OUTPT
+     &        stage_gpla, stagno, stgdur, xstag_nw, zstage)       !OUTPT
 !-----------------------------------------------------------------------
               IF (ISWWAT .NE. 'N') THEN
                   IF (SW(L0) .LE. LL(L0)) THEN
@@ -907,6 +912,7 @@ cbak  ears that is not included in lai calculation.
                               WRITE (NOUTDO,3500)
                           ENDIF
                           MDATE  = YRDOY
+                          CropStatus = 12
                           RETURN
                       ENDIF
                  !Germinate when soil water > 0.02 cm3/cm3
@@ -914,10 +920,11 @@ cbak  ears that is not included in lai calculation.
                   IF (SWSD .LT. SWCG) RETURN
                   ENDIF
               ENDIF
-              !---------------------------------------------------------
-              ! New Growth Stage Occurred Today. Initialize Some Variables
-              !---------------------------------------------------------
-              if (ISTAGE .GE. 9) STGDOY(ISTAGE) = YRDOY ! Jin Changed, should not have two sowing days
+!              ---------------------------------------------------------
+!               New Growth Stage Occurred Today. Initialize Some Variables
+!              ---------------------------------------------------------
+!             Jin Changed, should not have two sowing days
+              if (ISTAGE .GE. 9) STGDOY(ISTAGE) = YRDOY 
 
       !!*! The following IF statement delayed germination
       !!*! and helped align DTT with the original nwheat output.  FSR
@@ -934,15 +941,15 @@ cbak  ears that is not included in lai calculation.
               RETURN   ! In NWheat: 40. + 10.2 * sdepth/10
                        ! NWheat sdepth is mm
 
-      !-----------------------------------------------------------------
-      ! ISTAGE = 9 (Germination to Emergence) Determine Seedling Emergence Date
-      !-----------------------------------------------------------------
+!      -----------------------------------------------------------------
+!       ISTAGE = 9 (Germination to Emergence) Determine Seedling Emergence Date
+!      -----------------------------------------------------------------
           ELSEIF (ISTAGE .EQ. 9) THEN  !*!  9 = Germination-to-Emergence
-      !-----------------------------------------------------------------
+!      -----------------------------------------------------------------
               sumstgdtt(istage) = sumstgdtt(istage) + dtt
               NDAS = NDAS + 1        !NDAS - number of days after sowing
-      !-----------------------------------------------------------------
-      ! introduced to align DC Code with APSIM Nwheat  FSR             !
+!      -----------------------------------------------------------------
+!       introduced to align DC Code with APSIM Nwheat  FSR             !
               if(sumstgdtt(istage) .ge. pgdd(istage)) then             !
                 lstage = istage                                        !
                 istage = 1                                      !
@@ -952,11 +959,10 @@ cbak  ears that is not included in lai calculation.
      &                            *  min(nwheats_vfac, ntef_ppfac)  !
               endif                                                    !
       !-----------------------------------------------------------------
-          CALL TF_COLD (CONTROL, ISWITCH, FILEIO, IDETO,          !Input
+          CALL TF_COLD (CONTROL, ISWITCH, FILEIO,                 !Input
      &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
      &    tempcr, tiln, VSEN, weather,                            !Input
-     &    YRDOY,                                                  !Input
-     &    pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,          !Input/Outpt
+     &    pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,          !I/O
      &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
       !-----------------------------------------------------------------
       !-----------------------------------------------------------------
@@ -973,8 +979,8 @@ cbak  ears that is not included in lai calculation.
 	          IF (YRDOY .LT. YREMRG) RETURN
 	        ENDIF
 
-              ! If GDD's pass DGET threshold, terminate model run
-              ! DGET - growing degree days between germination and emergence.
+!               If GDD's pass DGET threshold, terminate model run
+!               DGET - growing degree days between germination and emergence.
               IF (P9 .GT. DGET) THEN !*! Does not make much sense - FSR
                   ISTAGE = 6
                   PLTPOP = 0.00
@@ -986,6 +992,7 @@ cbak  ears that is not included in lai calculation.
                       WRITE (NOUTDO,1399)
                   ENDIF
                   MDATE = YRDOY
+                  CropStatus = 12
                   RETURN
               ENDIF
 
@@ -996,7 +1003,8 @@ cbak  ears that is not included in lai calculation.
               ISTAGE = 1
               SUMDTT = SUMDTT - P9
               TLNO   = 30.0
-              YREMRG = YRDOY !STGDOY(9) !Passed back into water balance, JZW changed
+!             STGDOY(9) !Passed back into water balance, JZW changed
+              YREMRG = YRDOY 
               RETURN
 
       !-----------------------------------------------------------------
@@ -1010,8 +1018,8 @@ cbak  ears that is not included in lai calculation.
 !*!          substitute DAYL (DSSAT) for hrlt (NWheat)
 !*!          alternatively, could use TWILEN (DSSAT)
 !*!                  ppfac = 1. -   p1d * (20. - hrlt)**2
-            ! nwheats_ppfac = 1. - PPSEN * (20. - DAYL)**2
-            !n Apsim: The parameter twilight is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.
+!             nwheats_ppfac = 1. - PPSEN * (20. - DAYL)**2
+!            n Apsim: The parameter twilight is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.
 !             nwheats_ppfac = 1. - PPSEN * (20. - TWILEN)**2
 ! Swap 20 and TWILEN to go from long to short day response
 !Added if statements to account for TWILEN being less than the critical day length of 11 h
@@ -1024,7 +1032,7 @@ cbak  ears that is not included in lai calculation.
                 ntef_ppfac = MIN(ntef_ppfac, 1.0)
             endif
 !             ntef_ppfac = 1. - PPSEN * (TWILEN-11)**2
-             !DSSAT and APSIM may calculate DAYL differently, thus affect DCCD slightly
+!             DSSAT and APSIM may calculate DAYL differently, thus affect DCCD slightly
 !*!          nwheats_ppfac = bound (nwheats_ppfac, 0.0, 1.0)
 !             nwheats_ppfac = MAX(nwheats_ppfac, 0.0)
 !             nwheats_ppfac = MIN(nwheats_ppfac, 1.0)
@@ -1035,13 +1043,12 @@ cbak  ears that is not included in lai calculation.
 !*!       endif
 !*! End NWheat function nwheats_ppfac
       !-----------------------------------------------------------------
-          CALL TF_COLD (CONTROL, ISWITCH, FILEIO, IDETO,          !Input
+          CALL TF_COLD (CONTROL, ISWITCH, FILEIO,                 !Input
      &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
      &    tempcr, tiln, VSEN, weather,                            !Input
-     &    YRDOY,                                                  !Input
-     &    pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,         !Input/Outpt
+     &    pl_la, plsc, Tthrshld, frostf, crownT, SNOWky,          !I/O
      &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
-      !-----------------------------------------------------------------
+      !-----------------------------------------------------------------  
             ! from nwheats_phase
         if (nwheats_vfac .gt. 1.0) then
             nwheats_vfac = 1.0
@@ -1055,7 +1062,7 @@ cbak  ears that is not included in lai calculation.
       !-----------------------------------------------------------------
       ! introduced to align DC Code with APSIM Nwheat  FSR             !
               if(sumstgdtt(istage) .ge. pgdd(istage)) then             !
-                lstage = istage                                        !                              !
+                lstage = istage                                        !
                 istage = istage +1                              !
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
                 sumstgdtt(lstage) = pgdd(lstage)
@@ -1075,9 +1082,9 @@ cbak  ears that is not included in lai calculation.
       !-----------------------------------------------------------------
               IF (sumstgdtt(emergence) .LT. pgdd(emergence)) RETURN
 
-              !---------------------------------------------------------
-              ! New Growth Stage Occurred Today. Initialize Some Variables
-              !---------------------------------------------------------
+!              ---------------------------------------------------------
+!               New Growth Stage Occurred Today. Initialize Some Variables
+!              ---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY
 !*!           ISTAGE = 2   ! already accomplished above
               SUMDTT  = 0.0
@@ -1100,14 +1107,14 @@ cbak  ears that is not included in lai calculation.
                 istage = istage +1                              !
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
                 sumstgdtt(lstage) = pgdd(lstage)
-                ! JZW try to add above statement as Apsim. Is it necessary to set previous stage?
+!                 JZW try to add above statement as Apsim. Is it necessary to set previous stage?
                 cumph_nw(istage) = cumph_nw(lstage)
               endif                                                    !
                if (YRDOY .eq. 1983145) then
-                !   istage = 3 !jzw made wrong setting for test
-                !sumstgdtt(istage) = dtt/2                            !
-                !! JZW try to add above statement as Apsim. Is it necessary to set previous stage?
-                !cumph_nw(istage) = cumph_nw(2)
+!                   istage = 3 !jzw made wrong setting for test
+!                sumstgdtt(istage) = dtt/2                            !
+!                ! JZW try to add above statement as Apsim. Is it necessary to set previous stage?
+!                cumph_nw(istage) = cumph_nw(2)
               endif
       !-----------------------------------------------------------------
           CALL StageFlags (CONTROL, FILEIO,
@@ -1128,9 +1135,9 @@ cbak  ears that is not included in lai calculation.
               !*! from NWheat
               IF (sumstgdtt(endjuv) .LT. pgdd(endjuv)) RETURN
 
-              !---------------------------------------------------------
-              ! New Growth Stage Occurred Today. Initialize Some Variables
-              !---------------------------------------------------------
+!              ---------------------------------------------------------
+!               New Growth Stage Occurred Today. Initialize Some Variables
+!              ---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY
 !*!           ISTAGE = 3
               XNTI   = SUMDTT/43.0
@@ -1167,8 +1174,9 @@ cbak  ears that is not included in lai calculation.
                 istage = istage +1                                     !
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
                 sumstgdtt(lstage) = pgdd(lstage)
-                ! JZW try to add above statement as Apsim. Is it necessary set previous stage?
-                cumph_nw(istage) = cumph_nw(lstage) !JZW this will not need if we are not use array for cumph_nw
+!                 JZW try to add above statement as Apsim. Is it necessary set previous stage?
+!               JZW this will not need if we are not use array for cumph_nw
+                cumph_nw(istage) = cumph_nw(lstage) 
               endif                                                    !
       !-----------------------------------------------------------------
           CALL StageFlags (CONTROL, FILEIO,
@@ -1179,9 +1187,9 @@ cbak  ears that is not included in lai calculation.
       !-----------------------------------------------------------------
               IF (sumstgdtt(endveg) .LT. pgdd(endveg)) RETURN
 
-              !---------------------------------------------------------
-              ! New Growth Stage Occurred Today. Initialize Some Variables
-              !---------------------------------------------------------
+!              ---------------------------------------------------------
+!               New Growth Stage Occurred Today. Initialize Some Variables
+!              ---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY
               ISDATE = YRDOY
 !*!           ISTAGE = 4
@@ -1281,13 +1289,13 @@ cbak  ears that is not included in lai calculation.
       !-----------------------------------------------------------------
 
   !**!            IF (SUMDTT .LT. P5)  RETURN
-              !---------------------------------------------------------
-              ! New Growth Stage Occurred Today. Initialize Some Variables
-              !---------------------------------------------------------
+!              ---------------------------------------------------------
+!               New Growth Stage Occurred Today. Initialize Some Variables
+!              ---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY
               MDATE          = YRDOY
-              ISTAGE = 7  !*! was 10  !CHP - Prevents growth parameters
-                          ! from being set back to initial values.  08/11/03
+              ISTAGE = 7  !*! was 10  !CHP - Prevents growth parameters 
+!                           from being set back to initial values.  08/11/03
               CUMDTT = 0.0
 
               IF (PLTPOP .NE. 0.0) THEN

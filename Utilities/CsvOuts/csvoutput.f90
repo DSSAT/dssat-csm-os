@@ -2338,7 +2338,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
          Call ListtofileSW(nlayers)         ! SoilWat.csv
          Call ListtofileTemp(nlayers)       ! SoilTemp.csv
          Call ListtofileET(nlayers)         ! et.csv
-         Call ListtoFileSoilNi(nlayers)     ! SoilNi.csv
+         Call ListtoFileSoilNi()            ! SoilNi.csv
          call ListtoFileWth                 ! weather.csv
          Call ListtofileSumOpsum            ! summary.csv
          Call ListtofileSoilOrg(numelem)    ! SoilOrg.csv

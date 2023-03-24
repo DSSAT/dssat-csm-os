@@ -12,9 +12,11 @@ c      - Sucrose mass (t/ha)
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      SUBROUTINE SC_ETOUT(CONTROL, PAR, Fi, EP, ES, EO, YRPLT, XHLAI, 
-     & EORATIO, MDATE, YREND)
-     
+      SUBROUTINE SC_ETOUT(CONTROL, Fi, EP, ES, EO, YRPLT, XHLAI, 
+     & EORATIO, YREND)
+
+!     2023-01-26 chp removed unused variables from argument list: PAR, MDATE, 
+
 c     ***************************************************************      
 c     Instruct compiler to use module definitions:
 c     DSSAT
@@ -35,9 +37,9 @@ c     Bio-physical variables to output in summary file
 c     CMDMD is cellulose DM.
 c     LGDMD, LDDMD are green tops DM and trash DM
 c     RDMD is root dry mass
-      REAL, INTENT(IN) :: PAR, Fi, EP, ES, EO, XHLAI, EORATIO
+      REAL, INTENT(IN) :: Fi, EP, ES, EO, XHLAI, EORATIO !PAR, 
      
-      INTEGER, INTENT(IN) :: YRPLT, YREND, MDATE
+      INTEGER, INTENT(IN) :: YRPLT, YREND !, MDATE
 
 c     Local state variables
 c     :::::::::::::::::::::

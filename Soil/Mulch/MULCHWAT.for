@@ -8,6 +8,8 @@ C  08/27/1998 AAA (A. Andales) Wrote TILLRAIN.
 C  03/08/2001 CHP moved TILLRAIN to WATBAL module.
 C  05/22/2003 CHP Added mulch routine to current model.
 C  12/11/2021 FO  Initialized local variables for MULCHWAT Integr.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE MULCHWATER(CONTROL, ISWITCH,

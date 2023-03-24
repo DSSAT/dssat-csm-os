@@ -24,6 +24,8 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 ! 10/20/2009 CHP Soil water stress factors computed in SPAM to accomodate
 !                   2D, variable time step model.
 !  10/16/2020 CHP Cumulative "soil" evaporation includes mulch and flood evap
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called by: Main
 C  Calls:     XTRACT, OPSPAM    (File SPSUBS.for)

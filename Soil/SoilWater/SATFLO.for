@@ -24,10 +24,11 @@ C  07/02/1997 WDB ADDED TILE DRAIN FLOW
 C=======================================================================
 
       SUBROUTINE SATFLO(
-     &    DLAYR, DS, DUL, NLAYR, SAT, SW,                 !Input
-     &    SWCN, SWCON, MgmtWTD,                           !Input
+     &    DLAYR, DUL, NLAYR, SAT, SW, SWCN, SWCON,        !Input
      &    DRAIN, DRN, SWDELTS)                            !Output
 
+!     2023-02-07 CHP removed unused variables from argument list:
+!     DS, MgmtWTD
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -37,8 +38,8 @@ C=======================================================================
       IMPLICIT NONE
 
       INTEGER L, NLAYR
-      REAL DRAIN, HOLD, SWCON, SWOLD, MgmtWTD
-      REAL DLAYR(NL), DRMX(NL), DRN(NL), DS(NL), DUL(NL), SAT(NL), 
+      REAL DRAIN, HOLD, SWCON, SWOLD !, MgmtWTD
+      REAL DLAYR(NL), DRMX(NL), DRN(NL), DUL(NL), SAT(NL), !DS(NL), 
      &        SW(NL), SWCN(NL), SWDELTS(NL), SWTEMP(NL)
 
 !-----------------------------------------------------------------------

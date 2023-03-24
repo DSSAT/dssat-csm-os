@@ -23,6 +23,8 @@ C  08/12/2003 CHP Added I/O error checking
 !  12/17/2004 CHP Modified HRESCeres call for harvest residue
 !  April-May 2015 - KJB major revisions
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant

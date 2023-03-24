@@ -122,6 +122,7 @@ C-----------------------------------------------------------------------
 !              WTDAT(J) = JULWTB(K)
 !            ENDIF
 !          ENDDO
+
           CONVERTED = .TRUE.
         ENDIF
       ENDIF

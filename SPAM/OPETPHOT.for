@@ -12,18 +12,17 @@ C  Calls:         None
 C=======================================================================
       SUBROUTINE OpETPhot(CONTROL, ISWITCH,
      &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,        !Output
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C       preveious line added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+
+! 2023/01-26 chp removed unused variables in argument list:
+!     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,       !Output
+!     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,   !Output
+!     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
+!     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
+!     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
+!     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
+!     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
+!     &        AGEQESLN, CO2QESLN, QEFFSLN)
 
 C-------------------------------------------------------------------
 C
@@ -42,24 +41,24 @@ C-------------------------------------------------------------------
       CHARACTER*10 OUTETP
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, NOUTDC
-      INTEGER RUN, YEAR, YRDOY, TSV2
+      INTEGER RUN, YEAR, YRDOY !, TSV2
 
       REAL PCINPD,PG, PGNOON, PCINPN
       REAL SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN
       REAL TGRO(TS), TGROAV
 !           changed from 24 to TS by Bruce Kimball on 9JAN17
-      REAL Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit(3), TSRFN(3), CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN(3,1), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3,1),
-     &    GMT, LHT, LHEATT(3,1), RSSHT, RSSLT, RSSST, SHT, SHEATT(3,1)
+!      REAL Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
+!     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+!     &    TCnit, TSRnit(3), TSRFN(3), CSHnit, CSLnit, LSHnit, LSLnit,
+!     &    GN, LHN, LHEATN(3,1), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3,1),
+!     &    GMT, LHT, LHEATT(3,1), RSSHT, RSSLT, RSSST, SHT, SHEATT(3,1)
 C         previous five output lines added by Bruce Kimball DEC14
-      Real TGROnn,TGROnit,TAnn,TAnit,TGRODY
+!      Real TGROnn,TGROnit,TAnn,TAnit,TGRODY
 C           previous line added by Bruce Kimball on 9MAR15
-      Real RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
+!      Real RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
 C       preveious line added by BAK on 10DEC2015
 
-      real  AGEQESLN, CO2QESLN, QEFFSLN
+!      real  AGEQESLN, CO2QESLN, QEFFSLN
 
 
       LOGICAL FEXIST

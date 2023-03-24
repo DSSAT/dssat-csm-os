@@ -49,7 +49,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
       TYPE (FertType)    FertData
-      TYPE (N2O_type)    N2O_DATA
+!     TYPE (N2O_type)    N2O_DATA
 
 !     ------------------------------------------------------------------
 !     2D cell detail

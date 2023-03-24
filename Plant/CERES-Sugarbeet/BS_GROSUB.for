@@ -41,6 +41,8 @@
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD)      !Output
   
+!     2023-01-26 chp removed unused variables in argument list:
+!       CDAY, P3, TSEN, SKi_Avail, 
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres

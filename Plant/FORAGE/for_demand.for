@@ -22,35 +22,42 @@ C=======================================================================
       SUBROUTINE FOR_DEMAND(DYNAMIC,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
-     &  LFSCMOB, LFSNMOB, LNGPEG, NDLEAF, NMINEP, NSTRES,!Input
-     &  PAR, PCNL, PCNRT, PCNST, PGAVL, PHZACC, PUNCSD,   !Input
-     &  PUNCTR, PLTPOP, RPROAV, RTSCMOB, RTSNMOB, RTWT,   !Input
-     &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT, !Input
-     &  SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STMWT, STSCMOB,!Input
-     &  STSNMOB, SWFAC, TAVG, TDUMX, TDUMX2, TGRO, TURFAC,!Input 
-     &  VSTAGE, WCRLF, WCRRT, WCRST, WNRLF, WNRRT, WNRSH, !Input
-     &  WNRST, WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,       !Input
-     &  WTSHE, XPOD, YRDOY,                                                !Input
-     &  NVEG0, NR1, NR2, NR5, NR7, YRSIM,                 !Input
+     &  LNGPEG, NDLEAF, NMINEP, NSTRES,                   !Input
+     &  PAR, PGAVL, PHZACC, PUNCSD,                       !Input
+     &  PUNCTR, PLTPOP, RPROAV, RTWT,                     !Input
+     &  SDDES, SDNO, SDVAR, SHELN, SHVAR, SLDOT, SRDOT,   !Input
+     &  SSDOT, SSRDOT, STMWT,                             !Input
+     &  TAVG, TDUMX, TGRO, TURFAC,                        !Input 
+     &  VSTAGE, WCRLF, WCRRT, WCRST,                      !Input
+     &  WTLF, WTNLF, WTNRT, WTNSR, WTNST, WTSD,           !Input
+     &  WTSHE, YRDOY,                                     !Input
+     &  NVEG0, NR1, NR2, NR7, YRSIM,                      !Input
 
      &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMOBR, PHTIM, PNTIM, POTCAR,                        !Output
+     &  GRRAT1, NDMNEW, NDMOLD, NDMREP, NDMSDR, NDMTOT,   !Output
+     &  NDMVEG, PHTIM, PNTIM, POTCAR,                     !Output
      &  POTLIP, SDGR, TURADD, XFRT,                       !Output
-     &  NMOBSR, PPMFAC, PPTFAC, PCNSR, STRWT,                        !Input
-     &  WCRSR, WLIDOT, WNRSR, XLAI,                                    !Input
-     &  AGRSTR, FNINSR, FRSTR,                                          !Output
-
-     &  FRSTRF, FRSTRM, FRSTRMX, LRMOB,                              !Output
-     &  NMOBSRN, NMOBSRX, NRMOB, NVSTL, NVSTR, NVSTS,       !Output
-     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)                  !Output
+     &  PPTFAC, STRWT,                                    !Input?
+     &  WCRSR,                                            !Input?
+     &  AGRSTR, FNINSR, FRSTR,                            !Output
+     &  FRSTRF, FRSTRM, FRSTRMX, LRMOB,                   !Output
+     &  NMOBSRN, NMOBSRX, NRMOB, NVSTL, NVSTR, NVSTS,     !Output
+     &  NVSTSR, TYPLMOB, TYPNMOB, XSTR, YSTOR)            !Output
      
+! 2023-01-18 CHP removed unused variables from argument list:
+!  LFSCMOB, LFSNMOB, PCNL, PCNRT, PCNST, RTSCMOB, RTSNMOB, SRSCMOB, 
+!  SRSNMOB, STSCMOB, STSNMOB, SWFAC, TDUMX2, WNRLF, WNRRT, WNRSH, 
+!  WNRST, XPOD, NR5, NMOBR, NMOBSR, PPMFAC, PCNSR, WLIDOT, WNRSR, XLAI, 
+!  
+
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FOR_IPDMND, FOR_SDCOMP, FIND, ERROR, IGNORE, GETLUN, 
+     &  TABEX, TIMDIF, CURV
       SAVE
       CHARACTER*1 PLME
       CHARACTER*2 CROP
@@ -58,16 +65,16 @@ C-----------------------------------------------------------------------
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC, FILEGC
       
-      CHARACTER*80  C80
+!     CHARACTER*80  C80
       CHARACTER*6   SECTION
       CHARACTER*255 C255
-      CHARACTER*6   ERRKEY
+!     CHARACTER*6   ERRKEY
 
       INTEGER DYNAMIC, TIMDIF
       INTEGER NPP, I, NAGE, DAS, YRSIM
-      INTEGER YRDOY, NDLEAF, NR1, NR2, NR5, NR7, NVEG0
+      INTEGER YRDOY, NDLEAF, NR1, NR2, NR7, NVEG0  !NR5, 
       
-      INTEGER LUNCRP, LUNIO, LUNECO, ERR, LNUM, FOUND, ISECT
+      INTEGER LUNCRP, ERR, LNUM, FOUND, ISECT  !LUNIO, LUNECO, 
 
       REAL FRLFM, FRSTMM, YY, XX, TMPFAC
       REAL REDPUN,TMPFCS,PAGE,REDSHL,SDMAX,CDMSH,GDMSH,ADDSHL
@@ -93,9 +100,9 @@ C-----------------------------------------------------------------------
      &  GROMAX, GRRAT1, LAGSD, LNGPEG, LNGSH,
      &  NDMNEW, NDMOLD, NDMREP,
      &  NDMSD, NDMSDR, NDMSH, NDMTOT, NDMVEG,
-     &  NMINEP, NMOBMX, NMOBR, NRCVR, NSTRES,NRATIO,
+     &  NMINEP, NMOBMX, NRCVR, NSTRES, !NMOBR, NRATIO, 
      &  NVSMOB,
-     &  PAR, PCNL, PCNRT, PCNST,
+     &  PAR,   !PCNL, PCNRT, PCNST,
      &  PGAVL, PLIGSD, PLTPOP, PMINSD, POASD,
      &  PROLFF, PROLFI,
      &  PRORTF, PRORTI, PROSTF, PROSTI, RCH2O,
@@ -103,12 +110,12 @@ C-----------------------------------------------------------------------
      &  ROA, RPRO, RPROAV, RTWT, SDGR,
      &  SDLIP, SDPRO, SDVAR, SHLAG, SHVAR,
      &  SIZELF, SIZREF, SLAMN, SLAMX, SLAPAR,
-     &  SRMAX, STMWT, SWFAC, TAVG, TDUMX,
-     &  SIZRAT, TDUMX2,
+     &  SRMAX, STMWT, TAVG, TDUMX,  !SWFAC, 
+     &  SIZRAT, !TDUMX2,
      &  TURADD, TURFAC, TURSLA, TURXFR,
-     &  VSSINK, VSTAGE, WCRLF, WCRRT, WCRST, WNRLF,
-     &  WNRRT, WNRSH, WNRST, WTLF, XFRMAX,
-     &  XFRT, XFRUIT, XPOD
+     &  VSSINK, VSTAGE, WCRLF, WCRRT, WCRST, !WNRLF,
+     &  WTLF, XFRMAX,  !WNRRT, WNRSH, WNRST, 
+     &  XFRT, XFRUIT   !, XPOD
 
       REAL FNSDT(4)
       REAL XVGROW(6), YVGROW(6), YVREF(6)
@@ -124,7 +131,7 @@ C-----------------------------------------------------------------------
       REAL NFSL                                       !Diego added
       REAL NSLA                                       !Diego added
       REAL CUMNSF                                     !Diego added
-      REAL NHGT                                       !Diego added
+!     REAL NHGT                                       !Diego added
       
 !CHP - puncture variables, not functional
       REAL PUNCSD, PUNCTR, RPRPUN     
@@ -136,11 +143,11 @@ C Variables for adjusting initial XLEAF for grass transplants
 C Variables for adding storage organ and dormancy functions
 !-----------------------------------------------------------------------
 
-      REAL AGRSTR, FNINSR, FRSTR, WLIDOT, 
-     &    FRSTRF, FRSTRM, FRSTRMX, NMOBSR, NMOBSRN, NMOBSRX, 
-     &    NVSTSR, PCNSR, PPMFAC, PPTFAC, PROSRF, PROSRI, 
-     &    STRWT, TFRLF, TFRSTM, TFRSTR, TFRRT, WCRSR, WNRSR, 
-     &    XLAI, XSTR, YSTOR(8)
+      REAL AGRSTR, FNINSR, FRSTR,   !WLIDOT, 
+     &    FRSTRF, FRSTRM, FRSTRMX, NMOBSRN, NMOBSRX,   !NMOBSR, 
+     &    NVSTSR, PPTFAC, PROSRF, PROSRI, !PCNSR, PPMFAC, 
+     &    STRWT, TFRLF, TFRSTM, TFRRT, WCRSR, !TFRSTR, WNRSR, 
+     &    XSTR, YSTOR(8)  !XLAI, 
 
       CHARACTER*3 TYPLMOB, TYPNMOB 
       REAL LRMOB(4), NRMOB(4)
@@ -152,8 +159,8 @@ C Variables for apportioning NDMVEG and NDMOLD
 !-----------------------------------------------------------------------
       REAL CDMOLD, CHOPRO, FROLDA, KCOLD
       REAL SLDOT, SRDOT, SSDOT, SSRDOT
-      REAL LFSCMOB, LFSNMOB, RTSCMOB, RTSNMOB, SRSCMOB, SRSNMOB, 
-     &   STSCMOB, STSNMOB
+!     REAL LFSCMOB, LFSNMOB, RTSCMOB, RTSNMOB, SRSCMOB, SRSNMOB, 
+!    &   STSCMOB, STSNMOB
       REAL WTNLF, WTNRT, WTNSR, WTNST
       REAL PROLFR, PROSTR, PRORTR, PROSRR
 !***********************************************************************
@@ -173,12 +180,12 @@ C Variables for apportioning NDMVEG and NDMOLD
      &  SLAPAR, SLAREF, SLAVAR, SLOSUM, SIZELF, SIZREF,   !Output
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XLFEST, XSLATM, XTRFAC, XVGROW,    !Output
-     &  XXFTEM, YLEAF, YLFEST, YSLATM, YSTEM, YSTEST,       !Output
-     &  YTRFAC, YVREF, YXFTEM, SDLEST,                           !Output
-     &  FRSTRF, FRSTRMX, LRMOB, NMOBSRN,                              !Output
-     &  NMOBSRX, NRMOB, PLME, PROLFR, PRORTR, PROSRF,            !Output
-     &  PROSRI, PROSRR, PROSTR,                                          !Output
-     &  SDAGPL, TYPLMOB, TYPNMOB, YSREST, YSTOR, KCOLD )      !Output
+     &  XXFTEM, YLEAF, YLFEST, YSLATM, YSTEM, YSTEST,     !Output
+     &  YTRFAC, YVREF, YXFTEM, SDLEST,                    !Output
+     &  FRSTRF, FRSTRMX, LRMOB, NMOBSRN,                  !Output
+     &  NMOBSRX, NRMOB, PLME, PROLFR, PRORTR, PROSRF,     !Output
+     &  PROSRI, PROSRR, PROSTR,                           !Output
+     &  SDAGPL, TYPLMOB, TYPNMOB, YSREST, YSTOR, KCOLD )  !Output
 
 
 
@@ -663,7 +670,7 @@ C---------------------------------------------------------------- added by Diego
 !        WRITE(1000,'(I7,F10.3)') YRDOY,NSLA
         CLOSE (LUNCRP)
 C-----------------------------------------------------------------
-      if (NSLA .GT. 1.2) then                              !To limit NSLA to 1.2
+      if (NSLA .GT. 1.2) then     !To limit NSLA to 1.2
           NSLA=1.2 
           endif
       NFSL   = MAX(0.1, (1.0 - (1.0 - NSTRES)*NSLA))       
@@ -862,16 +869,17 @@ C=======================================================================
      &  SLAPAR, SLAREF, SLAVAR, SLOSUM, SIZELF, SIZREF,   !Output
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XLFEST, XSLATM, XTRFAC, XVGROW,    !Output
-     &  XXFTEM, YLEAF, YLFEST, YSLATM, YSTEM, YSTEST,       !Output
-     &  YTRFAC, YVREF, YXFTEM, SDLEST,                           !Output
-C     &  YTRFAC, YVREF, YXFTEM,                                      !Output
-     &  FRSTRF, FRSTRMX, LRMOB, NMOBSRN,                              !Output
-     &  NMOBSRX, NRMOB, PLME, PROLFR, PRORTR, PROSRF,            !Output
-     &  PROSRI, PROSRR, PROSTR,                                          !Output
-     &  SDAGPL, TYPLMOB, TYPNMOB, YSREST, YSTOR, KCOLD )      !Output
+     &  XXFTEM, YLEAF, YLFEST, YSLATM, YSTEM, YSTEST,     !Output
+     &  YTRFAC, YVREF, YXFTEM, SDLEST,                    !Output
+C     &  YTRFAC, YVREF, YXFTEM,                           !Output
+     &  FRSTRF, FRSTRMX, LRMOB, NMOBSRN,                  !Output
+     &  NMOBSRX, NRMOB, PLME, PROLFR, PRORTR, PROSRF,     !Output
+     &  PROSRI, PROSRR, PROSTR,                           !Output
+     &  SDAGPL, TYPLMOB, TYPNMOB, YSREST, YSTOR, KCOLD )  !Output
         
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
 !-----------------------------------------------------------------------
       CHARACTER*1 PLME
       CHARACTER*3   TYPSDT
@@ -903,16 +911,16 @@ C     &  YTRFAC, YVREF, YXFTEM,                                      !Output
      &    XXFTEM(10), YXFTEM(10)
         REAL XLEAF(8), YLEAF(8), YSTEM(8)
 
-      REAL  FRSTRF, FRSTRMX, NMOBSRN, NMOBSRX, PROSRF, PROSRI,                  
-     &  SDAGPL, CLAIT
-      REAL YSTOR(8)                                                      
+      REAL  FRSTRF, FRSTRMX, NMOBSRN, NMOBSRX, PROSRF, PROSRI,
+     &  SDAGPL  !, CLAIT
+      REAL YSTOR(8)   
       REAL KCOLD
       REAL PROLFR, PROSTR, PRORTR, PROSRR
 
       CHARACTER*3 TYPLMOB, TYPNMOB 
 
       REAL LRMOB(4), SDLEST
-      REAL NRMOB(4), VEGNPCT, VEGNPMX, VNMOBR, VNSTAT
+      REAL NRMOB(4)  !, VEGNPCT, VEGNPMX, VNMOBR, VNSTAT
       REAL XLFEST(8), YLFEST(8), YSTEST(8), YSREST(8)
 
 !-----------------------------------------------------------------------

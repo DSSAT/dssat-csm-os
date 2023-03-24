@@ -9,19 +9,23 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_AgesWts ( &
-        NLAYR,      BRSTAGE       & 
+        NLAYR       & 
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       BRSTAGE        
+
         USE YCA_First_Trans_m
         USE YCA_Control_Leaf
         USE YCA_Control_Plant
     
         IMPLICIT NONE
+        EXTERNAL WARNING
         
         INTEGER NLAYR
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
-        REAL BRSTAGE, TEMP
+!       REAL BRSTAGE, TEMP
         
         !-----------------------------------------------------------------------
         !         Update ages

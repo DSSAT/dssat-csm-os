@@ -39,9 +39,9 @@ C  RNLF   : Intermediate factor used to calculate distribution of new root
 C           growth in the soil - unitless value between 0 and 1
 C  L,L1   : Loop counter
 C=======================================================================
-      ! CHP & JZW considers that there exist a bug: 
-      ! RLV(L) = RLINIT / DLAYR(L) should be RLV/RTDEP
-      ! RLV(L) = RLV(L)+RLDF(L)*RNLF/DLAYR(L)-0.005*RLV(L) where DLAYR should be RTDEP
+!       CHP & JZW considers that there exist a bug: 
+!       RLV(L) = RLINIT / DLAYR(L) should be RLV/RTDEP
+!       RLV(L) = RLV(L)+RLDF(L)*RNLF/DLAYR(L)-0.005*RLV(L) where DLAYR should be RTDEP
       SUBROUTINE PT_ROOTGR (DYNAMIC, 
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input

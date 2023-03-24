@@ -21,6 +21,9 @@ C=======================================================================
      &    BD_TILLED, CN_TILLED, DL_TILLED,                !Output
      &    DS_TILLED, SAT_TILLED, SC_TILLED)               !OutpuT
 
+!     2023-01-26 chp removed unused variables in argument list:
+!       DS
+
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE

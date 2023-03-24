@@ -47,6 +47,7 @@ C-----------------------------------------------------------------------
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TIMDIF, CURV
       SAVE
 
       CHARACTER*3 TYPFXT,TYPNGT,TYPFXD,TYPFXW,TYPFXA

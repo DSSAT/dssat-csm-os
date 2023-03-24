@@ -70,6 +70,8 @@ C  02/20/2006 GH  Add RNMODE="G" option for GENCALC
 C  01/11/2007 CHP Changed GETPUT calls to GET and PUT
 C  01/12/2007 CHP Read trt number and rotation number for sequence mode
 C  10/09/2020 FO  Y4K implementation for weather files
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
       PROGRAM CSM
 

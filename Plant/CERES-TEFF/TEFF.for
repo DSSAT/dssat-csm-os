@@ -47,6 +47,8 @@ C  04/01/2004 CHP/US New PHEFAC calculation
 !  03/17/2020 WP subroutine name changed to TEFF
 C  03/29/2021 MB/WP Addapted to Teff based on CERES-Rice
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE TEFF(CONTROL, ISWITCH,

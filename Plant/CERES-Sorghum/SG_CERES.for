@@ -30,6 +30,8 @@ C  08/26/2011 GH  Add new tillering coefficient in Ecotype file
 C  05/31/2007 GH Added P-model (unfinished)
 C  02/07/2018 MA Externalized initial leaf area A (change name to PLAM, 11jan2019)
 !  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant

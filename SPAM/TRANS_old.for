@@ -35,6 +35,7 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL TRATIO
 
       CHARACTER*2  CROP
 
