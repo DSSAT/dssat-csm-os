@@ -30,6 +30,7 @@ C  08/12/2003 CHP Added I/O error checking
 !  08/11/2011 JW  Move the soilLayerType determination of 1D layer to a new SUBROUTINE SoilLayerClass
 !                 Add soilLayerType determination for bed layer profile
 !                 Add calculation of Matrix Potential
+!  01-24/2023 chp added SAEA to soil analysis in FileX for methane
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -95,6 +96,8 @@ C-----------------------------------------------------------------------
 !     Stable organic C, read from 2nd tier soil data in INP file.
 !     Value comes from soil analysis section of FILEX, but stored w/ soil profile data
       REAL, DIMENSION(NL) :: SASC
+!     Soil alternate electron acceptors (mol Ceq/m3)
+      REAL, DIMENSION(NL) :: SAEA
 
 !From DSSAT3.0 manual (second tier):
 ! EXTP    Extractable phosphorus (mg/kg)
@@ -223,6 +226,7 @@ C-----------------------------------------------------------------------
       STONES = -99.
       OC     = -99.
       SASC   = -99.
+      SAEA   = -99.
       PH     = -99.
       BD     = -99.
       LL     = -99.
@@ -326,7 +330,7 @@ C-----------------------------------------------------------------------
      &      EXTP(L), TOTP(L), ORGP(L), CACO(L), 
      &      EXTAL(L), EXTFE(L), EXTMN(L), TOTBAS(L), PTERMA(L),
      &      PTERMB(L), EXK(L), EXMG(L), EXNA(L), EXTS(L), SLEC(L),
-     &      EXCA(L), SASC(L)
+     &      EXCA(L), SASC(L), SAEA(L)
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
       ENDDO
@@ -570,6 +574,18 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
           ELSE
             IF (INDEX(MSG(3),'ADCOEF') < 1) THEN
               MSG(3) = TRIM(MSG(3)) // ', ADCOEF'
+            ENDIF
+          ENDIF
+        ENDIF
+
+        IF (SAEA(L) .LT. 0.0) THEN
+          SAEA(L) = 26.5
+          Length = LEN(TRIM(MSG(3)))
+          IF (Length < 2) THEN
+            MSG(3) = '   SAEA'
+          ELSE
+            IF (INDEX(MSG(3),'SAEA') < 1) THEN
+              MSG(3) = TRIM(MSG(3)) // ', SAEA'
             ENDIF
           ENDIF
         ENDIF
@@ -867,6 +883,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       SOILPROP % SAND   = SAND   
       SOILPROP % SASC   = SASC   
+      SOILPROP % SAEA   = SAEA   
       SOILPROP % SAT    = SAT    
       SOILPROP % SILT   = SILT   
       SOILPROP % SLNO   = SLNO  
@@ -1643,6 +1660,8 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       REAL, DIMENSION(NL) :: CACO3, EXTP, ORGP, PTERMA, PTERMB
       REAL, DIMENSION(NL) :: TOTP, TOTBAS, EXCA, EXK, EXNA
       REAL, DIMENSION(NL) :: SASC   !stable organic C
+!     SAEA = soil alternate electron acceptors (mol Ceq/m3)
+      REAL, DIMENSION(NL) :: SAEA   
       REAL, DIMENSION(NL) :: WCR, alphaVG, mVG, nVG
 
       REAL CN, SWCON
@@ -1681,6 +1700,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
       SAND    = SOILPROP % SAND   
       SASC    = SOILPROP % SASC   
+      SAEA    = SOILPROP % SAEA   
       SAT     = SOILPROP % SAT    
       SILT    = SOILPROP % SILT   
       SLNO    = SOILPROP % SLNO   
