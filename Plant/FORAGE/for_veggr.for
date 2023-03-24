@@ -1159,7 +1159,7 @@ C      returned for CH2O
       CHORECOVER = NLKNG1 * AGRVGI + NLKNG2 * AGRVGI
       AGRVG = (OCH2OCOST + CHORECOVER) / 
      &    (WLDOTN + WSDOTN + WRDOTN + WSRDOTN)
-      IF (TRNU .GT. 0.001) THEN
+      IF (TRNU .GT. 0.0) THEN
       NLKSPENT =  NLKNG1 * AGRVGI / (RPRO * 0.16) + 
      &    NLKNG2 * AGRVGI / (RNNU * 0.16)
       ELSE
@@ -1171,7 +1171,7 @@ C      returned for CH2O
 
 C      Return NLKSPENT to its sources
       NMINEA = NMINEA - NLKNG1 * (AGRVGI / (RPRO * 0.16))  
-      IF (TRNU .GT. 0.001) THEN
+      IF (TRNU .GT. 0.0) THEN
       TRNURTRN = NLKNG2 * AGRVGI / (RNNU * 0.16)
 
 
