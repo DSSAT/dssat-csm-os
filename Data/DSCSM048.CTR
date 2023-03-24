@@ -61,13 +61,13 @@ $SIMULATION_CONTROLS
 @N CONTROLS_TITLE
 11 Potential yield 
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
-11 OP              N     N     N     N     N     N     N     .     .
+11 OP              N     N     .     N     N     N     N     .     .
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
 12 Potential yield, no output except summary, overview and evaluate
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
-12 OP              N     N     N     N     N     N     N     .     .
+12 OP              N     N     .     N     N     N     N     .     .
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
 12 OU              N     Y     Y     .     N     N     N     N     N     N     N     N     N     .
 
