@@ -21,6 +21,7 @@
 
       USE ModuleDefs
       implicit none
+      EXTERNAL OPGENERIC, SUWCMS2, SUBSL2
       SAVE
 
       INTEGER, INTENT(IN) :: DYNAMIC
@@ -47,7 +48,7 @@
       INTEGER NVars, Width
       CHARACTER*80  FormatTxt
       CHARACTER*120 HeaderTxt
-      REAL CAPR12
+!     REAL CAPR12
 
 !     Curtis Result: Ksat=11.4, LL=0.05, DUL=0.096, SAT=0.46, 
 !     VG parameter: alpha=	0.079245615/cm, m=	0.613605717, n=	2.588030008

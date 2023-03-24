@@ -202,7 +202,7 @@ C=====================================================================
      &    ,(TSW * 10.), FLOOD, SNOW, MULCHWAT         !State variables
      &    ,IRRAMT, RAIN                               !Inflows
      &    ,RESWATADD_T                                !Inflows
-     &    ,LatInflow+LatOutflow                      !Lateral flow
+     &    ,LatInflow+LatOutflow                       !Lateral flow
      &    ,MULCHEVAP                                  !Outflows
 !!     &    ,INFILT                 !Exchange between flood and soil water
      &    ,DRAIN, RUNOFF, FRUNOFF, ES, EP, EF, TDFD*10. !Outflows

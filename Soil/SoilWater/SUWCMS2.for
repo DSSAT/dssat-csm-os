@@ -27,6 +27,8 @@
  
       USE MODULEDEFS
       IMPLICIT NONE
+      EXTERNAL SUERR
+
 !-----Formal parameters
       INTEGER I, SWIT4
       REAL    WCST, WCL, MS
@@ -47,14 +49,14 @@
  
       IF (SWIT4.EQ.1) THEN ! request MS(WCL)
 !--------Suction calculated from water content
-         ! SUERR checks whether value of variable X is within          *
-         !       pre-specified domain 
+!          SUERR checks whether value of variable X is within          *
+!                pre-specified domain 
           
          IF (WCL.LT.WCAD(I).OR.WCL.GT.WCST) 
      &      CALL SUERR(3,WCL,WCAD(I),WCST)
-         ! SUERR(message #,variable to be checked,XMIN,XMAX)
-         ! WCSTRP  R4  Array saturated volumetric water content ripened      I  *
-         ! soil per soil compartment (cm3 cm-3)     
+!          SUERR(message #,variable to be checked,XMIN,XMAX)
+!          WCSTRP  R4  Array saturated volumetric water content ripened      I  *
+!          soil per soil compartment (cm3 cm-3)     
          IF (WCL.GT.WCSTRP(I)) THEN
 !           It is assumed that MS remains zero during shrinkage
             MS = 0.
@@ -79,7 +81,7 @@
       END IF
  
       RETURN
-      END
+      END SUBROUTINE SUWCMS2
 ! C=====================================================================
 !  SUWCMS2 VARIABLE DEFINITIONS: (updated Dec 2009)
 !-----------------------------------------------------------------------
@@ -153,8 +155,6 @@
      &       '    message number, value, minimum and maximum: ',   
      &        IMNR,X,XMIN,XMAX, 
      &        ERRM(IMNR)
-       !  CALL FATALERR ('SUERRM',' ')
-         ! SUBROUTINE FATALERR (STRING1, STRING2). Writes the error messages STRING1 and STRING2 to the screen and holds the simulation until <RETURN> is pressed. Then the execution of the model is terminated.
       END IF
 
-      END
+      END SUBROUTINE SUERR

@@ -36,6 +36,7 @@
  
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL SUMSKM2
       SAVE
 
 !-----Formal parameters
@@ -94,8 +95,8 @@
 !       START CHANGES
           CALL SUMSKM2(I,EXP(ELOG10*PFGAU(I3)),WCST,KMS, 
      &          VGA, VGL, VGN, VGR, KST, WCAD, WCSTRP)
-          ! SUMSKM2 calculates the hydraulic conductivity at given suction for layer I on the basis of chosen option
-          ! SUMSKM2(Layer index,suction,SAT,Hydraulic conductivity)
+!           SUMSKM2 calculates the hydraulic conductivity at given suction for layer I on the basis of chosen option
+!           SUMSKM2(Layer index,suction,SAT,Hydraulic conductivity)
           CONDUC(I3) = KMS
          ! write(*,*)"I3=",I3,",KMS=", KMS
 !       END CHANGES
@@ -105,7 +106,8 @@
       END DO
  
 !-----Setting upper and lower limit
-      FU =4000. !!!!!JZW replaced  1.27  ! first Trial data of flow rate upper limit
+!!!!!JZW replaced  1.27  ! first Trial data of flow rate upper limit
+      FU =4000. 
 ! NEXT LINE CHANGED
 !      FL = -1.*EXP (ELOG10*AFGEN (CONTAB, ILCON, PF1))
 ! START CHANGES
@@ -210,6 +212,8 @@ C=====================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL SUERR, SUWCMS2
+
 !-----Formal parameters
       INTEGER I
       REAL    MS, WCST, KMS
@@ -240,17 +244,15 @@ C=====================================================================
 ! Jin Note: This is same as RETC's Mualem's Model model if consider VGL= l (read as el) of RETC
             WCL = 0.
 !           Dummy value; WCL is returned by SUWCMS2!
-           ! write(*,*)"error here MS=", MS
-            CALL SUWCMS2(I,2,WCST,WCL,MS, !Calculate water content from suction
+!           Calculate water content from suction
+            CALL SUWCMS2(I,2,WCST,WCL,MS, 
      &          VGA, VGN, VGR, WCAD, WCSTRP)
-          !   write(*,*)"error here WCL=", WCL
             VGM  = 1.0-1.0/VGN(I)
             WREL = (WCL-VGR(I))/(WCSTRP(I)-VGR(I))
             HLP1 = WREL**VGL(I)
             HLP2 = 1.0-WREL**(1./VGM)
             HLP3 = 1.0-HLP2**VGM
             KMS  = KST(I)*HLP1*HLP3*HLP3
-           ! Write(*,*) "Hydraulic Conductivity at ",I,"th layer is ",KMS
 !         ELSE IF (SWITKH.EQ.2) THEN
 !!-----------Power function conductivity
 !            IF (MS.LE.1.) KMS = KST(I)

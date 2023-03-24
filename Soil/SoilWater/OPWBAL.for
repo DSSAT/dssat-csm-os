@@ -55,6 +55,8 @@ C=======================================================================
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
+      CHARACTER*8, DIMENSION(NL) :: SW_txt
+
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -136,7 +138,9 @@ C-----------------------------------------------------------------------
         ENDIF
         END IF   ! VSH
         
-        N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+!       temp chp print all layers
+!       N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+        N_LYR = MAX(4,SOILPROP%NLAYR)
 
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
 !       IF (INDEX('RSN',MEINF) <= 0) THEN   
@@ -160,13 +164,26 @@ C-----------------------------------------------------------------------
      &    '  SWTD  SWXD   ROFC   DRNC   PREC  IR#C  IRRC  DTWT')
         ENDIF
 
-        IF (N_LYR < 10) THEN
-          WRITE (NOUTDW,1121) ("SW",L,"D",L=1,N_LYR)
- 1121     FORMAT(9("    ",A2,I1,A1))
-        ELSE
-          WRITE (NOUTDW,1122) ("SW",L,"D",L=1,9), "    SW10"
- 1122     FORMAT(9("    ",A2,I1,A1),A8)
-        ENDIF
+!        IF (N_LYR < 10) THEN
+!          WRITE (NOUTDW,1121) ("SW",L,"D",L=1,N_LYR)
+! 1121     FORMAT(9("    ",A2,I1,A1))
+!        ELSE
+!!         WRITE (NOUTDW,1122) ("SW",L,"D",L=1,9), "    SW10"
+!!1122     FORMAT(9("    ",A2,I1,A1),A8)
+!          WRITE (NOUTDW,1122) ("SW",L,"D",L=1,9),(
+! 1122     FORMAT(9("    ",A2,I1,A1),A8)
+!        ENDIF
+
+!       temp chp print SW for all layers
+        DO L = 1, NLAYR
+          IF (L < 10) THEN
+            WRITE(SW_txt(L),'("    SW",I1,"D")') L
+          ELSE
+            WRITE(SW_txt(L),'("   SW",I2,"D")') L
+          ENDIF
+        ENDDO
+        WRITE(NOUTDW,'(20(A8))') (SW_txt(L), L=1,NLAYR)
+
         END IF   ! VSH
         
         YRSTART = YRDOY
@@ -187,7 +204,9 @@ C-----------------------------------------------------------------------
      &    NINT(PESW*10.),0,0,0,0,
      &      0, 0, NINT(MgmtWTD), NINT(ActWTD), 
      &      MULCHWAT, 0.0, 0.0, 0.0, 0.0,
-     &      (SW(L),L=1,N_LYR)
+!    &      (SW(L),L=1,N_LYR)
+!     TEMP CHP
+     &      (SW(L),L=1,NLAYR)
  1300     FORMAT(1X,I4,1X,I3.3,1X,I5,10(1X,I7),
      &      F8.2,2F8.1,F8.2,
      &      F8.2,   !EXCS
@@ -265,7 +284,7 @@ C-----------------------------------------------------------------------
       
         IF (ISWWAT .EQ. 'Y') THEN
           CALL SUMSW(NLAYR, DLAYR, SW, TSW)
-	  CALL SUMSW(NLAYR, DLAYR, LL, TLL)
+          CALL SUMSW(NLAYR, DLAYR, LL, TLL)
           PESW = MAX(0.0, TSW - TLL) / 10.
         ELSE
           PESW = 0.0
