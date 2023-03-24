@@ -9,6 +9,7 @@
       USE ModuleDefs
       USE CRP_First_Trans_m 
       IMPLICIT NONE
+      EXTERNAL UCASE, TVILENT, GETLUN, TL10FROMI, XREADC, XREADT
       SAVE
 
       INTEGER CN, DOY, FROP, ON, RN, RUN, SN, TN
@@ -17,7 +18,7 @@
       !INTEGER VERSIONCSCRP
       INTEGER TVILENT          ! Integer function call
 
-      CHARACTER(LEN=1)   IDETL, ISWNIT, ISWWAT, RNMODE      
+      CHARACTER(LEN=1)   IDETL, ISWNIT, RNMODE !, ISWWAT     
       CHARACTER (LEN=250) FILEIOIN  
       CHARACTER(LEN=10)  TL10FROMI      
         

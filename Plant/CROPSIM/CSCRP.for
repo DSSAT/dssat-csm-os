@@ -4,133 +4,138 @@
 !  Version changed to accomodate new CUL,ECO files;minor other changes
 !
 !  Last edit 050415  Few more writes to Work.out 
+!  2023-01-26 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines.                    
 !-----------------------------------------------------------------------
   
       SUBROUTINE CSCRP(FILEIOIN, RUN, TN, RN, RNMODE,                                        
-     &  ISWWAT, ISWNIT, ISWDIS, MESOM,                         !Controls
-     &  IDETS, IDETO, IDETG, IDETL, FROP,                      !Controls
-     &  SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                !Run+loop
-     &  SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,             !Weather
-     &  DRAIN, RUNOFF, IRRAMT,                                 !Water
-     &  DAYLT, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,             !Weather        
-     &  NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,     !Soil states
-     &  SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                    !H2O,N states
-     &  TLCHD, TNIMBSOM, TNOXD,                                !N components
-     &  TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,   !N components
-     &  YEARPLTCSM, HARVFRAC,                                  !Pl.date
-     &  PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,            !Resources
-     &  LAI, KCAN, KEP,                                        !States
-     &  RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,            !States
-     &  UNO3, UNH4, UH2O,                                      !Uptake
-     &  SENCALG, SENNALG, SENLALG,                             !Senescence
-     &  RESCALG, RESNALG, RESLGALG,                            !Residues
-     &  STGYEARDOY, GSTAGE,                                    !Stage dates   
-     &  WEATHER, SOILPROP, CONTROL,                                               
-     &  DYNAMIC)                                               !Control
+     &  ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Controls
+     &  IDETS, IDETO, IDETG, IDETL, FROP,                   !Controls
+     &  SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
+     &  SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather
+     &  DRAIN, RUNOFF, IRRAMT,                              !Water
+     &  DAYLT, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,          !Weather        
+     &  NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
+     &  SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                !H2O,N states
+     &  TLCHD, TNIMBSOM, TNOXD,                            !N components
+     &  TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N comp
+     &  YEARPLTCSM, HARVFRAC,                               !Pl.date
+     &  PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,         !Resources
+     &  LAI, KCAN, KEP,                                     !States
+     &  RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,         !States
+     &  UNO3, UNH4, UH2O,                                   !Uptake
+     &  SENCALG, SENNALG, SENLALG,                          !Senescence
+     &  RESCALG, RESNALG, RESLGALG,                         !Residues
+     &  STGYEARDOY, GSTAGE,                                 !Stage dates   
+!    &  WEATHER, SOILPROP, CONTROL,                         
+     &  DYNAMIC)                                            !Control
 
-      ! Staging in comparison with Ceres
-      !  1 Germinate               1 Germinate
-      !  2 Terminal spikelet       2 Terminal spikelet
-      !  3 Pseudo-stem
-      !  4 End leaf                3 End leaf
-      !  5 Head emerge             4 End spike growth
-      !  6 Anthesis
-      !  7 End anthesis
-      !  8 Milk end/start dough    5 Begin rapid grain geroowth
-      !  9 Hard dough              6 Physiological maturity  
-      ! 10 Harvest                 6.9 Harvest 
+!     2023-01-20 chp removed unused variables from argument list
+!     WEATHER, SOILPROP, CONTROL, 
+
+!       Staging in comparison with Ceres
+!        1 Germinate               1 Germinate
+!        2 Terminal spikelet       2 Terminal spikelet
+!        3 Pseudo-stem
+!        4 End leaf                3 End leaf
+!        5 Head emerge             4 End spike growth
+!        6 Anthesis
+!        7 End anthesis
+!        8 Milk end/start dough    5 Begin rapid grain geroowth
+!        9 Hard dough              6 Physiological maturity  
+!       10 Harvest                 6.9 Harvest 
       
-      ! Changes made after sending model to Jeff for Agmip work.
-      !  1. Variables passed to main module for outputting in Summary.out 
-      !  2. Version check for genotype files re-introduced
-      !  3. Phenology temperature responses made to work for differrent 
-      !     phases (was not working so responses for phase 1 for all)
-      !  4. Initialized tfdnext. Not initialized so sequence of runs 
-      !     used previous tfdnext for 1st phase, hence ADAT differed
-      !     for sequence of runs.
-      !  5. Capability to start at time of 1st irrig or at emergence 
-      !     introduced
-      !  6. Aitken formula introduced to calculate leaf number
-      !     to emerge after terminal spikelet.
-      !  7. Radiation effect on grain number set at anthesis
-      !  8. Potential grain size reduced if canopy size over
-      !     threshold.
-      !  9. Temperature responses changed.
-      ! 10. Minor 'bugs' corrected.
+!       Changes made after sending model to Jeff for Agmip work.
+!        1. Variables passed to main module for outputting in Summary.out 
+!        2. Version check for genotype files re-introduced
+!        3. Phenology temperature responses made to work for differrent 
+!           phases (was not working so responses for phase 1 for all)
+!        4. Initialized tfdnext. Not initialized so sequence of runs 
+!           used previous tfdnext for 1st phase, hence ADAT differed
+!           for sequence of runs.
+!        5. Capability to start at time of 1st irrig or at emergence 
+!           introduced
+!        6. Aitken formula introduced to calculate leaf number
+!           to emerge after terminal spikelet.
+!        7. Radiation effect on grain number set at anthesis
+!        8. Potential grain size reduced if canopy size over
+!           threshold.
+!        9. Temperature responses changed.
+!       10. Minor 'bugs' corrected.
       
-      ! NB. Some additional controls that are not handled by the CSM 
-      !     inputs routine are read directly from the x-file in the
-      !     section of code dealing with 'additional controls'. The
-      !     same approach could be used to input grazing information
-      !     if CSM is not modified to handle the additional grazing
-      !     inputs necessary. 
+!       NB. Some additional controls that are not handled by the CSM 
+!           inputs routine are read directly from the x-file in the
+!           section of code dealing with 'additional controls'. The
+!           same approach could be used to input grazing information
+!           if CSM is not modified to handle the additional grazing
+!           inputs necessary. 
          
      
-      ! NB. TN, et.are not provided when running under CSM (DS4 files). 
-      !     They are read in XREADC in the CSREA module. 
+!       NB. TN, et.are not provided when running under CSM (DS4 files). 
+!           They are read in XREADC in the CSREA module. 
 
-      ! Changes for AZMC  01/02/2014
-      !  1. Account for 'haying off' (Using TKGF from SPE file)
-      !  2. SRAD in phase 5 (head emergence to anthesis) effect on grain #
-      !     (using G#RF,G#RT from ECO file)
-      !  3. Potential grain size reduced as temperature in phase 5 increases
-      !     (Using GWTAF,GWTAT from ECO file)  
+!       Changes for AZMC  01/02/2014
+!        1. Account for 'haying off' (Using TKGF from SPE file)
+!        2. SRAD in phase 5 (head emergence to anthesis) effect on grain #
+!           (using G#RF,G#RT from ECO file)
+!        3. Potential grain size reduced as temperature in phase 5 increases
+!           (Using GWTAF,GWTAT from ECO file)  
 
-      ! Changes for RORO  28/11/2013
-      !  1. HINM and VNPCM calculated without retained dead leaf
-      !  2. Root N taken out of remobilization pool
-      !     (N movement to grain from stem first,leaves 2nd.) 
-      !  3. Stem N limits changed. End minimum from 0.4 to 0.15
-      !  4. Labile N set at 10%
-      !  5. NUSEFAC left as NLABPC/100.0. No increase in late grain fill
-      !  6. NUPWF left at 1.0 after trying 0.0 (1.0->0.0 with changes 07/10/2014).
-      !  7. Calibration to increase tiller death (TDFAC 6->9); increase
-      !     leaf area (LAFV 0.1->0.3).  NB. Do not have a response to N
-      !     if potential leaf area too small (LAIS or increase factors)
-      !  8. Kernel wt.(GWTS) set too high at 50 to enable better 
-      !     simulation of yield. Often cannot simulate both K.Wt.and
-      !     yield ... maybe k.wt measurement after too good winnowing,
-      !     or moisture % problems.
-      !  9. Vegetative N% too low for higher N treatments ... need to
-      !     translocate less when have high soilN. 
+!       Changes for RORO  28/11/2013
+!        1. HINM and VNPCM calculated without retained dead leaf
+!        2. Root N taken out of remobilization pool
+!           (N movement to grain from stem first,leaves 2nd.) 
+!        3. Stem N limits changed. End minimum from 0.4 to 0.15
+!        4. Labile N set at 10%
+!        5. NUSEFAC left as NLABPC/100.0. No increase in late grain fill
+!        6. NUPWF left at 1.0 after trying 0.0 (1.0->0.0 with changes 07/10/2014).
+!        7. Calibration to increase tiller death (TDFAC 6->9); increase
+!           leaf area (LAFV 0.1->0.3).  NB. Do not have a response to N
+!           if potential leaf area too small (LAIS or increase factors)
+!        8. Kernel wt.(GWTS) set too high at 50 to enable better 
+!           simulation of yield. Often cannot simulate both K.Wt.and
+!           yield ... maybe k.wt measurement after too good winnowing,
+!           or moisture % problems.
+!        9. Vegetative N% too low for higher N treatments ... need to
+!           translocate less when have high soilN. 
 
-      ! Changes for KSAS  02/12/2013
-      !  1. Established flag set when LAI>0.0,not when shoot/root>2 
-      !     (But ? this as allows re-use in the fall)
-      !  2. May need to take reserve CH2O out of calculation of VNPCM
+!       Changes for KSAS  02/12/2013
+!        1. Established flag set when LAI>0.0,not when shoot/root>2 
+!           (But ? this as allows re-use in the fall)
+!        2. May need to take reserve CH2O out of calculation of VNPCM
 
-      ! Changes for SWSW  05/12/2013
-      !  1. Minimum grain N% from species to ecotype characteristic.
+!       Changes for SWSW  05/12/2013
+!        1. Minimum grain N% from species to ecotype characteristic.
       
 
-      ! For incorporation in CSM should:
-      !  Ensure that Alt-plant routine:
-      !   Sending control ISWDIS
-      !   Sending DEWDUR(=-99.0?), CLOUDS(=0.0?), ES, ALBEDO(=0.2)
-      !   Setting dummies for PARIP, PARIPA, LAIL, LAILA
-      !  Eliminate '!' from SUMVALS call.
-      !  Need to do something with metadata name if INH file
+!       For incorporation in CSM should:
+!        Ensure that Alt-plant routine:
+!         Sending control ISWDIS
+!         Sending DEWDUR(=-99.0?), CLOUDS(=0.0?), ES, ALBEDO(=0.2)
+!         Setting dummies for PARIP, PARIPA, LAIL, LAILA
+!        Eliminate '!' from SUMVALS call.
+!        Need to do something with metadata name if INH file
 
-      ! And to run well in CSM should:
-      !    Read ICIN (with -99 in profile) and ICSW variables
+!       And to run well in CSM should:
+!          Read ICIN (with -99 in profile) and ICSW variables
 
-      ! Temporary changes .. need firming-up:
-      !    Height increase on emergence day has initialisation value
+!       Temporary changes .. need firming-up:
+!          Height increase on emergence day has initialisation value
 
-      ! Thoughts about possible changes:
-      !    1. Phyllochron senescence delayed if low light interception
-      !    2. Leaf and stem N top-up reduced in stages 4 and 5 (NTUPF)
-      !    3. Organise echo of input variables in Work.out into logical 
-      !       groups
+!       Thoughts about possible changes:
+!          1. Phyllochron senescence delayed if low light interception
+!          2. Leaf and stem N top-up reduced in stages 4 and 5 (NTUPF)
+!          3. Organise echo of input variables in Work.out into logical 
+!             groups
 
-      ! Questions
-      !    1. What x-file information is essential to run
-      !    2. Impact of N uptake variable (NUPCF,NUPNF,NUPWF) 
+!       Questions
+!          1. What x-file information is essential to run
+!          2. Impact of N uptake variable (NUPCF,NUPNF,NUPWF) 
 
-      ! Checks needed 
-      !    1. Algorthms for fraction of day at changeovers
-      !    2. Blips in response curves and reasons for these
-      !    3  All declarations,initialisations to 0 or -99
+!       Checks needed 
+!          1. Algorthms for fraction of day at changeovers
+!          2. Blips in response curves and reasons for these
+!          3  All declarations,initialisations to 0 or -99
 
       USE OSDefinitions
 
@@ -138,18 +143,20 @@
       USE CRP_First_Trans_m
       
       IMPLICIT NONE
-        
-      TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
-      TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
-      TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
+      EXTERNAL DISEASE, CSCRPLAYERS, CRP_RUNINIT, CRP_SEASINIT, 
+     &  CRP_GROWTH, CRP_INTEGRATE, CRP_OUTPUT
+
+!     TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
+!     TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
+!     TYPE (SoilType), intent (in) ::   SOILPROP ! Defined in ModuleDefs
     
       INTEGER CN, DOY, DYNAMIC, FROP, NLAYR, ON, REP, RN          
       INTEGER RUN, RUNI, SN, STEP, STGYEARDOY(20), TN, YEAR
       INTEGER YEARPLTCSM 
-      INTEGER CSTIMDIF, CSYDOY, DAPCALC, TVICOLNM
-      INTEGER CSIDLAYR, CSYEARDOY
+!     INTEGER CSTIMDIF, CSYDOY, DAPCALC, TVICOLNM
+!     INTEGER CSIDLAYR, CSYEARDOY
 
-      REAL ALBEDOS, BD(NL), GSTAGE, LAI, CANHT, CLOUDS, CO2, DAYL
+      REAL ALBEDOS, BD(NL), GSTAGE, LAI, CANHT, CLOUDS, CO2  !, DAYL
       REAL DAYLT
       REAL DEPMAX, DEWDUR, DLAYR(NL), DRAIN, DUL(NL), EO, EOP, EP          
       REAL ES, ET, FERNIT, HARVFRAC(2), IRRAMT, KCAN, KEP, LAIL(30)
@@ -161,12 +168,12 @@
       REAL TLCHD, TAIRHR(24), TMAX, TMIN, TNIMBSOM, TNOXD, TOMINFOM                                                  
       REAL TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3, TRWUP, UH2O(NL)
       REAL UNH4(NL), UNO3(NL), WINDSP    
-      REAL CSVPSAT, TFAC4, YVALXY, CSYVAL
+!     REAL CSVPSAT, TFAC4, YVALXY, CSYVAL
   
       CHARACTER(LEN=1)   IDETG, IDETL, IDETO, IDETS, ISWDIS, ISWNIT      
       CHARACTER(LEN=1)   ISWWAT, MESOM, RNMODE      
       CHARACTER(LEN=250) FILEIOIN   
-      CHARACTER(LEN=10)  TL10FROMI                         
+!     CHARACTER(LEN=10)  TL10FROMI                         
 
       INTRINSIC AMAX1,AMIN1,EXP,FLOAT,INDEX,INT,LEN,MAX,MIN,MOD,NINT
       INTRINSIC SQRT,ABS,TRIM
@@ -194,14 +201,14 @@
       ELSEIF (DYNAMIC .EQ. RATE) THEN                                              
 !***********************************************************************
 
-        CALL CRP_Growth (ALBEDOS, BD, GSTAGE, CLOUDS, CO2, DAYLT,
-     &     DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
-     &     KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT, PARIP,
-     &     PARIPA, RLV, RNMODE, SAT , SENCALG, SENLALG, SENNALG,
-     &     SHF, SLPF, SNOW, SRAD, ST, STGYEARDOY, SW, TAIRHR, TDEW,
-     &     TMAX, TMIN, TRWUP, UH2O, UNH4, UNO3, WEATHER,
-     &     SOILPROP, CONTROL, WINDSP, YEAR, YEARPLTCSM, LAI,
-     &     IDETG)
+        call CRP_Growth (BD, GSTAGE, CLOUDS, CO2, DAYLT,
+     &    DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
+     &    KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT, PARIP,
+     &    PARIPA, RLV, RNMODE, SAT , SENCALG, SENLALG, SENNALG,
+     &    SHF, SLPF, SNOW, SRAD, ST, STGYEARDOY, SW, TDEW,
+     &    TMAX, TMIN, TRWUP, UH2O, UNH4, UNO3, 
+     &    WINDSP, YEAR, YEARPLTCSM, LAI,
+     &    IDETG)
 
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN                                            
@@ -247,7 +254,6 @@
 !***********************************************************************
 !    Call other modules
 !***********************************************************************
-      !TF - Disease subroutine not being used
       IF (LENDIS.GT.0.AND.LENDIS.LT.3) THEN
         IF (ISWDIS(LENDIS:LENDIS).NE.'N')
      X   CALL Disease(Spdirfle,run,runi,step,  ! Run+crop component
@@ -258,7 +264,7 @@
      &    tmax,tmin,dewdur,                    ! Drivers - weather
      &    pla,plas,pltpop,                     ! States - leaves
      &    lnumsg,lap,LAPP,laps,                ! States - leaves
-     &    stgyeardoy,                          ! Stage dates
+!    &    stgyeardoy,                          ! Stage dates
      &    didoy,                               ! Disease initiation
      &    dynamic)                             ! Control
       ENDIF
@@ -285,6 +291,7 @@
      & uh2o, trwup, trwu)                                  !H2o uptake
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, WARNING
 
       INTEGER,PARAMETER::NL=20         ! Maximum number soil layers,20
 
@@ -475,6 +482,7 @@
      X LAIA)                           ! Leaf area index,active
 
       IMPLICIT NONE
+      EXTERNAL YVALXY, GETLUN
 
       INTEGER       clx           ! Canopy layers,maximum          #
       INTEGER       lcx           ! Leaf cohort number,maximum     #
@@ -613,6 +621,7 @@
       ! running this way 05/12/12 LAH. Needs work!
 
       IMPLICIT NONE
+      EXTERNAL CSVPSAT, VPSLOP
 
       REAL          TVR1
       REAL          ALBEDO        ! Reflectance of soil-crop surf  fr
@@ -648,8 +657,8 @@
       REAL          VPSLOP        ! Sat vapor pressure v temp      Pa/K
       REAL          WFNFAO        ! FAO 24 hour wind function      #
       REAL          WINDSP        ! Wind speed                     m/s
-      INTEGER       FNUMWRK       ! File number,work file          #
-      LOGICAL       FOPEN         ! File open indicator            code
+!     INTEGER       FNUMWRK       ! File number,work file          #
+!     LOGICAL       FOPEN         ! File open indicator            code
       REAL          emisa
       REAL          TAIR
       REAL          VPAIR
@@ -674,10 +683,10 @@
       REAL          SUBVAR
       REAL          RCROP
       REAL          RSADJ         ! Stomatal res,adjusted Co2+H2o
-      REAL          TVR2
+!     REAL          TVR2
       REAL          TVR3
-      REAL          TVR4
-      REAL          TVR5
+!     REAL          TVR4
+!     REAL          TVR5
 
       CHARACTER (LEN=1)   MEEVP         ! Evaptr calculation method
       CHARACTER (LEN=1)   TASKFLAG      ! Flag for required task
