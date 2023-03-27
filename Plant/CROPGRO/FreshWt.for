@@ -133,7 +133,7 @@
 !         the description and units in parenthesis.
           WRITE(NOUTPF,'(A)') '',
      &    '!----------------------------',
-     &    '! Variable Description (unit)',
+     &    '! Variable Descriptions (unit)',
      &    '!----------------------------',
      &    '!YEAR  Year of current date of simulation',
      &    '!DOY  Day of year (d)',
@@ -155,6 +155,7 @@
      &    '!FSZ6D  Sieve size 6 ()'
           END SELECT
           WRITE(NOUTPF,'(A)')
+     &    '!XMAGE  Required pod age for Multi-Harvest (days)',
      &    '!TOSDN  Total Seed number (#)',
      &    '!TOWSD  Total weight seed ()',
      &    '!TOSHN  Total shell number ()',
@@ -168,8 +169,11 @@
      &    '!HSHELWT  Harvested shell weight ()',
      &    '!HSDWT  Harvested seed weight ()',
      &    '!HPODWT  Harvested pod weight ()',
-     &    '!CHPDT  Cumulative pod weight of mature fruits ()',
-     &    '!CHFPW  Cumulative fresh weight of mature fruits ()'
+     &    '!CPODN  Cumulative pod number (#)',
+     &    '!CMFNM  Cumulative mature fruit number (#)',
+     &    '!CHPDT  Cumulative harv. pod weight of mature fruits ()',
+     &    '!CHFPW  Cumulative harv. fresh weight of mature fruits ()',
+     &    '!CHNUM  Cumulative harvest number (#)'
         ENDIF
 
         CALL HEADER(SEASINIT, NOUTPF, CONTROL%RUN)
