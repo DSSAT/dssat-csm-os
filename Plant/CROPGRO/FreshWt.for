@@ -101,7 +101,21 @@
 
         IF (INDEX('CU,GB,PR,SR,TM',CROP) .GT. 0 
      &    .AND. XMAGE .LT. 0.0) THEN
+          CALL GET_CROPD(CROP, CROPD)
+          MSG(1) = 'Please change the value of XMAGE in Ecotype file.'
+          MSG(2) = 'The value cannot be lower than 0.0.'
+          WRITE(MSG(3),'("XMAGE = ",F8.2)') XMAGE
+          WRITE(MSG(4),'(A2,1X,A16)') CROP, CROPD
+          CALL WARNING(4, ERRKEY, MSG)
             CALL ERROR (ERRKEY,1,'',0)
+        ELSEIF (INDEX('CU,GB,PR,SR,TM',CROP) .GT. 0 
+     &    .AND. XMAGE .EQ. 0.0) THEN
+          CALL GET_CROPD(CROP, CROPD)
+          MSG(1) = 'Please check the value of XMAGE in Ecotype file.'
+          MSG(2) = 'The value is equal to 0.0'
+          WRITE(MSG(3),'("XMAGE = ",F8.2)') XMAGE
+          WRITE(MSG(4),'(A2,1X,A16)') CROP, CROPD
+          CALL WARNING(4, ERRKEY, MSG)
         ENDIF      
 !::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         INQUIRE (FILE= FWFile, EXIST = FEXIST)
