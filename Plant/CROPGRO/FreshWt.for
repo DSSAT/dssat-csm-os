@@ -434,53 +434,68 @@
         SELECT CASE (CROP)
          CASE ('CU')        ! Cucumber
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
-     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
-     &      MTFPW,MTDPW,MTDSD,MTDSH,
-     &      HSHELWT,HSDWT,HPODWT,
-     &      CHPDT,CHFPW 
+     &      XMAGE, CHNUM,
+     &      TOSHN,TOWSH,MTDSH,HSHELWT,
+     &      TOPOW,HPODWT,CHPDT,CPODN,
+     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      TOSDN,TOWSD,MTDSD,HSDWT
           CASE ('GB')       ! Snap bean
             WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,NINT(CLASS(7)*10.),NINT(CLASS(1)*10.),
      &      NINT(CLASS(2)*10.),NINT(CLASS(3)*10.),NINT(CLASS(4)*10.),
      &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.),
-     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
-     &      MTFPW,MTDPW,MTDSD,MTDSH,
-     &      HSHELWT,HSDWT,HPODWT,
-     &      CHPDT,CHFPW
+     &      XMAGE, CHNUM,
+     &      TOSHN,TOWSH,MTDSH,HSHELWT,
+     &      TOPOW,HPODWT,CHPDT,CPODN,
+     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      TOSDN,TOWSD,MTDSD,HSDWT
          CASE ('PR')        ! Bell pepper
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
-     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
-     &      MTFPW,MTDPW,MTDSD,MTDSH,
-     &      HSHELWT,HSDWT,HPODWT,
-     &      CHPDT,CHFPW
+     &      XMAGE, CHNUM,
+     &      TOSHN,TOWSH,MTDSH,HSHELWT,
+     &      TOPOW,HPODWT,CHPDT,CPODN,
+     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      TOSDN,TOWSD,MTDSD,HSDWT
          CASE ('SR')        ! Strawberry
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
-     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
-     &      MTFPW,MTDPW,MTDSD,MTDSH,
-     &      HSHELWT,HSDWT,HPODWT,
-     &      CHPDT,CHFPW     
+     &      XMAGE, CHNUM,
+     &      TOSHN,TOWSH,MTDSH,HSHELWT,
+     &      TOPOW,HPODWT,CHPDT,CPODN,
+     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      TOSDN,TOWSD,MTDSD,HSDWT
           CASE ('TM')       ! Tomato
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
-     &      TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW,
-     &      MTFPW,MTDPW,MTDSD,MTDSH,
-     &      HSHELWT,HSDWT,HPODWT,
-     &      CHPDT,CHFPW
+     &      XMAGE, CHNUM,
+     &      TOSHN,TOWSH,MTDSH,HSHELWT,
+     &      TOPOW,HPODWT,CHPDT,CPODN,
+     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      TOSDN,TOWSD,MTDSD,HSDWT
         END SELECT
 
  1000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    I8,F8.3,F8.1,F8.2,F8.1,15(F8.2))
+     &    I8,F8.2,F8.1,F8.2,F8.1,
+     &    F8.2, I8,
+     &    4(F8.2),
+     &    3(F8.2),I8,
+     &    4(F8.2),I8,
+     &    4(F8.2))
  2000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    I8,F8.3,F8.1,F8.2,F8.1,
-     &    7(1X,I5),15(F8.2))
+     &    I8,F8.2,F8.1,F8.2,F8.1,
+     &    7(1X,I5),
+     &    F8.2, I8,
+     &    4(F8.2),
+     &    3(F8.2),I8,
+     &    4(F8.2),I8,
+     &    4(F8.2))
 
       ENDIF
 
