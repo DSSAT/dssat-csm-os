@@ -187,48 +187,35 @@
 
         SELECT CASE (CROP)
           CASE ('CU')       ! Cucumber
-            WRITE (NOUTPF,228)
             WRITE (NOUTPF,230)
           CASE ('GB')       ! Snap bean
-            WRITE (NOUTPF,229)
             WRITE (NOUTPF,231)
           CASE ('PR')       ! Bell pepper
-            WRITE (NOUTPF,228)
             WRITE (NOUTPF,230)            
           CASE ('SR')       ! Strawberry
-            WRITE (NOUTPF,228)
             WRITE (NOUTPF,230)                        
           CASE ('TM')       ! Tomato
-            WRITE (NOUTPF,228)
             WRITE (NOUTPF,230)
         END SELECT
 
-  228 FORMAT('!                                            ',
-     &       '                   Totals....................',
-     &       '...................   Mature.................',
-     &       '......   Harvested............   Cumulative...')
-        
   230 FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
      &    '   ADPWD   PAGED',
-     &    '   TOSDN   TOWSD   TOSHN   TOWSH   TOPOW   TOFPW',
-     &    '   MTFPW   MTDPW   MTDSD   MTDSH',
-     &    '   HSHEL   HSDWT   HPODW',
-     &    '   CHPDT   CHFPW')
-
-  229 FORMAT('!                                            ',
-     &       '                   Totals....................',
-     &       '...................   Mature.................',
-     &       '......   Harvested............   Cumulative...')
+     &    '   XMAGE   CHNUM',   
+     &    '   TOSHN   TOWSH   MTDSH   HSHEL',
+     &    '   TOPOW   HPODW   CHPDT   CPODN',
+     &    '   TOFPW   MTFPW   MTDPW   CHFPW   CMFNM',
+     &    '   TOSDN   TOWSD   MTDSD   HSDWT')
      
   231 FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
      &    '   ADPWD   PAGED',
      &    ' FCULD FSZ1D FSZ2D FSZ3D FSZ4D FSZ5D FSZ6D',
-     &    '   TOSDN   TOWSD   TOSHN   TOWSH   TOPOW   TOFPW',
-     &    '   MTFPW   MTDPW   MTDSD   MTDSH',
-     &    '   HSHEL   HSDWT   HPODW',
-     &    '   CHPDT   CHFPW')
+     &    '   XMAGE   CHNUM',   
+     &    '   TOSHN   TOWSH   MTDSH   HSHEL',
+     &    '   TOPOW   HPODW   CHPDT   CPODN',
+     &    '   TOFPW   MTFPW   MTDPW   CHFPW   CMFNM',
+     &    '   TOSDN   TOWSD   MTDSD   HSDWT')
     
         AvgDMC  = 0.0
         AvgDPW  = 0.0
