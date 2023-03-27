@@ -109,7 +109,7 @@
           WRITE(MSG(3),'("XMAGE = ",F8.2)') XMAGE
           WRITE(MSG(4),'(A2,1X,A16)') CROP, CROPD
           CALL WARNING(4, ERRKEY, MSG)
-            CALL ERROR (ERRKEY,1,'',0)
+          CALL ERROR (ERRKEY,1,'',0)
         ELSEIF (INDEX('CU,GB,PR,SR,TM',CROP) .GT. 0 
      &    .AND. XMAGE .EQ. 0.0) THEN
           CALL GET_CROPD(CROP, CROPD)
@@ -118,7 +118,7 @@
           WRITE(MSG(3),'("XMAGE = ",F8.2)') XMAGE
           WRITE(MSG(4),'(A2,1X,A16)') CROP, CROPD
           CALL WARNING(4, ERRKEY, MSG)
-        ENDIF      
+        ENDIF     
 !::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         INQUIRE (FILE= FWFile, EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -199,7 +199,7 @@
           CASE ('TM')       ! Tomato
             WRITE (NOUTPF,230)
         END SELECT
-
+        
   230 FORMAT('@YEAR DOY   DAS   DAP',
      &    '   FPWAD   PDMCD   AFPWD',
      &    '   ADPWD   PAGED',
@@ -218,7 +218,7 @@
      &    '   TOPOW   HPODW   CHPDT   CPODN',
      &    '   TOFPW   MTFPW   MTDPW   CHFPW   CMFNM',
      &    '   TOSDN   TOWSD   MTDSD   HSDWT')
-    
+
         AvgDMC  = 0.0
         AvgDPW  = 0.0
         AvgFPW  = 0.0
@@ -253,7 +253,7 @@
 !-----------------------------------------------------------------------
         IF (INDEX('Y',ISWFWT) < 1 .OR. 
      &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
-
+        
         ! Total values
         TOSDN   = 0.0      
         TOWSD   = 0.0      
@@ -266,7 +266,8 @@
         MTFPW   = 0.0
         MTDPW   = 0.0
         MTDSD   = 0.0
-        MTDSH   = 0.0  
+        MTDSH   = 0.0
+        MFNUM   = 0.0  
         
         ! Ready to harvest
         HSDWT   = 0.0 
@@ -302,7 +303,7 @@
           END SELECT
 
 !         Fresh weight (g/pod)
-          IF (SHELN(NPP) > 1.E-6) THEN
+          IF (SHELN(NPP) > 0.0) THEN
             FreshPodWt(NPP) = (WTSD(NPP) + WTSHE(NPP)) / DMC(NPP) /
      &                          SHELN(NPP)  !g/pod
             DryPodWt(NPP) = (WTSD(NPP) + WTSHE(NPP))/SHELN(NPP) !g/pod
@@ -358,7 +359,6 @@
           !Total Fresh Pod weight
           TOFPW = TOFPW + (WTSD(NPP) + WTSHE(NPP)) / DMC(NPP)
         
-                
           ! Accumulating in the basket for harvesting (MultiHarvest)
           IF (page >= XMAGE) THEN
              !Fresh weight of mature fruits
@@ -371,6 +371,8 @@
              !Shell mass of mature fruits - wtshe 
              ! = shell mass for cohort
              MTDSH = MTDSH + WTSHE(NPP)
+             !Number of mature fruits
+             MFNUM = MFNUM + SDNO(NPP)
           ENDIF
           
           ! Apply Harvest
@@ -388,26 +390,27 @@
 
 !       Prepare model outputs
         PodAge = XPAGE(1)
-        IF (PODNO > 0.0) THEN
-          AvgFPW = TOFPW / PODNO
-          AvgDPW = TOPOW / PODNO
+        ! Avg. total shell number and pod weight
+        IF (TOSHN > 0.0) THEN
+          AvgFPW = TOFPW / TOSHN
+          AvgDPW = TOPOW / TOSHN
+          CPODN  = CPODN + NINT(TOSHN)
+          CMFNM  = CMFNM + NINT(MFNUM)
         ELSE
           AvgFPW = 0.0
           AvgDPW = 0.0
         ENDIF
+        ! Avg. Dry matter content
         IF (TOFPW > 0.0) THEN
           AvgDMC = TOPOW / TOFPW
         ELSE
           AvgDMC = 0.0
         ENDIF
-        IF (TDPW > 0.0) THEN
-          ShelPC = TDSW / TDPW * 100.
-        ELSE
-          ShelPC = 0.0
-        ENDIF
+        ! Cumulative har. amounts
         IF(HARVF .EQ. 1) THEN
           CHPDT = CHPDT + HPODWT
           CHFPW = CHFPW + MTFPW
+          CHNUM = CHNUM + 1
         ENDIF
         
 !***********************************************************************
