@@ -223,8 +223,6 @@
         AvgDPW  = 0.0
         AvgFPW  = 0.0
         PodAge  = 0.0
-        PODNO   = 0.0
-        SHELPC  = 0.0
         TDPW    = 0.0
         TFPW    = 0.0
         
@@ -233,12 +231,15 @@
         HSHELWT = 0.0
         RTFPW   = 0.0
         HPODWT  = 0.0
-        RPODNO  = 0.0
+
+        CHPDT   = 0.0
+        CHFPW   = 0.0
+        CMFNM   = 0
+        CHNUM   = 0
+        CPODN   = 0
 
         HRVD    = 0.0
         HRVF    = 0.0
-        CHPDT   = 0.0
-        CHFPW   = 0.0
         HRSN    = 0.0
         HRPN    = 0.0
         HRDSD   = 0.0
@@ -253,9 +254,6 @@
         IF (INDEX('Y',ISWFWT) < 1 .OR. 
      &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
 
-        PODNO   = 0.0
-        RPODNO  = 0.0
-        
         ! Total values
         TOSDN   = 0.0      
         TOWSD   = 0.0      
