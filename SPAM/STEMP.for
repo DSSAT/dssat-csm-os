@@ -27,6 +27,7 @@ C  01/14/2005 CHP Added METMP = 3: Corrected water content in temp. eqn.
 !  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil
 !                 water effects on albedo)
 !  12/09/2008 CHP Remove METMP and code for old (incorrect) soil water effect
+!  02/27/2023 CHP Added Kimball equation tied to METMP = "K" to compare effects
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : SOILT
@@ -44,7 +45,7 @@ C-----------------------------------------------------------------------
       EXTERNAL YR_DOY, SOILT, OPSTEMP
       SAVE
 
-      CHARACTER*1  RNMODE, ISWWAT !, IDETL
+      CHARACTER*1  RNMODE, ISWWAT, METMP !, IDETL
 !     CHARACTER*6  SECTION
       CHARACTER*6, PARAMETER :: ERRKEY = "STEMP "
       CHARACTER*30 FILEIO
@@ -76,6 +77,7 @@ C-----------------------------------------------------------------------
       YRDOY   = CONTROL % YRDOY
 
       ISWWAT = ISWITCH % ISWWAT
+      METMP  = ISWITCH % METMP
 
       BD     = SOILPROP % BD
       DLAYR  = SOILPROP % DLAYR
@@ -192,7 +194,8 @@ C-----------------------------------------------------------------------
 
         DO I = 1, 8
           CALL SOILT (
-     &        ALBEDO, B, CUMDPT, DOY, DP, HDAY, NLAYR,    !Input
+     &        ALBEDO, B, CUMDPT, DOY, DP, HDAY,           !Input
+     &        METMP, NLAYR,                               !Input
      &        PESW, SRAD, TAMP, TAV, TAVG, TMAX, WW, DSMID,!Input
      &        ATOT, TMA, SRFTEMP, ST)                     !Output
         END DO
@@ -232,7 +235,8 @@ C-----------------------------------------------------------------------
       ENDIF
 
       CALL SOILT (
-     &    ALBEDO, B, CUMDPT, DOY, DP, HDAY, NLAYR,    !Input
+     &    ALBEDO, B, CUMDPT, DOY, DP, HDAY,           !Input
+     &    METMP, NLAYR,                               !Input
      &    PESW, SRAD, TAMP, TAV, TAVG, TMAX, WW, DSMID,!Input
      &    ATOT, TMA, SRFTEMP, ST)                     !Output
 
@@ -272,9 +276,10 @@ C  Calls  : None
 C=======================================================================
 
       SUBROUTINE SOILT (
-     &    ALBEDO, B, CUMDPT, DOY, DP, HDAY, NLAYR,    !Input
-     &    PESW, SRAD, TAMP, TAV, TAVG, TMAX, WW, DSMID,!Input
-     &    ATOT, TMA, SRFTEMP, ST)                     !Output
+     &    ALBEDO, B, CUMDPT, DOY, DP, HDAY,               !Input
+     &    METMP, NLAYR,                                   !Input
+     &    PESW, SRAD, TAMP, TAV, TAVG, TMAX, WW, DSMID,   !Input
+     &    ATOT, TMA, SRFTEMP, ST)                         !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types,
@@ -283,11 +288,10 @@ C=======================================================================
 !     NL defined in ModuleDefs.for
 
       IMPLICIT  NONE
-
       SAVE
 
+      CHARACTER*1 METMP
       INTEGER  K, L, DOY, NLAYR
-
       REAL ALBEDO, ALX, ATOT, B, CUMDPT, DD, DP, DT, FX
       REAL HDAY, PESW, SRAD, SRFTEMP, TA, TAMP, TAV, TAVG, TMAX
       REAL WC, WW, ZD
@@ -303,8 +307,14 @@ C=======================================================================
         TMA(K) = TMA(K-1)
       END DO
 
-      TMA(1) = (1.0 - ALBEDO) * (TAVG + (TMAX - TAVG) *
+!-----------------------------------------------------------------------
+      SELECT CASE (METMP)
+      CASE('K') !Kimball method
+        TMA(1) = TAVG
+      CASE DEFAULT  !old DSSAT equation 
+        TMA(1) = (1.0 - ALBEDO) * (TAVG + (TMAX - TAVG) *
      &      SQRT(SRAD * 0.03)) + ALBEDO * TMA(1)
+      END SELECT
 
 !     Prevents differences between release & debug modes:
 !       Keep only 4 decimals. chp 06/03/03
@@ -369,7 +379,7 @@ C=======================================================================
 ! ABD      Average bulk density for soil profile (g [soil] / cm3 [soil])
 ! ALBEDO   Reflectance of soil-crop surface (fraction)
 ! ALX
-! ATOT     Sum of TMA array (last 5 days soil temperature) (캜)
+! ATOT     Sum of TMA array (last 5 days soil temperature) (째C)
 ! B        Exponential decay factor (Parton and Logan) (in subroutine
 !            HTEMP)
 ! BD(L)    Bulk density, soil layer L (g [soil] / cm3 [soil])
@@ -416,23 +426,23 @@ C=======================================================================
 !            density, drained upper limit, lower limit, pH, saturation
 !            water content.  Structure defined in ModuleDefs.
 ! SRAD     Solar radiation (MJ/m2-d)
-! SRFTEMP  Temperature of soil surface litter (캜)
-! ST(L)    Soil temperature in soil layer L (캜)
+! SRFTEMP  Temperature of soil surface litter (째C)
+! ST(L)    Soil temperature in soil layer L (째C)
 ! SW(L)    Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! SWI(L)   Initial soil water content (cm3[water]/cm3[soil])
-! TA       Daily normal temperature (캜)
+! TA       Daily normal temperature (째C)
 ! TAMP     Amplitude of temperature function used to calculate soil
-!            temperatures (캜)
+!            temperatures (째C)
 ! TAV      Average annual soil temperature, used with TAMP to calculate
-!            soil temperature. (캜)
-! TAVG     Average daily temperature (캜)
+!            soil temperature. (째C)
+! TAVG     Average daily temperature (째C)
 ! TBD      Sum of bulk density over soil profile
 ! TDL      Total water content of soil at drained upper limit (cm)
 ! TLL      Total soil water in the profile at the lower limit of
 !            plant-extractable water (cm)
-! TMA(I)   Array of previous 5 days of average soil temperatures. (캜)
-! TMAX     Maximum daily temperature (캜)
+! TMA(I)   Array of previous 5 days of average soil temperatures. (째C)
+! TMAX     Maximum daily temperature (째C)
 ! TSW      Total soil water in profile (cm)
 ! WC
 ! WW
