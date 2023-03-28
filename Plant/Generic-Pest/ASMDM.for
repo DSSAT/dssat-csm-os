@@ -20,6 +20,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      SAVE
 
       INTEGER DYNAMIC
 

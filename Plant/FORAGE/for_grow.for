@@ -22,6 +22,7 @@ C  07-06/2003 SJR Added STRSRFL, STRLYR! parameters to allow user to
 C                        specify distribution of storage organ dry mass
 C                        between soil surface layer and soil layer 1
 C                        used to distribute senesced material for CENTURY model
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  Called by:  CROPGRO
 C  Calls:      FOR_IPGROW, FOR_STRESS
@@ -30,26 +31,26 @@ C=======================================================================
       SUBROUTINE FOR_GROW(CONTROL, ISWITCH, DYNAMIC, SOILPROP, 
      &  AGEFAC, CADLF, CADST, CRUSLF, CRUSRT, CRUSSH,     !Input
      &  CRUSST, DISLA, F, FILECC, FILEGC, FRLF, FRSTM,    !Input
-     &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NADLF, NADRT,       !Input
-     &  NADST, NDTH, NFIXN, NGRLF, NGRRT, NGRSD, NGRSH,       !Input
+     &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NADLF, NADRT,   !Input
+     &  NADST, NDTH, NFIXN, NGRLF, NGRRT, NGRSD, NGRSH,   !Input
      &  NGRST, NMINEA, NODGR, NOUTDO, NPLTD, NRUSLF,      !Input
-     &  NRUSRT, NRUSSH, NRUSST, PORPT, POTCAR, POTLIP,    !Input
-     &  PPLTD, TSCMOB, RTSCMOB, RTSNMOB, SDIDOT, SDPROR,      !Input
-     &  SENNOD, SENRT, SLDOT, SLMDOT, SLNDOT, SLCADDOT,      !Input
-     &  SLNADDOT, SRCADDOT, SRDOT, SRMDOT, SRNADDOT,             !Input
-     &  SRNDOT, SRSCMOB, SRSNMOB, SSCADDOT, SSDOT, SSMDOT,!Input
-     &  SSNADDOT, SSNDOT, SSRCADDOT, SSRMDOT, SSRNADDOT,       !Input
-     &  STSCMOB, STLTSEN, STSENWT, STSNMOB, TRNH4U,            !Input
-     &  TRNO3U, TRNU, TURFAC, WLDOTN, WLIDOT, WRDOTN,            !Input
-     &  WRIDOT, WSDDTN, WSDOTN, WSHDTN, WSIDOT, WTABRT,       !Input
-     &  WTSHMT, YRNR1, MDATE, YRPLT,                                    !Input
+     &  NRUSRT, NRUSSH, NRUSST, POTCAR, POTLIP,           !Input
+     &  PPLTD, RTSCMOB, RTSNMOB, SDIDOT, SDPROR,          !Input
+     &  SENNOD, SENRT, SLDOT, SLMDOT, SLNDOT,             !Input
+     &  SLNADDOT, SRDOT, SRMDOT, SRNADDOT,                !Input
+     &  SRNDOT, SRSCMOB, SRSNMOB, SSDOT, SSMDOT,          !Input
+     &  SSNADDOT, SSNDOT, SSRMDOT, SSRNADDOT,             !Input
+     &  STSCMOB, STLTSEN, STSENWT, STSNMOB, TRNH4U,       !Input
+     &  TRNO3U, TRNU, TURFAC, WLDOTN, WLIDOT, WRDOTN,     !Input
+     &  WRIDOT, WSDDTN, WSDOTN, WSHDTN, WSIDOT, WTABRT,   !Input
+     &  WTSHMT, YRNR1, MDATE, YRPLT,                      !Input
      &  FHLEAF,FHSTEM,FHVSTG,                             !Input
 
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
 
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT, SDWTAM,        !Output
@@ -62,32 +63,36 @@ C=======================================================================
      &  WTNSDO, WTNSH, WTNSHA, WTNSHO, WTNSO, WTNST,      !Output
      &  WTNUP, WTRO, WTSDO, WTSHO, WTSO, XLAI, XPOD,      !Output
 
-     &  CADRT, CADSH, NADSH,                                                !Input
-     &  CADSR, CRUSSR, FRSTR, NADSR, NGRSR, NRUSSR,            !Input
-     &  PSRLYRD, PSRSRFD, PSRSRFL, PSRLYR1, SSRDOT,              !Input
-     &  SSRNDOT, STRSRFL, STRLYR1, WSRDOTN, WSRIDOT,            !Input
-     &  WSFDOT, WSRFDOT,                                                      !Input/Output
-     &  CSRW, PCNSR, PLIGSR, RHOSR, STRWT, WCRSR,                  !Output
-     &  WNRSR, WTNSR, WTNSRA, WTNSRO, WTSRO,                        !Output
+     &  CADRT, CADSH, NADSH,                              !Input
+     &  CADSR, CRUSSR, FRSTR, NADSR, NGRSR, NRUSSR,       !Input
+     &  PSRLYRD, PSRSRFD, PSRSRFL, PSRLYR1, SSRDOT,       !Input
+     &  SSRNDOT, STRSRFL, STRLYR1, WSRDOTN, WSRIDOT,      !Input
+     &  WSFDOT, WSRFDOT,                                  !Input/Output
+     &  CSRW, PCNSR, PLIGSR, RHOSR, STRWT, WCRSR,         !Output
+     &  WNRSR, WTNSR, WTNSRA, WTNSRO, WTSRO,              !Output
      
-     &  ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, PCARSR,            !Output
-     &  PLIPSR, PMINSR, POASR, PROSRF,CPFSTR, NSRALL,       !Output
-     &  NSRDOT, NSROFF, TPSRLYR1,TPSRSRFL, WRCSRDT,             !Output
-     &  WSRDOT, WSRI,                                                            !Output
+     &  ALPHL, ALPHR, ALPHS, ALPHSH, ALPHSR, PCARSR,      !Output
+     &  PLIPSR, PMINSR, POASR, PROSRF,CPFSTR, NSRALL,     !Output
+     &  NSRDOT, NSROFF, TPSRLYR1,TPSRSRFL, WRCSRDT,       !Output
+     &  WSRDOT, WSRI,                                     !Output
 
-     &  NLALL, NRALL, NSALL,                                                !Output
-     &  PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,                        !Output
-     &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,            !Output
-     &  WRDOT, WSDOT,                                                            !Output
+     &  NLALL, NRALL, NSALL,                              !Output
+     &  PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,               !Output
+     &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
+     &  WRDOT, WSDOT,                                     !Output
 
      &  VSTAGE, DWTCO, DWTLO, DWTSO,
      &  PWTCO, PWTLO, PWTSO)                         !Input/Output
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       PORPT, TSCMOB, SLCADDOT, SRCADDOT, SSCADDOT
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FOR_IPGROW, ERROR, FOR_STRESS
       SAVE
 !-----------------------------------------------------------------------
 
@@ -97,19 +102,19 @@ C=======================================================================
       PARAMETER (ERRKEY = 'FRGROW')
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC, FILEGC
-      CHARACTER*78 MSG(2)
-      CHARACTER*6   SECTION
-      CHARACTER(len=6) trtchar
+!     CHARACTER*78 MSG(2)
+!     CHARACTER*6   SECTION
+!     CHARACTER(len=6) trtchar
       character(len=60) ename
-      CHARACTER*78 MESSAGE(2)
+!     CHARACTER*78 MESSAGE(2)
 
       INTEGER DYNAMIC, NOUTDO, L, NLAYR
       INTEGER YRDOY, YRNR1, MDATE
-      INTEGER YRPLT, RUN
-      INTEGER MOWLUN,ISECT,ERR, I
-      INTEGER,ALLOCATABLE,DIMENSION(:) :: TRNO,DATE
-      INTEGER LUNCRP,fhlun, LNUM, FOUND
-      INTEGER MOWCOUNT,j
+      INTEGER YRPLT, RUN, CropStatus
+!     INTEGER MOWLUN,ISECT,ERR, I
+!     INTEGER,ALLOCATABLE,DIMENSION(:) :: TRNO,DATE
+!     INTEGER LUNCRP,fhlun, LNUM, FOUND
+!     INTEGER MOWCOUNT,j
       INTEGER TRTNO
       
 
@@ -117,7 +122,7 @@ C=======================================================================
       REAL WRCSHD,DISLA,WSDMAN
       REAL WLFDOT, PPLTD,NPLTD,SDWTAM,CANNAA,CANWAA
       REAL DWNODA,WTNNAG,AGEFAC
-      REAL PORPT, POTLIP,POTCAR
+      REAL POTLIP,POTCAR      !PORPT, 
       REAL CPFLF, CPFSTM, CPFRT, CPFNOD, CPFSH1, CPFSD1
       REAL WRIDOT,WSIDOT,WTNNOD
       REAL WNDOT, WPDOT, WDOT,WRCLDT,WRCSDT,WRCRDT
@@ -152,9 +157,9 @@ C=======================================================================
       REAL EODRTC, EODRTN, EODSRC, EODSRN
       REAL LFCADDM, LFNADDM, RTCADDM, RTNADDM
       REAL SRCADDM, SRNADDM, STCADDM, STNADDM
-      REAL LFNADFDM, STNADFDM, SRNADFDM
-      REAL SLCADDOT, SLNADDOT, SRCADDOT, SRNADDOT
-      REAL SSCADDOT, SSNADDOT, SSRCADDOT, SSRNADDOT 
+!     REAL LFNADFDM, STNADFDM, SRNADFDM
+      REAL SLNADDOT, SRNADDOT       !SLCADDOT, SRCADDOT, 
+      REAL SSNADDOT, SSRNADDOT !SSCADDOT, SSRCADDOT, 
       REAL SLNDOT, SSNDOT, SDIDOT
       REAL WLIDOT, WSHIDT, WSHDOT, WSDDOT
       REAL SDPROR, GRWRES, TRNO3U, TRNH4U, NFIXN
@@ -170,7 +175,7 @@ C=======================================================================
       REAL XHLAI, SEEDNO, PLTPOP, ROWSPC, BETN
       REAL TURFAC
       REAL GROWTH, NODGR
-      REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
+!     REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
 
       REAL FRLF, FRSTM
       REAL SDNPL, SEEDNI, SDRATE
@@ -205,10 +210,10 @@ C-----------------------------------------------------------------------
 C      New storage variables for forage model 
 C-----------------------------------------------------------------------
       REAL CADSR, CRUSSR, FRSTR, NADSR, NGRSR,  
-     &  NRUSSR, SSRDOT, SSRNDOT, WSRDOTN, WSRIDOT,                        
-     &  WSRDOT, WSRFDOT,                                                                  
-     &  CSRW, PCNSR, PLIGSR, RHOSR, STRWT, WCRSR,                  
-     &  WNRSR, WTNSR, WTNSRA, WTNSRO, WTSRO,                                    
+     &  NRUSSR, SSRDOT, SSRNDOT, WSRDOTN, WSRIDOT,  
+     &  WSRDOT, WSRFDOT,                                     
+     &  CSRW, PCNSR, PLIGSR, RHOSR, STRWT, WCRSR,   
+     &  WNRSR, WTNSR, WTNSRA, WTNSRO, WTSRO,        
      &  CPFSTR, NSRDOT, ALPHSR, 
      &  PCARSR, PLIPSR, PMINSR, 
      &  POASR, PROSRI, PROSRF, WSRI, WRCSRDT, NSROFF, NSRALL,
@@ -218,10 +223,10 @@ C-----------------------------------------------------------------------
       REAL CLOFF, CROFF, CSOFF, CSROFF, 
      &   PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF
 
-      REAL PSTCLSMOB, PSTCLSTRES
+!     REAL PSTCLSMOB, PSTCLSTRES
 
       REAL LFSCMOB, LFSENWT, LFSNMOB, RTSCMOB, RTSNMOB, SRSCMOB,  
-     &   SRSNMOB, STSCMOB, STSNMOB, TSCMOB
+     &   SRSNMOB, STSCMOB, STSNMOB        !, TSCMOB
       REAL SLMDOT, SRMDOT, SRNDOT, SSMDOT, SSRMDOT, STLTSEN, STSENWT 
 C-----------------------------------------------------------------------
 C      New stem freeze damage variables for forage model 
@@ -278,7 +283,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       CALL FOR_IPGROW(
      &  FILEIO, FILECC, FILEGC, CROP,                           !Input
-     &  ALPHL, ALPHR, ALPHS, ALPHSH, TNCFAC,                         !Output
+     &  ALPHL, ALPHR, ALPHS, ALPHSH, TNCFAC,                    !Output
      &  PCARLF, PCARST, PCARRT, PCARSH, PCARSD, PCARNO,         !Output
      &  PLIGLF, PLIGST, PLIGRT, PLIGSH, PLIGSD, PLIGNO,         !Output
      &  PLIPLF, PLIPST, PLIPRT, PLIPSH, PLIPNO, !Output
@@ -286,12 +291,12 @@ C-----------------------------------------------------------------------
      &  POALF, POAST, POART, POASH, POASD, POANO,          !Output
      &  PROLFF, PROSTF, PRORTF, PROSHF, PRONOD, !Output
      &  PROLFI, PROSTI, PRORTI,                                 !Output
-     &  PLTPOP, ROWSPC, RMIN, PLME, SDWTPL,                 !Output
-     &  SENCLV, SENCRV, SENCSV, SENCSRV,                                      !Output
-     &  SENNLV, SENNRV, SENNSV, SENNSRV,                                      !Output           
+     &  PLTPOP, ROWSPC, RMIN, PLME, SDWTPL,                !Output
+     &  SENCLV, SENCRV, SENCSV, SENCSRV,                   !Output
+     &  SENNLV, SENNRV, SENNSV, SENNSRV,                   !Output           
      &  SDLIP, SDPRO, WTFSD, WTPSD, XPODF,                 !Output
-     &  ALPHSR, PCARSR, PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,        !Output
-     &  PLIGSR, PLIPSR, PMINSR, POASR, PROSRF, PROSRI)              !Output
+     &  ALPHSR, PCARSR, PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,!Output
+     &  PLIGSR, PLIPSR, PMINSR, POASR, PROSRF, PROSRI)     !Output
  
 
       IF (CROP .NE. 'FA') THEN
@@ -2036,22 +2041,22 @@ C     Terminate growth if stress causes extremely low plant weights
 C-----------------------------------------------------------------------
       IF (STRWT .LT. 0.00001) THEN
        IF (TOPWT .LT. 0.00001 .OR. STMWT .LT. 0.00001) THEN
-        CALL FOR_STRESS(FILEIO, RUN,
+        CALL FOR_STRESS(
      &    AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,     !Input
      &    RTWT, SDWT, SHELWT, STMWT, TOPWT,               !Input
      &    TOTWT, TURFAC, WTLF, YRDOY, YRPLT,              !Input
-     &  MDATE,                                          !Output
+     &    MDATE, CropStatus,                              !Output
      &  STRWT)                                                                  !Input
         RETURN
        ENDIF
 
        IF (IHARI .NE. 'R' .AND. IHARI .NE. 'D') THEN
         IF (RTWT  .LT. 0.00001 .OR. WTLF  .LT. 0.00001) THEN
-        CALL FOR_STRESS(FILEIO, RUN, 
+        CALL FOR_STRESS( 
      &  AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,   !Input
      &  RTWT, SDWT, SHELWT, STMWT, TOPWT,             !Input
      &  TOTWT, TURFAC, WTLF, YRDOY, YRPLT,            !Input
-     &  MDATE,                                          !Output
+     &  MDATE, CropStatus,                            !Output
      &  STRWT)                                                                  !Input
         RETURN
         ENDIF
@@ -2081,25 +2086,26 @@ C  Plant death due to stress
 C-----------------------------------------------------------------------
 C  REVISION        HISTORY
 C  09/18/1998 CHP  Written based on code in FOR_GROW subroutine
+!  06/15/2022 CHP Added CropStatus
 !-----------------------------------------------------------------------
 !  Called by:  FOR_GROW
 !  Calls:      None
 C=======================================================================
-      SUBROUTINE FOR_STRESS(FILEIO, RUN,
+      SUBROUTINE FOR_STRESS(
      &  AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,       !Input
      &  RTWT, SDWT, SHELWT, STMWT, TOPWT,                 !Input
      &  TOTWT, TURFAC, WTLF, YRDOY, YRPLT,                !Input
-     &  MDATE,                                          !Output
-     &  STRWT)                                                                  !Input
+     &  MDATE, CropStatus,                                !Output
+     &  STRWT)                                            !Input
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL YR_DOY, WARNING, TIMDIF
 !-----------------------------------------------------------------------
       CHARACTER*1  IDETO, IHARI
-      CHARACTER*30 FILEIO
       CHARACTER*78 MESSAGE(10)
-      INTEGER NOUTDO, YRDOY, YRPLT, MDATE, DAP, TIMDIF, RUN
-      INTEGER YR, DOY
+      INTEGER NOUTDO, YRDOY, YRPLT, MDATE, DAP, TIMDIF
+      INTEGER YR, DOY, CropStatus
       REAL AGEFAC, DWNOD, PODWT, RTWT, SDWT,
      &  SHELWT, STMWT, TOPWT, TOTWT, TURFAC, WTLF
       REAL STRWT
@@ -2120,6 +2126,7 @@ C=======================================================================
       IF (MDATE .LT. 0) THEN
 !        NR8   = MAX(0,TIMDIF(YRSIM,YRDOY))
         MDATE = YRDOY
+        CropStatus = 39
       ENDIF
 C-----------------------------------------------------------------------
       IF (IHARI .EQ. 'M') THEN
@@ -2162,7 +2169,7 @@ C  Calls  : FIND, ERROR, IGNORE
 C=======================================================================
       SUBROUTINE FOR_IPGROW(
      &  FILEIO, FILECC, FILEGC, CROP,                           !Input
-     &  ALPHL, ALPHR, ALPHS, ALPHSH, TNCFAC,                         !Output
+     &  ALPHL, ALPHR, ALPHS, ALPHSH, TNCFAC,                    !Output
      &  PCARLF, PCARST, PCARRT, PCARSH, PCARSD, PCARNO,         !Output
      &  PLIGLF, PLIGST, PLIGRT, PLIGSH, PLIGSD, PLIGNO,         !Output
      &  PLIPLF, PLIPST, PLIPRT, PLIPSH, PLIPNO, !Output
@@ -2171,13 +2178,14 @@ C=======================================================================
      &  PROLFF, PROSTF, PRORTF, PROSHF, PRONOD, !Output
      &  PROLFI, PROSTI, PRORTI,                                 !Output
      &  PLTPOP, ROWSPC, RMIN, PLME, SDWTPL,                 !Output
-     &  SENCLV, SENCRV, SENCSV, SENCSRV,                                      !Output
-     &  SENNLV, SENNRV, SENNSV, SENNSRV,                                      !Output           
+     &  SENCLV, SENCRV, SENCSV, SENCSRV,                   !Output
+     &  SENNLV, SENNRV, SENNSV, SENNSRV,                   !Output           
      &  SDLIP, SDPRO, WTFSD, WTPSD, XPODF,                 !Output
-     &  ALPHSR, PCARSR, PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,        !Output
-     &  PLIGSR, PLIPSR, PMINSR, POASR, PROSRF, PROSRI)              !Output
+     &  ALPHSR, PCARSR, PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,!Output
+     &  PLIGSR, PLIPSR, PMINSR, POASR, PROSRF, PROSRI)     !Output
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, UPCASE
 !-----------------------------------------------------------------------
       CHARACTER*1 PLME, UPCASE
       CHARACTER*2 XPODF, CROP

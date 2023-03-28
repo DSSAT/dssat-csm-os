@@ -62,6 +62,7 @@ c     ::::::::::::::::::::::::::::::::::::::::::::::
 c     Do not allow randomly-created variables...
 c     ::::::::::::::::::::::::::::::::::::::::::
       IMPLICIT NONE
+      EXTERNAL GET_SPECIES_COEFF, GET_CULTIVAR_COEFF, WARNING, D_TT
       SAVE
 
 c     The DSSAT simulation control variable:
@@ -1313,7 +1314,8 @@ C CNB/MARCH2000 CALCULATE THE MEAN LEAF NUMBER IN THE CROP
 C THIS IS DONE BY TAKING THE POPULATION WEIGHED MEAN
 	  TMEANLF=0.0
 	  DO 440 N1=1,NTLGRP
-	     TLFN=LTILL(N1) !This was LFN(N1) but was changed to include all leaves
+!          This was LFN(N1) but was changed to include all leaves
+	     TLFN=LTILL(N1) 
 	     TTEMPOP=TEMPOP(N1)
 	     TMEANLF=TLFN*TTEMPOP/(TOTPOP+1)+TMEANLF
 440	  CONTINUE

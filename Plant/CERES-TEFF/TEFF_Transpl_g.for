@@ -32,6 +32,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL TEFF_NFACTO
       SAVE
 
       CHARACTER*1 ISWNIT

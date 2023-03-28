@@ -48,14 +48,16 @@
 !                   when N is not simulated.
 !  02/11/2010 CHP No simulation of organic matter when water is not 
 !                   simulated.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !-----------------------------------------------------------------------
 !  Called : SOIL
 !  Calls  : IPSOIL, MULCHLAYER, NCHECK_organic, OpSoilOrg, SoilOrg_init
 !=======================================================================
 
       SUBROUTINE SoilOrg (CONTROL, ISWITCH, 
-     &    DRAIN, FLOODWAT, FLOODN, HARVRES, NH4, NO3,     !Input
-     &    OMAData, RLV,                                   !Input
+     &    DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,     !Input
+     &    NH4, NO3, OMAData, RLV,                         !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    CH4_data, IMM, LITC, MNR, MULCH, newCO2, SomLit,!Output
      &    SomLitC, SomLitE, SSOMC)                        !Output
@@ -69,6 +71,8 @@
       USE GHG_MOD
 
       IMPLICIT  NONE
+      EXTERNAL MethaneDynamics, SoilOrg_init, 
+     &  NCHECK_organic, MULCHLAYER, SOILCBAL, OpSoilOrg, SoilNoPoBal
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWWAT
@@ -156,6 +160,7 @@
       Type (ResidueType) SENESCE
       TYPE (OrgMatAppType) OMAData
       TYPE (TillType)    TILLVALS
+      TYPE (FertType)    FERTDATA
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -222,7 +227,7 @@
       newCO2 = 0.0
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !***********************************************************************
@@ -731,7 +736,7 @@ C         recruit (NREQ-N CONC) g of N
       END DO   !End of soil layer loop.
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
 
 !     Transfer daily mineralization values for use by Cassava model
@@ -859,7 +864,7 @@ C         recruit (NREQ-N CONC) g of N
 
       IF (DYNAMIC .EQ. INTEGR) THEN
         CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,      !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
       ENDIF
 
@@ -892,9 +897,8 @@ C     Write seasonal output
      &    NLAYR, OMADATA, SENESCE, TLITE, TSOME)          !Input
 
       CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
-     &    FLOODWAT, SW, RLV, newCO2, DRAIN,                   !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
      &    CH4_data)                                           !Output
-
 
 C***********************************************************************
 C***********************************************************************
@@ -1033,27 +1037,4 @@ C-----------------------------------------------------------------------
 !                 50% reduction for SW = SAT) 
 ! XL            Excess water (above DUL) as a fraction of the maximum 
 !                 amount of excess water (i.e. saturated). (fraction)
-
-!Methane variables
-! DCO2D  NewCO2Tot       Daily new CO2 generated from decomposition of organic matter (kg[C]/ha)
-! CO2ED  CO2emission     Daily CO2 emission (kg/ha)
-! CH4SBD TCH4Substrate   Daily portion of new CO2 that is proportioned to methane generation (kg[C]/ha)
-! CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)
-! CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)
-! CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)
-! CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)
-! CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha) 
-! CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha) 
-! CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)   
-! CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)  
-! CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)  
-! CH4BLD CH4_balance     Daily CH4 balance (kg[C]/ha) 
-
-! DCO2C  CumNewCO2       Cumulative CO2 from decomposition (kg[C]/ha)
-! CO2EC  CumCO2Emission  Cumulative CO2 emissions (kg[C]/ha)
-! CH4EC  CumCH4Emission  Cumulative CH4 emissions (kg[C]/ha)
-! CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)
-! CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)
-! CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)
-
 !***********************************************************************

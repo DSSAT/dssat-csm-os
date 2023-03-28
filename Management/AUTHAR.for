@@ -13,6 +13,7 @@ C  04/17/2002 GH  Modified for sequence analysis
 C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 C  08/20/2002 GH  Modified for Y2K
 !  12/16/2004 CHP Added defaults for HPC and HBPC
+!  04/14/2021 CHP Added CONTROL % CropStatus
 C=======================================================================
 
       SUBROUTINE AUTHAR(CONTROL, ISWWAT,
@@ -25,6 +26,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, FIND, TIMDIF, GETLUN, WARNING, IPAHAR
       SAVE
 
       CHARACTER*1 IHARI, IDETO, ISWWAT, RNMODE
@@ -133,6 +135,7 @@ C Harvest at maturity, NR8
 C-----------------------------------------------------------------------
       IF (IHARI .EQ. 'M') THEN
         YREND     = MDATE
+        CONTROL % CropStatus = 1    !harvest at maturity
 
 C-----------------------------------------------------------------------
 C Harvest on specified day of year, HDATE
@@ -141,6 +144,7 @@ C-----------------------------------------------------------------------
         IF (YRDOY .GE. HDATE(1)) THEN
 C-GH    IF (YRDOY .GE. HDATE(1) .OR. MDATE .EQ. YRDOY) THEN
            YREND     = YRDOY
+           CONTROL % CropStatus = 2 !harvest on reported date
         ENDIF
 
 C-----------------------------------------------------------------------
@@ -151,6 +155,7 @@ C-----------------------------------------------------------------------
         IF (DAP .GE. HDATE(1)) THEN
 C-GH    IF (DAP .GE. HDATE(1) .OR. MDATE .EQ. YRDOY) THEN
            YREND     = YRDOY
+           CONTROL % CropStatus = 2 !harvest on reported date
         ENDIF
 
 C-----------------------------------------------------------------------
@@ -160,6 +165,7 @@ C-----------------------------------------------------------------------
         DO I = 1, 13
           IF (HSTG(1) .EQ. I .AND. YRDOY .EQ. STGDOY(I)) THEN
             YREND     = YRDOY
+            CONTROL % CropStatus = 3 !harvest at reported growth stage
             RETURN
           ENDIF
         END DO
@@ -210,7 +216,9 @@ C           Assume harvest to occur on the first day after the defined
 C           window to terminate the simulation. This needs to be changed 
 C           to account for harvest loss of the crop;
             YREND     = YRDOY
-!            STGDOY(16) = YRDOY
+!           Failure to plant (automatic planting)
+            CONTROL % CropStatus = 11  
+!           STGDOY(16) = YRDOY
             RETURN
           ENDIF
 
@@ -233,11 +241,13 @@ C           Compute average soil moisture as percent, AVGSW***
             AVGSW = (CUMSW / SWPLTD) * 100.0
             IF (AVGSW .GE. SWPLTL .AND. AVGSW .LE. SWPLTH) THEN
                YREND = YRDOY
-!               STGDOY(16) = YRDOY
+               CONTROL % CropStatus = 6 !auto-harvest within window
+!              STGDOY(16) = YRDOY
             ENDIF
           ELSE
             !Soil water not being simulated - conditions assumed OK
             YREND = YRDOY
+            CONTROL % CropStatus = 6 !auto-harvest within window
           ENDIF
         ENDIF
 
@@ -280,6 +290,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND
 
       CHARACTER*5 HCOM(3), HSIZ(3)
       CHARACTER*6 SECTION, ERRKEY 

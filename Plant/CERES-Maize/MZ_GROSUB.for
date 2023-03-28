@@ -31,6 +31,7 @@
 !  07/13/2006 CHP Added P model
 !  10/31/2007 CHP Added simple K model.
 !  01/03/2013 CHP Initialization for RLV prevents carryover 
+!  04/14/2021 CHP Added CropStatus
 !----------------------------------------------------------------------
 !
 !  Called : MAIZE
@@ -46,7 +47,7 @@
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
-     &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
+     &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -58,11 +59,13 @@
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES, CropStatus)                      !Output
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, MZ_NFACTO, TABEX, 
+     &  MZ_NUPTAK, MZ_KUPTAK, P_Ceres, YR_DOY, WARNING, CURV
       SAVE
 !----------------------------------------------------------------------
 !                         Variable Declaration
@@ -94,7 +97,8 @@
       REAL        CUMPH       
       REAL        CO2X(10)    
       REAL        CO2Y(10)    
-      REAL        CO2         
+      REAL        CO2 
+      INTEGER     CropStatus        
       REAL        CSD1        
       REAL        CSD2        
       REAL        CUMDTTEG      
@@ -158,7 +162,7 @@
       REAL        CumLeafSenes    !today's cumul. leaf senescence
       REAL        CumLeafSenesY   !yesterday's cumul. leaf senescence
       REAL        CumLfNSenes     !cumul. N loss in senesced leaves
-      REAL HARVFRAC(2)
+!     REAL HARVFRAC(2)
       INTEGER     LINC  
       REAL        LFWT        
       REAL        LFWTE
@@ -1649,19 +1653,23 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
               ENDIF
               ISTAGE = 6
               MDATE = YRDOY
+              CropStatus = 32 !cold stress
           ELSE
 !         JIL/CHP Added optional CDAY from ecotype file for cold 
 !         sensitivity.
 !              IF (ICOLD .GE. 15) THEN
               IF (ICOLD .GE. CDAY) THEN
-                  WRITE(MESSAGE(1),2800)
-                  CALL WARNING(1,ERRKEY, MESSAGE)
-                  WRITE (*,2800)
+                  WRITE(MESSAGE(1),'(A,I3,A,F6.1,A)')
+     &              "Crop experienced ",CDAY," days below",TSEN,"C"
+                  MESSAGE(2) = "Growth program terminated."
+                  CALL WARNING(2,ERRKEY, MESSAGE)
+!                 WRITE (*,2800)
                   IF (IDETO .EQ. 'Y') THEN
-                      WRITE (NOUTDO,2800)
+                      WRITE (NOUTDO,'(A)') MESSAGE(1)
                   ENDIF
                   ISTAGE = 6
                   MDATE = YRDOY
+                  CropStatus = 32 !cold stress
               ENDIF
           ENDIF
 
@@ -1688,6 +1696,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
               ENDIF   
               ISTAGE = 6           
               MDATE = YRDOY
+              CropStatus = 33  !water stress
           ENDIF
 
 !--------------------------------------------------------------

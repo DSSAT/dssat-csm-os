@@ -41,6 +41,9 @@ C=======================================================================
       USE SumModule
 
       IMPLICIT NONE
+      EXTERNAL YR_DOY, INCYD, ERROR, FIND, GETLUN, WARNING, UPCASE, 
+     &  IGNORE, PARSE_HEADERS, WEATHERERROR, IGNORE2, 
+     &  CHECK_WEATHER_HEADERS, SUMVALS, IPWREC, DAILYWEATHERCHECK
       SAVE
 
       CHARACTER*1  BLANK, MEWTH, RNMODE, UPCASE
@@ -619,8 +622,8 @@ C     Send labels and values to OPSUM
 
 !     Error checking
       CALL DailyWeatherCheck(CONTROL,
-     &    "WTHINIT", FILEWW, RAIN, RecNum, RHUM,          !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    "WTHINIT", FILEWW, RAIN, RecNum,                !Input
+     &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
 
       IF (YREND > 0) THEN
@@ -640,8 +643,8 @@ C     Send labels and values to OPSUM
       
 !       Error checking
         CALL DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, RecNum, RHUM,             !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    ERRKEY, FILEWW, RAIN, RecNum,                   !Input
+     &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
 
       ENDIF
@@ -796,8 +799,8 @@ C         Read in weather file header.
 
 !     Error checking
       CALL DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, RecNum, RHUM,             !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    ERRKEY, FILEWW, RAIN, RecNum,                   !Input
+     &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
 
 !      ERR = 0
@@ -902,6 +905,7 @@ C         Read in weather file header.
       USE ModuleDefs
       USE Forecast
       IMPLICIT NONE
+      EXTERNAL IGNORE, WEATHERERROR, Y2K_DOYW, YR_DOY, WARNING
       SAVE
 
       INTEGER MaxRecords
@@ -1068,7 +1072,7 @@ C         Read in weather file header.
             CALL Y2K_DOYW(MULTI, YRDOYWY, YRDOYW, CENTURY)
             IF (NRecords == 0 .AND. YRDOY == YRSIM .AND.  !First record
      &          YRDOYW > YRSIM .AND.                      ! > YRSIM
-     &          YRDOYW_SAVE < 99366) THEN       ! & century set by program
+     &          YRDOYW_SAVE < 99366) THEN     ! & century set by program
               CENTURY = CENTURY - 1
               YRDOYW = YRDOYW - 100000
             ENDIF
@@ -1171,6 +1175,8 @@ C         Read in weather file header.
 !     Checks that required headers are found in weather file.  Reports
 !     to INFO.OUT the headers that are found.
 !-----------------------------------------------------------------------
+      EXTERNAL UPCASE, INFO, WARNING, ERROR
+
       CHARACTER*1 UPCASE
       CHARACTER*92 FILEWW
       INTEGER IM, LINWTH
@@ -1252,8 +1258,8 @@ C         Read in weather file header.
 ! 09/01/2009 CHP Written
 !-----------------------------------------------------------------------
       Subroutine DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, RecNum, RHUM,             !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOYW,         !Input
+     &    ERRKEY, FILEWW, RAIN, RecNum,                   !Input
+     &    SRAD, TMAX, TMIN, YRDOYW,                       !Input
      &    YREND)                                          !Output
 
 !     Checks validity of daily weather for observed or generated values.
@@ -1261,12 +1267,12 @@ C         Read in weather file header.
       Use ModuleDefs
       Use ModuleData
       Implicit None
+      EXTERNAL WARNING, WeatherError
 
       CHARACTER*(*) ERRKEY, FILEWW
       CHARACTER*78 MSG(10)
       Integer ErrCode, NChar, RecNum, YRDOYW, YREND
-      REAL RAIN, RHUM, SRAD, TDEW, TMAX, TMIN, WINDSP
-      REAL CALC_TDEW
+      REAL RAIN, SRAD, TMAX, TMIN
       TYPE (ControlType) CONTROL
 
 !     Error checking
@@ -1343,29 +1349,6 @@ C         Read in weather file header.
         CALL WARNING(4,ERRKEY,MSG) 
       ENDIF
 
-!     Substitute default values if TDEW or WINDSP are missing.
-      IF (TDEW <= -90.)  THEN 
-c               MJ, 2007-04-05: set TDEW to TMIN if TDEW not otherwise available.  This is not
-c               appropriate to South African (and presumably other) conditions
-c               --> suggest replacing with a better calculation based on relative humidity, if
-c                   available.
-          IF (RHUM .GT. 0.01) THEN
-              TDEW = CALC_TDEW(TMIN, RHUM)
-          ELSE
-             TDEW = TMIN
-          ENDIF
-      ENDIF
-
-!      IF (WINDSP <= 0.) WINDSP = 86.4
-!      IF (WINDSP <= -1.E-6) THEN
-!        WINDSP = 86.4
-!      ELSEIF (WINDSP < 1.0) THEN
-!        MSG(1) = "Unlikely value for WINDSP in weather file."
-!        WRITE(MSG(2),'("WINDSP = ",F8.2," km/d")') WINDSP
-!        CALL WARNING(2,ERRKEY,MSG)
-!        CALL ERROR(ERRKEY,9,FILEW,RecNum)
-!      ENDIF
-
       Return
       End Subroutine DailyWeatherCheck
 
@@ -1380,6 +1363,7 @@ c                   available.
 !-----------------------------------------------------------------------
 ! REVISION HISTORY
 ! 09/01/2009 CHP Written
+! 06/15/2022 CHP Added CropStatus
 !-----------------------------------------------------------------------
       SUBROUTINE WeatherError(CONTROL, ErrCode, FILEWW, LNUM, 
      &      YRDOYW, YREND)
@@ -1387,6 +1371,7 @@ c                   available.
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL YR_DOY, LENSTRING, WARNING, ERROR
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'IPWTH '
       CHARACTER*78 MSG(4)
@@ -1462,6 +1447,7 @@ c                   available.
       MSG(NMSG) = "Simulation will end."
       YREND = CONTROL%YRDOY
       CONTROL % ErrCode = ErrCode
+      CONTROL % CropStatus = 200
       CALL PUT(CONTROL)
       CALL WARNING(NMSG,ERRKEY,MSG)
 
@@ -1487,8 +1473,6 @@ c                   available.
 
 !-----------------------------------------------------------------------
 ! BLANK   blank character 
-! CALC_TDEW Function that calculates dew point temperature from min and
-!           max temperatures and relative humidity.
 ! CCO2    Atmospheric CO2 concentration read from input file (ppm)
 ! ERRKEY  Subroutine name for error file 
 ! ERR  Error number for input 

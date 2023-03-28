@@ -31,11 +31,13 @@ C=======================================================================
      &     SWCON,CN2,SALB,DEPMAX,PEDON,SLNO,SLTX,LL,DUL,SAT,WR,BD,OC,PH,
      &     DLAYR,NLAYR,DS,LNIC,LNSA,YRIC,PRCROP,WRESR,WRESND,EFINOC,
      &     EFNFIX,PATHSL,SWINIT,INO3,INH4,EXTP,
-     &     ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,SWCN,ADCOEF,TOTN,YRSIM,
+     &     ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,SWCN,ADCOEF,TOTN,  !YRSIM,
      &     SMPX, EXK, PHKCL, SMHB, SMKE, ISWITCH)
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, IPSLAN, IPSLIN, IPSOIL_INP, SEDLYR, 
+     &  SEINIT, SEPROF, SESURF
 
       CHARACTER*1  RNMODE,BLANK,SWSPRF   !,ISWPHO
       CHARACTER*2  PRCROP
@@ -46,14 +48,14 @@ C=======================================================================
       CHARACTER*80 PATHSL
       CHARACTER*92 FILESS,FILEX_P
 
-      INTEGER      MENU,NSENS,NLAYR,NLOOP,LNIC,LNSA,YRIC,PATHL,I,YRSIM
+      INTEGER      MENU,NSENS,NLAYR,NLOOP,LNIC,LNSA,YRIC,PATHL,I !,YRSIM
       LOGICAL      FEXIST
 
       REAL         LL(NL),DUL(NL),SAT(NL),BD(NL),WR(NL),PH(NL)
       REAL         OC(NL),SLPF,U,SLNF,SWCON,CN2,SALB,DEPMAX,DLAYR(NL)
       REAL         DS(NL),WRESR,WRESND,EFINOC,EFNFIX,ADCOEF(NL),TOTN(NL)
       REAL         SWINIT(NL),INO3(NL),INH4(NL),EXTP(NL),SWCN(NL)
-      REAL         EXK(NL), PHKCL(NL), SASC(NL)
+      REAL         EXK(NL), PHKCL(NL), SASC(NL), SAEA(NL)
       REAL         ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID
 !      REAL, DIMENSION(NL) :: SOM1I, SOM2I, SOM3I
 
@@ -157,11 +159,11 @@ C
           NSENS = 1
           CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &	     WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &         ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM)
+     &         ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)    !,YRSIM)
 !     &         SOM1I, SOM2I, SOM3I)
           CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR, YRSIM)
+     &            SASC, SAEA, NLAYR)    !, YRSIM)
       ELSE IF (MENU .EQ. 5) THEN
           CALL SEPROF (DLAYR,NLAYR,RNMODE,DS,DUL,LL,SAT,BD,WR,OC,PH,
      &         SWINIT,SWCN,ADCOEF,TOTN)
@@ -226,6 +228,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, SEPLYR
 
       CHARACTER*1  RNMODE
       CHARACTER*6  ERRKEY
@@ -357,6 +360,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1 RNMODE,LINE(80)
       CHARACTER*6 ERRKEY
@@ -472,6 +476,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80)
       CHARACTER*6  ERRKEY
@@ -577,6 +582,7 @@ C=======================================================================
       SUBROUTINE SESURF (RNMODE,U,CN2,SWCON,SALB,SLNF,SLPF)
 
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1 RNMODE,LINE(80)
       CHARACTER*6 ERRKEY

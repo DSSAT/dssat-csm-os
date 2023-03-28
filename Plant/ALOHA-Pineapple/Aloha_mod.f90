@@ -1,7 +1,6 @@
 !=======================================================================
 !  MODULE Aloha_mod
 !  03/28/2017 CHP Written
-!  09/05/2020 JVJ Stages inclusion for Overview.    
 !=======================================================================
 
       MODULE Aloha_mod
@@ -14,8 +13,8 @@
         CHARACTER*12 CULfile
         CHARACTER*16 VRNAME
         CHARACTER*80 CULpath
-        REAL TC, P1, P2, P3, P4, P5, P6, P7, P8
-        REAL G1, G2, G3, PHINT
+        REAL P1, P2, P3, P4, P5, P6
+        REAL G2, G3, PHINT
       END TYPE AlohaCul_type
 
       TYPE AlohaSpe_type
@@ -43,18 +42,18 @@
 !     REAL TEMPM
 
       DATA STNAME/    &
-        'Foliar C1 ', &   ! 1   JVJ   Zero Stem is not a phenological stage, and it cannot be seen with the naked eye. The phyllotaxis of pineapple is 5/13
-        'Foliar C2 ', &   ! 2         (leaves are produced around the axis of the stem, when 5 turns are completed, leaf number 13 is aligned with the first leaf.
-        'Foliar C3 ', &   ! 3         In other words, a pineapple leaf cycle is fulfilled each time it is produce 13 leaves. 
-        'Forcing   ', &   ! 4         It is a date entered by the user.
-        'Open Heart', &   ! 5         Open Heart is an important event for producers. But you can have different criteria to define the precise moment. I am writing an article where this will be well defined.
-        'EarlyAnthe', &   ! 6         Idem
-        'LastAnthes', &   ! 7         Idem
-        'PhMaturity', &   ! 8         For MD-2 producers, physiological maturity is important because it defines the timing of degreening the fruit
-        'Fruit Harv', &   ! 9         The concept of previous physiological maturity of the Aloha Pineapple model is very different, so the values have been modified.
-        'Planting  ', &   !10
-        'WhRoottips', &   !11         Root Init.
-        'Leaf Emerg', &   !12
+        'Zero Stem ', &   ! 1
+        'Forcing   ', &   ! 2
+        'SCY       ', &   ! 3
+        'Early Flwr', &   ! 4
+        'Fruit Harv', &   ! 5
+        'Maturity  ', &   ! 6
+        'Planting  ', &   ! 7
+        'Root Init.', &   ! 8
+        'Leaf Emerg', &   ! 9
+        '          ', &   !10
+        '          ', &   !11
+        '          ', &   !12
         '          ', &   !13
         'Start Sim ', &   !14
         'End Sim   ', &   !15
@@ -76,11 +75,11 @@
 !
 !  06/15/1994 PWW Original written
 !  03/29/2017 CGO Revised for v4.6
-!  10/29/2021 FO  Fixed unit conflict on species file for gfortran
 !=======================================================================
       SUBROUTINE Aloha_IPCROP (CONTROL)
 
       IMPLICIT    NONE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE
       SAVE
 
       CHARACTER*6 SECTION
@@ -133,7 +132,7 @@
     ENDDO
 
     CLOSE(LUNSPE)
-
+    
     RETURN
 
 100 CALL ERROR(ERRKEY,ERR,FILESPE,LNUM)   
@@ -159,6 +158,7 @@
       SUBROUTINE Aloha_IpPlant (CONTROL)
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR
       SAVE
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'IPPLNT'
@@ -241,9 +241,9 @@
        ELSE
          READ (LUNIO,1800,IOSTAT=ERR) & 
             Cultivar % VARNO, Cultivar % VRNAME, Cultivar % ECONO,     &
-            Cultivar % TC, Cultivar % P1, Cultivar % P2, Cultivar % P3, Cultivar % P4, Cultivar % P5, & 
-            Cultivar % P6, Cultivar % P7, Cultivar % P8, Cultivar % G1, Cultivar % G2, Cultivar % G3, Cultivar % PHINT  
- 1800    FORMAT (A6,1X,A16,1X,A6,1X,15F6.0)               !FORMAT (A6,1X,A16,1X,A6,1X,15F6.0)    
+            Cultivar % P1, Cultivar % P2, Cultivar % P3, Cultivar % P4, Cultivar % P5, & 
+            Cultivar % P6, Cultivar % G2, Cultivar % G3, Cultivar % PHINT  
+ 1800    FORMAT (A6,1X,A16,1X,A6,1X,15F6.0)    
 !B0066 SC-F153          IB0001   60.0  629.  381. 2640.  400.  60.0  200.  14.0  40.0
          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
        ENDIF

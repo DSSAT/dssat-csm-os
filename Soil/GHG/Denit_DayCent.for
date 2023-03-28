@@ -13,13 +13,14 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE Denit_DayCent (CONTROL, ISWNIT, 
-     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
-     &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data)                      !Output
+     &    dD0, newCO2, NO3, SNO3, SOILPROP,       !Input
+     &    DLTSNO3,                                !I/O
+     &    CNOX, TNOXD, N2O_data)                  !Output
 !-----------------------------------------------------------------------
       USE GHG_mod 
       USE ModuleData
       IMPLICIT  NONE
+      EXTERNAL YR_DOY
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT
@@ -27,11 +28,11 @@ C=======================================================================
       INTEGER DOY, DYNAMIC, L, YEAR, YRDOY
       INTEGER NLAYR
 
-      REAL FLOOD, WFDENIT, XMIN
+      REAL FLOOD, XMIN    !, WFDENIT
       REAL SNO3_AVAIL
       REAL DLTSNO3(NL)   
       REAL BD(NL), DUL(NL), KG2PPM(NL)
-      REAL NO3(NL), SNO3(NL), SW(NL), DLAYR(NL), DS(NL)
+      REAL NO3(NL), SNO3(NL), DLAYR(NL), DS(NL)   !, SW(NL)
       
 !!!!! daycent variables  PG
       REAL wfps(nl)
@@ -55,10 +56,8 @@ C=======================================================================
 !          Cumul      Daily       Layer ppm        Layer kg
       REAL CNOX,      TNOXD,      denitrifppm(NL), DENITRIF(NL)  !Denit
       REAL CN2,       TN2D,                        n2flux(nl)    !N2
-      REAL CN2Odenit, TN2OdenitD,                  n2odenit(nl)  !N2O from denitrification only
-!     REAL            TNOXD,      denitrifppm(NL), DENITRIF(NL)  !Denitrification
-!     REAL                                         n2flux(nl)    !N2
-!     REAL                        n2odenitppm(NL), n2odenit(nl)  !N2O from denitrification only
+!     N2O from denitrification only
+      REAL CN2Odenit, TN2OdenitD,                  n2odenit(nl)  
 
       TYPE (ControlType) CONTROL
       DYNAMIC = CONTROL % DYNAMIC

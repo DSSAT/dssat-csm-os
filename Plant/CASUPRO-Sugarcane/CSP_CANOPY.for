@@ -31,6 +31,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR, GETLUN, IGNORE, CSP_SHADOW, TABEX
       SAVE
 
       CHARACTER*6 ERRKEY
@@ -360,7 +361,7 @@ C       Calculate fraction shaded for vertical sun position.
 
              CALL CSP_SHADOW(
      &         AZIR, AZZON,BETA(1),BETN,CANHT,CANWH,H,ROWSPC,   !Input
-     &         WEATHER,                                         !Input
+!    &         WEATHER,                                         !Input
      &         FRSHV)                                           !Output
 
              ENDIF
@@ -374,7 +375,7 @@ C       Calculate fraction shaded.
 		       
              CALL CSP_SHADOW(
      &         AZIR, AZZON, BETA, BETN, CANHT, CANWH, H, ROWSPC,!Input
-     &         WEATHER,                                         !Input
+!    &         WEATHER,                                         !Input
      &         FRACSH)                                          !Output
           
 		    FRSHAV = FRSHAV + FRACSH
@@ -420,7 +421,7 @@ C=======================================================================
 
       SUBROUTINE CSP_SHADOW(
      &  AZIR, AZZON, BETA, BETN, CANHT, CANWH, H, ROWSPC, !Input
-     &  WEATHER,                                          !Input 
+!    &  WEATHER,                                          !Input 
      &  FRACSH)                                           !Output
 
 C Note: AZIR & ROWSPC read by SUBROUTINE PGINP; copy code?
@@ -443,7 +444,7 @@ C       AZZON & BETA from WEATHER constructed data type
       PARAMETER (TINCR=24.0/TS)
 
 !     Transfer values from constructed data types into local variables.
-      TYPE (WeatherType) WEATHER
+!     TYPE (WeatherType) WEATHER
 !       AZZON  = WEATHER % AZZON 
 !       BETA   = WEATHER % BETA   
 

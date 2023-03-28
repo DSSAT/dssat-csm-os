@@ -35,6 +35,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, IGNORE, HFIND, IGNORE2, Y4K_DOY
 
       INTEGER      LNIR,NIRR,LUNEXP,IDLAPL(NAPPL),ISECT,LINEXP,LNSIM
       INTEGER      YRSIM,IFIND,LN,J,ERRNUM,NAPW,IIRV(NAPPL),IRRCD
@@ -70,6 +71,7 @@ C
          AMT(J)    = 0.0
          IRRCOD(J) = '     '
       END DO
+
       IF (LNIR .GT. 0) THEN
          IF (ISWWAT .EQ. 'N' .AND. LNSIM .EQ. 0) THEN
             IIRRI  = 'R'
@@ -184,7 +186,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             IF ((IRRCOD(NIRR)(3:5)) .NE. '007' .AND.
      &          (IRRCOD(NIRR)(3:5)) .NE. '008' .AND.
      &          (IRRCOD(NIRR)(3:5)) .NE. '009' .AND.
-     &          (IRRCOD(NIRR)(3:5)) .NE. '010') THEN  !CHP added '010'
+     &          (IRRCOD(NIRR)(3:5)) .NE. '010') THEN 
                 NAPW = NAPW + 1
                 IF (AMT(NAPW) .GT. 0.0) THEN
                   TOTAPW = TOTAPW + AMT(NAPW)
@@ -225,6 +227,25 @@ C-----------------------------------------------------------------------
  55   FORMAT (I3,F5.0,3(1X,F5.0),2(1X,A5),1X,F5.0)
  60   FORMAT (I3,I5,1X,A5,1X,F5.0,4X,I2)
       END SUBROUTINE IPIRR
+!=======================================================================
+!     IPIRR VARIABLE DEFINITIONS:
+!-----------------------------------------------------------------------
+!IDLAPL(I) Irrigation or water table dates read from input file.  
+!IIRRI    Irrigation switch R=on reported dates, D=as reported, days after 
+!            planting, A=automatic, when required., F=automatic w/ fixed 
+!            amt, P=as reported thru last reported day then automatic, W=as 
+!            reported thru last reported day then fixed amount, N=not 
+!            irrigated 
+!IIRV is no longer used. It is water table depth for IR007, otherwise it is?
+!IRRCOD    Irrigation Codes: IR001: Furrow in mm; IR006: Flood depth in mm; IR009 Bund height in mm
+!ISWWAT   Water simulation control switch (Y or N). It is read from X file simulation water
+!LNSIM    Simulation treatment setting in X file
+!NIRR # of irrigation events reading
+!
+!-----------------------------------------------------------------------
+!     END SUBROUTINE IPIRR
+!=======================================================================
+
 
 C=======================================================================
 C  IPRES, Subroutine
@@ -263,6 +284,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, WARNING, Y4K_DOY
 
       CHARACTER*1  ISWNIT,ISWPHO,ISWPOT,IRESI,ISWWAT
       CHARACTER*5  RESCOD(NAPPL),RMET(NAPPL)
@@ -272,7 +294,7 @@ C=======================================================================
       CHARACTER*80 CHARTEST
 
       INTEGER      LNRES,LUNEXP,ISECT,LINEXP,RESDAY(NAPPL),NRESAP
-      INTEGER      ERRNUM,J,IFIND,LN,NARES,YRSIM,LNSIM
+      INTEGER      ERRNUM,J,IFIND,LN,NARES,YRSIM,LNSIM,IRESCD
 
       REAL         RESN(NAPPL),RESP(NAPPL),RESK(NAPPL),RESIDUE(NAPPL),
      &             RINP(NAPPL),DEPRES(NAPPL),RESAMT
@@ -333,7 +355,18 @@ C
 C           Set minimum lower than 1000 KG .. PWW
 C
 C-PW        RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),10.0)
-            RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),0.0)
+
+C-GH 7/25/2022 Remove MAX statement; error checking below
+C-GH        RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),0.0)
+            
+            
+            READ (RESCOD(NRESAP)(3:5),'(I3)',IOSTAT=ERRNUM) IRESCD
+            IF (IRESCD .LT. 1 .OR. IRESCD .GE. 999 .OR.
+     &          ERRNUM .NE. 0) THEN
+               CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+            ENDIF
+                      
+C-GH 7/25/2022 Check for missing residue code        
             IF ((RESDAY(NRESAP) .LT. 0) .OR.
      &          (IRESI .EQ. 'R' .AND. MOD(RESDAY(NRESAP),1000)
      &           .GT. 366)) THEN
@@ -458,6 +491,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY
 
       CHARACTER*1  ISWNIT,ISWPHO,ISWPOT,IFERI,ISWWAT
       CHARACTER*5  FERCOD(NAPPL),FOCOD(NAPPL),IFTYPE(NAPPL)
@@ -613,9 +647,11 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &                  NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+     &                  NHAR,IHARI,YRSIM,CROP,HBPC)  !,FREQ,CUHT)
+!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY
 
       CHARACTER*1  IHARI
       CHARACTER*2  CROP
@@ -626,9 +662,10 @@ C=======================================================================
 
       INTEGER      LNHAR,LUNEXP,ISECT,LINEXP,HDATE(3),NHAR
       INTEGER      ERRNUM,J,IFIND,LN,YRSIM
-      INTEGER      HYR, HDAY
+!     INTEGER      HYR, HDAY
 
-      REAL         HPC(3),HBPC(3),FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+!     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+      REAL         HPC(3),HBPC(3) !,FREQ,CUHT 
 
       PARAMETER   (ERRKEY='IPHAR ')
 
@@ -733,7 +770,8 @@ C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
- 60   FORMAT (I3,I5,3(1X,A5),2(1X,F5.0),6X,F5.0,F5.0) !editted to read forage variables (Diego-2/14/2017)
+!     editted to read forage variables (Diego-2/14/2017)
+ 60   FORMAT (I3,I5,3(1X,A5),2(1X,F5.0),6X,F5.0,F5.0) 
 
       END SUBROUTINE IPHAR
 
@@ -767,6 +805,7 @@ C=======================================================================
       SUBROUTINE IPCUL (LUNEXP,FILEX,LNCU,CROP,VARNO)
 
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, UPCASE
 
       INTEGER      LNCU,LUNEXP,ISECT,LINEXP
       INTEGER      IFIND,LN,ERRNUM

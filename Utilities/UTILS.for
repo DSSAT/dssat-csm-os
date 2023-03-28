@@ -626,6 +626,7 @@ C========================================================================
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL LenString
       SAVE
 
       CHARACTER*(*), INTENT(IN) :: FileVarName
@@ -810,6 +811,8 @@ C========================================================================
       SUBROUTINE GET_CROPD(CROP, CROPD)
 C-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL READ_DETAIL, WARNING
+
       CHARACTER*2  CROP
       CHARACTER*6  ERRKEY
 !      CHARACTER*10 FILECDE
@@ -974,6 +977,7 @@ C=======================================================================
 C        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
+      EXTERNAL GETLUN, OUTFILES, WARNING
 
       Type (OutputType) FileData
       CHARACTER*16, DIMENSION(MaxFiles) :: FileName
@@ -1058,6 +1062,7 @@ C=======================================================================
 C        USE IFPORT
 !!!!cDEC$ ENDIF
       IMPLICIT NONE
+      EXTERNAL GETLUN
 
       SAVE
       INTEGER i, COUNT, LUNLST, LUNTMP, SYS, SYSTEM
@@ -1266,6 +1271,7 @@ C=======================================================================
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL get_dir, IGNORE, WARNING
       SAVE
 
       CHARACTER*6  ERRKEY
@@ -1419,6 +1425,7 @@ C=======================================================================
       INTEGER FUNCTION StartString (STRING)
 
       IMPLICIT  NONE
+      EXTERNAL LenString
 
       CHARACTER(len=*) STRING
       CHARACTER(len=1) CHAR
@@ -1454,6 +1461,7 @@ C=======================================================================
       Subroutine Join_Trim (STRING1, STRING2, JoinString)
 
       IMPLICIT NONE
+      EXTERNAL LenString, StartString
 
       CHARACTER(len=*) STRING1, STRING2, JoinString
       INTEGER EndLen1, EndLen2, LenString
@@ -1609,6 +1617,7 @@ C=======================================================================
       subroutine get_next_string(full_string,start,next_string)
 
         implicit none
+        external skipspc
 
         character(len=*),intent(in)  :: full_string
         character(len=*),intent(out) :: next_string

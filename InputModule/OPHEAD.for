@@ -34,6 +34,8 @@
         SUBROUTINE MULTIRUN(RUN, YRPLT)
 !       Updates header for multi-year runs
         IMPLICIT NONE
+        EXTERNAL YR_DOY, NAILUJ, LENSTRING
+
         CHARACTER*3 RMS
         CHARACTER*8 WSTAT
         CHARACTER*11 TEXT
@@ -141,6 +143,7 @@ C=======================================================================
       USE ModuleDefs
       USE HeaderMod
       IMPLICIT NONE
+      EXTERNAL LENSTRING, NAILUJ, YR_DOY
       SAVE
 
       INCLUDE 'COMSWI.blk'
@@ -512,6 +515,7 @@ C  03/11/2005 GH  Remove ANS, RNMODE and NYRS
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
 C  08/09/2012 GH  Updated for cassava
 C  09/18/2020 GH  Update for quinoa, safflower, sunflower
+C  07/08/2022 GH  Update for cucumber
 C-----------------------------------------------------------------------
 C  INPUT  : IDETO,NOUTDO,NYRS,LL,DUL,SAT,DLAYR,SWINIT,DS,NLAYR,ESW
 C           SHF,BD,PH,INO3,INH4,OC,TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4
@@ -540,6 +544,7 @@ C=======================================================================
       USE ModuleDefs
       USE HeaderMod
       IMPLICIT NONE
+      EXTERNAL LenString
 
       INCLUDE 'COMGEN.blk'
 
@@ -624,7 +629,7 @@ C=======================================================================
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('BH,BM,BR,CB,CI,CN,CO,NP,PR,QU,SF,SU,TM',CROP)
+        ELSEIF (INDEX ('BH,BM,BR,CB,CI,CN,CO,CU,NP,PR,QU,SF,SU,TM',CROP)
      &          .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
@@ -826,15 +831,13 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
 !-----------------------------------------------------------------------
 !     Pineapple **
       CASE ('PIALO')
-         WRITE (HEADER(I),2010) TC,P1,P2,P3,P4,P5,P6,P7,P8; I=I+1
-         WRITE (HEADER(I),2011) G1,G2,G3,PHINT; I=I+1
- 2010    FORMAT (1X,'    TC:',F6.1,'    P1:',F6.1,
-     &           '    P2:',F6.1,'    P3:',F6.1,
-     &           '    P4:',F6.1,'    P5:',F6.1
-     &           '    P6:',F6.1,'    P7:',F6.1,
-     &           '    P8:',F6.1)
- 2011 FORMAT (1X,'    G1:',F6.1,'    G2:',F6.1,
-     &           '    G3:',F6.1,' PHINT:',F6.1)
+         WRITE (HEADER(I),2010) P1,P2,P3,P4,P5,P6; I=I+1
+         WRITE (HEADER(I),2011) G2,G3,PHINT; I=I+1
+ 2010 FORMAT (1X,'    P1:',F6.1,'    P2:',F6.1,
+     &           '    P3:',F6.1,'    P4:',F6.0,
+     &           '    P5:',F6.1,'    P6:',F6.1)
+ 2011 FORMAT (1X,'    G2:',F6.1,'    G3:',F6.2,
+     &           ' PHINT:',F6.1)
 
 !-----------------------------------------------------------------------
 !     Sugarcane - Canegro

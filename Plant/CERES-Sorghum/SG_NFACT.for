@@ -28,7 +28,7 @@ C         :
 C=======================================================================
 
       SUBROUTINE SG_NFACT (DYNAMIC,
-     & AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
+     & AGEFAC, ISTAGE, NDEF3, NFAC, !CNSD1, CNSD2, 
      & NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
 
       USE ModuleDefs 
@@ -36,8 +36,8 @@ C=======================================================================
       SAVE
 
       REAL        AGEFAC
-      REAL        CNSD1
-      REAL        CNSD2
+!      REAL        CNSD1
+!      REAL        CNSD2
       INTEGER     ISTAGE
       REAL        NDEF3
       REAL        NFAC

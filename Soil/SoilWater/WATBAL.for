@@ -36,6 +36,8 @@ C  06/12/2002 CHP/US  Added flooded field options
 !  04/05/2006 CHP Added mixing of SW and variable soil layer depths
 !                 due to tillage
 !  04/10/2021 GH Corrected snowfall for very small amounts
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called by: SOIL module
 C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.for)
@@ -46,7 +48,7 @@ C             RNOFF   (File RNOFF.for)
 C             SATFLO  (File SATFLO.for)
 C=======================================================================
 
-      SUBROUTINE WATBAL(CONTROL, ISWITCH, 
+      SUBROUTINE WATBAL(CONTROL, ISWITCH,                 !Input
      &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
@@ -58,6 +60,9 @@ C=======================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
+     &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
+     &  SOILMIXING, SUMSW, WTDEPT
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -150,8 +155,8 @@ C=======================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
 !     Call IPWBAL to read in values from input file
-      CALL IPWBAL (CONTROL, DLAYR, LL, NLAYR, SAT,        !Input
-     &    SW, WTDEP)                                      !Output
+      CALL IPWBAL (CONTROL, LL, NLAYR,            !Input
+     &    SW, WTDEP)                              !Output
 
 !     Read tile drainage variables from FILEIO
       CALL TILEDRAIN(CONTROL, 
@@ -179,8 +184,8 @@ C=======================================================================
       IF (ISWWAT .EQ. 'Y') THEN
         IF (CONTROL%MULTI .GT. 1 .OR. CONTROL%RNMODE .EQ. 'Y') THEN
         !Re-read initial conditions if multi-season or forecast run
-          CALL IPWBAL (CONTROL, DLAYR, LL, NLAYR, SAT,    !Input
-     &    SW, WTDEP)                                      !Output
+          CALL IPWBAL (CONTROL, LL, NLAYR,            !Input
+     &      SW, WTDEP)                                !Output
         ENDIF
       ENDIF
 

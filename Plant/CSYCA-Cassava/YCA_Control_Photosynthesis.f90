@@ -39,22 +39,24 @@
       
 
     ! Conventional method using PAR utilization efficiency (V)
-    real function availableCarbohydrate_methodV(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, LAI, WFP, WEATHER, CONTROL, SOILPROP)
+!   real function availableCarbohydrate_methodV(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, LAI, WFP, WEATHER, CONTROL, SOILPROP)
+    real function availableCarbohydrate_methodV(PARMJFAC,       PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP,      WFP, WEATHER, CONTROL, SOILPROP)
         USE ModuleDefs
         USE YCA_Model_VPD_Interface
         
         implicit none
+        external VPSAT
         
         
-        real, intent (in) :: PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WFP
+        real, intent (in) :: PARMJFAC, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WFP !, SRAD
         TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
         TYPE (WeatherType) WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
         TYPE (YCA_VPD_Type) :: VPD
         real :: CARBOTMPR = 0
-        REAL VPDF, VPD_TRANSP, VPSAT, TDEW, LAI
-        real, DIMENSION(TS) :: VPDFPHR, CARBOTMPRHR, RADHR, VPDHR, TAIRHR
+        REAL VPDF, VPD_TRANSP, VPSAT, TDEW  !, LAI
+        real, DIMENSION(TS) :: CARBOTMPRHR, RADHR, VPDHR, TAIRHR  !VPDFPHR, 
         integer :: hour = 1
         
         RADHR  = WEATHER % RADHR
@@ -79,7 +81,8 @@
         
         VPD_TRANSP = VPD_TRANSP/TS
         
-        VPDF = AMAX1(0.0,(1.0 - VPD%get_YCA_VPDFP(LAI)))
+!       VPDF = AMAX1(0.0,(1.0 - VPD%get_YCA_VPDFP(LAI)))
+        VPDF = AMAX1(0.0,(1.0 - VPD%get_YCA_VPDFP()))
         Weather % VPDF = vpdf
         Weather % VPD_TRANSP = VPD_TRANSP
         

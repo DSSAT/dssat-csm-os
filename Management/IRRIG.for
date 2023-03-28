@@ -40,13 +40,15 @@ C=======================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, FIND, TIMDIF, SWDEFICIT, WARNING, 
+     &  FLOOD_IRRIG
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*6 ERRKEY
 !      CHARACTER*70 IrrText
       PARAMETER (ERRKEY = 'IRRIG')
 
-      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM
+      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE    !, MESOM
       CHARACTER*5 IOFF   ! old IRON, for compatibility with old files
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
@@ -68,7 +70,7 @@ C=======================================================================
       REAL DLAYR(NL), DS(NL), DUL(NL), LL(NL), SW(NL)
       REAL, DIMENSION(NAPPL) :: AMIR, AMT, WTABL
 
-!  Added for flooded field management
+!     Added for flooded field management
       LOGICAL PUDDLED
       INTEGER NBUND, NCOND, NPERC, NPUD
       INTEGER IBDAT(NAPPL), IIRRCV(NAPPL), IPDAT(NAPPL) !, IIRRP(100)
@@ -87,23 +89,23 @@ C=======================================================================
 	REAL IRAMT(20)
 	REAL IREFF(20)
       INTEGER IFREQ(20)
-	CHARACTER*5 V_IRONC(20)
+!     CHARACTER*5 V_IRONC(20)
 	CHARACTER*5 IRONC(20)
       INTEGER DaysSinceIrrig
-!      REAL IRRFREQ       !IRRFREQ as real value at request of IK 9/4/2017
-      INTEGER IRRFREQ     !Change back to integer, converted from real input 9/27/2017
-	REAL AVWATT         ! Water available for irrigation today (mm)
-	INTEGER NGSIrrigs   ! The number of irrigation inputs entered by the user
-	INTEGER IRINC       ! Counter keeping track of irrigation input been used
-	REAL THETAU         ! Threshold, % of available water stopping irrigation
+
+      INTEGER IRRFREQ     
+      REAL AVWATT         ! Water available for irrigation today (mm)
+      INTEGER NGSIrrigs   ! # of irrigation inputs entered by the user
+      INTEGER IRINC       ! Counter for irrigation input used
+      REAL THETAU         ! Threshold, % of avail water to end irrig
       INTEGER NWaterLimits !Number of water limit entrees
-      LOGICAL SeasonalWL  ! T or F - only one water limitation for the entire season?
+      LOGICAL SeasonalWL  ! Water limitation
       REAL GSWatUsed      ! Water used to date in current growth stage
       REAL, PARAMETER :: VeryLargeNumber = 99999999.
 
 !     ET-based auto-irrig
       REAL ET_THRESH, ACCUM_ET
-!      REAL ET     !, EP, ES, E0
+!     REAL ET     !, EP, ES, E0
       REAL EOP, EVAP, RUNOFF
 
 !-----------------------------------------------------------------------
@@ -111,7 +113,7 @@ C=======================================================================
       TYPE (SwitchType)   ISWITCH
       TYPE (SoilType)     SOILPROP
       TYPE (FloodWatType) FLOODWAT
-      Type (MgmtType)     MGMT
+!     Type (MgmtType)     MGMT
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -124,11 +126,8 @@ C=======================================================================
       NLAYR  = SOILPROP % NLAYR  
 
       IIRRI  = ISWITCH % IIRRI
-
       PUDDLED= FLOODWAT % PUDDLED
-
       DAS = CONTROL % DAS
-
 
 C***********************************************************************
 C***********************************************************************
@@ -248,15 +247,15 @@ C-----------------------------------------------------------------------
 !        ENDIF
 
 !     Import array values for growth stage based irrigation directly from input module
-      IMDEP = SAVE_data % MGMT % V_IMDEP       ! Depth
-      ITHRL = SAVE_data % MGMT % V_ITHRL       ! Lower threshold triggering irrigation
-      ITHRU = SAVE_data % MGMT % V_ITHRU       ! Upper threshold triggering irrigation
-      IRONC = SAVE_data % MGMT % V_IRONC       ! IRON in text (for compatibility)
-      IRON  = SAVE_data % MGMT % V_IRON        ! Growth Stage for parameters
-      IRAMT = SAVE_data % MGMT % V_IRAMT       ! Automatic irrigation with fixed amount
-      IREFF = SAVE_data % MGMT % V_IREFF       ! Irrigation Efficiency fraction
-      AVWATI =SAVE_data % MGMT % V_AVWAT       ! Water available for irrigation
-      IFREQ = SAVE_data % MGMT % V_IFREQ       ! Frequency limitation for irrigation
+      IMDEP = SAVE_data % MGMT % V_IMDEP   !Depth
+      ITHRL = SAVE_data % MGMT % V_ITHRL   !Lower thresh trigger irrig
+      ITHRU = SAVE_data % MGMT % V_ITHRU   !Upper thresh trigger irrig
+      IRONC = SAVE_data % MGMT % V_IRONC   !IRON in text (for compatib)
+      IRON  = SAVE_data % MGMT % V_IRON    !Growth Stage for parameters
+      IRAMT = SAVE_data % MGMT % V_IRAMT   !Auto irrigation fixed amt
+      IREFF = SAVE_data % MGMT % V_IREFF   !Irrigation Efficiency frac
+      AVWATI =SAVE_data % MGMT % V_AVWAT   !Water available for irrig
+      IFREQ = SAVE_data % MGMT % V_IFREQ   !Frequency limit for irrig
       NGSIrrigs  =SAVE_data % MGMT % GSIRRIG
 
 !-----------------------------------------------------------------------
@@ -266,7 +265,7 @@ C-----------------------------------------------------------------------
       NWaterLimits = 0
       DO i = 1, NGSIrrigs
         IF (ABS(AVWATI(i) - -99.) < 1.E-3) THEN
-          AVWATI(i) = VeryLargeNumber  !Set to something huge, no limitation
+          AVWATI(i) = VeryLargeNumber  !Set to something huge, no limit
         ELSE
           NWaterLimits = NWaterLimits + 1
         ENDIF
@@ -715,8 +714,9 @@ C-----------------------------------------------------------------------
 !     Check for growth stage dependent irrigation
       IF (IRINC < NGSIrrigs) THEN
         IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
-          IRINC = IRINC + 1  ! If you reach the next GS specified, add 1 to IRINC
-          GSWatUsed = 0.0    ! reset accumulator for water used in this growth stage
+          IRINC = IRINC + 1  ! If you reach the next GS, add 1 to IRINC
+!         reset accumulator for water used in this GS
+          GSWatUsed = 0.0    
         END IF
       ENDIF
 
@@ -832,7 +832,8 @@ C             Apply fixed irrigation amount
           END SELECT
 
           IF (IRRAPL .GT. AVWATT) THEN  
-            IRRAPL = AVWATT   ! IF irrigation greater than water available, limit irrigation
+!           IF irrigation greater than water available, limit irrigation
+            IRRAPL = AVWATT   
           ENDIF
           
           SELECT CASE(AIRRCOD)
@@ -932,11 +933,18 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Transfer data to ModuleData
-      CALL PUT('MGMT','DEPIR', DEPIR)   !Total applied irrig amt today (mm) (includes losses)
-      CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
-      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
-      CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) !Total effective irrigation (mm)
-      CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
+      CALL PUT('MGMT','DEPIR', DEPIR)  
+      CALL PUT('MGMT','IRRAMT',IRRAMT) 
+      CALL PUT('MGMT','TOTIR', TOTIR)  
+      CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) 
+      CALL PUT('MGMT','EFFIRR',EFFIRR) 
+
+! DEPIR     = Total applied irrig amt today (mm) (includes losses)
+! IRRAMT    = Effective irrig amt today (mm)
+! TOTIR     = Total applied irrigation (mm) (includes losses)
+! TOTEFFIRR = Total effective irrigation (mm)
+! EFFIRR    = Effective irrigation %
+
 !***********************************************************************
       ENDIF
 !***********************************************************************

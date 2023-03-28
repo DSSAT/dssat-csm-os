@@ -18,6 +18,8 @@
         USE YCA_Formats_m
      
         IMPLICIT NONE 
+        EXTERNAL YR_DOY, WARNING, HEADER, TVILENT, TVICOLNM, TL10FROMI, LTRIM, CSTIMDIF, CSOPLINE, CALENDAR, DAPCALC, &
+          LTRIM2, AREADR, AREADI, CSYDOY, GETSTRI, GETSTRR
      
         INTEGER :: CN          , DOY         , DYNAMIC     , ON          , RN          , RUN         , RUNI        , SN             
         INTEGER :: STGYEARDOY(0:19)            , TN          , YEAR

@@ -17,10 +17,18 @@
         INTEGER :: Build = @BUILD@
       END TYPE VersionType
       TYPE (VersionType) Version
-!     CMake no longer able to change the branch name, do it manually.      
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
-!     Version history:  
+!     Version history:
+!       4.8.1.6   FO 2023-03-27 Update if statement TRNU (Total N uptake in a day) (commit 6d1f15b)
+!       4.8.1.5   FO 2023-03-10 Rollback of PineApple model to version v4.7.5.26
+!       4.8.1.4   FO 2023-03-10 Added protections for negative NO3 and NH4 values in the PRFRM model
+!       4.8.1.3  chp 2023-01-25 SAEA added as input parameter for methane, restructure CSCER, CSCRP  
+!       4.8.1.2  chp 2023-01-03 Fertigation at user-depth  
+!       4.8.1.1  chp 2023-01-02 Crop status in Summary.OUT, GHG summary variable names  
+!       4.8.1.0   FO 2022-10-28 Separated DSSAT-CSM-CROPSIM main file into multiple files  
+!       4.8.0.29 chp 2022-10-04 SDATE issue, MgmtEvent output, minor updates
+!       4.8.0.28  FO 2022-07-29 Make ASCE ET robust for various weather file formats
 !       4.8.0.27 chp 2022-04-15 Methane initialization, error checking
 !       4.8.0.26 chp 2022-03-28 Cross-over year 2035
 !       4.8.0.25 chp 2022-02-25 Merge develop_4.8 into develop branch

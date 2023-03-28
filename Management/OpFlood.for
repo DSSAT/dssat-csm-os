@@ -11,10 +11,9 @@ C=======================================================================
       SUBROUTINE OpFlood(CONTROL, ISWITCH, 
      &     ABUND, EF, FLOOD, FRUNOFF, INFILT, IRRAMT, RAIN, RUNOFF)
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       CHARACTER*1 IDETW, ISWWAT, RNMODE

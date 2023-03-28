@@ -8,19 +8,23 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Out_LfTier ( & 
-        IDETL       , RUN         , STGYEARDOY  , BRSTAGE    &
+        IDETL       , RUN         , STGYEARDOY  &
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       , BRSTAGE    
+
         !USE ModuleDefs                                         ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
         USE YCA_First_Trans_m
         USE YCA_Formats_m
      
         IMPLICIT NONE 
+        EXTERNAL CSOPLINE
      
         INTEGER :: RUN         , STGYEARDOY(0:PSX) 
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
-        REAL BRSTAGE
+!       REAL BRSTAGE
 
         CHARACTER(LEN=1)  :: IDETL       
     

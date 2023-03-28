@@ -17,13 +17,14 @@
         USE YCA_First_Trans_m
       
         IMPLICIT NONE
-      
+        EXTERNAL GETLUN, TVILENT, TL10FROMI, XREADC, XREADT, UCASE
+
         INTEGER CN          , DOY         , FROP        , ON          , RN          , RUN         , SN          , TN          
         INTEGER YEAR
         !INTEGER VERSIONCSCAS
         INTEGER TVILENT                                                                       ! Integer function call
 
-        CHARACTER(LEN=1)   IDETL       , ISWNIT      , ISWWAT      , RNMODE      
+        CHARACTER(LEN=1)   IDETL       , ISWNIT      , RNMODE      ! ISWWAT      
         CHARACTER(LEN=120) FILEIOIN    
         CHARACTER(LEN=10)  TL10FROMI                                                          ! Character function call
         

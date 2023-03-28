@@ -123,6 +123,7 @@ C=======================================================================
       SUBROUTINE WTHMDI (RNMODE,WMODI,WTHADJ)
 
       IMPLICIT  NONE
+      EXTERNAL CLEAR, WTHSET_Inp
 
       CHARACTER*1  RNMODE, WTYPE,WMODI
       INTEGER      ERRNUM,I,J,MENU1,MENU2

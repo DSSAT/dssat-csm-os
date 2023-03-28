@@ -12,9 +12,11 @@ c      - Sucrose mass (t/ha)
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      SUBROUTINE SC_ETOUT(CONTROL, PAR, Fi, EP, ES, EO, YRPLT, XHLAI, 
-     & EORATIO, MDATE, YREND)
-     
+      SUBROUTINE SC_ETOUT(CONTROL, Fi, EP, ES, EO, YRPLT, XHLAI, 
+     & EORATIO, YREND)
+
+!     2023-01-26 chp removed unused variables from argument list: PAR, MDATE, 
+
 c     ***************************************************************      
 c     Instruct compiler to use module definitions:
 c     DSSAT
@@ -24,7 +26,9 @@ c     Canegro
       USE CNG_ModuleDefs      
 
       IMPLICIT NONE
-      SAVE  
+      EXTERNAL GETLUN, YR_DOY, NAILUJ, ETAD_NAILUJ, FIND_HDATE
+      EXTERNAL TIMDIF, MTHEND
+      SAVE
 
 c     Control variable:
       TYPE (ControlType), INTENT(IN) :: CONTROL        
@@ -33,9 +37,9 @@ c     Bio-physical variables to output in summary file
 c     CMDMD is cellulose DM.
 c     LGDMD, LDDMD are green tops DM and trash DM
 c     RDMD is root dry mass
-      REAL, INTENT(IN) :: PAR, Fi, EP, ES, EO, XHLAI, EORATIO
+      REAL, INTENT(IN) :: Fi, EP, ES, EO, XHLAI, EORATIO !PAR, 
      
-      INTEGER, INTENT(IN) :: YRPLT, YREND, MDATE
+      INTEGER, INTENT(IN) :: YRPLT, YREND !, MDATE
 
 c     Local state variables
 c     :::::::::::::::::::::
@@ -54,7 +58,7 @@ c     Error status:
       INTEGER ERRNUM
 c     Days after planting
       INTEGER DAP
-      INTEGER DOY, YEAR, YR, YRDOY, NDAY, iMON, YEARPLT, DAYMON
+      INTEGER DOY, YEAR, YRDOY, NDAY, iMON, DAYMON !, YR, YEARPLT
       CHARACTER*3  RMON
       !For the why
       INTEGER TIMDIF
@@ -420,6 +424,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR
 
       CHARACTER*6 SECTION, ERRKEY 
       PARAMETER (ERRKEY = 'FIND_HDATE')

@@ -31,6 +31,8 @@ C  02/09/2007 GH  Add path for FileA
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, GETDESC, OPVIEW, READA, 
+     &  READA_Dates, SUMVALS, TIMDIF, EvaluateDat
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE

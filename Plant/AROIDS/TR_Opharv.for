@@ -16,12 +16,14 @@ C=======================================================================
      &    SKERWT, STGDOY, STNAME, STOVER, STOVN, SWFAC,   !Input
      &    TOTNUP, TURFAC, YRPLT,                          !Input
      &    BWAH, SDWT, SDWTAH, TOPWT, WTNSD,               !Output
-     &    MCORMWT, TCORMWT ) !additions RMO
+     &    MCORMWT)    !, TCORMWT ) !additions RMO
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR, GETDESC, OPVIEW, READA, READA_Dates, 
+     &  SUMVALS, EvaluateDat, TIMDIF
       SAVE
 
       CHARACTER*1  IDETO, IPLTI, RNMODE
@@ -39,7 +41,7 @@ C=======================================================================
       INTEGER DNR1,DNR7,MDATE,STGDOY(20)
       INTEGER DYNAMIC, LUNIO, ACOUNT, ERRNUM, LINC, LNUM, FOUND
       INTEGER DFLR, DMAT, LEAFNO, YIELD, ISTAGE
-      INTEGER DNR0, IFLR, TIMDIF, IMAT, IPIN 
+      INTEGER DNR0, IFLR, TIMDIF, IMAT    !, IPIN 
 
       REAL MAXLAI,TOTNUP,PSDWT,PSPP,HI, LAI !,ACREFC
       REAL WTNCAN,PLANTS
@@ -51,7 +53,7 @@ C=======================================================================
       REAL CMOIST, CANWAA,CANNAA,CORMWT,BWAH,SDWTAH
       REAL Pstres1, Pstres2   
       REAL AGEFAC, SWFAC
-	  REAL MCORMWT, TCORMWT   !additions RMO
+      REAL MCORMWT  !, TCORMWT   !additions RMO
 
       REAL, DIMENSION(2) :: HARVFRAC
 
@@ -316,7 +318,8 @@ C-----------------------------------------------------------------------
 !     CHP 1/11/2005 Need to supply this value from somewhere!
       CMOIST = 200.0    ! set moisture to 200% RMO
 
-      YIELD  = NINT(DYIELD) + NINT(CMOIST*DYIELD/100.0) ! fresh yield calc. RMO
+!     fresh yield calc. RMO
+      YIELD  = NINT(DYIELD) + NINT(CMOIST*DYIELD/100.0) 
       PLTPOP = PLANTS
 
 C

@@ -7,9 +7,12 @@
 ! Subroutine YCA_Growth_Senesce calculates senescence and remobilization.
 !***************************************************************************************************************************
     SUBROUTINE YCA_Growth_Senesce ( &
-        ISWNIT      , ISWWAT,     BRSTAGE      , LAI       & 
+        ISWNIT      , LAI       & 
         )
-    
+
+! 2023-01-25 chp removed unused variables
+!       ISWWAT,     BRSTAGE      , 
+
         USE YCA_First_Trans_m
         USE YCA_Control_Leaf
     
@@ -19,8 +22,8 @@
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         INTEGER :: Lcount                   ! counter for iterations in leafs (Lcount)
         INTEGER :: Bcount                  ! counters for iterations in branches (Bcount)
-        CHARACTER(LEN=1) ISWNIT      , ISWWAT
-        REAL BRSTAGE
+        CHARACTER(LEN=1) ISWNIT      !, ISWWAT
+!       REAL BRSTAGE
         REAL LAI
     
         !-----------------------------------------------------------------------

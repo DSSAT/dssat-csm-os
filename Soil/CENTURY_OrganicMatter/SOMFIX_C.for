@@ -39,6 +39,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL PATH, ERROR, GETLUN, CHECKFIX_C
       SAVE
 
       CHARACTER*1, PARAMETER :: BLANK = ' '
@@ -569,6 +570,7 @@
 !     ------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT  NONE
+      EXTERNAL ERROR, WARNING
 !     ------------------------------------------------------------------
 !      CHARACTER*6  ROUTIN
       CHARACTER*6, PARAMETER :: ERRKEY = 'SOMFIX'

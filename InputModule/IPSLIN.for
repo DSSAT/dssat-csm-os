@@ -31,11 +31,15 @@ C=======================================================================
 
       SUBROUTINE IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &        WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM) 
+     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
 !     &        SOM1I, SOM2I, SOM3I)
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       YRSIM
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH
 
       CHARACTER*2  PRCROP
       CHARACTER*6  ERRKEY,FINDCH
@@ -44,8 +48,8 @@ C=======================================================================
       CHARACTER*80 CHARTEST
 	CHARACTER*92 FILEX_P
 
-      INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC,FWY1P,
-     &             YRIC,ERRNUM,IFIND,YRSIM, YRICYEAR, YR, DOY
+      INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC, !,FWY1P,
+     &             YRIC,ERRNUM,IFIND   !,YRSIM, YRICYEAR, YR, DOY
       REAL         DS(NL),DLAYRI(NL),SWINIT(NL)
       REAL         DUL(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
       REAL         ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID !, TOTSOM
@@ -234,10 +238,11 @@ C=======================================================================
 
       SUBROUTINE IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR, YRSIM)
+     &            SASC, SAEA, NLAYR)    !, YRSIM)
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH
 
       CHARACTER*5  SMHB, SMKE, SMPX, SMHBtemp, SMKEtemp, SMPXtemp
       CHARACTER*6  ERRKEY, FINDCH
@@ -247,11 +252,14 @@ C=======================================================================
 	CHARACTER*92 FILEX_P
 
       INTEGER      LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNSA
-      INTEGER      ERRNUM,SADAT,IFIND,L,YRSIM
+      INTEGER      ERRNUM,SADAT,IFIND,L   !,YRSIM
 
       REAL         SABL(NL),SADM(NL),SAOC(NL),SANI(NL),SAPHW(NL)
       REAL         SAPX(NL),SAKE(NL),BD(NL),OC(NL),DS(NL),SAPHB(NL)
       REAL         PH(NL),PHKCL(NL),EXK(NL), EXTP(NL),TOTN(NL), SASC(NL)
+
+!     chp 2023-01-24 for methane model initialization
+      REAL         SAEA(NL) !Soil Alternative Electron Acceptors 
 
       PARAMETER   (LUNEXP = 16)
       PARAMETER   (ERRKEY = 'IPSLAN')
@@ -268,6 +276,7 @@ C=======================================================================
       SAPHB = -99.
       SAPX = -99.
       SASC = -99.
+      SAEA = -99.
 
       OPEN (LUNEXP,FILE = FILEX_P,STATUS = 'OLD',IOSTAT=ERRNUM)
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,0)
@@ -314,6 +323,10 @@ C
 !        chp added 4/21/2008 - stable organic C in %
          READ (CHARTEST,'(51X,F6.0)',IOSTAT=ERRNUM) SASC(NLAYRI) 
          IF (ERRNUM .NE. 0) SASC(NLAYRI) = -99.
+
+!        chp added 2023-01-24 - soil alternative electron acceptors (mol Ceq/m3)
+         READ (CHARTEST,'(57X,F6.0)',IOSTAT=ERRNUM) SAEA(NLAYRI) 
+         IF (ERRNUM .NE. 0) SAEA(NLAYRI) = -99.
 
          IF (SADM(NLAYRI) .GT. 10.0) THEN
             CALL ERROR (ERRKEY,10,FILEX,LINEXP)
@@ -394,6 +407,11 @@ C          those values if data were available (i.e., not < 0.)
 !     Stable organic C has no counterpart in the soil profile data
       IF (SASC(1) .GT.  -1.E-6 .AND. NLAYRI > 0) THEN
         CALL LMATCH (NLAYRI, SABL, SASC,  NLAYR, DS)
+      ENDIF
+
+!     SAEA has no counterpart in the soil profile data
+      IF (SAEA(1) .GT.  -1.E-6 .AND. NLAYRI > 0) THEN
+        CALL LMATCH (NLAYRI, SABL, SAEA,  NLAYR, DS)
       ENDIF
 
       RETURN

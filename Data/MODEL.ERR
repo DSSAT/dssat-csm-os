@@ -187,6 +187,9 @@ Chemical input level not found. Please correct input file.
 IPCHEM    3
 First chemical application date is defined prior to the start of simulation.
 
+IPCHEM   4
+Error in chemical code.  Correct input file.
+
 IPCHEM   11
 No input amount defined for chemical applications.
 
@@ -374,7 +377,7 @@ IPPLNT    2
 Error in planting inputs.  Check format.
 
 IPPLNT   10
-Planting date is before start of simulation.  Please fix input file.
+Planting date is before start of simulation.  Please correct input file.
 
 IPPLNT   11
 Error in plant population input.  Check format.
@@ -414,6 +417,9 @@ Residue input level not found. Please correct input file.
 
 IPRES     3
 First residue application date is defined prior to the start of simulation.
+
+IPRES     4
+Error in residue code.  Correct input file.
 
 IPRES    10
 Error in date of residue application input.  Correct input file.
@@ -574,6 +580,9 @@ Tillage input level not found. Please correct input file.
 IPTILL    3
 First tillage application date is defined prior to the start of simulation date.
 
+IPTILL    4
+Tillage implement is not defined or missing. Please correct input file.
+
 IPVAR     1
 Error in Cultivar entry.  Fix entry or batch file.
 
@@ -694,8 +703,8 @@ Configuration file not found.
 PATH      3
 Path error in configuration file. Please correct file.
 
-PETASCE  50
-ASCE reference ET method is not available for this crop.
+PET       1
+Undefined EVAPO parameter in FileX.
 
 PPLANT   10
 Review P parameters in species file.

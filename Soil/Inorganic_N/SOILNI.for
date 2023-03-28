@@ -50,6 +50,8 @@ C  04/20/2004 US  Modified DLAG, removed IFDENIT
 !  04/13/2005 CHP changed subroutine name to SoilNi.for (was SoilN_inorg)
 !  06/12/2014 CHP DayCent calcs for N2O emissions from Peter Grace
 !  11/21/2017 HJ  modified this subroutine to include N loss to tile
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called : SOIL
 C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
@@ -71,6 +73,10 @@ C=======================================================================
       USE FloodModule
       USE ModSoilMix
       IMPLICIT  NONE
+      EXTERNAL DENIT_CERES, INCDAT, YR_DOY, OPSOILNI, 
+     &  SOILNI_INIT, NCHECK_INORG, FLOOD_CHEM, OXLAYER, DENIT_DAYCENT, 
+     &  NOX_PULSE, INCYD, DAYCENT_DIFFUSIVITY, NFLUX
+
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT, MEGHG
@@ -163,6 +169,24 @@ C=======================================================================
       TYPE (TillType)    TILLVALS
       TYPE (WeatherType) WEATHER
       
+!     Interface required because N2O_data is optional variable
+      INTERFACE
+        SUBROUTINE SoilNiBal(CONTROL, ISWITCH, 
+     &      ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &      N2O_data) 
+          USE GHG_mod
+          USE FertType_mod
+          TYPE (ControlType), INTENT(IN) :: CONTROL
+          TYPE (SwitchType),  INTENT(IN) :: ISWITCH
+          TYPE (FertType),    INTENT(IN) :: FertData
+          TYPE (N2O_type), INTENT(IN), OPTIONAL :: N2O_DATA
+          INTEGER, INTENT(IN) :: NBUND
+          REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
+        END SUBROUTINE SoilNiBal
+      END INTERFACE
+
 !      PI = 3.1416
       
 !     Transfer values from constructed data types into local variables.
@@ -284,9 +308,9 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
-     &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data)                      !Output
+     &    dD0, newCO2, NO3, SNO3, SOILPROP,       !Input
+     &    DLTSNO3,                                !I/O
+     &    CNOX, TNOXD, N2O_data)                  !Output
 
         CASE DEFAULT
           CALL Denit_Ceres (CONTROL, ISWNIT, 
@@ -720,9 +744,9 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1","2")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
-     &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data)                      !Output
+     &    dD0, newCO2, NO3, SNO3, SOILPROP,       !Input
+     &    DLTSNO3,                                !I/O
+     &    CNOX, TNOXD, N2O_data)                  !Output
 
         CASE DEFAULT
           CALL Denit_Ceres (CONTROL, ISWNIT, 
@@ -957,7 +981,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
@@ -992,11 +1016,10 @@ C     Write daily output
      &    ALGFIX, BD1, CUMFNRO, TOTAML, TOTFLOODN)        !Output
       ENDIF
 
-
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
-     &	  N2O_data) 
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    N2O_data) 
 
       CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 

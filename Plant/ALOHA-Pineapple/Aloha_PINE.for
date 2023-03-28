@@ -28,7 +28,6 @@
 !  02/07/1993 PWW Header revision and minor changes   
 !  02/24/1993 BDB Changed call to WATBAL (Added AIRAMT)
 !  03/22/2017 CHP Adpated for CSM v4.6
-!  09/05/2020 JVJ Stages changes for inclusion in Overview         
 C=======================================================================
 
       Subroutine Aloha_Pineapple(CONTROL, ISWITCH, 
@@ -38,6 +37,8 @@ C=======================================================================
 
       USE Aloha_mod
       IMPLICIT NONE
+      EXTERNAL Aloha_PHENOL, Aloha_GROSUB, 
+     &  Aloha_ROOTGR, Aloha_OpGrow, Aloha_OPHARV
       SAVE
 
       CHARACTER*1 ISWWAT
@@ -67,7 +68,7 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       TYPE (SoilType)    SOILPROP
       TYPE (SwitchType)  ISWITCH
-      Type (ResidueType) HARVRES
+!      Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
       TYPE (WeatherType) WEATHER
 
@@ -123,7 +124,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    SKWT, STMWT, STOVN, STOVWT,  TEMPM,                 !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
       CALL Aloha_ROOTGR (CONTROL,
@@ -201,7 +202,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    SKWT, STMWT, STOVN, STOVWT,  TEMPM,                 !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
          IF (YRDOY .EQ. STGDOY(3)) THEN
@@ -209,7 +210,7 @@ C-----------------------------------------------------------------------
             CANWAA = BIOMAS
          ENDIF
 
-        IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 10) THEN              ! IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN  JVJ Value changed because 2 stages in vegetative phase and one stage in reproductive phase were included
+        IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
           CALL Aloha_PHENOL (CONTROL, ISWITCH, 
      &    SW, WEATHER, SOILPROP, YRPLT,                       !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
@@ -234,7 +235,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    SKWT, STMWT, STOVN, STOVWT,  TEMPM,                 !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
 !=======================================================================

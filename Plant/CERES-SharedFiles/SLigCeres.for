@@ -15,6 +15,7 @@
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, IGNORE, INFO, ERROR
       SAVE
 
 !     Output variables
@@ -119,9 +120,9 @@
           ENDDO    !Loop thru lines in section
         ENDIF    !Found section
 
-        CLOSE(LUNCRP)
         PREV_CROP = CROP
       ENDIF   !End of CROP=PREV_CROP clause
+      CLOSE(LUNCRP)
 
 !     -----------------------------------------------------------------
 !     Assign requested values

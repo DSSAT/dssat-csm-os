@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2021
+C COPYRIGHT 1998-2022
 C                     DSSAT Foundation
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -34,17 +34,17 @@ C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C
-C     CROPPING SYSTEM MODEL Version 4.8.0
+C     CROPPING SYSTEM MODEL Version 4.8.1
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     May 2021  CSM Version 4.8.0
+C     July 2022  CSM Version 4.8.1
 C
 C     Hoogenboom, G., C.H. Porter, V. Shelia, K.J. Boote, U. Singh,  
 C     J.W. White, W. Pavan, F.A. de Oliveira, L.P. Moreno, J.I. Lizaso, 
 C     S. Asseng, D.N.L. Pequeno, B.A. Kimball, P. Alderman, K.R. Thorp, 
 C     M.R. Jones, S.V. Cuadra, M. Vianna, F.J. Villalobos, T.B. Ferreira,  
-C     J. Koo, L.A. Hunt, and J.W. Jones
+C     W.D. Batchelor, J. Koo, L.A. Hunt, and J.W. Jones
 C=======================================================================
 C
 C=======================================================================
@@ -70,6 +70,8 @@ C  02/20/2006 GH  Add RNMODE="G" option for GENCALC
 C  01/11/2007 CHP Changed GETPUT calls to GET and PUT
 C  01/12/2007 CHP Read trt number and rotation number for sequence mode
 C  10/09/2020 FO  Y4K implementation for weather files
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
       PROGRAM CSM
 
@@ -78,6 +80,10 @@ C=======================================================================
       USE HeaderMod
 
       IMPLICIT NONE
+      EXTERNAL CHECKRUNMODE, ERROR, FIND, GETLUN, IGNORE, INCYD, INFO, 
+     &  INPUT_SUB, LAND, OPCLEAR, OPNAMES, PATHD, RUNLIST, TIMDIF, 
+     &  UPCASE, YR_DOY
+
 C-----------------------------------------------------------------------
       CHARACTER*1   ANS,RNMODE,BLANK,UPCASE
       CHARACTER*6   ERRKEY,FINDCH,TRNARG
@@ -113,7 +119,7 @@ C     The variable "CONTROL" is of type "ControlType".
 C     The variable "ISWITCH" is of type "SwitchType".
       TYPE (SwitchType) ISWITCH
 
-!C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
 
       DONE = .FALSE.
       YRDOY_END = 9999999
@@ -291,6 +297,7 @@ C***********************************************************************
       CONTROL % ROTNUM  = ROTNUM
       CONTROL % TRTNUM  = TRTNUM
       CONTROL % ERRCODE = 0
+      CONTROL % CropStatus = -99
       CALL PUT(CONTROL)
 
 C-KRT**************************************************************

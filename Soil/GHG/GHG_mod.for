@@ -3,6 +3,8 @@ C  MODULE GHG_mod
 C  06/15/2014 CHP Written
 !  10/01/2021 CHP Remove CO2 outputs from here. These are now reported
 !                 by the methane module.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !=======================================================================
 
       MODULE GHG_mod
@@ -231,6 +233,7 @@ C  05/01/2022 FO  Added N2O.csv output
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
       SAVE
 !-----------------------------------------------------------------------
 
@@ -554,8 +557,7 @@ C-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
-      LABEL(1)  = 'N2OEC'; VALUE(1)  = CN2O_emitted  !kg/ha
-!     LABEL(2)  = 'CO2EC'; VALUE(2)  = NINT(CumTotCO2)
+      LABEL(1)  = 'N2OEM'; VALUE(1)  = CN2O_emitted  !kg/ha
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
@@ -582,6 +584,7 @@ C  06/15/2014 CHP Written
       SUBROUTINE OpGHG(CONTROL, ISWITCH, N2O_data, CH4_data) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
 
@@ -682,13 +685,13 @@ C-----------------------------------------------------------------------
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
-      CO2ED = CH4_data % CO2emission
-      N2OED = N2O_data % N2O_emitted
-      CH4ED = CH4_data % CH4Emission
+      CO2ED = CH4_data % CO2emission * 1000.  !g/d
+      N2OED = N2O_data % N2O_emitted * 1000.  !g/d
+      CH4ED = CH4_data % CH4Emission * 1000.  !g/d
 
-      CO2EC = CH4_data % CumCO2Emission
-      N2OEC = N2O_data % CN2O_emitted
-      CH4EC = CH4_data % CumCH4Emission
+      CO2EC = CH4_data % CumCO2Emission       !kg/d
+      N2OEC = N2O_data % CN2O_emitted         !kg/d
+      CH4EC = CH4_data % CumCH4Emission       !kg/d
 
 !     Calculation of cumulative CO2-equivalent emissions
 !     CO2 - convert from units of C to units of CO2
@@ -704,8 +707,9 @@ C-----------------------------------------------------------------------
       TCEQC = CCEQC + NCEQC + MCEQC
 
         IF (IDETN .EQ. 'Y') THEN
-          WRITE (GHGLUN,'(I5,I4.3,I6,6F9.2,4I9)') YEAR, DOY, DAS, 
-     &      CO2ED, N2OED, CH4ED, CO2EC, N2OEC, CH4EC,
+          WRITE (GHGLUN,'(I5,I4.3,I6,I9,2F9.2,I9,2F9.2,4I9)')  
+     &      YEAR, DOY, DAS, 
+     &      NINT(CO2ED), N2OED, CH4ED, NINT(CO2EC), N2OEC, CH4EC,
      &      NINT(CCEQC), NINT(NCEQC), NINT(MCEQC), NINT(TCEQC)
         ENDIF
 

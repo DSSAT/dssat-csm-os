@@ -20,8 +20,9 @@ C=======================================================================
       USE ModuleDefs
 
       IMPLICIT  NONE
-      SAVE      
-      
+      EXTERNAL MZ_IX_PSPARAM, MZ_IX_PSLEAF
+      SAVE
+
       REAL     ASMAX
       REAL     ASSAT(50)  
       REAL     CVXTY(50)  

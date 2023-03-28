@@ -34,6 +34,7 @@ C=======================================================================
       SUBROUTINE INVRLE (FILEG,RNMODE,VARTY,VRNAME,PATHGE,ECONO)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, UPCASE, VERIFY
 
       INCLUDE     'COMGEN.blk'
 
@@ -251,6 +252,7 @@ C=======================================================================
       SUBROUTINE INVRCE (CROP, MODEL)
 
       IMPLICIT  NONE
+      EXTERNAL CLEAR, SELPRO, GETREAL
 
       INCLUDE  'COMGEN.blk'
 
@@ -1090,7 +1092,7 @@ C=======================================================================
       SUBROUTINE INVRCS
 
       IMPLICIT NONE
-
+      EXTERNAL CLEAR, GETREAL, SELPRO
       INCLUDE 'COMGEN.blk'
 
       INTEGER  IERR,IPARAM,NDEX,L
@@ -1275,6 +1277,7 @@ C=======================================================================
       SUBROUTINE GETREAL (VARIABLE,VNAME,VLO,VHI)
 
       IMPLICIT    NONE
+      EXTERNAL FSELPRO
 
       CHARACTER*(*) VNAME
       INTEGER     IERR,INDEX

@@ -30,6 +30,7 @@
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS, INCDAT, INTERPOLATE
       SAVE
 !-----------------------------------------------------------------------
 
@@ -90,7 +91,7 @@
 !     Variable heading for SoilOrg.OUT
 !-----------------------------------------------------------------------
 !      IF (IDETC == 'Y') THEN
-      IF ((IDETC == 'Y').AND.(FMOPT == 'A'.OR.FMOPT == ' ')) THEN   ! VSH
+      IF ((IDETC == 'Y').AND.(FMOPT == 'A'.OR.FMOPT == ' ')) THEN
         CALL GETLUN(OUTSC, NOUTDC)
         INQUIRE (FILE = OUTSC, EXIST = FEXIST)
         IF (FEXIST) THEN

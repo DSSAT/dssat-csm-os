@@ -18,14 +18,15 @@ C=======================================================================
      &  PARSH, PARSUN, PLAISH, PLAISL)                         !Output
 
       IMPLICIT NONE
-      SAVE      
-      
-      REAL     AZIR       
-      REAL     AZZON      
-      REAL     BETA       
-      REAL     BETN       
-      REAL     CANHT      
-      REAL     CANWH      
+      EXTERNAL MZ_IX_SHADOW, MZ_IX_LFEXTN, MZ_IX_CANABS
+      SAVE
+
+      REAL     AZIR
+      REAL     AZZON
+      REAL     BETA
+      REAL     BETN
+      REAL     CANHT
+      REAL     CANWH
       LOGICAL  DAYTIM
       REAL     FRACSH     
       REAL     FRDIFP     

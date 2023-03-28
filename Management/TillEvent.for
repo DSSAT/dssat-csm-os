@@ -16,16 +16,18 @@ C=======================================================================
 
       SUBROUTINE TillEvent(CONTROL, 
      &    BD, BD_BASE, CN, CN_BASE, DLAYR, DL_BASE,       !Input
-     &    DS, DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,      !Input
+     &    DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,          !Input
      &    NLAYR, TILLVALS,                                !Input
      &    BD_TILLED, CN_TILLED, DL_TILLED,                !Output
      &    DS_TILLED, SAT_TILLED, SC_TILLED)               !OutpuT
 
+!     2023-01-26 chp removed unused variables in argument list:
+!       DS
+
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL INFO, LMATCH
       SAVE
 
       CHARACTER*8, PARAMETER :: ERRKEY = 'TILEVENT'
@@ -40,10 +42,10 @@ C=======================================================================
       REAL DEPTH, THICK, PREV_DEPTH, CUMDEPTH    !BDPMIN, 
       REAL, DIMENSION(NL) :: BD,    BD_BASE, BDTEMP, BD_TILLED, XBD
       REAL, DIMENSION(NL) :: DLAYR, DL_BASE, DLTEMP, DL_TILLED, XDL
-      REAL, DIMENSION(NL) :: DS,    DS_BASE, DSTEMP, DS_TILLED, XDS
+      REAL, DIMENSION(NL) ::        DS_BASE, DSTEMP, DS_TILLED, XDS
 !     REAL, DIMENSION(NL) :: RGIMPF,RGTEMP, RG_TILLED, XRGIF, RG_BASE
       REAL, DIMENSION(NL) :: SAT,   SAT_BASE, SATTEMP,SAT_TILLED,XSAT
-      REAL, DIMENSION(NL) :: SWCN,  SWCN_BASE, SCTEMP, SC_TILLED, XSWCN
+      REAL, DIMENSION(NL) :: SWCN,            SCTEMP, SC_TILLED, XSWCN
       REAL, DIMENSION(NL) :: SC_BASE
       REAL, DIMENSION(NAPPL) :: CNP, TDEP
       REAL, DIMENSION(NAPPL, NL) :: DEP, BDP, SWCNP

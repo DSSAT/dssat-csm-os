@@ -43,6 +43,7 @@ C  Calls:     None
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, TIMDIF
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1  IDETG, RNMODE
@@ -53,12 +54,12 @@ C  Calls:     None
 
       CHARACTER*30 FILEIO
 
-      INTEGER DAP, DAS, DOY, DYNAMIC, ERRNUM, FROP, I
+      INTEGER DAP, DAS, DOY, DYNAMIC, ERRNUM, FROP !, I
       INTEGER RUN
       INTEGER NOUTMOB 
       INTEGER MDATE, TIMDIF, YEAR, YRDOY, YRPLT
       REAL DTX, DXR57, PPMFAC, NMOBR, NMOBSR
-      REAL WTLF, WLDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT,           
+      REAL WTLF, WLDOT, WLDOTN, RTWT, WRDOT, WRDOTN, STMWT, WSDOT, 
      &  WSDOTN, STRWT, WSRDOT, WSRDOTN,
      &  SLMDOT, LFSENWT, LTSEN, SLNDOT, SLCADDOT, SLNADDOT, 
      &  SLDOT, SRMDOT, SRNDOT, SRCADDOT, SRNADDOT, SRDOT, 

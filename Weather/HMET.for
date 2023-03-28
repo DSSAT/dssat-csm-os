@@ -50,6 +50,7 @@ C=======================================================================
                          ! parameters, hourly weather data.
 !     TS defined in ModuleDefs.for
       IMPLICIT NONE
+      EXTERNAL HANG, HTEMP, VPSAT, HWIND, HRAD, FRACD, HPAR
       INTEGER H,NDAY
 
       REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR
@@ -425,8 +426,18 @@ C       1980).  Lower end adjusted to give smooth transition.
 !        ENDIF
 
 ! JIL 09/11/2007 Using single logistic equation instead of discontinous function
-        FRDFH = 0.156 + (0.86/(1.0+EXP(11.1*(AMTRH - 0.53))))
-        FRDFH = AMIN1 (FRDFH,1.0)
+! FO  06/05/2022 Added protection for overflow in the EXP() function.
+!                Overflow happens when AMTRH is greater than 64.
+!                This is possible for extreme latitudes that has
+!                low day length periods. IF AMTRH is greater than 5.0
+!                FRDFH will be always equal to 0.156. AMTRH lower than
+!                5.0, it will reach a maximum of 1.016.
+          IF(AMTRH .LT. 5.0) THEN
+            FRDFH = 0.156 + (0.86/(1.0+EXP(11.1*(AMTRH - 0.53))))
+            FRDFH = AMIN1 (FRDFH,1.0)
+          ELSE
+            FRDFH = 0.156
+          ENDIF
 
 C       Calculate instantaneous diffuse global irradiance.
         SDF = RADHR * FRDFH
@@ -657,6 +668,7 @@ C=======================================================================
       REAL FUNCTION VPSLOP(T)
 
       IMPLICIT NONE
+      EXTERNAL VPSAT
 
       REAL T,VPSAT
 

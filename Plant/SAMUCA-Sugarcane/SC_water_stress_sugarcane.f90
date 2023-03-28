@@ -1,4 +1,4 @@
-subroutine waterstress(method_ws,     &
+subroutine sc_waterstress(method_ws,  &
                         ndws,         &
                         ndews,        &
                         eop,          &
@@ -28,6 +28,7 @@ subroutine waterstress(method_ws,     &
     !----------------------------------------------!
     
     Implicit none
+    external asy_ws
     
     integer method_ws
     integer ndws
@@ -119,4 +120,4 @@ subroutine waterstress(method_ws,     &
       
     return
     
-end subroutine waterstress
+end subroutine sc_waterstress

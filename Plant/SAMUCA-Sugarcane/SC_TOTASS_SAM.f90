@@ -1,5 +1,6 @@
    
-subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
+!ubroutine totass(daynr,dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai,kdif,scv,srad,par,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
+subroutine totass(      dayl,lat_sim,DEC,SNDN,SNUP,CLOUDS,ISINB,S0N,amax,eff,lai,kdif,scv,srad,par,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
 ! ----------------------------------------------------------------------
 ! --- calculates daily total gross assimilation (dtga) by performing
 ! --- a gaussian integration over time at three different times of 
@@ -11,10 +12,12 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       Implicit None    
  !     include 'constants.fi' ! (SAMUCA's Crop Modelling Shell)
       
+      external HANG, HRAD, HPAR, FRACD
+
       integer ghour
       integer glai
       integer gl
-      integer daynr       
+!     integer daynr       
     
       real dlaic
       real frac_li
@@ -26,14 +29,14 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       real lai
       real kdif
       real amax
-      real avrad
-      real cosld
+      real srad      
       real dayl
       real dtga
       real dvisabs
       real eff
-      real fgros      
+!     real fgros      
       real hour
+      real par
       real pardif
       real pardir
       real phot
@@ -43,17 +46,16 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       real phos
       real phoshd
       real phosun
-      real sinb
-      real sinld
+      real sinb      
       real Acanopy(3+1,5+1)     
       real Qleaf(3+1,5+1)       
       real incpar(3,4)   
       real laic
       real kbl
       real kdrt     
-      real fgl    
-      real fgrsh
-      real fgrsun
+!     real fgl    
+!     real fgrsh
+!     real fgrsun
       real fslla     
       real refh
       real refs
@@ -70,10 +72,13 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       real vissun
       real vist
       real phot_layer(3) !Total photosynthesis per canopy layer
+      real DEC, SNDN, SNUP, CLOUDS, ISINB, S0N, lat_sim ! DSSAT's SOLAR/HMET
+      real AZZON, BETA, RADHR, PARHR, AMTRH, FRDIFP, FRDIFR 
+      real pi,rad
       
       !--- Gaussian arrangement for three points
       real :: gausr     = 0.3872983d0
-      real :: gaussx(3) = (/0.1127017,       0.5, 0.8872983/)
+!     real :: gaussx(3) = (/0.1127017,       0.5, 0.8872983/)
       real :: gaussw(3) = (/0.2777778, 0.4444444, 0.2777778/) 
       
       !--- Gaussian arrangement for five points
@@ -81,8 +86,12 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       real :: gaussw_5(5) = (/0.1184635, 0.2393144, 0.2844444, 0.2393144, 0.1184635/) 
       
       !--- Daily Expected PAR Ratio [PAR/SRAD]
-      real :: expected_par_ratio = 0.5d0
-
+!     real :: expected_par_ratio = 0.5d0
+      
+      !--- deg2rad
+      parameter (pi=3.14159, rad=PI/180.)
+      
+      
       !--- Initialization
       dtga          = 0.d0
       photth        = 0.d0
@@ -103,7 +112,24 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
           hour = 12.d0 + dayl * 0.5 * (0.5d0 + (ghour - 2) * gausr)
 
           !--- Compute diffuse and direct irradiance at the specified hour
-          call radiat (daynr,hour,dayl,sinld,cosld,avrad,sinb,pardir,pardif)
+          !call radiat (daynr,hour,dayl,sinld,cosld,srad,sinb,pardir,pardif)
+          
+          !--- Get solar declination at hour
+          call HANG(DEC, hour, lat_sim, AZZON, BETA)
+          
+          !--- Get global radiation and PAR at hour
+          call HRAD(BETA, hour, ISINB, SNDN, SNUP, srad, RADHR)     
+          call HPAR(hour, par, RADHR, SNDN, SNUP, srad,  PARHR) 
+          
+          !--- Get fraction of diffuse radiation
+          call FRACD(BETA, CLOUDS, hour, RADHR, S0N, SNDN, SNUP, AMTRH, FRDIFP, FRDIFR)  
+
+          !--- Get PAR fractions in [W m-2]
+          pardir = PARHR * (1.d0 - FRDIFP) / 4.6 ! 4.6 is used to convert umol to J/s (1 J/s = W)
+          pardif = PARHR * (FRDIFP)        / 4.6 ! 4.6 is used to convert umol to J/s (1 J/s = W)
+          
+          !--- Get sinb from HANG()
+          sinb = SIN(BETA * rad)
 
           !--- Store incoming direct, difuse and total par radiation [W m-2]
           incpar(ghour,1) = hour
@@ -213,7 +239,7 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       !--- Check incomming PAR integration method
       par_check = par_check * dayl * 3600.d0
       dvisabs   = visabsth  * dayl * 3600.d0
-      par_ratio = par_check / avrad             ! This should be around 0.5
+      par_ratio = par_check / (srad * 1e6)          ! This should be around 0.5
       
 
       !--- Fraction of light absorbed by the canopy

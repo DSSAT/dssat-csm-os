@@ -96,6 +96,7 @@ FORAGE.OUT      FH Forage harvest output file                         FORHARV
 
 !Summary csv files:
 summary.csv        Summary output file in CSV format
+Version.OUT        Version number for simulation
 
 !Information files:
 ERROR.OUT          Error messages                                     ERRORO

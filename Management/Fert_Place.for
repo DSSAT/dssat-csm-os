@@ -48,6 +48,8 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT  NONE
+      EXTERNAL INCDAT, YR_DOY, ERROR, FIND, TIMDIF, WARNING, 
+     &  FERTLAYERS, FERTAPPLY, IDLAYR
       SAVE
 !     ------------------------------------------------------------------
 
@@ -76,7 +78,7 @@ C=======================================================================
 
       REAL AMTFER(NELEM), ANFER(NAPPL), APFER(NAPPL), AKFER(NAPPL), 
      &  DLAYR(NL), DS(NL), ADDSNH4(NL), ADDSPi(NL), ADDSKi(NL),
-     &  ADDSNO3(NL), ADDUREA(NL), FERDEP(NAPPL)
+     &  ADDSNO3(NL), ADDUREA(NL), FERDEP(NAPPL), AddBuffer(NL)
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
@@ -304,6 +306,7 @@ C-----------------------------------------------------------------------
 
       ADDSPi   = 0.0
       ADDSKi   = 0.0
+      ADDBuffer= 0.0
 
       DO I = 1, NSlowRelN     !max # that can be applied
         SlowRelN(I) % ACTIVE = .FALSE.
@@ -332,6 +335,9 @@ C-----------------------------------------------------------------------
       ADDUREA  = 0.0
       ADDSPi   = 0.0
       ADDSKi   = 0.0
+
+!     Buffer for alternate electron acceptors (methane production)
+      ADDBuffer = 0.0
 
       FERTDAY  = 0
       FERMIXPERC = 0.0
@@ -395,29 +401,42 @@ C       Convert character codes for fertilizer method into integer
         IF (HASN) THEN    !Do this only if NOT slow release
 !         Set the amount of N to be applied and sum total amount of
 !         N fertilizer
-          FERNIT    = FERNIT + ANFER(I)
+!         FERNIT    = FERNIT + ANFER(I) !CHP 2023-01-15
+          FERNIT    = ANFER(I)
           FERNO3    = ANFER(I) * FertFile(FerType) % NO3_N_pct / 100.
           FERNH4    = ANFER(I) * FertFile(FerType) % NH4_N_pct / 100.
           FERUREA   = ANFER(I) * FertFile(FerType) % UREA_N_pct / 100.
           AMTFER(N) = AMTFER(N) + ANFER(I)
           NAPFER(N) = NAPFER(N) + 1
+        ELSE 
+          FERNIT  = 0.0
+          FERNO3  = 0.0
+          FERNH4  = 0.0
+          FERUREA = 0.0
+
         ENDIF   !End of IF block on HASN.
 
 !       For now P and K are NOT slow release
         IF (HASP) THEN
 !         Set the amount of P to be applied and sum total amount of
 !         P fertilizer
+!         FERPHOS   = FERPHOS + APFER(I) !CHP 2023-01-15
           FERPHOS   = FERPHOS + APFER(I)
           AMTFER(P) = AMTFER(P) + APFER(I)
           NAPFER(P) = NAPFER(P) + 1
+        ELSE 
+          FERPHOS = 0.0
         ENDIF   !End of IF block on HASP.
 
         IF (HASK) THEN
 !         Set the amount of K to be applied and sum total amount of
 !         K fertilizer
+!         FERPOT   = FERPOT + AKFER(I) !CHP 2023-01-15
           FERPOT   = FERPOT + AKFER(I)
           AMTFER(Kel) = AMTFER(Kel) + AKFER(I)
           NAPFER(Kel) = NAPFER(Kel) + 1
+        ELSE 
+          FERPOT = 0.0
         ENDIF   !End of IF block on HASP.
 
         IF (HASCR) THEN
@@ -463,7 +482,27 @@ C       Convert character codes for fertilizer method into integer
      &        FLOOD, FMIXEFF, PROF, KMAX,                         !Input
      &        ADDFUREA, ADDFNH4, ADDFNO3, ADDOXU, ADDOXH4,        !I/O
      &        ADDOXN3, ADDSNH4, ADDSNO3, ADDUREA, ADDSPi, ADDSKi) !I/O
-          ENDIF
+        ENDIF
+
+!       chp 2023-01-24
+!       Buffer capacity for alternate electron acceptors (methane)
+        DO L = 1, NLayr
+          SELECT CASE(FerType)
+          CASE(2) !Ammonium sulfate, (NH4)2-SO4
+!           For every mole of ammonium added, one electron is made available
+!           Convert from kg[N] to kg[C] using atomic weights of each
+            AddBuffer(L) = AddBuffer(L) + ADDSNH4(L) * 12./14.
+          CASE (18) !Potassium sulfate, K2-SO4
+!           For every mole of K added, one electron is made available
+!           Convert from kg[K] to kg[C] using atomic weights of each
+            AddBuffer(L) = AddBuffer(L) + ADDSKi(L) * 12./39.
+          CASE DEFAULT
+!           Need to add other fertilizers as appropriate
+!           Mn(4+), NO3(-), Fe(3+), SO4(2-)
+!           Use both stoichiometric ratios and number of electrons transferred.
+!           For now do nothing more for other fertilizers
+          END SELECT
+        ENDDO
 
 !----------------------------------------------------------------------
 !       Check for inhibitors
@@ -619,6 +658,7 @@ C-----------------------------------------------------------------------
 
       FertData % ADDSPi  = ADDSPi
       FertData % ADDSKi  = ADDSKi
+      FertData % ADDBuffer = ADDBuffer
 
       FertData % AMTFER  = AMTFER
       FertData % AppType = AppType
@@ -663,6 +703,7 @@ C=======================================================================
       USE ModuleDefs
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL IDLAYR, WARNING
       SAVE
 
 !     ------------------------------------------------------------------
@@ -739,7 +780,7 @@ C     Need to make provision for USG as a source
       PROF = 0.
 
       SELECT CASE (METFER)
-        CASE (1,3,5,11)
+        CASE (1,3,11)
 !         Surface placement
           KMAX = 1
           PROF(1) = 1.0
@@ -782,6 +823,13 @@ C     Need to make provision for USG as a source
             CALL WARNING(3, ERRKEY, MSG)
             KD = 2
           ENDIF
+          PROF(KD) = 1.0
+          KMAX     = KD
+          
+        CASE (5)
+!       This is applying with irrigation placement
+!       All fertilizer placed in layer KD with (PROF = 1.0)
+          KD = IDLAYR (NLAYR,DLAYR,FERDEPTH)
           PROF(KD) = 1.0
           KMAX     = KD
 
@@ -828,7 +876,8 @@ C     Need to make provision for USG as a source
 !       P available for uptake by roots.
         SELECT CASE (METFER)
           CASE (3,4,18); AppType = 'BANDED '
-          CASE (7,8,9) ; AppType = 'HILL   '
+!         CASE (7,8,9) ; AppType = 'HILL   '
+          CASE (7,8,9,19,20); AppType = 'POINT  '
           CASE DEFAULT ; AppType = 'UNIFORM'
         END SELECT
 
@@ -953,8 +1002,6 @@ C=======================================================================
       RETURN
       END FUNCTION IDLAYR
 
-
-
 !=======================================================================
 ! FPLACE and IDLAYR Variables - updated 08/18/2003
 !-----------------------------------------------------------------------
@@ -983,6 +1030,8 @@ C=======================================================================
 ! ADDSNO3(L) Rate of change of nitrate in soil layer L (kg [N] / ha / d)
 ! ADDUREA(L) Rate of change of urea content in soil layer L
 !             (kg [N] / ha / d)
+! AddBuffer(L) Buffer for alternate electron acceptors added with new
+!             fertilizer (kg[C]/ha) (for suppression of methane production)
 ! DOY        Current day of simulation (d)
 ! DSOILN     Fertilizer depth for automatic fertilizer option (cm)
 ! ERRKEY     Subroutine name for error file 

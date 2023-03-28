@@ -40,14 +40,18 @@ C  02/24/2012  FSR adapted from nwheats
 C  Called by: crppr; prepare 
 C  Calls    : nwheats_level
 C=======================================================================
-      SUBROUTINE set_swdef_new (CONTROL, swdep, uptake_source,
+      SUBROUTINE set_swdef_new (swdep, uptake_source,
      &    cwdemand, istage, rtdep_nw, rwu_nw, SOILPROP,          !Input
      &    swdef)                                                 !Output
+
+! 2023-01-18 CHP removed unused variables from argument list:
+!  CONTROL
 
 !     ------------------------------------------------------------------
       USE ModuleDefs 
       USE WH_module
       IMPLICIT NONE
+      EXTERNAL nwheats_level, sum_real_array
       SAVE
 
       integer istage 
@@ -67,7 +71,7 @@ C=======================================================================
                             ! number of depth in profile dlayr_nw
       
       real cumdep_nw ! depth of deepest layer with roots (mm)
-      real depth_nw  ! Depth below soil surface to the point of interest
+!     real depth_nw  ! Depth below soil surface to the point of interest
       real dlayr_nw(NL)! Thickness increment of soil layer L  (mm)
       real ep_nw     !  plant evapotranspiration (mm)
       real duldep(NL)! drained upper limit by soil layer
@@ -92,7 +96,7 @@ C=======================================================================
       real tpot_esw     ! potential esw for profile
       
 !     The variable "CONTROL" is of type "ControlType".
-      TYPE (ControlType) CONTROL 
+!     TYPE (ControlType) CONTROL 
       TYPE (SoilType) SOILPROP
             
       dlayr_nw = SOILPROP % DLAYR * 10.
@@ -201,7 +205,8 @@ cbak now accumulate for the profile that contains roots
            ! Expansion growth stops when fesw = 0.15
  
 !*!      swdef(cellxp) = divide (fesw, 0.3, 0.0) - 0.5
-         swdef(cellxp) = (fesw / 0.3) - 0.5  !fesw is fraction of extractable soil water
+         swdef(cellxp) = (fesw / 0.3) - 0.5  
+!         fesw is fraction of extractable soil water
 !*!      swdef(cellxp) = bound(swdef(cellxp), 0.0, 1.0)
          swdef(cellxp) = MAX(swdef(cellxp), 0.0)
          swdef(cellxp) = MIN(swdef(cellxp), 1.0)
@@ -254,9 +259,11 @@ cbak now accumulate for the profile that contains roots or is within 40cm of sur
  
 !*!      top_fesw = divide (tpesw_nw, tpot_esw, 0.0)
          if (tpot_esw .gt. 0.) then
-           top_fesw = (tpesw_nw / tpot_esw) !tpesw is total available water currently in profile
+           top_fesw = (tpesw_nw / tpot_esw) 
+!           tpesw is total available water currently in profile
          else 
-           top_fesw = 0. !fesw for topsoil. fesw is fraction of extractable soil water
+           top_fesw = 0. 
+!           fesw for topsoil. fesw is fraction of extractable soil water
          endif
  
 !*!      swdef(tiller) = divide (top_fesw, 0.5, 0.0) - 0.5
@@ -279,45 +286,50 @@ C  02/24/2012  FSR adapted from nwheats
 C  Called by: 
 C  Calls    : 
 C=======================================================================
-      SUBROUTINE nwheats_watup_new (CONTROL,SOILPROP,swdep,uptake_water,
-     &    cwdemand, istage, nrlayr, potntl, uptake_source,       !Input
-    !&    rlv_nw, above_gnd_pcarb, carbh, nwheats_topsfr, PLTPOP, pcarbo, temp_c, TMAX, TMIN,  
-    ! need above by call nwheats_cwdmd 
-    !&  cumph_nw, cwdemand, istage,  nrlayr, pl_la, PLTPOP, sen_la, 
-    ! Need above by call nwheats_cwpot
+      SUBROUTINE nwheats_watup_new (SOILPROP,swdep,uptake_water,
+     &    cwdemand, nrlayr, potntl, uptake_source,       !Input
+!    &    rlv_nw, above_gnd_pcarb, carbh, nwheats_topsfr, PLTPOP, pcarbo, temp_c, TMAX, TMIN,  
+!     need above by call nwheats_cwdmd 
+!    &  cumph_nw, cwdemand, istage,  nrlayr, pl_la, PLTPOP, sen_la, 
+!     Need above by call nwheats_cwpot
      &    prwu, rwu_nw)                                          !Output
-        ! nwheats_cwpot may be removed from input if keep call  nwheats_cwpot inside this subroutine
-        !jzw ADD ARGUMENT rwu_nw ON Nov 28
+!         nwheats_cwpot may be removed from input if keep call  nwheats_cwpot inside this subroutine
+!        jzw ADD ARGUMENT rwu_nw ON Nov 28
+
+! 2023-01-18 CHP removed unused variables from argument list:
+!  CONTROL, istage
+
 !     ------------------------------------------------------------------
       USE ModuleDefs    
       IMPLICIT NONE
+      EXTERNAL count_of_real_vals, sum_real_array
       SAVE
 
       integer count_of_real_vals
-      INTEGER istage
+!     INTEGER istage
 !**!      integer NL    ! max number of layers permitted in any soil(?)
       integer num_layers 
       
-      real carbh   !H2O stressed CH2O output (production) (gDM/plant)
+!     real carbh   !H2O stressed CH2O output (production) (gDM/plant)
       real cwdemand     ! crop water demand (mm).
-      ! It is sw_demand in nwheats.for,  water demand from soil by the crop (mm)
-      !call respond2get_real_var ('sw_demand'
-    ! :        , '()', sw_demand)
+!     It is sw_demand in nwheats.for,  water demand from soil by the crop (mm)
+!    call respond2get_real_var ('sw_demand'
+!     :        , '()', sw_demand)
 
       real dlayr_nw(NL) ! Thickness increment of soil layer L  (mm)
-      real fill_real_array
-      real swdef(3)     ! soil-water deficit stress factor for each of 3
+!     real fill_real_array
+!     real swdef(3)     ! soil-water deficit stress factor for each of 3
                         !  three processes: photo, cellxp, and tiller.
       real lldep(NL)! drained lower limit by soil layer
       
-      real cumph_nw(istage)!Cumulative phyllochron intervals
+!     real cumph_nw(istage)!Cumulative phyllochron intervals
                            ! or fully expanded leaves
       !real lai             ! leaf area index (m2/m2)
-      real pl_la           !Total leaf area per plant (green + senesced)
-      real nwheats_topsfr ! Senthold alternative to topsfr (tops fract)
-      real pcarbo        !Potential CH2O output (production) (gDM/plant)
-      REAL PLTPOP        ! Plant population at emergence (plants/m-2)
-      !*! real potntl(*)    ! (nwheats_cwpot OUTPUT) potential crop water
+!     real pl_la           !Total leaf area per plant (green + senesced)
+!     real nwheats_topsfr ! Senthold alternative to topsfr (tops fract)
+!     real pcarbo        !Potential CH2O output (production) (gDM/plant)
+!     REAL PLTPOP        ! Plant population at emergence (plants/m-2)
+!*! real potntl(*)    ! (nwheats_cwpot OUTPUT) potential crop water
       real potntl(NL)    ! (nwheats_cwpot OUTPUT) potential crop water 
                         !   uptake for each layer (mm)
       real pesw_nw ! available water in layer
@@ -326,7 +338,7 @@ C=======================================================================
                         !  (mm)
       real rwu_nw (NL)! (nwheats_watup_new OUTPUT) root water uptake
                        !  (mm)
-      real sen_la         !Senesced leaf area for plant
+!     real sen_la         !Senesced leaf area for plant
       real sum_real_array
       real swdep(NL)! water content by soil layer (mm) (?)
       character*6 uptake_source ! relocate parameter to FileX (*.WHX)
@@ -335,17 +347,17 @@ C=======================================================================
       integer L         ! Loop counter
 !*!   integer nlayr_nw  ! Number of layers in specific soil profile
       integer nrlayr    ! number of layers with roots
-      real cumdep_nw    ! depth of deepest layer with roots (mm)
-      real temp_c       ! dummy temperature for function (oC)
-      REAL TMAX
-      REAL TMIN
+!     real cumdep_nw    ! depth of deepest layer with roots (mm)
+!     real temp_c       ! dummy temperature for function (oC)
+!     REAL TMAX
+!     REAL TMIN
       real tpot 
       real uptake_water(NL)
       ! add the following by JZW
-      real rlv_nw(NL) ! root length volume array in mm/mm3
+!     real rlv_nw(NL) ! root length volume array in mm/mm3
       ! real above_gnd_pcarb ! potential increase in above ground biom
 !     The variable "CONTROL" is of type "ControlType".
-      TYPE (ControlType) CONTROL
+!     TYPE (ControlType) CONTROL
       TYPE (SoilType)    SOILPROP
       dlayr_nw  = SOILPROP % DLAYR  * 10.0 
       lldep = SOILPROP % LL
@@ -361,14 +373,14 @@ C=======================================================================
      
 !-----------------------------------------------------------------------
  
-       ! Now we have to partition trwu over the root system
-       ! Use the previous system with RLV, soil water etc determining potntl
- !-----------------------------------------------------------------------
+!        Now we have to partition trwu over the root system
+!        Use the previous system with RLV, soil water etc determining potntl
+!-----------------------------------------------------------------------
 !      call nwheats_cwpot (CONTROL, SOILPROP, rlv_nw, swdep,
 !     &    cumph_nw, cwdemand, istage,                            !Input
 !     &    nrlayr, pl_la, PLTPOP, sen_la,                         !Input
 !     &    potntl)                                                !Output
- !-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
  
          nrlayr = count_of_real_vals (potntl, NL)
          tpot = sum_real_array (potntl, nrlayr)
@@ -447,10 +459,12 @@ C  02/24/2012  FSR adapted from nwheats
 C  Called by: 
 C  Calls    : 
 C=======================================================================
-      SUBROUTINE nwheats_cwdmd (CONTROL, uptake_source,
+      SUBROUTINE nwheats_cwdmd (uptake_source,
      &    carbh, nwheats_topsfr, PLTPOP,                      !Input 
      &    pcarbo, TMAX, TMIN, transp_eff_coeff,               !Input
      &    cwdemand, vpd_transp)                              !Output
+
+! 2023-01-26 chp removed unused variables from argument list: CONTROL
 
 !     ------------------------------------------------------------------
       USE ModuleDefs    
@@ -465,7 +479,7 @@ C=======================================================================
 !*!      real count_of_real_vals
 !*!      real cwdemand     ! crop water demand (mm)
 !     The variable "CONTROL" is of type "ControlType".
-      TYPE (ControlType) CONTROL
+!     TYPE (ControlType) CONTROL
 *+  Calls   real nwheats_topsfr         ! function
 
 *+  Constant Values
@@ -485,11 +499,11 @@ C=======================================================================
       real transp_eff_coeff  ! transpiration efficiency coefficient
 *
 cbak
-  !    parameter (transp_eff_coeff = 0.006) 
-      ! To convert vpd to transpiration efficiency (kpa) although this is 
-      ! expressed as a pressure, it is really in the form
-      ! kpa*g carbo per m^2 / g water per m^2 and this can be converted to
-      ! kpa*g carbo per m^2 / mm water because 1g water = 1 cm^3 water
+!      parameter (transp_eff_coeff = 0.006) 
+!       To convert vpd to transpiration efficiency (kpa) although this is 
+!       expressed as a pressure, it is really in the form
+!       kpa*g carbo per m^2 / g water per m^2 and this can be converted to
+!       kpa*g carbo per m^2 / mm water because 1g water = 1 cm^3 water
 
 *+  Local Variables   
       real above_gnd_pcarb ! potential increase in above ground biom
@@ -542,9 +556,9 @@ cbak
          above_gnd_pcarb = pcarbo * nwheats_topsfr
 
       else
-         ! todays water demand is actually a supply term.  We use carbo
-         ! instead of pcarbo to capture the decrease in growth with water
-         ! content because carbo is pcarbo after water stress
+!          todays water demand is actually a supply term.  We use carbo
+!          instead of pcarbo to capture the decrease in growth with water
+!          content because carbo is pcarbo after water stress
  
          above_gnd_pcarb = carbh * nwheats_topsfr
 
@@ -575,26 +589,29 @@ C  02/24/2012  FSR adapted from nwheats
 C  Called by: 
 C  Calls    : 
 C=======================================================================
-      SUBROUTINE nwheats_cwpot (CONTROL, SOILPROP, rlv_nw, swdep,
-     &    cumph_nw, cwdemand, istage,                            !Input
+      SUBROUTINE nwheats_cwpot (SOILPROP, rlv_nw, swdep,
+     &    cumph_nw, istage,                                      !Input
      &    nrlayr, pl_la, PLTPOP, sen_la,                         !Input
      &    potntl)                                                !Output
 
+! 2023-01-26 chp removed unused variables in argument list: 
+!         CONTROL, cwdemand, 
 !     ------------------------------------------------------------------
       USE ModuleDefs    
       IMPLICIT NONE
+      EXTERNAL count_of_real_vals
       SAVE
       
 !     The variable "CONTROL" is of type "ControlType".
-      TYPE (ControlType) CONTROL
+!     TYPE (ControlType) CONTROL
 
       integer count_of_real_vals
       integer istage
 !**!      integer NL    ! max number of layers permitted in any soil(?)
-      integer num_layers 
+!     integer num_layers 
       
       real potntl(NL)! Potential crop H2O uptake by soil layer (mm)
-      real cwdemand     ! crop water demand (mm)
+!     real cwdemand     ! crop water demand (mm)
       real       rwumax ! maximum value of rwu (cm)
       parameter (rwumax = 0.03) ! Move to species file?
 
@@ -639,21 +656,21 @@ C=======================================================================
          if (swdep(L) .gt. lldep(L)) then
             rlv_cm = rlv_nw(L)*100.
             avolsw = (swdep(L) - lldep(L))/dlayr_nw(L)
-            ! --------------------------------------------------------------
+            ! -----------------------------------------------------
             potntl(L) = 2.67e-3*exp(62.*avolsw)/(6.68-log(rlv_cm))
-            ! --------------------------------------------------------------
+            ! -----------------------------------------------------
             if (potntl(L) .gt. rwumax) potntl(L) = rwumax
-            ! --------------------------------------------------------------
+            ! -----------------------------------------------------
             potntl(L) = potntl(L)*dlayr_nw(L)*mm2cm*rlv_cm*
      :                            (0.18+0.00272*(rlv_cm-18.)**2)
-            ! --------------------------------------------------------------
+            ! -----------------------------------------------------
             lai = (pl_la - sen_la) *PLTPOP/sm2smm
             if (cumph_nw(istage) .lt. 4 .and. lai .lt. 1) then
                potntl(L) = potntl(L)*(3. - 2. * lai)
  
             else
             endif
-            ! --------------------------------------------------------------
+!             --------------------------------------------------------------
          else
             potntl(L) = 0.0
          endif
@@ -776,29 +793,29 @@ C=======================================================================
       implicit none
 
    !+ Sub-Program Arguments
-      real       amount(*)             ! (INPUT) amount to be removed
-      integer    dimen                 ! (INPUT) number of elements to be
-                                       !   removed
-      real       store(*)              ! (INPUT/OUTPUT) array to be removed
-                                       !   from
+      real       amount(*)      ! (INPUT) amount to be removed
+      integer    dimen          ! (INPUT) number of elements to be
+                                !   removed
+      real       store(*)       ! (INPUT/OUTPUT) array to be removed
+                                !   from
 
-   !+ Purpose
-   !     remove contents of each element of an array from each element of
-   !     another array.
+!   + Purpose
+!        remove contents of each element of an array from each element of
+!        another array.
 
-   !+  Definition
-   !     This subroutine subtracts each of the "dimen" elements of
-   !     "amount" from its corresponding element of "store".
+!   +  Definition
+!        This subroutine subtracts each of the "dimen" elements of
+!        "amount" from its corresponding element of "store".
 
-   !+  Mission Statement
-   !     Subtract array %1 from %2
+!   +  Mission Statement
+!        Subtract array %1 from %2
 
-   !+ Changes
-   !     270591 specified and programmed jngh
+!   + Changes
+!        270591 specified and programmed jngh
 
-   !+ Calls
+!   + Calls
 
-   !+ Local Variables
+!   + Local Variables
       integer    indx                  ! do counter
 
    !- Implementation Section ----------------------------------
@@ -852,9 +869,10 @@ C=======================================================================
      &              lldep, NL, num_layers, rtdep_nw, swdep)
 
       implicit  NONE
+      external sum_real_array
       integer   L                  ! (INPUT) soil profile layer number
-      integer   N, count
-      integer   count_of_real_vals ! integer function
+!     integer   N, count
+!     integer   count_of_real_vals ! integer function
       integer   NL  ! max number of layers permitted in any soil(?)
       integer   num_layers         !
 
@@ -875,7 +893,7 @@ C=======================================================================
       real swdep(NL)  ! water content by soil layer (mm)
       real weighting_factor
 
-      character*78 msg(1)
+!     character*78 msg(1)
 
 *- Implementation Section ----------------------------------
 
@@ -1000,6 +1018,7 @@ C===========================================================
 C===========================================================
       USE ModuleDefs
       implicit none
+      EXTERNAL nwheats_lyrck, nwheats_fac
 *+  Sub-Program Arguments
       integer    L                  ! (INPUT) layer number
 

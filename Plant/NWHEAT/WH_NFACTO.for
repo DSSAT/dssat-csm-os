@@ -147,10 +147,10 @@ C----------------------------------------------------------------------
 *+  Sub-Program Arguments **OK**
       real cnc(mxpart)  !(OUTPUT) critical N concentration (g N/g part)
       real mnc(mxpart)  !(OUTPUT) minimum N concentration (g N/g part)
-      !*! real      pcnc (*)               ! (OUTPUT) critical N concentration
-                                       !   (g N/g part)
-      !*!  real      pmnc (*)               ! (OUTPUT) minimum N concentration
-                                       !   (g N/g part)
+!      !*! real      pcnc (*)               ! (OUTPUT) critical N concentration
+!                                       !   (g N/g part)
+!      !*!  real      pmnc (*)               ! (OUTPUT) minimum N concentration
+!                                       !   (g N/g part)
       REAL xstag_nw, zstage, VSEN ! add by JZW
       INTEGER ISTAGE ! add by JZW
 *+  Purpose
@@ -188,9 +188,9 @@ cjh      parameter (tmncpc = 0.45)
             mnc(root_part) = rmnpc/100.0 
          endif
  
-             ! the tops critical N percentage concentration is the stover
-             ! (non-grain shoot) concentration below which N concentration
-             ! begins to affect plant growth.
+!              the tops critical N percentage concentration is the stover
+!              (non-grain shoot) concentration below which N concentration
+!              begins to affect plant growth.
  
       !*! if (p1v .ge. 0.03)then
          if (VSEN .ge. 0.03)then
@@ -227,12 +227,17 @@ cbak lower boundary for stover n % = 0.25%
       end
 !======================================================================
       subroutine nwheats_set_nfact (xstag_nw, istage,            !Input 
-     &      cnc, mnc, pl_nit, plantwt, zstage,                   !Input 
+     &      cnc, mnc, pl_nit, plantwt,                   !Input 
      &      nfact)                                              !Output
 !======================================================================
+! 2023-01-17 chp removed unused variables from argument list:
+!  zstage, 
+
       USE ModuleDefs
       USE WH_module
       implicit none
+      external WARNING, ERROR
+
    !*!   include 'const.inc'              ! err_internal
    !*!   include    'nwheats.inc'          ! CERES_Wheat Common Block
    !*!   include 'data.pub'                          
@@ -268,7 +273,7 @@ cbak lower boundary for stover n % = 0.25%
       real  tcnc    ! tops (stover) critical N concentration (0-1)
       real  tmnc    ! tops (stover) minimum N concentration  (0-1)
       real  xnfac   ! available N as fraction of N capacity  (0-1)
-      REAL xstag_nw, zstage                  
+      REAL xstag_nw  !, zstage                  
       REAL plantwt(mxpart) !plant part weights (g/plant)
       REAL cnc(mxpart) ! critical N concentration by plant part
       REAL mnc(mxpart) ! minimum  N concentration by plant part 
@@ -313,7 +318,8 @@ cbak lower boundary for stover n % = 0.25%
          xnfac = (tanc - tmnc) / (tcnc - tmnc)
          !xnfac = max(xnfac, 0.02)
   
-         xnfac = max(xnfac, 0.0) !JZW changed on July 21, 2014 based on the request of Senthold
+!        JZW changed on July 21, 2014 based on the request of Senthold
+         xnfac = max(xnfac, 0.0) 
         
       else
          xnfac = 1.0
@@ -322,7 +328,6 @@ cbak lower boundary for stover n % = 0.25%
       nfac = max (xnfac, 0.0)
       nfac = min(nfac, 1.0)
       if (istage.eq.germ) then
-          ! JZW:  IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN   call WH_GROSUB if DYNAMIC = INTEGRATE, thus never go here
         nfact(1) = 1.0
         nfact(2) = 1.0
         nfact(3) = 1.0

@@ -20,6 +20,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL WARNING
       SAVE
 
       CHARACTER*78 MSG(10)

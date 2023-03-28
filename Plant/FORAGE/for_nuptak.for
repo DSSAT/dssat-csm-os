@@ -27,6 +27,7 @@ C=======================================================================
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
       SAVE
 
       CHARACTER*6 ERRKEY
@@ -249,7 +250,7 @@ C-----------------------------------------------------------------------
         ANDEM = TRNU
         ENDIF
 !        IF (TRNU .EQ. 0.0) GO TO 600
-        IF (TRNU .GT. 0.001) THEN
+        IF (TRNU .GT. 0.0) THEN
 C-----------------------------------------------------------------------
 C      10/31/05 SJR Replace TRNU with (PRSPNO3 + PRSPNH4) to prevent 
 C            excessive N-uptake when PGAVL limits TRNU to less than
@@ -334,10 +335,10 @@ C=======================================================================
 ! NDMSDR   Amount of Mobilized N which can be used for seed growth
 !            (g[N] / m2 / d)
 ! NDMTOT   Total N demand (g[N] / m2 / d)
-! NH4(L)   Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)   Ammonium N in soil layer L (Âµg[N] / g[soil])
 ! NL       maximum number of soil layers = 20 
 ! NLAYR    Number of soil layers 
-! NO3(L)   Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)   Nitrate in soil layer L (Âµg[N] / g[soil])
 ! NUF      N uptake fraction (ratio of demand to N uptake), <= 1.0 
 ! NUPNO3(L)      Proportion of TRNU from a soil layer that is nitrate
 ! NUPNH4(L)      Proportion of TRNU from a soil layer that is ammonium

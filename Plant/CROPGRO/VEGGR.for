@@ -44,6 +44,7 @@ C========================================================================
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, CANOPY
       SAVE
 
       CHARACTER*6  ERRKEY

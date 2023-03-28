@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2021-07-27
+! DSSAT v4.8; 2022-11-18
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -44,11 +44,12 @@ BR#SH  SHOOT NO #/m2   Shoot (apex) number at harvest (no/m2)                   
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                  .
+CH4EM  Cum CH4 emitted Cumulative methane emitted at maturity (kg[C]/ha)        .
 CHTA   Canopy height m Canopy height (m)                                        .
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
 CO2A   Avg CO2 (ppm)   Average atmospheric CO2 (ppm), planting to harvest       .
-CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
+CO2EM  Cum CO2 emitted Cumulative CO2 emitted from soil at maturity (kg[C]/ha)  .
 CPAM   Tops P kg/ha    Tops P at maturity (kg/ha)                               .
 CWAA   Tops wt,anthsis Tops weight at anthesis (kg [dm]/ha)                     .
 CWAM   Tops wt kg/ha   Tops weight at maturity (kg [dm]/ha)                     .
@@ -118,8 +119,7 @@ LONG   Longitude °     Longitude (degrees)                                      
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
-CH4EC  Cum CH4 emitted Cumulative methane emitted kg[C]/ha                      .
-N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
+N2OEM  Cum N2O emitted Cumulative N2O emissions at maturity (kg[N]/ha)          .
 NDCH   Days to harvest Number of days from planting to harvest (d)              .
 NFXM   N fixed kg/h    N fixed during season (kg/ha)                            .
 NI#M   N application # N applications (no)                                      .
@@ -1352,13 +1352,14 @@ RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)        
 RLAIH  Resid. LAI      Residual leaf area index after forage harvest            .
 
 *Greenhouse Gas Emissions
-CCEQC  CO2eq-CO2      CO2 emissions as CO2 equivalent (kg[CO2eq]/ha)            .
+CCEQC  CO2eq-CO2       CO2 emissions as CO2 equivalent (kg[CO2eq]/ha)           .
 CH4BLC Cum_CH4_bal     Cumulative CH4 balance (kg[C]/ha)                        .
 CH4BLD CH4_balance     Daily CH4 Balance (kg[C]/ha)                             .
 CH4COC CumCH4Consumpt  Cumulative CH4 consumption (kg[C]/ha)                    .
 CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)                         .
 CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)                           .
 CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)                          .
+CH4EC  Cum CH4 emitted Cumulative methane emitted kg[C]/ha                      .
 CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha)                            .
 CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)                       .
 CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha)                            .
@@ -1367,15 +1368,15 @@ CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)                          
 CH4SBD TCH4Substrate   Daily portion of new CO2 proportioned to CH4 (kg[C]/ha)  .
 CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)                        .
 CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             .
+CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission     Daily CO2 emission (kg/ha)                               .
 CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
 CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
-MCEQC  CO2eq-CH4      Methane emissions as CO2 equivalent (kg[CO2eq]/ha)        .
+MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .
 N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
+N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 N2OED  N2O emitted/d   Daily N2O emissions from soil (g[N]/ha)                  .
-N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
-N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
 N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
 N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
 N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .
@@ -1388,6 +1389,6 @@ N2O6D  N2O flux lyr 6  Daily N2O flux, soil layer 6 (g[N]/ha)                   
 N2O7D  N2O flux lyr 7  Daily N2O flux, soil layer 7 (g[N]/ha)                   .
 N2O8D  N2O flux lyr 8  Daily N2O flux, soil layer 8 (g[N]/ha)                   .
 N2O9D  N2O flux lyr 9  Daily N2O flux, soil layer 9 (g[N]/ha)                   .
-NCEQC  CO2eq-N2O      N2O emissions as CO2 equivalent (kg[CO2eq]/ha)            .
-TCEQC  CO2eq-Total    Total GHG emissions as CO2 equivalent (kg[CO2eq]/ha)      .
+NCEQC  CO2eq-N2O       N2O emissions as CO2 equivalent (kg[CO2eq]/ha)           .
+TCEQC  CO2eq-Total     Total GHG emissions as CO2 equivalent (kg[CO2eq]/ha)     .
 

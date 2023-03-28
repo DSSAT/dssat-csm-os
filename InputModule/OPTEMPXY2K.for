@@ -46,6 +46,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL TVILENT, ERROR
 
       INCLUDE 'COMIBS.blk'
       INCLUDE 'COMSOI.blk'

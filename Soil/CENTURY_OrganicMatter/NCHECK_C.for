@@ -21,6 +21,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL WARNING, NWRITE_C
 !     ------------------------------------------------------------------
 !     NL defined in ModuleDefs.for.
       INTEGER DYNAMIC, L, N_ELEMS, NLAYR, SRFC
@@ -150,7 +151,8 @@
       SUBROUTINE NWRITE_C (L, VALUE, CODE)
 
 !     ------------------------------------------------------------------
-      IMPLICIT NONE 
+      IMPLICIT NONE
+      EXTERNAL WARNING
 
       INTEGER CODE, L
       REAL VALUE

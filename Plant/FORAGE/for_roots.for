@@ -21,18 +21,22 @@ C  05/11/1999 GH  Incorporated in CROPGRO
 !=======================================================================
 
       SUBROUTINE FOR_ROOTS(DYNAMIC,
-     &    AGRRT, CADRT, CROP, DLAYR, DS, DTX, DUL, FILECC,!Input
-     &    FILEIO, FRRT, ISWWAT, LL, NADRT, NLAYR, PG,        !Input
-     &    RLSEN, RO, RP, RTWT, SAT, SRMDOT, SW,                   !Input
-     &  SWFAC, VSTAGE, WR, WRDOTN, WTNEW,                        !Input
-     &    CUMDEP, RLV, RTDEP, SATFAC, SENRT, SRDOT,             !Output
-     &  SRNDOT, SRCADDOT, SRNADDOT)                                    !Output
+     &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC,       !Input
+     &    FILEIO, FRRT, ISWWAT, LL, NLAYR, PG,            !Input
+     &    RLSEN, RO, RP, RTWT, SAT, SW,                   !Input
+     &    SWFAC, VSTAGE, WR, WRDOTN, WTNEW,               !Input
+     &    CUMDEP, RLV, RTDEP, SATFAC, SENRT,              !Output
+     &    SRCADDOT, SRNADDOT)                             !Output
+
+!     2023-01-20 CHP Removed unused variables in argument list
+!     CADRT, NADRT, SRMDOT, SRDOT, SRNDOT, 
 
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FOR_IPROOT, TABEX, FOR_INROOT
       SAVE
 
       CHARACTER*1 PLME
@@ -48,10 +52,10 @@ C-----------------------------------------------------------------------
       REAL CUMDEP, DEPMAX, DTX, FRRT,
      &  PG, RFAC1, RFAC2, RFAC3,
      &  RLDSM, RLNEW, RO, RP,
-     &  RTDEP, RTSDF, RTSEN, RTWT, SRDOT, SWDF, SWFAC,
+     &  RTDEP, RTSDF, RTSEN, RTWT, SWDF, SWFAC, !SRDOT, 
      &  TRLDF, TRLV, TRTDY, WRDOTN
         REAL CGRRT, AGRRT
-      REAL CADRT, NADRT, SRCADDOT, SRNADDOT
+      REAL SRCADDOT, SRNADDOT  !CADRT, NADRT, 
       REAL SWEXF, PORMIN, RTEXF, RTSURV
       REAL RTDEPI, SUMEX, SUMRL, SATFAC
       REAL PLTPOP, WTNEW, VSTAGE
@@ -62,8 +66,8 @@ C-----------------------------------------------------------------------
       REAL SW(NL), SAT(NL), WR(NL)
       REAL GRESPR(NL), MRESPR(NL), RESPS(NL)
 !       REAL YNRLT(NL), YNRL(5,NL)
-      REAL RNDOT(NL), RLNSEN(NL), TRLNSEN, TRLSEN, TRLGRW, SENRT(NL)
-      REAL SRMDOT, SRNDOT
+      REAL RLNSEN(NL), TRLNSEN, TRLSEN, TRLGRW, SENRT(NL)  !RNDOT(NL), 
+!     REAL SRMDOT, SRNDOT
 
 !***********************************************************************
 !***********************************************************************
@@ -362,6 +366,7 @@ C=======================================================================
 !     NL defined in ModuleDefs.for
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE
 
       CHARACTER*1 PLME
       CHARACTER*6 ERRKEY

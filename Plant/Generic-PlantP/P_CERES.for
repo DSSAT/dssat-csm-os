@@ -29,6 +29,7 @@
       USE ModuleDefs
       USE ModuleData
       IMPLICIT  NONE
+      EXTERNAL P_Plant
       SAVE
 !     ------------------------------------------------------------------
 

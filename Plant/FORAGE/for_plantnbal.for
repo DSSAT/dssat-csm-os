@@ -36,6 +36,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER
       SAVE
 
       CHARACTER*1  IDETL, IDETN

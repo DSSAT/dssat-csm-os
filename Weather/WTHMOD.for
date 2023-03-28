@@ -39,6 +39,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, DAILYWEATHERCHECK, FIND, WTHSET, DECL
       SAVE
 
       INTEGER, PARAMETER :: NMODS = 100
@@ -261,8 +262,8 @@ C       Adjustment of wind speed.
 !        ENDIF
 
         CALL DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, 0, RHUM,                  !Input 
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YYDDD,          !Input
+     &    ERRKEY, FILEWW, RAIN, 0,                        !Input 
+     &    SRAD, TMAX, TMIN, YYDDD,                        !Input
      &    YREND)                                          !Output
 
       ENDIF

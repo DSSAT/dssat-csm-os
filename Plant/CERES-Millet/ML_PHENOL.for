@@ -12,6 +12,7 @@ C  4. Modified TT calculations to reduce line #'s P.W.W.      2-7-93
 C  5. Modified for MILLET model                   W.T.B.      MAY 94
 C  6. Converted to modular format                 W.D.B.      7-31-02
 C  7. Major revisions to millet model             K.J.B April-May 2015
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  INPUT  : YRDOY
 C
@@ -47,24 +48,25 @@ C=======================================================================
 C      Variables passed through PHENOL to phasei but not used in phenol
      & AGEFAC, BIOMS1, CUMDTT, CUMPH, G4, G5, GROLF,
      & GRORT, GROSTM, LFWT, MGROLF, MGROPAN, MGROSTM, 
-     & MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NSTRES, PAF, 
+     & MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NSTRES, PAF, 
      & PGC, PLA, PLAN, PLAO, PLATO, PLAMX, PTF, RANC, 
      & RESERVE, RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
      & STOVWT, TCARBO, TGROLF,
      & TGROPAN, TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC,
      & TPANWT, TPLA, TPLAG, TSIZE, TSTMWT, VANC, VMNC, WSTR1, 
      & XNTI,SWFAC,TURFAC,DGET,SWCG,DJTI,
-     &    DAYL, TWILEN, CANWAA, CANNAA)
+     &    DAYL, TWILEN, CANWAA, CANNAA, CropStatus)
 
       USE MODULEDEFS
-
       IMPLICIT  NONE
+      EXTERNAL DAYLEN, CURV, ML_PHASEI, WARNING
       SAVE
 C -----------------------------------------------------------------------
 C VARIABLES ONLY USED IN PHASEI. THEY ARE PASSED THROUGH PHENOL TO PHASEI
 C------------------------------------------------------------------------
       REAL AGEFAC
       REAL BIOMS1
+      INTEGER CropStatus
       REAL CUMDTT
       REAL CUMPH
       REAL DGET
@@ -78,7 +80,7 @@ C------------------------------------------------------------------------
       REAL MGROLF
       REAL MGROPAN
       REAL MGROSTM
-      REAL MLAG1
+!     REAL MLAG1
       REAL MLFWT
       REAL MPANWT
       REAL MPLAG
@@ -379,20 +381,20 @@ C--------------------------------------------------------------------
           XRGSET = 1.0
 
           CALL ML_PHASEI (
-     &    AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
-     &    DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
-     &    GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
-     &    ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, MGROPAN,
-     &    MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
-     &    NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
-     &    PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
-     &    RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
-     &    SIND, SLAN, STMWT, STOVWT,    
-     &    TANC, TCARBO, TGROLF, TGROPAN,
-     &    TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
-     &    TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
-     &    VMNC, WSTR1, XNTI)
+     &      AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
+     &      CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     &      DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
+     &      GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
+     &      ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, 
+     &      MGROPAN,MGROSTM, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
+     &      NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
+     &      PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
+     &      RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
+     &      SIND, SLAN, STMWT, STOVWT,    
+     &      TANC, TCARBO, TGROLF, TGROPAN,
+     &      TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
+     &      TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
+     &      VMNC, XNTI)
 
           IF (ISWWAT .EQ. 'N') RETURN
 
@@ -424,20 +426,20 @@ C--------------------------------------------------------------------
           IPRINT = 0
 
           CALL ML_PHASEI (
-     &    AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
-     &    DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
-     &    GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
-     &    ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, MGROPAN,
-     &    MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
-     &    NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
-     &    PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
-     &    RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
-     &    SIND, SLAN, STMWT, STOVWT,    
-     &    TANC, TCARBO, TGROLF, TGROPAN,
-     &    TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
-     &    TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
-     &    VMNC, WSTR1, XNTI)
+     &      AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
+     &      CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     &      DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
+     &      GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
+     &      ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, 
+     &      MGROPAN,MGROSTM, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
+     &      NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
+     &      PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
+     &      RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
+     &      SIND, SLAN, STMWT, STOVWT,    
+     &      TANC, TCARBO, TGROLF, TGROPAN,
+     &      TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
+     &      TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
+     &      VMNC, XNTI)
 
           RETURN
 
@@ -465,26 +467,27 @@ C--------------------------------------------------------------------
                 WRITE (NOUTDO,1399)
              ENDIF
              MDATE = YRDOY
+             CropStatus = 12
              RETURN
           ENDIF
 
           STGDOY(ISTAGE) = YRDOY
 
           CALL ML_PHASEI (
-     &    AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
-     &    DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
-     &    GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
-     &    ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, MGROPAN,
-     &    MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
-     &    NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
-     &    PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
-     &    RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
-     &    SIND, SLAN, STMWT, STOVWT,    
-     &    TANC, TCARBO, TGROLF, TGROPAN,
-     &    TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
-     &    TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
-     &    VMNC, WSTR1, XNTI)
+     &      AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
+     &      CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     &      DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
+     &      GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
+     &      ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, 
+     &      MGROPAN,MGROSTM, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
+     &      NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
+     &      PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
+     &      RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
+     &      SIND, SLAN, STMWT, STOVWT,    
+     &      TANC, TCARBO, TGROLF, TGROPAN,
+     &      TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
+     &      TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
+     &      VMNC, XNTI)
           RETURN
 
 C--------------------------------------------------------------------
@@ -630,6 +633,7 @@ C--------------------------------------------------------------------
           STGDOY(ISTAGE) = YRDOY
           IPRINT         = 0
           MDATE          = YRDOY
+          CropStatus     = 1
           GRNWT  = PANWT - 1.1 * PWA
           GRNWT  = AMAX1(GRNWT,0.0)
           YIELD  = GRNWT*10.0*PLTPOP
@@ -679,20 +683,20 @@ C--------------------------------------------------------------------
 
 
       CALL ML_PHASEI (
-     &    AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
-     &    DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
-     &    GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
-     &    ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, MGROPAN,
-     &    MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
-     &    NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
-     &    PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
-     &    RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
-     &    SIND, SLAN, STMWT, STOVWT,    
-     &    TANC, TCARBO, TGROLF, TGROPAN,
-     &    TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
-     &    TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
-     &    VMNC, WSTR1, XNTI)
+     &  AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
+     &  CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     &  DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
+     &  GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
+     &  ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, 
+     &  MGROPAN,MGROSTM, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
+     &  NSTRES, P3, P4, P9, PAF, PANWT, PGC, PHINT, PLA, PLAN, PLAO,
+     &  PLATO, PLAY, PLAMX, PLTPOP, PTF, PWA, RANC, RESERVE,
+     &  RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
+     &  SIND, SLAN, STMWT, STOVWT,    
+     &  TANC, TCARBO, TGROLF, TGROPAN,
+     &  TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC, TPANWT,
+     &  TPLA, TPLAG, TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
+     &  VMNC, XNTI)
 
       RETURN
 

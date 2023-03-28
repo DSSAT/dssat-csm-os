@@ -41,7 +41,7 @@
 
       SUBROUTINE SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
-     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3, P3, !Input
+     &      FracRts, ISTAGE, KG2PPM, LL, NLAYR, NH4, NO3,     !Input
      &      PLTPOP, PPLTD, RLV, RTDEP, RUE, SAT, SeedFrac,    !Input
      &      SHF, SLPF, SPi_AVAIL, SRAD, STGDOY, SUMDTT, SW,   !Input
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
@@ -66,6 +66,8 @@
       USE ModuleDefs
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, SU_NFACTO, SU_NUPTAK, 
+     &  SU_KUPTAK, P_Ceres, WARNING, TABEX, CURV
       SAVE
 !----------------------------------------------------------------------
 !                         Variable Declaration
@@ -102,7 +104,7 @@
       REAL        CURV
       REAL        DLAYR(NL)   
       REAL        DS(NL)           
-      INTEGER     DOY         
+!     INTEGER     DOY         
       REAL        DTT         
       REAL        DUMMY           
       INTEGER     DYNAMIC     
@@ -183,7 +185,7 @@
       INTEGER     NWSD 
       REAL        P1             
       REAL        P2    
-      REAL        P3         
+!     REAL        P3         
       REAL        P5          
       REAL        PAR         
       REAL        PARSR
@@ -330,7 +332,7 @@
       REAL        XSTAGE           
       REAL        YIELD         
       REAL        PODWT   
-      INTEGER     YR, YRDOY   
+      INTEGER     YRDOY !YR,    
       REAL        OILPC,TRG,XHY
 !     Added to send messages to WARNING.OUT
       CHARACTER*78 MESSAGE(10)
@@ -365,7 +367,7 @@
       REAL DM,DSLAN1,DSLAN2,DSLANW,ELO,ELOFT,EMBN,ENP,EXCESS
       REAL FACHN,FACLN,FACPOOL,FACSN,FCP,FCP2,FPOOL1,FPOOL2
       REAL FRCARB,FSINK1,FSINK2,GF1,GLFWT,GPLA,GROEMB,GROPER
-      REAL GROHEAD,HWMAX,HWMIN,INCPLA,K2,LER,MAXGROLF
+      REAL GROHEAD,HWMAX,HWMIN,K2,LER,MAXGROLF !,INCPLA
       REAL MAXGROSTM,MAXLA,MINGROLF,NPL1H,NPL1S,NPL1L
       REAL NPL2L,NPL2R,NSINK1,NSINK2,O1,OIL,OILFRAC,OILINC
       REAL P3P,P9,PDWIH,PDWIL,PDWIS,PEPE,PERN,PHY,PO,PR,QD,QN
@@ -472,9 +474,9 @@
         OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,0)
 
-        !----------------------------------------------------------------
-        !       Find and Read TEMPERATURE Section
-        !----------------------------------------------------------------
+!        ----------------------------------------------------------------
+!               Find and Read TEMPERATURE Section
+!        ----------------------------------------------------------------
 
         SECTION = '*TEMPE'
         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
@@ -515,9 +517,9 @@
 
         ENDIF
         REWIND(LUNCRP)
-        !----------------------------------------------------------------
-        !        Find and Read Stress Response
-        !----------------------------------------------------------------
+!        ----------------------------------------------------------------
+!                Find and Read Stress Response
+!        ----------------------------------------------------------------
         SECTION = '*STRES'
         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
         IF (FOUND .EQ. 0) THEN
@@ -538,9 +540,9 @@
           ENDIF
         ENDIF
         REWIND(LUNCRP)
-        !----------------------------------------------------------------
-        !        Find and Read Seed Growth Parameters
-        !----------------------------------------------------------------
+!        ----------------------------------------------------------------
+!                Find and Read Seed Growth Parameters
+!        ----------------------------------------------------------------
         SECTION = '*SEED '
         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
         IF (FOUND .EQ. 0) THEN
@@ -565,9 +567,9 @@
 
         ENDIF    
         REWIND(LUNCRP)
-        !----------------------------------------------------------------
-        !        Find and Read Emergence Initial Conditions
-        !----------------------------------------------------------------
+!        ----------------------------------------------------------------
+!                Find and Read Emergence Initial Conditions
+!        ----------------------------------------------------------------
         SECTION = '*EMERG'
         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
         IF (FOUND .EQ. 0) THEN
@@ -600,9 +602,9 @@
         ENDIF
         REWIND(LUNCRP)
 
-        !----------------------------------------------------------------
-        !        Find and Read Plant Nitrogen Parameters
-        !----------------------------------------------------------------
+!        ----------------------------------------------------------------
+!                Find and Read Plant Nitrogen Parameters
+!        ----------------------------------------------------------------
         SECTION = '*NITRO'
         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
         IF (FOUND .EQ. 0) THEN
@@ -644,9 +646,9 @@
           ENDIF
         ENDIF
         REWIND(LUNCRP)
-        !----------------------------------------------------------------
-        !        Find and Read Root parameters
-        !----------------------------------------------------------------
+!        ----------------------------------------------------------------
+!                Find and Read Root parameters
+!        ----------------------------------------------------------------
         SECTION = '*ROOT '
         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
         IF (FOUND .EQ. 0) THEN
@@ -968,7 +970,7 @@
  
 
           PSKER  = SUMP / IDURP
-          PSKER  = AMAX1 (PSKER,0.1)                 ! Set PSKER to min of 0.1
+          PSKER  = AMAX1 (PSKER,0.1)           ! Set PSKER to min of 0.1
           !
           ! Include calculations to correct RUE after anthesis
           ! mantainance respiration
@@ -987,7 +989,7 @@
           GRFACTOR  = 0.6 + 0.4 * ZZZ
           GRFACTOR  = AMIN1 (GRFACTOR,1.0)
           
-          PERWT     = PPP * 0.002                     ! Pericarp starts with 2 mg
+          PERWT     = PPP * 0.002            ! Pericarp starts with 2 mg
           IF (PERWT.GT.0.5*HEADWT) THEN
               PERWT=0.5*HEADWT
           ENDIF
@@ -1112,9 +1114,9 @@
         TCNP=(XLCNP*GLFWT+XSCNP*STMWT+XHCNP*HEADWT)/(STOVWT-SLFWT)
         TMNC=(XLMNC*GLFWT+XSMNC*STMWT+XHMNC*HEADWT)/(STOVWT-SLFWT)
 
-        !-------------------------------------------------------------
-        !        Compute Nitrogen Stress Factors 
-        !-------------------------------------------------------------
+!        -------------------------------------------------------------
+!                Compute Nitrogen Stress Factors 
+!        -------------------------------------------------------------
         IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
           CALL SU_NFACTO(DYNAMIC,                 !Control
      %    TANC,TCNP,TMNC,xlanc,xlcnp,xlmnc,       !Inputs
@@ -1125,9 +1127,9 @@
           NDEF3 = 1.0
           NFAC = 1.0
         ENDIF
-          !-------------------------------------------------------------
-          !      Compute Water Stress Factors       
-          ! ------------------------------------------------------------
+!          -------------------------------------------------------------
+!                Compute Water Stress Factors       
+!           ------------------------------------------------------------
         SWFAC  = 1.0
         TURFAC = 1.0
         IF(ISWWAT.NE.'N') THEN
@@ -1143,9 +1145,9 @@
         ENDIF
         TURFAC = REAL(INT(TURFAC*1000))/1000
 
-        !-------------------------------------------------------------
-        !      Compute Water Saturation Factors       
-        ! ------------------------------------------------------------
+!        -------------------------------------------------------------
+!              Compute Water Saturation Factors       
+!         ------------------------------------------------------------
 
         SATFAC = 0.0    
         SUMEX = 0.0
@@ -1153,21 +1155,21 @@
       
           DO L = 1,NLAYR
 
-            !------------------------------------------------------------
-            !PORMIN = Minimum pore space required for supplying oxygen to 
-            !         roots for optimum growth and function    
-            !TSS(L) = Number of days soil layer L has been saturated 
-            !         above PORMIN
-            !------------------------------------------------------------
+!            ------------------------------------------------------------
+!            PORMIN = Minimum pore space required for supplying oxygen to 
+!                     roots for optimum growth and function    
+!            TSS(L) = Number of days soil layer L has been saturated 
+!                     above PORMIN
+!            ------------------------------------------------------------
             IF ((SAT(L)-SW(L)) .GE. PORMIN) THEN
               TSS(L) = 0.
             ELSE
               TSS(L) = TSS(L) + 1.
             ENDIF
-            !------------------------------------------------------------
-            ! Delay of 2 days after soil layer is saturated before root
-            ! water uptake is affected
-            !------------------------------------------------------------
+!            ------------------------------------------------------------
+!             Delay of 2 days after soil layer is saturated before root
+!             water uptake is affected
+!            ------------------------------------------------------------
             IF (TSS(L) .GT. 2.) THEN
               SWEXF = (SAT(L)-SW(L))/PORMIN
               SWEXF = MAX(SWEXF,0.0)
@@ -1188,10 +1190,10 @@
           SATFAC = AMAX1(SATFAC,0.0)
           SATFAC = AMIN1(SATFAC,1.0)
 
-          !-------------------------------------------------------------
-          !                Daily Photosynthesis Rate
-          ! ------------------------------------------------------------
-          !Compare with weather module: PAR = SRAD * 2.0  chp
+!          -------------------------------------------------------------
+!                          Daily Photosynthesis Rate
+!           ------------------------------------------------------------
+!          Compare with weather module: PAR = SRAD * 2.0  chp
           PAR = SRAD*PARSR    !PAR local variable        
           
          
@@ -1259,8 +1261,8 @@ c         PCARB = AMAX1 (PCARB,0.0)
           PRFT = CURV('LIN',PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4),TAVGD)
           PRFT  = AMAX1 (PRFT,0.0)
           PRFT = MIN(PRFT,1.0)
-!**************************************************************************
-!**************************************************************************
+!************************************************************************
+!************************************************************************
           RFR  = 1.2*EXP(-0.5*K2*LAI)
           IF (RFR .GT. 0.5) THEN
             RFR = 1.0
@@ -1584,7 +1586,8 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             ENDIF
 
             IF (SENRATE .GT. 0.0) THEN
-              DSLAN1 = SENRATE*10000.0/PLTPOP    ! rate of senescence cm2/day/plant
+!             rate of senescence cm2/day/plant
+              DSLAN1 = SENRATE*10000.0/PLTPOP    
             ELSE
               DSLAN1 = 0.0
             ENDIF
@@ -1597,7 +1600,8 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
               DSLANW = 0.0
             ENDIF
 
-            DSLAN1 = AMAX1 (DSLAN1,DSLANW)    ! rate of lraf senescence cm2/day/plant
+!           rate of lraf senescence cm2/day/plant
+            DSLAN1 = AMAX1 (DSLAN1,DSLANW)    
             SLAN1  = SLAN1 + DSLAN1
             SLAN   = SLAN1
             SLAY   = GPLA  / GLFWT     ! SLA of mean green area
@@ -1607,21 +1611,29 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             SLFWT  = SLFWT + DSLAN1/SLAY
             IF (ISWNIT .EQ. 'Y') THEN
               XRAT   = XNGLF / GLFWT
-              YRAT   = (0.009 - 0.0875 * XRAT)/0.9125  ! residual nitrogen concentration in senesced leaves
-              SDN    = DSLAN1/SLAY*(XRAT - YRAT)      ! amount of nitrogen retranslocated from the senesced leaves to other organs ( g N/plant)
+!             residual nitrogen concentration in senesced leaves
+              YRAT   = (0.009 - 0.0875 * XRAT)/0.9125  
+!             amount of nitrogen retranslocated from the senesced leaves to other organs ( g N/plant)
+              SDN    = DSLAN1/SLAY*(XRAT - YRAT)      
               SLFWT  = SLFWT - SDN * 6.25
               XNSLF  = XNSLF + DSLAN1/SLAY*YRAT
               GLFWT  = GLFWT + SDN * 6.25
               XNGLF  = XNGLF - DSLAN1/SLAY*YRAT
-              XXX    = GLFWT * XLCNP   ! N content in green leaves at critical level
+!             N content in green leaves at critical level
+              XXX    = GLFWT * XLCNP   
 
-            ! N is first moved from secesced leaves to green leaves and then from the latter to the stem
+!             N is first moved from secesced leaves to green leaves and then from the latter to the stem
               IF (XNGLF .GT. XXX) THEN
-                YYY    = XNGLF  - XXX   ! Leaf N amount in excess of critical (g/plant)
-                XNGLF  = XXX            ! set actual to critical amount of N in green leaves
-                GLFWT  = GLFWT  - YYY * 6.25  !export of protein by senescence
-                LFWT   = LFWT   - YYY * 6.25  !export of protein by senescence
-                STMWT  = STMWT  + YYY * 6.25  !input of protein by senescence
+!               Leaf N amount in excess of critical (g/plant)
+                YYY    = XNGLF  - XXX   
+!               set actual to critical amount of N in green leaves
+                XNGLF  = XXX            
+!               export of protein by senescence
+                GLFWT  = GLFWT  - YYY * 6.25  
+!               export of protein by senescence
+                LFWT   = LFWT   - YYY * 6.25  
+!               input of protein by senescence
+                STMWT  = STMWT  + YYY * 6.25  
                 XSTEMN = XSTEMN + YYY
                 XLEAFN = XLEAFN - YYY
               ENDIF  
@@ -1633,7 +1645,8 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           ENDIF
         
 
-        CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha
+!       total leaf senescence kg/ha
+        CumLeafSenes =SLFWT * PLTPOP * 10.    
 
 
 !      --------------------------------------------------------------------
@@ -1688,7 +1701,8 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
                   TFAC   = 0.690 + 0.0125*TEMPM                       !
 ! 
  
-            PNP = (0.0050 + 0.0100*NFAC)*AMAX1(SFAC,TFAC)            ! SUN Pericarp N conc.
+!           SUN Pericarp N conc.
+            PNP = (0.0050 + 0.0100*NFAC)*AMAX1(SFAC,TFAC)            
 
             OILFRAC = 0.0
             NSINK1 = 0.0
@@ -1704,12 +1718,12 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             IF (NSINK .NE. 0.0) THEN
             
               FSINK2 = NSINK2 / NSINK
-              RANC   = AMAX1 (RANC,RMNC)                  ! Roots actual N conc.                
-              XLANC  = XNGLF  / GLFWT  ! Leaf N conc.
-              XSANC  = XSTEMN / STMWT                     ! Stem N conc.
-              XHANC  = XHEADN / HEADWT                    ! Head N conc.
-              VANC   = STOVN  / STOVWT                    ! Stover actual N conc.
-              NPL1L  = GLFWT  * (XLANC - XLMNC)           ! Total N in leaf pool
+              RANC   = AMAX1 (RANC,RMNC)        ! Roots actual N conc.
+              XLANC  = XNGLF  / GLFWT           ! Leaf N conc.
+              XSANC  = XSTEMN / STMWT           ! Stem N conc.
+              XHANC  = XHEADN / HEADWT          ! Head N conc.
+              VANC   = STOVN  / STOVWT          ! Stover actual N conc.
+              NPL1L  = GLFWT  * (XLANC - XLMNC) ! Total N in leaf pool
               NPL1L  = AMAX1 (NPL1L,0.0)
 
               IF (NPL1L .GT. XPEPE) THEN
@@ -1719,16 +1733,17 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
                 NPL2L = NPL1L
                 NPL1L = 0 
               ENDIF   
-              NPL1S  = STMWT  * (XSANC - XSMNC)           ! Total N in stem pool
+              NPL1S  = STMWT  * (XSANC - XSMNC) ! Total N in stem pool
               NPL1S  = AMAX1 (NPL1S,0.0)
-              NPL1H  = HEADWT * (XHANC - XHMNC)           ! Total N in head pool
+              NPL1H  = HEADWT * (XHANC - XHMNC) ! Total N in head pool
               NPL1H  = AMAX1 (NPL1H,0.0)
-              NPOOL1 = NPL1L  + NPL1S + NPL1H             ! Total N in stover
+              NPOOL1 = NPL1L  + NPL1S + NPL1H   ! Total N in stover
               NPL2R  = RTWT   * (RANC  - RMNC)
               NPL2R  = AMAX1 (NPL2R,0.0)
-              NPOOL2 = NPL2R  + NPL2L                     ! Total N in roots pool
+              NPOOL2 = NPL2R  + NPL2L           ! Total N in roots pool
               NPOOL  = NPOOL1 + NPOOL2
-              NSDR   = NPOOL  / NSINK                     ! Nitrogen supply/demand ratio
+!             Nitrogen supply/demand ratio
+              NSDR   = NPOOL  / NSINK           
 
               IF (NSDR .LT. 1.0) THEN
                 NSINK = NSINK*NSDR
@@ -1809,7 +1824,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           IDURP  = IDURP  + 1
 c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
       !             5/11/2005 CHP Added cumulative leaf senescence
-         CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha
+         CumLeafSenes =SLFWT * PLTPOP * 10. !total leaf senescence kg/ha
 
           !-------------------------------------------------------------
           !   ISTAGE = 5 Effective Grain Filling Period
@@ -1825,10 +1840,11 @@ c      WRITE(*,*)'GROSUB 1655',dslan1,DSLAN2,dslanw,GPLA,SLAN2,plag
           GROEMB = 0.0   
           PLAG = 0.0
 
-          IF (SUMDTT .GE. 230.0 .AND. GPP .EQ. 0.0) THEN             ! Include calculations to correct RUE after anthesis
+          IF (SUMDTT .GE. 230.0 .AND. GPP .EQ. 0.0) THEN             
+!             Include calculations to correct RUE after anthesis
              ! mantainance respiration
              PS    = RM/(RI1-1.0)
-             RM    = (BIOMAS+RTWT*PLTPOP)*0.008*0.729  ! mantainance respiration
+             RM    = (BIOMAS+RTWT*PLTPOP)*0.008*0.729  !mantainance resp
              RI1   = 1.0 + RM/PS !ratio gross net photosyntesis
              PSKER = SUMP / IDURP
          
@@ -1876,7 +1892,7 @@ C          WRITE(*,*)'GROSUB 1852',ISTAGE,EMAT,CMAT,CARBO
               YRAT = (0.009 - 0.0875 * XLAY)/0.9125
               ZZZ  = APLA - SLOPEPE * (XNGLF - YRAT*GLFWT)
                 IF (ZZZ .GT. SLAN2 .AND. ZZZ .LE. APLA) THEN
-                  DSLAN2 = ZZZ - SLAN2                  ! Increment in senesc. leaf
+                  DSLAN2 = ZZZ - SLAN2  ! Increment in senesc. leaf
                 ELSE
                   DSLAN2 = 0.0
                 ENDIF
@@ -1884,11 +1900,11 @@ C          WRITE(*,*)'GROSUB 1852',ISTAGE,EMAT,CMAT,CARBO
              
           ELSE
           
-          ! Convert thermal time to base of 8.5 C
-          !
-          ! If N is not calculated, calculate leaf senescence according to
-          ! Sadras and Hall (1988), FCR 18:185-196.  - FV, 12/12/97
-          !
+!           Convert thermal time to base of 8.5 C
+!          
+!           If N is not calculated, calculate leaf senescence according to
+!           Sadras and Hall (1988), FCR 18:185-196.  - FV, 12/12/97
+!          
             SUMDT8 = 0.75*SUMDTT
             IF (SUMDT8 .GT. 200.0) THEN
             !
@@ -2037,8 +2053,10 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
                   TFAC   = 0.690 + 0.0125*TEMPM                       !
 ! 
              
-              ENP = (0.0225 + 0.0200*NFAC)*AMAX1(SFAC,TFAC)           ! SUN Emryo N conc.
-              PNP = (0.0050 + 0.0100*NFAC)*AMAX1(SFAC,TFAC)           ! SUN Pericarp N conc.
+!             SUN Emryo N conc.
+              ENP = (0.0225 + 0.0200*NFAC)*AMAX1(SFAC,TFAC) 
+!             SUN Pericarp N conc.
+              PNP = (0.0050 + 0.0100*NFAC)*AMAX1(SFAC,TFAC) 
 
 
               NSINK = 0.1
@@ -2063,12 +2081,12 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
               IF (NSINK .NE. 0.0) THEN
                 FSINK1 = NSINK1 / NSINK
                 FSINK2 = NSINK2 / NSINK
-                RANC   = AMAX1 (RANC,RMNC)                  ! Roots actual N conc.
-                XLANC  = XNGLF  / GLFWT     ! Leaf N conc.
-                XSANC  = XSTEMN / STMWT                     ! Stem N conc.
-                XHANC  = XHEADN / HEADWT                    ! Head N conc.
-                VANC   = STOVN  / STOVWT                    ! Stover actual N conc.
-                NPL1L  = GLFWT  * (XLANC - XLMNC)           ! Total N in leaf pool
+                RANC   = AMAX1 (RANC,RMNC)        ! Roots actual N conc.
+                XLANC  = XNGLF  / GLFWT           ! Leaf N conc.
+                XSANC  = XSTEMN / STMWT           ! Stem N conc.
+                XHANC  = XHEADN / HEADWT          ! Head N conc.
+                VANC   = STOVN  / STOVWT          ! Stover actual N conc
+                NPL1L  = GLFWT  * (XLANC - XLMNC) ! Total N in leaf pool
                 NPL1L  = AMAX1 (NPL1L,0.0)
                 IF (NPL1L .GT. XPEPE) THEN
                   NPL1L = NPL1L - XPEPE
@@ -2078,17 +2096,17 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
                   NPL1L = 0 
                 ENDIF   
 
-                NPL1S  = STMWT  * (XSANC - XSMNC)           ! Total N in stem pool
+                NPL1S  = STMWT  * (XSANC - XSMNC) ! Total N in stem pool
                 NPL1S  = AMAX1 (NPL1S,0.0)
-                NPL1H  = HEADWT * (XHANC - XHMNC)           ! Total N in head pool
+                NPL1H  = HEADWT * (XHANC - XHMNC) ! Total N in head pool
                 NPL1H  = AMAX1 (NPL1H,0.0)
-                NPOOL1 = NPL1L  + NPL1S + NPL1H             ! Total N in stover
+                NPOOL1 = NPL1L  + NPL1S + NPL1H   ! Total N in stover
                 NPL2R  = RTWT   * (RANC  - RMNC)
                 NPL2R  = AMAX1 (NPL2R,0.0)
-                NPOOL2 = NPL2R  + NPL2L                     ! Total N in roots pool
+                NPOOL2 = NPL2R  + NPL2L           !Total N in roots pool
                 NPOOL  = NPOOL1 + NPOOL2
                 IF (NSINK.NE.0.0) THEN
-                  NSDR   = NPOOL  / NSINK                     ! Nitrogen supply/demand ratio
+                  NSDR   = NPOOL  / NSINK        ! N supply/demand ratio
                 ELSE
                   NSDR= 10.
                 ENDIF  
@@ -2181,11 +2199,11 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
             IDURP = IDURP + 1
           ENDIF
 
-        CumLeafSenes =SLFWT * PLTPOP * 10.    ! total leaf senescence kg/ha                    
-        !----------------------------------------------------------------
-        !ISTAGE = 6 
-        !(End effective grain filling period to harvest maturity)
-        !----------------------------------------------------------------
+        CumLeafSenes =SLFWT * PLTPOP * 10.  !total leaf senescence kg/ha
+!        ----------------------------------------------------------------
+!        ISTAGE = 6 
+!        (End effective grain filling period to harvest maturity)
+!        ----------------------------------------------------------------
         ELSEIF (ISTAGE .EQ. 6) THEN
           GROLF = 0.0
           GROSTM = 0.0
@@ -2500,7 +2518,8 @@ c          WRITE (*,2800)
         WTNST = XSTEMN * PLTPOP 
         !Nitrogen in stem, g/m2
       
-      WTNVEG=(XNGLF+XSTEMN+XHEADN)*10.   !Nitrogen in vegetative tissue (g/m2)
+!     Nitrogen in vegetative tissue (g/m2)
+      WTNVEG=(XNGLF+XSTEMN+XHEADN)*10.   
 
 C       WTN = WTNCAN*10. / BIOMAS * 100.
 

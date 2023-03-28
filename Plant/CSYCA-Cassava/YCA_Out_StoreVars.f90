@@ -16,6 +16,7 @@
         USE YCA_Formats_m
      
         IMPLICIT NONE 
+        EXTERNAL SUMVALS
      
         INTEGER :: STGYEARDOY(0:19)            
         

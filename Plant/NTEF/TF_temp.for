@@ -43,10 +43,10 @@
       !! DSSAT: KG2PPM(1) = 1.0/(BD1*1.E-01*DLAYR(1))
 
 !      nwheats_fac = 100.0 /( bd(layer)*dlayr_nw(layer))
-      !   mg[N]      100             ha        m2      1000000mg   mm
-      !  ------   =------------ * --------*---------- * ---------*-------
-      !   kg[soil]  mm*  g/cm3     10000m2  10000cm2    kg         0.1cm
-      !*! call pop_routine (myname)
+!         mg[N]      100             ha        m2      1000000mg   mm
+!        ------   =------------ * --------*---------- * ---------*-------
+!         kg[soil]  mm*  g/cm3     10000m2  10000cm2    kg         0.1cm
+!      *! call pop_routine (myname)
 !      return
 !      end
 
@@ -60,12 +60,13 @@
       USE ModuleDefs
       USE TF_module
       implicit none
+      EXTERNAL nwheats_level
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'
       !*! include 'error.pub'
 
 *+  Sub-Program Arguments    *****OK******
-      integer    stagno                ! (OUTPUT) phenological stage number
+      integer    stagno           ! (OUTPUT) phenological stage number
 
 *+  Purpose
 *      determine germination date
@@ -89,14 +90,14 @@
       integer    nwheats_level          ! function
 
 *+  Constant Values
-      real       grmsw                 ! required mean plant extractable soil
-      parameter (grmsw = 0.02)         !   water for germination (mm/mm)
+      real       grmsw          ! required mean plant extractable soil
+      parameter (grmsw = 0.02)  !   water for germination (mm/mm)
 *
-      real       grmsw0                ! plant extractable soil water in
-      parameter (grmsw0 = 0.0)         !   seedling layer inadequate for
-                                       !   germination (mm/mm)
+      real       grmsw0         ! plant extractable soil water in
+      parameter (grmsw0 = 0.0)  !   seedling layer inadequate for
+                                !   germination (mm/mm)
 *
-      character  myname*(*)            ! name of subroutine
+      character  myname*(*)     ! name of subroutine
       parameter (myname = 'nwheats_germn')
 *
       real       wtmean                ! weight for weighted mean
@@ -126,10 +127,10 @@
 
       !*! call push_routine (myname)
 
-          ! determine if soil water content is sufficient to allow germination.
-          ! either soil water content of the seeded layer must be > the
-          ! lower limit or a weighted average of the water content of the
-          ! seeded layer and next layer below must be adequate for germination.
+!           determine if soil water content is sufficient to allow germination.
+!           either soil water content of the seeded layer must be > the
+!           lower limit or a weighted average of the water content of the
+!           seeded layer and next layer below must be adequate for germination.
 
       if (      stagno.eq.sowing
      :    .and. stgdur(sowing).ge.1) then
@@ -1123,10 +1124,10 @@
 *      end subroutine nwheats_plnin
  !*******************************************
 !TODO: where does this come from? I am taking a total guess that this is what it does.
-       !TODO: I am guessing that it checks if it is between the bounds and then sends a warning to the summary file it is outside
-       !      the bounds. I assume that is why they have the final parameter which is a string.
-       !      I am guessing it is used in the message to the summary file to specify which variable was outside the bounds.
-       !      Unlike u_bound and l_bound it does not force the variable to be between the bounds. It just warns the user in the summary file.
+!       TODO: I am guessing that it checks if it is between the bounds and then sends a warning to the summary file it is outside
+!             the bounds. I assume that is why they have the final parameter which is a string.
+!             I am guessing it is used in the message to the summary file to specify which variable was outside the bounds.
+!             Unlike u_bound and l_bound it does not force the variable to be between the bounds. It just warns the user in the summary file.
 *      subroutine bound_check_real_var(Variable, LowerBound,
 *     &            UpperBound, VariableName, ERRKEY)
 *      ! JZW if pass IDETO in the argument, the warning will go to the summary.out

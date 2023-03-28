@@ -21,6 +21,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
       SAVE
 
       CHARACTER*6 ERRKEY
@@ -128,6 +129,7 @@ C-----------------------------------------------------------------------
             IF (FNH4 .LT. 0.04) FNH4 = 0.0  
             IF (FNH4 .GT. 1.0)  FNH4 = 1.0
 
+!           SMDFR = relative drought factor
             SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
             IF (SMDFR .LT. 0.1) THEN
               SMDFR = 0.1
@@ -158,7 +160,7 @@ C-----------------------------------------------------------------------
           ANDEM = TRNU
         ENDIF
 !        IF (TRNU .EQ. 0.0) GO TO 600
-        IF (TRNU .GT. 0.001) THEN
+        IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
           DO L=1,NLAYR
             IF (RLV(L) .GT. 0.0) THEN
@@ -219,10 +221,10 @@ C=======================================================================
 ! NDMSDR   Amount of Mobilized N which can be used for seed growth
 !            (g[N] / m2 / d)
 ! NDMTOT   Total N demand (g[N] / m2 / d)
-! NH4(L)   Ammonium N in soil layer L (�g[N] / g[soil])
+! NH4(L)   Ammonium N in soil layer L (µg[N] / g[soil])
 ! NL       maximum number of soil layers = 20 
 ! NLAYR    Number of soil layers 
-! NO3(L)   Nitrate in soil layer L (�g[N] / g[soil])
+! NO3(L)   Nitrate in soil layer L (µg[N] / g[soil])
 ! NUF      N uptake fraction (ratio of demand to N uptake), <= 1.0 
 ! RFAC     Nitrogen uptake conversion factor ((kg N/ha) / (mg N / cm root))
 ! RLV(L)   Root length density for soil layer L ((cm root / cm3 soil))

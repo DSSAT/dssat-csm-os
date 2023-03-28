@@ -172,6 +172,11 @@ $SPECIES:WHCER048.20200721   Last edit: 2020-07-21 CHP
 !   fr
   0.02
 
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  1.03       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+  
 ! COEFF   DEFINITION
 ! =====   ==========
 ! CHFR    Fraction of assimilates to chaff (#)

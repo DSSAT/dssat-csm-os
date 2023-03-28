@@ -19,6 +19,7 @@
       USE GHG_mod 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL

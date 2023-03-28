@@ -7,26 +7,26 @@ C  11/16/2001 CHP Written
 C  06/07/2002 GH  Modified for crop rotations
 C  08/20/2002 GH  Modified for Y2K
 C  02/04/2005 CHP Added new variables to Summary.out: EPCM, ESCM
+!  08/11/2009 CHP Added potential root water uptake to output
 C-----------------------------------------------------------------------
 C  Called from:   SPAM
 C  Calls:         None
 C=======================================================================
       SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-     &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       USE ModuleData
       USE FloodModule
 !     VSH
-      USE CsvOutput 
+      USE CsvOutput
       USE Linklist
-      
+
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT, RNMODE
@@ -42,9 +42,9 @@ C=======================================================================
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
       REAL REFA, KCAA, KBSA, KEAA
-      REAL AVTMX, AVTMN, AVSRAD
-      REAL TMAX, TMIN, SRAD
-!      REAL SALB, SWALB, MSALB, CMSALB
+      REAL AVTMX, AVTMN, AVSRAD, AVRWUP, AVRWU
+      REAL TMAX, TMIN, SRAD, TRWUP
+!     REAL SALB, SWALB, MSALB, CMSALB
       REAL ES_LYR(NL), ES10
       LOGICAL FEXIST
 
@@ -52,7 +52,7 @@ C=======================================================================
       INTEGER, PARAMETER :: SUMNUM = 3
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
-      
+
       CHARACTER*20 FRMT  ! VSH
 
 !-----------------------------------------------------------------------
@@ -75,13 +75,13 @@ C=======================================================================
       YRDOY   = CONTROL % YRDOY
 
       IDETW   = ISWITCH % IDETW
-      FMOPT   = ISWITCH % FMOPT   ! VSH 
-      
+      FMOPT   = ISWITCH % FMOPT   ! VSH
+
       CEF     = FLOODWAT % CEF
 
-!      SALB   = SOILPROP % SALB       
-!      SWALB  = SOILPROP % SWALB  
-!      MSALB  = SOILPROP % MSALB  
+!      SALB   = SOILPROP % SALB
+!      SWALB  = SOILPROP % SWALB
+!      MSALB  = SOILPROP % MSALB
 !      CMSALB = SOILPROP % CMSALB
 
       CALL GET('SPAM', 'REFET', REFET)
@@ -111,7 +111,7 @@ C=======================================================================
 
 !       Number of soil layers to print between 4 and 10.
         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
-            
+
 C-----------------------------------------------------------------------
 C     Variable heading for ET.OUT
 C-----------------------------------------------------------------------
@@ -146,12 +146,12 @@ C-----------------------------------------------------------------------
 !              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
 !  121         FORMAT(9("    ",A2,I1,A1), A8)
                WRITE(FRMT,'(I1)') N_LYR
-               FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A8)'
-               WRITE (LUN,FRMT) ("ES",L,"D",L=1,N_LYR), 'TRWUD' 
+               FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A)'
+               WRITE(LUN,FRMT) ("ES",L,"D",L=1,N_LYR),"   TRWUD   TWUPD"
             ELSE
-!              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
-              WRITE (LUN,122)("ES",L,"D",L=1,9), "  ES10D   TRWUD"  !VSH
-  122         FORMAT(9("    ",A2,I1,A1),A16)
+!             WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+              WRITE(LUN,122)("ES",L,"D",L=1,9),"  ES10D   TRWUD   TWUPD"
+  122         FORMAT(9("    ",A2,I1,A1),A)
             ENDIF
             END IF   ! VSH
           ELSE
@@ -180,6 +180,8 @@ C-----------------------------------------------------------------------
         KBSA = 0.
         KCAA = 0.
         REFA = 0.
+        AVRWUP= 0.
+        AVRWU = 0.
 
 !***********************************************************************
 !***********************************************************************
@@ -205,6 +207,8 @@ C-----------------------------------------------------------------------
       KBSA   = KBSA   + (EP/REFET)
       KCAA   = KCAA   + (ET/REFET)
       REFA   = REFA   + REFET
+      AVRWUP = AVRWUP + TRWUP   !cm
+      AVRWU  = AVRWU  + TRWU    !cm
 
 !***********************************************************************
 !***********************************************************************
@@ -216,7 +220,7 @@ C-----------------------------------------------------------------------
 
         IF ((DYNAMIC .EQ. OUTPUT .AND. MOD(DAS,FROP) .EQ. 0) .OR.
      &      (DYNAMIC .EQ. SEASEND  .AND. MOD(DAS,FROP) .NE. 0) .OR.
-     &       DAS == 1) THEN 
+     &       DAS == 1) THEN
 
 C         Calculate average values as a function of the output interval
 C-----------------------------------------------------------------------
@@ -236,8 +240,10 @@ C-----------------------------------------------------------------------
           KBSA  = KBSA  / NAVWB
           KCAA  = KCAA  / NAVWB
           REFA  = REFA  / NAVWB
+          AVRWUP= AVRWUP / NAVWB
+          AVRWU = AVRWU  / NAVWB
 
-          CALL YR_DOY(YRDOY, YEAR, DOY) 
+          CALL YR_DOY(YRDOY, YEAR, DOY)
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             !Daily printout
@@ -245,7 +251,7 @@ C-----------------------------------------------------------------------
             IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR.
      &         CES > 1000. .OR. CEF > 1000. .OR. CEM > 1000.) THEN
               FMT = TRIM(FMT) // "6(F8.0),"
-            ELSE 
+            ELSE
               FMT = TRIM(FMT) // "6(F8.2),"
             ENDIF
             FMT = TRIM(FMT) // "3(F8.3))"
@@ -259,21 +265,16 @@ C-----------------------------------------------------------------------
             WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX,
      &        AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA,
      &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA
-!     &        ,SALB, SWALB, MSALB, CMSALB
-!  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
-!     &      8(F7.3),6(F8.2))     
-!     &    ,4F7.2 ,10(F7.3))
-          
+
             IF (ISWITCH % MESEV == 'S') THEN
               IF (SOILPROP % NLAYR < 11) THEN
-                WRITE(LUN,'(11F8.3)') ES_LYR(1:N_LYR) , TRWU
+                WRITE(LUN,'(12F8.3)') ES_LYR(1:N_LYR) , AVRWU, AVRWUP
               ELSE
                 ES10 = 0.0
                 DO L = 10, SOILPROP % NLAYR
                   ES10 = ES10 + ES_LYR(L)
                 ENDDO
-!               WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
-                WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
+                WRITE(LUN,'(12F8.3)') ES_LYR(1:9), ES10, AVRWU, AVRWUP
               ENDIF
             ELSE
               WRITE(LUN,'(" ")')
@@ -288,7 +289,7 @@ C-----------------------------------------------------------------------
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS,
      &AVSRAD, AVTMX, AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA,
      &EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA,
-     &N_LYR, ES_LYR, TRWU, vCsvlineET, vpCsvlineET, vlngthET)
+     &N_LYR, ES_LYR, AVRWU, AVRWUP, vCsvlineET, vpCsvlineET, vlngthET)
 
             CALL LinklstET(vCsvlineET)
           ENDIF
@@ -309,6 +310,8 @@ C-----------------------------------------------------------------------
           KBSA = 0.
           KCAA = 0.
           REFA = 0.
+          AVRWUP= 0.
+          AVRWU = 0.
 
         ENDIF
       ENDIF
@@ -321,14 +324,14 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
           !IF (IDETS .EQ. 'Y' .OR. IDETS .EQ. 'A') THEN
 !           Store Summary.out labels and values in arrays to send to
-!           OPSUM routines for printing.  Integers are temporarily 
+!           OPSUM routines for printing.  Integers are temporarily
 !           saved aS real numbers for placement in real array.
             LABEL(1)  = 'ETCM'; VALUE(1)  = CET
             LABEL(2)  = 'EPCM'; VALUE(2)  = CEP
             LABEL(3)  = 'ESCM'; VALUE(3)  = CEVAP
 
             !Send labels and values to OPSUM
-            CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+            CALL SUMVALS (SUMNUM, LABEL, VALUE)
           !ENDIF
 
           !Close daily output files.
@@ -368,18 +371,18 @@ C-----------------------------------------------------------------------
 ! KBSA    FAO-56 basal crop coefficient * stress coefficient (Kcb*Ks)
 ! KCAA    FAO-56 single crop coefficient (Kc)
 ! KEAA    FAO-56 evaporation coefficient (Ke)
-! MODEL   Name of CROPGRO executable file 
-! NAP     Number of irrigation applications  
+! MODEL   Name of CROPGRO executable file
+! NAP     Number of irrigation applications
 ! NAVWB   Number of days since last printout (d)
-! NL      Maximum number of soil layers = 20 
-! LUN     Unit number for spam output file 
-! OUTW    Filename for soil water output file (set in IPIBS) 
-! REFA    Actual reference evapotranspiration (ETo or ETr) 
+! NL      Maximum number of soil layers = 20
+! LUN     Unit number for spam output file
+! OUTW    Filename for soil water output file (set in IPIBS)
+! REFA    Actual reference evapotranspiration (ETo or ETr)
 ! ST(L)   Soil temperature in soil layer L (oC)
 ! SW(L)   Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! TDRAIN  Cumulative daily drainage from profile (mm)
-! TIMDIF  Integer function which calculates the number of days between two 
+! TIMDIF  Integer function which calculates the number of days between two
 !           Julian dates (da)
 ! TMAX    Maximum daily temperature (oC)
 ! TMIN    Minimum daily temperature (oC)
@@ -402,7 +405,7 @@ C  01/01/89 JR  Written
 C  12/05/93 NBP Made into subroutine
 C  07/11/96 GH  Set TRWU and RWU to 0 if EP = 0
 !  10/13/97 CHP Modified for modular format.
-!  07/20/2011 chp added option for root uptake from plant routines 
+!  07/20/2011 chp added option for root uptake from plant routines
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !  Calls:     None
@@ -427,7 +430,7 @@ C=======================================================================
       REAL  SWDELTX(NL),    !Change in SW due to root extraction
      &      SWTEMP(NL),     !New SW value based only on root extraction
      &      SW_AVAIL(NL),   !Water available for root extraction
-     &      UH2O(NL)        !Root water uptake from plant routine (optional)
+     &      UH2O(NL)        !Root water uptake from plant routine (opt.)
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
         SWDELTX(L) = 0.0
@@ -454,7 +457,7 @@ C=======================================================================
           ELSE
             WUF = 1.0
           ENDIF
-      
+
           TRWU = 0.0
           DO L = 1, NLAYR
             IF (SWTEMP(L) .GT. LL(L)) THEN
@@ -466,7 +469,7 @@ C=======================================================================
               TRWU = TRWU + RWU(L)
             ENDIF
           END DO
-      
+
         ELSE        !No root extraction of soil water
           TRWU = 0.0
           RWU  = 0.0
@@ -488,21 +491,21 @@ C=======================================================================
 ! EP          Actual plant transpiration rate (mm/d)
 ! LL(L)       Volumetric soil water content in soil layer L at lower limit
 !               (cm3/cm3)
-! NL          Maximum number of soil layers = 20 
-! NLAYR       Actual number of soil layers 
+! NL          Maximum number of soil layers = 20
+! NLAYR       Actual number of soil layers
 ! RWU(L)      Root water uptake from soil layer L (cm/d)
 ! SW(L)       Volumetric soil water content in layer L
 !               (cm3 [water] / cm3 [soil])
-! SW_AVAIL(L) Soil water content in layer L available for evaporation, 
+! SW_AVAIL(L) Soil water content in layer L available for evaporation,
 !               plant extraction, or movement through soil
 !               (cm3 [water] / cm3 [soil])
 ! SWDELTX (L) Change in soil water content due to root uptake in layer L
 !               (cm3/cm3)
-! SWTEMP(L)   Soil water content in layer L (temporary value to be modified 
-!               based on drainage, root uptake and upward flow through soil 
+! SWTEMP(L)   Soil water content in layer L (temporary value to be modified
+!               based on drainage, root uptake and upward flow through soil
 !               layers). (cm3/cm3)
 ! TRWU        Total potential daily root water uptake (cm/d)
-! WUF         Root water uptake reduction factor 
+! WUF         Root water uptake reduction factor
 !-----------------------------------------------------------------------
 !     END SUBROUTINE XTRACT
 C=======================================================================

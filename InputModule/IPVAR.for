@@ -43,14 +43,18 @@ C
 C  HDLAY  :
 C=======================================================================
       SUBROUTINE IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,
-     &                  PATHGE,ECONO, MODEL, ATLINE, CROP)
+     &                  PATHGE,ECONO, MODEL, ATLINE)  
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       CROP
 
       IMPLICIT NONE
+      EXTERNAL CLEAR, ERROR, IGNORE, VERIFY, WARNING
 
       INCLUDE 'COMGEN.blk'
 
       CHARACTER*1   LINE(80),RNMODE,BLANK,ANS
-      CHARACTER*2   CROP
+!     CHARACTER*2   CROP
       CHARACTER*6   VARTY,VARNO,ERRKEY,ECONO
       CHARACTER*8   MODEL
       CHARACTER*12  FILEG
@@ -398,7 +402,7 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Pineapple **
       CASE ('PIALO')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &           TC,P1,P2,P3,P4,P5,P6,P7,P8,G1,G2,G3,PHINT
+     &           P1,P2,P3,P4,P5,P6,G2,G3,PHINT
       END SELECT
 
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEG,LINVAR)
@@ -448,7 +452,8 @@ C-----------------------------------------------------------------------
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)    !CSCAS        02/18/2014
   821 FORMAT (A6,1X,A16,7X,A6,15F6.0)      !CSYCA        09/09/2020 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)     !WHCER, BACER 03/16/2010
-  850 FORMAT (A6,1X,A16,7X,A6,9F6.0,A)     !JG moved parameters to ECO, 01/09/2020
+!JG moved parameters to ECO, 01/09/2020
+  850 FORMAT (A6,1X,A16,7X,A6,9F6.0,A)     
  1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)      ! 02/10/2009 
  1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)     ! 02/21/2018 
  1070 FORMAT (A6,1X,A16,7X,A6,24F15.0)     ! 01/07/2020 (SAMUCA)

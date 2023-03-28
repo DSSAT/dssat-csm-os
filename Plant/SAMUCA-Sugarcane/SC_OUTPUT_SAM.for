@@ -20,29 +20,30 @@ c     SAMUCA's composite variables:
       USE SAM_ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
       
 c     Declare composite variables:
-      TYPE (ControlType)  CONTROL     ! DSSAT's control
-      Type (SwitchType)   ISWITCH     ! DSSAT's switches
-      TYPE (CaneSamuca)   CaneCrop    ! Samuca's Composite variables
+      TYPE (ControlType)  CONTROL   ! DSSAT's control
+      Type (SwitchType)   ISWITCH   ! DSSAT's switches
+      TYPE (CaneSamuca)   CaneCrop  ! Samuca's Composite variables
       
 c     DSSAT inputs:
-      INTEGER         NOUTDG          ! The file unit number for the growth output file.
-      INTEGER         RUN             ! local run number
-      INTEGER         ERRNUM          ! Error status
-      INTEGER         DYNAMIC         ! Dynamic
-      LOGICAL         FILE_EXISTS     ! Does the file exist, is this the first run?
-      CHARACTER*1     IDETG           ! Print Output flag
-      CHARACTER*20    FILEIO          ! local ?
-      CHARACTER*20    OFILE           ! Filename
+      INTEGER         NOUTDG        ! file unit # for growth output file
+      INTEGER         RUN           ! local run number
+      INTEGER         ERRNUM        ! Error status
+      INTEGER         DYNAMIC       ! Dynamic
+      LOGICAL         FILE_EXISTS   ! Does the file exist, 1st run?
+      CHARACTER*1     IDETG         ! Print Output flag
+      CHARACTER*20    FILEIO        ! local ?
+      CHARACTER*20    OFILE         ! Filename
       
-      real    SW(NL)                  ! Soil water content
-      real    watdmd                  ! water demand (TRWUP/Transp)
+!     real    SW(NL)                ! Soil water content
+!     real    watdmd                ! water demand (TRWUP/Transp)
       
       !--- Time control
       INTEGER DAP, DAS, FROP, YRDOY, YRPLT, YEAR, DOY
-      INTEGER TIMDIF      
+!     INTEGER TIMDIF      
             
       !--- Output setup
       INTEGER I, J        ! Varible counters
@@ -58,11 +59,13 @@ c     separately
       CHARACTER*15 GROHEAD(4, NUM_OVARS)
       CHARACTER*15 GRO_OUT(NUM_OVARS)     
       
-      INTEGER VLEN            ! Length of variable name string (excluding leading and trailing whitespace)
+!     Length of variable name string (excluding leading and trailing whitespace)
+      INTEGER VLEN            
       INTEGER SKIP            ! How many spaces need to be skipped?
       
-      CHARACTER*10 SKIP_STR, VLEN_STR, WIDTH_STR  ! String equivalents of VLEN and SKIP
-      CHARACTER*1024 FMT_STR, T_FMT_STR           ! Runtime format statement:
+!     String equivalents of VLEN and SKIP
+      CHARACTER*10 SKIP_STR, VLEN_STR, WIDTH_STR  
+      CHARACTER*1024 FMT_STR, T_FMT_STR       ! Runtime format statement
 
 c     General format statments for outputting heading comments
 c     and daily values
@@ -468,8 +471,9 @@ c         Print daily output:
               !--------------------------------------------------
               !  Write output based on user specified frequency 
               !--------------------------------------------------
-              IF ((MOD(DAS,FROP) .EQ. 0)      !Daily output every FROP days,
-     &            .OR. (YRDOY .EQ. YRPLT)) THEN !on planting date                  
+
+              IF ((MOD(DAS,FROP) .EQ. 0)   !Daily output every FROP days
+     &            .OR. (YRDOY .EQ. YRPLT)) THEN ! and on planting date
             
                   !------------------------------!
                   !--- Write Standard Outputs ---!

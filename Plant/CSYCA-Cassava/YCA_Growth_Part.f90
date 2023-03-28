@@ -8,22 +8,25 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Growth_Part ( &
-        BRSTAGE     , ISWNIT      , NFP        , LAI          , WEATHER     &
-        )
-    
+        BRSTAGE     , ISWNIT      , NFP        , LAI)
+
+! 2023-01-25 chp removed unused variables
+!   WEATHER    
+
         USE ModuleDefs
         USE YCA_First_Trans_m
     
         IMPLICIT NONE
+        EXTERNAL WARNING
         
-        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+!       TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         INTEGER :: Lcount                   ! counter for iterations in leafs (Lcount)
         CHARACTER(LEN=1) ISWNIT      
         REAL    BRSTAGE     , NFP      , LAI    
 
-        REAL    CSYVAL      , TFAC4     , TFAC5                                                           ! Real function call !LPM 19SEP2017 Added tfac5
+!       REAL    CSYVAL      , TFAC4     , TFAC5                                                           ! Real function call !LPM 19SEP2017 Added tfac5
         
         ! Full NODEWTGB equation
         ! NDDAED = NDDAE/d

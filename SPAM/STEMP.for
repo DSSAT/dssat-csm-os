@@ -2,7 +2,7 @@ C=======================================================================
 C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
 C                      University of Florida, Gainesville, Florida
 C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
+C                      International Center for Soil Fertility and
 C                       Agricultural Development, Muscle Shoals, Alabama
 C                      University of Guelph, Guelph, Ontario
 C  ALL RIGHTS RESERVED
@@ -14,7 +14,7 @@ C  Determines soil temperature by layer
 C-----------------------------------------------------------------------
 C  Revision history
 C  12/01/1980     Originally based on EPIC soil temperature routines
-C  12/01/1999 CHP Combined SOILT and INSOILT into STEMP.for for modular 
+C  12/01/1999 CHP Combined SOILT and INSOILT into STEMP.for for modular
 C                 format.
 C  01/01/2000 AJG Added surface temperature for the CENTURY-based
 C                 SOM/soil-N module.
@@ -24,40 +24,41 @@ C  06/07/2002 GH  Moved TAMP and TAV to IPWTH
 C  09/17/2002 CHP Added computation for ISWWAT = 'N' (necessary for potato)
 C  07/15/2003 CHP No re-initialization for sequenced runs.
 C  01/14/2005 CHP Added METMP = 3: Corrected water content in temp. eqn.
-!  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil 
+!  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil
 !                 water effects on albedo)
-!  12/09/2008 CHP Remove METMP and code for old (incorrect) soil water effect 
+!  12/09/2008 CHP Remove METMP and code for old (incorrect) soil water effect
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : SOILT
 C=======================================================================
 
-      SUBROUTINE STEMP(CONTROL, ISWITCH,  
+      SUBROUTINE STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL YR_DOY, SOILT, OPSTEMP
       SAVE
 
       CHARACTER*1  RNMODE, ISWWAT !, IDETL
-      CHARACTER*6  SECTION
+!     CHARACTER*6  SECTION
       CHARACTER*6, PARAMETER :: ERRKEY = "STEMP "
       CHARACTER*30 FILEIO
 
       INTEGER DOY, DYNAMIC, I, L, NLAYR
       INTEGER RUN, YRDOY, YEAR
-      INTEGER ERRNUM, FOUND, LNUM, LUNIO
+      INTEGER LUNIO  !,ERRNUM, FOUND, LNUM
 
-      REAL ABD, ALBEDO, ATOT, B, CUMDPT 
-      REAL DP, FX, HDAY, ICWD, PESW, MSALB, SRAD, SRFTEMP 
+      REAL ABD, ALBEDO, ATOT, B, CUMDPT
+      REAL DP, FX, HDAY, PESW, MSALB, SRAD, SRFTEMP   !, ICWD
       REAL TAMP, TAV, TAVG, TBD, TMAX, XLAT, WW
       REAL TDL, TLL, TSW
       REAL TMA(5)
-      REAL, DIMENSION(NL) :: BD, DLAYR, DLI, DS, DSI, DSMID, DUL, LL, 
+      REAL, DIMENSION(NL) :: BD, DLAYR, DLI, DS, DSI, DSMID, DUL, LL,
      &      ST, SW, SWI
 
 !-----------------------------------------------------------------------
@@ -71,18 +72,18 @@ C-----------------------------------------------------------------------
 !     IF (INDEX('N0',IDETL) > 0) RETURN
 
 !     Transfer values from constructed data types into local variables.
-      DYNAMIC = CONTROL % DYNAMIC  
-      YRDOY   = CONTROL % YRDOY    
+      DYNAMIC = CONTROL % DYNAMIC
+      YRDOY   = CONTROL % YRDOY
 
       ISWWAT = ISWITCH % ISWWAT
 
-      BD     = SOILPROP % BD     
-      DLAYR  = SOILPROP % DLAYR  
-      DS     = SOILPROP % DS     
-      DUL    = SOILPROP % DUL     
-      LL     = SOILPROP % LL     
-      NLAYR  = SOILPROP % NLAYR  
-      MSALB  = SOILPROP % MSALB   
+      BD     = SOILPROP % BD
+      DLAYR  = SOILPROP % DLAYR
+      DS     = SOILPROP % DS
+      DUL    = SOILPROP % DUL
+      LL     = SOILPROP % LL
+      NLAYR  = SOILPROP % NLAYR
+      MSALB  = SOILPROP % MSALB
 
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRDOY, YEAR, DOY)
@@ -100,20 +101,20 @@ C-----------------------------------------------------------------------
 !      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      FILEIO  = CONTROL % FILEIO    
-      LUNIO   = CONTROL % LUNIO    
-      RUN     = CONTROL % RUN    
+      FILEIO  = CONTROL % FILEIO
+      LUNIO   = CONTROL % LUNIO
+      RUN     = CONTROL % RUN
       RNMODE  = CONTROL % RNMODE
 
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
 
 !        IF (ISWWAT .NE. 'N') THEN
-!!         Read inital soil water values from FILEIO 
+!!         Read inital soil water values from FILEIO
 !!         (not yet done in WATBAL, so need to do here)
 !          OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
 !          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
 !          SECTION = '*INITI'
-!          CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
+!          CALL FIND(LUNIO, SECTION, LNUM, FOUND)
 !          IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
 !
 !!         Initial depth to water table (not currently used)
@@ -155,7 +156,7 @@ C-----------------------------------------------------------------------
             DLI(L) = DSI(L) - DSI(L-1)
           ENDIF
           DSMID(L) = CUMDPT + DLI(L)* 5.0   !mm depth to midpt of lyr
-          CUMDPT   = CUMDPT + DLI(L)*10.0   !mm profile depth 
+          CUMDPT   = CUMDPT + DLI(L)*10.0   !mm profile depth
           TBD = TBD + BD(L)  * DLI(L)       !CHP
           TLL = TLL + LL(L)  * DLI(L)
           TSW = TSW + SWI(L) * DLI(L)
@@ -210,7 +211,7 @@ C-----------------------------------------------------------------------
       TLL = 0.0
       TSW = 0.0
       DO L = 1, NLAYR
-        TBD = TBD + BD(L) * DLAYR(L) 
+        TBD = TBD + BD(L) * DLAYR(L)
         TDL = TDL + DUL(L)* DLAYR(L)
         TLL = TLL + LL(L) * DLAYR(L)
         TSW = TSW + SW(L) * DLAYR(L)
@@ -274,14 +275,15 @@ C=======================================================================
      &    ALBEDO, B, CUMDPT, DOY, DP, HDAY, NLAYR,    !Input
      &    PESW, SRAD, TAMP, TAV, TAVG, TMAX, WW, DSMID,!Input
      &    ATOT, TMA, SRFTEMP, ST)                     !Output
-      
+
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
 !     NL defined in ModuleDefs.for
 
       IMPLICIT  NONE
+
       SAVE
 
       INTEGER  K, L, DOY, NLAYR
@@ -290,7 +292,7 @@ C=======================================================================
       REAL HDAY, PESW, SRAD, SRFTEMP, TA, TAMP, TAV, TAVG, TMAX
       REAL WC, WW, ZD
       REAL TMA(5)
-      REAL DSMID(NL) 
+      REAL DSMID(NL)
       REAL ST(NL)
 
 !-----------------------------------------------------------------------
@@ -301,12 +303,12 @@ C=======================================================================
         TMA(K) = TMA(K-1)
       END DO
 
-      TMA(1) = (1.0 - ALBEDO) * (TAVG + (TMAX - TAVG) * 
+      TMA(1) = (1.0 - ALBEDO) * (TAVG + (TMAX - TAVG) *
      &      SQRT(SRAD * 0.03)) + ALBEDO * TMA(1)
 
 !     Prevents differences between release & debug modes:
 !       Keep only 4 decimals. chp 06/03/03
-      TMA(1) = NINT(TMA(1)*10000.)/10000.  !chp 
+      TMA(1) = NINT(TMA(1)*10000.)/10000.  !chp
       ATOT = ATOT + TMA(1)
 
 !-----------------------------------------------------------------------
@@ -314,7 +316,7 @@ C=======================================================================
 !      SELECT CASE (METMP)
 !      CASE ('O')  !Old, uncorrected equation
 !        !OLD EQUATION (used in DSSAT v3.5 CROPGRO, SUBSTOR, CERES-Maize
-!         WC = AMAX1(0.01, PESW) / (WW * CUMDPT * 10.0) 
+!         WC = AMAX1(0.01, PESW) / (WW * CUMDPT * 10.0)
 !
 !      CASE ('E')  !Corrected method (EPIC)
 !        !NEW (CORRECTED) EQUATION
@@ -332,7 +334,7 @@ C=======================================================================
 
       DD = FX * DP                                  !DD in mm
 !     JWJ, GH 12/9/2008
-!     Checked damping depths against values from literature and 
+!     Checked damping depths against values from literature and
 !       values are reasonable (after fix to WC equation).
 !     Hillel, D. 2004. Introduction to Environmental Soil Physics.
 !       Academic Press, San Diego, CA, USA.
@@ -350,7 +352,7 @@ C=======================================================================
 !     NB: this should be done by adding array element 0 to ST(L). Now
 !     temporarily done differently.
       SRFTEMP = TAV + (TAMP / 2. * COS(ALX) + DT)
-!     Note: ETPHOT calculates TSRF(3), which is surface temperature by 
+!     Note: ETPHOT calculates TSRF(3), which is surface temperature by
 !     canopy zone.  1=sunlit leaves.  2=shaded leaves.  3= soil.  Should
 !     we combine these variables?  At this time, only SRFTEMP is used
 !     elsewhere. - chp 11/27/01
@@ -366,53 +368,53 @@ C=======================================================================
 !=======================================================================
 ! ABD      Average bulk density for soil profile (g [soil] / cm3 [soil])
 ! ALBEDO   Reflectance of soil-crop surface (fraction)
-! ALX       
+! ALX
 ! ATOT     Sum of TMA array (last 5 days soil temperature) (°C)
-! B        Exponential decay factor (Parton and Logan) (in subroutine 
-!            HTEMP) 
+! B        Exponential decay factor (Parton and Logan) (in subroutine
+!            HTEMP)
 ! BD(L)    Bulk density, soil layer L (g [soil] / cm3 [soil])
-! CONTROL  Composite variable containing variables related to control 
-!            and/or timing of simulation.    See Appendix A. 
+! CONTROL  Composite variable containing variables related to control
+!            and/or timing of simulation.    See Appendix A.
 ! CUMDPT   Cumulative depth of soil profile (mm)
-! DD        
+! DD
 ! DLAYR(L) Thickness of soil layer L (cm)
 ! DOY      Current day of simulation (d)
-! DP        
+! DP
 ! DS(L)    Cumulative depth in soil layer L (cm)
 ! DSMID    Depth to midpoint of soil layer L (cm)
-! DT        
-! DUL(L)   Volumetric soil water content at Drained Upper Limit in soil 
+! DT
+! DUL(L)   Volumetric soil water content at Drained Upper Limit in soil
 !            layer L (cm3[water]/cm3[soil])
-! ERRNUM   Error number for input 
-! FILEIO   Filename for input file (e.g., IBSNAT35.INP) 
-! FOUND    Indicator that good data was read from file by subroutine FIND 
-!            (0 - End-of-file encountered, 1 - NAME was found) 
-! FX        
-! HDAY      
+! ERRNUM   Error number for input
+! FILEIO   Filename for input file (e.g., IBSNAT35.INP)
+! FOUND    Indicator that good data was read from file by subroutine FIND
+!            (0 - End-of-file encountered, 1 - NAME was found)
+! FX
+! HDAY
 ! ICWD     Initial water table depth (cm)
-! ISWITCH  Composite variable containing switches which control flow of 
-!            execution for model.  The structure of the variable 
-!            (SwitchType) is defined in ModuleDefs.for. 
-! ISWWAT   Water simulation control switch (Y or N) 
-! LINC     Line number of input file 
+! ISWITCH  Composite variable containing switches which control flow of
+!            execution for model.  The structure of the variable
+!            (SwitchType) is defined in ModuleDefs.for.
+! ISWWAT   Water simulation control switch (Y or N)
+! LINC     Line number of input file
 ! LL(L)    Volumetric soil water content in soil layer L at lower limit
 !           (cm3 [water] / cm3 [soil])
-! LNUM     Current line number of input file 
-! LUNIO    Logical unit number for FILEIO 
-! MSG      Text array containing information to be written to WARNING.OUT 
-!            file. 
-! MSGCOUNT Number of lines of message text to be sent to WARNING.OUT 
-! NLAYR    Actual number of soil layers 
-! PESW     Potential extractable soil water (= SW - LL) summed over root 
+! LNUM     Current line number of input file
+! LUNIO    Logical unit number for FILEIO
+! MSG      Text array containing information to be written to WARNING.OUT
+!            file.
+! MSGCOUNT Number of lines of message text to be sent to WARNING.OUT
+! NLAYR    Actual number of soil layers
+! PESW     Potential extractable soil water (= SW - LL) summed over root
 !            depth (cm)
-! RNMODE    Simulation run mode (I=Interactive, A=All treatments, 
+! RNMODE    Simulation run mode (I=Interactive, A=All treatments,
 !             B=Batch mode, E=Sensitivity, D=Debug, N=Seasonal, Q=Sequence)
 ! RUN      Change in date between two observations for linear interpolation
 ! MSALB    Soil albedo with mulch and soil water effects (fraction)
-! SECTION  Section name in input file 
-! SOILPROP Composite variable containing soil properties including bulk 
-!            density, drained upper limit, lower limit, pH, saturation 
-!            water content.  Structure defined in ModuleDefs. 
+! SECTION  Section name in input file
+! SOILPROP Composite variable containing soil properties including bulk
+!            density, drained upper limit, lower limit, pH, saturation
+!            water content.  Structure defined in ModuleDefs.
 ! SRAD     Solar radiation (MJ/m2-d)
 ! SRFTEMP  Temperature of soil surface litter (°C)
 ! ST(L)    Soil temperature in soil layer L (°C)
@@ -420,22 +422,22 @@ C=======================================================================
 !           (cm3 [water] / cm3 [soil])
 ! SWI(L)   Initial soil water content (cm3[water]/cm3[soil])
 ! TA       Daily normal temperature (°C)
-! TAMP     Amplitude of temperature function used to calculate soil 
+! TAMP     Amplitude of temperature function used to calculate soil
 !            temperatures (°C)
-! TAV      Average annual soil temperature, used with TAMP to calculate 
+! TAV      Average annual soil temperature, used with TAMP to calculate
 !            soil temperature. (°C)
 ! TAVG     Average daily temperature (°C)
-! TBD      Sum of bulk density over soil profile 
+! TBD      Sum of bulk density over soil profile
 ! TDL      Total water content of soil at drained upper limit (cm)
-! TLL      Total soil water in the profile at the lower limit of 
+! TLL      Total soil water in the profile at the lower limit of
 !            plant-extractable water (cm)
 ! TMA(I)   Array of previous 5 days of average soil temperatures. (°C)
 ! TMAX     Maximum daily temperature (°C)
 ! TSW      Total soil water in profile (cm)
-! WC        
-! WW        
+! WC
+! WW
 ! XLAT     Latitude (deg.)
-! YEAR     Year of current date of simulation 
+! YEAR     Year of current date of simulation
 ! YRDOY    Current day of simulation (YYYYDDD)
-! ZD        
+! ZD
 !=======================================================================

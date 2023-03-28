@@ -70,6 +70,11 @@ C=======================================================================
       USE ModuleData    
       Use CsvOutput   ! VSH
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, WARNING, YR_DOY, IGNORE, VERIFY, CLEAR, 
+     &  IGNORE2, OPHEAD, MAKEFILEW, IPCUL, IPPLNT_INP, IPSIM, PATH, 
+     &  GET_CROPD, IPFLD, IPENV, IPHAR, IPIRR, IPFERT, IPRES, IPCHEM, 
+     &  IPTILL
+
       SAVE
 
       INCLUDE 'COMIBS.blk'
@@ -98,9 +103,9 @@ C=======================================================================
       INTEGER NYRS,FROP,EXPN,EXPP,TRTN,ERRNUM,IFIND,FTYPEN
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
-      INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-
-      REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+!     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+      INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) 
+      REAL    FLAG,EXP,TRT,PLTFOR !,FREQ,CUHT 
       REAL    PMWD
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
@@ -808,13 +813,14 @@ C-----------------------------------------------------------------------
       CALL IPENV (FILEX,LNENV,LUNEXP,CO2ADJ,CO2FAC,DAYADJ,
      &     DAYFAC,DPTADJ,DPTFAC,NEV,PRCADJ,PRCFAC,RADADJ,RADFAC,
      &     TMADJ,TMFAC,TXADJ,TXFAC,WMDATE,WMODI,WNDADJ,WNDFAC,
-     &     WTHADJ,YRSIM)
+     &     WTHADJ)    !,YRSIM)
 
 C-----------------------------------------------------------------------
 C     Call IPHAR
 C-----------------------------------------------------------------------
+!     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
       CALL IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &     NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+     &     NHAR,IHARI,YRSIM,CROP,HBPC)    !,FREQ,CUHT
 
 C-----------------------------------------------------------------------
 C     Call IPIRR
@@ -840,8 +846,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call IPCHEM - Chemical applications
 C-----------------------------------------------------------------------
-      CALL IPCHEM (LUNEXP,FILEX,LNCHE,YRSIM,ISWWAT,NCHEM,CDATE,
-     &    CHCOD,CHAMT,CHMET,CHDEP,CHT,ISWCHE,LNSIM,CHEXTR)
+      CALL IPCHEM (LUNEXP,FILEX,LNCHE,YRSIM,NCHEM,CDATE,
+     &    CHCOD,CHAMT,CHMET,CHDEP,CHT,ISWCHE,CHEXTR)
 
 C-----------------------------------------------------------------------
 C     Call IPTILL - Tillage operations
@@ -935,6 +941,7 @@ C=======================================================================
      &     YRPLT,SPRLAP,NFORC,PLTFOR,NDOF,PMTYPE,IPLTI)
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, WARNING, YR_DOY, IGNORE, Y4K_DOY
 
       CHARACTER*1   PLME,PLDS,IPLTI
       CHARACTER*2   CROP
@@ -1093,6 +1100,8 @@ C=======================================================================
 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, UPCASE, WARNING, INFO, IGNORE, HFIND, 
+     &  SUMVALS
 
       CHARACTER*1  UPCASE
       CHARACTER*4  WSTA,WSTA1,HFNDCH
@@ -1262,11 +1271,15 @@ C
         IF (ISECT .EQ. 1) THEN
            READ (CHARTEST,90,IOSTAT=ERRNUM) LN,
      &                PMWD,PMALB
+
            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          ELSE
            CALL ERROR (ERRKEY,2,FILEX,LINEXP)
          ENDIF
          IF (LN .NE. LNFLD) GO TO 71
+      ELSE
+        PMWD = -99
+        PMALB = -99
       ENDIF
       IF (PMWD .LE. 0.0) PMWD = -99
       IF (PMALB .LE. 0.0) PMALB = -99

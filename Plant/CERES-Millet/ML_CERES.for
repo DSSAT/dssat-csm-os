@@ -22,7 +22,9 @@ C                   as defined in ModuleDefs.for
 C  08/12/2003 CHP Added I/O error checking
 !  12/17/2004 CHP Modified HRESCeres call for harvest residue
 !  April-May 2015 - KJB major revisions
-C
+!  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -35,12 +37,17 @@ C----------------------------------------------------------------------
      &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,            !Input
      &     SNOW, SOILPROP, SRAD, SW, TMAX, TMIN,          !Input
      &     TRWUP, TWILEN, YREND, YRPLT,                   !Input
+     &     CropStatus,                                    !Output
      $     CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,    !Output
      &     RWUMX, SENESCE, STGDOY, UNO3, UNH4, XLAI,KCAN,KEP) !Output
 
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, HRES_CERES, IGNORE, ML_GROSUB 
+      EXTERNAL ML_OPGROW, ML_OPHARV, ML_PHENOL, ML_ROOTGR, MZ_OPNIT
+      EXTERNAL PEST, YR_DOY
+
       SAVE
 !----------------------------------------------------------------------
 !      Programming Notes  W.D.B
@@ -68,7 +75,8 @@ C----------------------------------------------------------------------
       REAL            CO2      
       REAL            CO2X(10)  
       REAL            CO2Y(10)
-      CHARACTER*2     CROP   
+      CHARACTER*2     CROP 
+      INTEGER         CropStatus  
       INTEGER         CTYPE    
       REAL            CUMDEP      
       REAL            CUMDTT    
@@ -510,7 +518,7 @@ C--------------------------------------------------------------------
          CALL ML_GROSUB (
      & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
      & CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,
-     & PRFTC, GFLTC, LAITC, PRFTYP,GFLTYP,LAITYP,
+     & PRFTC, GFLTC, LAITC, PRFTYP,GFLTYP, LAITYP,
      & GPP, GRAINN, GROLF, GRORT, GROSTM, ISTAGE, 
      & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      & NFAC, NLAYR, NH4,NSTRES, NO3, P3, P4, P5, PAF, PANWT, 
@@ -518,7 +526,7 @@ C--------------------------------------------------------------------
      & PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      & STMWT, STOVN, STOVWT, SW, SUMDTT,  
-     & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TILN, 
+     & SWFAC, TANC, TCNP,TEMF, TEMPM, TILN, 
      & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      & XN,XSTAGE, EOP, TRWUP, RWUEP1,DYNAMIC,UNO3,UNH4,KG2PPM,
      & PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
@@ -853,26 +861,27 @@ C----------------------------------------------------------------------
           IF(YRDOY.EQ.YRPLT) ISTAGE = 7
 
           CALL ML_PHENOL (APTNUP,BIOMAS,BIOMS2,
-     &    CSD1, CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, SETTC, SETTYP,
-     &    EMAT, GNUP, GPP, GPSM, GRAINN, GRNWT, IDETO,
-     &    IDUR1, IPRINT, ISDATE, ISM, ISTAGE, ISWNIT, ISWWAT,
-     &    LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
-     &    P1, P2O, P2R, P3, P4, P5, P9, PANWT, PGRNWT, PHINT, 
-     &    PLTPOP, PWA, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
-     &    SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
-     &    SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
-     &    TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
-C         Variables passed through PHENOL to phasei but not used in phenol
-     &    AGEFAC, BIOMS1, CUMDTT, CUMPH, G4, G5, GROLF,
-     &    GRORT, GROSTM, LFWT, MGROLF, MGROPAN, MGROSTM, 
-     &    MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NSTRES, PAF, 
-     &    PGC, PLA, PLAN, PLAO, PLATO, PLAMX, PTF, RANC, 
-     &    RESERVE, RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
-     &    STOVWT, TCARBO, TGROLF,
-     &    TGROPAN, TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC,
-     &    TPANWT, TPLA, TPLAG, TSIZE, TSTMWT, VANC, VMNC, WSTR1, 
-     &    XNTI,SWFAC,TURFAC,DGET,SWCG,DJTI,
-     &    DAYL, TWILEN, CANWAA, CANNAA)
+     &      CSD1, 
+     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, SETTC, SETTYP,  
+     &      EMAT, GNUP, GPP, GPSM, GRAINN, GRNWT, IDETO,
+     &      IDUR1, IPRINT, ISDATE, ISM, ISTAGE, ISWNIT, ISWWAT,
+     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
+     &      P1, P2O, P2R, P3, P4, P5, P9, PANWT, PGRNWT, PHINT, 
+     &      PLTPOP, PWA, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
+     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
+     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
+     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
+C           Variables passed through PHENOL to phasei but not used in phenol
+     &      AGEFAC, BIOMS1, CUMDTT, CUMPH, G4, G5, GROLF,
+     &      GRORT, GROSTM, LFWT, MGROLF, MGROPAN, MGROSTM, 
+     &      MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NSTRES, PAF, 
+     &      PGC, PLA, PLAN, PLAO, PLATO, PLAMX, PTF, RANC, 
+     &      RESERVE, RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
+     &      STOVWT, TCARBO, TGROLF,
+     &      TGROPAN, TGROSTM, TILN, TILSW, TLAG1, TLFWT, TLNO, TMNC,
+     &      TPANWT, TPLA, TPLAG, TSIZE, TSTMWT, VANC, VMNC, WSTR1, 
+     &      XNTI,SWFAC,TURFAC,DGET,SWCG,DJTI,
+     &      DAYL, TWILEN, CANWAA, CANNAA, CropStatus)
 
         ENDIF
 
@@ -883,22 +892,22 @@ C         Variables passed through PHENOL to phasei but not used in phenol
  
 
           CALL ML_GROSUB (
-     &     AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &     CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,
-     &     PRFTC, GFLTC, LAITC, PRFTYP,GFLTYP,LAITYP,
-     &     GPP, GRAINN, GROLF, GRORT, GROSTM, ISTAGE, 
-     &     ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     &     NFAC, NLAYR, NH4,NSTRES, NO3, P3, P4, P5, PAF, PANWT, 
-     &     PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &     PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &     SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &     STMWT, STOVN, STOVWT, SW, SUMDTT,  
-     &     SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TILN, 
-     &     TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
-     &     XN,XSTAGE, EOP, TRWUP, RWUEP1,DYNAMIC,UNO3,UNH4,KG2PPM,
-     &     PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
-     &     ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS,G1,G0,
-     &     VANC,VMNC,TLAG1, SENESCE, MPLA, TPLA, MPLAG, TPLAG)
+     & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
+     & CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     & PRFTC, GFLTC, LAITC, PRFTYP,GFLTYP, LAITYP,
+     & GPP, GRAINN, GROLF, GRORT, GROSTM, ISTAGE, 
+     & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     & NFAC, NLAYR, NH4,NSTRES, NO3, P3, P4, P5, PAF, PANWT, 
+     & PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     & PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
+     & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
+     & STMWT, STOVN, STOVWT, SW, SUMDTT,  
+     & SWFAC, TANC, TCNP,TEMF, TEMPM, TILN, 
+     & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
+     & XN,XSTAGE, EOP, TRWUP, RWUEP1,DYNAMIC,UNO3,UNH4,KG2PPM,
+     & PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
+     & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS,G1,G0,
+     & VANC,VMNC,TLAG1, SENESCE, MPLA, TPLA, MPLAG, TPLAG)
           ENDIF
 
           XLAI = LAI
