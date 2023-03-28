@@ -10,7 +10,8 @@
 !  04/01/2021 FO  Added MultiHarvest. (FO, GH, VSH, AH, KJB)
 !  07/09/2022 GH  Add fresh weight for cucumber using tomato
 !  08/01/2022 FO  Updated source code format
-!  13/01/2023 FO  Updated variables in output file FreshWt.OUT
+!  01/13/2023 FO  Updated variables in output file FreshWt.OUT
+!  03/17/2023 FO  Major changes for Multi-Harvest
 !-----------------------------------------------------------------------
 !  Called from:  PODS
 !=======================================================================
