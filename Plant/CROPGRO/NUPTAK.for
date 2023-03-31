@@ -158,7 +158,7 @@ C-----------------------------------------------------------------------
           ANDEM = TRNU
         ENDIF
 !        IF (TRNU .EQ. 0.0) GO TO 600
-        IF (TRNU .GT. 0.001) THEN
+        IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
           DO L=1,NLAYR
             IF (RLV(L) .GT. 0.0) THEN
@@ -219,10 +219,10 @@ C=======================================================================
 ! NDMSDR   Amount of Mobilized N which can be used for seed growth
 !            (g[N] / m2 / d)
 ! NDMTOT   Total N demand (g[N] / m2 / d)
-! NH4(L)   Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)   Ammonium N in soil layer L (Âµg[N] / g[soil])
 ! NL       maximum number of soil layers = 20 
 ! NLAYR    Number of soil layers 
-! NO3(L)   Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)   Nitrate in soil layer L (Âµg[N] / g[soil])
 ! NUF      N uptake fraction (ratio of demand to N uptake), <= 1.0 
 ! RFAC     Nitrogen uptake conversion factor ((kg N/ha) / (mg N / cm root))
 ! RLV(L)   Root length density for soil layer L ((cm root / cm3 soil))
