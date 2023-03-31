@@ -790,7 +790,8 @@ c           SWDF2
 c           Find an equivalent value from DSSAT!
             ! WaterBal%ANAERF = 1.
             ! MJ, Jan 2018: Calculate anaerobic stress factor
-            PORMIN = 0.20
+!            2023-03-31 HBD Removed hardwired PORM species coeff.
+!            PORMIN = 0.20
 !            CALL SC_ANAERF(
 !     &        Soil%NLAYR, RLV, SW, Soil%DUL, Soil%SAT, 
 !     &        Soil%DLAYR, CONTROL, WaterBal%ANAERF)
