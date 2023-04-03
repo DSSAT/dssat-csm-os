@@ -307,7 +307,7 @@ C
 
 !        3/27/2016 chp Default soil temperature method is EPIC
 !        7/21/2016 chp Default soil temperature method is DSSAT, per GH
-         IF (INDEX('EDK',METMP) < 1) METMP = 'D'
+         IF (INDEX('EDK',METMP) < 1) METMP = 'K'
 !        IF (INDEX('ED',METMP) < 1) METMP = 'E'
 
 !        Default greenhouse gas method is DSSAT
