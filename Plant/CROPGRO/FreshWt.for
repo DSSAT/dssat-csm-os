@@ -133,7 +133,6 @@
      &    '!YEAR  Year of current date of simulation',
      &    '!DOY  Day of year (d)',
      &    '!DAS  Days after start of simulation (d)',
-     &    '!FPWAD  Total pod (ear) fresh weight (kg/ha)',
      &    '!PDMCD  Dry matter con. of harvested product (fraction)',
      &    '!AFPWD  Average fresh fruit (pod, ear) weight (g/fruit)',
      &    '!ADPWD  Average dry fruit (pod, ear) weight (g/fruit)',
@@ -141,33 +140,33 @@
           SELECT CASE (CROP)
             CASE ('GB')       ! Snap bean
               WRITE(NOUTPF,'(A)')
-     &    '!FCULD  Culls ()',
-     &    '!FSZ1D  Sieve size 1 ()',
-     &    '!FSZ2D  Sieve size 2 ()',
-     &    '!FSZ3D  Sieve size 3 ()',
-     &    '!FSZ4D  Sieve size 4 ()',
-     &    '!FSZ5D  Sieve size 5 ()',
-     &    '!FSZ6D  Sieve size 6 ()'
+     &    '!FCULD  Fresh weight for cull fruit/pods ()',
+     &    '!FSZ1D  Fresh weight for size class 1 ()',
+     &    '!FSZ2D  Fresh weight for size class 2 ()',
+     &    '!FSZ3D  Fresh weight for size class 3 ()',
+     &    '!FSZ4D  Fresh weight for size class 4 ()',
+     &    '!FSZ5D  Fresh weight for size class 5 ()',
+     &    '!FSZ6D  Fresh weight for size class 6 ()'
           END SELECT
           WRITE(NOUTPF,'(A)')
      &    '!XMAGE  Required pod age for Multi-Harvest (days)',
-     &    '!TOSDN  Total Seed number (#)',
-     &    '!TOWSD  Total weight seed ()',
-     &    '!TOSHN  Total shell number ()',
-     &    '!TOWSH  Total weight shell ()',
-     &    '!TOPOW  Total Pod weight ()',
-     &    '!TOFPW  Total Fresh Pod weight ()',
-     &    '!MTFPW  Fresh weight of mature fruits ()',
-     &    '!MTDPW  Dry weight of mature fruits (seed and shell) ()',
-     &    '!MTDSD  Seed mass of mature fruits ()',
-     &    '!MTDSH  Shell mass of mature fruits ()',
-     &    '!HSHELWT  Harvested shell weight ()',
-     &    '!HSDWT  Harvested seed weight ()',
-     &    '!HPODWT  Harvested pod weight ()',
-     &    '!CPODN  Cumulative pod number (#)',
+     &    '!TOSDN  Total Number of seeds (#/m2)',
+     &    '!TOWSD  Total Seed mass (g/m2)',
+     &    '!TOSHN  Total Number of shells (#/m2)',
+     &    '!TOWSH  Total Shell mass (g/m2)',
+     &    '!TOPOW  Total pod weight (g/m2)',
+     &    '!TOFPW  Total pod (ear) fresh weight (g/m2)',
+     &    '!MTFPW  Fresh weight of mature fruits (g/m2)',
+     &    '!MTDPW  Dry weight of mature fruits (seed and shell) (g/m2)',
+     &    '!MTDSD  Seed mass of mature fruits (g/m2)',
+     &    '!MTDSH  Shell mass of mature fruits (g/m2)',
+     &    '!HSHELWT  Harvested shell weight (g/m2)',
+     &    '!HSDWT  Harvested seed weight (g/m2)',
+     &    '!HPODWT  Harvested pod weight (g/m2)',
+     &    '!CPODN  Cumulative pod weight (g/m2)',
      &    '!CMFNM  Cumulative mature fruit number (#)',
-     &    '!CHPDT  Cumulative harv. pod weight of mature fruits ()',
-     &    '!CHFPW  Cumulative harv. fresh weight of mature fruits ()',
+     &    '!CHPDT  Cumulative harv. pod weight of mature fruits (g/m2)',
+     &    '!CHFPW  Cumulative harv. fresh weight of mature fruits (g/m2)',
      &    '!CHNUM  Cumulative harvest number (#)'
         ENDIF
 
@@ -196,7 +195,7 @@
         END SELECT
         
   230 FORMAT('@YEAR DOY   DAS   DAP',
-     &    '   FPWAD   PDMCD   AFPWD',
+     &    '   PDMCD   AFPWD',
      &    '   ADPWD   PAGED',
      &    '   XMAGE   CHNUM',   
      &    '   TOSHN   TOWSH   MTDSH   HSHEL',
@@ -205,7 +204,7 @@
      &    '   TOSDN   TOWSD   MTDSD   HSDWT')
      
   231 FORMAT('@YEAR DOY   DAS   DAP',
-     &    '   FPWAD   PDMCD   AFPWD',
+     &    '   PDMCD   AFPWD',
      &    '   ADPWD   PAGED',
      &    ' FCULD FSZ1D FSZ2D FSZ3D FSZ4D FSZ5D FSZ6D',
      &    '   XMAGE   CHNUM',   
@@ -390,7 +389,7 @@
         IF (TOSHN > 0.0) THEN
           AvgFPW = TOFPW / TOSHN
           AvgDPW = TOPOW / TOSHN
-          CPODN  = CPODN + NINT(TOSHN)
+          CPODN  = CPODN + NINT(TOPOW)
           CMFNM  = CMFNM + NINT(MFNUM)
         ELSE
           AvgFPW = 0.0
@@ -433,76 +432,76 @@
         SELECT CASE (CROP)
          CASE ('CU')        ! Cucumber
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH,MTDSH,HSHELWT,
      &      TOPOW,HPODWT,CHPDT,CPODN,
-     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      NINT(TOFPW*10),MTFPW,MTDPW,CHFPW,CMFNM,
      &      TOSDN,TOWSD,MTDSD,HSDWT
           CASE ('GB')       ! Snap bean
             WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,NINT(CLASS(7)*10.),NINT(CLASS(1)*10.),
      &      NINT(CLASS(2)*10.),NINT(CLASS(3)*10.),NINT(CLASS(4)*10.),
      &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.),
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH,MTDSH,HSHELWT,
      &      TOPOW,HPODWT,CHPDT,CPODN,
-     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      NINT(TOFPW),MTFPW,MTDPW,CHFPW,CMFNM,
      &      TOSDN,TOWSD,MTDSD,HSDWT
          CASE ('PR')        ! Bell pepper
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH,MTDSH,HSHELWT,
      &      TOPOW,HPODWT,CHPDT,CPODN,
-     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      NINT(TOFPW),MTFPW,MTDPW,CHFPW,CMFNM,
      &      TOSDN,TOWSD,MTDSD,HSDWT
          CASE ('SR')        ! Strawberry
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH,MTDSH,HSHELWT,
      &      TOPOW,HPODWT,CHPDT,CPODN,
-     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      NINT(TOFPW),MTFPW,MTDPW,CHFPW,CMFNM,
      &      TOSDN,TOWSD,MTDSD,HSDWT
           CASE ('TM')       ! Tomato
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH,MTDSH,HSHELWT,
      &      TOPOW,HPODWT,CHPDT,CPODN,
-     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      NINT(TOFPW),MTFPW,MTDPW,CHFPW,CMFNM,
      &      TOSDN,TOWSD,MTDSD,HSDWT
           CASE DEFAULT
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
-     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH,MTDSH,HSHELWT,
      &      TOPOW,HPODWT,CHPDT,CPODN,
-     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      NINT(TOFPW),MTFPW,MTDPW,CHFPW,CMFNM,
      &      TOSDN,TOWSD,MTDSD,HSDWT
         END SELECT
 
  1000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    I8,F8.2,F8.1,F8.2,F8.1,
+     &    F8.2,F8.1,F8.2,F8.1,
      &    F8.2, I8,
      &    4(F8.2),
      &    3(F8.2),I8,
-     &    4(F8.2),I8,
+     &    I8,3(F8.2),I8,
      &    4(F8.2))
  2000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    I8,F8.2,F8.1,F8.2,F8.1,
+     &    F8.2,F8.1,F8.2,F8.1,
      &    7(1X,I5),
      &    F8.2, I8,
      &    4(F8.2),
      &    3(F8.2),I8,
-     &    4(F8.2),I8,
+     &    I8,3(F8.2),I8,
      &    4(F8.2))
 
       ENDIF
