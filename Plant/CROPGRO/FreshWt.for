@@ -103,22 +103,14 @@
         ENDIF
 
         IF (INDEX('CU,GB,PR,SR,TM',CROP) .GT. 0 
-     &    .AND. XMAGE .LT. 0.0) THEN
+     &    .AND. XMAGE .LT. 1.0) THEN
           CALL GET_CROPD(CROP, CROPD)
-          MSG(1) = 'Please change the value of XMAGE in Ecotype file.'
-          MSG(2) = 'The value cannot be lower than 0.0.'
+          MSG(1) = 'Please check the value of XMAGE in Ecotype file.'
+          MSG(2) = 'XMAGE cannot be lower than 1.0.'
           WRITE(MSG(3),'("XMAGE = ",F8.2)') XMAGE
           WRITE(MSG(4),'(A2,1X,A16)') CROP, CROPD
           CALL WARNING(4, ERRKEY, MSG)
           CALL ERROR (ERRKEY,1,'',0)
-        ELSEIF (INDEX('CU,GB,PR,SR,TM',CROP) .GT. 0 
-     &    .AND. XMAGE .EQ. 0.0) THEN
-          CALL GET_CROPD(CROP, CROPD)
-          MSG(1) = 'Please check the value of XMAGE in Ecotype file.'
-          MSG(2) = 'The value is equal to 0.0'
-          WRITE(MSG(3),'("XMAGE = ",F8.2)') XMAGE
-          WRITE(MSG(4),'(A2,1X,A16)') CROP, CROPD
-          CALL WARNING(4, ERRKEY, MSG)
         ENDIF     
 !::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         INQUIRE (FILE= FWFile, EXIST = FEXIST)
@@ -198,6 +190,8 @@
           CASE ('SR')       ! Strawberry
             WRITE (NOUTPF,230)                        
           CASE ('TM')       ! Tomato
+            WRITE (NOUTPF,230)
+          CASE DEFAULT
             WRITE (NOUTPF,230)
         END SELECT
         
@@ -286,7 +280,6 @@
           XPAGE(NPP) = PAGE
             
 !       Dry matter concentration (fraction)
-!       DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
           SELECT CASE (CROP)
             CASE ('CU')       ! Cucumber
               DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
@@ -300,6 +293,8 @@
               !From Code from Ken Boote / VSH
               DMC(NPP) = 0.16 
             CASE ('TM')       ! Tomato
+              DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
+            CASE DEFAULT
               DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
           END SELECT
 
@@ -373,7 +368,7 @@
              ! = shell mass for cohort
              MTDSH = MTDSH + WTSHE(NPP)
              !Number of mature fruits
-             MFNUM = MFNUM + SDNO(NPP)
+             MFNUM = MFNUM + SHELN(NPP)
           ENDIF
           
           ! Apply Harvest
@@ -475,6 +470,15 @@
      &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
      &      TOSDN,TOWSD,MTDSD,HSDWT
           CASE ('TM')       ! Tomato
+            WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
+     &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      PodAge,
+     &      XMAGE, CHNUM,
+     &      TOSHN,TOWSH,MTDSH,HSHELWT,
+     &      TOPOW,HPODWT,CHPDT,CPODN,
+     &      TOFPW,MTFPW,MTDPW,CHFPW,CMFNM,
+     &      TOSDN,TOWSD,MTDSD,HSDWT
+          CASE DEFAULT
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TOFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge,
