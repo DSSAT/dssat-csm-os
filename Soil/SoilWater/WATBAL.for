@@ -405,15 +405,26 @@ C     Conflict with CERES-Wheat
           SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L))
         ENDDO
 
-C       Calculate upward movement of water due to evaporation and root 
-C       extraction (based on yesterday's values) for each soil layer.
-!       Don't call when using SALUS soil evaporation routine (MESEV = 'S')
-!        CALL UP_FLOW(    
-!     &    NLAYR, DLAYR, DUL, LL, SAT, SW, SW_AVAIL,       !Input
-!     &    UPFLOW, SWDELTU)                                !Output
+! ***************************************************************
+!       CHP TEMP
+!       This a temporary switch between old and new upflow routines using MEHYD.
+!       MEHYD = 'R' : Ritchie upflow routine
+!       MEHYD = 'D' : Diffusion routine (new)
+        SELECT CASE(ISWITCH % MEHYD)
+        CASE ('R')
+C         Calculate upward movement of water due to evaporation and root 
+C         extraction (based on yesterday's values) for each soil layer.
+!         Don't call when using SALUS soil evaporation routine (MESEV = 'S')
+          CALL UP_FLOW(    
+     &      NLAYR, DLAYR, DUL, LL, SAT, SW, SW_AVAIL,       !Input
+     &      UPFLOW, SWDELTU)                                !Output
 
-!       Alternate vertical diffusion routine.
-        CALL VertDiffusion(SOILPROP, SW_AVAIL, SWDELTU) 
+        CASE ('D')
+!         Alternate vertical diffusion routine.
+          CALL VertDiffusion(SOILPROP, SW_AVAIL, SWDELTU) 
+        END SELECT
+! ***************************************************************
+
       ENDIF
 
 !-----------------------------------------------------------------------
