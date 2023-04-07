@@ -428,11 +428,9 @@ C-----------------------------------------------------------------------
 
           WRITE(GHGLUN,"(A)",ADVANCE='NO') 
      & "@YEAR DOY   DAS" //
-!    & "   N2OEC    N2EC    NOEC   CO2TC    NDNC" // 
      & "   N2OEC    N2EC    NOEC    NDNC" // 
      & "    NITC   N2ODC   N2ONC   N2FLC   NOFLC" // 
-!    & "   N2OED    N2ED    NOED   CO2TD    NDND" // 
-     & "   N2OED    N2ED    NOED    NDND" // 
+     & "  N2OGED   N2GED   NOGED    NDND" // 
      & "   NITRD   N2ODD   N2OND   N2FLD   NOFLD"
           IF (N_LYR < 10) THEN
             WRITE (GHGLUN,105)
@@ -599,9 +597,9 @@ C  06/15/2014 CHP Written
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, REPNO
       INTEGER GHGLUN, RUN, YEAR, YRDOY
 
-      REAL CO2ED, N2OED, CH4ED, CO2EC, N2OEC, CH4EC
+      REAL CO2EC, N2OEC, CH4EC
       REAL CCEQC, NCEQC, MCEQC, TCEQC
-     
+      REAL CO2GED, N2OGED, CH4GED !CO2ED, N2OED, CH4ED, 
       LOGICAL FEXIST
 
 !-----------------------------------------------------------------------
@@ -666,7 +664,7 @@ C-----------------------------------------------------------------------
      &"    CO2eq    CO2eq    CO2eq    CO2eq"
 
           WRITE(GHGLUN,'(A,A,A)') "@YEAR DOY   DAS",
-     &"    CO2ED    N2OED    CH4ED    CO2EC    N2OEC    CH4EC",
+     &"   CO2GED   N2OGED   CH4GED    CO2EC    N2OEC    CH4EC",
      &"    CCEQC    NCEQC    MCEQC    TCEQC"
 
         ENDIF
@@ -685,9 +683,9 @@ C-----------------------------------------------------------------------
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
-      CO2ED = CH4_data % CO2emission * 1000.  !g/d
-      N2OED = N2O_data % N2O_emitted * 1000.  !g/d
-      CH4ED = CH4_data % CH4Emission * 1000.  !g/d
+      CO2GED = CH4_data % CO2emission * 1000.  !g/d
+      N2OGED = N2O_data % N2O_emitted * 1000.  !g/d
+      CH4GED = CH4_data % CH4Emission * 1000.  !g/d
 
       CO2EC = CH4_data % CumCO2Emission       !kg/d
       N2OEC = N2O_data % CN2O_emitted         !kg/d
@@ -709,7 +707,7 @@ C-----------------------------------------------------------------------
         IF (IDETN .EQ. 'Y') THEN
           WRITE (GHGLUN,'(I5,I4.3,I6,I9,2F9.2,I9,2F9.2,4I9)')  
      &      YEAR, DOY, DAS, 
-     &      NINT(CO2ED), N2OED, CH4ED, NINT(CO2EC), N2OEC, CH4EC,
+     &      NINT(CO2GED), N2OGED, CH4GED, NINT(CO2EC), N2OEC, CH4EC,
      &      NINT(CCEQC), NINT(NCEQC), NINT(MCEQC), NINT(TCEQC)
         ENDIF
 
