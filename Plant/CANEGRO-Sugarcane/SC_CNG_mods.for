@@ -1893,7 +1893,7 @@ c     an optimal temperature (TOpt),
 c     and a final cutoff temperature (TFinal) above which the
 c     plant stops responding to temperature
 c     DTT |___/\__
-c            °C
+c            ï¿½C
 c     MJ, Dec 2012
       REAL FUNCTION D_TT(TMEAN, TBase, TOpt, TFinal)
 c     ===============================================================      
@@ -1933,7 +1933,7 @@ c     temperature range end (Topt2),
 c     and a final cutoff temperature (TFinal) above which the
 c     plant stops responding to temperature
 c     DTT |___/--\__
-c            °C
+c            ï¿½C
 c     MJ, Dec 2012
       REAL FUNCTION D_TT4(TMEAN, TBase, TOpt1, Topt2, TFinal)
 c     ===============================================================      
@@ -1965,3 +1965,58 @@ c       Now calculate the D_TT:
 
       END
 c     =============================================================== 
+
+
+
+c     ---------------------------------------------------------------
+c                       N_MODULE composite variables
+c     ---------------------------------------------------------------
+c     A subroutine for calculating Nitrogen demand, stress, etc
+c     for the SASRI Canegro Plant Module in the DSSAT CSM.
+c     These Fortran composite variables are used for assisting in
+c     operation and clarity of the code
+c     ---------------------------------------------------------------
+c     July 2008
+c
+c     Matthew Jones,  (matthew.jones@sugar.org.za)
+c     Maurits van den Berg (maurits_vandenberg@sugar.org.za)
+c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+c     (c) South African Sugarcane Research Institute
+c     Mount Edgecombe, 4300
+c     ---------------------------------------------------------------
+
+      MODULE N_TYPES
+c         NUM_COMPONENTS: Number of plant components
+          INTEGER, PARAMETER:: NUM_COMPS = 4
+
+c         TOPS, STALKS, ROOTS, TRASH: index numbers for
+c         each of these components
+          INTEGER, PARAMETER:: TOPS  = 1, STALKS = 2, 
+     &                         ROOTS = 3, DEADLF  = 4
+
+c         Composite variable type to store
+c         N-stress response to N-concentration parameters:
+          TYPE N_PARAM_TYPE
+c             X: N-concentration (kg/kg/ha)
+              REAL X_VALUES(4)
+c             Y: N-stress factor (0-1) 
+c                [0 = maximum stress; 1 = no stress]
+              REAL Y_VALUES(4)
+
+c             MIN_CONC: minimum concentration of N for this plant
+c             component.  Define along the lines of, if N-conc
+c             was any lower, the plant would be dead.  In practice,
+c             N-conc might be lower, and might fall if DM increases,
+c             but the N translocation process cannot reduce N-conc 
+c             below this
+              REAL MIN_CONC
+              REAL CRIT_CONC
+	        REAL OPT_CONC
+			REAL INIT_CONC
+
+
+
+          END TYPE
+
+      END
+c     ===============================================================
