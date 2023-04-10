@@ -114,6 +114,8 @@ C=======================================================================
           Diffus(L)= Diffus_Coef(Ksat(L), alphaVG(L), mVG(L), SAT(L),
      &      Se(L), WCr(L))
 
+!         Note chp 2023-04-06: May not need Kunsat in calculation of time step. 
+!           It was in the 2D model because of gravity flow???
           IF (L < LIMIT_Diff .AND. 
      &        Diffus(L) > 1.E-9 .AND. 
      &        Kunsat(L) > 1.E-9) THEN
