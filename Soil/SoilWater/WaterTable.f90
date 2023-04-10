@@ -19,7 +19,7 @@
     USE ModuleDefs     
     USE ModuleData
     IMPLICIT NONE
-    EXTERNAL WTDEPT, CapFringe !, CAPILLARY
+    EXTERNAL CapFringe
     SAVE
 !-----------------------------------------------------------------------
 !   Interface:
@@ -79,11 +79,6 @@
     ActWTD    = MgmtWTD
     TargetWTD = MgmtWTD
 
-!!   Update actual depth to water table
-!    CALL WTDEPT(                                &
-!         NLAYR, DLAYR, DS, DUL, SAT, SW,        &         !Input
-!         ActWTD)                                          !Output
-
     IF (MgmtWTD < DS(NLAYR)) THEN
 !     Initialize soil water content with water table depth, starting at bottom of profile
       DO L = NLAYR, 1, -1
@@ -126,11 +121,6 @@
 
     IF (MgmtWTD > DS(NLAYR)) RETURN
 
-!!   Update actual depth to water table
-!    CALL WTDEPT(                                &
-!         NLAYR, DLAYR, DS, DUL, SAT, SW,        &         !Input
-!         ActWTD)                                          !Output
-!
 !-----------------------------------------------------------------------
 !   Compute lateral flow to maintain managed water table depth
 !   Use tolerance in cm to get target water table depth close to management 
@@ -325,13 +315,6 @@
       LatInflow = LatInflow + DeltaSW(L) * DLAYR(L) * 10.
     ENDDO
 
-!-----------------------------------------------------------------------
-!!   Update actual depth to water table
-!    CALL WTDEPT(                                &
-!         NLAYR, DLAYR, DS, DUL, SAT, SW_TEMP,   &         !Input
-!         ActWTD)                                          !Output
-!   Set the actual water table today to the Target WT
-
 !   flux in soil water content due to changes in water table and capillary flow
     DO L = 1, NLAYR
       SWDELTW(L) = SW_TEMP(L) - SW(L)
@@ -342,80 +325,3 @@
     End Subroutine WaterTable
 !=======================================================================
 
-!=======================================================================
-!  WTDEPT, Subroutine
-!  Determines actual water table depth
-!  Allows perched water table (uses highest free water surface in profile)
-!   This subroutine, as written still results in step-wise increments to water table.
-!   Maybe need to go back to original WTDEPT for non-managed water tables (i.e., perched)
-!-----------------------------------------------------------------------
-!  REVISION HISTORY
-!  01/06/1997 GH  Written
-!  10/20/1997 CHP Modified for modular format.
-!  03/17/2001 CHP Allows water table between top and bottom of layer
-!                 (no longer a step function).  Uses highest free water
-!                 surface.
-!  05/23/2007 CHP Start at bottom of profile and determine 1st unsaturated
-!                   layer.  Add factor to decrease step function appearance.
-!-----------------------------------------------------------------------
-!  Called by: WATBAL
-!  Calls    : None
-!=======================================================================
-      SUBROUTINE WTDEPT(                        &
-         NLAYR, DLAYR, DS, DUL, SAT, SW,        &         !Input
-         ActWTD)                                          !Output
-
-!     ------------------------------------------------------------------
-      USE ModuleDefs
-      IMPLICIT NONE
-      SAVE
-
-!     Interface variables:
-      INTEGER, INTENT(IN) :: NLAYR
-
-
-      INTEGER L
-      REAL ActWTD, FACTOR             !Depth to Water table (cm)
-      REAL, DIMENSION(NL) ::  DLAYR, DS, DUL, SAT, SW
-      REAL, DIMENSION(NL) :: SATFRAC
-      REAL, PARAMETER :: TOL = 0.95
-
-!-----------------------------------------------------------------------
-      DO L = NLAYR, 1, -1
-        SATFRAC(L) = (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
-        SATFRAC(L) = MIN(MAX(0.0, SATFRAC(L)), 1.0)
-        IF (SATFRAC(L) > TOL) THEN
-!         Layer is saturated, continue up to next layer
-          CYCLE
-        ELSEIF (L == NLAYR) THEN
-!         Bottom layer is unsaturated
-          ActWTD = DS(NLAYR) - DLAYR(NLAYR) * SATFRAC(NLAYR)
-          EXIT
-        ELSE
-!         Layer is unsaturated.  Interpolate water table depth.
-!         FACTOR prevents a step function when transitioning between
-!           layers.
-          FACTOR = MIN(MAX(0.0, (SATFRAC(L+1) - TOL) / (1.0 - TOL)),1.0)
-          ActWTD = DS(L) - DLAYR(L) * SATFRAC(L) * FACTOR
-          EXIT
-        ENDIF
-      ENDDO
-
-      RETURN
-      END SUBROUTINE WTDEPT
-
-!-----------------------------------------------------------------------
-!     WTDEPT VARIABLE DEFINITIONS:
-!-----------------------------------------------------------------------
-! DLAYR(L) Soil thickness in layer L (cm)
-! DS(L)    Cumulative depth in soil layer L (cm)
-! NL       Maximum number of soil layers = 20 
-! NLAYR    Actual number of soil layers 
-! SAT(L)   Volumetric soil water content in layer L at saturation
-!            (cm3 [water] / cm3 [soil])
-! SW(L)    Volumetric soil water content in layer L (cm3[water]/cm3[soil])
-! ActWTD    Water table depth  (cm)
-! SATFRAC   Fraction of layer L which is saturated
-!-----------------------------------------------------------------------
-!     END SUBROUTINE WTDEPT
-!=======================================================================
