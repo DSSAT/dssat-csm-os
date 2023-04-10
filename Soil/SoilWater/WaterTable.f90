@@ -278,32 +278,6 @@
 !   previous attempts resulted in instability for daily model.
     ActWTD = TargetWTD
 
-!!==================================
-!!   Capillary rise - Method 1
-!   This method resulted in very unstable water table depths in the top layers.
-!!==================================
-!!   Set a limit on how much capillary rise can occur
-!!   Plant uptake and soil evap are from yesterday.
-!    DO L = 1, NLAYR
-!!     MaxRise    =   DUL   - SW    + uptake     + evap 
-!      MaxRise(L) = (SAT(L) - SW(L) - SWDELTX(L) - SWDELTU(L)) * DLAYR(L) *10 !mm
-!      MaxRise(L) = MAX(0.0, MaxRise(L))
-!    ENDDO 
-!
-!!   Capillary flow
-!    CALL Capillary(DYNAMIC,                   &
-!         ActWTD, SOILPROP, SW_TEMP, MaxRise,  &     !Input
-!         Capri)                                     !Output
-!
-!    DO L = 1, NLAYR
-!      LatInflow = LatInflow + CAPRI(L)
-!      SW_TEMP(L) = SW_TEMP(L) + CAPRI(L) / (DLAYR(L) * 10.)
-!    ENDDO
-!!-----------------------------------------------------------------------
-
-!==================================
-!   Capillary rise - Method 2
-!==================================
     CALL CapFringe(           &
       ActWTD,  SOILPROP,      &   !Input
       ThetaCap)                   !Output

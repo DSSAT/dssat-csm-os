@@ -618,7 +618,6 @@ set(
         "Soil/SoilUtilities/SoilPBalSum.for"
         "Soil/SoilUtilities/TextureClass.for"
         "Soil/SoilWater/CapFringe.f90"
-        "Soil/SoilWater/Diffusion.for"
         "Soil/SoilWater/INFIL.for"
         "Soil/SoilWater/OPWBAL.for"
         "Soil/SoilWater/RETC_VG.for"
