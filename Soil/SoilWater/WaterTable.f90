@@ -74,10 +74,16 @@
     
 !   Negative or zero value means no managed water table
     IF (MgmtWTD < 1.E-6) THEN
-      MgmtWTD = 10000.
+      MgmtWTD = 1000.
     ENDIF
     ActWTD    = MgmtWTD
     TargetWTD = MgmtWTD
+!   Actual water table depth will equal either the managed water table depth or
+!     the target water table depth. When user water table depth records change
+!     a lot from one day to the next, it may take a few days for the actual 
+!     water table depth to reach the managed depth.
+    CALL PUT('WATER','WTDEP' ,ActWTD)  !Actual current water table depth
+    CALL PUT('MGMT' ,'WATTAB',MgmtWTD) !Managed water table depth (i.e., user records)
 
     IF (MgmtWTD < DS(NLAYR)) THEN
 !     Initialize soil water content with water table depth, starting at bottom of profile
@@ -116,12 +122,9 @@
 !   Get management depth to water table
     CALL GET('MGMT','WATTAB',MgmtWTD)
 
-!   Negative or zero value means no managed water table
-    IF (MgmtWTD < 1.E-6) THEN
-      MgmtWTD = 10000.
+    IF (MgmtWTD > DS(NLayr) .AND. ActWTD > DS(NLayr)) THEN
+      RETURN
     ENDIF
-
-    IF (MgmtWTD > DS(NLAYR)) RETURN
 
 !-----------------------------------------------------------------------
 !   Compute lateral flow to maintain managed water table depth
@@ -196,69 +199,12 @@
         LatOutflow = LatOutflow + SWDELTW(L) * DLAYR(L) * 10. !mm 
       ENDDO
 
-! OLD METHOD
-!!     First determine how much water (SAT-DUL) is between actual and 
-!!       managed water table levels
-!      DO L = 1, NLAYR
-!        IF (L == 1) THEN 
-!          Top = 0.
-!        ELSE
-!          Top = DS(L-1)
-!        ENDIF
-!        Bottom = DS(L)
-!        IF (ActWTD > Bottom) THEN
-!!         This layer is entirely above the actual water table; do nothing.
-!          CYCLE
-!        ELSEIF (ActWTD > Top) THEN
-!!         This layer is partially in water table
-!          L1 = L
-!          TotExcess = 0.0
-!!         Work thru layers until management water table depth is reached.
-!          DO K = L1, NLAYR
-!            Bottom = DS(K)
-!            IF (K == L) THEN
-!              Top = ActWTD
-!            ELSE
-!              Top = DS(K-1)
-!            ENDIF
-!
-!            IF (MgmtWTD < Bottom) THEN
-!              Bottom = MgmtWTD
-!              L2 = K
-!            ENDIF
-!            Thick = Bottom - Top
-!
-!!           Actual water table assumes a layer is divided into
-!!           a saturated portion at the bottom and the remainder at DUL.
-!!           (Wrong, I know!, but expedient for now -- fix later)
-!!           Removal of water will act on the average water content of
-!!           the layer.
-!            Excess1 = Thick * (SAT(K) - DUL(K))   !saturated portion of layer
-!            Excess2 = DLAYR(K) * (SW(K) - DUL(K)) !average water content above DUL for entire layer 
-!            Excess(K) = MIN(Excess1, Excess2)     !cm
-!            TotExcess = TotExcess + Excess(K)     !cm
-!            IF (ABS(MgmtWTD - Bottom) < 1.) EXIT 
-!          ENDDO     
-!        ELSE
-!!         This layer is entirely within water table; done.
-!          EXIT
-!        ENDIF 
-!      ENDDO     
-!
-!!     Drawdown volume of water based on Kd
-!      LatOutflow = -TotExcess * Kd * 10. !mm
-!      Residual = -LatOutflow / 10. !cm
-!      DO L = L1, L2
-!        IF (Excess(L) < Residual) THEN
-!          SWDELTW(L) = -Excess(L) / DLAYR(L)
-!          Residual = Residual - Excess(L)
-!        ELSE
-!          SWDELTW(L) = -Residual / DLAYR(L)
-!          Residual = 0.0
-!          EXIT
-!        ENDIF
-!      ENDDO
+    ELSE
+      TargetWTD = MgmtWTD
     ENDIF 
+
+    ActWTD = TargetWTD
+    CALL PUT('WATER','WTDEP',ActWTD)
 
 !-------------------------------------------------------------------------
 !   Update soil water content 
@@ -273,12 +219,15 @@
 !***********************************************************************
   ENDIF
 !-----------------------------------------------------------------------
-
 !   Set actual water table depth equal to target calculated above.
 !   Probably need a better way to do this, i.e., calculate the actual
 !   water table depth based on water table and drawdown dynamics, but
 !   previous attempts resulted in instability for daily model.
-    ActWTD = TargetWTD
+
+!   No effect of water table if it is below the bottom of the soil profile.
+    IF (ActWTD > DS(NLAYR)) THEN
+      RETURN
+    ENDIF
 
     CALL CapFringe(           &
       ActWTD,  SOILPROP,      &   !Input
