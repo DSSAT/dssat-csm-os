@@ -120,8 +120,6 @@
       ENDIF 
     ENDDO
 
-    CALL PUT('WATER','WTDEP',ActWTD)
-
 !-----------------------------------------------------------------------
     RETURN
     End Subroutine CapFringe

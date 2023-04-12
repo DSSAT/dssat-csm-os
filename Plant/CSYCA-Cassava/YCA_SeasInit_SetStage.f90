@@ -16,6 +16,7 @@
 !       CN          , RN          , RUN         , RUNI        , TN           
 
         USE OSDefinitions
+        USE ModuleData
         USE YCA_First_Trans_m
 
         
@@ -308,7 +309,8 @@
         ENDIF
         
         ! Water table depth
-        WTDEP = ICWD
+!       WTDEP = ICWD
+        CALL GET('WATER','WTDEP',WTDEP)
         
         ! Initial shoot and root placement
         IF (PLME /= 'I') THEN

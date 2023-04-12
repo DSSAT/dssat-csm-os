@@ -101,7 +101,7 @@ C  08/12/2003 CHP Added I/O error checking
 !       DLAYR, SAT,
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
       EXTERNAL FIND, ERROR
       SAVE
@@ -157,6 +157,9 @@ C     Find and Read Initial Conditions Section
         ELSE
           READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+          IF (ICWD .LT. 0.0) THEN
+            ICWD = 9999.
+          ENDIF
           ActWTD = ICWD
 
           DO L = 1, NLAYR
@@ -183,6 +186,7 @@ C     Find and Read Initial Conditions Section
 
       SW_INIT   = SW
       ICWD_INIT = ICWD
+      CALL PUT('MGMT','ICWD',ICWD)
 
       CLOSE (LUNIO)
 
@@ -224,6 +228,8 @@ C     Find and Read Initial Conditions Section
       SW   = SW_INIT   
       ICWD = ICWD_INIT  
       ActWTD = ICWD
+      CALL PUT('MGMT','ICWD',ICWD)
+      CALL PUT('MGMT','WATTAB',ActWTD)
 
 !***********************************************************************
 !***********************************************************************
