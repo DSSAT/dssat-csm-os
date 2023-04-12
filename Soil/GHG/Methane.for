@@ -8,19 +8,6 @@ C
 C  1. Written     R.B.M. March 1998.
 ! 2021-06-30 CHP and US adapt for DSSAT-CSM v4.8
 ! 2023-01-24 chp added SAEA to soil analysis in FileX 
-C-----------------------------------------------------------------------
-C Inputs:
-C   DAP        : days after planting
-C   dlayr      : width of each soil layer (cm)
-C   flood      : depth of flood water (mm)
-C   SW         : soil water content (m3 water/m3 soil)
-C   RLV        : root length density (cm root/cm3 soil)
-C   BD         : bulk density of each soil layer (g soil cm-3 soil)
-C   Csubstrate : available CH2O for methanogenesis (kgCH2O/ha per soil layer.
-C   drain      : percolation rate (mm/d)
-C Output:
-C   CH4flux    : total CH4 emission (kgCH4 ha-1 d-1)
-
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
      &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
