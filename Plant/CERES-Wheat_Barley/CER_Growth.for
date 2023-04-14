@@ -4,7 +4,7 @@
 !***********************************************************************
 
       SUBROUTINE CER_Growth (BD, CANHT, CO2, DAYLT,
-     &     DLAYR, DOY, DUL, EO, EOP, ISWNIT, ISWWAT,
+     &     DLAYR, DUL, EO, EOP, ISWNIT, ISWWAT,
      &     KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT,
      &     RLV, RNMODE, SAT , SENCALG, SENNALG,
      &     SHF, SLPF, SNOW, SRAD, ST, STGDOY, SW,
@@ -12,7 +12,7 @@
      &     WINDSP, YEARPLTCSM, LAI)
 
 ! 2023-01-25 chp removed unused variables in argument list
-!     KCAN, WEATHER, SOILPROP, CONTROL, YEAR, IDETG, 
+!     DOY, KCAN, WEATHER, SOILPROP, CONTROL, YEAR, IDETG, 
      
         USE ModuleDefs
         USE CER_First_Trans_m
@@ -26,7 +26,7 @@
 !        TYPE (SoilType), intent (in) ::   SOILPROP
 
         INTEGER ADAT10, CSTIMDIF, CSINCDAT, DYNAMICI
-        INTEGER CN, DOY, NLAYR, STGDOY(20)  !, YEAR
+        INTEGER NLAYR, STGDOY(20)  !CN, DOY, YEAR
         INTEGER YEARPLTCSM!, YEARPLT         
         REAL BD(20), CANHT, CO2
         REAL DLAYR(20), UNO3ALG(20), SENLGALG(0:20), UNH4ALG(20)

@@ -85,7 +85,7 @@ C========================================================================
 ! LIST OF NEW VARIABLES ADDED TO ENABLE SIMULATION OF SUGARS IN THE 
 ! SUGARCANE MODEL
 
-	INTEGER OpenStatus !, WLUN
+!	INTEGER OpenStatus !, WLUN
 
 	REAL DXR
       REAL AGRSU, CADSU, CRUSSU, FNINSU, FRSU, NADSU, NGRSU, NGRSUG 

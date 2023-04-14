@@ -23,7 +23,7 @@ C  Called : CASUPRO
 C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
       SUBROUTINE CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, KCAN,           !Input
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
      &    LeafMaint, LeafNum, LFmntDEF,               !Input
      &    MinGr, Ph1P, PhenoStage,                    !Input
      &    PI1, RATTP, Smax,                           !Input
@@ -63,7 +63,7 @@ C========================================================================
       PARAMETER (NSWAB = 5)
 
       REAL a  !, GRLF, GRSU  
-      REAL KCAN, MinGr, Ph1P, PI1  
+      REAL MinGr, Ph1P, PI1 !KCAN
       REAL PORLOST, RATTP 
       REAL SENDAY, SLNDOT   
 	REAL SSDOT, SSNDOT, StkSenFrac, SWFAC   

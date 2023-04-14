@@ -3,7 +3,7 @@
 ! lines 5252 - 7645 of the original CSCRP code.
 !***********************************************************************
  
-      SUBROUTINE CRP_Growth (BD, GSTAGE, CLOUDS, CO2, DAYLT,
+      SUBROUTINE CRP_Growth (BD, CLOUDS, CO2, DAYLT,
      &    DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
      &    KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT, PARIP,
      &    PARIPA, RLV, RNMODE, SAT , SENCALG, SENLALG, SENNALG,
@@ -28,7 +28,7 @@
   
       INTEGER DOY, NLAYR, STGYEARDOY(20), YEAR, YEARPLTCSM          
       INTEGER CSIDLAYR                 
-      REAL BD(NL), GSTAGE, CLOUDS, CO2, DLAYR(NL)  !ALBEDOS, 
+      REAL BD(NL), CLOUDS, CO2, DLAYR(NL)  !ALBEDOS, GSTAGE
       REAL DUL(NL), EO, EOP, ES, KCAN, kep, LL(NL), NFP, NH4LEFT(NL)
       REAL NO3LEFT(NL), PARIP, PARIPA, RLV(NL), SAT(NL)
       REAL SENCALG(0:NL), SENLALG(0:NL), SENNALG(0:NL), SHF(NL), SLPF

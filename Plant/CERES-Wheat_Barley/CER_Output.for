@@ -5,12 +5,12 @@
 
       SUBROUTINE CER_Output (LAI, CANHT, CN, DOY,
      &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS,
-     &     ISWNIT, ISWWAT, NFP, NLAYR, ON, REP,
+     &     ISWNIT, ISWWAT, NFP, ON, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, STEP, STGDOY,
      &     TOTIR, TN, YEAR)
 
 ! 2023-01-25 CHP removed unused variables from argument list
-!     CO2, RAIN, UNH4ALG, UNO3ALG, 
+!     NLAYR, CO2, RAIN, UNH4ALG, UNO3ALG, 
 
         USE ModuleDefs
         USE CSVOUTPUT  ! VSH
@@ -23,7 +23,7 @@
      &    GETSTRR
         SAVE
         
-        INTEGER CN, DOY, DYNAMIC, NLAYR, ON, REP, RN
+        INTEGER CN, DOY, DYNAMIC, ON, REP, RN !NLAYR
         INTEGER RUN, RUNI, SN, STGDOY(20), TN, YEAR
         INTEGER CSTIMDIF, STEP
         INTEGER TVICOLNM, TVILENT, CSYDOY, DAPCALC

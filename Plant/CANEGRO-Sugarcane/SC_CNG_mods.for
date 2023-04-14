@@ -1264,19 +1264,19 @@ c          ENDDO
 
 
 c     Print out soil properties:
-      SUBROUTINE PrintSoil(SOILPROP)
-          USE ModuleDefs 
-          USE ModuleData
-
-          EXTERNAL GETLUN
-
-          Type(SoilType) SOILPROP
-          TYPE (SwitchType) ISWITCH
+c      SUBROUTINE PrintSoil(SOILPROP)
+c          USE ModuleDefs 
+c          USE ModuleData
+c
+c          EXTERNAL GETLUN
+c
+c          Type(SoilType) SOILPROP
+c          TYPE (SwitchType) ISWITCH
 !          INTEGER SCLUN
-
-          CALL GET(ISWITCH)
-          IF (INDEX('YDA',ISWITCH%IDETL)< 1) RETURN
-
+c
+c          CALL GET(ISWITCH)
+c          IF (INDEX('YDA',ISWITCH%IDETL)< 1) RETURN
+c
 !          CALL GETLUN('WORK.OUT',SCLUN)
 c         Print soil layer properties in CANEGRO-compatible form:
 c         DLAYR:
@@ -1291,8 +1291,8 @@ c         BD
 !          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'BD', SOILPROP%BD
 c         SWCN
 !          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'SWCN', SOILPROP%SWCN
-
-      END
+c
+c      END
 
 
 

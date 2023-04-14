@@ -176,7 +176,7 @@
       CHARACTER (LEN=64)  spdirfle      ! Species directory+file
       CHARACTER (LEN=79)  outhed        ! Output file heading
 
-      LOGICAL             fopen         ! File open indicator
+      !LOGICAL             fopen         ! File open indicator
 
       INTRINSIC  AMAX1,AMIN1,EXP,FLOAT,INT,MAX,MIN,MOD
 

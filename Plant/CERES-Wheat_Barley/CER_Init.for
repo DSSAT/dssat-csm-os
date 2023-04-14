@@ -4,16 +4,16 @@
 !***********************************************************************
 
       SUBROUTINE CER_Init (LAI, CANHT,
-     &     CN, DOY, HARVFRAC, ISWNIT,
+     &     CN, DOY, HARVFRAC,
      &     FILEIOIN, FROP, IDETL,
-     &     ISWWAT, KCAN, KEP, NFP, ON,
+     &     KCAN, KEP, NFP, ON,
      &     RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
      &     RUN, RUNI, RWUMX, RWUPM, 
      &     UH2O, YEAR, SLPF, SN,
      &     STGDOY, TN, TRWUP, DYNAMIC)
 
 ! 2023-01-25 CHP removed unused variables from argument list
-!     SENCALG, UNH4ALG, UNO3ALG, SENNALG
+!     ISWWAT, ISWNIT, SENCALG, UNH4ALG, UNO3ALG, SENNALG
 
         USE ModuleDefs
         USE CER_First_Trans_m
@@ -35,7 +35,7 @@
         REAL RWUMX, RWUPM
         REAL TRWUP, UH2O(NL) !, UNH4ALG(NL), UNO3ALG(NL)
         
-        CHARACTER*1   IDETL, ISWNIT, ISWWAT, RNMODE      
+        CHARACTER*1   IDETL, RNMODE !ISWNIT, ISWWAT
         CHARACTER*250 FILEIOIN  
                
         FROPADJ = FROP

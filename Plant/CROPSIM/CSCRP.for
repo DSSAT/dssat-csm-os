@@ -190,8 +190,8 @@
 !***********************************************************************
           
         CALL CRP_SeasInit (ALBEDOS, GSTAGE, LAI, CANHT, CLOUDS,
-     &     CN, DEWDUR, DOY, HARVFRAC, IDETG, ISWDIS, ISWNIT,
-     &     ISWWAT, KCAN, KEP, LAIL, LAILA, NFP, ON, PARIP,
+     &     CN, DEWDUR, DOY, HARVFRAC, ISWDIS, ISWNIT,
+     &     KCAN, KEP, LAIL, LAILA, NFP, ON, PARIP,
      &     PARIPA, RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
      &     RUN, RUNI, RWUMX, RWUPM, SENCALG,
      &     UH2O, UNH4, UNO3, YEAR, SENLALG, SENNALG, SLPF, SN,
@@ -201,7 +201,7 @@
       ELSEIF (DYNAMIC .EQ. RATE) THEN                                              
 !***********************************************************************
 
-        call CRP_Growth (BD, GSTAGE, CLOUDS, CO2, DAYLT,
+        call CRP_Growth (BD, CLOUDS, CO2, DAYLT,
      &    DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
      &    KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT, PARIP,
      &    PARIPA, RLV, RNMODE, SAT , SENCALG, SENLALG, SENNALG,
@@ -227,11 +227,11 @@
      &        DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
 !***********************************************************************
   
-        CALL CRP_Output (GSTAGE, LAI, CANHT, CN, CO2, DAYLT, DOY, 
-     &     DYNAMIC, EO, EOP, IDETG, IDETL, IDETO, IDETS, IRRAMT, ISWNIT,
-     &     ISWWAT, KCAN, MESOM, NFP, NLAYR, ON, RAIN, REP, RLV,
+        CALL CRP_Output (GSTAGE, LAI, CANHT, CN, DAYLT, DOY, 
+     &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS, ISWNIT,
+     &     ISWWAT, KCAN, MESOM, NFP, NLAYR, ON, REP, RLV,
      &     RN, RNMODE, RUN, RUNI, SN, SRAD, STGYEARDOY, TN,
-     &     TNIMBSOM, TOMINSOM1, UNH4 , UNO3, WINDSP, YEAR)
+     &     TNIMBSOM, TOMINSOM1, UNH4 , UNO3, YEAR)
 
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN                                         
@@ -300,7 +300,7 @@
       REAL          DLAYRTMP(20)  ! Depth of soil layers with root cm
       REAL          EOP           ! Potential evaporation,plants   mm/d
       INTEGER       FNUMWRK       ! File number,work file          #
-      LOGICAL       FOPEN         ! File open indicator
+      !LOGICAL       FOPEN         ! File open indicator
       INTEGER       L             ! Loop counter                   #
       REAL          LL(NL)        ! Lower limit,soil h2o           #
       INTEGER       NLAYR         ! Actual number of soil layers   #
@@ -517,12 +517,12 @@
       INTEGER       lnumsg        ! Leaf cohort number             #
       REAL          plpop         ! Plant population               #/m2
       INTEGER       spp           ! Species                        #
-      INTEGER       fnumwrk       ! Unit number for work file      #
+      !INTEGER       fnumwrk       ! Unit number for work file      #
       INTEGER       tvi1          ! Temporary variable,integer     #
       INTEGER       tvilc         ! Temporary value,lf cohort      #
       REAL          yvalxy        ! Y value from function          #
 
-      LOGICAL       fopen         ! File status indicator          code
+      !LOGICAL       fopen         ! File status indicator          code
 
       INTRINSIC     AINT,MOD,INT
 

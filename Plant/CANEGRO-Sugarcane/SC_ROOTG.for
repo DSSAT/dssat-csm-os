@@ -154,7 +154,7 @@ c     Temporary stress array:
       LOGICAL CF_ERR, SPC_ERR
 
 !     Unit number for output
-      INTEGER OU   !CHP
+!      INTEGER OU   !CHP
       !INTEGER SCLUN
 
       DATA RatCarryOver%RTDEP /0./

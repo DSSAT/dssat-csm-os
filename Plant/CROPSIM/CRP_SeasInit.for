@@ -4,12 +4,15 @@
 !***********************************************************************
 
       SUBROUTINE CRP_SeasInit (ALBEDOS, GSTAGE, LAI, CANHT, CLOUDS,
-     &     CN, DEWDUR, DOY, HARVFRAC, IDETG, ISWDIS, ISWNIT,
-     &     ISWWAT, KCAN, KEP, LAIL, LAILA, NFP, ON, PARIP,
+     &     CN, DEWDUR, DOY, HARVFRAC, ISWDIS, ISWNIT,
+     &     KCAN, KEP, LAIL, LAILA, NFP, ON, PARIP,
      &     PARIPA, RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
      &     RUN, RUNI, RWUMX, RWUPM, SENCALG,
      &     UH2O, UNH4, UNO3, YEAR, SENLALG, SENNALG, SLPF, SN,
      &     STGYEARDOY, TAIRHR, TN, TRWUP)
+
+! 2023-04-13 TF removed unused variables in argument list
+!     IDETG, ISWWAT
 
       USE ModuleDefs
       USE CRP_First_Trans_m
@@ -32,7 +35,7 @@
       REAL SENCALG(0:NL), SENLALG(0:NL), SENNALG(0:NL), SLPF, TAIRHR(24)  
       REAL TRWUP, UH2O(NL), UNH4(NL), UNO3(NL)
       
-      CHARACTER(LEN=1) IDETG, ISWDIS, ISWNIT, ISWWAT, RNMODE
+      CHARACTER(LEN=1) ISWDIS, ISWNIT, RNMODE !IDETG, ISWWAT
 !-----------------------------------------------------------------------
 !       Initialize both state and rate variables                       
 !-----------------------------------------------------------------------

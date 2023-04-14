@@ -56,7 +56,7 @@
       INTEGER livecount, Day, Phase, Stalk    
       INTEGER CropTypeCode
       INTEGER PhenoStage, NewStalk
-      INTEGER Temp , WLUN
+!      INTEGER Temp, WLUN
       INTEGER, PARAMETER :: NumOfTemp = 5, NumOfLeaves = 40 
       INTEGER, PARAMETER :: NumOfStages = 5, NumOfPhases = 4
       INTEGER, DIMENSION(NumOfStages) :: DayOfStage, 
@@ -75,7 +75,7 @@
       REAL M, MinGr
       REAL Ph1P, Ph1R, Ph2, Ph3, Ph4
       REAL DTPI, PI1, PI2
-      REAL So, Go, Gmax
+!      REAL So, Go, Gmax
       REAL DepthRateOfEmer, DeltaDepthOfEmer, DepthToEmer
       REAL TGROAV, DeltaTTD, SumTTD, DeltaTTG 
       REAL RTNFAC, StkHrNO, SumTTG, TELOM 
@@ -88,8 +88,8 @@
       REAL :: DPLARF, DLFN, NewTiller, TillerExcess
       
       REAL, DIMENSION(NL) :: LL, DUL, SAT, DLAYR  ! , SW, ST
-      REAL, DIMENSION(0:NumOfPhases) :: FNSTR, FPSTR, FSW, FT, FUDAY, 
-     &                                WSENP, NSENP
+      REAL, DIMENSION(0:NumOfPhases) :: FNSTR, FPSTR, FSW, FT, FUDAY
+!     &                                WSENP, NSENP
       REAL, DIMENSION(1:NumOfStalks) :: DeltaTillerNum
                                 
       REAL, DIMENSION(0:NumOfDays,NumOfStalks) :: DeltaLeafNum, LeafNum, 

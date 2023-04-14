@@ -223,7 +223,7 @@ c     Germination:
 !      REAL TT_GERM
 c     Emergence
       REAL TT_EMERG
-      LOGICAL EMERGED, FILE_EXISTS
+      LOGICAL EMERGED !, FILE_EXISTS
 
 c     General local vars:
       INTEGER I
@@ -240,7 +240,7 @@ c     Error variable for species coefficient read
 !      REAL HI
 
 c     temp output file (remove)
-      CHARACTER TFILENAME*25
+!      CHARACTER TFILENAME*25
       
 c     Row-spacing warning text:
       CHARACTER*78 WARNINGS(2)      
