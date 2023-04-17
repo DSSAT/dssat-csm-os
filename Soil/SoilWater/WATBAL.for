@@ -242,7 +242,7 @@ C=======================================================================
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS, WTDEP)                           !Input
+     &    EXCS, WTDEP)                                    !Input
       ENDIF
 
       DRAIN  = 0.0
@@ -540,7 +540,7 @@ C-----------------------------------------------------------------------
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS, WTDEP)                           !Input
+     &    EXCS, WTDEP)                                    !Input
 
 !     Water balance daily output 
       CALL Wbal(CONTROL, ISWITCH, 
@@ -567,7 +567,7 @@ C-----------------------------------------------------------------------
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS, WTDEP)                           !Input
+     &    EXCS, WTDEP)                                    !Input
 
 !     Water balance seasonal output 
       CALL Wbal(CONTROL, ISWITCH, 

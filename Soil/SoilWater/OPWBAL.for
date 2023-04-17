@@ -15,7 +15,7 @@ C=======================================================================
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS, WTDEP)                           !Input
+     &    EXCS, WTDEP)                                    !Input
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -47,7 +47,7 @@ C=======================================================================
 
 !     Water table
       INTEGER NAVWB
-      REAL LatInflow, LatOutflow, ActWTD, MgmtWTD, WTDEP, WaterTable
+      REAL LatInflow, LatOutflow, ActWTD, WTDEP, WaterTable
       REAL CumLatInflow, CumLatOutflow
       REAL AVWTD, AVMWTD
 
@@ -164,7 +164,7 @@ C-----------------------------------------------------------------------
           WRITE (NOUTDW,1120, ADVANCE='NO')
  1120     FORMAT('@YEAR DOY   DAS',
      &    '    SWTD    SWXD    ROFC    DRNC    PREC    IR#C',
-     &    '    IRRC   LATFC   MDTWT    DTWT',
+     &    '    IRRC   LATFC    DTWT',
      &    '    MWTD    TDFD    TDFC    ROFD    ROSD')
 
  !       ELSE      !Old print format
@@ -214,7 +214,8 @@ C-----------------------------------------------------------------------
 !         New print format includes mulch, tiledrain and runoff info
           WRITE (NOUTDW,1300)YEAR,DOY,DAS, NINT(TSW), 
      &    NINT(PESW*10.),0,0,0,0,
-     &      0, 0, NINT(MgmtWTD), NINT(WaterTable), 
+!    &      0, 0, NINT(MgmtWTD), NINT(WaterTable), 
+     &      0, 0, NINT(WaterTable), 
      &      MULCHWAT, 0.0, 0.0, 0.0, 0.0,
 !    &      (SW(L),L=1,N_LYR)
 !     TEMP CHP
@@ -286,7 +287,7 @@ C-----------------------------------------------------------------------
         IF (ActWTD > 1.E-6) THEN
           NAVWB  = NAVWB  + 1
           AVWTD  = AVWTD  + WaterTable
-          AVMWTD = AVMWTD + MgmtWTD
+!         AVMWTD = AVMWTD + MgmtWTD
         ENDIF
 
         IF (IRRAMT .GT. 1.E-4) THEN
@@ -318,7 +319,7 @@ C-----------------------------------------------------------------------
             AVMWTD= AVMWTD / NAVWB
           ELSE
             AVWTD = WaterTable
-            AVMWTD= MgmtWTD
+!           AVMWTD= MgmtWTD
           ENDIF
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
@@ -329,7 +330,8 @@ C-----------------------------------------------------------------------
      &        NINT(PESW*10),NINT(TRUNOF),NINT(TDRAIN),NINT(CRAIN),
      &        NAP, NINT(TOTIR),
      &        NINT(CumLatInflow+CumLatOutflow), 
-     &        NINT(MgmtWTD), NINT(AVWTD),
+!    &        NINT(MgmtWTD), NINT(AVWTD),
+     &        NINT(AVWTD),
      &        MULCHWAT, TDFD*10., TDFC*10., RUNOFF, EXCS,
      &        (SW(L),L=1,NLAYR)
 
