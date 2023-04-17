@@ -163,8 +163,6 @@ C=======================================================================
       CALL IPWBAL (CONTROL, LL, NLAYR,                    !Input
      &    SW, MgmtWTD)                                    !Output
 
-      WTDEP = 9999. 
-
 !     Read tile drainage variables from FILEIO
       CALL TILEDRAIN(CONTROL, 
      &    DLAYR, DUL, ETDR, NLAYR, SAT, SW, SWDELTS,      !Input
@@ -207,6 +205,14 @@ C=======================================================================
       DO L = 1, NLAYR
         SW(L) = SW(L) + SWDELTW(L)
       ENDDO
+
+      WTDEP = 9999. 
+        IF (ActWTD .GT. DS(NLAYR)) THEN
+!         Calculate perched water table depth
+          CALL WTDEPT(
+     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
+     &      WTDEP)                                        !Output
+        ENDIF                   
 
 !     Initialize summary variables
       CALL WBSUM(SEASINIT,
