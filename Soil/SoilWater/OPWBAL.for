@@ -14,8 +14,8 @@ C=======================================================================
       SUBROUTINE OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,   !Input
-     &    MgmtWTD, EXCS)
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
+     &    MgmtWTD, EXCS, WTDEP)                           !Input
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -47,7 +47,7 @@ C=======================================================================
 
 !     Water table
       INTEGER NAVWB
-      REAL LatInflow, LatOutflow, ActWTD, MgmtWTD
+      REAL LatInflow, LatOutflow, ActWTD, MgmtWTD, WTDEP, WaterTable
       REAL CumLatInflow, CumLatOutflow
       REAL AVWTD, AVMWTD
 
@@ -85,6 +85,12 @@ C=======================================================================
       MULCHWAT  = MULCH % MULCHWAT
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
+
+      IF (ActWTD .LT. WTDEP) THEN
+        WaterTable = ActWTD
+      ELSE
+        WaterTable = WTDEP
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -208,7 +214,7 @@ C-----------------------------------------------------------------------
 !         New print format includes mulch, tiledrain and runoff info
           WRITE (NOUTDW,1300)YEAR,DOY,DAS, NINT(TSW), 
      &    NINT(PESW*10.),0,0,0,0,
-     &      0, 0, NINT(MgmtWTD), NINT(ActWTD), 
+     &      0, 0, NINT(MgmtWTD), NINT(WaterTable), 
      &      MULCHWAT, 0.0, 0.0, 0.0, 0.0,
 !    &      (SW(L),L=1,N_LYR)
 !     TEMP CHP
@@ -279,7 +285,7 @@ C-----------------------------------------------------------------------
       IF (DOPRINT) THEN
         IF (ActWTD > 1.E-6) THEN
           NAVWB  = NAVWB  + 1
-          AVWTD  = AVWTD  + ActWTD
+          AVWTD  = AVWTD  + WaterTable
           AVMWTD = AVMWTD + MgmtWTD
         ENDIF
 
@@ -311,7 +317,7 @@ C-----------------------------------------------------------------------
             AVWTD = AVWTD / NAVWB
             AVMWTD= AVMWTD / NAVWB
           ELSE
-            AVWTD = ActWTD
+            AVWTD = WaterTable
             AVMWTD= MgmtWTD
           ENDIF
 
@@ -451,6 +457,8 @@ C-----------------------------------------------------------------------
 !             printout; corresponds to LABEL array which identifies 
 !             variables being sent. (varies)
 ! ActWTD    Depth to water table (cm)
+! WTDEP     Depth to calculated perched water table (cm)
+! WaterTable Depth to lesser of ActWTD or WTDEP (cm)
 ! YEAR      Year of current date of simulation 
 ! YRDOY     Current day of simulation (YYYYDDD)
 !-----------------------------------------------------------------------

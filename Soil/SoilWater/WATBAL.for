@@ -62,7 +62,7 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
      &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
-     &  SOILMIXING, SUMSW, WaterTable
+     &  SOILMIXING, SUMSW, WTDEPT, WaterTable
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -100,7 +100,7 @@ C=======================================================================
       REAL CN, CRAIN, DRAIN, EXCS, NewSW
       REAL PINF, RUNOFF
       REAL SWCON, TDRAIN, TRUNOF
-      REAL TSW, TSWINI, WATAVL
+      REAL TSW, TSWINI, WATAVL, WTDEP
 
       REAL, DIMENSION(NL) :: DLAYR, DLAYR_YEST, DS, DUL, LL  
       REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL
@@ -162,6 +162,8 @@ C=======================================================================
 !     Call IPWBAL to read in values from input file
       CALL IPWBAL (CONTROL, LL, NLAYR,                    !Input
      &    SW, MgmtWTD)                                    !Output
+
+      WTDEP = 9999. 
 
 !     Read tile drainage variables from FILEIO
       CALL TILEDRAIN(CONTROL, 
@@ -240,7 +242,7 @@ C=======================================================================
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS)
+     &    MgmtWTD, EXCS, WTDEP)                           !Input
       ENDIF
 
       DRAIN  = 0.0
@@ -509,12 +511,12 @@ C       extraction (based on yesterday's values) for each soil layer.
      &    NLAYR, DRAIN, RAIN, RUNOFF, DLAYR, SW,          !Input
      &    CRAIN, TDRAIN, TRUNOF, TSW, TSWINI)             !Output
 
-!        IF (FLOOD .LE. 0.0) THEN
-!         Calculate soil water table depth
-!          CALL WTDEPT(
-!     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
-!     &      WTDEP)                                        !Output
-!        ENDIF                   
+        IF (ActWTD .GT. DS(NLAYR)) THEN
+!         Calculate perched water table depth
+          CALL WTDEPT(
+     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
+     &      WTDEP)                                        !Output
+        ENDIF                   
       ENDIF                   
 
 !     Keep yesterday's value of DLAYR for updating tomorrow's water
@@ -538,7 +540,7 @@ C-----------------------------------------------------------------------
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS)
+     &    MgmtWTD, EXCS, WTDEP)                           !Input
 
 !     Water balance daily output 
       CALL Wbal(CONTROL, ISWITCH, 
@@ -565,7 +567,7 @@ C-----------------------------------------------------------------------
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS)
+     &    MgmtWTD, EXCS, WTDEP)                           !Input
 
 !     Water balance seasonal output 
       CALL Wbal(CONTROL, ISWITCH, 
@@ -673,6 +675,7 @@ C=====================================================================
 ! WINF        Water available for infiltration - rainfall minus runoff plus 
 !               net irrigation (mm / d)
 ! MgmtWTD     Depth to water table (cm)
+! WTDEP       Depth to perched water table (cm)
 !-----------------------------------------------------------------------
 !     END SUBROUTINE WATBAL
 C=====================================================================
