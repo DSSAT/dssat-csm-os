@@ -557,6 +557,7 @@ IRRAC  Irrig apply mm  Cumulative applied irrigation (includes losses) (mm)     
 KCAA   Kc              FAO-56 single crop coefficient (Kc=ETAA/REFA)            .
 KBSA   Kcb*Ks          FAO-56 basal crop coef * stress coef (Kcb*Ks=EPAA/REFA)  .
 KEAA   Ke              FAO-56 evaporation coefficient (Ke=(ESAA+EFAA+EMAA)/REFA).
+LATFC  Lateral flow mm Subsurface Lateral flow to maintain water table (mm)     .
 MCFD   Mulch coverage  Fraction of soil covered by mulch                        .
 MDEPD  Mulch thick cm  Thickness of mulch layer (cm)                            .
 MWAD   Mulch mass k/h  Mass of mulch layer (kg/ha)                              .
@@ -569,7 +570,6 @@ ROSD   Sat surf runoff Daily surface runoff due to sl saturation excess (mm/d)  
 SEDM   Sediment LOSS   Sediment loss                                            .
 SNOWD  Snow accum (mm) Snow accumulation (mm water)                             .
 SRAA   SRAD MJ/m2.day  Avg solar radiation (MJ/(m2.day))                        .
-SW10   SWC layer 10    Soil water, soil layer 10(cm3/cm3)                       .
 SW1D   SWC layer 1     Soil water, soil layer 1 (cm3/cm3)                       .
 SW2D   SWC layer 2     Soil water, soil layer 2 (cm3/cm3)                       .
 SW3D   SWC layer 3     Soil water, soil layer 3 (cm3/cm3)                       .
@@ -579,6 +579,17 @@ SW6D   SWC layer 6     Soil water, soil layer 6 (cm3/cm3)                       
 SW7D   SWC layer 7     Soil water, soil layer 7 (cm3/cm3)                       .
 SW8D   SWC layer 8     Soil water, soil layer 8 (cm3/cm3)                       .
 SW9D   SWC layer 9     Soil water, soil layer 9 (cm3/cm3)                       .
+SW10D  SWC layer10     Soil water, soil layer 10 (cm3/cm3)                      .
+SW11D  SWC layer11     Soil water, soil layer 11 (cm3/cm3)                      .
+SW12D  SWC layer12     Soil water, soil layer 12 (cm3/cm3)                      .
+SW13D  SWC layer13     Soil water, soil layer 13 (cm3/cm3)                      .
+SW14D  SWC layer14     Soil water, soil layer 14 (cm3/cm3)                      .
+SW15D  SWC layer15     Soil water, soil layer 15 (cm3/cm3)                      .
+SW16D  SWC layer16     Soil water, soil layer 16 (cm3/cm3)                      .
+SW17D  SWC layer17     Soil water, soil layer 17 (cm3/cm3)                      .
+SW18D  SWC layer18     Soil water, soil layer 18 (cm3/cm3)                      .
+SW19D  SWC layer19     Soil water, soil layer 19 (cm3/cm3)                      .
+SW20D  SWC layer20     Soil water, soil layer 20 (cm3/cm3)                      .
 SWTD   Total water     Total soil water in profile (mm)                         .
 SWXD   Extr water mm   Extractable water (mm)                                   .
 TCADD  Canopy-air temp Canopy-air temperature difference (oC)                   .
