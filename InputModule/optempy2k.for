@@ -616,6 +616,7 @@ C-----------------------------------------------------------------------
      &      EXTFE(I), EXTMN(I), TOTBAS(I), PTERMA(I), PTERMB(I),
      &      EXK(I), EXMG(I), EXNA(I), EXTS(I), SLEC(I), EXCA(I)
   991     FORMAT (1X,F5.0,F6.2,9(1X,F5.1),F6.2,5F6.1)
+
 !         04/21/2008 CHP added SASC - stable organic C (%)
           IF (SASC(I) > 0) THEN
             WRITE (LUNIO,'(F6.3)',IOSTAT=ERRNUM,ADVANCE='NO') SASC(I)
@@ -768,8 +769,8 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !       Pineapple
         CASE ('PIALO')
             WRITE (LUNIO,1970,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &            TC,P1,P2,P3,P4,P5,P6,P7,P8,G1,G2,G3,PHINT
- 1970 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,7F6.0,F6.1,3F6.0,2F6.1)  
+     &            P1,P2,P3,P4,P5,P6,G2,G3,PHINT
+ 1970 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,4F6.0,F6.1,F6.0,2F6.1) 
 !B0067 SC-ANGUE         IB0001  60.0   500   500  2195   400  60.0   200  14.0  95.0
 
 !       Aroids taro & tanier

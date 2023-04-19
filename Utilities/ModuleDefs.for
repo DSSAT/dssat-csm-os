@@ -484,7 +484,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data transferred from Soil water routine
       Type WatType
-        REAL DRAIN, RUNOFF, SNOW
+        REAL DRAIN, RUNOFF, SNOW, WTDEP
       End Type WatType
 
 !     Data transferred from Soil Inorganic Nitrogen routine
@@ -746,6 +746,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('DRAIN'); Value = SAVE_data % WATER % DRAIN
         Case ('RUNOFF');Value = SAVE_data % WATER % RUNOFF
         Case ('SNOW');  Value = SAVE_data % WATER % SNOW
+        Case ('WTDEP');  Value = SAVE_data % WATER % WTDEP
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -890,6 +891,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('DRAIN'); SAVE_data % WATER % DRAIN  = Value
         Case ('RUNOFF');SAVE_data % WATER % RUNOFF = Value
         Case ('SNOW');  SAVE_data % WATER % SNOW   = Value
+        Case ('WTDEP');  SAVE_data % WATER % WTDEP   = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

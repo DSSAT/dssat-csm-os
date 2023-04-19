@@ -100,7 +100,7 @@ C=======================================================================
       REAL CN, CRAIN, DRAIN, EXCS, NewSW
       REAL PINF, RUNOFF
       REAL SWCON, TDRAIN, TRUNOF
-      REAL TSW, TSWINI, WATAVL
+      REAL TSW, TSWINI, WATAVL, WTDEP
 
       REAL, DIMENSION(NL) :: DLAYR, DLAYR_YEST, DS, DUL, LL  
       REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL
@@ -127,7 +127,7 @@ C=======================================================================
 !     Water table variables:
       REAL ActWTD, MgmtWTD
       REAL LatInflow, LatOutflow
-      REAL, DIMENSION(NL) :: CAPRI
+      REAL, DIMENSION(NL) :: SWDELTW, SWDELTW_mm
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -196,9 +196,23 @@ C=======================================================================
 
 !     Initialize water table
       Call WaterTable(SEASINIT,  
-     &  SOILPROP,  SWDELTU,                               !Input
-     &  SW,                                               !I/O
-     &  ActWTD, CAPRI, LatInflow, LatOutflow, MgmtWTD)    !Output
+     &  SOILPROP, SW,                                     !Input
+     &  ActWTD, LatInflow, LatOutflow,                    !Output
+     &  MgmtWTD, SWDELTW)                                 !Output
+
+!     Use inital water table depth and capillary rise to set initial
+!       soil water content
+      DO L = 1, NLAYR
+        SW(L) = SW(L) + SWDELTW(L)
+      ENDDO
+
+      WTDEP = 9999. 
+        IF (ActWTD .GT. DS(NLAYR)) THEN
+!         Calculate perched water table depth
+          CALL WTDEPT(
+     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
+     &      WTDEP)                                        !Output
+        ENDIF                   
 
 !     Initialize summary variables
       CALL WBSUM(SEASINIT,
@@ -234,7 +248,7 @@ C=======================================================================
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS)
+     &    EXCS, WTDEP)                                    !Input
       ENDIF
 
       DRAIN  = 0.0
@@ -244,10 +258,11 @@ C=======================================================================
 
 !     Set process rates to zero.
       SWDELTS = 0.0
-!      SWDELTX = 0.0
+!     SWDELTX = 0.0
       SWDELTU = 0.0
       SWDELTT = 0.0
       SWDELTL = 0.0
+      SWDELTW = 0.0
 
       DLAYR_YEST = DLAYR
 
@@ -275,9 +290,9 @@ C     Conflict with CERES-Wheat
 !     Maintain water table depth and calculate capillary rise
       IF (FLOOD < 1.E-6) THEN
         Call WaterTable(RATE,   
-     &    SOILPROP,  SWDELTU,                             !Input
-     &    SW,                                             !I/O
-     &    ActWTD, CAPRI, LatInflow, LatOutflow, MgmtWTD)  !Output
+     &    SOILPROP, SW,                                   !Input
+     &    ActWTD, LatInflow, LatOutflow,                  !Output
+     &    MgmtWTD, SWDELTW)                               !Output
       ENDIF
 
 !     Set process rates to zero.
@@ -471,11 +486,12 @@ C       extraction (based on yesterday's values) for each soil layer.
           SWDELTL_mm(L) = SWDELTL(L) * DLAYR_YEST(L) * 10. !tillage
           SWDELTU_mm(L) = SWDELTU(L) * DLAYR_YEST(L) * 10. !upflow
           SWDELTT_mm(L) = SWDELTT(L) * DLAYR_YEST(L) * 10. !tiledrain
+          SWDELTW_mm(L) = SWDELTW(L) * DLAYR_YEST(L) * 10. !water table
 
 !         Perform integration of soil water fluxes
           SW_mm_NEW(L) = SW_mm(L) + SWDELTS_mm(L) + SWDELTU_mm(L) 
      &        + SWDELTL_mm(L) + SWDELTX_mm(L) + SWDELTT_mm(L)
-     &        + Capri(L)    !capillary rise (mm/d)
+     &        + SWDELTW_mm(L) !(including capillary rise)
 
 !         Convert to volumetric content based on today's layer thickness
           SW(L) = SW_mm_NEW(L) / DLAYR(L) / 10.
@@ -501,12 +517,12 @@ C       extraction (based on yesterday's values) for each soil layer.
      &    NLAYR, DRAIN, RAIN, RUNOFF, DLAYR, SW,          !Input
      &    CRAIN, TDRAIN, TRUNOF, TSW, TSWINI)             !Output
 
-!        IF (FLOOD .LE. 0.0) THEN
-!         Calculate soil water table depth
-!          CALL WTDEPT(
-!     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
-!     &      WTDEP)                                        !Output
-!        ENDIF                   
+        IF (ActWTD .GT. DS(NLAYR)) THEN
+!         Calculate perched water table depth
+          CALL WTDEPT(
+     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
+     &      WTDEP)                                        !Output
+        ENDIF                   
       ENDIF                   
 
 !     Keep yesterday's value of DLAYR for updating tomorrow's water
@@ -530,7 +546,7 @@ C-----------------------------------------------------------------------
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS)
+     &    EXCS, WTDEP)                                    !Input
 
 !     Water balance daily output 
       CALL Wbal(CONTROL, ISWITCH, 
@@ -557,7 +573,7 @@ C-----------------------------------------------------------------------
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    MgmtWTD, EXCS)
+     &    EXCS, WTDEP)                                    !Input
 
 !     Water balance seasonal output 
       CALL Wbal(CONTROL, ISWITCH, 
@@ -665,6 +681,7 @@ C=====================================================================
 ! WINF        Water available for infiltration - rainfall minus runoff plus 
 !               net irrigation (mm / d)
 ! MgmtWTD     Depth to water table (cm)
+! WTDEP       Depth to perched water table (cm)
 !-----------------------------------------------------------------------
 !     END SUBROUTINE WATBAL
 C=====================================================================

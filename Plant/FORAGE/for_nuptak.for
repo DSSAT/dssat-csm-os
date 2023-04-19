@@ -250,7 +250,7 @@ C-----------------------------------------------------------------------
         ANDEM = TRNU
         ENDIF
 !        IF (TRNU .EQ. 0.0) GO TO 600
-        IF (TRNU .GT. 0.001) THEN
+        IF (TRNU .GT. 0.0) THEN
 C-----------------------------------------------------------------------
 C      10/31/05 SJR Replace TRNU with (PRSPNO3 + PRSPNH4) to prevent 
 C            excessive N-uptake when PGAVL limits TRNU to less than

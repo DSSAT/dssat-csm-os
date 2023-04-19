@@ -272,9 +272,9 @@ C-----------------------------------------------------------------------
             ELSE
               READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM =LNUM+1
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-!              MgmtWTD = ICWD
-              CALL PUT('MGMT','WATTAB',MgmtWTD)
-              CALL PUT('MGMT','ICWD',ICWD)
+              MgmtWTD = ICWD
+!              CALL PUT('MGMT','WATTAB',MgmtWTD)
+!              CALL PUT('MGMT','ICWD',ICWD)
             ENDIF
           ENDIF
 
@@ -764,20 +764,6 @@ C-----------------------------------------------------------------------
 !     Initialize cumulative seasonal irrigation
       TOTIR = 0.0
       NAP = 0
-
-!!     Check for water table depths compatible with irrigation code
-! 2022-12-15 chp Water table records are actually used, so no need for message
-!                 unless we disable the routines.
-!      IF (NTBL > 0) THEN
-!        SELECT CASE (IIRRI)
-!        CASE ('R','D'); CONTINUE
-!        CASE DEFAULT
-!          MSG(1)=
-!     &      "Water table depths require irrigation switch 'D' or 'R'."
-!          MSG(2)="Water table input records will be ignored."
-!          CALL WARNING(2,ERRKEY,MSG)
-!        END SELECT
-!      ENDIF
 
 !      IF (NBUND .GT. 0) THEN
         CALL FLOOD_IRRIG (SEASINIT, 

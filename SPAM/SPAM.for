@@ -21,8 +21,6 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !  08/25/2006 CHP Add SALUS soil evaporation routine, triggered by new
 !                 FILEX parameter MESEV
 !  12/09/2008 CHP Remove METMP
-! 10/20/2009 CHP Soil water stress factors computed in SPAM to accomodate
-!                   2D, variable time step model.
 !  10/16/2020 CHP Cumulative "soil" evaporation includes mulch and flood evap
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
@@ -42,7 +40,7 @@ C=======================================================================
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -52,7 +50,7 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS
       EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
-      EXTERNAL XTRACT, ROOTWU_HR, WATERSTRESS
+      EXTERNAL XTRACT
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT
@@ -71,7 +69,6 @@ C=======================================================================
       REAL EOS, EOP, WINF, MSALB, ET_ALB
       REAL XLAT, TAV, TAMP, SRFTEMP
       REAL EORATIO, KSEVAP, KTRANS
-      REAL RWUEP1, SWFAC, TURFAC
 
       REAL DLAYR(NL), DUL(NL), LL(NL), RLV(NL), RWU(NL),
      &    SAT(NL), ST(NL), SW(NL), SW_AVAIL(NL), !SWAD(NL),
@@ -172,12 +169,6 @@ C=======================================================================
       XHLAI = 0.0
       ET0 = 0.0
 
-!     Soil water stress variables
-      SWFAC  = 1.0
-      TURFAC = 1.0
-
-      CALL GET('PLANT','RWUEP1',RWUEP1)
-
 !     ---------------------------------------------------------
       IF (MEEVP .NE.'Z') THEN   !LPM 02dec14 use values from ETPHOT
         SELECT CASE (METMP)
@@ -193,17 +184,9 @@ C=======================================================================
       ENDIF
 !     ---------------------------------------------------------
       IF (MEEVP .NE. 'Z') THEN
-        SELECT CASE (CONTROL % MESIC)
-        CASE ('H')
-          CALL ROOTWU_HR(SEASINIT,  
-     &      DLAYR, EOP, ES_LYR, LL, NLAYR, RLV,           !Input
-     &      SAT, SW, WEATHER,                             !Input
-     &      EP, RWU, SWDELTX, SWFAC, TRWU, TRWUP, TURFAC) !Output
-        CASE DEFAULT
-          CALL ROOTWU(SEASINIT,
+        CALL ROOTWU(SEASINIT,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
-     &      RWU, TRWUP)                                   !Output
-        END SELECT
+     &      RWU, TRWUP)                           !Output
 
 !       Initialize soil evaporation variables
         SELECT CASE (MESEV)
@@ -295,22 +278,9 @@ C=======================================================================
 !         Calculate potential root water uptake rate for each soil layer
 !         and total potential water uptake rate.
           IF (XHLAI .GT. 0.0) THEN
-!           temp chp 8/10/2009
-!           use MESIC to trigger hourly ROOTWU_HR
-            SELECT CASE(CONTROL % MESIC)
-            CASE ('H')
-              CALL ROOTWU_HR(RATE,  
-     &         DLAYR, EOP, ES_LYR, LL, NLAYR, RLV,        !Input
-     &         SAT, SW, WEATHER,                          !Input
-     &         EP, RWU, SWDELTX, SWFAC, TRWU, TRWUP, TURFAC) !Output
-
-            CASE DEFAULT
-              CALL ROOTWU(RATE,
+            CALL ROOTWU(RATE,
      &          DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
      &          RWU, TRWUP)                                   !Output
-
-              CALL WaterStress(EOP, RWUEP1, TRWUP, SWFAC, TURFAC)
-            END SELECT
           ELSE
             RWU   = 0.0
             TRWUP = 0.0
@@ -444,10 +414,6 @@ C=======================================================================
      &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
           EVAP = ES  !CHP / BK 7/13/2017
-
-          IF (MEEVP == 'Z') THEN
-            CALL WaterStress(EOP, RWUEP1, TRWUP, SWFAC, TURFAC) 
-          ENDIF
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -465,14 +431,11 @@ C=======================================================================
             ENDDO
           END SELECT
 
-          IF (control % MESIC .NE. 'H') THEN
-!           For hourly RWU, already scaled by EP
-!           Calculate actual soil water uptake and transpiration rates
-            CALL XTRACT(
+!         Calculate actual soil water uptake and transpiration rates
+          CALL XTRACT(
      &      NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP, UH2O,  !Input
      &      EP, RWU,                                      !Input/Output
      &      SWDELTX, TRWU)                                !Output
-          ENDIF
         ENDIF   !ISWWAT = 'Y'
       ENDIF
 

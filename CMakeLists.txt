@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 1)
-SET(BUILD 3)
+SET(BUILD 6)
 
 # Get the current working branch
 execute_process(
@@ -192,7 +192,6 @@ set(
         "Management/Paddy_Mgmt.for"
         "Management/Tillage.for"
         "Management/TillEvent.for"
-        "Management/WaterTable.f90"
         "Plant/plant.for"
         "Plant/ALOHA-Pineapple/Aloha_GROSUB.for"
         "Plant/ALOHA-Pineapple/Aloha_mod.f90"
@@ -618,16 +617,15 @@ set(
         "Soil/SoilUtilities/SoilNoPoBal.for"
         "Soil/SoilUtilities/SoilPBalSum.for"
         "Soil/SoilUtilities/TextureClass.for"
-        "Soil/SoilWater/Capillary.for"
+        "Soil/SoilWater/CapFringe.f90"
         "Soil/SoilWater/INFIL.for"
         "Soil/SoilWater/OPWBAL.for"
         "Soil/SoilWater/RETC_VG.for"
         "Soil/SoilWater/RNOFF.for"
         "Soil/SoilWater/SATFLO.for"
-        "Soil/SoilWater/SUBSL2.for"
-        "Soil/SoilWater/SUWCMS2.for"
         "Soil/SoilWater/TILEDRAIN.for"
         "Soil/SoilWater/WATBAL.for"
+        "Soil/SoilWater/WaterTable.f90"
         "Soil/SoilWater/WBAL.for"
         "Soil/SoilWater/WBSUBS.for"
         "SPAM/ESR_SoilEvap.for"

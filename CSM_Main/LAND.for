@@ -201,7 +201,7 @@ C-----------------------------------------------------------------------
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
       END SELECT
 
 C-----------------------------------------------------------------------
@@ -285,7 +285,7 @@ C-----------------------------------------------------------------------
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
       END SELECT
 
 C-----------------------------------------------------------------------
@@ -373,7 +373,7 @@ C-----------------------------------------------------------------------
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
       ENDIF
 
 C-----------------------------------------------------------------------
@@ -432,7 +432,7 @@ C-----------------------------------------------------------------------
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
       END SELECT
 
 C-----------------------------------------------------------------------
@@ -498,7 +498,7 @@ C***********************************************************************
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
         END SELECT
 
 C-----------------------------------------------------------------------
@@ -560,7 +560,7 @@ C     Print seasonal summaries and close files.
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
       END SELECT
 
       CALL PLANT(CONTROL, ISWITCH, 

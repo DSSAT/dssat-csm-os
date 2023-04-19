@@ -158,7 +158,7 @@ C-----------------------------------------------------------------------
           ANDEM = TRNU
         ENDIF
 !        IF (TRNU .EQ. 0.0) GO TO 600
-        IF (TRNU .GT. 0.001) THEN
+        IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
           DO L=1,NLAYR
             IF (RLV(L) .GT. 0.0) THEN
