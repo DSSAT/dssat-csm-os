@@ -6,8 +6,7 @@
 !-----------------------------------------------------------------------
 !  REVISION       HISTORY
 !  01/23/2010 CHP Written
-!  02/10/2023 chp move SW integration to WATBAL, update for incorporation
-!                 into next release
+!  02/10/2023 chp move SW integration to WATBAL
 !=======================================================================
 
     Subroutine WaterTable(DYNAMIC,              &

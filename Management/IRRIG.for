@@ -395,7 +395,6 @@ C
              COND(NCOND)   = AMT(I)
 
              ! Regular irrigation upland fields
-             !
              NAPW = NAPW + 1
              JULAPL(NAPW) = IDLAPL(I)
              AMIR(NAPW)   = AMT(I)
