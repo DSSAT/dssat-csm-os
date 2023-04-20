@@ -28,7 +28,7 @@ C           SOILNI_init_2D
 C=======================================================================
 
       SUBROUTINE SoilNi_2D (CONTROL, ISWITCH, 
-     &    FERTDATA, IMM, MNR, SOILPROP,           !Input
+     &    FERTDATA, IMM, LITC, MNR, SOILPROP,     !Input
 !    &    SOILPROP_profile, SSOMC, ST, WEATHER,   !Input
      &    SSOMC, ST, WEATHER,                     !Input
      &    Cells,                                  !Input,Output
@@ -73,7 +73,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) ::  DLTSNH4_2D, DLTSNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) ::  DLTUREA_2D !, HFlux, VFlux
       REAL KG2PPM(NL), WCR(NL), NH4(NL), NO3(NL), UPPM(NL), 
-     &         SNO3(NL), DLTSNO3(NL), SW(NL)  !, LITC(0:NL)
+     &         SNO3(NL), DLTSNO3(NL), SW(NL), LITC(0:NL)
       REAL, DIMENSION(MaxRows,MaxCols) :: NH4_2D, NO3_2D,SNH4_2D,SNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UREA_2D, UPPM_2D
       REAL PH(NL), LL(NL), DUL(NL), SAT(NL), BD(NL), DLAYR(NL)
@@ -89,7 +89,7 @@ C=======================================================================
       INTEGER NBUND, NSWITCH
       INTEGER FERTDAY
       INTEGER DLAG_2D(MaxRows,MaxCols), LFD10  !REVISED-US
-      REAL TMAX, TMIN, SRAD !, XHLAI, RAIN, SNOW, FLOOD, 
+      REAL TMAX, TMIN, SRAD, FLOOD !, XHLAI, RAIN, SNOW, 
       REAL TKELVIN, TFACTOR, WFPL, WF2
       REAL PHFACT, T2, TLAG   !, DNFRATE
       REAL CUMFNRO
@@ -299,15 +299,15 @@ C=======================================================================
 !        CASE DEFAULT
 
 !*******************************************************************************
+         CALL Denit_Ceres (CONTROL, ISWNIT, 
+     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    SSOMC, SNO3, ST, SW,                        !Input
+     &    DLTSNO3,                                    !I/O
+     &    CNOX, TNOXD, N2O_data)                      !Output
 !     temp chp - remove denitrification
-    !     CALL Denit_Ceres (CONTROL, ISWNIT, 
-    !&    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
-    !&    SSOMC, SNO3, ST, SW,                        !Input
-    !&    DLTSNO3,                                    !I/O
-    !&    CNOX, TNOXD, N2O_data)                      !Output
-          DENITRIF = 0.0
-          CNOX = 0.0
-          TNOXD = 0.0
+!          DENITRIF = 0.0
+!          CNOX = 0.0
+!          TNOXD = 0.0
 !        END SELECT
 !*******************************************************************************
 

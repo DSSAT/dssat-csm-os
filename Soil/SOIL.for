@@ -183,7 +183,7 @@ C=====================================================================
       SELECT CASE (MEHYD)
       CASE('G','C')   !2D method - drip irrigation
         CALL SoilNi_2D (CONTROL, ISWITCH, 
-     &    FERTDATA, IMM, MNR, SOILPROP,           !Input
+     &    FERTDATA, IMM, LITC, MNR, SOILPROP,     !Input
 !    &    SOILPROP_profile, SSOMC, ST, WEATHER,   !Input
      &    SSOMC, ST, WEATHER,                     !Input
      &    Cells,                                  !Input,Output
