@@ -497,6 +497,10 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE PMDataType
         REAL PMFRACTION
       END TYPE
+      
+      TYPE MHarveType
+        INTEGER HARVF
+      END TYPE 
 
 !     Data which can be transferred between modules
       Type TransferType
@@ -512,8 +516,9 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (WatType)     WATER
         Type (WeatherType) WEATHER  !Full weather data structure
         Type (WeathType)   WEATH    !Supplemental weather data
-        TYPE (PDLABETATYPE) PDLABETA
-        TYPE (PMDataType) PM
+        TYPE (PDLABETATYPE)PDLABETA
+        TYPE (PMDataType)  PM
+        TYPE (MHarveType)  MHARVEST
       End Type TransferType
 
 !     The variable SAVE_data contains all of the components to be 
@@ -990,6 +995,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      CASE ('MHARVEST')
+        SELECT CASE(VarName)
+        CASE('HARVF'); Value = SAVE_data % MHARVEST % HARVF
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT       
+        
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -1029,6 +1040,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('WYEAR'); SAVE_data % WEATH % WYEAR = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
+        
+      CASE ('MHARVEST')
+        SELECT CASE(VarName)
+        CASE('HARVF'); SAVE_data % MHARVEST % HARVF = Value
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT            
 
       Case DEFAULT; ERR = .TRUE.
       END SELECT
