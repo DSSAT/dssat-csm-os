@@ -373,7 +373,8 @@ lfshthNSheath N kg/ha  Weight of nitrogen in leaf sheath, kg/ha                 
 LN%RD  LeafN% relative Leaf tissue relative (to critical) N conc. (%)           .
 LNAD   Leaf N kg/ha    Leaf N (kg/ha)                                           .
 N2EC   Cum N2 emitted  Cumulative N2 emissions from soil (kg[N]/ha)             .
-N2ED   N2 emitted/d    Daily N2 emissions from soil (g[N]/ha)                   .
+N2ED   N2 emitted kg   Daily N2 emissions from soil (kg[N]/ha)                  .
+N2GED  N2 emitted g    Daily N2 emissions from soil (g[N]/ha)                   .
 N2FLC  Cum N2 flux k/h Cumulative N2 flux, soil profile (kg[N]/ha)              .
 N2FLD  Day N2 flux g/h Daily N2 flux, soil profile (g[N]/ha/d)                  .
 N2F10  N2 flux lyr 10  Daily N2 flux, soil layer 10(g[N]/ha)                    .
@@ -405,27 +406,27 @@ NDN8D  Denit layer 8   Daily denitrification, soil layer 8 (g[N]/ha)            
 NDN9D  Denit layer 9   Daily denitrification, soil layer 9 (g[N]/ha)            .
 NFXC   N Fixed kg/ha   N fixed (kg/ha)                                          .
 NFXD   N Fixed kg/ha.d N fixation rate (kg/(ha.day))                            .
-NH10   NH4  layer 10   NH4, soil layer 10(ug [N]/g [soil])                      .
-NH1D   NH4  layer 1    NH4, soil layer 1 (ug [N]/g [soil])                      .
-NH2D   NH4  layer 2    NH4, soil layer 2 (ug [N]/g [soil])                      .
-NH3D   NH4  layer 3    NH4, soil layer 3 (ug [N]/g [soil])                      .
-NH4D   NH4  layer 4    NH4, soil layer 4 (ug [N]/g [soil])                      .
-NH5D   NH4  layer 5    NH4, soil layer 5 (ug [N]/g [soil])                      .
-NH6D   NH4  layer 6    NH4, soil layer 6 (ug [N]/g [soil])                      .
-NH7D   NH4  layer 7    NH4, soil layer 7 (ug [N]/g [soil])                      .
-NH8D   NH4  layer 8    NH4, soil layer 8 (ug [N]/g [soil])                      .
-NH9D   NH4  layer 9    NH4, soil layer 9 (ug [N]/g [soil])                      .
+NH10   NH4  layer 10   NH4, soil layer 10(g[N]/kg[soil])                        .
+NH1D   NH4  layer 1    NH4, soil layer 1 (g[N]/kg[soil])                        .
+NH2D   NH4  layer 2    NH4, soil layer 2 (g[N]/kg[soil])                        .
+NH3D   NH4  layer 3    NH4, soil layer 3 (g[N]/kg[soil])                        .
+NH4D   NH4  layer 4    NH4, soil layer 4 (g[N]/kg[soil])                        .
+NH5D   NH4  layer 5    NH4, soil layer 5 (g[N]/kg[soil])                        .
+NH6D   NH4  layer 6    NH4, soil layer 6 (g[N]/kg[soil])                        .
+NH7D   NH4  layer 7    NH4, soil layer 7 (g[N]/kg[soil])                        .
+NH8D   NH4  layer 8    NH4, soil layer 8 (g[N]/kg[soil])                        .
+NH9D   NH4  layer 9    NH4, soil layer 9 (g[N]/kg[soil])                        .
 NHTD   Total NH4 kg/ha Total soil NH4 (kg [N]/ha)                               .
-NI10   NO3 layer 10    NO3, soil layer 10(ug [N]/g [soil])                      .
-NI1D   NO3 layer 1     NO3, soil layer 1 (ug [N]/g [soil])                      .
-NI2D   NO3 layer 2     NO3, soil layer 2 (ug [N]/g [soil])                      .
-NI3D   NO3 layer 3     NO3, soil layer 3 (ug [N]/g [soil])                      .
-NI4D   NO3 layer 4     NO3, soil layer 4 (ug [N]/g [soil])                      .
-NI5D   NO3 layer 5     NO3, soil layer 5 (ug [N]/g [soil])                      .
-NI6D   NO3 layer 6     NO3, soil layer 6 (ug [N]/g [soil])                      .
-NI7D   NO3 layer 7     NO3, soil layer 7 (ug [N]/g [soil])                      .
-NI8D   NO3 layer 8     NO3, soil layer 8 (ug [N]/g [soil])                      .
-NI9D   NO3 layer 9     NO3, soil layer 9 (ug [N]/g [soil])                      .
+NI10   NO3 layer 10    NO3, soil layer 10(g[N]/kg[soil])                        .
+NI1D   NO3 layer 1     NO3, soil layer 1 (g[N]/kg[soil])                        .
+NI2D   NO3 layer 2     NO3, soil layer 2 (g[N]/kg[soil])                        .
+NI3D   NO3 layer 3     NO3, soil layer 3 (g[N]/kg[soil])                        .
+NI4D   NO3 layer 4     NO3, soil layer 4 (g[N]/kg[soil])                        .
+NI5D   NO3 layer 5     NO3, soil layer 5 (g[N]/kg[soil])                        .
+NI6D   NO3 layer 6     NO3, soil layer 6 (g[N]/kg[soil])                        .
+NI7D   NO3 layer 7     NO3, soil layer 7 (g[N]/kg[soil])                        .
+NI8D   NO3 layer 8     NO3, soil layer 8 (g[N]/kg[soil])                        .
+NI9D   NO3 layer 9     NO3, soil layer 9 (g[N]/kg[soil])                        .
 NIAD   Tot soil N kg/haTotal soil NO3+NH4 (kg [N]/ha)                           .
 NIMC   N Immobilized   Cumulative N immobilization (kg [N]/ha)                  .
 NITC   Nitrification   Cumulative nitrification (kg [N]/ha)                     .
@@ -447,7 +448,8 @@ NMNC   N Mineralize    Cumulative N mineralization (kg [N]/ha)                  
 NNMNC  Net N mineraliz Cumulative net N mineralization (miner - immob)          .
 NOAD   Organic N kg/ha Organic N in soil (kg [N]/ha)                            .
 NOEC   Cum NO emitted  Cumulative NO emissions from soil (kg[N]/ha)             .
-NOED   NO emitted/d    Daily NO emissions from soil (g[N]/ha)                   .
+NOED   NO emitted kg   Daily NO emissions from soil (kg[N]/ha)                  .
+NOGED  NO emitted g    Daily NO emissions from soil (g[N]/ha)                   .
 NOFLC  Cum NO flux k/h Cumulative NO flux, soil profile (kg[N]/ha)              .
 NOFLD  Day NO flux g/h Daily NO flux, soil profile (g[N]/ha/d)                  .
 NOF10  NO flux lyr 10  Daily NO flux, soil layer 10(g[N]/ha)                    .
@@ -460,16 +462,16 @@ NOF6D  NO flux layer 6 Daily NO flux, soil layer 6 (g[N]/ha)                    
 NOF7D  NO flux layer 7 Daily NO flux, soil layer 7 (g[N]/ha)                    .
 NOF8D  NO flux layer 8 Daily NO flux, soil layer 8 (g[N]/ha)                    .
 NOF9D  NO flux layer 9 Daily NO flux, soil layer 9 (g[N]/ha)                    .
-NT10   InorgN layer 10 Total inorganic N, soil layer 10(ug [N]/g [soil])        .
-NT1D   InorgN layer 1  Total inorganic N, soil layer 1 (ug [N]/g [soil])        .
-NT2D   InorgN layer 2  Total inorganic N, soil layer 2 (ug [N]/g [soil])        .
-NT3D   InorgN layer 3  Total inorganic N, soil layer 3 (ug [N]/g [soil])        .
-NT4D   InorgN layer 4  Total inorganic N, soil layer 4 (ug [N]/g [soil])        .
-NT5D   InorgN layer 5  Total inorganic N, soil layer 5 (ug [N]/g [soil])        .
-NT6D   InorgN layer 6  Total inorganic N, soil layer 6 (ug [N]/g [soil])        .
-NT7D   InorgN layer 7  Total inorganic N, soil layer 7 (ug [N]/g [soil])        .
-NT8D   InorgN layer 8  Total inorganic N, soil layer 8 (ug [N]/g [soil])        .
-NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (ug [N]/g [soil])        .
+NT10   InorgN layer 10 Total inorganic N, soil layer 10(g[N]/kg[soil])          .
+NT1D   InorgN layer 1  Total inorganic N, soil layer 1 (g[N]/kg[soil])          .
+NT2D   InorgN layer 2  Total inorganic N, soil layer 2 (g[N]/kg[soil])          .
+NT3D   InorgN layer 3  Total inorganic N, soil layer 3 (g[N]/kg[soil])          .
+NT4D   InorgN layer 4  Total inorganic N, soil layer 4 (g[N]/kg[soil])          .
+NT5D   InorgN layer 5  Total inorganic N, soil layer 5 (g[N]/kg[soil])          .
+NT6D   InorgN layer 6  Total inorganic N, soil layer 6 (g[N]/kg[soil])          .
+NT7D   InorgN layer 7  Total inorganic N, soil layer 7 (g[N]/kg[soil])          .
+NT8D   InorgN layer 8  Total inorganic N, soil layer 8 (g[N]/kg[soil])          .
+NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (g[N]/kg[soil])          .
 NUAC   N Uptake kg/ha  N uptake, cumulative (kg [N]/ha)                         .
 NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
@@ -970,7 +972,7 @@ HSAM   Seed Yield      Yield at harvest maturity (kg/ha 9% moisture)            
 CO20C  SurfCO2 (kg/ha) Cumul. CO2 from surface org. matter decomp (kg[C]/ha)    .
 CO2SC  SoilCO2 (kg/ha) Cumul. CO2 from soil org. matter decomposition (kg[C]/ha).
 CO2TC  TotSoilCO2(k/h) Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     . 
-CO2TD  SoilCO2(g/h/d)  Daily CO2 from surface + soil OM decomp. (g[C]/ha)       . 
+CO2TD  SoilCO2(kg/ha)  Daily CO2 from surface + soil OM decomp. (kg[C]/ha)      . 
 HRCH   C harvest res   C in harvest residue (kg [C]/ha)                         .
 HRNH   N harvest res   N in harvest residue (kg [N]/ha)                         .
 HRPH   P harvest res   P in harvest residue (kg [P]/ha)                         .
@@ -1365,7 +1367,8 @@ CH4COD CH4Consumption  Daily CH4 Consumption (kg[C]/ha)                         
 CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)                           .
 CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)                          .
 CH4EC  Cum CH4 emitted Cumulative methane emitted kg[C]/ha                      .
-CH4ED  CH4Emission     Daily CH4 Emission (kg[C]/ha)                            .
+CH4ED  CH4Emission kg  Daily CH4 Emission (kg[C]/ha)                            .
+CH4GED CH4Emission g   Daily CH4 Emission (g[C]/ha)                             .
 CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)                       .
 CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha)                            .
 CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)                           .
@@ -1374,14 +1377,14 @@ CH4SBD TCH4Substrate   Daily portion of new CO2 proportioned to CH4 (kg[C]/ha)  
 CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)                        .
 CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             .
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
-CO2ED  CO2emission     Daily CO2 emission (kg/ha)                               .
-CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
-CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
+CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
+CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
 MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .
 N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
 N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
-N2OED  N2O emitted/d   Daily N2O emissions from soil (g[N]/ha)                  .
+N2OED  N2O emitted kg  Daily N2O emissions from soil (kg[N]/ha)                 .
+N2OGED N2O emitted g   Daily N2O emissions from soil (g[N]/ha)                  .
 N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
 N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
 N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .
