@@ -28,7 +28,7 @@ SOMLITN.OUT     LN Daily soil organic matter nitrogen output file     OUTSOMN
 SOMLITP.OUT     LP Daily soil organic matter phosphorus output file   OUTSOMP
 Weather.OUT     WE Daily weather output file                          OUTWTH
 EAAMOD.OUT         Daily output from EAAMOD high water table model
-FreshWt.OUT        Daily fresh fruit weight
+FreshWt.OUT        Daily fresh fruit weight                           FWOUT
 Mulch.OUT          Daily surface mulch output file
 PrimaryStalk.OUT   Casupro sugarcane output                           PSTALK
 CSP_SENES.OUT      Casupro sugarcane output                           CSP_SENES
