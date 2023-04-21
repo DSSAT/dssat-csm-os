@@ -83,6 +83,7 @@ C=======================================================================
       REAL GDD, MOWGDD
       INTEGER HMFRQ, HMGDD, CUTDAY, HMVS
       INTEGER HMMOW, HRSPL !TF 2022-01-31 Smart version AutoMOW
+      INTEGER CUTNO !Count number of cuts for AutoMOW
       REAL TAVG, TGMIN
       REAL TB(5), TO1(5), TO2(5), TM(5)
       REAL VTO1, VTB1 !Vegetative coefficients
@@ -115,7 +116,7 @@ C=======================================================================
 
       TYPE(CONTROLTYPE) CONTROL
 
-      SAVE FILEMOW, TRNO,DATE,MOW,RSPLF,MVS,rsht
+      SAVE FILEMOW,TRNO,DATE,MOW,RSPLF,MVS,rsht,CUTNO
 
 
       PARAMETER  (ERRKEY = 'FRHARV')
@@ -319,6 +320,7 @@ C   FO -  05/07/2020 Add new Y4K subroutine call to convert YRDOY
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 C-----------------------------------------------------------------------
         MOWGDD = 0.0
+        CUTNO = 1
 
 !***********************************************************************
 !***********************************************************************
@@ -650,12 +652,13 @@ C-----------------------------------------------------------------------
                write(fhoutfmt,'(a)') '(i4,x,a8,a3,2(i5),i5,i4,'//
      &            '5(i6),f6.2,2(i6),3(f6.2),f6.1,x,f5.0,F6.1,F6.1)'
             WRITE(fhlun,fhoutfmt)
-     &           run,mowfile(1:8),crop,trtno,i,year,doy,
+     &           run,mowfile(1:8),crop,trtno,CUTNO,year,doy,
      &           Nint(topwt*10.),Nint(wtlf*10.),Nint(stmwt*10.),
      &           Nint(strwt*10.),Nint(rtwt*10.),xlai,
      &           Nint(fhtot*10.),Nint(fhtotn*10.),
      &           fhpctn,fhpcho,fhplig,fhpctlf,
      &           MOWC,RSPLC
+            CUTNO = CUTNO + 1
             close(fhlun)
 
             IF(CUTDAY .EQ. 0) THEN

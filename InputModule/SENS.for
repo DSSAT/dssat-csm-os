@@ -116,7 +116,8 @@ C=======================================================================
          HARMAN = 'AT REPORTED GROWTH STAGES'
        ELSEIF (IHARI .EQ. 'M') THEN
          HARMAN = 'AT HARVEST MATURITY      '
-       ELSEIF (IHARI .EQ. 'R') THEN
+       ELSEIF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
          HARMAN = 'ON REPORTED DATE(S)      '
        ELSEIF (IHARI .EQ. 'D') THEN
          HARMAN = 'ON REPORTED DAP          '

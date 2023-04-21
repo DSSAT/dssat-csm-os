@@ -140,7 +140,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C Harvest on specified day of year, HDATE
 C-----------------------------------------------------------------------
-      ELSE IF (IHARI .EQ. 'R') THEN
+      ELSE IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
         IF (YRDOY .GE. HDATE(1)) THEN
 C-GH    IF (YRDOY .GE. HDATE(1) .OR. MDATE .EQ. YRDOY) THEN
            YREND     = YRDOY
@@ -173,8 +174,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C Harvest within specified window if conditions are met
 C-----------------------------------------------------------------------
-      ELSE IF (IHARI .EQ. 'A' .OR. IHARI .EQ. 'W' .OR.
-     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
+      ELSE IF (IHARI .EQ. 'A') THEN
 
 !       Havest maturity not reached yet.
         IF (YRDOY .LT. MDATE .OR. MDATE .EQ. -99) THEN

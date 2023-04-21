@@ -87,7 +87,8 @@ C=======================================================================
          ELSE
             HDATT = -9
          ENDIF
-         IF (IHARI .EQ. 'R') THEN
+         IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
 	     IF (HDATE(1) .LE. 1000) THEN
               HDATE(1) = INCYD(YRPLT,365)
            ENDIF
@@ -106,7 +107,8 @@ C          YFHRV = 1900 + YFHRV
             HARMAN = 'AT REPORTED GROWTH STAGES'
           ELSE IF (IHARI .EQ. 'M') THEN
             HARMAN = 'AT HARVEST MATURITY      '
-          ELSE IF (IHARI .EQ. 'R') THEN
+          ELSE IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
             HARMAN = 'ON REPORTED DATE(S)      '
           ELSE IF (IHARI .EQ. 'D') THEN
             HARMAN = 'ON REPORTED DAP          '
