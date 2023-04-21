@@ -738,18 +738,18 @@ C-----------------------------------------------------------------------
       ENDIF
 
       call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
-     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
-     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
-     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
-     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
-     &                MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
-     &                RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
-     &                XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
-     &                PROLFF, PROSTF, pliglf, pligst)
+     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
+     &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &    MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &    RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &    XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &    PROLFF, PROSTF, pliglf, pligst)
      
 !***********************************************************************
 !***********************************************************************
@@ -806,9 +806,9 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
       call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
-     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
-     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
-     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
      &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
      &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
      &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
@@ -1240,18 +1240,18 @@ C-----------------------------------------------------------------------
         ENDIF
       ENDIF
       call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
-     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
-     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
-     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
-     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
-     &                MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
-     &                RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
-     &                XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
-     &                PROLFF, PROSTF, pliglf, pligst)
+     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
+     &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &    MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &    RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &    XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &    PROLFF, PROSTF, pliglf, pligst)
 
 !***********************************************************************
 !***********************************************************************
@@ -2049,18 +2049,18 @@ C-----------------------------------------------------------------------
       MOWC =0.0
       RSPLC =0.0
       call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
-     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
-     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
-     &                MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
-     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
-     &                MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
-     &                RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
-     &                XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
-     &                PROLFF, PROSTF, pliglf, pligst)
+     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
+     &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &    MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &    RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &    XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &    PROLFF, PROSTF, pliglf, pligst)
 
       Cumul_FHTOT  = Cumul_FHTOT  + FHWAH
       Cumul_FHTOTN = Cumul_FHTOTN + FHTOTN

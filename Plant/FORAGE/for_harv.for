@@ -38,6 +38,7 @@ C=======================================================================
 
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, IGNORE, Y2K_DOY, Y4K_DOY, yr_doy
+      EXTERNAL TABEX
 
       INTEGER MOWLUN,ISECT,ERR
       INTEGER,ALLOCATABLE,DIMENSION(:) :: TRNO,DATE
@@ -519,7 +520,7 @@ C-----------------------------------------------------------------------
               MOWGDD = 0.0
             ELSE
                 MOWCOUNT = MOWCOUNT + 1
-                !DP/TF 2022-01-31 GDD calculations as harvest frequency option
+      !DP/TF 2022-01-31 GDD calculations as harvest frequency option
                 IF(TAVG .GT. VTB1) THEN
                   GDD = TAVG - VTB1
                   !GDD = (((TMAX+TMIN)/2) - TB(1)) 
