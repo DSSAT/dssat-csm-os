@@ -679,9 +679,14 @@
 !   Combined albedo for bed and furrow
     SoilProp_Bed % SALB   = PMALB  
     BEDFRACTION = BEDWD / ROWSPC_CM
-    MSALB = PMALB * BEDFRACTION + SOILPROP % SALB * (1. - BEDFRACTION)
+    IF (PMALB > 0.) THEN
+      MSALB = PMALB * BEDFRACTION + SOILPROP % SALB * (1. - BEDFRACTION)
+    ELSE
+      MSALB = SOILPROP % SALB
+    ENDIF
     SoilProp_Bed % MSALB  = MSALB
     SoilProp_Bed % CMSALB = MSALB
+    SoilProp_Bed % SALB   = SOILPROP%SALB
     SoilProp_Furrow % SALB   = SOILPROP%SALB  
     SoilProp_Furrow % MSALB  = MSALB
     SoilProp_Furrow % CMSALB = MSALB

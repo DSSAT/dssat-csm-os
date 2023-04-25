@@ -2391,9 +2391,9 @@ C=======================================================================
     
       PMFRACTION = 0.0
       IF (PMCover) THEN
-        if (PMWD .GE. ROWSPC_CM) THEN
-          SOILPROP % SALB   = PMALB
-        ENDIF
+!        if (PMWD .GE. ROWSPC_CM) THEN
+!          SOILPROP % SALB   = PMALB
+!        ENDIF
         PMFRACTION = PMWD / ROWSPC_CM
         MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 -PMFRACTION)
         SOILPROP % MSALB  = MSALB
