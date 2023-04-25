@@ -512,19 +512,14 @@
         SWV_D= DBLE(SWV_avail)
       Endif
       Call ThetaCapOp(DYNAMIC,CONTROL,ISWITCH,MgmtWTD, SOILPROP)
-      ! Output ThetaCap
-      ! CALL YR_DOY(CONTROL % YRDOY, YR2, DY2)
-!        WRITE (LUNThetaCap,1300) !YR2, DY2, CONTROL % DAS, &
- !        ThetaCap(1), ThetaCap(3), ThetaCap(5), ThetaCap(7), &
-  !       ThetaCap(9), ThetaCap(11), ThetaCap(13), ThetaCap(15) ,    &
-  !       ThetaCap(17), ThetaCap(19), ThetaCap(21), ThetaCap(23)
+
 !     Compute daily runoff from furrows and water available for infiltration
 !       for each column in furrow.
       CALL Rnoff_furrow( 
      &  CN, ColFrac, FurCol1, FurRow1, HalfFurrow,        !Input
      &  HalfRow, LL, Rain, SAT, SWV_D,                    !Input
      &  RUNOFF, WINF_col)                                 !Output
-      ! The rain water from plastic cover run to furrow and infitration
+!       The rain water from plastic cover run to furrow and infitration
 
 !-----------------------------------------------------------------
 !     Drip irrigation schedule for today

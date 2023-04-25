@@ -144,3 +144,138 @@
 !-----------------------------------------------------------------------
 !     END SUBROUTINE CapFringe
 !=======================================================================
+
+!!=======================================================================
+!!  ThetaCapOp, Subroutine
+!!  Output daily info for ThetaCap 
+!!-----------------------------------------------------------------------
+!!  REVISION       HISTORY
+!!  
+!!=======================================================================
+!
+!    Subroutine ThetaCapOp(DYNAMIC,CONTROL,ISWITCH,MgmtWTD, SOILPROP)
+!!-----------------------------------------------------------------------
+!    USE ModuleDefs
+!    USE Cells_2D
+!    IMPLICIT NONE
+!    EXTERNAL GETLUN, HEADER, CAPFRINGE, YR_DOY, INCDAT
+!    SAVE
+!!-----------------------------------------------------------------------
+!    integer DYNAMIC, YR2, DY2, DAS, LUNThetaCap, LIMIT_2D, L
+!    INTEGER INCDAT, N1_LYR, N2_LYR
+!    REAL, INTENT(IN) :: MgmtWTD
+!    TYPE (ControlType), INTENT(IN) :: CONTROL
+!    Type(SoilType) , INTENT(INOUT):: SOILPROP
+!    TYPE (SwitchType)   ISWITCH
+!
+!    REAL, DIMENSION(NL):: ThetaCap, DUL, LL, SAT, LrTop, DS !NLAYR
+!!   REAL ThetaCa(25)
+!    CHARACTER*17, PARAMETER :: ThetaCapOut = 'ThetaCap.OUT'
+!    LOGICAL FEXIST, DOPRINT
+!    !    CALL GET('MGMT','WATTAB',MgmtWTD)
+!    LIMIT_2D = BedDimension % LIMIT_2D 
+!    N1_LYR = Min (11, SOILPROP % NLAYR)
+!    N2_LYR = Min (25, SOILPROP % NLAYR) 
+!!***********************************************************************
+!!     Seasonal initialization - run once per season
+!!***********************************************************************
+!    IF (DYNAMIC .EQ. SEASINIT) THEN
+!!-----------------------------------------------------------------------
+!      DOPRINT=.TRUE.
+!      IF (ISWITCH % IDETW .EQ. 'N') THEN
+!        DOPRINT=.FALSE.
+!      ENDIF
+!      IF (ISWITCH % ISWWAT .EQ. 'N') THEN
+!        DOPRINT=.FALSE.
+!      ENDIF
+!      IF (ISWITCH % IDETL /= 'D') THEN
+!        DOPRINT=.FALSE.
+!      ENDIF
+!      IF (.NOT. DOPRINT) RETURN
+!      DO L = 1, min(25, SOILPROP % NLAYR)
+!        DS(L) = SOILPROP % DS(L)
+!        LrTop(L) = DS(L) - SOILPROP % DLAYR(L)
+!        LL(L)   = SOILPROP % LL(L)
+!        DUL(L)  = SOILPROP % DUL(L)
+!        SAT(L)  = SOILPROP % SAT(L)
+!      EndDo
+!!       Open output file
+!        CALL GETLUN('ThetaCapOut', LUNThetaCap)
+!        INQUIRE (FILE = ThetaCapOut, EXIST = FEXIST)
+!        IF (FEXIST) THEN
+!          OPEN (UNIT = LUNThetaCap, FILE = ThetaCapOut, STATUS = 'OLD', &
+!          POSITION = 'APPEND')
+!        ELSE
+!          OPEN (UNIT = LUNThetaCap, FILE = ThetaCapOut, STATUS = 'NEW')
+!          WRITE(LUNThetaCap,'("*Daily ThetaCap for each Soil layer")')
+!        ENDIF
+!      CALL HEADER(SEASINIT, LUNThetaCap, CONTROL % RUN)
+!!      if (CONTROL % RUN .eq. 1) then
+!      !  WRITE (LUNThetaCap, '(I2)') &
+!      !      ('! LIMIT_2D is ', LIMIT_2D) 
+!  !    Endif
+! 
+!      WRITE (LUNThetaCap,1115, ADVANCE='NO')'!    Variable ' 
+!      WRITE (LUNThetaCap,1116) ("LYR",L, L=1,N1_LYR), ("LYR",L, L=13,N2_LYR, 2)
+!      WRITE (LUNThetaCap,1115, ADVANCE='NO')'!   Top Layer'
+!      WRITE (LUNThetaCap,1118) (LrTop(L),L=1,N1_LYR), (LrTop(L),L=13,N2_LYR,2)
+!      WRITE (LUNThetaCap,1115, ADVANCE='NO')'!Bottom Layer'
+!      WRITE (LUNThetaCap,1118) (DS(L),L=1,N1_LYR), (DS(L),L=13,N2_LYR,2)
+!      WRITE (LUNThetaCap,1115, ADVANCE='NO')'!          LL'
+!      WRITE (LUNThetaCap,1119) (LL(L),L=1,N1_LYR), (LL(L),L=13,N2_LYR,2)
+!      WRITE (LUNThetaCap,1115, ADVANCE='NO')'!         DUL'
+!      WRITE (LUNThetaCap,1119) (DUL(L),L=1,N1_LYR), (DUL(L),L=13,N2_LYR,2)
+!      WRITE (LUNThetaCap,1115, ADVANCE='NO')'!         SAT'
+!      WRITE (LUNThetaCap,1119) (SAT(L),L=1,N1_LYR), (SAT(L),L=13,N2_LYR,2)
+!      WRITE (LUNThetaCap,1115)
+! 
+!      WRITE (LUNThetaCap,1120, ADVANCE='NO')'@YEAR DOY DAS '
+!      WRITE (LUNThetaCap,1116, ADVANCE='NO') ("LYR",L, L=1,N1_LYR), &
+!         ("LYR",L, L=13,N2_LYR, 2)
+!      WRITE (LUNThetaCap,1120)'  mgWTD LIMIT_2D'
+!       CALL CapFringe(            & 
+!          ActWTD,  SOILPROP,   &     !Input
+!          ThetaCap)                  !Output
+!      
+!      CALL YR_DOY(INCDAT(CONTROL % YRDOY,-1),YR2,DY2)
+!      WRITE (LUNThetaCap,1300, ADVANCE='NO') YR2, DY2, DAS, &
+!           (ThetaCap(L),L=1,N1_LYR), (ThetaCap(L),L=13,N2_LYR,2)
+!      WRITE (LUNThetaCap,1400) MgmtWTD, LIMIT_2D   
+!      
+!!***********************************************************************
+!!     DAILY RATE CALCULATIONS
+!!***********************************************************************
+!    ELSEIF (DYNAMIC .EQ. RATE) THEN        
+!      CALL CapFringe(            & 
+!          ActWTD,  SOILPROP,   &     !Input
+!          ThetaCap)                  !Output
+!      
+!      CALL YR_DOY(CONTROL % YRDOY, YR2, DY2)
+!      DAS = CONTROL % DAS
+!      IF (.NOT. DOPRINT) RETURN
+!      WRITE (LUNThetaCap,1300, ADVANCE='NO') YR2, DY2, DAS, &
+!           (ThetaCap(L),L=1,N1_LYR), (ThetaCap(L),L=13,N2_LYR,2)
+!      WRITE (LUNThetaCap,1400) MgmtWTD, LIMIT_2D   
+! 1115 FORMAT(13A)
+! 1116 FORMAT(9(2X,A3,I1), 9(1X,A3,I2)) 
+! 1118 FORMAT(1x, 18F6.1) 
+! 1119 FORMAT(1x, 18F6.2) 
+! 1120 FORMAT(14A)  
+! 1121 FORMAT(A1, 7X, A5, 1X, 18F6.1, F6.1,3X)    
+! 1122 FORMAT(A1, 7X, A5, 1X, 18F6.3, F6.1,3X)   
+! 1300 FORMAT(1X,I4,1X,I3,1X,I3, 1X, 18F6.3, F6.1,3X, I2) 
+! 1400 FORMAT(F7.0,3X, I2) 
+!!***********************************************************************
+!!     END OF DYNAMIC IF CONSTRUCT
+!!***********************************************************************  
+!    Endif  
+!    RETURN
+!  End Subroutine ThetaCapOp
+!!=======================================================================
+!!=======================================================================
+!!     ThetaCapOp VARIABLE DEFINITIONS:
+!!-----------------------------------------------------------------------
+!!
+!!-----------------------------------------------------------------------
+!!     END SUBROUTINE ThetaCapOp
+!!=======================================================================

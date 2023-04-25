@@ -30,15 +30,11 @@
 !   SWDELT_WT = Change in SW due to water table changes
     REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
 
-!   REAL, DIMENSION(NL), INTENT(IN) :: SWDELTU, SWDELTX
-!   REAL, DIMENSION(NL), INTENT(OUT):: CAPRI
 
 !   Local
-    INTEGER L, NLAYR !, K, L1, L2
+    INTEGER L, NLAYR 
     REAL Bottom, Top, Thick, TargetWTD
-!   REAL Excess1, Excess2, TotExcess, Residual
     REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR 
-!   REAL, DIMENSION(NL) :: Excess, MaxRise
     REAL, DIMENSION(NL) :: ThetaCap, SW_temp, DeltaSW
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
@@ -52,7 +48,6 @@
     LatInflow  = 0.0
     LatOutflow = 0.0
     SWDELTW    = 0.0
-!   CAPRI      = 0.0
     SW_temp    = SW
 
 !***********************************************************************
@@ -62,8 +57,8 @@
   IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
     DLAYR = SOILPROP % DLAYR
-    DUL   = SOILPROP % DUL
     DS    = SOILPROP % DS
+    DUL   = SOILPROP % DUL
     NLAYR = SOILPROP % NLAYR
     SAT   = SOILPROP % SAT
     WCR   = SOILPROP % WCR
