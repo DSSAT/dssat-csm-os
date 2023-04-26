@@ -25,11 +25,9 @@
     INTEGER            , INTENT(IN) :: DYNAMIC
     TYPE(SoilType)     , INTENT(IN) :: SOILPROP
     REAL, DIMENSION(NL), INTENT(IN) :: SW
-    REAL               , INTENT(OUT):: ActWTD, MgmtWTD
-    REAL               , INTENT(OUT):: LatInflow, LatOutflow
 !   SWDELT_WT = Change in SW due to water table changes
     REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
-
+  REAL, INTENT(OUT) :: ActWTD, MgmtWTD, LatInflow, LatOutflow
 
 !   Local
     INTEGER L, NLAYR 
@@ -50,28 +48,29 @@
     SWDELTW    = 0.0
     SW_temp    = SW
 
-!***********************************************************************
-!***********************************************************************
-! Seasonal initialization - run once per season
-!***********************************************************************
-  IF (DYNAMIC .EQ. SEASINIT) THEN
-!-----------------------------------------------------------------------
     DLAYR = SOILPROP % DLAYR
     DS    = SOILPROP % DS
     DUL   = SOILPROP % DUL
     NLAYR = SOILPROP % NLAYR
     SAT   = SOILPROP % SAT
     WCR   = SOILPROP % WCR
-    
+
+!***********************************************************************
+!***********************************************************************
+! Seasonal initialization - run once per season
+!***********************************************************************
+  IF (DYNAMIC .EQ. SEASINIT) THEN
+!-----------------------------------------------------------------------
 !   Get initial depth to water table
     CALL GET('MGMT','ICWD',MgmtWTD)
-    
+
 !   Negative or zero value means no managed water table
     IF (MgmtWTD < 1.E-6) THEN
       MgmtWTD = 1000.
     ENDIF
     ActWTD    = MgmtWTD
     TargetWTD = MgmtWTD
+
 !   Actual water table depth will equal either the managed water table depth or
 !     the target water table depth. When user water table depth records change
 !     a lot from one day to the next, it may take a few days for the actual 
@@ -104,8 +103,6 @@
         ENDIF 
       ENDDO
     ENDIF
-
-    CALL PUT('WATER','WTDEP',ActWTD)
 
 !***********************************************************************
 !***********************************************************************
@@ -159,13 +156,12 @@
 !   Actual water table higher than management - drawdown using Kd
     ELSEIF (MgmtWTD - ActWTD > TOL .AND. MgmtWTD < 9999.) THEN
 !     Calculate lateral outflow needed to draw water table down to specified depth
+!     Water content above the target water table but within the old water table 
+!       will be set to DUL. 
+!     The capillary rise routine will then reset theta values just above the water table.
 
 !     initial guess at today's water table depth
       TargetWTD = (ActWTD - MgmtWTD) * Kd + MgmtWTD
-
-!     Water content above the target water table will be set to DUL. 
-!       The capillary rise routine will then reset theta values 
-!       just above the water table.
 
 !     Calculate lateral outflow needed to lower water table to target depth
       DO L = 1, NLAYR
@@ -197,12 +193,17 @@
       TargetWTD = MgmtWTD
     ENDIF 
 
+!-----------------------------------------------------------------------
+!   Set actual water table depth equal to target calculated above.
+!   Probably need a better way to do this, i.e., calculate the actual
+!   water table depth based on water table and drawdown dynamics, but
+!   previous attempts resulted in instability for daily model.
     ActWTD = TargetWTD
     CALL PUT('WATER','WTDEP',ActWTD)
 
 !-------------------------------------------------------------------------
 !   Update soil water content 
-!   (Pseudo-integration, the real integration occurs in WATBAL)
+!   Pseudo-integration, the real integration occurs in WATBAL
     DO L = 1, NLAYR
       SW_temp(L) = SW_temp(L) + SWDELTW(L)
     ENDDO
@@ -213,20 +214,17 @@
 !***********************************************************************
   ENDIF
 !-----------------------------------------------------------------------
-!   Set actual water table depth equal to target calculated above.
-!   Probably need a better way to do this, i.e., calculate the actual
-!   water table depth based on water table and drawdown dynamics, but
-!   previous attempts resulted in instability for daily model.
 
 !   No effect of water table if it is below the bottom of the soil profile.
-    IF (ActWTD > DS(NLAYR)) THEN
+    IF (ActWTD .GE. DS(NLAYR)) THEN
       RETURN
     ENDIF
-
+!   Calculate water content within capillary fringe, ThetaCap
     CALL CapFringe(           &
       ActWTD,  SOILPROP,      &   !Input
       ThetaCap)                   !Output
 
+!   Update temporary soil water content with ThetaCap
     DO L = 1, NLAYR
 !     ThetaCap(L) = MAX(SW_TEMP(L), ThetaCap(L))
       DeltaSW(L) = MAX(0.0, ThetaCap(L) - SW_TEMP(L))

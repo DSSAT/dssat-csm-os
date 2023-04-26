@@ -249,25 +249,20 @@
         ENDDO
       END IF
       
-      CALL WaterTable_2D(SEASINIT,                        
-     &  CELLS, SOILPROP, SWV,                   !Input
-     &  LatFlow, MgmtWTD, ThetaCap)             !Output
-!     If there is water table, set the initial condition of SWV as ThetaCap  
-      IF (MgmtWTD .LT. 9999.) THEN
-        Do i =1, NLAYR
-          DO j = 1, NColsTot
-            SELECT CASE(CELLS(i,j)%Struc%CellType)
-              CASE (3,4,5)
-                SWV(i,j) = ThetaCap(i)
-                SWA(i,j) = ThetaCap(i) - SOILPROP%LL(i)
-              CASE DEFAULT
-                SWV(i,j) = 0.0
-                SWA(i,j) = 0.0
-            END SELECT
-          Enddo
-        enddo
-        Endif
-      Call ThetaCapOp(DYNAMIC,CONTROL, ISWITCH,MgmtWTD, SOILPROP)
+      CALL WaterTable_2D(DYNAMIC,           
+     &  CELLS, SOILPROP, SWV,                         !Input                                              
+     &  ActWTD, LatInflow, LatOutflow,                !Output
+     &  MgmtWTD, SWVDELTW)                            !Output
+
+!     Set SWV based on initial water table  
+      DO i =1, NLAYR
+        DO j = 1, NColsTot
+          SWV(i,j) = SWV(i,j) + SWVDELTW(i,j)
+          SWA(i,j) = SWV(i,j) - SOILPROP%LL(i)
+        ENDDO
+      ENDDO
+!     Call ThetaCapOp(DYNAMIC,CONTROL, ISWITCH,MgmtWTD, SOILPROP)
+
 !     convert to double precision for time step loops
       SWV_D = DBLE(SWV)
 
@@ -453,12 +448,6 @@
 
 !     Compute water available at beginning of day
       SWV_avail = SWV_D
-      if (CONTROL % YRDOY .EQ. 2011090 ) then
-        continue
-      endif
-      if (SWV_D(10,4) .gt. 0.5) then 
-        continue
-      endif
 
 !     Convert soil evaporation to volumetric fraction units, 
       ES_mm = CELLS%Rate%ES_rate
@@ -491,27 +480,21 @@
         CumFracRad(i) = CumFracRad(i-1) + WEATHER%RADHR(i) / SRAD_TOT
       ENDDO
 
-!     Get depth to managed water table 
-      CALL WaterTable_2D(RATE,                        
-     &  CELLS, SOILPROP, SWV,                   !Input
-     &  LatFlow, MgmtWTD, ThetaCap)             !Output
+!     Update soil water today based on measured depth to water table
+      CALL WaterTable_2D(DYNAMIC,           
+     &  CELLS, SOILPROP, SWV,                         !Input                                              
+     &  ActWTD, LatInflow, LatOutflow,                !Output
+     &  MgmtWTD, SWVDELTW)                            !Output
 
-!     SWV should be previous'days SWV and is input. It is used to calculate the LatFlow due to water table depth change
-!     Here LatFlow is due to daily change of MgmtWTD
-        
 !     After call WaterTable_2D to get theLIMIT_2D, set the soil water content below LIMIT_2D as ThetaCap
       LIMIT_2D = BedDimension % LIMIT_2D
-      if (LIMIT_2D .LT. NLAYR) then
-        DO i = LIMIT_2D+1, NLAYR
-          DO j = 1, NColsTot
-!           SWV_avail is Double precision cell soil water content at the beginning of time step in mm3/mm3
-            SWV_avail(i,j) = ThetaCap(i)
-          !  SWV_D(i, j) = DBLE(SWV_avail(i.j))
-          Enddo
-        Enddo
-        SWV_D= DBLE(SWV_avail)
-      Endif
-      Call ThetaCapOp(DYNAMIC,CONTROL,ISWITCH,MgmtWTD, SOILPROP)
+      DO i = LIMIT_2D+1, NLAYR
+        DO j = 1, NColsTot
+          SWV_avail(i,j) = SWV_avail(i,j) + DBLE(SWVDELTW(i,j))
+        ENDDO
+      ENDDO
+      SWV_D= DBLE(SWV_avail)
+!     Call ThetaCapOp(DYNAMIC,CONTROL,ISWITCH,MgmtWTD, SOILPROP)
 
 !     Compute daily runoff from furrows and water available for infiltration
 !       for each column in furrow.
@@ -582,7 +565,7 @@
 
       DO IDL = 1, NDripLnTOT
         DripNumTot = DripNumTotArr(IDL)
-        ! Chek if the schedule time is valid
+!       Check if the schedule time is valid
         Do  jj = 1, DripNumTot
            if ((IrrigSched(IDL,JJ,1) .LT. 0.).or.
      &         (IrrigSched(IDL,JJ,1) .GT. 24.)) Then  
@@ -1101,10 +1084,8 @@
 
       IF (Allocated(IrrigSched)) DEALLOCATE (IrrigSched)
       
-!      IF (Allocated(DripDur)) DEALLOCATE (DripDur)
       IF (Allocated(DripInt)) DEALLOCATE (DripInt)
       IF (Allocated(DripRate)) DEALLOCATE (DripRate)
-!      IF (Allocated(DripStart)) DEALLOCATE (DripStart)
 
 !     ---------------------------------------------------------------
 !     Print message for small time increments
@@ -1119,14 +1100,6 @@
       CELLS % Rate % SWFlux_D = SWFlux_D
       CELLS % Rate % SWFlux_U = SWFlux_U
 
-!!     TEMP CHP
-!      DAYCOUNT = DAYCOUNT + 1
-!!     IF (DAYCOUNT == 10) THEN
-!      IF (DAYCOUNT == 1) THEN
-!        PRINT *, CONTROL%YRDOY, Rain, IrrVol
-!        DAYCOUNT = 0
-!      ENDIF
-
 !***********************************************************************
 !***********************************************************************
 !     DAILY INTEGRATION
@@ -1135,15 +1108,6 @@
 !-----------------------------------------------------------------------
       IF (ISWITCH%ISWWAT == 'N') RETURN
 
-!!       ThetaCap calculated in the morning of the day from CapFringe is SW. We assume that the water balance is reached imediately for the area between water table and Limit_2D 
-!!       Calculation the distribution to each layer (the model of distribution used here should be improved later)
-!      !We still use 2D SWV below LIMIT_2D, thus we may use the code for WBSUM_2D and do not need to create WBSUM_1D 
-! !       DO i = LIMIT_2D + 1 , NLAYR 
-! !         DO j = 1, NColsTot 
-!  !          SWV(i,j) = SW(i) 
-! !         end do
-!  !      enddo
-     
       CELLS % State % SWV = SWV
 
       CALL WBSUM_2D(INTEGR,
