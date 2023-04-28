@@ -1,0 +1,97 @@
+*DATE Date/Time Variables                                1.0      1.0    1.0
+YRDOY       DSSAT 2-digit Year Day-of-Year Format (yyddd)     1.0      0.0
+YEARDOY     DSSAT 4-digit Year Day-of-Year Format (yyyyddd)   1.0      0.0
+Encoded     Windows encoded date-time                         1.0      0.0
+Year(yy)    Year of weather (yy)                              1.0      0.0
+Year(yyyy)  Year of weather (yyyy)                            1.0      0.0
+Month       Month of the year                                 1.0      0.0
+Day of Year Day of year                                       1.0      0.0
+Day of Mon  Day of associated month                           1.0      0.0
+mm/dd/yyyy  Month Day Year (01/15/2004)                       1.0      0.0
+mm/dd/yy    Month Day Year (01/15/04)                         1.0      0.0
+dd/mm/yyyy  Day Month Year (15/01/2004)                       1.0      0.0
+dd/mm/yy    Day Month Year (15/01/04)                         1.0      0.0
+yyyymmdd    Basic ISO format (yyyymmdd)                       1.0      0.0
+yyyy-mm-dd  Standard ISO format (yyyy-mm-dd)                  1.0      0.0
+*SRAD Total daily solar radiation                         5.0    85.0   70.0
+MJ/m²/d     MegaJoules per square meter per day (Default)     1.0      0.0
+Watts/m²    Watts per square meter                            0.0864   0.0
+kJ/m²       KiloJoule per square meter per day                0.001    0.0
+cal/cm²     Calories per square centimeter per day            0.04184  0.0
+W-h/m²      Watt-hour per square meter per day                0.0036   0.0
+BTU/ft²     British Thermal Units per square foot per day     0.011357 0.0
+New         Undefined radiation unit                          1.0      0.0
+*TMAX Maximum daily air temperature                       5.0    40.0   20.0
+°C          Degree Celsuis (Centrigrade) (Default)            1.0      0.0
+10th °C     Tenths of a degree Celsuis                        0.1      0.0
+°F          Degree Fahrenheit                                 0.555556 -32.0
+10th °F     Tenths of a degree Fahrenheit                     0.055556 -320.0
+K           Kelvin (Absolute)                                 1.0      -273.15
+New         Undefined temperature unit                        1.0      0.0
+*TMIN Minimum daily air temperature                       -20.0  30.0   20.0
+°C          Degree Celsuis (Centrigrade) (Default)            1.0      0.0
+10th °C     Tenths of a degree Celsuis                        0.1      0.0
+°F          Degree Fahrenheit                                 0.555556 -32.0
+10th °F     Tenths of a degree Fahrenheit                     0.055556 -320.0
+K           Kelvin (Absolute)                                 1.0      -273.15
+New         Undefined temperature unit                        1.0      0.0
+*RAIN Total daily precipitation                           0.0    600.0  500.0
+mm          Millimeter per day (Default)                      1.0      0.0
+10th mm     Tenths of a millimeter per day                    0.1      0.0
+cm          Centimeter per day                                10.0     0.0
+inch        Inches per day                                    25.4     0.0
+10th in     Tenths of an inch per day                         2.54     0.0
+100th in    Hundredths of an inch per day                     0.254    0.0
+New         Undefined rainfall unit                           1.0      0.0
+*DEWP Dew point temperature                               0.0    25.0   5.0
+°C          Degree Celsuis (Centrigrade) (Default)            1.0      0.0
+°F          Degree Fahrenheit                                 0.555556 -32.0
+K           Kelvin (Absolute)                                 1.0      -273.15
+Pa          Water vapor pressure (Pa)                         0.001    0.0
+kPa         Water vapor pressure (kPa)                        1.0      0.0
+MPa         Water vapor pressure (MPa)                        1000.0   0.0
+mbar        Water vapor pressure (mbar)                       0.1      0.0
+bar         Water vapor pressure (bar)                        100.0    0.0
+New         Undefined dewpoint unit                           1.0      0.0
+*WIND Total daily wind run                                0.0    500.0  300.0
+km          Kilometer per day (Default)                       1.0      0.0
+Miles       Miles per day                                     1.609344 0.0
+m/s         Meter per second (average daily speed)            86.4     0.0
+Knots       Nautical miles per hour (average daily speed)     44.448   0.0
+Miles/hr    Miles per hour (average daily speed)              38.624   0.0
+New         Undefined wind unit                               1.0      0.0
+*SUNH Total daily sunshine hours                          0.0    100.0  90.0
+%Hrs        Percent of day with bright sunshine (Default)     1.0      0.0
+n/N         Fraction of daylength with bright sunshine        0.01     0.0
+Hrs         Hours of bright sunshine                          4.1667   0.0
+10th Hrs    Tenths of an hour of bright sunshine              0.4167   0.0
+New         Undefined sunshine hours unit                     1.0      0.0
+* PAR Total daily photosynthetic radiation                5.0    85.0   70.0
+Mol/m²      Moles PAR per square meter per day (Default)      1.0      0.0
+New         Undefined PAR unit                                1.0      0.0
+*TDRY Dry bulb air temperature at 9 am                    0.0    35.0   20.0
+°C          Degree Celsuis (Centrigrade) (Default)            1.0      0.0
+10th °C     Tenths of a degree Celsuis                        0.1      0.0
+°F          Degree Fahrenheit                                 0.555556 -32.0
+10th °F     Tenths of a degree Fahrenheit                     0.055556 -320.0
+K           Kelvin (Absolute)                                 1.0      -273.15
+New         Undefined dry bulb unit                           1.0      0.0
+*TWET Wet bulb air temperature at 9 am                    0.0    25.0   20.0
+°C          Degree Celsuis (Centrigrade) (Default)            1.0      0.0
+10th °C     Tenths of a degree Celsuis                        0.1      0.0
+°F          Degree Fahrenheit                                 0.555556 -32.0
+10th °F     Tenths of a degree Fahrenheit                     0.055556 -320.0
+New         Undefined wet bulb unit                           1.0      0.0
+K           Kelvin (Absolute)                                 1.0      -273.15
+*EVAP Total daily pan evaporation                         0.0    15.0   15.0
+mm          Millimeter per day (Default)                      1.0      0.0
+10th mm     Tenths of a millimeter per day                    0.1      0.0
+cm          Centimeter per day                                10.0     0.0
+inch        Inches per day                                    25.4     0.0
+10th in     Tenths of an inch per day                         2.54     0.0
+100th in    Hundredths of an inch per day                     0.254    0.0
+New         Undefined evaporation unit                        1.0      0.0
+*RHUM Relative humidity                                   0.0    100.0  75.0
+%           Percent (Default)                                 1.0      0.0
+New         Undefined evaporation unit                        1.0      0.0
+*
