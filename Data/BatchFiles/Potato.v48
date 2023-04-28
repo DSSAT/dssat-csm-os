@@ -1,0 +1,65 @@
+$BATCH(POTATO)
+!
+! Directory    : C:\DSSAT48\POTATO
+! Command Line : C:\DSSAT48\DSCSM048.EXE PTSUB048 B DSSBatch.v48
+! Crop         : Potato          
+! Experiment   : AUCB7001.PTX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE PTSUB048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\POTATO\AUCB7001.PTX                                                                    1      1      0      0      0
+C:\DSSAT48\POTATO\AUCB7001.PTX                                                                    2      1      0      0      0
+C:\DSSAT48\POTATO\AUCB7001.PTX                                                                    3      1      0      0      0
+C:\DSSAT48\POTATO\CPSR1302.PTX                                                                    1      1      0      1      0
+C:\DSSAT48\POTATO\CPSR1302.PTX                                                                    2      1      0      1      0
+C:\DSSAT48\POTATO\CPSR1302.PTX                                                                    4      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    1      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    2      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    3      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    4      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    5      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    6      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    7      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    8      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                    9      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                   10      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                   11      1      0      1      0
+C:\DSSAT48\POTATO\DIJY9001.PTX                                                                   12      1      0      1      0
+C:\DSSAT48\POTATO\NYCU8001.PTX                                                                    1      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    1      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    2      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    3      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    4      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    5      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    6      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    7      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    8      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                    9      1      0      0      0
+C:\DSSAT48\POTATO\OSBO8801.PTX                                                                   10      1      0      0      0
+C:\DSSAT48\POTATO\WABE0301.PTX                                                                    1      1      0      1      0
+C:\DSSAT48\POTATO\WABE0301.PTX                                                                    2      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9202.PTX                                                                    1      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9202.PTX                                                                    2      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9202.PTX                                                                    3      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9202.PTX                                                                    4      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9202.PTX                                                                    5      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9202.PTX                                                                    6      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9302.PTX                                                                    1      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9302.PTX                                                                    2      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9302.PTX                                                                    3      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9302.PTX                                                                    4      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9302.PTX                                                                    5      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9302.PTX                                                                    6      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9402.PTX                                                                    1      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9402.PTX                                                                    2      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9402.PTX                                                                    3      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9402.PTX                                                                    4      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9402.PTX                                                                    5      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9402.PTX                                                                    6      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9502.PTX                                                                    1      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9502.PTX                                                                    2      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9502.PTX                                                                    3      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9502.PTX                                                                    4      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9502.PTX                                                                    5      1      0      1      0
+C:\DSSAT48\POTATO\WAPA9502.PTX                                                                    6      1      0      1      0

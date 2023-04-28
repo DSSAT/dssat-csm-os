@@ -1,0 +1,16 @@
+$BATCH(PEARL MILLET)
+!
+! Directory    : C:\DSSAT48\PearlMillet
+! Command Line : C:\DSSAT48\DSCSM048.EXE MLCER048 B DSSBatch.v48
+! Crop         : Pearl millet    
+! Experiment   : ITHY8201.MLX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE MLCER048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\PearlMillet\ITHY8201.MLX                                                               1      1      0      0      0
+C:\DSSAT48\PearlMillet\ITHY8201.MLX                                                               2      1      0      0      0
+C:\DSSAT48\PearlMillet\ITHY8201.MLX                                                               3      1      0      0      0
+C:\DSSAT48\PearlMillet\ITHY8201.MLX                                                               4      1      0      0      0
+C:\DSSAT48\PearlMillet\ITSC8601.MLX                                                               1      1      0      0      0
+C:\DSSAT48\PearlMillet\ITSC8601.MLX                                                               2      1      0      0      0

@@ -1,0 +1,79 @@
+$BATCH(RICE)
+!
+! Directory    : C:\DSSAT48\Rice
+! Command Line : C:\DSSAT48\DSCSM048.EXE RICER048 B DSSBatch.v48
+! Crop         : Rice            
+! Experiment   : DTSP8502.RIX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE RICER048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Rice\DTSP8502.RIX                                                                      1      1      0      0      0
+C:\DSSAT48\Rice\DTSP8502.RIX                                                                      2      1      0      0      0
+C:\DSSAT48\Rice\DTSP8502.RIX                                                                      3      1      0      0      0
+C:\DSSAT48\Rice\DTSP8502.RIX                                                                      4      1      0      0      0
+C:\DSSAT48\Rice\DTSP8502.RIX                                                                      5      1      0      0      0
+C:\DSSAT48\Rice\DTSP8502.RIX                                                                      6      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      1      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      2      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      3      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      4      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      5      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      6      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      7      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      8      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                      9      1      0      0      0
+C:\DSSAT48\Rice\IRMZ8601.RIX                                                                     10      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      1      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      2      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      3      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      4      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      5      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      6      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      7      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      8      1      0      0      0
+C:\DSSAT48\Rice\IRPI8001.RIX                                                                      9      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      1      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      2      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      3      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      4      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      5      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      6      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      7      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      8      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                      9      1      0      0      0
+C:\DSSAT48\Rice\IRPL8501.RIX                                                                     10      1      0      0      0
+C:\DSSAT48\Rice\PULU0001.RIX                                                                      1      1      0      0      0
+C:\DSSAT48\Rice\PULU0001.RIX                                                                      2      1      0      0      0
+C:\DSSAT48\Rice\PULU0001.RIX                                                                      3      1      0      0      0
+C:\DSSAT48\Rice\PULU0001.RIX                                                                      4      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      1      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      2      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      3      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      4      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      5      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      6      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      7      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      8      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                      9      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                     10      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                     11      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                     12      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                     13      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                     14      1      0      0      0
+C:\DSSAT48\Rice\UAFD0011.RIX                                                                     15      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      1      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      2      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      3      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      4      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      5      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      6      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      7      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      8      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                      9      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                     10      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                     11      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                     12      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                     13      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                     14      1      0      0      0
+C:\DSSAT48\Rice\UAFD0012.RIX                                                                     15      1      0      0      0

@@ -1,0 +1,86 @@
+$BATCH(MAIZE)
+!
+! Directory    : C:\DSSAT48\Maize
+! Command Line : C:\DSSAT48\DSCSM048.EXE MZCER048 B DSSBatch.v48
+! Crop         : Maize           
+! Experiment   : BRPI0202.MZX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE MZCER048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Maize\BRPI0202.MZX                                                                     1      1      0      0      0
+C:\DSSAT48\Maize\BRPI0202.MZX                                                                     2      1      0      0      0
+C:\DSSAT48\Maize\BRPI0202.MZX                                                                     3      1      0      0      0
+C:\DSSAT48\Maize\BRPI0202.MZX                                                                     4      1      0      0      0
+C:\DSSAT48\Maize\BRPI0202.MZX                                                                     5      1      0      0      0
+C:\DSSAT48\Maize\BRPI0202.MZX                                                                     6      1      0      0      0
+C:\DSSAT48\Maize\BRPI0202.MZX                                                                     7      1      0      0      0
+C:\DSSAT48\Maize\BRPI0202.MZX                                                                     8      1      0      0      0
+C:\DSSAT48\Maize\EBPL8501.MZX                                                                     1      1      0      0      0
+C:\DSSAT48\Maize\EBPL8501.MZX                                                                     2      1      0      0      0
+C:\DSSAT48\Maize\EBPL8501.MZX                                                                     3      1      0      0      0
+C:\DSSAT48\Maize\EBPL8501.MZX                                                                     4      1      0      0      0
+C:\DSSAT48\Maize\FLSC8101.MZX                                                                     1      1      0      0      0
+C:\DSSAT48\Maize\FLSC8101.MZX                                                                     2      1      0      0      0
+C:\DSSAT48\Maize\GAGR0201.MZX                                                                     1      1      0      1      0
+C:\DSSAT48\Maize\GAGR0201.MZX                                                                     2      1      0      1      0
+C:\DSSAT48\Maize\GAGR0201.MZX                                                                     3      1      0      1      0
+C:\DSSAT48\Maize\GAGR0201.MZX                                                                     4      1      0      1      0
+C:\DSSAT48\Maize\GAGR0201.MZX                                                                     5      1      0      1      0
+C:\DSSAT48\Maize\GAGR0201.MZX                                                                     6      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     1      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     2      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     3      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     4      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     5      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     6      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     7      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     8      1      0      1      0
+C:\DSSAT48\Maize\GHWA0401.MZX                                                                     9      1      0      1      0
+C:\DSSAT48\Maize\IBWA8301.MZX                                                                     1      1      0      0      0
+C:\DSSAT48\Maize\IBWA8301.MZX                                                                     2      1      0      0      0
+C:\DSSAT48\Maize\IBWA8301.MZX                                                                     3      1      0      0      0
+C:\DSSAT48\Maize\IBWA8301.MZX                                                                     4      1      0      0      0
+C:\DSSAT48\Maize\IBWA8301.MZX                                                                     5      1      0      0      0
+C:\DSSAT48\Maize\IBWA8301.MZX                                                                     6      1      0      0      0
+C:\DSSAT48\Maize\IUAF9901.MZX                                                                     1      1      0      0      0
+C:\DSSAT48\Maize\IUAF9901.MZX                                                                     2      1      0      0      0
+C:\DSSAT48\Maize\IUAF9901.MZX                                                                     3      1      0      0      0
+C:\DSSAT48\Maize\IUAF9901.MZX                                                                     4      1      0      0      0
+C:\DSSAT48\Maize\IUAF9902.MZX                                                                     1      1      0      0      0
+C:\DSSAT48\Maize\IUAF9902.MZX                                                                     2      1      0      0      0
+C:\DSSAT48\Maize\IUAF9902.MZX                                                                     3      1      0      0      0
+C:\DSSAT48\Maize\IUAF9902.MZX                                                                     4      1      0      0      0
+C:\DSSAT48\Maize\IUAF9902.MZX                                                                     5      1      0      0      0
+C:\DSSAT48\Maize\IUAF9902.MZX                                                                     6      1      0      0      0
+C:\DSSAT48\Maize\IUAF9902.MZX                                                                     7      1      0      0      0
+C:\DSSAT48\Maize\IUAF9903.MZX                                                                     1      1      0      0      0
+C:\DSSAT48\Maize\IUAF9903.MZX                                                                     2      1      0      0      0
+C:\DSSAT48\Maize\IUAF9903.MZX                                                                     3      1      0      0      0
+C:\DSSAT48\Maize\IUAF9903.MZX                                                                     4      1      0      0      0
+C:\DSSAT48\Maize\IUAF9903.MZX                                                                     5      1      0      0      0
+C:\DSSAT48\Maize\IUAF9903.MZX                                                                     6      1      0      0      0
+C:\DSSAT48\Maize\IUAF9903.MZX                                                                     7      1      0      0      0
+C:\DSSAT48\Maize\SIAZ9501.MZX                                                                     1      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9501.MZX                                                                     2      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9501.MZX                                                                     3      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9501.MZX                                                                     4      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9501.MZX                                                                     5      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9501.MZX                                                                     6      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9501.MZX                                                                     7      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9501.MZX                                                                     8      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     1      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     2      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     3      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     4      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     5      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     6      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     7      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     8      0      0      0      0
+C:\DSSAT48\Maize\SIAZ9601.MZX                                                                     9      0      0      0      0
+C:\DSSAT48\Maize\UFGA8201.MZX                                                                     1      1      0      0      0
+C:\DSSAT48\Maize\UFGA8201.MZX                                                                     2      1      0      0      0
+C:\DSSAT48\Maize\UFGA8201.MZX                                                                     3      1      0      0      0
+C:\DSSAT48\Maize\UFGA8201.MZX                                                                     4      1      0      0      0
+C:\DSSAT48\Maize\UFGA8201.MZX                                                                     5      1      0      0      0
+C:\DSSAT48\Maize\UFGA8201.MZX                                                                     6      1      0      0      0

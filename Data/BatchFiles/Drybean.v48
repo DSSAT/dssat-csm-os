@@ -1,0 +1,75 @@
+$BATCH(DRY BEAN)
+!
+! Directory    : C:\DSSAT48\DRYBEAN
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Dry bean        
+! Experiment   : CCPA8629.BNX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   1      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   2      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   3      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   4      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   5      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   6      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   7      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   8      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                   9      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                  10      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                  11      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA8629.BNX                                                                  12      1      0      0      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   1      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   2      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   3      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   4      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   5      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   6      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   7      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   8      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                   9      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                  10      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                  11      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                  12      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                  13      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                  14      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                  15      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPA9001.BNX                                                                  16      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   1      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   2      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   3      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   4      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   5      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   6      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   7      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   8      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                   9      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                  10      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                  11      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                  12      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                  13      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                  14      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                  15      1      0      1      0
+C:\DSSAT48\DRYBEAN\CCPO9002.BNX                                                                  16      1      0      1      0
+C:\DSSAT48\DRYBEAN\IGQU8903.BNX                                                                   1      1      0      0      0
+C:\DSSAT48\DRYBEAN\IGQU8903.BNX                                                                   2      1      0      0      0
+C:\DSSAT48\DRYBEAN\IGQU8903.BNX                                                                   3      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8501.BNX                                                                   1      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8501.BNX                                                                   2      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8501.BNX                                                                   3      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8501.BNX                                                                   4      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8501.BNX                                                                   5      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8501.BNX                                                                   6      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8501.BNX                                                                   7      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8501.BNX                                                                   8      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   1      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   2      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   3      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   4      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   5      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   6      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   7      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   8      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                   9      1      0      0      0
+C:\DSSAT48\DRYBEAN\UFGA8601.BNX                                                                  10      1      0      0      0
