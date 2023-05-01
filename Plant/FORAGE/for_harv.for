@@ -25,7 +25,7 @@ C=======================================================================
      &              WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,    !Input/Output
      &              WTNLF,WTNST,WNRLF,WNRST,WTNCAN,        !Input/Output
      &              AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht, !Input/Output
-     &              fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,CUHT,
+     &              fhtot,FHTOTN, fhpctlf,fhpctn,FREQ,
      &              MOWC,RSPLC,HMFRQ,HMGDD,HMCUT, HMMOW,HRSPL,
      &              DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &              HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
@@ -33,6 +33,9 @@ C=======================================================================
      &              RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
      &              XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
      &              PROLFF, PROSTF, pliglf, pligst)
+
+!     2023-04-28 TF Removed unused variables in argument list:
+!    CUHT
 
       USE MODULEDEFS
 
@@ -64,7 +67,7 @@ C=======================================================================
 
       REAL DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO
       REAL WTCO, WTLO, WTSO
-      REAL FREQ,CUHT,MOWREF
+      REAL FREQ,MOWREF !CUHT
 !     REAL YHT
 
       REAL TABEX  ! Function subroutine - Lookup utility
@@ -86,7 +89,7 @@ C=======================================================================
       INTEGER HMMOW, HRSPL !TF 2022-01-31 Smart version AutoMOW
       INTEGER CUTNO !Count number of cuts for AutoMOW
       REAL TAVG, TGMIN
-      REAL TB(5), TO1(5), TO2(5), TM(5)
+      REAL TB(5), TO1(5) !, TO2(5) , TM(5)
       REAL VTO1, VTB1 !Vegetative coefficients
 !      REAL,ALLOCATABLE,DIMENSION(:) :: canht
       

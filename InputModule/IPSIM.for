@@ -89,13 +89,6 @@ C=======================================================================
 
       LOGICAL UseSimCtr, MulchWarn, SimLevel
 
-C FO/DP/TF - 2020-07-22 - AutomaticMOW FILEX variables
-      INTEGER HMFRQ
-      INTEGER HMGDD
-      REAL HMCUT
-C TF/DP 2022-01-31 Simple version AutoMOW
-      INTEGER HMMOW, HRSPL, HMVS
-
 
 !     2020-11-04 CHP Added for yield forecast mode, RNMODE = 'Y'
       INTEGER ENDAT, SeasDur, FODAT, FStartYear, FEndYear
@@ -605,6 +598,8 @@ C
 C           Read TENTH line of simulation control - AUTOMATIC HARVEST
 C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
+          
+C           Added AutoMow variables: HMFRQ, HMGDD, HMCUT, HMMOW, HRSPL, HMVS
             READ (CHARTEST,71,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
      &           HPP,HRP,ISWITCH%HMFRQ,ISWITCH%HMGDD,ISWITCH%HMCUT,
      &           ISWITCH%HMMOW, ISWITCH%HRSPL, ISWITCH%HMVS

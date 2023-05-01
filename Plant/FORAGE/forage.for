@@ -253,7 +253,7 @@ C------------------------------------------------------------
       REAL DWTCO, DWTLO, DWTSO !DIEGO ADDED 11/22/2016
       REAL PWTCO, PWTLO, PWTSO !DP & FO & TF ADDED 07/16/2019
       REAL fhpctn !DIEGO ADDED 01/18/2017
-      REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
+      REAL FREQ !,CUHT !DIEGO ADDED 02/14/2017
       REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
 !     LOGICAL RUNYET
 
@@ -266,16 +266,16 @@ C FO/DP/TF - 2020-07-22 - AutomaticMOW
       REAL VTO1, VTB1
       REAL MOWREF, RSREF
       
-      INTEGER,dimension(6) :: IXFREQ
+!      INTEGER,dimension(6) :: IXFREQ
       REAL,dimension(6) :: XFREQ
       REAL,dimension(6) :: YFREQ
-      INTEGER,dimension(6) :: IXCUTHT
+!      INTEGER,dimension(6) :: IXCUTHT
       REAL,dimension(6) :: XCUTHT
       REAL,dimension(6) :: YCUTHT
-      INTEGER,dimension(6) :: IXCHMOW
+!      INTEGER,dimension(6) :: IXCHMOW
       REAL,dimension(6) :: XCHMOW
       REAL,dimension(6) :: YCHMOW
-      INTEGER,dimension(6) :: IXFRGDD
+!      INTEGER,dimension(6) :: IXFRGDD
       REAL,dimension(6) :: XFRGDD
       REAL,dimension(6) :: YRSREF
       
@@ -717,7 +717,7 @@ C-----------------------------------------------------------------------
      &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
+     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
 
 !!     Initialize Overview.out file.
 !      CALL FOR_OPHARV(CONTROL, ISWITCH, 
@@ -742,7 +742,7 @@ C-----------------------------------------------------------------------
      &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
      &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
      &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,
      &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
@@ -810,7 +810,7 @@ C-----------------------------------------------------------------------
      &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
      &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
      &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,
      &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
@@ -1143,7 +1143,7 @@ C-----------------------------------------------------------------------
      &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
+     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
 
 ! CALL FOR_OPHARV (CONTROL, ISWITCH, 
 !&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
@@ -1244,7 +1244,7 @@ C-----------------------------------------------------------------------
      &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
      &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
      &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,
      &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
@@ -2053,7 +2053,7 @@ C-----------------------------------------------------------------------
      &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
      &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
      &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,
      &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
      &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
      &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
@@ -2159,7 +2159,7 @@ C-----------------------------------------------------------------------
      &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
+     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
 
 !     !!   ! Write to Overview.out and summary.out files.
 !     !!   CALL FOR_OPHARV (CONTROL, ISWITCH, 
