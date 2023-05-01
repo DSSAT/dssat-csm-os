@@ -158,7 +158,7 @@ FRHARV    1
 Error in forage harvest. Mow input date is defined prior to the start of simulation.
 
 FRSHWT    1
-Pod age (XMAGE) in ecotype file is defined lower than 1.0.
+Pod/Fruit harvest age (XMAGE) is not properly defined. Fix the Ecotype file.
 
 GETDSC   29
 Detail.CDE file not found.  Program will stop.
