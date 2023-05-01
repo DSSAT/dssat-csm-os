@@ -182,7 +182,7 @@ FRHARV    9
 Missing AutoMOW section in the species file.
 
 FRSHWT    1
-Pod age (XMAGE) in ecotype file is defined lower than 1.0.
+Pod/Fruit harvest age (XMAGE) is not properly defined. Fix the Ecotype file.
 
 GETDSC   29
 Detail.CDE file not found.  Program will stop.
