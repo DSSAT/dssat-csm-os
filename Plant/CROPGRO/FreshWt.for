@@ -140,13 +140,13 @@
           SELECT CASE (CROP)
             CASE ('GB')       ! Snap bean
               WRITE(NOUTPF,'(A)')
-     &    '!FCULD  Fresh weight for cull fruit/pods ()',
-     &    '!FSZ1D  Fresh weight for size class 1 ()',
-     &    '!FSZ2D  Fresh weight for size class 2 ()',
-     &    '!FSZ3D  Fresh weight for size class 3 ()',
-     &    '!FSZ4D  Fresh weight for size class 4 ()',
-     &    '!FSZ5D  Fresh weight for size class 5 ()',
-     &    '!FSZ6D  Fresh weight for size class 6 ()'
+     &    '!FCULD  Fresh weight for cull fruit/pods (g/m2)',
+     &    '!FSZ1D  Fresh weight for size class 1 (g/m2)',
+     &    '!FSZ2D  Fresh weight for size class 2 (g/m2)',
+     &    '!FSZ3D  Fresh weight for size class 3 (g/m2)',
+     &    '!FSZ4D  Fresh weight for size class 4 (g/m2)',
+     &    '!FSZ5D  Fresh weight for size class 5 (g/m2)',
+     &    '!FSZ6D  Fresh weight for size class 6 (g/m2)'
           END SELECT
           WRITE(NOUTPF,'(A)')
      &    '!XMAGE  Required pod age for Multi-Harvest (days)',
@@ -442,9 +442,9 @@
           CASE ('GB')       ! Snap bean
             WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
      &      AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge,NINT(CLASS(7)*10.),NINT(CLASS(1)*10.),
-     &      NINT(CLASS(2)*10.),NINT(CLASS(3)*10.),NINT(CLASS(4)*10.),
-     &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.),
+     &      PodAge,NINT(CLASS(7)),NINT(CLASS(1)),
+     &      NINT(CLASS(2)),NINT(CLASS(3)),NINT(CLASS(4)),
+     &      NINT(CLASS(5)),NINT(CLASS(6)),
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH,MTDSH,HSHELWT,
      &      TOPOW,HPODWT,CHPDT,CPODN,
