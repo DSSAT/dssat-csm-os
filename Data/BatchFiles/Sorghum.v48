@@ -1,0 +1,32 @@
+$BATCH(SORGHUM)
+!
+! Directory    : C:\DSSAT48\Sorghum
+! Command Line : C:\DSSAT48\DSCSM048.EXE SGCER048 B DSSBatch.v48
+! Crop         : Sorghum         
+! Experiment   : CSKU8201.SGX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE SGCER048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Sorghum\CSKU8201.SGX                                                                   1      1      0      0      0
+C:\DSSAT48\Sorghum\CSKU8201.SGX                                                                   2      1      0      0      0
+C:\DSSAT48\Sorghum\CSKU8201.SGX                                                                   3      1      0      0      0
+C:\DSSAT48\Sorghum\ITHY8001.SGX                                                                   1      1      0      0      0
+C:\DSSAT48\Sorghum\ITHY8001.SGX                                                                   2      1      0      0      0
+C:\DSSAT48\Sorghum\ITHY8001.SGX                                                                   3      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   1      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   2      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   3      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   4      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   5      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   6      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   7      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   8      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                   9      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                  10      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                  11      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                  12      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                  13      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                  14      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                  15      1      0      0      0
+C:\DSSAT48\Sorghum\ITSA1415.SGX                                                                  16      1      0      0      0

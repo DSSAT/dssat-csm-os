@@ -1,0 +1,42 @@
+$BATCH(BRACHIARIA)
+!
+! Directory    : C:\DSSAT48\BRACHIARIA
+! Command Line : C:\DSSAT48\DSCSM048.EXE PRFRM048 B DSSBatch.v48
+! Crop         : Brachiaria      
+! Experiment   : CBAN8401.BRX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE PRFRM048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\BRACHIARIA\CBAN8401.BRX                                                                1      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CBAN8401.BRX                                                                2      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CBAN8401.BRX                                                                3      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CBAN8401.BRX                                                                4      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCCA8001.BRX                                                                1      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCCA8001.BRX                                                                2      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCCA8001.BRX                                                                3      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCCA8001.BRX                                                                4      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCCA8091.BRX                                                                1      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCCA8091.BRX                                                                2      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCCA8091.BRX                                                                3      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCCA8091.BRX                                                                4      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCQU7901.BRX                                                                1      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCQU7901.BRX                                                                2      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCQU7901.BRX                                                                3      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCQU7901.BRX                                                                4      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCYU8101.BRX                                                                1      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCYU8101.BRX                                                                2      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCYU8101.BRX                                                                3      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CCYU8101.BRX                                                                4      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CNCH8201.BRX                                                                1      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CNCH8201.BRX                                                                2      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CNCH8201.BRX                                                                3      0      0      0      0
+C:\DSSAT48\BRACHIARIA\CNCH8201.BRX                                                                4      0      0      0      0
+C:\DSSAT48\BRACHIARIA\SAUR9001.BRX                                                                1      0      0      0      0
+C:\DSSAT48\BRACHIARIA\SAUR9001.BRX                                                                2      0      0      0      0
+C:\DSSAT48\BRACHIARIA\SAUR9001.BRX                                                                3      0      0      0      0
+C:\DSSAT48\BRACHIARIA\SAUR9001.BRX                                                                4      0      0      0      0
+C:\DSSAT48\BRACHIARIA\SPPI1101.BRX                                                                1      1      0      1      0
+C:\DSSAT48\BRACHIARIA\SPPI1101.BRX                                                                2      1      0      1      0
+C:\DSSAT48\BRACHIARIA\SPPI1101.BRX                                                                3      1      0      1      0
+C:\DSSAT48\BRACHIARIA\SPPI1101.BRX                                                                4      1      0      1      0

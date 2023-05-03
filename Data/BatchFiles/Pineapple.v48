@@ -1,0 +1,25 @@
+$BATCH(PINEAPPLE)
+!
+! Directory    : C:\DSSAT48\PINEAPPLE
+! Command Line : C:\DSSAT48\DSCSM048.EXE PIALO048 B DSSBatch.v48
+! Crop         : Pineapple       
+! Experiment   : UHKN8901.PIX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE PIALO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\PINEAPPLE\UHKN8901.PIX                                                                 1      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8901.PIX                                                                 2      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8901.PIX                                                                 3      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8901.PIX                                                                 4      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8901.PIX                                                                 5      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8902.PIX                                                                 1      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8902.PIX                                                                 2      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8902.PIX                                                                 3      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8902.PIX                                                                 4      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8902.PIX                                                                 5      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8903.PIX                                                                 1      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8903.PIX                                                                 2      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8903.PIX                                                                 3      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8903.PIX                                                                 4      1      0      0      0
+C:\DSSAT48\PINEAPPLE\UHKN8903.PIX                                                                 5      1      0      0      0

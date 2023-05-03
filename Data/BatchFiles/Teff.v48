@@ -1,0 +1,48 @@
+$BATCH(TEFF)
+!
+! Directory    : C:\DSSAT48\Teff
+! Command Line : C:\DSSAT48\DSCSM048.EXE TFAPS048 B DSSBatch.v48
+! Crop         : Teff
+! Experiment   : ETGA0201.TFX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE TFAPS048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Teff\ETGA0201.TFX                                                                      1      1      0      0      0
+C:\DSSAT48\Teff\ETGA0201.TFX                                                                      2      1      0      0      0
+C:\DSSAT48\Teff\ETGA0201.TFX                                                                      3      1      0      0      0
+C:\DSSAT48\Teff\ETGA0201.TFX                                                                      4      1      0      0      0
+C:\DSSAT48\Teff\ETJD1101.TFX                                                                      1      1      0      0      0
+C:\DSSAT48\Teff\ETJD1101.TFX                                                                      2      1      0      0      0
+C:\DSSAT48\Teff\ETJD1101.TFX                                                                      3      1      0      0      0
+C:\DSSAT48\Teff\ETJD1101.TFX                                                                      4      1      0      0      0
+C:\DSSAT48\Teff\ETMK0801.TFX                                                                      1      1      0      0      0
+C:\DSSAT48\Teff\ETMK0801.TFX                                                                      2      1      0      0      0
+C:\DSSAT48\Teff\ETMK0801.TFX                                                                      3      1      0      0      0
+C:\DSSAT48\Teff\ETMK0801.TFX                                                                      4      1      0      0      0
+C:\DSSAT48\Teff\ETMK0801.TFX                                                                      5      1      0      0      0
+C:\DSSAT48\Teff\ETMK0801.TFX                                                                      6      1      0      0      0
+C:\DSSAT48\Teff\ETMK0801.TFX                                                                      7      1      0      0      0
+C:\DSSAT48\Teff\ETMK0801.TFX                                                                      8      1      0      0      0
+C:\DSSAT48\Teff\ETOD1101.TFX                                                                      1      1      0      0      0
+C:\DSSAT48\Teff\ETOD1101.TFX                                                                      2      1      0      0      0
+C:\DSSAT48\Teff\ETOD1101.TFX                                                                      3      1      0      0      0
+C:\DSSAT48\Teff\ETOD1101.TFX                                                                      4      1      0      0      0
+C:\DSSAT48\Teff\ETUD9701.TFX                                                                      1      1      0      0      0
+C:\DSSAT48\Teff\ETUD9701.TFX                                                                      2      1      0      0      0
+C:\DSSAT48\Teff\ETUD9701.TFX                                                                      3      1      0      0      0
+C:\DSSAT48\Teff\GAJD1101.TFX                                                                      1      1      0      0      0
+C:\DSSAT48\Teff\GAJD1101.TFX                                                                      2      1      0      0      0
+C:\DSSAT48\Teff\GAJD1101.TFX                                                                      3      1      0      0      0
+C:\DSSAT48\Teff\GAJD1101.TFX                                                                      4      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      1      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      2      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      3      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      4      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      5      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      6      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      7      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      8      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                      9      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                     10      1      0      0      0
+C:\DSSAT48\Teff\NVFN0901.TFX                                                                     11      1      0      0      0

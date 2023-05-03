@@ -1,0 +1,43 @@
+$BATCH(CABBAGE)
+!
+! Directory    : C:\DSSAT48\CABBAGE
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Cabbage         
+! Experiment   : IBMC9601.CBX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\CABBAGE\IBMC9601.CBX                                                                   1      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   1      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   2      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   3      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   4      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   5      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   6      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   7      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   8      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                   9      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  10      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  11      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  12      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  13      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  14      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  15      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  16      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  17      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  18      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  19      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  20      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  21      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  22      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  23      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  24      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  25      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  26      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  27      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  28      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  29      1      0      0      0
+C:\DSSAT48\CABBAGE\IBPF8601.CBX                                                                  30      1      0      0      0
+C:\DSSAT48\CABBAGE\UHIH1201.CBX                                                                   1      0      0      0      0
+C:\DSSAT48\CABBAGE\UHIH1301.CBX                                                                   1      0      0      0      0
