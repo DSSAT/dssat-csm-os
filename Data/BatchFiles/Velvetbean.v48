@@ -1,0 +1,22 @@
+$BATCH(VELVET BEAN)
+!
+! Directory    : C:\DSSAT48\VELVETBEAN
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Velvet bean     
+! Experiment   : CIEB9701.VBX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\VELVETBEAN\CIEB9701.VBX                                                                1      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CIEB9701.VBX                                                                2      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CIEB9801.VBX                                                                1      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CIEB9801.VBX                                                                2      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CIEB9801.VBX                                                                3      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CIEB9801.VBX                                                                4      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CIEB9801.VBX                                                                5      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CIEB9801.VBX                                                                6      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CISR9704.VBX                                                                1      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CISR9704.VBX                                                                2      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CISR9704.VBX                                                                3      0      0      0      0
+C:\DSSAT48\VELVETBEAN\CISR9704.VBX                                                                4      0      0      0      0

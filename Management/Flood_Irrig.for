@@ -9,13 +9,14 @@ C  1. Written
 C  2. Header revision and minor changes           P.W.W.      8-7-93
 C  05/29/2002 CHP Rewrote for modular CSM model
 C  09/05/2003 CHP Added option for reported irrigation in DAP
+!  01/22/2010 CHP remove water table management from here - not just
+!                  for flooded fields.
 C=======================================================================
 
       SUBROUTINE FLOOD_IRRIG (DYNAMIC, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
-     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
-     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
+     &    IPDAT, IPERC, NBUND, NCOND, NPERC,              !Input
+     &    PUDDLED, RAIN, SOILPROP, SW, YRDOY, YRPLT,      !Input
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
 
@@ -28,17 +29,17 @@ C=======================================================================
       CHARACTER*1 IIRRI
       CHARACTER*6, PARAMETER :: ERRKEY = "FIRRIG"
       CHARACTER*78, DIMENSION(3) :: MSG
-      INTEGER  DYNAMIC, J,K,L, YRDOY, YRPLT
+      INTEGER  DYNAMIC, J,YRDOY, YRPLT
       REAL     DEPIR,TDSW,RAIN
 
-      INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC, NTBL, NPUD
+      INTEGER INCDAT, NBUND, NCOND, NLAYR, NPERC, NPUD        !, NTBL
       INTEGER IBDAT(NAPPL), BUNDDAT(NAPPL), IIRRCV(NAPPL)
       INTEGER CONDAT(NAPPL), IRRDAT(NAPPL), PUDDAT(NAPPL), PUDAT(NAPPL)
-      INTEGER JULWTB(NAPPL), WTDAT(NAPPL)
+!     INTEGER JULWTB(NAPPL), WTDAT(NAPPL)
       INTEGER IPDAT(NAPPL), PERCDAT(NAPPL)
-      REAL ABUND, APWAT, CUMDEP, EF
+      REAL ABUND, APWAT, EF
       REAL FLOOD, INFILT, PERC, PERMW, PUDPERC
-      REAL BUND(NAPPL), PWAT(NAPPL), COND(NAPPL), IPERC(NAPPL)
+      REAL BUND(NAPPL), COND(NAPPL), IPERC(NAPPL)
       REAL, DIMENSION(NL) :: DLAYR, SAT, SW
       LOGICAL BUNDED, PUDDLED, CONVERTED !, PERMF
 
@@ -113,14 +114,14 @@ C-----------------------------------------------------------------------
             ENDIF
           ENDDO
 
-!         Convert water table dates
-          DO K = 1, NTBL
-            IF (IIRRI .EQ. 'D') THEN
-              WTDAT(J) = INCDAT(YRPLT, JULWTB(K))
-            ELSE
-              WTDAT(J) = JULWTB(K)
-            ENDIF
-          ENDDO
+!          Convert water table dates
+!          DO K = 1, NTBL
+!            IF (IIRRI .EQ. 'D') THEN
+!              WTDAT(J) = INCDAT(YRPLT, JULWTB(K))
+!            ELSE
+!              WTDAT(J) = JULWTB(K)
+!            ENDIF
+!          ENDDO
 
           CONVERTED = .TRUE.
         ENDIF
@@ -235,25 +236,26 @@ C-----------------------------------------------------------------------
         DEPIR = DEPIR + EF
       END IF
 
-      IF (NTBL .GT. 0) THEN
-        DO K = 1, NTBL
-          IF (YRDOY .EQ. WTDAT(J)) THEN
-            APWAT = PWAT(K)
-          ENDIF
-        END DO
-
-!       Don't change SW here - calculate an irrigation depth to add.
-        IF (APWAT .GT. 0.0) THEN
-          CUMDEP = 0.0
-          DO L = 1, NLAYR
-            IF (CUMDEP .GE. APWAT) THEN
-              DEPIR = DEPIR + SAT(L) - SW(L)  !CHP - CHECK!
-!              SW(L) = SAT(L)
-            ENDIF
-            CUMDEP = CUMDEP + DLAYR(L)
-          END DO
-        ENDIF
-      ENDIF
+!     1/23/2010 CHP move water table entries to IRRIG
+!      IF (NTBL .GT. 0) THEN
+!        DO K = 1, NTBL
+!          IF (YRDOY .EQ. WTDAT(J)) THEN
+!            APWAT = PWAT(K)
+!          ENDIF
+!        END DO
+!
+!!       Don't change SW here - calculate an irrigation depth to add.
+!        IF (APWAT .GT. 0.0) THEN
+!          CUMDEP = 0.0
+!          DO L = 1, NLAYR
+!            IF (CUMDEP .GE. APWAT) THEN
+!              DEPIR = DEPIR + SAT(L) - SW(L)  !CHP - CHECK!
+!!              SW(L) = SAT(L)
+!            ENDIF
+!            CUMDEP = CUMDEP + DLAYR(L)
+!          END DO
+!        ENDIF
+!      ENDIF
 
       DEPIR = MAX(0.0, DEPIR)
 

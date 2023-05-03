@@ -1,0 +1,38 @@
+$BATCH(SAFFLOWER)
+!
+! Directory    : C:\DSSAT48\SAFFLOWER
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Safflower       
+! Experiment   : NMCL1301.SFX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\SAFFLOWER\NMCL1301.SFX                                                                 1      1      0      1      0
+C:\DSSAT48\SAFFLOWER\NMCL1301.SFX                                                                 2      1      0      1      0
+C:\DSSAT48\SAFFLOWER\NMCL1301.SFX                                                                 3      1      0      1      0
+C:\DSSAT48\SAFFLOWER\NMCL1301.SFX                                                                 4      1      0      1      0
+C:\DSSAT48\SAFFLOWER\NMCL1301.SFX                                                                 5      1      0      1      0
+C:\DSSAT48\SAFFLOWER\NMCL1301.SFX                                                                 6      1      0      1      0
+C:\DSSAT48\SAFFLOWER\NMCL1301.SFX                                                                 7      1      0      1      0
+C:\DSSAT48\SAFFLOWER\NMCL1301.SFX                                                                 8      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1703.SFX                                                                 1      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1703.SFX                                                                 2      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1703.SFX                                                                 3      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1703.SFX                                                                 4      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1703.SFX                                                                 5      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1703.SFX                                                                 6      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1703.SFX                                                                 7      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1703.SFX                                                                 8      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1705.SFX                                                                 1      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1705.SFX                                                                 2      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1803.SFX                                                                 1      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1803.SFX                                                                 2      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1803.SFX                                                                 3      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1803.SFX                                                                 4      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1803.SFX                                                                 5      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1803.SFX                                                                 6      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1803.SFX                                                                 7      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1803.SFX                                                                 8      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1805.SFX                                                                 1      1      0      1      0
+C:\DSSAT48\SAFFLOWER\UHIH1805.SFX                                                                 2      1      0      1      0
