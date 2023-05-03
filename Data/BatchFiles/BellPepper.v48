@@ -1,0 +1,15 @@
+$BATCH(BELL PEPPER)
+!
+! Directory    : C:\DSSAT48\BellPepper
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Bell pepper     
+! Experiment   : UFBR9601.PRX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\BellPepper\UFBR9601.PRX                                                                1      1      0      0      0
+C:\DSSAT48\BellPepper\UFBR9601.PRX                                                                2      1      0      0      0
+C:\DSSAT48\BellPepper\UFBR9601.PRX                                                                3      1      0      0      0
+C:\DSSAT48\BellPepper\UFBR9601.PRX                                                                4      1      0      0      0
+C:\DSSAT48\BellPepper\UFBR9601.PRX                                                                5      1      0      0      0

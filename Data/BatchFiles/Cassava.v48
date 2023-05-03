@@ -1,0 +1,26 @@
+$BATCH(CASSAVA)
+!
+! Directory    : C:\DSSAT48\CASSAVA
+! Command Line : C:\DSSAT48\DSCSM048.EXE CSYCA048 B DSSBatch.v48
+! Crop         : Cassava         
+! Experiment   : CCPA7801.CSX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CSYCA048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\CASSAVA\CCPA7801.CSX                                                                   1      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA7801.CSX                                                                   2      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA7801.CSX                                                                   3      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA7801.CSX                                                                   4      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA7901.CSX                                                                   1      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA7901.CSX                                                                   2      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA7901.CSX                                                                   3      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA7901.CSX                                                                   4      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA8001.CSX                                                                   1      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA8001.CSX                                                                   2      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA8001.CSX                                                                   3      1      0      0      0
+C:\DSSAT48\CASSAVA\CCPA8001.CSX                                                                   4      1      0      0      0
+C:\DSSAT48\CASSAVA\CCQU7901.CSX                                                                   1      1      0      0      0
+C:\DSSAT48\CASSAVA\CCQU7901.CSX                                                                   2      1      0      0      0
+C:\DSSAT48\CASSAVA\CCQU7901.CSX                                                                   3      1      0      0      0
+C:\DSSAT48\CASSAVA\CCQU7901.CSX                                                                   4      1      0      0      0

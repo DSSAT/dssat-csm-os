@@ -195,7 +195,6 @@ C=======================================================================
       FUNCTION TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
 
       IMPLICIT NONE
-
       EXTERNAL VPSLOP
 !-----------------------------------------------------------------------
       CHARACTER*2 CROP

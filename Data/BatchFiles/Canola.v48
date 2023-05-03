@@ -1,0 +1,24 @@
+$BATCH(CANOLA)
+!
+! Directory    : C:\DSSAT48\CANOLA
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Canola          
+! Experiment   : NOTH1201.CNX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\CANOLA\NOTH1201.CNX                                                                    1      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1201.CNX                                                                    2      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1201.CNX                                                                    3      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1201.CNX                                                                    4      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1301.CNX                                                                    1      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1301.CNX                                                                    2      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1301.CNX                                                                    3      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1301.CNX                                                                    4      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1401.CNX                                                                    1      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1401.CNX                                                                    2      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1401.CNX                                                                    3      1      0      1      0
+C:\DSSAT48\CANOLA\NOTH1401.CNX                                                                    4      1      0      1      0
+C:\DSSAT48\CANOLA\USON0801.CNX                                                                    1      1      0      1      0
+C:\DSSAT48\CANOLA\USOT0801.CNX                                                                    1      1      0      1      0

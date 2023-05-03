@@ -1,0 +1,15 @@
+$BATCH(GREEN BEAN)
+!
+! Directory    : C:\DSSAT48\GREENBEAN
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Green bean      
+! Experiment   : UFGA0701.GBX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\GREENBEAN\UFGA0701.GBX                                                                 1      1      0      1      0
+C:\DSSAT48\GREENBEAN\UFGA0701.GBX                                                                 2      1      0      1      0
+C:\DSSAT48\GREENBEAN\UFGA0701.GBX                                                                 3      1      0      1      0
+C:\DSSAT48\GREENBEAN\UFGA0701.GBX                                                                 4      1      0      1      0
+C:\DSSAT48\GREENBEAN\UFGA0701.GBX                                                                 5      1      0      1      0

@@ -1,0 +1,20 @@
+$BATCH(TOMATO)
+!
+! Directory    : C:\DSSAT48\TOMATO
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Tomato          
+! Experiment   : UFBR9101.TMX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\TOMATO\UFBR9101.TMX                                                                    1      1      0      0      0
+C:\DSSAT48\TOMATO\UFBR9201.TMX                                                                    1      1      0      0      0
+C:\DSSAT48\TOMATO\UFBR9401.TMX                                                                    4      1      0      0      0
+C:\DSSAT48\TOMATO\UFBR9502.TMX                                                                    1      1      0      0      0
+C:\DSSAT48\TOMATO\UFGA0602.TMX                                                                    4      1      0      1      1
+C:\DSSAT48\TOMATO\UFGA0701.TMX                                                                    4      1      0      1      1
+C:\DSSAT48\TOMATO\UFGA9601.TMX                                                                    3      1      0      1      1
+C:\DSSAT48\TOMATO\UFGA9602.TMX                                                                    4      1      0      1      1
+C:\DSSAT48\TOMATO\UFQU9501.TMX                                                                    1      1      0      0      0
+C:\DSSAT48\TOMATO\UFQU9502.TMX                                                                   14      1      0      0      0

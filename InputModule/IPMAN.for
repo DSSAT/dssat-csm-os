@@ -630,6 +630,7 @@ C  05/28/1993 PWW Header revision and minor changes
 C  06/09/2002 GH  Modified for Y2K
 C  02/03/2005 GH  Corrected error checking for missing levels
 C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C  04/01/2021 FO/VSH Update harvest array size for MultiHarvest
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNHAR,YEAR
 C
@@ -650,22 +651,23 @@ C=======================================================================
      &                  NHAR,IHARI,YRSIM,CROP,HBPC)  !,FREQ,CUHT)
 !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
+      USE ModuleDefs
       IMPLICIT     NONE
       EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY
 
       CHARACTER*1  IHARI
       CHARACTER*2  CROP
-      CHARACTER*5  HSTG(3),HCOM(3),HSIZ(3)
+      CHARACTER*5  HSTG(NAPPL),HCOM(NAPPL),HSIZ(NAPPL)
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*12 FILEX
       CHARACTER*80 CHARTEST
 
-      INTEGER      LNHAR,LUNEXP,ISECT,LINEXP,HDATE(3),NHAR
+      INTEGER      LNHAR,LUNEXP,ISECT,LINEXP,HDATE(NAPPL),NHAR
       INTEGER      ERRNUM,J,IFIND,LN,YRSIM
 !     INTEGER      HYR, HDAY
 
-!     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-      REAL         HPC(3),HBPC(3) !,FREQ,CUHT 
+      REAL         HPC(NAPPL),HBPC(NAPPL)
+!     REAL FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       PARAMETER   (ERRKEY='IPHAR ')
 
@@ -673,7 +675,7 @@ C=======================================================================
 
       NHAR  = 0
 
-      DO J = 1, 3
+      DO J = 1, NHAR         
          HSTG(J)  = '     '
          HCOM(J)  = '     '
          HSIZ(J)  = '     '
@@ -730,7 +732,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
            HSIZ(NHAR) = '  -99'
          ENDIF
          NHAR = NHAR + 1
-         IF (NHAR .GE. 4) GO TO 120
+
+         IF (NHAR .GE. NAPPL) GO TO 120
+         
        ELSE
          IF (NHAR .EQ. 1) THEN
            CALL ERROR (ERRKEY,2,FILEX,LINEXP)

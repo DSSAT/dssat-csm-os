@@ -19,6 +19,7 @@ C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  03/24/2004 CHP Added P component of senesced matter
 C  01/19/2006 CHP N in senesced roots lost at actual N%, not minimum.
+C  04/01/2021 VSH/AH Added MultiHarvest code changes.
 !  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  Called by:  PLANT
@@ -54,12 +55,14 @@ C=======================================================================
      &  WTNRA, WTNRO, WTNRT, WTNSA, WTNSD, WTNSDA,        !Output
      &  WTNSDO, WTNSH, WTNSHA, WTNSHO, WTNSO, WTNST,      !Output
      &  WTNUP, WTRO, WTSDO, WTSHO, WTSO, XLAI, XPOD,      !Output
-     &  ShutMob, RootMob, ShelMob)                        !Output
+     &  ShutMob, RootMob, ShelMob,                        !Output
+     &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      
       IMPLICIT NONE
       EXTERNAL IPGROW, ERROR, STRESS
       SAVE
@@ -154,6 +157,9 @@ C=======================================================================
       REAL ADD
       REAL ShutMob, RootMob, ShelMob
 
+      REAL TOSHMINE, TOCHMINE
+      REAL HPODWT,HSDWT,HSHELWT
+      REAL NHSHWT, NHSDWT
 !-----------------------------------------------------------------------
 !     Constructed variable types defined in ModuleDefs.for.
       TYPE (ControlType) CONTROL
@@ -338,6 +344,8 @@ C-----------------------------------------------------------------------
       SDPDOT = 0.0    !CHP - not used
       PUNDOT = 0.0    !CHP - not used
 
+      NHSHWT = 0.0    !CHP - N loss due to Multi-Harvest for shell wt
+      NHSDWT = 0.0    !CHP - N loss due to Multi-Harvest for seed wt
       NLPEST = 0.0    !CHP - N loss due to pest damage
 
 !-----------------------------------------------------------------------
@@ -444,7 +452,6 @@ C     Initial seedling or transplant weight
       SLAAD  = AREALF / (WTLF - WCRLF)
       XLAI   = AREALF / 10000.
       XHLAI  = XLAI
-
 C***********************************************************************
 C***********************************************************************
 C     Daily integration
@@ -530,15 +537,21 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net shell growth rate
 C-----------------------------------------------------------------------
-      WSHIDT = MIN(WSHIDT,SHELWT)     ! pest damage to shells
-      WSHDOT = WSHDTN - WSHIDT - WTABRT - NRUSSH / 0.16 - CRUSSH
-      ShelMob = (NRUSSH / 0.16 + CRUSSH) * 10.    !kg/ha
-
+      WSHIDT = MIN(WSHIDT,SHELWT)     ! pest damage to shells      
+      WSHDOT = WSHDTN - WSHIDT - WTABRT - TOSHMINE - TOCHMINE - HSHELWT
+      IF (WSHDOT .LT. 0.0) THEN
+        WSHDOT = MAX(WSHDOT, -SHELWT)
+      ENDIF      
+      ShelMob = (TOSHMINE + TOCHMINE) * 10.    !kg/ha
 C-----------------------------------------------------------------------
 C     Net seed growth rate
 C-----------------------------------------------------------------------
       SWIDOT = MIN(SWIDOT,SDWT)       ! pest damage to seeds
-      WSDDOT = WSDDTN - SWIDOT        
+      WSDDOT = WSDDTN - SWIDOT - HSDWT
+      IF (WSDDOT .LT. 0.0) THEN
+        WSDDOT = MAX(WSDDOT, -SDWT)
+      ENDIF
+            
       WTLSD  = WTLSD + WSDDOT * POTLIP    !lipids in seed
       WTCSD  = WTCSD + WSDDOT * POTCAR    !carbohydrates in seed
 
@@ -550,8 +563,10 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net pod growth rate
 C-----------------------------------------------------------------------
-      WPDOT = WSHDOT + WSDDOT          
-
+      WPDOT = WSHDOT + WSDDOT - HPODWT
+      IF (WPDOT .LT. 0.0) THEN
+        WPDOT = MAX(WPDOT, -PODWT)
+      ENDIF        
 C-----------------------------------------------------------------------
 C     Total Net plant growth rate
 C-----------------------------------------------------------------------
@@ -743,10 +758,11 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Shell nitrogen senescence, abortion and pest damage loss
 C-----------------------------------------------------------------------
-      NSHOFF = (WTABRT+WSHIDT) * (PCNSH/100.)
+      NSHOFF = (WTABRT+WSHIDT+HSHELWT) * (PCNSH/100.)
+      NHSHWT = NHSHWT + HSHELWT * PCNSH/100.
       NLPEST = NLPEST + WSHIDT * PCNSH/100.
       IF (NSHOFF < 0.0) THEN
-         NSHOFF = 0.0
+        NSHOFF = 0.0
       ENDIF
 
 C-----------------------------------------------------------------------
@@ -757,7 +773,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Seed nitrogen senescence, abortion and pest damage loss
 C-----------------------------------------------------------------------
-      NSDOFF = SWIDOT * PCNSD/100.
+      NSDOFF = (SWIDOT+HSDWT) * (PCNSD/100.)
+      NHSDWT = NHSDWT + HSDWT * PCNSH/100.
       IF (NSDOFF < 0.0) THEN
          NSDOFF = 0.0
       ENDIF
@@ -1654,7 +1671,7 @@ C=======================================================================
 ! SDLIP    Maximum lipid composition in seed (fraction)
 ! SDNPL    Seed N (g[N] / m2)
 ! SDPDOT   Daily seed puncture damage (not yet implemented) 
-! SDPRO    Seed protein fraction at 25ºC (g[protein] / g[seed])
+! SDPRO    Seed protein fraction at 25Â°C (g[protein] / g[seed])
 ! SDPROR   Ratio to adjust lipid and carbohydrate proportions when seed 
 !            protein differs from protein composition of standard cultivar 
 !            (SDPROS) 

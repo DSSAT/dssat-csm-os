@@ -20,7 +20,8 @@ C  08/12/2003 CHP Added I/O error checking and changed call to READA
 C  02/09/2007 GH  Add path for FileA
 !  08/28/2009 CHP added EDAT, EDAP 
 !  09/17/2019 CHP remove crop CT
-C  07/08/2022 GH  Add CU
+C  07/08/2022 GH  Add CU for Cucumber
+C  05/01/2023 GH  Add GY for Guar; SR for Strawberry
 C=======================================================================
 
       SUBROUTINE OPHARV(CONTROL, ISWITCH, 
@@ -225,8 +226,8 @@ C-----------------------------------------------------------------------
       PlantStres % StageName = '                       '
       SELECT CASE (CROP)
       CASE ('BG','BN','CH','CI','CN','CO','CP','CU','FB','GB',
-     &      'LT','PE','PN','PP','PR','QU','SB','SF','SU', 
-     &      'TM','VB')
+     &      'GY','LT','PE','PN','PP','PR','QU','SB','SF','SR',
+     &      'SU','TM','VB')
         PlantStres % NSTAGES = 4
         PlantStres % StageName(1)  = 'Emergence -First Flower'
         PlantStres % StageName(2)  = 'First Flower-First Seed'
@@ -270,8 +271,8 @@ C-----------------------------------------------------------------------
 !     Set ACTIVE variable to indicate that current phase is active
       SELECT CASE (CROP)
       CASE ('BG','BN','CH','CI','CN','CO','CP','CU','FB','GB',
-     &      'LT','PE','PN','PP','PR','QU','SB','SF','SU',
-     &      'TM','VB')
+     &      'GY','LT','PE','PN','PP','PR','QU','SB','SF','SR',
+     &      'SU','TM','VB')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(5)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -633,8 +634,8 @@ C-----------------------------------------------------------------------
       ENDDO
 
       SELECT CASE (CROP)
-      CASE ('BN','CH','CI','CN','CP','CU','FB','GB','PE',
-     &      'PP','PR','SB','TM','VB','LT')
+      CASE ('BN','CH','CI','CN','CP','CU','FB','GB','GY','PE',
+     &      'PP','PR','SB','SR','TM','VB','LT')
 !     For stage-dependant irrigation - send GSTAGE back to irrig routine
         STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
         STNAME(2) = 'Unifoliate'
