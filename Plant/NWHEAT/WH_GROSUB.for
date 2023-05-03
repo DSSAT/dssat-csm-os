@@ -66,6 +66,7 @@ C The statements begining with !*! are refer to APSIM source codes
 !  TSEN, vd, vd1, vd2, SKi_Avail, KSTRES, 
 
       USE ModuleDefs
+      USE ModuleData
       USE WH_module
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
@@ -75,7 +76,7 @@ C The statements begining with !*! are refer to APSIM source codes
      &  NWHEATS_LEVEL, NWHEATS_NUPTK, NWHEATS_PLNIN, NWHEATS_RTDP, 
      &  NWHEATS_RTLV, NWHEATS_SET_ADF, NWHEATS_SET_NCONC, 
      &  NWHEATS_SET_NFACT, NWHEATS_WATUP_NEW, P_CERES, SET_SWDEF_NEW, 
-     &  SUBTRACT_REAL_ARRAY, SUM_REAL_ARRAY, WARNING, WH_NFACTO, WTDEPT
+     &  SUBTRACT_REAL_ARRAY, SUM_REAL_ARRAY, WARNING, WH_NFACTO
       SAVE
 !----------------------------------------------------------------------
 !                         Variable Declaration
@@ -1860,10 +1861,11 @@ C 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
           SATFAC = AMIN1(SATFAC,1.0)
           
 C         Calculate soil water table depth
-          CALL WTDEPT(
-     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
-     &      WTDEP)                                        !Output
-          
+!          CALL WTDEPT(
+!     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
+!     &      WTDEP)                                        !Output
+          CALL GET('WATER','WTDEP',WTDEP)
+         
           g_water_table = WTDEP *10    ! for APSIM Nwheat model
           
 !======================================================================

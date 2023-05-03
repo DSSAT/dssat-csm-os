@@ -76,7 +76,7 @@ C=======================================================================
       INTEGER IBDAT(NAPPL), IIRRCV(NAPPL), IPDAT(NAPPL) !, IIRRP(100)
       INTEGER PUDDAT(NAPPL)
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
-      REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
+      REAL BUND(NAPPL), IPERC(NAPPL), COND(NAPPL)  !, PWAT(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
       
 !     Growth stage dependent irrigation 
@@ -108,6 +108,8 @@ C=======================================================================
 !     REAL ET     !, EP, ES, E0
       REAL EOP, EVAP, RUNOFF
 
+!  Added for water table management
+      REAL MgmtWTD, ICWD
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
@@ -162,6 +164,9 @@ C-----------------------------------------------------------------------
       DaysSinceIrrig = 999
       ACCUM_ET = 0.0
 
+!     Water table depth (-99 indicates no water table present)
+      MgmtWTD = -99.  
+
       IF (ISWWAT .EQ. 'Y') THEN
 
           JIRR = 0.0
@@ -210,6 +215,24 @@ C-----------------------------------------------------------------------
           ENDIF
 
 C-----------------------------------------------------------------------
+C         Find and Read Initial Conditions Section
+C-----------------------------------------------------------------------
+          IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
+            REWIND(LUNIO)
+            SECTION = '*INITI'
+            CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LINC
+            IF (FOUND .EQ. 0) THEN
+              CALL ERROR(SECTION, 42, FILEIO, LNUM)
+            ELSE
+              READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM =LNUM+1
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+              MgmtWTD = ICWD
+!              CALL PUT('MGMT','WATTAB',MgmtWTD)
+!              CALL PUT('MGMT','ICWD',ICWD)
+            ENDIF
+          ENDIF
+
+C-----------------------------------------------------------------------
 !     Find and Read Planting Details Section
 C-----------------------------------------------------------------------
           SECTION = '*PLANT'
@@ -241,7 +264,7 @@ C-----------------------------------------------------------------------
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
             JIRR = JIRR + 1
           ENDDO
-  
+
    50     CONTINUE
           CLOSE (LUNIO)
 !        ENDIF
@@ -286,6 +309,9 @@ C-----------------------------------------------------------------------
           IF (DSOILX .GT. 0)  DSOIL = DSOILX
           IF (AIRAMX .GT. 0) AIRAMT = AIRAMX
         ENDIF
+        
+        IF (EFFIRR < 1.E-3) EFFIRR = 1.0
+
 
 !     AMTMIN was not being used -- should it be used in place
 !             of AIRAMT?  CHP
@@ -319,11 +345,14 @@ C
       BUND  = 0.0
       COND  = 0.0
       IPERC = 0.0
-      PWAT  = 0.0
-      WTABL = 0.0
+!     PWAT  = 0.0
+!     WTABL = -99.
 
       PUDDLED = .FALSE.
       PLOWPAN = 0.0
+      
+      ATHETA = 1.0
+      SWDEF = 0 
 
 !-----------------------------------------------------------------------
 !     Irrigation Codes: IRRCOD
@@ -366,7 +395,6 @@ C
              COND(NCOND)   = AMT(I)
 
              ! Regular irrigation upland fields
-             !
              NAPW = NAPW + 1
              JULAPL(NAPW) = IDLAPL(I)
              AMIR(NAPW)   = AMT(I)
@@ -598,9 +626,8 @@ C-----------------------------------------------------------------------
 !      IF (NBUND .GT. 0) THEN
         CALL FLOOD_IRRIG (SEASINIT, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
-     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
-     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
+     &    IPDAT, IPERC, NBUND, NCOND, NPERC,              !Input
+     &    PUDDLED, RAIN, SOILPROP, SW, YRDOY, YRPLT,      !Input
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
 !      ENDIF
@@ -640,9 +667,8 @@ C-----------------------------------------------------------------------
       IF (NBUND .GT. 0) THEN
         CALL FLOOD_IRRIG (RATE, 
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
-     &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC,      !Input
-     &    NPUD, NTBL, PUDDAT, PUDDLED, PWAT, RAIN,        !Input
-     &    SOILPROP, SW, YRDOY, YRPLT,                     !Input
+     &    IPDAT, IPERC, NBUND, NCOND, NPERC,              !Input
+     &    PUDDLED, RAIN, SOILPROP, SW, YRDOY, YRPLT,      !Input
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
         IF (DEPIR > 1.E-3) NAP = NAP + 1
@@ -714,8 +740,9 @@ C-----------------------------------------------------------------------
 !     Check for growth stage dependent irrigation
       IF (IRINC < NGSIrrigs) THEN
         IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
-          IRINC = IRINC + 1  ! If you reach the next GS, add 1 to IRINC
-!         reset accumulator for water used in this GS
+!         If you reach the next GS specified, add 1 to IRINC
+          IRINC = IRINC + 1  
+!         reset accumulator for water used in this growth stage
           GSWatUsed = 0.0    
         END IF
       ENDIF
@@ -885,6 +912,7 @@ C               Determine supplemental irrigation amount.
 C               Compensate for expected water loss due to soil evaporation
 C               and transpiration today.
 C               Estimate that an average of 5 mm of water will be lost.
+! chp 2023-01-07 could use GET to grab yesterday's ET
                 IRRAPL = SWDEF*10 + 5.0
                 IRRAPL = MAX(0.,IRRAPL)
 
@@ -904,6 +932,24 @@ C               Apply fixed irrigation amount
 
       END SELECT
       ENDIF
+
+!-----------------------------------------------------------------------
+!     Water table management
+      IF (NTBL .GT. 0) THEN
+        DAP = MAX(0,TIMDIF(YRPLT,YRDOY))
+        DO I = 1, NTBL
+   !       IF ((IIRRI == 'R' .AND. YRDOY == JULWTB(I)) .OR.
+   !  &        (IIRRI == 'D' .AND. DAP == JULWTB(I))) THEN
+          IF ((IIRRI == 'R' .AND. YRDOY == JULWTB(I)) .OR.
+     &        (IIRRI == 'D' .AND. DAP == JULWTB(I))
+     &          .OR. ((IIRRI == 'A').AND. YRDOY == JULWTB(I))) THEN
+            MgmtWTD =  WTABL(I) 
+            CALL PUT('MGMT','WATTAB',MgmtWTD)
+            EXIT
+          ENDIF
+        END DO
+      ENDIF
+
 C-----------------------------------------------------------------------
 C    *********    IRRIGATE     **********
 C-----------------------------------------------------------------------

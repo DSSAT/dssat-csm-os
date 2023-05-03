@@ -24,8 +24,9 @@ C           depending on their water holding capacity and actual soil
 C           water content.  Then saturated flow is calculated.
 C=======================================================================
       SUBROUTINE INFIL(
-     &    DLAYR, DUL, NLAYR, PINF, SAT, SW, SWCN, SWCON,  !Input
-     &    DRAIN, DRN, EXCS, SWDELTS)                    !Output
+     &    DLAYR, DS, DUL, NLAYR, PINF, SAT, SW,           !Input
+     &    SWCN, SWCON, MgmtWTD,                           !Input
+     &    DRAIN, DRN, EXCS, SWDELTS)                      !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
@@ -36,7 +37,8 @@ C=======================================================================
       INTEGER L, LK, NLAYR
 
       REAL DRAIN, DRCM, EXCS, HOLD, PINF, SWCON, TMPEXCS
-      REAL DLAYR(NL), DRN(NL), DUL(NL), SAT(NL), SW(NL)
+      REAL MgmtWTD
+      REAL DLAYR(NL), DRN(NL), DS(NL), DUL(NL), SAT(NL), SW(NL)
       REAL SWCN(NL), SWDELTS(NL), SWTEMP(NL)
 
 !-----------------------------------------------------------------------
@@ -55,20 +57,25 @@ C=======================================================================
 ! 11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
 !     increased evaporation for wet soils
 
-          IF (L == 1) THEN                                        !JTR
-            DRCM = 0.9 * SWCON * (SAT(L) - DUL(L)) * DLAYR(L)     !JTR
-          ELSE                                                    !JTR
-            DRCM = SWCON * (SAT(L) - DUL(L)) * DLAYR(L)
-          ENDIF                                                   !JTR
-
-          DRN(L) = PINF - HOLD + DRCM
-
-!         Failed experiment -- too many problems with zero SWCN and 
-!           historic soil profiles
-!         IF (SWCN(L) .GE. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
-          IF (SWCN(L) .GT. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
-            DRN(L) = SWCN(L) * 24.0
-            DRCM = DRN(L) + HOLD - PINF
+          IF (DS(L) > MgmtWTD) THEN
+            DRN(L) = 0.0
+            DRCM = 0.0
+          ELSE
+            IF (L == 1) THEN                                        !JTR
+              DRCM = 0.9 * SWCON * (SAT(L) - DUL(L)) * DLAYR(L)     !JTR
+            ELSE                                                    !JTR
+              DRCM = SWCON * (SAT(L) - DUL(L)) * DLAYR(L)
+            ENDIF                                                   !JTR
+        
+            DRN(L) = PINF - HOLD + DRCM
+        
+!           Failed experiment -- too many problems with zero SWCN and 
+!             historic soil profiles
+!           IF (SWCN(L) .GE. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
+            IF (SWCN(L) .GT. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
+              DRN(L) = SWCN(L) * 24.0
+              DRCM = DRN(L) + HOLD - PINF
+            ENDIF
           ENDIF
 
           SWTEMP(L) = SWTEMP(L) + (PINF - DRN(L)) / DLAYR(L)
@@ -103,7 +110,8 @@ C           If there is excess water, redistribute it in layers above.
 
         ELSE
           SWTEMP(L) = SWTEMP(L) + PINF / DLAYR(L)
-          IF (SWTEMP(L) .GE. DUL(L) + 0.003) THEN
+          IF (SWTEMP(L) .GE. DUL(L) + 0.003 .AND.
+     &          DS(L) < MgmtWTD) THEN
 
 ! 11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
 !     increased evaporation for wet soils
@@ -145,27 +153,28 @@ C           If there is excess water, redistribute it in layers above.
 !     INFIL VARIABLE DEFINITIONS: (updated 2/12/2004)
 !-----------------------------------------------------------------------
 ! DLAYR(L)   Thickness of soil layer L (cm)
-! DRAIN       Drainage rate from soil profile (mm/d)
-! DRCM        Drainage rate from soil profile (cm/d)
-! DRN(L)      Drainage rate through soil layer L (cm/d)
-! DUL(L)      Volumetric soil water content at Drained Upper Limit in soil 
+! DRAIN      Drainage rate from soil profile (mm/d)
+! DRCM       Drainage rate from soil profile (cm/d)
+! DRN(L)     Drainage rate through soil layer L (cm/d)
+! DUL(L)     Volumetric soil water content at Drained Upper Limit in soil 
 !              layer L (cm3[water]/cm3[soil])
 ! EXCS       Excess water to be added to runoff (cm/d)
-! HOLD        Amount of water a soil layer will hold above it's present 
+! HOLD       Amount of water a soil layer will hold above it's present 
 !               level, used to calculate downward flow; also, temporary 
 !               variable/ intermediate calculation (cm)
-! NLAYR       Actual number of soil layers 
+! MgmtWTD    Managed depth to water table (cm)
+! NLAYR      Actual number of soil layers 
 ! PINF       Potential water available for infiltration (cm)
-! SAT(L)      Volumetric soil water content in layer L at saturation
+! SAT(L)     Volumetric soil water content in layer L at saturation
 !               (cm3 [water] / cm3 [soil])
-! SW(L)       Volumetric soil water content in layer L
+! SW(L)      Volumetric soil water content in layer L
 !               (cm3 [water] / cm3 [soil])
-! SWCN(L)     Saturated hydraulic conductivity in layer L (cm/hr)
-! SWCON       Soil water conductivity constant; whole profile drainage rate 
+! SWCN(L)    Saturated hydraulic conductivity in layer L (cm/hr)
+! SWCON      Soil water conductivity constant; whole profile drainage rate 
 !               coefficient (1/d)
 ! SWDELTS(L) Change in soil water content due to drainage in layer L
 !             (cm3 [water] / cm3 [soil])
-! SWTEMP(L)   Soil water content in layer L (temporary value to be modified 
+! SWTEMP(L)  Soil water content in layer L (temporary value to be modified 
 !               based on drainage, root uptake and upward flow through soil 
 !               layers). (cm3/cm3)
 !-----------------------------------------------------------------------
