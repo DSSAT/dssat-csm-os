@@ -442,9 +442,9 @@
           CASE ('GB')       ! Snap bean
             WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
      &      AvgDMC, AvgFPW, AvgDPW, 
-     &      PodAge,NINT(CLASS(7)*10.),NINT(CLASS(1)*10.),
-     &      NINT(CLASS(2)*10.),NINT(CLASS(3)*10.),NINT(CLASS(4)*10.),
-     &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.),
+     &      PodAge,NINT(CLASS(7)),NINT(CLASS(1)),
+     &      NINT(CLASS(2)),NINT(CLASS(3)),NINT(CLASS(4)),
+     &      NINT(CLASS(5)),NINT(CLASS(6)),
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
