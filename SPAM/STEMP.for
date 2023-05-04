@@ -309,7 +309,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       SELECT CASE (METMP)
-      CASE('K') !Kimball method
+      CASE('D') !Kimball method
         TMA(1) = TAVG
       CASE DEFAULT  !old DSSAT equation 
         TMA(1) = (1.0 - ALBEDO) * (TAVG + (TMAX - TAVG) *
