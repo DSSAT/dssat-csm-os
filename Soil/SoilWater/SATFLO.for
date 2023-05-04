@@ -27,6 +27,8 @@ C=======================================================================
      &    DLAYR, DUL, NLAYR, SAT, SW, SWCN, SWCON,        !Input
      &    DRAIN, DRN, SWDELTS)                            !Output
 
+!     2023-02-07 CHP removed unused variables from argument list:
+!     DS, MgmtWTD
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -36,9 +38,9 @@ C=======================================================================
       IMPLICIT NONE
 
       INTEGER L, NLAYR
-      REAL DRAIN, HOLD, SWCON, SWOLD
-      REAL DLAYR(NL), DRMX(NL), DRN(NL), DUL(NL), SAT(NL), SW(NL), 
-     &        SWCN(NL), SWDELTS(NL), SWTEMP(NL)
+      REAL DRAIN, HOLD, SWCON, SWOLD !, MgmtWTD
+      REAL DLAYR(NL), DRMX(NL), DRN(NL), DUL(NL), SAT(NL), !DS(NL), 
+     &        SW(NL), SWCN(NL), SWDELTS(NL), SWTEMP(NL)
 
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
@@ -51,6 +53,10 @@ C=======================================================================
       DO L = 1,NLAYR
         DRN(L) = 0.0
         DRMX(L) = 0.0
+
+!        IF (DS(L) > MgmtWTD) THEN
+!          EXIT
+!        ENDIF
 
         IF (SWTEMP(L) .GE. (DUL(L) + 0.003)) THEN
           DRMX(L) = (SWTEMP(L) - DUL(L)) * SWCON * DLAYR(L)

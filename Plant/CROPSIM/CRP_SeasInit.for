@@ -11,7 +11,7 @@
      &     UH2O, UNH4, UNO3, YEAR, SENLALG, SENNALG, SLPF, SN,
      &     STGYEARDOY, TAIRHR, TN, TRWUP)
 
-      USE ModuleDefs
+      USE ModuleData
       USE CRP_First_Trans_m
 
       IMPLICIT NONE
@@ -2006,7 +2006,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         VF = (1.0-VEFF)    
 
         ! Water table depth
-        WTDEP = ICWD
+!       WTDEP = ICWD
+        CALL GET('WATER','WTDEP',WTDEP)
 
         ! Initial shoot and root placement
         IF (SPRL.LT.0.0) SPRL = 0.0

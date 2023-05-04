@@ -75,6 +75,7 @@
       !       reduced uptake!
 
       USE OSDefinitions
+      USE ModuleData
       
       IMPLICIT NONE
       EXTERNAL YR_DOY, WARNING, GETLUN, SUMVALS, Y4K_DOY, HEADER, 
@@ -94,14 +95,14 @@
       INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts
       INTEGER,PARAMETER::LNUMX= 500 ! Maximum number of leaves/axis
       INTEGER,PARAMETER::HANUMX= 40 ! Maximum # harvest instructions
-      INTEGER,PARAMETER::NL   =  20 ! Maximum number of soil layers
+!     INTEGER,PARAMETER::NL   =  20 ! Maximum number of soil layers
 
-      INTEGER,PARAMETER::RUNINIT=1  ! Program initiation indicator
-      INTEGER,PARAMETER::SEASINIT=2 ! Reinitialisation indicator
-      INTEGER,PARAMETER::RATE = 3   ! Program rate calc.indicator
-      INTEGER,PARAMETER::INTEGR=4   ! Program update indicator
-      INTEGER,PARAMETER::OUTPUT=5   ! Program output indicator
-      INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator
+!     INTEGER,PARAMETER::RUNINIT=1  ! Program initiation indicator
+!     INTEGER,PARAMETER::SEASINIT=2 ! Reinitialisation indicator
+!     INTEGER,PARAMETER::RATE = 3   ! Program rate calc.indicator
+!     INTEGER,PARAMETER::INTEGR=4   ! Program update indicator
+!     INTEGER,PARAMETER::OUTPUT=5   ! Program output indicator
+!     INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator
 
       CHARACTER(LEN=1),PARAMETER::BLANK = ' '
       CHARACTER(LEN=3),PARAMETER::DASH = ' - '
@@ -1231,7 +1232,7 @@
 !     REAL          VARSUM(30)    ! Temporary variables sum        #
 !     REAL          VARVAL        ! Temporary variable             #
       REAL          VCNC          ! Vegetative critical N conc     #
-      INTEGER       VERSION       ! Version #                      #
+      INTEGER       CSCAS_VERSION ! Version #                      #
       REAL          VMNC          ! Vegetative minimum N conc      #
       REAL          VNAD          ! Vegetative canopy nitrogen     kg/ha
       REAL          VNAM          ! Vegetative N,mature            kg/ha
@@ -1482,7 +1483,7 @@
         IF (RUNCRP.LE.0) THEN          ! First time through
 
           MODNAME(1:8) = 'CSCAS048'
-          VERSION = 010115
+          CSCAS_VERSION = 010115
           GENFLCHK(1:15) = 'CSCAS048.20200721'
 
 !-----------------------------------------------------------------------
@@ -3550,7 +3551,8 @@ C-GH As per Tony Hunt 2017 for GenCalc
         ENDIF
 
         ! Water table depth
-        WTDEP = ICWD
+!       WTDEP = ICWD
+        CALL GET('WATER','WTDEP',WTDEP)
 
         ! Initial shoot and root placement
         IF (PLME.NE.'I') THEN
@@ -3726,7 +3728,7 @@ C-GH As per Tony Hunt 2017 for GenCalc
         WRITE(fnumwrk,*)' '
         WRITE(fnumwrk,*)' MODEL      ',MODEL
         WRITE(fnumwrk,*)' MODULE     ',MODNAME
-        WRITE(fnumwrk,'(A13,I6)')'  VERSION    ',VERSION
+        WRITE(fnumwrk,'(A13,I6)')'  VERSION    ',CSCAS_VERSION
         WRITE(fnumwrk,*)' PRODUCT    ',HPROD
         WRITE(fnumwrk,*)' RNMODE     ',RNMODE
         IF (RUN.LT.10) THEN

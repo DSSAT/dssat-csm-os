@@ -1,0 +1,29 @@
+$BATCH(SUGAR BEET)
+!
+! Directory    : C:\DSSAT48\SUGARBEET
+! Command Line : C:\DSSAT48\DSCSM048.EXE BSCER048 B DSSBatch.v48
+! Crop         : Sugar beet      
+! Experiment   : BU019701.BSX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE BSCER048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\SUGARBEET\BU019701.BSX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARBEET\BU019801.BSX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARBEET\NDCR1401.BSX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARBEET\NDCR1501.BSX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARBEET\NDCR1601.BSX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1601.BSX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1601.BSX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1601.BSX                                                                 5      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1601.BSX                                                                 6      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1601.BSX                                                                 8      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1601.BSX                                                                10      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1701.BSX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1701.BSX                                                                 2      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1701.BSX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1701.BSX                                                                 4      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1801.BSX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1801.BSX                                                                 2      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1801.BSX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARBEET\UHKL1801.BSX                                                                 4      1      0      1      0

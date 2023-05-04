@@ -224,7 +224,7 @@ C
 
 !        IF (INDEX ('BNSBPNPECHPPVBCPCBFB',CROP) .EQ. 0) THEN
          SELECT CASE (CROP)
-         CASE ('BN','SB','PN','PE','CH','PP',
+         CASE ('BN','SB','PN','PE','CH','PP','GY',
      &          'VB','CP','CB','FB','GB','LT','AL','BG')
 C     &          'VB','CP','CB','FB','GB','LT')
 !          Do nothing -- these crops fix N and can have Y or N

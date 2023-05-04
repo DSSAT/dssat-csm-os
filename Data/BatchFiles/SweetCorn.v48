@@ -1,0 +1,24 @@
+$BATCH(SWEET CORN)
+!
+! Directory    : C:\DSSAT48\SweetCorn
+! Command Line : C:\DSSAT48\DSCSM048.EXE SWCER048 B DSSBatch.v48
+! Crop         : Sweet corn      
+! Experiment   : UFCI0201.SWX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE SWCER048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\SweetCorn\UFCI0201.SWX                                                                 1      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0201.SWX                                                                 2      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0201.SWX                                                                 3      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0201.SWX                                                                 4      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0201.SWX                                                                 5      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0301.SWX                                                                 1      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0301.SWX                                                                 2      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0301.SWX                                                                 3      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0301.SWX                                                                 4      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0301.SWX                                                                 5      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0401.SWX                                                                 1      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0401.SWX                                                                 2      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0501.SWX                                                                 1      1      0      1      0
+C:\DSSAT48\SweetCorn\UFCI0501.SWX                                                                 2      1      0      1      0

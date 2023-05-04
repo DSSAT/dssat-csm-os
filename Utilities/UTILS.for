@@ -978,6 +978,8 @@ C        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
       EXTERNAL GETLUN, OUTFILES, WARNING
+!     Can't list routine SYSTEM as external because it generates an
+!       error with some compilers.
 
       Type (OutputType) FileData
       CHARACTER*16, DIMENSION(MaxFiles) :: FileName

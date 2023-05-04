@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2022-11-18
+! DSSAT v4.8; 2023-05-01
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -115,7 +115,7 @@ L#SX   Leaf number #   Leaf number per stem, maximum                            
 LAIH   LAI harvest     Leaf area index, at harvest                              .
 LAIX   LAI maximum     Leaf area index, maximum                                 .
 LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      .
-LONG   Longitude �     Longitude (degrees)                                      .
+LONG   Longitude °     Longitude (degrees)                                      .
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
@@ -173,8 +173,8 @@ T#AM   Tiller no #/m2  Tiller number at maturity (no/m2)                        
 TDAP   Tuber init day  Tuber initiation day (dap)                               .
 TDAT   Tuber init date Tuber initiation date (YrDoy)                            .
 THAM   Threshing %     Threshing % at maturity                                  .
-TMINA  Minimum temp �C Avg minimum air temperature (�C)                         TMNA
-TMAXA  Maximum temp �C Avg maximum air temperature (�C)                         TMXA
+TMINA  Minimum temp °C Avg minimum air temperature (°C)                         TMNA
+TMAXA  Maximum temp °C Avg maximum air temperature (°C)                         TMXA
 TN%H   Tuber N %       Tuber N at harvest (%)                                   .
 TNAH   Biomass N kg/ha Tuber+stem+leaf N at harvest (kg/ha)                     .
 TNAM   Treatment name  Treatment title                                          .
@@ -188,7 +188,7 @@ VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
 WYEAR  Weather year    Year for weather data (for forecast ensembles)           .
-XLAT   Latitude �      Latitude (degrees)                                       .
+XLAT   Latitude °      Latitude (degrees)                                       .
 YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
@@ -221,7 +221,7 @@ DAS    Days after st   Days after start of simulation (#)                       
 DCCD   Zadoks code     Growth stage (Zadoks code, 1-90)                         .
 DLAID  LAI-dead        Leaf area index, dead leaves                             .
 DLW_1  Dead Lf wt stk1 Dead leaf weight, primary stalk (g[dm]/stk)              .
-DTTD   Grow deg-days   Growing degree days (�C-d/d)                             .
+DTTD   Grow deg-days   Growing degree days (°C-d/d)                             .
 DU     Develpm units   Developmental units  (PVC.d)                             .
 DWTCO  Dead canopy     Dead canopy weight (kg [dm]/ha)                          .
 DWTLO  Dead leaf       Dead leaf weight (kg [dm]/ha)                            .
@@ -319,28 +319,28 @@ SLAD   SLA cm2/g       Specific leaf area (cm2/g)                               
 SLFT   Leaf sen factor Leaf senescence factor due to temperature (0-1)          . 
 SSTKH  Stalk t[dm]/ha  Stalk (structural) dry mass at harvest (t/ha)            .
 STD_1  Stk1+Suc g [dm] Primary stalk dry weight with sucrose (g [dm]/stalk)     .
-STTD   Leaf exp �C-day Sum of heat units, emrg & leaf expansion �C-day TB(1)    .
-STTG   Tillering�C-day Sum of heat units, tillering �C-day TB(2)                .
+STTD   Leaf exp °C-day Sum of heat units, emrg & leaf expansion °C-day TB(1)    .
+STTG   Tillering°C-day Sum of heat units, tillering °C-day TB(2)                .
 SUAD   Sucrose  kg/ha  Sucrose weight (kg [dm]/ha)                              .
 SUGD   Sucker weight   Sucker weight (kg [dm]/ha)                               .
 SUID   Sucrose index   Sucrose harvest index (sucrose/top)                      .
-SUMDTT Sum of GDD (�C) Sum of growing degree days since stage initiation, �C    .
+SUMDTT Sum of GDD (°C) Sum of growing degree days since stage initiation, °C    .
 SUW_1  Sucrose stk 1   Sucrose weight, primary stalk (g /stk)                   .
 SWAD   Stem wt kg/ha   Stem weight (kg [dm]/ha)                                 .
 SWD_1  Stalk 1 g[dm]   Primary stalk dry weight - no sucrose (g [dm]/stalk)     .
 SWF_1  Stalk 1 fresh g Primary stalk fresh weight - with sucrose (g /stalk)     .
 T#AD   Tiller no #/m2  Tiller number (no/m2)                                    .
 T#SD   Leaf tip no     Leaf tip number per stem                                 .
-TCDIF  Temp difference Temperature difference, canopy - air (�C)                .
-TDIF   Temp difference Temperature difference, canopy - air (�C)                .
+TCDIF  Temp difference Temperature difference, canopy - air (°C)                .
+TDIF   Temp difference Temperature difference, canopy - air (°C)                .
 TDRW   Total biomass   Total crop biomass (kg [dm]/ha)                          .
 TFDD   Temp.factor,dev Temperature factor for development (0-1)                 .
-TKILL  Pl death tmp �C Temperature for plant death (�C)                         .
+TKILL  Pl death tmp °C Temperature for plant death (°C)                         .
 TLA_1  Leaf area stk 1 Total green+dead leaf area, primary stalk only (cm2)     .
 TLW_1  Leaf wt stalk 1 Total green+dead leaf+sheath prim stalk (g [dm]/stalk)   .
 TPSM   Tillers no #/m2 Tiller number (no/m2)                                    .
 TRAD   Trash DM kg/ha  Trash weight (kg [dm]/ha)                                .
-TT     Thermal time    Daily thermal (�C.d)                                     .
+TT     Thermal time    Daily thermal (°C.d)                                     .
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
 UWAD   Tuber kg dm/ha  Tuber dry weight (kg [dm]/ha)                            .
 UYAD   Tuber Mg fm/ha  Tuber fresh weight (Mg [fm]/ha)                          .
@@ -557,6 +557,7 @@ IRRAC  Irrig apply mm  Cumulative applied irrigation (includes losses) (mm)     
 KCAA   Kc              FAO-56 single crop coefficient (Kc=ETAA/REFA)            .
 KBSA   Kcb*Ks          FAO-56 basal crop coef * stress coef (Kcb*Ks=EPAA/REFA)  .
 KEAA   Ke              FAO-56 evaporation coefficient (Ke=(ESAA+EFAA+EMAA)/REFA).
+LATFC  Lateral flow mm Subsurface Lateral flow to maintain water table (mm)     .
 MCFD   Mulch coverage  Fraction of soil covered by mulch                        .
 MDEPD  Mulch thick cm  Thickness of mulch layer (cm)                            .
 MWAD   Mulch mass k/h  Mass of mulch layer (kg/ha)                              .
@@ -569,7 +570,6 @@ ROSD   Sat surf runoff Daily surface runoff due to sl saturation excess (mm/d)  
 SEDM   Sediment LOSS   Sediment loss                                            .
 SNOWD  Snow accum (mm) Snow accumulation (mm water)                             .
 SRAA   SRAD MJ/m2.day  Avg solar radiation (MJ/(m2.day))                        .
-SW10   SWC layer 10    Soil water, soil layer 10(cm3/cm3)                       .
 SW1D   SWC layer 1     Soil water, soil layer 1 (cm3/cm3)                       .
 SW2D   SWC layer 2     Soil water, soil layer 2 (cm3/cm3)                       .
 SW3D   SWC layer 3     Soil water, soil layer 3 (cm3/cm3)                       .
@@ -579,26 +579,37 @@ SW6D   SWC layer 6     Soil water, soil layer 6 (cm3/cm3)                       
 SW7D   SWC layer 7     Soil water, soil layer 7 (cm3/cm3)                       .
 SW8D   SWC layer 8     Soil water, soil layer 8 (cm3/cm3)                       .
 SW9D   SWC layer 9     Soil water, soil layer 9 (cm3/cm3)                       .
+SW10D  SWC layer10     Soil water, soil layer 10 (cm3/cm3)                      .
+SW11D  SWC layer11     Soil water, soil layer 11 (cm3/cm3)                      .
+SW12D  SWC layer12     Soil water, soil layer 12 (cm3/cm3)                      .
+SW13D  SWC layer13     Soil water, soil layer 13 (cm3/cm3)                      .
+SW14D  SWC layer14     Soil water, soil layer 14 (cm3/cm3)                      .
+SW15D  SWC layer15     Soil water, soil layer 15 (cm3/cm3)                      .
+SW16D  SWC layer16     Soil water, soil layer 16 (cm3/cm3)                      .
+SW17D  SWC layer17     Soil water, soil layer 17 (cm3/cm3)                      .
+SW18D  SWC layer18     Soil water, soil layer 18 (cm3/cm3)                      .
+SW19D  SWC layer19     Soil water, soil layer 19 (cm3/cm3)                      .
+SW20D  SWC layer20     Soil water, soil layer 20 (cm3/cm3)                      .
 SWTD   Total water     Total soil water in profile (mm)                         .
 SWXD   Extr water mm   Extractable water (mm)                                   .
 TCADD  Canopy-air temp Canopy-air temperature difference (oC)                   .
 TCnt   Cano.T midnight Canopy temperature at midnight (oC)                      TCAN(h)
 TDFC   Cum. tile drain Cumulative water lost to tile drain (mm)                 .
 TDFD   Tile drainage   Water lost to tile drain (mm/d)                          .
-TMINA  Minimum temp �C Avg minimum air temperature (�C)                         TMNA
-TMAXA  Maximum temp �C Avg maximum air temperature (�C)                         TMXA
-TSRNIT Surf T midnight Surface temperature midnight (�C)                        TSURF
-TS0D   Surface temp �C Soil surface temperature (�C)                            .
-TS10   S-TMP layer 10  Soil temperature, soil layer 10(�C)                      .
-TS1D   S-TMP layer 1   Soil temperature, soil layer 1 (�C)                      .
-TS2D   S-TMP layer 2   Soil temperature, soil layer 2 (�C)                      .
-TS3D   S-TMP layer 3   Soil temperature, soil layer 3 (�C)                      .
-TS4D   S-TMP layer 4   Soil temperature, soil layer 4 (�C)                      .
-TS5D   S-TMP layer 5   Soil temperature, soil layer 5 (�C)                      .
-TS6D   S-TMP layer 6   Soil temperature, soil layer 6 (�C)                      .
-TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (�C)                      .
-TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (�C)                      .
-TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (�C)                      .
+TMINA  Minimum temp °C Avg minimum air temperature (°C)                         TMNA
+TMAXA  Maximum temp °C Avg maximum air temperature (°C)                         TMXA
+TSRNIT Surf T midnight Surface temperature midnight (°C)                        TSURF
+TS0D   Surface temp °C Soil surface temperature (°C)                            .
+TS10   S-TMP layer 10  Soil temperature, soil layer 10(°C)                      .
+TS1D   S-TMP layer 1   Soil temperature, soil layer 1 (°C)                      .
+TS2D   S-TMP layer 2   Soil temperature, soil layer 2 (°C)                      .
+TS3D   S-TMP layer 3   Soil temperature, soil layer 3 (°C)                      .
+TS4D   S-TMP layer 4   Soil temperature, soil layer 4 (°C)                      .
+TS5D   S-TMP layer 5   Soil temperature, soil layer 5 (°C)                      .
+TS6D   S-TMP layer 6   Soil temperature, soil layer 6 (°C)                      .
+TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (°C)                      .
+TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (°C)                      .
+TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (°C)                      .
 WINNIT Wind speed(noon)Wind speed at midnight (m/s)                             WINDHR 
 
 *CARBON
@@ -685,17 +696,17 @@ TDND   Tile N lost k/h Daily N lost to tile drain (kg[N]/ha/d)                  
 TEMt   Temp/h midnight Hourly air temperature at midnight                       TAIRHR
 TFOM   RESIDUE kg/ha   Plant residue remaining (kg [dm]/ha)                     .
 TFON   RESIDUE N kg/ha Plant residue N remaining (kg/ha)                        .
-TGAV   AVG CAN TMP �C  Daily average canopy temp (�C)                           .
-TGNN   NOON CAN TMP �C Noon canopy temperature (�C)                             .
-TGON   NOON GRO TMP �C Noon growth temperature (�C)                             .
-Tnit   Temp midnight�C Temperature midnight (�C)                                THR
+TGAV   AVG CAN TMP °C  Daily average canopy temp (°C)                           .
+TGNN   NOON CAN TMP °C Noon canopy temperature (°C)                             .
+TGON   NOON GRO TMP °C Noon growth temperature (°C)                             .
+Tnit   Temp midnight°C Temperature midnight (°C)                                THR
 TNN    T@noon mm/h     Transpiration rate at noon (mm/h) 
-TSR1n  Sur T sunlit nt Surface temperature sunlit leaves midnight (�C)          TSURF(1)
-TSR1t  Sur T sunlit nt Surface temperature sunlit leaves midnight (�C)          TSURF(1)
-TSR2n  Sur T sunlit nt Surface temperature shaded leaves midnight (�C)          TSURF(2)
-TSR2t  Sur T sunlit nt Surface temperature shaded leaves midnight (�C)          TSURF(2)
-TSR3n  Sur T sunlit nt Surface temperature soil  midnight (�C)                  TSURF(3)
-TSR3t  Sur T sunlit nt Surface temperature soil  midnight (�C)                  TSURF(3)
+TSR1n  Sur T sunlit nt Surface temperature sunlit leaves midnight (°C)          TSURF(1)
+TSR1t  Sur T sunlit nt Surface temperature sunlit leaves midnight (°C)          TSURF(1)
+TSR2n  Sur T sunlit nt Surface temperature shaded leaves midnight (°C)          TSURF(2)
+TSR2t  Sur T sunlit nt Surface temperature shaded leaves midnight (°C)          TSURF(2)
+TSR3n  Sur T sunlit nt Surface temperature soil  midnight (°C)                  TSURF(3)
+TSR3t  Sur T sunlit nt Surface temperature soil  midnight (°C)                  TSURF(3)
 TWAD   TOTAL WT kg/ha  Tops+roots+storage wt (kg [dm]/ha)                       .
 WDNN   Wind speed(noon)Wind speed at noon (m/s)                                 WINDHR 
 WINn   Wind speed(noon)Wind speed at noon (m/s)                                 WINDHR 
@@ -863,14 +874,14 @@ OZON7  Ozone ppb       Daily 7-hour mean ozone concentration (9:00-15:59), ppb  
 PARD   PAR             Daily PAR or photon flux density (moles[quanta]/(m2.d))  .
 PRED   PRECIP mm/d     Precipitation depth (mm/d)                               .
 SRAD   SRAD MJ/m2.d    Solar radiation (MJ/(m2.d))                              .
-TAVD   AVG TEMP �C     Average daily temperature (�C)                           .
-TDWD   DEWPOINT �C     Dewpoint temperature (�C)                                .
-TDYD   AV DAY TMP �C   Average temperature during daylight hours (�C)           .
-TGAD   AV GRWTH TMP �C Average daily air temperature for growth (�C)            .
-TGRD   AV GRWTH TMP �C Average air temp. daylight hours for growth (�C)         .
-TMEAN  MEAN TEMP �C    Mean Temperature (TMAX+TMIN/2; �C)                       .
-TMND   MIN TEMP �C     Minimum daily temperature (�C)                           .
-TMXD   MAX TEMP �C     Maximum daily temperature (�C)                           .
+TAVD   AVG TEMP °C     Average daily temperature (°C)                           .
+TDWD   DEWPOINT °C     Dewpoint temperature (°C)                                .
+TDYD   AV DAY TMP °C   Average temperature during daylight hours (°C)           .
+TGAD   AV GRWTH TMP °C Average daily air temperature for growth (°C)            .
+TGRD   AV GRWTH TMP °C Average air temp. daylight hours for growth (°C)         .
+TMEAN  MEAN TEMP °C    Mean Temperature (TMAX+TMIN/2; °C)                       .
+TMND   MIN TEMP °C     Minimum daily temperature (°C)                           .
+TMXD   MAX TEMP °C     Maximum daily temperature (°C)                           .
 TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     .
 VPD    Vapor Pres Def  Vapor pressure deficit                                   .
 VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
@@ -1379,12 +1390,16 @@ CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
 CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
+CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
+CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
 MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .
 N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
 N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 N2OED  N2O emitted kg  Daily N2O emissions from soil (kg[N]/ha)                 .
 N2OGED N2O emitted g   Daily N2O emissions from soil (g[N]/ha)                  .
+N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
+N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
 N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
 N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
 N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .

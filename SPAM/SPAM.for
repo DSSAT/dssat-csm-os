@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2021
+C  COPYRIGHT 1998-2023
 C                      DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
@@ -553,7 +553,7 @@ C-----------------------------------------------------------------------
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
+     &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
 

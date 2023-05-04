@@ -443,6 +443,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Data transferred from management routine 
       Type MgmtType
         REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR
+        REAL MgmtWTD, ICWD
+
 !       Vectors to save growth stage based irrigation
         REAL V_AVWAT(20)    
         REAL V_IMDEP(20)
@@ -458,7 +460,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data transferred from Soil water routine
       Type WatType
-        REAL DRAIN, RUNOFF, SNOW
+        REAL DRAIN, RUNOFF, SNOW, WTDEP
       End Type WatType
 
 !     Data transferred from Soil Inorganic Nitrogen routine
@@ -703,6 +705,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('DEPIR');  Value = SAVE_data % MGMT % DEPIR
         Case ('IRRAMT'); Value = SAVE_data % MGMT % IRRAMT
         Case ('FERNIT'); Value = SAVE_data % MGMT % FERNIT
+        Case ('WATTAB'); Value = SAVE_data % MGMT % MgmtWTD
+        Case ('ICWD'); Value = SAVE_data % MGMT % ICWD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -711,6 +715,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('DRAIN'); Value = SAVE_data % WATER % DRAIN
         Case ('RUNOFF');Value = SAVE_data % WATER % RUNOFF
         Case ('SNOW');  Value = SAVE_data % WATER % SNOW
+        Case ('WTDEP');  Value = SAVE_data % WATER % WTDEP
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -836,6 +841,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('DEPIR');  SAVE_data % MGMT % DEPIR  = Value
         Case ('IRRAMT'); SAVE_data % MGMT % IRRAMT = Value
         Case ('FERNIT'); SAVE_data % MGMT % FERNIT = Value
+        Case ('WATTAB'); SAVE_data % MGMT % MgmtWTD = Value
+        Case ('ICWD'); SAVE_data % MGMT % ICWD = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -844,6 +851,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('DRAIN'); SAVE_data % WATER % DRAIN  = Value
         Case ('RUNOFF');SAVE_data % WATER % RUNOFF = Value
         Case ('SNOW');  SAVE_data % WATER % SNOW   = Value
+        Case ('WTDEP');  SAVE_data % WATER % WTDEP   = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
