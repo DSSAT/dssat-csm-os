@@ -431,7 +431,7 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 !-----------------------------------------------------------------------
 !     AH 2023-04-21 - Adjustemnt of XFRUIT for Strawberry based on days
 !                     after first flower NR1TIM
-      IF (XFPHT .GT. 0.0 .AND. XFINT .GT. 0.0 .AND. 
+      IF (XFPHT .GT. 0.0 .AND. XFINT .GE. 0.0 .AND. 
      &    NPP .LE. NCOHORTS) THEN
             IF (PHTIM(NPP) .LE. XFPHT) THEN
             XFINT  = MIN(XFINT, 1.0) 
@@ -700,14 +700,15 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
-      EXTERNAL GETLUN, ERROR, FIND, IGNORE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE, WARNING
 !-----------------------------------------------------------------------
       CHARACTER*3   TYPSDT
       CHARACTER*6   ERRKEY
-      PARAMETER (ERRKEY = 'DEMAND')
+      PARAMETER (ERRKEY = 'IPDMND')
       CHARACTER*6   SECTION
       CHARACTER*6   ECOTYP, ECONO
       CHARACTER*30  FILEIO
+      CHARACTER*78  MSG(4)
       CHARACTER*80  C80
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*255 C255
@@ -961,8 +962,8 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
      &        (C255(1:1) .NE. '*')) THEN
 !          READ (C255,'(A6,66X,F6.0,30X,3F6.0)',IOSTAT=ERR)
 !     &        ECOTYP, LNGSH, THRESH, SDPRO, SDLIP
-          READ (C255,'(A6,66X,F6.0,54X,2(F6.0))',IOSTAT=ERR) ECOTYP, LNGSH,
-     &         XFPHT, XFINT
+          READ (C255,'(A6,66X,F6.0,54X,2(F6.0))',IOSTAT=ERR) ECOTYP, 
+     &        LNGSH, XFPHT, XFINT
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
           IF (ECOTYP .EQ. ECONO) THEN
             EXIT
@@ -975,6 +976,22 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
           LNUM = 0
         ENDIF
       ENDDO
+
+      IF(XFPHT .LT. 0.0) THEN
+        MSG(1) = 'Ecotype coefficient is not properly defined.'
+        MSG(2) = 'Time required to reach maximum partitioning to '
+        MSG(3) = 'pod/fruit. (photothermal days)'
+        MSG(4) = 'XFPHT must be greater then 0.0.'
+        CALL WARNING (4, ERRKEY, MSG)
+        CALL ERROR(ERRKEY,1,FILEGC,0)
+      ELSE IF(XFINT .LT. 0.0 .OR. XFINT .GT. 1.0) THEN
+        MSG(1) = 'Ecotype Coefficients is not properly defined.'
+        MSG(2) = 'Initial partitioning to pod/fruit during early '
+        MSG(3) = 'pod/fruit growth.'
+        MSG(4) = 'XFINT must be between/included 0.0 and 1.0.'
+        CALL WARNING (4, ERRKEY, MSG)
+        CALL ERROR(ERRKEY,2,FILEGC,0)
+      ENDIF
 
       CLOSE (LUNECO)
 
