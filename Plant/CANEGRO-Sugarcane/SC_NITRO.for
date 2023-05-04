@@ -20,10 +20,11 @@ c     (c) South African Sugarcane Research Institute
 c     Mount Edgecombe, 4300
 c     ---------------------------------------------------------------
 
-      SUBROUTINE SC_NITRO(TOPS_MASS, ROOTS_MASS, STALKS_MASS, 
+      SUBROUTINE SC_NITRO(ISWITCH, 
+     &    TOPS_MASS, ROOTS_MASS, STALKS_MASS, 
      &    DEADLF_MASS, NO3, NH4,UNO3, UNH4, RLV,
      &    SW, N_STRESS, SoilProp, Control, 
-     &    CaneCrop, ROOTNCONC, TOP_N)
+     &    CaneCrop, SENESCE, ROOTNCONC, TOP_N, YRPLT)
 
 !     2023-04-08 FO Commented it out variables not used: RWU, XHLAI, 
 !                   SENESCE, SOIL, N_STORAGE, MAXNO3U, MAXNH4U,
@@ -67,8 +68,9 @@ c            [0 = maximum stress; 1 = no stress]
           TYPE(N_PARAM_TYPE) N_PARAMS(NUM_COMPS)
           TYPE (SOILTYPE) SoilProp
 !          TYPE(CNG_SoilType) Soil
+          TYPE (SwitchType) ISWITCH
           TYPE(CANECROPTYPE) CaneCrop
-!          TYPE(ResidueType)  SENESCE     !MvdL
+          TYPE(ResidueType)  SENESCE     !MvdL
 
 c     ARGUMENT VARIABLES
 c     ::::::::::::::::::
@@ -87,6 +89,7 @@ c         DSSAT composite variables:
 c         [Taken from MZ_CERES.for]
 c         ::::::::::::::::::::::::::
           TYPE (ControlType) CONTROL
+          INTEGER	 YRPLT
 
 !          REAL XHLAI
 
@@ -238,7 +241,7 @@ c         Run mode:
           INTEGER DYNAMIC
 
 c         Output unit number for CSV file:
-          INTEGER N_OUT
+!          INTEGER N_OUT
 
 c		Added by MvdL
 !           Potential cumulative biomass (above and below ground)
@@ -333,7 +336,25 @@ c         ------------  TRASH  -------------------------------
 
 c         ----------------------------------------------------
 
-     
+! HBD Apr 2023 included these initiations in runinit because values started high in any simulation
+!           N_CONC(TOPS) = 0
+!           N_CONC(ROOTS) = 0
+!           N_CONC(STALKS) = 0
+!           N_CONC(DEADLF) = 0
+!
+      CALL SC_OPNIT(CONTROL, ISWITCH,
+     &    YRPLT, SoilProp%NLAYR, SENESCE,
+     &    MASSES,
+     &    N_POOL, ! ok
+!     &    N_ALLOC,! ok
+     &    N_STRESS, ! ok?
+!     &    PSV_UPTAKE, FO has commented it in SC_NITRO
+!     &    N_SENESCE, ! ok TODO check if this is = to SENESCE % ResE(n,1) (HBD)
+     &    N_CONC, ! ok
+!     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
+!     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
+     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ACC_UPTAKE)
      
       ELSE IF (DYNAMIC .EQ. SEASINIT) THEN
 
@@ -346,7 +367,17 @@ c             Set concentration to non-stressed level:
               N_CONC(I) = N_PARAMS(I)%INIT_CONC   
           ENDDO
            
-c          ## Set N_POOL sizes to something acceptable?           
+! HBD Apr 2023 tests included these initiations in at planting/ratooning because values started high in any simulation
+! - I let the roots in this way currently, but ratoon carry-over effects must be accomodated in future
+           !N_CONC(TOPS) = 0
+           !N_CONC(STALKS) = 0
+           !N_CONC(DEADLF) = 0
+
+c          ## Set N_POOL sizes to something acceptable?
+! HBD Apr 2023:
+! - N_POOL for leaves and stalks, unless it is a pre-sprouted cane or 'seed' (future need?)
+! - A sett (stalk piece) should be connected with the mass and its [N] for the planting material
+! - I let the roots in this way currently, but ratoon carry-over effects must be accomodated in future
            N_POOL(TOPS) = N_PARAMS(TOPS)%INIT_CONC * 0.0000002849 * 1000
            N_POOL(ROOTS) = N_PARAMS(ROOTS)%INIT_CONC * 0.00001111 * 1000
            N_POOL(STALKS) = N_PARAMS(STALKS)%INIT_CONC * 0.000001 * 1000
@@ -370,7 +401,20 @@ c         ------------------------------------
 !     &           'POT_N_SUPPLY', 'TUNO3', 'ABVGRND_N_MASS', 
 !     &           'TOT_N_POOL', 'ACC_UPTAKE'
 c         ------------------------------------
-		
+
+      CALL SC_OPNIT(CONTROL, ISWITCH,
+     &    YRPLT, SoilProp%NLAYR, SENESCE,
+     &    MASSES,
+     &    N_POOL, ! ok
+!     &    N_ALLOC,! ok
+     &    N_STRESS, ! ok?
+!     &    PSV_UPTAKE, FO has commented it in SC_NITRO
+!     &    N_SENESCE, ! ok TODO check if this is = to SENESCE % ResE(n,1) (HBD)
+     &    N_CONC, ! ok
+!     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
+!     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
+     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ACC_UPTAKE)
 
       ELSE IF (DYNAMIC .EQ. RATE) THEN
 c     ===============================================================
@@ -385,16 +429,18 @@ c         Copy input mass values to array for ease of calc:
 
 c         Calculate N-concentrations for each component:
 c         ::::::::::::::::::::::::::::::::::::::::::::::
-c             Conc = N_pool/mass, if mass > 0
-            IF (MASSES(TOPS) > 0) THEN
+c         Conc = N_pool/mass, if mass > 0
+            IF (MASSES(TOPS) > 0.00001) THEN
                 N_CONC(TOPS) = N_POOL(TOPS)/(MASSES(TOPS) * 1000)   
-		    ENDIF
-			IF (MASSES(STALKS) > 0) THEN
+		ENDIF
+		IF (MASSES(STALKS) > 0.00001) THEN
                 N_CONC(STALKS) = N_POOL(STALKS)/(MASSES(STALKS) * 1000)
-			ENDIF
-			IF (MASSES(ROOTS) > 0) THEN
+		ENDIF
+		IF (MASSES(ROOTS) > 0.00001) THEN
                 N_CONC(ROOTS) = N_POOL(ROOTS)/(MASSES(ROOTS) * 1000)  
-			ENDIF
+		ENDIF
+            !print*,'A ',N_CONC(TOPS),'; S ',N_CONC(STALKS),'; R ',N_CONC(ROOTS)
+            !print*,'Dead N conc ',N_CONC(DEADLF),'; Dead N mass ',N_POOL(DEADLF),'; Dead DM ',MASSES(DEADLF)
  
 !           MvdL this is to send to Roots to calculate root N senescence   
             ROOTNCONC = N_CONC(ROOTS)    
@@ -666,15 +712,57 @@ c		What about N stress on other processes? e.g. Stalk numbers (tillering) increa
 !     &                    TUNO3, ABVGRND_N_MASS, TOT_N_POOL, 
 !     &                    ACC_UPTAKE
 
+!HBD Apr 2023:
+!- senesced (attached), senesced (dropped) and root senesced mass, N conc and N mass need further development
+!- should we recalculate [N] f(N mass, DM) for each component? ([N] are being exported with values early in the crop season)
+
+      CALL SC_OPNIT(CONTROL, ISWITCH,
+     &    YRPLT, SoilProp%NLAYR, SENESCE,
+     &    MASSES,
+     &    N_POOL, ! ok
+!     &    N_ALLOC,! ok
+     &    N_STRESS, ! ok?
+!     &    PSV_UPTAKE, FO has commented it in SC_NITRO
+!     &    N_SENESCE, ! ok TODO check if this is = to SENESCE % ResE(n,1) (HBD)
+     &    N_CONC, ! ok
+!     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
+!     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
+     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ACC_UPTAKE)
 
       ELSE IF (DYNAMIC.EQ.OUTPUT) THEN
 c     OUTPUT
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
+      CALL SC_OPNIT(CONTROL, ISWITCH, 
+     &    YRPLT, SoilProp%NLAYR, SENESCE,
+     &    MASSES,
+     &    N_POOL, ! ok
+!     &    N_ALLOC,! ok
+     &    N_STRESS, ! ok?
+!     &    PSV_UPTAKE, FO has commented it in SC_NITRO
+!     &    N_SENESCE, ! ok TODO check if this is = to SENESCE % ResE(n,1) (HBD)
+     &    N_CONC, ! ok
+!     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
+!     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
+     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ACC_UPTAKE)
 
 c     Otherwise, close files at end of season:
       ELSE IF (DYNAMIC.EQ.SEASEND) THEN
-          CLOSE(N_OUT)
+!          CLOSE(N_OUT)
+      CALL SC_OPNIT(CONTROL, ISWITCH, 
+     &    YRPLT, SoilProp%NLAYR, SENESCE,
+     &    MASSES,
+     &    N_POOL, ! ok
+!     &    N_ALLOC,! ok
+     &    N_STRESS, ! ok?
+!     &    PSV_UPTAKE, FO has commented it in SC_NITRO
+!     &    N_SENESCE, ! ok TODO check if this is = to SENESCE % ResE(n,1) (HBD)
+     &    N_CONC, ! ok
+!     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
+!     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
+     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ACC_UPTAKE)
       ENDIF
 
       END

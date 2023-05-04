@@ -45,7 +45,7 @@ c     &---------------------
 c     This sub interfaces with the rest of the DSSAT CSM.
 c     Inputs and outputs are passed solely through this
 c     interface.  This forms the PLANT GROWTH MODULE for
-c     sugarcane.  Soil and atmospheric processes, along 
+c     sugarcane.  Soil and atmospheric processes, along YRPLT
 c     with external calculations like irrigation are
 c     handled OUTSIDE this module.
 c     [interface copied from MZ_CERES.for]
@@ -60,7 +60,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
      &    RWUEP1, YREND, YRPLT, WEATHER, IRRAMT,      !Input
      &    CANHT, KCAN, KTRANS, MDATE, NSTRES,         !Output
      &    PORMIN, RLV, RWUMX,STGDOY, UNH4,            !Output
-     &    UNO3, XLAI, XHLAI, EORATIO)                 !Output
+     &    UNO3, XLAI, XHLAI, EORATIO, SENESCE)        !Output
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !     2023-01-26 chp removed unused variables from argument list: 
@@ -137,7 +137,7 @@ c     ::::::::::::::::::::::::::
       TYPE (SoilType)    SOILPROP
       TYPE (SwitchType)  ISWITCH
 !     Type (ResidueType) HARVRES 
-!     Type (ResidueType) SENESCE
+      Type (ResidueType) SENESCE
       Type (WeatherType) WEATHER
 
 
@@ -393,7 +393,6 @@ c     ::::::::::
      &  Part, Out, WaterBal, SoilProp,
      &  YRPLT, CELLSE_DM)
 
-
       IF (INDEX('YDA',ISWITCH % IDETL) > 0) THEN
         TFILENAME = 'Work.OUT'
         CALL GETLUN('WORK.OUT', SCLUN)
@@ -492,10 +491,10 @@ c HBD (Jan 2023) after MvdL 2011
 c     Initialise Nitrogen module:
 c         If N is simulated:
           IF (ISWITCH % ISWNIT .NE. 'N') THEN
-              CALL SC_NITRO(Part%TOPDM, Out%ROOTDM, Part%STKDM, 
+              CALL SC_NITRO(ISWITCH, Part%TOPDM, Out%ROOTDM, Part%STKDM, 
      &                      Out%TRASDM, NO3, NH4,UNO3, UNH4, RLV,
      &                    SW, N_STRESS, SoilProp, Control,
-     &                    CaneCrop, ROOTNCONC, TOP_N)
+     &                    CaneCrop, SENESCE, ROOTNCONC, TOP_N, YRPLT)
           ENDIF  
 
 c     END of RUNINIT
@@ -687,10 +686,10 @@ c HBD (Jan 2023) after MvdL 2011
 c     Init Nitrogen variables
 c         If N is simulated:
           IF (ISWITCH % ISWNIT .NE. 'N') THEN
-              CALL SC_NITRO(Part%TOPDM, Out%ROOTDM, Part%STKDM, 
+              CALL SC_NITRO(ISWITCH, Part%TOPDM, Out%ROOTDM, Part%STKDM, 
      &                      Out%TRASDM, NO3, NH4,UNO3, UNH4, RLV,
      &                    SW, N_STRESS, SoilProp, Control,
-     &                    CaneCrop, ROOTNCONC, TOP_N)
+     &                    CaneCrop, SENESCE, ROOTNCONC, TOP_N, YRPLT)
           ENDIF
 c     :::::::::::::::::::::::
 
@@ -902,10 +901,10 @@ c HBD (Jan 2023) after MvdL 2011
 c     Calculate Nitrogen stress
 c         If N is simulated:
           IF (ISWITCH % ISWNIT .NE. 'N') THEN
-              CALL SC_NITRO(Part%TOPDM, Out%ROOTDM, Part%STKDM, 
+              CALL SC_NITRO(ISWITCH, Part%TOPDM, Out%ROOTDM, Part%STKDM, 
      &                      Out%TRASDM, NO3, NH4,UNO3, UNH4, RLV,
      &                    SW, N_STRESS, SoilProp, Control,
-     &                    CaneCrop, ROOTNCONC, TOP_N)
+     &                    CaneCrop, SENESCE, ROOTNCONC, TOP_N, YRPLT)
           ENDIF
 c     :::::::::::::::::::::::
 
@@ -989,13 +988,21 @@ c             If water balance is used:
 
 c             CWSI is a photosynthesis reduction factor
               CWSI=AMIN1(SWDFMN+RECTIM/HuRecover,WaterBal%SWDF1)
-
+              
               ! HBD (Jan 2023) after MvdL 2011   
               !MvdL: change made here April 2010
 		  IF (ISWITCH%ISWNIT .EQ. 'Y') THEN                     
                   CWSI=AMIN1(SWDFMN+RECTIM/HuRecover,WaterBal%SWDF1)
+
+! HBD May 2023: had to add this to avoid early null growth for some experiments
+!               during tests with available default experiments
+!               (i.e. in SATO8902)
+                  if(Growth%LAI .LT. 0.01) N_STRESS=1
+
 	            CWSI=CWSI * N_STRESS
-                  ! HBD test
+
+! HBD Apr 2023: wonder if this should be evaluated (= CERES)
+!               it may miss interactions of N x W
 !                 CWSI=AMIN1(SWDFMN+RECTIM/HuRecover,
 !     &               WaterBal%SWDF1,N_STRESS) 
 	        ENDIF  
@@ -1092,10 +1099,10 @@ c HBD (Jan 2023) after MvdL 2011
 c TODO check if here is the right place to insert this chunk of code
 c         If N is simulated:
           IF (ISWITCH % ISWNIT .NE. 'N') THEN
-              CALL SC_NITRO(Part%TOPDM, Out%ROOTDM, Part%STKDM, 
+              CALL SC_NITRO(ISWITCH, Part%TOPDM, Out%ROOTDM, Part%STKDM, 
      &                      Out%TRASDM, NO3, NH4,UNO3, UNH4, RLV,
      &                    SW, N_STRESS, SoilProp, Control,
-     &                    CaneCrop, ROOTNCONC, TOP_N)
+     &                    CaneCrop, SENESCE, ROOTNCONC, TOP_N, YRPLT)
           ENDIF
 c     :::::::::::::::::::::::
 
@@ -1140,10 +1147,10 @@ c     Output Nitrogen variables
 c     :::::::::::::::::::::::
 c         If N is simulated:
             IF (ISWITCH % ISWNIT .NE. 'N') THEN
-              CALL SC_NITRO(Part%TOPDM, Out%ROOTDM, Part%STKDM, 
+              CALL SC_NITRO(ISWITCH, Part%TOPDM, Out%ROOTDM, Part%STKDM, 
      &                      Out%TRASDM, NO3, NH4,UNO3, UNH4, RLV,
      &                    SW, N_STRESS, SoilProp, Control,
-     &                    CaneCrop, ROOTNCONC, TOP_N)
+     &                    CaneCrop, SENESCE, ROOTNCONC, TOP_N, YRPLT)
             ENDIF
 
             
