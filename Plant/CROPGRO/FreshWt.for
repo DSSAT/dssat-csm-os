@@ -436,7 +436,7 @@
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
-     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10.,
+     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
      &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE ('GB')       ! Snap bean
@@ -447,7 +447,7 @@
      &      NINT(CLASS(5)*10.),NINT(CLASS(6)*10.),
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
-     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10.,
+     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
      &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
          CASE ('PR')        ! Bell pepper
@@ -456,7 +456,7 @@
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
-     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10.,
+     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
      &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
          CASE ('SR')        ! Strawberry
@@ -465,7 +465,7 @@
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
-     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10.,
+     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
      &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE ('TM')       ! Tomato
@@ -474,7 +474,7 @@
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
-     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10.,
+     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
      &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE DEFAULT
@@ -483,26 +483,26 @@
      &      PodAge,
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
-     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10.,
+     &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
      &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
         END SELECT
 
  1000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    F8.2,F8.1,F8.2,F8.1,
-     &    F8.2, I8,
-     &    4(F8.2),
-     &    3(F8.2),I8,
-     &    I8,3(F8.2),I8,
-     &    4(F8.2))
+     &    F8.1,F8.1,F8.1,F8.1,
+     &    F8.1, I8,
+     &    4(F8.1),
+     &    3(F8.1),I8,
+     &    I8,3(F8.1),I8,
+     &    4(F8.1))
  2000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    F8.2,F8.1,F8.2,F8.1,
+     &    F8.1,F8.1,F8.1,F8.1,
      &    7(1X,I5),
-     &    F8.2, I8,
-     &    4(F8.2),
-     &    3(F8.2),I8,
-     &    I8,3(F8.2),I8,
-     &    4(F8.2))
+     &    F8.1, I8,
+     &    4(F8.1),
+     &    3(F8.1),I8,
+     &    I8,3(F8.1),I8,
+     &    4(F8.1))
 
       ENDIF
 
