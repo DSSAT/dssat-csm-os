@@ -306,7 +306,7 @@
 !      INTEGER       FNUMREA       ! File number,reads.out file     #
       INTEGER       FNUMT         ! Number used for T-file         #
       INTEGER       FNUMTMP       ! File number,temporary file     #
-      INTEGER       FNUMWRK       ! File number,work file          #
+      !INTEGER       FNUMWRK       ! File number,work file          #
       !INTEGER       FROP          ! Frquency of outputs,as sent    d
       INTEGER       FROPADJ       ! Frquency of outputs,adjusted   d
       REAL          FSDU          ! Rstage when final sen started  PVoCd
