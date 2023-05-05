@@ -307,8 +307,8 @@ C
 
 !        3/27/2016 chp Default soil temperature method is EPIC
 !        7/21/2016 chp Default soil temperature method is DSSAT, per GH
-         IF (INDEX('ED',METMP) < 1) METMP = 'D'
-!        IF (INDEX('ED',METMP) < 1) METMP = 'E'
+!        5/04/2023  FO Default ST method is TMA(1) = TAVG (BK changes)
+         IF (INDEX('EDR',METMP) < 1) METMP = 'D'
 
 !        Default greenhouse gas method is DSSAT
          IF (INDEX('01',MEGHG) < 1) MEGHG = '0'

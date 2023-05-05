@@ -106,7 +106,8 @@ C=======================================================================
       REAL WTSD(NCOHORTS), WTSHE(NCOHORTS)
       REAL PHTIM(NCOHORTS), PNTIM(NCOHORTS)
 
-      REAL TURFSL
+      REAL TURFSL, NSLA
+      REAL CUMNSF,NFSL
 
 !CHP - puncture variables, not functional
       REAL PUNCSD, PUNCTR, RPRPUN
@@ -130,7 +131,8 @@ C=======================================================================
      &  SLAPAR, SLAREF, SLAVAR, SLOSUM, SIZELF, SIZREF,   !Output
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XSLATM, XTRFAC, XVGROW, XXFTEM,    !Output
-     &  YLEAF, YSLATM, YSTEM, YTRFAC, YVREF, YXFTEM)      !Output
+     &  YLEAF, YSLATM, YSTEM, YTRFAC, YVREF, YXFTEM,      !Output
+     &  NSLA)                                             !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -153,10 +155,12 @@ C=======================================================================
       FNINS  = 0.0
       FNINR  = 0.0
       NMINEP = 0.0
-
+      
       RPRPUN = 1.0 
       TMPFAC = 1.0
-
+      
+      CUMNSF = 1.0
+      NFSL   = 1.0
 !-----------------------------------------------------------------------
 !     SET VARIETY SPECIFIC LEAF PARAMETERS
 !-----------------------------------------------------------------------
@@ -533,11 +537,20 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
       PARSLA = (SLAMN+(SLAMX-SLAMN)*EXP(SLAPAR*PAR))/SLAMX
       TURFSL = MAX(0.1, (1.0 - (1.0 - TURFAC)*TURSLA))
 !-----------------------------------------------------------------------
+!     Nitrogen effect by KJB
+!-----------------------------------------------------------------------
+      IF (NSLA .GT. 1.2) THEN                      !To limit NSLA to 1.2
+          NSLA=1.2 
+      ENDIF
+      NFSL   = MAX(0.1, (1.0 - (1.0 - NSTRES)*NSLA))       
+      CUMNSF = 0.75*CUMNSF + 0.25*NFSL  
+!-----------------------------------------------------------------------
 !     Compute overall effect of TMP, PAR, water stress on SLA (F), first
 !     for veg stages, then transition to rep stage from R1 to end leaf
 !     effect of PAR on SLA, COX PEANUT SCI. 5:27, 1978
+!     KJB - Added CUMNSF to FFVEG calculation
 !-----------------------------------------------------------------------
-      FFVEG = FVEG * TPHFAC * PARSLA * TURFSL
+      FFVEG = FVEG * TPHFAC * PARSLA * TURFSL * CUMNSF
 
       F = FFVEG
       IF (XFRT*FRACDN .GE. 0.05) F = FFVEG * (1.0 - XFRT * FRACDN)
@@ -675,7 +688,8 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
      &  SLAPAR, SLAREF, SLAVAR, SLOSUM, SIZELF, SIZREF,   !Output
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XSLATM, XTRFAC, XVGROW, XXFTEM,    !Output
-     &  YLEAF, YSLATM, YSTEM, YTRFAC, YVREF, YXFTEM)      !Output
+     &  YLEAF, YSLATM, YSTEM, YTRFAC, YVREF, YXFTEM,      !Output
+     &  NSLA)                                             !Output
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
@@ -710,6 +724,8 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
      &                  XXFTEM(10), YXFTEM(10)
         REAL XLEAF(25), YLEAF(25), YSTEM(25)
 
+! FO  Cotton-Nitrogen
+        REAL NSLA
 !-----------------------------------------------------------------------
       CALL GETLUN('FILEIO', LUNIO)
       OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)
@@ -863,7 +879,8 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(4F6.0)',IOSTAT=ERR) SLAMAX, SLAMIN, SLAPAR, TURSLA
+        READ(C80,'(6F6.0)',IOSTAT=ERR) SLAMAX, SLAMIN, SLAPAR, TURSLA,
+     &    NSLA
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)

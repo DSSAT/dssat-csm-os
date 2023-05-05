@@ -629,8 +629,8 @@ C=======================================================================
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('BH,BM,BR,CB,CI,CN,CO,CU,GY,NP,PR,QU,SF,SR,
-     &     SU,TM',CROP) .GT. 0) THEN
+        ELSEIF (INDEX ('BC,BH,BM,BR,CB,CI,CN,CO,CU,GY,NP,PR,QU,
+     &     SF,SR,SU,TM',CROP) .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),852) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1

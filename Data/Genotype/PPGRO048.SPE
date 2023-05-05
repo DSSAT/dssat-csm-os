@@ -38,7 +38,7 @@
 
 !*CARBON AND NITROGEN MINING PARAMETERS
  0.025  0.75  .260 0.143  0.39  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !v4.7
-    SD                                 XPODF
+    SD  0.70                           XPODF, NSTFAC
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH
 
 !*NITROGEN FIXATION PARAMETERS
@@ -58,7 +58,7 @@
 
 !*LEAF GROWTH PARAMETERS
   225.  320. 171.4   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC
-  660.  245. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA  !1/21/22
+  660.  245. -.048  1.50  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA
 
    0.0   2.0   4.0   6.0   8.0  10.0  XVGROW(1-6), VSTAGE VALUES
    1.0  33.0  55.0  87.0 124.0 152.0  YVREF(1-6), LEAF AREA VALUES,CM2 splines of Maliro pot study with regression DAP~lfno
@@ -132,7 +132,8 @@
   0.40  0.40  0.50  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
-
+  1.00                                               NHGT
+  
 !*EVAPOTRANSPIRATION
   0.70   1.1       KEP, EORATIO
   0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
