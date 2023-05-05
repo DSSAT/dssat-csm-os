@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2022-11-18
+! DSSAT v4.8; 2023-05-01
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -1390,12 +1390,16 @@ CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
 CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
+CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
+CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
 MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .
 N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
 N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 N2OED  N2O emitted kg  Daily N2O emissions from soil (kg[N]/ha)                 .
 N2OGED N2O emitted g   Daily N2O emissions from soil (g[N]/ha)                  .
+N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
+N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
 N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
 N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
 N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .

@@ -224,7 +224,7 @@ C
 
 !        IF (INDEX ('BNSBPNPECHPPVBCPCBFB',CROP) .EQ. 0) THEN
          SELECT CASE (CROP)
-         CASE ('BN','SB','PN','PE','CH','PP',
+         CASE ('BN','SB','PN','PE','CH','PP','GY',
      &          'VB','CP','CB','FB','GB','LT','AL','BG')
 C     &          'VB','CP','CB','FB','GB','LT')
 !          Do nothing -- these crops fix N and can have Y or N
@@ -307,8 +307,8 @@ C
 
 !        3/27/2016 chp Default soil temperature method is EPIC
 !        7/21/2016 chp Default soil temperature method is DSSAT, per GH
-         IF (INDEX('ED',METMP) < 1) METMP = 'D'
-!        IF (INDEX('ED',METMP) < 1) METMP = 'E'
+!        5/04/2023  FO Default ST method is TMA(1) = TAVG (BK changes)
+         IF (INDEX('EDR',METMP) < 1) METMP = 'D'
 
 !        Default greenhouse gas method is DSSAT
          IF (INDEX('01',MEGHG) < 1) MEGHG = '0'

@@ -131,14 +131,16 @@ C-----------------------------------------------------------------------
 
 !           SMDFR = relative drought factor
             SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
-            IF (SMDFR .LT. 0.0) THEN
-              SMDFR = 0.0
+            IF (SMDFR .LT. 0.1) THEN
+              SMDFR = 0.1
             ENDIF
 
             IF (SW(L) .GT. DUL(L)) THEN
               SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
             ENDIF
-            RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+            ! FO/KJB - Change for Cotton
+            !RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+            RFAC = RLV(L) * SQRT(SMDFR) * DLAYR(L) * 100.0
 C-----------------------------------------------------------------------
 C  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
 C  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)
