@@ -1,6 +1,6 @@
 C=======================================================================
 C  PLANTG, Subroutine, J.I. Lizaso
-C  Calculates instantaneous plant photosynthesis (�mol CO2/m2 s) of 
+C  Calculates instantaneous plant photosynthesis (µmol CO2/m2 s) of 
 C  shaded and sunlit leaf area on a per-leaf basis and integrates for
 C  the whole canopy
 C  Adapted from CANOPG by K.J. Boote, J.W. Jones, G. Hoogenboom
@@ -102,7 +102,7 @@ C     Compute photosynthesis for shaded leaves
      &        PARSH(I), ASSAT(I), INTSLP(I), CVXTY(I),           !Input
      &        PGSH(I))                                           !Output
 
-C     Compute instantaneous canopy gross photosynthesis (�mol CO2/m2 s).
+C     Compute instantaneous canopy gross photosynthesis (µmol CO2/m2 s).
 
             PGHR = PGHR + PGSL(I)*PLAISL(I) + PGSH(I)*PLAISH(I)
 	    ENDIF
@@ -310,8 +310,8 @@ C        Curve parameters are defined at 30 C and scaled using hourly air temp
 
 C=======================================================================
 C  PSLEAF, Subroutine, J.I. Lizaso
-C  Calculates gross photosynthesis (�mol CO2/m2 s) per unit leaf area as
-C  a function of instantaneous PAR (�mol/m2 s)
+C  Calculates gross photosynthesis (µmol CO2/m2 s) per unit leaf area as
+C  a function of instantaneous PAR (µmol/m2 s)
 C  Adapted from PGLEAF by K.J.Boote, J.W.Jones, G.Hoogenboom
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
