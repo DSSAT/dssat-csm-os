@@ -230,6 +230,8 @@ set(
         "Plant/CANEGRO-Sugarcane/SC_Poplt3.for"
         "Plant/CANEGRO-Sugarcane/SC_ROOTG.for"
         "Plant/CANEGRO-Sugarcane/SC_UM_WSTRESS.for"
+        "Plant/CANEGRO-Sugarcane/SC_NITRO.for"
+        "Plant/CANEGRO-Sugarcane/SC_OPNIT.for"
         "Plant/CASUPRO-Sugarcane/CSP_CANOPY.for"
         "Plant/CASUPRO-Sugarcane/CSP_CASUPRO.for"
         "Plant/CASUPRO-Sugarcane/CSP_DEMAND.for"

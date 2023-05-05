@@ -1303,6 +1303,10 @@ TRSH   Trash DM  t/ha  Trash (residue) dry mass at harvest (t/ha)               
 TTEBC  HeatUnits Emrg. Thermal Time (heat units) for emergence base temp.       .
 TTLEC  HeatUnits Stlk. Thermal Time (heat units) for stalk population Tbase     .
 TTSPC  HeatUnits Leaf. Thermal Time (heat units) for leaf extension Tbase       .
+LGNAD  Green Leaf N    Green leaf canopy + meristem N mass (kg/ha)              .
+LDNAD  Senesced Leaf N Senesced leaf N mass (kg/ha)                             .
+LGN%D  Green Leaf N%   Green leaf canopy + meristem N concentration (%)         .
+LDN%D  Senesced Leaf N%Senesced leaf N concentration (%)                        .
 
 *Dynamic soil properties
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS

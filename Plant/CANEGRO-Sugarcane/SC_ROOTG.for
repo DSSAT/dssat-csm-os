@@ -65,6 +65,10 @@ c     :::::::::::
 c     Daily change in heat units base 16 degrees
 !     REAL, INTENT(IN) :: HU16
 
+      ! HBD (Jan 2023) after MvdL 2011
+!      REAL HARVRES
+!      REAL ROOTNCONC
+
 c     Local variables (not part of any common blocks)
 c     :::::::::::::::::::::::::::::::::::::::::::::::
           REAL     AERFAC
