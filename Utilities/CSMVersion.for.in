@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.13  FO 2023-05-05 Removed WORK.OUT and CSCER_CSCRP_CSCAS folder (commit aeb6973)
 !       4.8.1.12  FO 2023-05-05 Strawberry and Multi-Harvest updates (commit 1664e40)
 !       4.8.1.11  FO 2023-05-05 Cotton-N CRGRO SPE and ST default method using TAVG (commit 37cd0cf)
 !       4.8.1.10  FO 2023-05-05 Included Guar and Carinata as new crops (commit bf321ad)
