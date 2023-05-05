@@ -1235,32 +1235,44 @@ PDMCD  DryMatterC frac Average dry matter concentration product (fraction)      
 AFPWD  FreshWt g/fruit Average fresh fruit (pod, ear) weight (g/fruit)          .
 ADPWD  DryWt   g/fruit Average dry fruit (pod, ear) weight (g/fruit)            .
 PAGED  Pod age    days Age of oldest pod or ear (days)                          .
-FCULD  Fr wt cull g/m2 Fresh weight for cull fruit/pods (g/m2)                  .
-FSZ1D  Fr wt 1    g/m2 Fresh weight for size class 1 (g/m2)                     .
-FSZ2D  Fr wt 2    g/m2 Fresh weight for size class 2 (g/m2)                     .
-FSZ3D  Fr wt 3    g/m2 Fresh weight for size class 3 (g/m2)                     .
-FSZ4D  Fr wt 4    g/m2 Fresh weight for size class 4 (g/m2)                     .
-FSZ5D  Fr wt 5    g/m2 Fresh weight for size class 5 (g/m2)                     .
-FSZ6D  Fr wt 6    g/m2 Fresh weight for size class 6 (g/m2)                     .
+FCULD  Fr wt cullkg/ha Fresh weight for cull fruit/pods (kg/ha)                 .
+FSZ1D  Fr wt 1   kg/ha Fresh weight for size class 1 (kg/ha)                    .
+FSZ2D  Fr wt 2   kg/ha Fresh weight for size class 2 (kg/ha)                    .
+FSZ3D  Fr wt 3   kg/ha Fresh weight for size class 3 (kg/ha)                    .
+FSZ4D  Fr wt 4   kg/ha Fresh weight for size class 4 (kg/ha)                    .
+FSZ5D  Fr wt 5   kg/ha Fresh weight for size class 5 (kg/ha)                    .
+FSZ6D  Fr wt 6   kg/ha Fresh weight for size class 6 (kg/ha)                    .
 XMAGE  Req. pod age  d Required pod age for Multi-Harvest (days)                .
 CHNUM  Cum. Harvest  # Cumulative harvest number (#)                            .
 TOSHN  Tot # sh   #/m2 Total Number of shells (#/m2)                            .
-TOWSH  Tot sh m.  g/m2 Total Shell mass (g/m2)                                  .
-MTDSH  Sh m. MtFr g/m2 Shell mass of mature fruits (g/m2)                       .
-HSHEL  Har sh Wt  g/m2 Harvested shell weight (g/m2)                            .
-TOPOW  Tot pod Wt g/m2 Total pod weight (g/m2)                                  .
-HPODW  Har pod Wt g/m2 Harvested pod weight (gm2)                               .
-CHPDT  C.H.podWt  g/m2 Cumulative harvested pod weight of mature fruits (g/m2)  .
-CPODN  C. pod Wt  g/m2 Cumulative pod weight (g/m2)                             .
-TOFPW  Fr pod Wt  g/m2 Total pod (ear) fresh weight (g/m2)                      .
-MTFPW  Fr Wt Mat  g/m2 Fresh weight of mature fruits (g/m2)                     .
-MTDPW  Dry Wt Mat g/m2 Dry weight of mature fruits (seed and shell) (g/m2)      .
-CHFPW  C.H. Fr Wt g/m2 Cumulative harv. fresh weight of mature fruits (g/m2)    .
-CMFNM  C.M. Fruit #/m2 Cumulative mature fruit number (#)                       .
+TOWSH  Tot sh m. kg/ha Total Shell mass (kg/ha)                                 .
+MTDSH  Sh m. MtF kg/ha Shell mass of mature fruits (kg/ha)                      .
+HSHEL  Har sh Wt kg/ha Harvested shell weight (kg/ha)                           .
+TOPOW  Tot pod W kg/ha Total pod weight (kg/ha)                                 .
+HPODW  Har pod W kg/ha Harvested pod weight (kg/ha)                             .
+CHPDT  C.H.podWt kg/ha Cumulative harvested pod weight of mature fruits (kg/ha) .
+CPODN  C. pod Wt kg/ha Cumulative pod weight (kg/ha)                            .
+TOFPW  Fr pod Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
+MTFPW  Fr Wt Mat kg/ha Fresh weight of mature fruits (kg/ha)                    .
+MTDPW  Dry Wt Ma kg/ha Dry weight of mature fruits (seed and shell) (kg/ha)     .
+CHFPW  C.H. Fr W kg/ha Cumulative harv. fresh weight of mature fruits (kg/ha)   .
+CMFNM  C.M. Fruit #/m2 Cumulative mature fruit number (#/m2)                    .
 TOSDN  Tot # sd   #/m2 Total Number of seeds (#/m2)                             .
-TOWSD  Tot sd m.  g/m2 Total Seed mass (g/m2)                                   .
-MTDSD  Sd m. MtFr g/m2 Seed mass of mature fruits (g/m2)                        .
-HSDWT  Har sd Wt  g/m2 Harvested seed weight (g/m2)                             .
+TOWSD  Tot sd m. kg/ha Total Seed mass (kg/ha)                                  .
+MTDSD  Sd m. MtF kg/ha Seed mass of mature fruits (kg/ha)                       .
+HSDWT  Har sd Wt kg/ha Harvested seed weight (kg/ha)                            .
+ADPWM  DryWt g/fruit   Avg dry fruit (pod, ear) weight at maturity (g/fruit)    .
+AFPWM  FreshWt g/fruit Avg fresh fruit (pod, ear) weight at maturity (g/fruit)  .
+FHWAD  Fresh harvest   Harvest product fresh wt (kg/ha)                         .
+FPWAD  Tot Fr Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
+RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)         .
+RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)           .
+MFWAD  Mrkt Fr Wt k/h  Market fresh fruit (pod, ear) weight (kg/ha)             .
+NFWAD  # market/ha     Market fruit (pod, ear) number (fruit/ha)                .
+PAGEM  Pod age d       Age of oldest pod or ear at maturity (days)              .
+PDMCM  DryMatter frac  Avg dry matter concentration at maturity (fraction)      .
+PDMCH  DryMatter frac  Avg dry matter concentration at harvest (fraction)       .
+SMFMH  Stalk fresh massMillable cane fresh weight at harvest (t/ha)             .
 
 *CANEGRO - South Africa
 ! Added by Matthew Jones 20070323 for the CANEGRO output analysis exercises

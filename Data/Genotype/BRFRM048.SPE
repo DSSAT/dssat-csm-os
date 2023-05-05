@@ -177,7 +177,18 @@
  -0.04    FLFP, EFFECT OF HARV. FREQ. ON RSPLF    
  -0.34    RHLFP, EFFECT OF GRAZING EFFICIENCY ON RSPLF 
   60.0    RSPLM, MAXIMUM ACHIEVABLE PERCENT LEAF OF STUBBLE                                
+
+!*STUBBLE MASS AND PERCENT LEAF FORAGE HARVEST 
+  2000  30.0                              MOWREF RSREF (2 VALUES) reference stuble mass (kg/ha) and harvest frequency in days
+     0    14    28    42    84   400      XFREQ (6 VALUES) harvest frequency in days
+     0    15    30    50    90   800      XFRGDD (6 VALUES) harvest frequency in GDD
+   1.1   1.1   1.0   0.9   0.9   0.9      YFREQ (6 VALUES) relative change on MOWREF  
+   1.2   1.2   1.0   0.9   0.8   0.8      YRSREF (6 VALUES) relative change on RSREF                                    
  
+     0     5    10    20    40   400      XCUTHT (6 VALUES) cutting height in cm               
+   1.2   1.2   1.0   0.9   0.8   0.8      YCUTHT (6 VALUES) relative change on MOWREF
+     0   200   400   800  1000  1200      XCHMOW (6 VALUES) pre-harvest biomass kg/m2               
+   1.0   1.0   1.5   2.0   2.5   3.0      YCHMOW (6 VALUES) relative change on MOWREF 
                                                                                                     
 !*EVAPOTRANSPIRATION                                                                                
   0.50   0.9       KEP, EORATIO                                                                     

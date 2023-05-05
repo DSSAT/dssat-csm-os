@@ -343,7 +343,7 @@ C     &    TNLEAK, WLDOTN, WRDOTN, WSDOTN, WSUDOTN)        !Output
 C     Call leaf senescence routine for initialization
 C-----------------------------------------------------------------------
       CALL CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, KCAN,           !Input
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
      &    LeafMaint, LeafNum, LFmntDEF,               !Input
      &    MinGr, Ph1P, PhenoStage,                    !Input
      &    PI1, RATTP, Smax,                           !Input
@@ -534,7 +534,7 @@ C     Initialize pest coupling point and damage variables
 C     Call leaf senescence routine for initialization
 C-----------------------------------------------------------------------
       CALL CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, KCAN,           !Input
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
      &    LeafMaint, LeafNum, LFmntDEF,               !Input
      &    MinGr, Ph1P, PhenoStage,                    !Input
      &    PI1, RATTP, Smax,                           !Input
@@ -993,7 +993,7 @@ C-----------------------------------------------------------------------
 C     Call leaf senescence routine to compute leaf loss variables
 C-----------------------------------------------------------------------
       CALL CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, KCAN,           !Input
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
      &    LeafMaint, LeafNum, LFmntDEF,               !Input
      &    MinGr, Ph1P, PhenoStage,                    !Input
      &    PI1, RATTP, Smax,                           !Input
@@ -1117,7 +1117,7 @@ C-----------------------------------------------------------------------
 C     Call leaf senescence routine for output
 C-----------------------------------------------------------------------
       CALL CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, KCAN,           !Input
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
      &    LeafMaint, LeafNum, LFmntDEF,               !Input
      &    MinGr, Ph1P, PhenoStage,                    !Input
      &    PI1, RATTP, Smax,                           !Input
@@ -1299,8 +1299,8 @@ C-----------------------------------------------------------------------
 ! FRACDN    Relative time between flowering (NR1) and last leaf appearance 
 !             (NDLEAF) 
 ! FREEZ1    Temperature below which plant loses all leaves, but development 
-!             continues (°C)
-! FREEZ2    Temperature below which plant growth stops completely. (°C)
+!             continues (ï¿½C)
+! FREEZ2    Temperature below which plant growth stops completely. (ï¿½C)
 ! FRLF      Fraction of vegetative tissue growth that goes to leaves on a 
 !             day (g[leaf] / g[veg])
 ! FRRT      Fraction of vegetative tissue growth that goes to roots on a 
@@ -1339,13 +1339,13 @@ C-----------------------------------------------------------------------
 ! NGRLF     Maximum N demand for leaf growth (g[leaf N] / m2[ground] / d)
 ! NGRRT     Maximum N demand for root growth (g[root N] / m2[ground] / d)
 ! NGRST     Maximum N demand for stem growth (g[stem N] / m2[ground] / d)
-! NH4(L)    Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)    Ammonium N in soil layer L (ï¿½g[N] / g[soil])
 ! NL        Maximum number of soil layers = 20 
 ! NLAYR     Number of soil layers 
 ! NMINEA    Actual Nitrogen mined from existing tissue (g[N] / m2 / d)
 ! NMINEP    Potential N mobilization from storage (g[N] / m2 / d)
 ! NMOBR     Stage dependent N mining rate 
-! NO3(L)    Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)    Nitrate in soil layer L (ï¿½g[N] / g[soil])
 ! NOUTDO    Logical unit for OVERVIEW.OUT file 
 ! NPLTD     Number of plants destroyed (#/m2/d)
 ! NR1       Day when 50% of plants have at least one flower (days)
@@ -1451,7 +1451,7 @@ C-----------------------------------------------------------------------
 ! SRDOT     Daily root senescence (g / m2 / d)
 ! SSDOT     Daily senescence of petioles (g / m2 / d)
 ! SSNDOT    Petiole senescence due to water stress (g/m2/day)
-! ST(L)     Soil temperature in soil layer L (°C)
+! ST(L)     Soil temperature in soil layer L (ï¿½C)
 ! STGDOY(I) Day when stage I occurred (YYDDD)
 ! StkHrNO   Number of stalks last harvested from existing stubble.
 ! StkPG(j)  Daily gross photosynthesis by stalk j (g[CH2O] / stalk / d)
@@ -1462,17 +1462,17 @@ C-----------------------------------------------------------------------
 !             (cm3 [water] / cm3 [soil])
 ! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
-! TAVG      Average daily temperature (°C)
+! TAVG      Average daily temperature (ï¿½C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
 ! TDUMX2    Photo-thermal time that occurs in a real day based on late 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
-! TGRO(I)   Hourly air temperature (°C)
-! TGROAV    Average daily air temperature (°C)
+! TGRO(I)   Hourly air temperature (ï¿½C)
+! TGROAV    Average daily air temperature (ï¿½C)
 ! TITLET    Description of treatment for this simulation 
-! TMIN      Minimum daily temperature (°C)
+! TMIN      Minimum daily temperature (ï¿½C)
 ! TNLEAK    Total nitrogen leak (g[N] / m2 / d)
 ! TOPWT     Total weight of above-ground portion of crop. (g[tissue] / m2)
 ! TOTALWT(j) Total weight of sugarcane stalk j, including a proportion of 
@@ -1530,7 +1530,7 @@ C-----------------------------------------------------------------------
 ! XLAI      Leaf area (one side) per unit of ground area
 !             (m2[leaf] / m2[ground])
 ! XSLATM(I) Temperature values for function that reduces specific leaf area 
-!             (SLA) (°C)
+!             (SLA) (ï¿½C)
 ! YRDOY     Current day of simulation (YYDDD)
 ! YREMRG    Day of emergence (YYDDD)
 ! MDATE     Harvest maturity (YYDDD)

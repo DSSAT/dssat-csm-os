@@ -145,7 +145,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C Harvest on specified day of year, HDATE
 C-----------------------------------------------------------------------
-      ELSE IF (IHARI .EQ. 'R') THEN
+      ELSE IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
         IF (YRDOY .GE. HDATE(NHAR)) THEN
           YREND = HDATE(NHAR)
           CONTROL % CropStatus = 2 !harvest on reported date
