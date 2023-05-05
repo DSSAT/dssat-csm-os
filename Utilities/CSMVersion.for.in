@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.16  FO 2023-05-05 Added Nitrogen calculations for Sugarcane SCCAN048 (commit 6fc178d)
 !       4.8.1.15  FO 2023-05-05 Updated sunflower genetics as per Ken Boote (commit 0fd4ba2)
 !       4.8.1.14  FO 2023-05-05 Added AutoMOW and SmartMOW code to PRFRM (commit 870d739)
 !       4.8.1.13  FO 2023-05-05 Removed WORK.OUT and CSCER_CSCRP_CSCAS folder (commit aeb6973)
