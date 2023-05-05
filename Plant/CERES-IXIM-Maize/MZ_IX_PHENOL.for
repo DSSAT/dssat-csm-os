@@ -573,7 +573,7 @@ C      REAL            PRLF  ! JIL Prolificacy level
 
                           WRITE(MESSAGE(1),3500) DSGT
 3500  FORMAT ('Crop failure because of lack of germination ',
-     &           'within',I5,' days of sowing.')
+     &           'within',F7.3,' days of sowing.')
                           CALL WARNING(1,'MZPHEN',MESSAGE)
 !                         WRITE (*,3500)
                           IF (IDETO .EQ. 'Y') THEN

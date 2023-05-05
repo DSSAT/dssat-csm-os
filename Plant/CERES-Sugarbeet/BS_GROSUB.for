@@ -1010,7 +1010,11 @@
           PAR = SRAD*PARSR    !PAR local variable
           LIFAC  = 1.5 - 0.768 * ((ROWSPC * 0.01)**2 * PLTPOP)**0.1 
           PCO2  = TABEX (CO2Y,CO2X,CO2,10)
-          IPAR = PAR/PLTPOP * (1.0 - EXP(-LIFAC * LAI))
+          IF(PLTPOP .GT. 0.0) THEN
+            IPAR = PAR/PLTPOP * (1.0 - EXP(-LIFAC * LAI))
+          ELSE
+            IPAR = 0.0
+          ENDIF
           PCARB = IPAR * RUE * PCO2
           TAVGD = 0.25*TMIN+0.75*TMAX
 

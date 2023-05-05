@@ -976,7 +976,11 @@
           ! mantainance respiration
           !
           RM  = (BIOMAS+RTWT*PLTPOP)*0.008*0.729
-          RI1 = 1.0 + RM/PSKER/PLTPOP      
+          IF(PLTPOP .GT. 0.0) THEN
+            RI1 = 1.0 + RM/PSKER/PLTPOP      
+          ELSE
+            RI1 = 0.0
+          ENDIF
 
           !
           ! Pericarp number calculated according to Soriano
@@ -1000,13 +1004,20 @@
 
           XRAT    = XNGLF / GLFWT
           YRAT    = (0.009-0.0875*XRAT)/0.9125
-          SLOPEPE = LAI*10E3/PLTPOP/(XNGLF-YRAT*GLFWT) ! SUN, HV
-
+          IF(PLTPOP .GT. 0.0) THEN
+            SLOPEPE = LAI*10E3/PLTPOP/(XNGLF-YRAT*GLFWT) ! SUN, HV
+          ELSE
+            SLOPEPE = 0.0
+          ENDIF
           
           XPEPE   = 0.50 * (XNGLF - YRAT*GLFWT)
           GPP    = 0.0
           MAXLAI = PLAMX*PLTPOP/10000.0
-          APLA   = LAI*10000.0/PLTPOP
+          IF(PLTPOP .GT. 0.0) THEN
+            APLA   = LAI*10000.0/PLTPOP
+          ELSE
+            APLA   = 0.0
+          ENDIF
           ABIOMS = BIOMAS
           OILWT = 0.0
           OIL = 0.0
@@ -1111,8 +1122,13 @@
       !
         ! Calculate total N in plant parts
       !
-        TCNP=(XLCNP*GLFWT+XSCNP*STMWT+XHCNP*HEADWT)/(STOVWT-SLFWT)
-        TMNC=(XLMNC*GLFWT+XSMNC*STMWT+XHMNC*HEADWT)/(STOVWT-SLFWT)
+        IF(STOVWT-SLFWT .GT. 0.0) THEN
+          TCNP=(XLCNP*GLFWT+XSCNP*STMWT+XHCNP*HEADWT)/(STOVWT-SLFWT)
+          TMNC=(XLMNC*GLFWT+XSMNC*STMWT+XHMNC*HEADWT)/(STOVWT-SLFWT)
+        ELSE
+          TCNP=0.0
+          TMNC=0.0
+        ENDIF
 
 !        -------------------------------------------------------------
 !                Compute Nitrogen Stress Factors 
@@ -1241,14 +1257,18 @@ C     recalculated KEP taken into account that K(FR)=0.5 K(PAR)
               C2  = GF1
             ENDIF
           ENDIF
-          IF (ISTAGE .LT. 4) THEN
+          IF (ISTAGE .LT. 4 .AND. PLTPOP .GT. 0.0) THEN
             PCARB = RUE * RI/PLTPOP
           ELSE
-            IF (RI .GT. 0) THEN
-              PCARB = (RI*RI1*C2/C1*RUE-RM)/PLTPOP
+            IF(PLTPOP .GT. 0.0) THEN
+              IF (RI .GT. 0) THEN
+                PCARB = (RI*RI1*C2/C1*RUE-RM)/PLTPOP
 
+              ELSE
+                PCARB =-RM/PLTPOP
+              ENDIF
             ELSE
-              PCARB =-RM/PLTPOP
+              PCARB = 0.0
             ENDIF
           ENDIF
 c          write(*,*)istage,lai,pcarb,pco2,ri1,c2,c1,rm
@@ -1584,8 +1604,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             ELSE
               SENRATE  = 0.0
             ENDIF
-
-            IF (SENRATE .GT. 0.0) THEN
+            IF (SENRATE .GT. 0.0 .AND. PLTPOP .GT. 0.0) THEN
 !             rate of senescence cm2/day/plant
               DSLAN1 = SENRATE*10000.0/PLTPOP    
             ELSE
@@ -2448,13 +2467,21 @@ c          WRITE (*,2800)
 
       BIOMAS = (GLFWT + STMWT + HEADWT + GRNWT + GRNWTE)*PLTPOP
       DM     = BIOMAS*10.0
-      HIO = OILWT/BIOMAS
+      IF (BIOMAS .GT. 0.0) THEN
+        HIO = OILWT/BIOMAS
+      ELSE
+        HIO = 0.0
+      ENDIF
 
       BIOMAS_R=(GLFWT+STMWT+HEADWT+GRNWT+GRNWTE+RTWT)
      &     *PLTPOP
 
       STOVWT = GLFWT + STMWT + HEADWT
-      PTF    = STOVWT/(RTWT + STOVWT)   
+      IF(RTWT + STOVWT .GT. 0.0) THEN
+        PTF    = STOVWT/(RTWT + STOVWT)
+      ELSE
+        PTF    = 0.0
+      ENDIF   
       IF (BIOMAS .GT. 0.0) THEN
         PTF = BIOMAS/BIOMAS_R
       ELSE
@@ -2605,8 +2632,12 @@ C       WTN = WTNCAN*10. / BIOMAS * 100.
       AREALF = LAI *10000   !cm2/m2
 !     Compute N lost in leaf senescence
 !     N in senesced leaves - calculate based on today's N content
-      CumLfNSenes = CumLfNSenes + 
+      IF (GLFWT .GT. 0.0) THEN
+        CumLfNSenes = CumLfNSenes + 
      &    (CumLeafSenes - CumLeafSenesY) * XNGLF/GLFWT
+      ELSE
+        CumLfNSenes = 0.0
+      ENDIF
 
 !----------------------------------------------------------------------
 !----------------------------------------------------------------------

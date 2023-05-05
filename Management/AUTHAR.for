@@ -135,6 +135,17 @@ C***********************************************************************
 !     YREND = -99
       IF (YRDOY == YREND) RETURN
 
+      !TF 05/04/2023 - stop simulation if crop failed to germinate
+      IF(CONTROL % CropStatus .EQ. 12) THEN
+        YREND = YRDOY
+        RETURN
+      ENDIF 
+
+      !TF 05/04/2023 - stop simulation if crop failed to germinate
+      IF(CONTROL % CropStatus .EQ. 13) THEN
+        YREND = YRDOY
+        RETURN
+      ENDIF 
 C-----------------------------------------------------------------------
 C Harvest at maturity, NR8
 C-----------------------------------------------------------------------
