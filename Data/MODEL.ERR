@@ -196,6 +196,12 @@ Error in chemical code.  Correct input file.
 IPCHEM   11
 No input amount defined for chemical applications.
 
+IPDMND   1
+Time for pod/fruit to reach har. maturity (XFPHT) not set properly.
+
+IPDMND   2
+Initial partitioning to pod/fruit in early growth (XFINT) not set properly.
+
 IPCUL     2
 Cultivar input level not found. Please correct input file.
 
