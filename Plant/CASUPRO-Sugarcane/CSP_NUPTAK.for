@@ -39,7 +39,7 @@ C=======================================================================
       CHARACTER*92 FILECC
 
       INTEGER LUNCRP, ERR, LNUM, ISECT, FOUND
-      INTEGER L, NLAYR, DYNAMIC, WLUN
+      INTEGER L, NLAYR, DYNAMIC !, WLUN
       
       REAL NUF, XMIN
       REAL DLAYR(NL), LL(NL), DUL(NL), SAT(NL), SW(NL), RLV(NL)
@@ -49,7 +49,7 @@ C=======================================================================
       REAL NDMTOT,         ANDEM, FNH4, FNO3, SMDFR, RFAC
       REAL RTNO3, RTNH4, MXNH4U, MXNO3U
 
-      INTEGER OpenStatus
+!      INTEGER OpenStatus
 
 !***********************************************************************
 !***********************************************************************
@@ -101,22 +101,22 @@ C=======================================================================
 !OHD - Echoes input data
 
 ! Open file to write results from NUPTAK_SC
-      CALL GETLUN('WORK.OUT',WLUN)
-      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
-     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
+!      CALL GETLUN('WORK.OUT',WLUN)
+!      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
+!     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
 
-      WRITE(WLUN,'(1X, "")')   !chp for portability
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"RESULTS FROM NUPTAK_SC.for")')
-      WRITE(WLUN,'(1X,"--------------------------")')
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-	WRITE(WLUN,'(1X,"RTNO3  : ",F6.3)') RTNO3
-      WRITE(WLUN,'(1X,"RTNH4  : ",F6.3)') RTNH4
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"END RESULTS FROM NUPTAK_SC.for")')
+!      WRITE(WLUN,'(1X, "")')   !chp for portability
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"RESULTS FROM NUPTAK_SC.for")')
+!      WRITE(WLUN,'(1X,"--------------------------")')
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!	WRITE(WLUN,'(1X,"RTNO3  : ",F6.3)') RTNO3
+!      WRITE(WLUN,'(1X,"RTNH4  : ",F6.3)') RTNH4
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"END RESULTS FROM NUPTAK_SC.for")')
 
 !      CLOSE (WLUN)
 

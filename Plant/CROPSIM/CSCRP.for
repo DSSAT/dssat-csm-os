@@ -190,8 +190,8 @@
 !***********************************************************************
           
         CALL CRP_SeasInit (ALBEDOS, GSTAGE, LAI, CANHT, CLOUDS,
-     &     CN, DEWDUR, DOY, HARVFRAC, IDETG, ISWDIS, ISWNIT,
-     &     ISWWAT, KCAN, KEP, LAIL, LAILA, NFP, ON, PARIP,
+     &     CN, DEWDUR, DOY, HARVFRAC, ISWDIS, ISWNIT,
+     &     KCAN, KEP, LAIL, LAILA, NFP, ON, PARIP,
      &     PARIPA, RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
      &     RUN, RUNI, RWUMX, RWUPM, SENCALG,
      &     UH2O, UNH4, UNO3, YEAR, SENLALG, SENNALG, SLPF, SN,
@@ -201,7 +201,7 @@
       ELSEIF (DYNAMIC .EQ. RATE) THEN                                              
 !***********************************************************************
 
-        call CRP_Growth (BD, GSTAGE, CLOUDS, CO2, DAYLT,
+        call CRP_Growth (BD, CLOUDS, CO2, DAYLT,
      &    DLAYR, DOY, DUL, EO, EOP, ES, ISWDIS, ISWNIT , ISWWAT,
      &    KCAN, KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT, PARIP,
      &    PARIPA, RLV, RNMODE, SAT , SENCALG, SENLALG, SENNALG,
@@ -227,11 +227,11 @@
      &        DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
 !***********************************************************************
   
-        CALL CRP_Output (GSTAGE, LAI, CANHT, CN, CO2, DAYLT, DOY, 
-     &     DYNAMIC, EO, EOP, IDETG, IDETL, IDETO, IDETS, IRRAMT, ISWNIT,
-     &     ISWWAT, KCAN, MESOM, NFP, NLAYR, ON, RAIN, REP, RLV,
+        CALL CRP_Output (GSTAGE, LAI, CANHT, CN, DAYLT, DOY, 
+     &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS, ISWNIT,
+     &     ISWWAT, KCAN, MESOM, NFP, NLAYR, ON, REP, RLV,
      &     RN, RNMODE, RUN, RUNI, SN, SRAD, STGYEARDOY, TN,
-     &     TNIMBSOM, TOMINSOM1, UNH4 , UNO3, WINDSP, YEAR)
+     &     TNIMBSOM, TOMINSOM1, UNH4 , UNO3, YEAR)
 
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN                                         
@@ -243,7 +243,7 @@
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
         CLOSE (NOUTPN)
-        CLOSE (FNUMWRK)
+!        CLOSE (FNUMWRK)
 
 !***********************************************************************
       ENDIF ! End of INITIATION-RATES-INTEGRATE-OUTPUT-SEASEND construct
@@ -300,7 +300,7 @@
       REAL          DLAYRTMP(20)  ! Depth of soil layers with root cm
       REAL          EOP           ! Potential evaporation,plants   mm/d
       INTEGER       FNUMWRK       ! File number,work file          #
-      LOGICAL       FOPEN         ! File open indicator
+      !LOGICAL       FOPEN         ! File open indicator
       INTEGER       L             ! Loop counter                   #
       REAL          LL(NL)        ! Lower limit,soil h2o           #
       INTEGER       NLAYR         ! Actual number of soil layers   #
@@ -341,9 +341,9 @@
 
       IF (FNUMWRK.LE.0.0) THEN
 
-        CALL GETLUN ('WORK.OUT',FNUMWRK)
-        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-        IF (.NOT.FOPEN) OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+        !CALL GETLUN ('WORK.OUT',FNUMWRK)
+        !INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+        !IF (.NOT.FOPEN) OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
 
         ! Compute SWCON2 for each soil layer.  Adjust SWCON2 for very
         ! high LL to avoid water uptake limitations.
@@ -390,9 +390,9 @@
             WRITE(Message(1),'(A57)') 
      &      'To avoid early stress,h2o uptake set equal to demand.  '
             CALL WARNING(1,'CSCRP',MESSAGE)
-            WRITE(Fnumwrk,*)' '
-            WRITE(Fnumwrk,'(A58)') 
-     &      ' To avoid early stress,h2o uptake set equal to demand.  '
+!            WRITE(Fnumwrk,*)' '
+!            WRITE(Fnumwrk,'(A58)') 
+!     &      ' To avoid early stress,h2o uptake set equal to demand.  '
           ENDIF
         ELSE
           RWUP = SWCON1*EXP(MIN((SWCON2(L)*(SW(L)-LL(L))),40.))/
@@ -416,10 +416,10 @@
      &           ' Water uptake resticted by saturation,layer',L,
      &           ' Uptake saturation factor ',wfewu
                  CALL WARNING(1,'CSCRP',MESSAGE)
-                 WRITE(Fnumwrk,*)' '
-                 WRITE(Fnumwrk,'(A52,I3,a26,F4.2)')
-     &           ' Water uptake resticted by saturation,layer',L,
-     &           ' Uptake saturation factor ',wfewu
+!                 WRITE(Fnumwrk,*)' '
+!                 WRITE(Fnumwrk,'(A52,I3,a26,F4.2)')
+!     &           ' Water uptake resticted by saturation,layer',L,
+!     &           ' Uptake saturation factor ',wfewu
                ENDIF
             ENDIF
           ENDIF
@@ -437,7 +437,11 @@
       ENDDO
 
       IF (TRWUP.GT.0.0) THEN
-        WUPR = TRWUP/(EOP*0.1)
+        IF (EOP.GT.0.0) THEN
+          WUPR = TRWUP/(EOP*0.1)
+        ELSE
+          WUPR = 0.0
+        ENDIF
         IF (WUPR.GE.WFEU) THEN
           WUF = (EOP*0.1) / TRWUP
         ELSEIF (WUPR.LT.WFEU) THEN
@@ -513,12 +517,12 @@
       INTEGER       lnumsg        ! Leaf cohort number             #
       REAL          plpop         ! Plant population               #/m2
       INTEGER       spp           ! Species                        #
-      INTEGER       fnumwrk       ! Unit number for work file      #
+      !INTEGER       fnumwrk       ! Unit number for work file      #
       INTEGER       tvi1          ! Temporary variable,integer     #
       INTEGER       tvilc         ! Temporary value,lf cohort      #
       REAL          yvalxy        ! Y value from function          #
 
-      LOGICAL       fopen         ! File status indicator          code
+      !LOGICAL       fopen         ! File status indicator          code
 
       INTRINSIC     AINT,MOD,INT
 
@@ -532,11 +536,11 @@
 
       IF(caid.LE.0.0)RETURN
 
-      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
-        CALL Getlun ('WORK.OUT',fnumwrk)
-        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
-        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
-      ENDIF
+!      IF (FNUMWRK.LE.0.OR.FNUMWRK.GT.1000) THEN
+!        CALL Getlun ('WORK.OUT',fnumwrk)
+!        INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+!        IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+!      ENDIF
 
       lfrutmp=1.0
       clthick=10.0                     ! Starting layer thickness (cm)

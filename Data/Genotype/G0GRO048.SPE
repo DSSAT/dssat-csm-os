@@ -35,7 +35,7 @@
                                                                                                                                                                                                         
 !*CARBON AND NITROGEN MINING PARAMETERS                                                                                                                                                                 
  0.025  0.75  .280  .080  0.30  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR 
-    PD                                 XPODF                                                                                                                                                            
+    PD  0.70                           XPODF, NSTFAC                                                                                                                                                           
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH                                                                                                                                         
                                                                                                                                                                                                         
 !*NITROGEN FIXATION PARAMETERS                                                                                                                                                                          
@@ -55,7 +55,7 @@
                                                                                                                                                                                                         
 !*LEAF GROWTH PARAMETERS                                                                                                                                                                                
   144. 285.    2.0  0.0   00.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC 
-  350.  200. -.048  1.20               SLAMAX,SLAMIN,SLAPAR,TURSLA 
+  350.  200. -.048  1.20  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA 
    0.0   5.0  10.0  15.0  20.0  25.0  XVGROW(1-6), VSTAGE VALUES                                                                                                                                        
    0.0  10.0  20.0  30.0  40.0  50.0  YVREF(1-6), LEAF AREA VALUES,CM2                                                                                                                                  
  -50.0  00.0  10.0  30.0  60.0        XSLATM(1-5),TEMP VALUES                                                                                                                                           
@@ -129,7 +129,8 @@
   0.55  0.55  0.55  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN                                                                                                                         
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES                                                                                                                             
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN                                                                                                                         
-                                                            
+  1.00                                               NHGT
+                                                              
 !*EVAPOTRANSPIRATION                                        
   0.70   1.0       KEP, EORATIO                             
   0.50  0.95       SSKC, SKCBmax ASCE short ref (12 cm grass)
