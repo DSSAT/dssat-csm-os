@@ -131,12 +131,13 @@ C-----------------------------------------------------------------------
 
 !           SMDFR = relative drought factor
             SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
-            IF (SMDFR .LT. 0.1) THEN
-              SMDFR = 0.1
-            ENDIF
 
             IF (SW(L) .GT. DUL(L)) THEN
               SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
+            ENDIF
+            
+            IF (SMDFR .LT. 0.1) THEN
+              SMDFR = 0.1
             ENDIF
             ! FO/KJB - Change for Cotton
             !RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
