@@ -157,6 +157,30 @@ Error a new weather year is defined prior to the start of simulation.
 FRHARV    1
 Error in forage harvest. Mow input date is defined prior to the start of simulation.
 
+FRHARV    2
+Error reading stuble mass and percent leaf forage harvest in species file.
+
+FRHARV    3
+Error in Automatic Management section. Correct mow harvest frequency (days).
+
+FRHARV    4
+Error in Automatic Management section. Correct mow harvest frequency (GDD).
+
+FRHARV    5
+Error in Automatic Management section. Correct the stubble percent leaf.
+
+FRHARV    6
+Error in Automatic Management section. Correct the cutting height.
+
+FRHARV    7
+Error in Automatic Management section. Correct the stubble mass.
+
+FRHARV    8
+Error in Automatic Management section. Correct residual veg. stage after mowing.
+
+FRHARV    9
+Missing AutoMOW section in the species file.
+
 FRSHWT    1
 Pod/Fruit harvest age (XMAGE) is not properly defined. Fix the Ecotype file.
 

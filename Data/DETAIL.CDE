@@ -72,8 +72,14 @@ HCOM     Harvest component, code                                              IB
 HDATE    Harvest date, year + day or days from planting                       IB
 HL       Harvest level                                                        IB
 HLEN     Harvest row length, m                                                IB
+HMCUT    Mow cutting height, cm                                               IB
+HMFRQ    Mow harvest frequency in days, #                                     IB
+HMGDD    Mow harvest frequency using GDD, #                                   IB
+HMMOW    Stubble mass after mowing, kh ha-1                                   IB
+HMVS     Residual vegetative stage after mowing, 0-80                         IB
 HPC      Harvest percentage, %                                                IB
 HRNO     Harvest row number                                                   IB
+HRSPL    Stubble percent leaf, %                                              IB
 HSIZ     Harvest size group, code                                             IB
 HSTG     Harvest stage                                                        IB
 IAME     Method for automatic applications, code                              IB
