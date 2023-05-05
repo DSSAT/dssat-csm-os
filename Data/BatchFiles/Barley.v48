@@ -1,0 +1,23 @@
+$BATCH(BARLEY)
+!
+! Directory    : C:\DSSAT48\BARLEY
+! Command Line : C:\DSSAT48\DSCSM048.EXE CSCER048 B DSSBatch.v48
+! Crop         : Barley          
+! Experiment   : IEBR8201.BAX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CSCER048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\BARLEY\IEBR8201.BAX                                                                    1      1      0      0      0
+C:\DSSAT48\BARLEY\IEBR8201.BAX                                                                    2      1      0      0      0
+C:\DSSAT48\BARLEY\IEBR8201.BAX                                                                    3      1      0      0      0
+C:\DSSAT48\BARLEY\IEBR8201.BAX                                                                    4      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    1      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    2      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    3      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    4      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    5      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    6      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    7      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    8      1      0      0      0
+C:\DSSAT48\BARLEY\MTBO7701.BAX                                                                    9      1      0      0      0

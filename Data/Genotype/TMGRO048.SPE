@@ -34,7 +34,7 @@
 
 !*CARBON AND NITROGEN MINING PARAMETERS
  0.022  0.70  .250  .090  0.38  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR LAST
-    PD                                 XPODF
+    PD  0.70                           XPODF, NSTFAC
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH
 
 !*NITROGEN FIXATION PARAMETERS
@@ -54,7 +54,7 @@
 
 !*LEAF GROWTH PARAMETERS
   220.  300.  300.   4.1   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC
-  720. 385.0 -.047  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA
+  720. 385.0 -.047  1.50  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA
 
 !Note to users from KJB. The LA vs V data came from Scholberg but had
 !different set of V:  0.0, 1.7, 4.3, 5.9, 6.9, and 7.9 with same LA as below
@@ -129,7 +129,8 @@
   0.05  0.05  0.40  1.00  0.00                       YHWTEM(1-5),RELATIVE EXPAN
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
-
+  1.00                                               NHGT
+  
 !*EVAPOTRANSPIRATION
   0.70   1.0       KEP, EORATIO
   0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)

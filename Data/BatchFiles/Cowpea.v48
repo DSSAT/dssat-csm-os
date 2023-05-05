@@ -1,0 +1,25 @@
+$BATCH(COWPEA)
+!
+! Directory    : C:\DSSAT48\COWPEA
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Cowpea          
+! Experiment   : CCPA9701.CPX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\COWPEA\CCPA9701.CPX                                                                    1      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9801.CPX                                                                    1      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9801.CPX                                                                    2      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9801.CPX                                                                    3      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    1      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    2      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    3      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    4      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    5      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    6      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    7      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    8      0      0      0      0
+C:\DSSAT48\COWPEA\GAGR9802.CPX                                                                    9      0      0      0      0
+C:\DSSAT48\COWPEA\UFGA8401.CPX                                                                    1      1      0      0      0
+C:\DSSAT48\COWPEA\UFGA8401.CPX                                                                    2      1      0      0      0

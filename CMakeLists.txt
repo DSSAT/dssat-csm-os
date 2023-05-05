@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 1)
-SET(BUILD 7)
+SET(BUILD 13)
 
 # Get the current working branch
 execute_process(
@@ -238,7 +238,6 @@ set(
         "Plant/CASUPRO-Sugarcane/CSP_INCOMP.for"
         "Plant/CASUPRO-Sugarcane/CSP_INCOMP_OUT.for"
         "Plant/CASUPRO-Sugarcane/CSP_INPHENOL.for"
-        "Plant/CASUPRO-Sugarcane/CSP_IPDMND_OUT.for"
         "Plant/CASUPRO-Sugarcane/CSP_IPPHENOL.for"
         "Plant/CASUPRO-Sugarcane/CSP_IPPLNT.for"
         "Plant/CASUPRO-Sugarcane/CSP_MOBIL.for"
@@ -617,6 +616,7 @@ set(
         "Soil/SoilUtilities/SoilNoPoBal.for"
         "Soil/SoilUtilities/SoilPBalSum.for"
         "Soil/SoilUtilities/TextureClass.for"
+        "Soil/SoilWater/CapFringe.f90"
         "Soil/SoilWater/INFIL.for"
         "Soil/SoilWater/OPWBAL.for"
         "Soil/SoilWater/RETC_VG.for"
@@ -624,6 +624,7 @@ set(
         "Soil/SoilWater/SATFLO.for"
         "Soil/SoilWater/TILEDRAIN.for"
         "Soil/SoilWater/WATBAL.for"
+        "Soil/SoilWater/WaterTable.f90"
         "Soil/SoilWater/WBAL.for"
         "Soil/SoilWater/WBSUBS.for"
         "SPAM/ESR_SoilEvap.for"

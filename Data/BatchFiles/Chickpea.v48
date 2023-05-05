@@ -1,0 +1,70 @@
+$BATCH(CHICKPEA)
+!
+! Directory    : C:\DSSAT48\CHICKPEA
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Chickpea        
+! Experiment   : ITBP8401.CHX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\CHICKPEA\ITBP8401.CHX                                                                  1      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8401.CHX                                                                  2      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8401.CHX                                                                  3      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8401.CHX                                                                  4      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8401.CHX                                                                  5      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8401.CHX                                                                  6      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  1      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  2      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  3      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  4      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  5      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  6      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  7      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  8      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                  9      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                 10      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                 11      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8502.CHX                                                                 12      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  1      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  2      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  3      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  4      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  5      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  6      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  7      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  8      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                  9      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                 10      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                 11      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8603.CHX                                                                 12      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  1      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  2      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  3      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  4      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  5      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  6      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  7      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  8      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                  9      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                 10      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                 11      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBP8704.CHX                                                                 12      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  1      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  2      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  3      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  4      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  5      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  6      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  7      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  8      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                  9      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                 10      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                 11      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9205.CHX                                                                 12      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9306.CHX                                                                  1      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9306.CHX                                                                  2      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9306.CHX                                                                  3      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9306.CHX                                                                  4      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9306.CHX                                                                  5      1      0      0      0
+C:\DSSAT48\CHICKPEA\ITBW9306.CHX                                                                  6      1      0      0      0
