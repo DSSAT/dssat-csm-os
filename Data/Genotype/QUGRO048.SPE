@@ -36,7 +36,7 @@
 !*CARBON AND NITROGEN MINING PARAMETERS
 ! 0.024  0.75  .260  .125  0.65  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !def
  0.024  0.75  .260  .135  0.65  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !kjb !9/13/21
-    SD                                 XPODF
+    SD  0.70                           XPODF, NSTFAC
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH
 
 !*NITROGEN FIXATION PARAMETERS
@@ -57,7 +57,7 @@
 !*LEAF GROWTH PARAMETERS
 !  180. 250.0  30.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !def
   180. 250.0  36.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !kjb,reduce LA, 35 8/30, 36 9/13/21
-  760. 250.0 -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA
+  760. 250.0 -.048  1.50  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA
 
    0.0   1.0   2.0   3.0   4.0   5.0  XVGROW(1-6), VSTAGE VALUES          !not tips
    0.0  20.0  55.0 110.0 200.0 320.0  YVREF(1-6), LEAF AREA VALUES,CM2 !this is soy, need quinoa 
@@ -129,7 +129,8 @@
 
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
-
+  1.00                                               NHGT
+  
 !*EVAPOTRANSPIRATION
   0.68   1.1       KEP, EORATIO
   0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
