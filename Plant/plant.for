@@ -634,7 +634,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    RWUEP1, YREND, YRPLT, WEATHER, IRRAMT,      !Input
      &    CANHT, KCAN, KTRANS, MDATE, NSTRES,         !Output
      &    PORMIN, RLV, RWUMX,STGDOY, UNH4,            !Output
-     &    UNO3, XLAI, XHLAI, EORATIO)                 !Output
+     &    UNO3, XLAI, XHLAI, EORATIO,SENESCE)         !Output
 
 c     Added by MJ, 2007-04-04:
 c     ::::::::::::::::::::::::
