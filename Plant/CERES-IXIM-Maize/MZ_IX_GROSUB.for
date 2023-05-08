@@ -1292,7 +1292,11 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
   	  K1 =  0.425 + (0.245*EXP(-((Z2STAGE-1.03)**2)/(0.0467)))
 ! JIL 09/07/2007 Z2STAGE (Phenology scale, 0-1-2) calculated in PHENOL
 ! JIL Intercepted PAR (MJ/plant d)
-	  IPAR = PAR/PLTPOP * (1.0 - EXP(-K1 * LAI))
+      IF(PLTPOP .GT. 0.0) THEN        
+	      IPAR = PAR/PLTPOP * (1.0 - EXP(-K1 * LAI))
+      ELSE
+        IPAR = 0.0
+      ENDIF
         PCARB = IPAR * RUE                       !RUE read from ECO file
 
           !-------------------------------------------------------------
@@ -1323,7 +1327,11 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
 	  IF (CVF .EQ. 0.0) THEN
 	      PSCARB = (PG-MAINR)
 	  ELSE
-	      PSCARB = (PG-MAINR)/(CVF*PLTPOP)                  !(g/pl)
+        IF(PLTPOP .GT. 0.0) THEN 
+	        PSCARB = (PG-MAINR)/(CVF*PLTPOP)                  !(g/pl)
+        ELSE
+          PSCARB = 0.0
+        ENDIF
 	  ENDIF
 
 ! JIL 09/07/2007 Comment/Switch-out this line to run the (IPAR * RUE) C balance
@@ -1448,10 +1456,13 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
             LFWT   = LFWT  + GROLF
             STMWT  = STMWT + GROSTM
 
+            IF(PLTPOP .GT. 0.0) THEN 
 !             5/11/2005 CHP Added cumulative leaf senescence
-            CumLeafSenes = SENLA / 600. * PLTPOP * 10.
+              CumLeafSenes = SENLA / 600. * PLTPOP * 10.
 !                kg/ha     =  g/plant * plants/m2 * (kg/ha)/(g/m2)
-
+            ELSE
+              CumLeafSenes = 0.0
+            ENDIF
 !             Stage 3 accumulates leaf senescence from 0
 !             Save stage 2 value for true accumulation
             Stg2CLS = CumLeafSenes

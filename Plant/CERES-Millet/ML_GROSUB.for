@@ -395,7 +395,11 @@ C
 
 C      LIFAC =1.5 - 0.768 * ((ROWSPC * 0.01)**2 * PLTPOP)**0.1
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
-      PCARB = RUE * PAR/PLTPOP * (1.0 - EXP(-LIFAC * LAI))
+      IF (PLTPOP .GT. 0.0) THEN
+         PCARB = RUE * PAR/PLTPOP * (1.0 - EXP(-LIFAC * LAI))
+      ELSE
+         PCARB = 0.0
+      ENDIF
       PCARB = PCARB*PCO2      !chp added
 
       TEMPM = (TMAX + TMIN)*0.5   !Mean air temperature, C

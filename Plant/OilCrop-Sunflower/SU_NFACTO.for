@@ -58,7 +58,11 @@ C     ----------------------------------------------------------------
 ! based on proportion nitrogen below critical level (TCNP-TANC) and 
 ! total nitrogen between the critical level and minimum 
 ! level (TCNP-TMNC). 
-        NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)  
+        IF (TCNP-TMNC .GT. 0.0) THEN
+          NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)  
+        ELSE
+          NFAC   = 0.0
+        ENDIF
 c       write(*,*)'nfacto 62',tcnp,tanc,tmnc,NFAC
           NFAC   = AMIN1 (NFAC,1.0)
           NFAC   = AMAX1 (NFAC,0.001)
