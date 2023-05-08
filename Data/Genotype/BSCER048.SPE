@@ -8,8 +8,10 @@
 
 *PHOTOSYNTHESIS PARAMETERS
   PARSR   .52        !Conversion of solar radiation to PAR
-  CO2X     0   220   280   330   400   490   570   750   990  9999
-  CO2Y  0.00  0.85  0.95  1.00  1.02  1.04  1.05  1.06  1.07  1.08
+! CO2X     0   220   280   330   400   490   570   750   990  9999 ! old from CERES-Maize for C4
+! CO2Y  0.00  0.85  0.95  1.00  1.02  1.04  1.05  1.06  1.07  1.08
+  CO2X     0   220   330   440   550   660   770   880   990  9999 
+  CO2Y  0.00  0.71  1.00  1.08  1.17  1.25  1.32  1.38  1.43  1.50
 
 *STRESS RESPONSE
   FSLFW   0.050     !Fraction of leaf area senesced under 100% water stress, 1/day
