@@ -355,7 +355,8 @@ c         ----------------------------------------------------
      &    N_CONC, ! ok
 !     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
 !     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
-     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ABVGRND_N_MASS, 
+!     &    TOT_N_POOL, !ok,ok
      &    ACC_UPTAKE)
      
       ELSE IF (DYNAMIC .EQ. SEASINIT) THEN
@@ -415,7 +416,8 @@ c         ------------------------------------
      &    N_CONC, ! ok
 !     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
 !     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
-     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ABVGRND_N_MASS, 
+!     &    TOT_N_POOL, !ok,ok
      &    ACC_UPTAKE)
 
       ELSE IF (DYNAMIC .EQ. RATE) THEN
@@ -441,8 +443,6 @@ c         Conc = N_pool/mass, if mass > 0
 		IF (MASSES(ROOTS) > 0.00001) THEN
                 N_CONC(ROOTS) = N_POOL(ROOTS)/(MASSES(ROOTS) * 1000)  
 		ENDIF
-            !print*,'A ',N_CONC(TOPS),'; S ',N_CONC(STALKS),'; R ',N_CONC(ROOTS)
-            !print*,'Dead N conc ',N_CONC(DEADLF),'; Dead N mass ',N_POOL(DEADLF),'; Dead DM ',MASSES(DEADLF)
  
 !           MvdL this is to send to Roots to calculate root N senescence   
             ROOTNCONC = N_CONC(ROOTS)    
@@ -729,7 +729,8 @@ c		What about N stress on other processes? e.g. Stalk numbers (tillering) increa
      &    N_CONC, ! ok
 !     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
 !     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
-     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ABVGRND_N_MASS, 
+!     &    TOT_N_POOL, !ok,ok
      &    ACC_UPTAKE)
 
       ELSE IF (DYNAMIC.EQ.OUTPUT) THEN
@@ -746,7 +747,8 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
      &    N_CONC, ! ok
 !     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
 !     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
-     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ABVGRND_N_MASS, 
+!     &    TOT_N_POOL, !ok,ok
      &    ACC_UPTAKE)
 
 c     Otherwise, close files at end of season:
@@ -763,7 +765,8 @@ c     Otherwise, close files at end of season:
      &    N_CONC, ! ok
 !     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
 !     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
-     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
+     &    ABVGRND_N_MASS, 
+!     &    TOT_N_POOL, !ok,ok
      &    ACC_UPTAKE)
       ENDIF
 
