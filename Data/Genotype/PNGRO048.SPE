@@ -55,6 +55,7 @@
 !*LEAF GROWTH PARAMETERS
   140.  260.  20.0   5.0   5.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC
   600. 295.0 -.047  1.00  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA
+!  600. 295.0 -.047  1.00  0.40        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA
 
    0.0   1.0   2.0   3.3   5.4   7.5  XVGROW(1-6), VSTAGE VALUES
    0.0  28.7  57.5  99.6 188.7 375.8  YVREF(1-6), LEAF AREA VALUES,CM2  orig
@@ -127,6 +128,7 @@
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
   1.00                                               NHGT
+!  0.40                                               NHGT
   
 !*EVAPOTRANSPIRATION
   0.70   1.0       KEP, EORATIO
