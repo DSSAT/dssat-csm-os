@@ -51,6 +51,8 @@ c     Use the composite variable defn:
 c     All variables to be declared:
       IMPLICIT NONE
 c     and saved between subroutine calls:
+      EXTERNAL SC_OPNIT
+
       SAVE
 
 
