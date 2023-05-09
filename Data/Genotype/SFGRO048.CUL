@@ -1,4 +1,4 @@
-*SAFFLOWER CULTIVAR COEFFICIENTS: CRGRO048 MODEL
+*SAFFLOWER GENOTYPE COEFFICIENTS: CRGRO048 MODEL
 !
 ! COEFF       DEFINITIONS
 ! =====       ===========
@@ -43,7 +43,7 @@
 !
 ! 2/4/2019, Modifications made by K. Boote, and K. Steberl during January 2019, to go along with modified Spe and Eco files.
 @VAR#  VAR-NAME........ EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
-!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
 !Calibration                             P     P     P      P    P     P     P     G     G     G     G     G     G     G     G     G     G     G
 
 999991 MINIMA               . DFAULT 23.00 0.001  10.3   4.0  13.0 28.50 18.00  1.55  250. 115.0  0.66 0.052  29.0 18.00  17.0  46.0  .140  .330
@@ -52,6 +52,8 @@
 IB0001 PI8311               . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.40  250. 115.0  0.64 0.052  29.0 18.00  18.0  46.5  .140  .330
 IB0002 99OL                 . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.40  250. 115.0  0.64 0.052  29.0 18.00  18.0  46.5  .140  .330
 IB0003 Nutrisaff            . SF0401 23.00 0.001  16.5   3.2  14.7 30.50 20.25  1.40  250. 115.0  0.64 0.052  29.0 18.00  18.0  46.5  .140  .330
+!**IB0001 PI8311               . SF0401 23.00 0.001  17.0   3.0  15.0 30.00 20.25  1.70  270. 115.0  0.55 0.040  29.0 22.25  17.0  51.3  .140  .330
+!**prior cultivar is exactly from older V4.7, I modified LFMAX from 2.20 of the paper because spe change, to 1.70 for DSSAT V4.7, and 1.40 for V4.8
 
 ! following are two cultivars from Kathrin Steberl, grown at Stuttgart, Germany
 UH0001 Goldschopf           . BW0001 23.00 0.001  10.3   4.5  13.0 28.50 18.00  1.55  250. 115.0  0.67 0.064  30.0 22.25  19.0  55.0  .140  .330

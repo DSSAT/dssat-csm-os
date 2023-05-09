@@ -93,6 +93,7 @@
   0.55  0.55  0.55  0.51  0.40  0.38  0.35  0.35  YLFEST VALUES -     kjb new 8/15/19 AZ reduce root, incr stem                        
   0.19  0.19  0.20  0.24  0.30  0.36  0.41  0.41  YSTEST VALUES -     kjb new                            
   0.08  0.08  0.08  0.09  0.10  0.11  0.11  0.11  YSREST VALUES -     kjb new
+!  40.0                                SDLEST !photothermal days sowing to established perennial                                                                                                  
   60.0                                SDLEST !photothermal days sowing to established perennial                                                                                                  
                                                                                                     
 !*LEAF GROWTH PARAMETERS                                                                            
@@ -105,7 +106,8 @@
                                                                                                     
                                                                                                     
 !*LEAF SENESCENCE FACTORS                                                                           
-  0.80  0.20  .060  -2.0 -25.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 - Wafa/kjb                               
+  0.80  0.20  .060 -20.0 -25.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 - Wafa/kjb                               
+!  0.80  0.20  .060  -2.0 -25.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 - Wafa/kjb                               
   1.17  13.1  0.01                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen
                                                                                                     
                                                                                                     
@@ -170,19 +172,43 @@
   0.35  0.35  0.35  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN - kjb 8/16/19                    
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES                         
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN                     
- -11.1    FMOW, EFFECT OF HARV. FREQUENCY ON MOW 
+
+  -11.1    FMOW, EFFECT OF HARV. FREQUENCY ON MOW 
  159.6    RHMOW, EFFECT OF STUBBLE HEIGHT ON MOW 
   50.0    CHMOW, EFFECT OF CANOPY HEIGHT ON MOW
  -0.04    FLFP, EFFECT OF HARV. FREQ. ON RSPLF    
  -0.34    RHLFP, EFFECT OF GRAZING EFFICIENCY ON RSPLF 
   60.0    RSPLM, MAXIMUM ACHIEVABLE PERCENT LEAF OF STUBBLE                                
  
+!*STUBBLE MASS AND PERCENT LEAF FORAGE HARVEST 
+!for alfalfa, kjb set MOWREF to 800 and RSREF to 20%, and all other factors (1.0) to best mimic Malik's experiment
+!Note:  34 days is best fixed harvest and 630 GDD for best GDD harvest for Spanish data (also works for Arizona, unpublished)
+   800  20.0                              MOWREF RSREF (2 VALUES) reference stuble mass (kg/ha) and harvest frequency in days
+     0    14    28    42    84   400      XFREQ (6 VALUES) harvest frequency in days
+     0   100   350   500   700   800      XFRGDD (6 VALUES) harvest frequency in GDD
+   1.0   1.0   1.0   1.0   1.0   1.0      YFREQ (6 VALUES) relative change on MOWREF  
+   1.0   1.0   1.0   1.0   1.0   1.0      YRSREF (6 VALUES) relative change on RSREF                                    
+
+     0     5    10    20    40   400      XCUTHT (6 VALUES) cutting height in cm               
+   1.0   1.0   1.0   1.0   1.0   1.0      YCUTHT (6 VALUES) relative change on MOWREF
+     0   200   400   800  1000  1200      XCHMOW (6 VALUES) pre-harvest biomass kg/m2               
+   1.0   1.0   1.0   1.0   1.0   1.0      YCHMOW (6 VALUES) relative change on MOWREF
+! start with no effect of cutting height,days, or GDD on mowref,RSREF
+
+!   600  10.0                              MOWREF RSREF (2 VALUES) reference stuble mass (kg/ha) and harvest frequency in days
+!     0    14    28    42    84   400      XFREQ (6 VALUES) harvest frequency in days
+!     0   100   350   500   700   800      XFRGDD (6 VALUES) harvest frequency in GDD
+!   1.1   1.1   1.0   0.9   0.9   0.9      YFREQ (6 VALUES) relative change on MOWREF  
+!   1.2   1.2   1.0   0.9   0.8   0.8      YRSREF (6 VALUES) relative change on RSREF                                    
+ 
+!     0     5    10    20    40   400      XCUTHT (6 VALUES) cutting height in cm               
+!   1.2   1.2   1.0   0.9   0.8   0.8      YCUTHT (6 VALUES) relative change on MOWREF
+!     0   200   400   800  1000  1200      XCHMOW (6 VALUES) pre-harvest biomass kg/m2               
+!   1.0   1.0   1.5   2.0   2.5   3.0      YCHMOW (6 VALUES) relative change on MOWREF
                                                                                                     
 !*EVAPOTRANSPIRATION                                                                                
   0.50   0.9       KEP, EORATIO                                                                     
-  0.50  1.15       SSKC, SKCBmax ASCE short ref (12 cm grass)
-  0.50  1.00       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
-  
+                                                                                                    
 !*STORAGE ORGAN PARAMETERS -                                                                        
  1.000 0.000 			      STRSRFL, STRLYR1- Proportions of storage organ mass on soil surface and in soi
  0.009				      SENSR - rate for senescence of storage organ tissue                                 
