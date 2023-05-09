@@ -62,7 +62,8 @@
 
 !*LEAF SENESCENCE FACTORS
   0.80  0.10  0.06  3.00  -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2
-  0.80  10.0                           ICMP,TCMP(Light comp, time constant-senes)
+  1.40  10.0                           ICMP,TCMP(Light comp, time constant-senes)
+!  0.80  10.0                           ICMP,TCMP(Light comp, time constant-senes)
 
 ! .......XSTAGE.........  .......XSENMX.........
    0.0   5.0  10.0  40.0   3.0   5.0  10.0  40.0
@@ -94,7 +95,8 @@
 !*PHENOLOGY PARAMETERS
 !  TB   TO1   TO2    TM                I
 ! 10.0  28.0  35.0  45.0               1 VEGETATIVE DEVELOPMENT
-   8.0  32.0  35.0  45.0               1 VEGETATIVE DEVELOPMENT
+!   8.0  32.0  35.0  45.0               1 VEGETATIVE DEVELOPMENT
+   8.0  30.0  35.0  45.0               1 VEGETATIVE DEVELOPMENT
    8.0  28.0  35.0  45.0               2 EARLY REPRODUCTIVE DEVELOPMENT
    0.0  26.0  35.0  45.0               3 LATE REPRODUCTIVE DEVELOPMENT
 
