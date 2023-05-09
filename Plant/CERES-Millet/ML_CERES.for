@@ -1027,7 +1027,7 @@ C Original 10/1/03          SDWT = PANWT*PLTPOP     !g/m2
              PCNGRN = 0.0
           ENDIF
 
-          IF((WTLF+STMWT).GT.0.0) THEN
+          IF((WTLF+STMWT).GT.0.0.AND.PLTPOP.GT.0.0) THEN
              PCNVEG = (WTNLF+WTNST)/(WTLF+(STMWT*PLTPOP))*100
           ELSE
              PCNVEG = 0.0

@@ -135,6 +135,17 @@ C***********************************************************************
 !     YREND = -99
       IF (YRDOY == YREND) RETURN
 
+      !TF 05/04/2023 - stop simulation if crop failed to germinate
+      IF(CONTROL % CropStatus .EQ. 12) THEN
+        YREND = YRDOY
+        RETURN
+      ENDIF 
+
+      !TF 05/04/2023 - stop simulation if crop failed to germinate
+      IF(CONTROL % CropStatus .EQ. 13) THEN
+        YREND = YRDOY
+        RETURN
+      ENDIF 
 C-----------------------------------------------------------------------
 C Harvest at maturity, NR8
 C-----------------------------------------------------------------------
@@ -145,7 +156,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C Harvest on specified day of year, HDATE
 C-----------------------------------------------------------------------
-      ELSE IF (IHARI .EQ. 'R') THEN
+      ELSE IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
         IF (YRDOY .GE. HDATE(NHAR)) THEN
           YREND = HDATE(NHAR)
           CONTROL % CropStatus = 2 !harvest on reported date

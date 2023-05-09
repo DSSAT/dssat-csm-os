@@ -216,9 +216,9 @@
       IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
 
         CALL CER_Init (LAI, CANHT,
-     &     CN, DOY, HARVFRAC, ISWNIT,
+     &     CN, DOY, HARVFRAC,
      &     FILEIOIN, FROP, IDETL,
-     &     ISWWAT, KCAN, KEP, NFP, ON,
+     &     KCAN, KEP, NFP, ON,
      &     RESCALG, RESLGALG, RESNALG, RLV, RN, RNMODE,
      &     RUN, RUNI, RWUMX, RWUPM, 
      &     UH2O, YEAR, SLPF, SN,
@@ -227,7 +227,7 @@
       ELSEIF (DYNAMIC.EQ.RATE) THEN
 
         CALL CER_Growth (BD, CANHT, CO2, DAYLT,
-     &     DLAYR, DOY, DUL, EO, EOP, ISWNIT, ISWWAT,
+     &     DLAYR, DUL, EO, EOP, ISWNIT, ISWWAT,
      &     KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT,
      &     RLV, RNMODE, SAT , SENCALG, SENNALG,
      &     SHF, SLPF, SNOW, SRAD, ST, STGDOY, SW,
@@ -271,7 +271,7 @@
 
         CALL CER_Output (LAI, CANHT, CN, DOY,
      &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS,
-     &     ISWNIT, ISWWAT, NFP, NLAYR, ON, REP,
+     &     ISWNIT, ISWWAT, NFP, ON, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, STEP, STGDOY,
      &     TOTIR, TN, YEAR)
      
@@ -282,7 +282,7 @@
         IF (FEXIST) CLOSE (NOUTPN)
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
-        CLOSE (FNUMWRK)
+!        CLOSE (FNUMWRK)
 
       ENDIF   ! Tasks
 
@@ -479,7 +479,7 @@
       INTEGER       DYNAMICI      ! Module control,internal        code
       REAL          DLAYR(20)     ! Depth of soil layers           cm
       REAL          EOP           ! Potential evaporation,plants   mm/d
-      INTEGER       FNUMWRK       ! File number,work file          #
+      !INTEGER       FNUMWRK       ! File number,work file          #
       CHARACTER*1   ISWWAT        ! Soil water balance switch Y/N  code
       INTEGER       L             ! Loop counter                   #
       REAL          LL(NL)        ! Lower limit,soil h2o           #
@@ -513,7 +513,7 @@
 
       IF (DYNAMICI.EQ.RUNINIT) THEN
 
-        CALL Getlun('WORK.OUT',fnumwrk)
+        !CALL Getlun('WORK.OUT',fnumwrk)
 
         ! Compute SWCON2 for each soil layer.  Adjust SWCON2 for very
         ! high LL to avoid water uptake limitations.

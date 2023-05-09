@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 1)
-SET(BUILD 11)
+SET(BUILD 18)
 
 # Get the current working branch
 execute_process(
@@ -230,6 +230,8 @@ set(
         "Plant/CANEGRO-Sugarcane/SC_Poplt3.for"
         "Plant/CANEGRO-Sugarcane/SC_ROOTG.for"
         "Plant/CANEGRO-Sugarcane/SC_UM_WSTRESS.for"
+        "Plant/CANEGRO-Sugarcane/SC_NITRO.for"
+        "Plant/CANEGRO-Sugarcane/SC_OPNIT.for"
         "Plant/CASUPRO-Sugarcane/CSP_CANOPY.for"
         "Plant/CASUPRO-Sugarcane/CSP_CASUPRO.for"
         "Plant/CASUPRO-Sugarcane/CSP_DEMAND.for"
@@ -238,7 +240,6 @@ set(
         "Plant/CASUPRO-Sugarcane/CSP_INCOMP.for"
         "Plant/CASUPRO-Sugarcane/CSP_INCOMP_OUT.for"
         "Plant/CASUPRO-Sugarcane/CSP_INPHENOL.for"
-        "Plant/CASUPRO-Sugarcane/CSP_IPDMND_OUT.for"
         "Plant/CASUPRO-Sugarcane/CSP_IPPHENOL.for"
         "Plant/CASUPRO-Sugarcane/CSP_IPPLNT.for"
         "Plant/CASUPRO-Sugarcane/CSP_MOBIL.for"

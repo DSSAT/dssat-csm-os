@@ -4,7 +4,7 @@
 !***********************************************************************
 
       SUBROUTINE CER_Growth (BD, CANHT, CO2, DAYLT,
-     &     DLAYR, DOY, DUL, EO, EOP, ISWNIT, ISWWAT,
+     &     DLAYR, DUL, EO, EOP, ISWNIT, ISWWAT,
      &     KEP, LL, NFP, NH4LEFT, NLAYR , NO3LEFT,
      &     RLV, RNMODE, SAT , SENCALG, SENNALG,
      &     SHF, SLPF, SNOW, SRAD, ST, STGDOY, SW,
@@ -12,7 +12,7 @@
      &     WINDSP, YEARPLTCSM, LAI)
 
 ! 2023-01-25 chp removed unused variables in argument list
-!     KCAN, WEATHER, SOILPROP, CONTROL, YEAR, IDETG, 
+!     DOY, KCAN, WEATHER, SOILPROP, CONTROL, YEAR, IDETG, 
      
         USE ModuleDefs
         USE CER_First_Trans_m
@@ -26,7 +26,7 @@
 !        TYPE (SoilType), intent (in) ::   SOILPROP
 
         INTEGER ADAT10, CSTIMDIF, CSINCDAT, DYNAMICI
-        INTEGER CN, DOY, NLAYR, STGDOY(20)  !, YEAR
+        INTEGER NLAYR, STGDOY(20)  !CN, DOY, YEAR
         INTEGER YEARPLTCSM!, YEARPLT         
         REAL BD(20), CANHT, CO2
         REAL DLAYR(20), UNO3ALG(20), SENLGALG(0:20), UNH4ALG(20)
@@ -56,12 +56,12 @@
           ENDIF  
         ENDIF
 
-        IF (FILEIOT.EQ.'XFL') WRITE(fnumwrk,'(A28,I3,I8,2F6.2)')
-     &   ' CN,YEARDOY,XSTAGE1,LEAFNUM ',cn,yeardoy,xstage,lnumsd
-     
-        IF (YEARDOY.LT.YEARPLTP)
-     &  WRITE(fnumwrk,*) 'yeardoy,YEARPLT,YEARPLTP   ',
-     &                     yeardoy,YEARPLT,YEARPLTP
+!        IF (FILEIOT.EQ.'XFL') WRITE(fnumwrk,'(A28,I3,I8,2F6.2)')
+!     &   ' CN,YEARDOY,XSTAGE1,LEAFNUM ',cn,yeardoy,xstage,lnumsd
+!     
+!        IF (YEARDOY.LT.YEARPLTP)
+!     &  WRITE(fnumwrk,*) 'yeardoy,YEARPLT,YEARPLTP   ',
+!     &                     yeardoy,YEARPLT,YEARPLTP
 
         CFLINIT = 'N'    ! Reset initiation flag for next run
 
@@ -111,11 +111,11 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
                 I = I + 1
               END DO
               AVGSW = (CUMSW / SWPLTD) * 100.0
-              WRITE (fnumwrk,*) 'Date thresholds ',pwdinf,pwdinl
-              WRITE (fnumwrk,*) 'Water thresholds ',swpltl,swplth
-              WRITE (fnumwrk,*) 'Water ',avgsw
-              WRITE (fnumwrk,*) 'Temperature thresholds ',pttn,ptx
-              WRITE (fnumwrk,*) 'Temperature ',tsdep
+!              WRITE (fnumwrk,*) 'Date thresholds ',pwdinf,pwdinl
+!              WRITE (fnumwrk,*) 'Water thresholds ',swpltl,swplth
+!              WRITE (fnumwrk,*) 'Water ',avgsw
+!              WRITE (fnumwrk,*) 'Temperature thresholds ',pttn,ptx
+!              WRITE (fnumwrk,*) 'Temperature ',tsdep
               IF (TSDEP .GE. PTTN .AND. TSDEP .LE. PTX) THEN
                 IF (AVGSW .GE. SWPLTL .AND. AVGSW .LE. SWPLTH) THEN
                   YEARPLT = YEARDOY
@@ -139,17 +139,17 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
                 STGDOY(11) = YEARDOY
                 ISTAGE = 7
                 XSTAGE = 7.0
-                WRITE (fnumwrk,*) ' '
-                WRITE (fnumwrk,*)
-     &           'Automatic planting failure on ',yeardoy
+!                WRITE (fnumwrk,*) ' '
+!                WRITE (fnumwrk,*)
+!     &           'Automatic planting failure on ',yeardoy
               ENDIF
             ENDIF
           ENDIF
 
-          IF (YEARDOY.EQ.YEARPLTP) WRITE (fnumwrk,*)
-     &      'Planting on: ',yeardoy
-          WRITE (fnumwrk,*)
-     &      'Initialising soil profile and other N aspects on: ',yeardoy
+!          IF (YEARDOY.EQ.YEARPLTP) WRITE (fnumwrk,*)
+!     &      'Planting on: ',yeardoy
+!          WRITE (fnumwrk,*)
+!     &      'Initialising soil profile and other N aspects on: ',yeardoy
 
           STGDOY(7) = YEARPLT
           SEEDN = SEEDNI
@@ -338,12 +338,12 @@ C-GH      IF (snow.GT.0) THEN
           ! Radiation interception (if from competition model)
           IF (PARIP.GE.0.0) THEN
             PARI = PARIP/100.0
-            WRITE(fnumwrk,'(A39,F6.2,A11,I2)')
-     &       ' PARI from competition model          :',PARI,
-     &       ' Component:',CN
-            WRITE(fnumwrk,'(A39,F6.2,7X,F6.2)')
-     &       ' Leaf area (laminae). Index,Per plant: ',
-     &       LAI,PLA-SENLA
+!            WRITE(fnumwrk,'(A39,F6.2,A11,I2)')
+!     &       ' PARI from competition model          :',PARI,
+!     &       ' Component:',CN
+!            WRITE(fnumwrk,'(A39,F6.2,7X,F6.2)')
+!     &       ' Leaf area (laminae). Index,Per plant: ',
+!     &       LAI,PLA-SENLA
           ENDIF
 
           IF (fileiot(1:2).NE.'DS')
@@ -568,15 +568,15 @@ C-GH      IF (snow.GT.0) THEN
           IF (XSTAGE.GE.LAFST.AND.XSTAGE.LT.7.0) THEN
             IF(LNUMSG.GT.0 .AND. LNSWITCH.LE.0.0) THEN
               LNSWITCH = LNUMSD
-              WRITE(fnumwrk,*)' '
-              WRITE(fnumwrk,*)
-     &         'Leaf number when size increment changed ',lnswitch
+!              WRITE(fnumwrk,*)' '
+!              WRITE(fnumwrk,*)
+!     &         'Leaf number when size increment changed ',lnswitch
               LASWITCH = lapot(lnumsg)
-              WRITE(fnumwrk,*)
-     &         'Leaf p.size when size increment changed ',Laswitch
-               WRITE(fnumwrk,*)
-     &         'Next p.size when size increment changed ',
-     &          Lapot(lnumsg+1)
+!              WRITE(fnumwrk,*)
+!     &         'Leaf p.size when size increment changed ',Laswitch
+!               WRITE(fnumwrk,*)
+!     &         'Next p.size when size increment changed ',
+!     &          Lapot(lnumsg+1)
             ENDIF
           ENDIF   
           
@@ -655,8 +655,8 @@ C-GH      IF (snow.GT.0) THEN
      &                      * AMAX1(0.0,AMIN1(1.0,(TNUM-1.0)))
                 ELSE
                   TNUMOUT = TNUMOUT + 1
-                  IF (TNUMOUT.LT.2)
-     &             WRITE(fnumwrk,*)'Tiller number at limit of 20! '
+!                  IF (TNUMOUT.LT.2)
+!     &             WRITE(fnumwrk,*)'Tiller number at limit of 20! '
                 ENDIF
               ENDDO
             ENDIF
@@ -673,8 +673,8 @@ C-GH      IF (snow.GT.0) THEN
           IF (ISTAGE.EQ.4.OR.ISTAGE.EQ.5) THEN
             GROGRP = AMAX1(0.0,LAGSTAGE*TFGF*GRNUM*G2*DU*0.001)
             IF (LAGSTAGE.GT.0.0.AND.TFGF.LT.1.0) THEN
-              WRITE(fnumwrk,'(A44,F6.2)')
-     &         ' Temperature limit on grain growth at xstage',xstage
+!              WRITE(fnumwrk,'(A44,F6.2)')
+!     &         ' Temperature limit on grain growth at xstage',xstage
               TLIMIT = TLIMIT+1
             ENDIF
           ENDIF
@@ -702,16 +702,16 @@ C-GH      IF (snow.GT.0) THEN
             IF (GROST.GT.0.0) THEN
               GROGRST = AMIN1(GROST,GROGRP-(GRORSP+RSWT))
               IF (GROGRST.GT.0.0) THEN
-                WRITE(fnumwrk,*)'CH2O destined for stem used for grain'
+!                WRITE(fnumwrk,*)'CH2O destined for stem used for grain'
               ENDIF
             ENDIF
             IF (GROGRP.GT.GRORSP+RSWT+GROGRST) THEN
-              WRITE(fnumwrk,*)'CH2O limit on grain growth.'
+!              WRITE(fnumwrk,*)'CH2O limit on grain growth.'
               CH2OLIM = CH2OLIM+1
               if (grnum > 1.e-6) then
-              WRITE(fnumwrk,'(A15,F6.2,A5,F6.3,A10)') ' CH2O shortage:',
-     &         (GROGRP-(GRORSP+RSWT+GROGRST)),' g/p ',
-     &         (GROGRP-(GRORSP+RSWT+GROGRST))/GRNUM,' g/kernel '
+!              WRITE(fnumwrk,'(A15,F6.2,A5,F6.3,A10)') ' CH2O shortage:',
+!     &         (GROGRP-(GRORSP+RSWT+GROGRST)),' g/p ',
+!     &         (GROGRP-(GRORSP+RSWT+GROGRST))/GRNUM,' g/kernel '
               endif
             ENDIF
           ENDIF
@@ -826,8 +826,8 @@ C-GH      IF (snow.GT.0) THEN
           ! NB. 3% of green leaf area senesces ... must check
           IF (RSCD.LT.0.10 .AND. ISTAGE.GE.4. AND. PLA.GT.0.0) THEN
            PLAS = PLAS + AMAX1(0.0,0.03*(PLA-PLAS-SENLA))
-           WRITE(fnumwrk,'(A52,I4)')
-     &      ' Senescence accelerated because low reserves on day:',doy
+!           WRITE(fnumwrk,'(A52,I4)')
+!     &      ' Senescence accelerated because low reserves on day:',doy
           ENDIF
           
           ! Overall check to restrict senescence to what available
@@ -1051,10 +1051,10 @@ C-GH      IF (snow.GT.0) THEN
             ! (0.020*HARDI-0.10)*(TMIN*0.85+TMAX*0.15+10.0+.25*SNOW)))
             PLASC = AMAX1(0.0,
      &            AMIN1(CKCOLD*(PLA-SENLA),((PLA-SENLA)-TNUM*0.035)))
-            IF (PLASC.GT.0.0.AND.(PLA-SENLA).GT.0.0) 
-     &       WRITE(fnumwrk,'(A30,I4,A14,F4.1)')
-     &       ' Leaves damaged by cold on day',doy,
-     &       ' Fraction lost',plasc/(pla-senla)
+!            IF (PLASC.GT.0.0.AND.(PLA-SENLA).GT.0.0) 
+!     &       WRITE(fnumwrk,'(A30,I4,A14,F4.1)')
+!     &       ' Leaves damaged by cold on day',doy,
+!     &       ' Fraction lost',plasc/(pla-senla)
           
             ! Tiller and plant death
             IF (TKILL.GT.(TMIN+TMAX)/2.0) THEN
@@ -1063,8 +1063,8 @@ C-GH      IF (snow.GT.0) THEN
      &           (1.0-(0.9-0.02*ABS(((TMIN+TMAX)/2.0-TKILL))**2))
               ENDIF
               IF (TNUM-TNUMLOSS.GE.1.0) THEN
-                WRITE (FNUMWRK,900)
-     &           DOY,TKILL,(TMIN+TMAX)/2.0,HARDI,TNUM,PLTPOP
+!                WRITE (FNUMWRK,900)
+!     &           DOY,TKILL,(TMIN+TMAX)/2.0,HARDI,TNUM,PLTPOP
  900            FORMAT (' Crop was damaged by cold on day',I4,/,
      &            ' TKILL =',F5.1,5X,'TMEAN=',F5.1,5X,
      &            'HARDI=',F5.2,5X,'TNUM =',  F7.2,5X,'PLTPOP=',F4.0)
@@ -1073,16 +1073,16 @@ C-GH      IF (snow.GT.0) THEN
      &           PLTPOP*(1.0-(0.95-0.02*((TMIN+TMAX)/2.0-TKILL)**2))
                  IF (ISTAGE.GE.4) PLTLOSS = 0.0
                 IF (PLTPOP-PLTLOSS.GE.0.05*PLTPOPP) THEN
-                  WRITE (FNUMWRK,900) DOY,TKILL,
-     &             (TMIN+TMAX)/2.0,HARDI,TNUM,PLTPOP
+!                  WRITE (FNUMWRK,900) DOY,TKILL,
+!     &             (TMIN+TMAX)/2.0,HARDI,TNUM,PLTPOP
                 ELSE
                   CFLFAIL = 'Y'
                   PLTLOSS = AMIN1(PLTPOP,PLTLOSS)
                   IF (ISTAGE.GE.4) PLTLOSS = 0.0
-                  WRITE (FNUMWRK,1100) DOY,TKILL,(TMIN+TMAX)/2.0,HARDI
- 1100             FORMAT (' At least 95% killed by cold on day',I4,/,
-     &            ' TKILL =',F5.1,5X,'TMEAN =',F5.1,5X,
-     &            'HARDII =',F5.2)
+!                  WRITE (FNUMWRK,1100) DOY,TKILL,(TMIN+TMAX)/2.0,HARDI
+! 1100             FORMAT (' At least 95% killed by cold on day',I4,/,
+!     &            ' TKILL =',F5.1,5X,'TMEAN =',F5.1,5X,
+!     &            'HARDII =',F5.2)
                 ENDIF
               ENDIF
             ENDIF
@@ -1130,8 +1130,8 @@ C-GH      IF (snow.GT.0) THEN
             SENNLFGRS = AMIN1((LEAFN-GRAINNGL)*(1.0-LSENNF),
      &                  (SENLFG+SENLFGRS)*LANC*(1.0-LSENNF))
             IF (((SENNLFG+SENNLFGRS)-LEAFN).GT.1.0E-8) THEN
-              WRITE(fnumwrk,'(A40,F6.2)')
-     &         ' Adjusted N removal from leaves at stage',xstage
+!              WRITE(fnumwrk,'(A40,F6.2)')
+!     &         ' Adjusted N removal from leaves at stage',xstage
               SENNLFGRS = LEAFN-SENNLFG
               IF (SENNLFGRS.LT.0.0) THEN
                 SENNLFG = SENNLFG - ABS(SENNLFGRS)
@@ -1152,7 +1152,7 @@ C-GH      IF (snow.GT.0) THEN
             SENNSTG = SENSTG*SANC*SSENF
             SENNSTGRS = SENSTG*SANC*(1.0-SSENF)
             IF (SENNSTG+SENNSTGRS.GT.STEMN) THEN
-              WRITE(fnumwrk,*)'N removal from stem > stem N'
+!              WRITE(fnumwrk,*)'N removal from stem > stem N'
               SENNSTG = STEMN-SENNSTGRS
             ENDIF
           ENDIF
@@ -1471,8 +1471,8 @@ C-GH      IF (snow.GT.0) THEN
               ENDIF
             ENDIF
             IF (GROGR.LT.GROGRPA) THEN
-              WRITE(fnumwrk,'(A42,F4.2)')
-     &         ' N limit on grain growth. N at minimum of ',grnmn
+!              WRITE(fnumwrk,'(A42,F4.2)')
+!     &         ' N limit on grain growth. N at minimum of ',grnmn
               NLIMIT = NLIMIT + 1
             ENDIF
           ELSE
@@ -1483,7 +1483,7 @@ C-GH      IF (snow.GT.0) THEN
           GROGRADJ = 0.0
           IF (GRNUM.GT.0.0) THEN
             IF ((GRWT+GROGR)/GRNUM - G2KWT/1000.0 > 1.E-5) THEN
-              WRITE(fnumwrk,*)'Maximum kernel wt reached on:',YEARDOY
+!              WRITE(fnumwrk,*)'Maximum kernel wt reached on:',YEARDOY
               GROGRADJ = GROGR - (G2KWT/1000.0-(GRWT/GRNUM))*GRNUM
             ENDIF
           ENDIF
