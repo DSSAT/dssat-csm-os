@@ -38,7 +38,8 @@
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     
-      USE CsvOutput   ! VSH (HBD: had to leave it here because of statements using 'FMOPT')
+      USE CsvOutput   
+      ! HBD: had to leave it here because of statements using 'FMOPT')
 
 !     Define CANEGRO composite variables:
       USE CNG_ModuleDefs
@@ -220,7 +221,8 @@ c         Conc = N_pool/mass, if mass < 0
      &         N_CONC(STALKS)*100, N_CONC(TOPS)*100, N_CONC(ROOTS)*100,
 !add abg Nconc  !add total Nconc
 !     &         N_CONC(DEADLF)*100!,
-     &         1.0-N_STRESS ! HBD Apr 2023 move to plantgro.out in future
+!              HBD Apr 2023 move to plantgro.out in future
+     &         1.0-N_STRESS 
 !     &         CUMSENSURFN, CUMSENSOILN
 
   300         FORMAT (1X,I4,1X,I3.3,2(1X,I5),
