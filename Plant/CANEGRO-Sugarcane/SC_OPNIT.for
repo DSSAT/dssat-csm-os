@@ -24,16 +24,17 @@
 ! Exporting what MvdL used to export for his 2011 paper
 !     &    Control%YRDOY,
      &    MASSES,
-     &    N_POOL, ! ok
-!     &    N_ALLOC,! ok
-     &    N_STRESS, ! ok?
-!     &    PSV_UPTAKE, FO has commented it in SC_NITRO
-!     &    N_SENESCE, ! ok TODO check if this is = to SENESCE % ResE(n,1) (HBD)
-     &    N_CONC, ! ok
-!     &    TOT_N_DEMAND, POT_N_SUPPLY, !ok TODO is it necessary to be exported? (HBD)
-!     &    TUNO3, ! FO has commented it in SC_NITRO; TODO check necessity here (HBD)
-     &    ABVGRND_N_MASS, TOT_N_POOL, !ok,ok
-     &    ACC_UPTAKE) ! ok
+     &    N_POOL,
+!     &    N_ALLOC,
+     &    N_STRESS,
+!     &    PSV_UPTAKE, ! FO has commented it in SC_NITRO
+!     &    N_SENESCE, ! check if this is = to SENESCE % ResE(n,1) (HBD)
+     &    N_CONC,
+!     &    TOT_N_DEMAND, POT_N_SUPPLY, is it necessary to be exported? (HBD)
+!     &    TUNO3, ! FO has commented it in SC_NITRO; check necessity here (HBD)
+     &    ABVGRND_N_MASS, 
+!     &    TOT_N_POOL, !FO commented it out variable not used
+     &    ACC_UPTAKE) 
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     
@@ -69,9 +70,9 @@
 
 !     The variable "ISWITCH" is of type "SwitchType".
       TYPE (SwitchType) ISWITCH
-      TYPE (SOILTYPE) SoilProp
+!      TYPE (SOILTYPE) SoilProp
       TYPE (ResidueType) SENESCE
-      TYPE (N_PARAM_TYPE) N_PARAMS(NUM_COMPS)
+!      TYPE (N_PARAM_TYPE) N_PARAMS(NUM_COMPS)
       
 !     CANEGRO N variables
 !     MASSES: Dry masses of each plant component, 
@@ -107,11 +108,11 @@
       !REAL TOT_N_DEMAND
 !     Potential NO3 and NH4 uptake
       !REAL POT_N_SUPPLY
-      ! FO has commented TUNO3 in SC_NITRO
+!     FO has commented TUNO3 in SC_NITRO
       !REAL TUNO3 !, TUNH4
       REAL ABVGRND_N_MASS 
       REAL ACC_UPTAKE
-      REAL TOT_N_POOL
+!      REAL TOT_N_POOL
 
       IDETG   = ISWITCH % IDETG
       IDETN   = ISWITCH % IDETN
@@ -156,10 +157,10 @@
             WRITE (NOUTDN,230)
   230       FORMAT('@YEAR DOY   DAS   DAP',
      &        '   CNAD',
-     &        '   SNAD  LGNAD   RNAD',!   VNAD',
+     &        '   SNAD   LNAD   RNAD',!   VNAD',
 !     &        '  LDNAD', ! total N
      &        '   NUPC',
-     &        '   SN%D  LGN%D   RN%D',!   VN%D
+     &        '   SN%D   LN%D   RN%D',!   VN%D
 !     &        '  LDN%D')!, ! total Nconc
      &        '   NSTD')
 !     &        '  SNN0C   SNN1C')
@@ -250,8 +251,3 @@ c         Conc = N_pool/mass, if mass < 0
       RETURN
       END SUBROUTINE SC_OPNIT
 !=======================================================================
-
-
-! TODO: 1) add total crop and dead leaves N masses and conc's
-! TODO: 2) look for ICASA acronyms for those variables (TNAD?); LDN%D is new
-! Note: dead leaves vars are somehow related to DSSAT SNNPD and SNWPD

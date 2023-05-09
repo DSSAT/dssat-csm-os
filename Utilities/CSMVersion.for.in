@@ -20,6 +20,9 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.21  FO 2023-05-09 Calibration with new Soil Tem. for cassava cultivars (commit c5ce09d)
+!       4.8.1.20  FO 2023-05-09 Updates for Sugarcane CANEGRO (commit 37f17e0)
+!       4.8.1.19  FO 2023-05-09 Genotype files updates for recalibrated crops (commit 8cbd624)
 !       4.8.1.18  FO 2023-05-08 CERES-Maize issue with germination and emergence failure (commit e8f165b)
 !       4.8.1.17  FO 2023-05-08 Quinoa and Sugarbeet update for genotype files (commit 525973c)
 !       4.8.1.16  FO 2023-05-05 Added Nitrogen calculations for Sugarcane SCCAN048 (commit 6fc178d)

@@ -714,8 +714,8 @@ c     :::::::::::::::::::::::::::::::::
 
 c     Call the climate change summary output file subroutine (module).
       CALL SC_CCOUT(CONTROL, Part%AERLDM, Part%STKDM, Part%SUCMAS, 
-     &  IRRAMT, Weather%RAIN, CELLSE_DM, WaterBal%SWDF1, TMIN, 
-     &  Part%TOPDM, Out%TRASDM, Out%ROOTDM, Part%STKWM, Out%PAR, 
+     &  IRRAMT, Weather%RAIN, WaterBal%SWDF1, TMIN, 
+     &  Part%TOPDM, Out%TRASDM, Part%STKWM, Out%PAR, 
      &  Growth%Li, EP, ES)
      
 c     Call the climate change summary output file subroutine (module).
@@ -1113,9 +1113,9 @@ c     :::::::::::::::::::::::
      &             CONTROL, STGDOY, HUBaseEm, Growth%LI)
 
 c       Call the climate change summary output file subroutine (module).
-        CALL SC_CCOUT(CONTROL, Part%AERLDM, Part%STKDM, Part%SUCMAS, 
-     &  IRRAMT, Weather%RAIN, CELLSE_DM, WaterBal%SWDF1, TMIN, 
-     &  Part%TOPDM, Out%TRASDM, Out%ROOTDM, Part%STKWM, Out%PAR, 
+      CALL SC_CCOUT(CONTROL, Part%AERLDM, Part%STKDM, Part%SUCMAS, 
+     &  IRRAMT, Weather%RAIN, WaterBal%SWDF1, TMIN, 
+     &  Part%TOPDM, Out%TRASDM, Part%STKWM, Out%PAR, 
      &  Growth%Li, EP, ES)
      
      
@@ -1216,8 +1216,8 @@ c     in this subroutine (for now)
 
 c     Call the climate change summary output file subroutine (module).
       CALL SC_CCOUT(CONTROL, Part%AERLDM, Part%STKDM, Part%SUCMAS, 
-     &  IRRAMT, Weather%RAIN, CELLSE_DM, WaterBal%SWDF1, TMIN, 
-     &  Part%TOPDM, Out%TRASDM, Out%ROOTDM, Part%STKWM, Out%PAR, 
+     &  IRRAMT, Weather%RAIN, WaterBal%SWDF1, TMIN, 
+     &  Part%TOPDM, Out%TRASDM, Part%STKWM, Out%PAR, 
      &  Growth%Li, EP, ES)
 
 
