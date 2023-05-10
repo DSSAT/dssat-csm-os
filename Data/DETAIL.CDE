@@ -663,3 +663,22 @@ FH202    Cultivated, poor mgmt, init grass or forest                          IB
 FH301    Cultivated, good mgmt, init degraded land                            IB
 FH302    Cultivated, poor mgmt, init degraded land                            IB
 
+*Crop Status 
+@CDE     DESCRIPTION                                                          SO
+   1     Crop matured normally                                                IB
+   2     Crop harvested on reported date                                      IB
+   3     Crop harvested at reported growth stage                              IB
+   6     Auto-harvest within window                                           IB
+  11     Failure to plant (automatic planting)                                IB
+  12     Failure to germinate                                                 IB
+  13     Failure to emerge                                                    IB
+  21     Crop mature due to slow grain filling                                IB
+  31     Crop died due to heat stress                                         IB
+  32     Crop died due to cold stress                                         IB
+  33     Crop died due to deficit water stress                                IB
+  34     Crop died due to excess water stress                                 IB
+  39     Crop died due to excess stress                                       IB
+  51     Crop died due to pest damage                                         IB
+ 100     Crop season length exceeded limits                                   IB
+ 200     Weather data error                                                   IB
+ 999     Unspecified error condition                                          IB
