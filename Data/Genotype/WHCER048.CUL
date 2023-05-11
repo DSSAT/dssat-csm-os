@@ -28,9 +28,12 @@ $CULTIVARS:WHCER048.20200721   Last edit: 20210-05-06 GH
                                                                             
 DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
 
-IB1500 MANITOU           1,14 CAWH01     8   100   320    23    23   2.5    86 
-IB0488 NEWTON             1,6 USWH01    45    75   500    25    30   2.0    95  
-IB1015 MARIS FUNDIN       1,8 UKWH01    30    83   515    15    44   3.2   100
+!IB1500 MANITOU           1,14 CAWH01     8   100   320    23    23   2.5    86 ! Previous coefficients < DSSAT 4.8.1.11
+IB1500 MANITOU           1,14 CAWH01  7.35 121.1 340.8 30.32 70.09  0.98 86.00
+!IB0488 NEWTON             1,6 USWH01    45    75   500    25    30   2.0    95 ! Previous coefficients < DSSAT 4.8.1.11
+IB0488 NEWTON             1,6 USWH01 48.45 73.50 505.0 35.42 22.60  0.78 95.00  
+!IB1015 MARIS FUNDIN       1,8 UKWH01    30    83   515    15    44   3.2   100 ! Previous coefficients < DSSAT 4.8.1.11
+IB1015 MARIS FUNDIN       1,8 UKWH01 55.90 82.89 543.5 16.40 40.55   1.0 100.0  
 
 AW0071 Yecora_Rojo      16,33 AZWH18    10  40.0   450    20    60  1.50    95
 CI0001 Yecora_Rojo        1,2 CI0001    02    40   570    27    45   4.0   100 
