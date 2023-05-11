@@ -18,7 +18,7 @@
 ! NIDUR       Duration of nitrification inhibitor (d) (acts as a step function, effectiveness goes to zero after this time)
 ! NREL50      Controlled N release rate, expressed as time for 50% of N to be released (d)                               
 ! NRFNC       Controlled N release function type (see below for choices)                                                   
-! NSIGK       Sigmoid logistics curve K value (for step-like function, k=0.8, for linear-like function, k=0.2)             
+! NSIGK       Sigmoid logistics curve K value (k=0.8 for step-like function; k=0.2 for linear-like function)             
 ! N%          Content of elemental N in fertilizer by weight (%)                                                                       
 ! P%          Content of elemental P in fertilizer by weight (%)                                                                       
 ! K%          Content of elemental K in fertilizer by weight (%)                                                                       
