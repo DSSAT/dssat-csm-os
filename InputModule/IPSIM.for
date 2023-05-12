@@ -137,7 +137,7 @@ C=======================================================================
          MESOM   = 'G'
          MESOL   = '2'    !was '1'
          MESEV   = 'R'    !old Ritchie two-stage method
-         METMP   = 'D'    !DSSAT original soil temperature
+         METMP   = 'D'    !DSSAT / Kimball improved soil temperature
 !        METMP   = 'E'    ! EPIC soil temp routine.
          MEGHG   = '0'
 !                   0  => DSSAT original denitrification routine
@@ -310,6 +310,9 @@ C
 !        7/21/2016 chp Default soil temperature method is DSSAT, per GH
 !        5/04/2023  FO Default ST method is TMA(1) = TAVG (BK changes)
          IF (INDEX('EDR',METMP) < 1) METMP = 'D'
+!         METMP = 'D' - default DSSAT (improved Kimball) soil temperature
+!         METMP = 'R' - previous DSSAT default method (Ritchie)
+!         METMP = 'E' - EPIC soil temperature routine
 
 !        Default greenhouse gas method is DSSAT
          IF (INDEX('01',MEGHG) < 1) MEGHG = '0'
