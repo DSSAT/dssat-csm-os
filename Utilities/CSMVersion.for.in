@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.24  FO 2023-05-11 Updated comments in SCCAN048.SPE to avoid issues (commit 70d1005)
 !       4.8.1.23  FO 2023-05-10 Updated CERES CUL coefficients and code protections (commit 280c5bf)
 !       4.8.1.22 chp 2023-05-10 updated genetics, SC files
 !       4.8.1.21  FO 2023-05-09 Calibration with new Soil Tem. for cassava cultivars (commit c5ce09d)
