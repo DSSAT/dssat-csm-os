@@ -1,5 +1,5 @@
 *ECONOMIC CODES
-! DSSAT v4.8; 2020-07-21
+! DSSAT v4.8; 2022-05-11
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify variables next.
@@ -42,4 +42,3 @@ PCOS     Phosphorus fertilizer cost, $/kg                                     IB
 PFER     Cost per P fertilizer application, $                                 IB
 KCOS     Potassium fertilizer cost, $/kg                                      IB
 KFER     Cost per K fertilizer application, $                                 IB
-
