@@ -30,15 +30,10 @@
 !   SWDELT_WT = Change in SW due to water table changes
     REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
 
-!   REAL, DIMENSION(NL), INTENT(IN) :: SWDELTU, SWDELTX
-!   REAL, DIMENSION(NL), INTENT(OUT):: CAPRI
-
 !   Local
-    INTEGER L, NLAYR !, K, L1, L2
+    INTEGER L, NLAYR
     REAL Bottom, Top, Thick, TargetWTD
-!   REAL Excess1, Excess2, TotExcess, Residual
     REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR 
-!   REAL, DIMENSION(NL) :: Excess, MaxRise
     REAL, DIMENSION(NL) :: ThetaCap, SW_temp, DeltaSW
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
@@ -52,8 +47,14 @@
     LatInflow  = 0.0
     LatOutflow = 0.0
     SWDELTW    = 0.0
-!   CAPRI      = 0.0
     SW_temp    = SW
+
+    DLAYR = SOILPROP % DLAYR
+    DS    = SOILPROP % DS
+    DUL   = SOILPROP % DUL
+    NLAYR = SOILPROP % NLAYR
+    SAT   = SOILPROP % SAT
+    WCR   = SOILPROP % WCR
 
 !***********************************************************************
 !***********************************************************************
@@ -61,22 +62,16 @@
 !***********************************************************************
   IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-    DLAYR = SOILPROP % DLAYR
-    DUL   = SOILPROP % DUL
-    DS    = SOILPROP % DS
-    NLAYR = SOILPROP % NLAYR
-    SAT   = SOILPROP % SAT
-    WCR   = SOILPROP % WCR
-    
 !   Get initial depth to water table
     CALL GET('MGMT','ICWD',MgmtWTD)
-    
+
 !   Negative or zero value means no managed water table
     IF (MgmtWTD < 1.E-6) THEN
       MgmtWTD = 1000.
     ENDIF
     ActWTD    = MgmtWTD
     TargetWTD = MgmtWTD
+
 !   Actual water table depth will equal either the managed water table depth or
 !     the target water table depth. When user water table depth records change
 !     a lot from one day to the next, it may take a few days for the actual 
@@ -207,7 +202,7 @@
 
 !-------------------------------------------------------------------------
 !   Update soil water content 
-!   (Pseudo-integration, the real integration occurs in WATBAL)
+!   Pseudo-integration, the real integration occurs in WATBAL
     DO L = 1, NLAYR
       SW_temp(L) = SW_temp(L) + SWDELTW(L)
     ENDDO
@@ -224,14 +219,16 @@
 !   previous attempts resulted in instability for daily model.
 
 !   No effect of water table if it is below the bottom of the soil profile.
-    IF (ActWTD > DS(NLAYR)) THEN
+    IF (ActWTD .GE. DS(NLAYR)) THEN
       RETURN
     ENDIF
 
+!   Calculate water content within capillary fringe, ThetaCap
     CALL CapFringe(           &
       ActWTD,  SOILPROP,      &   !Input
       ThetaCap)                   !Output
 
+!   Update temporary soil water content with ThetaCap
     DO L = 1, NLAYR
 !     ThetaCap(L) = MAX(SW_TEMP(L), ThetaCap(L))
       DeltaSW(L) = MAX(0.0, ThetaCap(L) - SW_TEMP(L))

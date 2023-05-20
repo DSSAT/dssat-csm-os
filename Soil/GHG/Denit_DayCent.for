@@ -208,7 +208,7 @@ C=======================================================================
 !       daycent labile C factor
 !    Comment from Upendra - 2018-10-09
 !    This will always be  > 1; 
-!    even at 50 ppm fDCO2 = 16 � I�m assuming CO2 is in ppm.  
+!    even at 50 ppm fDCO2 = 16 : I'm assuming CO2 is in ppm.  
 !    So it will not play any role ..
         fDco2 = 0.1 * co2_correct(L)**1.3 -  min_nitrate
         fDco2 = max(0.0, fDco2)

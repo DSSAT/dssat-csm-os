@@ -1431,7 +1431,7 @@ C-----------------------------------------------------------------------
 ! CNOD      C used in N-Fixation and nodule growth (including respiration 
 !             costs) today (g[CH2O] / m2 / d)
 ! CNODMN    Minimum C reserved for nodule growth (g[CH2O] / m2 / d)
-! CO2       Atmospheric carbon dioxide concentration (Î¼mol[CO2] / mol[air])
+! CO2       Atmospheric carbon dioxide concentration (µmol[CO2] / mol[air])
 ! CONTROL   Composite variable containing variables related to control 
 !             and/or timing of simulation.    See Appendix A. 
 ! CROP      Crop identification code 
@@ -1488,8 +1488,8 @@ C-----------------------------------------------------------------------
 ! FRCNOD    Fraction of new root dry matter allocation that is diverted to 
 !             nodule growth 
 ! FREEZ1    Temperature below which plant loses all leaves, but development 
-!             continues (Â°C)
-! FREEZ2    Temperature below which plant growth stops completely. (Â°C)
+!             continues (°C)
+! FREEZ2    Temperature below which plant growth stops completely. (°C)
 ! FRLF      Fraction of vegetative tissue growth that goes to leaves on a 
 !             day (g[leaf] / g[veg])
 ! FRRT      Fraction of vegetative tissue growth that goes to roots on a 
@@ -1560,13 +1560,13 @@ C-----------------------------------------------------------------------
 ! NGRSD     Rate of N accumulation in new seeds (g[N] / m2 / d)
 ! NGRSH     Rate of N accumulation in new shells (g[N] / m2 / d)
 ! NGRST     Maximum N demand for stem growth (g[stem N] / m2[ground] / d)
-! NH4(L)    Ammonium N in soil layer L (Î¼g[N] / g[soil])
+! NH4(L)    Ammonium N in soil layer L (µg[N] / g[soil])
 ! NLAYR     Actual number of soil layers 
 ! NMINEA    Actual Nitrogen mined from existing tissue (g[N] / m2 / d)
 ! NMINEP    Potential N mobilization from storage (g[N] / m2 / d)
 ! NMOBR     Stage-dependent potential N mining rate expressed as a fraction 
 !             of the maximum rate (NMOBMX) 
-! NO3(L)    Nitrate in soil layer L (Î¼g[N] / g[soil])
+! NO3(L)    Nitrate in soil layer L (µg[N] / g[soil])
 ! NODGR     New nodule growth (g[nod] / m2 / d)
 ! NOUTDO    Logical unit for OVERVIEW.OUT file 
 ! NPLTD     Number of plants destroyed (#/m2/d)
@@ -1731,7 +1731,7 @@ C-----------------------------------------------------------------------
 ! SRDOT     Daily root senescence (g / m2 / d)
 ! SSDOT     Daily senescence of petioles (g / m2 / d)
 ! SSNDOT    Petiole senescence due to water stress (g/m2/day)
-! ST(L)     Soil temperature in soil layer L (Â°C)
+! ST(L)     Soil temperature in soil layer L (°C)
 ! STGDOY(I) Day when plant stage I occurred (YYYYDDD)
 ! STMWT     Dry mass of stem tissue, including C and N
 !            (g[stem] / m2[ground)
@@ -1740,17 +1740,17 @@ C-----------------------------------------------------------------------
 ! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
 ! SWIDOT    Daily seed mass damage (g/m2/day)
-! TAVG      Average daily temperature (Â°C)
-! TDAY      Average temperature during daylight hours (Â°C)
+! TAVG      Average daily temperature (°C)
+! TDAY      Average temperature during daylight hours (°C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
 ! TDUMX2    Photo-thermal time that occurs in a real day based on late 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
-! TGRO(I)   Hourly canopy temperature (Â°C)
-! TGROAV    Average daily canopy temperature (Â°C)
-! TMIN      Minimum daily temperature (Â°C)
+! TGRO(I)   Hourly canopy temperature (°C)
+! TGROAV    Average daily canopy temperature (°C)
+! TMIN      Minimum daily temperature (°C)
 ! TNLEAK    Total nitrogen leak (g[N] / m2 / d)
 ! TOPWT     Total weight of above-ground portion of crop, including pods
 !            (g[tissue] / m2)

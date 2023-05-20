@@ -84,7 +84,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: PTERMB, EXK, EXMG, EXNA, EXTS, SLEC, EXCA
 
 !     vanGenuchten parameters
-      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG  !, MSkPa
+      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
 !     Brook & Corey model parameters
       Double Precision, DIMENSION(NL) :: hb, lambda
 
