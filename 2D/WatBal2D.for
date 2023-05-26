@@ -91,7 +91,7 @@
       REAL SWFAC,  SWFAC_ts,  SWFAC_day
       REAL TURFAC, TURFAC_ts, TURFAC_day
       REAL ActWTD, MgmtWTD, LatFlow, LatFlow_ts !, MaxDif
-      REAL StdIrrig, WidTot, DepTot
+      REAL StdIrrig, WidTot, DepTot, LatInflow, LatOutflow
       
       REAL, DIMENSION(0:24) :: EOP_HR, CumFracRad
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, Ksat, LL, SAT, WCr
@@ -104,8 +104,9 @@
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFh_ts, RWUP_2D, Se
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, Kunsat, Diffus
       REAL, DIMENSION(MaxRows,MaxCols) :: EvapFlow, SWA
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWVDELTW
       REAL, ALLOCATABLE :: IrrigSched(:,:,:), DripRate(:,:),DripInt(:,:)
-!      REAL, ALLOCATABLE :: DripDep(:,:), DripStart(:,:), DripDur(:,:)
+!     REAL, ALLOCATABLE :: DripDep(:,:), DripStart(:,:), DripDur(:,:)
       
       Double Precision DRAIN_ts, EOP_ts, ES_avg, ES_day, ES_ts
       Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn), Rain_ts
@@ -118,7 +119,7 @@
       Double precision, DIMENSION(MaxRows,MaxCols) :: RWUP_2D_ts, EP_vf,
      &       ES_vf_ts, INF_vol_dtal
       Double precision, DIMENSION(MaxRows,MaxCols) :: INF_vol_dtal_temp  !chp
-!      Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_LAST
+!     Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_LAST
       Double Precision, DIMENSION(MaxRows,MaxCols,0:24) :: ES_Hr
 
 !     Functions

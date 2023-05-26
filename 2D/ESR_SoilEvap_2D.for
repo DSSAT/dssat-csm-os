@@ -89,8 +89,8 @@
 !-----------------------------------------------------------------------
 !     ProfileType:
 !     1 = Wet: SW > DUL in at least one layer in top 100 cm and
-!           SW > SW_threshold in top layer 
-!     2 = Intermediate: wet, but SW < SW_threshold in top layer 
+!           SW > SW_threshold in top layer
+!     2 = Intermediate: wet, but SW < SW_threshold in top layer
 !     3 = Dry: SW < DUL in all layers in top 100 cm
 !-----------------------------------------------------------------------
 

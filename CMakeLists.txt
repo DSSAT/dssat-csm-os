@@ -653,32 +653,33 @@ set(
         "Weather/weathr.for"
         "Weather/WGEN.for"
         "Weather/WTHMOD.for"
-        2D/DENIT_CERES_2D.for
-        2D/Drainage_2D.for
-        2D/Drip_Irrig.for
-        2D/ESR_SoilEvap_2D.for
-        2D/NCHECK_inorg_2D.for
-        2D/NFLUX_2D.for
-        2D/NUPTAK_2D.for
-        2D/OPSOILNI_2D.for
-        2D/OPWBAL_2D.for
-        2D/PT_GROSUB_2D.for
-        2D/PT_NUPTAK_2D.for
-        2D/PT_ROOTGR_2D.for
-        2D/PT_SUBSTOR_2D.for
-        2D/ROOTS_2D.for
-        2D/ROOTWU_2D.for
-        2D/ROOTWU_HR.for
-        2D/SoilCellInit_2D.f90
-        2D/SoilCellUtils_2D.f90
-        2D/SoilNiBal_2D.for
-        2D/SOILNI_2D.for
-        2D/SoilNi_init_2D.for
-        2D/SPAM_2D.for
-        2D/WatBal2D.for
-        2D/WaterTable_2D.f90
-        2D/WBAL_2D.for
-        2D/WBAL_2D_ts.for
+        "2D/DENIT_CERES_2D.for"
+        "2D/Drainage_2D.for"
+        "2D/Drip_Irrig.for"
+        "2D/ESR_SoilEvap_2D.for"
+        "2D/NCHECK_inorg_2D.for"
+        "2D/NFLUX_2D.for"
+        "2D/NUPTAK_2D.for"
+        "2D/OPSOILNI_2D.for"
+        "2D/OPWBAL_2D.for"
+        "2D/PT_GROSUB_2D.for"
+        "2D/PT_NUPTAK_2D.for"
+        "2D/PT_ROOTGR_2D.for"
+        "2D/PT_SUBSTOR_2D.for"
+        "2D/ROOTS_2D.for"
+        "2D/ROOTWU_2D.for"
+        "2D/ROOTWU_HR.for"
+        "2D/SoilCellInit_2D.f90"
+        "2D/SoilCellUtils_2D.f90"
+        "2D/SoilEV_2D.for"
+        "2D/SoilNiBal_2D.for"
+        "2D/SOILNI_2D.for"
+        "2D/SoilNi_init_2D.for"
+        "2D/SPAM_2D.for"
+        "2D/WatBal2D.for"
+        "2D/WaterTable_2D.f90"
+        "2D/WBAL_2D.for"
+        "2D/WBAL_2D_ts.for"
 )
 ADD_EXECUTABLE(${EXECUTABLE_NAME} ${source_list})
 

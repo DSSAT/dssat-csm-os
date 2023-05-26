@@ -64,7 +64,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       REAL SRAD, TAVG, TMAX, TMIN, WINDSP, XHLAI, XLAI
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP 
       REAL EF, EM, EO, EP, ES, ET, EVAP 
-      REAL TRWU, TRWUP    !, U
+      REAL TRWU, TRWUP, U
       REAL EOS, EOP   !, WINF
       REAL XLAT, TAV, TAMP, SRFTEMP
       REAL EORATIO, KSEVAP, KTRANS
@@ -115,7 +115,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !      MSALB  = SOILPROP % MSALB
 !      NLAYR  = SOILPROP % NLAYR
 !      SAT    = SOILPROP % SAT
-!      U      = SOILPROP % U
+      U      = SOILPROP % U
 
       ISWWAT = ISWITCH % ISWWAT
       IDETW  = ISWITCH % IDETW
@@ -199,29 +199,30 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
         END SELECT
       ENDIF
 
-!!     ---------------------------------------------------------
-!          SELECT CASE(MESEV)
-!!         ------------------------
-!          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
+!     ---------------------------------------------------------
+          SELECT CASE(MESEV)
+!         ------------------------
+          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
             CALL ESR_SoilEvap_2D(SEASINIT,
      &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
      &        ES, ES_LYR, ES_mm)                     !Output
-!!         ------------------------
-!          CASE DEFAULT 
-!	  
-!!!!!   NOTE CHP: NEED 2D SOILEV   !!!!!
+!         ------------------------
+          CASE DEFAULT 
 !         CASE ('R')  !Ritchie soil evaporation routine
 !           Calculate the availability of soil water for use in SOILEV.
-!            DO L = 1, NLAYR
-!              SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
-!            ENDDO
-!            CALL SOILEV_2D(RATE,
-!     &        CELLS, DLAYR, DUL, EOS_SOIL, LL, SW,      !Input
-!     &        SW_AVAIL(1), U, WINF,                     !Input
-!     &        ES, ES_mm)                                !Output
-!          END SELECT
+          !  DO L = 1, NLAYR
+          !    SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+          !  ENDDO
 
-!!     ---------------------------------------------------------
+! NOTE chp - call this for each column of soil? Could calculate a separate value for each.
+            CALL SOILEV_2D(SEASINIT,
+     &        CELLS, EOS_SOIL, SW_AVAIL(1), WINF,         !Input
+     &        SOILPROP, SOILPROP_furrow,                  !Input
+     &        ES, ES_mm)                                  !Output
+          END SELECT
+
+!     ---------------------------------------------------------
+!     2D model not compatible with energy balance (yet)
 !      IF (MEEVP .NE. 'Z') THEN
 !        SELECT CASE (CONTROL % MESIC)
 !        CASE ('H')
@@ -235,16 +236,6 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !     &      RWU, TRWUP)                                   !Output
 !        END SELECT
 
-!!       Initialize soil evaporation variables
-!        SELECT CASE (MESEV)
-!!     ----------------------------
-!        CASE ('R')  !Original soil evaporation routine
-!          CALL SOILEV(SEASINIT,
-!     &      DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
-!     &      U, WINF,                                      !Input
-!     &      ES)                                           !Output
-!!     ----------------------------
-!        END SELECT
 
 !       Initialize plant transpiration variables
         CALL TRANS_old(DYNAMIC,  
@@ -253,6 +244,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
      &    EOP)                                            !Output
 !     ENDIF
 
+!     2D model not compatible with surface mulch calculations (yet)
 !     CALL MULCH_EVAP(DYNAMIC, MULCH, EOS, EM)
 
 !     ---------------------------------------------------------
@@ -294,7 +286,6 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
-
       SWDELTX = 0.0
 !     ---------------------------------------------------------
       IF (MEEVP .NE.'Z') THEN  !LPM 02dec14 use values from ETPHOT
@@ -344,6 +335,8 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       ELSE
 !       Actual soil evaporation 
         EOS_SOIL = EOS
+
+!     2D model not compatible with surface mulch calculations (yet)
 !!       First meet evaporative demand from mulch
 !        IF (EOS_SOIL > 1.E-6 .AND. INDEX('RSM',MEINF) > 0) THEN
 !          CALL MULCH_EVAP(DYNAMIC, MULCH, EOS_SOIL, EM)
@@ -355,30 +348,28 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !          ENDIF
 !        ENDIF
 
+!     ---------------------------------------------------------
 !       Soil evaporation after flood and mulch evaporation
         IF (EOS_SOIL > 1.E-6) THEN
-!          SELECT CASE(MESEV)
-!!         ------------------------
-!          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
-!           Note that this routine calculates UPFLOW, unlike the SOILEV.
+
+          SELECT CASE(MESEV)
+!         ------------------------
+          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
             CALL ESR_SoilEvap_2D(RATE,
      &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
      &        ES, ES_LYR, ES_mm)                     !Output
-!!         ------------------------
-!          CASE DEFAULT 
-!
-!!!!!   NOTE CHP: NEED 2D SOILEV   !!!!!
+!         ------------------------
+          CASE DEFAULT 
 !         CASE ('R')  !Ritchie soil evaporation routine
 !           Calculate the availability of soil water for use in SOILEV.
-!            DO L = 1, NLAYR
-!              SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
-!            ENDDO
-!            CALL SOILEV_2D(RATE,
-!     &        CELLS, DLAYR, DUL, EOS_SOIL, LL, SW,      !Input
-!     &        SW_AVAIL(1), U, WINF,                     !Input
-!     &        ES, ES_mm)                                !Output
-!          END SELECT
-!!           ------------------------
+       !     DO L = 1, NLAYR
+       !       SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+       !     ENDDO
+            CALL SOILEV_2D(RATE,
+     &        CELLS, EOS_SOIL, SW_AVAIL(1), WINF,         !Input
+     &        SOILPROP, SOILPROP_furrow,                  !Input
+     &        ES, ES_mm)                                  !Output
+          END SELECT
         ENDIF
       ENDIF
      
