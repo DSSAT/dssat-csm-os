@@ -78,7 +78,9 @@ C=======================================================================
       wfps = n2o_data % wfps
  
 !     Compute the Nitrate effect on Denitrification
-!     Changed NO3 effect on denitrification based on paper  "General model for N2O and N2 gas emissions from soils due to denitrification"
+!     Changed NO3 effect on denitrification based on paper  
+!     "General model for N2O and N2 gas emissions from soils 
+!     due to denitrification"
 !     Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
       A(1) = 9.23
       A(2) = 1.556
@@ -88,15 +90,16 @@ C=======================================================================
       NDAYS_WET = 0.0
       min_nitrate = 0.1
 
-!     Calculate the number of top layers to accelerate slow denitrification
-!     as in DayCent denitrify.c
+!     Calculate the number of top layers to accelerate s
+!     slow denitrification as in DayCent denitrify.c
       NLAYR = SOILPROP % NLAYR
       DLAYR = SOILPROP % DLAYR
       DS    = SOILPROP % DS
 
       Denit_depth = 30.   !cm depth for accelerated dentitrification
       DD_layer = 1        !layer number at depth = Denit_depth
-!     Save soil layer at Denit_depth (if it's at least half the layer thickness)
+!     Save soil layer at Denit_depth 
+!     (if it's at least half the layer thickness)
       cumdep = 0.0
       do L = 1, nlayr
         cumdep = cumdep + dlayr(L)
@@ -164,7 +167,8 @@ C=======================================================================
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
 !       Daycent denitrification routines PG 17/5/13      
 
-!       CO2ppm is labile C which is derivation of CO2 produced on any day
+!       CO2ppm is labile C which is derivation of CO2 produced 
+!       on any day
         if (L == 1) then
 !         first soil layer includes residue layer-chp
           CO2ppm(1) = (newCO2(0)+newCO2(1))*kg2ppm(L)  
@@ -187,11 +191,14 @@ C=======================================================================
           else 
             a_coeff = -0.1*dD0(L) + 0.019
           endif    
-          co2_correct(L)=co2PPM(L)*(1.0+a_coeff*(wfps(L)-WFPS_thres))   !the amount labile C is adjusted taking into account diffusion
+          co2_correct(L)=co2PPM(L)*(1.0+a_coeff*(wfps(L)-WFPS_thres))   
+          !the amount labile C is adjusted taking into account diffusion
         endif  
         
-!       Compute the Carbon Dioxide effect on Denitrification fDco2, ppm N
-!       Changed CO2 effect on denitrification based on paper "General model for N2O and N2 gas emissions from  soils due to denitrification"
+!       Compute the Carbon Dioxide effect on Denitrification fDco2, 
+!       ppm N Changed CO2 effect on denitrification based on paper 
+!        "General model for N2O and N2 gas emissions from  soils due to 
+!        denitrification"
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
 !       daycent NO3 factor
         fDno3 = (A(2) + (A(3)/PI) * atan(PI*A(4)*(no3(L)-A(1))))  
@@ -200,7 +207,9 @@ C=======================================================================
 !chp    fDco2 = 0.1 * co2_correct(L)**1.27    !daycent labile C factor
 !       daycent labile C factor
 !    Comment from Upendra - 2018-10-09
-!    This will always be  > 1; even at 50 ppm fDCO2 = 16 – I’m assuming CO2 is in ppm.  So it will not play any role ..
+!    This will always be  > 1; 
+!    even at 50 ppm fDCO2 = 16 : I'm assuming CO2 is in ppm.  
+!    So it will not play any role ..
         fDco2 = 0.1 * co2_correct(L)**1.3 -  min_nitrate
         fDco2 = max(0.0, fDco2)
 
@@ -208,7 +217,8 @@ C=======================================================================
 
 !     9/28/2017 Based on DayCent dentitrificaion routine (denitrify.c)
 !        Dtotflux = (fDno3 < fDco2) ? fDno3 : fDco2;
-!        /* Minimum value for potential denitrification in top 2 soil layers */
+!        /* Minimum value for potential denitrification in top 2 soil 
+!        layers */
 !        /* ppm N, 9/18/00 -cindyk */
 ! chp: top 2 layers in DayCent = 30 cm
 !        if (ilyr < 2) {
@@ -219,12 +229,15 @@ C=======================================================================
         endif
 
 !       Compute wfps effect on denitrification, (fDwfps, 0-1)
-!       Changed wfps effect on denitrification based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
+!       Changed wfps effect on denitrification based on paper 
+!        "General model for N2O and N2 gas emissions from soils 
+!        due to denitrification"
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00
 
         M = min(0.113, dD0(L)) * (-1.25) + 0.145
        
-!       The x_inflection calculation should take into account the corrected CO2 concentration, cak - 07/31/02 
+!       The x_inflection calculation should take into 
+!        account the corrected CO2 concentration, cak - 07/31/02 
 
 !       daycent  X_inflection/adjustment for WFPS response
         x_inflect = (9.0 - M * co2_correct(L))    
@@ -235,13 +248,16 @@ C=======================================================================
         fDwfps = max(0.0, fDwfps)
 
         denitrifppm(L) = fDwfps * fNO3fCO2   !daycent
-C       denitrifppm(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT ! from DSSAT DENIT version, moved here from below PG
+C       denitrifppm(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT 
+!       from DSSAT DENIT version, moved here from below PG
         
 C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         denitrif(L) = denitrifppm(L)/kg2ppm(L)
 
-! *** Moved this section up from below - needs to be done prior to partitioning to N2 and N2O
-!       Modify Denitrification rate based on available NO3 & flooding effects 
+! *** Moved this section up from below - needs to be done prior 
+!        to partitioning to N2 and N2O
+!       Modify Denitrification rate based on available NO3 
+!        & flooding effects 
         DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
       
 !       The minimum amount of NO3 that stays behind in the soil and 
@@ -272,11 +288,15 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
 ! *** End of Moved section
         
 ! *** Ratio of N2 to N2O        
-!       Nitrate effect on the ratio of N2 to N2O. Two approaches, use maximum of ratio1 and ratio2
+!       Nitrate effect on the ratio of N2 to N2O. 
+!       Two approaches, use maximum of ratio1 and ratio2
 !       Maximum N2/N2O ratio soil respiration function 
-!       Changed the NO3 and CO2 effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
+!       Changed the NO3 and CO2 effect on the N2/N2O ratio based 
+!        on paper "General model for N2O and N2 gas emissions 
+!       from soils due to denitrification"
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
-!       fRno3_co2 estimates the ratio as a function of electron donor to substrate -mdh 5/17/00
+!       fRno3_co2 estimates the ratio as a function of 
+!        electron donor to substrate -mdh 5/17/00
 
         k1 = max(1.5, 38.4 - 350. * dD0(L))
 
@@ -289,7 +309,9 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         endif
 
 C       WFPS effect on the N2/N2O Ratio */
-C       Changed wfps effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
+C       Changed wfps effect on the N2/N2O ratio based on paper 
+!       "General model for N2O and N2 gas emissions from soils 
+!       due to denitrification"
 C       Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
 
         fRwfps = max(0.1, 0.015 * wfps(L)*100 - 0.32)
@@ -298,7 +320,8 @@ C       Compute the N2:N2O Ratio
 !       Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
         ratio1(L) = max(0.1, fRno3_co2 * fRwfps)
         
-!       Count the number of days that water filled pore space is above 0.80     
+!       Count the number of days that water filled pore space 
+!       is above 0.80     
         if (wfps(L) >= 0.80) then
             ndays_wet(L) = min(7, ndays_wet(L) + 1)
         else
@@ -314,12 +337,14 @@ C       Compute the N2:N2O Ratio
         endif
         
 C       Calculate N2O       
-!       PG changed n2ofluxppm to n2odenitppm to differentiate n2o from denitrification
+!       PG changed n2ofluxppm to n2odenitppm to differentiate n2o 
+!       from denitrification
 !       n2ofluxppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
         Rn2n2o(L) = max(ratio1(L), ratio2(L)) 
         n2odenit(L) = denitrif(L) / (Rn2n2o(L) + 1.0)
 
-!       PG changed n2oflux to n2odenit to differentiate n2o from denitrification       
+!       PG changed n2oflux to n2odenit to differentiate n2o 
+!       from denitrification       
         n2flux(L) = denitrif(L) - n2odenit(L)
       
 !       Reduce soil NO3 by the amount denitrified and add this to

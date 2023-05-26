@@ -1,21 +1,10 @@
 *CSM OUTPUT FILES
-! DSSAT v4.8; 2020-07-21
+! DSSAT v4.8; 2023-05-11
 !
 ! Output files currently created by DSSAT crop simulation models.
 !
 @NAME......... CDE Description....................................... ALIAS
 !Daily output files:
-CellDetail.OUT
-CellDetail_1.OUT
-CellDetail_2.OUT
-CellDetail_3.OUT
-CellDetail_4.OUT
-CellDetail_5.OUT
-CellDetail_6.OUT
-CellDetail_7.OUT
-CellDetail_8.OUT
-CellDetail_9.OUT
-CellDetailN.OUT
 Chemical.OUT    CH Daily chemical applications output file            OUTCH
 ET.OUT          EB Daily soil-plant-atmosphere output file            OUTET
 ETPhot.OUT      PH Daily evapotranspiration output file
@@ -27,10 +16,6 @@ PlantC.OUT      PC Daily plant carbon output file                     OUTPC
 PlantGro.OUT    PG Daily plant growth output file                     OUTG
 PlantN.OUT      PN Daily plant nitrogen output file                   OUTPN
 PlantP.OUT      PP Daily plant phosphorus output
-PT_DepFrac.OUT
-PT_RLV_2D.OUT
-PT_WidFrac.OUT
-Root2D.OUT
 SoilDyn.OUT        Daily soil dynamics output file (temp)
 SoilNi.OUT      SN Daily inorganic soil N output file
 SoilOrg.OUT     SC Daily soil carbon output file
@@ -38,16 +23,12 @@ SoilPi.OUT      SP Daily inorganic soil phosphorus output file
 SoilKi.OUT      SK Daily inorganic soil potassium output file
 SoilTemp.OUT    TS Daily soil temperature output file                 OUTT
 SoilWat.OUT     SW Daily soil water output file                       OUTWAT
-SoilWat_ts.OUT
 SOMLITC.OUT     LC Daily soil organic matter carbon output file       OUTSOMC
 SOMLITN.OUT     LN Daily soil organic matter nitrogen output file     OUTSOMN
 SOMLITP.OUT     LP Daily soil organic matter phosphorus output file   OUTSOMP
-SWSensorD.OUT
-SWSensorH.OUT
-ThetaCap.OUT
 Weather.OUT     WE Daily weather output file                          OUTWTH
 EAAMOD.OUT         Daily output from EAAMOD high water table model
-FreshWt.OUT        Daily fresh fruit weight
+FreshWt.OUT        Daily fresh fruit weight                           FWOUT
 Mulch.OUT          Daily surface mulch output file
 PrimaryStalk.OUT   Casupro sugarcane output                           PSTALK
 CSP_SENES.OUT      Casupro sugarcane output                           CSP_SENES
@@ -84,8 +65,6 @@ etphot.csv         Daily evapotranspiration output file in CSV
 mulch.csv          Daily surface mulch output file in CSV format
 plantp.csv         Daily plant phosphorus output in CSV format
 soilpi.csv         Daily inorganic soil phosphorus output file, CSV
-RWU_1D.CSV
-RWU_2D.CSV
 n2o.csv            Daily N2O output file, CSV
 
 !Seasonal summary output files
@@ -105,7 +84,6 @@ SoilKBal.OUT       Seasonal soil potassium balance                    SKBAL
 SoilNBalSum.OUT    Soil N balance summary
 SoilNBal.OUT       Seasonal soil N balance (v4.02 and earlier)        SNBAL
 SoilNiBal.OUT      Seasonal inorganic soil N balance
-SoilNiBal2D.OUT
 SoilNoBal.OUT      Seasonal organic soil N balance
 SoilPBalSum.OUT    Soil P balance summary
 SoilPiBal.OUT      Seasonal inorganic soil P balance

@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2021
+C COPYRIGHT 1998-2023
 C                     DSSAT Foundation
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -845,6 +845,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !    6 - auto-harvest within window               NORMAL
 !   11 - failure to plant (automatic planting)    NO_SOW
 !   12 - failure to germinate                     NOGERM
+!   13 - failure to emerge                        NOEMRG
 !   21 - crop mature due to slow grain filling    SLOGRN 
 !   31 - crop died due to heat stress             HOT
 !   32 - crop died due to cold stress             COLD

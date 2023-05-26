@@ -878,7 +878,7 @@ C     Need to make provision for USG as a source
         END SELECT
 
 !       Meng (04/27/2018):
-!       Because fertilizer drip line could be separated from irrigation line,
+!       Because fertilizer drip line could be separate from irrigation line,
 !       The handling below is not proper
 !       If there is drip irrigation today, and fertilizer is applied in
 !       irrigation water (AP005) then use AppType = 'DRIP   '

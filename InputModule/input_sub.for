@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2022
+C COPYRIGHT 1998-2023
 C                     DSSAT Foundation                      
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -329,10 +329,12 @@ C
 C-----------------------------------------------------------------------
       
         CALL OPTEMPY2K(RNMODE,FILEX,PATHEX,
-     &   YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
-     &   NYRS,VARNO,VRNAME,CROP,MODEL,RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,
-     &   TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS, BEDHT, BEDWD, !PMWD
-     &   DripLN, DripSpc, DripOfset, DripDep)  
+     &            YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
+     &            SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,MODEL,
+     &            RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,TRTN,
+     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,
+     &            BEDHT, BEDWD, !PMWD
+     &            DripLN, DripSpc, DripOfset, DripDep)  
       
         CALL OPTEMPXY2K (YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &           SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,

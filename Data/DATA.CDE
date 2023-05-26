@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2022-11-18
+! DSSAT v4.8; 2023-05-11
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -1231,28 +1231,45 @@ KUPD   K uptake kg/ha  Daily K uptake by plants (kg/ha)                         
 
 *FRESH WEIGHT
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
-ADPWD  DryWt g/fruit   Average dry fruit (pod, ear) weight (g/fruit)            .
-ADPWM  DryWt g/fruit   Avg dry fruit (pod, ear) weight at maturity (g/fruit)    .
+PDMCD  DryMatterC frac Average dry matter concentration product (fraction)      .
 AFPWD  FreshWt g/fruit Average fresh fruit (pod, ear) weight (g/fruit)          .
+ADPWD  DryWt   g/fruit Average dry fruit (pod, ear) weight (g/fruit)            .
+PAGED  Pod age    days Age of oldest pod or ear (days)                          .
+FCULD  Fr wt cullkg/ha Fresh weight for cull fruit/pods (kg/ha)                 .
+FSZ1D  Fr wt 1   kg/ha Fresh weight for size class 1 (kg/ha)                    .
+FSZ2D  Fr wt 2   kg/ha Fresh weight for size class 2 (kg/ha)                    .
+FSZ3D  Fr wt 3   kg/ha Fresh weight for size class 3 (kg/ha)                    .
+FSZ4D  Fr wt 4   kg/ha Fresh weight for size class 4 (kg/ha)                    .
+FSZ5D  Fr wt 5   kg/ha Fresh weight for size class 5 (kg/ha)                    .
+FSZ6D  Fr wt 6   kg/ha Fresh weight for size class 6 (kg/ha)                    .
+XMAGE  Req. pod age  d Required pod age for Multi-Harvest (days)                .
+CHNUM  Cum. Harvest  # Cumulative harvest number (#)                            .
+TOSHN  Tot # sh   #/m2 Total Number of shells (#/m2)                            .
+TOWSH  Tot sh m. kg/ha Total Shell mass (kg/ha)                                 .
+MTDSH  Sh m. MtF kg/ha Shell mass of mature fruits (kg/ha)                      .
+HSHEL  Har sh Wt kg/ha Harvested shell weight (kg/ha)                           .
+TOPOW  Tot pod W kg/ha Total pod weight (kg/ha)                                 .
+HPODW  Har pod W kg/ha Harvested pod weight (kg/ha)                             .
+CHPDT  C.H.podWt kg/ha Cumulative harvested pod weight of mature fruits (kg/ha) .
+CPODN  C. pod Wt kg/ha Cumulative pod weight (kg/ha)                            .
+TOFPW  Fr pod Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
+MTFPW  Fr Wt Mat kg/ha Fresh weight of mature fruits (kg/ha)                    .
+MTDPW  Dry Wt Ma kg/ha Dry weight of mature fruits (seed and shell) (kg/ha)     .
+CHFPW  C.H. Fr W kg/ha Cumulative harv. fresh weight of mature fruits (kg/ha)   .
+CMFNM  C.M. Fruit #/m2 Cumulative mature fruit number (#/m2)                    .
+TOSDN  Tot # sd   #/m2 Total Number of seeds (#/m2)                             .
+TOWSD  Tot sd m. kg/ha Total Seed mass (kg/ha)                                  .
+MTDSD  Sd m. MtF kg/ha Seed mass of mature fruits (kg/ha)                       .
+HSDWT  Har sd Wt kg/ha Harvested seed weight (kg/ha)                            .
+ADPWM  DryWt g/fruit   Avg dry fruit (pod, ear) weight at maturity (g/fruit)    .
 AFPWM  FreshWt g/fruit Avg fresh fruit (pod, ear) weight at maturity (g/fruit)  .
-FCULD  Fr wt cull      Fresh weight for cull fruit/pods (g/m2)                  .
 FHWAD  Fresh harvest   Harvest product fresh wt (kg/ha)                         .
 FPWAD  Tot Fr Wt kg/ha Total pod (ear) fresh weight (kg/ha)                     .
 RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)         .
 RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)           .
-FSZ1D  Fr wt 1 g/m2    Fresh weight for size class 1 (g/m2)                     .
-FSZ2D  Fr wt 2 g/m2    Fresh weight for size class 2 (g/m2)                     .
-FSZ3D  Fr wt 3 g/m2    Fresh weight for size class 3 (g/m2)                     .
-FSZ4D  Fr wt 4 g/m2    Fresh weight for size class 4 (g/m2)                     .
-FSZ5D  Fr wt 5 g/m2    Fresh weight for size class 5 (g/m2)                     .
-FSZ6D  Fr wt 6 g/m2    Fresh weight for size class 6 (g/m2)                     .
-FSZ7D  Fr wt 7 g/m2    Fresh weight for size class 7 (g/m2)                     .
-FSZ8D  Fr wt 8 g/m2    Fresh weight for size class 8 (g/m2)                     .
 MFWAD  Mrkt Fr Wt k/h  Market fresh fruit (pod, ear) weight (kg/ha)             .
 NFWAD  # market/ha     Market fruit (pod, ear) number (fruit/ha)                .
-PAGED  Pod age d       Age of oldest pod or ear (days)                          .
 PAGEM  Pod age d       Age of oldest pod or ear at maturity (days)              .
-PDMCD  DryMatter frac  Dry matter concentration of harvested product (fraction) .
 PDMCM  DryMatter frac  Avg dry matter concentration at maturity (fraction)      .
 PDMCH  DryMatter frac  Avg dry matter concentration at harvest (fraction)       .
 SMFMH  Stalk fresh massMillable cane fresh weight at harvest (t/ha)             .
@@ -1286,6 +1303,10 @@ TRSH   Trash DM  t/ha  Trash (residue) dry mass at harvest (t/ha)               
 TTEBC  HeatUnits Emrg. Thermal Time (heat units) for emergence base temp.       .
 TTLEC  HeatUnits Stlk. Thermal Time (heat units) for stalk population Tbase     .
 TTSPC  HeatUnits Leaf. Thermal Time (heat units) for leaf extension Tbase       .
+LGNAD  Green Leaf N    Green leaf canopy + meristem N mass (kg/ha)              .
+LDNAD  Senesced Leaf N Senesced leaf N mass (kg/ha)                             .
+LGN%D  Green Leaf N%   Green leaf canopy + meristem N concentration (%)         .
+LDN%D  Senesced Leaf N%Senesced leaf N concentration (%)                        .
 
 *Dynamic soil properties
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -1385,12 +1406,16 @@ CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
 CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
+CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
+CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
 MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .
 N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
 N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 N2OED  N2O emitted kg  Daily N2O emissions from soil (kg[N]/ha)                 .
 N2OGED N2O emitted g   Daily N2O emissions from soil (g[N]/ha)                  .
+N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
+N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
 N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
 N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
 N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .

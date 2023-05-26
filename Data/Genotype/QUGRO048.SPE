@@ -2,15 +2,23 @@
 
 !*PHOTOSYNTHESIS PARAMETERS
  40.00 61.00  0.67  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE
+! 40.00 61.00  0.68  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE
+!Note: Kcan can be overridden by value in Ecotype file, if present
+!Kc_slope is the slope of Kcan with ratio of Rowsp:PlantSp (see DEMAND subroutine).
+!Kc_slope is optional, default value is 0.10.
+! Not calibrated for C version or the CO2 effect of the C photosynthesis option
   79.0  2.08 .0106                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN
+!  80.0  2.09 .0105                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN
   1.00  4.50  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG
   6.00  22.0  34.0  45.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG !not used in model
-   0.0   2.0  32.0  36.0  44.0  55.0       XLMAXT (6 VALUES)   !Photosynthesis temp. influence def verwendn
+
+   0.0   2.0  32.0  36.0  44.0  55.0       XLMAXT (6 VALUES)   !Photosynthesis temp.
    0.0   0.0   1.0   0.8   0.0   0.0       YLMAXT (6 VALUES)
-  -3.0 15.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG !Photosynthesis min night temp. influence def new
+
+  -3.0 12.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG !Photosynthesis min night temp. 2/6/22
+!  -3.0 15.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG !Photosynthesis min night temp. !4.7
  .0541  0.20  0.80   2.0                   PGEFF SCV KDIF, LFANGB
-! .0034 .0004 .3000  4.50 1.730             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF !def
- .0031 .0004 .3000  4.50 1.730             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF !kjb,9/13/21,because LAI protect is gone
+ .0034 .0004 .3000  4.50 1.730             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF !4.7
 
    0.0  .001  .002  .003 .0035  .004  .005  .006  .008  .010  XPGSLW(1-10)
   .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10)
@@ -21,6 +29,7 @@
  1.242 3.106 2.174  .929  0.05  1.13    RCH20,RLIP,RLIG,ROA,RMIN,PCH2O
 
 !*PLANT COMPOSITION VALUES
+
   .356  .285  .082  .200  .100  .030   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF
   .092  .064  .056  .380  .196  .040   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF
   .135  .135  .300  .030  .080  .800   SDPROS,SDPROG,PRONOD,PROMIN,PROMAX,THETA
@@ -34,9 +43,9 @@
  7.168 23.65 0.908 0.180               LIPTB,LIPOPT,SLOSUM*100,CARMIN
 
 !*CARBON AND NITROGEN MINING PARAMETERS
-! 0.024  0.75  .260  .125  0.65  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !def
- 0.024  0.75  .260  .135  0.65  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !kjb !9/13/21
-    SD                                 XPODF
+ 0.024  0.75  .260  .130  0.65  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !2/6/22
+! 0.024  0.75  .260  .125  0.65  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !V47
+    SD  0.70                           XPODF, NSTFAC
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH
 
 !*NITROGEN FIXATION PARAMETERS
@@ -48,19 +57,19 @@
   0.00  0.10  1.00  0.00   INL         FNFXA(4),TYPFXA-AGE EFF ON N FIX
 
 !*VEGETATIVE PARTITIONING PARAMETERS
- 0.0   3.0   7.0   11.0  16.0  25.0  37.0  40.0  XLEAF VALUES  !chg 4 second set 2 def. new 17.12.2018 verwendet
+ 0.0   3.0   7.0   11.0  16.0  25.0  37.0  40.0  XLEAF VALUES
  0.41  0.41  0.41  0.41  0.39  0.33  0.30  0.30  YLEAF VALUES
  0.09  0.13  0.20  0.28  0.35  0.48  0.49  0.49  YSTEM VALUES
  0.55  0.06  0.65  0.20  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD
- 0.70                                FRLFMX 
+ 0.70
 
 !*LEAF GROWTH PARAMETERS
-!  180. 250.0  30.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !def
-  180. 250.0  36.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !kjb,reduce LA, 35 8/30, 36 9/13/21
-  760. 250.0 -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA
+!  180. 250.0  30.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !4.7
+  180. 250.0  40.0   5.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !2/6/22
+  760. 250.0 -.048  1.50  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA
 
    0.0   1.0   2.0   3.0   4.0   5.0  XVGROW(1-6), VSTAGE VALUES          !not tips
-   0.0  20.0  55.0 110.0 200.0 320.0  YVREF(1-6), LEAF AREA VALUES,CM2 !this is soy, need quinoa 
+   0.0  20.0  55.0 110.0 200.0 320.0  YVREF(1-6), LEAF AREA VALUES,CM2   ! check
  -50.0  00.0   6.0  22.0  60.0        XSLATM(1-5),TEMP VALUES
   0.40  0.40  0.46  1.00  1.0         YSLATM(1-5),EFFECT ON SLA
 
@@ -83,6 +92,7 @@
   15.0   0.0   0.0                     DSWBAR,XFRMAX,SHLAG
   10.0  22.0  26.5  40.0   QDR         FNPDT(1-4),TYPPDT-TEMP EFFECT ON POD SET    !SB new for Quinoa
    6.0  21.0  23.5  41.0   QDR         FNSDT(1-4),TYPSDT-TEMP EFFECT ON SD GRWTH   !SB new for Quinoa
+  
   0.00  5.00 20.00 35.00 45.00 60.00   XXFTEM(1-6),TEMPERATURES
   1.00  1.00  1.00  1.00  0.00  0.00   YXFTEM(1-6),REL CHG IN PARTIT
   0.00  0.50  1.00  1.00               XSWFAC(1-4)
@@ -100,7 +110,7 @@
    1.0  22.0  30.0  45.0               1 VEGETATIVE DEVELOPMENT    !def   verwendet   
    2.0  24.0  30.0  45.0               2 EARLY REPRODUCTIVE DEVELOPMENT   !def
    4.0  22.0  30.0  45.0               3 LATE REPRODUCTIVE DEVELOPMENT    !def
-   
+
 !FOLLOWING LINE: STAGE; REF STAGE; PHOTOPERIOD FUNCTION; TEMPERATURE FUNCT;
 !POINTER TO VEGD(1) OR REPDA(2) OR REPDB(3) TEMP SENS; SENS TO WATER;N; AND P
   1  1  NON  LIN  1 -0.10  0.00  0.00  PLANT(STG 1) TO EMERG(STG 2) PHASE
@@ -129,7 +139,8 @@
 
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
-
+  1.00                                               NHGT
+  
 !*EVAPOTRANSPIRATION
   0.68   1.1       KEP, EORATIO
   0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
@@ -165,4 +176,15 @@
 *NITROGEN STRESS PARAMETERS
   0.70  1.00    NSTR_FAC, NSTR_EXP  !Operate on NSTRES (VEGGR 235)
   1.00          NRAT_FAC            !Operate on NRATIO (VEGGR 297)
+!  0.10  0.50    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
   0.20  0.50    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
+
+!  0.70  1.00    NSTR_FAC, NSTR_EXP  !Operate on NSTRES (VEGGR 235)
+!  0.80          NRAT_FAC            !Operate on NRATIO (VEGGR 297)
+!  0.10  0.30    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
+
+!! DEFAULT VALUES:
+!  0.70  1.00    NSTR_FAC, NSTR_EXP  !Operate on NSTRES (VEGGR 235)
+!  1.00          NRAT_FAC            !Operate on NRATIO (VEGGR 297)
+!  0.20  0.50    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
+

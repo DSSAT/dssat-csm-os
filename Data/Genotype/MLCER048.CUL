@@ -8,7 +8,7 @@
 ! ECO#        Ecotype code for this cultivar, points to the Ecotype in the
 !             ECO file (currently not used).
 ! P1          Thermal time from seedling emergence to the end of the juvenile
-!             phase (expressed in degree days above a base temperature of 10øC)
+!             phase (expressed in degree days above a base temperature of 10ï¿½C)
 !             during which the plant is not responsive to changes in
 !             photoperiod.
 ! P2O         Critical photoperiod or the longest day length (in hours) at
@@ -17,7 +17,7 @@
 ! P2R         Extent to which phasic development leading to panicle
 !             initiation (expressed in degree days) is delayed for each hour
 !             increase in photoperiod above P2O.
-! P5          Thermal time (degree days above a base temperature of 10øC)
+! P5          Thermal time (degree days above a base temperature of 10ï¿½C)
 !             from beginning of grain filling (3-4 days after flowering)
 !             to physiological maturity.
 ! G1          Scaler for relative leaf size.
@@ -43,7 +43,8 @@
 990002 MIDDLE VARIETY       . IB0001 140.0 12.00 150.0 500.0  2.00  0.50 43.00  1.00  11.0
 990003 SOUTH VARIETY        . IB0001 180.0 12.00 150.0 600.0  2.00  0.50 43.00  1.00  11.0
 !
-IB0033 BJ104                . IB0001 120.0 13.40 145.0 340.0  0.60  1.00 43.00  1.50  10.0
+!IB0033 BJ104                . IB0001 120.0 13.40 145.0 340.0  0.60  1.00 43.00  1.50  10.0 ! Previous coefficients < DSSAT 4.8.1.11
+IB0033 BJ104                . IB0001 181.7 14.32 766.3 334.5 0.344  0.86 43.00  1.49 10.14
 IB0034 CZH-859              . IB0001 170.0 12.10 138.0 420.0  2.13  0.50 43.00  1.00  11.0
 IB0035 CZP-87               . IB0001 136.0 12.40 130.0 370.0  2.10  0.50 43.00  1.00  11.0
 IB0036 CZMP-2               . IB0001 135.0 12.60 140.0 370.0  2.00  0.50 43.00  1.00  11.0
@@ -54,7 +55,9 @@ IB0040 CZP-85               . IB0001 142.0 12.30 130.0 380.0  2.15  0.50 43.00  
 IB0041 WCC-75               . IB0001 160.0 12.00 142.0 422.0  2.10  0.50 43.00  1.00  11.0
 IB0042 CZP-84               . IB0001 138.0 12.20 128.0 360.0  2.30  0.50 43.00  1.00  11.0
 IB0043 CZH-83-J1            . IB0001 136.0 12.60 130.0 300.0  2.30  0.50 43.00  1.00  11.0
-IB0044 CIVT                 . IB0001 100.0 12.00 142.0 390.0  0.60  0.60 43.00  1.20  11.0
+!B0044 CIVT                 . IB0001 100.0 12.00 142.0 390.0  0.60  0.60 43.00  1.20  11.0 ! Previous coefficients < DSSAT 4.8.1.11
+IB0044 CIVT                 . IB0001 100.0 14.54 338.1 569.8  1.60  0.50 43.00  1.45 10.53
+
 IB0045 59022A X 89-083      . IB0001 100.0 12.00  18.0 200.0  0.0  19.00 43.00  1.00  11.0  !CTS
 IB0046 1011A X 086R         . IB0001 100.0 12.00  35.0 120.0  0.0  17.00 43.00  1.00  11.0  !CTS
 IB0047 1361M X 6Rm          . IB0001 100.0 12.00  55.0 105.0  0.0  11.00 43.00  1.00  11.0  !CTS

@@ -60,7 +60,8 @@
    RESPCON_LEAVES   = 0.00292
    RESPCON_SUCR     = 0.00121
 *ROOTS
-          RTCMPG     = 500.0
+! 2023-03-31 HBD Increased RTCMPG to 3000.0 based on other C4 plants within DSSAT
+          RTCMPG     = 3000.0
           WRK        =  -0.01
           RLVMIN     = 0.02
 ! Added Jan 2018

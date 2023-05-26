@@ -44,11 +44,12 @@
 !         slowing normal development toward flowering (oC)
 ! SLOBI   Slope of relationship reducing progress toward flowering if
 !         TMIN for the day is less than OPTBI
+! XMAGE   Photothermal time required for Multi-harvest
 !
-@ECO#  ECONAME.......... MG TM PP-SS PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNHSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI
-!                                  1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16
-PR0001 CAPISTRANO        01 01   0.0   5.0  10.0  24.0  05.0   0.0  0.75  35.0   0.0 53.00  0.35   1.0   1.0  .000  00.0  .000
-PR0002 BISCAYNE          01 01   0.0   5.0  10.0  24.0  05.0   0.0  0.75  35.0   0.0 53.00  0.35   1.0   1.0  .000  00.0  .000
-PR0003 BISCAYNE-JJ       01 01   0.0   5.0  10.0   0.0  05.0   0.0  0.75  35.0  15.0 53.00  0.35   1.0   1.0  .000  00.0  .000
-DFAULT DEFAULT TYPE      01 01   0.0   5.0  20.0   0.0  05.0   0.0  0.75  35.0   0.0 18.00  0.52   1.0   1.0  .000  00.0  .000
+@ECO#  ECONAME.......... MG TM PP-SS PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNHSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI XMAGE
+!                                  1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
+PR0001 CAPISTRANO        01 01   0.0   5.0  10.0  24.0  05.0   0.0  0.75  35.0   0.0 53.00  0.35   1.0   1.0  .000  00.0  .000  25.0
+PR0002 BISCAYNE          01 01   0.0   5.0  10.0  24.0  05.0   0.0  0.75  35.0   0.0 53.00  0.35   1.0   1.0  .000  00.0  .000  25.0
+PR0003 BISCAYNE-JJ       01 01   0.0   5.0  10.0   0.0  05.0   0.0  0.75  35.0  15.0 53.00  0.35   1.0   1.0  .000  00.0  .000  25.0
+DFAULT DEFAULT TYPE      01 01   0.0   5.0  20.0   0.0  05.0   0.0  0.75  35.0   0.0 18.00  0.52   1.0   1.0  .000  00.0  .000  25.0
 

@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2022
+C COPYRIGHT 1998-2023
 C                     DSSAT Foundation
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -38,7 +38,7 @@ C     CROPPING SYSTEM MODEL Version 4.8.1
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     July 2022  CSM Version 4.8.1
+C     May 2023  CSM Version 4.8.1
 C
 C     Hoogenboom, G., C.H. Porter, V. Shelia, K.J. Boote, U. Singh,  
 C     J.W. White, W. Pavan, F.A. de Oliveira, L.P. Moreno, J.I. Lizaso, 

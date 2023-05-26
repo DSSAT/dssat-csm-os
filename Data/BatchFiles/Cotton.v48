@@ -1,0 +1,15 @@
+$BATCH(COTTON)
+!
+! Directory    : C:\DSSAT48\cotton
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Cotton          
+! Experiment   : AZMC8901.COX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\cotton\AZMC8901.COX                                                                    1      0      0      0      0
+C:\DSSAT48\cotton\AZMC8901.COX                                                                    2      0      0      0      0
+C:\DSSAT48\cotton\GACM0401.COX                                                                    1      1      0      1      0
+C:\DSSAT48\cotton\GACM0401.COX                                                                    2      1      0      1      0
+C:\DSSAT48\cotton\TXTE8401.COX                                                                    1      1      0      1      0

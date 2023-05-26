@@ -15,6 +15,8 @@ C  09/15/1998 CHP Modified for modular format
 C  05/10/1999 GH  Incorporated in CROPGRO
 C  04/02/2021 GH  Adjust growth rate for small seeded crops
 !  06/15/2022 CHP Added CropStatus
+!  04/21/2023 FO/AH Adjustment of XFRUIT for Strawberry based on days
+!                   after first flower NR1TIM
 C-----------------------------------------------------------------------
 C  Called by:  PLANT
 C  Calls:      SDCOMP, IPDMND
@@ -94,7 +96,7 @@ C=======================================================================
      &  TURADD, TURFAC, TURSLA, TURXFR,
      &  VSSINK, VSTAGE, WCRLF, WCRRT, WCRST, WNRLF,
      &  WNRRT, WNRSH, WNRST, WTLF, XFRMAX,
-     &  XFRT, XFRUIT, XPOD
+     &  XFRT, XFRUIT, XPOD, XFRUIT2, XFPHT, XFINT, AXFINT
 
       REAL FNSDT(4)
       REAL XVGROW(6), YVGROW(6), YVREF(6)
@@ -106,7 +108,8 @@ C=======================================================================
       REAL WTSD(NCOHORTS), WTSHE(NCOHORTS)
       REAL PHTIM(NCOHORTS), PNTIM(NCOHORTS)
 
-      REAL TURFSL
+      REAL TURFSL, NSLA
+      REAL CUMNSF,NFSL
 
 !CHP - puncture variables, not functional
       REAL PUNCSD, PUNCTR, RPRPUN
@@ -119,6 +122,9 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
+      XFPHT  = 0.0
+      XFINT  = 0.0
+      
       CALL IPDMND(
      &  FILECC, FILEGC, FILEIO,                           !Input
      &  CARMIN, FINREF, FNSDT, FRLFF, FRLFMX,             !Output
@@ -130,7 +136,8 @@ C=======================================================================
      &  SLAPAR, SLAREF, SLAVAR, SLOSUM, SIZELF, SIZREF,   !Output
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XSLATM, XTRFAC, XVGROW, XXFTEM,    !Output
-     &  YLEAF, YSLATM, YSTEM, YTRFAC, YVREF, YXFTEM)      !Output
+     &  YLEAF, YSLATM, YSTEM, YTRFAC, YVREF, YXFTEM,      !Output
+     &  XFPHT, XFINT, NSLA)                               !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -153,10 +160,12 @@ C=======================================================================
       FNINS  = 0.0
       FNINR  = 0.0
       NMINEP = 0.0
-
+      
       RPRPUN = 1.0 
       TMPFAC = 1.0
-
+      
+      CUMNSF = 1.0
+      NFSL   = 1.0
 !-----------------------------------------------------------------------
 !     SET VARIETY SPECIFIC LEAF PARAMETERS
 !-----------------------------------------------------------------------
@@ -190,6 +199,7 @@ C=======================================================================
       ELSEIF (DYNAMIC .EQ. EMERG) THEN
 !-----------------------------------------------------------------------
         XFRT   = XFRUIT
+        XFRUIT2 = XFRUIT
         ADDSHL = 0.0
         TURXFR = 0.0
         GDMSD  = 0.0
@@ -422,6 +432,18 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 !     Night length and temperature are multiplicative
 !     but turgor effect adds to the partitioning
 !-----------------------------------------------------------------------
+!     AH 2023-04-21 - Adjustemnt of XFRUIT for Strawberry based on days
+!                     after first flower NR1TIM
+      IF (XFPHT .GT. 0.0 .AND. XFINT .GE. 0.0 .AND. 
+     &    NPP .LE. NCOHORTS) THEN
+            IF (PHTIM(NPP) .LE. XFPHT) THEN
+            XFINT  = MIN(XFINT, 1.0) 
+            AXFINT = MAX(0.0, 1.0 - XFINT)
+            XFRUIT = (XFRUIT2 / XFPHT * PHTIM(NPP) * AXFINT)
+     &               + (XFINT * XFRUIT2)
+            ENDIF
+      ENDIF
+
       XFRT = XFRUIT * TEMXFR + XFRUIT * TURXFR
 !     XFRT = XFRUIT * RNIT * TEMXFR   !NEED TO FIX FOR DAYLENGTH EFFECT
       XFRT = MIN(XFRT,1.0)
@@ -533,11 +555,20 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
       PARSLA = (SLAMN+(SLAMX-SLAMN)*EXP(SLAPAR*PAR))/SLAMX
       TURFSL = MAX(0.1, (1.0 - (1.0 - TURFAC)*TURSLA))
 !-----------------------------------------------------------------------
+!     Nitrogen effect by KJB
+!-----------------------------------------------------------------------
+      IF (NSLA .GT. 1.2) THEN                      !To limit NSLA to 1.2
+          NSLA=1.2 
+      ENDIF
+      NFSL   = MAX(0.1, (1.0 - (1.0 - NSTRES)*NSLA))       
+      CUMNSF = 0.75*CUMNSF + 0.25*NFSL  
+!-----------------------------------------------------------------------
 !     Compute overall effect of TMP, PAR, water stress on SLA (F), first
 !     for veg stages, then transition to rep stage from R1 to end leaf
 !     effect of PAR on SLA, COX PEANUT SCI. 5:27, 1978
+!     KJB - Added CUMNSF to FFVEG calculation
 !-----------------------------------------------------------------------
-      FFVEG = FVEG * TPHFAC * PARSLA * TURFSL
+      FFVEG = FVEG * TPHFAC * PARSLA * TURFSL * CUMNSF
 
       F = FFVEG
       IF (XFRT*FRACDN .GE. 0.05) F = FFVEG * (1.0 - XFRT * FRACDN)
@@ -660,6 +691,7 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 !  07/04/1998 CHP Written.
 !  08/12/2003 CHP Added I/O error checking
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
+!  05/28/2023  FO Added read XFPHT, XFINT from ecotype file
 !-----------------------------------------------------------------------
 !  Called by:  DEMAND
 !  Calls:      FIND, ERROR, IGNORE
@@ -675,18 +707,20 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
      &  SLAPAR, SLAREF, SLAVAR, SLOSUM, SIZELF, SIZREF,   !Output
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XSLATM, XTRFAC, XVGROW, XXFTEM,    !Output
-     &  YLEAF, YSLATM, YSTEM, YTRFAC, YVREF, YXFTEM)      !Output
+     &  YLEAF, YSLATM, YSTEM, YTRFAC, YVREF, YXFTEM,      !Output
+     &  XFPHT, XFINT, NSLA)                               !Output
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
-      EXTERNAL GETLUN, ERROR, FIND, IGNORE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE, WARNING
 !-----------------------------------------------------------------------
       CHARACTER*3   TYPSDT
       CHARACTER*6   ERRKEY
-      PARAMETER (ERRKEY = 'DEMAND')
+      PARAMETER (ERRKEY = 'IPDMND')
       CHARACTER*6   SECTION
       CHARACTER*6   ECOTYP, ECONO
       CHARACTER*30  FILEIO
+      CHARACTER*78  MSG(4)
       CHARACTER*80  C80
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*255 C255
@@ -702,7 +736,8 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
      &  RPRO, SHLAG, SLAMAX, SLAMIN, SLAPAR,
      &  SLAREF, SLAVAR, SLOSUM, SIZELF, SIZREF,
      &  SRMAX, TURSLA, VSSINK, XFRMAX, XFRUIT
-        REAL LNGSH, THRESH, SDPRO, SDLIP
+        REAL LNGSH, THRESH, SDPRO, SDLIP, XFPHT, XFINT
+        REAL NSLA
 
         REAL FNSDT(4)
         REAL XVGROW(6), YVREF(6)
@@ -863,7 +898,8 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(4F6.0)',IOSTAT=ERR) SLAMAX, SLAMIN, SLAPAR, TURSLA
+        READ(C80,'(6F6.0)',IOSTAT=ERR) SLAMAX, SLAMIN, SLAPAR, TURSLA,
+     &    NSLA
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
@@ -940,7 +976,8 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
      &        (C255(1:1) .NE. '*')) THEN
 !          READ (C255,'(A6,66X,F6.0,30X,3F6.0)',IOSTAT=ERR)
 !     &        ECOTYP, LNGSH, THRESH, SDPRO, SDLIP
-          READ (C255,'(A6,66X,F6.0,30X)',IOSTAT=ERR) ECOTYP, LNGSH
+          READ (C255,'(A6,66X,F6.0,54X,2(F6.0))',IOSTAT=ERR) ECOTYP, 
+     &        LNGSH, XFPHT, XFINT
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
           IF (ECOTYP .EQ. ECONO) THEN
             EXIT
@@ -953,6 +990,22 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
           LNUM = 0
         ENDIF
       ENDDO
+
+      IF(XFPHT .LT. 0.0) THEN
+        MSG(1) = 'Ecotype coefficient is not properly defined.'
+        MSG(2) = 'Time required to reach maximum partitioning to '
+        MSG(3) = 'pod/fruit. (photothermal days)'
+        MSG(4) = 'XFPHT must be greater then 0.0.'
+        CALL WARNING (4, ERRKEY, MSG)
+        CALL ERROR(ERRKEY,1,FILEGC,0)
+      ELSE IF(XFINT .LT. 0.0 .OR. XFINT .GT. 1.0) THEN
+        MSG(1) = 'Ecotype Coefficients is not properly defined.'
+        MSG(2) = 'Initial partitioning to pod/fruit during early '
+        MSG(3) = 'pod/fruit growth.'
+        MSG(4) = 'XFINT must be between/included 0.0 and 1.0.'
+        CALL WARNING (4, ERRKEY, MSG)
+        CALL ERROR(ERRKEY,2,FILEGC,0)
+      ENDIF
 
       CLOSE (LUNECO)
 
@@ -1021,7 +1074,7 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 ! FNINSH    Maximum fraction of N for growing shell tissue
 !            (g[N] / g[shell])
 ! FNSDT(I)  Temperature values which describe function for modifying seed 
-!             growth rate with temperature (캜)
+!             growth rate with temperature (째C)
 ! FOUND     Indicator that good data was read from file by subroutine FIND 
 !             (0 - End-of-file encountered, 1 - NAME was found) 
 ! FRACDN    Relative time between flowering (NR1) and last leaf appearance 
@@ -1071,8 +1124,8 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 ! LAGSD     Time required between shell growth and seed growth, per cohort
 !            (Photo-thermal days)
 ! LINC      Line number of input file 
-! LIPOPT    Temperature above which lipid composition is at a maximum (캜)
-! LIPTB     Temperature below which lipid composition is zero (캜)
+! LIPOPT    Temperature above which lipid composition is at a maximum (째C)
+! LIPTB     Temperature below which lipid composition is zero (째C)
 ! LNGPEG    Time between start of peg (full flower) and shell formation 
 !             (for peanuts only).  Defines slow growth period.
 !             (Photo-thermal days)
@@ -1175,7 +1228,7 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 ! SDLIP     Maximum lipid composition in seed (fraction)
 ! SDMAX     A maximum amount of remaining growth for each cohort (g/m2)
 ! SDNO(J)   Number of seeds for cohort J (#/m2)
-! SDPRO     Seed protein fraction at 25튏 (g[protein] / g[seed])
+! SDPRO     Seed protein fraction at 25째C (g[protein] / g[seed])
 ! SDVAR     Maximum cultivar-dependent seed growth rate, per seed
 !            (g / seed / d)
 ! SECTION   Section name in input file 
@@ -1211,14 +1264,14 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 !             growth for the standard cultivar. (cm2/g)
 ! SLAVAR    Specific leaf area (SLA) for new leaves during peak vegetative 
 !             growth for cultivar I, modified by environmental factor (cm2/g)
-! SLOSUM    Slope of temperature vs. SUMTEM line (1/튏)
+! SLOSUM    Slope of temperature vs. SUMTEM line (1/째C)
 ! SRMAX     Maximum fraction change in seed growth rate for long day 
 !             lengths 
 ! STMWT     Dry mass of stem tissue, including C and N
 !            (g[stem] / m2[ground)
 ! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
-! TAVG      Average daily temperature (캜)
+! TAVG      Average daily temperature (째C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
@@ -1227,7 +1280,7 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 !             (photo-thermal days / day)
 ! TEMXFR    Temperature effect on partitioning to pods, high temp. 
 !             increases fraction of growth to vegetative tissue (0-1) 
-! TGRO(I)   Hourly canopy temperature (캜)
+! TGRO(I)   Hourly canopy temperature (째C)
 ! THRESH    The maximum ratio mass of seed to mass of seed plus shell at 
 !             maturity.  Causes seed to stop growing as their dry weights 
 !             increase until shells are filled in a cohort. 
@@ -1265,6 +1318,10 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 !            (g[leaf] / m2[ground])
 ! WTSD(J)   Seed mass  for cohort J (g/m2)
 ! WTSHE(J)  Shell mass  for cohort J (g/m2)
+! XFINT     Initial partitioning to pod/fruit during early pod/fruit growth
+!           (from 0.0 to 1.0)
+! XFPHT     Time required to reach maximum partitioning to pod/fruit 
+!           (photothermal days)
 ! XFRMAX    Maximum increase in partitioning to fruits induced under water 
 !             stress, assuming no problem in pod setting 
 ! XFRT      Current day's partitioning to reproductive growth (0-1)
@@ -1272,12 +1329,13 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 ! XFRUIT    Maximum fraction of daily available gross photosynthate (PG) 
 !             which is allowed to go to seeds plus shells, varies from 0 to 
 !             1.0. 
+! XFRUIT2   Temporary variable for dynamic adustment of XFRUIT
 ! XLEAF(I)  V-stage at which partitioning to leaves is YLEAF(I).
 !            (leaf nodes)
 ! XPOD      Growth partitioning to pods which slows node appearance
 !            (fraction)
 ! XSLATM(I) Temperature values for function that reduces specific leaf area 
-!             (SLA) (캜)
+!             (SLA) (째C)
 ! XTRFAC(I) Values of TURFAC for function which reduces reproductive growth 
 !             based on water stress 
 ! XVGROW(I) V-stage at which maximum leaf area growth per plant since 
@@ -1286,7 +1344,7 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 !             bloom (R1) and at the day on which the maximum number of 
 !             V-stages occurs (NDLEAF) 
 ! XXFTEM(I) Array of temperature values in table lookup describing effect 
-!             of temperature on partitioning to pods (YXFTEM = 0 TO 1). (캜)
+!             of temperature on partitioning to pods (YXFTEM = 0 TO 1). (째C)
 ! YLEAF(I)  Partitioning fraction to leaves at V-stage XLEAF(I)
 !            (g[leaf] / g[veg. plant])
 ! YSLATM(I) Array which describes the effect of temperature on specific 

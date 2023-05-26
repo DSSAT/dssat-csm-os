@@ -20,7 +20,6 @@
    0.0   0.0   1.0   0.4   0.0   0.0       YLMAXT (6 VALUES)                                        
   -0.4  11.7  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG                      
  .0541  0.20  0.80   3.0                   PGEFF SCV KDIF, LFANGB                                   
-! .0026 .0004 .3000  3.03 2.000             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !def                         
  .0022 .0004 .3000  3.03 2.000             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !kjb                        
                                                                                                     
    0.0  .001  .002  .003 .0035  .004  .005  .006  .008  .010  XPGSLW(1-10)                          
@@ -47,7 +46,8 @@
                                                                                                     
 !*CARBON AND NITROGEN MINING PARAMETERS                                                             
  0.050  0.75 0.250 0.110 0.555  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR             
-    SD                                 XPODF                                                        
+    SD  0.70                           XPODF, NSTFAC                                                      
+!    SD  0.70                           XPODF, NSTFAC                                                      
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH                                     
                                                                                                     
 !*NITROGEN FIXATION PARAMETERS                                                                      
@@ -71,7 +71,7 @@
 !*LEAF GROWTH PARAMETERS                                                                            
   120.  260. 200.0   8.5   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC                            
 !  580.  240. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA  !def                                 
-  580.  320. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA  !kjb                                 
+  580.  320. -.048  1.50  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA
                                                                                                     
    0.0   2.0   4.5   7.0   9.5  12.0  XVGROW(1-6), VSTAGE VALUES                                    
    0.0  18.8  62.4 160.0 424.2 580.0  YVREF(1-6), LEAF AREA VALUES,CM2                              
@@ -142,9 +142,11 @@
   0.40  0.40  0.50  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN                     
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES                         
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN                     
-                                                                                                    
+  1.00                                               NHGT
+                                                                                                      
 !*EVAPOTRANSPIRATION                                                                                
-  0.69   1.1       KEP, EORATIO
+  0.65   1.1       KEP, EORATIO
+!  0.69   1.1       KEP, EORATIO
   0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
   0.50  0.92       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
 

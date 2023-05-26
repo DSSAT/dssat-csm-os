@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2022
+C COPYRIGHT 1998-2023
 C                     DSSAT Foundation
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -33,7 +33,8 @@ C-----------------------------------------------------------------------
 
       IMPLICIT NONE
       EXTERNAL INFO, ERROR, WARNING, IPIBS, WEATHR, SOIL, SPAM, PLANT, 
-     &  OPSUM, MGMTOPS, SPAM_2D
+     &  OPSUM, MGMTOPS
+      EXTERNAL SPAM_2D
       SAVE
 C-----------------------------------------------------------------------
 C     Crop, Experiment, Command line Variables

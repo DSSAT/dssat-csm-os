@@ -435,7 +435,7 @@ C
       COND  = 0.0
       IPERC = 0.0
 !     PWAT  = 0.0
-      WTABL = -99.
+!     WTABL = -99.
 
       PUDDLED = .FALSE.
       PLOWPAN = 0.0

@@ -401,9 +401,11 @@ C=======================================================================
           MGPP    = G1*MSTMWT*AMIN1 (STRCOLD,STRHEAT)  !,HSNSTRES)
           PTF    = 1.0   
           TILNO  = AMIN1 (TILNO,SPACE)   
-          IF (MGPP .GT. 0.0 .AND. GPP/MGPP .LT. 2.0) THEN
-             GPP    = MGPP*2.0
-             TGPP   = GPP - MGPP
+          IF(MGPP .GT. 0.0) THEN
+            IF (MGPP .GT. 0.0 .AND. GPP/MGPP .LT. 2.0) THEN
+               GPP    = MGPP*2.0
+               TGPP   = GPP - MGPP
+            ENDIF
           ENDIF
 
         CASE (5)

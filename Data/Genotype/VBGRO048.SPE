@@ -34,7 +34,7 @@
 
 !*CARBON AND NITROGEN MINING PARAMETERS
  0.025  0.75  .260  .090  0.35  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR
-    SD                                 XPODF
+    SD  0.70                           XPODF, NSTFAC
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH
 
 !*NITROGEN FIXATION PARAMETERS
@@ -54,7 +54,7 @@
 
 !*LEAF GROWTH PARAMETERS
   500.  550. 500.0   5.0   5.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC
-  990. 250.0 -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA
+  990. 250.0 -.048  1.50  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA
    0.0   1.0   2.0   3.0   4.0   5.0  XVGROW(1-6), VSTAGE VALUES
    0.0  20.0  55.0 110.0 200.0 320.0  YVREF(1-6), LEAF AREA VALUES,CM2
  -50.0  00.0  12.0  22.0  60.0        XSLATM(1-5),TEMP VALUES
@@ -62,7 +62,8 @@
 
 !*LEAF SENESCENCE FACTORS
   0.80  0.10  0.06  3.00  -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2
-  0.80  10.0                           ICMP,TCMP(Light comp, time constant-senes)
+  1.40  10.0                           ICMP,TCMP(Light comp, time constant-senes)
+!  0.80  10.0                           ICMP,TCMP(Light comp, time constant-senes)
 
 ! .......XSTAGE.........  .......XSENMX.........
    0.0   5.0  10.0  40.0   3.0   5.0  10.0  40.0
@@ -94,7 +95,8 @@
 !*PHENOLOGY PARAMETERS
 !  TB   TO1   TO2    TM                I
 ! 10.0  28.0  35.0  45.0               1 VEGETATIVE DEVELOPMENT
-   8.0  32.0  35.0  45.0               1 VEGETATIVE DEVELOPMENT
+!   8.0  32.0  35.0  45.0               1 VEGETATIVE DEVELOPMENT
+   8.0  30.0  35.0  45.0               1 VEGETATIVE DEVELOPMENT
    8.0  28.0  35.0  45.0               2 EARLY REPRODUCTIVE DEVELOPMENT
    0.0  26.0  35.0  45.0               3 LATE REPRODUCTIVE DEVELOPMENT
 
@@ -125,7 +127,8 @@
   0.00  0.00  0.00  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
-
+  1.00                                               NHGT
+  
 !*EVAPOTRANSPIRATION
   0.85   1.0       KEP, EORATIO
   0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)

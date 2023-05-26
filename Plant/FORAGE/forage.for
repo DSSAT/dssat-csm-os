@@ -128,8 +128,9 @@ C=======================================================================
       REAL SLCADDOT, SRCADDOT, SSRCADDOT, SSCADDOT
       REAL SLNADDOT, SRNADDOT, SSRNADDOT, SSNADDOT 
       REAL SRDOT, SLAAD, SLNDOT, SSDOT, SSNDOT
-      REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TURFAC, TAVG, TURADD,
-     &    TRNH4U, TRNO3U, TRNU, TNLEAK, TRWUP, TTFIX, TOPWT, TOTWT
+      REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TURFAC
+      REAL TAVG, TURADD, TRNH4U, TRNO3U, TRNU, TNLEAK
+      REAL TRWUP, TTFIX, TOPWT, TOTWT
       REAL VSTAGE
       REAL WLFDOT, WSIDOT, WRIDOT
       REAL WTNCAN, WTNFX, WTNLA, WTNLO, WTNNA, WTNNAG
@@ -252,9 +253,37 @@ C------------------------------------------------------------
       REAL DWTCO, DWTLO, DWTSO !DIEGO ADDED 11/22/2016
       REAL PWTCO, PWTLO, PWTSO !DP & FO & TF ADDED 07/16/2019
       REAL fhpctn !DIEGO ADDED 01/18/2017
-!     REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
+      REAL FREQ !,CUHT !DIEGO ADDED 02/14/2017
       REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
 !     LOGICAL RUNYET
+
+C FO/DP/TF - 2020-07-22 - AutomaticMOW
+      LOGICAL ATMOW
+      INTEGER HMFRQ, MOWCOUNT
+      INTEGER HMGDD, CUTDAY
+      REAL HMCUT
+      REAL MOWGDD, TGMIN
+      REAL VTO1, VTB1
+      REAL MOWREF, RSREF
+      
+!      INTEGER,dimension(6) :: IXFREQ
+      REAL,dimension(6) :: XFREQ
+      REAL,dimension(6) :: YFREQ
+!      INTEGER,dimension(6) :: IXCUTHT
+      REAL,dimension(6) :: XCUTHT
+      REAL,dimension(6) :: YCUTHT
+!      INTEGER,dimension(6) :: IXCHMOW
+      REAL,dimension(6) :: XCHMOW
+      REAL,dimension(6) :: YCHMOW
+!      INTEGER,dimension(6) :: IXFRGDD
+      REAL,dimension(6) :: XFRGDD
+      REAL,dimension(6) :: YRSREF
+      
+      REAL PROLFF,PROSTF
+C TF/DP 2022-01-31 Simple version AutoMOW
+      INTEGER HMMOW, HRSPL, HMVS
+      CHARACTER*1 ATTP
+
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 2
@@ -304,6 +333,14 @@ C------------------------------------------------------------
       ISWSYM = ISWITCH % ISWSYM
       ISWWAT = ISWITCH % ISWWAT
       MEPHO  = ISWITCH % MEPHO
+      ATMOW  = ISWITCH % ATMOW
+      HMFRQ  = ISWITCH % HMFRQ
+      HMGDD  = ISWITCH % HMGDD
+      HMCUT  = ISWITCH % HMCUT
+      HMMOW  = ISWITCH % HMMOW
+      HRSPL  = ISWITCH % HRSPL
+      HMVS   = ISWITCH % HMVS
+      ATTP   = ISWITCH % ATTP
 
       CO2    = WEATHER % CO2   
       DAYL   = WEATHER % DAYL  
@@ -700,6 +737,19 @@ C-----------------------------------------------------------------------
         HARVRES % RESE   = 0.0
       ENDIF
 
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
+     &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,
+     &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &    MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &    RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &    XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &    PROLFF, PROSTF, pliglf, pligst)
      
 !***********************************************************************
 !***********************************************************************
@@ -754,6 +804,20 @@ C-----------------------------------------------------------------------
      &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
      &  YRNR7)                                        !Output
 
+!-----------------------------------------------------------------------
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
+     &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,
+     &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &    MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &    RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &    XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &    PROLFF, PROSTF, pliglf, pligst)
 !-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Seasonal initialization for Dormancy processes
@@ -1175,6 +1239,19 @@ C-----------------------------------------------------------------------
  
         ENDIF
       ENDIF
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
+     &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,
+     &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &    MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &    RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &    XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &    PROLFF, PROSTF, pliglf, pligst)
 
 !***********************************************************************
 !***********************************************************************
@@ -1971,14 +2048,19 @@ C-----------------------------------------------------------------------
 !      fhpctn = 0.0
       MOWC =0.0
       RSPLC =0.0
-      call forage_harvest(CONTROL,FILECC,
-     &     RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
-     &     WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
-     &     WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &     AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht, !Input/Output
-     &     FHWAH,FHTOTN, FHLPH,fhpctn,  
-     &     DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &     WTCO, WTLO, WTSO)
+      call forage_harvest(CONTROL,FILECC, ATMOW, ATTP,
+     &    RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,       !Input
+     &    WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,        !Input/Output
+     &    WTNLF,WTNST,WNRLF,WNRST,WTNCAN,            !Input/Output
+     &    AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &    FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,
+     &    MOWC,RSPLC,HMFRQ,HMGDD,HMCUT,HMMOW,HRSPL,
+     &    DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+     &    HMVS, WTCO, WTLO, WTSO, TAVG, MOWGDD,
+     &    MOWCOUNT, TGMIN, VTO1, VTB1, MOWREF, 
+     &    RSREF, YFREQ, YRSREF, YCUTHT, YCHMOW,
+     &    XCUTHT, XCHMOW, XFRGDD, XFREQ, CUTDAY,
+     &    PROLFF, PROSTF, pliglf, pligst)
 
       Cumul_FHTOT  = Cumul_FHTOT  + FHWAH
       Cumul_FHTOTN = Cumul_FHTOTN + FHTOTN
@@ -2274,8 +2356,8 @@ C-----------------------------------------------------------------------
 ! FRCNOD    Fraction of new root dry matter allocation that is diverted to 
 !             nodule growth 
 ! FREEZ1    Temperature below which plant loses all leaves, but development 
-!             continues (캜)
-! FREEZ2    Temperature below which plant growth stops completely. (캜)
+!             continues (째C)
+! FREEZ2    Temperature below which plant growth stops completely. (째C)
 ! FRLF      Fraction of vegetative tissue growth that goes to leaves on a 
 !             day (g[leaf] / g[veg])
 ! FRRT      Fraction of vegetative tissue growth that goes to roots on a 
@@ -2350,7 +2432,7 @@ C-----------------------------------------------------------------------
 ! NGRSD     Rate of N accumulation in new seeds (g[N] / m2 / d)
 ! NGRSH     Rate of N accumulation in new shells (g[N] / m2 / d)
 ! NGRST     Maximum N demand for stem growth (g[stem N] / m2[ground] / d)
-! NH4(L)    Ammonium N in soil layer L (킽[N] / g[soil])
+! NH4(L)    Ammonium N in soil layer L (째g[N] / g[soil])
 ! NL        Maximum number of soil layers = 20 
 ! NLAYR     Number of soil layers 
 ! NMINEA    Actual Nitrogen mined from existing tissue (g[N] / m2 / d)
@@ -2364,7 +2446,7 @@ C-----------------------------------------------------------------------
 !                  storage organ in a day 
 ! NMOBSRX   Maximum fraction of N which can be mobilized from
 !                  storage organ in a day 
-! NO3(L)    Nitrate in soil layer L (킽[N] / g[soil])
+! NO3(L)    Nitrate in soil layer L (째g[N] / g[soil])
 ! NODGR     New nodule growth (g[nod] / m2 / d)
 ! NOUTDO    Logical unit for OVERVIEW.OUT file 
 ! NPLTD     Number of plants destroyed (#/m2/d)
@@ -2564,7 +2646,7 @@ C-----------------------------------------------------------------------
 ! SSDOT     Daily senescence of petioles (g / m2 / d)
 ! SSNADDOT  Today's NADST lost with senescing stem tissue (g [CP]/m2/d)
 ! SSNDOT    Petiole senescence due to water stress (g/m2/day)
-! ST(L)     Soil temperature in soil layer L (캜)
+! ST(L)     Soil temperature in soil layer L (째C)
 ! STCMINE        Today's maximum potential CH2O mobilization from stem (g [CH2O] m-2)
 ! STGDOY(I) Day when stage I occurred (YYDDD)
 ! STLTSEN   Stem senescence corresponding to LTSEN
@@ -2582,20 +2664,20 @@ C-----------------------------------------------------------------------
 !              (g [N] m-2 d-1)
 ! SW(L)     Volumetric soil water content in layer L
 !             (cm3 [water] / cm3 [soil])
-! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress,
+! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
 ! SWIDOT    Daily seed mass damage (g/m2/day)
-! TAVG      Average daily temperature (캜)
+! TAVG      Average daily temperature (째C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
 ! TDUMX2    Photo-thermal time that occurs in a real day based on late 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
-! TGRO(I)   Hourly air temperature (캜)
-! TGROAV    Average daily air temperature (캜)
+! TGRO(I)   Hourly air temperature (째C)
+! TGROAV    Average daily air temperature (째C)
 ! TITLET    Description of treatment for this simulation 
-! TMIN      Minimum daily temperature (캜)
+! TMIN      Minimum daily temperature (째C)
 ! TNLEAK    Total nitrogen leak (g[N] / m2 / d)
 ! TOPWT     Total weight of above-ground portion of crop, including pods
 !             (g[tissue] / m2)

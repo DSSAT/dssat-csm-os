@@ -1,0 +1,22 @@
+$BATCH(FALLOW)
+!
+! Directory    : C:\DSSAT48\FALLOW
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Fallow          
+! Experiment   : GAGR0401.FAX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\FALLOW\GAGR0401.FAX                                                                    1      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    1      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    2      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    3      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    4      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    5      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    6      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    7      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    8      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                    9      1      0      1      0
+C:\DSSAT48\FALLOW\IUAM9801.FAX                                                                   10      1      0      1      0
+C:\DSSAT48\FALLOW\RORO5901.FAX                                                                    1      0      0      0      0

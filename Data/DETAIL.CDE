@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.8; 07/27/2021
+! DSSAT v4.8; 05/11/2023
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -72,8 +72,14 @@ HCOM     Harvest component, code                                              IB
 HDATE    Harvest date, year + day or days from planting                       IB
 HL       Harvest level                                                        IB
 HLEN     Harvest row length, m                                                IB
+HMCUT    Mow cutting height, cm                                               IB
+HMFRQ    Mow harvest frequency in days, #                                     IB
+HMGDD    Mow harvest frequency using GDD, #                                   IB
+HMMOW    Stubble mass after mowing, kh ha-1                                   IB
+HMVS     Residual vegetative stage after mowing, 0-80                         IB
 HPC      Harvest percentage, %                                                IB
 HRNO     Harvest row number                                                   IB
+HRSPL    Stubble percent leaf, %                                              IB
 HSIZ     Harvest size group, code                                             IB
 HSTG     Harvest stage                                                        IB
 IAME     Method for automatic applications, code                              IB
@@ -231,6 +237,7 @@ CH102    Ethylene [Growth Regulator]                                          IB
 @CDE     DESCRIPTION                                                          SO
 AL       Alfalfa                                                              IB
 BA       Barley                                                               IB
+BC       Carinata                                                             IB
 BM       Bermudagrass                                                         IB
 BH       Bahia grass                                                          IB
 BN       Dry bean                                                             IB
@@ -246,7 +253,8 @@ CS       Cassava                                                              IB
 FA       Fallow                                                               IB
 FB       Faba bean                                                            IB
 GB       Green bean                                                           IB
-GG       Guineagrass                                                          IB
+GG       Guinea grass                                                         IB
+GY       Guar                                                                 IB
 LT       Lentil                                                               IB
 ML       Pearl millet                                                         IB
 MZ       Maize                                                                IB
@@ -265,6 +273,7 @@ SC       Sugarcane                                                            IB
 SF       Safflower                                                            IB
 SG       Sorghum                                                              IB
 SQ       Sequence                                                             IB
+SR       Strawberry                                                           IB
 SS       Sesame                                                               IB
 SU       Sunflower                                                            IB
 SW       Sweet corn                                                           IB
@@ -400,7 +409,7 @@ FE401    Potassium carbonate K2CO3 solid                                      IB
 FE402    Potassium carbonate K2CO3 liquid                                     IB
 FE403    Potassium magnesium sulfate**                                        IB
 FE404    Manure salts                                                         IB
-FE405    Kainite KMg(SO4)ClÂ·3H2O                                              IB
+FE405    Kainite KMg(SO4)Cl·3H2O                                              IB
 FE406    Carnallite (hydrated potassium magnesium chloride)                   IB
 FE407    Lime-potash mixtures                                                 IB
 FE408    Greensand                                                            IB
@@ -497,7 +506,7 @@ IR003    Flood, mm                                                            IB
 IR004    Sprinkler, mm                                                        IB
 IR005    Drip or trickle, mm                                                  IB
 IR006    Flood depth, mm                                                      IB
-IR007    Water table depth, mm                                                IB
+IR007    Water table depth, cm                                                IB
 IR008    Percolation rate, mm day-1                                           IB
 IR009    Bund height, mm                                                      IB
 IR010    Puddling (for Rice only)                                             IB
@@ -654,3 +663,22 @@ FH202    Cultivated, poor mgmt, init grass or forest                          IB
 FH301    Cultivated, good mgmt, init degraded land                            IB
 FH302    Cultivated, poor mgmt, init degraded land                            IB
 
+*Crop Status 
+@CDE     DESCRIPTION                                                          SO
+   1     Crop matured normally                                                IB
+   2     Crop harvested on reported date                                      IB
+   3     Crop harvested at reported growth stage                              IB
+   6     Auto-harvest within window                                           IB
+  11     Failure to plant (automatic planting)                                IB
+  12     Failure to germinate                                                 IB
+  13     Failure to emerge                                                    IB
+  21     Crop mature due to slow grain filling                                IB
+  31     Crop died due to heat stress                                         IB
+  32     Crop died due to cold stress                                         IB
+  33     Crop died due to deficit water stress                                IB
+  34     Crop died due to excess water stress                                 IB
+  39     Crop died due to excess stress                                       IB
+  51     Crop died due to pest damage                                         IB
+ 100     Crop season length exceeded limits                                   IB
+ 200     Weather data error                                                   IB
+ 999     Unspecified error condition                                          IB

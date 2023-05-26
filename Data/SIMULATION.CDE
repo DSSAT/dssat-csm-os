@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.8; 07/27/2021
+! DSSAT v4.8; 05/11/2023
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
@@ -122,6 +122,10 @@ A        Automatic                                                            IB
 M        At maturity                                                          IB
 R        On reported date(s)                                                  IB
 D        Days after planting                                                  IB
+W        AutoMOW using days as harvest frequency                              IB
+X        AutoMOW using GDD as harvest frequency                               IB
+Y        SmartMOW using days as harvest frequency                             IB
+Z        SmartMOW using GDD as harvest frequency                              IB
 
 *Simulation/Outputs
 @CDE     DESCRIPTION                                                          SO
@@ -149,6 +153,7 @@ C        Comma Separated Values (CSV)                                         IB
 *Simulation/Crop Models
 @MODEL  CROP  Description
 BSCER    BS   CERES-Sugarbeet
+CRGRO    BC   CROPGRO-Carinata
 CRGRO    BH   CROPGRO-Bahia
 CRGRO    BN   CROPGRO-Dry bean
 CRGRO    BR   CROPGRO-Brachiaria
@@ -161,6 +166,7 @@ CRGRO    CP   CROPGRO-Cowpea
 CRGRO    FA   CROPGRO-Fallow
 CRGRO    FB   CROPGRO-Faba bean
 CRGRO    GB   CROPGRO-Grean bean
+CRGRO    GY   CROPGRO-Guar
 CRGRO    LT   CROPGRO-Lentil
 CRGRO    NP   CROPGRO-Napier grass
 CRGRO    PE   CROPGRO-Pea
@@ -171,7 +177,7 @@ CRGRO    PR   CROPGRO-Bellpepper
 CRGRO    QU   CROPGRO-Quinoa
 CRGRO    SF   CROPGRO-Safflower
 CRGRO    SB   CROPGRO-Soybean
-CRGRO    SR   CRGRO-Strawberry
+CRGRO    SR   CROPGRO-Strawberry
 CRGRO    SU   CROPGRO-Sunflower
 CRGRO    TM   CROPGRO-Tomato
 CRGRO    VB   CROPGRO-Velvetbean
@@ -201,5 +207,6 @@ PRFRM    BM   FORAGE-Bermudagrass
 PRFRM    BR   FORAGE-Brachiaria
 PRFRM    BH   FORAGE-Bahiagrass
 PRFRM    AL   FORAGE-Alfalfa
+PRFRM    GG   FORAGE-Guinea grass
 SUOIL    SU   OILCROP-Sunflower
-PRFRM    GG   PRFRM-Guinea grass
+

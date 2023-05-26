@@ -32,7 +32,8 @@ C  Calls:     None
      &    WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, 
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
+     &    FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,
+     &    RHOR)
 
 !     2023-01-19 CHP Removed unused variables in argument list:
 !    &  PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR, 
@@ -40,7 +41,7 @@ C  Calls:     None
 !    &  YSTOR, FRSTRF, FRSTRMX, STRSRFL, STRLYR1, SENSR,
 !    &  FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
 !    &  FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
-!    &  RCHDP,MOWC,RSPLC
+!    &  RCHDP, MOWC, RSPLC
 !     
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -108,8 +109,8 @@ C  Calls:     None
 !    &  YSTOR(8), FRSTRF, FRSTRMX, STRSRFL, STRLYR1, SENSR,
 !    &  FNPTD(4), FNPMD(4), FNPGD(4), HARD1, HARD2, 
 !    &  FRZDC, FRZHRD(4), 
-!    &  FRZDHD(4), RDRMG, RDRMM, RDRMT, RCHDP,,MOWC,RSPLC
-      REAL fhpctn
+!    &  FRZDHD(4), RDRMG, RDRMM, RDRMT, RCHDP
+      REAL fhpctn!,MOWC,RSPLC
 
       REAL, DIMENSION(NL) :: ST
 C-------------------------------------------

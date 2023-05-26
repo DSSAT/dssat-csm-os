@@ -8,7 +8,7 @@
 ! ECO#        Ecotype code or this cultivar, points to the Ecotype in the
 !             ECO file (currently not used).
 ! P1          Thermal time from seedling emergence to the end of the juvenile
-!             phase (expressed in degree days above a base temperature of 8øC)
+!             phase (expressed in degree days above a base temperature of 8ï¿½C)
 !             during which the plant is not responsive to changes in
 !             photoperiod.
 ! P2          Extent to which development (expressed as days) is delayed for
@@ -16,7 +16,7 @@
 !             at which development proceeds at a maximum rate (which is
 !             considered to be 12.5 hours).
 ! P5          Thermal time from silking to physiological maturity (expressed
-!             in degree days above a base temperature of 8øC).
+!             in degree days above a base temperature of 8ï¿½C).
 ! G2          Maximum possible number of kernels per plant.
 ! G3          Kernel filling rate during the linear grain filling stage and
 !             under optimum conditions (mg/day).
@@ -36,6 +36,11 @@
 999991 MINIMA               . DFAULT 150.0 0.300 680.0 600.0  5.50 35.00
 999992 MAXIMA               . DFAULT 180.0 0.300 738.0 850.0 15.00 50.00
 
-SW0001 GSS0966 sh2          . IB0001 150.0 0.300 680.0 600.0  5.50 43.00
-SW0002 Saturn sh2           . IB0001 180.0 0.300 738.0 850.0 15.00 35.00
+!SW0001 GSS0966 sh2          . IB0001 150.0 0.300 680.0 600.0  5.50 43.00 ! Previous coefficients < DSSAT 4.8.1.11
+SW0001 GSS0966 sh2          . IB0001 163.2 0.300 688.3 824.2 13.18 44.17
+
+!SW0002 Saturn sh2           . IB0001 180.0 0.300 738.0 850.0 15.00 35.00 ! Previous coefficients < DSSAT 4.8.1.11
+SW0002 Saturn sh2           . IB0001 155.5 0.300 712.2 783.5 14.02 35.17
+
+!SW0003 BSS0977 sh2          . IB0001 175.0 0.300 700.0 500.0  5.00 50.00 ! Previous coefficients < DSSAT 4.8.1.11
 SW0003 BSS0977 sh2          . IB0001 175.0 0.300 700.0 500.0  5.00 50.00

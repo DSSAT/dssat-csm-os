@@ -56,11 +56,11 @@ C-----------------------------------------------------------------------
       INTEGER NAP, NCHEM, NLAYR, TILLNO          
       INTEGER NHAR, NTIL, RUN, TIMDIF
       INTEGER YRDIF, YRDOY, MDATE, YRO, YRPLT, YRS, YRSIM
-      INTEGER HDATE(3)
+      INTEGER HDATE(NAPPL)
       INTEGER STGDOY(20)
 
       REAL IRRAMT, TOTIR, TIL_IRR
-      REAL HPC(3), HBPC(3), HARVFRAC(2)
+      REAL HPC(NAPPL), HBPC(NAPPL), HARVFRAC(2)
       REAL, DIMENSION(NL) :: DLAYR, DUL, DS, LL, ST, SW
 
 !     Variables added for flooded conditions
@@ -68,7 +68,7 @@ C-----------------------------------------------------------------------
       REAL FLOOD, RAIN
 
       !Variables needed to call IPAHAR for sequenced runs:
-      INTEGER HDLAY, HLATE, HSTG(3)
+      INTEGER HDLAY, HLATE, HSTG(NAPPL)
       REAL    SWPLTL, SWPLTH, SWPLTD
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
@@ -213,16 +213,6 @@ C-----------------------------------------------------------------------
      &    MDATE, YRPLT)                                   !Output
       ENDIF
 
-      IF (INDEX('AFRDPWET',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
-!       Calculate irrigation depth for today
-        CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
-     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
-        TILLVALS % TIL_IRR = TIL_IRR
-      ELSE
-          IRRAMT = 0.0
-      ENDIF
-
       CALL Fert_Place (CONTROL, ISWITCH, 
      &  DLAYR, DS, FLOOD, NLAYR, YRPLT,           !Input
      &  FERTDATA)                                 !Output
@@ -234,6 +224,16 @@ C-----------------------------------------------------------------------
       IF (INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0) THEN
         CALL TILLAGE(CONTROL, ISWITCH, SOILPROP,          !Input
      &    TILLVALS, TILLNO)                               !Output
+      ENDIF
+
+      IF (INDEX('AFRDPWET',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+!       Calculate irrigation depth for today
+        CALL IRRIG(CONTROL, ISWITCH,
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
+     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+        TILLVALS % TIL_IRR = TIL_IRR
+      ELSE
+          IRRAMT = 0.0
       ENDIF
 
       IF (ISWCHE .EQ. 'Y' .AND. NCHEM .GT. 0 .) THEN

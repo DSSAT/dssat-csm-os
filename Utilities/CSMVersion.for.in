@@ -20,6 +20,25 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.25 chp 2023-05-12 2023 Workshop version
+!       4.8.1.24  FO 2023-05-11 Updated comments in SCCAN048.SPE to avoid issues (commit 70d1005)
+!       4.8.1.23  FO 2023-05-10 Updated CERES CUL coefficients and code protections (commit 280c5bf)
+!       4.8.1.22 chp 2023-05-10 updated genetics, SC files
+!       4.8.1.21  FO 2023-05-09 Calibration with new Soil Tem. for cassava cultivars (commit c5ce09d)
+!       4.8.1.20  FO 2023-05-09 Updates for Sugarcane CANEGRO (commit 37f17e0)
+!       4.8.1.19  FO 2023-05-09 Genotype files updates for recalibrated crops (commit 8cbd624)
+!       4.8.1.18  FO 2023-05-08 CERES-Maize issue with germination and emergence failure (commit e8f165b)
+!       4.8.1.17  FO 2023-05-08 Quinoa and Sugarbeet update for genotype files (commit 525973c)
+!       4.8.1.16  FO 2023-05-05 Added Nitrogen calculations for Sugarcane SCCAN048 (commit 6fc178d)
+!       4.8.1.15  FO 2023-05-05 Updated sunflower genetics as per Ken Boote (commit 0fd4ba2)
+!       4.8.1.14  FO 2023-05-05 Added AutoMOW and SmartMOW code to PRFRM (commit 870d739)
+!       4.8.1.13  FO 2023-05-05 Removed WORK.OUT and CSCER_CSCRP_CSCAS folder (commit aeb6973)
+!       4.8.1.12  FO 2023-05-05 Strawberry and Multi-Harvest updates (commit 1664e40)
+!       4.8.1.11  FO 2023-05-05 Cotton-N CRGRO SPE and ST default method using TAVG (commit 37cd0cf)
+!       4.8.1.10  FO 2023-05-05 Included Guar and Carinata as new crops (commit bf321ad)
+!       4.8.1.9   FO 2023-05-03 Batch files in data directory for testing (commit 12cb0cc)
+!       4.8.1.8   FO 2023-05-03 Water table model (commit 25fba49)
+!       4.8.1.7   FO 2023-04-21 Added Multi-Harvest for CROPGRO (commit 469fcc2)
 !       4.8.1.6   FO 2023-03-27 Update if statement TRNU (Total N uptake in a day) (commit 6d1f15b)
 !       4.8.1.5   FO 2023-03-10 Rollback of PineApple model to version v4.7.5.26
 !       4.8.1.4   FO 2023-03-10 Added protections for negative NO3 and NH4 values in the PRFRM model
@@ -27,38 +46,6 @@
 !       4.8.1.2  chp 2023-01-03 Fertigation at user-depth  
 !       4.8.1.1  chp 2023-01-02 Crop status in Summary.OUT, GHG summary variable names  
 !       4.8.1.0   FO 2022-10-28 Separated DSSAT-CSM-CROPSIM main file into multiple files  
-!       4.8.0.29 chp 2022-10-04 SDATE issue, MgmtEvent output, minor updates
-!       4.8.0.28  FO 2022-07-29 Make ASCE ET robust for various weather file formats
-!       4.8.0.27 chp 2022-04-15 Methane initialization, error checking
-!       4.8.0.26 chp 2022-03-28 Cross-over year 2035
-!       4.8.0.25 chp 2022-02-25 Merge develop_4.8 into develop branch
-!       4.8.0.24 chp 2022-03-04 More CROPGRO calibrations. Methane zero-divide check.
-!       4.8.0.23 chp 2022-02-15 More CROPGRO calibrations. Lat-long fix. Methane updates.
-!       4.8.0.22 chp 2022-01-28 More CROPGRO calibrations. NWheat & NTeff updates.
-!       4.8.0.21 chp 2022-01-20 Methane model. CROPGRO calibrations for v4.8. 
-!       4.8.0.20 chp 2022-01-14 More ETPHOT protections, mulch water initialization, 
-!                               fix puddling date, filepath length for linux, misc.
-!       4.8.0.19 chp 2021-12-13 Remove plant.for initializations in seasinit 
-!       4.8.0.18 chp 2021-12-10 ETPHOT protections, FO 
-!       4.8.0.17 chp 2021-10-25 Pre-season forecast enabled, portability issues 
-!       4.8.0.16 chp 2021-09-24 OilCropSun model added, 
-!                               updated calibration quinoa, chia, safflower
-!       4.8.0.15 chp 2021-08-20 Roll back some ETPHOT protections 
-!       4.8.0.14 chp 2021-08-19 OilCrop-Sun model added, mods to chia, quinoa, cassava,
-!                               safflower 
-!       4.8.0.13 chp 2021-08-12 Forage model minor mods
-!       4.8.0.12 chp 2021-08-06 Ceres-teff added, Changes to CSYCA and PRFRM models 
-!                               update genotype files for GLUE compatibility
-!       4.8.0.11 chp 2021-07-23 July 2021 Sprint version 
-!       4.8.0.10 chp 2021-06-25 FP protections, cassava minor, Mow file path 
-!       4.8.0.9  chp 2021-06-04 v4.8 (=v4.7.5.41) Summary: Lat-long, freshweight
-!       4.8.0.8  chp 2021-06-04 v4.8 (=v4.7.5.39) Bugfix SW_INIT, Allow TMAX = TMIN
-!       4.8.0.7  chp 2021-05-14 v4.8 (=v4.7.5.37) May 2021 Workshop
-!       4.8.0.6  chp 2021-05-04 v4.8 (=v4.7.5.36+) Pre-release test version
-!       4.8.0.5  chp 2021-04-23 v4.8 (=v4.7.5.36)
-!       4.8.0.4  chp 2021-04-04 v4.8 (=v4.7.5.33)
-!       4.8.0.3  chp 2021-02-08 v4.8 (=v4.7.5.29)
-!       4.8.0.2  chp 2020-07-21 v4.8 (=v4.7.5.28)
 !       4.8.0.1  chp 2020-07-21 v4.8 (=v4.7.5.14)
 !       4.7.5.0  chp 2018-12-18 Pre-release version
 !       4.7.2.0  chp 2018-05-07 v4.7.2 Release 2018 Workshop

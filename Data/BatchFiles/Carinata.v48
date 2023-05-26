@@ -1,0 +1,28 @@
+$BATCH(CARINATA)
+!
+! Directory    : C:\DSSAT48\Carinata
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Carinata
+! Experiment   : AUSH1701.BCX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Carinata\AUSH1701.BCX                                                                  1      1      0      1      0
+C:\DSSAT48\Carinata\AUSH1701.BCX                                                                  2      1      0      1      0
+C:\DSSAT48\Carinata\AUSH1801.BCX                                                                  1      1      0      1      0
+C:\DSSAT48\Carinata\AUSH1801.BCX                                                                  2      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1704.BCX                                                                  1      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1704.BCX                                                                  2      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1704.BCX                                                                  3      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1704.BCX                                                                  4      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1704.BCX                                                                  5      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1803.BCX                                                                  1      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1803.BCX                                                                  2      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1803.BCX                                                                  3      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1803.BCX                                                                  4      1      0      1      0
+C:\DSSAT48\Carinata\UFJA1803.BCX                                                                  5      1      0      1      0
+C:\DSSAT48\Carinata\UFQU1701.BCX                                                                  1      1      0      1      0
+C:\DSSAT48\Carinata\UFQU1701.BCX                                                                  2      1      0      1      0
+C:\DSSAT48\Carinata\UFQU1801.BCX                                                                  1      1      0      1      0
+C:\DSSAT48\Carinata\UFQU1801.BCX                                                                  2      1      0      1      0

@@ -30,7 +30,7 @@ C  08/12/2003 CHP Added I/O error checking
 !  08/11/2011 JW  Move the soilLayerType determination of 1D layer to a new SUBROUTINE SoilLayerClass
 !                 Add soilLayerType determination for bed layer profile
 !                 Add calculation of Matrix Potential
-!  01-24/2023 chp added SAEA to soil analysis in FileX for methane
+!  01/24/2023 chp added SAEA to soil analysis in FileX for methane
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -88,7 +88,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: PTERMB, EXK, EXMG, EXNA, EXTS, SLEC, EXCA
 
 !     vanGenuchten parameters
-      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG  !, MSkPa, WPkpa
+      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
 !     Brook & Corey model parameters
       Double Precision, DIMENSION(NL) :: hb, lambda
 
@@ -2391,9 +2391,9 @@ C=======================================================================
     
       PMFRACTION = 0.0
       IF (PMCover) THEN
-!        if (PMWD .GE. ROWSPC_CM) THEN
-!          SOILPROP % SALB   = PMALB
-!        ENDIF
+        if (PMWD .GE. ROWSPC_CM) THEN
+          SOILPROP % SALB   = PMALB
+        ENDIF
         PMFRACTION = PMWD / ROWSPC_CM
         MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 -PMFRACTION)
         SOILPROP % MSALB  = MSALB

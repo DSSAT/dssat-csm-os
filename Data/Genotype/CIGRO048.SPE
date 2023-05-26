@@ -6,18 +6,21 @@
 !Kc_slope is the slope of Kcan with ratio of Rowsp:PlantSp (see DEMAND subroutine).
 !Kc_slope is optional, default value is 0.10.
   79.0  2.08 .0106                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN
-!  1.45  5.00  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG !def
-  1.55  5.00  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG !kjb
+  1.45  4.50  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG !kjb 5/8/23
+!  1.55  5.00  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG !9/1/21
   6.00  22.0  34.0  45.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG
    0.0   8.0  40.0  44.0  48.0  55.0       XLMAXT (6 VALUES)
    0.0   0.0   1.0   0.8   0.0   0.0       YLMAXT (6 VALUES)
   0.00 19.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG
  .0541  0.20  0.80   2.0                   PGEFF SCV KDIF, LFANGB
-! .0036 .0004 .3000  4.90 1.530             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !def
- .0026 .0004 .3000  4.90 1.530             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !kjb 9/1/21
+ .0028 .0004 .3000  4.50 1.530             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !kjb 5/8/23
+! .0028 .0004 .3000  4.90 1.530             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !kjb 2/9/22
+! .0026 .0004 .3000  4.90 1.530             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !kjb 9/1/21
 ! .0022 .0004 .3000  4.90 1.530             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !kjb 8/13/21
+! .0036 .0004 .3000  4.90 1.530             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF  !def
 ! Note from kjb:  Removing LAI protection from source code, caused tiny LAI with tiny seed
-! Therefore, the much smaller SLWREF was needed to re-gain productivity. 8/12/2021 all changes
+! Therefore, the smaller SLWREF was needed to re-gain productivity. 8/12/2021 all changes
+
    0.0  .001  .002  .003 .0035  .004  .005  .006  .008  .010  XPGSLW(1-10)
   .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10)
 
@@ -42,9 +45,11 @@
  7.168 23.65 0.908 0.180               LIPTB,LIPOPT,SLOSUM*100,CARMIN
 
 !*CARBON AND NITROGEN MINING PARAMETERS
+ 0.030  0.75  .060  .115  0.55  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !5/8/23
+! 0.030  0.75  .060  .105  0.55  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !2/14/22
+! 0.030  0.75  .060  .110  0.55  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !9/3/21
 ! 0.030  0.75  .060  .120  0.45  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !def
- 0.030  0.75  .060  .110  0.55  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !kjb
-    SD                                 XPODF
+    SD  0.70                           XPODF, NSTFAC
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH
 
 !*NITROGEN FIXATION PARAMETERS
@@ -57,31 +62,33 @@
 
 !*VEGETATIVE PARTITIONING PARAMETERS
    0.0   1.5   3.3   5.0   7.8  12.5  30.0  40.0  XLEAF VALUES                  !change13
-  0.43  0.44  0.44  0.43  0.39  0.33  0.29  0.29  YLEAF VALUES  !kjb 9/3/21
+  0.45  0.45  0.45  0.44  0.39  0.34  0.29  0.29  YLEAF VALUES  !kjb 2/10/22
   0.09  0.13  0.21  0.29  0.36  0.50  0.56  0.56  YSTEM VALUES  !kjb 9/3/21
-!  0.43  0.44  0.44  0.43  0.39  0.34  0.30  0.30  YLEAF VALUES  
+!  0.43  0.44  0.44  0.43  0.39  0.33  0.29  0.29  YLEAF VALUES  !kjb 9/3/21
 !  0.09  0.13  0.21  0.29  0.36  0.48  0.55  0.55  YSTEM VALUES
 !  0.55  0.08  0.77  0.09  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD !def
-!  0.65  0.06  0.79  0.07  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD  !kjb
-  0.65  0.06  0.80  0.04  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD  !kjb
+!  0.65  0.06  0.80  0.04  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD  !9/3/21
+  0.60  0.05  0.80  0.04  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD  !2/9/22
 !  0.70                                FRLFMX 
-  0.75                                FRLFMX 
+  0.75                                FRLFMX   !9/3/21
 
 !*LEAF GROWTH PARAMETERS
 !  180.  340.   6.3   8.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !def
-  240.  360.   6.3   8.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !kjb
+  240.  360.   6.3   8.0   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC !kjb 9/3/21
 !  950. 340.0 -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA !def
-  950. 360.0 -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA !kjb
+  950. 360.0 -.048  1.50  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA !kjb 9/3/21
 
    0.0   1.0   2.0   4.0   6.0   8.0  XVGROW(1-6), VSTAGE VALUES
    0.0  1.53  2.40  5.88 14.44 35.46  YVREF(1-6), LEAF AREA VALUES,CM2   
  -50.0  00.0  12.0  24.0  60.0        XSLATM(1-5),TEMP VALUES
 !  0.25  0.25  0.25  1.00  1.0         YSLATM(1-5),EFFECT ON SLA !def
-  0.29  0.29  0.29  1.00  1.0         YSLATM(1-5),EFFECT ON SLA !kjb
+  0.29  0.29  0.29  1.00  1.0         YSLATM(1-5),EFFECT ON SLA !8/13/21
 
 !*LEAF SENESCENCE FACTORS
-  0.85  0.14  0.08 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 !kjb 9/3/21
-!  0.85  0.16  0.08 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 !kjb
+!  1.00  0.10  0.08 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 !kjb 2/12/22
+  1.00  0.08 0.08 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 !kjb 5/8/23
+!  0.84  0.13  0.08 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 !kjb 9/3/21
+!  0.85  0.16  0.08 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 !8/13/21
 !  0.85  0.20  0.08 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 !def
   0.80  10.0                          ICMP,TCMP(Light comp, time constant-senes)
 
@@ -148,7 +155,8 @@
   0.40  0.40  0.50  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
-
+  1.00                                               NHGT
+  
 !*EVAPOTRANSPIRATION
   0.68   1.1       KEP, EORATIO
   0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)

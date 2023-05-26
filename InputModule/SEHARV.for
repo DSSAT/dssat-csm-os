@@ -30,6 +30,7 @@ C=======================================================================
      &                   HSTG,HCOM,HSIZ,HDATE,HPC,CROP,NHAR,HBPC,
      &                   YRPLT)
 
+      USE ModuleDefs
       IMPLICIT     NONE
       EXTERNAL CLEAR, ERROR, INCYD, INSTGE, JULIAN, NAILUJ, SELHRV, 
      &  STHARV, SWHARV, VERIFY, YR_DOY
@@ -37,16 +38,16 @@ C=======================================================================
       CHARACTER*1  RNMODE,IHARI,LINE(80)
       CHARACTER*2  CROP
       CHARACTER*3  MFHRV
-      CHARACTER*5  HSTG(3),HCOM(3),HSIZ(3)
+      CHARACTER*5  HSTG(NAPPL),HCOM(NAPPL),HSIZ(NAPPL)
       CHARACTER*6  ERRKEY
       CHARACTER*10 STNAME(20)
       CHARACTER*25 HARMAN
 
       INTEGER      NLOOP,MENU,DFHRV,YFHRV,IFHRV,YEAR,NHAR,YRPLT
-      INTEGER      HDLAY,HLATE,HDATE(3),JULIAN,HSTAGE,HDATT
+      INTEGER      HDLAY,HLATE,HDATE(NAPPL),JULIAN,HSTAGE,HDATT
       INTEGER      INCYD,IDUMM
 
-      REAL         HPP,HRP,HPC(3),EFF,FLAG,HBPC(3)
+      REAL         HPP,HRP,HPC(NAPPL),EFF,FLAG,HBPC(NAPPL)
 
       PARAMETER (ERRKEY = 'SEHARV')
 
@@ -87,7 +88,8 @@ C=======================================================================
          ELSE
             HDATT = -9
          ENDIF
-         IF (IHARI .EQ. 'R') THEN
+         IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
 	     IF (HDATE(1) .LE. 1000) THEN
               HDATE(1) = INCYD(YRPLT,365)
            ENDIF
@@ -106,7 +108,8 @@ C          YFHRV = 1900 + YFHRV
             HARMAN = 'AT REPORTED GROWTH STAGES'
           ELSE IF (IHARI .EQ. 'M') THEN
             HARMAN = 'AT HARVEST MATURITY      '
-          ELSE IF (IHARI .EQ. 'R') THEN
+          ELSE IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
             HARMAN = 'ON REPORTED DATE(S)      '
           ELSE IF (IHARI .EQ. 'D') THEN
             HARMAN = 'ON REPORTED DAP          '
@@ -472,11 +475,12 @@ C=======================================================================
 
       SUBROUTINE STHARV (RNMODE,HSTG,STNAME,HSTAGE)
 
+      USE ModuleDefs
       IMPLICIT     NONE
       EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE
-      CHARACTER*5  HSTG(3)
+      CHARACTER*5  HSTG(NAPPL)
       CHARACTER*6  ERRKEY
       CHARACTER*10 STNAME(20)
 

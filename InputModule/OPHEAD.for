@@ -455,7 +455,7 @@ C-----------------------------------------------------------------------
      &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')
   500 FORMAT (1X,'WEATHER',8X,':',1X,A4,3X,I4)
   600 FORMAT (1X,'SOIL',11X,':',1X,A10,5X,'TEXTURE : ',A5,' - ',A25)
-  625 FORMAT (1X,'SOIL INITIAL C ',':',1X,'DEPTH:',I3,'cm',1X,
+  625 FORMAT (1X,'SOIL INIT COND ',':',1X,'DEPTH:',I3,'cm',1X,
      &     'EXTR. H2O:',F5.1,'mm  NO3:',F5.1,'kg/ha  NH4:',F5.1,'kg/ha')
   650 FORMAT (1X,'WATER BALANCE',2X,':',1X,'IRRIGATE ON',
      &           ' REPORTED DATE(S)')
@@ -629,8 +629,8 @@ C=======================================================================
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('BH,BM,BR,CB,CI,CN,CO,CU,NP,PR,QU,SF,SU,TM',CROP)
-     &          .GT. 0) THEN
+        ELSEIF (INDEX ('BC,BH,BM,BR,CB,CI,CN,CO,CU,GY,NP,PR,QU,
+     &     SF,SR,SU,TM',CROP) .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),852) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1

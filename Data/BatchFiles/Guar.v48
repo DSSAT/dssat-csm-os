@@ -1,0 +1,49 @@
+$BATCH(GUAR)
+!
+! Directory    : C:\DSSAT48\Guar
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Guar
+! Experiment   : CHIL1901.GYX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Guar\CHIL1901.GYX                                                                      1      1      0      1      0
+C:\DSSAT48\Guar\CHIL1901.GYX                                                                      2      1      0      1      0
+C:\DSSAT48\Guar\CHIL1901.GYX                                                                      3      1      0      1      0
+C:\DSSAT48\Guar\CHIL1901.GYX                                                                      4      1      0      1      0
+C:\DSSAT48\Guar\CHIL2101.GYX                                                                      1      1      0      1      0
+C:\DSSAT48\Guar\CHIL2101.GYX                                                                      2      1      0      1      0
+C:\DSSAT48\Guar\CHIL2101.GYX                                                                      3      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      1      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      2      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      3      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      4      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      5      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      6      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      7      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      8      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                      9      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                     10      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                     11      1      0      1      0
+C:\DSSAT48\Guar\CLNM1401.GYX                                                                     12      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      1      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      2      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      3      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      4      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      5      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      6      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      7      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      8      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                      9      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                     10      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                     11      1      0      1      0
+C:\DSSAT48\Guar\CLNM1501.GYX                                                                     12      1      0      1      0
+C:\DSSAT48\Guar\LCNM1401.GYX                                                                      1      1      0      1      0
+C:\DSSAT48\Guar\LCNM1401.GYX                                                                      2      1      0      1      0
+C:\DSSAT48\Guar\LCNM1401.GYX                                                                      3      1      0      1      0
+C:\DSSAT48\Guar\LCNM1401.GYX                                                                      4      1      0      1      0
+C:\DSSAT48\Guar\LCNM1401.GYX                                                                      5      1      0      1      0
+C:\DSSAT48\Guar\LCNM1401.GYX                                                                      6      1      0      1      0
+C:\DSSAT48\Guar\LCNM1401.GYX                                                                      7      1      0      1      0
+C:\DSSAT48\Guar\LCNM1401.GYX                                                                      8      1      0      1      0
