@@ -90,12 +90,12 @@
 
       REAL SWFAC,  SWFAC_ts,  SWFAC_day
       REAL TURFAC, TURFAC_ts, TURFAC_day
-      REAL ActWTD, MgmtWTD, LatFlow, LatFlow_ts !, MaxDif
-      REAL StdIrrig, WidTot, DepTot
+      REAL ActWTD, MgmtWTD, LatInflow, LatOutflow, LatFlow_ts !, MaxDif
+      REAL StdIrrig, WidTot, DepTot, LatFlow
       
       REAL, DIMENSION(0:24) :: EOP_HR, CumFracRad
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, Ksat, LL, SAT, WCr
-      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG, ThetaCap
+      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
       REAL, DIMENSION(MaxCols) :: WINF_col
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ES_mm, ColFrac
       REAL, DIMENSION(MaxRows,MaxCols) :: mm_2_vf, RLV_2D, RWU_2D
@@ -103,7 +103,7 @@
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFlux_D, SWFlux_U
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFh_ts, RWUP_2D, Se
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, Kunsat, Diffus
-      REAL, DIMENSION(MaxRows,MaxCols) :: EvapFlow, SWA
+      REAL, DIMENSION(MaxRows,MaxCols) :: EvapFlow, SWA, SWVDELTW
       REAL, ALLOCATABLE :: IrrigSched(:,:,:), DripRate(:,:),DripInt(:,:)
 !      REAL, ALLOCATABLE :: DripDep(:,:), DripStart(:,:), DripDur(:,:)
       
@@ -277,65 +277,6 @@
      &    SOILPROP, SWV_D, TimeIncr, WCr,             !Input
      &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
 
-!!     -------------------------------------------------------------------
-!!     If a water table is present, need to calculate stable initial water
-!!     content based on upflow from water table.
-!      IF (MgmtWTD < DS(NLAYR)) THEN
-!!     Run through loop to initialize soil water in upper layers 
-!
-!!       Minimum difference in SWV
-!        SWV_last = SWV_D
-!        SWV_avail = SWV_D
-!        MaxDif = 1000.
-!        Count = 0
-!      
-!        DO WHILE (MaxDif > 1.E-4)
-!          TimeIncr = Max_Time_Step  !minutes
-!          MaxDif = 0.0
-!          DO i = 1, NRowsTot
-!            DO j = 1, NColsTot
-!              SELECT CASE(CELLS(i,j)%STRUC%CellType)
-!              CASE (3,4,5);CONTINUE
-!              CASE DEFAULT; CYCLE
-!              END SELECT
-!              Se(i,j) = (SWV_avail(i,j) - WCr(i))/(SAT(i) - WCr(i))
-!              Se(i,j) = MIN(1.0, Se(i,j))
-!              Se(i,j) = MAX(0.0, Se(i,j))
-!              Kunsat(i,j)= K_unsat(Ksat(i), mVG(i), Se(i,j))
-!              Diffus(i,j)= Diffus_Coef(Ksat(i), alphaVG(i), mVG(i),
-!     &          SAT(i), Se(i,j), WCr(i))
-!              IF (Diffus(i,j) > 1.E-9 .AND. Kunsat(i,j) > 1.E-9) THEN
-!                DeltaT = 1./(
-!     &            2.*Diffus(i,j)/(Width(i,j)*Width(i,j)) + 
-!     &            2.*Diffus(i,j)/(Thick(i,j)*Thick(i,j)) + 
-!     &            10.*Kunsat(i,j)/Thick(i,j)) * 60. !min 
-!              ENDIF
-!            ENDDO
-!          ENDDO
-!          Count = Count + 1
-!
-!          CALL Drainage_2D(RATE, 
-!     &      CELLS, Diffus, FurCol1, FurRow1, Kunsat,        !Input
-!     &      MgmtWTD, SOILPROP, SWV_avail, DeltaT, WCr,      !Input
-!     &      LatFlow_ts,                                     !Output
-!     &      SWV_ts, SWFh_ts, SWFv_ts)                       !Output
-!
-!          DO i = 1, NRowsTot
-!            DO j = 1, NColsTot
-!              IF (ABS(SWV_ts(i,j) - SWV_last(i,j)) > MaxDif) THEN
-!                MaxDif = ABS(SWV_ts(i,j) - SWV_last(i,j))
-!              ENDIF
-!            ENDDO
-!          ENDDO
-!          SWV_last = SWV_ts
-!          SWV_avail = SWV_ts
-!        ENDDO 
-!      
-!        SWV_D = SWV_ts
-!      ENDIF
-!!     End of water table upflow initialization
-!!     -------------------------------------------------------------------
-
       CALL ROOTWU_2D(SEASINIT, TimeIncr, 
      &    Cells, EOP_ts, SWV_avail,                       !Input 
      &    RWU_2D_ts, RWUP_2D_ts, TRWU_ts, TRWUP_ts)       !Output
@@ -352,15 +293,15 @@
 
 !     Water balance output initialization
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CES, CEP, DRAIN_2D, RUNOFF, IRRAMT, RAIN, 
-     &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
-     &    LatFlow, ES, ES_DAY)
+     &    CEP, CES, CRAIN, DRAIN_2D, ES, ES_DAY, 
+     &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
+     &    TDRAIN, TEP, TES, TRUNOF, TSW)
      
 !     Call OPWBAL to write headers to output file
       CALL OPWBAL_2D(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, IRRAMT, LL, NLAYR, RUNOFF,        !Input
-     &    SOILPROP, StdIrrig, SW, TDRAIN, TRUNOF,         !Input
-     &    ActWTD, LatFlow, MgmtWTD, ThetaCap)             !Input 
+     &    CRAIN, DLAYR, IRRAMT, LL,                       !Input
+     &    NLAYR, RUNOFF, SOILPROP, SW,                    !Input
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow)  !Input
 
       SWDELTS= 0.0
       EOP_Hr = 0.0
@@ -956,7 +897,6 @@
           ! DRAIN_ts = DRAIN_ts + SWFv_ts(NLayr,j) / HalfRow * 10.   !mm 
           DRAIN_ts = 
      &    DRAIN_ts + SWFv_ts(min(NLayr, LIMIT_2D),j) / HalfRow * 10. !mm
-          
         ENDDO
         DRAIN_2D = DRAIN_2D + DRAIN_ts    
 
@@ -1132,15 +1072,17 @@ C-----------------------------------------------------------------------
 
 !     Output SoilWat.OUT
       CALL OPWBAL_2D(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, IRRAMT, LL, NLAYR, RUNOFF,        !Input
-     &    SOILPROP, StdIrrig, SW, TDRAIN, TRUNOF,         !Input
-     &    ActWTD, LatFlow, MgmtWTD, ThetaCap)             !Input 
+     &    CRAIN, DLAYR, IRRAMT, LL,                       !Input
+     &    NLAYR, RUNOFF, SOILPROP, SW,                    !Input
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow)  !Input
 
 !     Daily water balance output to SoilWatBal.OUT 
+!       NOTE: DRAIN_2D vs Drain_Limit2D. Could not find the latter, so using the former.
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CES, CEP, DRAIN_2D, RUNOFF, IRRAMT, RAIN, 
-     &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
-     &    LatFlow, ES, ES_DAY)
+     &    CEP, CES, CRAIN, DRAIN_2D, ES, ES_DAY, 
+     &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
+     &    TDRAIN, TEP, TES, TRUNOF, TSW)
+
 !-----------------------------------------------------------------
 !          call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
 !------------------------------------------------------------
@@ -1157,15 +1099,15 @@ C-----------------------------------------------------------------------
       IF (ISWITCH%ISWWAT == 'N') RETURN
       
       CALL OPWBAL_2D(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, IRRAMT, LL, NLAYR, RUNOFF,        !Input
-     &    SOILPROP, StdIrrig, SW, TDRAIN, TRUNOF,         !Input
-     &    ActWTD, LatFlow, MgmtWTD, ThetaCap)             !Input 
+     &    CRAIN, DLAYR, IRRAMT, LL,                       !Input
+     &    NLAYR, RUNOFF, SOILPROP, SW,                    !Input
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow)  !Input
 
 !     Seasonal water balance output 
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CES, CEP, DRAIN_2D, RUNOFF, IRRAMT, RAIN, 
-     &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
-     &    LatFlow, ES, ES_DAY)
+     &    CEP, CES, CRAIN, DRAIN_2D, ES, ES_DAY, 
+     &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
+     &    TDRAIN, TEP, TES, TRUNOF, TSW)
 
 !     chp 2022-07-10 can't use an array of zeros in the argument. 
 !     I don't want to set the original variables to zero, so use a dummy argument here.

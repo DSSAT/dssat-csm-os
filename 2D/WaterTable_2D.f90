@@ -15,7 +15,7 @@
 !=======================================================================
 
   Subroutine WaterTable_2D(DYNAMIC,           &
-    CELLS, SOILPROP, SoilProp_row, SWV,       &   !Input                                              
+    CELLS, SOILPROP, SWV,                     &   !Input                                              
     ActWTD, LatInflow, LatOutflow,            &   !Output
     MgmtWTD, SWVDELTW)                            !Output
 
@@ -29,17 +29,16 @@
 ! Interface:
   INTEGER, INTENT(IN) :: DYNAMIC
   Type(CellType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CELLS
-  Type(SoilType), INTENT(IN) :: SOILPROP, SoilProp_row
+  Type(SoilType), INTENT(IN) :: SOILPROP
   REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: SWV
   REAL, DIMENSION(MaxRows,MaxCols), INTENT(OUT) :: SWVDELTW
   REAL, INTENT(OUT) :: ActWTD, MgmtWTD, LatInflow, LatOutflow
 
 ! Local
-  INTEGER i, j, L, NLAYR, LIMIT_2D 
+  INTEGER L, NLAYR, LIMIT_2D 
   REAL Bottom, Top, Thick, TargetWTD, AdjustWTD
   REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, SW, WCR  
   REAL, DIMENSION(NL) :: ThetaCap, SW_temp, SWDELTW, DeltaSW
-  REAL, DIMENSION(MaxRows,MaxCols) :: SWV_temp
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
@@ -273,7 +272,7 @@
 
 !   The 2D model is not needed in the vicinity of the water table.
 !   Calculate the limits of the 2D model. 
-    IF (ActWTD > DS(L)) THEN
+    IF (ActWTD > DS(NLAYR)) THEN
 !     Water table is below profile depth
       LIMIT_2D = NRowsTot    
     Else          
