@@ -41,7 +41,7 @@ C=======================================================================
 
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, IGNORE, Y2K_DOY, Y4K_DOY, yr_doy
-      EXTERNAL TABEX
+      EXTERNAL TABEX, PARSE_HEADERS
 
       INTEGER MOWLUN,ISECT,ERR
       INTEGER,ALLOCATABLE,DIMENSION(:) :: TRNO,DATE
@@ -114,6 +114,9 @@ C=======================================================================
 !     CHARACTER*12 FILEX
 !     CHARACTER*78 MESSAGE(2)
 
+      INTEGER, PARAMETER :: MAXCOL = 50
+      CHARACTER*15  HEADER(MAXCOL)
+      INTEGER COL(MAXCOL,2), C1, C2, COUNT
       LOGICAL ATMOW
       CHARACTER*1 ATTP
       logical exists
@@ -211,14 +214,31 @@ C           MOW file has no data for this treatment
           ISECT = 0
           DO WHILE (ISECT.EQ.0)
             READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
+!           TF 05/22/2023 - Updated read method for mow file to handle 
+!            dates in YYDDD and YYYYDDD format
+            IF(MOW80(1:1).EQ."@") THEN
+              CALL PARSE_HEADERS(MOW80, MAXCOL, HEADER, COUNT, COL)
+            ENDIF
             IF (MOW80(1:1).NE."@"
      &         .AND.MOW80(1:1).NE."!"
      &         .AND.MOW80(1:20).NE."                    "
      &         .and.mow80(1:6)==trtchar
      &         .AND.ISECT.EQ.0)THEN
               I = I + 1
-              READ (MOW80,'(2I6,4F6.0)',IOSTAT=ISECT)
-     &                  TRNO(I),DATE(I),MOW(I),RSPLF(I),MVS(I),rsht(i)
+              DO J = 1, COUNT
+                C1 = COL(J,1)
+                C2 = COL(J,2)
+                SELECT CASE (TRIM(HEADER(J)))
+                 CASE('TRNO');READ(MOW80(C1:C2+1),*,IOSTAT=ERR) TRNO(I)
+                 CASE('DATE');READ(MOW80(C1:C2),*,IOSTAT=ERR) DATE(I)
+                 CASE('MOW');READ(MOW80(C1:C2),*,IOSTAT=ERR) MOW(I)
+                 CASE('RSPLF');READ(MOW80(C1:C2),*,IOSTAT=ERR) RSPLF(I)
+                 CASE('MVS');READ(MOW80(C1:C2),*,IOSTAT=ERR) MVS(I)
+                 CASE('RSHT');READ(MOW80(C1:C2),*,IOSTAT=ERR) rsht(I)
+                END SELECT
+              END DO
+!              READ (MOW80,'(2I6,4F6.0)',IOSTAT=ISECT)
+!     &                  TRNO(I),DATE(I),MOW(I),RSPLF(I),MVS(I),rsht(i)
 C   FO -  05/07/2020 Add new Y4K subroutine call to convert YRDOY
               !CALL Y2K_DOY(DATE(I))
               CALL Y4K_DOY(DATE(I),MOWFILE,I,ERRKEY,1)
