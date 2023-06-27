@@ -335,10 +335,10 @@ C=======================================================================
 ! NDMSDR   Amount of Mobilized N which can be used for seed growth
 !            (g[N] / m2 / d)
 ! NDMTOT   Total N demand (g[N] / m2 / d)
-! NH4(L)   Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)   Ammonium N in soil layer L (Âµg[N] / g[soil])
 ! NL       maximum number of soil layers = 20 
 ! NLAYR    Number of soil layers 
-! NO3(L)   Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)   Nitrate in soil layer L (Âµg[N] / g[soil])
 ! NUF      N uptake fraction (ratio of demand to N uptake), <= 1.0 
 ! NUPNO3(L)      Proportion of TRNU from a soil layer that is nitrate
 ! NUPNH4(L)      Proportion of TRNU from a soil layer that is ammonium

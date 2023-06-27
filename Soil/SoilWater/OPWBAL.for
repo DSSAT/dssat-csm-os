@@ -164,6 +164,14 @@ C-----------------------------------------------------------------------
      &    '    MWTD    TDFD    TDFC    ROFD    ROSD')
 
 !       print SW for all layers
+ !    &    '  SWTD  SWXD   ROFC   DRNC   PREC  IR#C  IRRC  DTWT')
+ !       ENDIF
+
+!        IF (N_LYR < 10) THEN
+!          WRITE (NOUTDW,1121) ("SW",L,"D",L=1,N_LYR)
+! 1121     FORMAT(9("    ",A2,I1,A1))
+!        ELSE
+!!         WRITE (NOUTDW,1122) ("SW",L,"D",L=1,9), "    SW10"
         DO L = 1, NLAYR
           IF (L < 10) THEN
             WRITE(SW_txt(L),'("    SW",I1,"D")') L

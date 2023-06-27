@@ -199,27 +199,28 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
         END SELECT
       ENDIF
 
+!     Temporarily go back to Sulieman-Ritchie
 !     ---------------------------------------------------------
-          SELECT CASE(MESEV)
-!         ------------------------
-          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
+!          SELECT CASE(MESEV)
+!!         ------------------------
+!          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
             CALL ESR_SoilEvap_2D(SEASINIT,
      &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
      &        ES, ES_LYR, ES_mm)                     !Output
-!         ------------------------
-          CASE DEFAULT 
-!         CASE ('R')  !Ritchie soil evaporation routine
-!           Calculate the availability of soil water for use in SOILEV.
-          !  DO L = 1, NLAYR
-          !    SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
-          !  ENDDO
-
-! NOTE chp - call this for each column of soil? Could calculate a separate value for each.
-            CALL SOILEV_2D(SEASINIT,
-     &        CELLS, EOS_SOIL, SW_AVAIL(1), WINF,         !Input
-     &        SOILPROP, SOILPROP_furrow,                  !Input
-     &        ES, ES_mm)                                  !Output
-          END SELECT
+!!         ------------------------
+!          CASE DEFAULT 
+!!         CASE ('R')  !Ritchie soil evaporation routine
+!!           Calculate the availability of soil water for use in SOILEV.
+!          !  DO L = 1, NLAYR
+!          !    SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+!          !  ENDDO
+!
+!! NOTE chp - call this for each column of soil? Could calculate a separate value for each.
+!            CALL SOILEV_2D(SEASINIT,
+!     &        CELLS, EOS_SOIL, SW_AVAIL(1), WINF,         !Input
+!     &        SOILPROP, SOILPROP_furrow,                  !Input
+!     &        ES, ES_mm)                                  !Output
+!          END SELECT
 
 !     ---------------------------------------------------------
 !     2D model not compatible with energy balance (yet)
@@ -352,24 +353,25 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !       Soil evaporation after flood and mulch evaporation
         IF (EOS_SOIL > 1.E-6) THEN
 
-          SELECT CASE(MESEV)
-!         ------------------------
-          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
+!     Temporarily go back to Sulieman-Ritchie
+!          SELECT CASE(MESEV)
+!!         ------------------------
+!          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine 
             CALL ESR_SoilEvap_2D(RATE,
      &        CELLS, EOS_SOIL, SOILPROP_FURROW,      !Input
      &        ES, ES_LYR, ES_mm)                     !Output
-!         ------------------------
-          CASE DEFAULT 
-!         CASE ('R')  !Ritchie soil evaporation routine
-!           Calculate the availability of soil water for use in SOILEV.
-       !     DO L = 1, NLAYR
-       !       SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
-       !     ENDDO
-            CALL SOILEV_2D(RATE,
-     &        CELLS, EOS_SOIL, SW_AVAIL(1), WINF,         !Input
-     &        SOILPROP, SOILPROP_furrow,                  !Input
-     &        ES, ES_mm)                                  !Output
-          END SELECT
+!!         ------------------------
+!          CASE DEFAULT 
+!!         CASE ('R')  !Ritchie soil evaporation routine
+!!           Calculate the availability of soil water for use in SOILEV.
+!       !     DO L = 1, NLAYR
+!       !       SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+!       !     ENDDO
+!            CALL SOILEV_2D(RATE,
+!     &        CELLS, EOS_SOIL, SW_AVAIL(1), WINF,         !Input
+!     &        SOILPROP, SOILPROP_furrow,                  !Input
+!     &        ES, ES_mm)                                  !Output
+!          END SELECT
         ENDIF
       ENDIF
      

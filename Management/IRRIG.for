@@ -205,6 +205,9 @@ C-----------------------------------------------------------------------
 !     Water table depth (-99 indicates no water table present)
       MgmtWTD = -99.  
 
+!     Water table depth (-99 indicates no water table present)
+      MgmtWTD = -99.  
+
       IF (ISWWAT .EQ. 'Y') THEN
 
           JIRR = 0.0
@@ -258,6 +261,24 @@ C-----------------------------------------------------------------------
               IRRCOD = AIRRCOD
               DripRate = AIRAMT    
             Endif
+          ENDIF
+
+C-----------------------------------------------------------------------
+C         Find and Read Initial Conditions Section
+C-----------------------------------------------------------------------
+          IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
+            REWIND(LUNIO)
+            SECTION = '*INITI'
+            CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LINC
+            IF (FOUND .EQ. 0) THEN
+              CALL ERROR(SECTION, 42, FILEIO, LNUM)
+            ELSE
+              READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM =LNUM+1
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+              MgmtWTD = ICWD
+!              CALL PUT('MGMT','WATTAB',MgmtWTD)
+!              CALL PUT('MGMT','ICWD',ICWD)
+            ENDIF
           ENDIF
 
 C-----------------------------------------------------------------------
@@ -1103,7 +1124,7 @@ C               Estimate that an average of 5 mm of water will be lost.
                 !IRRAPL = SWDEF*10 + 5.0 ! Jin feel too much water added
                 IRRAPL = SWDEF*10 ! CHP had +5 here
                 IRRAPL = MAX(0.,IRRAPL)
-                !IRRAMT = IRRAPL ! add by JZW
+
               ELSE IF (IIRRI .EQ. 'W') THEN
 C               Apply fixed irrigation amount
                 IRRAPL = AIRAMT

@@ -27,6 +27,7 @@ C  01/14/2005 CHP Added METMP = 3: Corrected water content in temp. eqn.
 !  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil
 !                 water effects on albedo)
 !  12/09/2008 CHP Remove METMP and code for old (incorrect) soil water effect
+!  02/27/2023 CHP Added Kimball equation tied to METMP = "K" to compare effects
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : SOILT
@@ -378,7 +379,7 @@ C=======================================================================
 ! ABD      Average bulk density for soil profile (g [soil] / cm3 [soil])
 ! ALBEDO   Reflectance of soil-crop surface (fraction)
 ! ALX
-! ATOT     Sum of TMA array (last 5 days soil temperature) (캜)
+! ATOT     Sum of TMA array (last 5 days soil temperature) (째C)
 ! B        Exponential decay factor (Parton and Logan) (in subroutine
 !            HTEMP)
 ! BD(L)    Bulk density, soil layer L (g [soil] / cm3 [soil])
@@ -425,23 +426,23 @@ C=======================================================================
 !            density, drained upper limit, lower limit, pH, saturation
 !            water content.  Structure defined in ModuleDefs.
 ! SRAD     Solar radiation (MJ/m2-d)
-! SRFTEMP  Temperature of soil surface litter (캜)
-! ST(L)    Soil temperature in soil layer L (캜)
+! SRFTEMP  Temperature of soil surface litter (째C)
+! ST(L)    Soil temperature in soil layer L (째C)
 ! SW(L)    Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! SWI(L)   Initial soil water content (cm3[water]/cm3[soil])
-! TA       Daily normal temperature (캜)
+! TA       Daily normal temperature (째C)
 ! TAMP     Amplitude of temperature function used to calculate soil
-!            temperatures (캜)
+!            temperatures (째C)
 ! TAV      Average annual soil temperature, used with TAMP to calculate
-!            soil temperature. (캜)
-! TAVG     Average daily temperature (캜)
+!            soil temperature. (째C)
+! TAVG     Average daily temperature (째C)
 ! TBD      Sum of bulk density over soil profile
 ! TDL      Total water content of soil at drained upper limit (cm)
 ! TLL      Total soil water in the profile at the lower limit of
 !            plant-extractable water (cm)
-! TMA(I)   Array of previous 5 days of average soil temperatures. (캜)
-! TMAX     Maximum daily temperature (캜)
+! TMA(I)   Array of previous 5 days of average soil temperatures. (째C)
+! TMAX     Maximum daily temperature (째C)
 ! TSW      Total soil water in profile (cm)
 ! WC
 ! WW

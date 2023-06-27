@@ -90,6 +90,7 @@ C=======================================================================
 
       LOGICAL UseSimCtr, MulchWarn, SimLevel
 
+
 !     2020-11-04 CHP Added for yield forecast mode, RNMODE = 'Y'
       INTEGER ENDAT, SeasDur, FODAT, FStartYear, FEndYear
       CHARACTER*15 FWFILE
