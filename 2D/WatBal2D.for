@@ -44,7 +44,7 @@
       USE Cells_2D
       USE ModuleData
       IMPLICIT NONE
-      EXTERNAL WATERTABLE_2D, THETACAPOP, DRAINAGE_2D, ROOTWU_2D, 
+      EXTERNAL WATERTABLE_2D, DRAINAGE_2D, ROOTWU_2D, 
      &  WBSUM_2D, WBAL_2D, OPWBAL_2D, CALC_SW_VOL, WBAL_2D_TS, 
      &  RNOFF_FURROW, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
      &  WATERSTRESS
@@ -366,8 +366,6 @@
       
       IF (ISWITCH%ISWWAT == 'N') RETURN
 
-      CALL GET(DripIrrig)
- 
       DRAIN_2D = 0.0
       RWU_2D = 0.0
       RWUP_2D = 0.0
@@ -447,6 +445,8 @@
 
 !-----------------------------------------------------------------
 !     Drip irrigation schedule for today
+      CALL GET(DripIrrig)
+ 
 !      DripDur   = DripIrrig % DripDur   !duration of ea. irrig (hr)
 !      DripInt   = DripIrrig % DripInt   !interval between irrig (hr)
 !      DripNum   = DripIrrig % DripNum   !# of irrigs for J'th entries today
@@ -462,19 +462,14 @@
      &          DripIrrig(IDL) % DripNum(J)
         End do
       END DO
-      !DripIrrig % DripEvntEntr
       IF (MAXVAL(DripNumTotArr) > 0 .AND. MAXVAL(IrrRate) > 1.E-6) THEN
         ALLOCATE (IrrigSched(NDripLnTOT,MAXVAL(DripNumTotArr),2))
-!        ALLOCATE (DripDur(NDripLnTOT,MAXVAL(DripNumTotArr)))
         ALLOCATE (DripInt(NDripLnTOT,MAXVAL(DripNumTotArr)))
         ALLOCATE (DripRate(NDripLnTOT,MAXVAL(DripNumTotArr)))
-!        ALLOCATE (DripStart(NDripLnTOT,MAXVAL(DripNumTotArr)))
         
         IrrigSched = 0.
-!        DripDur = 0.
         DripInt = 0.
         DripRate = 0.
-!        DripStart = 0.
         DO IDL = 1, NDripLnTOT
           JJ = 0
           do J = 1, DripIrrig(IDL) % DripEvntEntr
@@ -495,12 +490,9 @@
           Enddo
         END DO
       ELSE 
-!        ALLOCATE (DripDur(IDL,1))
         ALLOCATE (DripInt(IDL,1))
         ALLOCATE (DripRate(IDL,1))
-!        ALLOCATE (DripStart(IDL,1))
         DripNumTotArr = 0
-!        DripDur = 0
         DripInt = 24.
       ENDIF
 

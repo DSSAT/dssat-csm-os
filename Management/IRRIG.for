@@ -480,23 +480,22 @@ C
                CYCLE
              ENDIF
 
-!            IF (INDEX('GC',MEHYD) > 0 .AND. IRRCOD(I) == 5) THEN
              IF (IRRCOD(I) == 5 .AND. DRIP2D) THEN
-                !------------------------------
-                !Drip irrigation
-                if ( I==1) then
+!               ------------------------------
+!               Drip irrigation
+                IF (I == 1) THEN     ! I = irrigation record #
                   NDRIP = NDRIP + 1 
-                  j = 1
-                else If (I.GT.1) then
-!                 IR007 can not insert in the IR005 on same day in X file
-                  if ((IDLAPL(I-1).EQ.IDLAPL(I)).and.(IRRCOD(I-1)== 5))
-     &                then
-                      J = J + 1
-                  else
+                  J = 1              ! J = irrig record # today
+                ELSEIF (I .GT. 1) THEN
+!                 Check if this irrigation is on same day as last
+                  IF ((IDLAPL(I-1) .EQ. IDLAPL(I)) .AND. 
+     &                (IRRCOD(I-1) == 5)) THEN
+                    J = J + 1
+                  ELSE
                       NDRIP = NDRIP + 1
                       J = 1
-                  endif
-                Endif
+                  ENDIF
+                ENDIF
                 DripEvntEntr(NDRIP) = J
                 DripDat(NDRIP) = IDLAPL(I)
                 DripRate(NDRIP, j)= AMT(I)          !drip rate ml/s
@@ -516,7 +515,7 @@ C
                 IIRRCV(NCOND) = IRRCOD(I)
                 COND(NCOND)   = AMT(I)
              
-                ! Regular irrigation upland fields
+!               Regular irrigation upland fields
                 NAPW = NAPW + 1
                 JULAPL(NAPW) = IDLAPL(I)
                 AMIR(NAPW)   = AMT(I)
@@ -525,7 +524,6 @@ C
           !------------------------------
            CASE (7)
 !          Water table
-
              IF (AMT(I) < -1.E-6) THEN
                AMT(I) = 0.0
                NMSG = NMSG + 1

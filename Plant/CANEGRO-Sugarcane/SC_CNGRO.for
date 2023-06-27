@@ -55,12 +55,12 @@ c     [interface copied from MZ_CERES.for]
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE SC_CNGRO (
      &    CONTROL, ISWITCH,                           !Input
-     &    CO2, EOP, EP, EO, ES, HARVFRAC, NH4, NO3,   !Input
+     &    CO2, EOP, EP, EO, ES,                       !Input
      &    SOILPROP, SW, TMAX, TMIN, TRWUP, EOS,       !Input
      &    RWUEP1, YREND, YRPLT, WEATHER, IRRAMT,      !Input
      &    CANHT, KCAN, KTRANS, MDATE, NSTRES,         !Output
      &    PORMIN, RLV, RWUMX,STGDOY, UNH4,            !Output
-     &    UNO3, XLAI, XHLAI, EORATIO, SENESCE)        !Output
+     &    UNO3, XLAI, XHLAI, EORATIO)                 !Output
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !     2023-01-26 chp removed unused variables from argument list: 
