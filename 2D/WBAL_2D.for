@@ -1,12 +1,12 @@
 !=====================================================================
 !  Wbal_2D, Subroutine, Gerrit Hoogenboom
-!  Modified for 2-D drip irrigation model
+!  Modified for 2D drip irrigation model
 !  Seasonally: Provides output Water balance.  Prints file SoilWatBal.OUT
 !  Data is obtained from WATBAL, SPAM and IRRIG modules daily.  
 !  Data from SPAM and IRRIG are sent via GETPUT routines.
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
-!  09/05/2008 CHP adapted WBAL for 2-D model 
+!  09/05/2008 CHP adapted WBAL for 2D model 
 !  08/15/2011  Add columns of LIMIT_2D and MgWTD for SoilWatBal.OUT
 !              Fix bug of YRDOY
 !              Clarify the output Drain as SolProfDrain to distiguish the drain from LIMIT_2D
@@ -16,10 +16,9 @@
 !  Called by: WATBAL
 !=====================================================================
       SUBROUTINE Wbal_2D(CONTROL, ISWITCH, COUNT,
-     &    CES, CEP, Drain_Limit2D, RUNOFF, IRRAMT, RAIN, 
-     &    TES, TEP, CRAIN, TDRAIN, TRUNOF, TSW,
-     &    LatFlow, !StdIrrig, 
-     &    ES, ES_DAY)
+     &    CEP, CES, CRAIN, DRAIN_2D, ES, ES_DAY, 
+     &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
+     &    TDRAIN, TEP, TES, TRUNOF, TSW)
 
 !     ------------------------------------------------------------------
       USE ModuleDefs 
@@ -29,31 +28,27 @@
       EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 
+      TYPE (ControlType), INTENT(IN) :: CONTROL
+      TYPE (SwitchType),  INTENT(IN) :: ISWITCH
+      INTEGER, INTENT(IN) :: COUNT
+      REAL, INTENT(IN) :: CEP, CES, CRAIN, DRAIN_2D, ES, IRRAMT, 
+     &  LatInflow, LatOutflow, RAIN, RUNOFF, TDRAIN, TEP, TES, 
+     &  TRUNOF, TSW
+      DOUBLE PRECISION, INTENT(IN) :: ES_DAY
+
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
       CHARACTER*14, PARAMETER :: SWBAL = 'SoilWatBal.OUT'
-      INTEGER DAS, DYNAMIC, LUNWBL, COUNT
-!     INTEGER DOY, YEAR, L, NLAYR
-      INTEGER YRSIM, YRDOY, INCDAT
-      INTEGER YR1, DY1, YR2, DY2, LIMIT_2D
+      INTEGER DAS, DOY, DYNAMIC, INCDAT, LIMIT_2D, LUNWBL
+      INTEGER RUN, YEAR, YRSIM, YRDOY
+      INTEGER YR1, DY1, YR2, DY2
 
-      REAL CEO, CES, CEP, TEP, TES, CRAIN, EFFIRR 
-      REAL TDRAIN, TOTIR, TRUNOF, TSW, TSWINI
-      REAL LatFlow, CumLatFlow    !, StdIrrig
+      REAL CEO, EFFIRR 
+      REAL TOTIR, TSWINI
+      REAL CumLatInflow, CumLatOutflow
       REAL WBALAN, MgmtWTD, SolProfDrain
-
-!     Temporary daily balance
-!     REAL, DIMENSION(NL) :: DLAYR, SWDELTS, SWDELTX
-!     REAL SWDELTSTOT, SWDELTXTOT
-      REAL IRRAMT, RAIN, RUNOFF, Drain_Limit2D
-      REAL CUMWBAL, TOTEFFIRR, TSWY , ES
-
-      DOUBLE PRECISION ES_DAY
+      REAL CUMWBAL, TOTEFFIRR, TSWY
 
       LOGICAL FEXIST
-
-!     The variable "ISWITCH" is of type "SwitchType".
-      TYPE (ControlType)  CONTROL
-      TYPE (SwitchType)   ISWITCH
 
 !     ------------------------------------------------------------------
       IDETW   = ISWITCH % IDETW
@@ -72,12 +67,21 @@
       
       CALL GET('MGMT','WATTAB',MgmtWTD)
       LIMIT_2D = BedDimension % LIMIT_2D
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+      RUN     = CONTROL % RUN
+
+      TSWINI = TSW
+      TSWY   = TSW
+      CUMWBAL = 0.0
+      CumLatInflow = 0.0
+      CumLatOutflow = 0.0
+
 !     Open output file
       CALL GETLUN('SWBAL', LUNWBL)
       INQUIRE (FILE = SWBAL, EXIST = FEXIST)
@@ -89,10 +93,10 @@
         WRITE(LUNWBL,'("*WATER BALANCE OUTPUT FILE")')
       ENDIF
 
-      CALL HEADER(SEASINIT, LUNWBL, CONTROL % RUN)
+      CALL HEADER(SEASINIT, LUNWBL, RUN)
 
-      IF (IDETL .EQ. 'D') THEN
-        !Write header for daily output
+      IF (INDEX('AD',IDETL) > 0) THEN
+!       Write header for daily output
         WRITE (LUNWBL,1120)
  1120   FORMAT('@YEAR DOY   DAS',
      & '      SWTD',                           !State vars
@@ -102,22 +106,16 @@
      & '     WBAL    CUMWBAL',                 !Balance
      & '    COUNT         ES     ES_DAY',      !Extras
      & ' LIMIT_2D MgWTD')                        
-      ENDIF
 
-      TSWINI = TSW
-      TSWY   = TSW
-      CUMWBAL = 0.0
-      CumLatFlow  = 0.0
-        
-        CALL YR_DOY(INCDAT(YRDOY,-1),YR2,DY2)
-      
-        WRITE (LUNWBL,1300) YR2, DY2, DAS, 
+        CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
+        WRITE (LUNWBL,1300) YEAR, DOY, DAS, 
      &    TSW,                              !State variables
      &    0.0, 0.0, 0.0,                    !Inflows
      &    0.0, 0.0, 0.0, 0.0,               !Outflows
      &    0.0, 0.0,                         !Balance
      &    COUNT, 0.0, 0.0,                  !Extras
      &    LIMIT_2D, MgmtWTD                 !LIMIT_2D, WaterTableDepth
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -125,66 +123,55 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
 !-----------------------------------------------------------------------
-      IF (IDETL .EQ. 'D') THEN
-      
+      IF (INDEX('AD',IDETL) > 0) THEN
+
 !       Transfer data from constructed variable to local variables
         CALL Get('SPAM','CEO',CEO)
+        CALL Get('MGMT','TOTIR', TOTIR)
+        CALL Get('MGMT','EFFIRR',EFFIRR)
+        CALL YR_DOY(YRDOY, YEAR, DOY) 
 
 !       Change in storage = Inflows - Outflows
 !       Balance = Inflows - Outflows - Change in storage
-        if (BedDimension % LIMIT_2D .GE. NRowsTot) then 
-          SolProfDrain = Drain_Limit2D
+        if (LIMIT_2D .GE. NRowsTot) then 
+          SolProfDrain = DRAIN_2D
         else
-          SolProfDrain =0
-!          LatFlow = LatFlow  + Drain_Limit2D It is already counted in Dainage_2D
+          SolProfDrain = 0.0
         endif
-!         rain water from plastic cover run to furrow, thus use full rain data from weather 
-!         The following variables are in mm and are on teh average of the ROW space
-          WBALAN = 
-!              Inflows in mm. IRRAMT include the drip & spinkle
-     &         + IRRAMT + RAIN 
-!    &         + IRRAMT + StdIrrig + RAIN     !Inflows  JZW remove teh IRR amount
-     &         + LatFlow                      !Lateral flow
-     &         - SolProfDrain - RUNOFF - TES - TEP   !Outflows
+
+        WBALAN = 
+     &         + IRRAMT + RAIN                !Inflows
+!                LatOutflow is negative!
+     &         + LatInflow + LatOutflow       !Lateral flow
+     &         - SolProfDrain - RUNOFF        !Outflows
+     &         - TES - TEP                    !Outflows
      &         - (TSW - TSWY)                 !Change in soil water 
-        !else
-        ! SolProfDrain =0
-          !! Drain_Limit2D is part of LatFlow
-         ! WBALAN = 
-   !  &         + IRRAMT + RAIN     !Inflows
-   !! &         + IRRAMT + StdIrrig + RAIN     !Inflows
-   !  &         + LatFlow                      !Lateral flow
-   !  &         - RUNOFF - TES - TEP   !Outflows
-   !  &         - (TSW - TSWY)   
-   !     endif
 
         CUMWBAL = CUMWBAL + WBALAN
 
-    
-        CALL YR_DOY(YRDOY, YR2, DY2)
-        WRITE (LUNWBL,1300) YR2, DY2, DAS 
+        WRITE (LUNWBL,1300) YEAR, DOY, DAS
      &    , TSW                                       !State variables
    
      &    , IRRAMT, RAIN                              !Inflows
-   ! &    , IRRAMT+StdIrrig, RAIN                     !Inflows
-     &    , LatFlow                                   !Lateral flow
+     &    ,LatInflow+LatOutflow                       !Lateral flow
      &    , SolProfDrain, RUNOFF, TES, TEP                   !Outflows
      &    , WBALAN, CUMWBAL                           !Balance
      &    , COUNT, ES, ES_DAY
      &    , LIMIT_2D, MgmtWTD
  1300   FORMAT(1X,I4,1X,I3.3,1X,I5
      &    , F10.4       !TSW
-     &    , 3F9.4       !Inflows
-     &    , 4F9.4       !Outflows
+     &    , 2F9.4       !Inflows
+     &    , 5F9.4       !Outflows
      &    , F9.4, F11.4 !Balances
-     &    , I9, 2F11.4  !ES, ES_DAY
-     &    , 5X, I3, 1X, F6.1)         !LIMIT_2D
+     &    , I9, 2F11.4  !COUNT, ES, ES_DAY
+     &    , 5X, I3, 1X, F6.1)    !LIMIT_2D, MgmtWTD
 
         !Save values for comparison tomorrow
         TSWY   = TSW
       ENDIF
       
-      CumLatFlow = CumLatFlow + LatFlow
+      CumLatInflow = CumLatInflow + LatInflow
+      CumLatOutflow = CumLatOutflow + LatOutflow
 
 !***********************************************************************
 !***********************************************************************
@@ -197,18 +184,9 @@ C-----------------------------------------------------------------------
       CALL YR_DOY(YRDOY, YR2, DY2)
 
       CALL Get('SPAM','CEO',CEO)
-!      CALL Get('SPAM','CEP',CEP)
-!      CALL Get('SPAM','CES',CES)
-!      CALL Get('SPAM','EP', EP)
-!      CALL Get('SPAM','ES', ES)
       CALL Get('MGMT','TOTIR', TOTIR)
       CALL Get('MGMT','EFFIRR',EFFIRR)
-
-      IF (EFFIRR .GT. 0.0) THEN
-        TOTEFFIRR = EFFIRR * TOTIR
-      ELSE
-        TOTEFFIRR = TOTIR
-      ENDIF
+      CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrig
 
       WRITE (LUNWBL,320)
   320 FORMAT(/,'!',5X,'WATER BALANCE PARAMETERS',
@@ -218,24 +196,25 @@ C-----------------------------------------------------------------------
      &                   YR2, DY2, TSW, 
      &                   TOTEFFIRR,
      &                   CRAIN, 
-     &                   CumLatFlow,
+     &                   CumLatInflow+CumLatOutflow,
      &                   TDRAIN, TRUNOF,
-     &                   CES, CEP, CEO
+     &                   CES, CEP, CES+CEP, CEO
   400 FORMAT(
      &    /,'!',5X,'Soil H20 (start) on Year/day',I5,'/',I3.3,T44,F10.2,
      &    /,'!',5X,'Soil H20 (final) on Year/day',I5,'/',I3.3,T44,F10.2,
-     &    /,'!',5X,'Effective Irrigation',         T44,F10.2,
-     &    /,'!',5X,'Precipitation',                T44,F10.2,
-     &    /,'!',5X,'Net lateral flow',             T44,F10.2,
-     &    /,'!',5X,'Drainage',                     T44,F10.2,
-     &    /,'!',5X,'Runoff',                       T44,F10.2,
-     &    /,'!',5X,'Soil Evaporation',             T44,F10.2,
-     &    /,'!',5X,'Transpiration',                T44,F10.2,
-     &    /,'!',5X,'Potential ET',                 T44,F10.2)
+     &    /,'!',5X,'Effective Irrigation',                    T44,F10.2,
+     &    /,'!',5X,'Precipitation',                           T44,F10.2,
+     &    /,'!',5X,'Net lateral flow',                        T44,F10.2,
+     &    /,'!',5X,'Drainage',                                T44,F10.2,
+     &    /,'!',5X,'Runoff',                                  T44,F10.2,
+     &    /,'!',5X,'Soil Evaporation',                        T44,F10.2,
+     &    /,'!',5X,'Transpiration',                           T44,F10.2,
+     &    /,'!',5X,'Total evapotranspiration',                T44,F10.2,
+     &    /,'!',5X,'Total potential evapotranspiration',      T44,F10.2)
 
       WBALAN = TSWINI - TSW    !Change in water content
      &       + TOTEFFIRR + CRAIN +            !Inflows
-     &       + CumLatFlow                     !Lateral flow
+     &       + CumLatInflow + CumLatOutflow   !Lateral flow
      &       - TDRAIN - TRUNOF - CES - CEP    !Outflows
 
       WRITE  (LUNWBL,500) WBALAN
@@ -330,7 +309,7 @@ C  12/05/1993 NBP Made into subroutine
 !  Calls:     None
 C=======================================================================
       SUBROUTINE WBSUM_2D(DYNAMIC,
-     &    CELLS, Drain_Limit2D, HalfRow, RAIN, RUNOFF, SWV,       !Input
+     &    CELLS, DRAIN_2D, HalfRow, RAIN, RUNOFF, SWV,    !Input
      &    CES, CEP, CRAIN, TDRAIN, TES, TEP, TRUNOF,      !Output
      &    TSW, TSWINI)                                    !Output
 
@@ -340,7 +319,7 @@ C=======================================================================
       SAVE
 
       INTEGER DYNAMIC, i, j
-      REAL CRAIN, Drain_Limit2D, CES, CEP, HalfRow, RAIN, RUNOFF
+      REAL CRAIN, DRAIN_2D, CES, CEP, HalfRow, RAIN, RUNOFF
       REAL TDRAIN, TEP, TES, TRUNOF, TSW, TSWINI
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
@@ -398,7 +377,7 @@ C     Increment summation variables.
 !-----------------------------------------------------------------------
       CRAIN  = CRAIN  + RAIN
       if (BedDimension % LIMIT_2D .GE. NRowsTot) 
-     &    TDRAIN = TDRAIN + Drain_Limit2D
+     &    TDRAIN = TDRAIN + DRAIN_2D
       TRUNOF = TRUNOF + RUNOFF
       CES    = CES    + TES
       CEP    = CEP    + TEP
@@ -439,7 +418,7 @@ C=======================================================================
 !=====================================================================
 !  Wbal_Sep, Subroutine, Cheryl Porter
 
-!  Daily water balance for 2-D drip irrigation model
+!  Daily water balance for 2D drip irrigation model
 !  Separate daily balances are kept for bed, under-bed and furrow
 !  Not currently used.
 !-----------------------------------------------------------------------
