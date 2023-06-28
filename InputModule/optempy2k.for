@@ -395,20 +395,19 @@ C-----------------------------------------------------------------------
       IF (NIRR .GT. 0) THEN
         DO I = 1, NIRR
           LINIO = LINIO + 1
-          SELECT CASE(IRRCOD(I)(3:5))
-          CASE('005') !Drip irrig
+
+          IF (IRRCOD(I)(3:5) == '005' .AND. NDPLNO > 0) THEN
             WRITE(LUNIO,'(3X,I7,1X,A5,1X,F5.2,A30)',IOSTAT=ERRNUM) 
      &        IDLAPL(I), IRRCOD(I), AMT(I), IRRSCHED(I)
-
-          CASE DEFAULT
+          ELSE
             IF (AMT(I) < 999.) THEN
-              WRITE(LUNIO,76,IOSTAT=ERRNUM) 
-     &          IDLAPL(I), IRRCOD(I),AMT(I)   !,IIRV(I)
+              WRITE(LUNIO,'(3X,I7,1X,A5,1X,F5.1)',IOSTAT=ERRNUM) 
+     &          IDLAPL(I), IRRCOD(I), AMT(I)   !,IIRV(I)
             ELSE
               WRITE(LUNIO,'(3X,I7,1X,A5,1X,I5)',IOSTAT=ERRNUM) 
      &          IDLAPL(I), IRRCOD(I),NINT(AMT(I))   !,IIRV(I)
             ENDIF
-          END SELECT
+          ENDIF
           IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
         END DO
       ENDIF
