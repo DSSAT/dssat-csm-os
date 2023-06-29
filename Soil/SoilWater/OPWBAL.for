@@ -425,7 +425,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs 
       INTEGER NLAYR, L
       REAL, DIMENSION(NL) :: DS
-      CHARACTER*8 LayerText(20)
+      CHARACTER*8 LayerText(NL)
       INTEGER, DIMENSION(NL) :: ZB, ZT
       CHARACTER*14 FMT  
         
