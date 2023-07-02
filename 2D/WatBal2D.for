@@ -746,7 +746,7 @@
 !           ------------  =  ---------- * -------------- * min * ---
 !           cm[row length]       s        cm[row length]         min
 
-!           Apply all irrigation to top row, DripCol column
+!           Apply all irrigation to DripRow, DripCol cell
             SWV_avail(DripRow,DripCol) = SWV_avail(DripRow,DripCol) + 
      &                           IrrVol(IDL)/ CellArea(DripRow,DripCol)
 !          SWV_avail(1,DripCol) = SWV_avail(1,DripCol) + IrrVol(IDL)
