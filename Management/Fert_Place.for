@@ -112,37 +112,10 @@ C=======================================================================
       IFERI = ISWITCH % IFERI
 !     IF (IFERI .EQ. 'N') RETURN
 
-!       ===================================================
-!       º    Fertilizer types as given in appendix 4,     º
-!       º    Technical Report 1,IBSNAT (1986).            º
-!       º                                                 º
-!       º      1   = Ammonium Nitrate                     º
-!       º      2   = Ammonium Sulphate                    º
-!       º      3   = Ammonium Nitrate Sulphate            º
-!       º      4   = Anhydrous Ammonia                    º
-!       º      5   = Urea                                 º
-!       º      51  = Urea Super Granule                   º
-!       º      6   = Diammonium Phosphate                 º
-!       º      7   = Monoammonium Phosphate               º
-!       º      8   = Calcium Nitrate                      º
-!       º      9   = Aqua Ammonia                         º
-!       º     10   = Urea Ammonium Nitrate                º
-!       º     11   = Calcium Ammonium Nitrate             º
-!       º     12   = Ammonium poly-phosphate              º
-!       º     13   = Single super phosphate               º
-!       º     14   = Triple super phosphate               º
-!       º     15   = Liquid phosphoric acid               º
-!       º     16   = Potassium chloride                   º
-!       º     17   = Potassium Nitrate                    º
-!       º     18   = Potassium sulfate                    º
-!       º     19   = Urea super granules                  º
-!       º     20   = Dolomitic limestone                  º
-!       º     21   = Rock phosphate                       º
-!       º     22   = Calcitic limestone                   º
-!       º     24   = Rhizobium                            º
-!       º     26   = Calcium hydroxide                    º
-!       º  19-22   = Reserved for control release fert.   º
-!       ===================================================
+!      ===================================================
+!      See fertilizer types in external file:
+!      ..\DSSAT48\StandardData\FERCH048.SDA
+!      ===================================================
 
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
@@ -770,7 +743,7 @@ C     depth.
 C
 C     Need to make provision for USG as a source
 
-!       Set fertilizer mixing efficiency based on method of fert.
+!     Set fertilizer mixing efficiency based on method of fert.
       SELECT CASE (METFER)
         CASE (1, 3);  FMIXEFF = FME(1)           !0% incorporation
         CASE (2, 4:9);FMIXEFF = FME(10)          !100% incorporated
@@ -833,7 +806,7 @@ C     Need to make provision for USG as a source
           KMAX     = KD
           
         CASE (5)
-!       This is applying with irrigation placement
+!       This is applying with irrigation placement; fertigation
 !       All fertilizer placed in layer KD with (PROF = 1.0)
           KD = IDLAYR (NLAYR,DLAYR,FERDEPTH)
           PROF(KD) = 1.0
@@ -868,42 +841,42 @@ C     Need to make provision for USG as a source
         END DO
       ENDIF
 
-!       Set the percentage of the surface residues that will be
-!       incorporated with the fertilizer incorporation. Set to zero
-!       if superficially applied or with irrigation water, and set
-!       to 100 if incorporated or deeply placed.
-        SELECT CASE (METFER)
-          CASE (2,4,19,20); FERMIXPERC = 100. 
-          CASE DEFAULT;     FERMIXPERC = 0.
-        END SELECT
+!     Set the percentage of the surface residues that will be
+!     incorporated with the fertilizer incorporation. Set to zero
+!     if superficially applied or with irrigation water, and set
+!     to 100 if incorporated or deeply placed.
+      SELECT CASE (METFER)
+        CASE (2,4,19,20); FERMIXPERC = 100. 
+        CASE DEFAULT;     FERMIXPERC = 0.
+      END SELECT
 
-!       Meng (04/27/2018):
-!       Because fertilizer drip line could be separate from irrigation line,
-!       The handling below is not proper
-!       If there is drip irrigation today, and fertilizer is applied in
-!       irrigation water (AP005) then use AppType = 'DRIP   '
-        Call GET(DripIrrig)
+!     Meng (04/27/2018):
+!     Because fertilizer drip line could be separate from irrigation line,
+!     The handling below is not proper
+!     If there is drip irrigation today, and fertilizer is applied in
+!     irrigation water (AP005) then use AppType = 'DRIP   '
+      Call GET(DripIrrig)
         
-!       Set the percentage of fertilizer that is applied to the root zone
-!       This is used in the soil inorganic phosphorus routine to compute
-!       P available for uptake by roots.
-        DrpRefIdx = -99
-        AppType = ' '
-        SELECT CASE (METFER)
-          CASE (3,4,18); AppType = 'BANDED '
-          CASE (5)
-            DO J = 1, NDrpLn
-              IF (DripIrrig(J)%DripDep .EQ. FERDEPTH 
-     &          .AND. DripIrrig(J)%IrrRate > 1.E-6) THEN
-                 AppType = 'DRIP   '
-                 DrpRefIdx = J
-                 exit
-              ENDIF
-            Enddo
-!         CASE (7,8,9) ; AppType = 'HILL   '
-          CASE (7,8,9,19,20); AppType = 'POINT  '
-          CASE DEFAULT ; AppType = 'UNIFORM'
-        END SELECT
+!     Set the percentage of fertilizer that is applied to the root zone
+!     This is used in the soil inorganic phosphorus routine to compute
+!     P available for uptake by roots.
+      DrpRefIdx = -99
+      AppType = ' '
+      SELECT CASE (METFER)
+        CASE (3,4,18); AppType = 'BANDED '
+        CASE (5)
+          DO J = 1, NDrpLn
+            IF (DripIrrig(J)%DripDep .EQ. FERDEPTH 
+     &        .AND. DripIrrig(J)%IrrRate > 1.E-6) THEN
+               AppType = 'DRIP   '
+               DrpRefIdx = J
+               exit
+            ENDIF
+          Enddo
+!       CASE (7,8,9) ; AppType = 'HILL   '
+        CASE (7,8,9,19,20); AppType = 'POINT  '
+        CASE DEFAULT ; AppType = 'UNIFORM'
+      END SELECT
 
       RETURN
       END SUBROUTINE FertLayers
