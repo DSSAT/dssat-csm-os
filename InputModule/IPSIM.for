@@ -840,7 +840,8 @@ C-----------------------------------------------------------------------
         CASE('CRGRO','MZCER','SGCER')
           SELECT CASE(CONTROL % CROP)
 !         CASE('SB','FA','MZ','RI','PN','SG') 
-          CASE('SB','FA','MZ','PN','SG') 
+!         CASE('SB','FA','MZ','PN','SG') 
+          CASE('SB','FA','MZ','PN','SG','TM','GB') 
 !           Phosphorus model has been enabled and tested for these crops, do nothing
 
           CASE DEFAULT
