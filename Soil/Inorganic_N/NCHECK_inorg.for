@@ -23,7 +23,7 @@ C-----------------------------------------------------------------------
       CHARACTER*78  MSG(10)
       INTEGER L, NLAYR, YRDOY
       REAL, DIMENSION(NL) :: NH4, NO3, SNH4, SNO3, UREA
-      REAL, PARAMETER :: TOL = -1.E-6
+      REAL, PARAMETER :: TOL = 0.0
 
       TYPE (ControlType) CONTROL
       YRDOY   = CONTROL % YRDOY
