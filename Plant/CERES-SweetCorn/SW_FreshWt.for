@@ -4,7 +4,8 @@
 !  Sweet corn fresh weight 
 !----------------------------------------------------------------------
 !  Revision history
-!  04/21/2008 CHP Moved this code from SW_GROSUB   
+!  04/21/2008 CHP Moved this code from SW_GROSUB
+!  06/29/2023  FO Updated FreshWT.OUT header for SweetCorn   
 !----------------------------------------------------------------------
 !
 !  Called : SW_GROSUB
@@ -78,7 +79,7 @@
           ELSE
             OPEN (UNIT = NOUTPF, FILE = FWFILE, STATUS='NEW',
      &        IOSTAT = ERRNUM)
-              WRITE(NOUTPF,'("*Fresh weight daily output")')
+              WRITE(NOUTPF,'("*Fresh Weight Output File")')
           ENDIF
 
           CALL HEADER(SEASINIT, NOUTPF, CONTROL%RUN)
@@ -88,7 +89,7 @@
 
  1000 FORMAT ('!',22X,'(0-1)  g/ear g/ear  <---- kg/ha ---> < ear/ha >')
  1001 FORMAT ('@YEAR DOY   DAS   DAP',
-     &               '  PDMCD  AFPWD ADPWD    FPWAD    MFWAD    NFWAD')
+     &               '  PDMCD  AFPWD ADPWD    TOFPW    MFWAD    NFWAD')
 
           EARS1_2= 0.0
           FWYLD1_2=0.0
