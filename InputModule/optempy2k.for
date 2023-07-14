@@ -291,9 +291,12 @@ C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,59,IOSTAT=ERRNUM) FLDNAM,FILEW(1:8),SLOPE,
      &       FLOB,DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,
-     &       BEDWD, BEDHT, PMALB
+!     2023-07-14 chp changed order of these three variables to allow 
+!                    1D and 2D models to use the same file format.
+!    &       BEDWD, BEDHT, PMALB
+     &       PMALB, BEDWD, BEDHT
    59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
-     &        2(1X,A5),1X,F5.0,1X,A10,2F6.1,F6.2)
+     &        2(1X,A5),1X,F5.0,1X,A10,F6.2,2F6.1)
 
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
       WRITE (LUNIO,60,IOSTAT=ERRNUM) XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS

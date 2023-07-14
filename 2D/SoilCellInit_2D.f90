@@ -63,7 +63,7 @@
     ! CHARACTER*17 bedSOILLAYERTYPE 
     CHARACTER*125 MSG(50)
 !   CHARACTER*180 CHAR
-    INTEGER L, M, NLayr, Row, Col
+    INTEGER L, M, NLayr, Row, Col, NMSG
     INTEGER ERR, FOUND, LNUM, LUNIO
     INTEGER N_Bed_Cols, N_Fur_Cols, N_Bed_Rows  !, NRowsTOT, NColsTOT
     INTEGER FurRow1, FurCol1, BedCase
@@ -113,22 +113,25 @@
     SECTION = '*FIELD'
     CALL FIND(LUNIO, SECTION, LNUM, FOUND)
     IF (FOUND /= 0)  THEN
-      READ(LUNIO,'(79X,2(1x,F5.1), F6.2)',IOSTAT=ERR)BEDWD, BEDHT, PMALB
+!     2023-07-14 chp changed order of these three variables to allow 
+!                    1D and 2D models to use the same file format.
+!     READ(LUNIO,'(79X,2(1x,F5.1), F6.2)',IOSTAT=ERR)BEDWD, BEDHT, PMALB
+      READ(LUNIO,'(79X,F6.2,2(1x,F5.1))',IOSTAT=ERR)PMALB, BEDWD, BEDHT
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
       IF ((ERR == 0) .AND. (PMALB .eq. 0.)) THEN
         PMALB = -99.
       ENDIF
     ELSE
-      BEDWD = -99
-      BEDHT = -99
-      PMALB = -99
+      BEDWD = -99.
+      BEDHT = -99.
+      PMALB = -99.
     ENDIF
 
 !   Read Planting Details Section
     SECTION = '*PLANT'
     CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
     IF (FOUND == 0) CALL ERROR(SECTION, 42, CONTROL%FILEIO, LNUM)
-    READ(LUNIO,'(42X,F6.0,42X,2F6.0)',IOSTAT=ERR) ROWSPC_CM !, BEDWD, BEDHT
+    READ(LUNIO,'(42X,F6.0,42X,2F6.0)',IOSTAT=ERR) ROWSPC_CM 
     LNUM = LNUM + 1
     IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
     
@@ -163,17 +166,18 @@
         BEDWD = ROWSPC_CM
         PMCover = .TRUE.
         MSG(1)= "Flat surface with full plastic cover."
-        call INFO(1,errkey,msg)
+        Write(MSG(2),'(A9,F5.2)') "Albedo = ", PMALB
+        NMSG = 2
       ELSE
 !       Case 1, Flat surface, no plastic mulch cover
         BedCase = 1 
         BEDWD = 0.0
         PMCover = .FALSE.
         MSG(1)= "Flat surface, no plastic mulch cover."
-        call INFO(1,errkey,msg)
+        NMSG = 1
       ENDIF
 
-!   Bed width is specified (2 < BEDWT < ROWSPC -2)
+!   Bed width is specified (2 < BEDWD < ROWSPC -2)
     ELSEIF (BEDHT < 2.) THEN 
 !     Flat surface
       RaisedBed = .FALSE.
@@ -184,12 +188,17 @@
         PMCover = .TRUE.
         BEDWD = BEDWD
         MSG(1)= "Flat surface, partial plastic cover."
+        Write(MSG(2),'(A,F6.2)') "Albedo of cover:         ", PMALB
+        WRITE(MSG(3),'(A,F6.1)') "Plastic cover width (cm):", BEDWD
+        WRITE(MSG(4),'(A,F6.1)') "Row width (cm):          ", ROWSPC_CM
+        NMSG = 4
       Else
 !       Case 1, Flat surface, no plastic mulch cover
         BedCase = 1 
         PMCover = .FALSE.
         BEDWD = 0.0  !no bed, treat as all "furrow"
         MSG(1)= "Flat surface with no plastic mulch cover."
+        NMSG = 1
       Endif
 
 !   Raised bed
@@ -202,14 +211,23 @@
         BedCase = 4 
         PMCover = .TRUE.
         MSG(1)= "Raised bed with plastic mulch cover."
+        WRITE(MSG(2),'(A,F6.1)') "Bed width (cm):    ", BEDWD
+        WRITE(MSG(3),'(A,F6.1)') "Bed height (cm):   ", BEDHT
+        Write(MSG(4),'(A,F6.2)') "Albedo of bed cover", PMALB
+        WRITE(MSG(5),'(A,F6.1)') "Row width (cm):    ", ROWSPC_CM
+        NMSG = 5
       ELSE
         BedCase = 5 ! Raised bed, no plastic mulch 
         PMCover = .FALSE.
         MSG(1)= "Raised bed without plastic mulch cover."
+        WRITE(MSG(2),'(A,F6.1)') "Bed width (cm): ", BEDWD
+        WRITE(MSG(3),'(A,F6.1)') "Bed height (cm):", BEDHT
+        WRITE(MSG(4),'(A,F6.1)') "Row width (cm): ", ROWSPC_CM
+        NMSG = 4
       Endif
     ENDIF
     
-    CALL WARNING(1,ERRKEY,MSG)
+    CALL INFO(NMSG,ERRKEY,MSG)
     Call PUT('PLANT', 'BEDHT',  BEDHT)
     Call PUT('PLANT', 'BEDWD',  BEDWD)
 

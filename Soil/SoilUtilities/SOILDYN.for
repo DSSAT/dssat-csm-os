@@ -2337,7 +2337,7 @@ C=======================================================================
       CALL FIND(LUNIO, SECTION, LNUM, FOUND)
       IF (FOUND /= 0)  THEN
 !     For 1D model, plastic mulch width is read from "bed width" variable in FileX
-      READ(LUNIO,'(79X,F6.0,6X,F6.0)',IOSTAT=ERR) PMWD, PMALB
+      READ(LUNIO,'(79X,F6.0,F6.0)',IOSTAT=ERR) PMALB, PMWD
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
         IF ((ERR == 0) .AND. (PMALB .eq. 0.)) THEN
           PMALB = -99.
@@ -2362,30 +2362,30 @@ C=======================================================================
           WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
           MSG(3) = "Simulating flat surface entirely covered " //
      &             "by by plastic mulch."
-          call warning(3,errkey,msg)
+          call INFO(3,errkey,msg)
         ELSEIF (PMWD .GT. 0.) THEN 
           PMCover   = .TRUE.
           WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
           WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
           MSG(3)= "Simulating flat surface partially covered " // 
      &            "by plastic mulch."
-          call warning(3,errkey,msg)
+          call INFO(3,errkey,msg)
         ELSE
           PMCover   = .FALSE.
           MSG(1)= "Missing mulch cover width."
           MSG(2) = "Simulating flat surface with no plastic mulch."
-          call warning(2,errkey,msg)
+          call INFO(2,errkey,msg)
         ENDIF
       ELSE
         IF (PMWD .GT. 0) THEN
           PMCover   = .FALSE.
           MSG(1)= "Missing albedo for plastic mulch. "
           MSG(2)= "Simulating flat surface with no plastic mulch."
-          call warning(2,errkey,msg)
+          call INFO(2,errkey,msg)
         ELSE
           PMCover   = .FALSE.
           MSG(1)= "Simulating flat surface with no plastic mulch."
-          call warning(1,errkey,msg)
+          call INFO(1,errkey,msg)
         ENDIF
       ENDIF
     

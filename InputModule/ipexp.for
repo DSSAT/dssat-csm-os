@@ -1172,8 +1172,6 @@ C=======================================================================
       IF (SFDRN .LE. 0.0) THEN
         SFDRN = 100.
       ENDIF
-      Write(msg(1),'("Plastic mulch cover albedo =",F7.2)') PMALB 
-      call info(1,errkey,msg)
 C
 C    New section
 C
@@ -1279,7 +1277,10 @@ C
  71     CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
         IF (ISECT .EQ. 1) THEN
            READ (CHARTEST,90,IOSTAT=ERRNUM) LN,
-     &         BEDWD, BEDHT, PMALB
+!     2023-07-14 chp changed order of these three variables to allow 
+!                    1D and 2D models to use the same file format.
+!    &         BEDWD, BEDHT, PMALB
+     &         PMALB, BEDWD, BEDHT
 
            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          ELSE
