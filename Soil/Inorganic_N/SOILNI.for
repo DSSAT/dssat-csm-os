@@ -913,9 +913,12 @@ C=======================================================================
         UREA(L) = UREA(L) + DLTUREA(L)
 
 !       Underflow trapping
-        IF (ABS(SNO3(L)) .LT. 1.E-8) SNO3(L) = 0.0
-        IF (ABS(SNH4(L)) .LT. 1.E-8) SNH4(L) = 0.0
-        IF (ABS(UREA(L)) .LT. 1.E-8) UREA(L) = 0.0
+!        IF (ABS(SNO3(L)) .LT. 1.E-8) SNO3(L) = 0.0
+!        IF (ABS(SNH4(L)) .LT. 1.E-8) SNH4(L) = 0.0
+!        IF (ABS(UREA(L)) .LT. 1.E-8) UREA(L) = 0.0
+!        IF (SNO3(L) .LE. 0.0) SNO3(L) = 0.0
+!        IF (SNH4(L) .LE. 0.0) SNH4(L) = 0.0
+!        IF (UREA(L) .LE. 0.0) UREA(L) = 0.0
 
 !       Conversions.
         NO3(L)  = SNO3(L) * KG2PPM(L)
@@ -1048,7 +1051,7 @@ C-----------------------------------------------------------------------
 ! AK            Maximum hydrolysis rate of urea (i.e. proportion of urea 
 !                 that will hydrolyze in 1 day under optimum conditions). 
 !                 AK >= 0.25. Also: Today's value of the nitrification 
-!                 potential, calculated from the previous day’s value (d-1)
+!                 potential, calculated from the previous dayï¿½s value (d-1)
 ! ALGFIX        N in algae (kg [N] / ha)
 ! ALI            
 ! NITRIF(L)     Daily nitrification rate (kg [N] / ha / d)
@@ -1058,7 +1061,7 @@ C-----------------------------------------------------------------------
 !                 and/or timing of simulation.  The structure of the 
 !                 variable (ControlType) is defined in ModuleDefs.for. 
 ! CUMFNRO       Cumulative N lost in runoff over bund (kg [N] / ha)
-! CW            Water extractable SOM carbon (µg [C] / g [soil])
+! CW            Water extractable SOM carbon (ï¿½g [C] / g [soil])
 ! DENITRIF      Denitrification rate (kg [N] / ha / d)
 ! DLAG(L)       Number of days with soil water content greater than the 
 !                 drained upper limit for soil layer L.  For 
@@ -1109,7 +1112,7 @@ C-----------------------------------------------------------------------
 !                 hydrolyzed (this is assumed to occur 21 days after the 
 !                 urea application) (d)
 ! IUON          Flag indicating presence of urea (true or false) 
-! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to µg [N] / g 
+! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to ï¿½g [N] / g 
 !                 [soil] for soil layer L 
 ! LFD10         Date, 10 days after last fertilization.  Used to determine 
 !                 whether hourly flood chemistry computations will be done 
@@ -1117,12 +1120,12 @@ C-----------------------------------------------------------------------
 ! LL(L)         Volumetric soil water content in soil layer L at lower 
 !                 limit (cm3 [water] / cm3 [soil])
 ! NBUND         Number of bund height records 
-! NH4(L)        Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)        Ammonium N in soil layer L (ï¿½g[N] / g[soil])
 ! NITRIFppm        Nitrification rate (kg [N] / ha - d)
 ! NL            Maximum number of soil layers = 20 
 ! NLAYR         Actual number of soil layers 
 ! NNOM          Net mineral N release from all SOM sources (kg [N] / ha)
-! NO3(L)        Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)        Nitrate in soil layer L (ï¿½g[N] / g[soil])
 ! NSOURCE       Flag for N source (1 = urea, 2 = NO3) 
 ! NSWITCH       Nitrogen switch - can be used to control N processes (0-No 
 !                 N simulated, 1-N simulated, 5-Nitrification off, 
@@ -1143,7 +1146,7 @@ C-----------------------------------------------------------------------
 !                 bulk density, drained upper limit, lower limit, pH, 
 !                 saturation water content.  Structure defined in ModuleDefs. 
 ! SRAD          Solar radiation (MJ/m2-d)
-! ST(L)         Soil temperature in soil layer L (°C)
+! ST(L)         Soil temperature in soil layer L (ï¿½C)
 ! SW(L)         Volumetric soil water content in layer L
 !                (cm3 [water] / cm3 [soil])
 ! SWEF          Soil water evaporation fraction; fraction of lower limit 
@@ -1152,15 +1155,15 @@ C-----------------------------------------------------------------------
 ! T2            Temperature factor for nitrification 
 ! TFACTOR       Temperature factor for nitrification 
 ! TFDENIT       Temperature factor for denitrification rate (range 0-1) 
-! TFNITY(L)     Yesterday’s soil temperature factor for nitrification 
+! TFNITY(L)     Yesterdayï¿½s soil temperature factor for nitrification 
 !                 (range 0-1) 
 ! TFUREA        Soil temperature factor for urea hydrolysis (range 0-1) 
 ! TIMMOBILIZE   Cumulative N immoblized (kg [N] / ha)
 ! TKELVIN       Soil temperature (oK)
 ! TLAG          Temperature factor for nitrification (0-1) 
 ! CLeach        Cumulative N leached from soil (kg [N] / ha)
-! TMAX          Maximum daily temperature (°C)
-! TMIN          Minimum daily temperature (°C)
+! TMAX          Maximum daily temperature (ï¿½C)
+! TMIN          Minimum daily temperature (ï¿½C)
 ! TMINERALIZE   Cumulative mineralization (kg [N] / ha)
 ! TNH4          Total extractable ammonium N in soil profile (kg [N] / ha)
 ! TNH4NO3       Total amount of inorganic N (NH4 and NO3) across soil 
