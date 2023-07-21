@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.29  FO 2023-07-21 Removed unused Nitrogen Stress parameters read from IPPLNT (commit 25ec202)
 !       4.8.1.28  FO 2023-07-14 Removed unnecessary IF statements in SOILNI.for (commit 20fd0c3)
 !       4.8.1.27  FO 2023-07-07 TOL value NCHECK_inorg.for, KCAN_ECO and FreshWt header (commit e8bd43a)
 !       4.8.1.26  FO 2023-06-16 Modified fileT read in PEST/MOW to read 2-4 digit year format (commit 49eb470)
