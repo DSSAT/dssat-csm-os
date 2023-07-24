@@ -285,8 +285,12 @@ C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,40)'*FIELDS             '
       LINIO = LINIO + 1
+!     2023-07-14 chp changed order of PMALB and PMWD variables to allow 
+!                    1D and 2D models to use the same file format.
       WRITE (LUNIO,59,IOSTAT=ERRNUM) FLDNAM,FILEW(1:8),SLOPE,FLOB,DFDRN,
-     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,PMWD,PMALB
+     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,PMALB,PMWD
+   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,1X,F5.0,1X,F5.1,
+     &        2(1X,A5),1X,F5.0,1X,A10,F6.2,2F6.1)
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
       WRITE (LUNIO,60,IOSTAT=ERRNUM) XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
      &            , FldHist, FHDur
@@ -767,8 +771,6 @@ C-----------------------------------------------------------------------
    50 FORMAT (I3,A8,1X,A2,1X,A60)
    55 FORMAT (I3,I2,2(1X,I1),1X,A25)
    56 FORMAT (3X,A2,1X,A6,1X,A16)
-   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,1X,F5.0,1X,F5.1,
-     &        2(1X,A5),1X,F5.0,1X,A10,1X,F5.1,F6.2)
    60 FORMAT (3X,2(F15.10,1X),F9.3,1X,F17.1,1X,F5.0,2(1X,F5.1),1X,A5,I6)
    70 FORMAT (3X,I7,1X,I7,2F6.1,2(5X,A1),2(1X,F5.0),1X,F5.1,
      &        2(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)

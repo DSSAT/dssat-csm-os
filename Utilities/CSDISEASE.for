@@ -76,7 +76,7 @@
       INTEGER       dynamic       ! Program control variable       #
       INTEGER       fnumdis(0:5)  ! File number,disease outputs    #
       INTEGER       fnumlfdi      ! File number,leaves,disease mod #
-!      INTEGER       fnumwrk       ! File number,work file          #
+!     INTEGER       fnumwrk       ! File number,work file          #
       INTEGER       i             ! Loop counter                   #
       INTEGER       l             ! Loop counter                   #
       INTEGER       lfcnum        ! Leaf cohort number             #
@@ -176,7 +176,7 @@
       CHARACTER (LEN=64)  spdirfle      ! Species directory+file
       CHARACTER (LEN=79)  outhed        ! Output file heading
 
-      !LOGICAL             fopen         ! File open indicator
+!     LOGICAL             fopen         ! File open indicator
 
       INTRINSIC  AMAX1,AMIN1,EXP,FLOAT,INT,MAX,MIN,MOD
 

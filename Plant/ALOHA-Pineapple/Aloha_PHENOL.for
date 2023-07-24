@@ -36,7 +36,6 @@ C=======================================================================
 
       INTEGER      DYNAMIC, EDATE, MDATE,HAREND
       REAL         XSTAGE
-!TEMP      REAL         GRAINN
 
       CHARACTER*1 ISWWAT, IDETO, ISWNIT
       INTEGER     ISTAGE, NLAYR, NOUTDO, ISDATE, FHDATE, PMDATE
@@ -433,6 +432,7 @@ C     6 - Physiological maturity
 
           PMDATE = YRDOY                  ! physiological maturity date
           MDATE  = YRDOY                  ! Set MDATE to stop model
+          CONTROL % CropStatus = 1
           STGDOY(ISTAGE) = YRDOY
 
 !         Ready for next stage
