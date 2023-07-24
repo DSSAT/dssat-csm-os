@@ -297,7 +297,6 @@ C-----------------------------------------------------------------------
      &       PMALB, BEDWD, BEDHT
    59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
      &        2(1X,A5),1X,F5.0,1X,A10,F6.2,2F6.1)
-
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
       WRITE (LUNIO,60,IOSTAT=ERRNUM) XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
      &            , FldHist, FHDur

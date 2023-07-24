@@ -16,6 +16,7 @@ C                 Added warning for use of default ecotype.
 !  09/11/2008 KJB, CHP Added 5 species parameters affecting N stress
 C  01/18/2018 KRT Added functionality for ASCE dual Kc ET routines
 !  06/29/2023  FO Removed KCAN_ECO unused ecotype parameter read.
+!  07/14/2023  FO Removed unused Nit. stress parameters from SPE file.
 C-----------------------------------------------------------------------
 !  Called:      PLANT
 !  Calls:       FIND, ERROR, IGNORE
@@ -28,7 +29,6 @@ C=======================================================================
      &  POASH, PORMIN, PROLFI, PRORTI, PROSHI, PROSTI,    !Output
      &  R30C2, RCH2O, RES30C, RFIXN, RLIG, RLIP, RMIN,    !Output
      &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX)    !Output
-!     &  NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP) !Output
 
 C-----------------------------------------------------------------------
 
@@ -67,9 +67,6 @@ C-----------------------------------------------------------------------
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KC_SLOPE !KCAN_ECO
-
-!     Species parameters for N stress  9/11/2008
-!     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -333,42 +330,7 @@ C-----------------------------------------------------------------------
         ENDIF
 
 C-----------------------------------------------------------------------
-C
-C     ***** READ NITROGEN STRESS PARAMETERS *****
-C
-C-----------------------------------------------------------------------
-!        REWIND (LUNCRP)
-!        CALL FIND2(LUNCRP, '*NITROGEN STRESS', LNUM, FOUND)
-!        IF (FOUND .EQ. 0) THEN
-!!         Use default values
-!          NSTR_FAC = 0.70
-!          NSTR_EXP = 1.00
-!          NRAT_FAC = 1.00
-!          EXCS_FAC = 0.20
-!          EXCS_EXP = 0.50
-!          MSG(1) = "Default nitrogen stress values will be used."
-!        ELSE
-!          CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-!          READ(CHAR,'(2F6.0)',IOSTAT=ERR) NSTR_FAC, NSTR_EXP
-!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!          CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-!          READ(CHAR,'(F6.0)',IOSTAT=ERR) NRAT_FAC
-!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!          CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-!          READ(CHAR,'(2F6.0)',IOSTAT=ERR) EXCS_FAC, EXCS_EXP
-!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!          MSG(1) = "Nitrogen stress values read from species file."
-!        ENDIF
-!
-!        WRITE(MSG(2),'(A,F6.2)') "NSTRES factor   = ", NSTR_FAC
-!        WRITE(MSG(3),'(A,F6.2)') "NSTRES exponent = ", NSTR_EXP
-!        WRITE(MSG(4),'(A,F6.2)') "NRATIO factor   = ", NRAT_FAC
-!        WRITE(MSG(5),'(A,F6.2)') "EXCESS factor   = ", EXCS_FAC
-!        WRITE(MSG(6),'(A,F6.2)') "EXCESS exponent = ", EXCS_EXP
-!        CALL INFO(6,ERRKEY,MSG)
-
         CLOSE (LUNCRP)
-
 C-----------------------------------------------------------------------
 C    Read Ecotype Parameter File
 C-----------------------------------------------------------------------

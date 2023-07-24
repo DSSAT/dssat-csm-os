@@ -386,8 +386,12 @@ C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
       WRITE (LUNIO,'(/,"*FIELDS")')
+!     2023-07-14 chp changed order of PMALB and PMWD variables to allow 
+!                    1D and 2D models to use the same file format.
       WRITE(LUNIO,'("@L  ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD",
-     & 2X,"FLDS  FLST SLTX   SLDP ID_SOIL  BDWD  BDHT PMALB")')
+      
+      
+     & 2X,"FLDS  FLST SLTX   SLDP ID_SOIL PMALB  BDWD  BDHT")')
       WRITE(LUNIO,57,IOSTAT=ERRNUM) LNFLD,FLDNAM,FILEW(1:8),SLOPE,
      &   FLOB, DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,
 !     2023-07-14 chp changed order of these three variables to allow 
