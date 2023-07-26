@@ -76,6 +76,9 @@ C=======================================================================
 
       NDAYS_WET = 0.0
 
+!     CHP added 2023-03-21
+      DLAG_2D = 0.0
+
 !!   temp chp
 !      write(4000,'(a,/,a)') "Ceres",
 !     &   "  yrdoy Lyr Wet    wfps  ratio1  ratio2"

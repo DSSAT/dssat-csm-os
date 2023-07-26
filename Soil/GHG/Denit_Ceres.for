@@ -123,7 +123,7 @@ C-UPS     Corrected per e-mail 03/29/00
 !     ----------------------------------------------------------------
 
 !        From Century:
-         !CHP changed 1/14/2004 per email from UPS / AJG
+!        CHP changed 1/14/2004 per email from UPS / AJG
           CW = 24.5 + 0.0031 * (SSOMC(L) + 0.2 * LITC(L)) * KG2PPM(L)
 !     ----------------------------------------------------------------
 !

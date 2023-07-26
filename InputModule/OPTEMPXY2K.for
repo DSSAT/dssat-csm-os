@@ -44,6 +44,7 @@ C=======================================================================
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
      &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX, !PMWD,
      &           BEDHT, BEDWD)
+!                note chp: PMALB comes from a block. Why not pass it here?
 
       USE ModuleDefs
       IMPLICIT NONE
