@@ -1,4 +1,4 @@
-﻿subroutine SAMUCA(CONTROL, ISWITCH,                                 &
+subroutine SAMUCA(CONTROL, ISWITCH,                                 &
 !        CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,      &  !Input
          CO2, DAYL, EOP,                                            &  !Input
 !        SOILPROP, tsoil, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   &  !Input
@@ -821,7 +821,6 @@
     call get_cultivar_coeff(                        popmat,         'POPMAT', CONTROL, CF_ERR)
     call get_cultivar_coeff(                       poppeak,        'POPPEAK', CONTROL, CF_ERR)
     call get_cultivar_coeff(                    tillochron,     'TILLOCHRON', CONTROL, CF_ERR)
-    call get_cultivar_coeff(                   phyllochron,    'PHYLLOCHRON', CONTROL, CF_ERR)
     call get_cultivar_coeff(                           sla,            'SLA', CONTROL, CF_ERR)
     call get_cultivar_coeff(                           mla,            'MLA', CONTROL, CF_ERR)
     call get_cultivar_coeff(                   plastochron,    'PLASTOCHRON', CONTROL, CF_ERR)
@@ -941,6 +940,10 @@
     t_max_ws_til    = t_max_ws_pho
     t_mid_ws_til    = t_mid_ws_pho
     t_min_ws_til    = t_min_ws_pho
+    
+    !--- Assume phyllochron=plastochron for simplicity
+    !--- We do not have such high level of precision yet
+    phyllochron = plastochron
     
     !--------------------------!
     !--- Simulation Options ---!
