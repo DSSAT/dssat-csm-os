@@ -1,10 +1,10 @@
-$BATCH(ALFALFA)
+$BATCH(ALL)
 !
-! Directory    : C:\DSSAT48\ALFALFA
-! Command Line : C:\DSSAT48\DSCSM048.EXE PRFRM048 B DSSBatch.v48
-! Crop         : Alfalfa         
-! Experiment   : AGZG1501.ALX
-! ExpNo        : 1
+! Directory    : C:\DSSAT48\BatchFiles
+! Command Line : C:\DSSAT48\DSCSM048.EXE B DSSBatch.v48
+! Crop         : All         
+! Experiment   : *
+! ExpNo        : *
 ! Debug        : C:\DSSAT48\DSCSM048.EXE PRFRM048 " B DSSBatch.v48"
 !
 @FILEX                                                                                        TRTNO     RP     SQ     OP     CO
