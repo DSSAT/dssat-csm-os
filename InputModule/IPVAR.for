@@ -372,7 +372,6 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
      &      popmat     			     ,
      &      poppeak      		     ,
      &      tillochron      	     ,
-     &      phyllochron     	     ,
      &      sla       			     ,
      &      mla       			     ,
      &      plastochron       	     ,

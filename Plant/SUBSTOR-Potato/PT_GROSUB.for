@@ -17,6 +17,7 @@ C                   as defined in ModuleDefs.for
 C  08/12/2003 CHP Added Walter Bowen's changes to GROLF from 1/2000
 C  08/23/2011 GH/JIL Added CO2 response to tuber growth
 !  04/01/2012 CHP Added two RUE parameters to new ecotype file
+!  07/28/2023 HBD/FO Protection for SLFT not kill the canopy.
 C=======================================================================
 
       SUBROUTINE PT_GROSUB (DYNAMIC,
@@ -302,7 +303,8 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
          SLFT = MAX(SLFT_TMIN, SLFT_TMAX) !changed to MIN RR
          SLFT = MIN(SLFT_TMIN, SLFT_TMAX)
          SLFT = MAX (SLFT, 0.0)
-         IF (TMIN <= 0.0) SLFT = 0.0
+!        20230-07-28 HBD, FO - Protection for SLFT not kill the canopy.
+!         IF (TMIN <= 0.0) SLFT = 0.0
 
          PLAS = PLA*(1.0 - AMIN1(SLFW,SLFC,SLFT,SLFN))
        ELSE

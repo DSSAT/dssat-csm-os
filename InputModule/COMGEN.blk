@@ -54,7 +54,6 @@
 	real    popmat
 	real    poppeak
 	real    tillochron
-	real    phyllochron
 	real    sla
 	real    mla
 	real    plastochron
@@ -142,7 +141,6 @@
      &      popmat                      ,   
      &      poppeak                     ,   
      &      tillochron                  ,   
-     &      phyllochron                 ,   
      &      sla                         ,   
      &      mla                         ,   
      &      plastochron                 ,   
