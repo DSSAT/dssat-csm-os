@@ -187,10 +187,10 @@ c     String lengths:
         DATA GROHEAD(3,22) /'m'/
         DATA GROHEAD(4,22) /'SHTD'/
 
-        DATA GROHEAD(1,23) /'Green'/
+        DATA GROHEAD(1,23) /'Total'/
         DATA GROHEAD(2,23) /'Leaves'/
         DATA GROHEAD(3,23) /'#/Stk'/
-        DATA GROHEAD(4,23) /'L#SD'/
+        DATA GROHEAD(4,23) /'T#SD'/
 
         DATA GROHEAD(1,24) /'Stress'/
         DATA GROHEAD(2,24) /'Factor'/

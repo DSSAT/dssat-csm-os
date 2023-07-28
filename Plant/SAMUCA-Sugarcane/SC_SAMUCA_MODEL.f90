@@ -314,7 +314,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real		dwat_it_ag_dead                           		! Water fraction rate of senesced Stalks aboveground
     real		eff_conv                                  		! Canopy Quantum Efficiency [kgCO2 ha-1 h-1 (J m-2 s-1)-1]
     real		eff_mod                                   		! Canopy Quantum Efficiency after stress factors
-    real		effective_rd                              		! Effective root depth
+    real		effective_rd                              		! Effective root depth where roots are actively growing
     real		end_tt_it_growth                          		! Thermal time internode stop growing
     real		end_tt_lf_growth                          		! Thermal time leaf stop growing
     real		end_tt_rt_growth                          		! Thermal time roots stop growing
@@ -972,16 +972,16 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !---------------!
     
     !--- Tillering
-    method_pop      = 2             ! Using light + temperature method
+    method_pop      = 2               ! Using light + temperature method
     
     !--- Photosynthesis Method
-    metpg           = 2             ! Using 5-point layered canopy as default
+    metpg           = 2               ! Using 5-point layered canopy as default
     
     !--- Use Soil Temperature
-    usetsoil            = .true.    ! Soil Temperature effect is switched on
+    usetsoil            = .false.     ! Soil Temperature effect [switched-off until DSSAT soil temp is corrected]
     
     !--- Use mulch effect
-    mulcheffect         = .true.    ! Mulch effect is switched on
+    mulcheffect         = .false.     ! Mulch effect [switched-off until DSSAT soil temp is corrected]
     
     !----------------------------------!
     !--- Crop States Initialization ---!
@@ -995,6 +995,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !--- Planting depth
     plantdepth  = 20.   ! Default Value in case the below function doesnt find any value
     call find_inp_sam(plantdepth, 'PLDP', Control)
+    if(plantdepth .lt. z) plantdepth  = 20. ! in case its -99.0    
     
     !--- Leaf dry weight at end of life-spam of a leaf grown under optimun conditions [g]
     max_lf_dw       = mla / sla ! Use this while the model considers fixed SLA (PIT)
@@ -2976,7 +2977,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !--- Root Front velocity [cm day-1]
     drdepth = rootdrate * disoil 
         
-    !--- Number of sublayers for root profile rate
+    !--- Number of sublayers for root profile rate [1cm resolution]
     nsublay = aint(dep(nlay))
     
     !--- Root Profile Rate (RLD and Biomass)
@@ -3659,7 +3660,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     CaneCrop % lai_ass              = lai_ass   
     CaneCrop % nstk           		= nstk          
     CaneCrop % stk_h          		= stk_h         
-    CaneCrop % n_lf_AG_dewlap 		= n_lf_AG_dewlap
+    CaneCrop % n_lf_AG_dewlap 		= n_lf
     CaneCrop % swface         		= swface        
     CaneCrop % swfacp         		= swfacp        
     CaneCrop % tempfac_pho          = tempfac_pho
