@@ -875,7 +875,7 @@
             VPENDFR = 1.0
           ENDIF
           CUMVD = CUMVD+TFV*GERMFR*VPENDFR-VDLOS
-          IF (VREQ.GT.0.0) THEN
+          IF (VREQ.GT.0.0 .AND. (VREQ-VBASE) .GT. 0.0) THEN
             VRNSTAGE =AMAX1(0.,AMIN1(1.,(CUMVD-VBASE)/(VREQ-VBASE)))
           ELSE
             VRNSTAGE = 1.0

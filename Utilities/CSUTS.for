@@ -2119,7 +2119,7 @@
       CHARACTER (LEN=10) newchar
       CHARACTER (LEN=78) message(10)
       INTEGER            pos,i,lenchar,tvilent,fnumerr
-!      INTEGER            fnumwrk
+!     INTEGER            fnumwrk
       REAL               tvrfromc,number
 !     LOGICAL            fopen
 
@@ -2227,7 +2227,7 @@
       CHARACTER (LEN=10) newchar
       CHARACTER (LEN=78) message(10)
       INTEGER            pos,i,lenchar,tvilent,fnumerr
-!      INTEGER            fnumwrk
+!     INTEGER            fnumwrk
       REAL               tvrfromc,number,tvrfromccde
 !     LOGICAL            fopen
 
