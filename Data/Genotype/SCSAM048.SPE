@@ -60,9 +60,9 @@
 !-----------------------------
 *ROOTS PROFILE
 !-----------------------------
-SRLMAX             =  36.0
-SRLMIN             =  30.0
-ROOTDRATE          =  0.048
+SRLMAX             =  38.0
+SRLMIN             =  34.0
+ROOTDRATE          =  0.088
 MAX_RT_DW          =  120.0
 END_TT_RT_GRO      =  3000.0
 ROOTLEFTFRAC       =  0.03
@@ -93,7 +93,7 @@ TREF_MR            =  25.0
 TB                 =  12.0
 TBM                =  50.0
 THRESHEWS          =  0.05
-DSHOOT_EXT         =  0.068
+DSHOOT_EXT         =  0.072
 MID_TT_RT_GRO      =  1000.0
 MAX_IT_DW_BG       =  5.0
 SUC_MIN            =  0.06584
@@ -107,8 +107,3 @@ C_SCATTERING       =  0.15
 K                  =  0.75
 RT_FRONT_SIZE      =  10.0
 !-----------------------------
-
-!*EVAPOTRANSPIRATION
-  0.68   1.1       KEP, EORATIO
-  0.50  1.20       SSKC, SKCBmax ASCE short ref (12 cm grass)
-  0.50  1.00       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
