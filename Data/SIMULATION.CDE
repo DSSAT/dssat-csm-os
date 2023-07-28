@@ -47,8 +47,8 @@ F        FAO-56                                                               IB
 !P       FAO-24/(old Penman)                                                  IB
 R        Priestley-Taylor/Ritchie                                             IB
 !Z       Hourly energy bal. method                                            IB
-S        ASCE Standardized Reference ET - Short reference                     IB
-T        ASCE Standardized Reference ET - Tall reference                      IB
+S        ASCE Std Ref ET, Short ref                                           IB
+T        ASCE Std Ref ET, Tall ref                                            IB
 !H       Hourly Priestley-Taylor/Ritchie                                      IB
 
 *Simulation/Methods/Infiltration
