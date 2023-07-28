@@ -606,7 +606,13 @@ c		MvdL: This next bit is borrowed from APSIM
 !           cause rounding errors to take
 !           NO3 below zero.
 
-		DEM_SUP_RATIO = TOT_N_DEMAND/POT_N_SUPPLY
+!         2023-07-28 HBD, FO - Needs re-check what is the impact 
+!         of this floating point protection below
+          IF(POT_N_SUPPLY .GT. 0.0) THEN
+		     DEM_SUP_RATIO = TOT_N_DEMAND/POT_N_SUPPLY
+          ELSE
+               DEM_SUP_RATIO = 0.0
+          ENDIF
 		
 		IF(TOT_N_DEMAND.GT.POT_N_SUPPLY) THEN
 			UPTK_RATIO = 0.99999                   
