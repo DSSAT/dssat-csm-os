@@ -12,6 +12,7 @@
 !  08/01/2022 FO  Updated source code format
 !  01/13/2023 FO  Updated variables in output file FreshWt.OUT
 !  03/17/2023 FO  Major changes for Multi-Harvest
+!  07/27/2023 FO  Adding output for Harv. Fresh Pod weight.
 !-----------------------------------------------------------------------
 !  Called from:  PODS
 !=======================================================================
@@ -55,7 +56,7 @@
       REAL :: HRSN, HRDSD, HRDSH 
       REAL :: TOSDN,TOWSD,TOSHN,TOWSH,TOPOW,TOFPW
       REAL :: MTFPW,MTDPW,MTDSD,MTDSH,MFNUM
-      REAL :: RTFPW,HPODWT,HSDWT,HSHELWT
+      REAL :: RTFPW,HPODWT,HSDWT,HSHELWT,HFPOW
       REAL :: HRVD, HRVF
       REAL :: CHPDT,CHFPW
 
@@ -163,6 +164,7 @@
      &    '!HSHELWT  Harvested shell weight (kg/ha)',
      &    '!HSDWT  Harvested seed weight (kg/ha)',
      &    '!HPODWT  Harvested pod weight (kg/ha)',
+     &    '!HFPOW  Harvested fresh pod weight (kg/ha)',
      &    '!CPODN  Cum. pod weight (kg/ha)',
      &    '!CMFNM  Cum. mature fruit number (#)',
      &    '!CHPDT  Cum. har. pod weight of mat. fruits (kg/ha)',
@@ -200,7 +202,7 @@
      &    '   XMAGE   CHNUM',   
      &    '   TOSHN   TOWSH   MTDSH   HSHEL',
      &    '   TOPOW   HPODW   CHPDT   CPODN',
-     &    '   TOFPW   MTFPW   MTDPW   CHFPW   CMFNM',
+     &    '   TOFPW   MTFPW   MTDPW   HFPOW   CHFPW   CMFNM',
      &    '   TOSDN   TOWSD   MTDSD   HSDWT')
      
   231 FORMAT('@YEAR DOY   DAS   DAP',
@@ -210,7 +212,7 @@
      &    '   XMAGE   CHNUM',   
      &    '   TOSHN   TOWSH   MTDSH   HSHEL',
      &    '   TOPOW   HPODW   CHPDT   CPODN',
-     &    '   TOFPW   MTFPW   MTDPW   CHFPW   CMFNM',
+     &    '   TOFPW   MTFPW   MTDPW   HFPOW   CHFPW   CMFNM',
      &    '   TOSDN   TOWSD   MTDSD   HSDWT')
 
         AvgDMC  = 0.0
@@ -225,6 +227,7 @@
         HSHELWT = 0.0
         RTFPW   = 0.0
         HPODWT  = 0.0
+        HFPOW   = 0.0
 
         CHPDT   = 0.0
         CHFPW   = 0.0
@@ -267,6 +270,7 @@
         HSDWT   = 0.0 
         HSHELWT = 0.0
         HPODWT  = 0.0
+        HFPOW   = 0.0
         HARVF   = 0
         CALL GET('MHARVEST','HARVF',HARVF)   
            
@@ -374,7 +378,8 @@
           IF(HARVF == 1 .AND. page >= XMAGE) THEN
             HSHELWT = MTDSH 
             HSDWT   = MTDSD
-            HPODWT  = MTDPW 
+            HPODWT  = MTDPW
+            HFPOW   = MTFPW
             SHELN(NPP) = 0.0
             WTSHE(NPP) = 0.0
             WTSD(NPP)  = 0.0
@@ -437,7 +442,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE ('GB')       ! Snap bean
             WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
@@ -448,7 +454,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
          CASE ('PR')        ! Bell pepper
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
@@ -457,7 +464,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
          CASE ('SR')        ! Strawberry
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
@@ -466,7 +474,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE ('TM')       ! Tomato
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
@@ -475,7 +484,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE DEFAULT
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
@@ -484,7 +494,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
         END SELECT
 
@@ -493,7 +504,7 @@
      &    F8.1, I8,
      &    4(F8.1),
      &    3(F8.1),I8,
-     &    I8,3(F8.1),I8,
+     &    I8,4(F8.1),I8,
      &    4(F8.1))
  2000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
      &    F8.1,F8.1,F8.1,F8.1,
@@ -501,7 +512,7 @@
      &    F8.1, I8,
      &    4(F8.1),
      &    3(F8.1),I8,
-     &    I8,3(F8.1),I8,
+     &    I8,4(F8.1),I8,
      &    4(F8.1))
 
       ENDIF
