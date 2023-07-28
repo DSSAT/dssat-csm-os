@@ -442,7 +442,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,HFPOW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE ('GB')       ! Snap bean
             WRITE(NOUTPF, 2000) YEAR, DOY, DAS, DAP, 
@@ -453,7 +454,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,HFPOW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
          CASE ('PR')        ! Bell pepper
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
@@ -462,7 +464,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,HFPOW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
          CASE ('SR')        ! Strawberry
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
@@ -471,7 +474,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,HFPOW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE ('TM')       ! Tomato
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
@@ -480,7 +484,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,HFPOW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
           CASE DEFAULT
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
@@ -489,7 +494,8 @@
      &      XMAGE, CHNUM,
      &      TOSHN,TOWSH*10.,MTDSH*10.,HSHELWT*10.,
      &      TOPOW*10.,HPODWT*10.,CHPDT*10.,CPODN*10,
-     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,HFPOW*10.,CHFPW*10.,CMFNM,
+     &      NINT(TOFPW*10.),MTFPW*10.,MTDPW*10.,
+     &      HFPOW*10.,CHFPW*10.,CMFNM,
      &      TOSDN,TOWSD*10.,MTDSD*10.,HSDWT*10.
         END SELECT
 
