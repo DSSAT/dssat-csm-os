@@ -26,8 +26,6 @@
 !                     used if competition for light is switched-off,method_pop=1)
 ! TILLOCHRON        Thermal time required for the emergence of one new 
 !                     tiller (°Cdays/tiller)
-! PHYLLOCHRON       Thermal time required for the appearance of one new 
-!                     leaf (°Cdays/leaf)
 ! SLA               Specific Leaf Area (cm2/g)
 ! MLA               Maximum leaf area (cm2)
 ! PLASTOCHRON       Thermal time required for the appearance of one new 

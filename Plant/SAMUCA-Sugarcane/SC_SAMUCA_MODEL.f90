@@ -805,6 +805,17 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !-------------------------------!
     !--- Reading crop parameters ---!
     !-------------------------------!
+
+    !-------------------------------------------------------------------!
+    !--------------------------- IMPORTANT -----------------------------!
+    !-------------------------------------------------------------------!
+    !--- get_cultivar_coeff() is coming from CANEGRO (SC_COEFFS.f90)
+    !--- Also add/remove new parameters in:
+    !---    OPTEMPXY2K.for 
+    !---    IPVAR.for
+    !---    COMGEN.blk
+    !--- Dont forget to update the .cul/.eco/.spe files too!
+    !-------------------------------------------------------------------!
     
     !--- Reading crop parameters with MJ's subroutine used in CANEGRO
     !--- Cultivar parameters
@@ -1090,13 +1101,14 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         
             !--- Geotropism function
             do sl = 1, nlay
-                geot(sl) = max(0.d0,(1-dep(sl)/rdprof)) ** rootshape
+                geot(sl) = max(0.d0,(1.d0-dep(sl)/rdprof)) ** rootshape
             enddo
         
             !--- Convert dryweight to root length density
             drld = 0.d0
             rld  = 0.d0
             srl  = (srlmin + srlmax) / 2.d0
+            
             do sl = 1, nlay
                 rgf(sl,1)       = geot(sl)/sum(geot)
                 dw_rt_prof(sl)  = rgf(sl,1) * dw_rt * (1.e6/1.e8)   ! [g cm-2]
