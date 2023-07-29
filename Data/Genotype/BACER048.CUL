@@ -28,16 +28,19 @@ $CULTIVARS:BACER048.20200721   Last edit: 2021-05-08 GH
                                                                             
 DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
 
-!IB0101 A.Abiad (2)          . SY0001    10    30   220    16    40   2.7    89 ! Previous coefficients < DSSAT 4.8.1.11
 IB0101 A.Abiad (2)          . SY0001 25.26 32.26 220.0 18.23 37.77  6.05 89.00 
 
-!IB0102 Beecher (6)          . SY0002    10    30   220    13    40   2.7    92 ! Previous coefficients < DSSAT 4.8.1.11
-IB0102 Beecher (6)          . SY0002  4.44 35.17 208.2 13.88 38.79  2.73 92.00 
+IB0102 Beecher (6)          . SY0002 14.10 33.82 223.7 13.69 38.87 5.343 92.00
 
-!IB0030 Maris Badger         . US0001     0    40   750    20    52   1.5    64 ! Previous coefficients < DSSAT 4.8.1.11
-IB0030 Maris Badger         . US0001  0.17 0.497 727.3 24.25 79.57  2.43 64.00 
+IB0030 Maris Badger         . US0001 0.001 142.0 763.2 22.71 37.27 2.046 64.00
 
-                                                                                                                                                                                                             
+
+! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
+!IB0102 Beecher (6)          . SY0002    10    30   220    13    40   2.7    92
+!IB0101 A.Abiad (2)          . SY0001    10    30   220    16    40   2.7    89
+!IB0030 Maris Badger         . US0001     0    40   750    20    52   1.5    64 
+
+                                                                                                                                                                                                       
 ! COEFF       DEFINITION
 ! ========    ==========
 ! VAR#        Identification code or number for the specific cultivar.
