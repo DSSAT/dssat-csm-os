@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.38  FO 2023-07-30 Added Minima and Maxima for Guar and Carinata (commit 734eb01)
 !       4.8.1.37  FO 2023-07-28 Added new genotype based on GLUE calibrations (commit f228914)
 !       4.8.1.36  FO 2023-07-28 Samuca updates (commit 6b3b5ab)
 !       4.8.1.35  FO 2023-07-28 NCheck improved (commit 6f94588)
