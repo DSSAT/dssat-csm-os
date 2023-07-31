@@ -8,10 +8,19 @@ $BATCH(ALL)
 ! Debug        : /DSSAT48/DSCSM048.EXE PRFRM048 " B DSSBatch.v48"
 !
 @FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+/Applications/DSSAT48/ALFALFA/AGZG1219.ALX                                                        1      1      0      1      0
+/Applications/DSSAT48/ALFALFA/AGZG1219.ALX                                                        2      1      0      1      0
+/Applications/DSSAT48/ALFALFA/AGZG1219.ALX                                                        3      1      0      1      0
+/Applications/DSSAT48/ALFALFA/AGZG1229.ALX                                                        1      1      0      1      0
+/Applications/DSSAT48/ALFALFA/AGZG1229.ALX                                                        2      1      0      1      0
+/Applications/DSSAT48/ALFALFA/AGZG1229.ALX                                                        3      1      0      1      0
 /Applications/DSSAT48/ALFALFA/AGZG1501.ALX                                                        1      1      0      1      0
-/Applications/DSSAT48/ALFALFA/AGZG1501.ALX                                                        2      1      0      1      0
-/Applications/DSSAT48/ALFALFA/AGZG1501.ALX                                                        3      1      0      1      0
-/Applications/DSSAT48/ALFALFA/AGZG1501.ALX                                                        4      1      0      1      0
+/Applications/DSSAT48/ALFALFA/AGZG1502.ALX                                                        1      1      0      1      0
+/Applications/DSSAT48/ALFALFA/AGZG1502.ALX                                                        2      1      0      1      0
+/Applications/DSSAT48/ALFALFA/AGZG1502.ALX                                                        3      1      0      1      0
+/Applications/DSSAT48/ALFALFA/ONCF1401.ALX                                                        1      1      0      1      0
+/Applications/DSSAT48/ALFALFA/ONCF1401.ALX                                                        2      1      0      1      0
+/Applications/DSSAT48/ALFALFA/ONCF1401.ALX                                                        3      1      0      1      0
 /Applications/DSSAT48/BAHIA/ALTH5601.BHX                                                          1      1      0      0      0
 /Applications/DSSAT48/BAHIA/ALTH5601.BHX                                                          2      1      0      0      0
 /Applications/DSSAT48/BAHIA/ALTH5601.BHX                                                          3      1      0      0      0
@@ -944,6 +953,11 @@ $BATCH(ALL)
 /Applications/DSSAT48/Soybean/UFQU7901.SBX                                                        1      1      0      0      0
 /Applications/DSSAT48/Soybean/UFQU7902.SBX                                                        1      1      0      0      0
 /Applications/DSSAT48/Soybean/UFQU7902.SBX                                                        2      1      0      0      0
+/Applications/DSSAT48/Strawberry/UFBA1401.SRX                                                     1      1      0      1      0
+/Applications/DSSAT48/Strawberry/UFBA1601.SRX                                                     1      1      0      1      0
+/Applications/DSSAT48/Strawberry/UFBA1601.SRX                                                     2      1      0      1      0
+/Applications/DSSAT48/Strawberry/UFBA1701.SRX                                                     1      1      0      1      0
+/Applications/DSSAT48/Strawberry/UFBA1701.SRX                                                     2      1      0      1      0
 /Applications/DSSAT48/Strawberry/UFWM1401.SRX                                                     1      1      0      1      0
 /Applications/DSSAT48/Strawberry/UFWM1401.SRX                                                     2      1      0      1      0
 /Applications/DSSAT48/SUGARBEET/BU019701.BSX                                                      1      1      0      1      0
