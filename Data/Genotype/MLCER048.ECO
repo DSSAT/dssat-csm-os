@@ -1,7 +1,7 @@
 *MILLET ECOTYPE COEFFICIENTS: MLCER048 MODEL
 
-!                                1     2     4     5     7     8     9    10    11    12    13    14    15    16    17    18    19
 @ECO#  ECONAME.........  TBASE TOPT  ROPT  DJTI  GDDE   RUE  KCAN
+!                            1    2     3     4     5     6     7
 ! all KCAN were 0.85. Does not affect LIFAC, only affects KEP, so use it that way? (Yes, KJB)
 IB0001 GENERIC            10.0 34.0  34.0  68.0   6.0   4.0  0.85
 DFAULT DEFAULT            10.0 34.0  34.0  68.0   6.0   4.0  0.85
