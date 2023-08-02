@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.40  FO 2023-08-02 Cleaning up genotype files and updating standards (commit 2f7af24)
 !       4.8.1.39  FO 2023-08-02 Fixed AutoMOW variable initialization (commit 7e778933)
 !       4.8.1.38  FO 2023-07-30 Added Minima and Maxima for Guar and Carinata (commit 734eb01)
 !       4.8.1.37  FO 2023-07-28 Added new genotype based on GLUE calibrations (commit f228914)
