@@ -1,4 +1,4 @@
-*SUGARCANE GENOTYPE COEFFICIENTS - SCCAN045 MODEL
+*SUGARCANE GENOTYPE COEFFICIENTS - SCCAN048 MODEL
 
 ! -------------+---------+----------------------+-----------------------------------------------------------------------------------------+----------------------------------------------
 ! DELTTMAX     |  0.07   | Sucrose accumulation | Max. change in sucrose content per unit change in stalk mass in the unripenened section |  'DELTAMAX' in Singels & Bezuidenhout, 2002  
@@ -10,7 +10,7 @@
 ! -------------+---------+----------------------+-----------------------------------------------------------------------------------------+----------------------------------------------
 ! CS_CNREDUC   |   0.3   | Canopy - CANESIM     | Canopy reduction due to water stress                                                    |                                              
 ! CS_CNPERIOD  |   21    | Canopy - CANESIM     | Canopy water stress period (days)                                                       |                                              
-! Tthalfa      |   125   | Canopy - CANESIM     | Half canopy thermal time adjustment for row width                                       |                                              
+! Tthalfaï¿½     |   125   | Canopy - CANESIM     | Half canopy thermal time adjustment for row width                                       |                                              
 ! -------------+---------+----------------------+-----------------------------------------------------------------------------------------+----------------------------------------------
 ! DPERdT       |  0.176  | Canopy - height      | Change in plant extension rate (mm/h) per unit change in temperature (oC)               | Originally from Inman-Bamber (1991), since adjusted
 ! -------------+---------+----------------------+-----------------------------------------------------------------------------------------+----------------------------------------------

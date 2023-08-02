@@ -1,5 +1,35 @@
 $ECOTYPES:WHCRP048.20200721   Last edit: 2020-07-21 CHP
-
+!
+! COEFF   DEFINITION                                                                                                                                  
+! =====   ==========                                                                                                                                  
+! AWNS    Awn score (0-10;10=very long)                                                                                                               
+! ECO#    Ecotype code (text)                                                                                                                         
+! GM%H    Grain moisture percentage at harvest (%)
+! GN%MN   Minimum grain nitrogen (%)
+! GN%S    Standard grain nitrogen concentration (%)
+! HTSTD   Standard canopy height (cm)                                                                                                                 
+! KCAN    PAR extinction coefficient (#)
+! LSENI   Leaf senescence,intermediate phases (%/standard day)               
+! LSPHE   Leaf senescence (final) phase end stage (GrowthStage)                                                                                             
+! LSPHS   Leaf senescence (final) phase start stage (GrowthStage)                                                                                             
+! PARU2   PAR conversion factor,after change (g dry matter/MJ)                                                                                        
+! PARUE   PAR conversion factor,standard (g dry matter/MJ)                                                                                            
+! PHFn    Factor by which PHINTS multiplied -> PHINT for particular phase (#)
+! PHLn    Leaf # at end of phyllochron phase (ie,at which PHINT changes) (#) 
+! RDGS    Root depth growth rate,standard (cm/standard day)
+! RS%A    Reserves concentration in tops at start of anthesis (%)           
+! SLAS    Specific leaf area,standard (cm2/g)                                                                                   
+! SSPHE   Stem senescence (final) phase end stage (GrowthStage)                                                                                             
+! SSPHS   Stem senescence (final) phase start stage (GrowthStage)                                                                                             
+! TDFAC   Tiller death factor (%/st.day when tiller wt 2xstandard wt)
+! TDPHE   Tiller death phase end stage (GrowthStage)
+! TDPHS   Tiller death phase start stage (GrowthStage)
+! TDSF    Tiller death stress factor (#;0,2->no,full stress acceleration)
+! TIFAC   Tiller initiation (rate) factor (fr of phyllochron based) (#)
+! TIL#S   Tillering phase (production) start stage (leaf #)
+! TILPE   Tillering phase (production) end (GrowthStage)
+! TKFH    Cold tolerance when fully hardened (oC)
+!
 ! Coefficients presented here differ from those used in previous
 ! model versions. They have been developed by taking into account
 ! the characteristics of a limited number of groups of cultivars.
@@ -30,34 +60,4 @@ DFAULT DEFAULT             2.7   2.7    12   1.3   400   1.5   8.0   9.2   4.0  
 CA0001 CANADA(SPRING)      2.7   2.7   200   1.0   300    .3   5.5   9.0   3.0   3.5   1.0   3.7   9.0   4.0  1.00   3.0   100   0.0  0.85    15   4.0   1.5  15.0    -8   8.7   9.4
 US0001 USA(WINTER)         2.5   2.7   200   1.0   400   1.5   8.3   9.3   4.5   3.0   0.8   3.2   9.0   4.0  1.00   4.0   100   5.0  0.85    10   2.3   1.7   8.0   -30   8.3   8.5
 UK0001 UK(MFUNDIN)         2.7   2.7    15   1.5   485    .3   8.7   9.2   4.5   3.0   0.2   3.0   9.0  12.0  1.00   3.0   100   0.0  0.85    25   2.5   1.0  15.0   -10   8.5   9.7
-                                                                                                                                                      
-! COEFF   DEFINITION                                                                                                                                  
-! =====   ==========                                                                                                                                  
-! AWNS    Awn score (0-10;10=very long)                                                                                                               
-! ECO#    Ecotype code (text)                                                                                                                         
-! GM%H    Grain moisture percentage at harvest (%)
-! GN%MN   Minimum grain nitrogen (%)
-! GN%S    Standard grain nitrogen concentration (%)
-! HTSTD   Standard canopy height (cm)                                                                                                                 
-! KCAN    PAR extinction coefficient (#)
-! LSENI   Leaf senescence,intermediate phases (%/standard day)               
-! LSPHE   Leaf senescence (final) phase end stage (GrowthStage)                                                                                             
-! LSPHS   Leaf senescence (final) phase start stage (GrowthStage)                                                                                             
-! PARU2   PAR conversion factor,after change (g dry matter/MJ)                                                                                        
-! PARUE   PAR conversion factor,standard (g dry matter/MJ)                                                                                            
-! PHFn    Factor by which PHINTS multiplied -> PHINT for particular phase (#)
-! PHLn    Leaf # at end of phyllochron phase (ie,at which PHINT changes) (#) 
-! RDGS    Root depth growth rate,standard (cm/standard day)
-! RS%A    Reserves concentration in tops at start of anthesis (%)           
-! SLAS    Specific leaf area,standard (cm2/g)                                                                                   
-! SSPHE   Stem senescence (final) phase end stage (GrowthStage)                                                                                             
-! SSPHS   Stem senescence (final) phase start stage (GrowthStage)                                                                                             
-! TDFAC   Tiller death factor (%/st.day when tiller wt 2xstandard wt)
-! TDPHE   Tiller death phase end stage (GrowthStage)
-! TDPHS   Tiller death phase start stage (GrowthStage)
-! TDSF    Tiller death stress factor (#;0,2->no,full stress acceleration)
-! TIFAC   Tiller initiation (rate) factor (fr of phyllochron based) (#)
-! TIL#S   Tillering phase (production) start stage (leaf #)
-! TILPE   Tillering phase (production) end (GrowthStage)
-! TKFH    Cold tolerance when fully hardened (oC)
 
