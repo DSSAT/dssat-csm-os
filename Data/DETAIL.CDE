@@ -506,7 +506,7 @@ IR003    Flood, mm                                                            IB
 IR004    Sprinkler, mm                                                        IB
 IR005    Drip or trickle, mm                                                  IB
 IR006    Flood depth, mm                                                      IB
-IR007    Water table depth, mm                                                IB
+IR007    Water table depth, cm                                                IB
 IR008    Percolation rate, mm day-1                                           IB
 IR009    Bund height, mm                                                      IB
 IR010    Puddling (for Rice only)                                             IB

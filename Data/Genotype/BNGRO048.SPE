@@ -160,18 +160,4 @@
     0.20          FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
   0.0020          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m)
 
-*NITROGEN STRESS PARAMETERS
-  0.70  1.00    NSTR_FAC, NSTR_EXP  !Operate on NSTRES (VEGGR 235)
-  1.00          NRAT_FAC            !Operate on NRATIO (VEGGR 297)
-  0.20  0.50    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
-!  0.20  0.50    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
-
-!  0.70  1.00    NSTR_FAC, NSTR_EXP  !Operate on NSTRES (VEGGR 235)
-!  0.80          NRAT_FAC            !Operate on NRATIO (VEGGR 297)
-!  0.10  0.30    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
-
-!! DEFAULT VALUES:
-!  0.70  1.00    NSTR_FAC, NSTR_EXP  !Operate on NSTRES (VEGGR 235)
-!  1.00          NRAT_FAC            !Operate on NRATIO (VEGGR 297)
-!  0.20  0.50    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
 

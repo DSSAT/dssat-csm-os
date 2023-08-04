@@ -15,6 +15,8 @@ C  06/30/2006 CHP/CDM Added KC_SLOPE to SPE file and KC_ECO to ECO file.
 C                 Added warning for use of default ecotype.
 !  09/11/2008 KJB, CHP Added 5 species parameters affecting N stress
 C  01/18/2018 KRT Added functionality for ASCE dual Kc ET routines
+!  06/29/2023  FO Removed KCAN_ECO unused ecotype parameter read.
+!  07/14/2023  FO Removed unused Nit. stress parameters from SPE file.
 C-----------------------------------------------------------------------
 !  Called:      PLANT
 !  Calls:       FIND, ERROR, IGNORE
@@ -27,7 +29,6 @@ C=======================================================================
      &  POASH, PORMIN, PROLFI, PRORTI, PROSHI, PROSTI,    !Output
      &  R30C2, RCH2O, RES30C, RFIXN, RLIG, RLIP, RMIN,    !Output
      &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX)    !Output
-!     &  NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP) !Output
 
 C-----------------------------------------------------------------------
 
@@ -41,18 +42,18 @@ C-----------------------------------------------------------------------
       PARAMETER (BLANK  = ' ')
 
       CHARACTER*2 CROP
-      CHARACTER*6 SECTION, ECONO, ECOTYP
+      CHARACTER*6 SECTION, ECONO !ECOTYP
       CHARACTER*6  ERRKEY
       PARAMETER (ERRKEY = 'IPPLNT')
 
       CHARACTER*12 FILEC, FILEE
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(6)
+!      CHARACTER*78 MSG(6)
       CHARACTER*80 PATHCR, CHAR, PATHEC
       CHARACTER*92 FILECC, FILEGC
-      CHARACTER*255 C255
+!      CHARACTER*255 C255
 
-      INTEGER LUNCRP, LUNECO, NOUTDO, LUNIO
+      INTEGER LUNCRP, NOUTDO, LUNIO !LUNECO
       INTEGER PATHL, FOUND, ERR, LINC, LNUM, ISECT
 
       REAL
@@ -65,10 +66,7 @@ C-----------------------------------------------------------------------
 
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
-      REAL KCAN_ECO, KC_SLOPE
-
-!     Species parameters for N stress  9/11/2008
-!     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
+      REAL KC_SLOPE !KCAN_ECO
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -332,46 +330,16 @@ C-----------------------------------------------------------------------
         ENDIF
 
 C-----------------------------------------------------------------------
-C
-C     ***** READ NITROGEN STRESS PARAMETERS *****
-C
-C-----------------------------------------------------------------------
-!        REWIND (LUNCRP)
-!        CALL FIND2(LUNCRP, '*NITROGEN STRESS', LNUM, FOUND)
-!        IF (FOUND .EQ. 0) THEN
-!!         Use default values
-!          NSTR_FAC = 0.70
-!          NSTR_EXP = 1.00
-!          NRAT_FAC = 1.00
-!          EXCS_FAC = 0.20
-!          EXCS_EXP = 0.50
-!          MSG(1) = "Default nitrogen stress values will be used."
-!        ELSE
-!          CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-!          READ(CHAR,'(2F6.0)',IOSTAT=ERR) NSTR_FAC, NSTR_EXP
-!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!          CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-!          READ(CHAR,'(F6.0)',IOSTAT=ERR) NRAT_FAC
-!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!          CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-!          READ(CHAR,'(2F6.0)',IOSTAT=ERR) EXCS_FAC, EXCS_EXP
-!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!          MSG(1) = "Nitrogen stress values read from species file."
-!        ENDIF
-!
-!        WRITE(MSG(2),'(A,F6.2)') "NSTRES factor   = ", NSTR_FAC
-!        WRITE(MSG(3),'(A,F6.2)') "NSTRES exponent = ", NSTR_EXP
-!        WRITE(MSG(4),'(A,F6.2)') "NRATIO factor   = ", NRAT_FAC
-!        WRITE(MSG(5),'(A,F6.2)') "EXCESS factor   = ", EXCS_FAC
-!        WRITE(MSG(6),'(A,F6.2)') "EXCESS exponent = ", EXCS_EXP
-!        CALL INFO(6,ERRKEY,MSG)
-
         CLOSE (LUNCRP)
-
 C-----------------------------------------------------------------------
 C    Read Ecotype Parameter File
 C-----------------------------------------------------------------------
 !    Set file plus pathname for ecotype parameter file
+!    06/29/2023 FO - Removed unused KCAN_ECO read and left FILEGC build.
+!    This is need to feed with FILEGC path for ecotype file present in
+!    other subroutines such as DEMAND, PODS and VEEGR. However, this
+!    subroutine is the best option to read ecotype parameter and then
+!    pass the coefficients to the other subroutines.
 !-----------------------------------------------------------------------
         PATHL  = INDEX(PATHEC,BLANK)
         IF (PATHL .LE. 1) THEN
@@ -379,52 +347,6 @@ C-----------------------------------------------------------------------
         ELSE
           FILEGC = PATHEC(1:(PATHL-1)) // FILEE
         ENDIF
-
-!       Get ecotype Kcan, if present.  
-!       If not here, use value read from species file.
-        LUNECO = LUNCRP
-        OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
-        ECOTYP = '      '
-        LNUM = 0
-        DO WHILE (ECOTYP .NE. ECONO)
-          CALL IGNORE(LUNECO, LNUM, ISECT, C255)
-          IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
-     &          (C255(1:1) .NE. '*')) THEN
-            READ (C255,'(A6,139X,F6.0)',IOSTAT=ERR) ECOTYP, KCAN_ECO
-            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
-            IF (ECOTYP .EQ. ECONO) EXIT
-
-          ELSE IF (ISECT .EQ. 0) THEN
-            IF (ECONO .EQ. 'DFAULT') THEN
-              MSG(1)='No default ecotype found in file: '
-              WRITE(MSG(2),'(2X,A)') FILEGC(1:76)
-              MSG(3)='Program will halt.'
-              CALL WARNING(3, ERRKEY, MSG)
-              CALL ERROR(ERRKEY,35,FILEGC,LNUM)
-            ENDIF
-
-!           Write message to WARNING.OUT file that default ecotype 
-!             will be used.
-            WRITE(MSG(1),5000) ECONO
-            WRITE(MSG(2),'(2X,A)') FILEGC(1:76)
-            WRITE(MSG(3),5001) 
- 5000       FORMAT('Ecotype ',A6,' not found in file: ')
- 5001       FORMAT('Default ecotype parameters will be used.')
-            CALL WARNING(3, ERRKEY, MSG)
-
-            ECONO = 'DFAULT'
-            REWIND(LUNECO)
-            LNUM = 0
-          ENDIF
-        ENDDO
-
-        CLOSE (LUNECO)
-
-        IF (KCAN_ECO .GT. 1.E-6) THEN
-          KCAN = KCAN_ECO
-        ENDIF
-
 !-----------------------------------------------------------------------
       ENDIF
 !-----------------------------------------------------------------------
@@ -458,8 +380,8 @@ C-----------------------------------------------------------------------
 ! FRCNOD   Fraction of new root dry matter allocation that is diverted to 
 !            nodule growth 
 ! FREEZ1   Temperature below which plant loses all leaves, but development 
-!            continues (°C)
-! FREEZ2   Temperature below which plant growth stops completely. (°C)
+!            continues (ï¿½C)
+! FREEZ2   Temperature below which plant growth stops completely. (ï¿½C)
 ! ISECT    Data record code (0 - End of file encountered, 1 - Found a good 
 !            line to read, 2 - End of Section in file encountered, denoted 
 !            by * in column 1

@@ -15,6 +15,7 @@ C  02/21/2006 GH  Removed crop model selection
 !  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 !  05/07/2020 FO  Added check for SimLevel to set YRSIM using YRPLT
 !  93/22/2022 GH Fix forecast issue
+!  07/30/2023 FO  Initialized ATMOW and ATTP.
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
@@ -347,10 +348,13 @@ C
          IHARI = UPCASE(IHARI)
 
 C TF, FO & DP - 2022-07-12 - AutomaticMOW Switch
+! 2023-07-30 FO Initialized ATMOW and ATTP.
 ! W - AutoMOW days frequency
 ! X - AutoMOW GDD
 ! Y - SmartMOW days frequency
 ! Z - SmartMOW GDD
+         ISWITCH%ATMOW = .FALSE.
+         ISWITCH%ATTP = ' '
          IF(IHARI .EQ. 'W') THEN
            ISWITCH%ATMOW = .TRUE.
            ISWITCH%ATTP = 'W'
@@ -840,7 +844,8 @@ C-----------------------------------------------------------------------
         CASE('CRGRO','MZCER','SGCER')
           SELECT CASE(CONTROL % CROP)
 !         CASE('SB','FA','MZ','RI','PN','SG') 
-          CASE('SB','FA','MZ','PN','SG') 
+!         CASE('SB','FA','MZ','PN','SG') 
+          CASE('SB','FA','MZ','PN','SG','TM','GB') 
 !           Phosphorus model has been enabled and tested for these crops, do nothing
 
           CASE DEFAULT

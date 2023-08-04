@@ -271,6 +271,7 @@ C-----------------------------------------------------------------------
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
+
 C-----------------------------------------------------------------------
 C     Initialize summary output file - possible output from 
 C     various modules.

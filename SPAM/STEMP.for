@@ -27,7 +27,6 @@ C  01/14/2005 CHP Added METMP = 3: Corrected water content in temp. eqn.
 !  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil
 !                 water effects on albedo)
 !  12/09/2008 CHP Remove METMP and code for old (incorrect) soil water effect
-!  02/27/2023 CHP Added Kimball equation tied to METMP = "K" to compare effects
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : SOILT

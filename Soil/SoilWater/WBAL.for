@@ -95,6 +95,22 @@ C=====================================================================
 !-----------------------------------------------------------------------
       RUN     = CONTROL % RUN
 
+      TSWY   = TSWINI
+      FLOODI = FLOOD
+      FLOODY = FLOOD
+
+      !CINF = 0.0
+      SNOWI = SNOW
+      SNOWY = SNOW
+      MWI   = MULCHWAT
+      MWY   = MULCHWAT
+
+      CUMWBAL = 0.0
+      CUMRESWATADD = 0.0
+      CUMMULEVAP = 0.0
+      CumLatInflow = 0.0
+      CumLatOutflow = 0.0
+
 !     Open output file
       CALL GETLUN('SWBAL', LUNWBL)
       INQUIRE (FILE = SWBAL, EXIST = FEXIST)
@@ -109,7 +125,7 @@ C=====================================================================
       CALL HEADER(SEASINIT, LUNWBL, RUN)
 
       IF (INDEX('AD',IDETL) > 0) THEN
-        !Write header for daily output
+!       Write header for daily output
         WRITE (LUNWBL,1120)
  1120   FORMAT('@YEAR DOY   DAS',
      & '    SWTD    FWTD    SNTD   MWTD',                   !State vars
@@ -134,21 +150,9 @@ C=====================================================================
 
       ENDIF
 
-      TSWY   = TSWINI
-      FLOODI = FLOOD
-      FLOODY = FLOOD
-
-      !CINF = 0.0
-      SNOWI = SNOW
       SNOWY = SNOW
       MWI   = MULCHWAT
       MWY   = MULCHWAT
-
-      CUMWBAL = 0.0
-      CUMRESWATADD = 0.0
-      CUMMULEVAP = 0.0
-      CumLatInflow = 0.0
-      CumLatOutflow = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -173,7 +177,7 @@ C=====================================================================
         WBALAN = 
      &         + IRRAMT + RAIN                !Inflows
      &         + RESWATADD_T                  !Inflows
-!               LatOutflow is negative!
+!                LatOutflow is negative!
      &         + LatInflow + LatOutflow       !Lateral flow
      &         - MULCHEVAP                    !Outflows
      &         - DRAIN - RUNOFF - FRUNOFF     !Outflows
@@ -247,16 +251,7 @@ C-----------------------------------------------------------------------
       CALL Get('SPAM','EP', EP)
       CALL Get('SPAM','ES', ES)
 
-!      CALL Get('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm) (includes losses)
-!      CALL Get('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
-!      CALL Get('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
       CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrig
-
-!      IF (EFFIRR .GT. 0.0) THEN
-!        TOTEFFIRR = EFFIRR * TOTIR
-!      ELSE
-!        TOTEFFIRR = TOTIR
-!      ENDIF
 
       WRITE (LUNWBL,320)
   320 FORMAT(/,'!',5X,'WATER BALANCE PARAMETERS',
@@ -275,7 +270,7 @@ C-----------------------------------------------------------------------
      &    /,'!',5X,'Effective Irrigation',                    T44,F10.2,
      &    /,'!',5X,'Precipitation',                           T44,F10.2,
      &    /,'!',5X,'Water added with new mulch',              T44,F10.2,
-     &    /,'!',5X,'Lateral flow',                            T44,F10.2,
+     &    /,'!',5X,'Net lateral flow',                        T44,F10.2,
      &    /,'!',5X,'Drainage',                                T44,F10.2,
      &    /,'!',5X,'Tiledrain flow',                          T44,F10.2,
      &    /,'!',5X,'Runoff',                                  T44,F10.2,
