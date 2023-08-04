@@ -1,4 +1,4 @@
-**Checklist for preparing a release exe for DSSAT-CSM:**
+# Checklist for preparing a release exe for DSSAT-CSM:
 
 - CMakeLists.txt - change the version number. This brands the output files.
 - Utilities\CSMVersion.for.in - change the version number. 
