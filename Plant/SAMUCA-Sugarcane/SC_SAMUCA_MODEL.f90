@@ -1966,7 +1966,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
                     fl_tiller_stop      = .false.
                     
                     !--- Update Tillering dead rate [till cdays-1]
-                    if(diacsoil .gt. chumat_lt)then
+                    if(diacsoil .ge. chumat_lt)then
                         dnstk_dead_rate = 0.d0
                     else                        
                         dnstk_dead_rate     = (popmat - nstk_now) / (chumat_lt - diacsoil)
