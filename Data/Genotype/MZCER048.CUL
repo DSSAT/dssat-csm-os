@@ -186,7 +186,7 @@ IF0009 OBA S2 Benin         . IB0001 170.0 0.600 760.0 800.0  8.00 50.00
 IF0010 EV-8449_TG           . IB0001 260.0 0.600 630.0 900.0  9.00 45.00
 IF0011 EV-8443_TG           . IB0001 300.0 0.600 850.0 850.0  8.80 45.00
 
-AC0001 TOHONO O'odham       . IB0001 200.0 0.100 610.0 248.0  9.80 38.90 !Michael Pool, Austin Comm College
+AC0001 TOHONO O'odham       . IB0001 200.0 0.100 610.0 248.0  9.80 38.90
 
 ! Vietnam sequencing
 VI0001 LVN 10               . IB0001 350.0 1.000 980.0 760.0  9.20 38.90
@@ -247,7 +247,7 @@ GF0501 Yield 10%longer      . IB0004 285.0 0.500 810.0 840.0  8.19 38.90
 CYMA01 wh403                . IB0001 265.0 0.760 685.0 760.0  7.60 38.90   
 
 ! Added by Camilo Andrade from Embrapa Maize and Sorghum
-EBSL06 BRS1030-SL2009       . IB0001 263.8 0.500 1034  700.0  5.20 44.22 !Single-cross hybrid from Embrapa
+EBSL06 BRS1030-SL2009       . IB0001 263.8 0.500 1034  700.0  5.20 44.22
 
 !Kingaroy sequence
 IB0200 32P55                . IB0004 215.0 0.500 650.0 740.0  8.19 45.90
