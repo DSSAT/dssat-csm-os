@@ -8,7 +8,7 @@ $SPECIES:WHCER048.20200721   Last edit: 2020-07-21 CHP
 ! temperature response characteristics, and for some root growth 
 ! and activity coefficients.  
 
-*SPECIES:WHCER047
+*SPECIES:WHCER048
 ! Phase durations
 @PGERM PEMRG    P0    P6  ! Germination,emrgence/cm,juvenile,post-maturity
 !  HTu Tu/cm  oC.d  oC.d

@@ -1,8 +1,8 @@
-Checklist for preparing a release exe for DSSAT-CSM:
+# Checklist for preparing a release exe for DSSAT-CSM:
 
-- CMakeLists.txt - change the version number. This is the one that actually brands the output files.
+- CMakeLists.txt - change the version number. This brands the output files.
 - Utilities\CSMVersion.for.in - change the version number. 
-- Resources\version48.rc - change the version number. This is what brands the exe.
+- Resources\version48.rc - change the version number. This brands the exe.
 - Manually add the resource file to the project after rebuilding the project with new CMakeLists.txt.
 - Compile and test everything in the “develop” branch with the release-mode compiler settings
 - Tag with a version number

@@ -488,19 +488,21 @@ C-----------------------------------------------------------------------
                WRITE(fhlun,'(a)')
      &           '@RUN FILEX    CR TRNO FHNO YEAR DOY'//
      &           ' RCWAH RLWAH RSWAH RSRWH RRTWH RLAIH'//
-     &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H'
+     &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H'//
 !     &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H FHAGE IVOMD'//
-!     &           '   MOWC RSPLC'
+     &           '  MOWC RSPLC'
             end if
                call yr_doy(yrdoy,year,doy)
                write(fhoutfmt,'(a)') '(i4,x,a8,a3,2(i5),i5,i4,'//
-     &            '5(i6),f6.2,2(i6),3(f6.2),f6.1,i6,f6.1,x,f8.0,F6.1)'
+     &            '5(i6),f6.2,2(i6),3(f6.2),f6.1,x,f5.0,F6.1,F6.1)'
             WRITE(fhlun,fhoutfmt)
      &           run,mowfile(1:8),crop,trtno,i,year,doy,
      &           Nint(topwt*10.),Nint(wtlf*10.),Nint(stmwt*10.),
      &           Nint(strwt*10.),Nint(rtwt*10.),xlai,
      &           Nint(fhtot*10.),Nint(fhtotn*10.),
-     &           fhpctn,fhpcho,fhplig,fhpctlf
+     &           fhpctn,fhpcho,fhplig,fhpctlf,
+     &           MOWC,RSPLC
+
 !     &           -99,-99.0,MOWC,RSPLC
             close(fhlun)
 

@@ -8,5 +8,10 @@ $BATCH(STRAWBERRY)
 ! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
 !
 @FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Strawberry\UFBA1401.SRX                                                                1      1      0      1      0
+C:\DSSAT48\Strawberry\UFBA1601.SRX                                                                1      1      0      1      0
+C:\DSSAT48\Strawberry\UFBA1601.SRX                                                                2      1      0      1      0
+C:\DSSAT48\Strawberry\UFBA1701.SRX                                                                1      1      0      1      0
+C:\DSSAT48\Strawberry\UFBA1701.SRX                                                                2      1      0      1      0
 C:\DSSAT48\Strawberry\UFWM1401.SRX                                                                1      1      0      1      0
 C:\DSSAT48\Strawberry\UFWM1401.SRX                                                                2      1      0      1      0

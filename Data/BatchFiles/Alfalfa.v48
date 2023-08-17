@@ -8,7 +8,16 @@ $BATCH(ALFALFA)
 ! Debug        : C:\DSSAT48\DSCSM048.EXE PRFRM048 " B DSSBatch.v48"
 !
 @FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\ALFALFA\AGZG1219.ALX                                                                   1      1      0      1      0
+C:\DSSAT48\ALFALFA\AGZG1219.ALX                                                                   2      1      0      1      0
+C:\DSSAT48\ALFALFA\AGZG1219.ALX                                                                   3      1      0      1      0
+C:\DSSAT48\ALFALFA\AGZG1229.ALX                                                                   1      1      0      1      0
+C:\DSSAT48\ALFALFA\AGZG1229.ALX                                                                   2      1      0      1      0
+C:\DSSAT48\ALFALFA\AGZG1229.ALX                                                                   3      1      0      1      0
 C:\DSSAT48\ALFALFA\AGZG1501.ALX                                                                   1      1      0      1      0
-C:\DSSAT48\ALFALFA\AGZG1501.ALX                                                                   2      1      0      1      0
-C:\DSSAT48\ALFALFA\AGZG1501.ALX                                                                   3      1      0      1      0
-C:\DSSAT48\ALFALFA\AGZG1501.ALX                                                                   4      1      0      1      0
+C:\DSSAT48\ALFALFA\AGZG1502.ALX                                                                   1      1      0      1      0
+C:\DSSAT48\ALFALFA\AGZG1502.ALX                                                                   2      1      0      1      0
+C:\DSSAT48\ALFALFA\AGZG1502.ALX                                                                   3      1      0      1      0
+C:\DSSAT48\ALFALFA\ONCF1401.ALX                                                                   1      1      0      1      0
+C:\DSSAT48\ALFALFA\ONCF1401.ALX                                                                   2      1      0      1      0
+C:\DSSAT48\ALFALFA\ONCF1401.ALX                                                                   3      1      0      1      0

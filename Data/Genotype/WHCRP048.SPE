@@ -6,7 +6,7 @@ $SPECIES:WHCRP048.20200721   Last edit: 2020-07-21 CHP
 ! model,and from the literature. They may change as experience is
 ! gained,and should not be taken as 'fixed'.
 
-*SPECIES:WHCRP047
+*SPECIES:WHCRP048
 ! Principal Stages (S=Standard,K=Key(those that may be outputed)
 @ PSNO PSTYP PSABV PSNAME
 ! Stg#  Type Abrev Name

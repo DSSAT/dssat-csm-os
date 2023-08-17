@@ -16,7 +16,8 @@
 ! FL-LF   Time between first flower (R1) and end of leaf expansion
 !         (photothermal days)
 ! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
-!         (mg CO2/m2-s) default was 1.98 - set to 1.76=40 umol m-2 s-1 yielding Boote et al.'s 35.5 umol m-2s-1 @ 2000 umol photons m-2s-1
+!         (mg CO2/m2-s) default was 1.98 - set to 1.76=40 umol m-2 s-1 yielding 
+!         Boote et al.'s 35.5 umol m-2s-1 @ 2000 umol photons m-2s-1
 ! SLAVR   Specific leaf area of cultivar under standard growth conditions
 !         (cm2/g)
 ! SIZLF   Maximum size of full leaf (three leaflets) (cm2)

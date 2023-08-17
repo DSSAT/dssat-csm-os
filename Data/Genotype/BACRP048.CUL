@@ -1,5 +1,30 @@
 $CULTIVARS:BACRP048.20200721   Last edit: 2021-05-08 GH
-
+!
+! COEFF       DEFINITION
+! ========    ==========
+! ECO#        Ecotype code for this cultivar, points to entry in the ECO file
+! EXP#        Number of experiments,treatments used to estimate coefficients
+! G#WTS       Standard grain number per unit canopy weight at anthesis (#/g)
+! GWTS        Standard grain size,optimum conditions,normal plant density (mg)
+! LA1S        Area of standard first leaf (cm2)
+! LAFV        Increase in potential area of leaves,vegetative phase (fr/leaf)
+! LAFR        Increase in potential area of leaves,reproductive phase (fr/leaf)
+! Pn          Duration of phase n where n is phase number (PVoC.D) BUT P3 and
+!             P4 are 'dummy' values inserted to set the total duration of the 
+!             P3+P4 phase. The actual balance between P3 and P4 is determined 
+!             internally depending on the leaf number at the end of phase 1. 
+! PPSn *      Photoperiod sensitivity,phase(n). % drop in rate,10h pp.change.
+! PHINT       Interval between successive leaf appearances. (oC.d)
+! SHWTS       Standard,non-stressed shoot dry weight (incl.grain),maturity (g)
+! SLAS        Specific leaf area,standard (cm2/g)                                                                                   
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+! VREQ        Vernalization required for max.development rate (VDays)
+! VBASE       Vernalization requirement before any effect (VDays)
+! VEFF        Vernalization effect (Rate reduction when unvernalized (fr)
+!
+! *  The programme has been written to read sensitivity for all phases so that
+!    additional columns for later phases could be added if desired.
 ! Coefficients used in the Cropsim model differ from those used in
 ! earlier DSSAT wheat/barley models. They can be calculated
 ! (approximately) from V3.5 coefficients as follows:
@@ -48,30 +73,3 @@ IB0030 Maris Badger         . US0001   400    66   199   178    60    24   156  
 
 ! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
 !IB0030 Maris Badger         . US0001   356    66   199   178    60    24   156   750     0     0   1.0    00     0    83   4.0   0.1   0.3   1.5    20    52 
-
-
-! COEFF       DEFINITION
-! ========    ==========
-! ECO#        Ecotype code for this cultivar, points to entry in the ECO file
-! EXP#        Number of experiments,treatments used to estimate coefficients
-! G#WTS       Standard grain number per unit canopy weight at anthesis (#/g)
-! GWTS        Standard grain size,optimum conditions,normal plant density (mg)
-! LA1S        Area of standard first leaf (cm2)
-! LAFV        Increase in potential area of leaves,vegetative phase (fr/leaf)
-! LAFR        Increase in potential area of leaves,reproductive phase (fr/leaf)
-! Pn          Duration of phase n where n is phase number (PVoC.D) BUT P3 and
-!             P4 are 'dummy' values inserted to set the total duration of the 
-!             P3+P4 phase. The actual balance between P3 and P4 is determined 
-!             internally depending on the leaf number at the end of phase 1. 
-! PPSn *      Photoperiod sensitivity,phase(n). % drop in rate,10h pp.change.
-! PHINT       Interval between successive leaf appearances. (oC.d)
-! SHWTS       Standard,non-stressed shoot dry weight (incl.grain),maturity (g)
-! SLAS        Specific leaf area,standard (cm2/g)                                                                                   
-! VAR#        Identification code or number for the specific cultivar.
-! VAR-NAME    Name of cultivar.
-! VREQ        Vernalization required for max.development rate (VDays)
-! VBASE       Vernalization requirement before any effect (VDays)
-! VEFF        Vernalization effect (Rate reduction when unvernalized (fr)
-
-! *  The programme has been written to read sensitivity for all phases so that
-!    additional columns for later phases could be added if desired.
