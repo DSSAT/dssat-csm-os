@@ -200,6 +200,8 @@ YPTM   Yd-EP Prod      Yield-transpiration productivity (kg[yield]/ha/mm[EP])   
 *GROWTH
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 A#PD   Apex number     Apex number per plant (#)                                .
+AMLWT  stem lf wt      Leaf weight on main stem                                 .
+ATLWT  till lf wt      Leaf weight of tiller                                    .
 BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
 BWAD   Basal weight    Basal weight (kg [dm]/ha)                                .
 CAID   Canopy area ix  Canopy area index (Laminae+sheaths+stems+ear+??)         .
@@ -221,6 +223,7 @@ DAS    Days after st   Days after start of simulation (#)                       
 DCCD   Zadoks code     Growth stage (Zadoks code, 1-90)                         .
 DLAID  LAI-dead        Leaf area index, dead leaves                             .
 DLW_1  Dead Lf wt stk1 Dead leaf weight, primary stalk (g[dm]/stk)              .
+DTTC   Cum gr degees   Cumulutive growing degrees (°C)                          .
 DTTD   Grow deg-days   Growing degree days (°C-d/d)                             .
 DU     Develpm units   Developmental units  (PVC.d)                             .
 DWTCO  Dead canopy     Dead canopy weight (kg [dm]/ha)                          .
@@ -271,6 +274,11 @@ LRSD   Leaf app rate   Leaf appearance rate (#/bday)                            
 LWAD   Leaf wt kg/ha   Leaf weight (kg [dm]/ha)                                 .
 LWD_1  Leaf wt stk 1   Green leaf weight, primary stalk (g[dm]/stk)             .
 M_RESP Maint. resp.    Maintenance respiration rate (t/ha/d)                    .
+MLAG1  Leaf area gr    Leaf area growth on main stem                            .
+MLFWT  Total stem lf w Total leaf weight on main stem                           .
+MPLA   Total stem lf a Total leaf area on main stem (growth)                    .
+MPLAG  Leaf area gr    Leaf area growth on main stem                            .  
+MSTMWT Total stem w   Total main stem weight                                    .
 NFLF2  N factor leaf   N factor for leaf area (0-1)                             .
 NFTID  N factor till   N factor for tillering (0-1)                             .
 NSPAV  N stress (av)   Nitrogen stress (av) - photosynthesis (0-1, 0=none)      .
@@ -283,8 +291,11 @@ OWAD   Corm kg dm/ha   Corm dry weight (kg/ha)                                  
 OWGD   Corm wt g       Unit corm weight (g [dm]/corm)                           .
 P#AD   Pod no #/m2     Pod number (no/m2)                                       .
 PARCE  Average RUE     Daily photosynthetic conversion efficiency (g/MJ)        .
+PLA    Total leaf area Total leaf area (growth)                                 .
 PMWD   Planting wt     Planting material wt (kg/ha)                             .
 PRSD   Shoot fraction  Partitioning of wt to shoot (ratio)                      .
+PS1D   P Stress growth Phosphorus stress affecting growth (0-1, 0=none)         .
+PS2D   P Stress PHS    Phosphorus stress affecting photosynthesis (0-1, 0=none) .
 PWAD   Pod wt kg/ha    Pod weight (kg [dm]/ha)                                  .
 PWDD   Det pod kt/ha   Detached pod mass (kg [dm]/ha)                           .
 PWTD   Pod wt kg/ha    Total pod weight (kg [dm]/ha)                            .
@@ -312,6 +323,7 @@ RSPD   Rt senesce g/pl Root senescence (g [dm]/pl)                              
 RSTD   Reproductive st Reproductive development stage (0-9 for cereals)         .
 RWAD   Root wt kg/ha   Root weight (kg [dm]/ha)                                 .
 SDAD   Dead stem kg/ha Dead stem weight (kg [dm]/ha)                            .
+SDDMD  Sen T. DM t/ha  Senesced tiller (stalk) dry mass (t/ha)                  .
 SEAD   Senesce kg/ha.d Senescence,tops (kg [dm]/(ha.day))                       .
 SH%D   Shelling %      Shelling % (seed wt/pod wt*100)                          .
 SHAD   Shell wt kg/ha  Shell weight (kg [dm]/ha)                                .
@@ -337,9 +349,14 @@ TDRW   Total biomass   Total crop biomass (kg [dm]/ha)                          
 TFDD   Temp.factor,dev Temperature factor for development (0-1)                 .
 TKILL  Pl death tmp °C Temperature for plant death (°C)                         .
 TLA_1  Leaf area stk 1 Total green+dead leaf area, primary stalk only (cm2)     .
+TLAG1  Tiller area gr  Tiller leaf area expansion                               .
+TLFWT  Total till lf w Total leaf weight of tiller                              .
 TLW_1  Leaf wt stalk 1 Total green+dead leaf+sheath prim stalk (g [dm]/stalk)   .
+TPLA   Total till lf a Total tiller leaf area (growth)                          .
+TPLAG  Tiller area gr  Tiller leaf area growth                                  .
 TPSM   Tillers no #/m2 Tiller number (no/m2)                                    .
 TRAD   Trash DM kg/ha  Trash weight (kg [dm]/ha)                                .
+TSTMWT Total till st w Total stem weight of tiller                              .
 TT     Thermal time    Daily thermal (°C.d)                                     .
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
 UWAD   Tuber kg dm/ha  Tuber dry weight (kg [dm]/ha)                            .
@@ -532,7 +549,7 @@ EOSA   Pot soil evap   Average potential soil evaporation per day  (mm/day)     
 EPAA   Transpir mm/d   Avg plant transpiration (mm/d)                           .
 EPAC   Transpiration   Cumulative transpiration (mm)                            .
 EPAD   Transpir mm/d   Plant transpiration (mm/d)                               .
-ES10   Evap layer 10   Soil evaporation, layer 10(mm/d)                         .
+ES10D  Evap layer 10   Soil evaporation, layer 10(mm/d)                         .
 ES1D   Evap layer 1    Soil evaporation, layer 1 (mm/d)                         .
 ES2D   Evap layer 2    Soil evaporation, layer 2 (mm/d)                         .
 ES3D   Evap layer 3    Soil evaporation, layer 3 (mm/d)                         .
@@ -842,6 +859,7 @@ Z39D   ZADOKS 39 day   Zadoks 39 date (YrDoy)                                   
 *USER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 ABUND  BUND HT mm      Bund height (mm)                                         .
+DLYR3  Tick. Lyr1-3 cm Cum. tickness of soil layer from 1 to3 after tillage (cm).
 EFAC   CUM FLD EVAP mm Cumulative floodwater evaporation (mm)                   .
 EFAD   FLD EVAP mm/d   Floodwater evaporation rate (mm/d)                       .
 FALG   ALGAL ACTIVITY  Floodwater Photosynth. Act. Index (0 to 1)               .
@@ -863,7 +881,8 @@ INFD   INFILT mm/d     Infiltration rate (mm/d)                                 
 IRRD   Eff Irrig mm/d  Daily effective irrigation (mm/d)                        .
 IRRAD  App Irrig mm/d  Daily applied irrigation (includes losses) (mm/d)        .
 TL#C   TILLAGE #       Number of tillage operations                             .
-TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .
+TLBD   BD Lyr1-3 g/cm3 Bulk Density average Lyr 1 to 3 after tillage (g/cm3)    .
+TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .    
 
 *WEATHER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -947,6 +966,7 @@ SNW1D  Senes Soil Wt.  Daily senesced dry matter to soil (kg/ha.d)              
 SNXD   Extr. N kg/ha   Extractable soil N (kg[N]/ha)                            .
 SSAD   STRUCTURAL STEM Structural stem weight (g/m2 or kg/ha)                   .
 TFGD   TEMP FAC GROWTH Temperature factor for leaf growth (0-1)                 .
+TFGEM  TEMP FAC GERM   Temperature factor for germination and emergence (0-1)   .
 TFPD   TEMP FAC PHS    Temperature factor for photosynthesis (0-1)              .
 TNAD   TOPS N kg/ha    Tops (ie canopy) N (kg/ha)                               .
 TRRD   TRANSLOC RESP   Translocation respiration (g/(m2.d) or kg/(ha.d))        .
@@ -957,9 +977,10 @@ VN%D   Veg N%          Vegetative above-ground tissue N concentration (%)       
 VN%LD  Veg N% minimum  Vegetative above-ground tissue minimum N conc. (%)       .
 VN%CD  Veg N% critical Vegetative above-ground tissue critical N conc. (%)      .
 VRNF   VERNALIZE FAC   Vernalization factor (0-1)                               .
-WFSD   WATER FAC SENES Water factor for senescence (0-1)                        .
-WFTD   WATER FAC TRANS Water factor for transpiration (0-1)                     .
-WSTD   H2O STRESS,TILR Water stress - tillering (0-1)                           .
+WFGE   Water Fac Emer  Water stress factor for emergence (0-1)                  .
+WFSD   Water Fac Senes Water stress factor for senescence (0-1)                 .
+WFTD   Water Fac Trans Water stress factor for transpiration (0-1)              .
+WSTD   Water Fac Tilr  Water stress factor for tillering (0-1)                  .
 YEAR   YEAR            Year (4 digits)                                          .
 RCANE  Cane Type       PlantCane or Ratoon Cane                                 .
 DDLMD  Dead Leaf Biom. Dead Leaves Biomass (ton/ha)   							.
