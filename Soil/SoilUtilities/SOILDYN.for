@@ -2306,7 +2306,7 @@ C=======================================================================
 !   ---------------------------------------------------------
       USE ModuleData
       Implicit NONE
-      EXTERNAL ERROR, FIND, WARNING, GETLUN
+      EXTERNAL ERROR, FIND, WARNING, GETLUN, INFO
 
       Type (SoilType) SOILPROP
 
