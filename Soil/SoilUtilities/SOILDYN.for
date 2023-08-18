@@ -29,7 +29,7 @@ C  08/12/2003 CHP Added I/O error checking
 !                 Changed condition for missing or zero OC.
 !  08/11/2011 JW  Move the soilLayerType determination of 1D layer to a new SUBROUTINE SoilLayerClass
 !                 Add soilLayerType determination for bed layer profile
-!                 Add calculation of Matrix Potential
+!                 Add calculation of Matric Potential
 !  01/24/2023 chp added SAEA to soil analysis in FileX for methane
 C-----------------------------------------------------------------------
 C  Called : Main
@@ -956,6 +956,9 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         TEXTURE = SOILPROP % TEXTURE
 
       ELSE
+        SoilProp_Bed = SOILPROP
+        SoilProp_Furrow = SOILPROP
+        SOILPROP_profile = SOILPROP
         CALL PRINT_SOILPROP(SOILPROP)
       ENDIF
 !--------------------------------------------------------------------
