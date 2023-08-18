@@ -20,7 +20,8 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
-!       4.8.1.41  FO 2023-08-03 Update help files for release Version 4.8.2 (commit f9dd401)
+!       4.8.1.42  FO 2023-08-18 Updated Tannier to Tanier path name for CSM (commit 13d414c)
+!       4.8.1.41  FO 2023-08-18 Update help files for release Version 4.8.2 (commit f9dd401)
 !       4.8.1.40  FO 2023-08-02 Cleaning up genotype files and updating standards (commit 2f7af24)
 !       4.8.1.39  FO 2023-08-02 Fixed AutoMOW variable initialization (commit 7e778933)
 !       4.8.1.38  FO 2023-07-30 Added Minima and Maxima for Guar and Carinata (commit 734eb01)
