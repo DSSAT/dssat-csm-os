@@ -859,7 +859,7 @@ Z39D   ZADOKS 39 day   Zadoks 39 date (YrDoy)                                   
 *USER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 ABUND  BUND HT mm      Bund height (mm)                                         .
-DLYR3  Tick. Lyr1-3 cm Cum. tickness of soil layer from 1 to3 after tillage (cm).
+DLYR3  Tick. Lyr1-3 cm Cum. tickness of soil layer from 1 to 3 after til.(cm)   .
 EFAC   CUM FLD EVAP mm Cumulative floodwater evaporation (mm)                   .
 EFAD   FLD EVAP mm/d   Floodwater evaporation rate (mm/d)                       .
 FALG   ALGAL ACTIVITY  Floodwater Photosynth. Act. Index (0 to 1)               .
