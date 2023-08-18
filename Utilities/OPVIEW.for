@@ -347,10 +347,10 @@ C-----------------------------------------------------------------------
 C-GH &          (INDEX(Simulated(I),'-99') .EQ. 0) .AND.            !L!
 C Need to keep -99 values                                           !L!
      &          (INDEX(Simulated(I),'-99') .EQ. 0) .AND.            ! !
-c-chp If Simulated values are -99, then value doesn't exist and     !O!
-c      we shouldn't print it. Maize has some variables that are     !F!
+c-chp If Simulated values are -99, then value doesnt exist and      !O!
+c      we shouldnt print it. Maize has some variables that are      !F!
 c      included in OLAB array (like pod date, etc.) that            ! !
-c      really don't make sense for maize.  We should probably       !T!
+c      really dont make sense for maize.  We should probably        !T!
 c      modify the OLAB array to only include values that are        !H!
 c      needed. - chp 4/11/03                                        !E!
 c      Values of -99 for Measured data are still printed.           !S!
