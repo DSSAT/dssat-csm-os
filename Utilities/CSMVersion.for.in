@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.1.44  FO 2023-08-18 Updated negative WHCRP048.CUL coefficient (commit ad87f21)
 !       4.8.1.43  FO 2023-08-18 Fixed encoding issues (commit 1018eb8)
 !       4.8.1.42  FO 2023-08-18 Updated Tannier to Tanier path name for CSM (commit 13d414c)
 !       4.8.1.41  FO 2023-08-18 Update help files for release Version 4.8.2 (commit f9dd401)
