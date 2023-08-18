@@ -142,7 +142,7 @@ C=====================================================================
 !     Call WATBAL first for all except seasonal initialization
       IF (DYNAMIC /= SEASINIT) THEN
         SELECT CASE (MEHYD)
-        CASE('G','C')   !Green-Ampt method - drip irrigation
+        CASE('G','C')   !2D
           CALL WatBal2D(CONTROL, ISWITCH,
      &    EOP, ES, IRRAMT, SOILPROP, SOILPROP_FURROW,     !Input 
      &    WEATHER,                                        !Input

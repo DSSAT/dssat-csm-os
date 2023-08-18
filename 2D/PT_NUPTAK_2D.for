@@ -1,5 +1,5 @@
 C=======================================================================
-C  PT_NUPTAK_2D, Subroutine
+C  PT_NUPTAK, Subroutine
 C
 C  Determines N uptake
 C-----------------------------------------------------------------------
@@ -11,13 +11,13 @@ C  02/08/1993 PWW Header revision and minor changes
 C  12/  /1994 WTB Adapted for SUBSTOR model
 C  08/28/2001 CHP Modified for modular format.
 !  11/07/2005 CHP Replaced FAC with SOILPROP variable KG2PPM
-!  02/25/2018 MZ  Converted to 2D
+!  02/25/2018 MZ  Adapted for 2D
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
 C  NUF    : Plant N supply/demand ratio used to modify uptake
 C  NDEM   : Plant nitrogen demand (g/plant)
-C  L      : Loop counters
+C  L,L1   : Loop counters
 C  J      : Loop counters for 2D
 C  THUMN  :
 C  RNH4U  : Potential ammonium uptake from Layer L (kg N/ha)
@@ -50,9 +50,9 @@ C  FACTOR : Relative weighting to distribute crop root residues at the beginning
 C           of a simulation
 C=======================================================================
 
-      SUBROUTINE PT_NUPTAK_2D (DYNAMIC, CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
-     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
+      SUBROUTINE PT_NUPTAK (DYNAMIC, CELLS,
+     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
+     &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
@@ -65,12 +65,12 @@ C=======================================================================
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
       SAVE
-      
+
       Type (CellType) Cells(MaxRows,MaxCols)
 !     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
       REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
 
-      INTEGER DYNAMIC, ISTAGE, L, NLAYR
+      INTEGER DYNAMIC, ISTAGE, L, L1, NLAYR
 
       REAL ANDEM, ARVCHO, AVAILN, EXTRAN, FACTOR 
       REAL FNH4, FNO3, GRFN, GRORT, GROTOP, GROTUB 
@@ -82,9 +82,10 @@ C=======================================================================
       REAL TUBSINK, TUBSN, TUBWT
       REAL WTNUP, XMIN, XNDEM
 
-      REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL  !, NH4, NO3
-      REAL, DIMENSION(NL) :: SAT, UNO3, UNH4
-      
+      REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
+      REAL, DIMENSION(NL) :: RLV, RNO3U, RNH4U
+      REAL, DIMENSION(NL) :: SAT, SNH4, SNO3, SW, UNO3, UNH4
+
       INTEGER J, FurCol1
       REAL HalfRow, BEDWD
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D
@@ -128,6 +129,10 @@ C-----------------------------------------------------------------------
       ARVCHO = 0.0
       NUF    = 0.0
       TRNU   = 0.0
+      RNO3U    = 0.0
+      RNH4U    = 0.0
+      UNO3     = 0.0
+      UNH4     = 0.0
       RNO3U_2D = 0.0
       RNH4U_2D = 0.0
       UNH4_2D  = 0.0
