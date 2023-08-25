@@ -20,7 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
-!       4.8.2.0   FO 2023-08-18 v4.8.2 Release 2023
+!       4.8.2.0   FO 2023------ v4.8.2 Release 2023
 !       4.8.1.0   FO 2022-10-28 v4.8.1 Interim release 2022
 !       4.8.0.1  chp 2020-07-21 v4.8 (=v4.7.5.14)
 !       4.7.5.0  chp 2018-12-18 Pre-release version
