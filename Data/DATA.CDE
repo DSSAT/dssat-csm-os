@@ -1417,7 +1417,7 @@ CH4DID CH4Diffusion    Daily CH4 Diffusion (kg[C]/ha)                           
 CH4EBD CH4Ebullition   Daily CH4 Ebullition (kg[C]/ha)                          .
 CH4EC  Cum CH4 emitted Cumulative methane emitted kg[C]/ha                      .
 CH4ED  CH4Emission kg  Daily CH4 Emission (kg[C]/ha)                            .
-CH4GED CH4Emission g   Daily CH4 Emission (g[C]/ha)                             .
+CH4GD  CH4Emission g   Daily CH4 Emission (g[C]/ha)                             .
 CH4LCC CumCH4Leaching  Cumulative CH4 leaching (kg[C]/ha)                       .
 CH4LCD CH4Leaching     Daily CH4 Leaching (kg[C]/ha)                            .
 CH4PLD CH4PlantFlux    Daily CH4 PlantFlux (kg[C]/ha)                           .
@@ -1427,7 +1427,7 @@ CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)                        
 CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             .
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
-CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
+CO2GD  CO2emission g   Daily CO2 emission (g[C]/ha)                             .
 CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
 CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
 MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .
@@ -1435,7 +1435,7 @@ N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha)
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
 N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 N2OED  N2O emitted kg  Daily N2O emissions from soil (kg[N]/ha)                 .
-N2OGED N2O emitted g   Daily N2O emissions from soil (g[N]/ha)                  .
+N2OGD  N2O emitted g   Daily N2O emissions from soil (g[N]/ha)                  .
 N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
 N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
 N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .

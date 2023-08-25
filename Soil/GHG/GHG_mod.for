@@ -577,6 +577,7 @@ C  Generates output for daily soil N2O routines
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  06/15/2014 CHP Written
+C  08/24/2023  FO Update header from 6- to 5-character code for GHG.OUT
 !=======================================================================
 
       SUBROUTINE OpGHG(CONTROL, ISWITCH, N2O_data, CH4_data) 
@@ -599,7 +600,7 @@ C  06/15/2014 CHP Written
 
       REAL CO2EC, N2OEC, CH4EC
       REAL CCEQC, NCEQC, MCEQC, TCEQC
-      REAL CO2GED, N2OGED, CH4GED !CO2ED, N2OED, CH4ED, 
+      REAL CO2GD, N2OGD, CH4GD
       LOGICAL FEXIST
 
 !-----------------------------------------------------------------------
@@ -664,7 +665,7 @@ C-----------------------------------------------------------------------
      &"    CO2eq    CO2eq    CO2eq    CO2eq"
 
           WRITE(GHGLUN,'(A,A,A)') "@YEAR DOY   DAS",
-     &"   CO2GED   N2OGED   CH4GED    CO2EC    N2OEC    CH4EC",
+     &"    CO2GD    N2OGD    CH4GD    CO2EC    N2OEC    CH4EC",
      &"    CCEQC    NCEQC    MCEQC    TCEQC"
 
         ENDIF
@@ -683,9 +684,9 @@ C-----------------------------------------------------------------------
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
-      CO2GED = CH4_data % CO2emission * 1000.  !g/d
-      N2OGED = N2O_data % N2O_emitted * 1000.  !g/d
-      CH4GED = CH4_data % CH4Emission * 1000.  !g/d
+      CO2GD = CH4_data % CO2emission * 1000.  !g/d
+      N2OGD = N2O_data % N2O_emitted * 1000.  !g/d
+      CH4GD = CH4_data % CH4Emission * 1000.  !g/d
 
       CO2EC = CH4_data % CumCO2Emission       !kg/d
       N2OEC = N2O_data % CN2O_emitted         !kg/d
@@ -707,7 +708,7 @@ C-----------------------------------------------------------------------
         IF (IDETN .EQ. 'Y') THEN
           WRITE (GHGLUN,'(I5,I4.3,I6,I9,2F9.2,I9,2F9.2,4I9)')  
      &      YEAR, DOY, DAS, 
-     &      NINT(CO2GED), N2OGED, CH4GED, NINT(CO2EC), N2OEC, CH4EC,
+     &      NINT(CO2GD), N2OGD, CH4GD, NINT(CO2EC), N2OEC, CH4EC,
      &      NINT(CCEQC), NINT(NCEQC), NINT(MCEQC), NINT(TCEQC)
         ENDIF
 
