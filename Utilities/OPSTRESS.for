@@ -257,7 +257,7 @@
      &      CONTROL % ErrCode == 0) THEN
         WRITE(NOUTDO,500)
  500    FORMAT(//,'*ENVIRONMENTAL AND STRESS FACTORS',//,1X, 
-     &'|-----Development Phase------|'38('-'),'Environment',38('-'),
+     &'|-----Development Phase------|',38('-'),'Environment',38('-'),
      &'|',17('-'),'Stress',17('-'),'|',
      &/,30X,'|',15('-'),'Average',14('-'),'|-----Cumulative-----',
      &'|--------Count of days--------|',10X,'(0=Min, 1=Max Stress)',9X,
@@ -268,8 +268,8 @@
      &/,25X,'Span   Max   Min  Mean   Rad  [day]    CO2   Rain  Trans ',
      &'    ET   <    <    >    >    >    >   Photo         Photo      ',
      &'   Photo',
-     &/,25X,'days    øC    øC    øC MJ/m2     hr    ppm     mm     mm ',
-     &'    mm  0øC  2øC 30øC 32øC 34øC  0mm  synth Growth  synth ',
+     &/,25X,'days     C     C     C MJ/m2     hr    ppm     mm     mm ',
+     &'   mm   0 C  2 C 30 C 32 C 34 C  0mm  synth Growth  synth ',
      &'Growth  synth Growth',/,160('-'))
       ENDIF
 

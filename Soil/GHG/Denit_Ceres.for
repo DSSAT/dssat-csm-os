@@ -206,13 +206,14 @@ C         If flooded, lose all nitrate --------REVISED-US
 !            DNFRATE = 0.0
 !          ENDIF
 
-!         chp/us 4/21/2006
-          IF (FLOOD .GT. 0.0 .AND. WFDENIT > 0.0) THEN
-!            DENITRIF(L) = SNO3_AVAIL
-!           chp 9/6/2011 remove 50% NO3/d = 97% removed in 5 days
-!           previously removed 100% NO3/d
-            DENITRIF(L) = SNO3_AVAIL * 0.5
-          ENDIF
+!     2023-07-28 Mathilde Dionisi, Myriam Adam - flooded denitrification at same rates as upland
+!!         chp/us 4/21/2006
+!          IF (FLOOD .GT. 0.0 .AND. WFDENIT > 0.0) THEN
+!!            DENITRIF(L) = SNO3_AVAIL
+!!           chp 9/6/2011 remove 50% NO3/d = 97% removed in 5 days
+!!           previously removed 100% NO3/d
+!            DENITRIF(L) = SNO3_AVAIL * 0.5
+!          ENDIF
 
 !chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
           DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
