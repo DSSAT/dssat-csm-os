@@ -31,6 +31,7 @@ C  08/12/2003 CHP Added I/O error checking
 !                 Add soilLayerType determination for bed layer profile
 !                 Add calculation of Matric Potential
 !  01/24/2023 chp added SAEA to soil analysis in FileX for methane
+!  08/22/2023 CHP begin integration of 2D model into develop
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -257,10 +258,6 @@ C-----------------------------------------------------------------------
       EXK    = -99.
       EXNA   = -99.
       
-!-----------------------------------------------------------------------
-!     Should not need to run this unless soil water is being simulated.
-!     However, currently roots are grown even with no soil water simulation.
-!     Need to fix this in the future
       ISWWAT = ISWITCH % ISWWAT
 
 !-----------------------------------------------------------------------
@@ -919,11 +916,11 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % COARSE = COARSE
 
 !=====================================================================
-!    2D model:
-      IF (ISWITCH%MESOL == 'D') THEN  !MESOL = 'D' for 2D raised bed 
-        CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, 
+!     Initialize 2D variables for all cases.
+      CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, 
      &        SoilProp_Bed, SoilProp_Furrow)
 
+      IF (ISWITCH%MESOL == 'D') THEN  !MESOL = 'D' for 2D raised bed 
         SOILPROP_profile = SOILPROP  !Save original profile info
         SOILPROP = SoilProp_Bed      !this is the new soil profile data
 
@@ -936,11 +933,10 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
         CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP) 
 
-!-----------------------------------------------------------------------
-!    
-!-----------------------------------------------------------------------
         CALL PRINT_SOILPROP(SOILPROP)
-        CALL PRINT_SOILPROP(SoilProp_Furrow)
+        IF (ISWITCH%MESOL == 'D') THEN  !MESOL = 'D' for 2D raised bed 
+          CALL PRINT_SOILPROP(SoilProp_Furrow)
+        ENDIF
 
         BD     = SOILPROP % BD
         DLAYR  = SOILPROP % DLAYR

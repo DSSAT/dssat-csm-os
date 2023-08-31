@@ -22,15 +22,15 @@
 !-----------------|---------------------------|----------------------------|---------------------------|
 !                 |  PMALB > 0  | PMALB <= 0  |  PMALB > 0  |  PMALB <= 0  |  PMALB > 0  | PMALB <= 0  |
 !-----------------|-------------|-------------|----------------------------|-------------|-------------|
-!  Bed  | BH < 2  |   CASE 3    |    CASE 1   |     CASE 2  |    CASE 1    |   CASE 3    |    CASE 1   |
+!       | BH < 2  |   CASE 3    |    CASE 1   |     CASE 2  |    CASE 1    |   CASE 3    |    CASE 1   |
+!  Bed  |         |    RaisedBed = .FALSE.    |     RaisedBed = .FALSE.    |    RaisedBed = .FALSE.    |
 ! Height|---------|-------------|-------------|----------------------------|-------------|-------------|
 !  (cm) | BH > 2  |   CASE 3    |    CASE 1   |     CASE 4  |    CASE 5    |   CASE 3    |    CASE 1   |
+!       |         |    RaisedBed = .FALSE.    |     RaisedBed = .TRUE.     |    RaisedBed = .FALSE.    |
 !-----------------|---------------------------|----------------------------|---------------------------|
-!                 |       set RaisedBed       |        set RaisedBed       |       set RaisedBed       |        
-!                 |          = .FALSE.        |          = .TRUE.          |          = .FALSE.        |
-!------------------------------------------------------------------------------------------------------|
 !==============================================================================
 !   Subroutine CellInit_2D
+!   Initialization for cell structure and initial conditions
 !   Initialization for cell structure and initial conditions
     Subroutine CellInit_2D(SOILPROP, CELLS, &        !input
                 NH4I, NO3I,  &                        !input & output
@@ -46,7 +46,7 @@
 !   L = original soil layers as input from soil profile data, 1 to NLAYR
 !   M = modified soil layers from bottom of furrow to bottom of soil profile, 1 to SoilProp_Furrow%NLAYR
 !   Row = modified soil layers from top of bed to bottom of soil profile, 1 to NRowsTot
-	USE Cells_2D
+    USE Cells_2D
     USE ModuleData
     Implicit NONE
     EXTERNAL INFO, ERROR, FIND, GETLUN, WARNING, MIXMASSMASS,   &
@@ -54,15 +54,12 @@
 
     Type (CellType) Cells(MaxRows,MaxCols)
     Type (SoilType) SOILPROP, SoilProp_Bed, SoilProp_Furrow
-!    Type (DripIrrType) DripIrrig
 
     CHARACTER*6 SECTION
     CHARACTER*8, PARAMETER :: ERRKEY = 'CellInit'
     CHARACTER*12 bedTexture
     CHARACTER*14 FMT
-    ! CHARACTER*17 bedSOILLAYERTYPE 
     CHARACTER*125 MSG(50)
-!   CHARACTER*180 CHAR
     INTEGER L, M, NLayr, Row, Col, NMSG
     INTEGER ERR, FOUND, LNUM, LUNIO
     INTEGER N_Bed_Cols, N_Fur_Cols, N_Bed_Rows  !, NRowsTOT, NColsTOT
@@ -93,7 +90,9 @@
     LOGICAL COARSE, RaisedBed, PMCover
     
     TYPE (ControlType) CONTROL
+    TYPE (SwitchType) ISWITCH
     CALL GET(CONTROL)
+    CALL GET(ISWITCH)
 
 !   ---------------------------------------------------------
     DS    = SOILPROP % DS
@@ -127,6 +126,11 @@
       PMALB = -99.
     ENDIF
 
+!   1D case - set bed height to 0.0
+    IF (ISWITCH % MESOL .NE. 'D') THEN
+      BEDHT = 0.
+    ENDIF
+
 !   Read Planting Details Section
     SECTION = '*PLANT'
     CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
@@ -150,11 +154,13 @@
 !--------------------------------------------------------------------------
 !   Column widths in bed and furrow 
 !---------------------------------------------------------------------------  
+!  (CASE 0: 1D model)
 !   CASE 1: Flat surface, no plastic mulch cover (all "furrow")
 !   CASE 2: Flat surface, partial plastic mulch cover (mixture of "bed" and "furrow")
 !   CASE 3: Flat surface, full plastic mulch cover (all "bed")
 !   CASE 4: Raised bed, plastic mulch cover over bed
 !   CASE 5: Raised bed, no plastic mulch 
+
 !---------------------------------------------------------------------------  
     IF (BEDWD < 2. .OR. ROWSPC_CM - BEDWD < 2.) THEN 
 !     Flat surface with or without plastic mulch
@@ -226,71 +232,89 @@
         NMSG = 4
       Endif
     ENDIF
-    
+
     CALL INFO(NMSG,ERRKEY,MSG)
     Call PUT('PLANT', 'BEDHT',  BEDHT)
     Call PUT('PLANT', 'BEDWD',  BEDWD)
 
 ! ---------------------------------------------------------------------------
 !   Define column dimensions
-!   Half of the bed is simulated area because of the symmetry vertically
-!   IF (( RaisedBed ) .or. ((BedCase .EQ. 1) .AND. (BEDWD > 2.) )) Then
-!   03/29/2019 Meng remove the extra condition to always set correct 
-!   bed/furrow based on input data
-    IF (BEDWD > 2.) THEN
-!     Half of the bed is simulated, ~5cm columns
-      N_Bed_Cols = nint(BEDWD/10.)  
-!     Reserve at least one column for furrow
-      N_Bed_Cols = MIN(N_Bed_Cols, MaxCols - 1) 
-      Bed_Col_Width = BEDWD / N_Bed_Cols / 2.
+    IF (ISWITCH % MESOL == 'D') THEN
+!     2D model
+!     Half of the bed is simulated area because of the symmetry vertically
+!     IF (( RaisedBed ) .or. ((BedCase .EQ. 1) .AND. (BEDWD > 2.) )) Then
+!     03/29/2019 Meng remove the extra condition to always set correct 
+!     bed/furrow based on input data
+      IF (BEDWD > 2.) THEN
+!       Half of the bed is simulated, ~5cm columns
+        N_Bed_Cols = nint(BEDWD/10.)  
+!       Reserve at least one column for furrow
+        N_Bed_Cols = MIN(N_Bed_Cols, MaxCols - 1) 
+        Bed_Col_Width = BEDWD / N_Bed_Cols / 2.
+      ELSE
+        N_Bed_Cols = 0
+        Bed_Col_Width = 0.
+      ENDIF
+      
+      N_Fur_Cols = NINT((ROWSPC_CM - BEDWD) / 2. / 10.)  !~10cm columns
+      N_Fur_Cols = MIN(N_Fur_Cols, MaxCols - N_Bed_Cols)
+      IF (N_Fur_Cols > 0) THEN
+        Fur_Col_Width = (ROWSPC_CM - BEDWD) / 2. / N_Fur_Cols
+      ELSE
+        Fur_Col_Width = 0.0
+      ENDIF
+
+!     Number of columns from planting bed centerline to furrow centerline
+      NColsTOT = N_Bed_Cols + N_Fur_Cols
+
+! --  -------------------------------------------------------------------------
+!     Define row dimensions
+      IF (RaisedBed) THEN
+!       Calculate bed row thickness
+        N_Bed_Rows = nint(BEDHT/5.0)
+        Bed_Row_Thick = BEDHT / N_Bed_Rows    !cm
+!       Depth of native soil excavated and blended to create beds
+        DigDep = BEDWD / ROWSPC_CM * BEDHT
+      ELSE
+        N_Bed_Rows = 0
+        Bed_Row_Thick = 0.0    !cm
+        DigDep = 0.0 
+      ENDIF
+
+      SELECT CASE(BedCase)
+      CASE (1) !Flat surface, no plastic
+        FurRow1 = 1
+        If (N_Bed_Cols .GE. 0) then
+          FurCol1 = N_Bed_Cols + 1
+        else
+          FurCol1 = 1
+        endif
+      CASE (2,3) !Flat surface, partial or full plastic
+        FurRow1 = 1
+        FurCol1 = N_Bed_Cols + 1
+      CASE (4) !Raised bed, partial plastic
+        FurRow1 = N_Bed_Rows + 1
+        FurCol1 = N_Bed_Cols + 1
+      CASE (5) ! Raised bed, no plastic mulch  
+        FurRow1 = N_Bed_Rows + 1
+        FurCol1 = N_Bed_Cols + 1
+      END SELECT
+
     ELSE
+!     1D model
+      BedCase = 0
+      RaisedBed = .FALSE.
       N_Bed_Cols = 0
-      Bed_Col_Width = 0.
-    ENDIF
-
-    N_Fur_Cols = NINT((ROWSPC_CM - BEDWD) / 2. / 10.)  !~10cm columns
-    N_Fur_Cols = MIN(N_Fur_Cols, MaxCols - N_Bed_Cols)
-    IF (N_Fur_Cols > 0) THEN
-      Fur_Col_Width = (ROWSPC_CM - BEDWD) / 2. / N_Fur_Cols
-    ELSE
-      Fur_Col_Width = 0.0
-    ENDIF
-    
-!   Number of columns from planting bed centerline to furrow centerline
-    NColsTOT = N_Bed_Cols + N_Fur_Cols
-
-! ---------------------------------------------------------------------------
-!   Define row dimensions
-    IF (RaisedBed) THEN
-!     Calculate bed row thickness
-      N_Bed_Rows = nint(BEDHT/5.0)
-      Bed_Row_Thick = BEDHT / N_Bed_Rows    !cm
-!     Depth of native soil excavated and blended to create beds
-      DigDep = BEDWD / ROWSPC_CM * BEDHT
-    ELSE
+      N_Fur_Cols = 1
+      NColsTOT = 1
       N_Bed_Rows = 0
-      Bed_Row_Thick = 0.0    !cm
+      Bed_Col_Width = 0.0
+!     Note chp: check this width; should it be 1/2 the row? depends on how it is used.
+      Fur_Col_Width = ROWSPC_CM
+      Bed_Row_Thick = 0.0
       DigDep = 0.0 
     ENDIF
 
-    SELECT CASE(BedCase)
-    CASE (1) !Flat surface, no plastic
-      FurRow1 = 1
-      If (N_Bed_Cols .GE. 0) then
-        FurCol1 = N_Bed_Cols + 1
-      else
-        FurCol1 = 1
-      endif
-    CASE (2,3) !Flat surface, partial or full plastic
-      FurRow1 = 1
-      FurCol1 = N_Bed_Cols + 1
-    CASE (4) !Raised bed, partial plastic
-      FurRow1 = N_Bed_Rows + 1
-      FurCol1 = N_Bed_Cols + 1
-    CASE (5) ! Raised bed, no plastic mulch  
-      FurRow1 = N_Bed_Rows + 1
-      FurCol1 = N_Bed_Cols + 1
-    END SELECT
 
 !   Store these values for use by conversion routines
     BedDimension % BEDHT  = BEDHT
@@ -307,10 +331,10 @@
 ! ---------------------------------------------------------------------
 !   Properties of soils within bed
 ! ---------------------------------------------------------------------
-    FurrowNH4I = 0
-    FurrowNO3I = 0
-    NewPropNH4I = 0
-    NewPropNO3I = 0
+    FurrowNH4I = 0.
+    FurrowNO3I = 0.
+    NewPropNH4I = 0.
+    NewPropNO3I = 0.
     IF (RaisedBed) THEN
 !     These variables are in units of mass per unit soil volume or 
 !        volume per unit soil volume - weighed average by soil depth.
@@ -353,7 +377,7 @@
       CALL TEXTURECLASS (Bed_Clay, Bed_Sand, Bed_silt,    &  !Input
          BedTEXTURE, COARSE)                               !Output
 
-	  call calBrokCryPara(BedTEXTURE, Bed_SAT, Bed_LL,     & !Input
+      CALL calBrokCryPara(BedTEXTURE, Bed_SAT, Bed_LL,     & !Input
           Bed_DUL,                                       & !Input
           Bed_WCR, Bed_HB, Bed_lambda)                     !output
 
