@@ -16,17 +16,18 @@ C  08/29/2001 CHP Written for modular pototo model to be incorporated
 C                   into CROPGRO.
 C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
-C  12/17/2004 CHP Modified HRESCeres call for harvest residue
-C  08/17/2005 CHP Renamed to PT_SUBSTOR to accomodate TN, TR SUBSTOR
-C                 routines.
+!  12/17/2004 CHP Modified HRESCeres call for harvest residue
+!  08/17/2005 CHP Renamed to PT_SUBSTOR to accomodate TN, TR SUBSTOR
+!                 routines.
 C  08/23/2011 GH Added CO2 response for tuber growth
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
 C=======================================================================
 
-      SUBROUTINE PT_SUBSTOR(CONTROL, ISWITCH,
+      SUBROUTINE PT_SUBSTOR(CONTROL, ISWITCH, CELLS, 
      &    CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
-     &    ST, SW, TMAX, TMIN, TRWUP, TWILEN, YREND, YRPLT,!Input
+     &    ST, SW, SWFAC, TMAX, TMIN, TRWUP, TURFAC,       !Input
+     &    TWILEN, YREND, YRPLT,                           !Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
 
@@ -34,9 +35,12 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE Cells_2D
+      USE ModuleData
       IMPLICIT NONE
       EXTERNAL PT_OPGROW, PT_OPHARV, PT_IPSPE, PT_ROOTGR, PT_PHENOL, 
      &  PT_GROSUB, HRes_Ceres
+      EXTERNAL PT_ROOTGR_2D
       SAVE
 
       CHARACTER*1  IDETG, ISWNIT, ISWWAT
@@ -78,6 +82,7 @@ C=======================================================================
       TYPE (SwitchType)  ISWITCH
       Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
+      Type (CellType)    CELLS(MaxRows,MaxCols)
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -145,10 +150,19 @@ C=======================================================================
       PConc_Shel = 0.0
       PConc_Seed = 0.0
 
-      CALL PT_ROOTGR (SEASINIT,
+      SELECT CASE(ISWITCH % MESOL)
+      CASE ('G')
+        CALL PT_ROOTGR_2D(SEASINIT, ISWWAT, CELLS, YRDOY,
+     &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
+     &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
+     &    CUMDEP, RLV, RTDEP)                             !Output
+
+      CASE DEFAULT
+        CALL PT_ROOTGR (SEASINIT,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &    CUMDEP, RLV, RTDEP)                             !Output
+      END SELECT
 
       CALL PT_PHENOL (
      &    DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
@@ -159,7 +173,7 @@ C=======================================================================
      &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG,            !Output
      &    SEASINIT)
 
-      CALL PT_GROSUB (SEASINIT,
+      CALL PT_GROSUB (SEASINIT, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
      &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
@@ -208,14 +222,22 @@ C=======================================================================
 
 !     ROOTGR was called from main program between WATBAL and NTRANS
       IF (ISWWAT .EQ. 'Y') THEN
-        !
-        ! WRESR growth and depth routine
-        !
+
+!       WRESR growth and depth routine
         IF (GRORT .GT. 0.0) THEN
-          CALL PT_ROOTGR (RATE, 
-     &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
-     &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output
+          SELECT CASE (ISWITCH % MESOL)
+          CASE ('G')
+            CALL PT_ROOTGR_2D(RATE, ISWWAT, CELLS, YRDOY,
+     &        DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
+     &        NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
+     &        CUMDEP, RLV, RTDEP)                             !Output
+
+          CASE DEFAULT
+            CALL PT_ROOTGR (RATE, 
+     &        DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
+     &        LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
+     &        CUMDEP, RLV, RTDEP)                             !Output
+          END SELECT
         ENDIF
       ENDIF
 
@@ -231,7 +253,7 @@ C=======================================================================
       ENDIF
 
       IF (ISTAGE .LT. 5) THEN
-        CALL PT_GROSUB (RATE,
+          CALL PT_GROSUB (RATE, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
      &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
@@ -270,6 +292,15 @@ C=======================================================================
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
      &    YIELD, YRPLT,                                   !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
+     
+     
+!     CALL PT_OPRoots_2D in PT_ROOTGR_2D when DYNAMIC .EQ. OUTPUT
+      IF (ISWITCH % MESOL == 'G') THEN
+        CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
+     &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
+     &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
+     &    CUMDEP, RLV, RTDEP)                             !Output    
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -307,6 +338,13 @@ C=======================================================================
         SENESCE % ResWt  = 0.0
         SENESCE % ResLig = 0.0
         SENESCE % ResE   = 0.0
+
+      IF (ISWITCH % MESOL == 'G') THEN
+        CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
+     &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
+     &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
+     &    CUMDEP, RLV, RTDEP)                             !Output    
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************

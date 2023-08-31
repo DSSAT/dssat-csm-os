@@ -50,7 +50,7 @@ C  FACTOR : Relative weighting to distribute crop root residues at the beginning
 C           of a simulation
 C=======================================================================
 
-      SUBROUTINE PT_NUPTAK (DYNAMIC, CELLS,
+      SUBROUTINE PT_NUPTAK (DYNAMIC, 
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
      &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input

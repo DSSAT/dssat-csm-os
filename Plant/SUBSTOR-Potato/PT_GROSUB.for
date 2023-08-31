@@ -38,11 +38,11 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
       USE Cells_2D
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleData
+
       IMPLICIT  NONE
       EXTERNAL PT_IPGRO, PT_NUPTAK, PT_NFACTO, ALIN, TABEX
+      EXTERNAL PT_NUPTAK_2D
       SAVE
 
       Type (CellType) Cells(MaxRows,MaxCols)
@@ -83,9 +83,13 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
      &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
 
+      TYPE (SwitchType) ISWITCH
+
 !      DATA  LALWR, SLAN /270.,0./
       DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
-     
+
+      CALL GET(ISWITCH)
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -175,13 +179,25 @@ C-----------------------------------------------------------------------
       TUBN    = 0.0
       TUBWT   = 0.0
       
-      CALL PT_NUPTAK (SEASINIT, CELLS,
+      SELECT CASE(ISWITCH % MESOL)
+      CASE ('G')
+        CALL PT_NUPTAK_2D (SEASINIT, CELLS,
+     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
+     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
+     &    TOPWT, TUBCNP, TUBWT,                           !Input
+     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
+     &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
+     &    WTNUP)                                          !Output
+
+      CASE DEFAULT
+        CALL PT_NUPTAK (SEASINIT, 
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
      &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
+      END SELECT
 
       CARBO  = 0.0
       PCARB  = 0.0
@@ -576,13 +592,25 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! SRVNU  = AMAX1 (SRVNU, 0.0)
           ! AVAILN = (SRVNU)+(0.5*DDEADLF*TMNC)
 
-        CALL PT_NUPTAK (RATE, CELLS,
+      SELECT CASE(ISWITCH % MESOL)
+      CASE ('G')
+        CALL PT_NUPTAK_2D (RATE, CELLS,
+     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
+     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
+     &    TOPWT, TUBCNP, TUBWT,                           !Input
+     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
+     &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
+     &    WTNUP)                                          !Output
+
+      CASE DEFAULT
+        CALL PT_NUPTAK (RATE, 
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
      &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
+      END SELECT
 
 !-----------------------------------------------------------------------
 ! Jan 2000, Walter Bowen 

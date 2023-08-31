@@ -123,15 +123,7 @@ C=======================================================================
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
      &    YIELD, YRPLT,                                   !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
-      ! JZW for debug, comparing the results of 1D & 2D
-!      Write(93,*)",,,,,1D Model,,,,,  , , ,,,, 2D Model"
-!      Write(93,*)"DAS,,DS1,DS2,DS3,DS4,DS5,DS6,DS7,DS8,"
-!     &      ,",,DS1,DS2,DS3,DS4,DS5,DS6,DS7,DS8,DS9"
-!      Write(93,930)",",DS(1),DS(2),DS(3),DS(4),DS(5), DS(6),DS(7),DS(8),
-!     &   ",,",DS(1),DS(2),DS(3),DS(4),DS(5), DS(6), DS(7),DS(8),DS(9)
-!  930  format (A1,8(",",F6.2),A2,9(",",F6.2))
-!      Write(93,*)" ,RTDEP,RLV1,RLV2,RLV3,RLV4,RLV5,RLV6,RLV7,RLV8,,
-!     &  RTDEP2,RLV1,RLV2,RLV3,RLV4,RLV5,RLV6,RLV7,RLV8,RLV9" 
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -197,8 +189,6 @@ C=======================================================================
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
      &    YIELD, YRPLT,                                   !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
-!       CALL ArrayHandler(CELLS, CONTROL, SOILPROP, CELLS%STATE%RLV, 
-!     &    "RLV",0.0,20.0)
 
 !***********************************************************************
 !***********************************************************************
@@ -233,13 +223,8 @@ C=======================================================================
      &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
      &    CUMDEP, RLV, RTDEP)                             !Output
         ENDIF
-        ! JZW for debug, comparing the results of 1D & 2D
-!        Write(92,*)"PT_RootGR: RLV(L)=,", RLV
-!        Write(92,*)"PT_RootGR_2D: RLV(ROW)=,",RLV2 
-!        Write(93,931)CONTROL % DAS,RTDEP,(RLV(I),I=1,8),",",RTDEP2,
-!     &      (RLV2(I),I=1,9)
       ENDIF
-! 931  format (I3,9(",",F7.4),A2,10(",",F7.4))
+
       IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 5) THEN
         CALL PT_PHENOL (
      &    DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
@@ -267,8 +252,7 @@ C=======================================================================
         UNO3 = 0.0
         UNH4 = 0.0
       ENDIF
-!      CALL ArrayHandler(CELLS, CONTROL, SOILPROP, CELLS%STATE%RLV, 
-!     &    "RLV",0.0,20.0)
+
 !***********************************************************************
 !***********************************************************************
 !     Daily output
@@ -341,8 +325,6 @@ C=======================================================================
      &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
      &    CUMDEP, RLV, RTDEP)                             !Output    
 
-!       CALL ArrayHandler(CELLS, CONTROL, SOILPROP, CELLS%STATE%RLV, 
-!     &    "RLV",0.0,20.0)
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
