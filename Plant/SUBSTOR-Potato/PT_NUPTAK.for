@@ -11,14 +11,12 @@ C  02/08/1993 PWW Header revision and minor changes
 C  12/  /1994 WTB Adapted for SUBSTOR model
 C  08/28/2001 CHP Modified for modular format.
 !  11/07/2005 CHP Replaced FAC with SOILPROP variable KG2PPM
-!  02/25/2018 MZ  Adapted for 2D
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
 C  NUF    : Plant N supply/demand ratio used to modify uptake
 C  NDEM   : Plant nitrogen demand (g/plant)
 C  L,L1   : Loop counters
-C  J      : Loop counters for 2D
 C  THUMN  :
 C  RNH4U  : Potential ammonium uptake from Layer L (kg N/ha)
 C  RNO3U  : Potential nitrate uptake from Layer L (kg N/ha)
@@ -37,20 +35,13 @@ C  RFAC   : Interim variable describing the effects of root length density
 C           on potential N uptake from a layer
 C  UNO3   : Plant uptake of nitrate from a layer (kg N/ha)
 C  UNH4   : Plant uptake of ammonium from a layer (kg N/ha)
-C  NH4_2D(L,J)   : Ammonium N in soil cell (µg[N] / g[soil])
-C  NO3_2D(L,J)   : Nitrate in soil cell (µg[N] / g[soil])
-C  RLV_2D(L,J)   : Root length density for soil cell ((cm root / cm3 soil))
-C  RNH4U_2D(L,J) : Ammonium uptake (kg N/ha)
-C  RNO3U_2D(L,J) : Nitrate uptake (kg N/ha)
-C  UNH4_2D(L,J)  : Uptake of NH4 from cell
-C  UNO3_2D(L,J)  : Uptake of NO3 from cell
 C  XMIN   :
 C  XNDEM  :
 C  FACTOR : Relative weighting to distribute crop root residues at the beginning
 C           of a simulation
 C=======================================================================
 
-      SUBROUTINE PT_NUPTAK (DYNAMIC, 
+      SUBROUTINE PT_NUPTAK (DYNAMIC,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
      &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
@@ -59,16 +50,11 @@ C=======================================================================
      &    WTNUP)                                          !Output
 
 !-----------------------------------------------------------------------
-      USE Cells_2D
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
       SAVE
-
-      Type (CellType) Cells(MaxRows,MaxCols)
-!     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
-      REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
 
       INTEGER DYNAMIC, ISTAGE, L, L1, NLAYR
 
@@ -86,17 +72,6 @@ C=======================================================================
       REAL, DIMENSION(NL) :: RLV, RNO3U, RNH4U
       REAL, DIMENSION(NL) :: SAT, SNH4, SNO3, SW, UNO3, UNH4
 
-      INTEGER J, FurCol1
-      REAL HalfRow, BEDWD
-      REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV,RNH4U_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D, RNO3U_2D
-
-      SWV    = CELLS % State % SWV
-      RLV_2D = CELLS % State % RLV
-      SNO3_2D = CELLS % State % SNO3
-      SNH4_2D = CELLS % State % SNH4
-
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -106,17 +81,6 @@ C=======================================================================
       TUBMNC  = 0.007
       TUBSINK = 0.0   !from PHASEI
       WTNUP   = 0.0   !Seasonal total N uptake (kg[N]/ha)
-      UNH4_2D = 0.0
-      UNO3_2D = 0.0
-      RLV_2D  = 0.0
-      
-      CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
-      CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
-      
-      HalfRow = BedDimension % ROWSPC_cm / 2
-      BEDWD   = BedDimension % BEDWD
-      FurCol1 = BedDimension % FurCol1 
-      ColFrac = BedDimension % ColFrac
 
 !***********************************************************************
 !***********************************************************************

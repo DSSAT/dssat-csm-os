@@ -119,7 +119,7 @@ C-----------------------------------------------------------------------
      &  RICE,SAMUCA,SC_CNGRO,SG_CERES,SU_CERES,SUMVALS,TEFF,TF_APSIM,
      &  TR_SUBSTOR,WARNING,WH_APSIM
       EXTERNAL INCDAT, ERROR
-      EXTERNAL PT_SUBSTOR_2D, SYNC_NUPTAKE_TO2D
+      EXTERNAL SYNC_NUPTAKE_TO2D
 
       SAVE
 
@@ -572,19 +572,12 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     -------------------------------------------------
 !     Potato
       CASE('PTSUB')
-        IF (INDEX('GC',ISWITCH%MEHYD) > 0) THEN
-          CALL PT_SUBSTOR_2D(CONTROL, ISWITCH, 
-     &    CO2, EOP, CELLS, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
-     &    ST, SW, TMAX, TMIN,SWFAC, TURFAC, TRWUP, TWILEN, YREND, YRPLT,!Input
-     &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
-     &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
-        ELSE
-          CALL PT_SUBSTOR(CONTROL, ISWITCH,
+        CALL PT_SUBSTOR(CONTROL, ISWITCH, CELLS,
      &    CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
-     &    ST, SW, TMAX, TMIN, TRWUP, TWILEN, YREND, YRPLT,!Input
+     &    ST, SW, SWFAC, TMAX, TMIN, TRWUP, TURFAC,       !Input
+     &    TWILEN, YREND, YRPLT,                           !Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
-        ENDIF
 
         IF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI

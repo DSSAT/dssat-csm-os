@@ -19,6 +19,7 @@ C  08/23/2011 GH/JIL Added CO2 response to tuber growth
 !  04/01/2012 CHP Added two RUE parameters to new ecotype file
 !  02/25/2018 MZ  Converted to 2D
 !  07/28/2023 HBD/FO Protection for SLFT not kill the canopy.
+!  08/31/2023 CHP integrated 2D into 1D
 C=======================================================================
 
       SUBROUTINE PT_GROSUB (DYNAMIC, CELLS,

@@ -51,8 +51,8 @@ C           of a simulation
 C=======================================================================
 
       SUBROUTINE PT_NUPTAK_2D (DYNAMIC, CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
-     &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
+     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
+     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
@@ -70,7 +70,7 @@ C=======================================================================
 !     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
       REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
 
-      INTEGER DYNAMIC, ISTAGE, L, L1, NLAYR
+      INTEGER DYNAMIC, ISTAGE, L, NLAYR
 
       REAL ANDEM, ARVCHO, AVAILN, EXTRAN, FACTOR 
       REAL FNH4, FNO3, GRFN, GRORT, GROTOP, GROTUB 
@@ -82,9 +82,9 @@ C=======================================================================
       REAL TUBSINK, TUBSN, TUBWT
       REAL WTNUP, XMIN, XNDEM
 
-      REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
-      REAL, DIMENSION(NL) :: RLV, RNO3U, RNH4U
-      REAL, DIMENSION(NL) :: SAT, SNH4, SNO3, SW, UNO3, UNH4
+      REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL
+      REAL, DIMENSION(NL) :: RNO3U, RNH4U
+      REAL, DIMENSION(NL) :: SAT, UNO3, UNH4
 
       INTEGER J, FurCol1
       REAL HalfRow, BEDWD
