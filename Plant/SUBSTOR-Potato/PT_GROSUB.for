@@ -181,7 +181,7 @@ C-----------------------------------------------------------------------
       TUBWT   = 0.0
       
       SELECT CASE(ISWITCH % MESOL)
-      CASE ('G')
+      CASE ('D')
         CALL PT_NUPTAK_2D (SEASINIT, CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
      &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
@@ -594,7 +594,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! AVAILN = (SRVNU)+(0.5*DDEADLF*TMNC)
 
       SELECT CASE(ISWITCH % MESOL)
-      CASE ('G')
+      CASE ('D')
         CALL PT_NUPTAK_2D (RATE, CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
      &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input

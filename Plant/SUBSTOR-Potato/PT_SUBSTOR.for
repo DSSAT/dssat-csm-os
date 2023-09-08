@@ -151,7 +151,7 @@ C=======================================================================
       PConc_Seed = 0.0
 
       SELECT CASE(ISWITCH % MESOL)
-      CASE ('G')
+      CASE ('D')
         CALL PT_ROOTGR_2D(SEASINIT, ISWWAT, CELLS, YRDOY,
      &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
      &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
@@ -226,7 +226,7 @@ C=======================================================================
 !       WRESR growth and depth routine
         IF (GRORT .GT. 0.0) THEN
           SELECT CASE (ISWITCH % MESOL)
-          CASE ('G')
+          CASE ('D')
             CALL PT_ROOTGR_2D(RATE, ISWWAT, CELLS, YRDOY,
      &        DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
      &        NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
@@ -295,7 +295,7 @@ C=======================================================================
      
      
 !     CALL PT_OPRoots_2D in PT_ROOTGR_2D when DYNAMIC .EQ. OUTPUT
-      IF (ISWITCH % MESOL == 'G') THEN
+      IF (ISWITCH % MESOL == 'D') THEN
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
      &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
@@ -339,7 +339,7 @@ C=======================================================================
         SENESCE % ResLig = 0.0
         SENESCE % ResE   = 0.0
 
-      IF (ISWITCH % MESOL == 'G') THEN
+      IF (ISWITCH % MESOL == 'D') THEN
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
      &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input

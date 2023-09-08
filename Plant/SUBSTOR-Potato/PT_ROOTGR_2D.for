@@ -56,15 +56,13 @@ C When emergen, tthe root grow for both up and down direction
 C=======================================================================
 
       SUBROUTINE PT_ROOTGR_2D (DYNAMIC, ISWWAT, CELLS, YRDOY,
-     &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,     !Input
-     &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,    !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output
+     &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,      !Input
+     &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,        !Input
+     &    CUMDEP, RLV, RTDEP)                         !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       IMPLICIT  NONE
       EXTERNAL PT_IPROOT_2D, PT_AGGREGATE_ROOTS, PT_OPROOTS_2D, 
      &  PT_INROOT_2D
@@ -76,7 +74,6 @@ C=======================================================================
 
       INTEGER DYNAMIC, NLAYR, YRDOY0, YRDOY   !, DAS  
       INTEGER ROW, Col, LastCol, LastRow, iniRT_StartRow
-!     INTEGER CSTIMDIF      ! Time difference function
       REAL HalfRow, ROWSPC_cm, CumRootMass
 
       REAL CUMDEP, DEPMAX, DTT, GRORT, PLTPOP, RTSEN   
@@ -88,11 +85,10 @@ C=======================================================================
       REAL RTWIDr(MaxRows), RTWIDnew(MaxRows), WidMax(MaxRows)
       REAL WidFrac(MaxRows,MaxCols), DepFrac(MaxRows,MaxCols) 
       REAL TotRootMass, TotRootArea, CelRootArea(MaxRows,MaxCols) !RFAC3
-!     above two variables are required in Aggregate_Roots. Here do not need
 
       REAL, DIMENSION(NL) :: DLAYR, DS
       REAL, DIMENSION(NL) :: NO3, NH4, RLV, SHF ! SW, RLDF, RLVTEMP
-      !REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D
+!     REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RLDF, SAT, DUL, LL,SWV
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea, ESW
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_WS 
@@ -101,14 +97,13 @@ C=======================================================================
       TYPE (CellType) CELLS(MaxRows,MaxCols)
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
 
-
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      ! We only need RTWIDI to calculate LastCol
+!     We only need RTWIDI to calculate LastCol
       YRDOY0 = YRDOY
       STRUC = CELLS%STRUC
       Thick = STRUC%THICK
@@ -134,47 +129,27 @@ C=======================================================================
         Enddo
       Enddo
 
-!      DO Row = 1, NRowsTot
-!         if (SDEPTH .GE. DS(ROW)) continue
-!         if (SDEPTH .LT. DS(ROW)) then
-!           iniRT_StartRow = Row
-!            ! SeedRowFrac =1.0 -  SDEPTH / Thick(ROW,1)
-!           Exit
-!         endif
-!       Enddo
-
 !     at emergence, assume that the initial root area starts from Row 1
       iniRT_StartRow = 1 
       FIRST = .TRUE.
 
-      ! DO L = 1, NL
-      !   RLV_2D(L) = 0.0
-      ! END DO
       RLV_2D = 0.0
       DEPMAX = DS(NRowsTot) !DEPMAX = DS(NLAYR)
       CUMDEP = 0.0
       RTDEP  = 0.0 
       CumRootMass = 0.0
       RTLSenes = 0.
-   
-      
-    
+
       CALL PT_Aggregate_Roots(
      &    DLAYR, HalfRow,                               !Input
      &    NLAYR, RLV_2D, Struc,                         !Input
      &    RLV, TRLV)                                    !Output
-      !LastRow = 2 ! 1st layer has no root !  LastRow = 1
+
       LastRow = 1 
       LastCol = 1
       CALL PT_OPRoots_2D(TotRootMass, RLWR,RLV_2D,RLV,DepFrac, WidFrac, 
      &    Thick, Width, RTDEP, RTWID, RTWIDr, CumRootMass, RTMasSenes,
      &    GRORT, DTT, SDEPTH, LastRow, LastCol)
-! There is bug for small BEDWD when writting output
-!       WRITE (92,1110)
-! 1110 FORMAT('Row, Col,',
-!     & ' RTDEP, CUMDEP, LastCumDep, RTDEPnew, Depfrac, LastRow, ',    
-!     & ' RTWIDr,CumWid,LastCumWid,RTWIDnew,Widfrac,LastCol,RLDF,',
-!     &   'RLV_2D in cm root / cm3 soil,RNFAC,NH4(Row), NO3(Row)')   
 
 !***********************************************************************
 !***********************************************************************
@@ -186,12 +161,12 @@ C=======================================================================
       SWV = CELLS%STATE%SWV 
       TotRootArea=0.
       CelRootArea=0.
-      
+
 !     10/20/2005 Limit RLV decrease due to senscence to 
 !       a minimum resulting root weight 
       IF (RTWTMIN > 0.0) THEN
 !       Same units as TRLV (cm[root]/cm[row-length])
-         TRLV_MIN = RTWTMIN * RLWR * HalfRow      
+        TRLV_MIN = RTWTMIN * RLWR * HalfRow      
 !        cm[root]        g    cm[root]                m2
 !      -----------   =  --- * -------- * cm[width] * ----
 !      cm[row length]    m2    g[root]                cm2
@@ -199,22 +174,21 @@ C=======================================================================
 !       Set TRLV_MIN to zero -- no minimum root mass
         TRLV_MIN = 0.0
       ENDIF
-      
-      
-!     Initial root distribution:  
+
+!     Initial root distribution:
       IF (FIRST) THEN
 !     After planting date, call here when Root growth rate >0, this day could be before Emergence date
 !       Kelly said about 7 or more days, the potato starting to have root
-        RTDEPI = MAX(Thick(1,1), 2. * SDEPTH)  
-!       RTDEPI = MIN(20.0,DS(NLAYR))     !CHP per JWJ   
-!       Initial root width (specify half because we are modeling half a row)             
-        RTWIDI = max (WIDTH(iniRT_StartRow,1),  RTDEPI / 2.0)   
-        RTWIDI = MIN(BedDimension%BEDWD / 2.0, RTWIDI)      
+        RTDEPI = MAX(Thick(1,1), 2. * SDEPTH)
+!       RTDEPI = MIN(20.0,DS(NLAYR))     !CHP per JWJ
+!       Initial root width (specify half because we are modeling half a row)
+        RTWIDI = max (WIDTH(iniRT_StartRow,1),  RTDEPI / 2.0)
+        RTWIDI = MIN(BedDimension%BEDWD / 2.0, RTWIDI)
 !       Tomato 2D use *.spe to give RTWIDI, YRTFACH, XRTFACH. Potato 2D does not need to change *.spe
-!       ROOOTS_2D use YRTFACH, XRTFACH to calculate RFAC2H which is used to calculate RTWIDnew 
-        
+!       ROOOTS_2D use YRTFACH, XRTFACH to calculate RFAC2H which is used to calculate RTWIDnew
+
         FIRST  = .FALSE.
-        
+
 C-------------------------------------------------------------------------
 !       CHP 5/29/03 - Added this section based on CROPGRO initialization
 !           at emergence. 
@@ -227,26 +201,25 @@ C-------------------------------------------------------------------------
      &  RTDEPI, RTWIDI, Thick, WidMax, Width,              !Input
      &  RLV_2D, RTDEP, RTWID, RTWIDr, DepFrac, WidFrac)    !Output
 
-        
 !***********************************************************************
       ELSE !if not first, i.e not initial
 !     Daily root growth and distribution
 
         TRLDF  = 0.0
         CUMDEP = 0.0
-        !CUMDEP = Thick(1,1) ! first layer has no root
+!       CUMDEP = Thick(1,1) ! first layer has no root
         RNFAC  = 1.0
         RTDEPnew = RTDEP 
-        ! Here, RTDEP is previous day's maximum root depth 
-        ! RTDEPnmew will be Today's maximum root depth 
+!       Here, RTDEP is previous day's maximum root depth 
+!       RTDEPnmew will be Today's maximum root depth 
         RTWIDnew = RTWIDr !it is array
-        
-!     First, root expansion.
-!     Root depth is calculated in column 1 only.
-!     Root width is calculated for each row. 
+
+!       First, root expansion.
+!       Root depth is calculated in column 1 only.
+!       Root width is calculated for each row. 
         RowLoop: DO Row = 1, NRowsTot 
         
-          LastCumdep = CUMDEP      
+          LastCumdep = CUMDEP
 !         now calculate DepFrac layer by layer, 
 !         LastCumdep is the top of the calculated layer, CUMDEP is buttom of the calculated layer
           CUMDEP = CUMDEP + Thick(Row,1)
@@ -257,7 +230,8 @@ C-------------------------------------------------------------------------
 !     &          WIDMAX(Row) = BedDimension % BEDWD / 2
 !            IF (TypeCell(Row,Col) .EQ. 4 .OR. TypeCell(Row,Col) .EQ. 5) 
 !     &          WIDMAX(Row) = HalfRow
-            !RLNew   =  GRORT * RLWR *  PLTPOP * WIDMAX(Row)
+
+!           RLNew   =  GRORT * RLWR *  PLTPOP * WIDMAX(Row)
 !           This statement could be before do loop
             RLNew   =  GRORT * RLWR *  PLTPOP *  HalfRow 
             LastCumWid = CumWid
@@ -279,14 +253,16 @@ C-------------------------------------------------------------------------
               ENDIF
               SWDF = AMAX1 (SWDF,0.0) 
             endif
+
 !           Water stress senescence 
             RTSURV = MIN(1.0,(1.-RTSDF*(1.-SWDF)),(1.-RTEXF*(1.-SWEXF)))
-           
+
             IF (RLV_2D(Row,Col) > RLDSM .AND. TRLV+RLNEW > TRLV_MIN)THEN
               RLV_WS(Row,Col) = RLV_2D(Row,Col) * (1.0 - RTSURV)
             ELSE
               RLV_WS(Row,Col) = 0.0
-            ENDIF     
+            ENDIF
+
             IF (ISWNIT .NE. 'N') THEN 
 !             RNFAC = 1.0 - (1.17 * EXP(-0.15 * TOTIN)
 !             RNFAC = 1.0 - (1.17 * EXP(-0.15 * (SNH4(L) + SNO3(L))))
@@ -300,7 +276,6 @@ C-------------------------------------------------------------------------
             RLDF(Row,Col) =AMIN1(SWDF,RNFAC)*SHF(Row)*CellArea(Row,Col) 
 !           End of calculation RLDF
 
-          
 !           Calculate new vertical growth in column 1 only
             IF (COL == 1) THEN
 !             Starting to calculate DepFrac
@@ -326,7 +301,7 @@ C-------------------------------------------------------------------------
 !               JZW this is equivalent exit the do loop of row
                 DepFrac(Row,Col) = 0.0
               ENDIF ! end IF (RTDEP >= CUMDEP) 
-          
+
 !             Check for new roots in this cell
               IF (RTDEPnew > LastCumDep .AND. 
      &          RTDEP <= LastCumDep) THEN
@@ -338,7 +313,7 @@ C-------------------------------------------------------------------------
                 IF (Row > LastRow) LastRow = Row    
               ENDIF
 !            finish calculate DepFrac
-              
+
             Else ! if col!=1, calculate WidFrac
   !           Calculate new horizontal growth in this cell (RTWIDnew) 
 !             horizontal portion of cell occupied by roots (WidFrac)
@@ -377,22 +352,21 @@ C-------------------------------------------------------------------------
 !               New roots have just grown into this cell
                 WidFrac(Row,Col) = MIN(1.0, 1. -(CumWid-RTWIDnew(Row))
      &                        / Width(Row,Col))
-      
+
 !               JZW change May 9,2012 
                 DepFrac(Row,Col) = min(1.0, DepFrac(Row, col-1)) 
                 IF (Col > LastCol) LastCol = Col 
               ENDIF ! end if new grow in this cell
-              
             ENDIF !! end of  col!=1  
-            
+
             ! Re calculate the DepFrac from Row=1 to SeedRow
             IF (Row < iniRT_StartRow) Then 
 !             current row is above initial root start row
               DepFrac(Row, Col) =0. 
-!            Elseif (Row == iniRT_StartRow) then !current row is in initial root start row
-!              IF (CELLS(Row,Col)%STATE%WR > 0. .AND. RLNEW >0.) THEN
-!                !RTDEPnew = RTDEP + DTT * 1.3 *
-!                RTDEPnew = RTDEP + DTT * 1.0 *
+!           Elseif (Row == iniRT_StartRow) then !current row is in initial root start row
+!             IF (CELLS(Row,Col)%STATE%WR > 0. .AND. RLNEW >0.) THEN
+!               !RTDEPnew = RTDEP + DTT * 1.3 *
+!               RTDEPnew = RTDEP + DTT * 1.0 *
 !     &                       AMIN1((SWFAC * 2.0 ), SWDF)
 !                RTDEPnew = MIN(RTDEPnew, DEPMAX)
 !              Endif
@@ -402,32 +376,24 @@ C-------------------------------------------------------------------------
 !                  DepFrac(Row,Col) = (CUMDEP - SDEPTH)/Thick(Row,Col)
 !              Endif
             Endif ! end of seed row
+
             If (DepFrac(Row, 1) .GT. 0. ) then
               WidFrac(Row, 1) = 1.0
             else 
               WidFrac(Row, 1) = 0.0
             endif
+
 !-----------------------------------------------------------------------
-!         Apply factor for this cell
+!           Apply factor for this cell
             RLDF(Row,Col) = 
      &               RLDF(Row,Col)*DepFrac(Row,Col)*WidFrac(Row,Col)
             CelRootArea(Row,Col) =CellArea(Row,Col)
      &               *DepFrac(Row,Col)*WidFrac(Row,Col)
-!         Sum of all factors
-!           if (RLV(Row) .GE. 5.) RLDF(Row,Col)= 0. JZW test May 9, 2012
+!           Sum of all factors
             TRLDF = TRLDF + RLDF(Row,Col)
             TotRootArea = TotRootArea +  CelRootArea(Row,Col)
-!            WRITE (92,1120)Row, Col,
-!     &        RTDEP, CUMDEP, LastCumDep, 
-!     &        RTDEPnew, Depfrac(Row,Col), LastRow,  
-!     &        RTWIDr(Row),CumWid, LastCumWid,RTWIDnew(Row),
-!     &        Widfrac(Row,Col),LastCol,RLDF(Row,Col), RLV_2D(Row,Col),
-!     &        RNFAC, NH4(Row), NO3(ROW)
-          
- 1120 FORMAT(2(I4,","),5(F6.2,","),I2,",",
-     &    5(F6.2,","),I2,",",F6.2,4(",",F6.2))   
-           
-            IF (RTWIDnew(Row) < CumWid) EXIT ColLoop    
+
+            IF (RTWIDnew(Row) < CumWid) EXIT ColLoop
           ENDDO ColLoop 
         ENDDO RowLoop
         RTDEP  = RTDEPnew 
@@ -439,13 +405,12 @@ C-------------------------------------------------------------------------
      &           "there is root grow"
              stop
         Endif
-        
+
         RLSENTOT = 0.0
-        
-        
+
 !        IF (TRLDF .GE. RLNEW*0.00001) THEN ! JZW ask CHP: different unit, how to compare????
 !          RLNEW and RLINIT IS in cm[root]/cm[ground]/d, TRLDF is in cm2 TRLDF has same unit as RLDF for now
-           RLDF = RLDF /TRLDF ! RLDF is unitless now
+           RLDF = RLDF / TRLDF ! RLDF is unitless now
            
 !          RLDF(Row,Col) is AMIN1(SWDF,RNFAC)*SHF(Row)*CelRootArea(Row,Col)/TotRootArea Same cellRootArea may have different dense 
 !          DO L = 1, L1
@@ -454,22 +419,23 @@ C-------------------------------------------------------------------------
                IF (TypeCell(Row,Col)<3 .OR. TypeCell(Row,Col) > 5) CYCLE
                RTLSenes = 
      &              RTLSenes + 0.005*RLV_2D(Row,Col) * CellArea(Row,Col)
-             ! To calculate LastCol need RTWIDr(Row), LastCumWid, RTWIDI
+!              To calculate LastCol need RTWIDr(Row), LastCumWid, RTWIDI
                RLV_2D(Row,Col) = RLV_2D(Row,Col)
      &             +RLDF(Row,Col) * RLNEW /CellArea(Row,Col)
-   ! &             +RLDF(Row,Col)*RNLF/CellArea(Row,Col)
+!    &             +RLDF(Row,Col)*RNLF/CellArea(Row,Col)
      &             -0.005*RLV_2D(Row,Col)  
-             !  cm         cm     1
-             ! -------  = ---- * ----
-             !  cm3        cm    cm2
-             ! Root senescence may make RLV_2D<0
+!               cm         cm     1
+!              -------  = ---- * ----
+!               cm3        cm    cm2
+!              Root senescence may make RLV_2D<0
                RLV_2D(Row,Col) = AMAX1 (RLV_2D(Row,Col),0.0)
-               !RLV_2D(Row,Col) = AMIN1 (RLV_2D(Row,Col),5.0)
-               ! Make RLV limitation instead of RLV_2D
+!              RLV_2D(Row,Col) = AMIN1 (RLV_2D(Row,Col),5.0)
+!              Make RLV limitation instead of RLV_2D
              END DO
            ENDDO
         !END IF
       ENDIF ! end of IF not (FIRST)
+
       TRLV = 0.0
       DO Row = 1, LastRow
         Do Col = 1, LastCol
@@ -480,7 +446,7 @@ C-------------------------------------------------------------------------
 !            cm     cm      cm3
 !            JZW, TRLV is calculated in PT_Aggregate_Roots, we do not need to calculate here
         End do
-      
+
         IF (RTWIDr(Row) > RTWID) RTWID = RTWIDr(Row) 
 !       RTWID is not used, it can be as output of this subroutine for watch variable
       ENDDO
@@ -489,45 +455,16 @@ C-------------------------------------------------------------------------
      &    DLAYR, HalfRow,                              !Input
      &    NLAYR, RLV_2D, Struc,                        !Input
      &    RLV, TRLV)                                   !Output
-!      For 1D DAS=1, RLINIT=0.245, RLV(L=1 to 4)=0.245/DLAYER=0.049, RLINT in cm/cm2, 
+
 !      Roots.for indicate RLV is in cm/cm3, OpGrow indicate !RLV is in cm/cm3, PlantGro.out indicate RLV is cm3/cm3, Roots_2D.for indicate RLV_2D is in cm/cm3
-!      For 2D DAS=1, RLINIT = 0.245 * HALFRow= 11, RLV_2D(Row=1 to 4,Col=1) = 11*25/100/25=0.1102, RLV=0.0183 
-     
-! !     Limited RLV(Row) to 5.  The roots to be cut off for above 5.0 should be put in some other cells. Too difficult to  do
-!       DO Row = 1, LastRow 
-!         !RLV(Row) = AMAX1 (RLV(Row),0.0)
-!         If (RLV(Row) .GT. 5.) then
-!           Do Col = 1, LastCol
-!             IF (TypeCell(Row,Col) < 3 .OR. TypeCell(Row,Col) > 5) CYCLE
-!             RLV_2D (Row, Col) = RLV_2D(Row, Col) * (5./RLV(Row)) 
-!           Enddo
-!           RLV(Row) = 5.0  ! AMIN1 (RLV(Row),5.0)         
-!           CALL PT_Aggregate_Roots(
-!     &          DLAYR, HalfRow,                              !Input
-!     &          NLAYR, RLV_2D, Struc,                        !Input
-!     &          RLVTemp, TRLV) 
-!           if ( ( (RLVTemp(Row)-RLV(Row)) . GT. 0001) .or.
-!     &           (RLV(ROW) .LT. 0)) then
-!             Write(*,*) "RLV Calculation is worong"
-!             stop
-!           endif
-!           
-!         Endif
-!          write(92,1140)Row, RTWIDr(ROW), RLV(ROW)
-!       Enddo
- 1140  Format("Row=", I2, ", RIWIDr=", F6.2, ",  RLV=", F8.4, 
-     &  "cm3[root]/cm3[ground)")
-       
-        CELLS%STATE%RLV = RLV_2D       
-       
+
+       CELLS%STATE%RLV = RLV_2D
+
        DO Row = 1, LastRow 
          RLV(Row) = AMAX1 (RLV(Row),0.0)
-        
-          
        Enddo
- 
-   
-! RLWR  Root length to weight ration, (cm/g)*1E-4 
+
+!       RLWR  Root length to weight ration, (cm/g)*1E-4 
         RTMasSenes = (RTLSenes /HalfRow/ RLWR) * 10.
         TotRootMass=(TRLV /HalfRow/ RLWR) * 10.
 !                   cm    1    g * 1E-4   10000 cm2   10(kg/ha)
@@ -538,18 +475,11 @@ C-------------------------------------------------------------------------
        ! kg[root]       kg     g      # plants     kg/ha
        !----------- = -----+ ------ * --------*  --------
        ! ha             ha    plant      m2         g/m2
-!        Write(93,931) "2D,RLNEW,",RLnew, ",cm/cm,CmRtMs,", CumRootMass,
-!     &              ",kg/ha,totRtMs,",  TotRootMass, ",kg/ha"
- 931    format (A9,F7.3,A14,F8.3,A15, F8.3,A6)   
+
 !***********************************************************************
       ELSEIF (DYNAMIC == OUTPUT .OR. DYNAMIC == SEASEND) THEN
 !-----------------------------------------------------------------------
-!      CALL PT_OPRoots_2D(TotRootMass, RLWR,RLV_2D,RLV,DepFrac, WidFrac, 
-!     &  Thick, Width, RTDEP, RTWID, RTWIDr, CumRootMass, RTMasSenes,
-!     &  GRORT, DTT, SDEPTH, LastRow, LastCol)
-! There is bug for small BEDWD in output writing
-      
-     
+
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
@@ -889,7 +819,6 @@ C-----------------------------------------------------------------------
       YRDOY   = CONTROL % YRDOY
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
-      
 
 !***********************************************************************
 !***********************************************************************
@@ -924,7 +853,7 @@ C-----------------------------------------------------------------------
      &    IOSTAT = ERRNUM)
         WRITE(NOUTRLV,'("*2D Cell Root RLV_2D DAILY OUTPUT FILE")')
       ENDIF
-      
+
       OUTRoot2 = 'PT_DepFrac.OUT'
       CALL GETLUN('OUTRoot2', NOUTDPF)
       INQUIRE (FILE = OUTRoot2, EXIST = FEXIST)
@@ -936,7 +865,7 @@ C-----------------------------------------------------------------------
      &    IOSTAT = ERRNUM)
         WRITE(NOUTDPF,'("*2D Cell ROOTS DepFrac DAILY OUTPUT FILE")')
       ENDIF
-      
+
       OUTRoot3 = 'PT_WidFrac.OUT'
       CALL GETLUN('OUTRoot3', NOUTWDF)
       INQUIRE (FILE = OUTRoot3, EXIST = FEXIST)
@@ -1001,8 +930,6 @@ C-----------------------------------------------------------------------
           Write(NOUTRLV,'("Root L:M ratio =",F10.2," cm/g")') RLWR*1.E4
           Write(NOUTRLV,'("Grow Rate (GRORT) :",F10.2,"g/plant; 
      &     Growing degree days (DTT)", F6.2)') GRORT, DTT
-!          Write(NOUTRLV,'("  Column ->",8I10, A7)') !JZW ask CHP how??the 10I10 may need to be change if the NColsTot changed 
-!     &         (Col, Col=1, NColsTOT), "    RLV"
           Write(NOUTRLV,'("Width(cm)->",20F10.3)') 
      &                  (width(1,Col),Col = 1, NColsTOT)
           Write(NOUTRLV,'("      Thick")') 
@@ -1014,8 +941,8 @@ C-----------------------------------------------------------------------
      &     (RLV_2D(Row,Col),Col = 1, NColsTOT), RLV(Row)
           Enddo 
           
-          ! Output DepFrac
-           Write(NOUTDPF,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
+!         Output DepFrac
+          Write(NOUTDPF,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
      &             DOY, DAS
           Write(NOUTDPF,'("Root Depth =    ",F10.2," cm")') RTDep
           Write(NOUTDPF,'("Last Row =    ", I2)') LastRow
@@ -1031,12 +958,12 @@ C-----------------------------------------------------------------------
      &      Row, Thick(Row,1), (DepFrac(Row,Col),Col = 1, NColsTOT) 
           Enddo 
           
-          ! Out put WidFrac
-           Write(NOUTWDF,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
+!         Out put WidFrac
+          Write(NOUTWDF,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
      &             DOY, DAS
           Write(NOUTWDF,'("Root Width =",F10.2," cm")') RTWid
           Write(NOUTWDF,'("Last Col =    ", I2)') LastCol
-!          Write(NOUTWDF,'("  Column ->",8I10, A14)') 
+!         Write(NOUTWDF,'("  Column ->",8I10, A14)') 
 !     &      (Col, Col=1, NColsTOT), "   RTWidth(Row)"
           Write(NOUTWDF,'("Width(cm)->",20F10.3)') 
      &                  (width(1,Col),Col = 1, NColsTOT)
@@ -1110,7 +1037,7 @@ C-----------------------------------------------------------------------
       CALL Cell2Layer_2D(
      &   RtLen, Struc, NLAYR,                 !Input
      &   RLV)                                  !Output
-!     JZW for das=1, RLV_2D(row=1 to 4, Col =1) = 0.1102, RtLen(1,1) = 2.75, TRLV = 11.02, RLV(Row=1 to 4)= 2.75, after the following do loop, RLV(Row=1 to 4) = 2.75/5/30=0.0183
+
       DO L = 1, NLAYR
          IF (TypeCell(L,1) .EQ. 3) then 
 !          JZW: Cheryl does not want this statement , Check????

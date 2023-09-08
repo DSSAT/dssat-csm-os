@@ -259,12 +259,12 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &          (IRRCOD(NIRR)(3:5)) .NE. '010') THEN 
                 NAPW = NAPW + 1
                 IF (AMT(NAPW) .GT. 0.0) THEN
-                  IF ((IRRCOD(NIRR)(3:5)) .NE. '005') THEN
+!                 IF ((IRRCOD(NIRR)(3:5)) .NE. '005') THEN
                     TOTAPW = TOTAPW + AMT(NAPW)
-                  ELSE
+!                 ELSE
 !                    SPD = DripIrrig(1)% DripNum(1) * DripIrrig(1) % DripDur(1) * 3600
 !                    TOTAPW = TOTAPW + AMT(NAPW) / (DripSpc(DrpRefLN) * ROWSPC_CM) * 10. * SPD
-                  ENDIF
+!                 ENDIF
                 ENDIF
 
             !CHP start ***********************************************
