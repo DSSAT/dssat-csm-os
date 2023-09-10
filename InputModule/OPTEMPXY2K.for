@@ -391,7 +391,7 @@ C-----------------------------------------------------------------------
       WRITE(LUNIO,'("@L  ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD",
       
       
-     & 2X,"FLDS  FLST SLTX   SLDP ID_SOIL PMALB  BDWD  BDHT")')
+     & 2X,"FLDS  FLST SLTX   SLDP ID_SOIL    PMALB  BDWD  BDHT")')
       WRITE(LUNIO,57,IOSTAT=ERRNUM) LNFLD,FLDNAM,FILEW(1:8),SLOPE,
      &   FLOB, DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,
 !     2023-07-14 chp changed order of these three variables to allow 

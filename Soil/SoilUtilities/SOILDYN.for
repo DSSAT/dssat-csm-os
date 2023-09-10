@@ -830,7 +830,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       ENDIF
 
 !     Write RETC info to info.out
-      MSG(1) = "Soil RETC parameters for 1D system: "
+      MSG(1) = "Soil RETC parameters: "
       MSG(2) = 
      &  " LYR DS  SWCN   WCR    Hb Lambd  Alpha     m     n Texture"
       DO L = 1, NLAYR

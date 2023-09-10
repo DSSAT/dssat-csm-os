@@ -1105,8 +1105,6 @@ C=======================================================================
      &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,BEDHT, BEDWD, 
      &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur, PMALB)
 
-!     Unused variable removed from argument list: PMWD
-
       USE ModuleData
       IMPLICIT NONE
       EXTERNAL ERROR, FIND, UPCASE, WARNING, INFO, IGNORE, HFIND, 
