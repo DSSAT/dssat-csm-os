@@ -52,7 +52,7 @@
             '"--------|",/,30X,"|--------Average-------|---Cumulative--|         (0=Min, 1=","Max Stress)         |",/,' // &
             '25X,"Time  Temp  Temp Solar Photop         Evapo |----Water---|-","-Nitrogen--|--Phosphorus-|",/,' // &
             '25X,"Span   Max   Min   Rad  [day]   Rain  Trans  Photo",9X,"Pho","to         Photo",/,' // &
-            '25X,"days     C     C MJ/m2     hr     mm     mm  synth Growth  ","synth Growth  synth Growth",/,110("-"))'
+            '25X,"days    °C    °C MJ/m2     hr     mm     mm  synth Growth  ","synth Growth  synth Growth",/,110("-"))'
         CHARACTER(LEN=256) :: FMT501 = '(I5,I4,2I6,F6.1,A6,F6.1,F6.3,F6.2,F6.1,A6,F6.3,A6,4I6,3I6,F6.3,I6,2A6,F6.2,' // & ! issue 50
             !'I6,F6.1,2F6.2,F6.1,F6.1, F6.2,2F6.2,2F6.2,F6.1,2F6.2,F6.2)'   !LPM 19MAY2015 to delete PTF as output
             'F6.2,F6.1,1F6.2,F6.1,F6.1, F6.2,2F6.2,2F6.2,F6.1,2F6.2,F6.2)'

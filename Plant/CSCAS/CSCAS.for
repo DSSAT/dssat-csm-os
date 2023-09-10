@@ -9754,7 +9754,7 @@ c           ENDIF
      &'-Nitrogen--|--Phosphorus-|',/,
      &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
      &'to         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth ',
+     &25X,'days    °C    °C MJ/m2     hr     mm     mm  synth Growth ',
      &' synth Growth  synth Growth',/,110('-'))
   270 FORMAT(/,'------------------------------------------------------',
      &'--------------------------------------------------------')
