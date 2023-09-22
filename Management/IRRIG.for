@@ -205,9 +205,6 @@ C-----------------------------------------------------------------------
 !     Water table depth (-99 indicates no water table present)
       MgmtWTD = -99.  
 
-!     Water table depth (-99 indicates no water table present)
-      MgmtWTD = -99.  
-
       IF (ISWWAT .EQ. 'Y') THEN
 
           JIRR = 0.0
@@ -237,8 +234,6 @@ C-----------------------------------------------------------------------
 !      CASE ('W')
 !        IrrText = 'As reported through last reported day, then ' //
 !     &       'automatic with fixed amount.'
-!      CASE ('T')
-!         IrrText = 'Repeat irrigation amount every day until a new record is input.'
 !       CASE ('N')    !No irrigation
 !      END SELECT
 
@@ -255,30 +250,12 @@ C-----------------------------------------------------------------------
 
             LNUM = LNUM + 2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-            ! JZW add auto irr for dripper
-!            IF (INDEX('GC',MEHYD) > 0 .AND. AIRRCOD == 5) then
+
+!           JZW add auto irr for dripper
             IF (AIRRCOD == 5) then
               IRRCOD = AIRRCOD
               DripRate = AIRAMT    
             Endif
-          ENDIF
-
-C-----------------------------------------------------------------------
-C         Find and Read Initial Conditions Section
-C-----------------------------------------------------------------------
-          IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
-            REWIND(LUNIO)
-            SECTION = '*INITI'
-            CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LINC
-            IF (FOUND .EQ. 0) THEN
-              CALL ERROR(SECTION, 42, FILEIO, LNUM)
-            ELSE
-              READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM =LNUM+1
-              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-              MgmtWTD = ICWD
-!              CALL PUT('MGMT','WATTAB',MgmtWTD)
-!              CALL PUT('MGMT','ICWD',ICWD)
-            ENDIF
           ENDIF
 
 C-----------------------------------------------------------------------
@@ -335,7 +312,6 @@ C-----------------------------------------------------------------------
 !           READ(LUNIO,'(3X,I7,3X,I3,1X,F5.0,1X,I5)',IOSTAT=ERRNUM,
 !     &        ERR=50)  IDLAPL(I), IRRCOD(I), AMT(I)
             READ(LUNIO,'(3X,I7,3X,A90)',ERR=50, END=50) IDLAPL(I),CHAR
-            ! Read irrigation date one by one
             LNUM = LNUM + 1
 
             READ(CHAR,'(I3,1X,F5.0,1X,I5)',IOSTAT=ERRNUM) 
@@ -1121,8 +1097,9 @@ C               Determine supplemental irrigation amount.
 C               Compensate for expected water loss due to soil evaporation
 C               and transpiration today.
 C               Estimate that an average of 5 mm of water will be lost.
-                !IRRAPL = SWDEF*10 + 5.0 ! Jin feel too much water added
-                IRRAPL = SWDEF*10 ! CHP had +5 here
+!               chp 2023-01-07 could use GET to grab yesterday's ET
+!               IRRAPL = SWDEF*10 + 5.0 ! Jin feel too much water added
+                IRRAPL = SWDEF*10 
                 IRRAPL = MAX(0.,IRRAPL)
 
               ELSE IF (IIRRI .EQ. 'W') THEN
