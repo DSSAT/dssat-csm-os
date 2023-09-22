@@ -1459,9 +1459,6 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               ISWTIL = 'N'
               MEEVP  = 'R'
             CASE ('R')
-              IF (INDEX('123',MESOL) < 1) THEN
-                 MESOL = '2'
-              ENDIF
             END SELECT
 
 !         Fourth line of simulation controls
