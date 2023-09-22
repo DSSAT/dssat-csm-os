@@ -2357,34 +2357,34 @@ C=======================================================================
         IF (PMWD .GT. 0 .AND. PMWD .GE. ROWSPC_CM) THEN
           PMWD = ROWSPC_CM
           PMCover   = .TRUE.
-          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
-          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
-          MSG(3) = "Simulating flat surface entirely covered " //
-     &             "by by plastic mulch."
-          call INFO(3,errkey,msg)
+!          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+!          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+!          MSG(3) = "Simulating flat surface entirely covered " //
+!     &             "by by plastic mulch."
+!          call INFO(3,errkey,msg)
         ELSEIF (PMWD .GT. 0.) THEN 
           PMCover   = .TRUE.
-          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
-          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
-          MSG(3)= "Simulating flat surface partially covered " // 
-     &            "by plastic mulch."
-          call INFO(3,errkey,msg)
+!          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+!          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+!          MSG(3)= "Simulating flat surface partially covered " // 
+!     &            "by plastic mulch."
+!          call INFO(3,errkey,msg)
         ELSE
           PMCover   = .FALSE.
-          MSG(1)= "Missing mulch cover width."
-          MSG(2) = "Simulating flat surface with no plastic mulch."
-          call INFO(2,errkey,msg)
+!          MSG(1)= "Missing mulch cover width."
+!          MSG(2) = "Simulating flat surface with no plastic mulch."
+!          call INFO(2,errkey,msg)
         ENDIF
       ELSE
         IF (PMWD .GT. 0) THEN
           PMCover   = .FALSE.
-          MSG(1)= "Missing albedo for plastic mulch. "
-          MSG(2)= "Simulating flat surface with no plastic mulch."
-          call INFO(2,errkey,msg)
+!          MSG(1)= "Missing albedo for plastic mulch. "
+!          MSG(2)= "Simulating flat surface with no plastic mulch."
+!          call INFO(2,errkey,msg)
         ELSE
           PMCover   = .FALSE.
-          MSG(1)= "Simulating flat surface with no plastic mulch."
-          call INFO(1,errkey,msg)
+!          MSG(1)= "Simulating flat surface with no plastic mulch."
+!          call INFO(1,errkey,msg)
         ENDIF
       ENDIF
     
