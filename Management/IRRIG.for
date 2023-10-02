@@ -977,12 +977,9 @@ C             Determine supplemental irrigation amount.
 C             Compensate for expected water loss due to soil evaporation
 C             and transpiration today.
 C             Estimate that an average of 5 mm of water will be lost.
-!              CALL GET("SPAM", "ET", ET)
-!              IRRAPL = SWDEF*10 + ET   ! 11/25/2018 MZ change plus 5 to plus ET
-              IRRAPL = SWDEF*10 + 5.0 ! CHP had +5 here
-              !IRRAPL = SWDEF*10       ! Jin feel too much water added
+              IRRAPL = SWDEF*10 + 5.0
               IRRAPL = MAX(0.,IRRAPL)
-              !IRRAMT = IRRAPL ! add by JZW
+
             ELSE IF (IIRRI .EQ. 'F') THEN
 C             Apply fixed irrigation amount
               IRRAPL = AIRAMT
