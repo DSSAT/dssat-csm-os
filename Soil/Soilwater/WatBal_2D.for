@@ -44,7 +44,7 @@
       USE Cells_2D
       USE ModuleData
       IMPLICIT NONE
-      EXTERNAL WATERTABLE_2D, DRAINAGE_2D, ROOTWU_2D, 
+      EXTERNAL WATERTABLE, DRAINAGE_2D, ROOTWU_2D, 
      &  WBSUM_2D, WBAL_2D, OPWBAL_2D, CALC_SW_VOL, WBAL_2D_TS, 
      &  RNOFF_FURROW, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
      &  WATERSTRESS
@@ -96,6 +96,8 @@
       REAL, DIMENSION(0:24) :: EOP_HR, CumFracRad
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, Ksat, LL, SAT, WCr
       REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
+      REAL, DIMENSION(NL) :: SWDELTW, ThetaCap
+
       REAL, DIMENSION(MaxCols) :: WINF_col
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ES_mm, ColFrac
       REAL, DIMENSION(MaxRows,MaxCols) :: mm_2_vf, RLV_2D, RWU_2D
@@ -248,11 +250,35 @@
           ENDDO
         ENDDO
       END IF
-      
-      CALL WaterTable_2D(DYNAMIC,           
-     &  CELLS, SOILPROP, SWV,                         !Input                                              
-     &  ActWTD, LatInflow, LatOutflow,                !Output
-     &  MgmtWTD, SWVDELTW)                            !Output
+
+!     Water table initialization
+      CALL WaterTable(DYNAMIC,           
+     &  SOILPROP, SW,                         !Input
+     &  ActWTD, LatInflow, LatOutflow,        !Output
+     &  MgmtWTD, SWDELTW, ThetaCap)           !Output
+
+!     Convert the soil water flux due to water table into 2D variable 
+      CALL Interpolate2Cells_2D(
+     &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
+     &  SWVDeltW)                                         !Output
+
+!     The 2D model is not needed in the vicinity of the water table.
+!     Calculate the limits of the 2D model. 
+      IF (ActWTD > DS(NLAYR)) THEN
+!       Water table is below profile depth
+        LIMIT_2D = NRowsTot    
+      Else          
+!       Set LIMIT_2D to be the layer above ThetaCap = .9 * SAT
+        LIMIT_2D = NLAYR
+        DO i = NLAYR, 1, -1
+          IF ((ThetaCap(i) - DUL(i)) > (0.9 * (SAT(i) - DUL(i)))) then
+            LIMIT_2D = i - 1
+          ELSE 
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF 
+      BedDimension % LIMIT_2D = LIMIT_2D
 
 !     Set SWV based on initial water table  
       DO i =1, NLAYR
@@ -261,7 +287,6 @@
           SWA(i,j) = SWV(i,j) - SOILPROP%LL(i)
         ENDDO
       ENDDO
-!     Call ThetaCapOp(DYNAMIC,CONTROL, ISWITCH,MgmtWTD, SOILPROP)
 
 !     convert to double precision for time step loops
       SWV_D = DBLE(SWV)
@@ -420,10 +445,33 @@
       ENDDO
 
 !     Update soil water today based on measured depth to water table
-      CALL WaterTable_2D(DYNAMIC,           
-     &  CELLS, SOILPROP, SWV,                         !Input                                              
-     &  ActWTD, LatInflow, LatOutflow,                !Output
-     &  MgmtWTD, SWVDELTW)                            !Output
+      CALL WaterTable(DYNAMIC,           
+     &  SOILPROP, SW,                         !Input
+     &  ActWTD, LatInflow, LatOutflow,        !Output
+     &  MgmtWTD, SWDELTW, ThetaCap)           !Output
+
+!     Convert the soil water flux due to water table into 2D variable 
+      CALL Interpolate2Cells_2D(
+     &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
+     &  SWVDeltW)                                         !Output
+      
+!     The 2D model is not needed in the vicinity of the water table.
+!     Calculate the limits of the 2D model. 
+      IF (ActWTD > DS(NLAYR)) THEN
+!       Water table is below profile depth
+        LIMIT_2D = NRowsTot    
+      Else          
+!       Set LIMIT_2D to be the layer above ThetaCap = .9 * SAT
+        LIMIT_2D = NLAYR
+        DO i = NLAYR, 1, -1
+          IF ((ThetaCap(i) - DUL(i)) > (0.9 * (SAT(i) - DUL(i)))) then
+            LIMIT_2D = i - 1
+          ELSE 
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF 
+      BedDimension % LIMIT_2D = LIMIT_2D
 
 !     After call WaterTable_2D to get theLIMIT_2D, set the soil water content below LIMIT_2D as ThetaCap
       LIMIT_2D = BedDimension % LIMIT_2D
@@ -433,7 +481,6 @@
         ENDDO
       ENDDO
       SWV_D= DBLE(SWV_avail)
-!     Call ThetaCapOp(DYNAMIC,CONTROL,ISWITCH,MgmtWTD, SOILPROP)
 
 !     Compute daily runoff from furrows and water available for infiltration
 !       for each column in furrow.

@@ -103,7 +103,7 @@ C=======================================================================
       REAL TSW, TSWINI, WATAVL, WTDEP
 
       REAL, DIMENSION(NL) :: DLAYR, DLAYR_YEST, DS, DUL, LL  
-      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL
+      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL, ThetaCap
 
 !     Flood management variables:
       REAL FLOOD, INFILT, PUDPERC
@@ -198,7 +198,7 @@ C=======================================================================
       Call WaterTable(SEASINIT,  
      &  SOILPROP, SW,                                     !Input
      &  ActWTD, LatInflow, LatOutflow,                    !Output
-     &  MgmtWTD, SWDELTW)                                 !Output
+     &  MgmtWTD, SWDELTW, ThetaCap)                       !Output
 
 !     Use inital water table depth and capillary rise to set initial
 !       soil water content
@@ -292,7 +292,7 @@ C     Conflict with CERES-Wheat
         Call WaterTable(RATE,   
      &    SOILPROP, SW,                                   !Input
      &    ActWTD, LatInflow, LatOutflow,                  !Output
-     &    MgmtWTD, SWDELTW)                               !Output
+     &  MgmtWTD, SWDELTW, ThetaCap)                       !Output
       ENDIF
 
 !     Set process rates to zero.

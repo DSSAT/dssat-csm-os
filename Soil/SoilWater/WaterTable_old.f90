@@ -1,44 +1,40 @@
 !=======================================================================
-!  WaterTable_2D, Subroutine, C.H.Porter
+!  WaterTable, Subroutine, C.H.Porter
 !  Computes lateral flows necessary to maintain a managed water table depth.
 !  Actual computed water table may rise above or fall below managed water
 !  table. 
-!  The 2D version collapses 2D soil water into 1D layers with average soil water content.
-!  All water table calculations are done on 1D basis because there is little variation
-!    across a row for very wet conditions.
-!  The daily 1D soil water flux due to a change in water table is then converted to 2D cells.
 !-----------------------------------------------------------------------
 !  REVISION       HISTORY
 !  01/23/2010 CHP Written
-!  08/01/2011 CHP Add LIMIT_2D for water table handling
-!  04/26/2023 CHP Use 1D WaterTable.f90, but modify to expand 1D fluxes to 2D cells.
+!  02/10/2023 chp move SW integration to WATBAL
 !=======================================================================
 
-  Subroutine WaterTable_2D(DYNAMIC,           &
-    CELLS, SOILPROP, SWV,                     &   !Input                                              
-    ActWTD, LatInflow, LatOutflow,            &   !Output
-    MgmtWTD, SWVDELTW)                            !Output
+    Subroutine WaterTable(DYNAMIC,              &
+      SOILPROP, SW,                             &   !Input
+      ActWTD, LatInflow, LatOutflow,            &   !Output
+      MgmtWTD, SWDELTW)                             !Output
 
 !-----------------------------------------------------------------------
-  USE Cells_2D     
-  USE ModuleData
-  IMPLICIT NONE
-  EXTERNAL CapFringe
-  SAVE
+    USE ModuleDefs     
+    USE ModuleData
+    IMPLICIT NONE
+    EXTERNAL CapFringe
+    SAVE
 !-----------------------------------------------------------------------
-! Interface:
-  INTEGER, INTENT(IN) :: DYNAMIC
-  Type(CellType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CELLS
-  Type(SoilType), INTENT(IN) :: SOILPROP
-  REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: SWV
-  REAL, DIMENSION(MaxRows,MaxCols), INTENT(OUT) :: SWVDELTW
-  REAL, INTENT(OUT) :: ActWTD, MgmtWTD, LatInflow, LatOutflow
+!   Interface:
+    INTEGER            , INTENT(IN) :: DYNAMIC
+    TYPE(SoilType)     , INTENT(IN) :: SOILPROP
+    REAL, DIMENSION(NL), INTENT(IN) :: SW
+    REAL               , INTENT(OUT):: ActWTD, MgmtWTD
+    REAL               , INTENT(OUT):: LatInflow, LatOutflow
+!   SWDELT_WT = Change in SW due to water table changes
+    REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
 
-! Local
-  INTEGER L, NLAYR, LIMIT_2D 
-  REAL Bottom, Top, Thick, TargetWTD, AdjustWTD
-  REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, SW, WCR  
-  REAL, DIMENSION(NL) :: ThetaCap, SW_temp, SWDELTW, DeltaSW
+!   Local
+    INTEGER L, NLAYR
+    REAL Bottom, Top, Thick, TargetWTD
+    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR 
+    REAL, DIMENSION(NL) :: ThetaCap, SW_temp, DeltaSW
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
@@ -51,15 +47,8 @@
     LatInflow  = 0.0
     LatOutflow = 0.0
     SWDELTW    = 0.0
-    SWVDELTW   = 0.0
     SW_temp    = SW
 
-!   Use cell water content to calculate layer sol water content 
-    CALL Interpolate2Layers_2D(                         &
-        SWV, CELLS%Struc, SOILPROP % NLAYR,             & !Input
-        SW)                                               !Output
-
-!   If modeling a raised bed, SOILPROP contains soil properties for raised bed plus below bed.
     DLAYR = SOILPROP % DLAYR
     DS    = SOILPROP % DS
     DUL   = SOILPROP % DUL
@@ -80,18 +69,6 @@
     IF (MgmtWTD < 1.E-6) THEN
       MgmtWTD = 1000.
     ENDIF
-
-!   If there is a raised bed, then need to adjust water table depths 
-!   Assumptions:
-!   - Recorded water table depths are relative to the soil surface prior to making a raised bed.
-!   - The difference between the surface of the bed and the original surface is BEDHT - DIGDEP
-    IF (BedDimension % RaisedBed) THEN
-      AdjustWTD = BedDimension % BedHt - BedDimension % DigDep
-    ELSE
-      AdjustWTD = 0.0
-    ENDIF
-
-    MgmtWTD = MgmtWTD + AdjustWTD
     ActWTD    = MgmtWTD
     TargetWTD = MgmtWTD
 
@@ -128,6 +105,8 @@
       ENDDO
     ENDIF
 
+    CALL PUT('WATER','WTDEP',ActWTD)
+
 !***********************************************************************
 !***********************************************************************
 ! DAILY RATE CALCULATIONS
@@ -136,7 +115,6 @@
 
 !   Get management depth to water table
     CALL GET('MGMT','WATTAB',MgmtWTD)
-    MgmtWTD = MgmtWTD + AdjustWTD
 
     IF (MgmtWTD > DS(NLayr) .AND. ActWTD > DS(NLayr)) THEN
       RETURN
@@ -181,12 +159,13 @@
 !   Actual water table higher than management - drawdown using Kd
     ELSEIF (MgmtWTD - ActWTD > TOL .AND. MgmtWTD < 9999.) THEN
 !     Calculate lateral outflow needed to draw water table down to specified depth
-!     Water content above the target water table but within the old water table 
-!       will be set to DUL. 
-!     The capillary rise routine will then reset theta values just above the water table.
 
 !     initial guess at today's water table depth
       TargetWTD = (ActWTD - MgmtWTD) * Kd + MgmtWTD
+
+!     Water content above the target water table will be set to DUL. 
+!       The capillary rise routine will then reset theta values 
+!       just above the water table.
 
 !     Calculate lateral outflow needed to lower water table to target depth
       DO L = 1, NLAYR
@@ -218,16 +197,11 @@
       TargetWTD = MgmtWTD
     ENDIF 
 
-!-----------------------------------------------------------------------
-!   Set actual water table depth equal to target calculated above.
-!   Probably need a better way to do this, i.e., calculate the actual
-!   water table depth based on water table and drawdown dynamics, but
-!   previous attempts resulted in instability for daily model.
     ActWTD = TargetWTD
     CALL PUT('WATER','WTDEP',ActWTD)
 
 !-------------------------------------------------------------------------
-!   Update soil water content for 1D soil profile
+!   Update soil water content 
 !   Pseudo-integration, the real integration occurs in WATBAL
     DO L = 1, NLAYR
       SW_temp(L) = SW_temp(L) + SWDELTW(L)
@@ -239,76 +213,36 @@
 !***********************************************************************
   ENDIF
 !-----------------------------------------------------------------------
+!   Set actual water table depth equal to target calculated above.
+!   Probably need a better way to do this, i.e., calculate the actual
+!   water table depth based on water table and drawdown dynamics, but
+!   previous attempts resulted in instability for daily model.
 
 !   No effect of water table if it is below the bottom of the soil profile.
     IF (ActWTD .GE. DS(NLAYR)) THEN
-      LIMIT_2D = NRowsTot
-
-    ELSE
-!     Calculate water content within capillary fringe, ThetaCap
-      CALL CapFringe(           &
-        ActWTD,  SOILPROP,      &   !Input
-        ThetaCap)                   !Output
-
-!     Update temporary soil water content with ThetaCap
-      DO L = 1, NLAYR
-!       ThetaCap(L) = MAX(SW_TEMP(L), ThetaCap(L))
-        DeltaSW(L) = MAX(0.0, ThetaCap(L) - SW_TEMP(L))
-        SW_TEMP(L) = SW_TEMP(L) + DeltaSW(L)
-        LatInflow = LatInflow + DeltaSW(L) * DLAYR(L) * 10.
-      ENDDO
-      
-!     Flux in soil water content due to changes in water table and capillary flow
-      DO L = 1, NLAYR
-        SWDELTW(L) = SW_TEMP(L) - SW(L)
-      ENDDO
+      RETURN
     ENDIF
 
-!-----------------------------------------------------------------------
-!   Convert the soil water flux due to water table into 2D variable 
-    CALL Interpolate2Cells_2D(                    &
-        CELLS%STRUC, SOILPROP, SWDELTW, 0.0,      &     !Input
-        SWVDeltW)                                       !Output
+!   Calculate water content within capillary fringe, ThetaCap
+    CALL CapFringe(           &
+      ActWTD,  SOILPROP,      &   !Input
+      ThetaCap)                   !Output
 
-!   The 2D model is not needed in the vicinity of the water table.
-!   Calculate the limits of the 2D model. 
-    IF (ActWTD > DS(NLAYR)) THEN
-!     Water table is below profile depth
-      LIMIT_2D = NRowsTot    
-    Else          
-!     Set LIMIT_2D to be the layer above ThetaCap = .9 * SAT
-      LIMIT_2D = NLAYR
-      DO L = NLAYR, 1, -1
-        IF ((ThetaCap(L) - DUL(L)) > (0.9 * (SAT(L) - DUL(L)))) then
-          LIMIT_2D = L - 1
-        ELSE 
-          EXIT
-        ENDIF
-      ENDDO
-    ENDIF 
-    
-    BedDimension % LIMIT_2D = LIMIT_2D
+!   Update temporary soil water content with ThetaCap
+    DO L = 1, NLAYR
+!     ThetaCap(L) = MAX(SW_TEMP(L), ThetaCap(L))
+      DeltaSW(L) = MAX(0.0, ThetaCap(L) - SW_TEMP(L))
+      SW_TEMP(L) = SW_TEMP(L) + DeltaSW(L)
+      LatInflow = LatInflow + DeltaSW(L) * DLAYR(L) * 10.
+    ENDDO
+
+!   flux in soil water content due to changes in water table and capillary flow
+    DO L = 1, NLAYR
+      SWDELTW(L) = SW_TEMP(L) - SW(L)
+    ENDDO
 
 !-----------------------------------------------------------------------
     RETURN
-    End Subroutine WaterTable_2D
+    End Subroutine WaterTable
 !=======================================================================
-!     WaterTable_2D VARIABLE DEFINITIONS:
-!-----------------------------------------------------------------------
-! ActWTD   The actual depth which may vary from the MgmtWTD if there has been rainfall.  
-!          Calculated from soil water content at the end of the day.  Not be
-!          used for anything, but just reported as output.
-! Bottom   Depth of the bottom for current layer 
-! LatFlow  Daily LatFlow in cm
-! LIMIT_2D From LIMIT_2D+1 to LNYR using 1D model. Daily variable. It is allowed to be in bed area
-! MgmtWTD  User inputed fixed management water table depth. Counted from top to down
-! SWV(L,j) Cell soil water content
-! ThetaCap An array of volumetric soil water contents at the midpoint of each soil layer.
-!          Calculated from the water characteristic curve at the height above the
-!          water table. 
-! Top      Depth of the top for current layer
-!-----------------------------------------------------------------------
-!     END SUBROUTINE WaterTable_2D
-!=======================================================================
-
 
