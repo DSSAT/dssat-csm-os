@@ -1444,15 +1444,15 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             METMP = UPCASE(METMP)
             MEGHG = UPCASE(MEGHG)
 
-            IF (INDEX('PG' ,MESOM) == 0) MESOM = ' '
-            IF (INDEX('123',MESOL) == 0) MESOL = ' '
-            IF (INDEX('RSN',MESEV) == 0) MESEV = ' '
-            IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
+            IF (INDEX('PG.' ,MESOM) == 0) MESOM = ' '
+            IF (INDEX('123.',MESOL) == 0) MESOL = ' '
+            IF (INDEX('RSN.',MESEV) == 0) MESEV = ' '
+            IF (INDEX('Z.'  ,MEEVP)  > 0) MEPHO = '.'
 !           IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
-            IF (INDEX('ED' ,METMP) == 0) METMP = 'D' !7/21/2016
-            IF (INDEX('01' ,MEGHG) == 0) MEGHG = '0'
+            IF (INDEX('ED.' ,METMP) == 0) METMP = '.' !7/21/2016
+            IF (INDEX('01.' ,MEGHG) == 0) MEGHG = '.'
 
-            IF (INDEX('RGC',MEHYD) == 0) MEHYD = 'R' !default 1D Ritchie
+            IF (INDEX('RGC.',MEHYD) == 0) MEHYD = '.' 
             SELECT CASE(MEHYD)
             CASE ('G', 'C')
               MESOL  = 'D'     !2D soil
