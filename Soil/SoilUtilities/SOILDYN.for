@@ -761,16 +761,17 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
           TotOrgN(L) = -99.
         ENDIF
 
+!     chp 2023-10-03 - Must have KSAT for 2D model to work. Use this for MEHYD = 'G', 'C'
 !       Remove this ksat estimation 
 !       It causes problems when SAT and DUL are close. (KJB/JWJ - India workshop 2011)
-!!       Calculate Ksat (SWCN) if not provided
-!        IF (SWCN(L) < -1.E-6) THEN
-!!         Eqn. 10 from 
-!!         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
-!!           drainage model for more accurate soil water dynamics estimation. 
-!!           Soil Science 169(11):745-757.
-!          SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
-!        ENDIF
+!       Calculate Ksat (SWCN) if not provided
+        IF (SWCN(L) < -1.E-6 .AND. INDEX('GC',ISWITCH % MEHYD) > 0) THEN
+!         Eqn. 10 from 
+!         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
+!           drainage model for more accurate soil water dynamics estimation. 
+!           Soil Science 169(11):745-757.
+          SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
+        ENDIF
       ENDDO
 
 !-----------------------------------------------------------------------
@@ -2311,7 +2312,7 @@ C=======================================================================
 
       CHARACTER*6 SECTION
       CHARACTER*8, PARAMETER :: ERRKEY = 'SETPM'
-      CHARACTER*125 MSG(50)
+!     CHARACTER*125 MSG(50)
 !     CHARACTER*180 CHAR
       INTEGER ERR, FOUND, LNUM, LUNIO
       REAL PMWD, ROWSPC_CM
