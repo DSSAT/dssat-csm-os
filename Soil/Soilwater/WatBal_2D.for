@@ -278,6 +278,7 @@
           ENDIF
         ENDDO
       ENDIF 
+      LIMIT_2D = MAX(LIMIT_2D, 1)
       BedDimension % LIMIT_2D = LIMIT_2D
 
 !     Set SWV based on initial water table  
@@ -471,6 +472,7 @@
           ENDIF
         ENDDO
       ENDIF 
+      LIMIT_2D = MAX(LIMIT_2D, 1)
       BedDimension % LIMIT_2D = LIMIT_2D
 
 !     After call WaterTable_2D to get theLIMIT_2D, set the soil water content below LIMIT_2D as ThetaCap
@@ -625,7 +627,8 @@
         TimeIncr = Max_Time_Step  !minutes
        
         CritCell = 0 
-        DO i = 1, min(LIMIT_2D, NRowsTot)
+!       DO i = 1, min(LIMIT_2D, NRowsTot)
+        DO i = 1, NRowsTot
           DO j = 1, NColsTot
             SELECT CASE(CELLS(i,j)%STRUC%CellType)
             CASE (3,4,5);CONTINUE
@@ -644,7 +647,8 @@
      &        Se(i,j), WCr(i))
 
 !           JZW 9/29/2009
-            IF (Diffus(i,j) > 1.E-9 .AND. Kunsat(i,j) > 1.E-9) THEN
+            IF (Diffus(i,j) > 1.E-9 .AND. Kunsat(i,j) > 1.E-9 
+     &                              .AND. i .LE. LIMIT_2D) THEN
               DeltaT = 1./(
      &          2.*Diffus(i,j)/(Width(i,j)*Width(i,j)) + 
      &          2.*Diffus(i,j)/(Thick(i,j)*Thick(i,j)) + 
