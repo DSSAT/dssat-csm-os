@@ -20,7 +20,7 @@ C=======================================================================
       SUBROUTINE Drainage_2D(DYNAMIC, 
      &    CELLS, Diffus, FurCol1, Kunsat,             !Input
      &    SOILPROP, SWV_D, TimeIncr, WCr,             !Input
-     &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
+     &    SWV_ts, SWFh_ts, SWFv_ts)                   !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D     
@@ -39,7 +39,7 @@ C=======================================================================
       TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CELLS
       Double Precision, DIMENSION(MaxRows,MaxCols), INTENT(OUT) ::SWV_ts
       REAL, DIMENSION(MaxRows,MaxCols), INTENT(OUT) :: SWFh_ts, SWFv_ts
-      REAL, INTENT(OUT) :: LatFlow_ts
+!     REAL, INTENT(OUT) :: LatFlow_ts
 
 !-----------------------------------------------------------------------
       CHARACTER*6, PARAMETER :: ERRKEY = 'DRN_2D' 
@@ -86,7 +86,7 @@ C=======================================================================
       CellArea = CELLS % Struc % CellArea
       Cell_Type = CELLS % Struc % CellType
        
-      LatFlow_ts = 0.0
+!     LatFlow_ts = 0.0
       WatTable = .FALSE.
 
 !***********************************************************************
@@ -95,7 +95,7 @@ C=======================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
-      LatFlow_ts = 0.0
+!     LatFlow_ts = 0.0
 
       SWFh_ts = 0.0
       SWFv_ts = 0.0
@@ -258,21 +258,22 @@ C=======================================================================
 
             V_out(i,j) = V_diff + V_grav
 
-!           Check for water table in cell below
-            !IF (DS(i+1) > MgmtWTD) THEN
-            IF (i .eq. LIMIT_2D) THEN ! If there is water table
-!             Water table found - compute lateral flows
-              V_in(i+1,j) = 0.0  !no net change to cell below
-!             Lateral inflow is positive, outflow is negative
-              IF (V_out(i,j) > 1.E-10) THEN
-!               Flow into water table from above - lateral outflow to balance
-                LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2
-              ELSEIF (V_out(i,j) < -1.E-10) THEN
-!               Flow up from water table cell - lateral inflow to balance
-!               What is the difference for this two cases?
-                LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2 
-              ENDIF
-            Endif
+! chp 2023-10-03 Lateral flows now calculated daily in WaterTable.f90
+!!           Check for water table in cell below
+!            !IF (DS(i+1) > MgmtWTD) THEN
+!            IF (i .eq. LIMIT_2D) THEN ! If there is water table
+!!             Water table found - compute lateral flows
+!              V_in(i+1,j) = 0.0  !no net change to cell below
+!!             Lateral inflow is positive, outflow is negative
+!              IF (V_out(i,j) > 1.E-10) THEN
+!!               Flow into water table from above - lateral outflow to balance
+!                LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2
+!              ELSEIF (V_out(i,j) < -1.E-10) THEN
+!!               Flow up from water table cell - lateral inflow to balance
+!!               What is the difference for this two cases?
+!                LatFlow_ts = LatFlow_ts - V_out(i,j)   !cm2 
+!              ENDIF
+!            Endif
 
           ELSE
 !           If there is no water table, this is Last row - gravity only, no diffusion. 
@@ -287,22 +288,22 @@ C=======================================================================
           
 !         Limit vertical Flow not making next layer above saturation
           if ((SWV_ts(i,j).GT. SAT(i)).and.(i.GT.1).and.(j.GT.1)) then 
-             if (i.LT. LIMIT_2D) then 
+!             if (i.LT. LIMIT_2D) then 
 !              If water is down flow shall we set V_in_hold? How to send the extra water back to above layer?
 !              Do not assume to flow out horizentally
 !            if (V_out(i,j) .LE. 0.) then
                V_out(i,j) = V_out(i,j) + 
      &                     (SWV_ts(i,j) - SAT(i)) * CellArea(i,j)
                SWV_ts(i,j) = SAT(i)
-             elseif (i.eq.LIMIT_2D) then 
-!              if today's water table is lower then yesterday, to avoid the SW in layer LIMIT_2D to go to above SAT 
-               LatFlow_ts = LatFlow_ts -
-     &          (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
-               SWV_ts(LIMIT_2D,j) = SAT(LIMIT_2D)
-               SWFv_ts(LIMIT_2D,j) = SWFv_ts(LIMIT_2D,j) +
-     &          (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
-             Endif
-        !    Endif
+!             elseif (i.eq.LIMIT_2D) then 
+!!              if today's water table is lower then yesterday, to avoid the SW in layer LIMIT_2D to go to above SAT 
+!               LatFlow_ts = LatFlow_ts -
+!     &          (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
+!               SWV_ts(LIMIT_2D,j) = SAT(LIMIT_2D)
+!               SWFv_ts(LIMIT_2D,j) = SWFv_ts(LIMIT_2D,j) +
+!     &          (SWV_ts(LIMIT_2D,j)-SAT(LIMIT_2D))* CellArea(LIMIT_2D,j)
+!             Endif
+!        !    Endif
           Endif
           V_in(i+1,j) = V_out(i,j)
          
@@ -337,7 +338,7 @@ C=======================================================================
         Enddo
       endif
       
-      LatFlow_ts = LatFlow_ts / HalfRow * 10.   !mm
+!      LatFlow_ts = LatFlow_ts / HalfRow * 10.   !mm
 
 !***********************************************************************
 !***********************************************************************

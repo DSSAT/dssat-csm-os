@@ -301,7 +301,7 @@
       CALL Drainage_2D(SEASINIT,  
      &    CELLS, Diffus, FurCol1, Kunsat,             !Input
      &    SOILPROP, SWV_D, TimeIncr, WCr,             !Input
-     &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
+     &    SWV_ts, SWFh_ts, SWFv_ts)                   !Output
 
       CALL ROOTWU_2D(SEASINIT, TimeIncr, 
      &    Cells, EOP_ts, SWV_avail,                       !Input 
@@ -836,6 +836,7 @@
           ENDDO
           Runoff_ts = RUNOFF * DayIncr
           Rain_ts = RAIN * DayIncr ! in mm
+          LatFlow_ts = (LatInflow - LatOutflow) * DayIncr
           IRR_ts = IRR_ts + StdIrrig * DayIncr
         ENDIF
 
@@ -930,8 +931,8 @@
 !       Drainage_2D computes both runoff and drainage for bed and furrow
         CALL Drainage_2D(RATE, 
      &    CELLS, Diffus, FurCol1, Kunsat,             !Input
-     &    SOILPROP, SWV_avail, TimeIncr, WCr,             !Input
-     &    LatFlow_ts, SWV_ts, SWFh_ts, SWFv_ts)       !Output
+     &    SOILPROP, SWV_avail, TimeIncr, WCr,         !Input
+     &    SWV_ts, SWFh_ts, SWFv_ts)                   !Output
 
         ! Here LatFlow_ts is due to the drainage of layer LIMIT_2D 
         ! here the drainage is from first layer to LIMIT_2D
