@@ -164,14 +164,6 @@ C-----------------------------------------------------------------------
      &    '    MWTD    TDFD    TDFC    ROFD    ROSD')
 
 !       print SW for all layers
- !    &    '  SWTD  SWXD   ROFC   DRNC   PREC  IR#C  IRRC  DTWT')
- !       ENDIF
-
-!        IF (N_LYR < 10) THEN
-!          WRITE (NOUTDW,1121) ("SW",L,"D",L=1,N_LYR)
-! 1121     FORMAT(9("    ",A2,I1,A1))
-!        ELSE
-!!         WRITE (NOUTDW,1122) ("SW",L,"D",L=1,9), "    SW10"
         DO L = 1, NLAYR
           IF (L < 10) THEN
             WRITE(SW_txt(L),'("    SW",I1,"D")') L
@@ -179,7 +171,7 @@ C-----------------------------------------------------------------------
             WRITE(SW_txt(L),'("   SW",I2,"D")') L
           ENDIF
         ENDDO
-        WRITE(NOUTDW,'(20(A8))') (SW_txt(L), L=1,NLAYR)
+        WRITE(NOUTDW,'(40(A8))') (SW_txt(L), L=1,NLAYR)
 
         END IF   ! VSH
 
@@ -204,7 +196,7 @@ C-----------------------------------------------------------------------
  1300     FORMAT(1X,I4,1X,I3.3,1X,I5,9(1X,I7),  !was 10(1X,I7)
      &      F8.2,2F8.1,F8.2,
      &      F8.2,   !EXCS
-     &      20(F8.3))
+     &      30(F8.3))
 
         END IF   ! VSH
          

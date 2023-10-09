@@ -6,7 +6,7 @@
 !     Order of calculations:
 !     -- accept daily irrigation inputs from management module
 !     -- input potential daily root water extraction and hourly  
-!		    distribution
+!           distribution
 !     -- compute soil water dynamics,
 !           including drip irrigation, redistribution, root water extraction, 
 !           upflow and drainage on a variable time step. 
@@ -108,7 +108,7 @@
       REAL, DIMENSION(MaxRows,MaxCols) :: EvapFlow, SWA, SWVDELTW
       REAL, ALLOCATABLE :: IrrigSched(:,:,:), DripRate(:,:),DripInt(:,:)
 !     REAL, ALLOCATABLE :: DripDep(:,:), DripStart(:,:), DripDur(:,:)
-      
+
       Double Precision DRAIN_ts, EOP_ts, ES_avg, ES_day, ES_ts
       Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn), Rain_ts
       Double Precision IrrVol_temp(NDrpLn), Runoff_ts  !chp
@@ -127,9 +127,6 @@
       REAL Time_interval, k_unsat, diffus_coef
 
       LOGICAL IRRIG, IRRIGArr(NDrpLn)
-
-!!     temp chp
-!      integer lun2
 
 !     Default time steps durring irrigation and drying !minutes
       REAL, PARAMETER :: TSI = 5.0, TSN = 30.0, Max_Time_Step=60.
@@ -185,7 +182,7 @@
       Thick    = CELLS%STRUC%Thick
       Width    = CELLS%STRUC%Width
       Cell_Type = CELLS % Struc % CellType
-      
+
 !     Drip irrigation
       CALL GET(DripIrrig)
       DripOfset = DripIrrig % DripOfset
@@ -214,7 +211,8 @@
             EXIT
           ENDIF
         ENDDO
-      END DO
+      ENDDO
+
 !     Initial soil water content in single precision
       IF (BedDimension % RaisedBed) THEN
         DO i = 1, NRowsTot
@@ -352,8 +350,7 @@
       Call Calc_SW_Vol(
      &  CellArea, Cell_Type, HalfRow, SWV_D,                !Input
      &  SW_vol_tot)                                         !Output
-     
-           
+
 !      call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
 !      call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
 
@@ -382,14 +379,13 @@
 
       !call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
  !     call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
-      
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE CALCULATIONS
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
-      
       IF (ISWITCH%ISWWAT == 'N') RETURN
 
       DRAIN_2D = 0.0
@@ -455,7 +451,7 @@
       CALL Interpolate2Cells_2D(
      &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
      &  SWVDeltW)                                         !Output
-      
+
 !     The 2D model is not needed in the vicinity of the water table.
 !     Calculate the limits of the 2D model. 
       IF (ActWTD > DS(NLAYR)) THEN
@@ -475,6 +471,7 @@
       LIMIT_2D = MAX(LIMIT_2D, 1)
       BedDimension % LIMIT_2D = LIMIT_2D
 
+!     This resets the soil water once per day for the lateral inflow (outflow). Could do this on a time-step basis.
 !     After call WaterTable_2D to get theLIMIT_2D, set the soil water content below LIMIT_2D as ThetaCap
       LIMIT_2D = BedDimension % LIMIT_2D
       DO i = LIMIT_2D+1, NLAYR
@@ -515,7 +512,7 @@
         ALLOCATE (IrrigSched(NDripLnTOT,MAXVAL(DripNumTotArr),2))
         ALLOCATE (DripInt(NDripLnTOT,MAXVAL(DripNumTotArr)))
         ALLOCATE (DripRate(NDripLnTOT,MAXVAL(DripNumTotArr)))
-        
+
         IrrigSched = 0.
         DripInt = 0.
         DripRate = 0.
@@ -625,7 +622,7 @@
 !       for each cell based on soil water content at beginning of time step
 !       Also compute optimum time increment for stability
         TimeIncr = Max_Time_Step  !minutes
-       
+
         CritCell = 0 
 !       DO i = 1, min(LIMIT_2D, NRowsTot)
         DO i = 1, NRowsTot
@@ -665,7 +662,7 @@
 
 !!     temp chp
 !      TimeIncr = 1.0
-!
+
 !       Need smaller time step during irrigation
         DO IDL = 1, NDripLnTOT
           IrrigIndex = IrrIdxArr(IDL)
@@ -693,7 +690,7 @@
           ELSE
             IRRIG = .FALSE.
           ENDIF
-        
+
           IF (RAIN > 1.E-6) THEN  ! check if both irr and rain exist
 !           Actually, under above if statement, the TimeIncr is overwrite by the next if (IRRIG) elseif 
 !           IF (DripInt(J) > 1.E-6) THEN
@@ -714,7 +711,7 @@
             ENDIF
             TimeIncr = MIN(TimeIncr, DeltaT)
           ENDIF
-        
+
           IF (IRRIG) THEN
 !           Irrigated time step
             !DeltaT = Time_interval(DripDur(J), TSI)  !minutes
@@ -855,7 +852,7 @@
         TSRadFrac = CumRad - LastCumRad 
         LastCumRad = CumRad
 !       ===============================================================
-        
+
 !       Soil Evaporation
         ES_ts = 0.0
         IF (BedDimension % PMCover) then
@@ -875,7 +872,7 @@
               ES_ts = ES_ts + ES_avg 
 !             Subtract from cell water by volume fraction
               SWV_avail(i,j) = SWV_avail(i,j) - ES_avg * mm_2_vf(i,j)  
-            
+
 !             temp chp
               es_vf_ts(i,j) = ES_avg * mm_2_vf(i,j)
             CASE DEFAULT; CYCLE
@@ -947,7 +944,6 @@
         CELLS%Rate%EP_rate = RWU_2D
         SWV_avail = SWV_ts
         SWV_D = SWV_ts
-        LatFlow = LatFlow + LatFlow_ts
 
 !       ---------------------------------------------------------------
 !       Update soil water process accumulators
@@ -1051,7 +1047,7 @@
             END SELECT
           ENDDO
         ENDDO
-        
+
       SWV_D = SWV_ts
       SWV = SNGL(SWV_D)
 
@@ -1102,7 +1098,7 @@
       CALL Interpolate2Layers_2D(                    
      &  CELLS%State%SWV, CELLS%Struc, SOILPROP%NLAYR,     !Input
      &  SW)                                               !Output
-     
+
 !***********************************************************************
 !***********************************************************************
 !     OUTPUT - Daily output
