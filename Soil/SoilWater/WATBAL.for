@@ -59,9 +59,10 @@ C=======================================================================
       USE ModuleDefs     
       USE ModuleData
       USE FloodModule
+      USE Interface_OPWBAL
       IMPLICIT NONE
       EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
-     &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
+     &  MULCHWATER, WBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
      &  SOILMIXING, SUMSW, WTDEPT, WaterTable
       SAVE
 !-----------------------------------------------------------------------
@@ -245,10 +246,10 @@ C=======================================================================
 
 !       Call OPWBAL to write headers to output file
         CALL OPWBAL(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
-     &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    EXCS, WTDEP)                                    !Input
+     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
+     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
+     &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
       ENDIF
 
       DRAIN  = 0.0
@@ -543,10 +544,10 @@ C-----------------------------------------------------------------------
       IF (ISWWAT .NE. 'Y') RETURN
 
       CALL OPWBAL(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
-     &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    EXCS, WTDEP)                                    !Input
+     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
+     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
+     &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
 
 !     Water balance daily output 
       CALL Wbal(CONTROL, ISWITCH, 
@@ -570,10 +571,10 @@ C-----------------------------------------------------------------------
       IF (ISWWAT .NE. 'Y') RETURN
 
       CALL OPWBAL(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
-     &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    EXCS, WTDEP)                                    !Input
+     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
+     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
+     &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
 
 !     Water balance seasonal output 
       CALL Wbal(CONTROL, ISWITCH, 

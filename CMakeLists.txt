@@ -644,7 +644,6 @@ set(
         "Soil/SoilWater/Drainage_2D.for"
         "Soil/SoilWater/INFIL.for"
         "Soil/SoilWater/OPWBAL.for"
-        "Soil/SoilWater/OPWBAL_2D.for"
         "Soil/SoilWater/RETC_VG.for"
         "Soil/SoilWater/RNOFF.for"
         "Soil/SoilWater/SATFLO.for"

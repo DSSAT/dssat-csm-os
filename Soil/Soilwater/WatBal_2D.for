@@ -43,9 +43,10 @@
 !-----------------------------------------------------------------------
       USE Cells_2D
       USE ModuleData
+      USE Interface_OPWBAL
       IMPLICIT NONE
       EXTERNAL WATERTABLE, DRAINAGE_2D, ROOTWU_2D, 
-     &  WBSUM_2D, WBAL_2D, OPWBAL_2D, CALC_SW_VOL, WBAL_2D_TS, 
+     &  WBSUM_2D, WBAL_2D, CALC_SW_VOL, WBAL_2D_TS, 
      &  RNOFF_FURROW, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
      &  WATERSTRESS
       SAVE
@@ -322,10 +323,10 @@
      &    TDRAIN, TEP, TES, TRUNOF, TSW)
      
 !     Call OPWBAL to write headers to output file
-      CALL OPWBAL_2D(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, IRRAMT, LL,                       !Input
-     &    NLAYR, RUNOFF, SOILPROP, SW,                    !Input
-     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow)  !Input
+      CALL OPWBAL(CONTROL, ISWITCH, 
+     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
+     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF)       !Input
 
       SWDELTS= 0.0
       EOP_Hr = 0.0
@@ -1111,10 +1112,10 @@ C-----------------------------------------------------------------------
     ! &          "SWV", 0.0, 0.5)
 
 !     Output SoilWat.OUT
-      CALL OPWBAL_2D(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, IRRAMT, LL,                       !Input
-     &    NLAYR, RUNOFF, SOILPROP, SW,                    !Input
-     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow)  !Input
+      CALL OPWBAL(CONTROL, ISWITCH, 
+     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
+     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF)       !Input
 
 !     Daily water balance output to SoilWatBal.OUT 
 !       NOTE: DRAIN_2D vs Drain_Limit2D. Could not find the latter, so using the former.
@@ -1138,10 +1139,10 @@ C-----------------------------------------------------------------------
 
       IF (ISWITCH%ISWWAT == 'N') RETURN
       
-      CALL OPWBAL_2D(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, IRRAMT, LL,                       !Input
-     &    NLAYR, RUNOFF, SOILPROP, SW,                    !Input
-     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow)  !Input
+      CALL OPWBAL(CONTROL, ISWITCH, 
+     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
+     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF)       !Input
 
 !     Seasonal water balance output 
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 

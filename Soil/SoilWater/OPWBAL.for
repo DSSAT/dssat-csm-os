@@ -11,17 +11,16 @@ C-----------------------------------------------------------------------
 C  Called from:   WATBAL
 C  Calls:         None
 C=======================================================================
+
       SUBROUTINE OPWBAL(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
-     &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
-     &    EXCS, WTDEP)                                    !Input
+     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
+     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
+     &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-      USE FloodModule    ! which contain control information, soil
-                         ! parameters, hourly weather data.
-!     VSH
+      USE ModuleDefs
+      USE FloodModule
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
@@ -29,25 +28,35 @@ C=======================================================================
      &   , SoilLayerText2
       SAVE
 
+      TYPE (ControlType) , INTENT(IN) :: CONTROL
+      TYPE (SwitchType)  , INTENT(IN) :: ISWITCH
+      TYPE (SoilType)    , INTENT(IN) :: SoilProp
+      INTEGER NLAYR
+      REAL, INTENT(IN) :: ActWTD, CRAIN, IRRAMT, 
+     &                    LatInflow, LatOutflow, 
+     &                    RUNOFF, TDRAIN, TRUNOF
+      REAL, DIMENSION(NL), INTENT(IN) :: DLAYR, LL, SW
+!     Optional inputs:
+      TYPE (FloodWatType), INTENT(IN), OPTIONAL :: FLOODWAT
+      TYPE (MulchType)   , INTENT(IN), OPTIONAL :: MULCH
+      REAL, INTENT(IN), OPTIONAL :: TDFC, TDFD, EXCS, WTDEP
+
       CHARACTER*1 IDETW, IDETL, ISWWAT, MEINF, RNMODE
       CHARACTER*12 OUTWAT
       PARAMETER (OUTWAT = 'SoilWat.OUT ')
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, L
-      INTEGER NAP, NLAYR, N_LYR, NOUTDW, RUN
+      INTEGER NAP, N_LYR, NOUTDW, RUN
       INTEGER YEAR, YRDOY, REPNO, YRSTART, INCDAT
 
-      REAL CRAIN, IRRAMT, PESW, TDFC, TDFD, TDRAIN, TLL
-      REAL TOTBUNDRO, TOTIR, TRUNOF, TSW, MULCHWAT
-      REAL, DIMENSION(NL) :: DLAYR, LL, SW
-      REAL RUNOFF
-      REAL EXCS
+      REAL PESW, TLL, TDFCp, TDFDp, EXCSp
+      REAL TOTBUNDRO, TOTIR, TSW, MULCHWAT
 
       LOGICAL FEXIST, DOPRINT
 
 !     Water table
       INTEGER NAVWB
-      REAL LatInflow, LatOutflow, ActWTD, WTDEP, WaterTable
+      REAL WaterTable
       REAL CumLatInflow, CumLatOutflow
       REAL AVWTD, AVMWTD
 
@@ -59,14 +68,6 @@ C=======================================================================
       CHARACTER*8, DIMENSION(NL) :: SW_txt, LayerText
 
 !-----------------------------------------------------------------------
-!     Define constructed variable types based on definitions in
-!     ModuleDefs.for.
-      TYPE (ControlType) CONTROL
-      TYPE (SwitchType)  ISWITCH
-      TYPE (FloodWatType) FLOODWAT
-      TYPE (MulchType)    MULCH
-      TYPE (SoilType)     SoilProp
-
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
       FROP    = CONTROL % FROP
@@ -81,15 +82,49 @@ C=======================================================================
       MEINF   = ISWITCH % MEINF    
       FMOPT   = ISWITCH % FMOPT   ! VSH
 
-      TOTBUNDRO = FLOODWAT % TOTBUNDRO
-      MULCHWAT  = MULCH % MULCHWAT
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
-      IF (ActWTD .LT. WTDEP) THEN
-        WaterTable = ActWTD
+!     Handle optional arguments
+!    &    EXCS, )   !Optional input
+      IF (PRESENT(FLOODWAT)) THEN
+        TOTBUNDRO = FLOODWAT % TOTBUNDRO
       ELSE
-        WaterTable = WTDEP
+        TOTBUNDRO = 0.0
+      ENDIF
+
+      IF (PRESENT(MULCH)) THEN
+        MULCHWAT  = MULCH % MULCHWAT
+      ELSE
+        MULCHWAT  = 0.0
+      ENDIF
+
+      IF (PRESENT(TDFC)) THEN
+        TDFCp = TDFC
+      ELSE
+        TDFCp = 0.0
+      ENDIF
+
+      IF (PRESENT(TDFD)) THEN
+        TDFDp = TDFD
+      ELSE
+        TDFDp = 0.0
+      ENDIF
+
+      IF (PRESENT(EXCS)) THEN
+        EXCSp = EXCS
+      ELSE
+        EXCSp = 0.0
+      ENDIF
+
+      IF (PRESENT(WTDEP)) THEN
+        IF (ActWTD .LT. WTDEP) THEN
+          WaterTable = ActWTD
+        ELSE
+          WaterTable = WTDEP
+        ENDIF
+      ELSE
+        WaterTable = ActWTD
       ENDIF
 
 !***********************************************************************
@@ -106,8 +141,6 @@ C-----------------------------------------------------------------------
       AVWTD = 0.
       AVMWTD = 0.
       TOTIR = 0.
-      TRUNOF= 0.
-      CRAIN = 0.
       CumLatInflow = 0.
       CumLatOutflow = 0.
 
@@ -204,7 +237,7 @@ C-----------------------------------------------------------------------
          N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
          CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
-     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD*10., TDFC*10.,
+     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFDp*10., TDFCp*10.,
      &RUNOFF, N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
      
          CALL LinklstSW(vCsvlineSW)
@@ -268,7 +301,7 @@ C-----------------------------------------------------------------------
      &        NAP, NINT(TOTIR),
      &        NINT(CumLatInflow+CumLatOutflow), 
      &        NINT(AVWTD),
-     &        MULCHWAT, TDFD*10., TDFC*10., RUNOFF, EXCS,
+     &        MULCHWAT, TDFDp*10., TDFCp*10., RUNOFF, EXCSp,
      &        (SW(L),L=1,NLAYR)
 
           END IF   ! VSH 
@@ -278,7 +311,7 @@ C-----------------------------------------------------------------------
          N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
          CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
-     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD*10., TDFC*10.,
+     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFDp*10., TDFCp*10.,
      &RUNOFF, N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
      
          CALL LinklstSW(vCsvlineSW)
@@ -334,6 +367,42 @@ C-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE OPWBAL
 !***********************************************************************
+
+!=======================================================================
+      MODULE Interface_OPWBAL
+!     Interface needed for dummy arguments with OPWBAL
+      INTERFACE 
+        SUBROUTINE OPWBAL(CONTROL, ISWITCH, 
+     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
+     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
+     &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
+
+          USE ModuleDefs
+          USE FloodModule
+          USE CsvOutput
+          USE Linklist
+          IMPLICIT NONE
+
+          TYPE (ControlType) , INTENT(IN) :: CONTROL
+          TYPE (SwitchType)  , INTENT(IN) :: ISWITCH
+          TYPE (SoilType)    , INTENT(IN) :: SoilProp
+          INTEGER NLAYR
+          REAL, INTENT(IN) :: ActWTD, CRAIN, IRRAMT, 
+     &                        LatInflow, LatOutflow, 
+     &                        RUNOFF, TDRAIN, TRUNOF
+          REAL, DIMENSION(NL), INTENT(IN) :: DLAYR, LL, SW
+!         Optional inputs:
+          TYPE (FloodWatType), INTENT(IN), OPTIONAL :: FLOODWAT
+          TYPE (MulchType)   , INTENT(IN), OPTIONAL :: MULCH
+          REAL, INTENT(IN), OPTIONAL :: TDFC, TDFD, EXCS, WTDEP
+
+        END SUBROUTINE OPWBAL
+      END INTERFACE 
+!=======================================================================
+      END MODULE Interface_OPWBAL
+!=======================================================================
+
 !-----------------------------------------------------------------------
 !     OPWBAL VARIABLE DEFINITIONS:  updated 2/19/2004
 !-----------------------------------------------------------------------

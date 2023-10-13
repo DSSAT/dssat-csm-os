@@ -64,7 +64,7 @@
       IDETL   = ISWITCH % IDETL
       ISWWAT  = ISWITCH % ISWWAT
       MEINF   = ISWITCH % MEINF
-      
+
       CALL GET('MGMT','WATTAB',MgmtWTD)
       LIMIT_2D = BedDimension % LIMIT_2D
 
