@@ -28,7 +28,7 @@
 !***********************************************************************
 
       SUBROUTINE SoilCNPinit_C (CONTROL, ISWITCH, 
-     &  N_ELEMS, SOILPROP, NH4Ini,NO3Ini,                  !Input  
+     &  N_ELEMS, SOILPROP, NH4Ini,NO3Ini, BWRATIO,        !Input  
      &  ACCCO2, ACCMNR, ADDMETABEFLAG, AMINRL, CEDAM,     !Output
      &  CES1, CES1M, CES1T, CES1X, CES2, CES21I, CES21M,  !Output
      &  CES21S, CES21T, CES21X, CES23LM, CES23LX, CES23M, !Output
@@ -90,6 +90,7 @@
 
       REAL, DIMENSION(1:NL) :: BD, DLAYR, DS, KG2PPM, S1S3, S2S3, 
      &    SOM2C, SOM23C, SOM3C, TXS1, WRN, NH4I, NO3I, OC, NH4Ini,NO3Ini
+      REAL, DIMENSION(NL) :: BWRATIO
 
       REAL, DIMENSION(NELEM) :: CEDAM, CESTR, FRDAE, TLITE
 
@@ -186,7 +187,7 @@
         
         IF (N_ELEMS > 0) THEN
           DO L=1,NLAYR
-            AMINRL(L,N) = (NO3I(L) + NH4I(L)) / KG2PPM(L)
+            AMINRL(L,N) = (NO3I(L) + NH4I(L)) / KG2PPM(L) * BWRATIO(L)
 !           Don't yet know initial values of Pi
             AMINRL(L,P) = 0.0 !SPi_Labile(L)
           ENDDO 
