@@ -42,7 +42,7 @@ C=======================================================================
       REAL SLA,PCNL,TURFAC,CANHT,CANWH,RLV(20),HI,SHELPC,SHELLW
       REAL SDSIZE,PODNO,RTDEP,NSTRES,SWFAC,SATFAC,PLTPOP,GM2KG
       REAL FRYLD,DEADLF, GRAINN
-
+      REAL DTT
       REAL LFWT, GPP, PCNGRN, PCNRT
       REAL PCNST, PCNVEG, ROOTN
       REAL STOVN, STOVWT
@@ -323,7 +323,6 @@ C
         IF (DAP > DAS) DAP = 0
         CALL YR_DOY(YRDOY, YEAR, DOY)
 
-        REAL :: DTT
         DTT = 27.50
 
 !       PlantGro.out file
