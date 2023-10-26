@@ -17,7 +17,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
-     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
+     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT) !Input
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -37,12 +37,12 @@ C=======================================================================
       INTEGER I, ISTAGE, L, LUNIO, NLAYR
       INTEGER NOUTPN, NOUTDG, RUN, RSTAGE, TIMDIF
       INTEGER YEAR, YRDOY, MDATE, YRPLT
+      REAL DTT
  
       REAL XLAI,STMWT,SDWT,WTLF,BIOMAS,RTWT,PODWT,SEEDNO
       REAL SLA,PCNL,TURFAC,CANHT,CANWH,RLV(20),HI,SHELPC,SHELLW
       REAL SDSIZE,PODNO,RTDEP,NSTRES,SWFAC,SATFAC,PLTPOP,GM2KG
       REAL FRYLD,DEADLF, GRAINN
-      REAL DTT
       REAL LFWT, GPP, PCNGRN, PCNRT
       REAL PCNST, PCNVEG, ROOTN
       REAL STOVN, STOVWT
