@@ -84,25 +84,25 @@ C=======================================================================
 C-----------------------------------------------------------------------
       DATA GROHEAD /
 !      DATA GROHEAD(1)/
-     &'! YR      Thermal  Days   Days  Grow       Fresh
+     &'! YR      Thermal Days   Days  Grow       Fresh
      &      Dry Weight                           Pod      Phot. Grow    
      &   Leaf Shell   Spec    Canopy          Root  ³    Root Length Den
      &sity   ³ Senesced mass              ',
 
 !      DATA GROHEAD(2)/
-     &'!   and   Time     after  after Stage  LAI  Yield  Leaf  St
+     &'!   and   Time    after  after Stage  LAI  Yield  Leaf  St
      &em Tuber  Root  Crop  Tops DLeaf   HI   Wgt.   No.    Water     Ni
      &t.   Nit -ing   Leaf  Hght  Brdth      Depth  ³     cm3/cm3   of 
      &soil    ³    (kg/ha)                ',
 
 !      DATA GROHEAD(3)/
-     &'!     DOY          sim     plant             Mg/Ha  ³<------
+     &'!     DOY         sim    plant             Mg/Ha  ³<------
      &--------- kg/Ha --------------->³      Kg/Ha        ³<Stress (0-1)
      &>³    %     %   Area    m     m           m   ³<------------------
      &------>³ Surface  Soil              ',
 
 !      DATA GROHEAD(4) / 
-     &'@YEAR DOY  DTT     DAS    DAP   GSTD  LAID  UYAD  LWAD
+     &'@YEAR DOY DTT     DAS    DAP   GSTD  LAID  UYAD  LWAD
      &SWAD  UWAD  RWAD  TWAD  CWAD  DWAD  HIAD  EWAD  E#AD  WSPD  WSGD  
      &NSTD  LN%D  SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  
 !     &RL4D  RL5D              '/
@@ -323,8 +323,6 @@ C
         IF (DAP > DAS) DAP = 0
         CALL YR_DOY(YRDOY, YEAR, DOY)
 
-        DTT = 27.50
-
 !       PlantGro.out file
         IF (IDETG .EQ. 'Y') THEN
           WRITE (NOUTDG,400)YEAR,DOY,DTT,DAS,DAP,RSTAGE,XLAI,FRYLD,
@@ -335,7 +333,7 @@ C
      &        1.0-NSTRES,PCNL,SHELPC,SLA,CANHT,CANWH,SATFAC,
      &        (RTDEP/100),(RLV(I),I=1,5)
      &       ,NINT(CUMSENSURF), NINT(CUMSENSOIL)
- 400      FORMAT (1X,I4,1X,I3.3,2X,F2.2,1X,3(1X,I5),1X,F5.2,1X,F5.1,7(1X,I5),
+ 400      FORMAT (1X,I4,1X,I3.3,1X,F4.2,1X,3(1X,I5),1X,F5.2,1X,F5.1,7(1X,I5),
      &          1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,
      &          2(1X,F5.2),1X,F5.3,6(1X,F5.2), 2I6)
         ENDIF
