@@ -333,8 +333,8 @@ C
      &        1.0-NSTRES,PCNL,SHELPC,SLA,CANHT,CANWH,SATFAC,
      &        (RTDEP/100),(RLV(I),I=1,5)
      &       ,NINT(CUMSENSURF), NINT(CUMSENSOIL)
- 400      FORMAT (1X,I4,1X,I3.3,1X,F4.2,1X,3(1X,I5),1X,F5.2,1X,F5.1,7(1X,I5),
-     &          1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,
+ 400      FORMAT (1X,I4,1X,I3.3,1X,F4.2,1X,3(1X,I5),1X,F5.2,1X,F5.1,
+     &          7(1X,I5),1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,
      &          2(1X,F5.2),1X,F5.3,6(1X,F5.2), 2I6)
         ENDIF
 
