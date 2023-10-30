@@ -25,7 +25,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
-      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI
+      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI, PT_BTHTIME
       SAVE
 
       LOGICAL   COND, EMERGE
@@ -46,6 +46,7 @@ C=======================================================================
       REAL SEEDRV, SENLA, SPGROF, SPRLAP, SPRLTH, SPRWT, SWSD
       REAL TC, TCPLUS, TEMP, TII, TMAX, TMIN, TOPSN, TOTNUP, TSPRWT
       REAL XDEPTH, XDTT, XPLANT, XSTAGE
+      REAL DS, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, ETRM
 
       REAL, DIMENSION(NL) :: DLAYR, LL, ST, SW
 
@@ -84,6 +85,8 @@ C=======================================================================
       RTF    = 0.0
       SENLA  = 0.0
       TOTNUP = 0.0
+      TDU    = 0.0
+      ETRM   = 0.0
       ISDATE = 0
 
 !***********************************************************************
@@ -102,6 +105,23 @@ C=======================================================================
          CALL PT_THTIME (  
      &      ISTAGE, L0, ST, TMAX, TMIN,                   !Input
      &      DTT, STT)                                     !Output
+
+         ! Calculate TDU
+         ! define costants
+         DS = ISTAGE ! should it be XSTAGE?
+         ! DIF = ?
+         ! DAYL = ?
+         TBD=5.5
+         TOD=23.4
+         TCD=34.6
+         TSEN=1.6
+
+         CALL PT_BTHTIME (
+     &      DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, !Input
+     &      TDU, ETRM)                                      !Output
+
+         ! replace DTT with the one calculated by PT_BTHTIME
+         DTT = TDU
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
          CUMSTT = CUMSTT + STT
