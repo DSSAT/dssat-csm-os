@@ -1,5 +1,6 @@
 !=======================================================================
 C  SoilNiBal_2D, Subroutine
+C  CellNDetail_2D, Subroutine
 C 
 C  Purpose: Provides seasonal inorganic soil N balance.  
 C     Based on SoilNBal.for.
@@ -8,7 +9,7 @@ C  REVISION   HISTORY
 C  03/04/2005 CHP wrote based on SoilNBal
 !=======================================================================
 
-      SUBROUTINE SoilNiBal_2D (CONTROL, ISWITCH, 
+      SUBROUTINE CellNDetail_2D (CONTROL, ISWITCH, 
      &    FERTDATA, TNH4, TNO3, TUREA,   
      &    Cells, DENITRIF, IMM, MNR) 
 
@@ -621,10 +622,10 @@ C  03/04/2005 CHP wrote based on SoilNBal
       END IF
 
       RETURN
-      END SUBROUTINE SoilNiBal_2D
+      END SUBROUTINE CellNDetail_2D
 
 !=======================================================================
-! SoilNiBal_2D VARIABLE DEFINITIONS:
+! CellNDetail_2D VARIABLE DEFINITIONS:
 !-----------------------------------------------------------------------
 ! ALGFIX        N in algae (kg [N] / ha)
 ! AMTFER     Cumulative amount of N in fertilizer applications
@@ -644,6 +645,6 @@ C  03/04/2005 CHP wrote based on SoilNBal
 ! TNOXY     Yesterday's TNOX
 ! TOTAML         Cumulative ammonia volatilization (kg [N] / ha)
 !-----------------------------------------------------------------------
-! END SUBROUTINE SoilNiBal_2D
+! END SUBROUTINE CellNDetail_2D
 !=======================================================================
 
