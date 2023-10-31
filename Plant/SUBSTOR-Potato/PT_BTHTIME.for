@@ -24,7 +24,7 @@
      &    DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN,     !Input
      &    TDU, ETRM)                                          !Output
       IMPLICIT NONE
-      REAL DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, ETRM
+      REAL DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, ETRM  
       REAL SUNRIS, SUNSET, TMEAN, TT, ETR, TD, TU, Q10, IETR
       INTEGER I
       SAVE
@@ -44,7 +44,8 @@
       TMEAN  = (TMAX + TMIN)/2.0
       TT     = 0.0
       ETR    = 0.0
-
+    !  TMEAN  = XTEMP 
+      
 !*---diurnal course of temperature
       DO 10 I = 1, 24
         IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
@@ -55,7 +56,8 @@
 
 !*---assuming development rate at supra-optimum temperatures during
 !*   the reproductive phase equals that at the optimum temperature
-        IF (DS.GT.1.) THEN
+        IF  (DS .GE. 6 .OR. DS .LE. 1) THEN
+        !IF (DS.GT.1.) THEN
            TD = MIN (TD,TOD)
         ELSE
            TD = TD

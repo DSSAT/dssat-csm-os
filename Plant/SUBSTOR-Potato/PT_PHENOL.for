@@ -46,7 +46,7 @@ C=======================================================================
       REAL SEEDRV, SENLA, SPGROF, SPRLAP, SPRLTH, SPRWT, SWSD
       REAL TC, TCPLUS, TEMP, TII, TMAX, TMIN, TOPSN, TOTNUP, TSPRWT
       REAL XDEPTH, XDTT, XPLANT, XSTAGE
-      REAL DS, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, ETRM
+      REAL DS, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, ETRM 
 
       REAL, DIMENSION(NL) :: DLAYR, LL, ST, SW
 
@@ -107,8 +107,8 @@ C=======================================================================
      &      DTT, STT)                                     !Output
 
          ! Calculate TDU
-         ! define costants
-         DS = ISTAGE ! should it be XSTAGE?
+         ! define constants
+         DS = ISTAGE ! should it be XSTAGE ?
          ! DIF = ?
          ! DAYL = ?
          TBD=5.5
