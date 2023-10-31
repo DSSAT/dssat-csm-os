@@ -55,7 +55,7 @@ C=======================================================================
       REAL PLANTS, PLTPOP, PODWT, ROOTN, RTDEP, RTF
       REAL RTWT, SDWTAH, SDWTPL, SEEDNI, SEEDRV, SRAD, STMWT, STOVN
       REAL SLPF
-      REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN
+      REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN 
       REAL TOPWT, TOTNUP, TRNU, TUBN, TUBWT, TURFAC, TWILEN
       REAL WTNCAN, WTNLO, XLAI, XSTAGE
       REAL SDWT, SEEDNO, TRWUP, WTNSD, WTNUP, YIELD
@@ -155,7 +155,7 @@ C=======================================================================
       CALL PT_PHENOL (
      &    DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
      &    NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
-     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,       !Input
+     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,  !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
      &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG,            !Output
