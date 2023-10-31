@@ -85,17 +85,17 @@ C=======================================================================
 
       INTEGER DOY, DYNAMIC, INCDAT, IUYRDOY, IUOF, L
       INTEGER NLAYR
-      INTEGER NSOURCE, YEAR, YRDOY   
+      INTEGER NSOURCE, YEAR, YRDOY
 
       REAL AD, AK, ALGFIX 
-      REAL NFAC, NNOM   
+      REAL NFAC, NNOM
       REAL SNH4_AVAIL, SNO3_AVAIL, SUMFERT
       REAL SWEF, TFUREA
       REAL TNH4, TNH4NO3, TNO3, UHYDR
       REAL WFSOM, WFUREA, XL, XMIN
       REAL TUREA
-      
-      REAL ADCOEF(NL), BD(NL), DLAYR(NL) 
+
+      REAL ADCOEF(NL), BD(NL), DLAYR(NL)
       REAL DLTSNH4(NL), DLTSNO3(NL), DLTUREA(NL), DRN(NL), DUL(NL)
       REAL UPFLOW(NL)
       REAL KG2PPM(NL), LITC(0:NL), LL(NL) 
@@ -103,7 +103,7 @@ C=======================================================================
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
       REAL NH4_plant(NL), NO3_plant(NL)
-      
+
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
 !     Variables added for flooded conditions analysis:
@@ -168,7 +168,7 @@ C=======================================================================
       TYPE (FertType)    FERTDATA
       TYPE (TillType)    TILLVALS
       TYPE (WeatherType) WEATHER
-      
+
 !     Interface required because N2O_data is optional variable
       INTERFACE
         SUBROUTINE SoilNiBal(CONTROL, ISWITCH, 
@@ -187,8 +187,6 @@ C=======================================================================
         END SUBROUTINE SoilNiBal
       END INTERFACE
 
-!      PI = 3.1416
-      
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
@@ -233,7 +231,7 @@ C=======================================================================
         !*** temp debugging chp
         TNOM = 0.0
 
-!       Seasonal cumulative vaules
+!       Seasonal cumulative values, kg[N]/ha
         CMINERN  = 0.0  !mineralization
         CIMMOBN  = 0.0  !immobilization
         CNETMINRN= 0.0  !net mineralization
@@ -259,8 +257,8 @@ C=======================================================================
 !     chp - from DayCent - is this the equivalent value?
 !     double turnovfrac = 0.02;
 ! chp - tried pn2Onitrif = .02, but n2o emissions are way too high.
-       
-        TFNITY = 0.0    !
+
+        TFNITY = 0.0
         IUOF   = 0
         IUON   = .FALSE.
 
@@ -496,10 +494,9 @@ C=======================================================================
 
 !         Soil water factor WFSOM.
           WFSOM = 1.0 - 0.5 * XL
-          
+
         ENDIF   !End of IF block on SW vs. DUL.
 
-!     
 !       PH factor (from RICE model)
         IF (FLOOD .GT. 0.0) THEN
            WFSOM    = 0.75
@@ -507,7 +504,7 @@ C=======================================================================
 
 !       Limit the soil water factors between 0 and 1.
         WFSOM = AMAX1 (AMIN1 (WFSOM, 1.), 0.)
-        
+
 !       Calculate the soil temperature factor for the urea hydrolysis.
         TFUREA = (ST(L) / 40.) + 0.20
         TFUREA = AMAX1 (AMIN1 (TFUREA, 1.), 0.)
@@ -570,7 +567,6 @@ C=======================================================================
 !       add the mineralized N to the NH4 pool.
         IF (NNOM .GE. 0.0) THEN
           DLTSNH4(L) = DLTSNH4(L) + NNOM
-          !TMINERALIZE(N) = TMINERALIZE(N) + NNOM
           NNOM = 0.
 
         ELSE
@@ -586,20 +582,17 @@ C=======================================================================
             NNOM_b = NNOM - NNOM_a
 
             DLTSNH4(L) = -(SNH4(L) - XMIN)
-            !TIMMOBILIZE(N) = TIMMOBILIZE(N) + (SNH4(L) - XMIN)
             NNOM = NNOM_b
 
             SNO3_AVAIL = SNO3(L) + DLTSNO3(L)
             IF (ABS(NNOM) .GT. (SNO3_AVAIL + DLTSNO3(L) - XMIN)) THEN
               !Not enough SNO3 to fill remaining NNOM, leave residual
               DLTSNO3(L) = DLTSNO3(L) + XMIN - SNO3_AVAIL
-              !TIMMOBILIZE(N) = TIMMOBILIZE(N) + (SNO3_AVAIL - XMIN)
               NNOM = NNOM + SNO3_AVAIL - XMIN
             ELSE
 !             Get the remainder of the immobilization from nitrate (NNOM
 !             is negative!)
               DLTSNO3(L) = DLTSNO3(L) + NNOM
-              !TIMMOBILIZE(N) = TIMMOBILIZE(N) - NNOM
               NNOM = 0.
             ENDIF
 
@@ -607,7 +600,6 @@ C=======================================================================
 !           Reduce soil NH4 by the immobilization (NNOM is
 !           negative!).
             DLTSNH4(L) = DLTSNH4(L) + NNOM
-            !TIMMOBILIZE(N) = TIMMOBILIZE(N) - NNOM
             NNOM = 0.0
           ENDIF   !End of IF block on ABS(NNOM).
         ENDIF   !End of IF block on NNOM.
@@ -618,7 +610,6 @@ C=======================================================================
 !       Nitrification based on Gilmour
         TKELVIN = ST(L) + 273.0
         TFACTOR = EXP(-6572 / TKELVIN + 21.4)  !6602
-!        WFPL    = WFP(L)    !not used
         WFPL = SW(L) / SAT(L)
         IF (SW(L) .GT. DUL(L)) THEN
           WF2 = -2.5 * WFPL + 2.55
@@ -633,7 +624,6 @@ C=======================================================================
         WF2 = AMIN1 (1.0, WF2)
 
         PHFACT  = AMIN1 (1.0, 0.33 * PH(L) - 1.36)
-!        NH4(L)  = SNH4(L)*KG2PPM(L)
 
         IF (FLOOD .GT. 0.0) THEN
           PHFACT = 1.0
@@ -727,7 +717,7 @@ C=======================================================================
         DLTSNH4(L) = DLTSNH4(L) - NH4_to_NO
 !       This contribution from NH4 can be considered as part of the nitrification process
         TNITRIFY   = TNITRIFY   + NITRIF(L) 
-      
+
       END DO   !End of soil layer loop.
 
       N2O_data % NITRIF   = NITRIF
