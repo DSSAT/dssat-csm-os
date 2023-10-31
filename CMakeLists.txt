@@ -616,7 +616,6 @@ set(
         "Soil/Inorganic_N/SoilNiBal.for"
         "Soil/Inorganic_N/CellNDetail_2D.for"
         "Soil/Inorganic_N/SoilNi_init.for"
-        "Soil/Inorganic_N/SoilNi_init_2D.for"
         "Soil/Inorganic_P/IPHedley_inorg.for"
         "Soil/Inorganic_P/OpSoilPi.for"
         "Soil/Inorganic_P/SoilPi.for"
