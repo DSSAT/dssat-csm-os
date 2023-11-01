@@ -1,6 +1,5 @@
-C Change SW to SWV
 C=======================================================================
-C  COPYRIGHT 1998-2007 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
 C                      University of Florida, Gainesville, Florida
 C                      Iowa State University, Ames, Iowa
 C                      International Center for Soil Fertility and 
@@ -37,94 +36,86 @@ C=======================================================================
 !-----------------------------------------------------------------------
       USE Cells_2D
       USE GHG_mod
+      USE FertType_mod
       USE ModuleData
       USE ModSoilMix
       IMPLICIT  NONE
-      EXTERNAL SOILNI_INIT_2D, NCHECK_INORG_2D, NFLUX_2D, DENIT_CERES, 
-     &  INCDAT, YR_DOY, DENIT_CERES_2D, SOILNIBAL_2D,OPSOILNI
+      EXTERNAL DENIT_CERES, INCDAT, YR_DOY, OPSOILNI, 
+     &  SOILNI_INIT_2D, NCHECK_INORG_2D, NFLUX_2D, 
+     &  CellNDetail_2D
 
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT, MEHYD !, MEGHG
 
-      LOGICAL IUON
+      LOGICAL IUON, Sim2D
 
-      INTEGER DOY, DYNAMIC, INCDAT, IUYRDOY, IUOF, L, I, J
-      INTEGER NLAYR, FurRow1, FurCol1
-      INTEGER NSOURCE, YEAR, YRDOY
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type   
-
+!     2D variables
+      Type (CellType) Cells(MaxRows,MaxCols)
+      INTEGER FurRow1, FurCol1, i, j
+      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type, DLAG_2D
       REAL HalfRow, BEDWD, FertFactor
-      REAL AD, AK, ALGFIX !, CW  
-      REAL NFAC, NNOM
-      REAL SNH4_AVAIL, SNO3_AVAIL, SUMFERT
-      REAL SWEF, TFUREA   !, TFDENIT
-      REAL WFSOM, WFUREA, XL, XMIN    !WFDENIT, 
-!     REAL TMINERN(MaxCols), TIMMOBN(MaxCols), TLCH, TLCHD
-!     REAL TLCH, TNOX
-!     REAL TNH4(MaxCols), TNH4NO3, TNO3(MaxCols), UHYDR
-!     REAL, DIMENSION(MaxCols) :: WTNUP, TNITRIFY, TUREA
-!     REAL, DIMENSION(MaxRows) :: TNH4, TNO3, TMINERN, TIMMOBN
-!     REAL, DIMENSION(MaxRows) :: WTNUP, TNITRIFY, TUREA
-      REAL TNH4, TNO3,TUREA
-!     Real TNOXD_Lr(NL)
-      Real TNH4NO3, UHYDR
-      REAL ADCOEF(NL)
-      REAL, DIMENSION(MaxRows,MaxCols) ::  DLTSNH4_2D, DLTSNO3_2D
-      REAL, DIMENSION(MaxRows,MaxCols) ::  DLTUREA_2D !, HFlux, VFlux
-      REAL KG2PPM(NL), WCR(NL), NH4(NL), NO3(NL), UPPM(NL), 
-     &         SNO3(NL), DLTSNO3(NL), SW(NL), LITC(0:NL)
+      REAL, DIMENSION(MaxRows,MaxCols) :: DLTSNH4_2D, DLTSNO3_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: DLTUREA_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: NH4_2D, NO3_2D,SNH4_2D,SNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UREA_2D, UPPM_2D
-      REAL PH(NL), LL(NL), DUL(NL), SAT(NL), BD(NL), DLAYR(NL)
-      REAL SSOMC(0:NL), ST(NL)
-      REAL, DIMENSION(MaxRows,MaxCols) :: SWV, TFNITY ! , Width 
-      REAL, DIMENSION(MaxRows,MaxCols) :: UNH4_2D, UNO3_2D  !Uptake
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWV, TFNITY_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: UNH4_2D, UNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac
-      
+      REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_L,NFlux_R,NFlux_D
+      REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_U
+      REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_UREA_L, NFlux_UREA_R
+      REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_UREA_D, NFlux_UREA_U
+      REAL, DIMENSION(MaxRows,MaxCols) :: MINERN_2D, IMMOBN_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: NITRIFppm
+
+      INTEGER DOY, DYNAMIC, INCDAT, IUYRDOY, IUOF, L
+      INTEGER NLAYR
+      INTEGER NSOURCE, YEAR, YRDOY
+
+      REAL AD, AK, ALGFIX 
+      REAL NFAC, NNOM
+      REAL SNH4_AVAIL, SNO3_AVAIL, SUMFERT
+      REAL SWEF, TFUREA
+      REAL TNH4, TNH4NO3, TNO3, UHYDR
+      REAL WFSOM, WFUREA, XL, XMIN
+      REAL TUREA
+
+      REAL ADCOEF(NL), BD(NL), DLAYR(NL)
+      REAL DLTSNH4(NL), DLTSNO3(NL), DLTUREA(NL), DUL(NL)
+      REAL KG2PPM(NL), LITC(0:NL), LL(NL)
+      REAL NH4(NL), NO3(NL), PH(NL), SAT(NL)
+      REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
+      REAL TFNITY(NL), UNH4(NL), UNO3(NL), UPPM(NL)
+      REAL WCR(NL), MINERN_1D(NL), IMMOBN_1D(NL)
+
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
-!     Variables added for flooded conditions analysis:
-      
       INTEGER NBUND, NSWITCH
       INTEGER FERTDAY
-      INTEGER DLAG_2D(MaxRows,MaxCols), LFD10  !REVISED-US
+      INTEGER LFD10  !REVISED-US
       REAL TMAX, TMIN, SRAD, FLOOD !, XHLAI, RAIN, SNOW, 
       REAL TKELVIN, TFACTOR, WFPL, WF2
       REAL PHFACT, T2, TLAG   !, DNFRATE
       REAL CUMFNRO
-      REAL TOTAML
-      REAL TOTFLOODN
-!      REAL TOMINFOM, TOMINSOM, TNIMBSOM
-      
-      REAL, DIMENSION(MaxRows,MaxCols) ::NFlux_L,NFlux_R,NFlux_D,NFlux_U
-      REAL, DIMENSION(MaxRows,MaxCols) ::NFlux_UREA_L,NFlux_UREA_R,
-     &          NFlux_UREA_D,NFlux_UREA_U
-      REAL TLeachD_UREA
-
-!     *** TEMP CHP DEBUGGIN
-!      REAL TNOM(MaxCols)
-      REAL NNOM_a, NNOM_b
-!     TEMP CHP
-!      real TotDailyNetMiner, TotUptake
-!      real TotNO3, TotNH4, TotN, LastTotN
-!      real TotDeltNO3, TotDeltNH4, TotDeltN, LastTotDeltN
-!
-!      data TotN /0.0/
-!      data TotDeltN /0.0/
+      REAL TOTAML, TOTFLOODN, TotUptake
 
       TYPE (N2O_type) N2O_DATA
 !          Cumul,     Daily,    Layer ppm,     Layer kg
-      REAL CNOX,      TNOXD,                   DENITRIF(MaxRows,MaxCols) !Denitrification
-      REAL CNITRIFY,  TNITRIFY, NITRIFppm,     NITRIF(MaxRows,MaxCols)   !Nitrification 
+!     Denitrification
+      REAL CNOX,      TNOXD,  DENITRIF(MaxRows,MaxCols)
+!     Nitrification 
+      REAL CNITRIFY,  TNITRIFY, NITRIF(MaxRows,MaxCols)
       REAL CMINERN,   TMINERN              !Mineralization
       REAL CIMMOBN,   TIMMOBN              !Immobilization
       REAL CNETMINRN                       !Net mineralization
       REAL CNUPTAKE,  WTNUP                !N uptake
       REAL CLeach,    TLeachD              !N leaching
+      REAL TLeachD_UREA
       REAL CNTILEDR,  NTILEDR              !N loss to tile (HJ added)
 !      REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
 !      REAL CN2Odenit, TN2OdenitD,              N2ODenit(NL) !N2O from denitrification
+       REAL N2ODenit(NL) !N2O from denitrification
 !      REAL CNOflux,   TNOfluxD,                NOflux(NL)   !NO flux
 !      REAL                                     nNOflux(NL)  !NO from nitrification
 !      REAL                                     dNOflux(NL)  !NO from denitrification
@@ -137,16 +128,19 @@ C=======================================================================
 !     real nox_puls, krainNO, potential_NOflux, NITRIF_remaining
 !     real canopy_reduction, NOAbsorp
 
+!     *** TEMP DEBUGGIN CHP
+      REAL TNOM
+      REAL NNOM_a, NNOM_b
+
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
-      TYPE (SoilType)    SOILPROP !, SOILPROP_profile
+      TYPE (SoilType)    SOILPROP
       TYPE (FertType)    FERTDATA
       TYPE (WeatherType) WEATHER
-      Type (CellType) Cells(MaxRows,MaxCols)
-      !TYPE (CellStrucType) Struc(MaxRows,MaxCols)
 
+!     Interface required because N2O_data is optional variable
       INTERFACE
         SUBROUTINE SoilNiBal(CONTROL, ISWITCH, 
      &      ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,
@@ -167,27 +161,21 @@ C=======================================================================
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
-      MEHYD   = ISWITCH % MEHYD
-!      MEGHG   = ISWITCH % MEGHG
-      FERTDAY = FERTDATA % FERTDAY
 
-      SRAD = WEATHER % SRAD
-      TMAX = WEATHER % TMAX
-      TMIN = WEATHER % TMIN
-!      RAIN = WEATHER % RAIN
-      
       SWV = Cells % State % SWV
       UNH4_2D = Cells % Rate % NH4Uptake
       UNO3_2D = Cells % Rate % NO3Uptake
       SNH4_2D = Cells % State % SNH4
       SNO3_2D = Cells % State % SNO3
 
-!***********************************************************************
-!***********************************************************************
-!     Seasonal initialization - run once per season
-!***********************************************************************
-      IF (DYNAMIC .EQ. SEASINIT) THEN
-!     ------------------------------------------------------------------
+!     BED & Cell info
+      Cell_Type = CELLS % Struc % CellType
+      BEDWD   = BedDimension % BEDWD
+      HalfRow = BedDimension % ROWSPC_cm / 2.
+      FurRow1 = BedDimension % FurRow1
+      FurCol1 = BedDimension % FurCol1
+      ColFrac = BedDimension % ColFrac
+
       ADCOEF = SOILPROP % ADCOEF 
       BD     = SOILPROP % BD     
       DLAYR  = SOILPROP % DLAYR  
@@ -198,98 +186,118 @@ C=======================================================================
       PH     = SOILPROP % PH     
       SAT    = SOILPROP % SAT    
       WCR    = SOILPROP % WCR
-      
+
       NSWITCH = ISWITCH % NSWI
       ISWNIT  = ISWITCH % ISWNIT
+      MEHYD   = ISWITCH % MEHYD
+!      MEGHG   = ISWITCH % MEGHG
+      FERTDAY = FERTDATA % FERTDAY
 
-!     BED & Cell info
-      Cell_Type = CELLS % Struc % CellType
-      BEDWD   = BedDimension % BEDWD
-      HalfRow = BedDimension % ROWSPC_cm / 2.
-      FurRow1 = BedDimension % FurRow1
-      FurCol1 = BedDimension % FurCol1
-      ColFrac = BedDimension % ColFrac
+      SRAD = WEATHER % SRAD
+      TMAX = WEATHER % TMAX
+      TMIN = WEATHER % TMIN
+!      RAIN = WEATHER % RAIN
+
+!***********************************************************************
+!***********************************************************************
+!     Seasonal initialization - run once per season
+!***********************************************************************
+      IF (DYNAMIC .EQ. SEASINIT) THEN
+!     ------------------------------------------------------------------
+        IF (INDEX('GC',ISWITCH % MEHYD) > 0) THEN
+          Sim2D = .TRUE.
+        ELSE
+          Sim2D = .FALSE.
+        ENDIF
+
+!       Today's values
+        TMINERN  = 0.0  !mineralization
+        TIMMOBN  = 0.0  !immobilization
+        TNITRIFY = 0.0  !nitrification
+        TNOXD    = 0.0  !denitrification
+        TLeachD  = 0.0  !leaching
+
+        !*** temp debugging chp
+        TNOM = 0.0
+
+!       Seasonal cumulative values, kg[N]/ha
+        CMINERN  = 0.0  !mineralization
+        CIMMOBN  = 0.0  !immobilization
+        CNETMINRN= 0.0  !net mineralization
+        CNITRIFY = 0.0  !nitrification
+        CNUPTAKE = 0.0  !cumulative N uptake
+        CNOX     = 0.0  !denitrification
+        CLeach   = 0.0  !leaching
+        CNTILEDR = 0.0  !N loss to tile drainage     !HJ added
+        WTNUP    = 0.0  !N uptake
+
+        TOTAML = 0.0    !Ammonia volatilization
+
+!        CN2Onitrif=0.0  !N2O[N] from nitrification
+!        CN2Odenit = 0.0 !N2O[N] from nitrification
+!        CNOflux   = 0.0 !NO
+!        CN2       = 0.0 !N2
+!        CumSumFert= 0.0 !Total fertilizer
+
+        nitrif = 0.0
+        denitrif = 0.0
+!       N2O_data % wfps = 0.0
       
-!     Initialization
-      TMINERN  = 0.0  !mineralization
-      TIMMOBN  = 0.0  !immobilization
-      TNITRIFY = 0.0  !nitrification
-      TNOXD    = 0.0  !denitrification
-      TLeachD  = 0.0  !leaching
+!!       proportion of N2O from nitrification PG calibrated this variable for DayCent
+!        pn2Onitrif = .001
+!     pn2Onitrif = .02  
+!     chp - from DayCent - is this the equivalent value?
+!     double turnovfrac = 0.02;
+! chp - tried pn2Onitrif = .02, but n2o emissions are way too high.
 
-      !*** temp debugging chp
-!      TNOM = 0.0
+        TFNITY = 0.0
+        TFNITY_2D = 0.0
+        IUOF   = 0
+        IUON   = .FALSE.
 
-!     Seasonal cumulative values, kg[N]/ha
-      CMINERN  = 0.0  !mineralization
-      CIMMOBN  = 0.0  !immobilization
-      CNETMINRN= 0.0  !net mineralization
-      CNITRIFY = 0.0  !nitrification
-      CNUPTAKE = 0.0  !cumulative N uptake
-      CNOX     = 0.0  !denitrification
-      CLeach   = 0.0  !leaching
-      CNTILEDR = 0.0  !N loss to tile drainage     !HJ added
-      WTNUP  = 0.0    !N uptake
-      TOTAML = 0.0    !Ammonia volatilization
-!      N2Onitrif = 0.0 !N2O[N] from nitrification
-!      CN2Odenit = 0.0 !N2O[N] from nitrification
-!      CNOflux   = 0.0 !NO
-!      CN2       = 0.0 !N2
+        DLTSNO3 = 0.0
+        DLTSNH4 = 0.0
+        DLTUREA = 0.0
+        SW = 0.0
+        DLTSNO3_2D  = 0.0
+        DLTSNH4_2D  = 0.0
+        DLTUREA_2D  = 0.0
+        DLAG_2D   = 0   !REVISED-US
+        TOTFLOODN = 0.0
 
-      nitrif = 0.0
-      denitrif = 0.0
-!     N2O_data % wfps = 0.0
-      
-!!     proportion of N2O from nitrification PG calibrated this variable for DayCent
-!      pn2Onitrif = .001
+!       Initialize uptake variables here, or they will have residual
+!         value on first day of multi-season runs.
+        UNH4_2D   = 0.0
+        UNO3_2D   = 0.0
 
-      TFNITY = 0.0    !
-      IUOF   = 0
-      IUON   = .FALSE.
-      DLTSNO3 = 0.0
-      SW = 0.0
-      DLTSNO3_2D  = 0.0     
-      DLTSNH4_2D  = 0.0      
-      DLTUREA_2D  = 0.0
-      DLAG_2D   = 0   !REVISED-US
-      TOTFLOODN = 0.0
-!      DO L = 1, NLAYR
-!        N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
-!      ENDDO
+!        DO L = 1, NLAYR
+!          N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
+!        ENDDO
 
-      !Initialize uptake variables here, or they will have residual
-      !  value on first day of multi-season runs.
-      UNH4_2D   = 0.0
-      UNO3_2D   = 0.0
+!        IF (INDEX('N',ISWNIT) > 0) RETURN
 
-      IF (INDEX('N',ISWNIT) > 0) RETURN
+!         Set initial SOM and nitrogen conditions for each soil layer.
+          CALL SoilNi_init_2D(CONTROL, 
+     &      Cell_Type, SOILPROP, ST, NH4, NO3,      !Input
+     &      NH4_2D, NO3_2D, SNH4_2D, SNO3_2D,       !Input
+     &      TFNITY_2D, UREA_2D)                      !Output
 
-!     Set initial SOM and nitrogen conditions for each soil layer.
-      CALL SoilNi_init_2D(CONTROL, 
-     &    Cell_Type, SOILPROP, ST, NH4, NO3,      !Input
-     &    NH4_2D, NO3_2D, SNH4_2D, SNO3_2D,       !Input
-     &    TFNITY, UREA_2D)                        !Output
+          CALL NCHECK_inorg_2D(CONTROL, Sim2D,
+     &      NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, UREA_2D)     !Input
 
-      CALL NCHECK_inorg_2D(CONTROL, 
-     &  NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, UREA_2D)         !Input
-
-        CALL NFLUX_2D (DYNAMIC, 
-     &  ADCOEF, BD, CELLS, ColFrac, DUL, SNO3_2D,         !Input
-     &  NSOURCE, SWV,                                     !Input
-     &  DLTSNO3_2D, CLeach, TLeachD, NFlux_L, NFlux_R, NFlux_D, NFlux_U)!Output
+!        CALL NFLUX_2D (DYNAMIC, 
+!     &  ADCOEF, BD, CELLS, ColFrac, DUL, SNO3_2D,         !Input
+!     &  NSOURCE, SWV,                                     !Input
+!     &  DLTSNO3_2D, CLeach, TLeachD, NFlux_L, NFlux_R, NFlux_D, NFlux_U)!Output
 
       SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
-
       LFD10 = CONTROL % YRSIM
-      
-      DO J = 1, NColsTot
-        DO L = 1, NRowsTot
-          SNO3(L)  = SNO3(L)  + SNO3_2D(L, J) * ColFrac(L, J)
-!          SNH4(L)  = SNH4(L)  + SNH4_2D(L, J) * ColFrac(L, J)
-          SNO3(L)  = SNO3(L)  + SNO3_2D(L, J) * ColFrac(L, J)
-        END DO
-      END DO
-      
+
+!     Aggregate cells across a row to get layer total. 
+      CALL Cell2Layer_2D(SNO3_2D,    CELLS % Struc, NLAYR, SNO3)
+!     CALL Cell2Layer_2D(SNH4_2D,    CELLS % Struc, NLAYR, SNH4)
+      CALL Cell2Layer_2D(DLTSNO3_2D, CELLS % Struc, NLAYR, DLTSNO3)
+
 !      SELECT CASE(MEGHG)
 !        CASE("1")
 !          CALL Denit_DayCent (CONTROL, ISWNIT, 
@@ -313,22 +321,13 @@ C=======================================================================
 
 !      CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
 
-!      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+!      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
+!      CALL OPGHG(CONTROL, ISWITCH, N2O_data, CH4_data)
 
 !      IF (CONTROL%RUN .EQ. 1 .OR. INDEX('QF',CONTROL%RNMODE) .LE. 0)THEN
 !        call nox_pulse (dynamic, rain, snow, nox_puls)
 !      ENDIF
-
-!      CALL ArrayHandler(CELLS,CONTROL,SOILPROP,SNO3_2D,"NO3",0.0,200.)
-
-!     TEMP CHP
-!      call SUM_N(Cell_Type, DLTSNO3_2D, DLTSNH4_2D, !Input
-!     &      ColFrac, SNO3_2D, SNH4_2D,                    !Input
-!     &      TotNO3, TotNH4, TotDeltNO3, TotDeltNH4,       !Output
-!     &      TotN, TotDeltN, LastTotN, LastTotDeltN)       !Output
-!      if (TotN + TotDeltN .NE. LastTotN) THEN
-!        TotN = TotN + 0
-!      endif
 
 !***********************************************************************
 !***********************************************************************
@@ -340,50 +339,66 @@ C=======================================================================
 
 !     Initialize Soil N process rates for this time step.
       DLTUREA_2D = 0.0
-      DLTSNO3_2D = 0.0 
-      DLTSNH4_2D = 0.0 
-      TNH4 = 0
-      TNO3 = 0
-      TUREA = 0 
-      TNOXD = 0
-
-!      TotUptake = 0.0
+      DLTSNO3_2D = 0.0
+      DLTSNH4_2D = 0.0
+      DLTSNO3 = 0.0
+      DLTSNH4 = 0.0
+      TNH4 = 0.0
+      TNO3 = 0.0
+      TUREA = 0.0
+      TNOXD = 0.0
+      TotUptake = 0.0
 
       DO L = 1, NRowsTot
         DO J = 1, NColsTot 
 !         Update with yesterday's plant N uptake
           SNO3_2D(L, J) = SNO3_2D(L, J) - UNO3_2D(L, J)
           SNH4_2D(L, J) = SNH4_2D(L, J) - UNH4_2D(L, J)
-!         KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g 
+!         KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g
 !         KG2PPM(L) = 10. / (BD(L) * DLAYR(L))
-          NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) 
-          NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) 
+          NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L)
+          NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L)
 
-!          TotUptake = TotUptake + (UNO3_2D(L,J)+UNH4_2D(L,J))*ColFrac(L, J)
+          TotUptake = TotUptake + (UNO3_2D(L,J) +UNH4_2D(L,J))
+     &        * ColFrac(L, J)
         ENDDO
       ENDDO
 
+!     Must calculate WTNUP here or it won't be guaranteed to match N
+!     removed from the soil today and the balance will be off.
+      CALL Cell2Layer_2D(UNO3_2D,    CELLS % Struc, NLAYR, UNO3)
+      CALL Cell2Layer_2D(UNH4_2D,    CELLS % Struc, NLAYR, UNH4)
+      WTNUP = 0.0
+      DO L = 1, NLAYR
+        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
+      ENDDO
+
 !-------------------------------------------------------------------------
-!     FERTILIZER
-!-------------------------------------------------------------------------
-      IF (FERTDAY == YRDOY) THEN
-!       Fertilizer was placed today
+!     Check for fertilizer added today or active slow release fertilizers 
+      IF (FERTDAY == YRDOY .OR. NActiveSR .GT. 0) THEN
         SUMFERT = 0.0
-        
         DO L = 1, NRowsTot 
+          DLTSNO3(L) = DLTSNO3(L) + FERTDATA % ADDSNO3(L)
+          DLTSNH4(L) = DLTSNH4(L) + FERTDATA % ADDSNH4(L)
+          DLTUREA(L) = DLTUREA(L) + FERTDATA % ADDUREA(L)
+          IF (FERTDATA % ADDUREA(L) > 1.E-4) THEN
+            IUON = .TRUE.
+            IUYRDOY = INCDAT(YRDOY, 21)
+            CALL YR_DOY (IUYRDOY, YEAR, IUOF)
+          ENDIF
           SUMFERT = SUMFERT + FERTDATA % ADDSNO3(L) + 
-     &                     FERTDATA % ADDSNH4(L) + FERTDATA % ADDUREA(L)
+     &                   FERTDATA % ADDSNH4(L) + FERTDATA % ADDUREA(L)
 
           SELECT CASE (TRIM(FERTDATA % AppType))
           CASE ('BANDED','POINT')
-!           Banded or point application goes to cell L,1
+!           Banded or point application goes to  column 1, for each layer
             DLTSNO3_2D(L,1) = DLTSNO3_2D(L,1) + FERTDATA % ADDSNO3(L)
      &           / ColFrac(L,1)
             DLTSNH4_2D(L,1) = DLTSNH4_2D(L,1) + FERTDATA % ADDSNH4(L)
      &           / ColFrac(L,1)
             DLTUREA_2D(L,1) = DLTUREA_2D(L,1) + FERTDATA % ADDUREA(L)
      &           / ColFrac(L,1)
-           
+
           CASE ('DRIP')
 !           Drip fertigation goes to cell DripRow,DripCol
             J = BedDimension % DripCol(FERTDATA%DrpRefIdx)
@@ -396,16 +411,10 @@ C=======================================================================
                 DLTUREA_2D(I,J) = DLTUREA_2D(I,J) + FERTDATA %ADDUREA(L)
      &              / ColFrac(I,J)
             END IF
-      ! Changed by JZW
-!            DLTSNO3_2D(1,J) = DLTSNO3_2D(1,J) + FERTDATA % ADDSNO3(L)
-!     &          / ColFrac(1, J)
-!            DLTSNH4_2D(1,J) = DLTSNH4_2D(1,J) + FERTDATA % ADDSNH4(L)
-!     &          / ColFrac(1, J)
-!            DLTUREA_2D(1,J) = DLTUREA_2D(1,J) + FERTDATA % ADDUREA(L)
-!     &          / ColFrac(1, J)
 
           CASE DEFAULT
             DO J = 1, NColsTot
+! CHP 2023-10-16 - Check how this works for flat system. Where does the fertilizer go?
               SELECT CASE (Cell_Type(L,J))
 !             Within the bed, fertilizer is concentrated in bed cells
               CASE (3); 
@@ -423,12 +432,8 @@ C=======================================================================
             ENDDO
           END SELECT
 
-          IF (FERTDATA % ADDUREA(L) > 1.E-4) THEN
-            IUON = .TRUE.
-            IUYRDOY = INCDAT(YRDOY, 21)
-            CALL YR_DOY (IUYRDOY, YEAR, IUOF)
-          ENDIF
         ENDDO
+!        CumSumFert = CumSumFert + SUMFERT
       ENDIF
 
 !     ----------------------------------------------------------------
@@ -449,34 +454,60 @@ C=======================================================================
 !!     NOx pulse multiplier from DayCent
 !      call nox_pulse (dynamic, rain, snow, nox_puls)
 !      krainNO = nox_puls
+!
+!!     Diffusivity rate calculation from DayCent
+!      call DayCent_diffusivity(dD0, sw, soilprop)
+!-----------------------------------------------------------------------
 
-!     ------------------------------------------------------------------
-!     Loop through soil layers for rate calculations
-!     ------------------------------------------------------------------
+      NNOM     = 0.0
       TMINERN  = 0.0
-
-!     TEMP CHP
-!      TotDailyNetMiner = 0.0
-
       TIMMOBN  = 0.0
       TNITRIFY = 0.0
       TNOXD    = 0.0  !denitrification
       TLeachD  = 0.0  !leaching
       NTILEDR = 0.0   !N loss to tile !HJ added
+      NITRIF   = 0.0
+!      TN2OnitrifD = 0.0  !N2O from nitrification
+!      TN2OdenitD  = 0.0  !N2O from denitrification
+!      N2Onitrif = 0.0
+!      TNOfluxD  = 0.0   !NO
+!      NOflux    = 0.0
+!      nNOflux   = 0.0
+!      dNOflux   = 0.0
+!      TN2D      = 0.0
+!      N2flux    = 0.0
+
+!     For 2D model, need to expand 1D mineralization and immobilization arrays
+      DO L = 1, NLAYR
+        MINERN_1D(L) = MNR(L,N)
+        IMMOBN_1D(L) = IMM(L,N)
+      ENDDO
+
+!     Surface layer is added to layer 1 here (at least for bed)
+      CALL Layer2Cell_2D(
+     &  CELLS % Struc, NLAYR, DLAYR, MINERN_1D, MNR(0,N),   !Input
+     &  MINERN_2D)                                          !Output
+      CALL Layer2Cell_2D(
+     &  CELLS % Struc, NLAYR, DLAYR, IMMOBN_1D, IMM(0,N),   !Input
+     &  IMMOBN_2D)                                          !Output
+
+!-------------------------------------------------------------------------
+!     Loop thru rows and columns
       DO J = 1, NColsTot
-        NNOM = 0.0
         DO L = 1, NRowsTot
           XMIN    = 0.
           IF (Cell_Type(L, J) .EQ. 0) THEN 
               cycle
           ENDIF
-!       ----------------------------------------------------------------
-!       Environmental limitation factors for the soil processes.
-!       ----------------------------------------------------------------
+!         ----------------------------------------------------------------
+!         Environmental limitation factors for the soil processes.
+!         ----------------------------------------------------------------
           IF (SWV(L, J) .LE. DUL(L)) THEN
             AD  = WCR(L)
+          
 !           Soil water factor WFSOM.
             WFSOM = (SWV(L, J) - AD) / (DUL(L) - AD)
+          
           ELSE
 !           If the soil water content is higher than the drained upper 
 !           limit (field capacity), calculate the excess water as fraction
@@ -484,57 +515,68 @@ C=======================================================================
             XL = (SWV(L, J) - DUL(L)) / (SAT(L) - DUL(L))
 !           Soil water factor WFSOM.
             WFSOM = 1.0 - 0.5 * XL
+          
           ENDIF   !End of IF block on SW vs. DUL.
-
+          
 !         Limit the soil water factors between 0 and 1.
           WFSOM = AMAX1 (AMIN1 (WFSOM, 1.), 0.)
-
+          
 !         Calculate the soil temperature factor for the urea hydrolysis.
           TFUREA = (ST(L) / 40.) + 0.20
           TFUREA = AMAX1 (AMIN1 (TFUREA, 1.), 0.)
-        
-!-------------------------------------------------------------------------
+
+!         Water filled pore space
+          N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
+
+!-----------------------------------------------------------------------
 !         UREA hydrolysis
-!-------------------------------------------------------------------------
+!-----------------------------------------------------------------------
           IF (IUON) THEN
 !           Calculate the maximum hydrolysis rate of urea.
-            AK = -1.12 + 1.31*SSOMC(L)*1.E-4 * KG2PPM(L) + 0.203*PH(L)
-     &                - 0.155 * SSOMC(L) * 1.E-4 * KG2PPM(L) * PH(L)
+            AK = -1.12 + 1.31 * SSOMC(L) * 1.E-4 * KG2PPM(L) 
+     &           + 0.203 * PH(L) 
+     &           - 0.155 * SSOMC(L) * 1.E-4 * KG2PPM(L) * PH(L)
             AK = AMAX1 (AK, 0.25)
-        
+          
+!           If urease inhibitor is active, reduce hydrolysis rate
+            IF ((YRDOY .LT. UIData % UIEND) .AND. 
+     &          (L .LE. UIData % UILYR)) THEN
+              AK = AK * (1.0 - UIData % UIEFF/100.)
+            ENDIF
+          
 !           Calculate the soil water factor for the urea hydrolysis, and
 !           limit it between 0 and 1.
             WFUREA = WFSOM + 0.20
             WFUREA = AMAX1 (AMIN1 (WFUREA, 1.), 0.)
-        
+          
 !           Calculate the amount of urea that hydrolyses.
             UHYDR = AK * AMIN1 (WFUREA, TFUREA) * (UREA_2D(L, J) 
-     &              + DLTUREA_2D(L, J))
+     &                + DLTUREA_2D(L, J))
             UHYDR = AMIN1 (UHYDR, UREA_2D(L, J)+DLTUREA_2D(L, J))
-        
+          
             DLTUREA_2D(L, J) = DLTUREA_2D(L, J) - UHYDR 
             DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) + UHYDR 
           ENDIF   !End of IF block on IUON.
-        
-!-------------------------------------------------------------------------
-!         Net mineralization rate - Nitrogen.
-!-------------------------------------------------------------------------
-!         Add in residual from previous layer to preserve N balance
-          NNOM = NNOM + MNR(L,N) - IMM(L,N)
 
-          SELECT CASE (Cell_Type(L,J))
-          CASE (3) !bed
-            IF (L == 1)  THEN
-!             First layer takes mineralization from surface also.
-!             JZW for plastic case, should have no mineralize on the surface
-              NNOM = NNOM + MNR(0,N) - IMM(0,N) 
-            ENDIF
-          CASE (5)  !furrow
-            IF (L == FurRow1)  THEN
-!             First layer takes mineralization from surface also.
-              NNOM = NNOM + MNR(0,N) - IMM(0,N) 
-            ENDIF
-          END SELECT
+!-----------------------------------------------------------------------
+!         Net mineralization rate - Nitrogen.
+!-----------------------------------------------------------------------
+!         Add in residual from previous layer to preserve N balance
+          NNOM = NNOM + MINERN_2D(L,J) - IMMOBN_2D(L,J)
+
+!     CHP 2023-10-16 Surface layer has already been added to first layer (at least for bed)
+!        SELECT CASE (Cell_Type(L,J))
+!        CASE (3) !bed
+!          IF (L == 1)  THEN
+!!           First layer takes mineralization from surface also.
+!            NNOM = NNOM + MNR(0,N) - IMM(0,N) 
+!          ENDIF
+!        CASE (5)  !furrow
+!          IF (L == FurRow1)  THEN
+!!           First layer takes mineralization from surface also.
+!            NNOM = NNOM + MNR(0,N) - IMM(0,N) 
+!          ENDIF
+!        END SELECT
 
 !         Mineralization
 !         --------------
@@ -542,12 +584,8 @@ C=======================================================================
 !         add the mineralized N to the NH4 pool.
           IF (NNOM .GE. 0.0) THEN
             DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) + NNOM
-
-!           temp chp
-!            TotDailyNetMiner = TotDailyNetMiner + NNOM * ColFrac(L, J)
-
             NNOM = 0.
-
+          
           ELSE
 !         Immobilization
 !         --------------
@@ -558,59 +596,29 @@ C=======================================================================
             IF (ABS(NNOM) .GT. (SNH4_2D(L, J) - XMIN)) THEN
               NNOM_a = -(SNH4_2D(L, J) - XMIN + DLTSNH4_2D(L, J))
               NNOM_b = NNOM - NNOM_a
-
+          
               DLTSNH4_2D(L, J) = -(SNH4_2D(L, J) - XMIN)
-
-!           temp chp
-!            TotDailyNetMiner = TotDailyNetMiner 
-!     &          - (SNH4_2D(L, J) - XMIN) * ColFrac(L, J)
-
-
               NNOM = NNOM_b
-
+          
               SNO3_AVAIL = SNO3_2D(L, J) + DLTSNO3_2D(L, J)
               IF (ABS(NNOM) .GT. (SNO3_AVAIL - XMIN)) THEN
                 !Not enough SNO3 to fill remaining NNOM, leave residual
                 DLTSNO3_2D(L, J) = DLTSNO3_2D(L, J) + XMIN - SNO3_AVAIL
-
-!           temp chp
-!            TotDailyNetMiner = TotDailyNetMiner + 
-!     &              (XMIN - SNO3_AVAIL) * ColFrac(L, J)
-
                 NNOM = NNOM + SNO3_AVAIL - XMIN
-
               ELSE
 !               Get the remainder of the immobilization from nitrate (NNOM
 !               is negative!)
                 DLTSNO3_2D(L, J) = DLTSNO3_2D(L, J) + NNOM
-
-!           temp chp
-!            TotDailyNetMiner = TotDailyNetMiner + NNOM * ColFrac(L, J)
-
                 NNOM = 0.
-
               ENDIF
-
+          
             ELSE
 !             Reduce soil NH4 by the immobilization (NNOM is
 !             negative!).
               DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) + NNOM
-
-!           temp chp
-!            TotDailyNetMiner = TotDailyNetMiner + NNOM * ColFrac(L, J)
-
               NNOM = 0.0
             ENDIF   !End of IF block on ABS(NNOM).
           ENDIF   !End of IF block on NNOM.
-
-!     TEMP CHP - mineralization
-!      call SUM_N(Cell_Type, DLTSNO3_2D, DLTSNH4_2D, !Input
-!     &      ColFrac, SNO3_2D, SNH4_2D,                    !Input
-!     &      TotNO3, TotNH4, TotDeltNO3, TotDeltNH4,       !Output
-!     &      TotN, TotDeltN, LastTotN, LastTotDeltN)       !Output
-!      if (MNR(L,N) -IMM(L,N) - TotDeltN + LastTotDeltN > 0.00001) THEN
-!        TotN = TotN + 0
-!      endif
 
 !-----------------------------------------------------------------------
 !         Nitrification section
@@ -633,28 +641,35 @@ C=======================================================================
 
           PHFACT  = AMIN1 (1.0, 0.33 * PH(L) - 1.36)
 
-          T2   = AMAX1 (0.0,(TFNITY(L, J) - 1.0))
+          T2   = AMAX1 (0.0,(TFNITY_2D(L, J) - 1.0))
           TLAG = 0.075 * T2**2
           TLAG = AMIN1 (TLAG,1.0)
           IF (NBUND <= 0.) THEN
             TLAG = 1.0
           ENDIF
           NFAC = AMAX1(0.0, AMIN1(1.0, TFACTOR * WF2 * PHFACT * TLAG))
-          NITRIFppm = NFAC * NH4_2D(L, J)
+
+!         If nitrification inhibitor is active, reduce rate
+          IF ((YRDOY .LT. NIData % NIEND) .AND. 
+     &        (L .LE. NIData % NILYR)) THEN
+            NFAC = NFAC * (1.0 - NIData % NIEFF/100.)
+          ENDIF
+
+          NITRIFppm(L,J) = NFAC * NH4_2D(L, J)
 
           IF (NSWITCH .EQ. 5) THEN
             NITRIF(L, J) = 0.0
           ELSE
 !           NITRIFppm in ppm; NITRIF in kg/ha
 !           changed by PG from * kg2ppm
-            NITRIF(L, J)  = NITRIFppm / KG2PPM(L) 
+            NITRIF(L, J)  = NITRIFppm(L,J) / KG2PPM(L) 
           ENDIF
 
           IF (NH4_2D(L, J).LE. 0.01) THEN
-            TFNITY(L, J) = 0.0
+            TFNITY_2D(L, J) = 0.0
           ELSE
             IF (SWV(L, J) .LT. SAT(L)) THEN
-              TFNITY(L, J) = TFNITY(L, J) + 1.0
+              TFNITY_2D(L, J) = TFNITY_2D(L, J) + 1.0
             ENDIF
           ENDIF
 
@@ -666,15 +681,6 @@ C=======================================================================
           DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) - NITRIF(L, J)
 !         This contribution from NH4 can be considered as part of the nitrification process
           TNITRIFY = TNITRIFY  + NITRIF(L, J) * ColFrac(L, J)
-
-!     TEMP CHP nitrification
-!      call SUM_N(Cell_Type, DLTSNO3_2D, DLTSNH4_2D, !Input
-!     &      ColFrac, SNO3_2D, SNH4_2D,                    !Input
-!     &      TotNO3, TotNH4, TotDeltNO3, TotDeltNH4,       !Output
-!     &      TotN, TotDeltN, LastTotN, LastTotDeltN)       !Output
-!      if (TotDeltN - LastTotDeltN > 0.00001 .OR. TotDeltN - LastTotDeltN < -0.00001) THEN
-!        TotN = TotN + 0
-!      endif
 
         END DO   !End of soil column loop.
       End Do !End of soil layer loop. 
@@ -695,32 +701,27 @@ C=======================================================================
 !
 !        CASE DEFAULT
 
-!*******************************************************************************
-!     temp chp - remove denitrification
-    !     CALL Denit_Ceres_2D (CONTROL, ISWNIT, 
-    !&    DUL, KG2PPM, LITC, NLAYR, NO3_2D,           !Input
-    !&    SAT, SSOMC, SNO3_2D, ST, SWV, Cells,        !Input
-    !&    ColFrac,                                    !Input
-    !&    DLTSNO3_2D,                                 !I/O
-    !&    CNOX, TNOXD, DENITRIF)                      !Output
-!        END SELECT
-          DENITRIF = 0.0
-          CNOX = 0.0
-          TNOXD = 0.0
-      ENDIF
-!*******************************************************************************
+!!*******************************************************************************
+!         CALL Denit_Ceres_2D (CONTROL, ISWNIT, 
+!     &    DUL, KG2PPM, LITC, NLAYR, NO3_2D,           !Input
+!     &    SAT, SSOMC, SNO3_2D, ST, SWV, Cells,        !Input
+!     &    ColFrac,                                    !Input
+!     &    DLTSNO3_2D,                                 !I/O
+!     &    CNOX, TNOXD, DENITRIF)                      !Output
+!!        END SELECT
+!      ENDIF
+!!*******************************************************************************
 
-!      CALL PUT('NITR','TNOXD',TNOXD) 
-!      N2ODenit = N2O_data % N2ODenit
+!       CHP TEMP
+        CNOX = 0.0
+        TNOXD = 0.0
+        DENITRIF = 0.0
+        
+        CALL PUT('NITR','TNOXD',TNOXD) 
+        N2ODenit = N2O_data % N2ODenit
 
-      !     TEMP CHP denitrification
-!      call SUM_N(Cell_Type, DLTSNO3_2D, DLTSNH4_2D, !Input
-!     &      ColFrac, SNO3_2D, SNH4_2D,                    !Input
-!     &      TotNO3, TotNH4, TotDeltNO3, TotDeltNH4,       !Output
-!     &      TotN, TotDeltN, LastTotN, LastTotDeltN)       !Output
-!      if (DENITRIF(L, J) + TotDeltN .NE. LastTotN) THEN
 !        TotN = TotN + 0
-!      endif
+      endif
 
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.
@@ -743,7 +744,7 @@ C=======================================================================
      &    NSOURCE, SWV,                                   !Input
      &    DLTSNO3_2D, CLeach, TLeachD, NFlux_L, NFlux_R,  !Output
      &    NFlux_D, NFlux_U)                               !Output
-     
+
       IF (IUON) THEN
         TLeachD = TLeachD + TLeachD_UREA
         NFlux_L = NFlux_L + NFlux_UREA_L
@@ -752,19 +753,13 @@ C=======================================================================
         NFlux_U = NFlux_U + NFlux_UREA_U
       ENDIF
 
+      CALL PUT('NITR','TLCHD', TLeachD) 
+
 !     TEMP CHP
 !      call SUM_N(Cell_Type, DLTSNO3_2D, DLTSNH4_2D, !Input
 !     &      ColFrac, SNO3_2D, SNH4_2D,                    !Input
 !     &      TotNO3, TotNH4, TotDeltNO3, TotDeltNH4,       !Output
 !     &      TotN, TotDeltN, LastTotN, LastTotDeltN)       !Output
-
-  !    CAll Interpolate2Layers_2D(TNOXD, Cells%Struc, NLAYR,  !input
-   !  &         TNOXD_Lr) 
-!       JZW in SOILNI, the TNOXD is scalar, put a scalar variable. In Interpolate2Layers_2D, TNOXD should be 2D
-!     Cumulative denitrification across the total soil profile
-      CALL PUT('NITR','TNOXD', TNOXD) 
-      !CALL PUT('NITR','TNOXD',ARNTRF) !Daily nitrification rate
-      CALL PUT('NITR','TLCHD', TLeachD) 
 
       Cells % State % SNH4 = SNH4_2D  !kg/ha
       Cells % State % SNO3 = SNO3_2D  !kg/ha
@@ -811,7 +806,7 @@ C=======================================================================
       ENDDO  
                                                 
 !     Call NCHECK to check for and fix negative values.
-      CALL NCHECK_inorg_2D(CONTROL, 
+      CALL NCHECK_inorg_2D(CONTROL, Sim2D,
      &      NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, UREA_2D) !Input 
      
 !     Soil profile accumulations.
@@ -894,14 +889,6 @@ C=======================================================================
       CAll Interpolate2Layers_2D(UPPM_2D, Cells%Struc, NLAYR,  !input
      &         UPPM)                                           !Output
 
-!     Transfer daily mineralization values for use by Cassava model
-!      CALL GET('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
-!      CALL GET('ORGC','TOMINSOM' ,TOMINSOM) !Miner from SOM (kg/ha)
-!      CALL GET('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
-!
-!      TMINERN = TOMINFOM + TOMINSOM
-!      TIMMOBN = TNIMBSOM
-      
       TMINERN = 0.0
       TIMMOBN = 0.0
       DO L = 1, NRowsTot
@@ -925,7 +912,7 @@ C=======================================================================
      &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
 
-        Call SoilNiBal_2D (CONTROL, ISWITCH, 
+        Call CellNDetail_2D (CONTROL, ISWITCH, 
      &    FERTDATA, TNH4, TNO3, TUREA,   
      &    Cells, DENITRIF, IMM, MNR) 
 
@@ -968,7 +955,7 @@ C     Write daily output
      &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
 
-        Call SoilNiBal_2D (CONTROL, ISWITCH, 
+        Call CellNDetail_2D (CONTROL, ISWITCH, 
      &    FERTDATA, TNH4, TNO3, TUREA,   
      &    Cells, DENITRIF, IMM, MNR) 
 
@@ -1124,8 +1111,7 @@ C-----------------------------------------------------------------------
 ! T2             Temperature factor for nitrification 
 ! TFACTOR        Temperature factor for nitrification 
 ! TFDENIT        Temperature factor for denitrification rate (range 0-1) 
-! TFNITY(L,J)    Yesterday's soil temperature factor for nitrification 
-!                  (range 0-1) 
+! TFNITY_2D(L,J) 
 ! TFUREA         Soil temperature factor for urea hydrolysis (range 0-1) 
 ! TIMMOBILIZE    Cumulative N immoblized (kg [N] / ha)
 ! TIMMOBN(J)     Cumulative N immobilization (kg [N] / ha /d)for Jth column

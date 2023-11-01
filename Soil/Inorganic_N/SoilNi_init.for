@@ -33,7 +33,7 @@
      &    Cell_Type, SOILPROP, ST, NH4, NO3,      !Input
      &    NH4_2D, NO3_2D, SNH4, SNH4_2D, SNO3,    !Output
      &    SNO3_2D, TFNITY, UPPM, UREA, UREA_2D)   !Output
-      
+
 !-----------------------------------------------------------------------
       USE Cells_2D
       IMPLICIT  NONE
