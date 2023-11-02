@@ -108,7 +108,9 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
-      CALL PT_OPGROW(CONTROL, ISWITCH, 
+! The arguments to PT_OPGROW at call site must match the type and
+! sequence of the parameters defined in PT_OPGROW subroutine declaration
+      CALL PT_OPGROW(CONTROL, ISWITCH, WEATHER,
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
@@ -174,8 +176,9 @@ C=======================================================================
      &    UNH4, UNO3, WTNCAN, WTNLO, WTNUP, XLAI)         !Output
 
       STGDOY(14) = YRSIM
-
-      CALL PT_OPGROW(CONTROL, ISWITCH, 
+! The arguments to PT_OPGROW at call site must match the type and
+! sequence of the parameters defined in PT_OPGROW subroutine declaration
+      CALL PT_OPGROW(CONTROL, ISWITCH, WEATHER,
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
@@ -259,8 +262,9 @@ C=======================================================================
       IF (YRDOY .EQ. YREND) THEN
         STGDOY(20) = YREND
       ENDIF
-
-      CALL PT_OPGROW(CONTROL, ISWITCH, 
+! The arguments to PT_OPGROW at call site must match the type and
+! sequence of the parameters defined in PT_OPGROW subroutine declaration
+      CALL PT_OPGROW(CONTROL, ISWITCH, WEATHER,
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
@@ -284,7 +288,9 @@ C=======================================================================
 !     YIELD  = TUBWT*10.*PLANTS   !YIELD used by OPAHRV, OPOPS
       YIELD  = TUBWT*10.*PLTPOP   !CHP changed 
 
-      CALL PT_OPGROW(CONTROL, ISWITCH, 
+! The arguments to PT_OPGROW at call site must match the type and
+! sequence of the parameters defined in PT_OPGROW subroutine declaration
+      CALL PT_OPGROW(CONTROL, ISWITCH, WEATHER,
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
