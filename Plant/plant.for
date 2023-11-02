@@ -549,7 +549,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Potato
       CASE('PTSUB')
         CALL PT_SUBSTOR(CONTROL, ISWITCH,
-     &    CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
+     &    WEATHER, CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD, !Input
      &    ST, SW, TMAX, TMIN, TRWUP, TWILEN, YREND, YRPLT,!Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output

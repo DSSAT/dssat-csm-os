@@ -23,9 +23,8 @@ C  08/23/2011 GH Added CO2 response for tuber growth
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
 C=======================================================================
-
       SUBROUTINE PT_SUBSTOR(CONTROL, ISWITCH,
-     &    CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
+     &    WEATHER, CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,!Input
      &    ST, SW, TMAX, TMIN, TRWUP, TWILEN, YREND, YRPLT,!Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
@@ -69,6 +68,7 @@ C=======================================================================
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SAT, SHF
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4 
 
+      TYPE (WeatherType) WEATHER
 !     P variables
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
 
@@ -153,7 +153,7 @@ C=======================================================================
      &    CUMDEP, RLV, RTDEP)                             !Output
 
       CALL PT_PHENOL (
-     &    DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
+     &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
      &    NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
      &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,  !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output
@@ -224,8 +224,8 @@ C=======================================================================
 
       IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 5) THEN
         CALL PT_PHENOL (
-     &    DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
-     &    NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
+     &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, !Input
+     &    NLAYR, NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
      &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,       !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
