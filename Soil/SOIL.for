@@ -53,7 +53,7 @@ C=====================================================================
       USE GHG_mod
       IMPLICIT NONE
       EXTERNAL SOILDYN, WATBAL, CENTURY, SoilOrg, SoilNi, SoilPi, 
-     &  SoilKi, WATBAL2D, SOILNI_2D
+     &  SoilKi, WATBAL2D
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -105,7 +105,8 @@ C=====================================================================
 
 !-----------------------------------------------------------------------
 !     Local variables:
-      CHARACTER*1  MESOM, MEHYD
+      LOGICAL Sim2D
+      CHARACTER*1  MESOM
       INTEGER DYNAMIC
 
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
@@ -126,8 +127,8 @@ C=====================================================================
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
+      Sim2D   = CONTROL % Sim2D
       MESOM   = ISWITCH % MESOM
-      MEHYD   = ISWITCH % MEHYD
 
 !***********************************************************************
 !     Call Soil Dynamics module 
@@ -141,20 +142,19 @@ C=====================================================================
 
 !     Call WATBAL first for all except seasonal initialization
       IF (DYNAMIC /= SEASINIT) THEN
-        SELECT CASE (MEHYD)
-        CASE('G','C')   !2D
+        IF (SIM2D) THEN
           CALL WatBal2D(CONTROL, ISWITCH,
      &    EOP, ES, IRRAMT, SOILPROP, SOILPROP_FURROW,     !Input 
      &    WEATHER,                                        !Input
      &    Cells, SW, SWDELTS, SWFAC, TURFAC, TRWU, TRWUP) !Output
-        CASE DEFAULT
+        ELSE
           CALL WATBAL(CONTROL, ISWITCH, 
      &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
-        END SELECT
+        ENDIF
       ENDIF
 
 !     Soil organic matter modules
@@ -179,26 +179,13 @@ C=====================================================================
      &    SomLit, SomLitC, SomLitE, SSOMC)                !Output
       ENDIF
 
-!     Inorganic N (formerly NTRANS)
-      SELECT CASE (MEHYD)
-      CASE('G','C')   !2D method - drip irrigation
-        CALL SoilNi_2D (CONTROL, ISWITCH, 
-     &    FERTDATA, IMM, LITC, MNR, SOILPROP,     !Input
-!    &    SOILPROP_profile, SSOMC, ST, WEATHER,   !Input
-     &    SSOMC, ST, WEATHER,                     !Input
-     &    Cells,                                  !Input,Output
-     &    NH4, NO3, UPPM)                         !Output
-        NH4_plant = NH4
-        NO3_plant = NO3
-      CASE DEFAULT
-        CALL SoilNi (CONTROL, ISWITCH, 
+      CALL SoilNi (CONTROL, ISWITCH, 
      &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
      &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
      &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI,                                 !Input
-     &    FLOODN,                                         !I/O
+     &    CELLS, FLOODN,                                  !I/O
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
-      END SELECT
 
 !     Inorganic P
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 
@@ -212,8 +199,7 @@ C=====================================================================
      &    SKi_Avail)                                      !Output
 
       IF (DYNAMIC == SEASINIT) THEN
-        SELECT CASE (MEHYD)
-        CASE('G','C')   !2d - drip irrigation
+        IF (SIM2D) THEN
           CALL WatBal2D(CONTROL, ISWITCH,
      &    EOP, ES, IRRAMT, SOILPROP, SOILPROP_FURROW,     !Input 
      &    WEATHER,                                        !Input
@@ -221,14 +207,14 @@ C=====================================================================
 
           SNOW = 0.0; TDFC = 0.0; TDLNO = 0 
           WINF = 0.0; SWDELTU = 0.0
-        CASE DEFAULT
+        ELSE
           CALL WATBAL(CONTROL, ISWITCH, 
      &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
-        END SELECT
+        ENDIF
       ENDIF
 
 !***********************************************************************

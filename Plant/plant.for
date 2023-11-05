@@ -238,7 +238,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       ENDIF
 
 !     Initialize 2D variable for general purpose
-      IF (INDEX('GC',ISWITCH%MEHYD) > 0) THEN
+      IF (CONTROL % SIM2D) THEN
         CELLS % RATE % NO3Uptake = 0.0
         CELLS % RATE % NH4Uptake = 0.0
         CELLS % STATE % RLV = 0.0
@@ -797,7 +797,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
         ENDIF
 
 !       Sync 2D variable for general purpose
-        IF (INDEX('GC',ISWITCH%MEHYD) > 0 .AND.
+        IF (CONTROL % SIM2D .AND.
      &      MODEL(1:5) .NE. 'CRGRO' .AND.
      &      MODEL(1:5) .NE. 'PTSUB') THEN
 

@@ -954,7 +954,8 @@ C-----------------------------------------------------------------------
           SELECT CASE (IIRRI)
           CASE ('A', 'F')
 !         Soil water content determins demand
-          IF (INDEX('GC',MEHYD) > 0) THEN
+!         2023-11-05 CHP changed from MEHYD = "G" or "C" (2D simulation) to MESOL = "D" (raised bed)
+          IF (ISWITCH % MESOL == 'D') THEN
 !           SWDEFICIT_bed looks for bedded system, which has a different
 !           method for calculating volume of water deficit
            
@@ -1071,7 +1072,8 @@ C-----------------------------------------------------------------------
           IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &        (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
-            IF (INDEX('GC',MEHYD) > 0) THEN
+!           2023-11-05 CHP changed from MEHYD = "G" or "C" (2D simulation) to MESOL = "D" (raised bed)
+            IF (ISWITCH % MESOL == 'D') THEN
 !             SWDEFICIT_bed looks for bedded system, which has a different
 !             method for calculating volume of water deficit
            

@@ -307,7 +307,7 @@ C-----------------------------------------------------------------------
      &    AGRSH2, AGRSTM, AGRVG, AGRVG2, SDPROR)          !Output
 
 !-----------------------------------------------------------------------
-        IF (INDEX('GC',ISWITCH%MEHYD) == 0) THEN
+        IF (.NOT. CONTROL % SIM2D) THEN
           CALL NUPTAK(RUNINIT,
      &     DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT,!Input
      &     NH4, NO3, NLAYR, RLV, SAT, SW,                 !Input
@@ -380,7 +380,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
-        IF (INDEX('GC',ISWITCH%MEHYD) == 0) THEN
+        IF (.NOT. CONTROL % SIM2D) THEN
           CALL ROOTS(RUNINIT,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
@@ -584,7 +584,7 @@ C     Initialize pest coupling point and damage variables
      &  ShutMob, RootMob, ShelMob,                        !Output
      &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output
 !-----------------------------------------------------------------------
-      IF (INDEX('GC',ISWITCH%MEHYD) == 0) THEN
+      IF (.NOT. CONTROL % SIM2D) THEN
          CALL NUPTAK(SEASINIT,
      &    DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT,!Input
      &    NH4, NO3, NLAYR, RLV, SAT, SW,                 !Input
@@ -663,7 +663,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
-      IF (INDEX('GC',ISWITCH%MEHYD) == 0) THEN      
+      IF (.NOT. CONTROL % SIM2D) THEN      
         CALL ROOTS(SEASINIT,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
@@ -830,7 +830,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
-      IF (INDEX('GC',ISWITCH%MEHYD) == 0) THEN
+      IF (.NOT. CONTROL % SIM2D) THEN
         CALL ROOTS(EMERG,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
@@ -1010,7 +1010,7 @@ C    If ISWNIT = Y - Call soil N routines. Balance Available C and N
 C    If ISWNIT = N - Do not call soil N routines, N assumed to be limited by C
 C-----------------------------------------------------------------------
       IF (ISWNIT .EQ. 'Y') THEN
-        IF (INDEX('GC',ISWITCH%MEHYD) == 0) THEN
+        IF (.NOT. CONTROL % SIM2D) THEN
            CALL NUPTAK(INTEGR,
      &      DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT,!Input
      &      NH4, NO3, NLAYR, RLV, SAT, SW,                 !Input
@@ -1240,7 +1240,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 !-----------------------------------------------------------------------
-      IF (INDEX('GC',ISWITCH%MEHYD) == 0) THEN
+      IF (.NOT. CONTROL % SIM2D) THEN
         CALL ROOTS(INTEGR,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
@@ -1394,7 +1394,7 @@ C-----------------------------------------------------------------------
      &    YRNR7, YRPLT,                                   !Input
      &    SDWTAH)                                         !Output
 
-      IF (INDEX('GC',ISWITCH%MEHYD) > 0) THEN
+      IF (CONTROL % SIM2D) THEN
          CALL ROOTY_2D(SEASEND,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, ROWSPC, RTWT, SOILPROP,         !Input

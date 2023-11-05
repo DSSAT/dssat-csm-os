@@ -167,16 +167,17 @@ C-----------------------------------------------------------------------
 
 !     ---------------------------------------------------------------
 !     Composite variables
+      TYPE (ControlType) CONTROL  !Control variables
       TYPE (SoilType)   , INTENT(OUT):: SOILPROP !Soil properties
       TYPE (MulchType)  , INTENT(IN) :: MULCH    !Surface mulch propert.
       TYPE (SwitchType) , INTENT(IN) :: ISWITCH  !Simulation options 
-      TYPE (ControlType), INTENT(IN) :: CONTROL  !Control variables
       TYPE (TillType)   , INTENT(IN) :: TILLVALS !Tillage operation vars
       TYPE (WeatherType), INTENT(IN) :: WEATHER  !Weather variables
 
 !     2d MODEL
       TYPE (CellType)   , INTENT(OUT):: CELLS(MaxRows,MaxCols)
       TYPE (SoilType) SoilProp_Bed, SoilProp_Furrow, SOILPROP_profile
+      LOGICAL Sim2D
 
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
@@ -204,6 +205,13 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
+
+      IF (INDEX('GC',ISWITCH % MEHYD) > 0) THEN
+        Sim2D = .TRUE.
+      ELSE
+        Sim2D = .FALSE.
+      ENDIF
+      CONTROL % Sim2D = Sim2D
 
 !     Initialize soils variables
       NLAYR  = 0
@@ -765,7 +773,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 !       Remove this ksat estimation 
 !       It causes problems when SAT and DUL are close. (KJB/JWJ - India workshop 2011)
 !       Calculate Ksat (SWCN) if not provided
-        IF (SWCN(L) < -1.E-6 .AND. INDEX('GC',ISWITCH % MEHYD) > 0) THEN
+        IF (SWCN(L) < -1.E-6 .AND. Sim2D) THEN
 !         Eqn. 10 from 
 !         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
 !           drainage model for more accurate soil water dynamics estimation. 
@@ -957,14 +965,14 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         SoilProp_Furrow = SOILPROP
         SOILPROP_profile = SOILPROP
         CALL PRINT_SOILPROP(SOILPROP)
+!       Depths of layers and cells are the same.
+        Layer_Cell_Dep = 1.0
       ENDIF
 !--------------------------------------------------------------------
-!     Use this to handle plastic mulch for 1D case.
-      SELECT CASE (ISWITCH % MEHYD)
-      CASE('G','C')   !2d - drip irrigation, do nothing
-      CASE DEFAULT    !1d - set up plastic mulch routines
+!     Handle plastic mulch for 1D case.
+      IF (.NOT. SIM2D) THEN
         CALL SETPM(SOILPROP)
-      END SELECT
+      END IF
 
       CALL PUT(SOILPROP)
 
@@ -2184,8 +2192,6 @@ C=======================================================================
 !  08/17/2011  
 !-----------------------------------------------------------------------
 !  Called by: SoilDYN, CellInit_2D when (DYNAMIC = RUNINIT) and 
-!             (((INDEX('QFN',RNMODE) <=0 or (RUN=1 .AND. REPNO=11)) or 2D case)
-!  Calls    : 
 !=======================================================================
       SUBROUTINE SoilLayerClass(ISWITCH, 
      &    MULTI, DS, NLAYR, SLDESC, TAXON,                !Input
