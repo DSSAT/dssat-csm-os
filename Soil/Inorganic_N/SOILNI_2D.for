@@ -804,7 +804,7 @@ C=======================================================================
           UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L)
         ENDDO
       ENDDO  
-                                                
+
 !     Call NCHECK to check for and fix negative values.
       CALL NCHECK_inorg_2D(CONTROL, Sim2D,
      &      NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, UREA_2D) !Input 
@@ -829,21 +829,6 @@ C=======================================================================
           TUREA = TUREA + UREA_2D(L, J) * ColFrac(L, J)
 !         WTNUP in g[N]/m2 - convert to kg/ha in CNUPTAKE (below) 
           WTNUP = WTNUP + (UNO3_2D(L,J) + UNH4_2D(L,J))/10.*ColFrac(L,J)
-
-!          if (L == Cell_detail%row .and. J == Cell_detail%col) then
-!             Cell_Ndetail % NFlux_L_out  = NFlux_L(L, J) !CELLS % RATE % SWFlux_L
-!             Cell_Ndetail % NFlux_R_out  = NFlux_R(L, J)
-!             Cell_Ndetail % NFlux_D_out  = NFlux_D(L, J)
-!             Cell_Ndetail % NFlux_U_out  = NFlux_U(L, J) 
-!          elseif (L == Cell_detail%row - 1 .and. J == Cell_detail%col) then
-!              Cell_Ndetail % NFlux_U_in  = NFlux_D(L, J)
-!          elseif (L == Cell_detail%row + 1 .and. J == Cell_detail%col) then
-!              Cell_Ndetail % NFlux_D_in  = NFlux_U(L, J)
-!          elseif (L == Cell_detail%row .and. J == Cell_detail%col - 1) then
-!              Cell_Ndetail % NFlux_L_in  = NFlux_R(L, J)
-!          elseif (L == Cell_detail%row .and. J == Cell_detail%col + 1) then
-!              Cell_Ndetail % NFlux_R_in  = NFlux_L(L, J)
-!          Endif
 
              Cell_Ndetail % NFlux_L_out(L, J)  = NFlux_L(L, J) 
              Cell_Ndetail % NFlux_R_out(L, J)  = NFlux_R(L, J)
