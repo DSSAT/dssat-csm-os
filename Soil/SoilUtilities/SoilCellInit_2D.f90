@@ -78,12 +78,12 @@
  
     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
     REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea, mm_2_vf
-    REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
+    REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac  !, BedFrac
     REAL Bed_BD, Bed_CEC, Bed_Clay, Bed_DUL, Bed_LL, Bed_OC, Bed_PH, Bed_NH4, Bed_NO3
     REAL Bed_Sand, Bed_SAT, Bed_Silt, Bed_SWCN, Bed_ADCOEF, Bed_TOTN, Bed_WR, Bed_TotOrgN
     REAL Bed_WCR, Bed_alphaVG, Bed_mVG, Bed_nVG, Bed_CACO3  !, Bed_DMOD
     Real Bed_SASC, Bed_TOTBAS, Bed_EXCA, Bed_EXNA, Bed_EXK, Bed_EXTP, Bed_TOTP, Bed_ORGP
-    REAL LayerThick
+    REAL LayerThick, SimWidth
 
     Double Precision :: Bed_hb, Bed_lambda, Furrow_HB, Furrow_lambda
 
@@ -327,6 +327,13 @@
     BedDimension % FurCol1 = FurCol1
     
     HalfRow = ROWSPC_cm / 2.
+    IF (Sim2D) THEN
+!     For 2D simulations, half of a row width is simulated
+      SimWidth = ROWSPC_cm / 2.
+    ELSE
+!     For 1D simulations, the full row width is simulated
+      SimWidth = ROWSPC_cm
+    ENDIF
 
 ! ---------------------------------------------------------------------
 !   Properties of soils within bed
@@ -530,7 +537,7 @@
     Thick = 0.0
     Width = 0.0
     ColFrac = 0.0
-    BedFrac = 0.0
+!   BedFrac = 0.0
     Cell_type = 0 
     CellArea = 0.0
 
@@ -638,6 +645,8 @@
       SoilProp_Bed%DS(Row)    = DEPTH
 
 !     Assign cell types and properties
+!     2023-11-05 CHP changed calculation of ColFrac to be based on 
+!       full width for 1D simulations
       DO Col = 1, NColsTot
         Thick(Row,Col) = DEPTH - PREV_DEPTH
         IF (Col <= N_Bed_Cols) THEN
@@ -645,12 +654,12 @@
 !          ColFrac(Col) = Width(Row,Col) / HalfRow
 !          BedFrac(Col) = Width(Row,Col) / BEDWD / 2.0
           IF (DEPTH < BEDHT + 0.01) THEN
-            ColFrac(Row, Col) = Width(Row,Col) / HalfRow
-            BedFrac(Row, Col) = HalfRow / (BEDWD / 2.0)
+            ColFrac(Row, Col) = Width(Row,Col) / SimWidth
+!           BedFrac(Row, Col) = HalfRow / (BEDWD / 2.0)
             Cell_type(Row,Col) = 3    !within bed
           ELSE
-            ColFrac(Row, Col) = Width(Row,Col) / HalfRow
-            BedFrac(Row, Col) = 1
+            ColFrac(Row, Col) = Width(Row,Col) / SimWidth
+!           BedFrac(Row, Col) = 1
             Cell_type(Row,Col) = 4    !below bed
           ENDIF
         ELSE
@@ -659,11 +668,11 @@
 !          BedFrac(Col) = 0.0
           IF (DEPTH < BEDHT + 0.01) THEN
             ColFrac(Row, Col) = 0.0
-            BedFrac(Row, Col) = 0.0
+!           BedFrac(Row, Col) = 0.0
             Cell_type(Row,Col) = 0    !in furrow (no soil)
           ELSE
-            ColFrac(Row, Col) = Width(Row,Col) / HalfRow
-            BedFrac(Row, Col) = 1
+            ColFrac(Row, Col) = Width(Row,Col) / SimWidth
+!           BedFrac(Row, Col) = 1
             Cell_type(Row,Col) = 5    !soil below furrow
           ENDIF
         ENDIF
@@ -780,7 +789,7 @@
 
     BedDimension % LIMIT_2D = NRowsTot
     BedDimension % ColFrac  = ColFrac
-    BedDimension % BedFrac  = BedFrac
+!   BedDimension % BedFrac  = BedFrac
 
     DO Row = 1, NRowsTot
       IF (CELLS(Row,1)%Struc%CellType > 3) THEN

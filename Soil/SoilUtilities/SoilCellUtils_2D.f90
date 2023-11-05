@@ -31,7 +31,7 @@
 !   Below this depth, use 1D tipping bucket approach.
 !   For now, compute as the highest layer with depth > 70cm.
 !   Column width as fraction of total field surface area
-    REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
+    REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac  !, BedFrac
     INTEGER LIMIT_2D
 !    INTEGER DripLN(NDrpLn)      !Drip line number
     INTEGER DripCol(NDrpLn)     !Column recieving drip irrig
