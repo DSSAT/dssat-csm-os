@@ -964,9 +964,8 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         SoilProp_Bed = SOILPROP
         SoilProp_Furrow = SOILPROP
         SOILPROP_profile = SOILPROP
+        CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP) 
         CALL PRINT_SOILPROP(SOILPROP)
-!       Depths of layers and cells are the same.
-        Layer_Cell_Dep = 1.0
       ENDIF
 !--------------------------------------------------------------------
 !     Handle plastic mulch for 1D case.

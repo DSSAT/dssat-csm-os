@@ -33,7 +33,7 @@
 !   Column width as fraction of total field surface area
     REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac  !, BedFrac
     INTEGER LIMIT_2D
-!    INTEGER DripLN(NDrpLn)      !Drip line number
+!   INTEGER DripLN(NDrpLn)      !Drip line number
     INTEGER DripCol(NDrpLn)     !Column recieving drip irrig
     INTEGER DripRow(NDrpLn)     !Row recieving drip irrig
     LOGICAL RaisedBed, PMCover 

@@ -823,16 +823,16 @@ C=======================================================================
 !     Convert NITRIF, DLTSNO3 and DLTSNH4 from 2D to 1D for next set of processes
 !     use the utility 
       CALL Cell2Layer_2D(
-     &  NITRIF_2D, CELLS % Struc, NLAYR,              !Input
-     &  NITRIF, SurfaceVal)                           !Output
+     &  NITRIF_2D, CELLS % Struc, NLAYR,  !Input
+     &  NITRIF)                           !Output
 
       CALL Cell2Layer_2D(
-     &  DLTSNO3_2D, CELLS % Struc, NLAYR,              !Input
-     &  DLTSNO3, SurfaceVal)                           !Output
+     &  DLTSNO3_2D, CELLS % Struc, NLAYR,  !Input
+     &  DLTSNO3)                           !Output
 
       CALL Cell2Layer_2D(
-     &  DLTSNH4_2D, CELLS % Struc, NLAYR,              !Input
-     &  DLTSNH4, SurfaceVal)                           !Output
+     &  DLTSNH4_2D, CELLS % Struc, NLAYR,  !Input
+     &  DLTSNH4)                           !Output
 
 !     Keep the values of DLTSNO3 and DLTSNH4 because we need to add the new part to the 
 !       2D arrays.
@@ -1281,6 +1281,8 @@ C=======================================================================
 
       TMINERN = 0.0
       TIMMOBN = 0.0
+      DO L = 1, NRowsTot
+
         IF (L ==1) THEN
           TMINERN = MNR(0,N) + MNR(1,N)
           TIMMOBN = IMM(0,N) + IMM(1,N)
@@ -1288,6 +1290,8 @@ C=======================================================================
           TMINERN = TMINERN + MNR(L,N)
           TIMMOBN = TIMMOBN + IMM(L,N)
         ENDIF
+      ENDDO
+
 !     Seasonal cumulative values
       CMINERN  = CMINERN  + TMINERN       !mineralization
       CIMMOBN  = CIMMOBN  + TIMMOBN       !immobilization
