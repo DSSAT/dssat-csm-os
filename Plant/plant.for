@@ -119,7 +119,7 @@ C-----------------------------------------------------------------------
      &  RICE,SAMUCA,SC_CNGRO,SG_CERES,SU_CERES,SUMVALS,TEFF,TF_APSIM,
      &  TR_SUBSTOR,WARNING,WH_APSIM
       EXTERNAL INCDAT, ERROR
-      EXTERNAL SYNC_NUPTAKE_TO2D
+!     EXTERNAL SYNC_NUPTAKE_TO2D
 
       SAVE
 
@@ -796,13 +796,11 @@ c     Total LAI must exceed or be equal to healthy LAI:
           FixCanht = .FALSE.
         ENDIF
 
-!       Sync 2D variable for general purpose
-        IF (!CONTROL % SIM2D .AND.
-     &      MODEL(1:5) .NE. 'CRGRO' .AND.
-     &      MODEL(1:5) .NE. 'PTSUB') THEN
+!       Sync 2D variables for use in SoilN routines
+        IF (.NOT. CONTROL % SIM2D) THEN
 
           CALL Interpolate2Cells_2D(
-     &      CELLS%STRUC, SOILPROP, RLV, RLV(1),           !Input
+     &      CELLS%STRUC, SOILPROP, RLV, 0.0   ,           !Input
      &      RLV_2D)                                       !Output
 
           CALL Layer2Cell_2D(
@@ -815,9 +813,9 @@ c     Total LAI must exceed or be equal to healthy LAI:
      &      UNH4, 0.0,                                    !Input
      &      NH4Uptake_2D)                                 !Output
 
-          CELLS%RATE%NO3Uptake = NO3Uptake_2D
-          CELLS%RATE%NH4Uptake = NH4Uptake_2D
-          CELLS%STATE%RLV = RLV_2D
+          CELLS % RATE % NO3Uptake = NO3Uptake_2D
+          CELLS % RATE % NH4Uptake = NH4Uptake_2D
+          CELLS % STATE % RLV = RLV_2D
         END IF
 
 !***********************************************************************

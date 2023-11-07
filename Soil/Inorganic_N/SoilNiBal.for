@@ -10,7 +10,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       SUBROUTINE SoilNiBal (CONTROL, ISWITCH, 
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE,
      &    N2O_data) 
 
 !     ------------------------------------------------------------------
@@ -28,7 +28,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       INTEGER, INTENT(IN) :: NBUND
       REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,   
-     &  CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
+     &  CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE
       LOGICAL FEXIST
 
       CHARACTER*1  IDETN, IDETL, ISWNIT
@@ -43,9 +43,9 @@ C  03/04/2005 CHP wrote based on SoilNBal
       REAL STATEN, BALANCE
 
       REAL LCHTODAY, NTILEDRTODAY, IMMOBTODAY, MINERTODAY !HJ
-      REAL WTNUPTODAY, AMLTODAY, FNROTODAY, AMTFERTODAY
+      REAL CNUPTAKETODAY, AMLTODAY, FNROTODAY, AMTFERTODAY
       REAL N2Otoday, N2today, NOtoday
-      REAL CLeachY, TNTILEDRY, WTNUPY, CIMMOBY, CMINERY 
+      REAL CLeachY, TNTILEDRY, CNUPTAKEY, CIMMOBY, CMINERY 
       REAL TOTAMLY, CUMFNROY, AMTFERY
       REAL TOTSTATE, TOTADD, TOTSUB, DAYBAL, TOTSTATY, CUMBAL
       REAL NGasLoss, TNGSOIL, TNGSOILI, TotNEmitted,
@@ -121,7 +121,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
         CIMMOBY  = 0.0
         CLeachY  = 0.0
         TNTILEDRY = 0.0
-        WTNUPY   = 0.0
+        CNUPTAKEY   = 0.0
         CUMFNROY = 0.0
         TOTAMLY  = 0.0
         N2OY     = 0.0
@@ -170,7 +170,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       IMMOBTODAY = CIMMOBN - CIMMOBY
       LCHTODAY   = CLeach - CLeachY
       NTILEDRTODAY = CNTILEDR - TNTILEDRY             !HJ added
-      WTNUPTODAY = (WTNUP - WTNUPY) * 10.  
+      CNUPTAKETODAY = (CNUPTAKE - CNUPTAKEY)
       FNROTODAY  = CUMFNRO - CUMFNROY
       AMLTODAY   = TOTAML - TOTAMLY
 
@@ -202,7 +202,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       TOTSTATE = TNO3 + TNH4 + TUREA + ALGFIX + TOTFLOODN 
      &         + TNGSoil + UnreleasedN
       TOTADD   = AMTFERTODAY + MINERTODAY
-      TOTSUB   = IMMOBTODAY + LCHTODAY + WTNUPTODAY + FNROTODAY 
+      TOTSUB   = IMMOBTODAY + LCHTODAY + CNUPTAKETODAY + FNROTODAY 
      &         + AMLTODAY + N2Otoday + N2today + NOtoday
      &         + NTILEDRTODAY !HJ added
 
@@ -215,7 +215,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &  TNO3, TNH4, TUREA, TNGSoil, TOTFLOODN, ALGFIX, 
      &  UnreleasedN,
      &  AMTFERTODAY, MINERTODAY, 
-     &  IMMOBTODAY, LCHTODAY, NTILEDRTODAY, WTNUPTODAY, !HJ
+     &  IMMOBTODAY, LCHTODAY, NTILEDRTODAY, CNUPTAKETODAY, !HJ
      &  FNROTODAY, AMLTODAY, N2Otoday, N2today, NOtoday,
      &  DAYBAL, CUMBAL
    50 FORMAT(I5, I4.3, I5, 7F8.3, F8.1, 10F8.4, 2F10.4)
@@ -226,7 +226,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       CIMMOBY  = CIMMOBN
       CLeachY  = CLeach
       TNTILEDRY = CNTILEDR            !HJ added
-      WTNUPY   = WTNUP
+      CNUPTAKEY = CNUPTAKE
       CUMFNROY = CUMFNRO
       TOTAMLY  = TOTAML
 
@@ -303,7 +303,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !    &          CLeach + CNOX + WTNUP * 10. +       !Losses
 !    &          TOTAML + CIMMOBN           !Losses
 !               HJ adeed CNTILEDR
-     &          CIMMOBN + CLeach + CNTILEDR + WTNUP * 10. + TOTAML +
+     &          CIMMOBN + CLeach + CNTILEDR + CNUPTAKE + TOTAML +
      &          TotNEmitted     
 
 !       Write output to NBAL.OUT.
@@ -320,7 +320,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
         ENDIF
 !       HJ adeed CNTILEDR
         WRITE (LUNSNC,600) AMTFER, CMINERN, 
-     &    CIMMOBN, CLeach, CNTILEDR, WTNUP * 10., TOTAML, 
+     &    CIMMOBN, CLeach, CNTILEDR, CNUPTAKE, TOTAML, 
      &    CN2O_emitted, CN2_emitted, CNO_emitted 
 
         IF (NBUND .GT. 0) THEN
@@ -380,7 +380,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       CALL SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, 
      &    CLeach=CLeach, CNTILEDR=CNTILEDR, N_inorganic=StateN, 
-     &    WTNUP=WTNUP*10., NGasLoss=NGasLoss, CUMFNRO=CUMFNRO)
+     &    CNUPTAKE=CNUPTAKE, NGasLoss=NGasLoss, CUMFNRO=CUMFNRO)
 
 !***********************************************************************
 !***********************************************************************

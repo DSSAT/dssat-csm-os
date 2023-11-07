@@ -10,7 +10,7 @@
       SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
      &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, CNTILEDR, TLITN, 
-     &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP,
+     &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, CNUPTAKE,
      &    CUMFNRO, NGasLoss)
 
 !***********************************************************************
@@ -26,7 +26,7 @@
       REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
      &    CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach,
      &    CNTILEDR, TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N,	 
-     &    WTNUP, NGasLoss
+     &    CNUPTAKE, NGasLoss
       REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
 
       CHARACTER(LEN=15), PARAMETER :: SNSUM = 'SoilNBalSum.OUT'
@@ -121,7 +121,7 @@
       IF (PRESENT(AMTFER))   Add(3) = AMTFER
       IF (PRESENT(CLeach))   Sub(1) = CLeach
 	IF (PRESENT(CNTILEDR)) Sub(2) = CNTILEDR     !HJ added
-      IF (PRESENT(WTNUP))    Sub(3) = WTNUP
+      IF (PRESENT(CNUPTAKE)) Sub(3) = CNUPTAKE
       IF (PRESENT(NGasLoss)) Sub(4) = NGasLoss
       IF (PRESENT(CUMFNRO))  Sub(5) = CUMFNRO
 
@@ -221,14 +221,14 @@
         SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
      &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, CNTILEDR, TLITN, 
-     &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP,
+     &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, CNUPTAKE,
      &    CUMFNRO, NGasLoss)
           USE ModuleDefs
           TYPE (ControlType), INTENT(IN) :: CONTROL
           REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
      &      CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, 
      &      CNTILEDR, TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N,
-     &      WTNUP, NGasLoss
+     &      CNUPTAKE, NGasLoss
           REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
         END SUBROUTINE
       END INTERFACE

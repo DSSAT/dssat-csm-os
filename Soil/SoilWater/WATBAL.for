@@ -49,15 +49,16 @@ C             SATFLO  (File SATFLO.for)
 C=======================================================================
 
       SUBROUTINE WATBAL(CONTROL, ISWITCH,                 !Input
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+     &    CELLS, ES, IRRAMT, SOILPROP, SWDELTX,           !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     
+      USE ModuleDefs
       USE ModuleData
+      USE Cells_2D
       USE FloodModule
       USE Interface_OPWBAL
       IMPLICIT NONE
@@ -82,6 +83,7 @@ C=======================================================================
       REAL, DIMENSION(NL) :: SWDELTU
       TYPE (FloodWatType) FLOODWAT
       TYPE (MulchType)    MULCH
+      Type (CellType) Cells(MaxRows,MaxCols)
 
 !     Output:
       INTEGER           , INTENT(OUT) :: TDLNO
@@ -130,6 +132,8 @@ C=======================================================================
       REAL LatInflow, LatOutflow
       REAL, DIMENSION(NL) :: SWDELTW, SWDELTW_mm
 
+!     Transfer out 2D soil water variables for use in soil N routines.
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWV
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -266,6 +270,13 @@ C=======================================================================
       SWDELTW = 0.0
 
       DLAYR_YEST = DLAYR
+
+!     Convert soil water to 2D for use in SoilN routines
+      CALL Interpolate2Cells_2D(
+     &  CELLS % Struc, SOILPROP, SW, 0.0,     !Input
+     &  SWV)                                  !Output
+
+      CELLS % STATE % SWV = SWV
 
 !***********************************************************************
 !***********************************************************************
@@ -530,10 +541,12 @@ C       extraction (based on yesterday's values) for each soil layer.
 !       content
       DLAYR_YEST = DLAYR
 
-!      CALL OPWBAL(CONTROL, ISWITCH, 
-!     &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
-!     &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-!     &    TDRAIN, TRUNOF, WTDEP)                          !Input
+!     Convert soil water to 2D for use in SoilN routines
+      CALL Interpolate2Cells_2D(
+     &  CELLS % Struc, SOILPROP, SW, 0.0,     !Input
+     &  SWV)                                  !Output
+
+      CELLS % STATE % SWV = SWV
 
 !***********************************************************************
 !***********************************************************************

@@ -417,15 +417,15 @@ C=======================================================================
           NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
           NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
 
-          TotUptake = TotUptake + (UNO3_2D(L,J) +UNH4_2D(L,J))
+          TotUptake = TotUptake + (UNO3_2D(L,J) +UNH4_2D(L,J)) !kg/ha
         ENDDO
       ENDDO
 
 !     Must calculate WTNUP here or it won't be guaranteed to match N
 !     removed from the soil today and the balance will be off.
+!     WTNUP is cumulative
       CALL Cell2Layer_2D(UNO3_2D,    CELLS % Struc, NLAYR, UNO3)
       CALL Cell2Layer_2D(UNH4_2D,    CELLS % Struc, NLAYR, UNH4)
-      WTNUP = 0.0
       DO L = 1, NLAYR
         WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
       ENDDO
@@ -1013,8 +1013,8 @@ C=======================================================================
 !     FIRST NEED TO CONVERT DLT-N VALUES BACK TO 2D
 
 !     Look at only the differences in DLTSNO3 and DLTSNH4 due to GHG processes
-      DLTSNO3_DIFF = DLTSNO3_SAVE - DLTSNO3
-      DLTSNH4_DIFF = DLTSNH4_SAVE - DLTSNH4
+      DLTSNO3_DIFF = DLTSNO3 - DLTSNO3_SAVE
+      DLTSNH4_DIFF = DLTSNH4 - DLTSNH4_SAVE
 
 !     Convert DLTSNO3 and DLTSNH4 differences  to 2D arrays
       CALL Layer2Cell_2D(                              
@@ -1085,6 +1085,11 @@ C=======================================================================
      &      ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,     !Input
      &      UREA, NSOURCE, SW, TDFC, TDLNO,                 !Input
      &      DLTUREA, CLeach, TLeachD, CNTILEDR, NTILEDR)    !Output !HJ
+
+          CALL Layer2Cell_2D(                              
+     &      CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0,        !Input
+     &      DLTUREA_2D)                                       !Output
+
         ENDIF
 
         NSOURCE = 2   !NO3.
@@ -1092,6 +1097,12 @@ C=======================================================================
      &    ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &    SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
      &    DLTSNO3, CLeach, TLeachD, CNTILEDR, NTILEDR)      !Output !HJ
+
+!       Since this is a 1D simulation, expansion to 2D array will not 
+!       cause any loss of info
+        CALL Layer2Cell_2D(                              
+     &    CELLS % Struc, NLAYR, DLAYR, DLTSNO3, 0.0,        !Input
+     &    DLTSNO3_2D)                                       !Output
 
       ELSE !2D simulation
         IF (IUON) THEN
@@ -1193,15 +1204,15 @@ C=======================================================================
           SNH4_2D(L, J) = SNH4_2D(L, J) + DLTSNH4_2D(L, J)    
           UREA_2D(L, J) = UREA_2D(L, J) + DLTUREA_2D(L, J)
 
-!         Underflow trapping
-          IF (ABS(SNO3_2D(L, J)) .LT. 1.E-8) SNO3_2D(L, J) = 0.0
-          IF (ABS(SNH4_2D(L, J)) .LT. 1.E-8) SNH4_2D(L, J) = 0.0
-          IF (ABS(UREA_2D(L, J)) .LT. 1.E-8) UREA_2D(L, J) = 0.0
+!!         Underflow trapping
+!          IF (ABS(SNO3_2D(L, J)) .LT. 1.E-8) SNO3_2D(L, J) = 0.0
+!          IF (ABS(SNH4_2D(L, J)) .LT. 1.E-8) SNH4_2D(L, J) = 0.0
+!          IF (ABS(UREA_2D(L, J)) .LT. 1.E-8) UREA_2D(L, J) = 0.0
 
 !         Conversions.
-          NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L)
-          NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L)
-          UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L)
+          NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+          NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+          UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
         ENDDO
       ENDDO  
 
@@ -1230,9 +1241,10 @@ C=======================================================================
           TNO3  = TNO3  + SNO3_2D(L, J) * ColFrac(L, J)
           TUREA = TUREA + UREA_2D(L, J) * ColFrac(L, J)
 
+!     Already calculated WTNUP in rate section
 !         Calculate this where uptake is removed from the soil.
 !         WTNUP in g[N]/m2 - convert to kg/ha in CNUPTAKE (below) 
-          WTNUP = WTNUP + (UNO3_2D(L,J) + UNH4_2D(L,J))/10.*ColFrac(L,J)
+!         WTNUP = WTNUP + (UNO3_2D(L,J) + UNH4_2D(L,J))/10.*ColFrac(L,J)
 !         WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
 
 !!         For detailed cell output (commented out for now)
@@ -1269,15 +1281,24 @@ C=======================================================================
       CELLS%State%SNO3 = SNO3_2D
       
 !     Convert 2D to 1D
-!     Integrated cell variable into layer variable   
-      CAll Interpolate2Layers_2D(NH4_2D, Cells%Struc, NLAYR,  !input
-     &         NH4)                                           !Output
+!     Use Interpolate2Layers_2D for concentration variables
       CAll Interpolate2Layers_2D(NO3_2D, Cells%Struc, NLAYR,  !input
      &         NO3)                                           !Output
-!      CAll Interpolate2Layers_2D(SNO3_2D, Cells%Struc, NLAYR,  !input
-!     &         SNO3)                                           !Output
+      CAll Interpolate2Layers_2D(NH4_2D, Cells%Struc, NLAYR,  !input
+     &         NH4)                                           !Output
       CAll Interpolate2Layers_2D(UPPM_2D, Cells%Struc, NLAYR,  !input
      &         UPPM)                                           !Output
+
+!     Use Cell2Layer_2D for mass variables
+      CALL Cell2Layer_2D(
+     &  SNO3_2D, Cells%Struc, NLAYR,                      !Input
+     &  SNO3, SurfaceVal)                                 !Output
+      CALL Cell2Layer_2D(
+     &  SNH4_2D, Cells%Struc, NLAYR,                      !Input
+     &  SNH4, SurfaceVal)                                 !Output
+      CALL Cell2Layer_2D(
+     &  UREA_2D, Cells%Struc, NLAYR,                      !Input
+     &  UREA, SurfaceVal)                                 !Output
 
       TMINERN = 0.0
       TIMMOBN = 0.0
@@ -1323,7 +1344,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE,
      &    N2O_data) 
 
 !        Call CellNDetail_2D (CONTROL, ISWITCH, 
@@ -1372,7 +1393,7 @@ C     Write daily output
 
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE,
      &    N2O_data) 
 
 !        Call CellNDetail_2D (CONTROL, ISWITCH, 

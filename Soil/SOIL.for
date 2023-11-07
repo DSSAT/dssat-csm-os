@@ -149,7 +149,7 @@ C=====================================================================
      &    Cells, SW, SWDELTS, SWFAC, TURFAC, TRWU, TRWUP) !Output
         ELSE
           CALL WATBAL(CONTROL, ISWITCH, 
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+     &    CELLS, ES, IRRAMT, SOILPROP, SWDELTX,           !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
@@ -209,7 +209,7 @@ C=====================================================================
           WINF = 0.0; SWDELTU = 0.0
         ELSE
           CALL WATBAL(CONTROL, ISWITCH, 
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+     &    CELLS, ES, IRRAMT, SOILPROP, SWDELTX,           !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
