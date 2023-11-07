@@ -1,21 +1,25 @@
 <p align="center">
-<img width="1000px" alt="DSSAT" src="Resources/logo.png">
+<img width="400px" alt="DSSAT" src="Resources/logo.png">
 </p>
 <p align="center">
 <a href="http://dssat.net">[DSSAT Homepage]</a> | 
 <a href="http://dssat.net/about">[About DSSAT]</a> | 
-<a href="http://dssat.net/contact-us">[Contact us]</a> | 
+<a href="http://dssat.net/contact-us">[Contact us]</a>
 </p>
 <hr>
 The Decision Support System for Agrotechnology Transfer (DSSAT) Version is a software 
-application program that comprises crop simulation models for over 42 crops (as of Version 4.8).
+application program that comprises crop simulation models for over 42 crops (as of version 4.8).
 
 For DSSAT to be functional it is supported by data base management programs for soil, 
 weather, and crop management and experimental data, and by utilities and application 
 programs. The crop simulation models simulate growth, development and yield as a 
 function of the soil-plant-atmosphere dynamics.
 
-Read more about DSSAT at <a href="http://dssat.net">[DSSAT Homepage]</a>
+Questions about usage of DSSAT ecosystem <a href="http://dssat.net/contact-us">[contact us]</a>.
+
+Do not know how to use DSSAT? Consider participating the <a href="https://dssat.net/training/upcoming-workshop/">[upcoming DSSAT training workshop]</a>
+
+Read more about DSSAT at <a href="http://dssat.net/about">[DSSAT Homepage]</a>
 
 ## The directory structure ##
 
@@ -123,7 +127,7 @@ in the Documentation section under DSSAT References and Model References.
 
 Hoogenboom, G., C.H. Porter, K.J. Boote, V. Shelia, P.W. Wilkens, U. Singh, J.W. White, S. Asseng, J.I. Lizaso, L.P. Moreno, W. Pavan, R. Ogoshi, L.A. Hunt, G.Y. Tsuji, and J.W. Jones. 2019. The DSSAT crop modeling ecosystem. In: p.173-216 [K.J. Boote, editor] Advances in Crop Modeling for a Sustainable Agriculture. Burleigh Dodds Science Publishing, Cambridge, United Kingdom (https://dx.doi.org/10.19103/AS.2019.0061.10).
 
-See also: [The DSSAT Crop Modeling Ecosystem](https://dssat.net/wp-content/uploads/2020/03/The-DSSAT-Crop-Modeling-Ecosystem.pdf)
+See also: [The DSSAT crop modeling ecosystem](https://dssat.net/wp-content/uploads/2020/03/The-DSSAT-Crop-Modeling-Ecosystem.pdf)
 
 Hoogenboom, G., C.H. Porter, V. Shelia, K.J. Boote, U. Singh, W. Pavan, F.A.A. Oliveira, L.P. Moreno-Cadena, T.B. Ferreira, J.W. White, J.I. Lizaso, D.N.L. Pequeno, B.A. Kimball, P.D. Alderman, K.R. Thorp, S.V. Cuadra, M.S. Vianna, F.J. Villalobos, W.D. Batchelor, S. Asseng, M.R. Jones, A. Hopf, H.B. Dias, L.A. Hunt, and J.W. Jones. 2023. Decision Support System for Agrotechnology Transfer (DSSAT) Version 4.8.2 (www.DSSAT.net). DSSAT Foundation, Gainesville, Florida, USA.
 
