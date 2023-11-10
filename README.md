@@ -1,5 +1,5 @@
 <p align="center">
-<img width="400px" alt="DSSAT" src="Resources/logo.png">
+<img width="400px" alt="DSSAT" src="Resources/logo.jpg">
 </p>
 <p align="center">
 <a href="http://dssat.net">[DSSAT Homepage]</a> | 
