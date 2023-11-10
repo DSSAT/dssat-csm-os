@@ -1,5 +1,5 @@
 <p align="center">
-<img width="400px" alt="DSSAT" src="Resources/logo.jpg">
+<img width="400px" alt="DSSAT" src="https://dssat.net/wp-content/uploads/2014/05/DSSAT-color-update.png">
 </p>
 <p align="center">
 <a href="http://dssat.net">[DSSAT Homepage]</a> | 
