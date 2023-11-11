@@ -16,8 +16,8 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
-     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, CUMDTT) !Input
-
+     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT,  !Input
+     &    DTT, CUMDTT, STT, CUMSTT) !Input
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -36,7 +36,7 @@ C=======================================================================
       INTEGER I, ISTAGE, L, LUNIO, NLAYR
       INTEGER NOUTPN, NOUTDG, RUN, RSTAGE, TIMDIF
       INTEGER YEAR, YRDOY, MDATE, YRPLT
-      REAL DTT, CUMDTT
+      REAL DTT, CUMDTT, STT, CUMSTT !Added by Khan
  
       REAL XLAI,STMWT,SDWT,WTLF,BIOMAS,RTWT,PODWT,SEEDNO
       REAL SLA,PCNL,TURFAC,CANHT,CANWH,RLV(20),HI,SHELPC,SHELLW
@@ -85,29 +85,29 @@ C=======================================================================
 C-----------------------------------------------------------------------
       DATA GROHEAD /
 !      DATA GROHEAD(1)/
-     &'! YR      Thermal Cumm.   Day    Days   Days  Grow       Fresh
+     &'! YR      AirT AirCum. SoT  SoCum. Day  Days  Days  Grow   Fresh
      &      Dry Weight                           Pod      Phot. Grow    
      &   Leaf Shell   Spec    Canopy          Root  ³    Root Length Den
      &sity   ³ Senesced mass              ',
 
 !      DATA GROHEAD(2)/
-     &'!   and   Time    Thermal Length after  after Stage  LAI  Yield  Leaf  St
+     &'!   and           Length after  after Stage  LAI  Yield  Leaf  St
      &em Tuber  Root  Crop  Tops DLeaf   HI   Wgt.   No.    Water     Ni
      &t.   Nit -ing   Leaf  Hght  Brdth      Depth  ³     cm3/cm3   of 
      &soil    ³    (kg/ha)                ',
 
 !      DATA GROHEAD(3)/
-     &'!     DOY         Time           sim    plant             Mg/Ha  ³<------
+     &'!     DOY         sim    plant             Mg/Ha  ³<------
      &--------- kg/Ha --------------->³      Kg/Ha        ³<Stress (0-1)
      &>³    %     %   Area    m     m           m   ³<------------------
      &------>³ Surface  Soil              ',
 
 !      DATA GROHEAD(4) / 
-     &'@YEAR DOY DTT     CUMDTT  DAYL   DAS    DAP   GSTD  LAID  UYAD  
-     &LWAD SWAD  UWAD  RWAD  TWAD  CWAD  DWAD  HIAD  EWAD  E#AD  WSPD  WSGD  
-     &NSTD  LN%D  SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  
+     &'@YEAR DOY DTT  CUMDTT STT CUMSTT DAYL   DAS    DAP   GSTD  LAID  
+     &UYAD LWAD SWAD  UWAD  RWAD  TWAD  CWAD  DWAD  HIAD  EWAD  E#AD    
+     &WSPD  WSGDNSTD  LN%D  SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D   
 !     &RL4D  RL5D              '/
-     &RL4D  RL5D  SNW0C  SNW1C'/
+     &RL2D  RL3D RL4D  RL5D  SNW0C  SNW1C'/
 
 C-----------------------------------------------------------------------
       DATA NITHEAD /
@@ -326,17 +326,17 @@ C
 
 !       PlantGro.out file
         IF (IDETG .EQ. 'Y') THEN
-      WRITE (NOUTDG,400)YEAR,DOY,DTT,CUMDTT,DAYL,DAS,DAP,RSTAGE,XLAI,
-     &        FRYLD,NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(SDWT*GM2KG),
-     &        NINT(RTWT*GM2KG),NINT(BIOMAS*10.0),
+      WRITE (NOUTDG,400)YEAR,DOY,DTT,CUMDTT,STT,CUMSTT,DAYL,DAS,DAP,
+     &        RSTAGE,XLAI,FRYLD,NINT(WTLF*10.0),NINT(STMWT*GM2KG),
+     &        NINT(SDWT*GM2KG),NINT(RTWT*GM2KG),NINT(BIOMAS*10.0),
      &        NINT(WTLF*10.0)+NINT(STMWT*GM2KG),NINT(DEADLF*GM2KG),HI,
      &        NINT(PODWT*GM2KG),NINT(PODNO),1.0-SWFAC,1.0-TURFAC,
      &        1.0-NSTRES,PCNL,SHELPC,SLA,CANHT,CANWH,SATFAC,
      &        (RTDEP/100),(RLV(I),I=1,5)
      &       ,NINT(CUMSENSURF), NINT(CUMSENSOIL)
- 400      FORMAT (1X,I4,1X,I3.3,2X,F4.2,1X,F5.2,2X,F6.2,3(1X,I5),
-     &          1X,F5.2,1X,F5.1,7(1X,I5),1X,F5.3,2(1X,I5),
-     &          3(1X,F5.3),2(1X,F5.2),1X,F5.1,2(1X,F5.2),
+ 400      FORMAT (1X,I4,1X,I3.3,2X,F4.2,1X,F5.2,2X,F4.2,1X,F5.2,    
+     &          2X,F6.2,3(1X,I5),1X,F5.2,1X,F5.1,7(1X,I5),1X,F5.3,
+     &          2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,2(1X,F5.2),
      &          1X,F5.3,6(1X,F5.2), 2I6)
         ENDIF
 
