@@ -49,7 +49,7 @@ C=======================================================================
 
       REAL AGEFAC, APTNUP, BIOMAS, BWAH, CANNAA, CANWAA
       REAL CANHT, CNSD1, CNSD2, CO2
-      REAL CUMDEP, CUMDTT, DEADLF, DTT, EOP, EP1, GNUP
+      REAL CUMDEP, CUMDTT, CUMSTT, DEADLF, DTT, EOP, EP1, GNUP
       REAL GRAINN, GRNWT, GRORT, LFWT, MAXLAI, NSTRES
       REAL PLANTS, PLTPOP, PODWT, ROOTN, RTDEP, RTF
       REAL RTWT, SDWTAH, SDWTPL, SEEDNI, SEEDRV, SRAD, STMWT, STOVN
@@ -115,7 +115,7 @@ C=======================================================================
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
-     &   CUMDTT) !Input
+     &   CUMDTT, STT, CUMSTT) !Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
@@ -158,10 +158,10 @@ C=======================================================================
      &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
      &    NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
      &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,  !Input
-     &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output
+     &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output !reason of putting CUMDTT? Khan
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
-     &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG,            !Output
-     &    SEASINIT)
+     &    STGDOY, TOTNUP, XSTAGE, YREMRG, CUMSTT,         !Output 
+     &    SEASINIT) !Output !why  different than decalaration? Khan
 
       CALL PT_GROSUB (SEASINIT,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
@@ -183,7 +183,7 @@ C=======================================================================
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
-     &    CUMDTT) !Input
+     &    CUMDTT, STT, CUMSTT) !Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
@@ -232,8 +232,8 @@ C=======================================================================
      &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,       !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
-     &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG,            !Output
-     &    RATE)
+     &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,    !Output
+     &    RATE) ! Different than decalaration Khan
       ENDIF
 
       IF (ISTAGE .LT. 5) THEN
@@ -269,7 +269,7 @@ C=======================================================================
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
-     &    CUMDTT) !Input
+     &    CUMDTT, STT, CUMSTT) !Input added by Khan
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
@@ -295,7 +295,7 @@ C=======================================================================
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
-     &    CUMDTT) !Input
+     &    CUMDTT, STT, CUMSTT) !Input added by Khan
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
