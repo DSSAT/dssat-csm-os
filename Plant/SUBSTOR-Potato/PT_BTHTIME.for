@@ -102,7 +102,8 @@
 
 !*---assuming development rate at supra-optimum (above optimum) temperatures during
 !*   the reproductive phase equals that at the optimum temperature
-        IF (DS.GT.1.) THEN
+        !IF (DS.GT.1.) THEN
+         IF (DS .GE. 1 .OR. DS .EQ. 0) THEN
            SD = MIN (SD,TOD)
         ELSE
            SD = SD
@@ -112,12 +113,13 @@
         IF (SD.LT.TBD .OR. SD.GT.TCD) THEN
            SU = 0.0
         ELSE
-           SU = (((TCD-TD)/(TCD-TOD))*((TD-TBD)/(TOD-TBD))**
+           SU = (((TCD-SD)/(TCD-TOD))*((SD-TBD)/(TOD-TBD))**
      &          ((TOD-TBD)/(TCD-TOD)))**TSEN
         ENDIF
 
         ST = ST + SU/24.0
-
+  18    CONTINUE
+        
 !*---daily thermal unit for phenology
         SDU  = ST
       RETURN
