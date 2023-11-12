@@ -160,7 +160,7 @@ C=======================================================================
      &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,  !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output !reason of putting CUMDTT? Khan
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
-     &    STGDOY, TOTNUP, XSTAGE, YREMRG, CUMSTT,         !Output 
+     &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,         !Output 
      &    SEASINIT) !Output !why  different than decalaration? Khan
 
       CALL PT_GROSUB (SEASINIT,

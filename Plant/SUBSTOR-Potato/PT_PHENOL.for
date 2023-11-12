@@ -132,7 +132,7 @@ C=======================================================================
 
          CALL PT_BTHTIME (
      &      DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, !Input
-     &      TDU, ETRM)                                      !Output
+     &      TDU, SDU, ETRM)                                 !Output
 
          ! replace DTT with the one calculated by PT_BTHTIME
          DTT = TDU
