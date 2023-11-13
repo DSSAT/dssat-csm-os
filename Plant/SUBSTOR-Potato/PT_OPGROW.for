@@ -42,6 +42,8 @@ C=======================================================================
       REAL SLA,PCNL,TURFAC,CANHT,CANWH,RLV(20),HI,SHELPC,SHELLW
       REAL SDSIZE,PODNO,RTDEP,NSTRES,SWFAC,SATFAC,PLTPOP,GM2KG
       REAL FRYLD,DEADLF, GRAINN
+      REAL FRYLDB, FRYLDPREV, FRYLDDELTA, TDELTA, CM, RM
+      REAL, PARAMETER :: FRYLDTHRESH = 0.1
       REAL LFWT, GPP, PCNGRN, PCNRT
       REAL PCNST, PCNVEG, ROOTN
       REAL STOVN, STOVWT
@@ -52,7 +54,7 @@ C=======================================================================
       REAL CUMSENSURF, CUMSENSOIL, CUMSENSURFN, CUMSENSOILN  
       REAL DAYL
       LOGICAL FEXIST, FIRST
-
+      LOGICAL MAXYIELDED
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -79,6 +81,19 @@ C=======================================================================
       ISWNIT  = ISWITCH % ISWNIT
 !     DAYL is embedded within WEATHER Variable Type
       DAYL    = WEATHER % DAYL
+
+!     If simulation is run every 1 day (not in case of beta thermal
+!     time)
+      TDELTA  = 1.0
+      FRYLDDELTA = 0.0
+      CM = 23.2 ! Growth rate in the linear phase, g/m^2
+      RM = 0.34;! Relative growth rate in exponential phase g/m^2
+
+!     FRYLD is Mg/Ha while while CM and RM are in g/m^2
+!     Multiply by 0.01 for g/m^2 to Mg/Ha (1Ha = 10000 m^2,
+!     1Mg=1000000g)
+      FRYLDB = ((CM/RM)*log(2.0)) * 0.01;
+
 ! Thermal
 ! Time
 
@@ -270,6 +285,19 @@ C
 !      YIELD  = TUBWT*10.*PLTPOP   
 !      FRYLD = (YIELD/1000.)/0.2    
       FRYLD = (TUBWT*10.*PLTPOP/1000.)/0.2   ! Fresh yield
+      TDELTA = DTT
+      IF (FRYLDPREV .GT. 0.0 .AND. TDELTA .GT. 0) THEN
+          ! Avoid divide by 0
+          FRYLDDELTA = ABS(FRYLD - FRYLDPREV) / TDELTA
+          IF (FRYLDDELTA .LT. FRYLDTHRESH .AND. FRYLD .GT. FRYLDB) THEN
+              IF (.NOT. MAXYIELDED) THEN
+                MAXYIELDED = .TRUE.
+                PRINT 101,'Potential Maturity Reached at DAP: ', DAP
+              END IF
+ 101          FORMAT (/, A38,I3.3, /)
+          ENDIF
+      END IF
+      FRYLDPREV = FRYLD
 
 !---------------------------------------------------------------------------
 !     Compute reported plant N variables
