@@ -22,11 +22,13 @@
 !*  ETRM    R4  Daily mean temperature effect on maint. resp -       O  *
 !*----------------------------------------------------------------------*
       SUBROUTINE PT_BTHTIME (
-     &    DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN,     !Input
+     &    DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, SOD, !Input
+     &    SCD, SSEN,
      &    TDU, SDU, ETRM)                                     !Output
       IMPLICIT NONE
       INTEGER DS
       REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU, ETRM
+      REAL SBD, SOD, SCD, SSEN
       REAL SUNRIS, SUNSET, TMEAN, TT, ST, ETR, TD, SD, SU, TU, Q10, IETR
       INTEGER I
       SAVE
@@ -93,7 +95,7 @@
 ! Soil thermal time (tuber)
       !
       !*---diurnal course of temperature
-      !DO 10 I = 1, 24
+      DO 18 I = 1, 24
         IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
           SD = TMEAN+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ELSE
@@ -102,19 +104,19 @@
 
 !*---assuming development rate at supra-optimum (above optimum) temperatures during
 !*   the reproductive phase equals that at the optimum temperature
-        !IF (DS.GT.1.) THEN
-         IF (DS .GE. 1 .OR. DS .EQ. 0) THEN
+        IF (DS.GT.1.) THEN
+         !IF (DS .GE. 1 .OR. DS .EQ. 0) THEN
            SD = MIN (SD,TOD)
         ELSE
            SD = SD
         ENDIF
 
 !*---instantaneous thermal unit based on bell-shaped temperature response
-        IF (SD.LT.TBD .OR. SD.GT.TCD) THEN
+        IF (SD.LT.SBD .OR. SD.GT.SCD) THEN
            SU = 0.0
         ELSE
-           SU = (((TCD-SD)/(TCD-TOD))*((SD-TBD)/(TOD-TBD))**
-     &          ((TOD-TBD)/(TCD-TOD)))**TSEN
+           SU = (((SCD-SD)/(SCD-SOD))*((SD-SBD)/(SOD-SBD))**
+     &          ((SOD-SBD)/(SCD-SOD)))**SSEN
         ENDIF
 
         ST = ST + SU/24.0
