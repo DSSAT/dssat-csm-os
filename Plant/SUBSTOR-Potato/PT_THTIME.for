@@ -54,7 +54,7 @@ C-----------------------------------------------------------------------
       IF (ISTAGE .GE. 6 .OR. ISTAGE .LE. 2) THEN
          IF (ST(L0) .GE. 2.0 .AND. ST(L0) .LT. 15.0) THEN
            ! STT = 0.0769*(ST(L0)-2.0)
-            STT = 0.079*(ST(L0)-2.0)
+            STT = 0.079*(ST(L0)-2.0) !value corrected by Khan
           ELSE IF (ST(L0) .GE. 15.0 .AND. ST(L0) .LT. 23.0) THEN
             STT = 1.0
           ELSE IF (ST(L0) .GE. 23.0 .AND. ST(L0) .LT. 33.0) THEN
