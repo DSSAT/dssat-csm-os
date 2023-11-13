@@ -13,10 +13,14 @@
 !*  TMIN    R4  Daily minimum temperature                    oC      I  *
 !*  DIF     R4  Daytime plant-air temperature differential   oC      I  *
 !*  DAYL    R4  Astronomic daylength (base = 0 degrees)      h       I  *
-!*  TBD     R4  Base temperature for phenology               oC      I  *
-!*  TOD     R4  Optimum temperature for phenology            oC      I  *
-!*  TCD     R4  Ceiling temperature for phenology            oC      I  *
-!*  TSEN    R4  Curvature for temperature response           -       I  *
+!*  TBD     R4  Base air temperature for phenology           oC      I  *
+!*  SBD     R4  Base soil temperature for phenology          oC      I  *
+!*  TOD     R4  Optimum air temperature for phenology        oC      I  *
+!*  SOD     R4  Optimum soil temperature for phenology       oC      I  *
+!*  TCD     R4  Ceiling air temperature for phenology        oC      I  *
+!*  SCD     R4  Ceiling soil temperature for phenology       oC      I  *     
+!*  TSEN    R4  Curvature for air temperature response       -       I  *
+!*  SSEN    R4  Curvature for soil temperature response      -       O  *
 !*  TDU     R4  Daily thermal-day unit Air                   -       O  *
 !*  SDU     R4  Daily thermal-day unit Soil                  -       O  *      
 !*  ETRM    R4  Daily mean temperature effect on maint. resp -       O  *
