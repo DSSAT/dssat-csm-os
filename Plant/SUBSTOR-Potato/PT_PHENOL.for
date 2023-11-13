@@ -47,7 +47,8 @@ C=======================================================================
       REAL SEEDRV, SENLA, SPGROF, SPRLAP, SPRLTH, SPRWT, SWSD
       REAL TC, TCPLUS, TEMP, TII, TMAX, TMIN, TOPSN, TOTNUP, TSPRWT
       REAL XDEPTH, XDTT, XPLANT, XSTAGE
-      REAL DIF, TBD, TOD, TCD, TSEN, TDU, ETRM, SDU ! Added by Khan
+      REAL DIF, TBD, TOD, TCD, TSEN, TDU, ETRM, SDU, SBD, SOD, SCD ! Added by Khan
+      REAL SSEN ! Added by Khan
 
       REAL, DIMENSION(NL) :: DLAYR, LL, ST, SW
       Type (WeatherType) WEATHER
@@ -116,9 +117,13 @@ C=======================================================================
          ! define constants
          ! DIF = ?
          TBD=5.5
-         TOD=23.4
+         TOD=23.4     
          TCD=34.6
-         TSEN=1.6
+         TSEN=1.6     
+         SBD=1.73
+         SOD=23.9     
+         SCD=36.7
+         SSEN=0.8     
 
          ! DSSAT's ISTAGE to GECROSS DS (Development Stage) mapping
          ! DS = 0 -> germination, emergence (ISTAGE 5, 6 & 7)
@@ -131,11 +136,12 @@ C=======================================================================
          ENDIF
 
          CALL PT_BTHTIME (
-     &      DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, !Input
+     &      DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, SOD,  !Input
+     &      SCD, SSEN,  
      &      TDU, SDU, ETRM)                                 !Output
 
          ! replace DTT with the one calculated by PT_BTHTIME
-         DTT = TDU
+         !DTT = TDU
          STT = SDU
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
