@@ -113,17 +113,15 @@ C=======================================================================
      &      ISTAGE, L0, ST, TMAX, TMIN,                   !Input
      &      DTT, STT)                                     !Output
 
-         ! Calculate TDU
-         ! define constants
-         ! DIF = ?
-         TBD=5.5
-         TOD=23.4     
-         TCD=34.6
-         TSEN=1.6     
-         SBD=1.73
-         SOD=23.9     
-         SCD=36.7
-         SSEN=0.8     
+         DIF = 0.0
+         TBD=5.5  !from Khan et al., 2019_Field_Crops_Res_242
+         TOD=23.4 !from Khan et al., 2019_Field_Crops_Res_242   
+         TCD=34.6 !from Khan et al., 2019_Field_Crops_Res_242
+         TSEN=1.6 !from Khan et al., 2019_Field_Crops_Res_242   
+         SBD=1.73 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
+         SOD=23.9 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171    
+         SCD=36.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
+         SSEN=0.8 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171   
 
          ! DSSAT's ISTAGE to GECROSS DS (Development Stage) mapping
          ! DS = 0 -> germination, emergence (ISTAGE 5, 6 & 7)
@@ -141,7 +139,7 @@ C=======================================================================
      &      TDU, SDU, ETRM)                                 !Output
 
          ! replace DTT with the one calculated by PT_BTHTIME
-         !DTT = TDU
+         DTT = TDU
          STT = SDU
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
