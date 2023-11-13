@@ -81,7 +81,7 @@ C-----------------------------------------------------------------------
      &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
 
 !      DATA  LALWR, SLAN /270.,0./
-      DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
+!      DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
      
 !***********************************************************************
 !***********************************************************************
@@ -92,7 +92,7 @@ C-----------------------------------------------------------------------
       CALL PT_IPGRO(
      &    FILEIO,                                         !Input
      &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,           !Output
-     &    SDWTPL, RUE1, RUE2, SENSF, SENST)               !Output
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST, LALWR)        !Output
 
       IF (PLME .EQ. 'B') THEN
         !Bed width ratio = Bed width / Row Spacing
@@ -695,7 +695,7 @@ C=======================================================================
       SUBROUTINE PT_IPGRO(
      &    FILEIO,                                         !Input
      &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,           !Output
-     &    SDWTPL, RUE1, RUE2, SENSF, SENST)               !Output
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST, LALWR)   !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -723,6 +723,7 @@ C=======================================================================
       INTEGER ERR, FOUND, I, J, LINC, LNUM, PATHL, ISECT
 
       REAL G2, G3, PD, PLTPOP, SDWTPL, RUE1, RUE2
+      REAL LALWR
       REAL, DIMENSION(4) :: SENST, SENSF
       REAL CO2X(10), CO2Y(10)
       
@@ -769,8 +770,8 @@ C     Read crop genetic information
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
         IF (INDEX ('PT',CROP) .GT. 0) THEN
-          READ (LUNIO,'(24X,A6,1X,3F6.0)',IOSTAT=ERR) 
-     &          ECONO, G2, G3, PD
+          READ (LUNIO,'(24X,A6,1X,3F6.0,12X,F6.0)',IOSTAT=ERR)
+     &          ECONO, G2, G3, PD, LALWR
           LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF

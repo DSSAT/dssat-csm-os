@@ -717,7 +717,7 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !       Substor potato
         CASE ('PTSUB')
                WRITE (LUNIO,1400,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &               G2,G3,PD,P2,TC
+     &               G2,G3,PD,P2,TC,LALWR
 !     &               G2,G3,G4,PD,P2,TC
 
 !       CaneGro sugarcane
@@ -816,7 +816,7 @@ C-----------------------------------------------------------------------
      &        F6.0,2F6.2,F6.2,7F6.1, 2F6.2, 1X, F5.4,7F6.1,F6.2,2F6.0,
      &        F6.1,F6.2,F6.2,F6.2,3F6.2,2F6.2)
 
- 1400 FORMAT (A6,1X,A16,1X,A6,1X,F6.0,4(F6.1))
+ 1400 FORMAT (A6,1X,A16,1X,A6,1X,F6.0,5(F6.1))
  1500 FORMAT (A6,1X,A16,1X,A6,F6.2,F6.3,5F6.2,F6.3,2F6.1,F6.2,
      &        F6.3,3F6.2,F6.1,2F6.3)
  1550 FORMAT (A6,1X,A16,1X,A6,A)
