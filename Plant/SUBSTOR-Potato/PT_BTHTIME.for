@@ -25,9 +25,21 @@
 !*  SDU     R4  Daily thermal-day unit Soil                  -       O  *      
 !*  ETRM    R4  Daily mean temperature effect on maint. resp -       O  *
 !*----------------------------------------------------------------------*
+C=======================================================================
+C  PT_BTHTIME, Subroutine
+C
+C  Determines Beta thermal time calculations
+C-----------------------------------------------------------------------
+C  Revision history
+C
+C               Written
+C  10/30/2023 MSKhan added Beta thermal time sub-routine following Yin et al., 2003 
+C  
+C=======================================================================
+
       SUBROUTINE PT_BTHTIME (
-     &    ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, SOD, !Input
-     &    SCD, SSEN,                                                !Input
+     &    ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD,  !Input
+     &    SOD, SCD, SSEN,         !Input
      &    TDU, SDU, ETRM)                                           !Output
       IMPLICIT NONE
       !INTEGER DS
