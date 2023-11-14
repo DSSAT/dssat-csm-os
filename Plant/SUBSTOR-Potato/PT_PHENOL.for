@@ -127,20 +127,20 @@ C=======================================================================
          ! DS = 0 -> germination, emergence (ISTAGE 5, 6 & 7)
          ! DS = 1 -> tuber initiation (ISTAGE 1)
          ! DS = 2 -> maturity (ISTAGE 2)
-         IF (ISTAGE .GE. 5 .AND. ISTAGE .LE. 7) THEN
-             DS = 0.0
-         ELSE
-             DS = ISTAGE
-         ENDIF
+c         IF (ISTAGE .GE. 5 .AND. ISTAGE .LE. 7) THEN
+c             DS = 0.0
+c         ELSE
+c             DS = ISTAGE
+c         ENDIF
 
          CALL PT_BTHTIME (
-     &      DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, SOD,  !Input
+     &      ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, SOD,  !Input
      &      SCD, SSEN,  
      &      TDU, SDU, ETRM)                                 !Output
 
          ! replace DTT with the one calculated by PT_BTHTIME
-         DTT = TDU
-         STT = SDU
+         !DTT = TDU
+         !STT = SDU
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
          CUMSTT = CUMSTT + STT
