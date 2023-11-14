@@ -26,11 +26,12 @@
 !*  ETRM    R4  Daily mean temperature effect on maint. resp -       O  *
 !*----------------------------------------------------------------------*
       SUBROUTINE PT_BTHTIME (
-     &    DS, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, SOD, !Input
+     &    ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, SOD, !Input
      &    SCD, SSEN,                                                !Input
      &    TDU, SDU, ETRM)                                           !Output
       IMPLICIT NONE
-      INTEGER DS
+      !INTEGER DS
+      INTEGER ISTAGE
       REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU, ETRM
       REAL SBD, SOD, SCD, SSEN
       REAL SUNRIS, SUNSET, TMEAN, TT, ST, ETR, TD, SU, TU, Q10, IETR
@@ -53,7 +54,10 @@
       TT     = 0.0
       ST     = 0.0
       ETR    = 0.0
-      
+      TDU    = 0.0
+      SDU    = 0.0
+      ETRM   = 0.0
+
 !*---diurnal course of temperature
       DO 10 I = 1, 24
         IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
@@ -64,7 +68,8 @@
 
 !*---assuming development rate at supra-optimum (above optimum) temperatures during
 !*   the reproductive phase equals that at the optimum temperature
-        IF (DS.GT.1.) THEN
+        ! IF (DS.GT.1.) THEN
+        IF (ISTAGE.EQ.2) THEN
            TD = MIN (TD,TOD)
         ELSE
            TD = TD
@@ -95,8 +100,12 @@
   10  CONTINUE
 
 !*---daily thermal unit for phenology
-      TDU  = TT
-      SDU  = ST
+      IF (ISTAGE .LE. 4) THEN
+        TDU  = TT
+      END IF
+      IF (ISTAGE .GE. 6 .OR. ISTAGE .LE. 2) THEN
+        SDU  = ST
+      END IF
 
 !*---daily average of temperature effect on maintenance respiration
       ETRM = ETR
