@@ -134,13 +134,13 @@ c             DS = ISTAGE
 c         ENDIF
 
          CALL PT_BTHTIME (
-     &      ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, SOD,  !Input
-     &      SCD, SSEN,  
+     &      ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, !Input
+     &      SOD, SCD, SSEN,  
      &      TDU, SDU, ETRM)                                 !Output
 
          ! replace DTT with the one calculated by PT_BTHTIME
-         !DTT = TDU
-         !STT = SDU
+         DTT = TDU
+         STT = SDU
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
          CUMSTT = CUMSTT + STT
