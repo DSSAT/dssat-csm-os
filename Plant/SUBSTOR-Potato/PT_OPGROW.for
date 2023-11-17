@@ -87,7 +87,7 @@ C=======================================================================
       TDELTA  = 1.0
       FRYLDDELTA = 0.0
       CM = 23.2 ! Growth rate in the linear phase, g/m^2
-      RM = 0.34;! Relative growth rate in exponential phase g/m^2
+      RM = 0.34 ! Relative growth rate in exponential phase g/m^2
 
 !     FRYLD is Mg/Ha while while CM and RM are in g/m^2
 !     Multiply by 0.01 for g/m^2 to Mg/Ha (1Ha = 10000 m^2,
