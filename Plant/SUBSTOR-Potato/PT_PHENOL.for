@@ -118,10 +118,14 @@ C=======================================================================
          TOD=23.4 !from Khan et al., 2019_Field_Crops_Res_242   
          TCD=34.6 !from Khan et al., 2019_Field_Crops_Res_242
          TSEN=1.6 !from Khan et al., 2019_Field_Crops_Res_242   
-         SBD=1.73 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
-         SOD=23.9 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171    
-         SCD=36.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
-         SSEN=0.8 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171   
+         SBD=2.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
+         SOD=24.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171    
+         SCD=36.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
+         SSEN=0.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171  
+         !SBD=3.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
+         !SOD=23.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)   
+         !SCD=33.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
+         !SSEN=1.0 !Assumed 
 
          ! DSSAT's ISTAGE to GECROSS DS (Development Stage) mapping
          ! DS = 0 -> germination, emergence (ISTAGE 5, 6 & 7)
