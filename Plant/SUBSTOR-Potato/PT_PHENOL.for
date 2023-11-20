@@ -138,16 +138,26 @@ c             DS = ISTAGE
 c         ENDIF
 
          CALL PT_BTHTIME (
+     &      ISTAGE,  TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
+     &      TSEN, SBD, SOD, SCD, SSEN,  
+     &      TDU, SDU, ETRM)                                 !Output
+         
+       CALL PT_BTHTIME_2 (
      &      ISTAGE,  L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
      &      TSEN, SBD, SOD, SCD, SSEN,  
      &      TDU, SDU, ETRM)                                 !Output
 
+
          ! replace DTT with the one calculated by PT_BTHTIME
          DTT = TDU
          STT = SDU
+         DTT_2 = TDU_2
+         STT_2 = SDU_2
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
+         CUMDTT = CUMDTT + DTT_2
          CUMSTT = CUMSTT + STT
+         CUMSTT_2 = CUMSTT + STT_2
       END IF
 
       IF (ISTAGE .LT. 3) THEN             ! Relative temp. factor
