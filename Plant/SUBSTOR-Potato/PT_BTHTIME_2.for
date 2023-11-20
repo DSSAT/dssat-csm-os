@@ -37,10 +37,10 @@ C  10/30/2023 MSKhan added Beta thermal time sub-routine following Yin et al., 2
 C  
 C=======================================================================
 
-      SUBROUTINE PT_BTHTIME (
+      SUBROUTINE PT_BTHTIME_2 (
      &    ISTAGE, L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,   !Input
      &    TSEN, SBD, SOD, SCD, SSEN,         !Input
-     &    TDU, SDU, ETRM)                                           !Output
+     &    TDU_2, SDU_2, ETRM)                                     !Output
       
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -73,8 +73,8 @@ C=======================================================================
       TT     = 0.0
       SS     = 0.0
       ETR    = 0.0
-      TDU    = 0.0
-      SDU    = 0.0
+      TDU_2  = 0.0
+      SDU_2  = 0.0
       ETRM   = 0.0
 
 !*---diurnal course of temperature
@@ -93,12 +93,10 @@ C=======================================================================
         ! IF (DS.GT.1.) THEN
         IF (ISTAGE.EQ.2) THEN
            TD = MIN (TD,TOD)
-           !SD = MIN (SD,SOD)
            ST(L0) = MIN (ST(L0),SOD)
            
         ELSE
            TD = TD
-           !SD = SD
            ST(L0) = ST(L0)
           
         ENDIF
@@ -119,7 +117,6 @@ C=======================================================================
         ENDIF
 
         TT = TT + TU/24.0
-        !ST = ST + SU/24.0
         SS = SS + SU/24.0
 
 !*---effect of instantaneous temperature on maintenance respiration
@@ -130,10 +127,10 @@ C=======================================================================
 
 !*---daily thermal unit for phenology
       IF (ISTAGE .LE. 4) THEN
-        TDU  = TT
+        TDU_2  = TT
       END IF
       IF (ISTAGE .GE. 6 .OR. ISTAGE .LE. 2) THEN
-        SDU  = SS
+        SDU_2  = SS
       END IF
 
 !*---daily average of temperature effect on maintenance respiration
