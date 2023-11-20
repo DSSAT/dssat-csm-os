@@ -94,10 +94,12 @@ C=======================================================================
         IF (ISTAGE.EQ.2) THEN
            TD = MIN (TD,TOD)
            !SD = MIN (SD,SOD)
+           ST(L0) = MIN (ST(L0),SOD)
            
         ELSE
            TD = TD
            !SD = SD
+           ST(L0) = ST(L0)
           
         ENDIF
 
