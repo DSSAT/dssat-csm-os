@@ -46,7 +46,7 @@ C=======================================================================
       INTEGER ISTAGE
       REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU, ETRM
       REAL SBD, SOD, SCD, SSEN
-      REAL SUNRIS, SUNSET, TMEAN, TT, ST, ETR, TD, SU, TU, Q10, IETR
+      REAL SUNRIS, SUNSET, TMEAN, TT, ST, ETR, TD, SD, SU, TU, Q10, IETR
       INTEGER I
       SAVE
 
@@ -74,10 +74,13 @@ C=======================================================================
       DO 10 I = 1, 24
         IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
           TD = TMEAN+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          SD = TMEAN+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ELSE
           TD = TMEAN    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          SD = TMEAN    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ENDIF
-
+        
+        
 !*---assuming development rate at supra-optimum (above optimum) temperatures during
 !*   the reproductive phase equals that at the optimum temperature
         ! IF (DS.GT.1.) THEN
@@ -95,10 +98,10 @@ C=======================================================================
      &          ((TOD-TBD)/(TCD-TOD)))**TSEN
         ENDIF
 
-        IF (TD.LT.SBD .OR. TD.GT.SCD) THEN
+        IF (SD.LT.SBD .OR. SD.GT.SCD) THEN
            SU = 0.0
         ELSE
-           SU = (((SCD-TD)/(SCD-SOD))*((TD-SBD)/(SOD-SBD))**
+           SU = (((SCD-SD)/(SCD-SOD))*((SD-SBD)/(SOD-SBD))**
      &          ((SOD-SBD)/(SCD-SOD)))**SSEN
         ENDIF
 
