@@ -38,16 +38,23 @@ C
 C=======================================================================
 
       SUBROUTINE PT_BTHTIME (
-     &    ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD,  !Input
-     &    SOD, SCD, SSEN,         !Input
+     &    ISTAGE, L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,   !Input
+     &    TSEN, SBD, SOD, SCD, SSEN,         !Input
      &    TDU, SDU, ETRM)                                           !Output
+      
+!     ------------------------------------------------------------------
+      USE ModuleDefs     !Definitions of constructed variable types, 
+                         ! which contain control information, soil
+                         ! parameters, hourly weather data.
+!     NL defined in ModuleDefs.for
+      
       IMPLICIT NONE
       !INTEGER DS
-      INTEGER ISTAGE
+      INTEGER ISTAGE, L0, I
       REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU, ETRM
       REAL SBD, SOD, SCD, SSEN
-      REAL SUNRIS, SUNSET, TMEAN, TT, ST, ETR, TD, SD, SU, TU, Q10, IETR
-      INTEGER I
+      REAL SUNRIS, SUNSET, TMEAN, TT, SS, ETR, TD, SD, SU, TU, Q10, IETR
+      REAL ST(NL)
       SAVE
 
 ! Mathematical equation to fortran variables mapping:
@@ -64,7 +71,7 @@ C=======================================================================
 !*---mean daily temperature
       TMEAN  = (TMAX + TMIN)/2.0
       TT     = 0.0
-      ST     = 0.0
+      SS     = 0.0
       ETR    = 0.0
       TDU    = 0.0
       SDU    = 0.0
@@ -86,8 +93,12 @@ C=======================================================================
         ! IF (DS.GT.1.) THEN
         IF (ISTAGE.EQ.2) THEN
            TD = MIN (TD,TOD)
+           !SD = MIN (SD,SOD)
+           
         ELSE
            TD = TD
+           !SD = SD
+          
         ENDIF
 
 !*---instantaneous thermal unit based on bell-shaped temperature response
@@ -98,15 +109,16 @@ C=======================================================================
      &          ((TOD-TBD)/(TCD-TOD)))**TSEN
         ENDIF
 
-        IF (SD.LT.SBD .OR. SD.GT.SCD) THEN
+        IF (ST(L0).LT.SBD .OR. ST(L0).GT.SCD) THEN
            SU = 0.0
         ELSE
-           SU = (((SCD-SD)/(SCD-SOD))*((SD-SBD)/(SOD-SBD))**
+            SU = (((SCD-ST(L0))/(SCD-SOD))*((ST(L0)-SBD)/(SOD-SBD))**
      &          ((SOD-SBD)/(SCD-SOD)))**SSEN
         ENDIF
 
         TT = TT + TU/24.0
-        ST = ST + SU/24.0
+        !ST = ST + SU/24.0
+        SS = SS + SU/24.0
 
 !*---effect of instantaneous temperature on maintenance respiration
         Q10  = 2.0
@@ -119,7 +131,7 @@ C=======================================================================
         TDU  = TT
       END IF
       IF (ISTAGE .GE. 6 .OR. ISTAGE .LE. 2) THEN
-        SDU  = ST
+        SDU  = SS
       END IF
 
 !*---daily average of temperature effect on maintenance respiration
