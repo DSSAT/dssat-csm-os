@@ -38,7 +38,7 @@ C
 C=======================================================================
 
       SUBROUTINE PT_BTHTIME (
-     &    ISTAGE, L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,   !Input
+     &    ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,   !Input
      &    TSEN, SBD, SOD, SCD, SSEN,         !Input
      &    TDU, SDU, ETRM)                                           !Output
       
@@ -50,11 +50,10 @@ C=======================================================================
       
       IMPLICIT NONE
       !INTEGER DS
-      INTEGER ISTAGE, L0, I
+      INTEGER ISTAGE, I
       REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU, ETRM
       REAL SBD, SOD, SCD, SSEN
       REAL SUNRIS, SUNSET, TMEAN, TT, SS, ETR, TD, SD, SU, TU, Q10, IETR
-      REAL ST(NL)
       SAVE
 
 ! Mathematical equation to fortran variables mapping:
@@ -93,13 +92,13 @@ C=======================================================================
         ! IF (DS.GT.1.) THEN
         IF (ISTAGE.EQ.2) THEN
            TD = MIN (TD,TOD)
-           !SD = MIN (SD,SOD)
-           ST(L0) = MIN (ST(L0),SOD)
+           SD = MIN (SD,SOD)
+           
            
         ELSE
            TD = TD
-           !SD = SD
-           ST(L0) = ST(L0)
+           SD = SD
+           
           
         ENDIF
 
@@ -111,10 +110,10 @@ C=======================================================================
      &          ((TOD-TBD)/(TCD-TOD)))**TSEN
         ENDIF
 
-        IF (ST(L0).LT.SBD .OR. ST(L0).GT.SCD) THEN
+        IF (SD.LT.SBD .OR. SD.GT.SCD) THEN
            SU = 0.0
         ELSE
-            SU = (((SCD-ST(L0))/(SCD-SOD))*((ST(L0)-SBD)/(SOD-SBD))**
+            SU = (((SCD-SD)/(SCD-SOD))*((SD-SBD)/(SOD-SBD))**
      &          ((SOD-SBD)/(SCD-SOD)))**SSEN
         ENDIF
 
