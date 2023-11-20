@@ -138,8 +138,8 @@ c             DS = ISTAGE
 c         ENDIF
 
          CALL PT_BTHTIME (
-     &      ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, SBD, !Input
-     &      SOD, SCD, SSEN,  
+     &      ISTAGE,  L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
+     &      TSEN, SBD, SOD, SCD, SSEN,  
      &      TDU, SDU, ETRM)                                 !Output
 
          ! replace DTT with the one calculated by PT_BTHTIME
