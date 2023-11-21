@@ -23,7 +23,6 @@
 !*  SSEN    R4  Curvature for soil temperature response      -       O  *
 !*  TDU     R4  Daily thermal-day unit Air                   -       O  *
 !*  SDU     R4  Daily thermal-day unit Soil                  -       O  *      
-!*  ETRM    R4  Daily mean temperature effect on maint. resp -       O  *
 !*----------------------------------------------------------------------*
 C=======================================================================
 C  PT_BTHTIME, Subroutine
@@ -40,7 +39,7 @@ C=======================================================================
       SUBROUTINE PT_BTHTIME (
      &    ISTAGE, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,   !Input
      &    TSEN, SBD, SOD, SCD, SSEN,         !Input
-     &    TDU, SDU, ETRM)                                           !Output
+     &    TDU, SDU)                                           !Output
       
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -51,9 +50,9 @@ C=======================================================================
       IMPLICIT NONE
       !INTEGER DS
       INTEGER ISTAGE, I
-      REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU, ETRM
+      REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU
       REAL SBD, SOD, SCD, SSEN
-      REAL SUNRIS, SUNSET, TMEAN, TT, SS, ETR, TD, SD, SU, TU, Q10, IETR
+      REAL SUNRIS, SUNSET, TMEAN, TT, SS, TD, SD, SU, TU
       SAVE
 
 ! Mathematical equation to fortran variables mapping:
@@ -71,10 +70,8 @@ C=======================================================================
       TMEAN  = (TMAX + TMIN)/2.0
       TT     = 0.0
       SS     = 0.0
-      ETR    = 0.0
       TDU    = 0.0
       SDU    = 0.0
-      ETRM   = 0.0
 
 !*---diurnal course of temperature
       DO 10 I = 1, 24
@@ -122,9 +119,6 @@ C=======================================================================
         SS = SS + SU/24.0
 
 !*---effect of instantaneous temperature on maintenance respiration
-        Q10  = 2.0
-        IETR = Q10**((TD-20.0)/10.0)
-        ETR  = ETR + IETR/24.0
   10  CONTINUE
 
 !*---daily thermal unit for phenology
@@ -136,7 +130,6 @@ C=======================================================================
       END IF
 
 !*---daily average of temperature effect on maintenance respiration
-      ETRM = ETR
         
       RETURN
       END SUBROUTINE PT_BTHTIME
