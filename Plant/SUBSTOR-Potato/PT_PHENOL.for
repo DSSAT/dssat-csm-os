@@ -38,17 +38,17 @@ C=======================================================================
       INTEGER MDATE, NDAS, NLAYR, YEAR, YRDOY, YRPLT, YRSIM
       INTEGER YREMRG
       INTEGER STGDOY(20)
-      INTEGER DS
+      !INTEGER DS
 
-      REAL APTNUP, CTII, CUMDTT, CUMSTT, DTT
+      REAL APTNUP, CTII, CUMDTT, CUMSTT
       REAL GNUP, GRAINN, GRF, GRORT, GROSPR, XLAI, MAXLAI
       REAL NSTRES, P2, TWILEN, PLANTS, PLTPOP
       REAL RDLF, RTF, RTWT, SDEPTH, STT, SWFAC, SEEDAV
       REAL SEEDRV, SENLA, SPGROF, SPRLAP, SPRLTH, SPRWT, SWSD
       REAL TC, TCPLUS, TEMP, TII, TMAX, TMIN, TOPSN, TOTNUP, TSPRWT
       REAL XDEPTH, XDTT, XPLANT, XSTAGE
-      REAL DIF, TBD, TOD, TCD, TSEN, TDU, ETRM, SDU, SBD, SOD, SCD ! Added by Khan
-      REAL SSEN ! Added by Khan
+      REAL DIF, TBD, TOD, TCD, TSEN, TDU, SDU, SBD, SOD, SCD ! Added by Khan
+      REAL SSEN, DTT, TDU_2, SDU_2 ! Added by Khan
 
       REAL, DIMENSION(NL) :: DLAYR, LL, ST, SW
       Type (WeatherType) WEATHER
@@ -93,7 +93,6 @@ C=======================================================================
       SENLA  = 0.0
       TOTNUP = 0.0
       TDU    = 0.0
-      ETRM   = 0.0
       ISDATE = 0
 
 !***********************************************************************
@@ -140,24 +139,23 @@ c         ENDIF
          CALL PT_BTHTIME (
      &      ISTAGE,  TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
      &      TSEN, SBD, SOD, SCD, SSEN,  
-     &      TDU, SDU, ETRM)                                 !Output
-         
+     &      TDU, SDU)                                 !Output
+     
+         ! replace DTT and STT with the one calculated by PT_BTHTIME
+         DTT = TDU
+         STT = SDU
+      
        CALL PT_BTHTIME_2 (
      &      ISTAGE,  L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
      &      TSEN, SBD, SOD, SCD, SSEN,  
-     &      TDU, SDU, ETRM)                                 !Output
+     &      TDU_2, SDU_2)                                 !Output
 
-
-         ! replace DTT with the one calculated by PT_BTHTIME
-         DTT = TDU
-         STT = SDU
-         DTT_2 = TDU_2
-         STT_2 = SDU_2
+         ! replace DTT & STT with the one calculated by PT_BTHTIME_2
+         DTT = TDU_2
+         STT = SDU_2
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
-         CUMDTT = CUMDTT + DTT_2
          CUMSTT = CUMSTT + STT
-         CUMSTT_2 = CUMSTT + STT_2
       END IF
 
       IF (ISTAGE .LT. 3) THEN             ! Relative temp. factor
@@ -402,7 +400,6 @@ C-----------------------------------------------------------------------
       INTEGER LUNIO
       CHARACTER*1, PARAMETER :: BLANK = ' '
       CHARACTER*6, PARAMETER :: ERRKEY = 'PHENPT '
-
       CHARACTER*2   CROP
       CHARACTER*6   SECTION
       CHARACTER*30  FILEIO

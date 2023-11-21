@@ -23,7 +23,6 @@
 !*  SSEN    R4  Curvature for soil temperature response      -       O  *
 !*  TDU     R4  Daily thermal-day unit Air                   -       O  *
 !*  SDU     R4  Daily thermal-day unit Soil                  -       O  *      
-!*  ETRM    R4  Daily mean temperature effect on maint. resp -       O  *
 !*----------------------------------------------------------------------*
 C=======================================================================
 C  PT_BTHTIME, Subroutine
@@ -40,7 +39,7 @@ C=======================================================================
       SUBROUTINE PT_BTHTIME_2 (
      &    ISTAGE, L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,   !Input
      &    TSEN, SBD, SOD, SCD, SSEN,         !Input
-     &    TDU_2, SDU_2, ETRM)                                     !Output
+     &    TDU, SDU)                                     !Output
       
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -51,9 +50,9 @@ C=======================================================================
       IMPLICIT NONE
       !INTEGER DS
       INTEGER ISTAGE, L0, I
-      REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU, ETRM
+      REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU
       REAL SBD, SOD, SCD, SSEN
-      REAL SUNRIS, SUNSET, TMEAN, TT, SS, ETR, TD, SD, SU, TU, Q10, IETR
+      REAL SUNRIS, SUNSET, TMEAN, TT, TD, TU, SS, SD, SU
       REAL ST(NL)
       SAVE
 
@@ -72,33 +71,33 @@ C=======================================================================
       TMEAN  = (TMAX + TMIN)/2.0
       TT     = 0.0
       SS     = 0.0
-      ETR    = 0.0
-      TDU_2  = 0.0
-      SDU_2  = 0.0
-      ETRM   = 0.0
+      TDU  = 0.0
+      SDU  = 0.0
 
+      PRINT 101, 'TMIN', TMIN, 'TMAX', TMAX, 'ST(L0)', ST(L0)
+ 101  FORMAT(A5, F6.2, A5, F6.2, A7, F6.2)
 !*---diurnal course of temperature
       DO 10 I = 1, 24
         IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
           TD = TMEAN+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-          SD = TMEAN+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          SD = ST(L0)+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ELSE
           TD = TMEAN    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-          SD = TMEAN    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          SD = ST(L0)   +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ENDIF
-        
+
+        PRINT 102, 'HR', I, 'SD', SD
+ 102    FORMAT(A3, I2, A3, F6.2)
         
 !*---assuming development rate at supra-optimum (above optimum) temperatures during
 !*   the reproductive phase equals that at the optimum temperature
         ! IF (DS.GT.1.) THEN
         IF (ISTAGE.EQ.2) THEN
            TD = MIN (TD,TOD)
-           ST(L0) = MIN (ST(L0),SOD)
-           
+           SD = MIN (SD,SOD)
         ELSE
            TD = TD
-           ST(L0) = ST(L0)
-          
+           SD = SD
         ENDIF
 
 !*---instantaneous thermal unit based on bell-shaped temperature response
@@ -109,10 +108,10 @@ C=======================================================================
      &          ((TOD-TBD)/(TCD-TOD)))**TSEN
         ENDIF
 
-        IF (ST(L0).LT.SBD .OR. ST(L0).GT.SCD) THEN
+        IF (SD.LT.SBD .OR. SD.GT.SCD) THEN
            SU = 0.0
         ELSE
-            SU = (((SCD-ST(L0))/(SCD-SOD))*((ST(L0)-SBD)/(SOD-SBD))**
+           SU = (((SCD-SD)/(SCD-SOD))*((SD-SBD)/(SOD-SBD))**
      &          ((SOD-SBD)/(SCD-SOD)))**SSEN
         ENDIF
 
@@ -120,21 +119,15 @@ C=======================================================================
         SS = SS + SU/24.0
 
 !*---effect of instantaneous temperature on maintenance respiration
-        Q10  = 2.0
-        IETR = Q10**((TD-20.0)/10.0)
-        ETR  = ETR + IETR/24.0
   10  CONTINUE
 
 !*---daily thermal unit for phenology
       IF (ISTAGE .LE. 4) THEN
-        TDU_2  = TT
+        TDU  = TT
       END IF
       IF (ISTAGE .GE. 6 .OR. ISTAGE .LE. 2) THEN
-        SDU_2  = SS
+        SDU  = SS
       END IF
-
-!*---daily average of temperature effect on maintenance respiration
-      ETRM = ETR
         
       RETURN
-      END SUBROUTINE PT_BTHTIME
+      END SUBROUTINE PT_BTHTIME_2
