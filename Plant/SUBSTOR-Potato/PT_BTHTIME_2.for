@@ -52,7 +52,7 @@ C=======================================================================
       INTEGER ISTAGE, L0, I
       REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU
       REAL SBD, SOD, SCD, SSEN
-      REAL SUNRIS, SUNSET, TMEAN, TT, TD, TU, SS, SD, SU
+      REAL SUNRIS, SUNSET, TMEAN, TT, TD, TU, SS, SD, SU, XTEMP
       REAL ST(NL)
       SAVE
 
@@ -68,7 +68,8 @@ C=======================================================================
       SUNSET = 12.0 + 0.5*DAYL
 
 !*---mean daily temperature
-      TMEAN  = (TMAX + TMIN)/2.0
+      !TMEAN  = (TMAX + TMIN)/2.0
+      XTEMP  = (TMAX + TMIN)/2.0
       TT     = 0.0
       SS     = 0.0
       TDU  = 0.0
@@ -79,10 +80,10 @@ C=======================================================================
 !*---diurnal course of temperature
       DO 10 I = 1, 24
         IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
-          TD = TMEAN+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          TD = XTEMP+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
           SD = ST(L0)+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ELSE
-          TD = TMEAN    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          TD = XTEMP    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
           SD = ST(L0)   +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ENDIF
 
