@@ -199,7 +199,7 @@ C=======================================================================
 
       STI = AMIN1 (STI,1.0)
       SWI = 1.0
-      IF (SW(1) .LT. DUL(1)) THEN
+      IF (SW(1) .LT. DUL(1) .AND. SAT(1) .GT. SW(1)) THEN
          SWI = (SAT(1)-DUL(1))/(SAT(1)-SW(1))
       ENDIF
 
