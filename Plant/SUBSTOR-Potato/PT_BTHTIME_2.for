@@ -75,8 +75,8 @@ C=======================================================================
       TDU  = 0.0
       SDU  = 0.0
 
-      PRINT 101, 'TMIN', TMIN, 'TMAX', TMAX, 'ST(L0)', ST(L0)
- 101  FORMAT(A5, F6.2, A5, F6.2, A7, F6.2)
+      !PRINT 101, 'TMIN', TMIN, 'TMAX', TMAX, 'ST(L0)', ST(L0)
+ !101  FORMAT(A5, F6.2, A5, F6.2, A7, F6.2)
 !*---diurnal course of temperature
       DO 10 I = 1, 24
         IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
@@ -87,8 +87,8 @@ C=======================================================================
           SD = ST(L0)   +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ENDIF
 
-        PRINT 102, 'HR', I, 'SD', SD
- 102    FORMAT(A3, I2, A3, F6.2)
+        !PRINT 102, 'HR', I, 'SD', SD
+ !102    FORMAT(A3, I2, A3, F6.2)
         
 !*---assuming development rate at supra-optimum (above optimum) temperatures during
 !*   the reproductive phase equals that at the optimum temperature
