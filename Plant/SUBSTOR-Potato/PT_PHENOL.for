@@ -142,8 +142,8 @@ c         ENDIF
      &      TDU, SDU)                                 !Output
      
          ! replace DTT and STT with the one calculated by PT_BTHTIME
-         DTT = TDU
-         STT = SDU
+         !DTT = TDU
+         !STT = SDU
       
        CALL PT_BTHTIME_2 (
      &      ISTAGE,  L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
