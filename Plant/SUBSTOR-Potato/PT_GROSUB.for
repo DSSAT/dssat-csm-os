@@ -81,7 +81,7 @@ C-----------------------------------------------------------------------
      &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
 
 !      DATA  LALWR, SLAN /270.,0./
-!      DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
+!      DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g) MSKhan, moved to CUL file
      
 !***********************************************************************
 !***********************************************************************
@@ -94,13 +94,16 @@ C-----------------------------------------------------------------------
      &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,           !Output
      &    SDWTPL, RUE1, RUE2, SENSF, SENST, LALWR)        !Output
 
-      IF (PLME .EQ. 'B') THEN
+      IF (PLME .EQ. 'B') THEN 
+      !IF (PLME .EQ. 'S') THEN ! MSKhan
         !Bed width ratio = Bed width / Row Spacing
         !For now, this ratio will be coded in (could use the ROWSPC
         !  variable in FILEX in the future). CHP
         BWRATIO = 0.5
+        !BWRATIO = 0.3 !MSKhan
       ELSE
         BWRATIO = 1.0
+        !BWRATIO = 0.5 !MSKhan
       ENDIF
 
       FIRST = .TRUE.
@@ -205,7 +208,7 @@ C-----------------------------------------------------------------------
           XLAI    = XLAI * BWRATIO            !WM
         ENDIF                                 !WM
         LFWT    = 0.093                
-        PLA     = 25.0        !cm2/plant             
+        PLA     = 25.0        !cm2/plant
         STMWT   = LFWT                 
         TOPWT   = 0.186                
         IF (ISWNIT .EQ. 'Y') THEN
@@ -247,9 +250,11 @@ C-----------------------------------------------------------------------
           PRFT  = AMAX1 (PRFT,0.0)
           PRFT  = AMIN1 (PRFT,1.0)
 
-      ELSEIF (TEMPM .GT. 14 .AND. TEMPM .LE. 24) THEN
+      !ELSEIF (TEMPM .GT. 14 .AND. TEMPM .LE. 24) THEN
+      ELSEIF (TEMPM .GT. 14 .AND. TEMPM .LE. 25) THEN !MSKhan
           PRFT = 1.0
-      ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
+      !ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
+      ELSEIF (TEMPM .GT. 25 .AND. TEMPM .LE. 35) THEN !MSKhan (Raymundo et al., 2018. European Journal of Agronomy, 100, 87-98)
 !         RR linear function from 24 to 40  y = -0.0909x + 3.1818      
           PRFT = -0.0909*(TEMPM) + 3.1818 
       ELSE
@@ -499,7 +504,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! Calculation of potential growth .. Set priorities for carbon
           !
 !          PTUBGR  = G3*ETGT/PLTPOP    !CHP
-           !PTUBGR  = G3 * PCO2 * ETGT/PLTPOP          !JIL   (Modified)
+          !PTUBGR  = G3 * PCO2 * ETGT/PLTPOP         !JIL   (Modified)
            PTUBGR  = G3 * PCO2 * STT/PLTPOP          !  (By MSKhan)
           
           
