@@ -341,7 +341,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
          DEADLN = DEADLN + (DDEADLF*TMNC)
       ENDIF
       
-!      This unction was merged with PRFT
+!      This function was merged with PRFT
 !      --------beggin----RR effect of Tmean on RUE 02/15/2016
 !      IF (TEMPM .LE. 24) THEN
 !          TX_RUE = 1.0
@@ -486,20 +486,21 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           TIND = AMAX1 (TIND,0.0)
           TIND = AMIN1 (TIND,1.0)
 
-          IF (TEMPM .GT. 2.0 .AND. TEMPM .LT. 15.0) THEN
-             ETGT = 0.0769*(TEMPM-2.0)
-           ELSEIF (TEMPM .GE. 15.0 .AND. TEMPM .LE. 23.0) THEN
-             ETGT = 1.0
-           ELSEIF (TEMPM .GT. 23.0 .AND. TEMPM .LT. 33.0) THEN
-             ETGT = 1.0 - 0.1*(TEMPM-23.0) 
-           ELSE
-             ETGT = 0.0
-           ENDIF
+          !IF (TEMPM .GT. 2.0 .AND. TEMPM .LT. 15.0) THEN ! By MSKhan, same as STT in PT_THTIME
+             !ETGT = 0.0769*(TEMPM-2.0)
+           !ELSEIF (TEMPM .GE. 15.0 .AND. TEMPM .LE. 23.0) THEN
+            ! ETGT = 1.0
+           !ELSEIF (TEMPM .GT. 23.0 .AND. TEMPM .LT. 33.0) THEN
+             !ETGT = 1.0 - 0.1*(TEMPM-23.0) 
+           !ELSE
+           !  ETGT = 0.0
+           !ENDIF
                
           ! Calculation of potential growth .. Set priorities for carbon
           !
 !          PTUBGR  = G3*ETGT/PLTPOP    !CHP
-           PTUBGR  = G3 * PCO2 * ETGT/PLTPOP          !JIL   (Modified)
+           !PTUBGR  = G3 * PCO2 * ETGT/PLTPOP          !JIL   (Modified)
+           PTUBGR  = G3 * PCO2 * STT/PLTPOP          !  (By MSKhan)
           
           
           IF (PLME .EQ. 'B') THEN                     !WM
