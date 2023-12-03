@@ -35,7 +35,7 @@ C=======================================================================
                          ! parameters, hourly weather data.
       IMPLICIT NONE
       EXTERNAL PT_OPGROW, PT_OPHARV, PT_IPSPE, PT_ROOTGR, PT_PHENOL, 
-     &  PT_GROSUB, HRes_Ceres
+     &  PT_GROSUB, HRes_Ceres, PT_MATURITY
       SAVE
 
 
@@ -43,7 +43,7 @@ C=======================================================================
       CHARACTER*2  CROP ! member of dervied type CONTROL
       CHARACTER*30 FILEIO ! member of derived type CONTROL
 
-      INTEGER DYNAMIC, YREND, ISDATE, ISTAGE
+      INTEGER DYNAMIC, YREND, ISDATE, ISTAGE, TUBINITDATE
       INTEGER MDATE, NLAYR, RUN, YRDOY, YREMRG, YRPLT, YRSIM
       INTEGER STGDOY(20)
 
@@ -57,7 +57,7 @@ C=======================================================================
       REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN 
       REAL TOPWT, TOTNUP, TRNU, TUBN, TUBWT, TURFAC, TWILEN
       REAL WTNCAN, WTNLO, XLAI, XSTAGE
-      REAL SDWT, SEEDNO, TRWUP, WTNSD, WTNUP, YIELD
+      REAL SDWT, SEEDNO, TRWUP, WTNSD, WTNUP, YIELD, WMAX
 
       REAL SATFAC !SATFAC imported only for PT_OPGROW
       REAL RWUEP1, PORMIN, RWUMX
@@ -117,12 +117,16 @@ C=======================================================================
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
      &   CUMDTT, STT, CUMSTT) !Input
 
+      CALL PT_MATURITY(CONTROL,
+     &    TUBWT, PLTPOP, DTT, STT,                        !Input
+     &    MDATE, TUBINITDATE, WMAX)                       !Output
+
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    YIELD, YRPLT, WMAX, TUBINITDATE,                !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -185,12 +189,16 @@ C=======================================================================
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
      &    CUMDTT, STT, CUMSTT) !Input
 
+      CALL PT_MATURITY(CONTROL,
+     &    TUBWT, PLTPOP, DTT, STT,                        !Input
+     &    MDATE, TUBINITDATE, WMAX)                       !Output
+
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    YIELD, YRPLT, WMAX, TUBINITDATE,                !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -271,12 +279,16 @@ C=======================================================================
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
      &    CUMDTT, STT, CUMSTT) !Input added by Khan
 
+      CALL PT_MATURITY(CONTROL,
+     &    TUBWT, PLTPOP, DTT, STT,                        !Input
+     &    MDATE, TUBINITDATE, WMAX)                       !Output
+
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    YIELD, YRPLT,  WMAX, TUBINITDATE,               !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -297,12 +309,16 @@ C=======================================================================
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
      &    CUMDTT, STT, CUMSTT) !Input added by Khan
 
+      CALL PT_MATURITY(CONTROL,
+     &    TUBWT, PLTPOP, DTT, STT,                        !Input
+     &    MDATE, TUBINITDATE, WMAX)                       !Output
+
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    YIELD, YRPLT, WMAX, TUBINITDATE,                !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
       PODWT = 0.0

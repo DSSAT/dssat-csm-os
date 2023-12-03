@@ -554,7 +554,7 @@ set(
         "Plant/SUBSTOR-Potato/PT_THTIME.for"
         "Plant/SUBSTOR-Potato/PT_BTHTIME.for"
         "Plant/SUBSTOR-Potato/PT_BTHTIME_2.for"
-        "Plant/SUBSTOR-Potato/PT_PHMATURITY.for"
+        "Plant/SUBSTOR-Potato/PT_MATURITY.for"
         "Soil/SOIL.for"
         "Soil/CENTURY_OrganicMatter/CENTURY.for"
         "Soil/CENTURY_OrganicMatter/CE_RATIO_C.for"

@@ -23,7 +23,7 @@ C=======================================================================
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    YIELD, YRPLT, WMAX, TUBINITDATE,                !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !-----------------------------------------------------------------------
@@ -48,7 +48,7 @@ C=======================================================================
       CHARACTER*80 PATHEX
 
       INTEGER ACOUNT, DFLR, DMAT
-      INTEGER DEMRG, DNR0, DNR1, DNR7, DYNAMIC, ERRNUM, FOUND
+      INTEGER DEMRG, DNR0, DNR1, DNR2, DNR7, DYNAMIC, ERRNUM, FOUND
 !      INTEGER IFLR, IFSD, IFPD, IHRV, IMAT
       INTEGER IEMRG, IFLR, IMAT
       INTEGER ISDATE, ISENS, ISTAGE, LINC, LNUM, LUNIO, MDATE, RUN
@@ -64,7 +64,8 @@ C=======================================================================
       REAL SDWT, SDWTAH, SDWTAM, SDWTPL, SEEDNO, STOVER, STOVWT
       REAL SWFAC, TOTNUP, TUBN, TUBNUP, TUBSM, TUBWT, TURFAC
       REAL WTNCAN, WTNFX, WTNSD, WTNUP, XLAI
-      REAL YIELD, YIELDB, YLDFR 
+      REAL YIELD, YIELDB, YLDFR, WMAX
+      INTEGER TUBINITDATE 
 
       REAL, DIMENSION(2) :: HARVFRAC
 
@@ -108,14 +109,14 @@ C=======================================================================
       ACOUNT = 22  !Number of possible FILEA headers for this crop
       DATA OLAB /
      &    'TDAT  ',     ! 1 BEGIN TUBER GROWTH (dap)
-     &    'PD1T  ',     ! 2
+     &    'TBID  ',     ! 2 Tuber initiation date (added by sohail)
      &    'PDFT  ',     ! 3
      &    'HDAT  ',     ! 4 PHYSIOL. MATURITY (dap)
      &    'UWAH  ',     ! 5 TUBER DRY YIELD (kg/ha)
      &    'PWAM  ',     ! 6
      &    'H#AM  ',     ! 7
      &    'UYAH  ',     ! 8 TUBER FRESH YIELD (Mg/ha)
-     &    'H#UM  ',     ! 9
+     &    'WMAX  ',     ! 9 WMAX (added by Sohail)
      &    'TWAH  ',     !10 TUBER+TOP (kg/ha) HARVEST
 
 !        08/11/2005 Change BWAH to BWAM - byproduct produced to maturity
@@ -371,6 +372,11 @@ C-----------------------------------------------------------------------
           DNR1 = -99
         ENDIF
 
+        DNR2 = TIMDIF (YRPLT,TUBINITDATE)
+        IF (DNR2 .LE. 0) THEN
+          DNR2 = -99
+        ENDIF
+
         DNR7 = TIMDIF (YRPLT,MDATE)
         IF (DNR7 .LE. 0 .OR. YRPLT .LT. 0) THEN
           DNR7 = -99
@@ -389,7 +395,7 @@ C-----------------------------------------------------------------------
         YIELDB = (YIELD/1000.)/0.2                  ! Fresh yield
 
         WRITE(Simulated(1),'(I8)') DNR1;  WRITE(Measured(1),'(I8)') DFLR
-        WRITE(Simulated(2),'(I8)') -99;   WRITE(Measured(2),'(I8)') -99
+        WRITE(Simulated(2),'(I8)') DNR2;  WRITE(Measured(2),'(I8)') DFLR
         WRITE(Simulated(3),'(I8)') -99;   WRITE(Measured(3),'(I8)') -99
         WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT
         WRITE(Simulated(5),'(I8)') NINT(YIELD)
@@ -397,7 +403,7 @@ C-----------------------------------------------------------------------
         WRITE(Simulated(6),'(I8)') -99;   WRITE(Measured(6),'(I8)') -99
         WRITE(Simulated(7),'(I8)') -99;   WRITE(Measured(7),'(I8)') -99
         WRITE(Simulated(8),'(F8.2)')YLDFR;WRITE(Measured(8),'(A8)') X(8)
-        WRITE(Simulated(9),'(I8)') -99;   WRITE(Measured(9),'(I8)') -99
+        WRITE(Simulated(9),'(F8.2)')WMAX;WRITE(Measured(9),'(I8)') -99
         WRITE(Simulated(10),'(I8)') NINT(PBIOMS)
                                          WRITE(Measured(10),'(A8)')X(10)
 
