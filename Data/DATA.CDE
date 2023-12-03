@@ -171,8 +171,9 @@ SRADA  Avg solar rad   Average solar radiation (MJ/m2/d), planting - harvest    
 SWAH   Stem wt kg/ha   Stem weight at harvest (kg/ha)                           .
 SWXM   Extr water mm   Extractable water at maturity (mm)                       .
 T#AM   Tiller no #/m2  Tiller number at maturity (no/m2)                        .
-TDAP   Tuber init day  Tuber initiation day (dap)                               .
+TDAP   Tuber init day  Tuber initiation day old method (dap)                    .
 TDAT   Tuber init date Tuber initiation date (YrDoy)                            .
+TBID   Tuber init date Tuber initiation date Beta method (dap)                  .
 THAM   Threshing %     Threshing % at maturity                                  .
 TMINA  Minimum temp °C Avg minimum air temperature (°C)                         TMNA
 TMAXA  Maximum temp °C Avg maximum air temperature (°C)                         TMXA
@@ -183,7 +184,8 @@ TWAH   Total wt kg/ha  Total wt, harvest (kg [dm]/ha)                           
 UN%H   Tuber N %       Tuber N at harvest (%)                                   .
 UNAM   Tuber N kg/ha   Tuber N at harvest (kg/ha)                               .
 UWAH   Tuber kg dm/ha  Tuber dry weight (kg [dm]/ha) harvest                    .
-UYAH   Tuber Mg fm/ha  Tuber fresh weight (Mg [fm]/ha) harvest                  .
+UYAH   Tuber Mg fm/ha  Tuber fresh weight (Mg [fm]/ha) at harvest               .
+WMAX   Tuber Mg fm/ha  Tuber fresh weight (Mg [fm]/ha) at PH. maturity          .
 VN%M   Veg N% @ matur. Vegetative N at maturity (%)                             .
 VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         .
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
