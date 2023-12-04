@@ -169,9 +169,10 @@ C=======================================================================
 
 !     2D integration
       REAL RESID3, RESID4, SNO3_TEMP, SNH4_TEMP
-      REAL, DIMENSION(NL) :: DLTSNO3_SAVE, DLTSNH4_SAVE
-      REAL, DIMENSION(NL) :: DLTSNO3_DIFF, DLTSNH4_DIFF
-      REAL, DIMENSION(MaxRows,MaxCols) ::DLTSNO3_DIFF_2D,DLTSNH4_DIFF_2D
+      REAL, DIMENSION(NL) :: DLTSNO3_SAVE, DLTSNH4_SAVE, DLTUREA_SAVE
+      REAL, DIMENSION(NL) :: DLTSNO3_DIFF, DLTSNH4_DIFF, DLTUREA_DIFF
+      REAL, DIMENSION(MaxRows,MaxCols) ::DLTSNO3_DIFF_2D, 
+     &                  DLTSNH4_DIFF_2D, DLTUREA_DIFF_2D
 !     *** TEMP DEBUGGIN CHP
       REAL TNOM
       REAL NNOM_a, NNOM_b
@@ -553,6 +554,10 @@ C=======================================================================
      & CELLS % Struc, NLAYR, DLAYR, DLTSNH4, 0.0,            !Input
      & DLTSNH4_2D)                                       !Output
 
+      CALL Layer2Cell_2D(                              
+     & CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0,            !Input
+     & DLTUREA_2D)                                       !Output
+
 !     ----------------------------------------------------------------
 !     If DOY=IUOF (has been set in Fert_Place), then all the urea has
 !     hydrolyzed already.
@@ -812,13 +817,11 @@ C=======================================================================
         ENDDO  !End of soil row (layer) loop
       END DO   !End of soil column loop
 
-
 !*************************************************************************************************
 !*************************************************************************************************
 !     FROM HERE START 1D PROCESSES? NEED TO CONVERT DLTSNH3_2D AND DLTSNH4_2D TO 1D???
 !*************************************************************************************************
 !*************************************************************************************************
-
 
 !     Convert NITRIF, DLTSNO3 and DLTSNH4 from 2D to 1D for next set of processes
 !     use the utility 
@@ -834,10 +837,15 @@ C=======================================================================
      &  DLTSNH4_2D, CELLS % Struc, NLAYR,  !Input
      &  DLTSNH4)                           !Output
 
+      CALL Cell2Layer_2D(
+     &  DLTUREA_2D, CELLS % Struc, NLAYR,  !Input
+     &  DLTUREA)                           !Output
+
 !     Keep the values of DLTSNO3 and DLTSNH4 because we need to add the new part to the 
 !       2D arrays.
       DLTSNO3_SAVE = DLTSNO3
       DLTSNH4_SAVE = DLTSNH4
+      DLTUREA_SAVE = DLTUREA
 
 !     Start 1D processes for GHG
       DO L = 1, NRowsTot
@@ -1015,6 +1023,7 @@ C=======================================================================
 !     Look at only the differences in DLTSNO3 and DLTSNH4 due to GHG processes
       DLTSNO3_DIFF = DLTSNO3 - DLTSNO3_SAVE
       DLTSNH4_DIFF = DLTSNH4 - DLTSNH4_SAVE
+      DLTUREA_DIFF = DLTUREA - DLTUREA_SAVE
 
 !     Convert DLTSNO3 and DLTSNH4 differences  to 2D arrays
       CALL Layer2Cell_2D(                              
@@ -1024,6 +1033,10 @@ C=======================================================================
       CALL Layer2Cell_2D(                              
      & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0,        !Input
      & DLTSNH4_DIFF_2D)                                       !Output
+
+      CALL Layer2Cell_2D(                              
+     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0,        !Input
+     & DLTUREA_DIFF_2D)                                       !Output
 
       RESID3 = 0.0
       RESID4 = 0.0
@@ -1063,6 +1076,7 @@ C=======================================================================
         ENDDO
       ENDDO
 
+!     TEMP CHP This shouldn't happen.
       IF (RESID3 > 0.0 .OR. RESID4 > 0.0) THEN
         PRINT *, "HELP ME!"
       ENDIF
@@ -1089,7 +1103,6 @@ C=======================================================================
           CALL Layer2Cell_2D(                              
      &      CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0,        !Input
      &      DLTUREA_2D)                                       !Output
-
         ENDIF
 
         NSOURCE = 2   !NO3.
