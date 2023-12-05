@@ -506,22 +506,25 @@ C=======================================================================
       ENDIF
 
 !     ------------------------------------------------------------------
+!     1D only simulations
+!     Tillage and flood calcs are done only for 1D simulations
+!     ------------------------------------------------------------------
       IF (.NOT. SIM2D) THEN
 !       Check if tillage occurred today -- if so, mix soil N within
 !         tillage depth
         IF (TILLVALS % NTIL .GT. 0) THEN
           TILDATE = TILLVALS % TILDATE
           IF (YRDOY .EQ. TILDATE) THEN
-            !Call mixing routine for soil properties
+!           Call mixing routine for soil properties
             MIXPCT = TILLVALS % TILMIX
             TDEP = TILLVALS % TILDEP
             CALL SoilMix (SNO3, DLTSNO3, 1, DLAYR, MIXPCT, NLAYR, TDEP)
             CALL SoilMix (SNH4, DLTSNH4, 1, DLAYR, MIXPCT, NLAYR, TDEP)
             CALL SoilMix (UREA, DLTUREA, 1, DLAYR, MIXPCT, NLAYR, TDEP)
+
           ENDIF
         ENDIF
 
-!       ------------------------------------------------------------------
 !       Calculate rates of change of flood N components and interaction
 !           with top soil layer.
         IF (NBUND > 0) THEN
@@ -541,23 +544,36 @@ C=======================================================================
      &      DLTSNH4, DLTSNO3, DLTUREA, OXLAYR,              !I/O
      &      ALI, TOTAML)                                    !Output
         ENDIF
-      ENDIF
 
-!     Convert DLTSNO3 and DLTSNH4 to 2D for next set of processes
-!     This is only needed when 1D routines are used, so can just
-!     use the utility 
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3, 0.0,            !Input
-     & DLTSNO3_2D)                                       !Output
+!       Convert state and DELTA variables to 2D for next set of processes
+        CALL Layer2Cell_2D(                              
+     &   CELLS % Struc, NLAYR, DLAYR, SNO3, 0.0,            !Input
+     &   SNO3_2D)                                           !Output
+        
+        CALL Layer2Cell_2D(                              
+     &   CELLS % Struc, NLAYR, DLAYR, SNH4, 0.0,            !Input
+     &   SNH4_2D)                                           !Output
+        
+        CALL Layer2Cell_2D(                              
+     &   CELLS % Struc, NLAYR, DLAYR, UREA, 0.0,            !Input
+     &   UREA_2D)                                           !Output
 
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4, 0.0,            !Input
-     & DLTSNH4_2D)                                       !Output
+        CALL Layer2Cell_2D(                              
+     &   CELLS % Struc, NLAYR, DLAYR, DLTSNO3, 0.0,         !Input
+     &   DLTSNO3_2D)                                        !Output
+        
+        CALL Layer2Cell_2D(                              
+     &   CELLS % Struc, NLAYR, DLAYR, DLTSNH4, 0.0,         !Input
+     &   DLTSNH4_2D)                                        !Output
+        
+        CALL Layer2Cell_2D(                              
+     &   CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0,         !Input
+     &   DLTUREA_2D)                                        !Output
 
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0,            !Input
-     & DLTUREA_2D)                                       !Output
+      ENDIF !End of 1D-only simulations
+!     ------------------------------------------------------------------
 
+!     Back to 2D calculations
 !     ----------------------------------------------------------------
 !     If DOY=IUOF (has been set in Fert_Place), then all the urea has
 !     hydrolyzed already.
@@ -565,8 +581,8 @@ C=======================================================================
       IF (DOY .EQ. IUOF) THEN
         DO L = 1, NRowsTot
           DO J = 1, NColsTot
-            DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) + UREA_2D(L, J)
-            DLTUREA_2D(L, J) = DLTUREA_2D(L,J) - UREA_2D(L, J)
+            DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + UREA_2D(L,J)
+            DLTUREA_2D(L,J) = DLTUREA_2D(L,J) - UREA_2D(L,J)
           END DO
         END DO
         IF (FLOOD > 1.E-4) THEN
@@ -586,8 +602,8 @@ C=======================================================================
       call DayCent_diffusivity(dD0, sw, soilprop)
 !-----------------------------------------------------------------------
 
-!     ------------------------------------------------------------------
-!     Loop through soil cells for rate calculations
+!     Loop thru soil layers (rows) and columns. 1D simulations have only
+!     one column.
 !     ------------------------------------------------------------------
       NNOM     = 0.0
       TMINERN  = 0.0
@@ -606,7 +622,7 @@ C=======================================================================
       dNOflux   = 0.0
       TN2D      = 0.0
       N2flux    = 0.0
- 
+
       DO J = 1, NColsTot
         DO L = 1, NRowsTot
 !       ----------------------------------------------------------------
@@ -1159,18 +1175,29 @@ C=======================================================================
       Cells % State % SNO3 = SNO3_2D  !kg/ha
       Cells % State % UREA = UREA_2D
 
-
 !***********************************************************************
 !     NEED TO CONVERT 2D to 1D HERE FIRST!
 !***********************************************************************
 
-      ! Convert 2D to 1D
-      ! Integrated cell variable into layer variable   
-      CAll Interpolate2Layers_2D(NH4_2D, Cells%Struc, NLAYR,  !input
-     &         NH4)                                           !Output
-      CAll Interpolate2Layers_2D(NO3_2D, Cells%Struc, NLAYR,  !input
-     &         NO3)                                           !Output
+!     chp - not sure why this was done here. the concentration variables 
+!     might not even be up to date.
+!!     Convert 2D to 1D
+!!     Integrated cell variable into layer variable   
+!      CAll Interpolate2Layers_2D(NH4_2D, Cells%Struc, NLAYR,  !input
+!     &         NH4)                                           !Output
+!      CAll Interpolate2Layers_2D(NO3_2D, Cells%Struc, NLAYR,  !input
+!     &         NO3)                                           !Output
 
+!     Convert 2D states to 1D
+      CALL Cell2Layer_2D(
+     &  SNO3_2D, Cells%Struc, NLAYR,                      !Input
+     &  SNO3, SurfaceVal)                                 !Output
+      CALL Cell2Layer_2D(
+     &  SNH4_2D, Cells%Struc, NLAYR,                      !Input
+     &  SNH4, SurfaceVal)                                 !Output
+
+
+!     Plant available N should be available in 2D!!!
 !     Psuedo-integration - for plant-available N
       DO L = 1, NLAYR
         NO3_plant(L) = (SNO3(L) + DLTSNO3(L)) * KG2PPM(L)
