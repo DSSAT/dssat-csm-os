@@ -4,8 +4,10 @@
       USE ModuleDefs
       IMPLICIT NONE
       SAVE
-      REAL TUBWT, PLTPOP 
-      REAL FRYLD, FRYLDB, FRYLDPREV, FRYLDDELTA, DTT, STT, TDELTA
+      REAL TUBWT, PLTPOP
+      REAL YIELD, FRYLD
+      REAL DTT, STT, TDELTA
+      REAL W, WB, WPREV, WDELTA
       REAL CM, RM, SLOPE
       REAL G2, G3, WMAX
       REAL, PARAMETER :: THRESH = 0.1
@@ -22,38 +24,43 @@
       RM = 0.34 ! Relative growth rate in exponential phase g/m^2
 
       FRYLD = (TUBWT*10.*PLTPOP/1000.)/0.2   ! Fresh yield
+      YIELD  = TUBWT*10.*PLTPOP
+
 !     FRYLD is Mg/Ha while while CM and RM are in g/m^2
 !     Multiply by 0.01 for g/m^2 to Mg/Ha (1Ha = 10000 m^2,
 !     1Mg=1000000g)
-      FRYLDB = ((CM/RM)*log(2.0)) * 0.01;   ! WB
+      ! FRYLDB = ((CM/RM)*log(2.0)) * 0.01;   ! WB
+      WB = ((CM/RM)*log(2.0)) * 0.01;   ! WB
 
-      FRYLDDELTA = 0.0
+      !W = FRYLD   ! uncommented: based on fresh yield
+      W = YIELD    ! uncommented: based on dry yield
+      WDELTA = 0.0
       SLOPE = 0.0
       !TDELTA = DTT
       TDELTA = STT
 
-      IF (.NOT. TUBINITFOUND .AND. FRYLD .GT. FRYLDB) THEN
+      IF (.NOT. TUBINITFOUND .AND. W .GE. WB) THEN
           TUBINITFOUND = .TRUE.
           ISDATE = YRDOY
       ENDIF
 
       IF (.NOT. MAXYIELDED) THEN
-        IF (FRYLDPREV .GT. 0.0 .AND. TDELTA .GT. 0) THEN
+        IF (WPREV .GT. 0.0 .AND. TDELTA .GT. 0) THEN
           ! Avoid divide by 0
-          FRYLDDELTA = ABS(FRYLD - FRYLDPREV)
-          SLOPE = FRYLDDELTA / TDELTA
+          WDELTA = ABS(W - WPREV)
+          SLOPE = WDELTA / TDELTA
           ! slope can be nearly 0 at two inflection points, at FRYLDB
           ! (WB) and at WMAX
-          IF (SLOPE .LT. THRESH .AND. FRYLD .GT. FRYLDB) THEN
+          IF (SLOPE .LT. THRESH .AND. W .GT. WB) THEN
             MAXYIELDED = .TRUE.
             ! Print for testing
 !            PRINT 101, "WMAX:", FRYLD, ", G2: ", G2, ", G3: ", G3
 ! 101        FORMAT (A5, F6.2, A6, F6.2, A6, F6.2)
             MDATE = YRDOY
-            WMAX = FRYLD
+            WMAX = W
           END IF
         END IF
-        FRYLDPREV = FRYLD
+        WPREV = W
       END IF
 
       RETURN
