@@ -24,13 +24,13 @@
       RM = 0.34 ! Relative growth rate in exponential phase g/m^2
 
       FRYLD = (TUBWT*10.*PLTPOP/1000.)/0.2   ! Fresh yield
-      YIELD  = TUBWT*10.*PLTPOP
+      YIELD  = TUBWT*10.*PLTPOP               ! Dry yield
 
 !     FRYLD is Mg/Ha while while CM and RM are in g/m^2
 !     Multiply by 0.01 for g/m^2 to Mg/Ha (1Ha = 10000 m^2,
 !     1Mg=1000000g)
       ! FRYLDB = ((CM/RM)*log(2.0)) * 0.01;   ! WB
-      WB = ((CM/RM)*log(2.0)) * 0.01;   ! WB
+      WB = ((CM/RM)*log(2.0)) * 0.01;         ! WB
 
       !W = FRYLD   ! uncommented: based on fresh yield
       W = YIELD    ! uncommented: based on dry yield
@@ -39,19 +39,18 @@
       !TDELTA = DTT
       TDELTA = STT
 
-      IF (.NOT. TUBINITFOUND .AND. W .GE. WB) THEN
+      !IF (.NOT. TB_STILL_NOT_FOUND .AND. W .GE. WB) THEN !Find the first point when W greater than or equal to Wb
+      IF (.NOT. TUBINITFOUND .AND. W .GE. WB) THEN !Finds Tb
           TUBINITFOUND = .TRUE.
-          ISDATE = YRDOY
+          ISDATE = YRDOY !ISDATE means tubr inititation date
       ENDIF
 
+      !IF (.NOT. TE_STILL_NOT_FOUND) THEN !Keep calculating if Te not found
       IF (.NOT. MAXYIELDED) THEN
-        IF (WPREV .GT. 0.0 .AND. TDELTA .GT. 0) THEN
-          ! Avoid divide by 0
-          WDELTA = ABS(W - WPREV)
-          SLOPE = WDELTA / TDELTA
-          ! slope can be nearly 0 at two inflection points, at FRYLDB
-          ! (WB) and at WMAX
-          IF (SLOPE .LT. THRESH .AND. W .GT. WB) THEN
+        IF (WPREV .GT. 0.0 .AND. TDELTA .GT. 0) THEN ! Avoid division by 0
+          WDELTA = ABS(W - WPREV)                     !Y2-Y1
+          SLOPE = WDELTA / TDELTA                     !Y2-Y1/X2-X1
+          IF (SLOPE .LT. THRESH .AND. W .GT. WB) THEN  !slope can be nearly 0 at two inflection points: at WB and at WMAX (finds TE)
             MAXYIELDED = .TRUE.
             ! Print for testing
 !            PRINT 101, "WMAX:", FRYLD, ", G2: ", G2, ", G3: ", G3
