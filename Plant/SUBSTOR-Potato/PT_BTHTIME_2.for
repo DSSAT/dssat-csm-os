@@ -55,6 +55,12 @@ C=======================================================================
       REAL SUNRIS, SUNSET, TMEAN, TT, TD, TU, SS, SD, SU, XTEMP
       REAL ST(NL)
       SAVE
+      TMAX = 50.0
+      TMIN = 37.0
+      !TMAX = 0.0
+      !TMIN = -10.0
+      !ST(L0) = 55.0
+      
 
 ! Mathematical equation to fortran variables mapping:
 ! TCD is Tc, TD is T, TOD is To, TBD is Tb, and TSEN is ct. 
@@ -72,8 +78,8 @@ C=======================================================================
       XTEMP  = (TMAX + TMIN)/2.0
       TT     = 0.0
       SS     = 0.0
-      TDU  = 0.0
-      SDU  = 0.0
+      TDU    = 0.0
+      SDU    = 0.0
 
       !PRINT 101, 'TMIN', TMIN, 'TMAX', TMAX, 'ST(L0)', ST(L0)
  !101  FORMAT(A5, F6.2, A5, F6.2, A7, F6.2)
@@ -119,7 +125,6 @@ C=======================================================================
         TT = TT + TU/24.0
         SS = SS + SU/24.0
 
-!*---effect of instantaneous temperature on maintenance respiration
   10  CONTINUE
 
 !*---daily thermal unit for phenology
