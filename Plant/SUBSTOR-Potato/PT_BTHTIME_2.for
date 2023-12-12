@@ -55,8 +55,8 @@ C=======================================================================
       REAL SUNRIS, SUNSET, TMEAN, TT, TD, TU, SS, SD, SU, XTEMP
       REAL ST(NL)
       SAVE
-      TMAX = 50.0
-      TMIN = 37.0
+      !TMAX = 50.0
+      !TMIN = 37.0
       !TMAX = 0.0
       !TMIN = -10.0
       !ST(L0) = 55.0
