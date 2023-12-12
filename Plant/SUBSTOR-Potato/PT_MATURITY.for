@@ -47,7 +47,7 @@
 
       !IF (.NOT. TE_STILL_NOT_FOUND) THEN !Keep calculating if Te not found
       IF (.NOT. MAXYIELDED) THEN
-        IF (WPREV .GT. 0.0 .AND. TDELTA .GT. 0) THEN ! Avoid division by 0
+        IF (WPREV .GT. 0.0 .AND. TDELTA .GT. 0.) THEN ! Avoid division by 0
           WDELTA = ABS(W - WPREV)                     !Y2-Y1
           SLOPE = WDELTA / TDELTA                     !Y2-Y1/X2-X1
           IF (SLOPE .LT. THRESH .AND. W .GT. WB) THEN  !slope can be nearly 0 at two inflection points: at WB and at WMAX (finds TE)
