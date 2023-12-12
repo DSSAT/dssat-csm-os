@@ -505,7 +505,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           !
 !          PTUBGR  = G3*ETGT/PLTPOP    !CHP
           !PTUBGR  = G3 * PCO2 * ETGT/PLTPOP         !JIL   (Modified)
-           PTUBGR  = G3 * PCO2 * STT/PLTPOP          !  (By MSKhan)
+           PTUBGR  = G3 * PCO2 * DTT/PLTPOP          !  (By MSKhan)
           
           
           IF (PLME .EQ. 'B') THEN                     !WM
