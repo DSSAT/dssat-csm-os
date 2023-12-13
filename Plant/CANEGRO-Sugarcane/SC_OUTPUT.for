@@ -36,9 +36,13 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE SC_OPGROW (CONTROL, CaneCrop, Growth,
-     - Part, Out, WaterBal, SW, SoilProp,
+     - Part, Out, WaterBal, SoilProp,
      - YRPLT, CELLSE_DM)
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+!     2023-01-26 chp removed unused variables from argument list: SW, 
+
+
 c     Define DSSAT composite variables:
 c     [Taken from MZ_CERES.for]
       USE ModuleDefs
@@ -50,6 +54,7 @@ c     Define CANEGRO composite variables:
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     No implicit typing - yuck!
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, TIMDIF
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Maintain the value of internal variables between 
 c     calls to this subroutine (supports the modular 
@@ -75,7 +80,7 @@ c     local ?
       CHARACTER*20 FILEIO
 
 c     Soil water content
-      REAL SW(NL)
+!     REAL SW(NL)
 
 c     CANEGRO variables:
 c     ::::::::::::::::::
@@ -820,7 +825,20 @@ c                     ((area (m2) * LI * number of leaves/area) / total leaf DM)
             SLAD     = 0.
             IF (LGDMD .GT. 0.) SLAD = ((10000. * Growth%LI * 
      -                                Growth%LAI) / LGDMD)
-            CHTD     = CaneCrop%SHGT ! / 100.
+!           HBD May 2023:
+!           - It seems that this equation above has been here since v4.5
+!           - Test (1)
+!           - Divided Growth%LI above in L826 to 100 to convert % to fraction
+!           - Multiplied LGDMD above in L827 to 100 to convert t/ha to g/m2
+!           - Values still does not seem ok.
+!           - Test (2) SLAD calculation as below. Simply LAI/Green leaf DM
+!           - It produces really high values that do not appear to be right...
+!           -    in both calculation formats!
+!           - At least outputs are being read in DSSAT R package now
+!            IF (LGDMD .GT. 0.5) SLAD = (Growth%LAI*10000)/(LGDMD*100)
+
+!           HBD May 2023: uncommented the division here to export in meters            
+            CHTD     = CaneCrop%SHGT  / 100.
             
             
             RDPD     = WaterBal%RTDEP / 100.

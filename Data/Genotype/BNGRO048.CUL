@@ -1,0 +1,79 @@
+*DRYBEAN CULTIVAR COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! EXPNO   Number of experiments used to estimate cultivar parameters
+! ECO#    Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL    Critical Short Day Length below which reproductive development
+!         progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN   Slope of the relative response of development to photoperiod with time
+!         (positive for shortday plants) (1/hour)
+! EM-FL   Time between plant emergence and flower appearance (R1)
+!         (photothermal days)
+! FL-SH   Time between first flower and first pod (R3) (photothermal days)
+! FL-SD   Time between first flower and first seed (R5) (photothermal days)
+! SD-PM   Time between first seed (R5) and physiological maturity (R7)
+!         (photothermal days)
+! FL-LF   Time between first flower (R1) and end of leaf expansion
+!         (photothermal days)
+! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!         (mg CO2/m2-s)
+! SLAVR   Specific leaf area of cultivar under standard growth conditions
+!         (cm2/g)
+! SIZLF   Maximum size of full leaf (three leaflets) (cm2)
+! XFRT    Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD   Maximum weight per seed (g)
+! SFDUR   Seed filling duration for pod cohort at standard growth conditions
+!         (photothermal days)
+! SDPDV   Average seed per pod under standard growing conditions (#/pod)
+! PODUR   Time required for cultivar to reach final pod load under optimal
+!         conditions (photothermal days)
+! THRSH   The maximum ratio of (seed/(seed+shell)) at maturity.
+!         Causes seed to stop growing as their dry weights
+!         increase until shells are filled in a cohort.
+!         (Threshing percentage).
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             N     N     P     N     P     P     N     N     G     G     N     G     G     G     G     N     N     N
+
+999991 MINIMA               . DFAULT 12.17 0.000  20.0   2.0   6.0 14.00 10.00  0.98  250. 133.0  1.00  0.22  11.0  3.00   4.0  78.0  .235  .030
+999992 MAXIMA               . DFAULT 12.17 0.070  35.0   5.0  13.0 29.00 34.00  1.00  350. 180.0  1.00  0.66  22.0  5.00  16.0  78.0  .235  .030
+
+990001 Andean Habit 1       . ANDDET 12.17 0.000  22.6   3.0  12.0 18.40 10.00  0.98  305. 133.0  1.00 0.600  15.0  3.50  10.0  78.0  .235  .030
+990002 Andean Habit 2       . ANDIND 12.17 0.050  26.0   4.0  11.0 21.00 18.00  0.98  320. 133.0  1.00 0.600  15.0  3.50  10.0  78.0  .235  .030
+990003 Andean Habit 3       . ANDIND 12.17 0.050  30.0   4.5   9.5 22.00 22.00  0.98  320. 133.0  1.00 0.600  20.0  4.20  14.0  78.0  .235  .030
+990004 Andean Habit 4       . ANDIND 12.17 0.050  34.0   5.0   9.0 25.00 34.00  0.98  320. 133.0  1.00 0.650  22.0  4.70  15.0  78.0  .235  .030
+990005 Meso Amer. Hab.1     . MESDET 12.17 0.000  27.0   3.0   9.0 20.00 16.00  1.00  310. 133.0  1.00 0.230  16.0  5.20   5.0  78.0  .235  .030
+990006 MesoAm Hab 2 & 3     . MESIND 12.17 0.000  31.0   3.5  10.0 22.00 21.00  1.00  320. 133.0  1.00 0.230  20.0  5.50  10.0  78.0  .235  .030
+990007 Mex Highland H 3     . MEXHIL 12.17 0.050  27.0   3.0   9.0 22.00 20.00  1.00  320. 133.0  1.00 0.400  17.0  3.20   5.0  78.0  .235  .030
+
+IB0001 Porrillo Sintetico   . MESIND 13.50 0.017  31.2   3.0   8.0 20.50 21.00  1.00  300. 150.0  1.00 0.240  21.0  5.20  11.5  78.0  .235  .030
+!IB0001 Porrillo Sintetico   . MESIND 13.50 0.017  31.5   3.0   8.0 20.50 21.00  1.00  300. 150.0  1.00 0.230  21.0  5.20  11.5  78.0  .235  .030
+IB0002 BAT 477              . MESIND 12.17 0.000  30.0   3.0   8.5 21.00 21.00  1.00  300. 140.0  1.00 0.230  21.0  5.50  11.5  78.0  .235  .030
+IB0003 Seafarer             . MESDET 12.17 0.000  28.0   4.0  11.0 19.00 18.00  0.95  315. 133.0  1.00 0.220  17.0  5.00  11.0  78.0  .235  .030
+IB0004 C-20                 . MESIND 12.17 0.000  33.6   4.5  11.5 21.50 20.00  0.97  310. 133.0  1.00 0.220  17.0  5.20  14.0  78.0  .235  .030
+IB0005 BAT 881              . MESIND 12.17 0.000  32.0   3.5  10.8 20.20 20.00  1.01  280. 140.0  1.00 0.220  19.0  5.20  10.0  78.0  .235  .030
+IB0006 ICTA-Ostua           . MESIND 12.17 0.000  26.5   3.5   8.5 18.50 18.00  1.00  320. 133.0  1.00 0.200  19.0  5.40  14.0  78.0  .235  .030
+IB0007 Rabia de Gato        . MESIND 12.17 0.000  24.0   3.5   8.0 19.20 14.00  1.00  295. 133.0  1.00 0.200  20.5  5.40  13.0  78.0  .235  .030
+IB0008 TURBO-III            . MESIND 12.17 0.050  29.0   3.5   8.0 17.00 22.00  1.00  295. 133.0  1.00 0.240  19.0  4.00  10.0  78.0  .235  .030
+IB0010 Carioca (G4017)      . MESIND 12.17 0.000  32.5   3.5  10.8 18.20 18.00  1.00  300. 140.0  1.00 0.250  19.0  5.50  11.5  78.0  .235  .030
+IB0011 Isabella             . ANDDET 12.17 0.000  26.3   2.5  10.0 21.00 10.00  0.95  300. 140.0  1.00 0.500  19.0  3.50  10.0  78.0  .235  .030
+IB0012 Manitou              . ANDDET 12.17 0.015  29.0   4.5  12.0 22.00 10.00  0.93  310. 140.0  1.00 0.500  17.0  3.50  12.0  78.0  .235  .030
+IB0013 Redkloud             . ANDDET 12.17 0.000  23.5   3.0   9.8 19.70 10.00  1.00  320. 150.0  1.00 0.550  18.0  3.50  11.0  78.0  .235  .030
+IB0014 Canadian Wonder      . ANDDET 12.17 0.020  24.0   3.5  10.0 19.50 10.00  0.96  315. 150.0  1.00 0.550  18.0  3.50  10.0  78.0  .235  .030
+IB0016 A 70                 . MESIND 12.17 0.020  31.0   3.5  10.2 18.80 18.00  1.00  285. 140.0  1.00 0.280  19.0  5.20  12.0  78.0  .235  .030
+IB0028 Jatu Rong            . ANDDET 12.17 0.040  23.0   2.0   9.5 18.50 10.00  0.99  295. 140.0  1.00 0.350  14.0  4.30   9.0  78.0  .235  .030
+IB0029 San Crist. 83        . MESIND 12.17 0.020  31.0   3.0   9.5 18.50 18.00  1.00  310. 150.0  1.00 0.320  19.0  5.00  12.0  78.0  .235  .030
+IB0031 A 465                . MESIND 12.17 0.020  29.0   4.0  10.5 20.50 10.00  0.97  270. 133.0  1.00 0.340  19.0  4.00  14.0  78.0  .235  .030
+IB0032 A 486                . ANDDET 12.17 0.030  27.0   2.5   9.5 21.50  9.00  0.94  295. 150.0  1.00 0.550  19.0  3.50  11.0  78.0  .235  .030
+IB0033 A 193 (hab 2)        . ANDIND 12.17 0.040  30.0   4.0  11.6 18.40 12.00  0.95  285. 140.0  1.00 0.500  19.0  3.50  10.0  78.0  .235  .030
+IB0034 A 195                . ANDDET 12.17 0.020  28.0   2.5   9.2 21.50 12.00  0.99  300. 160.0  1.00 0.550  17.5  3.50  11.0  78.0  .235  .030
+IB0035 BAT 1393             . ANDDET 12.17 0.020  25.0   3.5  11.0 22.00 12.00  0.99  325. 133.0  1.00 0.400  15.0  3.30  11.0  78.0  .235  .030
+IB0036 WAF 9                . ANDDET 12.17 0.040  23.5   2.5  10.5 19.00 10.00  1.00  320. 150.0  1.00 0.500  14.0  3.40   9.0  78.0  .235  .030
+IB0037 Brasil 2 Pico        . MESDET 12.17 0.020  29.0   2.5   9.0 17.00 14.00  0.99  290. 150.0  1.00 0.220  15.0  5.00  11.0  78.0  .235  .030
+

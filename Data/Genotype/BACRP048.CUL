@@ -1,0 +1,75 @@
+$CULTIVARS:BACRP048.20200721   Last edit: 2021-05-08 GH
+!
+! COEFF       DEFINITION
+! ========    ==========
+! ECO#        Ecotype code for this cultivar, points to entry in the ECO file
+! EXP#        Number of experiments,treatments used to estimate coefficients
+! G#WTS       Standard grain number per unit canopy weight at anthesis (#/g)
+! GWTS        Standard grain size,optimum conditions,normal plant density (mg)
+! LA1S        Area of standard first leaf (cm2)
+! LAFV        Increase in potential area of leaves,vegetative phase (fr/leaf)
+! LAFR        Increase in potential area of leaves,reproductive phase (fr/leaf)
+! Pn          Duration of phase n where n is phase number (PVoC.D) BUT P3 and
+!             P4 are 'dummy' values inserted to set the total duration of the 
+!             P3+P4 phase. The actual balance between P3 and P4 is determined 
+!             internally depending on the leaf number at the end of phase 1. 
+! PPSn *      Photoperiod sensitivity,phase(n). % drop in rate,10h pp.change.
+! PHINT       Interval between successive leaf appearances. (oC.d)
+! SHWTS       Standard,non-stressed shoot dry weight (incl.grain),maturity (g)
+! SLAS        Specific leaf area,standard (cm2/g)                                                                                   
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+! VREQ        Vernalization required for max.development rate (VDays)
+! VBASE       Vernalization requirement before any effect (VDays)
+! VEFF        Vernalization effect (Rate reduction when unvernalized (fr)
+!
+! *  The programme has been written to read sensitivity for all phases so that
+!    additional columns for later phases could be added if desired.
+! Coefficients used in the Cropsim model differ from those used in
+! earlier DSSAT wheat/barley models. They can be calculated
+! (approximately) from V3.5 coefficients as follows:
+! VREQ  = P1V(v3.5)*10
+! VBASE = 0.0          
+! VEFF  = MAX(0.0,1.0-P1V(V3.5)*10/50)
+! PPS1  = P1D(V3.5)*20
+! PPS2  = 0.0
+! P1    = PHINT(V3.5)*4.2
+! P2    = PHINT(V3.5)*3*0.3   (V3.5P2*0.3)
+! P3    = PHINT(V3.5)*3*0.7   (V3.5P2*0.7)
+! P4    = PHINT(V3.5)*2       (V3.5P3)
+! P5    = 80
+! P6    = 0
+! P7    = 120
+! P8    = P5(V3.5)*20 + 430
+! G#WTS  = G1(V3.5)*5 + 5
+! GWTS  = (G2(V3.5)*0.35+0.65) * P5/20
+! SHWTS = G3(V3.5)*0.7
+! PHINT = PHINT(V3.5)
+
+! Converted coefficients,and those listed below,should always be
+! tested by using them with real experiments and comparing model
+! outputs with measured values. Users should also be aware that
+! some of the coefficients (eg.PHINT) may vary from region to
+! region,and perhaps even from sowing date to sowing date,reflecting
+! the current incomplete understanding of the environmental physiology
+! of barley and other cereals.
+
+!             P/G/N:Phenology/Growth/Not used for calbration
+
+*CULTIVARS:BACRP048
+!                                     --------- PHENOLOGY (PHASE DURATIONS) -------- -------- P.MODIFIERS -------- -- LEAF PRODN.& SIZE -- SHOOT -- GRAIN --             
+@VAR#  VAR-NAME........  EXP#   ECO#    P1    P2    P3    P4    P5    P6    P7    P8  VREQ VBASE  VEFF  PPS1  PPS2 PHINT  LA1S  LAFV  LAFR SHWTS G#WTS  GWTS
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20
+!Calibration                             P     P     P     P     P     P     P     P     P     P     P     P     P     P     G     G     G     G     G     G
+!                                     oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  Vday  Vday    fr %/10h %/10h  oC.d m2/m2 fr/lf fr/lf     g   #/g    mg      
+999991 MINIMA               . 999991   100    60   100    50    50    10    50   100     0     0     0     0     0    40   0.1  0.01  0.01   0.5    10    10
+999992 MAXIMA               . 999992   800   100   300   500   400   100   300   800    60    30   1.0   300   200   120  10.0  5.00  5.00   5.0    50    75
+                                                                                                                                                                
+DFAULT DEFAULTS             . DFAULT   380    70   200   200    60    25   150   500     0     0     0     0     0    80   3.0  0.10  0.50   2.5    25    40
+
+IB0101 A.Abiad(2row)        . SY0001   390    73   218   196    66    26   171   220    10     0   1.0    20     0    91   4.0   0.1   0.3   3.0    10    40 
+IB0102 Beecher(6row)        . SY0002   411    77   230   206    70    28   181   220    10     0   1.0    20     0    96   5.0   0.1   0.4   3.0     7    40 
+IB0030 Maris Badger         . US0001   400    66   199   178    60    24   156   650     0     0   1.0    00     0    83   4.0   0.1   0.3   2.5    14    50 
+
+! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
+!IB0030 Maris Badger         . US0001   356    66   199   178    60    24   156   750     0     0   1.0    00     0    83   4.0   0.1   0.3   1.5    20    52 

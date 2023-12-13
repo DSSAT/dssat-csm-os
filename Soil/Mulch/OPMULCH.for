@@ -1,6 +1,6 @@
 C=======================================================================
 C  OPMULCH, Subroutine, C.H.Porter
-C  Mulch water balance output.  
+C  Mulch water balance output.
 C  File 'MulWatBal.out' created only if IDETL = 'D'.
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
@@ -10,20 +10,21 @@ C=======================================================================
 
       SUBROUTINE OPMULCH(CONTROL, ISWITCH, MULCH)
 !     &  MULWATADD, RESWATADD)
- 
+
       USE ModuleDefs
 !     VSH
-      USE CsvOutput 
+      USE CsvOutput
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 
       CHARACTER*1 IDETL, IDETW, ISWWAT
       CHARACTER*13, PARAMETER :: MWBAL = 'MulWatBal.OUT'
 
-      INTEGER DAS, DOY, DYNAMIC, FROP, INCDAT 
+      INTEGER DAS, DOY, DYNAMIC, FROP, INCDAT
       INTEGER DLUN, RUN, YRDOY,  YEAR
-!     INTEGER DY1, DY2, ERRNUM, LUN, YR1, YR2, 
+!     INTEGER DY1, DY2, ERRNUM, LUN, YR1, YR2,
 
 !      REAL CUMWBAL, CUMMULADD, CUMMULEVAP, CUMRESWATADD
 !     REAL RESWATADD
@@ -39,7 +40,7 @@ C=======================================================================
       DYNAMIC = CONTROL % DYNAMIC
       FROP    = CONTROL % FROP
       YRDOY   = CONTROL % YRDOY
-           
+
       FMOPT   = ISWITCH % FMOPT   ! VSH
 
 !***********************************************************************
@@ -79,26 +80,26 @@ C=======================================================================
         ENDIF
         END IF ! VSH
 
-        CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
-        
+        CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
+
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE(DLUN,200) YEAR, DOY, DAS, MULCH % MULCHCOVER,
      &      MULCH % MULCHTHICK, NINT(MULCH % MULCHMASS), MULCH %MULCHWAT
   200   FORMAT(1X,I4,1X,I3.3,1X,I5,F8.3,F8.2,I8,F8.2)
-      
+
         END IF ! VSH
-        
+
         !     VSH
-      IF (FMOPT == 'C') THEN 
-         CALL CsvOutMulch(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
-     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
-     &MULCH % MULCHCOVER, MULCH % MULCHTHICK,  
-     &MULCH % MULCHMASS, MULCH %MULCHWAT,   
+      IF (FMOPT == 'C') THEN
+         CALL CsvOutMulch(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM,
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,
+     &MULCH % MULCHCOVER, MULCH % MULCHTHICK,
+     &MULCH % MULCHMASS, MULCH %MULCHWAT,
      &vCsvlineMulch, vpCsvlineMulch, vlngthMulch)
-     
+
          CALL LinklstMulch(vCsvlineMulch)
       END IF
-      
+
       ENDIF
 !-----------------------------------------------------------------------
 !      IF (PRINTBAL) THEN
@@ -113,9 +114,9 @@ C=======================================================================
 !     &      IOSTAT = ERRNUM)
 !          WRITE(LUN,'("*MULCH WATER BALANCE OUTPUT FILE")')
 !        ENDIF
-!      
+!
 !        CALL HEADER(SEASINIT, LUN, RUN)
-!      
+!
 !!       Write header for daily balance output
 !        WRITE (LUN,100)
 !  100   FORMAT('@YEAR DOY   DAS',
@@ -126,7 +127,7 @@ C=======================================================================
 !
 !        MWI   = MULCH%MULCHWAT
 !        MWY   = MULCH%MULCHWAT
-!      
+!
 !        CUMWBAL      = 0.0
 !        CUMMULADD    = 0.0
 !        CUMRESWATADD = 0.0
@@ -141,22 +142,22 @@ C=======================================================================
 !-----------------------------------------------------------------------
       IF (PRINTDAY .AND. MOD(DAS,FROP) == 0) THEN
 !       Transfer data from constructed variable to local variables
-        CALL YR_DOY(YRDOY, YEAR, DOY) 
+        CALL YR_DOY(YRDOY, YEAR, DOY)
 
-        CALL YR_DOY(YRDOY, YEAR, DOY) 
+        CALL YR_DOY(YRDOY, YEAR, DOY)
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE(DLUN,200) YEAR, DOY, DAS, MULCH % MULCHCOVER,
      &      MULCH % MULCHTHICK, NINT(MULCH % MULCHMASS), MULCH %MULCHWAT
         END IF   ! VSH
-      
+
 !     VSH
-        IF (FMOPT == 'C') THEN 
-         CALL CsvOutMulch(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
-     &     CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
-     &     MULCH % MULCHCOVER, MULCH % MULCHTHICK,  
-     &     MULCH % MULCHMASS, MULCH %MULCHWAT,   
+        IF (FMOPT == 'C') THEN
+         CALL CsvOutMulch(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM,
+     &     CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,
+     &     MULCH % MULCHCOVER, MULCH % MULCHTHICK,
+     &     MULCH % MULCHMASS, MULCH %MULCHWAT,
      &     vCsvlineMulch, vpCsvlineMulch, vlngthMulch)
-     
+
          CALL LinklstMulch(vCsvlineMulch)
         END IF
       ENDIF
@@ -171,7 +172,7 @@ C=======================================================================
 !
 !        CUMWBAL = CUMWBAL + WBALAN
 !
-!        WRITE (LUN,300) YEAR, DOY, DAS, 
+!        WRITE (LUN,300) YEAR, DOY, DAS,
 !     &    MULCH%MULCHWAT,                   !State variables
 !     &    MULWATADD, RESWATADD,             !Inflows
 !     &    MULCH%MULCHEVAP,                  !Outflows
@@ -180,7 +181,7 @@ C=======================================================================
 !
 !!       Save values for comparison tomorrow
 !        MWY = MULCH%MULCHWAT
-!      
+!
 !        CUMMULADD    = CUMMULADD    + MULWATADD
 !        CUMMULEVAP   = CUMMULEVAP   + MULCH%MULCHEVAP
 !        CUMRESWATADD = CUMRESWATADD + RESWATADD
@@ -195,13 +196,13 @@ C=======================================================================
 !      IF (PRINTBAL) THEN
 !        CALL YR_DOY(YRSIM, YR1, DY1)
 !        CALL YR_DOY(YRDOY, YR2, DY2)
-!      
+!
 !!       Put "!" in column 1 so that daily info can be plotted.
 !        WRITE (LUN,350)
 !  350   FORMAT(/,'!',5X,'MULCH WATER BALANCE PARAMETERS',
 !     &         /,'!',5X,'========================',T48,'--mm--')
 !        WRITE (LUN,400) YR1, DY1, MWI,
-!     &                     YR2, DY2, MULCH%MULCHWAT, 
+!     &                     YR2, DY2, MULCH%MULCHWAT,
 !     &                     CUMMULADD, CUMRESWATADD, CUMMULEVAP
 !  400   FORMAT(
 !     &   /,'!',5X,'Mulch H20 (start) on Year/day',I5,'/',I3.3,T44,F10.2,
@@ -209,11 +210,11 @@ C=======================================================================
 !     &   /,'!',5X,'Rainfall added to mulch',      T44,F10.2,
 !     &   /,'!',5X,'Water added with new residue', T44,F10.2,
 !     &   /,'!',5X,'Mulch evaporation',            T44,F10.2)
-!      
+!
 !        WBALAN = MWI - MULCH%MULCHWAT       !Change in water content
 !     &         + CUMMULADD + CUMRESWATADD   !Inflows
 !     &         - CUMMULEVAP                 !Outflows
-!      
+!
 !        WRITE  (LUN,500) WBALAN
 !  500   FORMAT(/,'!',5X,'Final Balance ',T42,F12.4,/)
 !      ENDIF
@@ -221,16 +222,16 @@ C=======================================================================
 !      CLOSE(LUN)
       IF (PRINTDAY .AND. MOD(DAS,FROP) /= 0) THEN
 !     Transfer data from constructed variable to local variables
-      CALL YR_DOY(YRDOY, YEAR, DOY) 
+      CALL YR_DOY(YRDOY, YEAR, DOY)
 
         CALL YR_DOY(YRDOY, YEAR, DOY)
-        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE(DLUN,200) YEAR, DOY, DAS, MULCH % MULCHCOVER,
      &      MULCH % MULCHTHICK, NINT(MULCH % MULCHMASS), MULCH %MULCHWAT
         END IF   ! VSH
       ENDIF
       IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-      CLOSE(DLUN)       
+      CLOSE(DLUN)
       END IF   ! VSH
 !***********************************************************************
 !***********************************************************************

@@ -12,9 +12,11 @@ c      - Sucrose mass (t/ha)
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      SUBROUTINE SC_ETOUT(CONTROL, PAR, Fi, EP, ES, EO, YRPLT, XHLAI, 
-     & EORATIO, MDATE, YREND)
-     
+      SUBROUTINE SC_ETOUT(CONTROL, Fi, EP, ES, EO, YRPLT, XHLAI, 
+     & EORATIO, YREND)
+
+!     2023-01-26 chp removed unused variables from argument list: PAR, MDATE, 
+
 c     ***************************************************************      
 c     Instruct compiler to use module definitions:
 c     DSSAT
@@ -24,7 +26,9 @@ c     Canegro
       USE CNG_ModuleDefs      
 
       IMPLICIT NONE
-      SAVE  
+      EXTERNAL GETLUN, YR_DOY, NAILUJ, ETAD_NAILUJ, FIND_HDATE
+      EXTERNAL TIMDIF, MTHEND
+      SAVE
 
 c     Control variable:
       TYPE (ControlType), INTENT(IN) :: CONTROL        
@@ -33,9 +37,9 @@ c     Bio-physical variables to output in summary file
 c     CMDMD is cellulose DM.
 c     LGDMD, LDDMD are green tops DM and trash DM
 c     RDMD is root dry mass
-      REAL, INTENT(IN) :: PAR, Fi, EP, ES, EO, XHLAI, EORATIO
+      REAL, INTENT(IN) :: Fi, EP, ES, EO, XHLAI, EORATIO !PAR, 
      
-      INTEGER, INTENT(IN) :: YRPLT, YREND, MDATE
+      INTEGER, INTENT(IN) :: YRPLT, YREND !, MDATE
 
 c     Local state variables
 c     :::::::::::::::::::::
@@ -45,16 +49,16 @@ c     Cumulative transpiration + evaporation
       INTEGER COUNTER
 
 c     The file unit number for the summary output file.
-      INTEGER ETOUT
+!      INTEGER ETOUT
 c     Filename
-      CHARACTER*20 OFILE
+!      CHARACTER*20 OFILE
 c     Does the file exist, is this the first run?:
-      LOGICAL FILE_EXISTS !, FIRST
+!      LOGICAL FILE_EXISTS !, FIRST
 c     Error status:
-      INTEGER ERRNUM
+!      INTEGER ERRNUM
 c     Days after planting
       INTEGER DAP
-      INTEGER DOY, YEAR, YR, YRDOY, NDAY, iMON, YEARPLT, DAYMON
+      INTEGER DOY, YEAR, YRDOY, NDAY, iMON, DAYMON !, YR, YEARPLT
       CHARACTER*3  RMON
       !For the why
       INTEGER TIMDIF
@@ -97,57 +101,57 @@ c     Write a file header
 c     Open growth aspects output file:
 c     ::::::::::::::::::::::::::::::::
 c       Set file name:
-        OFILE = 'ETSUMMRY.OUT'
-
-c       Get file unit number:
-        CALL GETLUN('ETSUMMRY', ETOUT)
-
-c       Check that the file exists:
-        FILE_EXISTS = .FALSE.
-        INQUIRE(FILE=OFILE, EXIST=FILE_EXISTS)
-
-c       Open the file
-        IF (FILE_EXISTS) THEN
-c         In append mode if the file already exists
-          OPEN (UNIT=ETOUT, FILE=OFILE, STATUS='OLD',
-     &      IOSTAT=ERRNUM, POSITION='APPEND')
-!         WRITE(*,*) 'Appending to existing file.'
-        ELSE
-c         A new file if not existing
-          OPEN (UNIT=ETOUT, FILE=OFILE, STATUS='NEW',
-     &      IOSTAT = ERRNUM)
-     
-!         WRITE(*,*) 'Writing to new file.' 
-          
-          WRITE(ETOUT,'("*MONTHLY EVAPORATION SUMMARY OUTPUT FILE")')
-          WRITE(ETOUT,'("! RUNNO - Cumulative irrigation (mm)")')
-          WRITE(ETOUT,'("! TRNO-the DSSAT CSM internal TRNO variable")')
-          WRITE(ETOUT,'("! HV_YEAR – harvest year")')
-          WRITE(ETOUT,'("! HV_MON – harvest month")')
-          WRITE(ETOUT,'(A)') "! GRYR_No – the year of growth for this " 
-     &                  //   "month's output "
-          WRITE(ETOUT,'("! GRMON_No – the growth month number, from 1 
-     & to n where n is the number of months at harvest.
-     &    ")')
-          WRITE(ETOUT,'("! MONTH – month number, 1-12 for Jan- Dec")')
-          WRITE(ETOUT,'("! FI – average canopy cover for that month.")')
-          WRITE(ETOUT,'("! ETc – sum of plant (EP) and soil (ET) 
-     & evaporation over the course of the month")')
-          WRITE(ETOUT,'("! EToc – sum of potential evaporation, i.e. EO,
-     &     over the course of the month")')
-          WRITE(ETOUT,'("! ETo – sum of FAO-56 shortgrass potential
-     & evaporation, over the course of the month")')
-          WRITE(ETOUT,'("! ETc_ETo – monthly average ETc / ETo")')
-          WRITE(ETOUT,'("! ETc_EToc – monthly average ETc / EToc")')
-          WRITE(ETOUT,'("! RNOFF - Monthly cumulative runoff (mm)")')
-          WRITE(ETOUT,'("! DRAIN - Monthly cumulative drainage (mm)")')
-          WRITE(ETOUT,'("")')
-c         Write column headings
-          WRITE(ETOUT, '(A8, 1H , A5, 1H , A4, 1H , 13(A8, 1H ))') 
-     &      '@EXPCODE', 'RUNNO', 'TRNO', 'HV_YEAR', 'HV_MON','GRYR_NO',
-     &      'GRMON_NO','MONTH','FI','ETc', 'EToc', 'ETc_ETo', 'ETo', 
-     &      'ETc_EToc', 'RNOFF', 'DRAIN'
-        ENDIF
+!        OFILE = 'ETSUMMRY.OUT'
+!
+!c       Get file unit number:
+!        CALL GETLUN('ETSUMMRY', ETOUT)
+!
+!c       Check that the file exists:
+!        FILE_EXISTS = .FALSE.
+!        INQUIRE(FILE=OFILE, EXIST=FILE_EXISTS)
+!
+!c       Open the file
+!        IF (FILE_EXISTS) THEN
+!c         In append mode if the file already exists
+!          OPEN (UNIT=ETOUT, FILE=OFILE, STATUS='OLD',
+!     &      IOSTAT=ERRNUM, POSITION='APPEND')
+!!         WRITE(*,*) 'Appending to existing file.'
+!        ELSE
+!c         A new file if not existing
+!          OPEN (UNIT=ETOUT, FILE=OFILE, STATUS='NEW',
+!     &      IOSTAT = ERRNUM)
+!     
+!!         WRITE(*,*) 'Writing to new file.' 
+!          
+!          WRITE(ETOUT,'("*MONTHLY EVAPORATION SUMMARY OUTPUT FILE")')
+!          WRITE(ETOUT,'("! RUNNO - Cumulative irrigation (mm)")')
+!          WRITE(ETOUT,'("! TRNO-the DSSAT CSM internal TRNO variable")')
+!          WRITE(ETOUT,'("! HV_YEAR ï¿½ harvest year")')
+!          WRITE(ETOUT,'("! HV_MON ï¿½ harvest month")')
+!          WRITE(ETOUT,'(A)') "! GRYR_No ï¿½ the year of growth for this " 
+!     &                  //   "month's output "
+!          WRITE(ETOUT,'("! GRMON_No ï¿½ the growth month number, from 1 
+!     & to n where n is the number of months at harvest.
+!     &    ")')
+!          WRITE(ETOUT,'("! MONTH ï¿½ month number, 1-12 for Jan- Dec")')
+!          WRITE(ETOUT,'("! FI ï¿½ average canopy cover for that month.")')
+!          WRITE(ETOUT,'("! ETc ï¿½ sum of plant (EP) and soil (ET) 
+!     & evaporation over the course of the month")')
+!          WRITE(ETOUT,'("! EToc ï¿½ sum of potential evaporation, i.e. EO,
+!     &     over the course of the month")')
+!          WRITE(ETOUT,'("! ETo ï¿½ sum of FAO-56 shortgrass potential
+!     & evaporation, over the course of the month")')
+!          WRITE(ETOUT,'("! ETc_ETo ï¿½ monthly average ETc / ETo")')
+!          WRITE(ETOUT,'("! ETc_EToc ï¿½ monthly average ETc / EToc")')
+!          WRITE(ETOUT,'("! RNOFF - Monthly cumulative runoff (mm)")')
+!          WRITE(ETOUT,'("! DRAIN - Monthly cumulative drainage (mm)")')
+!          WRITE(ETOUT,'("")')
+!c         Write column headings
+!          WRITE(ETOUT, '(A8, 1H , A5, 1H , A4, 1H , 13(A8, 1H ))') 
+!     &      '@EXPCODE', 'RUNNO', 'TRNO', 'HV_YEAR', 'HV_MON','GRYR_NO',
+!     &      'GRMON_NO','MONTH','FI','ETc', 'EToc', 'ETc_ETo', 'ETo', 
+!     &      'ETc_EToc', 'RNOFF', 'DRAIN'
+!        ENDIF
 
 c       Initialised total irrigation to 0.0
         COUNTER = 0
@@ -332,39 +336,39 @@ c         CALL MTHEND(YR,MTH)
           endif
       
 c         Write summary data to file.
-		  WRITE(ETOUT, '(A8, 1H , ' // !File name1
-     &                 'I5, 1X , '//  !Run number2
-     &                 'I4, 1H , ' // !Treatment number3
-     &      'I8, 1H '//      !HV_YEAR4
-     &      'A8, 1H '//      !HV_MON5
-     &      'I8, 1H '//      !Growth year num6
-     &      'I8, 1H '//      !Growth month num7
-     &      'I8, 1H '//      !Current month num8
-     &      'F8.3, 1H '//    !FI9
-     &      'F8.3, 1H '//    !ETc10
-     &      'F8.3, 1H '//    !EToc11
-     &      'F8.3, 1H '//    !ETo12
-     &      'F8.3, 1H '//    !ETc_ETo13
-     &      'F8.3, 1H '//    !ETc_EToc14
-     &      'F8.3, 1H '//    !Runoff
-     &      'F8.3, 1H )')    !Drainage
-     &      Control%FILEX,   !File1
-     &      Control%RUN,     !Run number2
-     &      Control%TRTNUM,  !Treatment number3
-     &      YRHV,            !Harvest year4
-     &      MONHV,           !Harvest month5
-     &      GRYRNO,          !Growth year number6
-     &      GRMONNO,         !Growth month number7
-     &      iMON,            !Current month number8
-     &      AvgFi,           !average canopy cover for the month9
-     &      ETV,             !Sum of EP and ET evaporation for the mon10
-     &      EToc,            !Sum of EO for the month11
-     &      ETc_ETo,         !Sum of EO for the month12
-     &      ETo,             !Monthly average ETc_ETo13
-!    &      (ETV/EToc),      !Monthly average ETc_ETo14
-     &      ETc_ETo14,       !Monthly average ETc_ETo14
-     &      cRUNOFF,         ! Monthly cumulative runoff
-     &      cDRAIN           ! Monthly cumulative drainage
+!		  WRITE(ETOUT, '(A8, 1H , ' // !File name1
+!     &                 'I5, 1X , '//  !Run number2
+!     &                 'I4, 1H , ' // !Treatment number3
+!     &      'I8, 1H '//      !HV_YEAR4
+!     &      'A8, 1H '//      !HV_MON5
+!     &      'I8, 1H '//      !Growth year num6
+!     &      'I8, 1H '//      !Growth month num7
+!     &      'I8, 1H '//      !Current month num8
+!     &      'F8.3, 1H '//    !FI9
+!     &      'F8.3, 1H '//    !ETc10
+!     &      'F8.3, 1H '//    !EToc11
+!     &      'F8.3, 1H '//    !ETo12
+!     &      'F8.3, 1H '//    !ETc_ETo13
+!     &      'F8.3, 1H '//    !ETc_EToc14
+!     &      'F8.3, 1H '//    !Runoff
+!     &      'F8.3, 1H )')    !Drainage
+!     &      Control%FILEX,   !File1
+!     &      Control%RUN,     !Run number2
+!     &      Control%TRTNUM,  !Treatment number3
+!     &      YRHV,            !Harvest year4
+!     &      MONHV,           !Harvest month5
+!     &      GRYRNO,          !Growth year number6
+!     &      GRMONNO,         !Growth month number7
+!     &      iMON,            !Current month number8
+!     &      AvgFi,           !average canopy cover for the month9
+!     &      ETV,             !Sum of EP and ET evaporation for the mon10
+!     &      EToc,            !Sum of EO for the month11
+!     &      ETc_ETo,         !Sum of EO for the month12
+!     &      ETo,             !Monthly average ETc_ETo13
+!!    &      (ETV/EToc),      !Monthly average ETc_ETo14
+!     &      ETc_ETo14,       !Monthly average ETc_ETo14
+!     &      cRUNOFF,         ! Monthly cumulative runoff
+!     &      cDRAIN           ! Monthly cumulative drainage
      
             COUNTER = 0
             ETV = 0
@@ -392,7 +396,7 @@ c     ===============================================================
       ELSEIF (Control%DYNAMIC .EQ. SEASEND) THEN
       
 c       Close the output file
-        CLOSE(UNIT=ETOUT)
+!        CLOSE(UNIT=ETOUT)
 
 c     End of DYNAMIC conditional statement
       ENDIF
@@ -420,6 +424,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR
 
       CHARACTER*6 SECTION, ERRKEY 
       PARAMETER (ERRKEY = 'FIND_HDATE')

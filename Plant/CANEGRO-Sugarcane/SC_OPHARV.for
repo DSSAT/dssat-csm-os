@@ -13,7 +13,8 @@
 !     &    PhenoStage, 
      &    STGDOY, 
 c         WFAC, TOPWT, TURFAC,       !Input
-     &    XLAI, YRPLT)                                    !Input
+     &    XLAI, YRPLT,                                    !Input
+     &    HARVFRAC, TOP_N)  !Input  ! HBD (Jan 2023) after MvdL 2011
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -21,6 +22,8 @@ c     Define CANEGRO composite variables:
       USE CNG_ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL GETDESC, OPVIEW, READA, SUMVALS, EvaluateDat, 
+     &  ERROR, TIMDIF
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI
@@ -45,6 +48,19 @@ c     Define CANEGRO composite variables:
 !      REAL, DIMENSION(2) :: HARVFRAC
 
       REAL PStres1, PStres2
+
+      ! HBD (Jan 2023) after MvdL 2011
+      !     MvdL
+       !REAL HARVFRAC(2)
+      Type (ResidueType) HARVRES
+!     Harvest residue variables 0 = surface
+      INTEGER, PARAMETER :: SRFC = 0
+      REAL HResWt(0:NL)   !Residue mass (kg[dry matter]/ha)
+      REAL HResLig(0:NL)  !Residue lignin (kg[lignin]/ha)
+      REAL HResE(0:NL,NELEM)  !Residue element components (kg[E]/ha)
+      REAL HARVFRAC(2) ! HBD (Jan 2023) after MvdL 2011
+!      REAL PLIGLF
+      REAL TOP_N
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
@@ -339,6 +355,25 @@ c     Green Leaf area index at harvest
       ELSE
         DNR_EMRG = -99
       ENDIF
+
+      ! HBD (Jan 2023) after MvdL 2011
+      !   Added by MvdL: 
+      ! for C modelling purposes, * 1000 to get from t/ha to kg/ha
+
+      HResWt  = 0.0     !MvdL: Consider moving this to a later stage 
+      HResLig = 0.0
+      HResE   = 0.0
+      
+      HResWt(SRFC)  = (TRSH*1000*(1. - HARVFRAC(2))) 
+     &  + (Part%TOPDM*1000*(1. - HARVFRAC(2)))
+      HResLig(SRFC) = HResWt(SRFC)*0.07                          
+      !MvdL: This represents the min N conc.
+      HResE(SRFC, N) = (TRSH*1000*0.004*(1.-HARVFRAC(2)))        
+     & + (1.-HARVFRAC(2))*TOP_N                       
+
+      HARVRES % ResWt  = HResWt
+      HARVRES % ResLig = HResLig
+      HARVRES % ResE   = HResE 
 
 !-----------------------------------------------------------------------
 !     Read Measured (measured) data from FILEA

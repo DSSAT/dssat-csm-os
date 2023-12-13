@@ -5,6 +5,8 @@ C  Soil Potassium Model
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  10/31/2007 US/CHP Written
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=====================================================================
 
       SUBROUTINE SoilKi(CONTROL, ISWITCH, 
@@ -15,6 +17,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModSoilMix
       IMPLICIT NONE
+      EXTERNAL SoilKi_init, OpSOILKi, WARNING
       SAVE
 
       CHARACTER*1  ISWPOT, RNMODE

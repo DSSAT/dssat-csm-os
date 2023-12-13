@@ -1,5 +1,5 @@
 *CSM OUTPUT FILES
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.8; 2023-05-11
 !
 ! Output files currently created by DSSAT crop simulation models.
 !
@@ -28,7 +28,7 @@ SOMLITN.OUT     LN Daily soil organic matter nitrogen output file     OUTSOMN
 SOMLITP.OUT     LP Daily soil organic matter phosphorus output file   OUTSOMP
 Weather.OUT     WE Daily weather output file                          OUTWTH
 EAAMOD.OUT         Daily output from EAAMOD high water table model
-FreshWt.OUT        Daily fresh fruit weight
+FreshWt.OUT        Daily fresh fruit weight                           FWOUT
 Mulch.OUT          Daily surface mulch output file
 PrimaryStalk.OUT   Casupro sugarcane output                           PSTALK
 CSP_SENES.OUT      Casupro sugarcane output                           CSP_SENES
@@ -37,8 +37,9 @@ CSP_GrowCane.OUT   Casupro sugarcane output                           CSP_GRO
 CSP_PHEN.OUT       Casupro sugarcane output                           OUTPHNL
 PlantKg.OUT        Casupro sugarcane output                           OUTKG
 Generic.OUT        Generic (temporary) output file
-SALUS.OUT          Generic plant routine
+GHG.OUT            Greenhouse gas emissions report
 N2O.OUT         NO Soil N2O and N2 daily emissions output        
+Methane.OUT     MT Methane emissions daily output file
 Potential.OUT      Water potential - daily
 PlantGr2.OUT    G2 Wheat and barley specific output file
 PlantGrf.OUT    GF Wheat and barley specific output file
@@ -64,6 +65,7 @@ etphot.csv         Daily evapotranspiration output file in CSV
 mulch.csv          Daily surface mulch output file in CSV format
 plantp.csv         Daily plant phosphorus output in CSV format
 soilpi.csv         Daily inorganic soil phosphorus output file, CSV
+n2o.csv            Daily N2O output file, CSV
 
 !Seasonal summary output files
 Environ.OUT     EN Environmental modifications output file            SOUTE
@@ -94,6 +96,7 @@ FORAGE.OUT      FH Forage harvest output file                         FORHARV
 
 !Summary csv files:
 summary.csv        Summary output file in CSV format
+Version.OUT        Version number for simulation
 
 !Information files:
 ERROR.OUT          Error messages                                     ERRORO
@@ -108,3 +111,8 @@ LUN.LST            List of output files generated                     LUNLST
 ! MJ & SK Climate change summary output file
 CCSUMMRY.OUT    CC Climate change summary output file                 OUTCC
 ETSUMMRY.OUT    ET extended summary output file                       OUTEX
+
+! Sugarcane-SAMUCA Detailed outputs
+PlantGr_Det.OUT    Detailed phytomeric outputs                        SAMPHY
+Canopy_Phot.OUT    Layered canopy photosynthesis outputs              SAMCPH
+Crop_Stress.OUT    Crop abiotic stress factors                        SAMSTR

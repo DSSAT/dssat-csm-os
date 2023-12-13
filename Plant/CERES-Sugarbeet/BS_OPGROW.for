@@ -12,7 +12,7 @@ C  Calls:     None
 !======================================================================
       SUBROUTINE BS_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, MDATE, NLAYR, NSTRES, 
-     &  PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &  PCNL, PLTPOP, PODNO, PODWT, RLV, RSTAGE, !PSTRES1, PSTRES2, 
      &  RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &  STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
      &  WTSO, XLAI, YRPLT)
@@ -21,6 +21,7 @@ C  Calls:     None
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
 !----------------------------------------------------------------------
       INTEGER NOUTDG
@@ -35,14 +36,14 @@ C  Calls:     None
 
       REAL VSTAGE, XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, PODWT, SEEDNO
       REAL SLA, PCNL, TURFAC, CANHT, CANWH, HI, SHELPC, SATFAC
-      REAL SDSIZE, PODNO, PSTRES1, PSTRES2, RTDEP, NSTRES, SWFAC, HIP
+      REAL SDSIZE, PODNO, RTDEP, NSTRES, SWFAC, HIP   !PSTRES1, PSTRES2, 
       REAL PLTPOP, PODWTD, DTT
       REAL WTLO, WTSO, WTCO
       REAL RLV(NL)
       REAL CUMSENSURF, CUMSENSOIL     !cumul. senes. soil and surface
 
 !     Average stresses since last printout
-      REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV
+      REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, KST_AV
 
       CHARACTER*1     IDETG
       CHARACTER*6, PARAMETER :: ERRKEY = 'BS_OPG'
@@ -130,14 +131,14 @@ C  Calls:     None
         EXW_AV = 0.0
 !        PS1_AV = 0.0
 !        PS2_AV = 0.0
-
+        KST_AV = 0.0
 !-----------------------------------------------------------------------
 !                         DYNAMIC = OUTPUT
 !-----------------------------------------------------------------------
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
         IF (YRDOY .GE. YRPLT) THEN
 
-          PODWTD = 0
+          PODWTD = 0.0
 !         DAS = MAX(0, TIMDIF(YRSIM, YRDOY))
           DAP = MAX(0, TIMDIF(YRPLT, YRDOY))
 
@@ -191,7 +192,7 @@ C  Calls:     None
      &        NINT(WTLF*10.),NINT(STMWTO*10.),NINT(SDWT*10.),
      &        NINT(RTWT*10.*PLTPOP), VWAD, NINT(TOPWT*10.),
      &        NINT(SEEDNO),SDSIZE,HI,NINT(PODWT*10.),NINT(PODNO),
-     &        SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, 
+     &        SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, KST_AV,
      &        PCNL,SHELPC,HIP, NINT(PODWTD*10.),
      &        NINT((PODWTD+PODWT)*10.),SLA,CANHT,CANWH, (RTDEP/100.)
  400        FORMAT (1X,I4,1X,I3.3,2(1X,I5),1X,F6.1,1X,I6,1X,F6.2,

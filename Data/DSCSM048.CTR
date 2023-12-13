@@ -1,0 +1,326 @@
+$SIMULATION_CONTROLS
+
+! A control number (CTRNO) > 0 specifies the set of controls that will be 
+! used to override the simulation controls specified in the experiment file.
+
+!-----------------------------------------------------------------------------------------
+*CONTROLS_SWITCH
+@CTRNO DESCRIPTION  
+    00 No change 
+
+*CONTROLS
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 1 No changes
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              .     .     .     .     .     .     .     .     .     .     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 2 Summary, evaluate files only (VBOSE='0' - zero)
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 2 OU              .     E     Y     .     N     N     N     N     N     N     0     N     N     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 3 Minimum output (VBOSE='N') 
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 3 OU              .     .     .     .     .     .     .     .     .     .     N     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 4 Normal output (VBOSE='Y') 
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 4 OU              .     .     .     .     .     .     .     .     .     .     Y     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 5 Detail output (VBOSE='D') 
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 5 OU              .     .     .     1     .     .     .     .     .     .     D     .     Y     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 6 All output (VBOSE='A') 
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 6 OU              .     .     .     .     .     .     .     .     .     .     A     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 7 CSV outputs
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 7 OU              .     .     .     .     .     .     .     .     .     .     .     .     .     C
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 8 CSV outputs, only Summary.OUT
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 8 OU              .     .     .     .     .     .     .     .     .     .     0     .     .     C
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+11 Potential yield 
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+11 OP              N     N     .     N     N     N     N     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+12 Potential yield, no output except summary, overview and evaluate
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+12 OP              N     N     .     N     N     N     N     .     .
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+12 OU              N     Y     Y     .     N     N     N     N     N     N     N     N     N     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+24 EPIC soil temperature method
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL METMP
+24 ME              .     .     .     .     .     .     .     .     .     .     .     E
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+25 DSSAT soil temperature method
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL METMP
+25 ME              .     .     .     .     .     .     .     .     .     .     .     D
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+31 No water, no N, no P, no K simulation or stresses
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+31 OP              N     N     .     N     N     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+32 No N, no P, no K simulation or stresses 
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+32 OP              .     N     .     N     N     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+33 No P, no K simulation or stresses
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+33 OP              .     .     .     N     N     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+34 No K simulation or stresses
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+34 OP              .     .     .     .     N     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+35 Force Water simulation on
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+35 OP              Y     .     .     .     .     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+36 Force Water & N simulation on
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+36 OP              Y     Y     .     .     .     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+37 Force Water, N and P simulation on
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+37 OP              Y     Y     .     Y     .     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+38 Force Water, N, and K simulation on
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+38 OP              Y     Y     .     .     Y     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+41 No Tillage 
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+41 OP              .     .     .     .     .     .     .     N     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+42 Switch on mulch effects
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+42 ME              .     .     .     .     M     .     .     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+43 Switch off mulch effects
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+43 ME              .     .     .     .     N     .     .     .     .     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+44 Original Ritchie soil evaporation method
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+44 ME              .     .     .     .     .     .     .     .     .     R     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+45 Modified Suleiman-Ritchie soil evaporation method
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+45 ME              .     .     .     .     .     .     .     .     .     S     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+50 Parton - Century soil organic matter
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+50 ME              .     .     .     .     .     .     .     .     P     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+51 Godwin - Ceres soil organic matter
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+51 ME              .     .     .     .     .     .     .     .     G     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+60 CO2 read from file CO2xxx.WDA
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+60 OP              .     .     .     .     .     .     .     .     M
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+61 CO2 default
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+61 OP              .     .     .     .     .     .     .     .     D
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+62 CO2 read from weather file
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+62 OP              .     .     .     .     .     .     .     .     W
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+90 CASUPRO, Sugarcane
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+90 GE              .     .     .     .     .                           SCCSP 
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+91 CANEGRO, Sugarcane
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+91 GE              .     .     .     .     .                           SCCAN 
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+92 Ceres Maize
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+92 GE              .     .     .     .     . Ceres Maize               MZCER 
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+93 IXIM Maize
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+93 GE              .     .     .     .     . IXIM Maize                MZIXM 
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+94 CSCRP wheat, barley, cassava
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+94 GE              .     .     .     .     . CSCRP                     CSCRP 
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+95 CSCER wheat, barley
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+95 GE              .     .     .     .     . CSCER                     CSCER
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+96 N-Wheat
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+96 GE              .     .     .     .     . N-Wheat                   WHAPS
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+98 Custom 
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+98 GE              .     .     .     .     .                           . 
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+98 OP              .     .     .     .     .     .     .     .     .
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL METMP MEGHG
+98 ME              .     .     .     .     .     .     .     .     .     .     .     .     .
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+98 MA              .     .     .     .     .
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+98 OU              .     .     .     .     .     .     .     .     .     .     .     .     .     .
+
+!!-----------------------------------------------------------------------------------------
+!!The following options can be set from this file (except "X" fields)
+!@N CONTROLS_TITLE
+!99 Full set of available controls
+!@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+!99 GE              1     1     X 01001  XXXX Default Sim Controls      CRGRO046 
+!@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+!99 OP              Y     Y     N     N     N     N     N     N     D
+!@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+!99 ME              M     M     E     R     S     C     R     1     G     S     2
+!@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+!99 MA              R     R     R     N     M
+!@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+!99 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     Y     A
+!
+!-----------------------------------------------------------------------------------------
+
+!Definitions:
+
+!GENERAL
+! NYERS  Number of years this simulation
+! NREPS  Number of replicates (for generated weather)
+! SDATE  Start date for simulation
+! RSEED  Random number seed (for generated weather)
+! SNAME  Simulation name
+! MODEL  Crop model (e.g., MZCER046 or MZIXM046)
+
+!OPTIONS
+! WATER   Water balance and stresses simulation switch (Y=yes, N=no) 
+! NITRO   N balance and stresses simulation switch (Y=yes, N=no)
+! SYMBI   Symbiosis, N fixation simulation switch (Y=yes, N=no)
+! PHOSP   P balance and stresses simulation switch (Y=yes, N=no)
+! POTAS   K balance and stresses simulation switch (Y=yes, N=no)
+! DISES   Disease & pests simulation switch (Y=yes, N=no)
+! CHEM    Chemical applications simulation switch (not currently functional)(Y=yes, N=no)
+! TILL    Tillage events simulation switch (Y=yes, N=no)
+! CO2     CO2 data source (D = use static CO2 value from CO2046.WDA file, M = Use time series 
+!           from CO2046.WDA file, W = read from weather file header)  
+
+!METHODS
+! WTHER   Weather data source (M=measured,G=generated,S=Simmeteo,W=Wthgen)
+! INCON   Initial conditions switch (not currently used) (M=as reported, S=from previous run) 
+! LIGHT   Y=yes,N=no (not implemented)
+! EVAPO   Method of potential evapotranspiration (R=Priestley-Taylor,P=Penman FAO-24,
+!           F=FAO-56,D=Dynamic FAO-56,Z=Hourly energy balance)
+! INFIL   Mulch effects switch (R,S=SCS runoff with mulch effects, N=no mulch effects)
+! PHOTO   Photosynthesis method (C=canopy response, R=radiation use efficiency, L=leaf photosynthesis)
+! HYDRO   Hydrology method (R=Ritchie)
+! NSWIT   Nitrogen switch (experimental)
+! MESOM   Organic matter model (G=Godwin/Ceres, P=Parton/CENTURY)
+! MESEV   Soil evaporation method (S=Suleiman-Ritchie, R=Ritchie)
+! MESOL   Soil layer distribution (1=DSSAT layers, 2=no interpolation, 3=user defined)
+
+!MANAGEMENT
+! PLANT   Planting input (A=automatic planting, R=on reported date)
+! IRRIG   Irrigation input (N=no irrigation, R=reported dates, D=reported DAP, A=automatic, 
+!           F=automatic w/ fixed amounts)
+! FERTI   Fertilizer input (N=no fertilizer, R=reported dates, D=reported DAP, A=automatic
+!           F=automatic w/ fixed amounts)
+! RESID   Organic matter application (N=no residues, R=reported dates, D=reported DAP)
+! HARVS   Harvest (M=at maturity, R=reported dates, D=reported DAP, G=at specified growth stage, A=automatic)
+
+!OUTPUTS
+! FNAME   N=use defaults,Text=replacement name for output files
+! OVVEW   Overview.OUT (Y or N or E=Evaluate, but no Overview file)
+! SUMRY   Summary.OUT (Y or N)
+! FROPT   Frequency of output (days)
+! GROUT   Plant growth output (Y or N)
+! CAOUT   Carbon output (Y or N)
+! WAOUT   Water output (Y or N)
+! NIOUT   Nitrogen output (Y or N)
+! MIOUT   Phosphorus output (Y or N)
+! DIOUT   Pest and disease output (Y or N)
+! VBOSE   Verbosity (0=Summary.OUT only, N=minimal output, Y=normal output, D=detailed output)
+! CHOUT   Chemical output (not currently active (Y or N)
+! OPOUT   Management operations output (Y or N)
+! FMOPT   Output format (A=ASCII, C=CSV)

@@ -1,0 +1,86 @@
+*SUGARCANE ECOTYPE COEFFICIENTS: SCSAM048 MODEL
+!
+! Crop Coefficients for the SAMUCA (Sugarcane) model
+! Scientific documentation in Appendix A of Vianna et al (2020): 
+! https://doi.org/10.1016/j.compag.2020.105361
+!
+! COEFF   		   	DEFINITIONS
+! =====   		   	===========
+! NS_LF_TIL     	Number of dry leaves to consider on canopy light 
+!					transmission (#/tiller)
+! N_LF_MAX_ILA  	Number of leaves when leaves appear at it maximum initial
+! 					area (#/tiller)
+! TB0PHO        	Minimum base temperature for photosynthesis (°C)
+! TB1PHO        	Optimum temperature for photosynthesis (°C)
+! TB2PHO        	Optimum temperature for photosynthesis (°C)
+! TBFPHO        	Maximum base temperature for photosynhesis (°C)
+! TBPER         	Minimum base temperature for plant expansion (°C)
+! TBMAX_PER     	Maximum base temperature for plant expansion (°C)
+! LTTHRESHOLD   	Threshold of light transmited through canopy to start 
+!					tiller senescence (0-1)
+! FDEADLF       	Fraction of dryied leaves blade area considered on canopy 
+!					light transmission (0-1)
+! RDM           	Maximum root depth (cm)
+! DPERCOEFF     	Maximum plant expansion rate (mm/h)
+! RWUEP1        	Water Stress Sensitivity of Photosynthesis (dml)
+! RWUEP2        	Water Stress Sensitivity of Plant Expansion (dml)
+! T_MAX_WS_PHO  	Supply/Demand ratio where water stress effect is maximum 
+!					for photosynthesis (0-1)
+! T_MID_WS_PHO  	Supply/Demand ratio where half of maximum water stress 
+!					effect (0.5) for photosynthesis occurs (0-1)
+! T_MIN_WS_PHO  	Supply/Demand ratio where water stress effect on 
+!					photosynthesis onsets (0-1)
+! T_MAX_WS_EXP  	Supply/Demand ratio where water stress effect is maximum 
+!					for expansion (0-1)
+! T_MID_WS_EXP  	Supply/Demand ratio where half of maximum water stress 
+!					effect (0.5) for expansionoccurs (0-1)
+! T_MIN_WS_EXP  	Supply/Demand ratio where water stress effect on expansion
+!					onsets (0-1)
+! FRAC_SUC_BG   	Sucrose fraction of total sugars of below ground 
+!					internode (0-1)
+! FRAC_HEX_BG   	Hexose fraction of total sugars of below ground 
+!					internode (0-1)
+! INIT_PD_RAT   	Initial plant depth for ratooning cane (cm)
+! IT_STR_TB_INI 	Minimum base temperature for internode structural 
+!					partitioning (°C)
+! IT_STR_TO1    	Optimum temperature for internode structural 
+!					partitioning (°C)
+! IT_STR_TO2    	Optimum temperature for internode structural 
+!					partitioning (°C)
+! IT_STR_TB_END 	Maximum base temperature for internode structural 
+!					partitioning (°C)
+! IT_STR_PF_MAX 	Maximum biomass partitioning fraction to structural parts 
+!					of internodes (0-1)
+! IT_STR_PF_MIN 	Minimum biomass partitioning fraction to structural parts 
+!					of internodes (0-1)
+! IT_STR_PF_TB  	Thermal time for onset of biomass partitioning to internode
+!					structural parts (°Cdays)
+! IT_STR_PF_TM  	Thermal time where biomass partitioning to internodes 
+!					structural parts is at maximum (°Cdays)
+! IT_STR_PF_TE  	Thermal time for biomass partitioning to internodes 
+!					structural parts cessation (°Cdays)
+! IT_STR_PF_D   	Shape coefficient for biomass partitioning to internodes 
+!					strucutural parts (dml)
+! IT_STR_T_RED  	Maximum reduction of internode structural partitioning 
+!					due to temperature (0-1)
+! IT_STR_W_RED  	Maximum reduction of internode structural partitioning 
+!					due to water stress (0-1)
+! MAX_PER_IT    	Maximum expansion rate of internodes (mm/day)
+! DSWAT_DDWS    	Water weight increment per unit of structural biomass 
+!					gain (d[H2O]/d[STR])
+! DSWAT_DSUC    	Water weight decrease per unit of sugars biomass 
+!					gain (d[H2O]/d[SUG])
+! HEX_MIN       	Minimum hexoses fraction of total sugars in a growing 
+!					internode (g/g)
+! SUC_ACC_INI   	Internode total sugars concentration where sucrose 
+!					accumulation onsets (0-1)
+! DSUC_FRAC_TS  	Sucrose weight increment per unit of total sugars increment
+!					in internodes (TSUG > suc_acc_ini) (d[SUC]/d[TSUG])
+! TT_CHUMAT_LT  	Thermal time required after peak of population for 
+!					tillering stabilization (°Cdays)
+!
+@ECO#  ECO-NAME.........       NS_LF_TIL   N_LF_MAX_ILA         TB0PHO         TB1PHO         TB2PHO         TBFPHO          TBPER      TBMAX_PER    LTTHRESHOLD        FDEADLF            RDM      DPERCOEFF         RWUEP1         RWUEP2   T_MAX_WS_PHO   T_MID_WS_PHO   T_MIN_WS_PHO   T_MAX_WS_EXP   T_MID_WS_EXP   T_MIN_WS_EXP    FRAC_SUC_BG    FRAC_HEX_BG    INIT_PD_RAT  IT_STR_TB_INI     IT_STR_TO1     IT_STR_TO2  IT_STR_TB_END  IT_STR_PF_MAX  IT_STR_PF_MIN   IT_STR_PF_TB   IT_STR_PF_TM   IT_STR_PF_TE    IT_STR_PF_D   IT_STR_T_RED   IT_STR_W_RED     MAX_PER_IT     DSWAT_DDWS     DSWAT_DSUC        HEX_MIN    SUC_ACC_INI   DSUC_FRAC_TS   TT_CHUMAT_LT
+SC0001 RIDESA BRAZIL                 3.0           15.0           12.0           16.0           32.0           40.0           18.0           35.0            0.4           0.75          120.0           2.75            0.3            0.9            0.0            0.2            0.6            0.0            0.4            1.0            0.5            0.5           12.0           18.0           31.0           55.0           60.0           0.95            0.0            0.0           50.0          800.0            1.0           0.15           0.15            4.0       9.881798       11.24845          0.004           0.35            2.5         1600.0
+SC0002 SOUTH AFRICAN                 3.0           15.0           12.0           16.0           32.0           40.0           18.0           35.0            0.3           0.05          120.0           2.75            0.3            0.9            0.0            0.2            0.6            0.0            0.4            1.0            0.5            0.5           12.0           18.0           31.0           55.0           60.0           0.95            0.1            0.0           50.0          800.0            1.0           0.15           0.15            4.0      11.250000       13.50000          0.004           0.35            2.5         2600.0
+SC0003 SOUTH AFRICAN                 3.0           15.0           12.0           16.0           32.0           40.0           18.0           35.0            0.3           0.50          120.0           2.75            0.3            0.9            0.0            0.2            0.6            0.0            0.4            1.0            0.5            0.5           12.0           18.0           31.0           55.0           60.0           0.95            0.0            0.0           50.0          800.0            1.0           0.15           0.15            4.0       9.881798       11.24845          0.004           0.35            2.5         2000.0
+SC0004 RIDESA HIGHFIBER              3.0           15.0           12.0           16.0           32.0           40.0           18.0           35.0            0.4           0.75          120.0           2.75            0.3            0.9            0.0            0.2            0.6            0.0            0.4            1.0            0.5            0.5           12.0           18.0           31.0           55.0           60.0           0.99            0.2            0.0           50.0          800.0            1.0           0.15           0.15            4.0       9.881798       11.24845          0.004           0.35            2.5         1600.0

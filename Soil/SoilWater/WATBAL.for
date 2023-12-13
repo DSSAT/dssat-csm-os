@@ -1,14 +1,12 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2021 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
+C                      International Fertilizer Development Center
+C                    
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
-C  WATBAL, Subroutine, J.T. Ritchie
+C  WATBAL, Subroutine
 C  Calculates water balance components.
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
@@ -37,6 +35,9 @@ C  06/12/2002 CHP/US  Added flooded field options
 !                 MEINF = 'M', Mulch effects modelled.
 !  04/05/2006 CHP Added mixing of SW and variable soil layer depths
 !                 due to tillage
+!  04/10/2021 GH Corrected snowfall for very small amounts
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called by: SOIL module
 C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.for)
@@ -47,11 +48,11 @@ C             RNOFF   (File RNOFF.for)
 C             SATFLO  (File SATFLO.for)
 C=======================================================================
 
-      SUBROUTINE WATBAL(CONTROL, ISWITCH, 
+      SUBROUTINE WATBAL(CONTROL, ISWITCH,                 !Input
      &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
-     &    DRN, SNOW, SW, SWDELTS,                         !Output
+     &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
 
 !-----------------------------------------------------------------------
@@ -59,6 +60,9 @@ C=======================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
+     &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
+     &  SOILMIXING, SUMSW, WTDEPT, WaterTable
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -94,7 +98,7 @@ C=======================================================================
       INTEGER DYNAMIC, L, NLAYR, YRDOY
 
       REAL CN, CRAIN, DRAIN, EXCS, NewSW
-      REAL PINF,  RUNOFF
+      REAL PINF, RUNOFF
       REAL SWCON, TDRAIN, TRUNOF
       REAL TSW, TSWINI, WATAVL, WTDEP
 
@@ -114,11 +118,16 @@ C=======================================================================
       INTEGER TILDATE
       REAL MIXPCT, TDEP
       REAL, DIMENSION(NL) :: SW_MIX, SW_UNMIX, SWDELTL, SW_mm_NEW
-      REAL, DIMENSION(NL) :: SW_mm, SWDELTS_mm, SWDELTU_mm 
+      REAL, DIMENSION(NL) :: SW_mm, SWDELTS_mm, SWDELTU_mm
       REAL, DIMENSION(NL) :: SWDELTX_mm, SWDELTT_mm, SWDELTL_mm
 
 !     Weather variables
       REAL RAIN, TMAX
+
+!     Water table variables:
+      REAL ActWTD, MgmtWTD
+      REAL LatInflow, LatOutflow
+      REAL, DIMENSION(NL) :: SWDELTW, SWDELTW_mm
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -151,8 +160,8 @@ C=======================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
 !     Call IPWBAL to read in values from input file
-      CALL IPWBAL (CONTROL, DLAYR, LL, NLAYR, SAT,        !Input
-     &    SW, WTDEP)                                      !Output
+      CALL IPWBAL (CONTROL, LL, NLAYR,                    !Input
+     &    SW, MgmtWTD)                                    !Output
 
 !     Read tile drainage variables from FILEIO
       CALL TILEDRAIN(CONTROL, 
@@ -178,12 +187,32 @@ C=======================================================================
       MEEVP  = ISWITCH % MEEVP
 
       IF (ISWWAT .EQ. 'Y') THEN
-        IF (CONTROL%MULTI .GT. 1) THEN
-        !Re-read initial conditions if multi-season run
-          CALL IPWBAL (CONTROL, DLAYR, LL, NLAYR, SAT,    !Input
-     &    SW, WTDEP)                                      !Output
+        IF (CONTROL%MULTI .GT. 1 .OR. CONTROL%RNMODE .EQ. 'Y') THEN
+        !Re-read initial conditions if multi-season or forecast run
+          CALL IPWBAL (CONTROL, LL, NLAYR,                !Input
+     &    SW, MgmtWTD)                                    !Output
         ENDIF
       ENDIF
+
+!     Initialize water table
+      Call WaterTable(SEASINIT,  
+     &  SOILPROP, SW,                                     !Input
+     &  ActWTD, LatInflow, LatOutflow,                    !Output
+     &  MgmtWTD, SWDELTW)                                 !Output
+
+!     Use inital water table depth and capillary rise to set initial
+!       soil water content
+      DO L = 1, NLAYR
+        SW(L) = SW(L) + SWDELTW(L)
+      ENDDO
+
+      WTDEP = 9999. 
+        IF (ActWTD .GT. DS(NLAYR)) THEN
+!         Calculate perched water table depth
+          CALL WTDEPT(
+     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
+     &      WTDEP)                                        !Output
+        ENDIF                   
 
 !     Initialize summary variables
       CALL WBSUM(SEASINIT,
@@ -209,7 +238,7 @@ C=======================================================================
       IF (ISWWAT == 'Y') THEN
 !       Water balance output initialization
         CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, 
+     &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
@@ -218,7 +247,8 @@ C=======================================================================
         CALL OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, WTDEP)                          !Input
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
+     &    EXCS, WTDEP)                                    !Input
       ENDIF
 
       DRAIN  = 0.0
@@ -228,10 +258,11 @@ C=======================================================================
 
 !     Set process rates to zero.
       SWDELTS = 0.0
-!      SWDELTX = 0.0
+!     SWDELTX = 0.0
       SWDELTU = 0.0
       SWDELTT = 0.0
       SWDELTL = 0.0
+      SWDELTW = 0.0
 
       DLAYR_YEST = DLAYR
 
@@ -243,7 +274,9 @@ C=======================================================================
 !-----------------------------------------------------------------------
       !Convert snowfall into precip ( = rain)
       !This is needed for winter crops even if water not simulated.
-      IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.001) THEN
+C-GH   IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.001) THEN
+C     Conflict with CERES-Wheat
+      IF (TMAX .LE. 1.0 .OR. SNOW .GT. 0.0) THEN
         CALL SNOWFALL (RATE,
      &    TMAX, RAIN,                                 !Input
      &    SNOW, WATAVL)                               !Output
@@ -253,6 +286,14 @@ C=======================================================================
 
 !     Rates not calculated unless water switch is on.
       IF (ISWWAT .NE. 'Y') RETURN
+
+!     Maintain water table depth and calculate capillary rise
+      IF (FLOOD < 1.E-6) THEN
+        Call WaterTable(RATE,   
+     &    SOILPROP, SW,                                   !Input
+     &    ActWTD, LatInflow, LatOutflow,                  !Output
+     &    MgmtWTD, SWDELTW)                               !Output
+      ENDIF
 
 !     Set process rates to zero.
       SWDELTS = 0.0
@@ -335,7 +376,8 @@ C=======================================================================
 !         to calculate saturated flow.
         IF (PINF .GT. 0.0001) THEN
           CALL INFIL(
-     &      DLAYR, DUL, NLAYR, PINF, SAT, SW, SWCN, SWCON,!Input
+     &      DLAYR, DS, DUL, NLAYR, PINF, SAT, SW,         !Input
+     &      SWCN, SWCON, MgmtWTD,                         !Input
      &      DRAIN, DRN, EXCS, SWDELTS)                    !Output
 
           INFILT = 0.0
@@ -444,10 +486,12 @@ C       extraction (based on yesterday's values) for each soil layer.
           SWDELTL_mm(L) = SWDELTL(L) * DLAYR_YEST(L) * 10. !tillage
           SWDELTU_mm(L) = SWDELTU(L) * DLAYR_YEST(L) * 10. !upflow
           SWDELTT_mm(L) = SWDELTT(L) * DLAYR_YEST(L) * 10. !tiledrain
+          SWDELTW_mm(L) = SWDELTW(L) * DLAYR_YEST(L) * 10. !water table
 
 !         Perform integration of soil water fluxes
           SW_mm_NEW(L) = SW_mm(L) + SWDELTS_mm(L) + SWDELTU_mm(L) 
      &        + SWDELTL_mm(L) + SWDELTX_mm(L) + SWDELTT_mm(L)
+     &        + SWDELTW_mm(L) !(including capillary rise)
 
 !         Convert to volumetric content based on today's layer thickness
           SW(L) = SW_mm_NEW(L) / DLAYR(L) / 10.
@@ -473,8 +517,8 @@ C       extraction (based on yesterday's values) for each soil layer.
      &    NLAYR, DRAIN, RAIN, RUNOFF, DLAYR, SW,          !Input
      &    CRAIN, TDRAIN, TRUNOF, TSW, TSWINI)             !Output
 
-        IF (FLOOD .LE. 0.0) THEN
-C         Calculate soil water table depth
+        IF (ActWTD .GT. DS(NLAYR)) THEN
+!         Calculate perched water table depth
           CALL WTDEPT(
      &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
      &      WTDEP)                                        !Output
@@ -501,11 +545,12 @@ C-----------------------------------------------------------------------
       CALL OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, WTDEP)                          !Input
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
+     &    EXCS, WTDEP)                                    !Input
 
 !     Water balance daily output 
       CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, 
+     &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
@@ -527,11 +572,12 @@ C-----------------------------------------------------------------------
       CALL OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, WTDEP)                          !Input
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
+     &    EXCS, WTDEP)                                    !Input
 
 !     Water balance seasonal output 
       CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, 
+     &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
@@ -617,8 +663,10 @@ C=====================================================================
 ! SWCN(L)     Saturated hydraulic conductivity in layer L (cm/hr)
 ! SWCON       Soil water conductivity constant; whole profile drainage rate 
 !               coefficient (1/d)
+! SWDELTL(L)  Change in soil water content due to tillage in layer L
 ! SWDELTS(L)  Change in soil water content due to drainage in layer L
 !              (cm3 [water] / cm3 [soil])
+! SWDELTT(L)  Change in soil water content due to tiledrain in layer L
 ! SWDELTU(L)  Change in soil water content due to evaporation and/or upward 
 !               flow in layer L (cm3 [water] / cm3 [soil])
 ! SWDELTX(L)  Change in soil water content due to root water uptake in 
@@ -632,7 +680,8 @@ C=====================================================================
 !               irrigation) (mm/d)
 ! WINF        Water available for infiltration - rainfall minus runoff plus 
 !               net irrigation (mm / d)
-! WTDEP       Depth to water table (cm)
+! MgmtWTD     Depth to water table (cm)
+! WTDEP       Depth to perched water table (cm)
 !-----------------------------------------------------------------------
 !     END SUBROUTINE WATBAL
 C=====================================================================

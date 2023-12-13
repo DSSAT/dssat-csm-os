@@ -1,0 +1,41 @@
+*SWEET CORN CULTIVAR COEFFICIENTS: SWCER048 MODEL
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code or this cultivar, points to the Ecotype in the
+!             ECO file (currently not used).
+! P1          Thermal time from seedling emergence to the end of the juvenile
+!             phase (expressed in degree days above a base temperature of 8�C)
+!             during which the plant is not responsive to changes in
+!             photoperiod.
+! P2          Extent to which development (expressed as days) is delayed for
+!             each hour increase in photoperiod above the longest photoperiod
+!             at which development proceeds at a maximum rate (which is
+!             considered to be 12.5 hours).
+! P5          Thermal time from silking to physiological maturity (expressed
+!             in degree days above a base temperature of 8�C).
+! G2          Maximum possible number of kernels per plant.
+! G3          Kernel filling rate during the linear grain filling stage and
+!             under optimum conditions (mg/day).
+! PHINT       Phylochron interval; the interval in thermal time (degree days)
+!             between successive leaf tip appearances.
+!
+! su1          Sugary genotypes (earlier cultivars of sweet corn)
+! se1          Sugary-enhancer genotypes (increases the sugar level in homozygous su1 germplasm)
+! sh2          Shrunken genotypes ('super sweet' cultivars)
+!
+!              P/G/N:Phenology/Growth/Not used for calbration
+! 
+@VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3 PHINT
+!Coeffient #                             1     2     3     4     5     6
+!Calibration                             P     P     P     G     G     P
+
+999991 MINIMA               . DFAULT 150.0 0.300 680.0 600.0  5.50 35.00
+999992 MAXIMA               . DFAULT 180.0 0.300 738.0 850.0 15.00 50.00
+
+SW0001 GSS0966 sh2          . IB0001 150.0 0.300 680.0 600.0  5.50 43.00
+SW0002 Saturn sh2           . IB0001 180.0 0.300 738.0 850.0 15.00 35.00
+SW0003 BSS0977 sh2          . IB0001 175.0 0.300 700.0 500.0  5.00 50.00

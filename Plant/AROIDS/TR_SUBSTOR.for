@@ -38,7 +38,9 @@ C-----------------------------------------------------------------------
 C  Revision history
 C
 C             Written - See above
-
+!  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE TR_SUBSTOR(CONTROL, ISWITCH,
@@ -46,6 +48,7 @@ C=======================================================================
      &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
      &    YRPLT,                                          !Input
      &    FLOODN,                                         !I/O
+     &    CropStatus,                                     !Output
      &    CANHT, HARVRES, LAI, MDATE, NSTRES, PORMIN,     !Output
      &    RWUEP1, RWUMX, RLV, SENESCE, STGDOY, UNH4, UNO3)!Output
 
@@ -55,13 +58,15 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data and flooded
                          ! conditions.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, TR_OPGROW, TR_OPHARV, TR_PHENOL, TR_ROOTGR, 
+     &  TR_GROSUB, GNURSE, HRes_Ceres
       SAVE
 
       CHARACTER*1  ISWWAT, ISWNIT
       CHARACTER*2  CROP
       CHARACTER*10 STNAME(20)
 
-      INTEGER DOY, DYNAMIC, EDATE, EMAT
+      INTEGER DOY, DYNAMIC, EDATE, EMAT, CropStatus
       INTEGER ISDATE, ISTAGE, ITRANS
       INTEGER LEAFNO, MDATE, NDAT, NLAYR
       INTEGER YRDOY, YRNURSE, YEAR, YRPLT, YRSIM, YRSOW
@@ -100,13 +105,13 @@ C-----------------------------------------------------------------------
       REAL SLFCGRD, SLFNGRD, SLFNINT, SLFTGRD, SLFTINT, SLFWGRD, SLFWINT
       REAL SLGRD1, SLGRD2, SUFAC2, SUFAC3, TCARBC2, TGRAD, TIPGRAD
       REAL TIPGRAD3, TIPINT, XNFGRAD, XNFINT, XTNMAX
-	REAL TCORMWT    ! addition RMO
+!     REAL TCORMWT    ! addition RMO
 
       REAL CORMNUP, CORMLNO, CORMN, CORMWT, PCORMN, TGROCOM
       REAL PODWT, GRNWT
 
 !     For output to PlantGro.OUT
-      REAL DEADLF, SATFAC, PETWT, STOVWT, TUBN, TUBWT, WTNCAN
+      REAL DEADLF, SATFAC, PETWT, STOVWT, WTNCAN   !TUBN, TUBWT, 
       REAL WTNUP, XLAI
 
       LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO
@@ -166,7 +171,7 @@ C-----------------------------------------------------------------------
      &    SKERWT, STGDOY, STNAME, STOVER, STOVN, SWFAC,   !Input
      &    TOTNUP, TURFAC, YRPLT,                          !Input
      &    BWAH, SDWT, SDWTAH, TOPWT, WTNSD,               !Output
-     &    MCORMWT, TCORMWT )        ! additions RMO
+     &    MCORMWT)    !, TCORMWT ) !additions RMO
 
 !***********************************************************************
 !***********************************************************************
@@ -197,6 +202,7 @@ C-----------------------------------------------------------------------
      &    SRAD, SW, SWFAC, TGROCOM, TILNO, TMAX, TMIN,    !Input
      &    TURFAC, YRPLT,                                  !Input
      &    CUMDTT, EMAT, PLANTS, RTDEP, YRSOW,             !I/O
+     &    CropStatus,                                     !Output
      &    CDTT_TP, DTT, FIELD, ISTAGE, ITRANS, LTRANS,    !Output
      &    MDATE, NDAT, NEW_PHASE, P1, P1T, P3, P4,        !Output
      &    SDTT_TP,SEEDNI, SI3, STGDOY, STNAME, SUMDTT,    !Output
@@ -236,7 +242,7 @@ C-----------------------------------------------------------------------
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
      &    UNH4, UNO3, MDATE, WTNUP,                      !Output
-     &    CARBO,                                          !Output
+     &    CARBO, CropStatus,                              !Output
      &    PETWT)                              !addition RMO
 
       CALL TR_OPGROW (CONTROL, ISWITCH, SOILPROP, 
@@ -255,7 +261,7 @@ C-----------------------------------------------------------------------
      &    SKERWT, STGDOY, STNAME, STOVER, STOVN, SWFAC,   !Input
      &    TOTNUP, TURFAC, YRPLT,                          !Input
      &    BWAH, SDWT, SDWTAH, TOPWT, WTNSD,               !Output
-     &    MCORMWT, TCORMWT )                      ! additions RMO
+     &    MCORMWT)    !, TCORMWT ) !additions RMO
 
 !     NOTE: TAGE is initialized in PHENOL
       CALL GNURSE (ITRANS, TAGE, YRPLT, YRSIM,            !Input
@@ -319,6 +325,7 @@ C-----------------------------------------------------------------------
      &    SRAD, SW, SWFAC, TGROCOM, TILNO, TMAX, TMIN,    !Input
      &    TURFAC, YRPLT,                                  !Input
      &    CUMDTT, EMAT, PLANTS, RTDEP, YRSOW,             !I/O
+     &    CropStatus,                                     !Output
      &    CDTT_TP, DTT, FIELD, ISTAGE, ITRANS, LTRANS,    !Output
      &    MDATE, NDAT, NEW_PHASE, P1, P1T,P3, P4,         !Output
      &    SDTT_TP,SEEDNI, SI3, STGDOY, STNAME, SUMDTT,    !Output
@@ -357,7 +364,7 @@ C--------------------------------------------------------------
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
      &    UNH4, UNO3, MDATE, WTNUP,                       !Output
-     &    CARBO,                                          !Output
+     &    CARBO, CropStatus,                              !Output
      &    PETWT)                              !addition RMO
 
       FLOODN % NDAT   = NDAT
@@ -384,7 +391,7 @@ C-----------------------------------------------------------------------
      &    SKERWT, STGDOY, STNAME, STOVER, STOVN, SWFAC,   !Input
      &    TOTNUP, TURFAC, YRPLT,                          !Input
      &    BWAH, SDWT, SDWTAH, TOPWT, WTNSD,               !Output
-     &    MCORMWT, TCORMWT )                              !additions RMO
+     &    MCORMWT)    !, TCORMWT ) !additions RMO
 !***********************************************************************
 !***********************************************************************
 !     Seasonal output

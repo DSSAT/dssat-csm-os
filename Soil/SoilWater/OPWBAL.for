@@ -14,7 +14,8 @@ C=======================================================================
       SUBROUTINE OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
-     &    TDRAIN, TRUNOF, WTDEP)                          !Input
+     &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
+     &    EXCS, WTDEP)                                    !Input
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -24,6 +25,8 @@ C=======================================================================
       USE CsvOutput 
       USE Linklist
       IMPLICIT NONE
+      EXTERNAL YR_DOY, GETLUN, HEADER, SUMSW, SUMVALS, INCDAT
+     &   , SoilLayerText2
       SAVE
 
       CHARACTER*1 IDETW, IDETL, ISWWAT, MEINF, RNMODE
@@ -31,26 +34,35 @@ C=======================================================================
       PARAMETER (OUTWAT = 'SoilWat.OUT ')
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, L
-      INTEGER NAP, NAVWB, NLAYR, N_LYR, NOUTDW, RUN
+      INTEGER NAP, NLAYR, N_LYR, NOUTDW, RUN
       INTEGER YEAR, YRDOY, REPNO, YRSTART, INCDAT
 
-      REAL AVWTD, CRAIN, IRRAMT, PESW, TDFC, TDFD, TDRAIN, TLL
-      REAL TOTBUNDRO, TOTIR, TRUNOF, TSW, WTDEP, MULCHWAT
+      REAL CRAIN, IRRAMT, PESW, TDFC, TDFD, TDRAIN, TLL
+      REAL TOTBUNDRO, TOTIR, TRUNOF, TSW, MULCHWAT
       REAL, DIMENSION(NL) :: DLAYR, LL, SW
-      REAL RUNOFF        
+      REAL RUNOFF
+      REAL EXCS
 
       LOGICAL FEXIST, DOPRINT
+
+!     Water table
+      INTEGER NAVWB
+      REAL LatInflow, LatOutflow, ActWTD, WTDEP, WaterTable
+      REAL CumLatInflow, CumLatOutflow
+      REAL AVWTD, AVMWTD
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 4
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
+      CHARACTER*8, DIMENSION(NL) :: SW_txt, LayerText
+
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
       TYPE (ControlType) CONTROL
-      TYPE (SwitchType) ISWITCH
+      TYPE (SwitchType)  ISWITCH
       TYPE (FloodWatType) FLOODWAT
       TYPE (MulchType)    MULCH
       TYPE (SoilType)     SoilProp
@@ -74,6 +86,12 @@ C=======================================================================
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
+      IF (ActWTD .LT. WTDEP) THEN
+        WaterTable = ActWTD
+      ELSE
+        WaterTable = WTDEP
+      ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -82,11 +100,16 @@ C=======================================================================
 C-----------------------------------------------------------------------
 C   Set initial values to calculate average values
 C-----------------------------------------------------------------------
+      NAP   = 0
+      PESW  = 0.
       NAVWB = 0
       AVWTD = 0.
+      AVMWTD = 0.
       TOTIR = 0.
-      NAP   = 0
+      TRUNOF= 0.
       CRAIN = 0.
+      CumLatInflow = 0.
+      CumLatOutflow = 0.
 
       IF (IDETW == 'N' .OR. ISWWAT == 'N' .OR. IDETL == '0') THEN
         DOPRINT = .FALSE.
@@ -121,39 +144,45 @@ C-----------------------------------------------------------------------
           CALL HEADER(SEASINIT, NOUTDW, RUN)
         ENDIF
         END IF   ! VSH
-        
-        N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+
+!       Print all layers
+        N_LYR = MAX(4,SOILPROP%NLAYR)
+
+!     Use revised Soil layer text which uses all soil layers
+      CALL SoilLayerText2(SOILPROP%DS, NLAYR,        !Input
+     &    LayerText)                             !Output 
 
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-!       IF (INDEX('RSN',MEINF) <= 0) THEN   
-        IF (INDEX('RSM',MEINF) > 0) THEN   
 !         New print format includes mulch, tiledrain and runoff info
-          WRITE (NOUTDW, '("!",T99,
+          WRITE (NOUTDW, '("!",T133,
      &    "Soil water content (mm3/mm3) by soil depth (cm):",
-     &    /,"!",T94,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
+     &    /,"!",T128,20A8)') (LayerText(L), L=1,NLAYR)
           WRITE (NOUTDW,1120, ADVANCE='NO')
  1120     FORMAT('@YEAR DOY   DAS',
-     &    '  SWTD  SWXD   ROFC   DRNC   PREC  IR#C  IRRC  DTWT',
-     &    '    MWTD  TDFD  TDFC   ROFD')
+     &    '    SWTD    SWXD    ROFC    DRNC    PREC    IR#C',
+     &    '    IRRC   LATFC    DTWT',
+     &    '    MWTD    TDFD    TDFC    ROFD    ROSD')
 
-        ELSE      !Old print format
-          WRITE (NOUTDW, '("!",T72,
-     &    "Soil water content (mm3/mm3) by soil depth (cm):",
-     &    /,"!",T67,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
-          WRITE (NOUTDW,1123,ADVANCE='NO')
- 1123     FORMAT('@YEAR DOY   DAS',
-     &    '  SWTD  SWXD   ROFC   DRNC   PREC  IR#C  IRRC  DTWT')
-        ENDIF
+!       print SW for all layers
+ !    &    '  SWTD  SWXD   ROFC   DRNC   PREC  IR#C  IRRC  DTWT')
+ !       ENDIF
 
-        IF (N_LYR < 10) THEN
-          WRITE (NOUTDW,1121) ("SW",L,"D",L=1,N_LYR)
- 1121     FORMAT(9("    ",A2,I1,A1))
-        ELSE
-          WRITE (NOUTDW,1122) ("SW",L,"D",L=1,9), "    SW10"
- 1122     FORMAT(9("    ",A2,I1,A1),A8)
-        ENDIF
+!        IF (N_LYR < 10) THEN
+!          WRITE (NOUTDW,1121) ("SW",L,"D",L=1,N_LYR)
+! 1121     FORMAT(9("    ",A2,I1,A1))
+!        ELSE
+!!         WRITE (NOUTDW,1122) ("SW",L,"D",L=1,9), "    SW10"
+        DO L = 1, NLAYR
+          IF (L < 10) THEN
+            WRITE(SW_txt(L),'("    SW",I1,"D")') L
+          ELSE
+            WRITE(SW_txt(L),'("   SW",I2,"D")') L
+          ENDIF
+        ENDDO
+        WRITE(NOUTDW,'(20(A8))') (SW_txt(L), L=1,NLAYR)
+
         END IF   ! VSH
-        
+
         YRSTART = YRDOY
         CALL YR_DOY(INCDAT(YRSTART,-1),YEAR,DOY)
 
@@ -166,25 +195,17 @@ C-----------------------------------------------------------------------
         ENDIF
 
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-        IF (INDEX('RSM',MEINF) > 0) THEN   
 !         New print format includes mulch, tiledrain and runoff info
           WRITE (NOUTDW,1300)YEAR,DOY,DAS, NINT(TSW), 
-     &    NINT(PESW*10.),0,0,0,
-     &      0, 0,NINT(AVWTD), 
-     &      MULCHWAT, 0.0, 0.0, 0.0, 
-     &      (SW(L),L=1,N_LYR)
- 1300     FORMAT(1X,I4,1X,I3.3,3(1X,I5),3(1X,I6),3(1X,I5),
-     &      F8.2,2F6.1,F7.2,
-     &      10(F8.3))  
+     &    NINT(PESW*10.),0,0,0,0,
+     &      0, 0, NINT(WaterTable), 
+     &      MULCHWAT, 0.0, 0.0, 0.0, 0.0,
+     &      (SW(L),L=1,NLAYR)
+ 1300     FORMAT(1X,I4,1X,I3.3,1X,I5,9(1X,I7),  !was 10(1X,I7)
+     &      F8.2,2F8.1,F8.2,
+     &      F8.2,   !EXCS
+     &      20(F8.3))
 
-        ELSE        !match old printout
-          WRITE (NOUTDW,1302)YEAR,DOY,MOD(DAS,100000), NINT(TSW), 
-     &      NINT(PESW*10),0,0,0,
-     &      0, 0,NINT(AVWTD), 
-     &      (SW(L),L=1,N_LYR)
- 1302     FORMAT(1X,I4,1X,I3.3,3(1X,I5),3(1X,I6),3(1X,I5),
-     &      10(F8.3))
-        ENDIF
         END IF   ! VSH
          
       IF (FMOPT == 'C') THEN
@@ -196,32 +217,8 @@ C-----------------------------------------------------------------------
      
          CALL LinklstSW(vCsvlineSW)
       END IF     
-     
       ENDIF
-!
-!!     Temporary header for runoff debugging info
-!      IF (RUN > 1) THEN
-!        OPEN (UNIT = 5500, FILE = "RO.OUT", STATUS = 'OLD',
-!     &    IOSTAT = ERRNUM, POSITION = 'APPEND')
-!      ELSE
-!        OPEN (UNIT = 5500, FILE = "RO.OUT", STATUS = 'REPLACE',
-!     &    IOSTAT = ERRNUM)
-!        WRITE(5500,'("*RUNOFF TEMPORARY DAILY OUTPUT FILE")')
-!      ENDIF
-!
-!      CALL HEADER(SEASINIT, 5500, RUN)
-!      WRITE(5500,10)
-!   10 FORMAT
-!     &  ('@YEAR DOY   DAS     SMX  WATAVL   SWABI      PB  RUNOFF')
 
-!***********************************************************************
-!***********************************************************************
-!     Daily integration
-!***********************************************************************
-      ELSEIF (DYNAMIC .EQ. INTEGR) THEN
-C-----------------------------------------------------------------------
-C   Summations for calculation of average values per print interval
-C-----------------------------------------------------------------------
 !***********************************************************************
 !***********************************************************************
       ENDIF !DYNAMIC CONTROL
@@ -235,14 +232,16 @@ C-----------------------------------------------------------------------
 C   Calculate average values as a function of the output interval
 C-----------------------------------------------------------------------
       IF (DOPRINT) THEN
- 
-        NAVWB  = NAVWB  + 1
-        AVWTD  = AVWTD  + WTDEP
+        IF (ActWTD > 1.E-6) THEN
+          NAVWB  = NAVWB  + 1
+          AVWTD  = AVWTD  + WaterTable
+        ENDIF
+
         IF (IRRAMT .GT. 1.E-4) THEN
           TOTIR = TOTIR + IRRAMT
           NAP  = NAP + 1
         ENDIF
-      
+
         IF (ISWWAT .EQ. 'Y') THEN
           CALL SUMSW(NLAYR, DLAYR, SW, TSW)
           CALL SUMSW(NLAYR, DLAYR, LL, TLL)
@@ -251,36 +250,35 @@ C-----------------------------------------------------------------------
           PESW = 0.0
         ENDIF
 
+        CumLatInflow = CumLatInflow + LatInflow
+        CumLatOutflow = CumLatOutflow + LatOutflow
+
 C-----------------------------------------------------------------------
 C  Generate output for file WATER.OUT
 C-----------------------------------------------------------------------
-!        Print every FROP days, and
+!       Print every FROP days, and
         IF ((DYNAMIC .EQ. OUTPUT .AND. MOD(DAS, FROP) .EQ. 0) .OR. 
-!        Print on last day if not already done.
+!           Print on last day if not already done.
      &      (DYNAMIC .EQ. SEASEND  .AND. MOD(DAS, FROP) .NE. 0)) THEN
 
           IF (NAVWB > 0) THEN
             AVWTD = AVWTD / NAVWB
+            AVMWTD= AVMWTD / NAVWB
           ELSE
-            AVWTD = WTDEP
+            AVWTD = WaterTable
+!           AVMWTD= MgmtWTD
           ENDIF
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-!         IF (INDEX('RSN',MEINF) <= 0) THEN   
-          IF (INDEX('RSM',MEINF) > 0) THEN   
 !           New print format includes mulch, tiledrain and runoff info
             WRITE (NOUTDW,1300)YEAR,DOY,MOD(DAS,100000), NINT(TSW), 
-     &      NINT(PESW*10),NINT(TRUNOF),NINT(TDRAIN),NINT(CRAIN),
-     &        NAP, NINT(TOTIR),NINT(AVWTD), 
-     &        MULCHWAT, TDFD*10., TDFC*10., RUNOFF, 
-     &        (SW(L),L=1,N_LYR)
-
-          ELSE        !match old printout
-            WRITE (NOUTDW,1302)YEAR,DOY,MOD(DAS,100000), NINT(TSW), 
      &        NINT(PESW*10),NINT(TRUNOF),NINT(TDRAIN),NINT(CRAIN),
-     &        NAP, NINT(TOTIR),NINT(AVWTD), 
-     &        (SW(L),L=1,N_LYR)
-          ENDIF
+     &        NAP, NINT(TOTIR),
+     &        NINT(CumLatInflow+CumLatOutflow), 
+     &        NINT(AVWTD),
+     &        MULCHWAT, TDFD*10., TDFC*10., RUNOFF, EXCS,
+     &        (SW(L),L=1,NLAYR)
+
           END IF   ! VSH 
 
 !     VSH CSV output corresponding to SoilWat.OUT
@@ -295,10 +293,15 @@ C-----------------------------------------------------------------------
       END IF         
       
           NAVWB = 0
-          AVWTD = 0.        
-        
+          AVWTD = 0.
+          AVMWTD= 0.
         ENDIF
-     
+      ENDIF
+
+      IF (DYNAMIC .EQ. SEASINIT) THEN
+          NAVWB = 0
+          AVWTD = 0.        
+          AVMWTD= 0.
       ENDIF
 
 !***********************************************************************
@@ -316,7 +319,6 @@ C-----------------------------------------------------------------------
             PESW = 0.0
           ENDIF
 
-          !IF (IDETS .EQ. 'Y' .OR. IDETS .EQ. 'A') THEN
 !           Store Summary.out labels and values in arrays to send to
 !           OPSUM routines for printing.  Integers are temporarily 
 !           saved aS real numbers for placement in real array.
@@ -330,7 +332,6 @@ C-----------------------------------------------------------------------
 
             !Close daily output files.
             CLOSE (NOUTDW)
-          !ENDIF
         ENDIF
 !***********************************************************************
 !***********************************************************************
@@ -339,12 +340,13 @@ C-----------------------------------------------------------------------
       ENDIF
 !***********************************************************************
       RETURN
-      END !SUBROUTINE OPWBAL
+      END SUBROUTINE OPWBAL
 !***********************************************************************
 !-----------------------------------------------------------------------
 !     OPWBAL VARIABLE DEFINITIONS:  updated 2/19/2004
 !-----------------------------------------------------------------------
 ! AVWTD     Average water table depth since last printout (cm)
+! AVMWTD    Average managed water table depth since last printout (cm)
 ! CONTROL   Composite variable containing variables related to control 
 !             and/or timing of simulation.    See Appendix A. 
 ! CRAIN     Cumulative precipitation (mm)
@@ -390,9 +392,82 @@ C-----------------------------------------------------------------------
 ! VALUE(I)  Array of values of variables sent to OPSUM for summary 
 !             printout; corresponds to LABEL array which identifies 
 !             variables being sent. (varies)
-! WTDEP     Depth to water table (cm)
+! ActWTD    Depth to water table (cm)
+! WTDEP     Depth to calculated perched water table (cm)
+! WaterTable Depth to lesser of ActWTD or WTDEP (cm)
 ! YEAR      Year of current date of simulation 
 ! YRDOY     Current day of simulation (YYYYDDD)
 !-----------------------------------------------------------------------
 !     END OPWBAL Subroutine
 !-----------------------------------------------------------------------
+
+!=======================================================================
+!  The following subroutine is probably temporary, copied from 
+!     SoilLayerText in the SOILDYN.for file.
+!   This version prints ALL layers, and does not compress the final 
+!     layers above 9 into a single large bottom layer.
+
+!=======================================================================
+!   SoilLayerText2, Subroutine
+!-----------------------------------------------------------------------
+!     Labels for soil layer depth info
+!-----------------------------------------------------------------------
+!  REVISION HISTORY
+!  2023-02-13 chp
+
+!-----------------------------------------------------------------------
+!  Called by: OPWBAL
+!  Calls    : 
+!=======================================================================
+      SUBROUTINE SoilLayerText2(DS, NLAYR,        !Input
+     &    LayerText)                             !Output 
+ 
+      USE ModuleDefs 
+      INTEGER NLAYR, L
+      REAL, DIMENSION(NL) :: DS
+      CHARACTER*8 LayerText(NL)
+      INTEGER, DIMENSION(NL) :: ZB, ZT
+      CHARACTER*14 FMT  
+        
+!     Establish soil layer depths for headers
+!     Text describing soil layer depth data
+!     1-NLAYR describe depths for layers 1-9
+      LayerText = '        '
+      ZT = -99
+      ZB = -99
+ 
+      DO L = 1, NLAYR
+        IF (L == 1) THEN 
+          ZT(1) = 0
+          ZB(1) = NINT(DS(1))
+        ELSE
+          ZT(L) = ZB(L-1)
+          ZB(L) = NINT(DS(L))
+        ENDIF
+
+!       Format dependant on # digits
+        IF (ZB(L) > 0) THEN
+          SELECT CASE (ZT(L))
+          CASE (:9)
+            SELECT CASE (ZB(L))
+            CASE(:9);    FMT = '(5X,I1,"-",I1)'
+            CASE(10:99); FMT = '(4X,I1,"-",I2)'
+            CASE(100:);  FMT = '(3X,I1,"-",I3)'
+            END SELECT
+          CASE (10:99)
+            SELECT CASE (ZB(L))
+            CASE(10:99); FMT = '(3X,I2,"-",I2)'
+            CASE(100:);  FMT = '(2X,I2,"-",I3)'
+            END SELECT
+          CASE (100:);   FMT = '(1X,I3,"-",I3)'
+          END SELECT
+          WRITE(LayerText(L),FMT) ZT(L), ZB(L)
+        ENDIF
+      ENDDO
+
+      RETURN      
+      END SUBROUTINE SoilLayerText2
+C=======================================================================
+
+
+

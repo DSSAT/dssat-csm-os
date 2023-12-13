@@ -1,0 +1,161 @@
+*NWHEAT SPECIES COEFFICIENTS: TFAPS048 MODEL
+
+*TEMPERATURE EFFECTS
+!         T1    T2    T3    T4
+  SENST -10.   32.   34.   50.     !Temperature thresholds which affect senescence for leaf; 
+!         F1    F2    F3    F4
+  SENSF   1.    1.    1.5   5.5    !Factor of leaf senescence rate 
+!         T1    T2    T3    T4 
+!Factors of leaf scenecence were 1.,1.,3.1,11.1, but reduced by half on 10 Dec. 2014 as Senthold suggested that these values are too much.
+  GTMAX -50.   30.   40.   60.     !Tmax thersholds used for effect of grain number; maximum temeprature values used for interpolation of effects
+  GRDUH   0.    0.    0.    0.     !Tmax effect on grain number; to TURN-ON set values to 0. 0. -50. -50. and to TURN-OFF set all values to zero
+  GTMIN -50.   -1.    2.   50.     !Tmin thresholds used for effect of grain number
+  GRDUL   0.    0.    0.    0.     !Tmin effect for grain number; to TURN-ON set values to -50. -50. 0. 0. and to TURN-OFF set all values to zero
+  DTTPT  20.   80.  120.           !Sum of thermal temepratures (DTT) point to set up DTT factor of Temperature effect of the Grain #; DTT are from end of ear development.
+  DTTF    0.    0.    0.           !DTT factor as function of DTT points; to turn-on set values to 0. 1. 0. and to turn-off set all values to zero
+!Note GRDUH,GRDUL and DTTF should be turned-on and turned-off together to get the effect of temperature on grain number 
+  VPD     0.    1.    7.    8.     !vapor pressure deficit used in canopy temperature effect, VPD values of refernce for interpolation
+  VPDF    0.    0.3   1.    1.     !vapor pressure deficit effect used in canopy temperature effect;these are values used to modify the effect of VPD on canop temeprature effect
+! To turn-on VPDF, set values to 0., .3, 1., 1.,and to turn-off, set all values to 0.
+! when we set values of vpdf to 0, then canopy temperature is equal to the maximum air temperature and hence there will be no cooling effect
+! To see the effect of canopy temeprature with out vpdf effect, set the values of vpdf all to 1.
+  TCSLP -12.0                      !Canopy temperature modification slope; to turn-off just comment on this line and to turn-on remove the comment
+! TCSLP  0.0                       !Turn off Canopy temperature modification slope; when TCSLP is turn-on comment this line and when TCSLP is turn-off, remove the comment from this line
+  TCINT  6.0                       !Canopy temperature modification intercept; To turn-off, comment this line and to turn-on remove comment from this line
+! TCINT  0.0                       !Turn off Canopy temperature modification intercept; no comment on this line means the TCINT is turn-on and visa-vis
+  TTHLD -50.0                      ! Minimum temperature (Tmin) threshold for frost effect (frost effect starts when Tmin<-5)
+! To turn-on frost effect set the TTHLD to -5 or below -5 depending on your Tmin threshold you are interested in to see the effect
+! To tun-off frost effect, set the TTHLD to a value beyond the range of minimum Tmin (e.g.-30 oC)
+  FRSTF  0.1                       ! Frost Factor's factor- a factor for 10% leaf frosted for each OC dcrease in minimum temeperture
+! TBASE   0.                       ! Base temperature below which no development occurs, C
+  CRWNT  .02                       ! crown temperature
+  SNOW   0                         ! Switch for snow effect of frost (0=switch off; 1=switch-on)
+! Canopy temeprature effect and vpdf effect need to be turned on and off together because the purpse of vpdf is to moderate the canopy temeprature effect
+!!Note: for temeprature effect on leaf senescence; the orginal option is with (T, F) combinations of ((-10, 1) ; (34 , 1); (34.1, 3) and (50, 11)). 
+! For no heat stress on leaf scenescence, set the values of F1..F4 to 1 and to use different threshold, change T2; e.g. if we use 32 for T2 which means we set the heat stress threshold at 32 0C
+
+*PHOTOSYNTHESIS PARAMETERS 
+  PARSR   0.50      !Conversion of solar radiation to PAR 
+  CO2X     0   220   280   330   400   490   570   750   990  9999
+  CO2Y  0.00  0.85  0.95  1.00  1.02  1.04  1.05  1.06  1.07  1.08
+
+!Note:  Photosynthesis response to CO2 for C-4 maize, sorghum, millet is reduced from prior.
+!Above 2 lines re-done by K. J. Boote, based on USDA-ARS SAP4.3, 2008, see Tables 2.6 and 2.7
+!and cited references, summarizing a 4% grain yield/biomass increase for doubling of CO2.
+!Maize model now gives 4.59 & 4.24% grain yield increase from 330-660 or 350-700, respectively, and
+!1.17% from 380 to 440 (SAP4.3 cites 1%).  Biomass increase is 3.23 & 2.93%, respectively & 0.88%.
+!Sensitivity for 5 irrigated/non-stressed maize experiments (UFGA, FLSC, IBWA, SIAZ, and IUAF).
+!The ET is reduced 12.74 & 13.50% from 330 to 660, and T reduced 17.08 & 18.12% from 350 to 700ppm.
+!Function based on stomatal resistance method of Allen et al.  CO2 effect on ET and T are good and
+!did not need to be changed.
+
+*APCO2 APSIM CO2 PARAMETERS 
+  TEFAC    1        ! Switch for transpiration effect coeff; turn-on = 1 and turn-off = 0 ! Use  turn-on for all simulations
+  RUEFAC   0        ! switch for RUE Factor; turn-on = 1 and turn off = 0 !Use turn-on for all simulations
+
+!Note: the above switch for TEFAC and RUEFAC mean that 1 is switch on and 0 is swich off. 
+!When we switch-off the effect of CO2 it means that the TEFAC (transp_eff_coeff) will set to a value of 0.006 and RUE (rue_factor) to 1
+
+ 
+
+*STRESS RESPONSE
+  FSLFW   0.050     !Fraction of leaf area senesced under 100% water stress, 1/day
+  FSLFN   0.050     !Fraction of leaf area senesced under 100% nitrogen stress, 1/day
+  FSLFP   0.050     !Fraction of leaf area senesced under 100% phosphorus stress, 1/day
+  
+*SEED GROWTH PARAMETERS 
+! SDSZ   .2750      !Maximum potential seed size, mg/sd     
+  SDSZ   .0003      !Maximum potential seed size, g/sd
+  RSGR     0.1      !Relative seed growth rate below which plant may mature early
+  RSGRT    5.0      !Number of consecutive days relative seed growth rate is below RSGR that triggers early maturity
+  CARBOT   7.0      !Number of consecutive days CARBO is less than .001 before plant matures due to temperature, water or nitrogen stress
+  DSGT    60.0      !Maximum days from sowing to germination before seed dies. (increased from 21 to 60)
+  DGET   150.0      !Growing degree days between germination and emergence after which the seed dies due to drought
+  SWCG    0.02      !Minimimum available soil water required for seed germination, cm3/cm3 
+
+*EMERGENCE INITIAL CONDITIONS  
+  STMWTE  0.20      !Stem weight at emergence, g/plant
+  RTWTE   0.20      !Root weight at emergence, g/plant
+  LFWTE   0.0023    !Leaf weight at emergence, g/plant                  ! revised for nwheat
+  SEEDRVE 0.20      !Carbohydrate reserve in seed at emergence, g/plant
+  LEAFNOE 1.0       !Leaf number at emergence, #/plant
+  PLAE    1.0       !Leaf area at emergence, cm2/plant
+
+*NITROGEN PARAMETERS
+  TMNC    0.00450   !Plant top minimum N concentration g N/g dry matter
+  TANCE   0.0440    !Nitrogen content in above ground biomass at emergence, g N/g dry matter
+  RCNP    0.01060   !Root critical nitrogen concentration, g N/g root dry weight
+  RANCE   0.0220    !Root N content at emergence   g N/g root
+!04/19/2007 US/CHP added optional coefficients, CTCNP1 and CTCNP2
+! TCNP = EXP (CTCNP1 - CTCNP2 * XSTAGE) / 100.0 in MZ_GROSUB
+  CTCNP1  1.52      !Maximum value for critical tissue N concentration (in developing seed embryo)
+  CTCNP2  0.160     !Coefficent for change in conc. with growth stage
+
+*ROOT PARAMETERS
+  PORM    0.05      !Minimum volume required for supplying oxygen to roots for optimum growth (1-1.0)
+  RWMX    0.03      !Not used in ceres, but passed through AltPlant for use elsewhere
+  RLWR    0.98      !Root length to weight ratio (cm/g * 1E-4)
+  RWUEP1  1.50  
+  istage emerge endjuv endveg endear grnfil mature fallow sowing   germ  ! Reference only: istage  
+  stage#      1      2      3      4      5      6      7      8      9  ! names-to-numbers set in ModuleDefs
+  rootfr    0.3    0.2   0.15   0.10   0.08    0.0    0.0    0.0    0.0  ! Modify this line only   
+! rootfr    0.3    0.2    0.15   0.10   0.08    0.0    0.0    0.0    0.0 ! <- numbers were not being read correctly 
+  
+*AERATION DEFICIT PARAMETERS (NWHEAT roots)
+  p_fdsw     0.0   0.5   1.0      ! fraction of drainable soil water in layer 
+  p_adf      1.0   1.0   0.0      ! aeration deficit (1 = no stress)
+  p_stag     1.0   5.0            ! istage (growth stage): emerg.- grain fill  
+  p_afs      0.0   1.0            ! crop sensitivity to aeration deficit, as a funct of phenol (1 = aeration deficit tolerant crop)
+  
+*GROWTH STAGE (can these be combined?)
+  istageno   1.0   2.0   3.0   4.0   4.4   5.0   6.0    ! From Nwheats real function nwheats_dc_code
+  dc_code   10.0  30.0  43.0  59.0  65.0  70.0  90.0    ! DC code
+  xs         1.0   1.5   2.7   3.3   4.1   6.0          ! From Nwheats subroutine nwheats_set_zstag
+  zs         1.0   2.0   4.0   5.0   6.0   9.0          ! Zadok's growth stage
+
+*PLANT COMPOSITION VALUES
+  PLIGLF  0.070     !Leaf lignin fraction
+  PLIGST  0.070     !Stem lignin fraction 
+  PLIGRT  0.070     !Root lignin fraction 
+  PLIGSH  0.280     !Shell lignin fraction 
+  PLIGSD  0.020     !Seed lignin fraction 
+
+*PHOSPHORUS CONTENT (g [P]/g [shoot])                                                                 
+  0.0070  0.0025  0.0020  Optimum Shoot Conc (emerg, End L. Growth, p. mat)
+   -99.0   -99.0   -99.0  Optimum Leaf Conc  (   "              "            "     )
+   -99.0   -99.0   -99.0  Optimum Stem Conc  (   "              "            "     )
+  .00041  .00041  .00041  Optimum Root Conc  (   "              "            "     )
+  0.0050  0.0050  0.0005  Optimum Shell Conc (   "              "            "     )
+  0.0035  0.0035  0.0035  Optimum Seed Conc  (   "              "            "     )
+
+  0.0040  0.0015  0.0010  Minimum Shoot Conc (emerg, End L. Growth, p. mat)
+   -99.0   -99.0   -99.0  Minimum Leaf Conc  (   "              "            "     )
+   -99.0   -99.0   -99.0  Minimum Stem Conc  (   "              "            "     )
+  .00020  .00020  .00020  Minimum Root Conc  (   "              "            "     )
+  0.0025  0.0025  .00025  Minimum Shell Conc (   "              "            "     )
+  .00175  .00175  .00175  Minimum Seed Conc  (   "              "            "     )
+
+    25.0    15.0     9.3  Maximum Veg N:P ratio (emergence, eff. grain fill, phys. mat)
+     4.2     2.7     2.1  Minimum Veg N:P ratio (emergence, eff. grain fill, phys. mat)
+
+    0.80    1.00  SRATPHOTO, SRATPART
+    0.10          FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
+! 4/10/2008 CHP removed FracPUptake, which was not being used. Added new variable ROOTRAD.
+!   0.80          FracPUptake - Maximum fraction of available P which can be taken up / day
+  0.0028          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m)
+  
+
+!At emergence and end of leaf growth: 
+!Optimum shoot P concentration (%) = 0.684 - 0.108X (Jones, 1983) 
+!At physiological maturity: 
+!Optimum shoot P concentration (%) = 0.238 - 0.0056X (Jones, 1983)
+!Where:
+!X is the growth stage.
+!Emergence was defined as growth stage 0 (X = 0), end of leaf growth as growth stage 4, and 
+!physiological maturity as growth stage 10 (Jones, 1983). Minimum shoot P concentration was 
+!taken as 60% of the estimated optimum (Daroub et al., 2003).
+
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.95       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)

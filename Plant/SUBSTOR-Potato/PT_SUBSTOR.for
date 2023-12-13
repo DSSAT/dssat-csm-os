@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2017 DSSAT Foundation
+C  COPYRIGHT 1998-2023 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Universidad Politechnica de Madrid
@@ -20,6 +20,8 @@ C  12/17/2004 CHP Modified HRESCeres call for harvest residue
 C  08/17/2005 CHP Renamed to PT_SUBSTOR to accomodate TN, TR SUBSTOR
 C                 routines.
 C  08/23/2011 GH Added CO2 response for tuber growth
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE PT_SUBSTOR(CONTROL, ISWITCH,
@@ -33,6 +35,8 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL PT_OPGROW, PT_OPHARV, PT_IPSPE, PT_ROOTGR, PT_PHENOL, 
+     &  PT_GROSUB, HRes_Ceres
       SAVE
 
       CHARACTER*1  IDETG, ISWNIT, ISWWAT
@@ -334,6 +338,7 @@ C-----------------------------------------------------------------------
 !     ------------------------------------------------------------------
 
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, IGNORE
 
       CHARACTER*1, PARAMETER :: BLANK = ' '
       CHARACTER*6, PARAMETER :: ERRKEY = 'ROOTGR'

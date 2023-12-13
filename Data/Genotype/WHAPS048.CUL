@@ -1,0 +1,54 @@
+*WHEAT CULTIVAR COEFFICIENTS: WHAPS048 MODEL
+!
+!********** NWheat transition Cultivar Coefficient File ***************
+!
+!(Comments Here)
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code of this cultivar, points to the Ecotype in the ECO file.
+!
+! VSEN	      sensitivity to vernalisation
+! PPSEN       sensitivity to photoperiod
+! P1	        Thermal time from seedling emergence to the end of the juvenile phase
+! P5	        Thermal time (base 0oC) from beginning of grainfill to maturity: range 500 to 700
+! PHINT       Phyllochron interval
+! GRNO        Coefficient of kernel number per stem weight at the beginning of grain filling [kernels (g stem)-1] 
+! MXFIL       Potential kernel growth rate [mg kernel-1 day-1]:  Values between 1.0 and 3.0
+! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) values 1.0 - 3.0
+! SLAP1       ratio of leaf area to mass at emergence (cm2/g)
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!																   *	 *     *				   *     *                                                                                                                  
+@VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1
+!Coeffient #                             1     2     3     4     5     6     7     8     9
+!Calibration                             P     P     P     P     P     G     G     G     G
+
+999991 MINIMA               . 999991  0.00  1.20 380.0 200.0  85.0  20.0  1.60  1.00 200.0
+999992 MAXIMA               . 999992  4.00  4.50 530.0 700.0 130.0  32.0  2.90  3.00 400.0
+
+AW0071 YECORA ROJO          . IB0002  1.00  1.20 400.0 600.0 120.0  24.0  1.90  3.00 300.0
+IB0001 YECORA               . IB0001  1.00  1.20 400.0 600.0 120.0  24.0  1.90  3.00 400.0
+IB0002 ARMINDA              . IB0006  4.00  4.50 400.0 640.0 100.0  32.0  2.50  3.00 280.0
+IB0003 Lely                 . IB0005  4.00  4.50 400.0 640.0 100.0  32.0  2.50  1.00 280.0
+IB0004 RONGOTEA             . IB0002  1.00  2.00 400.0 600.0 130.0  20.0  1.60  3.00 300.0
+AW0005 Bacanora 88          . IB0003  1.90  1.50 400.0 700.0 120.0  25.5  2.40  3.00 300.0
+AW0006 Nesser               . IB0003  1.40  1.50 400.0 660.0 120.0  24.0  2.40  3.00 300.0
+SP0007 Spear                . IB0004  1.50  3.50 400.0 740.0 110.0  24.0  2.10  3.00 300.0
+WI0008 Wilgoyne             . IB0004  1.40  1.60 400.0 680.0 100.0  22.0  1.90  3.00 300.0
+IB0010 Gamenya              . IB0002  1.60  2.00 400.0 700.0 110.0  22.0  1.90  1.50 280.0
+IB0012 Recital              . IB0008  4.00  3.50 380.0 580.0  85.0  32.0  1.90  3.00 280.0
+IB0013 Yitpi                . IB0007  1.50  2.90 400.0 680.0 105.0  22.0  1.90  3.00 300.0
+
+!Three cultivars existing in CERES-Wheat added to NWheat by Yujing 05/05/2017
+IB1500 MANITOU           1,14 DFAULT 0.474 3.566 388.5 299.3 85.69 31.84 2.893 1.170 399.2
+IB0488 NEWTON             1,6 DFAULT 1.254 3.778 523.1 464.0 108.5 31.56 1.624 2.379 204.3
+IB1015 MARIS FUNDIN       1,8 DFAULT 1.957 3.677 514.4 490.3 104.8 31.92 2.250 2.001 399.5
+
+! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
+!IB1500 MANITOU           1,14 DFAULT  0.66  4.23 330.0 277.0  86.0 30.67  1.47  1.28 280.0
+!IB0488 NEWTON             1,6 DFAULT  3.69  3.17 520.0 457.0  95.0 33.33  1.91  1.03 280.0
+!IB1015 MARIS FUNDIN       1,8 DFAULT  2.46  3.51 530.0 472.0 100.0  20.0  2.81  1.64 300.0

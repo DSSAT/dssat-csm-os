@@ -1,0 +1,44 @@
+*ALFALFA GENOTYPE COEFFICIENTS: PRFRM048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! ECO#    Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL    Critical Short Day Length below which reproductive development
+!         progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN   Slope of the relative response of development to photoperiod with time
+!         (positive for shortday plants) (1/hour)
+! EM-FL   Time between plant emergence and flower appearance (R1)
+!         (photothermal days)
+! FL-SH   Time between first flower and first pod (R3) (photothermal days)
+! FL-SD   Time between first flower and first seed (R5) (photothermal days)
+! SD-PM   Time between first seed (R5) and physiological maturity (R7)
+!         (photothermal days)
+! FL-LF   Time between first flower (R1) and end of leaf expansion
+!         (photothermal days)
+! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!         (mg CO2/m2-s) default was 1.98 - set to 1.76=40 umol m-2 s-1 yielding 
+!         Boote et al.'s 35.5 umol m-2s-1 @ 2000 umol photons m-2s-1
+! SLAVR   Specific leaf area of cultivar under standard growth conditions
+!         (cm2/g)
+! SIZLF   Maximum size of full leaf (three leaflets) (cm2)
+! XFRT    Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD   Maximum weight per seed (g)
+! SFDUR   Seed filling duration for pod cohort at standard growth conditions
+!         (photothermal days)
+! SDPDV   Average seed per pod under standard growing conditions (#/pod)
+! PODUR   Time required for cultivar to reach final pod load under optimal
+!         conditions (photothermal days)
+!
+! 8/16/19 kjb - set lfmax 0.02 change per MG step from Aragon 1.40
+! 9/25/19 kjb - FD3 should be 1.32 (stats equally good), if 0.02 per FD step
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+AL0001 Aragon  FD7            G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.40  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+AL0002 Rugged  FD3            G00002 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.32  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+AL0003 Cisco II  FD6          G00003 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.38  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+AL0004 CUF101  FD9            G00004 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.46  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+AL0005 Aragon RDRMM           G00005 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.40  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+CA0001 CFIA-alfalfa FD4       C00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.34  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+CA0002 Apica FD4              C00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.34  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+CA0003 Oneida FD3             C00002 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.32  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+

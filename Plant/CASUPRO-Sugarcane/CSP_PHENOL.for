@@ -23,7 +23,7 @@
      &    YRPLT, YRSIM,                                      !Input
      &    CropTypeCode, DeltaLeafArea, DeltaLeafNum,         !Output
      &    DLFN, DPLARF, DRPP, DTX, TillerCount,              !Output 
-     &	    LeafNum, MinGr, MDATE,                             !Output
+     &    LeafNum, MinGr, MDATE,                             !Output
      &    NVEG0, PhenoStage, PHTHRS, Ph1P, PI1, PI2, ROWSPC, !Output
      &    Smax, StalkState, STNAME, STGDOY, StkHrNO,         !Output
      &    SumTTD, SumTTG, SumTTStalk, TDUMX, VSTAGE,         !Output
@@ -33,6 +33,8 @@
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL CSP_IPPHENOL, CSP_INPHENOL, CURV, GETLUN, HEADER, TABEX, 
+     &  TIMDIF, YR_DOY
       SAVE
 !----------------------------------------------------------------------
 
@@ -54,13 +56,13 @@
       INTEGER livecount, Day, Phase, Stalk    
       INTEGER CropTypeCode
       INTEGER PhenoStage, NewStalk
-      INTEGER Temp , WLUN
+!      INTEGER Temp, WLUN
       INTEGER, PARAMETER :: NumOfTemp = 5, NumOfLeaves = 40 
       INTEGER, PARAMETER :: NumOfStages = 5, NumOfPhases = 4
       INTEGER, DIMENSION(NumOfStages) :: DayOfStage, 
      &                   DaysAfterPlantOfStage, STGDOY
       INTEGER, DIMENSION(1:NumOfStalks) :: Kill    
-	REAL LI, LI1, VT, RTR, XLI(7), YVTR(7)   
+      REAL LI, LI1, RTR, XLI(7), YVTR(7)  !, VT   
       REAL XLFNUM(7), YLFSZ(7), XStkNum(9), YLfFac(9)  
       REAL TABEX  ! Function subroutine - Lookup utility
   
@@ -73,7 +75,7 @@
       REAL M, MinGr
       REAL Ph1P, Ph1R, Ph2, Ph3, Ph4
       REAL DTPI, PI1, PI2
-      REAL So, Go, Gmax
+!      REAL So, Go, Gmax
       REAL DepthRateOfEmer, DeltaDepthOfEmer, DepthToEmer
       REAL TGROAV, DeltaTTD, SumTTD, DeltaTTG 
       REAL RTNFAC, StkHrNO, SumTTG, TELOM 
@@ -86,8 +88,8 @@
       REAL :: DPLARF, DLFN, NewTiller, TillerExcess
       
       REAL, DIMENSION(NL) :: LL, DUL, SAT, DLAYR  ! , SW, ST
-      REAL, DIMENSION(0:NumOfPhases) :: FNSTR, FPSTR, FSW, FT, FUDAY, 
-     &                                WSENP, NSENP
+      REAL, DIMENSION(0:NumOfPhases) :: FNSTR, FPSTR, FSW, FT, FUDAY
+!     &                                WSENP, NSENP
       REAL, DIMENSION(1:NumOfStalks) :: DeltaTillerNum
                                 
       REAL, DIMENSION(0:NumOfDays,NumOfStalks) :: DeltaLeafNum, LeafNum, 
@@ -183,13 +185,13 @@
 ! of run (Once only initialization).
 !----------------------------------------------------------------------
       CALL CSP_IPPHENOL(CONTROL, FILECC,
-     &           CROP,  DTPI, Gmax, Go, ISIMI,                !Output
-     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,            !Output 
-     &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,         !Output
-     &           RTNFAC, ROWSPC, SDEPTH, Smax, So,            !Output
-     &           StkHrNO, TB, TELOM, TM, TO1,                 !Output
-     &           TO2, XLFNUM, XLI, XStkNum, YLfFac,           !Output
-     &           YLFSZ, YVTR)                                 !Output
+     &           CROP,  DTPI, ISIMI,                      !Output
+     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,        !Output 
+     &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,     !Output
+     &           RTNFAC, ROWSPC, SDEPTH, Smax,            !Output
+     &           StkHrNO, TB, TELOM, TM, TO1,             !Output
+     &           TO2, XLFNUM, XLI, XStkNum, YLfFac,       !Output
+     &           YLFSZ, YVTR)                             !Output
 
 ! PHTHRS calculate this here and make it input in CSP_INPHENOL
 
@@ -218,63 +220,63 @@
       PHTHRS(3) = Ph3               ! Ph1, 2, 3 & 4 parameters in .ECO
       PHTHRS(4) = Ph4
 
-      CALL GETLUN('WORK.OUT', WLUN)
-      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
-     &   ACTION = "WRITE", POSITION = "APPEND")
+!      CALL GETLUN('WORK.OUT', WLUN)
+!      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
+!     &   ACTION = "WRITE", POSITION = "APPEND")
 
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_IPPHENOL.for")')
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"Input file: ",A)') FILEIO
-      WRITE(WLUN,'(1X,"Crop  : ",A2)') CROP
-      WRITE(WLUN,'(1X,"ISIMI : ",A1)') ISIMI
-      WRITE(WLUN,'(1X,"ISWWAT: ",A1)') ISWWAT
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1x,"Plant population at seeding:  
-     &             ",F8.1," plants/m²")') PLANTS
-      WRITE(WLUN,'(1x,"Plant population at emergence:
-     &               ",F8.1," plants/m²")') PLTPOP
-      WRITE(WLUN,'(1X,"PLME                         : ",A1)') PLME
-      WRITE(WLUN,'(1x,"Row spacing                  :
-     &               ",F8.1," cm")') ROWSPC
-      WRITE(WLUN,'(1x,"Planting depth               :
-     &             ",F8.1," cm")') SDEPTH
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"Output from cultivar file .CUL")')
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"Phyllochron interval 1:",F8.1," °C-day")') PI1
-      WRITE(WLUN,'(1X,"Phyllochron interval 2:",F8.1," °C-day")') PI2
-      WRITE(WLUN,'(1X,"Phyllochron interval  :",F8.1," °C-day")') DTPI
-      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"RESULTS FROM CSP_IPPHENOL.for")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"Input file: ",A)') FILEIO
+!      WRITE(WLUN,'(1X,"Crop  : ",A2)') CROP
+!      WRITE(WLUN,'(1X,"ISIMI : ",A1)') ISIMI
+!      WRITE(WLUN,'(1X,"ISWWAT: ",A1)') ISWWAT
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1x,"Plant population at seeding:  
+!     &             ",F8.1," plants/mï¿½")') PLANTS
+!      WRITE(WLUN,'(1x,"Plant population at emergence:
+!     &               ",F8.1," plants/mï¿½")') PLTPOP
+!      WRITE(WLUN,'(1X,"PLME                         : ",A1)') PLME
+!      WRITE(WLUN,'(1x,"Row spacing                  :
+!     &               ",F8.1," cm")') ROWSPC
+!      WRITE(WLUN,'(1x,"Planting depth               :
+!     &             ",F8.1," cm")') SDEPTH
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"Output from cultivar file .CUL")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"Phyllochron interval 1:",F8.1," ï¿½C-day")') PI1
+!      WRITE(WLUN,'(1X,"Phyllochron interval 2:",F8.1," ï¿½C-day")') PI2
+!      WRITE(WLUN,'(1X,"Phyllochron interval  :",F8.1," ï¿½C-day")') DTPI
+!      WRITE(WLUN,*)
    !!!WRITE(WLUN,'(1X,"Smax:",F8.1," # stalks/stubble")') Smax
-      WRITE(WLUN,'(1X,"Smax:",I8," # stalks/stubble")') Smax
-      WRITE(WLUN,'(1X,"So  :",F8.1," # stalks/stubble")') So    
-      WRITE(WLUN,'(1X,"Gmax:",F8.1," °C-day")') Gmax    
-      WRITE(WLUN,'(1X,"Go  :",F8.1," °C-day")') Go
-      WRITE(WLUN,*)
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"Phase 1 - plant crop :", F8.1, " ºC-day")') Ph1P
-      WRITE(WLUN,'(1X,"Phase 1 - ratoon crop:", F8.1, " ºC-day")') Ph1R
-      WRITE(WLUN,'(1X,"Phase 2              :
-     &             ", F8.1, " mm/(ºC-day)")') Ph2
-      WRITE(WLUN,'(1X,"Phase 3              :", F8.1, " ºC-day")') Ph3
-      WRITE(WLUN,'(1X,"Phase 4              :", F8.1, " ºC-day")') Ph4
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"Phase  PHTHRS  ºC-day")')
-      DO Phase = 1, NumOfPhases
-        WRITE(WLUN,'(1X,I5,1X,F7.1)') Phase, PHTHRS(Phase)
-      END DO
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"   TB  TO1  TO2   TM  ºC")')
-      DO Temp = 1,NumOfTemp
-        WRITE(WLUN,'(1X, 4F5.1)') TB(Temp), TO1(Temp), TO2(Temp),
-     &        TM(Temp)
-      END DO
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"Phase WSENP NSENP")')
-      DO Phase = 1, NumOfPhases
-        WRITE(WLUN,'(1X,I5,2(1X,F5.1))') Phase, WSENP(Phase), 
-     &        NSENP(Phase)
-      END DO
+!      WRITE(WLUN,'(1X,"Smax:",I8," # stalks/stubble")') Smax
+!      WRITE(WLUN,'(1X,"So  :",F8.1," # stalks/stubble")') So    
+!      WRITE(WLUN,'(1X,"Gmax:",F8.1," ï¿½C-day")') Gmax    
+!      WRITE(WLUN,'(1X,"Go  :",F8.1," ï¿½C-day")') Go
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"Phase 1 - plant crop :", F8.1, " ï¿½C-day")') Ph1P
+!      WRITE(WLUN,'(1X,"Phase 1 - ratoon crop:", F8.1, " ï¿½C-day")') Ph1R
+!      WRITE(WLUN,'(1X,"Phase 2              :
+!     &             ", F8.1, " mm/(ï¿½C-day)")') Ph2
+!      WRITE(WLUN,'(1X,"Phase 3              :", F8.1, " ï¿½C-day")') Ph3
+!      WRITE(WLUN,'(1X,"Phase 4              :", F8.1, " ï¿½C-day")') Ph4
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"Phase  PHTHRS  ï¿½C-day")')
+!      DO Phase = 1, NumOfPhases
+!        WRITE(WLUN,'(1X,I5,1X,F7.1)') Phase, PHTHRS(Phase)
+!      END DO
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"   TB  TO1  TO2   TM  ï¿½C")')
+!      DO Temp = 1,NumOfTemp
+!        WRITE(WLUN,'(1X, 4F5.1)') TB(Temp), TO1(Temp), TO2(Temp),
+!     &        TM(Temp)
+!      END DO
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"Phase WSENP NSENP")')
+!      DO Phase = 1, NumOfPhases
+!        WRITE(WLUN,'(1X,I5,2(1X,F5.1))') Phase, WSENP(Phase), 
+!     &        NSENP(Phase)
+!      END DO
 
 
 !      WRITE(WLUN,'(1X,"Crop: ", A)') CropTypeName(:6)
@@ -289,23 +291,23 @@
      &    CumOptStageDur, OptStageDur, STNAME)            !Output
 
 ! TEMPORARY: Statements to test output from CSP_INPHENOL above
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_INPHENOL.for")')
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"Phase OptStageDur CumOptStageDur  STNAME")')
-      WRITE(WLUN,'(1X,"         (days)       (days)")')
-      DO Phase = 1, NumOfPhases
-        WRITE(WLUN,'(1X,I5,1X,F11.1,1X,F14.1,2X,A)') Phase,
-     &           OptStageDur(Phase), CumOptStageDur(Phase), 
-     &           STNAME(Phase)
-      END DO
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"RESULTS FROM CSP_INPHENOL.for")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"Phase OptStageDur CumOptStageDur  STNAME")')
+!      WRITE(WLUN,'(1X,"         (days)       (days)")')
+!      DO Phase = 1, NumOfPhases
+!        WRITE(WLUN,'(1X,I5,1X,F11.1,1X,F14.1,2X,A)') Phase,
+!     &           OptStageDur(Phase), CumOptStageDur(Phase), 
+!     &           STNAME(Phase)
+!      END DO
 
 ! Base temperatures
       Tbase = TB(1)
       TbaseStalk = TB(2)
 
 ! This is an input value from file .CUL (read by CSP_IPPHENOL)
-      DepthRateOfEmer = Ph2   ! e.g., 0.8 mm (soil depth) / (ºC-day)
+      DepthRateOfEmer = Ph2   ! e.g., 0.8 mm (soil depth) / (ï¿½C-day)
 
 ! For P module (FSR):
       GrowFrac = 0.0
@@ -373,8 +375,8 @@
         ENDIF
       ENDIF
 !-----------------------------------------------------------------------
-! Ph1P    Threshold to sprouting - Plant cane,  °C-day
-! Ph1R    Threshold to sprouting - Ratoon cane, °C-day
+! Ph1P    Threshold to sprouting - Plant cane,  ï¿½C-day
+! Ph1R    Threshold to sprouting - Ratoon cane, ï¿½C-day
 !-----------------------------------------------------------------------
 
       IF (CropTypeCode >= 2) THEN
@@ -448,31 +450,31 @@
 
 
 ! TEMPORARY: Statements to test output from PHENOL_SC
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_PHENOL.for - SEASINIT")')
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"YRSIM:",I7)') YRSIM
-      WRITE(WLUN,'(1X,"YRPLT:",I7)') YRPLT
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"CropTypeName: ",A11)') CropTypeName
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_PHENOL.for - INTEGR")')
-      WRITE(WLUN,*)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"RESULTS FROM CSP_PHENOL.for - SEASINIT")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"YRSIM:",I7)') YRSIM
+!      WRITE(WLUN,'(1X,"YRPLT:",I7)') YRPLT
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"CropTypeName: ",A11)') CropTypeName
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"RESULTS FROM CSP_PHENOL.for - INTEGR")')
+!      WRITE(WLUN,*)
 
-      WRITE(WLUN,'(1X,"  YRDOY DAS DAP PHSTG NSKST    STTD  
-     &DTTG   STTG  XLAI")', ADVANCE="NO")
+!      WRITE(WLUN,'(1X,"  YRDOY DAS DAP PHSTG NSKST    STTD  
+!     &DTTG   STTG  XLAI")', ADVANCE="NO")
 
 !      DO Stalk = 1, Smax
 !        WRITE(WLUN,'(" LN(",I2,")")',ADVANCE="NO") Stalk
 !      END DO
       
-      DO Stalk = 1,Smax
-        WRITE(WLUN,'(3X"LN",I2)',ADVANCE="NO") Stalk
-      END DO
+!      DO Stalk = 1,Smax
+!        WRITE(WLUN,'(3X"LN",I2)',ADVANCE="NO") Stalk
+!      END DO
 
-      DO Stalk = 1, Smax
-        WRITE(WLUN,'(2X"DLAR",I2)',ADVANCE="NO") Stalk
-      END DO
+!      DO Stalk = 1, Smax
+!        WRITE(WLUN,'(2X"DLAR",I2)',ADVANCE="NO") Stalk
+!      END DO
 
 !***********************************************************************
 !***********************************************************************
@@ -572,7 +574,7 @@
 !******************* Stalk development code (FSR) **********************
       IF (LI < LI1)  THEN !Low competition among tillers   
 	 
-!!        Use TELOM for tiller emergence thermal time (°C-day):. 
+!!        Use TELOM for tiller emergence thermal time (ï¿½C-day):. 
 	    RTR = 1/TELOM
 
 	ELSE ! Calculate Relative Tillering Rate following 
@@ -1046,19 +1048,19 @@
   
 !-----------------CSP_PHENOL.OUT-----------------------------------------
 
-      WRITE(WLUN,'(/1X,I7,1X,I3,1X,I3,4X,I2,3X,I3,1X,F7.1,1X,
-     &    F5.2,1X,F6.1,1X,F5.1)', ADVANCE="NO"),
-     &    YRDOY, DAS, DAP, PhenoStage, NewStalk,   
-     &    SumTTD, DeltaTTG, SumTTG, XLAI
+!      WRITE(WLUN,'(/1X,I7,1X,I3,1X,I3,4X,I2,3X,I3,1X,F7.1,1X,
+!     &    F5.2,1X,F6.1,1X,F5.1)', ADVANCE="NO"),
+!     &    YRDOY, DAS, DAP, PhenoStage, NewStalk,   
+!     &    SumTTD, DeltaTTG, SumTTG, XLAI
 
-      DO Stalk = 1, Smax
-        WRITE(WLUN,'(1X,F6.2)', ADVANCE="NO") LeafNum(DAS,Stalk)
-      END DO
+!      DO Stalk = 1, Smax
+!        WRITE(WLUN,'(1X,F6.2)', ADVANCE="NO") LeafNum(DAS,Stalk)
+!      END DO
  
 
-      DO Stalk = 1, Smax
-        WRITE(WLUN,'(1X,F7.2)', ADVANCE="NO") DeltaLeafArea(DAS,Stalk)
-      END DO
+!      DO Stalk = 1, Smax
+!        WRITE(WLUN,'(1X,F7.2)', ADVANCE="NO") DeltaLeafArea(DAS,Stalk)
+!      END DO
 !-----------------CSP_PHENOL.OUT-----------------------------------------
 
       IF ((MOD(DAS,FROP) .EQ. 0)          !Daily output every FROP days,
@@ -1115,7 +1117,7 @@
 ! SAT
 ! ST
 ! SW
-! TGROAV                    Average daily air temperature (°C)
+! TGROAV                    Average daily air temperature (Â°C)
 
 ! Tmin
 ! TURFAC  Water stress factor for expansion (0 - 1) 
@@ -1162,21 +1164,21 @@
 ! DAi,j    DeltaLeafArea(i,j) increment of leaf area in period i and 
 !                             stalk j                                   cm2
 ! DDi      DeltaTTD(i)        thermal time increment for leaf 
-!                             appearance in period i                    °C-day
+!                             appearance in period i                    Â°C-day
 ! DGi      DeltaTTG(i)        thermal time increment for stalk 
-!                             appearance in period i                    °C-day
+!                             appearance in period i                    Â°C-day
 !          [DTTG in CSP_PHENOL.OUT]
 ! Dli,j    DeltaLeafNum(i,j)  leaf number increase at period i in 
-!                             stalk j                                   leaves (°C-day)-1
+!                             stalk j                                   leaves (Â°C-day)-1
 ! Bd       BudPlantDensity    bud planting density                      # buds m-2
 ! Bs       BudDistance        bud spacing along the row of plants       m
-! Di       SumTTD(i)          accumulated thermal time up to period i      °C-day
+! Di       SumTTD(i)          accumulated thermal time up to period i      Â°C-day
 ! di,j     SumTTStalk(i,j)    accumulated thermal time in period i for 
-!                             stalk j                                   °C-day
+!                             stalk j                                   Â°C-day
 ! DLAR      DeltaLeafArea(DAS,Stalk) 
-! DTPI      Thermal time threshold (Tb = 9 °C) corresponding to a 
+! DTPI      Thermal time threshold (Tb = 9 Â°C) corresponding to a 
 !             given leaf number at which phyllochron interval changes 
-!             from Ph1 to Ph2, °C-day
+!             from Ph1 to Ph2, Â°C-day
 ! FNSTR(I) Nitrogen stress function (0 to 1) for phase I
 ! FPSTR(I) Phosphorus stress function (0 to 1) for phase I 
 ! FSW(I)   Water stress function (0.0 to 1.0) for phase I 
@@ -1185,11 +1187,11 @@
 ! FUDAY(I) Effect of daylength on development progress (0-1) for phase I 
 ! FROP     Frequency of output (d)
 ! Gi       SumTTGStalk(i)     accumulated thermal time for stalk 
-!                             appearance up to period i                 °C-day
+!                             appearance up to period i                 Â°C-day
 ! Gmax     Gmax               threshold thermal time at which the 
-!                             maximum stalk number is reached           °C-day
+!                             maximum stalk number is reached           Â°C-day
 ! Go       Go                 threshold thermal time at which the 
-!                             stable stalk number is set                °C-day
+!                             stable stalk number is set                Â°C-day
 ! i        i                  index denoting period      
 ! j        j                  index denoting stalk number      
 ! K        KmxStk             maximum number of stalks a stubble can 
@@ -1202,14 +1204,14 @@
 ! NewStalk Number of stalks produced per plant (including senesced) 
 ! NVEG0    Day of emergence (days)
 !                             number                                    cm2 leaf-1
-! P1       Ph1P               threshold to sprouting (Tb = 9 °C) 
-!                             - Plant cane                              °C-day
-! P1       Ph1R               threshold to sprouting (Tb = 9 °C) 
-!                             - Ratoon cane                             °C-day
+! P1       Ph1P               threshold to sprouting (Tb = 9 Â°C) 
+!                             - Plant cane                              Â°C-day
+! P1       Ph1R               threshold to sprouting (Tb = 9 Â°C) 
+!                             - Ratoon cane                             Â°C-day
 ! P2       Ph2                threshold to emergence - Plant and 
-!                             ratoon cane                               mm (°C-day)-1 
+!                             ratoon cane                               mm (Â°C-day)-1 
 ! PI1, PI2 inverse slopes of the linear relationship for phyllochron
-!          interval 1 and 2           # leaves (°C-day)-1
+!          interval 1 and 2           # leaves (Â°C-day)-1
 ! PHZACC   cumulative thermal time for phase I
 ! RTNFAC   Number of primary shoots to develop from each mature stalk 
 !           at previous harvest.
@@ -1224,14 +1226,14 @@
 !                  3 (LI zone: TOP, MID or GND);  4-10 unused  
 ! TELOM    Telomechron interval, or thermal period required for an existing tiller
 !                             to produce one higher order tiller.
-! Tb       Tbase              base temperature                          °C 
-! Ti       Tmean, TGROAV        mean daily temperature in period i        °C
-! Tm       Tm                 maximum critical temperature              °C
-! Tmax i   Tmax(i)            maximum daily temperature                 °C
-! Tmin i   Tmin(i)            minimum daily temperature                 °C
-! To1      To1                lower optimum temperature                 °C
-! To2      To2                upper optimum temperature                 °C
-! Tbs      TbaseStalk         base temperature for stalk appearance     °C
-! VT       Variable Telomechron (tiller emergence)   °C-day
+! Tb       Tbase              base temperature                          Â°C 
+! Ti       Tmean, TGROAV        mean daily temperature in period i        Â°C
+! Tm       Tm                 maximum critical temperature              Â°C
+! Tmax i   Tmax(i)            maximum daily temperature                 Â°C
+! Tmin i   Tmin(i)            minimum daily temperature                 Â°C
+! To1      To1                lower optimum temperature                 Â°C
+! To2      To2                upper optimum temperature                 Â°C
+! Tbs      TbaseStalk         base temperature for stalk appearance     Â°C
+! VT       Variable Telomechron (tiller emergence)   Â°C-day
 !-----------------------------------------------------------------------
 

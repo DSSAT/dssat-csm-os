@@ -64,12 +64,17 @@ C=======================================================================
      &           NFORC,PLTFOR,NDOF,PMTYPE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
+     &           CONTROL, ISWITCH, UseSimCtr, MODELARG,PMWD)
 
       USE ModuleDefs
       USE ModuleData    
       Use CsvOutput   ! VSH
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, WARNING, YR_DOY, IGNORE, VERIFY, CLEAR, 
+     &  IGNORE2, OPHEAD, MAKEFILEW, IPCUL, IPPLNT_INP, IPSIM, PATH, 
+     &  GET_CROPD, IPFLD, IPENV, IPHAR, IPIRR, IPFERT, IPRES, IPCHEM, 
+     &  IPTILL
+
       SAVE
 
       INCLUDE 'COMIBS.blk'
@@ -78,13 +83,13 @@ C=======================================================================
       CHARACTER* 1 LINE(80),BLANK, RNMODE
       CHARACTER* 1 WMODI,ANS
       CHARACTER* 2 CROP
-      CHARACTER* 3 PROCOD,ALN(13),ALLN
+      CHARACTER* 3 PROCOD,ALN(13),ALLN, PROCODG, PROCODC, PROCODW
       CHARACTER* 4 WSTA1
       CHARACTER* 6 VARNO,ERRKEY,FINDCH
       CHARACTER* 7 FILELS
       CHARACTER* 8 FILES_a, FILES_b, MODEL, MODELARG, FILEW4
       CHARACTER*10 SLNO
-      CHARACTER*12 NAMEF, FILEX
+      CHARACTER*12 NAMEF, FILEX, FILE_CHECK
       CHARACTER*25 TITLET
       CHARACTER*42 CHEXTR(NAPPL)
       CHARACTER*78 MSG(4)
@@ -98,9 +103,10 @@ C=======================================================================
       INTEGER NYRS,FROP,EXPN,EXPP,TRTN,ERRNUM,IFIND,FTYPEN
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
-      INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-
-      REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+!     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+      INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) 
+      REAL    FLAG,EXP,TRT,PLTFOR !,FREQ,CUHT 
+      REAL    PMWD
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -323,7 +329,7 @@ C-----------------------------------------------------------------------
  2750    CONTINUE
          NLOOP = NLOOP + 1
          LINE(1) = ' '
-         IF (NLOOP .GT. 25) CALL ERROR(ERRKEY,3,FILEX,LINEXP)
+         IF (NLOOP .GT. 25) CALL ERROR(ERRKEY,4,FILEX,LINEXP)
          IF (RNMODE .EQ. 'I') THEN
            WRITE (*,2900) TRTN
 C
@@ -346,7 +352,7 @@ C-GH        TRTN   = 1
           ELSEIF (TRT .GT. 0.) THEN
             TRTN = NINT(TRT)
           ELSE
-            CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+            CALL ERROR (ERRKEY,4,FILEX,LINEXP)
          ENDIF
        ELSEIF (INDEX ('Q',RNMODE) .GT. 0) THEN
          !READ (TRNARG(1:6),'(I6)') TRTN
@@ -354,7 +360,7 @@ C-GH        TRTN   = 1
          TRTN = TRTNUM
          ROTN = ROTNUM
          I = 999
-       ELSEIF (INDEX ('NQGSFBECT',RNMODE) .GT. 0) THEN
+       ELSEIF (INDEX ('NQGSFBECTY',RNMODE) .GT. 0) THEN
 !         READ (TRNARG(1:6),'(I6)') TRTN
          TRTN = TRTNUM
          I = 999
@@ -394,7 +400,7 @@ C-----------------------------------------------------------------------
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
 
 C     IF (I .LT. TRTN) GO TO 50
-      IF ((INDEX('BEDNSGFCT',RNMODE) .GT. 0 .AND. TRTN .NE. TRTNO) .OR.
+      IF ((INDEX('BEDNSGFCTY',RNMODE) .GT. 0 .AND. TRTN .NE. TRTNO) .OR.
      &    (INDEX('Q',RNMODE) .GT. 0 .AND. 
      &                     (TRTN .NE. TRTNO .OR. ROTN .NE. ROTNO)) .OR. 
      &    (INDEX('AI',RNMODE) .GT. 0 .AND. I .LT. TRTN))
@@ -404,6 +410,13 @@ C     IF (I .LT. TRTN) GO TO 50
       CALL OPHEAD (RUNINIT,99,0.0,0.0,"                ",0.0,0.0, 
      &     "      ",RUN,"        ",TITLET,WTHSTR, RNMODE,
      &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
+     
+C-----------------------------------------------------------------------
+C     Call MAKEFILEW to read FILEX and 
+C-----------------------------------------------------------------------
+      CALL MAKEFILEW(LUNEXP,DSSATP,PATHEX,FILEX,
+     &               SimLevel,LNSIM,LNPLT,LNFLD)
+      
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -416,6 +429,7 @@ c      ENDIF
 C-----------------------------------------------------------------------
 C     Call input section for cultivar selection
 C-----------------------------------------------------------------------
+      REWIND (LUNEXP)
 
       CALL IPCUL (LUNEXP,FILEX,LNCU,CROP,VARNO)
       IF (CROP   .EQ. '  ') CALL ERROR (ERRKEY,10,FILEX,LINEXP)
@@ -442,19 +456,19 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call IPSIM
 C-----------------------------------------------------------------------
-
-      IF (.NOT. SimLevel) THEN
-        LNSIM = 0
-        YRSIM = YRPLT
-      ENDIF
-
-      CALL IPSIM (LUNEXP,LNSIM,TITSIM,NYRS,RUN,NREPSQ,ISIMI,PWDINF,
-     &     PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,PTX,PTTN,DSOIL,THETAC,
-     &     IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,NEND,RIP,NRESDL,
-     &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
-     &     EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
-     &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
+      !FO - Removed from ipexp and added into IPSIM
+      !IF (.NOT. SimLevel) THEN
+      !  LNSIM = 0
+      !  YRSIM = YRPLT
+      !ENDIF
       
+      CALL IPSIM (LUNEXP,LNSIM,SimLevel,TITSIM,NYRS,RUN,NREPSQ,ISIMI,
+     &     PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,PTX,PTTN,
+     &     DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,
+     &     NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,
+     &     LINEXP,AIRAMT,EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
+     &     CONTROL,ISWITCH,UseSimCtr,FILECTL,MODELARG,YRPLT)
+
 C-----------------------------------------------------------------------
 C        Select crop parameter input file
 C-----------------------------------------------------------------------
@@ -559,8 +573,8 @@ C-----------------------------------------------------------------------
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
 
         CALL IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,
-     &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur)
+     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,PMWD,
+     &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur,PMALB)
 
 C-----------------------------------------------------------------------
 C     Select soil profile input file
@@ -654,14 +668,13 @@ C-----------------------------------------------------------------------
       CALL YR_DOY (YRSIM,YEAR,ISIM)
       CONTROL % YRSIM = YRSIM
 
-C-----------------------------------------------------------------------
-C     Now establish the weather file FILEW as WSTA + .WT?  where ? :
-C
-C          M = observed data
-C          G = generated data
-C          S = interactively generated
-C-----------------------------------------------------------------------
-
+!-----------------------------------------------------------------------
+! 2020-10-11 CHP RNMODE = 'Y' indicates yield forecast mode. May need multiple
+!     weather files. 
+!     If RNMODE = 'Y' and MEWTH = 'G','W','S', then also need a WTH file for
+!     forecast year weather data.
+!-----------------------------------------------------------------------
+!     Generated weather data files
       IF (MEWTH .EQ. 'G') THEN
          IF (WSTA1(4:4) .EQ. BLANK) THEN
             IF (YEAR .LT. 2000) THEN
@@ -669,15 +682,19 @@ C-----------------------------------------------------------------------
             ELSE IF (YEAR .LT. 3000) THEN
               YR = YEAR - 2000
             ENDIF
-            WRITE (FILEW(1:12),75) WSTA,YR,'01.WTG'
+            WRITE (FILEWG(1:12),75) WSTA,YR,'01.WTG'
          ELSE
-            WRITE (FILEW(1:12),76) WSTA,WSTA1,'.WTG'
+            WRITE (FILEWG(1:12),76) WSTA,WSTA1,'.WTG'
          ENDIF
-         PROCOD = 'WGD'
-      ELSEIF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
-         WRITE (FILEW(1:12),77) WSTA,'.CLI    '
-         PROCOD = 'CLD'
-      ELSEIF (MEWTH .EQ. 'M') THEN
+         PROCODG = 'WGD'
+      ENDIF
+!     Interactively generated weather 
+      IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+         WRITE (FILEWC(1:12),77) WSTA,'.CLI    '
+         PROCODC = 'CLD'
+      ENDIF
+!     Measured weather data
+      IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
          IF (WSTA1(4:4) .EQ. BLANK) THEN
            IF (YEAR .LT. 2000) THEN
              YR = YEAR - 1900
@@ -688,58 +705,93 @@ C-----------------------------------------------------------------------
          ELSE
             WRITE(FILEW(1:12),76) WSTA,WSTA1,'.WTH'
          ENDIF
-         PROCOD = 'WED'
-      ELSE
+         PROCODW = 'WED'
+      ENDIF
+      IF (INDEX('GSWM',RNMODE) .LT. 0) THEN
          CALL ERROR (ERRKEY,22,FILEX,LINEXP)
       ENDIF
 
-!     Check weather filename in current directory
-      INQUIRE (FILE = FILEW,EXIST = FEXIST)
-      IF (FEXIST) THEN
-        PATHWT = BLANK
-!     Check weather filename in data directory
-      ELSE
-        FILETMP = TRIM(PATHEX)//FILEW
-        INQUIRE (FILE = FILETMP,EXIST = FEXIST)
+!     Check for existing FILEW, FILEWC, and FILEWG
+      DO I = 1, 3
+        SELECT CASE (I)
+          CASE (1)
+            IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
+              FILE_CHECK = FILEW
+              PROCOD = PROCODW
+            ELSE
+              CYCLE
+            ENDIF
+          CASE (2)
+            IF (MEWTH .EQ. 'G') THEN
+              FILE_CHECK = FILEWG
+              PROCOD = PROCODG
+            ELSE
+              CYCLE
+            ENDIF
+          CASE (3)
+            IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+              FILE_CHECK = FILEWC
+              PROCOD = PROCODC
+            ELSE
+              CYCLE
+            ENDIF
+          CASE DEFAULT; CYCLE
+        END SELECT
+
+!       Check weather filename in current directory
+        INQUIRE (FILE = FILE_CHECK,EXIST = FEXIST)
         IF (FEXIST) THEN
-          PATHWT = TRIM(PATHEX)
-!       Check weather filename in default DSSAT directory
+          PATHWT = BLANK
+!       Check weather filename in data directory
         ELSE
-          CALL PATH(PROCOD,DSSATP,PATHWT,1,NAMEF)
-          FILETMP = TRIM(PATHWT) // FILEW
-          INQUIRE (FILE=FILETMP, EXIST = FEXIST)
+          FILETMP = TRIM(PATHEX)//FILE_CHECK
+          INQUIRE (FILE = FILETMP,EXIST = FEXIST)
           IF (FEXIST) THEN
-            PATHWT = PATHWT
-!         Check 4-character file name in data directory
+            PATHWT = TRIM(PATHEX)
+!         Check weather filename in default DSSAT directory
           ELSE
-            FILEW4 = FILEW(1:4) // ".WTH"
-            FILETMP = TRIM(PATHEX) // FILEW4
+            CALL PATH(PROCOD,DSSATP,PATHWT,1,NAMEF)
+            FILETMP = TRIM(PATHWT) // FILE_CHECK
             INQUIRE (FILE=FILETMP, EXIST = FEXIST)
             IF (FEXIST) THEN
-              PATHWT = TRIM(PATHEX)
-              FILEW = FILEW4
-!           Check 4-character filename in default DSSAT directory
+              PATHWT = PATHWT
+!           Check 4-character file name in data directory
             ELSE
-              FILETMP = TRIM(PATHWT) // FILEW
+              FILEW4 = FILE_CHECK(1:4) // ".WTH"
+              FILETMP = TRIM(PATHEX) // FILEW4
               INQUIRE (FILE=FILETMP, EXIST = FEXIST)
               IF (FEXIST) THEN
-                PATHWT = PATHWT
-                FILEW = FILEW4
+                PATHWT = TRIM(PATHEX)
+                FILE_CHECK = FILEW4
+!             Check 4-character filename in default DSSAT directory
               ELSE
-                MSG(1) = "Weather file not found."
-                MSG(2) = "  Neither " // FILEW // " nor " // FILEW4
-                MSG(3) = 
-     &            "  were found in weather or experiment directories."
-                MSG(4) = "Simulation will end."
-                CONTROL % ErrCode = 29
-                CALL PUT(CONTROL)
-                CALL WARNING(4,ERRKEY,MSG)
-!               CALL ERROR(ERRKEY,29,FILEW,0)
+                FILETMP = TRIM(PATHWT) // FILE_CHECK
+                INQUIRE (FILE=FILETMP, EXIST = FEXIST)
+                IF (FEXIST) THEN
+                  PATHWT = PATHWT
+                  FILE_CHECK = FILEW4
+                ELSE
+                  MSG(1) = "Weather file not found."
+                  MSG(2) = "  Neither " // FILE_CHECK // " nor "//FILEW4
+                  MSG(3) = 
+     &              "  were found in weather or experiment directories."
+                  MSG(4) = "Simulation will end."
+                  CONTROL % ErrCode = 29
+                  CALL PUT(CONTROL)
+                  CALL WARNING(4,ERRKEY,MSG)
+!                 CALL ERROR(ERRKEY,29,FILEW,0)
+                ENDIF
               ENDIF
             ENDIF
           ENDIF
         ENDIF
-      ENDIF
+
+        SELECT CASE(I)
+          CASE (1); FILEW  = FILE_CHECK; PATHWTW = PATHWT
+          CASE (2); FILEWG = FILE_CHECK; PATHWTG = PATHWT
+          CASE (3); FILEWC = FILE_CHECK; PATHWTC = PATHWT
+        END SELECT
+      ENDDO
 
 C-----------------------------------------------------------------------
 C     Build output files.
@@ -761,13 +813,14 @@ C-----------------------------------------------------------------------
       CALL IPENV (FILEX,LNENV,LUNEXP,CO2ADJ,CO2FAC,DAYADJ,
      &     DAYFAC,DPTADJ,DPTFAC,NEV,PRCADJ,PRCFAC,RADADJ,RADFAC,
      &     TMADJ,TMFAC,TXADJ,TXFAC,WMDATE,WMODI,WNDADJ,WNDFAC,
-     &     WTHADJ)
+     &     WTHADJ)    !,YRSIM)
 
 C-----------------------------------------------------------------------
 C     Call IPHAR
 C-----------------------------------------------------------------------
+!     NEW FORAGE VARIABLES (DIEGO-2/14/2017)
       CALL IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &     NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+     &     NHAR,IHARI,YRSIM,CROP,HBPC)    !,FREQ,CUHT
 
 C-----------------------------------------------------------------------
 C     Call IPIRR
@@ -793,8 +846,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call IPCHEM - Chemical applications
 C-----------------------------------------------------------------------
-      CALL IPCHEM (LUNEXP,FILEX,LNCHE,YRSIM,ISWWAT,NCHEM,CDATE,
-     &    CHCOD,CHAMT,CHMET,CHDEP,CHT,ISWCHE,LNSIM,CHEXTR)
+      CALL IPCHEM (LUNEXP,FILEX,LNCHE,YRSIM,NCHEM,CDATE,
+     &    CHCOD,CHAMT,CHMET,CHDEP,CHT,ISWCHE,CHEXTR)
 
 C-----------------------------------------------------------------------
 C     Call IPTILL - Tillage operations
@@ -864,6 +917,7 @@ C  01/01/1990 JWJ Written
 C  05/28/1993 PWW Header revision and minor changes            
 C  02/21/2006 GH  Update 
 C  04/26/2013 GH  Update planting method for cassava
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNPLT
 C
@@ -887,6 +941,7 @@ C=======================================================================
      &     YRPLT,SPRLAP,NFORC,PLTFOR,NDOF,PMTYPE,IPLTI)
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, WARNING, YR_DOY, IGNORE, Y4K_DOY
 
       CHARACTER*1   PLME,PLDS,IPLTI
       CHARACTER*2   CROP
@@ -919,9 +974,16 @@ C
      &      PLPH,SPRLAP,NFORC,PLTFOR,NDOF,PMTYPE
 C New variables for pineapple
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
-            CALL Y2K_DOY(YRPLT)
-            CALL Y2K_DOY(IEMRG)
-            CALL YR_DOY (YRPLT,YR,IPLT)
+            
+C 05/07/2020 FO Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY(YRPLT)
+            !CALL Y2K_DOY(IEMRG)
+            IF(LN .EQ. LNPLT) THEN
+              CALL Y4K_DOY(YRPLT,FILEX,LINEXP,ERRKEY,10)
+              CALL Y4K_DOY(IEMRG,FILEX,LINEXP,ERRKEY,15)
+              CALL YR_DOY (YRPLT,YR,IPLT)
+            ENDIF
+            
           ELSE
             CALL ERROR (ERRKEY,2,FILEX,LINEXP)
          ENDIF
@@ -935,7 +997,9 @@ C New variables for pineapple
          IF (PLTPOP .LE. 0.0 .AND. PLANTS .GT. 0.0) THEN
             PLTPOP = PLANTS
          ENDIF
-         IF (PLTPOP .LE. 0.0 .OR. PLTPOP .GT. 999.) THEN
+C-GH     IF (PLTPOP .LE. 0.0 .OR. PLTPOP .GT. 999.) THEN
+         IF (PLTPOP .LE. 0.0) THEN
+
             IF (CROP /= 'SC') CALL ERROR (ERRKEY,11,FILEX,LINEXP)
          ENDIF
 
@@ -996,7 +1060,8 @@ C-----------------------------------------------------------------------
 C     FORMAT Strings
 C-----------------------------------------------------------------------
 
- 60   FORMAT (I3,I5,1X,I5,2(1X,F5.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
+C 60 FORMAT (I3,I5,1X,I5,2(1X,F5.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
+ 60   FORMAT (I3,I5,1X,I5,2(F6.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
 
       END SUBROUTINE IPPLNT_Inp
 
@@ -1012,6 +1077,7 @@ C  05/28/1993 PWW Header revision and minor changes
 C  02/21/2006 GH  Update 
 !  07/26/2006 CHP Added previous management code for lookup in 
 !       SOMFR045.SDA file to FIELDS section
+!  05/28/2021 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNFLD
 C
@@ -1029,24 +1095,37 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &           SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,
-     &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDUR)
+     &           SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,PMWD,
+     &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist,FHDUR,PMALB)
 
+      USE ModuleData
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, UPCASE, WARNING, INFO, IGNORE, HFIND, 
+     &  SUMVALS
 
       CHARACTER*1  UPCASE
       CHARACTER*4  WSTA,WSTA1,HFNDCH
       CHARACTER*5  DFDRN,FLST,SLTX, FldHist
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*8  FLDNAM
+      CHARACTER*9  CELEV
       CHARACTER*10 SLNO
       CHARACTER*12 FILEX
+      CHARACTER*15 CXCRD, CYCRD
+      CHARACTER*78 MSG(2)
       CHARACTER*92 CHARTEST
+      LOGICAL      CKELEV
+      DATA CKELEV /.TRUE./
 
       INTEGER LUNEXP,LNFLD,LN,LINEXP,ISECT,IFIND,ERRNUM,I, FHDUR
 
-      REAL    FLDD,SFDRN,FLOB,SLDP,SLOPE
+      REAL    FLDD,SFDRN,FLOB,SLDP,SLOPE,PMWD,PMALB
       REAL    XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
+
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 3
+      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
 
       PARAMETER (ERRKEY='IPFLD ')
                  FINDCH='*FIELD'
@@ -1084,7 +1163,6 @@ C=======================================================================
       IF (SFDRN .LE. 0.0) THEN
         SFDRN = 100.
       ENDIF
-
 C
 C    New section
 C
@@ -1096,7 +1174,7 @@ C
  70     CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
         IF (ISECT .EQ. 1) THEN
            READ (CHARTEST,80,IOSTAT=ERRNUM) LN,
-     &                XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS, FldHist, FHDUR
+     &           CXCRD,CYCRD,CELEV,AREA,SLEN,FLWR,SLAS, FldHist, FHDUR
            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          ELSE
            CALL ERROR (ERRKEY,2,FILEX,LINEXP)
@@ -1106,9 +1184,109 @@ C
       IF (AREA .LE. 0.0) AREA = 1.0
       IF (FLWR .LE. 0.0) FLWR = 1.0
       IF (SLEN .LE. 0.0) SLEN = SQRT(AREA*FLWR*10000.0)
+      
+C FO - Store Summary.out labels and values in arrays to send to
+C     OPSUM routines for printing.  Integers are temporarily 
+C     saved as real numbers for placement in real array.
 
+      READ(CXCRD,'(F15.0)', IOSTAT=ERRNUM) XCRD
+      IF(ERRNUM .NE. 0) THEN
+         XCRD = -999.0
+         MSG(1) = 'Error reading latitude from experimental file'
+         MSG(2) = FILEX
+         CALL WARNING(2, ERRKEY, MSG)
+      ENDIF
+      READ(CYCRD,'(F15.0)', IOSTAT=ERRNUM) YCRD
+      IF(ERRNUM .NE. 0) THEN
+         YCRD = -99.0
+         MSG(1) = 'Error reading longitude from experimental file'
+         MSG(2) = FILEX
+         CALL WARNING(2, ERRKEY, MSG)
+      ENDIF
+      READ(CELEV,'(F9.0)', IOSTAT=ERRNUM)  ELEV
+      IF(ERRNUM .NE. 0) THEN
+        ELEV = -99.0
+        MSG(1) = 'Error reading elevation from experimental file'
+        MSG(2) = FILEX
+        CALL WARNING(2, ERRKEY, MSG)
+      ENDIF
+      
+      IF(YCRD .GE. -90.0 .AND. YCRD .LE. 90.0 .AND.
+     &   XCRD .GE.-180.0 .AND. XCRD .LE. 180.0 .AND.
+     &   LEN_TRIM(CYCRD).GT. 0.0 .AND. LEN_TRIM(CXCRD).GT.0.0
+     &   .AND.
+     &   (ABS(YCRD) .GT. 1.E-15 .OR. ABS(XCRD) .GT. 1.E-15))THEN
+!     Transfer data to the modules
+         CALL PUT('FIELD','CYCRD',CYCRD)
+         CALL PUT('FIELD','CXCRD',CXCRD)   
+         LABEL(1) = 'YCRD'; VALUE(1) = YCRD 
+         LABEL(2) = 'XCRD'; VALUE(2) = XCRD
+         CKELEV = .TRUE.
+      ELSE
+        !     Transfer data to the modules
+        CALL PUT('FIELD','CYCRD','            -99')
+        CALL PUT('FIELD','CXCRD','            -99')
+        LABEL(1) = 'YCRD'; VALUE(1) = -99.0 
+        LABEL(2) = 'XCRD'; VALUE(2) = -999.0         
+        CKELEV = .FALSE.
+      ENDIF
+  
+!     Check elevation (CKELEV) based on latitude and longitude  
+      IF(CKELEV .EQV. .TRUE.) THEN
+         IF(ELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
+           CALL PUT('FIELD','CELEV',CELEV)
+           LABEL(3) = 'ELEV'; VALUE(3) = ELEV      
+         ELSE
+           CALL PUT('FIELD','CELEV','      -99')
+           LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+           
+         ENDIF
+      ELSE
+        IF(ELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0 .AND.
+     &     ABS(ELEV) .GT. 1.E-15) THEN
+          CALL PUT('FIELD','CELEV',CELEV)
+          LABEL(3) = 'ELEV'; VALUE(3) = ELEV      
+        ELSE
+          CALL PUT('FIELD','CELEV','      -99')
+          LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+        ENDIF
+      ENDIF
+               
+C     Send labels and values to OPSUM      
+      CALL SUMVALS (SUMNUM, LABEL, VALUE)    
 C
 C    End New section
+
+C
+C    New section (3rd)
+C
+C    Find header and read second line of field information
+C
+      HFNDCH='PMALB'
+      CALL HFIND(LUNEXP,HFNDCH,LINEXP,IFIND)
+      IF (IFIND .EQ. 1) THEN
+ 71     CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
+        IF (ISECT .EQ. 1) THEN
+           READ (CHARTEST,90,IOSTAT=ERRNUM) LN,
+!     2023-07-14 chp changed order of these three variables to allow 
+!                    1D and 2D models to use the same file format.
+!    &                PMWD,PMALB
+     &         PMALB, PMWD
+
+           IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+         ELSE
+           CALL ERROR (ERRKEY,2,FILEX,LINEXP)
+         ENDIF
+         IF (LN .NE. LNFLD) GO TO 71
+      ELSE
+        PMWD = -99
+        PMALB = -99
+      ENDIF
+      IF (PMWD .LE. 0.0) PMWD = -99
+      IF (PMALB .LE. 0.0) PMALB = -99
+
+C
+C    End New section (3rd)
 
       REWIND(LUNEXP)
 
@@ -1122,7 +1300,8 @@ C-----------------------------------------------------------------------
      &         2(1X,A5),1X,F5.0,1X,A10)
 !     chp 7/26/2006
 ! 80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0))
- 80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0),1X,A5,I6)
+ 80   FORMAT (I3,2(A15,1X),A9,1X,F17.0,3(1X,F5.0),1X,A5,I6)
+ 90   FORMAT (I3, 4F6.0)
 
       END SUBROUTINE IPFLD
 

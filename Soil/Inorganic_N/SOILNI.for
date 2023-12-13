@@ -50,6 +50,8 @@ C  04/20/2004 US  Modified DLAG, removed IFDENIT
 !  04/13/2005 CHP changed subroutine name to SoilNi.for (was SoilN_inorg)
 !  06/12/2014 CHP DayCent calcs for N2O emissions from Peter Grace
 !  11/21/2017 HJ  modified this subroutine to include N loss to tile
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called : SOIL
 C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
@@ -57,20 +59,24 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE SoilNi (CONTROL, ISWITCH, 
-     &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
-     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
-     &    XHLAI,                                          !Input
+     &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
+     &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
+     &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
+     &    WEATHER, XHLAI,                                 !Input
      &    FLOODN,                                         !I/O
-     &    NH4, NO3, UPPM)                                 !Output
+     &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
 !-----------------------------------------------------------------------
-      USE N2O_mod 
+      USE GHG_mod 
       USE FertType_mod
       USE ModuleData
       USE FloodModule
       USE ModSoilMix
       IMPLICIT  NONE
+      EXTERNAL DENIT_CERES, INCDAT, YR_DOY, OPSOILNI, 
+     &  SOILNI_INIT, NCHECK_INORG, FLOOD_CHEM, OXLAYER, DENIT_DAYCENT, 
+     &  NOX_PULSE, INCYD, DAYCENT_DIFFUSIVITY, NFLUX
+
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT, MEGHG
@@ -96,6 +102,7 @@ C=======================================================================
       REAL NH4(NL), NO3(NL), PH(NL), SAT(NL), SNH4(NL)
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
+      REAL NH4_plant(NL), NO3_plant(NL)
       
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
@@ -132,6 +139,7 @@ C=======================================================================
       REAL CN2,       TN2D,                    N2flux(NL)   !N2 detnitr
 
 !     Added for GHG model
+      TYPE (CH4_type) CH4_data
       REAL, DIMENSION(NL) :: dD0, NO_N2O_ratio
       REAL, DIMENSION(0:NL) :: newCO2
       REAL pn2onitrif, NH4_to_NO, NITRIF_to_NO
@@ -161,6 +169,24 @@ C=======================================================================
       TYPE (TillType)    TILLVALS
       TYPE (WeatherType) WEATHER
       
+!     Interface required because N2O_data is optional variable
+      INTERFACE
+        SUBROUTINE SoilNiBal(CONTROL, ISWITCH, 
+     &      ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &      N2O_data) 
+          USE GHG_mod
+          USE FertType_mod
+          TYPE (ControlType), INTENT(IN) :: CONTROL
+          TYPE (SwitchType),  INTENT(IN) :: ISWITCH
+          TYPE (FertType),    INTENT(IN) :: FertData
+          TYPE (N2O_type), INTENT(IN), OPTIONAL :: N2O_DATA
+          INTEGER, INTENT(IN) :: NBUND
+          REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
+        END SUBROUTINE SoilNiBal
+      END INTERFACE
+
 !      PI = 3.1416
       
 !     Transfer values from constructed data types into local variables.
@@ -282,9 +308,9 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
-     &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data)                      !Output
+     &    dD0, newCO2, NO3, SNO3, SOILPROP,       !Input
+     &    DLTSNO3,                                !I/O
+     &    CNOX, TNOXD, N2O_data)                  !Output
 
         CASE DEFAULT
           CALL Denit_Ceres (CONTROL, ISWNIT, 
@@ -296,7 +322,9 @@ C=======================================================================
 
       CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
+      CALL OPGHG(CONTROL, ISWITCH, N2O_data, CH4_data)
 
       IF (CONTROL%RUN .EQ. 1 .OR. INDEX('QF',CONTROL%RNMODE) .LE. 0)THEN
         call nox_pulse (dynamic, rain, snow, nox_puls)
@@ -321,6 +349,9 @@ C=======================================================================
         SNH4(L) = SNH4(L) - UNH4(L)
         NO3(L)  = SNO3(L) * KG2PPM(L)
         NH4(L)  = SNH4(L) * KG2PPM(L)
+!       Must calculate WTNUP here or it won't be guaranteed to match N
+!       removed from the soil today and the balance will be off.
+        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
       ENDDO
 
 !     Check for fertilizer added today or active slow release fertilizers 
@@ -550,7 +581,7 @@ C=======================================================================
 !         available, take all NH4, leaving behind a minimum amount of
 !         NH4 equal to XMIN (NNOM is negative!).
 
-          IF (ABS(NNOM) .GT. (SNH4(L) - XMIN)) THEN
+          IF (ABS(NNOM) .GT. (SNH4(L) + DLTSNH4(L) - XMIN)) THEN
             NNOM_a = -(SNH4(L) - XMIN + DLTSNH4(L))
             NNOM_b = NNOM - NNOM_a
 
@@ -559,7 +590,7 @@ C=======================================================================
             NNOM = NNOM_b
 
             SNO3_AVAIL = SNO3(L) + DLTSNO3(L)
-            IF (ABS(NNOM) .GT. (SNO3_AVAIL - XMIN)) THEN
+            IF (ABS(NNOM) .GT. (SNO3_AVAIL + DLTSNO3(L) - XMIN)) THEN
               !Not enough SNO3 to fill remaining NNOM, leave residual
               DLTSNO3(L) = DLTSNO3(L) + XMIN - SNO3_AVAIL
               !TIMMOBILIZE(N) = TIMMOBILIZE(N) + (SNO3_AVAIL - XMIN)
@@ -713,9 +744,9 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1","2")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
-     &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data)                      !Output
+     &    dD0, newCO2, NO3, SNO3, SOILPROP,       !Input
+     &    DLTSNO3,                                !I/O
+     &    CNOX, TNOXD, N2O_data)                  !Output
 
         CASE DEFAULT
           CALL Denit_Ceres (CONTROL, ISWNIT, 
@@ -836,6 +867,12 @@ C=======================================================================
       
       CALL PUT('NITR','TLCHD',TLeachD) 
 
+!     Psuedo-integration - for plant-available N
+      DO L = 1, NLAYR
+        NO3_plant(L) = (SNO3(L) + DLTSNO3(L)) * KG2PPM(L)
+        NH4_plant(L) = (SNH4(L) + DLTSNH4(L)) * KG2PPM(L)
+      ENDDO
+
 !***********************************************************************
 !***********************************************************************
 !     END OF FIRST DYNAMIC IF CONSTRUCT
@@ -871,14 +908,17 @@ C=======================================================================
 
 !     Loop through soil layers for integration
       DO L = 1, NLAYR
-        SNO3(L) = SNO3(L) + DLTSNO3(L)    !plant uptake added to DLTSNO3
-        SNH4(L) = SNH4(L) + DLTSNH4(L)    !plant uptake added to DLTSNH4
+        SNO3(L) = SNO3(L) + DLTSNO3(L)
+        SNH4(L) = SNH4(L) + DLTSNH4(L)
         UREA(L) = UREA(L) + DLTUREA(L)
 
 !       Underflow trapping
-        IF (ABS(SNO3(L)) .LT. 1.E-8) SNO3(L) = 0.0
-        IF (ABS(SNH4(L)) .LT. 1.E-8) SNH4(L) = 0.0
-        IF (ABS(UREA(L)) .LT. 1.E-8) UREA(L) = 0.0
+!        IF (ABS(SNO3(L)) .LT. 1.E-8) SNO3(L) = 0.0
+!        IF (ABS(SNH4(L)) .LT. 1.E-8) SNH4(L) = 0.0
+!        IF (ABS(UREA(L)) .LT. 1.E-8) UREA(L) = 0.0
+!        IF (SNO3(L) .LE. 0.0) SNO3(L) = 0.0
+!        IF (SNH4(L) .LE. 0.0) SNH4(L) = 0.0
+!        IF (UREA(L) .LE. 0.0) UREA(L) = 0.0
 
 !       Conversions.
         NO3(L)  = SNO3(L) * KG2PPM(L)
@@ -900,7 +940,8 @@ C=======================================================================
         TNO3  = TNO3  + SNO3(L)
         TUREA = TUREA + UREA(L)
         TN2OnitrifD = TN2OnitrifD + N2Onitrif(L)
-        WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
+!       Calculate this where uptake is removed from the soil.
+!       WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
         IF (L ==1) THEN
           TMINERN = MNR(0,N) + MNR(1,N)
           TIMMOBN = IMM(0,N) + IMM(1,N)
@@ -943,7 +984,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
@@ -951,6 +992,9 @@ C=======================================================================
      &    FertData, NH4, NO3, 
      &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, TUREA, CNOX, TOTAML)
       ENDIF
+
+      NO3_plant = NO3
+      NH4_plant = NH4
 
 !***********************************************************************
 !***********************************************************************
@@ -977,10 +1021,12 @@ C     Write daily output
 
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
-     &	  N2O_data) 
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    N2O_data) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
+      CALL OPGHG(CONTROL, ISWITCH, N2O_data, CH4_data)
 
 C***********************************************************************
 C***********************************************************************
@@ -988,7 +1034,6 @@ C     END OF SECOND DYNAMIC IF CONSTRUCT
 C***********************************************************************
       ENDIF
 C-----------------------------------------------------------------------
-  
       RETURN
       END SUBROUTINE SoilNi
 
@@ -1006,7 +1051,7 @@ C-----------------------------------------------------------------------
 ! AK            Maximum hydrolysis rate of urea (i.e. proportion of urea 
 !                 that will hydrolyze in 1 day under optimum conditions). 
 !                 AK >= 0.25. Also: Today's value of the nitrification 
-!                 potential, calculated from the previous day’s value (d-1)
+!                 potential, calculated from the previous dayï¿½s value (d-1)
 ! ALGFIX        N in algae (kg [N] / ha)
 ! ALI            
 ! NITRIF(L)     Daily nitrification rate (kg [N] / ha / d)
@@ -1016,7 +1061,7 @@ C-----------------------------------------------------------------------
 !                 and/or timing of simulation.  The structure of the 
 !                 variable (ControlType) is defined in ModuleDefs.for. 
 ! CUMFNRO       Cumulative N lost in runoff over bund (kg [N] / ha)
-! CW            Water extractable SOM carbon (µg [C] / g [soil])
+! CW            Water extractable SOM carbon (ï¿½g [C] / g [soil])
 ! DENITRIF      Denitrification rate (kg [N] / ha / d)
 ! DLAG(L)       Number of days with soil water content greater than the 
 !                 drained upper limit for soil layer L.  For 
@@ -1067,7 +1112,7 @@ C-----------------------------------------------------------------------
 !                 hydrolyzed (this is assumed to occur 21 days after the 
 !                 urea application) (d)
 ! IUON          Flag indicating presence of urea (true or false) 
-! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to µg [N] / g 
+! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to ï¿½g [N] / g 
 !                 [soil] for soil layer L 
 ! LFD10         Date, 10 days after last fertilization.  Used to determine 
 !                 whether hourly flood chemistry computations will be done 
@@ -1075,12 +1120,12 @@ C-----------------------------------------------------------------------
 ! LL(L)         Volumetric soil water content in soil layer L at lower 
 !                 limit (cm3 [water] / cm3 [soil])
 ! NBUND         Number of bund height records 
-! NH4(L)        Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)        Ammonium N in soil layer L (ï¿½g[N] / g[soil])
 ! NITRIFppm        Nitrification rate (kg [N] / ha - d)
 ! NL            Maximum number of soil layers = 20 
 ! NLAYR         Actual number of soil layers 
 ! NNOM          Net mineral N release from all SOM sources (kg [N] / ha)
-! NO3(L)        Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)        Nitrate in soil layer L (ï¿½g[N] / g[soil])
 ! NSOURCE       Flag for N source (1 = urea, 2 = NO3) 
 ! NSWITCH       Nitrogen switch - can be used to control N processes (0-No 
 !                 N simulated, 1-N simulated, 5-Nitrification off, 
@@ -1101,7 +1146,7 @@ C-----------------------------------------------------------------------
 !                 bulk density, drained upper limit, lower limit, pH, 
 !                 saturation water content.  Structure defined in ModuleDefs. 
 ! SRAD          Solar radiation (MJ/m2-d)
-! ST(L)         Soil temperature in soil layer L (°C)
+! ST(L)         Soil temperature in soil layer L (ï¿½C)
 ! SW(L)         Volumetric soil water content in layer L
 !                (cm3 [water] / cm3 [soil])
 ! SWEF          Soil water evaporation fraction; fraction of lower limit 
@@ -1110,15 +1155,15 @@ C-----------------------------------------------------------------------
 ! T2            Temperature factor for nitrification 
 ! TFACTOR       Temperature factor for nitrification 
 ! TFDENIT       Temperature factor for denitrification rate (range 0-1) 
-! TFNITY(L)     Yesterday’s soil temperature factor for nitrification 
+! TFNITY(L)     Yesterdayï¿½s soil temperature factor for nitrification 
 !                 (range 0-1) 
 ! TFUREA        Soil temperature factor for urea hydrolysis (range 0-1) 
 ! TIMMOBILIZE   Cumulative N immoblized (kg [N] / ha)
 ! TKELVIN       Soil temperature (oK)
 ! TLAG          Temperature factor for nitrification (0-1) 
 ! CLeach        Cumulative N leached from soil (kg [N] / ha)
-! TMAX          Maximum daily temperature (°C)
-! TMIN          Minimum daily temperature (°C)
+! TMAX          Maximum daily temperature (ï¿½C)
+! TMIN          Minimum daily temperature (ï¿½C)
 ! TMINERALIZE   Cumulative mineralization (kg [N] / ha)
 ! TNH4          Total extractable ammonium N in soil profile (kg [N] / ha)
 ! TNH4NO3       Total amount of inorganic N (NH4 and NO3) across soil 

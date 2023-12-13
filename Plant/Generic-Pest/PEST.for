@@ -17,6 +17,8 @@ C  06/19/2001 GH  Added mowing option
 C  01/28/2002 GH  Expanded number of pests to 100 (from 40)
 C  05/09/2003 CHP Expanded number of pests to 200 (from 100)
 C  06/18/2015 GH  Moved MaxPest to ModuleDefs
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  Called by: PLANT
 C  Calls:     ASMDM
@@ -44,6 +46,8 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL IPPEST, IPPARM, IPPROG, PESTCP, ASMDM, SEEDDM, VEGDM, 
+     &  ROOTDM, OPPEST, LINDM, TIMDIF
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1   ISWDIS

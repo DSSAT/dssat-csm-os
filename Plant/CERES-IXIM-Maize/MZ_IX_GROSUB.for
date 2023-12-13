@@ -30,6 +30,7 @@
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
 !  09/06/2007 JIL Modified and added new components for IXIM model
+!  04/14/2021 CHP Added CropStatus
 !----------------------------------------------------------------------
 !
 !  Called : CERES
@@ -56,11 +57,14 @@
      &      SI1, SI3, SKERWT, SLA, STMWTO, STOVER, STOVN,       !Output
      &      STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4, UNO3,     !Output
      &      VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST, WTNUP,   !Output
-     &      WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD)               !Output
+     &      WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD, CropStatus)   !Output
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, MZ_NFACTO, MZ_IX_KNUMBER, 
+     &  MZ_IX_NUPTAK, P_Ceres, YR_DOY, WARNING
+      EXTERNAL CURV, MZ_IX_LEAFAREA, MZ_IX_PHOTSYNT, TABEX
       SAVE
 !----------------------------------------------------------------------
 !                         Variable Declaration
@@ -92,7 +96,8 @@
 	REAL        CVF
       REAL        CO2X(10)    
       REAL        CO2Y(10)    
-      REAL        CO2         
+      REAL        CO2
+      INTEGER     CropStatus
       REAL        CSD1        
       REAL        CSD2        
       REAL        CUMDTTEG      
@@ -458,7 +463,8 @@ C      REAL        PRLF
 ! 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! ** JIL Read AZIR (Row direction, PLRD)
             READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC,AZIR ; LNUM=LNUM+1
- 60         FORMAT(25X,F5.2,13X,F5.2,1X,F5.2,1X,F5.2)
+C 60         FORMAT(25X,F5.2,13X,F5.2,1X,F5.2,1X,F5.2)
+ 60         FORMAT(24X,F6.0,13X,F5.2,1X,F5.2,1X,F5.2)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 !     -----------------------------------------------------------------
@@ -470,12 +476,8 @@ C      REAL        PRLF
               CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
-!     %                 P1,P2,P5,G2,G3,PHINT  
-!     %                 P1,P2,P5,G2,G3,PHINT,AX,LX            ! New inputs (JIL)
-     %                 P1,P2,P5,G2,G3,PHINT,AX,LX,LFN        ! New inputs (JIL)
+     %                 P1,P2,P5,G2,G3,PHINT,AX,LX,LFN 
 
-!CHP 1800        FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2))    
-!1800        FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)    
 1800        FORMAT (A6,1X,A16,1X,A6,1X,8F6.0,I4)    
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
@@ -895,41 +897,41 @@ C ** Use default values if inputs not available
              NFAC   = 1.0
           ENDIF
 
-	    CALL MZ_IX_LEAFAREA (DYNAMIC,                          !Control
-     &      AX,LX,GDDAE,GROLF,ISTAGE,LFN,PAR,PHINT,PLTPOP,PATHSR,  !Input
-     &      AGEFAC,FILES,SATFAC,PStres2,TURFAC,TEMPM,TLNO,XSTAGE,  !Input
-     &      NSTRES,SWFAC,PLAE,                                     !Input
-     &      GLA,LA,LAD,LAP,LATOT,LFL,LFWTD,LNEXP,PGROLF,PLAG,SEN,  !Output
-     &      SENLA,YX)                                              !Output
+	    CALL MZ_IX_LEAFAREA (DYNAMIC,                         !Control
+     &     AX,LX,GDDAE,GROLF,ISTAGE,LFN,PAR,PHINT,PLTPOP,PATHSR, !Input
+     &     AGEFAC,FILES,SATFAC,PStres2,TURFAC,TEMPM,TLNO,XSTAGE, !Input
+     &     NSTRES,SWFAC,PLAE,                                    !Input
+     &     GLA,LA,LAD,LAP,LATOT,LFL,LFWTD,LNEXP,PGROLF,PLAG,SEN, !Output
+     &     SENLA,YX)                                             !Output
 
-	    CALL MZ_IX_PHOTSYNT (DYNAMIC,                          !Control
-     &      AMTRH,AZIR,DUL(1),GDDAE,GLA,GREAR,GRLF,                !Input
-     &      FILES,GRGRN, GRRT, GRSTM, PCNL, PCNST, PCNRT,          !Input
-     &      PATHSR,PCNSD, LAP, LFL, LFN, PLTPOP, Z2STAGE,          !Input
-     &      ROWSPC,SALB,SW(1),YX,WEATHER,WTMAIN,TURFAC,            !Input
-     &      PG,MAINR,CVF,PLIGLF,PLIGRT)                            !Output
+	    CALL MZ_IX_PHOTSYNT (DYNAMIC,                         !Control
+     &      AMTRH,AZIR,DUL(1),GDDAE,GLA,GREAR,GRLF,             !Input
+     &      FILES,GRGRN, GRRT, GRSTM, PCNL, PCNST, PCNRT,       !Input
+     &      PATHSR,PCNSD, LAP, LFL, LFN, PLTPOP, Z2STAGE,       !Input
+     &      ROWSPC,SALB,SW(1),YX,WEATHER,WTMAIN,TURFAC,         !Input
+     &      PG,MAINR,CVF,PLIGLF,PLIGRT)                         !Output
 
-          CALL MZ_IX_KNUMBER (DYNAMIC,                             !Control
-     &      FILES,G2,ICSDUR,IPAR,ISTAGE,NSTRES,PATHSR,P3,          !Inputs
-     &      PLTPOP,SHCARB,SUMDTT,SWFAC,                            !Inputs
-     &      BSGDD,EARS,GPP,GPSM)                                   !Outputs
+          CALL MZ_IX_KNUMBER (DYNAMIC,                    !Control
+     &      FILES,G2,ICSDUR,IPAR,ISTAGE,PATHSR,P3,        !Inputs
+     &      PLTPOP,SHCARB,SUMDTT,                         !Inputs
+     &      BSGDD,EARS,GPP,GPSM)                          !Outputs
 
-          CALL MZ_IX_NUPTAK (DYNAMIC,                              !Control
-     &      CARBO,DLAYR,EAROWT,ECNP,KG2PPM,                        !Input
-     &      LCNP,LFWT,LL,NH4,NLAYR,NO3,NX,PDWI,PGROEA,PGROLF,      !Input
-     &      PGRORT,PGROST,PLIGRT,PLTPOP,PTF,RCNP,RLV,RTWT,SAT,SCNP,!Input
-     &      SENESCE,SHF,STMWT,STOVWT,SW,TCNP,XSTAGE,               !Input
-     &      EARN,LEAFN,RANC,ROOTN,STEMN,STOVN,TANC,TRNU,UNH4,UNO3) !Output
+          CALL MZ_IX_NUPTAK (DYNAMIC,                           !Control
+     &     CARBO,DLAYR,EAROWT,ECNP,KG2PPM,                        !Input
+     &     LCNP,LFWT,LL,NH4,NLAYR,NO3,NX,PDWI,PGROEA,PGROLF,      !Input
+     &     PGRORT,PGROST,PLIGRT,PLTPOP,PTF,RCNP,RLV,RTWT,SAT,SCNP,!Input
+     &     SENESCE,SHF,STMWT,STOVWT,SW,TCNP,XSTAGE,               !Input
+     &     EARN,LEAFN,RANC,ROOTN,STEMN,STOVN,TANC,TRNU,UNH4,UNO3) !Out
 
-          CALL P_Ceres (DYNAMIC, ISWPHO,                           !Input
-     &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,         !Input
-     &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,              !Input
-     &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,           !Input
-     &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,               !Input
-     &      WTLF, YRPLT,                                           !Input
-     &      SENESCE,                                               !I/O
-     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,        !Output
-     &      PStres1, PStres2, PUptake, FracRts)                    !Output
+          CALL P_Ceres (DYNAMIC, ISWPHO,                         !Input
+     &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,       !Input
+     &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,            !Input
+     &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,         !Input
+     &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,             !Input
+     &      WTLF, YRPLT,                                         !Input
+     &      SENESCE,                                             !I/O
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,      !Output
+     &      PStres1, PStres2, PUptake, FracRts)                  !Output
 
 !-----------------------------------------------------------------------  
 !-----------------------------------------------------------------------
@@ -1137,7 +1139,7 @@ C ** Use default values if inputs not available
 	    IF (CUMDTTEG .GT. 0.0) THEN 
 		     IF (CUMDTTEG .LT. 350.0) THEN
 C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
-	         ECNP = (4.0 - 0.0086 * CUMDTTEG)/100.0 !Ear critical [N] (frac)
+	         ECNP = (4.0 - 0.0086 * CUMDTTEG)/100.0 !Ear crit [N] (frac)
 	       ELSE
 	         ECNP = 0.01
 	       ENDIF
@@ -1249,8 +1251,8 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
      &      AX,LX,GDDAE,GROLF,ISTAGE,LFN,PAR,PHINT,PLTPOP,PATHSR, !Input
      &      AGEFAC,FILES,SATFAC,PStres2,TURFAC,TEMPM,TLNO,XSTAGE, !Input
      &      NSTRES,SWFAC,PLAE,                                    !Input
-     &      GLA,LA,LAD,LAP,LATOT,LFL,LFWTD,LNEXP,PGROLF,PLAG,SEN, !Output
-     &      SENLA,YX)                                             !Output
+     &      GLA,LA,LAD,LAP,LATOT,LFL,LFWTD,LNEXP,PGROLF,PLAG,SEN, !Out
+     &      SENLA,YX)                                             !Out
 	    ENDIF
 	    PLA    = PLA + PLAG	  
           !-------------------------------------------------------------
@@ -1290,7 +1292,11 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
   	  K1 =  0.425 + (0.245*EXP(-((Z2STAGE-1.03)**2)/(0.0467)))
 ! JIL 09/07/2007 Z2STAGE (Phenology scale, 0-1-2) calculated in PHENOL
 ! JIL Intercepted PAR (MJ/plant d)
-	  IPAR = PAR/PLTPOP * (1.0 - EXP(-K1 * LAI))
+      IF(PLTPOP .GT. 0.0) THEN        
+	      IPAR = PAR/PLTPOP * (1.0 - EXP(-K1 * LAI))
+      ELSE
+        IPAR = 0.0
+      ENDIF
         PCARB = IPAR * RUE                       !RUE read from ECO file
 
           !-------------------------------------------------------------
@@ -1321,7 +1327,11 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
 	  IF (CVF .EQ. 0.0) THEN
 	      PSCARB = (PG-MAINR)
 	  ELSE
-	      PSCARB = (PG-MAINR)/(CVF*PLTPOP)                  !(g/pl)
+        IF(PLTPOP .GT. 0.0) THEN 
+	        PSCARB = (PG-MAINR)/(CVF*PLTPOP)                  !(g/pl)
+        ELSE
+          PSCARB = 0.0
+        ENDIF
 	  ENDIF
 
 ! JIL 09/07/2007 Comment/Switch-out this line to run the (IPAR * RUE) C balance
@@ -1446,10 +1456,13 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
             LFWT   = LFWT  + GROLF
             STMWT  = STMWT + GROSTM
 
+            IF(PLTPOP .GT. 0.0) THEN 
 !             5/11/2005 CHP Added cumulative leaf senescence
-            CumLeafSenes = SENLA / 600. * PLTPOP * 10.
+              CumLeafSenes = SENLA / 600. * PLTPOP * 10.
 !                kg/ha     =  g/plant * plants/m2 * (kg/ha)/(g/m2)
-
+            ELSE
+              CumLeafSenes = 0.0
+            ENDIF
 !             Stage 3 accumulates leaf senescence from 0
 !             Save stage 2 value for true accumulation
             Stg2CLS = CumLeafSenes
@@ -1464,10 +1477,10 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
           SHCARB = CARBO - GRORT     ! Shoot growth rate (g/pl)
 
 ! JIL 09/07/2007 Consolidate all kernel number calculations in one routine
-	    CALL MZ_IX_KNUMBER (DYNAMIC,                       !Control
-     &      FILES,G2,ICSDUR,IPAR,ISTAGE,NSTRES,PATHSR,P3,      !Inputs
-     &      PLTPOP,SHCARB,SUMDTT,SWFAC,                        !Inputs
-     &      BSGDD,EARS,GPP,GPSM)                               !Outputs
+	    CALL MZ_IX_KNUMBER (DYNAMIC,                    !Control
+     &      FILES,G2,ICSDUR,IPAR,ISTAGE,PATHSR,P3,        !Inputs
+     &      PLTPOP,SHCARB,SUMDTT,                         !Inputs
+     &      BSGDD,EARS,GPP,GPSM)                          !Outputs
     
 ! JIL 04/06/2006 Ear grows starting at thermal time BSGDD
 	    IF (SUMDTT .GT. P3-BSGDD) THEN
@@ -1542,10 +1555,10 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
           SHCARB = CARBO - GRORT     ! Shoot growth rate (g/pl)
 
 ! JIL 09/07/2007 Consolidate all kernel number calculations in one routine
-	    CALL MZ_IX_KNUMBER (DYNAMIC,                       !Control
-     &      FILES,G2,ICSDUR,IPAR,ISTAGE,NSTRES,PATHSR,P3,      !Inputs
-     &      PLTPOP,SHCARB,SUMDTT,SWFAC,                        !Inputs
-     &      BSGDD,EARS,GPP,GPSM)                               !Outputs
+	    CALL MZ_IX_KNUMBER (DYNAMIC,                    !Control
+     &      FILES,G2,ICSDUR,IPAR,ISTAGE,PATHSR,P3,        !Inputs
+     &      PLTPOP,SHCARB,SUMDTT,                         !Inputs
+     &      BSGDD,EARS,GPP,GPSM)                          !Outputs
      
 	    CUMDTTEG = CUMDTTEG + DTT
             GROEAR = ((PEAR*CARBO)/(1.0+EXP(-0.02*(CUMDTTEG-225.0))))
@@ -1584,10 +1597,10 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
             SHCARB = CARBO - GRORT     ! Shoot growth rate (g/pl)
 
 ! JIL 09/07/2007 Consolidate all kernel number calculations in one routine
-	    CALL MZ_IX_KNUMBER (DYNAMIC,                       !Control
-     &      FILES,G2,ICSDUR,IPAR,ISTAGE,NSTRES,PATHSR,P3,      !Inputs
-     &      PLTPOP,SHCARB,SUMDTT,SWFAC,                        !Inputs
-     &      BSGDD,EARS,GPP,GPSM)                               !Outputs
+	    CALL MZ_IX_KNUMBER (DYNAMIC,                    !Control
+     &      FILES,G2,ICSDUR,IPAR,ISTAGE,PATHSR,P3,        !Inputs
+     &      PLTPOP,SHCARB,SUMDTT,                         !Inputs
+     &      BSGDD,EARS,GPP,GPSM)                          !Outputs
 
             IF (ABS(CARBO) .GT. 0.0001) THEN        !<-----------------!
               CMAT = 0                                                 !
@@ -1611,8 +1624,9 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
                   GRORT  = 0.0                                         !
                 ELSE                                                   !
                   SUMDTT = P5                                          !
-	            ISTAGE = 6                                           !
-	            MDATE  = YRDOY                                       !
+	            ISTAGE = 6                                         !
+	            MDATE  = YRDOY 
+                  CropStatus = 21  !mature due to slow grain filling   !
                   CALL YR_DOY(YRDOY, YR, DOY)                          !
                   WRITE(MESSAGE(1),2700) DOY                           !
                   CALL WARNING(1,ERRKEY, MESSAGE)                      !
@@ -1628,8 +1642,9 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
               CMAT = CMAT + 1                                          !
               IF (CMAT.GE.CARBOT) THEN                                 !
                 SUMDTT = P5                                            !
-	          ISTAGE = 6                                             !
-	          MDATE  = YRDOY                                         !
+	          ISTAGE = 6                                           !
+	          MDATE  = YRDOY                                       !
+                CropStatus = 21  !mature due to slow grain filling     !
                 CALL YR_DOY(YRDOY, YR, DOY)                            !
                 WRITE(MESSAGE(1),2700) DOY                             !
                 CALL WARNING(1,ERRKEY, MESSAGE)                        !
@@ -1822,20 +1837,24 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
               ENDIF
               ISTAGE = 6
               MDATE = YRDOY
+              CropStatus = 32  !cold stress
           ELSE
 !         JIL/CHP Added optional CDAY from ecotype file for cold 
 !         sensitivity.
 !              IF (ICOLD .GE. 15) THEN
               IF (ICOLD .GE. CDAY) THEN
-                  WRITE(MESSAGE(1),2800)
-                  CALL WARNING(1,ERRKEY, MESSAGE)
-                  WRITE (*,2800)
+                  WRITE(MESSAGE(1),'(A,I3,A,F6.1,A)')
+     &              "Crop experienced ",CDAY," days below",TSEN,"C"
+                  MESSAGE(2) = "Growth program terminated."
+                  CALL WARNING(2,ERRKEY, MESSAGE)
+!                 WRITE (*,2800)
                   IF (IDETO .EQ. 'Y') THEN
-                      WRITE (NOUTDO,2800)
+                      WRITE (NOUTDO,'(A)') MESSAGE(1)
                   ENDIF
                   ISTAGE = 6
                   MDATE = YRDOY
-              ENDIF
+                  CropStatus = 32  !cold stress
+             ENDIF
           ENDIF
 
           !------------------------------------------------------------
@@ -1861,6 +1880,7 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
               ENDIF   
               ISTAGE = 6           
               MDATE = YRDOY
+              CropStatus = 33  !water stress
           ENDIF
 
           !------------------------------------------------------------
@@ -1873,8 +1893,9 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
           IF (PLTPOP.GT.0.0.AND.LFWT.GT.0.0)
      &      LAIDOT = WLIDOT*(PLA-SENLA)/(LFWT*PLTPOP)  !cm2/plant/day
           IF(PLTPOP.GT.0.0)
-     &      LFWT = LFWT - WLIDOT/PLTPOP    !Affect LEAFWT(I),LEAFWTG(I),SSLA(I)
-                                           !Affect leaf N variables
+!           Affect LEAFWT(I),LEAFWTG(I),SSLA(I)
+!           Affect leaf N variables
+     &      LFWT = LFWT - WLIDOT/PLTPOP    
           PLA = PLA - LAIDOT               !Affect LA(I), GLA(I)
           LAI = LAI - LAIDOT*PLTPOP/10000
 
@@ -2032,12 +2053,12 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
 !               PGROLF is calculated in LEAFAREA	          
               ENDIF
 
-              CALL MZ_IX_NUPTAK (DYNAMIC,                            !Control
-     &      CARBO,DLAYR,EAROWT,ECNP,KG2PPM,                          !Input
-     &      LCNP,LFWT,LL,NH4,NLAYR,NO3,NX,PDWI,PGROEA,PGROLF,        !Input
-     &      PGRORT,PGROST,PLIGRT,PLTPOP,PTF,RCNP,RLV,RTWT,SAT,SCNP,  !Input
-     &      SENESCE,SHF,STMWT,STOVWT,SW,TCNP,XSTAGE,                 !Input
-     &      EARN,LEAFN,RANC,ROOTN,STEMN,STOVN,TANC,TRNU,UNH4,UNO3)   !Output
+              CALL MZ_IX_NUPTAK (DYNAMIC,                       !Control
+     & CARBO,DLAYR,EAROWT,ECNP,KG2PPM,                          !Input
+     & LCNP,LFWT,LL,NH4,NLAYR,NO3,NX,PDWI,PGROEA,PGROLF,        !Input
+     & PGRORT,PGROST,PLIGRT,PLTPOP,PTF,RCNP,RLV,RTWT,SAT,SCNP,  !Input
+     & SENESCE,SHF,STMWT,STOVWT,SW,TCNP,XSTAGE,                 !Input
+     & EARN,LEAFN,RANC,ROOTN,STEMN,STOVN,TANC,TRNU,UNH4,UNO3)   !Output
           ENDIF
 
 	    ROOTN = MAX(0.0,ROOTN)    ! g N/pl

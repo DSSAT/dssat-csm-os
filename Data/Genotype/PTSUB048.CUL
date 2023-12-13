@@ -1,0 +1,59 @@
+*POTATO CULTIVAR COEFFICIENTS: PTSUB048 MODEL
+
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code or this cultivar, points to the Ecotype in the
+!             ECO file (currently not used).
+! G2          Leaf area expansion rate after tuber initiation (cm2/m2 d)
+! G3          Potential tuber growth rate (g/m2 d)
+! PD          Index that supresses tuber growth during the period
+!             that immediately follows tuber induction
+! P2          Tuber initiation sensitivity to long photoperiods
+! TC          Upper critical temperature for tuber initiation (C)
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    PD    P2    TC
+!Coeffient #                             1     2     3     4     5
+!Calibration                             G     G     G     P     P
+
+999991 MINIMA               . DFAULT  900.  21.0   0.5   0.3  15.0
+999992 MAXIMA               . DFAULT 2100.  26.0   1.0   0.9  22.0
+
+IB0001 MAJESTIC             . IB0001 2000.  22.5   0.8   0.6  17.0   
+IB0002 SEBAGO               . IB0001 1894. 25.10 0.528 0.359 21.37   
+
+IB0003 Russet Burbank       . IB0001 1522. 21.59 0.536 0.313 18.76 
+
+IB0004 KATHADIN             . IB0001 2000.  25.0   0.5   0.7  20.0
+
+IB0005 ATLANTIC             . IB0001 1000.  25.0   0.4   0.1  21.0
+
+CI0001 CLON7316             . IB0001 1100.  25.0   0.2   0.8  21.0
+CI0002 CLON7716             . IB0001 901.4 25.90 0.962 0.710 18.53
+
+AR0003 ACHIRANA             . IB0001 1564. 21.01 0.545 0.420 21.15 
+
+DM0004 KAPTAH               . IB0001 1500.  26.0   0.5   0.2  22.0
+
+IB0006 MARIS PIPER          . IB0001 2000.  25.0   0.8   0.4  17.0   
+IB0007 KING EDWARD          . IB0001 2000.  22.5   1.0   0.6  17.0   
+IB0008 DESIREE              . IB0001 2000.  25.0   0.9   0.6  16.0   
+IB0009 LT-1                 . IB0001 2000.  25.0   0.9   0.8  17.0   
+IB0010 C14-343              . IB0001 2000.  25.0   0.9   0.4  21.0   
+IB0011 NORCHIP              . IB0001 2000.  25.0   1.0   0.4  17.0   
+IB0012 SHEPODY              . IB0001 2000.  25.0   0.7   0.6  19.0  
+IB0018 Hilite Russet        . IB0001 1000.  27.0   0.2   0.1  20.0
+
+UF0001 RED LASODA           . IB0001 2000.  22.0   0.7   0.4  19.0   
+
+! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
+!IB0002 SEBAGO               . IB0001 1100.  22.5   0.9   0.0  19.0
+!IB0003 Russet Burbank       . IB0001 1100.  26.0   0.9   0.2  17.0
+!CI0002 CLON7716             . IB0001 1100.  25.0   0.3   0.8  21.0
+!AR0003 ACHIRANA             . IB0001 1100.  21.0   0.5   0.2  21.0
+
+

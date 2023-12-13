@@ -12,31 +12,35 @@ C  Called : CROPGRO
 C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
       SUBROUTINE FOR_SENMOB(
-     &    FILECC, CLW, DAYL, DLAYR, DTX, DUL, DXR57, FNINL,!Input
-     &  FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,       !Input 
-     &    NR7, NSTRES, PAR, PCNL, PCNRT, PCNSR, PCNST,       !Input
-     &  PPMFAC, RHOL, RLV, RTWT, SAT, SLAAD, STMWT,       !Input
-     &    STRWT, SW, SWFAC, TDUMX, TDUMX2, VSTAGE, WCRLF, !Input
-     &  WCRRT,WCRSH, WCRSR, WCRST, WNRLF, WNRRT, WNRSH, !Input
-     &  WNRSR,WNRST, WRDOTN, WTLF, XLAI, XPOD,            !Input
-     &  YRDOY, YRSIM,                              !Input
-     &  CMINELF, CMINEP, CMINERT, CMINESH, CMINESR,      !Output
-     &  CMINEST, CMOBMX, CMOBSR, LAIMOBR, LFCMINE,        !Output
-     &  LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NMINELF,          !Output
-     &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,      !Output
-     &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,!Output
-     &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,       !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,!OutpuT
-     &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,!Output      
-     &    STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,       !Output
-     &  TSNMOB, VNMOBR,                              !Output
-     &  DYNAMIC)                                        !Control
+     &    FILECC, CLW, DLAYR, DTX, DUL, DXR57, FNINL,           !Input
+     &    FNINR, FNINS, FNINSR, ISWWAT, LL, NLAYR, NR5,         !Input 
+     &    NR7, NSTRES, PAR, PCNL, PCNRT, PCNSR, PCNST,          !Input
+     &    PPMFAC, RLV, RTWT, SAT, SLAAD, STMWT,                 !Input
+     &    STRWT, SW, SWFAC, TDUMX, TDUMX2, VSTAGE, WCRLF,       !Input
+     &    WCRRT,WCRSH, WCRSR, WCRST, WNRLF, WNRRT, WNRSH,       !Input
+     &    WNRSR,WNRST, WTLF, XLAI, XPOD,                        !Input
+     &    YRDOY, YRSIM,                                         !Input
+     &    CMINELF, CMINEP, CMINERT, CMINESH, CMINESR,           !Output
+     &    CMINEST, CMOBMX, CMOBSR, LAIMOBR, LFCMINE,            !Output
+     &    LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NMINELF,            !Output
+     &    NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,             !Output
+     &    NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,      !Output
+     &    SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,             !Output
+     &    SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,      !OutpuT
+     &    SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,     !Output
+     &    STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,           !Output
+     &    TSNMOB, VNMOBR,                                       !Output
+     &    DYNAMIC)                                              !Control
+
+!     2023-01-20 CHP Remove unused variables from argument list:
+!     DAYL, RHOL, WRDOTN, 
 
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TIMDIF, TABEX, CURV
       SAVE
       
       CHARACTER*1 ISWWAT
@@ -54,8 +58,8 @@ C-----------------------------------------------------------------------
       INTEGER NSWAB
       PARAMETER (NSWAB = 5)
 
-      REAL DAYL, DAYL_1, DAYL_2, LFSEN, SNSTAGE
-      REAL DTX, PAR, RHOL, SLAAD
+      REAL DAYL_1, DAYL_2, LFSEN  !, SNSTAGE  DAYL, 
+      REAL DTX, PAR, SLAAD  !RHOL, 
       REAL STMWT, VSTAGE, WTLF, XLAI
       REAL SLDOT, SSDOT, SRDOT
       REAL ICMP, KCAN, PORPT, SENDAY
@@ -76,14 +80,14 @@ C-----------------------------------------------------------------------
       REAL DUL(NL), ESW(NL), LL(NL), SAT(NL), SW(NL)
       REAL RNDOT(NL), RLNSEN(NL) 
       REAL RFAC1, RFAC3, RLDSM, RTSEN
-      REAL TRTDY, TRLSEN, RTWT, WRDOTN
+      REAL TRTDY, TRLSEN, RTWT  !, WRDOTN
 
       REAL LFNSEN, SLMDOT, SRMDOT, SSMDOT, SSRMDOT 
       REAL LFSCMOB, RTSCMOB, SRSCMOB, STSCMOB, TSCMOB
       REAL LFSNMOB, RTSNMOB, SRSNMOB, STSNMOB, TSNMOB
 
       REAL CMINELF, CMINERT, CMINESH, CMINESR, CMINEST
-      REAL NMINELF, NMINERT, NMINESH, NMINESR, NMINEST
+      REAL NMINELF, NMINERT, NMINESR, NMINEST  !NMINESH, 
 
       REAL CMINEP, LFCMINE, RTCMINE, SHCMINE, SRCMINE, STCMINE
       REAL NMINEP, LFNMINE, RTNMINE, SHNMINE, SRNMINE, STNMINE

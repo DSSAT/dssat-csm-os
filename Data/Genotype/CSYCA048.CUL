@@ -1,0 +1,58 @@
+﻿$CULTIVARS:CSYCA048.041621    Last edit: 05/05/2023 LPM
+
+
+! Users should be aware that some of the coefficients may 
+! vary from region to region,and perhaps even from sowing date to sowing 
+! date,reflecting not only the current incomplete understanding of the 
+! environmental physiology of the crop, but also deficiencies in defining 
+! the initial conditions.
+
+*CULTIVARS:CSYCA048
+! The following cultivars have not been calibrated well and the coefficients are                                                                            
+! present merely to allow the experiments to be run. A user should spend time calibrating for                                                                    
+! his/her own data. 
+
+!                                    ---------------BRANCHING----------------------- -------------- LEAVES ------- ---STEM----
+@VAR#  VAR-NAME........  EXP#   ECO# B01ND B12ND B23ND B34ND BR1FX BR2FX BR3FX BR4FX  LAXS  SLAS LLIFA LPEFR LNSLP NODWT NODLT
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+!Calibration                             P     P     P     P     G     G     G     G     G     G     G     G     G     G     G 
+!                                       Tu    Tu    Tu    Tu    F#    F#    F#    F#   cm2 cm2/g    Tu    fr     #     g    cm
+999991 MINIMA               . 999991 100.0 100.0 100.0 100.0   1.0   1.0   1.0   1.0   300   150   600  0.20  0.70  3.00   1.0
+999992 MAXIMA               . 999992 1800. 1800. 1800. 1800.   4.0   4.0   4.0   4.0   900   280  1800  0.35  1.80 15.00   4.0
+
+DFAULT DEFAULT              . DFAULT 200.0 250.0 250.0 250.0   2.2   2.7   2.0   1.5   350   220  1000  0.33  1.20  4.00   2.0
+
+UC0002 MCol-22              . 990002 200.0 250.0 250.0 250.0   2.0   2.0   3.0   1.3   500   220   720  0.20  0.90  3.10   2.0
+UC0003 CMC 40               . 990014 680.0 300.0 300.0 300.0   3.0   2.0   2.0   2.0   320   200   600  0.33  1.60  8.00   2.0
+UC0004 MMEX-59              . 990001 100.0 200.0 200.0 200.0   2.0   2.5   2.3   1.6   550   280   900  0.33  1.10  3.50   2.0
+UC0005 Ceiba                . 990013 350.0 350.0 350.0 350.0   3.1   2.7   2.7   2.7   650   200   800  0.33  1.10  6.00   2.0
+UC0006 MCol-1684            . 990003 150.0 200.0 200.0 200.0   2.2  3.25  3.25  1.25   300   220   800  0.33  1.10  1.90   2.0
+UC0007 MVen-77              . 990005 450.0 150.0 150.0 300.0   3.1   2.7   2.0   1.2   540   200   950  0.33  1.30  4.00   2.0
+UC0008 MPtr-26              . 990004 500.0 200.0 200.0 200.0   3.0   2.6   1.5   1.5   700   180  1019  0.33  1.60  6.00   2.0
+UC0009 MCol-638             . 990006 400.0 350.0 400.0 900.0   4.0   4.0   3.0   2.0   900   180   840  0.33  1.10  5.80   2.0
+UC0010 TMS 30572            . 990015 350.0 120.0 120.0 120.0   3.0   3.0   2.5   1.5   600   180  1200  0.33  1.10  8.00   2.0
+UC0011 MCol-113             . 990008 300.0 380.0 380.0 380.0   4.0   4.0   4.0   4.0   430   200   957  0.33  1.20  6.30   2.0
+UC0012 CM 523-7             . 990007 696.0 1206. 1206. 1206.   3.1   2.7   2.7   2.7   400   253  1000  0.33  1.80  5.00   2.0
+UC0013 MCol-72              . 990002 1500. 700.0 700.0 700.0   3.0   2.0   2.0   2.0   430   200   957  0.33  1.40  6.30   2.0
+UC0014 CM 507-37            . 990007 750.0 500.0 500.0 500.0   3.1   2.7   2.7   2.7   600   220   600  0.33  1.80  5.00   2.0
+UC0015 MMex-11              . 990002 696.0 1206. 1206. 1206.   3.0   2.0   2.0   2.0   600   220   700  0.33  0.80  5.60   2.0
+UC0016 MCol-113 3Br         . 990009 300.0 380.0 380.0 380.0   3.0   3.0   3.0   3.0   430   200   957  0.33  1.20  6.30   2.0
+UC0017 MCol-113 2Br         . 990010 300.0 380.0 380.0 380.0   2.0   2.0   2.0   2.0   430   200   957  0.33  1.20  6.30   2.0
+UC0018 MCol-113 1Br         . 990011 300.0 260.0 260.0 260.0   1.0   1.0   1.0   1.0   430   200   957  0.33  1.20  6.30   2.0
+UC0019 MCol-113 1-4Br       . 990012 300.0 380.0 380.0 380.0   1.0   1.0   4.0   4.0   430   200   957  0.33  1.20  6.30   2.0
+
+! COEFF       DEFINITION
+! ========    ==========
+! BxyND       Duration (thermal time) from branch x to branch y
+! BRxFX       Branch number per fork at fork x (#)
+! EXP#        Number of experiments used for calibration.
+! ECO#        Ecotype code for this cultivar,points to entry in the ECO file
+! LAXS        Maximum area/leaf when crop growing without stress(cm2)
+! LLIFA       Leaf life,from full expansion to start senescence (Thermal units)
+! LNSLP       Slope for leaf production (0.8 low rate, 1.0 medium rate, 1.2 high rate)
+! LPEFR       Leaf petiole fraction (fr of lamina+petiole)
+! NODLT       Mean internode length (cm) for the first stem of the shoot before branching when is lignified 
+! NODWT       Node weight for the first stem of the shoot before branching at 3400 ˚Cd
+! SLAS        Specific leaf lamina area when crop growing without stress (cm2/g)
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.

@@ -11,7 +11,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integrate ( &
-        ALBEDOS     , BD          , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX      , &
+        ALBEDOS     , BD          , BRSTAGE     , LAI         , CANHT       , CO2         , DAYL        , DEPMAX      , &
         DLAYR       , DOY         , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , &
         ISWNIT      , ISWWAT      , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , RAIN        , &
         RESCALG     , RESLGALG    , RESNALG     , RLV         , RUNOFF      , SRAD        , STGYEARDOY  , SW          , &
@@ -23,10 +23,12 @@
         USE YCA_First_Trans_m
         
         IMPLICIT NONE
+        EXTERNAL YCA_INTEG_AGESWTS, YCA_INTEG_LA, YCA_INTEG_N, YCA_INTEG_STAGES, YCA_INTEG_NCONC, YCA_INTEG_HSTFAIL, &
+            YCA_INTEG_SEASEND, YCA_INTEG_WTHRSUM, YCA_INTEG_ENDCROP
         
         INTEGER DOY         , NLAYR       , STGYEARDOY(0:19)            , YEAR
         
-        REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX
+        REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , LAI         , CANHT       , CO2         , DAYL        , DEPMAX
         REAL    DLAYR(NL)   , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , LL(NL)      
         REAL    NFP         , NH4LEFT(NL) , NO3LEFT(NL) , RAIN        , RESCALG(0:NL)             , RESLGALG(0:NL)            
         REAL    RESNALG(0:NL)             , RLV(NL)     , RUNOFF      , SRAD        , SW(NL)      , TLCHD       , TMAX      
@@ -38,21 +40,21 @@
         !         Update ages
         !----------------------------------------------------------------------
         CALL YCA_Integ_AgesWts ( &
-            NLAYR,      BRSTAGE       & 
+            NLAYR       & 
             )
             
         !-----------------------------------------------------------------------
         !         Calculate reserve concentrations, shoot and total leaf area.
         !-----------------------------------------------------------------------
         CALL  YCA_Integ_LA ( &
-            CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV         , BRSTAGE   & 
+            LAI        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV         & 
             ) 
             
         !-----------------------------------------------------------------------
         !         Update nitrogen amounts
         !-----------------------------------------------------------------------
         IF (ISWNIT  /=  'N') THEN
-            CALL YCA_Integ_N (NLAYR  , BRSTAGE)
+            CALL YCA_Integ_N (NLAYR  )
         ENDIF
         !-----------------------------------------------------------------------
         !         Update stages; returns if germinating.
@@ -67,7 +69,7 @@
         !-----------------------------------------------------------------------
         !IF (GESTAGE >= 0.5) CALL YCA_Integ_Nconc ( &  !LPM 21MAR2016 To separate germination and emergence
         IF (GESTAGE >= 1.0) CALL YCA_Integ_Nconc ( &
-            ISWNIT      , BRSTAGE           & 
+            ISWNIT                 & 
             )   
             
         ! 6666        CONTINUE  ! Jump to here if germinating ! MF From CS_Integ_Stages (48)
@@ -76,7 +78,7 @@
         !         Determine if to harvest or fail
         !-----------------------------------------------------------------------
          CALL YCA_Integ_HstFail ( &   
-            BRSTAGE     , DOY         , STGYEARDOY  , SW          , YEAR        & 
+            BRSTAGE     , DOY         , STGYEARDOY  , SW          , YEAR        , LAI      & 
             ) 
              
         !-----------------------------------------------------------------------
@@ -101,7 +103,7 @@
         !-----------------------------------------------------------------------
         CALL YCA_Integ_EndCrop ( &
             ALBEDOS     , DLAYR       , EOP         , FERNIT      , ISWWAT      , LL          , NLAYR       , STGYEARDOY  , &
-            SW          & 
+            SW          , LAI         & 
             )
             
     END SUBROUTINE YCA_Integrate

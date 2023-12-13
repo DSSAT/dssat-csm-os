@@ -17,11 +17,13 @@ C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
-      IMPLICIT NONE 
+      IMPLICIT NONE
+      EXTERNAL WARNING
 !-----------------------------------------------------------------------
       CHARACTER*78  MSG(10)
       INTEGER L, NLAYR, YRDOY
       REAL, DIMENSION(NL) :: NH4, NO3, SNH4, SNO3, UREA
+      REAL, PARAMETER :: TOL = -1.E-6
 
       TYPE (ControlType) CONTROL
       YRDOY   = CONTROL % YRDOY
@@ -35,24 +37,30 @@ C-----------------------------------------------------------------------
         WRITE(MSG(1),100) YRDOY, L
   100   FORMAT('Negative soil N value on day ',I7,' in layer ',I3)
 
-        IF (SNO3(L).LT. -0.1) THEN
-          WRITE(MSG(2),"('Nitrate (SNO3) =',F10.3,'kg[N]/ha')")SNO3(L)
-          CALL WARNING(3, "NCHECK", MSG)
+        IF (SNO3(L).LT. 0.0) THEN
           SNO3(L) = 0.0
           NO3(L) = 0.0
+          IF (SNO3(L) .LT. TOL) THEN
+            WRITE(MSG(2),"('Nitrate (SNO3) =',F10.3,'kg[N]/ha')")SNO3(L)
+            CALL WARNING(3, "NCHECK", MSG)
+          ENDIF
         ENDIF
 
-        IF (SNH4(L).LT. -0.1) THEN
-          WRITE(MSG(2),"('Ammonium (SNH4) =',F10.3,'kg[N]/ha')")SNH4(L)
-          CALL WARNING(3, "NCHECK", MSG)
+        IF (SNH4(L).LT. 0.0) THEN
           SNH4(L) = 0.0
           NH4(L) = 0.0
+          IF (SNH4(L) .LT. TOL) THEN
+           WRITE(MSG(2),"('Ammonium (SNH4) =',F10.3,'kg[N]/ha')")SNH4(L)
+           CALL WARNING(3, "NCHECK", MSG)
+          ENDIF
         ENDIF
 
-        IF (UREA(L).LT. -0.1) THEN
-          WRITE(MSG(2),"('Urea =',F10.3,'kg[N]/ha')") UREA(L)
-          CALL WARNING(3, "NCHECK", MSG)
+        IF (UREA(L).LT. 0.0) THEN
           UREA(L) = 0.0
+          IF (UREA(L) .LT. TOL) THEN
+            WRITE(MSG(2),"('Urea =',F10.3,'kg[N]/ha')") UREA(L)
+            CALL WARNING(3, "NCHECK", MSG)
+          ENDIF
         ENDIF
       ENDDO
 

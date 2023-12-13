@@ -16,6 +16,7 @@
 !     ------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL

@@ -1,0 +1,121 @@
+*SOYBEAN CULTIVAR COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF       DEFINITIONS
+! =====       ===========
+! VAR#        Identification code or number for a specific cultivar.
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL        Critical Short Day Length below which reproductive development
+!             progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN       Slope of the relative response of development to photoperiod with time
+!             (positive for shortday plants) (1/hour)
+! EM-FL       Time between plant emergence and flower appearance (R1)
+!             (photothermal days)
+! FL-SH       Time between first flower and first pod (R3) (photothermal days)
+! FL-SD       Time between first flower and first seed (R5) (photothermal days)
+! SD-PM       Time between first seed (R5) and physiological maturity (R7)
+!             (photothermal days)
+! FL-LF       Time between first flower (R1) and end of leaf expansion
+!             (photothermal days)
+! LFMAX       Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!             (mg CO2/m2-s)
+! SLAVR       Specific leaf area of cultivar under standard growth conditions
+!             (cm2/g)
+! SIZLF       Maximum size of full leaf (three leaflets) (cm2)
+! XFRT        Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD       Maximum weight per seed (g)
+! SFDUR       Seed filling duration for pod cohort at standard growth conditions
+!             (photothermal days)
+! SDPDV       Average seed per pod under standard growing conditions (#/pod)
+! PODUR       Time required for cultivar to reach final pod load under optimal
+!             conditions (photothermal days)
+! THRSH       Threshing percentage. The maximum ratio of (seed/(seed+shell))
+!             at maturity. Causes seeds to stop growing as their dry weight
+!             increases until shells are filled in a cohort.
+! SDPRO       Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP       Fraction oil in seeds (g(oil)/g(seed))
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             P     P     P     N     P     P     N     G     G     G     N     G     G     G     N     N     N     N
+
+999991 MINIMA               . DFAULT 11.78 0.129   9.0   5.0  11.0 22.00 18.00 1.000  300. 137.0  1.00  0.15  17.0  1.70  10.0  77.0  .400  .200
+999992 MAXIMA               . DFAULT 14.60 0.385  28.9  10.0  22.0 37.70 26.00 1.400  400. 230.0  1.00  0.19  25.5  2.44  10.0  78.0  .405  .205
+
+990011 M GROUP 000          . SB0001 14.60 0.129  15.5   5.0  12.0 29.50 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  77.0  .405  .205
+990012 M GROUP  00          . SB0001 14.35 0.148  16.0   5.0  12.0 30.00 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  77.0  .405  .205
+990013 M GROUP   0          . SB0001 14.10 0.171  16.8   6.0  13.0 30.80 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  77.0  .405  .205
+990001 M GROUP   1          . SB0101 13.84 0.203  17.0   6.0  13.0 31.60 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  77.0  .405  .205
+990002 M GROUP   2          . SB0201 13.59 0.249  17.4   6.0  13.5 32.40 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  77.0  .405  .205
+990003 M GROUP   3          . SB0301 13.40 0.285  19.0   6.0  14.0 33.20 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  77.0  .405  .205
+990004 M GROUP   4          . SB0401 13.09 0.294  19.4   7.0  15.0 34.00 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  77.0  .405  .205
+990005 M GROUP   5          . SB0501 12.83 0.303  19.8   8.0  15.5 34.80 18.00 1.030  375. 180.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200
+990006 M GROUP   6          . SB0601 12.58 0.311  20.2   9.0  16.0 35.60 18.00 1.030  375. 180.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200
+990007 M GROUP   7          . SB0701 12.33 0.320  20.8  10.0  16.0 36.40 18.00 1.030  375. 180.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200
+990008 M GROUP   8          . SB0801 12.07 0.330  21.5  10.0  16.0 37.20 18.00 1.030  375. 180.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200
+990009 M GROUP   9          . SB0901 11.88 0.340  23.0  10.0  16.0 37.40 18.00 1.030  375. 180.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200
+990010 M GROUP  10          . SB1001 11.78 0.349  23.5  10.0  16.0 37.40 18.00 1.030  375. 180.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200
+!
+990015 M GROUP Savoy        . SB0304 14.33 0.110 20.77   6.0 11.70 35.2 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  76.0  .405  .205
+990016 M GROUP Vinton       . SB0305 14.16 0.173 22.57   6.0 12.08 34.2 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  76.0  .405  .205
+
+
+! KJB I DON'T KNOW ABOUT RELIABILITY OF UC CULTIVAR COEFFICIENTS, NEVER SAW ANY DATA.
+! VALUES FOR SD-PM FOR THESE 3 MG 00 CULTIVARS ARE HIGH, ALSO CONSISTENT WITH LAI DECLINING TO ZERO
+! LONG BEFORE THE SIMULATION.  I SUSPECT THAT THE MATURITY DATE REPORTED IN FILE A, IS FOR R8, NOT R7 PHYSIOL. MATURITY
+! REST OF CULTIVARS, I HAVE SOME EXPERIENCE WITH. KJB
+
+UC0001 ALTONA (00)          . SB0001 14.30 0.155  17.0   7.2  13.4 32.50 26.00 1.020  385. 190.0  1.00  0.19  19.0  2.20  11.5  77.0  .405  .205
+UC0002 MAPLE ARROW (00)     . SB0001 14.30 0.155  17.0   6.9  12.8 33.40 26.00 1.040  385. 190.0  1.00  0.19  19.0  2.20  10.5  77.0  .405  .205
+UC0003 MCCALL (00)          . SB0001 14.30 0.155  16.5   5.5  12.0 34.30 26.00 1.090  385. 200.0  1.00  0.19  21.0  2.20  10.5  77.0  .405  .205
+IB0011 EVANS (0)            . SB0001 14.10 0.171  16.8   7.8  13.8 30.00 26.00 1.020  400. 180.0  1.00  0.18  24.0  2.20  11.5  77.0  .405  .205
+IB0037 ELGIN-87 (2)         . SB0201 13.59 0.249  17.0   8.9  13.0 35.80 30.00 1.090  395. 180.0  1.00 0.175  24.5  2.20  11.5  77.0  .405  .205
+IB0003 WAYNE (3)            . SB0301 13.45 0.255  19.5   8.0  14.7 26.70 28.00 1.000  375. 180.0  1.00 0.180  23.0  2.20  12.0  77.0  .405  .205
+IB0010 WILLIAMS-82 (3)      . SB0301 13.40 0.285  19.0   8.3  14.2 32.20 28.00  0.97  385. 180.0  1.00 0.180  26.0  2.40  12.0  77.0  .405  .205
+IB0001 BRAGG                . SB0701 12.33 0.320  19.5  10.0  15.2 37.60 19.00 1.000  355. 170.0  1.00 0.170  24.0  2.00  10.0  78.0  .400  .200
+IB0101 BRAGG (7)            . SB0701 12.33 0.320  19.5  10.0  15.2 37.60 19.00 1.000  355. 170.0  1.00 0.170  25.0  2.00  10.0  78.0  .400  .200
+IB0002 COBB (8)             . SB0801 12.25 0.330  21.0   9.4  16.0 37.20 19.00 1.030  370. 190.0  1.00 0.155  23.5  1.90  10.0  78.0  .400  .200
+IB0014 CENTENNIAL(6)        . SB0601 12.48 0.311  20.0   9.0  15.5 34.50 18.00 1.030  375. 180.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200
+IB0015 ESSEX (5)            . SB0501 12.83 0.303  19.8   8.5  15.5 35.00 18.00 1.030  375. 180.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200
+IB0008 FORREST (5)          . SB0501 12.82 0.303  21.1   8.8  15.2 35.20 18.00 1.030  355. 140.0  1.00  0.18  23.0  2.05   9.0  78.0  .400  .200
+IB0006 RANSOM (7)           . SB0702 12.38 0.320  18.4   9.0  14.2 33.50 18.00 1.030  355. 170.0  1.00 0.170  22.5  2.05  10.0  78.0  .420  .200
+IB0013 LEFLORE (6)          . SB0601 12.55 0.312  19.6   8.4  16.0 37.30 18.00 1.030  375. 180.0  1.00  .175  23.0  2.05  10.5  78.0  .400  .200
+IB0044 COKER 6847 (7)       . SB0701 12.35 0.319  20.1   9.0  14.8 36.50 18.00 1.030  345. 180.0  1.00  .170  23.0  2.05  10.0  78.0  .400  .200
+! CLARK, PAPILLON, JUPITER, PK-472 ARE CARRY-OVERS FROM STUDIES NOT SHOWN HERE, NOT MODIFIED OR TESTED FOR V4.0.
+IB0012 JUPITER (10)         . SB0901 11.88 0.340  28.9   7.0  13.5 31.50 15.00 1.030  375. 180.0  1.00  0.18  22.0  2.05  10.0  78.0  .400  .200
+IB0043 CLARK (4)            . SB0501 12.83 0.303  18.0   9.0  15.0 32.00 26.00 1.030  390. 200.0  1.00  0.19  20.0  2.10  12.0  78.0  .400  .200
+IB0033 PAPILLON (9)         . SB0901 11.88 0.340  28.0   6.0  11.0 30.00 15.00 1.030  375. 180.0  1.00  0.18  22.0  2.05  10.0  78.0  .400  .200
+IB0051 PK-472 (8)           . SB0801 12.07 0.330  21.5   8.0  16.0 36.00 18.00 1.030  300. 180.0  1.00  0.18  23.0  2.05   8.0  78.0  .400  .200
+IB0055 Hutcheson            . SB0501 12.58 0.311  22.0   8.0  15.5 35.00 18.00 1.050  400. 230.0  1.00  0.18  23.0  2.05  10.0  78.0  .400  .200 
+! Envirotron/2002 Experiment; coefficients based on Georgia variety trials
+!LUGO, SPAIN FROM F. SAU STUDY
+LU0003 CHAND. 0             . SB0000 13.70 0.171  18.6  6.60  12.3 33.00 30.00 1.050  387. 200.0  1.00 .185  25.0  2.01  11.50  77.0  .405  .205
+LU0004 LABR.  00            . SB0100 14.00 .1480 16.60  7.00 13.20 36.80 34.80 1.080 397.0 200.0 1.000 .1530 25.00 2.030 11.20  77.0  .405  .205
+LU0005 MAJ. 000             . SB1000 14.20 .1290 17.00  6.20  11.0 34.60 32.00 1.050 395.0 200.0 1.000 .1780 25.00 1.970 12.00  77.0  .405  .205
+! FROM IOWA YIELDS PROJECT STUDY
+ST3660 STIN3660  MG 3.6     . SB0301 13.44 0.284  18.8   7.0  11.0 37.60 26.00 1.070  370. 180.0  1.00 0.165  25.0  2.20   8.0  77.0  .405  .205
+KR2828 KRUG2828  MG 2.7     . SB0201 13.50 0.258  17.4   7.0  12.0 37.70 26.00 1.080  370. 180.0  1.00 0.165  24.5  2.20   8.0  77.0  .405  .205
+! KBS-LTER Experiment. So far no experimental data for verification.
+MS0077 PIO9272 (00)         . SB0001 13.40 0.280  20.0   9.0  16.0 30.00 30.00 1.030  390. 200.0  1.00  0.18  22.0  2.05  10.0  77.0  .405  .205
+MS0078 PIO9202 (00)         . SB0001 14.35 0.148  16.0   5.0  15.0 30.00 30.00 1.022  350. 180.0  1.00  0.18  22.0  2.05  10.0  77.0  .405  .205
+MS0079 MS MAT GROUP 2       . SB0201 13.59 0.249  17.4   6.0  13.5 32.40 26.00 1.030  375. 180.0  1.00  0.19  23.0  2.20  10.0  77.0  .405  .205
+
+ISU113 KENWOOD TEMPPAP      . SB0201 13.59 0.249  17.0   6.5  13.5 33.50 26.00 1.050  375. 180.0  1.00  0.19  22.0  2.44  10.0  77.0  .405  .205
+
+!Vietnam
+IB0057 AK 06                . SB0801 12.15 0.200  21.0   6.0  12.0 26.00 20.00 1.030  385  137.0  1.00 0.155  22.0  2.20  13.0  78.0  .400  .200
+IB0058 SAMRAT               . SB0801 12.20 0.220  16.5   7.0  12.5 25.00 18.00 1.030  400  150.0  1.00 0.155  23.0  1.70   7.5  78.0  .400  .200
+IB0059 MAUS 47              . SB0801 12.20 0.385  17.0   6.0  12.5 25.00 18.00 1.030  400  180.0  1.00 0.155  23.0  1.70   7.5  78.0  .400  .200
+
+CCCA01 SAMIRA 1             . SB0401 13.09 0.294  19.4   7.0  15.0 34.50 26.00 1.030  375. 180.0  1.00 0.190  23.0  2.20  10.0  77.0  .405  .205
+
+! Next two cultivars calibrated by K. Boote, Feb 17, 2007, with modified species file using
+! Tb from 8 to 6C for Ps, Tmin 0/19 to -2/17C effect on Ps, and Tb for podset changed from 14 to 10C.
+IB0045 DON MARIO (4)        . SB0501 12.95 0.294  15.0   9.7  19.4 35.10 26.00 1.200  390. 200.0  1.00  0.19  21.0  2.10  16.0  78.0  .400  .200
+IB0056 ASGROW (4)           . SB0401 13.20 0.294  12.5   8.5  15.0 28.00 26.00 1.250  400. 200.0  1.00  0.19  21.0  2.10  12.0  77.0  .405  .205
+
+RB0002 MG77PA (13)          . SB0777 11.80 0.325  25.0   5.0  10.5 27.50 22.00 1.200  365. 230.0  1.00 0.150  18.2  2.00   10.  76.0  .400  .200
+RB0003 MG88PA (11)          . SB0888 11.50 0.340  24.5   8.2  12.0 25.00 18.00 1.175  388. 216.0  1.00 0.160  25.0  2.06   10.  78.0  .400  .200

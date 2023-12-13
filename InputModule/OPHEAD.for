@@ -34,6 +34,8 @@
         SUBROUTINE MULTIRUN(RUN, YRPLT)
 !       Updates header for multi-year runs
         IMPLICIT NONE
+        EXTERNAL YR_DOY, NAILUJ, LENSTRING
+
         CHARACTER*3 RMS
         CHARACTER*8 WSTAT
         CHARACTER*11 TEXT
@@ -141,6 +143,7 @@ C=======================================================================
       USE ModuleDefs
       USE HeaderMod
       IMPLICIT NONE
+      EXTERNAL LENSTRING, NAILUJ, YR_DOY
       SAVE
 
       INCLUDE 'COMSWI.blk'
@@ -307,7 +310,7 @@ c     IHARI is harvest management option
 c     (e.g. 'R' = 'On reported date', 'M' = 'At maturity')
 c     HDATE(1) is harvest date (YYYYDOY)
 c     ::::::::::::::::::::::::::::::::::
-      IF (IHARI  .EQ. 'R' .AND. INDEX('FQN',RNMODE)<1) THEN
+      IF (IHARI  .EQ. 'R' .AND. INDEX('FQNY',RNMODE)<1) THEN
 
 c         Get Day Of Year (DOY) date
           HDATE_YR = HDATE(1)/1000
@@ -446,13 +449,13 @@ C-----------------------------------------------------------------------
 
   400 FORMAT (1X,'STARTING DATE  :',1X,A3,1X,I2,1X,I4)
   425 FORMAT (1X,'HARVEST DATE   :',1X,A3,1X,I2,1X,I4)
-  450 FORMAT (1X,'PLANTING DATE  :',1X,A3,1X,I2,1X,I4,8X,
-     &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')
+  450 FORMAT (1X,'PLANTING DATE  :',1X,A3,1X,I2,1X,I4,6X,
+     &       'PLANTS/m2 :',F8.1,4X,'ROW SPACING :',F5.0,'cm ')
   475 FORMAT (1X,'PLANTING DATE  :',1X,'AUTOMATIC PLANTING',1X,
      &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')
   500 FORMAT (1X,'WEATHER',8X,':',1X,A4,3X,I4)
   600 FORMAT (1X,'SOIL',11X,':',1X,A10,5X,'TEXTURE : ',A5,' - ',A25)
-  625 FORMAT (1X,'SOIL INITIAL C ',':',1X,'DEPTH:',I3,'cm',1X,
+  625 FORMAT (1X,'SOIL INIT COND ',':',1X,'DEPTH:',I3,'cm',1X,
      &     'EXTR. H2O:',F5.1,'mm  NO3:',F5.1,'kg/ha  NH4:',F5.1,'kg/ha')
   650 FORMAT (1X,'WATER BALANCE',2X,':',1X,'IRRIGATE ON',
      &           ' REPORTED DATE(S)')
@@ -511,6 +514,8 @@ C  03/11/2005 GH  Remove ANS, RNMODE and NYRS
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
 C  08/09/2012 GH  Updated for cassava
+C  09/18/2020 GH  Update for quinoa, safflower, sunflower
+C  07/08/2022 GH  Update for cucumber
 C-----------------------------------------------------------------------
 C  INPUT  : IDETO,NOUTDO,NYRS,LL,DUL,SAT,DLAYR,SWINIT,DS,NLAYR,ESW
 C           SHF,BD,PH,INO3,INH4,OC,TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4
@@ -539,6 +544,7 @@ C=======================================================================
       USE ModuleDefs
       USE HeaderMod
       IMPLICIT NONE
+      EXTERNAL LenString
 
       INCLUDE 'COMGEN.blk'
 
@@ -609,7 +615,7 @@ C=======================================================================
 !     GENOTYPE
 !-----------------------------------------------------------------------
 !     Write genetic coefficients
-      WRITE (HEADER(I),800) CROPD(1:10),VARTY,VRNAME,ECONO; I=I+1
+      WRITE (HEADER(I),800) CROPD(1:16),VARTY,VRNAME,ECONO; I=I+1
 
       SELECT CASE (MODEL(1:5))
 
@@ -617,13 +623,14 @@ C=======================================================================
 !     CROPGRO
       CASE ('CRGRO','PRFRM')
 !      IF (INDEX (MODEL, 'CRGRO') > 0) THEN
-        IF (INDEX ('BN,PN,SB,PE,CH,PP,VB,CP,BR,FB,NP,GB,PE,LT',CROP) 
+        IF (INDEX ('BN,CH,CP,FB,GB,LT,PE,PN,PP,SB,VB,BG',CROP) 
      &    > 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('TM,PR,CB,CO,CT,CN',CROP) .GT. 0) THEN
+        ELSEIF (INDEX ('BC,BH,BM,BR,CB,CI,CN,CO,CU,GY,NP,PR,QU,
+     &     SF,SR,SU,TM',CROP) .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),852) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
@@ -739,10 +746,10 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
 !     Cassava CIAT      
       CASE ('CSYCA')
           WRITE (HEADER(I),'(A,A)')
-     &     "  B01ND B12ND B23ND BR1FX BR2FX BR3FX BR4FX "
+     &     "  B01ND B12ND B23ND B34ND BR1FX BR2FX BR3FX BR4FX "
           I=I+1
-          WRITE (HEADER(I),'(3F6.0,4F6.2)') 
-     &     B01ND, B12ND, B23ND, BR1FX, BR2FX, BR3FX, BR4FX
+          WRITE (HEADER(I),'(4F6.0,4F6.2)') 
+     &     B01ND, B12ND, B23ND, B34ND, BR1FX, BR2FX, BR3FX, BR4FX
          I=I+1
          WRITE (HEADER(I),'(A,A)') 
      &     "  LAXS  SLAS",
@@ -777,6 +784,12 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
              WRITE (HEADER(I),915) P1,P2,P5,AX; I=I+1
              WRITE (HEADER(I),916) G2,G3,PHINT,LX; I=I+1
              
+!-----------------------------------------------------------------------
+!     CERES-Sugarbeet
+      CASE ('BSCER')
+            WRITE (HEADER(I),900) P1,P2,P5; I=I+1
+            WRITE (HEADER(I),901) G2,G3,PHINT; I=I+1
+
 !-----------------------------------------------------------------------
 !     Sorghum
       CASE ('SGCER')
@@ -887,7 +900,7 @@ C-----------------------------------------------------------------------
   711 FORMAT ('RUNOFF CURVE # :',F5.2,
      &        6X,'DRAINAGE RATE     :',F5.2,9X,'FERT. FACTOR :',F5.2)
 
-  800 FORMAT (1X,A10,1X,'CULTIVAR :',A6,'-',A16,3X,'ECOTYPE :',
+  800 FORMAT (1X,A16,1X,'CULTIVAR: ',A6,'-',A16,3X,'ECOTYPE: ',
      &        A6)
   850 FORMAT (1X,'CSDVAR :',F5.2,'  PPSEN  :',F5.2,
      &         '  EMG-FLW:',F5.2,'  FLW-FSD:',F5.2,'  FSD-PHM :',F6.2)

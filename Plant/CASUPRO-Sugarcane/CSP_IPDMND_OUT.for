@@ -24,6 +24,7 @@ C=======================================================================
 !     &  ECONO, FILECC, FILEGC, FILEIO,                          !Input
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN
 !-----------------------------------------------------------------------
 !       CHARACTER*3   TYPSDT
       CHARACTER*6   ERRKEY
@@ -37,7 +38,7 @@ C=======================================================================
 
 !       INTEGER LUNCRP, LUNIO, LUNECO, ERR, LNUM, FOUND, ISECT
 C      PARAMETER (LUNIO = 21)
-      INTEGER II, WLUN
+      INTEGER II !, WLUN
 
       REAL FINREF, FRLFF, FRLFMX, FRSTMF, NMOBMX, NVSMOB,
      &  PROLFF, PROLFI, PRORTF, PRORTI, PROSTF, PROSTI, PROSUI, PROSUF,
@@ -55,15 +56,15 @@ C      PARAMETER (LUNIO = 21)
 
 ! Open file to write results from CSP_IPDMND
 
-      CALL GETLUN('WORK.OUT',WLUN)
-      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
-     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
+!      CALL GETLUN('WORK.OUT',WLUN)
+!      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
+!     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
 
-      WRITE(WLUN,'(1X, "")')   !chp for portability
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"RESULTS FROM IPDMND_SC.for")')
-      WRITE(WLUN,'(1X,"--------------------------")')
-      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X, "")')   !chp for portability
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"RESULTS FROM IPDMND_SC.for")')
+!      WRITE(WLUN,'(1X,"--------------------------")')
+!      WRITE(WLUN,'(1X, "")')
 
 !-----------------------------------------------------------------------
 !      OPEN (LUNIO, FILE = FILEIO, STATUS = 'UNKNOWN', IOSTAT=ERR)
@@ -87,12 +88,12 @@ C-----------------------------------------------------------------------
 
 !      CLOSE (LUNIO)
 
-      WRITE(WLUN,'(1X,"*** FILEIO : ",A12)') FILEIO
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"ECONO  : ",A6)') ECONO
-      WRITE(WLUN,'(1X,"SLAVAR : ",F6.1)') SLAVAR 
-      WRITE(WLUN,'(1X,"SIZELF : ",F6.1)') SIZELF
+!      WRITE(WLUN,'(1X,"*** FILEIO : ",A12)') FILEIO
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"ECONO  : ",A6)') ECONO
+!      WRITE(WLUN,'(1X,"SLAVAR : ",F6.1)') SLAVAR 
+!      WRITE(WLUN,'(1X,"SIZELF : ",F6.1)') SIZELF
       
 !-----------------------------------------------------------------------
 !     Read in values from input file, which were previously input
@@ -121,17 +122,17 @@ C-----------------------------------------------------------------------
 !        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 !      ENDIF
 
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"RNO3C  : ",G12.4)') RNO3C
-      WRITE(WLUN,'(1X,"RPRO   : ",G12.3)') RPRO
-      WRITE(WLUN,'(1X,"RCH2O  : ",F6.3)') RCH2O
-      WRITE(WLUN,'(1X,"RLIP   : ",F6.3)') RLIP
-      WRITE(WLUN,'(1X,"RLIG   : ",F6.3)') RLIG
-      WRITE(WLUN,'(1X,"ROA    : ",F6.3)') ROA
-      WRITE(WLUN,'(1X,"RMIN   : ",F6.2)') RMIN
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"RNO3C  : ",G12.4)') RNO3C
+!      WRITE(WLUN,'(1X,"RPRO   : ",G12.3)') RPRO
+!      WRITE(WLUN,'(1X,"RCH2O  : ",F6.3)') RCH2O
+!      WRITE(WLUN,'(1X,"RLIP   : ",F6.3)') RLIP
+!      WRITE(WLUN,'(1X,"RLIG   : ",F6.3)') RLIG
+!      WRITE(WLUN,'(1X,"ROA    : ",F6.3)') ROA
+!      WRITE(WLUN,'(1X,"RMIN   : ",F6.2)') RMIN
 
 !-----------------------------------------------------------------------
 !    Find and Read Plant Composition Section
@@ -166,16 +167,16 @@ C-----------------------------------------------------------------------
 !        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 !      ENDIF
 
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"PROLFI : ",F6.3)') PROLFI
-      WRITE(WLUN,'(1X,"PROLFF : ",F6.3)') PROLFF
-      WRITE(WLUN,'(1X,"PROSTI : ",F6.3)') PROSTI
-      WRITE(WLUN,'(1X,"PROSTF : ",F6.3)') PROSTF
-      WRITE(WLUN,'(1X,"PRORTI : ",F6.3)') PRORTI
-      WRITE(WLUN,'(1X,"PRORTF : ",F6.3)') PRORTF
-      WRITE(WLUN,'(1X,"PROSUI : ",F6.3)') PROSUI
-      WRITE(WLUN,'(1X,"PROSUF : ",F6.3)') PROSUF
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"PROLFI : ",F6.3)') PROLFI
+!      WRITE(WLUN,'(1X,"PROLFF : ",F6.3)') PROLFF
+!      WRITE(WLUN,'(1X,"PROSTI : ",F6.3)') PROSTI
+!      WRITE(WLUN,'(1X,"PROSTF : ",F6.3)') PROSTF
+!      WRITE(WLUN,'(1X,"PRORTI : ",F6.3)') PRORTI
+!      WRITE(WLUN,'(1X,"PRORTF : ",F6.3)') PRORTF
+!      WRITE(WLUN,'(1X,"PROSUI : ",F6.3)') PROSUI
+!      WRITE(WLUN,'(1X,"PROSUF : ",F6.3)') PROSUF
 
 !-----------------------------------------------------------------------
 !    Find and Read Seed Composition Section
@@ -205,10 +206,10 @@ C-----------------------------------------------------------------------
 !      ENDIF
 
       SECTION = '!*CARB'
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"NMOBMX : ",F6.3)') NMOBMX
-      WRITE(WLUN,'(1X,"NVSMOB : ",F6.2)') NVSMOB
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"NMOBMX : ",F6.3)') NMOBMX
+!      WRITE(WLUN,'(1X,"NVSMOB : ",F6.2)') NVSMOB
 
 !-----------------------------------------------------------------------
 !    Find and Read Vegetative Partitioning Section
@@ -239,16 +240,16 @@ C-----------------------------------------------------------------------
 !        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 !      ENDIF
 
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"I      : ",8I6)') (II,II=1,8)
-      WRITE(WLUN,'(1X,"XLEAF  : ",8F6.1)') (XLEAF(II),II=1,8)
-      WRITE(WLUN,'(1X,"YLEAF  : ",8F6.2)') (YLEAF(II),II=1,8)
-      WRITE(WLUN,'(1X,"YSTEM  : ",8F6.2)') (YSTEM(II),II=1,8)
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"FRSTMF : ", F6.2)') FRSTMF
-      WRITE(WLUN,'(1X,"FRLFF  : ", F6.2)') FRLFF
-      WRITE(WLUN,'(1X,"FRLFMX : ", F6.2)') FRLFMX
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"I      : ",8I6)') (II,II=1,8)
+!      WRITE(WLUN,'(1X,"XLEAF  : ",8F6.1)') (XLEAF(II),II=1,8)
+!      WRITE(WLUN,'(1X,"YLEAF  : ",8F6.2)') (YLEAF(II),II=1,8)
+!      WRITE(WLUN,'(1X,"YSTEM  : ",8F6.2)') (YSTEM(II),II=1,8)
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"FRSTMF : ", F6.2)') FRSTMF
+!      WRITE(WLUN,'(1X,"FRLFF  : ", F6.2)') FRLFF
+!      WRITE(WLUN,'(1X,"FRLFMX : ", F6.2)') FRLFMX
 
 !-----------------------------------------------------------------------
 !    Find and Read Leaf Growth Section
@@ -283,40 +284,40 @@ C-----------------------------------------------------------------------
 !        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 !      ENDIF
 
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"FINREF : ",F6.1)') FINREF
-      WRITE(WLUN,'(1X,"SLAREF : ",F6.1)') SLAREF
-      WRITE(WLUN,'(1X,"SIZREF : ",F6.1)') SIZREF
-      WRITE(WLUN,'(1X,"VSSINK : ",F6.1)') VSSINK
-      WRITE(WLUN,'(1X,"SLAMAX : ",F6.1)') SLAMAX
-      WRITE(WLUN,'(1X,"SLAMIN : ",F6.1)') SLAMIN
-      WRITE(WLUN,'(1X,"SLAPAR : ",F6.3)') SLAPAR
-      WRITE(WLUN,'(1X,"TURSLA : ",F6.2)') TURSLA
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"I      : ",6I6)') (II,II=1,6)
-      WRITE(WLUN,'(1X,"XVGROW : ",6F6.1)') (XVGROW(II),II=1,6)
-      WRITE(WLUN,'(1X,"YVREF  : ",6F6.1)') (YVREF(II),II=1,6)
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"I      : ",6I6)') (II,II=1,5)
-      WRITE(WLUN,'(1X,"XSLATM : ",5F6.1)') (XSLATM(II),II = 1,5)
-      WRITE(WLUN,'(1X,"YSLATM : ",5F6.2)') (YSLATM(II),II = 1,5)
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"FINREF : ",F6.1)') FINREF
+!      WRITE(WLUN,'(1X,"SLAREF : ",F6.1)') SLAREF
+!      WRITE(WLUN,'(1X,"SIZREF : ",F6.1)') SIZREF
+!      WRITE(WLUN,'(1X,"VSSINK : ",F6.1)') VSSINK
+!      WRITE(WLUN,'(1X,"SLAMAX : ",F6.1)') SLAMAX
+!      WRITE(WLUN,'(1X,"SLAMIN : ",F6.1)') SLAMIN
+!      WRITE(WLUN,'(1X,"SLAPAR : ",F6.3)') SLAPAR
+!      WRITE(WLUN,'(1X,"TURSLA : ",F6.2)') TURSLA
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"I      : ",6I6)') (II,II=1,6)
+!      WRITE(WLUN,'(1X,"XVGROW : ",6F6.1)') (XVGROW(II),II=1,6)
+!      WRITE(WLUN,'(1X,"YVREF  : ",6F6.1)') (YVREF(II),II=1,6)
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"I      : ",6I6)') (II,II=1,5)
+!      WRITE(WLUN,'(1X,"XSLATM : ",5F6.1)') (XSLATM(II),II = 1,5)
+!      WRITE(WLUN,'(1X,"YSLATM : ",5F6.2)') (YSLATM(II),II = 1,5)
 
       SECTION = '!*ROOT'
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"I      : ",4I6)') (II,II=1,4)
-      WRITE(WLUN,'(1X,"XFRRT  : ",4F6.2)') (XFRRT(II),II=1,4)
-      WRITE(WLUN,'(1X,"YFRRT  : ",4F6.2)') (YFRRT(II),II=1,4)
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"I      : ",4I6)') (II,II=1,4)
+!      WRITE(WLUN,'(1X,"XFRRT  : ",4F6.2)') (XFRRT(II),II=1,4)
+!      WRITE(WLUN,'(1X,"YFRRT  : ",4F6.2)') (YFRRT(II),II=1,4)
 
       SECTION = '!*SUGA'
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"I      : ",4I6)') (II,II=1,4)
-      WRITE(WLUN,'(1X,"XFRSU  : ",4F6.2)') (XFRSU(II),II=1,4)
-      WRITE(WLUN,'(1X,"YFRSU  : ",4F6.2)') (YFRSU(II),II=1,4)
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"GAMMA  : ",F6.2)') GAMMA
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"I      : ",4I6)') (II,II=1,4)
+!      WRITE(WLUN,'(1X,"XFRSU  : ",4F6.2)') (XFRSU(II),II=1,4)
+!      WRITE(WLUN,'(1X,"YFRSU  : ",4F6.2)') (YFRSU(II),II=1,4)
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"GAMMA  : ",F6.2)') GAMMA
 !-----------------------------------------------------------------------
 !    Find and Read Seed and Shell Growth Section
 !-----------------------------------------------------------------------
@@ -388,8 +389,8 @@ C-----------------------------------------------------------------------
 
 !      CLOSE (LUNECO)
 
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"END RESULTS FROM IPDMND_SC_OUT.for")')
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"END RESULTS FROM IPDMND_SC_OUT.for")')
 
 !      CLOSE (WLUN)
 
@@ -538,7 +539,7 @@ C-----------------------------------------------------------------------
 !             (g[stem] / m2[ground)
 ! SUMTEM    Factor which affects protein composition based on average 
 !             temperature. 
-! TAVG      Average daily temperature (°C)
+! TAVG      Average daily temperature (Â°C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
@@ -568,7 +569,7 @@ C-----------------------------------------------------------------------
 ! XLEAF(I)  V-stage at which partitioning to leaves is YLEAF(I).
 !             (leaf nodes)
 ! XSLATM(I) Temperature values for function that reduces specific leaf area 
-!             (SLA) (°C)
+!             (SLA) (Â°C)
 ! XVGROW(I) V-stage at which maximum leaf area growth per plant since 
 !             emergence is YVGROW(I). (# leaf nodes)
 ! XX        Difference between partitioning fraction to stems at beginning 

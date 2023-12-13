@@ -16,6 +16,7 @@
         USE YCA_Formats_m
      
         IMPLICIT NONE 
+        EXTERNAL CSCLEAR5, CSOPLINE, YR_DOY, CALENDAR, DAPCALC
      
         INTEGER :: CN          , DOY         , ON          , REP         , RN          , RUN         , RUNI         
         INTEGER :: SN          , STGYEARDOY(0:PSX)            , TN          , YEAR
@@ -45,7 +46,8 @@
             DO L = 0, PSNUM
                 CALL Csopline(laic,laistg(l))
                 IF (STGYEARDOY(L) < 9999999.AND.L /= PSX.AND.L /= PSX+1) THEN
-                    CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                    CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                    CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                     CALL Calendar(year,doy,dom,month)
                     CNCTMP = 0.0
                     IF (CWADSTG(L) > 0.0) THEN

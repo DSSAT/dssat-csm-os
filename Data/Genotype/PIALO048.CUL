@@ -1,0 +1,26 @@
+*PINEAPPLE CULTIVAR COEFFICIENTS: PIALO48 MODEL
+!
+! P1 Growing degree days from first leaf emerged to end of stem growth
+! P2 Growing degree days from forcing to sepals closed on youngest flower
+! P3 Growing degree days from SCY to early flowering
+! P4 Cumulative growing degree days from early flowering to maturity
+! P5 Growing degree days from fruit harvest to physiological maturity
+! P6 Growing degree days from root initiation to first leaf emerged
+! G2 Potential eye number
+! G3 Potential eye growth rate
+! PHINT Phylochron interval; the interval in thermal time (degree days) between successive leaf tip appearances.
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!                                               
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1    P2    P3    P4    P5    P6    G2    G3 PHINT
+!Coefficient #                           1     2     3     4     5     6     7     8     9
+!Calibration                             P     P     P     P     P     P     G     G     P
+
+999991 MINIMA               . DFAULT    60    60    35    65   520   260   190  12.0  35.0
+999992 MAXIMA               . DFAULT    60   900    35    65   700   400   220  24.0  83.0
+
+IB0066 SC-F153                IB0001  60.0   629   381  2640   400  60.0   200  14.0  40.0
+IB0067 SC-ANGUE               IB0001  60.0   500   500  2195   400  60.0   200  14.0  95.0
+IB0068 HB-MD2CR               IB0002    60   530    35    65   520   260   200  14.0  40.0  
+IB0069 HB-MD2CRp              IB0003    60   812    35    65   520   260   200  14.0  83.0  
+

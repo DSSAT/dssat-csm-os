@@ -1,0 +1,65 @@
+*SUGARCANE CULTIVAR COEFFICIENTS: SCSAM048 MODEL
+!
+! Crop Coefficients for the SAMUCA (Sugarcane) model
+! Scientific documentation in Appendix A of Vianna et al (2020): 
+! https://doi.org/10.1016/j.compag.2020.105361
+!
+! COEFF             DEFINITIONS
+! =====            ===========
+! MAXGL             Maximum number of green leaf a tiller can hold (#/tiller)
+! N_LF_STK_EM       Number of leaves appeared before stalks emerges at soil 
+!                     surface (#/tiller)
+! N_LF_IT_FORM      Number of leaves appeared before internode formation 
+!                     (#/tiller)
+! MAXDGL            Maximum number of developed (dewlap formed) green leaf 
+!                     a tiller can hold (#/tiller)
+! AMAX              Assimilation rate at light saturation point (μmol/m2/s)
+! EFF               Carboxylation efficiency
+!                     (μmol[CO2]/m2/s (μmol[PPFD]/m2/s)-1)
+! CHUSTK            TT for stalk emergence (°Cdays)
+! CHUPEAK           TT for tillering peak (only used when competition for light 
+!                     is switched-off, method_pop = 1) (°Cdays)
+! CHUDEC            TT for tillering senescence (°Cdays)
+! CHUMAT            TT for population stabilization (°Cdays)
+! POPMAT            Tiller population at tillering stabilization (tillers/m2)
+! POPPEAK           Number of tillers at peak of population (tillers/m2, only 
+!                     used if competition for light is switched-off,method_pop=1)
+! TILLOCHRON        Thermal time required for the emergence of one new 
+!                     tiller (°Cdays/tiller)
+! SLA               Specific Leaf Area (cm2/g)
+! MLA               Maximum leaf area (cm2)
+! PLASTOCHRON       Thermal time required for the appearance of one new 
+!                     phytomer (°Cdays/phytomer)
+! INIT_LF_AREA      Initial leaf area of first appeared leaf (cm2)
+! MAX_INI_LA        Initial leaf area of leaves appeared after top parts 
+!                     formation (n_lf_max_ini_la) (cm2)
+! MAX_IT_DW         Maximum Dry Biomass of Internodes (g)
+! MID_TT_IT_GRO     Thermal time where internodes can achieve half of its 
+!                     maximum biomass (°Cdays)
+! END_TT_IT_GRO     Thermal time for completion of internode growth (°Cdays)
+! MID_TT_LF_GRO     Thermal time where leaves can achieve half of its maximum 
+!                     biomass (°Cdays)
+! END_TT_LF_GRO     Thermal time for completion of leaf growth (°Cdays)
+!
+! Notes: 
+! (i) Values are being read with a precision of 4 decimals
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#          MAXGL    N_LF_STK_EM   N_LF_IT_FORM         MAXDGL           AMAX            EFF         CHUSTK        CHUPEAK         CHUDEC         CHUMAT         POPMAT        POPPEAK     TILLOCHRON            SLA            MLA    PLASTOCHRON   INIT_LF_AREA     MAX_INI_LA      MAX_IT_DW  MID_TT_IT_GRO  END_TT_IT_GRO  MID_TT_LF_GRO  END_TT_LF_GRO
+!Coeff #                                          1              2              3              4              5              6              7              8              9             10             11             12             13             14             15             16             17             18             19             20             21             22             23 
+!Calibration                                      G              P              P              P              G              G              P              P              P              P              P              P              P              G              G              P              G              G              G              P              P              P              P 
+999991 MINIMA               . DFAULT            6.0            2.0            2.0            3.0           30.0          0.030          404.0          400.0         1000.0         1500.0            6.0           10.0           20.0           50.0          200.0           40.0           10.0           80.0           18.0          200.0          600.0          200.0          600.0
+999992 MAXIMA               . DFAULT           12.0            8.0            8.0           12.0           62.0          0.100         1050.0         2000.0         2000.0         4000.0           18.0           30.0          135.0          160.0          800.0          200.0           60.0          180.0           40.0          800.0         1600.0          800.0         1600.0
+
+RB7515 RB867515             . SC0001           12.0            4.0            3.0            6.0           44.9          0.069          650.0         1400.0         1600.0         3200.0            9.5           22.0           39.0          120.0          600.0          112.0           50.0          120.0           28.0          400.0         1200.0          450.0         1100.0
+RB75ST RB867515_STemp       . SC0001           12.0            4.0            3.0            6.0           44.9          0.069          650.0         1400.0         1600.0         3200.0            9.5           22.0           69.0          120.0          600.0          132.0           15.0          120.0           28.0          400.0         1200.0          700.0         1300.0
+IB0001 NCo376               . SC0002            9.0            3.0            3.0            4.0           40.0          0.066          650.0         1400.0         1900.0         3600.0           13.0           32.0          130.0           90.0          300.0          142.0           15.0           90.0           38.0          400.0         1300.0          900.0         1400.0
+HYP_HS High-sucrose         . SC0001           12.0            4.0            3.0            6.0           44.9          0.069          650.0         1400.0         1600.0         3200.0            9.5           22.0           39.0          120.0          600.0          112.0           50.0          120.0           28.0          400.0         1200.0          450.0         1100.0
+HYP_HF High-fibre           . SC0004           12.0            4.0            3.0            6.0           44.9          0.069          650.0         1400.0         1600.0         3200.0            9.5           22.0           69.0          120.0          600.0          132.0           15.0          120.0           28.0          400.0         1200.0          700.0         1300.0
+CP1743 CP 80-1743           . SC0003           10.0            4.0            3.0            5.0           39.0          0.055          650.0         1400.0         1900.0         3600.0            5.0           32.0           90.0          120.0          400.0           85.0           50.0          120.0           25.0          400.0         1200.0          700.0         1300.0
+CP1762 CP 88-1762           . SC0003           10.0            4.0            3.0            5.0           39.0          0.055          650.0         1400.0         1900.0         3600.0            5.0           32.0           90.0          120.0          400.0           85.0           50.0          120.0           25.0          400.0         1200.0          700.0         1300.0
+CP2086 CP 72-2086           . SC0003           10.0            4.0            3.0            5.0           39.0          0.055          650.0         1400.0         1900.0         3600.0            5.0           32.0           90.0          120.0          400.0           85.0           50.0          120.0           25.0          400.0         1200.0          700.0         1300.0
+CP2143 CP 89-2143           . SC0003           10.0            4.0            3.0            5.0           39.0          0.055          650.0         1400.0         1900.0         3600.0            5.0           32.0           90.0          120.0          400.0           85.0           50.0          120.0           25.0          400.0         1200.0          700.0         1300.0
+IB0002 N14-Pong_Mike        . SC0001           12.0            2.0            2.0            6.0           62.0          0.080          650.0         1400.0         1600.0         3200.0           14.0           22.0           39.0          120.0          600.0          112.0           50.0          120.0           40.0          300.0          800.0          450.0         1100.0
+TRAIN1 Training             . SC0001           12.0            4.0            3.0            6.0           44.9          0.069          650.0         1400.0         1600.0         3200.0            9.5           22.0           39.0          120.0          600.0          112.0           50.0          120.0           28.0          400.0         1200.0          450.0         1300.0

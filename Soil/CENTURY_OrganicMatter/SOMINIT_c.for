@@ -45,6 +45,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT  NONE
+      EXTERNAL ERROR, FIND, SOMFRAC_INIT, IPHedley_C, WARNING, INFO
       SAVE
 !     ------------------------------------------------------------------
 
@@ -699,6 +700,7 @@
      &    SOM1FRAC, SOM2FRAC, SOM3FRAC) 
 
       Use ModuleDefs
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE, INFO, PATH
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL

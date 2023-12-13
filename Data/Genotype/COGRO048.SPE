@@ -1,0 +1,185 @@
+*COTTON SPECIES COEFFICIENTS: CRGRO048 MODEL
+
+!*PHOTOSYNTHESIS PARAMETERS
+ 58.00 66.00  0.80  0.10                   PARMAX,PHTMAX,KCAN,KC_SLOPE
+!Note: Kcan can be overridden by value in Ecotype file, if present
+!Kc_slope is the slope of Kcan with ratio of Rowsp:PlantSp (see DEMAND subroutine).
+!Kc_slope is optional, default value is 0.10.
+  80.0  2.09 .0105                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN
+  1.35  4.87  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG !12/7/22
+!  1.25  4.87  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG
+ 15.04  30.2  34.2  47.1   QDR             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG
+   0.0   9.0  40.0  44.0  48.0  55.0       XLMAXT (6 VALUES)
+   0.0   0.0   1.0   0.8   0.0   0.0       YLMAXT (6 VALUES)
+  2.00 22.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG
+ .0541  0.20  0.80   2.0                   PGEFF SCV KDIF, LFANGB
+ .0050 .0005 .2500  4.87  1.10             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF ! 3/2/22 kjb
+
+   0.0  .001  .002  .003 .0035  .004  .005  .006  .008  .010  XPGSLW(1-10)
+  .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10)
+
+!*RESPIRATION PARAMETERS
+     2.5E-04 .0022                      RES30C,R30C2
+ 2.556 2.556  .360 2.830                RNO3C,RNH4C,RPRO,RFIXN
+ 1.242 3.106 2.174  .929  0.05  1.13    RCH20,RLIP,RLIG,ROA,RMIN,PCH2O
+
+!*PLANT COMPOSITION VALUES
+!  .285  .220  .095  .110  .090  .056   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF !1/1/23
+  .280  .220  .095  .110  .090  .056   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF
+  .080  .080  .050  .170  .170  .040   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF
+  .153  .153  .300  .012  .030  .900   SDPROS,SDPROG,PRONOD,PROMIN,PROMAX,THETA
+!  .515  .610  .580  .360  .640  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO !1/1/23
+  .520  .610  .580  .360  .640  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO
+  .030  .020  .020  .035  .050         PLIPLF,PLIPST,PLIPRT,PLIPSH,PLIPNO
+  .060  .200  .200  .350  .023  .070   PLIGLF,PLIGST,PLIGRT,PLIGSH,PLIGSD,PLIGNO
+  .040  .020  .020  .035  .040  .050   POALF,POAST,POART,POASH,POASD,POANO
+  .070  .040  .100  .050  .024  .050   PMINLF,PMINST,PMINRT,PMINSH,PMINSD,PMINNO
+
+!*SEED  COMPOSITION VALUES             
+ 7.168 24.00 0.908 0.607               LIPTB,LIPOPT,SLOSUM*100,CARMIN
+
+!*CARBON AND NITROGEN MINING PARAMETERS
+! 0.050  0.70  .320  .070  0.38  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR ! 3/3/22
+ 0.050  0.70  .320  .080  0.38  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR !6/19/22
+    PD  0.60                           XPODF, NSTFAC !as of 12/7/22?
+!    PD  0.70                           XPODF, NSTFAC
+  0.04  0.08  0.04  0.06               ALPHL,ALPHS,ALPHR,ALPHSH
+
+!*NITROGEN FIXATION PARAMETERS         NOT NEEDED FOR COTTON
+ 0.045 0.200 0.015   0.0  0.04  0.05   SNACTM,NODRGM,DWNODI,TTFIX,NDTHMX,CNODCR
+  9.00  25.0  34.0  44.0   LIN         FNNGT(4),TYPNGT-TEMP EFF ON NOD GROWTH
+  7.00  23.0  34.0  44.0   LIN         FNFXT(4),TYPFXT-TEMP EFF ON N FIX
+  0.00  0.67  1.00  10.0   LIN         FNFXD(4),TYPFXD-REL SW-DRY EFF ON N FIX
+  -.02  .001  1.00  2.00   LIN         FNFXW(4),TYPFXW-REL SW-WET EFF ON N FIX
+  0.00  0.10  1.00  0.00   INL         FNFXA(4),TYPFXA-REL DEV-AGE EFF ON N FIX
+
+!*VEGETATIVE PARTITIONING PARAMETERS   
+   0.0   2.0   3.3   5.4   7.5   9.6  15.0  40.0  XLEAF VALUES 
+  0.58  0.61  0.57  0.52  0.41  0.36  0.35  0.30  YLEAF VALUES ! 1/12/23 kjb
+!  0.57  0.61  0.57  0.51  0.40  0.35  0.35  0.30  YLEAF VALUES ! 6/19/22 kjb
+!  0.56  0.60  0.56  0.50  0.40  0.35  0.35  0.30  YLEAF VALUES ! 3/2/22 kjb
+  0.08  0.08  0.14  0.20  0.34  0.44  0.45  0.50  YSTEM VALUES ! 1/12/23 kjb
+!  0.08  0.08  0.14  0.20  0.35  0.45  0.45  0.50  YSTEM VALUES ! 3/2/22 kjb
+! proportion petiole really should be a non-zero number, or do all petioles stay when leaves senesce?
+  0.55  0.10  0.51  0.29  1.00  0.00  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD !1/12/23 kjb
+!  0.55  0.10  0.50  0.30  1.00  0.00  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD !6/19/22 kjb
+!  0.55  0.00  0.50  0.30  1.00  0.00  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD
+  0.70                                FRLFMX  
+
+!*LEAF GROWTH PARAMETERS
+  150.  170. 280.0   5.0   5.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC
+!  540. 110.0 -.029  3.50  1.20        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA !?
+  540. 110.0 -.029  2.50  1.00        SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA  !default 3/3/22
+ 
+   0.0   1.0   2.0   4.0   5.0   7.0  XVGROW(1-6), VSTAGE VALUES
+   0.0  25.0  70.0 150.0 250.0 500.0  YVREF(1-6), LEAF AREA VALUES,cm2
+ -50.0  12.0  28.0  40.0  60.0        XSLATM(1-5),TEMP VALUES
+  0.35  0.35   1.0   1.0   1.0        YSLATM(1-5),EFFECT ON SLA
+
+!*LEAF SENESCENCE FACTORS
+  1.00  0.01  0.02 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 !1/4/23 kjb
+!  1.00  0.01  0.02 -2.22 -5.00        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2
+  0.01  50.0                          ICMP,TCMP(Light comp, time constant-senes)
+
+! .......XSTAGE.........  .......XSENMX.........
+   0.0   5.0  14.0  30.0   3.0   5.0  10.0  30.0
+! .......SENPOR.........  .......SENMAX.........
+   0.0   0.0  0.10  0.14   0.0   0.4   0.5   0.5
+
+!*ROOT PARAMETERS
+  25.0 12000 .0080   0.1  0.01  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX
+   0.0  2.60   5.0  2.60   9.0  2.55  30.0  2.50   XRTFAC,YRTFAC ! kjb 1/5/23
+!   0.0  2.60   5.0  2.60   9.0  2.30  30.0  2.30   XRTFAC,YRTFAC
+ 0.011 0.011  0.02  0.10                    RTNO3,RTNH4,PORMIN,RTEXF !6/19/22
+! 0.009 0.009  0.02  0.10                    RTNO3,RTNH4,PORMIN,RTEXF
+
+!*SEED AND SHELL GROWTH PARAMETERS
+  0.60  0.01  0.00  100.               SETMAX,SRMAX,RFLWAB,XMPAGE
+  15.0   0.2  0.10                     DSWBAR,XFRMAX,SHLAG
+  17.3  28.2  30.0  40.0   QDR         FNPDT(1-4),TYPPDT-TEMP EFFECT ON POD SET
+  10.0  24.8  24.8  44.0   QDR         FNSDT(1-4),TYPSDT-TEMP EFFECT ON SD GRWTH
+  0.00 10.00 17.00 26.00 31.00 44.00   XXFTEM(1-6),TEMPERATURES
+  0.00  0.00  1.00  1.00  0.80  0.00   YXFTEM(1-6),REL CHG IN PARTIT
+  0.00  0.01  1.00  1.10               XSWFAC(1-4)
+  0.00  1.00  1.00  1.00               YSWFAC(1-4)
+  0.00  0.01  0.25  1.00  1.00         XSWBAR(1-5),REL WATER TOPSOIL
+  1.00  1.00  1.00  1.00  1.00         YSWBAR(1-5),EFFECT ON PNUT PEGGING
+  0.00  0.50  0.75  1.00               XTRFAC(1-4),TURFAC
+  0.00  0.05  0.10  0.10               YTRFAC(1-4),ENHANCE REPROD. GROWTH
+  !need to add similar effect of N stress on repro partitioning
+
+!*POD LOSS PARAMETERS
+     N   6.0 .3961 -.865 3.405 0.102      DETACH,DWC,PR1DET,PR2DET,XP1DET,XP2DET
+
+!*PHENOLOGY PARAMETERS
+!  TB   TO1   TO2    TM                I
+!  11.0  29.0  34.5  55.0               1 VEGETATIVE DEVELOPMENT !4/09/23
+   11.  29.5  34.5  55.0               1 VEGETATIVE DEVELOPMENT !1/1/23
+!   11.  28.5  33.5  55.0               1 VEGETATIVE DEVELOPMENT
+   11.  30.0  30.0  55.0               2 EARLY REPRODUCTIVE DEVELOPMENT
+   7.6  33.0  34.0  55.0               3 LATE REPRODUCTIVE DEVELOPMENT
+
+!FOLLOWING LINE: STAGE; REF STAGE; PHOTOPERIOD FUNCTION; TEMPERATURE FUNCT;
+!POINTER TO VEGD(1) OR REPDA(2) OR REPDB(3) TEMP SENS; SENS TO WATER;N; AND P
+  1  1  NON  LIN  1 -0.20  0.00  0.00  PLANT(STG 1) TO EMERG(STG 2) PHASE
+  2  2  NON  LIN  1 -0.20  0.00  0.00  EMERG(STG 2) TO V1(STG 3) PHASE
+  3  2  NON  LIN  1 -0.05  0.00  0.00  EMERG(STG 2) TO END JV(STG 4) PHASE
+  4  4  NON  LIN  1 -0.05  0.00  0.00  END JV(STG 4) TO FL IND(STG 5) PHASE
+  5  5  NON  LIN  1 -0.05  0.00  0.00  FL IND(STG 5) TO 1ST FL(STG 6) PHASE
+  6  6  NON  LIN  2  0.00  0.00  0.00  1ST FL(STG 6) TO 1ST PEG(STG 7) PHASE
+  7  6  NON  LIN  2  0.00  0.00  0.00  1ST FL(STG 6) TO 1ST POD(STG 8) PHASE
+  8  6  NON  LIN  2  0.00  0.00  0.00  1ST FL(STG 6) TO 1ST SD(STG 9) PHASE
+  9  9  NON  LIN  3  0.20  0.00  0.00  1ST SD(STG 9) TO LST SD(STG 10) PHASE
+ 10  9  NON  LIN  3  0.20  0.00  0.00  1ST SD(STG 9) TO PH MAT(STG 11) PHASE
+ 11 11  NON  NON  1  0.00  0.00  0.00  PH MAT(STG 11) TO H-MAT(STG 12) PHASE
+ 12  6  NON  LIN  2 -0.60  0.00  0.00  1ST FL(STG 6) TO LST VST(STG 13) PHASE
+ 13  6  NON  LIN  2 -0.90  0.00  0.00  1ST FL(STG 6) TO LST LF(STG 14) PHASE
+
+!*CANOPY HEIGHT AND WIDTH GROWTH PARAMETERS
+
+! VSTAGE, FOLLOWED BY INTERNODE LENGTH PER NODE, THEN CANOPY WIDTH PER NODE
+  0.00  4.00  5.00 10.00 12.00 17.00 22.00 25.00 30.00 40.00  XVSHT(1-10)
+ .0300 .0550 .0980 .1350 .1350 .1300 .1200 .0800 .0500 .0100  YVSHT(1-10)
+ .0300 .0400 .0800 .1000 .1000 .0900 .0900 .0500 .0400 .0100  YVSWH(1-10)
+
+ -50.0  00.0  15.0  35.0  60.0                       XHWTEM(1-5),TEMPERATURES
+  0.01  0.01  0.33  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN
+  0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
+  4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
+  1.00                                               NHGT
+
+!*EVAPOTRANSPIRATION
+!  0.70   1.1       KEP,  EORATIO
+  0.60   1.1       KEP,  EORATIO !6/19/22 kjb for Halfway, TX
+  0.50  1.15       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.96       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+
+*PHOSPHORUS CONTENT
+! Two options for Optimum and minimum P concentrations for shoots: 
+! (1) supply values for shoots (leaf plus stem)
+! (2) supply values individually for leaf and for stem
+! If positive values for shoots are supplied, any values supplied for leaf and 
+! stem will be ignored
+
+! These values taken from soybean file -- need to be determined for cotton!
+   -99.0   -99.0   -99.0  Optimum Shoot Conc (emergence, 1st flower, full seed)
+  0.0030  0.0025  0.0015  Optimum Leaf Conc  (emergence, 1st flower, full seed)
+  0.0020  0.0016  0.0010  Optimum Stem Conc  (emergence, 1st flower, full seed)
+  0.0014  0.0012  0.0005  Optimum Root Conc  (emergence, 1st flower, full seed)
+   -99.0  0.0040  0.0005  Optimum Shell Conc (emergence, 1st flower, full seed)
+   -99.0  0.0045  0.0040  Optimum Seed Conc  (emergence, 1st flower, full seed)
+
+   -99.0   -99.0   -99.0  Minimum Shoot Conc (emergence, 1st flower, full seed)
+  0.0020  0.0015  0.0010  Minimum Leaf Conc  (emergence, 1st flower, full seed)
+  0.0003  0.0003  0.0003  Minimum Stem Conc  (emergence, 1st flower, full seed)
+  0.0003  0.0003  0.0003  Minimum Root Conc  (emergence, 1st flower, full seed)
+   -99.0  0.0003  0.0003  Minimum Shell Conc (emergence, 1st flower, full seed)
+   -99.0  0.0030  0.0030  Minimum Seed Conc  (emergence, 1st flower, full seed)
+
+    50.0    20.0    10.0  Maximum Veg N:P ratio (emergence, 1st flower, full seed)
+     5.0     5.0     1.0  Minimum Veg N:P ratio (emergence, 1st flower, full seed)
+
+    0.80    1.00  SRATPHOTO, SRATPART
+    0.20          FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
+  0.0020          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m)
+

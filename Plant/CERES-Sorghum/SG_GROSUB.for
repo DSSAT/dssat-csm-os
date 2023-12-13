@@ -35,7 +35,7 @@ C  Calls  : SG_NFACT SG_NUPTAK
 C-----------------------------------------------------------------------
 
       SUBROUTINE SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     & AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      & CO2, CSD2, CUMPH, DLAYR,DM, DTT,       !CUMDTT, 
      & GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -62,12 +62,13 @@ C-----------------------------------------------------------------------
       USE Interface_SenLig_Ceres
 
       IMPLICIT  NONE
+      EXTERNAL SG_NFACT, SG_NUPTAK, P_Ceres, WARNING, TABEX, CURV
 
       SAVE
 
       INTEGER     DYNAMIC
 
-      REAL        AGEFAC, ASMDOT, BIOMAS, CARBO, CNSD1, CNSD2
+      REAL        AGEFAC, ASMDOT, BIOMAS, CARBO, CNSD2  !CNSD1, 
 	REAL        CO2X(10), CO2Y(10), CO2, CSD2, CUMPH    !CUMDTT, 
       REAL        CUMP4, CURV, DM, DTT,PLAM
 
@@ -277,7 +278,7 @@ C-GH     Check for appropriate equations to be added to the code
 C
          IF (ISWNIT .NE. 'N') THEN
            CALL SG_NFACT(DYNAMIC,
-     &       AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
+     &       AGEFAC, ISTAGE, NDEF3, NFAC, !CNSD1, CNSD2, 
      &       NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
 
          ELSE
@@ -347,7 +348,7 @@ C              Emergence
 
       IF (ISWNIT .NE. 'N') THEN
          CALL SG_NFACT(DYNAMIC,
-     &       AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
+     &       AGEFAC, ISTAGE, NDEF3, NFAC, !CNSD1, CNSD2, 
      &       NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
       ELSE
          AGEFAC = 1.0

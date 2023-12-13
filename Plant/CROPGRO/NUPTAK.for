@@ -19,10 +19,9 @@ C=======================================================================
      &  TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE
       SAVE
 
       CHARACTER*6 ERRKEY
@@ -130,15 +129,19 @@ C-----------------------------------------------------------------------
             IF (FNH4 .LT. 0.04) FNH4 = 0.0  
             IF (FNH4 .GT. 1.0)  FNH4 = 1.0
 
+!           SMDFR = relative drought factor
             SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
-            IF (SMDFR .LT. 0.0) THEN
-              SMDFR = 0.0
-            ENDIF
 
             IF (SW(L) .GT. DUL(L)) THEN
               SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
             ENDIF
-            RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+            
+            IF (SMDFR .LT. 0.1) THEN
+              SMDFR = 0.1
+            ENDIF
+            ! FO/KJB - Change for Cotton
+            !RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+            RFAC = RLV(L) * SQRT(SMDFR) * DLAYR(L) * 100.0
 C-----------------------------------------------------------------------
 C  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
 C  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)
@@ -158,7 +161,7 @@ C-----------------------------------------------------------------------
           ANDEM = TRNU
         ENDIF
 !        IF (TRNU .EQ. 0.0) GO TO 600
-        IF (TRNU .GT. 0.001) THEN
+        IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
           DO L=1,NLAYR
             IF (RLV(L) .GT. 0.0) THEN
@@ -219,10 +222,10 @@ C=======================================================================
 ! NDMSDR   Amount of Mobilized N which can be used for seed growth
 !            (g[N] / m2 / d)
 ! NDMTOT   Total N demand (g[N] / m2 / d)
-! NH4(L)   Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)   Ammonium N in soil layer L (Âµg[N] / g[soil])
 ! NL       maximum number of soil layers = 20 
 ! NLAYR    Number of soil layers 
-! NO3(L)   Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)   Nitrate in soil layer L (Âµg[N] / g[soil])
 ! NUF      N uptake fraction (ratio of demand to N uptake), <= 1.0 
 ! RFAC     Nitrogen uptake conversion factor ((kg N/ha) / (mg N / cm root))
 ! RLV(L)   Root length density for soil layer L ((cm root / cm3 soil))

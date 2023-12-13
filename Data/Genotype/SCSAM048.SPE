@@ -1,0 +1,109 @@
+! SUGARCANE SPECIES COEFFICIENTS: SCSAM048 MODEL
+!
+! Crop Coefficients for the SAMUCA (Sugarcane) model
+! Scientific documentation in Appendix A of Vianna et al (2020): 
+! https://doi.org/10.1016/j.compag.2020.105361
+!
+! COEFF   		   	DEFINITIONS
+! =====   		   	===========
+! SRLMAX            Specific Root Length at Root Front (m/g)
+! SRLMIN            Specific Root Length at Inner Roots Profile (m/g)
+! ROOTDRATE         Root depth rate (cm/°Cdays)
+! MAX_RT_DW         Maximum Dry Biomass of Roots (g/m2)
+! END_TT_RT_GRO     Thermal time for completion of root growth (°Cdays)
+! ROOTLEFTFRAC      Fraction of roots left alive after harvesting (0-1)
+! KDIF              Diffuse light extinction coefficient (dml)
+! KC_MIN            Minimum Crop Coefficient (dml)
+! EORATIO           Direct relation of LAI with Crop Coefficient (dKc/dLAI)
+! SO2SI_USERES      Source-sink ratio threshold crop can use its reserves (dml)
+! MAXLAI_EO         Maximum Leaf Area Index for Crop Coefficient 
+! 					Increment (m2/m2)
+! GRESP             Growth Respiration (g[CH2O]/g[DW])
+! KMR_LEAF          Michaelis–Menten kinetics of the O2 on Leaves (Km)
+! KMR_STEM          Michaelis–Menten kinetics of the O2 on Stems (Km)
+! KMR_ROOT          Michaelis–Menten kinetics of the O2 on Roots (Km)
+! KMR_STOR          Michaelis–Menten kinetics of the O2 on Storage (Km)
+! Q10_LEAF          Leaf proportional change in respiration with a 10 °C 
+!					increase in temperature (dml)
+! Q10_STEM          Stem proportional change in respiration with a 10 °C 
+!					increase in temperature (dml)
+! Q10_ROOT          Root proportional change in respiration with a 10 °C 
+!					increase in temperature (dml)
+! Q10_STOR          Storage proportional change in respiration with a 10 °C 
+!					increase in temperature (dml)
+! TREF_MR           Reference temperature of adjustment of Q10 respiration 
+!					function (°C)
+! TB                Base temperature for crop development (°C)
+! TBM               Maximum base tempeature for crop development (°C)
+! THRESHEWS         Supply/Demand ratio threshold for extreme drought 
+!					condition counter (0-1)
+! DSHOOT_EXT        Below ground shoots expasion rate (cm/°Cdays)
+! MID_TT_RT_GRO     Thermal time where roots can achieve half of its maximum 
+!					biomass (°Cdays)
+! MAX_IT_DW_BG      Maximum Structural Dry Biomass of Below Ground 
+!					Internodes (g)
+! SUC_MIN           Minimum sucrose content of internodes (g[SUC]g[DW])
+! TILLAGEFAC        Relative age difference among tillers shape 
+!					coefficient (dml)
+! ROOTSHAPE         Root profile shape factor (geotropism function) (dml)
+! RWUMAX            Maximum Root Water Uptake Rate (cm3[H2O]/cm[RLD])
+! FRES_USED_EM      No of times total reserves pool can exceed the total 
+!					CH2O used for emerg to allow reserves use for growth (dml)
+! AGEFAC_AMAX       Age factor parameter for CO2 assimilation rate at light
+!					saturation point (dml)
+! AGEFAC_PER        Age factor parameter for CO2 assimilation rate for plant
+! 					expansion (dml)
+! C_SCATTERING      Canopy scattering coefficient (0-1)
+! K                 Canopy light extinction coefficient (dml)
+! RT_FRONT_SIZE     Vertical size of root front (cm)
+!
+!-----------------------------
+*ROOTS PROFILE
+!-----------------------------
+SRLMAX             =  38.0
+SRLMIN             =  34.0
+ROOTDRATE          =  0.088
+MAX_RT_DW          =  120.0
+END_TT_RT_GRO      =  3000.0
+ROOTLEFTFRAC       =  0.03
+!-----------------------------
+*ATMOSPHERE
+!-----------------------------
+KDIF               =  1.0
+KC_MIN             =  0.79
+EORATIO            =  1.15
+SO2SI_USERES       =  3.0
+MAXLAI_EO          =  4.5
+!-----------------------------
+*RESPIRATION
+!-----------------------------
+GRESP              =  0.242
+KMR_LEAF           =  0.0123
+KMR_STEM           =  0.0036
+KMR_ROOT           =  0.0086
+KMR_STOR           =  0.0022
+Q10_LEAF           =  1.584
+Q10_STEM           =  1.804
+Q10_ROOT           =  1.804
+Q10_STOR           =  1.804
+TREF_MR            =  25.0
+!-----------------------------
+*CROP DEVELOPMENT AND FACTORS
+!-----------------------------
+TB                 =  12.0
+TBM                =  50.0
+THRESHEWS          =  0.05
+DSHOOT_EXT         =  0.072
+MID_TT_RT_GRO      =  1000.0
+MAX_IT_DW_BG       =  5.0
+SUC_MIN            =  0.06584
+TILLAGEFAC         =  1.0
+ROOTSHAPE          =  2.0
+RWUMAX             =  0.07
+FRES_USED_EM       =  2.0
+AGEFAC_AMAX        =  -2.0
+AGEFAC_PER         =  -5.0
+C_SCATTERING       =  0.15
+K                  =  0.75
+RT_FRONT_SIZE      =  10.0
+!-----------------------------

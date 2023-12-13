@@ -1,9 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C                      Washington State University
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2023
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C 
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  CROPGRO, Subroutine, G. Hoogenboom, J.W. Jones, K.J. Boote, C. Porter
@@ -33,13 +34,16 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 !  06/06/2006 CHP/CDM Added KC_SLOPE to SPE file and KC_ECO to ECO file.
 !  07/13/2006 CHP Added P model
 !  06/11/2007 CHP PStres1 affects photosynthesis, PStres2 affects growth
+!  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE CROPGRO(CONTROL, ISWITCH, 
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
-     &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
-     &    NSTRES, PSTRES1,                                !Output
+     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,    !Output
+     &    KTRANS, MDATE, NSTRES, PSTRES1,                 !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
 
@@ -48,6 +52,10 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL DEMAND, FREEZE, GROW, HRES_CGRO, INCOMP, IPPLNT, MOBIL,
+     &  NFIX, NUPTAK, OPGROW, OPHARV, P_CGRO, PEST, PHENOL,
+     &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, SENES,
+     &  VEGGR
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 DETACH, IDETO, ISWNIT, ISWSYM,
@@ -57,7 +65,7 @@ C=======================================================================
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC, FILEGC
 
-      INTEGER DAS, DYNAMIC, RUN
+      INTEGER DAS, DYNAMIC, RUN, CropStatus
       INTEGER NDLEAF, NDSET, NLAYR, NOUTDO,
      &    NR1, NR2, NR5, NR7, NVEG0
       INTEGER RSTAGE, YREND
@@ -143,6 +151,9 @@ C=======================================================================
       REAL SHELN(NCOHORTS)
       REAL PHTIM(NCOHORTS)
       REAL PNTIM(NCOHORTS)
+      
+      REAL TOSHMINE,TOCHMINE
+      REAL HPODWT,HSDWT,HSHELWT
 
       REAL FLWN(NCOHORTS)
 
@@ -243,6 +254,7 @@ C=======================================================================
       CALL PHENOL(CONTROL, ISWITCH, 
      &    DAYL, NSTRES, PStres2, SOILPROP, ST,            !Input
      &    SW, SWFAC, TGRO, TMIN, TURFAC, XPOD, YRPLT,     !Input
+     &    CropStatus,                                     !Output
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    RSTAGE, RVSTGE, STGDOY, SeedFrac, TDUMX,        !Output
@@ -272,11 +284,11 @@ C=======================================================================
      &  TAVG, TDUMX, TDUMX2, TGRO, TURFAC, VSTAGE, WCRLF, !Input
      &  WCRRT, WCRST, WNRLF, WNRRT, WNRSH, WNRST, WTLF,   !Input
      &  WTSD, WTSHE, XPOD, NVEG0, NR1, NR2, NR5, NR7,     !Input
-     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
-     &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
+     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, CropStatus,!Output
+     &  F, FNINL, FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM,!Output
+     &  GDMSD, GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR,   !Output
+     &  NDMTOT, NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM,      !Output
+     &  POTCAR, POTLIP, SDGR, TURADD, XFRT, YREND)        !Output
 
 !-----------------------------------------------------------------------
 C    Call plant COMPosition INitialization (for data input)
@@ -307,6 +319,7 @@ C-----------------------------------------------------------------------
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
      &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
      &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
      &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
@@ -314,7 +327,8 @@ C-----------------------------------------------------------------------
      &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
      &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
-     &    WTSHE, WTSHMT, FLWN)                            !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
 
 !-----------------------------------------------------------------------
         IF (DETACH .EQ. 'Y') THEN
@@ -372,9 +386,9 @@ C-----------------------------------------------------------------------
      &  WSDOTN, WSHDTN, WSIDOT, WTABRT, WTSHMT, YRNR1,    !Input
      &  MDATE, YRPLT,                                     !Input
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT,                !Output
@@ -386,8 +400,9 @@ C-----------------------------------------------------------------------
      &  WTNRA, WTNRO, WTNRT, WTNSA, WTNSD, WTNSDA,        !Output
      &  WTNSDO, WTNSH, WTNSHA, WTNSHO, WTNSO, WTNST,      !Output
      &  WTNUP, WTRO, WTSDO, WTSHO, WTSO, XLAI, XPOD,      !Output
-     &  ShutMob, RootMob, ShelMob)                        !Output
-
+     &  ShutMob, RootMob, ShelMob,                        !Output
+     &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output
+      
       CALL OPGROW(CONTROL, ISWITCH, SoilProp, 
      &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD, GROWTH,  
      &    GRWRES, KSTRES, MAINR, MDATE, NFIXN, NLAYR, NSTRES, 
@@ -463,6 +478,7 @@ C-----------------------------------------------------------------------
       CALL PHENOL(CONTROL, ISWITCH, 
      &    DAYL, NSTRES, PStres2, SOILPROP, ST,            !Input
      &    SW, SWFAC, TGRO, TMIN, TURFAC, XPOD, YRPLT,     !Input
+     &    CropStatus,                                     !Output
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    RSTAGE, RVSTGE, STGDOY, SeedFrac, TDUMX,        !Output
@@ -497,11 +513,11 @@ C     Initialize pest coupling point and damage variables
      &  TAVG, TDUMX, TDUMX2, TGRO, TURFAC, VSTAGE, WCRLF, !Input
      &  WCRRT, WCRST, WNRLF, WNRRT, WNRSH, WNRST, WTLF,   !Input
      &  WTSD, WTSHE, XPOD, NVEG0, NR1, NR2, NR5, NR7,     !Input
-     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
-     &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
+     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, CropStatus,!Output
+     &  F, FNINL, FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM,!Output
+     &  GDMSD, GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR,   !Output
+     &  NDMTOT, NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM,      !Output
+     &  POTCAR, POTLIP, SDGR, TURADD, XFRT, YREND)        !Output
 
 !-----------------------------------------------------------------------
 !     Call plant COMPosition INitialization
@@ -529,9 +545,9 @@ C     Initialize pest coupling point and damage variables
      &  WSDOTN, WSHDTN, WSIDOT, WTABRT, WTSHMT, YRNR1,    !Input
      &  MDATE, YRPLT,                                     !Input
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT,                !Output
@@ -543,8 +559,8 @@ C     Initialize pest coupling point and damage variables
      &  WTNRA, WTNRO, WTNRT, WTNSA, WTNSD, WTNSDA,        !Output
      &  WTNSDO, WTNSH, WTNSHA, WTNSHO, WTNSO, WTNST,      !Output
      &  WTNUP, WTRO, WTSDO, WTSHO, WTSO, XLAI, XPOD,      !Output
-     &  ShutMob, RootMob, ShelMob)                        !Output
-
+     &  ShutMob, RootMob, ShelMob,                        !Output
+     &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output
 !-----------------------------------------------------------------------
       CALL NUPTAK(SEASINIT, 
      &    DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT, !Input
@@ -581,6 +597,7 @@ C     Initialize pest coupling point and damage variables
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
      &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
      &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
      &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
@@ -588,7 +605,8 @@ C     Initialize pest coupling point and damage variables
      &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
      &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
-     &    WTSHE, WTSHMT, FLWN)                            !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
 
 !-----------------------------------------------------------------------
       CALL VEGGR (SEASINIT, 
@@ -683,6 +701,7 @@ C-----------------------------------------------------------------------
         CALL PHENOL(CONTROL, ISWITCH, 
      &    DAYL, NSTRES, PStres2, SOILPROP, ST,            !Input
      &    SW, SWFAC, TGRO, TMIN, TURFAC, XPOD, YRPLT,     !Input
+     &    CropStatus,                                     !Output
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    RSTAGE, RVSTGE, STGDOY, SeedFrac, TDUMX,        !Output
@@ -730,6 +749,7 @@ C-----------------------------------------------------------------------
       CALL PHENOL(CONTROL, ISWITCH, 
      &    DAYL, NSTRES, PStres2, SOILPROP, ST,            !Input
      &    SW, SWFAC, TGRO, TMIN, TURFAC, XPOD, YRPLT,     !Input
+     &    CropStatus,                                     !Output
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    RSTAGE, RVSTGE, STGDOY, SeedFrac, TDUMX,        !Output
@@ -754,9 +774,9 @@ C-----------------------------------------------------------------------
      &  WSDOTN, WSHDTN, WSIDOT, WTABRT, WTSHMT, YRNR1,    !Input
      &  MDATE, YRPLT,                                     !Input
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT,                !Output
@@ -768,8 +788,8 @@ C-----------------------------------------------------------------------
      &  WTNRA, WTNRO, WTNRT, WTNSA, WTNSD, WTNSDA,        !Output
      &  WTNSDO, WTNSH, WTNSHA, WTNSHO, WTNSO, WTNST,      !Output
      &  WTNUP, WTRO, WTSDO, WTSHO, WTSO, XLAI, XPOD,      !Output
-     &  ShutMob, RootMob, ShelMob)                        !Output
-
+     &  ShutMob, RootMob, ShelMob,                        !Output
+     &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output      
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
@@ -790,17 +810,18 @@ C-----------------------------------------------------------------------
      &  TAVG, TDUMX, TDUMX2, TGRO, TURFAC, VSTAGE, WCRLF, !Input
      &  WCRRT, WCRST, WNRLF, WNRRT, WNRSH, WNRST, WTLF,   !Input
      &  WTSD, WTSHE, XPOD, NVEG0, NR1, NR2, NR5, NR7,     !Input
-     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
-     &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
+     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, CropStatus,!Output
+     &  F, FNINL, FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM,!Output
+     &  GDMSD, GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR,   !Output
+     &  NDMTOT, NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM,      !Output
+     &  POTCAR, POTLIP, SDGR, TURADD, XFRT, YREND)        !Output
 
 !-----------------------------------------------------------------------
-        CALL PODS(EMERG, 
+      CALL PODS(EMERG, 
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
      &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
      &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
      &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
@@ -808,7 +829,8 @@ C-----------------------------------------------------------------------
      &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
      &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
-     &    WTSHE, WTSHMT, FLWN)                            !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
 
 !-----------------------------------------------------------------------
         CALL VEGGR(EMERG, 
@@ -918,11 +940,11 @@ C-----------------------------------------------------------------------
      &  TAVG, TDUMX, TDUMX2, TGRO, TURFAC, VSTAGE, WCRLF, !Input
      &  WCRRT, WCRST, WNRLF, WNRRT, WNRSH, WNRST, WTLF,   !Input
      &  WTSD, WTSHE, XPOD, NVEG0, NR1, NR2, NR5, NR7,     !Input
-     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, F, FNINL,  !Output
-     &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
-     &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
-     &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
+     &  AGRSD1, AGRSD2, AGRVG, AGRVG2, CDMREP, CropStatus,!Output
+     &  F, FNINL, FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM,!Output
+     &  GDMSD, GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR,   !Output
+     &  NDMTOT, NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM,      !Output
+     &  POTCAR, POTLIP, SDGR, TURADD, XFRT, YREND)        !Output
 
       IF (YRDOY == YREND) RETURN
 
@@ -1068,6 +1090,7 @@ C-----------------------------------------------------------------------
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
      &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
      &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
      &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
@@ -1075,7 +1098,8 @@ C-----------------------------------------------------------------------
      &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
      &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
-     &    WTSHE, WTSHMT, FLWN)                            !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
 
 C-----------------------------------------------------------------------
 C     Call specific routines for peanut to determine
@@ -1157,7 +1181,7 @@ C-----------------------------------------------------------------------
      &    FREEZ2, IDETO, NOUTDO, NRUSLF, SLDOT,           !Input
      &    TMIN, WTLF, YRDOY,  YRPLT,                      !Input
      &    MDATE,                                          !Input/Output
-     &    WLFDOT)                                         !Output
+     &    WLFDOT, CropStatus)                             !Output
       ELSE
           WLFDOT = 0.0
       ENDIF
@@ -1208,9 +1232,9 @@ C-----------------------------------------------------------------------
      &  WSDOTN, WSHDTN, WSIDOT, WTABRT, WTSHMT, YRNR1,    !Input
      &  MDATE, YRPLT,                                     !Input
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT,                !Output
@@ -1222,9 +1246,9 @@ C-----------------------------------------------------------------------
      &  WTNRA, WTNRO, WTNRT, WTNSA, WTNSD, WTNSDA,        !Output
      &  WTNSDO, WTNSH, WTNSHA, WTNSHO, WTNSO, WTNST,      !Output
      &  WTNUP, WTRO, WTSDO, WTSHO, WTSO, XLAI, XPOD,      !Output
-     &  ShutMob, RootMob, ShelMob)                        !Output
-
-
+     &  ShutMob, RootMob, ShelMob,                        !Output
+     &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output
+      
       IF ((WTLF+STMWT).GT. 0.0001) THEN
         PCNVEG = (WTNLF+WTNST)/(WTLF+STMWT)*100.
       ELSE
@@ -1265,6 +1289,7 @@ C-----------------------------------------------------------------------
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
      &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
      &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
      &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
@@ -1272,7 +1297,8 @@ C-----------------------------------------------------------------------
      &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
      &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
-     &    WTSHE, WTSHMT, FLWN)                            !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
 
         CALL OPGROW(CONTROL, ISWITCH, SoilProp, 
      &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD, GROWTH,  

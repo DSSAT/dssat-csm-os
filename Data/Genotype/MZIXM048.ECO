@@ -1,0 +1,31 @@
+*MAIZE ECOTYPE COEFFICIENTS: MZIXM048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! ECO#    Code for the ecotype to which a cultivar belongs (see *.cul
+!         file)
+! ECONAME Name of the ecotype, which is referenced from *.CUL file
+! TBASE   Base temperature below which no development occurs, C
+! TOPT    Temperature at which maximum development rate occurs during vegetative stages, C
+! ROPT    Temperature at which maximum development rate occurs for reproductive stages, C
+! P2O     Daylength below which daylength does not affect development rate, hours
+! DJTI    Minimum days from end of juvenile stage to tassel initiation if the cultivar
+! 	       is not photoperiod sensitive, days
+! GDDE    Growing degree days per cm seed depth required for emergence, GDD/cm
+! DSGFT   GDD from silking to effective grain filling period, C
+! RUE     Radiation use efficiency, g plant dry matter/MJ PAR
+! KCAN    Canopy light extinction coefficient for daily PAR.
+! PSTM    Parameter controlling stem C partitioning during ISTAGES 3, 4 (0-1) 
+!          Higher PSTM, more DM into stem, less into leaves
+! PEAR    Parameter controlling ear C partitioning during ear growth 
+!         (250 GDD before flowering-end ISTAGE 4)
+! TSEN    Critical temperature below which leaf damage occurs (default 6°C)
+! CDAY    Number of cold days parameter (default 15.0 )
+!
+@ECO#  ECONAME.........  TBASE TOPT  ROPT   P20  DJTI  GDDE  DSGFT  RUE   KCAN  PSTM  PEAR  TSEN  CDAY
+!                            1    2     3     4     5     6     7     8      9    10    11    12    13
+IB0001 HEAVY STEMS         8.0 34.0  34.0  12.5   4.0   6.0   170.  4.2   0.85  0.75  0.15      
+IB0002 LIGHT STEMS         8.0 34.0  34.0  12.5   4.0   6.0   170.  4.2   0.85  0.10  0.15
+IB0003 MEDIUM STEMS        8.0 34.0  34.0  12.5   4.0   6.0   170.  4.2   0.85  0.50  0.15
+IB0004 DEFAULT             8.0 34.0  34.0  12.5   4.0   6.0   170.  4.2   0.85  0.40  0.15
+                                                                                          

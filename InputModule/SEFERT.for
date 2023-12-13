@@ -35,6 +35,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, CLEAR, SENIT, SWFERT, AUTFER, ENTFER, SWFIX, SEFIX
 
       CHARACTER*1  RNMODE,IDETN,ISWWAT,ISWNIT,IFERI,ISWSYM
       CHARACTER*2  CROP
@@ -77,8 +78,8 @@ C     FTYPE ( 0) = 'None applied             '
       FTYPE (22) = 'Calcitic limestone       '
 !      FTYPE (24) = 'Rhizobium                '
 !      FTYPE (26) = 'Calcium hydroxide        '
-!       º  19-22   = Reserved for control release fert.   º
-!       º      51  = Urea Super Granule                   º
+!      19-22      = Reserved for control release fert. 
+!             51  = Urea Super Granule
 
 C     ATYPE ( 0) = 'Applied when required             '
       ATYPE ( 1) = 'Broadcast, not incorporated       '
@@ -250,6 +251,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, CLEAR
 
       CHARACTER*1  RNMODE,IFERI,ISWNIT,ISWWAT
       CHARACTER*6  ERRKEY
@@ -347,6 +349,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80)
       CHARACTER*6  ERRKEY
@@ -471,6 +474,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, CLEAR
 
       CHARACTER*1  RNMODE,ISWNIT,ISWSYM,ISWWAT
       CHARACTER*6  ERRKEY
@@ -559,6 +563,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT    NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1 RNMODE,LINE(80)
       CHARACTER*6 ERRKEY
@@ -636,6 +641,7 @@ C
 C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes  
 C  07/16/2002 CHP Increased number of applications to 200 (NAPPL)
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : NENTRY,EDAY,EMOUNT,TOTAP,EDEPTH,ETYPE,FTYPE
 C
@@ -657,6 +663,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL YR_DOY, ERROR, CLEAR, UPCASE, VERIFY, HOME, Y4K_DOY, SORT
 
       CHARACTER*1  RNMODE,LINE(80),IMENU,UPCASE,ANS,IFERI
       CHARACTER*6  ERRKEY
@@ -666,6 +673,8 @@ C=======================================================================
       INTEGER      NENTRY,I,MENU,YRTEMP,YRT,DOYT,NLOOP
       INTEGER      EDAY(*),ETYPE(*),COUNT,MTYPE(*)
       REAL         EMOUNT(*),EFF,FLAG,TOTAP,EDEPTH(*)
+      
+      PARAMETER (ERRKEY = 'ENTFER')
 
       NLOOP = 0
   100 CONTINUE
@@ -739,7 +748,9 @@ C
         IF (EFF .GT. -0.0001 .AND. EFF .LE. 9999999. .AND.FLAG .LE. 0)
      &    THEN
           YRTEMP = NINT(EFF)
-          CALL Y2K_DOY(YRTEMP)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+          !CALL Y2K_DOY(YRTEMP)
+          CALL Y4K_DOY(YRTEMP,'ENTFER',0,ERRKEY,1)
           IF (IFERI .EQ. 'R') THEN
             CALL YR_DOY (YRTEMP,YRT,DOYT)
             IF (DOYT > 0 .AND. DOYT <= 366 .AND. YRT < 3000) THEN
@@ -777,7 +788,9 @@ C
         IF (EFF .GT. -0.0001 .AND. EFF .LE. 9999999. .AND. FLAG .LE. 0)
      &    THEN
           YRTEMP = NINT(EFF)
-          CALL Y2K_DOY(YRTEMP)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+          !CALL Y2K_DOY(YRTEMP)
+          CALL Y4K_DOY(YRTEMP,'ENTFER',0,ERRKEY,1)
           IF (IFERI .EQ. 'R') THEN
             CALL YR_DOY (YRTEMP,YRT,DOYT)
             IF (DOYT > 0 .AND. DOYT <= 366 .AND.YRT < 3000) THEN
@@ -886,23 +899,24 @@ C-----------------------------------------------------------------------
   200 FORMAT (  9X,'INTERACTIVE DATA ENTRY FOR FERTILIZER',
      &        /,9X,'=====================================')
   250 FORMAT (
-     & 1X,'ÚÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂ',
-     &    'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿',/,
-     & 1X,'³ # ³ Date    ³ Amount ³ Depth ³    Fertilizer Type     ³',
-     &    ' Application Method ³',/,
-     & 1X,'³   ³         ³  Kg/Ha ³   cm  ³                        ³',
-     &    '                    ³',/,
-     & 1X,'ÃÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅ',
-     &    'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´')
+     & 1X,'|---|---------|--------|-------|------------------------|',
+     &    '--------------------|',/,
+     & 1X,'| # | Date    | Amount | Depth |    Fertilizer Type     |',
+     &    ' Application Method |',/,
+     & 1X,'|   |         |  Kg/Ha |   cm  |                        |',
+     &    '                    |',/,
+     & 1X,'|---|---------|--------|-------|------------------------|',
+     &    '-------------------|')
   275 FORMAT (
-     & 1X,'ÀÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁ',
-     &    'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ')
+     & 1X,'|---|---------|--------|-------|------------------------|',
+     &    '--------------------|')
+      
 
   285 FORMAT (
-     & 1X,'³',I2,1X,'³',I4,1X,I3,1X,'³',F7.1,1X,'³',F6.1,1X,'³ ',
-     &          A23,'³ ',A19,'³')
+     & 1X,'|',I2,1X,'|',I4,1X,I3,1X,'|',F7.1,1X,'|',F6.1,1X,'| ',
+     &          A23,'| ',A19,'|')
   295 FORMAT (/9X,
-     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (ÄÄÙ = Done) ', $)
+     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (Enter = Done)',$)
   296 FORMAT (//,9X,
      &    'This option is not available for the current N-fertilizer',/,
      & 9X,'management selection.  Please change selection first.', $)
@@ -923,18 +937,18 @@ C-----------------------------------------------------------------------
   900 FORMAT (/,9X,'Fertilizer application depth ===>',1X,F10.3,' cm',
      &        /,9X,'New fertilizer depth  ?      --->',3X,' ',$)
  1700 FORMAT (/,15X,'There are more entries .. Press any key ..')
- 4900 FORMAT (//,9X,'ÚÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿',/,
-     &           9X,'³ # ³   Fertilizer Type         ³',/,
-     &           9X,'ÃÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´',/,
-     &           17(9X,'³',I2,' ³',1X,A25,' ³',/),
-     &           9X,'ÀÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ',//,
+ 4900 FORMAT (//,9X,'|---|---------------------------|',/,
+     &           9X,'| # |   Fertilizer Type         |',/,
+     &           9X,'|---|---------------------------|',/,
+     &           17(9X,'|',I2,' |',1X,A25,' |',/),
+     &           9X,'|---|---------------------------|',//,
      &              9X,'Fertilizer type selected ===>',1X,I3,
      &            /,9X,'New type ?               --->  ',$)
- 4950 FORMAT (//,9X,'ÚÄÄÄÂ',35('Ä'),'¿',/,
-     &           9X,'³ # ³ Application Method',16X,'³',/,
-     &           9X,'ÃÄÄÄÅ',35('Ä'),'´',/,
-     &           18(9X,'³',I2,' ³',1X,A34,'³',/),
-     &           9X,'ÀÄÄÄÁ',35('Ä'),'Ù',//,
+ 4950 FORMAT (//,9X,'|---|',35('â”€'),'|',/,
+     &           9X,'| # | Application Method',16X,'|',/,
+     &           9X,'|---|',35('â”€'),'|',/,
+     &           18(9X,'|',I2,' |',1X,A34,'|',/),
+     &           9X,'|---|',35('â”€'),'|',//,
      &              9X,'Application method selected ===>',1X,I3,
      &            /,9X,'New method ?                --->  ',$)
 

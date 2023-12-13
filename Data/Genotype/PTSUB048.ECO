@@ -1,0 +1,12 @@
+*POTATO ECOTYPE COEFFICIENTS: PTSUB048 MODEL
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! RUE1 - Radiation use efficiency, ISTAGE=1, g plant dry matter/MJ PAR
+! RUE2 - Radiation use efficiency, ISTAGE>1, g plant dry matter/MJ PAR
+!
+@ECO#  ECONAME..........  RUE1  RUE2
+!                            1     2
+IB0001 GENERIC POTATO      3.5   4.0
+IB0002 GENERIC POTATO+10%  3.8   4.4
+DFAULT DEFAULT             3.5   4.0

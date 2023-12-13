@@ -71,14 +71,19 @@ C=======================================================================
       SUBROUTINE WGEN(CONTROL,
      &    FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,        !Input
      &    RNMODE, RSEED1, YRDOY, YRSIM,                   !Input
-     &    PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,        !Output
-     &    TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)         !Output
+     &    PAR, RAIN, RSEED, SRAD, TAMP, TAV,              !Output
+     &    TMAX, TMIN, XLAT, XLONG, YREND)                 !Output
       
+!     2023-01-26 chp removed unused variables in argument list:
+!       TDEW, WINDSP
+
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, WGENIN, SIMMIN, YDOY, MTHMID, INCMTH, 
+     &  MTHEND, WGENPM, WGENGN, DAILYWEATHERCHECK
 
       SAVE Y,CF,MTH,MM,YMID,YMEND,WETPRV,XPRV
 
@@ -96,7 +101,7 @@ C=======================================================================
 
       REAL Y(NM,M),CF(NM,M),SRDMN,SRDSD,SRWMN,SRWSD,TXDMN,TXDSD,
      &  TXWMN,TXWSD,TNAMN,TNASD,PWW,PDW,ALPHA,BETA,PAR,SRAD, 
-     &  TMAX,TMIN,RAIN,XLAT,XLONG,XPRV(3),TDEW, WINDSP
+     &  TMAX,TMIN,RAIN,XLAT,XLONG,XPRV(3) !,TDEW, WINDSP
       REAL TAV, TAMP, RHUM
 
       TYPE (ControlType) CONTROL
@@ -112,19 +117,18 @@ C=======================================================================
 C     Input and initialize if first day.
       RHUM = -99.
 
-!      IF (YRDOY .EQ. YRSIM) THEN
-        IF ((INDEX('IABDNGSEC',RNMODE) .GT. 0 .AND. MULTI .EQ. 1) .OR.
-     &      (INDEX('QF',RNMODE) .GT. 0 .AND. 
-     &            RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
-          IF (RSEED1 .GT. 0) THEN
-            RSEED(1) = RSEED1
-          ELSE
-            RSEED(1) = 2510
-          ENDIF
-          RSEED(2) = 7692
-          RSEED(3) = 2456
-          RSEED(4) = 3765
+      IF ((INDEX('IABDNGSEC',RNMODE) .GT. 0 .AND. MULTI .EQ. 1) 
+     &  .OR.(INDEX('QF',RNMODE).GT.0 .AND. RUN.EQ.1 .AND. REPNO.EQ.1) 
+     &  .OR.(INDEX('Y',RNMODE).GT.0 .AND. CONTROL % ENDYRS .EQ. 1)) THEN
+        IF (RSEED1 .GT. 0) THEN
+          RSEED(1) = RSEED1
+        ELSE
+          RSEED(1) = 2510
         ENDIF
+        RSEED(2) = 7692
+        RSEED(3) = 2456
+        RSEED(4) = 3765
+      ENDIF
 
 !-----------------------------------------------------------------------
 !     Two methods of calculating Y, monthly input factors and CF, monthly
@@ -209,8 +213,8 @@ C     Set default values for dew point temp and windspeed
 !      WINDSP = 86.4
 
       CALL DailyWeatherCheck(CONTROL, 
-     &    ERRKEY, FILEW, RAIN, 0, RHUM,                   !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    ERRKEY, FILEW, RAIN, 0,                         !Input
+     &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
 
 !***********************************************************************
@@ -265,13 +269,13 @@ C     Set default values for dew point temp and windspeed
 ! SRDSD     SRAD standard deviation for dry day (MJ/m2-d)
 ! SRWMN     SRAD mean value for wet day (MJ/m2-d)
 ! SRWSD     SRAD standard deviation for wet day (MJ/m2-d)
-! TDEW      Dewpoint temperature (캜)
-! TMAX      Maximum daily temperature (캜)
-! TMIN      Minimum daily temperature (캜)
-! TNAMN(12) Minimum temperature mean value (캜)
-! TNASD     Minimum temperature standard deviation (캜)
-! TXDMN     Maximum temperature mean value for dry day (캜)
-! TXDSD     Maximum temperature standard deviation for dry day (캜)
+! TDEW      Dewpoint temperature (째C)
+! TMAX      Maximum daily temperature (째C)
+! TMIN      Minimum daily temperature (째C)
+! TNAMN(12) Minimum temperature mean value (째C)
+! TNASD     Minimum temperature standard deviation (째C)
+! TXDMN     Maximum temperature mean value for dry day (째C)
+! TXDSD     Maximum temperature standard deviation for dry day (째C)
 ! WETPRV    Switch for previous day's rainfall 0=NONE 1=RAINFALL 
 ! WINDSP    Wind speed (km/d)
 ! XLAT      Latitude (deg.)
@@ -307,6 +311,7 @@ C  08/12/2003 CHP Added I/O error checking
 !  06/23/2005 CHP Change variable "N" to "NM" to avoid future conflict 
 !                 with global variable "N"
 !  11/12/2005 CHP Added read for TAV, TAMP
+!  02/04/2022 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
 !-----------------------------------------------------------------------
 !  Called by: WGEN
 !  Calls:     CFACT
@@ -322,11 +327,15 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleData
+      USE SumModule
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, FIND, IGNORE, SUMVALS, CFACT
 
       CHARACTER BLANK*1,FILEW*12,FILEWW*92,LINE*100
       CHARACTER*6 ERRKEY,FINDCH
       CHARACTER*8 WSTAT
+      CHARACTER*9 CELEV
+      CHARACTER*15 CXCRD, CYCRD
       CHARACTER*80 PATHWT
 
       INTEGER NM,M,I,J,MTH,FOUND,LNUM,NUMDAY(12),LUNCLI,ERRNUM
@@ -335,13 +344,17 @@ C=======================================================================
       PARAMETER (NM=12, M=14, ERRKEY='WGENIN', BLANK = ' ')
 
       REAL Y(NM,M),CF(NM,M),PW,RNUM,RTOT,RWET,XLAT,XLONG,ALPHA,BETA,
-     &  PDW,PWW
+     &  PDW,PWW, ELEV
       REAL TAV, TAMP
+      
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 3
+      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
 
 !      DATA NUMDAY/31,28.25,31,30,31,30,31,31,30,31,30,31/
 !     NUMDAY is INTEGER - change to REAL?? CHP
       DATA NUMDAY/31,28,31,30,31,30,31,31,30,31,30,31/
-
 !-----------------------------------------------------------------------
       LNUM = 1
       PATHL  = INDEX(PATHWT,BLANK)
@@ -364,14 +377,56 @@ C=======================================================================
         CALL IGNORE(LUNCLI,LNUM,FOUND,LINE)
         IF (FOUND .NE. 1) CALL ERROR(ERRKEY,-1,FILEW,LNUM)
 !        READ (LINE,'(6X,2F9.0)',IOSTAT=ERRNUM) XLAT,XLONG
-        READ (LINE,'(6X,2F9.0,6X,2F6.0)',IOSTAT=ERRNUM) 
-     &            XLAT, XLONG, TAV, TAMP
+        READ (LINE,'(6X,2F9.0,F6.0,2F6.0)',IOSTAT=ERRNUM) 
+     &            XLAT, XLONG, ELEV, TAV, TAMP
         IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEW,LNUM+1)
         REWIND(LUNCLI)
       ELSE
         !CALL ERROR(ERRKEY,-1,FILEW,LNUM)
         CALL ERROR(FINDCH, 42, FILEW,LNUM)
       ENDIF
+      
+!  05/28/2021 FO  Added code for LAT,LONG and ELEV in Summary.OUT
+!     Check if LAT and LONG are correct in FileX
+      IF(SUMDAT%YCRD .LE. -99.0 .OR. SUMDAT%XCRD .LE. -999.0) THEN
+        
+        WRITE(CYCRD,'(F9.4)') XLAT
+        WRITE(CXCRD,'(F9.4)') XLONG
+        WRITE(CELEV,'(F6.0)') ELEV
+        
+        IF(XLAT .GE. -90.0 .AND. XLAT .LE. 90.0 .AND.
+     &     XLONG .GE.-180.0 .AND. XLONG .LE. 180.0 .AND.
+     &   LEN_TRIM(CYCRD).GT.0.0 .AND. LEN_TRIM(CXCRD).GT.0.0
+     &   .AND.
+     &   (ABS(XLAT) .GT. 1.E-15 .OR. ABS(XLONG) .GT. 1.E-15))THEN
+          !     Transfer data to the modules
+         CALL PUT('FIELD','CYCRD',CYCRD)
+         CALL PUT('FIELD','CXCRD',CXCRD)      
+         LABEL(1) = 'YCRD'; VALUE(1) = XLAT 
+         LABEL(2) = 'XCRD'; VALUE(2) = XLONG
+        ELSE
+          !     Transfer data to the modules
+          CALL PUT('FIELD','CYCRD','            -99')
+          CALL PUT('FIELD','CXCRD','            -99')
+          LABEL(1) = 'YCRD'; VALUE(1) = -99.0 
+          LABEL(2) = 'XCRD'; VALUE(2) = -999.0 
+        ENDIF 
+      ENDIF
+
+!     Check if ELEV are correct in FileX      
+      IF(SUMDAT%ELEV .LE. -99.0) THEN
+        IF(ELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
+          CALL PUT('FIELD','CELEV',CELEV)
+          LABEL(3) = 'ELEV'; VALUE(3) = ELEV
+        ELSE
+          CALL PUT('FIELD','CELEV','      -99')
+          LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+        ENDIF
+      ENDIF
+      
+C     Send labels and values to OPSUM      
+      CALL SUMVALS (SUMNUM, LABEL, VALUE)
+            
 
       REWIND(LUNCLI)
       FINDCH = '*WGEN '
@@ -441,6 +496,7 @@ C  08/12/2003 CHP Added I/O error checking
 !  06/23/2005 CHP Change variable "N" to "NM" to avoid future conflict 
 !                 with global variable "N"
 !  11/12/2005 CHP Added read for TAV, TAMP
+!  02/04/2022 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
 !-----------------------------------------------------------------------
 !  Called by: WGEN
 !  Calls:     AVG, CFACT, FOURCF, FOURIN
@@ -456,11 +512,16 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleData
+      USE SumModule
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, FIND, IGNORE, SUMVALS, CFACT, AVG, 
+     &  FOURCF, FOURIN
 
       CHARACTER BLANK*1,FILEW*12,FILEWW*92,LINE*100
       CHARACTER*6 ERRKEY,FINDCH
       CHARACTER*8 WSTAT
+      CHARACTER*9 CELEV
+      CHARACTER*15 CXCRD, CYCRD
       CHARACTER*80 PATHWT
 
       INTEGER NM,M,I,MTH,FOUND,LNUM,NUMDAY(12),LUNCLI,ERRNUM, PATHL
@@ -472,7 +533,12 @@ C=======================================================================
      &  SRAMNF(3),TXDMNF(3),TXWMNF(3),TXAMNF(3),SAVG,SDIFF,TDIFF,
      &  FOURIN,SRAMN(12),SRDCV,SRDMN,SRDSD,SRWCV,SRWMN,SRWSD,TNAMN(12),
      &  TNASD,TXAMN(12),TXDMN,TXDSD,TXWMN,TXWSD,ALPHA,BETA,PWW
-      REAL TAV, TAMP
+      REAL TAV, TAMP, ELEV
+      
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 3
+      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
 
 !      DATA NUMDAY/31,28.25,31,30,31,30,31,31,30,31,30,31/
 !     NUMDAY is INTEGER - change to REAL?? CHP
@@ -499,13 +565,54 @@ C=======================================================================
         CALL IGNORE(LUNCLI,LNUM,FOUND,LINE)
         IF (FOUND .NE. 1) CALL ERROR(ERRKEY,-1,FILEW,LNUM)
 !        READ (LINE,'(6X,2F9.0)',IOSTAT=ERRNUM) XLAT,XLONG
-        READ (LINE,'(6X,2F9.0,6X,2F6.0)',IOSTAT=ERRNUM) 
-     &            XLAT, XLONG, TAV, TAMP
+        READ (LINE,'(6X,2F9.0,F6.0,2F6.0)',IOSTAT=ERRNUM) 
+     &            XLAT, XLONG, ELEV, TAV, TAMP
         IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEW,LNUM)
         REWIND(LUNCLI)
       ELSE
         CALL ERROR(FINDCH, 42, FILEW,LNUM)
       ENDIF
+
+!  05/28/2021 FO  Added code for LAT,LONG and ELEV in Summary.OUT
+!     Check if LAT and LONG are correct in FileX
+      IF(SUMDAT%YCRD .LE. -99.0 .OR. SUMDAT%XCRD .LE. -999.0) THEN
+        
+        WRITE(CYCRD,'(F9.4)') XLAT
+        WRITE(CXCRD,'(F9.4)') XLONG
+        WRITE(CELEV,'(F6.0)') ELEV
+        
+        IF(XLAT .GE. -90.0 .AND. XLAT .LE. 90.0 .AND.
+     &     XLONG .GE.-180.0 .AND. XLONG .LE. 180.0 .AND.
+     &   LEN_TRIM(CYCRD).GT.0.0 .AND. LEN_TRIM(CXCRD).GT.0.0
+     &   .AND.
+     &   (ABS(XLAT) .GT. 1.E-15 .OR. ABS(XLONG) .GT. 1.E-15))THEN
+          !     Transfer data to the modules
+         CALL PUT('FIELD','CYCRD',CYCRD)
+         CALL PUT('FIELD','CXCRD',CXCRD)      
+         LABEL(1) = 'YCRD'; VALUE(1) = XLAT 
+         LABEL(2) = 'XCRD'; VALUE(2) = XLONG
+        ELSE
+          !     Transfer data to the modules
+          CALL PUT('FIELD','CYCRD','            -99')
+          CALL PUT('FIELD','CXCRD','            -99')
+          LABEL(1) = 'YCRD'; VALUE(1) = -99.0 
+          LABEL(2) = 'XCRD'; VALUE(2) = -999.0 
+        ENDIF 
+      ENDIF
+
+!     Check if ELEV are correct in FileX      
+      IF(SUMDAT%ELEV .LE. -99.0) THEN
+        IF(ELEV .GT. -99.0 .AND. LEN_TRIM(CELEV) .GT. 0.0) THEN
+          CALL PUT('FIELD','CELEV',CELEV)
+          LABEL(3) = 'ELEV'; VALUE(3) = ELEV
+        ELSE
+          CALL PUT('FIELD','CELEV','      -99')
+          LABEL(3) = 'ELEV'; VALUE(3) = -99.0
+        ENDIF
+      ENDIF
+      
+C     Send labels and values to OPSUM      
+      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
       FINDCH = '*MONTH'
       CALL FIND (LUNCLI,FINDCH,LNUM,FOUND)
@@ -640,6 +747,7 @@ C=======================================================================
       
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL CIRC, ENDYR, LININT
       SAVE
 
       INTEGER CIRC,DOY,ENDYR,I,NM,M,MTH,MM,YR,CC
@@ -698,6 +806,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL RADA, RANDN
       SAVE
 
       INTEGER DOY,RSEED(4),I,WET,WETPRV,J,K
@@ -926,6 +1035,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL CIRC
       INTEGER J,NM,M,MTH,PRV,CIRC,CC
       PARAMETER (NM=12, M=14)
       REAL DIFX,X,Y(NM,M),XP,YP(M)
@@ -965,6 +1075,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL CIRC
       INTEGER I,J,NM,M,NXT,PRV,CIRC,CC
       PARAMETER (NM=12, M=14)
       REAL Y(NM,M),CF(NM,M)

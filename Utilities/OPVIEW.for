@@ -22,6 +22,8 @@ C=======================================================================
 !                         ! which contain control information, soil
 !                         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL CLEAR, ERROR, FIND, GET_CROPD, GETLUN, HEADER, 
+     &  LENSTRING, NAILUJ, TIMDIF, YR_DOY
       SAVE
 
       CHARACTER*1 IDETO, RNMODE, ANS
@@ -206,7 +208,7 @@ C-----------------------------------------------------------------------
       IF (CROP == 'FA') RETURN
 
       IF (YRDOY == YRPLT) THEN
-        IF (CONTROL%MULTI > 1 .OR. INDEX('NQF',CONTROL%RNMODE) > 0) THEN
+        IF (CONTROL%MULTI > 1 .OR. INDEX('NQFY',CONTROL%RNMODE) > 0)THEN
           CALL MULTIRUN(RUN,YRPLT)
         ENDIF
 C-----------------------------------------------------------------------
@@ -345,10 +347,10 @@ C-----------------------------------------------------------------------
 C-GH &          (INDEX(Simulated(I),'-99') .EQ. 0) .AND.            !L!
 C Need to keep -99 values                                           !L!
      &          (INDEX(Simulated(I),'-99') .EQ. 0) .AND.            ! !
-c-chp If Simulated values are -99, then value doesn't exist and     !O!
-c      we shouldn't print it. Maize has some variables that are     !F!
+c-chp If Simulated values are -99, then value doesnt exist and      !O!
+c      we shouldnt print it. Maize has some variables that are      !F!
 c      included in OLAB array (like pod date, etc.) that            ! !
-c      really don't make sense for maize.  We should probably       !T!
+c      really dont make sense for maize.  We should probably        !T!
 c      modify the OLAB array to only include values that are        !H!
 c      needed. - chp 4/11/03                                        !E!
 c      Values of -99 for Measured data are still printed.           !S!

@@ -1,0 +1,38 @@
+$BATCH(WHEAT)
+!
+! Directory    : C:\DSSAT48\Wheat
+! Command Line : C:\DSSAT48\DSCSM048.EXE CSCER048 B DSSBatch.v48
+! Crop         : Wheat           
+! Experiment   : KSAS8101.WHX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CSCER048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Wheat\KSAS8101.WHX                                                                     1      1      0      0      0
+C:\DSSAT48\Wheat\KSAS8101.WHX                                                                     2      1      0      0      0
+C:\DSSAT48\Wheat\KSAS8101.WHX                                                                     3      1      0      0      0
+C:\DSSAT48\Wheat\KSAS8101.WHX                                                                     4      1      0      0      0
+C:\DSSAT48\Wheat\KSAS8101.WHX                                                                     5      1      0      0      0
+C:\DSSAT48\Wheat\KSAS8101.WHX                                                                     6      1      0      0      0
+C:\DSSAT48\Wheat\RORO7401.WHX                                                                     1      1      0      0      0
+C:\DSSAT48\Wheat\RORO7401.WHX                                                                     2      1      0      0      0
+C:\DSSAT48\Wheat\RORO7401.WHX                                                                     3      1      0      0      0
+C:\DSSAT48\Wheat\RORO7401.WHX                                                                     4      1      0      0      0
+C:\DSSAT48\Wheat\RORO7401.WHX                                                                     5      1      0      0      0
+C:\DSSAT48\Wheat\RORO7401.WHX                                                                     6      1      0      0      0
+C:\DSSAT48\Wheat\RORO7401.WHX                                                                     7      1      0      0      0
+C:\DSSAT48\Wheat\RORO7401.WHX                                                                     8      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     1      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     2      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     3      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     4      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     5      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     6      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     7      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     8      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                     9      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                    10      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                    11      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                    12      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                    13      1      0      0      0
+C:\DSSAT48\Wheat\SWSW7501.WHX                                                                    14      1      0      0      0

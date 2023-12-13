@@ -39,6 +39,10 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL CLEAR, DATEC, ERROR, FILL_ISWITCH, IPECO, IPVAR, NAILUJ, 
+     &  SECLI, SECROP, SEFERT, SEFLD, SEFREQ, SEHARV, SEINIT, SEIRR, 
+     &  SEPEST, SEPLT, SERES, SESIM, SESOIL, SETIME, SEVAR, SEWTH, 
+     &  YR_DOY
 
       INCLUDE 'COMIBS.blk'
       INCLUDE 'COMSOI.blk'
@@ -112,7 +116,8 @@ C=======================================================================
          HARMAN = 'AT REPORTED GROWTH STAGES'
        ELSEIF (IHARI .EQ. 'M') THEN
          HARMAN = 'AT HARVEST MATURITY      '
-       ELSEIF (IHARI .EQ. 'R') THEN
+       ELSEIF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
          HARMAN = 'ON REPORTED DATE(S)      '
        ELSEIF (IHARI .EQ. 'D') THEN
          HARMAN = 'ON REPORTED DAP          '
@@ -242,7 +247,7 @@ C
           CALL SECROP (FILEC,FILEE,FILEG,RNMODE,CROP,CROPD,PATHCR)
           IF (CROP .NE. CROPC) THEN
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,
-     &                  PATHGE,ECONO, MODEL, ATLINE, CROP)
+     &                  PATHGE,ECONO, MODEL, ATLINE) !, CROP)
              IF (INDEX('GRO,CSM,CAN,CER',MODEL(3:6)) .GT. 0) THEN 
                 NSENS =  0
                 CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
@@ -281,7 +286,8 @@ C
      &         SHF,BD,OC,PH,DLAYR,NLAYR,DS,LNIC,LNSA,YRIC,PRCROP,
      &         WRESR,WRESND,EFINOC,EFNFIX,PATHSL,SWINIT,INO3,INH4,
      &         EXTP,ICWD,ICRES,ICREN,ICREP,ICRIP,
-     &         ICRID,SWCN,ADCOEF,TOTN,YRSIM, SMPX, EXK,
+!    &         ICRID,SWCN,ADCOEF,TOTN,YRSIM, SMPX, EXK,
+     &         ICRID,SWCN,ADCOEF,TOTN, SMPX, EXK,
      &         PHKCL, SMHB, SMKE, ISWITCH)
 
       ELSE IF (MENU .EQ. 6) THEN
@@ -420,6 +426,7 @@ C  2. Header revision and minor changes           P.W.W.      2-7-93
 C  2. Added switch common block, restructured     P.W.W.      2-7-93
 C  3. Added additional variables                  G.H.       04-2-96
 C  07/16/2002 CHP Increased number of applications to 200 (NAPPL)
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : FILEW,YRSIM,YRPLT,YEAR,PATHWT,IDLAPL,NIRR,RESDAY,NARES,FDAY,
 C           NFERT,HLATE,PWDINF,PWDINL,NHAR,HDATE
@@ -445,6 +452,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, IGNORE, Y4K_DOY, YR_DOY
 
       CHARACTER*1  BLANK,IIRRI,IFERI,IHARI,IRESI,ISWTIL,ISWCHE
       CHARACTER*6  ERRKEY
@@ -491,7 +499,10 @@ C
 
       !Y2K shift for YEARN
       YEARNDOY = YEARN * 1000 + 1
-	CALL Y2K_DOY(YEARNDOY)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+	    !CALL Y2K_DOY(YEARNDOY)
+	    CALL Y4K_DOY(YEARNDOY,FILEWW,LINWTH,ERRKEY,1)
+      
       YEARN = (YEARNDOY - 1) / 1000
 
       YRDIF = YEARN - YEAR

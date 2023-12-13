@@ -9,6 +9,7 @@ C  09/15/1991 NBP Written
 C  05/28/1993 PWW Header revision and minor changes   
 C  10/23/2002 CHP Modified for Y2K
 C  02/03/2005 GH  Corrected error checking for missing levels
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : FILEX,LNENV,LUNEXP
 C
@@ -33,17 +34,21 @@ C=======================================================================
       SUBROUTINE IPENV(FILEX,LNENV,LUNEXP,CO2ADJ,CO2FAC,DAYADJ,
      &  DAYFAC,DPTADJ,DPTFAC,NEV,PRCADJ,PRCFAC,RADADJ,RADFAC,
      &  TMADJ,TMFAC,TXADJ,TXFAC,WMDATE,WMODI,WNDADJ,WNDFAC,
-     &  WTHADJ)
+     &  WTHADJ)   !,YRSIM)
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       YRSIM
 
       USE ModuleDefs
       IMPLICIT    NONE
+      EXTERNAL FIND, ERROR, IGNORE, Y4K_DOY
 
       CHARACTER   ERRKEY*6,LINE*80,FILEX*12,WMODI*1,FINDCH*6
       CHARACTER*1 DAYFAC(NAPPL),RADFAC(NAPPL),TXFAC (NAPPL)
       CHARACTER*1 TMFAC(NAPPL), WNDFAC(NAPPL)
       CHARACTER*1 PRCFAC(NAPPL),CO2FAC(NAPPL),DPTFAC(NAPPL)
       INTEGER     ERRNUM,FOUND,I,LN,LNENV,LUNEXP,LINEXP,NEV
-      INTEGER     WMDATE(NAPPL)
+      INTEGER     WMDATE(NAPPL)   !,YRSIM
 
       REAL        DAYADJ(NAPPL),RADADJ(NAPPL),TXADJ (NAPPL),TMADJ(NAPPL)
       REAL        PRCADJ(NAPPL)
@@ -99,8 +104,10 @@ C
      &         TXFAC (NEV),TXADJ (NEV),TMFAC (NEV),TMADJ (NEV),
      &         PRCFAC(NEV),PRCADJ(NEV),CO2FAC(NEV),CO2ADJ(NEV),
      &         DPTFAC(NEV),DPTADJ(NEV),WNDFAC(NEV),WNDADJ(NEV)
-
-	         CALL Y2K_DOY (WMDATE(NEV))
+           
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+	             !CALL Y2K_DOY (WMDATE(NEV))
+               CALL Y4K_DOY (WMDATE(NEV),FILEX,LINEXP,ERRKEY,3)
 
                IF (DAYADJ(NEV) .LE. -90.) DAYADJ(NEV) = 0.0
                IF (RADADJ(NEV) .LE. -90.) RADADJ(NEV) = 0.0

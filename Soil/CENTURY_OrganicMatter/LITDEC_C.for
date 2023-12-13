@@ -36,6 +36,7 @@
                          !which contain control information, soil
                          !parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL EFLOW_C
       SAVE
 !     ------------------------------------------------------------------
       LOGICAL DOCULT(0:NL)

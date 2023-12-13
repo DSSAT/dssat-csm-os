@@ -15,7 +15,7 @@ C  08/20/2002 GH  Modified for Y2K
 !  Called by: WATBAL
 C=====================================================================
       SUBROUTINE Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, 
+     &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
@@ -24,6 +24,7 @@ C=====================================================================
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
@@ -35,6 +36,8 @@ C=====================================================================
       REAL CEO, CEP, CES, CRAIN, EFFIRR
       REAL TDFC, TDFD
       REAL TDRAIN, TOTIR, TRUNOF, TSW, TSWINI
+      REAL LatInflow, LatOutflow
+      REAL CumLatInflow, CumLatOutflow
       REAL WBALAN
 
 !     Temporary daily balance
@@ -92,6 +95,22 @@ C=====================================================================
 !-----------------------------------------------------------------------
       RUN     = CONTROL % RUN
 
+      TSWY   = TSWINI
+      FLOODI = FLOOD
+      FLOODY = FLOOD
+
+      !CINF = 0.0
+      SNOWI = SNOW
+      SNOWY = SNOW
+      MWI   = MULCHWAT
+      MWY   = MULCHWAT
+
+      CUMWBAL = 0.0
+      CUMRESWATADD = 0.0
+      CUMMULEVAP = 0.0
+      CumLatInflow = 0.0
+      CumLatOutflow = 0.0
+
 !     Open output file
       CALL GETLUN('SWBAL', LUNWBL)
       INQUIRE (FILE = SWBAL, EXIST = FEXIST)
@@ -106,12 +125,12 @@ C=====================================================================
       CALL HEADER(SEASINIT, LUNWBL, RUN)
 
       IF (INDEX('AD',IDETL) > 0) THEN
-        !Write header for daily output
+!       Write header for daily output
         WRITE (LUNWBL,1120)
  1120   FORMAT('@YEAR DOY   DAS',
      & '    SWTD    FWTD    SNTD   MWTD',                   !State vars
      & '   IRRD   PRED',                                    !Inflows
-     & '  RESAD',                                           !Inflows
+     & '  RESAD   LFLOD',                                   !Inflows
      & '  MEVAP',                                           !Outflows
      & '   DRND   ROFD   FROD   ESAD   EPAD   EFAD   TDFD', !Outflows
      & '    WBAL   CUMWBAL',                                !Balance
@@ -122,7 +141,7 @@ C=====================================================================
      &    (TSWINI * 10.), FLOOD, SNOW, MULCHWAT,      !State variables
      &    0.0, 0.0,                                   !Inflows
      &    0.0,                                        !Inflows
-     &    MULCHEVAP,                                  !Outflows
+     &    0.0,MULCHEVAP,                              !Outflows
 !     &    INFILT,                 !Exchange between flood and soil water
      &    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,          !Outflows
      &    0.0, 0.0                                    !Balance
@@ -131,19 +150,9 @@ C=====================================================================
 
       ENDIF
 
-      TSWY   = TSWINI
-      FLOODI = FLOOD
-      FLOODY = FLOOD
-
-      !CINF = 0.0
-      SNOWI = SNOW
       SNOWY = SNOW
       MWI   = MULCHWAT
       MWY   = MULCHWAT
-
-      CUMWBAL = 0.0
-      CUMRESWATADD = 0.0
-      CUMMULEVAP = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -168,6 +177,8 @@ C=====================================================================
         WBALAN = 
      &         + IRRAMT + RAIN                !Inflows
      &         + RESWATADD_T                  !Inflows
+!                LatOutflow is negative!
+     &         + LatInflow + LatOutflow       !Lateral flow
      &         - MULCHEVAP                    !Outflows
      &         - DRAIN - RUNOFF - FRUNOFF     !Outflows
      &         - ES - EP - EF - (TDFD*10.)    !Outflows
@@ -195,6 +206,7 @@ C=====================================================================
      &    ,(TSW * 10.), FLOOD, SNOW, MULCHWAT         !State variables
      &    ,IRRAMT, RAIN                               !Inflows
      &    ,RESWATADD_T                                !Inflows
+     &    ,LatInflow+LatOutflow                       !Lateral flow
      &    ,MULCHEVAP                                  !Outflows
 !!     &    ,INFILT                 !Exchange between flood and soil water
      &    ,DRAIN, RUNOFF, FRUNOFF, ES, EP, EF, TDFD*10. !Outflows
@@ -205,6 +217,7 @@ C=====================================================================
  1300   FORMAT(1X,I4,1X,I3.3,1X,I5
      &      ,3F8.2,F7.2
      &      ,3F7.2
+     &      ,F8.2       !Lateral flow
      &      ,8F7.2
      &      ,F8.2,F10.2 !Balances
      &      ,4X,5F8.2   !SWDELT's
@@ -219,6 +232,8 @@ C=====================================================================
       
       CUMMULEVAP   = CUMMULEVAP + MULCHEVAP
       CUMRESWATADD = CUMRESWATADD + RESWATADD_T
+      CumLatInflow = CumLatInflow + LatInflow
+      CumLatOutflow = CumLatOutflow + LatOutflow
 
 !***********************************************************************
 !***********************************************************************
@@ -236,16 +251,7 @@ C-----------------------------------------------------------------------
       CALL Get('SPAM','EP', EP)
       CALL Get('SPAM','ES', ES)
 
-!      CALL Get('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm) (includes losses)
-!      CALL Get('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
-!      CALL Get('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
-      CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrigation
-
-!      IF (EFFIRR .GT. 0.0) THEN
-!        TOTEFFIRR = EFFIRR * TOTIR
-!      ELSE
-!        TOTEFFIRR = TOTIR
-!      ENDIF
+      CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrig
 
       WRITE (LUNWBL,320)
   320 FORMAT(/,'!',5X,'WATER BALANCE PARAMETERS',
@@ -255,24 +261,28 @@ C-----------------------------------------------------------------------
      &                   YR2, DY2, TSW*10, 
      &                   TOTEFFIRR,
      &                   CRAIN, CUMRESWATADD, 
+     &                   CumLatInflow+CumLatOutflow,
      &                   TDRAIN, TDFC*10., TRUNOF, CUMMULEVAP,
-     &                   CES, CEP, CEO
+     &                   CES, CEP, CES+CEP, CEO
   400 FORMAT(
      &    /,'!',5X,'Soil H20 (start) on Year/day',I5,'/',I3.3,T44,F10.2,
      &    /,'!',5X,'Soil H20 (final) on Year/day',I5,'/',I3.3,T44,F10.2,
-     &    /,'!',5X,'Effective Irrigation',         T44,F10.2,
-     &    /,'!',5X,'Precipitation',                T44,F10.2,
-     &    /,'!',5X,'Water added with new mulch',   T44,F10.2,
-     &    /,'!',5X,'Drainage',                     T44,F10.2,
-     &    /,'!',5X,'Tiledrain flow',               T44,F10.2,
-     &    /,'!',5X,'Runoff',                       T44,F10.2,
-     &    /,'!',5X,'Mulch evaporation',            T44,F10.2,
-     &    /,'!',5X,'Soil Evaporation',             T44,F10.2,
-     &    /,'!',5X,'Transpiration',                T44,F10.2,
-     &    /,'!',5X,'Potential ET',                 T44,F10.2)
+     &    /,'!',5X,'Effective Irrigation',                    T44,F10.2,
+     &    /,'!',5X,'Precipitation',                           T44,F10.2,
+     &    /,'!',5X,'Water added with new mulch',              T44,F10.2,
+     &    /,'!',5X,'Net lateral flow',                        T44,F10.2,
+     &    /,'!',5X,'Drainage',                                T44,F10.2,
+     &    /,'!',5X,'Tiledrain flow',                          T44,F10.2,
+     &    /,'!',5X,'Runoff',                                  T44,F10.2,
+     &    /,'!',5X,'Mulch evaporation',                       T44,F10.2,
+     &    /,'!',5X,'Soil Evaporation',                        T44,F10.2,
+     &    /,'!',5X,'Transpiration',                           T44,F10.2,
+     &    /,'!',5X,'Total evapotranspiration',                T44,F10.2,
+     &    /,'!',5X,'Total potential evapotranspiration',      T44,F10.2)
 
       WBALAN = (TSWINI * 10.) - (TSW * 10.) !Change in water content
      &       + TOTEFFIRR + CRAIN + CUMRESWATADD           !Inflows
+     &       + CumLatInflow + CumLatOutflow               !Lateral flow
      &       - CUMMULEVAP                                 !Outflows
      &       - TDRAIN - TRUNOF - CES - CEP - (TDFC*10.)   !Outflows
 

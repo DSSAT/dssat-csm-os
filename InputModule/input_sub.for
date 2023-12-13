@@ -1,17 +1,17 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
-C                      University of Florida, Gainesville, Florida
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
+C COPYRIGHT 1998-2023
+C                     DSSAT Foundation                      
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
 C                     
-C  ALL RIGHTS RESERVED
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  INPUT, Subroutine
 C
-C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.5
+C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.8
 C
-C  October 2007      Gerrit Hoogenboom, Cheryl Porter and Jim Jones
+C  Gerrit Hoogenboom, Cheryl Porter and Jim Jones
 C
 C
 C  Reads FileX, includes sensitivity analysis and writes a
@@ -54,6 +54,8 @@ C 02/21/2006 GH  Read Crop Module from DSSATPRO
 C 02/01/2007 GH  RNMODE=T option for Gencalc Batch files
 C 02/07/2007 GH  Include path for FileX and rotation number to command
 C                line
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C
@@ -85,6 +87,10 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, YR_DOY, CLEAR, OPHEAD, PATHD, INTRO, JOIN_TRIM, 
+     &  IPEXP, IPSOIL_INP, IPVAR, IPSLIN, IPSLAN, SENS, INSOIL, 
+     &  WEATHR_INP, OPTEMPY2K, OPTEMPXY2K, OPGEN
+
       SAVE
 
       INCLUDE 'COMSOI.blk'
@@ -125,7 +131,7 @@ C-SUN INTEGER       LNBLNK
       REAL          INO3(NL),INH4(NL),EFINOC,EFNFIX
       REAL          AINO3,AINH4,TNMIN,ANO3,ANH4,TSWINI
       REAL          ESW(NL),SW(NL),TLL,TSW,TDUL,TSAT,TPESW,CUMDEP,PESW
-      REAL          PLTFOR
+      REAL          PLTFOR, PMBD
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
@@ -141,7 +147,7 @@ C-----------------------------------------------------------------------
       CALL GETARG (0,INPUTX)
 !      call path_adj(inputx)
       IPX = LEN_TRIM(INPUTX)
-D     INPUTX = STDPATH // 'DSCSM047.EXE'
+!D     INPUTX = STDPATH // 'DSCSM048.EXE'
       CALL PATHD  (DSSATP,INPUTX,IPX)
       CONTROL % DSSATP = DSSATP
 
@@ -184,7 +190,7 @@ C-----------------------------------------------------------------------
      &     IIRV,FTYPEN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,
      &     LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &     LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES, 
-     &     CONTROL, ISWITCH, UseSimCtr, MODELARG)
+     &     CONTROL, ISWITCH, UseSimCtr, MODELARG, PMBD)
 
 C-----------------------------------------------------------------------
 C     Call IPSOIL
@@ -202,7 +208,7 @@ C     Call IPVAR
 C-----------------------------------------------------------------------
       IF (CROP .NE. 'FA') THEN
         CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,PATHGE,
-     &              ECONO, MODEL, ATLINE, CROP)
+     &              ECONO, MODEL, ATLINE) !, CROP)
       ENDIF
 
 C-----------------------------------------------------------------------
@@ -212,13 +218,16 @@ C-----------------------------------------------------------------------
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
          CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &        WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM) 
+     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
          IF (ISIMI .EQ. 'I') THEN
            IF (YRIC .LT. YRSIM .AND. YRIC .GT. 0) THEN
              YRSIM = YRIC
              CALL YR_DOY (YRSIM,YEAR,ISIM)
-             IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
+             IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
                 WRITE (FILEW(5:6),'(I2)') YEAR
+             ENDIF
+             IF (MEWTH .EQ. 'G') THEN
+                WRITE (FILEWG(5:6),'(I2)') YEAR
              ENDIF
            ENDIF
          ENDIF
@@ -229,7 +238,7 @@ C-----------------------------------------------------------------------
          IF (ISWNIT .EQ. 'Y') THEN
             CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, OC,
      &            PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)
+     &            SASC, SAEA, NLAYR)    !, YRSIM)
          ENDIF
 !      ENDIF
       ENDIF
@@ -262,10 +271,10 @@ C-----------------------------------------------------------------------
                   CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,
      &                 PRCROP,WRESR,WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,
      &                 SWINIT,INH4,INO3,ISWITCH,
-     &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID,YRSIM) 
+     &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)    !,YRSIM) 
                   CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, 
      &            OC, PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
-     &            SASC, NLAYR)
+     &            SASC, SAEA, NLAYR)    !, YRSIM)
                   NSENS = 1
                ENDIF
             ENDIF
@@ -317,14 +326,14 @@ C-----------------------------------------------------------------------
      &            YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &            SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,MODEL,
      &            RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,TRTN,
-     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS)
+     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMBD)
       
         CALL OPTEMPXY2K (YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &           SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,
      &           FILEIO,FROP,ECONO,ATLINE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX)
+     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX,PMBD)
 
 C-----------------------------------------------------------------------
 C     Write DSSAT Format Version 4 Output files

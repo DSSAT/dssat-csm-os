@@ -23,14 +23,14 @@ C  Called : CASUPRO
 C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
       SUBROUTINE CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, GRLF, GRSU, KCAN,    !Input
-     &    LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
-     &    MinGr, Ph1P, PhenoStage,                         !Input
-     &    PI1, RATTP, Smax,                                !Input
-     &	    StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
-     &    SumTTStalk, SWFAC, TMIN, XLAI,                   !Input
-     &    YRDOY, YRPLT, YRSIM,                             !Input
-     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)              !Output
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
+     &    LeafMaint, LeafNum, LFmntDEF,               !Input
+     &    MinGr, Ph1P, PhenoStage,                    !Input
+     &    PI1, RATTP, Smax,                           !Input
+     &    StalkState, STKmntDEF, STKWT, STKWTP,       !Input
+     &    SumTTStalk, SWFAC, TMIN, XLAI,              !Input
+     &    YRDOY, YRPLT,                               !Input
+     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)         !Output
 
 !OHD -  Include senescence of roots as SRDOT, SRNDOT
 !-----------------------------------------------------------------------
@@ -38,6 +38,7 @@ C========================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE, TABEX, TIMDIF
       SAVE
 
       CHARACTER*1  RNMODE  
@@ -50,18 +51,19 @@ C========================================================================
 
       INTEGER I, II, CAB, LUNCRP, LUNECO, ERR, ISECT, LNUM, Zone 
       INTEGER DYNAMIC, Smax, Stalk, TIMDIF
-      INTEGER DAS, YRDOY, YRPLT, YRSIM
+      INTEGER DAS, YRDOY, YRPLT !, YRSIM
       INTEGER FOUND
       INTEGER NSWAB
-	INTEGER DAP, REPNO, RUN, WLUN, LUN
+	INTEGER DAP, REPNO, RUN, LUN
+      !INTEGER WLUN
 
       INTEGER, DIMENSION(1:NumOfStalks) :: Kill
 	INTEGER, PARAMETER :: CanopyLayers=3
 
       PARAMETER (NSWAB = 5)
 
-      REAL a, GRLF, GRSU  
-      REAL KCAN, MinGr, Ph1P, PI1  
+      REAL a  !, GRLF, GRSU  
+      REAL MinGr, Ph1P, PI1 !KCAN
       REAL PORLOST, RATTP 
       REAL SENDAY, SLNDOT   
 	REAL SSDOT, SSNDOT, StkSenFrac, SWFAC   
@@ -73,10 +75,10 @@ C========================================================================
 
 	REAL, DIMENSION(1:NumOfStalks) :: SenLfCld, 
      &                SenLfNat, SenLfShd, SenLfWat, SLDOT,  
-     &                SuDEF, TotalDEF, CanopyMaint
+     &                TotalDEF, CanopyMaint  !SuDEF, 
 	REAL, DIMENSION(0:NumOfDays) :: STKWTP          
-	REAL, DIMENSION(0:NumOfDays, NumOfStalks) :: LeafArea, LeafNum, 
-     &                STKmntDEF, STKWT, SumTTStalk
+	REAL, DIMENSION(0:NumOfDays, NumOfStalks) :: LeafNum, 
+     &                STKmntDEF, STKWT, SumTTStalk  !LeafArea, 
 	REAL, DIMENSION(1:NumOfStalks,CanopyLayers) :: CanopySenes,
      &                LeafMaint, LFmntDEF 
 	!LOGICAL FEXIST
@@ -211,38 +213,38 @@ C------ Find particular ECOTYPE ----------------------------------------
 ! Echoes input data  (OHD debugging and calibrating code)
 
 ! Open file to write results from CSP_SENES
-      CALL GETLUN('WORK.OUT',WLUN)
-      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
-     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
+!      CALL GETLUN('WORK.OUT',WLUN)
+!      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
+!     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
 
-      WRITE(WLUN,*)
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_SENES.for")')
-      WRITE(WLUN,'(1X,"-------------------------")')
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"RESULTS FROM CSP_SENES.for")')
+!      WRITE(WLUN,'(1X,"-------------------------")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
 
       SECTION = '*#PHOT'  
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"KCAN   : ",F6.2)') KCAN
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"KCAN   : ",F6.2)') KCAN
 
       SECTION = '*SENES'
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"SENDAY : ",F6.2)') SENDAY
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"SENDAY : ",F6.2)') SENDAY
 
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"I      : ",4I6)') (I,I=1,4)
-      WRITE(WLUN,'(1X,"XSTAGE : ",4F6.2)') (XSTAGE(II),II=1,4)
-      WRITE(WLUN,'(1X,"XSENMX : ",4F6.2)') (XSENMX(II),II=1,4)
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"I      : ",4I6)') (I,I=1,4)
-      WRITE(WLUN,'(1X,"SENPOR : ",4F6.2)') (SENPOR(II),II=1,4)
-      WRITE(WLUN,'(1X,"SENMAX : ",4F6.2)') (SENMAX(II),II=1,4)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"I      : ",4I6)') (I,I=1,4)
+!      WRITE(WLUN,'(1X,"XSTAGE : ",4F6.2)') (XSTAGE(II),II=1,4)
+!      WRITE(WLUN,'(1X,"XSENMX : ",4F6.2)') (XSENMX(II),II=1,4)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"I      : ",4I6)') (I,I=1,4)
+!      WRITE(WLUN,'(1X,"SENPOR : ",4F6.2)') (SENPOR(II),II=1,4)
+!      WRITE(WLUN,'(1X,"SENMAX : ",4F6.2)') (SENMAX(II),II=1,4)
 
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"END RESULTS FROM CSP_SENES.for")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"END RESULTS FROM CSP_SENES.for")')
 
 !      CLOSE (WLUN)
 

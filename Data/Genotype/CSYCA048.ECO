@@ -1,0 +1,54 @@
+$ECOTYPES:CSYCA048.041621    Last edit: 05/05/2023 LPM
+
+
+! Users should be aware that some of the coefficients are likely
+! to vary from region to region, reflecting either an incomplete
+! understanding of the environmental physiology of cassava, or an
+! inadequate incorporation of aspects of current understanding.
+! For example,PARUE may vary from region to region,possibly
+! because of variation in the proportion of diffuse radiation
+! in the incoming solar and sky components.
+
+*ECOTYPE:CSYCA048
+@ECO#  ECONAME.......... PARUE TBLSZ SRN%S  KCAN PGERM  PPS1  PPS2  PPS3  PHTV  PHSV  RDGS  RLWR  WFSU RSUSE  HMPC
+!                            1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+!                         g/MJ    ˚C     %     #    Tu                     kPa fr/kPa cm/d   m/g     #    fr     %
+999991 MINIMA             2.00  12.0   .25  0.65   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+999992 MAXIMA             3.20  12.0  1.00  0.65   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+                                                                                                            
+DFAULT DEFAULT            2.80  12.0   .65  0.65   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+                                                                                                            
+990001 STANDARD1          1.50  12.0   .65  0.60   150     0     0     0   0.8  0.23   2.2    50  0.50  0.00    30
+990002 STANDARD2          1.30  14.0   .65  0.88   120     0     0     0   0.8  0.23   2.2    50  0.00  0.05    30
+990003 STANDARD3          1.50  12.0   .65  0.85   120     0     0     0   0.8  0.23   2.2    50  0.40  0.05    30
+990004 STANDARD4          1.50  12.0   .65  0.86   240     0     0     0   0.8  0.23   2.2    50  0.50  0.10    30
+990005 STANDARD5          1.50  12.0   .65  0.72   120     0     0     0   0.8  0.23   2.2    50  0.50  0.10    30
+990006 STANDARD6          1.50  12.0   .65  0.61   310     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+990007 STANDARD7          2.00  12.0   .65  0.72   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+990008 STANDARD8          1.90  14.0   .65  0.88   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+990009 STANDARD9          1.90  14.0   .65  0.88   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+990010 STANDARD10         1.90  14.0   .65  0.88   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+990011 STANDARD11         1.90  14.0   .65  0.88   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+990012 STANDARD12         1.90  14.0   .65  0.88   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+990013 STANDARD13         2.40  12.0   .65  0.72   120     0     0     0   0.8  0.23   2.2    50  0.30  0.05    30
+990014 STANDARD14         1.90  14.0   .65  0.88   120     0     0     0   0.8  0.23   2.2    50  0.30  0.10    30
+990015 STANDARD15         3.80  14.0   .65  0.50   120     0     0     0   0.8  0.23   2.2    50  0.00  0.00    30
+
+! COEFF   DEFINITION
+! =====   ==========
+! ECO#    Ecotype code (text)
+! ECONAME Ecotype name (text)
+! HMPC    Harvest product dry matter content (%)
+! KCAN    PAR extinction coefficient (#)
+! PARUE   PAR conversion factor,standard (g dry matter/MJ)
+! PGERM   Germination duration (Tu)
+! PHSV    Photosynthesis and transpiration,sensitivity to VPD (fraction/kPa) (hourly effect, MEPHO = V)
+! PHTV    Photosynthesis and transpiration,threshold VPD for reduction in rate (kPa) (hourly effect, MEPHO = V)
+! PPSn    Photoperiod sensitivity that delays branching n in short days (h-1)
+! RDGS    Root depth growth rate,standard (cm/standard day)
+! RLWR    Root length/weight ratio (m/g)
+! RSUSE   Reserves remobilization fraction (storage roots for top growth) (fr)
+! TBLSZ   Base temperature for leaf development (˚C)
+! SRN%S   Storage root standard N concentration (% dm)
+! WFSU    Water stress factor for leaf senescence (0-1)
+

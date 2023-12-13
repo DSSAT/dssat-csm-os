@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Out_Sens ( & 
-        CN          , DOY         , RNMODE      , STGYEARDOY  , TN          , YEAR        &
+        CN          , DOY         , RNMODE      , STGYEARDOY  , TN          , YEAR        , LAI      &
         )
         
         USE ModuleDefs                                                                        ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
@@ -16,12 +16,13 @@
         USE YCA_Formats_m
      
         IMPLICIT NONE 
-     
+        EXTERNAL YR_DOY, CSOPLINE, CALENDAR, DAPCALC, CSCLEAR5
+
         INTEGER :: CN          , DOY         , STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
         
-        REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
-
+        REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output) 
+        REAL    :: LAI
         CHARACTER(LEN=1)  :: RNMODE      
 
         !-----------------------------------------------------------------------------------------------------------
@@ -34,7 +35,8 @@
             DO L = 0, PSNUM
                 CALL Csopline(laic,laistg(l))
                 IF (STGYEARDOY(L) < 9999999.AND.L /= PSX.AND.L /= PSX+1) THEN
-                    CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                    CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                    CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                     CALL Calendar(year,doy,dom,month)
                     CNCTMP = 0.0
                     IF (CWADSTG(L) > 0.0)CNCTMP = CNADSTG(L)/CWADSTG(L)*100
@@ -46,7 +48,8 @@
             ! For harvest at specified date
             IF (YEARDOYHARF == YEARDOY) THEN
                 CALL Csopline(laic,lai)
-                CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+!                CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                CALL YR_DOY(YEARDOYHARF,YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWAD > 0.0)CNCTMP = CNAD/CWAD*100

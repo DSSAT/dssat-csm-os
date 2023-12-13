@@ -17,13 +17,14 @@
         USE YCA_First_Trans_m
       
         IMPLICIT NONE
-      
+        EXTERNAL GETLUN, TVILENT, TL10FROMI, XREADC, XREADT, UCASE
+
         INTEGER CN          , DOY         , FROP        , ON          , RN          , RUN         , SN          , TN          
         INTEGER YEAR
         !INTEGER VERSIONCSCAS
         INTEGER TVILENT                                                                       ! Integer function call
 
-        CHARACTER(LEN=1)   IDETL       , ISWNIT      , ISWWAT      , RNMODE      
+        CHARACTER(LEN=1)   IDETL       , ISWNIT      , RNMODE      ! ISWWAT      
         CHARACTER(LEN=120) FILEIOIN    
         CHARACTER(LEN=10)  TL10FROMI                                                          ! Character function call
         
@@ -34,7 +35,7 @@
         IF (RUNCRP <= 0) THEN
             MODNAME(1:8) = 'CSYCA' // ModelVerTxt 
             VERSIONCSCAS = 010114                                                             ! MF 15SE14 Changed from VERSION, conflict with ModuleDefs 
-            GENFLCHK(1:15) = 'CSYCA047.08102017'
+            GENFLCHK(1:15) = 'CSYCA048.041621'
             
             !-----------------------------------------------------------------------
             !         Set parameters (Most should be placed in input files!)
@@ -150,7 +151,7 @@
             IF (FILEIOT == 'XFL') THEN
                 IF (RNMODE == 'I'.OR.RNMODE == 'E'.OR.RNMODE == 'A') THEN
                     IDETD = 'M'
-                ELSEIF (RNMODE == 'B'.OR.RNMODE == 'N'.OR.RNMODE == 'Q')THEN
+                ELSEIF (RNMODE == 'B'.OR.RNMODE == 'N'.OR.RNMODE == 'Q' .OR. RNMODE .EQ. 'Y')THEN
                     IDETD = 'S'
                 ENDIF  
             ELSE
@@ -168,7 +169,6 @@
             CALL GETLUN ('FILET',FNUMT)
             
             ! WORK,ERROR,AND TEMPORARY FILES
-            CALL GETLUN ('WORK.OUT',FNUMWRK)
             CALL GETLUN ('ERROR.OUT',FNUMERR)
             CALL GETLUN ('FNAMETMP',FNUMTMP)
             
@@ -181,21 +181,25 @@
                 OUTPG = 'PlantGro.'//OUT
                 OUTPN = 'PlantN.'//OUT
                 OUTPG2 = EXCODE(1:8)//'.OP2'
+                OUTPG3 = 'FreshWt.'//OUT
                 OUTPGF = EXCODE(1:8)//'.OPF'
             ELSE  
                 OUTPG = 'PlantGro.'//OUT
                 OUTPN = 'PlantN.'//OUT
                 OUTPG2 = 'PlantGr2.'//OUT
+                OUTPG3 = 'FreshWt.'//OUT
                 OUTPGF = 'PlantGrf.'//OUT 
             ENDIF
             CALL GETLUN (OUTPG,NOUTPG)
             CALL GETLUN (OUTPG2,NOUTPG2)
+            CALL GETLUN (OUTPG3,NOUTPF)
             CALL GETLUN (OUTPGF,NOUTPGF)
             CALL GETLUN (OUTPN,NOUTPN)
             
             ! IDETO FILES
             ! NB. Renaming of Overview and Evaluate handled by CSM
-            FNAMEOV = 'Overview.'//out
+            !LPM 30JUL2021 Change to uppercase the overview.out file
+            FNAMEOV = 'OVERVIEW.'//out
             FNAMEEVAL = 'Evaluate.'//out
             FNAMEMEAS = 'Measured.'//out
             CALL GETLUN (FNAMEEVAL,fnumeval)
@@ -235,40 +239,16 @@
             !-----------------------------------------------------------------------
             
             ! WARNING AND WORK FILES
-            INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-            IF (.NOT.FOPEN) THEN
-                IF (RUN == 1) THEN
-                    OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-                    WRITE(FNUMWRK,*) 'CSYCA  CIAT Cassava Module '
-                ELSE
-                    OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',ACTION = 'READWRITE')
-                    WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                    IF (IDETL == '0'.OR.IDETL == 'Y'.OR.IDETL == 'N') THEN
-                        CLOSE (FNUMWRK)
-                        OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-                        WRITE(fnumwrk,*) ' '
-                        WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                    ENDIF  
-                ENDIF
-            ELSE          
-                IF (IDETL == '0'.OR.IDETL == 'Y'.OR.IDETL == 'N') THEN
-                    ! Close and re-open Work file
-                    CLOSE (FNUMWRK, STATUS = 'DELETE')
-                    OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
-                    WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                    CALL Getlun('READS.OUT',fnumrea)
-                    ! Close and re-open Reads file
-                    CLOSE (FNUMREA, STATUS = 'DELETE')
-                    OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
-                    WRITE(fnumrea,*)' '
-                    WRITE(fnumrea,*)' File closed and re-opened to avoid generating huge file'
-                ELSE  
-                    WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                ENDIF
-            ENDIF  
+! FO/LPM/GH/CHP - 12-04-2020 - READS.out file removed from CSM output.            
+!            IF (IDETL .EQ. 'Y') THEN
+!              ! Close and re-open Work file
+!              CALL Getlun('READS.OUT',fnumrea)
+!              ! Close and re-open Reads file
+!              CLOSE (FNUMREA, STATUS = 'DELETE')
+!              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
+!              WRITE(fnumrea,*)' '
+!              WRITE(fnumrea,*)' File closed and re-opened to avoid generating huge file'
+!            ENDIF
             
             IF (RUN == 1) THEN
                 ! IDETG FILES
@@ -278,6 +258,9 @@
                 OPEN (UNIT = NOUTPG2, FILE = OUTPG2)
                 WRITE (NOUTPG2,'(A38)')'$GROWTH ASPECTS SECONDARY OUTPUTS FILE'
                 CLOSE (NOUTPG2)
+                OPEN (UNIT = NOUTPF, FILE = OUTPG3)
+                WRITE(NOUTPF,'("*Fresh Weight Output File")')
+                CLOSE (NOUTPF)
                 OPEN (UNIT = NOUTPGF, FILE = OUTPGF)
                 WRITE (NOUTPGF,'(A27)')'$GROWTH FACTOR OUTPUTS FILE'
                 CLOSE (NOUTPGF)

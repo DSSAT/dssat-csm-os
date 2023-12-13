@@ -60,6 +60,7 @@ C  06/15/2014 CHP Written
       SUBROUTINE FertTypeRead(CONTROL) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL PATH, GETLUN, FIND2, IGNORE
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -114,6 +115,7 @@ C  06/15/2014 CHP Written
             IF (ERR .GT. 0) CALL Fert_ERROR(64, ERRKEY, FILEF,LNUM,LUNF)
             IF (Ftype .GT. NFertTypes) 
      &        CALL Fert_ERROR(42, ERRKEY, FILEF, LNUM, LUNF)
+
             READ(CHARTEST,'(6X,A35,3X,8F6.0,3X,A3,F6.0,6A6)',IOSTAT=ERR)
      &        FertFile(Ftype) % FertName, 
      &        FertFile(Ftype) % NO3_N_pct, 
@@ -128,10 +130,20 @@ C  06/15/2014 CHP Written
      &        FertFile(Ftype) % NSIGK,
      &        FertFile(Ftype) % FertN, 
      &        FertFile(Ftype) % FertP, 
-     &        FertFile(Ftype) % FertK, 
-     &        FertFile(Ftype) % FertC, 
-     &        FertFile(Ftype) % FertMg, 
-     &        FertFile(Ftype) % FertS
+     &        FertFile(Ftype) % FertK 
+
+!           The remaining variables are included in the fertilizer 
+!           lookup file, but are not currently used by the model.
+!     &        FertFile(Ftype) % FertS, 
+!     &        FertFile(Ftype) % FerMg, 
+!     &        FertFile(Ftype) % FerCa, 
+!     &        FertFile(Ftype) % FertB, 
+!     &        FertFile(Ftype) % FerZn, 
+!     &        FertFile(Ftype) % FerMn, 
+!     &        FertFile(Ftype) % FerFe, 
+!     &        FertFile(Ftype) % Form, 
+!     &        FertFile(Ftype) % Notes
+
             IF (ERR .GT. 0) CALL Fert_ERROR(64, ERRKEY, FILEF,LNUM,LUNF)
             I = I + 1
             FertFile(Ftype) % Check = 1
@@ -193,6 +205,7 @@ C  06/15/2014 CHP Written
 
 !     ------------------------------------------------------------------
       IMPLICIT  NONE
+      EXTERNAL READ_DETAIL, WARNING
 
       LOGICAL HASN, HASP, HASK  ! N, P, K
       LOGICAL HASUI             ! Urease inhibitor
@@ -332,6 +345,7 @@ C  06/15/2014 CHP Written
 !     Error handling routine for fertilizer characteristics input 
 
       IMPLICIT NONE
+      EXTERNAL WARNING, ERROR
 
       CHARACTER* 6 ERRKEY
       CHARACTER*78 MSG(4)

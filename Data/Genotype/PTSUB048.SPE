@@ -1,0 +1,36 @@
+*POTATO SPECIES COEFFICIENTS: PTSUB047 MODEL
+
+*CHARACTERISTICS
+@C X(EN) Y(CH)  YSTD
+!PT OPT   CO2X      0  220  330  440  550  660  770  880  990 9999  ! CO2 X axis
+!PT OPT   CO2Y   0.00 0.81 1.00 1.03 1.06 1.10 1.13 1.16 1.18 1.25  ! CO2 Y axis 
+!PT OPT   CO2Y   0.00 0.71 1.00 1.08 1.17 1.25 1.32 1.38 1.43 1.50  ! CO2 Y axis Using general C3 response for now. JIL
+PT OPT   CO2X      0  220  330  440  550  660  770  880  990 9999  ! CO2 X axis
+PT OPT   CO2Y   0.00 0.71 1.00 1.19 1.40 1.41 1.43 1.44 1.47 1.50  ! CO2 Y axis Using FACE and OTC data. RR
+!PT OPT   CO2Y   0.00 0.71 1.00 1.08 1.17 1.25 1.32 1.38 1.43 1.50  ! CO2 Y axis Using general C3 response for now. JIL
+
+
+
+
+
+PT OPT   RWEP   1.50                   ! Threshold of the ratio Water uptake/Transpiration to begin calculating stress affecting expansion (TURFAC)
+PT OPT   PORM   0.02                   ! Minimum pore space
+PT OPT   RWMX   0.03                   ! Max root water uptake !PT_SUBSTOR.FOR
+PT OPT   RLWR   2.50                   ! Root length weight ratio	!chp changed from 0.75
+
+*TEMPERATURE EFFECTS
+!PT OPT   SENST   -10.   32.   34.   50.     !Temperature thersholds which affect senescense for leaf; 
+!PT OPT   SENSF     1.    1.   1.5   5.5     !Factor of leaf senescense rate 
+PT OPT   SENST     6.   32.   41.   50.     !Temperature thersholds which affect senescense for leaf; 
+PT OPT   SENSF     1.    1.   0.7    0.0     !Factor of leaf senescense rate ....final 
+
+
+! values for good simulation for SR y Washi and figures of paper
+!32= 1
+!41=0.7
+
+!*EVAPOTRANSPIRATION
+  0.68   1.0       KEP, EORATIO
+  0.50  1.00       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.77       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+

@@ -1,8 +1,22 @@
+!======================================================================
+!  WH_temp, subroutines
+!
+!  WHAPS subroutines
+!----------------------------------------------------------------------
+!  Revision history
+!  11/01/2021 FO Added missing CONTROL type for nwheats_* subroutines
+!  11/01/2021 FO Added ERRKEY paramter for all nwheats_* subroutines
+!  01/18/2022 TF Added statments to prevent divisions by zero
+!----------------------------------------------------------------------
+
 ! JZW note: need to read p_root_n_min, p_init_grain_nconc, g_uptake_source='apsim' or 'calc'
 !p_min_grain_nc_ratio = min_grain_nc_ratio, p_max_n_uptake
 ! where is pndem? it is ndmd
 ! uptake_no3 is soil pool/property variables ??
 !The following is line 1546 in *tmp
+! JG moved some CUL parameters to ECO file 01/21/2020
+! JG moved ozone parameters to ECO file 07/24/2020
+! JG cleaned ozone parameters in ECO file 01/18/2022
 
 *     ===========================================================
       !*! real function nwheats_fac (layer)
@@ -43,10 +57,10 @@
       !! DSSAT: KG2PPM(1) = 1.0/(BD1*1.E-01*DLAYR(1))
 
       nwheats_fac = 100.0 /( bd(layer)*dlayr_nw(layer))
-      !   mg[N]      100             ha        m2      1000000mg   mm
-      !  ------   =------------ * --------*---------- * ---------*-------
-      !   kg[soil]  mm*  g/cm3     10000m2  10000cm2    kg         0.1cm
-      !*! call pop_routine (myname)
+!         mg[N]      100             ha        m2      1000000mg   mm
+!        ------   =------------ * --------*---------- * ---------*-------
+!         kg[soil]  mm*  g/cm3     10000m2  10000cm2    kg         0.1cm
+!      *! call pop_routine (myname)
       return
       end
 
@@ -60,12 +74,13 @@
       USE ModuleDefs
       USE WH_module
       implicit none
+      EXTERNAL nwheats_level
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
 
 *+  Sub-Program Arguments    *****OK******
-      integer    stagno                ! (OUTPUT) phenological stage number
+      integer    stagno            ! (OUTPUT) phenological stage number
 
 *+  Purpose
 *      determine germination date
@@ -89,14 +104,14 @@
       integer    nwheats_level          ! function
 
 *+  Constant Values
-      real       grmsw                 ! required mean plant extractable soil
-      parameter (grmsw = 0.02)         !   water for germination (mm/mm)
+      real       grmsw            ! required mean plant extractable soil
+      parameter (grmsw = 0.02)    !   water for germination (mm/mm)
 *
-      real       grmsw0                ! plant extractable soil water in
-      parameter (grmsw0 = 0.0)         !   seedling layer inadequate for
-                                       !   germination (mm/mm)
+      real       grmsw0           ! plant extractable soil water in
+      parameter (grmsw0 = 0.0)    !   seedling layer inadequate for
+                                  !   germination (mm/mm)
 *
-      character  myname*(*)            ! name of subroutine
+      character  myname*(*)       ! name of subroutine
       parameter (myname = 'nwheats_germn')
 *
       real       wtmean                ! weight for weighted mean
@@ -126,10 +141,10 @@
  
       !*! call push_routine (myname)
  
-          ! determine if soil water content is sufficient to allow germination.
-          ! either soil water content of the seeded layer must be > the
-          ! lower limit or a weighted average of the water content of the
-          ! seeded layer and next layer below must be adequate for germination.
+!           determine if soil water content is sufficient to allow germination.
+!           either soil water content of the seeded layer must be > the
+!           lower limit or a weighted average of the water content of the
+!           seeded layer and next layer below must be adequate for germination.
  
       if (      stagno.eq.sowing
      :    .and. stgdur(sowing).ge.1) then
@@ -256,22 +271,28 @@ cnh to allow watching of these variables
 
 *     ==================================================================
       ! find actual grain uptake by translocation
-      subroutine nwheats_grnit (CONTROL, ISWITCH,                 !Input
-     &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
+      subroutine nwheats_grnit (CONTROL,                  !Input
+     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        pnout)                                             !Output
+
+! 2023-01-18 CHP removed unused variables from argument list:
+!  ISWITCH,
+
 *     ==================================================================
 
       USE ModuleDefs
       USE WH_module
       implicit none
+      EXTERNAL nwheats_gndmd, GrN_Ptl, sum_real_array, warning, ERROR, 
+     &  count_of_real_vals
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
 
 *+  Sub-Program Arguments      ******OK*******
-      !*! real       pnout (*)             ! (OUTPUT) plant N taken out from plant parts ()
+!      *! real       pnout (*)             ! (OUTPUT) plant N taken out from plant parts ()
       real pnout (mxpart)
       CHARACTER*78 MSG(1)
 
@@ -289,6 +310,8 @@ cnh to allow watching of these variables
 *+  Constant Values
       character  myname*(*)            ! name of subroutine
       parameter (myname = 'nwheats_grnit')
+      CHARACTER*6 ERRKEY
+      PARAMETER (ERRKEY = 'NWGRNI')
 
 *+  Local Variables	 ******OK*******
       real gndmd         ! grain N demand
@@ -304,19 +327,20 @@ cnh to allow watching of these variables
 
 
       real delta_N_fraction ! N as proportion of daily C transfer to
-                            ! today's increment in C in grain (growth + translocation)
+              ! today's increment in C in grain (growth + translocation)
       real delta_grainC     
       ! JZW add the following
       real gro_wt(mxpart), trans_wt (mxpart) 
-      Real p_max_grain_nc_ratio ! JZW get from crop.apr: 
-      ! max_grain_nc_ratio = 0.04;  0.035=20%;  .04=23% protein, max n:c ratio of grain growth 
-      parameter (p_max_grain_nc_ratio = 0.04)
+!       Real p_max_grain_nc_ratio ! JZW get from crop.apr: ! JG replaced with MXNCR 7/23/20
+!       max_grain_nc_ratio = 0.04;  0.035=20%;  .04=23% protein, max n:c ratio of grain growth 
+!       parameter (p_max_grain_nc_ratio = 0.04) ! JG replaced with MXNCR 7/23/20
+      Real MXNCR  ! JG added 7/23/20
       real sum_real_array 
-      real rgnfil
+!     real rgnfil
       REAL g_navl(mxpart) 
       REAL mnc(mxpart)  ! Minimum N concentration, by plant part
       INTEGER ISTAGE 
-      Real tempmx, tempmn, dtt, gpp, g_gndmd, g_rgnfil
+      Real tempmx, tempmn, dtt, gpp  !, g_gndmd, g_rgnfil
       REAL nfact(10) ! Nstress sensitivity by plant organ (0-1)
       REAL nitmn  ! nitrogen minimum level
       REAL npot   ! potential N available for transfer  (g/part) 
@@ -326,7 +350,8 @@ cnh to allow watching of these variables
       REAL plantwt(mxpart) 
       REAL sen_la   ! Senesced leaf area, mm2/plant      nwheat
       TYPE (ControlType) CONTROL
-      TYPE (SwitchType) ISWITCH
+!     TYPE (SwitchType) ISWITCH
+      
 *- Implementation Section ----------------------------------
  
       !*! call push_routine (myname)
@@ -345,22 +370,24 @@ cnh to allow watching of these variables
          if (delta_grainC .gt. 0.) then
            delta_N_fraction = gndmd / delta_grainC
          else
-           delta_N_fraction = 0. !JZW add this case in Oct, 2014. On 1st day of emergence, goes here
+           delta_N_fraction = 0. 
+!          JZW add this case in Oct, 2014. On 1st day of emergence, goes here
          endif
          
+!          JG replaced p_max_grain_nc_ratio with MXNCR 7/23/20
 !         delta_N_fraction = u_bound (delta_N_fraction
 !     :                              ,p_max_grain_nc_ratio)
          delta_N_fraction = min(delta_N_fraction
-     &                              ,p_max_grain_nc_ratio)
+     &                              ,MXNCR)     
          gndmd = delta_N_fraction * delta_grainC
  
-              ! -------------- get grain N potential (supply) -----------
+!               -------------- get grain N potential (supply) -----------
  
       !*! call nwheats_gnptl (navl) 
       ! FSR Created from NWheat subroutine "nwheats_gnptl"
       !Calculates N available for transfer to grain (g/plant) from each
       !       plant part. 
-      Call GrN_Ptl (CONTROL, ISWITCH,
+      Call GrN_Ptl (CONTROL, 
      &   mnc, nfact, nitmn, npot, optfr, part, pl_la, pl_nit,     !INPUT
      &   plantwt, sen_la,                                         !INPUT
      &   navl)            
@@ -393,8 +420,8 @@ cnh added for watch purposes
          pnout(leaf_part) = navl(leaf_part)
          pnout(stem_part) = navl(stem_part)
          pnout(lfsheath_part) = navl(lfsheath_part) 
-         !JZW run EEST, 1938198, when reach here, pnout(sten_part) is not assigned, until finish endif
-         !navl(stem_part) was 5.3382293*10-5, pnout(stem_part) is 5.338304x10-5
+!         JZW run EEST, 1938198, when reach here, pnout(sten_part) is not assigned, until finish endif
+!         navl(stem_part) was 5.3382293*10-5, pnout(stem_part) is 5.338304x10-5
  
 ! take the rest of the grain n uptake from the roots
          pnout(root_part)  =  gnuptk - tnavil
@@ -426,15 +453,15 @@ cnh added for watch purposes
 
           if (pnout(part) .lt. 0.) then
              msg(1) = "pnout bound check <0 error"
-             call warning(1, "NWheat", msg)
-             call error("NWheat",99," ",0)
+             call warning(1, ERRKEY, msg)
+             call error(ERRKEY,99," ",0)
           endif
 
           if  (pnout(part). gt. navl(part) ) then
-              ! pnout is pntrans calculated by nwheats_grnit for finding actual grain uptake by translocation
-              ! navl (mxpart) is N available for transfer to grain
+!               pnout is pntrans calculated by nwheats_grnit for finding actual grain uptake by translocation
+!               navl (mxpart) is N available for transfer to grain
               msg(1) = "pnout bound check >navl error"
-              call warning(1, "NWheat", msg)
+              call warning(1, ERRKEY, msg)
               pnout(part) = navl(part) !JZW add this case in Oct, 2014
           endif
 1000  continue
@@ -448,6 +475,7 @@ cnh added for watch purposes
 *     ===========================================================
       USE ModuleDefs
       implicit none
+      EXTERNAL count_of_real_vals, warning
       !*! include 'const.inc'              ! err_user
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -487,7 +515,7 @@ cnh added for watch purposes
       !JZW add the following
       REAL dlayr_nw(NL) 
       integer count_of_real_vals
-      CHARACTER*6, PARAMETER :: ERRKEY = '_lyrck'
+      CHARACTER*6, PARAMETER :: ERRKEY = 'NWLYRC'
 *- Implementation Section ----------------------------------
       !*! call push_routine(my_name)
  
@@ -519,6 +547,7 @@ cnh added for watch purposes
 *     ===========================================================
       USE WH_module
       implicit none
+      external sum_real_array, error, warning
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
@@ -546,6 +575,8 @@ cnh added for watch purposes
       character  myname*(*) ! name of subroutine
       parameter (myname = 'nwheats_ndmd')
       character*78 msg(1)
+      CHARACTER*6 ERRKEY
+      PARAMETER (ERRKEY = 'NWNDMD')
 *
       real       tolnce     ! tolerance for calculation errors
       parameter (tolnce = 1.0e-5)
@@ -584,8 +615,8 @@ cnh added for watch purposes
          !*! pgro(part) = pcarb* (growt(part)/ carbo)
           if (carbh .eq. 0.) then
               msg(1) = "carbh is zero"
-              call warning(1,"NWheat", msg)
-              call error("NWheat",99," ",0)
+              call warning(1,ERRKEY, msg)
+              call error(ERRKEY,99," ",0)
           endif
          pgro(part) = pcarbo* (gro_wt(part)/ carbh)
          !*! pgro(part) = bound (pgro(part), 0.0, pcarb)
@@ -652,18 +683,20 @@ cjh  end of correction
       end
 *     ==================================================================
       !*! subroutine nwheats_nuptk (snuptk_no3, snuptk_nh4, pnuptk)
-      subroutine nwheats_nuptk (SOILPROP,                         !Input
+      subroutine nwheats_nuptk (CONTROL, SOILPROP,                !Input
      &      carbh, cnc, EXNH4,     EXNO3,                         !Input
-     &      g_uptake_source, gro_wt, MNNH4, MNNO3,                !Input
+     &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR,         rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw, MXNUP,                                !Input
+     &      WFNU, xstag_nw,                                       !Input
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
 
       USE ModuleDefs
       USE WH_module
       implicit none
+      external count_of_real_vals, getlun, error, ignore, 
+     &  nwheats_ndmd, sum_real_array, nwheats_nsupply
       !*! include 'convert.inc'            ! gm2kg, sm2ha
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -711,7 +744,7 @@ cjh  end of correction
       REAL gro_wt(mxpart)
       REAL pl_nit(mxpart)
       REal cnc(mxpart)
-      real       cnit
+!     real       cnit
       real pcarbo
       REAL            carbh
       REAL            dlayr_nw(NL), swdep(NL)
@@ -723,15 +756,103 @@ cjh  end of correction
       REAL PLTPOP
       real EXNH4, MNNH4, EXNO3, MNNO3, WFNU, PNUPR
       real MXNUP
-      ! real p_max_n_uptake  , btk 03/02/2017
-      ! PARAMETER (p_max_n_uptake = .6)  !(g/m2) max N uptake per day ; commented out by btk, 03/02/2017
+!       real p_max_n_uptake  , btk 03/02/2017
+!       PARAMETER (p_max_n_uptake = .6)  !(g/m2) max N uptake per day ; commented out by btk, 03/02/2017
       character*5 G_UPTAKE_SOURCE
       Integer count_of_real_vals
       REAL  ha2sm
       PARAMETER   (ha2sm = 10000)
       REAL  gm2kg
       PARAMETER   (gm2kg = 0.001)   ! conversion factor from NWheat.
+      
+      ! JG added for ecotype file
+      INTEGER         DYNAMIC         
+      CHARACTER*12    FILEE 
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      CHARACTER*6     ECONO 
+      CHARACTER*6     ERRKEY   
+      INTEGER     ERRNUM
+      INTEGER     ISECT
+      INTEGER     PATHL
+      INTEGER     LNUM
+      INTEGER     LUNECO
+      INTEGER     NOUTDO
+      CHARACTER*80    PATHER 
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
+      REAL        P2AF,P3AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN
+      REAL        MXNCR,INGWT,INGNC,FREAR,MNNCR,GPPSS,GPPES,MXGWT
+      REAL        MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,SFOZ1
+      ! JG end for ecotype variables
+      
+C     The variable "CONTROL" is of type "ControlType".
+      TYPE (ControlType) CONTROL
       TYPE (SoilType)    SOILPROP
+      
+      PARAMETER (ERRKEY = 'NWNPTK')
+      
+!  JG added section to read ecotype file
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+!----------------------------------------------------------------------
+!         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
+! ---------------------------------------------------------------------
+      IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
+
+!       Do this just once in RUNINIT
+        IF (DYNAMIC .EQ. RUNINIT) THEN
+          CALL GETLUN('OUTO', NOUTDO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,SFOZ1
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+          CLOSE (LUNECO)
+        ENDIF
+      ENDIF
+!  JG end of ecotype addition
       
       dlayr_nw = SOILPROP % DLAYR * 10.
 *- Implementation Section ----------------------------------
@@ -742,14 +863,14 @@ cjh  end of correction
          snup_no3 = 0.0
          !*! call fill_real_array (snuptk_nh4, 0.0, mxlayr)
          snup_nh4 = 0.0
-            ! N demand by plant
+!             N demand by plant
  
-            ! pndem is in common and is being changed here
-            ! because it is needed for cumulative totals. It is not a state.
-            ! Needs to be fixed ????????????????? JNGH 230693
-            ! State variables must be only changed by deltas at the top level,
-            ! and deltas can be changed at lower levels if they are in
-            ! common blocks. Is this acceptable ????
+!             pndem is in common and is being changed here
+!             because it is needed for cumulative totals. It is not a state.
+!             Needs to be fixed ????????????????? JNGH 230693
+!             State variables must be only changed by deltas at the top level,
+!             and deltas can be changed at lower levels if they are in
+!             common blocks. Is this acceptable ????
       !*! call nwheats_ndmd (pndem)
 * ====================================================================
       CALL nwheats_ndmd (xstag_nw,  gro_wt, plantwt,       !Input
@@ -759,20 +880,25 @@ cjh  end of correction
       n_demand = sum_real_array (pndem, mxpart)
  
       if (g_uptake_source .eq. 'calc') then
-            ! First we put a cap on the total uptake that can occur
-            ! on any given day by bounding the demand. Note: we do
-            ! not bound the "real" n demand, just the value here.
-         !*! capped_n_demand = u_bound(n_demand,p_max_n_uptake/plants)
-         ! capped_n_demand = min(n_demand,p_max_n_uptake/PLTPOP) !  btk 03/02/2017
-          capped_n_demand = min(n_demand,MXNUP/PLTPOP) ! changed by btk 03/02/2017
-         
+!             First we put a cap on the total uptake that can occur
+!             on any given day by bounding the demand. Note: we do
+!             not bound the "real" n demand, just the value here.
+!         *! capped_n_demand = u_bound(n_demand,p_max_n_uptake/plants)
+!          capped_n_demand = min(n_demand,p_max_n_uptake/PLTPOP) !  btk 03/02/2017
+!         Added to void divisions by zero (TF - 01/18/2022)
+          IF (PLTPOP .GT. 0.0) THEN 
+!           changed by btk 03/02/2017
+            capped_n_demand = min(n_demand,MXNUP/PLTPOP) 
+          ELSE
+            capped_n_demand = 0
+          ENDIF             
          !                                  g/m2
          !          g   =                 ______
          !                               plant/m2
             ! find potential N uptake (supply, available N)
          !*! call nwheats_nsupply (avail_NO3, avail_NH4)
 * ====================================================================
-         call nwheats_nsupply (SOILPROP, rlv_nw,                !Input
+         call nwheats_nsupply (CONTROL, SOILPROP, rlv_nw,       !Input
      &     sno3, snh4, swdep, EXNH4, MNNH4, EXNO3,              !Input
      &     MNNO3, WFNU, PNUPR,                                  !Input
      &     avail_no3, avail_nh4)                               !Output
@@ -787,8 +913,12 @@ cjh  end of correction
 !*!     :                   ,n_supply/ha2sm/gm2kg/plants
 !*!     :                   ,0.0)
          if (n_supply .gt. 0.) then
-           scalef = capped_n_demand
-     &                   /(n_supply/ha2sm/gm2kg/PLTPOP)
+!          Added to void divisions by zero (TF - 01/18/2022)
+           IF (PLTPOP .GT. 0.0) THEN 
+            scalef = capped_n_demand/(n_supply/ha2sm/gm2kg/PLTPOP)
+           ELSE
+            scalef = 0
+           ENDIF
         !scalef = (capped_n_demand/n_supply)*ha2sm *  gm2kg  * PLTPOP
          !             g /plant             10000m2  0.001*kg   plant
          !      = (-------------------) *  -------* -------- *------
@@ -836,10 +966,14 @@ cjh  end of correction
          endif
          ! pnuptk_tot is total plant N uptake (g/plant) Wrong ????
          !*! pnuptk (part) = pnuptk_tot*fr_part/ha2sm/gm2kg/plants
-         pnup (part) = pnuptk_tot*fr_part/ha2sm/gm2kg/PLTPOP
-         !    g           kg                      1
-         ! --------  = ----------*     -------------------------------------- ?????
-         !  plant         ha          (10000m2/ha) * (0.001kg/g) * (plant/m2)
+         ! Added IF statment to void divisions by zero (TF - 01/18/2022)
+         IF (PLTPOP .GT. 0.0) THEN
+            pnup (part) = pnuptk_tot*fr_part/ha2sm/gm2kg/PLTPOP
+         ELSE
+            pnup (part) = 0
+         ENDIF         !    g           kg                      1
+!          --------  = ----------*     -------------------------------------- 
+!           plant         ha          (10000m2/ha) * (0.001kg/g) * (plant/m2)
 1300  continue
  
       !*! call pop_routine (myname)
@@ -847,13 +981,14 @@ cjh  end of correction
       end
 * ====================================================================
 !*!    subroutine nwheats_nsupply(avail_no3, avail_nh4)
-       subroutine nwheats_nsupply(SOILPROP, rlv_nw,             !Input
+       subroutine nwheats_nsupply(CONTROL, SOILPROP, rlv_nw,    !Input
      &     sno3, snh4, swdep, EXNH4, MNNH4, EXNO3,              !Input
      &     MNNO3, WFNU, PNUPR,                                  !Input
      &     avail_no3, avail_nh4)                               !Output
 * ====================================================================
       USE ModuleDefs
       implicit none
+      EXTERNAL GETLUN, ERROR, IGNORE, COUNT_OF_REAL_VALS, NWHEATS_FAC
       !*! include 'convert.inc'            ! gm2kg, sm2ha
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -906,18 +1041,110 @@ cbak      parameter (potrate = .9e-6)        ! (g n/mm root/day)
       integer count_of_real_vals
       real duldep(NL), lldep(NL), satdep(NL), snh4(NL), sno3(NL)
       real rlv_nw(NL), swdep(NL), dlayr_nw(NL)
-      real nh4mn(NL) ! nh4ppm_min, minimum allowable NH4 (ppm) in soil n initial
+      real nh4mn(NL) ! nh4ppm_min, min allowable NH4 (ppm) soil n init
       real no3mn(NL) ! no3ppm_min, minimum allowable NO3 (ppm
       PARAMETER   (nh4mn = 0.0) ! from APSIM soiln.ini
       PARAMETER   (no3mn = 0.0) ! from APSIM soiln.ini
-      real EXNH4 ! it is APSIM p_enupf_nh4 exponent for NH4 supply factor, FSR: change this unwieldy parameter by a factor of 100
-      real MNNH4 ! it is APSIM p_mnupf_nh4, minimum for NH4 supply factor
-      real EXNO3 ! it is APSIM p_enupf_no3, exponent for NO3 supply factor, FSR: change this unwieldy parameter by a factor of 100
-      real MNNO3 ! it is APSIM p_mnupf_no3,  minimum for NO3 supply factor
-      real WFNU	 ! it is APSIM p_wfnu_power,  power term for water effect on N supply
-      real PNUPR ! it is APSIM p_pot_nuprate potential uptake rate (g/mm root/day)  [FSR: change this unwieldy parameter to 0.45 mg/m]
+      real EXNH4 
+      real MNNH4 
+      real EXNO3 
+      real MNNO3 
+      real WFNU  
+      real PNUPR 
+!EXNH4 = APSIM p_enupf_nh4 exponent for NH4 supply factor, FSR: change this unwieldy parameter by a factor of 100
+!MNNH4 = APSIM p_mnupf_nh4, minimum for NH4 supply factor
+!EXNO3 = APSIM p_enupf_no3, exponent for NO3 supply factor, FSR: change this unwieldy parameter by a factor of 100
+!MNNO3 = APSIM p_mnupf_no3,  minimum for NO3 supply factor
+!WFNU  = APSIM p_wfnu_power,  power term for water effect on N supply
+!PNUPR = APSIM p_pot_nuprate potential uptake rate (g/mm root/day)  [FSR: change this unwieldy parameter to 0.45 mg/m]
      
+      ! JG added for ecotype file
+      INTEGER         DYNAMIC         
+      CHARACTER*12    FILEE 
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      CHARACTER*6     ECONO 
+      CHARACTER*6     ERRKEY   
+      INTEGER     ERRNUM
+      INTEGER     ISECT
+      INTEGER     PATHL
+      INTEGER     LNUM
+      INTEGER     LUNECO
+      INTEGER     NOUTDO
+      CHARACTER*80    PATHER 
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
+      REAL        P2AF,P3AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN
+      REAL        MXNUP,MXNCR,INGWT,INGNC,FREAR,MNNCR,GPPSS,GPPES
+      REAL        MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,SFOZ1
+      TYPE (ControlType) CONTROL
+      ! JG end for ecotype variables
+      
       TYPE (SoilType)  SOILPROP
+      
+      PARAMETER (ERRKEY = 'NWNSUP')
+      
+!  JG added section to read ecotype file
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+!----------------------------------------------------------------------
+!         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
+! ---------------------------------------------------------------------
+      IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
+
+!       Do this just once in RUNINIT
+        IF (DYNAMIC .EQ. RUNINIT) THEN
+          CALL GETLUN('OUTO', NOUTDO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,SFOZ1
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+          CLOSE (LUNECO)
+        ENDIF
+      ENDIF
+!  JG end of ecotype addition
       
       duldep =  SOILPROP % DUL
       lldep  =  SOILPROP % LL
@@ -973,26 +1200,27 @@ cnh          fno3 = 1.0 - exp (-0.0675 * (no3 - 0.2))
          smdfr = max(smdfr, 0.0)
          smdfr = min(smdfr, 1.0)
  
-         ! note - the following equations are arranged just as the original
-         ! code. these need to be rearranged to show meaning.
+!          note - the following equations are arranged just as the original
+!          code. these need to be rearranged to show meaning.
  
-         ! units for rlength are mm per ha
-         !*! rlength = rlv(layer) * dlayr(layer) / smm2sm / sm2ha
+!          units for rlength are mm per ha
+!         *! rlength = rlv(layer) * dlayr(layer) / smm2sm / sm2ha
          rlength = rlv_nw(layer) * dlayr_nw(layer) / smm2sm / sm2ha
-         !  mm       mm                              1
-         ! ---- = ------------  *    mm          *--------* --------
-         !  ha       mm3                    0.000001* m2/mm2 0.0001 *ha/m2
+!           mm       mm                              1
+!          ---- = ------------  *    mm          *--------* --------
+!           ha       mm3                    0.000001* m2/mm2 0.0001 *ha/m2
 cnh         avail_no3(layer) = rlength * fno3 * smdfr**2 * potrate*gm2kg
 !*!         avail_no3(layer) = rlength * fno3 * smdfr**p_wfnu_power
 !*!     :                      * p_pot_nuprate*gm2kg
          avail_no3(layer) = rlength * fno3 * smdfr**WFNU
      :                      * PNUPR * gm2kg
-         !   kg               mm                        g          0.001kg
-         !--------------- = ------- *      *      * ----------- * ---------
-         !    ha               ha                     mm[root]*d      g
-         max_avail_no3 = sno3(layer) - no3mn(layer) ! no3ppm_min in soiln.ini is in ppm
-         ! kg/ha        = kg/ha   - mg/MG ! NO3MN in *spe is in mg/MG ????????
-         !*! avail_no3(layer) = u_bound (avail_no3(layer),max_avail_no3)
+!            kg               mm                        g          0.001kg
+!         --------------- = ------- *      *      * ----------- * ---------
+!             ha               ha                     mm[root]*d      g
+!         no3ppm_min in soiln.ini is in ppm
+         max_avail_no3 = sno3(layer) - no3mn(layer) 
+!          kg/ha        = kg/ha   - mg/MG ! NO3MN in *spe is in mg/MG ????????
+!         *! avail_no3(layer) = u_bound (avail_no3(layer),max_avail_no3)
          avail_no3(layer) = min (avail_no3(layer),max_avail_no3)
 cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
 !*!         avail_nh4(layer) = rlength * fnh4 * smdfr**p_wfnu_power
@@ -1000,7 +1228,7 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
          avail_nh4(layer) = rlength * fnh4 * smdfr**WFNU
      :                      * PNUPR*gm2kg
          max_avail_nh4 = snh4(layer) - nh4mn(layer)
-         !*! avail_nh4(layer) = u_bound (avail_nh4(layer), max_avail_nh4)
+!         *! avail_nh4(layer) = u_bound (avail_nh4(layer), max_avail_nh4)
          avail_nh4(layer) = min (avail_nh4(layer), max_avail_nh4)
   100 continue
  
@@ -1011,19 +1239,21 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
 *     ===========================================================
       !*! subroutine nwheats_plnin (plantn)
       !Initial PLant N
-      subroutine nwheats_plnin (istage, stgdur, plantwt,   !input
+      subroutine nwheats_plnin (CONTROL, istage, stgdur, plantwt,
  !   &    p_init_grain_nconc, p_root_n_min,                !input
      &    mnc,         INGNC,        MNRTN,                !input
      &    pl_nit )                                      !input & output
 *     ===========================================================
+      USE ModuleDefs  ! JG added for ecotype file
       USE WH_module
       implicit none
+      EXTERNAL GETLUN, ERROR, IGNORE, WARNING
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
       !*! include 'error.pub'                         
 
 *+  Sub-Program Arguments  *******OK********
-      !*!real       plantn (*)            ! (INPUT/OUTPUT) plant part nitrogen
+!      *!real       plantn (*)            ! (INPUT/OUTPUT) plant part nitrogen
                                        !   (g/plant)
 
 *+  Purpose
@@ -1040,9 +1270,9 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
       real avail_stem_n
       real avail_root_n, avail_leaf_n, avail_lfsheath_n
       real INGNC  ! p_init_grain_nconc from APSIM
-          ! .CUL parameter INGNC = initial grain N conc(g N/g biomass) 17.1% protein
+!           .CUL parameter INGNC = initial grain N conc(g N/g biomass) 17.1% protein
       real MNRTN  ! p_root_n_min from APSIM, * 1000
-          ! .CUL parameter MNRTN = min root n due to grain n initialisation (0=off)
+!           .CUL parameter MNRTN = min root n due to grain n initialisation (0=off)
       real root_n_moved, lfsheath_n_moved, leaf_n_moved 
       ! JZW add the following variables
       Integer istage, stgdur(20)
@@ -1050,6 +1280,94 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
       REAL mnc(mxpart)  ! Minimum N concentration, by plant part
       REAL plantwt(mxpart)
 
+      ! JG added for ecotype file
+      INTEGER         DYNAMIC         
+      CHARACTER*12    FILEE 
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      CHARACTER*6     ECONO 
+      CHARACTER*6     ERRKEY   
+      INTEGER     ERRNUM
+      INTEGER     ISECT
+      INTEGER     PATHL
+      INTEGER     LNUM
+      INTEGER     LUNECO
+      INTEGER     NOUTDO
+      CHARACTER*80    PATHER 
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
+      REAL        P2AF,P3AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN
+      REAL        MXNUP,MXNCR,WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT
+      REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,NOMOB,RTDP1,RTDP2
+      REAL        FOZ1,SFOZ1
+      
+      PARAMETER (ERRKEY = 'NWPLWI')
+      
+      TYPE (ControlType) CONTROL
+      ! JG end for ecotype variables
+      
+!  JG added section to read ecotype file
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+!----------------------------------------------------------------------
+!         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
+! ---------------------------------------------------------------------
+      IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
+
+!       Do this just once in RUNINIT
+        IF (DYNAMIC .EQ. RUNINIT) THEN
+          CALL GETLUN('OUTO', NOUTDO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,SFOZ1
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+          CLOSE (LUNECO)
+        ENDIF
+      ENDIF
+!  JG end of ecotype addition
+      
 *- Implementation Section ----------------------------------
 
 cnh need to initialise plant n after these weights are initialised.
@@ -1097,11 +1415,11 @@ cnh need to initialise plant n after these weights are initialised.
 !*!      plantn(stem) = plantn(stem) - min(avail_stem_n, plantn(grain))    
          pl_nit(stem_part) = pl_nit(stem_part) - 
      &                  min(avail_stem_n, pl_nit(grain_part))
-         ! If there is no enough available N from stem, take N from lfsheath 
+!          If there is no enough available N from stem, take N from lfsheath 
          lfsheath_n_moved = max(0.0, pl_nit(grain_part) - avail_stem_n)
          lfsheath_n_moved = min(lfsheath_n_moved, avail_lfsheath_n)
          pl_nit(lfsheath_part) = pl_nit(lfsheath_part)- lfsheath_n_moved
-         ! If there is no enough available N from lfsheath, take N from leaf 
+!          If there is no enough available N from lfsheath, take N from leaf 
          leaf_n_moved = max(0.0, pl_nit(grain_part) - avail_stem_n-
      :                  avail_lfsheath_n)
          leaf_n_moved = min(leaf_n_moved, avail_leaf_n)
@@ -1123,15 +1441,16 @@ cnh need to initialise plant n after these weights are initialised.
       end subroutine nwheats_plnin
  !*******************************************
 !TODO: where does this come from? I am taking a total guess that this is what it does.
-       !TODO: I am guessing that it checks if it is between the bounds and then sends a warning to the summary file it is outside
-       !      the bounds. I assume that is why they have the final parameter which is a string. 
-       !      I am guessing it is used in the message to the summary file to specify which variable was outside the bounds. 
-       !      Unlike u_bound and l_bound it does not force the variable to be between the bounds. It just warns the user in the summary file.
+!       TODO: I am guessing that it checks if it is between the bounds and then sends a warning to the summary file it is outside
+!             the bounds. I assume that is why they have the final parameter which is a string. 
+!             I am guessing it is used in the message to the summary file to specify which variable was outside the bounds. 
+!             Unlike u_bound and l_bound it does not force the variable to be between the bounds. It just warns the user in the summary file.
       subroutine bound_check_real_var(Variable, LowerBound, 
      &            UpperBound, VariableName, ERRKEY)
-      ! JZW if pass IDETO in the argument, the warning will go to the summary.out
-      ! IDETO  = ISWITCH % IDETO   
+!       JZW if pass IDETO in the argument, the warning will go to the summary.out
+!       IDETO  = ISWITCH % IDETO   
           IMPLICIT  NONE
+          EXTERNAL GETLUN, WARNING
           
           real Variable, LowerBound, UpperBound
           Integer NOUTDO

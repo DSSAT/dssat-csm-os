@@ -37,6 +37,8 @@ C=======================================================================
 
       USE Aloha_mod
       IMPLICIT NONE
+      EXTERNAL Aloha_PHENOL, Aloha_GROSUB, 
+     &  Aloha_ROOTGR, Aloha_OpGrow, Aloha_OPHARV
       SAVE
 
       CHARACTER*1 ISWWAT
@@ -66,7 +68,7 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       TYPE (SoilType)    SOILPROP
       TYPE (SwitchType)  ISWITCH
-      Type (ResidueType) HARVRES
+!      Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
       TYPE (WeatherType) WEATHER
 
@@ -122,7 +124,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    SKWT, STMWT, STOVN, STOVWT,  TEMPM,                 !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
       CALL Aloha_ROOTGR (CONTROL,
@@ -200,7 +202,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    SKWT, STMWT, STOVN, STOVWT,  TEMPM,                 !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
          IF (YRDOY .EQ. STGDOY(3)) THEN
@@ -233,7 +235,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
      &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
-     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    SKWT, STMWT, STOVN, STOVWT,  TEMPM,                 !Output
      &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
 !=======================================================================

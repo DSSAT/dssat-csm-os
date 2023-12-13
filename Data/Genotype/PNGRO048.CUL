@@ -1,0 +1,98 @@
+*PEANUT CULTIVAR COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! EXPNO   Number of experiments used to estimate cultivar parameters
+! ECO#    Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL    Critical Short Day Length below which reproductive development
+!         progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN   Slope of the relative response of development to photoperiod with time
+!         (positive for shortday plants) (1/hour)
+! EM-FL   Time between plant emergence and flower appearance (R1)
+!         (photothermal days)
+! FL-SH   Time between first flower and first pod (R3) (photothermal days)
+! FL-SD   Time between first flower and first seed (R5) (photothermal days)
+! SD-PM   Time between first seed (R5) and physiological maturity (R7)
+!         (photothermal days)
+! FL-LF   Time between first flower (R1) and end of leaf expansion
+!         (photothermal days)
+! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!         (mg CO2/m2-s)
+! SLAVR   Specific leaf area of cultivar under standard growth conditions
+!         (cm2/g)
+! SIZLF   Maximum size of full leaf (three leaflets) (cm2)
+! XFRT    Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD   Maximum weight per seed (g)
+! SFDUR   Seed filling duration for pod cohort at standard growth conditions
+!         (photothermal days)
+! SDPDV   Average seed per pod under standard growing conditions (#/pod)
+! PODUR   Time required for cultivar to reach final pod load under optimal
+!         conditions (photothermal days)
+! THRSH   The maximum ratio of (seed/(seed+shell)) at maturity.
+!         Causes seed to stop growing as their dry weights
+!         increase until shells are filled in a cohort.
+!         (Threshing percentage).
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+! For typical cultivars, use TAMNUT for typical Spanish, FLORUNNER for typical
+! runner virginia type, and FLORIGIANT for large-seeded Virginia runner type,
+! EARLY BUNCH for early Virginia bunch type, and CHICO for earliest Spanish.
+! These cultivars have been subjected to other calibration data sets.
+! Of the above cultivars, Marc I and Southern Runner are also well tested.
+! Those with "v tamn" or "v flor" or "v Ma" are presumed to be like TAMNUT
+! or FLORUNNER or MARC I, with no testing done. NC7 and GK3 not tested.
+! Cultivars 19-38 tested somewhat with Australian and India data, & 31-35
+! also tested with some data at Gainesville.
+!
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP  
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             N     N     P     P     P     P     N     G     G     G     G     G     G     G     N     N     N     N
+
+999991 MINIMA               . DFAULT 11.84  0.00  15.0   5.0  13.0 50.00 70.00  1.00  230.  13.0  0.63 0.360  23.0  1.40  10.0  78.0  .270  .510 
+999992 MAXIMA               . DFAULT 11.84  0.00  25.0  12.0  24.0 85.00 90.00  1.50  290.  21.0  1.00 1.200  46.0  2.00  34.0  80.0  .270  .510
+ 
+990001 Spanish type         . PN0007 11.84  0.00  17.4   7.0  17.5 62.00 70.00  1.28  245.  16.0  0.84 0.360  29.0  1.65  15.0  78.0  .270  .510
+990002 Runner Type          . PN0001 11.84  0.00  21.2   8.0  17.8 75.30 88.00  1.40  260.  18.0  0.94 0.660  40.0  1.65  25.0  80.0  .270  .510
+IB0001 STARR, v tamnut      . PN0007 11.84  0.00  17.4   7.0  17.5 62.00 70.00  1.28  245.  16.0  0.84 0.360  29.0  1.65  15.0  78.0  .270  .510
+IB0002 FLORUNNER           18 PN0001 11.84  0.00  21.2   9.2  18.8 74.30 88.00  1.40  260.  18.0  0.92 0.690  40.0  1.65  24.0  80.0  .270  .510
+IB0003 FLORIGIANT           1 PN0008 11.84  0.00  21.2   8.5  20.3 73.00 88.00  1.38  250.  18.0  0.86 0.990  37.0  1.65  25.0  74.0  .270  .510
+IB0004 VALENCIA, v tamn     . PN0007 11.84  0.00  17.4   7.0  17.5 62.00 70.00  1.28  245.  16.0  0.84 0.360  29.0  2.50  15.0  78.0  .270  .510
+IB0005 TAMNUT               1 PN0007 11.84  0.00  17.4   7.0  17.0 62.00 70.00  1.28  245.  16.0  0.83 0.380  29.0  1.65  16.0  78.0  .270  .510
+IB0006 PRONTO, v tamnu      . PN0007 11.84  0.00  17.4   7.0  17.5 62.00 70.00  1.28  245.  16.0  0.84 0.360  29.0  1.65  15.0  78.0  .270  .510
+IB0007 MARC I               2 PN0009 11.84  0.00  20.0   7.0  17.0 74.00 80.00  1.42  270.  18.0  0.93 0.690  40.0  1.65  23.0  80.0  .270  .510
+IB0008 CHICO                1 PN0006 11.84  0.00  16.4   7.0  15.0 58.00 66.00  1.04  285.  16.0  0.90 0.310  22.0  1.75  13.0  77.0  .270  .510
+IB0009 AGRITEC-127,v Ma     . PN0009 11.84  0.00  20.0   7.0  17.0 74.00 80.00  1.40  275.  18.0  0.95 0.660  40.0  1.65  23.0  80.0  .270  .510
+IB0011 EARLY RUNNER         1 PN0002 11.84  0.00  21.6   8.5  17.8 80.00 87.00  1.28  265.  18.0  0.85 0.570  36.0  1.65  27.0  79.0  .270  .510
+IB0013 SUNRUNNER,v flor     . PN0001 11.84  0.00  21.2   8.0  17.8 75.30 88.00  1.40  260.  18.0  0.94 0.650  40.0  1.65  25.0  80.0  .270  .510
+IB0015 SOUTHERN RUNNER      4 PN0002 11.84  0.00  22.9   9.2  18.2 82.60 91.00  1.30  265.  17.0  0.85 0.630  40.0  1.65  30.0  79.0  .270  .510
+IB0016 EARLY BUNCH          2 PN0004 11.84  0.00  21.9   7.6  16.5 72.40 80.00  1.34  265.  20.0  0.93 1.100  44.0  1.65  21.0  75.0  .270  .510
+IB0017 NC7, VIRGINIA        . PN0004 11.84  0.00  21.0   8.0  20.3 73.00 88.00  1.36  270.  20.0  0.94 1.000  38.0  1.65  30.0  75.0  .270  .510
+IB0018 GK3, VIRGINIA        . PN0001 11.84  0.00  21.0   8.0  20.3 73.00 88.00  1.36  270.  18.0  0.94 1.000  38.0  1.65  30.0  80.0  .270  .510
+IB0019 SHULAMIT, VA BUN     . PN0005 11.84  0.00  20.8   7.8  17.5 76.10 83.00  1.35  220.  19.0  0.93 0.980  40.0  1.65  25.0  74.0  .270  .510
+IB0020 TIFTON-8,FLORIG      . PN0011 11.84  0.00  21.9   8.2  19.7 74.50 83.00  1.37  205.  19.0  0.73 0.910  38.0  1.65  28.0  74.0  .270  .510
+IB0021 Q18801,earlybun      . PN0010 11.84  0.00  21.9   8.0  17.8 74.60 78.00  1.37  240.  19.0  0.87 1.180  44.0  1.65  24.0  75.0  .270  .510
+IB0022 VIRG BUN, MODIF      . PN0013 11.84  0.00  21.9   8.5  20.3 74.50 90.00  1.33  275.  19.0  0.76 0.880  38.0  1.65  27.0  74.0  .270  .510
+IB0023 MCCUBBIN, m TAMN     . PN0007 11.84  0.00  20.0   7.5  17.5 70.00 78.00  1.32  230.  17.0  0.82 0.520  32.0  1.65  19.0  78.0  .270  .510
+IB0024 TMV2, mod tamnu      . PN0007 11.84  0.00  17.4   7.0  17.5 62.00 78.00  1.31  270.  16.0  0.80 0.360  29.0  1.65  15.0  78.0  .270  .510
+IB0025 TAPIR, mod tamn      . PN0007 11.84  0.00  17.4   7.0  17.5 62.00 78.00  1.32  265.  16.0  0.80 0.360  29.0  1.65  13.0  78.0  .270  .510
+IB0026 ROBUT-33,uf v35      . PN0015 11.84  0.00  19.0   7.0  17.5 70.00 78.00  1.28  260.  16.0  0.84 0.500  29.0  1.65  15.0  78.0  .270  .510
+IB0027 TMV-2,uf v 24        . PN0007 11.84  0.00  19.0   7.0  17.5 62.00 72.00  1.28  270.  16.0  0.80 0.370  29.0  1.65  15.0  78.0  .270  .510
+IB0031 F81206,LS-RES        2 PN0014 11.84  0.00  23.0   8.0  19.5 77.00 91.00  1.27  265.  18.0  0.85 0.720  38.0  1.65  29.0  77.0  .270  .510
+IB0032 MA72*94-12,LS-Rs     2 PN0014 11.84  0.00 27.30  11.0 24.50 68.50 91.00  1.25  250.  18.0  0.59 0.720  38.0  1.65  30.0  77.0  .270  .510
+IB0033 861 VIRGINIA BUN     . PN0004 11.84  0.00  21.0   8.0  20.0 78.00 85.00  1.30  275.  20.0  0.76 0.550  38.0  1.65  30.0  75.0  .270  .510
+IB0034 897 VIRGINIA BUN     . PN0004 11.84  0.00  21.0   8.0  20.0 78.00 85.00  1.30  275.  20.0  0.76 0.960  38.0  1.65  30.0  75.0  .270  .510
+IB0035 ROBUT 33-1 v 5       . PN0015 11.84  0.00  17.4   7.0  17.5 65.00 77.00  1.23  260.  16.0  0.84 0.500  29.0  1.65  15.0  78.0  .270  .510
+IB0036 CIANJUR #5 TAM       . PN0007 11.84  0.00  17.4   7.0  17.5 65.00 77.00  1.23  250.  16.0  0.84 0.360  29.0  1.65  15.0  78.0  .270  .510
+IB0037 RANGKASBITUNG 5      . PN0007 11.84  0.00  17.4   7.0  17.5 65.00 77.00  1.23  250.  16.0  0.84 0.360  29.0  1.65  15.0  78.0  .270  .510
+IB0038 PIDIE  #5 TAMN       . PN0007 11.84  0.00  17.4   7.0  17.5 65.00 77.00  1.23  250.  16.0  0.84 0.360  29.0  1.65  15.0  78.0  .270  .510
+GA0001 Georgia Green        . RUNNER 11.84  0.00  21.2   9.2  18.8 77.30 85.00  1.45  270.  18.0  0.95 0.690  42.0  1.65  28.0  80.0  .270  .510
+IB0082 Non-Nodulated        1 PN0001 11.84  0.00  21.2   9.2  18.8 77.30 85.00  1.30  260.  18.0  0.56 0.455  40.0  1.65  26.0  72.0  .190  .510
+! next is 1997-1998/paper, also 2002-2003 P experiment
+GH0001 CHINESE TMV2 TAM     7 PN0019 11.84  0.00  18.0   7.0  17.5 53.00 73.00  1.20  270.  20.0  0.72 0.360  29.0  1.65  15.0  74.5  .270  .510
+!GH0001 CHINESE TMV2 TAM     7 PN0019 11.84  0.00  17.0   7.0  17.5 53.00 73.00  1.20  270.  20.0  0.72 0.360  29.0  1.65  15.0  74.5  .270  .510
+! next is 1997-1998/paper
+GH0002 F_MIX3,short bun     7 PN0020 11.84  0.00  20.0   8.8  19.0 69.00 80.00  1.24  265.  19.0  0.77 0.450  36.0  1.65  26.0  74.0  .270  .510
+!GH0002 F_MIX3,short bun     7 PN0020 11.84  0.00  19.0   8.8  19.0 69.00 80.00  1.24  265.  19.0  0.77 0.450  36.0  1.65  26.0  74.0  .270  .510

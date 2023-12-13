@@ -1,0 +1,76 @@
+*SOYBEAN ECOTYPE COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! ECO#    Code for the ecotype to which a cultivar belongs (see *.cul
+!         file)
+! ECONAME Name of the ecotype, which is referenced from *.CUL file
+! MG      Maturity group number for this ecotype, such as maturity
+!         group in soybean
+! TM      Indicator of temperature adaptation
+! THVAR   Minimum rate of reproductive development under long days
+!         and optimal temperature
+! PL-EM   Time between planting and emergence (V0) (thermal days)
+! EM-V1   Time required from emergence to first true leaf (V1), thermal
+!         days
+! V1-JU   Time required from first true leaf to end of juvenile phase,
+!         thermal days
+! JU-R0   Time required for floral induction, equal to the minimum
+!         number of days for floral induction under optimal temperature and
+!         daylengths, photothermal days
+! PM06    Proportion of time between first flower and first pod for
+!         first peg (peanut only)
+! PM09    Proportion of time between first seed and physiological
+!         maturity that the last seed can be formed
+! LNGSH   Time required for growth of individual shells (photothermal
+!         days)
+! R7-R8   Time between physiological (R7) and harvest maturity (R8) (days)
+! FL-VS   Time from first flower to last leaf on main stem (photothermal
+!         days)
+! TRIFL   Rate of appearance of leaves on the mainstem (leaves per
+!         thermal day)
+! RWDTH   Relative width of this ecotype in comparison to the standard
+!         width per node (YVSWH) defined in the species file (*.SPE)
+! RHGHT   Relative height of this ecotype in comparison to the
+!         standard height per node (YVSHT) defined in the species file
+!         (*.SPE)
+! R1PPO   Increase in daylength sensitivity after R1 (CSDVAR and CLDVAR
+!         both decrease with the same amount) (h)
+! OPTBI   Minimum daily temperature above which there is no effect on
+!         slowing normal development toward flowering (oC)
+! SLOBI   Slope of relationship reducing progress toward flowering if
+!         TMIN for the day is less than OPTBI
+!
+! changed PL-EM from 3.6 to 2.2 for all ecotypes because of the new soil temp simulations are 2-3 C cooler
+@ECO#  ECONAME.......... MG TM THVAR PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNGSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI
+!                                  1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16
+DETERM DETERMINATE TYPE  07 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .504  20.0  .035
+INDETE INDETERMINATE     03 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .324  18.0  .028
+SB1000 MATURITY GP  000  00 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 25.00  0.32   1.0   1.0  .189  18.0  .028
+SB0100 MATURITY GP   00  00 02   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 29.00  0.32   1.0   1.0  .189  18.0  .028
+SB0000 MATURITY GROUP 0  00 03   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 29.00  0.32   1.0   1.0  .189  18.0  .028
+SB0001 MATURITY GROUP 0  00 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .189  18.0  .028
+SB0101 MATURITY GROUP 1  01 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .234  18.0  .028
+SB0113 MATURITY GROUP 1  01 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .234  18.0  .028
+SB0115 MATURITY GROUP 1  01 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .234  18.0  .028
+SB0116 MATURITY GROUP 1  01 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .234  18.0  .028
+SB0201 MATURITY GROUP 2  02 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .279  18.0  .028
+SB0211 MATURITY GROUP 2  02 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .279  18.0  .028
+SB0212 MATURITY GROUP 2  02 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .279  18.0  .028
+SB0214 MATURITY GROUP 2  02 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .279  18.0  .028
+SB0301 MATURITY GROUP 3  03 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .324  18.0  .028
+SB0302 MATURITY GROUP 3  03 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 24.00  0.33   1.0   1.0  .324  18.0  .028
+SB0303 MATURITY GROUP 3  03 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.33   1.0   1.0  .324  18.0  .028
+SB0401 MATURITY GROUP 4  04 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .369  20.0  .035
+SB0501 MATURITY GROUP 5  05 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .414  20.0  .035
+SB0601 MATURITY GROUP 6  06 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .459  20.0  .035
+SB0701 MATURITY GROUP 7  07 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .504  20.0  .035
+SB0702 MATURITY GROUP 7  07 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .504  20.0  .035
+SB0801 MATURITY GROUP 8  08 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .549  20.0  .035
+SB0901 MATURITY GROUP 9  09 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .549  20.0  .035
+SB1001 MATURITY GROUP 10 10 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .549  20.0  .035
+DFAULT DEFAULT TYPE      07 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0  9.00  0.32   1.0   0.9  .504  20.0  .035
+SB0304 MATURITY GROUP 3  03 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .100  18.0  .028
+SB0305 MATURITY GROUP 3  03 01   0.0   2.2   6.0   0.0  05.0   0.0  0.35  10.0  12.0 26.00  0.32   1.0   1.0  .166  18.0  .028
+
+!

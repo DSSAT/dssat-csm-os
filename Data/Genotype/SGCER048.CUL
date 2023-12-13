@@ -1,0 +1,109 @@
+*SORGHUM CULTIVAR COEFFICIENTS: SGCER048 MODEL
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar.
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code for this cultivar, points to the Ecotype in
+!             the ecotype file
+! P1          Thermal time from seedling emergence to the end of the
+!             juvenile phase (expressed in degree days above TBASE
+!             during which the plant is not responsive to changes
+!             in photoperiod
+! P2          Thermal time from the end of the juvenile stage to tassel initiation
+!             under short days (degree days above TBASE)
+! P2O         Critical photoperiod or the longest day length (in hours) at
+!             which development occurs at a maximum rate. At values higher
+!             than P2O, the rate of development is reduced
+! P2R         Extent to which phasic development leading to panicle
+!             initiation (expressed in degree days) is delayed for each hour
+!             increase in photoperiod above P2O
+! PANTH       Thermal time from the end of tassel initiation to anthesis (degree days
+!             above TBASE)
+! P3          Thermal time from to end of flag leaf expansion to anthesis (degree days
+!             above TBASE)
+! P4          Thermal time from anthesis to beginning grain filling (degree
+!             days above TBASE)
+! P5          Thermal time from beginning of grain filling to physiological
+!             maturity (degree days above TBASE)
+! PHINT       Phylochron interval; the interval in thermal time between
+!             successive leaf tip appearances (degree days)
+! G1          Scaler for relative leaf size
+! G2          Scaler for partitioning of assimilates to the panicle (head).
+! PSAT        Critical photoperiod below which development is not delayed (optional)
+! PBASE       Ceiling photoperiod above which development is delayed indefinitely (optional)
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!                                                                                                     |-optional-|
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1    P2   P2O   P2R PANTH    P3    P4    P5 PHINT    G1    G2 PBASE  PSAT
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13
+!Calibration                             P     P     P     P     N     N     N     P     N     G     G     P     P
+
+999991 MINIMA               . DFAULT 200.0 102.0 11.00   1.0 617.5 152.5  81.5 300.0 49.00    .0   2.0
+999992 MAXIMA               . DFAULT 500.0 300.0 17.00 300.0 617.5 152.5  81.5 700.0 49.00  22.0   6.0
+
+990001 N.AMERICAN           . IB0001 360.0 102.0 12.50  30.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+990002 INDIAN               . IB0001 410.0 102.0 13.60  40.0 617.5 152.5  81.5 540.0 49.00   3.0   5.5
+990003 AUSTRALIAN           . IB0001 460.0 102.0 12.50  90.0 617.5 152.5  81.5 600.0 49.00   5.0   6.0
+990004 W.AFRICAN            . IB0001 413.0 102.0 13.60  40.0 617.5 152.5  81.5 640.0 49.00   3.0   6.5
+
+IB0001 RIO                  . IB0001 430.0 102.0 11.60  24.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0002 9188                 . IB0001 393.0 102.0 13.00  23.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0003 BRANDES              . IB0001 374.0 102.0 11.00 116.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0004 MN1500               . IB0001 495.0 102.0 11.80 139.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0005 HEGARI               . IB0001 273.0 102.0 11.50 136.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0006 100M                 . IB0001 291.0 102.0 11.00 127.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0007 80M                  . IB0001 337.0 102.0 12.60 262.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0008 60M                  . IB0001 337.0 102.0 12.80 290.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0009 SM100                . IB0001 365.0 102.0 13.00  45.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0010 SM80                 . IB0001 356.0 102.0 12.00  74.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0011 SM60                 . IB0001 365.0 102.0 12.20  74.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0012 REDLON               . IB0001 393.0 102.0 12.50  30.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0013 CAPROCK              . IB0001 393.0 102.0 12.80  84.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0014 ATx378XRTx7000       . IB0001 384.0 102.0 11.30  24.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0015 ATx623               . IB0001 380.0 102.0 13.00  35.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0016 RTx430               . IB0001 400.0 102.0 13.00 123.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0017 ATx623XRTx430        . IB0001 390.0 102.0 13.00  35.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0018 BTx3197              . IB0001 411.0 102.0 13.00 108.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0019 RTx7078              . IB0001 421.0 102.0 14.40 221.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0020 TX 610               . IB0001 180.0 102.0 16.50   1.0 617.5 152.5  81.5 580.0 49.00  22.0   6.0
+IB0021 WHEATLAND            . IB0001 365.0 102.0 12.50  30.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0022 ATx399XRTx430        . IB0001 393.0 102.0 12.80  40.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0023 ATx378XRTx430        . IB0001 411.0 102.0 12.50  20.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0024 ATx623XRTx7000       . IB0001 374.0 102.0 13.00  14.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0025 38M                  . IB0001 291.0 102.0 13.00  12.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0026 CSH-1                . IB0001 410.0 102.0 13.60 40.00 617.5 152.5 81.50 640.0 49.00 0.031 5.982
+
+IB0027 DE KALB 46           . IB0001 325.0 102.0 15.50  30.0 617.5 152.5  81.5 540.0 49.00   9.0   6.0
+IB0028 PIONEER 8333         . IB0001 325.0 102.0 15.50  30.0 617.5 152.5  81.5 540.0 49.00  11.0   6.0
+IB0029 DK                   . IB0001 200.0 102.0 15.50  12.0 617.5 152.5  81.5 540.0 49.00    .0   6.0
+IB0030 PIONEER 8515         . IB0001 275.0 102.0 15.50  30.0 617.5 152.5  81.5 500.0 49.00    .0   6.0
+IB0031 RS 626               . IB0001 300.0 102.0 15.50  30.0 617.5 152.5  81.5 400.0 49.00    .0   6.0
+IB0032 DK- E57              . IB0001 325.0 102.0 15.50  30.0 617.5 152.5  81.5 450.0 49.00  13.0   6.0
+IB0040 RS610                . IB0001 247.8 186.3 12.29 87.20 617.5 152.5 81.50 666.5 49.00 21.99 5.954
+IB0041 NK212                . IB0001 420.0 102.0 15.50  30.0 617.5 152.5  81.5 500.0 49.00  13.0   6.0
+IB0042 PIONEER 846          . IB0001 480.0 102.0 12.50 190.0 617.5 152.5  81.5 650.0 49.00   5.0   5.0
+IB0043 CSH-6                . IB0001 410.0 102.0 13.60  40.0 617.5 152.5  81.5 510.0 49.00   7.0   4.5
+IB0044 CSH-6*               . IB0001 320.0 102.0 13.50 180.0 617.5 152.5  81.5 540.0 49.00   7.0   5.5
+IB0046 M-35-1               . IB0001 320.0 102.0 14.00  45.6 617.5 152.5  81.5 556.0 49.00  15.0   4.5
+IB0047 SPV-504              . IB0001 310.0 102.0 13.00  35.0 617.5 152.5  81.5 554.0 49.00  15.0   4.5
+IB0048 CSH-5                . IB0001 255.0 102.0 13.50  40.5 617.5 152.5  81.5 490.0 49.00  10.0   5.5
+IB0049 CSH-9                . IB0001 225.0 102.0 13.50  45.1 617.5 152.5  81.5 573.0 49.00  10.0   5.5
+IB0050 SPH-388              . IB0001 232.0 102.0 12.50  43.7 617.5 152.5  81.5 590.0 49.00  10.0   4.5
+IB0051 CARGIL_1090          . IB0001 460.0 102.0 12.50  90.0 617.5 152.5  81.5 600.0 49.00   5.0   6.0
+IB0052 CARGIL DR.1125       . IB0001 460.0 102.0 12.50  90.0 617.5 152.5  81.5 600.0 49.00   5.0   6.0
+IB0053 CARGIL 837           . IB0001 460.0 102.0 12.50  90.0 617.5 152.5  81.5 600.0 49.00   5.0   6.0
+IB0054 ORGO-G-EXTRA         . IB0001 460.0 102.0 12.50  90.0 617.5 152.5  81.5 600.0 49.00   5.0   6.0
+IB0055 PIONEER 850          . IB0001 460.0 102.0 12.50  90.0 617.5 152.5  81.5 600.0 49.00   5.0   6.0
+
+!calibration Myriam (data SMK 2014 +P/-P)
+IB0056 CSM335               . IB0002 400.0 252.0 12.80 1000. 617.5 252.5  81.5 400.0 60.00  10.0   3.0               
+IB0057 CSM63E               . IB0002 300.0 102.0 12.80 100.0 647.5 142.5  61.5 450.0 55.00  16.0   3.0             
+IB0058 Fadda                . IB0002 300.0 252.0 12.80 1000. 617.5 152.5  81.5 350.0 49.00  10.0   6.0             
+IB0059 IS15401              . IB0002 500.0 300.0 12.80 1800. 640.5 300.5  81.5 350.0 55.00   0.5   2.0
+
+! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
+!IB0026 CSH-1                . IB0001 410.0 102.0 13.60  40.0 617.5 152.5  81.5 640.0 49.00   3.0   6.5             
+!IB0040 RS610                . IB0001 460.0 102.0 12.50  90.0 617.5 152.5  81.5 600.0 49.00   5.0   6.0             
+

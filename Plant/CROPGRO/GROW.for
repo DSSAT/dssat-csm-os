@@ -19,6 +19,8 @@ C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  03/24/2004 CHP Added P component of senesced matter
 C  01/19/2006 CHP N in senesced roots lost at actual N%, not minimum.
+C  04/01/2021 VSH/AH Added MultiHarvest code changes.
+!  06/15/2022 CHP Added CropStatus
 C-----------------------------------------------------------------------
 C  Called by:  PLANT
 C  Calls:      IPGROW, STRESS
@@ -39,13 +41,13 @@ C=======================================================================
 
      &  SWIDOT, WLFDOT, WSHIDT, WTNFX, XHLAI,             !Input/Output
 
-     &  AREALF, BETN, CANNAA, CANWAA, CLW, CSW, DWNOD,    !Output
-     &  DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, PCLSD,      !Output
-     &  PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,         !Output
+     &  AREALF, BETN, CANNAA, CANWAA, CLW, CropStatus,    !Output
+     &  CSW, DWNOD, DWNODA, GROWTH, GRWRES, LAIMX, PCCSD, !Output
+     &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
      &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT,                !Output
-     &  SEEDNI, SEEDNO, SENESCE, SHELWT, SLA,              !Output
+     &  SEEDNI, SEEDNO, SENESCE, SHELWT, SLA,             !Output
      &  SLAAD, STMWT, TOPWT, TOTWT, WCRLF, WCRRT, WCRSH,  !Output
      &  WCRST, WNRLF, WNRRT, WNRSH, WNRST, WTCO,          !Output
      &  WTLF, WTLO, WTMAIN, WTNCAN, WTNEW, WTNLA, WTNLF,  !Output
@@ -53,13 +55,16 @@ C=======================================================================
      &  WTNRA, WTNRO, WTNRT, WTNSA, WTNSD, WTNSDA,        !Output
      &  WTNSDO, WTNSH, WTNSHA, WTNSHO, WTNSO, WTNST,      !Output
      &  WTNUP, WTRO, WTSDO, WTSHO, WTSO, XLAI, XPOD,      !Output
-     &  ShutMob, RootMob, ShelMob)                        !Output
+     &  ShutMob, RootMob, ShelMob,                        !Output
+     &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      
       IMPLICIT NONE
+      EXTERNAL IPGROW, ERROR, STRESS
       SAVE
 !-----------------------------------------------------------------------
 
@@ -72,7 +77,7 @@ C=======================================================================
 
       INTEGER DYNAMIC, NOUTDO, L, NLAYR
       INTEGER YRDOY, YRNR1, MDATE
-      INTEGER YRPLT
+      INTEGER YRPLT, CropStatus
 
       REAL WTNUP,WTNFX,WTNMOB,WTNCAN,TGROW
       REAL WRCSHD,DISLA,WSDMAN
@@ -152,6 +157,9 @@ C=======================================================================
       REAL ADD
       REAL ShutMob, RootMob, ShelMob
 
+      REAL TOSHMINE, TOCHMINE
+      REAL HPODWT,HSDWT,HSHELWT
+      REAL NHSHWT, NHSDWT
 !-----------------------------------------------------------------------
 !     Constructed variable types defined in ModuleDefs.for.
       TYPE (ControlType) CONTROL
@@ -336,6 +344,8 @@ C-----------------------------------------------------------------------
       SDPDOT = 0.0    !CHP - not used
       PUNDOT = 0.0    !CHP - not used
 
+      NHSHWT = 0.0    !CHP - N loss due to Multi-Harvest for shell wt
+      NHSDWT = 0.0    !CHP - N loss due to Multi-Harvest for seed wt
       NLPEST = 0.0    !CHP - N loss due to pest damage
 
 !-----------------------------------------------------------------------
@@ -528,15 +538,21 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net shell growth rate
 C-----------------------------------------------------------------------
-      WSHIDT = MIN(WSHIDT,SHELWT)     ! pest damage to shells
-      WSHDOT = WSHDTN - WSHIDT - WTABRT - NRUSSH / 0.16 - CRUSSH
-      ShelMob = (NRUSSH / 0.16 + CRUSSH) * 10.    !kg/ha
-
+      WSHIDT = MIN(WSHIDT,SHELWT)     ! pest damage to shells      
+      WSHDOT = WSHDTN - WSHIDT - WTABRT - TOSHMINE - TOCHMINE - HSHELWT
+      IF (WSHDOT .LT. 0.0) THEN
+        WSHDOT = MAX(WSHDOT, -SHELWT)
+      ENDIF      
+      ShelMob = (TOSHMINE + TOCHMINE) * 10.    !kg/ha
 C-----------------------------------------------------------------------
 C     Net seed growth rate
 C-----------------------------------------------------------------------
       SWIDOT = MIN(SWIDOT,SDWT)       ! pest damage to seeds
-      WSDDOT = WSDDTN - SWIDOT        
+      WSDDOT = WSDDTN - SWIDOT - HSDWT
+      IF (WSDDOT .LT. 0.0) THEN
+        WSDDOT = MAX(WSDDOT, -SDWT)
+      ENDIF
+            
       WTLSD  = WTLSD + WSDDOT * POTLIP    !lipids in seed
       WTCSD  = WTCSD + WSDDOT * POTCAR    !carbohydrates in seed
 
@@ -548,8 +564,10 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net pod growth rate
 C-----------------------------------------------------------------------
-      WPDOT = WSHDOT + WSDDOT          
-
+      WPDOT = WSHDOT + WSDDOT - HPODWT
+      IF (WPDOT .LT. 0.0) THEN
+        WPDOT = MAX(WPDOT, -PODWT)
+      ENDIF        
 C-----------------------------------------------------------------------
 C     Total Net plant growth rate
 C-----------------------------------------------------------------------
@@ -741,10 +759,11 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Shell nitrogen senescence, abortion and pest damage loss
 C-----------------------------------------------------------------------
-      NSHOFF = (WTABRT+WSHIDT) * (PCNSH/100.)
+      NSHOFF = (WTABRT+WSHIDT+HSHELWT) * (PCNSH/100.)
+      NHSHWT = NHSHWT + HSHELWT * PCNSH/100.
       NLPEST = NLPEST + WSHIDT * PCNSH/100.
       IF (NSHOFF < 0.0) THEN
-         NSHOFF = 0.0
+        NSHOFF = 0.0
       ENDIF
 
 C-----------------------------------------------------------------------
@@ -755,7 +774,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Seed nitrogen senescence, abortion and pest damage loss
 C-----------------------------------------------------------------------
-      NSDOFF = SWIDOT * PCNSD/100.
+      NSDOFF = (SWIDOT+HSDWT) * (PCNSD/100.)
+      NHSDWT = NHSDWT + HSDWT * PCNSH/100.
       IF (NSDOFF < 0.0) THEN
          NSDOFF = 0.0
       ENDIF
@@ -1087,7 +1107,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,     !Input
      &    RTWT, SDWT, SHELWT, STMWT, TOPWT,               !Input
      &    TOTWT, TURFAC, WTLF, YRDOY, YRPLT,              !Input
-     &    MDATE)                                          !Output
+     &    MDATE, CropStatus)                              !Output
         RETURN
       ENDIF
 
@@ -1097,7 +1117,7 @@ C-----------------------------------------------------------------------
      &      AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,   !Input
      &      RTWT, SDWT, SHELWT, STMWT, TOPWT,             !Input
      &      TOTWT, TURFAC, WTLF, YRDOY, YRPLT,            !Input
-     &      MDATE)                                        !Output
+     &      MDATE, CropStatus)                            !Output
           RETURN
         ENDIF
       ENDIF
@@ -1133,6 +1153,7 @@ C  Plant death due to stress
 C-----------------------------------------------------------------------
 C  REVISION        HISTORY
 C  09/18/1998 CHP  Written based on code in GROW subroutine
+!  06/15/2022 CHP Added CropStatus
 !-----------------------------------------------------------------------
 !  Called by:  GROW
 !  Calls:      None
@@ -1141,14 +1162,15 @@ C=======================================================================
      &  AGEFAC, DWNOD, IDETO, IHARI, NOUTDO, PODWT,       !Input
      &  RTWT, SDWT, SHELWT, STMWT, TOPWT,                 !Input
      &  TOTWT, TURFAC, WTLF, YRDOY, YRPLT,                !Input
-     &  MDATE)                                            !Output
+     &  MDATE, CropStatus)                                !Output
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL YR_DOY, WARNING, TIMDIF
 !-----------------------------------------------------------------------
       CHARACTER*1  IDETO, IHARI
       CHARACTER*78 MESSAGE(10)
       INTEGER NOUTDO, YRDOY, YRPLT, MDATE, DAP, TIMDIF
-      INTEGER YR, DOY
+      INTEGER YR, DOY, CropStatus
       REAL AGEFAC, DWNOD, PODWT, RTWT, SDWT,
      &  SHELWT, STMWT, TOPWT, TOTWT, TURFAC, WTLF
 
@@ -1168,6 +1190,7 @@ C=======================================================================
       IF (MDATE < 0) THEN
 !        NR8   = MAX(0,TIMDIF(YRSIM,YRDOY))
         MDATE = YRDOY
+        CropStatus = 39
       ENDIF
 C-----------------------------------------------------------------------
       IF (IHARI == 'M') THEN
@@ -1224,6 +1247,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TIMDIF, UPCASE
 !-----------------------------------------------------------------------
       CHARACTER*1 PLME, UPCASE
       CHARACTER*2 XPODF, CROP
@@ -1275,7 +1299,8 @@ C=======================================================================
         IF (FOUND == 0) THEN
           CALL ERROR(SECTION, 42, FILEIO, LNUM)
         ELSE
-          READ(LUNIO,'(24X,F6.1,5X,A1,6X,F6.0,12X,F6.0)',IOSTAT=ERR)
+C-GH      READ(LUNIO,'(24X,F6.1,5X,A1,6X,F6.0,12X,F6.0)',IOSTAT=ERR)
+          READ(LUNIO,'(24X,F6.0,5X,A1,6X,F6.0,12X,F6.0)',IOSTAT=ERR)
      &            PLTPOP, PLME, ROWSPC, SDWTPL ; LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF

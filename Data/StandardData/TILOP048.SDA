@@ -1,0 +1,318 @@
+*TILLAGE
+! DSSAT v4.8.0.1; 2020-07-21
+!  Tilllage Input File
+!
+!  JWW/CP/BB
+!  13/05/2003 - JWW Created
+!  21/08/2008 - JWW minor edits, added roller harrow
+!  07/11/2008 - JWW changed CN effect to reduce values for most tillage
+!  Implement names are changed substantially from Details.Cde
+!
+!  Initial values are from Table 5-5 of RUSLE manual (which in turn relates to ASAE nomenclature)
+!  (https://www.ars.usda.gov/southeast-area/oxford-ms/national-sedimentation-laboratory/watershed
+!  -physical-processes-research/docs/revised-universal-soil-loss-equation-106-documentation/)
+!  and the SWAT manual (https://swat.tamu.edu/docs/)
+!  RUSLE was used for Residue incorporated (presented in Table 5-5 as the inverse -- residue
+!    left on the surface) and percent soil surface disturbed.
+!  SWAT was the source of mixing efficiency and depth.
+!
+!  A useful reference for basic farm machinery concepts is:
+!  Hunt, D.  Farm Power and Machinery Management 10th Ed.
+!  It does not deal with effectiveness of tillage or incorporation of mulch.
+!
+!  Discussion notes:
+!  1.  Use of percentages vs fractions:
+!         Although it makes more sense from a modeling perspective to use fractional changes
+!         (e.g., 0.15) than percent changes, we expect most users to prefer percentages.
+!
+!  2.  "Field operation" vs. "tillage operation":
+!         We tend to discuss "tillage effects" but for completeness, the overall approach really
+!         is for "field operations."
+!
+!  3.  Handling of depth here vs in file X (proportional adjustment)
+!         In TILLAGE.INP, the maximum depth of incorporation and mixing are assumed to be the
+!         same.  Thus, both are set by the maximum value of SLB.  This maximum should be greater
+!         than or equal to TDEP as reported in FILEX.
+!
+!  4.  Depths reported for RUSLE and SWAT are quite different, especially given
+!      that RUSLE is defined as "depth in which 75% of residue is buried":
+!                          __Depth_(cm)____
+!          Implement         RUSLE    SWAT
+!          --------------------------------
+!          Moldboard            20      15
+!          Spiketooth harrow     5       3
+!      Is there a difference between mixing and incorporation?
+!      Is the depth pre- or post-tillage operation
+!      We need to chase original sources for such data.
+!
+!  5.  CN2T  HPAN  SBDT  SKST all need more research.
+!      There were no initial estimates available.  Default values used:
+!        CN2T - +/- 5 or 10 based on expected effect
+!        HPAN - 0
+!        SBDT - +/- 5 or 10 based on expected effect
+!        SKST - +/- 5 or 10 based on expected effect
+!
+!  7.  SSDT (% soil surface disturbed) and CN2T (% change in curve number) should interact.
+!      For the moment, we assume that CN2T is average effect over entire soil surface.
+!
+!  8.  What outputs would people expect to see for tillage?
+!
+!  ---------------------------------------------------------------------------------
+!
+!  Definitions of parameters given in this file:
+!  TIMPL - implement/operation code from DSSAT standard in FILEX
+!  DESCRIPTION - Brief name of the implement (e.g., "moldboard plow")
+!  COMMENT - Further information that would clarify the conditions for which the parameters
+!      are considered valid (e.g., "into sod," ...)
+!
+!  CN2T - Percent change in SCS curve number immediately after ith field operation.
+!  RINP - Percent of residue incorporated
+!  SSDT - Percent soil surface that is disturbed by the field operation.
+!  MIXT - Mixing efficiency of tillage event
+!  HPAN - Percent reduction in hard pan (if depth is sufficient to reach pan)
+!
+!  SLB  - Soil layer depth, cm -- maximum potential of operation.
+!  SBDT - Percent change in bulk density just after field operation
+!  SKST - Percent change in saturated hydraulic conductivity just after field operation (cm/day)
+!
+!  Definitions of parameters also worth keeping in mind:
+!  TDEP  - depth of residue incorporation (here defined as 100% vs 75% in RUSLE
+!  NTILL - number of tillage operations entered
+!
+!
+!TIMPL DESCRIPTION                      IMPLEMENT
+*TI001 V-Ripper                         One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+  -5.0    20    20    25     0
+@  SLB  SBDT  SKST
+  8.00 -10.0  10.0
+ 30.00 -10.0  10.0
+ 35.00   5.0 -10.0
+
+*TI002 Subsoiler                        One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    50   40   45       0
+@  SLB  SBDT  SKST
+  8.00 -10.0  10.0
+ 30.00 -15.0  20.0
+ 45.00   5.0 -10.0
+
+*TI003 Moldboard plow 20 cm depth       One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    95   100    90     0
+@  SLB  SBDT  SKST
+ 15.00 -10.0  10.0
+ 20.00   5.0  -5.0
+
+*TI004 Chisel plow, sweeps              One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    30   100    40     0
+@  SLB  SBDT  SKST
+ 15.00 -20.0  20.0
+
+*TI005 Chisel plow, straight point      One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    40   100    30     0
+@  SLB  SBDT  SKST
+ 15.00 -20.0  20.0
+
+*TI006 Chisel plow, twisted shovels     One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    55   100    50     0
+@  SLB  SBDT  SKST
+ 10.00 -10.0  10.0
+ 15.00   5.0 -10.0
+
+*TI007 Disk plow                        One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    70   100    85     0
+@  SLB  SBDT  SKST
+ 10.00 -10.0  20.0
+
+*TI008 Disk, 1-way
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    70   100    60     0
+@  SLB  SBDT  SKST
+ 10.00 -10.0  20.0
+
+*TI009 Disk, tandem                     One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    50   100    55     0
+@  SLB  SBDT  SKST
+  7.50  -5.0   5.0
+
+*TI010 Disk, double disk                One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    10    85    60     0
+@  SLB  SBDT  SKST
+ 10.00  -5.0   5.0
+
+*TI011 Cultivator, field                One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    25   100    30     0
+@  SLB  SBDT  SKST
+ 10.00 -10.0   5.0
+
+*TI012 Cultivator, row                  One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    20    85    25     0
+@  SLB  SBDT  SKST
+  2.50 -10.0  15.0
+
+*TI013 Cultivator, ridge till           One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+  -5.0    60    90    25     0
+@  SLB  SBDT  SKST
+  3.00 -10.0  10.0
+
+*TI014 Harrow, spike                    One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    20   100    25     0
+@  SLB  SBDT  SKST
+  2.50 -10.0  10.0
+
+*TI015 Harrow, tine                     One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+  -5.0    15   100    20     0
+@  SLB  SBDT  SKST
+  2.50 -10.0  10.0
+
+*TI016 Lister                           One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    80   100    15     0
+@  SLB  SBDT  SKST
+  4.00  10.0  -5.0
+
+*TI017 Bedder                           One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   5.0    50   100    60     0
+@  SLB  SBDT  SKST
+  5.00  10.0  -5.0
+
+*TI018 Blade cultivator                 One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    20    20    25     0
+@  SLB  SBDT  SKST
+  7.50   5.0  -5.0
+
+*TI019 Fertilizer applicator, anhydr    Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+  -5.0    20    15    10     0
+@  SLB  SBDT  SKST
+  5.00   5.0  -5.0
+
+*TI020 Manure injector                  One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    50    40    10     0
+@  SLB  SBDT  SKST
+ 15.00   5.0  -5.0
+
+*TI022 Mulch treader                    One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    25   100    70     0
+@  SLB  SBDT  SKST
+  5.00   5.0  -5.0
+
+*TI023 Plank                            One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   5.0    20   100    20     0
+@  SLB  SBDT  SKST
+  4.00  10.0  -5.0
+
+*TI024 Roller packer                    One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   5.0    40   100    30     0
+@  SLB  SBDT  SKST
+  4.00  10.0  -5.0
+
+*TI025 Drill, double-disk               Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    10    85    15     0
+@  SLB  SBDT  SKST
+  5.00  -5.0   5.0
+
+*TI026 Drill, deep furrow               Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    30   100    10     0
+@  SLB  SBDT  SKST
+ 10.00  -5.0   5.0
+
+*TI031 Drill, no-till                   Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    20    60    10     0
+@  SLB  SBDT  SKST
+  5.00   1.0  -2.0
+
+*TI032 Drill, no-till                   Into sod, generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    90    20     5     0
+@  SLB  SBDT  SKST
+  5.00   1.0  -2.0
+
+*TI033 Planter, row                     Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    10    15    10     0
+@  SLB  SBDT  SKST
+  5.00   5.0   0.0
+
+*TI034 Planter, no-till                 Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    15    15     5     0
+@  SLB  SBDT  SKST
+  5.00   5.0   0.0
+
+*TI035 Planting stick (hand)            Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    10    10     0     0
+@  SLB  SBDT  SKST
+  5.00   0.0   0.0
+
+*TI036 Matraca hand planter             Brazilian-style jab planter that meters seed
+@ CN2T  RINP  SSDT  MIXT  HPAN
+   0.0    15    15     0     0
+@  SLB  SBDT  SKST
+  5.00   0.0   0.0
+
+*TI037 Rod weeder                       Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+  -5.0    10   100    30     0
+@  SLB  SBDT  SKST
+  2.50  -5.0   5.0
+
+*TI038 Rotary hoe                       Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    20    20    30     0
+@  SLB  SBDT  SKST
+  2.50 -10.0  10.0
+
+*TI039 Roller harrow, cultipacker       One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    20   100    40     0
+@  SLB  SBDT  SKST
+  5.00  20.0  -5.0
+ 15.00   5.0  -5.0
+
+*TI041 Moldboard plow 25 cm             One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    95   100    90     0
+@  SLB  SBDT  SKST
+ 20.00 -10.0  10.0
+ 25.00   5.0  -5.0
+
+*TI042 Moldboard plow 30 cm             One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    95   100    90     0
+@  SLB  SBDT  SKST
+  5.00 -10.0  10.0
+ 15.00  -5.0   5.0
+ 30.00  10.0  -5.0
+
+! 2022-02-26: JWW added for CAF LTAR simulations
+! https://www.sare.org/publications/steel-in-the-field/dryland-crop-tools/red-weeder
+*TI043 Wide-blade sweep plow 20 cm             One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+ -10.0    10    10     5     0
+@  SLB  SBDT  SKST
+ 10.00   2.0   0.0
+ 20.00  10.0  -5.0
+

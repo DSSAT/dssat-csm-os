@@ -1,0 +1,78 @@
+*PEANUT ECOTYPE COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! ECO#    Code for the ecotype to which a cultivar belongs (see *.cul
+!         file)
+! ECONAME Name of the ecotype, which is referenced from *.CUL file
+! MG      Maturity group number for this ecotype, such as maturity
+!         group in soybean
+! TM      Indicator of temperature adaptation
+! THVAR   Minimum rate of reproductive development under short days
+!         and optimal temperature
+! PL-EM   Time between planting and emergence (V0) (thermal days)
+! EM-V1   Time required from emergence to first true leaf (V1), thermal
+!         days
+! V1-JU   Time required from first true leaf to end of juvenile phase,
+!         thermal days
+! JU-R0   Time required for floral induction, equal to the minimum
+!         number of days for floral induction under optimal temperature and
+!         daylengths, photothermal days
+! PM06    Proportion of time between first flower and first pod for
+!         first peg (peanut only)
+! PM09    Proportion of time between first seed and physiological
+!         maturity that the last seed can be formed
+! LNGSH   Time required for growth of individual shells (photothermal
+!         days)
+! R7-R8   Time between physiological (R7) and harvest maturity (R8) (days)
+! FL-VS   Time from first flower to last leaf on main stem (photothermal
+!         days)
+! TRIFL   Rate of appearance of leaves on the mainstem (leaves per
+!         thermal day)
+! RWDTH   Relative width of this ecotype in comparison to the standard
+!         width per node (YVSWH) defined in the species file (*.SPE)
+! RHGHT   Relative height of this ecotype in comparison to the
+!         standard height per node (YVSHT) defined in the species file
+!         (*.SPE)
+! THRSH   The maximum ratio of (seed/(seed+shell)) at maturity.
+!         Causes seed to stop growing as their dry weights
+!         increase until shells are filled in a cohort.
+!         (Threshing percentage).
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
+! R1PPO   Increase in daylength sensitivity after R1 (CSDVAR and CLDVAR
+!         both decrease with the same amount) (h)
+! OPTBI   Minimum daily temperature above which there is no effect on
+!         slowing normal development toward flowering (oC)
+! SLOBI   Slope of relationship reducing progress toward flowering if
+!         TMIN for the day is less than OPTBI
+!
+! reduced all PL-EM by 1.5 ptd, because of "fix" to soil temperature, and now cooler soil temperature
+@ECO#  ECONAME.......... MG TM THVAR PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNGSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI
+!                                  1     2     3     4     5     6     7     8    9     10    11    12    13    14    15    16
+RUNNER RUNNER TYPE       02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  16.0   0.0 68.00  0.35   1.0   1.0  .010  20.0  .001
+VIRGIN VIRGINIA TYPE     01 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.35   1.0   1.0  .010  20.0  .001
+SPANIS SPANISH TYPE      02 01   0.0   3.1   3.1   0.0  15.1  0.40  1.00  15.0   0.0 68.00  0.35  0.85  0.95  .010  20.0  .001
+PN0001 FLORUNNER VARS    02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  16.0   0.0 68.00  0.35   1.0   1.0  .010  20.0  .001
+PN0002 SLOW RUNNER       02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  16.0   0.0 68.00  0.34  0.90  0.95  .010  20.0  .001
+PN0003 MEDIUM RUNNER     02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  16.0   0.0 68.00  0.35  0.95   1.0  .010  20.0  .001
+PN0004 FAST BUNCH, VA    02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.37  0.90   1.0  .010  20.0  .001
+PN0005 SLOW BUNCH, VA    02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.35  0.90   1.0  .010  20.0  .001
+PN0006 SHORT SPANISH     02 01   0.0   3.1   3.1   0.0  15.1  0.40  1.00  15.0   0.0 68.00  0.35  0.70  0.85  .010  20.0  .001
+PN0007 MEDIUM SPANISH    02 01   0.0   3.1   3.1   0.0  15.1  0.40  1.00  15.0   0.0 68.00  0.35  0.85  0.95  .010  20.0  .001
+PN0008 FAST VIRGINIA     02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.36   1.0   1.0  .010  20.0  .001
+PN0009 FAST   RUNNER     02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  16.0   0.0 68.00  0.37  1.00   1.0  .010  20.0  .001
+PN0010 FAST VA BUN,Q188  02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.37  0.95   1.0  .010  20.0  .001
+PN0011 FAST VIRG, TIF-8  02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.36  0.92   1.0  .010  20.0  .001
+PN0012 SHORT SPANISH     02 01   0.0   3.1   3.1   0.0  15.1  0.40  1.00  15.0   0.0 68.00  0.35  0.75  0.85  .010  20.0  .001
+PN0013 SLOW BUNCH, VA    02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.35  0.86   1.0  .010  20.0  .001
+PN0014 SLOW,RUN,loshel%  02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  17.0   0.0 68.00  0.34  0.90  0.95  .010  20.0  .001
+PN0015 SMALL RUNNER      02 01   0.0   3.1   3.1   0.0  15.1  0.40  1.00  15.0   0.0 68.00  0.36  0.88  0.95  .010  20.0  .001
+PN0016 SLOW,SHORT VA BU  02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.34  0.75  0.60  .010  20.0  .001
+PN0017 MEDIUM SPAN chin  02 01   0.0   3.1   3.1   0.0  15.1  0.40  1.00  15.0   0.0 68.00  0.35  0.80  0.85  .010  20.0  .001
+PN0018 SLOW,SHORT 97-98  02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.34  0.75  0.60  .010  20.0  .001
+PN0019 MEDIUM SPAN97-98  02 01   0.0   3.1   3.1   0.0  15.1  0.40  1.00  15.0   0.0 68.00  0.35  0.80  0.85  .010  20.0  .001
+PN0020 SLOW,SHORT 97-98  02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  18.0   0.0 68.00  0.34  0.75  0.60  .010  20.0  .001
+
+
+DFAULT DEFAULT ECOTYPE   02 01   0.0   3.5   3.3   0.0  17.7  0.40  1.00  16.0   0.0 68.00  0.35   1.0   1.0  .010  20.0  .001

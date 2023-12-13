@@ -10,36 +10,41 @@
 ! information to the overview and work files.
 !***************************************************************************************************************************
     SUBROUTINE YCA_SeasInit ( &  
-        ALBEDOS     , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CN          , DEWDUR      , DOY         , &
-        HARVFRAC    , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , KEP         , LAIL        , &
+        ALBEDOS     , BRSTAGE     , LAI         , CANHT       , CLOUDS      , CN          , DEWDUR      , DOY         , &
+        HARVFRAC    , ISWDIS      , ISWNIT      , KCAN        , KEP         , LAIL        , &
         LAILA       , NFP         , ON          , PARIP       , PARIPA      , RESCALG     , RESLGALG    , RESNALG     , &
         RLV         , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , RWUPM       , SENCALG     , &
         UH2O        , UNH4        , UNO3        , YEAR        , SENLALG     , SENNALG     , SLPF        , SN          , &
         STGYEARDOY  , TAIRHR      , TN          , TRWUP       &
         )
-        
+
+! 2023-01-25 chp removed unused variables
+!       IDETG       , ISWWAT      , 
+
         USE ModuleDefs
         USE YCA_First_Trans_m
 
         IMPLICIT     NONE
+        EXTERNAL YCA_SeasInit_VarInit, YCA_SeasInit_ReadXfile, YCA_SeasInit_PlHarvDat, YCA_SeasInit_ReadGeno, &
+          YCA_SeasInit_SetStage, YCA_SeasInit_Final
         
         INTEGER STGYEARDOY(0:19)            , CN          , DOY         , ON          , RN          , RUN         , RUNI        
         INTEGER SN          , TN          , YEAR
         
-        REAL    ALBEDOS     , BRSTAGE     , CAID        , CANHT       , CLOUDS      , DEWDUR      , HARVFRAC(2) , KCAN        
+        REAL    ALBEDOS     , BRSTAGE     , LAI         , CANHT       , CLOUDS      , DEWDUR      , HARVFRAC(2) , KCAN        
         REAL    KEP         , LAIL(30)    , LAILA(30)   , NFP         , PARIP       , PARIPA      , RESCALG(0:NL)             
         REAL    RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)     , RWUMX       , RWUPM       
         REAL    SENCALG(0:NL)             , SENLALG(0:NL)             , SENNALG(0:NL)             , SLPF        , TAIRHR(24)   
         REAL    TRWUP       , UH2O(NL)    , UNH4(NL)    , UNO3(NL)
         
-        CHARACTER(LEN=1)  :: IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , RNMODE       
+        CHARACTER(LEN=1)  :: ISWDIS      , ISWNIT      , RNMODE       ! IDETG       , ISWWAT      , 
         
         !-----------------------------------------------------------------------------------------------------------------------
         !       Initialize both state and rate variables                       ! MF Equivalent to line 1828 in CSCAS.FOR
         !-----------------------------------------------------------------------------------------------------------------------
         
         CALL YCA_SeasInit_VarInit ( &
-            BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
+            BRSTAGE     , LAI         , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
             PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
             STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3         &
             ) 
@@ -76,8 +81,7 @@
         !-----------------------------------------------------------------------------------------------------------------------
         
         CALL YCA_SeasInit_SetStage( &
-            CN          , ISWNIT      , KCAN        , KEP         , RN          , RUN         , RUNI        , SLPF        , &
-            TN           &
+            ISWNIT      , KCAN        , KEP         , SLPF          &
             )
             
         !-----------------------------------------------------------------------------------------------------------------------
@@ -85,9 +89,9 @@
                                                                                ! MF Equivalent to line 3551 in CSCAS.FOR 
         !-----------------------------------------------------------------------------------------------------------------------
         CALL YCA_SeasInit_Final ( &
-            ALBEDOS     , CLOUDS      , CN          , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
-            KEP         , ON          , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , SLPF        , &
-            SN          , TAIRHR       , TN           &                                                                                        
+            ALBEDOS     , CLOUDS      , CN          , KCAN        , KEP         , ON          , &
+            RN          , RUN         , RUNI        , RWUMX       , SN          , TAIRHR      , &
+            TN           &
             )
             
     END SUBROUTINE YCA_SeasInit

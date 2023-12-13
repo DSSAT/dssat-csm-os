@@ -30,6 +30,8 @@ C  07/26/2004 CHP Removed variables which were not being used
 C  03/24/2005 CHP Put weather variables in constructed variable. 
 C  05/16/2005 FSR Removed calls to NFIX and CSP_MOBIL
 C  06/30/2006 FSR Incorporated into CSM v.5
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
 
       SUBROUTINE CSP_CASUPRO(CONTROL, ISWITCH, 
@@ -45,6 +47,9 @@ C=======================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL CSP_IPPLNT, CSP_PHENOL, CSP_PHOTO, PEST, CSP_INCOMP, 
+     &  CSP_GROW_CANE, CSP_NUPTAK, CSP_SENES, CSP_ROOTS, CSP_OPGROW, 
+     &  CSP_OPHARV, P_CASUPRO, CSP_RESPIR, PlantNBal, CSP_HRes
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 IDETO, ISWNIT, ISWPHO, ISWSYM, 
@@ -79,10 +84,10 @@ C=======================================================================
       REAL DRPP, DTPI, DTX     
       REAL EOP, EOS, EP1
       REAL FINREF, FRACSH, FRSHV, FRLF, FRRT, FRSTM 
-      REAL FREEZ1, FREEZ2
+!     REAL FREEZ1, FREEZ2
       REAL GrowFrac, RipeFrac, GROWTH, GRWRES 
       REAL HARVFRAC(2)
-      REAL LAIMX, LAIX, LSFAC, LI, LITOT, LITOTAL, LMF
+      REAL LAIMX, LSFAC, LI, LITOTAL !, LAIX, LITOT, LMF
       REAL MAINR
       REAL NSTRES, NDMNEW,
      &     NGRLF, NGRRT,  NGRST,    
@@ -103,7 +108,7 @@ C=======================================================================
      &     ROA !, RNH4C, RNO3C, RPRO
       REAL RATTP, RHOL, RO, RP, RTDEP, RHOS   !, ROWSPC
       REAL RSPNO3, RSPNH4   
-      REAL SDNPL, SLAVAR, SIZELF, TDAY
+      REAL SDNPL, SIZELF, TDAY !, SLAVAR
 
 !     Senescence variables computed for soil N routines.
       REAL SENRT(NL)      
@@ -112,7 +117,7 @@ C=======================================================================
      &     SLA, SLAMAX, STMWT, SEEDNI, SIZREF
       REAL SLAMIN, SLAPAR, SLAREF, SLPF
       REAL SRDOT, SLAAD, SLNDOT, SSDOT, SSNDOT, StkB, StkM
-      REAL TAVG, TDUMX, TGROAV, TMIN, TNLEAK, TOPWT, TOTWT, TRLV,   
+      REAL TAVG, TDUMX, TGROAV, TMIN, TNLEAK, TOPWT, TOTWT, !TRLV,   
      &     TRNH4U, TRNO3U, TRNU, TRWUP, TURFAC, TURSLA 
       REAL VSTAGE
       REAL WSIDOT, WRIDOT
@@ -142,7 +147,7 @@ C=======================================================================
       REAL FRSU, GAMMA, GRLF, GRRT, GRST, GRSU, LfShdFac, M   
       REAL MinGr, PCARSU, PConc_Shut, PConc_Root, PI1, PI2, PLIGSU 
       REAL PLIPSU, PMINSU, POASU, PROSUI, PSTRES1, PSTRES2  
-      REAL PHTMAX, StkH2OFac, StkHrNO, SumTTD, SuH2OFac, SumTTG 
+      REAL StkH2OFac, StkHrNO, SumTTD, SuH2OFac, SumTTG !PHTMAX, 
       REAL XFRRT(4), XFRSU(4), YFRRT(4), YFRSU(4) 
       REAL XLFNUM(7), XSTKRT(6), YLFSZ(7), XStkNum(9) 
       REAL YLfFac(9), YSLA(6), YSTKRT(6), XVSHT(10), YVSHT(10)
@@ -221,12 +226,12 @@ C=======================================================================
       CALL CSP_IPPLNT(CONTROL,
      &  CAB, CanLmtFac, CROP, ECONO, EORATIO, FILECC,          !Output  
      &  FILEGC, FINREF,                                        !Output
-     &  FREEZ1, FREEZ2, GAMMA, GRLF, GRRT, GRST, GRSU, KCAN,   !Output
-     &  KEP, LfShdFac, LMF, LSFAC, NOUTDO, PCARSU, PCH2O, PLF1,!Output 
+     &  GAMMA, GRLF, GRRT, GRST, GRSU, KCAN,                   !Output
+     &  KEP, LfShdFac, LSFAC, NOUTDO, PCARSU, PCH2O, PLF1,     !Output 
      &  PLF2, PLIGSU, PLIPSU, PLWT, PMINSU, POASU, PORMIN,     !Output
      &  PROLFI, PRORTI, PROSTI, PROSUI, R30C2, RCH2O, RES30C,  !Output
      &  RLF30C, RLIG, RLIP, RMIN, ROA, RWUEP1, RWUMX, SLAMAX,  !Output
-     &  SLAMIN, SLAPAR, SLAREF,                                !Output
+     &  SLAMIN, SLAPAR,                                        !Output
      &  SIZELF, SIZREF, StkB, StkM, StkH2OFac, SuH2OFac,       !Output
      &  TURSLA, XDAY,                                          !Output
      &  XFRRT, XFRSU, XSLATM, XSTKRT, XVSHT, YFRRT,            !Output
@@ -253,8 +258,7 @@ C=======================================================================
      &    CANHT, CanLmtFac, CANWH, CO2, ECONO, EXCESS,    !Input
      &    DeltaLeafArea, DeltaLeafNum, FILECC,            !Input 
      &    DeltaLeafArealost, FILEGC, FRACSH, FRSHV,       !Input
-     &    KCAN, LeafArea,LeafAreaPlant, LeafNum,          !Input 
-     &    LfShdFac, PAR,                                  !Input
+     &    KCAN, LeafAreaPlant, LeafNum, LfShdFac, PAR,    !Input 
      &    PStres2, RNITP, SLAREF, SLAAD,                  !Input
      &    SLPF, Smax, StalkState, StkHt, SWFAC, TAVG,     !Input 
      &    TURFAC, WEATHER, XHLAI,                         !Input
@@ -295,20 +299,20 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
       CALL CSP_GROW_CANE(CONTROL, DYNAMIC,
-     &  CAB, CropTypeCode, DeltaLeafArea,              !AGEFAC,!Input 
-     &  DeltaLeafNum, DTPI, ECONO, EXCESS, FILEIO, FILECC,     !Input
-     &  FILEGC, FINREF, FRSU, GAMMA, GRLF, GRRT, GRST,         !Input
-     &  GRSU, KCAN,Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
-     &  PAR, PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
-     &  PLTPOP, PLF1, PLF2, PLWT, ROWSPC, SLA,                 !Input
-     &  SLAMIN, SLAMAX, SLAPAR, SLAREF,                        !Input 
+     &  CAB, CropTypeCode, DeltaLeafArea,                 !Input 
+     &  DeltaLeafNum, DTPI, EXCESS, FILEIO,               !Input
+     &  FRSU, GAMMA, GRLF, GRRT, GRST,                    !Input
+     &  GRSU, Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
+     &  PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
+     &  PLTPOP, PLF1, PLF2, PLWT, SLA,                    !Input
+     &  SLAREF,                                           !Input 
      &  LSFAC, SENRT, SLDOT, Smax, SRDOT, StkHrNO, StalkState, !Input
-     &  StkB, StkM, SumTTStalk, TGRO,                          !Input
-     &  TURFAC, TURSLA, WEATHER, XDAY, XFRRT,                  !Input
-     &  XFRSU, XLAI, XLAIlost, XSLATM, XSTKRT, XVSHT, YFRRT,   !Input
-     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT, YVSHT, ZVSDI,       !Input
-     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI, YSLATM,       !Input/Output
-     &  BRDMD, CANHT, CANWH, CountStalk, DeltaLeafArealost,    !Output 
+     &  StkB, StkM, SumTTStalk,                           !Input
+     &  TURFAC, XDAY, XFRRT,                              !Input
+     &  XFRSU, XLAI, XLAIlost, XSTKRT, YFRRT,             !Input
+     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT,                !Input
+     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI,                !Input/Output
+     &  BRDMD, CountStalk, DeltaLeafArealost,                  !Output 
      &  LAIMX, LAIXD, LeafArea, LeafArealost, LeafAreaPlant,   !Output
      &  LFWT, LFWTHa, LSWTlost, LSWT, LSWTHa, LFWTHalost,      !Output 
      &  LFWTlost, LSWTHalost, StkH2OFac, STKmntDEF,            !Output
@@ -339,14 +343,14 @@ C     &    TNLEAK, WLDOTN, WRDOTN, WSDOTN, WSUDOTN)        !Output
 C     Call leaf senescence routine for initialization
 C-----------------------------------------------------------------------
       CALL CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, GRLF, GRSU, KCAN,    !Input
-     &    LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
-     &    MinGr, Ph1P, PhenoStage,                         !Input
-     &    PI1, RATTP, Smax,                                !Input
-     &    StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
-     &    SumTTStalk, SWFAC, TMIN, XLAI,                   !Input
-     &    YRDOY, YRPLT, YRSIM,                             !Input
-     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)              !Output
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
+     &    LeafMaint, LeafNum, LFmntDEF,               !Input
+     &    MinGr, Ph1P, PhenoStage,                    !Input
+     &    PI1, RATTP, Smax,                           !Input
+     &    StalkState, STKmntDEF, STKWT, STKWTP,       !Input
+     &    SumTTStalk, SWFAC, TMIN, XLAI,              !Input
+     &    YRDOY, YRPLT,                               !Input
+     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)         !Output
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
@@ -358,23 +362,23 @@ C-----------------------------------------------------------------------
      &  CUMDEP, RLV, RTDEP, SATFAC, SENRT, SRDOT)            !Output
 
         ENDIF
-!-----------------------------------------------------------------------    
+!-----------------------------------------------------------------------
       CALL CSP_OPGROW(CONTROL, ISWITCH, 
-     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,				!Input 
-     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,					!Input
-     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input 
-     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa, 				!Input
-     &  LSWTHalost, LFWTlost, LITOTAL,							!Input                            !Input
-     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input 
+     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,                !Input
+     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,                   !Input
+     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input
+     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa,                 !Input
+     &  LSWTHalost, LFWTlost, LITOTAL,                            !Input
+     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input
      &  PCLSD,PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,            !Input
-     &  PGT, RHOL, RHOS, RLV, RTDEP,								!Input
-     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input 
-     &  PHTMAX, STKFWTHa, STKFWT, STKWT, STKWTHa,                 !Input
+     &  PGT, RHOL, RHOS, RLV, RTDEP,                              !Input
+     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input
+     &  STKFWTHa, STKFWT, STKWT, STKWTHa,                         !Input
      &  STKWTHalost, SumTTD, SumTTG, SWFAC, SUWT, SUWTHa,         !Input
-     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input 
-     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,	!Input
-     &  BADMD)                                                    !Output
-!-----------------------------------------------------------------------    
+     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input
+     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,   !Input
+     &  BADMD)                                                   !Output
+!-----------------------------------------------------------------------
 !     Initialize Overview.out file.
       PSTRES1 = 1.0
       PSTRES2 = 1.0
@@ -382,13 +386,13 @@ C-----------------------------------------------------------------------
       PConc_Root = 0.0
 
       CALL CSP_OPHARV(CONTROL, ISWITCH, 
-     &    AGEFAC, BADMD, CANHT, TillerCount, LAIMX,       !Input
-     &	LAIXD, LeafNum, LFWTHa, LSWTHa,                   !Input
+     &    AGEFAC, BADMD, TillerCount, LAIMX,              !Input
+     &    LAIXD, LeafNum, LFWTHa, LSWTHa,                 !Input
      &    HARVFRAC,NSTRES, PLTPOP, PLWT, PStres1,         !Input
      &    PStres2, PhenoStage, StalkPopul, StalkState,    !Input 
-     &	STGDOY, STKFWTHa, StkHt, STKWTHa,                 !Input
+     &    STGDOY, STKFWTHa, StkHt, STKWTHa,               !Input
      &    STNAME, SUWTHa, SWFAC, TOPWT, TURFAC,           !Input
-     &    VSTAGE, WTNCAN, WTNST, WTNUP, XLAI, YRPLT)      !Input
+     &    WTNCAN, WTNUP, XLAI, YRPLT)                     !Input
 
 !     If this is not a sequenced run, don't use any previously calculated
 !       harvest residue.
@@ -466,8 +470,7 @@ C-----------------------------------------------------------------------
      &    CANHT, CanLmtFac, CANWH, CO2, ECONO, EXCESS,    !Input
      &    DeltaLeafArea, DeltaLeafNum, FILECC,            !Input 
      &    DeltaLeafArealost, FILEGC, FRACSH, FRSHV,       !Input
-     &    KCAN, LeafArea,LeafAreaPlant, LeafNum,          !Input 
-     &    LfShdFac, PAR,                                  !Input
+     &    KCAN, LeafAreaPlant, LeafNum, LfShdFac, PAR,    !Input 
      &    PStres2, RNITP, SLAREF, SLAAD,                  !Input
      &    SLPF, Smax, StalkState, StkHt, SWFAC, TAVG,     !Input 
      &    TURFAC, WEATHER, XHLAI,                         !Input
@@ -501,20 +504,20 @@ C     Initialize pest coupling point and damage variables
  
 !-----------------------------------------------------------------------
       CALL CSP_GROW_CANE(CONTROL, DYNAMIC,
-     &  CAB, CropTypeCode, DeltaLeafArea,              !AGEFAC,!Input 
-     &  DeltaLeafNum, DTPI, ECONO, EXCESS, FILEIO, FILECC,     !Input
-     &  FILEGC, FINREF, FRSU, GAMMA, GRLF, GRRT, GRST,         !Input
-     &  GRSU, KCAN,Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
-     &  PAR, PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
-     &  PLTPOP, PLF1, PLF2, PLWT, ROWSPC, SLA,                 !Input
-     &  SLAMIN, SLAMAX, SLAPAR, SLAREF,                        !Input 
+     &  CAB, CropTypeCode, DeltaLeafArea,                 !Input 
+     &  DeltaLeafNum, DTPI, EXCESS, FILEIO,               !Input
+     &  FRSU, GAMMA, GRLF, GRRT, GRST,                    !Input
+     &  GRSU, Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
+     &  PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
+     &  PLTPOP, PLF1, PLF2, PLWT, SLA,                    !Input
+     &  SLAREF,                                           !Input 
      &  LSFAC, SENRT, SLDOT, Smax, SRDOT, StkHrNO, StalkState, !Input
-     &  StkB, StkM, SumTTStalk, TGRO,                          !Input
-     &  TURFAC, TURSLA, WEATHER, XDAY, XFRRT,                  !Input
-     &  XFRSU, XLAI, XLAIlost, XSLATM, XSTKRT, XVSHT, YFRRT,   !Input
-     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT, YVSHT, ZVSDI,       !Input
-     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI, YSLATM,       !Input/Output
-     &  BRDMD, CANHT, CANWH, CountStalk, DeltaLeafArealost,    !Output 
+     &  StkB, StkM, SumTTStalk,                           !Input
+     &  TURFAC, XDAY, XFRRT,                              !Input
+     &  XFRSU, XLAI, XLAIlost, XSTKRT, YFRRT,             !Input
+     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT,                !Input
+     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI,                !Input/Output
+     &  BRDMD, CountStalk, DeltaLeafArealost,                  !Output 
      &  LAIMX, LAIXD, LeafArea, LeafArealost, LeafAreaPlant,   !Output
      &  LFWT, LFWTHa, LSWTlost, LSWT, LSWTHa, LFWTHalost,      !Output 
      &  LFWTlost, LSWTHalost, StkH2OFac, STKmntDEF,            !Output
@@ -531,14 +534,14 @@ C     Initialize pest coupling point and damage variables
 C     Call leaf senescence routine for initialization
 C-----------------------------------------------------------------------
       CALL CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, GRLF, GRSU, KCAN,    !Input
-     &    LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
-     &    MinGr, Ph1P, PhenoStage,                         !Input
-     &    PI1, RATTP, Smax,                                !Input
-     &    StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
-     &    SumTTStalk, SWFAC, TMIN, XLAI,                   !Input
-     &    YRDOY, YRPLT, YRSIM,                             !Input
-     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)              !Output
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
+     &    LeafMaint, LeafNum, LFmntDEF,               !Input
+     &    MinGr, Ph1P, PhenoStage,                    !Input
+     &    PI1, RATTP, Smax,                           !Input
+     &    StalkState, STKmntDEF, STKWT, STKWTP,       !Input
+     &    SumTTStalk, SWFAC, TMIN, XLAI,              !Input
+     &    YRDOY, YRPLT,                               !Input
+     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)         !Output
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
@@ -565,30 +568,30 @@ C-----------------------------------------------------------------------
 !     Write headings to output file GROWTH.OUT
 !-----------------------------------------------------------------------
       CALL CSP_OPGROW(CONTROL, ISWITCH, 
-     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,				!Input 
-     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,					!Input
-     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input 
-     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa, 				!Input
-     &  LSWTHalost, LFWTlost, LITOTAL,							!Input                            !Input
-     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input 
+     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,                !Input
+     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,                   !Input
+     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input
+     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa,                 !Input
+     &  LSWTHalost, LFWTlost, LITOTAL,                            !Input
+     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input
      &  PCLSD,PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,            !Input
-     &  PGT, RHOL, RHOS, RLV, RTDEP,								!Input
-     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input 
-     &  PHTMAX, STKFWTHa, STKFWT, STKWT, STKWTHa,                 !Input
+     &  PGT, RHOL, RHOS, RLV, RTDEP,                              !Input
+     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input
+     &  STKFWTHa, STKFWT, STKWT, STKWTHa,                         !Input
      &  STKWTHalost, SumTTD, SumTTG, SWFAC, SUWT, SUWTHa,         !Input
-     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input 
-     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,	!Input
-     &  BADMD)                                                    !Output
+     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input
+     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,   !Input
+     &  BADMD)                                                   !Output
 !-----------------------------------------------------------------------    
 
       CALL CSP_OPHARV(CONTROL, ISWITCH, 
-     &    AGEFAC, BADMD, CANHT, TillerCount, LAIMX,       !Input
-     &	LAIXD, LeafNum, LFWTHa, LSWTHa,                 !Input
+     &    AGEFAC, BADMD, TillerCount, LAIMX,              !Input
+     &    LAIXD, LeafNum, LFWTHa, LSWTHa,                 !Input
      &    HARVFRAC,NSTRES, PLTPOP, PLWT, PStres1,         !Input
      &    PStres2, PhenoStage, StalkPopul, StalkState,    !Input 
-     &	STGDOY, STKFWTHa, StkHt, STKWTHa,               !Input
+     &    STGDOY, STKFWTHa, StkHt, STKWTHa,               !Input
      &    STNAME, SUWTHa, SWFAC, TOPWT, TURFAC,           !Input
-     &    VSTAGE, WTNCAN, WTNST, WTNUP, XLAI, YRPLT)      !Input
+     &    WTNCAN, WTNUP, XLAI, YRPLT)                     !Input
 
 ! Zero the value of HARVRES composite variable here 
 ! NOTE: At this time, the variable has already been used to 
@@ -664,8 +667,7 @@ C-----------------------------------------------------------------------
      &    CANHT, CanLmtFac, CANWH, CO2, ECONO, EXCESS,    !Input
      &    DeltaLeafArea, DeltaLeafNum, FILECC,            !Input 
      &    DeltaLeafArealost, FILEGC, FRACSH, FRSHV,       !Input
-     &    KCAN, LeafArea,LeafAreaPlant, LeafNum,          !Input 
-     &    LfShdFac, PAR,                                  !Input
+     &    KCAN, LeafAreaPlant, LeafNum, LfShdFac, PAR,    !Input 
      &    PStres2, RNITP, SLAREF, SLAAD,                  !Input
      &    SLPF, Smax, StalkState, StkHt, SWFAC, TAVG,     !Input 
      &    TURFAC, WEATHER, XHLAI,                         !Input
@@ -675,20 +677,20 @@ C-----------------------------------------------------------------------
       ENDIF
 !-----------------------------------------------------------------------
       CALL CSP_GROW_CANE(CONTROL, DYNAMIC,
-     &  CAB, CropTypeCode, DeltaLeafArea,              !AGEFAC,!Input 
-     &  DeltaLeafNum, DTPI, ECONO, EXCESS, FILEIO, FILECC,     !Input
-     &  FILEGC, FINREF, FRSU, GAMMA, GRLF, GRRT, GRST,         !Input
-     &  GRSU, KCAN,Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
-     &  PAR, PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
-     &  PLTPOP, PLF1, PLF2, PLWT, ROWSPC, SLA,                 !Input
-     &  SLAMIN, SLAMAX, SLAPAR, SLAREF,                        !Input 
+     &  CAB, CropTypeCode, DeltaLeafArea,                 !Input 
+     &  DeltaLeafNum, DTPI, EXCESS, FILEIO,               !Input
+     &  FRSU, GAMMA, GRLF, GRRT, GRST,                    !Input
+     &  GRSU, Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
+     &  PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
+     &  PLTPOP, PLF1, PLF2, PLWT, SLA,                    !Input
+     &  SLAREF,                                           !Input 
      &  LSFAC, SENRT, SLDOT, Smax, SRDOT, StkHrNO, StalkState, !Input
-     &  StkB, StkM, SumTTStalk, TGRO,                          !Input
-     &  TURFAC, TURSLA, WEATHER, XDAY, XFRRT,                  !Input
-     &  XFRSU, XLAI, XLAIlost, XSLATM, XSTKRT, XVSHT, YFRRT,   !Input
-     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT, YVSHT, ZVSDI,       !Input
-     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI, YSLATM,       !Input/Output
-     &  BRDMD, CANHT, CANWH, CountStalk, DeltaLeafArealost,    !Output 
+     &  StkB, StkM, SumTTStalk,                           !Input
+     &  TURFAC, XDAY, XFRRT,                              !Input
+     &  XFRSU, XLAI, XLAIlost, XSTKRT, YFRRT,             !Input
+     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT,                !Input
+     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI,                !Input/Output
+     &  BRDMD, CountStalk, DeltaLeafArealost,                  !Output 
      &  LAIMX, LAIXD, LeafArea, LeafArealost, LeafAreaPlant,   !Output
      &  LFWT, LFWTHa, LSWTlost, LSWT, LSWTHa, LFWTHalost,      !Output 
      &  LFWTlost, LSWTHalost, StkH2OFac, STKmntDEF,            !Output
@@ -782,8 +784,7 @@ C-----------------------------------------------------------------------
      &    CANHT, CanLmtFac, CANWH, CO2, ECONO, EXCESS,    !Input
      &    DeltaLeafArea, DeltaLeafNum, FILECC,            !Input 
      &    DeltaLeafArealost, FILEGC, FRACSH, FRSHV,       !Input
-     &    KCAN, LeafArea,LeafAreaPlant, LeafNum,          !Input 
-     &    LfShdFac, PAR,                                  !Input
+     &    KCAN, LeafAreaPlant, LeafNum, LfShdFac, PAR,    !Input 
      &    PStres2, RNITP, SLAREF, SLAAD,                  !Input
      &    SLPF, Smax, StalkState, StkHt, SWFAC, TAVG,     !Input 
      &    TURFAC, WEATHER, XHLAI,                         !Input
@@ -794,11 +795,11 @@ C-----------------------------------------------------------------------
 C       Compute maintenance respiration and subtract from available CH2O
 C-----------------------------------------------------------------------
       CALL CSP_RESPIR(CONTROL,
-     &    LeafArea, LeafDist, LFWT, LMF, R30C2,            !Input
-     &    RES30C, RLF30C, SLAREF, StalkState,              !Input
-     &    StkPG, SUWT, TGRO, TGROAV, TOTALWT,              !Input
-     &    RO, RP,                                          !Input/Output
-     &    LeafMaint, MAINTR)                               !Output
+     &    LeafArea, LeafDist, LFWT, R30C2,            !Input
+     &	RES30C, RLF30C, SLAREF, StalkState,         !Input
+     &    StkPG, SUWT, TGRO, TOTALWT,                 !Input
+     &    RO, RP,                                     !Input/Output
+     &    LeafMaint, MAINTR)                          !Output
 C-----------------------------------------------------------------------
       DO Stalk = 1, NumOfStalks
 
@@ -967,20 +968,20 @@ C-----------------------------------------------------------------------
 !!      ENDIF
 C-----------------------------------------------------------------------
       CALL CSP_GROW_CANE(CONTROL, DYNAMIC,
-     &  CAB, CropTypeCode, DeltaLeafArea,              !AGEFAC,!Input 
-     &  DeltaLeafNum, DTPI, ECONO, EXCESS, FILEIO, FILECC,     !Input
-     &  FILEGC, FINREF, FRSU, GAMMA, GRLF, GRRT, GRST,         !Input
-     &  GRSU, KCAN,Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
-     &  PAR, PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
-     &  PLTPOP, PLF1, PLF2, PLWT, ROWSPC, SLA,                 !Input
-     &  SLAMIN, SLAMAX, SLAPAR, SLAREF,                        !Input 
+     &  CAB, CropTypeCode, DeltaLeafArea,                 !Input 
+     &  DeltaLeafNum, DTPI, EXCESS, FILEIO,               !Input
+     &  FRSU, GAMMA, GRLF, GRRT, GRST,                    !Input
+     &  GRSU, Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
+     &  PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
+     &  PLTPOP, PLF1, PLF2, PLWT, SLA,                    !Input
+     &  SLAREF,                                           !Input 
      &  LSFAC, SENRT, SLDOT, Smax, SRDOT, StkHrNO, StalkState, !Input
-     &  StkB, StkM, SumTTStalk, TGRO,                          !Input
-     &  TURFAC, TURSLA, WEATHER, XDAY, XFRRT,                  !Input
-     &  XFRSU, XLAI, XLAIlost, XSLATM, XSTKRT, XVSHT, YFRRT,   !Input
-     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT, YVSHT, ZVSDI,       !Input
-     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI, YSLATM,       !Input/Output
-     &  BRDMD, CANHT, CANWH, CountStalk, DeltaLeafArealost,    !Output 
+     &  StkB, StkM, SumTTStalk,                           !Input
+     &  TURFAC, XDAY, XFRRT,                              !Input
+     &  XFRSU, XLAI, XLAIlost, XSTKRT, YFRRT,             !Input
+     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT,                !Input
+     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI,                !Input/Output
+     &  BRDMD, CountStalk, DeltaLeafArealost,                  !Output 
      &  LAIMX, LAIXD, LeafArea, LeafArealost, LeafAreaPlant,   !Output
      &  LFWT, LFWTHa, LSWTlost, LSWT, LSWTHa, LFWTHalost,      !Output 
      &  LFWTlost, LSWTHalost, StkH2OFac, STKmntDEF,            !Output
@@ -992,14 +993,14 @@ C-----------------------------------------------------------------------
 C     Call leaf senescence routine to compute leaf loss variables
 C-----------------------------------------------------------------------
       CALL CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, GRLF, GRSU, KCAN,    !Input
-     &	LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
-     &    MinGr, Ph1P, PhenoStage,                         !Input
-     &    PI1, RATTP, Smax,                                !Input
-     &	StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
-     &    SumTTStalk, SWFAC, TMIN, XLAI,                   !Input
-     &    YRDOY, YRPLT, YRSIM,                             !Input
-     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)              !Output
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
+     &    LeafMaint, LeafNum, LFmntDEF,               !Input
+     &    MinGr, Ph1P, PhenoStage,                    !Input
+     &    PI1, RATTP, Smax,                           !Input
+     &    StalkState, STKmntDEF, STKWT, STKWTP,       !Input
+     &    SumTTStalk, SWFAC, TMIN, XLAI,              !Input
+     &    YRDOY, YRPLT,                               !Input
+     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)         !Output
 C-----------------------------------------------------------------------
 C     Call frost damage routine if TMIN is less than FREEZ1 deg C
 C-----------------------------------------------------------------------
@@ -1116,32 +1117,32 @@ C-----------------------------------------------------------------------
 C     Call leaf senescence routine for output
 C-----------------------------------------------------------------------
       CALL CSP_SENES(CONTROL, DYNAMIC,
-     &    CAB, ECONO, FILECC, FILEGC, GRLF, GRSU, KCAN,    !Input
-     &    LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
-     &    MinGr, Ph1P, PhenoStage,                         !Input
-     &    PI1, RATTP, Smax,                                !Input
-     &    StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
-     &    SumTTStalk, SWFAC, TMIN, XLAI,                   !Input
-     &    YRDOY, YRPLT, YRSIM,                             !Input
-     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)              !Output
+     &    CAB, ECONO, FILECC, FILEGC,                 !Input
+     &    LeafMaint, LeafNum, LFmntDEF,               !Input
+     &    MinGr, Ph1P, PhenoStage,                    !Input
+     &    PI1, RATTP, Smax,                           !Input
+     &    StalkState, STKmntDEF, STKWT, STKWTP,       !Input
+     &    SumTTStalk, SWFAC, TMIN, XLAI,              !Input
+     &    YRDOY, YRPLT,                               !Input
+     &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)         !Output
 !-----------------------------------------------------------------------
 C     Call sugarcane growth routine to update senescence 
 C-----------------------------------------------------------------------
       CALL CSP_GROW_CANE(CONTROL, DYNAMIC,
-     &  CAB, CropTypeCode, DeltaLeafArea,              !AGEFAC,!Input 
-     &  DeltaLeafNum, DTPI, ECONO, EXCESS, FILEIO, FILECC,     !Input
-     &  FILEGC, FINREF, FRSU, GAMMA, GRLF, GRRT, GRST,         !Input
-     &  GRSU, KCAN,Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
-     &  PAR, PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
-     &  PLTPOP, PLF1, PLF2, PLWT, ROWSPC, SLA,                 !Input
-     &  SLAMIN, SLAMAX, SLAPAR, SLAREF,                        !Input 
+     &  CAB, CropTypeCode, DeltaLeafArea,                 !Input 
+     &  DeltaLeafNum, DTPI, EXCESS, FILEIO,               !Input
+     &  FRSU, GAMMA, GRLF, GRRT, GRST,                    !Input
+     &  GRSU, Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
+     &  PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
+     &  PLTPOP, PLF1, PLF2, PLWT, SLA,                    !Input
+     &  SLAREF,                                           !Input 
      &  LSFAC, SENRT, SLDOT, Smax, SRDOT, StkHrNO, StalkState, !Input
-     &  StkB, StkM, SumTTStalk, TGRO,                          !Input
-     &  TURFAC, TURSLA, WEATHER, XDAY, XFRRT,                  !Input
-     &  XFRSU, XLAI, XLAIlost, XSLATM, XSTKRT, XVSHT, YFRRT,   !Input
-     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT, YVSHT, ZVSDI,       !Input
-     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI, YSLATM,       !Input/Output
-     &  BRDMD, CANHT, CANWH, CountStalk, DeltaLeafArealost,    !Output 
+     &  StkB, StkM, SumTTStalk,                           !Input
+     &  TURFAC, XDAY, XFRRT,                              !Input
+     &  XFRSU, XLAI, XLAIlost, XSTKRT, YFRRT,             !Input
+     &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT,                !Input
+     &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI,                !Input/Output
+     &  BRDMD, CountStalk, DeltaLeafArealost,                  !Output 
      &  LAIMX, LAIXD, LeafArea, LeafArealost, LeafAreaPlant,   !Output
      &  LFWT, LFWTHa, LSWTlost, LSWT, LSWTHa, LFWTHalost,      !Output 
      &  LFWTlost, LSWTHalost, StkH2OFac, STKmntDEF,            !Output
@@ -1150,20 +1151,20 @@ C-----------------------------------------------------------------------
      &  SuH2OFac, SUWT, SUWTHa, TOPWT)                         !Output
 C-----------------------------------------------------------------------
       CALL CSP_OPGROW(CONTROL, ISWITCH, 
-     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,				!Input 
-     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,					!Input
-     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input 
-     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa, 				!Input
-     &  LSWTHalost, LFWTlost, LITOTAL,							!Input                            !Input
-     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input 
+     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,                !Input
+     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,                   !Input
+     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input
+     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa,                 !Input
+     &  LSWTHalost, LFWTlost, LITOTAL,                            !Input
+     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input
      &  PCLSD,PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,            !Input
-     &  PGT, RHOL, RHOS, RLV, RTDEP,								!Input
-     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input 
-     &  PHTMAX, STKFWTHa, STKFWT, STKWT, STKWTHa,                 !Input
+     &  PGT, RHOL, RHOS, RLV, RTDEP,                              !Input
+     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input
+     &  STKFWTHa, STKFWT, STKWT, STKWTHa,                         !Input
      &  STKWTHalost, SumTTD, SumTTG, SWFAC, SUWT, SUWTHa,         !Input
-     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input 
-     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,	!Input
-     &  BADMD)                                                    !Output
+     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input
+     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,   !Input
+     &  BADMD)                                                   !Output
 C-----------------------------------------------------------------------    
 C     Plant phosphorus module call
 C-----------------------------------------------------------------------	 
@@ -1183,13 +1184,13 @@ C-----------------------------------------------------------------------
 
         ! Write to Overview.out and summary.out files.
         CALL CSP_OPHARV(CONTROL, ISWITCH, 
-     &    AGEFAC, BADMD, CANHT, TillerCount, LAIMX,       !Input
+     &    AGEFAC, BADMD, TillerCount, LAIMX,              !Input
      &    LAIXD, LeafNum, LFWTHa, LSWTHa,                 !Input
      &    HARVFRAC,NSTRES, PLTPOP, PLWT, PStres1,         !Input
      &    PStres2, PhenoStage, StalkPopul, StalkState,    !Input 
      &    STGDOY, STKFWTHa, StkHt, STKWTHa,               !Input
      &    STNAME, SUWTHa, SWFAC, TOPWT, TURFAC,           !Input
-     &    VSTAGE, WTNCAN, WTNST, WTNUP, XLAI, YRPLT)      !Input
+     &    WTNCAN, WTNUP, XLAI, YRPLT)                     !Input
       ENDIF
 
 !       Call PlantNBal only for seasonal output.
@@ -1298,8 +1299,8 @@ C-----------------------------------------------------------------------
 ! FRACDN    Relative time between flowering (NR1) and last leaf appearance 
 !             (NDLEAF) 
 ! FREEZ1    Temperature below which plant loses all leaves, but development 
-!             continues (°C)
-! FREEZ2    Temperature below which plant growth stops completely. (°C)
+!             continues (ï¿½C)
+! FREEZ2    Temperature below which plant growth stops completely. (ï¿½C)
 ! FRLF      Fraction of vegetative tissue growth that goes to leaves on a 
 !             day (g[leaf] / g[veg])
 ! FRRT      Fraction of vegetative tissue growth that goes to roots on a 
@@ -1338,13 +1339,13 @@ C-----------------------------------------------------------------------
 ! NGRLF     Maximum N demand for leaf growth (g[leaf N] / m2[ground] / d)
 ! NGRRT     Maximum N demand for root growth (g[root N] / m2[ground] / d)
 ! NGRST     Maximum N demand for stem growth (g[stem N] / m2[ground] / d)
-! NH4(L)    Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)    Ammonium N in soil layer L (ï¿½g[N] / g[soil])
 ! NL        Maximum number of soil layers = 20 
 ! NLAYR     Number of soil layers 
 ! NMINEA    Actual Nitrogen mined from existing tissue (g[N] / m2 / d)
 ! NMINEP    Potential N mobilization from storage (g[N] / m2 / d)
 ! NMOBR     Stage dependent N mining rate 
-! NO3(L)    Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)    Nitrate in soil layer L (ï¿½g[N] / g[soil])
 ! NOUTDO    Logical unit for OVERVIEW.OUT file 
 ! NPLTD     Number of plants destroyed (#/m2/d)
 ! NR1       Day when 50% of plants have at least one flower (days)
@@ -1450,7 +1451,7 @@ C-----------------------------------------------------------------------
 ! SRDOT     Daily root senescence (g / m2 / d)
 ! SSDOT     Daily senescence of petioles (g / m2 / d)
 ! SSNDOT    Petiole senescence due to water stress (g/m2/day)
-! ST(L)     Soil temperature in soil layer L (°C)
+! ST(L)     Soil temperature in soil layer L (ï¿½C)
 ! STGDOY(I) Day when stage I occurred (YYDDD)
 ! StkHrNO   Number of stalks last harvested from existing stubble.
 ! StkPG(j)  Daily gross photosynthesis by stalk j (g[CH2O] / stalk / d)
@@ -1461,17 +1462,17 @@ C-----------------------------------------------------------------------
 !             (cm3 [water] / cm3 [soil])
 ! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
-! TAVG      Average daily temperature (°C)
+! TAVG      Average daily temperature (ï¿½C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
 ! TDUMX2    Photo-thermal time that occurs in a real day based on late 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
-! TGRO(I)   Hourly air temperature (°C)
-! TGROAV    Average daily air temperature (°C)
+! TGRO(I)   Hourly air temperature (ï¿½C)
+! TGROAV    Average daily air temperature (ï¿½C)
 ! TITLET    Description of treatment for this simulation 
-! TMIN      Minimum daily temperature (°C)
+! TMIN      Minimum daily temperature (ï¿½C)
 ! TNLEAK    Total nitrogen leak (g[N] / m2 / d)
 ! TOPWT     Total weight of above-ground portion of crop. (g[tissue] / m2)
 ! TOTALWT(j) Total weight of sugarcane stalk j, including a proportion of 
@@ -1529,7 +1530,7 @@ C-----------------------------------------------------------------------
 ! XLAI      Leaf area (one side) per unit of ground area
 !             (m2[leaf] / m2[ground])
 ! XSLATM(I) Temperature values for function that reduces specific leaf area 
-!             (SLA) (°C)
+!             (SLA) (ï¿½C)
 ! YRDOY     Current day of simulation (YYDDD)
 ! YREMRG    Day of emergence (YYDDD)
 ! MDATE     Harvest maturity (YYDDD)

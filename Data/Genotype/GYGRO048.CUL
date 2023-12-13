@@ -1,0 +1,50 @@
+*GUAR GENOTYPE COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF       DEFINITIONS
+! =====       ===========
+! VAR#        Identification code or number for a specific cultivar.
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL        Critical Short Day Length below which reproductive development
+!             progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN       Slope of the relative response of development to photoperiod with time
+!             (positive for shortday plants) (1/hour)
+! EM-FL       Time between plant emergence and flower appearance (R1)
+!             (photothermal days)
+! FL-SH       Time between first flower and first pod (R3) (photothermal days)
+! FL-SD       Time between first flower and first seed (R5) (photothermal days)
+! SD-PM       Time between first seed (R5) and physiological maturity (R7)
+!             (photothermal days)
+! FL-LF       Time between first flower (R1) and end of leaf expansion
+!             (photothermal days)
+! LFMAX       Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!             (mg CO2/m2-s)
+! SLAVR       Specific leaf area of cultivar under standard growth conditions
+!             (cm2/g)
+! SIZLF       Maximum size of full leaf (three leaflets) (cm2)
+! XFRT        Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD       Maximum weight per seed (g)
+! SFDUR       Seed filling duration for pod cohort at standard growth conditions
+!             (photothermal days)
+! SDPDV       Average seed per pod under standard growing conditions (#/pod)
+! PODUR       Time required for cultivar to reach final pod load under optimal
+!             conditions (photothermal days)
+! THRSH       Threshing percentage. The maximum ratio of (seed/(seed+shell))
+!             at maturity. Causes seeds to stop growing as their dry weight
+!             increases until shells are filled in a cohort.
+! SDPRO       Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP       Fraction oil in seeds (g(oil)/g(seed))
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             P     P     P     N     P     P     N     G     G     G     G     G     G     G     N     G     N     N
+
+999991 MINIMA               . DFAULT 11.78 0.129   9.0   5.0  11.0 30.00 30.00 1.000  300. 100.0  0.60 0.020  40.0  3.00  10.0  50.0  .250  .040
+999992 MAXIMA               . DFAULT 14.60 0.385  24.0  10.0  20.0 70.00 70.00 1.400  400. 200.0  0.99 0.090  65.0  9.00  30.0  70.0  .350  .080
+
+!VAR#  VAR-NAME........ EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+IB1111 Guar-Kinman          . GY0331 13.59 0.249  14.5   8.0  12.0 63.00 60.00  1.33  350. 140.0  0.70 0.030  55.0  8.00  20.5  57.8  .300  .060 
+IB2222 Guar Monument        . GY0331 13.59 0.249  14.5   8.0  12.0 63.00 58.00  1.11  350. 140.0  0.70 0.030  55.0  8.00  19.5  56.8  .300  .060 

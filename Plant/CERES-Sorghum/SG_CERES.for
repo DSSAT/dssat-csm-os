@@ -1,10 +1,9 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida
-C                      International Fertilizer Development Center
-C                      USDA-ARS-ALARC, Phoenix, AZ
-C                      Washington State University
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2021
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C ALL RIGHTS RESERVED
 C=======================================================================
 C======================================================================
 C  Main CERES-Sorghum CSM Routine
@@ -30,6 +29,9 @@ C  05/19/2011 GH  Reorganized cultivar coefficients
 C  08/26/2011 GH  Add new tillering coefficient in Ecotype file
 C  05/31/2007 GH Added P-model (unfinished)
 C  02/07/2018 MA Externalized initial leaf area A (change name to PLAM, 11jan2019)
+!  06/15/2022 CHP Added CropStatus
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -43,11 +45,14 @@ C----------------------------------------------------------------------
      &     TRWUP, TWILEN, YREND, YRPLT,                         !Input
      &     CANHT, HARVRES, MDATE, NSTRES, PORMIN, PUptake,      !Output
      &     RLV, RWUMX, SENESCE, STGDOY, UNO3, UNH4,             !Ouput
-     &     XLAI, KCAN, KEP, FracRts)                            !Output
+     &     XLAI, KCAN, KEP, FracRts, CropStatus)                !Output
 
       USE ModuleDefs
 
       IMPLICIT NONE
+      EXTERNAL FIND,GETLUN,YR_DOY,ERROR,HRES_CERES,IGNORE,SG_PHENOL,
+     &  SG_GROSUB,MZ_OPGROW,MZ_OPNIT,SG_OPHARV,PEST,SG_ROOTGR
+
       SAVE
 
       REAL            AGEFAC
@@ -68,6 +73,7 @@ C----------------------------------------------------------------------
       REAL            CO2X(10)
       REAL            CO2Y(10)
       CHARACTER*2     CROP
+      INTEGER         CropStatus
       INTEGER         CTYPE
       REAL            CUMDEP
       REAL            CUMDTT
@@ -374,8 +380,6 @@ C-----------------------------------------------------------------------
       Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
 
-C      PARAMETER       (ERRKEY='MAIZE')
-
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       CROP    = CONTROL % CROP
@@ -487,7 +491,8 @@ C----------------------------------------------------------------------
               CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
               READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC,SDEPTH
- 60           FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+C 60           FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+ 60           FORMAT(24X,F6.0,13X,F5.2,7X,F5.2)
               LNUM = LNUM + 1
               IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
@@ -737,6 +742,10 @@ C         ***********************************************************
 C-GH &            ROPT,GDDE,RUE,KCAN
 C-gh &            ROPT,DJTI,GDDE,RUE,KCAN
 
+             IF (PLAM .LE. 0.0) THEN
+              CALL ERROR (ERRKEY,37,FILEE,LNUM)
+             ENDIF
+
 c             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
 c     &            ROPT,DJTI,GDDE,RUE,KCAN,P3,P4
 
@@ -745,7 +754,7 @@ C-GH3100         FORMAT (A6,1X,A16,1X,8(1X,F5.0))
 c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
           ELSEIF (ISECT .EQ. 0) THEN
-            CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            CALL ERROR(ERRKEY,38,FILEE,LNUM)
           ENDIF
         ENDDO
         CLOSE (LUNECO)
@@ -777,10 +786,10 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
      &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
      &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)
+     &      SeedFrac, VegFrac, CropStatus)                                 
 
           CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -1186,10 +1195,10 @@ C--------------------------------------------------------------------
      &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
      &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)
+     &      SeedFrac, VegFrac, CropStatus) 
 
              CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -1308,7 +1317,7 @@ C----------------------------------------------------------------------
      &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
      &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)
+     &      SeedFrac, VegFrac, CropStatus) 
 
           ENDIF
         ENDIF
@@ -1319,7 +1328,7 @@ C----------------------------------------------------------------------
           IF (ISTAGE .LT. 6) THEN
 
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -1489,7 +1498,7 @@ c         WTNRT = ROOTN * PLTPOP
          ENDIF
          IF (YRDOY .GE. YRPLT) THEN
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
@@ -1557,7 +1566,7 @@ C----------------------------------------------------------------------
 
 
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      AGEFAC, BIOMAS, CARBO, CNSD2, CO2X, CO2Y,  !CNSD1
      &      CO2, CSD2, CUMPH, DLAYR,DM, DTT,
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,

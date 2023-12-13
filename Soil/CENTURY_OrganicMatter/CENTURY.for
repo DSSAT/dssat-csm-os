@@ -32,6 +32,8 @@
 !  07/14/2006 CHP Put revised DSSAT-Century with P model into CSM v4.6
 !  02/11/2010 CHP No simulation of organic matter when water is not 
 !                   simulated.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 !-----------------------------------------------------------------------
 !  Called: SOIL
 !  Calls : CE_RATIO_C, DECRAT_C, IMMOBLIMIT_C, INCORPOR_C, LITDEC_C, 
@@ -41,19 +43,24 @@
 !=======================================================================
 
       SUBROUTINE CENTURY (CONTROL, ISWITCH, 
-     &  FERTDATA, FLOODWAT, FLOODN, HARVRES, NH4,         !Input
-     &  NO3, OMADATA, SENESCE, SOILPROP, SPi_Labile,      !Input
-     &  ST, SW, TILLVALS,                                 !Input
-     &  IMM, LITC, MNR, MULCH, SomLit, SomLitC,           !Output
-     &  SomLitE, SSOMC,                                   !Output
-     &  newCO2)                         !added newCO2 from DayCent  PG
+     &  DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,   !Input
+     &  NH4, NO3, OMADATA, RLV, SENESCE,              !Input
+     &  SOILPROP, SPi_Labile, ST, SW, TILLVALS,       !Input
+     &  CH4_data, IMM, LITC, MNR, MULCH, newCO2,      !Output
+     &  SomLit,SomLitC, SomLitE, SSOMC)               !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
       USE FloodModule             
       USE ModSoilMix
+      USE GHG_mod
 
       IMPLICIT  NONE
+      EXTERNAL YR_DOY, OPSOMLIT_C, SoilCNPinit_C, TSOMLIT_C, 
+     &  SOMLITPRINT_C, SENESADD_C, OpSoilOrg, MethaneDynamics, 
+     &  SOILCBAL, SoilNoBal_C, SoilPoBal_C, RPLACE_C, INCORPOR_C, 
+     &  DECRAT_C, CE_RATIO_C, LITDEC_C, SOMDEC_C, IMMOBLIMIT_C,
+     &  NCHECK_C, INCYD
       SAVE
 !     ------------------------------------------------------------------
 
@@ -137,6 +144,13 @@
 
 !     Added for tillage
       REAL MIXPCT
+
+!     Methane variables:
+!     REAL CH4Consumption, CH4Emission, CH4Leaching, CH4Stored,
+!    &    CO2emission, CumCH4Consumpt, CumCH4Emission, 
+!    &    CumCH4Leaching, CumCO2Emission
+      REAL RLV(NL), DRAIN
+      TYPE (CH4_type) CH4_data
 
       DATA ADDMETABEFLAG /.FALSE./
       DATA FRMETFLAG /.FALSE./
@@ -243,6 +257,7 @@
       MNR = 0.
 
       ACCCO2 = 0.0
+      newCO2 = 0.
 
 !     Set initial SOM and nitrogen conditions for each soil layer.
       CALL SoilCNPinit_C (CONTROL, ISWITCH,               !Input 
@@ -403,9 +418,13 @@
 !     &  ACCCO2, LITC, OMAData, SENESCE,                   !Input
 !     &    SOM1C, TLITC, TSOMC, YRDOY)                     !Input
 
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
+     &    CH4_data)                                           !Output
+
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
       CALL SoilNoBal_C (CONTROL, ISWITCH, 
      &  HARVRES, IMM, LITE, MNR, NLAYR, OMAData,          !Input
@@ -704,6 +723,21 @@
      &  METABE, NLAYR, SOM1C, SOM1E, SOM2C,               !Input
      &  SOM2E, SOM23E, SOM3C, SOM3E, STRUCC, STRUCE)      !Input
 
+!     New CO2 produced from decomposition today
+      DO L = 0, NLAYR
+        IF (L == SRFC) THEN
+          newCO2(SRFC) = CO2FMET(SRFC) + CO2FSTR(SRFC,LIG) + 
+     &      CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
+        ELSE
+          newCO2(L) = CO2FMET(L) + CO2FSTR(L,LIG) + CO2FSTR(L,NONLIG) + 
+     &      CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
+        ENDIF   
+      ENDDO
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
+     &    CH4_data)                                           !Output
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY INTEGRATION
@@ -787,17 +821,17 @@
           ACCCO2(SRFC) = ACCCO2(SRFC) + CO2FMET(SRFC) +
      &        CO2FSTR(SRFC,LIG) + CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
 
-!         microbial respiration for N2O/N2 loss in DayCent   PG/chp
-          newCO2(SRFC) = CO2FMET(SRFC) + CO2FSTR(SRFC,LIG) + 
-     &        CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
+!!         microbial respiration for N2O/N2 loss in DayCent   PG/chp
+!          newCO2(SRFC) = CO2FMET(SRFC) + CO2FSTR(SRFC,LIG) + 
+!     &        CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
 
         ELSE
           ACCCO2(SOIL) = ACCCO2(SOIL) + CO2FMET(L) + CO2FSTR(L,LIG) +
      &        CO2FSTR(L,NONLIG) + CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
 
-!         microbial respiration for N2O/N2 loss in DayCent   PG
-          newCO2(L) = CO2FMET(L) + CO2FSTR(L,LIG) + CO2FSTR(L,NONLIG) + 
-     &        CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
+!!         microbial respiration for N2O/N2 loss in DayCent   PG
+!          newCO2(L) = CO2FMET(L) + CO2FSTR(L,LIG) + CO2FSTR(L,NONLIG) + 
+!     &        CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
 
         ENDIF   !End of IF block on L == SRFC.
       END DO   !End of DO loop on L.
@@ -818,14 +852,18 @@
      &  METABE, NLAYR, SOM1C, SOM1E, SOM2C,               !Input
      &  SOM2E, SOM23E, SOM3C, SOM3E, STRUCC, STRUCE)      !Input
 
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
+     &    CH4_data)                                           !Output
+
 !     Soil carbon balance.
 !      CALL SOILCBAL_C (CONTROL, ISWITCH, 
 !     &  ACCCO2, LITC, OMAData, SENESCE,                   !Input
 !     &    SOM1C, TLITC, TSOMC, YRDOY)                     !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************
 !***********************************************************************
@@ -834,6 +872,10 @@
       ELSEIF (DYNAMIC == OUTPUT) THEN
 !---------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
+     &    CH4_data)                                           !Output
 
 !       Get detailed SOM and litter output.
       IF (INDEX('AD',IDETL) > 0) THEN
@@ -868,8 +910,8 @@
      &  SENESCE, SOM1E, TLITE, TSOME, TSOM1E, TSOM23E)    !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************
 !***********************************************************************
@@ -878,6 +920,10 @@
       ELSEIF (DYNAMIC == SEASEND) THEN
 !     ------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
+
+      CALL MethaneDynamics(CONTROL, ISWITCH, SOILPROP,        !Input
+     &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
+     &    CH4_data)                                           !Output
 
 !     Close output files.
       IF (INDEX('AD',IDETL) > 0) THEN
@@ -912,8 +958,8 @@
      &  SENESCE, SOM1E, TLITE, TSOME, TSOM1E, TSOM23E)    !Input
 
       CALL SOILCBAL (CONTROL, ISWITCH, 
-     &  ACCCO2, HARVRES, LITC, OMAData, SENESCE,          !Input
-     &  SSOMC, TLITC, TSOMC, YRDOY)                       !Input
+     &  CH4_data, HARVRES, LITC, OMAData, SENESCE,            !Input
+     &  SSOMC, TLITC, TSOMC, YRDOY)                           !Input
 
 !***********************************************************************
 !***********************************************************************

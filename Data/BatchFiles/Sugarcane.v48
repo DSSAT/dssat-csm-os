@@ -1,0 +1,49 @@
+$BATCH(SUGARCANE)
+!
+! Directory    : C:\DSSAT48\SUGARCANE
+! Command Line : C:\DSSAT48\DSCSM048.EXE SCCAN048 B DSSBatch.v48
+! Crop         : Sugarcane       
+! Experiment   : ESAL1401.SCX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE SCCAN048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\SUGARCANE\ESAL1401.SCX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARCANE\SAPO8601.SCX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARCANE\SAPO8601.SCX                                                                 2      1      0      1      0
+C:\DSSAT48\SUGARCANE\SAPO8601.SCX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARCANE\SAPO8601.SCX                                                                11      1      0      1      0
+C:\DSSAT48\SUGARCANE\SAPO8601.SCX                                                                12      1      0      1      0
+C:\DSSAT48\SUGARCANE\SAPO8601.SCX                                                                13      1      0      1      0
+C:\DSSAT48\SUGARCANE\SATO8902.SCX                                                                 1      1      0      0      0
+C:\DSSAT48\SUGARCANE\SATO8902.SCX                                                                 2      1      0      0      0
+C:\DSSAT48\SUGARCANE\SATO8902.SCX                                                                 3      1      0      0      0
+C:\DSSAT48\SUGARCANE\SATO8902.SCX                                                                 4      1      0      0      0
+C:\DSSAT48\SUGARCANE\SATO8902.SCX                                                                 5      1      0      0      0
+C:\DSSAT48\SUGARCANE\SATO8902.SCX                                                                 6      1      0      0      0
+C:\DSSAT48\SUGARCANE\SATO8902.SCX                                                                 7      1      0      0      0
+C:\DSSAT48\SUGARCANE\SATO8902.SCX                                                                 8      1      0      0      0
+C:\DSSAT48\SUGARCANE\SXPG6801.SCX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARCANE\SXPG6801.SCX                                                                 2      1      0      1      0
+C:\DSSAT48\SUGARCANE\SXPG6801.SCX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARCANE\SXPG6801.SCX                                                                 4      1      0      1      0
+C:\DSSAT48\SUGARCANE\SXPG6801.SCX                                                                 5      1      0      1      0
+C:\DSSAT48\SUGARCANE\SXPG6801.SCX                                                                 6      1      0      1      0
+C:\DSSAT48\SUGARCANE\SXPG6801.SCX                                                                 7      1      0      1      0
+C:\DSSAT48\SUGARCANE\SXPG6801.SCX                                                                 8      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0001.SCX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0001.SCX                                                                 2      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0001.SCX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0001.SCX                                                                10      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0201.SCX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0201.SCX                                                                 2      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0201.SCX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0201.SCX                                                                 4      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0501.SCX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0501.SCX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0501.SCX                                                                 5      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0501.SCX                                                                 6      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0701.SCX                                                                 1      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0701.SCX                                                                 2      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0701.SCX                                                                 3      1      0      1      0
+C:\DSSAT48\SUGARCANE\UFBG0701.SCX                                                                 4      1      0      1      0

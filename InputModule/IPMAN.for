@@ -10,7 +10,7 @@ C  05/28/1993 PWW Header revision and minor changes
 C  04/16/2002 GH  Modified logic for reading planting date
 C  06/19/2002 GH  Modified for Y2K
 C  08/23/2002 GH  Expanded array for irrigation applications to NAPPL
-C
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNIR,YRSIM,ISWWAT,NIRR,EFFIRX,DSOILX,THETCX
 C           IEPTX,IOFFX,IAMEX,NAPW,TOTAPW,AIRAMX,IDLAPL,IRRCOD,AMT
@@ -35,6 +35,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, IGNORE, HFIND, IGNORE2, Y4K_DOY
 
       INTEGER      LNIR,NIRR,LUNEXP,IDLAPL(NAPPL),ISECT,LINEXP,LNSIM
       INTEGER      YRSIM,IFIND,LN,J,ERRNUM,NAPW,IIRV(NAPPL),IRRCD
@@ -70,6 +71,7 @@ C
          AMT(J)    = 0.0
          IRRCOD(J) = '     '
       END DO
+
       IF (LNIR .GT. 0) THEN
          IF (ISWWAT .EQ. 'N' .AND. LNSIM .EQ. 0) THEN
             IIRRI  = 'R'
@@ -113,9 +115,14 @@ C
             IF ((IDLAPL(NIRR) .LT.  0) .OR.
      &         (IIRRI .EQ. 'R' .AND. MOD(IDLAPL(NIRR),1000) .GT. 366))
      &         CALL ERROR (ERRKEY,10,FILEX,LINEXP)
-            IF (IIRRI .NE. 'D') CALL Y2K_DOY (IDLAPL(NIRR))
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !IF (IIRRI .NE. 'D') CALL Y2K_DOY (IDLAPL(NIRR))
+            IF (IIRRI .NE. 'D') THEN
+              CALL Y4K_DOY (IDLAPL(NIRR),FILEX,LINEXP,ERRKEY,3)
+            ENDIF
             IF (IIRRI .EQ. 'R' .AND. IDLAPL(NIRR) .LT. YRSIM) 
      &          CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+     
             IF (IIRRI .EQ. 'D' .AND. IDLAPL(NIRR) .LT. 0) GO TO 70
 
 !           chp 04/18/2013 remove this requirement. For puddling event, 
@@ -179,7 +186,7 @@ C
             IF ((IRRCOD(NIRR)(3:5)) .NE. '007' .AND.
      &          (IRRCOD(NIRR)(3:5)) .NE. '008' .AND.
      &          (IRRCOD(NIRR)(3:5)) .NE. '009' .AND.
-     &          (IRRCOD(NIRR)(3:5)) .NE. '010') THEN  !CHP added '010'
+     &          (IRRCOD(NIRR)(3:5)) .NE. '010') THEN 
                 NAPW = NAPW + 1
                 IF (AMT(NAPW) .GT. 0.0) THEN
                   TOTAPW = TOTAPW + AMT(NAPW)
@@ -220,6 +227,25 @@ C-----------------------------------------------------------------------
  55   FORMAT (I3,F5.0,3(1X,F5.0),2(1X,A5),1X,F5.0)
  60   FORMAT (I3,I5,1X,A5,1X,F5.0,4X,I2)
       END SUBROUTINE IPIRR
+!=======================================================================
+!     IPIRR VARIABLE DEFINITIONS:
+!-----------------------------------------------------------------------
+!IDLAPL(I) Irrigation or water table dates read from input file.  
+!IIRRI    Irrigation switch R=on reported dates, D=as reported, days after 
+!            planting, A=automatic, when required., F=automatic w/ fixed 
+!            amt, P=as reported thru last reported day then automatic, W=as 
+!            reported thru last reported day then fixed amount, N=not 
+!            irrigated 
+!IIRV is no longer used. It is water table depth for IR007, otherwise it is?
+!IRRCOD    Irrigation Codes: IR001: Furrow in mm; IR006: Flood depth in mm; IR009 Bund height in mm
+!ISWWAT   Water simulation control switch (Y or N). It is read from X file simulation water
+!LNSIM    Simulation treatment setting in X file
+!NIRR # of irrigation events reading
+!
+!-----------------------------------------------------------------------
+!     END SUBROUTINE IPIRR
+!=======================================================================
+
 
 C=======================================================================
 C  IPRES, Subroutine
@@ -234,6 +260,7 @@ C  06/19/2002 GH  Modified for Y2K
 C  05/28/1993 PWW Header revision and minor changes
 C  08/23/2002 GH  Expanded array for organic material applications to NAPPL
 C  02/03/2005 GH  Corrected error checking for missing levels
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNRES,RESDAY,RESCOD,RESIDUE,RINP,DEPRES,
 C           RESN,RESP,RESK,NARES,RESAMT,ISWNIT,YRSIM,ISWPHO,ISWPOT
@@ -257,6 +284,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, WARNING, Y4K_DOY
 
       CHARACTER*1  ISWNIT,ISWPHO,ISWPOT,IRESI,ISWWAT
       CHARACTER*5  RESCOD(NAPPL),RMET(NAPPL)
@@ -266,7 +294,7 @@ C=======================================================================
       CHARACTER*80 CHARTEST
 
       INTEGER      LNRES,LUNEXP,ISECT,LINEXP,RESDAY(NAPPL),NRESAP
-      INTEGER      ERRNUM,J,IFIND,LN,NARES,YRSIM,LNSIM
+      INTEGER      ERRNUM,J,IFIND,LN,NARES,YRSIM,LNSIM,IRESCD
 
       REAL         RESN(NAPPL),RESP(NAPPL),RESK(NAPPL),RESIDUE(NAPPL),
      &             RINP(NAPPL),DEPRES(NAPPL),RESAMT
@@ -327,18 +355,32 @@ C
 C           Set minimum lower than 1000 KG .. PWW
 C
 C-PW        RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),10.0)
-            RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),0.0)
+
+C-GH 7/25/2022 Remove MAX statement; error checking below
+C-GH        RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),0.0)
+            
+            
+            READ (RESCOD(NRESAP)(3:5),'(I3)',IOSTAT=ERRNUM) IRESCD
+            IF (IRESCD .LT. 1 .OR. IRESCD .GE. 999 .OR.
+     &          ERRNUM .NE. 0) THEN
+               CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+            ENDIF
+                      
+C-GH 7/25/2022 Check for missing residue code        
             IF ((RESDAY(NRESAP) .LT. 0) .OR.
      &          (IRESI .EQ. 'R' .AND. MOD(RESDAY(NRESAP),1000)
      &           .GT. 366)) THEN
                CALL ERROR (ERRKEY,11,FILEX,LINEXP)
             ENDIF
             IF (IRESI .EQ. 'R') THEN
-              CALL Y2K_DOY (RESDAY(NRESAP))
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+              !CALL Y2K_DOY (RESDAY(NRESAP))
+              CALL Y4K_DOY (RESDAY(NRESAP),FILEX,LINEXP,ERRKEY,3)
             ENDIF
             IF (IRESI .EQ. 'R' .AND. RESDAY(NRESAP) .LT. YRSIM) THEN
                 CALL ERROR (ERRKEY,3,FILEX,LINEXP)
             ENDIF
+            
             IF (RESIDUE(NRESAP) .LT. 0.0 .OR. RESIDUE(NRESAP)
      &           .GT. 99999.) THEN
                CALL ERROR (ERRKEY,11,FILEX,LINEXP)
@@ -425,7 +467,7 @@ C  05/08/1991 JWW Written for DSSAT v3 format
 C  05/28/1993 PWW Header revision and minor changes
 C  08/23/2002 GH  Expanded array for fertilizer applications to NAPPL
 C  02/03/2005 GH  Corrected error checking for missing levels
-C
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNFER,YRSIM,ISWNIT
 C
@@ -449,6 +491,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY
 
       CHARACTER*1  ISWNIT,ISWPHO,ISWPOT,IFERI,ISWWAT
       CHARACTER*5  FERCOD(NAPPL),FOCOD(NAPPL),IFTYPE(NAPPL)
@@ -509,7 +552,9 @@ C
                CALL ERROR (ERRKEY,10,FILEX,LINEXP)
             ENDIF
             IF (IFERI .EQ. 'R') THEN
-              CALL Y2K_DOY(FDAY(NFERT))
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+              !CALL Y2K_DOY(FDAY(NFERT))
+              CALL Y4K_DOY(FDAY(NFERT),FILEX,LINEXP,ERRKEY,3)
             ENDIF
             IF (IFERI .EQ. 'R' .AND. FDAY(NFERT) .LT. YRSIM)  THEN
                CALL ERROR (ERRKEY,3,FILEX,LINEXP)
@@ -584,7 +629,8 @@ C  05/08/1991 JWW Written for DSSAT v3 format
 C  05/28/1993 PWW Header revision and minor changes
 C  06/09/2002 GH  Modified for Y2K
 C  02/03/2005 GH  Corrected error checking for missing levels
-C
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C  04/01/2021 FO/VSH Update harvest array size for MultiHarvest
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNHAR,YEAR
 C
@@ -602,22 +648,26 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &                  NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+     &                  NHAR,IHARI,YRSIM,CROP,HBPC)  !,FREQ,CUHT)
+!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
+      USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY
 
       CHARACTER*1  IHARI
       CHARACTER*2  CROP
-      CHARACTER*5  HSTG(3),HCOM(3),HSIZ(3)
+      CHARACTER*5  HSTG(NAPPL),HCOM(NAPPL),HSIZ(NAPPL)
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*12 FILEX
       CHARACTER*80 CHARTEST
 
-      INTEGER      LNHAR,LUNEXP,ISECT,LINEXP,HDATE(3),NHAR
+      INTEGER      LNHAR,LUNEXP,ISECT,LINEXP,HDATE(NAPPL),NHAR
       INTEGER      ERRNUM,J,IFIND,LN,YRSIM
-      INTEGER      HYR, HDAY
+!     INTEGER      HYR, HDAY
 
-      REAL         HPC(3),HBPC(3),FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+      REAL         HPC(NAPPL),HBPC(NAPPL)
+!     REAL FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       PARAMETER   (ERRKEY='IPHAR ')
 
@@ -625,7 +675,7 @@ C=======================================================================
 
       NHAR  = 0
 
-      DO J = 1, 3
+      DO J = 1, NHAR         
          HSTG(J)  = '     '
          HCOM(J)  = '     '
          HSIZ(J)  = '     '
@@ -653,19 +703,26 @@ C
 !     &                  FREQ, CUHT !New variables for forages (Diego-2/14/2017)
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          IF ((HDATE(NHAR) .LT.  0) .OR.
-     &       (IHARI .EQ. 'R' .AND. MOD(HDATE(NHAR),1000) .GT. 366))
+     &       (IHARI .EQ. 'R' .AND. MOD(HDATE(NHAR),1000) .GT. 366).OR.
+     &       (IHARI .EQ. 'W' .AND. MOD(HDATE(NHAR),1000) .GT. 366).OR.
+     &       (IHARI .EQ. 'X' .AND. MOD(HDATE(NHAR),1000) .GT. 366).OR.
+     &       (IHARI .EQ. 'Y' .AND. MOD(HDATE(NHAR),1000) .GT. 366).OR.
+     &       (IHARI .EQ. 'Z' .AND. MOD(HDATE(NHAR),1000) .GT. 366))
      &       THEN
              CALL ERROR (ERRKEY,10,FILEX,LINEXP)
          ENDIF
-         IF (IHARI .EQ. 'R') THEN
-           CALL Y2K_DOY(HDATE(NHAR))
-           IF (INT(HDATE(NHAR)/100.) < INT(YRSIM/100.)) THEN
-!            Increment harvest century (can't be less than simulation century)
-             CALL YR_DOY(HDATE(NHAR), HYR, HDAY)
-             HDATE(NHAR) = (HYR + 100) * 1000 + HDAY
-           ENDIF
+         IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+           !CALL Y2K_DOY(HDATE(NHAR))
+           CALL Y4K_DOY(HDATE(NHAR),FILEX,LINEXP,ERRKEY,6)
          ENDIF
          IF (IHARI .EQ. 'R' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
+         IF (IHARI .EQ. 'W' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
+         IF (IHARI .EQ. 'X' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
+         IF (IHARI .EQ. 'Y' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
+         IF (IHARI .EQ. 'Z' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
+
 !        Harvested product defaults to 100%
          IF (HPC(NHAR) .LT. -1.E-4) THEN
              HPC(NHAR) = 100.0
@@ -684,7 +741,9 @@ C
            HSIZ(NHAR) = '  -99'
          ENDIF
          NHAR = NHAR + 1
-         IF (NHAR .GE. 4) GO TO 120
+
+         IF (NHAR .GE. NAPPL) GO TO 120
+         
        ELSE
          IF (NHAR .EQ. 1) THEN
            CALL ERROR (ERRKEY,2,FILEX,LINEXP)
@@ -714,6 +773,18 @@ C
       IF (IHARI .EQ. 'R' .AND. HDATE(1) .EQ. 0) THEN
          CALL ERROR (ERRKEY,4,FILEX,LINEXP)
       ENDIF
+      IF (IHARI .EQ. 'W' .AND. HDATE(1) .EQ. 0) THEN
+         CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+      ENDIF
+      IF (IHARI .EQ. 'X' .AND. HDATE(1) .EQ. 0) THEN
+         CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+      ENDIF
+      IF (IHARI .EQ. 'Y' .AND. HDATE(1) .EQ. 0) THEN
+         CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+      ENDIF
+      IF (IHARI .EQ. 'Z' .AND. HDATE(1) .EQ. 0) THEN
+         CALL ERROR (ERRKEY,4,FILEX,LINEXP)
+      ENDIF
       IF (IHARI .EQ. 'D' .AND. HDATE(1) .EQ. 0) THEN
          CALL ERROR (ERRKEY,5,FILEX,LINEXP)
       ENDIF
@@ -724,7 +795,8 @@ C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
- 60   FORMAT (I3,I5,3(1X,A5),2(1X,F5.0),6X,F5.0,F5.0) !editted to read forage variables (Diego-2/14/2017)
+!     editted to read forage variables (Diego-2/14/2017)
+ 60   FORMAT (I3,I5,3(1X,A5),2(1X,F5.0),6X,F5.0,F5.0) 
 
       END SUBROUTINE IPHAR
 
@@ -758,6 +830,7 @@ C=======================================================================
       SUBROUTINE IPCUL (LUNEXP,FILEX,LNCU,CROP,VARNO)
 
       IMPLICIT     NONE
+      EXTERNAL ERROR, FIND, IGNORE, UPCASE
 
       INTEGER      LNCU,LUNEXP,ISECT,LINEXP
       INTEGER      IFIND,LN,ERRNUM

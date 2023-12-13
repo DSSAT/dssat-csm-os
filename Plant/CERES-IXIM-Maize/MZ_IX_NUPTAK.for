@@ -24,12 +24,12 @@ C  Called : MZ_IX_GROSUB
 C
 C  Calls  : None
 C----------------------------------------------------------------------
-      SUBROUTINE MZ_IX_NUPTAK (DYNAMIC,                              !Control
-     &      CARBO,DLAYR,EAROWT,ECNP,KG2PPM,                          !Input
-     &      LCNP,LFWT,LL,NH4,NLAYR,NO3,NX,PDWI,PGROEA,PGROLF,        !Input
-     &      PGRORT,PGROST,PLIGRT,PLTPOP,PTF,RCNP,RLV,RTWT,SAT,SCNP,  !Input
-     &      SENESCE,SHF,STMWT,STOVWT,SW,TCNP,XSTAGE,                 !Input
-     &      EARN,LEAFN,RANC,ROOTN,STEMN,STOVN,TANC,TRNU,UNH4,UNO3)   !Output
+      SUBROUTINE MZ_IX_NUPTAK (DYNAMIC,                         !Control
+     &  CARBO,DLAYR,EAROWT,ECNP,KG2PPM,                         !Input
+     &  LCNP,LFWT,LL,NH4,NLAYR,NO3,NX,PDWI,PGROEA,PGROLF,       !Input
+     &  PGRORT,PGROST,PLIGRT,PLTPOP,PTF,RCNP,RLV,RTWT,SAT,SCNP, !Input
+     &  SENESCE,SHF,STMWT,STOVWT,SW,TCNP,XSTAGE,                !Input
+     &  EARN,LEAFN,RANC,ROOTN,STEMN,STOVN,TANC,TRNU,UNH4,UNO3)  !Output
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -223,7 +223,7 @@ C----------------------------------------------------------------------
 !         TRLV     = TRLV    + RLV(L)
          TRLV     = TRLV    + RLV(L) * DLAYR(L)
          !KG2PPM(L) = 10.0/(BD(L)*DLAYR(L))
-         SNO3(L) = NO3(L) / KG2PPM(L)  ! Converts (mg N/kg soil) into (kg N/ha)
+         SNO3(L) = NO3(L) / KG2PPM(L)  ! Converts (mg N/kg) to (kg N/ha)
          SNH4(L) = NH4(L) / KG2PPM(L)  ! JIL 
       END DO
 

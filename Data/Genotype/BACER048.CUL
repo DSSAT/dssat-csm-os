@@ -1,0 +1,56 @@
+$CULTIVARS:BACER048.20200721   Last edit: 2021-05-08 GH
+
+! Coefficients used in the Cropsim-Ceres model differ from those used
+! in DSSAT Version 3.5 AND 4.0. They can be calculated (approximately) from 
+! V3.5 coefficients as follows:
+
+! P1V   = P1V(v3.5)*10 
+! P1D   = P1D(V3.5)*20
+! P5    = P5(V3.5)*20 + 430
+! G1    = G1(V3.5)*5 + 5
+! G2    = (G2(V3.5)*0.35+0.65) * P5/20
+! G3    = G3(V3.5)*0.7 
+! PHINT = PHINT(V3.5)
+
+! Converted coefficients,and those listed below,should always be
+! tested by using them with real experiments and comparing model 
+! outputs with measured values. 
+
+!             P/G/N:Phenology/Growth/Not used for calbration
+
+*CULTIVARS:BACER048
+@VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
+!Coeffient #                             1     2     3     4     5     6     7
+!Calibration                             P     P     P     G     G     G     N
+!                                     Vday %/10h  oC.d   #/g    mg     g  oC.d
+999991 MINIMA               . 999991     0     0   100    10    10   0.5    30
+999992 MAXIMA               . 999992    60   200   999    50    80   8.0   150
+                                                                            
+DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
+
+IB0101 A.Abiad (2)          . SY0001 25.26 32.26 220.0 18.23 37.77  6.05 89.00 
+
+IB0102 Beecher (6)          . SY0002 14.10 33.82 223.7 13.69 38.87 5.343 92.00
+
+IB0030 Maris Badger         . US0001 0.001 142.0 763.2 22.71 37.27 2.046 64.00
+
+
+! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
+!IB0102 Beecher (6)          . SY0002    10    30   220    13    40   2.7    92
+!IB0101 A.Abiad (2)          . SY0001    10    30   220    16    40   2.7    89
+!IB0030 Maris Badger         . US0001     0    40   750    20    52   1.5    64 
+
+                                                                                                                                                                                                       
+! COEFF       DEFINITION
+! ========    ==========
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+! EXP#        Number of experiments used to generate parameters
+! ECO#        Ecotype code for this cultivar,points to entry in ECO file
+! P1V         Days,optimum vernalizing temperature,required for vernalization
+! P1D         Photoperiod response (% reduction in rate/10 h drop in pp)
+! P5          Grain filling (excluding lag) phase duration (oC.d)
+! G1          Kernel number per unit canopy weight at anthesis (#/g)
+! G2          Standard kernel size under optimum conditions (mg)
+! G3          Standard,non-stressed mature tiller wt (incl grain) (g dwt)
+! PHINT       Interval between successive leaf tip appearances (oC.d)

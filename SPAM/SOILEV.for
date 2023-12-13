@@ -35,7 +35,9 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE ModuleData
       IMPLICIT NONE
+      EXTERNAL ESUP
       SAVE
 
       !CHARACTER*6 ERRKEY
@@ -48,6 +50,7 @@ C=======================================================================
       REAL ES, T
       REAL AWEV1, ESX, SWR, USOIL
       REAL DLAYR(NL), DUL(NL), LL(NL), SW(NL)
+      REAL PMFRACTION
 
 !***********************************************************************
 !***********************************************************************
@@ -74,6 +77,8 @@ C-----------------------------------------------------------------------
               SUMES1 = U
               T= (SUMES2/3.5)**2
           ENDIF
+
+          CALL GET("PM", "PMFRACTION", PMFRACTION)
 
 !-----------------------------------------------------------------------
 !     Set air dry water content for top soil layer
@@ -151,6 +156,11 @@ C-----------------------------------------------------------------------
             SUMES1 = SUMES1 - ES + AWEV1
             ES = AWEV1
          ENDIF
+      ENDIF
+
+!     Apply the fraction of plastic mulch coverage
+      IF (PMFRACTION .GT. 1.E-6) THEN
+        ES = ES * (1.0 - PMFRACTION)
       ENDIF
 
 !-----------------------------------------------------------------------

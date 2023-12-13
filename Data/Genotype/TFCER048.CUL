@@ -1,0 +1,115 @@
+*TEFF GENOTYPE COEFFICIENTS: TFCER048 MODEL
+!
+! COEFF    DEFINITIONS
+! ======== ===========
+! VAR#     Identification code or number for a specific cultivar.
+! VAR-NAME Name of cultivar.
+! EXPNO    Number of experiments used to estimate cultivar parameters
+! ECO#     Ecotype code for this cultivar points to the Ecotype in the ECO
+!          file (currently not used).
+
+! P1       Time period (expressed as growing degree days [GDD] in oC-d above a
+!          base temperature of 9oC) from seedling emergence during which the
+!          teff plant is not responsive to changes in photoperiod. This period
+!          is also referred to as the basic vegetative phase of the plant.
+!          Range: 150-800 oC-d. 
+!          Calibration: flexible, compare with observed panicle initiation 
+!          and flowering dates.
+
+! P2O      Critical photoperiod or the longest day length (in hours) at
+!          which the development occurs at a maximum rate. At values higher
+!          than P2O developmental rate is slowed, hence there is delay due
+!          to longer day lengths. 
+!          Range 11-13 h. Default 12 h. 
+!          Calibration: Do not go below 11 unless data are available. 
+
+! P2R      Extent to which phasic development leading to panicle initiation
+!          is delayed (expressed as GDD in oC-d) for each hour increase in
+!          photoperiod above P2O. 
+!          Range 5-300 oC-d. 
+!          Calibration: Modern teff varieties will have values in 
+!          the lower range.
+
+! P5       Time period in GDD oC-d) from beginning of grain filling (3 to
+!          4 days after flowering) to physiological maturity with a base
+!          temperature of 9oC. 
+!          Range 150-850 oC-d. 
+!          Calibration: Ensure P1, P2O and P2R are correctly calibrated for 
+!          anthesis data. Then calibrate P5 for observed maturity date.
+
+! G1       Potential spikelet number coefficient as estimated from the
+!          number of spikelets per g of main culm dry weight (less leaf
+!          blades and sheaths plus spikes) at anthesis. 
+!          Range 50-75 #/g. A typical value is 55 #/g.
+
+! G2       Single grain weight (g) under ideal growing conditions, i.e.
+!          nonlimiting light, water, nutrients, and absence of pests
+!          and diseases.
+!          Range 0.015-0.030 g. Default 0.025 g.
+!          Calibration: Very low flexibility. 
+
+! G3       Tillering coefficient (scalar value) relative to IR64 cultivar
+!          under ideal conditions. 
+!          Range 0.7-1.3.
+!          Calibration: A higher tillering cultivar would have a coefficient 
+!          greater than 1.0.
+
+! PHINT    Phyllochron Interval (oC-d). Time interval in degree-days for each 
+!          leaf-tip to appear under non-stressed conditions.  
+!          Range 55-90 oC-d. Default 83 oC-d.
+!          Calibration: Recommend to not change unless field data on leaf 
+!          numbers are available.
+
+! THOT     Temperature (oC) above which spikelet sterility is affected by 
+!          high temperature.  
+!          Range 25-34 oC. Default 28oC. 
+!          Calibration: recommended to not change unless hot environment
+!          data are available. Convert old cultivars THOT = 28./G4.
+
+! TCLDP    Temperature (oC) below which panicle initiation is further delayed 
+!          (other than P1, P2O and P2R) by low temperature.
+!          Range 12-18 oC. Default 15oC. 
+!          Calibration: recommended to not change unless cold environment
+!          data are available. Convert old cultivars TCLDP = 15.*G5.
+
+! TCLDF    Temperature (oC) below which spikelet sterility is affected by 
+!          low temperature.
+!          Range 10-20 oC. Default 15oC. 
+!          Calibration: recommended to not change unless cold environment
+!          data are available. Convert old cultivars TCLDF = 15.*G5.
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2R    P5   P2O    G1    G2    G3 PHINT  THOT TCLDP TCLDF
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11
+!Calibration                             P     P     P     P     G     G     G     N     G     N     N
+
+999991 MINIMA               . DFAULT 100.0   5.0 150.0  11.0  50.0 .0002  0.70  50.0  25.0   9.0   9.0
+999992 MAXIMA               . DFAULT 880.0 300.0 850.0  14.0 9999. .0300  1.50  90.0  34.0  18.0  20.0
+
+IB0304 Wajera(local)        . IB0001 135.0  50.0 265.0  13.0  9800 .0003  1.30  50.0  28.0  10.0  10.0
+IB0306 Buseye               . IB0001 135.0  50.0 255.0  13.0  9800 .0003  1.00  50.0  28.0  10.0  10.0
+IB0135 Keyh (local)         . IB0001 140.0  50.0 260.0  13.0  9500 .0003  1.00  50.0  28.0  10.0  10.0
+IB0136 DZ-974 & Keyh        . IB0001 140.0  50.0 260.0  13.0  9500 .0003  1.00  50.0  28.0  10.0  10.0
+IB0156 DZ-Cr-387            . IB0001 140.0  50.0 285.0  12.0  9500 .0003  1.00  50.0  28.0  10.0  10.0
+IB0157 DZ-Cr-387            . IB0001 140.0  50.0 260.0  13.0  9500 .0003  1.00  50.0  28.0  10.0  10.0
+IB0158 DZ-Cr-387            . IB0001 190.0  50.0 250.0  13.0  9500 .0003  1.00  50.0  28.0  10.0  10.0
+IB0161 DZ-01-354            . IB0001 120.0  50.0 250.0  14.0  9990 .0003  1.30  50.0  28.0  10.0  10.0
+IB0162 DZ-01-354            . IB0001 105.0  50.0 270.0  13.0  9990 .0003  1.10  50.0  28.0  10.0  10.0
+IB0163 DZ-Cr-37             . IB0001 165.0  50.0 240.0  13.0  9990 .0003  1.10  50.0  28.0  10.0  10.0
+IB0164 DZ-Cr-3186           . IB0001 145.0  50.0 250.0  13.0  9990 .0003  1.10  50.0  28.0  10.0  10.0
+IB0221 UK Brown             . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0244 PI 193508            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0245 PI 193514            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0246 PI 557457            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0247 PI 494366            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0248 UK White             . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0249 PI 494465            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0250 PI 273889            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0251 Dessie               . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0252 PI 347632            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0253 PI 494432            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0254 PI 195932            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0255 PI 329680            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0256 PI 494479            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0257 PI 494433            . IB0001 140.0  50.0 260.0  13.0  9500 .0030  1.00  50.0  28.0  10.0  10.0
+IB0166 DZ-01-354            . IB0001 281.5 237.2 211.0 12.57 7561. 0.001 0.824 50.00 27.51 10.00 10.00
+IB0167 DZ-01-354            . IB0001 115.6 37.79 614.5 11.62 8720. 0.022 1.295 50.00 25.49 10.00 10.00

@@ -20,6 +20,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE 
+      EXTERNAL NWRITE
 !-----------------------------------------------------------------------
       INTEGER L, N_ELEMS, NLAYR, YRDOY
 
@@ -76,7 +77,8 @@ C  Revision history
       SUBROUTINE NWRITE(L, VALUE, CODE)
 
 !-----------------------------------------------------------------------
-      IMPLICIT NONE 
+      IMPLICIT NONE
+      EXTERNAL WARNING
 
       CHARACTER*78  MSG(10)
       INTEGER CODE, L

@@ -38,6 +38,7 @@ C  06/07/2002 GH  Modifed for Y2K Output
 !  Apr-May 2015 KJB added G0 and G5 for pearl millet
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 !  03/20/2018 Created new FORMAT to read in CUL file for tef
+!  01/21/2020 JG moved some CUL parameters to ECO file
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO
@@ -58,10 +59,11 @@ C=======================================================================
       SUBROUTINE OPTEMPY2K (RNMODE, FILEX,PATHEX,
      & YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
      & NYRS,VARNO,VRNAME,CROP,MODEL,RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,
-     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS)
+     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMWD)
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR
 
       INCLUDE 'COMIBS.blk'
       INCLUDE 'COMSOI.blk'
@@ -83,7 +85,7 @@ C=======================================================================
       INTEGER NYRS,RUN,I,EXPN,LUNIO,LINIO,ERRNUM,FROP,YRIC,TRTALL
       INTEGER TRTN,NFORC,NDOF,PMTYPE,ISENS
 
-      REAL    PLTFOR
+      REAL    PLTFOR, PMWD
       REAL    SWINIT(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
 
       PARAMETER (LUNIO = 21)
@@ -160,9 +162,24 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      LINIO = LINIO + 1
-      WRITE (LUNIO,2800,IOSTAT=ERRNUM) FILEW,PATHWT
-      IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERW',FILEW,PATHWTW
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
+      IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERC',FILEWC,PATHWTC
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
+      IF (MEWTH .EQ. 'G') THEN
+        LINIO = LINIO + 1
+        WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
+     &     'WEATHERG',FILEWG,PATHWTG
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+      ENDIF
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -268,8 +285,12 @@ C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,40)'*FIELDS             '
       LINIO = LINIO + 1
+!     2023-07-14 chp changed order of PMALB and PMWD variables to allow 
+!                    1D and 2D models to use the same file format.
       WRITE (LUNIO,59,IOSTAT=ERRNUM) FLDNAM,FILEW(1:8),SLOPE,FLOB,DFDRN,
-     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO
+     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,PMALB,PMWD
+   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,1X,F5.0,1X,F5.1,
+     &        2(1X,A5),1X,F5.0,1X,A10,F6.2,2F6.1)
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
       WRITE (LUNIO,60,IOSTAT=ERRNUM) XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
      &            , FldHist, FHDur
@@ -326,13 +347,21 @@ C-----------------------------------------------------------------------
      &          NFORC,PLTFOR,NDOF,PMTYPE
       ELSE
 
-         IF (SDWTPL <= 9999.) THEN
+         IF (SDWTPL .LE. 9999. .AND. PLANTS .LE. 9999.) THEN
            WRITE(LUNIO,70,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
      &          PLDS,ROWSPC,AZIR,SDEPTH,SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP
-         ELSE
+         ELSE IF (SDWTPL .GT. 9999. .AND. PLANTS .LE. 9999.) THEN
            WRITE(LUNIO,71,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
-     &          PLDS,ROWSPC,AZIR,SDEPTH, NINT(SDWTPL),
+     &          PLDS,ROWSPC,AZIR,SDEPTH,SDWTPL,NINT(SDWTPL),
      &          SDAGE,ATEMP,PLPH,SPRLAP
+         ELSE IF (SDWTPL .LE. 9999. .AND. PLANTS .GT. 9999.) THEN
+           WRITE(LUNIO,72,IOSTAT=ERRNUM) YRPLT,IEMRG,NINT(PLANTS),
+     &          NINT(PLTPOP),PLME,PLDS,ROWSPC,AZIR,SDEPTH,
+     &          SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP
+         ELSE
+           WRITE(LUNIO,73,IOSTAT=ERRNUM) YRPLT,IEMRG,NINT(PLANTS),
+     &          NINT(PLTPOP),PLME,PLDS,ROWSPC,AZIR,SDEPTH,
+     &          NINT(SDWTPL),SDAGE,ATEMP,PLPH,SPRLAP
          ENDIF
       ENDIF
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
@@ -561,9 +590,18 @@ C-----------------------------------------------------------------------
      &      EXTFE(I), EXTMN(I), TOTBAS(I), PTERMA(I), PTERMB(I),
      &      EXK(I), EXMG(I), EXNA(I), EXTS(I), SLEC(I), EXCA(I)
   991     FORMAT (1X,F5.0,F6.2,9(1X,F5.1),F6.2,5F6.1)
+
 !         04/21/2008 CHP added SASC - stable organic C (%)
           IF (SASC(I) > 0) THEN
-            WRITE (LUNIO,'(F6.3)',IOSTAT=ERRNUM) SASC(I)
+            WRITE (LUNIO,'(F6.3)',IOSTAT=ERRNUM,ADVANCE='NO') SASC(I)
+          ELSE
+            WRITE (LUNIO,'("  -99.")',IOSTAT=ERRNUM,ADVANCE='NO')
+          ENDIF
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+
+!         2023-01-24 CHP added SAEA - soil alternate electron acceptors (mol Ceq/m3)
+          IF (SAEA(I) > 0) THEN
+            WRITE (LUNIO,'(F6.1)',IOSTAT=ERRNUM) SAEA(I)
           ELSE
             WRITE (LUNIO,'("  -99.")',IOSTAT=ERRNUM)
           ENDIF
@@ -617,24 +655,17 @@ C-----------------------------------------------------------------------
 !       Do nothing - these models read the INH file written by OPTEMPXY2K
 
 !       APSIM Wheat (NWheat)
+!  JG moved CUL parameters to ECO file for WHAPS and TFAPS 01/21/2020
         CASE('WHAPS')
                 WRITE (LUNIO,1850,IOSTAT=ERRNUM)
      &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1
 !       Tef based on APSIM NWheat KEP
     !Created new FORMAT to read in CUL file for tef
         CASE('TFAPS')
                 WRITE (LUNIO,1855,IOSTAT=ERRNUM)
      &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1
 !       Ceres Maize, sweetcorn
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
@@ -671,6 +702,13 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
      &             P1,P2R,P5,P2O,G1,G2,G3,PHINT, THOT, TCLDP, TCLDF
  1985 FORMAT (A6,1X,A16,1X,A6,5(F6.1),F6.3,2(F6.2),3F6.1)
 
+!       Ceres TEFF
+        CASE ('TFCER')
+            WRITE (LUNIO,1986,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
+!    &             P1,P2R,P5,P2O,G1,G2,G3,G4,PHINT, G5
+     &             P1,P2R,P5,P2O,G1,G2,G3,PHINT, THOT, TCLDP, TCLDF
+ 1986 FORMAT (A6,1X,A16,1X,A6,5(F6.1),F6.3,2(F6.2),3F6.1)
+
 !!       ORYZA rice
 !        CASE ('RIORZ')
 !            WRITE (LUNIO,'(A6,1X,A16,1X,A)',IOSTAT=ERRNUM) VARNO,VRNAME,
@@ -706,7 +744,7 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
         CASE ('PIALO')
             WRITE (LUNIO,1970,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
      &            P1,P2,P3,P4,P5,P6,G2,G3,PHINT
- 1970 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,4F6.0,F6.1,F6.0,2F6.1)
+ 1970 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,4F6.0,F6.1,F6.0,2F6.1) 
 !B0067 SC-ANGUE         IB0001  60.0   500   500  2195   400  60.0   200  14.0  95.0
 
 !       Aroids taro & tanier
@@ -733,41 +771,23 @@ C-----------------------------------------------------------------------
    50 FORMAT (I3,A8,1X,A2,1X,A60)
    55 FORMAT (I3,I2,2(1X,I1),1X,A25)
    56 FORMAT (3X,A2,1X,A6,1X,A16)
-!chp   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
-   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,1X,F5.0,1X,F5.1,
-     &        2(1X,A5),1X,F5.0,1X,A10)
-!chp   60 FORMAT (3X,2(F15.5,1X),F9.2,1X,F17.1,1X,F5.0,2(1X,F5.1))
-   60 FORMAT (3X,2(F15.5,1X),F9.2,1X,F17.1,1X,F5.0,2(1X,F5.1),1X,A5,I6)
-C  61 FORMAT (3X,A2,4X,I5,2(1X,F5.0),2(1X,F5.2),1X,F5.1,1X,F5.0,
-C    &        2(1X,F5.2),2(1X,F5.0))
-C-Y2K 61 FORMAT (3X,A2,4X,I5,2(1X,F5.0),2(1X,F5.2),1X,F5.1,1X,I5,
-C-Y2K &        2(1X,F5.2),2(1X,F5.0))
-!   61 FORMAT (3X,A2,4X,I7,2(1X,F5.0),2(1X,F5.2),1X,F5.1,1X,I5,
-!     &        2(1X,F5.2),2(1X,F5.0))
-!CHP 2/6/06   62 FORMAT (3X,F5.0,1X,F5.3,2(1X,F5.1))
-!CHP 8/19/08  62 FORMAT (3X,F5.0,1X,F5.3,2(1X,F5.1),3F6.2)
-C-Y2K 70 FORMAT (3X,I5,1X,I5,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
-C-Y2K &        2(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
-C-GH   70 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
+   60 FORMAT (3X,2(F15.10,1X),F9.3,1X,F17.1,1X,F5.0,2(1X,F5.1),1X,A5,I6)
    70 FORMAT (3X,I7,1X,I7,2F6.1,2(5X,A1),2(1X,F5.0),1X,F5.1,
      &        2(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
-C-GH   71 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
    71 FORMAT (3X,I7,1X,I7,2F6.1,2(5X,A1),2(1X,F5.0),1X,F5.1,
+     &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
+   72 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
+     &        2(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
+   73 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
+     &        I6,1(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
+   74 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
      &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
    75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1)
    76 FORMAT (3X,I7,1X,A5,1X,F5.1)
-!chp   76 FORMAT (3X,I7,1X,A5,1X,F5.1,4X,I2)
-C-Y2K 76 FORMAT (3X,I5,1X,A5,1X,F5.1,4X,I2)
    77 FORMAT (3X,I7,2(1X,A5),6(1X,F5.0),1X,A5)
-C-Y2K 77 FORMAT (3X,I5,2(1X,A5),6(1X,F5.0),1X,A5)
    78 FORMAT (3X,I7,1X,A5,1X,F5.2,1X,A5,1X,F5.1,1X,A5,A42)
-!  78 FORMAT (3X,I7,1X,A5,1X,F5.2,1X,A5,1X,F5.2,1X,A5,A42)
-C-Y2K 78 FORMAT (3X,I5,1X,A5,1X,F5.2,1X,A5,1X,F5.2,1X,A5,A42)
-c  78 FORMAT (3X,I5,1X,A5,1X,F5.2,1X,A5,1X,F5.2,1X,A5)
    79 FORMAT (3X,I7,1X,A5,1X,I5,3(1X,F5.2),2(1X,F5.0),1X,A5)
-C-Y2K79 FORMAT (3X,I5,1X,A5,1X,I5,3(1X,F5.2),2(1X,F5.0),1X,A5)
    80 FORMAT (3X,I7,1X,A5,1X,F5.1)
-C-Y2K 80 FORMAT (3X,I5,1X,A5,1X,F5.1)
    91 FORMAT (3X,I7,1X,A1,F4.2,4(1X,A1,F4.1),1X,A1,I4,2(1X,A1,F4.1))
    92 FORMAT (3X,I7,1X,A1,F4.1,1X,A1,F4.2,3(1X,A1,F4.1),1X,A1,I4,
      &       2(1X,A1,F4.1))
@@ -777,13 +797,10 @@ C-Y2K 80 FORMAT (3X,I5,1X,A5,1X,F5.1)
      &       2(1X,A1,F4.1))
    90 FORMAT (3X,I7,5(1X,A1,F4.1),1X,A1,I4,2(1X,A1,F4.1))
   100 FORMAT (3X,I7,3(1X,A5),2(1X,F5.0))
-C-Y2K 100 FORMAT (3X,I5,3(1X,A5),2(1X,F5.0))
   900 FORMAT (14X,I6,1X,I5,5X,A1,1X,I7,1X,I5,1X,A25)
-C-Y2K 900 FORMAT (18X,I2,2X,I4,5X,A1,2(1X,I5),1X,A25,1X,A5)
   910 FORMAT (14X,9(5X,A1),2I6)
   915 FORMAT (14X,7(5X,A1),5X,I1,5(5X,A1))
   920 FORMAT (14X,3(5X,A1),4X,I2,9(5X,A1))
-C-Y2K 930 FORMAT (14X,2(1X,I5),5(1X,F5.0))
   930 FORMAT (14X,2(1X,I7),5(1X,F5.0))
   940 FORMAT (14X,3(1X,F5.0),2(1X,A5),1X,F5.1,1X,F5.3)
   950 FORMAT (15X,F5.0,1X,I5,1X,F5.0)
@@ -793,15 +810,6 @@ C-Y2K 930 FORMAT (14X,2(1X,I5),5(1X,F5.0))
   980 FORMAT (1X,A5,1X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),4(1X,A5),
      &        F6.2)
 
-C-GH  989 FORMAT (1X,F5.0,6X,4(1X,F5.3),1X,F5.3,2(1X,F5.2),3(1X,F5.1),
-C     &        1X,F5.2,19(1X,F5.1))
-!  989 FORMAT (1X,F5.0,6X,4(1X,F5.3),1X,F5.3,2(1X,F5.2),3(1X,F5.1),
-!     &        F6.3,19F6.2)
-C-GH  990 FORMAT (1X,F5.0,6X,4(1X,F5.3),1X,F5.1,2(1X,F5.2),3(1X,F5.1),
-C     &        1X,F5.2,19(1X,F5.1))
-!  990 FORMAT (1X,F5.0,6X,4(1X,F5.3),1X,F5.1,1X,F5.21X,F5.3,3(1X,F5.1),
-!     &        F6.3,19F6.2)
-
  1000 FORMAT (A6,1X,A16,1X,A6,1X,7(F6.1))
  1050 FORMAT (A6,1X,A16,1X,A6,9(1X,F5.0),1X,I5,1X,F5.2,1X,F5.0,1X,F5.1)
  1055 FORMAT (A6,1X,A16,1X,A6,F6.3,F6.0,2F6.3,F6.2,5F6.3,F6.2,
@@ -809,7 +817,6 @@ C     &        1X,F5.2,19(1X,F5.1))
      &        F6.1,F6.2,F6.2,F6.2,3F6.2,2F6.2)
 
  1400 FORMAT (A6,1X,A16,1X,A6,1X,F6.0,4(F6.1))
-! 1400 FORMAT (A6,1X,A16,1X,A6,1X,F6.0,F6.1,F6.2,3(F6.1))
  1500 FORMAT (A6,1X,A16,1X,A6,F6.2,F6.3,5F6.2,F6.3,2F6.1,F6.2,
      &        F6.3,3F6.2,F6.1,2F6.3)
  1550 FORMAT (A6,1X,A16,1X,A6,A)
@@ -818,24 +825,16 @@ C     &        1X,F5.2,19(1X,F5.1))
      &        F6.3,F6.2,6(F6.0))
  1700 FORMAT (A6,1X,A16,1X,A6,1X,5(F6.1),F6.2, F6.1)
  1800 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2))
+! JG modified to move CUL parameters to ECO file
  1850 FORMAT (A6,1X,A16,1X,A6,1X,
  !             1     2     3     4     5     6     7     8     9     0
-     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1, F6.1,
-     &       F6.2, F6.2, F6.3, F6.0, F6.2, F6.2, F6.1, F6.2, F6.2, F6.2,
-     &       F6.2, F6.2, F6.2, F6.2, F6.2, F6.3, F6.2, F6.3, F6.2, F6.2,
-     &       F6.2, F6.2, F6.2, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
-     &       F6.3, F6.0, F6.0)
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1)
 
-!Changed F6.1. in column 6, row 1 to F6.0 so that the GRNO value read in can be a 6 digit integer
-!Changed F6.2 to F6.4 in column 3, row 4. INGWT can now be up to 4 decimal places long
-! Added 1X to add a space between the values of MNH4 and INGWT when they are written
+! JG modified to move CUL parameters to ECO file
  1855 FORMAT (A6,1X,A16,1X,A6,1X,
  !             1     2     3     4     5     6     7     8     9     0
-     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.0, F6.2, F6.2, F6.1, F6.1,
-     &       F6.2, F6.2, F6.3, F6.0, F6.2, F6.2, F6.1, F6.2, F6.2, F6.2,
-     &       F6.2, F6.2, F6.2, F6.2, F6.2, F6.3, F6.2, F6.3, F6.2, F6.2,
-     &   F6.2, F6.2, 1X, F6.4, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
-     &       F6.3, F6.0, F6.0)
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1)
+
  1801 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2),2(F6.1),I4)
  1802 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),5(F6.2))
  1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,4(F6.1))
@@ -857,7 +856,7 @@ c1960 FORMAT (A6,1X,A16,1X,A6,1X,F6.2,F8.4,F7.2,F8.2,F7.3,F4.0)
  2500 FORMAT ('CULTIVAR       ',A12,1X,A80)
  2600 FORMAT ('PESTS          ',A12,1X,A80)
  2700 FORMAT ('SOILS          ',A12,1X,A80)
- 2800 FORMAT ('WEATHER        ',A12,1X,A80)
+! 2800 FORMAT ('WEATHER        ',A12,1X,A80)
  2900 FORMAT ('OUTPUT         ',A8)
  3000 FORMAT (A6,1X,A16,1X,A255)
 

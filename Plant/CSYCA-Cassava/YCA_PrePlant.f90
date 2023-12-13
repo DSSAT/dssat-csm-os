@@ -17,6 +17,7 @@
         USE YCA_First_Trans_m
         
         IMPLICIT NONE
+        EXTERNAL WARNING
         
         !TYPE (WeatherType) WEATHER    , WEATHER
         
@@ -68,7 +69,8 @@
         
         ! YEARPLTCSM established by CSM and brought across in argument.
         IF (FILEIOT == 'DS4') THEN
-            IF (IPLTI == 'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+!           IF (IPLTI == 'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+            IF (IPLTI == 'A' .OR. IPLTI =='F' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
                 PLYEARDOYT = YEARPLTCSM
             ENDIF  
         ENDIF

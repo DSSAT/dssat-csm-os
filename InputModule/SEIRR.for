@@ -31,6 +31,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL ERROR, CLEAR, VERIFY, SWIRR, AUTIRR, ENTIRR
 
       CHARACTER*1  RNMODE,IDETW,ISWWAT,ISWNIT,IIRRI,LINE(80)
       CHARACTER*5  IRRCOD(NAPPL)
@@ -227,6 +228,7 @@ C=======================================================================
       SUBROUTINE SWIRR (RNMODE,IIRRI,ISWWAT,IRMANT)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR
 
       CHARACTER*1  RNMODE,IIRRI,ISWWAT
       CHARACTER*6  ERRKEY
@@ -328,6 +330,7 @@ C=======================================================================
       SUBROUTINE AUTIRR (RNMODE,THETAC,DSOIL)
 
       IMPLICIT     NONE
+      EXTERNAL CLEAR, ERROR, VERIFY
 
       CHARACTER*1  RNMODE,LINE(80)
       CHARACTER*6  ERRKEY
@@ -404,6 +407,7 @@ C  Revision history
 C
 C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : NENTRY,EDAY,EMOUNT,RNMODE,TOTAPW,NAPW,IRTYPE,IRRTYP
 C
@@ -425,6 +429,7 @@ C=======================================================================
 
       USE ModuleDefs
       IMPLICIT     NONE
+      EXTERNAL YR_DOY, ERROR, CLEAR, UPCASE, VERIFY, Y4K_DOY, SORT
 
       CHARACTER*1  RNMODE,LINE(80),IMENU,UPCASE,ANS,IIRRI
       CHARACTER*6  ERRKEY
@@ -515,7 +520,9 @@ C
 	  IF (EFF .GT. -0.0001 .AND.EFF .LE. 9999999. .AND. FLAG .LE. 0)
      &  THEN
 	     YRTEMP = NINT(EFF)
-	     CALL Y2K_DOY(YRTEMP)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+	     !CALL Y2K_DOY(YRTEMP)
+       CALL Y4K_DOY(YRTEMP,'ENTIRR',1,ERRKEY,1)
 	     IF (INDEX('RPW',IIRRI) .GT. 0) THEN
 	       CALL YR_DOY (YRTEMP,YRT,DOYT)
 	       IF (DOYT .GT. 0 .AND. DOYT .LE. 366 .AND. YRT .LT. 3000)
@@ -553,8 +560,10 @@ C
 	 CALL VERIFY (LINE,EFF,FLAG)
 	 IF (EFF .GT. -0.0001 .AND. EFF .LE. 9999999. .AND. FLAG .LE. 0)
      &   THEN
-	   YRTEMP = NINT(EFF)
-	   CALL Y2K_DOY(YRTEMP)
+	    YRTEMP = NINT(EFF)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+      !CALL Y2K_DOY(YRTEMP)
+	    CALL Y4K_DOY(YRTEMP,'ENTIRR',0,ERRKEY,1)
 	   IF (INDEX('RPW',IIRRI) .GT. 0) THEN
 	     CALL YR_DOY (YRTEMP,YRT,DOYT)
 	     IF (DOYT .GT. 0 .AND. DOYT .LE. 366 .AND.YRT .LT. 3000) THEN
@@ -624,15 +633,15 @@ C-----------------------------------------------------------------------
      &    10X,'INTERACTIVE DATA ENTRY FOR IRRIGATION',/,
      &    10X,'=====================================')
   250 FORMAT (
-     & 9X,'ÚÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿',/,
-     & 9X,'³ # ³ Date    ³ Amount (mm) ³    Irrigation Type       ³',/,
-     & 9X,'ÃÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´')
+     & 9X,'|---|---------|-------------|--------------------------|',/,
+     & 9X,'| # | Date    | Amount (mm) |    Irrigation Type       |',/,
+     & 9X,'|---|---------|-------------|--------------------------|')
   275 FORMAT (
-     & 9X,'ÀÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ')
+     & 9X,'|---|---------|-------------|--------------------------|')
   285 FORMAT (
-     & 9X,'³',I2,1X,'³',I4,1X,I3,1X,'³',F9.1,4X,'³ ',A25,'³')
+     & 9X,'â”‚',I2,1X,'â”‚',I4,1X,I3,1X,'â”‚',F9.1,4X,'â”‚ ',A25,'â”‚')
   295 FORMAT (/9X,
-     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (ÄÄÙ = Done) ', $)
+     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (Enter = Done)',$)
   296 FORMAT (//,9X,
      &    'This option is not available for the current irrigation',/,
      & 9X,'management selection.  Please change selection first.', $)
@@ -650,11 +659,11 @@ C-----------------------------------------------------------------------
   600 FORMAT (/, 9X,'ERROR! Values are out of range',/)
   800 FORMAT (/, 9X,'Please enter entry number to delete ',$)
   850 FORMAT (/, 9X,'Please enter entry number to edit   ',$)
-  900 FORMAT (//,9X,'ÚÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿',/,
-     &           9X,'³ # ³   Irrigation Type         ³',/,
-     &           9X,'ÃÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´',/,
-     &           10(9X,'³',I2,' ³',1X,A25,' ³',/),
-     &           9X,'ÀÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ',//,
+  900 FORMAT (//,9X,'|---|---------------------------|',/,
+     &           9X,'| # |   Irrigation Type         |',/,
+     &           9X,'|---|---------------------------|',/,
+     &           10(9X,'|',I2,' |',1X,A25,' |',/),
+     &           9X,'|---|---------------------------|',//,
      &           9X,'Irrigation type selected ===>',1X,I3,/,
      &           9X,'New type ?               --->  ',$)
  1700 FORMAT (/,15X,'There are more entries .. Press any key ..')

@@ -1,0 +1,316 @@
+$SPECIES:CSCAS048.20200721   Last edit: 2020-07-21 CHP
+
+
+! Coefficients differ from those used in the DSSAT V3.5 cassava model.
+! They have been developed from coefficients used in,and from 'parameters'
+! embedded in the code of, the earlier model,and from the literature.
+! They may change as experience is gained,and should not be taken as
+! 'fixed'. Some equivalences with the earlier model are:
+
+! RDGS  = RER/17.0*20.0
+! RLWR  = RLW/10000
+! SERX  = SER/17.0*20.0
+! PTFMN = 0.87 From root/shoot function in original model
+! PTFMX = 0.90 From root/shoot function in original model
+! (Root/shoot = 0.1+0.05*EXP(-0.0085*Lnum)
+! KCAN  = 0.27 From embeded parameter in original model
+! PHSV = PHSV = -0.35
+! PHTV = PHTV = 2.0    Changed to 5 to eliminate effect temporarily
+
+! Users should be extremely cautious in changing the stress response
+! thresholds (WFPU,LNCPU,etc). It is possible that there are differences
+! in these characteristics, but the extent of such differences is not
+! well understood.
+
+! Users should also be aware that the algorithms using the following coefficients
+! are being worked upon, but have not yet been implemented in the model:
+! RATM,RCROP; LLOSA; SLATS,SLATR,SLAWR; RWUPM,WFS
+! Further,the coefficient SDSZ is a default that is used only if no planting-stick
+! size is entered in the experiment details file.
+
+*SPECIES:CSCAS047
+! Harvest product
+@HPROD
+! Code 
+    SR
+! Principal Stages (S=Standard,K=Key)
+@ PSNO PSTYP PSABV PSNAME
+    1      S GDAT  Germinate  
+    2      K B1DAT 1stBranch
+    3      K B2DAT 2ndBranch
+    4      K B3DAT 3rdBranch
+    5      K B4DAT 4thBranch
+    6      K B5DAT 5thBranch
+    7      K B6DAT 6thBranch
+    8      M HDAT  Harvest  
+! Phase durations
+@PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
+! oC.d  oC.d                                                              
+    10  10.0
+! Development rate responses to environment
+@PPFPE PPTHR PPSEN ! Photoperiod threshold,sensitivity type  
+!  0-1     h  Code                                  
+   1.0  15.5    LQ 
+! Roots
+@RLIG%  RLWR  RSEN RRESP RDGS RDGAF  ! Lignin%,length/wt;sen,resp;dpth growth
+!    %  cm/g     %    fr cm/d     #                                       
+  10.0   0.5   2.0  0.40  2.6   0.5
+! Leaves
+@PHNTF  ! Phint change with growth stage factor
+!    #
+  0.80
+@LLIG% LPEAW ! Lignin%
+!    %  cm/g
+  10.0    45 
+@LLIFG LLIFS LLIFX  ! Growing,senescence durations;max.acceleration in shade 
+!   Tu    Tu    Tu
+ 100.0  60.0  20.0
+@LLOSA LWLOS  ! Loss when accelerated,normal senescence   
+!   fr    fr
+   1.0  0.50  
+@SLACF SLAFF SLAMN  ! Specific leaf area change,flexibility,minimum  
+!fr/nd    fr    fr
+-0.001  0.05   0.3
+@SLATS SLATR SLAWR  ! Specific leaf area temperature and h2o effect parameters
+!  oC     fr    fr
+  25.0 0.000  0.00  ! Set to zero so not working
+@ CHT%  CLA%   ! Canopy height%, leaf area %
+!    %     %
+     0     0
+    50    50
+   100   100
+@ TPAR TSRAD  ! Individual leaf transmission PAR, solar radiation  
+!   fr    fr
+  0.07  0.25
+@ KCAN  ! Canopy extinction coefficient PAR
+!    #
+  0.75 
+@PARIX  ! PAR interception beyond which accelerated ageing    
+!   fr
+  0.95
+! Shoots 
+@SGRO2  ! Relative size of 2nd shoot
+!   fr
+  1.00     
+! Reserves   
+@RSFRS RS%O RS%LX RSUSE  ! Standard concs (overall,leaves), fr utilizeable/day
+!   fr    %     %    fr
+  0.05  2.0     5   0.1
+! Stems
+@SLIG%  SAWS  SERX  ! Lignin%, area/weight, elongation rate
+!    % cm2/g  cm/d 
+  10.0  25.0   2.4
+! Crown (Planting stick)
+@ CRFR ! Fraction of stem growth
+!   fr
+  0.05
+! Seed
+@ SDWT SDDUR SDRS% ! Weight, duration, reserves (% whole seed)
+!    g     d     %
+    50    20    90
+! Photosynthesis
+@ PHTV  PHSV  ! VPD sensitivity aspects
+! kPa fr/kPa
+   5.0 -0.35
+@CO2RF  CO2F  ! CO2 response
+!  vpm     # 
+     0  0.00
+   220  0.71
+   330  1.00
+   440  1.08
+   550  1.17
+   660  1.25
+   770  1.32
+   880  1.38
+   990  1.43
+  9999  1.50
+CH2O distribution/mobilization
+@PTFMN PTFMX  PTFA  ! Partition to tops (max,min,adjustment)
+!   fr    fr   0-1  
+  0.77  0.80  0.10
+! Temperature responses
+@RRATE TRGEM TRDV1 TRLFG TRPHS  ! Germination/emergence,development,leaf growth,phsis
+!    #    oC    oC    oC    oC
+     0  13.0  13.0    12    10
+   1.0  30.0  30.0    24    25
+   1.0  30.0  30.0    45    40
+     0  42.5  42.5    55    50
+
+! WATER loss,uptake,etc.
+! Evapotranspiration 
+@EORATIO  ! FAO formula factor
+!     fr 
+     1.0
+! Water uptake  
+@RWUPM RWUMX ! Min pore size,max.uptake rate
+!   fr cm3/cm.d
+  0.00  0.06 
+! Water shortage effects
+! 1. Based on ratio of potential uptake to potential loss (WFEU only for Cropsim)
+@ WFGU  WFGL  WFPU  WFPL  WFSU  WFEU  ! Growth,phs,senescence,evap
+!   fr    fr    fr    fr    fr    fr
+   1.5   0.0   1.0   0.0   0.6   1.5
+! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
+@WFGEU WFRGU  ! Germination/emergence, root growth
+!   fr    fr
+  0.25  0.25
+
+! NITROGEN uptake,distribution,etc.
+! For standard CSM uptake routine
+@RTNO3 RTNH4 NH4MN NO3MN
+!   mg.cm.d     mg/Mg 
+ 0.006 0.006   0.5   0.5 
+! N demand 
+@NTUPF  ! Fraction of deficit that can be filled per day
+!   fr
+  0.10
+! Nitrogen concentrations
+@ SDN% ! Seed
+!    %
+   1.9
+@ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN  ! Standard,minima N% leaves,stems,roots
+!    %     %     %     %     %     %
+   4.0   2.0   3.5   2.5   2.0   1.0 
+   3.9   2.0   1.0   0.5   1.7   1.0 
+! N distribution/mobilization
+@NLAB% ! Labile nitrogen
+!    %
+    20
+! N shortage effects (Fraction of span from lowest to upper N concentration)
+@ NFPU  NFPL  NFGU  NFGL  NFSU ! Photosynthesis,growth,senescence
+!   fr    fr    fr    fr    fr
+  0.90  0.10  1.00  0.00  0.40
+! N limits for leaf growth (Fraction of upper N concentration)
+@ NLLG
+!   fr
+  0.85
+! N stress (Based on soil NO3 or NH4 concentration)
+@ NCRG   ! Root growth
+!  ppm 
+    30 
+
+!*EVAPOTRANSPIRATION
+  0.68   1.0       KEP, EORATIO
+  0.50  1.00       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.83       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+    
+! COEFF   DEFINITION
+! =====   ==========
+! BnDAT   Date at which n'th branching (forking) occurs (YrDoy)                          
+! CHT%    Canopy ht % for lf area distribution (%)
+! CLA%    Canopy leaf area % associated with height fraction (%)
+! CRFR    Crown growth rate as a fraction of stem growth (#)
+! CO2F    CO2 factor,photosynthesis,relative (0-2)
+! CO2RF   CO2 reference (vpm)
+! GDAT    Germination date  (YrDoy)
+! HPROD   Harvest product (code;SR=storage root)
+! KCAN    PAR extinction coefficient (#)
+! LLIFG   Leaf growth (expansion) period (Thermal units)  
+! LLIFS   Leaf senescence period (Thermal units)  
+! LLIFX   Leaf ageing acceleration (max) if deep shade (Thermal units)  
+! LLIG%   Leaf lignin (%)
+! LLOSA   Leaf dry matter loss,accelerated senescence (fr)
+! LLOSN   Leaf dry matter loss,normal senescence (fr;1.0=0 to reserves)
+! LN%MN   Leaf N concentration,minimum,early and late in life cycle (fr)
+! LN%S    Leaf N concentration,standard,early and late in life cycle (fr)
+! LPEAW   Leaf petiole area/weight (cm2/g)
+! MDAT    Maturity date  (YrDoy)
+! NCNU    NO3,NH4 conc factor,N uptake (ppm)
+! NCRTG   N concentration factor,root growth (ppm)
+! NFGL    N stress factor,growth,lower (fr)
+! NFGU    N stress factor,growth,upper (fr)
+! NLLG    N limit,leaf growth (fr.max.N%)
+! NFPL    N stress factor,photosynthesis,lower (fr)
+! NFPU    N stress factor,photosynthesis,upper (fr)
+! NFSU    N stress factor,senescence,upper (fr)
+! NH4MN   NH4 minimum concentration for uptake (mg/MG)
+! NO3MN   NO3 minimum concentration for uptake (mg/MG)
+! NTUPF   N top-up fraction (/d)
+! PARIX   PAR interception beyond which accelerated ageing (fr)
+! PEMRG   Emergence phase duration (Thermal units per cm depth)
+! PGERM   Germination phase duration (Hydrothermal units)
+! PHNTF   Phint change with node number factor (#)
+! PHSV    Photosynthesis,sensitivity to VPD (fr/kPa)
+! PHTV    Photosynthesis,threshold VPD for reduction in rate (kPa)
+! PPFPE   Photoperiod factor,pre emergence (#,0-1,0=No development)
+! PPSEN   Photoperiod sensitivity (S=Short day response,L=linear)
+! PPTHR   Photoperiod threshold (h below which no effect)
+! PSABV   Principal stage abbreviation (text)
+! PSNAME  Principal stage name (text)
+! PSNO    Principal stage number (#)
+! PSTYP   Principal stage type (code;K=key,S=standard)
+! PTFA    Partition fraction to tops,adjustment factor (fr)
+! PTFMN   Partition fraction to tops,minimum (fr)
+! PTFMX   Partition fraction to tops,maximum (fr)
+! RDGAF   Root depth growth rate,acceleration factor (*RDGS/WUPR<10.0)
+! RDGS    Root depth growth rate,standard (cm/standard day)
+! RLIG%   Root lignin (%)
+! RLWR    Root length/weight ratio (m/(0.01g)
+! RN%MN   Root N concentration,minimum (fr)
+! RN%S    Root N concentration,maximum,sstage (fr)
+! RRATE   Relative process rate (#)
+! RRESP   Root respiration fraction (fr)
+! RS%LX   Reserves concentration,leaves,maximum (fr)
+! RS%O    Reserves concentration above which overflow to storage root (%)
+! RSEN%   Root senescence rate (%/standard day)
+! RSFRS   Fraction of stem assimilates left as reserves (fr)    
+! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
+! RTNO3   NO3 uptake/root length  (mg N/cm.day)
+! RTNH4   NH4 uptake/root length  (mg N/cm.day)
+! RWUMX   Maximum water uptake rate (cm3/cm.d)
+! RWUPM   Root water upake,minimum pore size for maximum uptake (fr SAT-DUL)
+! SAWS    Stem area/weight ratio,standard (cm2/g)
+! SDDUR   Seed duration if used only for roots (Standard day)
+! SDN%    Seed N (%)
+! SDRS%   Seed reserves (C) as fraction of seed (#)
+! SDWT    Seed size (g/seed)
+! SERX    Shoot elongation rate (cm/std.day)
+! SGRO2   Size of 2nd shoot relative to 1st (fr)
+! SLACF   Specific leaf area,change with leaf position,fr standard (#)
+! SLAFF   Specific leaf area,flexibility w.low CH2O,fr non-stressed (#)
+! SLAMN   Specific leaf area,minimum,fr standard (#)
+! SLATR   Specific leaf area,temperature response (fr change per oC)
+! SLATS   Specific leaf area,temperature standard (C)
+! SLAWR   Specific leaf area,water stress response (fr standard,full stress)
+! SLIG%   Stem lignin (%)
+! SN%MN   Stem N concentration,minimum (fr)
+! SN%S    Stem N concentration,maximum,stage (fr)
+! SSABV   Secondary stage abbreviation (text)
+! SSNAME  Secondary stage name (text)
+! SSNO    Secondary stage number (#)
+! SSTG    Secondary stage timing (Principal stage #)
+! SSTYP   Secondary stage type (code;K=key,S=standard)
+! TPAR    Transmission,photosynthetically active radiation (fr)
+! TRDVx   Temperature response,development,phase x and on until next x entry
+! TRLFG   Temperature response,leaf growth (oC)
+! TRPHS   Temperature response,photosynthesis (oC)
+! TSRAD   Transmission,solar radiation (fr)
+! WFEU    Water factor,evapotranspiration,upper (fr)
+! WFGEM   Water factor,germination and emergence (fr)
+! WFGL    Water factor,growth,lower (fr)
+! WFGU    Water factor,growth,upper (fr)
+! WFPL    Water factor,photosynthesis,lower (fr)
+! WFPU    Water factor,photosynthesis,upper (fr)
+! WFNUL   Water factor,N uptake,lower (fr)
+! WFNUU   Water factor,N uptake,upper (fr)
+! WFRTG   Water factor,root growth (#)
+! WFSU    Water factor,senescence,upper (fr)
+
+! Photosynthesis (Alternative function)
+@PARFC CO2CC CO2EX  ! CO2 response function parameters 
+  2.05    80 0.005
+! CO2CC   CO2 compensation concentration (vpm)
+! CO2EX   Exponent for relationship between CO2 and photosynthesis (#)
+! PARFC   Maximum photosynthesis relative to phs at 330 vpm CO2 (#)
+
+! Evapotranspiration (Resistances only used for comparison)
+@ RATM RCROP  ! Atmospheric,canopy resistances 
+   300   150 
+! RATM    Boundary layer,air,resistance (s/m)
+! RCROP   Stomatal resistance,crop basis (s/m)
+
+! Water uptake  (RWULF only used in stand-alone Cropsim)
+@RWULF ! Length factor
+   0.5 
+! RWULF   Root length factor,water uptake (cm/cm3) 
+

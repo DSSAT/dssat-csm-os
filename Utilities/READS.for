@@ -17,6 +17,7 @@ C=======================================================================
       SUBROUTINE FIND(LUNUM,NAME,LNUM,FOUND)
 
       IMPLICIT NONE
+      EXTERNAL UPCASE
       INTEGER FOUND,I,LNUM,LUNUM
       CHARACTER SECTION*6,NAME*6,UPCASE*1
 C
@@ -297,6 +298,7 @@ C=======================================================================
       SUBROUTINE HFIND(LUNUM,NAME,LNUM,ISECT)
 
       IMPLICIT NONE
+      EXTERNAL UPCASE
       INTEGER ISECT,I,LNUM,LUNUM
       CHARACTER HEADER*5,NAME*(*),UPCASE*1,LINE*128
 C
@@ -358,6 +360,7 @@ C========================================================================
 C-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND_IN_FILE, get_dir, GETLUN
 
       INTEGER,          INTENT(IN)  :: LENCDE, LENTXT
       CHARACTER*(LENCDE), INTENT(IN)  :: CODE
@@ -445,6 +448,7 @@ C  02/09/2007 GH  Add path for fileA
 !-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, IGNORE, INFO, YR_DOY
 
       INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,ISECT,NTR,I, J
       INTEGER YRSIM,YR,ISIM
@@ -652,6 +656,7 @@ C=======================================================================
 C-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GETLUN, GET_DIR, ERROR, INFO
 
       CHARACTER*6 CODE, OLAB(*)
       CHARACTER*6, PARAMETER :: ERRKEY = 'GETDSC'
@@ -752,6 +757,7 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
       IMPLICIT NONE
+      EXTERNAL UPCASE
 
       INTEGER StartCol, I, LENGTH
       CHARACTER*1 CHAR, UPCASE
@@ -784,18 +790,22 @@ C  Convert dates from READA (text) to ouptut format (integer)
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  05-14-2002 CHP Written.
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C=======================================================================
       SUBROUTINE READA_Dates(XDAT, YRSIM, IDAT)
 
       IMPLICIT NONE
+      EXTERNAL ERROR, Y4K_DOY, YR_DOY
 
-      CHARACTER*6 XDAT
+      CHARACTER*6 XDAT,ERRKEY
       REAL        RDAT
       INTEGER     ERRNUM, IDAT, ISIM, YR, YRSIM
+      
+      PARAMETER (ERRKEY = 'RADATE')
 
       CALL YR_DOY(YRSIM, YR, ISIM)
       READ(XDAT(1:6),1000,IOSTAT=ERRNUM) RDAT
-      IF (ERRNUM .NE. 0) CALL ERROR('READA ',2,'FILEA',0)
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,2,'FILEA',0)
  1000 FORMAT(F6.0)
       IDAT = INT(RDAT)
 
@@ -807,7 +817,10 @@ C=======================================================================
         ENDIF
 
       ELSEIF (IDAT .GT. 0 .AND. IDAT .GE. 1000) THEN
-        CALL Y2K_DOY(IDAT)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+        !CALL Y2K_DOY(IDAT)
+        CALL Y4K_DOY(IDAT,'READA ',0,ERRKEY,1)
+        
         !CALL FullYear (IDAT, YR, DOY)
         !IDAT = YR*1000 + DOY
       ENDIF
@@ -925,6 +938,7 @@ C========================================================================
 C-----------------------------------------------------------------------
       USE Moduledefs
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND_IN_FILE, get_dir, GETLUN, IGNORE
 
       INTEGER MaxNum
       CHARACTER*2   CropName(MaxNum)

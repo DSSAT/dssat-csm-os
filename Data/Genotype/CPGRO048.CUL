@@ -1,0 +1,66 @@
+*COWPEA CULTIVAR COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! EXPNO   Number of experiments used to estimate cultivar parameters
+! ECO#    Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL    Critical Short Day Length below which reproductive development
+!         progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN   Slope of the relative response of development to photoperiod with time
+!         (positive for shortday plants) (1/hour)
+! EM-FL   Time between plant emergence and flower appearance (R1)
+!         (photothermal days)
+! FL-SH   Time between first flower and first pod (R3) (photothermal days)
+! FL-SD   Time between first flower and first seed (R5) (photothermal days)
+! SD-PM   Time between first seed (R5) and physiological maturity (R7)
+!         (photothermal days)
+! FL-LF   Time between first flower (R1) and end of leaf expansion
+!         (photothermal days)
+! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!         (mg CO2/m2-s)
+! SLAVR   Specific leaf area of cultivar under standard growth conditions
+!         (cm2/g)
+! SIZLF   Maximum size of full leaf (three leaflets) (cm2)
+! XFRT    Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD   Maximum weight per seed (g)
+! SFDUR   Seed filling duration for pod cohort at standard growth conditions
+!         (photothermal days)
+! SDPDV   Average seed per pod under standard growing conditions (#/pod)
+! PODUR   Time required for cultivar to reach final pod load under optimal
+! THRESH  The maximum ratio of (seed/(seed+shell)) at maturity.
+!         Causes seed to stop growing as their dry weights
+!         increase until shells are filled in a cohort.
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))       
+!
+!             P/G/N:Phenology/Growth/Not used for calbration 
+!
+! KJB has confidence only in CP0001,CP0003,CP0004,CP0005,CP0006(only for Vstg).  Rest not calibrated in V4.7 or V4.8 (unknown) so beware
+! CP0012 and CP0014 are particularly bad (very short SD-PM, very short PODUR, but much too long SFDUR) which are not realistic.
+!
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP 
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             P     P     P     P     P     P     N     G     G     N     G     G     N     N     N     N     N     N
+
+999991 MINIMA               . DFAULT 12.50 .0200 22.00  2.50 5.000 23.00  7.00 0.900  200. 170.0  0.50 .0500   5.5   6.0  13.0  74.0  .300  .065 
+999992 MAXIMA               . DFAULT 13.10 .3000 38.00  3.60 8.000 48.00 35.00 1.100  260. 260.0  1.00 .6500   9.5  15.0  30.0  83.0  .300  .065 
+
+CP0001 CAL # 5  MG4       1,2 CP0409 12.80 .2646 23.46  3.80 6.000 24.85  7.00 1.000  250. 260.0  1.00 .1400   9.0   6.4  16.0  83.0  .300  .065
+CP0003 TVU3046 - India    1,1 CP0411 12.80 .1096 25.60  2.90 5.900 32.10  9.00 0.900  250. 220.0  0.85 .0405   7.2   9.7  20.0  74.9  .300  .065
+CP0004 UCR 368 - Kenya    1,1 CP0412 12.80 .0545 25.60  2.40 4.900 48.00 16.00 0.900  250. 240.0  0.83 .0775   8.4 10.30  31.0  77.7  .300  .065
+CP0005 TVU3644 - Nigeria  1,1 CP0413 12.80 .1576 37.00  2.50 5.900 22.10 15.00 1.000  200. 170.0  0.53 .0420   5.8  15.0  14.0  74.6  .300  .065
+!CP0001 CAL # 5  MG4       1,2 CP0409 12.80 .2646 23.46  3.80 6.000 24.85  7.00 1.000  250. 260.0  1.00 .1400   8.5   6.4  16.0  83.0  .300  .065
+!CP0003 TVU3046 - India    1,1 CP0411 12.80 .1096 25.60  3.00 6.000 32.00  9.00 0.900  250. 220.0  0.84 .0405   7.0   9.7  20.0  74.9  .300  .065
+!CP0004 UCR 368 - Kenya    1,1 CP0412 12.80 .0545 25.60  2.50 5.000 48.00 16.00 0.900  250. 240.0  0.82 .0775   8.0 10.30  31.0  77.7  .300  .065
+!CP0005 TVU3644 - Nigeria  1,1 CP0413 12.80 .1576 37.00  2.50 6.000 22.00 15.00 1.000  200. 170.0  0.52 .0420   5.5  15.0  14.0  74.6  .300  .065
+CP0006 VERDE BRASIL         . CP0410 12.80 .2940 33.20  3.50  7.20 31.00 17.00 1.000 260.0 270.0 0.850 .2200   7.0  6.40  32.0  66.5  .300  .065
+CP0012 277                  . CP0414 12.80 .2940 28.57  3.00  6.00 11.52 18.00 1.000 325.0 133.0 1.000 .6000  14.4  3.50   3.5  82.0  .300  .065
+CP0014 349                  . CP0414 12.80 .2940 34.14  3.00  6.00 13.17 18.00 1.000 325.0 133.0 1.000 .6500  21.9  5.20   6.0  82.0  .300  .065
+
+II0001 Kanannado            . CP0414 12.50 .3000 40.00  3.00  6.00 25.00 18.00 1.000 325.0 150.0 0.500 0.600   8.0   3.5  16.0  82.0  .300  .065
+II0002 IT86D-719            . CP0414 12.80 .2940 30.50  2.50  6.00 18.00  5.00 1.000 275.0 150.0 1.000 0.240   7.0   5.2  14.0  82.0  .300  .065
+II0003 IT90K-277-2          . CP0414 12.80 .2940 34.14  3.00  6.00 20.00 18.00 1.000 325.0 150.0 0.900 0.600   8.0   3.5  16.0  82.0  .300  .065
+II0004 IT96D-748            . CP0414 12.80 .2940 34.14  3.00  6.00 20.00 18.00 1.000 325.0 150.0 0.900 0.600   8.0   3.5  16.0  82.0  .300  .065
+II0014 349*                 . CP0414 12.80 .2940 34.14  3.00  6.00 20.00 18.00 1.000 325.0 150.0 0.900 0.600   8.0   3.5  16.0  82.0  .300  .065
+                                                                                                                                    
+                                                                                                                                    

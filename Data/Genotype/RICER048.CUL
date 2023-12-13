@@ -1,0 +1,153 @@
+*RICE CULTIVAR COEFFICIENTS: RICER048 MODEL
+!
+! COEFF    DEFINITIONS
+! ======== ===========
+! VAR#     Identification code or number for a specific cultivar.
+! VAR-NAME Name of cultivar.
+! EXPNO    Number of experiments used to estimate cultivar parameters
+! ECO#     Ecotype code for this cultivar points to the Ecotype in the ECO
+!          file (currently not used).
+
+! P1       Time period (expressed as growing degree days [GDD] in oC-d above a
+!          base temperature of 9oC) from seedling emergence during which the
+!          rice plant is not responsive to changes in photoperiod. This period
+!          is also referred to as the basic vegetative phase of the plant.
+!          Range: 150-800 oC-d. 
+!          Calibration: flexible, compare with observed panicle initiation 
+!          and flowering dates.
+
+! P2O      Critical photoperiod or the longest day length (in hours) at
+!          which the development occurs at a maximum rate. At values higher
+!          than P2O developmental rate is slowed, hence there is delay due
+!          to longer day lengths. 
+!          Range 11-13 h. Default 12 h. 
+!          Calibration: Do not go below 11 unless data are available. 
+
+! P2R      Extent to which phasic development leading to panicle initiation
+!          is delayed (expressed as GDD in oC-d) for each hour increase in
+!          photoperiod above P2O. 
+!          Range 5-300 oC-d. 
+!          Calibration: Modern rice varieties will have values in 
+!          the lower range.
+
+! P5       Time period in GDD oC-d) from beginning of grain filling (3 to
+!          4 days after flowering) to physiological maturity with a base
+!          temperature of 9oC. 
+!          Range 150-850 oC-d. 
+!          Calibration: Ensure P1, P2O and P2R are correctly calibrated for 
+!          anthesis data. Then calibrate P5 for observed maturity date.
+
+! G1       Potential spikelet number coefficient as estimated from the
+!          number of spikelets per g of main culm dry weight (less leaf
+!          blades and sheaths plus spikes) at anthesis. 
+!          Range 50-75 #/g. A typical value is 55 #/g.
+
+! G2       Single grain weight (g) under ideal growing conditions, i.e.
+!          nonlimiting light, water, nutrients, and absence of pests
+!          and diseases.
+!          Range 0.015-0.030 g. Default 0.025 g.
+!          Calibration: Very low flexibility. 
+
+! G3       Tillering coefficient (scalar value) relative to IR64 cultivar
+!          under ideal conditions. 
+!          Range 0.7-1.3.
+!          Calibration: A higher tillering cultivar would have a coefficient 
+!          greater than 1.0.
+
+! PHINT    Phyllochron Interval (oC-d). Time interval in degree-days for each 
+!          leaf-tip to appear under non-stressed conditions.  
+!          Range 55-90 oC-d. Default 83 oC-d.
+!          Calibration: Recommend to not change unless field data on leaf 
+!          numbers are available.
+
+! THOT     Temperature (oC) above which spikelet sterility is affected by 
+!          high temperature.  
+!          Range 25-34 oC. Default 28oC. 
+!          Calibration: recommended to not change unless hot environment
+!          data are available. Convert old cultivars THOT = 28./G4.
+
+! TCLDP    Temperature (oC) below which panicle initiation is further delayed 
+!          (other than P1, P2O and P2R) by low temperature.
+!          Range 12-18 oC. Default 15oC. 
+!          Calibration: recommended to not change unless cold environment
+!          data are available. Convert old cultivars TCLDP = 15.*G5.
+
+! TCLDF    Temperature (oC) below which spikelet sterility is affected by 
+!          low temperature.
+!          Range 10-20 oC. Default 15oC. 
+!          Calibration: recommended to not change unless cold environment
+!          data are available. Convert old cultivars TCLDF = 15.*G5.
+!
+! The cultivar coefficient G5 was added to DSSAT Version 4.7.5
+! The cultivar coefficients G4 and G5 were removed - DSSAT Version 4.8
+! The cultivar coefficients THOT, TCLDP, and TCLDF were added to DSSAT Version 4.8
+!
+!          P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2R    P5   P2O    G1    G2    G3 PHINT  THOT TCLDP TCLDF  
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11  
+!Calibration                             P     P     P     P     G     G     G     N     G     N     N
+
+999991 MINIMA               . DFAULT 150.0   5.0 150.0  11.0  50.0 .0150  0.70  55.0  25.0  12.0  10.0
+999992 MAXIMA               . DFAULT 800.0 300.0 850.0  13.0  70.0 .0300  1.30  90.0  34.0  18.0  20.0
+
+990001 IRRI ORIGINALS       . IB0001 880.0  52.0 550.0  12.0  65.0 .0280  1.00  83.0  28.0  15.0  15.0  
+990002 IRRI RECENT          . IB0001 450.0 149.0 350.0  11.7  68.0 .0230  1.00  83.0  28.0  15.0  15.0  
+990003 JAPANESE             . IB0001 220.0  35.0 510.0  12.0  55.0 .0250  1.00  83.0  28.0  15.0  15.0  
+990004 N.AMERICAN           . IB0001 318.0 189.0 550.0  12.8  65.0 .0280  1.00  83.0  28.0  15.0  15.0  
+
+IB0003 IR 36                . IB0001 556.8 53.88 373.4 12.87 68.00 0.023  1.00 83.00  31.3  15.0  15.0
+IB0012 IR 58                . IB0001 254.8 96.44 378.4 10.63 77.03 0.020  1.00 83.00  33.9  15.0  15.0
+IB0020 RD 23                . IB0001 528.6 156.5 387.4 12.64 52.65 0.022  1.00 83.00  29.0  15.0  15.0
+IB0050 PR114                . IB0001 662.5 184.4 503.0 12.38 62.86 0.023  1.00 83.00  25.7  15.0  15.0  
+IB0055 Basmati 385          . IB0001 498.3 130.1 420.0 12.90 74.76 0.022  0.53 83.00  30.9  15.0  15.0
+
+IB0118 IR 72                . IB0001 437.1 61.02 371.8 11.58 77.80 0.026  1.00 83.00  30.4  15.0  15.0  
+ 
+IB0001 IR 8                 . IB0001 880.0  52.0 550.0  12.1  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0002 IR 20                . IB0001 500.0 166.0 500.0  11.2  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0004 IR 43                . IB0001 720.0 120.0 580.0  10.5  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0005 LABELLE              . IB0001 318.0 189.0 550.0  12.8  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0006 MARS                 . IB0001 698.0 134.0 550.0  13.0  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0007 NOVA 66              . IB0001 389.0 155.0 550.0  11.0  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0008 PETA                 . IB0001 420.0 240.0 550.0  11.3  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0009 STARBONNETT          . IB0001 880.0 164.0 550.0  13.0  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0010 UPLRI5               . IB0001 620.0 160.0 380.0  11.5  50.0 .0220  0.60  83.0  28.0  15.0  15.0
+IB0011 UPLRI7               . IB0001 760.0 150.0 450.0  11.7  65.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0013 SenTaNi (???)        . IB0001 320.0  50.0 550.0  10.0  70.0 .0300  1.00  83.0  28.0  15.0  15.0
+IB0014 IR 54                . IB0001 350.0 125.0 520.0  11.5  60.0 .0280  1.00  83.0  28.0  15.0  15.0
+IB0015 IR 64                . IB0001 500.0 160.0 450.0  12.0  60.0 .0250  1.00  83.0  28.0  15.0  15.0
+IB0016 IR 60(Est)           . IB0001 490.0 100.0 320.0  11.5  75.0 .0275  1.00  83.0  28.0  15.0  15.0
+IB0017 IR 66                . IB0001 500.0  50.0 490.0  12.5  62.0 .0265  1.00  83.0  28.0  15.0  15.0
+IB0018 IR 72x               . IB0001 400.0 100.0 580.0  12.0  76.0 .0230  1.00  83.0  28.0  15.0  15.0
+IB0019 RD 7 (cal.)          . IB0001 603.3 150.0 452.5  11.2  65.0 .0230  1.00  83.0  28.0  15.0  15.0
+IB0021 CICA8                . IB0001 700.0 120.0 360.0  11.7  60.0 .0270  1.00  83.0  28.0  15.0  15.0
+IB0022 LOW TEMP.SEN         . IB0001 400.0 120.0 420.0  12.0  60.0 .0250  1.00  83.0  35.0  15.0  15.0
+IB0023 LOW TEMP.TOL         . IB0001 400.0 120.0 420.0  12.0  60.0 .0250  1.00  83.0  22.4  15.0  15.0
+IB0024 17 BR11,T.AMAN       . IB0001 740.0 180.0 400.0  10.5  55.0 .0250  1.00  83.0  31.1  15.0  15.0
+IB0025 18 BR22,T.AMAN       . IB0001 650.0 110.0 400.0  12.0  60.0 .0250  1.00  83.0  28.0  15.0  15.0
+IB0026 19 BR 3,T.AMAN       . IB0001 650.0 110.0 420.0  12.0  65.0 .0250  1.00  83.0  28.0  15.0  15.0
+IB0027 20 BR 3,BORO         . IB0001 650.0  90.0 400.0  13.0  65.0 .0250  1.00  83.0  28.0  15.0  15.0
+IB0029 CPIC8                . IB0001 380.0 150.0 300.0  12.8  38.0 .0210  1.00  83.0  28.0  15.0  15.0
+IB0030 LEMONT               . IB0001 500.0  50.0 300.0  12.8  60.0 .0207  1.00  83.0  28.0  15.0  15.0
+IB0031 RN12                 . IB0001 380.0  50.0 300.0  12.8  40.0 .0199  1.00  83.0  24.3  15.0  15.0
+IB0032 TW                   . IB0001 360.0  50.0 290.0  12.8  55.0 .0210  1.00  83.0  28.0  15.0  15.0
+IB0115 IR 64*               . IB0001 540.0 160.0 490.0  12.0  50.0 .0250  1.10  83.0  28.0  15.0  15.0
+IB0116 HEAT SENSITIVE       . IB0001 460.0   5.0 390.0  13.5  62.0 .0250  1.00  83.0  24.3  15.0  15.0
+IB0117 BR14                 . IB0001 560.0 200.0 500.0  11.5  45.0 .0260  1.00  83.0  28.0  15.0  15.0
+IB0119 BR11                 . IB0001 825.0 300.0 390.0  11.5  52.0 .0240  1.00  83.0  28.0  15.0  15.0
+IB0120 PANT-4               . IB0001 830.0 160.0 300.0  11.4  45.0 .0300  1.00  83.0  35.0  15.0  15.0
+IB0121 JAYA                 . IB0001 830.0 100.0 200.0  11.4  40.0 .0300  1.00  83.0  35.0  15.0  15.0
+IB0122 BPRI10               . IB0001 740.0 200.0 225.0  13.5  40.0 .0230  1.00  83.0  28.0  15.0  15.0
+IB0151 ZHENG DAO 9380       . IB0001 400.0 120.0 420.0  13.0  60.0 .0270  1.00  83.0  24.3  15.0  15.0
+IB0200 CL-448               . IB0001 100.0 120.0 250.0  12.0  40.0 .0250  1.00  83.0  22.4  15.0  15.0
+IB0051 KS-282 CRice         . IB0001 290.0  17.0 490.0  13.0  55.0 .0500  1.00  83.0  40.0  15.0  15.0
+IB0052 Basmati-515 FRice    . IB0001 460.0 120.0 512.0  11.0  37.0 .0210  1.00  75.0  28.0  15.0  15.0
+
+MC0020 RD 23                . IB0001 310.3 140.0 370.0  11.2  53.0 .0230  0.30  83.0  28.0  15.0  15.0
+TR0001 KDML105              . IB0001 502.3 123.3 386.5  12.7  45.7 .0270  1.00  83.0  29.5  15.0  15.0
+TR0002 NIEW SANPATONG       . IB0001 495.8 128.3 364.2  12.7  40.7 .0277  0.70  83.0  32.9  15.0  15.0
+TR0003 SUPANBURI 60         . IB0001 540.0 154.7 497.0  11.9  77.7 .0280  1.00  83.0  27.2  15.0  15.0
+TR0004 CHAINAT 1            . IB0001 570.0 122.8 334.8  11.9  63.1 .0278  1.00  83.0  28.0  15.0  15.0
+TR0005 DOA 1                . IB0001 388.5  20.0 381.8  12.0  73.8 .0275  1.10  83.0  24.3  15.0  15.0
+

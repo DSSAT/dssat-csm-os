@@ -45,6 +45,7 @@ C========================================================================
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, PRNT_VEGGR_SC
       SAVE
 
       CHARACTER*6  ERRKEY
@@ -84,7 +85,7 @@ C========================================================================
 ! LIST OF NEW VARIABLES ADDED TO ENABLE SIMULATION OF SUGARS IN THE 
 ! SUGARCANE MODEL
 
-	INTEGER OpenStatus, WLUN
+!	INTEGER OpenStatus !, WLUN
 
 	REAL DXR
       REAL AGRSU, CADSU, CRUSSU, FNINSU, FRSU, NADSU, NGRSU, NGRSUG 
@@ -167,42 +168,42 @@ C========================================================================
 
 ! Open file to write results from CSP_VEGGR
 
-      CALL GETLUN('WORK.OUT',WLUN)
-      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
-     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
+!      CALL GETLUN('WORK.OUT',WLUN)
+!      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
+!     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
 
-      WRITE(WLUN,*)
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM VEGGR_SC.for")')
-      WRITE(WLUN,'(1X,"-------------------------")')
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"RESULTS FROM VEGGR_SC.for")')
+!      WRITE(WLUN,'(1X,"-------------------------")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
 
       SECTION = '!*PLAN'
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"PROLFI : ",F6.3)') PROLFI
-      WRITE(WLUN,'(1X,"PROLFG : ",F6.3)') PROLFG
-      WRITE(WLUN,'(1X,"PROSTI : ",F6.3)') PROSTI
-      WRITE(WLUN,'(1X,"PROSTG : ",F6.3)') PROSTG
-      WRITE(WLUN,'(1X,"PRORTI : ",F6.3)') PRORTI
-      WRITE(WLUN,'(1X,"PRORTG : ",F6.3)') PRORTG
-      WRITE(WLUN,'(1X,"PROSUI : ",F6.3)') PROSUI
-      WRITE(WLUN,'(1X,"PROSUG : ",F6.3)') PROSUG
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"PROLFI : ",F6.3)') PROLFI
+!      WRITE(WLUN,'(1X,"PROLFG : ",F6.3)') PROLFG
+!      WRITE(WLUN,'(1X,"PROSTI : ",F6.3)') PROSTI
+!      WRITE(WLUN,'(1X,"PROSTG : ",F6.3)') PROSTG
+!      WRITE(WLUN,'(1X,"PRORTI : ",F6.3)') PRORTI
+!      WRITE(WLUN,'(1X,"PRORTG : ",F6.3)') PRORTG
+!      WRITE(WLUN,'(1X,"PROSUI : ",F6.3)') PROSUI
+!      WRITE(WLUN,'(1X,"PROSUG : ",F6.3)') PROSUG
 
       SECTION = '!*CARB'
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"CMOBMX : ",F6.3)') CMOBMX
-      WRITE(WLUN,'(1X,"CADSTF : ",F6.3)') CADSTF
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"CMOBMX : ",F6.3)') CMOBMX
+!      WRITE(WLUN,'(1X,"CADSTF : ",F6.3)') CADSTF
 
       SECTION = '!*VEGE'
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-      WRITE(WLUN,'(1X,"ATOP   : ",F6.3)') ATOP
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!      WRITE(WLUN,'(1X,"ATOP   : ",F6.3)') ATOP
 
-      WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"END RESULTS FROM VEGGR_SC.for")')
+!      WRITE(WLUN,*)
+!      WRITE(WLUN,'(1X,"END RESULTS FROM VEGGR_SC.for")')
 
 !      CLOSE (WLUN)
 
@@ -1008,7 +1009,7 @@ C-----------------------------------------------------------------------
 ! SECTION Section name in input file 
 ! STMWT   Dry mass of stem tissue, including C and N (g [stem] / m2[ground)
 ! SUPPN   Total supply of N (g [N] / m2 / d)
-! TGRO(I) Hourly air temperature (°C)
+! TGRO(I) Hourly air temperature (Â°C)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
 ! TNLEAK  Total nitrogen leak (g [N] / m2 / d)

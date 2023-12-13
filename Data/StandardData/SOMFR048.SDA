@@ -1,0 +1,155 @@
+*SOMFR047.SDA Stable SOM fractions - DSCSM047 Model 09/01/2017
+
+!========================================================================================================
+! Initial SOM fractions are based on previous land use / management,
+!   soil type, number of years under this management and on initial
+!   carbon composition.
+!
+! Values in these tables represent the fraction of total organic C (OC)
+!   that is stable (SOM3). Intermediate (SOM2) and microbial (SOM1) SOM
+!   are estimated in the DSSAT-CENTURY model based on these stable SOM
+!   fractions as follows:
+!      SOM1 = 0.05 * (1.0 - SOM3).
+!      SOM2 = 1.0 - SOM3 - SOM1
+!
+! If measured values are entered into Soil Analysis section of
+!   experiment file, those values supercede these.  If no measured
+!   values or field history are available, model uses Adiku's equaton:
+!         SOM3 = (0.015 * (CLAY + SILT) + 0.069) / OC
+!
+!Five character field history code (FLHST) needs to be placed in
+! "FIELDS" section of FILEX:
+!*FIELDS
+!@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+! 1 PLmodame ISDA9901   -99   -99   -99   200   -99     0 S      200  ISDA250001 Sample field history
+!@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+! 1            13.1            2.14       250              1728    48   1.3     3 FH101    11
+!======================================================================================================== 
+! Summary of field history choices:
+! FH101 Cultivated with good management practices, initially cultivated land
+! FH102 Cultivated with poor management practices, initially cultivated land
+! FH201 Cultivated with good management practices, initially grassland/forest
+! FH202 Cultivated with poor management practices, initially grassland/forest
+! FH301 Cultivated with good management practices, initially degraded
+! FH302 Cultivated with poor management practices, initially degraded
+
+
+@FH101 Cultivated with good management practices, initially cultivated land
+!100 yr continuous simulation approach, irrigated, high N application rate
+!Initial conditions: 44% stable C
+!Years this mgmt ->|---0 yrs----|----5 yrs----|---10 yrs----|---20 yrs----|---60 yrs----|-Steady State|
+!Soil depth (cm) ->| 0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|
+@ L  TEXTURE        S3_T0  S3_D0  S3_T5  S3_D5 S3_T10 S3_D10 S3_T20 S3_D20 S3_T60 S3_D60 S3_TSS S3_DSS
+  1  Sand            0.44   0.44   0.49   0.60   0.48   0.69   0.41   0.75   0.31   0.78   0.29   0.78
+  2  LoamySand       0.44   0.44   0.55   0.63   0.60   0.75   0.62   0.84   0.60   0.88   0.60   0.88
+  3  SandyLoam       0.44   0.44   0.50   0.60   0.52   0.70   0.50   0.78   0.44   0.82   0.43   0.82
+  4  SiltyLoam       0.44   0.44   0.49   0.57   0.49   0.64   0.47   0.72   0.44   0.79   0.43   0.79
+  5  Silt            0.44   0.44   0.49   0.56   0.48   0.64   0.46   0.71   0.43   0.77   0.43   0.77
+  6  Loam            0.44   0.44   0.52   0.59   0.56   0.70   0.57   0.79   0.56   0.85   0.55   0.85
+  7  SandClayLoam    0.44   0.44   0.57   0.60   0.65   0.72   0.72   0.83   0.75   0.91   0.75   0.91
+  8  SiltClayLoam    0.44   0.44   0.52   0.56   0.55   0.65   0.58   0.74   0.60   0.83   0.60   0.83
+  9  ClayLoam        0.44   0.44   0.54   0.58   0.59   0.67   0.64   0.78   0.68   0.87   0.68   0.87
+ 10  SandyClay       0.44   0.44   0.56   0.60   0.64   0.71   0.70   0.82   0.74   0.90   0.74   0.90
+ 11  SiltyClay       0.44   0.44   0.51   0.56   0.54   0.64   0.56   0.72   0.57   0.81   0.57   0.82
+ 12  Clay            0.44   0.44   0.53   0.57   0.59   0.66   0.63   0.76   0.67   0.85   0.67   0.86
+
+
+@FH102 Cultivated with poor management practices, initially cultivated land
+!100 yr continuous simulation approach, non-irrigated, non-fertilized
+!Initial conditions: 44% stable C
+!Years this mgmt ->|---0 yrs----|----5 yrs----|---10 yrs----|---20 yrs----|---60 yrs----|-Steady State|
+!Soil depth (cm) ->| 0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|
+@ L  TEXTURE        S3_T0  S3_D0  S3_T5  S3_D5 S3_T10 S3_D10 S3_T20 S3_D20 S3_T60 S3_D60 S3_TSS S3_DSS
+  1  Sand            0.44   0.44   0.54   0.68   0.58   0.83   0.69   0.95   0.89   0.98   0.93   0.98
+  2  LoamySand       0.44   0.44   0.56   0.66   0.59   0.81   0.62   0.93   0.86   0.98   0.94   0.98
+  3  SandyLoam       0.44   0.44   0.53   0.64   0.54   0.78   0.54   0.91   0.76   0.98   0.89   0.98
+  4  SiltyLoam       0.44   0.44   0.52   0.60   0.53   0.72   0.53   0.85   0.65   0.95   0.74   0.97
+  5  Silt            0.44   0.44   0.51   0.60   0.52   0.72   0.52   0.84   0.64   0.95   0.73   0.96
+  6  Loam            0.44   0.44   0.53   0.62   0.55   0.76   0.56   0.88   0.70   0.97   0.80   0.98
+  7  SandClayLoam    0.44   0.44   0.56   0.62   0.62   0.75   0.67   0.88   0.81   0.97   0.85   0.98
+  8  SiltClayLoam    0.44   0.44   0.53   0.59   0.56   0.70   0.59   0.83   0.71   0.95   0.77   0.96
+  9  ClayLoam        0.44   0.44   0.54   0.60   0.58   0.72   0.62   0.85   0.73   0.96   0.79   0.96
+ 10  SandyClay       0.44   0.44   0.55   0.61   0.60   0.74   0.65   0.87   0.79   0.97   0.83   0.97
+ 11  SiltyClay       0.44   0.44   0.52   0.59   0.55   0.69   0.57   0.82   0.66   0.94   0.73   0.95
+ 12  Clay            0.44   0.44   0.54   0.59   0.58   0.71   0.63   0.84   0.75   0.95   0.80   0.96
+
+
+@FH201 Cultivated with good management practices, initially grassland/forest
+!100 yr continuous simulation approach, irrigated, high N application rate
+!Initial conditions: 34% stable C
+!Years this mgmt ->|---0 yrs----|----5 yrs----|---10 yrs----|---20 yrs----|---60 yrs----|-Steady State|
+!Soil depth (cm) ->| 0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|
+@ L  TEXTURE        S3_T0  S3_D0  S3_T5  S3_D5 S3_T10 S3_D10 S3_T20 S3_D20 S3_T60 S3_D60 S3_TSS S3_DSS
+  1  Sand            0.34   0.34   0.43   0.55   0.43   0.66   0.39   0.74   0.31   0.78   0.29   0.78
+  2  LoamySand       0.34   0.34   0.49   0.58   0.56   0.72   0.60   0.83   0.60   0.88   0.60   0.88
+  3  SandyLoam       0.34   0.34   0.44   0.54   0.48   0.67   0.48   0.77   0.44   0.82   0.43   0.82
+  4  SiltyLoam       0.34   0.34   0.42   0.50   0.45   0.60   0.45   0.71   0.44   0.79   0.43   0.79
+  5  Silt            0.34   0.34   0.42   0.49   0.44   0.59   0.44   0.69   0.43   0.77   0.43   0.77
+  6  Loam            0.34   0.34   0.46   0.53   0.52   0.66   0.55   0.78   0.56   0.85   0.56   0.85
+  7  SandClayLoam    0.34   0.34   0.50   0.54   0.61   0.68   0.70   0.82   0.75   0.91   0.75   0.91
+  8  SiltClayLoam    0.34   0.34   0.45   0.49   0.51   0.60   0.56   0.72   0.60   0.83   0.60   0.83
+  9  ClayLoam        0.34   0.34   0.47   0.51   0.55   0.63   0.62   0.76   0.68   0.87   0.68   0.87
+ 10  SandyClay       0.34   0.34   0.50   0.53   0.59   0.67   0.69   0.81   0.74   0.90   0.74   0.90
+ 11  SiltyClay       0.34   0.34   0.45   0.49   0.49   0.59   0.53   0.70   0.57   0.81   0.57   0.82
+ 12  Clay            0.34   0.34   0.47   0.50   0.54   0.62   0.61   0.74   0.67   0.85   0.67   0.86
+
+
+@FH202 Cultivated with poor management practices, initially grassland/forest
+!100 yr continuous simulation approach, non-irrigated, non-fertilzed
+!Initial conditions: 34% stable C
+!Years this mgmt ->|---0 yrs----|----5 yrs----|---10 yrs----|---20 yrs----|---60 yrs----|-Steady State|
+!Soil depth (cm) ->| 0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|
+@ L  TEXTURE        S3_T0  S3_D0  S3_T5  S3_D5 S3_T10 S3_D10 S3_T20 S3_D20 S3_T60 S3_D60 S3_TSS S3_DSS
+  1  Sand            0.34   0.34   0.46   0.62   0.51   0.80   0.62   0.94   0.87   0.98   0.93   0.98
+  2  LoamySand       0.34   0.34   0.49   0.61   0.54   0.78   0.58   0.92   0.85   0.98   0.94   0.98
+  3  SandyLoam       0.34   0.34   0.46   0.58   0.48   0.75   0.50   0.89   0.75   0.98   0.89   0.98
+  4  SiltyLoam       0.34   0.34   0.45   0.54   0.47   0.68   0.49   0.83   0.65   0.96   0.76   0.97
+  5  Silt            0.34   0.34   0.44   0.53   0.47   0.67   0.49   0.82   0.64   0.95   0.75   0.96
+  6  Loam            0.34   0.34   0.46   0.56   0.50   0.72   0.53   0.87   0.70   0.97   0.82   0.98
+  7  SandClayLoam    0.34   0.34   0.49   0.55   0.57   0.71   0.65   0.86   0.81   0.97   0.87   0.98
+  8  SiltClayLoam    0.34   0.34   0.46   0.52   0.51   0.65   0.56   0.81   0.70   0.95   0.78   0.96
+  9  ClayLoam        0.34   0.34   0.47   0.53   0.53   0.67   0.59   0.82   0.73   0.96   0.80   0.96
+ 10  SandyClay       0.34   0.34   0.48   0.54   0.56   0.70   0.63   0.85   0.79   0.97   0.85   0.97
+ 11  SiltyClay       0.34   0.34   0.45   0.51   0.49   0.64   0.54   0.79   0.66   0.94   0.74   0.95
+ 12  Clay            0.34   0.34   0.47   0.52   0.53   0.66   0.60   0.82   0.75   0.95   0.82   0.96
+
+
+@FH301 Cultivated with good management practices, initially degraded
+!100 yr continuous simulation approach, irrigated, high N application rate
+!Initial conditions: Stable C from 100 year continuous simulations for FH102
+!Initial conditions: previously degraded land, use initial SOM from transient simulation scenarios
+!Years this mgmt ->|---0 yrs----|----5 yrs----|---10 yrs----|---20 yrs----|---60 yrs----|-Steady State|
+!Soil depth (cm) ->| 0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|
+@ L  TEXTURE        S3_T0  S3_D0  S3_T5  S3_D5 S3_T10 S3_D10 S3_T20 S3_D20 S3_T60 S3_D60 S3_TSS S3_DSS
+  1  Sand            0.93   0.98   0.82   0.91   0.69   0.85   0.51   0.80   0.32   0.78   0.29   0.78
+  2  LoamySand       0.94   0.98   0.89   0.94   0.82   0.91   0.72   0.88   0.62   0.88   0.60   0.88
+  3  SandyLoam       0.89   0.98   0.84   0.92   0.74   0.88   0.60   0.83   0.45   0.82   0.43   0.82
+  4  SiltyLoam       0.74   0.97   0.78   0.90   0.68   0.85   0.56   0.81   0.45   0.79   0.43   0.79
+  5  Silt            0.73   0.96   0.77   0.89   0.67   0.85   0.54   0.80   0.43   0.77   0.43   0.77
+  6  Loam            0.80   0.98   0.83   0.92   0.75   0.89   0.66   0.86   0.56   0.85   0.56   0.85
+  7  SandClayLoam    0.85   0.98   0.88   0.95   0.84   0.93   0.79   0.92   0.76   0.91   0.75   0.91
+  8  SiltClayLoam    0.77   0.96   0.82   0.91   0.75   0.88   0.67   0.85   0.61   0.83   0.60   0.83
+  9  ClayLoam        0.79   0.96   0.84   0.93   0.79   0.90   0.73   0.88   0.68   0.87   0.68   0.87
+ 10  SandyClay       0.83   0.97   0.87   0.94   0.83   0.93   0.78   0.91   0.74   0.90   0.74   0.90
+ 11  SiltyClay       0.73   0.95   0.80   0.91   0.73   0.88   0.65   0.84   0.57   0.82   0.57   0.82
+ 12  Clay            0.80   0.96   0.84   0.92   0.78   0.90   0.72   0.87   0.67   0.86   0.67   0.86
+
+
+@FH302 Cultivated with poor management practices, initially degraded
+!Initial conditions: Stable C from 100 year continuous simulations for FH102
+!No change from initial degraded conditions
+!Years this mgmt ->|---0 yrs----|----5 yrs----|---10 yrs----|---20 yrs----|---60 yrs----|-Steady State|
+!Soil depth (cm) ->| 0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|  0-20  20-40|
+@ L  TEXTURE        S3_T0  S3_D0  S3_T5  S3_D5 S3_T10 S3_D10 S3_T20 S3_D20 S3_T60 S3_D60 S3_TSS S3_DSS
+  1  Sand            0.93   0.98   0.93   0.98   0.93   0.98   0.93   0.98   0.93   0.98   0.93   0.98
+  2  LoamySand       0.94   0.98   0.94   0.98   0.94   0.98   0.94   0.98   0.94   0.98   0.94   0.98
+  3  SandyLoam       0.89   0.98   0.89   0.98   0.89   0.98   0.89   0.98   0.89   0.98   0.89   0.98
+  4  SiltyLoam       0.74   0.97   0.74   0.97   0.74   0.97   0.74   0.97   0.74   0.97   0.74   0.97
+  5  Silt            0.73   0.96   0.73   0.96   0.73   0.96   0.73   0.96   0.73   0.96   0.73   0.96
+  6  Loam            0.80   0.98   0.80   0.98   0.80   0.98   0.80   0.98   0.80   0.98   0.80   0.98
+  7  SandClayLoam    0.85   0.98   0.85   0.98   0.85   0.98   0.85   0.98   0.85   0.98   0.85   0.98
+  8  SiltClayLoam    0.77   0.96   0.77   0.96   0.77   0.96   0.77   0.96   0.77   0.96   0.77   0.96
+  9  ClayLoam        0.79   0.96   0.79   0.96   0.79   0.96   0.79   0.96   0.79   0.96   0.79   0.96
+ 10  SandyClay       0.83   0.97   0.83   0.97   0.83   0.97   0.83   0.97   0.83   0.97   0.83   0.97
+ 11  SiltyClay       0.73   0.95   0.73   0.95   0.73   0.95   0.73   0.95   0.73   0.95   0.73   0.95
+ 12  Clay            0.80   0.96   0.80   0.96   0.80   0.96   0.80   0.96   0.80   0.96   0.80   0.96

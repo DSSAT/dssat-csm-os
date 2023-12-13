@@ -13,6 +13,7 @@ C 11/14/2002 CHP Added date correction for sequenced runs
 C 05/09/2003 CHP Increased number of pest observations to 200
 C 09/28/2004 CHP Fixed problem with reading multiple tiers of pest
 C                  data from FILET.
+C 05/07/2020 FO  Add new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  Called by: PEST
 C  Calls:     None
@@ -26,6 +27,8 @@ C for the experiment being simulated.
 C----------------------------------------------------------------------
       USE MODULEDEFS
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, IGNORE2, LenString, TIMDIF, Y2K_DOY, 
+     &  Y4K_DOY, YR_DOY, WARNING, PARSE_HEADERS
 C-----------------------------------------------------------------------
       
       CHARACTER*6 ERRKEY
@@ -42,7 +45,7 @@ C-----------------------------------------------------------------------
       CHARACTER*5   PID(MAXPEST)
 
       INTEGER COUNT,COLNUM,ERRNUM
-      INTEGER ISECT, I, J, L, LenString
+      INTEGER ISECT, I, J, LenString
       INTEGER LNUM, LUN, PCN
       INTEGER TR, TRTNUM
       INTEGER MULTI
@@ -55,6 +58,9 @@ C-----------------------------------------------------------------------
       REAL REP(6)
       REAL YPL(6,MAXPEST)
 
+      INTEGER, PARAMETER :: MAXCOL = 50
+      CHARACTER*15  HEADER(MAXCOL)
+      INTEGER COL(MAXCOL,2), C1, C2, COUNT_F, C1D(6), C2D(6), COLN
       TYPE (ControlType) CONTROL
       MULTI  = CONTROL % MULTI
       RNMODE = CONTROL % RNMODE
@@ -102,11 +108,14 @@ C-----------------------------------------------------------------------
       AMPSAVE = C200
       COUNT = 0
 
+!     TF 05/22/2023 - Updated fileT read method to handle  
+!      dates in YYDDD and YYYYDDD format
+      CALL PARSE_HEADERS(C200, MAXCOL, HEADER, COUNT_F, COL)
 !     Max 30 columns per tier of data
-      DO COLNUM = 1, 30
-        READ(C200,'(A6)') HEAD
-        IF (HEAD.EQ. '      ') EXIT
-        HEAD = ADJUSTL(HEAD)  !Removes leading blanks in header
+      DO COLNUM = 1, COUNT_F
+        C1 = COL(COLNUM,1)
+        C2 = COL(COLNUM,2)
+        HEAD = TRIM(HEADER(COLNUM))  !Removes leading blanks in header
         DO J = 1, MAXPEST
           IF (INDEX(PID(J),TRIM(HEAD)) .GT. 0) THEN
             PCN = PCN + 1         !Total pest count
@@ -114,6 +123,9 @@ C-----------------------------------------------------------------------
             PCOL(COUNT) = COLNUM  !Column # this tier 
             PSTHD(PCN) = HEAD     !pest header
             PNO(PCN) = J          !pest number from pest file
+!           save the position of the pest-related columns
+            C1D(PCN) = C1 !beginning
+            C2D(PCN) = C2 !ending
             EXIT
           ENDIF
         ENDDO
@@ -139,12 +151,22 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C    ISECT=1 Good line found
 C-----------------------------------------------------------------------
-          READ(C200,510,END=1000,IOSTAT=ERRNUM) TR,YRPST
-  510     FORMAT(1X,I5,1X,I5)
+          DO COLN = 1, COUNT_F
+            C1 = COL(COLN,1)
+            C2 = COL(COLN,2)
+            SELECT CASE (TRIM(HEADER(COLN)))
+              CASE('TRNO');READ(C200(C1:C2+1),*,IOSTAT=ERRNUM) TR
+              CASE('DATE');READ(C200(C1:C2),*,IOSTAT=ERRNUM) YRPST
+            END SELECT
+          END DO 
+!          READ(C200,510,END=1000,IOSTAT=ERRNUM) TR,YRPST
+!  510     FORMAT(1X,I5,1X,I5)
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,T_PATH_FILE,LNUM)
           IF (TR .NE. TRTNUM) GOTO 500
 C-----------------------------------------------------------------
-          CALL Y2K_DOY(YRPST)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+          !CALL Y2K_DOY(YRPST)
+          CALL Y4K_DOY(YRPST,T_PATH_FILE,LNUM,ERRKEY,1)
           CALL YR_DOY(YRPST,YR,IPST)               !GH - Fix to handle
           YRPST = (YR + MULTI - 1) * 1000 + IPST   !GH - multiple yrs
 
@@ -163,8 +185,7 @@ C---------------------------------------------------------------
           DO J = 1, COUNT               !Begin Pest do loop, this tier
             I = PCN - COUNT + J         !counter for this tier
             C200 = CSAVE
-            L = (PCOL(J)-3)*6 + 13      !CHP - instead of loop, force
-            C200 = C200(L:200)          !       C200 to PCOL
+            C200 = C200(C1D(J)-1:C2D(J))          !       C200 to PCOL
             READ(C200,'(1X,F5.0)',IOSTAT=ERRNUM) CDATA
             IF (ERRNUM .NE. 0)CALL ERROR(ERRKEY,ERRNUM,T_PATH_FILE,LNUM)
             IF (CDATA .GE. 0.0) THEN    !Begin 'good data' if-constr.

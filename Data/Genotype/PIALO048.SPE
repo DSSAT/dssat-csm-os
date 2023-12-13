@@ -1,0 +1,60 @@
+$SPECIES:PIALO048 ALOHA pineapple model
+
+*SPECIES:PIALO048
+     
+!Growth
+@  CONV   FDMC
+!   1.8   0.12
+    2.5   0.12
+! CONV    Rams dry matter/mj PAR
+! FDMC    Fruit dry matter content (0 to 1.0, dry weight:fresh weight ratio)
+
+@ TBASV  TOPTV  TTOPV
+     16    35.    45.
+! TBASV   Base temperature during leaf emergence, oC
+! TOPTV   Upper limit of optimum temperature - veg phase, oC
+! TTOPV   Maximum temperature for development - veg phase, oC
+
+@ TBASR  TOPTR  TTOPR
+     18    33.    45.
+! TBASR   Base temperature during reproductive phase, oC
+! TOPTR   Upper limit of optimum temperature - rep phase, oC
+! TTOPR   Maximum temperature for development - rep phase, oC
+
+!Photosynthesis
+@ LIFAC
+   0.52
+
+!Roots
+@  RWEP   PORM   RWMX   RLWR
+   1.50   0.02   0.03   0.98
+! RWEP    
+! PORM    Minimum pore space, cm3/cm3
+! RWMX    Max root water uptake, cm3[water]/cm [root]
+! RLWR    Root length weight ratio, cm/g
+   
+!Management factor
+@  CMFC
+      1
+! CMFC    Management condition factor affecting leaf growth rate (0-1)
+
+!CO2 effect
+@  CO2X   CO2Y
+      0      0
+    220   0.81
+    330   1.00
+    440   1.03
+    550   1.06
+    660   1.10
+    770   1.13
+    880   1.16
+    990   1.18
+   9999   1.25
+! CO2X - atmospheric CO2 concentration, ppm
+! CO2Y - multiplier for photosynthetic effect
+
+!*EVAPOTRANSPIRATION
+  0.68   0.5       KEP, EORATIO
+  0.50  0.45       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.38       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+

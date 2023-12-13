@@ -1,0 +1,49 @@
+*CABBAGE CLTIVAR COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! EXPNO   Number of experiments used to estimate cultivar parameters
+! ECO#    Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL    Critical Short Day Length below which reproductive development
+!         progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN   Slope of the relative response of development to photoperiod with time
+!         (positive for shortday plants) (1/hour)
+! EM-FL   Time between plant emergence and flower appearance (R1)
+!         (photothermal days)
+! Fl-SH   Time between first flower and first pod (R3) (photothermal days)
+! Fl-SD   Time between first flower and first seed (R5) (photothermal days)
+! SD-PM   Time between first seed (R5) and physiological maturity (R7)
+!         (photothermal days)
+! Fl-LF   Time between first flower (R1) and end of leaf expansion
+!         (photothermal days)
+! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!         (mg CO2/m2-s)
+! SLAVR   Specific leaf area of cultivar under standard growth conditions
+!         (cm2/g)
+! SIZLF   Maximum size of full leaf (three leaflets) (cm2)
+! XFRT    Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD   Maximum weight per seed (g)
+! SFDUR   Seed filling duration for pod cohort at standard growth conditions
+!         (photothermal days)
+! SDPDV   Average seed per pod under standard growing conditions (#/pod)
+! PODUR   Time required for cultivar to reach final pod load under optimal
+!         conditions (photothermal days)
+! THRSH   Threshing percentage. The maximum ratio of (seed/(seed+shell))
+!         at maturity. Causes seeds to stop growing as their dry weight
+!         increases until shells are filled in a cohort.
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             N     N     P     P     P     P     N     G     G     N     P     G     N     N     N     N     N     N
+
+999991 MINIMA               . DFAULT 12.33 0.000  25.0   4.0  11.0 50.00 40.00 1.000  210.  40.0  .550  0.19  23.0  2.20  10.0  10.0  .180  .020
+999992 MAXIMA               . DFAULT 12.33 0.000  28.0   6.0  13.0 60.00 60.00 1.100  240.  60.0  .800  0.25  23.0  2.20  40.0  10.0  .180  .020
+
+990001 Tastie    4          . CB0401 13.09 0.000  26.0   5.0  11.0 55.00 42.00 1.030  220.  50.0  .600  0.25  23.0  2.20  40.0  10.0  .180  .020
+990002 CG        4          . CB0402 13.09 0.000  27.0   6.0  13.0 55.00 40.00 1.030  220.  50.0  .750  0.19  23.0  2.20  10.0  10.0  .180  .020
+990003 Kalorama  4          . CB0403 13.09 0.000  26.0   6.0  16.0 82.00 20.00 1.250   80.  20.0  .650  0.19  23.0  2.20  40.0  10.0  .180  .020
+                                                                                                                              

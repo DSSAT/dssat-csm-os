@@ -27,6 +27,7 @@
       USE ModuleDefs 
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL FIND, GETLUN, WARNING, ERROR, IGNORE, INFO
       SAVE
 
 !     Input (required)
@@ -150,8 +151,8 @@ C-----------------------------------------------------------------------
 
       IF (PRESENT(LAYER)) THEN
 !       Called from soil routines - initialize for banded or hill fert.
-        SELECT CASE (AppType)
-        CASE ('HILL   ')    ! 5cm x 5cm square
+        SELECT CASE (TRIM(AppType))
+        CASE ('HILL', 'POINT')    ! 5cm x 5cm square
           FracRootVol = 0.05 * 0.05 * PlantPop
 
         CASE DEFAULT   !('BANDED ')    ! 5cm band

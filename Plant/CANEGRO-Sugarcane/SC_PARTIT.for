@@ -1,13 +1,17 @@
 C*************************************************************************
 C  DRY MATTER PARTITIONING
        SUBROUTINE SC_PARTIT (WaterBal, Part, Climate, CaneCrop,
-     -                    Growth, Out, Control, ISWITCH,
+     -                    Growth, Out, Control, 
      -                    STGDOY, DSUCyest, CELLSE_DM, LEAFTT)
+
+!     2023-01-26 chp removed unused variables from argument list: ISWITCH
+
 c     Use the modules:
       USE CNG_MODULEDEFS
       USE MODULEDEFS
 
       IMPLICIT NONE
+      EXTERNAL GET_CULTIVAR_COEFF, GET_SPECIES_COEFF
       SAVE
 
 c     Declare modules in use:
@@ -18,7 +22,7 @@ c     :::::::::::::::::::::::
       TYPE(CANECROPTYPE) CaneCrop
       TYPE(OUTTYPE)      Out
       TYPE(GROTHTYPE)    Growth
-      TYPE(SwitchType) ISWITCH ! MJ: no longer used
+!     TYPE(SwitchType) ISWITCH ! MJ: no longer used
 
 c     Dssat control variable:
       TYPE(ControlType) Control
@@ -36,6 +40,7 @@ c     Thermal time for leaf development --> start of stalk elongation
       ! REAL    CHUPI, LEAFTT
       REAL    LEAFTT
       REAL    ROOTDM
+      REAL    ROOTDM2   !Added temporarily by MvdL 
       REAL    TRASDM
 
 c     Common PART variables in use:
@@ -319,6 +324,7 @@ c         These are variables that need to be zeroed for each run/treatment:
           Out%TRASDM     = 0.
           Part%TOPDM     = 0.
           Out%ROOTDM     = 0.
+          ROOTDM2     = 0.   !MvdL - temp
           Part%ROOTF     = 0.5    
 
 c         No sucrose yesterday...
@@ -421,12 +427,15 @@ c     MJ: 2006/09/12:
 c     changed this:
 c	ROOTDM=ROOTDM * ROOTDWDT
 c     to this:
-          ROOTDWDT = AMAX1(ROOTDWDT, 0.000001)
+          ROOTDWDT = AMAX1(ROOTDWDT, 0.00000)  !MvdL
           ROOTDM=ROOTDM + ROOTDWDT
-          ROOTDM = AMAX1(ROOTDM, 0.000001)
+          ROOTDM = AMAX1(ROOTDM, 0.00000)      !MvdL
+          
+c     Added by MvdL:
+          ROOTDM2 = ROOTDM2+ROOTDWDT               
   
 c         Calculate AERDWDT, ensuring that it is at least 0. 
-          AERDWDT=AMAX1(FDWDT-ROOTDWDT,0.000001) 
+          AERDWDT=AMAX1(FDWDT-ROOTDWDT,0.00000)    !MvdL  0.000001 - 0
            
 c         Update Aerial dry mass
           AERLDM=AERLDM+AERDWDT

@@ -1,0 +1,259 @@
+*MAIZE CULTIVAR COEFFICIENTS: MZCER048 MODEL
+!
+!The P1 values for the varieties used in experiments IBWA8301 and
+!UFGA8201 were recalibrated to obtain a better fit for version 3
+!of the model. After converting from 2.1 to 3.0 the varieties
+!IB0035, IB0060, and IB0063 showed an earlier simulated flowering
+!date. To correct this, the P1 values were recalibrated.
+!The reason for this is that there was an error in PHASEI in
+!version 2.1 that had TLNO=IFIX(CUMDTT/21.+6.) rather than
+!TLNO=IFIX(SUMDTT/21.+6.); see p. 74 of Jones & Kiniry.
+!-Walter Bowen, 22 DEC 1994.
+!
+!All G2 values were increased by a factor of 1.1 for Ritchie's
+!change to RUE -Walter, 28 DEC 1994
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code of this cultivar, points to the Ecotype in the
+!             ECO file (currently not used).
+! P1          Thermal time from seedling emergence to the end of the juvenile
+!             phase (expressed in degree days above a base temperature of 8 deg.C)
+!             during which the plant is not responsive to changes in
+!             photoperiod.
+! P2          Extent to which development (expressed as days) is delayed for
+!             each hour increase in photoperiod above the longest photoperiod
+!             at which development proceeds at a maximum rate (which is
+!             considered to be 12.5 hours).
+! P5          Thermal time from silking to physiological maturity (expressed
+!             in degree days above a base temperature of 8 deg.C).
+! G2          Maximum possible number of kernels per plant.
+! G3          Kernel filling rate during the linear grain filling stage and
+!             under optimum conditions (mg/day).
+! PHINT       Phylochron interval; the interval in thermal time (degree days)
+!             between successive leaf tip appearances.
+!
+! PIO         Pioneer
+! AS          Asgrow (Monsanto)
+! DK          Dekalb (Monsanto)
+! LH          Holden (Monsanto)
+! C/LOL       Land of Lakes
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3 PHINT
+!Coeffient #                             1     2     3     4     5     6
+!Calibration                             P     P     P     G     G     N
+
+999991 MINIMA               . DFAULT   5.0 0.000 580.0 248.0  5.00 38.00
+999992 MAXIMA               . DFAULT 450.0 2.000 999.0 990.0 16.50 75.00
+
+PC0001 2500-2600 GDD        . IB0001 160.0 0.750 780.0 750.0  8.50 49.00
+PC0002 2600-2650 GDD        . IB0001 185.0 0.750 850.0 800.0  8.50 49.00
+PC0003 2650-2700 GDD        . IB0001 212.0 0.750 850.0 800.0  8.50 49.00
+PC0004 2700-2750 GDD        . IB0001 240.0 0.750 850.0 800.0  8.50 49.00
+PC0005 2750-2800 GDD        . IB0001 260.0 0.750 850.0 800.0  8.50 49.00
+
+990001 LONG SEASON          . IB0001 320.0 0.520 940.0 620.0  6.00 38.90
+990002 MEDIUM SEASON        . IB0001 200.0 0.300 800.0 700.0  8.50 38.90
+990003 SHORT SEASON         . IB0001 110.0 0.300 680.0 820.4  6.60 38.90
+990004 V.SHORT SEASON       . IB0001   5.0 0.300 680.0 820.4  6.60 38.90
+IB0001 CORNL281             . IB0001 110.0 0.300 685.0 907.9  6.60 38.90
+IB0002 CP170                . IB0001 120.0 0.000 685.0 907.9 10.00 38.90
+IB0003 LG11                 . IB0001 125.0 0.000 685.0 907.9 10.00 38.90
+IB0004 F7 X F2              . IB0001 125.0 0.000 685.0 907.9 10.00 38.90
+IB0005 PIO 3995             . IB0001 130.0 0.300 685.0 907.9  8.60 38.90
+IB0006 INRA                 . IB0001 135.0 0.000 685.0 907.9 10.00 38.90
+IB0007 EDO                  . IB0001 135.0 0.300 685.0 907.9 10.40 38.90
+IB0008 A654 X F2            . IB0001 135.0 0.000 685.0 907.9 10.00 38.90
+IB0009 DEKALB XL71          . IB0001 140.0 0.300 685.0 907.9 10.50 38.90
+IB0010 F478 X W705A         . IB0001 140.0 0.000 685.0 907.9 10.00 38.90
+IB0011 DEKALBXL45           . IB0001 150.0 0.400 685.0 907.9 10.15 38.90
+IB0012 PIO 3382             . IB0001 160.0 0.700 950.0 845.0  8.40 38.90
+IB0013 B59*OH43             . IB0001 162.0 0.800 685.0 862.4  6.90 38.90
+IB0014 F16 X F19            . IB0001 165.0 0.000 685.0 907.9 10.00 38.90
+IB0015 WASHINGTON           . IB0001 165.0 0.400 715.0 825.0 11.00 38.90
+IB0016 B14XOH43             . IB0001 172.0 0.300 685.0 907.9  8.50 38.90
+IB0017 R1*(N32*B14)         . IB0001 172.0 0.800 685.0 907.9 10.15 38.90
+IB0018 B60*R71              . IB0001 172.0 0.800 685.0 781.4  7.70 38.90
+IB0019 WF9*B37              . IB0001 172.0 0.800 685.0 907.9 10.15 38.90
+IB0020 B59*C103             . IB0001 172.0 0.800 685.0 907.9 10.15 38.90
+IB0021 Garst 8702           . IB0001 175.0 0.200 960.0 855.8  6.00 38.90
+IB0022 B14*C103             . IB0001 180.0 0.500 685.0 907.9 10.15 38.90
+IB0023 B14*C131A            . IB0001 180.0 0.500 685.0 907.9 10.15 38.90
+IB0024 PIO 3720             . IB0001 180.0 0.800 685.0 907.9 10.00 38.90
+IB0025 WASH/GRAIN-1         . IB0001 185.0 0.400 775.0 836.0 12.00 38.90
+IB0026 A632 X W117          . IB0001 187.0 0.000 685.0 907.9 10.00 38.90
+IB0027 Garst 8750           . IB0001 190.0 0.200 930.0 891.0  6.30 38.90
+IB0028 TAINAN-11            . IB0001 200.0 0.800 670.0 803.0  6.80 38.90
+IB0029 PIO 3541             . IB0001 200.0 0.300 800.0 770.0  8.50 38.90
+IB0030 PIO 3707             . IB0001 200.0 0.700 800.0 649.0  6.30 38.90
+IB0031 PIO 3475*            . IB0001 200.0 0.700 800.0 797.5  8.60 38.90
+IB0032 PIO 3382*            . IB0001 200.0 0.700 800.0 715.0  8.50 38.90
+IB0033 PIO 3780             . IB0001 200.0 0.760 685.0 660.0  9.60 38.90
+IB0034 PIO 3780*            . IB0001 200.0 0.760 685.0 797.5  9.60 38.90
+IB0035 McCurdy 84aa         . IB0001 259.0 1.193 947.1 924.3 8.168 43.00 
+IB0036 C281                 . IB0001 202.0 0.300 685.0 907.9  5.80 38.90
+IB0037 SWEET CORN           . IB0001 210.0 0.520 625.0 907.5 10.00 38.90
+IB0038 Garst 8555           . IB0001 215.0 0.400 890.0 880.0  9.00 38.90
+IB0039 PIO 3901             . IB0001 215.0 0.760 600.0 616.0  9.00 38.90
+IB0040 B8*153R              . IB0001 218.0 0.300 760.0 632.5  8.80 38.90
+IB0041 Garst 8808           . IB0001 220.0 0.400 780.0 858.0  8.50 38.90
+IB0042 B73 X MO17           . IB0001 220.0 0.520 880.0 803.0 10.00 38.90
+IB0043 PIO 511A             . IB0001 220.0 0.300 685.0 709.5 10.50 38.90
+IB0044 W69A X F546          . IB0001 240.0 0.300 685.0 907.9 10.00 38.90
+IB0045 A632 X VA26          . IB0001 240.0 0.300 685.0 907.9 10.00 38.90
+IB0046 W64A X W117          . IB0001 245.0 0.000 685.0 907.9  8.00 38.90
+IB0047 PIO 3147             . IB0001 255.0 0.760 685.0 917.4 10.00 38.90
+IB0048 WF9*B37              . IB0001 260.0 0.800 710.0 907.9  6.50 38.90
+IB0049 NEB 611              . IB0001 260.0 0.300 720.0 907.5  9.00 38.90
+IB0050 PV82S                . IB0001 260.0 0.500 750.0 660.0  8.50 38.90
+IB0051 PV76S                . IB0001 260.0 0.500 750.0 660.0  8.50 38.90
+IB0052 PIO 3183             . IB0001 260.0 0.500 750.0 660.0  8.50 38.90
+IB0053 CESDA-28             . IB0001 260.0 0.500 669.0 858.0  7.10 38.90
+IB0054 B14*OH43             . IB0001 265.0 0.800 665.0 858.0  6.90 38.90
+IB0055 MCCURDY 6714         . IB0001 265.0 0.300 825.0 907.9  9.80 38.90
+IB0056 FM 6                 . IB0001 276.0 0.520 867.0 677.6 10.70 38.90
+IB0057 TOCORON-3            . IB0001 276.0 0.520 867.0 660.0  8.12 38.90
+IB0058 NC+59                . IB0001 280.0 0.300 750.0 907.5 10.00 38.90
+IB0059 H6                   . IB0001 310.0 0.300 685.0 907.9 10.00 38.90
+IB0060 H610(UH)             . IB0001 314.4 1.109 944.4 648.9 6.362 38.90  
+IB0061 PB 8                 . IB0001 300.0 0.520 990.0 440.0  7.00 38.90
+IB0062 B56*C131A            . IB0001 318.0 0.500 700.0 885.5  6.40 38.90
+IB0063 PIO X 304C           . IB0001 342.4 0.243 944.5 756.6 5.497 38.90  
+IB0064 H.OBREGON            . IB0001 360.0 0.800 685.0 907.9 10.15 38.90
+IB0065 SUWAN-1              . IB0001 380.0 0.600 780.0 825.0  7.00 38.90
+IB0066 PIO 3165             . IB0001 320.0 0.520 940.0 625.0  6.00 38.90
+IB0067 PIO 3324             . IB0001 320.0 0.520 940.0 625.0  6.00 38.90
+IB0068 PIO 3475             . IB0001 200.0 0.700 750.0 907.0  9.00 38.90  
+IB0168 PIO 3475 orig        . IB0001 220.0 0.700 850.0 907.0  9.90 38.90
+IB0069 PIO 3790             . IB0001 212.4 0.520 792.8 625.0  6.00 38.90
+IB0070 CARGILL 111S         . IB0001 303.4 0.388 996.9 329.3 9.301 47.00    
+IB0071 PIO 31G98            . IB0003 165.0 0.750 680.0 820.4  6.60 48.00  
+IB0089 GL 582               . IB0001 200.0 0.700 750.0 750.0  8.60 38.90
+IB0090 GL 482               . IB0001 240.0 0.700 990.0 907.0  8.80 38.90
+IB0091 GL 450               . IB0001 200.0 0.700 850.0 700.0  7.00 38.90
+IB0092 LAURENT 3733         . IB0001 200.0 0.700 680.0 725.0  9.00 38.90  
+IB0093 GL 582 MOD KBS       . IB0001 180.0 0.700 750.0 750.0  8.60 38.90
+IB0099 AGETI76              . IB0001 325.0 2.000 625.0 580.0  7.30 50.00
+IB0100 PARTAP1              . IB0001 450.0 2.000 580.0 600.0 16.50 50.00
+
+IB1051 AS 740               . IB0001 215.0 0.750 850.0 700.0  5.00 48.00
+IB1052 DK 611               . IB0001 260.0 0.100 800.0 980.0  5.70 48.00
+IB1053 LH198XLH185          . IB0001 205.0 0.750 850.0 731.0  5.00 48.00
+IB0154 PIO 3192             . IB0001 215.0 0.300 990.0 660.0  8.50 48.00   
+IB0155 DEA                  . IB0001 165.0 0.100 476.0 442.0  5.35 40.00   
+
+!Brazil cultivars:
+IB0171 AG9010               . IB0001 196.0 0.500 758.0 830.0  5.10 40.00
+IB0172 DAS CO32             . IB0001 220.0 0.500 747.8 1100.  5.40 45.00
+IB0173 DKB 333B             . IB0001 250.0 0.500 842.0 920.0  4.80 45.00
+IB0174 EXCELER              . IB0001 210.0 0.500 770.0 1170.  5.80 45.00  
+
+IB0185 JACKSON HYBRI        . IB0001 200.0 0.300 950.0 980.0  7.15 43.00  
+
+IB1065 PIO 33Y09            . IB0001 245.0 0.500 905.0 780.0  6.00 48.00
+IB1066 PIO 3489             . IB0001 225.0 0.600 895.0 875.0  8.80 48.00
+IB1067 PIO 3394             . IB0001 240.0 0.500 900.0 820.0  8.50 48.00
+IB1069 PIO 3563             . IB0001 216.0 0.600 830.0 860.0  8.80 48.00
+IB1072 DEKALB 485           . IB0001 215.0 0.600 785.0 750.0  8.70 45.00
+IB1068 DEKALB 521           . IB0001 215.0 0.400 795.0 890.0  8.00 48.00
+IB1168 DEKALB 591           . IB0001 225.0 0.400 895.0 880.0  8.00 48.00
+
+LL0499 C/LOL 499            . IB0001 182.0 0.500 650.0 750.0  8.70 46.00
+LL0564 C/LOL 564            . IB0001 210.0 0.500 670.0 880.0 11.25 46.00
+LL0581 C/LOL 581            . IB0001 200.0 0.500 668.0 850.0  8.80 45.00
+LL0599 C/LOL 599            . IB0001 200.0 0.500 670.0 850.0  8.80 45.00
+LL0542 C/LOL 542            . IB0001 185.0 0.500 700.0 835.0  8.70 46.00
+LL0661 C/LOL 661            . IB0001 200.0 0.500 670.0 850.0  9.00 45.00
+LL0674 C/LOL 674            . IB0001 200.0 0.500 670.0 800.0  8.90 45.00
+
+ZA0001 Prisma (FAO 700)     . IB0001 280.0 0.400 850.0 750.0  6.80 38.90
+ZA0002 Prisma GC Avg        . IB0001 280.0 0.300 789.0 700.0  6.05 48.00
+
+IF0001 OBA SUPER 2          . IB0001 270.0 0.600 780.0 840.0  7.80 45.00
+IF0002 EV8728-SR            . IB0001 265.0 0.600 800.0 900.0  7.20 45.00
+IF0003 Mokwa 87TZPB-SR      . IB0001 305.0 0.600 765.0 810.0  8.00 45.00
+IF0004 SPL (semi-prol)      . IB0001 270.0 0.600 740.0 920.0  7.40 41.00
+IF0005 TZB-SR (open p)      . IB0001 290.0 0.600 775.0 990.0  6.80 45.00
+IF0006 EV 8449-SR           . IB0001 385.0 0.600 860.0 700.0  8.00 50.00
+IF0007 EV 8449-SRx          . IB0001 385.0 0.600 860.0 945.4  7.20 50.00
+IF0008 AG-KADUNA            . IB0001 220.0 0.600 780.0 845.0  8.00 40.00
+IF0009 OBA S2 Benin         . IB0001 170.0 0.600 760.0 800.0  8.00 50.00
+IF0010 EV-8449_TG           . IB0001 260.0 0.600 630.0 900.0  9.00 45.00
+IF0011 EV-8443_TG           . IB0001 300.0 0.600 850.0 850.0  8.80 45.00
+
+AC0001 TOHONO O'odham       . IB0001 200.0 0.100 610.0 248.0  9.80 38.90
+
+! Vietnam sequencing
+VI0001 LVN 10               . IB0001 350.0 1.000 980.0 760.0  9.20 38.90
+
+!Coefficients calibrated by Jones and Boote in Mali
+IM0001 SOTUBAKA             . IB0001 300.0 0.520 930.0 500.0  6.00 38.90
+IM0002 NIELENI              . IB0001 232.0 0.300 688.0 540.0  8.80 38.90
+IM0003 APPOLO               . IB0001 216.0 0.300 530.0 455.0 11.00 38.90
+
+!Coefficients calibrated by Dzotsi and Singh in Togo, 2002.
+IF0018 TZE C0MP4C2          . IB0001 210.0 0.100 660.0 850.0  9.70 55.00
+IF0019 TZESRW X GUA 314     . IB0001 170.0 0.100 660.0 780.0  8.00 55.00
+IF0020 AB-11-TG             . IB0001 250.0 0.100 620.0 920.0  8.50 55.00
+IF0021 TZEEY-SRBC5          . IB0001 130.0 0.100 600.0 850.0  8.00 55.00
+IF0022 IKENNE               . IB0001 280.0 0.600 630.0 900.0  8.80 45.00
+
+!Alagarswamy
+IB0067 TEST                 . IB0001 130.0 0.500 720.0 380.0  7.50 75.00
+KA0001 H625                 . IB0001 130.0 0.500 720.0 380.0  7.50 75.00
+EM0001 H512                 . IB0001 130.0 0.500 720.0 550.0  7.50 75.00
+KY0001 H622                 . IB0001 358.5 0.500 616.1 550.0  7.20 75.00
+KY0002 H511                 . IB0001 317.6 0.500 530.4 550.0  7.50 75.00
+KY0003 CCOMP                . IB0001 366.2 1.235 611.3 600.0  6.50 75.00
+KY0004 MAKUCOMP             . IB0001 183.6 0.500 611.0 380.0 10.00 75.00
+KY0005 H625                 . IB0001 341.1 0.500 612.0 700.0  8.50 75.00
+KY0006 KCB                  . IB0001 125.0 0.500 500.3 450.0 10.50 75.00
+KY0007 PWANI                . IB0001 182.4 0.500 616.0 720.0 10.50 75.00
+KY0008 H613                 . IB0001 182.4 0.500 616.0 825.0 10.15 75.00
+KY0009 CUZCO                . IB0001 182.4 0.500 616.0 380.0  7.50 75.00
+KY0010 H512                 . IB0001 332.9 0.500 601.6 550.0  7.50 75.00
+KY0011 H614                 . IB0001 396.9 0.500 623.6 825.0 10.15 75.00
+KY0012 H5012                . IB0001 351.7 0.500 859.0 550.0  7.50 75.00
+KY0013 H626                 . IB0001 458.0 0.500 429.0 450.0 10.50 75.00
+KY0014 KATUMANICOMPI        . IB0001 238.6 0.500 654.0 450.0 10.50 75.00
+KY0015 PH 1                 . IB0001 234.5 0.500 429.0 720.0 10.50 75.00
+KY0016 HAC                  . IB0001 245.0 0.500 825.0 750.0 10.50 75.00 
+KY0017 H612                 . IB0001 130.0 0.500 390.0 825.0 10.15 75.00
+KY0018 KATUMANICOMP-II      . IB0001 125.0 0.500 660.0 450.0 10.50 75.00
+
+!J.B.Naab data 2003-2006, re-calibrated by kjb 1/2/12
+GH0010 OBATANPA             . IB0001 280.0 0.000 750.0 540.0  7.50 40.00
+
+!Four Global Futures maize cultivars (3 life cycle by 2 "yield levels")
+!Composite: same maturity as Garst 8808 and WH403), but G2 and G3 mid-way.
+!Those cultivars seemed most realistic compared with 5 other cultivars calibrated
+!in DSSAT, not too early (Pio3382 too early), not too late (Pio 304C is late),
+!not too high in yield(McCurdy 84aa not realistic), DK611 strange, and
+!Obatanpa is low yielding (fertility constraints, or OPV)
+!Yield "trait" is 5% higher RUE, 5% higher G2, 5% higher G3
+
+GF0001 Base Garst808-wh403  . IB0001 250.0 0.500 730.0 800.0  7.80 38.90
+GF0101 Baseline 10%shorter  . IB0001 215.0 0.500 650.0 800.0  7.80 38.90
+GF0201 Baseline 10%longer   . IB0001 285.0 0.500 810.0 800.0  7.80 38.90
+GF0301 Yield norm cycle     . IB0004 250.0 0.500 730.0 840.0  8.19 38.90
+GF0401 Yield 10%shorter     . IB0004 215.0 0.500 650.0 840.0  8.19 38.90
+GF0501 Yield 10%longer      . IB0004 285.0 0.500 810.0 840.0  8.19 38.90
+
+CYMA01 wh403                . IB0001 265.0 0.760 685.0 760.0  7.60 38.90   
+
+! Added by Camilo Andrade from Embrapa Maize and Sorghum
+EBSL06 BRS1030-SL2009       . IB0001 263.8 0.500 1034  700.0  5.20 44.22
+
+!Kingaroy sequence
+IB0200 32P55                . IB0004 215.0 0.500 650.0 740.0  8.19 45.90
+
+! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
+!IB0035 McCurdy 84aa         . IB0001 265.0 0.300 920.0 920.0  8.00 43.00
+!IB0060 H610(UH)             . IB0001 365.0 0.520 850.0 680.0  6.50 38.90
+!IB0063 PIO X 304C           . IB0001 365.0 0.520 920.0 780.0  5.70 38.90
+!IB0070 CARGILL 111S         . IB0001 290.0 0.500 1035. 580.0  5.50 47.00

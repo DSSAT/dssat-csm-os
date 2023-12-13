@@ -1,0 +1,68 @@
+*COTTON ECOTYPE COEFFICIENTS - CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! ECO#    Code for the ecotype to which a cultivar belongs (see *.cul
+!         file)
+! ECONAME Name of the ecotype, which is referenced from *.CUL file
+! MG      Maturity group number for this ecotype, such as maturity
+!         group in soybean
+! TM      Indicator of temperature adaptation
+! THVAR   Minimum rate of reproductive development under short days
+!         and optimal temperature
+! PL-EM   Time between planting and emergence (V0) (thermal days)
+! EM-V1   Time required from emergence to first true leaf (V1), thermal
+!         days
+! V1-JU   Time required from first true leaf to end of juvenile phase,
+!         thermal days
+! JU-R0   Time required for floral induction, equal to the minimum
+!         number of days for floral induction under optimal temperature and
+!         daylengths, photothermal days
+! PM06    Proportion of time between first flower and first pod for
+!         first peg (peanut only)
+! PM09    Proportion of time between first seed and physiological
+!         maturity that the last seed can be formed
+! LNGSH   Time required for growth of individual shells (photothermal
+!         days)
+! R7-R8   Time between physiological (R7) and harvest maturity (R8) (days)
+! FL-VS   Time from first flower to last leaf on main stem (photothermal
+!         days)
+! TRIFL   Rate of appearance of leaves on the mainstem (leaves per
+!         thermal day)
+! RWDTH   Relative width of this ecotype in comparison to the standard
+!         width per node (YVSWH) defined in the species file (*.SPE)
+! RHGHT   Relative height of this ecotype in comparison to the
+!         standard height per node (YVSHT) defined in the species file
+!         (*.SPE)
+! R1PPO   Increase in daylength sensitivity after R1 (CSDVAR and CLDVAR
+!         both decrease with the same amount) (h)
+! OPTBI   Minimum daily temperature above which there is no effect on
+!         slowing normal development toward flowering (oC)
+! SLOBI   Slope of relationship reducing progress toward flowering if
+!         TMIN for the day is less than OPTBI
+!
+@ECO#  ECONAME.......... MG TM THVAR PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNGSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI
+!                                  1     2     3     4     5     6     7     8    9     10    11    12    13    14    15    16
+
+CO0001 DP 77             02 01   0.0   4.0   4.0   0.0   0.0  0.00  0.90  10.0  10.0 75.00  0.20  0.80  0.85  .001  20.0  .001
+CO0003 DP 458            02 01   0.0   4.0   4.0   0.0   0.0  0.00  0.90  12.0  10.0 65.00  0.25  1.00  0.90  .001  20.0  .001
+CO0004 DP 555            02 01   0.0   2.5   4.0   0.0   0.0  0.00  0.90   9.0  10.0 70.00  0.33  0.65  0.65  .001  20.0  .001
+CO0005 DP 555            02 01   0.0   3.0   4.0   0.0   0.0  0.00  0.90   9.0  10.0 70.00  0.33  0.65  0.65  .001  20.0  .001
+CO0006 DP 555 BG/RR      02 01  0.00   4.0   3.0   0.0   0.0  0.00  0.90   8.0  20.0 12.00  0.33  1.00  0.65 0.001  20.0 0.001
+CO0007 DP 5690           02 01  0.00   5.0   4.0   0.0   0.0  0.00  0.90   6.0  10.0 75.00  0.25  1.00  0.80 0.001  20.0 0.001
+CO0008 DP 77             02 01  0.00   4.0   4.0   0.0   0.0  0.00  0.90   9.0  20.0 24.00  0.33  0.65  0.65 0.001  20.0 0.001
+CO0009 Arizona           02 01   0.0   6.0   4.0   0.0   0.0  0.00  0.90  10.0  10.0 30.00  0.20  0.90  0.99  .001  20.0  .001
+CO0010 GP 3774           02 01  0.00   4.0   4.0   0.0   0.0  0.00  0.90   8.0  10.0 75.00  0.30  0.85  0.80 0.001  20.0 0.001
+CO0011 DP 1219           02 01   0.0   4.0   4.0   0.0   0.0  0.00  0.90   8.0  10.0 40.00  0.20  1.00  0.90  .001  20.0  .001
+CO0012 Arizona           02 01   0.0   9.0   4.0   0.0   0.0  0.00  0.90  10.0  10.0 40.00  0.20  0.90  0.95  .001  20.0  .001
+CO0013 Arizona           02 01   0.0  12.0   4.0   0.0   0.0  0.00  0.90  10.0  10.0 33.00  0.20  0.90  0.66  .001  20.0  .001
+CO0021 GP 3774           02 01   0.0   3.0   4.0   0.0   0.0  0.00  0.90   8.0  10.0 75.00  0.20  0.85  0.95  .001  20.0  .001
+CO0027 Deltapine 0912    02 01  0.00   3.0   4.0   0.0   0.0  0.00  0.90  14.0  10.0 75.00  0.28  0.70  0.70 0.001  20.0 0.001
+CO0028 Fibermax 9680B2RF 02 01  0.00   2.0   4.0   0.0   0.0  0.00  0.90   8.0  10.0 75.00  0.32  0.60  0.60 0.001  20.0 0.001
+CO0032 Phytogen 333      02 01  0.00   3.0   5.0   0.0   0.0  0.00  0.90  17.0  15.0 12.00  0.32  0.82  0.82 0.001  20.0 0.001
+CO0033 DP 90b            02 01  0.00   4.0   5.0   0.0   0.0  0.00  0.90   7.0  10.0 34.00  0.36  0.55  0.49 0.001  20.0 0.001
+CO0034 DP 458 BG/RR      02 01  0.00   3.0   3.0   0.0   0.0  0.00  0.90  10.0  10.0 26.00  0.32  0.67  0.45 0.001  20.0 0.001
+CO0035 Phytogen 339      02 01  0.00   3.5   4.0   0.0   0.0  0.00  0.90  18.0  38.0 14.00  0.27  1.00  0.90 0.001  20.0 0.001
+CO0036 Deltapine 1219    02 01  0.00   3.0   4.0   0.0   0.0  0.00  0.90   8.0  10.0 40.00  0.33  0.60  0.60 0.001  20.0 0.001
+CO0037 Phytogen 499      02 01  0.00   3.0   5.0   0.0   0.0  0.00  0.90  18.0  15.0 14.00  0.33  0.77  0.77 0.001  20.0 0.001
+CO0038 FM 1944 GLB2      02 01  0.00   3.5   5.0   0.0   0.0  0.00  0.90  12.0  10.0 17.00  0.31  0.65  0.75 0.001  20.0 0.001

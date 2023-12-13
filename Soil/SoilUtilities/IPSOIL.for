@@ -45,6 +45,7 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data.
 
       IMPLICIT     NONE
+      EXTERNAL PATH, GETLUN, FIND2, IGNORE, WARNING
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -294,6 +295,9 @@ C-----------------------------------------------------------------------
 !     PRLIG must sum with PRCHO and PRCEL to 1.0
       IF (PRESENT(PRLIG )) THEN
         PRLIG = APRLIG(JJ)
+        IF (PRLIG .LT. 0) THEN
+          PRLIG = APSLIG(JJ)
+        ENDIF
         IF (PRESENT(PRCHO) .AND. PRESENT(PRCEL)) THEN
           REDUCE_FRAC = (1.0 - PRLIG) / (PRCHO + PRCEL) 
           PRCHO = PRCHO * REDUCE_FRAC
@@ -301,8 +305,18 @@ C-----------------------------------------------------------------------
         ENDIF
       ENDIF
 
-      IF (PRESENT(RCN   )) RCN   = ARCN  (JJ)
-      IF (PRESENT(RCP   )) RCP   = ARCP  (JJ)
+      IF (PRESENT(RCN)) THEN
+        RCN = ARCN(JJ)
+        IF (RCN .LT. 0) THEN
+          RCN = ASCN(JJ)
+        ENDIF
+      ENDIF
+      IF (PRESENT(RCP)) THEN
+        RCP = ARCP(JJ)
+        IF (RCP .LT. 0) THEN
+          RCP = ASCP(JJ)
+        ENDIF
+      ENDIF
 
 C-----------------------------------------------------------------------
       RETURN

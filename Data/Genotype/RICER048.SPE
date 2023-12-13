@@ -1,0 +1,18 @@
+*RICE SPECIES COEFFICIENTS: RICER048 MODEL
+
+*CHARACTERISTICS
+@C X(EN) Y(CH)  YSTD
+RI OPT   SHME      1     ! Shock calculation method (1-standard, 2-Salaam)
+RI OPT   SHFC    1.0     ! Shock factor
+!RI OPT   PHIN   83.0     ! Phyllochron interval
+RI OPT   CO2X      0  220  330  440  550  660  770  880  990 9999  ! CO2 X axis
+RI OPT   CO2Y   0.00 0.71 1.00 1.08 1.17 1.25 1.32 1.38 1.43 1.50  ! CO2 Y axis
+RI OPT   RWEP   1.50
+RI OPT   PORM   0.00                   ! Minimum pore space
+RI OPT   RWMX   0.03                   ! Max root water uptake
+RI OPT   RLWR   1.05                   ! Root length weight ratio
+
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.15       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.96       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)

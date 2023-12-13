@@ -26,56 +26,49 @@ C             ERROR, FIND, IGNORE
 C========================================================================
 
       SUBROUTINE FOR_VEGGR(
-     &    AGRLF, AGRRT, AGRSTM, CADVG, CMINELF, CMINEP,      !
-     &    CMINERT, CMINESH, CMINESR, CMINEST, CSAVEV,            !
-     &    DTX, DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,!
-     &    FNINS, LFCDEBT, LFCMINE, LFSCMOB, LFSNMOB, NAVL,!
-     &  NDMNEW, NDMOLD, NR1, NVSTL, NVSTR, NVSTS,            !Input
-     &    NVSTSR, PAR, PCH2O, PCNL, PCNST, PCNRT, PCNSR,       !
-     &  PG, PGAVL, ROWSPC, RTCDEBT, RTCMINE, RTSCMOB,       !
-     &    RTSNMOB, RTWT, RVSTGE, SHCMINE, SLDOT, SRCDEBT,!
-     &    SRCMINE, SRDOT, SRSCMOB, SRSNMOB, SSDOT,        !
-     &  SSRDOT, STCDEBT, STCMINE, STMWT, STSCMOB,            !
-     &  STSNMOB, TGRO, TSCMOB, TSNMOB, TURFAC, VSTAGE,       !
-     &    WCRLF, WCRRT, WCRSH, WCRST,WTLF, WTNLF, WTNRT,       !
-     &  WTNSR, WTNST, XLAI,                                                !
-     &    YRDOY, YREMRG, YRSIM,                                          !
+     &    AGRLF, AGRRT, AGRSTM, CADVG, CMINEP, CSAVEV,    !
+     &    ECONO, FILECC, FILEGC, FNINL, FNINR, FNINS,     !
+     &    LFCDEBT, LFCMINE, LFSCMOB, LFSNMOB, NAVL,       !
+     &    NDMNEW, NDMOLD, PAR, PCH2O, PCNL, PCNST,        !Input
+     &    PCNRT, PCNSR, PG, PGAVL, ROWSPC, RTCDEBT,       !
+     &    RTCMINE, RTSCMOB, RTSNMOB, RTWT, RVSTGE,        !
+     &    SHCMINE, SLDOT, SRCDEBT, SRCMINE, SRDOT,        !
+     &    SRSCMOB, SRSNMOB, SSDOT, SSRDOT, STCDEBT,       !
+     &    STCMINE, STMWT, STSCMOB, STSNMOB, TGRO, TSCMOB, !
+     &    TSNMOB, TURFAC, VSTAGE, WCRLF, WCRRT, WCRST,    !
+     &    WTLF, WTNLF, WTNRT, WTNSR, WTNST, XLAI,         !
+     &    YRDOY, YREMRG, YRSIM,                           !
+     &    AGRSTR, FNINSR, STRWT, WCRSR,                   !Input
+     &    NLAYR, PROLFI, PRORTI, PROSTI, PROSRI,          !Input
+     &    RNH4C, RNO3C, TRNH4U, TRNO3U, UNO3, UNH4,       !
 
      &    AGRVG, ANMINELF, ANMINERT, ANMINESR, ANMINEST,  !Input/Output
-     &  FRLF, FRRT, FRSTM, NMINEA, NFIXN, NRUSLF,            !
-     &  NRUSRT, NRUSSR, NRUSST, TRNU,                              !
+     &    FRLF, FRRT, FRSTM, FRSTR, NMINEA, NFIXN,        !
+     &    NRUSLF, NRUSRT, NRUSSR, NRUSST, TRNU,           !
 
      &    ACMINELF, ACMINERT, ACMINESH, ACMINESR,         !
-     &    ACMINEST, CADLF, CADST, CANHT, CANWH, CMINEA,      !
-     &    CRUSLF, CRUSRT, CRUSSH, CRUSST, EXCESS, NADLF,      !
-     &  NADRT, NADST, NGRLF, NGRRT, NGRST,          !Output
+     &    ACMINEST, CADLF, CADST, CANHT, CANWH, CMINEA,   !
+     &    CRUSLF, CRUSRT, CRUSSH, CRUSST, EXCESS, NADLF,  !
+     &    NADRT, NADST, NGRLF, NGRRT, NGRST,              !Output
      &    NSTRES, TNLEAK, WLDOTN, WRDOTN, WSDOTN,         !
-
-     &    CLAIT, NRUSTOT,                                                      !Input
-     &  PNMLF, PNMRT, PNMSH, PNMSR,PNMST,RPRO,                  !
-     &    CADRT, CADSH, NADSH,                                          !Output
-
-     &  AGRSTR, CDEBIT, CMOBSR, FNINSR, PPMFAC, STRWT,       !Input
-     &  WCRSR,                                                                  !Input
-     &  FRSTR,                                                                  !Input/Output
-     &  CADSR, CRUSSR, NADSR, NGRSR, WSRDOTN,                  !Output
-
-     &  CADSRF, CMOBSRN, CMOBSRX,                                     !Output
-     &  FNINSRG, NGRSRG, PROSRG, PROSRT,                        !Output
-
-     &  ALPHL, ALPHR, ALPHS, ALPHSR, NLAYR, NUPNH4,       !Input
-     &  NUPNO3, PROLFI, PRORTI, PROSTI, PROSRI, RFIXN,  !
-     &  RNH4C, RNO3C, TRNH4U, TRNO3U, UNO3, UNH4,            !
-
-     &  CHORECOVER, NLKSPENT, NLKNUSED, NLKCHK, TNLKCHK,!Output
-      
+     &    PNMLF, PNMRT, PNMSH, PNMSR,PNMST,RPRO,          !
+     &    CADRT, CADSH, NADSH, CADSR, CRUSSR, NADSR,      !Output
+     &    NGRSR, WSRDOTN, CADSRF, CMOBSRN, CMOBSRX,       !Output
+     &    FNINSRG, NGRSRG, PROSRG, PROSRT, CHORECOVER,    !Output
+     &    NLKSPENT, NLKNUSED, NLKCHK, TNLKCHK,            !Output
      &    DYNAMIC)                                        !Control
 
+! 2023-01-26 chp removed unused variables in argument list:
+!     CMINELF, CMINERT, CMINESH, CMINESR, CMINEST, DTX, DXR57, 
+!     NR1, NVSTL, NVSTR, NVSTS, NVSTSR, WCRSH, CLAIT, NRUSTOT, 
+!     CDEBIT, CMOBSR, PPMFAC, ALPHL, ALPHR, ALPHS, ALPHSR, 
+!     NUPNH4, NUPNO3, RFIXN, 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, FOR_CANOPY, NLKDIST, TIMDIF
       SAVE
 
       CHARACTER*6  ERRKEY
@@ -86,14 +79,14 @@ C========================================================================
       CHARACTER*92 FILECC, FILEGC
 
       INTEGER DYNAMIC, TIMDIF
-      INTEGER YRDOY, YREMRG, YRSIM, NR1, DAS
+      INTEGER YRDOY, YREMRG, YRSIM, DAS !, NR1
       INTEGER I, LUNCRP, ERR, LNUM, ISECT, FOUND
 
       REAL AGRLF, AGRRT, AGRSTM, CMINEP, CMOBMX
-      REAL DTX, DXR57, FNINL, FNINR, FNINS
+      REAL FNINL, FNINR, FNINS  !DTX, DXR57, 
       REAL NAVL, NDMNEW, NDMOLD, PAR, PCH2O, PG
       REAL PROLFI, PRORTI, PROSTI, ROWSPC
-      REAL RVSTGE, STMWT, TURFAC, WCRLF, WCRRT, WCRSH, WCRST
+      REAL RVSTGE, STMWT, TURFAC, WCRLF, WCRRT, WCRST !, WCRSH
       REAL WTLF, XLAI
 
       REAL AGRVG, CADLF, CADST, CANHT, CANWH, CMINEA
@@ -112,17 +105,17 @@ C========================================================================
       REAL NMINEA, NFIXN, TRNU
 
       REAL TGRO(TS)
-      REAL AGRSTR, CADSR, CADSRF, CLAIT, CMOBSR, CMOBSRN, 
+      REAL AGRSTR, CADSR, CADSRF, CMOBSRN, ! CLAIT, CMOBSR, 
      &    CMOBSRX, CRUSSR, FNINSR, FNINSRG, FRSTR,   
-     &    NADSR, NGRSR, NGRSRG, PPMFAC, PROSRG,   
+     &    NADSR, NGRSR, NGRSRG, PROSRG,   !PPMFAC, 
      &    PROSRI, PROSRT, STRWT, WCRSR, WSRDOTN
 
-      REAL NADSH, NRUSTOT, PNMLF, PNMRT, PNMSH, PNMSR, PNMST,
+      REAL NADSH, PNMLF, PNMRT, PNMSH, PNMSR, PNMST,  !NRUSTOT, 
      &    CADRT, CADSH, RPRO
 
       REAL LFSCMOB, RTSCMOB, SRSCMOB, STSCMOB, TSCMOB, TSNMOB
       REAL ACMINELF, ACMINERT, ACMINESH, ACMINESR, ACMINEST
-      REAL CMINELF, CMINER, CMINERT, CMINESH, CMINESR, CMINEST
+      REAL CMINER  !CMINELF, CMINERT, CMINESH, CMINESR, CMINEST 
       REAL LFCMINE, RTCMINE, SHCMINE, SRCMINE, STCMINE
       REAL SLDOT, SRDOT, SSDOT, SSRDOT
       REAL LFSNMOB, RTSNMOB, SRSNMOB, STSNMOB
@@ -135,7 +128,7 @@ C-----------------------------------------------------------------------
 C      New NDMOLD allocation variables for forage model 
 C      Used to weight partitioning in favor of one organ over others
 C-----------------------------------------------------------------------
-      REAL NVSTL, NVSTR, NVSTS, NVSTSR, PCNL, PCNST, PCNRT, PCNSR,  
+      REAL PCNL, PCNST, PCNRT, PCNSR,  !NVSTL, NVSTR, NVSTS, NVSTSR, 
      &    CWST, MXWST, PWLF, PWST, PWRT, PWSR, RTWT
       REAL PROLFR, PROSTR, PRORTR, PROSRR
 
@@ -144,16 +137,16 @@ C      New NLEAK distribution variables for all models
 C      Used to "put back" and distribute NLEAK to new growth
 C-----------------------------------------------------------------------
       INTEGER L, NLAYR
-      REAL AGRVGI, AGRVGPI, DNADRAT, NLKCOST, NLKGROW,
-     &   NRFRESP, PNTVG, NUPNH4(NL), NUPNO3(NL), ONDMOLD,
-     &   PNUPNH4,PNUPNO3, RFIXN, RNH4C, RNNU, RNO3C, TRNH4U,  
-     &   TRNO3U, UNH4(NL), UNO3(NL), XTVEGM
+      REAL DNADRAT, NLKCOST, NLKGROW,  !AGRVGI, AGRVGPI, 
+     &   NRFRESP, ONDMOLD,  !PNTVG, NUPNH4(NL), NUPNO3(NL), 
+     &   RNH4C, RNO3C, TRNH4U,  !RFIXN, RNNU, PNUPNH4,PNUPNO3, 
+     &   TRNO3U, UNH4(NL), UNO3(NL)  !, XTVEGM
 
       REAL NLKCHK, TNLKCHK
 
-      REAL CDEBIT, LFCDEBT, LSTSR, RTCDEBT, SRCDEBT, STCDEBT
+      REAL LFCDEBT, LSTSR, RTCDEBT, SRCDEBT, STCDEBT  !CDEBIT, 
 
-      REAL ALPHL, ALPHR, ALPHS, ALPHSR
+!     REAL ALPHL, ALPHR, ALPHS, ALPHSR
 C-----------------------------------------------------------------------
 C      New minimum mobile CH2O concentration variables 
 C      for forage model.  Sets CH2O concentration in 
@@ -617,7 +610,7 @@ C-----------------------------------------------------------------------
         LSTSR = CADSRF/(1-CADSRF)
         LSTR = (1.-CADSTF)/CADSTF
 !      ENDIF
-      IF (STMWT+WTLF .GT. 0.0) THEN
+      IF (STMWT-SSDOT+WTLF-SLDOT .GT. 0.0) THEN
 C      5/16/05 SJR added WTLF to calculation of LSTSR to be consistent 
 C            with the definition - ratio of CH2O to be added to stem 
 C            relative to that added to leaf + stem
@@ -962,15 +955,15 @@ C-----------------------------------------------------------------------
 
       IF (NLEAK .GT. 0.0) THEN
         CALL NLKDIST(
-     &    AGRLF, AGRRT, AGRSTM, AGRSTR, AGRVG, FNINL,       !Input
-     &  FNINR, FNINS, FNINSR, FRLF, FRRT, FRSTM, FRSTR, !Input
-     &  L, NLAYR, PROLFI, PRORTI, PROSRI, PROSTI,              !Input
-     &  RNH4C, RNO3C, RPRO, TSNMOB,                                    !Input
-     &  ANMINELF, ANMINERT, ANMINEST, ANMINESR, NGRLF,      !Input/Output 
-     &  NGRRT, NGRST, NGRSR, NLEAK, NMINEA, NRUSLF,       !Input/Output
-     &  NRUSRT, NRUSSR, NRUSST, TRNH4U, TRNO3U, TRNU,       !Input/Output
-     &  UNO3, UNH4, WLDOTN, WRDOTN, WSDOTN, WSRDOTN,      !Input/Output
-     &    CHORECOVER, NLKSPENT, NLKNUSED)                              !Output
+     &    AGRLF, AGRRT, AGRSTM, AGRSTR, AGRVG, FNINL,     !Input
+     &    FNINR, FNINS, FNINSR, FRLF, FRRT, FRSTM, FRSTR, !Input
+     &    L, NLAYR, PROLFI, PRORTI, PROSRI, PROSTI,       !Input
+     &    RNH4C, RNO3C, RPRO, TSNMOB,                     !Input
+     &    ANMINELF, ANMINERT, ANMINEST, ANMINESR, NGRLF,  !Input/Output
+     &    NGRRT, NGRST, NGRSR, NLEAK, NMINEA, NRUSLF,     !Input/Output
+     &    NRUSRT, NRUSSR, NRUSST, TRNH4U, TRNO3U, TRNU,   !Input/Output
+     &    UNO3, UNH4, WLDOTN, WRDOTN, WSDOTN, WSRDOTN,    !Input/Output
+     &    CHORECOVER, NLKSPENT, NLKNUSED)                 !Output
 
 
         IF (NLEAK .LT. 0.0001) NLEAK = 0.0
@@ -1026,15 +1019,15 @@ C        of CH2O was used for growth and liberation of just enough
 C        N for that new growth, no excess.
 C-----------------------------------------------------------------------
       SUBROUTINE NLKDIST(
-     &    AGRLF, AGRRT, AGRSTM, AGRSTR, AGRVG, FNINL,       !Input
-     &  FNINR, FNINS, FNINSR, FRLF, FRRT, FRSTM, FRSTR, !Input
-     &  L, NLAYR, PROLFI, PRORTI, PROSRI, PROSTI,              !Input
-     &  RNH4C, RNO3C, RPRO, TSNMOB,                                    !Input
-     &  ANMINELF, ANMINERT, ANMINEST, ANMINESR, NGRLF,      !Input/Output 
-     &  NGRRT, NGRST, NGRSR, NLEAK, NMINEA, NRUSLF,       !Input/Output
-     &  NRUSRT, NRUSSR, NRUSST, TRNH4U, TRNO3U, TRNU,       !Input/Output
-     &  UNO3, UNH4, WLDOTN, WRDOTN, WSDOTN, WSRDOTN,      !Input/Output
-     &    CHORECOVER, NLKSPENT, NLKNUSED)                              !Output
+     &    AGRLF, AGRRT, AGRSTM, AGRSTR, AGRVG, FNINL,     !Input
+     &    FNINR, FNINS, FNINSR, FRLF, FRRT, FRSTM, FRSTR, !Input
+     &    L, NLAYR, PROLFI, PRORTI, PROSRI, PROSTI,       !Input
+     &    RNH4C, RNO3C, RPRO, TSNMOB,                     !Input
+     &    ANMINELF, ANMINERT, ANMINEST, ANMINESR, NGRLF,  !Input/Output
+     &    NGRRT, NGRST, NGRSR, NLEAK, NMINEA, NRUSLF,     !Input/Output
+     &    NRUSRT, NRUSSR, NRUSST, TRNH4U, TRNO3U, TRNU,   !Input/Output
+     &    UNO3, UNH4, WLDOTN, WRDOTN, WSDOTN, WSRDOTN,    !Input/Output
+     &    CHORECOVER, NLKSPENT, NLKNUSED)                 !Output
  
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
@@ -1166,7 +1159,7 @@ C      returned for CH2O
       CHORECOVER = NLKNG1 * AGRVGI + NLKNG2 * AGRVGI
       AGRVG = (OCH2OCOST + CHORECOVER) / 
      &    (WLDOTN + WSDOTN + WRDOTN + WSRDOTN)
-      IF (TRNU .GT. 0.001) THEN
+      IF (TRNU .GT. 0.0) THEN
       NLKSPENT =  NLKNG1 * AGRVGI / (RPRO * 0.16) + 
      &    NLKNG2 * AGRVGI / (RNNU * 0.16)
       ELSE
@@ -1178,7 +1171,7 @@ C      returned for CH2O
 
 C      Return NLKSPENT to its sources
       NMINEA = NMINEA - NLKNG1 * (AGRVGI / (RPRO * 0.16))  
-      IF (TRNU .GT. 0.001) THEN
+      IF (TRNU .GT. 0.0) THEN
       TRNURTRN = NLKNG2 * AGRVGI / (RNNU * 0.16)
 
 
@@ -1187,12 +1180,12 @@ C      Allocate N "returned for respiration" (CH2O) to layers as NO3&NH4
         DO L = 1,NLAYR
         IF (TRNO3U .GT. 0.0) THEN
         UNO3(L) = UNO3(L) - TRNURTRN * 10 * PNUPNO3 * 
-     &    UNO3(L)/TRNO3U
+     &    (UNO3(L)/(TRNO3U * 10))
         ENDIF
 
         IF (TRNH4U .GT. 0.0) THEN
         UNH4(L) = UNH4(L) - TRNURTRN * 10 * PNUPNH4 * 
-     &    UNH4(L)/TRNH4U
+     &    (UNH4(L)/(TRNH4U * 10))
         ENDIF
         
         ENDDO

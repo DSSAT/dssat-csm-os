@@ -1,0 +1,91 @@
+*CHICKPEA CULTIVAR COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! EXPNO   Number of experiments used to estimate cultivar parameters
+! ECO#    Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL    Critical Short Day Length below which reproductive development
+!         progresses WITH daylength effect (for longday plants) (hour)
+! PPSEN   Slope of the relative response of development to photoperiod with time
+!         (negative for longday plants) (1/hour)
+! EM-FL   Time between plant emergence and flower appearance (R1)
+!         (photothermal days)
+! FL-SH   Time between first flower and first pod (R3) (photothermal days)
+! FL-SD   Time between first flower and first seed (R5) (photothermal days)
+! SD-PM   Time between first seed (R5) and physiological maturity (R7)
+!         (photothermal days)
+! FL-LF   Time between first flower (R1) and end of leaf expansion
+!         (photothermal days)
+! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!         (mg CO2/m2-s)
+! SLAVR   Specific leaf area of cultivar under standard growth conditions
+!         (cm2/g)
+! SIZLF   Maximum size of full leaf (three leaflets) (cm2)
+! XFRT    Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD   Maximum weight per seed (g)
+! SFDUR   Seed filling duration for pod cohort at standard growth conditions
+!         (photothermal days)
+! SDPDV   Average seed per pod under standard growing conditions (#/pod)
+! PODUR   Time required for cultivar to reach final pod load under optimal
+!         conditions (photothermal days)
+! THRSH   The maximum ratio of (seed/(seed+shell)) at maturity.
+!         Causes seed to stop growing as their dry weights
+!         increase until shells are filled in a cohort.
+!         (Threshing percentage).
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             N     N     P     P     P     P     N     G     G     N     P     G     N     N     N     N     N     N
+
+999991 MINIMA               . DFAULT 11.00 -.143  28.0   6.0  12.5 26.00 34.00 0.900  130.  10.0  0.94 0.150  22.0  1.00  15.0  80.0  .216  .048
+999992 MAXIMA               . DFAULT 11.00 -.143  42.0  11.0  16.5 40.00 44.00 1.700  220.  10.0  1.00 0.300  29.0  1.80  18.0  85.0  .216  .048
+
+! NOTE from K. Boote. 1-31-22 Annigeri (IB001) and JG74 (IB004) are the only ones that are calibrated with confidence.
+! Other cultivars are left there for contrast.  In fact, values for Kabuli and Desi type and the others may no longer be good.
+!
+990001 Kabuli Type          . KABULE 11.00 -.143  30.0   8.0  15.0 35.00 42.00 1.000  200.  10.0  0.96 0.181  29.0  1.20  18.0  85.0  .216  .048
+990002 Desi Type            . DESI   11.00 -.143  37.0   8.0  15.0 38.00 42.00 1.000  200.  10.0  0.96 0.283  29.0  1.00  18.0  85.0  .216  .048
+
+IB0001 ANNIGERI v48calib    . DESI   11.00 -.143  32.0   7.5  18.5 31.00 42.00 0.950  200.  10.0  0.95 0.230  22.0  1.20  17.0  82.0  .216  .048
+IB0002 K 850   v48calib     . DFAULT 11.00 -.143  38.5   9.0  13.5 31.00 38.00 1.020  200.  10.0  0.96 0.340  27.0  1.00  17.0  84.0  .216  .048 
+IB0003 G 130   v48calib     . DFAULT 11.00 -.143  39.0  13.5  22.5 28.50 36.00 1.000  200.  10.0  0.96 0.230  28.0  1.20  19.0  84.0  .216  .048
+IB0004 JG 74  v48calib      . DESI   11.00 -.143  41.0   7.5  14.5 27.50 34.00 1.040  200.  10.0  0.95 0.225  22.0  1.60  18.0  77.0  .216  .048
+IB0005 ICCV 88202 v48calib  . DFAULT 11.00 -.143  29.0   5.5   9.5 28.50 38.00 1.000  200.  10.0  0.96 0.255  29.0  1.30  18.0  85.0  .216  .048
+IB0006 ICCC 42    v48calib  . DFAULT 11.00 -.143  35.0   5.0   9.0 29.00 37.00 1.000  155.  10.0  0.96 0.320  29.0  1.20  17.0  85.0  .216  .048
+IB0007 ICCV 10    v48calib  . DFAULT 11.00 -.143  35.0   5.0  10.0 28.00 36.00 1.010  200.  10.0  0.96 0.230  29.0  1.30  17.0  85.0  .216  .048
+IB0008 ICCV 2     v48calib  . DFAULT 11.00 -.143  26.5   5.0   9.0 27.00 35.00 1.010  200.  10.0  0.96 0.260  29.0  1.00  16.0  85.0  .216  .048
+IB0009 ICCC 32    v48calib  . DFAULT 11.00 -.143  40.0   5.0  11.5 29.00 37.00 0.980  150.  10.0  0.96 0.320  29.0  1.10  17.0  85.0  .216  .048
+IB0010 ICCC 37              . DFAULT 11.00 -.143  38.5   6.0  11.0 39.00 46.00 1.000  160.  10.0  0.96 0.220  28.0  1.20  18.0  85.0  .216  .048
+IB0012 KAK-2                . KABULE 11.00 -.143  40.0  10.0  15.0 35.00 42.00 1.000  200.  10.0  0.96 0.181  29.0  1.20  18.0  85.0  .216  .048 
+IB0013 JG 218               . JG 218 11.00 -.143  36.0   9.0  12.5 39.00 47.00 1.000  200.  10.0  0.96 0.180  29.0  1.50  18.0  85.0  .216  .048
+
+!Global Futures chickpea cultivars (3 life cycle by 2 "yield levels")
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+
+GF0005 JG11-baseline        . DESI   11.00 -.430  36.5   7.0  14.5 35.00 42.00 1.000  200.  10.0  0.95 0.225  20.0  1.20  18.0  85.0  .216  .048
+GF0105 JG11-10%shortcycle   . DESI   11.00 -.430  32.9   6.3  13.1 29.70 35.00 1.000  200.  10.0  0.95 0.225  20.0  1.20  18.0  85.0  .216  .048
+GF0205 JG11-10%longercycle  . DESI   11.00 -.430  40.2   7.7  16.0 41.50 49.00 1.000  200.  10.0  0.95 0.225  20.0  1.20  18.0  85.0  .216  .048
+
+GF0305 JG11-base+yield      . DESI   11.00 -.430  36.5   7.0  14.5 35.00 42.00 1.100  200.  10.0  1.05 0.225  22.0  1.20  18.0  85.0  .216  .048
+GF0405 JG11-10%short+yield  . DESI   11.00 -.430  32.9   6.3  13.1 29.70 35.00 1.100  200.  10.0  1.05 0.225  22.0  1.20  18.0  85.0  .216  .048
+GF0505 JG11-10%long+yield   . DESI   11.00 -.430  40.2   7.7  16.0 41.50 49.00 1.100  200.  10.0  1.05 0.225  22.0  1.20  18.0  85.0  .216  .048
+
+
+GF0006 RSG888-baseline      . DESI   10.90 -.320  40.8   8.0  13.0 41.00 48.00 1.000  200.  10.0  0.91 0.180  20.0  1.20  18.0  85.0  .216  .048
+GF0106 RSG888-10%shortcycl  . DESI   10.90 -.320  35.0   7.2  11.7 30.00 40.00 1.000  200.  10.0  0.91 0.180  20.0  1.20  18.0  85.0  .216  .048
+GF0206 RSG888-10%longercycl . DESI   10.90 -.320  47.4   8.8  14.3 54.00 60.00 1.000  200.  10.0  0.91 0.180  20.0  1.20  18.0  85.0  .216  .048
+
+GF0306 RSG888-base+yield    . DESI   10.90 -.320  40.8   8.0  13.0 41.00 48.00 1.100  200.  10.0  1.00 0.180  22.0  1.20  18.0  85.0  .216  .048
+GF0406 RSG888-10%short+yiel . DESI   10.90 -.320  35.0   7.2  11.7 30.00 40.00 1.100  200.  10.0  1.00 0.180  22.0  1.20  18.0  85.0  .216  .048
+GF0506 RSG888-10%long+yiel  . DESI   10.90 -.320  47.4   8.8  14.3 54.00 60.00 1.100  200.  10.0  1.00 0.180  22.0  1.20  18.0  85.0  .216  .048
+
+GF0007 Vijay-baseline       . DESI   11.00 -.220  37.2   9.0  13.0 48.00 55.00 1.000  200.  10.0  0.91 0.210  29.0  1.20  18.0  85.0  .216  .048
+GF0107 Vijay-10%shortcycle  . DESI   11.00 -.220  33.2   8.1  11.7 38.00 45.00 1.000  200.  10.0  0.91 0.210  29.0  1.20  18.0  85.0  .216  .048
+GF0207 Vijay-10%longercycle . DESI   11.00 -.220  41.5   9.9  14.3 58.20 65.00 1.000  200.  10.0  0.91 0.210  29.0  1.20  18.0  85.0  .216  .048
+
+GF0307 Vijay-base+yield     . DESI   11.00 -.220  37.2   9.0  13.0 48.00 55.00 1.100  200.  10.0  1.00 0.210  31.9  1.20  18.0  85.0  .216  .048
+GF0407 Vijay-10%short+yield . DESI   11.00 -.220  33.2   8.1  11.7 38.00 45.00 1.100  200.  10.0  1.00 0.210  31.9  1.20  18.0  85.0  .216  .048
+GF0507 Vijay-10%long+yield  . DESI   11.00 -.220  41.5   9.9  14.3 58.20 65.00 1.100  200.  10.0  1.00 0.210  31.9  1.20  18.0  85.0  .216  .048

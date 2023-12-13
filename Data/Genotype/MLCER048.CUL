@@ -1,0 +1,132 @@
+*MILLET CULTIVAR COEFFICIENTS: MLCER048 MODEL
+!
+! COEFF       DEFINITIONS
+! =========   ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code for this cultivar, points to the Ecotype in the
+!             ECO file (currently not used).
+! P1          Thermal time from seedling emergence to the end of the juvenile
+!             phase (expressed in degree days above a base temperature of 10�C)
+!             during which the plant is not responsive to changes in
+!             photoperiod.
+! P2O         Critical photoperiod or the longest day length (in hours) at
+!             which development occurs at a maximum rate. At values greater
+!             than P2O, the rate of development is reduced.
+! P2R         Extent to which phasic development leading to panicle
+!             initiation (expressed in degree days) is delayed for each hour
+!             increase in photoperiod above P2O.
+! P5          Thermal time (degree days above a base temperature of 10�C)
+!             from beginning of grain filling (3-4 days after flowering)
+!             to physiological maturity.
+! G1          Scaler for relative leaf size.
+! G4          Scaler for partitioning of assimilates to the panicle (head).
+! PHINT       Phylochron interval; the interval in thermal time (degree days)
+!             between successive leaf tip appearances.
+! GT          Tillering coefficient, equivalent to G1, but on tillers
+! G5          Potential grain size, mg
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2O   P2R    P5    G1    G4 PHINT    GT    G5
+!Coeffient #                             1     2     3     4     5     6     7     8     9
+!Calibration                             P     P     P     P     G     G     N     G     G
+
+999991 MINIMA               . DFAULT 100.0 10.00  50.0 100.0  0.10  0.50 43.00  1.00  10.0
+999992 MAXIMA               . DFAULT 400.0 15.00 900.0 700.0  3.00 20.00 43.00  1.50  11.0
+!
+! The sample 3 varieties were estimated to give increasing days to maturity
+! moving from north to south
+!
+990001 NORTH VARIETY        . IB0001 120.0 12.00 125.0 360.0  2.00  0.50 43.00  1.00  11.0
+990002 MIDDLE VARIETY       . IB0001 140.0 12.00 150.0 500.0  2.00  0.50 43.00  1.00  11.0
+990003 SOUTH VARIETY        . IB0001 180.0 12.00 150.0 600.0  2.00  0.50 43.00  1.00  11.0
+!
+IB0033 BJ104                . IB0001 181.7 14.32 766.3 334.5 0.344  0.86 43.00  1.49 10.14
+IB0034 CZH-859              . IB0001 170.0 12.10 138.0 420.0  2.13  0.50 43.00  1.00  11.0
+IB0035 CZP-87               . IB0001 136.0 12.40 130.0 370.0  2.10  0.50 43.00  1.00  11.0
+IB0036 CZMP-2               . IB0001 135.0 12.60 140.0 370.0  2.00  0.50 43.00  1.00  11.0
+IB0037 MBH-110              . IB0001 140.0 12.50 148.0 365.0  2.12  0.50 43.00  1.00  11.0
+IB0038 RCB-2                . IB0001 136.0 12.10 135.0 365.0  2.14  0.50 43.00  1.00  11.0
+IB0039 CZP-78               . IB0001 136.0 12.10 125.0 362.0  2.00  0.50 43.00  1.00  11.0
+IB0040 CZP-85               . IB0001 142.0 12.30 130.0 380.0  2.15  0.50 43.00  1.00  11.0
+IB0041 WCC-75               . IB0001 160.0 12.00 142.0 422.0  2.10  0.50 43.00  1.00  11.0
+IB0042 CZP-84               . IB0001 138.0 12.20 128.0 360.0  2.30  0.50 43.00  1.00  11.0
+IB0043 CZH-83-J1            . IB0001 136.0 12.60 130.0 300.0  2.30  0.50 43.00  1.00  11.0
+IB0044 CIVT                 . IB0001 100.0 14.54 338.1 569.8  1.60  0.50 43.00  1.45 10.53
+
+IB0045 59022A X 89-083      . IB0001 100.0 12.00  18.0 200.0  0.0  19.00 43.00  1.00  11.0
+IB0046 1011A X 086R         . IB0001 100.0 12.00  35.0 120.0  0.0  17.00 43.00  1.00  11.0
+IB0047 1361M X 6Rm          . IB0001 100.0 12.00  55.0 105.0  0.0  11.00 43.00  1.00  11.0
+IB0048 Heini Kirey          . IB0001 396.0 12.00 470.0 140.0  0.50 11.80 43.00  1.00  11.0
+IB0049 Zatib                . IB0001 309.0 12.00 410.0 108.0  0.50 13.00 43.00  1.00  11.0
+IB0050 3/4HK                . IB0001 270.0 12.00 390.0 108.0  0.50 18.00 43.00  1.00  11.0
+IB0149 Sadore-Local         . IB0001 170.0 12.00 150.0 450.0  1.00  0.55 43.00  1.00  11.0
+IM0015 SaniobaB             . IB0001 413.0 12.80 999.9 640.0   3.0   6.5 65.00  1.00  11.0
+IM0016 SaniobaB             . IB0001 413.0 12.80 999.9 640.0   3.0   6.5 65.00  1.00  11.0
+
+! The genetic coeff of the following cultivars were based on phenology and 
+! end-of-season data only (ICAR multi-site expts)
+IB0052 PUSA 23              . IB0001 120.0 12.90 110.0 350.0  1.00  0.70 43.00  1.50  11.0
+IB0054 GHB 558              . IB0001 145.0 12.70  15.0 360.0  1.00  1.00 43.00  1.50  11.0
+
+! Calibrated by Piara Singh (paper 2017)
+IB0051 ICMH356-baseline     . IB0001 120.0 12.70  86.0 340.0  1.00  1.00 43.00  1.50  11.0
+IB0053 Sharda-baseline      . IB0001 120.0 12.00  15.0 360.0  1.00  1.00 43.00  1.50  11.0
+! Based on Akponike's Ph. D thesis work (2008), modified by P. Singh
+IB0072 CIVT-baseline        . IB0001 365.0 12.00 260.0 285.0  0.60  0.73 43.00  1.20  11.0
+
+! The genetic coeff of the following cultivars were based on ICRISAT watershed expts data
+IB0060 ICTP 8203            . IB0201 120.0 12.80  10.0 310.0  0.90  0.90 43.00  1.20  11.0
+IB0061 ICMV 221             . IB0001 120.0 12.00 125.0 360.0  0.50  0.57 43.00  1.20  11.0
+
+! The genetic coeff of the following cultivars were based on ICRISAT data 
+! (Van Oostrom et al data)
+IB0062 ERajPop              . IB0201 110.0 13.90 440.0 230.0  0.70  0.90 43.00  1.00  11.0
+IB0063 NokhaLocal           . IB0201 110.0 13.90 440.0 230.0  0.70  0.78 43.00  1.00  11.0
+IB0064 WRajPop              . IB0201 110.0 13.90 440.0 390.0  0.70  0.63 43.00  1.00  11.0
+IB0065 RCBIC 911            . IB0201 120.0 13.40  15.0 340.0  0.70  1.00 43.00  1.00  11.0
+IB0066 CZIC 922             . IB0201 110.0 13.40  15.0 360.0  0.70  0.69 43.00  1.00  11.0
+IB0067 Landrace             . IB0201 110.0 13.40  15.0 250.0  0.70  0.83 43.00  1.00  11.0
+IB0068 Non-landrace         . IB0201 120.0 12.20  15.0 300.0  0.70  1.00 43.00  1.00  11.0
+IB0069 WCC-75               . IB0201 120.0 13.50 142.0 230.0  0.70  1.00 43.00  1.00  11.0
+
+IB0070 BK 560               . IB0001 100.0 13.40  15.0 230.0  0.70  1.00 43.00  1.20  11.0
+IB0071 ICMH 451             . IB0001 120.0 12.00 110.0 360.0  0.90  0.80 43.00  1.50  11.0
+
+! Based on Crafurd and Bidinger (1988) papers
+IB0073 81A X Souna B        . IB0201 120.0 13.40  95.0 265.0  0.80  1.05 43.00  1.50  11.0
+IB0074 841A X J104          . IB0301 120.0 13.20 100.0 250.0  0.70  1.00 43.00  1.50  11.0
+
+! Based on Akponike's Ph. D thesis work (2008)
+IB0075 Heini Kirey          . IB0001 396.0 12.00 410.0 285.0  0.60  0.80 43.00  1.20  11.0 
+IB0076 Zatib                . IB0001 340.0 12.00 260.0 285.0  0.45  0.90 43.00  1.00  11.0  
+IB0077 3/4HK                . IB0001 270.0 12.00 390.0 108.0  0.40 18.00 43.00  1.00  11.0
+
+! Provided by Gerrit Hoogenboom (Nebraska study), but GCs were further changed by Piara Singh
+IB0078 59022A X 89-083      . IB0001 100.0 12.50   3.0 280.0  0.9   1.00 43.00  1.00  11.0  
+IB0079 1011A X 086R         . IB0001 100.0 12.50   3.0 280.0  0.9   0.90 43.00  1.00  11.0  
+IB0080 1361M X 6Rm          . IB0001 100.0 12.50   8.0 330.0  0.4   0.53 43.00  1.00  11.0  
+
+! Developed by DR Alagarswamy based on old ICRISAT data
+IB0082 BJ104                . IB0001 120.0 13.40 145.0 340.0  0.60  1.00 43.00  1.50  10.0
+
+! Based on Akponike's Ph. D thesis work (2008)
+IB0083 ICMVIS 89305         . IB0001 365.0 12.00 210.0 285.0  0.60  1.00 43.00  1.20  11.0  
+
+! Suppled by Dr Hoogenboom from his student work- coefficients for DSSAT4.5 - March 2010                             
+IB0045 59022A X 89-083      . IB0001 100.0 12.00  18.0 200.0  0.0  19.00 43.00  1.00  11.0  
+IB0046 1011A X 086R         . IB0001 100.0 12.00  35.0 120.0  0.0  17.00 43.00  1.00  11.0  
+IB0047 1361M X 6Rm          . IB0001 100.0 12.00  55.0 105.0  0.0  11.00 43.00  1.00  11.0  
+IB0048 Heini Kirey          . IB0001 396.0 12.00 470.0 140.0  0.50 11.80 43.00  1.00  11.0  
+IB0049 Zatib                . IB0001 309.0 12.00 410.0 108.0  0.50 13.00 43.00  1.00  11.0  
+IB0050 3/4HK                . IB0001 270.0 12.00 390.0 108.0  0.50 18.00 43.00  1.00  11.0  
+
+IB0087 BJ104                . IB0001 120.0 13.40 145.0 340.0  0.50  1.00 43.00  1.50  10.0
+IB0088 81A X Souna B        . IB0201 120.0 13.40  95.0 265.0  0.50  1.60 43.00  1.50  11.0
+IB0089 841A X J104          . IB0301 120.0 13.20 100.0 250.0  0.50  1.00 43.00  1.50  11.0
+
+! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
+!IB0044 CIVT                 . IB0001 100.0 12.00 142.0 390.0  0.60  0.60 43.00  1.20  11.0
+!IB0033 BJ104                . IB0001 120.0 13.40 145.0 340.0  0.60  1.00 43.00  1.50  10.0

@@ -44,6 +44,7 @@ C========================================================================
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, CANOPY
       SAVE
 
       CHARACTER*6  ERRKEY
@@ -80,6 +81,9 @@ C========================================================================
       REAL NMINEA, NFIXN, TRNU
 
       REAL TGRO(TS)
+      
+!     FO - Cotton-Nitrogen
+      REAL NSTFAC, PNSTRES, XNSTRES
 
 !     P module
       REAL PStres2
@@ -133,6 +137,9 @@ C========================================================================
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
         READ(C80,'(2F6.0)',IOSTAT=ERR) CMOBMX, CADSTF
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(6X,F6.0)',IOSTAT=ERR) NSTFAC
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
       ENDIF
 !-----------------------------------------------------------------------
 !    Find and Read Partitioning Section
@@ -159,7 +166,7 @@ C========================================================================
 !-----------------------------------------------------------------------
       CALL CANOPY(RUNINIT,
      &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
-     &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,             !Input
+     &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
 !***********************************************************************
@@ -193,10 +200,13 @@ C========================================================================
       WLDOTN = 0.0  
       WRDOTN = 0.0  
       WSDOTN = 0.0  
-
+!     FO/KJB - Running average      
+      PNSTRES= 1.0
+      XNSTRES= 1.0
+      
       CALL CANOPY(SEASINIT,
      &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
-     &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,             !Input
+     &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
 !***********************************************************************
@@ -213,7 +223,7 @@ C========================================================================
 
       CALL CANOPY(EMERG,
      &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
-     &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,             !Input
+     &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
 !***********************************************************************
@@ -226,15 +236,25 @@ C========================================================================
 C     Partitioning is modified by water stress and nitrogen stress
 C-----------------------------------------------------------------------
       SUPPN = NFIXN + TRNU + NMINEA
+! KJB - Replacing a hardwire 0.70 for N-Stress      
+      NSTFAC = MIN(NSTFAC,1.0) 
+      NSTFAC = MAX(NSTFAC,0.1)
 !    chp added check for YRDOY = YREMRG, but on the next day, it still
 !     shows N stress because there is little supply.  Force a lag time?
 !      IF (SUPPN .LT. 0.70 * NDMNEW .AND. NDMNEW .GT. 0.) THEN
-      IF (SUPPN .LT. 0.70 * NDMNEW .AND. NDMNEW .GT. 0. .AND. 
+!     FO/KJB - Running average
+      PNSTRES = XNSTRES
+
+      IF (SUPPN .LT. NSTFAC * NDMNEW .AND. NDMNEW .GT. 0. .AND. 
      &        YRDOY .NE. YREMRG) THEN
-        NSTRES = MIN(1.0,SUPPN/(NDMNEW * 0.70))
+        XNSTRES = MIN(1.0,SUPPN/(NDMNEW * NSTFAC))
       ELSE
-        NSTRES = 1.0
+        XNSTRES = 1.0
       ENDIF
+      
+!     FO/KJB - Running average
+      NSTRES = XNSTRES * 0.5 + PNSTRES * 0.5
+      
 !      FRRT  = ATOP * (1.0 - (MIN(TURFAC,NSTRES)))*(1.0-FRRT) + FRRT
       FRRT  = ATOP * (1.0 - (MIN(TURFAC, NSTRES, PStres2))) * 
      &                    (1.0 - FRRT) + FRRT
@@ -445,7 +465,7 @@ C     daylenght and radiation (PAR).
 C-----------------------------------------------------------------------
       CALL CANOPY(INTEGR,
      &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
-     &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,             !Input
+     &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
 !***********************************************************************
@@ -568,7 +588,7 @@ C-----------------------------------------------------------------------
 ! SECTION Section name in input file 
 ! STMWT   Dry mass of stem tissue, including C and N (g[stem] / m2[ground)
 ! SUPPN   Total supply of N (g[N] / m2 / d)
-! TGRO(I) Hourly air temperature (°C)
+! TGRO(I) Hourly air temperature (Â°C)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
 ! TNLEAK  Total nitrogen leak (g[N] / m2 / d)

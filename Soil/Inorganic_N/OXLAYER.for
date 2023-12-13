@@ -20,6 +20,7 @@ C=======================================================================
       USE ModuleDefs
       USE FloodModule
       IMPLICIT NONE
+      EXTERNAL EQUIL2
       SAVE
 
       CHARACTER*1 RNMODE

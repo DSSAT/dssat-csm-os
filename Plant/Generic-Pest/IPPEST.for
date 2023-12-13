@@ -21,6 +21,7 @@ C=======================================================================
 !     NL defined in ModuleDefs.for
 
       IMPLICIT NONE
+      EXTERNAL FIND, ERROR
 
       CHARACTER*2 CROP
       CHARACTER*6  SECTION,ERRKEY

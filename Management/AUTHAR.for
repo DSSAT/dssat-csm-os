@@ -12,7 +12,9 @@ C  03/19/2001 GH  Corrected YREND initialization
 C  04/17/2002 GH  Modified for sequence analysis
 C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 C  08/20/2002 GH  Modified for Y2K
-!  12/16/2004 CHP Added defaults for HPC and HBPC
+C  12/16/2004 CHP Added defaults for HPC and HBPC
+C  04/01/2021 FO/VSH Update harvest array size for MultiHarvest
+!  04/14/2021 CHP Added CONTROL % CropStatus
 C=======================================================================
 
       SUBROUTINE AUTHAR(CONTROL, ISWWAT,
@@ -24,7 +26,10 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE ModuleData
+      
       IMPLICIT NONE
+      EXTERNAL YR_DOY, ERROR, FIND, TIMDIF, GETLUN, WARNING, IPAHAR
       SAVE
 
       CHARACTER*1 IHARI, IDETO, ISWWAT, RNMODE
@@ -36,12 +41,12 @@ C=======================================================================
       INTEGER MULTI, TIMDIF, YRPLT, YRDIF, YRSIM
       INTEGER YRDOY, MDATE, DAP, NOUTDO
       INTEGER DYNAMIC, RUN
-      INTEGER HDATE(3), HSTG(3) 
-      INTEGER STGDOY(20) 
+      INTEGER HDATE(NAPPL), HSTG(NAPPL) 
+      INTEGER STGDOY(20), HARVF, NPHAR
 
       REAL AVGSW, CUMSW, DTRY, SWPLTD
       REAL SWPLTH, SWPLTL, XDEP, XDEPL
-      REAL HPC(3), HBPC(3)
+      REAL HPC(NAPPL), HBPC(NAPPL)
       REAL HARVFRAC(2)
       REAL DLAYR(NL), DUL(NL), LL(NL), SW(NL)
 
@@ -119,6 +124,8 @@ C-----------------------------------------------------------------------
       HARVFRAC(1) = HPC(1)  / 100.
       HARVFRAC(2) = HBPC(1) / 100.
 
+!     08/15/2022 FO Multi-Harvest index to the reported harvests
+      NPHAR = 1
 C***********************************************************************
 C***********************************************************************
 C     Daily integration
@@ -128,21 +135,42 @@ C***********************************************************************
 !     YREND = -99
       IF (YRDOY == YREND) RETURN
 
+      !TF 05/04/2023 - stop simulation if crop failed to germinate
+      IF(CONTROL % CropStatus .EQ. 12) THEN
+        YREND = YRDOY
+        RETURN
+      ENDIF 
+
+      !TF 05/04/2023 - stop simulation if crop failed to germinate
+      IF(CONTROL % CropStatus .EQ. 13) THEN
+        YREND = YRDOY
+        RETURN
+      ENDIF 
 C-----------------------------------------------------------------------
 C Harvest at maturity, NR8
 C-----------------------------------------------------------------------
       IF (IHARI .EQ. 'M') THEN
         YREND     = MDATE
+        CONTROL % CropStatus = 1    !harvest at maturity
 
 C-----------------------------------------------------------------------
 C Harvest on specified day of year, HDATE
 C-----------------------------------------------------------------------
-      ELSE IF (IHARI .EQ. 'R') THEN
-        IF (YRDOY .GE. HDATE(1)) THEN
-C-GH    IF (YRDOY .GE. HDATE(1) .OR. MDATE .EQ. YRDOY) THEN
-           YREND     = YRDOY
+      ELSE IF (IHARI .EQ. 'R' .OR. IHARI .EQ. 'W' .OR.
+     &   IHARI .EQ. 'X' .OR. IHARI .EQ. 'Y' .OR. IHARI .EQ. 'Z') THEN
+        IF (YRDOY .GE. HDATE(NHAR)) THEN
+          YREND = HDATE(NHAR)
+          CONTROL % CropStatus = 2 !harvest on reported date
         ENDIF
-
+        
+        HARVF = 0
+        IF (YRDOY .GE. HDATE(NPHAR)) THEN
+         HARVF = 1
+         IF (NPHAR < NHAR) THEN
+            NPHAR = NPHAR + 1
+         ENDIF
+        ENDIF
+        CALL PUT('MHARVEST','HARVF',HARVF)
 C-----------------------------------------------------------------------
 C Harvest on specified day after planting, HDATE
 C-----------------------------------------------------------------------
@@ -151,6 +179,7 @@ C-----------------------------------------------------------------------
         IF (DAP .GE. HDATE(1)) THEN
 C-GH    IF (DAP .GE. HDATE(1) .OR. MDATE .EQ. YRDOY) THEN
            YREND     = YRDOY
+           CONTROL % CropStatus = 2 !harvest on reported date
         ENDIF
 
 C-----------------------------------------------------------------------
@@ -160,6 +189,7 @@ C-----------------------------------------------------------------------
         DO I = 1, 13
           IF (HSTG(1) .EQ. I .AND. YRDOY .EQ. STGDOY(I)) THEN
             YREND     = YRDOY
+            CONTROL % CropStatus = 3 !harvest at reported growth stage
             RETURN
           ENDIF
         END DO
@@ -210,7 +240,9 @@ C           Assume harvest to occur on the first day after the defined
 C           window to terminate the simulation. This needs to be changed 
 C           to account for harvest loss of the crop;
             YREND     = YRDOY
-!            STGDOY(16) = YRDOY
+!           Failure to plant (automatic planting)
+            CONTROL % CropStatus = 11  
+!           STGDOY(16) = YRDOY
             RETURN
           ENDIF
 
@@ -233,11 +265,13 @@ C           Compute average soil moisture as percent, AVGSW***
             AVGSW = (CUMSW / SWPLTD) * 100.0
             IF (AVGSW .GE. SWPLTL .AND. AVGSW .LE. SWPLTH) THEN
                YREND = YRDOY
-!               STGDOY(16) = YRDOY
+               CONTROL % CropStatus = 6 !auto-harvest within window
+!              STGDOY(16) = YRDOY
             ENDIF
           ELSE
             !Soil water not being simulated - conditions assumed OK
             YREND = YRDOY
+            CONTROL % CropStatus = 6 !auto-harvest within window
           ENDIF
         ENDIF
 
@@ -269,6 +303,7 @@ C  REVISION HISTORY
 C  11/23/1999 CHP Written for modular version of AUTHAR.
 C  08/20/2002 GH  Modified for Y2K
 C  08/12/2003 CHP Added error checking
+C  04/01/2021 FO/VSH Updated harvest section for MultiHarvest
 C========================================================================
 
       SUBROUTINE IPAHAR(CONTROL,
@@ -279,21 +314,23 @@ C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND
 
-      CHARACTER*5 HCOM(3), HSIZ(3)
+      CHARACTER*5 HCOM(NAPPL), HSIZ(NAPPL)
       CHARACTER*6 SECTION, ERRKEY 
       PARAMETER (ERRKEY = 'IPAHAR')
       CHARACTER*30 FILEIO 
       CHARACTER*90 CHAR
 
       INTEGER ERRNUM
-      INTEGER HDLAY, HLATE, I, NHAR, HDATE(3), HSTG(3)
+      INTEGER HDLAY, HLATE, NHAR, HDATE(NAPPL), HSTG(NAPPL)
       INTEGER LINC, LNUM, FOUND
       INTEGER LUNIO
 
       REAL HPP, HRP, SWPLTL, SWPLTH, SWPLTD
-      REAL HPC(3), HBPC(3)
+      REAL HPC(NAPPL), HBPC(NAPPL)
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -335,20 +372,20 @@ C-----------------------------------------------------------------------
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
         NHAR = 0
-        DO I = 1,3
-          READ(LUNIO,'(3X,I7,4X,A90)',ERR=4102,END=4102) HDATE(I), CHAR 
+        DO
+          READ(LUNIO,'(A90)',ERR=4102,END=4102) CHAR 
           LNUM = LNUM + 1
-
-          READ(CHAR,4100,IOSTAT=ERRNUM) 
-     &         HSTG(I), HCOM(I), HSIZ(I), HPC(I), HBPC(I) 
- 4100     FORMAT(I2,2(1X,A5),2(1X,F5.0))
-          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+          IF(INDEX(CHAR, '*') .GT. 0) EXIT
           NHAR = NHAR + 1
+          
+          READ(CHAR,4100,IOSTAT=ERRNUM) HDATE(NHAR), HSTG(NHAR),
+     &        HCOM(NHAR), HSIZ(NHAR), HPC(NHAR), HBPC(NHAR) 
+ 4100     FORMAT(3X,I7,4X,I2,2(1X,A5),2(1X,F5.0))
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
 
-        ENDDO
+        ENDDO              
  4102   CONTINUE
-
-      ENDIF
+      ENDIF  !Section HARVEST
 
       CLOSE (LUNIO)
 
@@ -359,8 +396,8 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Default to 100% harvest of product, 0% harvest of by-product
-      IF (HPC(1)  <-1.E-4) HPC(1)  = 100.  !Percent product harvested
-      IF (HBPC(1) < 1.E-4) HBPC(1) = 0.    !Percent by-product harvested
+      IF (HPC(1)  < 0.) HPC(1)  = 100.  !Percent product harvested
+      IF (HBPC(1) < 0.) HBPC(1) = 0.    !Percent by-product harvested
 
       RETURN
       END !SUBROUTINE IPAHAR

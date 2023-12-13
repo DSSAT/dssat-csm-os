@@ -29,6 +29,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
+      EXTERNAL ERROR, GETLUN, FIND, IGNORE
       SAVE
 
       CHARACTER*10 ERRKEY
@@ -38,7 +39,7 @@ C=======================================================================
       CHARACTER*92 FILECC
 
       INTEGER LUNCRP, ERR, LNUM, ISECT, FOUND
-      INTEGER L, NLAYR, DYNAMIC, WLUN
+      INTEGER L, NLAYR, DYNAMIC !, WLUN
       
       REAL NUF, XMIN
       REAL DLAYR(NL), LL(NL), DUL(NL), SAT(NL), SW(NL), RLV(NL)
@@ -48,7 +49,7 @@ C=======================================================================
       REAL NDMTOT,         ANDEM, FNH4, FNO3, SMDFR, RFAC
       REAL RTNO3, RTNH4, MXNH4U, MXNO3U
 
-      INTEGER OpenStatus
+!      INTEGER OpenStatus
 
 !***********************************************************************
 !***********************************************************************
@@ -100,22 +101,22 @@ C=======================================================================
 !OHD - Echoes input data
 
 ! Open file to write results from NUPTAK_SC
-      CALL GETLUN('WORK.OUT',WLUN)
-      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
-     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
+!      CALL GETLUN('WORK.OUT',WLUN)
+!      OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
+!     &   ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
 
-      WRITE(WLUN,'(1X, "")')   !chp for portability
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"RESULTS FROM NUPTAK_SC.for")')
-      WRITE(WLUN,'(1X,"--------------------------")')
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
-	WRITE(WLUN,'(1X,"RTNO3  : ",F6.3)') RTNO3
-      WRITE(WLUN,'(1X,"RTNH4  : ",F6.3)') RTNH4
-      WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"END RESULTS FROM NUPTAK_SC.for")')
+!      WRITE(WLUN,'(1X, "")')   !chp for portability
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"RESULTS FROM NUPTAK_SC.for")')
+!      WRITE(WLUN,'(1X,"--------------------------")')
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"SECTION: ",A6)') SECTION
+!	WRITE(WLUN,'(1X,"RTNO3  : ",F6.3)') RTNO3
+!      WRITE(WLUN,'(1X,"RTNH4  : ",F6.3)') RTNH4
+!      WRITE(WLUN,'(1X, "")')
+!      WRITE(WLUN,'(1X,"END RESULTS FROM NUPTAK_SC.for")')
 
 !      CLOSE (WLUN)
 
@@ -208,7 +209,7 @@ C-----------------------------------------------------------------------
           ANDEM = TRNU
         ENDIF
 
-        IF (TRNU .GT. 0.001) THEN
+        IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
           DO L=1,NLAYR
             IF (RLV(L) .GT. 0.0) THEN
@@ -271,10 +272,10 @@ C=======================================================================
 ! NDMSDR   Amount of Mobilized N which can be used for seed growth
 !            (g[N] / m2 / d)
 ! NDMTOT   Total N demand (g[N] / m2 / d)
-! NH4(L)   Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)   Ammonium N in soil layer L (Âµg[N] / g[soil])
 ! NL       maximum number of soil layers = 20 
 ! NLAYR    Number of soil layers 
-! NO3(L)   Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)   Nitrate in soil layer L (Âµg[N] / g[soil])
 ! NUF      N uptake fraction (ratio of demand to N uptake), <= 1.0 
 ! RFAC     Nitrogen uptake conversion factor ((kg N/ha) / (mg N / cm root))
 ! RLV(L)   Root length density for soil layer L ((cm root / cm3 soil))

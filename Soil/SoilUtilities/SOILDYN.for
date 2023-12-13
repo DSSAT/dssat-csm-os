@@ -1,10 +1,8 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2020 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
+C                      Inernational Fertilizer Development Center
+C  
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
@@ -29,6 +27,7 @@ C  08/12/2003 CHP Added I/O error checking
 !  03/26/2007 CHP Soil layer depth labels added to SoilProp variable 
 !  02/11/2009 CHP Do not run SoilDyn when ISWWAT = 'N'
 !                 Changed condition for missing or zero OC.
+!  01/24/2023 chp added SAEA to soil analysis in FileX for methane
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -44,19 +43,21 @@ C-----------------------------------------------------------------------
       USE ModuleData
 
       IMPLICIT NONE
+      EXTERNAL ERROR, FIND, WARNING, INFO, TEXTURECLASS, SOILLAYERCLASS,
+     &  CALBROKCRYPARA, RETC_VG, SOILLAYERTEXT, PRINT_SOILPROP, 
+     &  SETPM, OPSOILDYN, ALBEDO, TILLEVENT, SOILMIXING
       SAVE
 
       LOGICAL NOTEXTURE, PHFLAG, FIRST, NO_OC
-      CHARACTER*1 ISWTIL, ISWWAT, MEINF, MESOM, RNMODE, UPCASE
+      CHARACTER*1 ISWTIL, ISWWAT, MEINF, MESOM, RNMODE
       CHARACTER*6 SECTION
       CHARACTER*7, PARAMETER :: ERRKEY = 'SOILDYN'
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(NL+4)
+      CHARACTER*78 MSG(NL+10)
       CHARACTER*200 CHAR
 
       INTEGER DAS, DYNAMIC, ERRNUM, FOUND, I, L, Length 
       INTEGER LNUM, LUNIO, MULTI, REPNO, RUN, YRDOY
-      INTEGER LEN1, LEN2, LENSTRING
 !     ---------------------------------------------------------------
 !     Soil properties:
       CHARACTER*5 SLTXS, SMPX
@@ -67,6 +68,7 @@ C-----------------------------------------------------------------------
       CHARACTER*50 SLDESC, TAXON
       INTEGER NLAYR
       REAL CN, DMOD, KTRANS, SALB, SLDP, SLPF, SWCON, TEMP, TOTAW, U
+      REAL SWAD, SWnew
       REAL, DIMENSION(NL) :: ADCOEF, BD, CEC, CLAY, DLAYR, DS, DUL
       REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, POROS, SAND, SAT, SILT
       REAL, DIMENSION(NL) :: SW, SWCN, TOTN, TotOrgN, WCR, WR
@@ -82,7 +84,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: PTERMB, EXK, EXMG, EXNA, EXTS, SLEC, EXCA
 
 !     vanGenuchten parameters
-      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG  !, MSkPa
+      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
 !     Brook & Corey model parameters
       Double Precision, DIMENSION(NL) :: hb, lambda
 
@@ -90,6 +92,8 @@ C-----------------------------------------------------------------------
 !     Stable organic C, read from 2nd tier soil data in INP file.
 !     Value comes from soil analysis section of FILEX, but stored w/ soil profile data
       REAL, DIMENSION(NL) :: SASC
+!     Soil alternate electron acceptors (mol Ceq/m3)
+      REAL, DIMENSION(NL) :: SAEA
 
 !From DSSAT3.0 manual (second tier):
 ! EXTP    Extractable phosphorus (mg/kg)
@@ -118,7 +122,7 @@ C-----------------------------------------------------------------------
 !     ---------------------------------------------------------------
 !     Soil dynamics variables
       INTEGER NTIL, TILDATE, NMSG
-      REAL AS, CANCOV, CRAIN, CUMDEP   !, FF
+      REAL AS, CRAIN, CUMDEP   !, FF, CANCOV
       REAL LCRAIN, MCUMDEP, MIXPCT, MULCHALB, MULCHCOVER
       REAL RAIN, RSTL, SOILCOV, SRATE
       REAL SUMKE, SUMKEL, SUMKET, TDEP, TIL_IRR, XHLAI
@@ -128,13 +132,13 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: BD_TILLED, DL_TILLED, DS_TILLED
       REAL, DIMENSION(NL) :: SAT_TILLED, SC_TILLED
 !     REAL, DIMENSION(NL) :: RG_TILLED, RGIF_INIT
-      LOGICAL TILLED, VOLCANIC
+      LOGICAL TILLED
 
 !     Keep initial values of soil properties -- these are the "baseline"
 !     values for comparison with effects of tillage and organic C content.
       REAL CN_INIT
       REAL, DIMENSION(NL) :: BD_INIT, DLAYR_INIT, DS_INIT, DUL_INIT
-      REAL, DIMENSION(NL) :: LL_INIT, SWCN_INIT, SAT_INIT
+      REAL, DIMENSION(NL) :: LL_INIT, SWCN_INIT, SAT_INIT, SW_INIT
 
 !     Base soil values modified by soil organic matter
       REAL dBD_SOM, dDLAYR_SOM, dDUL_SOM, dLL_SOM, dSOM, dOC
@@ -186,6 +190,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     Run Initialization - Called once per simulation
 !***********************************************************************
+!     IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
 !     Skip initialization for sequenced runs:
@@ -213,6 +218,7 @@ C-----------------------------------------------------------------------
       STONES = -99.
       OC     = -99.
       SASC   = -99.
+      SAEA   = -99.
       PH     = -99.
       BD     = -99.
       LL     = -99.
@@ -316,7 +322,7 @@ C-----------------------------------------------------------------------
      &      EXTP(L), TOTP(L), ORGP(L), CACO(L), 
      &      EXTAL(L), EXTFE(L), EXTMN(L), TOTBAS(L), PTERMA(L),
      &      PTERMB(L), EXK(L), EXMG(L), EXNA(L), EXTS(L), SLEC(L),
-     &      EXCA(L), SASC(L)
+     &      EXCA(L), SASC(L), SAEA(L)
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
       ENDDO
@@ -355,13 +361,62 @@ C-----------------------------------------------------------------------
       LNUM = LNUM + 1
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
+      NMSG = 0
       DO L = 1, NLAYR
-
         READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)SW(L), NH4(L),NO3(L)
 100     FORMAT (8X, 3 (1X, F5.1))
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
+
+        IF (SW(L) .LT. LL(L)) THEN
+          IF (NMSG == 0) THEN
+            MSG(1) = "Initial soil water content < LL."
+            MSG(2) = " "
+            MSG(3) = "         FileX              SW @  Revised"
+            MSG(4) = "Layer  Init SW       LL   AirDry  Init SW"
+            NMSG = 4
+          ENDIF
+          IF (L == 1) THEN
+!           Layer 1 - check for SW < air dry
+            SWAD = 0.30 * LL(L)
+            IF (SW(L) < SWAD) THEN
+              SWnew = SWAD
+              NMSG = NMSG + 1
+              WRITE(MSG(NMSG),'(I5,4F9.3)') L, SW(L), LL(L), SWAD, SWnew
+              SW(L) = SWnew
+            ENDIF
+          ELSE
+!           Layers 2 thru NLAYR
+            SWnew = LL(L)
+            NMSG = NMSG + 1
+            WRITE(MSG(NMSG),'(I5,2F9.3,9X,F9.3)') L, SW(L), LL(L), SWnew
+            SW(L) = SWnew
+          ENDIF
+        ENDIF
       ENDDO
+      IF (NMSG > 0) THEN
+        CALL WARNING(NMSG, ERRKEY, MSG)
+      ENDIF
+
+      NMSG = 0
+      DO L = 1, NLAYR
+        IF (SW(L) > SAT(L)) THEN
+          IF (NMSG == 0) THEN
+            MSG(1) = "Initial soil water content > SAT."
+            MSG(2) = " "
+            MSG(3) = "         FileX           Revised"
+            MSG(4) = "Layer  Init SW      SAT  Init SW"
+            NMSG = 4
+          ENDIF
+          SWnew = SAT(L)
+          NMSG = NMSG + 1
+          WRITE(MSG(NMSG),'(I5,3F9.3)') L, SW(L), SAT(L), SWnew
+          SW(L) = SWnew
+        ENDIF
+      ENDDO
+      IF (NMSG > 0) THEN
+        CALL WARNING(NMSG, ERRKEY, MSG)
+      ENDIF
 
       CLOSE (LUNIO)
 
@@ -511,10 +566,22 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
             ENDIF
           ENDIF
         ENDIF
+
+        IF (SAEA(L) .LT. 0.0) THEN
+          SAEA(L) = 26.5
+          Length = LEN(TRIM(MSG(3)))
+          IF (Length < 2) THEN
+            MSG(3) = '   SAEA'
+          ELSE
+            IF (INDEX(MSG(3),'SAEA') < 1) THEN
+              MSG(3) = TRIM(MSG(3)) // ', SAEA'
+            ENDIF
+          ENDIF
+        ENDIF
       ENDDO   !End of soil layer loop.
 
 !     Warning message for non-sequenced runs or any first run
-      IF (INDEX('QFN',RNMODE) .LE. 0 .OR. 
+      IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
         IF (LEN(TRIM(MSG(3))) > 1) THEN
 !         Print message for missing or invalid data
@@ -647,98 +714,14 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       ENDIF
 
 !     Define the type of soil layer. 
-!     First check soil name for occurrence of 'ANDOSOL', 'ANDISOL', 
-!     'VOLCAN' or 'ANDEPT'.  These indicate volcanic soils.
-      VOLCANIC = .FALSE.
-      LENGTH = MAX0(LEN(TRIM(SLDESC)), LEN(TRIM(TAXON)))
-      DO I = 1, LENGTH
-        SLDESC(I:I) = UPCASE(SLDESC(I:I))
-        TAXON(I:I)  = UPCASE(TAXON(I:I))
-      ENDDO 
-
-      IF (INDEX(SLDESC // TAXON,'ANDOSOL') > 0 .OR.
-     &    INDEX(SLDESC // TAXON,'ANDISOL') > 0 .OR.
-     &    INDEX(SLDESC // TAXON,'VOLCAN' ) > 0 .OR.
-     &    INDEX(SLDESC // TAXON,'ANDEPT' ) > 0) THEN
-        VOLCANIC = .TRUE.
-      ENDIF
-
-!     Calcareous soil is with >15% (w:w) of CaCO3. 
-!     Highly weathered is CEC:CLAY < 16 cmol/kg (meq/100g) 
-!     Slightly weathered is CEC:CLAY >16 mmol/kg
-      DO L = 1, NLAYR
-!       First check for calcareous soil
-        IF (CaCO3(L) > 0.15) THEN
-          SOILLAYERTYPE(L) = 'CALCAREOUS       '
-          CYCLE
-        ELSEIF (CaCO3(L) < 0.) THEN
-          IF (pH(L) > 7 .AND. ISWITCH%ISWPHO /= 'N' .AND. MULTI < 2)THEN
-            WRITE(MSG(1),'("CaCO3 value missing for soil layer. ",I2)')L
-            MSG(2) = "Soil classification may be in error."
-            WRITE(MSG(2),'("pH =",F8.1,
-     &        " Possible calcareous soil type.")') pH(L)
-            CALL WARNING(2,ERRKEY,MSG)
-          ENDIF
-        ENDIF
-
-!       Next check for andisol
-        IF (VOLCANIC) THEN
-          SOILLAYERTYPE(L) = 'ANDISOL          '
-          CYCLE
-        ENDIF
-
-!       Last classify by slightly or higly weathered (or unknown)
-        IF (CEC(L) > 0.0 .AND. CLAY(L) > 0.0) THEN
-          IF (CEC(L)/(CLAY(L)/100.) > 16.) THEN
-            SOILLAYERTYPE(L) = 'SLIGHTLYWEATHERED'
-          ELSE
-            SOILLAYERTYPE(L) = 'HIGHLYWEATHERED  '
-          ENDIF
-          CYCLE
-        ELSE
-          SOILLAYERTYPE(L) = 'UNKNOWN          '
-          IF (ISWITCH%ISWPHO .NE. 'N' .AND. MULTI < 2) THEN
-            WRITE(MSG(1),'("Insufficient data available to classify",
-     &      " soil layer ",I2)') L
-            WRITE(MSG(2),'("Default characteristics will be used.")')
-            WRITE(MSG(3),'("  CaCO3 =",F8.2,"%")') CaCO3(L)
-            WRITE(MSG(4),'("  CEC   =",F8.2," cmol/kg")') CEC(L)
-            WRITE(MSG(5),'("  pH    =",F8.1)') pH(L)
-            WRITE(MSG(6),'("  Clay  =",F8.1,"%")') CLAY(L)
-            WRITE(MSG(7),
-     &        '("This may affect results of soil phosphorus model.")')
-            CALL INFO(7,ERRKEY,MSG)
-          ENDIF
-        ENDIF
-      ENDDO
-
-      IF (ISWITCH%ISWPHO == 'Y') THEN
-        MSG(1) = "Soil layer classifications (used for soil P model)"
-        MSG(2) = "Layer Depth Soil_Layer_Type   Backup_Data"
-        DO L = 1, NLAYR
-          SELECT CASE(SOILLAYERTYPE(L))
-          CASE('CALCAREOUS       ')
-            WRITE(MSG(L+2),'(I3,I7,2X,A17," CaCO3:",F6.2,"%")')  
-     &        L, NINT(DS(L)),SOILLAYERTYPE(L), CaCO3(L)
-          CASE('ANDISOL          ')
-            LEN1 = MIN(39,LENSTRING(SLDESC))
-            LEN2 = MIN(47-LEN1,LENSTRING(TAXON))
-            WRITE(MSG(L+2),'(I3,I7,2X,A17,1X,A,",",A)')  
-     &        L, NINT(DS(L)),SOILLAYERTYPE(L), SLDESC(1:LEN1), 
-     &        TAXON(1:LEN2)
-          CASE DEFAULT
-            WRITE(MSG(L+2),'(I3,I7,2X,A17," CaCO3:",F6.2,"%; CEC:",F6.1,
-     &        " cmol/kg; CLAY:",F6.1,"%")')  
-     &        L, NINT(DS(L)),SOILLAYERTYPE(L), CaCO3(L), CEC(L), CLAY(L)
-          END SELECT
-        ENDDO
-        CALL INFO(NLAYR+2,ERRKEY,MSG)
-      ENDIF
+      Call SoilLayerClass(ISWITCH, 
+     &    MULTI, DS, NLAYR, SLDESC, TAXON,                !Input
+     &    CaCO3, PH, CEC, Clay, SOILLAYERTYPE)            !Output 
 
 !     Warning message for Century
 !      (non-sequenced runs or any first run)
       IF (MESOM == 'P' .AND. 
-     &   (INDEX('QFN',RNMODE) .LE. 0 .OR. 
+     &   (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1))) THEN
 !       Texture data missing - write message to WARNING.OUT file.
         IF (NOTEXTURE) THEN
@@ -826,7 +809,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         IF (.NOT. VG_OK) THEN
 !         van Genuchten parameters fit from known soil properties based on RETC code
           CALL RETC_VG(TEXTURE(L), SWCN(L), LL(L), DUL(L),  !Input
-     &      SAT(L), wcr(L), Hb(L), lambda(L),               !Input
+     &      SAT(L), wcr(L), Hb(L),                          !Input
      &      alphaVG(L), mVG(L), nVG(L))                     !Output
         ENDIF
       ENDDO
@@ -888,6 +871,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       SOILPROP % SAND   = SAND   
       SOILPROP % SASC   = SASC   
+      SOILPROP % SAEA   = SAEA   
       SOILPROP % SAT    = SAT    
       SOILPROP % SILT   = SILT   
       SOILPROP % SLNO   = SLNO  
@@ -902,6 +886,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % TotOrgN= TotOrgN   
       SOILPROP % U      = U     
       SOILPROP % WR     = WR      !SHF
+      SOILPROP % WCR    = WCR     !residual water content
 
       SOILPROP % TOTP   = TOTP
       SOILPROP % ORGP   = ORGP
@@ -921,6 +906,8 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       SOILPROP % COARSE = COARSE
       
+      CALL SETPM(SOILPROP)
+
       CALL PUT(SOILPROP)
 
       IF (ISWWAT == 'N') RETURN
@@ -945,6 +932,7 @@ C  tillage and rainfall kinetic energy
       TOTN_INIT = TOTN
       TotOrgN_INIT = TotOrgN
       SWCN_INIT = SWCN
+      SW_INIT   = SW
 
       BD_SOM   = BD
       DUL_SOM  = DUL
@@ -969,7 +957,7 @@ C  tillage and rainfall kinetic energy
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
@@ -993,6 +981,8 @@ C  tillage and rainfall kinetic energy
       SWCN  = SWCN_INIT
       TOTN  = TOTN_INIT
       TotOrgN = TotOrgN_INIT
+
+      SW    = SW_INIT
 
       BD_SOM   = BD
       DUL_SOM  = DUL
@@ -1062,7 +1052,7 @@ C  tillage and rainfall kinetic energy
       CALL ALBEDO(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
-      IF (INDEX('RSM',MEINF) > 0) THEN   
+      IF (INDEX('RSM',MEINF) > 0) THEN 
 
 !       ---------------------------------------------------
 !       Update combined soil/mulch albedo
@@ -1124,9 +1114,10 @@ C  tillage and rainfall kinetic energy
 !           Limit BD to realistic values
 !           BD_SOM(L) = MIN(BD_SOM(L), 1.8)
 !           BD_SOM(L) = MAX(BD_SOM(L), 0.25)
-            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) !Upper limit for BD_SOM
-            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) !Lower limit for BD_SOM
-
+!           Upper limit for BD_SOM
+            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) 
+!           Lower limit for BD_SOM
+            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) 
             dBD_SOM = BD_SOM(L) - BD_INIT(L)
 
 !           -------------------------------------------------------
@@ -1185,7 +1176,7 @@ C  tillage and rainfall kinetic energy
 !         on soil properties -- effects are applied in integr section.
         CALL TillEvent(CONTROL, 
      &    BD, BD_BASE, CN, CN_BASE, DLAYR, DL_BASE,       !Input
-     &    DS, DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,      !Input
+     &    DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,          !Input
      &    NLAYR, TILLVALS,                                !Input
      &    BD_TILLED, CN_TILLED, DL_TILLED,                !Output
      &    DS_TILLED, SAT_TILLED, SC_TILLED)               !OutpuT
@@ -1412,7 +1403,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
 !***********************************************************************
 !***********************************************************************
@@ -1450,6 +1441,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 ! FILEIO    Filename for input file (e.g., IBSNAT35.INP) 
 ! FOUND     Indicator that good data was read from file by subroutine FIND 
 !             (0 - End-of-file encountered, 1 - NAME was found) 
+! KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g 
 ! LL(L)     Volumetric soil water content in soil layer L at lower limit
 !            (cm3 [water] / cm3 [soil])
 ! LNUM      Current line number of input file 
@@ -1564,10 +1556,10 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SOILPROP % MSALB  = MSALB
       SOILPROP % SWALB  = SWALB
 
-!!       Temporary -- print soil albedo stuff
+!!    Temporary -- print soil albedo stuff
 !     GET (CONTROL)
 !     CALL YR_DOY(CONTROL.YRDOY, YEAR, DOY)
-!        WRITE(2250,'(1X,I4,1X,I3.3,1X,I5,8F8.3)') YEAR, DOY, CONTROL.DAS, SOILPROP.SALB, 
+!     WRITE(2250,'(1X,I4,1X,I3.3,1X,I5,8F8.3)') YEAR, DOY, CONTROL.DAS, SOILPROP.SALB, 
 !     &      FF, SWALB, MULCHCOVER, MSALB, CANCOV, CMSALB
 
       RETURN
@@ -1585,6 +1577,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       USE MODULEDEFS
       USE MODULEDATA
       IMPLICIT NONE
+      EXTERNAL INFO
       TYPE (SwitchType) ISWITCH
       TYPE (SoilType) SOILPROP
 
@@ -1606,6 +1599,8 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       REAL, DIMENSION(NL) :: CACO3, EXTP, ORGP, PTERMA, PTERMB
       REAL, DIMENSION(NL) :: TOTP, TOTBAS, EXCA, EXK, EXNA
       REAL, DIMENSION(NL) :: SASC   !stable organic C
+!     SAEA = soil alternate electron acceptors (mol Ceq/m3)
+      REAL, DIMENSION(NL) :: SAEA   
       REAL, DIMENSION(NL) :: WCR, alphaVG, mVG, nVG
 
       REAL CN, SWCON
@@ -1644,6 +1639,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
       SAND    = SOILPROP % SAND   
       SASC    = SOILPROP % SASC   
+      SAEA    = SOILPROP % SAEA   
       SAT     = SOILPROP % SAT    
       SILT    = SOILPROP % SILT   
       SLNO    = SOILPROP % SLNO   
@@ -1776,10 +1772,11 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !     SUBROUTINE OPSOILDYN -- output dynamic soil properties
       SUBROUTINE OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+     &  SOILCOV, SUMKE, SWCN, TOTAW)
 
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL YR_DOY, GETLUN, HEADER
       SAVE
 
       TYPE (ControlType) CONTROL
@@ -1788,7 +1785,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       CHARACTER*11, PARAMETER :: OUTSOL = 'SoilDyn.OUT'
       INTEGER DLUN, DOY, DYNAMIC, YEAR   
       LOGICAL FEXIST, PrintDyn
-      LOGICAL Print_today, TILLED
+      LOGICAL Print_today !, TILLED
       REAL CN, CRAIN, SOILCOV, SUMKE, TOTAW
       REAL, DIMENSION(NL) :: BD, BD_SOM, DLAYR, DUL, LL, SAT, SWCN
       REAL, DIMENSION(0:NL) :: KECHGE
@@ -2116,3 +2113,232 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       RETURN      
       END SUBROUTINE SoilLayerText
 C=======================================================================
+
+!=======================================================================
+!   SoilLayerClass, Subroutine
+!-----------------------------------------------------------------------
+!     Define the type of soil layer. 
+!-----------------------------------------------------------------------
+!  REVISION HISTORY
+!  08/17/2011  
+!-----------------------------------------------------------------------
+!  Called by: SoilDYN, CellInit_2D when (DYNAMIC = RUNINIT) and 
+!             (((INDEX('QFN',RNMODE) <=0 or (RUN=1 .AND. REPNO=11)) or 2D case)
+!  Calls    : 
+!=======================================================================
+      SUBROUTINE SoilLayerClass(ISWITCH, 
+     &    MULTI, DS, NLAYR, SLDESC, TAXON,                !Input
+     &    CaCO3, PH, CEC, CLAY, SOILLAYERTYPE)            !Output 
+ 
+      USE ModuleDefs
+      IMPLICIT NONE
+      EXTERNAL UPCASE, WARNING, LENSTRING, INFO
+
+      TYPE (SwitchType) , INTENT(IN) :: ISWITCH  !Simulation options  
+      INTEGER NLAYR, L, LENGTH, LEN1, LEN2, MULTI, LenString, I
+      REAL, DIMENSION(NL) :: DS, CaCO3, PH, CEC, CLAY
+      CHARACTER*1  UPCASE
+      CHARACTER*17 SOILLAYERTYPE(NL)
+      CHARACTER*50 SLDESC, TAXON 
+      CHARACTER*7, PARAMETER :: ERRKEY = 'SOILLayerClass'  
+      CHARACTER*78 MSG(NL+4)
+      LOGICAL VOLCANIC
+        
+!     Define the type of soil layer.
+!     First check soil name for occurrence of 'ANDOSOL', 'ANDISOL', 
+!     'VOLCAN' or 'ANDEPT'.  These indicate volcanic soils.
+      VOLCANIC = .FALSE.
+      LENGTH = MAX0(LEN(TRIM(SLDESC)), LEN(TRIM(TAXON)))
+      DO I = 1, LENGTH
+        SLDESC(I:I) = UPCASE(SLDESC(I:I))
+        TAXON(I:I)  = UPCASE(TAXON(I:I))
+      ENDDO 
+
+      IF (INDEX(SLDESC // TAXON,'ANDOSOL') > 0 .OR.
+     &    INDEX(SLDESC // TAXON,'ANDISOL') > 0 .OR.
+     &    INDEX(SLDESC // TAXON,'VOLCAN' ) > 0 .OR.
+     &    INDEX(SLDESC // TAXON,'ANDEPT' ) > 0) THEN
+        VOLCANIC = .TRUE.
+      ENDIF
+
+!     Calcareous soil is with >15% (w:w) of CaCO3. 
+!     Highly weathered is CEC:CLAY < 16 cmol/kg (meq/100g) 
+!     Slightly weathered is CEC:CLAY >16 mmol/kg
+      DO L = 1, NLAYR
+!       First check for calcareous soil
+        IF (CaCO3(L) > 0.15) THEN
+          SOILLAYERTYPE(L) = 'CALCAREOUS       '
+          CYCLE
+        ELSEIF (CaCO3(L) < 0.) THEN
+          IF (pH(L) > 7 .AND. ISWITCH%ISWPHO /= 'N' .AND. MULTI < 2)THEN
+            WRITE(MSG(1),'("CaCO3 value missing for soil layer. ",I2)')L
+            MSG(2) = "Soil classification may be in error."
+            WRITE(MSG(2),'("pH =",F8.1,
+     &        " Possible calcareous soil type.")') pH(L)
+            CALL WARNING(2,ERRKEY,MSG)
+          ENDIF
+        ENDIF
+
+!       Next check for andisol
+        IF (VOLCANIC) THEN
+          SOILLAYERTYPE(L) = 'ANDISOL          '
+          CYCLE
+        ENDIF
+
+!       Last classify by slightly or higly weathered (or unknown)
+        IF (CEC(L) > 0.0 .AND. CLAY(L) > 0.0) THEN
+          IF (CEC(L)/(CLAY(L)/100.) > 16.) THEN
+            SOILLAYERTYPE(L) = 'SLIGHTLYWEATHERED'
+          ELSE
+            SOILLAYERTYPE(L) = 'HIGHLYWEATHERED  '
+          ENDIF
+          CYCLE
+        ELSE
+          SOILLAYERTYPE(L) = 'UNKNOWN          '
+          IF (ISWITCH%ISWPHO .NE. 'N' .AND. MULTI < 2) THEN
+            WRITE(MSG(1),'("Insufficient data available to classify",
+     &      " soil layer ",I2)') L
+            WRITE(MSG(2),'("Default characteristics will be used.")')
+            WRITE(MSG(3),'("  CaCO3 =",F8.2,"%")') CaCO3(L)
+            WRITE(MSG(4),'("  CEC   =",F8.2," cmol/kg")') CEC(L)
+            WRITE(MSG(5),'("  pH    =",F8.1)') pH(L)
+            WRITE(MSG(6),'("  Clay  =",F8.1,"%")') CLAY(L)
+            WRITE(MSG(7),
+     &        '("This may affect results of soil phosphorus model.")')
+            CALL INFO(7,ERRKEY,MSG)
+          ENDIF
+        ENDIF
+      ENDDO
+! CHP the following statement should be in here or SOILDYN??
+      IF (ISWITCH%ISWPHO == 'Y') THEN
+        MSG(1) = "Soil layer classifications (used for soil P model)"
+        MSG(2) = "Layer Depth Soil_Layer_Type   Backup_Data"
+        DO L = 1, NLAYR
+          SELECT CASE(SOILLAYERTYPE(L))
+          CASE('CALCAREOUS       ')
+            WRITE(MSG(L+2),'(I3,I7,2X,A17," CaCO3:",F6.2,"%")')  
+     &        L, NINT(DS(L)),SOILLAYERTYPE(L), CaCO3(L)
+          CASE('ANDISOL          ')
+            LEN1 = MIN(39,LENSTRING(SLDESC))
+            LEN2 = MIN(47-LEN1,LENSTRING(TAXON))
+            WRITE(MSG(L+2),'(I3,I7,2X,A17,1X,A,",",A)')  
+     &        L, NINT(DS(L)),SOILLAYERTYPE(L), SLDESC(1:LEN1), 
+     &        TAXON(1:LEN2)
+          CASE DEFAULT
+            WRITE(MSG(L+2),'(I3,I7,2X,A17," CaCO3:",F6.2,"%; CEC:",F6.1,
+     &        " cmol/kg; CLAY:",F6.1,"%")')  
+     &        L, NINT(DS(L)),SOILLAYERTYPE(L), CaCO3(L), CEC(L), CLAY(L)
+          END SELECT
+        ENDDO
+        CALL INFO(NLAYR+2,ERRKEY,MSG)
+      ENDIF
+
+
+      RETURN      
+      END SUBROUTINE SoilLayerClass
+C=======================================================================
+
+!==============================================================================
+!     Subroutine SETPM
+!     Initialization for cell structure and initial conditions
+      SUBROUTINE SETPM(SOILPROP)                        !input/output
+!   ---------------------------------------------------------
+      USE ModuleData
+      Implicit NONE
+      EXTERNAL ERROR, FIND, WARNING, GETLUN
+
+      Type (SoilType) SOILPROP
+
+      CHARACTER*6 SECTION
+      CHARACTER*8, PARAMETER :: ERRKEY = 'SETPM'
+      CHARACTER*125 MSG(50)
+!     CHARACTER*180 CHAR
+      INTEGER ERR, FOUND, LNUM, LUNIO
+      REAL PMWD, ROWSPC_CM
+      REAL PMALB, PMFRACTION, MSALB
+      LOGICAL PMCover
+    
+      TYPE (ControlType) CONTROL
+      CALL GET(CONTROL)
+
+!   ---------------------------------------------------------
+!     Get bed dimensions and row spacing
+      CALL GETLUN('FILEIO', LUNIO)
+      OPEN (LUNIO, FILE = CONTROL%FILEIO,STATUS = 'OLD',IOSTAT=ERR)
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,0)
+      LNUM = 0
+
+!-----------------------------------------------------------------------
+      PMALB = -99.
+
+!     Read plastic mulch albedo from FIELDS section
+      SECTION = '*FIELD'
+      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
+      IF (FOUND /= 0)  THEN
+!     For 1D model, plastic mulch width is read from "bed width" variable in FileX
+      READ(LUNIO,'(79X,F6.0,F6.0)',IOSTAT=ERR) PMALB, PMWD
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
+        IF ((ERR == 0) .AND. (PMALB .eq. 0.)) THEN
+          PMALB = -99.
+        ENDIF
+      ENDIF
+
+!     Read Planting Details Section
+      SECTION = '*PLANT'
+      CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
+      IF (FOUND == 0) CALL ERROR(SECTION, 42, CONTROL%FILEIO, LNUM)
+      READ(LUNIO,'(42X,F6.0,42X,2F6.0)',IOSTAT=ERR) ROWSPC_CM 
+      LNUM = LNUM + 1
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
+
+      CLOSE(LUNIO)
+ 
+      IF (PMALB .GT. 0) THEN
+        IF (PMWD .GT. 0 .AND. PMWD .GE. ROWSPC_CM) THEN
+          PMWD = ROWSPC_CM
+          PMCover   = .TRUE.
+          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+          MSG(3) = "Simulating flat surface entirely covered " //
+     &             "by by plastic mulch."
+          call INFO(3,errkey,msg)
+        ELSEIF (PMWD .GT. 0.) THEN 
+          PMCover   = .TRUE.
+          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+          MSG(3)= "Simulating flat surface partially covered " // 
+     &            "by plastic mulch."
+          call INFO(3,errkey,msg)
+        ELSE
+          PMCover   = .FALSE.
+          MSG(1)= "Missing mulch cover width."
+          MSG(2) = "Simulating flat surface with no plastic mulch."
+          call INFO(2,errkey,msg)
+        ENDIF
+      ELSE
+        IF (PMWD .GT. 0) THEN
+          PMCover   = .FALSE.
+          MSG(1)= "Missing albedo for plastic mulch. "
+          MSG(2)= "Simulating flat surface with no plastic mulch."
+          call INFO(2,errkey,msg)
+        ELSE
+          PMCover   = .FALSE.
+          MSG(1)= "Simulating flat surface with no plastic mulch."
+          call INFO(1,errkey,msg)
+        ENDIF
+      ENDIF
+    
+      PMFRACTION = 0.0
+      IF (PMCover) THEN
+        if (PMWD .GE. ROWSPC_CM) THEN
+          SOILPROP % SALB   = PMALB
+        ENDIF
+        PMFRACTION = PMWD / ROWSPC_CM
+        MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 -PMFRACTION)
+        SOILPROP % MSALB  = MSALB
+        SOILPROP % CMSALB = MSALB
+      ENDIF
+      CALL PUT("PM", "PMFRACTION", PMFRACTION)
+
+      RETURN      
+      END SUBROUTINE SETPM

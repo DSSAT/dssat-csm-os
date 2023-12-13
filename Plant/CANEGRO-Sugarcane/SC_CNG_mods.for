@@ -939,6 +939,7 @@ c     Instruct compiler to use CANEGRO module defns:
 c     ::::::::::::::::::::::::::::::::::::::::::::::
           USE CNG_ModuleDefs
       IMPLICIT NONE
+      EXTERNAL INFO
 
 c     The CaneCrop 'object'
 c     ::::::::::::::::::::
@@ -1263,32 +1264,35 @@ c          ENDDO
 
 
 c     Print out soil properties:
-      SUBROUTINE PrintSoil(SOILPROP)
-          USE ModuleDefs 
-          USE ModuleData
-          Type(SoilType) SOILPROP
-          TYPE (SwitchType) ISWITCH
-          INTEGER SCLUN
-
-          CALL GET(ISWITCH)
-          IF (INDEX('YDA',ISWITCH%IDETL)< 1) RETURN
-
-          CALL GETLUN('WORK.OUT',SCLUN)
+c      SUBROUTINE PrintSoil(SOILPROP)
+c          USE ModuleDefs 
+c          USE ModuleData
+c
+c          EXTERNAL GETLUN
+c
+c          Type(SoilType) SOILPROP
+c          TYPE (SwitchType) ISWITCH
+!          INTEGER SCLUN
+c
+c          CALL GET(ISWITCH)
+c          IF (INDEX('YDA',ISWITCH%IDETL)< 1) RETURN
+c
+!          CALL GETLUN('WORK.OUT',SCLUN)
 c         Print soil layer properties in CANEGRO-compatible form:
 c         DLAYR:
-          WRITE(SCLUN, '(A5, 1X, 20(F4.0, 1X))') 'DLAYR', SOILPROP%DLAYR
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.0, 1X))') 'DLAYR', SOILPROP%DLAYR
 c         LL
-          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'LL', SOILPROP%LL
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'LL', SOILPROP%LL
 c         DUL
-          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'DUL', SOILPROP%DUL
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'DUL', SOILPROP%DUL
 c         SAT
-          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'SAT', SOILPROP%SAT
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.3, 1X))') 'SAT', SOILPROP%SAT
 c         BD
-          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'BD', SOILPROP%BD
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'BD', SOILPROP%BD
 c         SWCN
-          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'SWCN', SOILPROP%SWCN
-
-      END
+!          WRITE(SCLUN, '(A5, 1X, 20(F4.2, 1X))') 'SWCN', SOILPROP%SWCN
+c
+c      END
 
 
 
@@ -1300,8 +1304,8 @@ c     ===============================================================
       SUBROUTINE FIND_INP(var, varname, Control)
           USE ModuleDefs
           IMPLICIT NONE
+          EXTERNAL ERROR, FIND, GETLUN
           SAVE
-
 
           TYPE(CONTROLTYPE) CONTROL
           REAL var
@@ -1437,6 +1441,7 @@ c     ===============================================================
           USE CNG_ModuleDefs
           USE ModuleDefs
           IMPLICIT NONE
+          EXTERNAL GET_CULTIVAR_COEFF, INFO, WARNING
 
           TYPE(ControlType) CONTROL
           INTEGER CANOPY_ROUTINE, TRUECOUNT, I
@@ -1570,6 +1575,7 @@ c     ===============================================================
           USE ModuleDefs
           USE CNG_ModuleDefs
           IMPLICIT NONE
+          EXTERNAL GET_CULTIVAR_COEFF, INFO, WARNING
           SAVE
 
 c         Parameter variables
@@ -1887,7 +1893,7 @@ c     an optimal temperature (TOpt),
 c     and a final cutoff temperature (TFinal) above which the
 c     plant stops responding to temperature
 c     DTT |___/\__
-c            °C
+c            Â°C
 c     MJ, Dec 2012
       REAL FUNCTION D_TT(TMEAN, TBase, TOpt, TFinal)
 c     ===============================================================      
@@ -1927,7 +1933,7 @@ c     temperature range end (Topt2),
 c     and a final cutoff temperature (TFinal) above which the
 c     plant stops responding to temperature
 c     DTT |___/--\__
-c            °C
+c            Â°C
 c     MJ, Dec 2012
       REAL FUNCTION D_TT4(TMEAN, TBase, TOpt1, Topt2, TFinal)
 c     ===============================================================      
@@ -1959,3 +1965,58 @@ c       Now calculate the D_TT:
 
       END
 c     =============================================================== 
+
+
+
+c     ---------------------------------------------------------------
+c                       N_MODULE composite variables
+c     ---------------------------------------------------------------
+c     A subroutine for calculating Nitrogen demand, stress, etc
+c     for the SASRI Canegro Plant Module in the DSSAT CSM.
+c     These Fortran composite variables are used for assisting in
+c     operation and clarity of the code
+c     ---------------------------------------------------------------
+c     July 2008
+c
+c     Matthew Jones,  (matthew.jones@sugar.org.za)
+c     Maurits van den Berg (maurits_vandenberg@sugar.org.za)
+c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+c     (c) South African Sugarcane Research Institute
+c     Mount Edgecombe, 4300
+c     ---------------------------------------------------------------
+
+      MODULE N_TYPES
+c         NUM_COMPONENTS: Number of plant components
+          INTEGER, PARAMETER:: NUM_COMPS = 4
+
+c         TOPS, STALKS, ROOTS, TRASH: index numbers for
+c         each of these components
+          INTEGER, PARAMETER:: TOPS  = 1, STALKS = 2, 
+     &                         ROOTS = 3, DEADLF  = 4
+
+c         Composite variable type to store
+c         N-stress response to N-concentration parameters:
+          TYPE N_PARAM_TYPE
+c             X: N-concentration (kg/kg/ha)
+              REAL X_VALUES(4)
+c             Y: N-stress factor (0-1) 
+c                [0 = maximum stress; 1 = no stress]
+              REAL Y_VALUES(4)
+
+c             MIN_CONC: minimum concentration of N for this plant
+c             component.  Define along the lines of, if N-conc
+c             was any lower, the plant would be dead.  In practice,
+c             N-conc might be lower, and might fall if DM increases,
+c             but the N translocation process cannot reduce N-conc 
+c             below this
+              REAL MIN_CONC
+              REAL CRIT_CONC
+	        REAL OPT_CONC
+			REAL INIT_CONC
+
+
+
+          END TYPE
+
+      END
+c     ===============================================================

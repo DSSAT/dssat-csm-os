@@ -1,0 +1,78 @@
+*WHEAT ECOTYPE COEFFICIENTS: WHAPS048 MODEL
+!
+! COEFF       DEFINITIONS
+! =====       ===========
+! TBASE - base temperature below which no development occurs, C
+! TOPT  - temperature at which maximum development rate occurs during vegetative stages, C
+! ROPT  - temperature at which maximum development rate occurs for reproductive stages, C (no effect, WHAPS)
+! TTOP  - temperature above which no development occurs, C
+! P2O   - Daylength below which daylength does not affect development rate, hours	(no effect, WHAPS)
+! VREQ  - Vernalization required for max.development rate (VDays)
+! GDDE  - Growing degree days per cm seed depth required for emergence, GDD/cm
+! DSGFT - GDD from End Ear Growth to Start Grain Filling period, C
+! RUE1  - Pre-anthesis radiation use efficiency, g plant dry matter/MJ PAR
+! RUE2  - Post-anthesis radiation use efficiency, g plant dry matter/MJ PAR
+! KVAL1 - Pre-anthesis canopy light extinction coefficient for daily PAR
+! KVAL2 - Post-anthesis canopy light extinction coefficient for daily PAR
+! SLAP2 - ratio of leaf area to mass at end of leaf growth (cm2/g) 
+! TC1P1 - for calculating tc1: tiller number from emerg. to term. spik.(=stem elongation)
+! TC1P2 - tc1 = tc1_p1 + tc1_p2 *cumph_nw(istage)
+! DTNP1 - for calculating dtiln: tiller number after term. spik.(=stem elongation)
+! PLGP1 - for calculating plag: potential leaf growth.  plag= plag_p1*cumph(istage)**plag_p2
+! PLGP2 - for calculating plag: potential leaf growth.  plag= plag_p1*cumph(istage)**plag_p2
+! P2AF  - threshold AD in a layer becoming effective on root growth
+! P3AF  - length of downwards root not effected under aeration deficit
+! P4AF  - days to be accumulated before aeration deficit effects root growth
+! P5AF  - power term at af1
+! P6AF  - days to be accumulated before aeration deficit effects crop growth
+! ADLAI - threshold aeration deficit (AF2) affecting LAI        (set to 1.0 for no stress run)
+! ADTIL - threshold aeration deficit (AF2) effecting tillering  (set to 1.0 for no stress run)
+! ADPHO - threshold aeration deficit (AF2) effecting photosyn.  (set to 1.0 for no stress run)
+! STEMN - 0=original C to grain translocation, >0 to 1.0 sets % of C of stem to be transloc. to grain
+! MXNUP - max N uptake per day
+! MXNCR - 0.035=20%,   .04=23% protein, max n:c ratio of grain growth
+! WFNU  - power term for water effect on N supply
+! PNUPR - potential uptake rate (mg/meter/day)
+! EXNO3 - exponent for NO3 supply factor
+! MNNO3 - minimum for NO3 supply factor
+! EXNH4 - exponent for NH4 supply factor
+! MNNH4 - minimum for NH4 supply factor
+! INGWT - initial grain weight  (mg/100 grain)
+! INGNC - % protein, initial grain N conc   (init_grain_nconc or p_init_grain_nconc from APSIM Nwheat)
+! FREAR - fraction between end ear and begin grainfilling, setting min stem weight for remobilisation
+! MNNCR - % protein, min n:c ratio of grain growth
+! GPPSS - gpp_start_stage - Grain per plant: 2=stem elong., 3=end leaf stage at which to start accumo. stem for gpp calc.
+! GPPES - gpp_end_stage - Start grainfilling stage at which to end accumulation stem for Grain per plant calc
+! MXGWT - maximum kernal weight  [100 = no effect]
+! MNRTN - min root n due to grain n initialisation [0 = off] (root_n_min or p_root_n_min from APSIM Nwheat)
+! NOMOB - fraction of accum stem weight that is not mobile [0 = original]
+! RTDP1 - sw effect, 0 = old version
+! RTDP2 - crop stress effect, 0 = old version
+! FOZ1  - ozone effect rate on photosynthesis: 0.06 = ozone tolerant, 0.10 = intermediate, 0.50 = ozone sensitive
+! FOZ2  - ozone effect initialization on photosynthesis (dependent on FOZ1): 1.015 = ozone tolerant, 1.025 = intermediate, 1.125 = ozone sensitive
+! SFOZ1 - ozone effect rate on leaf senescence: 0.08 = ozone tolerant, 0.25 = intermediate, 0.40 = ozone sensitive
+! SFOZ2 - ozone effect initialization on leaf senescence (dependent on SFOZ1): 0.80 = ozone tolerant, 0.38 = intermediate, 0.00 = ozone sensitive
+! TSEN  - Critical temperature below which leaf damage occurs (default 6°C)
+! CDAY  - cold days parameter (default 15.0)
+
+@ECO#  ECONAME.........  TBASE  TOPT  ROPT  TTOP   P20  VREQ  GDDE DSGFT  RUE1  RUE2 KVAL1 KVAL2 SLAP2 TC1P1 TC1P2 DTNP1 PLGP1 PLGP2  P2AF  P3AF  P4AF  P5AF  P6AF ADLAI ADTIL ADPHO STEMN MXNUP MXNCR  WFNU PNUPR EXNO3 MNNO3 EXNH4 MNNH4 INGWT INGNC FREAR MNNCR GPPSS GPPES MXGWT MNRTN NOMOB RTDP1 RTDP2  FOZ1 SFOZ1  TSEN  CDAY
+!                            1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    28    29    30    31    32    33    34    35    36    37    38    39    40    41    42    43    44    45    46    47    48    49    50
+IB0001 GENERIC             0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   3.8   3.8  0.63  0.63 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+!GENERIC with different SLAP2
+IB0002 GENERIC2            0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   3.8   3.8  0.63  0.63 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+!GENERIC with different SLAP2 and TC1P2
+IB0003 GENERIC3            0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   3.8   3.8  0.63  0.63 270.0  2.50  1.00 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+IB0004 GENERIC4            0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   3.8   3.8  0.63  0.63 225.0  2.50  1.00 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+!GENERIC with different SLAP2 and P5AF
+IB0005 GENERIC5            0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   3.8   3.8  0.63  0.63 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  3.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+!GENERIC with different SLAP2, P2AF, and P5AF
+IB0006 GENERIC6            0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   3.8   3.8  0.63  0.63 270.0  2.50  0.60 0.005 1400.  0.60  0.10  50.0  3.00  3.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+!GENERIC with different SLAP2 and ADLAI
+IB0007 GENERIC7            0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   3.8   3.8  0.63  0.63 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  0.70  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+!GENERIC with different SLAP2, P2AF, P5AF, and ADLAI
+IB0008 GENERIC8            0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   3.8   3.8  0.63  0.63 270.0  2.50  0.60 0.005 1400.  0.60  0.10  50.0  3.00  3.00  3.00  0.50  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+DFAULT DEFAULT             0.0  34.0  34.0  34.0  12.5   50.   6.0  170.   3.8   3.8  0.63  0.63 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08
+
+!chp added this for test of optional temperature input for cold damage
+IB0099 Cold Hardy (test)   0.0  26.0  26.0  34.0  12.5   50.   6.0  170.   3.8   3.8  0.63  0.63 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08   0.5    20
+IB0098 Cold Sens. (test)   0.0  26.0  26.0  34.0  12.5   50.   6.0  170.   3.8   3.8  0.63  0.63 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1  0.06  0.08  10.0     5

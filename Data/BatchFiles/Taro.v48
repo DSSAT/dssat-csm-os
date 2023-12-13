@@ -1,0 +1,32 @@
+$BATCH(TARO)
+!
+! Directory    : C:\DSSAT48\TARO
+! Command Line : C:\DSSAT48\DSCSM048.EXE TRARO048 B DSSBatch.v48
+! Crop         : Taro            
+! Experiment   : IBHK8901.TRX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE TRARO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\TARO\IBHK8901.TRX                                                                      1      1      0      1      0
+C:\DSSAT48\TARO\IBHK8901.TRX                                                                      2      1      0      1      0
+C:\DSSAT48\TARO\IBKA9701.TRX                                                                      1      1      0      1      0
+C:\DSSAT48\TARO\IBKA9701.TRX                                                                      2      1      0      1      0
+C:\DSSAT48\TARO\IBKA9701.TRX                                                                      3      1      0      1      0
+C:\DSSAT48\TARO\IBKA9701.TRX                                                                      4      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      1      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      2      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      3      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      4      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      5      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      6      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      7      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      8      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                      9      1      0      1      0
+C:\DSSAT48\TARO\IBKA9702.TRX                                                                     10      1      0      1      0
+C:\DSSAT48\TARO\IBWM9101.TRX                                                                      1      1      0      1      0
+C:\DSSAT48\TARO\IBWM9101.TRX                                                                      2      1      0      1      0
+C:\DSSAT48\TARO\IBWM9101.TRX                                                                      3      1      0      1      0
+C:\DSSAT48\TARO\IBWM9101.TRX                                                                      4      1      0      1      0
+C:\DSSAT48\TARO\MTIS9201.TRX                                                                      1      1      0      1      0
+C:\DSSAT48\TARO\MTIS9201.TRX                                                                      2      1      0      1      0

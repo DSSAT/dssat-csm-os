@@ -1,6 +1,6 @@
 C=======================================================================
 C  PLANTG, Subroutine, J.I. Lizaso
-C  Calculates instantaneous plant photosynthesis (µmol CO2/m2 s) of 
+C  Calculates instantaneous plant photosynthesis (Âµmol CO2/m2 s) of 
 C  shaded and sunlit leaf area on a per-leaf basis and integrates for
 C  the whole canopy
 C  Adapted from CANOPG by K.J. Boote, J.W. Jones, G. Hoogenboom
@@ -20,8 +20,9 @@ C=======================================================================
       USE ModuleDefs
 
       IMPLICIT  NONE
-      SAVE      
-      
+      EXTERNAL MZ_IX_PSPARAM, MZ_IX_PSLEAF
+      SAVE
+
       REAL     ASMAX
       REAL     ASSAT(50)  
       REAL     CVXTY(50)  
@@ -101,7 +102,7 @@ C     Compute photosynthesis for shaded leaves
      &        PARSH(I), ASSAT(I), INTSLP(I), CVXTY(I),           !Input
      &        PGSH(I))                                           !Output
 
-C     Compute instantaneous canopy gross photosynthesis (µmol CO2/m2 s).
+C     Compute instantaneous canopy gross photosynthesis (Âµmol CO2/m2 s).
 
             PGHR = PGHR + PGSL(I)*PLAISL(I) + PGSH(I)*PLAISH(I)
 	    ENDIF
@@ -213,7 +214,11 @@ C ** JIL Calculating light response curve parameters for each leaf
 	    CVTY(I) = 0.0
 	    INSL(I) = 0.0
 	    IF(GLA(I) .GT. 0.0) THEN
-	      XX = LAP(I)/YX(I)
+        IF(YX(I) .GT. 0.0) THEN
+	        XX = LAP(I)/YX(I)
+        ELSE
+          XX = 0.0
+        ENDIF
 	      IF(XX .LT. 0.99) THEN    ! Expanding leaf
 	        AYZ = 0.66
 	        AXX = 0.34
@@ -305,8 +310,8 @@ C        Curve parameters are defined at 30 C and scaled using hourly air temp
 
 C=======================================================================
 C  PSLEAF, Subroutine, J.I. Lizaso
-C  Calculates gross photosynthesis (µmol CO2/m2 s) per unit leaf area as
-C  a function of instantaneous PAR (µmol/m2 s)
+C  Calculates gross photosynthesis (Âµmol CO2/m2 s) per unit leaf area as
+C  a function of instantaneous PAR (Âµmol/m2 s)
 C  Adapted from PGLEAF by K.J.Boote, J.W.Jones, G.Hoogenboom
 C-----------------------------------------------------------------------
 C  REVISION HISTORY

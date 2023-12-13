@@ -11,7 +11,7 @@ c     [I] An indicator of anaerobic stress
 c     [I] Day of year
 c     - IDOY,
 c     [I] Latitude
-     - ALAT,
+!    - ALAT,
 c     [I] A coefficient for solar radiation ?
 c     - SCV,
 c     [I] Not sure
@@ -25,15 +25,15 @@ c     - bootli,
 c     [I] Important for choice of photos. tech.
      - coderd,
 c     [I] The height of the canopy today
-     - canhgt,
+!    - canhgt,
 c     [I] Rowspacing
-     - rowspc,
+!    - rowspc,
 c     [I] Quantity of runoff today?
      - RUNOFF, 
 c     [I] Allow lodging? (PRN file)
      - allowlodg,
 c     [I] Sunlit LAI fraction
-     & F_SL,         
+!    & F_SL,         
 c     [O] Effect of lodging on light interception
      - LODGE_LI, 
 c     [IO] The partitioning object
@@ -57,6 +57,9 @@ c     [I] yesterday's mass partitioned to sucrose
 c     [O] Average Rm fraction
      & RM_AVG, TMEAN_AVG)
 
+!     2023-01-26 chp removed unused variables from argument list: 
+!         ALAT, canhgt, rowspc, F_SL
+
 c     Use the Canegro modules:
 c     ::::::::::::::::::::::::
       USE CNG_ModuleDefs
@@ -64,6 +67,7 @@ c     Use DSSAT modules
 c     :::::::::::::::::
       USE ModuleDefs
       IMPLICIT NONE
+      EXTERNAL GET_SPECIES_COEFF, GET_CULTIVAR_COEFF, D_TT4, TABEX
       SAVE
 
 c     Declare composite variables:
@@ -123,21 +127,19 @@ c         ::::::::::
 
 c         Parameters
 c         ::::::::::
-          REAL     ALAT
-c          REAL     ALLOWLODG
+!          REAL     ALAT
           REAL     ANAERF
 c          REAL     BOOTLI
-          REAL     CANHGT
+!          REAL     CANHGT
           REAL     CODERD
           REAL     CWSI
           REAL     DWDT
           INTEGER  IDOY
           INTEGER  IW
-c          REAL     LODGE_LI
           INTEGER  MDL
           INTEGER  NEGGRO
        
-          REAL     ROWSPC
+!          REAL     ROWSPC
           REAL     RUNOFF
           REAL     SLPF   !CHP 2/14/2011
 c          REAL     SCV
@@ -185,16 +187,16 @@ c      The separation between sunlit and shaded leaves is based on a calculation
 c      Monteith and Unsworth, 2013.
 c      :::::::::::::::
 c      Sunlit leaf fraction
-       REAL, INTENT(IN) :: F_SL
+!      REAL, INTENT(IN) :: F_SL
 c      Delta canopy- and leaf-level PARCE       
-       REAL D_PRC_OC, D_PRC_OL
+!      REAL D_PRC_OC, D_PRC_OL
 c      Sunlit and shaded fraction efficiencies
 c      Calculated from: de Silva and de Costa, 2009
        REAL EPS_SL, EPS_SH       
 c      Reference PARCE for NCo376 [Species Parameter]
-       REAL PARCEMX376
+!      REAL PARCEMX376
 c      Revised MAX_PAR_CONV equivalent
-       REAL NMX_PAR_CONV
+!      REAL NMX_PAR_CONV
 c      :::::::::::::::
 
 
@@ -1002,19 +1004,21 @@ c     ::::::::::
 !> @param[in]  SAT    Saturated limit of soil moisture content (cm3/cm3)
 ! Not used for now
        SUBROUTINE SC_ANAERF(
-     &   NLAYR, RLV, SW, DUL, SAT, DLAYR, CONTROL, ! Inputs  
+     &   NLAYR, RLV, SW, DUL, SAT, DLAYR,  ! Inputs  
      &   ANAERF)
 
+!     2023-01-26 chp removed unused variables from argument list: CONTROL
+
        USE MODULEDEFS
-       INTENT(IN) :: NLAYR, RLV, SW, DUL, SAT, DLAYR, Control
+       INTENT(IN) :: NLAYR, RLV, SW, DUL, SAT, DLAYR !, Control
        INTENT(OUT) :: ANAERF
        
-       TYPE (ControlType) Control
+!      TYPE (ControlType) Control
        
        REAL ANAERF
        REAL SWC_RTD, DUL_RTD, SAT_RTD
        REAL AERSTp
-       INTEGER I
+       INTEGER I, NLAYR
        REAL SWC_RTDi, DUL_RTDi, SAT_RTDi
        REAL WTRLG, WTRLG_7
        INTEGER NROOTD

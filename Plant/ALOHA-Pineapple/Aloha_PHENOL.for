@@ -19,6 +19,7 @@ C=======================================================================
 
       USE Aloha_mod
       IMPLICIT    NONE
+      EXTERNAL TIMDIF
       SAVE
 
       INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0, TIMDIF, YRPLT
@@ -35,7 +36,6 @@ C=======================================================================
 
       INTEGER      DYNAMIC, EDATE, MDATE,HAREND
       REAL         XSTAGE
-!TEMP      REAL         GRAINN
 
       CHARACTER*1 ISWWAT, IDETO, ISWNIT
       INTEGER     ISTAGE, NLAYR, NOUTDO, ISDATE, FHDATE, PMDATE
@@ -282,8 +282,10 @@ C     6 - Physiological maturity
           STGDOY(ISTAGE) = YRDOY
   !        CALL PHASEI (ISWWAT,ISWNIT)
           ISTAGE =  9
-          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0
-          TBASE  = 12.0                 ! Tbase of 12.0 is used
+!         Cumulative growing degree days set to 0.0
+          SUMDTT =  0.0
+!         Tbase of 12.0 is used                 
+          TBASE  = 12.0
           RETURN
 
 !-----------------------------------------------------------------
@@ -294,16 +296,22 @@ C     6 - Physiological maturity
           NDAS   = NDAS + 1
 !MOVE TO GROSUB          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
           IF (NDAS .LT. P6) THEN
-             RETURN                     ! P6: NDAS from root initiation to first leaf emerged
+             ! P6: NDAS from root initiation to first leaf emerged
+             RETURN               
           ENDIF
           STGDOY(ISTAGE) = YRDOY
           EDATE = YRDOY
 
   !        CALL PHASEI (ISWWAT,ISWNIT)
           ISTAGE  = 1
-          TBASE   = TBASE1              ! Tbase1 used for calibration
-          SUMDTT  = 0.0                 ! Cumulative growing degree days set to 0.0
-          CUMDTT  = 0.0                 ! CUMDTT is also cumulative growing degree days but it is set to 0.0 only at root initiation crown weight when planting
+          ! Tbase1 used for calibration
+          TBASE   = TBASE1
+          ! Cumulative growing degree days set to 0.0
+          SUMDTT  = 0.0        
+          ! CUMDTT is also cumulative growing degree days but 
+          ! it is set to 0.0 only at root initiation crown weight 
+          ! when planting
+          CUMDTT  = 0.0
           RETURN
 
 !-----------------------------------------------------------------
@@ -314,7 +322,8 @@ C     6 - Physiological maturity
           NDAS   = NDAS + 1
           XSTAGE = SUMDTT / P1
           IF (NDAS .LT. (P1+P6)) THEN
-             RETURN                     ! P1: NDAS from leaf emerged to end stem growth
+             ! P1: NDAS from leaf emerged to end stem growth
+             RETURN                     
           ENDIF
           STGDOY(ISTAGE) = YRDOY
   !        CALL PHASEI (ISWWAT,ISWNIT)
@@ -349,8 +358,11 @@ C     6 - Physiological maturity
 !         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
           ISTAGE = 3
-          TBASE  = 10.00                ! Base temperature of 6.25 is used during forcing to sepals closed on youngest flowers
-          SUMDTT = 0.0                  ! Cumulative GDD set to 0.0
+          ! Base temperature of 6.25 is used during forcing to sepals 
+          ! closed on youngest flowers
+          TBASE  = 10.00            
+          ! Cumulative GDD set to 0.0
+          SUMDTT = 0.0                
 
 !-----------------------------------------------------------------
         CASE (3)
@@ -358,14 +370,17 @@ C     6 - Physiological maturity
           ! Stage 3 >> Forcing to sepals closed on youngest flowers
           !
           IF (SUMDTT .LT. P2) THEN
-             RETURN                       ! P2: GDD needed to complete this stage
+             ! P2: GDD needed to complete this stage
+             RETURN                      
           ENDIF
 
 !         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
           ISTAGE = 4
-          TBASE  = 10.0                 ! TBASE of 10.0 is used in this stage
-          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0
+          ! TBASE of 10.0 is used in this stage
+          TBASE  = 10.0                
+          ! Cumulative growing degree days set to 0.0 
+          SUMDTT =  0.0                
 
 !-----------------------------------------------------------------
         CASE (4)
@@ -374,14 +389,17 @@ C     6 - Physiological maturity
           !
           XSTAGE = 1.5+3.0*SUMDTT/P3      ! Used by CERES-MAIZE
           IF (SUMDTT .LT. P3) THEN
-             RETURN                       ! P3: GDD needed to complete this stage
+             ! P3: GDD needed to complete this stage
+             RETURN                       
           ENDIF
 
 !         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
           ISTAGE = 5
-          TBASE  = 4.0                  ! Tbase of 4.0 is used in the stage
-          SUMDTT = 0.0                  ! Cumulative growing degree days set to 0.0
+          ! Tbase of 4.0 is used in the stage
+          TBASE  = 4.0                  
+          ! Cumulative growing degree days set to 0.0
+          SUMDTT = 0.0                  
 
 !-----------------------------------------------------------------
         CASE (5)
@@ -390,7 +408,8 @@ C     6 - Physiological maturity
           !
           XSTAGE = 4.5+5.5*SUMDTT/(P4*.8)
           IF (SUMDTT .LT. (P4+(PLTPOP-8.0)*2.4*16.95)) THEN
-             RETURN                        ! P4: GDD needed to complete this stage
+             ! P4: GDD needed to complete this stage
+             RETURN                        
           ENDIF
           FHDATE = YRDOY                   ! Fruit harvest date
           STGDOY(ISTAGE) = YRDOY
@@ -409,10 +428,11 @@ C     6 - Physiological maturity
              RETURN
           ENDIF
 
-!MOVE TO GROSUB          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
+!MOVE TO GROSUB          HBIOM  = BIOMAS  ! Record biomass at fruit harvest date
 
           PMDATE = YRDOY                  ! physiological maturity date
           MDATE  = YRDOY                  ! Set MDATE to stop model
+          CONTROL % CropStatus = 1
           STGDOY(ISTAGE) = YRDOY
 
 !         Ready for next stage

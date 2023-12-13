@@ -14,13 +14,17 @@
 !                 to transp_eff_coeff = 0.009 * ( 1+ (0.28/350)*(WEATHER % CO2 -350))
 !  04/05/2018 KEP changed transp_eff_coeff from transp_eff_coeff=0.006 to transp_eff_coeff=0.009
 !  09/14/2018 KEP increased the base growth temperature from -4 C to 7.8 C for calculating prft.
+!  01/21/2020 JG moved some CUL parameters to ECO file
+!  07/24/2020 JG moved ozone parameters to ECO file
+!  11/01/2021 FO Added missing CONTROL type for WH_temp.for subroutines
+!  01/18/2022 TF Added statements to prevent divisions by zero
 !----------------------------------------------------------------------
 !  Called by : TF_APSIM
 !
 !  Calls  : NFACTO NUPTAK
 !----------------------------------------------------------------------
 C The statements begining with !*! are refer to APSIM source codes
-! JZW rlv_nw is output of WH_Grosub and output of WH_APSIM, input of nwheats_rtlv
+! JZW rlv_nw is output of WH_Grosub and ourput of WH_APSIM, input of nwheats_rtlv
 ! How to get SNO3(NL) initial? from soil property? I add XStage to the argument of WH_GROSUB
 ! cnc is critical N  concentration? you need to call nwheats_set_nconc (cnc, mnc)
 ! duldep and lldep should beshold be DUL * DLAYR * 10.
@@ -28,23 +32,23 @@ C The statements begining with !*! are refer to APSIM source codes
 ! Need to output the ptnup and ctnup
 
       SUBROUTINE TF_GROSUB (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,   !Input
-     &      fstage, FracRts, ISTAGE, zstage,                  !Input
+     &      ASMDOT, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,      !Input
+     &      FracRts, ISTAGE, zstage,                          !Input
      &      KG2PPM, LL, NLAYR, nh4ppm, no3ppm,                !Input
-     &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,        !Input
-     &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
+     &      nwheats_kvalue,                                   !Input
+     &      pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,            !Input
+     &      SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,       !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
-     &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
-     &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
+     &      sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,          !Input
+     &      TRWUP, VegFrac, WLIDOT,                           !Input
      &      WRIDOT, WSIDOT, XNTI, xstag_nw,                   !Input
-     &      YRDOY, YRPLT, SKi_Avail,                          !Input
+     &      YRDOY, YRPLT,                                     !Input
      &      EARS, GPP, MDATE,                                 !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, carbh, dlayr_nw, GNUP, GPSM, GRNWT, !Output
      &      GRORT, HI, HIP, LEAFNO, NSTRES,                   !Output
      &      nwheats_topsfr, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output !PODNO should be removed
+     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, pl_la, plsc,              !Output
      &      PODWT, PORMIN, PSTRES1,                           !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
@@ -53,16 +57,28 @@ C The statements begining with !*! are refer to APSIM source codes
      &      SI3, SKERWT, SLA, STMWTO, STOVER,                 !Output
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC, snup_nh4,                          !Output
-     &      snup_no3, VSTAGE, WTLF, WTNCAN, pl_nit_leaf,      !Output  pl_nit_leaf is  WTNLF,
-     &      pl_nit_grain, pl_nit_stem, cumph_nw,                       !Output they are  WTNSD, WTNST,
+     &      snup_no3, VSTAGE, WTLF, WTNCAN, pl_nit_leaf,      !Output
+     &      pl_nit_grain, pl_nit_stem, cumph_nw,              !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
-     &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)        !Output
+     &      KUptake, rwu_nw, swdef, nfact,                    !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)         !Output
+
+! 2023-01-17 chp removed unused variables
+!  CDAY, CO2, fstage, nwheats_dc_code, nwheats_vfac, P3, SUMDTT, 
+!  TSEN, vd, vd1, vd2, SKi_Avail, KSTRES, RUE, DISLA
 
       USE ModuleDefs
+      USE ModuleData
       USE TF_module
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
+      EXTERNAL ADD_REAL_ARRAY, ALIN, COUNT_OF_REAL_VALS, ERROR, FIND, 
+     &  GETLUN, GRN_PTL, HEADER, IGNORE, NWHEATS_ADD_SEN_ROOTS, 
+     &  NWHEATS_CWDMD, NWHEATS_CWPOT, NWHEATS_GNDMD, NWHEATS_GRNIT, 
+     &  NWHEATS_LEVEL, NWHEATS_NUPTK, NWHEATS_PLNIN, NWHEATS_RTDP, 
+     &  NWHEATS_RTLV, NWHEATS_SET_ADF, ntefs_set_nconc, 
+     &  ntefs_set_nfact, NWHEATS_WATUP_NEW, P_CERES, SET_SWDEF_NEW, 
+     &  SUBTRACT_REAL_ARRAY, SUM_REAL_ARRAY, WARNING, TF_NFACTO
       SAVE
 !----------------------------------------------------------------------
 !                         Variable Declaration
@@ -79,8 +95,8 @@ C The statements begining with !*! are refer to APSIM source codes
       character*6 uptake_source ! add by JZW
       character*6 g_uptake_source ! add by JZW
       CHARACTER*78 MSG(2)
-      real       temp_c
-      real       above_gnd_pcarb       ! potential increase in above ground biom
+!     real       temp_c 
+!     real     above_gnd_pcarb  ! potential increase in aboveground biom
       real uptake_water(NL)
       LOGICAL FEXIST, FIRST
 
@@ -88,7 +104,8 @@ C The statements begining with !*! are refer to APSIM source codes
       real   dc_code(7) ! Growth stage code, similar to Zadocs scale
       real   istageno(7) ! istage input for interpolation of DC code
       real   p_adf(3)    ! aeration deficit (1 = no stress)
-      real   p_afs(2)    ! crop sensitivity to aeration deficit, as a funct of phenol (1 = aeration deficit tolerant crop)
+!     p_afs = crop sensitivity to aeration deficit, as a funct of phenol (1 = aeration deficit tolerant crop)
+      real   p_afs(2)    
       real   p_fdsw(3)   ! fraction of drainable soil water in layer
       real   p_stage(2)  ! istage (growth stage): emerg.- grain fill
       real   rootfr(9)
@@ -104,6 +121,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        EO, ep_nw, ES!JZW add for Canopy T calculation
       REAL        EXNH4
       REAL        EXNO3
+      REAL        FOZ1  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -134,6 +152,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        MXFIL
       REAL        RTDP1
       REAL        RTDP2
+      REAL        SFOZ1  ! Added by JG for ozone, formerly SLFOZ1
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2 ! nwheat cultivar parameter
@@ -146,7 +165,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        WTDEP  ! Depth to water table (cm)
 
 !*!   FSR added variables from nwheats.for
-      real  rtsnr                 ! rate of senescence of root (0-1)
+      real  rtsnr                 ! rate of senescense of root (0-1)
       parameter   (rtsnr = 0.01)
       REAL  gm2kg
       PARAMETER   (gm2kg = 0.001)   ! conversion factor from NWheat.
@@ -160,9 +179,9 @@ C The statements begining with !*! are refer to APSIM source codes
       PARAMETER   (smm2sm = 0.000001) ! conversion factor from NWheat.
       real adf(NL)
       real afs
-      REAL af2_lai
+!     REAL af2_lai
       REAL af2_photo
-      real af2_tiller
+!     real af2_tiller
       real aver_tsw
       real carbh    ! WHAPS ver of NWheat carb and carbo
       REAL ce       ! conversion efficiency under no stress(g biomas/mj)
@@ -173,19 +192,20 @@ C The statements begining with !*! are refer to APSIM source codes
       real cwdemand     ! crop water demand (mm) add by JZW
 !     real gndmd                 ! (OUTPUT) grain N demand (g/plant) add by JZW
       Real tempmx, tempmn !add by JZW
-      REAL zstage, xtag_nw !add by JZW
+      REAL zstage ! , xtag_nw !add by JZW
       REAL SNO3(NL), SNH4(NL) !add by JZW
       real cnc(mxpart) !it is pcnc, add by JZW
       real ptnup
       real cumpnup
-      real snup_no3 (NL)   !It is snuptk_no3, actual plant N uptake from NO3 in each layer (kg/ha)
-      real snup_nh4 (NL)   !It is snuptk_no3 actual plant N uptake from NH4 in each layer (kg/ha)
-      real pnup (mxpart)   !It is pnuptk actual plant N uptake into each plant part (g/plant part)
+      real snup_no3 (NL)   !actual plant NO3 uptake (kg/ha)
+      real snup_nh4 (NL)   !actual plant NH4 uptake (kg/ha)
+!     pnup = actual plant N uptake to ea plant part (g/plant part)
+      real pnup (mxpart)   
       REAL cumph_nw(11) ! DSSSAT: "Cumulative phyllochron
                         ! intervals or fully expanded leaves"
       real dlayr_nw(NL) ! Soil thickness in layer L (mm) NWHEAT
-      real depth_nw  ! Depth below soil surface to the point of interest Add by JZW
-      real pesw_nw(NL)! available water in layer
+!     real depth_nw  ! Depth below soil surface to the point of interest
+!     real pesw_nw(NL)! available water in layer
       real potntl(NL)! Potential crop H2O uptake by soil layer (mm)
       real prwu (NL)! (nwheats_watup_new OUTPUT) root water uptake
                         !  (mm)
@@ -194,12 +214,12 @@ C The statements begining with !*! are refer to APSIM source codes
       real duldep(NL)   ! drained upper limit by soil layer
       REAL fr_intc_radn
       REAL frlf ! New fraction of oldest expanding leaf
-      real fstage
+!     real fstage
       REAL g_obs_gpsm  ! Observed number of grains per plant
                               ! not yet implemented.  Set to zero.
       real g_water_table    ! water table depth (soil parameter; mm)
       REAL grain_nc_ratio ! N/C ratio in grain?
-      REAL grnrat
+!     REAL grnrat        
       REAL grogrn   ! grain demand for carbohydrate (g/plant)
       REAL grolfsh  ! carbohydrate demand to grow new leaf sheath
       real grogrnmx ! max grain increase (g/plant)
@@ -230,16 +250,16 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL nflow  !*! N mobilized to grain?
       REAL nitmn  ! nitrogen minimum level              (g/part)
       REAL npot   ! potential N available for transfer  (g/part)
-      real nwheats_dc_code
+!     real nwheats_dc_code
       REAL nwheats_gplag_emerg  ! growth in leaf area
                                 ! during emerg to endjuv (mm^2)
       REAL nwheats_lfdmd ! CH2O needed for leaf growth (g/plant)
-      REAL nwheats_min_rootfr
-      REAL nwheats_rtdmd
+!     REAL nwheats_min_rootfr
+      REAL nwheats_rtdmd 
       real nwheats_rtlos
       REAL nwheats_stdmd
       REAL nwheats_topsfr ! Senthold alternative to topsfr
-      real nwheats_vfac
+!     real nwheats_vfac
       real optfr ! fraction of optimum conditions from stress (0-1)
       real part_shift     ! the shift in allocation from leaves to
       REAL plagtf !plant leaf area growth temperature function(?)
@@ -252,14 +272,14 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL pl_nit(mxpart) !plant part nitrogen (g/plant)  nwheat
       REAL plntp, pl_nit_leaf, pl_nit_grain
       REAL pl_nit_root, pl_nit_lfsheath, pl_nit_stem
- !*!  REAL pl_wt(mxpart) !Replaced with "plantwt"        nwheat !JZW should remove
+!*!  REAL pl_wt(mxpart) !Replaced with "plantwt"        nwheat !JZW should remove
       REAL plag   ! plant leaf area growth for day   (mm^2/plant)
       REAL plagms
       REAL plantwt(mxpart)!plant part weights (g/plant)  nwheat
       real plsc(20)   ! accumulates leaf area in an array
                           ! for each phylochron interval
       REAL plwtmn(mxpart) !min wt of each plant part     nwheat
-      REAL plantwtmn(mxpart)!Replaced with "plwtmn"      nwheat
+!     REAL plantwtmn(mxpart)!Replaced with "plwtmn"      nwheat
       real pntrans(mxpart) ! N translocated to grain.
       REAL ptcarb
       REAL ptfstem
@@ -311,9 +331,9 @@ C The statements begining with !*! are refer to APSIM source codes
       real tpsm
       real trans_wt (mxpart) ! (INPUT) actual change in plant part
                              ! weights due to translocation (g/plant)
-      REAL        vd
-      REAL        vd1
-      REAL        vd2
+!     REAL        vd
+!     REAL        vd1
+!     REAL        vd2
       real wfactor
       real WR(NL)    ! APSIM soil layer parameter (0-1?)
       real xstag_nw , XSTAGE!
@@ -326,14 +346,14 @@ C The statements begining with !*! are refer to APSIM source codes
       integer greenlfno ! from function nwheats_slan
       parameter (greenlfno = 4) !*! Included temporarily (FSR)
       integer  I
-      INTEGER II , TIMDIF
-      integer nwheats_level ! Function from nwheats. Returns layer
+      INTEGER II !, TIMDIF
+      integer nwheats_level ! Function from nwheats. Returns layer  
                             ! number of depth in profile dlayr_nw
       integer nwrlay        ! number of layers with root weighting
       INTEGER     part   ! plant part number
-      INTEGER     photo
+!     INTEGER     photo
       INTEGER     stgdur(20)
-      INTEGER     tiller
+!     INTEGER     tiller
       PARAMETER   (leafgr = 0.006)  ! leaf growth before emergence
       PARAMETER   (rootgr = 0.2) ! root growth before emergence
       PARAMETER   (seedrvNW = 0.012) ! seed carbohydrate reserves
@@ -356,24 +376,24 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        CANWH
       REAL        CARBO
       REAL        CARBOT
-      INTEGER     CDAY, anth_date
+      INTEGER     anth_date   !CDAY,  
       INTEGER     CMAT
-      REAL        CNSD1
-      REAL        CNSD2
-      REAL        CPSD1
-      REAL        CPSD2
+!     REAL        CNSD1       
+!     REAL        CNSD2        
+!     REAL        CPSD1       
+!     REAL        CPSD2        
       REAL        CO2X(10)
       REAL        CO2Y(10)
-      REAL        CO2
-      REAL        CSD1
-      REAL        CSD2
+!     REAL        CO2         
+!     REAL        CSD1        
+!     REAL        CSD2        
       REAL        CUMDTTEG
-      REAL        CURV
+!     REAL        CURV
       real        depmax   ! maximum depth to which roots can grow (mm)
       REAL        DLAYR(NL)
       REAL        DS(NL)
 
-      INTEGER     DOY
+!     INTEGER     DOY         
       REAL        DTT
       REAL        DUMMY
       INTEGER     DYNAMIC
@@ -391,11 +411,24 @@ C The statements begining with !*! are refer to APSIM source codes
       CHARACTER*92    FILECC
       CHARACTER*12    FILES
       CHARACTER*12    FILEE
+
+      ! JG added for ecotype file
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      INTEGER     PATHL
+      INTEGER     LUNECO
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2  ! JG added for ecotype file
+      
       INTEGER         FOUND
       REAL        FSLFW
       REAL        FSLFN
-      REAL        G2
-      REAL        G3
+!     REAL        G2    
+!     REAL        G3          
       REAL        GNP
       REAL        GNUP
       REAL        GPP
@@ -447,17 +480,17 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        NSDR
       REAL        NSINK
       REAL        NSTRES
-      INTEGER     NWSD
+!     INTEGER     NWSD 
       real        p_min_pot_hi
       REAL        P1
-      REAL        P3
-      REAL        PAR
+!     REAL        P3      
+!     REAL        PAR         
       REAL        PARSR
       CHARACTER*80    PATHCR
       CHARACTER*80    PATHSR
       CHARACTER*80    PATHER
-      REAL        PC
-      REAL        PCARB
+!     REAL        PC          
+!     REAL        PCARB
       REAL        PCNGRN
       REAL        PCNL
       REAL        PCNRT
@@ -468,11 +501,12 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        PDWI
       ! Temperature effect of grain number
       REAL        GTMAX(4), GTMIN(4), GRDUH(4),  GRDUL(4)
-      REAL        DTTPT(3), DTTF(3) !DTT factor of Temperature effect of the Grain #
-      REAL        PRFTC(4)
+!     DTT factor of Temperature effect of the Grain #
+      REAL        DTTPT(3), DTTF(3) 
+!     REAL        PRFTC(4)
       REAL        SENST(4),  SENSF(4), ALIN, TCSlope, TCInt ! TRLFG(4)
       REAL        SLPF
-      REAL        PGRORT
+!     REAL        PGRORT      
       REAL        PLA
       REAL        PLAE
 !*!   REAL        PLAG
@@ -487,14 +521,14 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        RANC
       REAL        RANCE
       REAL        RCNP
-      REAL        RGFILL
-      REAL        RGFIL(4) !not used
+!     REAL        RGFILL 
+!     REAL        RGFIL(4) !not used    
       REAL        RLV(NL) !JZW should remove
       real        rlv_nw(NL)
       REAL        RLWR
       REAL        RMNC
       REAL        RNLAB
-      REAL        RNOUT
+!     REAL        RNOUT
       REAL        ROOTN
       REAL        RSGR
       REAL        RSGRT
@@ -503,7 +537,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        RTWT
       REAL        RTWTE
       REAL        RTWTO
-      REAL        RUE
+!     REAL        RUE
       REAL        RWUEP1
       REAL        ROWSPC
       REAL        RWUMX
@@ -518,7 +552,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        SEEDRV
       REAL        SEEDRVE
       REAL        SENLA   !, SENLAY
-      REAL        SFAC
+!     REAL        SFAC        
       REAL        SHF(NL)
       REAL        SHELPC
       REAL        SI1(6)
@@ -531,25 +565,26 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        SLFC
       REAL        SRAD
       INTEGER     STGDOY(20)
-      REAL        Stg2CLS
+!     REAL        Stg2CLS 
       REAL        STMWTO
       REAL        STMWT
       REAL        STMWTE
       REAL        STOVER
       REAL        STOVN
       REAL        STOVWT
-      REAL        SUMDTT
+!     REAL        SUMDTT      
       REAL        SUMEX
       REAL        SUMP
       REAL        SUMRL
-      REAL        FracRts(NL)   ! FracRts  Fraction of soil volume in direct contact with roots
+!     FracRts  Fraction of soil volume in direct contact with roots
+      REAL        FracRts(NL)   
       REAL        SW(NL)
       REAL        SWEXF
       REAL        SWFAC
       REAL        SWIDOT
       REAL        SWMAX
       REAL        SWMIN
-      REAL        TABEX
+!     REAL        TABEX       
       REAL        TANC
       REAL        TANCE
       REAL        TAVGD
@@ -565,11 +600,11 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        TOTNUP
       REAL        TRNU
       REAL        TRWUP
-      REAL        TSEN
+!     REAL        TSEN
       REAL        TSS(NL)
       REAL        TURFAC
-      REAL        UNH4(NL)
-      REAL        UNO3(NL)
+!     REAL        UNH4(NL)    
+!     REAL        UNO3(NL)    
       REAL        VMNC
       REAL        VANC
       CHARACTER*6     VARNO
@@ -581,9 +616,9 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        WTLF
       REAL        WTNCAN
       REAL        WTNLF
-      REAL        WTNSD
+!     REAL        WTNSD       
       REAL        WTNST
-      REAL        WTNUP
+!     REAL        WTNUP       
       REAL        WTNVEG
       REAL        XANC
       REAL        XLAI
@@ -595,10 +630,10 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        XNTI
       REAL        YIELD
       REAL        YIELDB
-      INTEGER     YR, YRDOY
+      INTEGER     YRDOY  !YR,   
 
 !     Added to send messages to WARNING.OUT
-      CHARACTER*78 MESSAGE(10)
+!     CHARACTER*78 MESSAGE(10)
 
 !     CHP added for P model 9/5/2004
       CHARACTER*1 ISWPHO
@@ -615,8 +650,8 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL CTCNP1, CTCNP2
 
 !     K model
-      REAL, DIMENSION(NL) :: KUptake, SKi_Avail
-      REAL KSTRES
+      REAL, DIMENSION(NL) :: KUptake  !, SKi_Avail
+!     REAL KSTRES
 
 !     CHP 3/31/2006
 !     Proportion of lignin in STOVER and Roots
@@ -645,7 +680,7 @@ C The statements begining with !*! are refer to APSIM source codes
       tempmx = weather % TMAX
       tempmn = weather % TMIN
       dlayr_nw = DLAYR * 10.0
-      duldep   = DUL  ! JZW here shold be DUL * DLAYR * 10. !!!!!!!!!!!!!!!!!!!
+      duldep   = DUL  ! JZW here shold be DUL * DLAYR * 10. !
       lldep    = LL
       satdep   = SAT
       WR       = SHF
@@ -695,7 +730,8 @@ C The statements begining with !*! are refer to APSIM source codes
             CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
             READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC ; LNUM = LNUM + 1
- 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+C60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+ 60         FORMAT(24X,F6.0,12X,F6.0,7X,F5.2)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 !     -----------------------------------------------------------------
@@ -708,11 +744,7 @@ C The statements begining with !*! are refer to APSIM source codes
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR)
      &          VARNO,VRNAME,ECONO,VSEN,PPSEN,P1,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1
 !------------------------------------------------------------------
 ! PNUPR = 0.45; APSIM pot_nuprate =  .45e-6 , g/mm root/day
 ! MNNCR=1.23: APSIM min_grain_nc_ratio = 0.0123
@@ -727,16 +759,60 @@ C The statements begining with !*! are refer to APSIM source codes
 ! p_max_grain_nc_ratio = 0.04
 !-----------------------------------------------------------------
 !*!1800        FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)
-1800        FORMAT (A6,1X,A16,1X,A6,1X,43F6.0)
+1800        FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 
       VSEN = VSEN * 0.0054545 + 0.0003
       PPSEN = PPSEN *0.002
-      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
 
         CLOSE(LUNIO)
 
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,SFOZ1
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0),2(1X,F5.2))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+
+      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
+          CLOSE (LUNECO)
+        
 !         ************************************************************
 !         ************************************************************
 !
@@ -785,7 +861,8 @@ C The statements begining with !*! are refer to APSIM source codes
 
         ! Temperatures effect for senescence of leaf
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) SENST(1), ! SENST in *.spe
+!       SENST in *.spe
+        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) SENST(1), 
      &     SENST(2), SENST(3), SENST(4)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:5) .ne. "SENST") then
@@ -797,7 +874,8 @@ C The statements begining with !*! are refer to APSIM source codes
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) SENSF(1), ! SENSF in  *.spe
+!       SENSF in  *.spe
+        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) SENSF(1), 
      &     SENSF(2), SENSF(3), SENSF(4)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:5) .ne. "SENSF") then
@@ -810,7 +888,7 @@ C The statements begining with !*! are refer to APSIM source codes
 
         ! Temperature effect for grain number
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) GTMAX(1), ! GTMAX in *.spe
+        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) GTMAX(1), 
      &     GTMAX(2), GTMAX(3), GTMAX(4)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:5) .ne. "GTMAX") then
@@ -822,7 +900,7 @@ C The statements begining with !*! are refer to APSIM source codes
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) GRDUH(1), ! GRDUH in  *.spe
+        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) GRDUH(1), 
      &     GRDUH(2), GRDUH(3), GRDUH(4)
          READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:5) .ne. "GRDUH") then
@@ -834,7 +912,7 @@ C The statements begining with !*! are refer to APSIM source codes
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) GTMIN(1), ! GTMIN in *.spe
+        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) GTMIN(1), 
      &     GTMIN(2), GTMIN(3), GTMIN(4)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:5) .ne. "GTMIN") then
@@ -846,7 +924,7 @@ C The statements begining with !*! are refer to APSIM source codes
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) GRDUL(1), ! GRDUL in  *.spe
+        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) GRDUL(1), 
      &     GRDUL(2), GRDUL(3), GRDUL(4)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:5) .ne. "GRDUL") then
@@ -858,7 +936,7 @@ C The statements begining with !*! are refer to APSIM source codes
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X, 1X, F5.0,2(1X,F5.0))',IOSTAT=ERR) DTTPT(1), ! DTTPT in *.spe
+        READ(C80,'(7X, 1X, F5.0,2(1X,F5.0))',IOSTAT=ERR) DTTPT(1), 
      &     DTTPT(2), DTTPT(3)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:5) .ne. "DTTPT") then
@@ -870,7 +948,7 @@ C The statements begining with !*! are refer to APSIM source codes
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X, 3(1X,F5.0))',IOSTAT=ERR) DTTF(1), ! DTTF in  *.spe
+        READ(C80,'(7X, 3(1X,F5.0))',IOSTAT=ERR) DTTF(1), 
      &     DTTF(2), DTTF(3)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:4) .ne. "DTTF") then
@@ -882,7 +960,7 @@ C The statements begining with !*! are refer to APSIM source codes
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) VPD(1), ! VPD in *.spe
+        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) VPD(1), 
      &     VPD(2), VPD(3), VPD(4)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:3) .ne. "VPD") then
@@ -894,7 +972,7 @@ C The statements begining with !*! are refer to APSIM source codes
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X, 4(1X,F5.0))',IOSTAT=ERR) FVPD(1), ! VPDF in  *.spe
+        READ(C80,'(7X, 4(1X,F5.0))',IOSTAT=ERR) FVPD(1), 
      &     FVPD(2), FVPD(3), FVPD(4)
         READ(C80,'(2X, A5)')temp_Char
         if (temp_Char(1:4) .ne. "VPDF") then
@@ -955,22 +1033,22 @@ C The statements begining with !*! are refer to APSIM source codes
 
       ENDIF
       REWIND(LUNCRP)
-      !---------------------------------------------------------------
-      !         Find and Read APSIM CO2 section ! this section will not be used. It is replaced by model equation
-      !---------------------------------------------------------------
+!      ---------------------------------------------------------------
+!               Find and Read APSIM CO2 section ! this section will not be used. It is replaced by model equation 
+!      ---------------------------------------------------------------
       SECTION = '*APCO2'
       CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(SECTION, 42, FILECC, LNUM)
       ELSE
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(11X,I1)',IOSTAT=ERR)TEFAC !from section *APCO2 in *.spe
+        READ(C80,'(11X,I1)',IOSTAT=ERR)TEFAC 
 !        READ(C80,'(9X,10(4x,F3.0))',IOSTAT=ERR) XCO2(1), XCO2(2),
 !     &  XCO2(3), XCO2(4), XCO2(5), XCO2(6), XCO2(7), XCO2(8)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(11X,I1)',IOSTAT=ERR) RUEFAC !from section *APCO2 in *.spe
+        READ(C80,'(11X,I1)',IOSTAT=ERR) RUEFAC 
 !        READ(C80,'(9X,10(1X,F6.5))',IOSTAT=ERR) tec(1), tec(2),
 !     &   tec(3), tec(4), tec(5), tec(6), tec(7), tec(8)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
@@ -1478,10 +1556,10 @@ C The statements begining with !*! are refer to APSIM source codes
      &   '    xstag_nw')
       ENDIF
       CALL nwheats_rtdp(CONTROL, SOILPROP,
-     &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,      !Input
-     &  lldep, nrlayr, p3af, rtdep_nw,                            !Input
-     &  RTDEP, RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep, wr,    !Input
-     &  rtdnew)   ! JZW rtdep_nw is output
+     &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,  !Input
+     &  lldep, nrlayr, p3af, rtdep_nw,                        !Input
+     &  RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep,           !Input
+     &  rtdnew)                                               !Output
       ! JZW add the following two lines
       rwu_nw = 0.
       sen_la = 0.
@@ -1532,11 +1610,11 @@ C The statements begining with !*! are refer to APSIM source codes
 !        transp_eff_coeff = 0.006
         transp_eff_coeff = 0.009
       endif
-      ! transp_eff_coeff should be used in daily rate instead of run ini,
-      ! because the CO2 is not available in the runini or seasini
-      ! JZW replace rue_factor/transp_eff_coeff by model equation from David on Mar. 22, 2014
-      ! rue_factor  = TABEX (rue_fac, XCO2, WEATHER % CO2 ,8)
-      !Tdepend is Temperature dependent CO2 compensation point
+!       transp_eff_coeff should be used in daily rate instaed of run ini, 
+!       because the CO2 is not availabe in the runini or seasini
+!       JZW replace rue_factor/transp_eff_coeff by model equation from David on Mar. 22, 2014
+!       rue_factor  = TABEX (rue_fac, XCO2, WEATHER % CO2 ,8) 
+!      Tdepend is Temperature dependent CO2 compensation point
       if (RUEFAC .eq. 1) then
         Tdepend = (163 - (Tmax+Tmin)/2)/(5.0 - 0.1* (Tmax+Tmin)/2)
         rue_factor = (WEATHER % CO2 - Tdepend) *(350 + 2* Tdepend)/
@@ -1553,10 +1631,10 @@ C The statements begining with !*! are refer to APSIM source codes
       endif
 
       CALL nwheats_rtdp(CONTROL, SOILPROP,
-     &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,      !Input
-     &  lldep, nrlayr, p3af, rtdep_nw,                            !Input, rtdepnw is output also
-     &  RTDEP, RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep, wr,    !Input
-     &  rtdnew)                                                  !Output
+     &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,  !Input
+     &  lldep, nrlayr, p3af, rtdep_nw,                        !Input
+     &  RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep,           !Input
+     &  rtdnew)                                               !Output
         nlayr = count_of_real_vals (dlayr_nw, NL)
          nwrlay = count_of_real_vals (wr, nlayr)
          depmax = sum_real_array (dlayr_nw, nwrlay)
@@ -1769,9 +1847,10 @@ C The statements begining with !*! are refer to APSIM source codes
           SATFAC = AMIN1(SATFAC,1.0)
 
 C         Calculate soil water table depth
-          CALL WTDEPT(
-     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
-     &      WTDEP)                                        !Output
+!          CALL WTDEPT(
+!     &      NLAYR, DLAYR, DS, DUL, SAT, SW,               !Input
+!     &      WTDEP)                                        !Output
+          CALL GET('WATER','WTDEP',WTDEP)
 
           g_water_table = WTDEP *10    ! for APSIM Nwheat model
 
@@ -1789,17 +1868,22 @@ C         Calculate soil water table depth
 
          if (g_obs_gpsm.ne.0) then
 !*!         grpp = g_obs_gpsm/plants ! I assume plants =/= 0
-            grpp = g_obs_gpsm/PLTPOP ! NWheat plants = DSSAT PLTPOP
+        !Added IF statement to void divisions by zero (TF - 01/21/2022)
+            IF(PLTPOP .GT. 0.0) THEN
+               grpp = g_obs_gpsm/PLTPOP ! NWheat plants = DSSAT PLTPOP
+            ELSE 
+               grpp = 0 
             ! g_obs_gpsm  is Observed number of grains per plant
-            !g_obs_gpsm is currently set to 0, and therefore this if statement is irrelevant
+            ENDIF
+!            g_obs_gpsm is currently set to 0, and therefore this if statement is irrelevant
          else
 cnh Senthold
 !**!        grpp = pl_wt(stem) * grnmx
-           ! grpp = gpp_stem_wt * GRNO
-           ! GRNO is reported in the CUL file in terms of 100 grains/g stem. Multiplying GRNO times 100 in the code resulted in
-           ! massive spikes in grain yield and unit grain weights so small that they were rounded to 0 g/grain. Therefore GRNO is kept
-           ! as is. The output for the final grain number is in terms of 0.01 grains/m2 and needs to be multiplied by 100 to get the actual
-           ! grains/m2. The output for the unit grain weight is reported in mg/100 grains and needs to be divided by 100 to get the actual mg/grain.
+!            grpp = gpp_stem_wt * GRNO
+!            GRNO is reported in the CUL file in terms of 100 grains/g stem. Multiplying GRNO times 100 in the code resulted in
+!            massive spikes in grain yield and unit grain weights so small that they were rounded to 0 g/grain. Therefore GRNO is kept
+!            as is. The output for the final grain number is in terms of 0.01 grains/m2 and needs to be multiplied by 100 to get the actual
+!            grains/m2. The output for the unit grain weight is reported in mg/100 grains and needs to be divided by 100 to get the actual mg/grain.
             GAD2 = gpp_stem_wt * GRNO
             grpp = gpp_stem_wt * GRNO* gtmaxfac * gtminfac
             gpp = grpp
@@ -1819,17 +1903,17 @@ cnh Senthold
           ! initialise plant weight
           ! initialisations - set up seed carbohydrate or leaf, stem
           ! and root
-      call nwheats_set_adf (CONTROL,
-     &    dlayr_nw, duldep, g_water_table, istage, nrlayr,       !Input
+      call nwheats_set_adf (control, 
+     &    dlayr_nw, duldep, g_water_table, nrlayr,       !Input 
      &    p3af, p4af, p5af, p6af, rtdep_nw,                      !Input
      &    satdep, swdep, xstag_nw, p_fdsw, p_adf, p_afs, p_stage, !Input
      &    nlayr_nw, adf, afs)                                    !Output
        ! JZW: Add nlayr_nw declaration and here
       CALL nwheats_rtdp(CONTROL, SOILPROP,
-     &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,      !Input
-     &  lldep, nrlayr, p3af, rtdep_nw,                            !Input
-     &  RTDEP, RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep, wr,    !Input
-     &  rtdnew)                                                  !Output
+     &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,  !Input
+     &  lldep, nrlayr, p3af, rtdep_nw,                        !Input
+     &  RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep,           !Input
+     &  rtdnew)                                               !Output
 
           ! get actual root growth and constrain it by the maximum
           ! depth that roots are allowed to grow.
@@ -1854,7 +1938,7 @@ cnh Senthold
       call nwheats_rtlv (CONTROL, SOILPROP, sno3, snh4,
      &  dlayr_nw, istage, nrlayr, p2af, p3af, PLTPOP,             !Input
      &  nwheats_level, rtdep_nw, stgdur, wr,                      !Input
-     &  duldep, lldep, swdep, nlayr_nw, rlv_nw, gro_wt, adf,      !Input
+     &  duldep, lldep, swdep, rlv_nw, gro_wt, adf,               !Input
      &  rlvnew)                                                  !Output
 
 !**!  call add_real_array (rlvnew, rlv, nrlayr)
@@ -1903,7 +1987,8 @@ c Senthold
 c Senthold
 c         pl_wt(grain) = 0.0035 * gpp
 !*!      pl_wt(grain) = u_bound(p_init_grain_wt*gpp, plantwtmn(stem))
-         INGWTgrams = INGWT/100*0.001 !KEP 02/11/18: convert CUL parameter from mg/(100 grains) to g/grain
+!        KEP 02/11/18: convert CUL parameter from mg/(100 grains) to g/grain
+         INGWTgrams = INGWT/100*0.001 
 !         INGWTgrams = INGWT*0.001 ! convert CUL parameter from mg to g
          plantwt(grain_part) = MIN(INGWTgrams * gpp, plwtmn(stem_part))
 
@@ -1980,7 +2065,7 @@ c senthold
 !*!      (from APSIM NWheat subroutine nwheats_plwin and nwheats_crppr)
 *======================================================================
       !*! subroutine nwheats_plnin (plantn) initial plant N
-      CALL nwheats_plnin (istage, stgdur, plantwt,               !input
+      CALL nwheats_plnin (CONTROL, istage, stgdur, plantwt,      !input
      &    mnc, INGNC, MNRTN,                                     !input
      &    pl_nit )                                       !input & output
 *======================================================================
@@ -2014,32 +2099,32 @@ cjh temp fix to avoid any further development during maturity stage
 !*! End WHAPS leaf emergence calculation
 !*!       (from APSIM NWheat subroutine nwheats_lfemr)
 !----------------------------------------------------------------------
-          ! update the fully expanded leafs and constrain it to the maximum
-          ! number that leafs are allowed to grow.
+!           update the fully expanded leafs and constrain it to the maximum
+!           number that leafs are allowed to grow.
        cumph_nw(istage) = cumph_nw(istage) + ti
 
 !======================================================================
       IF (ISWNIT .NE. 'N') THEN
          !*! Call APSIM subroutine nwheats_set_nfact
          CALL  ntefs_set_nfact (xstag_nw, istage,              !Input
-     &         cnc, mnc, pl_nit, plantwt, zstage,                !Input
-     &         nfact)                                           !Output
+     &         cnc, mnc, pl_nit, plantwt,                      !Input
+     &         nfact)                                          !Output
       ELSE
           nfact = 1.0
       ENDIF
 !======================================================================
 
-      ! ADD BY jzw IN NOV 28:
-      ! RWUEP1 where use it???????????????????
-      !sw_demand is input of set_swdef_new from respond2get_real_var
-      ! demand is output of nwheats_cwdmd
+!       ADD BY jzw IN NOV 28:
+!       RWUEP1 where use it???????????????????
+!      sw_demand is input of set_swdef_new from respond2get_real_var
+!       demand is output of nwheats_cwdmd
 
-      ! cwdemand shoulld be output of nwheats_watup_new
-      ! set_swdef_new should not have input cwdemand. nwheats.for does not have cwdemand here
+!       cwdemand shoulld be output of nwheats_watup_new
+!       set_swdef_new should not have input cwdemand. nwheats.for does not have cwdemand here
 
-       ! we should move call nwheats_cwdmd out of call nwheats_watup_new. Because nwheats_cwdmd needs a lot arguments
-      !pl_la is calculated in line 2494 also
-      ! potntl should be remover from input of nwheats_watup_new,  if keep call  nwheats_cwpot inside this subroutine
+!        we should move call nwheats_cwdmd out of call nwheats_watup_new. Because nwheats_cwdmd needs a lot arguments
+!      pl_la is calculated in line 2494 also
+!       potntl should be remover from input of nwheats_watup_new,  if keep call  nwheats_cwpot inside this subroutine
 
 !       call nwheats_cwdmd (CONTROL,uptake_source,
 !     &    carbh, nwheats_topsfr, PLTPOP,                   !Input
@@ -2058,20 +2143,20 @@ cjh temp fix to avoid any further development during maturity stage
 !    !&  cumph_nw, cwdemand, istage,  nrlayr, pl_la, PLTPOP, sen_la,
 !    ! Need above by call nwheats_cwpot
 !     &    prwu, rwu_nw) !JZW: pesw_nw should be output. Actually, it is intermediate data, do not need to output
-       !!!!! If cwdemand and rwu_nw is from yesterday, we need to initialize when Dynamic is run initial
-       ! moved the following to Rate section, by JZWU on Feb 25, 2014
-       !if (istage.eq.germ) then
-         !rwu_nw = 0.0 move to season initial
-       !  cwdemand= 0.0
-         ! if uptake_source is from calc, then cwdemand is not needed in set_swdef_nw
-       !endif
+!       !!!! If cwdemand and rwu_nw is from yesterday, we need to initialize when Dynamic is run initial
+!        moved the following to Rate section, by JZWU on Feb 25, 2014
+!       if (istage.eq.germ) then
+!       rwu_nw = 0.0 move to season initial
+!         cwdemand= 0.0
+!        if uptake_source is from calc, then cwdemand is not needed in set_swdef_nw
+!       endif
        uptake_source = 'calc'
 
 !======================================================================
       IF (ISWWAT .NE. 'N') THEN ! Call APSIM subroutine set_swdef_new
 ! jzw: Input here cwdemand should be sw_demand
 ! jzw: APSIM use SW_demand (cwdwmand) which is reading from respond2get_real_var
-          CALL set_swdef_new (CONTROL, swdep, uptake_source,
+          CALL set_swdef_new (swdep, uptake_source,
      &         cwdemand, istage, rtdep_nw, rwu_nw, SOILPROP,
      &         swdef)                                           !Output
       ELSE
@@ -2086,14 +2171,14 @@ cjh temp fix to avoid any further development during maturity stage
 !*!       (from APSIM NWheat subroutine nwheats_ptcarb)
 !----------------------------------------------------------------------
 !*! Notes from NWheat code:
-          ! potential dry matter production at optimum temperature, soil
-          ! water, and N content is calculated.
-          ! this is g of dry biomass is produced per mj of intercepted
-          ! photosynthetically active radiation under nonstressed conditions.
+!           potential dry matter production at optimum temperature, soil
+!           water, and N content is calculated.
+!           this is g of dry biomass is produced per mj of intercepted
+!           photosynthetically active radiation under nonstressed conditions.
 
-          ! note that assumptions are made as to the relative flows of carbo to
-          ! below ground biomass.  To keep above ground biomass correct and allo
-          ! assumed roots in biomass accumulation.
+!           note that assumptions are made as to the relative flows of carbo to
+!           below ground biomass.  To keep above ground biomass correct and allo
+!           assumed roots in biomass accumulation.
 
 cbak    testing:
 !*!     ce_tops = 3.8 * divide (solrad**0.63, solrad, 0.0)
@@ -2101,12 +2186,13 @@ cbak    testing:
 !*!     ce_tops = u_bound(ce_tops,2.0)
 
 !       ce_tops = 3.8 * (SRAD**0.63 / SRAD)
-        ce_tops = 4.5 * (SRAD**0.63 / SRAD) !KEP 01/31/18 Increased RUE by 18.5%, the difference between the CERES-Wheat and the CERES-Sorghum RUE
+!       KEP 01/31/18 Increased RUE by 18.5%, the difference between the CERES-Wheat and the CERES-Sorghum RUE
+        ce_tops = 4.5 * (SRAD**0.63 / SRAD) 
         ce_tops = MIN(ce_tops,2.0)
 
 !*!   if (nwheats_min_rootfr() .gt. 0.0) then
       if (rootfr(istage) .gt. 0.0) then
-         ! there is a carbon demand by roots - increase ce to allow for this
+!          there is a carbon demand by roots - increase ce to allow for this
 !*!      rootfr = nwheats_min_rootfr()  FSR removed function nwheats_min_rootfr()
 !*!      ce_roots = ce_tops * divide (rootfr, 1. - rootfr, 0.0)
          ce_roots = ce_tops * (rootfr(istage) / (1. - rootfr(istage)))
@@ -2139,8 +2225,9 @@ cbak    testing:
 
 cbak set the min temp for phs at -3oc
 
+!*!     Increase the base growth temperature from -4 to 3.8 C for tef
 !       if (TMIN .gt. -4.0) then  !*! TMIN replaces tempmn
-       if (TMIN .gt. 3.8) then  !*! Increase the base growth temperature from -4 to 3.8 C for tef
+       if (TMIN .gt. 3.8) then  
         ! photosynthetic rate decreases away from the optimum (18)
 
 cbak optimum of 18oc for photosynthesis
@@ -2155,10 +2242,10 @@ cbak optimum of 18oc for photosynthesis
          prft = 0.0
       endif
 
-          ! --------------- actual -----------------
+!           --------------- actual -----------------
 
-          ! now get the actual dry matter (carbohydrate) production on the
-          ! day by discounting by temperature, water or N stress factors.
+!           now get the actual dry matter (carbohydrate) production on the
+!           day by discounting by temperature, water or N stress factors.
 cnh senthold
 cnh      optfr = min (swdef(photo), nfact(1)) * prft
       optfr = min (swdef(photo_nw), nfact(1), ADPHO) * prft
@@ -2187,26 +2274,27 @@ cnh      optfr = min (swdef(photo), nfact(1)) * prft
  !     if (istage.eq.germ) then
  !        !nwheats_topsfr=? initialize here
  !      endif
-      call nwheats_cwdmd (CONTROL, uptake_source,
+      call nwheats_cwdmd (uptake_source,
      &    carbh, nwheats_topsfr, PLTPOP,                   !Input
        ! nwheats_topsfr is available in line 2100
      &    pcarbo, TMAX, TMIN, transp_eff_coeff,            !Input
      &    cwdemand, vpd_transp)
 
-       call nwheats_cwpot (CONTROL, SOILPROP, rlv_nw, swdep,
-     &    cumph_nw, cwdemand, istage,                        !Input
+       call nwheats_cwpot (SOILPROP, rlv_nw, swdep,
+     &    cumph_nw, istage,                                       !Input
      &    nrlayr, pl_la, PLTPOP, sen_la,                          !Input
-           ! sen_la is unknown in line 1646 ; pl_la is calculated in line 2494 also
+!            sen_la is unknown in line 1646 ; pl_la is calculated in line 2494 also
      &    potntl)
 
-      Call nwheats_watup_new (CONTROL, SOILPROP, swdep, uptake_water,
-     &    cwdemand, istage, nrlayr, potntl, uptake_source, !Input
-    !&    rlv_nw, above_gnd_pcarb, carbh, nwheats_topsfr, PLTPOP, pcarbo, temp_c, TMAX, TMIN,
-    ! need above by call nwheats_cwdmd
-    !&  cumph_nw, cwdemand, istage,  nrlayr, pl_la, PLTPOP, sen_la,
-    ! Need above by call nwheats_cwpot
-     &    prwu, rwu_nw)                                           !Output
-       rwu_nw = prwu    ! prwu(mm) is from calculation, rwu_nw is from input
+      Call nwheats_watup_new (SOILPROP, swdep, uptake_water,
+     &    cwdemand, nrlayr, potntl, uptake_source, !Input
+!    &    rlv_nw, above_gnd_pcarb, carbh, nwheats_topsfr, PLTPOP, pcarbo, temp_c, TMAX, TMIN,
+!     need above by call nwheats_cwdmd
+!    &  cumph_nw, cwdemand, istage,  nrlayr, pl_la, PLTPOP, sen_la,
+!     Need above by call nwheats_cwpot
+     &    prwu, rwu_nw)                                    !Output
+       rwu_nw = prwu    
+! prwu(mm) is from calculation, rwu_nw is from input
 !----------------------------------------------------------------------
 !*! Begin WHAPS calculation of plant biomass production and partition
 !*!             into various plant parts
@@ -2278,10 +2366,10 @@ cSenthold-1
 !----------------------------------------------------------------------
 !*!      call nwheats_gnptl (navl_est) ! nwheats_gnptl renamed GrN_Ptl
 
-      call GrN_Ptl (CONTROL, ISWITCH,
-     &   mnc, nfact, nitmn, npot, optfr, part, pl_la, pl_nit,     !INPUT
-     &   plantwt, sen_la,                                         !INPUT
-     &   navl_est)                                                !OUTPUT
+      call GrN_Ptl (CONTROL, 
+     &   mnc, nfact, nitmn, npot, optfr, part, pl_la, pl_nit,    !INPUT
+     &   plantwt, sen_la,                                        !INPUT
+     &   navl_est)                                               !OUTPUT
 
       tot_navl_est  =  sum_real_array (navl_est, mxpart)
  !*!  create DO loop:
@@ -2299,7 +2387,7 @@ CSenthold-2
 !*!  &  p_min_grain_nc_ratio)  ! assuming p_min_grain_nc_ratio = min_grain_nc_ratio
      &                        MNNCR/100)   !*! MNNCR is a .CUL parameter
          IF (grain_nc_ratio .gt. 1.e-6) THEN
-           pl_dmd(grain_part) = nflow / grain_nc_ratio      ! no nflow yet
+           pl_dmd(grain_part) = nflow / grain_nc_ratio ! no nflow yet
          ENDIF
 
       else
@@ -2366,7 +2454,7 @@ cnh      plagms = 1400.*(cumph(istage)**.6)*ti*optfr
          grolf = 0.0
 
       else
-             ! we have no leaf growth in these stages.  Plag should be 0.
+!              we have no leaf growth in these stages.  Plag should be 0.
          grolf = 0.0
 
       endif
@@ -2398,14 +2486,14 @@ cbak : set leaf sheath demand to 0.8 of leaf blade demand
          grolfsh = 0.8*plag/sla_new
 
       else if (istage.eq.endjuv) then  ! This IF-THEN clause has no
-                                       ! purpose: grolfsh = 0 in any case
+                                      ! purpose: grolfsh = 0 in any case
 
-         ! leaf sheaths will take what ever is left over
-         ! (Does this make sense? Both ELSE clauses have same result.) FSR
+!          leaf sheaths will take what ever is left over
+!          (Does this make sense? Both ELSE clauses have same result.) FSR
          grolfsh = 0.0
 
       else
-             ! we have no leaf growth in these stages.  Plag should be 0.
+!              we have no leaf growth in these stages.  Plag should be 0.
          grolfsh = 0.0
 
       endif
@@ -2503,9 +2591,9 @@ cnh note that endjuv is only 3 phints long and so most c will still go into leaf
           ! this is different for each stage
       part_shift = 0.0
       if (istage.eq.emergence) then
-          ! roots get carbon left after leaf demand but root demand must
-          ! be met. Excess carbon partitioned to roots is "respired".
-          ! This is not elegant, but other systems result in unstable root syste
+!           roots get carbon left after leaf demand but root demand must
+!           be met. Excess carbon partitioned to roots is "respired".
+!           This is not elegant, but other systems result in unstable root syste
 
           gro_wt(root_part) =
      &           carbh - pl_dmd(leaf_part) - pl_dmd(lfsheath_part)
@@ -2513,8 +2601,8 @@ cnh note that endjuv is only 3 phints long and so most c will still go into leaf
           if (gro_wt(root_part) .le. 0) then
                continue
           endif
-          ! JZW: the following if statement is non-sense
-          ! gro_wt(root_part) = MAX(gro_wt(root_part), pl_dmd(root_part)) should replace if statement
+!           JZW: the following if statement is non-sense
+!           gro_wt(root_part) = MAX(gro_wt(root_part), pl_dmd(root_part)) should replace if statement
           if (gro_wt(root_part) .gt. pl_dmd(root_part)) then
             part_shift = gro_wt(root_part) - pl_dmd(root_part)
             gro_wt(root_part) = pl_dmd(root_part)+ part_shift
@@ -2576,12 +2664,12 @@ cbak  consider using it to reflect on sla under stress (ie. lower sla, thicker l
     ! :           0.01 * min (1., max(0., ((Sumstgdtt(endear)-20)/60))))
      :           0.01 * min (1., max(0.,
      :             ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)))))
-      !          ! II= MAX( 0, TIMDIF(anth_date, YRDOY))
-      !           gtmaxfac= gtmaxfac * (1+ ALIN (GTMAX, GRDUH, 4, TMAX)*
-      !:           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) )
-      !           ! 0.01 is percentage
-      !           gtminfac= gtminfac * (1+ ALIN (GTMIN, GRDUL, 4, TMIN)*
-      !:           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) )
+!                ! II= MAX( 0, TIMDIF(anth_date, YRDOY))
+!                 gtmaxfac= gtmaxfac * (1+ ALIN (GTMAX, GRDUH, 4, TMAX)*
+!      :           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) )
+!                 ! 0.01 is percentage
+!                 gtminfac= gtminfac * (1+ ALIN (GTMIN, GRDUL, 4, TMIN)*
+!      :           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) )
           endif
 cbak
           gro_wt(leaf_part) = 0.0
@@ -2601,9 +2689,9 @@ cbak
              ! we have no change in carbohydrate allocation
 
        endif
-       ! JZW add the following: Dr. Senthold siad that APSIM has restriction:
-       ! root growing weight rate can not large than top growing rate
-       ! This may affect more for low Nitrogen case
+!        JZW add the following: Dr. Senthold siad that APSIM has restriction:
+!        root growing weight rate can not large than top growing rate
+!        This may affect more for low Nitrogen case
        temp = gro_wt(lfsheath_part)+gro_wt(leaf_part)+
      :    gro_wt(stem_part) + gro_wt(grain_part)
        if  (gro_wt(root_part) .gt.  temp) then
@@ -2613,8 +2701,8 @@ cbak
 
       totprt = sum_real_array (gro_wt, mxpart)
 
-            ! the carbohydrate in the seed is available for uptake into the
-            ! rest of the plant.
+!             the carbohydrate in the seed is available for uptake into the
+!             rest of the plant.
 
 !*! The following subroutine probably sends a message when fstage
 !*! is "out of bounds".  I have not reproduced that here.  FSR
@@ -2673,8 +2761,8 @@ cnh do we need to try and satisfy leaf sheath demand as well???????????
           ! now check that we have mass balance
 
       mass_balance = sum_real_array (trans_wt, mxpart)
-            ! the carbohydrate in the seed is available for uptake into the
-            ! rest of the plant.
+!             the carbohydrate in the seed is available for uptake into the
+!             rest of the plant.
 
 !*! The following subroutine probably sends a message when fstage
 !*! is "out of bounds" (more than 0.001 from 0.0).
@@ -2824,10 +2912,11 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 
             ! find actual grain uptake by translocation
       !JZW should not call grain before dtage grnfil ??
+      !JG linked MXNCR in nwheats_grnit
 *     ==================================================================
 
-      call nwheats_grnit (CONTROL, ISWITCH,                       !Input
-     &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
+      call nwheats_grnit (CONTROL,                        !Input
+     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        pntrans)                                           !Output
@@ -2844,12 +2933,12 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
             ! find actual plant uptake
       g_uptake_source = 'calc'
 *     ==================================================================
-      CALL nwheats_nuptk (SOILPROP,                               !Input
+      CALL nwheats_nuptk (CONTROL, SOILPROP,                      !Input
      &      carbh, cnc, EXNH4/100, EXNO3/100,                     !Input
-     &      g_uptake_source, gro_wt, MNNH4, MNNO3,                !Input
+     &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR/1000000, rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw, MXNUP,                                !Input, ! MXNUP added, 02/03/2017, btk
+     &      WFNU, xstag_nw,                                       !Input
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
        ptnup = sum_real_array (pnup, mxpart)
@@ -2864,8 +2953,8 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
      :                  + sum_real_array (snup_nh4, nrlayr)
        if (cumpnup . GT. 0.000000001) then
         continue
-        ! on day 1989753, snup_no3(1)=0.0335, snup_no3(2) = 0.0713, snop_nh4(1)=0.00058, snop_nh4(2) =0.021
-        !cumpnup = 0.127kg/ha
+!         on day 1989753, snup_no3(1)=0.0335, snup_no3(2) = 0.0713, snop_nh4(1)=0.00058, snop_nh4(2) =0.021
+!        cumpnup = 0.127kg/ha
        endif
       call add_real_array (pnup, pl_nit, mxpart)
 !----------------------------------------------------------------------
@@ -2899,7 +2988,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
       ! JZW add the following for output
       plntp = pl_nit(leaf_part)+pl_nit(lfsheath_part)+pl_nit(stem_part)
      :   + pl_nit(grain_part)
-      ! WTNCAN      Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha
+!       WTNCAN      Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha
       WTNCAN = plntp * PLTPOP
       pl_nit_leaf = pl_nit(leaf_part) * PLTPOP !pl_nit_leaf is  WTNLF
       !   g               g            plant
@@ -3004,7 +3093,7 @@ cbak  plsc(mxleaf) accumulates leaf area in an array for each phylochron
          if (cumph_nw(istage).gt.greenlfno+1) then
             lai = (pl_la - sen_la) * PLTPOP * smm2sm ! PLTPOP for plants
             XHLAI  = LAI  ! XHLAI: Healthy leaf area index used to
-                          ! compute transpiration in water balance routine
+!                         compute transpiration in water balance routine
             if (sen_la/pl_la .gt. 0.4 .and. lai .lt. 6.0) then
                slan = 0.0
             else
@@ -3014,8 +3103,8 @@ cbak  plsc(mxleaf) accumulates leaf area in an array for each phylochron
      &                                                              ,20)
                slan = plsc(dyingleaf)*ti
 
-                ! do a bit of housekeeping - really this is not the place to do
-               ! this!!!!!!
+!                do a bit of housekeeping - really this is not the place to do
+!                this!!!!!!
 cbak  adjust the green leaf ara of the leaf that is dying
 
                plsc(dyingleaf) = plsc(dyingleaf) - slan
@@ -3061,16 +3150,18 @@ cbak  adjust the green leaf ara of the leaf that is dying
       slfn = MAX (slfn, 1.0)
       slfn = MIN (slfn, 2.0)
       vpdf = ALIN (VPD, FVPD, 4, vpd_transp)
-      IF ((ISWWAT .EQ. 'Y') .and. (MEEVP .NE. 'Z')) THEN   !MEEVP is EVAPO in X file
-          ! high temperature factor JZW changed on Mar. 24, 2014, add Tcnpy on May 14, 2014
+      IF ((ISWWAT .EQ. 'Y') .and. (MEEVP .NE. 'Z')) THEN   
+!           high temperature factor JZW changed on Mar. 24, 2014, add Tcnpy on May 14, 2014
          ep_nw = sum_real_array (rwu_nw, nrlayr) ! Actual transpiration
-         ! ES is actual soil evaporation
-         !Tcnpy = (-12. * ( ES + ep_nw)/EO + 6.) +Tmax
+!          ES is actual soil evaporation
+!         Tcnpy = (-12. * ( ES + ep_nw)/EO + 6.) +Tmax
          Tcnpy = vpdf*(TCSlope * ( ES + ep_nw)/EO + TCInt) +Tmax
       else
-         Tcnpy = vpdf * (TCSlope + TCInt) + Tmax  ! because EO is not availabe (there is no CALL PET in SPAM.for)
+!        because EO is not availabe (there is no CALL PET in SPAM.for)
+         Tcnpy = vpdf * (TCSlope + TCInt) + Tmax  
       endif
-         weather % TGROAV = Tcnpy !Average daily canopy temperature (°C)
+!        Average daily canopy temperature (Â°C)
+         weather % TGROAV = Tcnpy 
          slft = ALIN (SENST, SENSF, 4, Tcnpy)
        Weather % VPD_TRANSP = vpd_transp
        Weather % VPDF = vpdf
@@ -3125,7 +3216,7 @@ cjh quick fix for maturity stage
 !----------------------------------------------------------------------
 !*! End  WHAPS code from APSIM NWheat subroutine nwheats_crppr
 !======================================================================
-      call nwheats_add_sen_roots (CONTROL,
+      call nwheats_add_sen_roots (
      &  dlayr_nw, rootsen, rtdep_nw,                             !Input
      &  deepest_layer, root_array)                              !Output
 !-----------------------------------------------------------------------
@@ -3176,7 +3267,7 @@ cjh quick fix for maturity stage
           PODWT  = plantwt(lfsheath_part) * PLTPOP !sheath weight, g/m2
           STMWTO = plantwt(stem_part) * PLTPOP    !stem weight, g/m2
           SDWT   = plantwt(grain_part) * PLTPOP    !grain weight, g/m2
-          YIELD = SDWT * 10  ! added to pass yield to Overview & Summary.out
+          YIELD = SDWT * 10  ! to pass yield to Overview & Summary.out
           tpsm = tiln * PLTPOP
           SHELPC = tpsm               ! Tiller number (no/m2)
           TOPWT  = WTLF+PODWT+STMWTO+SDWT
@@ -3446,7 +3537,7 @@ cjh quick fix for maturity stage
 ! TANC        Nitrogen content in above ground biomass, g N/g dry weight
 ! TAVGD       Average temperature during daylight hours, C
 ! TCNP        Critical nitrogen concentration in tops, g N/g dry weight
-! TEMPM       Mean daily temperature (°C)
+! TEMPM       Mean daily temperature (Â°C)
 ! TFAC        Temperature stress factor for grain nitrogen concentration
 ! TI          Fraction of a phyllochron interval which occurred as a fraction of today's daily thermal time
 ! TLNO        Total number of leaves that the plant produces

@@ -33,9 +33,6 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.orig
 *.aps
-resource.h
-Resources/
-Version047.rc
 *.wjf
 *.INH
 *.INP
@@ -51,8 +48,6 @@ Version047.rc
 *.ico
 .DS_Store
 Data/.DS_Store
-Resources/RC*
-*makefile*
 build/
 nbproject/
 .metadata/
@@ -64,8 +59,11 @@ readme*
 CMakeFiles/
 CMakeCache.txt
 Data/DSSATPRO.L47
+Data/DSSATPRO.L48
 Utilities/run_dssat
 Utilities/CSMVersion.for
 Plant/ORYZA
-.vscode
-.vs
+.vscode/*
+.vs/*
+.history/*
+Resources/R*

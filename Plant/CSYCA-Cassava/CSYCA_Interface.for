@@ -10,13 +10,19 @@ C  08/09/2012 GH  Updated for cassava
 C  02/03/2014 MF/PM SNOW variable deleted.
 C  20/01/2015 MF Added module YCA_Albedo_Check_m to allow checks in WORK.OUT.
 C  20/01/2015 MF Updated some variables to be consistent with CSCAS.
+!  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
+!                 unused variables, shorten lines. 
 C=======================================================================
       SUBROUTINE CSYCA_Interface (CONTROL, ISWITCH,       !Input
-     &    EOP, ES, NH4, NO3,SOILPROP, SRFTEMP,            !Input
+     &    EOP, NH4, NO3,SOILPROP, SRFTEMP,                !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
-     &    RWUPM, RLV, RWUMX, SENESCE, STGDOY,            !Output       ! MF 20JA15 REPLACED PORMIN with RWUMP
+!         MF 20JA15 REPLACED PORMIN with RWUMP
+     &    RWUPM, RLV, RWUMX, SENESCE, STGDOY,             !Output       
      &    UNH4, UNO3, XLAI)                               !Output
+
+!     2023-01-26 chp removed unused variables in argument list:
+!       ES
 
       USE ModuleDefs
       USE ModuleData
@@ -24,6 +30,7 @@ C=======================================================================
       USE YCA_First_Trans_m
 
       IMPLICIT NONE
+      EXTERNAL CSYCA, YR_DOY
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
@@ -35,14 +42,17 @@ C=======================================================================
       INTEGER MDATE, NLAYR
       INTEGER MULTI, FROP, SN, YEAR, DOY
       INTEGER STGYEARDOY(0:19), STGDOY(0:19), YRPLT
-      INTEGER YEARPLTCSM                                                ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS                                        
+!     INTEGER YEARPLTCSM    ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS
 
-      REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
+! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS 
+! MF 26OC14 REPLACED PORMIN WITH RWUMP
+! MF 26OC14 REPLACED GSTAGE WITH BRSTAGE
+      REAL CLOUDS, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2  !ES, 
       REAL KCAN, KEP, DEPMAX, DAYLT, DEWDUR
-      REAL NSTRES, XLAI, NFP, MSALB, ALBEDOS                            ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS 
-      REAL DAYL, RWUPM, RAIN, RWUMX, SRFTEMP, TWILEN                    ! MF 26OC14 REPLACED PORMIN WITH RWUMP
+      REAL NSTRES, XLAI, NFP, MSALB, ALBEDOS                            
+      REAL DAYL, RWUPM, RAIN, RWUMX, SRFTEMP, TWILEN                    
       REAL CANHT, EO, WINDSP, PARIP, PARIPA   
-      REAL BRSTAGE, CAID                                                ! MF 26OC14 REPLACED GSTAGE WITH BRSTAGE
+      REAL BRSTAGE, LAI         
       REAL TAIRHR(TS), TDEW, SLPF
 !      REAL LAIL, LAILA, TWILEN
 
@@ -104,7 +114,7 @@ C=======================================================================
       YRHAR = YREND
       WUPT  = TRWUP
 
-      
+      DAYLT = DAYL
       DEWDUR = 12.
       NH4Left = NH4
       NO3Left = NO3
@@ -119,17 +129,6 @@ C=======================================================================
 
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
-!     Print warning if Century soil N routine used
-      IF (DYNAMIC  ==  RUNINIT .AND. ISWITCH % MESOM  ==  'P') THEN
-        WRITE(MESSAGE(1),100) 
-        WRITE(MESSAGE(2),110)  
-        WRITE(MESSAGE(3),120) 
-        CALL WARNING(3, "CSYCA ", MESSAGE)
-      ENDIF
-
-  100 FORMAT('You have selected the Century soil nutrient model. ')
-  110 FORMAT('The CSYCA (cassava) routines have not been ')
-  120 FORMAT('calibrated for use with this model.' )
 
       IF (DYNAMIC  ==  RUNINIT .OR. DYNAMIC  ==  SEASINIT) THEN
         TN = 0
@@ -174,7 +173,6 @@ C=======================================================================
         CALL GET('ORGC','TOMINSOM3',TOMINSOM3)!Miner from SOM3 (kg/ha)
         CALL GET('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
         CALL GET('SPAM','EP',  EP)
-        DAYLT = DAYL
       ELSEIF (DYNAMIC == INTEGR) THEN
         CALL GET('SPAM','ET',  ET)
       ENDIF
@@ -202,25 +200,31 @@ C-----------------------------------------------------------------------
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather 
      & DRAIN, RUNOFF, IRRAMT,                              !Water   
-     & DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,           !Weather 
+     & DAYL, DEWDUR, CLOUDS, ST, EO,                       !Weather 
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states 
      & SW, NO3LEFT, NH4LEFT, FERNIT,                       !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                             !N components
      & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components
-     & YRPLT, HARVFRAC,                                    !Pl.date         !LPM 06MAR2016 Use YRPLT instead of YEARPLTCSM 
-     & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,         !Resources       ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS
-     & CAID, KCAN, KEP,                                    !States       
-     & RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,         !States          ! MF 26OC14 REPLACED PORMIN WITH RWUPM
+     & YRPLT, HARVFRAC,                                    !Pl.date         
+!     LPM 06MAR2016 Use YRPLT instead of YEARPLTCSM 
+     & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,         !Resources       
+!     MF 26OC14 REPLACED ALBEDO WITH ALBEDOS
+     & LAI, KCAN, KEP,                                    !States           
+!     LPM 14AUG20 use LAI instead of CAID
+     & RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,         !States          
+!     MF 26OC14 REPLACED PORMIN WITH RWUPM
      & UNO3, UNH4, UH2O,                                   !Uptake       
      & SENCALG, SENNALG, SENLALG,                          !Senescence   
      & RESCALG, RESNALG, RESLGALG,                         !Residues     
      & STGYEARDOY, BRSTAGE,                                !Stage dates  
-     & DYNAMIC) !, WEATHER)                                !Control         ! MF 10JA15 WEATHER IS NEEDED FOR HOURLY EVALUATIONS
-      
-      ! MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of
-      !    CSCAS_Interface of which there are only 31. The others can be passed in a Module (20JA15 still to do).
+     & WEATHER     , SOILPROP    , CONTROL     , 
+     & DYNAMIC) !, WEATHER)                                !Control         
+!     MF 10JA15 WEATHER IS NEEDED FOR HOURLY EVALUATIONS
 
-      XLAI   = CAID
+!       MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of
+!          CSCAS_Interface of which there are only 31. The others can be passed in a Module (20JA15 still to do).
+
+      XLAI   = LAI
       NSTRES = NFP
 
       STGDOY = STGYEARDOY
