@@ -168,7 +168,7 @@ C=======================================================================
       REAL MIXPCT, TDEP
 
 !     2D integration
-      REAL RESID3, RESID4, SNO3_TEMP, SNH4_TEMP
+      REAL RESID3, RESID4, RESID5, SNO3_TEMP, SNH4_TEMP, UREA_TEMP
       REAL, DIMENSION(NL) :: DLTSNO3_SAVE, DLTSNH4_SAVE, DLTUREA_SAVE
       REAL, DIMENSION(NL) :: DLTSNO3_DIFF, DLTSNH4_DIFF, DLTUREA_DIFF
       REAL, DIMENSION(MaxRows,MaxCols) ::DLTSNO3_DIFF_2D, 
@@ -611,8 +611,9 @@ C=======================================================================
       TNITRIFY = 0.0
       TNOXD    = 0.0  !denitrification
       TLeachD  = 0.0  !leaching
-      NTILEDR = 0.0   !N loss to tile !HJ added
+      NTILEDR  = 0.0  !N loss to tile !HJ added
       NITRIF   = 0.0
+      NITRIF_2D   = 0.0
       TN2OnitrifD = 0.0  !N2O from nitrification
       TN2OdenitD  = 0.0  !N2O from denitrification
       N2Onitrif = 0.0
@@ -835,7 +836,7 @@ C=======================================================================
 
 !*************************************************************************************************
 !*************************************************************************************************
-!     FROM HERE START 1D PROCESSES? NEED TO CONVERT DLTSNH3_2D AND DLTSNH4_2D TO 1D???
+!     FROM HERE START 1D PROCESSES. NEED TO CONVERT DLTSNH3_2D AND DLTSNH4_2D TO 1D
 !*************************************************************************************************
 !*************************************************************************************************
 
@@ -1032,76 +1033,17 @@ C=======================================================================
 
 !*************************************************************************************************
 !*************************************************************************************************
+!    NFLUX is done in 1D for 1D simulations and 2D for 2D simulations. That is, the DLTUREA and
+!     DLTSNO3 are updated for 1D simulations. The DLTUREA_2D and DLTSNO3_2D are updated for the 2D 
+!     simulation. 
 
-!     END OF 1D GHG PROCESSES, NOW BACK TO 2D.
-!     FIRST NEED TO CONVERT DLT-N VALUES BACK TO 2D
+!     At this point, the 1D processes above have changed the 1D DLT variables. 1D NFLUX
+!     will vary those 1D DLT variables further. 
 
-!     Look at only the differences in DLTSNO3 and DLTSNH4 due to GHG processes
-      DLTSNO3_DIFF = DLTSNO3 - DLTSNO3_SAVE
-      DLTSNH4_DIFF = DLTSNH4 - DLTSNH4_SAVE
-      DLTUREA_DIFF = DLTUREA - DLTUREA_SAVE
-
-!     Convert DLTSNO3 and DLTSNH4 differences  to 2D arrays
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3_DIFF, 0.0,        !Input
-     & DLTSNO3_DIFF_2D)                                       !Output
-
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0,        !Input
-     & DLTSNH4_DIFF_2D)                                       !Output
-
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0,        !Input
-     & DLTUREA_DIFF_2D)                                       !Output
-
-      RESID3 = 0.0
-      RESID4 = 0.0
-
-!     Add these differences into the 2D DLT arrays, cell by cell, correcting for negative values
-      DO L = 1, NRowsTot
-        DO J = 1, NColsTot
-!         Add in NO3 differences due to GHG processes
-          DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + DLTSNO3_DIFF_2D(L,J)
-!         Add in residual from previous cell (if any)
-          DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + RESID3
-!         pseudo-integration
-          SNO3_TEMP = SNO3_2D(L,J) + DLTSNO3_2D(L,J)
-          IF (SNO3_TEMP .LT. 0.0) THEN
-!           Maximum DLTSNO3 = SNO3 at the beginning of the day
-            DLTSNO3_2D(L,J) = - SNO3_2D(L,J)
-!           RESID3 = Negative SNO3 value passed on to next cell
-            RESID3 = SNO3_TEMP
-          ELSE
-            RESID3 = 0.0
-          ENDIF
-
-!         Add in NH4 differences due to GHG processes
-          DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + DLTSNH4_DIFF_2D(L,J)
-!         Add in residual from previous cell (if any)
-          DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + RESID4
-!         pseudo-integration
-          SNH4_TEMP = SNH4_2D(L,J) + DLTSNH4_2D(L,J)
-          IF (SNH4_TEMP .LT. 0.0) THEN
-!           Maximum DLTSNH4 = SNH4 at the beginning of the day
-            DLTSNH4_2D(L,J) = - SNH4_2D(L,J)
-!           RESID4 = Negative NH4 value passed on to next cell
-            RESID4 = SNH4_TEMP
-          ELSE
-            RESID4 = 0.0
-          ENDIF
-        ENDDO
-      ENDDO
-
-!     TEMP CHP This shouldn't happen.
-      IF (RESID3 > 0.0 .OR. RESID4 > 0.0) THEN
-        PRINT *, "HELP ME!"
-      ENDIF
-
+!     If it is a 2D simulation, then the 1D processes above have not yet been incorporated into the
+!     2D flux variable. Calculate the 2D NFLUX first, then add in the 1D process effects to the 
+!     2D DLT variables.
 !*************************************************************************************************
-!*************************************************************************************************
-!     Back to 2D for NFLUX
-!*************************************************************************************************
-
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.
 !     ------------------------------------------------------------------
@@ -1115,10 +1057,6 @@ C=======================================================================
      &      ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,     !Input
      &      UREA, NSOURCE, SW, TDFC, TDLNO,                 !Input
      &      DLTUREA, CLeach, TLeachD, CNTILEDR, NTILEDR)    !Output !HJ
-
-          CALL Layer2Cell_2D(                              
-     &      CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0,        !Input
-     &      DLTUREA_2D)                                       !Output
         ENDIF
 
         NSOURCE = 2   !NO3.
@@ -1126,12 +1064,6 @@ C=======================================================================
      &    ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &    SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
      &    DLTSNO3, CLeach, TLeachD, CNTILEDR, NTILEDR)      !Output !HJ
-
-!       Since this is a 1D simulation, expansion to 2D array will not 
-!       cause any loss of info
-        CALL Layer2Cell_2D(                              
-     &    CELLS % Struc, NLAYR, DLAYR, DLTSNO3, 0.0,        !Input
-     &    DLTSNO3_2D)                                       !Output
 
       ELSE !2D simulation
         IF (IUON) THEN
@@ -1165,6 +1097,91 @@ C=======================================================================
 
       CALL PUT('NITR','TLCHD',TLeachD) 
 
+!*************************************************************************************************
+!*************************************************************************************************
+
+!     END OF 1D GHG PROCESSES, NOW BACK TO 2D.
+!     FIRST NEED TO CONVERT DLT-N VALUES BACK TO 2D
+
+!     Look at only the differences in DLTSNO3 and DLTSNH4 due to GHG processes
+      DLTSNO3_DIFF = DLTSNO3 - DLTSNO3_SAVE
+      DLTSNH4_DIFF = DLTSNH4 - DLTSNH4_SAVE
+      DLTUREA_DIFF = DLTUREA - DLTUREA_SAVE
+
+!     Convert DLTSNO3 and DLTSNH4 differences  to 2D arrays
+      CALL Layer2Cell_2D(                              
+     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3_DIFF, 0.0,        !Input
+     & DLTSNO3_DIFF_2D)                                       !Output
+
+      CALL Layer2Cell_2D(                              
+     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0,        !Input
+     & DLTSNH4_DIFF_2D)                                       !Output
+
+      CALL Layer2Cell_2D(                              
+     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0,        !Input
+     & DLTUREA_DIFF_2D)                                       !Output
+
+      RESID3 = 0.0
+      RESID4 = 0.0
+      RESID5 = 0.0
+
+!     Add these differences into the 2D DLT arrays, cell by cell, correcting for negative values
+      DO L = 1, NRowsTot
+        DO J = 1, NColsTot
+!         Add in NO3 differences due to GHG and NFLUX processes
+          DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + DLTSNO3_DIFF_2D(L,J)
+!         Add in residual from previous cell (if any)
+          DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + RESID3
+!         pseudo-integration
+          SNO3_TEMP = SNO3_2D(L,J) + DLTSNO3_2D(L,J)
+          IF (SNO3_TEMP .LT. 0.0) THEN
+!           Maximum DLTSNO3 = SNO3 at the beginning of the day
+            DLTSNO3_2D(L,J) = - SNO3_2D(L,J)
+!           RESID3 = Negative SNO3 value passed on to next cell
+            RESID3 = SNO3_TEMP
+          ELSE
+            RESID3 = 0.0
+          ENDIF
+
+!         Add in NH4 differences due to GHG and NFLUX processes
+          DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + DLTSNH4_DIFF_2D(L,J)
+!         Add in residual from previous cell (if any)
+          DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + RESID4
+!         pseudo-integration
+          SNH4_TEMP = SNH4_2D(L,J) + DLTSNH4_2D(L,J)
+          IF (SNH4_TEMP .LT. 0.0) THEN
+!           Maximum DLTSNH4 = SNH4 at the beginning of the day
+            DLTSNH4_2D(L,J) = - SNH4_2D(L,J)
+!           RESID4 = Negative NH4 value passed on to next cell
+            RESID4 = SNH4_TEMP
+          ELSE
+            RESID4 = 0.0
+          ENDIF
+
+!         Add in urea differences due to GHG and NFLUX processes
+          DLTUREA_2D(L,J) = DLTUREA_2D(L,J) + DLTUREA_DIFF_2D(L,J)
+!         Add in residual from previous cell (if any)
+          DLTUREA_2D(L,J) = DLTUREA_2D(L,J) + RESID5
+!         pseudo-integration
+          UREA_TEMP = UREA_2D(L,J) + DLTUREA_2D(L,J)
+          IF (UREA_TEMP .LT. 0.0) THEN
+!           Maximum DLTSNH4 = SNH4 at the beginning of the day
+            DLTUREA_2D(L,J) = - UREA_2D(L,J)
+!           RESID5 = Negative urea value passed on to next cell
+            RESID5 = UREA_TEMP
+          ELSE
+            RESID5 = 0.0
+          ENDIF
+        ENDDO
+      ENDDO
+
+!     TEMP CHP This shouldn't happen.
+      IF (RESID3 > 0.0 .OR. RESID4 > 0.0 .OR. RESID5 > 0.0) THEN
+        PRINT *, "HELP ME!"
+      ENDIF
+
+!*************************************************************************************************
+!*************************************************************************************************
 !     TEMP CHP
 !      call SUM_N(Cell_Type, DLTSNO3_2D, DLTSNH4_2D, !Input
 !     &      ColFrac, SNO3_2D, SNH4_2D,                    !Input

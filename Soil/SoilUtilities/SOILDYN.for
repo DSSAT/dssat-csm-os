@@ -174,7 +174,7 @@ C-----------------------------------------------------------------------
       TYPE (TillType)   , INTENT(IN) :: TILLVALS !Tillage operation vars
       TYPE (WeatherType), INTENT(IN) :: WEATHER  !Weather variables
 
-!     2d MODEL
+!     2D MODEL
       TYPE (CellType)   , INTENT(OUT):: CELLS(MaxRows,MaxCols)
       TYPE (SoilType) SoilProp_Bed, SoilProp_Furrow, SOILPROP_profile
       LOGICAL Sim2D
@@ -187,11 +187,12 @@ C-----------------------------------------------------------------------
       REPNO   = CONTROL % REPNO
       RNMODE  = CONTROL % RNMODE
       RUN     = CONTROL % RUN
+      SIM2D   = CONTROL % SIM2D
       YRDOY   = CONTROL % YRDOY
 
       MEINF   = ISWITCH % MEINF
       MESOM   = ISWITCH % MESOM
-      
+
       MULCHALB = MULCH % MULCHALB
 
       RAIN = WEATHER % RAIN
@@ -206,12 +207,13 @@ C-----------------------------------------------------------------------
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
 
-      IF (INDEX('GC',ISWITCH % MEHYD) > 0) THEN
-        Sim2D = .TRUE.
-      ELSE
-        Sim2D = .FALSE.
-      ENDIF
-      CONTROL % Sim2D = Sim2D
+!     Move this to IPSIM
+!      IF (INDEX('GC',ISWITCH % MEHYD) > 0) THEN
+!        Sim2D = .TRUE.
+!      ELSE
+!        Sim2D = .FALSE.
+!      ENDIF
+!      CONTROL % Sim2D = Sim2D
 
 !     Initialize soils variables
       NLAYR  = 0
@@ -1082,6 +1084,7 @@ C  tillage and rainfall kinetic energy
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
+      IF (SIM2D) RETURN
 
 !     Initial SOM not established until end of SEASINIT section so 
 !     remember initial values here.  Units are kg[Organic matter]/ha
@@ -1115,8 +1118,7 @@ C  tillage and rainfall kinetic energy
       CALL ALBEDO(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
-      IF (INDEX('RSM',MEINF) > 0) THEN 
-
+      IF (INDEX('RSM',MEINF) > 0) THEN
 !       ---------------------------------------------------
 !       Update combined soil/mulch albedo
 !       Transfer local values from constructed variables
@@ -1455,6 +1457,21 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SOILPROP % POROS  = POROS  
 
       CALL PUT(SOILPROP)
+
+!     Synchronize the new soil properties with the 2D Cell variables
+!     for use in the SoilNi processes, some of which are done as 2D
+!     processes, even when in 1D simulation mode.
+      DO L = 1, NLAYR
+        Cells(L,1) % Struc % Thick = DLAYR(L)
+        Cells(L,1) % State % BD    = BD(L)
+        Cells(L,1) % State % DUL   = DUL(L)
+        Cells(L,1) % State % LL    = LL(L)
+        Cells(L,1) % State % SAT   = SAT(L)
+        Cells(L,1) % State % SWCN  = SWCN(L)
+      ENDDO
+      SOILPROP_FURROW = SOILPROP
+      SOILPROP_BED    = SOILPROP
+      CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP)
 
 !***********************************************************************
 !***********************************************************************

@@ -94,6 +94,7 @@
     CALL GET(CONTROL)
     CALL GET(ISWITCH)
 
+    Sim2D = CONTROL % Sim2D
 !   ---------------------------------------------------------
     DS    = SOILPROP % DS
     DLAYR = SOILPROP % DLAYR

@@ -331,11 +331,13 @@ C
          IF (INDEX('RGC',MEHYD) < 1) MEHYD = 'R'
          SELECT CASE(MEHYD)
          CASE ('G', 'C')
-           MESOL  = 'D'     !2D soil
+           CONTROL % SIM2D = .TRUE.
+!          2D soil water and N processes. Not compatible with tillage
+           MESOL  = 'D'
            ISWTIL = 'N'
-!           ISWNIT = 'N'
            MEEVP  = 'R'
          CASE ('R')
+           CONTROL % SIM2D = .FALSE.
            IF (INDEX('123',MESOL) < 1) THEN
               MESOL = '2'
            ENDIF
