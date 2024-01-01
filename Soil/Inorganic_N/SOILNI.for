@@ -422,6 +422,10 @@ C=======================================================================
         ENDDO
       ENDDO
 
+!     Convert 2D arrays to 1D after N uptake 
+      CALL Cell2Layer_2D(SNO3_2D, CELLS % Struc, NLAYR, SNO3)
+      CALL Cell2Layer_2D(SNH4_2D, CELLS % Struc, NLAYR, SNH4)
+
 !     Must calculate WTNUP here or it won't be guaranteed to match N
 !     removed from the soil today and the balance will be off.
 !     WTNUP is cumulative
@@ -1195,25 +1199,6 @@ C=======================================================================
 !***********************************************************************
 !     NEED TO CONVERT 2D to 1D HERE FIRST!
 !***********************************************************************
-
-!     chp - not sure why this was done here. the concentration variables 
-!     might not even be up to date.
-!!     Convert 2D to 1D
-!!     Integrated cell variable into layer variable   
-!      CAll Interpolate2Layers_2D(NH4_2D, Cells%Struc, NLAYR,  !input
-!     &         NH4)                                           !Output
-!      CAll Interpolate2Layers_2D(NO3_2D, Cells%Struc, NLAYR,  !input
-!     &         NO3)                                           !Output
-
-!     Convert 2D states to 1D
-      CALL Cell2Layer_2D(
-     &  SNO3_2D, Cells%Struc, NLAYR,                      !Input
-     &  SNO3, SurfaceVal)                                 !Output
-      CALL Cell2Layer_2D(
-     &  SNH4_2D, Cells%Struc, NLAYR,                      !Input
-     &  SNH4, SurfaceVal)                                 !Output
-
-
 !     Plant available N should be available in 2D!!!
 !     Psuedo-integration - for plant-available N
       DO L = 1, NLAYR
