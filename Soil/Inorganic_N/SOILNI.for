@@ -15,7 +15,7 @@ C  This routine was modified from NTRANS when the module was split into
 C  organic and inorganic sections.
 !  2023 - Integration of 2D soil water and N routines now work with 2D 
 !    arrays even in 1D mode. Some processes are still 1D so 2D arrays are
-!    collapsed into 1D array as needed.
+!    collapsed into 1D array as needed
 C-----------------------------------------------------------------------
 C  Revision history
 C  . . . . . .  Written

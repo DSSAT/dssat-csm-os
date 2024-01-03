@@ -42,8 +42,8 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 C=======================================================================
 
       SUBROUTINE CROPGRO(CONTROL, ISWITCH, 
-     &    EOP, CELLS, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
-     &    ST, SW, SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,   !Input
+     &    EOP, CELLS, HARVFRAC, SOILPROP, SPi_AVAIL, ST, SW,     !Input
+     &    SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,           !Output
      &    KTRANS, MDATE, NSTRES, PSTRES1,                        !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,                  !Output
@@ -59,7 +59,7 @@ C=======================================================================
      &  NFIX, NUPTAK, OPGROW, OPHARV, P_CGRO, PEST, PHENOL,
      &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, SENES,
      &  VEGGR
-      EXTERNAL NUPTAK_2D, ROOTY_2D
+      EXTERNAL ROOTY_2D
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 DETACH, IDETO, ISWNIT, ISWSYM,
@@ -147,7 +147,7 @@ C=======================================================================
 
       REAL DLAYR(NL), DS(NL), DUL(NL), KG2PPM(NL), LL(NL), 
      &    SAT(NL), SW(NL), ST(NL), RLV(NL), WR(NL)
-      REAL NH4(NL), NO3(NL), UNH4(NL), UNO3(NL)
+      REAL UNH4(NL), UNO3(NL) !NH4(NL), NO3(NL), 
       REAL PHTHRS(20)
       REAL TGRO(TS)
       REAL SDDES(NCOHORTS)
@@ -307,17 +307,10 @@ C-----------------------------------------------------------------------
      &    AGRSH2, AGRSTM, AGRVG, AGRVG2, SDPROR)          !Output
 
 !-----------------------------------------------------------------------
-        IF (.NOT. CONTROL % SIM2D) THEN
-          CALL NUPTAK(RUNINIT,
-     &     DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT,!Input
-     &     NH4, NO3, NLAYR, RLV, SAT, SW,                 !Input
-     &     TRNH4U, TRNO3U, TRNU, UNH4, UNO3)              !Output
-        ELSE
-          CALL NUPTAK_2D(RUNINIT,
-     &      CELLS, DLAYR, DUL, FILECC, KG2PPM, LL,        !Input
-     &      NDMSDR, NDMTOT, SAT,                          !Input  
-     &      TRNH4U, TRNO3U, TRNU, UNH4, UNO3)             !Output
-        ENDIF
+        CALL NUPTAK(CONTROL,
+     &    CELLS, DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR,    !Input
+     &    NDMTOT, NLAYR, SAT,                               !Input
+     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 !-----------------------------------------------------------------------
         IF (ISWSYM .EQ. 'Y') THEN
@@ -584,17 +577,11 @@ C     Initialize pest coupling point and damage variables
      &  ShutMob, RootMob, ShelMob,                        !Output
      &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output
 !-----------------------------------------------------------------------
-      IF (.NOT. CONTROL % SIM2D) THEN
-         CALL NUPTAK(SEASINIT,
-     &    DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT,!Input
-     &    NH4, NO3, NLAYR, RLV, SAT, SW,                 !Input
-     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)              !Output
-      ELSE
-         CALL NUPTAK_2D(SEASINIT,
-     &      CELLS, DLAYR, DUL, FILECC, KG2PPM, LL,        !Input
-     &      NDMSDR, NDMTOT, SAT,                          !Input  
-     &      TRNH4U, TRNO3U, TRNU, UNH4, UNO3)             !Output
-      ENDIF
+!-----------------------------------------------------------------------
+        CALL NUPTAK(CONTROL,
+     &    CELLS, DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR,    !Input
+     &    NDMTOT, NLAYR, SAT,                               !Input
+     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 !     Plant phosphorus module initialization
       CALL P_CGRO (DYNAMIC, ISWITCH, 
@@ -1010,17 +997,11 @@ C    If ISWNIT = Y - Call soil N routines. Balance Available C and N
 C    If ISWNIT = N - Do not call soil N routines, N assumed to be limited by C
 C-----------------------------------------------------------------------
       IF (ISWNIT .EQ. 'Y') THEN
-        IF (.NOT. CONTROL % SIM2D) THEN
-           CALL NUPTAK(INTEGR,
-     &      DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT,!Input
-     &      NH4, NO3, NLAYR, RLV, SAT, SW,                 !Input
-     &      TRNH4U, TRNO3U, TRNU, UNH4, UNO3)              !Output
-        ELSE
-          CALL NUPTAK_2D(INTEGR,
-     &      CELLS, DLAYR, DUL, FILECC, KG2PPM, LL,        !Input
-     &      NDMSDR, NDMTOT, SAT,                          !Input  
-     &      TRNH4U, TRNO3U, TRNU, UNH4, UNO3)             !Output
-        ENDIF
+!-----------------------------------------------------------------------
+        CALL NUPTAK(CONTROL,
+     &    CELLS, DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR,    !Input
+     &    NDMTOT, NLAYR, SAT,                               !Input
+     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 C-----------------------------------------------------------------------
 C    Account for C Used to reduce N Uptake to protein
