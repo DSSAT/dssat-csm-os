@@ -21,14 +21,12 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE Cells_2D
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       IMPLICIT NONE
       EXTERNAL GETLUN, ERROR, FIND, IGNORE
       SAVE
-      
-      Type (CellType) Cells(MaxRows,MaxCols)
+
+      Type (CellType), INTENT(IN) :: Cells(MaxRows,MaxCols)
 !     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
       REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
       CHARACTER*6 ERRKEY
@@ -41,7 +39,7 @@ C=======================================================================
 !     INTEGER NLAYR
 
       REAL NUF, XMIN, HalfRow, BEDWD
-      REAL DLAYR(NL), LL(NL), DUL(NL), SAT(NL) !, SW(NL)
+      REAL DLAYR(NL), LL(NL), DUL(NL), SAT(NL), SW(NL), RLV(NL)
       REAL KG2PPM(NL)
       REAL TRNO3U, TRNH4U, TRNU
       REAL NDMTOT, NDMSDR, ANDEM, FNH4, FNO3, SMDFR, RFAC
@@ -103,6 +101,11 @@ C=======================================================================
       BEDWD   = BedDimension % BEDWD
       FurCol1 = BedDimension % FurCol1 
       ColFrac = BedDimension % ColFrac
+      IF (Sim2D) THEN
+        SimWidth = HalfRow
+      ELSE
+        SimWidth = ROWSPC_cm
+      ENDIF
 
 !!     These should be done globally
 !      DO j = 1, NColsTot
@@ -128,7 +131,7 @@ C=======================================================================
       UNH4_2D = 0.0
       UNO3_2D = 0.0
       RLV_2D  = 0.0
-      
+
       CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
       CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
 
@@ -155,8 +158,8 @@ C-----------------------------------------------------------------------
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           !KG2PPM(L) = 10. / (BD(L) * DLAYR(L))
-          NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L)
-          NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L)
+          NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+          NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
         ENDDO
       ENDDO
 C-----------------------------------------------------------------------
@@ -179,17 +182,25 @@ C-----------------------------------------------------------------------
 
 !             SMDFR = relative drought factor
               SMDFR = (SWV(L, J) - LL(L)) / (DUL(L) - LL(L))
-              IF (SMDFR .LT. 1.E-9) SMDFR = 0.0
               IF (SWV(L, J) .GT. DUL(L)) THEN
                 SMDFR = 1.0 - (SWV(L, J) - DUL(L)) / (SAT(L) - DUL(L))
               ENDIF
 
-!             RLV = Rootlength density (cm/cm3)
-              RFAC = RLV_2D(L, J) * SMDFR * SMDFR * DLAYR(L)
-!             cm[root]/cm2[soil] = cm[root]/cm3[soil] * cm[soil]
+              IF (SMDFR .LT. 0.1) THEN
+                SMDFR = 0.1
+              ENDIF
 
+              ! FO/KJB - Change for Cotton
+              !RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+              RFAC = RLV(L) * SQRT(SMDFR) * DLAYR(L) * 100.0
+
+!             RLV = Rootlength density (cm/cm3)
+!             cm[root]/cm2[soil] = cm[root]/cm3[soil] * cm[soil]
+!-----------------------------------------------------------------------
+!             RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
 !             RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)
 !             RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
+!-----------------------------------------------------------------------
               RNO3U_2D(L, J) = RFAC * FNO3 * RTNO3 * 100.0
               RNH4U_2D(L, J) = RFAC * FNH4 * RTNH4 * 100.0
 !             kg[N]   cm[root]     mg[N]     100 kg/ha
@@ -212,7 +223,7 @@ C-----------------------------------------------------------------------
           ANDEM = TRNU
         ENDIF
 
-        IF (TRNU .GT. 0.001) THEN
+        IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
           DO L = 1, NRowsTot
             DO J = 1, NColsTot
