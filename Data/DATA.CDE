@@ -882,7 +882,7 @@ IRRD   Eff Irrig mm/d  Daily effective irrigation (mm/d)                        
 IRRAD  App Irrig mm/d  Daily applied irrigation (includes losses) (mm/d)        .
 TL#C   TILLAGE #       Number of tillage operations                             .
 TLBD   BD Lyr1-3 g/cm3 Bulk Density average Lyr 1 to 3 after tillage (g/cm3)    .
-TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .    
+TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .
 
 *WEATHER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
