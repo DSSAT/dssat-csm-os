@@ -347,7 +347,6 @@ set(
         "Plant/CROPGRO/MOBIL.for"
         "Plant/CROPGRO/NFIX.for"
         "Plant/CROPGRO/NUPTAK.for"
-        "Plant/CROPGRO/NUPTAK_2D.for"
         "Plant/CROPGRO/Opgrow.for"
         "Plant/CROPGRO/OPHARV.for"
         "Plant/CROPGRO/PHENOL.for"

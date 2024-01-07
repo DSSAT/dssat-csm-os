@@ -9,8 +9,7 @@ C  01/20/1997 GH  Modified.
 C  07/10/1998 CHP modified for modular format.
 C  05/11/1998 GH  Incorporated in CROPGRO
 !  07/23/2010 JZW, CHP converted to 2D
-!  06/30/2011 Rename RowFrac to ColFrac 
-!  01/04/2024 CHP integrated into 1D routine
+!  01/04/2024 CHP integrated 2D into 1D routine
 C-----------------------------------------------------------------------
 C  Called from:  CROPGRO
 C=======================================================================
@@ -147,8 +146,8 @@ C-----------------------------------------------------------------------
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           !KG2PPM(L) = 10. / (BD(L) * DLAYR(L))
-          NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-          NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+          NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+          NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
         ENDDO
       ENDDO
 C-----------------------------------------------------------------------
@@ -162,8 +161,8 @@ C-----------------------------------------------------------------------
         DO L = 1, NRowsTot 
           DO J = 1, NColsTot  
             IF (RLV_2D(L, J) .GT. 1.E-6) THEN
-              FNH4 = 1.0 - EXP(-0.08 * NH4_2D(L, J))
-              FNO3 = 1.0 - EXP(-0.08 * NO3_2D(L, J))
+              FNH4 = 1.0 - EXP(-0.08 * NH4_2D(L,J))
+              FNO3 = 1.0 - EXP(-0.08 * NO3_2D(L,J))
               IF (FNO3 .LT. 0.04) FNO3 = 0.0  
               IF (FNO3 .GT. 1.0)  FNO3 = 1.0
               IF (FNH4 .LT. 0.04) FNH4 = 0.0  
@@ -190,18 +189,18 @@ C-----------------------------------------------------------------------
 !             RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)
 !             RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
 !-----------------------------------------------------------------------
-              RNO3U_2D(L, J) = RFAC * FNO3 * RTNO3 * 100.0
-              RNH4U_2D(L, J) = RFAC * FNH4 * RTNH4 * 100.0
+              RNO3U_2D(L,J) = RFAC * FNO3 * RTNO3 
+              RNH4U_2D(L,J) = RFAC * FNH4 * RTNH4 
 !             kg[N]   cm[root]     mg[N]     100 kg/ha
 !             ----- = --------- * -------- * ---------
 !               ha    cm2[soil]   cm[root]     mg/cm2
 
-              RNO3U_2D(L, J) = MAX(0.0,RNO3U_2D(L, J))
-              RNH4U_2D(L, J) = MAX(0.0,RNH4U_2D(L, J))
+              RNO3U_2D(L,J) = MAX(0.0,RNO3U_2D(L,J))
+              RNH4U_2D(L,J) = MAX(0.0,RNH4U_2D(L,J))
 
 !             kg[N]/ha
-              TRNU = TRNU + (RNO3U_2D(L, J) + RNH4U_2D(L, J))*
-     &              ColFrac(L, J)
+              TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J))*
+     &              ColFrac(L,J)
             ENDIF
           ENDDO
         ENDDO
@@ -216,25 +215,25 @@ C-----------------------------------------------------------------------
           NUF = ANDEM / TRNU
           DO L = 1, NRowsTot
             DO J = 1, NColsTot
-              IF (RLV_2D(L, J) .GT. 0.0) THEN
-                UNO3_2D(L, J) = RNO3U_2D(L, J) * NUF  !kg[N]/ha
-                UNH4_2D(L, J) = RNH4U_2D(L, J) * NUF  !kg[N]/ha
+              IF (RLV_2D(L,J) .GT. 0.0) THEN
+                UNO3_2D(L,J) = RNO3U_2D(L,J) * NUF  !kg[N]/ha
+                UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF  !kg[N]/ha
 
 !               XMIN = minimum amount NO3 left after uptake (kg[N]/ha)
                 XMIN    = 0.25 / KG2PPM(L)
-                MXNO3U  = MAX(0.0,(SNO3_2D(L, J) - XMIN))
-                IF (UNO3_2D(L, J) .GT. MXNO3U) THEN
-                  UNO3_2D(L, J) = MXNO3U
+                MXNO3U  = MAX(0.0,(SNO3_2D(L,J) - XMIN))
+                IF (UNO3_2D(L,J) .GT. MXNO3U) THEN
+                  UNO3_2D(L,J) = MXNO3U
                 ENDIF
 
 !               XMIN = minimum amount NH4 left after uptake (kg[N]/ha)
                 XMIN = 0.5 / KG2PPM(L)
                 MXNH4U  = MAX(0.0,(SNH4_2D(L, J) - XMIN))
-                IF (UNH4_2D(L, J) .GT. MXNH4U) UNH4_2D(L, J) = MXNH4U
-                TRNO3U  = TRNO3U + UNO3_2D(L, J) * ColFrac(L, J)
-                TRNH4U  = TRNH4U + UNH4_2D(L, J) * ColFrac(L, J)
-                UNO3(L) = UNO3(L) + UNO3_2D(L, J) * ColFrac(L, J)
-                UNH4(L) = UNH4(L) + UNH4_2D(L, J) * ColFrac(L, J)
+                IF (UNH4_2D(L,J) .GT. MXNH4U) UNH4_2D(L,J) = MXNH4U
+                TRNO3U  = TRNO3U + UNO3_2D(L,J) * ColFrac(L,J)
+                TRNH4U  = TRNH4U + UNH4_2D(L,J) * ColFrac(L,J)
+                UNO3(L) = UNO3(L) + UNO3_2D(L,J) * ColFrac(L,J)
+                UNH4(L) = UNH4(L) + UNH4_2D(L,J) * ColFrac(L,J)
               ENDIF
             ENDDO
           ENDDO
