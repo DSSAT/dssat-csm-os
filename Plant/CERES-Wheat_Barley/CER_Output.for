@@ -155,9 +155,9 @@
               WRITE (NOUTPN,2251)
 !             2021-02-15 chp Change NUAD to NUAC in header.
  2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAC',
-     &        '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
-     &        ' RSNAD SNNPD SNN0D SNN1D',
-     B        '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
+     &        '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD   HIND',
+     &        '  RSNAD  SNNPD SNN0D SNN1D',
+     B        '  RN%D  LN%D  SN%D   HN%D  SDN%D   VN%D',
      C        ' LN%RD SN%RD RN%RD  VCN%  VMN% NUPRD',
      &        ' NDEMD')
   
@@ -393,9 +393,9 @@
      &           F6.1,F6.2,
      &           F6.2,
      &           3F6.1,
-     &           1F6.1,3F6.2,2A6,
+     &           1F6.1,3F7.2,2A6,
      &           3F6.3,
-     &           3F6.3,
+     &           3F7.2,
      &           3F6.2,
      &           F6.1,F6.2,
      &           2F6.2)')
@@ -799,7 +799,7 @@
      x         ' HYEAR  HDAY SDWAP CWAHC  CWAM',
      X         ' PARUE',
      X         '  HWAM  HWAH  BWAH  HWUM  H#AM  H#UM',
-     x         ' SDNAP  CNAM  HNAM  RNAM  TNAM  NUAM  HN%M  VN%M',
+     x         ' SDNAP  CNAM  HNAM  RNAM  TNAM  NUAM   HN%M  VN%M',
      E         ' D1INI D2INI D3INI ')
                CLOSE(fnumtmp)
               ENDIF
@@ -848,7 +848,7 @@
      X         1X,F5.3,I6,I6,
      X         F6.1,I6,I6,I6,
      X         I6,I6,
-     X         F6.2,F6.2,
+     X         F7.2,F6.2,
      X         3A6)
               
               CLOSE(fnumtmp)       
