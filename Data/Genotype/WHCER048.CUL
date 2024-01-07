@@ -18,6 +18,20 @@ $CULTIVARS:WHCER048.20200721   Last edit: 20210-05-06 GH
 !
 !             P/G/N:Phenology/Growth/Not used for calbration
 !
+! COEFF       DEFINITION
+! ========    ==========
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+! EXP#        Number of experiments used to generate parameters
+! ECO#        Ecotype code for this cultivar,points to entry in ECO file
+! P1V         Days,optimum vernalizing temperature,required for vernalization
+! P1D         Photoperiod response (% reduction in rate/10 h drop in pp)
+! P5          Grain filling (excluding lag) phase duration (oC.d)
+! G1          Kernel number per unit canopy weight at anthesis (#/g)
+! G2          Standard kernel size under optimum conditions (mg)
+! G3          Standard,non-stressed mature tiller wt (incl grain) (g dwt)
+! PHINT       Interval between successive leaf tip appearances (oC.d)
+
 *CULTIVARS:WHCER048
 @VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
 !Coeffient #                             1     2     3     4     5     6     7
@@ -45,18 +59,4 @@ TX0001 TAMU112              . TXWH01    10  68.0   450    30    30   1.0    30
 !IB0488 NEWTON             1,6 USWH01    45    75   500    25    30   2.0    95
 !IB1015 MARIS FUNDIN       1,8 UKWH01    30    83   515    15    44   3.2   100
 
-                                                                                                                                                                                                             
-! COEFF       DEFINITION
-! ========    ==========
-! VAR#        Identification code or number for the specific cultivar.
-! VAR-NAME    Name of cultivar.
-! EXP#        Number of experiments used to generate parameters
-! ECO#        Ecotype code for this cultivar,points to entry in ECO file
-! P1V         Days,optimum vernalizing temperature,required for vernalization
-! P1D         Photoperiod response (% reduction in rate/10 h drop in pp)
-! P5          Grain filling (excluding lag) phase duration (oC.d)
-! G1          Kernel number per unit canopy weight at anthesis (#/g)
-! G2          Standard kernel size under optimum conditions (mg)
-! G3          Standard,non-stressed mature tiller wt (incl grain) (g dwt)
-! PHINT       Interval between successive leaf tip appearances (oC.d)
 
