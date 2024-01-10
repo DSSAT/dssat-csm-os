@@ -294,27 +294,27 @@
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
 !  JG updated TSEN and CDAY format above 02/03/2023
-!              IF (ECOTYP .EQ. ECONO) THEN
+              IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter. 
 !               Default to TSEN = 6.0 if no value given.
-!                IF (C255(80:84) == '     ') THEN
-!                  TSEN = 6.0
-!                ELSE
-!                  READ(C255(80:84),'(F5.0)',IOSTAT=ERRNUM) TSEN
-!                  IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
-!                ENDIF
+                IF (C255(80:84) == '     ') THEN
+                  TSEN = 6.0
+                ELSE
+                  READ(C255(80:84),'(F5.0)',IOSTAT=ERRNUM) TSEN
+                  IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
+                ENDIF
 !        
 !               Read optional number of cold days paramter. 
 !               Default to CDAY = 15.0 if no value given.
-!                IF (C255(86:90) == '     ') THEN
-!                  CDAY = 15
-!                ELSE
-!                  READ(C255(86:90),'(I5)',IOSTAT=ERRNUM) CDAY
-!                  IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
-!                ENDIF
-!        
-!                EXIT
-!              ENDIF
+                IF (C255(86:90) == '     ') THEN
+                  CDAY = 15
+                ELSE
+                  READ(C255(86:90),'(I5)',IOSTAT=ERRNUM) CDAY
+                  IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
+                ENDIF
+        
+                EXIT
+              ENDIF
 
             ELSEIF (ISECT .EQ. 0) THEN
               CALL ERROR(ERRKEY,7,FILEE,LNUM)

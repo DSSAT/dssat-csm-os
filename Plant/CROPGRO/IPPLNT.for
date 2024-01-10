@@ -44,18 +44,18 @@ C-----------------------------------------------------------------------
       PARAMETER (BLANK  = ' ')
 
       CHARACTER*2 CROP
-      CHARACTER*6 SECTION, ECONO !ECOTYP
+      CHARACTER*6 SECTION, ECONO, ECOTYP
       CHARACTER*6  ERRKEY
       PARAMETER (ERRKEY = 'IPPLNT')
 
       CHARACTER*12 FILEC, FILEE
       CHARACTER*30 FILEIO
-!      CHARACTER*78 MSG(6)
+      CHARACTER*78 MSG(6)
       CHARACTER*80 PATHCR, CHAR, PATHEC
       CHARACTER*92 FILECC, FILEGC
-!      CHARACTER*255 C255
+      CHARACTER*255 C255
 
-      INTEGER LUNCRP, NOUTDO, LUNIO !LUNECO
+      INTEGER LUNCRP, NOUTDO, LUNIO, LUNECO
       INTEGER PATHL, FOUND, ERR, LINC, LNUM, ISECT
 
       REAL
@@ -364,7 +364,7 @@ C-----------------------------------------------------------------------
           CALL IGNORE(LUNECO, LNUM, ISECT, C255)
           IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
      &          (C255(1:1) .NE. '*')) THEN
-            READ (C255,'(A6,139X,4F6.0)',IOSTAT=ERR) ECOTYP, KCAN_ECO, 
+            READ (C255,'(A6,145X,3F6.0)',IOSTAT=ERR) ECOTYP, 
      &            FOZ1, SFOZ1, OBASE
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
             IF (ECOTYP .EQ. ECONO) EXIT
@@ -394,10 +394,6 @@ C-----------------------------------------------------------------------
         ENDDO
 
         CLOSE (LUNECO)
-
-        IF (KCAN_ECO .GT. 1.E-6) THEN
-          KCAN = KCAN_ECO
-        ENDIF
 
 !-----------------------------------------------------------------------
       ENDIF
