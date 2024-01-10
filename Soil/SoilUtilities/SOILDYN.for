@@ -50,7 +50,7 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       EXTERNAL ERROR, FIND, WARNING, INFO, TEXTURECLASS, SOILLAYERCLASS,
      &  CALBROKCRYPARA, RETC_VG, SOILLAYERTEXT, PRINT_SOILPROP, 
-     &  CELLINIT_2D, SETPM, OPSOILDYN, ALBEDO, TILLEVENT, SOILMIXING
+     &  CELLINIT_2D, SETPM, OPSOILDYN, ALBEDO_avg, TILLEVENT, SOILMIXING
       SAVE
 
       LOGICAL NOTEXTURE, PHFLAG, FIRST, NO_OC
@@ -971,12 +971,8 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       ENDIF
 !--------------------------------------------------------------------
 !     Handle plastic mulch for 1D case.
-      IF (.NOT. SIM2D) THEN
-        CALL SETPM(SOILPROP)
-      END IF
-
+      CALL SETPM(SOILPROP, CELLS)
       CALL PUT(SOILPROP)
-
       IF (ISWWAT == 'N') RETURN
 
 !-----------------------------------------------------------------------
@@ -1115,7 +1111,7 @@ C  tillage and rainfall kinetic energy
       ENDIF
 
 !     ------------------------------------------------------------------
-      CALL ALBEDO(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
+      CALL ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
       IF (INDEX('RSM',MEINF) > 0) THEN
@@ -1570,7 +1566,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
 
 !=======================================================================
-      SUBROUTINE ALBEDO(KTRANS, MEINF, MULCH, SOILPROP, SW1, XHLAI)
+      SUBROUTINE ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW1, XHLAI)
       !Update soil albedo based on mulch cover and soil water content in
       !top layer
 
@@ -1648,7 +1644,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !     &      FF, SWALB, MULCHCOVER, MSALB, CANCOV, CMSALB
 
       RETURN
-      END SUBROUTINE ALBEDO
+      END SUBROUTINE ALBEDO_avg
 !=======================================================================
 
 !=======================================================================
@@ -2324,21 +2320,24 @@ C=======================================================================
 !==============================================================================
 !     Subroutine SETPM
 !     Initialization for cell structure and initial conditions
-      SUBROUTINE SETPM(SOILPROP)                        !input/output
+      SUBROUTINE SETPM(SOILPROP, CELLS)                 !input/output
 !   ---------------------------------------------------------
+      USE Cells_2D
       USE ModuleData
       Implicit NONE
       EXTERNAL ERROR, FIND, WARNING, GETLUN, INFO
 
       Type (SoilType) SOILPROP
+      TYPE (CellType)   , INTENT(OUT):: CELLS(MaxRows,MaxCols)
 
       CHARACTER*6 SECTION
       CHARACTER*8, PARAMETER :: ERRKEY = 'SETPM'
 !     CHARACTER*125 MSG(50)
 !     CHARACTER*180 CHAR
-      INTEGER ERR, FOUND, LNUM, LUNIO
+      INTEGER ERR, FOUND, LNUM, LUNIO, J
       REAL PMWD, ROWSPC_CM
-      REAL PMALB, PMFRACTION, MSALB
+      REAL PMALB, MSALB, AvgPMCover, CumWid, CumWidLast
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       LOGICAL PMCover
     
       TYPE (ControlType) CONTROL
@@ -2410,18 +2409,47 @@ C=======================================================================
 !          call INFO(1,errkey,msg)
         ENDIF
       ENDIF
-    
+
+!     Default = no plastic mulch cover
       PMFRACTION = 0.0
+
       IF (PMCover) THEN
-        if (PMWD .GE. ROWSPC_CM) THEN
-          SOILPROP % SALB   = PMALB
-        ENDIF
-        PMFRACTION = PMWD / ROWSPC_CM
-        MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 -PMFRACTION)
+!       Overall fraction of row covered by plastic mulch
+        PMFRACTION(0) = PMWD / ROWSPC_CM
+        MSALB = PMALB * PMFRACTION(0) + 
+     &    SOILPROP % SALB * (1.0 - PMFRACTION(0))
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
+
+        IF (PMWD .GE. ROWSPC_CM) THEN
+!         Entire row covered with plastic for 1D and 2D
+          PMFRACTION = 1.0  !for all columns
+        ELSE
+
+          IF (CONTROL % SIM2D) THEN
+!           2D case. Set PMALB and PMFRACTION by column
+            CumWid = 0.0
+            CumWidLast = 0.0
+            DO J = 1, NColsTot
+              CumWid = CumWid + CELLS(1,J)%Struc%Width
+              IF (CumWid <= PMWD) THEN
+!               This column is entirely covered by plastic mulch
+                PMFRACTION(J) = 1.0
+              ELSEIF (CumWidLast < PMWD) THEN
+                PMFRACTION(J) = (PMWD - CumWidLast)/
+     &            CELLS(1,J) % Struc%Width
+              ELSE
+                PMFRACTION(J) = 0.0
+              ENDIF
+            ENDDO
+          ELSE
+!           1D case - only handle column 1 (entire row)
+            PMFRACTION(1) =  PMFRACTION(0)
+          ENDIF
+        ENDIF
       ENDIF
-      CALL PUT("PM", "PMFRACTION", PMFRACTION)
+
+      CALL PUT("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
 
       RETURN      
       END SUBROUTINE SETPM

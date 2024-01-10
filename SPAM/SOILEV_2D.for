@@ -21,24 +21,24 @@ C  03/30/2000 CHP Keep original value of WINF for export to soil N module
 !  Called by: SPAM_2D
 C=======================================================================
       SUBROUTINE SOILEV_2D(DYNAMIC,
-     &    DLAYR, DUL, EOS, LL, SW, SW_AVAIL, U, WINF,     !Input
+     &    CELLS, DLAYR, DUL, EOS, LL, SW, SW_AVAIL, U, WINF,     !Input
      &    ES)                                             !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+      USE CELL_2D
       USE ModuleData
       IMPLICIT NONE
       EXTERNAL ESUP
       SAVE
 
       INTEGER DYNAMIC
-
+      TYPE (CellType), DIMENSION(NColsMax, NRowsMax) :: CELLS
       REAL EOS, SWEF, U, SW_AVAIL, SWMIN
       REAL SUMES1, SUMES2, WINF, WINFMOD
       REAL ES, T
       REAL AWEV1, ESX, SWR, USOIL
       REAL DLAYR(NL), DUL(NL), LL(NL), SW(NL)
-      REAL PMFRACTION
+      REAL PMFRACTION(0:MaxCols)
 
 !***********************************************************************
 !***********************************************************************
@@ -66,7 +66,7 @@ C-----------------------------------------------------------------------
               T= (SUMES2/3.5)**2
           ENDIF
 
-          CALL GET("PM", "PMFRACTION", PMFRACTION)
+          CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
 
 !-----------------------------------------------------------------------
 !     Set air dry water content for top soil layer
@@ -146,10 +146,10 @@ C-----------------------------------------------------------------------
          ENDIF
       ENDIF
 
-!     Apply the fraction of plastic mulch coverage
-      IF (PMFRACTION .GT. 1.E-6) THEN
-        ES = ES * (1.0 - PMFRACTION)
-      ENDIF
+!!     Apply the fraction of plastic mulch coverage
+!      IF (PMFRACTION .GT. 1.E-6) THEN
+!        ES = ES * (1.0 - PMFRACTION)
+!      ENDIF
 
 !-----------------------------------------------------------------------
 !     Available water = SW - air dry limit + infil. or sat. flow

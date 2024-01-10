@@ -443,7 +443,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     5.  A call to the PUT routine must be used to store data prior to
 !         a call to the GET routine to retrive the data.
 
-      USE ModuleDefs
+      USE Cells_2D
       SAVE
 
 !======================================================================
@@ -522,7 +522,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       END TYPE
 
       TYPE PMDataType
-        REAL PMFRACTION
+        REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       END TYPE
       
       TYPE MHarveType
@@ -802,12 +802,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
-      CASE ('PM')
-        SELECT CASE(VarName)
-        CASE('PMFRACTION'); Value = SAVE_data % PM % PMFRACTION
-        CASE DEFAULT; ERR = .TRUE.
-        END SELECT
-            
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 
@@ -936,12 +930,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
-      CASE ('PM')
-        SELECT CASE(VarName)
-            CASE('PMFRACTION'); SAVE_data % PM % PMFRACTION = Value
-        CASE DEFAULT; ERR = .TRUE.
-        END SELECT
-            
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 
@@ -956,13 +944,14 @@ C             CHP Added TRTNUM to CONTROL variable.
       END SUBROUTINE PUT_Real
 
 !----------------------------------------------------------------------
-      SUBROUTINE GET_Real_Array_NL(ModuleName, VarName, Value)
+      SUBROUTINE GET_Real_Array_NL(ModuleName, VarName, Value, Dim)
 !     Retrieves array of dimension(NL) 
       IMPLICIT NONE
       EXTERNAL WARNING
       Character*(*) ModuleName, VarName
       Character*78 MSG(2)
-      REAL, DIMENSION(NL) :: Value
+      Integer Dim
+      REAL, DIMENSION(Dim) :: Value
       Logical ERR
 
       Value = 0.0
@@ -974,6 +963,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         SELECT CASE (VarName)
           CASE ('UH2O'); Value = SAVE_data % SPAM % UH2O
           CASE DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      CASE ('PM')
+        SELECT CASE(VarName)
+        CASE('PMFRACTION'); Value = SAVE_data % PM % PMFRACTION
+        CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
         CASE DEFAULT; ERR = .TRUE.
@@ -990,13 +985,14 @@ C             CHP Added TRTNUM to CONTROL variable.
       END SUBROUTINE GET_Real_Array_NL
 
 !----------------------------------------------------------------------
-      SUBROUTINE PUT_Real_Array_NL(ModuleName, VarName, Value)
+      SUBROUTINE PUT_Real_Array_NL(ModuleName, VarName, Value, Dim)
 !     Stores array of dimension NL
       IMPLICIT NONE
       EXTERNAL WARNING
       Character*(*) ModuleName, VarName
       Character*78 MSG(2)
-      REAL, DIMENSION(NL) :: Value
+      Integer Dim
+      REAL, DIMENSION(Dim) :: Value
       Logical ERR
 
       ERR = .FALSE.
@@ -1006,6 +1002,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         SELECT CASE (VarName)
         Case ('UH2O'); SAVE_data % SPAM % UH2O = Value
         Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      CASE ('PM')
+        SELECT CASE(VarName)
+            CASE('PMFRACTION'); SAVE_data % PM % PMFRACTION = Value
+        CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
       Case DEFAULT; ERR = .TRUE.

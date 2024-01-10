@@ -24,7 +24,7 @@ C=======================================================================
      &    RUNOFF)                                         !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs
+      USE CELLS_2D
       USE ModuleData
       IMPLICIT NONE
       SAVE
@@ -47,7 +47,7 @@ C-----------------------------------------------------------------------
       Type (MulchType) MULCH
       
 !     Plastic Mulch
-      REAL PMFRACTION
+      REAL PMFRACTION(0:MaxCols)
 
 !!     Temporary for printing
 !      INTEGER DOY, YEAR, LUN
@@ -110,9 +110,9 @@ C-----------------------------------------------------------------------
         RUNOFF = 0.0
       ENDIF
       
-      CALL GET("PM","PMFRACTION",PMFRACTION)
-      IF (PMFRACTION .GT. 1.E-6) THEN
-          RUNOFF = WATAVL * PMFRACTION + RUNOFF * (1 - PMFRACTION)
+      CALL GET("PM","PMFRACTION",PMFRACTION, MaxCols+1)
+      IF (PMFRACTION(0) .GT. 1.E-6) THEN
+          RUNOFF = WATAVL * PMFRACTION(0) + RUNOFF * (1 - PMFRACTION(0))
       ENDIF
 
 !!     Temporary

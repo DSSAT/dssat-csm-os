@@ -415,7 +415,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
       CALL PUT('SPAM', 'ES',  ES)
       CALL PUT('SPAM', 'EOP', EOP)
       CALL PUT('SPAM', 'EVAP',EVAP)
-      CALL PUT('SPAM', 'UH2O',RWU)
+      CALL PUT('SPAM', 'UH2O',RWU, NL)
       
 !***********************************************************************
 !***********************************************************************

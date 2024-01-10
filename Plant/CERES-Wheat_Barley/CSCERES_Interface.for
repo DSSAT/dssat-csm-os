@@ -104,7 +104,7 @@ C=======================================================================
       ELSEIF (DYNAMIC == RATE) THEN
         CALL GET('SPAM','EO',  EO)
         CALL GET('SPAM','EP',  EP)
-        CALL GET('SPAM','UH2O',UH2O)
+        CALL GET('SPAM','UH2O',UH2O, NL)
       ELSEIF (DYNAMIC == INTEGR) THEN
         CALL GET('SPAM','ET',  ET)
         CALL Get('MGMT','TOTIR', TOTIR)
