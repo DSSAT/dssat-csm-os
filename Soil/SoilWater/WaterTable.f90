@@ -38,9 +38,9 @@
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
-!   Kd should be a user specified input in the Fields section of FILEX
-!   based on field measurement. Or it could be calculated from soil 
-!   properties. For now assume a constant value.  
+!     Kd should be a user specified input in the Fields section of FILEX
+!     based on field measurement. Or it could be calculated from soil 
+!     properties. For now assume a constant value.  
 
 !***********************************************************************
 !***********************************************************************

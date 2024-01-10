@@ -54,7 +54,7 @@
       REAL A, B, RedFac, SW_threshold
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP, SWAD
       REAL, DIMENSION(NL) :: SWTEMP, SW_AVAIL, ES_Coef
-      
+
 !     2D additions:
       INTEGER Col, FurRow1, FurCol1, Row, DYNAMIC
       REAL, DIMENSION(MaxRows, MaxCols) :: ES_mm, mm_2_vf, SWDELTU

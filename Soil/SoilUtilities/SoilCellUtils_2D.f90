@@ -68,48 +68,48 @@
 
 ! -----------------------------------------------------------------------------
 
-      TYPE CellStrucType 
-        Sequence
-        Integer*4 CellType                
-        ! 0 = no cell data (e.g., in furrow)      1,2     -99  
-        ! 1 = surface water                      ------|       
-        ! 2 = surface litter                       3   |   0   
-        ! 3 = soil in bed                        _  _  |_______
-        ! 4 = soil below bed                                   
-        ! 5 = soil below furrow                    4   |   5   
-        !-99= not simulated                       -99     -99  
-        Real*4 Thick       !cm
-        Real*4 Width       !cm
-        Real*4 CellArea    !cm3[soil]/cm[row length]
-      END TYPE CellStrucType
+  TYPE CellStrucType 
+    Sequence
+    Integer*4 CellType                
+    ! 0 = no cell data (e.g., in furrow)      1,2     -99  
+    ! 1 = surface water                      ------|       
+    ! 2 = surface litter                       3   |   0   
+    ! 3 = soil in bed                        _  _  |_______
+    ! 4 = soil below bed                                   
+    ! 5 = soil below furrow                    4   |   5   
+    !-99= not simulated                       -99     -99  
+    Real*4 Thick       !cm
+    Real*4 Width       !cm
+    Real*4 CellArea    !cm3[soil]/cm[row length]
+  END TYPE CellStrucType
 
-      TYPE CellStateType
-        Sequence
-        Real SWV                         !Soil water mm3/mm3
-        Real RLV                         !Root len dens cm/cm3 (PLANT)
-        REAL SNO3, SNH4, UREA            !Soil N (kg[N]/ha)
-        REAL BD, DUL, LL, SAT, SWCN, WR  !Soil properties 
-!       WR(L)     Root hospitality factor, used to compute root distribution
-!       REAL OC, SPi_Labile, SRP         !Not used currently
-!       Real STemp                       !Soil temperature (SPAM)
-      END TYPE CellStateType 
+  TYPE CellStateType
+    Sequence
+    Real SWV                         !Soil water mm3/mm3
+    Real RLV                         !Root len dens cm/cm3 (PLANT)
+    REAL SNO3, SNH4, UREA            !Soil N (kg[N]/ha)
+    REAL BD, DUL, LL, SAT, SWCN, WR  !Soil properties 
+!   WR(L)     Root hospitality factor, used to compute root distribution
+!   REAL OC, SPi_Labile, SRP         !Not used currently
+!   Real STemp                       !Soil temperature (SPAM)
+  END TYPE CellStateType 
 
-      TYPE CellRateType
-        Sequence
-        REAL SWFlux_L, SWFlux_R             !Horiz soil water movement, cm2/d
-        REAL SWFlux_D, SWFlux_U             !Vert soil water movement, cm2/d
-        REAL ES_Rate                        !Evaporation rates, mm/d
-        REAL EP_Rate                        !Transpiration rates, mm/d
-        REAL NO3Uptake, NH4Uptake           !PLANT N uptake rates
-!       REAL OCAdd                          !Plant residue
-      END TYPE CellRateType
+  TYPE CellRateType
+    Sequence
+    REAL SWFlux_L, SWFlux_R             !Horiz soil water movement, cm2/d
+    REAL SWFlux_D, SWFlux_U             !Vert soil water movement, cm2/d
+    REAL ES_Rate                        !Evaporation rates, mm/d
+    REAL EP_Rate                        !Transpiration rates, mm/d
+    REAL NO3Uptake, NH4Uptake           !PLANT N uptake rates
+!   REAL OCAdd                          !Plant residue
+  END TYPE CellRateType
 
-      TYPE CellType 
-        Sequence
-        TYPE (CellStrucType) Struc
-        TYPE (CellStateType) State
-        TYPE (CellRateType)  Rate
-      END TYPE CellType
+  TYPE CellType 
+    Sequence
+    TYPE (CellStrucType) Struc
+    TYPE (CellStateType) State
+    TYPE (CellRateType)  Rate
+  END TYPE CellType
       
 !==============================================================================
   CONTAINS

@@ -825,7 +825,7 @@
 ! write output
 ! ---------------------------------------------------------------------  
 !---------------- Output Cell Structures ---------------------------------
-    IF (ISWITCH % MESOL == 'D') THEN
+!   IF (ISWITCH % MESOL == 'D') THEN
       msg(1) = "2D model initialized:"
       Write(msg(2), '(" Bed height (cm)  =",F8.2)') BEDHT
       Write(msg(3), '(" Bed width (cm)   =",F8.2)') BEDWD
@@ -849,7 +849,7 @@
         Row, Cells(Row,1)%Struc%Thick, (Cells(Row,Col)%Struc%CellType,Col = 1, NColsTOT) 
       Enddo 
       call info(NRowsTot+4,errkey,msg)  
-    ENDIF
+!   ENDIF
 !------------------------------
     NH4I = NewPropNH4I 
     NO3I = NewPropNO3I 
