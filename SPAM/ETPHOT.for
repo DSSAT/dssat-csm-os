@@ -123,6 +123,14 @@ C         added by BAK on 10DEC2015
       REAL AGEQESL, AGEQESLN, CO2QESL, CO2QESLN, QEFFSL, QEFFSLN
 
       REAL PSTRES1  !3/22/2011
+!     Ozone input added by JG 12/15/2021. Included CO2 inputs for interaction
+      REAL OBASE
+      REAL OZON7
+      REAL FO3
+      REAL FOZ1
+      REAL PRFO3
+      REAL CCEFF, CCMAX, CCMP
+      REAL CCK, A0, PRATIO
 
 !      SAVE AZIR,BETN,CEC,DLAYR,DLAYR2,DULE,FNPGL,FNPGN,LFANGD,
 !     &  LL,LL2,LLE,LMXREF,LNREF,LWIDTH,NELAYR,NLAYR,NSLOPE,PALB,
@@ -181,9 +189,10 @@ C         added by BAK on 10DEC2015
       TAIRHR = WEATHER % TAIRHR
       TGRO   = WEATHER % TGRO     !I/O
       TGROAV = WEATHER % TGROAV   !I/O
-      TGRODY = WEATHER % TGRODY
-      TMIN   = WEATHER % TMIN
-      WINDHR = WEATHER % WINDHR
+      TGRODY = WEATHER % TGRODY 
+      TMIN   = WEATHER % TMIN  
+      WINDHR = WEATHER % WINDHR 
+      OZON7  = WEATHER % OZON7
 
 !     Retrieve plant module data for use here.
       Call GET('PLANT', 'CANHT',  CANHT)
@@ -235,7 +244,8 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
      &      LNREF, NSLOPE, PALBW, QEREF, ROWSPC,          !Output
      &      SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,         !Output
      &      XLMAXT, YLMAXT, PHTHRS10,                     !Output
-     &      CCNEFF, CICAD, cmxsf,cqesf,pgpath)            !Output
+     &      CCNEFF, CICAD, cmxsf,cqesf,pgpath,            !Output
+     &      CCEFF, CCMAX, CCMP, FOZ1, OBASE)              !Output added by JG for ozone
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
@@ -671,6 +681,27 @@ C          ES = MAX(MIN(EDAY,AWEV1),0.0)
             ENDIF
           ENDIF
 !*****************************************
+!         Calculate ozone stress on photosynthesis. Added by JG 12/15/2021
+!         FO3 ranges between 0.0-1.0, 1.0 = no stress, 0.0 = max stress
+          IF (OZON7 .GT. OBASE) THEN
+              FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
+              FO3 = MAX(FO3, 0.0)
+          ELSE
+              FO3 = 1.0
+          ENDIF
+!         Ozone interaction with CO2 and water stress (SWFAC). SWFAC is between 0.0-1.0
+!         CO2 effect on photosynthesis, same as in PHOTO.for
+!         Adjust canopy photosynthesis for CO2 concentration assuming a
+!         reference value of CO2 of 330 ppmv.
+          CCK = CCEFF / CCMAX
+          A0 = -CCMAX * (1. - EXP(-CCK * CCMP))
+          PRATIO = A0 + CCMAX * (1. - EXP(-CCK * CO2))
+          
+          IF (SWFAC .LT. 0.0001) THEN  ! added to prevent dividing by 0
+              PRFO3 = 1.0
+          ELSE
+              PRFO3 = MIN(1.0, (FO3*PRATIO)/SWFAC)
+          ENDIF
 
           IF (MEEVP .NE. 'Z') THEN
 C
@@ -678,11 +709,12 @@ C KJB USE THE REAL MID-DAY WATER STRESS FACTOR HERE, NOT THE DAILY ONE?
 C KJB AT LEAST FOR THE PGNOON?
 C
 !     CHP 3/22/2011 - multiply by P stress here.
-            PG = PG * SWFAC * PSTRES1
-            PGCO2 = PGCO2 * SWFAC * PSTRES1
-            LMXSLN = LMXSLN * SWFAC * PSTRES1
-            LMXSHN = LMXSHN * SWFAC * PSTRES1
-            PGNOON = PGNOON * SWFAC * PSTRES1
+!            PG = PG * SWFAC * PSTRES1
+            PG = PG * MIN(SWFAC, PRFO3) * PSTRES1
+            PGCO2 = PGCO2 * MIN(SWFAC, PRFO3) * PSTRES1
+            LMXSLN = LMXSLN * MIN(SWFAC, PRFO3) * PSTRES1
+            LMXSHN = LMXSHN * MIN(SWFAC, PRFO3) * PSTRES1
+            PGNOON = PGNOON * MIN(SWFAC, PRFO3) * PSTRES1
           ENDIF
 
 C         Post-processing for some stress effects (duplicated in PHOTO).
@@ -1009,7 +1041,8 @@ C=======================================================================
      &  LNREF, NSLOPE, PALBW, QEREF, ROWSPC,              !Output
      &  SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,             !Output
      &  XLMAXT, YLMAXT, PHTHRS10,                         !Output
-     &  ccneff, cicad, cmxsf, cqesf, pgpath)              !Output
+     &  ccneff, cicad, cmxsf, cqesf, pgpath,              !Output
+     &  CCEFF, CCMAX, CCMP, FOZ1, OBASE)                  !Output added by JG for ozone
 
       IMPLICIT NONE
       EXTERNAL FIND, GETLUN, IGNORE, ERROR
@@ -1031,6 +1064,16 @@ C=======================================================================
       character(len=2) pgpath
       character(len=8) model
       real ccneff, cicad, cmxsf, cqesf
+      
+      ! JG added to read ozone parameters from ecotype file 02/05/2023
+      CHARACTER*6   ECOTYP, ECONO
+      CHARACTER*12  FILEE
+      CHARACTER*80  PATHEC
+      CHARACTER*92  FILEGC
+      CHARACTER*255 C255
+      INTEGER LUNECO
+      REAL CCEFF, CCMAX, CCMP  !Added to read in CO2 parameters from species file
+      REAL FOZ1, OBASE
 
 C     Read IBSNAT35.INP file.
 
@@ -1050,6 +1093,11 @@ C     Read IBSNAT35.INP file.
         FILECC = PATHCR(1:(PATHL-1)) // FILEC
       ENDIF
 
+! JG added to read ozone parameters from ecotype file 02/05/2023
+      READ (LUNIO,105,IOSTAT=ERRNUM) FILEE, PATHEC; LNUM = LNUM + 1
+  105 FORMAT(15X,A12,1X,A80)
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+
       REWIND(LUNIO)
       SECTION = '*PLANT'
       CALL FIND(LUNIO,SECTION,LNUM,FOUND)
@@ -1066,7 +1114,10 @@ C     Read IBSNAT35.INP file.
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO,LNUM)
 
 C-GH  READ(LUNIO,'(72X,F6.0)') LMXREF
-      READ(LUNIO,'(60X,F6.0,6X,F6.0)',IOSTAT=ERRNUM) PHTHRS10,LMXREF
+! JG adjusted READ to read ECONO for ozone parameters 02/05/2023
+!      READ(LUNIO,'(60X,F6.0,6X,F6.0)',IOSTAT=ERRNUM) PHTHRS10,LMXREF
+      READ(LUNIO,'(24X,A6,30X,F6.0,6X,F6.0)',IOSTAT=ERRNUM) ECONO,
+     &     PHTHRS10,LMXREF
       LNUM = LNUM + 1
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM+1)
 
@@ -1080,10 +1131,14 @@ C     Read species file.
       SECTION = '!*PHOT'
       CALL FIND(LUNCRP,SECTION,LNUM,FOUND)
 
-!     Read 3rd line of photosynthesis section of species file
+!     Read 2nd line of photosynthesis section of species file
+!     JG read 2nd line instead of 3rd for CO2 effect on ozone
       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-      CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+      READ(C80,'(3F6.1)',IOSTAT=ERRNUM) CCMP, CCMAX, CCEFF
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
+      
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C80)  !3rd line
       READ(C80,'(4F6.0,3X,A)',IOSTAT=ERRNUM) (FNPGN(I),I=1,4), TYPPGN
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
 
@@ -1123,8 +1178,47 @@ C     Read species file.
          cqesf = -99
       end if
 
-
       CLOSE(LUNCRP)
+
+! JG added to read ecotype file for ozone parameters 02/10/2023
+C-----------------------------------------------------------------------
+C     Open FILEE
+C-----------------------------------------------------------------------
+        LNUM = 0
+        PATHL  = INDEX(PATHEC,BLANK)
+        IF (PATHL .LE. 1) THEN
+          FILEGC = FILEE
+        ELSE
+          FILEGC = PATHEC(1:(PATHL-1)) // FILEE
+        ENDIF
+C-----------------------------------------------------------------------
+C    Read Ecotype Parameter File
+C-----------------------------------------------------------------------
+      CALL GETLUN('FILEE', LUNECO)
+      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEGC,0)
+      ECOTYP = '      '
+      LNUM = 0
+      DO WHILE (ECOTYP .NE. ECONO)
+        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+          IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
+     &        (C255(1:1) .NE. '*')) THEN
+          READ (C255,'(A6,145X,F6.0,6X,F6.0)',IOSTAT=ERRNUM)
+     &        ECOTYP, FOZ1, OBASE
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEGC,LNUM)
+          IF (ECOTYP .EQ. ECONO) THEN
+              EXIT
+          ENDIF
+
+        ELSE IF (ISECT .EQ. 0) THEN
+          IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+          ECONO = 'DFAULT'
+          REWIND(LUNECO)
+          LNUM = 0
+        ENDIF
+      ENDDO
+
+      CLOSE (LUNECO)
 
 C     Initialize some parameters.
 

@@ -11,6 +11,7 @@ C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
 C  04/02/2008 US/CHP Added P and K models
 C  02/25/2012 JZW PHINT from CUL file (remove from SPE)
+C  02/03/2013 JG Added ozone parameters to CUL file
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
@@ -28,7 +29,7 @@ C=======================================================================
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW,                                          !Input
+     &    YRSOW, OZON7,                                   !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -120,6 +121,15 @@ C=======================================================================
       REAL PLIGLF, PLIGRT
       REAL SLPF
 
+!     JG added ozone functionality 11/24/2021
+      REAL OZON7
+      REAL FO3
+      REAL FOZ1
+      REAL OBASE
+      REAL PRFO3
+      REAL SFOZ1
+      REAL SLFO3
+
       LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO, FIRST
 
 !     The variable "CONTROL" is of type "ControlType".
@@ -158,7 +168,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       CALL RI_IPGROSUB (CONTROL, 
      &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
-     &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
+     &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL, FOZ1, SFOZ1, OBASE)
 
       CALL RI_IPCROP (FILEC, PATHCR, !CROP, 
      &    CO2X, CO2Y, MODELVER, PORMIN, 
@@ -619,7 +629,22 @@ CCCCC-PW
      &    CARBO, CUMDTT,                                  !I/O
      &    TSHOCK)                                         !Output
 
-      CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES,TSHOCK,PStres1,KSTRES)
+!     Effect of ozone on photosynthesis added by JG 11/24/2021
+      IF (OZON7 .GT. OBASE) THEN
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
+          FO3 = AMAX1(FO3, 0.0)
+      ELSE
+          FO3 = 1.0
+      ENDIF
+!     Ozone, CO2, water stress interaction
+      IF (SWFAC .LT. 0.0001) THEN  ! added to prevent dividing by 0
+          PRFO3 = 1.0
+      ELSE
+          PRFO3 = AMIN1(1.0, (FO3*PCO2)/SWFAC) ! ozone effect added by JG
+      ENDIF
+
+!     JG added ozone stress 11/24/2021
+      CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES,TSHOCK,PStres1,KSTRES,PRFO3)
      &       * SLPF
 
       TEMF  = 1.0
@@ -1158,10 +1183,19 @@ C
       SLFP   = (1-FSLFP) + FSLFP*PSTRES1 
       SLFK   = (1-FSLFP) + FSLFK*KSTRES 
 
+!     Senescence due to ozone stress, JG 11/24/2021
+      IF (OZON7 .GT. OBASE) THEN
+          SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * OBASE))
+          SLFO3 = AMAX1(SLFO3, 0.0)
+      ELSE
+          SLFO3 = 1.0
+      ENDIF
+
       !
       ! Senescence
       !
-      PLAS   = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFC,SLFT,SLFN,SLFP,SLFK))
+      PLAS   = (PLA-SENLA)*
+     &         (1.0-AMIN1(SLFW,SLFC,SLFT,SLFN,SLFP,SLFK,SLFO3))
       IF  (PLAS .GT. 0.025*PLA) THEN
           PLAS =  PLA*0.015
       ENDIF
@@ -1396,10 +1430,11 @@ C
 C  Reads FILEIO for GROSUB routine
 C  05/07/2002 CHP Written
 C  08/12/2003 CHP Added I/O error checking
+C  02/03/2023 JG Added ozone parameters
 C=======================================================================
       SUBROUTINE RI_IPGROSUB (CONTROL, 
      &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
-     &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
+     &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL, FOZ1, SFOZ1, OBASE)
 
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -1418,6 +1453,7 @@ C=======================================================================
 
       REAL ATEMP, G1, G2, G3, P5, PHINT
       REAL PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL
+      REAL FOZ1, SFOZ1, OBASE                  !JG added ozone parameters 02/03/2023
 
 C     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
@@ -1467,9 +1503,10 @@ C-----------------------------------------------------------------------
       SECTION = '*CULTI'
       CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-      READ (LUNIO,100, IOSTAT=ERR) P5, G1, G2, G3, PHINT
+      READ (LUNIO,100, IOSTAT=ERR) P5, G1, G2, G3, PHINT, FOZ1, SFOZ1,
+     &                             OBASE
 ! 100 FORMAT (42X,F6.0,6X,3F6.0,6X,F6.0)
-  100 FORMAT (42X,F6.0,6X,4F6.0)
+  100 FORMAT (42X,F6.0,6X,4F6.0,18X,3F6.0)
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 

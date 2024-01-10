@@ -138,6 +138,9 @@ C-----------------------------------------------------------------------
       REAL TMAX, TMIN !, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
 
+!     Ozone for RICER added by JG 11/24/2021
+      REAL OZON7
+
       REAL, DIMENSION(2)  :: HARVFRAC
       REAL, DIMENSION(NL) :: NH4, NO3, RLV  !, RWU, UPPM
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
@@ -202,6 +205,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       TMAX   = WEATHER % TMAX
       TMIN   = WEATHER % TMIN
       TWILEN = WEATHER % TWILEN
+      OZON7  = WEATHER % OZON7
 
 !***********************************************************************
 !***********************************************************************
@@ -565,7 +569,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    CO2, DAYL, EOP, FLOODWAT, HARVFRAC, NH4, NO3,   !Input
      &    SKi_Avail, SPi_AVAIL,                           !Input
      &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
-     &    TWILEN, YRPLT,                                  !Input
+     &    TWILEN, YRPLT, OZON7,                           !Input
      &    FLOODN,                                         !I/O
      &    CANHT, HARVRES, XLAI, KUptake, MDATE, NSTRES,   !Output
      &    PORMIN, PUptake, RWUEP1, RWUMX, CropStatus,     !Output
@@ -853,6 +857,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! NSTRES    Nitrogen stress factor (1=no stress, 0=max stress)
 ! NVALP0    Set to 100,000 in PHENOLOG, used for comparison of times of
 !             plant stages (d)
+! OZON7     Daily 7-hour mean ozone concentration (9:00-15:59) (ppb)
 ! PORMIN    Minimum pore space required for supplying oxygen to roots for
 !             optimal growth and function (cm3/cm3)
 ! RLV(L)    Root length density for soil layer L (cm[root] / cm3[soil])
