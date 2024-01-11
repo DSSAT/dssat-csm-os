@@ -48,9 +48,10 @@ C=======================================================================
       USE FloodModule
 
       IMPLICIT NONE
-      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS, TRANS_old
+      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV
       EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
       EXTERNAL XTRACT, ROOTWU_HR, WATERSTRESS, ESR_SoilEvap_2D
+      EXTERNAL TRANS_old, TRANS
       SAVE
 
 !     Subroutine interface variables
