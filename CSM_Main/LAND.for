@@ -196,7 +196,7 @@ C-----------------------------------------------------------------------
      &    SWDELTX)                                        !Output
       ELSE
         CALL SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
@@ -279,7 +279,7 @@ C-----------------------------------------------------------------------
      &    SWDELTX)                                        !Output
       ELSE
         CALL SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
@@ -367,7 +367,7 @@ C     rates of evapotranspiration.
 C-----------------------------------------------------------------------
       IF (.NOT. CONTROL % SIM2D) THEN
         CALL SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
@@ -425,7 +425,7 @@ C-----------------------------------------------------------------------
      &    SWDELTX)                                        !Output
       ELSE
         CALL SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
@@ -490,7 +490,7 @@ C***********************************************************************
      &    SWDELTX)                                        !Output
         ELSE
           CALL SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
@@ -551,7 +551,7 @@ C     Print seasonal summaries and close files.
      &    SWDELTX)                                        !Output
       ELSE
         CALL SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O

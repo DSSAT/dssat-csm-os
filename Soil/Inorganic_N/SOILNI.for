@@ -373,7 +373,7 @@ C=======================================================================
 
         CASE DEFAULT
           CALL Denit_Ceres (CONTROL, ISWNIT, 
-     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    DUL, KG2PPM, LITC, NLAYR, NO3, SAT,         !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
@@ -940,7 +940,7 @@ C=======================================================================
 
         CASE DEFAULT
           CALL Denit_Ceres (CONTROL, ISWNIT, 
-     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    DUL, KG2PPM, LITC, NLAYR, NO3, SAT,         !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output

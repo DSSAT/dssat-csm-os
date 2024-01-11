@@ -2328,7 +2328,7 @@ C=======================================================================
       EXTERNAL ERROR, FIND, WARNING, GETLUN, INFO
 
       Type (SoilType) SOILPROP
-      TYPE (CellType)   , INTENT(OUT):: CELLS(MaxRows,MaxCols)
+      TYPE (CellType) :: CELLS(MaxRows,MaxCols)
 
       CHARACTER*6 SECTION
       CHARACTER*8, PARAMETER :: ERRKEY = 'SETPM'
@@ -2336,7 +2336,7 @@ C=======================================================================
 !     CHARACTER*180 CHAR
       INTEGER ERR, FOUND, LNUM, LUNIO, J
       REAL PMWD, ROWSPC_CM
-      REAL PMALB, MSALB, AvgPMCover, CumWid, CumWidLast
+      REAL PMALB, MSALB, CumWid, CumWidLast
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       LOGICAL PMCover
     

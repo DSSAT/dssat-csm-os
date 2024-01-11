@@ -25,14 +25,14 @@ C=======================================================================
      &    ES)                                             !Output
 
 !-----------------------------------------------------------------------
-      USE CELL_2D
+      USE Cells_2D
       USE ModuleData
       IMPLICIT NONE
       EXTERNAL ESUP
       SAVE
 
       INTEGER DYNAMIC
-      TYPE (CellType), DIMENSION(NColsMax, NRowsMax) :: CELLS
+      TYPE (CellType), DIMENSION(MaxRows, MaxCols) :: CELLS
       REAL EOS, SWEF, U, SW_AVAIL, SWMIN
       REAL SUMES1, SUMES2, WINF, WINFMOD
       REAL ES, T

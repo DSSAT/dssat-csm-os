@@ -31,7 +31,7 @@
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
 
 !     2D variables:
-      INTEGER i, j, FurRow1, FurCol1
+      INTEGER j, FurRow1, FurCol1
 
       TYPE (CellType) CELLS(MaxRows,MaxCols)
 
@@ -129,7 +129,7 @@
           ELSE
             WFluxFrac = MAX(0.0, MIN(1.0,
      &        SWFlux_R(L,j) / (SWV(L,j) * CellArea(L,j))))
-            Nflux_R(L,j) = MAX(0.0, NTEMP(L,j) * FRAC_SOLN(i))*WFluxFrac
+            Nflux_R(L,j) = MAX(0.0, NTEMP(L,j) * FRAC_SOLN(L))*WFluxFrac
      &        * SWFlux_R(L,j) / 
      &   (SWFlux_R(L,j) + SWFlux_L(L,j) + SWFlux_D(L,j) + SWFlux_U(L,j))
 

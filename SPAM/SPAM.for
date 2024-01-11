@@ -35,7 +35,7 @@ C             TRANS   (File TRANS.for)
 C=======================================================================
 
       SUBROUTINE SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
@@ -43,15 +43,34 @@ C=======================================================================
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+      USE Cells_2D
       USE ModuleData
       USE FloodModule
 
       IMPLICIT NONE
-      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS
+      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS, TRANS_old
       EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
-      EXTERNAL XTRACT
+      EXTERNAL XTRACT, ROOTWU_HR, WATERSTRESS, ESR_SoilEvap_2D
       SAVE
+
+!     Subroutine interface variables
+      TYPE (Controltype), INTENT(INOUT) :: CONTROL
+      TYPE (SwitchType), INTENT(IN) :: ISWITCH
+      Type (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
+      TYPE (MulchType), INTENT(IN) :: MULCH
+      TYPE (SoilType), INTENT(IN) :: SOILPROP !, SoilProp_Furrow
+      TYPE (WeatherType), INTENT(IN) :: WEATHER
+
+      REAL, INTENT(IN) :: CANHT, EORATIO, KSEVAP, KTRANS, PORMIN, 
+     &      PSTRES1, RWUMX, WINF, XHLAI, XLAI
+      REAL, DIMENSION(NL), INTENT(IN) :: RLV, SW, SWDELTS, UH2O
+
+      TYPE (FloodWatType), INTENT(INOUT) :: FLOODWAT
+      REAL, DIMENSION(NL), INTENT(INOUT) :: SWDELTU
+
+      REAL, INTENT(OUT) :: EO, EOP, EOS, EP, ES, SRFTEMP, TRWU, TRWUP
+      REAL, DIMENSION(NL), INTENT(OUT) :: ST, SWDELTX, UPFLOW
+
 
       CHARACTER*1  IDETW, ISWWAT
       CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV, METMP
@@ -61,43 +80,28 @@ C=======================================================================
 
       INTEGER DYNAMIC, L, NLAYR
 
-      REAL CANHT, CO2, SRAD, TAVG,
-     &    TMAX, TMIN, WINDSP, XHLAI, XLAI
+      REAL CO2, SRAD, TAVG,
+     &    TMAX, TMIN, WINDSP
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP
-      REAL EF, EM, EO, EP, ES, ET, EVAP
-      REAL TRWU, TRWUP, U
-      REAL EOS, EOP, WINF, MSALB, ET_ALB
-      REAL XLAT, TAV, TAMP, SRFTEMP
-      REAL EORATIO, KSEVAP, KTRANS
+      REAL EF, EM, ET, EVAP
+      REAL U
+      REAL MSALB, ET_ALB
+      REAL XLAT, TAV, TAMP
 
-      REAL DLAYR(NL), DUL(NL), LL(NL), RLV(NL), RWU(NL),
-     &    SAT(NL), ST(NL), SW(NL), SW_AVAIL(NL), !SWAD(NL),
-     &    SWDELTS(NL), SWDELTU(NL), SWDELTX(NL), UPFLOW(NL)
+      REAL DLAYR(NL), DUL(NL), LL(NL),RWU(NL),
+     &    SAT(NL), SW_AVAIL(NL) !SWAD(NL),
       REAL ES_LYR(NL)
 
-!     Root water uptake computed by some plant routines (optional)
-      REAL UH2O(NL)
-
-!     Species-dependant variables imported from PLANT module:
-      REAL PORMIN, RWUMX
 
 !     Flood management variables:
       REAL FLOOD, EOS_SOIL
 
-!     P Stress on photosynthesis
-      REAL PSTRES1
 !     Hourly transpiration for MEEVP=H
       REAL, DIMENSION(TS)    :: ET0
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
-      TYPE (ControlType) CONTROL
-      TYPE (SoilType)    SOILPROP
-      TYPE (SwitchType)  ISWITCH
-      TYPE (FloodWatType)FLOODWAT
-      TYPE (MulchType)   MULCH
-      TYPE (WeatherType) WEATHER
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -166,7 +170,7 @@ C=======================================================================
       ES_LYR = 0.0
       SWDELTX = 0.0
       TRWU = 0.0
-      XHLAI = 0.0
+!     XHLAI = 0.0 CANT SET AN INPUT VARIABLE
       ET0 = 0.0
 
 !     ---------------------------------------------------------
