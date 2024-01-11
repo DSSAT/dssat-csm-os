@@ -415,8 +415,10 @@ C=======================================================================
           SNH4_2D(L, J) = SNH4_2D(L, J) - UNH4_2D(L, J)
 !         KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g
 !         KG2PPM(L) = 10. / (BD(L) * DLAYR(L))
-          NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-          NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+          IF (ColFrac(L,J) > 0.0) THEN
+            NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+            NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+          ENDIF
 
           TotUptake = TotUptake + (UNO3_2D(L,J) +UNH4_2D(L,J)) !kg/ha
         ENDDO
@@ -1251,10 +1253,12 @@ C=======================================================================
 !          IF (ABS(SNH4_2D(L, J)) .LT. 1.E-8) SNH4_2D(L, J) = 0.0
 !          IF (ABS(UREA_2D(L, J)) .LT. 1.E-8) UREA_2D(L, J) = 0.0
 
-!         Conversions.
-          NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-          NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-          UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+!         Concentration
+          IF (ColFrac(L,J) > 0.0) THEN
+             NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+             NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+             UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+          ENDIF
         ENDDO
       ENDDO  
 
