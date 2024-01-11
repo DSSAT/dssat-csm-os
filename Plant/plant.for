@@ -138,7 +138,7 @@ C-----------------------------------------------------------------------
       REAL KCAN, KEP, KSEVAP, KTRANS, LAI, NSTRES
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW, IRRAMT
       REAL TMAX, TMIN !, TRWU
-      REAL TRWUP, TWILEN, XLAI, XHLAI
+      REAL TRWUP, TWILEN, XLAI, XHLAI, DUMMY
 
 !     Water stress factors computed in SPAM now for variable time step 
 !       root water uptake model
@@ -797,12 +797,43 @@ c     Total LAI must exceed or be equal to healthy LAI:
         ENDIF
 
 !       Sync 2D variables for use in SoilN routines
-        IF (.NOT. CONTROL % SIM2D) THEN
+        IF (CONTROL % SIM2D .AND. 
+     &      (MODEL(1:5) .EQ. 'CRGRO' .OR.
+     &       MODEL(1:5) .EQ. 'PTSUB')) THEN
 
+!         Currently, only CROPGRO and SUBSTOR have 2D root models
+!         For these 2 models only, when simulating in 2D mode, 
+!         Export RLV and NUptake variables to 1D arrays for use in
+!         1D processes elsewhere in CSM.
+
+!         Interpolate2Layers_2D is for concentration variables which are
+!         averaged over a layer, weighted by column width.
+          CALL Interpolate2Layers_2D(                    
+     &      RLV_2D, CELLS%STRUC, SOILPROP%NLAYR,          !Input
+     &      RLV, Dummy)                                   !Output
+!         "Dummy" represents the surface value of a 2d array. Not relevant here.
+
+!         Cell2Layer_2D is for mass variables which are aggregated across 
+!         a soil layer.
+          CALL Cell2Layer_2D(
+     &      NO3Uptake_2D, CELLS%STRUC, SOILPROP%NLAYR,    !Input
+     &      UNO3, Dummy)                                  !Output
+
+          CALL Cell2Layer_2D(
+     &      NH4Uptake_2D, CELLS%STRUC, SOILPROP%NLAYR,    !Input
+     &      UNH4, Dummy)                                  !Output
+
+        ELSE
+!         For all other cases (i.e., 1D model, or not CROPGRO or SUBSTOR),
+!           only 1D RLV was calculated, so need to transfer values into
+!           the 2D arrays for use elsewhere in the model.
+
+!         Interpolate2Cells_2D is used for concentration variables.
           CALL Interpolate2Cells_2D(
-     &      CELLS%STRUC, SOILPROP, RLV, 0.0   ,           !Input
+     &      CELLS%STRUC, SOILPROP, RLV, 0.0,              !Input
      &      RLV_2D)                                       !Output
 
+!         Layer2Cell_2D is used for mass variables
           CALL Layer2Cell_2D(
      &      CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
      &      UNO3, 0.0,                                    !Input
@@ -812,11 +843,11 @@ c     Total LAI must exceed or be equal to healthy LAI:
      &      CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
      &      UNH4, 0.0,                                    !Input
      &      NH4Uptake_2D)                                 !Output
-
-          CELLS % RATE % NO3Uptake = NO3Uptake_2D
-          CELLS % RATE % NH4Uptake = NH4Uptake_2D
-          CELLS % STATE % RLV = RLV_2D
         END IF
+
+        CELLS % RATE % NO3Uptake = NO3Uptake_2D
+        CELLS % RATE % NH4Uptake = NH4Uptake_2D
+        CELLS % STATE % RLV = RLV_2D
 
 !***********************************************************************
 !***********************************************************************
@@ -948,84 +979,6 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! YRPLT     Planting date (YYYYDDD)
 !===========================================================================
 
-!C=======================================================================
-!C  SYNC_NUPTAKE_TO2D, Subroutine
-!C
-!C  This routine calls convert uptake from 1d layer array to 2d cell array
-!C-----------------------------------------------------------------------
-!C  Revision history
-!C
-!C  06/01/2019 MZ create this sub routine
-!C=======================================================================
-!
-!      SUBROUTINE SYNC_NUPTAKE_TO2D(
-!     &      CELLS, SOILPROP, NSTATE_2D,            !Input
-!     &      Uptake,                                !I/O
-!     &      Uptake_2D)                             !Output
-!
-!C-----------------------------------------------------------------------
-!! Each plant module must compute SATFAC, SWFAC, and TURFAC
-!C-----------------------------------------------------------------------
-!      USE ModuleDefs 
-!      USE ModuleData
-!      USE Cells_2D
-!
-!      IMPLICIT NONE
-!      
-!      TYPE (SoilType) SOILPROP
-!      Type (CellType) CELLS(MaxRows,MaxCols)
-!      TYPE (CellStrucType) Struc(MaxRows,MaxCols)
-!      INTEGER L, J, NLAYR
-!      REAL DLAYR(NL)
-!      REAL, DIMENSION(NL) :: Uptake
-!      REAL, DIMENSION(MaxRows,MaxCols) :: NSTATE_2D, Uptake_2D, ColFrac
-!!      REAL CumOverFlow
-!      REAL rowAveN
-!      INTEGER OverflowFlg
-!      
-!      Struc = CELLS%STRUC
-!      NLAYR = SOILPROP%NLAYR
-!      DLAYR = SOILPROP%DLAYR
-!      OverflowFlg = 0
-!      ColFrac = BedDimension % ColFrac
-!      
-!      CALL Interpolate2Cells_2D(
-!     &      Struc, SOILPROP, Uptake, Uptake(1),    !Input
-!     &      Uptake_2D)                             !Output
-!     
-!      DO L = 1, NRowsTot
-!        rowAveN = 0.0
-!        DO J = 1, NColsTot
-!          SELECT CASE(Struc(L, J) % CellType)
-!          CASE(3,4,5)
-!            rowAveN = rowAveN + NSTATE_2D(L, J) * ColFrac(L, J)
-!          END SELECT
-!        END DO
-!        DO J = 1, NColsTot
-!          SELECT CASE(Struc(L, J) % CellType)
-!          CASE(3,4,5)
-!            IF (rowAveN .LE. 0) THEN
-!              Uptake_2D(L, J) = Uptake_2D(L, J)
-!            ELSE
-!              Uptake_2D(L,J) = Uptake_2D(L,J) * NSTATE_2D(L,J) / rowAveN
-!            END IF
-!            
-!            IF (NSTATE_2D(L, J) .LT. Uptake_2D(L, J)) THEN
-!              OverflowFlg = 1
-!!              CumOverFlow = CumOverFlow + (Uptake_2D(L, J) - NSTATE_2D(L, J)) * ColFrac(L, J)
-!              Uptake_2D(L, J) = NSTATE_2D(L, J)
-!            END IF
-!          END SELECT
-!        END DO
-!      END DO
-!     
-!      IF (OverflowFlg .GT. 0) THEN
-!        CAll Interpolate2Layers_2D(Uptake_2D, Struc, NLAYR,  !input
-!     &       Uptake)                                 !Output
-!      END IF
-!      RETURN
-!      END SUBROUTINE
-!
 !===========================================================================
       SUBROUTINE READ_ASCE_KT(CONTROL, MEEVP)
 !     Generic routine to read evapotranspiration species parameters
