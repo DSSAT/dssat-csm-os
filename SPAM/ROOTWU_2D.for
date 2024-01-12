@@ -74,7 +74,7 @@ C-----------------------------------------------------------------------
       LL  = CELLS%STATE%LL
       SAT = CELLS%STATE%SAT
       CellArea = CELLS%STRUC%CellArea
-      Cell_TYPE = CELLS%STRUC%CellType
+      Cell_TYPE = CELLS%STRUC%Cell_Type
 
       TSS    = 0.0
       TSS_LAST = 0.0
@@ -197,7 +197,7 @@ C-----------------------------------------------------------------------
       DO i = 1, NRowsTot
         DO j = 1, NColsTot
           RWU_2D_ts(i,j) = RWUP_2D_ts(i,j) * WUF
-          SELECT CASE (Cells(i,j)%Struc%CellType)
+          SELECT CASE (Cells(i,j)%Struc%Cell_Type)
           CASE (3,4,5)
             TRWU_ts = TRWU_ts + RWU_2D_ts(i,j)
           END SELECT

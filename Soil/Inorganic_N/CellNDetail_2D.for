@@ -173,7 +173,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       CelWD =  CellDetail % STRUC % WIDTH
       CelHT  = CellDetail % STRUC % THICK
 
-      Cell_Type = CELLS % Struc % CellType
+      Cell_Type = CELLS % Struc % Cell_Type
       BEDWD   = BedDimension % BEDWD
 
 !     For Cell Detail N
@@ -206,8 +206,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           CellDetail = Cells(L, J)
-          IF (CellDetail%STRUC%CellType > 5 .OR. 
-     &        CellDetail%STRUC%CellType < 3) CYCLE
+          IF (CellDetail%STRUC%Cell_Type > 5 .OR. 
+     &        CellDetail%STRUC%Cell_Type < 3) CYCLE
 
           CelNtot = (
      &      CellDetail % state % SNO3 +
@@ -261,8 +261,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           CellDetail = Cells(L, J)
-          IF (CellDetail%STRUC%CellType > 5 .OR. 
-     &        CellDetail%STRUC%CellType < 3) CYCLE
+          IF (CellDetail%STRUC%Cell_Type > 5 .OR. 
+     &        CellDetail%STRUC%Cell_Type < 3) CYCLE
           TNO3_2D = TNO3_2D + CellDetail % state % SNO3 * ColFrac(L,J)
           TNH4_2D = TNH4_2D + CellDetail % state % SNH4 * ColFrac(L,J)
           TUREA_2D= TUREA_2D+ CellDetail % state % UREA * ColFrac(L,J)
@@ -354,8 +354,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           CellDetail = Cells(L, J)
-          IF (CellDetail%STRUC%CellType > 5 .OR. 
-     &        CellDetail%STRUC%CellType < 3) CYCLE
+          IF (CellDetail%STRUC%Cell_Type > 5 .OR. 
+     &        CellDetail%STRUC%Cell_Type < 3) CYCLE
       
           CelNtot =(
      &      CellDetail % state % SNO3 +
@@ -469,8 +469,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           CellDetail = Cells(L, J)
-          IF (CellDetail%STRUC%CellType > 5 .OR. 
-     &         CellDetail%STRUC%CellType < 3) CYCLE
+          IF (CellDetail%STRUC%Cell_Type > 5 .OR. 
+     &         CellDetail%STRUC%Cell_Type < 3) CYCLE
           TNO3_2D = TNO3_2D + CellDetail % state % SNO3 * ColFrac(L, J)
           TNH4_2D = TNH4_2D + CellDetail % state % SNH4 * ColFrac(L, J)
           TUREA_2D= TUREA_2D+ CellDetail % state % UREA * ColFrac(L, J)

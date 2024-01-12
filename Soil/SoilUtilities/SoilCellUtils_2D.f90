@@ -70,7 +70,7 @@
 
   TYPE CellStrucType 
     Sequence
-    Integer*4 CellType                
+    Integer*4 Cell_Type
     ! 0 = no cell data (e.g., in furrow)      1,2     -99  
     ! 1 = surface water                      ------|       
     ! 2 = surface litter                       3   |   0   
@@ -144,7 +144,7 @@
     SurfaceVal = 0.0
     DO Row = 1, NRowsTot
       DO Col = 1, NColsTot
-        IF (CellStruc(Row,Col)%CellType == 2) THEN
+        IF (CellStruc(Row,Col)%Cell_Type == 2) THEN
           SurfaceVal = SurfaceVal + CellArray(Row,Col)
         ENDIF
       ENDDO
@@ -159,7 +159,7 @@
         Fraction = Layer_Cell_Dep(Row,L) / CellStruc(Row,1) % Thick
         IF (Fraction < 1.E-6) CYCLE !No contribution to soil layer "L" from Cell row "Row"
         ColLoop: DO Col = 1, NColsTot
-          SELECT CASE(CellStruc(Row,Col) % CellType)
+          SELECT CASE(CellStruc(Row,Col) % Cell_Type)
           CASE(3,4,5)
             LayerArray(L) = LayerArray(L) + Fraction * CellArray(Row,Col)
           END SELECT
@@ -207,7 +207,7 @@
 ! Surface cells
   DO Row = 1, NRowsTot
     DO Col = 1, NColsTot
-      IF (CellStruc(Row,Col) % CellType == 2) THEN
+      IF (CellStruc(Row,Col) % Cell_Type == 2) THEN
         CellArray(Row,Col) = SurfaceVal * Surf_Cell_Frac(Row,Col)
       ENDIF
     ENDDO
@@ -264,7 +264,7 @@
     SurfaceVal = 0.0
     DO Row = 1, NL
       DO Col = 1, NColsTot
-        IF (CellStruc(Row,Col)%CellType == 2) THEN
+        IF (CellStruc(Row,Col)%Cell_Type == 2) THEN
           SurfaceVal = SurfaceVal + CellArray(Row,Col) * Surf_Cell_Frac(Row,Col) 
         ENDIF
       ENDDO
@@ -279,7 +279,7 @@
         Fraction = Layer_Cell_Dep(Row,L) / CellStruc(Row,1) % Thick
         IF (Fraction < 1.E-6) CYCLE !No contribution to soil layer "L" from Cell row "Row"
         ColLoop: DO Col = 1, NColsTot
-          SELECT CASE(CellStruc(Row,Col) % CellType)
+          SELECT CASE(CellStruc(Row,Col) % Cell_Type)
           CASE(3,4,5)
             LayerArray(L) = LayerArray(L) + CellArray(Row,Col) * Fraction * WidthFrac(Row,Col)
           END SELECT
@@ -328,7 +328,7 @@
 
   DO Row = 1, NRowsTot
     DO Col = 1, NColsTot
-      SELECT CASE(CellStruc(Row,Col)%CellType)
+      SELECT CASE(CellStruc(Row,Col)%Cell_Type)
 !     Surface data
       CASE (2); CellArray(Row,Col) = SurfaceVal 
 
@@ -393,7 +393,7 @@
   TotSurfXSArea = 0.0
   DO Row = 1, NRowsTot
     DO Col = 1, NColsTot
-      IF (CellStruc(Row,Col) % CellType == 2) THEN       !surface cell
+      IF (CellStruc(Row,Col) % Cell_Type == 2) THEN       !surface cell
         Surf_Cell_Frac(Row,Col) = CellStruc(Row,Col) % Thick * CellStruc(Row,Col) % Width
         TotSurfXSArea = TotSurfXSArea + Surf_Cell_Frac(Row,Col)
       ENDIF
@@ -412,7 +412,7 @@
   TotWidth = 0.0
   DO Row = 1, NRowsTot
     DO Col = 1, NColsTot
-      SELECT CASE(CellStruc(Row,Col) % CellType)
+      SELECT CASE(CellStruc(Row,Col) % Cell_Type)
       CASE(3,4,5)
         TotWidth(Row) = TotWidth(Row) + CellStruc(Row,Col) % Width
         WidthFrac(Row,Col) = CellStruc(Row,Col) % Width 
@@ -433,7 +433,7 @@
 
 ! Find first row that is soil (for column 1)
   DO Row = 1, NRowsTot
-    IF (CellStruc(Row,1) % CellType == 3) THEN       !soil cell
+    IF (CellStruc(Row,1) % Cell_Type == 3) THEN       !soil cell
       FirstSoilRow = Row
       EXIT
     ENDIF

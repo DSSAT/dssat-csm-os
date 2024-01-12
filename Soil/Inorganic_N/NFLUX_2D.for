@@ -51,7 +51,7 @@
 
       DO L = 1, NRowsTot
         DO j = 1, NColsTot
-          Cell_Type(L,j) = CELLS(L,j)%STRUC%CellType
+          Cell_Type(L,j) = CELLS(L,j)%STRUC%Cell_Type
         ENDDO
       ENDDO
 

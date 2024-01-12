@@ -217,7 +217,7 @@ C=======================================================================
       SNO3_2D = Cells % State % SNO3
 
 !     BED & Cell info
-      Cell_Type = CELLS % Struc % CellType
+      Cell_Type = CELLS % Struc % Cell_Type
       BEDWD   = BedDimension % BEDWD
       HalfRow = BedDimension % ROWSPC_cm / 2.
       FurRow1 = BedDimension % FurRow1

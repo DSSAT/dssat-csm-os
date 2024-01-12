@@ -182,7 +182,7 @@
       CellArea = CELLS%STRUC%CellArea
       Thick    = CELLS%STRUC%Thick
       Width    = CELLS%STRUC%Width
-      Cell_Type = CELLS % Struc % CellType
+      Cell_Type = CELLS % Struc % Cell_Type
 
 !     Drip irrigation
       CALL GET(DripIrrig)
@@ -220,7 +220,7 @@
           DO j = 1, NColsTot
 !           Set all initial soil water contents to DUL (soil will be wet after
 !             construction of raised bed).
-            SELECT CASE(CELLS(i,j)%Struc%CellType)
+            SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
               CASE (3,4,5)
                 SWV(i,j) = SOILPROP%DUL(i)
                 SWA(i,j) = SOILPROP%DUL(i) - SOILPROP%LL(i)
@@ -235,7 +235,7 @@
           DO j = 1, NColsTot
 !           Set all initial soil water contents to DUL (soil will be wet after
 !             construction of raised bed).
-            SELECT CASE(CELLS(i,j)%Struc%CellType)
+            SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
               CASE (3,4,5)
                 SWV(i,j) = SW(i)
                 IF (SW(i) < SOILPROP%LL(i)) THEN
@@ -628,7 +628,7 @@
 !       DO i = 1, min(LIMIT_2D, NRowsTot)
         DO i = 1, NRowsTot
           DO j = 1, NColsTot
-            SELECT CASE(CELLS(i,j)%STRUC%CellType)
+            SELECT CASE(CELLS(i,j)%STRUC%Cell_Type)
             CASE (3,4,5);CONTINUE
             CASE DEFAULT; CYCLE
             END SELECT
@@ -865,7 +865,7 @@
         DO i = FurRow1, NRowsTot
           !DO j = FurCol1, NColsTot
           DO j = jj, NColsTot
-            SELECT CASE (CELLS(i,j)%STRUC%CellType)
+            SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
             CASE (3,4,5)
 !             mm/hr                  mm/d
               ES_avg = TSRadFrac * ES_mm(i,j)
@@ -905,7 +905,7 @@
 !       root water uptake.
         DO i = 1, NRowsTot
           DO j = 1, NColsTot
-            SELECT CASE (CELLS(i,j)%STRUC%CellType)
+            SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
             CASE (3,4,5)
               EP_vf(i,j) = RWU_2D_ts(i,j) * mm_2_vf(i,j)
               IF (i <= LIMIT_2D) THEN 
@@ -950,7 +950,7 @@
 !       Update soil water process accumulators
         DO i = 1, NRowsTot
           DO j = 1, NColsTot
-            SELECT CASE (CELLS(i,j)%STRUC%CellType)
+            SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
             CASE (3,4,5)
 !             Potential and actual root water uptake (mm)
               RWU_2D(i,j) = RWU_2D(i,j) + RWU_2D_ts(i,j)
@@ -1039,7 +1039,7 @@
 !       Add in daily upward flow from evaporation into flux for N movement
         DO i = 1, NRowsTot
           DO j = 1, NColsTot
-            SELECT CASE (CELLS(i,j)%STRUC%CellType)
+            SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
             CASE (3,4,5)
 !              Negative vertical flow = upward flow from (i+1,j)
               if (i .LT. NRowsTot)

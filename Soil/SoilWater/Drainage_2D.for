@@ -84,7 +84,7 @@ C=======================================================================
       Thick = CELLS % Struc % Thick
       Width = CELLS % Struc % Width
       CellArea = CELLS % Struc % CellArea
-      Cell_Type = CELLS % Struc % CellType
+      Cell_Type = CELLS % Struc % Cell_Type
        
 !     LatFlow_ts = 0.0
       WatTable = .FALSE.
@@ -137,7 +137,7 @@ C=======================================================================
       DO i = 1, min(LIMIT_2D,  NLayr)
         DO j = 1, NColsTot
 
-          SELECT CASE(CELLS(i,j)%STRUC%CellType)
+          SELECT CASE(CELLS(i,j)%STRUC%Cell_Type)
           CASE (3,4,5);CONTINUE
           CASE DEFAULT; CYCLE
           END SELECT

@@ -342,7 +342,7 @@ C=======================================================================
       ! Jin Wu New: we should use NLAYR instead of NRowTot?
       DO i = 1, NRowsTot
         DO j = 1, NColsTot
-          SELECT CASE(CELLS(i,j)%Struc%CellType)
+          SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
           CASE (3,4,5) 
             TSW = TSW + SWV(i,j) * CellArea(i,j) / HalfRow * 10.
 !                       cm[water]     cm3[soil]      cm[row length]   mm
@@ -363,7 +363,7 @@ C=======================================================================
       TES = 0.0
       DO i = 1, NRowsTot
         DO j = 1, NColsTot
-          SELECT CASE(CELLS(i,j)%Struc%CellType)
+          SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
           CASE (3,4,5) 
             TSW = TSW + SWV(i,j) * CellArea(i,j) / HalfRow * 10.
             TEP = TEP + CELLS(i,j)%Rate%EP_Rate
@@ -543,7 +543,7 @@ C=======================================================================
                     
       DO i = 1, NRowsTot
         DO j = 1, NColsTot
-          SELECT CASE(CELLS(i,j)%STRUC%CellType)
+          SELECT CASE(CELLS(i,j)%STRUC%Cell_Type)
           CASE(3)  !bed
             TSWbed = TSWbed + CELLS(i,j)%STATE%SWV * 
      &          CELLS(i,j)%STRUC%CellArea / HalfRow * 10.

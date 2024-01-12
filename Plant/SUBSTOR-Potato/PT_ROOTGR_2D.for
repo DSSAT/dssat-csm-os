@@ -109,7 +109,7 @@ C=======================================================================
       Thick = STRUC%THICK
       Width = STRUC%WIDTH
       CellArea = STRUC%CellArea
-      TypeCell = STRUC%CellType
+      TypeCell = STRUC%Cell_Type
       DUL = CELLS%STATE%DUL
       LL  = CELLS%STATE%LL
       SAT = CELLS%STATE%SAT
@@ -1017,7 +1017,7 @@ C-----------------------------------------------------------------------
 
       Width = Struc%Width
       Thick = Struc%Thick
-      TypeCell = STRUC%CellType
+      TypeCell = STRUC%Cell_Type
       
       TRLV = 0.0
       DO Row = 1, NRowsTot

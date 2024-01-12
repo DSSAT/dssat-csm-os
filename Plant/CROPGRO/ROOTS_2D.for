@@ -131,7 +131,7 @@
       Thick = STRUC%THICK
       Width = STRUC%WIDTH
       CellArea = STRUC%CellArea
-      TypeCell = STRUC%CellType
+      TypeCell = STRUC%Cell_Type
       DUL = CELLS%STATE%DUL
       LL  = CELLS%STATE%LL
       SAT = CELLS%STATE%SAT
@@ -810,7 +810,7 @@
      &   RLV)                                  !Output
 
       DO L = 1, NLAYR
-        SELECT CASE(Struc(L,1) % CellType)
+        SELECT CASE(Struc(L,1) % Cell_Type)
           CASE(3)
             RLV(L) = RLV(L) / HalfBed / DLAYR(L)
           CASE(4,5)

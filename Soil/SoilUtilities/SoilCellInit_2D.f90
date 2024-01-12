@@ -724,7 +724,7 @@
     NRowsTot = Row - 1
     Cells%Struc%Width = Width
     Cells%Struc%Thick = Thick
-    CELLS%Struc%CellType = Cell_type
+    CELLS%Struc%Cell_Type = Cell_type
     Cells%Struc%CellArea = CellArea
   IF (RaisedBed) Then
   ! IF (PMCover) THEN
@@ -793,10 +793,10 @@
 !   BedDimension % BedFrac  = BedFrac
 
     DO Row = 1, NRowsTot
-      IF (CELLS(Row,1)%Struc%CellType > 3) THEN
+      IF (CELLS(Row,1)%Struc%Cell_Type > 3) THEN
         FurRow1 = Row
         DO Col = 1, NColsTot
-          IF (CELLS(Row,Col)%Struc%CellType == 5) THEN
+          IF (CELLS(Row,Col)%Struc%Cell_Type == 5) THEN
             FurCol1 = Col
             EXIT
           ENDIF
@@ -846,7 +846,7 @@
       WRITE(FMT,'("(I2,F8.2,",I2,"I5)")') NColsTot 
       DO Row = 1, NRowsTot  
         Write(msg(4+Row),FMT)    &
-        Row, Cells(Row,1)%Struc%Thick, (Cells(Row,Col)%Struc%CellType,Col = 1, NColsTOT) 
+        Row, Cells(Row,1)%Struc%Thick, (Cells(Row,Col)%Struc%Cell_Type,Col = 1, NColsTOT) 
       Enddo 
       call info(NRowsTot+4,errkey,msg)  
 !   ENDIF
