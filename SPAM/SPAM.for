@@ -357,8 +357,8 @@ C=======================================================================
             CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
               CALL ESR_SoilEvap(
-     &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
-     &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+     &          CELLS, EOS, SOILPROP, SW, SWDELTS,               !Input
+     &          ES, ES_LYR, SWDELTU, UPFLOW)                     !Output
 !           ------------------------
             CASE DEFAULT
 !           CASE ('R')  !Ritchie soil evaporation routine

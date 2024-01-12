@@ -931,7 +931,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, 
      &        SoilProp_Bed, SoilProp_Furrow)
 
-      IF (ISWITCH%MESOL == 'D') THEN  !MESOL = 'D' for 2D raised bed 
+      IF (CONTROL%SIM2D) THEN  !MESOL = 'D' for 2D raised bed 
         SOILPROP_profile = SOILPROP  !Save original profile info
         SOILPROP = SoilProp_Bed      !this is the new soil profile data
 
