@@ -36,7 +36,8 @@ C=======================================================================
 
       SUBROUTINE SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
+     &    SOILPROP_FURROW, SW,                            !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
@@ -195,14 +196,20 @@ C=======================================================================
 
 !       Initialize soil evaporation variables
         SELECT CASE (MESEV)
-!     ----------------------------
-        CASE ('R')  !Original soil evaporation routine
-          CALL SOILEV(SEASINIT,
-     &      DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
-     &      U, WINF,                                      !Input
-     &      ES)                                           !Output
-!     ----------------------------
-        END SELECT
+!         ------------------------
+          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
+!           Note that this routine calculates UPFLOW, unlike the SOILEV.
+            CALL ESR_SoilEvap(CONTROL,
+     &        CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,  !Input
+     &        ES, ES_LYR, ES_mm, SWDELTU, UPFLOW)              !Output
+!         ----------------------------
+          CASE (DEFAULT)  !Original soil evaporation routine
+            CALL SOILEV(SEASINIT,
+     &        DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
+     &        U, WINF,                                      !Input
+     &        ES)                                           !Output
+!         ----------------------------
+          END SELECT
 
 !       Initialize plant transpiration variables
         CALL TRANS(DYNAMIC, MEEVP,
@@ -356,9 +363,9 @@ C=======================================================================
 !           ------------------------
             CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
-              CALL ESR_SoilEvap(
-     &          CELLS, EOS, SOILPROP, SW, SWDELTS,               !Input
-     &          ES, ES_LYR, SWDELTU, UPFLOW)                     !Output
+              CALL ESR_SoilEvap(CONTROL,
+     &          CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,  !Input
+     &          ES, ES_LYR, ES_mm, SWDELTU, UPFLOW)              !Output
 !           ------------------------
             CASE DEFAULT
 !           CASE ('R')  !Ritchie soil evaporation routine

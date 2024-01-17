@@ -31,12 +31,9 @@
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !=======================================================================
-      SUBROUTINE ESR_SoilEvap(DYNAMIC,
-     &   CELLS, EOS, SOILPROP, SW, SWDELTS,               !Input
-     &   ES, ES_LYR, SWDELTU, UPFLOW)                     !Output
-!      SUBROUTINE ESR_SoilEvap(DYNAMIC, 
-!     &   CELLS, EOS, SOILPROP, SW, SWDELTS,                      !Input
-!     &   ES, ES_LYR, ES_mm, SWDELTU, UPFLOW)                     !Output
+      SUBROUTINE ESR_SoilEvap(CONTROL,
+     &   CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,        !Input
+     &   ES, ES_LYR, ES_mm, SWDELTU, UPFLOW)                    !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D; USE ModuleData
@@ -45,11 +42,10 @@
 
 !     ------------------------------------------------
 !     Interface Variables:
-      INTEGER, INTENT(IN) :: DYNAMIC
+      TYPE (ControlType), INTENT(IN) :: CONTROL
       TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CELLS
-      TYPE (SoilType), INTENT(IN) :: SOILPROP !Soil properties
+      TYPE (SoilType), INTENT(IN) :: SOILPROP, SOILPROP_FURROW 
       REAL, INTENT(IN) :: EOS          !Potential soil evap (mm/d)
-      REAL, INTENT(IN) :: SW(NL)       !Soil water content (cm3/cm3)
       REAL, INTENT(IN) :: SWDELTS(NL)  !Rate of drainage (cm3/cm3)
 
       REAL, INTENT(OUT):: ES           !Actual soil evaporation (mm/d)
@@ -63,15 +59,19 @@
 !     ------------------------------------------------
 
 !      CHARACTER*12, PARAMETER :: ERRKEY = 'SAL_SoilEvap'
-      INTEGER L, NLAYR, ProfileType, jj
+      INTEGER DYNAMIC, L, NLAYR, ProfileType, J
       REAL A, B, RedFac, SW_threshold
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
 
 !     2D additions:
+      TYPE (SoilType) USE_SOILPROP
       INTEGER Col, FurRow1, FurCol1, Row
-      REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf
+      REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type, SWV
+      REAL SimWidth
+
+      DYNAMIC = CONTROL % DYNAMIC
 
 !***********************************************************************
 !***********************************************************************
@@ -86,6 +86,14 @@
       ES = 0.0
       ES_mm = 0.0
       ES_LYR = 0.0
+      UPFLOW = 0.0
+
+      IF (CONTROL % Sim2D) THEN
+        SimWidth = Row
+      ENDIF
+
+      Cell_Type = CELLS % STRUC % Cell_Type
+      SWV       = CELLS % STATE % SWV
 
 !***********************************************************************
 !***********************************************************************
@@ -102,6 +110,7 @@
       ES = 0.0
       ES_mm = 0.0
       ES_LYR = 0.0
+      UPFLOW = 0.0
 
       CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
 
@@ -115,12 +124,12 @@
           CYCLE
         ENDIF
 
-        IF (.NOT. SIM2D .OR. CELLS(1,Col)%Cell_Type >2) THEN
+        IF (.NOT. CONTROL % SIM2D .OR. Cell_Type(1,Col) > 2) THEN
 !         This is either a 1D simulation or a bed with no plastic mulch or a flat system.
           Use_SOILPROP = SOILPROP
           J = 1
         ELSE
-!         This is a furrow layer with no plastic mulch
+!         This is a 2D furrow layer with no plastic mulch
           Use_SOILPROP = SOILPROP_FURROW
           J = FurRow1
         ENDIF
@@ -134,6 +143,8 @@
 !**********************************************************************
         ProfileType = 3   !assume dry profile until proven wet
         DO L = 1, NLAYR
+!         2D row location (if furrow, the top layer is not the top cell
+          Row = L+J-1  
 
 !         Air dry water content
           SWAD(L) = 0.30 * LL(L) !JTR 11/28/2006
@@ -141,13 +152,18 @@
 !         Mean depth for each soil layer
           MEANDEP(L) = DS(L) - DLAYR(L) / 2.  !cm
 
-!         Pseudo-integraton step
-!         If increase in SW due to rain or irrigation, include half
-          IF (SWDELTS(L) > 0.0) THEN
-            SWTEMP(L) = SW(L) + 0.5 * SWDELTS(L)
+          IF (.NOT. CONTROL % Sim2D) THEN
+!           Pseudo-integraton step
+!           If increase in SW due to rain or irrigation, include half
+            IF (SWDELTS(L) > 0.0) THEN
+              SWTEMP(L) = SWV(Row,Col) + 0.5 * SWDELTS(L)
+            ELSE
+!             If decrease in SW due to drainage, include all
+              SWTEMP(L) = SWV(Row,Col) + SWDELTS(L)
+            ENDIF
           ELSE
-!           If decrease in SW due to drainage, include all
-            SWTEMP(L) = SW(L) + SWDELTS(L)
+!           Use SWV with no pseudo-integration for 2D
+            SWTEMP(L) = SWV(Row,Col)
           ENDIF
 
 !         If any layer in top 100 cm is wet, use wet profile method
@@ -170,52 +186,61 @@
           ENDIF
         ENDIF
 
-      DO L = 1, NLAYR
-!-----------------------------------------------------------------------
-        SELECT CASE (ProfileType)
+        DO L = 1, NLAYR
+          Row = L+J-1  
+!-----  ------------------------------------------------------------------
+          SELECT CASE (ProfileType)
 
-!       Dry profile
-        CASE (3)
-!         Depth-dependant coefficients based on Ritchie spreadsheet 11/29/2006
-          A =  0.5  + 0.24 * DUL(L)
-          B = -2.04 + 0.20 * DUL(L)
-          ES_Coef(L) = A * MEANDEP(L) ** B
+!         Dry profile
+          CASE (3)
+!           Depth-dependant coefficients based on Ritchie spreadsheet 11/29/2006
+            A =  0.5  + 0.24 * DUL(L)
+            B = -2.04 + 0.20 * DUL(L)
+            ES_Coef(L) = A * MEANDEP(L) ** B
 
-!       Equilibrium profile
-        CASE (2)
-          ES_Coef(L) = 0.011   !for all depths
+!         Equilibrium profile
+          CASE (2)
+            ES_Coef(L) = 0.011   !for all depths
 
-!       Wet profile
-        CASE (1)
-!         Ritchie spreadsheet of 5/28/08
-          A = 0.26  !6/20/08  A = 0.14  !6/2/08  A = 0.42   !4/18/08
-          B = -0.70 !6/20/08  B = -0.46 !6/2/08  B = -0.73  !4/18/08
-          ES_Coef(L) = A * MEANDEP(L) ** B !function, no integration
+!         Wet profile
+          CASE (1)
+!           Ritchie spreadsheet of 5/28/08
+            A = 0.26  !6/20/08  A = 0.14  !6/2/08  A = 0.42   !4/18/08
+            B = -0.70 !6/20/08  B = -0.46 !6/2/08  B = -0.73  !4/18/08
+            ES_Coef(L) = A * MEANDEP(L) ** B !function, no integration
 
-        END SELECT
-!-----------------------------------------------------------------------
+          END SELECT
+!-----  ------------------------------------------------------------------
 
-        SWDELTU(L) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) !mm3/mm3
+!         SWDELTU in mm3/mm3
+          SWDELTU(Row,Col) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) 
 
-!       Apply the fraction of plastic mulch coverage
-        IF (PMFRACTION(0) .GT. 1.E-6) THEN
-          SWDELTU(L) = SWDELTU(L) * (1.0 - PMFRACTION(0))
-        END IF
+!         Apply the fraction of plastic mulch coverage
+          IF (PMFRACTION(0) .GT. 1.E-6) THEN
+            SWDELTU(Row,Col) = SWDELTU(Row,Col) * (1.0 - PMFRACTION(0))
+          END IF
+        
+!         Limit to available water
+!         SW_AVAIL(L) = SW(L) + SWDELTS(L) - SWAD(L)
+          SW_AVAIL(L) = SWV(Row,Col) - SWAD(L)
+          IF (-SWDELTU(Row,Col) > SW_AVAIL(L)) THEN
+            SWDELTU(Row,Col) = -SW_AVAIL(L)                   !mm3/mm3
+          ENDIF
 
-!       Limit to available water
-        SW_AVAIL(L) = SW(L) + SWDELTS(L) - SWAD(L)
-        IF (-SWDELTU(L) > SW_AVAIL(L)) THEN
-          SWDELTU(L) = -SW_AVAIL(L)                   !mm3/mm3
-        ENDIF
+!         Limit to negative values (decrease SW)
+          SWDELTU(Row,Col) = AMIN1(0.0, SWDELTU(Row,Col))
 
-!       Limit to negative values (decrease SW)
-        SWDELTU(L) = AMIN1(0.0, SWDELTU(L))
+!         Aggregate soil evaporation from each cell.  
+!         Scale with half row spacing for 2D simulations.
 
-!         Aggregate soil evaporation from each cell.  Scale with half row
-!           spacing.
-          ES_mm(Row,Col) = -SWDELTU(Row,Col) / mm_2_vf(Row,Col)
+          IF (CONTROL % Sim2D) THEN
+            ES_mm(Row,Col) = -SWDELTU(Row,Col) / mm_2_vf(Row,Col)
+          ELSE
+            ES_mm(Row,Col) = SWDELTU(Row,Col) * DLAYR(L) * 10.
+          ENDIF
           ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col)
           ES = ES + ES_mm(Row,Col)         !profile sum (mm)
+        ENDDO
       ENDDO
 
 !     Limit total profile soil evaporation to potential soil evaporation
@@ -228,13 +253,16 @@
         ES = EOS
       End If
 
-      UPFLOW = 0.0
-      ES = 0.0
-      UPFLOW(NLAYR) = ES_LYR(NLAYR) / 10.
-      DO L = NLAYR-1, 1, -1
-        UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10.     !cm/d
-        ES = ES + ES_LYR(L)                           !profile sum (mm)
-      ENDDO
+!     UPFLOW calcs are only for 1D simulations
+      IF (.NOT. CONTROL % SIM2D) THEN
+        UPFLOW = 0.0
+        ES = 0.0
+        UPFLOW(NLAYR) = ES_LYR(NLAYR) / 10.
+        DO L = NLAYR-1, 1, -1
+          UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10. !cm/d
+          ES = ES + ES_LYR(L)                       !profile sum (mm)
+        ENDDO
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
