@@ -422,7 +422,7 @@ C The statements begining with !*! are refer to APSIM source codes
       INTEGER     PATHL
       INTEGER     LUNECO
       REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
-      REAL        KVAL1,KVAL2  ! JG added for ecotype file
+      REAL        KVAL1,KVAL2,OBASE  ! JG added for ecotype file
       
       INTEGER         FOUND
       REAL        FSLFW
@@ -797,12 +797,12 @@ C60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,SFOZ1
+     &             FOZ1,SFOZ1,OBASE
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),2(1X,F5.2))
+     &                2(1X,F5.0),2(1X,F5.2),1(1X,F5.0))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -3421,6 +3421,7 @@ cjh quick fix for maturity stage
 ! NSINK       Demand for N associated with grain filling (g/plant/day)
 ! NSTRES      Nitrogen stress factor affecting growth (0-1)
 ! NWSD        No. of consecutive days with severe water stress
+! OBASE       Base mean 7-hour (M7) ozone damage threshold, default = 25.0 ppb
 ! optfr       Fraction of optimum conditions from stress. (0-1)  (NWheat)
 ! OUTPUT      Program control variable to output state and rate variables to output file (value=5)
 ! P5          GDD from silking to physiological maturity, C

@@ -4,6 +4,8 @@
 
 !CHP 2019-04-25 Rice changes
 	  REAL          THOT, TCLDP, TCLDF
+!JG  02/02/2023 added ozone cultivar parameters for rice
+      REAL          FOZ1, SFOZ1, OBASE
       
 !WDB 7/2016 added additional cultivar coefficients for sugar beet
       REAL          PHYL1,PHYL2,FRSUG,DRCER
@@ -124,7 +126,8 @@
      &      STMMX,SLAP1
 
 !CHP Add new Ceres-rice coefficients
-	  COMMON /GEN14/ THOT, TCLDP, TCLDF
+!JG Added ozone coefficients
+	  COMMON /GEN14/ THOT, TCLDP, TCLDF, FOZ1, SFOZ1, OBASE
 	  
 !MV	 Add SAMUCA Coefficients
       COMMON /GEN15/ 
