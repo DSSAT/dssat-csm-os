@@ -17,7 +17,7 @@ C  Called : PLANT
 C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
 
-      SUBROUTINE SENES(DYNAMIC,
+      SUBROUTINE SENES(DYNAMIC, ISWITCH,
      &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
      &    SFOZ1, OBASE,                                   !Input
@@ -30,6 +30,8 @@ C-----------------------------------------------------------------------
       EXTERNAL GETLUN, FIND, ERROR, IGNORE, TABEX
       SAVE
 
+      Type (SwitchType) ISWITCH
+      CHARACTER*1  ISWDIS
       CHARACTER*6  ERRKEY, SECTION
       CHARACTER*80 CHAR
       CHARACTER*92 FILECC
@@ -64,6 +66,7 @@ C-----------------------------------------------------------------------
 !     Run Initialization - Called once per simulation
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
+          ISWDIS = ISWITCH % ISWDIS
 !-----------------------------------------------------------------------
 !     Read in values from input file, which were previously input
 !       in Subroutine IPCROP.
@@ -238,7 +241,7 @@ C     Calculate senescence due to ozone stress. Added by JG 12/15/2021.
 C     Limit interaction between ozone stress and water stress by using
 C     maximum senescence from either ozone or water stress.
 C-----------------------------------------------------------------------
-        IF (OZON7 .GT. OBASE) THEN
+        IF (OZON7 .GT. OBASE .and. ISWDIS .eq. 'O') THEN
           SLFO3 = (SFOZ1/1000 * OZON7 - (SFOZ1/1000 * OBASE)) * WTLF
           SLFO3 = MIN(SLFO3, WTLF)
           SLFO3 = MAX(SLFO3, 0.0)

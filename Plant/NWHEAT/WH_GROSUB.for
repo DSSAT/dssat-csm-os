@@ -87,7 +87,7 @@ C The statements begining with !*! are refer to APSIM source codes
       INTEGER NOUTXL, ERRNUM, RUN  
       INTEGER nlayr_nw   ! Number of layers in specific soil profile  
       CHARACTER*1 IDETR
-      CHARACTER*1  MEEVP
+      CHARACTER*1  MEEVP, ISWDIS
       CHARACTER*5  temp_Char
       CHARACTER*12 OUTXL
       character*6 uptake_source ! add by JZW
@@ -716,6 +716,7 @@ C The statements begining with !*! are refer to APSIM source codes
           ISWWAT = ISWITCH % ISWWAT
           IDETO  = ISWITCH % IDETO
           MEEVP  = ISWITCH % MEEVP
+          ISWDIS = ISWITCH % ISWDIS
           !-------------------------------------------------------
           !     Read input file name (ie. DSSAT45.INP) and path
           !-------------------------------------------------------
@@ -2267,7 +2268,7 @@ cbak optimum of 18oc for photosynthesis
          ! JG divided FOZ1 by 100 to clean parameter value 7/24/20
          ! JG replaced FOZ2 with (1 + (FOZ1/100 * 25)) 01/18/2022
          !    same value, but one less parameter needed in ECO file
-      if (OZON7 .gt. OBASE) then
+      if (OZON7 .gt. OBASE .and. ISWDIS .eq. 'O') then
           FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
           !FO3 = (-0.0006 * OZON7) + 1.015  !Ozone Tolerant cultivars
           !FO3 = (-0.005 * OZON7) + 1.125   !Ozone Sensitive cultivars
@@ -3228,7 +3229,7 @@ cbak  adjust the green leaf ara of the leaf that is dying
       ! JG divided SFOZ1 by 10 to clean parameter value 7/24/20
       ! JG replaced SFOZ2 with (1 - (SFOZ1/10 * 25)) 01/18/2022
       !    same value, but one less parameter needed in ECO file
-      if (OZON7 .gt. OBASE) then
+      if (OZON7 .gt. OBASE .and. ISWDIS .eq. 'O') then
           SLFO3 = (SFOZ1/10) * OZON7 + (1.0 - (SFOZ1/10 * OBASE))
           !SLFO3 = 0.008 * OZON7 + 0.8    !Ozone Tolerant cultivars
           !SLFO3 = 0.04 * OZON7 + 0.0     !Ozone Sensitive cultivars

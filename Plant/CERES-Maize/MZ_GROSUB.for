@@ -153,6 +153,7 @@
       CHARACTER*1 ISWNIT
       CHARACTER*1 ISWWAT      
       CHARACTER*1 ISWPOT      
+      CHARACTER*1 ISWDIS
 !      REAL        K1
       REAL        KG2PPM(NL)   
       INTEGER     L
@@ -391,6 +392,7 @@
           ISWPHO = ISWITCH % ISWPHO
           ISWWAT = ISWITCH % ISWWAT
           IDETO  = ISWITCH % IDETO
+          ISWDIS = ISWITCH % ISWDIS
 
           !-------------------------------------------------------
           !     Read input file name (ie. DSSAT45.INP) and path
@@ -1172,7 +1174,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 !          CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES)*SLPF
 
 !   Effect of ozone on photosynthesis added by JG 11/23/2021
-      IF (OZON7 .GT. OBASE) THEN
+      IF (OZON7 .GT. OBASE .and. ISWDIS .eq. 'O') THEN
           FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
           FO3 = AMAX1(FO3, 0.0)
       ELSE
@@ -1651,7 +1653,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
           SLFT  = AMAX1 (SLFT,0.0)
 
 !         Senescence due to ozone stress, JG 11/23/2021
-          IF (OZON7 .GT. OBASE) THEN
+          IF (OZON7 .GT. OBASE .and. ISWDIS .eq. 'O') THEN
               SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * OBASE))
               SLFO3 = AMAX1(SLFO3, 0.0)
           ELSE

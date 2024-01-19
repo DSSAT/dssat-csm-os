@@ -69,7 +69,7 @@ C-----------------------------------------------------------------------
       SAVE
 
       CHARACTER FILEIO*30,ISWWAT*1,MEEVP*1,MEPHO*1,METEMP*1,
-     &  TYPPGN*3,TYPPGL*3, CROP*2
+     &  TYPPGN*3,TYPPGL*3, CROP*2,ISWDIS*1
       INTEGER DAS,DYNAMIC,H,I,NELAYR,NHOUR, DOY, YRDOY, YEAR,
      &  NLAYR,NR5, LUNIO, TSV2
 !         TSV2 = index for mid-day hour added by Bruce Kimball on 9JAN17
@@ -171,6 +171,7 @@ C         added by BAK on 10DEC2015
       ISWWAT = ISWITCH % ISWWAT
       MEEVP  = ISWITCH % MEEVP
       MEPHO  = ISWITCH % MEPHO
+      ISWDIS = ISWITCH % ISWDIS
 
       AZZON  = WEATHER % AZZON
       BETA   = WEATHER % BETA
@@ -683,7 +684,7 @@ C          ES = MAX(MIN(EDAY,AWEV1),0.0)
 !*****************************************
 !         Calculate ozone stress on photosynthesis. Added by JG 12/15/2021
 !         FO3 ranges between 0.0-1.0, 1.0 = no stress, 0.0 = max stress
-          IF (OZON7 .GT. OBASE) THEN
+          IF (OZON7 .GT. OBASE .and. ISWDIS .eq. 'O') THEN
               FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
               FO3 = MAX(FO3, 0.0)
           ELSE

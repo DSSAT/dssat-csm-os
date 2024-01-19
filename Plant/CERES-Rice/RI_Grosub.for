@@ -56,7 +56,7 @@ C=======================================================================
      &  P_Ceres, PlantInit, TRNSPL_GROSUB, MZ_KUPTAK
       SAVE
 
-      CHARACTER*1 ISWWAT, ISWNIT, ISWPHO, ISWPOT
+      CHARACTER*1 ISWWAT, ISWNIT, ISWPHO, ISWPOT, ISWDIS
       CHARACTER*2 CROP
       CHARACTER*12 FILEC      
 	CHARACTER*92 FILECC
@@ -153,6 +153,7 @@ C=======================================================================
       ISWNIT = ISWITCH % ISWNIT
       ISWPHO = ISWITCH % ISWPHO
       ISWPOT = ISWITCH % ISWPOT
+      ISWDIS = ISWITCH % ISWDIS
 
       DLAYR = SOILPROP % DLAYR
       NLAYR = SOILPROP % NLAYR
@@ -630,7 +631,7 @@ CCCCC-PW
      &    TSHOCK)                                         !Output
 
 !     Effect of ozone on photosynthesis added by JG 11/24/2021
-      IF (OZON7 .GT. OBASE) THEN
+      IF (OZON7 .GT. OBASE .and. ISWDIS .eq. 'O') THEN
           FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
           FO3 = AMAX1(FO3, 0.0)
       ELSE
@@ -1184,7 +1185,7 @@ C
       SLFK   = (1-FSLFP) + FSLFK*KSTRES 
 
 !     Senescence due to ozone stress, JG 11/24/2021
-      IF (OZON7 .GT. OBASE) THEN
+      IF (OZON7 .GT. OBASE .and. ISWDIS .eq. 'O') THEN
           SLFO3 = (-(SFOZ1/1000)*OZON7) + (1.0+(SFOZ1/1000 * OBASE))
           SLFO3 = AMAX1(SLFO3, 0.0)
       ELSE

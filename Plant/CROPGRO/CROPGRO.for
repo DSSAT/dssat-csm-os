@@ -254,7 +254,7 @@ C=======================================================================
                       !  extinction calculation for soil evap.
 
       IF (CROP .NE. 'FA' .AND. MEPHO .EQ. 'C') THEN
-        CALL PHOTO(CONTROL, 
+        CALL PHOTO(CONTROL, ISWITCH,
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
      &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
@@ -369,7 +369,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 C     Call leaf senescence routine for initialization
 C-----------------------------------------------------------------------
-        CALL SENES(RUNINIT, 
+        CALL SENES(RUNINIT, ISWITCH,
      &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
      &    SFOZ1, OBASE,                                   !Input
@@ -479,7 +479,7 @@ C-----------------------------------------------------------------------
           CALL GET('SPAM', 'AGEFAC', AGEFAC)
           CALL GET('SPAM', 'PG'    , PG)
         ELSEIF (MEPHO .EQ. 'C') THEN
-          CALL PHOTO(CONTROL, 
+          CALL PHOTO(CONTROL, ISWITCH,
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
      &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
@@ -640,7 +640,7 @@ C     Initialize pest coupling point and damage variables
 !-----------------------------------------------------------------------
 C     Call leaf senescence routine for initialization
 C-----------------------------------------------------------------------
-      CALL SENES(SEASINIT, 
+      CALL SENES(SEASINIT, ISWITCH,
      &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
      &    SFOZ1, OBASE,                                   !Input
@@ -742,7 +742,7 @@ C-----------------------------------------------------------------------
           CALL GET('SPAM', 'AGEFAC', AGEFAC)
           CALL GET('SPAM', 'PG'    , PG)
         ELSEIF (MEPHO .EQ. 'C') THEN
-          CALL PHOTO(CONTROL, 
+          CALL PHOTO(CONTROL, ISWITCH,
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
      &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
@@ -1184,7 +1184,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call leaf senescence routine to compute leaf loss variables
 C-----------------------------------------------------------------------
-      CALL SENES(INTEGR, 
+      CALL SENES(INTEGR, ISWITCH,
      &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
      &    SFOZ1, OBASE,                                   !Input

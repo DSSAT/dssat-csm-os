@@ -21,7 +21,7 @@ C  07/30/2004 CHP Added KC_SLOPE to SPE file and KC_ECO to ECO file.
 !  Calls:         PHOTIP
 C=======================================================================
 
-      SUBROUTINE PHOTO(CONTROL, 
+      SUBROUTINE PHOTO(CONTROL, ISWITCH,
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
      &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
@@ -36,6 +36,8 @@ C=======================================================================
       EXTERNAL PHOTIP, CURV, TABEX
       SAVE
 
+      TYPE (SwitchType) ISWITCH
+      CHARACTER*1  ISWDIS
       CHARACTER*3  TYPPGN, TYPPGT
       CHARACTER*30 FILEIO
 
@@ -80,6 +82,7 @@ C***********************************************************************
 C     Run Initialization - Called once per simulation
 C***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
+          ISWDIS = ISWITCH % ISWDIS
 C-----------------------------------------------------------------------
       CALL PHOTIP(FILEIO,  
      &  CCEFF, CCMAX, CCMP, FNPGN, FNPGT, LMXSTD, LNREF, PARMAX,   
@@ -174,7 +177,7 @@ C     FO3 ranges between 0.0-1.0, 1.0 = no stress, 0.0 = max stress.
 C     Ozone interacts with CO2 (PRATIO) and water stress (SWFAC) in PG.
 C     PRATIO is always > 1.0 and SWFAC is between 0.0-1.0.
 C-----------------------------------------------------------------------
-      IF (OZON7 .GT. OBASE) THEN
+      IF (OZON7 .GT. OBASE .and. ISWDIS .eq. 'O') THEN
           FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
           FO3 = MAX(FO3, 0.0)
       ELSE
