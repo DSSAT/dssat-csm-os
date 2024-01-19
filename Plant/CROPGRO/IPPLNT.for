@@ -364,7 +364,7 @@ C-----------------------------------------------------------------------
           CALL IGNORE(LUNECO, LNUM, ISECT, C255)
           IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
      &          (C255(1:1) .NE. '*')) THEN
-            READ (C255,'(A6,145X,3F6.0)',IOSTAT=ERR) ECOTYP, 
+            READ (C255,'(A6,138X,3F6.0)',IOSTAT=ERR) ECOTYP, 
      &            FOZ1, SFOZ1, OBASE
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
             IF (ECOTYP .EQ. ECONO) EXIT

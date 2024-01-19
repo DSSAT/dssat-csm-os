@@ -1203,7 +1203,7 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNECO, LNUM, ISECT, C255)
           IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
      &        (C255(1:1) .NE. '*')) THEN
-          READ (C255,'(A6,145X,F6.0,6X,F6.0)',IOSTAT=ERRNUM)
+          READ (C255,'(A6,138X,F6.0,6X,F6.0)',IOSTAT=ERRNUM)
      &        ECOTYP, FOZ1, OBASE
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEGC,LNUM)
           IF (ECOTYP .EQ. ECONO) THEN
