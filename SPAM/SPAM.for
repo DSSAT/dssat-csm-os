@@ -58,9 +58,9 @@ C=======================================================================
 !     Subroutine interface variables
       TYPE (Controltype), INTENT(INOUT) :: CONTROL
       TYPE (SwitchType), INTENT(IN) :: ISWITCH
-      Type (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
+      Type (CellType), INTENT(INOUT) :: CELLS(MaxRows,MaxCols)
       TYPE (MulchType), INTENT(IN) :: MULCH
-      TYPE (SoilType), INTENT(IN) :: SOILPROP !, SoilProp_Furrow
+      TYPE (SoilType), INTENT(IN) :: SOILPROP, SoilProp_Furrow
       TYPE (WeatherType), INTENT(IN) :: WEATHER
 
       REAL, INTENT(IN) :: CANHT, EORATIO, KSEVAP, KTRANS, PORMIN, 
@@ -201,9 +201,10 @@ C=======================================================================
 !           Note that this routine calculates UPFLOW, unlike the SOILEV.
             CALL ESR_SoilEvap(CONTROL,
      &        CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,  !Input
-     &        ES, ES_LYR, ES_mm, SWDELTU, UPFLOW)              !Output
+     &        ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+
 !         ----------------------------
-          CASE (DEFAULT)  !Original soil evaporation routine
+          CASE DEFAULT  !Original soil evaporation routine
             CALL SOILEV(SEASINIT,
      &        DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
      &        U, WINF,                                      !Input
@@ -365,7 +366,7 @@ C=======================================================================
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
               CALL ESR_SoilEvap(CONTROL,
      &          CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,  !Input
-     &          ES, ES_LYR, ES_mm, SWDELTU, UPFLOW)              !Output
+     &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
 !           ------------------------
             CASE DEFAULT
 !           CASE ('R')  !Ritchie soil evaporation routine

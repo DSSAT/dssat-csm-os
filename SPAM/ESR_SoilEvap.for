@@ -33,7 +33,7 @@
 !=======================================================================
       SUBROUTINE ESR_SoilEvap(CONTROL,
      &   CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,        !Input
-     &   ES, ES_LYR, ES_mm, SWDELTU, UPFLOW)                    !Output
+     &   ES, ES_LYR, SWDELTU, UPFLOW)                           !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D; USE ModuleData
@@ -43,17 +43,16 @@
 !     ------------------------------------------------
 !     Interface Variables:
       TYPE (ControlType), INTENT(IN) :: CONTROL
-      TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CELLS
+      TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(INOUT) :: CELLS
       TYPE (SoilType), INTENT(IN) :: SOILPROP, SOILPROP_FURROW 
       REAL, INTENT(IN) :: EOS          !Potential soil evap (mm/d)
       REAL, INTENT(IN) :: SWDELTS(NL)  !Rate of drainage (cm3/cm3)
 
       REAL, INTENT(OUT):: ES           !Actual soil evaporation (mm/d)
       REAL, DIMENSION(NL), INTENT(OUT) :: ES_LYR   !Actual ES (mm/d)
-!     REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
-      REAL, DIMENSION(MaxRows, MaxCols), INTENT(OUT) :: SWDELTU
+      REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
+!     REAL, DIMENSION(MaxRows, MaxCols), INTENT(OUT) :: SWDELTU
       REAL, INTENT(OUT):: UPFLOW(NL)   !Flow or N transport (cm/d)
-      REAL, DIMENSION(MaxRows, MaxCols) :: ES_mm
 !     UPFLOW(1:NL) refers to water which moves up from layer L to
 !       layer L-1, and includes upflow from lower layers.
 !     ------------------------------------------------
@@ -64,11 +63,12 @@
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
+      REAL, DIMENSION(MaxRows, MaxCols) :: CellEvap
 
 !     2D additions:
       TYPE (SoilType) USE_SOILPROP
       INTEGER Col, FurRow1, FurCol1, Row
-      REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type, SWV
+      REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type, SWV,ES_mm
       REAL SimWidth
 
       DYNAMIC = CONTROL % DYNAMIC
@@ -87,6 +87,7 @@
       ES_mm = 0.0
       ES_LYR = 0.0
       UPFLOW = 0.0
+      CellEvap = 0.0
 
       IF (CONTROL % Sim2D) THEN
         SimWidth = Row
@@ -111,6 +112,7 @@
       ES_mm = 0.0
       ES_LYR = 0.0
       UPFLOW = 0.0
+      CellEvap = 0.0
 
       CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
 
@@ -119,7 +121,7 @@
 !       If this column is covered by plastic mulch, no evaporation
         IF (PMFraction(Col) >= 1.0) THEN
           DO L = 1, NLAYR
-            SWDELTU(L,Col) = 0.0
+            CellEvap(L,Col) = 0.0
           ENDDO
           CYCLE
         ENDIF
@@ -212,31 +214,31 @@
           END SELECT
 !-----  ------------------------------------------------------------------
 
-!         SWDELTU in mm3/mm3
-          SWDELTU(Row,Col) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) 
+!         CellEvap in mm3/mm3
+          CellEvap(Row,Col) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) 
 
 !         Apply the fraction of plastic mulch coverage
           IF (PMFRACTION(0) .GT. 1.E-6) THEN
-            SWDELTU(Row,Col) = SWDELTU(Row,Col) * (1.0 - PMFRACTION(0))
+            CellEvap(Row,Col) = CellEvap(Row,Col) *(1.0 - PMFRACTION(0))
           END IF
         
 !         Limit to available water
 !         SW_AVAIL(L) = SW(L) + SWDELTS(L) - SWAD(L)
           SW_AVAIL(L) = SWV(Row,Col) - SWAD(L)
-          IF (-SWDELTU(Row,Col) > SW_AVAIL(L)) THEN
-            SWDELTU(Row,Col) = -SW_AVAIL(L)                   !mm3/mm3
+          IF (-CellEvap(Row,Col) > SW_AVAIL(L)) THEN
+            CellEvap(Row,Col) = -SW_AVAIL(L)                   !mm3/mm3
           ENDIF
 
 !         Limit to negative values (decrease SW)
-          SWDELTU(Row,Col) = AMIN1(0.0, SWDELTU(Row,Col))
+          CellEvap(Row,Col) = AMIN1(0.0, CellEvap(Row,Col))
 
 !         Aggregate soil evaporation from each cell.  
 !         Scale with half row spacing for 2D simulations.
 
           IF (CONTROL % Sim2D) THEN
-            ES_mm(Row,Col) = -SWDELTU(Row,Col) / mm_2_vf(Row,Col)
+            ES_mm(Row,Col) = -CellEvap(Row,Col) / mm_2_vf(Row,Col)
           ELSE
-            ES_mm(Row,Col) = SWDELTU(Row,Col) * DLAYR(L) * 10.
+            ES_mm(Row,Col) = CellEvap(Row,Col) * DLAYR(L) * 10.
           ENDIF
           ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col)
           ES = ES + ES_mm(Row,Col)         !profile sum (mm)
@@ -249,7 +251,7 @@
         RedFac = EOS / ES
         ES_mm = ES_mm * RedFac
         ES_LYR = ES_LYR * RedFac
-        SWDELTU = SWDELTU * RedFac
+        CellEvap = CellEvap * RedFac
         ES = EOS
       End If
 
@@ -261,6 +263,7 @@
         DO L = NLAYR-1, 1, -1
           UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10. !cm/d
           ES = ES + ES_LYR(L)                       !profile sum (mm)
+          SWDELTU(l) = CellEvap(L,1)
         ENDDO
       ENDIF
 
@@ -270,6 +273,7 @@
 !***********************************************************************
       ENDIF
 
+      CELLS % RATE % ES_Rate = ES_mm
 !-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE ESR_SoilEvap
