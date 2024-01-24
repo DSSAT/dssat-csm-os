@@ -28,11 +28,12 @@
 !  10/02/2008 CHP/JTR changed depth for determining evaporation case
 !                     from 50 cm to 100 cm.
 !  02/27/2009 CHP Modified for 2D model
+!  01/24/2024 chp Integrated 2D process into 1D model
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !=======================================================================
       SUBROUTINE ESR_SoilEvap(CONTROL,
-     &   CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,        !Input
+     &   CELLS, EOS, SOILPROP, SOILPROP_FURROW, WINF,  !Input
      &   ES, ES_LYR, SWDELTU, UPFLOW)                           !Output
 
 !-----------------------------------------------------------------------
@@ -46,6 +47,7 @@
       TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(INOUT) :: CELLS
       TYPE (SoilType), INTENT(IN) :: SOILPROP, SOILPROP_FURROW 
       REAL, INTENT(IN) :: EOS          !Potential soil evap (mm/d)
+      REAL, INTENT(IN) :: WINF
       REAL, INTENT(IN) :: SWDELTS(NL)  !Rate of drainage (cm3/cm3)
 
       REAL, INTENT(OUT):: ES           !Actual soil evaporation (mm/d)
@@ -58,8 +60,8 @@
 !     ------------------------------------------------
 
 !      CHARACTER*12, PARAMETER :: ERRKEY = 'SAL_SoilEvap'
-      INTEGER DYNAMIC, L, NLAYR, ProfileType, J
-      REAL A, B, RedFac, SW_threshold
+      INTEGER DYNAMIC, L, NLAYR, ProfileType, StartRow
+      REAL A, B, RedFac, SW_threshold, Infilt
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
@@ -96,6 +98,10 @@
       Cell_Type = CELLS % STRUC % Cell_Type
       SWV       = CELLS % STATE % SWV
 
+!     PMFraction is the fraction of the soil covered by plastic mulch
+!     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
+      CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE CALCULATIONS
@@ -108,20 +114,25 @@
 !     2 = Intermediate: wet, but SW < SW_threshold in top layer
 !     3 = Dry: SW < DUL in all layers in top 100 cm
 !-----------------------------------------------------------------------
-      ES = 0.0
+      ES = 0
       ES_mm = 0.0
       ES_LYR = 0.0
       UPFLOW = 0.0
       CellEvap = 0.0
 
-      CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+!     Increase the infiltration amount (from rainfall and irrig) to account
+!       for partial coverage of plastic mulch. Uncovered soil recieves additional
+!       infiltration.
+      IF (PMFraction(0) < 1.0) THEN
+        Infilt = WINF / (1.0 - PMFraction(0))
+      ENDIF
 
 !     Loop through columns and calculate soil evaporation for each column separately
       DO Col = 1, NColsTot
-!       If this column is covered by plastic mulch, no evaporation
-        IF (PMFraction(Col) >= 1.0) THEN
-          DO L = 1, NLAYR
-            CellEvap(L,Col) = 0.0
+!       If this column is covered by plastic mulch, no evaporation. 
+        IF (PMFraction(Col) > 0.999) THEN
+          DO Row = 1, NLAYR
+            CellEvap(Row,Col) = 0.0
           ENDDO
           CYCLE
         ENDIF
@@ -129,24 +140,25 @@
         IF (.NOT. CONTROL % SIM2D .OR. Cell_Type(1,Col) > 2) THEN
 !         This is either a 1D simulation or a bed with no plastic mulch or a flat system.
           Use_SOILPROP = SOILPROP
-          J = 1
+          StartRow = 1
         ELSE
 !         This is a 2D furrow layer with no plastic mulch
           Use_SOILPROP = SOILPROP_FURROW
-          J = FurRow1
+          StartRow = FurRow1
         ENDIF
 
-        DLAYR = SOILPROP % DLAYR
-        DS    = SOILPROP % DS
-        DUL   = SOILPROP % DUL
-        LL    = SOILPROP % LL
-        NLAYR = SOILPROP % NLAYR
+        DLAYR = Use_SOILPROP % DLAYR
+        DS    = Use_SOILPROP % DS
+        DUL   = Use_SOILPROP % DUL
+        LL    = Use_SOILPROP % LL
+        NLAYR = Use_SOILPROP % NLAYR
 
 !**********************************************************************
         ProfileType = 3   !assume dry profile until proven wet
         DO L = 1, NLAYR
 !         2D row location (if furrow, the top layer is not the top cell
-          Row = L+J-1  
+          Row = L+StartRow-1  
+          SWTEMP(L) = CELLS(Row,Col)%State%SWV
 
 !         Air dry water content
           SWAD(L) = 0.30 * LL(L) !JTR 11/28/2006
@@ -157,8 +169,8 @@
           IF (.NOT. CONTROL % Sim2D) THEN
 !           Pseudo-integraton step
 !           If increase in SW due to rain or irrigation, include half
-            IF (SWDELTS(L) > 0.0) THEN
-              SWTEMP(L) = SWV(Row,Col) + 0.5 * SWDELTS(L)
+            IF (Infilt > 0.0) THEN
+              SWTEMP(L) = SWV(Row,Col) + 0.5 * Infilt
             ELSE
 !             If decrease in SW due to drainage, include all
               SWTEMP(L) = SWV(Row,Col) + SWDELTS(L)
@@ -189,7 +201,7 @@
         ENDIF
 
         DO L = 1, NLAYR
-          Row = L+J-1  
+          Row = L+StartRow-1  
 !-----  ------------------------------------------------------------------
           SELECT CASE (ProfileType)
 

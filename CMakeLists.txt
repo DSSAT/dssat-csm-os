@@ -651,7 +651,6 @@ set(
         "Soil/SoilWater/WBSUBS.for"
 
         "SPAM/ESR_SoilEvap.for"
-        "SPAM/ESR_SoilEvap_2D.for"
         "SPAM/ETPHOT.for"
         "SPAM/ETPHR.for"
         "SPAM/OPETPHOT.for"
@@ -662,7 +661,6 @@ set(
         "SPAM/ROOTWU_HR.for"
         "SPAM/SAL_Stemp.for"
         "SPAM/SOILEV.for"
-        "SPAM/SoilEV_2D.for"
         "SPAM/SPAM.for"
         "SPAM/SPAM_2D.for"
         "SPAM/SPSUBS.for"
