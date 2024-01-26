@@ -30,7 +30,7 @@
 !             P/G/N:Phenology/Growth/Not used for calbration
 !
 @VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2O   P2R    P5    G1    G4 PHINT    GT    G5
-!Coeffient #                             1     2     3     4     5     6     7     8     9
+!Coefficient #                           1     2     3     4     5     6     7     8     9
 !Calibration                             P     P     P     P     G     G     N     G     G
 
 999991 MINIMA               . DFAULT 100.0 10.00  50.0 100.0  0.10  0.50 43.00  1.00  10.0
