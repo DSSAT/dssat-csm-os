@@ -208,7 +208,9 @@
                                                                                                     
 !*EVAPOTRANSPIRATION                                                                                
   0.50   0.9       KEP, EORATIO                                                                     
-                                                                                                    
+  0.50  1.15       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  1.00       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+  
 !*STORAGE ORGAN PARAMETERS -                                                                        
  1.000 0.000 			      STRSRFL, STRLYR1- Proportions of storage organ mass on soil surface and in soi
  0.009				      SENSR - rate for senescence of storage organ tissue                                 
