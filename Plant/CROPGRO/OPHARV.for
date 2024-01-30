@@ -356,6 +356,7 @@ C-----------------------------------------------------------------------
            TRT_ROT = TRTNUM
          ENDIF
          CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+         CALL READ_FILEA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM)
 
 !     Convert from YRDOY format to DAP.  Change descriptions to match.
 !       Anthesis

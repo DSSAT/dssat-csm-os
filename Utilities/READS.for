@@ -1008,5 +1008,72 @@ D       DATAX = STDPATH // FILECDE
       END SUBROUTINE ReadCropModels
 C=======================================================================
 
+C=======================================================================
+C  READ_FILEA, Subroutine T. B. Ferreira
+C  Reads FileA data.
+C-----------------------------------------------------------------------
+C  REVISION HISTORY
+C  01/28/2024 CHP Written.
+C=======================================================================
 
+!SUBROUTINE READA(FILEA, PATHEX, OLAB, TRTNUM, YRSIM, X)
+      SUBROUTINE READ_FILEA(FILEA, PATHEX, OLAB, TRTNUM, YRSIM)
+        
+        USE ModuleDefs
+        IMPLICIT NONE
+        
+        EXTERNAL UPCASE
+      
+        CHARACTER*1   UPCASE
+        CHARACTER*6   OLAB(EvaluateNum), HD
+        CHARACTER*6   HEAD(EvaluateNum)
+        CHARACTER*6   DAT(EvaluateNum), X(EvaluateNum)  !, ERRKEY
+        CHARACTER*12  FILEA
+        CHARACTER*78  MSG(10)
+	      CHARACTER*80  PATHEX
+	      CHARACTER*92  FILEA_P
+        CHARACTER*255 C255
+        
+        INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,NTR,I, J
+        INTEGER YRSIM
+        
+        INTEGER, PARAMETER :: MAXCOLN = 25
+        CHARACTER*15  HEADER(MAXCOLN), HTXT
+        INTEGER COL(MAXCOLN,2), ICOUNT, C1, C2, ISECT
+
+        LOGICAL FEXIST
+
+        FILEA_P = TRIM(PATHEX)//FILEA
+        
+        CALL GETLUN('FILEA', LUNA)
+        
+        INQUIRE(FILE=FILEA_P,EXIST=FEXIST)
+      IF (FEXIST) THEN
+        OPEN (LUNA,FILE = FILEA_P,STATUS = 'OLD',IOSTAT=ERRNUM)
+        
+C       FIND THE HEADER LINE, DESIGNATED BY @TRNO
+        DO WHILE (.TRUE.)
+          READ(LUNA,'(A)',END=5000) C255
+          LINEXP = LINEXP + 1
+          IF (C255(1:1) .EQ. '@') EXIT    
+        ENDDO
+      
+      WRITE(*,*) "LINEXP", LINEXP
+      
+      ENDIF
+        
+        CALL PARSE_HEADERS(C255, MAXCOLN, HEADER, ICOUNT, COL)
+        DO I = 1, ICOUNT
+          HTXT = HEADER(I)
+          DO J = 1, LEN(TRIM(HTXT))
+            HTXT(J:J) = UPCASE(HTXT(J:J))
+          END DO
+          HEADER(I) = HTXT
+        ENDDO
+      
+        WRITE(*,*) "FILEA_P:",FILEA_P
+        WRITE(*,*) "OLAB:",OLAB
+        
+      
+      END SUBROUTINE READ_FILEA
 
