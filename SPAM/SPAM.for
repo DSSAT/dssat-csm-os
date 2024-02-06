@@ -73,14 +73,13 @@ C=======================================================================
       REAL, INTENT(OUT) :: EO, EOP, EOS, EP, ES, SRFTEMP, TRWU, TRWUP
       REAL, DIMENSION(NL), INTENT(OUT) :: ST, SWDELTX, UPFLOW
 
-
       CHARACTER*1  IDETW, ISWWAT
       CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV, METMP
       CHARACTER*2  CROP
       CHARACTER*6, PARAMETER :: ERRKEY = "SPAM  "
 !      CHARACTER*78 MSG(2)
 
-      INTEGER DYNAMIC, L, NLAYR
+      INTEGER DYNAMIC, L, NLAYR, Col
 
       REAL CO2, SRAD, TAVG,
      &    TMAX, TMIN, WINDSP
@@ -93,7 +92,8 @@ C=======================================================================
       REAL DLAYR(NL), DUL(NL), LL(NL),RWU(NL),
      &    SAT(NL), SW_AVAIL(NL) !SWAD(NL),
       REAL ES_LYR(NL)
-
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWV
+      REAL, DIMENSION(MaxCols) :: SWAVAIL !top layer only for SOILEV
 
 !     Flood management variables:
       REAL FLOOD, EOS_SOIL
@@ -136,6 +136,8 @@ C=======================================================================
       TMIN   = WEATHER % TMIN
       WINDSP = WEATHER % WINDSP
       XLAT   = WEATHER % XLAT
+
+      SWV    = CELLS % State % SWV
 
 !***********************************************************************
 !***********************************************************************
@@ -200,15 +202,17 @@ C=======================================================================
           CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
 !           Note that this routine calculates UPFLOW, unlike the SOILEV.
             CALL ESR_SoilEvap(CONTROL,
-     &        CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,  !Input
+     &        CELLS, EOS, SOILPROP, SOILPROP_FURROW,    !Input
+     &        SWDELTS, WINF,                            !Input
      &        ES, ES_LYR, SWDELTU, UPFLOW)              !Output
 
 !         ----------------------------
           CASE DEFAULT  !Original soil evaporation routine
-            CALL SOILEV(SEASINIT,
-     &        DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
-     &        U, WINF,                                      !Input
-     &        ES)                                           !Output
+            SWAVAIL = 0.0 !not used for initialization
+            CALL SOILEV(CONTROL,
+     &        CELLS, EOS, U, WINF, SWAVAIL,         !Input
+     &        SOILPROP, SOILPROP_FURROW,            !Input
+     &        ES, ES_LYR)                           !Output
 !         ----------------------------
           END SELECT
 
@@ -281,9 +285,13 @@ C=======================================================================
 !-----------------------------------------------------------------------
       IF (ISWWAT .EQ. 'Y') THEN
 !       Calculate the availability of soil water for use in SOILEV.
-        DO L = 1, NLAYR
-          SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
-        ENDDO
+
+        IF (.NOT. CONTROL % Sim2D) THEN
+!         for 1D simulation, there is only one column
+          DO L = 1, NLAYR
+            SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+          ENDDO
+        ENDIF
 
 !       These processes are done by ETPHOT for hourly (Zonal) energy
 !       balance method.
@@ -364,20 +372,32 @@ C=======================================================================
 !           ------------------------
             CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
-              CALL ESR_SoilEvap(CONTROL,
-     &          CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,  !Input
-     &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+            CALL ESR_SoilEvap(CONTROL,
+     &        CELLS, EOS, SOILPROP, SOILPROP_FURROW,    !Input
+     &        SWDELTS, WINF,                            !Input
+     &        ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+
 !           ------------------------
             CASE DEFAULT
 !           CASE ('R')  !Ritchie soil evaporation routine
 !             Calculate the availability of soil water for use in SOILEV.
-              DO L = 1, NLAYR
-                SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+              DO Col = 1, NColsTot
+                IF (CONTROL % Sim2D) THEN
+                  SWAVAIL(Col) = Max(0.0, SWV(1,Col)
+     &               + CELLS(1,Col) % Rate % SWFlux_L
+     &               + CELLS(1,Col) % Rate % SWFlux_R
+     &               + CELLS(1,Col) % Rate % SWFlux_D)
+
+                ELSE
+                  SWAVAIL(Col) = MAX(0.0, 
+     &              SWV(1,Col) + SWDELTS(1) + SWDELTU(1))
+                ENDIF
               ENDDO
-              CALL SOILEV(RATE,
-     &          DLAYR, DUL, EOS_SOIL, LL, SW,             !Input
-     &          SW_AVAIL(1), U, WINF,                     !Input
-     &          ES)                                       !Output
+
+              CALL SOILEV(CONTROL,
+     &        CELLS, EOS, U, WINF, SWAVAIL,         !Input
+     &        SOILPROP, SOILPROP_FURROW,            !Input
+     &        ES, ES_LYR)                           !Output
             END SELECT
 !           ------------------------
           ENDIF

@@ -34,7 +34,6 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       EXTERNAL INFO, ERROR, WARNING, IPIBS, WEATHR, SOIL, SPAM, PLANT, 
      &  OPSUM, MGMTOPS
-      EXTERNAL SPAM_2D
       SAVE
 C-----------------------------------------------------------------------
 C     Crop, Experiment, Command line Variables
@@ -186,15 +185,15 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Read initial soil-plant-atmosphere data
 C-----------------------------------------------------------------------
-      IF (CONTROL % SIM2D) THEN
-        CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
-     &    FLOODWAT,                                       !I/O
-     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
-     &    SWDELTX)                                        !Output
-      ELSE
+!      IF (CONTROL % SIM2D) THEN
+!        CALL SPAM_2D(CONTROL, ISWITCH,
+!     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+!     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+!     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+!     &    FLOODWAT,                                       !I/O
+!     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
+!     &    SWDELTX)                                        !Output
+!      ELSE
         CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
@@ -203,7 +202,7 @@ C-----------------------------------------------------------------------
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
-      ENDIF
+!      ENDIF
 
 C-----------------------------------------------------------------------
 C     Read initial plant module data
@@ -270,15 +269,15 @@ C     Seasonal initialization for soil-plant-atmosphere processes
 !     chp moved this before SOIL, so soil temp is available 
 !     update 2020-12-04 - order makes no difference
 C-----------------------------------------------------------------------
-      IF (CONTROL % SIM2D) THEN
-        CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
-     &    FLOODWAT,                                       !I/O
-     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
-     &    SWDELTX)                                        !Output
-      ELSE
+!      IF (CONTROL % SIM2D) THEN
+!        CALL SPAM_2D(CONTROL, ISWITCH,
+!     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+!     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+!     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+!     &    FLOODWAT,                                       !I/O
+!     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
+!     &    SWDELTX)                                        !Output
+!      ELSE
         CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
@@ -287,7 +286,7 @@ C-----------------------------------------------------------------------
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
-      ENDIF
+!      ENDIF
 
 C-----------------------------------------------------------------------
 C     Initialize PLANT routines (including phenology and pest)
@@ -339,15 +338,15 @@ C-----------------------------------------------------------------------
 !     Call Soil-plant-atmosphere module to determine today's
 !     rates of evapotranspiration.
 !-----------------------------------------------------------------------
-      IF (CONTROL % Sim2D) THEN
-        CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
-     &    FLOODWAT,                                       !I/O
-     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
-     &    SWDELTX)                                        !Output
-      ENDIF
+!      IF (CONTROL % Sim2D) THEN
+!        CALL SPAM_2D(CONTROL, ISWITCH,
+!     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+!     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+!     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+!     &    FLOODWAT,                                       !I/O
+!     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
+!     &    SWDELTX)                                        !Output
+!      ENDIF
 C-----------------------------------------------------------------------
 C     Call Soil processes module to determine today's rates of 
 C     change of soil properties.
@@ -418,15 +417,15 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Compute cumulative totals for soil-plant-atmosphere processes
 C-----------------------------------------------------------------------
-      IF (CONTROL % SIM2D) THEN
-        CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
-     &    FLOODWAT,                                       !I/O
-     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
-     &    SWDELTX)                                        !Output
-      ELSE
+!      IF (CONTROL % SIM2D) THEN
+!        CALL SPAM_2D(CONTROL, ISWITCH,
+!     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+!     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+!     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+!     &    FLOODWAT,                                       !I/O
+!     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
+!     &    SWDELTX)                                        !Output
+!      ELSE
         CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
@@ -435,7 +434,7 @@ C-----------------------------------------------------------------------
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
-      ENDIF
+!      ENDIF
 
 C-----------------------------------------------------------------------
 C     Call Plant module to integrate daily plant processes and update
@@ -484,15 +483,15 @@ C***********************************************************************
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
-      IF (CONTROL % SIM2D) THEN
-          CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
-     &    FLOODWAT,                                       !I/O
-     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
-     &    SWDELTX)                                        !Output
-        ELSE
+!      IF (CONTROL % SIM2D) THEN
+!          CALL SPAM_2D(CONTROL, ISWITCH,
+!     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+!     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+!     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+!     &    FLOODWAT,                                       !I/O
+!     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
+!     &    SWDELTX)                                        !Output
+!        ELSE
         CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
@@ -501,7 +500,7 @@ C***********************************************************************
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
-        ENDIF
+!        ENDIF
 
 C-----------------------------------------------------------------------
 C     Call plant module for daily printout.
@@ -546,15 +545,15 @@ C     Print seasonal summaries and close files.
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
-      IF (CONTROL % SIM2D) THEN
-        CALL SPAM_2D(CONTROL, ISWITCH,
-     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
-     &    FLOODWAT,                                       !I/O
-     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
-     &    SWDELTX)                                        !Output
-      ELSE
+!      IF (CONTROL % SIM2D) THEN
+!        CALL SPAM_2D(CONTROL, ISWITCH,
+!     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
+!     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
+!     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
+!     &    FLOODWAT,                                       !I/O
+!     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
+!     &    SWDELTX)                                        !Output
+!      ELSE
         CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
@@ -563,7 +562,7 @@ C     Print seasonal summaries and close files.
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
-      ENDIF
+!      ENDIF
 
       CALL PLANT(CONTROL, ISWITCH, 
      &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input

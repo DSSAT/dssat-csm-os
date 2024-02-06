@@ -29,9 +29,9 @@ C  03/30/2000 CHP Keep original value of WINF for export to soil N module
 !  Calls:     ESUP
 C=======================================================================
       SUBROUTINE SOILEV(CONTROL,
-     &    CELLS, EOS, SW, SW_AVAIL, U, WINF,     !Input
-     &    SOILPROP, SOILPROP_FURROW,             !Input
-     &    ES, ES_LYR)                            !Output
+     &    CELLS, EOS, U, WINF, SWAVAIL,         !Input
+     &    SOILPROP, SOILPROP_FURROW,            !Input
+     &    ES, ES_LYR)                           !Output
 
 ! GET FROM SOILPROP: DLAYR, DUL, LL, 
 !-----------------------------------------------------------------------
@@ -47,16 +47,16 @@ C=======================================================================
       TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(INOUT) :: CELLS
       TYPE (SoilType), INTENT(IN) :: SOILPROP, SOILPROP_FURROW 
       REAL, INTENT(IN) :: EOS          !Potential soil evap (mm/d)
-      REAL, INTENT(IN) :: SW_AVAIL, U, WINF
-      REAL, DIMENSION(NL), INTENT(IN) :: SW
+      REAL, INTENT(IN) :: U, WINF
+      REAL, DIMENSION(MaxCols), INTENT(IN) :: SWAVAIL
       REAL, INTENT(OUT) :: ES
       REAL, DIMENSION(NL), INTENT(OUT) :: ES_LYR
 
       !CHARACTER*6 ERRKEY
       !PARAMETER (ERRKEY = 'SOILEV')
 
-      INTEGER DYNAMIC
-      REAL SWMIN, WINFMOD, AWEV1, ESX
+      INTEGER DYNAMIC, NLAYR
+      REAL SWMIN, WINFMOD, AWEV1, ESX, Infilt
       REAL, DIMENSION(NL) :: DLAYR, DUL, LL
 
       REAL, DIMENSION(MaxCols) :: SWR, USOIL, SUMES1, SUMES2, T, SWEF
@@ -110,6 +110,7 @@ C=======================================================================
         DLAYR = Use_SOILPROP % DLAYR
         DUL   = Use_SOILPROP % DUL
         LL    = Use_SOILPROP % LL
+        NLAYR = Use_SOILPROP % NLAYR
 
 !       Calculate initial soil water content with respect to evaporation sums
         SWR(Col) = MAX(0.0,(SWV(1,Col) - LL(1)) / (DUL(1) - LL(1)))
@@ -175,6 +176,7 @@ C=======================================================================
         DLAYR = Use_SOILPROP % DLAYR
         DUL   = Use_SOILPROP % DUL
         LL    = Use_SOILPROP % LL
+        NLAYR = Use_SOILPROP % NLAYR
 
 C       Adjust soil evaporation, and the sum of stage 1 (SUMES1) and stage 2
 C       (SUMES2) evaporation based on infiltration (Infilt), potential
@@ -223,21 +225,22 @@ C    water in the top layer.
 C    If available soil water is less than soil evaporation, adjust first
 C    and second stage evaporation and soil evaporation accordingly
 C-----------------------------------------------------------------------
-        AWEV1 = (SWV(1,col) - LL(1) * SWEF) * DLAYR(1) * 10.0
+        AWEV1 = (SWV(1,col) - LL(1) * SWEF(col)) * DLAYR(1) * 10.0
         AWEV1 = MAX(0.0,AWEV1)
-        
+
         IF (AWEV1 .LT. ESc(col)) THEN
            IF (SUMES1(Col) .GE. U .AND. SUMES2(Col) .GT. ESc(col)) THEN
               SUMES2(Col) = SUMES2(Col) - ESc(col) + AWEV1
               T(col) = (SUMES2(Col)/3.5)**2
               ESc(col) = AWEV1
-        
-           ELSE IF (SUMES1 .GE. U .AND. SUMES2(Col) .LT. ESc(col) .AND.
+
+           ELSE IF (SUMES1(Col) .GE. U .AND. 
+     &              SUMES2(Col) .LT. ESc(col) .AND.
      &              SUMES2(Col) .GT. 0) THEN
-              SUMES1 = SUMES1 - (ESc(col) - SUMES2(Col))
-              SUMES2(Col) = MAX(SUMES1 + AWEV1 - U,0.0)
-              SUMES1 = MIN(SUMES1 + AWEV1, U)
-              T = (SUMES2(Col)/3.5)**2
+              SUMES1(Col) = SUMES1(Col) - (ESc(Col) - SUMES2(Col))
+              SUMES2(Col) = MAX(SUMES1(Col) + AWEV1 - U,0.0)
+              SUMES1(Col) = MIN(SUMES1(Col) + AWEV1, U)
+              T(Col) = (SUMES2(Col)/3.5)**2
               ESc(col) = AWEV1
            ELSE
               SUMES1(Col) = SUMES1(Col) - ESc(col) + AWEV1
@@ -245,18 +248,14 @@ C-----------------------------------------------------------------------
            ENDIF
         ENDIF
 
-
-!       CellEvap in mm3/mm3
-        CellEvap(Row,Col) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) 
-
 !       Apply the fraction of plastic mulch coverage
-        IF (PMFRACTION(0) .GT. 1.E-6) THEN
-          CellEvap(Row,Col) = CellEvap(Row,Col) *(1.0 - PMFRACTION(0))
+        IF (PMFRACTION(Col) .GT. 1.E-6) THEN
+          CellEvap(Row,Col) = CellEvap(Row,Col) *(1.0 - PMFRACTION(Col))
         END IF
 
 !-----------------------------------------------------------------------
 !       Available water = SW - air dry limit + infil. or sat. flow
-        SWMIN = MAX(0.0, SW_AVAIL - SWEF * LL(1))
+        SWMIN = MAX(0.0, SWAVAIL(Col) - SWEF(col) * LL(1))
         
 !       Limit ES to between zero and avail water in soil layer 1
         IF (ESc(col) .GT. SWMIN * DLAYR(1) * 10.) THEN
@@ -264,8 +263,8 @@ C-----------------------------------------------------------------------
         ENDIF
         ESc(col) = MAX(ESc(col), 0.0)
 
-      ES = ES + ESc(col)
-      CellEvap = ESc(col)
+        ES = ES + ESc(col)
+        CellEvap(1,col) = ESc(col)
 
       ENDDO
 

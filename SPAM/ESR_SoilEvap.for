@@ -33,7 +33,7 @@
 !  Called by: SPAM
 !=======================================================================
       SUBROUTINE ESR_SoilEvap(CONTROL,
-     &   CELLS, EOS, SOILPROP, SOILPROP_FURROW, WINF,  !Input
+     &   CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS, WINF,  !Input
      &   ES, ES_LYR, SWDELTU, UPFLOW)                           !Output
 
 !-----------------------------------------------------------------------
@@ -169,15 +169,15 @@
           IF (.NOT. CONTROL % Sim2D) THEN
 !           Pseudo-integraton step
 !           If increase in SW due to rain or irrigation, include half
-            IF (Infilt > 0.0) THEN
-              SWTEMP(L) = SWV(Row,Col) + 0.5 * Infilt
+            IF (SWDELTS(L) > 0.0) THEN
+              SWTEMP(L) = SWV(Row,Col) + 0.5 * SWDELTS(L)
             ELSE
 !             If decrease in SW due to drainage, include all
               SWTEMP(L) = SWV(Row,Col) + SWDELTS(L)
             ENDIF
           ELSE
 !           Use SWV with no pseudo-integration for 2D
-            SWTEMP(L) = SWV(Row,Col)
+            SWTEMP(L) = SWV(Row,Col) + 0.5 * Infilt
           ENDIF
 
 !         If any layer in top 100 cm is wet, use wet profile method
