@@ -39,8 +39,8 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
-      EXTERNAL FIND, ERROR, STNAMES, OPVIEW, READA, READA_Dates, 
-     &  CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat, TIMDIF
+      EXTERNAL FIND, ERROR, STNAMES, OPVIEW, READA_Dates, 
+     &  CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI, PLME
@@ -355,8 +355,8 @@ C-----------------------------------------------------------------------
          ELSE
            TRT_ROT = TRTNUM
          ENDIF
-         CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
-         CALL READ_FILEA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM)
+         !CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+         CALL READA_Y4K(FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !     Convert from YRDOY format to DAP.  Change descriptions to match.
 !       Anthesis

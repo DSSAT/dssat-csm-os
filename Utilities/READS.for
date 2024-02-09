@@ -1016,8 +1016,7 @@ C  REVISION HISTORY
 C  01/28/2024 CHP Written.
 C=======================================================================
 
-!SUBROUTINE READA(FILEA, PATHEX, OLAB, TRTNUM, YRSIM, X)
-      SUBROUTINE READ_FILEA(FILEA, PATHEX, OLAB, TRTNUM, YRSIM)
+      SUBROUTINE READA_Y4K(FILEA, PATHEX, OLAB, TRTNUM, YRSIM, X)
         
         USE ModuleDefs
         IMPLICIT NONE
@@ -1027,24 +1026,29 @@ C=======================================================================
         CHARACTER*1   UPCASE
         CHARACTER*6   OLAB(EvaluateNum), HD
         CHARACTER*6   HEAD(EvaluateNum)
-        CHARACTER*6   DAT(EvaluateNum), X(EvaluateNum)  !, ERRKEY
+        CHARACTER*6   X(EvaluateNum)  !, ERRKEY
         CHARACTER*12  FILEA
         CHARACTER*78  MSG(10)
 	      CHARACTER*80  PATHEX
 	      CHARACTER*92  FILEA_P
         CHARACTER*255 C255
+        CHARACTER*10  DAT
+        CHARACTER*6, PARAMETER :: ERRKEY = 'FILEA'
+
         
-        INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,NTR,I, J
-        INTEGER YRSIM
+        INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,NTR,COLN, J
+        INTEGER YRSIM, ACN, ECN, TR, YRPST, I
         
         INTEGER, PARAMETER :: MAXCOLN = 25
-        CHARACTER*15  HEADER(MAXCOLN), HTXT
+        CHARACTER*15  HEADER(MAXCOLN), HTXT, FAHEADERS(MAXCOLN)
         INTEGER COL(MAXCOLN,2), ICOUNT, C1, C2, ISECT
+        INTEGER C1D(MAXCOLN), C2D(MAXCOLN)
 
         LOGICAL FEXIST
 
         FILEA_P = TRIM(PATHEX)//FILEA
-        
+        ACN = 0
+        X = '   -99'
         CALL GETLUN('FILEA', LUNA)
         
         INQUIRE(FILE=FILEA_P,EXIST=FEXIST)
@@ -1053,27 +1057,101 @@ C=======================================================================
         
 C       FIND THE HEADER LINE, DESIGNATED BY @TRNO
         DO WHILE (.TRUE.)
-          READ(LUNA,'(A)',END=5000) C255
+          READ(LUNA,'(A)',END=5010) C255
           LINEXP = LINEXP + 1
           IF (C255(1:1) .EQ. '@') EXIT    
         ENDDO
-      
-      WRITE(*,*) "LINEXP", LINEXP
-      
       ENDIF
         
         CALL PARSE_HEADERS(C255, MAXCOLN, HEADER, ICOUNT, COL)
-        DO I = 1, ICOUNT
-          HTXT = HEADER(I)
+        DO COLN = 1, ICOUNT
+          HTXT = HEADER(COLN)
+          C1 = COL(COLN,1)
+          C2 = COL(COLN,2)
+!         uppercase every word in each column
           DO J = 1, LEN(TRIM(HTXT))
-            HTXT(J:J) = UPCASE(HTXT(J:J))
+              HTXT(J:J) = UPCASE(HTXT(J:J))
           END DO
-          HEADER(I) = HTXT
+          HEADER(COLN) = HTXT
+          IF(INDEX(HEADER(COLN),TRIM(HTXT)) .GT. 0) THEN
+            ACN = ACN + 1
+            C1D(ACN) = C1 !beginning
+            C2D(ACN) = C2 !ending
+!CHP 12/16/2004 Need to be able to read FILEA headers of either
+!     'BWAM' or 'BWAH' and interpret data as 'BWAM'            
+            IF(TRIM(HEADER(COLN)) .EQ. "BWAH") THEN
+              FAHEADERS(ACN) = "BWAM"
+            ELSE
+              FAHEADERS(ACN) = HEADER(COLN)
+            ENDIF
+          ENDIF
         ENDDO
+
+       
+C       FIND THE RIGHT TREATMENT LINE OF DATA
+        DO I = 1,1000
+          CALL IGNORE(LUNA,LINEXP,ISECT,C255)
+          
+          IF (ISECT .EQ. 0) THEN
+            WRITE (MSG(1),'(" Error in FILEA-Measured data not used")')
+            CALL INFO(1, "READA ", MSG)
+            CLOSE(LUNA)
+            RETURN
+          ENDIF
+
+!         Search TRNO header        
+          DO J = 1, ACN
+            C1 = COL(J,1)
+            C2 = COL(J,2)
+          
+            IF(TRIM(FAHEADERS(J)).EQ. 'TRNO') THEN            
+                READ(C255(C1:C2+1),'(2X,I4)',IOSTAT=ERRNUM) TR
+
+                IF(TR .EQ. TRTNUM) GO TO 65
+            ENDIF
+          ENDDO
+        ENDDO      
+  65    CONTINUE
+    
+        DO ECN = 1, EvaluateNum
+          DO J = 1, ACN
+
+!         TF - if statement to handle cases where the value has more 
+!         line columns than the variable name
+          IF(J .EQ. 1) THEN
+            C1 = C1D(J)
+            C2 = C2D(J)
+          ELSE
+            C1 = C2D(J-1)
+            C2 = C2D(J)
+          ENDIF
+          IF(TRIM(FAHEADERS(J)) .EQ. TRIM(OLAB(ECN))) THEN
+
+!           Check if the column before was TRNO since it ocuppies one
+!           extract character after the last line column of the header
+            IF(TRIM(FAHEADERS(J-1)) .EQ. 'TRNO') THEN
+              READ(C255(C1+2:C2),'(A6)',IOSTAT=ERRNUM) DAT
+              X(ECN) = TRIM(DAT)
+            ELSE
+              READ(C255(C1+1:C2),'(A6)',IOSTAT=ERRNUM) DAT
+              X(ECN) = TRIM(DAT)
+            ENDIF
+          ELSE
+          ENDIF
+          ENDDO
+        ENDDO  
+
+      CLOSE (LUNA)
+      RETURN
+   
+!       Error handling
+ 5010   CONTINUE
+        X = '   -99'
+        WRITE (MSG(1),'(" Error in FILEA - Measured data not used")')
+        CALL INFO(1, "READA ", MSG)
+
+      CLOSE (LUNA)
+      RETURN
       
-        WRITE(*,*) "FILEA_P:",FILEA_P
-        WRITE(*,*) "OLAB:",OLAB
-        
-      
-      END SUBROUTINE READ_FILEA
+      END SUBROUTINE READA_Y4K
 
