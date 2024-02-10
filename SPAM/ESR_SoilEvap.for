@@ -125,6 +125,8 @@
 !       infiltration.
       IF (PMFraction(0) < 1.0) THEN
         Infilt = WINF / (1.0 - PMFraction(0))
+      ELSE
+        Infilt = 0.0
       ENDIF
 
 !     Loop through columns and calculate soil evaporation for each column separately
@@ -184,24 +186,21 @@
           IF (MEANDEP(L) < 100. .AND. SWTEMP(L) > DUL(L)) THEN
             ProfileType = 1
           ENDIF
-        ENDDO
 
-!       If wet profile, check for top layer SW below threshold.
-        IF (ProfileType == 1) THEN
-!         SW_threshold = DUL(1) - 0.05 !/ 0.13 * (DUL(1) - LL(1))
-!         JTR 6/4/2008
-!         Threshold WC = 0.275*DUL +1.165*DUL^2 + (1.2*DUL^3.75)*depth (center)
-          SW_threshold = 0.275*DUL(1) + 1.165*DUL(1)*DUL(1) +
-     &            (1.2*DUL(1)**3.75)*MEANDEP(1)
-!         chp 6/4/2008 use DUL - 0.05, like before, but limit to air dry
-!          SW_threshold = MAX(SWAD(1), DUL(1) - 0.05)
-          IF (SWTEMP(1) < SW_threshold) THEN
-            ProfileType = 2
+!         If wet profile, check for top layer SW below threshold.
+          IF (ProfileType == 1) THEN
+!           SW_threshold = DUL(1) - 0.05 !/ 0.13 * (DUL(1) - LL(1))
+!           JTR 6/4/2008
+!           Threshold WC = 0.275*DUL +1.165*DUL^2 + (1.2*DUL^3.75)*depth (center)
+            SW_threshold = 0.275*DUL(1) + 1.165*DUL(1)*DUL(1) +
+     &              (1.2*DUL(1)**3.75)*MEANDEP(1)
+!           chp 6/4/2008 use DUL - 0.05, like before, but limit to air dry
+!            SW_threshold = MAX(SWAD(1), DUL(1) - 0.05)
+            IF (SWTEMP(1) < SW_threshold) THEN
+              ProfileType = 2
+            ENDIF
           ENDIF
-        ENDIF
 
-        DO L = 1, NLAYR
-          Row = L+StartRow-1  
 !-----  ------------------------------------------------------------------
           SELECT CASE (ProfileType)
 

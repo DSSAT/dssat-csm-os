@@ -662,7 +662,6 @@ set(
         "SPAM/SAL_Stemp.for"
         "SPAM/SOILEV.for"
         "SPAM/SPAM.for"
-        "SPAM/SPAM_2D.for"
         "SPAM/SPSUBS.for"
         "SPAM/STEMP.for"
         "SPAM/STEMP_EPIC.for"
