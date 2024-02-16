@@ -264,7 +264,7 @@ C-----------------------------------------------------------------------
         ESc(col) = MAX(ESc(col), 0.0)
 
         ES = ES + ESc(col)
-        CellEvap(1,col) = ESc(col)
+        CellEvap(1,col) = -ESc(col)
 
       ENDDO
 

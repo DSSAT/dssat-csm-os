@@ -229,8 +229,9 @@
           CellEvap(Row,Col) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) 
 
 !         Apply the fraction of plastic mulch coverage
-          IF (PMFRACTION(0) .GT. 1.E-6) THEN
-            CellEvap(Row,Col) = CellEvap(Row,Col) *(1.0 - PMFRACTION(0))
+          IF (PMFRACTION(Col) .GT. 1.E-6) THEN
+            CellEvap(Row,Col) = CellEvap(Row,Col) *
+     &        (1.0 - PMFRACTION(Col))
           END IF
         
 !         Limit to available water
@@ -249,7 +250,7 @@
           IF (CONTROL % Sim2D) THEN
             ES_mm(Row,Col) = -CellEvap(Row,Col) / mm_2_vf(Row,Col)
           ELSE
-            ES_mm(Row,Col) = CellEvap(Row,Col) * DLAYR(L) * 10.
+            ES_mm(Row,Col) = -CellEvap(Row,Col) * DLAYR(L) * 10.
           ENDIF
           ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col)
           ES = ES + ES_mm(Row,Col)         !profile sum (mm)
