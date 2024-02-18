@@ -202,7 +202,7 @@ C       soil evaporation (EOS), and stage 1 evaporation (U).
             IF (ESX .LE. ES) ESX = ES + Infilt
             IF (ESX .GT. EOS) ESX = EOS
             ESc(col) = ESX
-          ELSE IF (ES .GT. EOS) THEN
+          ELSE IF (ESc(col) .GT. EOS) THEN
             ESc(col) = EOS
           ENDIF
           SUMES2(Col) = SUMES2(Col) + ES - Infilt
