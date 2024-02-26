@@ -522,7 +522,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       END TYPE
 
       TYPE PMDataType
-        REAL, DIMENSION(0:MaxCols) :: PMFRACTION
+        REAL, DIMENSION(0:MaxCols) :: PMFRACTION, EOS_factor
       END TYPE
       
       TYPE MHarveType
@@ -968,6 +968,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CASE ('PM')
         SELECT CASE(VarName)
         CASE('PMFRACTION'); Value = SAVE_data % PM % PMFRACTION
+        CASE('EOS_factor'); Value = SAVE_data % PM % EOS_factor
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1007,6 +1008,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CASE ('PM')
         SELECT CASE(VarName)
             CASE('PMFRACTION'); SAVE_data % PM % PMFRACTION = Value
+            CASE('EOS_factor'); SAVE_data % PM % EOS_factor = Value
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
 

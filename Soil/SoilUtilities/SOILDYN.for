@@ -157,7 +157,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: BD_calc, BD_calc_init  !, BD_mineral
 
       REAL CN_BASE
-      REAL, DIMENSION(NL) :: BD_BASE, DL_BASE, DS_BASE, SAT_BASE,SC_BASE    !, RG_BASE
+      REAL, DIMENSION(NL) :: BD_BASE, DL_BASE, DS_BASE, SAT_BASE,SC_BASE
 
 !     Labels for soil layer depth info
       CHARACTER*8 LayerText(11)
@@ -2319,7 +2319,13 @@ C=======================================================================
 
 !==============================================================================
 !     Subroutine SETPM
-!     Initialization for cell structure and initial conditions
+!     Calculate the fraction of plastic mulch cover for each column
+!     Calculate the factor to be applied to potential soil evaporation (EOS)
+!       to account for plastic mulch cover.
+!       - EOS_factor = 0.for columns with complete cover 
+!       - EOS_factor = 1.0 if there is no plastic mulch on any column
+!       - EOS_factor > 1.0 for columns with no or partial cover when there is 
+!           a presence of plastic on the row
       SUBROUTINE SETPM(SOILPROP, CELLS)                 !input/output
 !   ---------------------------------------------------------
       USE Cells_2D
@@ -2337,7 +2343,7 @@ C=======================================================================
       INTEGER ERR, FOUND, LNUM, LUNIO, J
       REAL PMWD, ROWSPC_CM
       REAL PMALB, MSALB, CumWid, CumWidLast
-      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION, EOS_factor
       LOGICAL PMCover
     
       TYPE (ControlType) CONTROL
@@ -2411,11 +2417,19 @@ C=======================================================================
       ENDIF
 
 !     Default = no plastic mulch cover
-      PMFRACTION = 0.0
+      PMFRACTION = 0.0  !no cover
+      EOS_factor = 1.0  !no change to EOS
 
       IF (PMCover) THEN
 !       Overall fraction of row covered by plastic mulch
         PMFRACTION(0) = PMWD / ROWSPC_CM
+!       Overall boost to EOS for bare soil when there is plastic mulch present
+        IF (PMFRACTION(0) >= 0.95) THEN
+!         For full PM, assume at least 5% is open for evap (planting holes)
+          EOS_factor(0) = 20.0    
+        ELSE 
+          EOS_factor(0) = 1.0 / (1.0 - PMFRACTION(0))  !partial PM
+        ENDIF
         MSALB = PMALB * PMFRACTION(0) + 
      &    SOILPROP % SALB * (1.0 - PMFRACTION(0))
         SOILPROP % MSALB  = MSALB
@@ -2424,6 +2438,7 @@ C=======================================================================
         IF (PMWD .GE. ROWSPC_CM) THEN
 !         Entire row covered with plastic for 1D and 2D
           PMFRACTION = 1.0  !for all columns
+          EOS_factor = 20.0
         ELSE
 
           IF (CONTROL % SIM2D) THEN
@@ -2434,22 +2449,29 @@ C=======================================================================
               CumWid = CumWid + CELLS(1,J)%Struc%Width
               IF (CumWid <= PMWD) THEN
 !               This column is entirely covered by plastic mulch
+!               Assume evaporation over minimum 5% of area.
                 PMFRACTION(J) = 1.0
+                EOS_factor(J) = 20.0
               ELSEIF (CumWidLast < PMWD) THEN
+!               Partion PM cover for this column (shouldn't happen?)
                 PMFRACTION(J) = (PMWD - CumWidLast)/
      &            CELLS(1,J) % Struc%Width
+                EOS_factor(J) = 1.0 / (1.0 - PMFRACTION(J))
               ELSE
                 PMFRACTION(J) = 0.0
+                EOS_factor(J) = 1.0
               ENDIF
             ENDDO
           ELSE
 !           1D case - only handle column 1 (entire row)
             PMFRACTION(1) =  PMFRACTION(0)
+            EOS_factor(1) = EOS_factor(0)
           ENDIF
         ENDIF
       ENDIF
 
       CALL PUT("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+      CALL PUT("PM", "EOS_factor", EOS_factor, MaxCols+1)
 
       RETURN      
       END SUBROUTINE SETPM
