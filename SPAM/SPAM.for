@@ -373,7 +373,7 @@ C=======================================================================
             CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
             CALL ESR_SoilEvap(CONTROL,
-     &        CELLS, EOS, SOILPROP, SOILPROP_FURROW,    !Input
+     &        CELLS, EOS_SOIL, SOILPROP, SOILPROP_FURROW,    !Input
      &        SWDELTS, WINF,                            !Input
      &        ES, ES_LYR, SWDELTU, UPFLOW)              !Output
 
@@ -395,7 +395,7 @@ C=======================================================================
               ENDDO
 
               CALL SOILEV(CONTROL,
-     &        CELLS, EOS, U, WINF, SWAVAIL,         !Input
+     &        CELLS, EOS_SOIL, U, WINF, SWAVAIL,         !Input
      &        SOILPROP, SOILPROP_FURROW,            !Input
      &        ES, ES_LYR)                           !Output
             END SELECT

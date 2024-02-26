@@ -60,18 +60,20 @@ C=======================================================================
       REAL, DIMENSION(NL) :: DLAYR, DUL, LL
 
       REAL, DIMENSION(MaxCols) :: SWR, USOIL, SUMES1, SUMES2, T, SWEF
+      REAL, DIMENSION(MaxCols) :: ES_col
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION, EOS_factor, EOS_max
+      REAL, DIMENSION(MaxRows, MaxCols) :: CellEvap
 
 !     2D additions:
       TYPE (SoilType) USE_SOILPROP
-      REAL SimWidth
-      REAL, DIMENSION(MaxCols) :: ESc
-      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       INTEGER Col, FurRow1, FurCol1, Row, StartRow
-      REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type, SWV,ES_mm
-      REAL, DIMENSION(MaxRows, MaxCols) :: CellEvap
+      REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type
+      REAL, DIMENSION(MaxRows, MaxCols) :: SWV, ES_mm, ColFrac
+      REAL, DIMENSION(MaxCols) :: ESc
 
       DYNAMIC = CONTROL % DYNAMIC
 
+      SWV       = CELLS % STATE % SWV
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -81,18 +83,15 @@ C=======================================================================
       FurRow1 = BedDimension % FurRow1
       FurCol1 = BedDimension % FurCol1
       mm_2_vf = BedDimension % mm_2_vf
+      ColFrac = BedDimension % ColFrac
 
       ES = 0.0
       ES_mm = 0.0
       ES_LYR = 0.0
+      ES_col = 0.0
       CellEvap = 0.0
 
-      IF (CONTROL % Sim2D) THEN
-        SimWidth = Row
-      ENDIF
-
       Cell_Type = CELLS % STRUC % Cell_Type
-      SWV       = CELLS % STATE % SWV
 
 !     Loop through columns and initialize for each column separately
       DO Col = 1, NColsTot
@@ -137,31 +136,37 @@ C=======================================================================
 !     PMFraction is the fraction of the soil covered by plastic mulch
 !     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
       CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+      CALL GET("PM", "EOS_factor", EOS_factor, MaxCols+1)
 
 !***********************************************************************
 !     RATE CALCULATIONS
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
+      ES = 0
+      ES_mm = 0.0
+      ES_LYR = 0.0
+      ES_col = 0.0
       CellEvap = 0.0
-      ES = 0.0
 
 !     Increase the infiltration amount (from rainfall and irrig) to account
 !       for partial coverage of plastic mulch. Uncovered soil recieves additional
 !       infiltration.
       IF (PMFraction(0) < 1.0) THEN
         Infilt = WINF / (1.0 - PMFraction(0))
+      ELSE
+        Infilt = 0.0
       ENDIF
 
 !     Loop through columns and calculate soil evaporation for each column separately
       DO Col = 1, NColsTot
-!       If this column is covered by plastic mulch, no evaporation. 
-        IF (PMFraction(Col) > 0.999) THEN
-          DO Row = 1, NLAYR
-            CellEvap(Row,Col) = 0.0
-          ENDDO
-          CYCLE
-        ENDIF
+
+!       Maximum potential soil evaporation by column accounts for partial 
+!         coverage with plastic mulch. To maintain the overall field 
+!         potential EOS, increase EOS for columns not covered by plastic. 
+!         This does not necessarily increase the actual soil evaporation 
+!         which is limited by available soil water.
+        EOS_max(col) = EOS * EOS_factor(col)
 
         IF (.NOT. CONTROL % SIM2D .OR. Cell_Type(1,Col) > 2) THEN
 !         This is either a 1D simulation or a bed with no plastic mulch or a flat system.
@@ -191,32 +196,35 @@ C       soil evaporation (EOS), and stage 1 evaporation (U).
           T(Col) = 0.0
           IF (WINFMOD .GT. U) SUMES1(Col) = 0.0
 !         Supplementary calcs
-          CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, ESc(col), T(Col))
+          CALL ESUP(EOS_max(col), SUMES1(Col), SUMES2(Col), U, 
+     &      ESc(col), T(Col))
 
         ELSEIF ((SUMES1(Col) >= U) .AND. (Infilt < SUMES2(Col))) THEN
 !         Stage 2 Evaporation
           T(Col) = T(Col) + 1.0
-          ES = 3.5 * T(Col)**0.5 - SUMES2(Col)
+          ESc(col) = 3.5 * T(Col)**0.5 - SUMES2(Col)
           IF (Infilt .GT. 0.0) THEN
             ESX = 0.8 * Infilt
-            IF (ESX .LE. ES) ESX = ES + Infilt
-            IF (ESX .GT. EOS) ESX = EOS
+            IF (ESX .LE. ESc(col)) ESX = ESc(col) + Infilt
+            IF (ESX .GT. EOS_max(col)) ESX = EOS_max(col)
             ESc(col) = ESX
-          ELSE IF (ESc(col) .GT. EOS) THEN
-            ESc(col) = EOS
+          ELSE IF (ESc(col) .GT. EOS_max(col)) THEN
+            ESc(col) = EOS_max(col)
           ENDIF
-          SUMES2(Col) = SUMES2(Col) + ES - Infilt
+          SUMES2(Col) = SUMES2(Col) + ESc(col) - Infilt
           T(Col) = (SUMES2(Col)/3.5)**2
 
         ELSE IF (Infilt .GE. SUMES1(Col)) THEN
 !         Stage 1 evaporation
           SUMES1(Col) = 0.0
-          CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, ESc(col), T(Col))
+          CALL ESUP(EOS_max(col), SUMES1(Col), SUMES2(Col), U, 
+     &      ESc(col), T(Col))
 
         ELSE
 !         Stage 1 evaporation
           SUMES1(Col) = SUMES1(Col) - Infilt
-          CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, ESc(col), T(Col))
+          CALL ESUP(EOS_max(col), SUMES1(Col), SUMES2(Col), U, 
+     &      ESc(col), T(Col))
         ENDIF
 
 C-----------------------------------------------------------------------
@@ -250,7 +258,7 @@ C-----------------------------------------------------------------------
 
 !       Apply the fraction of plastic mulch coverage
         IF (PMFRACTION(Col) .GT. 1.E-6) THEN
-          CellEvap(Row,Col) = CellEvap(Row,Col) *(1.0 - PMFRACTION(Col))
+          CellEvap(1,Col) = CellEvap(1,Col) *(1.0 - PMFRACTION(Col))
         END IF
 
 !-----------------------------------------------------------------------
@@ -263,7 +271,15 @@ C-----------------------------------------------------------------------
         ENDIF
         ESc(col) = MAX(ESc(col), 0.0)
 
-        ES = ES + ESc(col)
+        IF (CONTROL % Sim2D) THEN
+          ES_mm(1,Col) = ESc(col) / mm_2_vf(1,Col)
+        ELSE
+          ES_mm(1,Col) = ESc(col) * DLAYR(1) * 10.
+        ENDIF
+!       ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col)
+        ES_col(col) = ES_col(col) + ES_mm(1,Col)
+
+        ES = ES + ESc(col) * ColFrac(1,Col)  !profile sum (mm)
         CellEvap(1,col) = -ESc(col)
 
       ENDDO
@@ -273,7 +289,9 @@ C-----------------------------------------------------------------------
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
       ENDIF
-!***********************************************************************
+
+      CELLS % RATE % ES_Rate = ES_mm
+!-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE SOILEV
 !-----------------------------------------------------------------------

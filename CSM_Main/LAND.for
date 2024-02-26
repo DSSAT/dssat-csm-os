@@ -366,7 +366,7 @@ C-----------------------------------------------------------------------
 C     Call Soil-plant-atmosphere module to determine today's
 C     rates of evapotranspiration.
 C-----------------------------------------------------------------------
-      IF (.NOT. CONTROL % SIM2D) THEN
+!     IF (.NOT. CONTROL % SIM2D) THEN
         CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
@@ -375,7 +375,7 @@ C-----------------------------------------------------------------------
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
-      ENDIF
+!     ENDIF
 
 C-----------------------------------------------------------------------
 C     Call PLANT Subroutine to calculate crop growth and

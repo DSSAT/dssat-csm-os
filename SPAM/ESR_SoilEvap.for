@@ -64,17 +64,20 @@
       REAL A, B, RedFac, SW_threshold, Infilt
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
-      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
+      REAL, DIMENSION(MaxCols) :: ES_col
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION, EOS_factor, EOS_max
       REAL, DIMENSION(MaxRows, MaxCols) :: CellEvap
 
 !     2D additions:
       TYPE (SoilType) USE_SOILPROP
       INTEGER Col, FurRow1, FurCol1, Row
-      REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type, SWV,ES_mm
+      REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type
+      REAL, DIMENSION(MaxRows, MaxCols) :: SWV, ES_mm, ColFrac
       REAL SimWidth
 
       DYNAMIC = CONTROL % DYNAMIC
 
+      SWV = CELLS % STATE % SWV
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -84,10 +87,12 @@
       FurRow1 = BedDimension % FurRow1
       FurCol1 = BedDimension % FurCol1
       mm_2_vf = BedDimension % mm_2_vf
+      ColFrac = BedDimension % ColFrac
 
       ES = 0.0
       ES_mm = 0.0
       ES_LYR = 0.0
+      ES_col = 0.0
       UPFLOW = 0.0
       CellEvap = 0.0
 
@@ -96,11 +101,11 @@
       ENDIF
 
       Cell_Type = CELLS % STRUC % Cell_Type
-      SWV       = CELLS % STATE % SWV
 
 !     PMFraction is the fraction of the soil covered by plastic mulch
 !     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
       CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+      CALL GET("PM", "EOS_factor", EOS_factor, MaxCols+1)
 
 !***********************************************************************
 !***********************************************************************
@@ -117,6 +122,7 @@
       ES = 0
       ES_mm = 0.0
       ES_LYR = 0.0
+      ES_col = 0.0
       UPFLOW = 0.0
       CellEvap = 0.0
 
@@ -131,13 +137,12 @@
 
 !     Loop through columns and calculate soil evaporation for each column separately
       DO Col = 1, NColsTot
-!       If this column is covered by plastic mulch, no evaporation. 
-        IF (PMFraction(Col) > 0.999) THEN
-          DO Row = 1, NLAYR
-            CellEvap(Row,Col) = 0.0
-          ENDDO
-          CYCLE
-        ENDIF
+!       Maximum potential soil evaporation by column accounts for partial 
+!         coverage with plastic mulch. To maintain the overall field 
+!         potential EOS, increase EOS for columns not covered by plastic. 
+!         This does not necessarily increase the actual soil evaporation 
+!         which is limited by available soil water.
+        EOS_max(col) = EOS * EOS_factor(col)
 
         IF (.NOT. CONTROL % SIM2D .OR. Cell_Type(1,Col) > 2) THEN
 !         This is either a 1D simulation or a bed with no plastic mulch or a flat system.
@@ -229,10 +234,8 @@
           CellEvap(Row,Col) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) 
 
 !         Apply the fraction of plastic mulch coverage
-          IF (PMFRACTION(Col) .GT. 1.E-6) THEN
-            CellEvap(Row,Col) = CellEvap(Row,Col) *
-     &        (1.0 - PMFRACTION(Col))
-          END IF
+          CellEvap(Row,Col) = CellEvap(Row,Col) *
+     &      (1.0 - PMFRACTION(Col))
         
 !         Limit to available water
 !         SW_AVAIL(L) = SW(L) + SWDELTS(L) - SWAD(L)
@@ -252,29 +255,32 @@
           ELSE
             ES_mm(Row,Col) = -CellEvap(Row,Col) * DLAYR(L) * 10.
           ENDIF
-          ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col)
-          ES = ES + ES_mm(Row,Col)         !profile sum (mm)
+!         ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col)
+          ES_col(col) = ES_col(col) + ES_mm(Row,Col)
         ENDDO
-      ENDDO
 
-!     Limit total profile soil evaporation to potential soil evaporation
-      RedFac = 1.0
-      If (ES > EOS) Then
-        RedFac = EOS / ES
-        ES_mm = ES_mm * RedFac
-        ES_LYR = ES_LYR * RedFac
-        CellEvap = CellEvap * RedFac
-        ES = EOS
-      End If
+!       Limit total profile soil evaporation to potential soil evaporation
+        RedFac = 1.0
+        IF (ES_col(col) > EOS_max(col)) THEN
+          RedFac = EOS_max(col) / ES_col(col)
+        ENDIF
+
+        DO L = 1, NLAYR
+          Row = L+StartRow-1  
+          CellEvap(Row,Col) = CellEvap(Row,Col) * RedFac
+          ES_mm(Row,Col) = ES_mm(Row,Col) * RedFac
+          ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col)
+        ENDDO
+
+        ES = ES + ES_col(col) * ColFrac(Row,Col)  !profile sum (mm)
+      ENDDO
 
 !     UPFLOW calcs are only for 1D simulations
       IF (.NOT. CONTROL % SIM2D) THEN
         UPFLOW = 0.0
-        ES = 0.0
         UPFLOW(NLAYR) = ES_LYR(NLAYR) / 10.
         DO L = NLAYR-1, 1, -1
           UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10. !cm/d
-          ES = ES + ES_LYR(L)                       !profile sum (mm)
           SWDELTU(l) = CellEvap(L,1)
         ENDDO
       ENDIF
