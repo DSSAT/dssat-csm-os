@@ -59,9 +59,7 @@ C=======================================================================
       CHARACTER*80 PATHWTC, PATHWTG, PATHWTW, WPath
       CHARACTER*92 FILEWW, WFile
       CHARACTER*120 LINE
-      CHARACTER*15 ERRYRDOY
 
-      INTEGER EOF
       INTEGER DOY, DYNAMIC, ERR, ErrCode, FOUND, INCYD, ISIM
       INTEGER LINWTH, LNUM, LUNIO, LUNWTH, MULTI, NYEAR
       INTEGER LUNWTHC, LUNWTHG
@@ -89,7 +87,7 @@ C=======================================================================
      &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A, VAPR_A
      &        , DCO2_A, OZON7_A
       INTEGER CurrentWeatherYear, DOYW
-      INTEGER I, J, LastRec, LastWeatherDay, NRECORDS
+      INTEGER I, J, LastRec, LastWeatherDay, NRecords
       INTEGER FirstWeatherDay, YEARW, RecNum
 
 !     For free-format reads
@@ -193,7 +191,7 @@ C     The components are copied into local variables for use here.
       ErrCode = 0
 
 !-----------------------------------------------------------------------
-!     Do not re-initialize for sequence and seasonal runs
+!     Don't re-initialize for sequence and seasonal runs
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN > 1) RETURN
 
 !     Do we need to do this again for RNMODE = 'Y'?
@@ -230,10 +228,7 @@ C     The components are copied into local variables for use here.
       ENDIF
 
       CLOSE (LUNIO)
-!-----------------------------------------------------------------------      
-!-----------------------------------------------------------------------
-! Run MULTI Season with same treatment
-!-----------------------------------------------------------------------
+
       WYEAR = (ICHAR(FILEW(5:5)) - 48)*10 + (ICHAR(FILEW(6:6)) - 48)
       NYEAR = (ICHAR(FILEW(7:7)) - 48)*10 + (ICHAR(FILEW(8:8)) - 48)
       IF (LastWeatherDay > FirstWeatherDay) THEN
@@ -309,11 +304,9 @@ C     The components are copied into local variables for use here.
       ELSE
         FILEWW = WPath(1:(PATHL-1)) // WFile
       ENDIF
-      INQUIRE(FILE=FILEWW,EXIST=FEXIST)
-      IF (.NOT. FEXIST) THEN
-        ErrCode = 29
-        CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
-        RETURN
+
+      IF (YRDOY == YRSIM) THEN
+        YRDOY_WY = INCYD(YRSIM,-1)
       ENDIF
 
 !     Forecast mode - check bounds of weather file. Needed to determine
@@ -369,16 +362,6 @@ C     The components are copied into local variables for use here.
         REFHT = -99.
         WINDHT= -99.
         CCO2  = -99.
-        
-        
-        CALL READWEATHER(FILEWW, YRDOY, FirstWeatherDay, LastWeatherDay,
-     &                         EOF, LNUM, NRECORDS, ERRYRDOY, ErrCode)
-      
-        IF(ErrCode .NE. 0) THEN
-          CALL ErrorWeatherInput(CONTROL, ErrCode, ERRYRDOY, YREND, 
-     &                           FILEWW, LNUM)
-          RETURN
-        ENDIF
 
 !       Look for 1st header line beginning with '@' in column 1 (ISECT = 3)
         DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
@@ -463,11 +446,7 @@ C     The components are copied into local variables for use here.
       
 C       Substitute default values if REFHT or WINDHT are missing.
         IF (REFHT <= 0.) REFHT = 1.5
-        CALL fio%get('WTH', "WNDHT",WINDHT)
         IF (WINDHT <= 0.) WINDHT = 2.0
-        CALL fio%get('WTH', "CCO2",CCO2)
-        if(CCO2 .EQ. -99) CALL fio%get('WTH', "CO2",CCO2)
-        
 
         LastFileW = WFile
         
@@ -477,8 +456,8 @@ C       Substitute default values if REFHT or WINDHT are missing.
 !       which do not supply TAV and TAMP (UFMA8301.PNX, CLMO8501.SBX, 
 !       NCCL8801.SBX, GALN0201.COX, others).
 !       So -- leave LE for now.
-!       IF (TAV  .LT. 0.0) THEN       
         IF (TAV  .LE. 0.0) THEN       
+!       IF (TAV  .LT. 0.0) THEN       
           TAV = 20.0
           WRITE(MSG(1), 100)
           WRITE(MSG(2), 120) TAV
@@ -490,16 +469,15 @@ C       Substitute default values if REFHT or WINDHT are missing.
   130     FORMAT('which may produce inaccurate results.')
           CALL WARNING (3, ERRKEY, MSG)
         ENDIF
-!       IF (TAMP .LT. 0.0) THEN
         IF (TAMP .LE. 0.0) THEN
+!       IF (TAMP .LT. 0.0) THEN
           TAMP = 5.0
-          WRITE(MSG(1),'(A)') 
-     &    'Value of TAMP, amplitude of soil temperature ' //
-     &    'function, is missing.'
-          WRITE(MSG(2),'(A,F5.1,A)') 
-     &    'A default value of', TAMP,
-     &    '�C is being used for this simulation,' 
-          WRITE(MSG(3),'(A)') 'which may produce inaccurate results.'
+          WRITE(MSG(1), 110)
+  110     FORMAT('Value of TAMP, amplitude of soil temperature ',
+     &            'function, is missing.')
+          WRITE(MSG(2), 120) TAMP
+          WRITE(MSG(3), 130)
+
           CALL WARNING (3, ERRKEY, MSG)
         ENDIF
 
@@ -607,7 +585,6 @@ C     Send labels and values to OPSUM
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
       ENDIF
-!-----------------------------------------------------------------------
 
 !     Set weather values for initialization to the day before start of simulation
 !     unless first weather day == start of simulation day
@@ -664,54 +641,12 @@ C     Send labels and values to OPSUM
         OZON7 = OZON7_A(I+1)
         YREND = -99
       
-      IF(YRDOYW > 0) THEN
-        CALL fio%get('WTH', YRDOYW,"SRAD",SRAD)
-        CALL fio%get('WTH', YRDOYW,"TMAX",TMAX)
-        CALL fio%get('WTH', YRDOYW,"TMIN",TMIN)
-        CALL fio%get('WTH', YRDOYW,"RAIN",RAIN)
-        CALL fio%get('WTH', YRDOYW,"DEWP",TDEW)
-        IF(TDEW .EQ. -99) CALL fio%get('WTH', YRDOYW,"TDEW",TDEW)
-        CALL fio%get('WTH', YRDOYW,"WIND",WINDSP)
-        CALL fio%get('WTH', YRDOYW,"PAR",PAR)
-        CALL fio%get('WTH', YRDOYW,"RHUM",RHUM)
-        CALL fio%get('WTH', YRDOYW,"VAPR",VAPR)
-        IF(VAPR .EQ. -99) CALL fio%get('WTH', YRDOYW,"VPRS",VAPR)
-        CALL fio%get('WTH', YRDOYW,"DCO2",DCO2)
-        IF(DCO2 .EQ. -99) CALL fio%get('WTH', YRDOYW,"CO2",DCO2)
-        CALL fio%get('WTH', YRDOYW,"LNUM",LNUM)
-        
+!       Error checking
         CALL DailyWeatherCheck(CONTROL,
      &    ERRKEY, FILEWW, RAIN, RecNum,                   !Input
      &    SRAD, TMAX, TMIN, YRDOY,                        !Input
      &    YREND)                                          !Output
-     
-      ELSE
-        MSG(1) = "Error in weather data on day before " // 
-     &      "start of simulation date."
-        MSG(2) = "Will attempt to intitialize with data " // 
-     &      "for start of simulation date."
-        CALL WARNING(2,ERRKEY,MSG)
-     
-        CALL fio%get('WTH', YRSIM,"SRAD",SRAD)
-        CALL fio%get('WTH', YRSIM,"TMAX",TMAX)
-        CALL fio%get('WTH', YRSIM,"TMIN",TMIN)
-        CALL fio%get('WTH', YRSIM,"RAIN",RAIN)
-        CALL fio%get('WTH', YRSIM,"DEWP",TDEW)
-        IF(TDEW .EQ. -99) CALL fio%get('WTH', YRSIM,"TDEW",TDEW)
-        CALL fio%get('WTH', YRSIM,"WIND",WINDSP)
-        CALL fio%get('WTH', YRSIM,"PAR",PAR)
-        CALL fio%get('WTH', YRSIM,"RHUM",RHUM)
-        CALL fio%get('WTH', YRSIM,"VAPR",VAPR)
-        IF(VAPR .EQ. -99) CALL fio%get('WTH', YRSIM,"VPRS",VAPR)
-        CALL fio%get('WTH', YRSIM,"DCO2",DCO2)
-        IF(DCO2 .EQ. -99) CALL fio%get('WTH', YRSIM,"CO2",DCO2)
-        CALL fio%get('WTH', YRSIM,"LNUM",LNUM)
-        
-        CALL DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, LNUM, RHUM,               !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRSIM,         !Input
-     &    YREND)                                          !Output
-             
+
       ENDIF
 
 !***********************************************************************
@@ -720,35 +655,9 @@ C     Send labels and values to OPSUM
 !***********************************************************************
       ELSEIF (DYNAMIC == RATE) THEN
 !-----------------------------------------------------------------------
-!-----------------------------------------------------------------------
-! FlexibleIO
-!-----------------------------------------------------------------------
-      CALL fio%get('WTH', YRDOY,"DATE",YRDOYW)
-      
-
-      IF(YRDOYW > 0)THEN
-        
-        CALL fio%get('WTH', YRDOYW,"SRAD",SRAD)
-        CALL fio%get('WTH', YRDOYW,"TMAX",TMAX)
-        CALL fio%get('WTH', YRDOYW,"TMIN",TMIN)
-        CALL fio%get('WTH', YRDOYW,"RAIN",RAIN)
-        CALL fio%get('WTH', YRDOYW,"DEWP",TDEW)
-        IF(TDEW .EQ. -99) CALL fio%get('WTH', YRDOYW,"TDEW",TDEW)
-        CALL fio%get('WTH', YRDOYW,"WIND",WINDSP)
-        CALL fio%get('WTH', YRDOYW,"PAR",PAR)
-        CALL fio%get('WTH', YRDOYW,"RHUM",RHUM)
-        CALL fio%get('WTH', YRDOYW,"VAPR",VAPR)
-        IF(VAPR .EQ. -99) CALL fio%get('WTH', YRDOYW,"VPRS",VAPR)
-        CALL fio%get('WTH', YRDOYW,"DCO2",DCO2)
-        IF(DCO2 .EQ. -99) CALL fio%get('WTH', YRDOYW,"CO2",DCO2)
-        CALL fio%get('WTH', YRDOYW,"LNUM",LNUM)        
-        
-        CALL DailyWeatherCheck(CONTROL,
-     &    ERRKEY, FILEWW, RAIN, LNUM, RHUM,               !Input
-     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOYW,         !Input
-     &    YREND)                                          !Output
-                
-      ELSE IF(EOF .EQ. 1)THEN
+      IF (YRDOY > LastWeatherDay) THEN
+!       StartReadDate = YRDOY
+        YRSIMMY = INCYD(YRDOY,-1)
         CALL YR_DOY(YRDOY, YEAR, DOY)
         CurrentWeatherYear = YEAR
 
@@ -801,18 +710,15 @@ C         Read in weather file header.
           CALL WeatherError(CONTROL, ErrCode, FILEWW, LINWTH, 
      &      YRDOY, YREND)
           RETURN
+        ELSEIF (LongFile) THEN
+          YRDOYWY = LastWeatherDay
         ENDIF
 
-        WSTAT = FILEW(1:8)
-        CALL PUT('WEATHER','WSTA',WSTAT)
+        LastRec = 0
 
-        CALL READWEATHER(FILEWW, YRDOY, FirstWeatherDay, 
-     &  LastWeatherDay, EOF, LNUM, NRECORDS, ERRYRDOY, ErrCode)
-            
-        IF(ErrCode .NE. 0) THEN
-          CALL ErrorWeatherInput(CONTROL, ErrCode, ERRYRDOY, YREND, 
-     &                           FILEWW, LNUM)
-          RETURN
+!     ---------------------------------------------------------
+        IF (YRDOY == YRSIM) THEN
+          YRDOYWY = INCYD(YRSIM,-1)
         ENDIF
 
 !       Read in another batch of data
@@ -961,7 +867,7 @@ C         Read in weather file header.
 !     Long format weather files (i.e., more than one year in a file).
 
     !  CLOSE (LUNWTH)
-    !  INQUIRE(UNIT=LUNWTH,OPENED=FEXIST)
+      INQUIRE(UNIT=LUNWTH,OPENED=FEXIST)
 
 !***********************************************************************
 !***********************************************************************
@@ -973,10 +879,10 @@ C         Read in weather file header.
       END SUBROUTINE IPWTH
 !=======================================================================
 
-!=======================================================================
-! CheckDataWeather, Subroutine, C.H. Porter, 09/01/2009
-! Checks daily weather data.
 
+!=======================================================================
+!  IpWRec, Subroutine, C.H. Porter, 08/10/2006
+!  Read weather records into arrays
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  08/10/2006 CHP Written
@@ -995,6 +901,7 @@ C         Read in weather file header.
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
 
+!-----------------------------------------------------------------------
       USE ModuleDefs
       USE Forecast
       IMPLICIT NONE
@@ -1003,13 +910,12 @@ C         Read in weather file header.
 
       INTEGER MaxRecords
 
-      CHARACTER*78 MSG(10)
-      CHARACTER*(*) ERRKEY, FILEWW
-      INTEGER ErrCode, LNUM, YRDOY, YREND, NChar, RecNum, YRDOYWY
-      REAL RAIN, RHUM, SRAD, TDEW, TMAX, TMIN, WINDSP
-      REAL PAR, VAPR, DCO2
-      REAL CALC_TDEW
       TYPE (ControlType) CONTROL
+      CHARACTER*1  RNMODE
+      CHARACTER*6, PARAMETER :: ERRKEY = "IPWTH "
+      CHARACTER*78 MSG(2)
+      CHARACTER*120 LINE  
+      CHARACTER*92 FILEWW
 
       INTEGER CENTURY, ERR, ErrCode, FOUND, LINWTH, LUNWTH, MULTI, RUN  
       INTEGER YRDOY, YRDOYW, YRDOYWY, YRDOY_start, YREND, YRSIM
@@ -1019,13 +925,7 @@ C         Read in weather file header.
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
       REAL OZON7
 
-        IF (ERRKEY == 'WTHMOD') ErrCode = ErrCode + 70
-        IF (ERRKEY == 'WGEN  ') ErrCode = ErrCode + 80  
-      
-        CALL WeatherError(CONTROL, ErrCode, FILEWW, 
-     &                  RecNum, YRDOYWY, YREND)
-        RETURN
-      ENDIF
+      LOGICAL LongFile
 
 !     Arrays of weather data -- up to one year stored.
       INTEGER, DIMENSION(MaxRecords) :: YRDOY_A, LineNumber
@@ -1035,37 +935,18 @@ C         Read in weather file header.
       INTEGER LastRec, LastWeatherDay, NRecords
       INTEGER FirstWeatherDay
 
-!     Substitute default values if TDEW or WINDSP are missing.
-!     MJ, 2007-04-05: set TDEW to TMIN if TDEW not otherwise available.  This is not
-!     appropriate to South African (and presumably other) conditions
-!     --> suggest replacing with a better calculation based on relative humidity, if
-!         available.
-      IF (TDEW <= -90.)  THEN 
-          IF (RHUM .GT. 0.01) THEN
-              TDEW = CALC_TDEW(TMIN, RHUM)
-          ELSE
-             TDEW = TMIN
-          ENDIF
-      ENDIF
+!     For free-format reads
+!     Up to MAXCOL headers per line, up to 10 characters long each
+      INTEGER, PARAMETER :: MAXCOL = 25
+      CHARACTER*15  HEADER(MAXCOL)
+!     COL keeps beginning and ending column for each header
+      INTEGER COL(MAXCOL,2), ICOUNT, C1, C2, I
 
-!      IF (WINDSP <= 0.) WINDSP = 86.4
-!      IF (WINDSP <= -1.E-6) THEN
-!        WINDSP = 86.4
-!      ELSEIF (WINDSP < 1.0) THEN
-!        MSG(1) = "Unlikely value for WINDSP in weather file."
-!        WRITE(MSG(2),'("WINDSP = ",F8.2," km/d")') WINDSP
-!        CALL WARNING(2,ERRKEY,MSG)
-!        CALL ERROR(ERRKEY,9,FILEW,RecNum)
-!      ENDIF
-
-      RETURN
-      END SUBROUTINE CheckDataWeather
-
-!=======================================================================
-
-!=======================================================================
-! ErrorWeatherInput, Subroutine, C.H. Porter, 09/01/2009
-! Subroutine for errors found in weather data using FlexibleIO.
+      MULTI  = CONTROL % MULTI
+      RNMODE = CONTROL % RNMODE
+      RUN    = CONTROL % RUN
+      YRDOY  = CONTROL % YRDOY
+      YRSIM  = CONTROL % YRSIM
 
 !-----------------------------------------------------------------------
 !     LongFile = .FALSE.
@@ -1283,25 +1164,8 @@ C         Read in weather file header.
       !IF (EOF(LUNWTH)) LastWeatherDay = YRDOYW
       LastRec = 0
 
-      END SELECT
-
-!     Weather file location
-      WRITE(MSG(2),'(2X,A)') FILEWW(:76)
-      WRITE(MSG(3),'(2X,A,I4)') "Line: ", LNUM
-      
-      MSG(4) = "Simulation will end."
-      
-      YREND = CONTROL % YRDOY
-      CONTROL % ErrCode = ErrCode
-      CALL PUT(CONTROL)
-      
-!     Warning for these errors:
-      CALL WARNING(4,ERRKEY,MSG)
-!     Stop the run for these errors:
-!      CALL ERROR(ERRKEY,ErrCode,FILEWW,LNUM)
-      
       RETURN
-      END SUBROUTINE ErrorWeatherInput
+      End Subroutine IpWRec
 !=======================================================================
 
 !=======================================================================
@@ -1337,7 +1201,7 @@ C         Read in weather file header.
 !     Report acceptable headers to INFO.OUT file.  This list should match that
 !       in the read section below.
       WRITE(MSG(1),'(A)') FILEWW(1:78)
-      WRITE(MSG(2),'("Found daily weather data headers for:")')
+      WRITE(MSG(2),'("Found daily weather data headers for:")') 
       IM = 2
       DO I = 1, ICOUNT
 
@@ -1353,7 +1217,7 @@ C         Read in weather file header.
           CASE('SRAD','TMAX','TMIN','RAIN','DEWP','TDEW','WIND',
      &        'PAR','RHUM','VAPR','VPRS','DCO2','CO2','OZON7')
             IM = IM + 1
-            WRITE(MSG(IM),'(2X,A15,"Col ",I3," - ",I3)')
+            WRITE(MSG(IM),'(2X,A15,"Col ",I3," - ",I3)') 
      &          HEADER(I), COL(I,1), COL(I,2)
         END SELECT
 
@@ -1371,7 +1235,7 @@ C         Read in weather file header.
 
       DO I = 1, NumRqdHeaders
         IF (.NOT. Found_Headers(I)) THEN
-          MSG(1) = TRIM(Rqd_Headers(I)) //
+          MSG(1) = TRIM(Rqd_Headers(I)) // 
      &                " data not found in weather file:"
           MSG(2) = TRIM(FILEWW)
           CALL WARNING(2,ERRKEY,MSG)
@@ -1435,14 +1299,14 @@ C         Read in weather file header.
 
       IF (ErrCode .GT. 0) THEN
 !       For seasonal initialization, try next weather day
-!       ERRKEY="INIT" indicates using weather for day before start
+!       ERRKEY="INIT" indicates using weather for day before start 
 !         of simulation.  YREND = ErrCode indicates that error was
 !         found in the data.
         IF (INDEX(ERRKEY,"INIT") > 0) THEN
           YREND = ErrCode  !
-          MSG(1) = "Error in weather data on day before " //
+          MSG(1) = "Error in weather data on day before " // 
      &      "start of simulation date."
-          MSG(2) = "Will attempt to intitialize with data " //
+          MSG(2) = "Will attempt to intitialize with data " // 
      &      "for start of simulation date."
           CALL WARNING(2,ERRKEY,MSG)
           RETURN
@@ -1459,9 +1323,9 @@ C         Read in weather file header.
         CALL WARNING(8,ERRKEY,MSG)
 
         IF (ERRKEY == 'WTHMOD') ErrCode = ErrCode + 70
-        IF (ERRKEY == 'WGEN  ') ErrCode = ErrCode + 80
-
-        CALL WeatherError(CONTROL, ErrCode, FILEWW,
+        IF (ERRKEY == 'WGEN  ') ErrCode = ErrCode + 80  
+      
+        CALL WeatherError(CONTROL, ErrCode, FILEWW, 
      &                  RecNum, YRDOYW, YREND)
         RETURN
       ENDIF
@@ -1501,7 +1365,7 @@ C         Read in weather file header.
 ! 09/01/2009 CHP Written
 ! 06/15/2022 CHP Added CropStatus
 !-----------------------------------------------------------------------
-      SUBROUTINE WeatherError(CONTROL, ErrCode, FILEWW, LNUM,
+      SUBROUTINE WeatherError(CONTROL, ErrCode, FILEWW, LNUM, 
      &      YRDOYW, YREND)
 
       USE ModuleDefs
@@ -1522,17 +1386,17 @@ C         Read in weather file header.
       SELECT CASE(ErrCode)
 !       Weather data read from file
         CASE (1); MSG(1)="Header section not found in weather file."
-        CASE (2); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (2); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Solar radiation data error on YR DOY: ", YRY, DOYY
-        CASE (3); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (3); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Precipitation data error on YR DOY: ", YRY, DOYY
-        CASE (4); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (4); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax and Tmin are both set to 0 on YR DOY: ", YRY, DOYY
-        CASE (5); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (5); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax and Tmin have identical values on YR DOY: ", YRY, DOYY
-        CASE (6); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (6); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax is less than Tmin on YR DOY: ", YRY, DOYY
-        CASE (8); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (8); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Non-sequential data in file: ", YRY, DOYY
         CASE (10); WRITE(MSG(1),'(A,I5,I4)')
      &      "Weather record not found for YR DOY:",YRY, DOYY
@@ -1542,27 +1406,27 @@ C         Read in weather file header.
         CASE (64); MSG(1) = "Syntax error."
 
 !       Weather modification
-        CASE (72); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (72); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Solar radiation data error on YR DOY: ", YRY, DOYY
-        CASE (73); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (73); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Precipitation data error on YR DOY: ", YRY, DOYY
-        CASE (74); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (74); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax and Tmin are both set to 0 on YR DOY: ", YRY, DOYY
-        CASE (75); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (75); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax and Tmin have identical values on YR DOY: ", YRY, DOYY
-        CASE (76); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (76); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax is less than Tmin on YR DOY: ", YRY, DOYY
 
 !       Generated weather data
-        CASE (82); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (82); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Solar radiation data error on YR DOY: ", YRY, DOYY
-        CASE (83); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (83); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Precipitation data error on YR DOY: ", YRY, DOYY
-        CASE (84); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (84); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax and Tmin are both set to 0 on YR DOY: ", YRY, DOYY
-        CASE (85); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (85); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax and Tmin have identical values on YR DOY: ", YRY, DOYY
-        CASE (86); WRITE(MSG(1),'(A,I5,I4)')
+        CASE (86); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Tmax is less than Tmin on YR DOY: ", YRY, DOYY
 
       END SELECT
@@ -1602,104 +1466,6 @@ C         Read in weather file header.
 
       RETURN
       END SUBROUTINE WeatherError
-
-      SUBROUTINE WeatherErrorC(ErrCode, FILEWW, LNUM,
-     &      YRDOYW, YREND)
-
-      USE ModuleDefs
-      USE ModuleData
-      IMPLICIT NONE
-
-      CHARACTER*6, PARAMETER :: ERRKEY = 'IPWTH '
-      CHARACTER*78 MSG(4)
-      CHARACTER*92 FILEWW
-
-      INTEGER DOYY, ErrCode, I, LNUM, YRDOYW, YREND, YRY
-      INTEGER LenString, NCHAR, NMSG
-      TYPE (ControlType) CONTROL
-      CALL Get_CONTROL(CONTROL)
-!-----------------------------------------------------------------------
-      CALL YR_DOY(YRDOYW, YRY, DOYY)
-      SELECT CASE(ErrCode)
-!       Weather data read from file
-        CASE (1); MSG(1)="Header section not found in weather file."
-        CASE (2); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Solar radiation data error on YR DOY: ", YRY, DOYY
-        CASE (3); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Precipitation data error on YR DOY: ", YRY, DOYY
-        CASE (4); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax and Tmin are both set to 0 on YR DOY: ", YRY, DOYY
-        CASE (5); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax and Tmin have identical values on YR DOY: ", YRY, DOYY
-        CASE (6); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax is less than Tmin on YR DOY: ", YRY, DOYY
-        CASE (8); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Non-sequential data in file: ", YRY, DOYY
-        CASE (10); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Weather record not found for YR DOY:",YRY, DOYY
-        CASE (29); MSG(1) = "Weather file not found."
-        CASE (30); MSG(1) = "Error opening weather file."
-        CASE (59); MSG(1) = "Invalid format in weather file."
-        CASE (64); MSG(1) = "Syntax error."
-
-!       Weather modification
-        CASE (72); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Solar radiation data error on YR DOY: ", YRY, DOYY
-        CASE (73); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Precipitation data error on YR DOY: ", YRY, DOYY
-        CASE (74); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax and Tmin are both set to 0 on YR DOY: ", YRY, DOYY
-        CASE (75); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax and Tmin have identical values on YR DOY: ", YRY, DOYY
-        CASE (76); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax is less than Tmin on YR DOY: ", YRY, DOYY
-
-!       Generated weather data
-        CASE (82); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Solar radiation data error on YR DOY: ", YRY, DOYY
-        CASE (83); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Precipitation data error on YR DOY: ", YRY, DOYY
-        CASE (84); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax and Tmin are both set to 0 on YR DOY: ", YRY, DOYY
-        CASE (85); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax and Tmin have identical values on YR DOY: ", YRY, DOYY
-        CASE (86); WRITE(MSG(1),'(A,I5,I4)')
-     &      "Tmax is less than Tmin on YR DOY: ", YRY, DOYY
-
-      END SELECT
-
-      NMSG = 3
-      IF (ErrCode > 80) THEN
-        MSG(2) = "Generated weather data"
-        NMSG = 4
-      ELSEIF (ErrCode > 70) THEN
-        MSG(2) = "Modified weather data"
-        NMSG = 4
-      ENDIF
-
-      NCHAR = LenString(FILEWW)
-      NCHAR = MIN(76,NCHAR)
-      WRITE(MSG(NMSG-1),'(2X,A)') FILEWW(1:NCHAR)
-
-      MSG(NMSG) = "Simulation will end."
-      CALL WARNING(NMSG,ERRKEY,MSG)
-      YREND = CONTROL%YRDOY
-      CONTROL % ErrCode = ErrCode
-      CALL PUT(CONTROL)
-
-!!     Stop the run for these errors:
-!      SELECT CASE(ErrCode)
-!        CASE (29,30)
-!        CALL ERROR(ERRKEY,ErrCode,FILEWW(I-11:I),0)
-!      END SELECT
-
-      IF (INDEX('FQ',CONTROL%RNMODE) > 0) THEN
-        I = LEN_TRIM(FILEWW)
-        CALL ERROR(ERRKEY,ErrCode,FILEWW(I-11:I),LNUM)
-      ENDIF
-
-      RETURN
-      END SUBROUTINE WeatherErrorC
 !=======================================================================
 
 !=======================================================================
