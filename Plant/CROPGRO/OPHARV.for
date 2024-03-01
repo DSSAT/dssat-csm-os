@@ -471,38 +471,46 @@ C-----------------------------------------------------------------------
       WRITE(Simulated(5),' (I8)') DNR7;  WRITE(Measured(5),'(I8)') DMAT
       WRITE(Simulated(6),' (I8)') DNR8;  WRITE(Measured(6),'(I8)') DHRV
       WRITE(Simulated(7),' (I8)') NINT(SDWT*10);  
-                                         WRITE(Measured(7),'(A8)') TRIM(X(7))
+                                  WRITE(Measured(7),'(A8)') TRIM(X(7))
       WRITE(Simulated(8),' (I8)') NINT(PODWT*10); 
-                                         WRITE(Measured(8),'(A8)') TRIM(X(8))
+                                  WRITE(Measured(8),'(A8)') TRIM(X(8))
       WRITE(Simulated(9), '(I8)') NINT(CANWAA*10);
-                                         WRITE(Measured(9),'(A8)') TRIM(X(9))
+                                  WRITE(Measured(9),'(A8)') TRIM(X(9))
       WRITE(Simulated(10),'(I8)') NINT(TOPWT*10); 
-                                         WRITE(Measured(10),'(A8)')TRIM(X(10))
+                                  WRITE(Measured(10),'(A8)')TRIM(X(10))
 !     WRITE(Simulated(11),'(I8)') NINT(STMWT*10); 
 !                                        WRITE(Measured(11),'(A8)')X(11)
 ! KJB, LAH, CHP 12/16/2004  change BWAH to BWAM
       WRITE(Simulated(11),'(I8)') NINT(TOPWT-SDWT)*10; 
-                                         WRITE(Measured(11),'(A8)')TRIM(X(11))
+                                  WRITE(Measured(11),'(A8)')TRIM(X(11))
       WRITE(Simulated(12),'(I8)') NINT(SEEDNO);   
-                                         WRITE(Measured(12),'(A8)')TRIM(X(12))
-      WRITE(Simulated(13),'(F8.4)')PSDWT;WRITE(Measured(13),'(A8)')TRIM(X(13))
-      WRITE(Simulated(14),'(F8.2)')PSPP; WRITE(Measured(14),'(A8)')TRIM(X(14))
-      WRITE(Simulated(15),'(F8.3)')HI;   WRITE(Measured(15),'(A8)')TRIM(X(15))
-      WRITE(Simulated(16),'(F8.2)')THRES;WRITE(Measured(16),'(A8)')TRIM(X(16))
-      WRITE(Simulated(17),'(F8.2)')LAIMX;WRITE(Measured(17),'(A8)')TRIM(X(17))
+                                  WRITE(Measured(12),'(A8)')TRIM(X(12))
+      WRITE(Simulated(13),'(F8.4)')PSDWT;
+                                  WRITE(Measured(13),'(A8)')TRIM(X(13))
+      WRITE(Simulated(14),'(F8.2)')PSPP; 
+                                  WRITE(Measured(14),'(A8)')TRIM(X(14))
+      WRITE(Simulated(15),'(F8.3)')HI;   
+                                  WRITE(Measured(15),'(A8)')TRIM(X(15))
+      WRITE(Simulated(16),'(F8.2)')THRES;
+                                  WRITE(Measured(16),'(A8)')TRIM(X(16))
+      WRITE(Simulated(17),'(F8.2)')LAIMX;
+                                  WRITE(Measured(17),'(A8)')TRIM(X(17))
       WRITE(Simulated(18),'(F8.2)')VSTAGE;
-                                         WRITE(Measured(18),'(A8)')TRIM(X(18))
-      WRITE(Simulated(19),'(F8.2)')CANHT;WRITE(Measured(19),'(A8)')TRIM(X(19))
+                                  WRITE(Measured(18),'(A8)')TRIM(X(18))
+      WRITE(Simulated(19),'(F8.2)')CANHT;
+                                  WRITE(Measured(19),'(A8)')TRIM(X(19))
       WRITE(Simulated(20),'(I8)') NINT(CANNAA*10);
-                                         WRITE(Measured(20),'(A8)')TRIM(X(20))
+                                  WRITE(Measured(20),'(A8)')TRIM(X(20))
       WRITE(Simulated(21),'(I8)') NINT(WTNCAN*10);
-                                         WRITE(Measured(21),'(A8)')TRIM(X(21))
+                                  WRITE(Measured(21),'(A8)')TRIM(X(21))
       WRITE(Simulated(22),'(I8)') NINT(WTNST*10); 
-                                         WRITE(Measured(22),'(A8)')TRIM(X(22))
+                                  WRITE(Measured(22),'(A8)')TRIM(X(22))
       WRITE(Simulated(23),'(I8)') NINT(WTNSD*10); 
-                                         WRITE(Measured(23),'(A8)')TRIM(X(23))
-      WRITE(Simulated(24),'(F8.2)')PCNSD;WRITE(Measured(24),'(A8)')TRIM(X(24))
-      WRITE(Simulated(25),'(F8.2)')PCLSD;WRITE(Measured(25),'(A8)')TRIM(X(25))
+                                  WRITE(Measured(23),'(A8)')TRIM(X(23))
+      WRITE(Simulated(24),'(F8.2)')PCNSD;
+                                  WRITE(Measured(24),'(A8)')TRIM(X(24))
+      WRITE(Simulated(25),'(F8.2)')PCLSD;
+                                  WRITE(Measured(25),'(A8)')TRIM(X(25))
       ENDIF  
 
       IF (CONTROL % ERRCODE > 0) THEN
