@@ -5335,7 +5335,7 @@ C-GH As per Tony Hunt 2017 for GenCalc
               
               ! Check N and reduce leaf growth if not enough N  
               IF (ABS(NULEFT).LE.1.0E-5) THEN   ! Inadequate N
-                IF (NLLG.GT.0.0.AND.LNCX.GT.0.0) THEN 
+                IF(NLLG.GT.0.0.AND.LNCX.GT.0.0.AND.GROLF.GT.0.0) THEN 
                   IF ((LNUSE(1)+LNUSE(2))/GROLF.LT.(LNCX*NLLG)) THEN 
                     GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)
                   ELSE  
