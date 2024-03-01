@@ -797,16 +797,16 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL ERROR, Y4K_DOY, YR_DOY
 
-      CHARACTER*6 XDAT,ERRKEY
+      CHARACTER*8 XDAT,ERRKEY
       REAL        RDAT
       INTEGER     ERRNUM, IDAT, ISIM, YR, YRSIM
       
       PARAMETER (ERRKEY = 'RADATE')
 
-      CALL YR_DOY(YRSIM, YR, ISIM)
-      READ(XDAT(1:6),1000,IOSTAT=ERRNUM) RDAT
+      CALL YR_DOY(YRSIM, YR, ISIM)            
+      READ(XDAT(1:8),1000,IOSTAT=ERRNUM) RDAT
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,2,'FILEA',0)
- 1000 FORMAT(F6.0)
+ 1000 FORMAT(F8.0)
       IDAT = INT(RDAT)
 
       IF (IDAT .GT. 0 .AND. IDAT .LT. 1000) THEN
@@ -1026,20 +1026,21 @@ C=======================================================================
         CHARACTER*1   UPCASE
         CHARACTER*6   OLAB(EvaluateNum), HD
         CHARACTER*6   HEAD(EvaluateNum)
-        CHARACTER*6   X(EvaluateNum)  !, ERRKEY
+        CHARACTER*8   X(EvaluateNum)  !, ERRKEY
         CHARACTER*12  FILEA
         CHARACTER*78  MSG(10)
 	      CHARACTER*80  PATHEX
 	      CHARACTER*92  FILEA_P
         CHARACTER*255 C255
-        CHARACTER*10  DAT
+        CHARACTER*20  DAT
         CHARACTER*6, PARAMETER :: ERRKEY = 'FILEA'
-
+!       Headers with aliases -- save column
+        INTEGER HWAM, HWAH, BWAM, BWAH, PDFT, R5AT  
         
         INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,NTR,COLN, J
         INTEGER YRSIM, ACN, ECN, TR, YRPST, I
         
-        INTEGER, PARAMETER :: MAXCOLN = 25
+        INTEGER, PARAMETER :: MAXCOLN = 40
         CHARACTER*15  HEADER(MAXCOLN), HTXT, FAHEADERS(MAXCOLN)
         INTEGER COL(MAXCOLN,2), ICOUNT, C1, C2, ISECT
         INTEGER C1D(MAXCOLN), C2D(MAXCOLN)
@@ -1052,16 +1053,16 @@ C=======================================================================
         CALL GETLUN('FILEA', LUNA)
         
         INQUIRE(FILE=FILEA_P,EXIST=FEXIST)
-      IF (FEXIST) THEN
-        OPEN (LUNA,FILE = FILEA_P,STATUS = 'OLD',IOSTAT=ERRNUM)
-        
-C       FIND THE HEADER LINE, DESIGNATED BY @TRNO
-        DO WHILE (.TRUE.)
-          READ(LUNA,'(A)',END=5010) C255
-          LINEXP = LINEXP + 1
-          IF (C255(1:1) .EQ. '@') EXIT    
-        ENDDO
-      ENDIF
+        IF (FEXIST) THEN
+          OPEN (LUNA,FILE = FILEA_P,STATUS = 'OLD',IOSTAT=ERRNUM)
+          
+C         FIND THE HEADER LINE, DESIGNATED BY @TRNO
+          DO WHILE (.TRUE.)
+            READ(LUNA,'(A)',END=5010) C255
+            LINEXP = LINEXP + 1
+            IF (C255(1:1) .EQ. '@') EXIT    
+          ENDDO
+        ENDIF
         
         CALL PARSE_HEADERS(C255, MAXCOLN, HEADER, ICOUNT, COL)
         DO COLN = 1, ICOUNT
@@ -1073,17 +1074,19 @@ C       FIND THE HEADER LINE, DESIGNATED BY @TRNO
               HTXT(J:J) = UPCASE(HTXT(J:J))
           END DO
           HEADER(COLN) = HTXT
+          
           IF(INDEX(HEADER(COLN),TRIM(HTXT)) .GT. 0) THEN
             ACN = ACN + 1
             C1D(ACN) = C1 !beginning
-            C2D(ACN) = C2 !ending
-!CHP 12/16/2004 Need to be able to read FILEA headers of either
-!     'BWAM' or 'BWAH' and interpret data as 'BWAM'            
-            IF(TRIM(HEADER(COLN)) .EQ. "BWAH") THEN
-              FAHEADERS(ACN) = "BWAM"
-            ELSE
-              FAHEADERS(ACN) = HEADER(COLN)
-            ENDIF
+            C2D(ACN) = C2 !ending            
+          
+            FAHEADERS(ACN) = HEADER(COLN)
+
+            IF(TRIM(HEADER(COLN)) .EQ. "R5AT") FAHEADERS(ACN) = "PDFT"
+            IF(TRIM(HEADER(COLN)) .EQ. "BWAH") FAHEADERS(ACN) = "BWAM"
+            IF(TRIM(HEADER(COLN)) .EQ. "HWAH") FAHEADERS(ACN) = "HWAM"
+            IF(TRIM(HEADER(COLN)) .EQ. "CWAH") FAHEADERS(ACN) = "CWAM"
+            
           ENDIF
         ENDDO
 
@@ -1120,23 +1123,25 @@ C       FIND THE RIGHT TREATMENT LINE OF DATA
 !         line columns than the variable name
           IF(J .EQ. 1) THEN
             C1 = C1D(J)
-            C2 = C2D(J)
+            C2 = C1D(J+1)
+          ELSEIF(J .EQ. ACN) THEN
+            C1 = C2D(J-1)
+            C2 = C2D(J)+1
           ELSE
             C1 = C2D(J-1)
-            C2 = C2D(J)
+            C2 = C1D(J+1)
           ENDIF
           IF(TRIM(FAHEADERS(J)) .EQ. TRIM(OLAB(ECN))) THEN
 
 !           Check if the column before was TRNO since it ocuppies one
 !           extract character after the last line column of the header
             IF(TRIM(FAHEADERS(J-1)) .EQ. 'TRNO') THEN
-              READ(C255(C1+2:C2),'(A6)',IOSTAT=ERRNUM) DAT
+              READ(C255(C1+2:C2-1),'(A8)',IOSTAT=ERRNUM) DAT
               X(ECN) = TRIM(DAT)
             ELSE
-              READ(C255(C1+1:C2),'(A6)',IOSTAT=ERRNUM) DAT
+              READ(C255(C1+1:C2-1),'(A8)',IOSTAT=ERRNUM) DAT
               X(ECN) = TRIM(DAT)
             ENDIF
-          ELSE
           ENDIF
           ENDDO
         ENDDO  
