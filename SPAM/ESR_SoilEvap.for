@@ -183,22 +183,25 @@
           IF (MEANDEP(L) < 100. .AND. SWTEMP(L) > DUL(L)) THEN
             ProfileType = 1
           ENDIF
+        ENDDO
 
-!         If wet profile, check for top layer SW below threshold.
-          IF (ProfileType == 1) THEN
-!           SW_threshold = DUL(1) - 0.05 !/ 0.13 * (DUL(1) - LL(1))
-!           JTR 6/4/2008
-!           Threshold WC = 0.275*DUL +1.165*DUL^2 + (1.2*DUL^3.75)*depth (center)
-            SW_threshold = 0.275*DUL(1) + 1.165*DUL(1)*DUL(1) +
-     &              (1.2*DUL(1)**3.75)*MEANDEP(1)
-!           chp 6/4/2008 use DUL - 0.05, like before, but limit to air dry
-!            SW_threshold = MAX(SWAD(1), DUL(1) - 0.05)
-            IF (SWTEMP(1) < SW_threshold) THEN
-              ProfileType = 2
-            ENDIF
+!       If wet profile, check for top layer SW below threshold.
+        IF (ProfileType == 1) THEN
+!         SW_threshold = DUL(1) - 0.05 !/ 0.13 * (DUL(1) - LL(1))
+!         JTR 6/4/2008
+!         Threshold WC = 0.275*DUL +1.165*DUL^2 + (1.2*DUL^3.75)*depth (center)
+          SW_threshold = 0.275*DUL(1) + 1.165*DUL(1)*DUL(1) +
+     &            (1.2*DUL(1)**3.75)*MEANDEP(1)
+!         chp 6/4/2008 use DUL - 0.05, like before, but limit to air dry
+!          SW_threshold = MAX(SWAD(1), DUL(1) - 0.05)
+          IF (SWTEMP(1) < SW_threshold) THEN
+            ProfileType = 2
           ENDIF
+        ENDIF
 
-!-----  ------------------------------------------------------------------
+        DO L = 1, NLAYR
+          Row = L+StartRow-1  
+!-----------------------------------------------------------------------
           SELECT CASE (ProfileType)
 
 !         Dry profile
@@ -230,8 +233,11 @@
      &      (1.0 - PMFRACTION(Col))
         
 !         Limit to available water
-!         SW_AVAIL(L) = SW(L) + SWDELTS(L) - SWAD(L)
-          SW_AVAIL(L) = SWV(Row,Col) - SWAD(L)
+          IF (.NOT. CONTROL % Sim2D) THEN
+            SW_AVAIL(L) = SWV(Row,Col) + SWDELTS(L) - SWAD(L)
+          ELSE
+            SW_AVAIL(L) = SWV(Row,Col) - SWAD(L)
+          ENDIF
           IF (-CellEvap(Row,Col) > SW_AVAIL(L)) THEN
             CellEvap(Row,Col) = -SW_AVAIL(L)                   !mm3/mm3
           ENDIF
@@ -253,8 +259,9 @@
 
 !       Limit total profile soil evaporation to potential soil evaporation
         RedFac = 1.0
-        IF (ES_col(col) > EOS_max(col)) THEN
-          RedFac = EOS_max(col) / ES_col(col)
+        IF (ES_col(col) > EOS) THEN
+          RedFac = EOS / ES_col(col)
+          ES_col(col) = EOS
         ENDIF
 
         DO L = 1, NLAYR
