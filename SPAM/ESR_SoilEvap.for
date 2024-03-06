@@ -65,7 +65,7 @@
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
       REAL, DIMENSION(MaxCols) :: ES_col
-      REAL, DIMENSION(0:MaxCols) :: PMFRACTION, EOS_factor, EOS_max
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       REAL, DIMENSION(MaxRows, MaxCols) :: CellEvap
 
 !     2D additions:
@@ -105,7 +105,6 @@
 !     PMFraction is the fraction of the soil covered by plastic mulch
 !     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
       CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
-      CALL GET("PM", "EOS_factor", EOS_factor, MaxCols+1)
 
 !***********************************************************************
 !***********************************************************************
@@ -137,13 +136,6 @@
 
 !     Loop through columns and calculate soil evaporation for each column separately
       DO Col = 1, NColsTot
-!       Maximum potential soil evaporation by column accounts for partial 
-!         coverage with plastic mulch. To maintain the overall field 
-!         potential EOS, increase EOS for columns not covered by plastic. 
-!         This does not necessarily increase the actual soil evaporation 
-!         which is limited by available soil water.
-        EOS_max(col) = EOS * EOS_factor(col)
-
         IF (.NOT. CONTROL % SIM2D .OR. Cell_Type(1,Col) > 2) THEN
 !         This is either a 1D simulation or a bed with no plastic mulch or a flat system.
           Use_SOILPROP = SOILPROP

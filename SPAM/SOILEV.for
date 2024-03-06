@@ -61,7 +61,7 @@ C=======================================================================
 
       REAL, DIMENSION(MaxCols) :: SWR, USOIL, SUMES1, SUMES2, T, SWEF
       REAL, DIMENSION(MaxCols) :: ES_col
-      REAL, DIMENSION(0:MaxCols) :: PMFRACTION, EOS_factor, EOS_max
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       REAL, DIMENSION(MaxRows, MaxCols) :: CellEvap
 
 !     2D additions:
@@ -136,7 +136,6 @@ C=======================================================================
 !     PMFraction is the fraction of the soil covered by plastic mulch
 !     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
       CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
-      CALL GET("PM", "EOS_factor", EOS_factor, MaxCols+1)
 
 !***********************************************************************
 !     RATE CALCULATIONS
@@ -160,13 +159,6 @@ C=======================================================================
 
 !     Loop through columns and calculate soil evaporation for each column separately
       DO Col = 1, NColsTot
-
-!       Maximum potential soil evaporation by column accounts for partial 
-!         coverage with plastic mulch. To maintain the overall field 
-!         potential EOS, increase EOS for columns not covered by plastic. 
-!         This does not necessarily increase the actual soil evaporation 
-!         which is limited by available soil water.
-        EOS_max(col) = EOS * EOS_factor(col)
 
         IF (.NOT. CONTROL % SIM2D .OR. Cell_Type(1,Col) > 2) THEN
 !         This is either a 1D simulation or a bed with no plastic mulch or a flat system.
@@ -196,7 +188,7 @@ C       soil evaporation (EOS), and stage 1 evaporation (U).
           T(Col) = 0.0
           IF (WINFMOD .GT. U) SUMES1(Col) = 0.0
 !         Supplementary calcs
-          CALL ESUP(EOS_max(col), SUMES1(Col), SUMES2(Col), U, 
+          CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, 
      &      ESc(col), T(Col))
 
         ELSEIF ((SUMES1(Col) >= U) .AND. (Infilt < SUMES2(Col))) THEN
@@ -206,10 +198,10 @@ C       soil evaporation (EOS), and stage 1 evaporation (U).
           IF (Infilt .GT. 0.0) THEN
             ESX = 0.8 * Infilt
             IF (ESX .LE. ESc(col)) ESX = ESc(col) + Infilt
-            IF (ESX .GT. EOS_max(col)) ESX = EOS_max(col)
+            IF (ESX .GT. EOS) ESX = EOS
             ESc(col) = ESX
-          ELSE IF (ESc(col) .GT. EOS_max(col)) THEN
-            ESc(col) = EOS_max(col)
+          ELSE IF (ESc(col) .GT. EOS) THEN
+            ESc(col) = EOS
           ENDIF
           SUMES2(Col) = SUMES2(Col) + ESc(col) - Infilt
           T(Col) = (SUMES2(Col)/3.5)**2
@@ -217,13 +209,13 @@ C       soil evaporation (EOS), and stage 1 evaporation (U).
         ELSE IF (Infilt .GE. SUMES1(Col)) THEN
 !         Stage 1 evaporation
           SUMES1(Col) = 0.0
-          CALL ESUP(EOS_max(col), SUMES1(Col), SUMES2(Col), U, 
+          CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, 
      &      ESc(col), T(Col))
 
         ELSE
 !         Stage 1 evaporation
           SUMES1(Col) = SUMES1(Col) - Infilt
-          CALL ESUP(EOS_max(col), SUMES1(Col), SUMES2(Col), U, 
+          CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, 
      &      ESc(col), T(Col))
         ENDIF
 

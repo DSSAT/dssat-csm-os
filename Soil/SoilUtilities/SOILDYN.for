@@ -167,10 +167,10 @@ C-----------------------------------------------------------------------
 
 !     ---------------------------------------------------------------
 !     Composite variables
-      TYPE (ControlType) CONTROL  !Control variables
       TYPE (SoilType)   , INTENT(OUT):: SOILPROP !Soil properties
       TYPE (MulchType)  , INTENT(IN) :: MULCH    !Surface mulch propert.
       TYPE (SwitchType) , INTENT(IN) :: ISWITCH  !Simulation options 
+      TYPE (ControlType), INTENT(IN) :: CONTROL  !Control variables
       TYPE (TillType)   , INTENT(IN) :: TILLVALS !Tillage operation vars
       TYPE (WeatherType), INTENT(IN) :: WEATHER  !Weather variables
 
@@ -206,14 +206,6 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
-
-!     Move this to IPSIM
-!      IF (INDEX('GC',ISWITCH % MEHYD) > 0) THEN
-!        Sim2D = .TRUE.
-!      ELSE
-!        Sim2D = .FALSE.
-!      ENDIF
-!      CONTROL % Sim2D = Sim2D
 
 !     Initialize soils variables
       NLAYR  = 0
@@ -774,18 +766,17 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 !     chp 2023-10-03 - Must have KSAT for 2D model to work. Use this for MEHYD = 'G', 'C'
 !       Remove this ksat estimation 
 !       It causes problems when SAT and DUL are close. (KJB/JWJ - India workshop 2011)
-!       Calculate Ksat (SWCN) if not provided
-        IF (SWCN(L) < -1.E-6 .AND. Sim2D) THEN
-!         Eqn. 10 from 
-!         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
-!           drainage model for more accurate soil water dynamics estimation. 
-!           Soil Science 169(11):745-757.
-          SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
-        ENDIF
+!!       Calculate Ksat (SWCN) if not provided
+!        IF (SWCN(L) < -1.E-6) THEN
+!!         Eqn. 10 from 
+!!         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
+!!           drainage model for more accurate soil water dynamics estimation. 
+!!           Soil Science 169(11):745-757.
+!          SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
+!        ENDIF
       ENDDO
 
 !-----------------------------------------------------------------------
-!     For 1-D soil profile
 !     Compute vanGenuchten parameters which describe water retention curve
 !     Calculate all VG parameters if any one is missing
       VG_OK  = .TRUE.
@@ -1080,7 +1071,7 @@ C  tillage and rainfall kinetic energy
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
-      IF (SIM2D) RETURN
+!     IF (SIM2D) RETURN
 
 !     Initial SOM not established until end of SEASINIT section so 
 !     remember initial values here.  Units are kg[Organic matter]/ha
@@ -2320,12 +2311,6 @@ C=======================================================================
 !==============================================================================
 !     Subroutine SETPM
 !     Calculate the fraction of plastic mulch cover for each column
-!     Calculate the factor to be applied to potential soil evaporation (EOS)
-!       to account for plastic mulch cover.
-!       - EOS_factor = 0.for columns with complete cover 
-!       - EOS_factor = 1.0 if there is no plastic mulch on any column
-!       - EOS_factor > 1.0 for columns with no or partial cover when there is 
-!           a presence of plastic on the row
       SUBROUTINE SETPM(SOILPROP, CELLS)                 !input/output
 !   ---------------------------------------------------------
       USE Cells_2D
@@ -2343,7 +2328,7 @@ C=======================================================================
       INTEGER ERR, FOUND, LNUM, LUNIO, J
       REAL PMWD, ROWSPC_CM
       REAL PMALB, MSALB, CumWid, CumWidLast
-      REAL, DIMENSION(0:MaxCols) :: PMFRACTION, EOS_factor
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       LOGICAL PMCover
     
       TYPE (ControlType) CONTROL
@@ -2418,18 +2403,10 @@ C=======================================================================
 
 !     Default = no plastic mulch cover
       PMFRACTION = 0.0  !no cover
-      EOS_factor = 1.0  !no change to EOS
 
       IF (PMCover) THEN
 !       Overall fraction of row covered by plastic mulch
         PMFRACTION(0) = PMWD / ROWSPC_CM
-!       Overall boost to EOS for bare soil when there is plastic mulch present
-        IF (PMFRACTION(0) >= 0.95) THEN
-!         For full PM, assume at least 5% is open for evap (planting holes)
-          EOS_factor(0) = 20.0    
-        ELSE 
-          EOS_factor(0) = 1.0 / (1.0 - PMFRACTION(0))  !partial PM
-        ENDIF
         MSALB = PMALB * PMFRACTION(0) + 
      &    SOILPROP % SALB * (1.0 - PMFRACTION(0))
         SOILPROP % MSALB  = MSALB
@@ -2438,7 +2415,6 @@ C=======================================================================
         IF (PMWD .GE. ROWSPC_CM) THEN
 !         Entire row covered with plastic for 1D and 2D
           PMFRACTION = 1.0  !for all columns
-          EOS_factor = 20.0
         ELSE
 
           IF (CONTROL % SIM2D) THEN
@@ -2451,27 +2427,22 @@ C=======================================================================
 !               This column is entirely covered by plastic mulch
 !               Assume evaporation over minimum 5% of area.
                 PMFRACTION(J) = 1.0
-                EOS_factor(J) = 20.0
               ELSEIF (CumWidLast < PMWD) THEN
 !               Partion PM cover for this column (shouldn't happen?)
                 PMFRACTION(J) = (PMWD - CumWidLast)/
      &            CELLS(1,J) % Struc%Width
-                EOS_factor(J) = 1.0 / (1.0 - PMFRACTION(J))
               ELSE
                 PMFRACTION(J) = 0.0
-                EOS_factor(J) = 1.0
               ENDIF
             ENDDO
           ELSE
 !           1D case - only handle column 1 (entire row)
             PMFRACTION(1) =  PMFRACTION(0)
-            EOS_factor(1) = EOS_factor(0)
           ENDIF
         ENDIF
       ENDIF
 
       CALL PUT("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
-      CALL PUT("PM", "EOS_factor", EOS_factor, MaxCols+1)
 
       RETURN      
       END SUBROUTINE SETPM
