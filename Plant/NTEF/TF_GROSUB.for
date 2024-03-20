@@ -3308,8 +3308,6 @@ cjh quick fix for maturity stage
 !     Format Strings
 !----------------------------------------------------------------------
 
- 2700 FORMAT (2X,'Crop mature on JD',I4,' due to slowed grain filling')
- 2800 FORMAT (2X,'Crop failure growth program terminated ')
       return
       END SUBROUTINE TF_GROSUB
 
