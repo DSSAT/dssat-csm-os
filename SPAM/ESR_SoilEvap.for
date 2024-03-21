@@ -277,9 +277,12 @@
 !     UPFLOW calcs are only for 1D simulations
       IF (.NOT. CONTROL % SIM2D) THEN
         UPFLOW = 0.0
-        UPFLOW(NLAYR) = ES_LYR(NLAYR) / 10.
-        DO L = NLAYR-1, 1, -1
-          UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10. !cm/d
+        DO L = NLAYR, 1, -1
+          IF (L == NLAYR) THEN
+            UPFLOW(l) = ES_LYR(NLAYR) / 10.
+          ELSE
+            UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10. !cm/d
+          ENDIF
           SWDELTU(l) = CellEvap(L,1)
         ENDDO
       ENDIF
