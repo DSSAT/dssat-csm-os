@@ -374,7 +374,7 @@ C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
         IF (.NOT. CONTROL % SIM2D) THEN
-          CALL ROOTS(RUNINIT,
+          CALL ROOTS(RUNINIT, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
@@ -651,7 +651,7 @@ C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
       IF (.NOT. CONTROL % SIM2D) THEN      
-        CALL ROOTS(SEASINIT,
+        CALL ROOTS(SEASINIT, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
@@ -818,7 +818,7 @@ C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
       IF (.NOT. CONTROL % SIM2D) THEN
-        CALL ROOTS(EMERG,
+        CALL ROOTS(EMERG, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
@@ -1222,7 +1222,7 @@ C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 !-----------------------------------------------------------------------
       IF (.NOT. CONTROL % SIM2D) THEN
-        CALL ROOTS(INTEGR,
+        CALL ROOTS(INTEGR, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
