@@ -326,7 +326,7 @@
 !-----------------------------------------------------------------------
 !         Calculate new vertical growth in column 1 only
           IF (COL == 1) THEN
-            WidFrac = 1.0 ! JZW Bug: should be WidFrac(Row,Col)=1.0
+            WidFrac(Row,Col) = 1.0 
             IF (RTDEP >= CUMDEP) THEN
               DepFrac(Row,Col) = 1.0
             ELSEIF (RTDEP >= LastCumDep)THEN
