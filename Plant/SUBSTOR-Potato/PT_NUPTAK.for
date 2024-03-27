@@ -11,12 +11,15 @@ C  02/08/1993 PWW Header revision and minor changes
 C  12/  /1994 WTB Adapted for SUBSTOR model
 C  08/28/2001 CHP Modified for modular format.
 !  11/07/2005 CHP Replaced FAC with SOILPROP variable KG2PPM
+!  02/25/2018 MZ  Adapted for 2D
+!  03/27-2024 CHP 2D integration into 1D code
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
 C  NUF    : Plant N supply/demand ratio used to modify uptake
 C  NDEM   : Plant nitrogen demand (g/plant)
 C  L,L1   : Loop counters
+C  J      : Loop counters for 2D
 C  THUMN  :
 C  RNH4U  : Potential ammonium uptake from Layer L (kg N/ha)
 C  RNO3U  : Potential nitrate uptake from Layer L (kg N/ha)
@@ -35,13 +38,20 @@ C  RFAC   : Interim variable describing the effects of root length density
 C           on potential N uptake from a layer
 C  UNO3   : Plant uptake of nitrate from a layer (kg N/ha)
 C  UNH4   : Plant uptake of ammonium from a layer (kg N/ha)
+C  NH4_2D(L,J)   : Ammonium N in soil cell (µg[N] / g[soil])
+C  NO3_2D(L,J)   : Nitrate in soil cell (µg[N] / g[soil])
+C  RLV_2D(L,J)   : Root length density for soil cell ((cm root / cm3 soil))
+C  RNH4U_2D(L,J) : Ammonium uptake (kg N/ha)
+C  RNO3U_2D(L,J) : Nitrate uptake (kg N/ha)
+C  UNH4_2D(L,J)  : Uptake of NH4 from cell
+C  UNO3_2D(L,J)  : Uptake of NO3 from cell
 C  XMIN   :
 C  XNDEM  :
 C  FACTOR : Relative weighting to distribute crop root residues at the beginning
 C           of a simulation
 C=======================================================================
 
-      SUBROUTINE PT_NUPTAK (DYNAMIC,
+      SUBROUTINE PT_NUPTAK (DYNAMIC, CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
      &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
@@ -50,12 +60,15 @@ C=======================================================================
      &    WTNUP)                                          !Output
 
 !-----------------------------------------------------------------------
+      USE Cells_2D
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
       SAVE
 
+      Type (CellType) Cells(MaxRows,MaxCols)
+      REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
       INTEGER DYNAMIC, ISTAGE, L, L1, NLAYR
 
       REAL ANDEM, ARVCHO, AVAILN, EXTRAN, FACTOR 
@@ -72,6 +85,17 @@ C=======================================================================
       REAL, DIMENSION(NL) :: RLV, RNO3U, RNH4U
       REAL, DIMENSION(NL) :: SAT, SNH4, SNO3, SW, UNO3, UNH4
 
+      INTEGER J, FurCol1
+      REAL HalfRow, BEDWD
+      REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV,RNH4U_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D, RNO3U_2D
+
+      SWV    = CELLS % State % SWV
+      RLV_2D = CELLS % State % RLV
+      SNO3_2D = CELLS % State % SNO3
+      SNH4_2D = CELLS % State % SNH4
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -81,6 +105,17 @@ C=======================================================================
       TUBMNC  = 0.007
       TUBSINK = 0.0   !from PHASEI
       WTNUP   = 0.0   !Seasonal total N uptake (kg[N]/ha)
+      UNH4_2D = 0.0
+      UNO3_2D = 0.0
+      RLV_2D  = 0.0
+      
+      CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
+      CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
+      
+      HalfRow = BedDimension % ROWSPC_cm / 2
+      BEDWD   = BedDimension % BEDWD
+      FurCol1 = BedDimension % FurCol1 
+      ColFrac = BedDimension % ColFrac
 
 !***********************************************************************
 !***********************************************************************
@@ -93,49 +128,60 @@ C-----------------------------------------------------------------------
       ARVCHO = 0.0
       NUF    = 0.0
       TRNU   = 0.0
+      RNO3U    = 0.0
+      RNH4U    = 0.0
+      UNO3     = 0.0
+      UNH4     = 0.0
+      RNO3U_2D = 0.0
+      RNH4U_2D = 0.0
+      UNH4_2D  = 0.0
+      UNO3_2D  = 0.0
 
-      DO L = 1, NLAYR
-         RNO3U(L) = 0.0
-         RNH4U(L) = 0.0
-         UNO3(L)  = 0.0
-         UNH4(L)  = 0.0
-         !KG2PPM(L) = 10. / (BD(L) * DLAYR(L))
-         SNO3(L) = NO3(L) / KG2PPM(L)
-         SNH4(L) = NH4(L) / KG2PPM(L)
-      END DO
+      DO L = 1, NRowsTot
+        SNO3(L) = NO3(L) / KG2PPM(L)
+        SNH4(L) = NH4(L) / KG2PPM(L)
+        DO J = 1, NColsTot
+          NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+          NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+        ENDDO
+      ENDDO
 
 C-----------------------------------------------------------------------
 C   Calculate potential N supply in soil layers with roots (TRNU)
 C-----------------------------------------------------------------------
 
-      DO L = 1, NLAYR
-         IF (RLV(L) .NE. 0.0) THEN
-            L1 = L
-            ESW(L) = DUL(L) - LL(L)
-            FNO3 = 1.0 - EXP(-0.0275*NO3(L))
-            FNH4 = 1.0 - EXP(-0.0250*NH4(L))
-            IF (FNO3 .LT. 0.03) THEN
-               FNO3 = 0.0
-            ENDIF
-            IF (FNH4 .LT. 0.03) THEN
-               FNH4 = 0.0
-            ENDIF
-            FNO3  = AMIN1 (FNO3,1.0)
-            FNH4  = AMIN1 (FNH4,1.0)
+      DO L = 1, NRowsTot 
+        DO J = 1, NColsTot
+          IF (RLV_2D(L, J) .NE. 0.0) THEN
+             ESW(L) = DUL(L) - LL(L)
+             FNO3 = 1.0 - EXP(-0.0275*NO3_2D(L, J))
+             FNH4 = 1.0 - EXP(-0.0250*NH4_2D(L, J))
+             IF (FNO3 .LT. 0.03) THEN
+                FNO3 = 0.0
+             ENDIF
+             IF (FNH4 .LT. 0.03) THEN
+                FNH4 = 0.0
+             ENDIF
+             FNO3  = AMIN1 (FNO3, 1.0)
+             FNH4  = AMIN1 (FNH4, 1.0)
 
-            SMDFR = (SW(L)-LL(L))/ESW(L)
-            SMDFR = AMAX1 (SMDFR,0.0)
+             SMDFR = (SWV(L, J) - LL(L)) / ESW(L)
+             SMDFR = AMAX1 (SMDFR, 0.0)
 
-            IF (SMDFR .GT. 1.0) THEN
-               SMDFR = (SAT(L)-SW(L))/(SAT(L)-DUL(L))
-            ENDIF
+             IF (SMDFR .GT. 1.0) THEN
+                SMDFR = (SAT(L) - SWV(L, J)) / (SAT(L) - DUL(L))
+             ENDIF
 
-            RFAC     = RLV(L)*SMDFR*SMDFR*DLAYR (L)*100.0
-            RNO3U(L) = RFAC*FNO3*0.006
-            RNH4U(L) = RFAC*FNH4*0.006
-            TRNU     = TRNU + RNO3U(L) + RNH4U(L) !kg[N]/ha
+             RFAC = RLV_2D(L, J) * SMDFR * SMDFR * DLAYR (L) * 100.0
+             RNO3U_2D(L, J) = RFAC * FNO3 * 0.006
+             RNH4U_2D(L, J) = RFAC * FNH4 * 0.006
+             RNO3U_2D(L, J) = MAX(0.0, RNO3U_2D(L, J))
+             RNH4U_2D(L, J) = MAX(0.0, RNH4U_2D(L, J))
+             TRNU = TRNU + (RNO3U_2D(L, J) + RNH4U_2D(L, J)) * 
+     &              ColFrac(L, J) !kg[N]/ha
 
-         ENDIF
+          ENDIF
+        END DO
       END DO
 
 C-----------------------------------------------------------------------
@@ -364,23 +410,29 @@ C-----------------------------------------------------------------------
 C   Calculate N uptake in soil layers with roots based on demand (kg/ha)
 C-----------------------------------------------------------------------
 
-      DO L = 1, L1
-         UNO3(L)    = RNO3U(L)*NUF
-         UNH4(L)    = RNH4U(L)*NUF
-         XMIN    = 0.25/KG2PPM(L)
-         UNO3(L)    = AMIN1 (UNO3(L),SNO3(L) - XMIN)
-         UNO3(L) = MAX(0.0, UNO3(L))
-!         SNO3(L) = SNO3(L) - UNO3
-         XMIN    = 0.5 / KG2PPM(L)
-         UNH4(L)    = AMIN1 (UNH4(L),SNH4(L) - XMIN)
-         UNH4(L) = MAX(0.0, UNH4(L))
-!         SNH4(L) = SNH4(L) - UNH4
-!         NO3(L)  = SNO3(L) * KG2PPM(L)
-!         NH4(L)  = SNH4(L) * KG2PPM(L)
-         TRNU    = TRNU   + UNO3(L)   + UNH4(L)       !kg[N]/ha
+
+      DO L = 1, NRowsTot
+        DO J = 1, NColsTot
+          UNO3_2D(L, J) = RNO3U_2D(L, J) * NUF
+          UNH4_2D(L, J) = RNH4U_2D(L, J) * NUF
+          XMIN          = 0.25 / KG2PPM(L)
+          UNO3_2D(L, J) = AMIN1 (UNO3_2D(L, J), SNO3_2D(L, J) - XMIN)
+          UNO3_2D(L, J) = MAX(0.0, UNO3_2D(L, J))
+          XMIN          = 0.5 / KG2PPM(L)
+          UNH4_2D(L, J) = AMIN1 (UNH4_2D(L, J),SNH4_2D(L, J) - XMIN)
+          UNH4_2D(L, J) = MAX(0.0, UNH4_2D(L, J))
+          TRNU          = TRNU + UNO3_2D(L, J) + UNH4_2D(L, J) !kg[N]/ha
+        END DO
       END DO
 
-      TRNU = TRNU/(PLTPOP*10.0)                       !g[N]/plant
+      TRNU = TRNU/(PLTPOP*10.0)             !g[N]/plant
+
+      CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
+      CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
+      CAll Interpolate2Layers_2D(UNO3_2D, Cells%Struc, NLAYR,  !input
+     &         UNO3)                                           !Output
+      CAll Interpolate2Layers_2D(UNH4_2D, Cells%Struc, NLAYR,  !input
+     &         UNH4)                                           !Output
 
 !-----------------------------------------------------------------------
 C   Update stover and root N

@@ -43,15 +43,14 @@ C=======================================================================
 !       RLV(L) = RLINIT / DLAYR(L) should be RLV/RTDEP
 !       RLV(L) = RLV(L)+RLDF(L)*RNLF/DLAYR(L)-0.005*RLV(L) where DLAYR should be RTDEP
 
-      SUBROUTINE PT_ROOTGR (DYNAMIC, 
+      SUBROUTINE PT_ROOTGR (DYNAMIC, CELLS, 
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &    CUMDEP, RLV, RTDEP)                             !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE Cells_2D
       IMPLICIT  NONE
       EXTERNAL PT_IPROOT
       SAVE
@@ -68,6 +67,9 @@ C=======================================================================
 
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, ESW, LL 
       REAL, DIMENSION(NL) :: NH4, NO3, RLDF, RLV, SHF, SW
+
+!     Add 2D roots variable - needed for SoilNi, even for 1D runs
+      Type (CellType)    CELLS(MaxRows,MaxCols)
 
 !***********************************************************************
 !***********************************************************************
@@ -199,6 +201,11 @@ C-------------------------------------------------------------------------
         ENDDO
 
       ENDIF
+
+!     Transfer RLV values to 2D variable for use in some N routines
+      DO L = 1, NLAYR
+        CELLS(L,1)%STATE%RLV = RLV(L)
+      ENDDO
 
        ! RLWR  Root length to weight ration, (cm/g)*1E-4 
 !        TotRootMass = (TRLV / RLWR) * 10.

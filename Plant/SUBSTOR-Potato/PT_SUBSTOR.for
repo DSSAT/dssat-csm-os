@@ -158,7 +158,7 @@ C=======================================================================
      &    CUMDEP, RLV, RTDEP)                             !Output
 
       CASE DEFAULT
-        CALL PT_ROOTGR (SEASINIT,
+        CALL PT_ROOTGR (SEASINIT, CELLS,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &    CUMDEP, RLV, RTDEP)                             !Output
@@ -233,7 +233,7 @@ C=======================================================================
      &        CUMDEP, RLV, RTDEP)                             !Output
 
           CASE DEFAULT
-            CALL PT_ROOTGR (RATE, 
+            CALL PT_ROOTGR (RATE, CELLS, 
      &        DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &        LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &        CUMDEP, RLV, RTDEP)                             !Output

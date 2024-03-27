@@ -43,7 +43,7 @@ C-----------------------------------------------------------------------
 
       IMPLICIT  NONE
       EXTERNAL PT_IPGRO, PT_NUPTAK, PT_NFACTO, ALIN, TABEX
-      EXTERNAL PT_NUPTAK_2D
+!      EXTERNAL PT_NUPTAK_2D
       SAVE
 
       Type (CellType) Cells(MaxRows,MaxCols)
@@ -180,17 +180,17 @@ C-----------------------------------------------------------------------
       TUBN    = 0.0
       TUBWT   = 0.0
       
-      SELECT CASE(ISWITCH % MESOL)
-      CASE ('D')
-        CALL PT_NUPTAK_2D (SEASINIT, CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
-     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
-     &    TOPWT, TUBCNP, TUBWT,                           !Input
-     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
-     &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
-     &    WTNUP)                                          !Output
+!      SELECT CASE(ISWITCH % MESOL)
+!      CASE ('D')
+!        CALL PT_NUPTAK_2D (SEASINIT, CELLS,
+!     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
+!     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
+!     &    TOPWT, TUBCNP, TUBWT,                           !Input
+!     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
+!     &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
+!     &    WTNUP)                                          !Output
 
-      CASE DEFAULT
+!      CASE DEFAULT
         CALL PT_NUPTAK (SEASINIT, 
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
      &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
@@ -198,7 +198,7 @@ C-----------------------------------------------------------------------
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
-      END SELECT
+!      END SELECT
 
       CARBO  = 0.0
       PCARB  = 0.0
@@ -594,16 +594,16 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! AVAILN = (SRVNU)+(0.5*DDEADLF*TMNC)
 
       SELECT CASE(ISWITCH % MESOL)
-      CASE ('D')
-        CALL PT_NUPTAK_2D (RATE, CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
-     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
-     &    TOPWT, TUBCNP, TUBWT,                           !Input
-     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
-     &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
-     &    WTNUP)                                          !Output
+!      CASE ('D')
+!        CALL PT_NUPTAK_2D (RATE, CELLS,
+!     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
+!     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
+!     &    TOPWT, TUBCNP, TUBWT,                           !Input
+!     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
+!     &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
+!     &    WTNUP)                                          !Output
 
-      CASE DEFAULT
+!      CASE DEFAULT
         CALL PT_NUPTAK (RATE, 
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
      &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
@@ -611,7 +611,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
-      END SELECT
+!      END SELECT
 
 !-----------------------------------------------------------------------
 ! Jan 2000, Walter Bowen 
