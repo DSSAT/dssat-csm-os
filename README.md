@@ -112,7 +112,21 @@ This file uses the function from `SetCompilerFlag.cmake` to set the DEBUG, TESTI
 
 ### Data ###
 
-This folder contains model-specific data for genotypes pest, standard model data, code files, DSSATPRO files, etc.
+This folder contains model-specific data for genotypes, pest, standard model data, code files, DSSATPRO files, etc.
+
+    .
+    ├── Genotype
+    ├── Pest
+    ├── StandardData
+    ├── Data.CDE
+    ├── Detail.CDE
+    ├── DSSATPRO.v48
+    ├── ...
+    └── README.md
+ 
+The files in this repository can be combined with the files in the Data repository (https://github.com/DSSAT/dssat-csm-data) to 
+replicate the directory structure of the Windows installation of DSSAT v4.8.2 (e.g., with the Genotype directory at the
+same level as the Alfalfa and other crops directories and the CDE files in the root directory).
 
 ## Best DSSAT coding practices ##
 See: [Non-threatening best practice DSSAT Fortran coding guidelines](https://dssat.net/non-threatening-best-practice-dssat-fortran-coding-guidelines). 

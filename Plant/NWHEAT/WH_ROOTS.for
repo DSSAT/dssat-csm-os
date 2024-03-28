@@ -148,11 +148,7 @@ C=======================================================================
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
-     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
-     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
-     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),2(1X,F5.2))
+3100          FORMAT (A6,1X,A16,1X,48(F6.0))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -392,11 +388,7 @@ C=======================================================================
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
-     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
-     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
-     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),2(1X,F5.2))
+3100          FORMAT (A6,1X,A16,1X,48(F6.0))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -822,11 +814,7 @@ C----------------------------------------------------------------------
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
-     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
-     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
-     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),2(1X,F5.2))
+3100          FORMAT (A6,1X,A16,1X,48(F6.0))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -1119,11 +1107,7 @@ C=======================================================================
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
-     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
-     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
-     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0),2(1X,F5.2))
+3100          FORMAT (A6,1X,A16,1X,48(F6.0))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN

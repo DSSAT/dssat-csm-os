@@ -423,27 +423,27 @@ NDN8D  Denit layer 8   Daily denitrification, soil layer 8 (g[N]/ha)            
 NDN9D  Denit layer 9   Daily denitrification, soil layer 9 (g[N]/ha)            .
 NFXC   N Fixed kg/ha   N fixed (kg/ha)                                          .
 NFXD   N Fixed kg/ha.d N fixation rate (kg/(ha.day))                            .
-NH10   NH4  layer 10   NH4, soil layer 10(g[N]/kg[soil])                        .
-NH1D   NH4  layer 1    NH4, soil layer 1 (g[N]/kg[soil])                        .
-NH2D   NH4  layer 2    NH4, soil layer 2 (g[N]/kg[soil])                        .
-NH3D   NH4  layer 3    NH4, soil layer 3 (g[N]/kg[soil])                        .
-NH4D   NH4  layer 4    NH4, soil layer 4 (g[N]/kg[soil])                        .
-NH5D   NH4  layer 5    NH4, soil layer 5 (g[N]/kg[soil])                        .
-NH6D   NH4  layer 6    NH4, soil layer 6 (g[N]/kg[soil])                        .
-NH7D   NH4  layer 7    NH4, soil layer 7 (g[N]/kg[soil])                        .
-NH8D   NH4  layer 8    NH4, soil layer 8 (g[N]/kg[soil])                        .
-NH9D   NH4  layer 9    NH4, soil layer 9 (g[N]/kg[soil])                        .
+NH10   NH4  layer 10   NH4, soil layer 10(mg[N]/kg[soil])                        .
+NH1D   NH4  layer 1    NH4, soil layer 1 (mg[N]/kg[soil])                        .
+NH2D   NH4  layer 2    NH4, soil layer 2 (mg[N]/kg[soil])                        .
+NH3D   NH4  layer 3    NH4, soil layer 3 (mg[N]/kg[soil])                        .
+NH4D   NH4  layer 4    NH4, soil layer 4 (mg[N]/kg[soil])                        .
+NH5D   NH4  layer 5    NH4, soil layer 5 (mg[N]/kg[soil])                        .
+NH6D   NH4  layer 6    NH4, soil layer 6 (mg[N]/kg[soil])                        .
+NH7D   NH4  layer 7    NH4, soil layer 7 (mg[N]/kg[soil])                        .
+NH8D   NH4  layer 8    NH4, soil layer 8 (mg[N]/kg[soil])                        .
+NH9D   NH4  layer 9    NH4, soil layer 9 (mg[N]/kg[soil])                        .
 NHTD   Total NH4 kg/ha Total soil NH4 (kg [N]/ha)                               .
-NI10   NO3 layer 10    NO3, soil layer 10(g[N]/kg[soil])                        .
-NI1D   NO3 layer 1     NO3, soil layer 1 (g[N]/kg[soil])                        .
-NI2D   NO3 layer 2     NO3, soil layer 2 (g[N]/kg[soil])                        .
-NI3D   NO3 layer 3     NO3, soil layer 3 (g[N]/kg[soil])                        .
-NI4D   NO3 layer 4     NO3, soil layer 4 (g[N]/kg[soil])                        .
-NI5D   NO3 layer 5     NO3, soil layer 5 (g[N]/kg[soil])                        .
-NI6D   NO3 layer 6     NO3, soil layer 6 (g[N]/kg[soil])                        .
-NI7D   NO3 layer 7     NO3, soil layer 7 (g[N]/kg[soil])                        .
-NI8D   NO3 layer 8     NO3, soil layer 8 (g[N]/kg[soil])                        .
-NI9D   NO3 layer 9     NO3, soil layer 9 (g[N]/kg[soil])                        .
+NI10   NO3 layer 10    NO3, soil layer 10(mg[N]/kg[soil])                        .
+NI1D   NO3 layer 1     NO3, soil layer 1 (mg[N]/kg[soil])                        .
+NI2D   NO3 layer 2     NO3, soil layer 2 (mg[N]/kg[soil])                        .
+NI3D   NO3 layer 3     NO3, soil layer 3 (mg[N]/kg[soil])                        .
+NI4D   NO3 layer 4     NO3, soil layer 4 (mg[N]/kg[soil])                        .
+NI5D   NO3 layer 5     NO3, soil layer 5 (mg[N]/kg[soil])                        .
+NI6D   NO3 layer 6     NO3, soil layer 6 (mg[N]/kg[soil])                        .
+NI7D   NO3 layer 7     NO3, soil layer 7 (mg[N]/kg[soil])                        .
+NI8D   NO3 layer 8     NO3, soil layer 8 (mg[N]/kg[soil])                        .
+NI9D   NO3 layer 9     NO3, soil layer 9 (mg[N]/kg[soil])                        .
 NIAD   Tot soil N kg/haTotal soil NO3+NH4 (kg [N]/ha)                           .
 NIMC   N Immobilized   Cumulative N immobilization (kg [N]/ha)                  .
 NITC   Nitrification   Cumulative nitrification (kg [N]/ha)                     .
