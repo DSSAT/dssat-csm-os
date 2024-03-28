@@ -53,7 +53,7 @@ C=======================================================================
 
       SUBROUTINE PT_NUPTAK (DYNAMIC, CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
-     &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
+     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
@@ -61,15 +61,13 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE Cells_2D
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       IMPLICIT  NONE
       SAVE
 
       Type (CellType) Cells(MaxRows,MaxCols)
       REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
-      INTEGER DYNAMIC, ISTAGE, L, L1, NLAYR
+      INTEGER DYNAMIC, ISTAGE, L, NLAYR
 
       REAL ANDEM, ARVCHO, AVAILN, EXTRAN, FACTOR 
       REAL FNH4, FNO3, GRFN, GRORT, GROTOP, GROTUB 
@@ -80,10 +78,11 @@ C=======================================================================
       REAL TUBANC, TUBCNP, TUBDEM, TUBN, TUBMNC
       REAL TUBSINK, TUBSN, TUBWT
       REAL WTNUP, XMIN, XNDEM
+      REAL SurfaceVal
 
       REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
-      REAL, DIMENSION(NL) :: RLV, RNO3U, RNH4U
-      REAL, DIMENSION(NL) :: SAT, SNH4, SNO3, SW, UNO3, UNH4
+      REAL, DIMENSION(NL) :: RNO3U, RNH4U
+      REAL, DIMENSION(NL) :: SAT, SNH4, SNO3, UNO3, UNH4
 
       INTEGER J, FurCol1
       REAL HalfRow, BEDWD
@@ -453,6 +452,16 @@ C-----------------------------------------------------------------------
       TUBN   = TUBN  + TUBDEM    
 
       WTNUP = WTNUP + TRNU * PLTPOP * 10.0        !kg[N]/ha
+
+      CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
+      CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
+!     Use Cell2Layer_2D for mass variables
+      CALL Cell2Layer_2D(
+     &  UNO3_2D, Cells%Struc, NLAYR,                      !Input
+     &  UNO3, SurfaceVal)                                 !Output
+      CALL Cell2Layer_2D(
+     &  UNH4_2D, Cells%Struc, NLAYR,                      !Input
+     &  UNH4, SurfaceVal)                                 !Output
 
 !***********************************************************************
 !***********************************************************************

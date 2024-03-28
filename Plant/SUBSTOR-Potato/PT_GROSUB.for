@@ -25,9 +25,8 @@ C=======================================================================
       SUBROUTINE PT_GROSUB (DYNAMIC, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
-!     &    SWFAC, TGROAV,TMAX, TMIN, TURFAC, XSTAGE, YRDOY,!Input
-     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,!Input
+     &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
+     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
 
      &    GRORT, SEEDRV,                                  !I/O
 
@@ -82,7 +81,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(4)  :: SENST, SENSF
       REAL, DIMENSION(10) :: CO2X, CO2Y
       REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
-     &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
+     &    NH4, NO3, SAT, UNO3, UNH4  
 
       TYPE (SwitchType) ISWITCH
 
@@ -191,9 +190,9 @@ C-----------------------------------------------------------------------
 !     &    WTNUP)                                          !Output
 
 !      CASE DEFAULT
-        CALL PT_NUPTAK (SEASINIT, 
+        CALL PT_NUPTAK (SEASINIT,  CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
-     &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
+     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
@@ -593,7 +592,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! SRVNU  = AMAX1 (SRVNU, 0.0)
           ! AVAILN = (SRVNU)+(0.5*DDEADLF*TMNC)
 
-      SELECT CASE(ISWITCH % MESOL)
+!      SELECT CASE(ISWITCH % MESOL)
 !      CASE ('D')
 !        CALL PT_NUPTAK_2D (RATE, CELLS,
 !     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
@@ -604,9 +603,9 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
 !     &    WTNUP)                                          !Output
 
 !      CASE DEFAULT
-        CALL PT_NUPTAK (RATE, 
+        CALL PT_NUPTAK (RATE,  CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
-     &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
+     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output

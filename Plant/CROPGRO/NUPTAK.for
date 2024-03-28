@@ -247,6 +247,7 @@ C-----------------------------------------------------------------------
 
       CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
       CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
+
 !     Use Cell2Layer_2D for mass variables
       CALL Cell2Layer_2D(
      &  UNO3_2D, Cells%Struc, NLAYR,                      !Input

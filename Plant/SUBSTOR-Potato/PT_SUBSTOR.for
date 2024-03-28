@@ -176,7 +176,7 @@ C=======================================================================
       CALL PT_GROSUB (SEASINIT, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
+     &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
      &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
      &    GRORT, SEEDRV,                                  !I/O
      &    AGEFAC, BIOMAS, CANNAA, CANWAA, CNSD1, CNSD2,   !Output
@@ -256,7 +256,7 @@ C=======================================================================
           CALL PT_GROSUB (RATE, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
+     &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
      &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
      &    GRORT, SEEDRV,                                  !I/O
      &    AGEFAC, BIOMAS, CANNAA, CANWAA, CNSD1, CNSD2,   !Output
