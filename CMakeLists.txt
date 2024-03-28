@@ -550,7 +550,6 @@ set(
         "Plant/SUBSTOR-Potato/PT_GROSUB.for"
         "Plant/SUBSTOR-Potato/PT_NFACTO.for"
         "Plant/SUBSTOR-Potato/PT_NUPTAK.for"
-        "Plant/SUBSTOR-Potato/PT_NUPTAK_2D.for"
         "Plant/SUBSTOR-Potato/PT_OPGROW.for"
         "Plant/SUBSTOR-Potato/PT_OPHARV.for"
         "Plant/SUBSTOR-Potato/PT_PHASEI.for"
