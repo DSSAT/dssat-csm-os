@@ -941,6 +941,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !-----------------------------------------------------------------------
       FILEIO = CONTROL % FILEIO
       LUNIO  = CONTROL % LUNIO
+      CROP   = CONTROL % CROP
       OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERR)
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
       READ(LUNIO,50,IOSTAT=ERR) FILEC, PATHCR ; LNUM = 7
