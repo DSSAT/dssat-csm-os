@@ -46,10 +46,7 @@ C-----------------------------------------------------------------------
       CALL WARNING(1, 'FREEZE', MESSAGE)
   100 FORMAT('Freeze occurred at ',I4,' days after planting.')
   110 FORMAT('  (DAY : ',I7,' )')
-
-!      IF (ISWITCH % IDETL .NE. '0') THEN                     !
-!        WRITE (*,'(/,2X,A78,/,2X,A78)') MESSAGE(1), MESSAGE(2)
-!      ENDIF                                                  !
+!     WRITE (*,'(/,2X,A78,/,2X,A78)') MESSAGE(1), MESSAGE(2)
       IF (IDETO .EQ. 'Y')  THEN
         WRITE (NOUTDO,'(/,5X,A78,/,5X,A78)') MESSAGE(1), MESSAGE(2)
       ENDIF
