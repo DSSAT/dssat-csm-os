@@ -305,7 +305,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
          SLFT_TMAX = (ALIN(SENST,SENSF,4,TMAX)) ! RR 01/14/2016
 
 !        Use the maximum here, but in the next equation, it's minimum!
-         SLFT = MAX(SLFT_TMIN, SLFT_TMAX) !changed to MIN RR
+      !  SLFT = MAX(SLFT_TMIN, SLFT_TMAX) !changed to MIN RR
          SLFT = MIN(SLFT_TMIN, SLFT_TMAX)
          SLFT = MAX (SLFT, 0.0)
 !        20230-07-28 HBD, FO - Protection for SLFT not kill the canopy.
