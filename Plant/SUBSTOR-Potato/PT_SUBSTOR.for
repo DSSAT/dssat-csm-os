@@ -153,9 +153,9 @@ C=======================================================================
       SELECT CASE(ISWITCH % MESOL)
       CASE ('D')
         CALL PT_ROOTGR_2D(SEASINIT, ISWWAT, CELLS, YRDOY,
-     &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
-     &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output
+     &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
+     &    SOILPROP,                                     !Input
+     &    CUMDEP, RLV, RTDEP)                           !Output
 
       CASE DEFAULT
         CALL PT_ROOTGR (SEASINIT, CELLS,
@@ -228,9 +228,9 @@ C=======================================================================
           SELECT CASE (ISWITCH % MESOL)
           CASE ('D')
             CALL PT_ROOTGR_2D(RATE, ISWWAT, CELLS, YRDOY,
-     &        DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
-     &        NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
-     &        CUMDEP, RLV, RTDEP)                             !Output
+     &        DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
+     &        SOILPROP,                                     !Input
+     &        CUMDEP, RLV, RTDEP)                           !Output
 
           CASE DEFAULT
             CALL PT_ROOTGR (RATE, CELLS, 
@@ -297,9 +297,9 @@ C=======================================================================
 !     CALL PT_OPRoots_2D in PT_ROOTGR_2D when DYNAMIC .EQ. OUTPUT
       IF (ISWITCH % MESOL == 'D') THEN
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
-     &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
-     &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output    
+     &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
+     &    SOILPROP,                                     !Input
+     &    CUMDEP, RLV, RTDEP)                           !Output
       ENDIF
 
 !***********************************************************************
@@ -341,9 +341,9 @@ C=======================================================================
 
       IF (ISWITCH % MESOL == 'D') THEN
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
-     &    DLAYR, DS, DTT, FILEIO, GRORT, ISWNIT,          !Input
-     &    NH4, NLAYR, NO3, PLTPOP, SHF, SWFAC,            !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output    
+     &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
+     &    SOILPROP,                                     !Input
+     &    CUMDEP, RLV, RTDEP)                           !Output
       ENDIF
 
 !***********************************************************************
