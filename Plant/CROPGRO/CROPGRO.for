@@ -382,7 +382,7 @@ C-----------------------------------------------------------------------
         ELSE
           CALL ROOTY_2D(RUNINIT,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
-     &    ISWWAT, PLTPOP, ROWSPC, RTWT, SOILPROP,         !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
         ENDIF     
@@ -659,7 +659,7 @@ C-----------------------------------------------------------------------
       ELSE
         CALL ROOTY_2D(SEASINIT,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
-     &    ISWWAT, PLTPOP, ROWSPC, RTWT, SOILPROP,         !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
       ENDIF     
@@ -826,7 +826,7 @@ C-----------------------------------------------------------------------
       ELSE
         CALL ROOTY_2D(EMERG,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
-     &    ISWWAT, PLTPOP, ROWSPC, RTWT, SOILPROP,         !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)      !Output
       ENDIF     
@@ -1230,7 +1230,7 @@ C     Call to root growth and rooting depth routine
       ELSE
         CALL ROOTY_2D(INTEGR,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
-     &    ISWWAT, PLTPOP, ROWSPC, RTWT, SOILPROP,         !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
       ENDIF     
@@ -1378,7 +1378,7 @@ C-----------------------------------------------------------------------
       IF (CONTROL % SIM2D) THEN
          CALL ROOTY_2D(SEASEND,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
-     &    ISWWAT, PLTPOP, ROWSPC, RTWT, SOILPROP,         !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
       ENDIF     
