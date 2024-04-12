@@ -277,7 +277,7 @@ C         Compute the N2:N2O Ratio
       N2O_data % TN2OdenitD= TN2OdenitD
       N2O_data % TNOXD    = TNOXD
       N2O_data % DENITRIF = DENITRIF
-      N2O_data % n2odenit  = n2odenit
+      N2O_data % n2odenit = n2odenit
       N2O_data % N2FLUX   = N2FLUX
 
       RETURN

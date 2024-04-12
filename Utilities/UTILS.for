@@ -1178,6 +1178,15 @@ C        USE IFPORT
         IF (COUNT > 0) THEN
 !         Run batch file - direct output to TEMP.BAK file
           BatchCommand = "TEMP.BAT >TEMP.BAK"
+C-KRT February 2, 2024
+C-KRT This file renaming strategy is not compatible with Linux systems.
+C-KRT The Linux operating system will fail to run the following BatchCommand.
+C-KRT Linux OS prints "sh: 1: TEMP.BAT: not found" because it can't
+C-KRT find a system command called TEMP.BAT. Anyway, the commands
+C-KRT given in the batch file are for Windows systems.
+C-KRT Model will continue to run; however, the output files are not
+C-KRT copied to the new output file names as directed in BatchCommand.
+C-KRT Need to rework this strategy for OS compatibility.
           SYS = SYSTEM(BatchCommand)
   
 !         Delete TEMP.BAT file

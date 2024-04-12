@@ -352,7 +352,7 @@ C=======================================================================
      &    SRAD, SW, TMAX, TMIN, XHLAI,                    !Input
      &    DLTSNH4, DLTSNO3, DLTUREA, FLOODN, OXLAYR,      !I/O
      &    ALGFIX, BD1, CUMFNRO, TOTAML, TOTFLOODN)        !Output
-        
+
 !       Initialize TOTAML
         CALL OXLAYER(CONTROL,
      &    BD1, ES, FERTDATA, FLOODWAT, LFD10,             !Input
@@ -1480,7 +1480,7 @@ C-----------------------------------------------------------------------
 !                  potential, calculated from the previous day's value (d-1)
 ! ALGFIX        N in algae (kg [N] / ha)
 ! ALI            
-! AMTFER         Cumulative amount of N in fertilizer applications
+! AMTFER        Amount of N in fertilizer applications
 ! BD(L)         Bulk density, soil layer L (g [soil] / cm3 [soil])
 ! BD1           Bulk density of oxidized layer (g [soil] / cm3 [soil])
 ! CIMMOBN        Cumulative seasonal net immobilization of N in soil profile (kg[N]/ha) 
@@ -1558,14 +1558,13 @@ C-----------------------------------------------------------------------
 !                 hydrolyzed (this is assumed to occur 21 days after the 
 !                 urea application) (d)
 ! IUON          Flag indicating presence of urea (true or false) 
-! KG2PPM(L)      Conversion factor to switch from kg [N] / ha to µg [N] / g 
+! KG2PPM(L)     Conversion factor to switch from kg [N] / ha to mg [N] /kg 
 !                 [soil] for soil layer L 
 ! LFD10         Date, 10 days after last fertilization.  Used to determine 
 !                 whether hourly flood chemistry computations will be done 
 !                 (see DAILY variable). (YYYYDDD)
 ! LITC           Carbon in fresh organic matter in units of kg[C]/ha
 !                  soil evaporation: + = upward, -- = downward (cm/d)
-!                  3:lignin (kg [residue pool] / ha)
 ! LL(L)         Volumetric soil water content in soil layer L at lower 
 !                 limit (cm3 [water] / cm3 [soil])
 ! MaxCols
@@ -1664,7 +1663,7 @@ C-----------------------------------------------------------------------
 ! WFUREA        Reduction of urea hydrolysis due to soil water content 
 !                 (range = 0-1; no reduction for SW = DUL, 20% reduction 
 !                 for SW = LL, 70% reduction for SW = SAT (fraction)
-! WTNUP          Daily Cumulative N uptake (g[N] / m2 /d) in soil profile
+! WTNUP         Cumulative N uptake (g[N] / m2)
 ! XHLAI         Healthy leaf area index (m2[leaf] / m2[ground])
 ! XL            Excess water (above DUL) as a fraction of the maximum 
 !                 amount of excess water (i.e. saturated). (fraction)
