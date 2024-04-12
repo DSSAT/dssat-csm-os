@@ -367,8 +367,10 @@
      &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal_temp)
 !     ------------------------------------------------------------------
 
-      print *, " "
-      print *, "Start 2D, variable time-step model"
+!      print *, " "
+!      print *, "Start 2D, variable time-step model"
+      msg(1) = "Start 2D, variable time-step model"
+      call info(1, ERRKEY, msg)
 
 !      CALL GETLUN('RWU_2D.CSV',LUN2)
 !      OPEN (UNIT=LUN2, FILE='RWU_2D.CSV')

@@ -1544,7 +1544,7 @@ C-----------------------------------------------------------------------
 ! FON(L)        Nitrogen in fresh organic matter in soil layer L
 !                (kg [N] / ha)
 ! FPOOL(L,J)    FOM pool in soil layer L: J=1:carbohydrate, 2:cellulose, 
-! HFlux          The daily soil water flux from cell (i,j) to cell (i,j+1) in cm3.  
+!                 3:lignin (kg [residue pool] / ha)
 ! SSOMC(L)       Carbon in stable organic matter (humus) (kg [C] / ha)
 ! HUMFRAC       Humus fraction that decomposes (fraction)
 ! IMM            Cell immobilization of element IEL (1=N, 2=P) in soil layer L . (kg/ha)
@@ -1653,7 +1653,6 @@ C-----------------------------------------------------------------------
 !                 (kg [N] / ha -d)
 ! UREA(L)       Amount of urea in soil layer L (kg [N] / ha)
 ! UREA_2D(L,J)   Amount of urea in soil cell (kg [N] / ha)
-! VFlux          The daily soil water flux from cell (i,j) to cell (i+1,j) in cm3. 
 ! WF2           Water factor for nitrification 
 ! WFDENIT       Soil water factor for denitrification rate (range 0-1) 
 ! WFPL          Water factor for nitrification 
@@ -1673,98 +1672,4 @@ C-----------------------------------------------------------------------
 ! YEAR          Year of current date of simulation 
 ! YRDOY          Current day of simulation (YYDDD)
 !***********************************************************************
-! Jin Question:
 
-!Line 184:  UREA_2D = Cells % Rate % UREA, UNH4, UNO3, these are cell rate?  
-!    UREA is a state variable.  UNH4 and UNO3 are uptake rates.
-
-! if NHFlux, NVFlux are cell rate, then water HFlux, VFlux should be cell rate also?
-!    All fluxes are rates.
-
-! Line 751: should be CNUPTAKE = CNUPTAKE + WTNUP * 10.
-!    WTNUP is cumulative N uptake in g[N]/m2
-
-! Change all of DO J = 1, NColsTot DO L = 1, NRowsTot to Do Row first, do col second
-!    Order does not matter
-
-! line 756: TOTAML is output of Flood_Chem and OXLAYER. For 2D model, it is unknown 
-! line 756: TOTAML is daily variable?
-!    set TOTAML to zero for our 2D model
-
-! DLTSNO3_2D(L) Rate of change of nitrate in soil layer (kg [N] / ha / d)
-! But we changed to cell DLTSNO3_2D(L, J) Rate of change of nitrate in soil cell (kg [N] / ha / d)
-! the unit should be kg/d?
-!    I want to keep the units as kg/ha so that the masses from each cell are additive to get
-!    a total mass for the field.
-
-! Line 500 DLTSNO3_2D(L, J) = DLTSNO3_2D(L, J) + ARNTRF changed to per cell
-
-! CNITRIFY & CNUPTAKE are seasonal? 
-
-! Line 626: Change TNOX(J)  = TNOX(J)  + DENITRIF(L, J) * ColFrac(L) ! should be ColFrac(J)
-! to          TNOX(L)  = TNOX(L)  + DENITRIF(L, J)* ColFrac(L) /1.E-8 ! should be ColFrac(J)
-
-! SoilCellUtils_2D.for add real HFlux, VFlux for CellRateType
-! then in WatBal2D.for line 197 add cells % Rate % HFlux = cells % Rate % HFlux + SWFh_ts
-! then soil.for call SOILNI_2D(CONTROL, ISWITCH,cells % Rate % HFlux/cells%width, cells % Rate % VFlux/Cells%width, --- )
-! to replace SOILNI(CONTROL, ISWITCH, DRN (cm/d)
-! SWFh_ts in cm2[water]
-! When SoilNI_2D call NFLUX_2D add 
-
-!1D:  Soil.for call Watbal which out put DRN, then soil.for call Soilni which input DRN, then soilNI call NFLUX which input DRN
-! 
-! What do we want for Cell_Ndetail % NHFlux? how to calculate NFLUX?
-
-! do we need to convert the SNO3_2D(L, J) to layer variable?
-
-! if Cell_Type is pass and defined? width is not defined
-
-
-
-!=========================================================================================
-!TEMP CHP
-      SUBROUTINE SUM_N(Cell_Type, DLTSNO3_2D, DLTSNH4_2D, !Input
-     &      ColFrac, SNO3_2D, SNH4_2D,                    !Input
-     &      TotNO3, TotNH4, TotDeltNO3, TotDeltNH4,       !Output
-     &      TotN, TotDeltN, LastTotN, LastTotDeltN)       !Output
-
-      use Cells_2d
-      implicit none
-      save 
-
-      
-
-      integer i, j
-      real TotNO3, TotNH4, TotDeltNO3, TotDeltNH4
-      real TotN, LastTotN, TotDeltN, LastTotDeltN
-      real, dimension(MaxRows,MaxCols) :: ColFrac
-      real, dimension(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D
-      real, dimension(MaxRows,MaxCols) :: DLTSNO3_2D, DLTSNH4_2D
-      INTEGER, dimension(MaxRows,MaxCols) :: Cell_Type
-
-      LastTotN = TotN
-      LastTotDeltN = TotDeltN
-
-      TotNO3 = 0.0
-      TotNH4 = 0.0
-      TotDeltNO3 = 0.0
-      TotDeltNH4 = 0.0
-
-      do i = 1, NRowsTot
-        do j = 1, NColsTot
-          select case (cell_type(i,j))
-          case (3,4,5)
-            TotNO3 = TotNO3 + SNO3_2D(i,j) * ColFrac(i, j)
-            TotNH4 = TotNH4 + SNH4_2D(i,j) * ColFrac(i, j)
-            TotDeltNO3 = TotDeltNO3 + DLTSNO3_2D(i,j) ! * ColFrac(i, j)
-            TotDeltNH4 = TotDeltNH4 + DLTSNH4_2D(i,j) ! * ColFrac(i, j)
-          end select
-        enddo
-      enddo
-
-      TotN = TotNO3 + TotNH4
-      TotDeltN = TotDeltNO3 + TotDeltNH4
-
-      RETURN
-      END SUBROUTINE SUM_N
-!=========================================================================================

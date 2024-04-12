@@ -1456,6 +1456,8 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
         Cells(L,1) % State % SAT   = SAT(L)
         Cells(L,1) % State % SWCN  = SWCN(L)
       ENDDO
+
+!     tillage is only allowed for flat system, not bedded
       SOILPROP_FURROW = SOILPROP
       SOILPROP_BED    = SOILPROP
       CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP)

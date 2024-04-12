@@ -66,7 +66,7 @@ C=======================================================================
 
 !     2D additions:
       TYPE (SoilType) USE_SOILPROP
-      INTEGER Col, FurRow1, FurCol1, Row, StartRow
+      INTEGER Col, FurRow1, FurCol1, StartRow
       REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type
       REAL, DIMENSION(MaxRows, MaxCols) :: SWV, ES_mm, ColFrac
       REAL, DIMENSION(MaxCols) :: ESc
