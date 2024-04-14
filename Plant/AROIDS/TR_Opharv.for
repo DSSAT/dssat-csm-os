@@ -112,7 +112,7 @@ c     &  'GW%M  ', ! 4 Product Moisture Content (%)
      &  'CWAA  ', ! 8 Tot DM wt at max veg growth (kg dm/ha)
      &  'CNAA  ', ! 9 Tops N at at max veg growth (kg/ha) 
      &  'TWAH  ', !10 Tot DM wt at maturity (kg dm/ha)
-     &  'BWAH  ', !11 By-product harvest (kg dm/ha)
+     &  'BWAM  ', !11 By-product harvest (kg dm/ha)
      &  'HIAM  ', !12 Harvest index at maturity
      &  'L#SX  ', !13 Leaf number per stem,maximum
      &  'UNAM  ', !14 Corm N at maturity (kg/ha) 

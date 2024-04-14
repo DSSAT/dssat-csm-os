@@ -141,8 +141,7 @@ C-----------------------------------------------------------------------
      & 'GNAM  ',  !23 !15 NINT(WTNSD*10) XNGR   Seed N (kg N/ha)
      & 'GN%M  ',  !24 !18 PCNSD          XNPS   Seed N (%)
      & 'GL%M  ',  !25 !22 PCLSD          XLPS   Seed Lipid (%)
-     & 'PDFT  ',
-     & 14*'      '/
+     & 15*'      '/
 !     GWAH    !Grain weight at harvest (kg/ha)
 !     CWAH    !Canopy weight at harvest (kg/ha)
 !     FWAH    !Fruit weight at harvest (kg/ha)
