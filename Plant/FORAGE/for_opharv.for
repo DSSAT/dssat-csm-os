@@ -67,7 +67,7 @@ C-----------------------------------------------------------------------
 !       in OVERVIEW.OUT and EVALUATE.OUT files (FOR_OPVIEW subroutine)
 !         OLAP modified for dap
       CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP  
-      CHARACTER*8  X(EvaluateNum)
+      CHARACTER*12  X(EvaluateNum)
       CHARACTER*8 PREDICTED(EvaluateNum), OBSERVED(EvaluateNum)
       CHARACTER*50 DESCRIP(EvaluateNum)
 

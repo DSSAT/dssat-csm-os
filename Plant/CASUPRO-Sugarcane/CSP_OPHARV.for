@@ -76,7 +76,7 @@ C-----------------------------------------------------------------------
 !     Arrays which contain Simulated and Measured data for printing
 !       in OVERVIEW.OUT and EVALUATE.OUT files (OPVIEW subroutine)
       CHARACTER*6 OLAB(40), OLAP(40)  !OLAP modified for dap
-      CHARACTER*6  X(40)
+      CHARACTER*12  X(40)
       CHARACTER*8 Simulated(40), Measured(40)
       CHARACTER*50 DESCRIP(40)
 

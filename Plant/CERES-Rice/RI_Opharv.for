@@ -83,7 +83,7 @@ C=======================================================================
 !     Arrays which contain simulated and measured data for printing
 !       in OVERVIEW.OUT and EVALUATE.SUM files (OPVIEW subroutine)
       CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP !OLAP in dap
-      CHARACTER*8 X(EvaluateNum)
+      CHARACTER*12 X(EvaluateNum)
       CHARACTER*8 Simulated(EvaluateNum), Measured(EvaluateNum)
       CHARACTER*50 DESCRIP(EvaluateNum)
 

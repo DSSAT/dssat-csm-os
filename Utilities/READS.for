@@ -797,16 +797,16 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL ERROR, Y4K_DOY, YR_DOY
 
-      CHARACTER*8 XDAT,ERRKEY
+      CHARACTER*12 XDAT,ERRKEY
       REAL        RDAT
       INTEGER     ERRNUM, IDAT, ISIM, YR, YRSIM
       
       PARAMETER (ERRKEY = 'RADATE')
 
       CALL YR_DOY(YRSIM, YR, ISIM)            
-      READ(XDAT(1:8),1000,IOSTAT=ERRNUM) RDAT
+      READ(XDAT(1:12),1000,IOSTAT=ERRNUM) RDAT
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,2,'FILEA',0)
- 1000 FORMAT(F8.0)
+ 1000 FORMAT(F12.0)
       IDAT = INT(RDAT)
 
       IF (IDAT .GT. 0 .AND. IDAT .LT. 1000) THEN
@@ -1026,7 +1026,7 @@ C=======================================================================
         CHARACTER*1   UPCASE
         CHARACTER*6   OLAB(EvaluateNum), HD
         CHARACTER*6   HEAD(EvaluateNum)
-        CHARACTER*8   X(EvaluateNum)  !, ERRKEY
+        CHARACTER*12  X(EvaluateNum)  !, ERRKEY
         CHARACTER*12  FILEA
         CHARACTER*78  MSG(10)
 	      CHARACTER*80  PATHEX
@@ -1137,10 +1137,10 @@ C       FIND THE RIGHT TREATMENT LINE OF DATA
 !           Check if the column before was TRNO since it ocuppies one
 !           extract character after the last line column of the header
             IF(TRIM(FAHEADERS(J-1)) .EQ. 'TRNO') THEN
-              READ(C255(C1+2:C2-1),'(A8)',IOSTAT=ERRNUM) DAT
+              READ(C255(C1+2:C2-1),'(A12)',IOSTAT=ERRNUM) DAT
               X(ECN) = TRIM(DAT)
             ELSE
-              READ(C255(C1+1:C2-1),'(A8)',IOSTAT=ERRNUM) DAT
+              READ(C255(C1+1:C2-1),'(A12)',IOSTAT=ERRNUM) DAT
               X(ECN) = TRIM(DAT)
             ENDIF
           ENDIF

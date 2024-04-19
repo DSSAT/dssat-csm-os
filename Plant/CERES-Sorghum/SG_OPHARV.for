@@ -76,7 +76,7 @@ C  05/11/2007 GH  Added IDAT as output & renumber output variables
 !       in OVERVIEW.OUT and EVALUATE.OUT files (OPVIEW subroutine)
       INTEGER ACOUNT
       CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP !OLAP in dap
-      CHARACTER*8 X(EvaluateNum)
+      CHARACTER*12 X(EvaluateNum)
       CHARACTER*8 Simulated(EvaluateNum), Measured(EvaluateNum)
       CHARACTER*50 DESCRIP(EvaluateNum)
 
