@@ -120,7 +120,7 @@
       Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_ts, RWU_2D_ts
       Double precision, DIMENSION(MaxRows,MaxCols) :: RWUP_2D_ts, EP_vf,
      &       ES_vf_ts, INF_vol_dtal
-      Double precision, DIMENSION(MaxRows,MaxCols) :: INF_vol_dtal_temp  !chp
+      Double precision, DIMENSION(MaxRows,MaxCols) :: INF_vol_dtal_temp
 !     Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_LAST
       Double Precision, DIMENSION(MaxRows,MaxCols,0:24) :: ES_Hr
 
@@ -619,6 +619,7 @@
         IrrVol = 0.d0
         INF_vol = 0.d0
         INF_vol_dtal= 0.d0
+
 !       ---------------------------------------------------------------
 !       TIME STEP
 !       First determine unsaturated hydraulic conductivity and diffusivity
@@ -986,8 +987,6 @@
               IF (SWFv_ts(i,j) < -1.E-10) THEN
 !               Negative vertical flow = upward flow from (i+1,j)
                 SWFlux_U(i+1,j) = SWFLUX_U(i+1,j) - SWFv_ts(i,j) 
-!     &                  + EvapFlow(i,j) 
-!      JZW here may be double countine with the line 876? EvapFlow(i,j) is daily instead of time step?
               ELSEIF (SWFv_ts(i,j) > 1.E-10) THEN
 !               Positive vertical flow = downward flow from (i,j)
 !                SWFlux_D(i,j+1) = SWFLUX_D(i,j+1) + SWFv_ts(i,j)
@@ -1365,9 +1364,7 @@ C=====================================================================
       WINF_col = 0.0
 
       IF (RAIN > 1.E-6) THEN
-!         JZ : no furrow?
         IF (BedDimension % PMCover .AND. FurCol1 > NColsTot) THEN 
-!         CHP does not remember why this statement. Thus we may remove
           RUNOFF = RAIN 
           RETURN
         ENDIF

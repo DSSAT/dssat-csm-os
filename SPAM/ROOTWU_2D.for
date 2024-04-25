@@ -49,8 +49,8 @@ C-----------------------------------------------------------------------
       Double Precision, DIMENSION(MaxRows,MaxCols) :: RWUP_2D_ts
       Double Precision, DIMENSION(MaxRows,MaxCols) :: RWUP_vf
       Double Precision, DIMENSION(MaxRows,MaxCols) :: SWV_avail, SWV_D
-      TYPE (CellType) CELLS(MaxRows,MaxCols)
 
+      TYPE (CellType) CELLS(MaxRows,MaxCols)
       TYPE (WeatherType) WEATHER
 
       PARAMETER (SWCON1 = 1.32E-3)

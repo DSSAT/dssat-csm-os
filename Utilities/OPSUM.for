@@ -1004,7 +1004,7 @@ C-------------------------------------------------------------------
         FTXT2 = "(3X,A3)"
       ENDIF
 
-      IF (VALUE > 0.0) THEN
+      IF (VALUE > -0.000001) THEN
         WRITE(PRINT_TXT,FTXT1) VALUE
       ELSE
         WRITE(PRINT_TXT,FTXT2) "-99"

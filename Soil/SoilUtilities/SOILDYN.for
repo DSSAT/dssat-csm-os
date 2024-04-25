@@ -2425,17 +2425,18 @@ C=======================================================================
             CumWidLast = 0.0
             DO J = 1, NColsTot
               CumWid = CumWid + CELLS(1,J)%Struc%Width
-              IF (CumWid <= PMWD) THEN
+              IF (CumWid <= PMWD/2.0) THEN !model half row
 !               This column is entirely covered by plastic mulch
 !               Assume evaporation over minimum 5% of area.
                 PMFRACTION(J) = 1.0
-              ELSEIF (CumWidLast < PMWD) THEN
+              ELSEIF (CumWidLast < PMWD/2.0) THEN
 !               Partion PM cover for this column (shouldn't happen?)
-                PMFRACTION(J) = (PMWD - CumWidLast)/
+                PMFRACTION(J) = (PMWD/2.0 - CumWidLast)/
      &            CELLS(1,J) % Struc%Width
               ELSE
                 PMFRACTION(J) = 0.0
               ENDIF
+              CumWidLast = CumWid
             ENDDO
           ELSE
 !           1D case - only handle column 1 (entire row)

@@ -106,6 +106,7 @@ C=======================================================================
       CUMDEP   = 0.0
       RTLSenes = 0.0
       CumRootMass = 0.0
+      TotRootMass = 0.0
       RFAC3 = RLWR
 
 !     Variables available in 2D CELLS
@@ -157,10 +158,10 @@ C=======================================================================
       HalfRow = BedDimension % ROWSPC_cm / 2
       HalfBed = BedDimension % BEDWD / 2
 
-      CALL Aggregate_Roots(CELLS,
-     &    FirstRow, HalfRow, RLV_2D,          !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
-     &    RLV, TRLV, TotRootMass)             !1D Output
+!      CALL Aggregate_Roots(CELLS,
+!     &    FirstRow, HalfRow, RLV_2D,          !2D Input
+!     &    RFAC3, SOILPROP,                    !1D Input
+!     &    RLV, TRLV, TotRootMass)             !1D Output
 
       LastRow = 1
       LastCol = 1
@@ -670,8 +671,7 @@ C-----------------------------------------------------------------------
       NLAYR = SOILPROP % NLAYR
       DS    = SOILPROP % DS
 
-      RTDEPI = MIN(20.0,DS(NLAYR))
-      RTDEPI = MAX(MIN(RTDEPI, DepMax), Thick(1,1))
+      RTDEPI = MAX(MIN(20.0, DS(NLAYR), DepMax), Thick(1,1))
       RTDEP = RTDEPI
 
 !     Initial root width (specify half because we are modeling half a row)
@@ -750,16 +750,16 @@ C-----------------------------------------------------------------------
         ENDDO ColLoop
       ENDDO RowLoop
 
+      RLINIT   =  GRORT * RLWR *  PLTPOP * HalfRow * 1.E-4
+!     cm[root]   g[root]   cm[root]   plants                   m2
+!      ------- = ------- * -------- * ------ * cm[row width] * ---
+!  cm[rowLength]  plant     g[root]     m2                     cm2
+
 !     Calculate root senescence due to water table
       DO Row = 1, NRowsTot 
         DO Col = 1, NColsTot
 !         in 1D subroutine, RLINIT is in cm[root]/cm2[ground]
 !         in 2D subroutine, RLINIT is in cm[root]/cm[row length]
-
-          RLINIT   =  GRORT * RLWR *  PLTPOP * HalfRow * 1.E-4
-!         cm[root]   g[root]   cm[root]   plants                   m2
-!          ------- = ------- * -------- * ------ * cm[row width] * ---
-!      cm[rowLength]  plant     g[root]     m2                     cm2
 
           IF (RootArea(Row,Col) > 1.E-6) THEN
             RLV_2D(Row,Col) = RLINIT  * RootArea(Row,Col) / TotRootArea
