@@ -99,6 +99,7 @@
       REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
       REAL, DIMENSION(NL) :: SWDELTW, ThetaCap
 
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       REAL, DIMENSION(MaxCols) :: WINF_col
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ES_mm, ColFrac
       REAL, DIMENSION(MaxRows,MaxCols) :: mm_2_vf, RLV_2D, RWU_2D
@@ -165,6 +166,10 @@
       TEXTURE = SOILPROP % TEXTURE
 
       CALL GET('PLANT', 'RWUEP1', RWUEP1)
+
+!     PMFraction is the fraction of the soil covered by plastic mulch
+!     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
+      CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
 
       BEDHT = BedDimension % BEDHT
       BEDWD = BedDimension % BEDWD

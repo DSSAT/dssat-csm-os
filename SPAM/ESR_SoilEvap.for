@@ -73,7 +73,6 @@
       INTEGER Col, FurRow1, FurCol1, Row
       REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type
       REAL, DIMENSION(MaxRows, MaxCols) :: SWV, ES_mm, ColFrac
-      REAL SimWidth
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -95,10 +94,6 @@
       ES_col = 0.0
       UPFLOW = 0.0
       CellEvap = 0.0
-
-      IF (CONTROL % Sim2D) THEN
-        SimWidth = Row
-      ENDIF
 
       Cell_Type = CELLS % STRUC % Cell_Type
 
@@ -134,6 +129,7 @@
         Infilt = 0.0
       ENDIF
 
+
 !     Loop through columns and calculate soil evaporation for each column separately
       DO Col = 1, NColsTot
         IF (.NOT. CONTROL % SIM2D .OR. Cell_Type(1,Col) > 2) THEN
@@ -151,6 +147,17 @@
         DUL   = Use_SOILPROP % DUL
         LL    = Use_SOILPROP % LL
         NLAYR = Use_SOILPROP % NLAYR
+
+        IF (PMFraction(col) > 0.999) THEN
+!         complete plastic mulch cover for this column 
+          DO L = 1, NLAYR
+            Row = L+StartRow-1  
+            CellEvap(Row,Col) = 0.0
+            ES_mm(Row,Col)    = 0.0
+            ES_col(col)       = 0.0
+          ENDDO
+          CYCLE !go to the next column
+        ENDIF
 
 !**********************************************************************
         ProfileType = 3   !assume dry profile until proven wet

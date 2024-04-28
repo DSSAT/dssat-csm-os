@@ -55,7 +55,7 @@ C=======================================================================
       !CHARACTER*6 ERRKEY
       !PARAMETER (ERRKEY = 'SOILEV')
 
-      INTEGER DYNAMIC, NLAYR
+      INTEGER DYNAMIC, L, NLAYR, Row
       REAL SWMIN, WINFMOD, AWEV1, ESX, Infilt
       REAL, DIMENSION(NL) :: DLAYR, DUL, LL
 
@@ -174,6 +174,17 @@ C=======================================================================
         DUL   = Use_SOILPROP % DUL
         LL    = Use_SOILPROP % LL
         NLAYR = Use_SOILPROP % NLAYR
+
+        IF (PMFraction(col) > 0.999) THEN
+!         complete plastic mulch cover for this column 
+          DO L = 1, NLAYR
+            Row = L+StartRow-1  
+            CellEvap(Row,Col) = 0.0
+            ES_mm(Row,Col)    = 0.0
+            ES_col(col)       = 0.0
+          ENDDO
+          CYCLE !go to the next column
+        ENDIF
 
 C       Adjust soil evaporation, and the sum of stage 1 (SUMES1) and stage 2
 C       (SUMES2) evaporation based on infiltration (Infilt), potential
