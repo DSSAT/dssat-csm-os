@@ -144,7 +144,7 @@ C=====================================================================
       IF (DYNAMIC /= SEASINIT) THEN
         IF (SIM2D) THEN
           CALL WatBal2D(CONTROL, ISWITCH,
-     &    EOP, ES, IRRAMT, SOILPROP, SOILPROP_FURROW,     !Input 
+     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW,         !Input 
      &    WEATHER,                                        !Input
      &    Cells, SW, SWDELTS, SWFAC, TURFAC, TRWU, TRWUP) !Output
         ELSE
@@ -201,7 +201,7 @@ C=====================================================================
       IF (DYNAMIC == SEASINIT) THEN
         IF (SIM2D) THEN
           CALL WatBal2D(CONTROL, ISWITCH,
-     &    EOP, ES, IRRAMT, SOILPROP, SOILPROP_FURROW,     !Input 
+     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW,         !Input 
      &    WEATHER,                                        !Input
      &    Cells, SW, SWDELTS, SWFAC, TURFAC, TRWU, TRWUP) !Output
 

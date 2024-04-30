@@ -318,15 +318,16 @@ C-----------------------------------------------------------------------
 !     Call Soil-plant-atmosphere module to determine today's
 !     rates of evapotranspiration.
 !-----------------------------------------------------------------------
-!      IF (CONTROL % Sim2D) THEN
-!        CALL SPAM_2D(CONTROL, ISWITCH,
-!     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, PSTRES1, !Input
-!     &    PORMIN, RLV, RWUMX, SOILPROP, SoilProp_Furrow,  !Input
-!     &    SW, TRWU, WEATHER, XHLAI, XLAI,                 !Input
-!     &    FLOODWAT,                                       !I/O
-!     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST,              !Output
-!     &    SWDELTX)                                        !Output
-!      ENDIF
+      IF (CONTROL % Sim2D) THEN
+        CALL SPAM(CONTROL, ISWITCH,
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
+     &    SOILPROP_FURROW, SW,                            !Input
+     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    FLOODWAT, SWDELTU,                              !I/O
+     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+      ENDIF
 C-----------------------------------------------------------------------
 C     Call Soil processes module to determine today's rates of 
 C     change of soil properties.
@@ -346,6 +347,7 @@ C-----------------------------------------------------------------------
 C     Call Soil-plant-atmosphere module to determine today's
 C     rates of evapotranspiration.
 C-----------------------------------------------------------------------
+      IF (.NOT. CONTROL % Sim2D) THEN
         CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
@@ -354,7 +356,7 @@ C-----------------------------------------------------------------------
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
-
+      ENDIF
 C-----------------------------------------------------------------------
 C     Call PLANT Subroutine to calculate crop growth and
 C     development rates.

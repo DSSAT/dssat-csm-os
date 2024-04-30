@@ -700,7 +700,7 @@
           Cells(Row,Col)%State%LL    = -99.
           Cells(Row,Col)%State%SAT   = -99.
           Cells(Row,Col)%State%WR    = -99.
-          Cells(Row,Col)%State%SWCN  = -99.      
+          Cells(Row,Col)%State%SWCN  = -99.
           Cells(Row,Col)%State%WR    = 0.0
         END SELECT
         Cells(Row,Col)%State%SWV     = 0
@@ -810,12 +810,27 @@
     DO Row = 1, NRowsTot
       DO Col = 1, NColsTot
 !       conversion from mm[water] to volumetric fraction for each cell
-        mm_2_vf(Row,Col) = 1.0 / 10. * HalfRow / CellArea(Row,Col)  
+
+! OLD method: in each column, the mm are assumed to be reduced to field scale, 
+!   i.e., scaled by the column:half-row ratio so that the values are additive
+!   across a row.
+
+!       mm_2_vf(Row,Col) = 1.0 / 10. * HalfRow / CellArea(Row,Col)  
 !                          1.0 / 10. * HalfRow / (thick*width) 
 
 !       cm3[water]               cm[water]     cm2[soil]      cm[row length] 
 !       ---------- = mm[water] * --------- * -------------- * --------------
 !        cm3[soil]               mm[water]   cm[row length]      cm3[soil]     
+
+! NEW method: mm are additive in each column as if it's a stand-alone soil column.
+!   to add across the rows, need to multiply the mm by ColFrac.
+
+        mm_2_vf(Row,Col) = 1.0 / 10. / Thick(row,col)
+
+!       cm3[water]               cm[water]           1            1 cm2[water width x row length]
+!       ---------- = mm[water] * --------- * ------------------ * -------------------------------
+!        cm3[soil]               mm[water]   cm[soil thickness]   1 cm2[soil width x row length]
+
       ENDDO
     ENDDO
     BedDimension % mm_2_vf = mm_2_vf

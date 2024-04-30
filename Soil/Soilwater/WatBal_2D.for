@@ -36,7 +36,7 @@
 !=======================================================================
 
       SUBROUTINE WatBal2D(CONTROL, ISWITCH, 
-     &    EOP, ES, IRRAMT, SOILPROP, SOILPROP_FURROW,     !Input 
+     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW,     !Input 
      &    WEATHER,                                        !Input
      &    Cells, SW, SWDELTS, SWFAC, TURFAC, TRWU, TRWUP) !Output
 
@@ -75,11 +75,11 @@
 !     temp chp
       INTEGER NextUpdate, Count, CritCell(2), DAYCOUNT
 
-      REAL CN, BEDHT, BEDWD, CEP, CES, CRAIN
+      REAL CN, BEDHT, BEDWD, CRAIN
       REAL DRAIN_2D, HalfRow, HalfFurrow
       REAL DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
-      REAL RAIN, RUNOFF, ES
-      REAL TEP, TES, SRAD_TOT
+      REAL RAIN, RUNOFF
+      REAL TEP, SRAD_TOT
       REAL TDRAIN, TRUNOF, TSW, TSWINI
 !     INTEGER, PARAMETER :: MaxNEvent = 20  !Max number of irrigation event
 !     REAL, DIMENSION(MaxNEvent) :: DripStart, DripDur, DripInt, DripRate
@@ -92,17 +92,18 @@
       REAL SWFAC,  SWFAC_ts,  SWFAC_day
       REAL TURFAC, TURFAC_ts, TURFAC_day
       REAL ActWTD, MgmtWTD, LatInflow, LatOutflow, LatFlow_ts !, MaxDif
-      REAL StdIrrig, WidTot, DepTot, LatFlow
+      REAL StdIrrig, WidTot, DepTot, LatFlow, SurfaceVal
       
       REAL, DIMENSION(0:24) :: EOP_HR, CumFracRad
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, Ksat, LL, SAT, WCr
       REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
-      REAL, DIMENSION(NL) :: SWDELTW, ThetaCap
+      REAL, DIMENSION(NL) :: SWDELTW, ThetaCap, RWU
 
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       REAL, DIMENSION(MaxCols) :: WINF_col
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ES_mm, ColFrac
-      REAL, DIMENSION(MaxRows,MaxCols) :: mm_2_vf, RLV_2D, RWU_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, mm_2_vf
+      REAL, DIMENSION(MaxRows,MaxCols) :: RWU_2D, RWU_2D_frac
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFv_ts, SWFlux_L, SWFlux_R
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFlux_D, SWFlux_U
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFh_ts, RWUP_2D, Se
@@ -314,8 +315,11 @@
 !     Initialize summary variables
       CALL WBSUM_2D(SEASINIT,
      &    CELLS, DRAIN_2D, HalfRow, RAIN, RUNOFF, SWV,    !Input
-     &    CES, CEP, CRAIN, TDRAIN, TES, TEP, TRUNOF,      !Output
+     &    CRAIN, TDRAIN, TEP, TRUNOF,                     !Output
      &    TSW, TSWINI)                                    !Output
+
+
+
 
       CALL Interpolate2Layers_2D(                    
      &  CELLS%State%SWV, CELLS%Struc, SOILPROP%NLAYR,     !Input
@@ -323,9 +327,9 @@
 
 !     Water balance output initialization
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CEP, CES, CRAIN, DRAIN_2D, ES, ES_DAY, 
+     &    CRAIN, DRAIN_2D, ES_DAY, 
      &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
-     &    TDRAIN, TEP, TES, TRUNOF, TSW)
+     &    TDRAIN, TRUNOF, TSW)
      
 !     Call OPWBAL to write headers to output file
       CALL OPWBAL(CONTROL, ISWITCH, 
@@ -372,15 +376,8 @@
      &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal_temp)
 !     ------------------------------------------------------------------
 
-!      print *, " "
-!      print *, "Start 2D, variable time-step model"
       msg(1) = "Start 2D, variable time-step model"
       call info(1, ERRKEY, msg)
-
-!      CALL GETLUN('RWU_2D.CSV',LUN2)
-!      OPEN (UNIT=LUN2, FILE='RWU_2D.CSV')
-!      WRITE(LUN2,'(A)') "2D, variable time step root water uptake"
-!      WRITE(LUN2,'(A)') "TIME(d), EOP, TRWUP, TRWU, SWFAC, TURFAC"
 
 !     TEMP CHP
       DAYCOUNT = 0
@@ -421,20 +418,20 @@
 !     Convert soil evaporation to volumetric fraction units, 
       ES_mm = CELLS%Rate%ES_rate
 
-!     Upflow needed for N movement, units are cm2 to match flux units
-      EvapFlow = 0.0
-      IF (BedDimension % PMCover) then
-!       If there is plastic cover, the infiltration is in the furrow
-        jj = FurCol1 
-      else
-        jj = 1
-      endif
-      !DO j = FurCol1, NColsTot
-      DO j = jj, NColsTot
+!!     Upflow needed for N movement, units are cm2 to match flux units
+!      EvapFlow = 0.0
+!      IF (BedDimension % PMCover) then
+!!       If there is plastic cover, the infiltration is in the furrow
+!        jj = FurCol1 
+!      else
+!        jj = 1
+!      endif
 
-        EvapFlow(NLAYR,j) = ES_mm(NLAYR,j)/10. * Width(FurRow1,j)
+!     Evaporation flux starts at bottom layer and accumulates up
+      DO j = 1, NColsTot
+        EvapFlow(NRowsTot,j) = ES_mm(NRowsTot,j)/10. * Width(NRowsTot,j)
 !          cm2            =          cm        *    cm
-        DO i = NLAYR-1, 1, -1
+        DO i = NRowsTot-1, 1, -1
           EvapFlow(i,j) = EvapFlow(i+1,j) + 
      &                         ES_mm(i,j) / 10. * Width(i,j)
         ENDDO
@@ -863,35 +860,43 @@
 !       ===============================================================
 
 !       Soil Evaporation
+!       ----------------
+!       - Soil evaporation is assumed to be distributed over the day 
+!         based on solar radiation.
+!       - ES_mm(i,j) is  mm of evaporation from cell(i,j). 
+!       - These values can be added up in a column of soil to get the 
+!         total evaporation (mm) from that column. 
+!       - To get the total evaporation across a row, column fractions are used.
         ES_ts = 0.0
-        IF (BedDimension % PMCover) then
-!         If there is plastic cover, the infiltration is in the furrow
-          jj = FurCol1 
-        else
-          jj = 1
-        endif
-        DO i = FurRow1, NRowsTot
-          !DO j = FurCol1, NColsTot
-          DO j = jj, NColsTot
+
+        ColLoop: DO j = 1, NColsTot
+          RowLoop: DO i = 1, NRowsTot
             SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
             CASE (3,4,5)
-!             mm/hr                  mm/d
-              ES_avg = TSRadFrac * ES_mm(i,j)
-!             mm total during time interval
-              ES_ts = ES_ts + ES_avg 
+!             mm evap during this time interval in current cell
+              ES_avg = TSRadFrac * ES_mm(i,j) 
+!             mm/ts                  mm/d
+              ES_ts = ES_ts + ES_avg * ColFrac(i,j)
 !             Subtract from cell water by volume fraction
-              SWV_avail(i,j) = SWV_avail(i,j) - ES_avg * mm_2_vf(i,j)  
+              SWV_avail(i,j) = SWV_avail(i,j) 
+     &                       - ES_avg * mm_2_vf(i,j)
 
 !             temp chp
-              es_vf_ts(i,j) = ES_avg * mm_2_vf(i,j)
+              es_vf_ts(i,j) = ES_avg * mm_2_vf(i,j) 
             CASE DEFAULT; CYCLE
             END SELECT
-          ENDDO
-        ENDDO
+          ENDDO RowLoop
+        ENDDO ColLoop
+
         ES_day = ES_day + ES_ts
 
 !       ---------------------------------------------------------------
 !       ROOT WATER UPTAKE
+!       -----------------
+!       - RWU_2D_ts(i,j) is  mm of evaporation from cell(i,j) in one time step. 
+!       - These values can be added up in a column of soil to get the 
+!         total root uptake (mm) from that column. 
+!       - To get the total uptake across a row, column weights are used. 
         EOP_ts = TSRadFrac * EOP
 
         CALL ROOTWU_2D(RATE, TimeIncr, 
@@ -915,13 +920,18 @@
           DO j = 1, NColsTot
             SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
             CASE (3,4,5)
+!             Potential and actual root water uptake (mm)
+              RWU_2D(i,j) = RWU_2D(i,j) + RWU_2D_ts(i,j)
+              RWUP_2D(i,j) = RWUP_2D(i,j) + RWUP_2D_ts(i,j)
               EP_vf(i,j) = RWU_2D_ts(i,j) * mm_2_vf(i,j)
+
               IF (i <= LIMIT_2D) THEN 
                 SWV_avail(i,j) = SWV_avail(i,j) - EP_vf(i,j)
               ELSE  
                 !TotRWU_WT = TotRWU_WT + EP_vf(i,j) * conversion
                 SWV_avail(i,j) = SWV_avail(i,j) - EP_vf(i,j)
               ENDIF
+
             CASE DEFAULT; CYCLE
             END SELECT
           ENDDO
@@ -931,6 +941,7 @@
         IF (EOP_ts > 1.E-7) THEN
           TRWUP = TRWUP + TRWUP_ts
         ENDIF
+        CELLS%Rate%EP_rate = RWU_2D
 
 !       ---------------------------------------------------------------
 !       HORIZONTAL AND VERTICAL WATER MOVEMENT
@@ -950,7 +961,6 @@
         ENDDO
         DRAIN_2D = DRAIN_2D + DRAIN_ts    
 
-        CELLS%Rate%EP_rate = RWU_2D
         SWV_avail = SWV_ts
         SWV_D = SWV_ts
 
@@ -960,9 +970,6 @@
           DO j = 1, NColsTot
             SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
             CASE (3,4,5)
-!             Potential and actual root water uptake (mm)
-              RWU_2D(i,j) = RWU_2D(i,j) + RWU_2D_ts(i,j)
-              RWUP_2D(i,j) = RWUP_2D(i,j) + RWUP_2D_ts(i,j)
 
 !             Horizontal flow (cm2) left and right.
 !             SWFlux_L and SWFlux_R are both positive values and represent
@@ -1001,7 +1008,7 @@
             END SELECT
           ENDDO
         ENDDO
-        
+
         Call Calc_SW_Vol(
      &    CellArea, Cell_Type, HalfRow, SWV_ts,             !Input
      &    SW_vol_tot)                                       !Output
@@ -1059,8 +1066,21 @@
       SWV = SNGL(SWV_D)
 
 !     Convert units from mm to cm for DSSAT plant routines.
-      TRWUP = TRWUP / 10.
-      TRWU  = TRWU  / 10.
+      TRWUP = TRWUP / 10.           !cm
+      TRWU  = TRWU  / 10.           !cm
+      CALL PUT('SPAM','TRWUP', TRWUP)
+      CALL PUT('SPAM','TRWU',  TRWU)
+
+      DO i = 1, NRowsTot
+        DO j = 1, NColsTot
+          RWU_2D_frac(i,j) = RWU_2D(i,j) * ColFrac(i,j)
+        ENDDO
+      ENDDO
+
+      CALL Cell2Layer_2D(
+     &  RWU_2D_frac, CELLS%Struc, SOILPROP%NLAYR,  !Input
+     &  RWU, SurfaceVal)                           !Output
+      CALL PUT('SPAM','UH2O', RWU, NL)
 
 !     temp chp
 !     Compare daily average with accumulated values. Should be the 
@@ -1070,7 +1090,6 @@
       CALL WaterStress(EOP, RWUEP1, TRWUP, SWFAC_day, TURFAC_day)
 
       IF (Allocated(IrrigSched)) DEALLOCATE (IrrigSched)
-      
       IF (Allocated(DripInt)) DEALLOCATE (DripInt)
       IF (Allocated(DripRate)) DEALLOCATE (DripRate)
 
@@ -1099,7 +1118,7 @@
 
       CALL WBSUM_2D(INTEGR,
      &    CELLS, DRAIN_2D, HalfRow, RAIN, RUNOFF, SWV,    !Input
-     &    CES, CEP, CRAIN, TDRAIN, TES, TEP, TRUNOF,      !Output
+     &    CRAIN, TDRAIN, TEP, TRUNOF,                     !Output
      &    TSW, TSWINI)                                    !Output
 
       CALL Interpolate2Layers_2D(                    
@@ -1126,9 +1145,9 @@ C-----------------------------------------------------------------------
 !     Daily water balance output to SoilWatBal.OUT 
 !       NOTE: DRAIN_2D vs Drain_Limit2D. Could not find the latter, so using the former.
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CEP, CES, CRAIN, DRAIN_2D, ES, ES_DAY, 
+     &    CRAIN, DRAIN_2D, ES_DAY, 
      &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
-     &    TDRAIN, TEP, TES, TRUNOF, TSW)
+     &    TDRAIN, TRUNOF, TSW)
 
 !-----------------------------------------------------------------
 !          call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
@@ -1152,9 +1171,9 @@ C-----------------------------------------------------------------------
 
 !     Seasonal water balance output 
       CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CEP, CES, CRAIN, DRAIN_2D, ES, ES_DAY, 
+     &    CRAIN, DRAIN_2D, ES_DAY, 
      &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
-     &    TDRAIN, TEP, TES, TRUNOF, TSW)
+     &    TDRAIN, TRUNOF, TSW)
 
 !     chp 2022-07-10 can't use an array of zeros in the argument. 
 !     I don't want to set the original variables to zero, so use a dummy argument here.

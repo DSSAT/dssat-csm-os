@@ -16,9 +16,9 @@
 !  Called by: WATBAL
 !=====================================================================
       SUBROUTINE Wbal_2D(CONTROL, ISWITCH, COUNT,
-     &    CEP, CES, CRAIN, DRAIN_2D, ES, ES_DAY, 
+     &    CRAIN, DRAIN_2D, ES_DAY, 
      &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
-     &    TDRAIN, TEP, TES, TRUNOF, TSW)
+     &    TDRAIN, TRUNOF, TSW)
 
 !     ------------------------------------------------------------------
       USE ModuleDefs 
@@ -31,8 +31,8 @@
       TYPE (ControlType), INTENT(IN) :: CONTROL
       TYPE (SwitchType),  INTENT(IN) :: ISWITCH
       INTEGER, INTENT(IN) :: COUNT
-      REAL, INTENT(IN) :: CEP, CES, CRAIN, DRAIN_2D, ES, IRRAMT, 
-     &  LatInflow, LatOutflow, RAIN, RUNOFF, TDRAIN, TEP, TES, 
+      REAL, INTENT(IN) :: CRAIN, DRAIN_2D, IRRAMT, 
+     &  LatInflow, LatOutflow, RAIN, RUNOFF, TDRAIN, 
      &  TRUNOF, TSW
       DOUBLE PRECISION, INTENT(IN) :: ES_DAY
 
@@ -42,6 +42,7 @@
       INTEGER RUN, YEAR, YRSIM, YRDOY
       INTEGER YR1, DY1, YR2, DY2
 
+      REAL CEP, CES, ES, EP
       REAL CEO, EFFIRR 
       REAL TOTIR, TSWINI
       REAL CumLatInflow, CumLatOutflow
@@ -127,6 +128,10 @@
 
 !       Transfer data from constructed variable to local variables
         CALL Get('SPAM','CEO',CEO)
+        CALL Get('SPAM','CEP',CEP)
+        CALL Get('SPAM','CES',CES)
+        CALL Get('SPAM','EP', EP)
+        CALL Get('SPAM','ES', ES)
         CALL Get('MGMT','TOTIR', TOTIR)
         CALL Get('MGMT','EFFIRR',EFFIRR)
         CALL YR_DOY(YRDOY, YEAR, DOY) 
@@ -144,7 +149,7 @@
 !                LatOutflow is negative!
      &         + LatInflow + LatOutflow       !Lateral flow
      &         - SolProfDrain - RUNOFF        !Outflows
-     &         - TES - TEP                    !Outflows
+     &         - ES - EP                      !Outflows
      &         - (TSW - TSWY)                 !Change in soil water 
 
         CUMWBAL = CUMWBAL + WBALAN
@@ -154,7 +159,7 @@
    
      &    , IRRAMT, RAIN                              !Inflows
      &    ,LatInflow+LatOutflow                       !Lateral flow
-     &    , SolProfDrain, RUNOFF, TES, TEP                   !Outflows
+     &    , SolProfDrain, RUNOFF, ES, EP            !Outflows
      &    , WBALAN, CUMWBAL                           !Balance
      &    , COUNT, ES, ES_DAY
      &    , LIMIT_2D, MgmtWTD
@@ -184,6 +189,10 @@ C-----------------------------------------------------------------------
       CALL YR_DOY(YRDOY, YR2, DY2)
 
       CALL Get('SPAM','CEO',CEO)
+      CALL Get('SPAM','CEP',CEP)
+      CALL Get('SPAM','CES',CES)
+      CALL Get('SPAM','EP', EP)
+      CALL Get('SPAM','ES', ES)
       CALL Get('MGMT','TOTIR', TOTIR)
       CALL Get('MGMT','EFFIRR',EFFIRR)
       CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrig
@@ -310,22 +319,24 @@ C  12/05/1993 NBP Made into subroutine
 C=======================================================================
       SUBROUTINE WBSUM_2D(DYNAMIC,
      &    CELLS, DRAIN_2D, HalfRow, RAIN, RUNOFF, SWV,    !Input
-     &    CES, CEP, CRAIN, TDRAIN, TES, TEP, TRUNOF,      !Output
+     &    CRAIN, TDRAIN, TEP, TRUNOF,                     !Output
      &    TSW, TSWINI)                                    !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
       INTEGER DYNAMIC, i, j
-      REAL CRAIN, DRAIN_2D, CES, CEP, HalfRow, RAIN, RUNOFF
-      REAL TDRAIN, TEP, TES, TRUNOF, TSW, TSWINI
+      REAL CRAIN, DRAIN_2D, HalfRow, RAIN, RUNOFF
+      REAL TDRAIN, TEP, TRUNOF, TSW, TSWINI
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
       
       TYPE (CellType), DIMENSION(MaxRows,MaxCols) ::  CELLS
-      
+      REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -336,10 +347,9 @@ C=======================================================================
       TDRAIN = 0.
       TRUNOF = 0.
       TSW    = 0.
-      CES    = 0.
-      CEP    = 0.
       CellArea = CELLS%STRUC%CellARea
-      ! Jin Wu New: we should use NLAYR instead of NRowTot?
+      ColFrac = BedDimension % ColFrac
+
       DO i = 1, NRowsTot
         DO j = 1, NColsTot
           SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
@@ -360,14 +370,12 @@ C=======================================================================
 !-----------------------------------------------------------------------
       TSW = 0.0
       TEP = 0.0
-      TES = 0.0
       DO i = 1, NRowsTot
         DO j = 1, NColsTot
           SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
           CASE (3,4,5) 
             TSW = TSW + SWV(i,j) * CellArea(i,j) / HalfRow * 10.
-            TEP = TEP + CELLS(i,j)%Rate%EP_Rate
-            TES = TES + CELLS(i,j)%Rate%ES_Rate
+            TEP = TEP + CELLS(i,j)%Rate%EP_Rate * ColFrac(i,j)
           END SELECT
         ENDDO
       ENDDO
@@ -379,8 +387,6 @@ C     Increment summation variables.
       if (BedDimension % LIMIT_2D .GE. NRowsTot) 
      &    TDRAIN = TDRAIN + DRAIN_2D
       TRUNOF = TRUNOF + RUNOFF
-      CES    = CES    + TES
-      CEP    = CEP    + TEP
 
 !***********************************************************************
 !***********************************************************************
@@ -388,6 +394,9 @@ C     Increment summation variables.
 !***********************************************************************
       ENDIF
 !***********************************************************************
+!     Transfer data to storage routine
+      CALL PUT('SPAM', 'EP',  TEP)
+
       RETURN
       END SUBROUTINE WBSUM_2D
 
