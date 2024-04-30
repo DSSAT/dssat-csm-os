@@ -39,9 +39,8 @@ C-----------------------------------------------------------------------
       REAL EXPFAC, ROWSPC_cm, SWEXF, TimeIncr
       REAL RootLimit, Scale2Hour
       REAL SWCON1, SWCON3, PORMIN, RWUMX, WUF
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, LL, RLV_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: SAT
-      REAL, DIMENSION(MaxRows,MaxCols) :: SWCON2
+      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ColFrac, LL, RLV_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: SAT, SWCON2, Thick
       REAL, DIMENSION(MaxRows,MaxCols) :: TSS, TSS_last
 
       Double Precision EOP_ts, TRWU_ts,  TRWUP_ts
@@ -75,6 +74,8 @@ C-----------------------------------------------------------------------
       SAT = CELLS%STATE%SAT
       CellArea = CELLS%STRUC%CellArea
       Cell_TYPE = CELLS%STRUC%Cell_Type
+      ColFrac = BedDimension % ColFrac
+      Thick = CELLS % Struc % Thick
 
       TSS    = 0.0
       TSS_LAST = 0.0
@@ -163,24 +164,31 @@ C-----------------------------------------------------------------------
             RWUP_2D_ts(i,j) = MIN(RWUP_2D_ts(i,j), RootLimit)
 !           RWUP_2D_ts in cm3[water]/cm[root]-d
 
-!           Convert to volumetric fraction and limit to available water
+!           Convert to volumetric fraction 
             RWUP_vf(i,j) = RWUP_2D_ts(i,j) * RLV_2D(i,j)
 !           cm3[water]     cm3[water]   cm[root] 
 !           -----------  = ---------- * --------- 
 !           cm3[soil]-d    cm[root]-d   cm3[soil] 
-          
-            RWUP_2D_ts(i,j) = RWUP_vf(i,j) *CellArea(i,j)/(ROWSPC_cm/2.)
+
+!           RWUP_2D_ts(i,j) = RWUP_vf(i,j) *CellArea(i,j)/(ROWSPC_cm/2.)
 !           cm[water]   cm3[water]       cm3[soil]     cm[row length]
 !           --------- = ----------- * -------------- * --------------
 !               d       cm3[soil]-d   cm[row length]      cm2[soil]
-          
+
+!           With this formula, the RWUP can be added in a soil column to get the total for that column.
+!           Aggregating across a row requires multiplying by ColFrac
+            RWUP_2D_ts(i,j) = RWUP_vf(i,j) *Thick(i,j)
+!               cm[water]     cm3[water]                          1 cm2[soil cell width x row length]
+!               ---------   = -----------  * cm[soil thickness] * -----------------------------------
+!                   d         cm3[soil]-d                         1 cm2[watercell width x row length]
+
 !           Scale to time step.  Units are mm (i.e., total for this time step)
             RWUP_2D_ts(i,j) = RWUP_2D_ts(i,j) * 10./ 24. *(TimeIncr/60.)
 !                              cm[water]        mm    d
 !              mm[water]    =  ---------      * -- * -- * hr
 !                                  d            cm   hr
-            
-            TRWUP_ts = TRWUP_ts + RWUP_2D_ts(i,j)       !mm
+
+            TRWUP_ts = TRWUP_ts + RWUP_2D_ts(i,j) *ColFrac(i,j)      !mm
           ENDIF
         ENDDO
       ENDDO
@@ -199,11 +207,11 @@ C-----------------------------------------------------------------------
           RWU_2D_ts(i,j) = RWUP_2D_ts(i,j) * WUF
           SELECT CASE (Cells(i,j)%Struc%Cell_Type)
           CASE (3,4,5)
-            TRWU_ts = TRWU_ts + RWU_2D_ts(i,j)
+            TRWU_ts = TRWU_ts + RWU_2D_ts(i,j) * ColFrac(i,j)
           END SELECT
         ENDDO
       ENDDO
-      
+
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
