@@ -581,6 +581,7 @@ C  06/15/2014 CHP Written
 
       SUBROUTINE OpGHG(CONTROL, ISWITCH, N2O_data, CH4_data) 
 !-------------------------------------------------------------------
+      USE ModuleData
       IMPLICIT NONE
       EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
@@ -600,6 +601,7 @@ C  06/15/2014 CHP Written
       REAL CO2EC, N2OEC, CH4EC
       REAL CCEQC, NCEQC, MCEQC, TCEQC
       REAL CO2GED, N2OGED, CH4GED !CO2ED, N2OED, CH4ED, 
+      REAL TSOMC, TSOMC_init, CO2EC_Y 
       LOGICAL FEXIST
 
 !-----------------------------------------------------------------------
@@ -670,6 +672,9 @@ C-----------------------------------------------------------------------
         ENDIF
       ENDIF
 
+      CALL GET('ORGC','TSOMC',TSOMC_init)
+      CO2EC_Y = 0.0
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY OUTPUT
@@ -690,6 +695,16 @@ C-----------------------------------------------------------------------
       CO2EC = CH4_data % CumCO2Emission       !kg/d
       N2OEC = N2O_data % CN2O_emitted         !kg/d
       CH4EC = CH4_data % CumCH4Emission       !kg/d
+
+!     CHP per Peter Grace, 2024-05-09
+!     Calculate CO2 emissions based on SOC. This is the integration
+!       of all additions and losses to the system and is the accepted
+!       method for calculating global CO2 emissions.
+!     TSOMC = total soil organic matter (kg[C]/ha) = SOM1 + SOM2 + SOM3
+!       Does not include fresh organic matter.
+      CALL GET('ORGC','TSOMC',TSOMC)
+      CO2EC = (TSOMC_init - TSOMC )            !kg/d
+      CO2GED = (CO2EC - CO2EC_Y) * 1000.      !g/d
 
 !     Calculation of cumulative CO2-equivalent emissions
 !     CO2 - convert from units of C to units of CO2
