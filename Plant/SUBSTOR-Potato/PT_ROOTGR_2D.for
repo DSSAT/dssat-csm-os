@@ -43,7 +43,7 @@ C=======================================================================
       SUBROUTINE PT_ROOTGR_2D (DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
-     &    CUMDEP, RLV, RTDEP)                           !Output
+     &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs

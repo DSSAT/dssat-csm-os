@@ -46,7 +46,7 @@ C=======================================================================
      &    SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,           !Output
      &    KTRANS, MDATE, NSTRES, PSTRES1,                        !Output
-     &    PUptake, PORMIN, RLV, RWUMX, SENESCE,                  !Output
+     &    PUptake, PORMIN, RLV, RLV_2D, RWUMX, SENESCE,          !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)              !Output
 
 !-----------------------------------------------------------------------
@@ -148,6 +148,7 @@ C=======================================================================
       REAL DLAYR(NL), DS(NL), DUL(NL), KG2PPM(NL), LL(NL), 
      &    SAT(NL), SW(NL), ST(NL), RLV(NL), WR(NL)
       REAL UNH4(NL), UNO3(NL) !NH4(NL), NO3(NL), 
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D
       REAL PHTHRS(20)
       REAL TGRO(TS)
       REAL SDDES(NCOHORTS)
@@ -384,7 +385,8 @@ C-----------------------------------------------------------------------
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
-     &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT)                                   !Output
         ENDIF     
       ENDIF
 !-----------------------------------------------------------------------
@@ -661,7 +663,8 @@ C-----------------------------------------------------------------------
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
-     &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT)                                   !Output
       ENDIF     
 
 !-----------------------------------------------------------------------
@@ -828,7 +831,8 @@ C-----------------------------------------------------------------------
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
-     &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)      !Output
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT)                                   !Output
       ENDIF     
 
 !-----------------------------------------------------------------------
@@ -1232,7 +1236,8 @@ C     Call to root growth and rooting depth routine
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
-     &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT)                                   !Output
       ENDIF     
 
 C-----------------------------------------------------------------------
@@ -1380,7 +1385,8 @@ C-----------------------------------------------------------------------
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
-     &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT)                                   !Output
       ENDIF     
           
 !     Call PlantNBal only for seasonal output.

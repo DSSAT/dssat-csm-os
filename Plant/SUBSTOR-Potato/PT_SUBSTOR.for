@@ -29,6 +29,7 @@ C=======================================================================
      &    ST, SW, SWFAC, TMAX, TMIN, TRWUP, TURFAC,       !Input
      &    TWILEN, YREND, YRPLT,                           !Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
+     &    RLV_2D,                                         !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
 
 !-----------------------------------------------------------------------
@@ -71,6 +72,7 @@ C=======================================================================
       REAL, DIMENSION(NL) :: DLAYR, DUL, DS, LL, KG2PPM
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SAT, SHF
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4 
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D
 
 !     P variables
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
@@ -155,7 +157,7 @@ C=======================================================================
         CALL PT_ROOTGR_2D(SEASINIT, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
-     &    CUMDEP, RLV, RTDEP)                           !Output
+     &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
 
       CASE DEFAULT
         CALL PT_ROOTGR (SEASINIT, CELLS,
@@ -230,7 +232,7 @@ C=======================================================================
             CALL PT_ROOTGR_2D(RATE, ISWWAT, CELLS, YRDOY,
      &        DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &        SOILPROP,                                     !Input
-     &        CUMDEP, RLV, RTDEP)                           !Output
+     &        CUMDEP, RLV, RLV_2D, RTDEP)                  !Output
 
           CASE DEFAULT
             CALL PT_ROOTGR (RATE, CELLS, 
@@ -299,7 +301,7 @@ C=======================================================================
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
-     &    CUMDEP, RLV, RTDEP)                           !Output
+     &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
       ENDIF
 
 !***********************************************************************
@@ -343,7 +345,7 @@ C=======================================================================
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
-     &    CUMDEP, RLV, RTDEP)                           !Output
+     &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
       ENDIF
 
 !***********************************************************************

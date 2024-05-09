@@ -403,7 +403,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,           !Output
      &    KTRANS, MDATE, NSTRES, PSTRES1,                        !Output
-     &    PUptake, PORMIN, RLV, RWUMX, SENESCE,                  !Output
+     &    PUptake, PORMIN, RLV, RLV_2D, RWUMX, SENESCE,          !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)              !Output
 !-----------------------------------------------------------------------
 !     Forage model
@@ -577,6 +577,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    ST, SW, SWFAC, TMAX, TMIN, TRWUP, TURFAC,       !Input
      &    TWILEN, YREND, YRPLT,                           !Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
+     &    RLV_2D,                                         !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
 
         IF (DYNAMIC .EQ. INTEGR) THEN
@@ -806,12 +807,13 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !         Export RLV and NUptake variables to 1D arrays for use in
 !         1D processes elsewhere in CSM.
 
-!         Interpolate2Layers_2D is for concentration variables which are
-!         averaged over a layer, weighted by column width.
-          CALL Interpolate2Layers_2D(                    
-     &      RLV_2D, CELLS%STRUC, SOILPROP%NLAYR,          !Input
-     &      RLV, Dummy)                                   !Output
-!         "Dummy" represents the surface value of a 2d array. Not relevant here.
+! chp 2024-05-07 This is already done in the CROPGRO and SUBSTOR 2D root growth modules
+!!         Interpolate2Layers_2D is for concentration variables which are
+!!         averaged over a layer, weighted by column width.
+!          CALL Interpolate2Layers_2D(                    
+!     &      RLV_2D, CELLS%STRUC, SOILPROP%NLAYR,          !Input
+!     &      RLV, Dummy)                                   !Output
+!!         "Dummy" represents the surface value of a 2d array. Not relevant here.
 
 !         Cell2Layer_2D is for mass variables which are aggregated across 
 !         a soil layer.

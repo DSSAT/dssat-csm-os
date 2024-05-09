@@ -40,7 +40,8 @@
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
-     &    RLV, RTDEP, RTWID, SATFAC, SENRT, SRDOT)        !Output
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT)                                   !Output
 !-----------------------------------------------------------------------
       USE Cells_2D
       USE ModuleData

@@ -393,6 +393,8 @@
 !-----------------------------------------------------------------------
       IF (ISWITCH%ISWWAT == 'N') RETURN
 
+      RLV_2D = CELLS % STATE % RLV
+
       DRAIN_2D = 0.0
       RWU_2D = 0.0
       RWUP_2D = 0.0
