@@ -385,7 +385,7 @@ C  07/02/2021 CHP Written
      &  CumCH4Leaching, Cum_CH4_bal
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 2
+      INTEGER, PARAMETER :: SUMNUM = 1  !CO2EM now from GHG module
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -500,7 +500,7 @@ C-----------------------------------------------------------------------
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
       LABEL(1)  = 'CH4EM'; VALUE(1)  = CumCH4Emission  
-      LABEL(2)  = 'CO2EM'; VALUE(2)  = CumCO2emission
+!     LABEL(2)  = 'CO2EM'; VALUE(2)  = CumCO2emission
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
