@@ -7,7 +7,8 @@ C  Revision history
 C
 C  1. Written     R.B.M. March 1998.
 ! 2021-06-30 CHP and US adapt for DSSAT-CSM v4.8
-! 2023-01-24 chp added SAEA to soil analysis in FileX 
+! 2023-01-24 chp added SAEA to soil analysis in FileX
+! 2023-05-14 EHFMS changed the starting condition for methane production
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
      &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
@@ -23,7 +24,7 @@ C=======================================================================
 
       INTEGER n1,NLAYR,i,j, DYNAMIC
       REAL dlayr(NL),SW(NL),DLL(NL),RLV(NL),CSubstrate(NL),BD(NL),
-     &     Buffer(NL,2),afp(NL), SAEA(NL)
+     &     Buffer(NL,2),afp(NL), SAEA(NL), SAT(NL), DUL(NL)
       REAL, DIMENSION(0:NL) :: newCO2
       REAL drain,flood,x,CH4Emission,buffconc,rCO2,
      &     rCH4,TCH4Substrate,rbuff,afpmax,
@@ -49,15 +50,14 @@ C=======================================================================
       REAL, PARAMETER :: spd = 24.*3600.   ! seconds per day
 !     Reference height for the Arah model to be the top of the bund
       REAL, PARAMETER :: RefHeight = 100. ! mm
-!     Soil buffer regeneration rate after drainage
-      REAL, PARAMETER :: BufferRegenRate = 0.06 ! 1/d	  0.02
+      REAL, PARAMETER :: BufferRegenRate = 0.070 !1/d EHFMS changed, before was 0.06
+      REAL, PARAMETER :: frac_afpmax = 0.30 !EHFMS created this parameter 
       DYNAMIC = CONTROL % DYNAMIC
-
       DLAYR = SOILPROP % DLAYR
       DLL   = SOILPROP % LL
       BD    = SOILPROP % BD
       NLAYR = SOILPROP % NLAYR
-
+      
 C***********************************************************************
 C***********************************************************************
 C    Input and Initialization 
@@ -175,9 +175,9 @@ C-----------------------------------------------------------------------
         IF (FLOOD.GT.0.0) THEN 
           afp(i) = 0.0
         ELSE 
-          afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))
-        ENDIF
-        afpmax = 1.0 - BD(i)/2.65 - DLL(i)
+            afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))          
+      ENDIF
+         afpmax = 1.0 - BD(i)/2.65
 
 !       Update buffer from new fertilizer
         Buffer(i,1) = Buffer(i,1) + FERTDATA % AddBuffer(i)
@@ -186,29 +186,30 @@ C-----------------------------------------------------------------------
         buffconc = Buffer(i,1)/10./12./(dlayr(i)/100.)  
 
 !       calculate reoxidisation of buffer if soil is aerated
-        IF (afp(i).GT.0.0) THEN
-          rCH4 = 0.0              ! no CH4 production
-          rCO2 = CSubstrate(i)    ! aerobic respiration
-          rbuff = -MIN(BufferRegenRate*afp(i)/afpmax*Buffer(i,2),
-     &                     Buffer(i,2))
-        ELSE
-!         calculate methane production
-          if (buffconc.gt.0.0) then
-            rCH4 = 0.2 * (1.0 - buffconc/24.0)    ! mol C m3/d	 was 0.2
-            rCH4 = rCH4 * dlayr(i)/100.*12.*10.   ! kgC/ha/d
-          else  
-            rCH4 = CSubstrate(i) / 2.0            ! kgC/ha/d
-          endif
-          rCH4 = max(0.0,min(rCH4,CSubstrate(i)/2.0))
-          rCO2 = CSubstrate(i) - (2.0 * rCH4)
-          if (rCO2.gt.Buffer(i,1)) then
-            rCO2 = Buffer(i,1)
-            rCH4 = (CSubstrate(i) - rCO2)/2.0
-          endif
-          rbuff = rCO2  
-        ENDIF
-        Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidised buffer pool
-        Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool
+!         IF (afp(i).GT.0.0) THEN !     
+      IF (afp(i).GT.frac_afpmax*afpmax) THEN ! EHFMS: methane production under conditions of partially saturated soil     
+         rCH4 = 0.0              ! no CH4 production
+         rCO2 = CSubstrate(i)    ! aerobic respiration
+         rbuff = -MIN(BufferRegenRate * afp(i) / afpmax * Buffer(i,2),
+     &                Buffer(i,2))
+      ELSE
+      ! calculate methane production
+      IF (buffconc > 0.0) THEN
+         rCH4 = 0.3 * (1.0 - buffconc/24.0)    ! mol C m3/d  was 0.2
+         rCH4 = rCH4 * dlayr(i)/100. * 12. * 10.   ! kgC/ha/d
+      ELSE  
+        rCH4 = CSubstrate(i) / 2.0            ! kgC/ha/d
+      ENDIF
+       rCH4 = MAX(0.0, MIN(rCH4, CSubstrate(i)/2.0))
+       rCO2 = CSubstrate(i) - (2.0 * rCH4)
+      IF (rCO2 > Buffer(i,1)) THEN
+         rCO2 = Buffer(i,1)
+         rCH4 = (CSubstrate(i) - rCO2) / 2.0
+      ENDIF
+      rbuff = rCO2  
+      ENDIF
+      Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidized buffer pool
+      Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool                       
 
 !       Total CH4 substrate (kgC/ha)
         TCH4Substrate = TCH4Substrate + rCH4  
