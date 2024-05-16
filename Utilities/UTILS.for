@@ -1,5 +1,5 @@
 !=======================================================================
-C  UTILS, File, G. Hoogenboom, P.W. Wilkens and B. Baer
+C  UTILS, File, G. Hoogenboom, P.W. Wilkens, C.H. Porter
 C  General utility functions
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
