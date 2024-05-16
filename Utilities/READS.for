@@ -1021,24 +1021,24 @@ C=======================================================================
         USE ModuleDefs
         IMPLICIT NONE
         
-        EXTERNAL UPCASE
+        EXTERNAL UPCASE, GETLUN, PARSE_HEADERS, IGNORE, INFO
       
         CHARACTER*1   UPCASE
-        CHARACTER*6   OLAB(EvaluateNum), HD
-        CHARACTER*6   HEAD(EvaluateNum)
+        CHARACTER*6   OLAB(EvaluateNum) !HD
+!        CHARACTER*6   HEAD(EvaluateNum)
         CHARACTER*12  X(EvaluateNum)  !, ERRKEY
         CHARACTER*12  FILEA
-        CHARACTER*78  MSG(10)
+        CHARACTER*78  MSG(2)
 	      CHARACTER*80  PATHEX
 	      CHARACTER*92  FILEA_P
         CHARACTER*255 C255
         CHARACTER*20  DAT
         CHARACTER*6, PARAMETER :: ERRKEY = 'FILEA'
 !       Headers with aliases -- save column
-        INTEGER HWAM, HWAH, BWAM, BWAH, PDFT, R5AT  
+!        INTEGER HWAM, HWAH, BWAM, BWAH, PDFT, R5AT, NTR, YRPST 
         
-        INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,NTR,COLN, J
-        INTEGER YRSIM, ACN, ECN, TR, YRPST, I
+        INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,COLN, J
+        INTEGER YRSIM, ACN, ECN, TR, I
         
         INTEGER, PARAMETER :: MAXCOLN = 40
         CHARACTER*15  HEADER(MAXCOLN), HTXT, FAHEADERS(MAXCOLN)
@@ -1154,6 +1154,7 @@ C       FIND THE RIGHT TREATMENT LINE OF DATA
  5010   CONTINUE
         X = '   -99'
         WRITE (MSG(1),'(" Error in FILEA - Measured data not used")')
+        WRITE (MSG(1),'(I7)') YRSIM
         CALL INFO(1, "READA ", MSG)
 
       CLOSE (LUNA)

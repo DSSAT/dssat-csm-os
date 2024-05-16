@@ -977,7 +977,7 @@ C=======================================================================
 C        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN, OUTFILES, WARNING
+      EXTERNAL GETLUN, OUTFILES, WARNING, SYSTEM
 !     Can't list routine SYSTEM as external because it generates an
 !       error with some compilers.
 
@@ -1064,7 +1064,7 @@ C=======================================================================
 C        USE IFPORT
 !!!!cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN
+      EXTERNAL GETLUN, SYSTEM
 
       SAVE
       INTEGER i, COUNT, LUNLST, LUNTMP, SYS, SYSTEM

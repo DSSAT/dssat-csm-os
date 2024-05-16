@@ -30,7 +30,7 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data.
       IMPLICIT NONE
       EXTERNAL GETDESC, OPVIEW, READA, READA_Dates, CHANGE_DESC, 
-     &   SUMVALS, EvaluateDat, ERROR, TIMDIF, INCDAT
+     &   SUMVALS, EvaluateDat, ERROR, TIMDIF, INCDAT, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI

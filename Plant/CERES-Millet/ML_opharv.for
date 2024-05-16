@@ -33,7 +33,7 @@ C  02/09/2007 GH  Add path for FileA
                          ! parameters, hourly weather data.
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, GETDESC, OPVIEW, READA, 
-     &  READA_Dates, SUMVALS, EvaluateDat, TIMDIF
+     &  READA_Dates, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
