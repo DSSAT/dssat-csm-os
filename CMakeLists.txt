@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 2)
-SET(BUILD 8)
+SET(BUILD 9)
 
 # Get the current working branch
 execute_process(
