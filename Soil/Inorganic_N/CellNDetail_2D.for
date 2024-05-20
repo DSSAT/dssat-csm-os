@@ -68,7 +68,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       REAL TNO3_2D, TNH4_2D, TUREA_2D, Ntot, NtotI
       REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
       REAL, DIMENSION(MaxRows,MaxCols) :: YCelNtot,NO3UY,NH4UY,CCelNBal
-      REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, DENITRIF
+      REAL, DIMENSION(MaxRows,MaxCols) :: BedFrac, ColFrac, DENITRIF
 
       TYPE (CellType) CELLS(MaxRows,MaxCols), CellDetail
 
@@ -82,7 +82,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &    ISWNIT == 'N') RETURN
 
       ColFrac = BedDimension % ColFrac
-      
+      BedFrac = BedDimension % BedFrac
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization phase
@@ -365,10 +366,13 @@ C  03/04/2005 CHP wrote based on SoilNBal
           SELECT CASE (TRIM(FERTDATA % AppType))
           CASE ('BANDED','POINT')
 !           Banded or point application goes to cell L,1
-            IF (J .EQ. 1) THEN
+            IF (J .EQ. 1) THEN !add fertilizer to first column only
               FertAdd = (FERTDATA % ADDSNO3(L) +
-     &          FERTDATA % ADDSNH4(L) + FERTDATA % ADDUREA(L))
-     &          / ColFrac(L,1)
+     &            FERTDATA % ADDSNH4(L) + FERTDATA % ADDUREA(L))
+              SELECT CASE(Cell_type(L,J))
+              CASE(3);   FertAdd = FertAdd / BedFrac(L,J)
+              CASE(4,5); FertAdd = FertAdd / ColFrac(L,J)
+              END SELECT
             ELSE
               FertAdd = 0.0
             END IF
@@ -379,7 +383,10 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &          J == BedDimension%DripCol(FERTDATA%DrpRefIdx)) then
               FertAdd = (FERTDATA % ADDSNO3(L) +
      &          FERTDATA % ADDSNH4(L) + FERTDATA % ADDUREA(L))
-     &          / ColFrac(L,J)
+              SELECT CASE(Cell_type(L,J))
+              CASE(3);   FertAdd = FertAdd / BedFrac(L,J)
+              CASE(4,5); FertAdd = FertAdd / ColFrac(L,J)
+              END SELECT
             else
               FertAdd = 0.0
             endif

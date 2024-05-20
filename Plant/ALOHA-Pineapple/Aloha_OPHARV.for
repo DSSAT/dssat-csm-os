@@ -18,7 +18,7 @@
       USE Aloha_mod
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, GETDESC, OPVIEW, READA, 
-     &  READA_Dates, SUMVALS, EvaluateDat, TIMDIF
+     &  READA_Dates, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
@@ -62,7 +62,7 @@
 !       in OVERVIEW.OUT and EVALUATE.OUT files (OPVIEW subroutine)
       INTEGER ACOUNT
       CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP !OLAP in dap
-      CHARACTER*6 X(EvaluateNum)
+      CHARACTER*12 X(EvaluateNum)
       CHARACTER*8 Simulated(EvaluateNum), Measured(EvaluateNum)
       CHARACTER*50 DESCRIP(EvaluateNum)
 
@@ -351,7 +351,8 @@ C-----------------------------------------------------------------------
          ELSE
            TRT_ROT = TRTNUM
          ENDIF
-         CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+         !CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+         CALL READA_Y4K(FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !-----------------------------------------------------------------------
       FBTONS = FBIOM*0.01             !Biomass at forcing, t/ha
@@ -433,24 +434,29 @@ C-----------------------------------------------------------------------
       WRITE(Simulated(2),'(I8)') DNR7;  WRITE(Measured(2),'(I8)') DMAT    !MDAT  
       WRITE(Simulated(3),'(I8)') HDAP;  WRITE(Measured(3),'(I8)') DHARV   !HDAT   
       WRITE(Simulated(4),'(F8.2)') YIELDFresh/1000.                                     
-                                        WRITE(Measured(4),'(A8)') X(4)    !FWAH 
+                                  WRITE(Measured(4),'(A8)')TRIM(X(4))     !FWAH 
       WRITE(Simulated(5),'(F8.2)') YIELD/1000.                                     
-                                        WRITE(Measured(5),'(A8)') X(5)    !YDWAH 
+                                  WRITE(Measured(5),'(A8)')TRIM(X(5))     !YDWAH 
       WRITE(Simulated(6),'(F8.1)') FBTONS                                      
-                                        WRITE(Measured(6),'(A8)') X(6)    !BADMF     
+                                  WRITE(Measured(6),'(A8)')TRIM(X(6))     !BADMF     
       WRITE(Simulated(7),'(F8.1)') PBIOMS                                        
-                                        WRITE(Measured(7),'(A8)') X(7)    !BADMH    
-      WRITE(Simulated(8),'(F8.2)')VWATM;WRITE(Measured(8),'(A8)') X(8)    !VWATM  
+                                  WRITE(Measured(7),'(A8)')TRIM(X(7))     !BADMH    
+      WRITE(Simulated(8),'(F8.2)')VWATM;
+                                  WRITE(Measured(8),'(A8)')TRIM(X(8))     !VWATM  
       WRITE(Simulated(9),'(F8.2)') MAXLAI                                          
-                                        WRITE(Measured(9),'(A8)') X(9)    !LAIX     
-      WRITE(Simulated(10),'(F8.1)') LN; WRITE(Measured(10),'(A8)')X(10)   !L#SM 
-      WRITE(Simulated(11),'(F8.3)') HI; WRITE(Measured(11),'(A8)')X(11)   !HIAM
+                                  WRITE(Measured(9),'(A8)')TRIM(X(9))     !LAIX     
+      WRITE(Simulated(10),'(F8.1)') LN; 
+                                  WRITE(Measured(10),'(A8)')TRIM(X(10))   !L#SM 
+      WRITE(Simulated(11),'(F8.3)') HI; 
+                                  WRITE(Measured(11),'(A8)')TRIM(X(11))   !HIAM
       WRITE(Simulated(12),'(I8)') NINT(GPSM)                                      
-                                        WRITE(Measured(12),'(A8)')X(12)   !E#AM 
-      WRITE(Simulated(13),'(F8.1)') GPP;WRITE(Measured(13),'(A8)')X(13)   !E#UM     
+                                  WRITE(Measured(12),'(A8)')TRIM(X(12))   !E#AM 
+      WRITE(Simulated(13),'(F8.1)') GPP;
+                                  WRITE(Measured(13),'(A8)')TRIM(X(13))   !E#UM     
       WRITE(Simulated(14),'(F8.3)') EYEWT                                          
-                                        WRITE(Measured(14),'(A8)')X(14)   !EWUM    
-      WRITE(Simulated(15),'(F8.1)')CNAM;WRITE(Measured(15),'(A8)')X(15)   !CNAM
+                                  WRITE(Measured(14),'(A8)')TRIM(X(14))   !EWUM    
+      WRITE(Simulated(15),'(F8.1)')CNAM;
+                                  WRITE(Measured(15),'(A8)')TRIM(X(15))   !CNAM
 
 ! These aren't calculated - remove from Overview output
 !     WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT - not used

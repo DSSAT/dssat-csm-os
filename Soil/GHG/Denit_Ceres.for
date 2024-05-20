@@ -28,7 +28,7 @@ C=======================================================================
 
       INTEGER DYNAMIC, L, NLAYR
 
-      REAL CW, XMIN
+      REAL CW, XMIN !FLOOD
       REAL TFDENIT, WFDENIT
       REAL ST(NL), SNO3_AVAIL
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
@@ -288,7 +288,7 @@ C         Compute the N2:N2O Ratio
 !-----------------------------------------------------------------------
       
 ! DENITRIF(L)   Denitrification rate in soil layer L (kg [N] / ha / d)
-! NO3(L)        Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)        Nitrate in soil layer L (ï¿½g[N] / g[soil])
 
 !***********************************************************************
 

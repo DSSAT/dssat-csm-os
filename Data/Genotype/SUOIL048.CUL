@@ -29,7 +29,7 @@
 !             P/G/N:Phenology/Growth/Not used for calibration 
 
 @VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3    O1
-!Coeffient #                             1     2     3     4     5     6
+!Coefficient #                           1     2     3     4     5     6
 !Calibration                             P     P     P     G     G     N
 
 999991 MINIMA               . DFAULT 100.0  0.00 300.0  500.  1.50 60.00

@@ -1,14 +1,13 @@
 C=======================================================================
-C  COPYRIGHT 1998-2003 The University of Georgia, Griffin, Georgia
-C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
-C  ALL RIGHTS RESERVED
+C COPYRIGHT 1998-2024
+C                     DSSAT Foundation
+C                     University of Florida, Gainesville, Florida
+C                     International Fertilizer Development Center
+C 
+C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
-C  CROPGRO, Subroutine, G. Hoogenboom, J.W. Jones, K.J. Boote
+C  Perennial Forage Model, Subroutine, K.J. Boote, G. Hoogenboom
 C-----------------------------------------------------------------------
 C  FORAGE template plant growth subroutine.
 C  Computes plant development and growth.

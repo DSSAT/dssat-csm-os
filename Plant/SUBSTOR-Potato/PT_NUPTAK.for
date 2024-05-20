@@ -66,7 +66,7 @@ C=======================================================================
       SAVE
 
       Type (CellType) Cells(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac
+      REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac, BedFrac
       INTEGER DYNAMIC, ISTAGE, L, NLAYR
 
       REAL ANDEM, ARVCHO, AVAILN, EXTRAN, FACTOR 
@@ -85,6 +85,7 @@ C=======================================================================
       REAL, DIMENSION(NL) :: SAT, SNH4, SNO3, UNO3, UNH4
 
       INTEGER J, FurCol1
+      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
       REAL HalfRow, BEDWD
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV,RNH4U_2D
@@ -94,6 +95,7 @@ C=======================================================================
       RLV_2D = CELLS % State % RLV
       SNO3_2D = CELLS % State % SNO3
       SNH4_2D = CELLS % State % SNH4
+      Cell_Type = CELLS % Struc % Cell_Type
 
 !***********************************************************************
 !***********************************************************************
@@ -115,6 +117,7 @@ C=======================================================================
       BEDWD   = BedDimension % BEDWD
       FurCol1 = BedDimension % FurCol1 
       ColFrac = BedDimension % ColFrac
+      BedFrac = BedDimension % BedFrac
 
 !***********************************************************************
 !***********************************************************************
@@ -140,8 +143,14 @@ C-----------------------------------------------------------------------
         SNO3(L) = NO3(L) / KG2PPM(L)
         SNH4(L) = NH4(L) / KG2PPM(L)
         DO J = 1, NColsTot
-          NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
-          NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+          SELECT CASE(Cell_type(L,J))
+          CASE(3)
+            NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / BedFrac(L,J)
+            NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / BedFrac(L,J)
+          CASE(4,5)
+            NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+            NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+          END SELECT
         ENDDO
       ENDDO
 

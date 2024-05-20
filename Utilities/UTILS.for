@@ -1,5 +1,5 @@
 !=======================================================================
-C  UTILS, File, G. Hoogenboom, P.W. Wilkens and B. Baer
+C  UTILS, File, G. Hoogenboom, P.W. Wilkens, C.H. Porter
 C  General utility functions
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
@@ -977,7 +977,7 @@ C=======================================================================
 C        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN, OUTFILES, WARNING
+      EXTERNAL GETLUN, OUTFILES, WARNING, SYSTEM
 !     Can't list routine SYSTEM as external because it generates an
 !       error with some compilers.
 
@@ -1064,7 +1064,7 @@ C=======================================================================
 C        USE IFPORT
 !!!!cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN
+      EXTERNAL GETLUN, SYSTEM
 
       SAVE
       INTEGER i, COUNT, LUNLST, LUNTMP, SYS, SYSTEM

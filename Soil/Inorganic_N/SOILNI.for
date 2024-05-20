@@ -87,7 +87,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: UREA_2D, UPPM_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV, TFNITY_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UNH4_2D, UNO3_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac
+      REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
       REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_L,NFlux_R,NFlux_D
       REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_U
       REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_UREA_L, NFlux_UREA_R
@@ -223,6 +223,7 @@ C=======================================================================
       FurRow1 = BedDimension % FurRow1
       FurCol1 = BedDimension % FurCol1
       ColFrac = BedDimension % ColFrac
+      BedFrac = BedDimension % BedFrac
 
       ADCOEF = SOILPROP % ADCOEF 
       BD     = SOILPROP % BD     
@@ -414,11 +415,14 @@ C=======================================================================
           SNO3_2D(L, J) = SNO3_2D(L, J) - UNO3_2D(L, J)
           SNH4_2D(L, J) = SNH4_2D(L, J) - UNH4_2D(L, J)
 !         KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g
-!         KG2PPM(L) = 10. / (BD(L) * DLAYR(L))
-          IF (ColFrac(L,J) > 0.0) THEN
+          SELECT CASE(Cell_type(L,J))
+          CASE (3)
+            NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+            NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+          CASE (4,5)
             NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
             NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-          ENDIF
+          END SELECT
 
           TotUptake = TotUptake + (UNO3_2D(L,J) +UNH4_2D(L,J)) !kg/ha
         ENDDO
@@ -718,12 +722,16 @@ C=======================================================================
 !         First layer takes mineralization from surface also.
 !         NNOM = MINERALIZE(0,N) + MINERALIZE(1,N)
           NNOM = (MNR(0,N) + MNR(1,N) - IMM(0,N) - IMM(1,N)) 
-     &         * ColFrac(L,J)
         ELSE
 !         Add in residual from previous layer to preserve N balance
-!         NNOM = NNOM + MINERALIZE(L,N)
-          NNOM = NNOM + (MNR(L,N) - IMM(L,N)) * ColFrac(L,J)
+          NNOM = NNOM + (MNR(L,N) - IMM(L,N)) 
         ENDIF
+
+!       Proportion total NNOM to columns
+        SELECT CASE(Cell_type(L,J))
+        CASE (3)  ; NNOM = NNOM * BedFrac(L,J)
+        CASE (4,5); NNOM = NNOM * ColFrac(L,J)
+        END SELECT
 
         !*** temp debugging chp
         TNOM = TNOM + NNOM
@@ -818,7 +826,12 @@ C=======================================================================
           NITRIF_2D(L,J) = 0.0
         ELSE
 !         NITRIFppm in ppm; NITRIF in kg/ha  changed by PG from * kg2ppm
-          NITRIF_2D(L,J)  = NITRIFppm(L,J) / KG2PPM(L) * ColFrac(L,J)
+          SELECT CASE (Cell_Type(L,J))
+          CASE(3)
+            NITRIF_2D(L,J)  = NITRIFppm(L,J) / KG2PPM(L) * BedFrac(L,J)
+          CASE(4,5)
+            NITRIF_2D(L,J)  = NITRIFppm(L,J) / KG2PPM(L) * ColFrac(L,J)
+          END SELECT
         ENDIF
 
         IF (NH4_2D(L,J).LE. 0.01) THEN
@@ -1254,11 +1267,16 @@ C=======================================================================
 !          IF (ABS(UREA_2D(L, J)) .LT. 1.E-8) UREA_2D(L, J) = 0.0
 
 !         Concentration
-          IF (ColFrac(L,J) > 0.0) THEN
+          SELECT CASE(Cell_type(L,J))
+          CASE(3)
+             NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+             NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+             UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+          CASE(4,5)
              NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
              NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
              UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-          ENDIF
+          END SELECT
         ENDDO
       ENDDO  
 
@@ -1283,9 +1301,9 @@ C=======================================================================
           endif
 
 !         2D accumulations and integrations
-          TNH4  = TNH4  + SNH4_2D(L, J) * ColFrac(L, J)
-          TNO3  = TNO3  + SNO3_2D(L, J) * ColFrac(L, J)
-          TUREA = TUREA + UREA_2D(L, J) * ColFrac(L, J)
+          TNH4  = TNH4  + SNH4_2D(L, J)
+          TNO3  = TNO3  + SNO3_2D(L, J)
+          TUREA = TUREA + UREA_2D(L, J)
 
 !     Already calculated WTNUP in rate section
 !         Calculate this where uptake is removed from the soil.

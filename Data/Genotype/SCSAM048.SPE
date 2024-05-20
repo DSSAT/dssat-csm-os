@@ -107,3 +107,8 @@ C_SCATTERING       =  0.15
 K                  =  0.75
 RT_FRONT_SIZE      =  10.0
 !-----------------------------
+
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.20       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  1.00       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)

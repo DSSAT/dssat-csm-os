@@ -79,7 +79,7 @@
 !          data are available. Convert old cultivars TCLDF = 15.*G5.
 !
 @VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2R    P5   P2O    G1    G2    G3 PHINT  THOT TCLDP TCLDF
-!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11
+!Coefficient #                           1     2     3     4     5     6     7     8     9    10    11
 !Calibration                             P     P     P     P     G     G     G     N     G     N     N
 
 999991 MINIMA               . DFAULT 100.0   5.0 150.0  11.0  50.0 .0002  0.70  50.0  25.0   9.0   9.0

@@ -138,3 +138,5 @@
 
 !*EVAPOTRANSPIRATION
   0.50   1.1       KEP, EORATIO
+  0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.92       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)

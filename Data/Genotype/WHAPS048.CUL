@@ -24,7 +24,7 @@
 !             P/G/N:Phenology/Growth/Not used for calbration
 !																   *	 *     *				   *     *                                                                                                                  
 @VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1
-!Coeffient #                             1     2     3     4     5     6     7     8     9
+!Coefficient #                           1     2     3     4     5     6     7     8     9
 !Calibration                             P     P     P     P     P     G     G     G     G
 
 999991 MINIMA               . 999991  0.00  1.20 380.0 200.0  85.0  20.0  1.60  1.00 200.0
