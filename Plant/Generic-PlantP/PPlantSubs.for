@@ -21,15 +21,15 @@
 
 !
 !                |
-!      PArray(1)>+   x
-!      PArray(2)>+            x
-!                | 
-!                |
-!      PArray(3)>+                     x
-!                |___________________________
+! P    PArray(1)>+   x
+! V    PArray(2)>+            x
+! a              |
+! l              |
+! u    PArray(3)>+                     x
+! e              |___________________________
 !                    |        |        |
 !                Emergence  Stage1   Stage2            
-!
+!                        Time  ->
 !     ------------------------------------------------------------------
 !     Calculate optimum and minimum P concentrations in plant tissue.
 !     ------------------------------------------------------------------
@@ -72,7 +72,7 @@
      &    PConc_Shut, PConc_Shut_min, PConc_Shut_opt,     !Input
      &    PConc_Seed_opt, PRoot_kg, PSeed_kg, PShel_kg,   !Input
      &    PShut_kg, Root_kg, RootMob, Seed_kg, Shel_kg,   !Input
-     &    ShelMob, Shut_kg, ShutMob,                      !Input
+     &    ShelMob, Shut_kg, ShutMob, PhFrac2,             !Input
      &    DeltPRoot, DeltPSeed, DeltPShel, DeltPShut,     !I/O
      &    PRootDem, PSeedDem, PShelDem, PShutDem,         !Output
      &    PTotDem)                                        !Output
@@ -95,6 +95,7 @@
       Real ShutPMin, RootPMin, ShelPMin
       REAL PConc_Shut, PConc_Root, PConc_Shel
       Real PShutMobToday, PRootMobToday, PShelMobToday
+      REAL PhFrac2
 
 !***********************************************************************
 !***********************************************************************
@@ -161,44 +162,47 @@
 !     P demand to account for this.  If there is excess P mobilized, 
 !     then save it for next time step.
 !     ------------------------------------------------------------------
-      !Shoots
-      PShutMobPool = AMAX1(0.0, ShutMob * PConc_Shut) + PShutMobPool
-!     Amount which can be mobilized should not reduce P below minimum
-      PShutMobToday = AMIN1(PShutMobPool, PShut_kg - ShutPMin)
-      IF (PShutDem >= PShutMobToday) THEN
-        PShutMobPool = PShutMobPool - PShutMobToday
-        PShutDem = PShutDem - PShutMobToday
-        PShutMobToday = 0.0
-      ELSE
-        PShutMobPool = PShutMobPool - PShutDem
-        PShutMobToday = PShutMobToday - PShutDem
-        PShutDem = 0.0
-      ENDIF
-
-      !Roots
-      PRootMobPool = AMAX1(0.0, RootMob * PConc_Root) + PRootMobPool
-      PRootMobToday = AMIN1(PRootMobPool, PRoot_kg - RootPMin)
-      IF (PRootDem >= PRootMobToday) THEN
-        PRootMobPool = PRootMobPool - PRootMobToday
-        PRootDem = PRootDem - PRootMobToday
-        PRootMobToday = 0.0
-      ELSE
-        PRootMobPool = PRootMobPool - PRootDem
-        PRootMobToday = PRootMobToday - PRootDem
-        PRootDem = 0.0
-      ENDIF
-
-      !Shell
-      PShelMobPool = AMAX1(0.0, ShelMob * PConc_Shel) + PShelMobPool
-      PShelMobToday = AMIN1(PShelMobPool, PShel_kg - ShelPMin)
-      IF (PShelDem >= PShelMobToday) THEN
-        PShelMobPool = PShelMobPool - PShelMobToday
-        PShelDem = PShelDem - PShelMobToday
-        PShelMobToday = 0.0
-      ELSE
-        PShelMobPool = PShelMobPool - PShelDem
-        PShelMobToday = PShelMobToday - PShelDem
-        PShelDem = 0.0
+!     2024-05-23 - no mobilization from shoots until reproductive phase
+      IF (PhFrac2 > 0.001) THEN
+!       Shoots
+        PShutMobPool = AMAX1(0.0, ShutMob * PConc_Shut) + PShutMobPool
+!       Amount which can be mobilized should not reduce P below minimum
+        PShutMobToday = AMIN1(PShutMobPool, PShut_kg - ShutPMin)
+        IF (PShutDem >= PShutMobToday) THEN
+          PShutMobPool = PShutMobPool - PShutMobToday
+          PShutDem = PShutDem - PShutMobToday
+          PShutMobToday = 0.0
+        ELSE
+          PShutMobPool = PShutMobPool - PShutDem
+          PShutMobToday = PShutMobToday - PShutDem
+          PShutDem = 0.0
+        ENDIF
+        
+!       Roots
+        PRootMobPool = AMAX1(0.0, RootMob * PConc_Root) + PRootMobPool
+        PRootMobToday = AMIN1(PRootMobPool, PRoot_kg - RootPMin)
+        IF (PRootDem >= PRootMobToday) THEN
+          PRootMobPool = PRootMobPool - PRootMobToday
+          PRootDem = PRootDem - PRootMobToday
+          PRootMobToday = 0.0
+        ELSE
+          PRootMobPool = PRootMobPool - PRootDem
+          PRootMobToday = PRootMobToday - PRootDem
+          PRootDem = 0.0
+        ENDIF
+        
+!       Shell
+        PShelMobPool = AMAX1(0.0, ShelMob * PConc_Shel) + PShelMobPool
+        PShelMobToday = AMIN1(PShelMobPool, PShel_kg - ShelPMin)
+        IF (PShelDem >= PShelMobToday) THEN
+          PShelMobPool = PShelMobPool - PShelMobToday
+          PShelDem = PShelDem - PShelMobToday
+          PShelMobToday = 0.0
+        ELSE
+          PShelMobPool = PShelMobPool - PShelDem
+          PShelMobToday = PShelMobToday - PShelDem
+          PShelDem = 0.0
+        ENDIF
       ENDIF
 
 !     ------------------------------------------------------------------
