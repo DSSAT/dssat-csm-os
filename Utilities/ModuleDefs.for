@@ -46,7 +46,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Global constants
       INTEGER, PARAMETER :: 
-     &    NL       = 30,  !Maximum number of soil layers 
+     &    NL       = 40,  !Maximum number of soil layers 
      &    TS       = 24,  !Number of hourly time steps per day
      &    NAPPL    = 9000,!Maximum number of applications or operations
      &    NDrpEvnt = 10,  !Max # dripper irrigs per day 
