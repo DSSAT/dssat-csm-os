@@ -1328,10 +1328,10 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    Integer :: HNUMAM, IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM 
    Integer :: NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, PINUMM
    Integer :: PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, ONTAM 
-   Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, CO2EM, WYEAR, CRST, HYEAR  
+   Integer :: ONAM, OPTAM, OPAM, OCTAM, OCAM, NDCH, WYEAR, CRST, HYEAR  
    Real :: YPTM, YPIM, DPNAM, DPNUM, YPNAM, YPNUM,  TMAXA, TMINA, SRADA
    Real :: DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-   Real :: N2OEM, CH4EM
+   Real :: N2OEM, CH4EM, CO2EM
    
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
