@@ -32,9 +32,9 @@
 !   Subroutine CellInit_2D
 !   Initialization for cell structure and initial conditions
 !   Initialization for cell structure and initial conditions
-    Subroutine CellInit_2D(SOILPROP, CELLS, &        !input
-                NH4I, NO3I,  &                        !input & output
-                SoilProp_Bed, SoilProp_Furrow)        !output
+    Subroutine CellInit_2D(SOILPROP, CELLS, &   !input
+                NH4I, NO3I, SWI,            &   !input & output
+                SoilProp_Bed, SoilProp_Furrow)  !output
 !   ---------------------------------------------------------
 !  Revision history
 !  09/02/2008 CHP Written
@@ -69,8 +69,9 @@
     REAL PMALB, BEDFRACTION, MSALB
     LOGICAL WITHIN_BED, Sim2D
 
-    REAL, DIMENSION(NL) :: DS, DLAYR, NH4I, NO3I
+    REAL, DIMENSION(NL) :: DS, DLAYR, NH4I, NO3I, SWi
     REAL, DIMENSION(NL) :: FurrowNH4I, FurrowNO3I, NewPropNH4I, NewPropNO3I
+    REAL, DIMENSION(NL) :: FurrowSWi, NewPropSWi
     REAL Furrow_DEP
     REAL, DIMENSION(NL) :: DS_shift, DLAYR_shift
 
@@ -79,7 +80,7 @@
     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
     REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea, mm_2_vf
     REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
-    REAL Bed_BD, Bed_CEC, Bed_Clay, Bed_DUL, Bed_LL, Bed_OC, Bed_PH, Bed_NH4, Bed_NO3
+    REAL Bed_BD, Bed_CEC, Bed_Clay, Bed_DUL, Bed_LL, Bed_OC, Bed_PH, Bed_NH4, Bed_NO3, Bed_SW
     REAL Bed_Sand, Bed_SAT, Bed_Silt, Bed_SWCN, Bed_ADCOEF, Bed_TOTN, Bed_WR, Bed_TotOrgN
     REAL Bed_WCR, Bed_alphaVG, Bed_mVG, Bed_nVG, Bed_CACO3  !, Bed_DMOD
     Real Bed_SASC, Bed_TOTBAS, Bed_EXCA, Bed_EXNA, Bed_EXK, Bed_EXTP, Bed_TOTP, Bed_ORGP
@@ -339,10 +340,13 @@
 ! ---------------------------------------------------------------------
 !   Properties of soils within bed
 ! ---------------------------------------------------------------------
-    FurrowNH4I = 0.
-    FurrowNO3I = 0.
+    FurrowNH4I  = 0.
+    FurrowNO3I  = 0.
+    FurrowSWi   = 0.
     NewPropNH4I = 0.
     NewPropNO3I = 0.
+    NewPropSWi  = 0.
+
     IF (RaisedBed) THEN
 !     These variables are in units of mass per unit soil volume or 
 !        volume per unit soil volume - weighed average by soil depth.
@@ -353,6 +357,7 @@
       CALL MixMassVol (SOILPROP%SAT,   SOILPROP, DigDep, Bed_SAT)     !mm3/mm3
       CALL MixMassVol (SOILPROP%SWCN,  SOILPROP, DigDep, Bed_SWCN)    !cm/hr
       CALL MixMassVol (SOILPROP%ADCOEF,SOILPROP, DigDep, Bed_ADCOEF)  !cm3[H2O]/g[soil]
+      CALL MixMassVol (SWi,            SOILPROP, DigDep, Bed_SW)      !mm3/mm3
 
 !     These variables are in units of mass per unit soil mass
 !        Weighted average by soil mass.
@@ -361,21 +366,23 @@
       Call MixMassMass(SOILPROP%OC,    SOILPROP, DigDep, Bed_OC)      !%
       Call MixMassMass(SOILPROP%SILT,  SOILPROP, DigDep, Bed_Silt)    !%
       Call MixMassMass(SOILPROP%TOTN,  SOILPROP, DigDep, Bed_TOTN)    !%
-      Call MixMassMass(NH4I, SOILPROP, DigDep, Bed_NH4)
-      Call MixMassMass(NO3I, SOILPROP, DigDep, Bed_NO3)
-      Call MixMassMass(SOILPROP%SASC,   SOILPROP, DigDep, Bed_SASC)     !%
-      Call MixMassMass(SOILPROP%TOTBAS,   SOILPROP, DigDep, Bed_TOTBAS) !cmol/kg
-      Call MixMassMass(SOILPROP%EXCA,   SOILPROP, DigDep, Bed_EXCA)     !cmol/kg
-      Call MixMassMass(SOILPROP%EXNA,   SOILPROP, DigDep, Bed_EXNA)     !cmol/kg
-      Call MixMassMass(SOILPROP%EXK,   SOILPROP, DigDep, Bed_EXK)       !cmol/kg
-      Call MixMassMass(SOILPROP%EXTP,   SOILPROP, DigDep, Bed_EXTP)     !mg/kg
-      Call MixMassMass(SOILPROP%TOTP,   SOILPROP, DigDep, Bed_TOTP)     !mg/kg
-      Call MixMassMass(SOILPROP%ORGP,   SOILPROP, DigDep, Bed_ORGP)     !mg/kg
-      Call MixMassMass(SOILPROP%CACO3,   SOILPROP, DigDep, Bed_CACO3)   !g/kg
-     ! Call MixMassMass(SOILPROP%DMOD,   SOILPROP, DigDep, Bed_DMOD)   !DMOD is not array. 0-1 scale factor use MixMassTot????
+      Call MixMassMass(NH4I,           SOILPROP, DigDep, Bed_NH4)
+      Call MixMassMass(NO3I,           SOILPROP, DigDep, Bed_NO3)
+      Call MixMassMass(SOILPROP%SASC,  SOILPROP, DigDep, Bed_SASC)    !%
+      Call MixMassMass(SOILPROP%TOTBAS,SOILPROP, DigDep, Bed_TOTBAS) !cmol/kg
+      Call MixMassMass(SOILPROP%EXCA,  SOILPROP, DigDep, Bed_EXCA)  !cmol/kg
+      Call MixMassMass(SOILPROP%EXNA,  SOILPROP, DigDep, Bed_EXNA)  !cmol/kg
+      Call MixMassMass(SOILPROP%EXK,   SOILPROP, DigDep, Bed_EXK)   !cmol/kg
+      Call MixMassMass(SOILPROP%EXTP,  SOILPROP, DigDep, Bed_EXTP)  !mg/kg
+      Call MixMassMass(SOILPROP%TOTP,  SOILPROP, DigDep, Bed_TOTP)  !mg/kg
+      Call MixMassMass(SOILPROP%ORGP,  SOILPROP, DigDep, Bed_ORGP)  !mg/kg
+      Call MixMassMass(SOILPROP%CACO3, SOILPROP, DigDep, Bed_CACO3) !g/kg
+!     Call MixMassMass(SOILPROP%DMOD,  SOILPROP, DigDep, Bed_DMOD)  !DMOD is not array. 0-1 scale factor use MixMassTot????
 !     These variables are in units of kg/ha.  Sum of total within bed.
       CALL MixMassTot (SOILPROP%TotOrgN,SOILPROP,DigDep, Bed_TotOrgN) !kg[N]/ha
-      
+
+!     Initialize 1D soil water with modified soil depths
+
       !bedSOILLAYERTYPE = SOILPROP%SOILLAYERTYPE(1)
       Bed_Sand = 100. - Bed_Clay - Bed_Silt
       Bed_WR = 1.0
@@ -435,6 +442,7 @@
           SoilProp_Furrow%nVG(M)   = Soilprop%nVG(L)
           FurrowNH4I(M)            = NH4I(L)
           FurrowNO3I(M)            = NO3I(L)
+          FurrowSWi(M)             = AMAX1(SWI(L), Soilprop%DUL(L))
           SoilProp_Furrow%SASC(M)  = SOILPROP%SASC(L)
           SoilProp_Furrow%TOTBAS(M)= SOILPROP%TOTBAS(L)
           SoilProp_Furrow%EXCA(M)  = SOILPROP%EXCA(L)
@@ -475,6 +483,7 @@
       !We do not want to use LMATCH for alphaVG, mVG, and nVG?. 
       CALL LMATCH (M, DS_shift, FurrowNH4I             ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, FurrowNO3I             ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
+      CALL LMATCH (M, DS_shift, FurrowSWI              ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, SoilProp_Furrow%SASC   ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, SoilProp_Furrow%TOTBAS ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, SoilProp_Furrow%EXCA   ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
@@ -521,6 +530,7 @@
       SOILPROP_FURROW = SOILPROP
       FurrowNH4I = NH4I
       FurrowNO3I = NO3I
+      FurrowSWi  = SWi
     ENDIF
 !-----------------------------------------------------------------------
 
@@ -586,6 +596,7 @@
         SoilProp_Bed%KG2PPM(Row) = 10.0 / (Bed_BD * Bed_Row_Thick) 
         NewPropNH4I(Row)         = Bed_NH4
         NewPropNO3I(Row)         = Bed_NO3
+        NewPropSWi(Row)          = AMAX1(Bed_SW, Soilprop%DUL(L))
         SoilProp_Bed%SASC(Row)   = Bed_SASC
         SoilProp_Bed%TOTBAS(Row) = Bed_TOTBAS   
         SoilProp_Bed%EXCA(Row)   = Bed_EXCA
@@ -630,6 +641,7 @@
         SoilProp_Bed%TotOrgN(Row)= SoilProp_Furrow%TotOrgN(M)
         NewPropNH4I(Row)         = FurrowNH4I(M)
         NewPropNO3I(Row)         = FurrowNO3I(M)
+        NewPropSWi(Row)          = FurrowSWi(M)
         SoilProp_Bed%SASC(Row)   = SoilProp_Furrow%SASC(M)
         SoilProp_Bed%TOTBAS(Row) = SoilProp_Furrow%TOTBAS(M)   
         SoilProp_Bed%EXCA(Row)   = SoilProp_Furrow%EXCA(M)
@@ -683,7 +695,8 @@
           Cells(Row,Col)%State%LL    = Bed_LL
           Cells(Row,Col)%State%SAT   = Bed_SAT
           Cells(Row,Col)%State%WR    = Bed_WR
-          Cells(Row,Col)%State%SWCN  = bED_SWCN      
+          Cells(Row,Col)%State%SWCN  = Bed_SWCN
+          Cells(Row,Col)%State%SWV   = Bed_SW
         CASE (4,5)
           Cells(Row,Col)%State%BD    = SoilProp_Furrow%BD(M)
           Cells(Row,Col)%State%DUL   = SoilProp_Furrow%DUL(M)
@@ -691,6 +704,7 @@
           Cells(Row,Col)%State%SAT   = SoilProp_Furrow%SAT(M)
           Cells(Row,Col)%State%WR    = SoilProp_Furrow%WR(M)
           Cells(Row,Col)%State%SWCN  = SoilProp_Furrow%SWCN(M)
+          Cells(Row,Col)%State%SWV   = FurrowSWi(M)
         CASE DEFAULT
           Cells(Row,Col)%State%BD    = -99.
           Cells(Row,Col)%State%DUL   = -99.
@@ -700,19 +714,18 @@
           Cells(Row,Col)%State%SWCN  = -99.
           Cells(Row,Col)%State%WR    = 0.0
         END SELECT
-        Cells(Row,Col)%State%SWV     = 0
-        Cells(Row,Col)%State%RLV     = 0
-        Cells(Row,Col)%State%SNO3    = 0
-        Cells(Row,Col)%State%SNH4    = 0
-        Cells(Row,Col)%State%UREA    = 0
-        Cells(Row,Col)%Rate%SWFlux_L = 0
-        Cells(Row,Col)%Rate%SWFlux_R = 0
-        Cells(Row,Col)%Rate%SWFlux_D = 0
-        Cells(Row,Col)%Rate%SWFlux_U = 0
-        Cells(Row,Col)%Rate%ES_Rate  = 0
-        Cells(Row,Col)%Rate%EP_Rate  = 0
-        Cells(Row,Col)%Rate%NO3Uptake = 0
-        Cells(Row,Col)%Rate%NH4Uptake = 0
+        Cells(Row,Col)%State%RLV      = 0.0
+        Cells(Row,Col)%State%SNO3     = 0.0
+        Cells(Row,Col)%State%SNH4     = 0.0
+        Cells(Row,Col)%State%UREA     = 0.0
+        Cells(Row,Col)%Rate%SWFlux_L  = 0.0
+        Cells(Row,Col)%Rate%SWFlux_R  = 0.0
+        Cells(Row,Col)%Rate%SWFlux_D  = 0.0
+        Cells(Row,Col)%Rate%SWFlux_U  = 0.0
+        Cells(Row,Col)%Rate%ES_Rate   = 0.0
+        Cells(Row,Col)%Rate%EP_Rate   = 0.0
+        Cells(Row,Col)%Rate%NO3Uptake = 0.0
+        Cells(Row,Col)%Rate%NH4Uptake = 0.0
       ENDDO
 
       PREV_DEPTH = DEPTH
@@ -865,6 +878,7 @@
 !------------------------------
     NH4I = NewPropNH4I 
     NO3I = NewPropNO3I 
+    SWI  = NewPropSWi
 
     Return
     End Subroutine CellInit_2D

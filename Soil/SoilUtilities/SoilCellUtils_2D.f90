@@ -13,7 +13,7 @@
   SAVE
   
 ! Cell arrays -- fixed maximum dimensions for now
-  INTEGER, PARAMETER :: MaxRows = 30, MaxCols = 25 
+  INTEGER, PARAMETER :: MaxRows = 40, MaxCols = 25 
   INTEGER, PARAMETER :: MaxCells = 10
   REAL, DIMENSION(MaxRows,NL)     :: Layer_Cell_Dep
   REAL, DIMENSION(MaxRows,MaxCols):: Surf_Cell_Frac

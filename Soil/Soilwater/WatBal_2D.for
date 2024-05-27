@@ -220,41 +220,48 @@
         ENDDO
       ENDDO
 
-!     Initial soil water content in single precision
-      IF (BedDimension % RaisedBed) THEN
-        DO i = 1, NRowsTot
-          DO j = 1, NColsTot
-!           Set all initial soil water contents to DUL (soil will be wet after
-!             construction of raised bed).
-            SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
-              CASE (3,4,5)
-                SWV(i,j) = SOILPROP%DUL(i)
-                SWA(i,j) = SOILPROP%DUL(i) - SOILPROP%LL(i)
-              CASE DEFAULT
-                SWV(i,j) = 0.0
-                SWA(i,j) = 0.0
-            END SELECT
-          ENDDO
-        ENDDO
-      ELSE
-        DO i = 1, NRowsTot
-          DO j = 1, NColsTot
-!           Set all initial soil water contents to DUL (soil will be wet after
-!             construction of raised bed).
-            SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
-              CASE (3,4,5)
-                SWV(i,j) = SW(i)
-                IF (SW(i) < SOILPROP%LL(i)) THEN
-                    SW(i) = SOILPROP%LL(i)
-                END IF
-                SWA(i,j) = SW(i) - SOILPROP%LL(i)
-              CASE DEFAULT
-                SWV(i,j) = 0.0
-                SWA(i,j) = 0.0
-            END SELECT
-          ENDDO
-        ENDDO
-      END IF
+      SWV = CELLS % STATE % SWV
+!!     Convert the 1D soil water content
+!      CALL Interpolate2Cells_2D(
+!     &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
+!     &  SWVDeltW)                                         !Output
+!
+!!     Initial soil water content in single precision
+!      IF (BedDimension % RaisedBed) THEN
+!        DO i = 1, NRowsTot
+!          DO j = 1, NColsTot
+!!           Set all initial soil water contents to minimum of DUL and 
+!!             user-specified SW content 
+!!             (soil will be wet after construction of raised bed).
+!            SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
+!              CASE (3,4,5)
+!                SWV(i,j) = SOILPROP%DUL(i)
+!                SWA(i,j) = SOILPROP%DUL(i) - SOILPROP%LL(i)
+!              CASE DEFAULT
+!                SWV(i,j) = 0.0
+!                SWA(i,j) = 0.0
+!            END SELECT
+!          ENDDO
+!        ENDDO
+!      ELSE
+!        DO i = 1, NRowsTot
+!          DO j = 1, NColsTot
+!!           Set all initial soil water contents to DUL (soil will be wet after
+!!             construction of raised bed).
+!            SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
+!              CASE (3,4,5)
+!                SWV(i,j) = SW(i)
+!                IF (SW(i) < SOILPROP%LL(i)) THEN
+!                    SW(i) = SOILPROP%LL(i)
+!                END IF
+!                SWA(i,j) = SW(i) - SOILPROP%LL(i)
+!              CASE DEFAULT
+!                SWV(i,j) = 0.0
+!                SWA(i,j) = 0.0
+!            END SELECT
+!          ENDDO
+!        ENDDO
+!      END IF
 
 !     Water table initialization
       CALL WaterTable(DYNAMIC,           

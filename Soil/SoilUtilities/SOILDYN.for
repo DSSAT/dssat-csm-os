@@ -764,16 +764,18 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         ENDIF
 
 !     chp 2023-10-03 - Must have KSAT for 2D model to work. Use this for MEHYD = 'G', 'C'
-!       Remove this ksat estimation 
+!       Remove this ksat estimation  for 1D simulations
 !       It causes problems when SAT and DUL are close. (KJB/JWJ - India workshop 2011)
-!!       Calculate Ksat (SWCN) if not provided
-!        IF (SWCN(L) < -1.E-6) THEN
-!!         Eqn. 10 from 
-!!         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
-!!           drainage model for more accurate soil water dynamics estimation. 
-!!           Soil Science 169(11):745-757.
-!          SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
-!        ENDIF
+!!       Calculate Ksat (SWCN) if not provided for 2D model
+        IF (Sim2D) THEN
+          IF (SWCN(L) < -1.E-6) THEN
+!           Eqn. 10 from 
+!           Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
+!             drainage model for more accurate soil water dynamics estimation. 
+!             Soil Science 169(11):745-757.
+            SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
+          ENDIF
+        ENDIF
       ENDDO
 
 !-----------------------------------------------------------------------
@@ -919,7 +921,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
 !=====================================================================
 !     Initialize 2D variables for all cases.
-      CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, 
+      CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, SW,
      &        SoilProp_Bed, SoilProp_Furrow)
 
       IF (CONTROL%SIM2D) THEN  !MESOL = 'D' for 2D raised bed 
