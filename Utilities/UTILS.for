@@ -971,20 +971,23 @@ C                 rather than delete all *.OUT files.
 C=======================================================================
       SUBROUTINE OPCLEAR
       USE ModuleDefs
+      USE ISO_C_BINDING
+
 !cDEC$ IF (COMPILER == 0) 
 !        USE DFPORT
 !cDEC$ ELSE
 C        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN, OUTFILES, WARNING, SYSTEM
+      EXTERNAL GETLUN, OUTFILES, WARNING
+
 !     Can't list routine SYSTEM as external because it generates an
 !       error with some compilers.
 
       Type (OutputType) FileData
       CHARACTER*16, DIMENSION(MaxFiles) :: FileName
       CHARACTER*78 MSG(2)
-      INTEGER ERR, I, LUN, LUNTMP, SYS, SYSTEM
+      INTEGER ERR, I, LUN, LUNTMP, SYS
       LOGICAL FEXIST
 
 !     Read in list of possible output file names
@@ -1018,7 +1021,7 @@ C        USE IFPORT
           WRITE(LUNTMP,'(A)') "ERASE *.OUT"
           CLOSE (LUNTMP)
 
-          SYS = SYSTEM("TEMP.BAT >TEMP.BAK")
+          CALL EXECUTE_COMMAND_LINE("TEMP.BAT >TEMP.BAK")
           
 !         Delete TEMP.BAT file
           OPEN (LUNTMP, FILE = "TEMP.BAT", STATUS = 'UNKNOWN')
@@ -1058,16 +1061,17 @@ C=======================================================================
       SUBROUTINE OPNAMES(FNAME)
       USE ModuleDefs
       USE ModuleData
+      USE ISO_C_BINDING
 !!!!cDEC$ IF (COMPILER == 0) 
 !        USE DFPORT
 !!!!cDEC$ ELSE
 C        USE IFPORT
 !!!!cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN, SYSTEM
+      EXTERNAL GETLUN
 
       SAVE
-      INTEGER i, COUNT, LUNLST, LUNTMP, SYS, SYSTEM
+      INTEGER i, COUNT, LUNLST, LUNTMP, SYS
       INTEGER FNUM
 
       CHARACTER*8  FNAME
@@ -1187,7 +1191,7 @@ C-KRT given in the batch file are for Windows systems.
 C-KRT Model will continue to run; however, the output files are not
 C-KRT copied to the new output file names as directed in BatchCommand.
 C-KRT Need to rework this strategy for OS compatibility.
-          SYS = SYSTEM(BatchCommand)
+          CALL EXECUTE_COMMAND_LINE(BatchCommand)
   
 !         Delete TEMP.BAT file
           OPEN (LUNTMP, FILE = "TEMP.BAT", STATUS = 'UNKNOWN')
