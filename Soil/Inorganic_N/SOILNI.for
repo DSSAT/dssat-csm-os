@@ -94,6 +94,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_UREA_D, NFlux_UREA_U
 !     REAL, DIMENSION(MaxRows,MaxCols) :: MINERN_2D, IMMOBN_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: NITRIFppm, NITRIF_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: N2Onitrif_2D, nNOflux_2D
 
       INTEGER DOY, DYNAMIC, INCDAT, IUYRDOY, IUOF, I, J, L
       INTEGER NLAYR
@@ -205,6 +206,15 @@ C=======================================================================
      &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
         END SUBROUTINE SoilNiBal
       END INTERFACE
+
+**************************************************************************
+!     temp chp
+!     I want to know everything that happens on this date at the cell level.
+      INTEGER ReportDate, J1,L1, P1
+      ReportDate = 1995044
+      L1 = NRowsTot
+      J1 = NColsTot
+**************************************************************************
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -396,6 +406,17 @@ C=======================================================================
 !     ------------------------------------------------------------------
       IF (INDEX('N',ISWNIT) > 0) RETURN
 
+**************************************************************************
+!     TEMP CHP
+      IF (YRDOY == ReportDate) THEN
+        P1 = 10 !Start of rate section
+        WRITE(555,555) ((P1,"SNO3",L,J,SNO3_2D(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555) ((P1,"SNH4",L,J,SNH4_2D(L,J),J=1,J1),L=1,L1)
+  555   FORMAT(500(I3,1X,A10,2I3,F10.6,/))  !Format for the entire array
+  556   FORMAT(I3,1X,A10,2I3,F10.6) !Format for one element of the array
+      ENDIF
+**************************************************************************
+
 !     Initialize Soil N process rates for this time step.
       DLTUREA_2D = 0.0
       DLTSNO3_2D = 0.0
@@ -416,10 +437,11 @@ C=======================================================================
           SNH4_2D(L, J) = SNH4_2D(L, J) - UNH4_2D(L, J)
 !         KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g
           SELECT CASE(Cell_type(L,J))
-          CASE (3)
-            NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-            NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-          CASE (4,5)
+!          CASE (3)
+!            NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+!            NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+!          CASE (4,5)
+          CASE (3,4,5)
             NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
             NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
           END SELECT
@@ -636,6 +658,13 @@ C=======================================================================
 
       DO J = 1, NColsTot
         DO L = 1, NRowsTot
+
+!         Only process cells that have soil (i.e., not in the furrow)
+          SELECT CASE(Cell_type(L,J))
+          CASE(3,4,5); CONTINUE
+          CASE DEFAULT; CYCLE
+          END SELECT
+
 !       ----------------------------------------------------------------
 !       Environmental limitation factors for the soil processes.
 !       ----------------------------------------------------------------
@@ -731,6 +760,7 @@ C=======================================================================
         SELECT CASE(Cell_type(L,J))
         CASE (3)  ; NNOM = NNOM * BedFrac(L,J)
         CASE (4,5); NNOM = NNOM * ColFrac(L,J)
+        CASE DEFAULT; CYCLE
         END SELECT
 
         !*** temp debugging chp
@@ -742,6 +772,15 @@ C=======================================================================
 !       add the mineralized N to the NH4 pool.
         IF (NNOM .GE. 0.0) THEN
           DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + NNOM
+
+**************************************************************************
+!     TEMP CHP
+      IF (YRDOY == ReportDate) THEN
+        P1 = 15 !Mineralization
+        WRITE(555,556) P1,"NNOM",L,J,NNOM
+      ENDIF
+**************************************************************************
+
           NNOM = 0.
 
         ELSE
@@ -778,6 +817,16 @@ C=======================================================================
             NNOM = 0.0
           ENDIF   !End of IF block on ABS(NNOM).
         ENDIF   !End of IF block on NNOM.
+
+
+**************************************************************************
+!     TEMP CHP
+      IF (YRDOY == ReportDate) THEN
+        write(560,'(a,f10.6)') "tnom",tnom
+        WRITE(555,556) P1,"DLTSNO3",L,J,DLTSNO3_2D(L,J)
+        WRITE(555,556) P1,"DLTSNH4",L,J,DLTSNH4_2D(L,J)
+      ENDIF
+**************************************************************************
 
 !-----------------------------------------------------------------------
 !       Nitrification section
@@ -827,9 +876,10 @@ C=======================================================================
         ELSE
 !         NITRIFppm in ppm; NITRIF in kg/ha  changed by PG from * kg2ppm
           SELECT CASE (Cell_Type(L,J))
-          CASE(3)
-            NITRIF_2D(L,J)  = NITRIFppm(L,J) / KG2PPM(L) * BedFrac(L,J)
-          CASE(4,5)
+!          CASE(3)
+!            NITRIF_2D(L,J)  = NITRIFppm(L,J) / KG2PPM(L) * BedFrac(L,J)
+!          CASE(4,5)
+          CASE(3,4,5)
             NITRIF_2D(L,J)  = NITRIFppm(L,J) / KG2PPM(L) * ColFrac(L,J)
           END SELECT
         ENDIF
@@ -850,55 +900,20 @@ C=======================================================================
 !       Update available NH4 for the next step
         SNH4_AVAIL = AMAX1(0.0, SNH4_2D(L,J) + DLTSNH4_2D(L,J) - XMIN)
 
-        ENDDO  !End of soil row (layer) loop
-      END DO   !End of soil column loop
-
-!*************************************************************************************************
-!*************************************************************************************************
-!     FROM HERE START 1D PROCESSES. NEED TO CONVERT DLTSNH3_2D AND DLTSNH4_2D TO 1D
-!*************************************************************************************************
-!*************************************************************************************************
-
-!     Convert NITRIF, DLTSNO3 and DLTSNH4 from 2D to 1D for next set of processes
-!     use the utility 
-      CALL Cell2Layer_2D(
-     &  NITRIF_2D, CELLS % Struc, NLAYR,  !Input
-     &  NITRIF)                           !Output
-
-      CALL Cell2Layer_2D(
-     &  DLTSNO3_2D, CELLS % Struc, NLAYR,  !Input
-     &  DLTSNO3)                           !Output
-
-      CALL Cell2Layer_2D(
-     &  DLTSNH4_2D, CELLS % Struc, NLAYR,  !Input
-     &  DLTSNH4)                           !Output
-
-      CALL Cell2Layer_2D(
-     &  DLTUREA_2D, CELLS % Struc, NLAYR,  !Input
-     &  DLTUREA)                           !Output
-
-!     Keep the values of DLTSNO3 and DLTSNH4 because we need to add the new part to the 
-!       2D arrays.
-      DLTSNO3_SAVE = DLTSNO3
-      DLTSNH4_SAVE = DLTSNH4
-      DLTUREA_SAVE = DLTUREA
-
-!     Start 1D processes for GHG
-      DO L = 1, NRowsTot
 !       ------------------------------------------------------------------
 !       N2, N2O, NO fluxes from Nitrification
 !       ------------------------------------------------------------------
-        if (NITRIF(L) > 1.E-6) then
+        if (NITRIF_2D(L,J) > 1.E-6) then
 
 !         for N2O using a proportion of nitrification from original daycent PG
-          N2ONitrif(L) = pN2Onitrif * NITRIF(L) 
-          NITRIF_remaining = NITRIF(L) - N2ONitrif(L)   
+          N2ONitrif_2D(L,J) = pN2Onitrif * NITRIF_2D(L,J) 
+          NITRIF_remaining = NITRIF_2D(L,J) - N2ONitrif_2D(L,J)
 
 !         NO flux 
           NO_N2O_ratio(L) = 8.0+(18.0*atan(0.75*PI*(10*dD0(L)-1.86)))/PI
 !         0.5 for agricultural systems
-          NO_N2O_ratio(L) = NO_N2O_ratio(L) * 0.5  
-          potential_NOflux = NO_N2O_ratio(L) * krainNO * N2ONitrif(L)
+          NO_N2O_ratio(L) = NO_N2O_ratio(L) * 0.5
+          potential_NOflux = NO_N2O_ratio(L) * krainNO*N2ONitrif_2D(L,J)
 
           if (potential_NOflux <= NITRIF_remaining) then
             NITRIF_to_NO = potential_NOflux
@@ -916,28 +931,79 @@ C=======================================================================
             NITRIF_remaining = 0.0
           endif
 
-          nNOflux(L) = AMAX1(NITRIF_to_NO + NH4_to_NO, 0.0)
-          NITRIF(L) = NITRIF(L) + NH4_to_NO
+          nNOflux_2D(L,J) = AMAX1(NITRIF_to_NO + NH4_to_NO, 0.0)
+          NITRIF_2D(L,J) = NITRIF_2D(L,J) + NH4_to_NO
 
         else 
           NO_N2O_ratio(L) = 0.0
-          N2ONitrif(L) = 0.0
+          N2ONitrif_2D(L,J) = 0.0
+          nNOflux_2D(L,J) = 0.0
           NOflux(L)    = 0.0
           NITRIF_to_NO = 0.0
           NH4_to_NO    = 0.0
           NITRIF_remaining = 0.0
         endif
 
-        DLTSNO3(L) = DLTSNO3(L) + NITRIF_remaining
-        DLTSNH4(L) = DLTSNH4(L) - NH4_to_NO
+        DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + NITRIF_remaining
+        DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) - NH4_to_NO
 !       This contribution from NH4 can be considered as part of the nitrification process
         TNITRIFY   = TNITRIFY   + NITRIF(L) 
 
-      ENDDO !End of soil 1D soil layer loop
+        ENDDO  !End of soil row (layer) loop
+      END DO   !End of soil column loop
+
+
+
+**************************************************************************
+!     TEMP CHP
+      IF (YRDOY == ReportDate) THEN
+        P1 = 20 !Nitrification
+        WRITE(555,555)((P1,"NITRIF",L,J,NITRIF_2D(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"DLTSNO3",L,J,DLTSNO3_2D(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"DLTSNH4",L,J,DLTSNH4_2D(L,J),J=1,J1),L=1,L1)
+      ENDIF
+**************************************************************************
+
+!*************************************************************************************************
+!*************************************************************************************************
+!     FROM HERE START 1D PROCESSES. NEED TO CONVERT DLTSNH3_2D AND DLTSNH4_2D TO 1D
+!*************************************************************************************************
+!*************************************************************************************************
+
+!     Convert NITRIF, DLTSNO3 and DLTSNH4 from 2D to 1D for next set of processes
+!     use the utility 
+      CALL Cell2Layer_2D(
+     &  DLTSNO3_2D, CELLS % Struc, NLAYR,  !Input
+     &  DLTSNO3)                           !Output
+
+      CALL Cell2Layer_2D(
+     &  DLTSNH4_2D, CELLS % Struc, NLAYR,  !Input
+     &  DLTSNH4)                           !Output
+
+      CALL Cell2Layer_2D(
+     &  DLTUREA_2D, CELLS % Struc, NLAYR,  !Input
+     &  DLTUREA)                           !Output
+
+      CALL Cell2Layer_2D(
+     &  NITRIF_2D, CELLS % Struc, NLAYR,  !Input
+     &  NITRIF)                           !Output
+
+      CALL Cell2Layer_2D(
+     &  N2ONitrif_2D, CELLS % Struc, NLAYR,  !Input
+     &  N2ONitrif)                           !Output
+
+      CALL Cell2Layer_2D(
+     &  nNOflux_2D, CELLS % Struc, NLAYR,  !Input
+     &  nNOflux)                           !Output
 
       N2O_data % NITRIF   = NITRIF
       N2O_data % N2Onitrif  = N2Onitrif
-      N2O_data % NOflux = NOflux
+
+!     Keep the values of DLTSNO3 and DLTSNH4 because we need to add the new part to the 
+!       2D arrays.
+      DLTSNO3_SAVE = DLTSNO3
+      DLTSNH4_SAVE = DLTSNH4
+      DLTUREA_SAVE = DLTUREA
 
 !-----------------------------------------------------------------------
 !       Denitrification section
@@ -1052,6 +1118,97 @@ C=======================================================================
 
 !*************************************************************************************************
 !*************************************************************************************************
+
+!     END OF 1D GHG PROCESSES, NOW BACK TO 2D.
+!     FIRST NEED TO CONVERT DLT-N VALUES BACK TO 2D
+
+!     Look at only the differences in DLTSNO3 and DLTSNH4 due to GHG processes
+      DLTSNO3_DIFF = DLTSNO3 - DLTSNO3_SAVE
+      DLTSNH4_DIFF = DLTSNH4 - DLTSNH4_SAVE
+      DLTUREA_DIFF = DLTUREA - DLTUREA_SAVE
+
+!     Convert DLTSNO3 and DLTSNH4 differences  to 2D arrays
+      CALL Layer2Cell_2D(                              
+     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3_DIFF, 0.0,        !Input
+     & DLTSNO3_DIFF_2D)                                       !Output
+
+      CALL Layer2Cell_2D(                              
+     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0,        !Input
+     & DLTSNH4_DIFF_2D)                                       !Output
+
+      CALL Layer2Cell_2D(                              
+     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0,        !Input
+     & DLTUREA_DIFF_2D)                                       !Output
+
+      RESID3 = 0.0
+      RESID4 = 0.0
+      RESID5 = 0.0
+
+!     Add these differences into the 2D DLT arrays, cell by cell, correcting for negative values
+      DO L = 1, NRowsTot
+        DO J = 1, NColsTot
+!         Add in NO3 differences due to GHG and NFLUX processes
+          DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + DLTSNO3_DIFF_2D(L,J)
+!         Add in residual from previous cell (if any)
+          DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + RESID3
+!         pseudo-integration
+          SNO3_TEMP = SNO3_2D(L,J) + DLTSNO3_2D(L,J)
+          IF (SNO3_TEMP .LT. 0.0) THEN
+!           Maximum DLTSNO3 = SNO3 at the beginning of the day
+            DLTSNO3_2D(L,J) = - SNO3_2D(L,J)
+!           RESID3 = Negative SNO3 value passed on to next cell
+            RESID3 = SNO3_TEMP
+          ELSE
+            RESID3 = 0.0
+          ENDIF
+
+!         Add in NH4 differences due to GHG and NFLUX processes
+          DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + DLTSNH4_DIFF_2D(L,J)
+
+!         Add in residual from previous cell (if any)
+          DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + RESID4
+
+!         pseudo-integration
+          SNH4_TEMP = SNH4_2D(L,J) + DLTSNH4_2D(L,J)
+          IF (SNH4_TEMP .LT. 0.0) THEN
+!           Maximum DLTSNH4 = SNH4 at the beginning of the day
+            DLTSNH4_2D(L,J) = - SNH4_2D(L,J)
+
+!           RESID4 = Negative NH4 value passed on to next cell
+            RESID4 = SNH4_TEMP
+          ELSE
+            RESID4 = 0.0
+          ENDIF
+
+!         Add in urea differences due to GHG and NFLUX processes
+          DLTUREA_2D(L,J) = DLTUREA_2D(L,J) + DLTUREA_DIFF_2D(L,J)
+!         Add in residual from previous cell (if any)
+          DLTUREA_2D(L,J) = DLTUREA_2D(L,J) + RESID5
+!         pseudo-integration
+          UREA_TEMP = UREA_2D(L,J) + DLTUREA_2D(L,J)
+          IF (UREA_TEMP .LT. 0.0) THEN
+!           Maximum DLTSNH4 = SNH4 at the beginning of the day
+            DLTUREA_2D(L,J) = - UREA_2D(L,J)
+!           RESID5 = Negative urea value passed on to next cell
+            RESID5 = UREA_TEMP
+          ELSE
+            RESID5 = 0.0
+          ENDIF
+        ENDDO
+      ENDDO
+
+
+**************************************************************************
+!     TEMP CHP
+      IF (YRDOY == ReportDate) THEN
+        P1 = 22  !After adding in 1D process rates
+        WRITE(555,555)((P1,"DLTSNO3",L,J,DLTSNO3_2D(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"DLTSNH4",L,J,DLTSNH4_2D(L,J),J=1,J1),L=1,L1)
+      ENDIF
+**************************************************************************
+
+!*************************************************************************************************
+!*************************************************************************************************
 !    NFLUX is done in 1D for 1D simulations and 2D for 2D simulations. That is, the DLTUREA and
 !     DLTSNO3 are updated for 1D simulations. The DLTUREA_2D and DLTSNO3_2D are updated for the 2D 
 !     simulation. 
@@ -1116,88 +1273,18 @@ C=======================================================================
 
       CALL PUT('NITR','TLCHD',TLeachD) 
 
-!*************************************************************************************************
-!*************************************************************************************************
-
-!     END OF 1D GHG PROCESSES, NOW BACK TO 2D.
-!     FIRST NEED TO CONVERT DLT-N VALUES BACK TO 2D
-
-!     Look at only the differences in DLTSNO3 and DLTSNH4 due to GHG processes
-      DLTSNO3_DIFF = DLTSNO3 - DLTSNO3_SAVE
-      DLTSNH4_DIFF = DLTSNH4 - DLTSNH4_SAVE
-      DLTUREA_DIFF = DLTUREA - DLTUREA_SAVE
-
-!     Convert DLTSNO3 and DLTSNH4 differences  to 2D arrays
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3_DIFF, 0.0,        !Input
-     & DLTSNO3_DIFF_2D)                                       !Output
-
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0,        !Input
-     & DLTSNH4_DIFF_2D)                                       !Output
-
-      CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0,        !Input
-     & DLTUREA_DIFF_2D)                                       !Output
-
-      RESID3 = 0.0
-      RESID4 = 0.0
-      RESID5 = 0.0
-
-!     Add these differences into the 2D DLT arrays, cell by cell, correcting for negative values
-      DO L = 1, NRowsTot
-        DO J = 1, NColsTot
-!         Add in NO3 differences due to GHG and NFLUX processes
-          DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + DLTSNO3_DIFF_2D(L,J)
-!         Add in residual from previous cell (if any)
-          DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + RESID3
-!         pseudo-integration
-          SNO3_TEMP = SNO3_2D(L,J) + DLTSNO3_2D(L,J)
-          IF (SNO3_TEMP .LT. 0.0) THEN
-!           Maximum DLTSNO3 = SNO3 at the beginning of the day
-            DLTSNO3_2D(L,J) = - SNO3_2D(L,J)
-!           RESID3 = Negative SNO3 value passed on to next cell
-            RESID3 = SNO3_TEMP
-          ELSE
-            RESID3 = 0.0
-          ENDIF
-
-!         Add in NH4 differences due to GHG and NFLUX processes
-          DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + DLTSNH4_DIFF_2D(L,J)
-!         Add in residual from previous cell (if any)
-          DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + RESID4
-!         pseudo-integration
-          SNH4_TEMP = SNH4_2D(L,J) + DLTSNH4_2D(L,J)
-          IF (SNH4_TEMP .LT. 0.0) THEN
-!           Maximum DLTSNH4 = SNH4 at the beginning of the day
-            DLTSNH4_2D(L,J) = - SNH4_2D(L,J)
-!           RESID4 = Negative NH4 value passed on to next cell
-            RESID4 = SNH4_TEMP
-          ELSE
-            RESID4 = 0.0
-          ENDIF
-
-!         Add in urea differences due to GHG and NFLUX processes
-          DLTUREA_2D(L,J) = DLTUREA_2D(L,J) + DLTUREA_DIFF_2D(L,J)
-!         Add in residual from previous cell (if any)
-          DLTUREA_2D(L,J) = DLTUREA_2D(L,J) + RESID5
-!         pseudo-integration
-          UREA_TEMP = UREA_2D(L,J) + DLTUREA_2D(L,J)
-          IF (UREA_TEMP .LT. 0.0) THEN
-!           Maximum DLTSNH4 = SNH4 at the beginning of the day
-            DLTUREA_2D(L,J) = - UREA_2D(L,J)
-!           RESID5 = Negative urea value passed on to next cell
-            RESID5 = UREA_TEMP
-          ELSE
-            RESID5 = 0.0
-          ENDIF
-        ENDDO
-      ENDDO
-
-!     TEMP CHP This shouldn't happen.
-      IF (RESID3 > 0.0 .OR. RESID4 > 0.0 .OR. RESID5 > 0.0) THEN
-        PRINT *, "HELP ME!"
+**************************************************************************
+!     TEMP CHP
+      IF (YRDOY == ReportDate) THEN
+        P1 = 25 !nflux
+        WRITE(555,555)((P1,"NFlux_L",L,J,NFlux_L(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"NFlux_R",L,J,NFlux_R(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"NFlux_D",L,J,NFlux_D(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"NFlux_U",L,J,NFlux_U(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"DLTSNO3",L,J,DLTSNO3_2D(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"DLTSNH4",L,J,DLTSNH4_2D(L,J),J=1,J1),L=1,L1)
       ENDIF
+**************************************************************************
 
 !*************************************************************************************************
 !*************************************************************************************************
@@ -1235,6 +1322,27 @@ C=======================================================================
 !-----------------------------------------------------------------------
       IF (INDEX('N',ISWNIT) > 0) RETURN
 
+
+**************************************************************************
+!     TEMP CHP
+      IF (YRDOY == ReportDate) THEN
+        SELECT CASE(DYNAMIC)
+        CASE(2); P1 = 0  !Initialization
+        CASE(4); P1 = 50 !Start of integration
+        END SELECT
+
+        DO L = 1, L1
+          DO J = 1, J1
+            WRITE(555,556) P1,"SNO3      ",L,J,SNO3_2D(L,J)
+            WRITE(555,556) P1,"SNH4      ",L,J,SNH4_2D(L,J)
+            WRITE(555,556) P1,"DLTSNO3   ",L,J,DLTSNO3_2D(L,J)
+            WRITE(555,556) P1,"DLTSNH4   ",L,J,DLTSNH4_2D(L,J)
+          ENDDO
+        ENDDO
+
+      ENDIF
+**************************************************************************
+
       IF (DYNAMIC .EQ. INTEGR) THEN
 !       Update flood N components.
         IF (NBUND > 0) THEN
@@ -1258,7 +1366,25 @@ C=======================================================================
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           SNO3_2D(L, J) = SNO3_2D(L, J) + DLTSNO3_2D(L, J)    
+
+!!     *******************************
+!!     temp chp
+!      IF (L ==1 .AND. J==1) THEN
+!        write(1234,'(I7,2F10.5,2X,A)') 
+!     &    YRDOY, SNH4_2D(L,J), DLTSNH4_2D(L,J), "Before"
+!      ENDIF
+!!     *******************************
+
           SNH4_2D(L, J) = SNH4_2D(L, J) + DLTSNH4_2D(L, J)    
+
+!!     *******************************
+!!     temp chp
+!      IF (L ==1 .AND. J==1) THEN
+!        write(1234,'(I7,2F10.5,2X,A)') 
+!     &    YRDOY, SNH4_2D(L,J), DLTSNH4_2D(L,J), "After"
+!      ENDIF
+!!     *******************************
+
           UREA_2D(L, J) = UREA_2D(L, J) + DLTUREA_2D(L, J)
 
 !!         Underflow trapping
@@ -1268,11 +1394,12 @@ C=======================================================================
 
 !         Concentration
           SELECT CASE(Cell_type(L,J))
-          CASE(3)
-             NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-             NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-             UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-          CASE(4,5)
+!          CASE(3)
+!             NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+!             NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+!             UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
+!          CASE(4,5)
+          CASE(3,4,5)
              NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
              NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
              UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
@@ -1432,6 +1559,19 @@ C=======================================================================
       Cells % State % SNH4 = SNH4_2D  !kg/ha
       Cells % State % SNO3 = SNO3_2D  !kg/ha
       Cells % State % UREA = UREA_2D
+
+
+**************************************************************************
+!     TEMP CHP
+      IF (YRDOY == ReportDate) THEN
+        SELECT CASE(DYNAMIC)
+        CASE(2); P1 = 1  !End of initialization
+        CASE(4); P1 = 60 !End of integration
+        END SELECT
+        WRITE(555,555)((P1,"SNO3",L,J,SNO3_2D(L,J),J=1,J1),L=1,L1)
+        WRITE(555,555)((P1,"SNH4",L,J,SNH4_2D(L,J),J=1,J1),L=1,L1)
+      ENDIF
+**************************************************************************
 
 !***********************************************************************
 !***********************************************************************

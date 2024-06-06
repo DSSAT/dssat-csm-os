@@ -347,6 +347,15 @@
     NewPropNO3I = 0.
     NewPropSWi  = 0.
 
+! Notes on calculation of initial soil water and N
+! SWV for cells is calculated here and used as the initial values later in the model.
+!   This somewhat violates the modularity, but is important here because it is assumed that
+!   initial soil water is affected by construction of the raised bed. A minimum value of DUL
+!   is set when the bed is "constructed" using bed geometry.
+! Initial soil N is also affected by the construction of the bed in that N is mixed into the
+!   bed from the soil layers thru the dig depth. The initial values are left as concnetration
+!   and initial mass of soil N is still done in the SoilNi routine.
+
     IF (RaisedBed) THEN
 !     These variables are in units of mass per unit soil volume or 
 !        volume per unit soil volume - weighed average by soil depth.

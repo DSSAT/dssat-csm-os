@@ -135,7 +135,7 @@
 
             NTEMP(L,j)   = NTEMP(L,j)   - Nflux_R(L,j)
             NTEMP(L,j+1) = NTEMP(L,j+1) + Nflux_R(L,j) 
-     &                      * ColFrac(L, j) / ColFrac(L, j+1)
+!     &                      * ColFrac(L, j) / ColFrac(L, j+1)
           ENDIF
 
 !!           Check that we are not concentrating N at the boundaries
@@ -170,13 +170,13 @@
 
             NTEMP(L,j)   = NTEMP(L,j)   - Nflux_D(L,j)
             IF (L < NRowsTot) THEN
-              NTEMP(L+1,j) = NTEMP(L+1,j) + Nflux_D(L,j) * ColFrac(L, j)
-     &              / ColFrac(L + 1, j)
+              NTEMP(L+1,j) = NTEMP(L+1,j) + Nflux_D(L,j) !* ColFrac(L, j)
+!     &              / ColFrac(L + 1, j)
             ELSE
 !             Accumulate the N lost by leaching below profile depth.
               NLeach(j) = NFlux_D(NRowsTot,j)
 !             Today's leached N
-              TLCHD = TLCHD + NLeach(j) * ColFrac(L, j)   
+              TLCHD = TLCHD + NLeach(j) !* ColFrac(L, j)   
             ENDIF
           ENDIF
 
@@ -208,7 +208,7 @@
             
               NTEMP(L,j)   = NTEMP(L,j)   - Nflux_L(L,j)
               NTEMP(L,j-1) = NTEMP(L,j-1) + Nflux_L(L,j)
-     &                                  * ColFrac(L,j) / ColFrac(L,j-1)
+!     &                                  * ColFrac(L,j) / ColFrac(L,j-1)
 
 !           Check that we are not moving N from low to high concentration
 !            IF (NFlux_L(L,j) > 1.E-6 .AND. NTEMP(L,j-1) > NTEMP(L,j)) 
@@ -247,8 +247,8 @@
      &              SWFlux_D(L,j) + SWFlux_U(L,j))
 
                   NTEMP(L,j)   = NTEMP(L,j)   - Nflux_U(L,j)
-                  NTEMP(L-1,j) = NTEMP(L-1,j) + Nflux_U(L,j) * 
-     &              ColFrac(L, j) / ColFrac(L - 1, j)
+                  NTEMP(L-1,j) = NTEMP(L-1,j) + Nflux_U(L,j) !* 
+!     &              ColFrac(L, j) / ColFrac(L - 1, j)
               ENDIF
             ENDIF
           ENDIF
