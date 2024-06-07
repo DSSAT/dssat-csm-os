@@ -207,15 +207,6 @@ C=======================================================================
         END SUBROUTINE SoilNiBal
       END INTERFACE
 
-**************************************************************************
-!     temp chp
-!     I want to know everything that happens on this date at the cell level.
-      INTEGER ReportDate, J1,L1, P1
-      ReportDate = 1995044
-      L1 = NRowsTot
-      J1 = NColsTot
-**************************************************************************
-
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
@@ -406,17 +397,6 @@ C=======================================================================
 !     ------------------------------------------------------------------
       IF (INDEX('N',ISWNIT) > 0) RETURN
 
-**************************************************************************
-!     TEMP CHP
-      IF (YRDOY == ReportDate) THEN
-        P1 = 10 !Start of rate section
-        WRITE(555,555) ((P1,"SNO3",L,J,SNO3_2D(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555) ((P1,"SNH4",L,J,SNH4_2D(L,J),J=1,J1),L=1,L1)
-  555   FORMAT(500(I3,1X,A10,2I3,F10.6,/))  !Format for the entire array
-  556   FORMAT(I3,1X,A10,2I3,F10.6) !Format for one element of the array
-      ENDIF
-**************************************************************************
-
 !     Initialize Soil N process rates for this time step.
       DLTUREA_2D = 0.0
       DLTSNO3_2D = 0.0
@@ -437,10 +417,6 @@ C=======================================================================
           SNH4_2D(L, J) = SNH4_2D(L, J) - UNH4_2D(L, J)
 !         KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g
           SELECT CASE(Cell_type(L,J))
-!          CASE (3)
-!            NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-!            NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-!          CASE (4,5)
           CASE (3,4,5)
             NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
             NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
@@ -553,7 +529,6 @@ C=======================================================================
             CALL SoilMix (SNO3, DLTSNO3, 1, DLAYR, MIXPCT, NLAYR, TDEP)
             CALL SoilMix (SNH4, DLTSNH4, 1, DLAYR, MIXPCT, NLAYR, TDEP)
             CALL SoilMix (UREA, DLTUREA, 1, DLAYR, MIXPCT, NLAYR, TDEP)
-
           ENDIF
         ENDIF
 
@@ -772,15 +747,6 @@ C=======================================================================
 !       add the mineralized N to the NH4 pool.
         IF (NNOM .GE. 0.0) THEN
           DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + NNOM
-
-**************************************************************************
-!     TEMP CHP
-      IF (YRDOY == ReportDate) THEN
-        P1 = 15 !Mineralization
-        WRITE(555,556) P1,"NNOM",L,J,NNOM
-      ENDIF
-**************************************************************************
-
           NNOM = 0.
 
         ELSE
@@ -817,16 +783,6 @@ C=======================================================================
             NNOM = 0.0
           ENDIF   !End of IF block on ABS(NNOM).
         ENDIF   !End of IF block on NNOM.
-
-
-**************************************************************************
-!     TEMP CHP
-      IF (YRDOY == ReportDate) THEN
-        write(560,'(a,f10.6)') "tnom",tnom
-        WRITE(555,556) P1,"DLTSNO3",L,J,DLTSNO3_2D(L,J)
-        WRITE(555,556) P1,"DLTSNH4",L,J,DLTSNH4_2D(L,J)
-      ENDIF
-**************************************************************************
 
 !-----------------------------------------------------------------------
 !       Nitrification section
@@ -951,18 +907,6 @@ C=======================================================================
 
         ENDDO  !End of soil row (layer) loop
       END DO   !End of soil column loop
-
-
-
-**************************************************************************
-!     TEMP CHP
-      IF (YRDOY == ReportDate) THEN
-        P1 = 20 !Nitrification
-        WRITE(555,555)((P1,"NITRIF",L,J,NITRIF_2D(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"DLTSNO3",L,J,DLTSNO3_2D(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"DLTSNH4",L,J,DLTSNH4_2D(L,J),J=1,J1),L=1,L1)
-      ENDIF
-**************************************************************************
 
 !*************************************************************************************************
 !*************************************************************************************************
@@ -1197,16 +1141,6 @@ C=======================================================================
         ENDDO
       ENDDO
 
-
-**************************************************************************
-!     TEMP CHP
-      IF (YRDOY == ReportDate) THEN
-        P1 = 22  !After adding in 1D process rates
-        WRITE(555,555)((P1,"DLTSNO3",L,J,DLTSNO3_2D(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"DLTSNH4",L,J,DLTSNH4_2D(L,J),J=1,J1),L=1,L1)
-      ENDIF
-**************************************************************************
-
 !*************************************************************************************************
 !*************************************************************************************************
 !    NFLUX is done in 1D for 1D simulations and 2D for 2D simulations. That is, the DLTUREA and
@@ -1273,19 +1207,6 @@ C=======================================================================
 
       CALL PUT('NITR','TLCHD',TLeachD) 
 
-**************************************************************************
-!     TEMP CHP
-      IF (YRDOY == ReportDate) THEN
-        P1 = 25 !nflux
-        WRITE(555,555)((P1,"NFlux_L",L,J,NFlux_L(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"NFlux_R",L,J,NFlux_R(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"NFlux_D",L,J,NFlux_D(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"NFlux_U",L,J,NFlux_U(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"DLTSNO3",L,J,DLTSNO3_2D(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"DLTSNH4",L,J,DLTSNH4_2D(L,J),J=1,J1),L=1,L1)
-      ENDIF
-**************************************************************************
-
 !*************************************************************************************************
 !*************************************************************************************************
 !     TEMP CHP
@@ -1322,27 +1243,6 @@ C=======================================================================
 !-----------------------------------------------------------------------
       IF (INDEX('N',ISWNIT) > 0) RETURN
 
-
-**************************************************************************
-!     TEMP CHP
-      IF (YRDOY == ReportDate) THEN
-        SELECT CASE(DYNAMIC)
-        CASE(2); P1 = 0  !Initialization
-        CASE(4); P1 = 50 !Start of integration
-        END SELECT
-
-        DO L = 1, L1
-          DO J = 1, J1
-            WRITE(555,556) P1,"SNO3      ",L,J,SNO3_2D(L,J)
-            WRITE(555,556) P1,"SNH4      ",L,J,SNH4_2D(L,J)
-            WRITE(555,556) P1,"DLTSNO3   ",L,J,DLTSNO3_2D(L,J)
-            WRITE(555,556) P1,"DLTSNH4   ",L,J,DLTSNH4_2D(L,J)
-          ENDDO
-        ENDDO
-
-      ENDIF
-**************************************************************************
-
       IF (DYNAMIC .EQ. INTEGR) THEN
 !       Update flood N components.
         IF (NBUND > 0) THEN
@@ -1366,25 +1266,7 @@ C=======================================================================
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           SNO3_2D(L, J) = SNO3_2D(L, J) + DLTSNO3_2D(L, J)    
-
-!!     *******************************
-!!     temp chp
-!      IF (L ==1 .AND. J==1) THEN
-!        write(1234,'(I7,2F10.5,2X,A)') 
-!     &    YRDOY, SNH4_2D(L,J), DLTSNH4_2D(L,J), "Before"
-!      ENDIF
-!!     *******************************
-
           SNH4_2D(L, J) = SNH4_2D(L, J) + DLTSNH4_2D(L, J)    
-
-!!     *******************************
-!!     temp chp
-!      IF (L ==1 .AND. J==1) THEN
-!        write(1234,'(I7,2F10.5,2X,A)') 
-!     &    YRDOY, SNH4_2D(L,J), DLTSNH4_2D(L,J), "After"
-!      ENDIF
-!!     *******************************
-
           UREA_2D(L, J) = UREA_2D(L, J) + DLTUREA_2D(L, J)
 
 !!         Underflow trapping
@@ -1559,19 +1441,6 @@ C=======================================================================
       Cells % State % SNH4 = SNH4_2D  !kg/ha
       Cells % State % SNO3 = SNO3_2D  !kg/ha
       Cells % State % UREA = UREA_2D
-
-
-**************************************************************************
-!     TEMP CHP
-      IF (YRDOY == ReportDate) THEN
-        SELECT CASE(DYNAMIC)
-        CASE(2); P1 = 1  !End of initialization
-        CASE(4); P1 = 60 !End of integration
-        END SELECT
-        WRITE(555,555)((P1,"SNO3",L,J,SNO3_2D(L,J),J=1,J1),L=1,L1)
-        WRITE(555,555)((P1,"SNH4",L,J,SNH4_2D(L,J),J=1,J1),L=1,L1)
-      ENDIF
-**************************************************************************
 
 !***********************************************************************
 !***********************************************************************
