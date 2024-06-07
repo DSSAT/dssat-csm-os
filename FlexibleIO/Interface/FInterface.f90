@@ -12,7 +12,9 @@
 ! 02/27/2018 FO Restructured all get/set functions to link with the new CInterface.
 ! 08/10/2018 FO Added Read Weather interface
 !========================================================================
-module class_ioset
+module flexibleio
+    implicit none
+    
     type csm_io_type
     contains
         procedure :: getReal
@@ -48,11 +50,11 @@ module class_ioset
         setRealIndexMemory, setIntegerIndexMemory, setCharIndexMemory, &
         setRealYrdoyMemory, setIntegerYrdoyMemory, setCharYrdoyMemory
 
-
         procedure :: readfile
         
     end type csm_io_type
 
+    type(csm_io_type) :: fio
 contains
 
     subroutine getReal(ioset, group, varname, value)
@@ -721,54 +723,93 @@ contains
         call readinputfile(groupstr)
         
     end subroutine readfile
+
+     subroutine FILETYPE(fileww, rtype, errcode)
+
+        use, intrinsic :: iso_c_binding
+        character(len=*), intent(in) :: fileww
+        character(LEN(fileww)+1) :: filewwstr
+        character(len=*), intent(out) :: rtype
+        integer, intent(out) :: errcode
+
+        interface
+            subroutine readftype(filewwstr, rtype, errcode)&
+                bind(C, name = 'FILETYPE')
+                import :: c_char
+                character(kind = c_char), dimension(*) :: filewwstr
+                character(kind = c_char), dimension(*) :: rtype
+                integer :: errcode                
+            end subroutine readftype
+        end interface
+
+        filewwstr = fileww
+        filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)        
+        rtype = CHAR(0)        
+        
+        call readftype(filewwstr, rtype, errcode)
+        
+     end subroutine FILETYPE
+     
+     subroutine READ_WSTAT(fileww, errcode)
+
+        use, intrinsic :: iso_c_binding
+        character(len=*), intent(in) :: fileww
+        character(LEN(fileww)+1) :: filewwstr
+        integer, intent(out) :: errcode
+
+        interface
+            subroutine readwstat(filewwstr, errcode)&
+                bind(C, name = 'READ_WSTAT')
+                import :: c_char
+                character(kind = c_char), dimension(*) :: filewwstr
+                integer :: errcode                
+            end subroutine readwstat
+        end interface
+
+        filewwstr = fileww
+        filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)
+        
+        call readwstat(filewwstr, errcode)
+        
+     end subroutine READ_WSTAT
     
-end module class_ioset  
-
-
-module flexibleio
-
-    use class_ioset
-
-    implicit none
-
-    type(csm_io_type) :: fio
-
-end module flexibleio
-
-subroutine READWEATHER(fileww, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)
+     subroutine READ_WTH_Y2_4K(fileww, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)
   
-    use, intrinsic :: iso_c_binding
-    character(len=*), intent(in) :: fileww
-    character(LEN(fileww)+1) :: filewwstr
-    integer, intent(in) :: yrdoy
-    integer, intent(out) :: firstweatherday
-    integer, intent(out) :: lastweatherday
-    integer, intent(out) :: eof
-    integer, intent(out) :: lnum
-    integer, intent(out) :: nrecords
-    character(len=*), intent(out) :: erryrdoy
-    integer, intent(out) :: errcode
-
-    interface
-        subroutine readwthfile(filewwstr, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)&
-            bind(C, name = 'INPUTWEATHER')
-            import :: c_char
-            character(kind = c_char), dimension(*) :: filewwstr
-            integer :: yrdoy
-            integer :: firstweatherday
-            integer :: lastweatherday
-            integer :: eof
-            integer :: lnum
-            integer :: nrecords
-            character(kind = c_char), dimension(*) :: erryrdoy
-            integer :: errcode                
-        end subroutine readwthfile
-    end interface
-
-    filewwstr = fileww
-    filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)        
-    erryrdoy = CHAR(0)        
-
-    call readwthfile(filewwstr, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)
+         use, intrinsic :: iso_c_binding
+         character(len=*), intent(in) :: fileww
+         character(LEN(fileww)+1) :: filewwstr
+         integer, intent(in) :: yrdoy
+         integer, intent(out) :: firstweatherday
+         integer, intent(out) :: lastweatherday
+         integer, intent(out) :: eof
+         integer, intent(out) :: lnum
+         integer, intent(out) :: nrecords
+         character(len=*), intent(out) :: erryrdoy
+         integer, intent(out) :: errcode
     
-end subroutine READWEATHER
+         interface
+             subroutine readwthfile(filewwstr, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)&
+                 bind(C, name = 'READ_WTH_Y2_4K')
+                 import :: c_char
+                 character(kind = c_char), dimension(*) :: filewwstr
+                 integer :: yrdoy
+                 integer :: firstweatherday
+                 integer :: lastweatherday
+                 integer :: eof
+                 integer :: lnum
+                 integer :: nrecords
+                 character(kind = c_char), dimension(*) :: erryrdoy
+                 integer :: errcode                
+             end subroutine readwthfile
+         end interface
+    
+         filewwstr = fileww
+         filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)        
+         erryrdoy = CHAR(0)        
+    
+         call readwthfile(filewwstr, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)
+        
+     end subroutine READ_WTH_Y2_4K
+    
+end module flexibleio  
+
