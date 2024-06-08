@@ -229,6 +229,10 @@
 !     Initial shoot mass 
       Shut_kg = 0.0
 
+!     Initial fraction of physiological age for veg and repro
+      PhFrac1 = 0.0
+      PhFrac2 = 0.0
+
       IF (ISWPHO == 'N') RETURN
 
       CALL OPPlantP(DYNAMIC, MDATE, YRPLT, 

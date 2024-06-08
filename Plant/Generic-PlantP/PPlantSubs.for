@@ -163,7 +163,9 @@
 !     then save it for next time step.
 !     ------------------------------------------------------------------
 !     2024-05-23 - no mobilization from shoots until reproductive phase
-      IF (PhFrac2 > 0.001) THEN
+!     chp - this needs more evaluation before adoption. May be too simplistic
+!       and it has a large effect on existing experiments.
+!      IF (PhFrac2 > 0.001) THEN
 !       Shoots
         PShutMobPool = AMAX1(0.0, ShutMob * PConc_Shut) + PShutMobPool
 !       Amount which can be mobilized should not reduce P below minimum
@@ -203,7 +205,7 @@
           PShelMobToday = PShelMobToday - PShelDem
           PShelDem = 0.0
         ENDIF
-      ENDIF
+!      ENDIF
 
 !     ------------------------------------------------------------------
 !     If mobilization pools exist, they should be 
