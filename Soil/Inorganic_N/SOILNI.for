@@ -1063,10 +1063,45 @@ C=======================================================================
 !*************************************************************************************************
 !*************************************************************************************************
 
-!     END OF 1D GHG PROCESSES, NOW BACK TO 2D.
-!     FIRST NEED TO CONVERT DLT-N VALUES BACK TO 2D
+!*************************************************************************************************
+!*************************************************************************************************
+!    NFLUX is done in 1D for 1D simulations and 2D for 2D simulations. That is, the DLTUREA and
+!     DLTSNO3 are updated for 1D simulations. The DLTUREA_2D and DLTSNO3_2D are updated for the 2D 
+!     simulation. 
 
-!     Look at only the differences in DLTSNO3 and DLTSNH4 due to GHG processes
+!     At this point, the 1D processes above have changed the 1D DLT variables. 1D NFLUX
+!     will vary those 1D DLT variables further. 
+
+!     If it is a 2D simulation, then the 1D processes above have not yet been incorporated into the
+!     2D flux variable. First, add in the 1D process effects to the 2D DLT variables.
+!     Then do 2D NFLUX below.
+!*************************************************************************************************
+!     ------------------------------------------------------------------
+!     Downward and upward N movement with the water flow.
+!     ------------------------------------------------------------------
+      TLeachD = 0.0
+      NTILEDR = 0.0   !HJ added
+
+      IF (.NOT. SIM2D) THEN  !1D simulation
+        IF (IUON) THEN
+          NSOURCE = 1    !Urea.
+          CALL NFLUX ( 
+     &      ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,     !Input
+     &      UREA, NSOURCE, SW, TDFC, TDLNO,                 !Input
+     &      DLTUREA, CLeach, TLeachD, CNTILEDR, NTILEDR)    !Output !HJ
+        ENDIF
+
+        NSOURCE = 2   !NO3.
+        CALL NFLUX ( 
+     &    ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
+     &    SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
+     &    DLTSNO3, CLeach, TLeachD, CNTILEDR, NTILEDR)      !Output !HJ
+      ENDIF
+
+!     END OF 1D PROCESSES.
+!     NEED TO CONVERT DLT-N VALUES BACK TO 2D
+
+!     Look at only the differences in DLTSNO3 and DLTSNH4 due to GHG and NFLUX processes.
       DLTSNO3_DIFF = DLTSNO3 - DLTSNO3_SAVE
       DLTSNH4_DIFF = DLTSNH4 - DLTSNH4_SAVE
       DLTUREA_DIFF = DLTUREA - DLTUREA_SAVE
@@ -1143,39 +1178,8 @@ C=======================================================================
 
 !*************************************************************************************************
 !*************************************************************************************************
-!    NFLUX is done in 1D for 1D simulations and 2D for 2D simulations. That is, the DLTUREA and
-!     DLTSNO3 are updated for 1D simulations. The DLTUREA_2D and DLTSNO3_2D are updated for the 2D 
-!     simulation. 
-
-!     At this point, the 1D processes above have changed the 1D DLT variables. 1D NFLUX
-!     will vary those 1D DLT variables further. 
-
-!     If it is a 2D simulation, then the 1D processes above have not yet been incorporated into the
-!     2D flux variable. Calculate the 2D NFLUX first, then add in the 1D process effects to the 
-!     2D DLT variables.
-!*************************************************************************************************
-!     ------------------------------------------------------------------
-!     Downward and upward N movement with the water flow.
-!     ------------------------------------------------------------------
-      TLeachD = 0.0
-      NTILEDR = 0.0   !HJ added
-
-      IF (.NOT. SIM2D) THEN  !1D simulation
-        IF (IUON) THEN
-          NSOURCE = 1    !Urea.
-          CALL NFLUX ( 
-     &      ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,     !Input
-     &      UREA, NSOURCE, SW, TDFC, TDLNO,                 !Input
-     &      DLTUREA, CLeach, TLeachD, CNTILEDR, NTILEDR)    !Output !HJ
-        ENDIF
-
-        NSOURCE = 2   !NO3.
-        CALL NFLUX ( 
-     &    ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
-     &    SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
-     &    DLTSNO3, CLeach, TLeachD, CNTILEDR, NTILEDR)      !Output !HJ
-
-      ELSE !2D simulation
+!     2D NFLUX is done after the 1D process rates have been added to DLTSNH4_2D and DLTSNO3_2D
+      IF (Sim2D) THEN 
         IF (IUON) THEN
           NSOURCE = 1    !Urea.
           CALL NFLUX_2D (DYNAMIC, 
@@ -1203,9 +1207,19 @@ C=======================================================================
 
         CNTILEDR = 0.0
         NTILEDR = 0.0
-      ENDIF
 
-      CALL PUT('NITR','TLCHD',TLeachD) 
+!       Convert NITRIF, DLTSNO3 and DLTUREA from 2D to 1D prior to integration
+        CALL Cell2Layer_2D(
+     &    DLTSNO3_2D, CELLS % Struc, NLAYR,  !Input
+     &    DLTSNO3)                           !Output
+
+        CALL Cell2Layer_2D(
+     &    DLTUREA_2D, CELLS % Struc, NLAYR,  !Input
+     &    DLTUREA)                           !Output
+
+      ENDIF  !End 2D NFLUX
+
+      CALL PUT('NITR','TLCHD',TLeachD)
 
 !*************************************************************************************************
 !*************************************************************************************************
