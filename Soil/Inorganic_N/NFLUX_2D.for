@@ -170,8 +170,8 @@
 
             NTEMP(L,j)   = NTEMP(L,j)   - Nflux_D(L,j)
             IF (L < NRowsTot) THEN
-              NTEMP(L+1,j) = NTEMP(L+1,j) + Nflux_D(L,j) !* ColFrac(L, j)
-!     &              / ColFrac(L + 1, j)
+              NTEMP(L+1,j) = NTEMP(L+1,j) + Nflux_D(L,j) 
+!     &            * ColFrac(L, j) / ColFrac(L + 1, j)
             ELSE
 !             Accumulate the N lost by leaching below profile depth.
               NLeach(j) = NFlux_D(NRowsTot,j)

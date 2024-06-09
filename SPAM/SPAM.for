@@ -79,7 +79,7 @@ C=======================================================================
       CHARACTER*6, PARAMETER :: ERRKEY = "SPAM  "
 !      CHARACTER*78 MSG(2)
 
-      INTEGER DYNAMIC, L, NLAYR, Col
+      INTEGER DYNAMIC, L, NLAYR, Col, StartRow
 
       REAL CO2, SRAD, TAVG,
      &    TMAX, TMIN, WINDSP
@@ -383,7 +383,15 @@ C=======================================================================
 !             Calculate the availability of soil water for use in SOILEV.
               DO Col = 1, NColsTot
                 IF (CONTROL % Sim2D) THEN
-                  SWAVAIL(Col) = Max(0.0, SWV(1,Col)
+                  IF (CELLS(1,col)%Struc%Cell_Type == 3) THEN
+!                   This is either a 1D simulation in the 2D bed, start ES at top
+                    StartRow = 1
+                  ELSE
+!                   This is a 2D furrow column, ES is at top of furrow
+                    StartRow = BedDimension % FurRow1
+                  ENDIF
+
+                  SWAVAIL(Col) = Max(0.0, SWV(StartRow,Col)
      &               + CELLS(1,Col) % Rate % SWFlux_L
      &               + CELLS(1,Col) % Rate % SWFlux_R
      &               + CELLS(1,Col) % Rate % SWFlux_D)

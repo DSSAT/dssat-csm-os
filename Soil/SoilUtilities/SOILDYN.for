@@ -924,7 +924,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, SW,
      &        SoilProp_Bed, SoilProp_Furrow)
 
-      IF (CONTROL%SIM2D) THEN  !MESOL = 'D' for 2D raised bed 
+      IF (SIM2D) THEN  !MESOL = 'D' for 2D raised bed 
         SOILPROP_profile = SOILPROP  !Save original profile info
         SOILPROP = SoilProp_Bed      !this is the new soil profile data
 
@@ -1073,7 +1073,7 @@ C  tillage and rainfall kinetic energy
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
-!     IF (SIM2D) RETURN
+      IF (SIM2D) RETURN
 
 !     Initial SOM not established until end of SEASINIT section so 
 !     remember initial values here.  Units are kg[Organic matter]/ha
@@ -1245,7 +1245,7 @@ C  tillage and rainfall kinetic energy
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
-      IF (ISWWAT == 'N') RETURN
+      IF (ISWWAT == 'N' .or. SIM2D) RETURN
 
 !-----------------------------------------------------------------------
 !  Initialize surface soil properties 
@@ -1460,7 +1460,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       ENDDO
 
 !     tillage is only allowed for flat system, not bedded
-      SOILPROP_FURROW = SOILPROP
+!     SOILPROP_FURROW = SOILPROP
       SOILPROP_BED    = SOILPROP
       CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP)
 

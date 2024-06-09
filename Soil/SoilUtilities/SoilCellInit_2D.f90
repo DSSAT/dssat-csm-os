@@ -427,7 +427,10 @@
           DS_shift(M) = DS(L) - DigDep
           DLAYR_shift(M) = DS(L) - Prev_dep
           Prev_dep = DS(L)
-    
+
+          Soilprop_Furrow%NLAYR    = M
+          Soilprop_Furrow%DLAYR(M) = DLAYR_shift(M)
+          Soilprop_Furrow%DS(M)    = DS_SHIFT(M)
           SoilProp_Furrow%BD(M)    = Soilprop%BD(L)
           SoilProp_Furrow%CEC(M)   = Soilprop%CEC(L)
           SoilProp_Furrow%CLAY(M)  = Soilprop%CLAY(L)
@@ -646,7 +649,7 @@
         SoilProp_Bed%nVG(Row)    = SoilProp_Furrow%nVG(M)
         SoilProp_Bed%KG2PPM(Row) = SoilProp_Furrow%KG2PPM(M) 
         SoilProp_Bed%TEXTURE(Row)= SoilProp_Furrow%TEXTURE(M) 
-        SoilProp_Bed%COARSE(Row)= SoilProp_Furrow%COARSE(M) 
+        SoilProp_Bed%COARSE(Row) = SoilProp_Furrow%COARSE(M) 
         SoilProp_Bed%TotOrgN(Row)= SoilProp_Furrow%TotOrgN(M)
         NewPropNH4I(Row)         = FurrowNH4I(M)
         NewPropNO3I(Row)         = FurrowNO3I(M)
