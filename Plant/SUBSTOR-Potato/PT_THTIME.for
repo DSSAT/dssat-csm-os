@@ -52,15 +52,15 @@ C-----------------------------------------------------------------------
       ! Soil thermal time (tuber)
       !
       IF (ISTAGE .GE. 6 .OR. ISTAGE .LE. 2) THEN
-         !IF (ST(L0) .GE. 2.0 .AND. ST(L0) .LT. 15.0) THEN
-         IF (ST(L0) .GT. 2.0 .AND. ST(L0) .LE. 15.0) THEN !corected by MSKhan
-           !STT = 0.0769*(ST(L0)-2.0)
-            STT = 0.079*(ST(L0)-2.0) !value corrected by Khan
-           !ELSE IF (ST(L0) .GE. 15.0 .AND. ST(L0) .LT. 23.0) THEN
-          ELSE IF (ST(L0) .GE. 15.0 .AND. ST(L0) .LE. 23.0) THEN !corrected by MSKhan  
+         IF (ST(L0) .GE. 2.0 .AND. ST(L0) .LT. 15.0) THEN
+        ! IF (ST(L0) .GT. 2.0 .AND. ST(L0) .LE. 15.0) THEN !corected by MSKhan
+           STT = 0.0769*(ST(L0)-2.0)
+            !STT = 0.079*(ST(L0)-2.0) !value corrected by Khan
+           ELSE IF (ST(L0) .GE. 15.0 .AND. ST(L0) .LT. 23.0) THEN
+          !ELSE IF (ST(L0) .GE. 15.0 .AND. ST(L0) .LE. 23.0) THEN !corrected by MSKhan  
             STT = 1.0
-          !ELSE IF (ST(L0) .GE. 23.0 .AND. ST(L0) .LT. 33.0) THEN
-          ELSE IF (ST(L0) .GT. 23.0 .AND. ST(L0) .LE. 33.0) THEN !corrected by MSKhan 
+          ELSE IF (ST(L0) .GE. 23.0 .AND. ST(L0) .LT. 33.0) THEN
+          !ELSE IF (ST(L0) .GT. 23.0 .AND. ST(L0) .LE. 33.0) THEN !corrected by MSKhan 
             STT = 1.0 - 0.1*(ST(L0) - 23.0)
           ELSE
             STT = 0.0
