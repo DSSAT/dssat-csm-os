@@ -233,8 +233,9 @@ C=======================================================================
         ENDIF
       ENDIF
 
-      IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 5) THEN
-        CALL PT_PHENOL (
+      IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 5) THEN ! ISTAGE is 5 at the start of simulation
+          ! First run of PT_PHENOL updates ISTAGE from 5 to 7
+        CALL PT_PHENOL (  
      &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, !Input
      &    NLAYR, NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
      &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,       !Input
@@ -243,9 +244,10 @@ C=======================================================================
      &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,    !Output
      &    RATE) ! Different than decalaration Khan
       ENDIF
+!PT_GROSUB is called only during ISTAGE 1: vegetative to tuber initiation and ISTAGE 2: initiation to maturity
 
       IF (ISTAGE .LT. 5) THEN
-        CALL PT_GROSUB (RATE,
+        CALL PT_GROSUB (RATE,                             ! PT_GROSUB is called during ISTAGE 1 and 2
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
      &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
