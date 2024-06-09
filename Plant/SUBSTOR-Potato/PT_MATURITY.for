@@ -32,8 +32,8 @@
       ! FRYLDB = ((CM/RM)*log(2.0)) * 0.01;   ! WB
       WB = ((CM/RM)*log(2.0)) * 0.01;         ! WB
 
-      !W = FRYLD   ! uncommented: based on fresh yield
-      W = YIELD    ! uncommented: based on dry yield
+      W = FRYLD   ! uncommented: based on fresh yield
+      !W = YIELD    ! uncommented: based on dry yield
       WDELTA = 0.0
       SLOPE = 0.0
       !TDELTA = DTT
