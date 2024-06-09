@@ -301,7 +301,7 @@ C-----------------------------------------------------------------------
              STGDOY(ISTAGE) = YRDOY
              YREMRG = YRDOY       !CHP 12/4/01
              XSTAGE = 1.0
-             DTT    = STT
+             DTT    = STT !Khan: reason?
              CALL PT_PHASEI ( 
      &         ISTAGE, CUMDTT, XPLANT, SPRLAP,            !I/O
      &         CTII, CUMSTT, MAXLAI, SENLA, TSPRWT, XDTT) !Output
