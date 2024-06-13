@@ -23,7 +23,7 @@ c     Define CANEGRO composite variables:
 
       IMPLICIT NONE
       EXTERNAL GETDESC, OPVIEW, READA, SUMVALS, EvaluateDat, 
-     &  ERROR, TIMDIF
+     &  ERROR, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI

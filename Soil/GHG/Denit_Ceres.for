@@ -288,7 +288,7 @@ C         Compute the N2:N2O Ratio
 !-----------------------------------------------------------------------
       
 ! DENITRIF(L)   Denitrification rate in soil layer L (kg [N] / ha / d)
-! NO3(L)        Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)        Nitrate in soil layer L (ï¿½g[N] / g[soil])
 
 !***********************************************************************
 

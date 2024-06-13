@@ -27,7 +27,7 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       EXTERNAL FIND, ERROR, FOR_STNAMES, FOR_OPVIEW, READA, 
      &  READA_Dates, CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat,
-     &  TIMDIF
+     &  TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IDETS,IPLTI, PLME
