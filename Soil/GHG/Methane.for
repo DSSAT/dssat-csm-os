@@ -50,8 +50,10 @@ C=======================================================================
       REAL, PARAMETER :: spd = 24.*3600.   ! seconds per day
 !     Reference height for the Arah model to be the top of the bund
       REAL, PARAMETER :: RefHeight = 100. ! mm
-      REAL, PARAMETER :: BufferRegenRate = 0.070 !1/d EHFMS changed, before was 0.06
-      REAL, PARAMETER :: frac_afpmax = 0.30 !EHFMS created this parameter 
+      !1/d EHFMS changed, before was 0.06
+      REAL, PARAMETER :: BufferRegenRate = 0.070
+      !EHFMS created this parameter 
+      REAL, PARAMETER :: frac_afpmax = 0.30
       DYNAMIC = CONTROL % DYNAMIC
       DLAYR = SOILPROP % DLAYR
       DLL   = SOILPROP % LL
@@ -101,13 +103,15 @@ C-----------------------------------------------------------------------
 
       FloodCH4 = 0.0
       DO i=1,NLAYR
-!       Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
+!       Convert the alternate electron acceptors in each layer 
+!       from mol Ceq/m3 to kgC/ha
 !       Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,1) = SAEA(i) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,2) = 0.0
       ENDDO
 
-!     proportionality constant for root transmissivity and RLV	(0.00015 m air/(m root))
+!     proportionality constant for root transmissivity and RLV	
+!     (0.00015 m air/(m root))
 !     lamda_rho = lamdarho  ! 0.00015
       lamda_rho = 0.00015
 
@@ -136,8 +140,10 @@ C-----------------------------------------------------------------------
       CH4Ebullition  = 0.0
       CH4Diffusion   = 0.0
 
-!     Calculate total CO2 coming in from decomposition of organic matter, newCO2Tot
-!     Transfer newCO2 from soil organic matter modules to CSubstrate variable
+!     Calculate total CO2 coming in from decomposition 
+!     of organic matter, newCO2Tot
+!     Transfer newCO2 from soil organic matter modules 
+!     to CSubstrate variable
       CSubstrate = 0.0
       newCO2Tot = 0.0
       DO i = 1, SOILPROP % NLAYR
@@ -187,7 +193,8 @@ C-----------------------------------------------------------------------
 
 !       calculate reoxidisation of buffer if soil is aerated
 !         IF (afp(i).GT.0.0) THEN !     
-      IF (afp(i).GT.frac_afpmax*afpmax) THEN ! EHFMS: methane production under conditions of partially saturated soil     
+! EHFMS: Methane Prod. under conditions of partially saturated soil
+      IF (afp(i).GT.frac_afpmax*afpmax) THEN 
          rCH4 = 0.0              ! no CH4 production
          rCO2 = CSubstrate(i)    ! aerobic respiration
          rbuff = -MIN(BufferRegenRate * afp(i) / afpmax * Buffer(i,2),
@@ -235,7 +242,8 @@ C-----------------------------------------------------------------------
       Lz = drain * 1.e-3/spd    ! mm/d --> m3/m2/s
 
 !     Call the steady-state routine of the Arah model
-!     TSubstrate comes out of these routines, ~10% of TCH4Substrate for IRLB9701.RIX, trt 4
+!     TSubstrate comes out of these routines, 
+!     ~10% of TCH4Substrate for IRLB9701.RIX, trt 4
       CALL setup(NLAYR+n1)
       CALL SteadyState
 
@@ -254,7 +262,8 @@ C-----------------------------------------------------------------------
         LeachingFrac    = 0.0
       ENDIF
 
-!!     Limit leaching fraction + consumption fraction to no more than production
+!!     Limit leaching fraction + consumption fraction 
+!      to no more than production
 !      IF (ConsumptionFrac + LeachingFrac .GT. ProductionFrac) THEN
 !        ReductFact = ProductionFrac / (ConsumptionFrac + LeachingFrac)
 !        ConsumptionFrac = ConsumptionFrac * ReductFact
@@ -264,7 +273,8 @@ C-----------------------------------------------------------------------
       EmissionFrac = ProductionFrac - ConsumptionFrac - LeachingFrac
       DiffusionFrac = EmissionFrac - (PlantFrac + EbullitionFrac)
 
-!     Calculate actual flux rates (kgC/ha/d) based on CERES-Rice substrate calculations
+!     Calculate actual flux rates (kgC/ha/d) based on 
+!     CERES-Rice substrate calculations
       CH4Production  = TCH4Substrate * ProductionFrac
       CH4Consumption = TCH4Substrate * ConsumptionFrac
       CH4PlantFlux   = TCH4Substrate * PlantFrac
