@@ -45,7 +45,7 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       EXTERNAL ERROR, FIND, WARNING, INFO, TEXTURECLASS, SOILLAYERCLASS,
      &  CALBROKCRYPARA, RETC_VG, SOILLAYERTEXT, PRINT_SOILPROP, 
-     &  SETPM, OPSOILDYN, ALBEDO, TILLEVENT, SOILMIXING
+     &  SETPM, OPSOILDYN, ALBEDO_avg, TILLEVENT, SOILMIXING
       SAVE
 
       LOGICAL NOTEXTURE, PHFLAG, FIRST, NO_OC
@@ -1049,7 +1049,7 @@ C  tillage and rainfall kinetic energy
       ENDIF
 
 !     ------------------------------------------------------------------
-      CALL ALBEDO(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
+      CALL ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
       IF (INDEX('RSM',MEINF) > 0) THEN 
@@ -1485,7 +1485,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
 
 !=======================================================================
-      SUBROUTINE ALBEDO(KTRANS, MEINF, MULCH, SOILPROP, SW1, XHLAI)
+      SUBROUTINE ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW1, XHLAI)
       !Update soil albedo based on mulch cover and soil water content in
       !top layer
 
@@ -1563,7 +1563,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !     &      FF, SWALB, MULCHCOVER, MSALB, CANCOV, CMSALB
 
       RETURN
-      END SUBROUTINE ALBEDO
+      END SUBROUTINE ALBEDO_avg
 !=======================================================================
 
 !=======================================================================
@@ -2123,8 +2123,6 @@ C=======================================================================
 !  08/17/2011  
 !-----------------------------------------------------------------------
 !  Called by: SoilDYN, CellInit_2D when (DYNAMIC = RUNINIT) and 
-!             (((INDEX('QFN',RNMODE) <=0 or (RUN=1 .AND. REPNO=11)) or 2D case)
-!  Calls    : 
 !=======================================================================
       SUBROUTINE SoilLayerClass(ISWITCH, 
      &    MULTI, DS, NLAYR, SLDESC, TAXON,                !Input
@@ -2240,8 +2238,8 @@ C=======================================================================
 
 !==============================================================================
 !     Subroutine SETPM
-!     Initialization for cell structure and initial conditions
-      SUBROUTINE SETPM(SOILPROP)                        !input/output
+!     Calculate the fraction of plastic mulch cover 
+      SUBROUTINE SETPM(SOILPROP)                 !input/output
 !   ---------------------------------------------------------
       USE ModuleData
       Implicit NONE
@@ -2327,8 +2325,10 @@ C=======================================================================
           call INFO(1,errkey,msg)
         ENDIF
       ENDIF
-    
-      PMFRACTION = 0.0
+
+!     Default = no plastic mulch cover
+      PMFRACTION = 0.0  !no cover
+
       IF (PMCover) THEN
         if (PMWD .GE. ROWSPC_CM) THEN
           SOILPROP % SALB   = PMALB
@@ -2338,6 +2338,7 @@ C=======================================================================
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
       ENDIF
+
       CALL PUT("PM", "PMFRACTION", PMFRACTION)
 
       RETURN      
