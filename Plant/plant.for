@@ -891,7 +891,6 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! YRPLT     Planting date (YYYYDDD)
 !===========================================================================
 
-
 !===========================================================================
       SUBROUTINE READ_ASCE_KT(CONTROL, MEEVP)
 !     Generic routine to read evapotranspiration species parameters

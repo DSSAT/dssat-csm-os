@@ -1428,7 +1428,9 @@ C-GH              ENDIF                                               !
      &                 .AND. NWSD .GT. 10) THEN
               WRITE(MESSAGE(1),2800)
               CALL WARNING(1,ERRKEY, MESSAGE)
-              WRITE (*,2800)
+              IF (ISWITCH % IDETL .NE. '0') THEN                     !
+                WRITE (*,2800)
+              ENDIF                                                  !
               IF (IDETO .EQ. 'Y') THEN
                   WRITE (NOUTDO,2800)
               ENDIF   
