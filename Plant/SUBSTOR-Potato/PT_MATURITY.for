@@ -37,7 +37,7 @@
       WDELTA = 0.0
       SLOPE = 0.0
       !TDELTA = DTT
-      TDELTA = STT
+      TDELTA = STT !Reason?
 
       !IF (.NOT. TB_STILL_NOT_FOUND .AND. W .GE. WB) THEN !Find the first point when W greater than or equal to Wb
       IF (.NOT. TUBINITFOUND .AND. W .GE. WB) THEN !Finds Tb
@@ -50,7 +50,7 @@
         IF (WPREV .GT. 0.0 .AND. TDELTA .GT. 0.) THEN ! Avoid division by 0
           WDELTA = ABS(W - WPREV)                     !Y2-Y1
           SLOPE = WDELTA / TDELTA                     !Y2-Y1/X2-X1
-          IF (SLOPE .LT. THRESH .AND. W .GT. WB) THEN  !slope can be nearly 0 at two inflection points: at WB and at WMAX (finds TE)
+          IF (SLOPE .LT. THRESH .AND. W .GT. WB) THEN !slope can be nearly 0 at two inflection points: at WB and at WMAX (finds TE)
             MAXYIELDED = .TRUE.
             ! Print for testing
 !            PRINT 101, "WMAX:", FRYLD, ", G2: ", G2, ", G3: ", G3
