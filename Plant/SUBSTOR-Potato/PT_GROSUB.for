@@ -24,7 +24,7 @@ C=======================================================================
 
       SUBROUTINE PT_GROSUB (DYNAMIC, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
-     &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
+     &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
      &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
      &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
 
@@ -81,7 +81,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(4)  :: SENST, SENSF
       REAL, DIMENSION(10) :: CO2X, CO2Y
       REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
-     &    NH4, NO3, SAT, UNO3, UNH4  
+     &    SAT, UNO3, UNH4  
 
       TYPE (SwitchType) ISWITCH
 
@@ -179,25 +179,13 @@ C-----------------------------------------------------------------------
       TUBN    = 0.0
       TUBWT   = 0.0
       
-!      SELECT CASE(ISWITCH % MESOL)
-!      CASE ('D')
-!        CALL PT_NUPTAK_2D (SEASINIT, CELLS,
-!     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
-!     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
-!     &    TOPWT, TUBCNP, TUBWT,                           !Input
-!     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
-!     &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
-!     &    WTNUP)                                          !Output
-
-!      CASE DEFAULT
-        CALL PT_NUPTAK (SEASINIT,  CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
+      CALL PT_NUPTAK (SEASINIT,  CELLS,
+     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
      &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
-!      END SELECT
 
       CARBO  = 0.0
       PCARB  = 0.0
@@ -592,25 +580,13 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! SRVNU  = AMAX1 (SRVNU, 0.0)
           ! AVAILN = (SRVNU)+(0.5*DDEADLF*TMNC)
 
-!      SELECT CASE(ISWITCH % MESOL)
-!      CASE ('D')
-!        CALL PT_NUPTAK_2D (RATE, CELLS,
-!     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
-!     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
-!     &    TOPWT, TUBCNP, TUBWT,                           !Input
-!     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
-!     &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
-!     &    WTNUP)                                          !Output
-
-!      CASE DEFAULT
         CALL PT_NUPTAK (RATE,  CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
+     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
      &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
-!      END SELECT
 
 !-----------------------------------------------------------------------
 ! Jan 2000, Walter Bowen 
@@ -846,8 +822,8 @@ C     Read Crop Parameters from FILEC
             END SELECT
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEC,LNUM)
           ENDIF
-        END DO
-      END DO
+        ENDDO
+      ENDDO
 
   200 CLOSE (LUNCRP)
 C-----------------------------------------------------------------------

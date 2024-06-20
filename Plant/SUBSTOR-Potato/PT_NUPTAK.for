@@ -52,7 +52,7 @@ C           of a simulation
 C=======================================================================
 
       SUBROUTINE PT_NUPTAK (DYNAMIC, CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
+     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
      &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
      &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
@@ -80,9 +80,9 @@ C=======================================================================
       REAL WTNUP, XMIN, XNDEM
       REAL SurfaceVal
 
-      REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
-      REAL, DIMENSION(NL) :: RNO3U, RNH4U
-      REAL, DIMENSION(NL) :: SAT, SNH4, SNO3, UNO3, UNH4
+      REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL
+!     REAL, DIMENSION(NL) :: RNO3U, RNH4U
+      REAL, DIMENSION(NL) :: SAT, UNO3, UNH4
 
       INTEGER J, FurCol1
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
@@ -130,8 +130,8 @@ C-----------------------------------------------------------------------
       ARVCHO = 0.0
       NUF    = 0.0
       TRNU   = 0.0
-      RNO3U    = 0.0
-      RNH4U    = 0.0
+!     RNO3U    = 0.0
+!     RNH4U    = 0.0
       UNO3     = 0.0
       UNH4     = 0.0
       RNO3U_2D = 0.0
@@ -140,57 +140,54 @@ C-----------------------------------------------------------------------
       UNO3_2D  = 0.0
 
       DO L = 1, NRowsTot
-        SNO3(L) = NO3(L) / KG2PPM(L)
-        SNH4(L) = NH4(L) / KG2PPM(L)
         DO J = 1, NColsTot
+!         Concentration
           SELECT CASE(Cell_type(L,J))
-          CASE(3)
-            NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / BedFrac(L,J)
-            NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / BedFrac(L,J)
-          CASE(4,5)
-            NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
-            NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+          CASE(3,4,5)
+             NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+             NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
           END SELECT
         ENDDO
-      ENDDO
+      ENDDO  
 
 C-----------------------------------------------------------------------
 C   Calculate potential N supply in soil layers with roots (TRNU)
 C-----------------------------------------------------------------------
-
       DO L = 1, NRowsTot 
         DO J = 1, NColsTot
-          IF (RLV_2D(L, J) .NE. 0.0) THEN
-             ESW(L) = DUL(L) - LL(L)
-             FNO3 = 1.0 - EXP(-0.0275*NO3_2D(L, J))
-             FNH4 = 1.0 - EXP(-0.0250*NH4_2D(L, J))
-             IF (FNO3 .LT. 0.03) THEN
-                FNO3 = 0.0
-             ENDIF
-             IF (FNH4 .LT. 0.03) THEN
-                FNH4 = 0.0
-             ENDIF
-             FNO3  = AMIN1 (FNO3, 1.0)
-             FNH4  = AMIN1 (FNH4, 1.0)
-
-             SMDFR = (SWV(L, J) - LL(L)) / ESW(L)
-             SMDFR = AMAX1 (SMDFR, 0.0)
-
-             IF (SMDFR .GT. 1.0) THEN
-                SMDFR = (SAT(L) - SWV(L, J)) / (SAT(L) - DUL(L))
-             ENDIF
-
-             RFAC = RLV_2D(L, J) * SMDFR * SMDFR * DLAYR (L) * 100.0
-             RNO3U_2D(L, J) = RFAC * FNO3 * 0.006
-             RNH4U_2D(L, J) = RFAC * FNH4 * 0.006
-             RNO3U_2D(L, J) = MAX(0.0, RNO3U_2D(L, J))
-             RNH4U_2D(L, J) = MAX(0.0, RNH4U_2D(L, J))
-             TRNU = TRNU + (RNO3U_2D(L, J) + RNH4U_2D(L, J)) * 
-     &              ColFrac(L, J) !kg[N]/ha
-
-          ENDIF
-        END DO
-      END DO
+          SELECT CASE(Cell_type(L,J))
+          CASE(3,4,5)
+            IF (RLV_2D(L, J) .NE. 0.0) THEN
+              ESW(L) = DUL(L) - LL(L)
+              FNO3 = 1.0 - EXP(-0.0275*NO3_2D(L,J))
+              FNH4 = 1.0 - EXP(-0.0250*NH4_2D(L,J))
+              IF (FNO3 .LT. 0.03) THEN
+                 FNO3 = 0.0
+              ENDIF
+              IF (FNH4 .LT. 0.03) THEN
+                 FNH4 = 0.0
+              ENDIF
+              FNO3  = AMIN1 (FNO3, 1.0)
+              FNH4  = AMIN1 (FNH4, 1.0)
+            
+              SMDFR = (SWV(L,J) - LL(L)) / ESW(L)
+              SMDFR = AMAX1 (SMDFR, 0.0)
+            
+              IF (SMDFR .GT. 1.0) THEN
+                 SMDFR = (SAT(L) - SWV(L, J)) / (SAT(L) - DUL(L))
+              ENDIF
+            
+              RFAC = RLV_2D(L, J) * SMDFR * SMDFR * DLAYR (L) * 100.0
+              RNO3U_2D(L,J) = RFAC * FNO3 * 0.006
+              RNH4U_2D(L,J) = RFAC * FNH4 * 0.006
+              RNO3U_2D(L,J) = MAX(0.0, RNO3U_2D(L,J))
+              RNH4U_2D(L,J) = MAX(0.0, RNH4U_2D(L,J))
+              TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J)) 
+     &                 * ColFrac(L,J) !kg[N]/ha
+            ENDIF
+          END SELECT
+        ENDDO
+      ENDDO
 
 C-----------------------------------------------------------------------
 C   Calculate N demand
@@ -305,12 +302,11 @@ C-----------------------------------------------------------------------
            IF (NDEM .GT. 0.0) THEN           ! Luxury uptake.
               RATIO = AMIN1 (AVAILN/NDEM, 1.25)
               TNDEM = TNDEM * RATIO
-           !
-           ! Accumulate less N in the tubers under excess N conditions.
-           ! Don't allow any excess N to accumulate in the roots unless 
-           ! a provision is added to re-allocate excess N in the roots 
-           ! to other plant parts.
-           !
+!           
+!             Accumulate less N in the tubers under excess N conditions.
+!             Don't allow any excess N to accumulate in the roots unless 
+!             a provision is added to re-allocate excess N in the roots 
+!             to other plant parts.
               TUBDEM = TUBDEM * (1.0 + (RATIO - 1.0)*0.5)
             ELSE
               TNDEM  = 0.0
@@ -403,7 +399,6 @@ C     GRFN   = (GROTOP + GRORT + GROTUB)/PGROW ! Indicator of N stress
 C-----------------------------------------------------------------------
 C   Calculate factor (NUF) to reduce N uptake to level of demand
 C-----------------------------------------------------------------------
-
       IF (ANDEM .LE. 0.0) THEN
          TRNU  = 0.0
          NUF   = 0.0
@@ -417,45 +412,48 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C   Calculate N uptake in soil layers with roots based on demand (kg/ha)
 C-----------------------------------------------------------------------
-
-
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
-          UNO3_2D(L, J) = RNO3U_2D(L, J) * NUF
-          UNH4_2D(L, J) = RNH4U_2D(L, J) * NUF
-          XMIN          = 0.25 / KG2PPM(L)
-          UNO3_2D(L, J) = AMIN1 (UNO3_2D(L, J), SNO3_2D(L, J) - XMIN)
-          UNO3_2D(L, J) = MAX(0.0, UNO3_2D(L, J))
-          XMIN          = 0.5 / KG2PPM(L)
-          UNH4_2D(L, J) = AMIN1 (UNH4_2D(L, J),SNH4_2D(L, J) - XMIN)
-          UNH4_2D(L, J) = MAX(0.0, UNH4_2D(L, J))
-          TRNU          = TRNU + UNO3_2D(L, J) + UNH4_2D(L, J) !kg[N]/ha
-        END DO
-      END DO
+          SELECT CASE(Cell_type(L,J))
+          CASE(3,4,5)
+            UNO3_2D(L,J) = RNO3U_2D(L,J) * NUF
+            UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF
+            XMIN         = 0.25 / KG2PPM(L)
+            UNO3_2D(L,J) = AMIN1 (UNO3_2D(L,J), SNO3_2D(L,J) - XMIN)
+            UNO3_2D(L,J) = MAX(0.0, UNO3_2D(L,J))
+            XMIN         = 0.5 / KG2PPM(L)
+            UNH4_2D(L,J) = AMIN1 (UNH4_2D(L,J),SNH4_2D(L,J) - XMIN)
+            UNH4_2D(L,J) = MAX(0.0, UNH4_2D(L,J))
+            TRNU         = TRNU + UNO3_2D(L,J) + UNH4_2D(L,J) !kg[N]/ha
+          END SELECT
+        ENDDO
+      ENDDO
 
       TRNU = TRNU/(PLTPOP*10.0)             !g[N]/plant
 
       CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
       CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
-      CAll Interpolate2Layers_2D(UNO3_2D, Cells%Struc, NLAYR,  !input
-     &         UNO3)                                           !Output
-      CAll Interpolate2Layers_2D(UNH4_2D, Cells%Struc, NLAYR,  !input
-     &         UNH4)                                           !Output
+
+      CALL Cell2Layer_2D(
+     &  UNO3_2D, Cells%Struc, NLAYR,                      !Input
+     &  UNO3, SurfaceVal)                                 !Output
+      CALL Cell2Layer_2D(
+     &  UNH4_2D, Cells%Struc, NLAYR,                      !Input
+     &  UNH4, SurfaceVal)                                 !Output
 
 !-----------------------------------------------------------------------
 C   Update stover and root N
 C-----------------------------------------------------------------------
-
       IF (NDEM .GT. TRNU) THEN
-         XNDEM  = TRNU
-         FACTOR = XNDEM / NDEM
-         NDEM   = XNDEM
-         TNDEM  = TNDEM  * FACTOR
-         RNDEM  = RNDEM  * FACTOR
-         TUBDEM = TUBDEM * FACTOR
+        XNDEM  = TRNU
+        FACTOR = XNDEM / NDEM
+        NDEM   = XNDEM
+        TNDEM  = TNDEM  * FACTOR
+        RNDEM  = RNDEM  * FACTOR
+        TUBDEM = TUBDEM * FACTOR
       ENDIF
 
-      !g[N]/plant
+!     g[N]/plant
       TOPSN  = TOPSN + TNDEM      
       ROOTN  = ROOTN + RNDEM      
       TUBN   = TUBN  + TUBDEM    
@@ -464,13 +462,6 @@ C-----------------------------------------------------------------------
 
       CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
       CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
-!     Use Cell2Layer_2D for mass variables
-      CALL Cell2Layer_2D(
-     &  UNO3_2D, Cells%Struc, NLAYR,                      !Input
-     &  UNO3, SurfaceVal)                                 !Output
-      CALL Cell2Layer_2D(
-     &  UNH4_2D, Cells%Struc, NLAYR,                      !Input
-     &  UNH4, SurfaceVal)                                 !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -478,5 +469,5 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ENDIF
 !***********************************************************************
-      RETURN         
+      RETURN
       END SUBROUTINE PT_NUPTAK

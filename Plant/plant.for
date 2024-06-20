@@ -818,12 +818,12 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !         Cell2Layer_2D is for mass variables which are aggregated across 
 !         a soil layer.
           CALL Cell2Layer_2D(
-     &      NO3Uptake_2D, CELLS%STRUC, SOILPROP%NLAYR,    !Input
-     &      UNO3, Dummy)                                  !Output
+     &      CELLS%RATE%NO3Uptake, CELLS%STRUC, SOILPROP%NLAYR, !Input
+     &      UNO3, Dummy)                                       !Output
 
           CALL Cell2Layer_2D(
-     &      NH4Uptake_2D, CELLS%STRUC, SOILPROP%NLAYR,    !Input
-     &      UNH4, Dummy)                                  !Output
+     &      CELLS%RATE%NH4Uptake, CELLS%STRUC, SOILPROP%NLAYR, !Input
+     &      UNH4, Dummy)                                       !Output
 
         ELSE
 !         For all other cases (i.e., 1D model, or not CROPGRO or SUBSTOR),
@@ -845,11 +845,12 @@ c     Total LAI must exceed or be equal to healthy LAI:
      &      CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
      &      UNH4, 0.0,                                    !Input
      &      NH4Uptake_2D)                                 !Output
+
+          CELLS % RATE % NO3Uptake = NO3Uptake_2D
+          CELLS % RATE % NH4Uptake = NH4Uptake_2D
+          CELLS % STATE % RLV = RLV_2D
         END IF
 
-        CELLS % RATE % NO3Uptake = NO3Uptake_2D
-        CELLS % RATE % NH4Uptake = NH4Uptake_2D
-        CELLS % STATE % RLV = RLV_2D
 
 !***********************************************************************
 !***********************************************************************
