@@ -50,7 +50,7 @@ C-----------------------------------------------------------------------
       CHARACTER*10 STNAME(20)
       CHARACTER*12 FILEA
       CHARACTER*30 FILEIO
-	CHARACTER*80 PATHEX
+	CHARACTER*256 PATHEX
 
       INTEGER ACOUNT, DFLR, DEMRG, DFPD, DFSD, DHRV
       INTEGER DNR8,DMAT,DNR0, DNR1,DNR3,DNR5,DNR7

@@ -491,7 +491,7 @@
       REAL          LFWT          ! Leaf weight                    g/p
       REAL          LIF1          ! Light interception factor 1    #
       REAL          LIF2          ! Light interception factor 2    #
-      CHARACTER*80  LINESTAR      ! Group header line (with star)  text
+      CHARACTER*256  LINESTAR      ! Group header line (with star)  text
       CHARACTER*180 LINET         ! Line from T-file               text
       !REAL          LL(20)        ! Lower limit,soil h2o           #
       INTEGER       LLDATM        ! Last leaf (mature) date,measured

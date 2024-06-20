@@ -55,7 +55,7 @@ C=======================================================================
       CHARACTER*6   SECTION
       CHARACTER*30 FILEIO
       CHARACTER*78 MESSAGE(10)
-      CHARACTER*80  C80
+      CHARACTER*256  C80
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*255 C255
 
@@ -793,7 +793,7 @@ C-----------------------------------------------------------------------
       PARAMETER (ERRKEY = 'PODCOM')
 
       CHARACTER*6 SECTION
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       CHARACTER*92 FILECC
 
       INTEGER LUNCRP, ERR, LNUM, FOUND, ISECT, I

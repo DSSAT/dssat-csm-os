@@ -45,7 +45,7 @@ C========================================================================
       CHARACTER*4 StalkState(NumOfStalks,10)
       CHARACTER*6  ECOTYP, ECONO, ERRKEY, SECTION
       CHARACTER*30 FILEIO
-      CHARACTER*80 CHAR
+      CHARACTER*256 CHAR
       CHARACTER*92 FILECC, FILEGC
       PARAMETER (ERRKEY = 'SENES')
 

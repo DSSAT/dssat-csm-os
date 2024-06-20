@@ -45,7 +45,7 @@ C=======================================================================
       CHARACTER*10 STNAME(20)
       CHARACTER*12 FILEA
       CHARACTER*30 FILEIO
-      CHARACTER*80 PATHEX
+      CHARACTER*256 PATHEX
 
       INTEGER ACOUNT, DFLR, DMAT
       INTEGER DEMRG, DNR0, DNR1, DNR7, DYNAMIC, ERRNUM, FOUND

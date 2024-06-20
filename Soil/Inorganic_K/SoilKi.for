@@ -22,7 +22,7 @@ C-----------------------------------------------------------------------
 
       CHARACTER*1  ISWPOT, RNMODE
       CHARACTER*6, PARAMETER :: ERRKEY = 'SOILKi'
-      CHARACTER*78 MSG(4)
+      CHARACTER*256 MSG(4)
 
       INTEGER DYNAMIC, FERTDAY, L, NLAYR, RUN, YRDOY
 

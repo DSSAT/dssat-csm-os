@@ -60,11 +60,11 @@ C-----------------------------------------------------------------------
       CHARACTER(len=6), PARAMETER :: ERRKEY = 'IPSOIL'
       CHARACTER(len=3)   ModelVersionDecimal
       CHARACTER(len=9)   VERSION_TXT
-      CHARACTER(len=12)  FILESS, NAMEF
+      CHARACTER(len=256)  FILESS, NAMEF
       CHARACTER(len=30)  FILEIO
       CHARACTER(len=78)  MSG(4)
-      CHARACTER(len=80)  PATHSD
-      CHARACTER(len=92)  SOILNF
+      CHARACTER (len=256)  PATHSD
+      CHARACTER(len=256)  SOILNF
       CHARACTER(len=180) CHAR
 
       INTEGER FOUND, ERR, ISECT, LUNSOL, LNUM

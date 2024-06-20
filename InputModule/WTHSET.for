@@ -57,7 +57,7 @@ C=======================================================================
       IMPLICIT NONE
 
       CHARACTER*1   WTYPE(8)
-      CHARACTER*120 WTHSTR
+      CHARACTER*256 WTHSTR
       INTEGER       VNUM
       REAL          AMOUNT(8),WTHADJ(2,8)
 C

@@ -34,7 +34,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'IPPROG')
       CHARACTER*78 MSG(10)    !Up to 10 lines of text to be output
-      CHARACTER*80  PATHEX
+      CHARACTER*256  PATHEX
       CHARACTER*92 T_PATH_FILE
 
       CHARACTER*1   RNMODE

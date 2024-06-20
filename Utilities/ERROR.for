@@ -30,7 +30,7 @@ C=======================================================================
       CHARACTER     AKEY*6,BLANK*80,KEY*6,LINE*80
       CHARACTER*78  MSG(10)
       CHARACTER*100 ERRORX, SAVE_ERRORX
-      CHARACTER*120 PATHX
+      CHARACTER*256 PATHX
 
       INTEGER       ANUM,ERRNUM,LNUM, LUN, I , ELUN
       INTEGER       IMSG
@@ -204,7 +204,7 @@ C-GH      READ  (*, *)
 !
 !        !Skip over first 3 lines in LUN.LST file
 !        DO I=1,3
-!          READ(LUN,'(A80)') LINE
+!          READ(LUN,'(A256)') LINE
 !        ENDDO
 !
 !        !Read list of unit numbers that have been opened and close each
@@ -276,7 +276,7 @@ C-GH      READ  (*, *)
       EXTERNAL ERROR, WARNING
 
       CHARACTER(*) ERRKEY 
-      CHARACTER*78 MSG(4)
+      CHARACTER*256 MSG(4)
       INTEGER ErrCode, YREND
       TYPE (ControlType) CONTROL
 

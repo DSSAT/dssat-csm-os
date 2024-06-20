@@ -46,7 +46,7 @@ C=======================================================================
       CHARACTER*6   ERRKEY
       CHARACTER*12  FILES
       CHARACTER*78  MSG(25)
-      CHARACTER*80  PATHSL
+      CHARACTER*256  PATHSL
       CHARACTER*92  FILESS
       CHARACTER*255 C255
 

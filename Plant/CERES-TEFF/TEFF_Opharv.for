@@ -51,7 +51,7 @@ C=======================================================================
       CHARACTER*10 STNAME(20)
       CHARACTER*12 FILEA
       CHARACTER*30 FILEIO
-	CHARACTER*80 PATHEX
+	CHARACTER*256 PATHEX
 
       INTEGER TRTNUM
       INTEGER TRT_ROT

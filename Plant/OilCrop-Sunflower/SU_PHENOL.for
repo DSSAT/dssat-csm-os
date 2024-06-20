@@ -93,9 +93,9 @@
       REAL            P3P          
       REAL            P5             
       REAL            P9             
-      CHARACTER*80    PATHCR 
-      CHARACTER*80    PATHSR
-      CHARACTER*80    PATHER        
+      CHARACTER*256    PATHCR 
+      CHARACTER*256    PATHSR
+      CHARACTER*256    PATHER        
       REAL            PDTT
       REAL            PLTPOP       
       REAL            PSKER          
@@ -147,7 +147,7 @@
       CHARACTER*16  ECONAM
       INTEGER LUNCRP
       CHARACTER*92 FILECC
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       CHARACTER*78 MESSAGE(10)
       REAL TMFAC1(10)
 

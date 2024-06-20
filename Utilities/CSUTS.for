@@ -324,7 +324,7 @@
       IMPLICIT NONE
       EXTERNAL Getstr, Tvilent, Ucase, GETLUN
 
-      CHARACTER (LEN=80) tline
+      CHARACTER (LEN=256) tline
       CHARACTER (LEN=2)  tl2
       CHARACTER (LEN=37) tl37
       CHARACTER (LEN=*)  cfgdfile,cfgcode,fname,fdirname
@@ -341,12 +341,12 @@
       OPEN(fnumcfg,FILE=cfgdfile)
 
       DO loop=1,2000
-       READ(fnumcfg,'(A80)',ERR=1000,END=1000)tline
+       READ(fnumcfg,'(A256)',ERR=1000,END=1000)tline
        IF(tline(1:6).EQ.'*DIREC')EXIT
       ENDDO
 
       DO loop=1,2000
-       READ(fnumcfg,'(A80)',ERR=1000,END=1000)tline
+       READ(fnumcfg,'(A256)',ERR=1000,END=1000)tline
        IF(tline(1:1).EQ.'*')THEN
         CLOSE (fnumcfg)
         fdirname=' '
@@ -398,7 +398,7 @@
       EXTERNAL GETLUN, TVILENT
 
       CHARACTER (LEN=*)    DIRFILE, VCODE
-      CHARACTER (LEN=80)   TLINE
+      CHARACTER (LEN=256)   TLINE
 !     CHARACTER (LEN=30)   TLINE2
       CHARACTER (LEN=1)    COLON
       INTEGER              L,FNUMERR,FNUMTMP,TVILENT,ERRNUM
@@ -426,7 +426,7 @@
       ELSE
         COLON = 'N'
         OPEN (UNIT = FNUMTMP,FILE = DIRFILE)
-        READ(FNUMTMP,'(A80)',IOSTAT=ERRNUM) TLINE    !portability      
+        READ(FNUMTMP,'(A256)',IOSTAT=ERRNUM) TLINE    !portability      
         IF (ERRNUM < 0) THEN       !EOF - file is empty
           CALL Getlun('ERROR.OUT',fnumerr)
           OPEN(UNIT=fnumerr,FILE='ERROR.OUT')
@@ -2366,7 +2366,7 @@
       EXTERNAL Tvilent, ltrim
 
       CHARACTER (LEN=10) tl10fromi
-      CHARACTER (LEN=80) tchar
+      CHARACTER (LEN=256) tchar
       INTEGER            number,digitnew(20),numb,newn
       INTEGER            i,tvilent,lentvc,lentchar,l
 
@@ -2656,7 +2656,7 @@
 
       IMPLICIT NONE
 
-      CHARACTER (LEN=80) BLANK
+      CHARACTER (LEN=256) BLANK
       CHARACTER (LEN=*)  CHARTEST
       INTEGER            LUN,LINEXP,ISECT
 
@@ -2676,7 +2676,7 @@
 
       ! Check for blank lines and comments (denoted by ! in column 1)
       IF(CHARTEST(1:1).NE.'!' .AND. CHARTEST(1:1).NE.'@') THEN
-         IF(CHARTEST(1:80).NE.BLANK)THEN
+         IF(CHARTEST(1:256).NE.BLANK)THEN
             ! FOUND A GOOD LINE TO READ
             RETURN
          ENDIF

@@ -41,7 +41,7 @@ C=======================================================================
       CHARACTER*1  BLANK
       CHARACTER*6  ERRKEY
       CHARACTER*12 FILEC
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
       CHARACTER*92 FILECC
 
       INTEGER       PATHL,LUNCRP,ERR

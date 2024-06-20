@@ -253,7 +253,7 @@
                                         LINESTAR2 = '*TIER('//TIERNUMC//'):'//LINESTAR(1:LENLINESTAR)//LINET(14:LENLINE)
                                         IF (IDETG /= 'N') THEN 
                                             WRITE (FNUMMEAS,*) ' '
-                                            WRITE (FNUMMEAS,'(A80)') LINESTAR2(1:80)
+                                            WRITE (FNUMMEAS,'(A256)') LINESTAR2(1:256)
                                             WRITE (FNUMMEAS,*) ' '
                                             WRITE (FNUMMEAS,'(A180)') LINET(1:180)
                                         ENDIF  

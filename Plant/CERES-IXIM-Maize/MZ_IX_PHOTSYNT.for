@@ -33,7 +33,7 @@ C=======================================================================
       REAL        AZZON(TS)  
       REAL        BETA(TS)   
       REAL        BETN       
-      CHARACTER*80 C80      
+      CHARACTER*256 C80      
       REAL        CANH       
       REAL        CANHT      
       REAL        CANS       
@@ -81,7 +81,7 @@ C=======================================================================
       REAL        PARHR(TS)  
       REAL        PARSH(50) 
       REAL        PARSUN(50)
-      CHARACTER*80    PATHSR      
+      CHARACTER*256    PATHSR      
       REAL        PCAREA     
       REAL        PCARLF     
       REAL        PCARRT     

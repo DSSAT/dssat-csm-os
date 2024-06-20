@@ -100,15 +100,15 @@ C=======================================================================
       CHARACTER*12 MOWFILE
       CHARACTER*30 FILEIO
 !     CHARACTER*78 MSG(2)
-      CHARACTER*80 FILECC
-      CHARACTER*80 PATHEX
+      CHARACTER*256 FILECC
+      CHARACTER*256 PATHEX
       character(len=60) ename
       CHARACTER*80 MOW80
       character(len=180) fhoutfmt
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       CHARACTER*255 C255
-!     CHARACTER*80 CHARTEST
-!     CHARACTER*92 FILEX_P
+!     CHARACTER*256 CHARTEST
+!     CHARACTER*256 FILEX_P
       CHARACTER*92 FILEMOW
 !     CHARACTER*6  FINDCH
 !     CHARACTER*12 FILEX
@@ -188,7 +188,7 @@ C FO - 10/15/2020 Fixed path issue for MOWFILE.
           MOWCOUNT = 0
           write(trtchar,'(i6)') trtno
           DO WHILE (ISECT.EQ.0)
-            READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
+            READ (MOWLUN,'(A256)',IOSTAT=ISECT) MOW80
             IF (MOW80(1:1).NE."@"
      &         .AND.MOW80(1:1).NE."!"
      &         .AND.MOW80(1:20).NE."                    "
@@ -213,7 +213,7 @@ C           MOW file has no data for this treatment
           I = 0
           ISECT = 0
           DO WHILE (ISECT.EQ.0)
-            READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
+            READ (MOWLUN,'(A256)',IOSTAT=ISECT) MOW80
 !           TF 05/22/2023 - Updated read method for mow file to handle 
 !            dates in YYDDD and YYYYDDD format
             IF(MOW80(1:1).EQ."@") THEN

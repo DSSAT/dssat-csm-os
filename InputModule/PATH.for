@@ -37,7 +37,7 @@ C=======================================================================
       CHARACTER*6  ERRKEY
       CHARACTER*12 NAMEF
       CHARACTER*102 DSSATP
-      CHARACTER*80 LINE,PATHC
+      CHARACTER*256 LINE,PATHC
 
       INTEGER      LUNPR,ERRNUM,PATHL,I,K,PFLAG
       LOGICAL      FEXIST
@@ -55,7 +55,7 @@ C=======================================================================
       IF (.NOT. FEXIST .OR. ERRNUM .NE. 0) RETURN
 
       DO I = 1, 500
-         READ (LUNPR,'(A80)',IOSTAT=ERRNUM) LINE
+         READ (LUNPR,'(A256)',IOSTAT=ERRNUM) LINE
          IF (LINE(1:3) .EQ. PROCOD) THEN
 !            PATHC  = LINE(5:6) // LINE(8:80)
             call get_next_string(line,4,pathc)
@@ -75,8 +75,8 @@ C-SUN       PATHC  = LINE(8:80)
               PATHL = PATHL - 1
             ENDIF
             NAMEF  = PATHC (PATHL+1:PATHL+13)
-            IF (PATHL .LT. 80) THEN
-               DO K = (PATHL+1),80
+            IF (PATHL .LT. 256) THEN
+               DO K = (PATHL+1),256
                   IF (PATHC(K:K) .NE. BLANK) THEN
                      PATHC(K:K) = BLANK
                   ENDIF
@@ -132,7 +132,7 @@ C=======================================================================
 
 !     CHARACTER*12 DSSATF
       CHARACTER*102 DSSATP
-      CHARACTER*120 INPUTX
+      CHARACTER*256 INPUTX
       CHARACTER(len=255) :: DSSAT_HOME
 
       INTEGER      I
@@ -206,10 +206,10 @@ C=======================================================================
       CHARACTER*3   PROCOD
       CHARACTER*6   ERRKEY
       CHARACTER*8   MODEL, CRMODEL
-      CHARACTER*78  MSG(4)
-      CHARACTER*80  LINE
+      CHARACTER*256  MSG(4)
+      CHARACTER*256  LINE
       CHARACTER*102 DSSATP
-!     CHARACTER*120 PATHX
+!     CHARACTER*256 PATHX
 
       INTEGER      EXE_POS,LUNPR,LINPR,ERRNUM,ISECT,I,J   !, IPX
       INTEGER      ValidModel, LENSTRING

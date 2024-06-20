@@ -1483,7 +1483,7 @@
       CHARACTER (LEN=1)   EXAMINE(20)   ! Flag for examination of parts
       CHARACTER (LEN=10)  EXCODE        ! Experiment code/name
       CHARACTER (LEN=10)  EXCODEPREV    ! Previous experiment code/name
-      CHARACTER (LEN=80)  FAPPLINE(30)  ! Fertilizer application details
+      CHARACTER (LEN=256)  FAPPLINE(30)  ! Fertilizer application details
       CHARACTER (LEN=250) FILEA         ! Name of A-file
       CHARACTER (LEN=250) FILEX         ! Name of X-file
       CHARACTER (LEN=250) FILEIO        ! Name of input file,after check
@@ -1542,8 +1542,8 @@
       CHARACTER (LEN=6)   LAPSC         ! Senesced area,cohort of leaves
       CHARACTER (LEN=6)   LATLC         ! Leaf area,actual
       CHARACTER (LEN=354) LINEERA       ! Temporary line,error-a file
-      CHARACTER (LEN=80)  LINESTAR      ! Group header line (with star)
-      CHARACTER (LEN=80)  LINESTAR2     ! Group header line (with star)
+      CHARACTER (LEN=256)  LINESTAR      ! Group header line (with star)
+      CHARACTER (LEN=256)  LINESTAR2     ! Group header line (with star)
       CHARACTER (LEN=180) LINET         ! Line from T-file
       CHARACTER (LEN=1)   MEEXP         ! Switch,experimental method = E
       CHARACTER (LEN=1)   MEEVP         ! Switch,potential evapot method

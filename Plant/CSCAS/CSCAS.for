@@ -1290,7 +1290,7 @@
       CHARACTER (LEN=128) ARG           ! Argument component
       CHARACTER (LEN=6)   CAIC          ! Canopy area index
       CHARACTER (LEN=6)   CANHTC        ! Canopy height
-      CHARACTER (LEN=120) CFGDFILE      ! Configuration directory+file
+      CHARACTER (LEN=256) CFGDFILE      ! Configuration directory+file
       CHARACTER (LEN=1)   CFLAFLF       ! Control flag,assim.on lf area
       CHARACTER (LEN=1)   CFLFAIL       ! Control flag for failure
       CHARACTER (LEN=1)   CFLLFLIFE     ! Control flag,leaf life D,P,C
@@ -1320,28 +1320,28 @@
       CHARACTER (LEN=14)  EVHEADER      ! Evaluater.out header
       CHARACTER (LEN=10)  EXCODE        ! Experiment code/name
       CHARACTER (LEN=10)  EXCODEPREV    ! Previous experiment code/name
-      CHARACTER (LEN=80)  FAPPLINE(30)  ! Fertilizer application details
-      CHARACTER (LEN=120) FILEA         ! Name of A-file
-      CHARACTER (LEN=120) FILEX         ! Name of X-file
-      CHARACTER (LEN=120) FILEIO        ! Name of input file,after check
-      CHARACTER (LEN=120) FILEIOIN      ! Name of input file
+      CHARACTER (LEN=256)  FAPPLINE(30)  ! Fertilizer application details
+      CHARACTER (LEN=256) FILEA         ! Name of A-file
+      CHARACTER (LEN=256) FILEX         ! Name of X-file
+      CHARACTER (LEN=256) FILEIO        ! Name of input file,after check
+      CHARACTER (LEN=256) FILEIOIN      ! Name of input file
       CHARACTER (LEN=107) FILEADIR      ! Name of A-file directory      
       CHARACTER (LEN=3)   FILEIOT       ! Type of input file
-      CHARACTER (LEN=120) FILENEW       ! Temporary name of file
-      CHARACTER (LEN=120) FILET         ! Name of T-file
+      CHARACTER (LEN=256) FILENEW       ! Temporary name of file
+      CHARACTER (LEN=256) FILET         ! Name of T-file
       CHARACTER (LEN=1)   FNAME         ! File name switch (N->standard)
-      CHARACTER (LEN=120) FNAMEERA      ! File name,A-errors
-      CHARACTER (LEN=120) FNAMEERT      ! File name,T-errors
-      CHARACTER (LEN=120) FNAMEEVAL     ! File name,evaluate outputs
-      CHARACTER (LEN=120) FNAMELEAVES   ! File name,leaves outputs
-      CHARACTER (LEN=120) FNAMEMEAS     ! File name,measured outputs
-      CHARACTER (LEN=120) FNAMEOV       ! File name,overview outputs
-      CHARACTER (LEN=120) FNAMEPHASES   ! File name,phases outputs
-      CHARACTER (LEN=120) FNAMEPHENOLM  ! File name,phenology measured
-      CHARACTER (LEN=120) FNAMEPHENOLS  ! File name,phenology outputs
-      CHARACTER (LEN=120) FNAMEPREM     ! File name,responses,measured
-      CHARACTER (LEN=120) FNAMEPRES     ! File name,responses,simulated
-      CHARACTER (LEN=120) FNAMEPSUM     ! File name,plant summary
+      CHARACTER (LEN=256) FNAMEERA      ! File name,A-errors
+      CHARACTER (LEN=256) FNAMEERT      ! File name,T-errors
+      CHARACTER (LEN=256) FNAMEEVAL     ! File name,evaluate outputs
+      CHARACTER (LEN=256) FNAMELEAVES   ! File name,leaves outputs
+      CHARACTER (LEN=256) FNAMEMEAS     ! File name,measured outputs
+      CHARACTER (LEN=256) FNAMEOV       ! File name,overview outputs
+      CHARACTER (LEN=256) FNAMEPHASES   ! File name,phases outputs
+      CHARACTER (LEN=256) FNAMEPHENOLM  ! File name,phenology measured
+      CHARACTER (LEN=256) FNAMEPHENOLS  ! File name,phenology outputs
+      CHARACTER (LEN=256) FNAMEPREM     ! File name,responses,measured
+      CHARACTER (LEN=256) FNAMEPRES     ! File name,responses,simulated
+      CHARACTER (LEN=256) FNAMEPSUM     ! File name,plant summary
       CHARACTER (LEN=35)  GENFLCHK      ! Genotype file name for check
       CHARACTER (LEN=1)   GROUP         ! Flag for type of group
       CHARACTER (LEN=6)   HIAMCHAR      ! Harvest indx,at harvest
@@ -1382,8 +1382,8 @@
       CHARACTER (LEN=6)   LATL3C        ! Leaf area,stress+assim control
       CHARACTER (LEN=6)   LATL4C        ! Leaf area,stress+assim&Ncntrol
 !     CHARACTER (LEN=354) LINEERA       ! Temporary line,error-a file
-      CHARACTER (LEN=80)  LINESTAR      ! Group header line (with star)
-      CHARACTER (LEN=80)  LINESTAR2     ! Group header line (with star)
+      CHARACTER (LEN=256)  LINESTAR      ! Group header line (with star)
+      CHARACTER (LEN=256)  LINESTAR2     ! Group header line (with star)
       CHARACTER (LEN=180) LINET         ! Line from T-file
       CHARACTER (LEN=4)   MEDEV         ! Switch,development control
       CHARACTER (LEN=1)   MEEXP         ! Switch,experimental method = E
@@ -1403,9 +1403,9 @@
       CHARACTER (LEN=12)  OUTPG2        ! Growth output file2 code
       CHARACTER (LEN=12)  OUTPGF        ! Growth factors file2 code
       CHARACTER (LEN=12)  OUTPN         ! GrowthN output file code
-      CHARACTER (LEN=80)  PATHCR        ! Path to genotype (CUL) files
-      CHARACTER (LEN=80)  PATHEC        ! Path to genotype (ECO) files
-      CHARACTER (LEN=80)  PATHSP        ! Path to genotype (SPE) files
+      CHARACTER (LEN=256)  PATHCR        ! Path to genotype (CUL) files
+      CHARACTER (LEN=256)  PATHEC        ! Path to genotype (ECO) files
+      CHARACTER (LEN=256)  PATHSP        ! Path to genotype (SPE) files
       CHARACTER (LEN=1)   PLME          ! Planting method (code)        
       CHARACTER (LEN=2)   PPSEN         ! Code,photoperiod sensitivity
       CHARACTER (LEN=5)   PSABV(PSX)    ! Principal stage abbreviation
@@ -7462,7 +7462,7 @@ c           ENDIF
      &                 LINESTAR(1:LENLINESTAR)//LINET(14:LENLINE)
                       IF (IDETG.NE.'N') THEN 
                         WRITE (FNUMMEAS,*) ' '
-                        WRITE (FNUMMEAS,'(A80)') LINESTAR2(1:80)
+                        WRITE (FNUMMEAS,'(A256)') LINESTAR2(1:256)
                         WRITE (FNUMMEAS,*) ' '
                         WRITE (FNUMMEAS,'(A180)') LINET(1:180)
                       ENDIF  
@@ -8321,7 +8321,7 @@ c           ENDIF
 !                  WRITE (fnumwrk,'(A18,A10,I3)')
 !     &              ' N FERTILIZER FOR ',excode,tn
 !                  DO L = 1,FAPPNUM
-!                     WRITE (fnumwrk,'(A80)') FAPPLINE(L)
+!                     WRITE (fnumwrk,'(A256)') FAPPLINE(L)
 !                  ENDDO
 !                ENDIF
 !                WRITE(FNUMWRK,*) ' '
