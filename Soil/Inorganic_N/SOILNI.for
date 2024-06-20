@@ -1319,14 +1319,13 @@ C=======================================================================
         TN2OnitrifD = TN2OnitrifD + N2Onitrif(L)
 
         DO J = 1, NColsTot
-          if (Cell_Type(L,J) .EQ. 0) then
-            cycle
-          endif
-
-!         2D accumulations and integrations
-          TNH4  = TNH4  + SNH4_2D(L, J)
-          TNO3  = TNO3  + SNO3_2D(L, J)
-          TUREA = TUREA + UREA_2D(L, J)
+          SELECT CASE(Cell_Type(L,J))
+          CASE (3,4,5)
+!           2D accumulations and integrations
+            TNH4  = TNH4  + SNH4_2D(L, J)
+            TNO3  = TNO3  + SNO3_2D(L, J)
+            TUREA = TUREA + UREA_2D(L, J)
+          END SELECT
 
 !     Already calculated WTNUP in rate section
 !         Calculate this where uptake is removed from the soil.
@@ -1366,15 +1365,19 @@ C=======================================================================
 
       CELLS%State%SNH4 = SNH4_2D
       CELLS%State%SNO3 = SNO3_2D
-      
-!     Convert 2D to 1D
-!     Use Interpolate2Layers_2D for concentration variables
-      CAll Interpolate2Layers_2D(NO3_2D, Cells%Struc, NLAYR,  !input
-     &         NO3)                                           !Output
-      CAll Interpolate2Layers_2D(NH4_2D, Cells%Struc, NLAYR,  !input
-     &         NH4)                                           !Output
-      CAll Interpolate2Layers_2D(UPPM_2D, Cells%Struc, NLAYR,  !input
-     &         UPPM)                                           !Output
+
+!     CHP 2024-06-20
+!     Calculating concentration as a weighted average across a row
+!     gives different (incorrect) results than aggregating the mass 
+!     variable across a row first, then converting to concentration.
+!!     Convert 2D to 1D
+!!     Use Interpolate2Layers_2D for concentration variables
+!      CAll Interpolate2Layers_2D(NO3_2D, Cells%Struc, NLAYR,  !input
+!     &         NO3)                                           !Output
+!      CAll Interpolate2Layers_2D(NH4_2D, Cells%Struc, NLAYR,  !input
+!     &         NH4)                                           !Output
+!      CAll Interpolate2Layers_2D(UPPM_2D, Cells%Struc, NLAYR,  !input
+!     &         UPPM)                                           !Output
 
 !     Use Cell2Layer_2D for mass variables
       CALL Cell2Layer_2D(
@@ -1390,6 +1393,8 @@ C=======================================================================
       TMINERN = 0.0
       TIMMOBN = 0.0
       DO L = 1, NRowsTot
+        NO3(L) = SNO3(L) * KG2PPM(L)
+        NH4(L) = SNH4(L) * KG2PPM(L)
 
         IF (L ==1) THEN
           TMINERN = MNR(0,N) + MNR(1,N)

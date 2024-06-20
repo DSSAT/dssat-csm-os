@@ -239,6 +239,8 @@
 !     additive, e.g., Soil water content or temperature
 !   Input data, CellStruc, SurfaceVal, CellArray(MaxRows,MaxCols), 
 !     Surface values stored separately in SurfaceVal scalar.
+!   NOTE: concentration variables (e.g., ppm) should be aggregated from the 
+!     associated mass variable rather than using this routine.
 ! -----------------------------------------------------------------------------
 ! 09/13/2006 CHP Written
 ! 04/16/2007 CHP Convert from 1D to 2D
