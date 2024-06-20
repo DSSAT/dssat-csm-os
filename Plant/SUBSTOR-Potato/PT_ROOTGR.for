@@ -115,7 +115,7 @@ C-------------------------------------------------------------------------
 !      &       10000 )
 !         RLWR cm[root]/g[root])
 
-!     CHP 2024/04-12: The following is dimensionally incorrect but 
+!     CHP 2024-04-12: The following is dimensionally incorrect but 
 !       fixing it breaks the model.
           RLINIT = GRORT * RLWR * PLTPOP !* 1.E-4
 !      cm[root]    g[root]   cm[root]   plants   m2

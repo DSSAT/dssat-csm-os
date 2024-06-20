@@ -107,7 +107,7 @@ C=======================================================================
       RTLSenes = 0.0
       CumRootMass = 0.0
       TotRootMass = 0.0
-      RFAC3 = RLWR
+      RFAC3 = RLWR *1.E-4
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
@@ -225,10 +225,12 @@ C=======================================================================
         RTWIDnew = RTWIDr !it is array
 
 !------------------------------------------------------------------
-        RLNew  =  GRORT * RLWR *  PLTPOP *  HalfRow * 1.E4
-!     cm[root]   g[root]   cm[root]   plants                   m2
-!      ------- = ------- * -------- * ------ * cm[row width] * ---
-!  cm[rowLength]  plant     g[root]     m2                     cm2
+!     CHP 2024-04-12: The following is dimensionally incorrect but 
+!       fixing it breaks the model.
+        RLNew  =  GRORT * RLWR *  PLTPOP !* 1.E-4
+!      cm[root]    g[root]   cm[root]   plants   m2
+!      --------- = ------- * -------- * ------ * ---
+!      cm2[ground]  plant    g[root]      m2     cm2
 !------------------------------------------------------------------
 
 !       First, root expansion.
@@ -423,29 +425,26 @@ C=======================================================================
 !       IF (TRLDF .GE. RLNEW*0.00001) THEN ! JZW ask CHP: different unit, how to compare????
 !          RLNEW and RLINIT IS in cm[root]/cm[ground]/d, TRLDF is in cm2 TRLDF has same unit as RLDF for now
         RLDF = RLDF / TRLDF ! RLDF is unitless now
-           
-!       RLDF(Row,Col) is AMIN1(SWDF,RNFAC)*SHF(Row)*CelRootArea(Row,Col)/TotRootArea Same cellRootArea may have different dense 
-!       DO L = 1, L1
+
+
         DO Row = 1, LastRow !JZW LastRow is the last row of root
           DO Col = 1, LastCol 
             IF (TypeCell(Row,Col)<3 .OR. TypeCell(Row,Col) > 5) CYCLE
             RTLSenes = 
      &            RTLSenes + 0.005*RLV_2D(Row,Col) * CellArea(Row,Col)
 !           To calculate LastCol need RTWIDr(Row), LastCumWid, RTWIDI
+
             RLV_2D(Row,Col) = RLV_2D(Row,Col)
-     &           +RLDF(Row,Col) * RLNEW /CellArea(Row,Col)
-!    &           +RLDF(Row,Col)*RNLF/CellArea(Row,Col)
-     &           -0.005*RLV_2D(Row,Col)  
+     &           + RLDF(Row,Col) * RLNEW /CellArea(Row,Col)
 !             cm         cm     1
 !            -------  = ---- * ----
 !             cm3        cm    cm2
-!           Root senescence may make RLV_2D<0
+
+!           Subtract root senescence and check for negative value
+            RLV_2D(Row,Col) = RLV_2D(Row,Col) - 0.005 * RLV_2D(Row,Col)
             RLV_2D(Row,Col) = AMAX1 (RLV_2D(Row,Col),0.0)
-!           RLV_2D(Row,Col) = AMIN1 (RLV_2D(Row,Col),5.0)
-!           Make RLV limitation instead of RLV_2D
           END DO
         ENDDO
-!       END IF
       ENDIF ! end of IF not (FIRST)
 
       TRLV = 0.0
@@ -467,8 +466,6 @@ C=======================================================================
      &    FirstRow, HalfRow, RLV_2D,          !2D Input
      &    RFAC3, SOILPROP,                    !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
-
-!      Roots.for indicate RLV is in cm/cm3, OpGrow indicate !RLV is in cm/cm3, PlantGro.out indicate RLV is cm3/cm3, Roots_2D.for indicate RLV_2D is in cm/cm3
 
        CELLS%STATE%RLV = RLV_2D
 
@@ -622,8 +619,8 @@ C-----------------------------------------------------------------------
 
       CLOSE (LUNCRP)
 
-!     Convert RLWR from 1E4 cm/g to cm/g
-      RLWR = RLWR / 1.E4
+!!     Convert RLWR from 1E4 cm/g to cm/g
+!      RLWR = RLWR / 1.E4
 
 C-----------------------------------------------------------------------
       RETURN
@@ -665,7 +662,7 @@ C-----------------------------------------------------------------------
       REAL WidFrac(MaxRows,MaxCols), DepFrac(MaxRows,MaxCols) 
       TYPE (SoilType) SOILPROP
       REAL, DIMENSION(NL) :: DS
-
+      REAL Conc_factor
 
 !-----------------------------------------------------------------------
       NLAYR = SOILPROP % NLAYR
@@ -750,23 +747,23 @@ C-----------------------------------------------------------------------
         ENDDO ColLoop
       ENDDO RowLoop
 
-      RLINIT   =  GRORT * RLWR *  PLTPOP * HalfRow * 1.E-4
-!     cm[root]   g[root]   cm[root]   plants                   m2
-!      ------- = ------- * -------- * ------ * cm[row width] * ---
-!  cm[rowLength]  plant     g[root]     m2                     cm2
+!     CHP 2024-04-12: The following is dimensionally incorrect but 
+!       fixing it breaks the model.
+          RLINIT = GRORT * RLWR * PLTPOP !* 1.E-4
+!      cm[root]    g[root]   cm[root]   plants   m2
+!      --------- = ------- * -------- * ------ * ---
+!      cm2[ground]  plant    g[root]      m2     cm2
 
-!     Calculate root senescence due to water table
       DO Row = 1, NRowsTot 
         DO Col = 1, NColsTot
-!         in 1D subroutine, RLINIT is in cm[root]/cm2[ground]
-!         in 2D subroutine, RLINIT is in cm[root]/cm[row length]
-
           IF (RootArea(Row,Col) > 1.E-6) THEN
-            RLV_2D(Row,Col) = RLINIT  * RootArea(Row,Col) / TotRootArea
-            RLV_2D(Row,Col) = RLV_2D(Row,Col) / CellArea(Row,Col)
-!            cm[root]         cm[root]      1  
-!           ----------- = -------------- * ----
-!            cm3[soil]    cm[row length]   cm2 
+!           RLV is concentrated in a few cells and will be larger (per cell)
+!             than in the 1D model. Total cm of root and g of root are the same.
+            Conc_factor = HalfRow / Width(row,col)
+            RLV_2D(row,col) = RLINIT / Thick(row,col) * Conc_factor
+!                cm[root]      cm[root]      1
+!               ----------- = --------- * --------
+!                cm3[soil]    cm2[soil]   cm[soil]
           ENDIF
         ENDDO
       ENDDO
