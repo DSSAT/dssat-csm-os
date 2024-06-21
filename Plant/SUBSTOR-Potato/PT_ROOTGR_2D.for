@@ -107,7 +107,7 @@ C=======================================================================
       RTLSenes = 0.0
       CumRootMass = 0.0
       TotRootMass = 0.0
-      RFAC3 = RLWR *1.E-4
+      RFAC3 = RLWR * 1.E-4
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
@@ -146,22 +146,13 @@ C=======================================================================
         ENDDO
       ENDDO
 
-!     at emergence, assume that the initial root area starts from Row 1
-!     chp 2024-04-10 I think that we were starting to think about organic
-!     matter layer(s) above the first soil layer. Not ever really implemented
-!     so maybe don't really need this iniRT_StartRow anymore. But OK, it's assumed
-!     to be the top layer so shouldn't matter.
+!     iniRT is used to allow planting deeper than the first layer
       iniRT_StartRow = 1 
       FIRST = .TRUE.
 
 !     Width of half row (cm) used to scale up to field area basis. 
       HalfRow = BedDimension % ROWSPC_cm / 2
       HalfBed = BedDimension % BEDWD / 2
-
-!      CALL Aggregate_Roots(CELLS,
-!     &    FirstRow, HalfRow, RLV_2D,          !2D Input
-!     &    RFAC3, SOILPROP,                    !1D Input
-!     &    RLV, TRLV, TotRootMass)             !1D Output
 
       LastRow = 1
       LastCol = 1
@@ -205,9 +196,9 @@ C=======================================================================
 !       DISTRIBUTE ROOT LENGTH EVENLY IN ALL LAYERS TO A DEPTH OF
 !       RTDEPTI (ROOT DEPTH AT EMERGENCE)
         Call PT_INROOT_2D(
-     &    DepMax, GRORT, HalfRow, iniRT_StartRow, PLTPOP,   !Input
-     &    RLWR, SDEPTH, SOILPROP, Thick, TypeCell,          !Input
-     &    WidMax, Width,                                    !Input
+     &    DepMax, GRORT, iniRT_StartRow, PLTPOP,   !Input
+     &    RLWR, ROWSPC_cm, SDEPTH, SOILPROP, Thick,         !Input
+     &    TypeCell, WidMax, Width,                          !Input
      &    RLV_2D, RTDEP, RTWID, RTWIDr, DepFrac, WidFrac)   !Output
 
 !***********************************************************************
@@ -435,7 +426,7 @@ C=======================================================================
 !           To calculate LastCol need RTWIDr(Row), LastCumWid, RTWIDI
 
             RLV_2D(Row,Col) = RLV_2D(Row,Col)
-     &           + RLDF(Row,Col) * RLNEW /CellArea(Row,Col)
+     &           + RLDF(Row,Col) * RLNEW / CellArea(Row,Col)
 !             cm         cm     1
 !            -------  = ---- * ----
 !             cm3        cm    cm2
@@ -447,24 +438,24 @@ C=======================================================================
         ENDDO
       ENDIF ! end of IF not (FIRST)
 
-      TRLV = 0.0
-      DO Row = 1, LastRow
-        Do Col = 1, LastCol
-          IF (TypeCell(Row,Col) < 3 .OR. TypeCell(Row,Col) > 5) CYCLE
-          TRLV = TRLV + RLV_2D(Row,Col) * CellArea(Row,Col) 
-!          cm     cm      cm
-!         -----= ---- + ------- * cm2
-!          cm     cm      cm3
-!          JZW, TRLV is calculated in PT_Aggregate_Roots, we do not need to calculate here
-        End do
-
-        IF (RTWIDr(Row) > RTWID) RTWID = RTWIDr(Row) 
-!       RTWID is not used, it can be as output of this subroutine for watch variable
-      ENDDO
+!      TRLV = 0.0
+!      DO Row = 1, LastRow
+!        Do Col = 1, LastCol
+!          IF (TypeCell(Row,Col) < 3 .OR. TypeCell(Row,Col) > 5) CYCLE
+!          TRLV = TRLV + RLV_2D(Row,Col) * ColFrac(Row,Col) 
+!!          cm     cm      cm
+!!         -----= ---- + ------- * cm2
+!!          cm     cm      cm3
+!!          JZW, TRLV is calculated in PT_Aggregate_Roots, we do not need to calculate here
+!        End do
+!
+!        IF (RTWIDr(Row) > RTWID) RTWID = RTWIDr(Row) 
+!!       RTWID is not used, it can be as output of this subroutine for watch variable
+!      ENDDO
 
       CALL Aggregate_Roots(CELLS,
      &    FirstRow, HalfRow, RLV_2D,          !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
+     &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
        CELLS%STATE%RLV = RLV_2D
@@ -641,9 +632,9 @@ C-----------------------------------------------------------------------
 !  Calls  : None
 !=======================================================================
       SUBROUTINE PT_INROOT_2D(
-     &    DepMax, GRORT, HalfRow, iniRT_StartRow, PLTPOP,   !Input
-     &    RLWR, SDEPTH, SOILPROP, Thick, TypeCell,          !Input
-     &    WidMax, Width,                                    !Input
+     &    DepMax, GRORT, iniRT_StartRow, PLTPOP,   !Input
+     &    RLWR, ROWSPC_cm, SDEPTH, SOILPROP, Thick,         !Input
+     &    TypeCell, WidMax, Width,                          !Input
      &    RLV_2D, RTDEP, RTWID, RTWIDr, DepFrac, WidFrac)   !Output
 
 !     ------------------------------------------------------------------
@@ -653,16 +644,15 @@ C-----------------------------------------------------------------------
       INTEGER Row, Col, iniRT_StartRow, NLAYR
       INTEGER, DIMENSION(MaxRows,MaxCols) :: TypeCell
       REAL DepMax, RLINIT, WidMax(MaxRows)
-      REAL HalfRow, X, Z, GRORT, PLTPOP, RLWR, SDEPTH
+      REAL X, Z, GRORT, PLTPOP, RLWR, SDEPTH
       REAL RTDEPI, RTDEP, LastCumDep, CumDep
       REAL RTWIDI, RTWID, LastCumWid, CumWid, RTWIDr(MaxRows)
-      REAL TotRootArea
+      REAL TotRootArea, ROWSPC_cm, RLV_AVG
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RootArea
       REAL WidFrac(MaxRows,MaxCols), DepFrac(MaxRows,MaxCols) 
       TYPE (SoilType) SOILPROP
       REAL, DIMENSION(NL) :: DS
-      REAL Conc_factor
 
 !-----------------------------------------------------------------------
       NLAYR = SOILPROP % NLAYR
@@ -748,22 +738,29 @@ C-----------------------------------------------------------------------
       ENDDO RowLoop
 
 !     CHP 2024-04-12: The following is dimensionally incorrect but 
-!       fixing it breaks the model.
-          RLINIT = GRORT * RLWR * PLTPOP !* 1.E-4
-!      cm[root]    g[root]   cm[root]   plants   m2
-!      --------- = ------- * -------- * ------ * ---
-!      cm2[ground]  plant    g[root]      m2     cm2
+!       fixing it breaks the model. (I think it's because RLWR is 
+!       already input as 10-4 (?)
+      RLINIT = GRORT * RLWR * PLTPOP !* 1.E-4
+!  cm[root]     g[root]   cm[root]   plants   m2
+! ----------- = ------- * -------- * ------ * ---
+! cm2[ground]    plant     g[root]     m2     cm2
+
+!     Overall RLV is a concentration. The value should be equal
+!         in all cells at initialization.
+!     (Rowspc / RTWIDi) concentrates the RLV in the cells that have roots.
+!     RLV is higher in 2D cells than in 1D layers because the roots are not
+!       found in every cell so the cells with roots are more densly populated.
+      RLV_AVG = RLINIT / RTDEPI * (ROWSPC_cm / RTWIDi)
+!    cm[root]    cm[root]       1       cm[soil]
+!    --------- = --------- * -------- * --------
+!    cm3[soil]   cm2[soil]   cm[soil]   cm[soil]
 
       DO Row = 1, NRowsTot 
         DO Col = 1, NColsTot
           IF (RootArea(Row,Col) > 1.E-6) THEN
 !           RLV is concentrated in a few cells and will be larger (per cell)
 !             than in the 1D model. Total cm of root and g of root are the same.
-            Conc_factor = HalfRow / Width(row,col)
-            RLV_2D(row,col) = RLINIT / Thick(row,col) * Conc_factor
-!                cm[root]      cm[root]      1
-!               ----------- = --------- * --------
-!                cm3[soil]    cm2[soil]   cm[soil]
+            RLV_2D(row,col) = RLV_AVG
           ENDIF
         ENDDO
       ENDDO

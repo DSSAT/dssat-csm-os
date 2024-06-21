@@ -72,7 +72,7 @@
 
 !     2D variables:
       INTEGER Row, Col, FirstRow, LastRow, LastCol 
-      REAL RTDEPnew 
+      REAL RTDEPnew, RowSpc_cm
       REAL RTWIDr(MaxRows), RTWIDnew(MaxRows), WidMax(MaxRows)
       REAL RTDEP, RTDEPI, DEPMAX, RTWID, RTWIDI
       REAL TotRootMass, CumRootMass, rlv_max
@@ -206,6 +206,7 @@
 !-----------------------------------------------------------------------
       CALL INROOT_2D(
      &  DepMax, FirstRow, FRRT, HalfRow, PLTPOP, RFAC1,    !Input
+     &  ROWSPC_CM,                                         !Input
      &  RTDEPI, RTWIDI, Thick, WidMax, Width, WTNEW,       !Input
      &  RLV_2D, RTDEP, RTWID, RTWIDr)                      !Output
 
@@ -218,7 +219,7 @@
 
       CALL Aggregate_Roots(CELLS,
      &    FirstRow, HalfRow, RLV_2D,          !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
+     &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
       LastRow = 1
@@ -520,7 +521,7 @@
       CumRootMass = CumRootMass + WRDOTN * 10. - SRDOT * 10.
       CALL Aggregate_Roots(CELLS,
      &    FirstRow, HalfRow, RLV_2D,          !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
+     &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
       CALL Cell2Layer_2D(SENRT_2D, Struc, NRowsTot, SENRT)
@@ -669,6 +670,7 @@
 !=======================================================================
       SUBROUTINE INROOT_2D(
      &  DepMax, FirstRow, FRRT, HalfRow, PLTPOP, RFAC1,    !Input
+     &  ROWSPC_CM,                                         !Input
      &  RTDEPI, RTWIDI, Thick, WidMax, Width, WTNEW,       !Input
      &  RLV_2D, RTDEP, RTWID, RTWIDr)                      !Output
 
@@ -681,7 +683,7 @@
       REAL HalfRow, X, Z
       REAL RTDEPI, RTDEP, LastCumDep, CumDep
       REAL RTWIDI, RTWID, LastCumWid, CumWid, RTWIDr(MaxRows)
-      REAL TotRootArea
+      REAL TotRootArea, RLV_AVG, ROWSPC_CM
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RootArea
 !-----------------------------------------------------------------------
@@ -743,16 +745,22 @@
 !    -------------- = ------- * ------ * ------- * --- * cm(row width)  
 !    cm[row length]    plant      m2     g[root]   cm2
 
-      DO Row = FirstRow, NRowsTot
+!     Overall RLV is a concentration. The value should be equal
+!         in all cells at initialization.
+!     (Rowspc / RTWIDi) concentrates the RLV in the cells that have roots.
+!     RLV is higher in 2D cells than in 1D layers because the roots are not
+!       found in every cell so the cells with roots are more densly populated.
+      RLV_AVG = RLINIT / RTDEPI * (ROWSPC_cm / RTWIDi)
+!    cm[root]    cm[root]       1       cm[soil]
+!    --------- = --------- * -------- * --------
+!    cm3[soil]   cm2[soil]   cm[soil]   cm[soil]
+
+      DO Row = 1, NRowsTot 
         DO Col = 1, NColsTot
           IF (RootArea(Row,Col) > 1.E-6) THEN
-!           JZW question should be RLV_2D(Row,Col) = RLV_2D(Row,Col) + RLINIT  * RootArea(Row,Col) / TotRootArea
-!           RLV_2D(Row,Col) should not be zero before RLINIT ?????
-            RLV_2D(Row,Col) = RLINIT  * RootArea(Row,Col) / TotRootArea
-            RLV_2D(Row,Col) = RLV_2D(Row,Col) / CellArea(Row,Col)
-!            cm[root]         cm[root]      1  
-!           ----------- = -------------- * ----
-!            cm3[soil]    cm[row length]   cm2 
+!           RLV is concentrated in a few cells and will be larger (per cell)
+!             than in the 1D model. Total cm of root and g of root are the same.
+            RLV_2D(row,col) = RLV_AVG
           ENDIF
         ENDDO
       ENDDO
@@ -769,7 +777,7 @@
 !-----------------------------------------------------------------------
       SUBROUTINE Aggregate_Roots(CELLS,
      &    FirstRow, HalfRow, RLV_2D,          !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
+     &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
       Use Cells_2D
@@ -787,14 +795,16 @@
       INTEGER Row, Col, L, NLAYR
       REAL, DIMENSION(NL) :: DLAYR
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: TypeCell
+      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen, ColFrac
+      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
+      REAL RowSpc_cm
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
       Thick = STRUC%THICK
       Width = STRUC%WIDTH
-      TypeCell = STRUC%Cell_Type
+      ColFrac = BedDimension % ColFrac
+      Cell_Type = STRUC%Cell_Type
 
       DLAYR = SOILPROP % DLAYR
       NLAYR = SOILPROP % NLAYR
@@ -803,13 +813,19 @@
       TRLV = 0.0
       DO Row = FirstRow, NRowsTot
         DO Col = 1, NColsTot
-!         RLV_2D is zero for cell types < 3 and > 5
-          RtLen(Row,Col) =RLV_2D(Row,Col)*THICK(Row,Col)*Width(Row,Col)
-!             cm[root]         cm[root]
-!          -------------- =   ----------- * cm[cell depth] * cm[cell width]
-!          cm[row length]     cm3[ground]
+          SELECT CASE(Cell_Type(row,col))
+          CASE(3,4,5)
+!           RLV_2D is zero for cell types < 3 and > 5
+            RtLen(Row,Col) = RLV_2D(Row,Col)*THICK(Row,Col)
+!              cm[root]         cm[root]
+!           -------------- =   ----------- * cm[cell depth] * cm[cell width]
+!           cm[row length]     cm3[ground]
 
-          TRLV = TRLV + RtLen(Row,Col)
+!           Convert to field scale
+            RtLen(Row,Col) = RtLen(Row,Col) * (Width(Row,Col)/Rowspc_cm)
+
+            TRLV = TRLV + RtLen(Row,Col)/thick(row,col)*ColFrac(row,col)
+          END SELECT
         ENDDO
       ENDDO
 
@@ -819,16 +835,15 @@
 !              cm[row length]   cm[row width]   cm[root]     m2        (g/m2)
 
 !     Aggregate cells across a row to get layer total.  Units for layers
-!     are in cm[root]/cm[row length]
+!     are in cm[root]/cm[row length] and can be aggregated like mass units.
       CALL Cell2Layer_2D(
      &   RtLen, Struc, NLAYR ,                 !Input
      &   RLV)                                  !Output
 
       DO L = 1, NRowsTot
-        SELECT CASE(TypeCell(L,1))
+        SELECT CASE(Cell_Type(L,1))
           CASE(3)
-!           RLV(L) = RLV(L) / HalfBed / DLAYR(L)
-            RLV(L) = RLV(L) / DLAYR(L)/( BedDimension % BEDWD / 2) 
+            RLV(L) = RLV(L) / DLAYR(L)/(BedDimension % BEDWD / 2) 
           CASE(4,5)
             RLV(L) = RLV(L) / HalfRow / DLAYR(L) 
         END SELECT
