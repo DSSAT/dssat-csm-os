@@ -75,7 +75,7 @@ ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) 
 ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. g       Eye weight (g)                                           .
-EYLD   Eco. Yield      Economic Yield                                           .
+EYLDH  Eco. Yld t/ha   Economic Yield (ton/ha)                                  .
 FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
 FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .

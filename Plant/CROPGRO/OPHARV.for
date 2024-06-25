@@ -65,7 +65,7 @@ C-----------------------------------------------------------------------
 
       REAL BIOMAS, BWAH, CANHT, CANNAA, CANWAA, HI, HWAH, HWAM
       REAL LAIMX, PCLSD, PCNSD, PODWT, PODNO, PSDWT, PSPP
-      REAL SDRATE, SDWT, SDWTAH, SEEDNO, EYLD
+      REAL SDRATE, SDWT, SDWTAH, SEEDNO, EYLDH
       REAL THRES, TOPWT, VSTAGE
       REAL WTNCAN, WTNFX, WTNSD, WTNST, WTNUP, XLAI
       REAL, DIMENSION(2) :: HARVFRAC
@@ -73,7 +73,7 @@ C-----------------------------------------------------------------------
 !     Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
       INTEGER, PARAMETER :: SUMNUM = 19
-      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
 !     Arrays which contain Simulated and Measured data for printing
@@ -123,7 +123,7 @@ C-----------------------------------------------------------------------
      & 'MDAT  ',  ! 5 DNR7           DMAT   Physiological Maturity
      & 'R8AT  ',  ! 6 DNR8           DHRV   Harvest Maturity (dap)
      & 'HWAM  ',  ! 7 NINT(SDWT*10)  XGWT   Seed Yield (kg/ha;dry)
-     & 'EYLD  ',  ! 8 EYLD           EYLD   Economic Yield
+     & 'EYLDH ',  ! 8 EYLDH          EYLDH  Economic Yield
      & 'PWAM  ',  ! 9 NINT(PODWT*10) XPDW   Pod Yield (kg/ha;dry) 
      & 'CWAA  ',  !10 NINT(CANWAA*10)XCWAA  Biomass (kg/ha) at Anth
      & 'CWAM  ',  !11 NINT(TOPWT*10) XCWT   Biomass (kg/ha) Harv Mat
@@ -205,7 +205,7 @@ C-----------------------------------------------------------------------
       XLAI   = -99.
       YIELD  = -99.
       RSTAGE = -99.
-      EYLD   = -99.
+      EYLDH  = -99.
 
       CALL OPVIEW(CONTROL, 
      &    BIOMAS, ACOUNT, DESCRIP, IDETO, VSTAGE, 
@@ -349,7 +349,7 @@ C-----------------------------------------------------------------------
       
       ! 2024-06-20 FO - Economic Yield for Cotton.
       IF(CROP .EQ. 'CO') THEN
-        EYLD = -99.0
+        EYLDH = -99.0
       ENDIF
 
 !-----------------------------------------------------------------------
@@ -478,7 +478,7 @@ C-----------------------------------------------------------------------
       WRITE(Simulated(6),' (I8)') DNR8;  WRITE(Measured(6),'(I8)') DHRV
       WRITE(Simulated(7),' (I8)') NINT(SDWT*10);  
                                   WRITE(Measured(7),'(A8)') TRIM(X(7))
-      WRITE(Simulated(8),'(I8)') NINT(EYLD); 
+      WRITE(Simulated(8),'(I8)') NINT(EYLDH); 
                                   WRITE(Measured(8),'(A8)')TRIM(X(8))
       WRITE(Simulated(9),' (I8)') NINT(PODWT*10); 
                                   WRITE(Measured(9),'(A8)') TRIM(X(9))
@@ -588,7 +588,7 @@ C     Byproduct not harvested is incorporated
         LABEL(16) = 'LAIX'; VALUE(16) = LAIMX
         LABEL(17) = 'HIAM'; VALUE(17) = HI
         LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
-        LABEL(19) = 'EYLD'; VALUE(19) = EYLD
+        LABEL(19) = 'EYLDH'; VALUE(19) = EYLDH
 
         !Send labels and values to OPSUM
         CALL SUMVALS (SUMNUM, LABEL, VALUE) 
