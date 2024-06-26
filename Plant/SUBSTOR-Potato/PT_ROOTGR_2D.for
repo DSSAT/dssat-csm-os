@@ -68,7 +68,7 @@ C=======================================================================
       REAL  CumWid, LastCumDep, LastCumWid
       REAL HalfBed, RLV_max, RFAC3
       REAL PORMIN, SWEXF, RTSURV, RTEXF, RLDSM, RTSDF, RTWTMIN, TRLV_MIN
-      REAL RTDEPnew, RTWID, RTLSenes, RTMasSenes, RLSENTOT
+      REAL RTDEPnew, RTWID, RTLSenes, RTMasSenes
       REAL RTWIDr(MaxRows), RTWIDnew(MaxRows), WidMax(MaxRows)
       REAL WidFrac(MaxRows,MaxCols), DepFrac(MaxRows,MaxCols) 
       REAL TotRootMass, TotRootArea, CelRootArea(MaxRows,MaxCols)
@@ -77,7 +77,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RLDF, SAT, DUL, LL
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea, ESW
-      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_WS, WR, SWV
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_WS, WR, SWV, RootLen
 
       TYPE (CellType) CELLS(MaxRows,MaxCols)
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
@@ -107,7 +107,10 @@ C=======================================================================
       RTLSenes = 0.0
       CumRootMass = 0.0
       TotRootMass = 0.0
-      RFAC3 = RLWR * 1.E-4
+
+!!     RLWR 1E4 g/cm; RFAC3 g/cm
+!      RFAC3 = RLWR * 1.E-4
+      RFAC3 = RLWR
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
@@ -199,7 +202,8 @@ C=======================================================================
      &    DepMax, GRORT, iniRT_StartRow, PLTPOP,   !Input
      &    RLWR, ROWSPC_cm, SDEPTH, SOILPROP, Thick,         !Input
      &    TypeCell, WidMax, Width,                          !Input
-     &    RLV_2D, RTDEP, RTWID, RTWIDr, DepFrac, WidFrac)   !Output
+     &    RLV_2D, RTDEP, RTWID, RTWIDr, DepFrac, WidFrac,   !Output
+     &    RootLen)                                          !Output
 
 !***********************************************************************
       ELSE !if not first, i.e not initial
@@ -411,12 +415,7 @@ C=======================================================================
              stop
         Endif
 
-        RLSENTOT = 0.0
-
-!       IF (TRLDF .GE. RLNEW*0.00001) THEN ! JZW ask CHP: different unit, how to compare????
-!          RLNEW and RLINIT IS in cm[root]/cm[ground]/d, TRLDF is in cm2 TRLDF has same unit as RLDF for now
-        RLDF = RLDF / TRLDF ! RLDF is unitless now
-
+        RLDF = RLDF / TRLDF ! RLDF is unitless now and sums to 1
 
         DO Row = 1, LastRow !JZW LastRow is the last row of root
           DO Col = 1, LastCol 
@@ -425,11 +424,13 @@ C=======================================================================
      &            RTLSenes + 0.005*RLV_2D(Row,Col) * CellArea(Row,Col)
 !           To calculate LastCol need RTWIDr(Row), LastCumWid, RTWIDI
 
-            RLV_2D(Row,Col) = RLV_2D(Row,Col)
-     &           + RLDF(Row,Col) * RLNEW / CellArea(Row,Col)
-!             cm         cm     1
-!            -------  = ---- * ----
-!             cm3        cm    cm2
+            RootLen(row,col) = RootLen(row,col) + RLNEW * RLDF(Row,Col)
+            RLV_2D(Row,Col) = RootLen(row,col) / Thick(row,col)
+!              this factor scales to field scale
+     &          * (RowSpc_cm / width(row,col)) 
+!             cm         cm     1      cm
+!            -------  = ---- * ---- * ----
+!             cm3        cm2    cm     cm
 
 !           Subtract root senescence and check for negative value
             RLV_2D(Row,Col) = RLV_2D(Row,Col) - 0.005 * RLV_2D(Row,Col)
@@ -438,23 +439,8 @@ C=======================================================================
         ENDDO
       ENDIF ! end of IF not (FIRST)
 
-!      TRLV = 0.0
-!      DO Row = 1, LastRow
-!        Do Col = 1, LastCol
-!          IF (TypeCell(Row,Col) < 3 .OR. TypeCell(Row,Col) > 5) CYCLE
-!          TRLV = TRLV + RLV_2D(Row,Col) * ColFrac(Row,Col) 
-!!          cm     cm      cm
-!!         -----= ---- + ------- * cm2
-!!          cm     cm      cm3
-!!          JZW, TRLV is calculated in PT_Aggregate_Roots, we do not need to calculate here
-!        End do
-!
-!        IF (RTWIDr(Row) > RTWID) RTWID = RTWIDr(Row) 
-!!       RTWID is not used, it can be as output of this subroutine for watch variable
-!      ENDDO
-
       CALL Aggregate_Roots(CELLS,
-     &    FirstRow, HalfRow, RLV_2D,          !2D Input
+     &    FirstRow, RLV_2D,                   !2D Input
      &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
@@ -635,7 +621,8 @@ C-----------------------------------------------------------------------
      &    DepMax, GRORT, iniRT_StartRow, PLTPOP,   !Input
      &    RLWR, ROWSPC_cm, SDEPTH, SOILPROP, Thick,         !Input
      &    TypeCell, WidMax, Width,                          !Input
-     &    RLV_2D, RTDEP, RTWID, RTWIDr, DepFrac, WidFrac)   !Output
+     &    RLV_2D, RTDEP, RTWID, RTWIDr, DepFrac, WidFrac,   !Output
+     &    RootLen)                                          !Output
 
 !     ------------------------------------------------------------------
       USE Cells_2D
@@ -647,9 +634,9 @@ C-----------------------------------------------------------------------
       REAL X, Z, GRORT, PLTPOP, RLWR, SDEPTH
       REAL RTDEPI, RTDEP, LastCumDep, CumDep
       REAL RTWIDI, RTWID, LastCumWid, CumWid, RTWIDr(MaxRows)
-      REAL TotRootArea, ROWSPC_cm, RLV_AVG
+      REAL TotRootArea, ROWSPC_cm, RLV_init
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea
-      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RootArea
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RootArea, RootLen
       REAL WidFrac(MaxRows,MaxCols), DepFrac(MaxRows,MaxCols) 
       TYPE (SoilType) SOILPROP
       REAL, DIMENSION(NL) :: DS
@@ -668,6 +655,24 @@ C-----------------------------------------------------------------------
       ENDIF
       RTWIDI = MAX(MIN(RTWIDI, WidMax(1)), Width(1,1))
       RTWID = RTWIDI
+
+!     CHP 2024-04-12: The following is dimensionally incorrect but 
+!       fixing it breaks the model. (I think it's because RLWR is 
+!       already input as 1E4 (?)
+      RLINIT = GRORT * RLWR * PLTPOP !* 1.E-4
+!  cm[root]     g[root]   1E4 cm[root]   plants   1E-4 m2
+! ----------- = ------- * ------------ * ------ * -------
+! cm2[ground]    plant       g[root]       m2       cm2
+
+!     Overall RLV is a concentration. The value should be equal
+!         in all cells at initialization.
+!     (Rowspc / RTWIDi) concentrates the RLV in the cells that have roots.
+!     RLV is higher in 2D cells than in 1D layers because the roots are not
+!       found in every cell so the cells with roots are more densly populated.
+      RLV_init = RLINIT / RTDEPI * (ROWSPC_cm / RTWIDi)
+!    cm[root]    cm[root]       1       cm[soil]
+!    --------- = --------- * -------- * --------
+!    cm3[soil]   cm2[soil]   cm[soil]   cm[soil]
 
       RLV_2D = 0.0
       RootArea = 0.  !cell area containing roots
@@ -733,37 +738,12 @@ C-----------------------------------------------------------------------
           IF (ROW == 1 .OR. COL == 1 .OR. Z > 0.98 * Thick(Row,Col))THEN
             RootArea(Row,Col) = X * Z
           ENDIF
+          RLV_2D(row,col) = RLV_init*RootArea(row,col)/CellArea(row,col)
           TotRootArea = TotRootArea + RootArea(Row,Col)
+          RootLen(row,col) = RLV_2D(row,col) * Thick(row,col)
+     &       * (X / RowSpc_cm) ! this scales to field scale
         ENDDO ColLoop
       ENDDO RowLoop
-
-!     CHP 2024-04-12: The following is dimensionally incorrect but 
-!       fixing it breaks the model. (I think it's because RLWR is 
-!       already input as 10-4 (?)
-      RLINIT = GRORT * RLWR * PLTPOP !* 1.E-4
-!  cm[root]     g[root]   cm[root]   plants   m2
-! ----------- = ------- * -------- * ------ * ---
-! cm2[ground]    plant     g[root]     m2     cm2
-
-!     Overall RLV is a concentration. The value should be equal
-!         in all cells at initialization.
-!     (Rowspc / RTWIDi) concentrates the RLV in the cells that have roots.
-!     RLV is higher in 2D cells than in 1D layers because the roots are not
-!       found in every cell so the cells with roots are more densly populated.
-      RLV_AVG = RLINIT / RTDEPI * (ROWSPC_cm / RTWIDi)
-!    cm[root]    cm[root]       1       cm[soil]
-!    --------- = --------- * -------- * --------
-!    cm3[soil]   cm2[soil]   cm[soil]   cm[soil]
-
-      DO Row = 1, NRowsTot 
-        DO Col = 1, NColsTot
-          IF (RootArea(Row,Col) > 1.E-6) THEN
-!           RLV is concentrated in a few cells and will be larger (per cell)
-!             than in the 1D model. Total cm of root and g of root are the same.
-            RLV_2D(row,col) = RLV_AVG
-          ENDIF
-        ENDDO
-      ENDDO
 
 !-----------------------------------------------------------------------
       RETURN

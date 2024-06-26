@@ -60,10 +60,11 @@ C=======================================================================
 
       REAL CUMDEP, DEP, DEPMAX, DTT, GRORT, PLTPOP
       REAL RLINIT, RLNEW, RLWR, RNFAC, RNLF, RTDEP, RTDEPI
-      REAL SDEPTH, SWDF, SWFAC, TRLDF, TRLV
+      REAL SDEPTH, SWDF, SWFAC, TRLDF, TRLV, RLV_init
 
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, ESW, LL 
       REAL, DIMENSION(NL) :: NH4, NO3, RLDF, RLV, SHF, SW
+      REAL TotRootMass
 
 !     Add 2D roots variable - needed for SoilNi, even for 1D runs
       Type (CellType)    CELLS(MaxRows,MaxCols)
@@ -95,39 +96,35 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !     Initial root distribution:  
       IF (FIRST) THEN
+        FIRST  = .FALSE.
+
+!       INITIALIZE ROOT DEPTH AT EMERGENCE
 !       After planting date, when Root growth rate >0, could be before Emergence date
 !       RTDEPI = SDEPTH  
         RTDEPI = MIN(20.0,DS(NLAYR))     !CHP per JWJ                 
-        FIRST  = .FALSE.
+        RTDEP = RTDEPI
 
-C-------------------------------------------------------------------------
-!       CHP 5/29/03 - Added this section based on CROPGRO initialization
-!           at emergence. 
-C       INITIALIZE ROOT DEPTH AT EMERGENCE
-C       DISTRIBUTE ROOT LENGTH EVENLY IN ALL LAYERS TO A DEPTH OF
-C       RTDEPTI (ROOT DEPTH AT EMERGENCE)
-C-------------------------------------------------------------------------
+!       RLWR 1E4 cm/g
+        RLINIT = GRORT * RLWR * PLTPOP 
+!   cm[root]     g[root]   1E4 cm[root]   plants   1E-4 m2
+!  ----------- = ------- * ------------ * ------ * -------
+!  cm2[ground]    plant       g[root]       m2       cm2
+
+!       RLV is a concentration. The value is the same in all soil layers thru
+!         the rooting depth at initialization.
+        RLV_init = RLINIT / RTDEPI
+!      cm[root]    cm[root]       1       cm[soil]
+!      --------- = --------- * -------- * --------
+!      cm3[soil]   cm2[soil]   cm[soil]   cm[soil]
+
         CUMDEP = 0.
 !       RLINIT is in cm[root]/cm2[ground]
         DO L = 1,NLAYR
           DEP = MIN(RTDEPI - CUMDEP, DLAYR(L))
-!         RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * DEP / ( RTDEP *
-!      &       10000 )
-!         RLWR cm[root]/g[root])
-
-!     CHP 2024-04-12: The following is dimensionally incorrect but 
-!       fixing it breaks the model.
-          RLINIT = GRORT * RLWR * PLTPOP !* 1.E-4
-!      cm[root]    g[root]   cm[root]   plants   m2
-!      --------- = ------- * -------- * ------ * ---
-!      cm2[ground]  plant    g[root]      m2     cm2
-
           CUMDEP = CUMDEP + DEP
-          RLV(L) = RLINIT / DLAYR(L)
+          RLV(L) = RLV_init * DEP / DLAYR(L)
           IF (CUMDEP .GE. RTDEPI) EXIT
         ENDDO
-
-        RTDEP = RTDEPI
 
 !***********************************************************************
       ELSE
@@ -173,24 +170,20 @@ C-------------------------------------------------------------------------
               RLV(L) = AMIN1 (RLV(L),5.0)
            END DO
         END IF
-
-        TRLV = 0.0
-        DO L = 1, NLAYR
-          TRLV = TRLV + RLV(L) * DLAYR(L)
-        ENDDO
-
       ENDIF
 
-!     Transfer RLV values to 2D variable for use in some N routines
+      TRLV = 0.0
       DO L = 1, NLAYR
+        TRLV = TRLV + RLV(L) * DLAYR(L)
+!       Transfer RLV values to 2D variable for use in some N routines
         CELLS(L,1)%STATE%RLV = RLV(L)
       ENDDO
 
-       ! RLWR  Root length to weight ratio, (cm/g)
-!        TotRootMass = (TRLV / RLWR) * 10.
-!                   cm[root]   g[root]   10000 cm2   10(kg/ha)
-!          kg/ha  = -------- * ------- * -------- * ---------
-!                  cm2[soil]   cm[root]     m2         (g/m2)
+!     RLWR  Root length to weight ratio, (1E4 cm/g)
+      TotRootMass = (TRLV / RLWR) * 10.
+!                 cm[root]   g[root]   10000 cm2   10(kg/ha)
+!        kg/ha  = -------- * ------- * -------- * ---------
+!                cm2[soil]   cm[root]     m2         (g/m2)
 
 !        CumRootMass=CumRootMass+ GRORT * PLTPOP *  10 ! 1 ha = 10000m2
        ! kg[root]       kg        g      # plants     kg/ha
@@ -296,14 +289,6 @@ C-----------------------------------------------------------------------
       ENDDO
 
       CLOSE (LUNCRP)
-
-!     CHP 2024-04-12: 
-!     RLWR in species file has value of 2.5. If the units are cm/g then
-!       (assuming 1.3 g/cm3 density of root tissue), the roots are 6 mm diameter.
-!       I'm pretty sure that the units are 10^4 cm/g, then the diameter is .06 mm (small, but more realistic). 
-!     However, changing the units as below breaks the model, so I'll leave it commented out. 
-!!     Convert RLWR from 1E4 cm/g to cm/g
-!      RLWR = RLWR / 1.E4
 
 C-----------------------------------------------------------------------
       RETURN

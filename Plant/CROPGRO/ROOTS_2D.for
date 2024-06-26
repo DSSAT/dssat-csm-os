@@ -218,7 +218,7 @@
 !           ha      plant   g[tissue]     m2      g/m2
 
       CALL Aggregate_Roots(CELLS,
-     &    FirstRow, HalfRow, RLV_2D,          !2D Input
+     &    FirstRow, RLV_2D,                   !2D Input
      &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
@@ -520,7 +520,7 @@
 
       CumRootMass = CumRootMass + WRDOTN * 10. - SRDOT * 10.
       CALL Aggregate_Roots(CELLS,
-     &    FirstRow, HalfRow, RLV_2D,          !2D Input
+     &    FirstRow, RLV_2D,                   !2D Input
      &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
@@ -776,7 +776,7 @@
 !     Subroutine  Aggregate_Roots converts 2D RLV and root mass to 1D
 !-----------------------------------------------------------------------
       SUBROUTINE Aggregate_Roots(CELLS,
-     &    FirstRow, HalfRow, RLV_2D,          !2D Input
+     &    FirstRow, RLV_2D,                   !2D Input
      &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
@@ -787,15 +787,15 @@
       TYPE (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
       REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: RLV_2D
       INTEGER, INTENT(IN) :: FirstRow
-      REAL, INTENT(IN) :: HalfRow, RFAC3
+      REAL, INTENT(IN) :: RFAC3
       TYPE (SoilType), INTENT(IN) :: SOILPROP
       REAL, DIMENSION(NL), INTENT(OUT) :: RLV
       REAL, INTENT(OUT) :: TRLV, TotRootMass
 
       INTEGER Row, Col, L, NLAYR
-      REAL, DIMENSION(NL) :: DLAYR
+      REAL, DIMENSION(NL) :: DLAYR, RtLen_1D
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen, ColFrac
+      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen_2D,ColFrac
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
       REAL RowSpc_cm
 
@@ -816,36 +816,37 @@
           SELECT CASE(Cell_Type(row,col))
           CASE(3,4,5)
 !           RLV_2D is zero for cell types < 3 and > 5
-            RtLen(Row,Col) = RLV_2D(Row,Col)*THICK(Row,Col)
-!              cm[root]         cm[root]
-!           -------------- =   ----------- * cm[cell depth] * cm[cell width]
-!           cm[row length]     cm3[ground]
+            RtLen_2D(Row,Col) = RLV_2D(Row,Col) * THICK(Row,Col)
+!           cm[root]    cm[root]
+!           --------- = --------- * cm[cell thickness] 
+!           cm2[soil]   cm3[soil]
 
 !           Convert to field scale
-            RtLen(Row,Col) = RtLen(Row,Col) * (Width(Row,Col)/Rowspc_cm)
+            RtLen_2D(Row,Col) = RtLen_2D(Row,Col) 
+     &          * (Width(Row,Col) / Rowspc_cm)
 
-            TRLV = TRLV + RtLen(Row,Col)/thick(row,col)*ColFrac(row,col)
+            TRLV = TRLV + RtLen_2D(Row,Col) 
           END SELECT
         ENDDO
       ENDDO
 
-      TotRootMass = TRLV / HalfRow / RFAC3 * 1.E5
-!                 cm[root]           1          g[root]   1E4 cm2    10(kg/ha)
-!      kg/ha  = ------------- * ------------- * ------- * -------- * ---------
-!              cm[row length]   cm[row width]   cm[root]     m2        (g/m2)
+      TotRootMass = TRLV / RFAC3 * 10.
+!                 cm[root]       g[root]    1E4 cm2    10(kg/ha)
+!      kg/ha  = -------------- * -------- * -------- * ---------
+!              cm2[row length]   cm[root]      m2       (g/m2)
 
 !     Aggregate cells across a row to get layer total.  Units for layers
 !     are in cm[root]/cm[row length] and can be aggregated like mass units.
       CALL Cell2Layer_2D(
-     &   RtLen, Struc, NLAYR ,                 !Input
-     &   RLV)                                  !Output
+     &   RtLen_2D, Struc, NLAYR ,              !Input
+     &   RtLen_1D)                             !Output
 
       DO L = 1, NRowsTot
         SELECT CASE(Cell_Type(L,1))
           CASE(3)
-            RLV(L) = RLV(L) / DLAYR(L)/(BedDimension % BEDWD / 2) 
+            RLV(L) = RtLen_1D(L) / DLAYR(L)/BedDimension % BEDWD 
           CASE(4,5)
-            RLV(L) = RLV(L) / HalfRow / DLAYR(L) 
+            RLV(L) = RtLen_1D(L) / Rowspc_cm / DLAYR(L) 
         END SELECT
 !    cm[root]       cm[root]            1               1
 !  ----------- = -------------- * ------------- * -----------------
