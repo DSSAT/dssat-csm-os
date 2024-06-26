@@ -59,10 +59,11 @@ C=======================================================================
 
       REAL CUMDEP, DEP, DEPMAX, DTT, GRORT, PLTPOP
       REAL RLINIT, RLNEW, RLWR, RNFAC, RNLF, RTDEP, RTDEPI
-      REAL SDEPTH, SWDF, SWFAC, TRLDF, TRLV
+      REAL SDEPTH, SWDF, SWFAC, TRLDF, TRLV, RLV_init
 
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, ESW, LL 
       REAL, DIMENSION(NL) :: NH4, NO3, RLDF, RLV, SHF, SW
+      REAL TotRootMass
 
 !***********************************************************************
 !***********************************************************************
@@ -91,35 +92,35 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !     Initial root distribution:  
       IF (FIRST) THEN
+        FIRST  = .FALSE.
+
+!       INITIALIZE ROOT DEPTH AT EMERGENCE
 !       After planting date, when Root growth rate >0, could be before Emergence date
 !       RTDEPI = SDEPTH  
         RTDEPI = MIN(20.0,DS(NLAYR))     !CHP per JWJ                 
-        FIRST  = .FALSE.
+        RTDEP = RTDEPI
 
-C-------------------------------------------------------------------------
-!       CHP 5/29/03 - Added this section based on CROPGRO initialization
-!           at emergence. 
-C       INITIALIZE ROOT DEPTH AT EMERGENCE
-C       DISTRIBUTE ROOT LENGTH EVENLY IN ALL LAYERS TO A DEPTH OF
-C       RTDEPTI (ROOT DEPTH AT EMERGENCE)
-C-------------------------------------------------------------------------
+!       RLWR 1E4 cm/g
+        RLINIT = GRORT * RLWR * PLTPOP 
+!   cm[root]     g[root]   1E4 cm[root]   plants   1E-4 m2
+!  ----------- = ------- * ------------ * ------ * -------
+!  cm2[ground]    plant       g[root]       m2       cm2
+
+!       RLV is a concentration. The value is the same in all soil layers thru
+!         the rooting depth at initialization.
+        RLV_init = RLINIT / RTDEPI
+!      cm[root]    cm[root]       1       cm[soil]
+!      --------- = --------- * -------- * --------
+!      cm3[soil]   cm2[soil]   cm[soil]   cm[soil]
+
         CUMDEP = 0.
 !       RLINIT is in cm[root]/cm2[ground]
         DO L = 1,NLAYR
           DEP = MIN(RTDEPI - CUMDEP, DLAYR(L))
-!         RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * DEP / ( RTDEP *
-!      &       10000 )
-!         RLWR cm[root]/g[root])
-          RLINIT = GRORT * RLWR * PLTPOP
-      !cm[root]      g     cm  # plants    1E-4*m2 
-      !--------- = ---- * ---- * ---------*------
-      !cm2[ground] plant   g       m2        cm2  
           CUMDEP = CUMDEP + DEP
-          RLV(L) = RLINIT / DLAYR(L)
+          RLV(L) = RLV_init * DEP / DLAYR(L)
           IF (CUMDEP .GE. RTDEPI) EXIT
         ENDDO
-
-        RTDEP = RTDEPI
 
 !***********************************************************************
       ELSE
@@ -166,18 +167,18 @@ C-------------------------------------------------------------------------
            END DO
         END IF
 
-        TRLV = 0.0
-        DO L = 1, NLAYR
-          TRLV = TRLV + RLV(L) * DLAYR(L)
-        ENDDO
-
       ENDIF
 
-       ! RLWR  Root length to weight ratio, (1E4 cm/g)
-!        TotRootMass = (TRLV / RLWR) * 10.
-!                   cm[root]   g[root]   10000 cm2   10(kg/ha)
-!          kg/ha  = -------- * ------- * -------- * ---------
-!                  cm2[soil]   cm[root]     m2         (g/m2)
+      TRLV = 0.0
+      DO L = 1, NLAYR
+        TRLV = TRLV + RLV(L) * DLAYR(L)
+      ENDDO
+
+!     RLWR  Root length to weight ratio, (1E4 cm/g)
+      TotRootMass = (TRLV / RLWR) * 10.
+!                 cm[root]   g[root]   10000 cm2   10(kg/ha)
+!        kg/ha  = -------- * ------- * -------- * ---------
+!                cm2[soil]   cm[root]     m2         (g/m2)
 
 !        CumRootMass=CumRootMass+ GRORT * PLTPOP *  10 ! 1 ha = 10000m2
        ! kg[root]       kg        g      # plants     kg/ha
@@ -307,9 +308,9 @@ C=======================================================================
 ! RLWR         Root length to weight ration, (10^4 cm[root]/g[root])  
 ! RNFAC        Zero to unity factor describing mineral N availability effect on
 !              root growth in Layer L
-! RNLF         Intermediate factor used to calculate distribution of new root. !JZW this variable should be removed
-! RTDEP        Root length in col=1 at the begining of the day (cm)
-! RTDEPnew     Root length in col=1 at the end of the day (cm)
+! RNLF         Intermediate factor used to calculate distribution of new root. 
+! RTDEP        Root length at the begining of the day (cm)
+! RTDEPnew     Root length at the end of the day (cm)
 ! SHF          Soil hospitality factor 0-1,  PT_SUBSTOR.FOR(98): SHF = SOILPROP % WR
 ! SWDF         Soil water deficit factor for Layer L used to calculate root
 !              growth and water uptake - unitless value between 0 and 1   
