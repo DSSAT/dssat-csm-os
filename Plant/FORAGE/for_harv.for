@@ -38,6 +38,7 @@ C=======================================================================
 !    CUHT
 
       USE MODULEDEFS
+      USE ModuleData
 
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, IGNORE, Y2K_DOY, Y4K_DOY, yr_doy
@@ -148,6 +149,9 @@ C***********************************************************************
 
         MOWGDD = 0.0
         MOWCOUNT = 1
+
+        CALL PUT('MHARVEST','ISH_date',-99)
+        CALL PUT('MHARVEST','ISH_wt',  -99.)
 
 C----------------------------------------------------------
 C     Open and read MOWFILE and PATH
@@ -506,6 +510,10 @@ C-----------------------------------------------------------------------
 !     &           -99,-99.0,MOWC,RSPLC
             close(fhlun)
 
+!           Send out amount harvested today for MgmtEvent.OUT file
+            CALL PUT('MHARVEST','ISH_date',YRDOY)
+            CALL PUT('MHARVEST','ISH_wt',  fhtot*10.)
+
             if(date(i)==yrdoy.and.trno(i)==trtno) then
              PWTCO = WTCO
              PWTLO = WTLO
@@ -686,6 +694,10 @@ C-----------------------------------------------------------------------
      &           MOWC,RSPLC
             CUTNO = CUTNO + 1
             close(fhlun)
+
+!           Send out amount harvested today for MgmtEvent.OUT file
+            CALL PUT('MHARVEST','ISH_date',YRDOY)
+            CALL PUT('MHARVEST','ISH_wt',  fhtot*10.)
 
             IF(CUTDAY .EQ. 0) THEN
               PWTCO = WTCO

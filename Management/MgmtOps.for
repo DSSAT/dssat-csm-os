@@ -369,11 +369,11 @@ C=======================================================================
       INTEGER DAP, DAS, DLUN, DLUN2, DOY, DYNAMIC, ERRNUM, FROP, I
       INTEGER NDAY, RUN, YEAR, YRDOY, YRPLT
       INTEGER L, NAP, TIMDIF, NAPFER(NELEM), NAPRes
-      INTEGER TILLNO, TILDATE
+      INTEGER TILLNO, TILDATE, ISH_date
       INTEGER iSTAGE, iSTGDOY
 
 
-      REAL BDAVG3, CUMDEP, IRRAMT, TILDEP, DEPIR
+      REAL BDAVG3, CUMDEP, IRRAMT, TILDEP, DEPIR, ISH_wt
       REAL TotAmtN, TotAmtP, TotAmtK, TOTIR, TotResWt, SurfRes, RootRes
       REAL HARVFRAC(2)
       REAL, DIMENSION(NELEM) :: AMTFER, CumRESE
@@ -704,6 +704,17 @@ C-----------------------------------------------------------------------
      &          "Irrigation     ",
      &        DEPIR, " mm"
   110     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A,F7.1,A)
+        ENDIF
+
+!       In-season harvest or mow operation
+        CALL GET('MHARVEST','ISH_date',ISH_date)
+        CALL GET('MHARVEST','ISH_wt',  ISH_wt)
+        IF (YRDOY == ISH_date) THEN
+!         In-season harvest
+          WRITE(DLUN2,120) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+     &          "Harvest        ",
+     &        ISH_wt, " kg/ha"
+  120     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A,F7.0,A)
         ENDIF
 
       ENDIF
