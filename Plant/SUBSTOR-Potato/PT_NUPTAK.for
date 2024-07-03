@@ -66,7 +66,7 @@ C=======================================================================
       SAVE
 
       Type (CellType) Cells(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac, BedFrac
+      REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac !, BedFrac
       INTEGER DYNAMIC, ISTAGE, L, NLAYR
 
       REAL ANDEM, ARVCHO, AVAILN, EXTRAN, FACTOR 
@@ -117,7 +117,7 @@ C=======================================================================
       BEDWD   = BedDimension % BEDWD
       FurCol1 = BedDimension % FurCol1 
       ColFrac = BedDimension % ColFrac
-      BedFrac = BedDimension % BedFrac
+!     BedFrac = BedDimension % BedFrac
 
 !***********************************************************************
 !***********************************************************************
@@ -180,10 +180,9 @@ C-----------------------------------------------------------------------
               RFAC = RLV_2D(L, J) * SMDFR * SMDFR * DLAYR (L) * 100.0
               RNO3U_2D(L,J) = RFAC * FNO3 * 0.006
               RNH4U_2D(L,J) = RFAC * FNH4 * 0.006
-              RNO3U_2D(L,J) = MAX(0.0, RNO3U_2D(L,J))
-              RNH4U_2D(L,J) = MAX(0.0, RNH4U_2D(L,J))
+              RNO3U_2D(L,J) = MAX(0.0, RNO3U_2D(L,J)) * ColFrac(L,J) !kg[N]/ha
+              RNH4U_2D(L,J) = MAX(0.0, RNH4U_2D(L,J)) * ColFrac(L,J) !kg[N]/ha
               TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J)) 
-     &                 * ColFrac(L,J) !kg[N]/ha
             ENDIF
           END SELECT
         ENDDO

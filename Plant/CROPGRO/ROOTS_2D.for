@@ -821,9 +821,9 @@
 !           --------- = --------- * cm[cell thickness] 
 !           cm2[soil]   cm3[soil]
 
-!           Convert to field scale
-            RtLen_2D(Row,Col) = RtLen_2D(Row,Col) 
-     &          * (Width(Row,Col) / Rowspc_cm)
+!!           Convert to field scale
+!            RtLen_2D(Row,Col) = RtLen_2D(Row,Col) 
+!     &          * (Width(Row,Col) / Rowspc_cm)
 
             TRLV = TRLV + RtLen_2D(Row,Col) 
           END SELECT
@@ -842,15 +842,10 @@
      &   RtLen_1D)                             !Output
 
       DO L = 1, NRowsTot
-        SELECT CASE(Cell_Type(L,1))
-          CASE(3)
-            RLV(L) = RtLen_1D(L) / DLAYR(L)/BedDimension % BEDWD 
-          CASE(4,5)
-            RLV(L) = RtLen_1D(L) / Rowspc_cm / DLAYR(L) 
-        END SELECT
-!    cm[root]       cm[root]            1               1
-!  ----------- = -------------- * ------------- * -----------------
-!  cm3[ground]   cm[row length]   cm[row width]   cm[row thickness]
+        RLV(L) = RtLen_1D(L) / DLAYR(L)
+!    cm[root]       cm[root]            1
+!  ----------- = -------------- * -----------------
+!  cm3[ground]   cm2[row length]   cm[row thickness]
       ENDDO
 
       RETURN
