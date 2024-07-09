@@ -55,6 +55,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV,RNH4U_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D, RNO3U_2D
       REAL SurfaceVal !dummy variable
+      Real FieldFactor
 
 !     temp chp
       Real sumRLV
@@ -107,6 +108,11 @@ C=======================================================================
 
       ColFrac = BedDimension % ColFrac
       BedFrac = BedDimension % BedFrac
+      IF (CONTROL % SIM2D) THEN
+        FieldFactor = 2.0
+      ELSE
+        FieldFactor = 1.0
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -208,7 +214,7 @@ C-----------------------------------------------------------------------
 
 !             kg[N]/ha
               TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J))*
-     &              ColFrac(L,J)
+     &              ColFrac(L,J) * FieldFactor
             ENDIF
           ENDDO
         ENDDO
@@ -224,8 +230,9 @@ C-----------------------------------------------------------------------
           DO L = 1, NRowsTot
             DO J = 1, NColsTot
               IF (RLV_2D(L,J) .GT. 0.0) THEN
-                UNO3_2D(L,J) = RNO3U_2D(L,J) * NUF  !kg[N]/ha
-                UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF  !kg[N]/ha
+!               Proportion by demand : supply ratio
+                UNO3_2D(L,J) = RNO3U_2D(L,J) * NUF
+                UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF
 
 !               XMIN = minimum amount NO3 left after uptake (kg[N]/ha)
                 XMIN    = 0.25 / KG2PPM(L)
@@ -238,10 +245,16 @@ C-----------------------------------------------------------------------
                 XMIN = 0.5 / KG2PPM(L)
                 MXNH4U  = MAX(0.0,(SNH4_2D(L, J) - XMIN))
                 IF (UNH4_2D(L,J) .GT. MXNH4U) UNH4_2D(L,J) = MXNH4U
-                TRNO3U  = TRNO3U + UNO3_2D(L,J) * ColFrac(L,J)
-                TRNH4U  = TRNH4U + UNH4_2D(L,J) * ColFrac(L,J)
-                UNO3(L) = UNO3(L) + UNO3_2D(L,J) * ColFrac(L,J)
-                UNH4(L) = UNH4(L) + UNH4_2D(L,J) * ColFrac(L,J)
+
+!               Contribution of each cell is weighted average using ColFrac
+                UNO3_2D(L,J) = UNO3_2D(L,J) * ColFrac(L,J)
+                UNH4_2D(L,J) = UNH4_2D(L,J) * ColFrac(L,J)
+
+!               For 2D simulations, double the amount because we are modeling only half the field.
+                TRNO3U  = TRNO3U + UNO3_2D(L,J) * FieldFactor
+                TRNH4U  = TRNH4U + UNH4_2D(L,J) * FieldFactor
+                UNO3(L) = UNO3(L) + UNO3_2D(L,J) * FieldFactor
+                UNH4(L) = UNH4(L) + UNH4_2D(L,J) * FieldFactor
               ENDIF
             ENDDO
           ENDDO

@@ -17,7 +17,7 @@
 !    during Second-Stage Evaporation. Division S-1 -- soil Physics;
 !    Soil Science Society of America. Vol. 67, No. 2. March-apr 2003.
 !
-!  This routine takes the place of SOILEV and UPFLOW.
+!  This routine replaces both SOILEV and UPFLOW with MESEV = 'S'.
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  05/03/2005 JTR/CHP Written
@@ -73,6 +73,7 @@
       INTEGER Col, FurRow1, FurCol1, Row
       REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type
       REAL, DIMENSION(MaxRows, MaxCols) :: SWV, ES_mm, ColFrac
+      REAL FieldFactor
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -100,6 +101,14 @@
 !     PMFraction is the fraction of the soil covered by plastic mulch
 !     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
       CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+
+!     The weighted average using ColFrac sums only half the field for 2D 
+!       simulations. Using symmetry, multiply by 2.0 to get ES for field.
+      IF (CONTROL % SIM2D) THEN
+        FieldFactor = 2.0
+      ELSE
+        FieldFactor = 1.0
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -270,10 +279,11 @@
           Row = L+StartRow-1  
           CellEvap(Row,Col) = CellEvap(Row,Col) * RedFac
           ES_mm(Row,Col) = ES_mm(Row,Col) * RedFac
-          ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col)
+          ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col) 
+     &                  * FieldFactor
         ENDDO
 
-        ES = ES + ES_col(col) * ColFrac(Row,Col)  !profile sum (mm)
+        ES = ES + ES_col(col) * ColFrac(Row,Col) * FieldFactor
       ENDDO
 
 !     UPFLOW calcs are only for 1D simulations

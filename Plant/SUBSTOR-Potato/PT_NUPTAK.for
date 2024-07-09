@@ -51,7 +51,7 @@ C  FACTOR : Relative weighting to distribute crop root residues at the beginning
 C           of a simulation
 C=======================================================================
 
-      SUBROUTINE PT_NUPTAK (DYNAMIC, CELLS,
+      SUBROUTINE PT_NUPTAK (CONTROL, CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
      &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
@@ -65,6 +65,7 @@ C=======================================================================
       IMPLICIT  NONE
       SAVE
 
+      Type (ControlType) CONTROL
       Type (CellType) Cells(MaxRows,MaxCols)
       REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac !, BedFrac
       INTEGER DYNAMIC, ISTAGE, L, NLAYR
@@ -90,6 +91,9 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV,RNH4U_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D, RNO3U_2D
+      Real FieldFactor
+
+      DYNAMIC = CONTROL % DYNAMIC
 
       SWV    = CELLS % State % SWV
       RLV_2D = CELLS % State % RLV
@@ -118,6 +122,12 @@ C=======================================================================
       FurCol1 = BedDimension % FurCol1 
       ColFrac = BedDimension % ColFrac
 !     BedFrac = BedDimension % BedFrac
+
+      IF (CONTROL % SIM2D) THEN
+        FieldFactor = 2.0
+      ELSE
+        FieldFactor = 1.0
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -180,9 +190,11 @@ C-----------------------------------------------------------------------
               RFAC = RLV_2D(L, J) * SMDFR * SMDFR * DLAYR (L) * 100.0
               RNO3U_2D(L,J) = RFAC * FNO3 * 0.006
               RNH4U_2D(L,J) = RFAC * FNH4 * 0.006
-              RNO3U_2D(L,J) = MAX(0.0, RNO3U_2D(L,J)) * ColFrac(L,J) !kg[N]/ha
-              RNH4U_2D(L,J) = MAX(0.0, RNH4U_2D(L,J)) * ColFrac(L,J) !kg[N]/ha
+!             kg[N]/ha field scale
+              RNO3U_2D(L,J) = MAX(0.0, RNO3U_2D(L,J))
+              RNH4U_2D(L,J) = MAX(0.0, RNH4U_2D(L,J))
               TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J)) 
+     &              * ColFrac(L,J) * FieldFactor
             ENDIF
           END SELECT
         ENDDO
@@ -410,6 +422,7 @@ C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
 C   Calculate N uptake in soil layers with roots based on demand (kg/ha)
+!   Scale from field scale to cell using ColFrac after checking XMIN
 C-----------------------------------------------------------------------
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
@@ -419,11 +432,13 @@ C-----------------------------------------------------------------------
             UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF
             XMIN         = 0.25 / KG2PPM(L)
             UNO3_2D(L,J) = AMIN1 (UNO3_2D(L,J), SNO3_2D(L,J) - XMIN)
-            UNO3_2D(L,J) = MAX(0.0, UNO3_2D(L,J))
+            UNO3_2D(L,J) = MAX(0.0, UNO3_2D(L,J)) * ColFrac(L,J)
             XMIN         = 0.5 / KG2PPM(L)
             UNH4_2D(L,J) = AMIN1 (UNH4_2D(L,J),SNH4_2D(L,J) - XMIN)
-            UNH4_2D(L,J) = MAX(0.0, UNH4_2D(L,J))
-            TRNU         = TRNU + UNO3_2D(L,J) + UNH4_2D(L,J) !kg[N]/ha
+            UNH4_2D(L,J) = MAX(0.0, UNH4_2D(L,J)) * ColFrac(L,J)
+
+!           For 2D simulations, multiply by 2.0 because we are modeling only half a field.
+            TRNU = TRNU + (UNO3_2D(L,J) + UNH4_2D(L,J)) * FieldFactor
           END SELECT
         ENDDO
       ENDDO

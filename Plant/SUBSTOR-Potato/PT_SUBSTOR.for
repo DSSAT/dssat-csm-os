@@ -160,7 +160,7 @@ C=======================================================================
      &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
 
       CASE DEFAULT
-        CALL PT_ROOTGR (SEASINIT, CELLS,
+        CALL PT_ROOTGR (SEASINIT, CELLS, YRDOY,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &    CUMDEP, RLV, RTDEP)                             !Output
@@ -175,7 +175,7 @@ C=======================================================================
      &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG,            !Output
      &    SEASINIT)
 
-      CALL PT_GROSUB (SEASINIT, CELLS,
+      CALL PT_GROSUB (CONTROL, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
      &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
@@ -235,7 +235,7 @@ C=======================================================================
      &        CUMDEP, RLV, RLV_2D, RTDEP)                  !Output
 
           CASE DEFAULT
-            CALL PT_ROOTGR (RATE, CELLS, 
+            CALL PT_ROOTGR (RATE, CELLS, YRDOY,
      &        DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &        LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &        CUMDEP, RLV, RTDEP)                             !Output
@@ -255,7 +255,7 @@ C=======================================================================
       ENDIF
 
       IF (ISTAGE .LT. 5) THEN
-          CALL PT_GROSUB (RATE, CELLS,
+          CALL PT_GROSUB (CONTROL, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
      &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input

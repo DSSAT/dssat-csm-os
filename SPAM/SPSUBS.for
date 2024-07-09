@@ -150,8 +150,9 @@ C-----------------------------------------------------------------------
                WRITE(LUN,FRMT) ("ES",L,"D",L=1,N_LYR),"   TRWUD   TWUPD"
             ELSE
 !             WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
-              WRITE(LUN,122)("ES",L,"D",L=1,9),"  ES10D   TRWUD   TWUPD"
-  122         FORMAT(9("    ",A2,I1,A1),A)
+              WRITE(LUN,'(9("    ",A2,I1,A1),A)')
+     &            ("ES",L,"D",L=1,9),"   ES10D   TRWUD   TWUPD"
+! 122         FORMAT(9("    ",A2,I1,A1),A)
             ENDIF
             END IF   ! VSH
           ELSE

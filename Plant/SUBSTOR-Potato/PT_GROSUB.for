@@ -22,7 +22,7 @@ C  08/23/2011 GH/JIL Added CO2 response to tuber growth
 !  08/31/2023 CHP integrated 2D into 1D
 C=======================================================================
 
-      SUBROUTINE PT_GROSUB (DYNAMIC, CELLS,
+      SUBROUTINE PT_GROSUB (CONTROL, CELLS,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
      &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
@@ -45,6 +45,7 @@ C-----------------------------------------------------------------------
 !      EXTERNAL PT_NUPTAK_2D
       SAVE
 
+      Type (ControlType) CONTROL
       Type (CellType) Cells(MaxRows,MaxCols)
       LOGICAL FIRST
 
@@ -89,6 +90,7 @@ C-----------------------------------------------------------------------
       DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
 
       CALL GET(ISWITCH)
+      DYNAMIC = CONTROL % DYNAMIC
 
 !***********************************************************************
 !***********************************************************************
@@ -179,7 +181,7 @@ C-----------------------------------------------------------------------
       TUBN    = 0.0
       TUBWT   = 0.0
       
-      CALL PT_NUPTAK (SEASINIT,  CELLS,
+      CALL PT_NUPTAK (CONTROL,  CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
      &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
@@ -580,7 +582,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! SRVNU  = AMAX1 (SRVNU, 0.0)
           ! AVAILN = (SRVNU)+(0.5*DDEADLF*TMNC)
 
-        CALL PT_NUPTAK (RATE,  CELLS,
+        CALL PT_NUPTAK (CONTROL,  CELLS,
      &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
      &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input

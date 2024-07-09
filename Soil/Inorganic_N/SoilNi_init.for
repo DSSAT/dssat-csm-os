@@ -55,6 +55,7 @@
       REAL SNH4(NL), SNO3(NL)
       REAL UREA(NL), UPPM(NL)
       REAL ST(NL) 
+      REAL FieldFactor
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -67,6 +68,12 @@
       KG2PPM = SOILPROP % KG2PPM    
       ColFrac= BedDimension % ColFrac
       BedFrac= BedDimension % BedFrac
+
+      IF (CONTROL % SIM2D) THEN
+        FieldFactor = 2.0
+      ELSE
+        FieldFactor = 1.0
+      ENDIF
 
       NH4_2D = 0.0
       NO3_2D = 0.0
@@ -96,16 +103,19 @@
 !           --------------------------------------------------------------
 !           Initialize soil mineral nitrogen and urea.
 !           --------------------------------------------------------------
-            NO3_2D(L, J) = NO3(L)
-            NH4_2D(L, J) = NH4(L)
 !           Convert the N concentrations to kg[N] / ha per soil layer.
+!           For 2D simulations, divide by 2.0 (FieldFactor)
             SELECT CASE (Cell_type(L,J))
             CASE (3)
-              SNO3_2D(L, J) = SNO3(L) * BedFrac(L,J)
-              SNH4_2D(L, J) = SNH4(L) * BedFrac(L,J)
+              SNO3_2D(L, J) = SNO3(L) / FieldFactor * BedFrac(L,J)
+              SNH4_2D(L, J) = SNH4(L) / FieldFactor * BedFrac(L,J)
+              NO3_2D(L, J) = NO3(L)
+              NH4_2D(L, J) = NH4(L)
             CASE(4,5)
-              SNO3_2D(L, J) = SNO3(L) * ColFrac(L,J)
-              SNH4_2D(L, J) = SNH4(L) * ColFrac(L,J)
+              SNO3_2D(L, J) = SNO3(L) / FieldFactor * ColFrac(L,J)
+              SNH4_2D(L, J) = SNH4(L) / FieldFactor * ColFrac(L,J)
+              NO3_2D(L, J) = NO3(L)
+              NH4_2D(L, J) = NH4(L)
             END SELECT
           ENDDO
         END DO   !End of soil layer loop.

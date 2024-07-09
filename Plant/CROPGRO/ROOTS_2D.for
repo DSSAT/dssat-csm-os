@@ -795,7 +795,7 @@
       INTEGER Row, Col, L, NLAYR
       REAL, DIMENSION(NL) :: DLAYR, RtLen_1D
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen_2D,ColFrac
+      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen_2D 
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
       REAL RowSpc_cm
 
@@ -803,7 +803,7 @@
       STRUC = CELLS%STRUC
       Thick = STRUC%THICK
       Width = STRUC%WIDTH
-      ColFrac = BedDimension % ColFrac
+!     ColFrac = BedDimension % ColFrac
       Cell_Type = STRUC%Cell_Type
 
       DLAYR = SOILPROP % DLAYR

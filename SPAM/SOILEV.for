@@ -55,7 +55,7 @@ C=======================================================================
       !CHARACTER*6 ERRKEY
       !PARAMETER (ERRKEY = 'SOILEV')
 
-      INTEGER DYNAMIC, L, NLAYR, Row
+      INTEGER DYNAMIC, NLAYR, Row
       REAL SWMIN, WINFMOD, AWEV1, ESX, Infilt
       REAL, DIMENSION(NL) :: DLAYR, DUL, LL
 
@@ -278,7 +278,8 @@ C-----------------------------------------------------------------------
 !       ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col)
         ES_col(col) = ES_col(col) + ES_mm(Row,Col)
 
-        ES = ES + ESc(col) * ColFrac(Row,Col)  !profile sum (mm)
+!       profile sum (mm)
+        ES = ES + ESc(col) * ColFrac(Row,Col) 
         CellEvap(Row,col) = -ESc(col)
 
       ENDDO

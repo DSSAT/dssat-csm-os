@@ -80,7 +80,7 @@ C=======================================================================
       Type (CellType) Cells(MaxRows,MaxCols)
       INTEGER FurRow1, FurCol1
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type, DLAG_2D
-      REAL HalfRow, BEDWD, FertFactor
+      REAL HalfRow, BEDWD
       REAL, DIMENSION(MaxRows,MaxCols) :: DLTSNH4_2D, DLTSNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: DLTUREA_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: NH4_2D, NO3_2D,SNH4_2D,SNO3_2D
@@ -178,7 +178,7 @@ C=======================================================================
       REAL TNOM
       REAL NNOM_a, NNOM_b
 
-      REAL CumSumFert
+      REAL CumSumFert, FieldFactor, CellFactor
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -258,10 +258,11 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !     ------------------------------------------------------------------
-        IF (INDEX('GC',ISWITCH % MEHYD) > 0) THEN
-          Sim2D = .TRUE.
+        Sim2D = CONTROL % Sim2D
+        IF (SIM2D) THEN
+          FieldFactor = 2.0
         ELSE
-          Sim2D = .FALSE.
+          FieldFactor = 1.0
         ENDIF
 
 !       Today's values
@@ -422,7 +423,7 @@ C=======================================================================
             NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
           END SELECT
 
-          TotUptake = TotUptake + (UNO3_2D(L,J) +UNH4_2D(L,J)) !kg/ha
+          TotUptake = TotUptake + (UNO3_2D(L,J) +UNH4_2D(L,J))  !kg/ha
         ENDDO
       ENDDO
 
@@ -474,21 +475,23 @@ C=======================================================================
 
           CASE DEFAULT
             DO J = 1, NColsTot
-! CHP 2023-10-16 - Check how this works for flat system. Where does the fertilizer go?
+!             Fertilizer in each row of cells is proportioned based on two factors:
+!             - for 2D simulations, divide total amount by 2.0 because we are modeling
+!               only half a row (FieldFactor)
+!             - Distribute by based on relative cell width (ColFrac or BedFrac)
               SELECT CASE (Cell_Type(L,J))
-!             Within the bed, fertilizer is concentrated in bed cells
-              CASE (3); 
-                FertFactor = BedDimension%ROWSPC_cm / BEDWD
-              CASE (4,5); FertFactor = 1.0
-              CASE DEFAULT; CYCLE
+!               Within the bed, fertilizer is concentrated in bed cells
+                CASE (3);   CellFactor = BedFrac(L,J) / FieldFactor
+                CASE (4,5); CellFactor = ColFrac(L,J) / FieldFactor
+                CASE DEFAULT; CYCLE
               END SELECT
 
               DLTSNO3_2D(L, J) = DLTSNO3_2D(L, J) + 
-     &          FERTDATA % ADDSNO3(L) * FertFactor * ColFrac(L,J)
+     &          FERTDATA % ADDSNO3(L) * CellFactor
               DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) + 
-     &          FERTDATA % ADDSNH4(L) * FertFactor * ColFrac(L,J)
+     &          FERTDATA % ADDSNH4(L)  * CellFactor
               DLTUREA_2D(L, J) = DLTUREA_2D(L, J) + 
-     &          FERTDATA % ADDUREA(L) * FertFactor * ColFrac(L,J)
+     &          FERTDATA % ADDUREA(L)  * CellFactor
             ENDDO
           END SELECT
 
@@ -708,7 +711,7 @@ C=======================================================================
             WFUREA = AMAX1 (AMIN1 (WFUREA, 1.), 0.)
           ENDIF
 
-!         Calculate the amount of urea that hydrolyses.
+!         Calculate the amount of urea that hydrolyses from this cell.
           UHYDR = AK * AMIN1 (WFUREA, TFUREA) 
      &          * (UREA_2D(L,J) + DLTUREA_2D(L,J)) * ColFrac(L,J)
           UHYDR = AMIN1 (UHYDR, UREA_2D(L,J) + DLTUREA_2D(L,J))
@@ -725,10 +728,12 @@ C=======================================================================
         IF (L == 1) THEN
 !         First layer takes mineralization from surface also.
 !         NNOM = MINERALIZE(0,N) + MINERALIZE(1,N)
-          NNOM = (MNR(0,N) + MNR(1,N) - IMM(0,N) - IMM(1,N)) 
+          NNOM = (MNR(0,N) + MNR(1,N) - IMM(0,N) - IMM(1,N))
+!         For 2D simulations, divide by 2 because we are modeling half a row
+          NNOM = NNOM / FieldFactor
         ELSE
 !         Add in residual from previous layer to preserve N balance
-          NNOM = NNOM + (MNR(L,N) - IMM(L,N)) 
+          NNOM = NNOM + (MNR(L,N) - IMM(L,N)) / FieldFactor
         ENDIF
 
 !       Proportion total NNOM to columns

@@ -671,16 +671,26 @@
 !     Assign cell types and properties
 !     2023-11-05 CHP changed calculation of ColFrac to be based on 
 !       full width for 1D simulations
+
+
+!     2027-07-08  ColFrac should ALWAYS be based on full row width.
+!       Otherwise conversion from 1D mass to 2D mass will allocate
+!       double the amount to each cell.
+
+
       DO Col = 1, NColsTot
         Thick(Row,Col) = DEPTH - PREV_DEPTH
         IF (Col <= N_Bed_Cols) THEN
           Width(Row,Col) = Bed_Col_Width
           IF (DEPTH < BEDHT + 0.01) THEN
-            ColFrac(Row, Col) = Width(Row,Col) / SimWidth
-            BedFrac(Row, Col) = Width(Row,Col) / (BEDWD / 2.0)
+!           ColFrac(Row, Col) = Width(Row,Col) / SimWidth
+            ColFrac(Row, Col) = Width(Row,Col) / RowSpc_cm
+!           BedFrac(Row, Col) = Width(Row,Col) / (BEDWD / 2.0)
+            BedFrac(Row, Col) = Width(Row,Col) / (BEDWD)
             Cell_type(Row,Col) = 3    !within bed
           ELSE
-            ColFrac(Row, Col) = Width(Row,Col) / SimWidth
+!           ColFrac(Row, Col) = Width(Row,Col) / SimWidth
+            ColFrac(Row, Col) = Width(Row,Col) / RowSpc_cm
             BedFrac(Row, Col) = ColFrac(Row, Col)
             Cell_type(Row,Col) = 4    !below bed
           ENDIF
@@ -693,7 +703,8 @@
             BedFrac(Row, Col) = 0.0
             Cell_type(Row,Col) = 0    !in furrow (no soil)
           ELSE
-            ColFrac(Row, Col) = Width(Row,Col) / SimWidth
+!           ColFrac(Row, Col) = Width(Row,Col) / SimWidth
+            ColFrac(Row, Col) = Width(Row,Col) / RowSpc_cm
             BedFrac(Row, Col) = ColFrac(Row, Col)
             Cell_type(Row,Col) = 5    !soil below furrow
           ENDIF

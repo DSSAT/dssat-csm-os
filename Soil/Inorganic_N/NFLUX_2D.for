@@ -174,9 +174,9 @@
 !     &            * ColFrac(L, j) / ColFrac(L + 1, j)
             ELSE
 !             Accumulate the N lost by leaching below profile depth.
-              NLeach(j) = NFlux_D(NRowsTot,j)
-!             Today's leached N
-              TLCHD = TLCHD + NLeach(j) !* ColFrac(L, j)   
+              NLeach(j) = NFlux_D(NRowsTot,j) * 2.0
+!             Today's leached N, double for 2D simulations
+              TLCHD = TLCHD + NLeach(j) * 2.0 !* ColFrac(L, j)   
             ENDIF
           ENDIF
 

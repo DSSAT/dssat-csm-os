@@ -450,17 +450,16 @@ C=======================================================================
          RLV(Row) = AMAX1 (RLV(Row),0.0)
        Enddo
 
-!      RLWR  Root length to weight ration, (cm/g)*1E-4 
+!      RLWR  Root length to weight ratio, (cm/g)*1E-4 
        RTMasSenes = (RTLSenes /HalfRow/ RLWR) * 10.
-       TotRootMass=(TRLV /HalfRow/ RLWR) * 10.
-!                  cm    1     g   10000 cm2   10(kg/ha)
-!         kg/ha  = ---*---- * -- * -------- * ---------
-!                  cm    cm   cm       m2       (g/m2)
 
-        CumRootMass=CumRootMass+GRORT * PLTPOP *  10 ! 1 ha = 10000m2
+       CumRootMass=CumRootMass+GRORT * PLTPOP *  10 ! 1 ha = 10000m2
        ! kg[root]       kg     g      # plants     kg/ha
        !----------- = -----+ ------ * --------*  --------
        ! ha             ha    plant      m2         g/m2
+
+!     temp chp
+      write(1232,'(i7,2f10.4)') YRDOY, TotRootMass, CumRootMass
 
 !***********************************************************************
       ELSEIF (DYNAMIC == OUTPUT .OR. DYNAMIC == SEASEND) THEN

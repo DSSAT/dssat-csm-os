@@ -179,7 +179,7 @@
 !   Input data, bedLayerArray, furLayerArray, are in units of mass 
 !   Surface values stored separately in SurfaceVal scalar.
 !   Output data, CellArray, are also in units of mass.  
-!   Fixed dimension soil grid: 1-> NL=20 Rows allowed
+!   Fixed dimension soil grid: 1-> NL Rows allowed
 ! -----------------------------------------------------------------------------
 ! 09/12/2006 CHP Written
 ! 04/16/2007 CHP Convert from 1D to 2D
