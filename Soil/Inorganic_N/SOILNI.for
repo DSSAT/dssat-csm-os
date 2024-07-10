@@ -178,7 +178,7 @@ C=======================================================================
       REAL TNOM
       REAL NNOM_a, NNOM_b
 
-      REAL CumSumFert, FieldFactor, CellFactor
+      REAL CumSumFert, FieldFac, CellFactor
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -260,9 +260,9 @@ C=======================================================================
 !     ------------------------------------------------------------------
         Sim2D = CONTROL % Sim2D
         IF (SIM2D) THEN
-          FieldFactor = 2.0
+          FieldFac = 2.0
         ELSE
-          FieldFactor = 1.0
+          FieldFac = 1.0
         ENDIF
 
 !       Today's values
@@ -428,14 +428,14 @@ C=======================================================================
       ENDDO
 
 !     Convert 2D arrays to 1D after N uptake 
-      CALL Cell2Layer_2D(SNO3_2D, CELLS % Struc, NLAYR, SNO3)
-      CALL Cell2Layer_2D(SNH4_2D, CELLS % Struc, NLAYR, SNH4)
+      CALL Cell2Layer_2D(SNO3_2D, CELLS % Struc, NLAYR, FieldFac, SNO3)
+      CALL Cell2Layer_2D(SNH4_2D, CELLS % Struc, NLAYR, FieldFac, SNH4)
 
 !     Must calculate WTNUP here or it won't be guaranteed to match N
 !     removed from the soil today and the balance will be off.
 !     WTNUP is cumulative
-      CALL Cell2Layer_2D(UNO3_2D,    CELLS % Struc, NLAYR, UNO3)
-      CALL Cell2Layer_2D(UNH4_2D,    CELLS % Struc, NLAYR, UNH4)
+      CALL Cell2Layer_2D(UNO3_2D, CELLS % Struc, NLAYR, FieldFac, UNO3)
+      CALL Cell2Layer_2D(UNH4_2D, CELLS % Struc, NLAYR, FieldFac, UNH4)
       DO L = 1, NLAYR
         WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
       ENDDO
@@ -481,8 +481,8 @@ C=======================================================================
 !             - Distribute by based on relative cell width (ColFrac or BedFrac)
               SELECT CASE (Cell_Type(L,J))
 !               Within the bed, fertilizer is concentrated in bed cells
-                CASE (3);   CellFactor = BedFrac(L,J) / FieldFactor
-                CASE (4,5); CellFactor = ColFrac(L,J) / FieldFactor
+                CASE (3);   CellFactor = BedFrac(L,J) / FieldFac
+                CASE (4,5); CellFactor = ColFrac(L,J) / FieldFac
                 CASE DEFAULT; CYCLE
               END SELECT
 
@@ -557,27 +557,27 @@ C=======================================================================
 
 !       Convert state and DELTA variables to 2D for next set of processes
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, SNO3, 0.0,            !Input
+     &   CELLS % Struc, NLAYR, DLAYR, SNO3, 0.0, FieldFac,  !Input
      &   SNO3_2D)                                           !Output
         
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, SNH4, 0.0,            !Input
+     &   CELLS % Struc, NLAYR, DLAYR, SNH4, 0.0, FieldFac,  !Input
      &   SNH4_2D)                                           !Output
         
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, UREA, 0.0,            !Input
+     &   CELLS % Struc, NLAYR, DLAYR, UREA, 0.0, FieldFac,  !Input
      &   UREA_2D)                                           !Output
 
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, DLTSNO3, 0.0,         !Input
+     &   CELLS % Struc, NLAYR, DLAYR, DLTSNO3, 0.0, FieldFac, !Input
      &   DLTSNO3_2D)                                        !Output
         
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, DLTSNH4, 0.0,         !Input
+     &   CELLS % Struc, NLAYR, DLAYR, DLTSNH4, 0.0, FieldFac, !Input
      &   DLTSNH4_2D)                                        !Output
         
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0,         !Input
+     &   CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0, FieldFac, !Input
      &   DLTUREA_2D)                                        !Output
 
       ENDIF !End of 1D-only simulations
@@ -729,14 +729,13 @@ C=======================================================================
 !         First layer takes mineralization from surface also.
 !         NNOM = MINERALIZE(0,N) + MINERALIZE(1,N)
           NNOM = (MNR(0,N) + MNR(1,N) - IMM(0,N) - IMM(1,N))
-!         For 2D simulations, divide by 2 because we are modeling half a row
-          NNOM = NNOM / FieldFactor
         ELSE
 !         Add in residual from previous layer to preserve N balance
-          NNOM = NNOM + (MNR(L,N) - IMM(L,N)) / FieldFactor
+          NNOM = NNOM + (MNR(L,N) - IMM(L,N))
         ENDIF
 
-!       Proportion total NNOM to columns
+!       Proportion total NNOM to columns. 
+!       Field factor reduces amount by half for 2D simulations.
         SELECT CASE(Cell_type(L,J))
         CASE (3)  ; NNOM = NNOM * BedFrac(L,J)
         CASE (4,5); NNOM = NNOM * ColFrac(L,J)
@@ -922,28 +921,28 @@ C=======================================================================
 !     Convert NITRIF, DLTSNO3 and DLTSNH4 from 2D to 1D for next set of processes
 !     use the utility 
       CALL Cell2Layer_2D(
-     &  DLTSNO3_2D, CELLS % Struc, NLAYR,  !Input
-     &  DLTSNO3)                           !Output
+     &  DLTSNO3_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
+     &  DLTSNO3)                                     !Output
 
       CALL Cell2Layer_2D(
-     &  DLTSNH4_2D, CELLS % Struc, NLAYR,  !Input
-     &  DLTSNH4)                           !Output
+     &  DLTSNH4_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
+     &  DLTSNH4)                                     !Output
 
       CALL Cell2Layer_2D(
-     &  DLTUREA_2D, CELLS % Struc, NLAYR,  !Input
-     &  DLTUREA)                           !Output
+     &  DLTUREA_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
+     &  DLTUREA)                                     !Output
 
       CALL Cell2Layer_2D(
-     &  NITRIF_2D, CELLS % Struc, NLAYR,  !Input
-     &  NITRIF)                           !Output
+     &  NITRIF_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
+     &  NITRIF)                                     !Output
 
       CALL Cell2Layer_2D(
-     &  N2ONitrif_2D, CELLS % Struc, NLAYR,  !Input
-     &  N2ONitrif)                           !Output
+     &  N2ONitrif_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
+     &  N2ONitrif)                                     !Output
 
       CALL Cell2Layer_2D(
-     &  nNOflux_2D, CELLS % Struc, NLAYR,  !Input
-     &  nNOflux)                           !Output
+     &  nNOflux_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
+     &  nNOflux)                                     !Output
 
       N2O_data % NITRIF   = NITRIF
       N2O_data % N2Onitrif  = N2Onitrif
@@ -1113,16 +1112,16 @@ C=======================================================================
 
 !     Convert DLTSNO3 and DLTSNH4 differences  to 2D arrays
       CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3_DIFF, 0.0,        !Input
-     & DLTSNO3_DIFF_2D)                                       !Output
+     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3_DIFF, 0.0, FieldFac, !Input
+     & DLTSNO3_DIFF_2D)                                          !Output
 
       CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0,        !Input
-     & DLTSNH4_DIFF_2D)                                       !Output
+     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0, FieldFac, !Input
+     & DLTSNH4_DIFF_2D)                                          !Output
 
       CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0,        !Input
-     & DLTUREA_DIFF_2D)                                       !Output
+     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0, FieldFac, !Input
+     & DLTUREA_DIFF_2D)                                          !Output
 
       RESID3 = 0.0
       RESID4 = 0.0
@@ -1215,12 +1214,12 @@ C=======================================================================
 
 !       Convert NITRIF, DLTSNO3 and DLTUREA from 2D to 1D prior to integration
         CALL Cell2Layer_2D(
-     &    DLTSNO3_2D, CELLS % Struc, NLAYR,  !Input
-     &    DLTSNO3)                           !Output
+     &    DLTSNO3_2D, CELLS % Struc, NLAYR, FieldFac,   !Input
+     &    DLTSNO3)                                      !Output
 
         CALL Cell2Layer_2D(
-     &    DLTUREA_2D, CELLS % Struc, NLAYR,  !Input
-     &    DLTUREA)                           !Output
+     &    DLTUREA_2D, CELLS % Struc, NLAYR, FieldFac,   !Input
+     &    DLTUREA)                                      !Output
 
       ENDIF  !End 2D NFLUX
 
@@ -1386,13 +1385,13 @@ C=======================================================================
 
 !     Use Cell2Layer_2D for mass variables
       CALL Cell2Layer_2D(
-     &  SNO3_2D, Cells%Struc, NLAYR,                      !Input
+     &  SNO3_2D, Cells%Struc, NLAYR, FieldFac,            !Input
      &  SNO3, SurfaceVal)                                 !Output
       CALL Cell2Layer_2D(
-     &  SNH4_2D, Cells%Struc, NLAYR,                      !Input
+     &  SNH4_2D, Cells%Struc, NLAYR, FieldFac,            !Input
      &  SNH4, SurfaceVal)                                 !Output
       CALL Cell2Layer_2D(
-     &  UREA_2D, Cells%Struc, NLAYR,                      !Input
+     &  UREA_2D, Cells%Struc, NLAYR, FieldFac,            !Input
      &  UREA, SurfaceVal)                                 !Output
 
       TMINERN = 0.0

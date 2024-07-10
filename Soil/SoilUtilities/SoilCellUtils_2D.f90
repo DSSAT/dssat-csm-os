@@ -122,9 +122,15 @@
 ! -----------------------------------------------------------------------------
 ! 09/12/2006 CHP Written
 ! 04/16/2007 CHP Convert from 1D to 2D
+! 07/10/2024 CHP integrated into 1D release model.
+!   With the 1D integration, this routine is used for both 1D and 2D cases.
+!   For 2D, only half the row is modeleld and aggregation from 2D to 1D 
+!     requires that mass values be doubled. For 1D this is not necessary.
+!   The FF (FieldFactor) is introduced to make this doubling of mass only 
+!     for 2D simulations.
 ! -----------------------------------------------------------------------------
   Subroutine Cell2Layer_2D(                             &
-        CellArray, CellStruc, NLAYR,                    & !Input
+        CellArray, CellStruc, NLAYR, FF,                & !Input
         LayerArray, SurfaceVal)                           !Output
         
   IMPLICIT NONE
@@ -136,7 +142,7 @@
   REAL, OPTIONAL,      INTENT(OUT):: SurfaceVal
 
   INTEGER  NLAYR, L, Row, Col
-  REAL Fraction
+  REAL Fraction, FF
 
 !----------------------------------------------------------------------
 ! Surface data
@@ -161,7 +167,7 @@
         ColLoop: DO Col = 1, NColsTot
           SELECT CASE(CellStruc(Row,Col) % Cell_Type)
           CASE(3,4,5)
-            LayerArray(L) = LayerArray(L) + Fraction * CellArray(Row,Col)
+            LayerArray(L) = LayerArray(L) + Fraction * CellArray(Row,Col) * FF
           END SELECT
         ENDDO ColLoop
       ENDIF
@@ -183,9 +189,16 @@
 ! -----------------------------------------------------------------------------
 ! 09/12/2006 CHP Written
 ! 04/16/2007 CHP Convert from 1D to 2D
+! 07/10/2024 CHP integrated into 1D release model.
+!   With the 1D integration, this routine is used for both 1D and 2D cases.
+!   For 2D, only half the row is modeleld and disaggregation from 1D to 2D 
+!     requires that mass values be halved. For 1D this is not necessary.
+!   The FF (FieldFactor) is introduced to make this reduction of mass only 
+!     for 2D simulations.
 ! -----------------------------------------------------------------------------
   Subroutine Layer2Cell_2D(                             &
        CellStruc, NLAYR, DLAYR, LayerArray, SurfaceVal, &  !Input
+       FF,                                              &  !Input
        CellArray)                                          !Output
 
   USE ModuleDefs
@@ -198,7 +211,7 @@
   REAL,                 DIMENSION(MaxRows,MaxCols), INTENT(OUT):: CellArray
 
   INTEGER L, NLAYR, Row, Col
-  REAL Fraction, RowAdd
+  REAL Fraction, RowAdd, FF
   REAL, DIMENSION(NL) :: DLAYR
 
 !----------------------------------------------------------------------
@@ -208,7 +221,7 @@
   DO Row = 1, NRowsTot
     DO Col = 1, NColsTot
       IF (CellStruc(Row,Col) % Cell_Type == 2) THEN
-        CellArray(Row,Col) = SurfaceVal * Surf_Cell_Frac(Row,Col)
+        CellArray(Row,Col) = SurfaceVal * Surf_Cell_Frac(Row,Col) / FF
       ENDIF
     ENDDO
   ENDDO
@@ -220,7 +233,7 @@
       IF (Fraction > 1.E-6) THEN
         RowAdd = LayerArray(L) * Fraction
         DO Col = 1, NColsTot
-          CellArray(Row,Col) = CellArray(Row,Col) + RowAdd * WidthFrac(Row,Col)
+          CellArray(Row,Col) = CellArray(Row,Col) + RowAdd * WidthFrac(Row,Col) / FF
         ENDDO
       ENDIF
     ENDDO

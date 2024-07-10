@@ -1087,7 +1087,7 @@
       ENDDO
 
       CALL Cell2Layer_2D(
-     &  RWU_2D_frac, CELLS%Struc, SOILPROP%NLAYR,  !Input
+     &  RWU_2D_frac, CELLS%Struc, SOILPROP%NLAYR, 1.0, !Input
      &  RWU, SurfaceVal)                           !Output
       CALL PUT('SPAM','UH2O', RWU, NL)
 

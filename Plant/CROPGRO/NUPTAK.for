@@ -55,7 +55,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV,RNH4U_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D, RNO3U_2D
       REAL SurfaceVal !dummy variable
-      Real FieldFactor
+      Real FieldFac
 
 !     temp chp
       Real sumRLV
@@ -109,9 +109,9 @@ C=======================================================================
       ColFrac = BedDimension % ColFrac
       BedFrac = BedDimension % BedFrac
       IF (CONTROL % SIM2D) THEN
-        FieldFactor = 2.0
+        FieldFac = 2.0
       ELSE
-        FieldFactor = 1.0
+        FieldFac = 1.0
       ENDIF
 
 !***********************************************************************
@@ -214,7 +214,7 @@ C-----------------------------------------------------------------------
 
 !             kg[N]/ha
               TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J))*
-     &              ColFrac(L,J) * FieldFactor
+     &              ColFrac(L,J) * FieldFac
             ENDIF
           ENDDO
         ENDDO
@@ -251,10 +251,10 @@ C-----------------------------------------------------------------------
                 UNH4_2D(L,J) = UNH4_2D(L,J) * ColFrac(L,J)
 
 !               For 2D simulations, double the amount because we are modeling only half the field.
-                TRNO3U  = TRNO3U + UNO3_2D(L,J) * FieldFactor
-                TRNH4U  = TRNH4U + UNH4_2D(L,J) * FieldFactor
-                UNO3(L) = UNO3(L) + UNO3_2D(L,J) * FieldFactor
-                UNH4(L) = UNH4(L) + UNH4_2D(L,J) * FieldFactor
+                TRNO3U  = TRNO3U + UNO3_2D(L,J) * FieldFac
+                TRNH4U  = TRNH4U + UNH4_2D(L,J) * FieldFac
+                UNO3(L) = UNO3(L) + UNO3_2D(L,J) * FieldFac
+                UNH4(L) = UNH4(L) + UNH4_2D(L,J) * FieldFac
               ENDIF
             ENDDO
           ENDDO
@@ -271,10 +271,10 @@ C-----------------------------------------------------------------------
 
 !     Use Cell2Layer_2D for mass variables
       CALL Cell2Layer_2D(
-     &  UNO3_2D, Cells%Struc, NLAYR,                      !Input
+     &  UNO3_2D, Cells%Struc, NLAYR, FieldFac,            !Input
      &  UNO3, SurfaceVal)                                 !Output
       CALL Cell2Layer_2D(
-     &  UNH4_2D, Cells%Struc, NLAYR,                      !Input
+     &  UNH4_2D, Cells%Struc, NLAYR, FieldFac,            !Input
      &  UNH4, SurfaceVal)                                 !Output
 
 !***********************************************************************

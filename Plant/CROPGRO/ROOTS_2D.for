@@ -524,7 +524,7 @@
      &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
-      CALL Cell2Layer_2D(SENRT_2D, Struc, NRowsTot, SENRT)
+      CALL Cell2Layer_2D(SENRT_2D, Struc, NRowsTot, 2.0, SENRT)
       CELLS%STATE%RLV = RLV_2D
 
 !***********************************************************************
@@ -838,7 +838,7 @@
 !     Aggregate cells across a row to get layer total.  Units for layers
 !     are in cm[root]/cm[row length] and can be aggregated like mass units.
       CALL Cell2Layer_2D(
-     &   RtLen_2D, Struc, NLAYR ,              !Input
+     &   RtLen_2D, Struc, NLAYR, 2.0,          !Input
      &   RtLen_1D)                             !Output
 
       DO L = 1, NRowsTot

@@ -449,10 +449,10 @@ C-----------------------------------------------------------------------
       CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
 
       CALL Cell2Layer_2D(
-     &  UNO3_2D, Cells%Struc, NLAYR,                      !Input
+     &  UNO3_2D, Cells%Struc, NLAYR, 1.0,                 !Input
      &  UNO3, SurfaceVal)                                 !Output
       CALL Cell2Layer_2D(
-     &  UNH4_2D, Cells%Struc, NLAYR,                      !Input
+     &  UNH4_2D, Cells%Struc, NLAYR, 1.0,                 !Input
      &  UNH4, SurfaceVal)                                 !Output
 
 !-----------------------------------------------------------------------
