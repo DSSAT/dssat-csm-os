@@ -49,11 +49,13 @@
       FurCol1 = BedDimension % FurCol1
       TLCH = 0.0
 
-      DO L = 1, NRowsTot
-        DO j = 1, NColsTot
-          Cell_Type(L,j) = CELLS(L,j)%STRUC%Cell_Type
-        ENDDO
-      ENDDO
+!      DO L = 1, NRowsTot
+!        DO j = 1, NColsTot
+!          Cell_Type(L,j) = CELLS(L,j)%STRUC%Cell_Type
+!        ENDDO
+!      ENDDO
+
+      Cell_Type = CELLS%STRUC%Cell_Type
 
 !     temp chp
 !      TotN = 0.0
@@ -174,9 +176,9 @@
 !     &            * ColFrac(L, j) / ColFrac(L + 1, j)
             ELSE
 !             Accumulate the N lost by leaching below profile depth.
-              NLeach(j) = NFlux_D(NRowsTot,j) * 2.0
+              NLeach(j) = NFlux_D(NRowsTot,j)
 !             Today's leached N, double for 2D simulations
-              TLCHD = TLCHD + NLeach(j) * 2.0 !* ColFrac(L, j)   
+              TLCHD = TLCHD + NLeach(j) * 2.0 !* ColFrac(L, j)
             ENDIF
           ENDIF
 
@@ -304,29 +306,3 @@
 ! TLCH           Total N leached from soil (kg [N] / ha)
 !==========================================================================
 
-!=========================================================================================
-!TEMP CHP
-!      real function SUM_N2(Cell_Type, NCells, ColFrac)
-!
-!      use Cells_2d
-!      implicit none
-!
-!      integer L, j
-!      real, dimension(MaxRows,MaxCols) :: NCells, ColFrac
-!      INTEGER, dimension(MaxRows,MaxCols) :: Cell_Type
-!
-!      sum_n2 = 0.0
-!
-!      do L = 1, NRowsTot
-!        do j = 1, NColsTot
-!          select case (cell_type(L,j))
-!          case (3,4,5)
-!            if (NCells(L,j) < 1.e-15) cycle
-!            sum_n2 = sum_n2 + NCells(L,j) * ColFrac(L,j)
-!          end select
-!        enddo
-!      enddo
-!
-!      RETURN
-!      END FUNCTION SUM_N2
-!=========================================================================================

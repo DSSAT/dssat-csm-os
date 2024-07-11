@@ -70,6 +70,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type
       REAL, DIMENSION(MaxRows, MaxCols) :: SWV, ES_mm, ColFrac
       REAL, DIMENSION(MaxCols) :: ESc
+      REAL FieldFac
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -136,6 +137,12 @@ C=======================================================================
 !       Set air dry water content for top soil layer
         SWEF(Col) = 0.9-0.00038*(DLAYR(1)-30.)**2
       ENDDO
+
+        IF (CONTROL % Sim2D) THEN
+          FieldFac = 2.0
+        ELSE
+          FieldFac = 1.0
+        ENDIF
 
 !***********************************************************************
 !     RATE CALCULATIONS
@@ -268,18 +275,12 @@ C-----------------------------------------------------------------------
           ESc(col) = SWMIN * DLAYR(1) * 10.
         ENDIF
         ESc(col) = MAX(ESc(col), 0.0)
-
-!        IF (CONTROL % Sim2D) THEN
-!          ES_mm(Row,Col) = ESc(col) / mm_2_vf(Row,Col)
-!        ELSE
-!          ES_mm(Row,Col) = ESc(col) * DLAYR(1) * 10.
-!        ENDIF
         ES_mm(Row,Col) = ESc(col)
-!       ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col)
-        ES_col(col) = ES_col(col) + ES_mm(Row,Col)
+        ES_col(col) = ESc(col)
+        ES_LYR(Row) = ES_LYR(Row) + ESc(col) * ColFrac(Row,Col)
 
 !       profile sum (mm)
-        ES = ES + ESc(col) * ColFrac(Row,Col) 
+        ES = ES + ESc(col) * ColFrac(Row,Col) * FieldFac
         CellEvap(Row,col) = -ESc(col)
 
       ENDDO

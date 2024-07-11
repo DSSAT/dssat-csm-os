@@ -336,10 +336,17 @@
   INTEGER L, NLAYR, Row, Col
   REAL Fraction
 
+! TEMP CHP
+  REAL, DIMENSION(MaxRows,NL) :: Temp_LCD
+
+
   NLAYR = SOILPROP % NLAYR
 
 !----------------------------------------------------------------------
   CellArray = 0.0
+
+! TEMP CHP
+  Temp_LCD = Layer_Cell_Dep
 
   DO Row = 1, NRowsTot
     DO Col = 1, NColsTot
@@ -370,6 +377,12 @@
 
 !   Cell data sent in as m, soil layers as cm -- this routine stores 
 !       all data as cm.
+
+! NOTE CHP 2024-07-11
+! It seems that this subroutine is not needed and it adds unnecessary complication.
+! In all cases, the 2D cell thicknesses are identical to the 1D layer thicknesses (DLAYR), 
+! by definition. So this kind of layer cell association array is not needed.
+! It's not hurting anything, but it is not necessary.
 
 ! -----------------------------------------------------------------------------
 ! 09/13/2006 CHP Written

@@ -73,7 +73,7 @@
       INTEGER Col, FurRow1, FurCol1, Row
       REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type
       REAL, DIMENSION(MaxRows, MaxCols) :: SWV, ES_mm, ColFrac
-      REAL FieldFactor
+      REAL FieldFac
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -105,9 +105,9 @@
 !     The weighted average using ColFrac sums only half the field for 2D 
 !       simulations. Using symmetry, multiply by 2.0 to get ES for field.
       IF (CONTROL % SIM2D) THEN
-        FieldFactor = 2.0
+        FieldFac = 2.0
       ELSE
-        FieldFactor = 1.0
+        FieldFac = 1.0
       ENDIF
 
 !***********************************************************************
@@ -280,10 +280,10 @@
           CellEvap(Row,Col) = CellEvap(Row,Col) * RedFac
           ES_mm(Row,Col) = ES_mm(Row,Col) * RedFac
           ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col) 
-     &                  * FieldFactor
+     &                  * FieldFac
         ENDDO
 
-        ES = ES + ES_col(col) * ColFrac(Row,Col) * FieldFactor
+        ES = ES + ES_col(col) * ColFrac(Row,Col) * FieldFac
       ENDDO
 
 !     UPFLOW calcs are only for 1D simulations

@@ -15,7 +15,20 @@ C  This routine was modified from NTRANS when the module was split into
 C  organic and inorganic sections.
 !  2023 - Integration of 2D soil water and N routines now work with 2D 
 !    arrays even in 1D mode. Some processes are still 1D so 2D arrays are
-!    collapsed into 1D array as needed
+!    collapsed into 1D array as needed.
+
+!    NOTES on 2D integration:
+!    - 2D simulation is for half a row. When converting between 1D and 2D
+!         arrays, the ColFrac array is used. This is defined as 
+!         the cell width divided by the row spacing. 
+!    - Additions of N to the system from fertilizer and mineralization
+!         need to be halved when working with 2D simulations (because we 
+!         are simulating half a row).
+!    - Some 2D arrays are used for 1D simulations. These are NLx1 arrays 
+!         where  the entire row width is represented in a single
+!         column. Doubling of inputs is not done for 1D simulations
+!         as the entire row is being simulated.
+
 C-----------------------------------------------------------------------
 C  Revision history
 C  . . . . . .  Written
@@ -69,6 +82,7 @@ C=======================================================================
      &  SOILNI_INIT, NCHECK_INORG, FLOOD_CHEM, OXLAYER, DENIT_DAYCENT, 
      &  NOX_PULSE, INCYD, DAYCENT_DIFFUSIVITY, NFLUX
       EXTERNAL NFLUX_2D !, CellNDetail_2D
+      EXTERNAL SUM_N  !Temp CHP
 
       SAVE
 !-----------------------------------------------------------------------
@@ -95,6 +109,7 @@ C=======================================================================
 !     REAL, DIMENSION(MaxRows,MaxCols) :: MINERN_2D, IMMOBN_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: NITRIFppm, NITRIF_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: N2Onitrif_2D, nNOflux_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: NNOM_2D
 
       INTEGER DOY, DYNAMIC, INCDAT, IUYRDOY, IUOF, I, J, L
       INTEGER NLAYR
@@ -175,10 +190,12 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) ::DLTSNO3_DIFF_2D, 
      &                  DLTSNH4_DIFF_2D, DLTUREA_DIFF_2D
 !     *** TEMP DEBUGGIN CHP
-      REAL TNOM
+      REAL TNOM, newNNOM
       REAL NNOM_a, NNOM_b
+      REAL TotN, NRow(NL)
 
       REAL CumSumFert, FieldFac, CellFactor
+      REAL AddSNO3, AddSNH4, AddUrea
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -456,42 +473,46 @@ C=======================================================================
           SUMFERT = SUMFERT + FERTDATA % ADDSNO3(L) + 
      &                   FERTDATA % ADDSNH4(L) + FERTDATA % ADDUREA(L)
 
+!         Add fertilizer to 2D variables. For 2D simulations divide amount by 2.0
+          AddSNO3 = FERTDATA % ADDSNO3(L) / FieldFac
+          AddSNH4 = FERTDATA % ADDSNH4(L) / FieldFac
+          AddUrea = FERTDATA % ADDUREA(L) / FieldFac
+
+!         Distribute horizontally based on application type.
           SELECT CASE (TRIM(FERTDATA % AppType))
           CASE ('BANDED','POINT')
 !           Banded or point application goes to  column 1, for each layer
-            DLTSNO3_2D(L,1) = DLTSNO3_2D(L,1) + FERTDATA % ADDSNO3(L)
-            DLTSNH4_2D(L,1) = DLTSNH4_2D(L,1) + FERTDATA % ADDSNH4(L)
-            DLTUREA_2D(L,1) = DLTUREA_2D(L,1) + FERTDATA % ADDUREA(L)
+            DLTSNO3_2D(L,1) = DLTSNO3_2D(L,1) + AddSNO3
+            DLTSNH4_2D(L,1) = DLTSNH4_2D(L,1) + AddSNH4
+            DLTUREA_2D(L,1) = DLTUREA_2D(L,1) + AddUrea
 
           CASE ('DRIP')
 !           Drip fertigation goes to cell DripRow,DripCol
             J = BedDimension % DripCol(FERTDATA%DrpRefIdx)
             I = BedDimension % DripRow(FERTDATA%DrpRefIdx)
             If (I .EQ. L) THEN
-                DLTSNO3_2D(I,J) = DLTSNO3_2D(I,J) + FERTDATA %ADDSNO3(L)
-                DLTSNH4_2D(I,J) = DLTSNH4_2D(I,J) + FERTDATA %ADDSNH4(L)
-                DLTUREA_2D(I,J) = DLTUREA_2D(I,J) + FERTDATA %ADDUREA(L)
+                DLTSNO3_2D(I,J) = DLTSNO3_2D(I,J) + AddSNO3
+                DLTSNH4_2D(I,J) = DLTSNH4_2D(I,J) + AddSNH4
+                DLTUREA_2D(I,J) = DLTUREA_2D(I,J) + AddUrea
             END IF
 
           CASE DEFAULT
             DO J = 1, NColsTot
-!             Fertilizer in each row of cells is proportioned based on two factors:
-!             - for 2D simulations, divide total amount by 2.0 because we are modeling
-!               only half a row (FieldFactor)
-!             - Distribute by based on relative cell width (ColFrac or BedFrac)
+!             Fertilizer in each row of cells is proportioned based on 
+!               relative cell width (ColFrac or BedFrac)
               SELECT CASE (Cell_Type(L,J))
 !               Within the bed, fertilizer is concentrated in bed cells
-                CASE (3);   CellFactor = BedFrac(L,J) / FieldFac
-                CASE (4,5); CellFactor = ColFrac(L,J) / FieldFac
+!               The FieldFac is needed again here because the fertilizer amount has already
+!                 been divided by 2 for 2D simulations. ColFrac and BedFrac would do that
+!                 again.
+                CASE (3);   CellFactor = BedFrac(L,J) * FieldFac
+                CASE (4,5); CellFactor = ColFrac(L,J) * FieldFac
                 CASE DEFAULT; CYCLE
               END SELECT
 
-              DLTSNO3_2D(L, J) = DLTSNO3_2D(L, J) + 
-     &          FERTDATA % ADDSNO3(L) * CellFactor
-              DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) + 
-     &          FERTDATA % ADDSNH4(L)  * CellFactor
-              DLTUREA_2D(L, J) = DLTUREA_2D(L, J) + 
-     &          FERTDATA % ADDUREA(L)  * CellFactor
+              DLTSNO3_2D(L, J) = DLTSNO3_2D(L, J) + AddSNO3 * CellFactor
+              DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) + AddSNH4 * CellFactor
+              DLTUREA_2D(L, J) = DLTUREA_2D(L, J) + AddUrea * CellFactor
             ENDDO
           END SELECT
 
@@ -616,6 +637,7 @@ C=======================================================================
 !     one column.
 !     ------------------------------------------------------------------
       NNOM     = 0.0
+      newNNOM  = 0.0
       TMINERN  = 0.0
       TIMMOBN  = 0.0
       TNITRIFY = 0.0
@@ -728,22 +750,24 @@ C=======================================================================
         IF (L == 1) THEN
 !         First layer takes mineralization from surface also.
 !         NNOM = MINERALIZE(0,N) + MINERALIZE(1,N)
-          NNOM = (MNR(0,N) + MNR(1,N) - IMM(0,N) - IMM(1,N))
+          newNNOM = MNR(0,N) + MNR(1,N) - IMM(0,N) - IMM(1,N)
         ELSE
 !         Add in residual from previous layer to preserve N balance
-          NNOM = NNOM + (MNR(L,N) - IMM(L,N))
+          newNNOM = MNR(L,N) - IMM(L,N)
         ENDIF
 
 !       Proportion total NNOM to columns. 
-!       Field factor reduces amount by half for 2D simulations.
         SELECT CASE(Cell_type(L,J))
-        CASE (3)  ; NNOM = NNOM * BedFrac(L,J)
-        CASE (4,5); NNOM = NNOM * ColFrac(L,J)
+        CASE (3)  ; newNNOM = newNNOM * BedFrac(L,J)
+        CASE (4,5); newNNOM = newNNOM * ColFrac(L,J)
         CASE DEFAULT; CYCLE
         END SELECT
 
+        NNOM = NNOM + newNNOM
+        NNOM_2D(L,J) = newNNOM
+
         !*** temp debugging chp
-        TNOM = TNOM + NNOM
+        TNOM = TNOM + NNOM * FieldFac
 
 !       Mineralization
 !       --------------
@@ -1228,10 +1252,7 @@ C=======================================================================
 !*************************************************************************************************
 !*************************************************************************************************
 !     TEMP CHP
-!      call SUM_N(Cell_Type, DLTSNO3_2D, DLTSNH4_2D, !Input
-!     &      ColFrac, SNO3_2D, SNH4_2D,                    !Input
-!     &      TotNO3, TotNH4, TotDeltNO3, TotDeltNH4,       !Output
-!     &      TotN, TotDeltN, LastTotN, LastTotDeltN)       !Output
+      call SUM_N(Cell_Type, SNO3_2D, TotN, Nrow)
 
       Cells % State % SNH4 = SNH4_2D  !kg/ha
       Cells % State % SNO3 = SNO3_2D  !kg/ha
@@ -1326,9 +1347,9 @@ C=======================================================================
           SELECT CASE(Cell_Type(L,J))
           CASE (3,4,5)
 !           2D accumulations and integrations
-            TNH4  = TNH4  + SNH4_2D(L, J)
-            TNO3  = TNO3  + SNO3_2D(L, J)
-            TUREA = TUREA + UREA_2D(L, J)
+            TNH4  = TNH4  + SNH4_2D(L, J) * FieldFac
+            TNO3  = TNO3  + SNO3_2D(L, J) * FieldFac
+            TUREA = TUREA + UREA_2D(L, J) * FieldFac
           END SELECT
 
 !     Already calculated WTNUP in rate section
@@ -1723,3 +1744,37 @@ C-----------------------------------------------------------------------
 ! YRDOY          Current day of simulation (YYDDD)
 !***********************************************************************
 
+!=========================================================================================
+!TEMP CHP
+      Subroutine SUM_N(Cell_Type, NCells, TotN, Nrow)
+
+      use Cells_2d
+      implicit none
+
+      integer L, j
+      real, dimension(MaxRows,MaxCols) :: NCells
+      INTEGER, dimension(MaxRows,MaxCols) :: Cell_Type
+      real, dimension(MaxRows) :: Nrow
+      real, intent(out) :: TotN
+
+      TotN = 0.0
+      Nrow = 0.0
+
+      do L = 1, NRowsTot
+        do j = 1, NColsTot
+          select case (cell_type(L,j))
+          case (3,4,5)
+            if (NCells(L,j) < 1.e-15) cycle
+            TotN = TotN + NCells(L,j)
+            Nrow = Nrow + NCells(L,j)
+          end select
+        enddo
+      enddo
+
+!     Total N in field
+      TotN = TotN * 2.0
+      Nrow = Nrow * 2.0
+
+      RETURN
+      END Subroutine SUM_N
+!=========================================================================================
