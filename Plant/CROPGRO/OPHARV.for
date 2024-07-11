@@ -22,6 +22,8 @@ C  02/09/2007 GH  Add path for FileA
 !  09/17/2019 CHP remove crop CT
 C  07/08/2022 GH  Add CU for Cucumber
 C  05/01/2023 GH  Add GY for Guar; SR for Strawberry
+!  06/20/2024 FO  Added Economic Yield for Evaluate and Summary
+!  07/11/2024 FO  Added Economic standard output format
 C=======================================================================
 
       SUBROUTINE OPHARV(CONTROL, ISWITCH, 
@@ -39,7 +41,7 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
-      EXTERNAL FIND, ERROR, STNAMES, OPVIEW, READA_Dates, 
+      EXTERNAL FIND, ERROR, STNAMES, OPVIEW, READA_Dates, ROUND,
      &  CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
       SAVE
 
@@ -48,7 +50,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6  SECTION
       CHARACTER*6, PARAMETER :: ERRKEY = 'OPHARV'
       CHARACTER*10 STNAME(20)
-      CHARACTER*12 FILEA
+      CHARACTER*12 FILEA, FMT
       CHARACTER*30 FILEIO
 	CHARACTER*256 PATHEX
 
@@ -58,13 +60,13 @@ C-----------------------------------------------------------------------
       INTEGER IFLR, IEMRG, IFPD, IFSD, IHRV, IMAT, ISENS
       INTEGER LINC, LNUM, LUNIO, RUN, TIMDIF, TRTNUM, YIELD, YREMRG
       INTEGER YRNR1,YRNR3,YRNR5,YRNR7,MDATE,YRDOY, YRPLT,YRSIM
-      INTEGER RSTAGE
+      INTEGER RSTAGE, iEYLDH
       INTEGER TRT_ROT
       INTEGER STGDOY(20)
 
       REAL BIOMAS, BWAH, CANHT, CANNAA, CANWAA, HI, HWAH, HWAM
       REAL LAIMX, PCLSD, PCNSD, PODWT, PODNO, PSDWT, PSPP
-      REAL SDRATE, SDWT, SDWTAH, SEEDNO
+      REAL SDRATE, SDWT, SDWTAH, SEEDNO, EYLDH, ROUND
       REAL THRES, TOPWT, VSTAGE
       REAL WTNCAN, WTNFX, WTNSD, WTNST, WTNUP, XLAI
       REAL, DIMENSION(2) :: HARVFRAC
@@ -344,7 +346,32 @@ C-----------------------------------------------------------------------
       ENDIF
 
       IF (CROP .EQ. 'FA') YRPLT = -99
-
+      
+      ! 2024-06-20 FO - Economic Yield for Cotton.
+      IF(CROP .EQ. 'CO') THEN
+        EYLDH = -99.0
+      ENDIF
+      
+      ! 2024-07-11 FO - Economic standard output format
+      IF    (EYLDH < 0.999) THEN; FMT = '(F8.3)'
+      ELSEIF(EYLDH < 10.0)  THEN; FMT = '(F8.2)'
+      ELSEIF(EYLDH < 100.0) THEN; FMT = '(F8.1)'
+      ELSEIF(EYLDH < 1000.0)THEN
+        iEYLDH = INT(EYLDH)
+        FMT = '(I8)'
+      ELSEIF(EYLDH < 10000.0)THEN
+        EYLDH = ROUND(EYLDH, -1)
+        iEYLDH = INT(EYLDH)
+        FMT = '(I8)'
+      ELSEIF(EYLDH < 100000.0)THEN
+        EYLDH = ROUND(EYLDH, -2)
+        iEYLDH = INT(EYLDH)
+        FMT = '(I8)'
+      ELSE
+        EYLDH = ROUND(EYLDH, -2)
+        iEYLDH = INT(EYLDH)
+        FMT = '(I8)'
+      ENDIF
 !-----------------------------------------------------------------------
 !     Read Measured (measured) data from FILEA
 !-----------------------------------------------------------------------
@@ -471,9 +498,14 @@ C-----------------------------------------------------------------------
       WRITE(Simulated(6),' (I8)') DNR8;  WRITE(Measured(6),'(I8)') DHRV
       WRITE(Simulated(7),' (I8)') NINT(SDWT*10);  
                                   WRITE(Measured(7),'(A8)') TRIM(X(7))
-      WRITE(Simulated(8),' (I8)') NINT(PODWT*10); 
-                                  WRITE(Measured(8),'(A8)') TRIM(X(8))
-      WRITE(Simulated(9), '(I8)') NINT(CANWAA*10);
+      IF(EYLDH < 100.0) THEN
+        WRITE(Simulated(8),FMT) EYLDH; 
+                                  WRITE(Measured(8),'(A8)')TRIM(X(8))
+      ELSE
+        WRITE(Simulated(8),FMT) iEYLDH; 
+                                  WRITE(Measured(8),'(A8)')TRIM(X(8))
+      ENDIF
+      WRITE(Simulated(9),' (I8)') NINT(PODWT*10); 
                                   WRITE(Measured(9),'(A8)') TRIM(X(9))
       WRITE(Simulated(10),'(I8)') NINT(TOPWT*10); 
                                   WRITE(Measured(10),'(A8)')TRIM(X(10))

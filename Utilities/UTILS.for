@@ -1668,3 +1668,18 @@ C=======================================================================
         only_dir = full_path(1:pos)        
 
       end subroutine get_dir
+!=======================================================================
+!  ROUND, Subroutine
+!  Subroutine to round decimal part of a number in Fortran
+!-----------------------------------------------------------------------
+!  Revision history
+!  07/11/2024 FO Added round a number function
+!=======================================================================
+      REAL FUNCTION ROUND(VAL, N)
+        IMPLICIT NONE
+        REAL VAL
+        INTEGER N
+        ROUND = ANINT(VAL*10.0**N)/10.0**N
+        RETURN
+      END FUNCTION ROUND
+!=======================================================================
