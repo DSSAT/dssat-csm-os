@@ -215,7 +215,7 @@ C-----------------------------------------------------------------------
       SLSOUR = '           '
       SLDESC = '                                                 '
       TAXON  = '                                                 '
-      SLNO   = '-99.      '
+      SLNO   = '-99       '
       LayerText = '        '
 
       SLDP   = -99.
@@ -1746,12 +1746,12 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       TAXON         = SOILPROP % TAXON        
 
 !     General profile data:
-      MSG(1) = "Soil ID: " // SLNO
-      MSG(2) = SLDESC
-      MSG(3) = TAXON
+      WRITE(MSG(1),'("Soil ID: ",A)') TRIM(SLNO)
+      WRITE(MSG(2),'(A)') TRIM(SLDESC)
+      WRITE(MSG(3),'(A)') TRIM(TAXON)
       MSG(4) = "  SALB SWCON    CN  DMOD  SLPF SMPX"
-      WRITE(MSG(5),'(2F6.2,F6.1,2F6.2,1X,A5)') 
-     &      SALB, SWCON, CN,DMOD,SLPF, SMPX
+      WRITE(MSG(5),'(2F6.2,F6.1,2F6.2,1X,A)') 
+     &      SALB, SWCON, CN,DMOD,SLPF, TRIM(SMPX)
       WRITE(MSG(6),'(A,A)') 
      &      "Soil layer distribution method: ",ISWITCH%MESOL 
       

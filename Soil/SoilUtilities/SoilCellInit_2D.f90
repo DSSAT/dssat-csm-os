@@ -769,30 +769,38 @@
     ELSE
       MSALB = SOILPROP % SALB
     ENDIF
+
     SoilProp_Bed % MSALB  = MSALB
     SoilProp_Bed % CMSALB = MSALB
     SoilProp_Bed % SALB   = SOILPROP%SALB
-    SoilProp_Furrow % SALB   = SOILPROP%SALB  
+
     SoilProp_Furrow % MSALB  = MSALB
     SoilProp_Furrow % CMSALB = MSALB
+    SoilProp_Furrow % SALB   = SOILPROP%SAL
 
     SoilProp_Bed%NLAYR = NRowsTot
     SoilProp_Furrow%NLAYR = NRowsTot - FurRow1 + 1
 
 !   Need to re-think SALB and CN.  Values from the soil profile are not appropriate.
+    SoilProp_Bed % SLNO   = SOILPROP % SLNO
     SoilProp_Bed % SLDESC = "Constructed bed using " // SOILPROP % SLDESC(1:28)
+    SoilProp_Bed % TAXON  = SOILPROP % TAXON
     SoilProp_Bed % CN     = 98.      
     SoilProp_Bed % U      = SOILPROP % U     
     SoilProp_Bed % SLPF   = SOILPROP % SLPF  
     SoilProp_Bed % SWCON  = SOILPROP % SWCON
     SoilProp_Bed % DMOD   = SOILPROP % DMOD
-         
+    SoilProp_Bed % SMPX   = SOILPROP % SMPX
+
+    SoilProp_Furrow % SLNO   = SOILPROP % SLNO
     SoilProp_Furrow % SLDESC = "Constructed furrow using " // SOILPROP % SLDESC(1:25)
+    SoilProp_Furrow % TAXON  = SOILPROP % TAXON
     SoilProp_Furrow % CN     = SOILPROP % CN    
     SoilProp_Furrow % U      = SOILPROP % U     
     SoilProp_Furrow % SLPF   = SOILPROP % SLPF  
     SoilProp_Furrow % SWCON  = SOILPROP % SWCON
     SoilProp_Furrow % DMOD   = SOILPROP % DMOD
+    SoilProp_Furrow % SMPX   = SOILPROP % SMPX
   ENDIF
 
 ! Variables which are not being modified currently, but may need later    
