@@ -1073,6 +1073,9 @@ C  tillage and rainfall kinetic energy
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
+
+      CALL ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
+      CALL PUT(SOILPROP)
       IF (SIM2D) RETURN
 
 !     Initial SOM not established until end of SEASINIT section so 
@@ -1104,7 +1107,6 @@ C  tillage and rainfall kinetic energy
       ENDIF
 
 !     ------------------------------------------------------------------
-      CALL ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
       IF (INDEX('RSM',MEINF) > 0) THEN

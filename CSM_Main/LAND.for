@@ -33,7 +33,7 @@ C-----------------------------------------------------------------------
 
       IMPLICIT NONE
       EXTERNAL INFO, ERROR, WARNING, IPIBS, WEATHR, SOIL, SPAM, PLANT, 
-     &  OPSUM, MGMTOPS
+     &  OPSUM, MGMTOPS, SOILDYN
       SAVE
 C-----------------------------------------------------------------------
 C     Crop, Experiment, Command line Variables
@@ -66,12 +66,13 @@ C-----------------------------------------------------------------------
       REAL SNOW, WINF
       REAL, DIMENSION(NL) :: NH4_plant, NO3_plant, SPi_Avail, SKi_Avail
       REAL, DIMENSION(NL) :: ST, UPPM, SW, SWDELTS, UPFLOW
-      TYPE (SoilType) SOILPROP, SoilProp_Furrow   
+      TYPE (SoilType) SOILPROP, SoilProp_Furrow, SOILPROP_profile
       TYPE (FloodWatType) FLOODWAT
       TYPE (FloodNType)   FloodN
       TYPE (MulchType)    MULCH
       Type (CellType) Cells(MaxRows,MaxCols)
 !     Needed for ORYZA-Rice
+      REAL, DIMENSION(NL) :: SomLit 
       REAL, DIMENSION(0:NL) :: SomLitC
       REAL, DIMENSION(0:NL,NELEM) :: SomLitE
 
@@ -177,7 +178,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
@@ -250,7 +251,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
@@ -319,6 +320,14 @@ C-----------------------------------------------------------------------
 !     rates of evapotranspiration.
 !-----------------------------------------------------------------------
       IF (CONTROL % Sim2D) THEN
+!       IF (CONTROL % DYNAMIC == SEASINIT) THEN
+          CALL SOILDYN(CONTROL, ISWITCH, 
+     &    KTRANS, MULCH, SomLit, SomLitC, SW, TILLVALS,   !Input
+     &    WEATHER, XHLAI,                                 !Input
+     &    CELLS, SOILPROP, SOILPROP_furrow,               !Output
+     &    SOILPROP_profile, NH4_plant, NO3_plant)         !Output
+!       ENDIF
+
         CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
@@ -339,7 +348,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
@@ -390,7 +399,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
@@ -449,7 +458,7 @@ C***********************************************************************
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
@@ -501,7 +510,7 @@ C     Print seasonal summaries and close files.
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
@@ -578,7 +587,7 @@ C***********************************************************************
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 

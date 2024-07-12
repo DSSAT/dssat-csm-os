@@ -42,7 +42,7 @@ C=====================================================================
      &    WEATHER, XHLAI,                                 !Input
      &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 

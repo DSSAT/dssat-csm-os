@@ -776,7 +776,7 @@
 
     SoilProp_Furrow % MSALB  = MSALB
     SoilProp_Furrow % CMSALB = MSALB
-    SoilProp_Furrow % SALB   = SOILPROP%SAL
+    SoilProp_Furrow % SALB   = SOILPROP%SALB
 
     SoilProp_Bed%NLAYR = NRowsTot
     SoilProp_Furrow%NLAYR = NRowsTot - FurRow1 + 1

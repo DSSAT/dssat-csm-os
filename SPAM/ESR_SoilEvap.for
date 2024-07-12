@@ -295,7 +295,7 @@
           ELSE
             UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10. !cm/d
           ENDIF
-          SWDELTU(l) = CellEvap(L,1)
+          SWDELTU(L) = CellEvap(L,1)
         ENDDO
       ENDIF
 

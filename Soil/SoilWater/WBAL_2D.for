@@ -106,7 +106,7 @@
      & '     DRND     ROFD     ESAD     EPAD', !Outflows
      & '     WBAL    CUMWBAL',                 !Balance
      & '    COUNT         ES     ES_DAY',      !Extras
-     & ' LIMIT_2D MgWTD')                        
+     & ' LIMIT_2D   MgWTD')                        
 
         CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
         WRITE (LUNWBL,1300) YEAR, DOY, DAS, 
@@ -169,7 +169,7 @@
      &    , 5F9.4       !Outflows
      &    , F9.4, F11.4 !Balances
      &    , I9, 2F11.4  !COUNT, ES, ES_DAY
-     &    , 5X, I3, 1X, F6.1)    !LIMIT_2D, MgmtWTD
+     &    , 5X, I3, 1X, F8.1)    !LIMIT_2D, MgmtWTD
 
         !Save values for comparison tomorrow
         TSWY   = TSW
