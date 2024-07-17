@@ -16,6 +16,7 @@ C                 Added warning for use of default ecotype.
 !  09/11/2008 KJB, CHP Added 5 species parameters affecting N stress
 C  01/18/2018 KRT Added functionality for ASCE dual Kc ET routines
 !  06/29/2023  FO Removed KCAN_ECO unused ecotype parameter read.
+C  02/10/2023 JG  Added ozone parameters to read from ECO file
 !  07/14/2023  FO Removed unused Nit. stress parameters from SPE file.
 C-----------------------------------------------------------------------
 !  Called:      PLANT
@@ -28,7 +29,8 @@ C=======================================================================
      &  PLIPSH, PLIGSD, PLIGSH, PMINSD, PMINSH, POASD,    !Output
      &  POASH, PORMIN, PROLFI, PRORTI, PROSHI, PROSTI,    !Output
      &  R30C2, RCH2O, RES30C, RFIXN, RLIG, RLIP, RMIN,    !Output
-     &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX)    !Output
+     &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX,    !Output
+     &  FOZ1, SFOZ1, OBASE)                               !Output
 
 C-----------------------------------------------------------------------
 
@@ -42,18 +44,18 @@ C-----------------------------------------------------------------------
       PARAMETER (BLANK  = ' ')
 
       CHARACTER*2 CROP
-      CHARACTER*6 SECTION, ECONO !ECOTYP
+      CHARACTER*6 SECTION, ECONO, ECOTYP
       CHARACTER*6  ERRKEY
       PARAMETER (ERRKEY = 'IPPLNT')
 
       CHARACTER*12 FILEC, FILEE
       CHARACTER*30 FILEIO
-!      CHARACTER*78 MSG(6)
+      CHARACTER*78 MSG(6)
       CHARACTER*80 PATHCR, CHAR, PATHEC
       CHARACTER*92 FILECC, FILEGC
-!      CHARACTER*255 C255
+      CHARACTER*255 C255
 
-      INTEGER LUNCRP, NOUTDO, LUNIO !LUNECO
+      INTEGER LUNCRP, NOUTDO, LUNIO, LUNECO
       INTEGER PATHL, FOUND, ERR, LINC, LNUM, ISECT
 
       REAL
@@ -67,6 +69,8 @@ C-----------------------------------------------------------------------
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KC_SLOPE !KCAN_ECO
+      ! JG added ozone parameters 02/10/2023      
+      REAL FOZ1, SFOZ1, OBASE
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
 !     defined in ModuleDefs.for, and contains the following variables.
@@ -347,6 +351,50 @@ C-----------------------------------------------------------------------
         ELSE
           FILEGC = PATHEC(1:(PATHL-1)) // FILEE
         ENDIF
+
+!       Get ecotype Kcan, if present.  
+!       If not here, use value read from species file.
+!       JG added ozone parameters 02/05/2023
+        LUNECO = LUNCRP
+        OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+        ECOTYP = '      '
+        LNUM = 0
+        DO WHILE (ECOTYP .NE. ECONO)
+          CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+          IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
+     &          (C255(1:1) .NE. '*')) THEN
+            READ (C255,'(A6,138X,3F6.0)',IOSTAT=ERR) ECOTYP, 
+     &            FOZ1, SFOZ1, OBASE
+            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
+            IF (ECOTYP .EQ. ECONO) EXIT
+
+          ELSE IF (ISECT .EQ. 0) THEN
+            IF (ECONO .EQ. 'DFAULT') THEN
+              MSG(1)='No default ecotype found in file: '
+              WRITE(MSG(2),'(2X,A)') FILEGC(1:76)
+              MSG(3)='Program will halt.'
+              CALL WARNING(3, ERRKEY, MSG)
+              CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+            ENDIF
+
+!           Write message to WARNING.OUT file that default ecotype 
+!             will be used.
+            WRITE(MSG(1),5000) ECONO
+            WRITE(MSG(2),'(2X,A)') FILEGC(1:76)
+            WRITE(MSG(3),5001) 
+ 5000       FORMAT('Ecotype ',A6,' not found in file: ')
+ 5001       FORMAT('Default ecotype parameters will be used.')
+            CALL WARNING(3, ERRKEY, MSG)
+
+            ECONO = 'DFAULT'
+            REWIND(LUNECO)
+            LNUM = 0
+          ENDIF
+        ENDDO
+
+        CLOSE (LUNECO)
+
 !-----------------------------------------------------------------------
       ENDIF
 !-----------------------------------------------------------------------

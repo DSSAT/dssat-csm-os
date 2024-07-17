@@ -18,6 +18,7 @@
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
 !  04/14/2021 CHP Added CropStatus
+!  02/03/2023 JG Added ozone parameters to ecotype file
 !----------------------------------------------------------------------
       SUBROUTINE MZ_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,           !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
@@ -25,7 +26,7 @@
      &    XN,YRDOY,YRSIM,                                         !I
      &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac, CropStatus)                          !O
+     &    SeedFrac, VegFrac, CropStatus, FOZ1, SFOZ1, OBASE)      !O
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -68,6 +69,7 @@
       CHARACTER*92    FILEGC
       CHARACTER*30    FILEIO         
       INTEGER         FOUND          
+      REAL            FOZ1  !JG added for ozone 02/03/2023
       REAL            G2             
       REAL            G3             
       REAL            GDDE
@@ -90,6 +92,7 @@
       INTEGER         NDAS           
       INTEGER         NLAYR          
       INTEGER         NOUTDO         
+      REAL            OBASE  !JG added for ozone 02/02/2023
       REAL            P1             
       REAL            P2             
       REAL            P2O            
@@ -108,6 +111,7 @@
       REAL            RUE
       REAL            SDEPTH         
       CHARACTER*6     SECTION        
+      REAL            SFOZ1    !JG added for ozone 02/03/2023
       REAL            S1    
 !     REAL            SI1(6)         
 !     REAL            SI3(6)         
@@ -284,10 +288,12 @@
             IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
      &            C255(1:1) .NE. '*') THEN
               READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
-     &             ROPT,P2O,DJTI,GDDE,DSGFT,RUE, KCAN
-3100          FORMAT (A6,1X,A16,1X,9(1X,F5.1))
+     &             ROPT,P2O,DJTI,GDDE,DSGFT,RUE, KCAN, TSEN, CDAY,
+     &             FOZ1, SFOZ1, OBASE
+3100          FORMAT (A6,1X,A16,1X,14(1X,F5.0))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
+!  JG updated TSEN and CDAY format above 02/03/2023
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter. 
 !               Default to TSEN = 6.0 if no value given.
@@ -297,7 +303,7 @@
                   READ(C255(80:84),'(F5.0)',IOSTAT=ERRNUM) TSEN
                   IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
                 ENDIF
-        
+!        
 !               Read optional number of cold days paramter. 
 !               Default to CDAY = 15.0 if no value given.
                 IF (C255(86:90) == '     ') THEN
@@ -950,6 +956,7 @@
 ! FILEC      Filename of .SPE or species file
 ! FILEIO     Filename containing model inputs (IBSNAT35.INP)
 ! FOUND      Indicates if a section in a file is found
+! FOZ1       Ozone stress factor for photosynthesis (0.00-1.00)
 ! G2         Potential kernel number, kernels/plant
 ! G3         Potential kernel growth rate mg/kernel/day
 ! GDDE       Growing degree days per cm seed depth required for emergence, GDD/cm
@@ -971,6 +978,7 @@
 ! NDAS       Number of days after sowing
 ! NLAYR      Number of soil layers
 ! NOUTDO     Output file number
+! OBASE      Base mean 7 hour ozone damage threshold, set at 25.0 ppb
 ! P1         GDD from seedling emergence to end of juvenile phase, C
 ! P2         Photoperiod sensitivity coefficient, 1/hr
 ! P2O        Minimum daylength below which daylength does not affect dev
@@ -986,6 +994,7 @@
 ! ROPT       Second optimum temperature for development from species fil
 ! SDEPTH     Sowing depth, cm
 ! SECTION    Temporary variable used to identify section in a file
+! SFOZ1      Ozone stress factor for leaf senescence (0.00-1.00)
 ! S1         Used to compute daylength (computed in maize.for)
 ! SI1(6)     Water stress during a growth stage used for output
 ! SI3(6)     Water stress during a growth stage used for output
