@@ -214,7 +214,7 @@ C-----------------------------------------------------------------------
 
 !             kg[N]/ha
               TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J))*
-     &              ColFrac(L,J) * FieldFac
+     &              ColFrac(L,J)
             ENDIF
           ENDDO
         ENDDO
@@ -251,10 +251,10 @@ C-----------------------------------------------------------------------
                 UNH4_2D(L,J) = UNH4_2D(L,J) * ColFrac(L,J)
 
 !               For 2D simulations, double the amount because we are modeling only half the field.
-                TRNO3U  = TRNO3U + UNO3_2D(L,J) * FieldFac
-                TRNH4U  = TRNH4U + UNH4_2D(L,J) * FieldFac
-                UNO3(L) = UNO3(L) + UNO3_2D(L,J) * FieldFac
-                UNH4(L) = UNH4(L) + UNH4_2D(L,J) * FieldFac
+                TRNO3U  = TRNO3U + UNO3_2D(L,J)
+                TRNH4U  = TRNH4U + UNH4_2D(L,J)
+                UNO3(L) = UNO3(L) + UNO3_2D(L,J)
+                UNH4(L) = UNH4(L) + UNH4_2D(L,J)
               ENDIF
             ENDDO
           ENDDO
@@ -271,11 +271,11 @@ C-----------------------------------------------------------------------
 
 !     Use Cell2Layer_2D for mass variables
       CALL Cell2Layer_2D(
-     &  UNO3_2D, Cells%Struc, NLAYR, FieldFac,            !Input
-     &  UNO3, SurfaceVal)                                 !Output
+     &  UNO3_2D, Cells%Struc, NLAYR,              !Input
+     &  UNO3, SurfaceVal)                         !Output
       CALL Cell2Layer_2D(
-     &  UNH4_2D, Cells%Struc, NLAYR, FieldFac,            !Input
-     &  UNH4, SurfaceVal)                                 !Output
+     &  UNH4_2D, Cells%Struc, NLAYR,              !Input
+     &  UNH4, SurfaceVal)                         !Output
 
 !***********************************************************************
 !***********************************************************************

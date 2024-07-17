@@ -188,8 +188,7 @@ C-----------------------------------------------------------------------
 !              mm[water]    =  ---------      * -- * -- * hr
 !                                  d            cm   hr
 
-!           TRWUP_ts in mm
-            TRWUP_ts = TRWUP_ts + RWUP_2D_ts(i,j) *ColFrac(i,j) * 2.0
+            TRWUP_ts = TRWUP_ts + RWUP_2D_ts(i,j) *ColFrac(i,j)      !mm
           ENDIF
         ENDDO
       ENDDO
@@ -208,7 +207,7 @@ C-----------------------------------------------------------------------
           RWU_2D_ts(i,j) = RWUP_2D_ts(i,j) * WUF
           SELECT CASE (Cells(i,j)%Struc%Cell_Type)
           CASE (3,4,5)
-            TRWU_ts = TRWU_ts + RWU_2D_ts(i,j) * ColFrac(i,j) * 2.0
+            TRWU_ts = TRWU_ts + RWU_2D_ts(i,j) * ColFrac(i,j)
           END SELECT
         ENDDO
       ENDDO

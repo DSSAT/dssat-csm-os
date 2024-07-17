@@ -123,12 +123,6 @@ C=======================================================================
       ColFrac = BedDimension % ColFrac
 !     BedFrac = BedDimension % BedFrac
 
-      IF (CONTROL % SIM2D) THEN
-        FieldFactor = 2.0
-      ELSE
-        FieldFactor = 1.0
-      ENDIF
-
 !***********************************************************************
 !***********************************************************************
 !     Daily rate calculations
@@ -194,7 +188,7 @@ C-----------------------------------------------------------------------
               RNO3U_2D(L,J) = MAX(0.0, RNO3U_2D(L,J))
               RNH4U_2D(L,J) = MAX(0.0, RNH4U_2D(L,J))
               TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J)) 
-     &              * ColFrac(L,J) * FieldFactor
+     &                 * ColFrac(L,J) !kg[N]/ha
             ENDIF
           END SELECT
         ENDDO
@@ -449,11 +443,11 @@ C-----------------------------------------------------------------------
       CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
 
       CALL Cell2Layer_2D(
-     &  UNO3_2D, Cells%Struc, NLAYR, 1.0,                 !Input
-     &  UNO3, SurfaceVal)                                 !Output
+     &  UNO3_2D, Cells%Struc, NLAYR,                  !Input
+     &  UNO3, SurfaceVal)                             !Output
       CALL Cell2Layer_2D(
-     &  UNH4_2D, Cells%Struc, NLAYR, 1.0,                 !Input
-     &  UNH4, SurfaceVal)                                 !Output
+     &  UNH4_2D, Cells%Struc, NLAYR,                  !Input
+     &  UNH4, SurfaceVal)                             !Output
 
 !-----------------------------------------------------------------------
 C   Update stover and root N

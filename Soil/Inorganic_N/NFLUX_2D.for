@@ -10,7 +10,7 @@
 !***********************************************************************
 
       SUBROUTINE NFLUX_2D (DYNAMIC,
-     &  ADCOEF, BD, CELLS, ColFrac, DUL, NORIG,                 !Input
+     &  ADCOEF, BD, CELLS, DUL, NORIG,                          !Input
      &  NSOURCE, SWV,                                           !Input
      &  DLTN, TLCH, TLCHD, NFlux_L, NFlux_R, NFlux_D, NFlux_U)  !Output
 
@@ -25,7 +25,7 @@
       REAL TLCH, TLCHD, WFluxFrac !, NTEMP_AVG
       REAL, DIMENSION(NL) :: ADCOEF, BD, DUL, FRAC_SOLN
       REAL, DIMENSION(MaxCols) :: NLeach
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, DLTN, ColFrac,
+      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, DLTN, 
      &     NFlux_L, NFlux_R, NFlux_D, NFlux_U, NORIG, NTEMP,
      &     SWFlux_L, SWFlux_R, SWFlux_D, SWFlux_U, SWV
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 

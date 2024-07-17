@@ -358,7 +358,7 @@ C=======================================================================
         IF (SIM2D) THEN
 !         Initialize 2D N flux routines (1D is rate only)
           CALL NFLUX_2D (DYNAMIC,
-     &      ADCOEF, BD, CELLS, ColFrac, DUL, SNO3_2D,   !Input
+     &      ADCOEF, BD, CELLS, DUL, SNO3_2D,            !Input
      &      1, SWV,                                     !Input
      &      DLTSNO3_2D, CLeach, TLeachD,                !Output
      &      NFlux_L, NFlux_R, NFlux_D, NFlux_U)         !Output
@@ -1209,7 +1209,7 @@ C=======================================================================
         IF (IUON) THEN
           NSOURCE = 1    !Urea.
           CALL NFLUX_2D (DYNAMIC, 
-     &      ADCOEF, BD, CELLS, ColFrac, DUL, UREA_2D,       !Input
+     &      ADCOEF, BD, CELLS, DUL, UREA_2D,                !Input
      &      NSOURCE, SWV,                                   !Input
      &      DLTUREA_2D, CLeach, TLeachD_UREA,               !Output
      &      NFlux_UREA_L, NFlux_UREA_R, NFlux_UREA_D,       !Output
@@ -1218,7 +1218,7 @@ C=======================================================================
 
         NSOURCE = 2   !NO3.
         CALL NFLUX_2D (DYNAMIC, 
-     &      ADCOEF, BD, CELLS, ColFrac, DUL, SNO3_2D,       !Input
+     &      ADCOEF, BD, CELLS, DUL, SNO3_2D,                !Input
      &      NSOURCE, SWV,                                   !Input
      &      DLTSNO3_2D, CLeach, TLeachD, NFlux_L, NFlux_R,  !Output
      &      NFlux_D, NFlux_U)                               !Output
