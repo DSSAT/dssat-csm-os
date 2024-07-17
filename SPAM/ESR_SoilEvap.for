@@ -33,7 +33,8 @@
 !  Called by: SPAM
 !=======================================================================
       SUBROUTINE ESR_SoilEvap(CONTROL,
-     &   CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS, WINF,  !Input
+     &   CELLS, EOS, SOILPROP, SOILPROP_FURROW, SWDELTS,        !Input
+     &   WINF_col,                                              !Input
      &   ES, ES_LYR, SWDELTU, UPFLOW)                           !Output
 
 !-----------------------------------------------------------------------
@@ -47,7 +48,7 @@
       TYPE(CellType), DIMENSION(MaxRows,MaxCols), INTENT(INOUT) :: CELLS
       TYPE (SoilType), INTENT(IN) :: SOILPROP, SOILPROP_FURROW 
       REAL, INTENT(IN) :: EOS          !Potential soil evap (mm/d)
-      REAL, INTENT(IN) :: WINF
+      REAL, INTENT(IN), DIMENSION(MaxCols) :: WINF_col
       REAL, INTENT(IN) :: SWDELTS(NL)  !Rate of drainage (cm3/cm3)
 
       REAL, INTENT(OUT):: ES           !Actual soil evaporation (mm/d)
@@ -120,22 +121,18 @@
       UPFLOW = 0.0
       CellEvap = 0.0
 
-!     Increase the infiltration amount (from rainfall and irrig) to account
-!       for partial coverage of plastic mulch. Uncovered soil recieves additional
-!       infiltration.
-      IF (PMFraction(0) < 1.0) THEN
-        Infilt = WINF / (1.0 - PMFraction(0))
-      ELSE
-        Infilt = 0.0
-      ENDIF
-
-
 !     Loop through columns and calculate soil evaporation for each column separately
       DO Col = 1, NColsTot
 
         IF (PMFraction(col) > 0.999) THEN
 !         Full plastic mulch cover - no evaporation from this column. Move on.
           CYCLE
+        ENDIF
+
+        IF (PMFraction(col) < 1.0) THEN
+          Infilt = WINF_col(col) / (1.0 - PMFraction(col))
+        ELSE
+          Infilt = 0.0
         ENDIF
 
         IF (.NOT. CONTROL % SIM2D .OR. Cell_Type(1,Col) == 3) THEN

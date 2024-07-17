@@ -134,6 +134,7 @@ C=======================================================================
 
 !     Transfer out 2D soil water variables for use in soil N routines.
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
+      REAL, DIMENSION(MaxCols) :: WINF_col
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -260,6 +261,7 @@ C=======================================================================
       DRN    = 0.0
       UPFLOW = 0.0
       WINF   = 0.0
+      WINF_col = 0.0
 
 !     Set process rates to zero.
       SWDELTS = 0.0
@@ -417,6 +419,9 @@ C     Conflict with CERES-Wheat
         ENDIF
 
       ENDIF   !End of IF block for PUDDLED conditions
+
+      WINF_col(1) = WINF
+      CALL PUT('SPAM', 'WINF_COL', WINF_col, MaxCols)
 
 !-----------------------------------------------------------------------
       IF (FLOOD .LE. 0.0 .AND. MESEV .NE. 'S') THEN

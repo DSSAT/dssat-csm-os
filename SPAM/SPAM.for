@@ -38,7 +38,7 @@ C=======================================================================
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SOILPROP_FURROW, SW,                            !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
@@ -64,7 +64,7 @@ C=======================================================================
       TYPE (WeatherType), INTENT(IN) :: WEATHER
 
       REAL, INTENT(IN) :: CANHT, EORATIO, KSEVAP, KTRANS, PORMIN, 
-     &      PSTRES1, RWUMX, WINF, XHLAI, XLAI
+     &      PSTRES1, RWUMX, XHLAI, XLAI
       REAL, DIMENSION(NL), INTENT(IN) :: RLV, SW, SWDELTS, UH2O
 
       TYPE (FloodWatType), INTENT(INOUT) :: FLOODWAT
@@ -93,7 +93,7 @@ C=======================================================================
      &    SAT(NL), SW_AVAIL(NL) !SWAD(NL),
       REAL ES_LYR(NL)
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
-      REAL, DIMENSION(MaxCols) :: SWAVAIL !top layer only for SOILEV
+      REAL, DIMENSION(MaxCols) :: SWAVAIL, WINF_col
 
 !     Flood management variables:
       REAL FLOOD, EOS_SOIL
@@ -203,14 +203,14 @@ C=======================================================================
 !           Note that this routine calculates UPFLOW, unlike the SOILEV.
             CALL ESR_SoilEvap(CONTROL,
      &        CELLS, EOS, SOILPROP, SOILPROP_FURROW,    !Input
-     &        SWDELTS, WINF,                            !Input
+     &        SWDELTS, WINF_col,                        !Input
      &        ES, ES_LYR, SWDELTU, UPFLOW)              !Output
 
 !         ----------------------------
           CASE DEFAULT  !Original soil evaporation routine
             SWAVAIL = 0.0 !not used for initialization
             CALL SOILEV(CONTROL,
-     &        CELLS, EOS, U, WINF, SWAVAIL,         !Input
+     &        CELLS, EOS, U, WINF_col, SWAVAIL,     !Input
      &        SOILPROP, SOILPROP_FURROW,            !Input
      &        ES, ES_LYR)                           !Output
 !         ----------------------------
@@ -368,14 +368,16 @@ C=======================================================================
 
 !         Soil evaporation after flood and mulch evaporation
           IF (EOS_SOIL > 1.E-6) THEN
+            CALL GET('SPAM', 'WINF_COL', WINF_col, MaxCols)
+
             SELECT CASE(MESEV)
 !           ------------------------
             CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
             CALL ESR_SoilEvap(CONTROL,
-     &        CELLS, EOS_SOIL, SOILPROP, SOILPROP_FURROW,    !Input
-     &        SWDELTS, WINF,                            !Input
-     &        ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+     &        CELLS, EOS_SOIL, SOILPROP, SOILPROP_FURROW,   !Input
+     &        SWDELTS, WINF_col,                            !Input
+     &        ES, ES_LYR, SWDELTU, UPFLOW)                  !Output
 
 !           ------------------------
             CASE DEFAULT
@@ -403,9 +405,9 @@ C=======================================================================
               ENDDO
 
               CALL SOILEV(CONTROL,
-     &        CELLS, EOS_SOIL, U, WINF, SWAVAIL,         !Input
-     &        SOILPROP, SOILPROP_FURROW,            !Input
-     &        ES, ES_LYR)                           !Output
+     &        CELLS, EOS_SOIL, U, WINF_col, SWAVAIL,    !Input
+     &        SOILPROP, SOILPROP_FURROW,                !Input
+     &        ES, ES_LYR)                               !Output
             END SELECT
 !           ------------------------
           ENDIF

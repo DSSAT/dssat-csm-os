@@ -460,6 +460,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL REFET, SKC, KCBMAX, KCB, KE, KC
         !VPD parameters for CSYCA model (LPM)
         REAL PHSV, PHTV
+!       2D water infiltration (by column)
+        REAL, DIMENSION(MaxCols) :: WINF_col
       End Type SPAMType
 
 !     Data transferred from CROPGRO routine 
@@ -964,7 +966,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       CASE ('SPAM')
         SELECT CASE (VarName)
-          CASE ('UH2O'); Value = SAVE_data % SPAM % UH2O
+          CASE ('UH2O');     Value = SAVE_data % SPAM % UH2O
+          CASE ('WINF_COL'); Value = SAVE_data % SPAM % WINF_COL
           CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1003,7 +1006,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       SELECT CASE (ModuleName)
       Case ('SPAM')
         SELECT CASE (VarName)
-        Case ('UH2O'); SAVE_data % SPAM % UH2O = Value
+        Case ('UH2O');     SAVE_data % SPAM % UH2O = Value
+        Case ('WINF_COL'); SAVE_data % SPAM % WINF_COL = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

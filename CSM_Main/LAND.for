@@ -190,7 +190,7 @@ C-----------------------------------------------------------------------
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SOILPROP_FURROW, SW,                            !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
@@ -264,7 +264,7 @@ C-----------------------------------------------------------------------
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SOILPROP_FURROW, SW,                            !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
@@ -332,7 +332,7 @@ C-----------------------------------------------------------------------
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SOILPROP_FURROW, SW,                            !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
@@ -361,7 +361,7 @@ C-----------------------------------------------------------------------
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SOILPROP_FURROW, SW,                            !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
@@ -410,7 +410,7 @@ C-----------------------------------------------------------------------
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SOILPROP_FURROW, SW,                            !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
@@ -466,7 +466,7 @@ C***********************************************************************
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SOILPROP_FURROW, SW,                            !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
@@ -518,7 +518,7 @@ C     Print seasonal summaries and close files.
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SOILPROP_FURROW, SW,                            !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output

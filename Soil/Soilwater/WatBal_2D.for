@@ -36,9 +36,9 @@
 !=======================================================================
 
       SUBROUTINE WatBal2D(CONTROL, ISWITCH, 
-     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW,     !Input 
-     &    WEATHER,                                        !Input
-     &    Cells, SW, SWDELTS, SWFAC, TURFAC, TRWU, TRWUP) !Output
+     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW,               !Input
+     &    WEATHER,                                              !Input
+     &    Cells, SW, SWDELTS, SWFAC, TURFAC, TRWU, TRWUP)       !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D
@@ -325,9 +325,6 @@
      &    CRAIN, TDRAIN, TEP, TRUNOF,                     !Output
      &    TSW, TSWINI)                                    !Output
 
-
-
-
       CALL Interpolate2Layers_2D(                    
      &  CELLS%State%SWV, CELLS%Struc, SOILPROP%NLAYR,     !Input
      &  SW)                                               !Output
@@ -502,6 +499,8 @@
      &  HalfRow, LL, Rain, SAT, SWV_D,                    !Input
      &  RUNOFF, WINF_col)                                 !Output
 !       The rain water from plastic cover run to furrow and infitration
+
+      CALL PUT('SPAM', 'WINF_COL', WINF_col, MaxCols)
 
 !-----------------------------------------------------------------
 !     Drip irrigation schedule for today
@@ -1375,6 +1374,7 @@ C=====================================================================
 !=======================================================================
 
 !=======================================================================
+!     Calculates runoff column by column
       Subroutine Rnoff_furrow( 
      &  CN, ColFrac, FurCol1, FurRow1, HalfFurrow,        !Input
      &  HalfRow, LL, Rain, SAT, SWV_D,                    !Input
