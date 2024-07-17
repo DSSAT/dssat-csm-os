@@ -55,7 +55,7 @@
       REAL SNH4(NL), SNO3(NL)
       REAL UREA(NL), UPPM(NL)
       REAL ST(NL) 
-      REAL FieldFactor
+      REAL FieldFac
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -69,17 +69,17 @@
       ColFrac= BedDimension % ColFrac
       BedFrac= BedDimension % BedFrac
 
-      IF (CONTROL % SIM2D) THEN
-        FieldFactor = 2.0
-      ELSE
-        FieldFactor = 1.0
-      ENDIF
-
       NH4_2D = 0.0
       NO3_2D = 0.0
       UREA_2D = 0.0
       UREA = 0.0
       Uppm = 0.0
+
+      IF (SIM2D) THEN
+        FieldFac = 2.0
+      ELSE
+        FieldFac = 1.0
+      ENDIF
 
 !***********************************************************************
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
@@ -100,22 +100,19 @@
 
           DO J = 1, NColsTot
             TFNITY(L,J) = TFNITY(L,1)
+            NO3_2D(L, J) = NO3(L)
+            NH4_2D(L, J) = NH4(L)
 !           --------------------------------------------------------------
 !           Initialize soil mineral nitrogen and urea.
 !           --------------------------------------------------------------
 !           Convert the N concentrations to kg[N] / ha per soil layer.
-!           For 2D simulations, divide by 2.0 (FieldFactor)
             SELECT CASE (Cell_type(L,J))
             CASE (3)
-              SNO3_2D(L, J) = SNO3(L) / FieldFactor * BedFrac(L,J)
-              SNH4_2D(L, J) = SNH4(L) / FieldFactor * BedFrac(L,J)
-              NO3_2D(L, J) = NO3(L)
-              NH4_2D(L, J) = NH4(L)
+              SNO3_2D(L, J) = SNO3(L) / FieldFac * BedFrac(L,J)
+              SNH4_2D(L, J) = SNH4(L) / FieldFac * BedFrac(L,J)
             CASE(4,5)
-              SNO3_2D(L, J) = SNO3(L) / FieldFactor * ColFrac(L,J)
-              SNH4_2D(L, J) = SNH4(L) / FieldFactor * ColFrac(L,J)
-              NO3_2D(L, J) = NO3(L)
-              NH4_2D(L, J) = NH4(L)
+              SNO3_2D(L, J) = SNO3(L) / FieldFac * ColFrac(L,J)
+              SNH4_2D(L, J) = SNH4(L) / FieldFac * ColFrac(L,J)
             END SELECT
           ENDDO
         END DO   !End of soil layer loop.

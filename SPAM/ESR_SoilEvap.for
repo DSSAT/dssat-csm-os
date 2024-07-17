@@ -73,7 +73,6 @@
       INTEGER Col, FurRow1, FurCol1, Row
       REAL, DIMENSION(MaxRows, MaxCols) :: mm_2_vf, Cell_Type
       REAL, DIMENSION(MaxRows, MaxCols) :: SWV, ES_mm, ColFrac
-      REAL FieldFac
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -101,14 +100,6 @@
 !     PMFraction is the fraction of the soil covered by plastic mulch
 !     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
       CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
-
-!     The weighted average using ColFrac sums only half the field for 2D 
-!       simulations. Using symmetry, multiply by 2.0 to get ES for field.
-      IF (CONTROL % SIM2D) THEN
-        FieldFac = 2.0
-      ELSE
-        FieldFac = 1.0
-      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -279,11 +270,10 @@
           Row = L+StartRow-1  
           CellEvap(Row,Col) = CellEvap(Row,Col) * RedFac
           ES_mm(Row,Col) = ES_mm(Row,Col) * RedFac
-          ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col) 
-     &                  * FieldFac
+          ES_LYR(L) = ES_LYR(L) + ES_mm(Row,Col) * ColFrac(Row,Col)
         ENDDO
 
-        ES = ES + ES_col(col) * ColFrac(Row,Col) * FieldFac
+        ES = ES + ES_col(col) * ColFrac(Row,Col)  !profile sum (mm)
       ENDDO
 
 !     UPFLOW calcs are only for 1D simulations

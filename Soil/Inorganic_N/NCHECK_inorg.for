@@ -10,7 +10,7 @@ C               Note: File names etc. should be dynamically created
 C               Check time stamp
 !  02/25/2005 CHP Split NCHECK into organic and inorganic.
 C-----------------------------------------------------------------------
-      SUBROUTINE NCHECK_inorg(CONTROL, Sim2D,
+      SUBROUTINE NCHECK_inorg(CONTROL,
      &    NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, UREA_2D) !Input  
 
 !-----------------------------------------------------------------------
@@ -20,7 +20,6 @@ C-----------------------------------------------------------------------
       EXTERNAL WARNING
 !-----------------------------------------------------------------------
       TYPE (ControlType), INTENT(IN) :: CONTROL
-      LOGICAL, INTENT(IN) :: Sim2D
       REAL, DIMENSION(MaxRows, MaxCols), INTENT(INOUT) ::
      &     NH4_2D, NO3_2D, SNH4_2D,SNO3_2D, UREA_2D
 

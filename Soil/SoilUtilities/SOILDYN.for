@@ -177,7 +177,6 @@ C-----------------------------------------------------------------------
 !     2D MODEL
       TYPE (CellType)   , INTENT(OUT):: CELLS(MaxRows,MaxCols)
       TYPE (SoilType) SoilProp_Bed, SoilProp_Furrow, SOILPROP_profile
-      LOGICAL Sim2D
 
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC

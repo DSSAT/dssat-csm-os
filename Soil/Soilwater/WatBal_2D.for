@@ -885,7 +885,7 @@
 !             mm evap during this time interval in current cell
               ES_avg = TSRadFrac * ES_mm(i,j) 
 !             mm/ts                  mm/d
-              ES_ts = ES_ts + ES_avg * ColFrac(i,j) * 2.
+              ES_ts = ES_ts + ES_avg * ColFrac(i,j)
 !             Subtract from cell water by volume fraction
               SWV_avail(i,j) = SWV_avail(i,j) 
      &                       - ES_avg * mm_2_vf(i,j)
@@ -1087,7 +1087,7 @@
       ENDDO
 
       CALL Cell2Layer_2D(
-     &  RWU_2D_frac, CELLS%Struc, SOILPROP%NLAYR, 1.0, !Input
+     &  RWU_2D_frac, CELLS%Struc, SOILPROP%NLAYR,  !Input
      &  RWU, SurfaceVal)                           !Output
       CALL PUT('SPAM','UH2O', RWU, NL)
 
@@ -1429,7 +1429,7 @@ C=====================================================================
           IF (PB .GT. 0) THEN
             RUNOFF_col(j) = PB**2/(WATAVL + (1.0-IABS) * SMX) !mm/d
           END IF
-          RUNOFF = RUNOFF + RUNOFF_col(j) * ColFrac(FurRow1, j) * 2.0
+          RUNOFF = RUNOFF + RUNOFF_col(j) * ColFrac(FurRow1, j)
           WINF_col(j) = WATAVL - Runoff_col(j)    !mm/d
         ENDDO
       ENDIF

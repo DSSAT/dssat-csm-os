@@ -20,7 +20,7 @@ C  organic and inorganic sections.
 !    NOTES on 2D integration:
 !    - 2D simulation is for half a row. When converting between 1D and 2D
 !         arrays, the ColFrac array is used. This is defined as 
-!         the cell width divided by the row spacing. 
+!         the cell width divided by the half row spacing. 
 !    - Additions of N to the system from fertilizer and mineralization
 !         need to be halved when working with 2D simulations (because we 
 !         are simulating half a row).
@@ -88,7 +88,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT, MEGHG, MEHYD
 
-      LOGICAL IUON, Sim2D
+      LOGICAL IUON
 
 !     2D variables
       Type (CellType) Cells(MaxRows,MaxCols)
@@ -352,7 +352,7 @@ C=======================================================================
      &      SNO3_2D, TFNITY_2D, UPPM, UREA, UREA_2D)   !Output
 
 !       2D values are checked every day
-        CALL NCHECK_inorg(CONTROL, Sim2D,
+        CALL NCHECK_inorg(CONTROL, 
      &    NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, UREA_2D) !Input
 
         IF (SIM2D) THEN
@@ -445,14 +445,14 @@ C=======================================================================
       ENDDO
 
 !     Convert 2D arrays to 1D after N uptake 
-      CALL Cell2Layer_2D(SNO3_2D, CELLS % Struc, NLAYR, FieldFac, SNO3)
-      CALL Cell2Layer_2D(SNH4_2D, CELLS % Struc, NLAYR, FieldFac, SNH4)
+      CALL Cell2Layer_2D(SNO3_2D, CELLS % Struc, NLAYR, SNO3)
+      CALL Cell2Layer_2D(SNH4_2D, CELLS % Struc, NLAYR, SNH4)
 
 !     Must calculate WTNUP here or it won't be guaranteed to match N
 !     removed from the soil today and the balance will be off.
 !     WTNUP is cumulative
-      CALL Cell2Layer_2D(UNO3_2D, CELLS % Struc, NLAYR, FieldFac, UNO3)
-      CALL Cell2Layer_2D(UNH4_2D, CELLS % Struc, NLAYR, FieldFac, UNH4)
+      CALL Cell2Layer_2D(UNO3_2D, CELLS % Struc, NLAYR, UNO3)
+      CALL Cell2Layer_2D(UNH4_2D, CELLS % Struc, NLAYR, UNH4)
       DO L = 1, NLAYR
         WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
       ENDDO
@@ -502,11 +502,8 @@ C=======================================================================
 !               relative cell width (ColFrac or BedFrac)
               SELECT CASE (Cell_Type(L,J))
 !               Within the bed, fertilizer is concentrated in bed cells
-!               The FieldFac is needed again here because the fertilizer amount has already
-!                 been divided by 2 for 2D simulations. ColFrac and BedFrac would do that
-!                 again.
-                CASE (3);   CellFactor = BedFrac(L,J) * FieldFac
-                CASE (4,5); CellFactor = ColFrac(L,J) * FieldFac
+                CASE (3);   CellFactor = BedFrac(L,J)
+                CASE (4,5); CellFactor = ColFrac(L,J)
                 CASE DEFAULT; CYCLE
               END SELECT
 
@@ -578,28 +575,28 @@ C=======================================================================
 
 !       Convert state and DELTA variables to 2D for next set of processes
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, SNO3, 0.0, FieldFac,  !Input
-     &   SNO3_2D)                                           !Output
+     &   CELLS % Struc, NLAYR, DLAYR, SNO3, 0.0,    !Input
+     &   SNO3_2D)                                   !Output
         
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, SNH4, 0.0, FieldFac,  !Input
-     &   SNH4_2D)                                           !Output
+     &   CELLS % Struc, NLAYR, DLAYR, SNH4, 0.0,    !Input
+     &   SNH4_2D)                                   !Output
         
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, UREA, 0.0, FieldFac,  !Input
-     &   UREA_2D)                                           !Output
+     &   CELLS % Struc, NLAYR, DLAYR, UREA, 0.0,    !Input
+     &   UREA_2D)                                   !Output
 
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, DLTSNO3, 0.0, FieldFac, !Input
-     &   DLTSNO3_2D)                                        !Output
+     &   CELLS % Struc, NLAYR, DLAYR, DLTSNO3, 0.0,   !Input
+     &   DLTSNO3_2D)                                  !Output
         
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, DLTSNH4, 0.0, FieldFac, !Input
-     &   DLTSNH4_2D)                                        !Output
+     &   CELLS % Struc, NLAYR, DLAYR, DLTSNH4, 0.0,   !Input
+     &   DLTSNH4_2D)                                  !Output
         
         CALL Layer2Cell_2D(                              
-     &   CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0, FieldFac, !Input
-     &   DLTUREA_2D)                                        !Output
+     &   CELLS % Struc, NLAYR, DLAYR, DLTUREA, 0.0,   !Input
+     &   DLTUREA_2D)                                  !Output
 
       ENDIF !End of 1D-only simulations
 !     ------------------------------------------------------------------
@@ -758,8 +755,8 @@ C=======================================================================
 
 !       Proportion total NNOM to columns. 
         SELECT CASE(Cell_type(L,J))
-        CASE (3)  ; newNNOM = newNNOM * BedFrac(L,J)
-        CASE (4,5); newNNOM = newNNOM * ColFrac(L,J)
+        CASE (3)  ; newNNOM = newNNOM * BedFrac(L,J) / FieldFac
+        CASE (4,5); newNNOM = newNNOM * ColFrac(L,J) / FieldFac
         CASE DEFAULT; CYCLE
         END SELECT
 
@@ -767,7 +764,7 @@ C=======================================================================
         NNOM_2D(L,J) = newNNOM
 
         !*** temp debugging chp
-        TNOM = TNOM + NNOM * FieldFac
+        TNOM = TNOM + newNNOM * FieldFac
 
 !       Mineralization
 !       --------------
@@ -865,6 +862,7 @@ C=======================================================================
 !          CASE(4,5)
           CASE(3,4,5)
             NITRIF_2D(L,J)  = NITRIFppm(L,J) / KG2PPM(L) * ColFrac(L,J)
+     &          / FieldFac
           END SELECT
         ENDIF
 
@@ -875,7 +873,7 @@ C=======================================================================
             TFNITY_2D(L,J) = TFNITY_2D(L,J) + 1.0
           ENDIF
         ENDIF
-           
+
         XMIN = 0.0
         SNH4_AVAIL = AMAX1(0.0, SNH4_2D(L,J) + DLTSNH4_2D(L,J) - XMIN)
         NITRIF_2D(L,J) = AMIN1(NITRIF_2D(L,J), SNH4_AVAIL)
@@ -887,7 +885,7 @@ C=======================================================================
 !       ------------------------------------------------------------------
 !       N2, N2O, NO fluxes from Nitrification
 !       ------------------------------------------------------------------
-        if (NITRIF_2D(L,J) > 1.E-6) then
+        if (NITRIF_2D(L,J) > 1.E-8) then
 
 !         for N2O using a proportion of nitrification from original daycent PG
           N2ONitrif_2D(L,J) = pN2Onitrif * NITRIF_2D(L,J) 
@@ -931,7 +929,7 @@ C=======================================================================
         DLTSNO3_2D(L,J) = DLTSNO3_2D(L,J) + NITRIF_remaining
         DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) - NH4_to_NO
 !       This contribution from NH4 can be considered as part of the nitrification process
-        TNITRIFY   = TNITRIFY   + NITRIF(L) 
+        TNITRIFY   = TNITRIFY + NITRIF_2D(L,J) * FieldFac
 
         ENDDO  !End of soil row (layer) loop
       END DO   !End of soil column loop
@@ -945,28 +943,28 @@ C=======================================================================
 !     Convert NITRIF, DLTSNO3 and DLTSNH4 from 2D to 1D for next set of processes
 !     use the utility 
       CALL Cell2Layer_2D(
-     &  DLTSNO3_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
-     &  DLTSNO3)                                     !Output
+     &  DLTSNO3_2D, CELLS % Struc, NLAYR,       !Input
+     &  DLTSNO3)                                !Output
 
       CALL Cell2Layer_2D(
-     &  DLTSNH4_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
-     &  DLTSNH4)                                     !Output
+     &  DLTSNH4_2D, CELLS % Struc, NLAYR,       !Input
+     &  DLTSNH4)                                !Output
 
       CALL Cell2Layer_2D(
-     &  DLTUREA_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
-     &  DLTUREA)                                     !Output
+     &  DLTUREA_2D, CELLS % Struc, NLAYR,       !Input
+     &  DLTUREA)                                !Output
 
       CALL Cell2Layer_2D(
-     &  NITRIF_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
-     &  NITRIF)                                     !Output
+     &  NITRIF_2D, CELLS % Struc, NLAYR,        !Input
+     &  NITRIF)                                 !Output
 
       CALL Cell2Layer_2D(
-     &  N2ONitrif_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
-     &  N2ONitrif)                                     !Output
+     &  N2ONitrif_2D, CELLS % Struc, NLAYR,     !Input
+     &  N2ONitrif)                              !Output
 
       CALL Cell2Layer_2D(
-     &  nNOflux_2D, CELLS % Struc, NLAYR, FieldFac,  !Input
-     &  nNOflux)                                     !Output
+     &  nNOflux_2D, CELLS % Struc, NLAYR,       !Input
+     &  nNOflux)                                !Output
 
       N2O_data % NITRIF   = NITRIF
       N2O_data % N2Onitrif  = N2Onitrif
@@ -1136,16 +1134,16 @@ C=======================================================================
 
 !     Convert DLTSNO3 and DLTSNH4 differences  to 2D arrays
       CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3_DIFF, 0.0, FieldFac, !Input
-     & DLTSNO3_DIFF_2D)                                          !Output
+     & CELLS % Struc, NLAYR, DLAYR, DLTSNO3_DIFF, 0.0,      !Input
+     & DLTSNO3_DIFF_2D)                                     !Output
 
       CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0, FieldFac, !Input
-     & DLTSNH4_DIFF_2D)                                          !Output
+     & CELLS % Struc, NLAYR, DLAYR, DLTSNH4_DIFF, 0.0,      !Input
+     & DLTSNH4_DIFF_2D)                                     !Output
 
       CALL Layer2Cell_2D(                              
-     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0, FieldFac, !Input
-     & DLTUREA_DIFF_2D)                                          !Output
+     & CELLS % Struc, NLAYR, DLAYR, DLTUREA_DIFF, 0.0,      !Input
+     & DLTUREA_DIFF_2D)                                     !Output
 
       RESID3 = 0.0
       RESID4 = 0.0
@@ -1238,12 +1236,12 @@ C=======================================================================
 
 !       Convert NITRIF, DLTSNO3 and DLTUREA from 2D to 1D prior to integration
         CALL Cell2Layer_2D(
-     &    DLTSNO3_2D, CELLS % Struc, NLAYR, FieldFac,   !Input
-     &    DLTSNO3)                                      !Output
+     &    DLTSNO3_2D, CELLS % Struc, NLAYR,         !Input
+     &    DLTSNO3)                                  !Output
 
         CALL Cell2Layer_2D(
-     &    DLTUREA_2D, CELLS % Struc, NLAYR, FieldFac,   !Input
-     &    DLTUREA)                                      !Output
+     &    DLTUREA_2D, CELLS % Struc, NLAYR,         !Input
+     &    DLTUREA)                                  !Output
 
       ENDIF  !End 2D NFLUX
 
@@ -1304,32 +1302,25 @@ C=======================================================================
 !     Loop through soil layers for integration
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
-          SNO3_2D(L, J) = SNO3_2D(L, J) + DLTSNO3_2D(L, J)    
-          SNH4_2D(L, J) = SNH4_2D(L, J) + DLTSNH4_2D(L, J)    
-          UREA_2D(L, J) = UREA_2D(L, J) + DLTUREA_2D(L, J)
-
-!!         Underflow trapping
-!          IF (ABS(SNO3_2D(L, J)) .LT. 1.E-8) SNO3_2D(L, J) = 0.0
-!          IF (ABS(SNH4_2D(L, J)) .LT. 1.E-8) SNH4_2D(L, J) = 0.0
-!          IF (ABS(UREA_2D(L, J)) .LT. 1.E-8) UREA_2D(L, J) = 0.0
+          SNO3_2D(L,J) = SNO3_2D(L,J) + DLTSNO3_2D(L,J)
+          SNH4_2D(L,J) = SNH4_2D(L,J) + DLTSNH4_2D(L,J)
+          UREA_2D(L,J) = UREA_2D(L,J) + DLTUREA_2D(L,J)
 
 !         Concentration
           SELECT CASE(Cell_type(L,J))
-!          CASE(3)
-!             NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-!             NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-!             UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / BedFrac(L,J)
-!          CASE(4,5)
           CASE(3,4,5)
-             NO3_2D(L, J) = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-             NH4_2D(L, J) = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-             UPPM_2D(L,J) = UREA_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+             NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+     &                     * FieldFac
+             NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+     &                     * FieldFac
+             UPPM_2D(L,J) = UREA_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+     &                     * FieldFac
           END SELECT
         ENDDO
       ENDDO  
 
 !     Call NCHECK to check for and fix negative values.
-      CALL NCHECK_inorg(CONTROL, Sim2D,
+      CALL NCHECK_inorg(CONTROL, 
      &    NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, UREA_2D) !Input  
 
 !     Soil profile accumulations.
@@ -1347,9 +1338,9 @@ C=======================================================================
           SELECT CASE(Cell_Type(L,J))
           CASE (3,4,5)
 !           2D accumulations and integrations
-            TNH4  = TNH4  + SNH4_2D(L, J) * FieldFac
-            TNO3  = TNO3  + SNO3_2D(L, J) * FieldFac
-            TUREA = TUREA + UREA_2D(L, J) * FieldFac
+            TNH4  = TNH4  + SNH4_2D(L,J) * FieldFac
+            TNO3  = TNO3  + SNO3_2D(L,J) * FieldFac
+            TUREA = TUREA + UREA_2D(L,J) * FieldFac
           END SELECT
 
 !     Already calculated WTNUP in rate section
@@ -1406,14 +1397,14 @@ C=======================================================================
 
 !     Use Cell2Layer_2D for mass variables
       CALL Cell2Layer_2D(
-     &  SNO3_2D, Cells%Struc, NLAYR, FieldFac,            !Input
-     &  SNO3, SurfaceVal)                                 !Output
+     &  SNO3_2D, Cells%Struc, NLAYR,              !Input
+     &  SNO3, SurfaceVal)                         !Output
       CALL Cell2Layer_2D(
-     &  SNH4_2D, Cells%Struc, NLAYR, FieldFac,            !Input
-     &  SNH4, SurfaceVal)                                 !Output
+     &  SNH4_2D, Cells%Struc, NLAYR,              !Input
+     &  SNH4, SurfaceVal)                         !Output
       CALL Cell2Layer_2D(
-     &  UREA_2D, Cells%Struc, NLAYR, FieldFac,            !Input
-     &  UREA, SurfaceVal)                                 !Output
+     &  UREA_2D, Cells%Struc, NLAYR,              !Input
+     &  UREA, SurfaceVal)                         !Output
 
       TMINERN = 0.0
       TIMMOBN = 0.0

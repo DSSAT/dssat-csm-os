@@ -49,12 +49,6 @@
       FurCol1 = BedDimension % FurCol1
       TLCH = 0.0
 
-!      DO L = 1, NRowsTot
-!        DO j = 1, NColsTot
-!          Cell_Type(L,j) = CELLS(L,j)%STRUC%Cell_Type
-!        ENDDO
-!      ENDDO
-
       Cell_Type = CELLS%STRUC%Cell_Type
 
 !     temp chp
@@ -177,8 +171,8 @@
             ELSE
 !             Accumulate the N lost by leaching below profile depth.
               NLeach(j) = NFlux_D(NRowsTot,j)
-!             Today's leached N, double for 2D simulations
-              TLCHD = TLCHD + NLeach(j) * 2.0 !* ColFrac(L, j)
+!             Today's leached N
+              TLCHD = TLCHD + NLeach(j) * 2.0
             ENDIF
           ENDIF
 

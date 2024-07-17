@@ -18,6 +18,7 @@
   REAL, DIMENSION(MaxRows,NL)     :: Layer_Cell_Dep
   REAL, DIMENSION(MaxRows,MaxCols):: Surf_Cell_Frac
   REAL, DIMENSION(MaxRows,MaxCols):: WidthFrac
+  LOGICAL SIM2D
   
   INTEGER NRowsTOT, NColsTOT
   INTEGER NDripLnTOT
@@ -130,7 +131,7 @@
 !     for 2D simulations.
 ! -----------------------------------------------------------------------------
   Subroutine Cell2Layer_2D(                             &
-        CellArray, CellStruc, NLAYR, FF,                & !Input
+        CellArray, CellStruc, NLAYR,                    & !Input
         LayerArray, SurfaceVal)                           !Output
         
   IMPLICIT NONE
@@ -143,6 +144,12 @@
 
   INTEGER  NLAYR, L, Row, Col
   REAL Fraction, FF
+
+  IF (SIM2D) THEN
+    FF = 2.0
+  ELSE
+    FF = 1.0
+  ENDIF
 
 !----------------------------------------------------------------------
 ! Surface data
@@ -198,7 +205,6 @@
 ! -----------------------------------------------------------------------------
   Subroutine Layer2Cell_2D(                             &
        CellStruc, NLAYR, DLAYR, LayerArray, SurfaceVal, &  !Input
-       FF,                                              &  !Input
        CellArray)                                          !Output
 
   USE ModuleDefs
@@ -213,6 +219,12 @@
   INTEGER L, NLAYR, Row, Col
   REAL Fraction, RowAdd, FF
   REAL, DIMENSION(NL) :: DLAYR
+
+  IF (SIM2D) THEN
+    FF = 2.0
+  ELSE
+    FF = 1.0
+  ENDIF
 
 !----------------------------------------------------------------------
   CellArray = 0.0
