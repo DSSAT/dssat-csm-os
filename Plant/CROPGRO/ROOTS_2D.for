@@ -205,7 +205,7 @@
 !       must preceed call to INROOT.)
 !-----------------------------------------------------------------------
       CALL INROOT_2D(
-     &  DepMax, FirstRow, FRRT, HalfRow, PLTPOP, RFAC1,    !Input
+     &  DepMax, FirstRow, FRRT, PLTPOP, RFAC1,             !Input
      &  ROWSPC_CM,                                         !Input
      &  RTDEPI, RTWIDI, Thick, WidMax, Width, WTNEW,       !Input
      &  RLV_2D, RTDEP, RTWID, RTWIDr)                      !Output
@@ -219,7 +219,7 @@
 
       CALL Aggregate_Roots(CELLS,
      &    FirstRow, RLV_2D,                   !2D Input
-     &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
+     &    RFAC3, SOILPROP,                    !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
       LastRow = 1
@@ -521,7 +521,7 @@
       CumRootMass = CumRootMass + WRDOTN * 10. - SRDOT * 10.
       CALL Aggregate_Roots(CELLS,
      &    FirstRow, RLV_2D,                   !2D Input
-     &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
+     &    RFAC3, SOILPROP,                    !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
       CALL Cell2Layer_2D(SENRT_2D, Struc, NRowsTot, SENRT)
@@ -669,7 +669,7 @@
 !  Calls  : None
 !=======================================================================
       SUBROUTINE INROOT_2D(
-     &  DepMax, FirstRow, FRRT, HalfRow, PLTPOP, RFAC1,    !Input
+     &  DepMax, FirstRow, FRRT, PLTPOP, RFAC1,    !Input
      &  ROWSPC_CM,                                         !Input
      &  RTDEPI, RTWIDI, Thick, WidMax, Width, WTNEW,       !Input
      &  RLV_2D, RTDEP, RTWID, RTWIDr)                      !Output
@@ -680,7 +680,7 @@
 
       INTEGER Row, Col, FirstRow
       REAL FRRT, DepMax, PLTPOP, RFAC1, RLINIT, WidMax(MaxRows), WTNEW
-      REAL HalfRow, X, Z
+      REAL X, Z
       REAL RTDEPI, RTDEP, LastCumDep, CumDep
       REAL RTWIDI, RTWID, LastCumWid, CumWid, RTWIDr(MaxRows)
       REAL TotRootArea, RLV_AVG, ROWSPC_CM
@@ -740,10 +740,15 @@
         ENDDO ColLoop
       ENDDO RowLoop
           
-      RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * 1.E-4 * HalfRow  
-!        cm[root]     g[root]   plants  cm[root]   m2
-!    -------------- = ------- * ------ * ------- * --- * cm(row width)  
-!    cm[row length]    plant      m2     g[root]   cm2
+!      RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * 1.E-4 * HalfRow  
+!!        cm[root]     g[root]   plants  cm[root]   m2
+!!    -------------- = ------- * ------ * ------- * --- * cm(row width)  
+!!    cm[row length]    plant      m2     g[root]   cm2
+
+      RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * 1.E-4
+!     cm[root]     g[root]   plants  cm[root]   m2
+!    ---------- = ------- * ------ * ------- * ---   
+!     cm2[soil]    plant      m2     g[root]   cm2
 
 !     Overall RLV is a concentration. The value should be equal
 !         in all cells at initialization.
@@ -777,7 +782,7 @@
 !-----------------------------------------------------------------------
       SUBROUTINE Aggregate_Roots(CELLS,
      &    FirstRow, RLV_2D,                   !2D Input
-     &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
+     &    RFAC3, SOILPROP,                    !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
       Use Cells_2D
@@ -785,8 +790,8 @@
       SAVE
 
       TYPE (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: RLV_2D
       INTEGER, INTENT(IN) :: FirstRow
+      REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: RLV_2D
       REAL, INTENT(IN) :: RFAC3
       TYPE (SoilType), INTENT(IN) :: SOILPROP
       REAL, DIMENSION(NL), INTENT(OUT) :: RLV
@@ -797,7 +802,6 @@
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
       REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen_2D 
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
-      REAL RowSpc_cm
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
@@ -821,10 +825,6 @@
 !           --------- = --------- * cm[cell thickness] 
 !           cm2[soil]   cm3[soil]
 
-!!           Convert to field scale
-!            RtLen_2D(Row,Col) = RtLen_2D(Row,Col) 
-!     &          * (Width(Row,Col) / Rowspc_cm)
-
             TRLV = TRLV + RtLen_2D(Row,Col) 
           END SELECT
         ENDDO
@@ -835,8 +835,8 @@
 !      kg/ha  = -------------- * -------- * -------- * ---------
 !              cm2[row length]   cm[root]      m2       (g/m2)
 
-!     Aggregate cells across a row to get layer total.  Units for layers
-!     are in cm[root]/cm[row length] and can be aggregated like mass units.
+!     Aggregate root length in cells across a row to get the total 
+!     root length in each layer. 
       CALL Cell2Layer_2D(
      &   RtLen_2D, Struc, NLAYR,               !Input
      &   RtLen_1D)                             !Output
