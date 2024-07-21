@@ -61,7 +61,7 @@ C=======================================================================
       Logical WatTable
 !     REAL FracWT, TargetSWV !, Deficit
 !     REAL Bottom, Top
-      
+
 !***********************************************************************
 !***********************************************************************
 !     SEASONAL INITIALIZATION
@@ -209,7 +209,7 @@ C=======================================================================
 
 !         Limit gravity flow to amount > DUL
           Grav_limit = MAX (0.0, (SWV_D(i,j) - DUL(i)) * CellArea(i,j))
-!     &          + H_in(i,j) + V_in(i,j))
+
           V_grav = MIN(V_grav, Grav_limit)
 
 !         If this layer is within the water table, then no vertical drainage

@@ -110,7 +110,7 @@ C-----------------------------------------------------------------------
         RUNOFF = 0.0
       ENDIF
       
-      CALL GET("PM","PMFRACTION",PMFRACTION, MaxCols+1)
+      CALL GET("SPAM","PMFRACTION",PMFRACTION, MaxCols+1)
       IF (PMFRACTION(0) .GT. 1.E-6) THEN
           RUNOFF = WATAVL * PMFRACTION(0) + RUNOFF * (1 - PMFRACTION(0))
       ENDIF

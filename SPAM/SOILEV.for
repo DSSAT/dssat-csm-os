@@ -95,7 +95,7 @@ C=======================================================================
 
 !     PMFraction is the fraction of the soil covered by plastic mulch
 !     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
-      CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+      CALL GET("SPAM", "PMFRACTION", PMFRACTION, MaxCols+1)
 
 !     Loop through columns and initialize for each column separately
       DO Col = 1, NColsTot

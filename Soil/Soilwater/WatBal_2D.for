@@ -170,7 +170,7 @@
 
 !     PMFraction is the fraction of the soil covered by plastic mulch
 !     PMFraction(0) is the entire row. PMFraction(J) is for each column of soil.
-      CALL GET("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+      CALL GET("SPAM", "PMFRACTION", PMFRACTION, MaxCols+1)
 
       BEDHT = BedDimension % BEDHT
       BEDWD = BedDimension % BEDWD
@@ -500,8 +500,6 @@
      &  RUNOFF, WINF_col)                                 !Output
 !       The rain water from plastic cover run to furrow and infitration
 
-      CALL PUT('SPAM', 'WINF_COL', WINF_col, MaxCols)
-
 !-----------------------------------------------------------------
 !     Drip irrigation schedule for today
       CALL GET(DripIrrig)
@@ -604,8 +602,10 @@
           ENDDO
         ENDIF
       ELSE
-        StdIrrig = 0.0 ! If there is drip irrigation, then no sprinkle
+        StdIrrig = 0.0 ! If there is drip irrigation, then no standard irrigation
       ENDIF
+
+      CALL PUT('SPAM', 'WINF_COL', WINF_col, MaxCols)
 
 !-----------------------------------------------------------------
 !     Time Loop

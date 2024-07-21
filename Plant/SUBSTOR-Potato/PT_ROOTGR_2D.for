@@ -326,10 +326,6 @@ C=======================================================================
             ELSE ! if col!=1, calculate WidFrac
 !             Calculate new horizontal growth in this cell (RTWIDnew) 
 !             horizontal portion of cell occupied by roots (WidFrac)
-!             Horizontal root growth only occurs when DepFrac of adjacent 
-!               cell is > 0.99 (JZW: This 0.99 did not realized in the codes).  No need to calculate for Column 1, since
-!               bug statement 0.99 is missing
-!               width fraction is initialized to 1.0 there.
               IF (RTWIDr(Row) >= CumWid) THEN
                 WidFrac(Row,Col) = 1.0
 !               JZW change May 9,2012 
@@ -441,7 +437,7 @@ C=======================================================================
 
       CALL Aggregate_Roots(CELLS,
      &    FirstRow, RLV_2D,                   !2D Input
-     &    RFAC3, RowSpc_cm, SOILPROP,         !1D Input
+     &    RFAC3, SOILPROP,                    !1D Input
      &    RLV, TRLV, TotRootMass)             !1D Output
 
        CELLS%STATE%RLV = RLV_2D

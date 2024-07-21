@@ -197,11 +197,11 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL, DIMENSION(NL) :: SAEA  
 
 !      Variables added with new soil format:
+!        (NOT CURRENTLY USED)
         REAL ETDR, PONDMAX, SLDN, SLOPE
 !       REAL, DIMENSION(NL) :: RCLPF, RGIMPF
 
-      !Variables deleted with new soil format:
-      !Still needed for Ritchie hydrology
+!       Ritchie hydrology
         REAL CN, SWCON, U
         REAL, DIMENSION(NL) :: ADCOEF, TOTN, TotOrgN, WR
 
@@ -462,6 +462,10 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL PHSV, PHTV
 !       2D water infiltration (by column)
         REAL, DIMENSION(MaxCols) :: WINF_col
+!       Fraction of surface covered by plastic mulch by column
+        REAL, DIMENSION(0:MaxCols) :: PMFRACTION
+!       Surface albedo by column
+        REAL, DIMENSION(MaxCols) :: MSALB_2D
       End Type SPAMType
 
 !     Data transferred from CROPGRO routine 
@@ -524,10 +528,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL BETALS
       END TYPE
 
-      TYPE PMDataType
-        REAL, DIMENSION(0:MaxCols) :: PMFRACTION
-      END TYPE
-      
       TYPE MHarveType
         INTEGER HARVF
       END TYPE 
@@ -548,7 +548,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (WeatherType) WEATHER  !Full weather data structure
         Type (WeathType)   WEATH    !Supplemental weather data
         TYPE (PDLABETATYPE)PDLABETA
-        TYPE (PMDataType)  PM
         TYPE (MHarveType)  MHARVEST
       End Type TransferType
 
@@ -968,13 +967,9 @@ C             CHP Added TRTNUM to CONTROL variable.
         SELECT CASE (VarName)
           CASE ('UH2O');     Value = SAVE_data % SPAM % UH2O
           CASE ('WINF_COL'); Value = SAVE_data % SPAM % WINF_COL
+          CASE ('MSALB_2D'); Value = SAVE_data % SPAM % MSALB_2D
+          CASE('PMFRACTION');Value = SAVE_data % SPAM % PMFRACTION
           CASE DEFAULT; ERR = .TRUE.
-        END SELECT
-
-      CASE ('PM')
-        SELECT CASE(VarName)
-        CASE('PMFRACTION'); Value = SAVE_data % PM % PMFRACTION
-        CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
         CASE DEFAULT; ERR = .TRUE.
@@ -1008,13 +1003,9 @@ C             CHP Added TRTNUM to CONTROL variable.
         SELECT CASE (VarName)
         Case ('UH2O');     SAVE_data % SPAM % UH2O = Value
         Case ('WINF_COL'); SAVE_data % SPAM % WINF_COL = Value
+        Case ('MSALB_2D'); SAVE_data % SPAM % MSALB_2D = Value
+        CASE('PMFRACTION');SAVE_data % SPAM % PMFRACTION = Value
         Case DEFAULT; ERR = .TRUE.
-        END SELECT
-
-      CASE ('PM')
-        SELECT CASE(VarName)
-            CASE('PMFRACTION'); SAVE_data % PM % PMFRACTION = Value
-        CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
       Case DEFAULT; ERR = .TRUE.

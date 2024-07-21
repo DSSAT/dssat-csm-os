@@ -128,7 +128,7 @@ C-----------------------------------------------------------------------
 !     Soil dynamics variables
       INTEGER NTIL, TILDATE, NMSG
       REAL AS, CRAIN, CUMDEP   !, FF, CANCOV
-      REAL LCRAIN, MCUMDEP, MIXPCT, MULCHALB, MULCHCOVER
+      REAL LCRAIN, MCUMDEP, MIXPCT, MULCHCOVER
       REAL RAIN, RSTL, SOILCOV, SRATE
       REAL SUMKE, SUMKEL, SUMKET, TDEP, TIL_IRR, XHLAI
       REAL CN_TILLED
@@ -191,8 +191,6 @@ C-----------------------------------------------------------------------
 
       MEINF   = ISWITCH % MEINF
       MESOM   = ISWITCH % MESOM
-
-      MULCHALB = MULCH % MULCHALB
 
       RAIN = WEATHER % RAIN
 
@@ -1074,6 +1072,12 @@ C  tillage and rainfall kinetic energy
       IF (ISWWAT == 'N') RETURN
 
       CALL ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
+
+      DO L = 1, NLAYR
+        
+      ENDDO
+
+
       CALL PUT(SOILPROP)
       IF (SIM2D) RETURN
 
@@ -1113,7 +1117,6 @@ C  tillage and rainfall kinetic energy
 !       Update combined soil/mulch albedo
 !       Transfer local values from constructed variables
         MULCHCOVER = MULCH % MULCHCOVER
-        MULCHALB   = MULCH % MULCHALB
 
 !       ---------------------------------------------------
 !       Update BD, DLAYR, DUL, LL based on changes to soil organic matter 
@@ -2334,6 +2337,7 @@ C=======================================================================
       REAL PMWD, ROWSPC_CM
       REAL PMALB, MSALB, CumWid, CumWidLast
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
+      REAL, DIMENSION(MaxCols) :: MSALB_2D
       LOGICAL PMCover
     
       TYPE (ControlType) CONTROL
@@ -2374,35 +2378,35 @@ C=======================================================================
       IF (PMALB .GT. 0) THEN
         IF (PMWD .GT. 0 .AND. PMWD .GE. ROWSPC_CM) THEN
           PMWD = ROWSPC_CM
-          PMCover   = .TRUE.
-!          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
-!          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
-!          MSG(3) = "Simulating flat surface entirely covered " //
-!     &             "by by plastic mulch."
-!          call INFO(3,errkey,msg)
-        ELSEIF (PMWD .GT. 0.) THEN 
-          PMCover   = .TRUE.
-!          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
-!          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
-!          MSG(3)= "Simulating flat surface partially covered " // 
-!     &            "by plastic mulch."
-!          call INFO(3,errkey,msg)
-        ELSE
-          PMCover   = .FALSE.
-!          MSG(1)= "Missing mulch cover width."
-!          MSG(2) = "Simulating flat surface with no plastic mulch."
-!          call INFO(2,errkey,msg)
-        ENDIF
-      ELSE
-        IF (PMWD .GT. 0) THEN
-          PMCover   = .FALSE.
-!          MSG(1)= "Missing albedo for plastic mulch. "
-!          MSG(2)= "Simulating flat surface with no plastic mulch."
-!          call INFO(2,errkey,msg)
-        ELSE
-          PMCover   = .FALSE.
-!          MSG(1)= "Simulating flat surface with no plastic mulch."
-!          call INFO(1,errkey,msg)
+!          PMCover   = .TRUE.
+!!          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+!!          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+!!          MSG(3) = "Simulating flat surface entirely covered " //
+!!     &             "by by plastic mulch."
+!!          call INFO(3,errkey,msg)
+!        ELSEIF (PMWD .GT. 0.) THEN 
+!          PMCover   = .TRUE.
+!!          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
+!!          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
+!!          MSG(3)= "Simulating flat surface partially covered " // 
+!!     &            "by plastic mulch."
+!!          call INFO(3,errkey,msg)
+!        ELSE
+!          PMCover   = .FALSE.
+!!          MSG(1)= "Missing mulch cover width."
+!!          MSG(2) = "Simulating flat surface with no plastic mulch."
+!!          call INFO(2,errkey,msg)
+!        ENDIF
+!      ELSE
+!        IF (PMWD .GT. 0) THEN
+!          PMCover   = .FALSE.
+!!          MSG(1)= "Missing albedo for plastic mulch. "
+!!          MSG(2)= "Simulating flat surface with no plastic mulch."
+!!          call INFO(2,errkey,msg)
+!        ELSE
+!          PMCover   = .FALSE.
+!!          MSG(1)= "Simulating flat surface with no plastic mulch."
+!!          call INFO(1,errkey,msg)
         ENDIF
       ENDIF
 
@@ -2412,8 +2416,6 @@ C=======================================================================
       IF (PMCover) THEN
 !       Overall fraction of row covered by plastic mulch
         PMFRACTION(0) = PMWD / ROWSPC_CM
-        MSALB = PMALB * PMFRACTION(0) + 
-     &    SOILPROP % SALB * (1.0 - PMFRACTION(0))
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
 
@@ -2432,23 +2434,31 @@ C=======================================================================
 !               This column is entirely covered by plastic mulch
 !               Assume evaporation over minimum 5% of area.
                 PMFRACTION(J) = 1.0
+                MSALB_2D(J) = PMALB
+
               ELSEIF (CumWidLast < PMWD/2.0) THEN
 !               Partion PM cover for this column (shouldn't happen?)
                 PMFRACTION(J) = (PMWD/2.0 - CumWidLast)/
      &            CELLS(1,J) % Struc%Width
+                MSALB_2D(J) = PMALB * PMFRACTION(J) + 
+     &            SOILPROP % SALB * (1.0 - PMFRACTION(J))
               ELSE
                 PMFRACTION(J) = 0.0
+                MSALB_2D(J) = SOILPROP % SALB
               ENDIF
               CumWidLast = CumWid
             ENDDO
           ELSE
 !           1D case - only handle column 1 (entire row)
             PMFRACTION(1) =  PMFRACTION(0)
+            MSALB = PMALB * PMFRACTION(0) + 
+     &        SOILPROP % SALB * (1.0 - PMFRACTION(0))
           ENDIF
         ENDIF
       ENDIF
 
-      CALL PUT("PM", "PMFRACTION", PMFRACTION, MaxCols+1)
+      CALL PUT("SPAM", "PMFRACTION", PMFRACTION, MaxCols+1)
+      CALL PUT("SPAM", "MSALB_2D", MSALB_2D, MaxCols)
 
       RETURN      
       END SUBROUTINE SETPM
