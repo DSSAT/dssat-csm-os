@@ -26,6 +26,7 @@ C                   HIAM, EPCM, ESCM
 !  03/27/2012 CHP Fixed format bug for very large HWUM
 !  07/19/2016 CHP Add cumulative N2O emissions in Nitrogen section
 !  09/09/2016 CHP Add cumulative CO2 emissions from OC decomposition
+!  06/20/2024  FO Added Economic Yield
 C=======================================================================
 
       MODULE SumModule
@@ -79,6 +80,9 @@ C=======================================================================
 !       Added 2021-20-04 LPM Fresh weight variables
         INTEGER FCWAM, FHWAM, FPWAM
         REAL HWAHF, FBWAH
+
+!       Added 2024-06-20 FO Economic Yield
+        REAL EYLDH
 
       End Type SummaryType
 
@@ -382,6 +386,7 @@ C     Initialize OPSUM variables.
       SUMDAT % HWAHF  = -99.0 !Harvested yield (fresh weight) (kg/ha)
       SUMDAT % FBWAH  = -99.0 !By-prod fresh harvested (kg/ha)
       SUMDAT % FPWAM  = -99   !Fresh pod (ear) wt at maturity (kg/ha)
+      SUMDAT % EYLDH  = -99.0 !Economic Yield
 
       SUMDAT % DMPPM  = -99.0 !Dry matter-rain productivity(kg[DM]/m3[P]
       SUMDAT % DMPEM  = -99.0 !Dry matter-ET productivity(kg[DM]/m3[ET]
@@ -442,6 +447,7 @@ C     Initialize OPSUM variables.
       HWAHF= SUMDAT % HWAHF   !Harvested yield (fresh weight) (kg/ha)
       FBWAH= SUMDAT % FBWAH   !By-prod harvested fresh wt (kg/ha)
       FPWAM= SUMDAT % FPWAM   !Fresh pod (ear) weight @ maturity (kg/ha)
+      EYLDH= SUMDAT % EYLDH   !Economic Yield
 
       IRNUM= SUMDAT % IRNUM   !Irrigation Applications (no.)
       IRCM = SUMDAT % IRCM    !Season Irrigation (mm)
@@ -818,10 +824,10 @@ C-------------------------------------------------------------------
             CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP,
      &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT,WYEAR,SLNO,
      &LATI,LONG,ELEV,YRSIM,YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, 
-     &CWAM, HWAM, HWAH, BWAH, 
+     &CWAM, HWAM, HWAH, BWAH,
 !     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
      &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, FCWAM, FHWAM, HWAHF, 
-     &FBWAH, FPWAM, IRNUM, IRCM, PRCM, ETCM,
+     &FBWAH, FPWAM, EYLDH, IRNUM, IRCM, PRCM, ETCM,
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
      &NIAM, NMINC, CNAM, GNAM, N2OEM, PINUMM, PICM, PUPC, SPAM, KINUMM, 
      &KICM, KUPC, SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
@@ -1211,6 +1217,10 @@ C-------------------------------------------------------------------
 
 !       Crop status
         CASE ('CRST') ;SUMDAT % CRST   = VALUE(I)
+            
+!       Economic Yield
+        CASE ('EYLDH') ;SUMDAT % EYLDH = VALUE(I)
+
 
         END SELECT
       ENDDO
