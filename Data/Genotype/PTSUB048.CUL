@@ -1,4 +1,5 @@
 *POTATO CULTIVAR COEFFICIENTS: PTSUB048 MODEL
+! 50000 GLUE runs for growth after phenology run with P2 FIXED and reduced A file
 
 ! COEFF       DEFINITIONS
 ! ========    ===========
@@ -13,32 +14,26 @@
 !             that immediately follows tuber induction
 ! P2          Tuber initiation sensitivity to long photoperiods
 ! TC          Upper critical temperature for tuber initiation (C)
+!LALWR		
 !
 !             P/G/N:Phenology/Growth/Not used for calbration
 !
-@VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    PD    P2    TC
-!Coeffient #                             1     2     3     4     5
-!Calibration                             G     G     G     P     P
+@VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    PD    P2    TC    LALWR
+!Coeffient #                             1     2     3     4     5     6 
+!Calibration                             G     G     G     N     P     G
 
-999991 MINIMA               . DFAULT  900.  21.0   0.5   0.3  15.0
-999992 MAXIMA               . DFAULT 2100.  26.0   1.0   0.9  22.0
+999991 MINIMA               . DFAULT  900.  21.0   0.5   0.2  15.0  93.0
+999992 MAXIMA               . DFAULT 2100.  26.0   1.0   0.9  22.0 621.0
 
 IB0001 MAJESTIC             . IB0001 2000.  22.5   0.8   0.6  17.0   
-IB0002 SEBAGO               . IB0001 1894. 25.10 0.528 0.359 21.37   
-
-IB0003 Russet Burbank       . IB0001 1522. 21.59 0.536 0.313 18.76 
-
-IB0004 KATHADIN             . IB0001 2000.  25.0   0.5   0.7  20.0
-
+IB0002 SEBAGO               . IB0001 1100.  22.5   0.9   0.0  19.0   
+IB0003 Russet Burbank       . IB0001 1100.  26.0   0.9   0.2  17.0 
+IB0004 KATHADIN             . IB0001 2000.  25.0   0.5   0.7  20.0   
 IB0005 ATLANTIC             . IB0001 1000.  25.0   0.4   0.1  21.0
-
 CI0001 CLON7316             . IB0001 1100.  25.0   0.2   0.8  21.0
-CI0002 CLON7716             . IB0001 901.4 25.90 0.962 0.710 18.53
-
-AR0003 ACHIRANA             . IB0001 1564. 21.01 0.545 0.420 21.15 
-
-DM0004 KAPTAH               . IB0001 1500.  26.0   0.5   0.2  22.0
-
+CI0002 CLON7716             . IB0001 1100.  25.0   0.3   0.8  21.0
+AR0003 ACHIRANA             . IB0001 1100.  21.0   0.5   0.2  21.0 
+DM0004 KAPTAH               . IB0001 1500.  26.0   0.5   0.2  22.0 
 IB0006 MARIS PIPER          . IB0001 2000.  25.0   0.8   0.4  17.0   
 IB0007 KING EDWARD          . IB0001 2000.  22.5   1.0   0.6  17.0   
 IB0008 DESIREE              . IB0001 2000.  25.0   0.9   0.6  16.0   
@@ -46,14 +41,169 @@ IB0009 LT-1                 . IB0001 2000.  25.0   0.9   0.8  17.0
 IB0010 C14-343              . IB0001 2000.  25.0   0.9   0.4  21.0   
 IB0011 NORCHIP              . IB0001 2000.  25.0   1.0   0.4  17.0   
 IB0012 SHEPODY              . IB0001 2000.  25.0   0.7   0.6  19.0  
-IB0018 Hilite Russet        . IB0001 1000.  27.0   0.2   0.1  20.0
+IB0018 Hilite Russet        . IB0001 1000.  27.0   0.2   0.1  20.0   
+UF0001 RED LASODA           . IB0001 2000.  22.0   0.7   0.4  19.0
+NEW001 Test                 . IB0001 2000.  21.0   0.2   0.3  18.0  
 
-UF0001 RED LASODA           . IB0001 2000.  22.0   0.7   0.4  19.0   
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0001 ELodie               . IB0001 1183. 25.61 0.775 0.200 17.50
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0001 ELodie               . IB0001 942.5 25.97 0.684 0.200 21.67
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting 
+!GU0001 ELodie               . IB0001 939.4 25.98 0.654	0.200 19.92
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting
+!GU0001 ELodie               . IB0001 901.9 25.99 0.785	0.200 18.36
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting 
+GU0001 ELodie               . IB0001 902.7 25.97 0.816 0.200 15.00  270.0
+! Finalized by sensitivity analysis, keeping Suleiman-Ritchi setting  
+!GU0001 ELodie               . IB0001 1183. 25.61 0.775 0.200 16.00
+!GU0001 ELodie              . IB0001 939.4 25.98 0.654 0.200 18.00 
+!GU0001 ELodie               . IB0001 942.5  22.5 0.800 0.200 15.00 
+!GU0001 ELodie               . IB0001 902.7 25.97 0.816 0.200 21.77 
 
-! 4.8.0 cultivar coefficients (before changes in soil temperature subroutine)
-!IB0002 SEBAGO               . IB0001 1100.  22.5   0.9   0.0  19.0
-!IB0003 Russet Burbank       . IB0001 1100.  26.0   0.9   0.2  17.0
-!CI0002 CLON7716             . IB0001 1100.  25.0   0.3   0.8  21.0
-!AR0003 ACHIRANA             . IB0001 1100.  21.0   0.5   0.2  21.0
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0002 El Beida             . IB0001 904.4 21.46 0.905	0.200 16.63
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0002 El Beida             . IB0001 905.1 21.94 0.958 0.200 16.47 
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting
+!GU0002 El Beida             . IB0001 902.7 25.97 0.816 0.200 21.77
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting
+!GU0002 El Beida             . IB0001 
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting 
+GU0002 El Beida             . IB0001 905.1 21.94 1.000 0.200 15.00  270.0
 
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0003 Constance            . IB0001 906.1 24.93 0.564	0.200 19.59
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0003 Constance            . IB0001 2094. 21.02 0.529 0.200 21.76  
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting
+!GU0003 Constance            . IB0001 2091.0 21.11 0.546	0.200 20.86
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting
+!GU0003 Constance            . IB0001 2094.0 21.12 0.537	0.200 15.29
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting 
+!GU0003 Constance            . IB0001 2094. 21.02 0.529 0.200 15.00
+! Finalized by hand after sensitivity analysis, keeping Ritchie-ceres setting 
+GU0003 Constance            . IB0001 900.0 27.00 0.529 0.200 15.00  270.0
+!Type_3_without GLUE_just sensitivity done
+!GU0003 Constance            . IB0001 2100.0 27.00 0.800 0.200 15.00  270.0
+
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0004 Red Sun              . IB0001 2080.0 21.05 0.504 0.200 16.25
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting
+!GU0004 Red Sun              . IB0001 903.1 25.38 0.574 0.200 19.29
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting
+!GU0004 Red Sun              . IB0001 900.2 25.08 0.550	0.200 20.89
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting
+!GU0004 Red Sun              . IB0001 2099.0 21.03 0.506	0.200 16.97
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting  
+GU0004 Red Sun              . IB0001 903.1 27.00 0.800 0.200 15.00  270.0 
+
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0005 Red Valentine        . IB0001 1102.0 22.78 0.993 0.200 20.78
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting
+!GU0005 Red Valentine        . IB0001 1173. 25.52 0.953 0.200 15.85
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting 
+!GU0005 Red Valentine        . IB0001 1567. 21.00 0.934 0.200 15.61
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting
+!GU0005 Red Valentine        . IB0001 1173. 1128.0 25.20 0.951 0.200 19.67
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting  
+GU0005 Red Valentine        . IB0001 1173. 25.52 0.953 0.200 18.00  270.0  
+
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0006 Arizona              . IB0001 1929. 21.02 0.518 0.200 15.07
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0006 Arizona              . IB0001 1660. 21.05 0.519 0.200 17.67
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting 
+!GU0006 Arizona              . IB0001 917.4 21.63 0.524 0.200 15.22
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting 
+!GU0006 Arizona              . IB0001 1669.0 21.04 0.524 0.200 18.10
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting 
+GU0006 Arizona              . IB0001 917.4 21.63 0.524 0.200 15.50  270.0
+
+!Type_0_DTT old, STT old
+!GU0006 Arizona              . IB0001 917.4 21.63 0.524 0.200 15.50  270.0
+
+!Type_5_DTT old, STT old
+!GU0006 Arizona 	     . IB0001 1060.0 25.81 0.554 0.200 15.22 343.8
+!GU0006 Arizona 	     . IB0001 1130.0 22.01 0.531 0.200 15.01 295.1
+
+!Type_1_DTT beta and STT (beta)
+!GU0006 Arizona 	    . IB0001 1313.0 21.97 0.546 0.200 15.03 289.4
+!GU0006 Arizona 	    . IB0001 1273.0 22.03 0.513 0.200 15.02 289.9
+
+!Type_2_DTT old and STT beta
+!GU0006 Arizona 	    . IB0001 917.1 22.57 0.509 0.200 15.20 315.7
+
+!Type_3_DTT Beta, STT Beta_REV
+!GU0006 Arizona 	     . IB0001 1130.0 22.01 0.531 0.200 15.01 295.1
+!GU0006 Arizona 	     . IB0001 1700.0 24.00 1.00 0.200 18.00 295.1
+!GU0006 Arizona              . IB0001 1094. 25.57 0.947 0.200 20.75 336.8
+
+!Type_4_DTT Beta, STT old
+!GU0006 Arizona              . IB0001 2097.0 21.01 0.796 0.200 15.02 309.9
+
+!Type_6_DTT old, STT Beta_REV
+!GU0006 Arizona              . IB0001 911.9 21.66 0.570 0.200 15.07 306.2
+
+
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0007 Arsenal              . IB0001 905.0 25.86 0.970 0.200 20.90
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0007 Arsenal              . IB0001 901.0 25.85 0.995 0.200 20.79
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting 
+!GU0007 Arsenal              . IB0001 904.1 25.99 0.975 0.200 20.51
+!Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting 
+!GU0007 Arsenal              . IB0001 901.5 25.87 0.966 0.200 21.73
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting 
+GU0007 Arsenal              . IB0001 901.5 25.87 0.966 0.200 21.73  270.0
+
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0008 Rock                 . IB0001 964.2 25.87 0.998 0.200 19.20
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0008 Rock                 . IB0001 903.9 24.35 0.988 0.200 21.74
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting 
+!GU0008 Rock                 . IB0001 969.7 25.96 0.992 0.200 17.6
+!Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting 
+!GU0008 Rock                 . IB0001 913.1 24.72 0.973	0.200 18.84
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting 
+GU0008 Rock                 . IB0001 969.7 25.96 0.992 0.200 16.5  270.0
+
+! Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0009 Fado                 . IB0001 2099.0 21.03 0.525 0.200 15.44
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0009 Fado                 . IB0001 909.8 25.95 0.964	0.200 19.45
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting 
+!GU0009 Fado                 . IB0001 905.8 25.98 0.965 0.200 18.85
+!Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting 
+!GU0009 Fado                 . IB0001 936.3 25.41 0.961	0.200 21.09
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting 
+GU0009 Fado                 . IB0001 905.8 25.98 0.965 0.200 15.50  270.0
+
+!Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0010 Sarpo Mira           . IB0001 2095. 21.01 0.691 0.200 17.52
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0010 Sarpo Mira           . IB0001 903.8 25.97 0.952 0.200 20.74
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting 
+!GU0010 Sarpo Mira           . IB0001 902.7 25.98 0.992 0.200 18.33
+!Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting 
+!GU0010 Sarpo Mira           . IB0001 900.1 25.94 0.982 0.200 19.59
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting
+GU0010 Sarpo Mira           . IB0001 902.7 25.98 0.992 0.200 16.00  270.0
+
+!Round II, A File reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting
+!GU0011 Check                . IB0001 1993.0 21.03 0.501 0.200 16.13
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 100000 runs, keeping Ritchie-ceres setting 
+!GU0011 Check                . IB0001 2071.0 21.01 0.548 0.200 16.00
+! Round IV, A File very reduced, P2 fixed, Glue flag 1, 200000 runs, keeping Ritchie-ceres setting 
+!GU0011 Check                . IB0001 2071.0 21.05 0.509 0.200 18.37
+!Round IV, A File very reduced, P2 fixed, Glue flag 1, 300000 runs, keeping Ritchie-ceres setting 
+GU0011 Check                . IB0001 2073.0 21.03 0.544 0.200 18.00  270.0
+! Finalized by sensitivity analysis, keeping Ritchie-ceres setting
+!GU0011 Check                . IB0001 2073.0 27.00 0.600 0.200 18.00
+!GU0011 Check                . IB0001 2073.0 21.03 0.600 0.200 18.00
+!GU0011 Check                . IB0001 2073.0 27.00 0.544 0.200 18.00
+
+
+
+  
 
