@@ -336,7 +336,7 @@ C
      &        (RTDEP/100),(RLV(I),I=1,5)
      &       ,NINT(CUMSENSURF), NINT(CUMSENSOIL),
      &       DTT,CUMDTT,STT,CUMSTT,DAYL
- 400      FORMAT (1X,I4,1X,I3.3,3(1X,I5),1X,F5.2,1X,F5.1,7(1X,I5),
+ 400      FORMAT (1X,I4,1X,I3.3,3(1X,I5),1X,F5.2,1X,F5.2,7(1X,I5),
      &          1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,
      &          2(1X,F5.2),1X,F5.3,6(1X,F5.2), 2I6,5(1X,F6.2))
         ENDIF
