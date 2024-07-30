@@ -609,7 +609,6 @@ set(
         "Soil/Inorganic_N/OXLAYER.for"
         "Soil/Inorganic_N/SOILNI.for"
         "Soil/Inorganic_N/SoilNiBal.for"
-        "Soil/Inorganic_N/CellNDetail_2D.for"
         "Soil/Inorganic_N/SoilNi_init.for"
         "Soil/Inorganic_P/IPHedley_inorg.for"
         "Soil/Inorganic_P/OpSoilPi.for"
@@ -633,6 +632,7 @@ set(
         "Soil/SoilUtilities/SoilNoPoBal.for"
         "Soil/SoilUtilities/SoilPBalSum.for"
         "Soil/SoilUtilities/TextureClass.for"
+        "Soil/SoilUtilities/CellPlotDetail_2D.for"
 
         "Soil/SoilWater/CapFringe.f90"
         "Soil/SoilWater/Drainage_2D.for"

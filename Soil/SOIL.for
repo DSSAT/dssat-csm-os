@@ -53,7 +53,7 @@ C=====================================================================
       USE GHG_mod
       IMPLICIT NONE
       EXTERNAL SOILDYN, WATBAL, CENTURY, SoilOrg, SoilNi, SoilPi, 
-     &  SoilKi, WATBAL2D
+     &  SoilKi, WATBAL2D, CellPlotDetail_2D
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -214,6 +214,10 @@ C=====================================================================
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
         ENDIF
+      ENDIF
+
+      IF (SIM2D) THEN
+        CALL CellPlotDetail_2D (CONTROL, ISWITCH, CELLS, SOILPROP)
       ENDIF
 
 !***********************************************************************

@@ -60,10 +60,6 @@
   
   type Cell_Ndetail_type
     integer row, col  !cm
-    real, DIMENSION(MaxRows,MaxCols) :: NFlux_L_out, NFlux_R_out
-    real, DIMENSION(MaxRows,MaxCols) :: NFlux_D_out, NFlux_U_out
-    real, DIMENSION(MaxRows,MaxCols) :: NFlux_L_in, NFlux_R_in
-    real, DIMENSION(MaxRows,MaxCols) :: NFlux_D_in, NFlux_U_in
   end type
   type (Cell_Ndetail_type) Cell_Ndetail
 
@@ -97,12 +93,19 @@
 
   TYPE CellRateType
     Sequence
-    REAL SWFlux_L, SWFlux_R             !Horiz soil water movement, cm2/d
-    REAL SWFlux_D, SWFlux_U             !Vert soil water movement, cm2/d
-    REAL ES_Rate                        !Evaporation rates, mm/d
-    REAL EP_Rate                        !Transpiration rates, mm/d
-    REAL NO3Uptake, NH4Uptake           !PLANT N uptake rates
-!   REAL OCAdd                          !Plant residue
+    REAL SWFlux_L, SWFlux_R   !Horiz soil water movement, cm2/d
+    REAL SWFlux_D, SWFlux_U   !Vert soil water movement, cm2/d
+    REAL ES_Rate              !Evaporation rates, mm/d
+    REAL EP_Rate              !Transpiration rates, mm/d
+    REAL DripIrr              !Drip irrig added directly to cell (mm/d)
+    REAL CellInf              !Rain + standard irrig (mm/d)
+    REAL NFlux_L, NFlux_R     !Horiz N movement (kg/ha)
+    REAL NFlux_D, NFlux_U     !Vert N movement (kg/ha)
+    REAL NO3Uptake, NH4Uptake !PLANT N uptake rates (kg/ha)
+    REAL CellFert             !Fertilizer (kg/ha)
+    REAL NMINER               !Net mineralization (kg/ha)
+    REAL NITRIF               !Nitrification (kg/ha)
+    REAL GHG                  !GHG N loss including denit (kg/ha)
   END TYPE CellRateType
 
   TYPE CellType 
