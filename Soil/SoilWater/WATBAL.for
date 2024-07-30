@@ -421,7 +421,7 @@ C     Conflict with CERES-Wheat
       ENDIF   !End of IF block for PUDDLED conditions
 
       WINF_col(1) = WINF
-      CALL PUT('SPAM', 'WINF_COL', WINF_col, MaxCols)
+      CALL PUT('WATER', 'WINF_COL', WINF_col, MaxCols)
 
 !-----------------------------------------------------------------------
       IF (FLOOD .LE. 0.0 .AND. MESEV .NE. 'S') THEN

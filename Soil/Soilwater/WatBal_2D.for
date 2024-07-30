@@ -65,7 +65,8 @@
       CHARACTER*8, PARAMETER :: ERRKEY = 'WATBAL2D'
       CHARACTER*12 TEXTURE(NL)
       CHARACTER*78 MSG(30)
-      INTEGER DripCol,DripRow,DYNAMIC,FurRow1, FurCol1, i, j, jj,idl
+      INTEGER DripCol,DripRow,DYNAMIC,FurRow1, FurCol1
+      INTEGER i, j, jj,idl, row, col
      
       Integer DripNumTot, iHr
       INTEGER NLAYR, HR, IrrigIndex, LIMIT_2D
@@ -83,7 +84,7 @@
       REAL TDRAIN, TRUNOF, TSW, TSWINI
 !     INTEGER, PARAMETER :: MaxNEvent = 20  !Max number of irrigation event
 !     REAL, DIMENSION(MaxNEvent) :: DripStart, DripDur, DripInt, DripRate
-      REAL IrrRate(NDrpLn), RWUEP1
+      REAL IrrRate(NDrpLn), RWUEP1, Drainage_ts_col
 
       REAL TimeIncr, MinTimeIncr, ROWSPC_cm, DayIncr
       REAL StartTime, EndTime, DeltaT
@@ -100,9 +101,10 @@
       REAL, DIMENSION(NL) :: SWDELTW, ThetaCap, RWU
 
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
-      REAL, DIMENSION(MaxCols) :: WINF_col
+      REAL, DIMENSION(MaxCols) :: WINF_col, Drain_col
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ES_mm, ColFrac
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, mm_2_vf
+      REAL, DIMENSION(MaxRows,MaxCols) :: CellInf, CellDrip
       REAL, DIMENSION(MaxRows,MaxCols) :: RWU_2D, RWU_2D_frac
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFv_ts, SWFlux_L, SWFlux_R
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFlux_D, SWFlux_U
@@ -414,6 +416,8 @@
       SWFAC  = 0.0
       TURFAC = 0.0
       SUM_TSRF = 0.0
+      CellInf = 0.0
+      CellDrip = 0.0
 
       Cell_detail%IrrVol = 0
       Cell_detail%InfVol = 0
@@ -602,10 +606,10 @@
           ENDDO
         ENDIF
       ELSE
-        StdIrrig = 0.0 ! If there is drip irrigation, then no standard irrigation
+        StdIrrig = 0.0 ! If there is drip irrigation, then no std irrig
       ENDIF
 
-      CALL PUT('SPAM', 'WINF_COL', WINF_col, MaxCols)
+      CALL PUT('WATER', 'WINF_COL', WINF_col, MaxCols)
 
 !-----------------------------------------------------------------
 !     Time Loop
@@ -814,6 +818,8 @@
 !          SWV_avail(1,DripCol) = SWV_avail(1,DripCol) + IrrVol(IDL)
 !     &                                          / CellArea(1,DripCol)
             IRR_ts = IRR_ts + IrrVol(IDL) / HalfRow * 10.     !mm
+            CellDrip(DripRow,DripCol) = CellDrip(DripRow,DripCol) 
+     &                                   + IrrVol(IDL) / HalfRow * 10.
           ENDIF
         END DO
 
@@ -844,6 +850,8 @@
             SWV_avail(i,j) = SWV_avail(i,j) + INF_vol
             ! temp chp
             INF_vol_dtal(i,j) = INF_vol
+!           Daily rainfall plus standard irrigation to cell i,j
+            CellInf(i,j) = CellInf(i,j) + INF_vol_dtal(i,j)
           ENDDO
           Runoff_ts = RUNOFF * DayIncr
           Rain_ts = RAIN * DayIncr ! in mm
@@ -962,12 +970,15 @@
         ! Here LatFlow_ts is due to the drainage of layer LIMIT_2D 
         ! here the drainage is from first layer to LIMIT_2D
         DRAIN_ts = 0.0
-        DO j = 1, NColsTot
-          ! DRAIN_ts = DRAIN_ts + SWFv_ts(NLayr,j) / HalfRow * 10.   !mm 
-          DRAIN_ts = 
-     &    DRAIN_ts + SWFv_ts(min(NLayr, LIMIT_2D),j) / HalfRow * 10. !mm
+        DRAIN_col = 0.0
+        DO col = 1, NColsTot
+!         Drainage in this column in this time step:
+          row = min(NLayr, LIMIT_2D)
+          Drainage_ts_col = SWFv_ts(row,col) / HalfRow * 10.    !mm
+          DRAIN_ts = DRAIN_ts + Drainage_ts_col                 !mm
+          Drain_col(col) = Drain_col(col) + Drainage_ts_col     !mm
         ENDDO
-        DRAIN_2D = DRAIN_2D + DRAIN_ts    
+        DRAIN_2D = DRAIN_2D + DRAIN_ts                          !mm
 
         SWV_avail = SWV_ts
         SWV_D = SWV_ts
@@ -1113,6 +1124,7 @@
       CELLS % Rate % SWFlux_R = SWFlux_R
       CELLS % Rate % SWFlux_D = SWFlux_D
       CELLS % Rate % SWFlux_U = SWFlux_U
+      CELLS % Rate % CellInf  = CellInf
 
 !***********************************************************************
 !***********************************************************************

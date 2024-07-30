@@ -368,7 +368,7 @@ C=======================================================================
 
 !         Soil evaporation after flood and mulch evaporation
           IF (EOS_SOIL > 1.E-6) THEN
-            CALL GET('SPAM', 'WINF_COL', WINF_col, MaxCols)
+            CALL GET('WATER', 'WINF_COL', WINF_col, MaxCols)
 
             SELECT CASE(MESEV)
 !           ------------------------

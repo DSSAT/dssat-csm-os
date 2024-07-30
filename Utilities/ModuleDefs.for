@@ -460,8 +460,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL REFET, SKC, KCBMAX, KCB, KE, KC
         !VPD parameters for CSYCA model (LPM)
         REAL PHSV, PHTV
-!       2D water infiltration (by column)
-        REAL, DIMENSION(MaxCols) :: WINF_col
 !       Fraction of surface covered by plastic mulch by column
         REAL, DIMENSION(0:MaxCols) :: PMFRACTION
 !       Surface albedo by column
@@ -500,6 +498,10 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Data transferred from Soil water routine
       Type WatType
         REAL DRAIN, RUNOFF, SNOW, WTDEP
+!       2D water infiltration (by column)
+        REAL, DIMENSION(MaxCols) :: WINF_col
+!       2D drainage (by column)
+        REAL, DIMENSION(MaxCols) :: Drain_col
       End Type WatType
 
 !     Data transferred from Soil Inorganic Nitrogen routine
@@ -966,13 +968,19 @@ C             CHP Added TRTNUM to CONTROL variable.
       CASE ('SPAM')
         SELECT CASE (VarName)
           CASE ('UH2O');     Value = SAVE_data % SPAM % UH2O
-          CASE ('WINF_COL'); Value = SAVE_data % SPAM % WINF_COL
           CASE ('MSALB_2D'); Value = SAVE_data % SPAM % MSALB_2D
           CASE('PMFRACTION');Value = SAVE_data % SPAM % PMFRACTION
           CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
-        CASE DEFAULT; ERR = .TRUE.
+      CASE ('WATER')
+        SELECT CASE (VarName)
+          CASE ('WINF_COL'); Value = SAVE_data % WATER % WINF_COL
+          CASE ('DRAIN_COL');Value = SAVE_data % WATER % DRAIN_COL
+          CASE DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      CASE DEFAULT; ERR = .TRUE.
       END SELECT
 
       IF (ERR) THEN
@@ -1002,9 +1010,15 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('SPAM')
         SELECT CASE (VarName)
         Case ('UH2O');     SAVE_data % SPAM % UH2O = Value
-        Case ('WINF_COL'); SAVE_data % SPAM % WINF_COL = Value
         Case ('MSALB_2D'); SAVE_data % SPAM % MSALB_2D = Value
         CASE('PMFRACTION');SAVE_data % SPAM % PMFRACTION = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('WATER')
+        SELECT CASE (VarName)
+        Case ('WINF_COL'); SAVE_data % WATER % WINF_COL = Value
+        Case ('DRAIN_COL');SAVE_data % WATER % DRAIN_COL= Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
