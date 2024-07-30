@@ -109,7 +109,7 @@ C=======================================================================
 !     REAL, DIMENSION(MaxRows,MaxCols) :: MINERN_2D, IMMOBN_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: NITRIFppm, NITRIF_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: N2Onitrif_2D, nNOflux_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: NNOM_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: NMINER_2D
 
       INTEGER DOY, DYNAMIC, INCDAT, IUYRDOY, IUOF, I, J, L
       INTEGER NLAYR
@@ -189,6 +189,8 @@ C=======================================================================
       REAL, DIMENSION(NL) :: DLTSNO3_DIFF, DLTSNH4_DIFF, DLTUREA_DIFF
       REAL, DIMENSION(MaxRows,MaxCols) ::DLTSNO3_DIFF_2D, 
      &                  DLTSNH4_DIFF_2D, DLTUREA_DIFF_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: CellFert
+
 !     *** TEMP DEBUGGIN CHP
       REAL TNOM, newNNOM
       REAL NNOM_a, NNOM_b
@@ -429,6 +431,7 @@ C=======================================================================
       TUREA = 0.0
       TNOXD = 0.0
       TotUptake = 0.0
+      CellFert = 0.0
 
       DO L = 1, NRowsTot
         DO J = 1, NColsTot 
@@ -487,6 +490,7 @@ C=======================================================================
             DLTSNO3_2D(L,1) = DLTSNO3_2D(L,1) + AddSNO3
             DLTSNH4_2D(L,1) = DLTSNH4_2D(L,1) + AddSNH4
             DLTUREA_2D(L,1) = DLTUREA_2D(L,1) + AddUrea
+            CellFert(L,1) = AddSNO3 + AddSNH4 + AddUrea
 
           CASE ('DRIP')
 !           Drip fertigation goes to cell DripRow,DripCol
@@ -496,6 +500,7 @@ C=======================================================================
                 DLTSNO3_2D(I,J) = DLTSNO3_2D(I,J) + AddSNO3
                 DLTSNH4_2D(I,J) = DLTSNH4_2D(I,J) + AddSNH4
                 DLTUREA_2D(I,J) = DLTUREA_2D(I,J) + AddUrea
+                CellFert(L,1) = AddSNO3 + AddSNH4 + AddUrea
             END IF
 
           CASE DEFAULT
@@ -509,14 +514,16 @@ C=======================================================================
                 CASE DEFAULT; CYCLE
               END SELECT
 
-              DLTSNO3_2D(L, J) = DLTSNO3_2D(L, J) + AddSNO3 * CellFactor
-              DLTSNH4_2D(L, J) = DLTSNH4_2D(L, J) + AddSNH4 * CellFactor
-              DLTUREA_2D(L, J) = DLTUREA_2D(L, J) + AddUrea * CellFactor
+              DLTSNO3_2D(L,J) = DLTSNO3_2D(L, J) + AddSNO3 * CellFactor
+              DLTSNH4_2D(L,J) = DLTSNH4_2D(L, J) + AddSNH4 * CellFactor
+              DLTUREA_2D(L,J) = DLTUREA_2D(L, J) + AddUrea * CellFactor
+              CellFert(L,J) = (AddSNO3 + AddSNH4 + AddUrea) * CellFactor
             ENDDO
           END SELECT
 
         ENDDO
         CumSumFert = CumSumFert + SUMFERT
+        CELLS % RATE % CellFert = CellFert
 
         IF (.NOT. SIM2D) THEN
 !         Fertilizer added directly to flooded field
@@ -763,7 +770,7 @@ C=======================================================================
         END SELECT
 
         NNOM = NNOM + newNNOM
-        NNOM_2D(L,J) = newNNOM
+        NMINER_2D(L,J) = newNNOM
 
         !*** temp debugging chp
         TNOM = TNOM + newNNOM * FieldFac
@@ -938,6 +945,9 @@ C=======================================================================
 
         ENDDO  !End of soil row (layer) loop
       END DO   !End of soil column loop
+
+      CELLS % RATE % NMINER = NMINER_2D
+      CELLS % RATE % NITRIF = NITRIF_2D
 
 !*************************************************************************************************
 !*************************************************************************************************
@@ -1154,6 +1164,11 @@ C=======================================================================
       RESID4 = 0.0
       RESID5 = 0.0
 
+      IF (SIM2D) THEN
+        CELLS % RATE % GHG = DLTSNO3_DIFF_2D + DLTSNH4_DIFF_2D 
+     &                     + DLTUREA_DIFF_2D
+      ENDIF
+
 !     Add these differences into the 2D DLT arrays, cell by cell, correcting for negative values
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
@@ -1235,6 +1250,11 @@ C=======================================================================
           NFlux_D = NFlux_D + NFlux_UREA_D
           NFlux_U = NFlux_U + NFlux_UREA_U
         ENDIF
+
+        Cells % Rate % NFlux_L = NFlux_L
+        Cells % Rate % NFlux_R = NFlux_R
+        Cells % Rate % NFlux_D = NFlux_D
+        Cells % Rate % NFlux_U = NFlux_U
 
         CNTILEDR = 0.0
         NTILEDR = 0.0
