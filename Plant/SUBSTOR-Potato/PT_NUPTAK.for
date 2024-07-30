@@ -91,7 +91,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV,RNH4U_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D, RNO3U_2D
-      Real FieldFactor
+      Real FieldFac
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -122,6 +122,12 @@ C=======================================================================
       FurCol1 = BedDimension % FurCol1 
       ColFrac = BedDimension % ColFrac
 !     BedFrac = BedDimension % BedFrac
+
+      IF (CONTROL % SIM2D) THEN
+        FieldFac = 2.0
+      ELSE
+        FieldFac = 1.0
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -424,15 +430,18 @@ C-----------------------------------------------------------------------
           CASE(3,4,5)
             UNO3_2D(L,J) = RNO3U_2D(L,J) * NUF
             UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF
-            XMIN         = 0.25 / KG2PPM(L)
+!           XMIN = 0.25 / KG2PPM(L)
+            XMIN = 0.25 / KG2PPM(L) * ColFrac(L,J) / FieldFac
+
             UNO3_2D(L,J) = AMIN1 (UNO3_2D(L,J), SNO3_2D(L,J) - XMIN)
             UNO3_2D(L,J) = MAX(0.0, UNO3_2D(L,J)) * ColFrac(L,J)
-            XMIN         = 0.5 / KG2PPM(L)
+!           XMIN         = 0.5 / KG2PPM(L)
+            XMIN = 0.5 / KG2PPM(L) * ColFrac(L,J) / FieldFac
             UNH4_2D(L,J) = AMIN1 (UNH4_2D(L,J),SNH4_2D(L,J) - XMIN)
             UNH4_2D(L,J) = MAX(0.0, UNH4_2D(L,J)) * ColFrac(L,J)
 
 !           For 2D simulations, multiply by 2.0 because we are modeling only half a field.
-            TRNU = TRNU + (UNO3_2D(L,J) + UNH4_2D(L,J)) * FieldFactor
+            TRNU = TRNU + (UNO3_2D(L,J) + UNH4_2D(L,J)) * FieldFac
           END SELECT
         ENDDO
       ENDDO

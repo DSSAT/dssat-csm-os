@@ -292,6 +292,8 @@ C=======================================================================
         !*** temp debugging chp
         TNOM = 0.0
 
+        XMIN = 0.0
+
 !       Seasonal cumulative values, kg[N]/ha
         CMINERN  = 0.0  !mineralization
         CIMMOBN  = 0.0  !immobilization
@@ -782,6 +784,8 @@ C=======================================================================
 !         available, take all NH4, leaving behind a minimum amount of
 !         NH4 equal to XMIN (NNOM is negative!).
 
+          XMIN = XMIN * ColFrac(L,J) / FieldFac !kg/ha per cell
+
           IF (ABS(NNOM) .GT. (SNH4_2D(L,J) + DLTSNH4_2D(L,J)-XMIN)) THEN
             NNOM_a = -(SNH4_2D(L,J) - XMIN + DLTSNH4_2D(L,J))
             NNOM_b = NNOM - NNOM_a
@@ -874,7 +878,8 @@ C=======================================================================
           ENDIF
         ENDIF
 
-        XMIN = 0.0
+        XMIN = 0.0 * ColFrac(L,J) / FieldFac !kg/ha per cell
+
         SNH4_AVAIL = AMAX1(0.0, SNH4_2D(L,J) + DLTSNH4_2D(L,J) - XMIN)
         NITRIF_2D(L,J) = AMIN1(NITRIF_2D(L,J), SNH4_AVAIL)
         DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) - NITRIF_2D(L,J)

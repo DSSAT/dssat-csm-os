@@ -155,15 +155,15 @@ C-----------------------------------------------------------------------
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
           SELECT CASE(Cell_type(L,J))
-          CASE(3)
-            NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / BedFrac(L,J)
-            NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / BedFrac(L,J)
-          CASE(4,5)
-            NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
-            NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+          CASE(3,4,5)
+             NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+     &                     * FieldFac
+             NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+     &                     * FieldFac
           END SELECT
         ENDDO
-      ENDDO
+      ENDDO  
+
 C-----------------------------------------------------------------------
 C   Determine crop N demand (kg N/ha), after subtracting mobilized N
 C-----------------------------------------------------------------------
@@ -235,14 +235,14 @@ C-----------------------------------------------------------------------
                 UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF
 
 !               XMIN = minimum amount NO3 left after uptake (kg[N]/ha)
-                XMIN    = 0.25 / KG2PPM(L)
+                XMIN    = 0.25 / KG2PPM(L) * ColFrac(L,J) / FieldFac
                 MXNO3U  = MAX(0.0,(SNO3_2D(L,J) - XMIN))
                 IF (UNO3_2D(L,J) .GT. MXNO3U) THEN
                   UNO3_2D(L,J) = MXNO3U
                 ENDIF
 
 !               XMIN = minimum amount NH4 left after uptake (kg[N]/ha)
-                XMIN = 0.5 / KG2PPM(L)
+                XMIN = 0.5 / KG2PPM(L) * ColFrac(L,J) / FieldFac
                 MXNH4U  = MAX(0.0,(SNH4_2D(L, J) - XMIN))
                 IF (UNH4_2D(L,J) .GT. MXNH4U) UNH4_2D(L,J) = MXNH4U
 
