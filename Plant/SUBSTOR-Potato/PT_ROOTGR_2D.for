@@ -328,7 +328,6 @@ C=======================================================================
 !             horizontal portion of cell occupied by roots (WidFrac)
               IF (RTWIDr(Row) >= CumWid) THEN
                 WidFrac(Row,Col) = 1.0
-!               JZW change May 9,2012 
                 DepFrac(Row,Col) = min(1.0, DepFrac(Row, col-1)) 
               ELSEIF (RTWIDr(Row) >= LastCumWid) THEN
 !               Roots have partially filled the width of this cell

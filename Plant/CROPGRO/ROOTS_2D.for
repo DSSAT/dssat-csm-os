@@ -122,6 +122,8 @@
       RFAC3 = RFAC1
       RLNEW = 0.0
 
+      ROWSPC_cm = BedDimension % ROWSPC_cm
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -204,7 +206,7 @@
 !       day of emergence.  (GROW emergence initialization
 !       must preceed call to INROOT.)
 !-----------------------------------------------------------------------
-      CALL INROOT_2D(
+      CALL INROOT_2D(CELLS,
      &  DepMax, FirstRow, FRRT, PLTPOP, RFAC1,             !Input
      &  ROWSPC_CM,                                         !Input
      &  RTDEPI, RTWIDI, Thick, WidMax, Width, WTNEW,       !Input
@@ -321,11 +323,11 @@
 !     to soil impedance, soil deficiiees, other stuff.
           RLDF(Row,Col) = CELLS(Row,Col)%STATE%WR * CellArea(Row,Col) * 
      &                     MIN(SWDF,SWEXF)
-        
+
 !-----------------------------------------------------------------------
 !         Calculate new vertical growth in column 1 only
           IF (COL == 1) THEN
-            WidFrac(Row,Col) = 1.0 
+!           WidFrac(Row,Col) = 1.0 
             IF (RTDEP >= CUMDEP) THEN
               DepFrac(Row,Col) = 1.0
             ELSEIF (RTDEP >= LastCumDep)THEN
@@ -341,24 +343,21 @@
               ENDIF
               DepFrac(Row,Col) = MIN(1.0, 1. - (CUMDEP - RTDEPnew) / 
      &                         Thick(Row,Col))
-              IF (Row > LastRow) LastRow = Row
+              IF (Row > LastRow) THEN
+!               New roots have just grown into this cell
+                LastRow = Row
+!CHP                RTWIDnew(Row) = Width(Row,Col)
+                DepFrac(Row,Col) = MIN(1.0, 1. - (CUMDEP - RTDEPnew) / 
+     &                         Thick(Row,Col))
+              ENDIF
             ELSE
 !             No roots in this cell
               DepFrac(Row,Col) = 0.0
+              EXIT RowLoop
             ENDIF
-          
-!           Check for new roots in this cell
-            IF (RTDEPnew > LastCumDep .AND. 
-     &          RTDEP <= LastCumDep) THEN
-!             New roots have just grown into this cell
-              RTWIDnew(Row) = Width(Row,Col)
-              DepFrac(Row,Col) = MIN(1.0, 1. - (CUMDEP - RTDEPnew) / 
-     &                         Thick(Row,Col))
-            IF (Row > LastRow) LastRow = Row !JZW add this statement
-            ENDIF
-          
+          ENDIF
 !-----------------------------------------------------------------------
-          ELSE
+!CHP          ELSE
 !           Calculate new horizontal growth in this cell (RTWIDnew) and 
 !             horizontal portion of cell occupied by roots (WidFrac)
 !           Horizontal root growth only occurs when DepFrac of adjacent 
@@ -366,17 +365,23 @@
 !             width fraction is initialized to 1.0 there.
             IF (RTWIDr(Row) >= CumWid) THEN
               WidFrac(Row,Col) = 1.0
-              DepFrac(Row,Col) = 1.0
+              IF (col > 1) THEN
+                DepFrac(Row,Col) = min(1.0, DepFrac(Row, col-1)) 
+              ENDIF
             ELSEIF (RTWIDr(Row) >= LastCumWid) THEN
 !             Roots have partially filled the width of this cell
               IF (CELLS(Row,Col)%STATE%WR > 0.0 .AND. RLNEW > 0.0) THEN
                 IF (Row == 1) THEN
                   RTWIDnew(Row) = RTWIDr(Row) + DTX * RFAC2H
                 ELSE
-                  RTWIDnew(Row) = RTWIDr(Row) + DTX * RFAC2H * 
-     &            MIN(SWDF,SWEXF) * (1. + 0.25 * (1. - MAX(SWFAC,0.40)))
+                  RTWIDnew(Row) = RTWIDr(Row) + DTX * RFAC2H 
+     &                * MIN(SWDF,SWEXF) 
+     &                * (1. + 0.25 * (1. - MAX(SWFAC,0.40)))
                 ENDIF
                 RTWIDnew(Row) = MIN(RTWIDnew(Row), WIDMAX(Row))
+!              Else
+!!               JZW need to check if it is correct here
+!                DepFrac(Row,Col) = 0.0 
               ENDIF
               WidFrac(Row,Col) = MIN(1.0, 1. - (CumWid - RTWIDnew(Row))
      &                        / Width(Row,Col))
@@ -387,28 +392,34 @@
               WidFrac(Row,Col) = 0.0
               DepFrac(Row,Col) = 0.0
             ENDIF
-             
+
 !           Check for new roots in this cell
             IF (RTWIDnew(Row) > LastCumWid .AND. 
      &          RTWIDr(Row) <= LastCumWid) THEN
 !             New roots have just grown into this cell
               WidFrac(Row,Col) = MIN(1.0, 1. - (CumWid - RTWIDnew(Row)) 
      &                        / Width(Row,Col))
-              DepFrac(Row,Col) = 1.0 
+!             JZW change May 9,2012 
+              IF (col > 1) THEN
+                DepFrac(Row,Col) = min(1.0, DepFrac(Row, col-1)) 
+              ENDIF
               IF (Col > LastCol) LastCol = Col
             ENDIF
-          ENDIF
-          
+!CHP          ENDIF
+
 !-----------------------------------------------------------------------
 !         Apply factor for this cell
           RLDF(Row,Col) =RLDF(Row,Col)*DepFrac(Row,Col)*WidFrac(Row,Col)
+!          CelRootArea(Row,Col) =CellArea(Row,Col)
+!     &               *DepFrac(Row,Col)*WidFrac(Row,Col)
 !         Sum of all factors
           TRLDF = TRLDF + RLDF(Row,Col)
+!          TotRootArea = TotRootArea +  CelRootArea(Row,Col)
           IF (RTWIDnew(Row) < CumWid) EXIT ColLoop
           
         ENDDO ColLoop
       ENDDO RowLoop
-      
+
       RTDEP  = RTDEPnew
       RTWIDr = RTWIDnew
 
@@ -668,7 +679,7 @@
 !  Called : CROPGRO
 !  Calls  : None
 !=======================================================================
-      SUBROUTINE INROOT_2D(
+      SUBROUTINE INROOT_2D(CELLS,
      &  DepMax, FirstRow, FRRT, PLTPOP, RFAC1,    !Input
      &  ROWSPC_CM,                                         !Input
      &  RTDEPI, RTWIDI, Thick, WidMax, Width, WTNEW,       !Input
@@ -686,18 +697,37 @@
       REAL TotRootArea, RLV_AVG, ROWSPC_CM
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RootArea
+      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
+      TYPE (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
+      Cell_Type = CELLS%STRUC%Cell_Type
 !-----------------------------------------------------------------------
       RTDEPI = MAX(MIN(RTDEPI, DepMax), Thick(1,1))
       RTWIDI = MAX(MIN(RTWIDI, WidMax(1)), Width(1,1))
-      RLV_2D = 0.0
-      RootArea = 0.  !cell area containing roots
-      TotRootArea = 0.0
       RTDEP = RTDEPI
-!     JZW should times 0.5, because we only consider half of bed
-      RTWID = RTWIDI 
-      RTWIDr = 0.0
-      X = 0.0
-      Z = 0.0
+      RTWID = RTWIDI
+
+!     Total root length
+      RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * 1.E-4
+!     cm[root]     g[root]   plants  cm[root]   m2
+!    ---------- = ------- * ------ * ------- * ---   
+!     cm2[soil]    plant      m2     g[root]   cm2
+
+!     Overall RLV is a concentration. The value should be equal
+!         in all cells at initialization.
+!     RLV is higher in 2D cells than in 1D layers because the roots are not
+!       found in every cell so the cells with roots are more densly populated.
+!       (Rowspc / RTWIDi) concentrates the RLV in the cells that have roots.
+      RLV_AVG = RLINIT / RTDEPI * (ROWSPC_cm / RTWIDi)
+!    cm[root]    cm[root]       1       cm[soil]
+!    --------- = --------- * -------- * --------
+!    cm3[soil]   cm2[soil]   cm[soil]   cm[soil]
+
+!     Initialize variables for root distribution in cells
+      RTWIDr = 0.0  !total width of roots in a half row (array)
+      X = 0.0  !root width within a cell
+      Z = 0.0  !root depth within a cell
+      RootArea = 0.  !cell area containing roots
+      TotRootArea = 0.0  !total root area in half row
 
 !     Distribute root length and width evenly thru cells
       CUMDEP = 0.
@@ -712,60 +742,38 @@
           Z = 0.0
           EXIT RowLoop
         ENDIF
-        
-        IF (Row == 1 .OR. Z > 0.98 * Thick(Row,1)) THEN
-          RTWIDr(Row) = RTWIDI
-        ELSEIF (Z > 0.0) THEN
-          RTWIDr(Row) = WIDTH(Row,1)
-        ENDIF
-        
+
         CumWid = 0.
         ColLoop: DO Col = 1,NColsTot
-          LastCumWid = CumWid
-          CumWid = CumWid + Width(Row,Col)
-          CellArea(Row,Col) = Width(Row,Col) * Thick(Row,Col)
-          IF (RTWIDI >= CumWid) THEN
-            X = Width(Row,Col)
-          ELSEIF (RTWIDI > LastCumWid) THEN
-            X = RTWIDI - LastCumWid
-          ELSE
-            X = 0.0
-            EXIT ColLoop
-          ENDIF
-          
-          IF (ROW == 1 .OR. COL == 1 .OR. Z > 0.98 * Thick(Row,Col))THEN
+          SELECT CASE(Cell_type(row,col))
+          CASE(3,4,5)
+            LastCumWid = CumWid
+            CumWid = CumWid + Width(Row,Col)
+            CellArea(Row,Col) = Width(Row,Col) * Thick(Row,Col)
+            IF (RTWIDI / 2.0 >= CumWid) THEN
+              X = Width(Row,Col)
+            ELSEIF (RTWIDI / 2.0 > LastCumWid) THEN
+              X = RTWIDI / 2.0 - LastCumWid
+            ELSE
+              X = 0.0
+              EXIT ColLoop
+            ENDIF
+            RtWidr(row) = RtWidr(row) + X
+            
             RootArea(Row,Col) = X * Z
-          ENDIF
-          TotRootArea = TotRootArea + RootArea(Row,Col)
+            TotRootArea = TotRootArea + RootArea(Row,Col)
+          END SELECT
         ENDDO ColLoop
       ENDDO RowLoop
-          
-!      RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * 1.E-4 * HalfRow  
-!!        cm[root]     g[root]   plants  cm[root]   m2
-!!    -------------- = ------- * ------ * ------- * --- * cm(row width)  
-!!    cm[row length]    plant      m2     g[root]   cm2
 
-      RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * 1.E-4
-!     cm[root]     g[root]   plants  cm[root]   m2
-!    ---------- = ------- * ------ * ------- * ---   
-!     cm2[soil]    plant      m2     g[root]   cm2
-
-!     Overall RLV is a concentration. The value should be equal
-!         in all cells at initialization.
-!     (Rowspc / RTWIDi) concentrates the RLV in the cells that have roots.
-!     RLV is higher in 2D cells than in 1D layers because the roots are not
-!       found in every cell so the cells with roots are more densly populated.
-      RLV_AVG = RLINIT / RTDEPI * (ROWSPC_cm / RTWIDi)
-!    cm[root]    cm[root]       1       cm[soil]
-!    --------- = --------- * -------- * --------
-!    cm3[soil]   cm2[soil]   cm[soil]   cm[soil]
-
+!     RLV is equal in the intial root zone. Some cells are not fully
+!       filled with roots, so cell RLV is proportionally lower.
+      RLV_2D = 0.0
       DO Row = 1, NRowsTot 
         DO Col = 1, NColsTot
           IF (RootArea(Row,Col) > 1.E-6) THEN
-!           RLV is concentrated in a few cells and will be larger (per cell)
-!             than in the 1D model. Total cm of root and g of root are the same.
-            RLV_2D(row,col) = RLV_AVG
+            RLV_2D(row,col) = RLV_AVG 
+     &           * RootArea(row,col) / CellArea(row,col)
           ENDIF
         ENDDO
       ENDDO
@@ -800,14 +808,14 @@
       INTEGER Row, Col, L, NLAYR
       REAL, DIMENSION(NL) :: DLAYR, RtLen_1D
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen_2D 
+      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen_2D,ColFrac
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
       Thick = STRUC%THICK
       Width = STRUC%WIDTH
-!     ColFrac = BedDimension % ColFrac
+      ColFrac = BedDimension % ColFrac
       Cell_Type = STRUC%Cell_Type
 
       DLAYR = SOILPROP % DLAYR
@@ -820,17 +828,18 @@
           SELECT CASE(Cell_Type(row,col))
           CASE(3,4,5)
 !           RLV_2D is zero for cell types < 3 and > 5
-            RtLen_2D(Row,Col) = RLV_2D(Row,Col) * THICK(Row,Col)
+            RtLen_2D(Row,Col) = RLV_2D(Row,Col) * THICK(Row,Col) 
+     &                               * Colfrac(row,col) / 2.0
 !           cm[root]    cm[root]
 !           --------- = --------- * cm[cell thickness] 
 !           cm2[soil]   cm3[soil]
 
-            TRLV = TRLV + RtLen_2D(Row,Col) 
+            TRLV = TRLV + RtLen_2D(Row,Col) * 2.0
           END SELECT
         ENDDO
       ENDDO
 
-      TotRootMass = TRLV / RFAC3 * 10.
+      TotRootMass = TRLV / RFAC3 *1E4 * 10.
 !                 cm[root]       g[root]    1E4 cm2    10(kg/ha)
 !      kg/ha  = -------------- * -------- * -------- * ---------
 !              cm2[row length]   cm[root]      m2       (g/m2)
