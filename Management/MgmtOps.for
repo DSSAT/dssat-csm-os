@@ -369,11 +369,11 @@ C=======================================================================
       INTEGER DAP, DAS, DLUN, DLUN2, DOY, DYNAMIC, ERRNUM, FROP, I
       INTEGER NDAY, RUN, YEAR, YRDOY, YRPLT
       INTEGER L, NAP, TIMDIF, NAPFER(NELEM), NAPRes
-      INTEGER TILLNO, TILDATE
+      INTEGER TILLNO, TILDATE, ISH_date
       INTEGER iSTAGE, iSTGDOY
 
 
-      REAL BDAVG3, CUMDEP, IRRAMT, TILDEP, DEPIR
+      REAL BDAVG3, CUMDEP, IRRAMT, TILDEP, DEPIR, ISH_wt
       REAL TotAmtN, TotAmtP, TotAmtK, TOTIR, TotResWt, SurfRes, RootRes
       REAL HARVFRAC(2)
       REAL, DIMENSION(NELEM) :: AMTFER, CumRESE
@@ -706,6 +706,16 @@ C-----------------------------------------------------------------------
   110     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A,F7.1,A)
         ENDIF
 
+!       In-season harvest or mow operation
+        CALL GET('MHARVEST','ISH_date',ISH_date)
+        CALL GET('MHARVEST','ISH_wt',  ISH_wt)
+        IF (YRDOY == ISH_date) THEN
+!         In-season harvest
+          WRITE(DLUN2,120) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+     &          "Harvest        ",
+     &        ISH_wt, " kg/ha"
+  120     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A,F7.0,A)
+        ENDIF
       ENDIF
 
 !***********************************************************************
@@ -713,40 +723,54 @@ C-----------------------------------------------------------------------
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
       IF (IDETR == 'Y') THEN
-!       Harvest
-        IF (CROP .NE. 'FA') THEN
-          WRITE(DLUN2,112) HARVFRAC(1)*100., " % yield harvested",
-     &            SumDat % HWAH, " kg/ha"
-          WRITE(DLUN2,112) HARVFRAC(2)*100., " % by-product harv",
-     &            SumDat % BWAH, " kg/ha"
-  112     FORMAT(T45,F6.1,A,T72,F7.0,A)
 
+!       End of simulation-season harvest or mow operation
+        CALL GET('MHARVEST','ISH_date',ISH_date)
+        CALL GET('MHARVEST','ISH_wt',  ISH_wt)
+        IF (YRDOY == ISH_date) THEN
+!         In-season harvest
+          WRITE(DLUN2,220) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+     &          "Harvest        ",
+     &        ISH_wt, " kg/ha"
+  220     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A,F7.0,A)
+        ENDIF
+
+          WRITE(DLUN2,220) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+     &          "End simulation "
+
+!       Harvested amounts
+        IF (CROP .NE. 'FA') THEN
+          WRITE(DLUN2,312) HARVFRAC(1)*100., " % yield harvested",
+     &            SumDat % HWAH, " kg/ha"
+          WRITE(DLUN2,312) HARVFRAC(2)*100., " % by-product harv",
+     &            SumDat % BWAH, " kg/ha"
+  312     FORMAT(T45,F6.1,A,T72,F7.0,A)
+
+!         Harvest residues
           IF (INDEX('FQ',RNMODE) > 0 .AND. CROP /= 'FA') THEN
             SurfRes = HARVRES % ResWt(0)
             IF (SurfRes > 0) THEN
-              WRITE(DLUN2,200) "Surface residue carryover", SurfRes,
+              WRITE(DLUN2,400) "Surface residue carryover", SurfRes,
      &            " kg/ha"
-  200         FORMAT(T46,A,T72,F7.0,A)
+  400         FORMAT(T46,A,T72,F7.0,A)
             ENDIF
         
             RootRes = SUM(HARVRES % ResWt) - HARVRES % ResWt(0)
             IF (RootRes > 0) THEN
-              WRITE(DLUN2,200) "Root residue carryover", RootRes, 
+              WRITE(DLUN2,400) "Root residue carryover", RootRes, 
      &            " kg/ha"
             ENDIF
           ENDIF
-        ELSE
-          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
-     &            "End Sim        "
-  100     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.0,A))
+!        ELSE
+!          WRITE(DLUN2,500) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+!     &            "End Sim        "
+!  500     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.0,A))
         ENDIF
 
         WRITE(DLUN2,'(" ")')
         CLOSE (DLUN)
         CLOSE (DLUN2)
       ENDIF
-
-      
 
 !***********************************************************************
 !***********************************************************************

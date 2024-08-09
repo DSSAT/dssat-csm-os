@@ -106,8 +106,10 @@ C=======================================================================
 !         shell. So separate those here. Correct VEGRES for non-harvested
 !         seeds and shells, and add those separately with their own lignin
 !         concentration.
+
+!         chp 2024-07-01 HResLig should be in units of kg/ha! Don't divide by HResWt(SRFC)!
           HResLig(SRFC) = (LFRES * PLIGLF + STMRES * PLIGST +
-     &      SDRES * PLIGSD + SHLRES * PLIGSH) / HResWt(SRFC)
+     &      SDRES * PLIGSD + SHLRES * PLIGSH) ! / HResWt(SRFC)
         ENDIF 
 
 !-------------------------------------------------------------------------
@@ -124,7 +126,7 @@ C=======================================================================
 !       -----------------------
 !       Total root residues (whole profile) equal root weight plus nodule
 !       weight.
-        TRTRES = RTWT + DWNOD 
+        TRTRES = RTWT + DWNOD   !kg/ha
 
 !       N in root residues is N in roots plus N in nodules.
         TRTRESE(N) = WTNRT + WTNNOD
@@ -135,7 +137,7 @@ C=======================================================================
         IF (TRLV > 1.E-6 .AND. TRTRES > 1.E-6) THEN
           DO L = 1, NLAYR
             HResWt(L)  = 10. * TRTRES * RLV(L) * DLAYR(L) / TRLV
-            HResLig(L) = (RTWT * PLIGRT + DWNOD * PLIGNO) / TRTRES 
+            HResLig(L) = (RTWT * PLIGRT + DWNOD * PLIGNO) !/ TRTRES 
      &                            * RLV(L) * DLAYR(L) / TRLV
             DO IEL = 1, N_ELEMS
               HResE(L,IEL) = 10. * TRTRESE(IEL) * RLV(L) * DLAYR(L)/TRLV
