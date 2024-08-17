@@ -504,9 +504,9 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! Calculation of potential growth .. Set priorities for carbon
           !
 !          PTUBGR  = G3*ETGT/PLTPOP    !CHP
-          PTUBGR  = G3 * PCO2 * ETGT/PLTPOP         !JIL   (Modified)
-           !PTUBGR  = G3 * PCO2 * DTT/PLTPOP          !  (By MSKhan)
-          
+          !PTUBGR  = G3 * PCO2 * ETGT/PLTPOP         !JIL   (Modified)
+          PTUBGR  = G3 * PCO2 * STT/PLTPOP !  (By MSKhan; Raymundo et al. 2017. Field Crops Research. 202 57–76.
+	         
           
           IF (PLME .EQ. 'B') THEN                     !WM
             PTUBGR  = PTUBGR / BWRATIO                !WM
