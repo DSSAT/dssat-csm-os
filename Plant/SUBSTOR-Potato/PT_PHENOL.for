@@ -146,17 +146,17 @@ c         ENDIF
      &      TDU, SDU)                                 !Output
      
          ! replace DTT and STT with the one calculated by PT_BTHTIME
-         !DTT = TDU
-         !STT = SDU
-      
+         DTT = TDU
+         STT = SDU
+            
        CALL PT_BTHTIME_2 (
      &      ISTAGE,  L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
      &      TSEN, SBD, SOD, SCD, SSEN,  
      &      TDU_2, SDU_2)                                 !Output
 
          ! replace DTT & STT with the one calculated by PT_BTHTIME_2
-         DTT = TDU_2
-         STT = SDU_2
+         !DTT = TDU_2
+         !STT = SDU_2
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
          CUMSTT = CUMSTT + STT
@@ -192,8 +192,8 @@ C-----------------------------------------------------------------------
         ! ISTAGE 6: planting to germination
         ! ISTAGE 7: germination to emergence
         ! ISTAGE 1: vegetative to tuber initiation
-        ! ISTAGE 2: initiation to maturity
-        !
+        ! ISTAGE 2: tuber initiation to maturity
+        ! ISTAGE 3: Tuber harvest ! By Khan
 C-----------------------------------------------------------------------
         CASE (5)
           !
