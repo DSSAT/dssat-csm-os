@@ -34,7 +34,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
         CASE (2)                        ! Maturity
           CTII    = 0.0
-          ISTAGE  = 5
+          ISTAGE  = 5 ! Why? (5 means pre-planting; how about 20 (harvest) as per pt_opharv L.No 140-159))
           TSPRWT  = 0.0
           TPSM    = 0.0
 
