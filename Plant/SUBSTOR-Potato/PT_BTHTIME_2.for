@@ -39,7 +39,7 @@ C=======================================================================
       SUBROUTINE PT_BTHTIME_2 (
      &    ISTAGE, L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,   !Input
      &    TSEN, SBD, SOD, SCD, SSEN,         !Input
-     &    TDU, SDU)                                     !Output
+     &    TDU_2, SDU_2)                                     !Output TDU, SDU
       
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -50,11 +50,12 @@ C=======================================================================
       IMPLICIT NONE
       !INTEGER DS
       INTEGER ISTAGE, L0, I
-      REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU, SDU
+      REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU_2, SDU_2
       REAL SBD, SOD, SCD, SSEN
-      REAL SUNRIS, SUNSET, TMEAN, TT, TD, TU, SS, SD, SU, XTEMP
+      REAL SUNRIS, SUNSET, TT, TD, TU, SS, SD, SU  !removed XTEMP, TMEAN
       REAL ST(NL)
       SAVE
+      ! To test whether model is working with repect to temperture
       !TMAX = 50.0
       !TMIN = 37.0
       !TMAX = 0.0
@@ -75,21 +76,25 @@ C=======================================================================
 
 !*---mean daily temperature
       !TMEAN  = (TMAX + TMIN)/2.0
-      XTEMP  = (TMAX + TMIN)/2.0
+      !XTEMP  = (TMAX + TMIN)/2.0
       TT     = 0.0
       SS     = 0.0
-      TDU    = 0.0
-      SDU    = 0.0
+      TDU_2  = 0.0
+      SDU_2  = 0.0
 
       !PRINT 101, 'TMIN', TMIN, 'TMAX', TMAX, 'ST(L0)', ST(L0)
  !101  FORMAT(A5, F6.2, A5, F6.2, A7, F6.2)
 !*---diurnal course of temperature
       DO 10 I = 1, 24
         IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
-          TD = XTEMP+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          !TD = XTEMP+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          TD = (TMAX + TMIN) / 2.0 + 
+     &    DIF + 0.5 * ABS(TMAX - TMIN) * COS(0.2618 * FLOAT(I - 14))
           SD = ST(L0)+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ELSE
-          TD = XTEMP    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          !TD = XTEMP    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+          TD = (TMAX + TMIN) / 2.0 + 
+     &    0.5 * ABS(TMAX - TMIN) * COS(0.2618 * FLOAT(I - 14))
           SD = ST(L0)   +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
         ENDIF
 
@@ -129,10 +134,10 @@ C=======================================================================
 
 !*---daily thermal unit for phenology
       IF (ISTAGE .LE. 4) THEN
-        TDU  = TT
+        TDU_2  = TT
       END IF
       IF (ISTAGE .GE. 6 .OR. ISTAGE .LE. 2) THEN
-        SDU  = SS
+        SDU_2  = SS
       END IF
         
       RETURN
