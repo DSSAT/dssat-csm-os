@@ -42,7 +42,7 @@ C=======================================================================
       REAL SLA,PCNL,TURFAC,CANHT,CANWH,RLV(20),HI,SHELPC,SHELLW
       REAL SDSIZE,PODNO,RTDEP,NSTRES,SWFAC,SATFAC,PLTPOP,GM2KG
       REAL FRYLD,DEADLF, GRAINN
-      REAL, PARAMETER :: FRYLDTHRESH = 0.1
+      REAL, PARAMETER :: FRYLDTHRESH = 0.05 !Added by Khan
       REAL LFWT, GPP, PCNGRN, PCNRT
       REAL PCNST, PCNVEG, ROOTN
       REAL STOVN, STOVWT
@@ -88,20 +88,20 @@ C-----------------------------------------------------------------------
 !      DATA GROHEAD(1)/
      &'! YR       Days  Days  Grow       Fresh          
      &      Dry Weight                           Pod      Phot. Grow    
-     &   Leaf Shell   Spec    Canopy          Root  ³    Root Length Den
-     &sity   ³ Senesced mass Air   CumAir  Soil CumSoil Day ',
+     &   Leaf Shell   Spec    Canopy          Root  ï¿½    Root Length Den
+     &sity   ï¿½ Senesced mass Air   CumAir  Soil CumSoil Day ',
 
 !      DATA GROHEAD(2)/
      &'!   and   after after Stage  LAI  Yield  Leaf  St
      &em Tuber  Root  Crop  Tops DLeaf   HI   Wgt.   No.    Water     Ni
-     &t.   Nit -ing   Leaf  Hght  Brdth      Depth  ³     cm3/cm3   of 
-     &soil    ³    (kg/ha)    Temp  Temp    Temp  Temp   Length ',
+     &t.   Nit -ing   Leaf  Hght  Brdth      Depth  ï¿½     cm3/cm3   of 
+     &soil    ï¿½    (kg/ha)    Temp  Temp    Temp  Temp   Length ',
 
 !      DATA GROHEAD(3)/
-     &'!     DOY   sim plant             Mg/Ha  ³<------
-     &--------- kg/Ha --------------->³      Kg/Ha        ³<Stress (0-1)
-     &>³    %     %   Area    m     m           m   ³<------------------
-     &------>³ Surface  Soil °day  °day    °day  °day   Hrs',
+     &'!     DOY   sim plant             Mg/Ha  ï¿½<------
+     &--------- kg/Ha --------------->ï¿½      Kg/Ha        ï¿½<Stress (0-1)
+     &>ï¿½    %     %   Area    m     m           m   ï¿½<------------------
+     &------>ï¿½ Surface  Soil ï¿½day  ï¿½day    ï¿½day  ï¿½day   Hrs',
 
 !      DATA GROHEAD(4) / 
      &'@YEAR DOY   DAS   DAP  GSTD  LAID  UYAD  LWAD  
@@ -121,8 +121,8 @@ C-----------------------------------------------------------------------
      &g.   take    N     N     N     N     N     (kg/ha) ',
 
 !      DATA NITHEAD(3)/
-     &'!     DOY   Sim Plant  ³<--- Kg/Ha -->³ ³<-- % --
-     &>³  ³<--- kg/ha --->³ ³<----- % ----->³  Surface Soil',
+     &'!     DOY   Sim Plant  ï¿½<--- Kg/Ha -->ï¿½ ï¿½<-- % --
+     &>ï¿½  ï¿½<--- kg/ha --->ï¿½ ï¿½<----- % ----->ï¿½  Surface Soil',
 
 !      DATA NITHEAD(4)/  
      &'@YEAR DOY   DAS   DAP  TUNA  UNAD  VNAD  UN%D  
