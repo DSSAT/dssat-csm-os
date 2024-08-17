@@ -109,7 +109,7 @@ C=======================================================================
       ACOUNT = 22  !Number of possible FILEA headers for this crop
       DATA OLAB /
      &    'TDAT  ',     ! 1 BEGIN TUBER GROWTH (dap)
-     &    'TBID  ',     ! 2 Tuber initiation date (added by sohail)
+     &    'TBID  ',     ! 2 Tuber initiation date (added by Khan)
      &    'PDFT  ',     ! 3
      &    'HDAT  ',     ! 4 PHYSIOL. MATURITY (dap)
      &    'UWAH  ',     ! 5 TUBER DRY YIELD (kg/ha)
