@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
+!       4.8.2.15  FO 2024-08-23 PR 434 Commit SHA: ff849ef
 !       4.8.2.14  FO 2024-08-09 PR 429 Commit SHA: c93205a
 !       4.8.2.13  FO 2024-07-13 PR 424 Commit SHA: 0c15449
 !       4.8.2.12  FO 2024-06-13 PR 408 Commit SHA: 4fd64a3
