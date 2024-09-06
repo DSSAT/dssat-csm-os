@@ -28,6 +28,7 @@ C  08/12/2003 CHP Added I/O error checking
 !  02/11/2009 CHP Do not run SoilDyn when ISWWAT = 'N'
 !                 Changed condition for missing or zero OC.
 !  01/24/2023 chp added SAEA to soil analysis in FileX for methane
+!  08/30/2024  FO Added WARNING message if LL > DUL > SAT.
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -1072,7 +1073,7 @@ C  tillage and rainfall kinetic energy
 !         Change to SOM since initialization
 !         SOM units have already been converted to OM (not C)
           dSOM = SomLit(L) - SomLit_init(L) !kg[OM]/ha
-
+          
           IF (dSOM < 0.01) THEN
 !           No changes to soil properties due to organic matter
             BD_SOM(L)   = BD_INIT(L)
@@ -1377,6 +1378,22 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
         TOTAW = TOTAW + (DUL(L) - LL(L)) * DLAYR(L) * 10.
         POROS(L)  = 1.0 - BD(L) / 2.65
         IF (POROS(L) < DUL(L)) POROS(L) = SAT(L)
+      
+!       2024-08-30 FO - Protection for LL < DUL < SAT
+        IF ((DUL(L) - SAT(L)) .GT. 0.0) THEN
+          SAT(L) = DUL(L) + 0.01
+          MSG(1) = 'DUL greater than SAT due to Soil Organic Matter'
+          WRITE(MSG(2),'(A,I1,A,I1,A)') 'Setting: SAT(Layer = ',L,
+     &    ') = DUL(Layer = ',L,') + 0.01'
+          CALL WARNING(2,ERRKEY,MSG)
+        ENDIF
+        IF ((LL(L) - DUL(L)) .GT. 0.0) THEN
+          LL(L) = DUL(L) - 0.01
+          MSG(1) = 'LL greater than DUL due to Soil Organic Matter'
+          WRITE(MSG(2),'(A,I1,A,I1,A)') 'Setting: LL(Layer = ',L,
+     &    ') = DUL(Layer = ',L,') + 0.01'
+          CALL WARNING(2,ERRKEY,MSG)
+        ENDIF 
       ENDDO
 
       SOILPROP % BD     = BD     
