@@ -28,6 +28,7 @@
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, DLTN, 
      &     NFlux_L, NFlux_R, NFlux_D, NFlux_U, NORIG, NTEMP,
      &     SWFlux_L, SWFlux_R, SWFlux_D, SWFlux_U, SWV
+      REAL TotSWFlux
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type 
 
 !     2D variables:
@@ -106,6 +107,11 @@
         DO j = 1, NColsTot
           IF (Cell_Type(L,j) > 5 .OR. Cell_Type(L,j) < 3) CYCLE
 
+!         Flux values are in cm3[water]/cm[row length]
+          TotSWFlux = SWFlux_R(L,j) 
+     &              + SWFlux_L(L,j) 
+     &              + SWFlux_D(L,j) 
+     &              + SWFlux_U(L,j)
 !     ------------------------------------------------------------------
 !         To allow N movement across several soil layers within one time
 !         step after a big rain event, a temporary integration of the
@@ -120,19 +126,22 @@
      &        (Cell_Type(L,j) == 4 .AND. j < NColsTot) .OR. 
      &        (Cell_Type(L,j) == 5 .AND. j < NColsTot)) THEN
  
-          IF (SWFlux_R(L,j) .EQ. 0) then
-            Nflux_R(L,j) = 0
-          ELSE
-            WFluxFrac = MAX(0.0, MIN(1.0,
-     &        SWFlux_R(L,j) / (SWV(L,j) * CellArea(L,j))))
-            Nflux_R(L,j) = MAX(0.0, NTEMP(L,j) * FRAC_SOLN(L))*WFluxFrac
-     &        * SWFlux_R(L,j) / 
-     &   (SWFlux_R(L,j) + SWFlux_L(L,j) + SWFlux_D(L,j) + SWFlux_U(L,j))
+            IF (SWFlux_R(L,j) .EQ. 0) THEN
+              Nflux_R(L,j) = 0
+            ELSE
+              WFluxFrac = MAX(0.0, MIN(1.0,
+     &          SWFlux_R(L,j) / (SWV(L,j) * CellArea(L,j))))
+!                 cm3[water] / cm[row lng]   
+!                 -----------------------             * cm2[thick-wid]
+!                 cm3[water] / cm3[thick-wid-row lng]
 
-            NTEMP(L,j)   = NTEMP(L,j)   - Nflux_R(L,j)
-            NTEMP(L,j+1) = NTEMP(L,j+1) + Nflux_R(L,j) 
-!     &                      * ColFrac(L, j) / ColFrac(L, j+1)
-          ENDIF
+!             Nfluxes are in units of kg[N]/ha
+              Nflux_R(L,j) = MAX(0.0, NTEMP(L,j) * FRAC_SOLN(L))
+     &          * WFluxFrac * SWFlux_R(L,j) / TotSWFlux
+
+              NTEMP(L,j)   = NTEMP(L,j)   - Nflux_R(L,j)
+              NTEMP(L,j+1) = NTEMP(L,j+1) + Nflux_R(L,j) 
+            ENDIF
 
 !!           Check that we are not concentrating N at the boundaries
 !            IF (Nflux_R(L,j) > 1.E-6 .AND. NTEMP(L,j+1) > NTEMP(L,j)) 
@@ -160,14 +169,11 @@
             WFluxFrac = MAX(0.0, MIN(1.0,
      &        SWFlux_D(L,j) / (SWV(L,j) * CellArea(L,j))))
             Nflux_D(L,j) = MAX(0.0, NTEMP(L,j) * FRAC_SOLN(L)) 
-     &          * WFluxFrac * SWFlux_D(L,j) / 
-     &         (SWFlux_R(L,j) + SWFlux_L(L,j) + 
-     &          SWFlux_D(L,j) + SWFlux_U(L,j))
+     &          * WFluxFrac * SWFlux_D(L,j) / TotSWFlux
 
             NTEMP(L,j)   = NTEMP(L,j)   - Nflux_D(L,j)
             IF (L < NRowsTot) THEN
               NTEMP(L+1,j) = NTEMP(L+1,j) + Nflux_D(L,j) 
-!     &            * ColFrac(L, j) / ColFrac(L + 1, j)
             ELSE
 !             Accumulate the N lost by leaching below profile depth.
               NLeach(j) = NFlux_D(NRowsTot,j)
@@ -190,6 +196,11 @@
         DO j = NColsTot, 1, -1
           IF (Cell_Type(L,j) > 5 .OR. Cell_Type(L,j) < 3) CYCLE
 !         --------------------------------------------------------------
+          TotSWFlux = SWFlux_R(L,j) 
+     &              + SWFlux_L(L,j) 
+     &              + SWFlux_D(L,j) 
+     &              + SWFlux_U(L,j)
+
 !         Calculate movement to the left (all soil cells except left boundary)
           IF (j > 1) THEN
             IF (SWFlux_L(L,j) .EQ. 0) THEN
@@ -198,13 +209,10 @@
               WFluxFrac = MAX(0.0, MIN(1.0,
      &          SWFlux_L(L,j) / (SWV(L,j) * CellArea(L,j))))
               Nflux_L(L,j) = MAX(0.0, NTEMP(L,j) * FRAC_SOLN(L))*
-     &            WFluxFrac
-     &          * SWFlux_R(L,j) / (SWFlux_R(L,j) + SWFlux_L(L,j) +
-     &            SWFlux_D(L,j) + SWFlux_U(L,j))
-            
+     &            WFluxFrac * SWFlux_R(L,j) / TotSWFlux
+
               NTEMP(L,j)   = NTEMP(L,j)   - Nflux_L(L,j)
               NTEMP(L,j-1) = NTEMP(L,j-1) + Nflux_L(L,j)
-!     &                                  * ColFrac(L,j) / ColFrac(L,j-1)
 
 !           Check that we are not moving N from low to high concentration
 !            IF (NFlux_L(L,j) > 1.E-6 .AND. NTEMP(L,j-1) > NTEMP(L,j)) 
@@ -227,7 +235,6 @@
 !      TOTN = SUM_N2(Cell_Type, NTEMP, ColFrac)
 !      continue
 
-
 !         --------------------------------------------------------------
 !         Calculate movement upward (all soil cells except top boundary)
           IF (L > 1) THEN
@@ -238,9 +245,7 @@
                   WFluxFrac = MAX(0.0, MIN(1.0,
      &                SWFlux_U(L,j) / (SWV(L,j) * CellArea(L,j))))
                   Nflux_U(L,j) = MAX(0.0, NTEMP(L,j) * FRAC_SOLN(L))
-     &              *WFluxFrac * SWFlux_R(L,j) / 
-     &              (SWFlux_R(L,j) + SWFlux_L(L,j) + 
-     &              SWFlux_D(L,j) + SWFlux_U(L,j))
+     &              *WFluxFrac * SWFlux_R(L,j) / TotSWFlux
 
                   NTEMP(L,j)   = NTEMP(L,j)   - Nflux_U(L,j)
                   NTEMP(L-1,j) = NTEMP(L-1,j) + Nflux_U(L,j) !* 

@@ -34,9 +34,10 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       REAL CelNtot, CelNConc, CelNUptake
       REAL CelNO3Conc, CelNH4Conc, CelUreaConc
-      REAL BEDWD, ConvFactor
-      REAL, DIMENSION(MaxRows,MaxCols) :: BedFrac, ColFrac
-
+      REAL Wtot, EPTot, ESTot
+      REAL DeltaSWtot, DeltaNTot
+      REAL ConvFactor
+      REAL, DIMENSION(MaxRows,MaxCols) :: CelNtot_Y, Wtot_Y
       TYPE (CellType) CELLS(MaxRows,MaxCols), CellDetail
 
 !     ------------------------------------------------------------------
@@ -73,12 +74,13 @@ C  03/04/2005 CHP wrote based on SoilNBal
       WRITE (CLunn,1130)
  1130 FORMAT(
      &'@YEAR DOY   DAS ROW COL',
-     &'    TotalN      SNO3      SNH4      UREA',
+     &'    TotalN    DeltaN      SNO3      SNH4      UREA',
      &'     NConc   NO3conc   NH4conc  UREAconc',
      &'     NFERT    NMiner   NUPtake      NGHG',
      &'    NFluxR    NFluxL    NFluxD    NFluxU',
      &'       RLV',
-     &'       SWV        ES        EP   DripIrr      RAIN',
+     &'       SWV     SWTot   DeltaSW     ESTot     EPTot',
+     &'        ES        EP   DripIrr      RAIN',
      &'    WFluxR    WFluxL    WFluxD    WFluxU')
 
       ENDIF
@@ -97,9 +99,6 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !***********************************************************************
 !     Soil detail output
       Cell_Type = CELLS % Struc % Cell_Type
-      BEDWD   = BedDimension % BEDWD
-      ColFrac = BedDimension % ColFrac
-      BedFrac = BedDimension % BedFrac
 
       DO row = 1, NRowsTot
         DO col = 1, NColsTot
@@ -115,7 +114,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &      CellDetail % state % UREA
           
 !         Cell conversion from kg/ha to ppm
-          ConvFactor = SOILPROP % kg2ppm(row) / ColFrac(row,col) * 2.0
+          ConvFactor = SOILPROP % kg2ppm(row) 
+     &        / BedDimension % ColFrac(row,col) * 2.0
           
           CelNConc = CelNtot * ConvFactor
           CelNO3Conc = CellDetail % State % SNO3 * ConvFactor
@@ -126,11 +126,29 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &      CellDetail % rate % NO3Uptake + 
      &      CellDetail % rate % NH4Uptake
 
+          WTot = CellDetail % State % SWV * CellDetail % Struc %CellArea
+          EPTot = CellDetail % rate % EP_RATE / 10. 
+     &       * CellDetail % Struc % Width
+          ESTot = CellDetail % rate % ES_RATE / 10. 
+     &       * CellDetail % Struc % Width
+          DeltaSWTot = WTot - Wtot_Y(row,col)
+
+          IF (DAS == 0) THEN
+            DeltaSWTot = 0.0
+            DeltaNTot  = 0.0
+          ELSE
+            DeltaSWTot = WTot - Wtot_Y(row,col)
+            DeltaNTot  = CelNtot - CelNtot_Y(row,col)
+          ENDIF
+          Wtot_Y(row,col) = WTot
+          CelNtot_Y(row,col) = CelNtot
+
           WRITE (CLunn,1325) 
      &      YR, DOY, DAS, row, col, 
 
 !           N Variables
      &      CelNtot, 
+     &      DeltaNTot,
      &      CellDetail % State % SNO3, 
      &      CellDetail % State % SNH4, 
      &      CellDetail % State % Urea,
@@ -152,6 +170,10 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
 !           Water variables
      &      CellDetail % state % SWV,
+     &      WTot,
+     &      DeltaSWTot, 
+     &      ESTot, 
+     &      EPTot,
      &      CellDetail % rate % ES_RATE,
      &      CellDetail % rate % EP_RATE,
      &      CellDetail % rate % DripIrr,

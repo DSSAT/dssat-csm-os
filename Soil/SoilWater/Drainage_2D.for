@@ -151,12 +151,12 @@ C=======================================================================
   
           IF ((Cell_Type(i,j) == 3 .AND. j == FurCol1-1) .OR.
      &        (Cell_Type(i,j) == 5 .AND. j == NColsTot)) THEN
-!           No lateral flow into furrow from bed (plastic cover) and
+!           No lateral flow into furrow from bed (assume) and
 !           no lateral flow at centerline of furrow (symmetry)
             H_out(i,j) = 0.0
           ELSE
-!!           Use arithmetic mean of diffusion coefficients in adjacent cells
-!            DiffusH = 0.5 * (Diffus(i,j) + Diffus(i,j+1)) 
+!!          Use arithmetic mean of diffusion coefficients in adjacent cells
+!           DiffusH = 0.5 * (Diffus(i,j) + Diffus(i,j+1)) 
 !           Use only diffus from cell (i,j)
 !           DiffusH =Diffus(i,j) 
             DiffusH = SQRT(Diffus(i,j) * Diffus(i,j+1))

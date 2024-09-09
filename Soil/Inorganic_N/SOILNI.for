@@ -20,7 +20,8 @@ C  organic and inorganic sections.
 !    NOTES on 2D integration:
 !    - 2D simulation is for half a row. When converting between 1D and 2D
 !         arrays, the ColFrac array is used. This is defined as 
-!         the cell width divided by the half row spacing. 
+!         the cell width divided by the simulated row width (i.e., full row
+!         width for 1D simulations and half row width for 2D simulations). 
 !    - Additions of N to the system from fertilizer and mineralization
 !         need to be halved when working with 2D simulations (because we 
 !         are simulating half a row).
