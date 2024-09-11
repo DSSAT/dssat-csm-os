@@ -72,6 +72,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    SEASINIT = 2, 
      &    RATE     = 3,
      &    EMERG    = 3,  !Used for some plant processes.  
+     &    SDTime   = 30, !Sub-daily time step used for 2D model
      &    INTEGR   = 4,  
      &    OUTPUT   = 5,  
      &    SEASEND  = 6,

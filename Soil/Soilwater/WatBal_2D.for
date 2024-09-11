@@ -44,6 +44,8 @@
       USE Cells_2D
       USE ModuleData
       USE Interface_OPWBAL
+      USE NFLUXts
+
       IMPLICIT NONE
       EXTERNAL WATERTABLE, DRAINAGE_2D, ROOTWU_2D, 
      &  WBSUM_2D, WBAL_2D, CALC_SW_VOL, WBAL_2D_TS, 
@@ -71,7 +73,7 @@
       Integer DripNumTot, iHr
       INTEGER NLAYR, HR, IrrigIndex, LIMIT_2D
       INTEGER DripNumTotArr(NDrpLn), IrrIdxArr(NDrpLn)
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
+!     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
 
 !     temp chp
       INTEGER NextUpdate, Count, CritCell(2), DAYCOUNT
@@ -102,7 +104,7 @@
 
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       REAL, DIMENSION(MaxCols) :: WINF_col, Drain_col
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ES_mm, ColFrac
+      REAL, DIMENSION(MaxRows,MaxCols) :: ES_mm, ColFrac
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, mm_2_vf
       REAL, DIMENSION(MaxRows,MaxCols) :: CellInf, CellDrip
       REAL, DIMENSION(MaxRows,MaxCols) :: RWU_2D, RWU_2D_frac
@@ -967,8 +969,8 @@
      &    SOILPROP, SWV_avail, TimeIncr, WCr,         !Input
      &    SWV_ts, SWFh_ts, SWFv_ts)                   !Output
 
-        ! Here LatFlow_ts is due to the drainage of layer LIMIT_2D 
-        ! here the drainage is from first layer to LIMIT_2D
+!       Here LatFlow_ts is due to the drainage of layer LIMIT_2D 
+!       Drainage is from first layer to LIMIT_2D
         DRAIN_ts = 0.0
         DRAIN_col = 0.0
         DO col = 1, NColsTot
@@ -983,58 +985,60 @@
         SWV_avail = SWV_ts
         SWV_D = SWV_ts
 
-!       ---------------------------------------------------------------
-!       Update soil water process accumulators
-        DO i = 1, NRowsTot
-          DO j = 1, NColsTot
-            SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
-            CASE (3,4,5)
+!       Call NFLUX on sub-daily time step to computer N movement with water
+        CALL NFLUXts_2D (
+     &    CELLS, SWV_ts, SWFh_ts, SWFv_ts)       !Input
 
-!             Horizontal flow (cm2) left and right.
-!             SWFlux_L and SWFlux_R are both positive values and represent
-!               the amount of water flowing thru the L and R cell boundaries.
-              IF (SWFh_ts(i,j) < -1.E-10) THEN
-!               Negative horizontal flow = flow to the left from (i,j+1)
-                SWFlux_L(i,j+1) = SWFLUX_L(i,j+1) - SWFh_ts(i,j)
-              ELSEIF (SWFh_ts(i,j) > 1.E-10) THEN
-!               Positive horizontal flow = flow to the right from (i,j)
-                SWFlux_R(i,j) = SWFLUX_R(i,j) + SWFh_ts(i,j)
-              ENDIF
-
-!@ Need to consider upflow from water table for N movement. - Do this after water balance complete.
-!              ! Add by Jin Wu in Feb. 2011
-!              if (i .EQ. LIMIT_2D) THEN
-!                 EvapFlow(LIMIT_2D,j) =
-!     &                EvapFlow(LIMIT_2D,j) +CapilaryFlow(J) *TimeIncr
-!                 Do iRow= LIMIT_2D, NLAYR !NRowsTot
-!                    EvapFlow(LIMIT_2D,j) = EvapFlow(LIMIT_2D,j)+
-!     &                EvapFlow(iRow,j)
-!                 Enddo
-!              Endif
-!             Vertical flow (cm2) includes upflow.
-!             SWFlux_U and SWFlux_D are both positive values and represent
-!               the amount of water flowing thru the upper and lower cell boundaries.
-! CHECK UNITS FOR Upflow_2D(i,j).  THESE SHOULD BE PER TIME STEP, NOT PER DAY!
-              IF (SWFv_ts(i,j) < -1.E-10) THEN
-!               Negative vertical flow = upward flow from (i+1,j)
-                SWFlux_U(i+1,j) = SWFLUX_U(i+1,j) - SWFv_ts(i,j) 
-              ELSEIF (SWFv_ts(i,j) > 1.E-10) THEN
-!               Positive vertical flow = downward flow from (i,j)
-!                SWFlux_D(i,j+1) = SWFLUX_D(i,j+1) + SWFv_ts(i,j)
-                SWFlux_D(i,j) = SWFLUX_D(i,j) + SWFv_ts(i,j)
-              ENDIF
-            CASE DEFAULT; CYCLE
-            END SELECT
-          ENDDO
-        ENDDO
+!!       ---------------------------------------------------------------
+!!       Update soil water process accumulators
+!        DO i = 1, NRowsTot
+!          DO j = 1, NColsTot
+!            SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
+!            CASE (3,4,5)
+!
+!!             Horizontal flow (cm2) left and right.
+!!             SWFlux_L and SWFlux_R are both positive values and represent
+!!               the amount of water flowing thru the L and R cell boundaries.
+!              IF (SWFh_ts(i,j) < -1.E-10) THEN
+!!               Negative horizontal flow = flow to the left from (i,j+1)
+!                SWFlux_L(i,j+1) = SWFLUX_L(i,j+1) - SWFh_ts(i,j)
+!              ELSEIF (SWFh_ts(i,j) > 1.E-10) THEN
+!!               Positive horizontal flow = flow to the right from (i,j)
+!                SWFlux_R(i,j) = SWFLUX_R(i,j) + SWFh_ts(i,j)
+!              ENDIF
+!
+!!@ Need to consider upflow from water table for N movement. - Do this after water balance complete.
+!!              ! Add by Jin Wu in Feb. 2011
+!!              if (i .EQ. LIMIT_2D) THEN
+!!                 EvapFlow(LIMIT_2D,j) =
+!!     &                EvapFlow(LIMIT_2D,j) +CapilaryFlow(J) *TimeIncr
+!!                 Do iRow= LIMIT_2D, NLAYR !NRowsTot
+!!                    EvapFlow(LIMIT_2D,j) = EvapFlow(LIMIT_2D,j)+
+!!     &                EvapFlow(iRow,j)
+!!                 Enddo
+!!              Endif
+!!             Vertical flow (cm2) includes upflow.
+!!             SWFlux_U and SWFlux_D are both positive values and represent
+!!               the amount of water flowing thru the upper and lower cell boundaries.
+!! CHECK UNITS FOR Upflow_2D(i,j).  THESE SHOULD BE PER TIME STEP, NOT PER DAY!
+!              IF (SWFv_ts(i,j) < -1.E-10) THEN
+!!               Negative vertical flow = upward flow from (i+1,j)
+!                SWFlux_U(i+1,j) = SWFLUX_U(i+1,j) - SWFv_ts(i,j) 
+!              ELSEIF (SWFv_ts(i,j) > 1.E-10) THEN
+!!               Positive vertical flow = downward flow from (i,j)
+!!                SWFlux_D(i,j+1) = SWFLUX_D(i,j+1) + SWFv_ts(i,j)
+!                SWFlux_D(i,j) = SWFLUX_D(i,j) + SWFv_ts(i,j)
+!              ENDIF
+!            CASE DEFAULT; CYCLE
+!            END SELECT
+!          ENDDO
+!        ENDDO
 
         Call Calc_SW_Vol(
      &    CellArea, Cell_Type, HalfRow, SWV_ts,             !Input
      &    SW_vol_tot)                                       !Output
+
         ! Output to SoilWat_ts.OUT and CellDetail.OUT
-        if (IRR_ts .gt. 0) then
-          continue
-        endif
         Call Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr, !Input
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,              !Input
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,              !Input

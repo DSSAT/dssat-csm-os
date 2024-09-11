@@ -78,11 +78,12 @@ C=======================================================================
       USE ModuleData
       USE FloodModule
       USE ModSoilMix
+      USE NFLUXts
+
       IMPLICIT  NONE
       EXTERNAL DENIT_CERES, INCDAT, YR_DOY, OPSOILNI, 
      &  SOILNI_INIT, NCHECK_INORG, FLOOD_CHEM, OXLAYER, DENIT_DAYCENT, 
      &  NOX_PULSE, INCYD, DAYCENT_DIFFUSIVITY, NFLUX
-      EXTERNAL NFLUX_2D !, CellNDetail_2D
       EXTERNAL SUM_N  !Temp CHP
 
       SAVE
@@ -94,7 +95,7 @@ C=======================================================================
 !     2D variables
       Type (CellType) Cells(MaxRows,MaxCols)
       INTEGER FurRow1, FurCol1
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type, DLAG_2D
+      INTEGER, DIMENSION(MaxRows,MaxCols) :: DLAG_2D
       REAL HalfRow, BEDWD
       REAL, DIMENSION(MaxRows,MaxCols) :: DLTSNH4_2D, DLTSNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: DLTUREA_2D
@@ -103,10 +104,6 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV, TFNITY_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UNH4_2D, UNO3_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
-      REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_L,NFlux_R,NFlux_D
-      REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_U
-      REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_UREA_L, NFlux_UREA_R
-      REAL, DIMENSION(MaxRows,MaxCols) :: NFlux_UREA_D, NFlux_UREA_U
 !     REAL, DIMENSION(MaxRows,MaxCols) :: MINERN_2D, IMMOBN_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: NITRIFppm, NITRIF_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: N2Onitrif_2D, nNOflux_2D
@@ -159,7 +156,6 @@ C=======================================================================
       REAL CNETMINRN                                        !Net miner
       REAL CNUPTAKE,  WTNUP                                 !N uptake
       REAL CLeach,    TLeachD                               !N leaching
-      REAL TLeachD_UREA
       REAL CNTILEDR,  NTILEDR                               !N tile loss
       REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O nitrif
       REAL CN2Odenit, TN2OdenitD,              N2ODenit(NL) !N2O denitr
@@ -191,6 +187,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) ::DLTSNO3_DIFF_2D, 
      &                  DLTSNH4_DIFF_2D, DLTUREA_DIFF_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: CellFert
+      REAL, DIMENSION(MaxRows,MaxCols) :: DeltaSNO3, DeltaUREA
 
 !     *** TEMP DEBUGGIN CHP
       REAL TNOM, newNNOM
@@ -363,10 +360,8 @@ C=======================================================================
         IF (SIM2D) THEN
 !         Initialize 2D N flux routines (1D is rate only)
           CALL NFLUX_2D (DYNAMIC,
-     &      ADCOEF, BD, CELLS, DUL, SNO3_2D,            !Input
-     &      1, SWV,                                     !Input
-     &      DLTSNO3_2D, CLeach, TLeachD,                !Output
-     &      NFlux_L, NFlux_R, NFlux_D, NFlux_U)         !Output
+     &      CELLS, SOILPROP,                            !Input
+     &      CLeach, TLeachD, DeltaSNO3, DeltaUrea)      !Output
         ENDIF
 
         SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
@@ -1227,35 +1222,12 @@ C=======================================================================
 !*************************************************************************************************
 !     2D NFLUX is done after the 1D process rates have been added to DLTSNH4_2D and DLTSNO3_2D
       IF (Sim2D) THEN 
-        IF (IUON) THEN
-          NSOURCE = 1    !Urea.
-          CALL NFLUX_2D (DYNAMIC, 
-     &      ADCOEF, BD, CELLS, DUL, UREA_2D,                !Input
-     &      NSOURCE, SWV,                                   !Input
-     &      DLTUREA_2D, CLeach, TLeachD_UREA,               !Output
-     &      NFlux_UREA_L, NFlux_UREA_R, NFlux_UREA_D,       !Output
-     &      NFlux_UREA_U)                                   !Output
-        ENDIF
+        CALL NFLUX_2D (DYNAMIC,
+     &      CELLS, SOILPROP,                            !Input
+     &      CLeach, TLeachD, DeltaSNO3, DeltaUrea)      !Output
 
-        NSOURCE = 2   !NO3.
-        CALL NFLUX_2D (DYNAMIC, 
-     &      ADCOEF, BD, CELLS, DUL, SNO3_2D,                !Input
-     &      NSOURCE, SWV,                                   !Input
-     &      DLTSNO3_2D, CLeach, TLeachD, NFlux_L, NFlux_R,  !Output
-     &      NFlux_D, NFlux_U)                               !Output
-        
-        IF (IUON) THEN
-          TLeachD = TLeachD + TLeachD_UREA
-          NFlux_L = NFlux_L + NFlux_UREA_L
-          NFlux_R = NFlux_R + NFlux_UREA_R
-          NFlux_D = NFlux_D + NFlux_UREA_D
-          NFlux_U = NFlux_U + NFlux_UREA_U
-        ENDIF
-
-        Cells % Rate % NFlux_L = NFlux_L
-        Cells % Rate % NFlux_R = NFlux_R
-        Cells % Rate % NFlux_D = NFlux_D
-        Cells % Rate % NFlux_U = NFlux_U
+        DLTSNO3_2D = DLTSNO3_2D + DeltaSNO3
+        DLTUREA_2D = DLTUREA_2D + DeltaUrea
 
         CNTILEDR = 0.0
         NTILEDR = 0.0

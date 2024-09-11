@@ -306,8 +306,7 @@ C=======================================================================
 !        !    Endif
           Endif
           V_in(i+1,j) = V_out(i,j)
-         
-         
+
 !         Cells within water table should remain saturated
 ! This subroutine does not calculate SWV_ts(i,j) below LIMIT_2D, thus remove the following
         !  IF (WatTable) THEN
