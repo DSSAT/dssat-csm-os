@@ -108,7 +108,7 @@
       DeltaUrea = UREAts - CELLS % State % UREA
 
 !     At the end of the day, send back leached amounts and Delta N values
-      TLeachD = DayNLeach
+      TLeachD = DayNLeach * 2.0 !Double for the entire field
       CLeach = CLeach + TLeachD
 
       First_ts = .TRUE.
@@ -140,6 +140,10 @@
       REAL ResidualNO3, ResidualUREA
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3Fh, UreaFh, NO3Fv, UreaFv
 
+!     temp chp
+      REAL CA, DNL, FSNO3, SNO3, UREA, SNO31, SNO32
+      REAL, DIMENSION(MaxRows,MaxCols) :: SNO3init, UREAinit
+
 !***********************************************************************
 !***********************************************************************
 !     Sub-daily time step rate calculations 
@@ -158,6 +162,11 @@
         ResidualUREA = 0.0
 
         First_ts = .FALSE.
+
+!       temp chp
+        SNO3init = SNO3ts
+        UREAinit = UREAts
+
       ENDIF
 
 !     --------------------------------------------------------------
@@ -165,6 +174,14 @@
       DO i = 1, NRowsTot
         DO j = 1, NColsTot
           IF (Cell_Type(i,j) > 5 .OR. Cell_Type(i,j) < 3) CYCLE
+
+!         temp chp
+          CA = CellArea(i,j)
+          FSNO3 = FRAC_SOLN_no3(i)
+          SNO3 = SNO3ts(i,j)
+          UREA = UREAts(i,j)
+          SNO31= SNO3ts(i+1,j)  !BELOW CELL
+          SNO32= SNO3ts(i,j+1)  !to the right 
 
 !         Horizontal N Flux (all soil cells except right boundary)
           IF ((Cell_Type(i,j) == 3 .AND. j < BedDimension % FurCol1 - 1)
@@ -218,10 +235,13 @@
             ENDIF
 !           ****************************
 
+!           temp chp
+            DNL = DayNLeach
+
           ELSE
 !           Negative vertical fluxes from cell(i+1,j) to cell(i,j)
 !           Calculate the fraction of water that moves out of cell(i+1,j) with this flux
-            FracSWVv = -SWFv_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
+            FracSWVv = SWFv_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
             NO3Fv(i,j) = MAX(0.0, SNO3ts(i+1,j) * FRAC_SOLN_NO3(i))
      &        * FracSWVv
             UreaFv(i,j) = MAX(0.0, UREAts(i+1,j) * FRAC_SOLN_urea(i))

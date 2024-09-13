@@ -180,6 +180,10 @@ C=======================================================================
       INTEGER TILDATE
       REAL MIXPCT, TDEP
 
+!     Added for banded fertilizer application, 2D
+      INTEGER NCol, col
+      REAL FertWidth, TotWidth
+
 !     2D integration
       REAL RESID3, RESID4, RESID5, SNO3_TEMP, SNH4_TEMP, UREA_TEMP
       REAL, DIMENSION(NL) :: DLTSNO3_SAVE, DLTSNH4_SAVE, DLTUREA_SAVE
@@ -194,7 +198,7 @@ C=======================================================================
       REAL NNOM_a, NNOM_b
       REAL TotN, NRow(NL)
 
-      REAL CumSumFert, FieldFac, CellFactor
+      REAL CumSumFert, FieldFac, CellFac
       REAL AddSNO3, AddSNH4, AddUrea
 
 !-----------------------------------------------------------------------
@@ -481,12 +485,39 @@ C=======================================================================
 
 !         Distribute horizontally based on application type.
           SELECT CASE (TRIM(FERTDATA % AppType))
-          CASE ('BANDED','POINT')
-!           Banded or point application goes to  column 1, for each layer
+          CASE ('POINT')
+!           Point application goes to  column 1, for each layer
             DLTSNO3_2D(L,1) = DLTSNO3_2D(L,1) + AddSNO3
             DLTSNH4_2D(L,1) = DLTSNH4_2D(L,1) + AddSNH4
             DLTUREA_2D(L,1) = DLTUREA_2D(L,1) + AddUrea
             CellFert(L,1) = AddSNO3 + AddSNH4 + AddUrea
+
+          CASE ('BANDED')
+!           Banded application goes to width of bed or plastic mulch, if known,
+!             or 20 cm as a minimum.
+            IF (BedDimension% RaisedBed .OR. BedDimension% PMCover) THEN
+              FertWidth = BEDWD / 2.0
+            ELSE
+              FertWidth = 10.
+            ENDIF
+
+            Ncol = 0
+            TotWidth = 0.0
+            DO col = 1, NColsTot
+              IF (TotWidth > FertWidth - 0.5) EXIT
+              NCol = NCol + 1
+              TotWidth = TotWidth + CELLS(L,col) % Struc % Width
+            ENDDO
+
+            FertWidth = TotWidth
+
+            DO col = 1, NCol
+              CellFac = CELLS(L,col) % Struc % Width / FertWidth 
+              DLTSNO3_2D(L,col) = DLTSNO3_2D(L,col) + AddSNO3 * CellFac
+              DLTSNH4_2D(L,col) = DLTSNH4_2D(L,col) + AddSNH4 * CellFac
+              DLTUREA_2D(L,col) = DLTUREA_2D(L,col) + AddUrea * CellFac
+              CellFert(L,col) = (AddSNO3 + AddSNH4 + AddUrea)*CellFac
+            ENDDO
 
           CASE ('DRIP')
 !           Drip fertigation goes to cell DripRow,DripCol
@@ -505,15 +536,15 @@ C=======================================================================
 !               relative cell width (ColFrac or BedFrac)
               SELECT CASE (Cell_Type(L,J))
 !               Within the bed, fertilizer is concentrated in bed cells
-                CASE (3);   CellFactor = BedFrac(L,J)
-                CASE (4,5); CellFactor = ColFrac(L,J)
+                CASE (3);   CellFac = BedFrac(L,J)
+                CASE (4,5); CellFac = ColFrac(L,J)
                 CASE DEFAULT; CYCLE
               END SELECT
 
-              DLTSNO3_2D(L,J) = DLTSNO3_2D(L, J) + AddSNO3 * CellFactor
-              DLTSNH4_2D(L,J) = DLTSNH4_2D(L, J) + AddSNH4 * CellFactor
-              DLTUREA_2D(L,J) = DLTUREA_2D(L, J) + AddUrea * CellFactor
-              CellFert(L,J) = (AddSNO3 + AddSNH4 + AddUrea) * CellFactor
+              DLTSNO3_2D(L,J) = DLTSNO3_2D(L, J) + AddSNO3 * CellFac
+              DLTSNH4_2D(L,J) = DLTSNH4_2D(L, J) + AddSNH4 * CellFac
+              DLTUREA_2D(L,J) = DLTUREA_2D(L, J) + AddUrea * CellFac
+              CellFert(L,J) = (AddSNO3 + AddSNH4 + AddUrea) * CellFac
             ENDDO
           END SELECT
 
@@ -1218,6 +1249,12 @@ C=======================================================================
         ENDDO
       ENDDO
 
+!     temp chp
+      IF (ABS(RESID3) > 0.0 .OR. 
+     &    ABS(RESID4) > 0.0 .OR. ABS(RESID5) > 0.0) THEN
+        CONTINUE
+      ENDIF
+
 !*************************************************************************************************
 !*************************************************************************************************
 !     2D NFLUX is done after the 1D process rates have been added to DLTSNH4_2D and DLTSNO3_2D
@@ -1341,37 +1378,6 @@ C=======================================================================
             TUREA = TUREA + UREA_2D(L,J) * FieldFac
           END SELECT
 
-!     Already calculated WTNUP in rate section
-!         Calculate this where uptake is removed from the soil.
-!         WTNUP in g[N]/m2 - convert to kg/ha in CNUPTAKE (below) 
-!         WTNUP = WTNUP + (UNO3_2D(L,J) + UNH4_2D(L,J))/10.*ColFrac(L,J)
-!         WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
-
-!!         For detailed cell output (commented out for now)
-!             Cell_Ndetail % NFlux_L_out(L, J)  = NFlux_L(L, J) 
-!             Cell_Ndetail % NFlux_R_out(L, J)  = NFlux_R(L, J)
-!             Cell_Ndetail % NFlux_D_out(L, J)  = NFlux_D(L, J)
-!             Cell_Ndetail % NFlux_U_out(L, J)  = NFlux_U(L, J) 
-!          if (L > 1) then
-!              if (Cell_Type(L - 1, J) .NE. 0) then
-!                Cell_Ndetail % NFlux_U_in(L, J)  = NFlux_D(L - 1, J)
-!     &                          * ColFrac(L-1, j) / ColFrac(L, J)
-!              endif
-!          endif
-!          if (L < NRowsTot) then
-!              Cell_Ndetail % NFlux_D_in(L, J)  = NFlux_U(L + 1, J)
-!     &                           * ColFrac(L+1, j) / ColFrac(L, J)
-!          endif
-!          if (J > 1) then
-!              Cell_Ndetail % NFlux_L_in(L, J)  = NFlux_R(L, J - 1)
-!     &                           * ColFrac(L, j-1) / ColFrac(L, J)
-!          endif
-!          if (J < NColsTot) then
-!              if (Cell_Type(L, J + 1) .NE. 0) then
-!                Cell_Ndetail % NFlux_R_in(L, J)  = NFlux_L(L, J + 1)
-!     &                               * ColFrac(L, j+1) / ColFrac(L, J)
-!              endif
-!          Endif
         ENDDO
       ENDDO
 
