@@ -116,7 +116,7 @@ C=======================================================================
      &    'PWAM  ',     ! 6
      &    'H#AM  ',     ! 7
      &    'UYAH  ',     ! 8 TUBER FRESH YIELD (Mg/ha)
-     &    'WMAX  ',     ! 9 WMAX (added by Sohail)
+     &    'WMAX  ',     ! 9 WMAX (added by Khan))
      &    'TWAH  ',     !10 TUBER+TOP (kg/ha) HARVEST
 
 !        08/11/2005 Change BWAH to BWAM - byproduct produced to maturity
