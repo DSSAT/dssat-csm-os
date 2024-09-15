@@ -25,8 +25,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
-      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI, PT_BTHTIME_1, 
-     &         PT_BTHTIME_2
+      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI, PT_BTHTIME_2    
       SAVE
 
       LOGICAL   COND, EMERGE
@@ -137,7 +136,7 @@ C=======================================================================
          SSEN=1.0 !Assumed 
 
        CALL PT_BTHTIME_2 (
-     &     ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,  !Input, removed DIF, DAYL
+     &     ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,  !Input
      &     TSEN, SBD, SOD, SCD, SSEN,    
      &     TDU_2, SDU_2)                                 !Output
 
