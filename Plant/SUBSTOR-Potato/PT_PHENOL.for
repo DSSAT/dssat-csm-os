@@ -87,7 +87,7 @@ C=======================================================================
       CUMDTT = 0.0
       CUMSTT = 0.0
       DTT    = 0.0
-      STT    = 0.0 ! Reason for including here and putting value 0.0?
+      STT    = 0.0 
       GNUP   = 0.0
       MAXLAI = 0.0
       RTF    = 0.0
@@ -136,16 +136,6 @@ C=======================================================================
          !SSEN=0.3 !Assumed 
          SSEN=1.0 !Assumed 
 
-         ! DSSAT's ISTAGE to GECROSS DS (Development Stage) mapping
-         ! DS = 0 -> germination, emergence (ISTAGE 5, 6 & 7)
-         ! DS = 1 -> tuber initiation (ISTAGE 1)
-         ! DS = 2 -> maturity (ISTAGE 2)
-c         IF (ISTAGE .GE. 5 .AND. ISTAGE .LE. 7) THEN
-c             DS = 0.0
-c         ELSE
-c             DS = ISTAGE
-c         ENDIF
- 
        CALL PT_BTHTIME_2 (
      &     ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,  !Input, removed DIF, DAYL
      &     TSEN, SBD, SOD, SCD, SSEN,    
