@@ -145,16 +145,7 @@ c             DS = 0.0
 c         ELSE
 c             DS = ISTAGE
 c         ENDIF
-
-       CALL PT_BTHTIME_1 (
-     &      ISTAGE, TMAX, TMIN, TBD, TOD, TCD,  !Input, removed DIF, DAYL
-     &      TSEN, SBD, SOD, SCD, SSEN,  
-     &      TDU_1, SDU_1)                                 !Output
-     
-         ! replace DTT and STT with the one calculated by PT_BTHTIME
-          !DTT = TDU_1
-          !STT = SDU_1
-            
+ 
        CALL PT_BTHTIME_2 (
      &     ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,  !Input, removed DIF, DAYL
      &     TSEN, SBD, SOD, SCD, SSEN,    
