@@ -25,7 +25,8 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
-      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI, PT_BTHTIME
+      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI, PT_BTHTIME_1, 
+     &         PT_BTHTIME_2
       SAVE
 
       LOGICAL   COND, EMERGE
@@ -47,7 +48,7 @@ C=======================================================================
       REAL SEEDRV, SENLA, SPGROF, SPRLAP, SPRLTH, SPRWT, SWSD
       REAL TC, TCPLUS, TEMP, TII, TMAX, TMIN, TOPSN, TOTNUP, TSPRWT
       REAL XDEPTH, XDTT, XPLANT, XSTAGE
-      REAL DIF, TBD, TOD, TCD, TSEN, TDU, SDU, SBD, SOD, SCD ! Added by Khan
+      REAL TBD, TOD, TCD, TSEN, TDU_1, SDU_1, SBD, SOD, SCD, DIF ! Added by Khan
       REAL SSEN, DTT, TDU_2, SDU_2 ! Added by Khan
 
       REAL, DIMENSION(NL) :: DLAYR, LL, ST, SW
@@ -92,7 +93,10 @@ C=======================================================================
       RTF    = 0.0
       SENLA  = 0.0
       TOTNUP = 0.0
-      TDU    = 0.0
+      TDU_1  = 0.0
+      SDU_1  = 0.0
+      TDU_2  = 0.0
+      SDU_2  = 0.0
       ISDATE = 0
 
 !***********************************************************************
@@ -120,15 +124,17 @@ C=======================================================================
          TBD=2.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          TOD=24.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          TCD=35.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
-         TSEN=0.2 !Assumed 
+         !TSEN=0.2 !Assumed 
+         TSEN=1.0 !Assumed 
          !SBD=2.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
          !SOD=24.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171    
          !SCD=36.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
-         !SSEN=0.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171  
+         !SSEN=0.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171 
          SBD=2.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          SOD=23.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)   
          SCD=33.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
-         SSEN=0.3 !Assumed 
+         !SSEN=0.3 !Assumed 
+         SSEN=1.0 !Assumed 
 
          ! DSSAT's ISTAGE to GECROSS DS (Development Stage) mapping
          ! DS = 0 -> germination, emergence (ISTAGE 5, 6 & 7)
@@ -140,23 +146,23 @@ c         ELSE
 c             DS = ISTAGE
 c         ENDIF
 
-         CALL PT_BTHTIME (
-     &      ISTAGE,  TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
+       CALL PT_BTHTIME_1 (
+     &      ISTAGE, TMAX, TMIN, TBD, TOD, TCD,  !Input, removed DIF, DAYL
      &      TSEN, SBD, SOD, SCD, SSEN,  
-     &      TDU, SDU)                                 !Output
+     &      TDU_1, SDU_1)                                 !Output
      
          ! replace DTT and STT with the one calculated by PT_BTHTIME
-         DTT = TDU
-         STT = SDU
+          !DTT = TDU_1
+          !STT = SDU_1
             
        CALL PT_BTHTIME_2 (
-     &      ISTAGE,  L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,  !Input
-     &      TSEN, SBD, SOD, SCD, SSEN,  
-     &      TDU_2, SDU_2)                                 !Output
+     &     ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,  !Input, removed DIF, DAYL
+     &     TSEN, SBD, SOD, SCD, SSEN,    
+     &     TDU_2, SDU_2)                                 !Output
 
          ! replace DTT & STT with the one calculated by PT_BTHTIME_2
-         !DTT = TDU_2
-         !STT = SDU_2
+         DTT = TDU_2
+         STT = SDU_2
 
          CUMDTT = CUMDTT + DTT            ! Update thermal time
          CUMSTT = CUMSTT + STT
