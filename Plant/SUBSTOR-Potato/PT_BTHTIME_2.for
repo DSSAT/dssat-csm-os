@@ -37,7 +37,7 @@ C
 C=======================================================================
 
       SUBROUTINE PT_BTHTIME_2 (
-     &    ISTAGE, L0, ST, TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD,   !Input
+     &    ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,   !Input, removed DIF, DAYL
      &    TSEN, SBD, SOD, SCD, SSEN,         !Input
      &    TDU_2, SDU_2)                                     !Output TDU, SDU
       
@@ -50,9 +50,9 @@ C=======================================================================
       IMPLICIT NONE
       !INTEGER DS
       INTEGER ISTAGE, L0, I
-      REAL TMAX, TMIN, DIF, DAYL, TBD, TOD, TCD, TSEN, TDU_2, SDU_2
+      REAL TMAX, TMIN, TBD, TOD, TCD, TSEN, TDU_2, SDU_2 !removed DIF, DAYL
       REAL SBD, SOD, SCD, SSEN
-      REAL SUNRIS, SUNSET, TT, TD, TU, SS, SD, SU  !removed XTEMP, TMEAN
+      REAL TT, TU, SS, SU, TMEAN  !removed XTEMP, TD, SD, SUNRIS, SUNSET
       REAL ST(NL)
       SAVE
       ! To test whether model is working with repect to temperture
@@ -70,12 +70,13 @@ C=======================================================================
 ! As TBD, TOD, TCD and TSEN are declared as input variables,
 ! these constant values must be provided at the call site.
 
+! Disabled line numbers73-76
 !*---timing for sunrise and sunset
-      SUNRIS = 12.0 - 0.5*DAYL
-      SUNSET = 12.0 + 0.5*DAYL
+!     SUNRIS = 12.0 - 0.5*DAYL
+!     SUNSET = 12.0 + 0.5*DAYL
 
 !*---mean daily temperature
-      !TMEAN  = (TMAX + TMIN)/2.0
+      TMEAN  = (TMAX + TMIN)/2.0
       !XTEMP  = (TMAX + TMIN)/2.0
       TT     = 0.0
       SS     = 0.0
@@ -84,19 +85,20 @@ C=======================================================================
 
       !PRINT 101, 'TMIN', TMIN, 'TMAX', TMAX, 'ST(L0)', ST(L0)
  !101  FORMAT(A5, F6.2, A5, F6.2, A7, F6.2)
+! Disabled line numbers 87-102
 !*---diurnal course of temperature
-      DO 10 I = 1, 24
-        IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
-          !TD = XTEMP+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-          TD = (TMAX + TMIN) / 2.0 + 
-     &    DIF + 0.5 * ABS(TMAX - TMIN) * COS(0.2618 * FLOAT(I - 14))
-          SD = ST(L0)+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-        ELSE
-          !TD = XTEMP    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-          TD = (TMAX + TMIN) / 2.0 + 
-     &    0.5 * ABS(TMAX - TMIN) * COS(0.2618 * FLOAT(I - 14))
-          SD = ST(L0)   +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-        ENDIF
+!      DO 10 I = 1, 24
+!        IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
+!          !TD = XTEMP+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+!          TD = (TMAX + TMIN) / 2.0 + 
+!     &    DIF + 0.5 * ABS(TMAX - TMIN) * COS(0.2618 * FLOAT(I - 14))
+!          SD = ST(L0)+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+!        ELSE
+!          !TD = XTEMP    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+!          TD = (TMAX + TMIN) / 2.0 + 
+!     &    0.5 * ABS(TMAX - TMIN) * COS(0.2618 * FLOAT(I - 14))
+!          SD = ST(L0)   +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
+!        ENDIF
 
         !PRINT 102, 'HR', I, 'SD', SD
  !102    FORMAT(A3, I2, A3, F6.2)
@@ -104,33 +106,35 @@ C=======================================================================
 !*---assuming development rate at supra-optimum (above optimum) temperatures during
 !*   the reproductive phase equals that at the optimum temperature
         ! IF (DS.GT.1.) THEN
-        IF (ISTAGE.EQ.2) THEN
-           TD = MIN (TD,TOD)
-           SD = MIN (SD,SOD)
-        ELSE
-           TD = TD
-           SD = SD
-        ENDIF
+!        IF (ISTAGE.EQ.2) THEN
+!           TD = MIN (TD,TOD)
+!           SD = MIN (SD,SOD)
+!        ELSE
+!           TD = TD
+!           SD = SD
+!        ENDIF
 
 !*---instantaneous thermal unit based on bell-shaped temperature response
-        IF (TD.LT.TBD .OR. TD.GT.TCD) THEN
+        IF (TMEAN.LT.TBD .OR. TMEAN.GT.TCD) THEN
            TU = 0.0
         ELSE
-           TU = (((TCD-TD)/(TCD-TOD))*((TD-TBD)/(TOD-TBD))**
+           TU = (((TCD-TMEAN)/(TCD-TOD))*((TMEAN-TBD)/(TOD-TBD))**
      &          ((TOD-TBD)/(TCD-TOD)))**TSEN
         ENDIF
 
-        IF (SD.LT.SBD .OR. SD.GT.SCD) THEN
+        IF (ST(L0).LT.SBD .OR. ST(L0).GT.SCD) THEN
            SU = 0.0
         ELSE
-           SU = (((SCD-SD)/(SCD-SOD))*((SD-SBD)/(SOD-SBD))**
+           SU = (((SCD-ST(L0))/(SCD-SOD))*((ST(L0)-SBD)/(SOD-SBD))**
      &          ((SOD-SBD)/(SCD-SOD)))**SSEN
         ENDIF
 
-        TT = TT + TU/24.0
-        SS = SS + SU/24.0
+!       TT = TT + TU/24.0
+        TT = TT + TU
+!        SS = SS + SU/24.0
+        SS = SS + SU
 
-  10  CONTINUE
+  !10  CONTINUE
 
 !*---daily thermal unit for phenology
       IF (ISTAGE .LE. 4) THEN
