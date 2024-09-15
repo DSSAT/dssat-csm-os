@@ -1,38 +1,13 @@
-!*----------------------------------------------------------------------*
-!*  SUBROUTINE PT_BTHTIME                                               *
-!*  Purpose: This subroutine calculates the daily amount of thermal day *
-!*           and the average effect of daily temperature on maintenance *
-!*           respiration                                                *
-!*                                                                      *
-!*  FORMAL PARAMETERS:  (I=input,O=output,C=control,IN=init,T=time)     *
-!*                                                                      *
-!*  name   type meaning                                    units  class *
-!*  ----   ---- -------                                    -----  ----- *
-!*  DS      R4  Development stage                            -       I  *
-!*  TMAX    R4  Daily maximum temperature                    oC      I  *
-!*  TMIN    R4  Daily minimum temperature                    oC      I  *
-!*  DIF     R4  Daytime plant-air temperature differential   oC      I  *
-!*  DAYL    R4  Astronomic daylength (base = 0 degrees)      h       I  *
-!*  TBD     R4  Base air temperature for phenology           oC      I  *
-!*  SBD     R4  Base soil temperature for phenology          oC      I  *
-!*  TOD     R4  Optimum air temperature for phenology        oC      I  *
-!*  SOD     R4  Optimum soil temperature for phenology       oC      I  *
-!*  TCD     R4  Ceiling air temperature for phenology        oC      I  *
-!*  SCD     R4  Ceiling soil temperature for phenology       oC      I  *     
-!*  TSEN    R4  Curvature for air temperature response       -       I  *
-!*  SSEN    R4  Curvature for soil temperature response      -       O  *
-!*  TDU     R4  Daily thermal-day unit Air                   -       O  *
-!*  SDU     R4  Daily thermal-day unit Soil                  -       O  *      
-!*----------------------------------------------------------------------*
 C=======================================================================
-C  PT_BTHTIME, Subroutine
+C  PT_BTHTIME_2, Subroutine
 C
 C  Determines Beta thermal time calculations
 C-----------------------------------------------------------------------
 C  Revision history
 C
 C               Written
-C  10/30/2023 MSKhan added Beta thermal time sub-routine following Yin et al., 2003 
+C  10/30/2023 MSKhan added Beta thermal time sub-routine following 
+C  Yin et al., 2003 
 C  
 C=======================================================================
 
