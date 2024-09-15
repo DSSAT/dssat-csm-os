@@ -37,9 +37,9 @@ C
 C=======================================================================
 
       SUBROUTINE PT_BTHTIME_2 (
-     &    ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,   !Input, removed DIF, DAYL
+     &    ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,   !Input
      &    TSEN, SBD, SOD, SCD, SSEN,         !Input
-     &    TDU_2, SDU_2)                                     !Output TDU, SDU
+     &    TDU_2, SDU_2)                      !Output 
       
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -48,11 +48,10 @@ C=======================================================================
 !     NL defined in ModuleDefs.for
       
       IMPLICIT NONE
-      !INTEGER DS
       INTEGER ISTAGE, L0, I
-      REAL TMAX, TMIN, TBD, TOD, TCD, TSEN, TDU_2, SDU_2 !removed DIF, DAYL
+      REAL TMAX, TMIN, TBD, TOD, TCD, TSEN, TDU_2, SDU_2 
       REAL SBD, SOD, SCD, SSEN
-      REAL TT, TU, SS, SU, TMEAN  !removed XTEMP, TD, SD, SUNRIS, SUNSET
+      REAL TT, TU, SS, SU, TMEAN  
       REAL ST(NL)
       SAVE
       ! To test whether model is working with repect to temperture
@@ -62,57 +61,12 @@ C=======================================================================
       !TMIN = -10.0
       !ST(L0) = 55.0
       
-
-! Mathematical equation to fortran variables mapping:
-! TCD is Tc, TD is T, TOD is To, TBD is Tb, and TSEN is ct. 
-! Constants Tb = 5.5 ˚C, To= 23.4 ˚C, Tc= 34.6 ˚C, ct = 1.6
-! i.e. TBD=5.5, TOD=23.4, TCD=34.6, TSEN=1.6, respectively
-! As TBD, TOD, TCD and TSEN are declared as input variables,
-! these constant values must be provided at the call site.
-
-! Disabled line numbers73-76
-!*---timing for sunrise and sunset
-!     SUNRIS = 12.0 - 0.5*DAYL
-!     SUNSET = 12.0 + 0.5*DAYL
-
 !*---mean daily temperature
       TMEAN  = (TMAX + TMIN)/2.0
-      !XTEMP  = (TMAX + TMIN)/2.0
       TT     = 0.0
       SS     = 0.0
       TDU_2  = 0.0
       SDU_2  = 0.0
-
-      !PRINT 101, 'TMIN', TMIN, 'TMAX', TMAX, 'ST(L0)', ST(L0)
- !101  FORMAT(A5, F6.2, A5, F6.2, A7, F6.2)
-! Disabled line numbers 87-102
-!*---diurnal course of temperature
-!      DO 10 I = 1, 24
-!        IF (I.GE.SUNRIS .AND. I.LE.SUNSET) THEN
-!          !TD = XTEMP+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-!          TD = (TMAX + TMIN) / 2.0 + 
-!     &    DIF + 0.5 * ABS(TMAX - TMIN) * COS(0.2618 * FLOAT(I - 14))
-!          SD = ST(L0)+DIF+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-!        ELSE
-!          !TD = XTEMP    +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-!          TD = (TMAX + TMIN) / 2.0 + 
-!     &    0.5 * ABS(TMAX - TMIN) * COS(0.2618 * FLOAT(I - 14))
-!          SD = ST(L0)   +0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
-!        ENDIF
-
-        !PRINT 102, 'HR', I, 'SD', SD
- !102    FORMAT(A3, I2, A3, F6.2)
-        
-!*---assuming development rate at supra-optimum (above optimum) temperatures during
-!*   the reproductive phase equals that at the optimum temperature
-        ! IF (DS.GT.1.) THEN
-!        IF (ISTAGE.EQ.2) THEN
-!           TD = MIN (TD,TOD)
-!           SD = MIN (SD,SOD)
-!        ELSE
-!           TD = TD
-!           SD = SD
-!        ENDIF
 
 !*---instantaneous thermal unit based on bell-shaped temperature response
         IF (TMEAN.LT.TBD .OR. TMEAN.GT.TCD) THEN
@@ -129,12 +83,8 @@ C=======================================================================
      &          ((SOD-SBD)/(SCD-SOD)))**SSEN
         ENDIF
 
-!       TT = TT + TU/24.0
         TT = TT + TU
-!        SS = SS + SU/24.0
         SS = SS + SU
-
-  !10  CONTINUE
 
 !*---daily thermal unit for phenology
       IF (ISTAGE .LE. 4) THEN
