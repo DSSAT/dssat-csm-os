@@ -6,18 +6,36 @@
       SAVE
       REAL TUBWT, PLTPOP
       REAL YIELD, FRYLD
-      REAL DTT, STT, TDELTA
-      REAL W, WB, WPREV, WDELTA
-      REAL CM, RM, SLOPE
+      REAL DTT, STT, TDIFF
+      REAL W, WB, WPREV, WDIFF
+      REAL CM, RM, WDIFFRATE
       REAL G2, G3, WMAX
       REAL, PARAMETER :: THRESH = 0.05
-      LOGICAL MAXYIELDED, TUBINITFOUND
+      LOGICAL FOUND_WMAX
       INTEGER YRDOY, MDATE, ISDATE
       TYPE (ControlType) CONTROL
+      INTEGER DYNAMIC
 
-      YRDOY   = CONTROL % YRDOY
+      YRDOY  = CONTROL % YRDOY
+      DYNAMIC = CONTROL % DYNAMIC
 
-      CALL PT_IPTUBERRT(CONTROL, G2, G3)  !Output
+      FRYLD = 0.0
+      YIELD = 0.0
+      W = 0.0
+      WDIFF = 0.0
+      WDIFFRATE = 0.0
+      WMAX = 0.0
+
+      ! Re-initialise before each new season simulation
+      if (DYNAMIC .EQ. SEASINIT) THEN
+          FOUND_WMAX = .FALSE.
+          WPREV = 0.0
+          ISDATE = 0
+          MDATE = 0
+          ! Read the rates G2 and G3 from cultivar file
+          CALL PT_IPTUBERRT(CONTROL, G2, G3)
+          RETURN
+      ENDIF
 
       ! CM = 23.2 ! Growth rate in the linear phase, g/m^2
       CM = G3
@@ -33,31 +51,28 @@
       WB = ((CM/RM)*log(2.0)) * 0.01;         ! WB
 
       W = FRYLD   ! uncommented: based on fresh yield
-      !W = YIELD    ! uncommented: based on dry yield
-      WDELTA = 0.0
-      SLOPE = 0.0
-      !TDELTA = DTT
-      TDELTA = STT !Reason?
+      !W = YIELD  ! uncommented: based on dry yield
+      !TDIFF = DTT
+      TDIFF = STT !Reason?
 
-      !IF (.NOT. TB_STILL_NOT_FOUND .AND. W .GE. WB) THEN !Find the first point when W greater than or equal to Wb
-      IF (.NOT. TUBINITFOUND .AND. W .GE. WB) THEN !Finds Tb
-          TUBINITFOUND = .TRUE.
+      ! Find first point (Tb) where W greater than or equal to Wb
+      IF (.NOT. FOUND_WMAX .AND. W .GE. WB) THEN
+        IF (ISDATE .EQ. 0) THEN
           ISDATE = YRDOY !ISDATE means tubr inititation date
-      ENDIF
+        ENDIF
 
-      !IF (.NOT. TE_STILL_NOT_FOUND) THEN !Keep calculating if Te not found
-      IF (.NOT. MAXYIELDED) THEN
-        IF (WPREV .GT. 0.0 .AND. TDELTA .GT. 0.) THEN ! Avoid division by 0
-          WDELTA = ABS(W - WPREV)                     !Y2-Y1
-          SLOPE = WDELTA / TDELTA                     !Y2-Y1/X2-X1
-          IF (SLOPE .LT. THRESH .AND. W .GT. WB) THEN !slope can be nearly 0 at two inflection points: at WB and at WMAX (finds TE)
-            MAXYIELDED = .TRUE.
-            ! Print for testing
-!            PRINT 101, "WMAX:", FRYLD, ", G2: ", G2, ", G3: ", G3
-! 101        FORMAT (A5, F6.2, A6, F6.2, A6, F6.2)
+        ! Approximate the derivative/rate of change of the tuber weight
+        ! using finite difference method. The point where derivate becomes
+        ! almost 0 (tunable via threshold) is the point where tuber weight
+        ! becomes maximum, indicating maturity
+        IF (WPREV .GT. 0.0 .AND. TDIFF .GT. 0.0) THEN ! Avoid division by 0
+          WDIFF = ABS(W - WPREV)                      !Y2-Y1
+          WDIFFRATE = WDIFF / TDIFF                   !Y2-Y1/X2-X1
+          IF (WDIFFRATE .LE. THRESH) THEN
+            FOUND_WMAX = .TRUE.
             MDATE = YRDOY
             WMAX = W
-          END IF
+          ENDIF
         END IF
         WPREV = W
       END IF
