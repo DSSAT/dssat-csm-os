@@ -24,11 +24,11 @@
       W = 0.0
       WDIFF = 0.0
       WDIFFRATE = 0.0
-      WMAX = 0.0
 
       ! Re-initialise before each new season simulation
       if (DYNAMIC .EQ. SEASINIT) THEN
           FOUND_WMAX = .FALSE.
+          WMAX = 0.0
           WPREV = 0.0
           ISDATE = 0
           MDATE = 0
