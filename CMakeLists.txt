@@ -693,10 +693,13 @@ install(DIRECTORY Data/ DESTINATION .
 # Resume information about flags and option used #
 ##################################################
 
+message( "   SYSTEM             ${CMAKE_SYSTEM_NAME}")
 message( "-- Flags" )
 message( "   FORTRAN FLAGS      ${CMAKE_Fortran_FLAGS}" )
 message( "   FORTRAN RELEASE    ${CMAKE_Fortran_FLAGS_RELEASE}" )
 message( "   FORTRAN DEBUG      ${CMAKE_Fortran_FLAGS_DEBUG}" )
+message( "   LINKER RELEASE     ${CMAKE_EXE_LINKER_FLAGS}")
+message( "   LINKER DEBUG       ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 message( "   CXX FLAGS        ${CMAKE_CXX_FLAGS}" )
 message( "   CXX RELEASE      ${CMAKE_CXX_FLAGS_RELEASE}" )
 message( "   CXX DEBUG        ${CMAKE_CXX_FLAGS_DEBUG}" )

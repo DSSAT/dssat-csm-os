@@ -113,32 +113,20 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                          "-fpe0"                            # Intel Linux/Mac
                          "-ffpe-trap=invalid,zero,overflow" # GNU
                 )
-####################
-### LINKER FLAGS ###
-####################
-
-SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}"
-                 Fortran "/FORCE" # MSVC
-                 	        "-cxxlib"      # Intel
-			                "-static"      # GNU
-                            "-Bstatic"     # MacOSX
-                            "-Bdynamic"    # MacOSX
-                )
-
-# Hack to make MacOS happy.
-SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
-                 Fortran "-mmacosx-version-min=14.0.0"
-                )
 
 ####################
 ### LINKER FLAGS ###
 ####################
 IF (APPLE)
+    SET(ENV{MACOSX_DEPLOYMENT_TARGET} 14.10.0)
+    SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-mmacosx-version-min=14.10.0"
+                )
     set(MAC_STATIC_LIBGFORTRAN_DIR "" CACHE PATH "Path to static gFortran libraries")
     set(MAC_STATIC_LIBGCC_DIR "" CACHE PATH "Path to libgcc library")
     IF (MAC_STATIC_LIBGFORTRAN_DIR AND MAC_STATIC_LIBGCC_DIR)
-        message("Attempting partial static build for MacOS")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -macosx_version_min 14.0 -lSystem ${MAC_STATIC_LIBGFORTRAN_DIR}/libgfortran.a ${MAC_STATIC_LIBGFORTRAN_DIR}/libquadmath.a ${MAC_STATIC_LIBGCC_DIR}/libgcc.a"
+        message("Attempting partial static build for MacOS")    
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -macosx_version_min 14.10.0 -lSystem ${MAC_STATIC_LIBGFORTRAN_DIR}/libgfortran.a ${MAC_STATIC_LIBGFORTRAN_DIR}/libquadmath.a ${MAC_STATIC_LIBGCC_DIR}/libgcc.a"
                         )
         set(CMAKE_Fortran_LINK_EXECUTABLE "ld ${CMAKE_EXE_LINKER_FLAGS} <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
     ENDIF()
@@ -146,6 +134,7 @@ ELSE ()
         SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
                          Fortran "/FORCE"               # MSVC
                                  "-static"              # GNU
+                                 "-cxxlib"
                         )
         SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
                          Fortran "-static-libgcc"       # GNU
