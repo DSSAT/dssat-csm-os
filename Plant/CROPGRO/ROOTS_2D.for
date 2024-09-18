@@ -729,7 +729,7 @@
       RootArea = 0.  !cell area containing roots
       TotRootArea = 0.0  !total root area in half row
 
-!     Distribute root length and width evenly thru cells
+!     Distribute root length and width evenly thru cells with roots
       CUMDEP = 0.
       RowLoop: DO Row = FirstRow, NRowsTot
         LastCumDep = CUMDEP
@@ -766,8 +766,8 @@
         ENDDO ColLoop
       ENDDO RowLoop
 
-!     RLV is equal in the intial root zone. Some cells are not fully
-!       filled with roots, so cell RLV is proportionally lower.
+!     RLV is homogeneous in the intial root zone. Some cells are not fully
+!       filled with roots, so cell RLV may be proportionally lower.
       RLV_2D = 0.0
       DO Row = 1, NRowsTot 
         DO Col = 1, NColsTot
@@ -808,41 +808,66 @@
       INTEGER Row, Col, L, NLAYR
       REAL, DIMENSION(NL) :: DLAYR, RtLen_1D
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows,MaxCols) :: Width, Thick, RtLen_2D,ColFrac
+      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ColFrac, RtLen_2D, 
+     &    Width, Thick, RootLength
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
+      REAL TotalRootLength, Rowspc_cm
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
       Thick = STRUC%THICK
       Width = STRUC%WIDTH
       ColFrac = BedDimension % ColFrac
+      Rowspc_cm = BedDimension % Rowspc_cm
       Cell_Type = STRUC%Cell_Type
+      CellArea = STRUC % CellArea
 
       DLAYR = SOILPROP % DLAYR
       NLAYR = SOILPROP % NLAYR
 
 !-----------------------------------------------------------------------
       TRLV = 0.0
+      TotalRootLength = 0.0
+
       DO Row = FirstRow, NRowsTot
         DO Col = 1, NColsTot
           SELECT CASE(Cell_Type(row,col))
           CASE(3,4,5)
 !           RLV_2D is zero for cell types < 3 and > 5
-            RtLen_2D(Row,Col) = RLV_2D(Row,Col) * THICK(Row,Col) 
-     &                               * Colfrac(row,col) / 2.0
-!           cm[root]    cm[root]
-!           --------- = --------- * cm[cell thickness] 
-!           cm2[soil]   cm3[soil]
+!            RtLen_2D(Row,Col) = RLV_2D(Row,Col) * THICK(Row,Col) 
+!     &                               * Colfrac(row,col) / 2.0
+!!           cm[root]    cm[root]
+!!           --------- = --------- * cm[cell thickness] 
+!!           cm2[soil]   cm3[soil]
 
-            TRLV = TRLV + RtLen_2D(Row,Col) * 2.0
+!           RootLength is the total root length in each cell and is
+!             additive across a row.
+            RootLength(row,col) = RLV_2D(row,col) * CellArea(row,col)
+!                    cm[root]     cm[root]
+!                 ------------- = --------- * cm2[cell area]
+!                 cm[rowlength]   cm3[soil]
+
+            TotalRootLength = TotalRootLength + RootLength(row,col)
+
+            RtLen_2D(Row,Col) = RootLength(row,col) / Rowspc_cm
+!                cm[root]          cm[root]      1
+!                ---------    = ------------- * ---- 
+!                cm2[soil]      cm[rowlength]    cm
+
+!           TRLV = TRLV + RtLen_2D(Row,Col) * 2.0
           END SELECT
         ENDDO
       ENDDO
 
+      TRLV = TotalRootLength / Rowspc_cm * 2.0
+!     cm[root]     cm[root]       1
+!     -------- = ------------- * ----
+!        cm2     cm[rowlength]    cm
+
       TotRootMass = TRLV / RFAC3 *1E4 * 10.
-!                 cm[root]       g[root]    1E4 cm2    10(kg/ha)
-!      kg/ha  = -------------- * -------- * -------- * ---------
-!              cm2[row length]   cm[root]      m2       (g/m2)
+!               cm[root]    g[root]    1E4 cm2    10(kg/ha)
+!      kg/ha  = -------- * -------- * -------- * ---------
+!                  cm2     cm[root]      m2       (g/m2)
 
 !     Aggregate root length in cells across a row to get the total 
 !     root length in each layer. 
