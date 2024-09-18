@@ -191,7 +191,6 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) ::DLTSNO3_DIFF_2D, 
      &                  DLTSNH4_DIFF_2D, DLTUREA_DIFF_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: CellFert
-      REAL, DIMENSION(MaxRows,MaxCols) :: DeltaSNO3, DeltaUREA
 
 !     *** TEMP DEBUGGIN CHP
       REAL TNOM, newNNOM
@@ -292,6 +291,7 @@ C=======================================================================
         TNITRIFY = 0.0  !nitrification
         TNOXD    = 0.0  !denitrification
         TLeachD  = 0.0  !leaching
+        NTILEDR = 0.0   !tile drain HJ added
 
         !*** temp debugging chp
         TNOM = 0.0
@@ -364,8 +364,8 @@ C=======================================================================
         IF (SIM2D) THEN
 !         Initialize 2D N flux routines (1D is rate only)
           CALL NFLUX_2D (DYNAMIC,
-     &      CELLS, SOILPROP,                            !Input
-     &      CLeach, TLeachD, DeltaSNO3, DeltaUrea)      !Output
+     &      CELLS, SNO3_2D, SOILPROP, UREA_2D,              !Input
+     &      CLeach, TLeachD, DLTSNO3_2D, DLTUREA_2D)        !Output
         ENDIF
 
         SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
@@ -432,7 +432,11 @@ C=======================================================================
       TNOXD = 0.0
       TotUptake = 0.0
       CellFert = 0.0
+      TLeachD = 0.0
+      NTILEDR = 0.0
 
+!     ------------------------------------------------------------------
+!     N UPTAKE
       DO L = 1, NRowsTot
         DO J = 1, NColsTot 
 !         Update with yesterday's plant N uptake
@@ -462,7 +466,31 @@ C=======================================================================
         WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
       ENDDO
 
-!-------------------------------------------------------------------------
+!     ------------------------------------------------------------------
+!     2D NFLUX has already been done on a sub-daily time step, called from 
+!       WATBAL_2D, which is called earlier in the rate section than SoilNi.
+!     Update the DLTSNO3 and DLTUREA here since we have them already.
+      IF (Sim2D) THEN 
+        CALL NFLUX_2D (DYNAMIC,
+     &    CELLS, SNO3_2D, SOILPROP, UREA_2D,              !Input
+     &    CLeach, TLeachD, DLTSNO3_2D, DLTUREA_2D)        !Output
+
+        CNTILEDR = 0.0
+        NTILEDR = 0.0
+
+!       Convert NITRIF, DLTSNO3 and DLTUREA from 2D to 1D prior to integration
+        CALL Cell2Layer_2D(
+     &    DLTSNO3_2D, CELLS % Struc, NLAYR,         !Input
+     &    DLTSNO3)                                  !Output
+
+        CALL Cell2Layer_2D(
+     &    DLTUREA_2D, CELLS % Struc, NLAYR,         !Input
+     &    DLTUREA)                                  !Output
+
+        CALL PUT('NITR','TLCHD',TLeachD)
+      ENDIF  !End 2D NFLUX
+
+!     ------------------------------------------------------------------
 !     Check for fertilizer added today or active slow release fertilizers 
       IF (FERTDAY == YRDOY .OR. NActiveSR .GT. 0) THEN
         SUMFERT = 0.0
@@ -675,8 +703,8 @@ C=======================================================================
       TIMMOBN  = 0.0
       TNITRIFY = 0.0
       TNOXD    = 0.0  !denitrification
-      TLeachD  = 0.0  !leaching
-      NTILEDR  = 0.0  !N loss to tile !HJ added
+!     TLeachD  = 0.0  !leaching
+!     NTILEDR  = 0.0  !N loss to tile !HJ added
       NITRIF   = 0.0
       NITRIF_2D   = 0.0
       TN2OnitrifD = 0.0  !N2O from nitrification
@@ -1147,10 +1175,9 @@ C=======================================================================
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.
 !     ------------------------------------------------------------------
-      TLeachD = 0.0
-      NTILEDR = 0.0   !HJ added
-
       IF (.NOT. SIM2D) THEN  !1D simulation
+        NTILEDR = 0.0   !HJ added
+
         IF (IUON) THEN
           NSOURCE = 1    !Urea.
           CALL NFLUX ( 
@@ -1164,6 +1191,8 @@ C=======================================================================
      &    ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &    SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
      &    DLTSNO3, CLeach, TLeachD, CNTILEDR, NTILEDR)      !Output !HJ
+
+        CALL PUT('NITR','TLCHD',TLeachD)
       ENDIF
 
 !     END OF 1D PROCESSES.
@@ -1254,33 +1283,6 @@ C=======================================================================
      &    ABS(RESID4) > 0.0 .OR. ABS(RESID5) > 0.0) THEN
         CONTINUE
       ENDIF
-
-!*************************************************************************************************
-!*************************************************************************************************
-!     2D NFLUX is done after the 1D process rates have been added to DLTSNH4_2D and DLTSNO3_2D
-      IF (Sim2D) THEN 
-        CALL NFLUX_2D (DYNAMIC,
-     &      CELLS, SOILPROP,                            !Input
-     &      CLeach, TLeachD, DeltaSNO3, DeltaUrea)      !Output
-
-        DLTSNO3_2D = DLTSNO3_2D + DeltaSNO3
-        DLTUREA_2D = DLTUREA_2D + DeltaUrea
-
-        CNTILEDR = 0.0
-        NTILEDR = 0.0
-
-!       Convert NITRIF, DLTSNO3 and DLTUREA from 2D to 1D prior to integration
-        CALL Cell2Layer_2D(
-     &    DLTSNO3_2D, CELLS % Struc, NLAYR,         !Input
-     &    DLTSNO3)                                  !Output
-
-        CALL Cell2Layer_2D(
-     &    DLTUREA_2D, CELLS % Struc, NLAYR,         !Input
-     &    DLTUREA)                                  !Output
-
-      ENDIF  !End 2D NFLUX
-
-      CALL PUT('NITR','TLCHD',TLeachD)
 
 !*************************************************************************************************
 !*************************************************************************************************

@@ -29,7 +29,8 @@
       REAL, PROTECTED :: DayNLeach
       REAL, DIMENSION(NL), PROTECTED :: FRAC_SOLN_urea, FRAC_SOLN_no3
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
-      REAL, DIMENSION(MaxRows,MaxCols), PROTECTED :: SNO3ts, UREAts
+      REAL, DIMENSION(MaxRows,MaxCols) :: SNO3ts, UREAts, 
+     &  SNO3init, UREAinit
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
       LOGICAL, PROTECTED :: First_ts
 
@@ -37,8 +38,8 @@
 
 !==========================================================================
       SUBROUTINE NFLUX_2D (DYNAMIC,
-     &  CELLS, SOILPROP,                              !Input
-     &  CLeach, TLeachD, DeltaSNO3, DeltaUrea)        !Output
+     &  CELLS, SNO3_2D, SOILPROP, UREA_2D,              !Input
+     &  CLeach, TLeachD, DLTSNO3_2D, DLTUREA_2D)        !Output
 
 !     ------------------------------------------------------------------
       IMPLICIT  NONE
@@ -47,13 +48,16 @@
 
       INTEGER, INTENT(IN) :: DYNAMIC
       TYPE (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
+      REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: SNO3_2D, UREA_2D
       TYPE (SoilType), INTENT(IN) :: SOILPROP
       REAL, DIMENSION(MaxRows,MaxCols), INTENT(OUT) :: 
-     &       DeltaUrea, DeltaSNO3
+     &       DLTSNO3_2D, DLTUREA_2D
       REAL, INTENT(OUT) :: CLeach, TLeachD
 
-      INTEGER L
+      INTEGER L, i, j
+      REAL NewSNO3, NewUREA
       REAL, DIMENSION(MaxRows) :: ADCOEF, BD, DUL
+      REAL, DIMENSION(MaxRows,MaxCols) :: DeltaSNO3, DeltaUrea
 
 !***********************************************************************
 !***********************************************************************
@@ -98,14 +102,36 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !     ------------------------------------------------------------------
-!     ------------------------------------------------------------------
 !     This call from SoilNi is done after WatBal_2D has computed water and
 !       N fluxes at a sub-daily time step. The integration of sub-daily fluxes 
 !       is used to compute daily DeltaSNO3 and DeltaUrea.
 
 !     Update Delta N variables to send back
-      DeltasNO3 = SNO3ts - CELLS % State % SNO3
-      DeltaUrea = UREAts - CELLS % State % UREA
+      DeltaSNO3 = SNO3ts - SNO3init
+      DeltaUrea = UREAts - UREAinit
+
+      DO i = 1, NRowsTot
+        DO j = 1, NColsTot
+          DLTSNO3_2D(i,j) = DLTSNO3_2D(i,j) + DeltaSNO3(i,j)
+          NewSNO3 = SNO3_2D(i,j) + DLTSNO3_2D(i,j)
+          IF (NewSNO3 < 0.0) THEN 
+            DLTSNO3_2D(i,j) = -SNO3_2D(i,j)
+            IF (i == NRowsTot) THEN
+              TLeachD = TLeachD + NewSNO3
+            ENDIF
+          ENDIF
+
+          DLTUREA_2D = DLTUREA_2D + DeltaUrea
+          NewUREA = UREA_2D(i,j) + DLTUREA_2D(i,j)
+          IF (NewUREA < 0.0) THEN 
+            DLTUREA_2D(i,j) = -UREA_2D(i,j)
+            IF (i == NRowsTot) THEN
+              TLeachD = TLeachD + NewUREA
+            ENDIF
+          ENDIF
+
+        ENDDO
+      ENDDO
 
 !     At the end of the day, send back leached amounts and Delta N values
       TLeachD = DayNLeach * 2.0 !Double for the entire field
@@ -124,9 +150,10 @@
 !     This subroutine is called every time step by the WatBal_2D subroutine,
 !     after movement of water in cells is calculated. Compute N fluxes based
 !     on water fluxes.
-
+!==========================================================================
       SUBROUTINE NFLUXts_2D (
      &  CELLS, SWV_ts, SWFh_ts, SWFv_ts)       !Input
+!     ------------------------------------------------------------------
 
       IMPLICIT  NONE
       SAVE
@@ -140,18 +167,17 @@
       REAL ResidualNO3, ResidualUREA
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3Fh, UreaFh, NO3Fv, UreaFv
 
-!     temp chp
-      REAL CA, DNL, FSNO3, SNO3, UREA, SNO31, SNO32
-      REAL, DIMENSION(MaxRows,MaxCols) :: SNO3init, UREAinit
-
 !***********************************************************************
 !***********************************************************************
 !     Sub-daily time step rate calculations 
 !***********************************************************************
       IF (First_ts) THEN
 
-!       State variables at the beginning of the day
-        SNO3ts = CELLS % State % SNO3
+!       Calculate available N at the beginning of the day
+!       Plant uptake of N was done at the end of the day yesterday. Subtract
+!         this from SNO3 to ensure that we don't get negative values after
+!         N fluxes are calculated.
+        SNO3ts = CELLS % State % SNO3 - Cells % Rate % NO3Uptake
         UREAts = CELLS % State % UREA
 
 !       Accumulated leached N
@@ -163,7 +189,6 @@
 
         First_ts = .FALSE.
 
-!       temp chp
         SNO3init = SNO3ts
         UREAinit = UREAts
 
@@ -175,43 +200,6 @@
         DO j = 1, NColsTot
           IF (Cell_Type(i,j) > 5 .OR. Cell_Type(i,j) < 3) CYCLE
 
-!         temp chp
-          CA = CellArea(i,j)
-          FSNO3 = FRAC_SOLN_no3(i)
-          SNO3 = SNO3ts(i,j)
-          UREA = UREAts(i,j)
-          SNO31= SNO3ts(i+1,j)  !BELOW CELL
-          SNO32= SNO3ts(i,j+1)  !to the right 
-
-!         Horizontal N Flux (all soil cells except right boundary)
-          IF ((Cell_Type(i,j) == 3 .AND. j < BedDimension % FurCol1 - 1)
-     &      .OR. (Cell_Type(i,j) == 4 .AND. j < NColsTot) 
-     &      .OR. (Cell_Type(i,j) == 5 .AND. j < NColsTot)) THEN
-
-!           SWFh_ts is the horizontal flux at the boundary of cell(i,j) and cell(i,j+1)
-            IF (ABS(SWFh_ts(i,j)) .LT. 1.E-10) THEN
-!             No water flux, no N flux
-              NO3Fh(i,j) = 0.0
-              UREAFh(i,j) = 0.0
-            ELSEIF (SWFh_ts(i,j) > 1.E-10) THEN
-!             Positive horizontal fluxes from cell(i,j) to cell(i,j+1)
-!             Calculate the fraction of water that moves out of cell(i,j) with this flux
-              FracSWVh = SWFh_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
-              NO3Fh(i,j) = MAX(0.0, SNO3ts(i,j) * FRAC_SOLN_NO3(i)) 
-     &          * FracSWVh
-              UreaFh(i,j) = MAX(0.0, UREAts(i,j) * FRAC_SOLN_urea(i))
-     &          * FracSWVh
-            ELSE
-!             Negative horizontal fluxes from cell(i,j+1) to cell(i,j)
-!             Calculate the fraction of water that moves out of cell(i,j+1) with this flux
-              FracSWVh = -SWFh_ts(i,j) / CellArea(i,j+1) / SWV_ts(i,j+1)
-              NO3Fh(i,j) = MAX(0.0, SNO3ts(i,j+1) * FRAC_SOLN_NO3(i))
-     &          * FracSWVh
-              UreaFh(i,j) = MAX(0.0, UREAts(i,j+1) * FRAC_SOLN_urea(i))
-     &          * FracSWVh
-            ENDIF
-          ENDIF
-
 !         --------------------------------------------------------------
 !         Vertical fluxes, all cells
 !         SWFv_ts is the vertical flux at the boundary of cell(i,j) and cell(i+1,j)
@@ -219,10 +207,12 @@
 !           No water flux, no N flux
             NO3Fv(i,j) = 0.0
             UREAFv(i,j) = 0.0
+
           ELSEIF (SWFv_ts(i,j) > 1.E-10) THEN
 !           Positive vertical fluxes from cell(i,j) to cell(i+1,j)
 !           Calculate the fraction of water that moves out of cell(i,j) with this flux
             FracSWVv = SWFv_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
+!           N fluxes are proportional to water fluxes
             NO3Fv(i,j) = MAX(0.0, SNO3ts(i,j) * FRAC_SOLN_NO3(i))
      &        * FracSWVv
             UreaFv(i,j) = MAX(0.0, UREAts(i,j) * FRAC_SOLN_urea(i))
@@ -235,9 +225,6 @@
             ENDIF
 !           ****************************
 
-!           temp chp
-            DNL = DayNLeach
-
           ELSE
 !           Negative vertical fluxes from cell(i+1,j) to cell(i,j)
 !           Calculate the fraction of water that moves out of cell(i+1,j) with this flux
@@ -247,23 +234,55 @@
             UreaFv(i,j) = MAX(0.0, UREAts(i+1,j) * FRAC_SOLN_urea(i))
      &        * FracSWVv
           ENDIF
-        ENDDO
-      ENDDO
 
-!     Pseudo-integration loop
-      DO i = 1, NRowsTot
-        DO j = 1, NColsTot
-          SNO3ts(i,j)   = SNO3ts(i,j)   - NO3Fh(i,j)
-          SNO3ts(i,j+1) = SNO3ts(i,j+1) + NO3Fh(i,j)
+!         Pseudo-integration of N time step variables prevents negative values
           SNO3ts(i,j)   = SNO3ts(i,j)   - NO3Fv(i,j)
           SNO3ts(i+1,j) = SNO3ts(i+1,j) + NO3Fv(i,j)
-
-          UREAts(i,j)   = UREAts(i,j)   - UREAFh(i,j)
-          UREAts(i,j+1) = UREAts(i,j+1) + UREAFh(i,j)
           UREAts(i,j)   = UREAts(i,j)   - UREAFv(i,j)
           UREAts(i+1,j) = UREAts(i+1,j) + UREAFv(i,j)
-        ENDDO !row loop
-      ENDDO  !column loop
+
+!         --------------------------------------------------------------
+!         Horizontal N Flux (all soil cells except right boundary)
+          IF ((Cell_Type(i,j) == 3 .AND. j < BedDimension % FurCol1 - 1)
+     &      .OR. (Cell_Type(i,j) == 4 .AND. j < NColsTot) 
+     &      .OR. (Cell_Type(i,j) == 5 .AND. j < NColsTot)) THEN
+
+!           SWFh_ts is the horizontal flux at the boundary of cell(i,j) and cell(i,j+1)
+            IF (ABS(SWFh_ts(i,j)) .LT. 1.E-10) THEN
+!             No water flux, no N flux
+              NO3Fh(i,j) = 0.0
+              UREAFh(i,j) = 0.0
+
+            ELSEIF (SWFh_ts(i,j) > 1.E-10) THEN
+!             Positive horizontal fluxes from cell(i,j) to cell(i,j+1)
+!             Calculate the fraction of water that moves out of cell(i,j) with this flux
+              FracSWVh = SWFh_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
+
+!             NO3 flux
+              NO3Fh(i,j) = MAX(0.0, SNO3ts(i,j) * FRAC_SOLN_NO3(i)) 
+     &          * FracSWVh
+              UreaFh(i,j) = MAX(0.0, UREAts(i,j) * FRAC_SOLN_urea(i))
+     &          * FracSWVh
+
+            ELSE
+!             Negative horizontal fluxes from cell(i,j+1) to cell(i,j)
+!             Calculate the fraction of water that moves out of cell(i,j+1) with this flux
+              FracSWVh = -SWFh_ts(i,j) / CellArea(i,j+1) / SWV_ts(i,j+1)
+              NO3Fh(i,j) = MAX(0.0, SNO3ts(i,j+1) * FRAC_SOLN_NO3(i))
+     &          * FracSWVh
+              UreaFh(i,j) = MAX(0.0, UREAts(i,j+1) * FRAC_SOLN_urea(i))
+     &          * FracSWVh
+            ENDIF
+          ENDIF
+
+!         Pseudo-integration of N time step variables prevents negative values
+          SNO3ts(i,j)   = SNO3ts(i,j)   - NO3Fh(i,j)
+          SNO3ts(i,j+1) = SNO3ts(i,j+1) + NO3Fh(i,j)
+          UREAts(i,j)   = UREAts(i,j)   - UREAFh(i,j)
+          UREAts(i,j+1) = UREAts(i,j+1) + UREAFh(i,j)
+
+        ENDDO
+      ENDDO
 
 !     Check for negative state values
       DO i = 1, NRowsTot
@@ -276,8 +295,8 @@
             ResidualUREA = ResidualUREA + SNO3ts(i,j)
             UREAts(i,j) = 0.0
           ENDIF
-        ENDDO !row loop
-      ENDDO  !column loop
+        ENDDO
+      ENDDO
 
       RETURN
       END SUBROUTINE NFLUXts_2D
