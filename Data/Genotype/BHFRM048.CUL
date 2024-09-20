@@ -1,4 +1,5 @@
 *BAHIA CULTIVAR COEFFICIENTS: PRFRM048 MODEL
+!NOTE:  Calibrated by Ken Boote and Hunter Smith, using brachiaria Marandu as start
 !
 ! COEFF   DEFINITIONS
 ! =====   ===========
@@ -29,12 +30,13 @@
 !         conditions (photothermal days)
 !
 !             P/G/N:Phenology/Growth/Not used for calbration
+! Note:  CROPGRO-PFM uses only two GC from cultivar file:  LFMAX, SLAVR at present.  Future may use SIZLF and WTPSD if seedling establishment
 !
 @VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP  
 !Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
 !Calibration                             N     N     P     N     P     P     N     N     G     G     N     G     G     G     G     N     N     N
 
-999991 MINIMA               . DFAULT 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.80  180.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
-999992 MAXIMA               . DFAULT 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.80  180.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+999991 MINIMA               . DFAULT 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.50  140.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+999992 MAXIMA               . DFAULT 12.50 0.200  99.0  10.0  18.0 33.00 25.00  2.00  240.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
 
 UF0001 Pensacola            . G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.80  180.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
