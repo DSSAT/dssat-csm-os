@@ -17,7 +17,7 @@ C=======================================================================
 
       CHARACTER*1 IDETW, IDETL, ISWWAT, RNMODE, FMOPT
       CHARACTER*13 OUTSWL
-      PARAMETER (OUTSWL = 'SoilWatBL.OUT')
+      PARAMETER (OUTSWL = 'SoilWater.OUT')
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, L, I
       INTEGER NLAYR, NOUTSW, RUN
@@ -99,12 +99,31 @@ C-----------------------------------------------------------------------
   
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN
-            WRITE(NOUTSW,'(A)') '! Volumetric Soil water content ' //
-     &          '(cm3/cm3) by soil depth (cm):'
+            IF (.NOT. FEXIST) THEN
+              WRITE(NOUTSW,'(A)') '',
+     &    '!----------------------------',
+     &    '! Variable Descriptions (unit)',
+     &    '!----------------------------',
+     &    '!YEAR    Year of current date of simulation (YYYY)',
+     &    '!DOY     Day of year (d)',
+     &    '!DAS     Days after start of simulation (d)',
+     &    '!LL#D    Volumetric soil water content at Lower Limit' //
+     &    ' in soil layer # (cm3 [water] / cm3 [soil])',
+     &    '!DUL#D   Volumetric soil water content at'//
+     &    ' Drained Upper Limit in soil layer # (cm3[water]/cm3[soil])',
+     &    '!SAT#D   Volumetric soil water content at Saturation'//
+     &    ' in soil layer # (cm3 [water] / cm3 [soil])',
+     &    '!BD#D    Bulk density in soil layer # (g [soil] / cm3 [soil])',
+     &    '!SW#D    Volumetric soil water content in soil layer # '//
+     &    ' (cm3 [water] / cm3 [soil])',
+     &    ''
+            ENDIF
+
+!         Write same headers for layered soil properties variables
             WRITE(NOUTSW,'(A,15X)', ADVANCE='NO') '!' 
-  !         Write same headers for layered soil properties variables
             DO I = 1, 5
-              WRITE(NOUTSW,'(20A8)', ADVANCE='NO') (LayerText(L), L=1,NLAYR)
+              WRITE(NOUTSW,'(20A8)', ADVANCE='NO') 
+     &                       (LayerText(L), L=1,NLAYR)
             ENDDO
 
             WRITE (NOUTSW,'(/,A,1X)',ADVANCE='NO') '@YEAR DOY   DAS'
@@ -151,7 +170,7 @@ C-----------------------------------------------------------------------
      &                      (SW(L),L=1,NLAYR)
 
  1300         FORMAT(X,I4,1X,I3.3,1X,I5,1X
-     &               5(20(F8.3)))
+     &               5(20(F8.4)))
 
             ENDIF
           ENDIF
