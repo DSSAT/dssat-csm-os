@@ -15,7 +15,7 @@ C  Called from:  CROPGRO
 C=======================================================================
 
       SUBROUTINE NUPTAK(CONTROL,
-     &  CELLS, DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR,    !Input
+     &  CELLS, DUL, FILECC, KG2PPM, LL, NDMSDR,           !Input
      &  NDMTOT, NLAYR, SAT,                               !Input
      &  TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
@@ -29,7 +29,7 @@ C=======================================================================
 !     Subroutine interface variables
       Type (ControlType), INTENT(IN) :: CONTROL
       Type (CellType), INTENT(INOUT) :: Cells(MaxRows,MaxCols)
-      REAL, DIMENSION(NL), INTENT(IN) :: DLAYR, DUL, KG2PPM, LL, SAT
+      REAL, DIMENSION(NL), INTENT(IN) :: DUL, KG2PPM, LL, SAT
       CHARACTER*92, INTENT(IN) :: FILECC
       REAL, INTENT(IN) :: NDMSDR, NDMTOT
       INTEGER, INTENT(IN) :: NLAYR
@@ -46,20 +46,17 @@ C=======================================================================
       INTEGER I, J, LUNCRP, ERR, LNUM, ISECT, FOUND, L
 
       REAL NUF, XMIN
-      REAL ANDEM, FNH4, FNO3, SMDFR, RFAC
+      REAL ANDEM, FNH4, FNO3, SMDFR
       REAL RTNO3, RTNH4, MXNH4U, MXNO3U
 
 !     2D variables
       INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
-      REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV,RNH4U_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D, RNO3U_2D
+      REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D, 
+     &    RTLEN_2D, RNH4U_2D, RNO3U_2D, CellArea
+      REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV
+      REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D
       REAL SurfaceVal !dummy variable
-      Real FieldFac
-
-!     temp chp
-      Real sumRLV
-      sumRLV = sum(rlv_2d)
+      Real FieldFac, ROWSPC_cm
 
       DYNAMIC = CONTROL % DYNAMIC
 
@@ -108,11 +105,15 @@ C=======================================================================
 
       ColFrac = BedDimension % ColFrac
       BedFrac = BedDimension % BedFrac
+      ROWSPC_cm = BedDimension % ROWSPC_cm
+      CellArea = CELLS % STRUC % CellArea
+
       IF (CONTROL % SIM2D) THEN
         FieldFac = 2.0
       ELSE
         FieldFac = 1.0
       ENDIF
+
 
 !***********************************************************************
 !***********************************************************************
@@ -162,7 +163,7 @@ C-----------------------------------------------------------------------
      &                     * FieldFac
           END SELECT
         ENDDO
-      ENDDO  
+      ENDDO
 
 C-----------------------------------------------------------------------
 C   Determine crop N demand (kg N/ha), after subtracting mobilized N
@@ -192,29 +193,36 @@ C-----------------------------------------------------------------------
                 SMDFR = 0.1
               ENDIF
 
-              ! FO/KJB - Change for Cotton
-              !RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
-              RFAC = RLV_2D(L,J) * SQRT(SMDFR) * DLAYR(L) * 100.0
+!              ! FO/KJB - Change for Cotton
+!              !RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+!!             RFAC = RLV_2D(L,J) * SQRT(SMDFR) * DLAYR(L) * 100.0
+!
+!!             RLV = Rootlength density (cm/cm3)
+!!             cm[root]/cm2[soil] = cm[root]/cm3[soil] * cm[soil]
+!!-----------------------------------------------------------------------
+!!             RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
+!!             RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)
+!!             RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
+!!-----------------------------------------------------------------------
+!              RNO3U_2D(L,J) = RFAC * FNO3 * RTNO3 
+!              RNH4U_2D(L,J) = RFAC * FNH4 * RTNH4 
 
-!             RLV = Rootlength density (cm/cm3)
-!             cm[root]/cm2[soil] = cm[root]/cm3[soil] * cm[soil]
-!-----------------------------------------------------------------------
-!             RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
-!             RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)
-!             RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
-!-----------------------------------------------------------------------
-              RNO3U_2D(L,J) = RFAC * FNO3 * RTNO3 
-              RNH4U_2D(L,J) = RFAC * FNH4 * RTNH4 
-!             kg[N]   cm[root]     mg[N]     100 kg/ha
-!             ----- = --------- * -------- * ---------
-!               ha    cm2[soil]   cm[root]     mg/cm2
+!             Convert RLV to root length per area
+              RTLEN_2D(L,J) = RLV_2D(L,J) * CellArea(L,J) / RowSpc_cm
+
+              RNO3U_2D(L,J) = RTLEN_2D(L,J) * RTNO3 * SQRT(SMDFR) * FNO3
+     &                           * 100.
+              RNH4U_2D(L,J) = RTLEN_2D(L,J) * RTNH4 * SQRT(SMDFR) * FNH4
+     &                           * 100.
+!!                 kg[N]          cm[root]     mg[N]     100 kg/ha
+!!                 -----    =     --------- * -------- * ---------
+!!                   ha           cm2[soil]   cm[root]     mg/cm2
 
               RNO3U_2D(L,J) = MAX(0.0,RNO3U_2D(L,J))
               RNH4U_2D(L,J) = MAX(0.0,RNH4U_2D(L,J))
 
 !             kg[N]/ha
-              TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J))*
-     &              ColFrac(L,J)
+              TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J)) * FieldFac
             ENDIF
           ENDDO
         ENDDO

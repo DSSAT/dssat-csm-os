@@ -78,6 +78,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RLDF, SAT, DUL, LL
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea, ESW
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_WS, WR, SWV, RootLen
+      REAL, DIMENSION(MaxRows,MaxCols) :: RtLen_2D, RootLength
 
       TYPE (CellType) CELLS(MaxRows,MaxCols)
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
@@ -435,9 +436,9 @@ C=======================================================================
       ENDIF ! end of IF not (FIRST)
 
       CALL Aggregate_Roots(CELLS,
-     &    FirstRow, RLV_2D,                   !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
-     &    RLV, TRLV, TotRootMass)             !1D Output
+     &    FirstRow, RFAC3, RLV_2D, SOILPROP,  !Input
+     &    RLV, RootLength, RtLen_2D,          !Output
+     &    TotRootMass, TRLV)                  !Output
 
        CELLS%STATE%RLV = RLV_2D
 

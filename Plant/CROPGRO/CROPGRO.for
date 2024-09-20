@@ -309,7 +309,7 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
         CALL NUPTAK(CONTROL,
-     &    CELLS, DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR,    !Input
+     &    CELLS, DUL, FILECC, KG2PPM, LL, NDMSDR,           !Input
      &    NDMTOT, NLAYR, SAT,                               !Input
      &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
@@ -581,7 +581,7 @@ C     Initialize pest coupling point and damage variables
 !-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
         CALL NUPTAK(CONTROL,
-     &    CELLS, DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR,    !Input
+     &    CELLS, DUL, FILECC, KG2PPM, LL, NDMSDR,           !Input
      &    NDMTOT, NLAYR, SAT,                               !Input
      &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
@@ -1003,7 +1003,7 @@ C-----------------------------------------------------------------------
       IF (ISWNIT .EQ. 'Y') THEN
 !-----------------------------------------------------------------------
         CALL NUPTAK(CONTROL,
-     &    CELLS, DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR,    !Input
+     &    CELLS, DUL, FILECC, KG2PPM, LL, NDMSDR,           !Input
      &    NDMTOT, NLAYR, SAT,                               !Input
      &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 

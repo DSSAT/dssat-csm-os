@@ -72,7 +72,7 @@
 
 !     2D variables:
       INTEGER Row, Col, FirstRow, LastRow, LastCol 
-      REAL RTDEPnew, RowSpc_cm
+      REAL RTDEPnew, RowSpc_cm, RTLenNew
       REAL RTWIDr(MaxRows), RTWIDnew(MaxRows), WidMax(MaxRows)
       REAL RTDEP, RTDEPI, DEPMAX, RTWID, RTWIDI
       REAL TotRootMass, CumRootMass, rlv_max
@@ -82,20 +82,20 @@
       REAL RFAC2H, CellArea(MaxRows,MaxCols)
       TYPE (CellType) CELLS(MaxRows,MaxCols)
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
+      REAL, DIMENSION(MaxRows,MaxCols) :: RtLen_2D, RootLength, 
+     &    RLNew_2D, RLVnew_2D
 
 !     Local soil arrays
       INTEGER, DIMENSION(MaxRows,MaxCols) :: TypeCell
-      REAL, DIMENSION(MaxRows,MaxCols) :: DUL, ESW, LL, RLDF, RLGRW
+      REAL, DIMENSION(MaxRows,MaxCols) :: DUL, ESW, LL, RLDF
       REAL, DIMENSION(MaxRows,MaxCols) :: RLSEN, RLV_2D, RLV_WS, RRLF
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, SAT, SENRT_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: SWV, RLCELL
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWV, CelRootArea
       REAL, DIMENSION(NL) :: RLV, SENRT
+      REAL TotRootArea
 
       TYPE (SoilType) SOILPROP
-
       NLAYR = SOILPROP % NLAYR
-!      DLAYR = SOILPROP % DLAYR
-!      WR    = SOILPROP % WR
 
 !***********************************************************************
 !***********************************************************************
@@ -121,7 +121,6 @@
 
       RFAC3 = RFAC1
       RLNEW = 0.0
-
       ROWSPC_cm = BedDimension % ROWSPC_cm
 
 !***********************************************************************
@@ -187,14 +186,14 @@
       RFAC3 = RFAC1
       
       CumRootMass = 0.0
+
 !     Width of half row (cm) used to scale up to field area basis. 
-      HalfRow = BedDimension % ROWSPC_cm / 2
-      HalfBed = BedDimension % BEDWD / 2
+      HalfRow = BedDimension % ROWSPC_cm / 2.
+      HalfBed = BedDimension % BEDWD / 2.
 
       rlv_max = 0.0
-
       CALL OPRoots_2D(TotRootMass, RFAC3, RLV_2D, Thick, Width)
-     
+
 !***********************************************************************
 !***********************************************************************
 !     EMERGENCE CALCULATIONS - Performed once per season upon emergence
@@ -220,9 +219,9 @@
 !           ha      plant   g[tissue]     m2      g/m2
 
       CALL Aggregate_Roots(CELLS,
-     &    FirstRow, RLV_2D,                   !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
-     &    RLV, TRLV, TotRootMass)             !1D Output
+     &    FirstRow, RFAC3, RLV_2D, SOILPROP,  !Input
+     &    RLV, RootLength, RtLen_2D,          !Output
+     &    TotRootMass, TRLV)                  !Output
 
       LastRow = 1
       LastCol = 1
@@ -235,14 +234,22 @@
 !-----------------------------------------------------------------------
 !     Calculate Root Depth Rate of Increase, Physiological Day (RFAC2)
 !-----------------------------------------------------------------------
-!     Fernando's routine would modify RFAC2 and RFAC2H daily based on
-!     soil toxicity, strength, temperature, and soil water
       RFAC2 = TABEX(YRTFAC, XRTFAC, VSTAGE, 4)
       RFAC2H = TABEX(YRTFACH, XRTFACH, VSTAGE, 4)
-      RLNEW = WRDOTN * RFAC1 * HalfRow * 1.E-4 
-!     cm[root]        g[root]   cm[root]                   m2
-!  --------------   = ------- * -------- * cm[row width] * ---  
-!  cm[row length]-d     m2-d     g[root]                   cm2
+
+!     RLNEW calculated below is the same as in the 1D model. 
+!     It represents new root growth today over the entire field.
+      RLNEW = WRDOTN * RFAC1 * 1.E-4 
+!     cm[root]        g[root]   cm[root]   m2
+!  ---------------- = ------- * -------- * ---
+!  cm2[land area]-d     m2-d     g[root]   cm2
+
+!     For the 2D model, we need to scale it down to half the field 
+!       being modeled
+      RTLenNew = RLNEW * HalfRow
+!        cm[root]        cm[root]
+!     ------------- = -------------- * cm[row-width]
+!     cm[rowlength]   cm2[land area]
 
       CGRRT = AGRRT * WRDOTN
       SWV = CELLS%STATE%SWV
@@ -252,16 +259,28 @@
 !-----------------------------------------------------------------------
       RRLF   = 0.0
       RLSEN  = 0.0
-      RLGRW  = 0.0
+      RLVnew_2D  = 0.0
+
+!     Update RFAC3 based on yesterday's RTWT and TRLV
+      IF (RTWT .GE. 0.0001 .AND. TRLV .GE. 0.00001) THEN
+!       RTWT has not yet been updated today, so use yesterday's
+!       value and don't subtract out today's growth - chp 11/13/00
+        RFAC3 = TRLV / RTWT * 10000.0
+!       cm[root]      cm[root]        m2      cm2
+!       -------- = -------------- * ------- * ---
+!        g[root]   cm2[land area]   g[root]    m2
+      ELSE
+        RFAC3 = RFAC1
+      ENDIF
 
 !     10/20/2005 Limit RLV decrease due to senscence to 
 !       a minimum resulting root weight 
       IF (RTWTMIN > 0.0) THEN
-!       Same units as TRLV (cm[root]/cm[row-length])
-        TRLV_MIN = RTWTMIN * RFAC3 * HalfRow * 1.E-4   
-!        cm[root]        g    cm[root]                m2
-!      -----------   =  --- * -------- * cm[width] * ----
-!      cm[row length]    m2    g[root]                cm2
+!       Same units as TRLV (cm[root]/cm2[land area])
+        TRLV_MIN = RTWTMIN * RFAC3 * 1.E-4   
+!       cm[root]   g[root]   cm[root]   m2
+!       -------- = ------- * -------- * ---
+!          cm2       m2      g[root]    cm2
       ELSE
 !       Set TRLV_MIN to zero -- no minimum root mass
         TRLV_MIN = 0.0
@@ -297,6 +316,7 @@
               SWEXF = (SAT(Row,Col) - SWV(Row,Col)) / PORMIN
               SWEXF = MIN(SWEXF, 1.0)
             ENDIF
+!           SUMRL and SUMEX are weighted by cell area (instead of DLAYR)
             SUMRL = SUMRL + RLV_2D(Row,Col) * CellArea(Row,Col)
             SUMEX = SUMEX + RLV_2D(Row,Col) * CellArea(Row,Col) * 
      &              (1.0 - SWEXF)
@@ -309,6 +329,7 @@
 
 !-----------------------------------------------------------------------
 !         Water stress senescence 
+!         TRLV and RLNEW are scaled for entire field (same as 1D model)
           RTSURV = MIN(1.0,(1.-RTSDF*(1.-SWDF)),(1.-RTEXF*(1.-SWEXF)))
           IF (RLV_2D(Row,Col) > RLDSM .AND. TRLV + RLNEW > TRLV_MIN)THEN
             RLV_WS(Row,Col) = RLV_2D(Row,Col) * (1.0 - RTSURV)
@@ -319,8 +340,8 @@
 !-----------------------------------------------------------------------
 !         Weighting factor for each cell, RLDF, based on WR, cell area
 !           and water factors.  
-!     WR gets replaced with Z function from Fernando's model.  Modified daily due
-!     to soil impedance, soil deficiiees, other stuff.
+!         WR gets replaced with Z function from Fernando's model. Modified 
+!         daily due to soil impedance, soil deficiencies, other stuff.
           RLDF(Row,Col) = CELLS(Row,Col)%STATE%WR * CellArea(Row,Col) * 
      &                     MIN(SWDF,SWEXF)
 
@@ -410,11 +431,11 @@
 !-----------------------------------------------------------------------
 !         Apply factor for this cell
           RLDF(Row,Col) =RLDF(Row,Col)*DepFrac(Row,Col)*WidFrac(Row,Col)
-!          CelRootArea(Row,Col) =CellArea(Row,Col)
-!     &               *DepFrac(Row,Col)*WidFrac(Row,Col)
+          CelRootArea(Row,Col) = CellArea(Row,Col)
+     &               * DepFrac(Row,Col) * WidFrac(Row,Col)
 !         Sum of all factors
           TRLDF = TRLDF + RLDF(Row,Col)
-!          TotRootArea = TotRootArea +  CelRootArea(Row,Col)
+          TotRootArea = TotRootArea +  CelRootArea(Row,Col)
           IF (RTWIDnew(Row) < CumWid) EXIT ColLoop
           
         ENDDO ColLoop
@@ -438,45 +459,53 @@
       DO Row = FirstRow, LastRow
         DO Col = 1, LastCol
           IF (TRLDF .LT. 0.00001) THEN
-!           JZW: this is wrong, it should be zero, otherwise root will not be balanced
-            RRLF(Row,Col) = 1.0  
+            RRLF(Row,Col) = 0.0
           ELSE
             RRLF(Row,Col) = RLDF(Row,Col) / TRLDF
           ENDIF
 !-------------------------------------------------------------------------
-          RLGRW(Row,Col) = RLNEW * RRLF(Row,Col) / CellArea(Row,Col)
-!           cm[root]         cm[root]         1  
-!         ------------- = ---------------- * --- 
-!         cm3[ground]-d   cm[row length]-d   cm2
-        
+          RLNew_2D(row,col) = RTLenNew * RRLF(Row,Col)
+!             cm[root]         cm[root]
+!         ---------------- = ----------------
+!         cm[row length]-d   cm[row length]-d
+
+          RLVnew_2D(row,col) = RLNew_2D(row,col) / CellArea(row,col)
+!         cm[root]       cm[root]        1
+!         -------- = ---------------- * ---
+!           cm3-d    cm[row length]-d   cm2
+
           IF (TRLV + RLNEW > TRLV_MIN) THEN
             RLSEN(Row,Col) = RLV_2D(Row,Col) * RTSEN * DTX
           ELSE
             RLSEN(Row,Col) = 0.0
           ENDIF
-        
+
 !         Limit total senescence in each layer to existing RLV
           IF (RLSEN(Row,Col) + RLV_WS(Row,Col) > RLV_2D(Row,Col) + 
-     &        RLGRW(Row,Col)) THEN
-            RLSEN(Row,Col) = RLV_2D(Row,Col) + RLGRW(Row,Col) - 
+     &        RLVnew_2D(Row,Col)) THEN
+            RLSEN(Row,Col) = RLV_2D(Row,Col) + RLVnew_2D(Row,Col) - 
      &        RLV_WS(Row,Col)
           ENDIF 
-        
-!         RLSENTOT is profile senescence, water stress and natural cm/cm[row length]
+
+!         RLSENTOT is profile senescence, water stress and natural cm/cm2[land area]
           RLSENTOT = RLSENTOT  + (RLSEN(Row,Col) + RLV_WS(Row,Col)) * 
      &                         CellArea(Row,Col)
-!         cm[root]        cm[root]                
-!         -------- =     ----------- * cm2
-!       cm[row length]   cm3[ground]               
+!         cm[root]       cm[root]
+!       ------------- = ----------- * cm2
+!       cm[rowlength]   cm3[ground]
         ENDDO
       ENDDO
-!     JZW question, this statement is non-sense??
-      RLSENTOT = RLSENTOT   !cm[root]/cm[row length]   
+
+!     Convert RLSENTOT into units of TRLV
+      RLSENTOT = RLSENTOT / HalfRow
+!        cm[root]        cm[root]           1
+!     -------------- = ------------- * -------------
+!     cm2[land area]   cm[rowlength]   cm[row width]
 
 !     If senescence too high (results in TRLV < TRLV_MIN) then
 !       reduce senescence in each layer by factor.
       IF (RLSENTOT > 1.E-6 .AND. TRLV + RLNEW - RLSENTOT < TRLV_MIN)THEN
-      !      cm/cm               cm/cm   cm/cm    cm/cm      cm/cm
+      !    cm/cm2               cm/cm2  cm/cm2   cm/cm2     cm/cm2
         FACTOR = (TRLV + RLNEW - TRLV_MIN) / RLSENTOT
         FACTOR = MAX(0.0, MIN(1.0, FACTOR))
         RLSEN  = RLSEN  * FACTOR
@@ -488,21 +517,18 @@
       TRLV = 0.0
       DO Row = FirstRow, LastRow
         DO Col = 1, LastCol
-          RLV_2D(Row,Col) = RLV_2D(Row,Col) + RLGRW(Row,Col) 
+          RLV_2D(Row,Col) = RLV_2D(Row,Col) + RLNew_2D(Row,Col) 
+!           cm/cm3        =     cm/cm3      +   cm/cm3
      &                    - RLSEN(Row,Col) - RLV_WS(Row,Col)
-          TRLV = TRLV + RLV_2D(Row,Col) * CellArea(Row,Col)  
-!         cm[root]/cm[row]
+!                         -     cm/cm3      -   cm/cm3
 
-!         temp chp
-          RLCELL(Row,Col) = RLV_2D(Row,Col) * CellArea(Row,Col)
-        
 !         Track senescence in each cell for adding C and N to soil
           SENRT_2D(Row,Col) = (RLSEN(Row,Col) + RLV_WS(Row,Col))
      &                      * CellArea(Row,Col) / HalfRow / RFAC3 * 1.E5
 !                     cm[root]   cm2[widxdep]   g[root]   1E4 cm2    10(kg/ha)
 !           kg/ha  =  -------- * ------------ * ------- * -------- * ---------
 !                    cm3[soil]    cm[wid]       cm[root]     m2       (g/m2)
-        
+
           SENRT_2D(Row,Col) = AMAX1(SENRT_2D(Row,Col), 0.0)
           SRDOT = SRDOT + SENRT_2D(Row,Col)/10.        !g/m2
 
@@ -517,23 +543,12 @@
 !     Total root senescence = water stress + natural senescence
       SRDOT = AMAX1(SRDOT, 0.0)
 
-!     Update RFAC3 based on yesterday's RTWT and TRLV
-      IF (RTWT .GE. 0.0001 .AND. TRLV .GE. 0.00001) THEN
-!       RTWT has not yet been updated today, so use yesterday's
-!       value and don't subtract out today's growth - chp 11/13/00
-        RFAC3 = TRLV / HalfRow / RTWT * 1.E4
-!    cm[root]      cm[root]           1          m2[ground]   cm2
-!    -------- = -------------- * ------------- * ---------- * ---
-!    g[root]    cm[row length]   cm[row width]    g[root]      m2
-      ELSE
-        RFAC3 = RFAC1
-      ENDIF
-
       CumRootMass = CumRootMass + WRDOTN * 10. - SRDOT * 10.
+
       CALL Aggregate_Roots(CELLS,
-     &    FirstRow, RLV_2D,                   !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
-     &    RLV, TRLV, TotRootMass)             !1D Output
+     &    FirstRow, RFAC3, RLV_2D, SOILPROP,  !Input
+     &    RLV, RootLength, RtLen_2D,          !Output
+     &    TotRootMass, TRLV)                  !Output
 
       CALL Cell2Layer_2D(SENRT_2D, Struc, NRowsTot, SENRT)
       CELLS%STATE%RLV = RLV_2D
@@ -789,9 +804,9 @@
 !     Subroutine  Aggregate_Roots converts 2D RLV and root mass to 1D
 !-----------------------------------------------------------------------
       SUBROUTINE Aggregate_Roots(CELLS,
-     &    FirstRow, RLV_2D,                   !2D Input
-     &    RFAC3, SOILPROP,                    !1D Input
-     &    RLV, TRLV, TotRootMass)             !1D Output
+     &    FirstRow, RFAC3, RLV_2D, SOILPROP,  !Input
+     &    RLV, RootLength, RtLen_2D,          !Output
+     &    TotRootMass, TRLV)                  !Output
 
       Use Cells_2D
       IMPLICIT NONE
@@ -802,16 +817,20 @@
       REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: RLV_2D
       REAL, INTENT(IN) :: RFAC3
       TYPE (SoilType), INTENT(IN) :: SOILPROP
+
       REAL, DIMENSION(NL), INTENT(OUT) :: RLV
       REAL, INTENT(OUT) :: TRLV, TotRootMass
+
+      REAL, DIMENSION(MaxRows,MaxCols), INTENT(OUT) :: RtLen_2D, 
+     &    RootLength
+      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
+      REAL TotalRootLength, Rowspc_cm
 
       INTEGER Row, Col, L, NLAYR
       REAL, DIMENSION(NL) :: DLAYR, RtLen_1D
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ColFrac, RtLen_2D, 
-     &    Width, Thick, RootLength
-      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
-      REAL TotalRootLength, Rowspc_cm
+      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ColFrac, 
+     &    Width, Thick
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
@@ -833,13 +852,6 @@
         DO Col = 1, NColsTot
           SELECT CASE(Cell_Type(row,col))
           CASE(3,4,5)
-!           RLV_2D is zero for cell types < 3 and > 5
-!            RtLen_2D(Row,Col) = RLV_2D(Row,Col) * THICK(Row,Col) 
-!     &                               * Colfrac(row,col) / 2.0
-!!           cm[root]    cm[root]
-!!           --------- = --------- * cm[cell thickness] 
-!!           cm2[soil]   cm3[soil]
-
 !           RootLength is the total root length in each cell and is
 !             additive across a row.
             RootLength(row,col) = RLV_2D(row,col) * CellArea(row,col)
@@ -853,18 +865,16 @@
 !                cm[root]          cm[root]      1
 !                ---------    = ------------- * ---- 
 !                cm2[soil]      cm[rowlength]    cm
-
-!           TRLV = TRLV + RtLen_2D(Row,Col) * 2.0
           END SELECT
         ENDDO
       ENDDO
 
-      TRLV = TotalRootLength / Rowspc_cm * 2.0
+      TRLV = TotalRootLength * 2.0 / Rowspc_cm
 !     cm[root]     cm[root]       1
 !     -------- = ------------- * ----
 !        cm2     cm[rowlength]    cm
 
-      TotRootMass = TRLV / RFAC3 *1E4 * 10.
+      TotRootMass = TRLV / RFAC3 * 1.E4 * 10.
 !               cm[root]    g[root]    1E4 cm2    10(kg/ha)
 !      kg/ha  = -------- * -------- * -------- * ---------
 !                  cm2     cm[root]      m2       (g/m2)
@@ -897,6 +907,7 @@
 ! DEP       Cumulative soil depth (cm)
 ! DEPMAX    Maximum depth of reported soil layers (cm)
 ! CellArea  Soil area (depth x width) (cm2)
+! CumRootMass Cumulative growth of roots (kg/ha)
 ! DS(Row,Col)     Cumulative depth in soil layer L (cm)
 ! DTX       Thermal time that occurs in a real day based on vegetative 
 !             development temperature function (thermal days / day)
@@ -927,21 +938,25 @@
 ! RLDSM     Minimum root length density in a given layer, below which 
 !             drought-induced senescence is not allowed.
 !             (cm [root ]/ cm3 [soil])
-! RLGRW(Row,Col)  Incremental root length density in soil layer L
-!             (cm[root] / cm3[soil])
 ! RLINIT    Initial root density (cm[root]/cm[row length])
-! RLNEW     New root growth added (cm[root]/cm[row length]/d)
+! RLNEW     New root growth added (cm[root]/cm2[land area]/d)
+! RLNEW_2D(row,col) New root growth added per cell (cm[root]/cm2[land area]/d)
 ! RLSEN(Row,Col)  Root length density senesced today (cm[root]/ cm3[soil])
 ! RLV_2D(Row,Col)    Root length density for soil layer L (cm[root] / cm3[soil])
-! RLV_WS(Row,Col) Cell root density reduced by flood????
+! RLV_WS(Row,Col) Cell root density reduced by water stress
+! RLVnew_2D(row,col) New RLV added today per cell (cm[root] / cm3[soil])
 ! RO        Respiration coefficient that depends on total plant mass
 !             (g[CH2O] / g[tissue])
+! RootLength(row,col) Root length per row length (cm[root]/cm[row length])
 ! RP        proportion of the day's photosynthesis which is respired in the 
 !             maintenance process 
 ! RRLF(Row,Col)   Root length density factor ratio (RLDF(Row,Col) / TRLDF) 
 ! RTDEPc(Col)     Root depth for each soil column (cm)
 ! RTWIDr(Row)     Root width for each soil row (cm)
 ! RTDEPI    Depth of roots on day of plant emergence. (cm)
+! RtLen_1D(L) Root length per area (cm[root]/cm2[land area])
+! RtLen_2D(Row,Col) Root length per area (cm[root]/cm2[land area])
+! RTLenNew  New root length today per row length (cm[roots]/cm[row length])
 ! RTWIDI    Width of roots on day of plant emergence. (cm)
 ! RTEXF     Fraction root death per day under oxygen depleted soil 
 ! RTSDF     Maximum fraction of root length senesced in a given layer per 
@@ -965,9 +980,11 @@
 ! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
 ! TABEX     Function subroutine - Lookup utility 
+! TotalRootLength Total root length (cm[root]/cm[row length])
+! TotRootMass Current mass of roots (kg/ha)
 ! TRLDF     Total root length density factor for root depth (cm)
-! TRLV      Total root length per square cm soil today ! JZW should be per unit row length
-!             (cm[root]/cm[row length])
+! TRLV      Total root length per square cm soil today (cm[root]/cm2[land area])
+! TRLV_min  Minimum root length per square cm for senescence to occur (cm[root]/cm2[land area])
 ! VSTAGE    Number of nodes on main stem of plant 
 ! WR(Row,Col)     Root hospitality factor, used to computer root water uptake 
 ! WRDOTN    Dry weight growth rate of new root tissue including N but not C 
