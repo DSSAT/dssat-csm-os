@@ -43,7 +43,7 @@ C=======================================================================
       CHARACTER*2  CROP ! member of dervied type CONTROL
       CHARACTER*30 FILEIO ! member of derived type CONTROL
 
-      INTEGER DYNAMIC, YREND, ISDATE, ISTAGE, TUBINITDATE
+      INTEGER DYNAMIC, YREND, ISDATE, ISTAGE, TB
       INTEGER MDATE, NLAYR, RUN, YRDOY, YREMRG, YRPLT, YRSIM
       INTEGER STGDOY(20)
 
@@ -57,7 +57,7 @@ C=======================================================================
       REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN 
       REAL TOPWT, TOTNUP, TRNU, TUBN, TUBWT, TURFAC, TWILEN
       REAL WTNCAN, WTNLO, XLAI, XSTAGE
-      REAL SDWT, SEEDNO, TRWUP, WTNSD, WTNUP, YIELD, WMAX
+      REAL SDWT, SEEDNO, TRWUP, WTNSD, WTNUP, YIELD, WMAX, WB
 
       REAL SATFAC !SATFAC imported only for PT_OPGROW
       REAL RWUEP1, PORMIN, RWUMX
@@ -119,14 +119,14 @@ C=======================================================================
 
       CALL PT_MATURITY(CONTROL,
      &    TUBWT, PLTPOP, DTT, STT,                        !Input
-     &    MDATE, TUBINITDATE, WMAX)                       !Output
+     &    MDATE, TB, WB, WMAX)                            !Output
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT, WMAX, TUBINITDATE,                !Input
+     &    YIELD, YRPLT, WMAX, TB,                          !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -161,10 +161,10 @@ C=======================================================================
       CALL PT_PHENOL (
      &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
      &    NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
-     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,  !Input
+     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,       !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output !reason of putting CUMDTT? Khan
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
-     &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,         !Output 
+     &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,    !Output 
      &    SEASINIT) !Output !why  different than decalaration? Khan
 
       CALL PT_GROSUB (SEASINIT,
@@ -191,14 +191,14 @@ C=======================================================================
 
       CALL PT_MATURITY(CONTROL,
      &    TUBWT, PLTPOP, DTT, STT,                        !Input
-     &    MDATE, TUBINITDATE, WMAX)                       !Output
+     &    MDATE, TB, WB, WMAX)                       !Output
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT, WMAX, TUBINITDATE,                !Input
+     &    YIELD, YRPLT, WMAX, TB,                   !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -282,14 +282,14 @@ C=======================================================================
 
       CALL PT_MATURITY(CONTROL,
      &    TUBWT, PLTPOP, DTT, STT,                        !Input
-     &    MDATE, TUBINITDATE, WMAX)                       !Output
+     &    MDATE, TB, WB, WMAX)                       !Output
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,  WMAX, TUBINITDATE,               !Input
+     &    YIELD, YRPLT,  WMAX, TB,                  !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -312,14 +312,14 @@ C=======================================================================
 
       CALL PT_MATURITY(CONTROL,
      &    TUBWT, PLTPOP, DTT, STT,                        !Input
-     &    MDATE, TUBINITDATE, WMAX)                       !Output
+     &    MDATE, TB, WB, WMAX)                       !Output
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT, WMAX, TUBINITDATE,                !Input
+     &    YIELD, YRPLT, WMAX, TB,                   !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
       PODWT = 0.0
