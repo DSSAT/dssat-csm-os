@@ -107,7 +107,8 @@ C=======================================================================
       CALL YR_DOY (YRDOY, YEAR, DOY)
 
 !      XANC   = TANC*100.0
-      APTNUP = TOPSN*10.0*PLANTS
+!      APTNUP = TOPSN*10.0*PLANTS
+      APTNUP = TOPSN*10.0 * PLTPOP !modified by Khan
       TOTNUP = APTNUP
 
       IF (ISTAGE .NE. 5) THEN
@@ -115,25 +116,25 @@ C=======================================================================
      &      ISTAGE, L0, ST, TMAX, TMIN,                   !Input
      &      DTT, STT)                                     !Output
 
-         DIF = 0.0 !Daytime plant-air temperature differential (oC) is assumed zero
-         !TBD=5.5  !from Khan et al., 2019_Field_Crops_Res_242
-         !TOD=23.4 !from Khan et al., 2019_Field_Crops_Res_242   
-         !TCD=34.6 !from Khan et al., 2019_Field_Crops_Res_242
-         !TSEN=1.6 !from Khan et al., 2019_Field_Crops_Res_242  
-         TBD=2.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
-         TOD=24.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
-         TCD=35.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
+         !DIF = 0.0 !Daytime plant-air temperature differential (oC) is assumed zero
+         TBD=5.5  !from Khan et al., 2019_Field_Crops_Res_242
+         TOD=23.4 !from Khan et al., 2019_Field_Crops_Res_242   
+         TCD=34.6 !from Khan et al., 2019_Field_Crops_Res_242
+         TSEN=1.6 !from Khan et al., 2019_Field_Crops_Res_242  
+         !TBD=2.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
+         !TOD=24.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
+         !TCD=35.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          !TSEN=0.2 !Assumed 
-         TSEN=1.0 !Assumed 
-         !SBD=2.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
-         !SOD=24.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171    
-         !SCD=36.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
-         !SSEN=0.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171 
-         SBD=2.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
-         SOD=23.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)   
-         SCD=33.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
+         !TSEN=1.0 !Assumed 
+         SBD=2.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
+         SOD=24.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171    
+         SCD=36.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
+         SSEN=0.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171 
+         !SBD=2.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
+         !SOD=23.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)   
+         !SCD=33.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          !SSEN=0.3 !Assumed 
-         SSEN=1.0 !Assumed 
+         !SSEN=1.0 !Assumed 
 
        CALL PT_BTHTIME_2 (
      &     ISTAGE, L0, ST, TMAX, TMIN, TBD, TOD, TCD,  !Input
