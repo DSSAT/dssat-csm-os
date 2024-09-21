@@ -23,7 +23,7 @@ C=======================================================================
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT, WMAX, TUBINITDATE,                !Input
+     &    YIELD, YRPLT, WMAX, TB,                         !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !-----------------------------------------------------------------------
@@ -47,25 +47,24 @@ C=======================================================================
       CHARACTER*30 FILEIO
       CHARACTER*80 PATHEX
 
-      INTEGER ACOUNT, DFLR, DMAT
+      INTEGER ACOUNT, DFLR, DMAT, FHDAP
       INTEGER DEMRG, DNR0, DNR1, DNR2, DNR7, DYNAMIC, ERRNUM, FOUND
 !      INTEGER IFLR, IFSD, IFPD, IHRV, IMAT
       INTEGER IEMRG, IFLR, IMAT
       INTEGER ISDATE, ISENS, ISTAGE, LINC, LNUM, LUNIO, MDATE, RUN
       INTEGER TIMDIF, TRTNUM, YRNR1, YRNR2, YRNR3
       INTEGER YRDOY, YREMRG, YRNR5, YRNR7, YRSIM, YRPLT
-      INTEGER TRT_ROT
+      INTEGER TRT_ROT, TB
       INTEGER STGDOY(20)
       
       REAL AGEFAC, APTNUP, BIOMAS, BWAH, CTPP, GNUP, GPP
-      REAL HAULM, HI
+      REAL HAULM, HI, TOPSN
       REAL LeafNo, MAXLAI, NSTRES, PBIOMS, PLTPOP, PSDWT, PTUBNP
       REAL Pstres1, Pstres2   
       REAL SDWT, SDWTAH, SDWTAM, SDWTPL, SEEDNO, STOVER, STOVWT
       REAL SWFAC, TOTNUP, TUBN, TUBNUP, TUBSM, TUBWT, TURFAC
       REAL WTNCAN, WTNFX, WTNSD, WTNUP, XLAI
-      REAL YIELD, YIELDB, YLDFR, WMAX
-      INTEGER TUBINITDATE 
+      REAL YIELD, FRYLD, WMAX, TUBDM     ! removed YLDFR, YIELDB
 
       REAL, DIMENSION(2) :: HARVFRAC
 
@@ -106,11 +105,11 @@ C=======================================================================
       IDETO = ISWITCH % IDETO
       IPLTI = ISWITCH % IPLTI
 
-      ACOUNT = 22  !Number of possible FILEA headers for this crop
+      ACOUNT = 22  !Number of possible FILEA headers for this crop (EVALUATE.OUT)
       DATA OLAB /
      &    'TDAT  ',     ! 1 BEGIN TUBER GROWTH (dap)
-     &    'TBID  ',     ! 2 Tuber initiation date (added by Khan)
-     &    'PDFT  ',     ! 3
+     &    'TBID  ',     ! 2 Tuber initiation (dap) (added by Khan)
+     &    'FHDAP ',     ! 3 !removed PDFT and replaced with Final harvest day (dap)
      &    'HDAT  ',     ! 4 PHYSIOL. MATURITY (dap)
      &    'UWAH  ',     ! 5 TUBER DRY YIELD (kg/ha)
      &    'PWAM  ',     ! 6
@@ -313,7 +312,9 @@ C-----------------------------------------------------------------------
 
       PBIOMS = BIOMAS * 10.0
 
-      YLDFR  = (YIELD/1000.)/0.2
+!     YLDFR  = (YIELD/1000.)/0.2  ! Tuber fresh yield, similar to FRYLD
+      TUBDM = 0.2 !Default value = 0.2
+      FRYLD  = (YIELD/1000.)/TUBDM  ! Modified by Khan for clarity
 !      HAULM  = BIOMAS*10. * PLANTS
       HAULM  = BIOMAS*10. * PLTPOP    !CHP
 
@@ -326,6 +327,8 @@ C-----------------------------------------------------------------------
 !      TUBNUP = TUBN*10.0 * PLANTS
       TUBNUP = TUBN*10.0 * PLTPOP     !CHP
 !      TOTNUP = TUBNUP    + APTNUP
+       TOTNUP = TUBNUP    + APTNUP  ! enabled by Khan
+!      APTNUP = TOPSN*10.0 * PLTPOP ! PT_phenol L.No. 110, by Khan
       TUBSM  = 0.0
       CTPP   = 0.0
 
@@ -368,21 +371,21 @@ C-----------------------------------------------------------------------
         OLAP(22) = 'EDAP  '
         CALL GetDesc(1,OLAP(22), DESCRIP(22))
 
-        DNR1 = TIMDIF (YRPLT,ISDATE)
+        DNR1 = TIMDIF (YRPLT,ISDATE) !ISDATE coming from PT_PHENOL L.No. 326
         IF (DNR1 .LE. 0) THEN
           DNR1 = -99
         ENDIF
 
-        DNR2 = TIMDIF (YRPLT,TUBINITDATE)
+        DNR2 = TIMDIF (YRPLT,TB)
         IF (DNR2 .LE. 0) THEN
           DNR2 = -99
         ENDIF
-
+       
         DNR7 = TIMDIF (YRPLT,MDATE)
         IF (DNR7 .LE. 0 .OR. YRPLT .LT. 0) THEN
           DNR7 = -99
         ENDIF
-
+               
         YREMRG = STGDOY(7)
         IF (YRPLT .GT. 0) THEN
           DNR0 = TIMDIF (YRPLT,YREMRG)
@@ -393,19 +396,23 @@ C-----------------------------------------------------------------------
           DNR0 = -99
         ENDIF
 
-        YIELDB = (YIELD/1000.)/0.2                  ! Fresh yield
+        !YIELDB = (YIELD/1000.)/0.2                  ! Fresh yield, disabled by Khan as not used
 
+        FHDAP = '-99' ! Assuming "Not simulated"
+       
         WRITE(Simulated(1),'(I8)') DNR1;  WRITE(Measured(1),'(I8)') DFLR
         WRITE(Simulated(2),'(I8)') DNR2;  WRITE(Measured(2),'(I8)') DFLR
-        WRITE(Simulated(3),'(I8)') -99;   WRITE(Measured(3),'(I8)') -99
-        WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT
+        WRITE(Simulated(3),'(I8)') FHDAP; WRITE(Measured(3),'(I8)') DMAT
+        WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') -99
         WRITE(Simulated(5),'(I8)') NINT(YIELD)
                               WRITE(Measured(5),'(A8)') TRIM(X(5))
         WRITE(Simulated(6),'(I8)') -99;   WRITE(Measured(6),'(I8)') -99
         WRITE(Simulated(7),'(I8)') -99;   WRITE(Measured(7),'(I8)') -99
-        WRITE(Simulated(8),'(F8.2)')YLDFR;
-                              WRITE(Measured(8),'(A8)') TRIM(X(8))
-        WRITE(Simulated(9),'(F8.2)') WMAX;   WRITE(Measured(9),'(I8)') -99
+!        WRITE(Simulated(8),'(F8.2)')YLDFR;
+!                              WRITE(Measured(8),'(A8)') TRIM(X(8))
+        WRITE(Simulated(8),'(F8.2)')FRYLD;
+                              WRITE(Measured(8),'(A8)') TRIM(X(8))      
+        WRITE(Simulated(9),'(F8.2)')WMAX;WRITE(Measured(9),'(I8)') -99
         WRITE(Simulated(10),'(I8)') NINT(PBIOMS)
                                WRITE(Measured(10),'(A8)') TRIM(X(10))
 
