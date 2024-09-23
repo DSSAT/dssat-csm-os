@@ -398,7 +398,7 @@ C-----------------------------------------------------------------------
 
         !YIELDB = (YIELD/1000.)/0.2                  ! Fresh yield, disabled by Khan as not used
 
-        FHDAP = '-99' ! Assuming "Not simulated"
+        !FHDAP = -99 ! Assuming "Not simulated"
        
         WRITE(Simulated(1),'(I8)') DNR1;  WRITE(Measured(1),'(I8)') DFLR
         WRITE(Simulated(2),'(I8)') DNR2;  WRITE(Measured(2),'(I8)') DFLR

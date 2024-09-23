@@ -810,7 +810,7 @@ C     Read Crop Parameters from FILEC
         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
         IF (ISECT == 0) EXIT
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEC,LNUM)
-        DO J = 1, 4
+        DO J = 1, 5
           IF (INDEX(CHAR(1:15),ACRO(J)) > 0) THEN
             SELECT CASE (J)
               CASE (1)
