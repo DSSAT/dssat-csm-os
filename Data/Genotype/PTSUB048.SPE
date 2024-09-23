@@ -10,7 +10,7 @@ PT OPT   CO2Y   0.00 0.71 1.00 1.19 1.40 1.41 1.43 1.44 1.47 1.50  ! CO2 Y axis 
 !PT OPT   CO2Y   0.00 0.71 1.00 1.08 1.17 1.25 1.32 1.38 1.43 1.50  ! CO2 Y axis Using general C3 response for now. JIL
 
 
-
+PT OPT   TBD    5.5                    !Temperature thersholds which affect senescense for leaf;
 
 
 PT OPT   RWEP   1.50                   ! Threshold of the ratio Water uptake/Transpiration to begin calculating stress affecting expansion (TURFAC)

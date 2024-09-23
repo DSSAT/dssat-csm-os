@@ -116,8 +116,10 @@ C=======================================================================
      &      ISTAGE, L0, ST, TMAX, TMIN,                   !Input
      &      DTT, STT)                                     !Output
 
-         !DIF = 0.0 !Daytime plant-air temperature differential (oC) is assumed zero
-         TBD=5.5  !from Khan et al., 2019_Field_Crops_Res_242
+         !Khan: Introduced cardinal temperatures required for estimating beta thermal time
+         ! These can be moved to Species file (SPE file)
+                  !DIF = 0.0 !Daytime plant-air temperature differential (oC) is assumed zero
+         !TBD=5.5  !from Khan et al., 2019_Field_Crops_Res_242
          TOD=23.4 !from Khan et al., 2019_Field_Crops_Res_242   
          TCD=34.6 !from Khan et al., 2019_Field_Crops_Res_242
          TSEN=1.6 !from Khan et al., 2019_Field_Crops_Res_242  
