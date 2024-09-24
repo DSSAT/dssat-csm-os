@@ -825,7 +825,6 @@ C     Read Crop Parameters from FILEC
                 READ (CHAR(16:39), '(F6.1)', IOSTAT=ERR) TBD
             END SELECT
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEC,LNUM)
-            PRINT *, 'Debug: TBD value read is ', TBD  ! Debug print
           ENDIF
         END DO
       END DO
