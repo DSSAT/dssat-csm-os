@@ -116,7 +116,7 @@ L#SX   Leaf number #   Leaf number per stem, maximum                            
 LAIH   LAI harvest     Leaf area index, at harvest                              .
 LAIX   LAI maximum     Leaf area index, maximum                                 .
 LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      .
-LONG   Longitude Â°     Longitude (degrees)                                      .
+LONG   Longitude °     Longitude (degrees)                                      .
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
@@ -189,7 +189,7 @@ VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
 WYEAR  Weather year    Year for weather data (for forecast ensembles)           .
-XLAT   Latitude Â°      Latitude (degrees)                                       .
+XLAT   Latitude °      Latitude (degrees)                                       .
 YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
