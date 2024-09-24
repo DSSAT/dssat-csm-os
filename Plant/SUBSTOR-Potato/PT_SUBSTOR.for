@@ -56,7 +56,7 @@ C=======================================================================
       REAL SLPF
       REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN 
       REAL TOPWT, TOTNUP, TRNU, TUBN, TUBWT, TURFAC, TWILEN
-      REAL WTNCAN, WTNLO, XLAI, XSTAGE
+      REAL WTNCAN, WTNLO, XLAI, XSTAGE, TBD
       REAL SDWT, SEEDNO, TRWUP, WTNSD, WTNUP, YIELD, WMAX, WB
 
       REAL SATFAC !SATFAC imported only for PT_OPGROW
@@ -115,7 +115,7 @@ C=======================================================================
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT, DTT, !Input
-     &   CUMDTT, STT, CUMSTT) !Input
+     &    CUMDTT, STT, CUMSTT) !Input
 
       CALL PT_MATURITY(CONTROL,
      &    TUBWT, PLTPOP, DTT, STT,                        !Input
@@ -126,7 +126,7 @@ C=======================================================================
      &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
      &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT, WMAX, TB,                          !Input
+     &    YIELD, YRPLT, WMAX, TB,                         !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -161,7 +161,7 @@ C=======================================================================
       CALL PT_PHENOL (
      &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
      &    NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
-     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,       !Input
+     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM, TBD,       !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output !reason of putting CUMDTT? Khan
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
      &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,    !Output 
@@ -237,7 +237,7 @@ C=======================================================================
         CALL PT_PHENOL (  
      &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, !Input
      &    NLAYR, NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
-     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,       !Input
+     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM, TBD,       !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
      &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,    !Output

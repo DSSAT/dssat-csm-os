@@ -14,7 +14,7 @@ C=======================================================================
       SUBROUTINE PT_PHENOL (
      &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, !Input
      &    NLAYR, NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
-     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,       !Input
+     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM, TBD,       !Input
      &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output
      &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
      &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,    !Output !Added by Khan
@@ -25,12 +25,13 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE
-      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI, PT_BTHTIME_2    
+      EXTERNAL PT_IPPHEN, YR_DOY, PT_THTIME, PT_PHASEI, PT_BTHTIME_2,
+     &   PT_IPGRO 
       SAVE
 
       LOGICAL   COND, EMERGE
 
-      CHARACTER*1  ISWWAT
+      CHARACTER*1  ISWWAT, PLME
       CHARACTER*2  CROP
       CHARACTER*30 FILEIO
 
@@ -47,8 +48,12 @@ C=======================================================================
       REAL SEEDRV, SENLA, SPGROF, SPRLAP, SPRLTH, SPRWT, SWSD
       REAL TC, TCPLUS, TEMP, TII, TMAX, TMIN, TOPSN, TOTNUP, TSPRWT
       REAL XDEPTH, XDTT, XPLANT, XSTAGE
-      REAL TBD, TOD, TCD, TSEN, TDU_1, SDU_1, SBD, SOD, SCD, DIF ! Added by Khan
+      REAL TOD, TCD, TSEN, TDU_1, SDU_1, SBD, SOD, SCD, DIF ! Added by Khan
       REAL SSEN, DTT, TDU_2, SDU_2 ! Added by Khan
+      REAL G2, G3, PD, RUE1, RUE2, TBD, LALWR, SDWTPL ! Added by Khan
+      
+      REAL, DIMENSION(4)  :: SENST, SENSF ! Added by Khan
+      REAL, DIMENSION(10) :: CO2X, CO2Y   ! Added by Khan
 
       REAL, DIMENSION(NL) :: DLAYR, LL, ST, SW
       Type (WeatherType) WEATHER
@@ -65,6 +70,11 @@ C=======================================================================
       CALL PT_IPPHEN(
      &    FILEIO, 
      &    CROP, IEMRG, P2, PLANTS, SDEPTH, SPRLAP, TC, TCPLUS)
+      
+      CALL PT_IPGRO(
+     &    FILEIO,                                         !Input
+     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,           !Output
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST, LALWR, TBD)   !Output 
 
       ISTAGE = 5
       XSTAGE = 0.0
@@ -110,12 +120,13 @@ C=======================================================================
 !      APTNUP = TOPSN*10.0*PLANTS
       APTNUP = TOPSN*10.0 * PLTPOP !modified by Khan
       TOTNUP = APTNUP
-
+     
       IF (ISTAGE .NE. 5) THEN
          CALL PT_THTIME (  
      &      ISTAGE, L0, ST, TMAX, TMIN,                   !Input
      &      DTT, STT)                                     !Output
-
+           
+           
          !Khan: Introduced cardinal temperatures required for estimating beta thermal time
          ! These can be moved to Species file (SPE file)
                   !DIF = 0.0 !Daytime plant-air temperature differential (oC) is assumed zero
