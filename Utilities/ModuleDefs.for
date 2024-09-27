@@ -332,7 +332,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER, DIMENSION(MaxFiles) :: LUN
       End Type
 
-
 !======================================================================
 !      CONTAINS
 !
@@ -481,6 +480,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2
         REAL TOMINSOM3, TNIMBSOM
         REAL MULCHMASS
+        REAL TSOMC
       End Type OrgCType
 
 !     Data from weather
@@ -502,6 +502,11 @@ C             CHP Added TRTNUM to CONTROL variable.
       
       TYPE MHarveType
         INTEGER HARVF
+!       CHP added 2024-06-27
+!       In-season harvest info (currently just for forages)
+!       Could potentially add more in-season harvest variables as needed.
+        INTEGER ISH_date
+        REAL ISH_wt
       END TYPE 
 
 !     Data which can be transferred between modules
@@ -744,6 +749,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('TOMINSOM2');Value = SAVE_data % ORGC % TOMINSOM2
         Case ('TOMINSOM3');Value = SAVE_data % ORGC % TOMINSOM3
         Case ('TNIMBSOM'); Value = SAVE_data % ORGC % TNIMBSOM
+        Case ('TSOMC')   ; Value = SAVE_data % ORGC % TSOMC
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -771,6 +777,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
             
+      CASE ('MHARVEST')
+        SELECT CASE(VarName)
+        CASE('ISH_wt'); Value = SAVE_data % MHARVEST % ISH_wt
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT       
+
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 
@@ -880,6 +892,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('TOMINSOM2');SAVE_data % ORGC % TOMINSOM2 = Value
         Case ('TOMINSOM3');SAVE_data % ORGC % TOMINSOM3 = Value
         Case ('TNIMBSOM'); SAVE_data % ORGC % TNIMBSOM  = Value
+        Case ('TSOMC');    SAVE_data % ORGC % TSOMC     = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -896,6 +909,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
             
+      CASE ('MHARVEST')
+        SELECT CASE(VarName)
+        CASE('ISH_wt'); SAVE_data % MHARVEST % ISH_wt = Value
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT       
+
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 
@@ -1006,6 +1025,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CASE ('MHARVEST')
         SELECT CASE(VarName)
         CASE('HARVF'); Value = SAVE_data % MHARVEST % HARVF
+        CASE('ISH_date'); Value = SAVE_data % MHARVEST % ISH_date
         CASE DEFAULT; ERR = .TRUE.
         END SELECT       
         
@@ -1052,6 +1072,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CASE ('MHARVEST')
         SELECT CASE(VarName)
         CASE('HARVF'); SAVE_data % MHARVEST % HARVF = Value
+        CASE('ISH_date'); SAVE_data % MHARVEST % ISH_date = Value
         CASE DEFAULT; ERR = .TRUE.
         END SELECT            
 

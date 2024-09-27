@@ -208,9 +208,8 @@ C=======================================================================
 
 !     ROOTGR was called from main program between WATBAL and NTRANS
       IF (ISWWAT .EQ. 'Y') THEN
-        !
-        ! WRESR growth and depth routine
-        !
+
+!       WRESR growth and depth routine
         IF (GRORT .GT. 0.0) THEN
           CALL PT_ROOTGR (RATE, 
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input

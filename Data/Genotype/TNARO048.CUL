@@ -16,7 +16,7 @@
 ! PCGRD  Leaf appearance rate (Gradient)
 
 @VAR#  VAR-NAME........ EXPNO   ECO#    P1    P3    P4    P5    G2    G3    G4 PHINT PCINT PCGRD
-!Coeffient #                             1     2     3     4     5     5     6     7     8     9
+!Coefficient #                           1     2     3     4     5     5     6     7     8     9
 !Calibration                             P     P     P     P     P     P     N     N     G     G
 
 999991 MINIMA               . DFAULT  1400  1200   400   600  1.00  1.00  1.00 150.0 122.0  0.00

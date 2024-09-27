@@ -7,7 +7,8 @@ C  Revision history
 C
 C  1. Written     R.B.M. March 1998.
 ! 2021-06-30 CHP and US adapt for DSSAT-CSM v4.8
-! 2023-01-24 chp added SAEA to soil analysis in FileX 
+! 2023-01-24 chp added SAEA to soil analysis in FileX
+! 2023-05-14 EHFMS changed the starting condition for methane production
 C=======================================================================
       SUBROUTINE MethaneDynamics(CONTROL, ISWITCH, SOILPROP,  !Input
      &    FERTDATA, FLOODWAT, SW, RLV, newCO2, DRAIN,         !Input
@@ -23,7 +24,7 @@ C=======================================================================
 
       INTEGER n1,NLAYR,i,j, DYNAMIC
       REAL dlayr(NL),SW(NL),DLL(NL),RLV(NL),CSubstrate(NL),BD(NL),
-     &     Buffer(NL,2),afp(NL), SAEA(NL)
+     &     Buffer(NL,2),afp(NL), SAEA(NL), SAT(NL), DUL(NL)
       REAL, DIMENSION(0:NL) :: newCO2
       REAL drain,flood,x,CH4Emission,buffconc,rCO2,
      &     rCH4,TCH4Substrate,rbuff,afpmax,
@@ -49,15 +50,16 @@ C=======================================================================
       REAL, PARAMETER :: spd = 24.*3600.   ! seconds per day
 !     Reference height for the Arah model to be the top of the bund
       REAL, PARAMETER :: RefHeight = 100. ! mm
-!     Soil buffer regeneration rate after drainage
-      REAL, PARAMETER :: BufferRegenRate = 0.06 ! 1/d	  0.02
+      !1/d EHFMS changed, before was 0.06
+      REAL, PARAMETER :: BufferRegenRate = 0.070
+      !EHFMS created this parameter 
+      REAL, PARAMETER :: frac_afpmax = 0.30
       DYNAMIC = CONTROL % DYNAMIC
-
       DLAYR = SOILPROP % DLAYR
       DLL   = SOILPROP % LL
       BD    = SOILPROP % BD
       NLAYR = SOILPROP % NLAYR
-
+      
 C***********************************************************************
 C***********************************************************************
 C    Input and Initialization 
@@ -101,13 +103,15 @@ C-----------------------------------------------------------------------
 
       FloodCH4 = 0.0
       DO i=1,NLAYR
-!       Convert the alternate electron acceptors in each layer from mol Ceq/m3 to kgC/ha
+!       Convert the alternate electron acceptors in each layer 
+!       from mol Ceq/m3 to kgC/ha
 !       Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,1) = SAEA(i) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
         Buffer(i,2) = 0.0
       ENDDO
 
-!     proportionality constant for root transmissivity and RLV	(0.00015 m air/(m root))
+!     proportionality constant for root transmissivity and RLV	
+!     (0.00015 m air/(m root))
 !     lamda_rho = lamdarho  ! 0.00015
       lamda_rho = 0.00015
 
@@ -136,8 +140,10 @@ C-----------------------------------------------------------------------
       CH4Ebullition  = 0.0
       CH4Diffusion   = 0.0
 
-!     Calculate total CO2 coming in from decomposition of organic matter, newCO2Tot
-!     Transfer newCO2 from soil organic matter modules to CSubstrate variable
+!     Calculate total CO2 coming in from decomposition 
+!     of organic matter, newCO2Tot
+!     Transfer newCO2 from soil organic matter modules 
+!     to CSubstrate variable
       CSubstrate = 0.0
       newCO2Tot = 0.0
       DO i = 1, SOILPROP % NLAYR
@@ -175,9 +181,9 @@ C-----------------------------------------------------------------------
         IF (FLOOD.GT.0.0) THEN 
           afp(i) = 0.0
         ELSE 
-          afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))
-        ENDIF
-        afpmax = 1.0 - BD(i)/2.65 - DLL(i)
+            afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))          
+      ENDIF
+         afpmax = 1.0 - BD(i)/2.65
 
 !       Update buffer from new fertilizer
         Buffer(i,1) = Buffer(i,1) + FERTDATA % AddBuffer(i)
@@ -186,29 +192,31 @@ C-----------------------------------------------------------------------
         buffconc = Buffer(i,1)/10./12./(dlayr(i)/100.)  
 
 !       calculate reoxidisation of buffer if soil is aerated
-        IF (afp(i).GT.0.0) THEN
-          rCH4 = 0.0              ! no CH4 production
-          rCO2 = CSubstrate(i)    ! aerobic respiration
-          rbuff = -MIN(BufferRegenRate*afp(i)/afpmax*Buffer(i,2),
-     &                     Buffer(i,2))
-        ELSE
-!         calculate methane production
-          if (buffconc.gt.0.0) then
-            rCH4 = 0.2 * (1.0 - buffconc/24.0)    ! mol C m3/d	 was 0.2
-            rCH4 = rCH4 * dlayr(i)/100.*12.*10.   ! kgC/ha/d
-          else  
-            rCH4 = CSubstrate(i) / 2.0            ! kgC/ha/d
-          endif
-          rCH4 = max(0.0,min(rCH4,CSubstrate(i)/2.0))
-          rCO2 = CSubstrate(i) - (2.0 * rCH4)
-          if (rCO2.gt.Buffer(i,1)) then
-            rCO2 = Buffer(i,1)
-            rCH4 = (CSubstrate(i) - rCO2)/2.0
-          endif
-          rbuff = rCO2  
-        ENDIF
-        Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidised buffer pool
-        Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool
+!         IF (afp(i).GT.0.0) THEN !     
+! EHFMS: Methane Prod. under conditions of partially saturated soil
+      IF (afp(i).GT.frac_afpmax*afpmax) THEN 
+         rCH4 = 0.0              ! no CH4 production
+         rCO2 = CSubstrate(i)    ! aerobic respiration
+         rbuff = -MIN(BufferRegenRate * afp(i) / afpmax * Buffer(i,2),
+     &                Buffer(i,2))
+      ELSE
+      ! calculate methane production
+      IF (buffconc > 0.0) THEN
+         rCH4 = 0.3 * (1.0 - buffconc/24.0)    ! mol C m3/d  was 0.2
+         rCH4 = rCH4 * dlayr(i)/100. * 12. * 10.   ! kgC/ha/d
+      ELSE  
+        rCH4 = CSubstrate(i) / 2.0            ! kgC/ha/d
+      ENDIF
+       rCH4 = MAX(0.0, MIN(rCH4, CSubstrate(i)/2.0))
+       rCO2 = CSubstrate(i) - (2.0 * rCH4)
+      IF (rCO2 > Buffer(i,1)) THEN
+         rCO2 = Buffer(i,1)
+         rCH4 = (CSubstrate(i) - rCO2) / 2.0
+      ENDIF
+      rbuff = rCO2  
+      ENDIF
+      Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidized buffer pool
+      Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool                       
 
 !       Total CH4 substrate (kgC/ha)
         TCH4Substrate = TCH4Substrate + rCH4  
@@ -234,7 +242,8 @@ C-----------------------------------------------------------------------
       Lz = drain * 1.e-3/spd    ! mm/d --> m3/m2/s
 
 !     Call the steady-state routine of the Arah model
-!     TSubstrate comes out of these routines, ~10% of TCH4Substrate for IRLB9701.RIX, trt 4
+!     TSubstrate comes out of these routines, 
+!     ~10% of TCH4Substrate for IRLB9701.RIX, trt 4
       CALL setup(NLAYR+n1)
       CALL SteadyState
 
@@ -253,7 +262,8 @@ C-----------------------------------------------------------------------
         LeachingFrac    = 0.0
       ENDIF
 
-!!     Limit leaching fraction + consumption fraction to no more than production
+!!     Limit leaching fraction + consumption fraction 
+!      to no more than production
 !      IF (ConsumptionFrac + LeachingFrac .GT. ProductionFrac) THEN
 !        ReductFact = ProductionFrac / (ConsumptionFrac + LeachingFrac)
 !        ConsumptionFrac = ConsumptionFrac * ReductFact
@@ -263,7 +273,8 @@ C-----------------------------------------------------------------------
       EmissionFrac = ProductionFrac - ConsumptionFrac - LeachingFrac
       DiffusionFrac = EmissionFrac - (PlantFrac + EbullitionFrac)
 
-!     Calculate actual flux rates (kgC/ha/d) based on CERES-Rice substrate calculations
+!     Calculate actual flux rates (kgC/ha/d) based on 
+!     CERES-Rice substrate calculations
       CH4Production  = TCH4Substrate * ProductionFrac
       CH4Consumption = TCH4Substrate * ConsumptionFrac
       CH4PlantFlux   = TCH4Substrate * PlantFrac
@@ -385,7 +396,7 @@ C  07/02/2021 CHP Written
      &  CumCH4Leaching, Cum_CH4_bal
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 2
+      INTEGER, PARAMETER :: SUMNUM = 1  !CO2EM now from GHG module
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -500,7 +511,7 @@ C-----------------------------------------------------------------------
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
       LABEL(1)  = 'CH4EM'; VALUE(1)  = CumCH4Emission  
-      LABEL(2)  = 'CO2EM'; VALUE(2)  = CumCO2emission
+!     LABEL(2)  = 'CO2EM'; VALUE(2)  = CumCO2emission
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 

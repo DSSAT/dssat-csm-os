@@ -75,6 +75,7 @@ ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) 
 ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. g       Eye weight (g)                                           .
+EYLDH  Eco. Yld t/ha   Economic Yield (ton/ha)                                  .
 FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
 FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .
@@ -423,27 +424,27 @@ NDN8D  Denit layer 8   Daily denitrification, soil layer 8 (g[N]/ha)            
 NDN9D  Denit layer 9   Daily denitrification, soil layer 9 (g[N]/ha)            .
 NFXC   N Fixed kg/ha   N fixed (kg/ha)                                          .
 NFXD   N Fixed kg/ha.d N fixation rate (kg/(ha.day))                            .
-NH10   NH4  layer 10   NH4, soil layer 10(g[N]/kg[soil])                        .
-NH1D   NH4  layer 1    NH4, soil layer 1 (g[N]/kg[soil])                        .
-NH2D   NH4  layer 2    NH4, soil layer 2 (g[N]/kg[soil])                        .
-NH3D   NH4  layer 3    NH4, soil layer 3 (g[N]/kg[soil])                        .
-NH4D   NH4  layer 4    NH4, soil layer 4 (g[N]/kg[soil])                        .
-NH5D   NH4  layer 5    NH4, soil layer 5 (g[N]/kg[soil])                        .
-NH6D   NH4  layer 6    NH4, soil layer 6 (g[N]/kg[soil])                        .
-NH7D   NH4  layer 7    NH4, soil layer 7 (g[N]/kg[soil])                        .
-NH8D   NH4  layer 8    NH4, soil layer 8 (g[N]/kg[soil])                        .
-NH9D   NH4  layer 9    NH4, soil layer 9 (g[N]/kg[soil])                        .
+NH10   NH4  layer 10   NH4, soil layer 10(mg[N]/kg[soil])                        .
+NH1D   NH4  layer 1    NH4, soil layer 1 (mg[N]/kg[soil])                        .
+NH2D   NH4  layer 2    NH4, soil layer 2 (mg[N]/kg[soil])                        .
+NH3D   NH4  layer 3    NH4, soil layer 3 (mg[N]/kg[soil])                        .
+NH4D   NH4  layer 4    NH4, soil layer 4 (mg[N]/kg[soil])                        .
+NH5D   NH4  layer 5    NH4, soil layer 5 (mg[N]/kg[soil])                        .
+NH6D   NH4  layer 6    NH4, soil layer 6 (mg[N]/kg[soil])                        .
+NH7D   NH4  layer 7    NH4, soil layer 7 (mg[N]/kg[soil])                        .
+NH8D   NH4  layer 8    NH4, soil layer 8 (mg[N]/kg[soil])                        .
+NH9D   NH4  layer 9    NH4, soil layer 9 (mg[N]/kg[soil])                        .
 NHTD   Total NH4 kg/ha Total soil NH4 (kg [N]/ha)                               .
-NI10   NO3 layer 10    NO3, soil layer 10(g[N]/kg[soil])                        .
-NI1D   NO3 layer 1     NO3, soil layer 1 (g[N]/kg[soil])                        .
-NI2D   NO3 layer 2     NO3, soil layer 2 (g[N]/kg[soil])                        .
-NI3D   NO3 layer 3     NO3, soil layer 3 (g[N]/kg[soil])                        .
-NI4D   NO3 layer 4     NO3, soil layer 4 (g[N]/kg[soil])                        .
-NI5D   NO3 layer 5     NO3, soil layer 5 (g[N]/kg[soil])                        .
-NI6D   NO3 layer 6     NO3, soil layer 6 (g[N]/kg[soil])                        .
-NI7D   NO3 layer 7     NO3, soil layer 7 (g[N]/kg[soil])                        .
-NI8D   NO3 layer 8     NO3, soil layer 8 (g[N]/kg[soil])                        .
-NI9D   NO3 layer 9     NO3, soil layer 9 (g[N]/kg[soil])                        .
+NI10   NO3 layer 10    NO3, soil layer 10(mg[N]/kg[soil])                        .
+NI1D   NO3 layer 1     NO3, soil layer 1 (mg[N]/kg[soil])                        .
+NI2D   NO3 layer 2     NO3, soil layer 2 (mg[N]/kg[soil])                        .
+NI3D   NO3 layer 3     NO3, soil layer 3 (mg[N]/kg[soil])                        .
+NI4D   NO3 layer 4     NO3, soil layer 4 (mg[N]/kg[soil])                        .
+NI5D   NO3 layer 5     NO3, soil layer 5 (mg[N]/kg[soil])                        .
+NI6D   NO3 layer 6     NO3, soil layer 6 (mg[N]/kg[soil])                        .
+NI7D   NO3 layer 7     NO3, soil layer 7 (mg[N]/kg[soil])                        .
+NI8D   NO3 layer 8     NO3, soil layer 8 (mg[N]/kg[soil])                        .
+NI9D   NO3 layer 9     NO3, soil layer 9 (mg[N]/kg[soil])                        .
 NIAD   Tot soil N kg/haTotal soil NO3+NH4 (kg [N]/ha)                           .
 NIMC   N Immobilized   Cumulative N immobilization (kg [N]/ha)                  .
 NITC   Nitrification   Cumulative nitrification (kg [N]/ha)                     .
@@ -882,7 +883,7 @@ IRRD   Eff Irrig mm/d  Daily effective irrigation (mm/d)                        
 IRRAD  App Irrig mm/d  Daily applied irrigation (includes losses) (mm/d)        .
 TL#C   TILLAGE #       Number of tillage operations                             .
 TLBD   BD Lyr1-3 g/cm3 Bulk Density average Lyr 1 to 3 after tillage (g/cm3)    .
-TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .    
+TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .
 
 *WEATHER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -1428,6 +1429,8 @@ CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
 CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
+CO2ENC CO2emi net kg/d Cumulative net CO2 emissions kg/d                        .
+CO2END CO2emi net g/d  Daily net CO2 emissions kg/d                             .
 CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
 CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
 MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .

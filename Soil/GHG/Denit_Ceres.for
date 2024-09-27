@@ -13,7 +13,7 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE Denit_Ceres (CONTROL, ISWNIT,  
-     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    DUL, KG2PPM, LITC, NLAYR, NO3, SAT,         !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
@@ -28,7 +28,7 @@ C=======================================================================
 
       INTEGER DYNAMIC, L, NLAYR
 
-      REAL CW, FLOOD, XMIN
+      REAL CW, XMIN
       REAL TFDENIT, WFDENIT
       REAL ST(NL), SNO3_AVAIL
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
@@ -123,7 +123,7 @@ C-UPS     Corrected per e-mail 03/29/00
 !     ----------------------------------------------------------------
 
 !        From Century:
-         !CHP changed 1/14/2004 per email from UPS / AJG
+!        CHP changed 1/14/2004 per email from UPS / AJG
           CW = 24.5 + 0.0031 * (SSOMC(L) + 0.2 * LITC(L)) * KG2PPM(L)
 !     ----------------------------------------------------------------
 !
@@ -277,7 +277,7 @@ C         Compute the N2:N2O Ratio
       N2O_data % TN2OdenitD= TN2OdenitD
       N2O_data % TNOXD    = TNOXD
       N2O_data % DENITRIF = DENITRIF
-      N2O_data % n2odenit  = n2odenit
+      N2O_data % n2odenit = n2odenit
       N2O_data % N2FLUX   = N2FLUX
 
       RETURN
@@ -288,7 +288,7 @@ C         Compute the N2:N2O Ratio
 !-----------------------------------------------------------------------
       
 ! DENITRIF(L)   Denitrification rate in soil layer L (kg [N] / ha / d)
-! NO3(L)        Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)        Nitrate in soil layer L (ï¿½g[N] / g[soil])
 
 !***********************************************************************
 

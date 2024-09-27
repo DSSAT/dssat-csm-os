@@ -1,0 +1,52 @@
+*LENTIL GENOTYPE COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! EXPNO   Number of experiments used to estimate cultivar parameters
+! ECO#    Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL    Critical Short Day Length below which reproductive development
+!         progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN   Slope of the relative response of development to photoperiod with time
+!         (positive for shortday plants) (1/hour)
+! EM-FL   Time between plant emergence and flower appearance (R1)
+!         (photothermal days)
+! Fl-SH   Time between first flower and first pod (R3) (photothermal days)
+! Fl-SD   Time between first flower and first seed (R5) (photothermal days)
+! SD-PM   Time between first seed (R5) and physiological maturity (R7)
+!         (photothermal days)
+! Fl-LF   Time between first flower (R1) and end of leaf expansion
+!         (photothermal days)
+! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!         (mg CO2/m2-s)
+! SLAVR   Specific leaf area of cultivar under standard growth conditions
+!         (cm2/g)
+! SIZLF   Maximum size of full leaf (three leaflets) (cm2)
+! XFRT    Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD   Maximum weight per seed (g)
+! SFDUR   Seed filling duration for pod cohort at standard growth conditions
+!         (photothermal days)
+! SDPDV   Average seed per pod under standard growing conditions (#/pod)
+! PODUR   Time required for cultivar to reach final pod load under optimal
+!         conditions (photothermal days)
+! THRSH   The maximum ratio of (seed/(seed+shell)) at maturity.
+!         Causes seed to stop growing as their dry weights
+!         increase until shells are filled in a cohort.
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
+!
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             P     P     P     N     P     P     G     G     G     N     N     G     G     G     N     N     N     N
+
+999991 MINIMA               . DFAULT 14.00 -.200  20.0   4.0   7.5 17.00 14.00 0.700  200.  50.0  1.00 0.040  17.0  1.20  12.0  60.0  .225  .020
+999992 MAXIMA               . DFAULT 18.00 -.040  32.0   9.0  12.0 30.00 22.00 1.400  320. 100.0  1.00 0.070  23.0  2.40  20.0  78.0  .286  .020
+
+CAND01 Default (Maxim)      . LAT001 15.80  -.11  26.5   7.5  10.0 21.00 20.00  1.00  220.  70.0  1.00 0.044  20.0  1.30  14.0  69.0  .286  .020
+CAND02 CDC Glamis           . LAT001 15.40  -.11  28.0   5.0   8.0 22.50 16.00  0.86  240.  70.0  1.00 0.065  20.0  2.00  14.0  67.0  .286  .020
+CAND04 CDC Maximim          . LAT001 15.80  -.11  26.5   7.5  10.0 21.00 20.00  1.00  220.  70.0  1.00 0.044  20.0  1.30  14.0  69.0  .286  .020
+CAND05 CDC Impulse          . LAT001 16.00  -.11  29.0   7.5  11.0 18.50 15.00  0.83  230.  70.0  1.00 0.065  20.0  1.30  18.0  60.0  .286  .020
+CAND06 CDC Lima             . LAT001 16.90  -.19  23.0   5.0   8.0 20.00 18.00  0.90  220.  70.0  1.00 0.065  20.0  2.00  16.0  68.0  .286  .020
+WA0016 Morton [W]        1,11 WINTER 17.00 -.066  30.1   7.0  10.0 27.70 15.00  1.30  285.  70.0  1.00 0.040  20.0  2.00  14.0  77.0  .225  .020
+
+
+

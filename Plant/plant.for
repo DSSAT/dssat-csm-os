@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2023
+C COPYRIGHT 1998-2024
 C                     DSSAT Foundation
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -385,7 +385,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Forage model
       CASE('PRFRM')
         CALL FORAGE(CONTROL, ISWITCH,
-     &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
+     &    EOP, NH4, NO3, SOILPROP,                        !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, EORATIO, HARVRES, MDATE,                 !Output
      &    NSTRES, PSTRES1, CropStatus,                    !Output
@@ -891,7 +891,6 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! YRPLT     Planting date (YYYYDDD)
 !===========================================================================
 
-
 !===========================================================================
       SUBROUTINE READ_ASCE_KT(CONTROL, MEEVP)
 !     Generic routine to read evapotranspiration species parameters
@@ -936,6 +935,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !-----------------------------------------------------------------------
       FILEIO = CONTROL % FILEIO
       LUNIO  = CONTROL % LUNIO
+      CROP   = CONTROL % CROP
       OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERR)
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
       READ(LUNIO,50,IOSTAT=ERR) FILEC, PATHCR ; LNUM = 7

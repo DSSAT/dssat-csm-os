@@ -797,16 +797,16 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL ERROR, Y4K_DOY, YR_DOY
 
-      CHARACTER*6 XDAT,ERRKEY
+      CHARACTER*12 XDAT,ERRKEY
       REAL        RDAT
       INTEGER     ERRNUM, IDAT, ISIM, YR, YRSIM
       
       PARAMETER (ERRKEY = 'RADATE')
 
-      CALL YR_DOY(YRSIM, YR, ISIM)
-      READ(XDAT(1:6),1000,IOSTAT=ERRNUM) RDAT
+      CALL YR_DOY(YRSIM, YR, ISIM)            
+      READ(XDAT(1:12),1000,IOSTAT=ERRNUM) RDAT
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,2,'FILEA',0)
- 1000 FORMAT(F6.0)
+ 1000 FORMAT(F12.0)
       IDAT = INT(RDAT)
 
       IF (IDAT .GT. 0 .AND. IDAT .LT. 1000) THEN
@@ -1008,5 +1008,157 @@ D       DATAX = STDPATH // FILECDE
       END SUBROUTINE ReadCropModels
 C=======================================================================
 
+C=======================================================================
+C  READ_FILEA, Subroutine T. B. Ferreira
+C  Reads FileA data.
+C-----------------------------------------------------------------------
+C  REVISION HISTORY
+C  01/28/2024 CHP Written.
+C=======================================================================
 
+      SUBROUTINE READA_Y4K(FILEA, PATHEX, OLAB, TRTNUM, YRSIM, X)
+        
+        USE ModuleDefs
+        IMPLICIT NONE
+        
+        EXTERNAL UPCASE, GETLUN, PARSE_HEADERS, IGNORE, INFO
+      
+        CHARACTER*1   UPCASE
+        CHARACTER*6   OLAB(EvaluateNum) !HD
+!        CHARACTER*6   HEAD(EvaluateNum)
+        CHARACTER*12  X(EvaluateNum)  !, ERRKEY
+        CHARACTER*12  FILEA
+        CHARACTER*78  MSG(2)
+	      CHARACTER*80  PATHEX
+	      CHARACTER*92  FILEA_P
+        CHARACTER*255 C255
+        CHARACTER*20  DAT
+        CHARACTER*6, PARAMETER :: ERRKEY = 'FILEA'
+!       Headers with aliases -- save column
+!        INTEGER HWAM, HWAH, BWAM, BWAH, PDFT, R5AT, NTR, YRPST 
+        
+        INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,COLN, J
+        INTEGER YRSIM, ACN, ECN, TR, I
+        
+        INTEGER, PARAMETER :: MAXCOLN = 40
+        CHARACTER*15  HEADER(MAXCOLN), HTXT, FAHEADERS(MAXCOLN)
+        INTEGER COL(MAXCOLN,2), ICOUNT, C1, C2, ISECT
+        INTEGER C1D(MAXCOLN), C2D(MAXCOLN)
+
+        LOGICAL FEXIST
+
+        FILEA_P = TRIM(PATHEX)//FILEA
+        ACN = 0
+        X = '   -99'
+        CALL GETLUN('FILEA', LUNA)
+        
+        INQUIRE(FILE=FILEA_P,EXIST=FEXIST)
+        IF (FEXIST) THEN
+          OPEN (LUNA,FILE = FILEA_P,STATUS = 'OLD',IOSTAT=ERRNUM)
+          
+C         FIND THE HEADER LINE, DESIGNATED BY @TRNO
+          DO WHILE (.TRUE.)
+            READ(LUNA,'(A)',END=5010) C255
+            LINEXP = LINEXP + 1
+            IF (C255(1:1) .EQ. '@') EXIT    
+          ENDDO
+        ENDIF
+        
+        CALL PARSE_HEADERS(C255, MAXCOLN, HEADER, ICOUNT, COL)
+        DO COLN = 1, ICOUNT
+          HTXT = HEADER(COLN)
+          C1 = COL(COLN,1)
+          C2 = COL(COLN,2)
+!         uppercase every word in each column
+          DO J = 1, LEN(TRIM(HTXT))
+              HTXT(J:J) = UPCASE(HTXT(J:J))
+          END DO
+          HEADER(COLN) = HTXT
+          
+          IF(INDEX(HEADER(COLN),TRIM(HTXT)) .GT. 0) THEN
+            ACN = ACN + 1
+            C1D(ACN) = C1 !beginning
+            C2D(ACN) = C2 !ending            
+          
+            FAHEADERS(ACN) = HEADER(COLN)
+
+            IF(TRIM(HEADER(COLN)) .EQ. "R5AT") FAHEADERS(ACN) = "PDFT"
+            IF(TRIM(HEADER(COLN)) .EQ. "PDFD") FAHEADERS(ACN) = "PDFT"
+            IF(TRIM(HEADER(COLN)) .EQ. "BWAH") FAHEADERS(ACN) = "BWAM"
+            IF(TRIM(HEADER(COLN)) .EQ. "HWAH") FAHEADERS(ACN) = "HWAM"
+            IF(TRIM(HEADER(COLN)) .EQ. "CWAH") FAHEADERS(ACN) = "CWAM"
+            
+          ENDIF
+        ENDDO
+
+       
+C       FIND THE RIGHT TREATMENT LINE OF DATA
+        DO I = 1,1000
+          CALL IGNORE(LUNA,LINEXP,ISECT,C255)
+          
+          IF (ISECT .EQ. 0) THEN
+            WRITE (MSG(1),'(" Error in FILEA-Measured data not used")')
+            CALL INFO(1, "READA ", MSG)
+            CLOSE(LUNA)
+            RETURN
+          ENDIF
+
+!         Search TRNO header        
+          DO J = 1, ACN
+            C1 = COL(J,1)
+            C2 = COL(J,2)
+          
+            IF(TRIM(FAHEADERS(J)).EQ. 'TRNO') THEN            
+                READ(C255(C1:C2+1),'(2X,I4)',IOSTAT=ERRNUM) TR
+
+                IF(TR .EQ. TRTNUM) GO TO 65
+            ENDIF
+          ENDDO
+        ENDDO      
+  65    CONTINUE
+    
+        DO ECN = 1, EvaluateNum
+          DO J = 1, ACN
+
+!         TF - if statement to handle cases where the value has more 
+!         line columns than the variable name
+          IF(J .EQ. 1) THEN
+            C1 = C1D(J)
+            C2 = C1D(J+1)
+          ELSEIF(J .EQ. ACN) THEN
+            C1 = C2D(J-1)
+            C2 = C2D(J)+1
+          ELSE
+            C1 = C2D(J-1)
+            C2 = C1D(J+1)
+          ENDIF
+          IF(TRIM(FAHEADERS(J)) .EQ. TRIM(OLAB(ECN))) THEN
+
+!           Check if the column before was TRNO since it ocuppies one
+!           extract character after the last line column of the header
+            IF(TRIM(FAHEADERS(J-1)) .EQ. 'TRNO') THEN
+              READ(C255(C1+2:C2-1),'(A12)',IOSTAT=ERRNUM) DAT
+              X(ECN) = TRIM(DAT)
+            ELSE
+              READ(C255(C1+1:C2-1),'(A12)',IOSTAT=ERRNUM) DAT
+              X(ECN) = TRIM(DAT)
+            ENDIF
+          ENDIF
+          ENDDO
+        ENDDO  
+
+      CLOSE (LUNA)
+      RETURN
+   
+!       Error handling
+ 5010   CONTINUE
+        X = '   -99'
+        WRITE (MSG(1),'(" Error in FILEA - Measured data not used")')
+        WRITE (MSG(1),'(I7)') YRSIM
+        CALL INFO(1, "READA ", MSG)
+
+      CLOSE (LUNA)
+      RETURN
+      
+      END SUBROUTINE READA_Y4K
 

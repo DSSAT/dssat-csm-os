@@ -20,7 +20,25 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
-!       4.8.2.1   FO 2023-10-20 Commit SHA: 8be2eef17259018e1968491c282e6d5075dcc427
+!       4.8.2.19  FO 2024-09-20 PR 441 Commit SHA: e9c64bf
+!       4.8.2.18  FO 2024-09-06 PR 437 Commit SHA: 44bfa27
+!       4.8.2.17  FO 2024-09-06 PR 436 Commit SHA: 88e3060
+!       4.8.2.16  FO 2024-08-23 PR 431 Commit SHA: 635a664
+!       4.8.2.15  FO 2024-08-23 PR 434 Commit SHA: ff849ef
+!       4.8.2.14  FO 2024-08-09 PR 429 Commit SHA: c93205a
+!       4.8.2.13  FO 2024-07-13 PR 424 Commit SHA: 0c15449
+!       4.8.2.12  FO 2024-06-13 PR 408 Commit SHA: 4fd64a3
+!       4.8.2.11  FO 2024-06-13 PR 409 Commit SHA: 2e5a360
+!       4.8.2.10  FO 2024-05-16 PR 413 Commit SHA: 1e6ac3c
+!       4.8.2.9   FO 2024-05-16 PR 412 Commit SHA: 6488713
+!       4.8.2.8   FO 2024-04-26 PR 406 Commit SHA: f65fc5c
+!       4.8.2.7   FO 2024-03-22 PR 402 Commit SHA: 9b4a3cd
+!       4.8.2.6   FO 2024-02-16 PR 397 & 400 Commit SHA: fccf858
+!       4.8.2.5   FO 2024-02-16 PR 398 Commit SHA: 4870729
+!       4.8.2.4   FO 2024-01-26 PR 394 Commit SHA: 28ad6da
+!       4.8.2.3   FO 2024-01-26 PR 388 Commit SHA: 32b61e9
+!       4.8.2.2   FO 2024-01-26 PR 395 Commit SHA: 8a2a06f
+!       4.8.2.1   FO 2023-10-20 Commit SHA: 8be2eef
 !       4.8.2.0   FO 2023-09-02 v4.8.2 Release 2023
 !       4.8.1.0   FO 2022-10-28 v4.8.1 Interim release 2022
 !       4.8.0.1  chp 2020-07-21 v4.8 (=v4.7.5.14)

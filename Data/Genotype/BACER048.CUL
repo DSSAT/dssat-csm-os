@@ -20,7 +20,7 @@ $CULTIVARS:BACER048.20200721   Last edit: 2021-05-08 GH
 
 *CULTIVARS:BACER048
 @VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
-!Coeffient #                             1     2     3     4     5     6     7
+!Coefficient #                           1     2     3     4     5     6     7
 !Calibration                             P     P     P     G     G     G     N
 !                                     Vday %/10h  oC.d   #/g    mg     g  oC.d
 999991 MINIMA               . 999991     0     0   100    10    10   0.5    30

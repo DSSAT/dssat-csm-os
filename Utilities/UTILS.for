@@ -1,5 +1,5 @@
 !=======================================================================
-C  UTILS, File, G. Hoogenboom, P.W. Wilkens and B. Baer
+C  UTILS, File, G. Hoogenboom, P.W. Wilkens, C.H. Porter
 C  General utility functions
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
@@ -1178,6 +1178,15 @@ C        USE IFPORT
         IF (COUNT > 0) THEN
 !         Run batch file - direct output to TEMP.BAK file
           BatchCommand = "TEMP.BAT >TEMP.BAK"
+C-KRT February 2, 2024
+C-KRT This file renaming strategy is not compatible with Linux systems.
+C-KRT The Linux operating system will fail to run the following BatchCommand.
+C-KRT Linux OS prints "sh: 1: TEMP.BAT: not found" because it can't
+C-KRT find a system command called TEMP.BAT. Anyway, the commands
+C-KRT given in the batch file are for Windows systems.
+C-KRT Model will continue to run; however, the output files are not
+C-KRT copied to the new output file names as directed in BatchCommand.
+C-KRT Need to rework this strategy for OS compatibility.
           SYS = SYSTEM(BatchCommand)
   
 !         Delete TEMP.BAT file
@@ -1659,3 +1668,18 @@ C=======================================================================
         only_dir = full_path(1:pos)        
 
       end subroutine get_dir
+!=======================================================================
+!  ROUND, Subroutine
+!  Subroutine to round decimal part of a number in Fortran
+!-----------------------------------------------------------------------
+!  Revision history
+!  07/11/2024 FO Added round a number function
+!=======================================================================
+      REAL FUNCTION ROUND(VAL, N)
+        IMPLICIT NONE
+        REAL VAL
+        INTEGER N
+        ROUND = ANINT(VAL*10.0**N)/10.0**N
+        RETURN
+      END FUNCTION ROUND
+!=======================================================================

@@ -43,7 +43,7 @@ $CULTIVARS:CSCAS048.20200721   Last edit: 2021-05-06 GH
 *CULTIVARS:CSCAS048
 !                                    PPSEN ------------ BRANCHING ------------ - STORAGE ROOTS - ---- LEAF PRODUCTION,SIZES,SP.AREA,LONGEVITY,PETIOLES -----  STEM  
 @VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND B23ND B34ND B45ND B56ND SR#WT  SRFR  HMPC PHINT  LA1S  LAXS LAXND LAXN2  LAFS LAFND  SLAS LLIFA LPEFR  STFR
-!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21
+!Coefficient #                           1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21
 !Calibration                             P     P     P     P     P     P     P     G     G     G     G     G     G     G     G     G     G     G     G     G     G
 !                                            Nd#   Nd#   Nd#   Nd#   Nd#   Nd#   #/g    fr     %  oC.d   cm2   cm2     #     #   cm2     # cm2/g    Tu    fr    fr         
 999991 MINIMA               . 999991     0  25.0  25.0  25.0  25.0  25.0  25.0  0.20  0.00    40    15   200  1000    80    80    20   100   100   300  0.20  0.25 

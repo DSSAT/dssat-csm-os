@@ -13,6 +13,7 @@
 !  01/13/2023 FO  Updated variables in output file FreshWt.OUT
 !  03/17/2023 FO  Major changes for Multi-Harvest
 !  07/27/2023 FO  Adding output for Harv. Fresh Pod weight.
+!  05/16/2024 FO  Inc. output space from 8 to 9 chars FreshWt.OUT 
 !-----------------------------------------------------------------------
 !  Called from:  PODS
 !=======================================================================
@@ -60,6 +61,9 @@
       REAL :: HRVD, HRVF
       REAL :: CHPDT,CHFPW
 
+!     In-season harvest weight CHP 2024-06-27
+      REAL ISH_wt
+
       LOGICAL FEXIST
 
       TYPE (ControlType) CONTROL
@@ -78,6 +82,7 @@
         
         FWFile  = 'FreshWt.OUT '
         CALL GETLUN('FWOUT',  NOUTPF)
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -197,23 +202,23 @@
         END SELECT
         
   230 FORMAT('@YEAR DOY   DAS   DAP',
-     &    '   PDMCD   AFPWD',
-     &    '   ADPWD   PAGED',
-     &    '   XMAGE   CHNUM',   
-     &    '   TOSHN   TOWSH   MTDSH   HSHEL',
-     &    '   TOPOW   HPODW   CHPDT   CPODN',
-     &    '   TOFPW   MTFPW   MTDPW   HFPOW   CHFPW   CMFNM',
-     &    '   TOSDN   TOWSD   MTDSD   HSDWT')
+     &    '    PDMCD    AFPWD',
+     &    '    ADPWD    PAGED',
+     &    '    XMAGE    CHNUM',   
+     &    '    TOSHN    TOWSH    MTDSH    HSHEL',
+     &    '    TOPOW    HPODW    CHPDT    CPODN',
+     &    '    TOFPW    MTFPW    MTDPW    HFPOW    CHFPW    CMFNM',
+     &    '    TOSDN    TOWSD    MTDSD    HSDWT')
      
   231 FORMAT('@YEAR DOY   DAS   DAP',
-     &    '   PDMCD   AFPWD',
-     &    '   ADPWD   PAGED',
+     &    '    PDMCD    AFPWD',
+     &    '    ADPWD    PAGED',
      &    ' FCULD FSZ1D FSZ2D FSZ3D FSZ4D FSZ5D FSZ6D',
-     &    '   XMAGE   CHNUM',   
-     &    '   TOSHN   TOWSH   MTDSH   HSHEL',
-     &    '   TOPOW   HPODW   CHPDT   CPODN',
-     &    '   TOFPW   MTFPW   MTDPW   HFPOW   CHFPW   CMFNM',
-     &    '   TOSDN   TOWSD   MTDSD   HSDWT')
+     &    '    XMAGE    CHNUM',   
+     &    '    TOSHN    TOWSH    MTDSH    HSHEL',
+     &    '    TOPOW    HPODW    CHPDT    CPODN',
+     &    '    TOFPW    MTFPW    MTDPW    HFPOW    CHFPW    CMFNM',
+     &    '    TOSDN    TOWSD    MTDSD    HSDWT')
 
         AvgDMC  = 0.0
         AvgDPW  = 0.0
@@ -241,6 +246,9 @@
         HRPN    = 0.0
         HRDSD   = 0.0
         HRDSH   = 0.0      
+
+        CALL PUT('MHARVEST','ISH_date',-99)
+        CALL PUT('MHARVEST','ISH_wt',  -99.)
 
 !***********************************************************************
 !***********************************************************************
@@ -383,9 +391,11 @@
             SHELN(NPP) = 0.0
             WTSHE(NPP) = 0.0
             WTSD(NPP)  = 0.0
-            SDNO(NPP)  = 0.0                      
+            SDNO(NPP)  = 0.0
+            ISH_wt = HSHELWT + HSDWT + HPODWT + HFPOW
+            CALL PUT('MHARVEST','ISH_date',YRDOY)
+            CALL PUT('MHARVEST','ISH_wt',  ISH_wt)
           ENDIF
-               
         ENDDO  ! NPP
 
 !       Prepare model outputs
@@ -500,20 +510,20 @@
         END SELECT
 
  1000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    F8.1,F8.1,F8.1,F8.1,
-     &    F8.1, I8,
-     &    4(F8.1),
-     &    3(F8.1),I8,
-     &    I8,4(F8.1),I8,
-     &    4(F8.1))
+     &    F9.1,F9.1,F9.1,F9.1,
+     &    F9.1, I9,
+     &    4(F9.1),
+     &    3(F9.1),I9,
+     &    I9,4(F9.1),I9,
+     &    4(F9.1))
  2000   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
-     &    F8.1,F8.1,F8.1,F8.1,
+     &    F9.1,F9.1,F9.1,F9.1,
      &    7(1X,I5),
-     &    F8.1, I8,
-     &    4(F8.1),
-     &    3(F8.1),I8,
-     &    I8,4(F8.1),I8,
-     &    4(F8.1))
+     &    F9.1, I9,
+     &    4(F9.1),
+     &    3(F9.1),I9,
+     &    I9,4(F9.1),I9,
+     &    4(F9.1))
 
       ENDIF
 
