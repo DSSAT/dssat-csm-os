@@ -13,12 +13,13 @@ C=======================================================================
 
       SUBROUTINE PT_PHENOL (
      &    WEATHER, DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, !Input
-     &    NLAYR, NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX, TMIN,!Input
-     &    TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM, TBD,       !Input
-     &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,       !Output
-     &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,            !Output
-     &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,    !Output !Added by Khan
-     &    DYNAMIC)
+     &    NLAYR, NSTRES, PLTPOP, RTWT, ST, SW, SWFAC, TMAX,  !Input
+     &    TMIN, TOPSN, TWILEN, XLAI, YRDOY, YRPLT, YRSIM,    !Input
+     &    TBD, TOD, TCD, TSEN, SBD, SOD, SCD, SSEN,          !Input, Added by Khan
+     &    APTNUP, CUMDTT, DTT, GNUP, GRORT, ISDATE,          !Output
+     &    ISTAGE, MAXLAI, PLANTS, RTF, SEEDRV,               !Output
+     &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG, CUMSTT,       !Output       
+     &    DYNAMIC) !Output !Added by Khan
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -74,7 +75,8 @@ C=======================================================================
       CALL PT_IPGRO(
      &    FILEIO,                                         !Input
      &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,           !Output
-     &    SDWTPL, RUE1, RUE2, SENSF, SENST, LALWR, TBD)   !Output 
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST, LALWR,        !Output
+     &    TBD, TOD, TCD, TSEN, SBD, SOD, SCD, SSEN)       !Output 
 
       ISTAGE = 5
       XSTAGE = 0.0
@@ -131,18 +133,18 @@ C=======================================================================
          ! These can be moved to Species file (SPE file)
                   !DIF = 0.0 !Daytime plant-air temperature differential (oC) is assumed zero
          !TBD=5.5  !from Khan et al., 2019_Field_Crops_Res_242
-         TOD=23.4 !from Khan et al., 2019_Field_Crops_Res_242   
-         TCD=34.6 !from Khan et al., 2019_Field_Crops_Res_242
-         TSEN=1.6 !from Khan et al., 2019_Field_Crops_Res_242  
+         !TOD=23.4 !from Khan et al., 2019_Field_Crops_Res_242   
+         !TCD=34.6 !from Khan et al., 2019_Field_Crops_Res_242
+         !TSEN=1.6 !from Khan et al., 2019_Field_Crops_Res_242  
          !TBD=2.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          !TOD=24.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          !TCD=35.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          !TSEN=0.2 !Assumed 
          !TSEN=1.0 !Assumed 
-         SBD=2.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
-         SOD=24.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171    
-         SCD=36.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
-         SSEN=0.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171 
+         !SBD=2.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
+         !SOD=24.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171    
+         !SCD=36.0 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171
+         !SSEN=0.7 !Estimated from Epstein, 1966, Agronomy Journal 58, no. 2: 169-171 
          !SBD=2.0  !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
          !SOD=23.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)   
          !SCD=33.0 !Griffin et al., 1993 (SUBSTOR-Potato version 2.0)
