@@ -33,7 +33,7 @@ C  05/11/1999 GH  Incorporated in CROPGRO
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
-     &    RLV, RTDEP, SATFAC, SENRT, SRDOT)               !Output
+     &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
 
 C-----------------------------------------------------------------------
       USE ModuleDefs

@@ -23,7 +23,7 @@ C  Calls:     None
      &    RLV, RSTAGE, RTDEP, RTWT, SATFAC, SDWT, SEEDNO, 
      &    SENESCE, SLA, STMWT, SWFAC, TGRO, TGROAV, TOPWT, 
      &    TOTWT, TURFAC, VSTAGE, WTLF, WTNCAN, WTNLF, WTNST, 
-     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT) 
+     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT, TRLV) 
 !    &    EOP, TRWUP, WRDOTN)
 
 !-----------------------------------------------------------------------
@@ -59,7 +59,7 @@ C  Calls:     None
       REAL PCCSDP, PCLSDP, PCNLP, PCNRTP, PCNSDP
       REAL PCNSHP, PCNSTP, RHOLP, RHOSP, SLAP
 
-      REAL RLV(NL)
+      REAL RLV(NL), TRLV
       REAL TGRO(TS)
 
       REAL WTNCAN,WTNLF,WTNST,WTNSD,WTNUP,WTNFX
@@ -174,7 +174,7 @@ C  Calls:     None
         WRITE (NOUTDG,214, ADVANCE='NO')
   214   FORMAT('   EWSD    LN%D',
      &         '   SH%D   HIPD   PWDD   PWTD   SLAD   CHTD',
-     &         '   CWID   NWAD   RDPD')
+     &         '   CWID   NWAD   RDPD   RLAD')
 
           DO L = 1, N_LYR
             IF (L < 10) THEN
@@ -382,9 +382,10 @@ C-----------------------------------------------------------------------
           WRITE (NOUTDG,314, ADVANCE='NO') 
      &        EXW_AV, PCNLP, SHELPC, HIP, NINT(PODWTD*10.),
      &        NINT((PODWTD+PODWT)*10.), SLAP, CANHT, CANWH, (DWNOD*10.),
-     &        (RTDEP/100.), (RLV(I),I=1,N_LYR)
+     &        (RTDEP/100.), NINT(TRLV), (RLV(I),I=1,N_LYR)
   314     FORMAT (1X,F6.3,1X,F7.2,2(1X,F6.2),
-     &        2(1X,I6),1X,F6.1,2(1X,F6.2),1X,F6.1,1X,F6.2,11(1X,F7.2))
+     &        2(1X,I6),1X,F6.1,2(1X,F6.2),1X,F6.1,1X,F6.2,
+     &        I7,11(1X,F7.2))
 
           WRITE (NOUTDG,316) 
      &        NINT(CUMSENSURF), NINT(CUMSENSOIL)   !, SENSURFT, SENSOILT

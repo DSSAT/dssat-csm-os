@@ -41,7 +41,7 @@
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
-     &    SENRT, SRDOT)                                   !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
 !-----------------------------------------------------------------------
       USE Cells_2D
       USE ModuleData

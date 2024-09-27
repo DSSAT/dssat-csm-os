@@ -132,6 +132,7 @@ C=======================================================================
       REAL SRDOT, SLAAD, SLNDOT, SSDOT, SSNDOT
       REAL TDAY, TDUMX, TDUMX2, TGROAV, TMIN, TURFAC, TAVG, TURADD,
      &    TRNH4U, TRNO3U, TRNU, TNLEAK, TRWUP, TTFIX, TOPWT, TOTWT
+      REAL TRLV
       REAL VSTAGE
       REAL WLFDOT, WSIDOT, WRIDOT
       REAL WTNCAN, WTNFX, WTNLA, WTNLO, WTNNA, WTNNAG
@@ -379,14 +380,14 @@ C-----------------------------------------------------------------------
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
-     &    RLV, RTDEP, SATFAC, SENRT, SRDOT)               !Output
+     &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
         ELSE
           CALL ROOTY_2D(RUNINIT,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
-     &    SENRT, SRDOT)                                   !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
         ENDIF     
       ENDIF
 !-----------------------------------------------------------------------
@@ -428,7 +429,7 @@ C-----------------------------------------------------------------------
      &    RLV, RSTAGE, RTDEP, RTWT, SATFAC, SDWT, SEEDNO, 
      &    SENESCE, SLA, STMWT, SWFAC, TGRO, TGROAV, TOPWT, 
      &    TOTWT, TURFAC, VSTAGE, WTLF, WTNCAN, WTNLF, WTNST, 
-     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT) 
+     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT, TRLV) 
 
 !     Initialize Overview.out file.
       CALL OPHARV(CONTROL, ISWITCH, 
@@ -657,14 +658,14 @@ C-----------------------------------------------------------------------
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
-     &    RLV, RTDEP, SATFAC, SENRT, SRDOT)               !Output
+     &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
       ELSE
         CALL ROOTY_2D(SEASINIT,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
-     &    SENRT, SRDOT)                                   !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
       ENDIF     
 
 !-----------------------------------------------------------------------
@@ -678,7 +679,7 @@ C-----------------------------------------------------------------------
      &    RLV, RSTAGE, RTDEP, RTWT, SATFAC, SDWT, SEEDNO, 
      &    SENESCE, SLA, STMWT, SWFAC, TGRO, TGROAV, TOPWT, 
      &    TOTWT, TURFAC, VSTAGE, WTLF, WTNCAN, WTNLF, WTNST, 
-     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT) 
+     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT, TRLV) 
 
       CALL OPHARV (CONTROL, ISWITCH, 
      &    AGEFAC, CANHT, CANNAA, CANWAA, CROP,            !Input
@@ -825,14 +826,14 @@ C-----------------------------------------------------------------------
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
-     &    RLV, RTDEP, SATFAC, SENRT, SRDOT)               !Output
+     &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
       ELSE
         CALL ROOTY_2D(EMERG,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
-     &    SENRT, SRDOT)                                   !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
       ENDIF     
 
 !-----------------------------------------------------------------------
@@ -1230,14 +1231,14 @@ C     Call to root growth and rooting depth routine
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
-     &    RLV, RTDEP, SATFAC, SENRT, SRDOT)               !Output
+     &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
       ELSE
         CALL ROOTY_2D(INTEGR,
      &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
-     &    SENRT, SRDOT)                                   !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
       ENDIF     
 
 C-----------------------------------------------------------------------
@@ -1354,7 +1355,7 @@ C-----------------------------------------------------------------------
      &    RLV, RSTAGE, RTDEP, RTWT, SATFAC, SDWT, SEEDNO, 
      &    SENESCE, SLA, STMWT, SWFAC, TGRO, TGROAV, TOPWT, 
      &    TOTWT, TURFAC, VSTAGE, WTLF, WTNCAN, WTNLF, WTNST, 
-     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT) 
+     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT, TRLV) 
 
         IF (ISWPHO .EQ. 'Y' .OR. ISWPHO .EQ. 'H') THEN
           CALL P_CGRO (DYNAMIC, ISWITCH, 
@@ -1386,7 +1387,7 @@ C-----------------------------------------------------------------------
      &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
      &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
      &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
-     &    SENRT, SRDOT)                                   !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
       ENDIF     
           
 !     Call PlantNBal only for seasonal output.
