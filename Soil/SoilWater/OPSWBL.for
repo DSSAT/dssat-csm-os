@@ -113,7 +113,8 @@ C-----------------------------------------------------------------------
      &    ' Drained Upper Limit in soil layer # (cm3[water]/cm3[soil])',
      &    '!SAT#D   Volumetric soil water content at Saturation'//
      &    ' in soil layer # (cm3 [water] / cm3 [soil])',
-     &    '!BD#D    Bulk density in soil layer # (g [soil] / cm3 [soil])',
+     &    '!BD#D    Bulk density in soil layer # ' //
+     &    '(g [soil] / cm3 [soil])',
      &    '!SW#D    Volumetric soil water content in soil layer # '//
      &    ' (cm3 [water] / cm3 [soil])',
      &    ''
