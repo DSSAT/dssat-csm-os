@@ -620,6 +620,7 @@ set(
         "Soil/SoilUtilities/TextureClass.for"
         "Soil/SoilWater/CapFringe.f90"
         "Soil/SoilWater/INFIL.for"
+        "Soil/SoilWater/OPSWBL.for"
         "Soil/SoilWater/OPWBAL.for"
         "Soil/SoilWater/RETC_VG.for"
         "Soil/SoilWater/RNOFF.for"
