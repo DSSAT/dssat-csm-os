@@ -78,7 +78,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, RLDF, SAT, DUL, LL
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea, ESW
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_WS, WR, SWV, RootLen
-      REAL, DIMENSION(MaxRows,MaxCols) :: RtLen_2D, RootLength
+!     REAL, DIMENSION(MaxRows,MaxCols) :: RtLen_2D, RootLength
 
       TYPE (CellType) CELLS(MaxRows,MaxCols)
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
@@ -435,10 +435,11 @@ C=======================================================================
         ENDDO
       ENDIF ! end of IF not (FIRST)
 
-      CALL Aggregate_Roots(CELLS,
-     &    FirstRow, RFAC3, RLV_2D, SOILPROP,  !Input
-     &    RLV, RootLength, RtLen_2D,          !Output
-     &    TotRootMass, TRLV)                  !Output
+!     TEMP CHP GET RID OF THIS CALL UNTIL WE'RE DONE CHANGING THINGS IN CROPGRO
+!      CALL Aggregate_Roots(CELLS,
+!     &    FirstRow, RFAC3, RLV_2D, SOILPROP,  !Input
+!     &    RLV, RootLength, RtLen_2D,          !Output
+!     &    TotRootMass, TRLV)                  !Output
 
        CELLS%STATE%RLV = RLV_2D
 

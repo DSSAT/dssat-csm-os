@@ -24,7 +24,6 @@ C  Calls:     None
      &    SENESCE, SLA, STMWT, SWFAC, TGRO, TGROAV, TOPWT, 
      &    TOTWT, TURFAC, VSTAGE, WTLF, WTNCAN, WTNLF, WTNST, 
      &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT, TRLV) 
-!    &    EOP, TRWUP, WRDOTN)
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -152,7 +151,7 @@ C  Calls:     None
 !        IF (ISWPHO .NE. 'N') THEN
           WRITE (NOUTDG, 100) "Root Dens. (cm/cm3) by soil ",
      &      "depth (cm):",(SoilProp%LayerText(L), L=1,N_LYR)
-  100     FORMAT("!",244X,A,A,/,"!",239X,10A8) 
+  100     FORMAT("!",251X,A,A,/,"!",246X,10A8) 
 !        ELSE
 !          WRITE (NOUTDG,102) (SoilProp%LayerText(L), L=1,N_LYR)
 !  102     FORMAT("!",216X,"Soil Layer depths (cm):",/,"!",211X,10A8)
@@ -186,7 +185,6 @@ C  Calls:     None
 
         WRITE (NOUTDG,220)
   220   FORMAT('    SNW0C   SNW1C') !   SNW0D   SNW1D',
-!     &         '     EOP   TRWUP  WRDOTN')
 
 !-----------------------------------------------------------------------
 !       Initialize daily plant nitrogen output file
@@ -390,7 +388,7 @@ C-----------------------------------------------------------------------
           WRITE (NOUTDG,316) 
      &        NINT(CUMSENSURF), NINT(CUMSENSOIL)   !, SENSURFT, SENSOILT
 !     &        , EOP, TRWUP, WRDOTN
-  316     FORMAT (I8,1X,I7, 2F8.3, 3F8.4)
+  316       FORMAT (I8,1X,I7, F10.1)
           END IF   ! VSH
 !-----------------------------------------------------------------------
 !     VSH CSV output corresponding to PlantGro.OUT

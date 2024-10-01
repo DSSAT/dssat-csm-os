@@ -252,7 +252,9 @@ C-----------------------------------------------------------------------
 !               XMIN = minimum amount NH4 left after uptake (kg[N]/ha)
                 XMIN = 0.5 / KG2PPM(L) * ColFrac(L,J) / FieldFac
                 MXNH4U  = MAX(0.0,(SNH4_2D(L, J) - XMIN))
-                IF (UNH4_2D(L,J) .GT. MXNH4U) UNH4_2D(L,J) = MXNH4U
+                IF (UNH4_2D(L,J) .GT. MXNH4U) THEN
+                  UNH4_2D(L,J) = MXNH4U
+                ENDIF
 
 !               Contribution of each cell is weighted average using ColFrac
                 UNO3_2D(L,J) = UNO3_2D(L,J) * ColFrac(L,J)
