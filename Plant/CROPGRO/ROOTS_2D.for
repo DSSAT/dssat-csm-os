@@ -229,6 +229,8 @@
      &    RLV, RootLength, RtLen_2D,          !Output
      &    TotalRootLength, TotRootMass, TRLV) !Output
 
+      CELLS % STATE % RLV = RLV_2D
+
       LastRow = 1
       LastCol = 1
 
@@ -559,7 +561,8 @@
      &    TotalRootLength, TotRootMass, TRLV) !Output
 
       CALL Cell2Layer_2D(SENRT_2D, Struc, NRowsTot, SENRT)
-      CELLS%STATE%RLV = RLV_2D
+
+      CELLS % STATE % RLV = RLV_2D
 
 !***********************************************************************
 !***********************************************************************

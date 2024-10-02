@@ -58,7 +58,14 @@ C=======================================================================
       REAL SurfaceVal !dummy variable
       Real FieldFac, ROWSPC_cm
 
+!     TEMP CHP
+      INTEGER YRDOY
+      REAL TrackLostN
+
       DYNAMIC = CONTROL % DYNAMIC
+
+!     temp chp
+      YRDOY = CONTROL % YRDOY
 
       SWV    = CELLS % State % SWV
       RLV_2D = CELLS % State % RLV
@@ -113,7 +120,6 @@ C=======================================================================
       ELSE
         FieldFac = 1.0
       ENDIF
-
 
 !***********************************************************************
 !***********************************************************************
@@ -176,11 +182,17 @@ C-----------------------------------------------------------------------
         DO L = 1, NRowsTot 
           DO J = 1, NColsTot  
             IF (RLV_2D(L, J) .GT. 1.E-6) THEN
-              FNH4 = 1.0 - EXP(-0.08 * NH4_2D(L,J))
-              FNO3 = 1.0 - EXP(-0.08 * NO3_2D(L,J))
-              IF (FNO3 .LT. 0.04) FNO3 = 0.0  
+              IF (NH4_2D(L,J) > 1.E-6) THEN
+                FNH4 = 1.0 - EXP(-0.08 * NH4_2D(L,J))
+              ELSE
+                FNH4 = 0.0
+              ENDIF
+              IF (NO3_2D(L,J) > 1.E-6) THEN
+                FNO3 = 1.0 - EXP(-0.08 * NO3_2D(L,J))
+              ELSE
+                FNO3 = 0.0
+              ENDIF
               IF (FNO3 .GT. 1.0)  FNO3 = 1.0
-              IF (FNH4 .LT. 0.04) FNH4 = 0.0  
               IF (FNH4 .GT. 1.0)  FNH4 = 1.0
 
 !             SMDFR = relative drought factor
@@ -233,6 +245,8 @@ C-----------------------------------------------------------------------
           ANDEM = TRNU
         ENDIF
 
+        TrackLostN = 0.0
+
         IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
           DO L = 1, NRowsTot
@@ -243,22 +257,28 @@ C-----------------------------------------------------------------------
                 UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF
 
 !               XMIN = minimum amount NO3 left after uptake (kg[N]/ha)
-                XMIN    = 0.25 / KG2PPM(L) * ColFrac(L,J) / FieldFac
+!               TEMP CHP
+!               XMIN    = 0.25 / KG2PPM(L) * ColFrac(L,J) / FieldFac
+                XMIN = 0.0
                 MXNO3U  = MAX(0.0,(SNO3_2D(L,J) - XMIN))
                 IF (UNO3_2D(L,J) .GT. MXNO3U) THEN
+                  TrackLostN = TrackLostN + (UNO3_2D(L,J) - MXNO3U)
                   UNO3_2D(L,J) = MXNO3U
                 ENDIF
 
 !               XMIN = minimum amount NH4 left after uptake (kg[N]/ha)
-                XMIN = 0.5 / KG2PPM(L) * ColFrac(L,J) / FieldFac
+!               TEMP CHP
+!               XMIN = 0.5 / KG2PPM(L) * ColFrac(L,J) / FieldFac
+                XMIN = 0.0
                 MXNH4U  = MAX(0.0,(SNH4_2D(L, J) - XMIN))
                 IF (UNH4_2D(L,J) .GT. MXNH4U) THEN
+                  TrackLostN = TrackLostN + (UNH4_2D(L,J) - MXNH4U)
                   UNH4_2D(L,J) = MXNH4U
                 ENDIF
 
-!               Contribution of each cell is weighted average using ColFrac
-                UNO3_2D(L,J) = UNO3_2D(L,J) * ColFrac(L,J)
-                UNH4_2D(L,J) = UNH4_2D(L,J) * ColFrac(L,J)
+!!               Contribution of each cell is weighted average using ColFrac
+!                UNO3_2D(L,J) = UNO3_2D(L,J) * ColFrac(L,J)
+!                UNH4_2D(L,J) = UNH4_2D(L,J) * ColFrac(L,J)
 
 !               For 2D simulations, double the amount because we are modeling only half the field.
                 TRNO3U  = TRNO3U + UNO3_2D(L,J) * FieldFac
