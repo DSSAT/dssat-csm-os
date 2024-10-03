@@ -10,9 +10,9 @@
 ========================================================================*/
 #include "FlexibleIO.hpp"
 #include <new>
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
-#include <string.h>
+#include <string>
 #include <unordered_map>
 #include <algorithm>
 

@@ -29,8 +29,6 @@ public:
     static FlexibleIO* getInstance();
     static FlexibleIO* newInstance();
 
-    void readInputFile(std::string GROUP) {}
-
     float getReal(std::string GROUP, std::string VARNAME);
     int getInteger(std::string GROUP, std::string VARNAME);
     std::string getChar(std::string GROUP, std::string VARNAME);

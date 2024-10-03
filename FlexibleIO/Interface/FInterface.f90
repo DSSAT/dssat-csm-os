@@ -16,6 +16,8 @@ module flexibleio
     implicit none
     
     type csm_io_type
+        private
+            integer :: init
     contains
         procedure :: getReal
         procedure :: getInteger
@@ -35,7 +37,6 @@ module flexibleio
         getRealArray, getIntegerArray, getCharArray, &
         getRealYrdoy, getIntegerYrdoy, getCharYrdoy
       
-        
         procedure :: setRealMemory
         procedure :: setIntegerMemory
         procedure :: setCharMemory
@@ -49,18 +50,16 @@ module flexibleio
         generic :: set => setRealMemory, setIntegerMemory, setCharMemory, &
         setRealIndexMemory, setIntegerIndexMemory, setCharIndexMemory, &
         setRealYrdoyMemory, setIntegerYrdoyMemory, setCharYrdoyMemory
-
-        procedure :: readfile
         
     end type csm_io_type
 
     type(csm_io_type) :: fio
 contains
 
-    subroutine getReal(ioset, group, varname, value)
+    subroutine getReal(this, group, varname, value)
       
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -76,6 +75,7 @@ contains
             end subroutine get_real
         end interface
 
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -85,10 +85,10 @@ contains
         
     end subroutine getReal
 
-    subroutine getInteger(ioset, group, varname, value)
+    subroutine getInteger(this, group, varname, value)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -104,6 +104,7 @@ contains
             end subroutine get_int
         end interface
 
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -113,41 +114,44 @@ contains
 
     end subroutine getInteger
 
-    subroutine getChar(ioset, group, varname, value)
+    subroutine getChar(this, group, varname, value)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
         character(LEN(varname)+1) :: varnamestr
         character(len = *), intent(out) :: value
+        integer :: vsize
 
 
         interface
-            subroutine get_char(groupstr, varnamestr, valuestr)bind(C, name = 'getChar')
+            subroutine get_char(groupstr, varnamestr, valuestr, vsize)bind(C, name = 'getChar')
                 use, intrinsic :: iso_c_binding
                 character(kind = c_char), dimension(*) :: groupstr
                 character(kind = c_char), dimension(*) :: varnamestr
                 character(kind = c_char), dimension(*) :: valuestr
+                integer :: vsize
             end subroutine get_char
         end interface
 
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
         varnamestr(LEN(varnamestr):LEN(varnamestr)) = CHAR(0)
         value = CHAR(0)
+        vsize = LEN(value)
 
-        call get_char(groupstr, varnamestr, value)
+        call get_char(groupstr, varnamestr, value, vsize)
         
-
     end subroutine getChar
 
-    subroutine getRealIndex(ioset, group, varname, value, index)
+    subroutine getRealIndex(this, group, varname, value, index)
       
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -165,6 +169,7 @@ contains
             end subroutine get_real
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -174,10 +179,10 @@ contains
     
     end subroutine getRealIndex
     
-    subroutine getIntegerIndex(ioset, group, varname, value, index)
+    subroutine getIntegerIndex(this, group, varname, value, index)
     
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -195,6 +200,7 @@ contains
             end subroutine get_int_ind
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -204,41 +210,45 @@ contains
     
     end subroutine getIntegerIndex
     
-    subroutine getCharIndex(ioset, group, varname, value, index)
+    subroutine getCharIndex(this, group, varname, value, index)
     
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
         character(LEN(varname)+1) :: varnamestr
         character(len=*), intent(out) :: value
+        integer :: vsize
         integer, intent(in) :: index
     
         interface
-            subroutine get_char_ind(groupstr, varnamestr, valuestr, index)bind(C, name = 'getCharIndex')
+            subroutine get_char_ind(groupstr, varnamestr, valuestr, vsize, index)bind(C, name = 'getCharIndex')
                 use, intrinsic :: iso_c_binding
                 character(kind = c_char), dimension(*) :: groupstr
                 character(kind = c_char), dimension(*) :: varnamestr
                 character(kind = c_char), dimension(*) :: valuestr
+                integer :: vsize
                 integer :: index
             end subroutine get_char_ind
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)
         varnamestr = varname
         varnamestr(LEN(varnamestr):LEN(varnamestr)) = CHAR(0)
         value = CHAR(0)
+        vsize = LEN(value)
         
-        call get_char_ind(groupstr, varnamestr, value, index)
+        call get_char_ind(groupstr, varnamestr, value, vsize, index)
     
     end subroutine getCharIndex
     
-    subroutine getRealArray(ioset, group, varname, value, size)
+    subroutine getRealArray(this, group, varname, value, size)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -257,6 +267,7 @@ contains
             end subroutine get_real_array
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -268,10 +279,10 @@ contains
 
     end subroutine getRealArray
 
-    subroutine getIntegerArray(ioset, group, varname, value, size)
+    subroutine getIntegerArray(this, group, varname, value, size)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -290,6 +301,7 @@ contains
             end subroutine get_int_array
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -301,43 +313,47 @@ contains
 
     end subroutine getIntegerArray
 
-    subroutine getCharArray(ioset, group, varname, value, size)
+    subroutine getCharArray(this, group, varname, value, size)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
         character(LEN(varname)+1) :: varnamestr
         character(len=*), dimension(:), intent(out) :: value
+        integer :: vsize
         character(len=*), intent(in) :: size
         character(LEN(size)+1) :: sizestr
 
         interface
-            subroutine get_char_array(groupstr, varnamestr, value, sizestr)bind(C, name = 'getCharArray')
+            subroutine get_char_array(groupstr, varnamestr, value, vsize, sizestr)bind(C, name = 'getCharArray')
                 use, intrinsic :: iso_c_binding
                 character(kind = c_char), dimension(*) :: groupstr
                 character(kind = c_char), dimension(*) :: varnamestr
                 character(kind = c_char), dimension(*):: value
+                integer :: vsize
                 character(kind = c_char), dimension(*) :: sizestr
             end subroutine get_char_array
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
         varnamestr(LEN(varnamestr):LEN(varnamestr)) = CHAR(0)
+        vsize = LEN(value)
         sizestr = size
         sizestr(LEN(sizestr):LEN(sizestr)) = CHAR(0)
 
-        call get_char_array(groupstr, varnamestr, value, sizestr)
+        call get_char_array(groupstr, varnamestr, value, vsize, sizestr)
         
     end subroutine getCharArray
 
-    subroutine getRealYrdoy(ioset, group, yrdoy, varname, value)
+    subroutine getRealYrdoy(this, group, yrdoy, varname, value)
       
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -355,6 +371,7 @@ contains
           end subroutine get_real_mem_yrdoy
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -364,10 +381,10 @@ contains
         
     end subroutine getRealYrdoy
     
-    subroutine getIntegerYrdoy(ioset, group, yrdoy, varname, value)
+    subroutine getIntegerYrdoy(this, group, yrdoy, varname, value)
     
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -385,6 +402,7 @@ contains
             end subroutine get_int_mem_yrdoy
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -395,43 +413,47 @@ contains
     end subroutine getIntegerYrdoy
     
     
-    subroutine getCharYrdoy(ioset, group, yrdoy, varname, value)
+    subroutine getCharYrdoy(this, group, yrdoy, varname, value)
     
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
         character(LEN(varname)+1) :: varnamestr
         integer, intent(in) :: yrdoy
         character(len=*), intent(out) :: value
+        integer :: vsize
         
         interface
-            subroutine get_char_mem_yrdoy(groupstr, yrdoy, varnamestr, valuestr)bind(C, name = 'getCharYrdoy')
+            subroutine get_char_mem_yrdoy(groupstr, yrdoy, varnamestr, valuestr, vsize)bind(C, name = 'getCharYrdoy')
                 use, intrinsic :: iso_c_binding
                 character(kind = c_char), dimension(*) :: groupstr
                 character(kind = c_char), dimension(*) :: varnamestr
                 integer :: yrdoy
                 character(kind = c_char), dimension(*) :: valuestr
+                integer :: vsize
             end subroutine get_char_mem_yrdoy
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
         varnamestr(LEN(varnamestr):LEN(varnamestr)) = CHAR(0)
         value = CHAR(0)
+        vsize = LEN(value)
     
-        call get_char_mem_yrdoy(groupstr, yrdoy, varnamestr, value)
+        call get_char_mem_yrdoy(groupstr, yrdoy, varnamestr, value, vsize)
         
     end subroutine getCharYrdoy
 
 
 
-    subroutine setRealMemory(ioset, group, varname, value)
+    subroutine setRealMemory(this, group, varname, value)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -447,7 +469,8 @@ contains
                 real :: value
             end subroutine set_real_mem
         end interface
-
+        
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -457,10 +480,10 @@ contains
         
     end subroutine setRealMemory
 
-    subroutine setIntegerMemory(ioset, group, varname, value)
+    subroutine setIntegerMemory(this, group, varname, value)
       
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -476,6 +499,7 @@ contains
           end subroutine set_int_mem
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -485,10 +509,10 @@ contains
       
     end subroutine setIntegerMemory
     
-    subroutine setCharMemory(ioset, group, varname, value)
+    subroutine setCharMemory(this, group, varname, value)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -505,6 +529,7 @@ contains
             end subroutine set_char_mem
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -516,10 +541,10 @@ contains
         
     end subroutine setCharMemory
 
-    subroutine setRealIndexMemory(ioset, group, varname, value, index)
+    subroutine setRealIndexMemory(this, group, varname, value, index)
       
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -536,7 +561,8 @@ contains
                 integer :: index
             end subroutine set_real_mem_ind
         end interface
-
+            
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -546,10 +572,10 @@ contains
         
     end subroutine setRealIndexMemory
 
-    subroutine setIntegerIndexMemory(ioset, group, varname, value, index)
+    subroutine setIntegerIndexMemory(this, group, varname, value, index)
       
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -567,6 +593,7 @@ contains
           end subroutine set_int_mem_ind
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -576,10 +603,10 @@ contains
       
     end subroutine setIntegerIndexMemory
     
-    subroutine setCharIndexMemory(ioset, group, varname, value, index)
+    subroutine setCharIndexMemory(this, group, varname, value, index)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -597,7 +624,8 @@ contains
                 integer :: index
             end subroutine set_char_mem_ind
         end interface
-
+        
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -609,10 +637,10 @@ contains
         
     end subroutine setCharIndexMemory
 
-    subroutine setRealYrdoyMemory(ioset, group, yrdoy, varname, value)
+    subroutine setRealYrdoyMemory(this, group, yrdoy, varname, value)
       
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -630,6 +658,7 @@ contains
           end subroutine set_real_mem_yrdoy
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -639,10 +668,10 @@ contains
         
     end subroutine setRealYrdoyMemory
     
-    subroutine setIntegerYrdoyMemory(ioset, group, yrdoy, varname, value)
+    subroutine setIntegerYrdoyMemory(this, group, yrdoy, varname, value)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -660,6 +689,7 @@ contains
             end subroutine set_int_mem_yrdoy
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -670,10 +700,10 @@ contains
     end subroutine setIntegerYrdoyMemory
 
 
-    subroutine setCharYrdoyMemory(ioset, group, yrdoy, varname, value)
+    subroutine setCharYrdoyMemory(this, group, yrdoy, varname, value)
 
         implicit none
-        class(csm_io_type) :: ioset
+        class(csm_io_type) :: this
         character(len=*), intent(in) :: group
         character(len=*), intent(in) :: varname
         character(LEN(group)+1) :: groupstr
@@ -692,6 +722,7 @@ contains
             end subroutine set_char_mem_yrdoy
         end interface
         
+        this%init = 1
         groupstr = group
         groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
         varnamestr = varname
@@ -703,30 +734,9 @@ contains
         
     end subroutine setCharYrdoyMemory
 
-
-    subroutine readfile(ioset, group)
-        use, intrinsic :: iso_c_binding
-        class(csm_io_type) :: ioset
-        character(len=*), intent(in) :: group
-        character(LEN(group)+1) :: groupstr
-    
-        interface
-            subroutine readinputfile(groupstr)bind(C, name = 'readinputfile')
-                use, intrinsic :: iso_c_binding
-                character(kind = c_char), dimension(*) :: groupstr
-            end subroutine readinputfile
-        end interface
-
-        groupstr = group
-        groupstr(LEN(groupstr):LEN(groupstr)) = CHAR(0)        
-
-        call readinputfile(groupstr)
-        
-    end subroutine readfile
-
      subroutine FILETYPE(fileww, rtype, errcode)
-
-        use, intrinsic :: iso_c_binding
+        
+        implicit none
         character(len=*), intent(in) :: fileww
         character(LEN(fileww)+1) :: filewwstr
         character(len=*), intent(out) :: rtype
@@ -735,7 +745,7 @@ contains
         interface
             subroutine readftype(filewwstr, rtype, errcode)&
                 bind(C, name = 'FILETYPE')
-                import :: c_char
+                use, intrinsic :: iso_c_binding
                 character(kind = c_char), dimension(*) :: filewwstr
                 character(kind = c_char), dimension(*) :: rtype
                 integer :: errcode                
@@ -743,16 +753,16 @@ contains
         end interface
 
         filewwstr = fileww
-        filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)        
-        rtype = CHAR(0)        
+        filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)
+        rtype = CHAR(0)
         
         call readftype(filewwstr, rtype, errcode)
         
      end subroutine FILETYPE
      
      subroutine READ_WSTAT(fileww, errcode)
-
-        use, intrinsic :: iso_c_binding
+        
+        implicit none
         character(len=*), intent(in) :: fileww
         character(LEN(fileww)+1) :: filewwstr
         integer, intent(out) :: errcode
@@ -760,7 +770,7 @@ contains
         interface
             subroutine readwstat(filewwstr, errcode)&
                 bind(C, name = 'READ_WSTAT')
-                import :: c_char
+                use, intrinsic :: iso_c_binding
                 character(kind = c_char), dimension(*) :: filewwstr
                 integer :: errcode                
             end subroutine readwstat
@@ -773,41 +783,44 @@ contains
         
      end subroutine READ_WSTAT
     
-     subroutine READ_WTH_Y2_4K(fileww, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)
-  
-         use, intrinsic :: iso_c_binding
+     subroutine READ_WTH_Y2_4K(fileww, rtype, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
+
+         implicit none
          character(len=*), intent(in) :: fileww
          character(LEN(fileww)+1) :: filewwstr
+         character(len=*), intent(in) :: rtype
+         character(LEN(rtype)+1) :: rtypestr
          integer, intent(in) :: yrdoy
          integer, intent(out) :: firstweatherday
          integer, intent(out) :: lastweatherday
-         integer, intent(out) :: eof
          integer, intent(out) :: lnum
          integer, intent(out) :: nrecords
-         character(len=*), intent(out) :: erryrdoy
+         integer, intent(in)  :: mxrecords
          integer, intent(out) :: errcode
+
     
          interface
-             subroutine readwthfile(filewwstr, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)&
+             subroutine readwthfile(filewwstr, rtypestr, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)&
                  bind(C, name = 'READ_WTH_Y2_4K')
-                 import :: c_char
+                 use, intrinsic :: iso_c_binding
                  character(kind = c_char), dimension(*) :: filewwstr
+                 character(kind = c_char), dimension(*) :: rtypestr
                  integer :: yrdoy
                  integer :: firstweatherday
                  integer :: lastweatherday
-                 integer :: eof
                  integer :: lnum
                  integer :: nrecords
-                 character(kind = c_char), dimension(*) :: erryrdoy
+                 integer :: mxrecords
                  integer :: errcode                
              end subroutine readwthfile
          end interface
     
          filewwstr = fileww
-         filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)        
-         erryrdoy = CHAR(0)        
+         filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0) 
+         rtypestr = rtype
+         rtypestr(LEN(rtypestr):LEN(rtypestr)) = CHAR(0)      
     
-         call readwthfile(filewwstr, yrdoy, firstweatherday, lastweatherday, eof, lnum, nrecords, erryrdoy, errcode)
+         call readwthfile(filewwstr, rtypestr, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
         
      end subroutine READ_WTH_Y2_4K
     

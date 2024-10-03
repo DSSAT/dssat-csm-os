@@ -22,20 +22,18 @@
 
 extern "C" {
 
-    void readinputfile(char *GROUP);
-
     void getReal(char *GROUP, char *VARNAME, float *VALUE);
     void getInteger(char *GROUP, char *VARNAME, int *VALUE);
-    void getChar(char *GROUP, char *VARNAME, char  *VALUE);
+    void getChar(char *GROUP, char *VARNAME, char  *VALUE, int *VSIZE);
     void getRealIndex(char *GROUP, char *VARNAME, float *VALUE, int *INDEX);
     void getIntegerIndex(char *GROUP, char *VARNAME, int *VALUE, int *INDEX);
-    void getCharIndex(char *GROUP, char *VARNAME, char *VALUE, int *INDEX);
+    void getCharIndex(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, int *INDEX);
     void getRealArray(char *GROUP, char *VARNAME, float *VALUE, char *SIZE);
     void getIntegerArray(char *GROUP, char *VARNAME, int *VALUE, char *SIZE);
-    void getCharArray(char *GROUP, char *VARNAME, char *VALUE, char *SIZE);
+    void getCharArray(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, char *SIZE);
     void getRealYrdoy(char *GROUP, int *YRDOY, char *VARNAME, float *VALUE);
     void getIntegerYrdoy(char *GROUP, int *YRDOY, char *VARNAME, int *VALUE);
-    void getCharYrdoy(char *GROUP, int *YRDOY, char *VARNAME, char  *VALUE);
+    void getCharYrdoy(char *GROUP, int *YRDOY, char *VARNAME, char  *VALUE, int *VSIZE);
 
     void setRealMemory(char *GROUP, char *VARNAME, float *VALUE);
     void setIntegerMemory(char *GROUP, char *VARNAME, int *VALUE);
@@ -46,15 +44,6 @@ extern "C" {
     void setRealYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, float *VALUE);
     void setIntegerYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, int *VALUE);
     void setCharYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, char *VALUE);
-
-}
-
-
-void readinputfile(char *GROUP)
-{
-    std::string group(GROUP);
-
-    FlexibleIO::getInstance()->readInputFile(group);
 
 }
 
@@ -76,14 +65,15 @@ void getInteger(char *GROUP, char *VARNAME, int *VALUE)
 
 }
 
-void getChar(char *GROUP, char *VARNAME, char  *VALUE)
+void getChar(char *GROUP, char *VARNAME, char  *VALUE, int *VSIZE)
 {
-
     *VALUE = '\0';
     std::string group(GROUP), varname(VARNAME);
-
-    strcpy(VALUE, FlexibleIO::getInstance()->getChar(group, varname).c_str());
-
+    
+    std::string result = FlexibleIO::getInstance()->getChar(group, varname);
+    size_t size = static_cast<size_t>(*VSIZE);    
+    size_t sizecpy = std::min(result.size(), size);
+    std::memcpy(VALUE, result.c_str(), sizecpy);
 }
 
 void getRealIndex(char *GROUP, char *VARNAME, float *VALUE, int *INDEX)
@@ -104,14 +94,16 @@ void getIntegerIndex(char *GROUP, char *VARNAME, int *VALUE, int *INDEX)
 
 }
 
-void getCharIndex(char *GROUP, char *VARNAME, char *VALUE, int *INDEX)
+void getCharIndex(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, int *INDEX)
 {
 
     *VALUE = '\0';
     std::string group(GROUP), varname(VARNAME);
-
-    strcpy(VALUE, FlexibleIO::getInstance()->getCharIndex(group, varname, *INDEX).c_str());
-
+    
+    std::string result = FlexibleIO::getInstance()->getCharIndex(group, varname, *INDEX).c_str();
+    size_t size = static_cast<size_t>(*VSIZE);    
+    size_t sizecpy = std::min(result.size(), size);
+    std::memcpy(VALUE, result.c_str(), sizecpy);
 }
 
 void getRealArray(char *GROUP, char *VARNAME, float *VALUE, char *SIZE)
@@ -136,13 +128,15 @@ void getIntegerArray(char *GROUP, char *VARNAME, int *VALUE, char *SIZE)
 
 }
 
-void getCharArray(char *GROUP, char *VARNAME, char *VALUE, char *SIZE)
+void getCharArray(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, char *SIZE)
 {
 
     std::string group(GROUP), varname(VARNAME), size(SIZE);
-
-    strcpy(VALUE, FlexibleIO::getInstance()->getCharArray(group, varname, size).c_str());
-
+    
+    std::string result = FlexibleIO::getInstance()->getCharArray(group, varname, size).c_str();
+    size_t vsz = static_cast<size_t>(*VSIZE);    
+    size_t sizecpy = std::min(result.size(), vsz);
+    std::memcpy(VALUE, result.c_str(), sizecpy);
 }
 
 void getRealYrdoy(char *GROUP, int *YRDOY, char *VARNAME, float *VALUE)
@@ -163,13 +157,15 @@ void getIntegerYrdoy(char *GROUP, int *YRDOY, char *VARNAME, int *VALUE)
 
 }
 
-void getCharYrdoy(char *GROUP, int *YRDOY, char *VARNAME, char  *VALUE)
+void getCharYrdoy(char *GROUP, int *YRDOY, char *VARNAME, char  *VALUE, int *VSIZE)
 {
 
     std::string group(GROUP), yrdoy(std::to_string(*YRDOY)), varname(VARNAME);
-
-    strcpy(VALUE, FlexibleIO::getInstance()->getCharYrdoy(group, yrdoy, varname).c_str());
-
+    
+    std::string result = FlexibleIO::getInstance()->getCharYrdoy(group, yrdoy, varname).c_str();
+    size_t size = static_cast<size_t>(*VSIZE);    
+    size_t sizecpy = std::min(result.size(), size);
+    std::memcpy(VALUE, result.c_str(), sizecpy);
 }
 
 
