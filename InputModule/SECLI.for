@@ -43,8 +43,8 @@ C=======================================================================
       CHARACTER*12 FILEW,WTHTEM,NAMEF
       CHARACTER*15 WTMANT,WGMANT
       CHARACTER*102 DSSATP
-      CHARACTER*80 PATHWT
-      CHARACTER*92 FILEWW,FILEXX
+      CHARACTER*256 PATHWT
+      CHARACTER*256 FILEWW,FILEXX
 
       INTEGER      MENU,NLOOP,PATHL,YEAR,RSEED1,YR
       LOGICAL      FEXIST
@@ -150,7 +150,7 @@ C
           WTHTEM = FILEW
       ELSE IF (MENU .EQ. 4) THEN
           IF (RNMODE .EQ. 'I') WRITE (*,800) PATHWT
-          READ (5,'(A80)') PATHWT
+          READ (5,'(A256)') PATHWT
           PATHL  = INDEX (PATHWT,BLANK)
           IF (PATHL .GT. 1) THEN
              IF (PATHWT((PATHL-1):(PATHL-1)) .NE. SLASH) THEN

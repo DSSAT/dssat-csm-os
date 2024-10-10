@@ -34,7 +34,7 @@ C-----------------------------------------------------------------------
       CHARACTER*12 NAMEF
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(NAPPL)
-      CHARACTER*80 PATHSD
+      CHARACTER*256 PATHSD
       CHARACTER*90 CHAR
       CHARACTER*92 TILFILE
 

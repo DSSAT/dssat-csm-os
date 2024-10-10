@@ -75,7 +75,7 @@ C========================================================================
       PARAMETER   (ERRKEY = 'VEGGR')
 
       CHARACTER*6  ECONO, SECTION
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       CHARACTER*92 FILECC, FILEGC
 
       INTEGER DYNAMIC, TIMDIF

@@ -715,7 +715,7 @@ C=======================================================================
       CHARACTER*12  FILEC, FILEE
       CHARACTER*16  ECONAM
       CHARACTER*30  FILEIO
-      CHARACTER*80  PATHCR, PATHEC
+      CHARACTER*256  PATHCR, PATHEC
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*180 CHAR
       CHARACTER*255 C255

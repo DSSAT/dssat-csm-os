@@ -146,7 +146,7 @@ C----------------------------------------------------------------------
       REAL            NSTRES     
       REAL            P1              
       REAL            P5          
-      CHARACTER*80    PATHCR
+      CHARACTER*256    PATHCR
       INTEGER         PATHL
       REAL            PCNGRN   
       REAL            PCNVEG     
@@ -343,7 +343,7 @@ C-----------------------------------------------------------------------
 C  VARIABLES FROM SPECIES FILE
 C-----------------------------------------------------------------------
 
-      CHARACTER*80    C80
+      CHARACTER*256    C80
       CHARACTER*6     ECONO
       INTEGER         ERR 
       CHARACTER*12    FILES
@@ -352,8 +352,8 @@ C-----------------------------------------------------------------------
       INTEGER         ISECT
       INTEGER         LUNCRP
       REAL            PARSR
-      CHARACTER*80    PATHSR
-      CHARACTER*80    PATHER
+      CHARACTER*256    PATHSR
+      CHARACTER*256    PATHER
       REAL            SLPF
       REAL            PRFTC(4), GFLTC(4), SETTC(4), LAITC(4)
       CHARACTER*3     PRFTYP, GFLTYP, SETTYP, LAITYP

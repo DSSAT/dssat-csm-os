@@ -36,7 +36,7 @@ C=======================================================================
 	CHARACTER*8   MODEL
       CHARACTER*12  FILEE
       CHARACTER*16  ECONAM
-      CHARACTER*80  PATHEC
+      CHARACTER*256  PATHEC
       CHARACTER*92  FILEGC
       CHARACTER*255 C255
 

@@ -377,7 +377,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        ASMDOT
       REAL        BIOMAS 
       REAL        BSGDD
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       REAL        CANHT     
       REAL        CANHT_POT !added 26May04 RS     
       REAL        CANNAA      
@@ -495,9 +495,9 @@ C The statements begining with !*! are refer to APSIM source codes
 !     REAL        P3      
 !     REAL        PAR         
       REAL        PARSR
-      CHARACTER*80    PATHCR 
-      CHARACTER*80    PATHSR
-      CHARACTER*80    PATHER 
+      CHARACTER*256    PATHCR 
+      CHARACTER*256    PATHSR
+      CHARACTER*256    PATHER 
 !     REAL        PC          
 !     REAL        PCARB
       REAL        PCNGRN

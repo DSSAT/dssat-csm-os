@@ -783,7 +783,7 @@ C=======================================================================
 
       CHARACTER BLANK*1,ERRKEY*6,FILEC*12,FILECC*92,FILEIO*30,
      &  PATHCR*80,SECTION*6
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       INTEGER ERRNUM,FOUND,I,J,LNUM,LUNCRP,LUNIO,NELAYR,NLAYR,
      &  PATHL, ISECT
       PARAMETER (BLANK=' ', ERRKEY='ETPINP')
@@ -1017,7 +1017,7 @@ C=======================================================================
 
       CHARACTER BLANK*1,ERRKEY*6,FILEC*12,FILECC*92,FILEIO*30,
      &  PATHCR*80,SECTION*6,TYPPGL*3,TYPPGN*3
-      CHARACTER*80 C80
+      CHARACTER*256 C80
 
       INTEGER ERRNUM,FOUND,I,LINC,LNUM,LUNCRP,LUNIO,PATHL
       INTEGER ISECT

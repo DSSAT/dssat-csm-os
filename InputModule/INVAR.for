@@ -42,7 +42,7 @@ C=======================================================================
       CHARACTER*6  GNAME(18),VARTY,ECONO
       CHARACTER*12 FILEG
       CHARACTER*16 VRNAME
-      CHARACTER*80 PATHGE
+      CHARACTER*256 PATHGE
       CHARACTER*92 FILEGG
 
       INTEGER      I,IG,PATHL

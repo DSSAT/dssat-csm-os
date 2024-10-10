@@ -79,7 +79,7 @@
 
     CHARACTER(LEN=1)  :: IDETG, IDETL, IDETO, IDETS, ISWDIS, ISWNIT, ISWWAT      
     CHARACTER(LEN=1)  :: MESOM, RNMODE      
-    CHARACTER(LEN=120):: FILEIOIN    
+    CHARACTER (LEN=256):: FILEIOIN    
 !   CHARACTER(LEN=10) :: TL10FROMI                                                                                     ! Character function call
 
     INTRINSIC AMAX1,AMIN1,EXP,FLOAT,INDEX,INT,LEN,MAX,MIN,MOD,NINT

@@ -63,7 +63,7 @@ C=======================================================================
       CHARACTER*6     ERRKEY          
       PARAMETER       (ERRKEY='RI_GRO')   
 
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
       INTEGER   I,YEAR
 
       REAL      SWFAC,TURFAC,PHEFAC
@@ -1412,7 +1412,7 @@ C=======================================================================
       PARAMETER (ERRKEY = 'IPRICE')
       CHARACTER*12 FILEC
       CHARACTER*30 FILEIO
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
 
       INTEGER LINC, LNUM, LUNIO, ERR, FOUND
 

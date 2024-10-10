@@ -156,9 +156,9 @@ C=======================================================================
       CHARACTER*8   MODEL
       CHARACTER*16  VRNAME
       CHARACTER*25  TITLET
-      CHARACTER*80  PATHEX
+      CHARACTER*256  PATHEX
       CHARACTER*120 HEADER(100) !Simulation header
-      CHARACTER*120 WTHSTR
+      CHARACTER*256 WTHSTR
 
       INTEGER       DYNAMIC
       INTEGER       ICOUNT, I, IDYP,IDYS,IPYRP,IPYRS,NNFERT

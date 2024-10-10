@@ -38,7 +38,7 @@ C-----------------------------------------------------------------------
       CHARACTER*10 STNAME(20)
       CHARACTER*12 FILEA
       CHARACTER*30 FILEIO
-	CHARACTER*80 PATHEX
+	CHARACTER*256 PATHEX
       CHARACTER*4 StalkState(NumOfStalks,10)
 
       INTEGER ACOUNT, count, DAP, DAS, Stalk, StkDecDay 

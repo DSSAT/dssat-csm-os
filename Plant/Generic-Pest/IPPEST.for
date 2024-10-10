@@ -27,7 +27,7 @@ C=======================================================================
       CHARACTER*6  SECTION,ERRKEY
       CHARACTER*12 FILEP, FILET
       CHARACTER*30 FILEIO
-      CHARACTER*80 PATHPE, PATHEX
+      CHARACTER*256 PATHPE, PATHEX
 
       INTEGER LUNIO
       INTEGER ERRNUM, FOUND, LINC, LNUM, TRTNUM

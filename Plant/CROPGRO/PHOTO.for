@@ -266,7 +266,7 @@ C=======================================================================
       CHARACTER*6  ERRKEY, SECTION
       CHARACTER*12 FILEC
       CHARACTER*30 FILEIO
-      CHARACTER*80 PATHCR,CHAR
+      CHARACTER*256 PATHCR,CHAR
       CHARACTER*92 FILECC
 
       INTEGER LUNIO, LINC, LNUM, FOUND

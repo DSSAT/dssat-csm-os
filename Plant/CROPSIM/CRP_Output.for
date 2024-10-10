@@ -912,7 +912,7 @@
      &                 LINESTAR(1:LENLINESTAR)//LINET(14:LENLINE)
                       IF (IDETG.NE.'N') THEN 
                         WRITE (FNUMMEAS,*) ' '
-                        WRITE (FNUMMEAS,'(A80)') LINESTAR2(1:80)
+                        WRITE (FNUMMEAS,'(A256)') LINESTAR2(1:256)
                         WRITE (FNUMMEAS,*) ' '
                         WRITE (FNUMMEAS,'(A180)') LINET(1:180)
                       ENDIF  
@@ -1903,7 +1903,7 @@ C-GH 1/20/2022 For ISWNI set to N
 !                  WRITE (fnumwrk,'(A18,A10,I3)')
 !     &              ' N FERTILIZER FOR ',excode,tn
 !                  DO L = 1,FAPPNUM
-!                     WRITE (fnumwrk,'(A80)') FAPPLINE(L)
+!                     WRITE (fnumwrk,'(A256)') FAPPLINE(L)
 !                  ENDDO
 !                ENDIF
 !                WRITE(FNUMWRK,*) ' '

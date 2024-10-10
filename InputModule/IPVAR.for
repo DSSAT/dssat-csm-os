@@ -60,7 +60,7 @@ C=======================================================================
       CHARACTER*12  FILEG
       CHARACTER*16  VRNAME
       CHARACTER*78  MSG(3)
-      CHARACTER*80  PATHGE
+      CHARACTER*256  PATHGE
       CHARACTER*92  FILEGG
       CHARACTER*1000 C360,ATLINE
 

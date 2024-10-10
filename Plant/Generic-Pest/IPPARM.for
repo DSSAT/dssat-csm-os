@@ -31,7 +31,7 @@ C=======================================================================
       CHARACTER*6   ERRKEY
       CHARACTER*12  FILEP
       CHARACTER*20  PNAME(MAXPEST)
-      CHARACTER*80  PATHPE
+      CHARACTER*256  PATHPE
       CHARACTER*92  FILEPP
       CHARACTER*200 C200
 
