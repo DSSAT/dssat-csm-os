@@ -112,6 +112,8 @@
 
       DO i = 1, NRowsTot
         DO j = 1, NColsTot
+          IF (Cell_Type(i,j) < 3 .OR. Cell_Type(i,j) > 5) CYCLE
+
           DLTSNO3_2D(i,j) = DLTSNO3_2D(i,j) + DeltaSNO3(i,j)
           NewSNO3 = SNO3_2D(i,j) + DLTSNO3_2D(i,j)
           IF (NewSNO3 < 0.0) THEN 
@@ -121,7 +123,7 @@
             ENDIF
           ENDIF
 
-          DLTUREA_2D = DLTUREA_2D + DeltaUrea
+          DLTUREA_2D(i,j) = DLTUREA_2D(i,j) + DeltaUrea(i,j)
           NewUREA = UREA_2D(i,j) + DLTUREA_2D(i,j)
           IF (NewUREA < 0.0) THEN 
             DLTUREA_2D(i,j) = -UREA_2D(i,j)
@@ -254,24 +256,19 @@
               UREAFh(i,j) = 0.0
 
             ELSEIF (SWFh_ts(i,j) > 1.E-10) THEN
+
 !             Positive horizontal fluxes from cell(i,j) to cell(i,j+1)
 !             Calculate the fraction of water that moves out of cell(i,j) with this flux
               FracSWVh = SWFh_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
-
-!             NO3 flux
-              NO3Fh(i,j) = MAX(0.0, SNO3ts(i,j) * FRAC_SOLN_NO3(i)) 
-     &          * FracSWVh
-              UreaFh(i,j) = MAX(0.0, UREAts(i,j) * FRAC_SOLN_urea(i))
-     &          * FracSWVh
+              NO3Fh(i,j) = FracSWVh * SNO3ts(i,j) * FRAC_SOLN_NO3(i)
+              UreaFh(i,j) = FracSWVh * UREAts(i,j) * FRAC_SOLN_urea(i)
 
             ELSE
 !             Negative horizontal fluxes from cell(i,j+1) to cell(i,j)
 !             Calculate the fraction of water that moves out of cell(i,j+1) with this flux
-              FracSWVh = -SWFh_ts(i,j) / CellArea(i,j+1) / SWV_ts(i,j+1)
-              NO3Fh(i,j) = MAX(0.0, SNO3ts(i,j+1) * FRAC_SOLN_NO3(i))
-     &          * FracSWVh
-              UreaFh(i,j) = MAX(0.0, UREAts(i,j+1) * FRAC_SOLN_urea(i))
-     &          * FracSWVh
+              FracSWVh = SWFh_ts(i,j) / CellArea(i,j+1) / SWV_ts(i,j+1)
+              NO3Fh(i,j) = FracSWVh * SNO3ts(i,j+1) * FRAC_SOLN_NO3(i)
+              UreaFh(i,j) = FracSWVh * UREAts(i,j+1) *FRAC_SOLN_urea(i)
             ENDIF
           ENDIF
 
