@@ -59,13 +59,14 @@ C=======================================================================
       Real FieldFac, ROWSPC_cm
 
 !     TEMP CHP
-      INTEGER YRDOY
-      REAL TrackLostN
+      INTEGER YRDOY, DAS
+      REAL DayLostN, CumLostN
 
       DYNAMIC = CONTROL % DYNAMIC
 
 !     temp chp
       YRDOY = CONTROL % YRDOY
+      DAS = CONTROL % DAS
 
       SWV    = CELLS % State % SWV
       RLV_2D = CELLS % State % RLV
@@ -135,6 +136,7 @@ C=======================================================================
       UNH4_2D = 0.0
       UNO3_2D = 0.0
       RLV_2D  = 0.0
+      CumLostN = 0.0
 
       CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
       CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
@@ -245,7 +247,7 @@ C-----------------------------------------------------------------------
           ANDEM = TRNU
         ENDIF
 
-        TrackLostN = 0.0
+        DayLostN = 0.0
 
         IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
@@ -257,22 +259,18 @@ C-----------------------------------------------------------------------
                 UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF
 
 !               XMIN = minimum amount NO3 left after uptake (kg[N]/ha)
-!               TEMP CHP
-!               XMIN    = 0.25 / KG2PPM(L) * ColFrac(L,J) / FieldFac
-                XMIN = 0.0
+                XMIN    = 0.25 / KG2PPM(L) * ColFrac(L,J) / FieldFac
                 MXNO3U  = MAX(0.0,(SNO3_2D(L,J) - XMIN))
                 IF (UNO3_2D(L,J) .GT. MXNO3U) THEN
-                  TrackLostN = TrackLostN + (UNO3_2D(L,J) - MXNO3U)
+                  DayLostN = DayLostN + (UNO3_2D(L,J) - MXNO3U)
                   UNO3_2D(L,J) = MXNO3U
                 ENDIF
 
 !               XMIN = minimum amount NH4 left after uptake (kg[N]/ha)
-!               TEMP CHP
-!               XMIN = 0.5 / KG2PPM(L) * ColFrac(L,J) / FieldFac
-                XMIN = 0.0
+                XMIN = 0.5 / KG2PPM(L) * ColFrac(L,J) / FieldFac
                 MXNH4U  = MAX(0.0,(SNH4_2D(L, J) - XMIN))
                 IF (UNH4_2D(L,J) .GT. MXNH4U) THEN
-                  TrackLostN = TrackLostN + (UNH4_2D(L,J) - MXNH4U)
+                  DayLostN = DayLostN + (UNH4_2D(L,J) - MXNH4U)
                   UNH4_2D(L,J) = MXNH4U
                 ENDIF
 
@@ -288,6 +286,9 @@ C-----------------------------------------------------------------------
               ENDIF
             ENDDO
           ENDDO
+
+!         temp chp
+          CumLostN = CumLostN + DayLostN
 
 !         Convert uptake to g/m^2 for plant routines
           TRNO3U = TRNO3U / 10.0
