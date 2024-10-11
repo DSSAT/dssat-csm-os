@@ -69,9 +69,9 @@
     Sequence
     Integer*4 Cell_Type
     ! 0 = no cell data (e.g., in furrow)      1,2     -99  
-    ! 1 = surface water                      ------|       
+    ! 1 = surface water                     -------|       
     ! 2 = surface litter                       3   |   0   
-    ! 3 = soil in bed                        _  _  |_______
+    ! 3 = soil in bed                       _ _ _ _|_______
     ! 4 = soil below bed                                   
     ! 5 = soil below furrow                    4   |   5   
     !-99= not simulated                       -99     -99  
