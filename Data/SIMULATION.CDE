@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.8; 08/09/2024
+! DSSAT v4.8; 10/12/2024
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
@@ -153,8 +153,9 @@ C        Comma Separated Values (CSV)                                         IB
 *Simulation/Crop Models
 @MODEL  CROP  Description
 BSCER    BS   CERES-Sugarbeet
+CRGRO    AM   CROPGRO-Amaranth
 CRGRO    BC   CROPGRO-Carinata
-BGGRO    BG   CROPGRO-Bambara groundnut
+CRGRO    BG   CROPGRO-Bambara groundnut
 CRGRO    BH   CROPGRO-Bahia
 CRGRO    BN   CROPGRO-Dry bean
 CRGRO    BR   CROPGRO-Brachiaria

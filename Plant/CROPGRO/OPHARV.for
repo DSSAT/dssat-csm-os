@@ -24,6 +24,7 @@ C  07/08/2022 GH  Add CU for Cucumber
 C  05/01/2023 GH  Add GY for Guar; SR for Strawberry
 !  06/20/2024 FO  Added Economic Yield for Evaluate and Summary
 !  07/11/2024 FO  Added Economic standard output format
+!  10/11/2024 GH  Add AM for Amaranth
 C=======================================================================
 
       SUBROUTINE OPHARV(CONTROL, ISWITCH, 
@@ -223,14 +224,14 @@ C-----------------------------------------------------------------------
       Measured  = ' '
       YIELD  = 0
       BIOMAS = 0.0
-      
+
 !     Establish #, names of stages for environmental & stress summary
       PlantStres % ACTIVE = .FALSE.
       PlantStres % StageName = '                       '
       SELECT CASE (CROP)
-      CASE ('BC','BG','BN','CH','CI','CN','CO','CP','CU',
-     &      'FB','GB','GY','LT','PE','PN','PP','PR','QU',
-     &      'SB','SF','SR','SU','TM','VB')
+      CASE ('AM','BC','BG','BN','CH','CI','CN','CO','CP',
+     &      'CU','FB','GB','GY','LT','PE','PN','PP',
+     &      'PR','QU','SB','SF','SR','SU','TM','VB')
         PlantStres % NSTAGES = 4
         PlantStres % StageName(1)  = 'Emergence -First Flower'
         PlantStres % StageName(2)  = 'First Flower-First Seed'
@@ -273,9 +274,9 @@ C-----------------------------------------------------------------------
 
 !     Set ACTIVE variable to indicate that current phase is active
       SELECT CASE (CROP)
-      CASE ('BC','BG','BN','CH','CI','CN','CO','CP','CU',
-     &      'FB','GB','GY','LT','PE','PN','PP','PR','QU',
-     &      'SB','SF','SR','SU','TM','VB')
+      CASE ('AM','BC','BG','BN','CH','CI','CN','CO','CP',
+     &      'CU','FB','GB','GY','LT','PE','PN','PP',
+     &      'PR','QU','SB','SF','SR','SU','TM','VB')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(5)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -676,8 +677,8 @@ C-----------------------------------------------------------------------
       ENDDO
 
       SELECT CASE (CROP)
-      CASE ('BC','BN','CH','CI','CN','CP','CU','FB','GB','GY','PE',
-     &      'PP','PR','SB','SR','TM','VB','LT')
+      CASE ('AM','BC','BN','CH','CI','CN','CP','CU','FB','GB','GY',
+     &      'PE','PP','PR','SB','SR','TM','VB','LT')
 !     For stage-dependant irrigation - send GSTAGE back to irrig routine
         STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
         STNAME(2) = 'Unifoliate'
