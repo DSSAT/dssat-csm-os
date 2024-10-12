@@ -36,7 +36,7 @@
 ! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
 !
 !             P/G/N:Phenology/Growth/Not used for calbration
-!!
+!
 @VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP  
 !Coefficient #                           1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
 !Calibration                             N     N     P     P     P     P     N     G     G     G     G     G     G     G     N     N     N     N
@@ -45,5 +45,5 @@
 999992 MAXIMA               . DFAULT 11.84  0.00  45.0  14.0  22.0 80.00 80.00  1.40  240.  20.0  1.00 0.600  60.0  1.00  30.0  95.0  .240  .060
  
 ! Bambara groundnut landraces
-BG0001 UniswaRed, SW          BG0001 11.84  0.00  40.8   12.0 20.5 67.3  70.00  1.24  225.  15.0  0.87 0.540  48.0  1.00  25.0  89.8  .240  .060
-BG0002 S19-3, Namibia         BG0002 11.84  0.00  35.0   11.0 21.6 70.2  65.00  1.18  225.  18.0  0.91 0.460  48.0  1.00  19.0  90.8  .240  .060
+BG0001 UniswaRed (SW)         BG0001 11.84  0.00  40.8   12.0 20.5 67.3  70.00  1.24  225.  15.0  0.87 0.540  48.0  1.00  25.0  89.8  .240  .060
+BG0002 S19-3 (Namibia)        BG0002 11.84  0.00  35.0   11.0 21.6 70.2  65.00  1.18  225.  18.0  0.91 0.460  48.0  1.00  19.0  90.8  .240  .060
