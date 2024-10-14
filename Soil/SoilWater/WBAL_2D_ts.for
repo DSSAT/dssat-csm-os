@@ -17,9 +17,9 @@
       SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input
      &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input
      &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input
-     &    Count, LatFlow,                                       !Input
+     &    Count, LatFlow, SWV_D)                                !Input
 !         Temp chp
-     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input
+!    &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input
 
 !      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
 !     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
@@ -36,36 +36,36 @@
       SAVE
 
       CHARACTER*14, PARAMETER :: SWBAL = 'SoilWat_ts.OUT'
-      CHARACTER*19 SWCellBAL
-      INTEGER DAS, DYNAMIC, LUNWBL, I, Count, IDL, JJ
+!      CHARACTER*19 SWCellBAL
+      INTEGER DAS, DYNAMIC, LUNWBL, I, Count !, IDL, JJ
       INTEGER YRDOY
       INTEGER YR2, DY2, CritCell(2)
 
       REAL WBALAN, Time, TimeIncr, LatFlow_ts, LatFlow
-      REAL TimeIncrCum, NEXTTS
+      REAL NEXTTS  !TimeIncrCum, 
       REAL CUMWBAL, Diffus1, Kunsat1
 
-      Double Precision, DIMENSION(MaxRows,MaxCols) :: WCellCBal
+!      Double Precision, DIMENSION(MaxRows,MaxCols) :: WCellCBal
       REAL, DIMENSION(MaxRows,MaxCols) :: Kunsat, Diffus
 
       LOGICAL FEXIST, DOPRINT
 
-      integer clun, detailRow, detailCol, PTFLG, MULTI
+      integer detailRow, detailCol, PTFLG, MULTI !clun, 
       real MINTS
       integer, DIMENSION(MaxCells) :: rows, cols
       INTEGER DripCol(NDrpLn), DripRow(NDrpLn)
-      Double Precision swij, swijcm2
-      Double Precision rwuij, wbalij, esij
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
-      Double Precision, DIMENSION(MaxRows,MaxCols) :: swijcm2y,
-     &          vOutijCum,hOutijCum,RWUijCum, ESijCum
-      INTEGER L, J
+!      Double Precision swij, swijcm2
+!      Double Precision rwuij, wbalij, esij
+!      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
+!      Double Precision, DIMENSION(MaxRows,MaxCols) :: swijcm2y,
+!     &          vOutijCum,hOutijCum,RWUijCum, ESijCum
+!      INTEGER L, J
 
       Double Precision DRAIN, IRRAMT, RAIN, RUNOFF
       Double Precision TEP, TES, TSW, TSWY
-      Double Precision, DIMENSION(MaxRows,MaxCols) :: SWV_D, ep_vf, 
-     &          es_vf_ts, INF_vol_dtal
-      Double Precision IrrVol(NDrpLn)
+      Double Precision, DIMENSION(MaxRows,MaxCols) :: SWV_D !, ep_vf, 
+!     &          es_vf_ts, INF_vol_dtal
+!      Double Precision IrrVol(NDrpLn)
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
 

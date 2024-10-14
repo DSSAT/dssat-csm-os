@@ -378,10 +378,10 @@
       Call Wbal_2D_ts(CONTROL, ISWITCH, 0.0, 0.0, 
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, Diffus, Kunsat, 0.0,
-     &    0, 0.0,
+     &    0, 0.0, SWV_D)
 !         Temp chp
 !    &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, 0.d0)
-     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal_temp)
+!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal_temp)
 !     ------------------------------------------------------------------
 
       msg(1) = "Start 2D, variable time-step model"
@@ -1043,9 +1043,10 @@
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,              !Input
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,              !Input
      &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
+     &    SWV_D)
 !         for the 1st timestep, should not be LatFlow_ts
 !         Temp chp
-     &    CellArea, SWV_ts, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !I
+!     &    CellArea, SWV_ts, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !I
 
 !       ---------------------------------------------------------------
 !       Update time for next iteration
@@ -1206,11 +1207,11 @@ C-----------------------------------------------------------------------
       Call Wbal_2D_ts(CONTROL, ISWITCH, 24.0, 0.0, 
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, 
-     &    Diffus, Kunsat, LatFlow, 0, 0.0,
+     &    Diffus, Kunsat, LatFlow, 0, 0.0, SWV_D)
 !         Temp chp
 !    &    CellArea, SWV_D, EP_vf, ES_vf_ts, 0.d0, 0.d0)
-     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol_temp, 
-     &    INF_vol_dtal_temp)
+!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol_temp, 
+!     &    INF_vol_dtal_temp)
 
 !      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
 !     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
