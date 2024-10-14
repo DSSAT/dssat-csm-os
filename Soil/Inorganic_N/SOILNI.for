@@ -197,6 +197,9 @@ C=======================================================================
       REAL NNOM_a, NNOM_b
       REAL TotN, NRow(NL)
 
+!         temp chp
+      REAL UHYDR_TOT
+
       REAL CumSumFert, FieldFac, CellFac
       REAL AddSNO3, AddSNH4, AddUrea
 
@@ -434,6 +437,9 @@ C=======================================================================
       CellFert = 0.0
       TLeachD = 0.0
       NTILEDR = 0.0
+
+!         temp chp
+      UHYDR_TOT = 0.0
 
 !     ------------------------------------------------------------------
 !     N UPTAKE
@@ -673,8 +679,14 @@ C=======================================================================
       IF (DOY .EQ. IUOF) THEN
         DO L = 1, NRowsTot
           DO J = 1, NColsTot
-            DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + UREA_2D(L,J)
-            DLTUREA_2D(L,J) = DLTUREA_2D(L,J) - UREA_2D(L,J)
+            IF (Cell_type(L,J) < 3 .OR. Cell_type(L,J) > 5) CYCLE
+            UHYDR = UREA_2D(L,J) + DLTUREA_2D(L,J)
+            DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + UHYDR
+            DLTUREA_2D(L,J) = DLTUREA_2D(L,J) - UHYDR
+
+!         temp chp
+            UHYDR_TOT = UHYDR_TOT + UHYDR
+
           END DO
         END DO
         IF (FLOOD > 1.E-4) THEN
@@ -796,11 +808,14 @@ C=======================================================================
 
 !         Calculate the amount of urea that hydrolyses from this cell.
           UHYDR = AK * AMIN1 (WFUREA, TFUREA) 
-     &          * (UREA_2D(L,J) + DLTUREA_2D(L,J)) * ColFrac(L,J)
+     &          * (UREA_2D(L,J) + DLTUREA_2D(L,J))
           UHYDR = AMIN1 (UHYDR, UREA_2D(L,J) + DLTUREA_2D(L,J))
 
           DLTUREA_2D(L,J) = DLTUREA_2D(L,J) - UHYDR 
           DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + UHYDR 
+
+!         temp chp
+          UHYDR_TOT = UHYDR_TOT + UHYDR
         ENDIF   !End of IF block on IUON.
 
 !-----------------------------------------------------------------------
@@ -1003,6 +1018,10 @@ C=======================================================================
 
       CELLS % RATE % NMINER = NMINER_2D
       CELLS % RATE % NITRIF = NITRIF_2D
+
+
+!         temp chp
+      WRITE(1515,'(I7,F10.5)') YRDOY, UHYDR_TOT
 
 !*************************************************************************************************
 !*************************************************************************************************
