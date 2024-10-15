@@ -273,11 +273,10 @@ SUBROUTINE FCAST_FINISH()
 END SUBROUTINE FCAST_FINISH
 
 !========================================================================
-SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst) 
+SUBROUTINE FCAST_CheckFODAT(CONTROL) 
 
-!Scan the historic weather data to get starting and ending dates.
-!Set the Century for the first weather data - important for 2-digit years.
-
+! Check for missing FODAT. Set it equal to last weather record. 
+  
   USE ModuleDefs
   USE ModuleData
   EXTERNAL IGNORE2, INCDAT, TIMDIF, WARNING, WeatherError, YR_DOY
@@ -294,69 +293,10 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
   Type (ControlType) CONTROL
   INTEGER :: INCDAT , TIMDIF !FUNCTION
 
-  ErrCode = 0
-
-!--------------------------------------------------------------
-  OPEN (LUNWTH,FILE=FILEW,STATUS='OLD',IOSTAT=ERR)
-  REWIND(LUNWTH)
-  IF (ERR /= 0) THEN
-    ErrCode = 29
-    CALL WeatherError(CONTROL, ErrCode, FILEW, 0, 0, 0)
-    RETURN
-  ENDIF
-
-! Find 2nd header line
-  DO I = 1, 2
-! Look for header line beginning with '@' in column 1 (ISECT = 3)
-    DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
-      CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
-      SELECT CASE(ISECT)
-        CASE(0);            !End of file
-          ErrCode = 59
-          CALL WeatherError(CONTROL, ErrCode, FILEW, 0, 0, 0)
-          RETURN          
-        CASE(1); CYCLE      !Data line
-        CASE(2); CYCLE      !New section ("*" found) 
-        CASE(3); EXIT       !Header line ("@" found)
-      END SELECT
-    ENDDO  !Loop thru data file one record at a time
-  ENDDO    !Loop thru 1st and 2nd headers
-
-  I = 0
-! Read weather dates
-  DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
-    CALL IGNORE2 (LUNWTH, LINWTH, ISECT, LINE)
-    SELECT CASE(ISECT)
-      CASE(0); EXIT       !End of file
-      CASE(2); EXIT       !New section ("*" found) 
-      CASE(3); EXIT       !Header line ("@" found)
-      CASE(1)             !Data line found
-        I = I + 1
-        READ (LINE,'(I7)') WRecDate
-        IF (I .EQ. 1) WeathRecFirst = WRecDate
-    END SELECT
-  ENDDO  !Loop thru data file one record at a time
-  CLOSE (LUNWTH)
-
-  WeathRecLast = WRecDate
-  NRecords = I
-  NWeathYears = NRecords / 365.25
-
 !--------------------------------------------------------------
 ! Check for missing FODAT. Set it equal to last weather record. 
   IF (FODAT .EQ. -99) THEN
-    FODAT = INCDAT(WeathRecLast,1)
-!   Check for 2-digit year, use century of YRSIM.
-    IF (FODAT .LE. 99365) THEN
-      SCENTURY = AINT(FLOAT(CONTROL%YRSIM)/100000.)
-      FODAT = FODAT + SCENTURY * 100000
-      !IF (TIMDIF(CONTROL%YRSIM,FODAT) < 0) THEN
-      !  SCENTURY = SCENTURY + 1
-      !  FODAT = FODAT + SCENTURY * 100000
-      !ENDIF
-      !NMSG = NMSG + 1
-      !WRITE(MSG(NMSG),'("Forecast date = ",I8)') FODAT
-    ENDIF
+    FODAT = INCDAT(CONTROL % YRDOY,1)
 
     MSG(1) = "Forecast date is missing."
     MSG(2) = "Set forecast date to last weather record."
@@ -377,52 +317,9 @@ SUBROUTINE FCAST_ScanWeathData(CONTROL, FileW, LunWth, CenturyFirst)
     ENDIF
   ENDIF
   ForecastDate = FODAT
-   
-!--------------------------------------------------------------
-  IF (WeathRecLast .LE. 99365) THEN
-!   2-digit years, calculate first weather date based on FODAT and # records 
-!   First assume last weather record has the same century as the FODAT
-    CenturyForecast = AINT(FLOAT(FODAT) / 100000.)
-    WeathRecLast = CenturyForecast * 100000 + WeathRecLast
-!!   If the last weather date is before FODAT, then need to incrment the century
-!    DO WHILE (WeathRecLast .LT. FODAT)
-!      WeathRecLast = WeathRecLast + 100000
-!    ENDDO
-    
-!   Now we have the correct century for the last weather date,
-!     calculate first weather date based on number of records
-    CALL YR_DOY(WeathRecLast, WLastYear, WLastDOY)
-    NYears = AINT(NWeathYears)
-    NDays = (NWeathYears - NYears)*365.25
-    WFirstYear = WLastYear - NYears
-    
-    WFirstDate = WFirstYear * 1000 + WLastDOY
-    WFirstDate = INCDAT(WFirstDate, -Ndays+1)
-    
-!   One possible failure mode is when the first weather date is near 
-!   the beginning or end of a century. Because the number of leap days
-!   is uncertain, there may be a mismatch on first date and therefore
-!   first century. Probably need to check the DOY. If it matches, then
-!   we're OK. If not, then maybe adjust WFirstDate to match WeathRecFirst
-!   Below is the beginning of something to handle that.
-!    CALL YR_DOY(WeathRecFirst, YR0, DOY0)
-!    CALL YR_DOY(WFirstDate, YR1, DOY1)
-!    IF (DOY1 - DOY0 .GT. 300) THEN
-
-!CONCLUSION:  !!!!!
-! MUST use 4-digit weather data to guarantee that weather forecasting
-! works when weather data crosses a century boundary or has more than 
-! 100 years.
-
-  ELSE
-    WFirstDate = WeathRecFirst
-  ENDIF
-  
-!--------------------------------------------------------------
-  CenturyFirst = AINT(FLOAT(WFirstDate) / 100000.)
 
   RETURN
-END SUBROUTINE FCAST_ScanWeathData
+END SUBROUTINE FCAST_CheckFODAT
 
 !========================================================================
 End Module Forecast

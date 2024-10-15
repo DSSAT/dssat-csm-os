@@ -70,7 +70,7 @@ C=======================================================================
       INTEGER CenturyWRecord !Century associated with weather record
 
       INTEGER, PARAMETER :: MaxRecords = 10000
-      INTEGER :: MXRecords = 400
+      INTEGER :: MXRecords = 10000
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
@@ -382,20 +382,7 @@ C     The components are copied into local variables for use here.
      &     CALL fio % get('WTH', 'CO2', CCO2)
      
      
-        WRITE(*,*) 'FLEXIBLEIO WSTAT', YRDOY
-        WRITE(*,*) 'INSI', INSI
-        WRITE(*,*) 'LAT', XLAT
-        WRITE(*,*) 'LAT', CYCRD
-        WRITE(*,*) 'LONG', XLONG
-        WRITE(*,*) 'LONG', CXCRD
-        WRITE(*,*) 'ELEV', XELEV
-        WRITE(*,*) 'ELEV', CELEV
-        WRITE(*,*) 'TAV', TAV
-        WRITE(*,*) 'AMP', TAMP
-        WRITE(*,*) 'REFHT', REFHT
-        WRITE(*,*) 'WNDHT', WINDHT
-        WRITE(*,*) 'CCO2', CCO2
-        WRITE(*,*) 'END FLEXIBLEIO WSTAT'
+
         
 C       Substitute default values if REFHT or WINDHT are missing.
         IF (REFHT <= 0.) REFHT = 1.5
@@ -440,7 +427,8 @@ C       Substitute default values if REFHT or WINDHT are missing.
       ELSEIF (LongFile .AND. YRDOY > LastWeatherDay) THEN
 !       Need to get next batch of records from long file
         NRecords = 0
-        CALL READ_WTH_Y2_4K(FILEWW, RTYPE, YRDOY, FirstWeatherDay, 
+        YRSIMPREV = INCYD(YRSIM,-1)
+        CALL READ_WTH_Y2_4K(FILEWW, RTYPE, YRSIMPREV,FirstWeatherDay, 
      &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
         IF (ERRCODE /= 0) THEN
           CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
@@ -448,6 +436,16 @@ C       Substitute default values if REFHT or WINDHT are missing.
         ENDIF
       ENDIF
 ! FLEXIBLEIO - Ends
+!-----------------------------------------------------------------------
+!     Forecast mode - check bounds of weather file. Needed to determine
+!     that correct century is read for files with 2-digit years
+      IF (RNMODE .EQ. 'Y' .AND.           !Yield forecast mode
+     &    SOURCE .EQ. "FORCST" .AND.      !Getting in-season data 
+!    &    INDEX('MG',MEWTH) .GT. 0 .AND.  !Measured or generated data 
+!    &    NYEAR .GT. 1 .AND.              !Multi-year weather file
+     &    CONTROL % ENDYRS .EQ. 1) THEN   !First year simulation
+        CALL FCAST_CheckFODAT(CONTROL)
+      ENDIF
 !-----------------------------------------------------------------------
 !  05/28/2021 FO  Added code for LAT,LONG and ELEV in Summary.OUT
 !     Check if LAT and LONG are correct in FileX     
@@ -539,21 +537,6 @@ C     Send labels and values to OPSUM
       ENDIF
 ! FLEXIBLEIO - Ends
 
-        WRITE(*,*) 'FLEXIBLEIO SEASINIT', YRDOY
-        WRITE(*,*) 'SRAD', SRAD
-        WRITE(*,*) 'TMAX', TMAX
-        WRITE(*,*) 'TMIN', TMIN
-        WRITE(*,*) 'RAIN', RAIN
-        WRITE(*,*) 'DEWP', TDEW
-        WRITE(*,*) 'WIND', WINDSP
-        WRITE(*,*) 'PAR', PAR
-        WRITE(*,*) 'RHUM', RHUM
-        WRITE(*,*) 'VAPR', VAPR
-        WRITE(*,*) 'DCO2', DCO2
-        WRITE(*,*) 'OZON7', OZON7
-        WRITE(*,*) 'END FLEXIBLEIO SEASINIT'
-        
-        WRITE(*,*) 'FWD & LWD: ', FirstWeatherDay, LastWeatherDay
 !***********************************************************************
 !***********************************************************************
 !     RATE (Daily input of weather data)
@@ -593,9 +576,6 @@ C     Send labels and values to OPSUM
             NRecords = 0
             CALL READ_WTH_Y2_4K(FILEWW, RTYPE, YRDOY, FirstWeatherDay, 
      &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
-            WRITE(*,*) 'READ_WTH_Y2_4K: ', 
-     &          FILEWW,'/', YRDOY, '/',FirstWeatherDay,'/', 
-     &          LastWeatherDay, '/',LNUM,'/',ERRCODE,'/', RTYPE,'/'
             IF (ERRCODE /= 0) THEN
               CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
               RETURN
@@ -609,8 +589,15 @@ C     Send labels and values to OPSUM
           CALL WeatherError(CONTROL, ErrCode, FILEWW, LINWTH, 
      &      YRDOY, YREND)
           RETURN
-!        ELSEIF (LongFile) THEN
-!          YRDOYWY = LastWeatherDay
+        ELSEIF (LongFile) THEN
+!       Need to get next batch of records from long file
+          NRecords = 0
+          CALL READ_WTH_Y2_4K(FILEWW, RTYPE, YRDOY, FirstWeatherDay, 
+     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          IF (ERRCODE /= 0) THEN
+            CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
+            RETURN
+          ENDIF
         ENDIF
 
 !     ---------------------------------------------------------

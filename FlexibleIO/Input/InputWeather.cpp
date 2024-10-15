@@ -76,6 +76,7 @@ void READ_WSTAT(char *FILEWW, int *ERRCODE){
   std::regex_iterator<std::string::iterator> rend;
   
   // Initialization
+  flexibleio->eraseGroupMemory("WTH");
   fileww.erase(fileww.find_first_of(" "), fileww.size());
   // Regular expression to match words (sequences of non-space characters)
   std::regex word_regex("\\S+");
@@ -154,7 +155,7 @@ void READ_WSTAT(char *FILEWW, int *ERRCODE){
   hdsection = false;
   dtsection = false;
   
-  std::cout << "STRINGS: " << fileww << "/" << rtype << std::endl;
+  //std::cout << "STRINGS: " << fileww << "/" << rtype << std::endl;
   
   file.open(fileww, std::ifstream::in);
   
@@ -255,7 +256,7 @@ void READ_WSTAT(char *FILEWW, int *ERRCODE){
     *NRECORDS = nrec;
     *FirstWeatherDay = fwd;
     *LastWeatherDay = lwd;
-    std::cout << "Cpp values: " << *FirstWeatherDay << ", " << *LastWeatherDay << std::endl;
+    //std::cout << "Cpp values: " << *FirstWeatherDay << ", " << *LastWeatherDay << std::endl;
   }
   else{
     // Error: File not found.  Please check file name or create file.
