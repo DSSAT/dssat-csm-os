@@ -71,7 +71,8 @@ C  01/11/2007 CHP Changed GETPUT calls to GET and PUT
 C  01/12/2007 CHP Read trt number and rotation number for sequence mode
 C  10/09/2020 FO  Y4K implementation for weather files
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
-!                 unused variables, shorten lines. 
+!                 unused variables, shorten lines.
+!  10/08/2024  FO  Remove NULL char for empty PATHEX 
 C=======================================================================
       PROGRAM CSM
 
@@ -291,6 +292,8 @@ C***********************************************************************
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,26,FILEB,LINBIO)
       ENDIF
 
+      IF(PATHEX(1:1) .EQ. CHAR(0)) PATHEX = ''
+        
       CONTROL % FILEIO  = FILEIO
       CONTROL % FILEX   = FILEX
       CONTROL % RNMODE  = RNMODE
