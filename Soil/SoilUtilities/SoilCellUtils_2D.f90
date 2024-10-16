@@ -25,7 +25,7 @@
 ! INTEGER NBedRows, NBedCols         !number of bed rows, cols
  
   TYPE BedDimType
-    REAL BEDHT, BEDWD, DigDep, ROWSPC_cm  !cm
+    REAL BEDHT, BEDWD, DigDep, ROWSPC_cm, PMALB
     REAL, DIMENSION(MaxRows,MaxCols) :: mm_2_vf  !conversion factor
     INTEGER FurCol1, FurRow1  !furrow location in grid
 !   LIMIT_2D represents the lowest layer for which 2D modeling is done.

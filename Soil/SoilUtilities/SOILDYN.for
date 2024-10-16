@@ -2326,14 +2326,11 @@ C=======================================================================
       Implicit NONE
       EXTERNAL ERROR, FIND, WARNING, GETLUN, INFO
 
-      Type (SoilType) SOILPROP
-      TYPE (CellType) :: CELLS(MaxRows,MaxCols)
+      Type (SoilType), INTENT(INOUT) :: SOILPROP
+      TYPE (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
 
-      CHARACTER*6 SECTION
       CHARACTER*8, PARAMETER :: ERRKEY = 'SETPM'
-!     CHARACTER*125 MSG(50)
-!     CHARACTER*180 CHAR
-      INTEGER ERR, FOUND, LNUM, LUNIO, J
+      INTEGER J
       REAL PMWD, ROWSPC_CM
       REAL PMALB, MSALB, CumWid, CumWidLast
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
@@ -2343,72 +2340,11 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       CALL GET(CONTROL)
 
-!   ---------------------------------------------------------
-!     Get bed dimensions and row spacing
-      CALL GETLUN('FILEIO', LUNIO)
-      OPEN (LUNIO, FILE = CONTROL%FILEIO,STATUS = 'OLD',IOSTAT=ERR)
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,0)
-      LNUM = 0
-
 !-----------------------------------------------------------------------
-      PMALB = -99.
-
-!     Read plastic mulch albedo from FIELDS section
-      SECTION = '*FIELD'
-      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
-      IF (FOUND /= 0)  THEN
-!     For 1D model, plastic mulch width is read from "bed width" variable in FileX
-      READ(LUNIO,'(79X,F6.0,F6.0)',IOSTAT=ERR) PMALB, PMWD
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
-        IF ((ERR == 0) .AND. (PMALB .eq. 0.)) THEN
-          PMALB = -99.
-        ENDIF
-      ENDIF
-
-!     Read Planting Details Section
-      SECTION = '*PLANT'
-      CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
-      IF (FOUND == 0) CALL ERROR(SECTION, 42, CONTROL%FILEIO, LNUM)
-      READ(LUNIO,'(42X,F6.0,42X,2F6.0)',IOSTAT=ERR) ROWSPC_CM 
-      LNUM = LNUM + 1
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
-
-      CLOSE(LUNIO)
- 
-      IF (PMALB .GT. 0) THEN
-        IF (PMWD .GT. 0 .AND. PMWD .GE. ROWSPC_CM) THEN
-          PMWD = ROWSPC_CM
-!          PMCover   = .TRUE.
-!!          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
-!!          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
-!!          MSG(3) = "Simulating flat surface entirely covered " //
-!!     &             "by by plastic mulch."
-!!          call INFO(3,errkey,msg)
-!        ELSEIF (PMWD .GT. 0.) THEN 
-!          PMCover   = .TRUE.
-!!          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
-!!          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
-!!          MSG(3)= "Simulating flat surface partially covered " // 
-!!     &            "by plastic mulch."
-!!          call INFO(3,errkey,msg)
-!        ELSE
-!          PMCover   = .FALSE.
-!!          MSG(1)= "Missing mulch cover width."
-!!          MSG(2) = "Simulating flat surface with no plastic mulch."
-!!          call INFO(2,errkey,msg)
-!        ENDIF
-!      ELSE
-!        IF (PMWD .GT. 0) THEN
-!          PMCover   = .FALSE.
-!!          MSG(1)= "Missing albedo for plastic mulch. "
-!!          MSG(2)= "Simulating flat surface with no plastic mulch."
-!!          call INFO(2,errkey,msg)
-!        ELSE
-!          PMCover   = .FALSE.
-!!          MSG(1)= "Simulating flat surface with no plastic mulch."
-!!          call INFO(1,errkey,msg)
-        ENDIF
-      ENDIF
+      PMALB = BedDimension % PMALB
+      ROWSPC_CM = BedDimension % ROWSPC_CM
+      PMWD = BedDimension % BEDWD
+      PMCover = BedDimension % PMCover
 
 !     Default = no plastic mulch cover
       PMFRACTION = 0.0  !no cover
@@ -2462,3 +2398,5 @@ C=======================================================================
 
       RETURN      
       END SUBROUTINE SETPM
+!==============================================================================
+!==============================================================================

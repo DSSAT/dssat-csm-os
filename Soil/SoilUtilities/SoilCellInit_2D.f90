@@ -129,7 +129,11 @@
     ENDIF
 
 !   1D case - set bed height to 0.0
-    IF (ISWITCH % MESOL .NE. 'D') THEN
+    IF (.NOT. SIM2D) THEN
+      IF (BEDHT > 0.0) THEN
+        MSG(1) = "This is a 1D simulation. Bed height will be ignored."
+        CALL INFO(1,ERRKEY,MSG)
+      ENDIF
       BEDHT = 0.
     ENDIF
 
@@ -324,6 +328,7 @@
     BedDimension % DigDep = DigDep
     BedDimension % ROWSPC_CM = ROWSPC_CM
     BedDimension % PMCover = PMCover
+    BedDimension % PMALB   = PMALB
     BedDimension % RaisedBed = RaisedBed
     BedDimension % FurRow1 = FurRow1
     BedDimension % FurCol1 = FurCol1
