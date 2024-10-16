@@ -165,9 +165,10 @@
       REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: SWFh_ts, SWFv_ts
 
       INTEGER i, j
-      REAL FracSWVh, FracSWVv
+      REAL FracSWVh, FracSWVv, MaxNO3Fh, MaxUREAFh
       REAL ResidualNO3, ResidualUREA
       REAL, DIMENSION(MaxRows,MaxCols) :: NO3Fh, UreaFh, NO3Fv, UreaFv
+      REAL, DIMENSION(MaxRows,MaxCols) :: kg2ppm, NO3ts, Uconcts
 
 !***********************************************************************
 !***********************************************************************
@@ -194,7 +195,19 @@
         SNO3init = SNO3ts
         UREAinit = UREAts
 
+        kg2ppm = BedDimension % kg2ppm
+
       ENDIF
+
+!     --------------------------------------------------------------
+!     Calculate N concentrations
+      DO i = 1, NRowsTot
+        DO j = 1, NColsTot
+          IF (Cell_Type(i,j) > 5 .OR. Cell_Type(i,j) < 3) CYCLE
+            NO3ts(i,j)   = SNO3ts(i,j) * kg2ppm(i,j)
+            Uconcts(i,j) = UREAts(i,j) * kg2ppm(i,j)
+        ENDDO
+      ENDDO
 
 !     --------------------------------------------------------------
 !     N flux (kg[N]/ha) is proportional to water flux (cm2)
@@ -215,10 +228,8 @@
 !           Calculate the fraction of water that moves out of cell(i,j) with this flux
             FracSWVv = SWFv_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
 !           N fluxes are proportional to water fluxes
-            NO3Fv(i,j) = MAX(0.0, SNO3ts(i,j) * FRAC_SOLN_NO3(i))
-     &        * FracSWVv
-            UreaFv(i,j) = MAX(0.0, UREAts(i,j) * FRAC_SOLN_urea(i))
-     &        * FracSWVv
+            NO3Fv(i,j)  = FracSWVv * SNO3ts(i,j) * FRAC_SOLN_NO3(i)
+            UreaFv(i,j) = FracSWVv * UREAts(i,j) * FRAC_SOLN_urea(i)
 
 !           ****************************
 !           N leaching
@@ -231,10 +242,8 @@
 !           Negative vertical fluxes from cell(i+1,j) to cell(i,j)
 !           Calculate the fraction of water that moves out of cell(i+1,j) with this flux
             FracSWVv = SWFv_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
-            NO3Fv(i,j) = MAX(0.0, SNO3ts(i+1,j) * FRAC_SOLN_NO3(i))
-     &        * FracSWVv
-            UreaFv(i,j) = MAX(0.0, UREAts(i+1,j) * FRAC_SOLN_urea(i))
-     &        * FracSWVv
+            NO3Fv(i,j)  = FracSWVv * SNO3ts(i+1,j) * FRAC_SOLN_NO3(i)
+            UreaFv(i,j) = FracSWVv * UREAts(i+1,j) * FRAC_SOLN_urea(i)
           ENDIF
 
 !         Pseudo-integration of N time step variables prevents negative values
@@ -249,6 +258,13 @@
      &      .OR. (Cell_Type(i,j) == 4 .AND. j < NColsTot) 
      &      .OR. (Cell_Type(i,j) == 5 .AND. j < NColsTot)) THEN
 
+!           Maximum transfer of N between cells is limited by the amount which
+!             equalizes the concentration
+            MaxNO3Fh = ABS(NO3ts(i,j) - NO3ts(i,j+1)) 
+     &                 / (kg2ppm(i,j) + kg2ppm(i,j+1))
+            MaxUREAFh = ABS(Uconcts(i,j) - Uconcts(i,j+1))
+     &                 / (kg2ppm(i,j) + kg2ppm(i,j+1))
+
 !           SWFh_ts is the horizontal flux at the boundary of cell(i,j) and cell(i,j+1)
             IF (ABS(SWFh_ts(i,j)) .LT. 1.E-10) THEN
 !             No water flux, no N flux
@@ -256,19 +272,35 @@
               UREAFh(i,j) = 0.0
 
             ELSEIF (SWFh_ts(i,j) > 1.E-10) THEN
-
 !             Positive horizontal fluxes from cell(i,j) to cell(i,j+1)
 !             Calculate the fraction of water that moves out of cell(i,j) with this flux
               FracSWVh = SWFh_ts(i,j) / CellArea(i,j) / SWV_ts(i,j)
+
               NO3Fh(i,j) = FracSWVh * SNO3ts(i,j) * FRAC_SOLN_NO3(i)
+              IF (NO3Fh(i,j) > MaxNO3Fh) THEN
+                NO3Fh(i,j) = MaxNO3Fh
+              ENDIF
+
               UreaFh(i,j) = FracSWVh * UREAts(i,j) * FRAC_SOLN_urea(i)
+              IF (UreaFh(i,j) > MaxUREAFh) THEN
+                UreaFh(i,j) = MaxUREAFh
+              ENDIF
 
             ELSE
 !             Negative horizontal fluxes from cell(i,j+1) to cell(i,j)
 !             Calculate the fraction of water that moves out of cell(i,j+1) with this flux
               FracSWVh = SWFh_ts(i,j) / CellArea(i,j+1) / SWV_ts(i,j+1)
+
               NO3Fh(i,j) = FracSWVh * SNO3ts(i,j+1) * FRAC_SOLN_NO3(i)
+              IF (-NO3Fh(i,j) > MaxNO3Fh) THEN  
+                NO3Fh(i,j) = -MaxNO3Fh
+              ENDIF
+
               UreaFh(i,j) = FracSWVh * UREAts(i,j+1) *FRAC_SOLN_urea(i)
+              IF (-UreaFh(i,j) > MaxUREAFh) THEN
+                UreaFh(i,j) = -MaxUREAFh
+              ENDIF
+
             ENDIF
           ENDIF
 

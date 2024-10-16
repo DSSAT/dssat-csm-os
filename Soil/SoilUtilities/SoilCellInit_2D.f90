@@ -78,7 +78,7 @@
     REAL Depth_old_layer, Prev_dep
  
     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
-    REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea, mm_2_vf
+    REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, CellArea, mm_2_vf, kg2ppm_2d
     REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
     REAL Bed_BD, Bed_CEC, Bed_Clay, Bed_DUL, Bed_LL, Bed_OC, Bed_PH, Bed_NH4, Bed_NO3, Bed_SW
     REAL Bed_Sand, Bed_SAT, Bed_Silt, Bed_SWCN, Bed_ADCOEF, Bed_TOTN, Bed_WR, Bed_TotOrgN
@@ -844,6 +844,8 @@
 
     DO Row = 1, NRowsTot
       DO Col = 1, NColsTot
+
+        IF (Cell_type(row,col) < 3 .OR. Cell_type(row,col) >5) CYCLE
 !       conversion from mm[water] to volumetric fraction for each cell
 
 ! OLD method: in each column, the mm are assumed to be reduced to field scale, 
@@ -866,9 +868,13 @@
 !       ---------- = mm[water] * --------- * ------------------ * -------------------------------
 !        cm3[soil]               mm[water]   cm[soil thickness]   1 cm2[soil width x row length]
 
+!       conversion factor for N
+        kg2ppm_2d(row,col) = SOILPROP_BED % kg2ppm(row) / ColFrac(row,col)
+
       ENDDO
     ENDDO
     BedDimension % mm_2_vf = mm_2_vf
+    BedDimension % kg2ppm = kg2ppm_2d
 
 ! -----------------------------------------------------
 ! ---------------------------------------------------------------------

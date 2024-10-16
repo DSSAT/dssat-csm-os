@@ -26,7 +26,8 @@
  
   TYPE BedDimType
     REAL BEDHT, BEDWD, DigDep, ROWSPC_cm, PMALB
-    REAL, DIMENSION(MaxRows,MaxCols) :: mm_2_vf  !conversion factor
+    REAL, DIMENSION(MaxRows,MaxCols) :: mm_2_vf  !conversion factor for H2O
+    REAL, DIMENSION(MaxRows,MaxCols) :: kg2ppm   !conversion factor for N
     INTEGER FurCol1, FurRow1  !furrow location in grid
 !   LIMIT_2D represents the lowest layer for which 2D modeling is done.
 !   Below this depth, use 1D tipping bucket approach.
@@ -86,6 +87,7 @@
     Real RLV                         !Root len dens cm/cm3 (PLANT)
     REAL SNO3, SNH4, UREA            !Soil N (kg[N]/ha)
     REAL BD, DUL, LL, SAT, SWCN, WR  !Soil properties 
+    REAL KG2PPM                      !Conversion
 !   WR(L)     Root hospitality factor, used to compute root distribution
 !   REAL OC, SPi_Labile, SRP         !Not used currently
 !   Real STemp                       !Soil temperature (SPAM)
