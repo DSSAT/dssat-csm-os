@@ -533,6 +533,11 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       TYPE MHarveType
         INTEGER HARVF
+!       CHP added 2024-06-27
+!       In-season harvest info (currently just for forages)
+!       Could potentially add more in-season harvest variables as needed.
+        INTEGER ISH_date
+        REAL ISH_wt
       END TYPE 
 
 !     Data which can be transferred between modules
@@ -808,6 +813,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
+      CASE ('MHARVEST')
+        SELECT CASE(VarName)
+        CASE('ISH_wt'); Value = SAVE_data % MHARVEST % ISH_wt
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT       
+
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 
@@ -936,6 +947,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         CASE('BETA'); SAVE_data % PDLABETA % BETALS = Value
         CASE DEFAULT; ERR = .TRUE.
         END SELECT
+
+      CASE ('MHARVEST')
+        SELECT CASE(VarName)
+        CASE('ISH_wt'); SAVE_data % MHARVEST % ISH_wt = Value
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT       
 
       Case DEFAULT; ERR = .TRUE.
       END SELECT
@@ -1067,6 +1084,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CASE ('MHARVEST')
         SELECT CASE(VarName)
         CASE('HARVF'); Value = SAVE_data % MHARVEST % HARVF
+        CASE('ISH_date'); Value = SAVE_data % MHARVEST % ISH_date
         CASE DEFAULT; ERR = .TRUE.
         END SELECT       
         
@@ -1113,6 +1131,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CASE ('MHARVEST')
         SELECT CASE(VarName)
         CASE('HARVF'); SAVE_data % MHARVEST % HARVF = Value
+        CASE('ISH_date'); SAVE_data % MHARVEST % ISH_date = Value
         CASE DEFAULT; ERR = .TRUE.
         END SELECT            
 

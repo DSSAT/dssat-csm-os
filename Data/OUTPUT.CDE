@@ -47,6 +47,7 @@ Potential.OUT      Water potential - daily
 Dormancy.OUT       Forage daylength signal for stolon daily output
 PlantMob.OUT       Forage plant mobilization and refill of storage
 Storage.OUT        Forage storage organ characteristics daily output
+SoilWater.OUT      Daily soil water output file by layer              OUTSWL
 
 !Daily csv format files:
 plantgro.csv       Daily plant growth output file in CSV format

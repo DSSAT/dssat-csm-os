@@ -1,4 +1,4 @@
-*LENTIL GENOTYPE COEFFICIENTS: CRGRO048 MODEL
+*AMARANTH CULTIVAR COEFFICIENTS: CRGRO048 MODEL
 !
 ! COEFF   DEFINITIONS
 ! =====   ===========
@@ -34,19 +34,14 @@
 ! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
 ! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
 !
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
 @VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
-!Calibration                             P     P     P     N     P     P     G     G     G     N     N     G     G     G     N     N     N     N
+!Coefficient #                           1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             P     P     P     N     P     P     N     G     G     G     N     G     G     G     N     G     N     N
 
-999991 MINIMA               . DFAULT 14.00 -.200  20.0   4.0   7.5 17.00 14.00 0.700  200.  50.0  1.00 0.040  17.0  1.20  12.0  60.0  .225  .020
-999992 MAXIMA               . DFAULT 18.00 -.040  32.0   9.0  12.0 30.00 22.00 1.400  320. 100.0  1.00 0.070  23.0  2.40  20.0  78.0  .286  .020
+999991 MINIMA               . DFAULT 15.90 0.001   9.0   3.5   9.0 22.00 25.00  2.40  200.  30.0  0.60 0.075  24.0  22.0  24.0  50.0  .157  .104
+999992 MAXIMA               . DFAULT 16.10 0.001  15.0   3.5  10.0 26.00 25.00  2.60  250.  35.0  0.90 0.085  27.0  25.0  24.0  60.0  .157  .104
 
-CAND01 Default (Maxim)      . LAT001 15.80  -.11  26.5   7.5  10.0 21.00 20.00  1.00  220.  70.0  1.00 0.044  20.0  1.30  14.0  69.0  .286  .020
-CAND02 CDC Glamis           . LAT001 15.40  -.11  28.0   5.0   8.0 22.50 16.00  0.86  240.  70.0  1.00 0.065  20.0  2.00  14.0  67.0  .286  .020
-CAND04 CDC Maximim          . LAT001 15.80  -.11  26.5   7.5  10.0 21.00 20.00  1.00  220.  70.0  1.00 0.044  20.0  1.30  14.0  69.0  .286  .020
-CAND05 CDC Impulse          . LAT001 16.00  -.11  29.0   7.5  11.0 18.50 15.00  0.83  230.  70.0  1.00 0.065  20.0  1.30  18.0  60.0  .286  .020
-CAND06 CDC Lima             . LAT001 16.90  -.19  23.0   5.0   8.0 20.00 18.00  0.90  220.  70.0  1.00 0.065  20.0  2.00  16.0  68.0  .286  .020
-WA0016 Morton [W]        1,11 WINTER 17.00 -.066  30.1   7.0  10.0 27.70 15.00  1.30  285.  70.0  1.00 0.040  20.0  2.00  14.0  77.0  .225  .020
-
-
-
+UHOH01 ACK63 LD170 1.2G     . AcaK63 16.00  .001  14.7   3.5   9.8 24.60 25.00  2.50  210.  32.0  0.62 0.080  25.0  24.0  24.0  52.0  .157  .104
+UHOH02 AHYNT LD170 1.2G     . AhypNT 16.00  .001  11.7   3.5   9.8 24.60 25.00  2.50  230.  33.0  0.89 0.080  26.0  24.0  24.0  57.0  .157  .104

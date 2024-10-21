@@ -32,7 +32,7 @@ C  09/28/2005 SJR Added SENMOB to senesce organs earlier in the day.
 C=======================================================================
 
       subroutine FORAGE(CONTROL, ISWITCH, 
-     &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
+     &    EOP, NH4, NO3, SOILPROP,                        !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, EORATIO, HARVRES, MDATE,                 !Output
      &    NSTRES, PSTRES1, CropStatus,                    !Output
@@ -40,7 +40,7 @@ C=======================================================================
      &    STGDOY, UNH4, UNO3, XHLAI, XLAI)                !Output
 
 !     Variables not used:
-!     KSEVAP, KTRANS, 
+!     KSEVAP, KTRANS, HARVFRAC, 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
@@ -89,7 +89,7 @@ C=======================================================================
      &    FRLF, FRRT, FRSTM
       REAL FREEZ1, FREEZ2
       REAL GDMSD, GRRAT1, GROWTH, GRWRES
-      REAL HARVFRAC(2)
+!     REAL HARVFRAC(2)
       REAL LAIMX, LAGSD, LNGPEG, LTSEN
       REAL MAINR
       REAL NSTRES, NPLTD, NDMNEW,
@@ -285,7 +285,7 @@ C TF/DP 2022-01-31 Simple version AutoMOW
 
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 2
+      INTEGER, PARAMETER :: SUMNUM = 3
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -2191,10 +2191,11 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
         CALL FOR_HRES_CGRO(CONTROL,
-     &    CROP, DLAYR, DWNOD, HARVFRAC, NLAYR, PLIGLF,    !Input
-     &    PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST, RLV,    !Input
-     &    RTWT, SDWT, SENESCE, SHELWT, STMWT, WTLF,       !Input
-     &    WTNLF,WTNNOD, WTNRT, WTNSD, WTNSH, WTNST,       !Input
+     &    CROP, DLAYR, DWNOD, NLAYR,PLIGLF, PLIGNO,       !Input
+     &    PLIGRT, PLIGSD, PLIGSH, PLIGST, RLV, RTWT,      !Input
+     &    SDWT, SENESCE, SHELWT, STMWT, WTLF, WTNLF,      !Input
+     &    WTNNOD, WTNRT, WTNSD, WTNSH, WTNST,             !Input
+     &    STRWT, WTNSR, PLIGSR,     !Storage tissue       !Input
      &    HARVRES)                                        !Output
 
         !SENCLN = 0.0
@@ -2209,6 +2210,7 @@ C-----------------------------------------------------------------------
 !     saved as real numbers for placement in real array.
       LABEL(1) = 'HWAH'; VALUE(1) = Cumul_FHTOT*10.
       LABEL(2) = 'CNAM'; VALUE(2) = Cumul_FHTOTN*10.
+      LABEL(3) = 'BWAH'; VALUE(3) = 0.0
 
       !Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 

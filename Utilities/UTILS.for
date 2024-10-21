@@ -977,7 +977,7 @@ C=======================================================================
 C        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN, OUTFILES, WARNING, SYSTEM
+      EXTERNAL GETLUN, OUTFILES, WARNING
 !     Can't list routine SYSTEM as external because it generates an
 !       error with some compilers.
 
@@ -1064,7 +1064,7 @@ C=======================================================================
 C        USE IFPORT
 !!!!cDEC$ ENDIF
       IMPLICIT NONE
-      EXTERNAL GETLUN, SYSTEM
+      EXTERNAL GETLUN
 
       SAVE
       INTEGER i, COUNT, LUNLST, LUNTMP, SYS, SYSTEM
@@ -1668,3 +1668,18 @@ C=======================================================================
         only_dir = full_path(1:pos)        
 
       end subroutine get_dir
+!=======================================================================
+!  ROUND, Subroutine
+!  Subroutine to round decimal part of a number in Fortran
+!-----------------------------------------------------------------------
+!  Revision history
+!  07/11/2024 FO Added round a number function
+!=======================================================================
+      REAL FUNCTION ROUND(VAL, N)
+        IMPLICIT NONE
+        REAL VAL
+        INTEGER N
+        ROUND = ANINT(VAL*10.0**N)/10.0**N
+        RETURN
+      END FUNCTION ROUND
+!=======================================================================

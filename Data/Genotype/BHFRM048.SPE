@@ -1,39 +1,20 @@
 *BAHIA SPECIES COEFICIENTS: PRFRM048 MODEL                                                                          
-
+! Bahiagrass model - Ken Boote and Hunter Smith, 2023-2024.  Starting with brachiaria Marandu                                                                     
 !*PHOTOSYNTHESIS PARAMETERS                                                                         
-! KJB 6/2017, C version to mimic L version, CO2 sensitivity C version set way-down for C-4
-!  35.0  82.0  0.55  
-!  11.0  1.23 .0081                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN                    
-! 35.00 82.00  0.55  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE
  34.00 88.00  0.55  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE
   11.0  1.07 .0087                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN                    
-  0.80  3.70  10.0  10.0   QDR             FNPGN(4),TYPPGN-LF N EFFECT ON PG     ML                 
-!  0.80  4.00  10.0  10.0   QDR             FNPGN(4),TYPPGN-LF N EFFECT ON PG     ML                 
+  0.80  3.70  10.0  10.0   QDR             FNPGN(4),TYPPGN-LF N EFFECT ON PG     !kjb-bahia                 
   12.0  25.0  38.0  50.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG                    
-!  -5.0   7.5  40.2  50.0  55.0  60.0       XLMAXT (6 VALUES)Modified Bahia values -               
-  -5.0   8.2  40.2  50.0  55.0  60.0       XLMAXT (6 VALUES)Modified Bahia values -  kjb/th             
-!  -5.0   6.2  40.2  50.0  55.0  60.0       XLMAXT (6 VALUES)Modified Bahia values -  DP             
+  -5.0   7.5  40.2  50.0  55.0  60.0       XLMAXT (6 VALUES)Modified Bahia values -               
    0.0   0.0   1.0   0.8   0.0   0.0       YLMAXT (6 VALUES) Soybean values                         
-!   5.1  22.2  45.0  57.0   QDR             FNPGL(4), TYPPGL-TMIN EFFECT-LEAF PG  -     DP            
-!   7.0  22.2  45.0  57.0   QDR             FNPGL(4), TYPPGL-TMIN EFFECT-LEAF PG  -     th            
-   6.5  22.0  45.0  57.0   QDR             FNPGL(4), TYPPGL-TMIN EFFECT-LEAF PG  -     DP            
+   6.5  22.0  45.0  57.0   QDR             FNPGL(4), TYPPGL-TMIN EFFECT-LEAF PG  -    !kjb-bahia             
  .0650  0.20  0.80   2.0                   PGEFF SCV KDIF, LFANGB 11/5/02                           
- .0097 .0002 .2000  3.70 1.800             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF -    DP                 
-! .0095 .0002 .2000  3.70 1.800             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF -    DP                 
-! .0094 .0002 .2000  3.70 1.800             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF -    DP                 
-! .0093 .0002 .2000  3.70 1.800             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF -    DP                 
-! .0096 .0002 .2000  4.00 1.800             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF -    DP                 
-! .0100 .0002 .2000  4.00 1.800             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF -    DP                 
-! .0105 .0002 .2000  4.00 1.800             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF -    DP                 
+ .0097 .0002 .2000  3.70 1.800             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF -    !kjb-bahia                 
                                                                                                     
    0.0  .003  .006  .009 .0100  .011  .014  .017  .023  .029  XPGSLW(1-10) Recalc for lower SLWREF -
   .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10)                          
    0.4  10.0 4.500 4.250  C4   CICA, CCNEFF, CMXSF, CQESF, PGPATH  New Parameters for C4 Photosynthe
-                                                                                                    
-! .0052  .003  .006  .009 .0100  .011  .014  .017  .023  .029  XPGSLW(1-10) Recalc for lower SLWREF -
-!  .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10)                          
-!   0.4  10.0 4.500 4.250  C4   CICA, CCNEFF, CMXSF, CQESF, PGPATH  New Parameters for C4 Photosynthe
-                                                                                                    
+                                                                                                                                                                                                       
 !*RESPIRATION PARAMETERS                                                                            
      3.0E-04 .0024                      RES30C,R30C2                                                
  2.556 2.556  .360  2.830               RNO3C,RNH4C,RPRO,RFIXN                                      
@@ -45,14 +26,10 @@
                                                                                                     
                                                                                                     
 !*PLANT COMPOSITION VALUES                                                                          
-  .230  .120  .050  .110  .070  .033   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF - KJB 6/14/17 to impr CP
-!  .220  .110  .050  .110  .070  .033   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF - KJB 6/14/17 to impr CP
-! 0.240 0.160 0.035 0.120 0.080 0.025   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF - DP optimized with
+  .230  .120  .050  .110  .070  .033   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF - !kjb/hunter-bahia
   .111  .040  .030  .039  .039  .038   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF - KJB to impr root%N
-!  .101  .040  .022  .039  .039  .038   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF                    
   .115  .115  .300  .015  .019  .800   SDPROS,SDPROG,PRONOD,PROMIN,PROMAX,THETA                     
-  .592  .697  .692  .251  .750  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO - kjb, sums to 1.00
-!  .602  .697  .692  .251  .750  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO - kjb, sums to 1.00
+  .592  .697  .692  .251  .750  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO - !kjb-bahia  sums to 1.00
   .025  .020  .020  .011  .050         PLIPLF,PLIPST,PLIPRT,PLIPSH,PLIPNO                           
   .040  .060  .070  .100  .030  .070   PLIGLF,PLIGST,PLIGRT,PLIGSH,PLIGSD,PLIGNO                    
   .050  .050  .050  .040  .040  .050   POALF,POAST,POART,POASH,POASD,POANO                          
@@ -67,13 +44,11 @@
  7.168 23.65 0.908 0.430               LIPTB,LIPOPT,SLOSUM*100,CARMIN                               
                                                                                                     
 !*CARBON AND NITROGEN MINING PARAMETERS                                                             
- 0.040  0.75  .280 0.080  1.00  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR     -   kjb          
-! 0.050  0.75  .280 0.080  1.00  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR     -   ML          
+ 0.040  0.75  .280 0.080  1.00  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR     -   !kjb-bahia          
                                                                                                     
     PD                                 XPODF                                                        
   0.04  0.08  0.08  0.08  0.20  1.00   ALPHL,ALPHS,ALPHR,ALPHSH, ALPHSR, TNCFAC -     BP                    
- 0.020 0.052 0.439 0.010 0.068 0.400   CMOBSRN, CMOBSRX, CADSRF, NMOBSRN, NMOBSRX, CADPV "N" and "X"
-! 0.020 0.072 0.439 0.010 0.068 0.356   CMOBSRN, CMOBSRX, CADSRF, NMOBSRN, NMOBSRX, CADPV "N" and "X"
+ 0.020 0.052 0.439 0.010 0.068 0.400   CMOBSRN, CMOBSRX, CADSRF, NMOBSRN, NMOBSRX, CADPV "N" and "X" !kjb-bahia 
   0.00  0.00  0.41  2.75   SIN         LRMOB(4), TYPLMOB LAI EFF ON MOBILIZATION - default          
   0.50  0.70 10.00 10.00   SIN         NRMOB(4), TYPNMOB N-STATUS EFF ON MOBILIZATION - default -   
   0.00  0.33  0.81  0.29   INL         CRREF(4), TYPCREF CH2O status effect on routine refilling of 
@@ -93,54 +68,31 @@
                                                                                                     
 !*VEGETATIVE PARTITIONING PARAMETERS                                                                
    0.0   1.5   2.0   3.0   5.0   7.0  30.0  40.0  XLEAF VALUES  Partitioning Parameters for seedling
-!  0.60  0.50  0.40  0.25  0.20  0.20  0.20  0.20  YLEAF VALUES 05/05 revision                       
-!  0.10  0.10  0.10  0.10  0.05  0.05  0.05  0.05  YSTEM VALUES                                      
-  0.54  0.53  0.52  0.50  0.41  0.31  0.20  0.11  YLEAF VALUES !kjb                       - DC (simulated run - 15.5 plants/m2)
-  0.08  0.09  0.11  0.13  0.14  0.16  0.17  0.18  YSTEM VALUES                                       - DC (simulated run - 15.5 plants/m2)
-  0.55  0.27  0.05  0.20  1.00  0.00 WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD !SJR 10/17/05 PORPT incr. 
+  0.54  0.53  0.52  0.50  0.41  0.31  0.20  0.11  YLEAF VALUES !kjb bahia
+  0.08  0.09  0.11  0.13  0.14  0.16  0.17  0.18  YSTEM VALUES !kjb bahia
+  0.55  0.27  0.05  0.20  1.00  0.00 WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD 
   0.60                               FRLFMX                                                         
-  0.04  0.04  0.05  0.05 0.06  0.06  0.06  0.06  YSTOR VALUES   Partitoning to STOR for seedlings - DC (simulated run - 15.5 plants/m2)
-!  0.10  0.10  0.20  0.30  0.35  0.40  0.45  0.45  YSTOR VALUES   Partitoning to STOR for seedlings  
-  0.69  0.60  .1000                   FRSTRF, FRSTRMX, RTPPFAC storage equivalent of FRLFF and FRLFMX        
-!  0.68  0.59  .1000                   FRSTRF, FRSTRMX, RTPPFAC storage equivalent of FRLFF and FRLFMX        
+  0.04  0.04  0.05  0.05 0.06  0.06  0.06  0.06  YSTOR VALUES   Partitoning to STOR for seedlings !kjb-bahia 
+  0.69  0.60  .1000                   FRSTRF, FRSTRMX, RTPPFAC storage equivalent of FRLFF and FRLFMX !kjb-bahia        
   4.00  1.00  1.00  1.00  4.00        PWLF, PWST, PWRT, PWSR MXWST - Weighting factors for partition
    0.0   2.0   3.0   5.0   7.0  10.0  30.0  40.0  XLFEST VALUES  Partitioning Parameters for establi
-!  0.70  0.70  0.66  0.59  0.47  0.45  0.45  0.45  YLFEST VALUES -     !kjb 0.05 less to incr root                        
   0.70  0.70  0.66  0.58  0.47  0.46  0.45  0.45  YLFEST VALUES -     !kjb 0.05 less to incr root                        
-!  0.72  0.72  0.67  0.59  0.48  0.47  0.46  0.46  YLFEST VALUES -     !kjb 0.05 less to incr root                        
-!  0.74  0.74  0.68  0.60  0.49  0.48  0.47  0.47  YLFEST VALUES -     !kjb 0.04 less to incr root                        
-!  0.76  0.76  0.69  0.60  0.49  0.48  0.47  0.47  YLFEST VALUES -     !kjb 0.03 less to incr root                        
-!  0.78  0.78  0.70  0.61  0.50  0.49  0.48  0.48  YLFEST VALUES -     !kjb 0.02 less to incr root                        
-!  0.11  0.11  0.14  0.17  0.30  0.35  0.35  0.35  YSTEST VALUES -     kjb                            
   0.11  0.11  0.14  0.17  0.31  0.35  0.35  0.35  YSTEST VALUES -     kjb                            
-!  0.10  0.10  0.14  0.17  0.31  0.35  0.35  0.35  YSTEST VALUES -     DP                            
-!  0.10  0.10  0.14  0.17  0.32  0.36  0.35  0.35  YSTEST VALUES -     DP                            
   0.02  0.02  0.03  0.04  0.04  0.04  0.04  0.04  YSREST VALUES -     kjb                                                                                                                             
-!  0.01  0.01  0.03  0.04  0.04  0.04  0.04  0.04  YSREST VALUES -     DP                                                                                                                             
-!  0.80  0.80  0.72  0.63  0.52  0.51  0.50  0.50  YLFEST VALUES -     DP Manual-2                         
-!  0.10  0.10  0.14  0.17  0.32  0.36  0.35  0.35  YSTEST VALUES -     DP                            
-!  0.01  0.01  0.03  0.04  0.04  0.04  0.04  0.04  YSREST VALUES -     DP                            
   60.0                                SDLEST !photothermal days sowing to established perennial                                                                                                  
-!  50.0                                SDLEST !photothermal days sowing to established perennial                                                                                                  
                                                                                                     
 !*LEAF GROWTH PARAMETERS                                                                            
   150.  180.   2.0  0.0   0.00        FINREF,SLAREF,SIZREF,VSSINK,EVMODC -     BP                   
-  320.  125. -.048  1.20  1.00  1.00  SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA,NHGT  - kjb                          
-!  320.  130. -.048  1.20  1.00  1.00  SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA,NHGT  - kjb                          
-!  340.  139. -.048  1.20  1.00  1.00  SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA,NHGT  - DP                          
+  320.  125. -.048  1.20  1.00  1.00  SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA,NHGT  - !kjb-bahia                           
    0.0   5.0  10.0  15.0  20.0  25.0  XVGROW(1-6), VSTAGE VALUES                                    
    0.0  10.0  20.0  30.0  40.0  50.0  YVREF(1-6), LEAF AREA VALUES,CM2                              
  -50.0  00.0  10.3  24.2  60.0        XSLATM(1-5),TEMP VALUES   - DP                                
   0.35  0.35  0.39  1.00  1.0         YSLATM(1-5),EFFECT ON SLA                                     
-!  0.30  0.30  0.35  1.00  1.0         YSLATM(1-5),EFFECT ON SLA                                     
                                                                                                     
                                                                                                     
 !*LEAF SENESCENCE FACTORS                                                                           
-  0.80  0.20  .060  -5.0 -18.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 -     BP                   
-  0.80  20.0  .011                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen
-!  1.17  13.1  .012                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen
-!  1.17  13.1  .013                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen
-!  1.17  13.1  .014                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen
+  0.80  0.20  .060  -8.0 -18.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 -     !kjb-bahia                    
+  0.80  20.0  .011                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen !kjb-3/23/23
                                                                                                     
 ! .......XSTAGE.........  .......XSENMX.........                                                    
    0.0   5.0   9.0  50.0   3.0   5.0  10.0  50.0                                                    
@@ -148,10 +100,7 @@
    0.0  0.00  0.12  0.12   0.0   0.2   0.6   0.6                                                    
                                                                                                     
 !*ROOT PARAMETERS                                                                                   
-!  20.0 7500. 0.010   0.1  0.02  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX            
-!  20.0 7500. 0.008   0.1  0.02  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX   DP        
-!  20.0 7500. 0.008   0.1  0.01  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX   kjb        
-  20.0 7500. 0.005   0.1  0.01  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX   kjb        
+  20.0 7500. 0.005   0.1  0.01  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX   !kjb-bahia         
    0.0  2.50   3.0  2.50   6.0  2.50  30.0  2.50   XRTFAC,YRTFAC                                    
  0.075 0.075  0.02  0.10                    RTNO3,RTNH4,PORMIN,RTEXF (Tomato uses 0.012 for RTNO3/RT
                                                                                                     
@@ -199,7 +148,6 @@
 ! VSTAGE, FOLLOWED BY INTERNODE LENGTH PER NODE, THEN CANOPY WIDTH PER NODE                         
   0.00  1.00  4.00  6.00  8.00 10.00 14.00 16.00 20.00 40.00  XVSHT(1-10)                           
                                                                                                     
-! .0150 .0265 .0315 .0330 .0345 .0330 .0310 .0255 .0170 .0030  YVSHT(1-10)                           
  .0650 .0765 .0815 .0830 .0845 .0830 .0810 .0755 .0670 .0530  YVSHT(1-10)                           
  .0150 .0255 .0310 .0320 .0330 .0315 .0295 .0230 .0125 .0005  YVSWH(1-10)                           
                                                                                                     
@@ -213,8 +161,21 @@
  -0.04    FLFP, EFFECT OF HARV. FREQ. ON RSPLF    
  -0.34    RHLFP, EFFECT OF GRAZING EFFICIENCY ON RSPLF 
   60.0    RSPLM, MAXIMUM ACHIEVABLE PERCENT LEAF OF STUBBLE                                
- 
-                                                                                                    
+
+!*STUBBLE MASS AND PERCENT LEAF FORAGE HARVEST 
+!for bahia, kjb set MOWREF to 2000 and RSREF to 30%, and all other factors (1.0) to best mimic Malik's experiment
+  2000  30.0                              MOWREF RSREF (2 VALUES) reference stuble mass (kg/ha) and harvest frequency in days
+     0    14    28    42    84   400      XFREQ (6 VALUES) harvest frequency in days
+     0   100   350   500   700   800      XFRGDD (6 VALUES) harvest frequency in GDD
+   1.0   1.0   1.0   1.0   1.0   1.0      YFREQ (6 VALUES) relative change on MOWREF  
+   1.0   1.0   1.0   1.0   1.0   1.0      YRSREF (6 VALUES) relative change on RSREF                                    
+
+     0     5    10    20    40   400      XCUTHT (6 VALUES) cutting height in cm               
+   1.0   1.0   1.0   1.0   1.0   1.0      YCUTHT (6 VALUES) relative change on MOWREF
+     0   200   400   800  1000  1200      XCHMOW (6 VALUES) pre-harvest biomass kg/m2               
+   1.0   1.0   1.0   1.0   1.0   1.0      YCHMOW (6 VALUES) relative change on MOWREF
+! start with no effect of cutting height,days, or GDD on mowref,RSREF
+                                                                                                  
 !*EVAPOTRANSPIRATION                                                                                
   0.50   0.9       KEP, EORATIO                                                                     
                                                                                                     
@@ -223,9 +184,7 @@
  0.011				      SENSR - rate for senescence of storage organ tissue                                 
                                                                                                     
 !*DORMANCY PARAMETERS - DAYLENGTH TO INDUCE/DEEPEN/END DORMANCY                                     
-  0.00  12.0  14.8 0.000   INL        FNPTD(4),TYPPTD-DAYLENGTH EFFECT-PARTITIONING, FNPRD(4) is the
-!  0.00  12.0  16.0 0.000   INL        FNPTD(4),TYPPTD-DAYLENGTH EFFECT-PARTITIONING, FNPRD(4) is the
-!  0.00  11.5  15.5 0.000   INL        FNPTD(4),TYPPTD-DAYLENGTH EFFECT-PARTITIONING, FNPRD(4) is the
+  0.00  11.5  16.5 0.000   INL        FNPTD(4),TYPPTD-DAYLENGTH EFFECT-PARTITIONING, FNPRD(4) !kjb-bahia 
   7.8  12.0  0.62 1.000   CDD        FNPMD(4),TYPPMD-DAYLENGTH EFFECT ON MOBILIZATION, FNPMD(3)& FN
                                                                                                     
   0.00  0.00  0.00 1.000   DRD        FMPGD(4),TYPPGD-DAYLENGTH EFFECT ON PG, FNPGD(3)& FNPGD(4)are 

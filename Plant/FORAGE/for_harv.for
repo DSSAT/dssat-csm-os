@@ -38,6 +38,7 @@ C=======================================================================
 !    CUHT
 
       USE MODULEDEFS
+      USE ModuleData
 
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, IGNORE, Y2K_DOY, Y4K_DOY, yr_doy
@@ -148,6 +149,9 @@ C***********************************************************************
 
         MOWGDD = 0.0
         MOWCOUNT = 1
+
+        CALL PUT('MHARVEST','ISH_date',-99)
+        CALL PUT('MHARVEST','ISH_wt',  -99.)
 
 C----------------------------------------------------------
 C     Open and read MOWFILE and PATH
@@ -346,6 +350,9 @@ C-----------------------------------------------------------------------
         MOWGDD = 0.0
         CUTNO = 1
 
+        CALL PUT('MHARVEST','ISH_date',-99)
+        CALL PUT('MHARVEST','ISH_wt',  -99.)
+
 !***********************************************************************
 !***********************************************************************
 !     Daily Rate Calculations
@@ -380,122 +387,122 @@ C-----------------------------------------------------------------------
 
       IF (.NOT.ALLOCATED(MOW) .AND. ATMOW .EQV. .FALSE.) THEN
 
-      DO I=1,SIZE(MOW)
-           if(date(i)==yrdoy) then
-           IF (MOW(I).GE.0.and.trno(i)==trtno)then
+        DO I=1,SIZE(MOW)
+          if(date(i)==yrdoy) then
+            IF (MOW(I).GE.0.and.trno(i)==trtno)then
               if(mow(i)/10<topwt) THEN
-              FHLEAF=0
-              FHSTEM=0
-              FHVSTG=0
-              IF(RSPLF(I)>=0)THEN
-                FHLEAF=WTLF-(MOW(I)/10)*RSPLF(I)/100
-                FHSTEM=STMWT-(MOW(I)/10)*(1.0-RSPLF(I)/100)
-              ELSE
-                FHLEAF=WTLF-(MOW(I)/10)*WTLF/(WTLF+STMWT)
-                FHSTEM=STMWT-(MOW(I)/10)*STMWT/(WTLF+STMWT)
-              END IF
-              FHLEAF=MAX(FHLEAF,0.0)
-              FHSTEM=MAX(FHSTEM,0.0)
-              FHVSTG=MAX(MVS(I),0.0)
-              canht=max(rsht(i)/100,0.0)
-!             canht=max(rsht(i),0.0)     !enter rsht in cm
+                FHLEAF=0
+                FHSTEM=0
+                FHVSTG=0
+                IF(RSPLF(I)>=0)THEN
+                  FHLEAF=WTLF-(MOW(I)/10)*RSPLF(I)/100
+                  FHSTEM=STMWT-(MOW(I)/10)*(1.0-RSPLF(I)/100)
+                ELSE
+                  FHLEAF=WTLF-(MOW(I)/10)*WTLF/(WTLF+STMWT)
+                  FHSTEM=STMWT-(MOW(I)/10)*STMWT/(WTLF+STMWT)
+                END IF
+
+                FHLEAF=MAX(FHLEAF,0.0)
+                FHSTEM=MAX(FHSTEM,0.0)
+                FHVSTG=MAX(MVS(I),0.0)
+                canht=max(rsht(i)/100,0.0)
+!               canht=max(rsht(i),0.0)     !enter rsht in cm
+
+                fhtot = fhleaf+fhstem
+
+                fhlfn = fhleaf*pcnl/100
+                fhstn = fhstem*pcnst/100
+                fhtotn = fhlfn+fhstn
+
+                fhcrlf = fhleaf*rhol
+                fhcrst = fhstem*rhos
+
+                fhpctn = fhtotn/fhtot*100
+                fhplig = (fhleaf*pliglf+fhstem*pligst)/fhtot*100
+                fhpcho = (fhcrlf+fhcrst)/fhtot*100
+                fhpctlf = fhleaf/fhtot*100
+
+                WTLF  = WTLF - FHLEAF
+                STMWT = STMWT - FHSTEM
+                TOPWT = TOPWT - FHLEAF - FHSTEM
+                TOTWT = TOTWT - FHLEAF - FHSTEM
+
+                WCRLF = WTLF*RHOL
+                WCRST = STMWT*RHOS
+
+                WTNLF  = WTLF*PCNL/100.
+                WTNST  = STMWT*PCNST/100.
+                WTNCAN = WTNCAN - FHLEAF*PCNL/100. - FHSTEM*PCNST/100.
+
+                IF ((WTLF - WCRLF) .GT. 0.0) THEN
+                  WNRLF = MAX (WTNLF - PROLFF*0.16*(WTLF-WCRLF), 0.0)
+                ELSE
+                  WNRLF = 0.0
+                ENDIF
+
+                IF ((STMWT - WCRST) .GT. 0.0) THEN
+                  WNRST = MAX (WTNST - PROSTF*0.16*(STMWT-WCRST), 0.0)
+                ELSE
+                  WNRST = 0.0
+                ENDIF
+
+                AREALF = WTLF*SLA
+                XLAI   = AREALF/10000.
+                XHLAI  = XLAI
+                
+                VSTAGE = FHVSTG     
+                vstagp = vstage
+
+              else
+
+                fhtot = 0
+                
+                fhlfn = 0
+                fhstn = 0
+                fhtotn = 0
+                
+                fhcrlf = 0
+                fhcrst = 0
+                
+                fhpctn = 0
+                fhplig = 0
+                fhpcho = 0
+                
+                fhpctlf = 0
 
 
-              fhtot = fhleaf+fhstem
-
-              fhlfn = fhleaf*pcnl/100
-              fhstn = fhstem*pcnst/100
-              fhtotn = fhlfn+fhstn
-
-              fhcrlf = fhleaf*rhol
-              fhcrst = fhstem*rhos
-
-              fhpctn = fhtotn/fhtot*100
-              fhplig = (fhleaf*pliglf+fhstem*pligst)/fhtot*100
-              fhpcho = (fhcrlf+fhcrst)/fhtot*100
-              fhpctlf = fhleaf/fhtot*100
-      
-              WTLF  = WTLF - FHLEAF
-              STMWT = STMWT - FHSTEM
-              TOPWT = TOPWT - FHLEAF - FHSTEM
-              TOTWT = TOTWT - FHLEAF - FHSTEM
- 
-              WCRLF = WTLF*RHOL
-              WCRST = STMWT*RHOS
-
-              WTNLF  = WTLF*PCNL/100.
-              WTNST  = STMWT*PCNST/100.
-              WTNCAN = WTNCAN - FHLEAF*PCNL/100. - FHSTEM*PCNST/100.
-
-              IF ((WTLF - WCRLF) .GT. 0.0) THEN
-                WNRLF = MAX (WTNLF - PROLFF*0.16*(WTLF-WCRLF), 0.0)
-              ELSE
-                WNRLF = 0.0
               ENDIF
 
-              IF ((STMWT - WCRST) .GT. 0.0) THEN
-                WNRST = MAX (WTNST - PROSTF*0.16*(STMWT-WCRST), 0.0)
+              CALL GETLUN('FORHARV', fhlun)
+
+              INQUIRE(file=FHOUT,EXIST=EXISTS)
+              IF (exists.and.(run/=1.or.i/=1)) THEN
+                OPEN(FILE=FHOUT,UNIT=FHLUN,POSITION='APPEND')
               ELSE
-                WNRST = 0.0
-              ENDIF
-
-              AREALF = WTLF*SLA
-              XLAI   = AREALF/10000.
-              XHLAI  = XLAI
-  
-              VSTAGE = FHVSTG     
-              vstagp = vstage
-
-          else
-
-              fhtot = 0
-
-              fhlfn = 0
-              fhstn = 0
-              fhtotn = 0
-
-              fhcrlf = 0
-              fhcrst = 0
-
-              fhpctn = 0
-              fhplig = 0
-              fhpcho = 0
-
-              fhpctlf = 0
-
-
-          ENDIF
-
-             CALL GETLUN('FORHARV', fhlun)
-
-            INQUIRE(file=FHOUT,EXIST=EXISTS)
-            IF (exists.and.(run/=1.or.i/=1)) THEN
-              OPEN(FILE=FHOUT,UNIT=FHLUN,POSITION='APPEND')
-            ELSE
-               call date_and_time(values=date_time)
-               OPEN(FILE=FHOUT,UNIT=FHLUN)
-               rewind(fhlun)
-               fhoutfmt =
+                 call date_and_time(values=date_time)
+                 OPEN(FILE=FHOUT,UNIT=FHLUN)
+                 rewind(fhlun)
+                 fhoutfmt =
      &     "('*Forage Model Harvest Output: ',A8,A2,1X,A,1X,"//
      &     "'DSSAT Cropping System Model Ver. '"//
      &     ",I1,'.',I1,'.',I1,'.',"//
      &     "I3.3,1X,A10,4X,"//
      &     "A3,' ',I2.2,', ',I4,'; ',I2.2,':',I2.2,':',I2.2/)"
-               WRITE (fhlun,fhoutfmt) mowfile(1:8),crop,trim(ename),
+                 WRITE (fhlun,fhoutfmt) mowfile(1:8),crop,trim(ename),
      &             Version,VBranch,
      &             MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1),
      &             DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
-               WRITE(fhlun,'(a)')
+                 WRITE(fhlun,'(a)')
      &           '@RUN FILEX    CR TRNO FHNO YEAR DOY'//
      &           ' RCWAH RLWAH RSWAH RSRWH RRTWH RLAIH'//
      &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H'//
 !     &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H FHAGE IVOMD'//
      &           '  MOWC RSPLC'
-            end if
+               end if
                call yr_doy(yrdoy,year,doy)
                write(fhoutfmt,'(a)') '(i4,x,a8,a3,2(i5),i5,i4,'//
      &            '5(i6),f6.2,2(i6),3(f6.2),f6.1,x,f5.0,F6.1,F6.1)'
-            WRITE(fhlun,fhoutfmt)
+               WRITE(fhlun,fhoutfmt)
      &           run,mowfile(1:8),crop,trtno,i,year,doy,
      &           Nint(topwt*10.),Nint(wtlf*10.),Nint(stmwt*10.),
      &           Nint(strwt*10.),Nint(rtwt*10.),xlai,
@@ -504,24 +511,27 @@ C-----------------------------------------------------------------------
      &           MOWC,RSPLC
 
 !     &           -99,-99.0,MOWC,RSPLC
-            close(fhlun)
+               close(fhlun)
 
-            if(date(i)==yrdoy.and.trno(i)==trtno) then
-             PWTCO = WTCO
-             PWTLO = WTLO
-             PWTSO = WTSO
-             DWTCO = WTCO - PWTCO
-             DWTLO = WTLO - PWTLO
-             DWTSO = WTSO - PWTSO
-            endif
+!              Send out amount harvested today for MgmtEvent.OUT file
+               CALL PUT('MHARVEST','ISH_date',YRDOY)
+               CALL PUT('MHARVEST','ISH_wt',  fhtot*10.)
+               
+               if(date(i)==yrdoy.and.trno(i)==trtno) then
+                PWTCO = WTCO
+                PWTLO = WTLO
+                PWTSO = WTSO
+                DWTCO = WTCO - PWTCO
+                DWTLO = WTLO - PWTLO
+                DWTSO = WTSO - PWTSO
+               endif
               !TF - Variables are being deallocated on RUNINIT
               !if(i==size(mow)) deallocate(mow,trno,date,rsplf,mvs,rsht)
 
-            RETURN
-            end if
-        ENDIF
-      ENDDO
-
+               RETURN
+             end if  !(MOW(I).GE.0.and.trno(i)==trtno)
+           ENDIF  !date(i)==yrdoy
+        ENDDO
       ENDIF
 
 !***********************************************************************
@@ -529,175 +539,195 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ! DP/TF - 01/28/2022 Added degree days (GDD) option
       IF(ATMOW .EQV. .TRUE.) THEN
-            IF(CUTDAY .EQ. 0 .OR.
+        IF(CUTDAY .EQ. 0 .OR.
      &        (MOWGDD .GE. HMGDD .AND. HMGDD .GT. 0)) THEN
             !DP/TF 2022-01-31 Switch to complete version AutoMOW
-              IF(ATTP .EQ. 'W' .OR. ATTP .EQ. 'X') THEN
-                MOWC = (TABEX(YFREQ, XFREQ, FREQ, 6) * MOWREF) *
+          IF(ATTP .EQ. 'W' .OR. ATTP .EQ. 'X') THEN
+            MOWC = (TABEX(YFREQ, XFREQ, FREQ, 6) * MOWREF) *
      &          (TABEX(YCUTHT, XCUTHT, HMCUT*100, 6)) *
      &          (TABEX(YCHMOW, XCHMOW, topwt, 6))
                 RSPLC = (TABEX(YRSREF, XFREQ, FREQ, 6) * RSREF)
             !DP/TF 2022-01-31 Switch to simple version AutoMOW
-              ELSEIF(ATTP .EQ. 'Y' .OR. ATTP .EQ. 'Z') THEN
-                MOWC = MAX(HMMOW,0)
-                RSPLC = MAX(HRSPL,0)
-              ENDIF
-              MOWGDD = 0.0
-            ELSE
-                MOWCOUNT = MOWCOUNT + 1
+          ELSEIF(ATTP .EQ. 'Y' .OR. ATTP .EQ. 'Z') THEN
+            MOWC = MAX(HMMOW,0)
+            RSPLC = MAX(HRSPL,0)
+          ENDIF
+          MOWGDD = 0.0
+        ELSE
+          MOWCOUNT = MOWCOUNT + 1
       !DP/TF 2022-01-31 GDD calculations as harvest frequency option
-                IF(TAVG .GT. VTB1) THEN
-                  GDD = TAVG - VTB1
+          IF(TAVG .GT. VTB1) THEN
+            GDD = TAVG - VTB1
                   !GDD = (((TMAX+TMIN)/2) - TB(1)) 
-                ELSE
-                  GDD = 0.0
-                ENDIF
-                IF (GDD .GT. TGMIN) GDD = TGMIN
-                GDD = MAX(GDD, 0.0)
-                MOWGDD = MOWGDD + GDD
-                RETURN
-            ENDIF
-            IF (MOWC.GE.0) THEN
-            IF(MOWC/10<topwt) THEN
-              FHLEAF=0
-              FHSTEM=0
-              FHVSTG=0
-              IF(RSPLC>=0)THEN
-                FHLEAF=WTLF-(MOWC/10)*RSPLC/100
-                FHSTEM=STMWT-(MOWC/10)*(1.0-RSPLC/100)
-              ELSE
-                FHLEAF=WTLF-(MOWC/10)*WTLF/(WTLF+STMWT)
-                FHSTEM=STMWT-(MOWC/10)*STMWT/(WTLF+STMWT)
-              END IF
-              FHLEAF = MAX(FHLEAF,0.0)
-              FHSTEM = MAX(FHSTEM,0.0)
-              FHVSTG = HMVS
-              canht  = max(HMCUT/100,0.0)
-              !             canht=max(rsht(i),0.0)     !enter rsht in cm
+          ELSE
+            GDD = 0.0
+          ENDIF
+          IF (GDD .GT. TGMIN) GDD = TGMIN
+          GDD = MAX(GDD, 0.0)
+          MOWGDD = MOWGDD + GDD
+          RETURN
+        ENDIF
 
-
-              fhtot = fhleaf+fhstem
-
-              fhlfn = fhleaf*pcnl/100
-              fhstn = fhstem*pcnst/100
-              fhtotn = fhlfn+fhstn
-
-              fhcrlf = fhleaf*rhol
-              fhcrst = fhstem*rhos
-
-              IF(fhtot .GT. 0.0) THEN
-                fhpctn = fhtotn/fhtot*100
-                fhplig = (fhleaf*pliglf+fhstem*pligst)/fhtot*100
-                fhpcho = (fhcrlf+fhcrst)/fhtot*100
-                fhpctlf = fhleaf/fhtot*100
-              ELSE
-                fhpctn = 0
-                fhplig = 0
-                fhpcho = 0
-                fhpctlf = 0
-              ENDIF           
-
-              WTLF  = WTLF - FHLEAF
-              STMWT = STMWT - FHSTEM
-              TOPWT = TOPWT - FHLEAF - FHSTEM
-              TOTWT = TOTWT - FHLEAF - FHSTEM
-
-              WCRLF = WTLF*RHOL
-              WCRST = STMWT*RHOS
-
-              WTNLF  = WTLF*PCNL/100.
-              WTNST  = STMWT*PCNST/100.
-              WTNCAN = WTNCAN - FHLEAF*PCNL/100. - FHSTEM*PCNST/100.
-
-              IF ((WTLF - WCRLF) .GT. 0.0) THEN
-                WNRLF = MAX (WTNLF - PROLFF*0.16*(WTLF-WCRLF), 0.0)
-              ELSE
-                WNRLF = 0.0
-              ENDIF
-
-              IF ((STMWT - WCRST) .GT. 0.0) THEN
-                WNRST = MAX (WTNST - PROSTF*0.16*(STMWT-WCRST), 0.0)
-              ELSE
-                WNRST = 0.0
-              ENDIF
-
-              AREALF = WTLF*SLA
-              XLAI   = AREALF/10000.
-              XHLAI  = XLAI
-
-              VSTAGE = FHVSTG
-              vstagp = vstage
-
+        IF (MOWC.GE.0) THEN
+          IF(MOWC/10<topwt) THEN
+            FHLEAF=0
+            FHSTEM=0
+            FHVSTG=0
+            IF(RSPLC>=0)THEN
+              FHLEAF=WTLF-(MOWC/10)*RSPLC/100
+              FHSTEM=STMWT-(MOWC/10)*(1.0-RSPLC/100)
             ELSE
-              fhtot = 0
+              FHLEAF=WTLF-(MOWC/10)*WTLF/(WTLF+STMWT)
+              FHSTEM=STMWT-(MOWC/10)*STMWT/(WTLF+STMWT)
+            END IF
+            FHLEAF = MAX(FHLEAF,0.0)
+            FHSTEM = MAX(FHSTEM,0.0)
+            FHVSTG = HMVS
+            canht  = max(HMCUT/100,0.0)
+            !             canht=max(rsht(i),0.0)     !enter rsht in cm
 
-              fhlfn = 0
-              fhstn = 0
-              fhtotn = 0
 
-              fhcrlf = 0
-              fhcrst = 0
+            fhtot = fhleaf+fhstem
 
+            fhlfn = fhleaf*pcnl/100
+            fhstn = fhstem*pcnst/100
+            fhtotn = fhlfn+fhstn
+
+            fhcrlf = fhleaf*rhol
+            fhcrst = fhstem*rhos
+
+            IF(fhtot .GT. 0.0) THEN
+              fhpctn = fhtotn/fhtot*100
+              fhplig = (fhleaf*pliglf+fhstem*pligst)/fhtot*100
+              fhpcho = (fhcrlf+fhcrst)/fhtot*100
+              fhpctlf = fhleaf/fhtot*100
+            ELSE
               fhpctn = 0
               fhplig = 0
               fhpcho = 0
-
               fhpctlf = 0
+            ENDIF           
 
+            WTLF  = WTLF - FHLEAF
+            STMWT = STMWT - FHSTEM
+            TOPWT = TOPWT - FHLEAF - FHSTEM
+            TOTWT = TOTWT - FHLEAF - FHSTEM
+
+            WCRLF = WTLF*RHOL
+            WCRST = STMWT*RHOS
+
+            WTNLF  = WTLF*PCNL/100.
+            WTNST  = STMWT*PCNST/100.
+            WTNCAN = WTNCAN - FHLEAF*PCNL/100. - FHSTEM*PCNST/100.
+
+            IF ((WTLF - WCRLF) .GT. 0.0) THEN
+              WNRLF = MAX (WTNLF - PROLFF*0.16*(WTLF-WCRLF), 0.0)
+            ELSE
+              WNRLF = 0.0
             ENDIF
 
-
-             CALL GETLUN('FORHARV', FHLUN)
-
-            INQUIRE(file=FHOUT,EXIST=EXISTS)
-
-            IF (exists) THEN
-              OPEN(FILE=FHOUT,UNIT=FHLUN,POSITION='APPEND')
+            IF ((STMWT - WCRST) .GT. 0.0) THEN
+              WNRST = MAX (WTNST - PROSTF*0.16*(STMWT-WCRST), 0.0)
             ELSE
-               CALL date_and_time(values=date_time)
-               OPEN(FILE=FHOUT,UNIT=FHLUN)
-               REWIND(FHLUN)
-               fhoutfmt =
+              WNRST = 0.0
+            ENDIF
+
+            AREALF = WTLF*SLA
+            XLAI   = AREALF/10000.
+            XHLAI  = XLAI
+
+            VSTAGE = FHVSTG
+            vstagp = vstage
+
+          ELSE
+            fhtot = 0
+
+            fhlfn = 0
+            fhstn = 0
+            fhtotn = 0
+
+            fhcrlf = 0
+            fhcrst = 0
+
+            fhpctn = 0
+            fhplig = 0
+            fhpcho = 0
+
+            fhpctlf = 0
+
+          ENDIF
+
+
+          CALL GETLUN('FORHARV', FHLUN)
+
+          INQUIRE(file=FHOUT,EXIST=EXISTS)
+
+          IF (exists) THEN
+            OPEN(FILE=FHOUT,UNIT=FHLUN,POSITION='APPEND')
+          ELSE
+            CALL date_and_time(values=date_time)
+            OPEN(FILE=FHOUT,UNIT=FHLUN)
+            REWIND(FHLUN)
+            fhoutfmt =
      &     "('*Forage Model Harvest Output: ',A8,A2,1X,A,1X,"//
      &     "'DSSAT Cropping System Model Ver. '"//
      &     ",I1,'.',I1,'.',I1,'.',"//
      &     "I3.3,1X,A10,4X,"//
      &     "A3,' ',I2.2,', ',I4,'; ',I2.2,':',I2.2,':',I2.2/)"
-               WRITE (fhlun,fhoutfmt) mowfile(1:8),crop,trim(ename),
+            WRITE (fhlun,fhoutfmt) mowfile(1:8),crop,trim(ename),
      &             Version,VBranch,
      &             MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1),
      &             DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
-               WRITE(fhlun,'(a)')
+            WRITE(fhlun,'(a)')
      &           '@RUN FILEX    CR TRNO FHNO YEAR DOY'//
      &           ' RCWAH RLWAH RSWAH RSRWH RRTWH RLAIH'//
      &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H'//
      &           '  MOWC RSPLC'
-            ENDIF
-
-               call yr_doy(yrdoy,year,doy)
-               write(fhoutfmt,'(a)') '(i4,x,a8,a3,2(i5),i5,i4,'//
-     &            '5(i6),f6.2,2(i6),3(f6.2),f6.1,x,f5.0,F6.1,F6.1)'
-            WRITE(fhlun,fhoutfmt)
-     &           run,mowfile(1:8),crop,trtno,CUTNO,year,doy,
-     &           Nint(topwt*10.),Nint(wtlf*10.),Nint(stmwt*10.),
-     &           Nint(strwt*10.),Nint(rtwt*10.),xlai,
-     &           Nint(fhtot*10.),Nint(fhtotn*10.),
-     &           fhpctn,fhpcho,fhplig,fhpctlf,
-     &           MOWC,RSPLC
-            CUTNO = CUTNO + 1
-            close(fhlun)
-
-            IF(CUTDAY .EQ. 0) THEN
-              PWTCO = WTCO
-              PWTLO = WTLO
-              PWTSO = WTSO
-              DWTCO = WTCO - PWTCO
-              DWTLO = WTLO - PWTLO
-              DWTSO = WTSO - PWTSO
-
-              MOWCOUNT = 1
-            ENDIF
           ENDIF
+
+          call yr_doy(yrdoy,year,doy)
+          write(fhoutfmt,'(a)') '(i4,x,a8,a3,2(i5),i5,i4,'//
+     &          '5(i6),f6.2,2(i6),3(f6.2),f6.1,x,f5.0,F6.1,F6.1)'
+          WRITE(fhlun,fhoutfmt)
+     &         run,mowfile(1:8),crop,trtno,CUTNO,year,doy,
+     &         Nint(topwt*10.),Nint(wtlf*10.),Nint(stmwt*10.),
+     &         Nint(strwt*10.),Nint(rtwt*10.),xlai,
+     &         Nint(fhtot*10.),Nint(fhtotn*10.),
+     &         fhpctn,fhpcho,fhplig,fhpctlf,
+     &         MOWC,RSPLC
+          CUTNO = CUTNO + 1
+          close(fhlun)
+
+!         Send out amount harvested today for MgmtEvent.OUT file
+          IF (fhtot > 0.0) THEN
+            CALL PUT('MHARVEST','ISH_date',YRDOY)
+            CALL PUT('MHARVEST','ISH_wt',  fhtot*10.)
+          ENDIF
+
+          IF(CUTDAY .EQ. 0) THEN
+            PWTCO = WTCO
+            PWTLO = WTLO
+            PWTSO = WTSO
+            DWTCO = WTCO - PWTCO
+            DWTLO = WTLO - PWTLO
+            DWTSO = WTSO - PWTSO
+
+            MOWCOUNT = 1
+          ENDIF
+        ENDIF
+
+
+!***********************************************************************
+!***********************************************************************
+!     End of Season
+!***********************************************************************
+      ELSEIF (DYNAMIC .EQ. SEASEND) THEN
+!-----------------------------------------------------------------------
+
+
+
+
+
 
       ENDIF
 !***********************************************************************

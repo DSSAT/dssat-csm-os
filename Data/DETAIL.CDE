@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.8; 05/11/2023
+! DSSAT v4.8; 10/12/2024
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -236,8 +236,10 @@ CH102    Ethylene [Growth Regulator]                                          IB
 *Crop and Weed Species
 @CDE     DESCRIPTION                                                          SO
 AL       Alfalfa                                                              IB
+AM       Amaranth                                                             IB
 BA       Barley                                                               IB
 BC       Carinata                                                             IB
+BG       Bambara groundnut                                                    IB
 BM       Bermudagrass                                                         IB
 BH       Bahia grass                                                          IB
 BN       Dry bean                                                             IB
@@ -279,7 +281,7 @@ SU       Sunflower                                                            IB
 SW       Sweet corn                                                           IB
 TF       Teff                                                                 IB
 TM       Tomato                                                               IB
-TN       Tannier                                                              IB
+TN       Tanier                                                               IB
 TR       Taro                                                                 IB
 VB       Velvet bean                                                          IB
 WH       Wheat                                                                IB

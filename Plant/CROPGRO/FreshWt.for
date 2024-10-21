@@ -61,6 +61,9 @@
       REAL :: HRVD, HRVF
       REAL :: CHPDT,CHFPW
 
+!     In-season harvest weight CHP 2024-06-27
+      REAL ISH_wt
+
       LOGICAL FEXIST
 
       TYPE (ControlType) CONTROL
@@ -79,6 +82,7 @@
         
         FWFile  = 'FreshWt.OUT '
         CALL GETLUN('FWOUT',  NOUTPF)
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -243,6 +247,9 @@
         HRDSD   = 0.0
         HRDSH   = 0.0      
 
+        CALL PUT('MHARVEST','ISH_date',-99)
+        CALL PUT('MHARVEST','ISH_wt',  -99.)
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE/INTEGRATION
@@ -384,9 +391,11 @@
             SHELN(NPP) = 0.0
             WTSHE(NPP) = 0.0
             WTSD(NPP)  = 0.0
-            SDNO(NPP)  = 0.0                      
+            SDNO(NPP)  = 0.0
+            ISH_wt = HSHELWT + HSDWT + HPODWT + HFPOW
+            CALL PUT('MHARVEST','ISH_date',YRDOY)
+            CALL PUT('MHARVEST','ISH_wt',  ISH_wt)
           ENDIF
-               
         ENDDO  ! NPP
 
 !       Prepare model outputs

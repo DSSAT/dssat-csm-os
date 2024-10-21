@@ -300,6 +300,7 @@ C=======================================================================
         !*** temp debugging chp
         TNOM = 0.0
 
+!       temp chp
         XMIN = 0.0
 
 !       Seasonal cumulative values, kg[N]/ha
@@ -1555,6 +1556,7 @@ C-----------------------------------------------------------------------
 ! ALGFIX        N in algae (kg [N] / ha)
 ! ALI            
 ! AMTFER        Amount of N in fertilizer applications
+! NITRIF(L)     Daily nitrification rate (kg [N] / ha / d)
 ! BD(L)         Bulk density, soil layer L (g [soil] / cm3 [soil])
 ! BD1           Bulk density of oxidized layer (g [soil] / cm3 [soil])
 ! CIMMOBN        Cumulative seasonal net immobilization of N in soil profile (kg[N]/ha) 

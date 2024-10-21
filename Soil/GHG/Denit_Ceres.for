@@ -28,7 +28,7 @@ C=======================================================================
 
       INTEGER DYNAMIC, L, NLAYR
 
-      REAL CW, XMIN !FLOOD
+      REAL CW, XMIN
       REAL TFDENIT, WFDENIT
       REAL ST(NL), SNO3_AVAIL
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
