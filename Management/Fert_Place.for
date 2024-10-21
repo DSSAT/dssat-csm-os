@@ -996,6 +996,78 @@ C=======================================================================
       RETURN
       END FUNCTION IDLAYR
 
+
+!=======================================================================
+
+!=======================================================================
+!     Subroutine BandWidth determines the fraction of banded fertilizer
+!       placement in each column for a 2D simulation.
+
+!     Rules:
+!     - width of banding is FMAX cm maximum
+!     - use whole columns only for fertilizer placement
+!     - for raised beds, assume the entire bed width
+!     - for plastic mulch covered row, use width of plastic mulch, unless it
+!         covers more than half a row, then default to the FMAX rule.
+!     ----------------------------------------------------------------------
+
+      Subroutine BandWidth(CELLS, FracCol)
+
+      USE Cells_2D
+      IMPLICIT NONE
+
+      TYPE (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
+      REAL, DIMENSION(1:MaxCols), INTENT(OUT) :: FracCol
+      REAL TargetWidth, CumWidth, FertWidth
+      INTEGER col
+
+!     Total width of banded fertilizer placement, cm
+      REAL, PARAMETER :: FMAX = 40. 
+
+      IF (Sim2D) THEN
+!       Set the default width of fertilizer application.
+!       This is the full width in cm (not the simulated half width).
+        TargetWidth = FMAX  !default max width
+
+!       Assume no fertilizer application in any row
+        FertWidth = 0.0
+        FracCol = 0.0
+        
+        IF (BedDimension % RaisedBed) THEN
+!         Raised bed, apply banded fertilizer within bed width
+          TargetWidth = BedDimension % BedWd
+
+        ELSEIF (BedDimension % PMCover) THEN
+!         Plastic mulch cover on flat system, 
+!           apply fertilizer within plastic mulch cover unless 
+!           it covers more than 50% of the row width.
+          TargetWidth = MIN(FMAX, BedDimension % BedWd, 
+     &                      0.5 * BedDimension % RowSpc_cm)
+        ENDIF
+
+        CumWidth = 0.0
+        DO col = 1, NColsTot
+          CumWidth = CumWidth + CELLS(1,col) % STRUC % Width
+          IF (CumWidth <= TargetWidth / 2.0) THEN
+            FracCol(col) = CELLS(1,col) % STRUC % Width
+            FertWidth = CumWidth
+          ELSE
+            EXIT
+          ENDIF
+        ENDDO
+
+        FracCol = FracCol / FertWidth
+
+      ELSE
+!       1D simulation
+        FertWidth = BedDimension % RowSpc_cm
+        FracCol = 1.0
+      ENDIF
+
+      RETURN
+      End Subroutine BandWidth
+!=======================================================================
+
 !=======================================================================
 ! FPLACE and IDLAYR Variables - updated 08/18/2003
 !-----------------------------------------------------------------------

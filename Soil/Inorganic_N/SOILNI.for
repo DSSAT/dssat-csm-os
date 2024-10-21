@@ -83,7 +83,7 @@ C=======================================================================
       IMPLICIT  NONE
       EXTERNAL DENIT_CERES, INCDAT, YR_DOY, OPSOILNI, 
      &  SOILNI_INIT, NCHECK_INORG, FLOOD_CHEM, OXLAYER, DENIT_DAYCENT, 
-     &  NOX_PULSE, INCYD, DAYCENT_DIFFUSIVITY, NFLUX
+     &  NOX_PULSE, INCYD, DAYCENT_DIFFUSIVITY, NFLUX, BandWidth
       EXTERNAL SUM_N  !Temp CHP
 
       SAVE
@@ -181,8 +181,9 @@ C=======================================================================
       REAL MIXPCT, TDEP
 
 !     Added for banded fertilizer application, 2D
-      INTEGER NCol, col
-      REAL FertWidth, TotWidth
+      INTEGER col
+!     Columns which get banded fertilizer
+      Real, DIMENSION(1:MaxCols) :: FracCol
 
 !     2D integration
       REAL RESID3, RESID4, RESID5, SNO3_TEMP, SNH4_TEMP, UREA_TEMP
@@ -197,7 +198,7 @@ C=======================================================================
       REAL NNOM_a, NNOM_b
       REAL TotN, NRow(NL)
 
-!         temp chp
+!     temp chp
       REAL UHYDR_TOT
 
       REAL CumSumFert, FieldFac, CellFac
@@ -528,29 +529,15 @@ C=======================================================================
 
           CASE ('BANDED')
 !           Banded application goes to width of bed or plastic mulch, if known,
-!             or 20 cm as a minimum.
-            IF (BedDimension% RaisedBed .OR. BedDimension% PMCover) THEN
-              FertWidth = BEDWD / 2.0
-            ELSE
-              FertWidth = 10.
-            ENDIF
+!             or 40 cm as a maximum.
+            CALL BandWidth(CELLS, FracCol)
 
-            Ncol = 0
-            TotWidth = 0.0
             DO col = 1, NColsTot
-              IF (TotWidth > FertWidth - 0.5) EXIT
-              NCol = NCol + 1
-              TotWidth = TotWidth + CELLS(L,col) % Struc % Width
-            ENDDO
-
-            FertWidth = TotWidth
-
-            DO col = 1, NCol
-              CellFac = CELLS(L,col) % Struc % Width / FertWidth 
+              CellFac = FracCol(col)
               DLTSNO3_2D(L,col) = DLTSNO3_2D(L,col) + AddSNO3 * CellFac
               DLTSNH4_2D(L,col) = DLTSNH4_2D(L,col) + AddSNH4 * CellFac
               DLTUREA_2D(L,col) = DLTUREA_2D(L,col) + AddUrea * CellFac
-              CellFert(L,col) = (AddSNO3 + AddSNH4 + AddUrea)*CellFac
+              CellFert(L,col) = (AddSNO3 + AddSNH4 + AddUrea) * CellFac
             ENDDO
 
           CASE ('DRIP')
