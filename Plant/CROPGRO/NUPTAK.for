@@ -194,7 +194,11 @@ C-----------------------------------------------------------------------
               ELSE
                 FNO3 = 0.0
               ENDIF
+!             CHP 2024-10-23 Not sure why the lower limit of 0.04, but it has a big 
+!               impact on results, so keep it as in the 1D model.
+              IF (FNO3 .LT. 0.04) FNO3 = 0.0  
               IF (FNO3 .GT. 1.0)  FNO3 = 1.0
+              IF (FNH4 .LT. 0.04) FNH4 = 0.0  
               IF (FNH4 .GT. 1.0)  FNH4 = 1.0
 
 !             SMDFR = relative drought factor
