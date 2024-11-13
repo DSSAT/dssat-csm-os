@@ -1073,12 +1073,6 @@ C  tillage and rainfall kinetic energy
       IF (ISWWAT == 'N') RETURN
 
       CALL ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
-
-      DO L = 1, NLAYR
-        
-      ENDDO
-
-
       CALL PUT(SOILPROP)
       IF (SIM2D) RETURN
 
@@ -1118,6 +1112,7 @@ C  tillage and rainfall kinetic energy
 !       Update combined soil/mulch albedo
 !       Transfer local values from constructed variables
         MULCHCOVER = MULCH % MULCHCOVER
+        MULCHALB   = MULCH % MULCHALB
 
 !       ---------------------------------------------------
 !       Update BD, DLAYR, DUL, LL based on changes to soil organic matter 

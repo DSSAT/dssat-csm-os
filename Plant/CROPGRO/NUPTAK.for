@@ -163,6 +163,7 @@ C-----------------------------------------------------------------------
 
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
+!         Concentration
           SELECT CASE(Cell_type(L,J))
           CASE(3,4,5)
              NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
@@ -183,17 +184,12 @@ C   Calculate potential N uptake in soil layers with roots
 C-----------------------------------------------------------------------
         DO L = 1, NRowsTot 
           DO J = 1, NColsTot  
-            IF (RLV_2D(L, J) .GT. 1.E-6) THEN
-              IF (NH4_2D(L,J) > 1.E-6) THEN
-                FNH4 = 1.0 - EXP(-0.08 * NH4_2D(L,J))
-              ELSE
-                FNH4 = 0.0
-              ENDIF
-              IF (NO3_2D(L,J) > 1.E-6) THEN
-                FNO3 = 1.0 - EXP(-0.08 * NO3_2D(L,J))
-              ELSE
-                FNO3 = 0.0
-              ENDIF
+            SELECT CASE(Cell_type(L,J))
+            CASE(3,4,5)
+            IF (RLV_2D(L,J) .GT. 1.E-6) THEN
+              FNH4 = 1.0 - EXP(-0.08 * NH4_2D(L,J))
+              FNO3 = 1.0 - EXP(-0.08 * NO3_2D(L,J))
+
 !             CHP 2024-10-23 Not sure why the lower limit of 0.04, but it has a big 
 !               impact on results, so keep it as in the 1D model.
               IF (FNO3 .LT. 0.04) FNO3 = 0.0  
@@ -202,9 +198,10 @@ C-----------------------------------------------------------------------
               IF (FNH4 .GT. 1.0)  FNH4 = 1.0
 
 !             SMDFR = relative drought factor
-              SMDFR = (SWV(L, J) - LL(L)) / (DUL(L) - LL(L))
-              IF (SWV(L, J) .GT. DUL(L)) THEN
-                SMDFR = 1.0 - (SWV(L, J) - DUL(L)) / (SAT(L) - DUL(L))
+              SMDFR = (SWV(L,J) - LL(L)) / (DUL(L) - LL(L))
+
+              IF (SWV(L,J) .GT. DUL(L)) THEN
+                SMDFR = 1.0 - (SWV(L,J) - DUL(L)) / (SAT(L) - DUL(L))
               ENDIF
 
               IF (SMDFR .LT. 0.1) THEN
@@ -236,14 +233,16 @@ C-----------------------------------------------------------------------
 !!                 -----    =     --------- * -------- * ---------
 !!                   ha           cm2[soil]   cm[root]     mg/cm2
 
-              RNO3U_2D(L,J) = MAX(0.0,RNO3U_2D(L,J))
-              RNH4U_2D(L,J) = MAX(0.0,RNH4U_2D(L,J))
+              RNO3U_2D(L,J) = MAX(0.0, RNO3U_2D(L,J))
+              RNH4U_2D(L,J) = MAX(0.0, RNH4U_2D(L,J))
 
 !             kg[N]/ha
               TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J)) * FieldFac
             ENDIF
-          ENDDO
+          END SELECT
         ENDDO
+      ENDDO
+
 C-----------------------------------------------------------------------
 C   Calculate N uptake in soil layers with roots based on demand (kg/ha)
 C-----------------------------------------------------------------------
@@ -257,6 +256,8 @@ C-----------------------------------------------------------------------
           NUF = ANDEM / TRNU
           DO L = 1, NRowsTot
             DO J = 1, NColsTot
+              SELECT CASE(Cell_type(L,J))
+              CASE(3,4,5)
               IF (RLV_2D(L,J) .GT. 0.0) THEN
 !               Proportion by demand : supply ratio
                 UNO3_2D(L,J) = RNO3U_2D(L,J) * NUF
@@ -278,16 +279,13 @@ C-----------------------------------------------------------------------
                   UNH4_2D(L,J) = MXNH4U
                 ENDIF
 
-!!               Contribution of each cell is weighted average using ColFrac
-!                UNO3_2D(L,J) = UNO3_2D(L,J) * ColFrac(L,J)
-!                UNH4_2D(L,J) = UNH4_2D(L,J) * ColFrac(L,J)
-
-!               For 2D simulations, double the amount because we are modeling only half the field.
+!               For 2D simulations, multiply by 2.0 because we are modeling only half a field.
                 TRNO3U  = TRNO3U + UNO3_2D(L,J) * FieldFac
                 TRNH4U  = TRNH4U + UNH4_2D(L,J) * FieldFac
                 UNO3(L) = UNO3(L) + UNO3_2D(L,J) * FieldFac
                 UNH4(L) = UNH4(L) + UNH4_2D(L,J) * FieldFac
               ENDIF
+              END SELECT
             ENDDO
           ENDDO
 
