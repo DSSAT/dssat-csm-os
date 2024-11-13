@@ -276,7 +276,7 @@ end Subroutine CsvOut_cscer
 Subroutine CsvOut_crgro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
    VSTAGE, RSTAGE, XLAI, WTLF, STMWT, SDWT, RTWT, VWAD, TOPWT, SEEDNO, SDSIZE, HI, &
    PODWT, PODNO, SWF_AV, TUR_AV, NST_AV, PS1_AV, PS2_AV, KST_AV, EXW_AV, PCNLP, & 
-   SHELPC, HIP, PODWTD, SLAP, CANHT, CANWH, DWNOD, RTDEP, N_LYR, RLV, CUMSENSURF, & 
+   SHELPC, HIP, PODWTD, SLAP, CANHT, CANWH, DWNOD, RTDEP, TRLV, N_LYR, RLV, CUMSENSURF, & 
    CUMSENSOIL, Csvline, pCsvline, lngth) 
 
 !  Input vars
@@ -288,7 +288,7 @@ Subroutine CsvOut_crgro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
    Real,Intent(IN) :: VSTAGE, XLAI, WTLF, STMWT, SDWT, RTWT, TOPWT, SEEDNO     
    Real,Intent(in) :: SDSIZE, HI, PODWT, PODNO, SWF_AV, TUR_AV, NST_AV, PS1_AV
    Real,Intent(IN) :: PS2_AV, KST_AV, EXW_AV, PCNLP, SHELPC, HIP, PODWTD, SLAP
-   Real,Intent(IN) :: CANHT, CANWH, DWNOD, RTDEP, CUMSENSURF, CUMSENSOIL     
+   Real,Intent(IN) :: CANHT, CANWH, DWNOD, RTDEP, TRLV, CUMSENSURF, CUMSENSOIL     
    Integer,Intent(IN) :: RSTAGE, VWAD
 
    Integer,Intent(IN) :: N_LYR
@@ -326,11 +326,14 @@ Subroutine CsvOut_crgro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
    cCUMSENSOIL1 = NINT(CUMSENSOIL) 
    
    ! Unformatted string output
-   Write(tmp,'(42(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,&
+   Write(tmp,'(43(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,&
       VSTAGE, RSTAGE, XLAI, cWTLF1, cSTMWT1, cSDWT1, cRTWT1, VWAD, cTOPWT1, &
       cSEEDNO1, SDSIZE, HI, cPODWT1, cPODNO1, SWF_AV, TUR_AV, NST_AV, PS1_AV, &
       PS2_AV, KST_AV, EXW_AV, PCNLP, SHELPC, HIP, cPODWTD1, cPodSum, SLAP, &
-      CANHT, CANWH, cDWNOD1, cRTDEP1, cCUMSENSURF1, cCUMSENSOIL1 
+
+! temp chp
+!     CANHT, CANWH, cDWNOD1, cRTDEP1, TRLV, cCUMSENSURF1, cCUMSENSOIL1 
+      CANHT, CANWH, cDWNOD1, cRTDEP1, TRLV, CUMSENSURF, CUMSENSOIL 
    
    Write(fmt,'(I2)') N_LYR - 1
    fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
@@ -393,9 +396,11 @@ Subroutine CsvOutSW_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, TSW, 
    cAVWTD1 = NINT(AVWTD)
          
    Write(tmp,'(20(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
-   DAS, cTSW1, cPESW1, cTRUNOF1, cTDRAIN1, cCRAIN1, NAP, cTOTIR1, &
-   cAVWTD1, MULCHWAT, TDFD, TDFC, RUNOFF
-   
+!temp chp print real values instead of integers
+!  DAS, cTSW1, cPESW1, cTRUNOF1, cTDRAIN1, cCRAIN1, NAP, cTOTIR1, &
+!  cAVWTD1, MULCHWAT, TDFD, TDFC, RUNOFF
+   DAS, TSW, PESW, TRUNOF, TDRAIN, CRAIN, NAP, TOTIR, &
+   AVWTD, MULCHWAT, TDFD, TDFC, RUNOFF
    Write(fmt,'(I2)') N_LYR - 1  
    fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
    fmt = Trim(Adjustl(fmt))
