@@ -24,6 +24,7 @@ C  05/11/1999 GH  Incorporated in CROPGRO
 !  01/19/2006 CHP Fixed discrepancies between plant root senescence  
 !                 calculated and that sent to soil routines for addition
 !                 to organic matter.  
+!  10/24/2024 CHP Added TRLV to PlantGro.OUT
 !-----------------------------------------------------------------------
 !  Called by  :  PLANT
 !  Calls      :  IPROOT, INROOT

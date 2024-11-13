@@ -39,6 +39,7 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 !  06/15/2022 CHP Added CropStatus
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
+!  10/24/2024 CHP Added TRLV to PlantGro.OUT
 C=======================================================================
 
       SUBROUTINE CROPGRO(CONTROL, ISWITCH, 

@@ -11,6 +11,7 @@ C  06/19/2001 GH  Modified output format
 C  08/20/2002 GH  Modified for Y2K
 C  07/08/2003 CHP Changed senescence output.
 C  03/24/2004 CHP Added P stresses to PlantGro.out
+!  10/24/2024 CHP Added TRLV to PlantGro.OUT
 C-----------------------------------------------------------------------
 C  Called by: PLANT
 C  Calls:     None
@@ -398,7 +399,7 @@ C-----------------------------------------------------------------------
      &WTLF, STMWT, SDWT, RTWT, VWAD, TOPWT, SEEDNO, SDSIZE, HI, PODWT,
      &PODNO, SWF_AV, TUR_AV, NST_AV, PS1_AV, PS2_AV, KST_AV, EXW_AV,
      &PCNLP, SHELPC, HIP, PODWTD, SLAP, CANHT, CANWH,
-     &DWNOD, RTDEP, N_LYR, RLV, CUMSENSURF, CUMSENSOIL,
+     &DWNOD, RTDEP, TRLV, N_LYR, RLV, CUMSENSURF, CUMSENSOIL,
      &vCsvline, vpCsvline, vlngth)
      
          CALL Linklst(vCsvline)
