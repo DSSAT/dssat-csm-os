@@ -152,19 +152,18 @@ C=======================================================================
       PConc_Shel = 0.0
       PConc_Seed = 0.0
 
-      SELECT CASE(ISWITCH % MESOL)
-      CASE ('D')
+      IF (CONTROL % SIM2D) THEN
         CALL PT_ROOTGR_2D(SEASINIT, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
      &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
 
-      CASE DEFAULT
+      ELSE
         CALL PT_ROOTGR (SEASINIT, CELLS, YRDOY,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &    CUMDEP, RLV, RTDEP)                             !Output
-      END SELECT
+      ENDIF
 
       CALL PT_PHENOL (
      &    DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
@@ -176,7 +175,7 @@ C=======================================================================
      &    SEASINIT)
 
       CALL PT_GROSUB (CONTROL, CELLS,
-     &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
+     &    CO2, CUMDTT, DTT, DUL, FILEIO,                  !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
      &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
      &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
@@ -227,19 +226,18 @@ C=======================================================================
 
 !       WRESR growth and depth routine
         IF (GRORT .GT. 0.0) THEN
-          SELECT CASE (ISWITCH % MESOL)
-          CASE ('D')
+          IF (CONTROL % SIM2D) THEN
             CALL PT_ROOTGR_2D(RATE, ISWWAT, CELLS, YRDOY,
      &        DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &        SOILPROP,                                     !Input
      &        CUMDEP, RLV, RLV_2D, RTDEP)                  !Output
 
-          CASE DEFAULT
+          ELSE
             CALL PT_ROOTGR (RATE, CELLS, YRDOY,
      &        DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &        LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &        CUMDEP, RLV, RTDEP)                             !Output
-          END SELECT
+          ENDIF
         ENDIF
       ENDIF
 
@@ -256,7 +254,7 @@ C=======================================================================
 
       IF (ISTAGE .LT. 5) THEN
           CALL PT_GROSUB (CONTROL, CELLS,
-     &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
+     &    CO2, CUMDTT, DTT, DUL, FILEIO,                  !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
      &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
      &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
@@ -297,7 +295,7 @@ C=======================================================================
      
      
 !     CALL PT_OPRoots_2D in PT_ROOTGR_2D when DYNAMIC .EQ. OUTPUT
-      IF (ISWITCH % MESOL == 'D') THEN
+      IF (CONTROL % SIM2D) THEN
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
@@ -341,7 +339,7 @@ C=======================================================================
         SENESCE % ResLig = 0.0
         SENESCE % ResE   = 0.0
 
-      IF (ISWITCH % MESOL == 'D') THEN
+      IF (CONTROL % SIM2D) THEN
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input

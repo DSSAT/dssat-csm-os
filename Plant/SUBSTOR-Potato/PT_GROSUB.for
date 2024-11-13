@@ -23,7 +23,7 @@ C  08/23/2011 GH/JIL Added CO2 response to tuber growth
 C=======================================================================
 
       SUBROUTINE PT_GROSUB (CONTROL, CELLS,
-     &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
+     &    CO2, CUMDTT, DTT, DUL, FILEIO,                  !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
      &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
      &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
@@ -81,7 +81,7 @@ C-----------------------------------------------------------------------
 
       REAL, DIMENSION(4)  :: SENST, SENSF
       REAL, DIMENSION(10) :: CO2X, CO2Y
-      REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
+      REAL, DIMENSION(NL) :: DUL, KG2PPM, LL, 
      &    SAT, UNO3, UNH4  
 
       TYPE (SwitchType) ISWITCH
@@ -182,10 +182,11 @@ C-----------------------------------------------------------------------
       TUBWT   = 0.0
       
       CALL PT_NUPTAK (CONTROL,  CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
-     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
+     &    DUL, KG2PPM, LL, NLAYR, SAT,                    !Input
+     &    GRORT, GROTUB, ISTAGE,                          !Input
+     &    PLTPOP, RCNP, RTWT, TCNP, TMNC,                 !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
-     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
+     &    GROTOP, ROOTN, TOPSN, TUBANC,                   !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
 
@@ -202,7 +203,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     Daily rate calculations
 !***********************************************************************
-      ELSEIF (DYNAMIC .EQ. RATE) THEN
+      ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
 
       IF (FIRST) THEN     !Initializations from PHASEI, all Case(7), 
@@ -349,7 +350,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
          DEADLN = DEADLN + (DDEADLF*TMNC)
       ENDIF
       
-!     This unction was merged with PRFT
+!     This function was merged with PRFT
 !     --------beggin----RR effect of Tmean on RUE 02/15/2016
 !     IF (TEMPM .LE. 24) THEN
 !         TX_RUE = 1.0
@@ -363,10 +364,10 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
 !     Potential carbon fixation
       PT_PAR = SRAD*0.5               ! PAR = SRAD*.02092
       IF (ISTAGE .LT. 2) THEN
-!        PCARB = 3.5*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+!        PCARB = 3.5*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))     !CHP
          PCARB = RUE1*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
        ELSE
-!        PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+!        PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))     !CHP
 !        PCARB = RUE2*TX_RUE*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
          PCARB = RUE2*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
       END IF
@@ -380,8 +381,8 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
       PCO2   = TABEX (CO2Y,CO2X,CO2,10)
 !     PCARB  = PCARB*PCO2 ! original function 02/15/2016
       PCARB  = PCARB*PCO2*PRFT
-!     CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES)*SLPF + 0.5*DDEADLF ! original function 02/15/2016
 !     Modified by RR 02/15/2016
+!     CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES)*SLPF + 0.5*DDEADLF ! original function 02/15/2016
       CARBO  = PCARB*AMIN1(SWFAC, NSTRES)*SLPF + 0.5*DDEADLF 
       
       RVCUSD = 0.0                                   ! Reserve C used
@@ -583,10 +584,11 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! AVAILN = (SRVNU)+(0.5*DDEADLF*TMNC)
 
         CALL PT_NUPTAK (CONTROL,  CELLS,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NLAYR,          !Input
-     &    PLTPOP, RCNP, RTWT, SAT, TCNP, TMNC,            !Input
+     &    DUL, KG2PPM, LL, NLAYR, SAT,                    !Input
+     &    GRORT, GROTUB, ISTAGE,                          !Input
+     &    PLTPOP, RCNP, RTWT, TCNP, TMNC,                 !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
-     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
+     &    GROTOP, ROOTN, TOPSN, TUBANC,                   !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
 
