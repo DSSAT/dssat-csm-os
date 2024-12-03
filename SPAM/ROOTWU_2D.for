@@ -55,12 +55,6 @@ C-----------------------------------------------------------------------
       PARAMETER (SWCON1 = 1.32E-3)
       PARAMETER (SWCON3 = 7.01)
 
-
-!!     temp chp
-!      integer lun2
-!      type (controltype) control
-!      call get (control)
-
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -93,11 +87,6 @@ C-----------------------------------------------------------------------
           IF (LL(i,j) > 0.30) SWCON2(i,j) = 45.0
         ENDDO  
       ENDDO
-
-!      CALL GETLUN('RWU_2D.CSV',LUN2)
-!      OPEN (UNIT=LUN2, FILE='RWU_2D.CSV')
-!      WRITE(LUN2,'(A)') "2D, variable time step root water uptake"
-!      WRITE(LUN2,'(A)') "TIME(d), EOP, TRWUP, TRWU"
 
 !***********************************************************************
 !***********************************************************************

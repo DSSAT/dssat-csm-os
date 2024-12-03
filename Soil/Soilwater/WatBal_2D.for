@@ -225,47 +225,6 @@
       ENDDO
 
       SWV = CELLS % STATE % SWV
-!!     Convert the 1D soil water content
-!      CALL Interpolate2Cells_2D(
-!     &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
-!     &  SWVDeltW)                                         !Output
-!
-!!     Initial soil water content in single precision
-!      IF (BedDimension % RaisedBed) THEN
-!        DO i = 1, NRowsTot
-!          DO j = 1, NColsTot
-!!           Set all initial soil water contents to minimum of DUL and 
-!!             user-specified SW content 
-!!             (soil will be wet after construction of raised bed).
-!            SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
-!              CASE (3,4,5)
-!                SWV(i,j) = SOILPROP%DUL(i)
-!                SWA(i,j) = SOILPROP%DUL(i) - SOILPROP%LL(i)
-!              CASE DEFAULT
-!                SWV(i,j) = 0.0
-!                SWA(i,j) = 0.0
-!            END SELECT
-!          ENDDO
-!        ENDDO
-!      ELSE
-!        DO i = 1, NRowsTot
-!          DO j = 1, NColsTot
-!!           Set all initial soil water contents to DUL (soil will be wet after
-!!             construction of raised bed).
-!            SELECT CASE(CELLS(i,j)%Struc%Cell_Type)
-!              CASE (3,4,5)
-!                SWV(i,j) = SW(i)
-!                IF (SW(i) < SOILPROP%LL(i)) THEN
-!                    SW(i) = SOILPROP%LL(i)
-!                END IF
-!                SWA(i,j) = SW(i) - SOILPROP%LL(i)
-!              CASE DEFAULT
-!                SWV(i,j) = 0.0
-!                SWA(i,j) = 0.0
-!            END SELECT
-!          ENDDO
-!        ENDDO
-!      END IF
 
 !     Water table initialization
       CALL WaterTable(DYNAMIC,           
@@ -927,11 +886,6 @@
         TURFAC = TURFAC + TURFAC_ts * TSRadFrac
         SUM_TSRF = SUM_TSRF + TSRadFrac
 
-!       TEMP CHP
-!        WRITE(LUN2,'(F10.5,19(",",F10.4))') 
-!     &   CONTROL%DAS+EndTime/24.,
-!     &   EOP_ts, TRWUP_ts, TRWU_ts, SWFAC_ts, TURFAC_ts
-
 !       Calculate SW available for drainage -- reduce by 
 !       root water uptake.
         DO i = 1, NRowsTot
@@ -988,51 +942,6 @@
 !       Call NFLUX on sub-daily time step to computer N movement with water
         CALL NFLUXts_2D (
      &    CELLS, SWV_ts, SWFh_ts, SWFv_ts)       !Input
-
-!!       ---------------------------------------------------------------
-!!       Update soil water process accumulators
-!        DO i = 1, NRowsTot
-!          DO j = 1, NColsTot
-!            SELECT CASE (CELLS(i,j)%STRUC%Cell_Type)
-!            CASE (3,4,5)
-!
-!!             Horizontal flow (cm2) left and right.
-!!             SWFlux_L and SWFlux_R are both positive values and represent
-!!               the amount of water flowing thru the L and R cell boundaries.
-!              IF (SWFh_ts(i,j) < -1.E-10) THEN
-!!               Negative horizontal flow = flow to the left from (i,j+1)
-!                SWFlux_L(i,j+1) = SWFLUX_L(i,j+1) - SWFh_ts(i,j)
-!              ELSEIF (SWFh_ts(i,j) > 1.E-10) THEN
-!!               Positive horizontal flow = flow to the right from (i,j)
-!                SWFlux_R(i,j) = SWFLUX_R(i,j) + SWFh_ts(i,j)
-!              ENDIF
-!
-!!@ Need to consider upflow from water table for N movement. - Do this after water balance complete.
-!!              ! Add by Jin Wu in Feb. 2011
-!!              if (i .EQ. LIMIT_2D) THEN
-!!                 EvapFlow(LIMIT_2D,j) =
-!!     &                EvapFlow(LIMIT_2D,j) +CapilaryFlow(J) *TimeIncr
-!!                 Do iRow= LIMIT_2D, NLAYR !NRowsTot
-!!                    EvapFlow(LIMIT_2D,j) = EvapFlow(LIMIT_2D,j)+
-!!     &                EvapFlow(iRow,j)
-!!                 Enddo
-!!              Endif
-!!             Vertical flow (cm2) includes upflow.
-!!             SWFlux_U and SWFlux_D are both positive values and represent
-!!               the amount of water flowing thru the upper and lower cell boundaries.
-!! CHECK UNITS FOR Upflow_2D(i,j).  THESE SHOULD BE PER TIME STEP, NOT PER DAY!
-!              IF (SWFv_ts(i,j) < -1.E-10) THEN
-!!               Negative vertical flow = upward flow from (i+1,j)
-!                SWFlux_U(i+1,j) = SWFLUX_U(i+1,j) - SWFv_ts(i,j) 
-!              ELSEIF (SWFv_ts(i,j) > 1.E-10) THEN
-!!               Positive vertical flow = downward flow from (i,j)
-!!                SWFlux_D(i,j+1) = SWFLUX_D(i,j+1) + SWFv_ts(i,j)
-!                SWFlux_D(i,j) = SWFLUX_D(i,j) + SWFv_ts(i,j)
-!              ENDIF
-!            CASE DEFAULT; CYCLE
-!            END SELECT
-!          ENDDO
-!        ENDDO
 
         Call Calc_SW_Vol(
      &    CellArea, Cell_Type, HalfRow, SWV_ts,             !Input
@@ -1208,16 +1117,6 @@ C-----------------------------------------------------------------------
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, 
      &    Diffus, Kunsat, LatFlow, 0, 0.0, SWV_D)
-!         Temp chp
-!    &    CellArea, SWV_D, EP_vf, ES_vf_ts, 0.d0, 0.d0)
-!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol_temp, 
-!     &    INF_vol_dtal_temp)
-
-!      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
-!     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
-!     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input  dp, dp, dp, int(2), real(r,c), real(r,c), real
-!     &    Count, LatFlow,                                       !Input  int, real
-!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input real(r,c), dp(r,c), dp(r,c), dp(r,c), dp(nd), dp(r,c)
 
 !***********************************************************************
 !***********************************************************************

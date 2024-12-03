@@ -25,7 +25,7 @@ C  organic and inorganic sections.
 !    - Additions of N to the system from fertilizer and mineralization
 !         need to be halved when working with 2D simulations (because we 
 !         are simulating half a row).
-!    - Some 2D arrays are used for 1D simulations. These are NLx1 arrays 
+!    - Some 2D arrays are used for 1D simulations. These are (NL x 1) arrays 
 !         where  the entire row width is represented in a single
 !         column. Doubling of inputs is not done for 1D simulations
 !         as the entire row is being simulated.
@@ -1168,16 +1168,15 @@ C=======================================================================
 
 !*************************************************************************************************
 !*************************************************************************************************
-!    NFLUX is done in 1D for 1D simulations and 2D for 2D simulations. That is, the DLTUREA and
+!    NFLUX is used for 1D simulations and NFLUX_2D for 2D simulations. That is, the DLTUREA and
 !     DLTSNO3 are updated for 1D simulations. The DLTUREA_2D and DLTSNO3_2D are updated for the 2D 
 !     simulation. 
 
 !     At this point, the 1D processes above have changed the 1D DLT variables. 1D NFLUX
-!     will vary those 1D DLT variables further. 
+!     will further modify those 1D DLT variables. 
 
 !     If it is a 2D simulation, then the 1D processes above have not yet been incorporated into the
-!     2D flux variable. First, add in the 1D process effects to the 2D DLT variables.
-!     Then do 2D NFLUX below.
+!     2D DLT variable. First, add in the 1D process effects to the 2D DLT variables.
 !*************************************************************************************************
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.

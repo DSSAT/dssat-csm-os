@@ -575,30 +575,6 @@
 !==============================================================================
 
 !==============================================================================
-!  Subroutine Allocate_Var(Cell_Var, Var)
-!  
-!  Use ModuleDefs
-!  Implicit None
-!  SAVE
-!  
-!  Real Cell_Var(MaxRows,MaxCols)
-!  Real, Allocatable :: Var(:,:)
-!  Integer Row, Col
-!  
-!  DEALLOCATE (Var)
-!  ALLOCATE (Var(NRowsTot, NColsTot))
-!  
-!  DO Row = 1, NRowsTot
-!    DO Col = 1, NColsTot
-!      Var(Row,Col) = Cell_Var(Row,Col)
-!    ENDDO
-!  ENDDO
-!
-!  RETURN
-!  END Subroutine Allocate_Var
-!!==============================================================================
-
-!==============================================================================
   Subroutine BedLayerAdjust(SOILPROP, NLAYR0, DS0, Value, BEDHT)
 ! Takes soil layer data with pre-bed construction layer thicknesses and adjusts
 !   data for bed soil layers.  Use for initial condition data from FILEIO.

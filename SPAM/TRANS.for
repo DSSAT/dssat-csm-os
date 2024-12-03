@@ -164,7 +164,7 @@ C         will depend on whether actual soil evapo (EVAP) meets EOS
 ! KCB     Basal crop coefficient for ASCE dual Kc ET method
 ! LNUM    Current line number of input file
 ! REFET   ASCE Standardized Reference Evapotranspiration (alfalfa or grass)
-! TAVG    Average daily temperature (°C)
+! TAVG    Average daily temperature (�C)
 ! TRAT    Relative transpiration rate for CO2 values other than 330 ppm
 ! TRATIO  Function subroutine which calculates relative transpiration rate.
 !

@@ -487,12 +487,12 @@ C=======================================================================
       FLOODWAT % EF = EF
 
 !     Transfer data to storage routine
-      CALL PUT('SPAM', 'EO',  EO)
       CALL PUT('SPAM', 'EF',  EF)
       CALL PUT('SPAM', 'EM',  EM)
+      CALL PUT('SPAM', 'EO',  EO)
       CALL PUT('SPAM', 'ES',  ES)
-      CALL PUT('SPAM', 'EVAP',EVAP)
       CALL PUT('SPAM', 'EOP', EOP)
+      CALL PUT('SPAM', 'EVAP',EVAP)
       IF (.NOT. CONTROL % Sim2D) THEN
         CALL PUT('SPAM', 'EP',  EP)
         CALL PUT('SPAM', 'UH2O',RWU, NL)
@@ -514,8 +514,8 @@ C=======================================================================
         CEF = CEF + EF
         CEM = CEM + EM
         CEO = CEO + EO
-        CES = CES + ES
         CEP = CEP + EP
+        CES = CES + ES
         CEVAP=CEVAP + EVAP
         CET = CET + ET
       ENDIF
@@ -531,8 +531,8 @@ C=======================================================================
       CALL PUT('SPAM', 'CEF', CEF)
       CALL PUT('SPAM', 'CEM', CEM)
       CALL PUT('SPAM', 'CEO', CEO)
-      CALL PUT('SPAM', 'CES', CES)
       CALL PUT('SPAM', 'CEP', CEP)
+      CALL PUT('SPAM', 'CES', CES)
       CALL PUT('SPAM', 'CET', CET)
       CALL PUT('SPAM', 'ET',  ET)
       CALL PUT('SPAM', 'CEVAP', CEVAP)

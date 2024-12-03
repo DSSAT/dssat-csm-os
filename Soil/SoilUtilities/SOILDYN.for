@@ -1112,7 +1112,6 @@ C  tillage and rainfall kinetic energy
 !       Update combined soil/mulch albedo
 !       Transfer local values from constructed variables
         MULCHCOVER = MULCH % MULCHCOVER
-        MULCHALB   = MULCH % MULCHALB
 
 !       ---------------------------------------------------
 !       Update BD, DLAYR, DUL, LL based on changes to soil organic matter 

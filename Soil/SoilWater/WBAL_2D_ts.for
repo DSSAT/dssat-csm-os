@@ -18,16 +18,7 @@
      &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input
      &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input
      &    Count, LatFlow, SWV_D)                                !Input
-!         Temp chp
-!    &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input
-
-!      SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input  real, real
-!     &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input  dp, dp, dp, dp
-!     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input  dp, dp, dp, int(2), real(r,c), real(r,c), real
-!     &    Count, LatFlow,                                       !Input  int, real
-!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !Input real(r,c), dp(r,c), dp(r,c), dp(r,c), dp(nd), dp(r,c)
 !     ------------------------------------------------------------------
-!      USE ModuleDefs 
       USE Cells_2D  !temp chp
 
       USE ModuleData
@@ -45,7 +36,6 @@
       REAL NEXTTS  !TimeIncrCum, 
       REAL CUMWBAL, Diffus1, Kunsat1
 
-!      Double Precision, DIMENSION(MaxRows,MaxCols) :: WCellCBal
       REAL, DIMENSION(MaxRows,MaxCols) :: Kunsat, Diffus
 
       LOGICAL FEXIST, DOPRINT
@@ -54,12 +44,6 @@
       real MINTS
       integer, DIMENSION(MaxCells) :: rows, cols
       INTEGER DripCol(NDrpLn), DripRow(NDrpLn)
-!      Double Precision swij, swijcm2
-!      Double Precision rwuij, wbalij, esij
-!      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
-!      Double Precision, DIMENSION(MaxRows,MaxCols) :: swijcm2y,
-!     &          vOutijCum,hOutijCum,RWUijCum, ESijCum
-!      INTEGER L, J
 
       Double Precision DRAIN, IRRAMT, RAIN, RUNOFF
       Double Precision TEP, TES, TSW, TSWY
@@ -152,71 +136,6 @@
       cols      = Cell_detail%cols
       NEXTTS    = Cell_detail%NEXTTS
 
-!      
-!      IF (CONTROL%RUN < 10) THEN
-!         write (SWCellBAL, '("CellDetailW_", I1, ".OUT")')CONTROL%RUN
-!      ELSE IF (CONTROL%RUN < 100) THEN
-!         write (SWCellBAL, '("CellDetailW_", I2, ".OUT")')CONTROL%RUN
-!      ELSE
-!         write (SWCellBAL, '("CellDetailW_", I3, ".OUT")')CONTROL%RUN
-!      END IF
-!      CALL GETLUN(SWCellBAL, CLun)
-!      OPEN (UNIT = CLun, FILE = SWCellBAL, STATUS = 'REPLACE')
-!      WRITE(CLun,'("*WATER BALANCE FOR CELL(",I2,",",I2,")")') 
-!     &      Cell_detail%row, Cell_detail%col
-!      CALL HEADER(SEASINIT, CLun, CONTROL % RUN)
-!      WRITE (CLun,1130)
-! 1130 FORMAT('@YEAR DOY   DAS   TIME   INCR ROW COL',
-!     & '       SWV',                               !State vars
-!!     & '      H_in      V_in',                     !Inflows
-!!     & '     H_out     V_out     RWUij      ESij', !Outflows
-!!     & '      WBAL   CUMWBAL',                     !Balance
-!!     & ' SW(i-1,j) SW(i,j-1)   SW(i,j) SW(i,j+1) SW(i+1,j)', !Extra info
-!     & '     H_cum     V_cum   RWU_cum    ES_cum') !Cumulative info
-!!     & '    Diffus',           !Extra info
-!!     & '    Kunsat     VoutD     VoutG') !Extra info
-!     
-!      JJ = 1
-!      DO L = 1, NRowsTot
-!        DO J = 1, NColsTot
-!          IF (L .LT. BedDimension%FurRow1 .AND. 
-!     &          J .GE. BedDimension%FurCol1) CYCLE
-!          
-!          IF (PTFLG .EQ. 5) THEN
-!              IF (JJ .GT. MAXCELLS) CYCLE
-!              IF (L .NE. rows(jj) .OR. J .NE. cols(jj)) CYCLE
-!          END IF
-!
-!          SWijcm2  = SWV_D(L, J)*CellArea(L, J)   !cm2
-!          SWij     = SWV_D(L, J)
-!
-!          IF ((detailRow .EQ. L .AND. detailCol .EQ. J) .OR. 
-!     &         (L .LE. detailRow + MULTI .AND. 
-!     &          L .GE. detailRow - MULTI .AND. PTFLG .EQ. 1) .OR.
-!     &         (J .LE. detailCol + MULTI .AND. 
-!     &          J .GE. detailCol - MULTI .AND. PTFLG .EQ. 2) .OR.
-!     &         PTFLG .EQ. 3 .OR. PTFLG .EQ. 5) THEN
-!            WRITE (CLUN,1320) YR2, DY2, DAS, 0.0, 0.0, L, J,
-!     &            SWV_D(L, J),                !State variables
-!!     &            0.0, 0.0,                   !Inflows
-!!     &            0.0, 0.0, 0.0, 0.0,         !Outflows
-!!     &            0.0, 0.0,                   !Balance
-!     &            0.0, 0.0, 0.0, 0.0          !Cumulative
-!!     &            0.0, 0.0, 0.0, 0.0          !Extras
-!          END IF
-!
-!          SWijcm2y(L, J) = SWijcm2
-!          JJ = JJ + 1
-!
-!        END DO
-!      END DO
-!      WCellCBal = 0.0
-!      vOutijCum = 0
-!      hOutijCum = 0
-!      RWUijCum = 0
-!      ESijCum = 0
-!      TimeIncrCum = 0
-
 !***********************************************************************
 !***********************************************************************
 !     DAILY OUTPUT 
@@ -241,6 +160,8 @@
         If (Count .eq. 1)  WBALAN =  WBALAN - LatFlow_ts + LatFlow
         CUMWBAL = CUMWBAL + WBALAN
 
+!       CritCell is the cell that controls the calculation of the minimum time 
+!       step required to ensure stability.
         IF (CritCell(1) > 0 .and. CritCell(1) <= NRowsTot .and. 
      &      CritCell(2) > 0 .and. CritCell(2) <= NColsTot) THEN
           Diffus1 = Diffus(CritCell(1),CritCell(2))
@@ -289,153 +210,6 @@
         !Save values for comparison tomorrow
         TSWY   = TSW
 
-!!     --------------------------------------------------------------------
-!!     temp chp
-!!     Water balance detail for one cell in cm2
-!      DO IDL = 1, NDripLnTOT
-!        L = DripRow(IDL)
-!        J = DripCol(IDL)
-!        Cell_detail%v_in(L, J) = Cell_detail%v_in(L, J) + IrrVol(IDL)
-!        Cell_detail%IrrVol(L, J) = Cell_detail%IrrVol(L, J) +IrrVol(IDL)
-!      END DO
-!      JJ = 1
-!      TimeIncrCum = TimeIncrCum + TimeIncr
-!      DO L = 1, NRowsTot
-!        DO J = 1, NColsTot
-!          IF (PTFLG .EQ. 5) THEN
-!              IF (JJ .GT. MAXCELLS) CYCLE
-!              IF (L .NE. rows(jj) .OR. J .NE. cols(jj)) CYCLE
-!          END IF
-!          IF (L .LT. BedDimension%FurRow1 
-!     &          .AND. J .GE. BedDimension%FurCol1) CYCLE
-!
-!!         Within furrow, add infiltration to top cells
-!          Cell_detail%v_in(L, J) = Cell_detail%v_in(L, J) + 
-!     &          INF_vol_dtal(L, J) * CellArea(L, J)
-!          Cell_detail%InfVol(L, J) = Cell_detail%InfVol(L, J) + 
-!     &          INF_vol_dtal(L, J) * CellArea(L, J)
-!          !INF_vol = WINF_col(j) * 0.1 * DayIncr / Thick(FurRow1,j)
-!!           cm3[water]   mm[water]   cm         1           
-!!           ---------- = --------- * -- * d * --------
-!!            cm3[soil]       d       mm       cm[soil]   
-!        
-!          if (BedDimension % LIMIT_2D . LT. L) then
-!            Cell_detail%v_in(L, J) = -999999
-!          Endif
-!
-!          SWijcm2  = SWV_D(L, J)*CellArea(L, J)   !cm2
-!          SWij     = SWV_D(L, J) !cm3/cm3
-!
-!          RWUij = ep_vf(L, J) * CellArea(L, J)
-!          ESij = es_vf_ts(L, J) * CellArea(L, J)
-!          if (abs(Cell_detail%v_in(L, J) - 999999) .LT. 0.00001) then 
-!            WBALij = -999999
-!          elseif (abs(Cell_detail%v_out(L, J) - 999999).LT.0.00001)then 
-!            WBALij = -999999
-!          else 
-!            WBALij = 
-!!             Inflows
-!     &         + Cell_detail%h_in(L, J) + Cell_detail%v_in(L, J)     
-!!             Outflows
-!     &         - Cell_detail%h_out(L, J) - Cell_detail%v_out(L, J)   
-!!             Outflows
-!     &         - RWUij - ESij                                        
-!!             Change in soil water
-!     &         - (SWijcm2 - SWijcm2y(L, J)) 
-!                         
-!            WCellCBal(L, J) = WCellCBal(L, J) + WBALij 
-!            vOutijCum(L, J) = vOutijCum(L, J) + Cell_detail%v_out(L, J)
-!            hOutijCum(L, J) = hOutijCum(L, J) + Cell_detail%h_out(L, J)
-!            RWUijCum(L, J) = RWUijCum(L, J) + RWUij
-!            ESijCum(L, J) = ESijCum(L, J) + ESij
-!          endif
-!
-!          IF ((PTFLG .EQ. 4 .AND. 
-!     &          (WBALij .LT. -1e-6 .OR. WBALij .GT. 1e-6)) .OR.
-!     &        (PTFLG .EQ. 0 .AND. 
-!     &          detailRow .EQ. L .AND. detailCol .EQ. J) .OR. 
-!     &        (PTFLG .EQ. 1 .AND. 
-!     &          L .LE. detailRow + MULTI .AND. L .GE. detailRow - MULTI)
-!     &           .OR.
-!     &        (PTFLG .EQ. 2 .AND. 
-!     &          J .LE. detailCol + MULTI .AND. J .GE. detailCol - MULTI)
-!     &           .OR.
-!     &        (PTFLG .EQ. 3 .AND. 
-!     &          DAS .GE. cell_detail%start 
-!     &          .AND. DAS .LE. cell_detail%fin) .OR. 
-!     &        (PTFLG .EQ. 5 .AND. 
-!     &          DAS .GE. cell_detail%start 
-!     &          .AND. DAS .LE. cell_detail%fin)) THEN
-!            IF (MINTS .LE. 0) THEN
-!              WRITE (CLUN,1320) YR2, DY2, DAS, Time, TimeIncr, L, J,
-!     &            SWV_D(L, J),                                             !State vars
-!!     &            Cell_detail%h_in(L, J), Cell_detail%v_in(L, J),      !Inflows
-!!     &            Cell_detail%h_out(L, J), Cell_detail%v_out(L, J),    !Outflows
-!!     &            RWUij, ESij,                                         !Outflows
-!!     &            WBALij, WCellCBal(L, J),                             !Balance
-!     &            hOutijCum(L, J), vOutijCum(L, J),       !Cumulative
-!     &            RWUijCum(L, J), ESijCum(L, J)           !Cumulative
-!!     &            Diffus(L, J), Kunsat(L, J),                          !Extra
-!!     &            Cell_detail%vdiff(L, J), Cell_detail%vgrav(L, J)     !Extra
-!            ELSE IF((NEXTTS .NE. 24 
-!     &          .AND. ABS(Time - NEXTTS) .LE. 0.01) .OR.
-!     &              (Time .EQ. 24 .AND. NEXTTS .EQ. 24)) THEN
-!              WRITE (CLUN,1320) YR2, DY2, DAS, Time, TimeIncrCum, L, J,
-!     &            SWV_D(L, J),                                             !State vars
-!!     &            Cell_detail%h_in(L, J), Cell_detail%v_in(L, J),      !Inflows
-!!     &            Cell_detail%h_out(L, J), Cell_detail%v_out(L, J),    !Outflows
-!!     &            RWUij, ESij,                                         !Outflows
-!!     &            WBALij, WCellCBal(L, J),                             !Balance
-!     &            hOutijCum(L, J), vOutijCum(L, J),      !Cumulative
-!     &            RWUijCum(L, J), ESijCum(L, J)          !Cumulative
-!!     &            Diffus(L, J), Kunsat(L, J),                          !Extra
-!!     &            Cell_detail%vdiff(L, J), Cell_detail%vgrav(L, J)     !Extra
-!            ELSE IF(Time .GT. NEXTTS) THEN
-!              WRITE (CLUN,1320) YR2, DY2, DAS, Time, TimeIncrCum, L, J,
-!     &            SWV_D(L, J),                                             !State vars
-!!     &            Cell_detail%h_in(L, J), Cell_detail%v_in(L, J),      !Inflows
-!!     &            Cell_detail%h_out(L, J), Cell_detail%v_out(L, J),    !Outflows
-!!     &            RWUij, ESij,                                         !Outflows
-!!     &            WBALij, WCellCBal(L, J),                             !Balance
-!     &            hOutijCum(L, J), vOutijCum(L, J),        !Cumulative
-!     &            RWUijCum(L, J), ESijCum(L, J)            !Cumulative
-!!     &            Diffus(L, J), Kunsat(L, J),                          !Extra
-!!     &            Cell_detail%vdiff(L, J), Cell_detail%vgrav(L, J)     !Extra
-!            END IF
-!          ENDIF
-!
-!          SWijcm2y(L, J) = SWijcm2
-!          JJ = JJ + 1
-!        END DO
-!      END DO
-!      IF((NEXTTS .NE. 24 .AND. ABS(Time - NEXTTS) .LE. 0.01) .OR.
-!     &   (Time .EQ. 24 .AND. NEXTTS .EQ. 24)) THEN
-!        NEXTTS = NEXTTS + MINTS
-!        Cell_detail%NEXTTS = NEXTTS
-!        vOutijCum = 0
-!        hOutijCum = 0
-!        RWUijCum = 0
-!        ESijCum = 0
-!        TimeIncrCum = 0
-!      ELSE IF(Time .GT. NEXTTS) THEN
-!        DO WHILE (Time .GT. NEXTTS)
-!          NEXTTS = NEXTTS + MINTS
-!        END DO
-!        Cell_detail%NEXTTS = NEXTTS
-!        vOutijCum = 0
-!        hOutijCum = 0
-!        RWUijCum = 0
-!        ESijCum = 0
-!        TimeIncrCum = 0
-!      END IF
-!      IF (NEXTTS .GE. 24) THEN
-!        NEXTTS = NEXTTS - 24
-!        Cell_detail%NEXTTS = NEXTTS
-!      END IF
-!
-!!1320  FORMAT(I4,1X,1X,I3.3,1X,I5,1X,F6.2,1X,F6.1,1X,I3,1X,I3,9F10.6,F10.2,3F10.6)
-!1320  FORMAT(I4,1X,1X,I3.3,1X,I5,1X,F6.2,1X,
-!     &          F6.1,1X,I3,1X,I3,9F10.6,4(1X,F10.5))
 !***********************************************************************
 !***********************************************************************
 !     SEASEND - Seasonal output

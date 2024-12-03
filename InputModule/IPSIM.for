@@ -335,7 +335,6 @@ C
 !          2D soil water and N processes. Not compatible with tillage
            MESOL  = 'D'
            ISWTIL = 'N'
-!          MESEV  = 'R'
          CASE ('R')
            CONTROL % SIM2D = .FALSE.
            IF (INDEX('123',MESOL) < 1) THEN

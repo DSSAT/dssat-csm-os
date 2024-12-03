@@ -315,7 +315,7 @@ C-----------------------------------------------------------------------
      &    MDATE, OMADATA, TILLVALS, YRPLT)                !Output
 
 !-----------------------------------------------------------------------
-!     For 2D model, SPAM must be called before WATBAL
+!     For 2D model, SOILDYN and SPAM must be called before WATBAL
 !     Call Soil-plant-atmosphere module to determine today's
 !     rates of evapotranspiration.
 !-----------------------------------------------------------------------
