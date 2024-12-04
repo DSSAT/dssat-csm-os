@@ -706,6 +706,12 @@ Incompatibility between Century SOM method and flooded field management.
 LAND      2
 Planting date is defined prior to the start of simulation date.
 
+LTGROW   10
+Percent Lint (PCTLT) missing in the Ecotype file. Please correct file. 
+
+LTGROW   11
+Percent Lint (PCTLT) out of range. Range is from 25 to 60. Please correct file.
+
 MODELN    1
 Error opening file. Please check file.
 

@@ -20,6 +20,7 @@ C                   a sequence occurs on Jan 1.
 !  10/18/2016 CHP Read daily ozone values (ppb)
 !  05/28/2021 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
 !  08/20/2021 FO  Added support for LAT, LONG and ELEV to NASA format files.
+!  11/19/2024 FO  Added protection for NaN data.
 C-----------------------------------------------------------------------
 C  Called by: WEATHR
 C  Calls:     None
@@ -404,7 +405,7 @@ C     The components are copied into local variables for use here.
               CASE('LAT','WTHLAT')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XLAT
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CYCRD
-                IF (ERR .NE. 0) THEN
+                IF (ERR .NE. 0 .OR. ISNAN(XLAT)) THEN
                   XLAT = 0.0
                   MSG(1) = 'Error reading latitude, value of zero'
      &              //  ' will be used.'
@@ -414,32 +415,32 @@ C     The components are copied into local variables for use here.
               CASE('LONG','WTHLONG')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XLONG
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CXCRD
-                IF (ERR .NE. 0) XLONG = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(XLONG)) XLONG = -99.0
 
               CASE('ELEV','WELEV')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) XELEV
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CELEV
-                IF (ERR .NE. 0) XELEV = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(XELEV)) XELEV = -99.0
 
               CASE('TAV')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) TAV
-                IF (ERR .NE. 0) TAV = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(TAV)) TAV = -99.0
 
               CASE('AMP')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) TAMP
-                IF (ERR .NE. 0) TAMP = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(TAMP)) TAMP = -99.0
 
               CASE('REFHT')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) REFHT
-                IF (ERR .NE. 0) REFHT = 1.5
+                IF (ERR .NE. 0 .OR. ISNAN(REFHT)) REFHT = 1.5
 
               CASE('WNDHT')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) WINDHT
-                IF (ERR .NE. 0) WINDHT = 2.0
+                IF (ERR .NE. 0 .OR. ISNAN(WINDHT)) WINDHT = 2.0
 
               CASE('CCO2','CO2')
                 READ(LINE(C1:C2),*,IOSTAT=ERR) CCO2
-                IF (ERR .NE. 0) CCO2 = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(CCO2)) CCO2 = -99.0
             END SELECT
           ENDIF
         ENDDO
@@ -1021,49 +1022,49 @@ C         Read in weather file header.
 
               CASE('SRAD')  !Solar radiation MJ/m2/d
                 READ(LINE(C1:C2),*,IOSTAT=ERR) SRAD
-                IF (ERR .NE. 0) SRAD = -99.
+                IF (ERR .NE. 0 .OR. ISNAN(SRAD)) SRAD = -99.
 
               CASE('TMAX')  !Max daily temperature (C)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) TMAX
-                IF (ERR .NE. 0) TMAX = -99.
+                IF (ERR .NE. 0 .OR. ISNAN(TMAX)) TMAX = -99.
 
               CASE('TMIN')  !Min daily temperature (C)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) TMIN
-                IF (ERR .NE. 0) TMIN = -99.
+                IF (ERR .NE. 0 .OR. ISNAN(TMIN)) TMIN = -99.
 
               CASE('RAIN')  !Daily precip (mm)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) RAIN
-                IF (ERR .NE. 0) RAIN = -99.
+                IF (ERR .NE. 0 .OR. ISNAN(RAIN)) RAIN = -99.
 
               CASE('DEWP', 'TDEW')  !Dewpoint temp (C)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) TDEW
-                IF (ERR .NE. 0) TDEW = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(TDEW)) TDEW = -99.0
 
               CASE('WIND')  !Daily wind run (km/d)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) WINDSP
-                IF (ERR .NE. 0) WINDSP = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(WINDSP)) WINDSP = -99.0
 
               CASE('PAR')   
 !               Photosynthetically active radiation (Einstein/m2/day)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) PAR
-                IF (ERR .NE. 0) PAR = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(PAR)) PAR = -99.0
 
               CASE('RHUM')  
 !               Relative humidity at TMIN (or max rel. hum) (%)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) RHUM
-                IF (ERR .NE. 0) RHUM = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(RHUM)) RHUM = -99.0
 
               CASE('VAPR','VPRS')   !Vapor pressure (kPa)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) VAPR
-                IF (ERR .NE. 0) VAPR = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(VAPR)) VAPR = -99.0
 
               CASE('DCO2','CO2')   !Atmospheric CO2 (ppm)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) DCO2
-                IF (ERR .NE. 0) DCO2 = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(DCO2)) DCO2 = -99.0
 
               CASE('OZON7')   !Daily 7-hr mean ozone conc, ppb (9am-4pm)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) OZON7
-                IF (ERR .NE. 0) OZON7 = -99.0
+                IF (ERR .NE. 0 .OR. ISNAN(OZON7)) OZON7 = -99.0
             END SELECT
           ENDDO
 

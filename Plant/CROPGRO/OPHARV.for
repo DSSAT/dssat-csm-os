@@ -23,6 +23,7 @@ C  02/09/2007 GH  Add path for FileA
 C  07/08/2022 GH  Add CU for Cucumber
 C  05/01/2023 GH  Add GY for Guar; SR for Strawberry
 !  06/20/2024 FO  Added Economic Yield for Evaluate and Summary
+!  06/27/2024 FO  Added Lint Percentage for Evaluate
 !  07/11/2024 FO  Added Economic standard output format
 !  10/11/2024 GH  Add AM for Amaranth
 C=======================================================================
@@ -34,7 +35,7 @@ C=======================================================================
      &    SEEDNO, STGDOY, SWFAC, TOPWT, TURFAC,           !Input
      &    VSTAGE, WTNCAN, WTNFX, WTNSD, WTNST, WTNUP,     !Input
      &    XLAI, RSTAGE, YREMRG, YRNR1, YRNR3, YRNR5,      !Input
-     &    YRNR7, YRPLT,                                   !Input
+     &    YRNR7, YRPLT, LINTW, LINTP,                     !Input
      &    SDWTAH)                                         !Output
 
 C-----------------------------------------------------------------------
@@ -67,7 +68,7 @@ C-----------------------------------------------------------------------
 
       REAL BIOMAS, BWAH, CANHT, CANNAA, CANWAA, HI, HWAH, HWAM
       REAL LAIMX, PCLSD, PCNSD, PODWT, PODNO, PSDWT, PSPP
-      REAL SDRATE, SDWT, SDWTAH, SEEDNO, EYLDH, ROUND
+      REAL SDRATE, SDWT, SDWTAH, SEEDNO, EYLDH, ROUND, LINTW, LINTP
       REAL THRES, TOPWT, VSTAGE
       REAL WTNCAN, WTNFX, WTNSD, WTNST, WTNUP, XLAI
       REAL, DIMENSION(2) :: HARVFRAC
@@ -110,7 +111,7 @@ C-----------------------------------------------------------------------
       IDETO = ISWITCH % IDETO
       IPLTI = ISWITCH % IPLTI
 
-      ACOUNT = 26  !Number of possible FILEA headers for this crop
+      ACOUNT = 27  !Number of possible FILEA headers for this crop
 
 !CHP 12/16/2004 Need to be able to read FILEA headers of either
 !     'BWAM' or 'BWAH' and interpret data as 'BWAM'
@@ -126,25 +127,26 @@ C-----------------------------------------------------------------------
      & 'R8AT  ',  ! 6 DNR8           DHRV   Harvest Maturity (dap)
      & 'HWAM  ',  ! 7 NINT(SDWT*10)  XGWT   Seed Yield (kg/ha;dry)
      & 'EYLDH ',  ! 8 EYLDH          EYLDH  Economic Yield
-     & 'PWAM  ',  ! 9 NINT(PODWT*10) XPDW   Pod Yield (kg/ha;dry) 
-     & 'CWAA  ',  !10 NINT(CANWAA*10)XCWAA  Biomass (kg/ha) at Anth
-     & 'CWAM  ',  !11 NINT(TOPWT*10) XCWT   Biomass (kg/ha) Harv Mat
-     & 'BWAM  ',  !12 (TOPWT-PODWT)*10 XSWT Tops - seed (kg/ha) @Mat
-     & 'H#AM  ',  !13 NINT(SEEDNO)   XNOGR  Seed Number (Seed/m2)
-     & 'HWUM  ',  !14 PSDWT          XGWU   Weight Per Seed (g;dry)
-     & 'H#UM  ',  !15 PSPP           XNOGU  Seeds/Pod
-     & 'HIAM  ',  !16 HI             XHIN   Harvest Index (kg/kg)
-     & 'THAM  ',  !17 THRES          XTHR   Shelling Percentage (%)
-     & 'LAIX  ',  !18 LAIMX          XLAM   Maximum LAI (m2/m2)
-     & 'L#SM  ',  !19 VSTAGE         XLFNO  Final Leaf # Main Stem
-     & 'CHTA  ',  !20 CANHT          XCNHT  Canopy Height (m)
-     & 'CNAA  ',  !21                XCNAA  Biomass N @ anth (kg/ha)
-     & 'CNAM  ',  !22 NINT(WTNCAN*10)XNTP   Biomass N (kg N/ha)
-     & 'SNAM  ',  !23 NINT(WTNST*10) XNST   Stalk N (kg N/ha)
-     & 'GNAM  ',  !24 NINT(WTNSD*10) XNGR   Seed N (kg N/ha)
-     & 'GN%M  ',  !25 PCNSD          XNPS   Seed N (%)
-     & 'GL%M  ',  !26 PCLSD          XLPS   Seed Lipid (%)
-     & 14*'      '/
+     & 'LINTP ',  ! 9 LINTP          LINTP  Percent Lint (%)
+     & 'PWAM  ',  !10 NINT(PODWT*10) XPDW   Pod Yield (kg/ha;dry) 
+     & 'CWAA  ',  !11 NINT(CANWAA*10)XCWAA  Biomass (kg/ha) at Anth
+     & 'CWAM  ',  !12 NINT(TOPWT*10) XCWT   Biomass (kg/ha) Harv Mat
+     & 'BWAM  ',  !13 (TOPWT-PODWT)*10 XSWT Tops - seed (kg/ha) @Mat
+     & 'H#AM  ',  !14 NINT(SEEDNO)   XNOGR  Seed Number (Seed/m2)
+     & 'HWUM  ',  !15 PSDWT          XGWU   Weight Per Seed (g;dry)
+     & 'H#UM  ',  !16 PSPP           XNOGU  Seeds/Pod
+     & 'HIAM  ',  !17 HI             XHIN   Harvest Index (kg/kg)
+     & 'THAM  ',  !18 THRES          XTHR   Shelling Percentage (%)
+     & 'LAIX  ',  !19 LAIMX          XLAM   Maximum LAI (m2/m2)
+     & 'L#SM  ',  !20 VSTAGE         XLFNO  Final Leaf # Main Stem
+     & 'CHTA  ',  !21 CANHT          XCNHT  Canopy Height (m)
+     & 'CNAA  ',  !22                XCNAA  Biomass N @ anth (kg/ha)
+     & 'CNAM  ',  !23 NINT(WTNCAN*10)XNTP   Biomass N (kg N/ha)
+     & 'SNAM  ',  !24 NINT(WTNST*10) XNST   Stalk N (kg N/ha)
+     & 'GNAM  ',  !25 NINT(WTNSD*10) XNGR   Seed N (kg N/ha)
+     & 'GN%M  ',  !26 PCNSD          XNPS   Seed N (%)
+     & 'GL%M  ',  !27 PCLSD          XLPS   Seed Lipid (%)
+     & 13*'      '/
 !     GWAH    !Grain weight at harvest (kg/ha)
 !     CWAH    !Canopy weight at harvest (kg/ha)
 !     FWAH    !Fruit weight at harvest (kg/ha)
@@ -351,7 +353,8 @@ C-----------------------------------------------------------------------
       
       ! 2024-06-20 FO - Economic Yield for Cotton.
       IF(CROP .EQ. 'CO') THEN
-        EYLDH = -99.0
+        ! Units from g/m2 to ton/ha
+        EYLDH = LINTW / 100
       ENDIF
       
       ! 2024-07-11 FO - Economic standard output format
@@ -507,42 +510,46 @@ C-----------------------------------------------------------------------
         WRITE(Simulated(8),FMT) iEYLDH; 
                                   WRITE(Measured(8),'(A8)')TRIM(X(8))
       ENDIF
-      WRITE(Simulated(9),' (I8)') NINT(PODWT*10); 
-                                  WRITE(Measured(9),'(A8)') TRIM(X(9))
-      WRITE(Simulated(10), '(I8)') NINT(CANWAA*10);
-                                  WRITE(Measured(10),'(A8)')TRIM(X(10))
-      WRITE(Simulated(11),'(I8)') NINT(TOPWT*10); 
+      IF(CROP .EQ. 'CO') THEN
+        WRITE(Simulated(9),'(F8.1)') LINTP; 
+                                  WRITE(Measured(9),'(A8)')TRIM(X(9))
+      ENDIF
+      WRITE(Simulated(10),' (I8)') NINT(PODWT*10); 
+                                  WRITE(Measured(10),'(A8)') TRIM(X(10))
+      WRITE(Simulated(11), '(I8)') NINT(CANWAA*10);
                                   WRITE(Measured(11),'(A8)')TRIM(X(11))
-      WRITE(Simulated(12),'(I8)') NINT(TOPWT-SDWT)*10; 
+      WRITE(Simulated(12),'(I8)') NINT(TOPWT*10); 
                                   WRITE(Measured(12),'(A8)')TRIM(X(12))
-      WRITE(Simulated(13),'(I8)') NINT(SEEDNO);   
+      WRITE(Simulated(13),'(I8)') NINT(TOPWT-SDWT)*10; 
                                   WRITE(Measured(13),'(A8)')TRIM(X(13))
-      WRITE(Simulated(14),'(F8.4)')PSDWT;
+      WRITE(Simulated(14),'(I8)') NINT(SEEDNO);   
                                   WRITE(Measured(14),'(A8)')TRIM(X(14))
-      WRITE(Simulated(15),'(F8.2)')PSPP; 
+      WRITE(Simulated(15),'(F8.4)')PSDWT;
                                   WRITE(Measured(15),'(A8)')TRIM(X(15))
-      WRITE(Simulated(16),'(F8.3)')HI;   
+      WRITE(Simulated(16),'(F8.2)')PSPP; 
                                   WRITE(Measured(16),'(A8)')TRIM(X(16))
-      WRITE(Simulated(17),'(F8.2)')THRES;
+      WRITE(Simulated(17),'(F8.3)')HI;   
                                   WRITE(Measured(17),'(A8)')TRIM(X(17))
-      WRITE(Simulated(18),'(F8.2)')LAIMX;
+      WRITE(Simulated(18),'(F8.2)')THRES;
                                   WRITE(Measured(18),'(A8)')TRIM(X(18))
-      WRITE(Simulated(19),'(F8.2)')VSTAGE;
+      WRITE(Simulated(19),'(F8.2)')LAIMX;
                                   WRITE(Measured(19),'(A8)')TRIM(X(19))
-      WRITE(Simulated(20),'(F8.2)')CANHT;
+      WRITE(Simulated(20),'(F8.2)')VSTAGE;
                                   WRITE(Measured(20),'(A8)')TRIM(X(20))
-      WRITE(Simulated(21),'(I8)') NINT(CANNAA*10);
+      WRITE(Simulated(21),'(F8.2)')CANHT;
                                   WRITE(Measured(21),'(A8)')TRIM(X(21))
-      WRITE(Simulated(22),'(I8)') NINT(WTNCAN*10);
+      WRITE(Simulated(22),'(I8)') NINT(CANNAA*10);
                                   WRITE(Measured(22),'(A8)')TRIM(X(22))
-      WRITE(Simulated(23),'(I8)') NINT(WTNST*10); 
+      WRITE(Simulated(23),'(I8)') NINT(WTNCAN*10);
                                   WRITE(Measured(23),'(A8)')TRIM(X(23))
-      WRITE(Simulated(24),'(I8)') NINT(WTNSD*10); 
+      WRITE(Simulated(24),'(I8)') NINT(WTNST*10); 
                                   WRITE(Measured(24),'(A8)')TRIM(X(24))
-      WRITE(Simulated(25),'(F8.2)')PCNSD;
+      WRITE(Simulated(25),'(I8)') NINT(WTNSD*10); 
                                   WRITE(Measured(25),'(A8)')TRIM(X(25))
-      WRITE(Simulated(26),'(F8.2)')PCLSD;
+      WRITE(Simulated(26),'(F8.2)')PCNSD;
                                   WRITE(Measured(26),'(A8)')TRIM(X(26))
+      WRITE(Simulated(27),'(F8.2)')PCLSD;
+                                  WRITE(Measured(27),'(A8)')TRIM(X(27))
       ENDIF  
 
       IF (CONTROL % ERRCODE > 0) THEN

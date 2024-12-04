@@ -1,8 +1,8 @@
 *Codes for Simulations Options
-! DSSAT v4.8; 10/12/2024
-!
-! Codes currently used for simulation options for the DSSAT crop simulation
-! models.
+! DSSAT v4.8; 2024-12-01
+
+! Codes currently used for simulation options for the DSSAT Cropping System
+! Model
 
 *Start Simulation
 @CDE     DESCRIPTION                                                          SO
@@ -183,12 +183,12 @@ CRGRO    SR   CROPGRO-Strawberry
 CRGRO    SU   CROPGRO-Sunflower
 CRGRO    TM   CROPGRO-Tomato
 CRGRO    VB   CROPGRO-Velvetbean
-CSCER    BA   CROPSIM-CERES-Barley
-CSCER    WH   CROPSIM-CERES-Wheat
-CSCRP    BA   CSCRP-Barley
-CSCAS    CS   CSCAS-Cassava
+CSCER    BA   CERES-Barley
+CSCER    WH   CERES-Wheat
+CSCRP    BA   CROPSIM-Barley
+CSCRP    WH   CROPSIM-Wheat
+CSCAS    CS   CROPSIM-Cassava
 CSYCA    CS   MANIHOT-Cassava
-CSCRP    WH   CSCRP-Wheat
 MLCER    ML   CERES-Millet
 MZCER    MZ   CERES-Maize
 MZIXM    MZ   IXIM-Maize
@@ -211,4 +211,3 @@ PRFRM    BH   FORAGE-Bahiagrass
 PRFRM    AL   FORAGE-Alfalfa
 PRFRM    GG   FORAGE-Guinea grass
 SUOIL    SU   OILCROP-Sunflower
-

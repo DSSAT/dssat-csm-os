@@ -112,7 +112,13 @@
       ELSEIF (OPREAL.GT.99.99 .AND. OPREAL.LT.999.9)THEN
         WRITE (OPLINE,'(1X,F5.1)') OPREAL
       ELSE
-        WRITE (OPLINE,'(1X,I5)') NINT(OPREAL)
+        !TF - added if statement to avoid crashing when 
+        ! OPREAL is larger than 99999
+        IF(OPREAL .GT. 99999) THEN
+          WRITE (OPLINE,'(1X,I5)') -99
+        ELSE
+          WRITE (OPLINE,'(1X,I5)') NINT(OPREAL)
+        ENDIF
       ENDIF
 
       RETURN

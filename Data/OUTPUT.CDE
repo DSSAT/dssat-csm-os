@@ -1,7 +1,7 @@
 *CSM OUTPUT FILES
-! DSSAT v4.8; 2023-05-11
-!
-! Output files currently created by DSSAT crop simulation models.
+! DSSAT v4.8; 2024-12-01
+
+! Output files currently created by the DSSAT Cropping System Model
 !
 @NAME......... CDE Description....................................... ALIAS
 !Daily output files:

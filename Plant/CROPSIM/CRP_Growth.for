@@ -1622,7 +1622,9 @@
                     LAPOTX(LNUMSG+1) = LAPOTX(LNUMSG)*(1.0+LAFR)
                   ENDIF
                 ENDIF    
-                IF (LAPOTX(LNUMSG+1).GT.LAXS) LAPOTX(LNUMSG+1) = LAXS
+                IF(LNUMSG .LT. LNUMX) THEN
+                  IF (LAPOTX(LNUMSG+1).GT.LAXS) LAPOTX(LNUMSG+1) = LAXS
+                ENDIF  
 
                 IF (RSTAGE.GE.LAFST) THEN
                   IF(LNUMSG.GT.0 .AND. LAFSWITCH.LE.0.0) THEN

@@ -5,6 +5,7 @@ C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  11/01/2001 CHP Written
 C  06/07/2002 GH  Modified for crop rotations
+C  11/24/2024 FO  Updated Verbose mode for SoilTemp.OUT
 C-----------------------------------------------------------------------
 C  Called from:   STEMP
 C  Calls:         None
@@ -21,7 +22,7 @@ C=======================================================================
       EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
-      CHARACTER*1  RNMODE
+      CHARACTER*1  RNMODE, IDETL, IDETW, ISWWAT
       CHARACTER*12 OUTT
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, L, N_LYR
@@ -39,14 +40,17 @@ C=======================================================================
       TYPE (SwitchType)  ISWITCH
       TYPE (SoilType)    SOILPROP
 
-      IF (INDEX('N0',ISWITCH % IDETL) > 0) RETURN
-
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
       FROP    = CONTROL % FROP
       YRDOY   = CONTROL % YRDOY
+      
+      FMOPT   = ISWITCH % FMOPT
+      IDETL   = ISWITCH % IDETL
+      IDETW   = ISWITCH % IDETW
+      ISWWAT  = ISWITCH % ISWWAT
 
-      FMOPT   = ISWITCH % FMOPT   ! VSH
+      IF(IDETW == 'N' .OR. IDETL == '0' .OR. ISWWAT == 'N') RETURN
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season

@@ -600,9 +600,9 @@ C-------------------------------------------------------------------
      &'SITE INFORMATION.....................',
      &'........................................ ',
      &'DATES..................................................  ',
-     &'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
-     &'....................   ',
-     &'FRESH WEIGHT..................................  ',
+     &'DRY WEIGHT, YIELD AND YIELD COMPONENTS, AND ECONOMIC YIELD',
+     &'.............................  ',
+     &'FRESH WEIGHT..........................  ',
      &'WATER...............................................  ',
      &'NITROGEN..................................................  ',
      &'PHOSPHORUS............  ',
@@ -624,8 +624,8 @@ C-------------------------------------------------------------------
      &   '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT   HYEAR',
      &   '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
 !    &   '    HWUM  H#AM    H#UM  HIAM  LAIX',
-     &   '    HWUM    H#AM    H#UM  HIAM  LAIX',
-     &   '   FCWAM   FHWAM   HWAHF   FBWAH   FPWAM    EYLDH',
+     &   '    HWUM    H#AM    H#UM  HIAM  LAIX    EYLDH',
+     &   '   FCWAM   FHWAM   HWAHF   FBWAH   FPWAM',
      &   '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
      &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM NMINC  CNAM  GNAM N2OEM',
 !    &   '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
@@ -732,16 +732,11 @@ C-------------------------------------------------------------------
           FBWAH = FBWAH * 10.
         ENDIF
 
-        WRITE (NOUTDS,502,ADVANCE='NO') LAIX, 
-     &    FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH), FPWAM 
-
-502     FORMAT(                                
+        WRITE (NOUTDS,510,ADVANCE='NO') LAIX
+510     FORMAT(                                
 !       LAIX,
-     &  F6.1, 
-                                              
-!       FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH*10.), FPWAM
-     &  5(1X,I7))
-          
+     &  F6.1)
+
         ! 2024-07-11 FO - Economic standard output format
         IF    (EYLDH < 0.999) THEN; FMT = '(1X,F8.3)'
         ELSEIF(EYLDH < 10.0)  THEN; FMT = '(1X,F8.2)'
@@ -768,8 +763,14 @@ C-------------------------------------------------------------------
         ELSE
             WRITE (NOUTDS,FMT,ADVANCE='NO') iEYLDH
         ENDIF
+
+        WRITE (NOUTDS,520,ADVANCE='NO')
+     &    FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH), FPWAM 
+520     FORMAT(
+!       FCWAM, FHWAM, NINT(HWAHF), NINT(FBWAH*10.), FPWAM
+     &  5(1X,I7))
      
-        WRITE (NOUTDS,503)
+        WRITE (NOUTDS,530)
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
      &    NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, 
      &    N2OEC_TXT,
@@ -785,7 +786,7 @@ C-------------------------------------------------------------------
      &                 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT,
      &    CRST
 
-  503   FORMAT(                                            
+  530   FORMAT(                                            
 !       IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
 !       NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, NMINC, CNAM, GNAM, 
      &  18(1X,I5),
@@ -827,8 +828,8 @@ C-------------------------------------------------------------------
      &LATI,LONG,ELEV,YRSIM,YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, 
      &CWAM, HWAM, HWAH, BWAH,
 !     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
-     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, FCWAM, FHWAM, HWAHF, 
-     &FBWAH, FPWAM, EYLDH, IRNUM, IRCM, PRCM, ETCM,
+     &PWAM, HWUM, HNUMUM, HIAM, LAIX,EYLDH,HNUMAM,FCWAM, FHWAM,HWAHF, 
+     &FBWAH, FPWAM, IRNUM, IRCM, PRCM, ETCM,
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
      &NIAM, NMINC, CNAM, GNAM, N2OEM, PINUMM, PICM, PUPC, SPAM, KINUMM, 
      &KICM, KUPC, SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
