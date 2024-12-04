@@ -51,10 +51,6 @@ C-----------------------------------------------------------------------
       PARAMETER (SWCON1 = 1.32E-3)
       PARAMETER (SWCON3 = 7.01)
 
-!!     temp chp
-!      type (controltype) CONTROL
-!      CALL GET(CONTROL)
-
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -161,11 +157,6 @@ C-----------------------------------------------------------------------
             SWEXF = MIN(SWEXF,1.0)
             RWU_root_lim = RWUMX * SWEXF * Scale2Hour / 24.
             RWUP_hr(I,L) = MIN(RWU_soil_lim, RWU_root_lim)
-!            !temp chp
-!            if (control.das == 68) then
-!              write(lun2,'(I4,2(",",I4),3(",",F10.4))') control.das, 
-!     &          i, L, RWU_soil_lim, RWU_root_lim, RWUP_hr(I,L)
-!            endif
           ENDIF
   
           RWUP_hr(I,L) = RWUP_hr(I,L) * DLAYR(L) * RLV(L) 
@@ -208,16 +199,8 @@ C-----------------------------------------------------------------------
 !         Available water for next time step
           SW_AVAIL(L) = SWTEMP(L) - LL(L)
         ENDDO
-        
+
         TRWU = TRWU + TRWU_HR(I)    !cm
-
-!!       TEMP CHP
-!!        IF (CONTROL.DAS == 68) THEN
-!          WRITE(LUN2,'(F10.3,19(",",F10.4))') CONTROL%DAS+float(i)/24.,
-!     &     EOP_HR(I), TRWUP_HR(I)*10., TRWU_HR(I)*10., 
-!     &     SWFAC_HR, TURFAC_HR
-!!        ENDIF
-
       ENDDO HourLoop
 
       SWFAC  = SWFAC  / N_HRS

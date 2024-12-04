@@ -318,7 +318,7 @@ C=======================================================================
           SWFh_ts(i,j) = H_out(i,j) !cm2
           SWFv_ts(i,j) = V_out(i,j) !cm2
 
-!         temp chp
+!         debug chp
           Cell_detail%H_in(i,j)  = H_in(i,j)
           Cell_detail%H_out(i,j) = H_out(i,j)
           Cell_detail%V_in(i,j)  = V_in(i,j)

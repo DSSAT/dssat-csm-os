@@ -331,7 +331,7 @@ Subroutine CsvOut_crgro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
       cSEEDNO1, SDSIZE, HI, cPODWT1, cPODNO1, SWF_AV, TUR_AV, NST_AV, PS1_AV, &
       PS2_AV, KST_AV, EXW_AV, PCNLP, SHELPC, HIP, cPODWTD1, cPodSum, SLAP, &
 
-! temp chp
+!     chp print real values instead of integers
 !     CANHT, CANWH, cDWNOD1, cRTDEP1, TRLV, cCUMSENSURF1, cCUMSENSOIL1 
       CANHT, CANWH, cDWNOD1, cRTDEP1, TRLV, CUMSENSURF, CUMSENSOIL 
    
@@ -396,7 +396,7 @@ Subroutine CsvOutSW_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, TSW, 
    cAVWTD1 = NINT(AVWTD)
          
    Write(tmp,'(20(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
-!temp chp print real values instead of integers
+!  chp print real values instead of integers
 !  DAS, cTSW1, cPESW1, cTRUNOF1, cTDRAIN1, cCRAIN1, NAP, cTOTIR1, &
 !  cAVWTD1, MULCHWAT, TDFD, TDFC, RUNOFF
    DAS, TSW, PESW, TRUNOF, TDRAIN, CRAIN, NAP, TOTIR, &

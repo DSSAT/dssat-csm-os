@@ -761,7 +761,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
           TotOrgN(L) = -99.
         ENDIF
 
-!     chp 2023-10-03 - Must have KSAT for 2D model to work. Use this for MEHYD = 'G', 'C'
+!     chp 2023-10-03 - Must have KSAT for 2D model to work. 
 !       Remove this ksat estimation  for 1D simulations
 !       It causes problems when SAT and DUL are close. (KJB/JWJ - India workshop 2011)
 !!       Calculate Ksat (SWCN) if not provided for 2D model
@@ -1604,7 +1604,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SWALB = SOILPROP % SALB * (1.0 - 0.45 * FF)
 
 !     1/18/2008 chp change albedo calculations back to original at GH's request.
-!     Probably temporary-- temp chp
+!     Probably temporary
 !!     chp 12/21/2007
 !!     Based on Idso, Jackson et al., 1975. The dependence of bare soil 
 !!     albedo on soil water content. Journal of Applied Meteorology 14, 109-113. 
@@ -1646,12 +1646,6 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SOILPROP % CMSALB = CMSALB
       SOILPROP % MSALB  = MSALB
       SOILPROP % SWALB  = SWALB
-
-!!    Temporary -- print soil albedo stuff
-!     GET (CONTROL)
-!     CALL YR_DOY(CONTROL.YRDOY, YEAR, DOY)
-!     WRITE(2250,'(1X,I4,1X,I3.3,1X,I5,8F8.3)') YEAR, DOY, CONTROL.DAS, SOILPROP.SALB, 
-!     &      FF, SWALB, MULCHCOVER, MSALB, CANCOV, CMSALB
 
       RETURN
       END SUBROUTINE ALBEDO_avg

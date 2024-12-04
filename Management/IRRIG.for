@@ -55,7 +55,7 @@ C=======================================================================
 !      CHARACTER*70 IrrText
       PARAMETER (ERRKEY = 'IRRIG')
 
-      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MEHYD !, MESOM
+      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE !, MEHYD !, MESOM
       CHARACTER*5 IOFF   ! old IRON, for compatibility with old files
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
@@ -167,7 +167,6 @@ C-----------------------------------------------------------------------
       YRSIM   = CONTROL % YRSIM
 
       ISWWAT  = ISWITCH % ISWWAT
-      MEHYD   = ISWITCH % MEHYD
 
       TOTAPW = 0
       AMT    = 0. !irrigation amounts
@@ -318,7 +317,6 @@ C-----------------------------------------------------------------------
      &                 IRRCOD(I), AMT(I) 
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
 
-!            IF (INDEX('GC',MEHYD) > 0 .AND. IRRCOD(I) == 5) THEN
             IF (IRRCOD(I) == 5 .AND. DRIP2D) THEN
               READ(CHAR,'(9X,2(1X,I2),F6.0,I6)',IOSTAT=ERRNUM) 
      &          IRSTRH(I),IRSTRM(I),IRDUR(I),IRLN(I)
@@ -621,7 +619,6 @@ C
         IF (NMSG > 1) CALL WARNING(NMSG, ERRKEY, MSG)
       ENDIF
 
-!      IF (INDEX('GC',MEHYD) > 0 .AND. NDRIP .GT. 0) THEN
       IF (NDRIP .GT. 0) THEN
         DRIP2D = .TRUE. ! JZW these should goes line 370
       ENDIF

@@ -435,12 +435,6 @@ C=======================================================================
         ENDDO
       ENDIF ! end of IF not (FIRST)
 
-!     TEMP CHP GET RID OF THIS CALL UNTIL WE'RE DONE CHANGING THINGS IN CROPGRO
-!      CALL Aggregate_Roots(CELLS,
-!     &    FirstRow, RFAC3, RLV_2D, SOILPROP,  !Input
-!     &    RLV, RootLength, RtLen_2D,          !Output
-!     &    TotRootMass, TRLV)                  !Output
-
        CELLS%STATE%RLV = RLV_2D
 
        DO Row = 1, LastRow 
@@ -454,9 +448,6 @@ C=======================================================================
        ! kg[root]       kg     g      # plants     kg/ha
        !----------- = -----+ ------ * --------*  --------
        ! ha             ha    plant      m2         g/m2
-
-!     temp chp
-      write(1232,'(i7,2f10.4)') YRDOY, TotRootMass, CumRootMass
 
 !***********************************************************************
       ELSEIF (DYNAMIC == OUTPUT .OR. DYNAMIC == SEASEND) THEN

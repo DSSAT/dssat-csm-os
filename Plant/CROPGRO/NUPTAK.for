@@ -58,15 +58,10 @@ C=======================================================================
       REAL SurfaceVal !dummy variable
       Real FieldFac, ROWSPC_cm
 
-!     TEMP CHP
-      INTEGER YRDOY, DAS
+!     debug CHP - track losses of N
       REAL DayLostN, CumLostN
 
       DYNAMIC = CONTROL % DYNAMIC
-
-!     temp chp
-      YRDOY = CONTROL % YRDOY
-      DAS = CONTROL % DAS
 
       SWV    = CELLS % State % SWV
       RLV_2D = CELLS % State % RLV
@@ -289,7 +284,7 @@ C-----------------------------------------------------------------------
             ENDDO
           ENDDO
 
-!         temp chp
+!         debug chp
           CumLostN = CumLostN + DayLostN
 
 !         Convert uptake to g/m^2 for plant routines

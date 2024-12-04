@@ -19,7 +19,7 @@
      &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input
      &    Count, LatFlow, SWV_D)                                !Input
 !     ------------------------------------------------------------------
-      USE Cells_2D  !temp chp
+      USE Cells_2D
 
       USE ModuleData
       IMPLICIT NONE
@@ -125,7 +125,7 @@
       ENDIF
 
 !     ------------------------------------------------------------------
-!     temp chp
+!     debug chp
 !     water balance for single cell as defined in Cell_detail
       detailRow = Cell_detail%Row
       detailCol = Cell_detail%Col

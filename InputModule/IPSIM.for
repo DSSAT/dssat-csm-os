@@ -1458,7 +1458,6 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             CASE ('G', 'C')
               MESOL  = 'D'     !2D soil
               ISWTIL = 'N'
-              MEEVP  = 'R'
             CASE ('R')
             END SELECT
 

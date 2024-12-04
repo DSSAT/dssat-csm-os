@@ -75,7 +75,7 @@
       INTEGER DripNumTotArr(NDrpLn), IrrIdxArr(NDrpLn)
 !     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
 
-!     temp chp
+!     debug chp
       INTEGER NextUpdate, Count, CritCell(2), DAYCOUNT
 
       REAL CN, BEDHT, BEDWD, CRAIN
@@ -139,7 +139,7 @@
       REAL, PARAMETER :: TSI = 5.0, TSN = 30.0, Max_Time_Step=60.
 !                         irrig        rain        default  
 
-!     temp chp
+!     debug chp
       Cell_detail%row = 7 !FurRow1
       Cell_detail%col = 9 !FurCol1
 
@@ -338,15 +338,12 @@
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, Diffus, Kunsat, 0.0,
      &    0, 0.0, SWV_D)
-!         Temp chp
-!    &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, 0.d0)
-!     &    CellArea, SWV_D, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal_temp)
 !     ------------------------------------------------------------------
 
       msg(1) = "Start 2D, variable time-step model"
       call info(1, ERRKEY, msg)
 
-!     TEMP CHP
+!     debug chp
       DAYCOUNT = 0
 
       !call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
@@ -639,9 +636,6 @@
           ENDDO
         ENDDO
 
-!!     temp chp
-!      TimeIncr = 1.0
-
 !       Need smaller time step during irrigation
         DO IDL = 1, NDripLnTOT
           IrrigIndex = IrrIdxArr(IDL)
@@ -809,7 +803,7 @@
 !infitration not to Row=1, but to FurRow1
             ! SWV_avail(FurRow1,j) = SWV_avail(FurRow1,j) + INF_vol
             SWV_avail(i,j) = SWV_avail(i,j) + INF_vol
-            ! temp chp
+!           debug chp
             INF_vol_dtal(i,j) = INF_vol
 !           Daily rainfall plus standard irrigation to cell i,j
             CellInf(i,j) = CellInf(i,j) + INF_vol_dtal(i,j)
@@ -858,7 +852,7 @@
               SWV_avail(i,j) = SWV_avail(i,j) 
      &                       - ES_avg * mm_2_vf(i,j)
 
-!             temp chp
+!             debug chp
               es_vf_ts(i,j) = ES_avg * mm_2_vf(i,j) 
             CASE DEFAULT; CYCLE
             END SELECT
@@ -954,8 +948,6 @@
      &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
      &    SWV_D)
 !         for the 1st timestep, should not be LatFlow_ts
-!         Temp chp
-!     &    CellArea, SWV_ts, EP_vf, ES_vf_ts, IrrVol, INF_vol_dtal) !I
 
 !       ---------------------------------------------------------------
 !       Update time for next iteration
@@ -1015,7 +1007,6 @@
      &  RWU, SurfaceVal)                           !Output
       CALL PUT('SPAM','UH2O', RWU, NL)
 
-!     temp chp
 !     Compare daily average with accumulated values. Should be the 
 !       same for SWFAC.  Should be different for TURFAC
       SWFAC  = SWFAC  / SUM_TSRF

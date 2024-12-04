@@ -84,11 +84,11 @@ C=======================================================================
       EXTERNAL DENIT_CERES, INCDAT, YR_DOY, OPSOILNI, 
      &  SOILNI_INIT, NCHECK_INORG, FLOOD_CHEM, OXLAYER, DENIT_DAYCENT, 
      &  NOX_PULSE, INCYD, DAYCENT_DIFFUSIVITY, NFLUX, BandWidth
-      EXTERNAL SUM_N  !Temp CHP
+      EXTERNAL SUM_N  !debug CHP
 
       SAVE
 !-----------------------------------------------------------------------
-      CHARACTER*1 ISWNIT, MEGHG, MEHYD
+      CHARACTER*1 ISWNIT, MEGHG
 
       LOGICAL IUON
 
@@ -193,12 +193,12 @@ C=======================================================================
      &                  DLTSNH4_DIFF_2D, DLTUREA_DIFF_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: CellFert
 
-!     *** TEMP DEBUGGIN CHP
+!     debug chp
       REAL TNOM, newNNOM
       REAL NNOM_a, NNOM_b
       REAL TotN, NRow(NL)
 
-!     temp chp
+!     debug chp
       REAL UHYDR_TOT
 
       REAL CumSumFert, FieldFac, CellFac
@@ -263,7 +263,6 @@ C=======================================================================
 
       NSWITCH = ISWITCH % NSWI
       ISWNIT  = ISWITCH % ISWNIT
-      MEHYD   = ISWITCH % MEHYD
       MEGHG   = ISWITCH % MEGHG
 
       NBUND = FLOODWAT % NBUND
@@ -297,11 +296,8 @@ C=======================================================================
         TLeachD  = 0.0  !leaching
         NTILEDR = 0.0   !tile drain HJ added
 
-        !*** temp debugging chp
+!       debug chp
         TNOM = 0.0
-
-!       temp chp
-        XMIN = 0.0
 
 !       Seasonal cumulative values, kg[N]/ha
         CMINERN  = 0.0  !mineralization
@@ -440,7 +436,7 @@ C=======================================================================
       TLeachD = 0.0
       NTILEDR = 0.0
 
-!         temp chp
+!     debug chp
       UHYDR_TOT = 0.0
 
 !     ------------------------------------------------------------------
@@ -672,7 +668,7 @@ C=======================================================================
             DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + UHYDR
             DLTUREA_2D(L,J) = DLTUREA_2D(L,J) - UHYDR
 
-!         temp chp
+!           debug chp
             UHYDR_TOT = UHYDR_TOT + UHYDR
 
           END DO
@@ -802,7 +798,7 @@ C=======================================================================
           DLTUREA_2D(L,J) = DLTUREA_2D(L,J) - UHYDR 
           DLTSNH4_2D(L,J) = DLTSNH4_2D(L,J) + UHYDR 
 
-!         temp chp
+!         debug chp
           UHYDR_TOT = UHYDR_TOT + UHYDR
         ENDIF   !End of IF block on IUON.
 
@@ -830,7 +826,7 @@ C=======================================================================
         NNOM = NNOM + newNNOM
         NMINER_2D(L,J) = newNNOM
 
-        !*** temp debugging chp
+!       debug chp
         TNOM = TNOM + newNNOM * FieldFac
 
 !       Mineralization
@@ -1007,9 +1003,8 @@ C=======================================================================
       CELLS % RATE % NMINER = NMINER_2D
       CELLS % RATE % NITRIF = NITRIF_2D
 
-
-!         temp chp
-      WRITE(1515,'(I7,F10.5)') YRDOY, UHYDR_TOT
+!     debug chp
+!     WRITE(1515,'(I7,F10.5)') YRDOY, UHYDR_TOT
 
 !*************************************************************************************************
 !*************************************************************************************************
@@ -1284,15 +1279,9 @@ C=======================================================================
         ENDDO
       ENDDO
 
-!     temp chp
-      IF (ABS(RESID3) > 0.0 .OR. 
-     &    ABS(RESID4) > 0.0 .OR. ABS(RESID5) > 0.0) THEN
-        CONTINUE
-      ENDIF
-
 !*************************************************************************************************
 !*************************************************************************************************
-!     TEMP CHP
+!     debug CHP
       call SUM_N(Cell_Type, SNO3_2D, TotN, Nrow)
 
       Cells % State % SNH4 = SNH4_2D  !kg/ha
@@ -1749,7 +1738,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 
 !=========================================================================================
-!TEMP CHP
+!debug CHP
       Subroutine SUM_N(Cell_Type, NCells, TotN, Nrow)
 
       use Cells_2d

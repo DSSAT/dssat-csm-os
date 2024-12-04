@@ -353,17 +353,10 @@
   INTEGER L, NLAYR, Row, Col
   REAL Fraction
 
-! TEMP CHP
-  REAL, DIMENSION(MaxRows,NL) :: Temp_LCD
-
-
   NLAYR = SOILPROP % NLAYR
 
 !----------------------------------------------------------------------
   CellArray = 0.0
-
-! TEMP CHP
-  Temp_LCD = Layer_Cell_Dep
 
   DO Row = 1, NRowsTot
     DO Col = 1, NColsTot
@@ -422,7 +415,6 @@
   REAL CellDep, CellTop, Fraction, FracDep, FracTop
   REAL LayerDep, LayerTop, RowThick, TotSurfXSArea
   REAL CumCellDep
-  REAL, DIMENSION(MaxRows,NL)     :: Temp_LCD
   REAL, DIMENSION(MaxRows,MaxCols):: Temp_WF
 
   REAL, PARAMETER :: SmallNumber = 1.E-6
@@ -566,7 +558,6 @@
       ENDDO CellRowLoop   
     ENDDO LayerLoop
 
-    Temp_LCD = Layer_Cell_Dep
     Temp_WF  = WidthFrac
 
 !----------------------------------------------------------------------

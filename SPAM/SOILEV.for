@@ -194,10 +194,6 @@ C       soil evaporation (EOS), and stage 1 evaporation (U).
           CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, 
      &      ESc(col), T(Col))
 
-!         temp chp
-          write(1555,'(i7,a,i3,f10.4)') 
-     &      control%yrdoy, " stage1a", col, ESc(col)
-
         ELSEIF ((SUMES1(Col) >= U) .AND. (Infilt < SUMES2(Col))) THEN
 !         Stage 2 Evaporation
           T(Col) = T(Col) + 1.0
@@ -213,29 +209,17 @@ C       soil evaporation (EOS), and stage 1 evaporation (U).
           SUMES2(Col) = SUMES2(Col) + ESc(col) - Infilt
           T(Col) = (SUMES2(Col)/3.5)**2
 
-!         temp chp
-          write(1555,'(i7,a,i3,f10.4)') 
-     &      control%yrdoy, " stage2a", col, ESc(col)
-
         ELSE IF (Infilt .GE. SUMES1(Col)) THEN
 !         Stage 1 evaporation
           SUMES1(Col) = 0.0
           CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, 
      &      ESc(col), T(Col))
 
-!         temp chp
-          write(1555,'(i7,a,i3,f10.4)') 
-     &      control%yrdoy, " stage1b", col, ESc(col)
-
         ELSE
 !         Stage 1 evaporation
           SUMES1(Col) = SUMES1(Col) - Infilt
           CALL ESUP(EOS, SUMES1(Col), SUMES2(Col), U, 
      &      ESc(col), T(Col))
-
- !         temp chp
-          write(1555,'(i7,a,i3,f10.4)') 
-     &      control%yrdoy, " stage1c", col, ESc(col)
 
        ENDIF
 
