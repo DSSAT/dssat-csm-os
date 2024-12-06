@@ -21,6 +21,7 @@ C  03/24/2004 CHP Added P component of senesced matter
 C  01/19/2006 CHP N in senesced roots lost at actual N%, not minimum.
 C  04/01/2021 VSH/AH Added MultiHarvest code changes.
 !  06/15/2022 CHP Added CropStatus
+!  11/08/2023  FO Added lint growth for cotton.
 C-----------------------------------------------------------------------
 C  Called by:  PLANT
 C  Calls:      IPGROW, STRESS
@@ -28,13 +29,13 @@ C              ERROR
 C=======================================================================
       SUBROUTINE GROW(CONTROL, ISWITCH, DYNAMIC, SOILPROP, 
      &  AGEFAC, CADLF, CADST, CRUSLF, CRUSRT, CRUSSH,     !Input
-     &  CRUSST, DISLA, F, FILECC, FRLF, FRSTM,            !Input
+     &  CRUSST, DISLA, F, FILECC, FILEGC, FRLF, FRSTM,    !Input
      &  NADLF, NADRT, NADST, NDTH, NFIXN, NGRLF, NGRRT,   !Input
      &  NGRSD, NGRSH, NGRST, NMINEA, NODGR, NOUTDO,       !Input
-     &  NPLTD, NRUSLF, NRUSRT, NRUSSH, NRUSST,            !Input
+     &  NPLTD, NRUSLF, NRUSRT, NRUSSH, NRUSST, ECONO,     !Input
      &  POTCAR, POTLIP, PPLTD, SDIDOT, SDPROR,            !Input
      &  SENNOD, SENRT, SLDOT, SLNDOT, SRDOT, SSDOT,       !Input
-     &  SSNDOT, TRNH4U, TRNO3U, TRNU,                     !Input
+     &  SSNDOT, TRNH4U, TRNO3U, TRNU, TAVG, NSTRES,       !Input
      &  TURFAC, WLDOTN, WLIDOT, WRDOTN, WRIDOT, WSDDTN,   !Input
      &  WSDOTN, WSHDTN, WSIDOT, WTABRT, WTSHMT, YRNR1,    !Input
      &  MDATE, YRPLT,                                     !Input
@@ -46,7 +47,7 @@ C=======================================================================
      &  PCLSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST, PLTPOP,  !Output
      &  PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST,   !Output
      &  PODWT, PUNCSD, PUNCTR, RHOL, RHOS, RNITP,         !Output
-     &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT,                !Output
+     &  ROWSPC, RTWT, SDNPL, SDRATE, SDWT, LINTW,         !Output
      &  SEEDNI, SEEDNO, SENESCE, SHELWT, SLA,             !Output
      &  SLAAD, STMWT, TOPWT, TOTWT, WCRLF, WCRRT, WCRSH,  !Output
      &  WCRST, WNRLF, WNRRT, WNRSH, WNRST, WTCO,          !Output
@@ -64,16 +65,16 @@ C=======================================================================
                          ! parameters, hourly weather data.
       
       IMPLICIT NONE
-      EXTERNAL IPGROW, ERROR, STRESS
+      EXTERNAL IPGROW, ERROR, STRESS, LTGROW
       SAVE
 !-----------------------------------------------------------------------
 
       CHARACTER*1  ISWSYM, ISWNIT, IDETO, IHARI, PLME
       CHARACTER*2  XPODF, CROP
-      CHARACTER*6  ERRKEY
+      CHARACTER*6  ERRKEY, ECONO
       PARAMETER (ERRKEY = 'GROW  ')
       CHARACTER*30 FILEIO
-      CHARACTER*92 FILECC
+      CHARACTER*92 FILECC, FILEGC
 
       INTEGER DYNAMIC, NOUTDO, L, NLAYR
       INTEGER YRDOY, YRNR1, MDATE
@@ -94,7 +95,7 @@ C=======================================================================
       REAL NLALL,  NSALL,  NRALL,  NSHALL, NSDALL
       REAL WTNLA,  WTNSA,  WTNRA,  WTNSHA, WTNSDA, WTNNA
       REAL WTNLO,  WTNSO,  WTNRO,  WTNSHO, WTNSDO, WTNNO
-      REAL WLDOT,  WSDOT,  WRDOT
+      REAL WLDOT,  WSDOT,  WRDOT, LTDOT, LINTW
 
       REAL WLDOTN, WSDOTN, WRDOTN,         WSDDTN, WSHDTN
       REAL NGRLF,  NGRST,  NGRRT,  NGRSH,  NGRSD
@@ -126,7 +127,7 @@ C=======================================================================
       REAL ALFDOT,  F, SLA, AREALF, XLAI, SLAAD
       REAL LAIMX, AREAH
       REAL XHLAI, SEEDNO, PLTPOP, ROWSPC, BETN
-      REAL TURFAC
+      REAL TURFAC, TAVG, NSTRES
       REAL GROWTH, NODGR
 
       REAL FRLF, FRSTM
@@ -232,7 +233,14 @@ C-----------------------------------------------------------------------
         PCNMIN = PROLFF * 16.0            !Moved from INCOMP
 !-----------------------------------------------------------------------
       ENDIF
-
+C-----------------------------------------------------------------------
+C     Net Lint growth rate
+C-----------------------------------------------------------------------
+      IF(CROP .EQ. 'CO') THEN
+        CALL LTGROW(DYNAMIC, FILECC, FILEGC, ECONO,              !Input
+     &    WSDDOT, TAVG, TURFAC, NSTRES,                          !Input
+     &    LTDOT)                                                 !Output
+      ENDIF
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -247,6 +255,8 @@ C-----------------------------------------------------------------------
       GROWTH = 0.0
       GRWRES = 0.0
       LAIMX  = 0.0
+      LINTW  = 0.0
+      LTDOT  = 0.0
       NLDOT  = 0.0
       NSDOT  = 0.0
       NRDOT  = 0.0
@@ -357,7 +367,14 @@ C-----------------------------------------------------------------------
 !      IF (CROP .NE. 'FA') THEN
 !        SLA    = F                 
 !      ENDIF
-
+C-----------------------------------------------------------------------
+C     Net Lint growth rate
+C-----------------------------------------------------------------------
+      IF(CROP .EQ. 'CO') THEN
+        CALL LTGROW(DYNAMIC, FILECC, FILEGC, ECONO,              !Input
+     &    WSDDOT, TAVG, TURFAC, NSTRES,                          !Input
+     &    LTDOT)                                                 !Output
+      ENDIF
 !***********************************************************************
 !***********************************************************************
 !     EMERGENCE CALCULATIONS - Performed once per season upon emergence
@@ -555,7 +572,19 @@ C-----------------------------------------------------------------------
             
       WTLSD  = WTLSD + WSDDOT * POTLIP    !lipids in seed
       WTCSD  = WTCSD + WSDDOT * POTCAR    !carbohydrates in seed
+C-----------------------------------------------------------------------
+C     Net Lint growth rate
+C-----------------------------------------------------------------------
+      IF(CROP .EQ. 'CO') THEN
+        CALL LTGROW(DYNAMIC, FILECC, FILEGC, ECONO,              !Input
+     &    WSDDOT, TAVG, TURFAC, NSTRES,                          !Input
+     &    LTDOT)                                                 !Output
 
+        IF (LTDOT .LT. 0.0) THEN
+            LTDOT = MAX(LTDOT, -LINTW)
+        ENDIF
+      ENDIF
+      
 C-----------------------------------------------------------------------
 C     Net nodule growth rate
 C-----------------------------------------------------------------------
@@ -596,6 +625,7 @@ C-----------------------------------------------------------------------
       PODWT  = PODWT  + WPDOT
       DWNOD  = DWNOD  + WNDOT
       TGROW  = TGROW  + GROWTH
+      LINTW  = LINTW  + LTDOT
 
 C-----------------------------------------------------------------------
 C     Cumulative leaf and stem growth
@@ -1547,7 +1577,8 @@ C=======================================================================
 !            carbon will allow, and nodules are not grown explicitly) 
 ! LAIMX    Maximum leaf area index this season (m2[leaf] / m2[ground])
 ! LINC     Line number of input file 
-! LNUM     Current line number of input file 
+! LNUM     Current line number of input file
+! LTDOT    Net Lint growth rate (g/m2/d)
 ! LUNCRP   Logical unit number for FILEC (*.spe file) 
 ! LUNECO   Logical unit number for FILEE (*.eco file) 
 ! LUNIO    Logical unit number for FILEIO 
@@ -1672,7 +1703,7 @@ C=======================================================================
 ! SDLIP    Maximum lipid composition in seed (fraction)
 ! SDNPL    Seed N (g[N] / m2)
 ! SDPDOT   Daily seed puncture damage (not yet implemented) 
-! SDPRO    Seed protein fraction at 25ºC (g[protein] / g[seed])
+! SDPRO    Seed protein fraction at 25ï¿½C (g[protein] / g[seed])
 ! SDPROR   Ratio to adjust lipid and carbohydrate proportions when seed 
 !            protein differs from protein composition of standard cultivar 
 !            (SDPROS) 

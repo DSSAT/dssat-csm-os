@@ -1368,7 +1368,11 @@ C-GH 1/20/2022 For ISWNI set to N
             IF (ISWNIT.EQ.'N') THEN
                hinm = -99
             ELSE
-               HINM = GRAINN/(GRAINN+LEAFN+STEMN+RSN)
+              IF(GRAINN+LEAFN+STEMN+RSN .GT. 0.0) THEN
+                HINM = GRAINN/(GRAINN+LEAFN+STEMN+RSN)
+              ELSE
+                HINM = 0.0
+              ENDIF 
             ENDIF       
            
             ! Create character equivalents for outputing

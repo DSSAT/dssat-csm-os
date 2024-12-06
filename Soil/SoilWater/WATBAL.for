@@ -249,6 +249,10 @@ C=======================================================================
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
      &    EXCS, WTDEP)                                    !Input
+
+        CALL OPSWBL(CONTROL, ISWITCH, 
+     &    SOILPROP, SW)                                   !Input
+
       ENDIF
 
       DRAIN  = 0.0
@@ -548,6 +552,9 @@ C-----------------------------------------------------------------------
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
      &    EXCS, WTDEP)                                    !Input
 
+      CALL OPSWBL(CONTROL, ISWITCH, 
+     &    SOILPROP, SW)                                   !Input
+
 !     Water balance daily output 
       CALL Wbal(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
@@ -574,6 +581,9 @@ C-----------------------------------------------------------------------
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, ActWTD, LatInflow, LatOutflow,  !Input
      &    EXCS, WTDEP)                                    !Input
+
+      CALL OPSWBL(CONTROL, ISWITCH, 
+     &    SOILPROP, SW)                                   !Input
 
 !     Water balance seasonal output 
       CALL Wbal(CONTROL, ISWITCH, 
@@ -672,7 +682,7 @@ C=====================================================================
 ! SWDELTX(L)  Change in soil water content due to root water uptake in 
 !               layer L (cm3 [water] / cm3 [soil])
 ! TDRAIN      Cumulative daily drainage from profile (mm)
-! TMAX        Maximum daily temperature (°C)
+! TMAX        Maximum daily temperature (ï¿½C)
 ! TRUNOF      Cumulative runoff (mm)
 ! TSW         Total soil water in profile (cm)
 ! TSWINI      Initial soil water content (cm)

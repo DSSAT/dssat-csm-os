@@ -107,6 +107,14 @@
   0.00  0.50  0.75  1.00               XTRFAC(1-4),TURFAC
   0.00  0.05  0.10  0.10               YTRFAC(1-4),ENHANCE REPROD. GROWTH
   !need to add similar effect of N stress on repro partitioning
+  
+*LINT PARAMETERS
+ -50.0  12.0  24.0  40.0  60.0        XLTTM(1-5),TEMP VALUES
+  1.00  1.00  1.00  0.78  1.00        YLTTM(1-5),EFFECT ON LTTM
+  0.00  0.70  1.00  1.10              XLSWFAC(1-4), WSTRESS VALUES
+  0.90  1.12  1.00  1.00              YLSWFAC(1-4), EFFECT ON LSWFAC
+  0.00  0.01  1.00  1.10              XLNFAC(1-4), NSTRESS VALUES
+  1.30  1.30  1.00  1.00              YLNFAC(1-4), EFFECT on LNFAC
 
 !*POD LOSS PARAMETERS
      N   6.0 .3961 -.865 3.405 0.102      DETACH,DWC,PR1DET,PR2DET,XP1DET,XP2DET

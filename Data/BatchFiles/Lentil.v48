@@ -1,0 +1,103 @@
+$BATCH(LENTIL)
+!
+! Directory    : C:\DSSAT48\Lentil
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : Lentil          
+! Experiment   :
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Lentil\BRKS1107.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\BRKS1107.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\BRKS1107.LTX                                                                    3      0      0      0      0                                    
+C:\DSSAT48\Lentil\BRKS1107.LTX                                                                    4      0      0      0      0                                    
+C:\DSSAT48\Lentil\BRKS1107.LTX                                                                    5      0      0      0      0                                    
+C:\DSSAT48\Lentil\BRKS1107.LTX                                                                    6      0      0      0      0                                    
+C:\DSSAT48\Lentil\BRKS1107.LTX                                                                    7      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    3      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    4      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    5      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    6      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    7      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    8      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                    9      0      0      0      0                                    
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   10      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   11      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   12      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   13      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   14      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   15      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   16      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   17      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   18      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   19      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   20      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   21      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   22      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   23      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   24      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   25      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   26      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   27      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   28      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   29      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   30      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   31      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   32      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   33      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   34      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   35      0      0      0      0                                     
+C:\DSSAT48\Lentil\GLOB1632.LTX                                                                   36      0      0      0      0                                     
+C:\DSSAT48\Lentil\LUSK2101.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\LUSK2101.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\MEKN2102.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\MEKN2102.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\MONT1903.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\MONT1903.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\MONT1903.LTX                                                                    3      0      0      0      0                                    
+C:\DSSAT48\Lentil\MONT1903.LTX                                                                    4      0      0      0      0                                    
+C:\DSSAT48\Lentil\MONT1903.LTX                                                                    5      0      0      0      0                                    
+C:\DSSAT48\Lentil\MONT1903.LTX                                                                    6      0      0      0      0                                    
+C:\DSSAT48\Lentil\SASK0202.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\SASK0202.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\SASK0202.LTX                                                                    3      0      0      0      0                                    
+C:\DSSAT48\Lentil\SASK0202.LTX                                                                    4      0      0      0      0                                    
+C:\DSSAT48\Lentil\SASK0202.LTX                                                                    5      0      0      0      0                                    
+C:\DSSAT48\Lentil\SASK0202.LTX                                                                    6      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    3      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    4      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    5      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    6      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    7      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    8      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                    9      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0002.LTX                                                                   10      0      0      0      0                                     
+C:\DSSAT48\Lentil\SWIF0607.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0607.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0607.LTX                                                                    3      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF0607.LTX                                                                    4      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF2101.LTX                                                                    1      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF2101.LTX                                                                    2      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF2101.LTX                                                                    3      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF2101.LTX                                                                    4      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF2101.LTX                                                                    5      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF2101.LTX                                                                    6      0      0      0      0                                    
+C:\DSSAT48\Lentil\SWIF2101.LTX                                                                    7      0      0      0      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    1      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    2      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    3      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    4      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    5      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    6      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    7      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    8      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                    9      1      0      1      0                                    
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                   10      1      0      1      0                                     
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                   11      1      0      1      0                                     
+C:\DSSAT48\Lentil\WASP0201.LTX                                                                   12      1      0      1      0    
+

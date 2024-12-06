@@ -222,7 +222,7 @@
       !        Find and Read Fresh weight option
       !----------------------------------------------------------------
       ISWFWT = 'N'        !Default - no fresh weight calculated
-      SECTION = '*FRESH WEIGHT'
+      SECTION = '*FRESH'
       REWIND(LUNCRP)
       CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
       IF (FOUND /= 0) THEN
@@ -253,8 +253,11 @@
      &        (C255(1:1) .NE. '*')) THEN
 !          READ (C255,'(A6,66X,F6.0,30X,F6.0)',IOSTAT=ERR)
 !     &        ECOTYP, LNGSH, THRESH
-          READ (C255,'(A6,66X,F6.0,48X,F6.0)',IOSTAT=ERR)
-     &        ECOTYP, LNGSH, XMAGE
+          READ (C255,'(A6,66X,F6.0)',IOSTAT=ERR)
+     &        ECOTYP, LNGSH
+          IF (ISWFWT .EQ. 'Y') THEN
+            READ (C255,'(126X,F6.0)',IOSTAT=ERR) XMAGE
+          ENDIF
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
           IF (ECOTYP .EQ. ECONO) THEN
             EXIT
@@ -1284,7 +1287,7 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
 ! FNINSH    Maximum fraction of N for growing shell tissue
 !             (g[N] / g[shell])
 ! FNPDT(I)  Critical values of temperature for function to reduce pod 
-!             addition and seed setting rates under non-optimal temperatures (°C)
+!             addition and seed setting rates under non-optimal temperatures (ï¿½C)
 ! GDMSD     Seed growth demand based on temperature and photoperiod
 !             (g[seed] / m2 / d)
 ! GRRAT1    Maximum growth per individual shell (g / shell / d)
@@ -1432,7 +1435,7 @@ C-GH          IF (SHELN(NPP) .GE. 0.001 .AND. GRRAT1 .GE. 0.001) THEN
 !             reproductive development temperature function
 !             (photo-thermal days / day)
 ! TEMPOD    Factor for modifying pod setting based on temperature 
-! TGRO(I)   Hourly air temperature (°C)
+! TGRO(I)   Hourly air temperature (ï¿½C)
 ! THETA     Curvature of rectangular hyperbola to limit seed growth rate to 
 !             hold minimum seed N concentration. 
 ! THRESH    The maximum ratio mass of seed to mass of seed plus shell at 

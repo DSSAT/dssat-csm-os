@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran CXX)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 2)
-SET(BUILD 19)
+SET(BUILD 29)
 
 # Get the current working branch
 execute_process(
@@ -342,6 +342,7 @@ set(
         "Plant/CROPGRO/INCOMP.for"
         "Plant/CROPGRO/Ipphenol.for"
         "Plant/CROPGRO/IPPLNT.for"
+        "Plant/CROPGRO/LTGROW.for"
         "Plant/CROPGRO/MOBIL.for"
         "Plant/CROPGRO/NFIX.for"
         "Plant/CROPGRO/NUPTAK.for"
@@ -622,6 +623,7 @@ set(
         "Soil/SoilUtilities/TextureClass.for"
         "Soil/SoilWater/CapFringe.f90"
         "Soil/SoilWater/INFIL.for"
+        "Soil/SoilWater/OPSWBL.for"
         "Soil/SoilWater/OPWBAL.for"
         "Soil/SoilWater/RETC_VG.for"
         "Soil/SoilWater/RNOFF.for"
