@@ -632,6 +632,9 @@ C  06/15/2014 CHP Written
 C-----------------------------------------------------------------------
 C     Variable heading for GHG.OUT
 C-----------------------------------------------------------------------
+      CALL GET('ORGC','TSOMC',TSOMC_init)
+      CO2ENC_Y = 0.0
+
       IF (IDETN .EQ. 'Y') THEN
 
         FROP    = CONTROL % FROP
@@ -681,9 +684,6 @@ C-----------------------------------------------------------------------
 
         ENDIF
       ENDIF
-
-      CALL GET('ORGC','TSOMC',TSOMC_init)
-      CO2ENC_Y = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -746,6 +746,10 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
+!     Estimate net CO2 emissions
+      CALL GET('ORGC','TSOMC',TSOMC)
+      CO2ENC = (TSOMC_init - TSOMC )      !cumul net CO2 emissions kg/d
+
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.
       LABEL(1)  = 'CO2EM'; VALUE(1)  = CO2ENC
