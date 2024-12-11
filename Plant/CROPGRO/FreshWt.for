@@ -256,9 +256,12 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
-        IF (INDEX('Y',ISWFWT) < 1 .OR. 
-     &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
-        
+!     chp 2024-12-11 Need to continue with calculations for multiple harvests
+!                     regardless of IDETL value.
+!       IF (INDEX('Y',ISWFWT) < 1 .OR. 
+!    &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
+        IF (INDEX('Y',ISWFWT) < 1)  RETURN
+
         ! Total values
         TOSDN   = 0.0      
         TOWSD   = 0.0      
