@@ -207,9 +207,9 @@ C-----------------------------------------------------------------------
       REAL            P2O
       REAL            P3
       REAL            P9
-      CHARACTER*80    PATHCR
-      CHARACTER*80    PATHSR
-      CHARACTER*80    PATHER
+      CHARACTER*256    PATHCR
+      CHARACTER*256    PATHSR
+      CHARACTER*256    PATHER
       REAL            PDTT
       REAL            pgdd(20)  ! WHAPS:  TT required for each istage
                                 ! (from nwheats.for)
@@ -287,7 +287,7 @@ C-----------------------------------------------------------------------
       CHARACTER*16  ECONAM
       INTEGER LUNCRP
       CHARACTER*92 FILECC
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       CHARACTER*78 MESSAGE(10)
 
 !     CHP added for P model
@@ -1367,14 +1367,14 @@ cbak  ears that is not included in lai calculation.
 *      INTEGER   sowmx  !Maximum sowing-to- days before plant dies
 *      INTEGER   stgdur(20)
 *      Integer   YRDOY
-*      CHARACTER*80 C80
+*      CHARACTER*256 C80
 *      CHARACTER*6  ERRKEY
 *      PARAMETER    (ERRKEY='MZPHEN')
 *!*!      PARAMETER    (ERRKEY='TFPHEN')
 *      CHARACTER*92 FILECC
 *      CHARACTER*30 FILEIO
 *      CHARACTER*12 FILES
-*      CHARACTER*80 PATHSR
+*      CHARACTER*256 PATHSR
 *      CHARACTER*6  SECTION
 *
 *      REAL   cumph_nw(11)

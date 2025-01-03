@@ -34,7 +34,7 @@ C=======================================================================
       CHARACTER*6  ERRKEY
       CHARACTER*16 CROPD
       CHARACTER*12 FILEC,FILEE,FILEG
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
 
       INTEGER      MENU,NLOOP
 
@@ -127,7 +127,7 @@ C=======================================================================
       CHARACTER*6  ERRKEY
       CHARACTER*16 CROPD
       CHARACTER*12 FILEC,CRPTEM,FILEE,FILEG
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
       CHARACTER*92 FILECC
 
       INTEGER      I,NLOOP,PATHL
@@ -264,7 +264,7 @@ C=======================================================================
 
       CHARACTER*1  LINE(80),RNMODE,BLANK
       CHARACTER*12 FILEC,CROPFL
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
       CHARACTER*92 FILECC
 
       INTEGER      I,PATHL

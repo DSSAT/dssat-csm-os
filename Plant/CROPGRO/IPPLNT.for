@@ -49,7 +49,7 @@ C-----------------------------------------------------------------------
       CHARACTER*12 FILEC, FILEE
       CHARACTER*30 FILEIO
 !      CHARACTER*78 MSG(6)
-      CHARACTER*80 PATHCR, CHAR, PATHEC
+      CHARACTER*256 PATHCR, CHAR, PATHEC
       CHARACTER*92 FILECC, FILEGC
 !      CHARACTER*255 C255
 

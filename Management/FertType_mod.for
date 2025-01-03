@@ -74,7 +74,7 @@ C  06/15/2014 CHP Written
       CHARACTER*150 FILEF, CHARTEST
 
       CHARACTER*12 NAMEF
-      CHARACTER*80 PATHSD
+      CHARACTER*256 PATHSD
 
 !-----------------------------------------------------------------------
 !     Read from FERTCH???.SDA file
@@ -348,7 +348,7 @@ C  06/15/2014 CHP Written
       EXTERNAL WARNING, ERROR
 
       CHARACTER* 6 ERRKEY
-      CHARACTER*78 MSG(4)
+      CHARACTER*256 MSG(4)
       CHARACTER*150 FILEF
       INTEGER IERROR, LNUM, LUNF
 

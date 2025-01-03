@@ -108,7 +108,7 @@ C=======================================================================
       
       CHARACTER*6   ERRKEY,IERRKEY
       CHARACTER*(*) FILE
-      CHARACTER*78  MSG(4)
+      CHARACTER*256  MSG(4)
       
       INTEGER DOY,YR,YRDOY,LINE,IERRNUM
       INTEGER NEWYRDOY,CROVER

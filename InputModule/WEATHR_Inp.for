@@ -38,7 +38,7 @@ C=======================================================================
       CHARACTER*1   CO2FAC(10),DAYFAC(10),DPTFAC(10),WNDFAC(10)
       CHARACTER*1   PRCFAC(10),RADFAC(10),TMFAC(10),TXFAC(10)
       CHARACTER*1   WMODI
-      CHARACTER*120 WTHSTR
+      CHARACTER*256 WTHSTR
 
       INTEGER NEV
 
@@ -61,7 +61,7 @@ C
       CALL WTHSUM (WTHADJ,WTHSTR)
 
       IF (WMODI .EQ. 'Y') THEN
-         READ(WTHSTR(1:120),75) DAYFAC(1),DAYADJ(1),
+         READ(WTHSTR(1:256),75) DAYFAC(1),DAYADJ(1),
      &   RADFAC(1),RADADJ(1),TXFAC(1),TXADJ(1),TMFAC(1),TMADJ(1),
      &   PRCFAC(1),PRCADJ(1),CO2FAC(1),CO2ADJ(1),DPTFAC(1),DPTADJ(1),
      &   WNDFAC(1),WNDADJ(1)
@@ -73,7 +73,7 @@ C
 !             CO2FAC(1) = 'R'
 !             CO2ADJ(1) = CO2
 !         ENDIF
-         WRITE (WTHSTR(1:120),80)
+         WRITE (WTHSTR(1:256),80)
      &  'DAYL= ',DAYFAC(1),DAYADJ(1),'SRAD= ',RADFAC(1),RADADJ(1),
      &  'TMAX= ',TXFAC(1),TXADJ(1),  'TMIN= ',TMFAC(1),TMADJ(1),
      &  'RAIN= ',PRCFAC(1),PRCADJ(1),'CO2 = ',CO2FAC(1),CO2ADJ(1),

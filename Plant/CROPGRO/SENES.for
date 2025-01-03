@@ -29,7 +29,7 @@ C-----------------------------------------------------------------------
       SAVE
 
       CHARACTER*6  ERRKEY, SECTION
-      CHARACTER*80 CHAR
+      CHARACTER*256 CHAR
       CHARACTER*92 FILECC
       PARAMETER (ERRKEY = 'SENES')
 

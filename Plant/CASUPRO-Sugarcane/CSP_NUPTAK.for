@@ -35,7 +35,7 @@ C=======================================================================
       CHARACTER*10 ERRKEY
       PARAMETER (ERRKEY = 'CSP_NUPTAK')
       CHARACTER*6 SECTION
-      CHARACTER*80 CHAR
+      CHARACTER*256 CHAR
       CHARACTER*92 FILECC
 
       INTEGER LUNCRP, ERR, LNUM, ISECT, FOUND

@@ -373,7 +373,7 @@ C=======================================================================
       PARAMETER (ERRKEY = 'ROOTS')
 
       CHARACTER*6 SECTION
-      CHARACTER*80 CHAR
+      CHARACTER*256 CHAR
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC
 

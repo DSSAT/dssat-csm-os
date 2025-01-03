@@ -34,7 +34,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6   SECTION, ECOTYP, ECONO, ERRKEY, DRMST
       CHARACTER*12  FILEIO, FILEC, FILEE
       CHARACTER*16  ECONAM
-      CHARACTER*80  PATHCR, PATHEC, CHAR
+      CHARACTER*256  PATHCR, PATHEC, CHAR
 
 
       CHARACTER*92  FILECC, FILEGC

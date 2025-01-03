@@ -146,7 +146,7 @@ C-GH  REAL            DJTI
       REAL            NSTRES
       REAL            P1
       REAL            P5
-      CHARACTER*80    PATHCR
+      CHARACTER*256    PATHCR
       INTEGER         PATHL
       REAL            PCNGRN
       REAL            PCNVEG
@@ -339,7 +339,7 @@ C-----------------------------------------------------------------------
 C  VARIABLES FROM SPECIES FILE
 C-----------------------------------------------------------------------
 
-      CHARACTER*80    C80
+      CHARACTER*256    C80
       CHARACTER*6     ECONO
       INTEGER         ERR
       PARAMETER       (ERRKEY='SG_CERES')
@@ -352,8 +352,8 @@ C-----------------------------------------------------------------------
       INTEGER         ISECT
       INTEGER         LUNCRP
       REAL            PARSR
-      CHARACTER*80    PATHSR
-      CHARACTER*80    PATHER
+      CHARACTER*256    PATHSR
+      CHARACTER*256    PATHER
       REAL            SLPF
       REAL            PRFTC(4)
       REAL            RGFIL(4)

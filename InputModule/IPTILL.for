@@ -38,7 +38,7 @@ C=======================================================================
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*12 FILEX
       CHARACTER*1  ISWTIL
-      CHARACTER*80 CHARTEST
+      CHARACTER*256 CHARTEST
 
       INTEGER      LNTIL,LUNEXP,ISECT,LINEXP,TDATE(NAPPL),NTIL
       INTEGER      ERRNUM,J,IFIND,LN,YRSIM,LNSIM,TIMPLN

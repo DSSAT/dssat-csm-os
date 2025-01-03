@@ -33,7 +33,7 @@ C=======================================================================
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'INCOMP')
       CHARACTER*6 SECTION ! , ECONO, ECOTYP
-      CHARACTER*80 CHAR
+      CHARACTER*256 CHAR
       CHARACTER*92 FILECC ! , FILEGC
 !       CHARACTER*255 C255
 

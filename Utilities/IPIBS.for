@@ -66,7 +66,7 @@ C-----------------------------------------------------------------------
       CHARACTER*12 FILEX, FILEA, FILEC
       CHARACTER*30 FILEIO
 !     CHARACTER*78 MESSAGE(10)
-      CHARACTER*80 PATHCR,PATHEX
+      CHARACTER*256 PATHCR,PATHEX
 
       INTEGER FROP, ISENS, NSWI
       INTEGER LUNIO, LINC, LNUM, FOUND

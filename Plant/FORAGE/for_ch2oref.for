@@ -31,8 +31,8 @@ C=======================================================================
       CHARACTER*6  ERRKEY, SECTION
       CHARACTER*12 FILEC, FILEE
       CHARACTER*30 FILEIO
-      CHARACTER*80 PATHCR,CHAR, PATHEC
-      CHARACTER*80  C80
+      CHARACTER*256 PATHCR,CHAR, PATHEC
+      CHARACTER*256  C80
       CHARACTER*92 FILECC
 
       INTEGER LUNIO, LNUM, FOUND

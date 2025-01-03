@@ -33,7 +33,7 @@ C=======================================================================
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'NUPTAK')
       CHARACTER*6 SECTION
-      CHARACTER*80 CHAR
+      CHARACTER*256 CHAR
       CHARACTER*92 FILECC
 
       INTEGER I, LUNCRP, ERR, LNUM, ISECT, FOUND

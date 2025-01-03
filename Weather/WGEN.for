@@ -90,7 +90,7 @@ C=======================================================================
       CHARACTER*1 MEWTH, RNMODE
       CHARACTER*6 ERRKEY
       CHARACTER*12 FILEW
-      CHARACTER*80 PATHWT
+      CHARACTER*256 PATHWT
 
       INTEGER DOY,I,M,NM,MTH,MM,YY,YR,YRDOY,YRSIM,YMID,YMEND,
      &  YDOY,RSEED1,RSEED(4),MTHMID,MTHEND,WETPRV
@@ -336,7 +336,7 @@ C=======================================================================
       CHARACTER*8 WSTAT
       CHARACTER*9 CELEV
       CHARACTER*15 CXCRD, CYCRD
-      CHARACTER*80 PATHWT
+      CHARACTER*256 PATHWT
 
       INTEGER NM,M,I,J,MTH,FOUND,LNUM,NUMDAY(12),LUNCLI,ERRNUM
       INTEGER PATHL
@@ -522,7 +522,7 @@ C=======================================================================
       CHARACTER*8 WSTAT
       CHARACTER*9 CELEV
       CHARACTER*15 CXCRD, CYCRD
-      CHARACTER*80 PATHWT
+      CHARACTER*256 PATHWT
 
       INTEGER NM,M,I,MTH,FOUND,LNUM,NUMDAY(12),LUNCLI,ERRNUM, PATHL
 

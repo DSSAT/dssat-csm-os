@@ -65,7 +65,7 @@ C-----------------------------------------------------------------------
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC, FILEGC
       
-!     CHARACTER*80  C80
+!     CHARACTER*256  C80
       CHARACTER*6   SECTION
       CHARACTER*255 C255
 !     CHARACTER*6   ERRKEY
@@ -888,7 +888,7 @@ C     &  YTRFAC, YVREF, YXFTEM,                           !Output
       CHARACTER*6   SECTION
       CHARACTER*6   ECOTYP, ECONO
       CHARACTER*30  FILEIO
-      CHARACTER*80  C80
+      CHARACTER*256  C80
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*255 C255
 

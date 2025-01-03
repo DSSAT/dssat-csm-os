@@ -1365,7 +1365,7 @@
                     LINET(LENLINE+1:LENLINE+12) = '   DAP   DAS'
                     LINET(1:1) = '@'
                     WRITE (FNUMTMP,*) ' '
-                    WRITE (FNUMTMP,'(A80)') LINESTAR(1:80)
+                    WRITE (FNUMTMP,'(A256)') LINESTAR(1:256)
                     WRITE (FNUMTMP,*) ' '
                     WRITE (FNUMTMP,'(A180)') LINET(1:180)
                     STARNUMM = STARNUMM + 1       ! Number of datasets  

@@ -94,7 +94,7 @@ C=======================================================================
       INTEGER     LNUM
       INTEGER     LUNECO
       INTEGER     NOUTDO
-      CHARACTER*80    PATHER 
+      CHARACTER*256    PATHER 
       REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
       REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
       REAL        P2AF,STEMN,MXNUP,MXNCR,WFNU,PNUPR,EXNO3,MNNO3,EXNH4
@@ -333,7 +333,7 @@ C=======================================================================
       INTEGER     LNUM
       INTEGER     LUNECO
       INTEGER     NOUTDO
-      CHARACTER*80    PATHER 
+      CHARACTER*256    PATHER 
       REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
       REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
       REAL        P2AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR
@@ -748,7 +748,7 @@ C=======================================================================
       INTEGER     LNUM
       INTEGER     LUNECO
       INTEGER     NOUTDO
-      CHARACTER*80    PATHER 
+      CHARACTER*256    PATHER 
       REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
       REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
       REAL        P2AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,STEMN,MXNUP,MXNCR
@@ -1053,7 +1053,7 @@ C=======================================================================
       INTEGER     LNUM
       INTEGER     LUNECO
       INTEGER     NOUTDO
-      CHARACTER*80    PATHER 
+      CHARACTER*256    PATHER 
       REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
       REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
       REAL        P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR

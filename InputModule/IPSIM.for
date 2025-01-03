@@ -64,7 +64,7 @@ C=======================================================================
       CHARACTER*16  CROPD
       CHARACTER*25  TITSIM
       CHARACTER*78  MSG(7)
-      CHARACTER*120 FILECTL
+      CHARACTER*256 FILECTL
       CHARACTER*128 CHARTEST
 
       INTEGER LNSIM,LUNEXP,ISECT,LINEXP,ISIM,NYRS,NREPSQ,FROP
@@ -1085,7 +1085,7 @@ C-----------------------------------------------------------------------
       CHARACTER*12 FILEX  !, DSSATS
       CHARACTER*78 MSG(50)
       CHARACTER*102 DSSATP, SIMCTR
-      CHARACTER*120 INPUTX, FILECTL
+      CHARACTER*256 INPUTX, FILECTL
       CHARACTER*128 CHARTEST
 
       INTEGER CTRNO, ERRNUM, FOUND, FROP, I, IFIND, IPX, ISECT, ISIM

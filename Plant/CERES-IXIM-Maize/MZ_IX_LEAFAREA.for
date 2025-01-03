@@ -31,7 +31,7 @@ C=======================================================================
       REAL      AGEFAC
       REAL      AK
       REAL      AX
-      CHARACTER*80 C80            
+      CHARACTER*256 C80            
       REAL      CRLL
       INTEGER	DYNAMIC
       INTEGER   ERR       
@@ -75,7 +75,7 @@ C=======================================================================
       REAL      LX
       REAL      NSTRES
       REAL      PAR
-      CHARACTER*80    PATHSR      
+      CHARACTER*256    PATHSR      
       REAL      PGROLF
       REAL      PHINT
       REAL      PLAE

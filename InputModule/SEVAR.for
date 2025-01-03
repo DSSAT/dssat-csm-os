@@ -40,7 +40,7 @@ C=======================================================================
 	CHARACTER*8  MODEL
       CHARACTER*12 FILEE,FILEG
       CHARACTER*16 VRNAME,ECONAM
-      CHARACTER*80 PATHGE,PATHEC
+      CHARACTER*256 PATHGE,PATHEC
       CHARACTER*92 FILEGG
       CHARACTER*1000 ATLINE
 
@@ -226,7 +226,7 @@ C=======================================================================
 
       CHARACTER*1  LINE(80),RNMODE,BLANK
       CHARACTER*12 FILEG,GENTEM
-      CHARACTER*80 PATHGE
+      CHARACTER*256 PATHGE
       CHARACTER*92 FILEGG
 
       INTEGER      I,PATHL,CUL

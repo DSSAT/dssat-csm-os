@@ -28,7 +28,7 @@ C==========================================================================
       REAL       ASGDD
 C      REAL       ASYMP
       REAL       BSGDD    
-      CHARACTER*80    C80        
+      CHARACTER*256    C80        
 C      REAL       CRV1
 C      REAL       CRV2
       REAL       CUMCARB  
@@ -62,7 +62,7 @@ C      REAL       INT2
       INTEGER    LUNCRP            
 !     REAL       NSTRES   
       REAL       P3       
-      CHARACTER*80    PATHSR            
+      CHARACTER*256    PATHSR            
       INTEGER    PLF
       REAL       PLTPOP   
       REAL       PP4

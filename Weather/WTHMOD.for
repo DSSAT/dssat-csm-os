@@ -50,7 +50,7 @@ C=======================================================================
       CHARACTER*6  SECTION, ERRKEY
       CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
-      CHARACTER*92 FILEWW
+      CHARACTER*256 FILEWW
 
       INTEGER LINWTH
       PARAMETER (LINWTH=0)

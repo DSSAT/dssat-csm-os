@@ -32,7 +32,7 @@ C-----------------------------------------------------------------------
       PARAMETER (ERRKEY = 'PODDET')
 
       CHARACTER*6 SECTION
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       CHARACTER*92 FILECC
 
       INTEGER LUNCRP, ERR, LNUM, FOUND, ISECT, I

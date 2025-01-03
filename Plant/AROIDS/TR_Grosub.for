@@ -60,7 +60,7 @@ C=======================================================================
       CHARACTER*1 ISWWAT, ISWNIT
       CHARACTER*2 CROP
       CHARACTER*12 FILEC
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
       INTEGER   I,YEAR, CropStatus
 !     Variable conversion RUEA = ceff
        
@@ -1114,7 +1114,7 @@ C=======================================================================
       PARAMETER (ERRKEY = 'IPRICE')
       CHARACTER*12 FILEC
       CHARACTER*30 FILEIO
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
 
       INTEGER LINC, LNUM, LUNIO, ERR, FOUND
 

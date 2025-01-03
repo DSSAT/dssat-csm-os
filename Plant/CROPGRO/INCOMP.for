@@ -32,7 +32,7 @@ C-----------------------------------------------------------------------
       PARAMETER (ERRKEY = 'INCOMP')
       CHARACTER*6 SECTION
       CHARACTER*30 FILEIO
-      CHARACTER*80 C80
+      CHARACTER*256 C80
       CHARACTER*92 FILECC
 
       INTEGER LUNCRP, LUNIO

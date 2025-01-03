@@ -37,8 +37,8 @@ C-----------------------------------------------------------------------
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*255 C255
       
-!     CHARACTER*80  C80
-!     CHARACTER*80 PATHCR,CHAR
+!     CHARACTER*256  C80
+!     CHARACTER*256 PATHCR,CHAR
 
 
       INTEGER I, II, LUNCRP, LUNECO, ERR, LNUM, ISECT

@@ -46,7 +46,7 @@ C=======================================================================
       CHARACTER*5  IRRCOD(NAPPL),IOFFX,IAMEX
       CHARACTER*6  FINDCH,ERRKEY
       CHARACTER*12 FILEX
-      CHARACTER*80 CHARTEST
+      CHARACTER*256 CHARTEST
 
       INTEGER I, PERM, PERMDOY
 
@@ -291,7 +291,7 @@ C=======================================================================
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*12 FILEX
       CHARACTER*78 MSG(3)
-      CHARACTER*80 CHARTEST
+      CHARACTER*256 CHARTEST
 
       INTEGER      LNRES,LUNEXP,ISECT,LINEXP,RESDAY(NAPPL),NRESAP
       INTEGER      ERRNUM,J,IFIND,LN,NARES,YRSIM,LNSIM,IRESCD
@@ -497,7 +497,7 @@ C=======================================================================
       CHARACTER*5  FERCOD(NAPPL),FOCOD(NAPPL),IFTYPE(NAPPL)
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*12 FILEX
-      CHARACTER*80 CHARTEST
+      CHARACTER*256 CHARTEST
 
       INTEGER      LUNEXP,LNFER,YRSIM,NFERT,FDAY(NAPPL),IFFTYP,IFFCOD
       INTEGER      ISECT,LINEXP,ERRNUM,J,IFIND,LN,LNSIM
@@ -660,7 +660,7 @@ C=======================================================================
       CHARACTER*5  HSTG(NAPPL),HCOM(NAPPL),HSIZ(NAPPL)
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*12 FILEX
-      CHARACTER*80 CHARTEST
+      CHARACTER*256 CHARTEST
 
       INTEGER      LNHAR,LUNEXP,ISECT,LINEXP,HDATE(NAPPL),NHAR
       INTEGER      ERRNUM,J,IFIND,LN,YRSIM
@@ -840,7 +840,7 @@ C=======================================================================
       CHARACTER*6  ERRKEY,VARNO,FINDCH
       CHARACTER*12 FILEX
       CHARACTER*16 CNAME
-      CHARACTER*80 CHARTEST
+      CHARACTER*256 CHARTEST
 
       PARAMETER (ERRKEY='IPCUL ')
 

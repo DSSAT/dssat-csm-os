@@ -202,7 +202,7 @@ C        End of section encountered
 C
 C     Check for blank lines and comments (denoted by ! in column 1)
       IF(CHARTEST(1:1).NE.'!' .AND. CHARTEST(1:1).NE.'@') THEN
-!         IF(CHARTEST(1:80).NE.BLANK)THEN
+!         IF(CHARTEST(1:256).NE.BLANK)THEN
          IF(CHARTEST(1:LENGTH).NE.BLANK)THEN
 C           FOUND A GOOD LINE TO READ
             RETURN
@@ -370,8 +370,8 @@ C-----------------------------------------------------------------------
       CHARACTER*(LENCDE) FCODE
       CHARACTER*(LENTXT) FTEXT
       CHARACTER*10 FILECDE
-      CHARACTER*120 DATAX
-      CHARACTER*120 PATHX
+      CHARACTER*256 DATAX
+      CHARACTER*256 PATHX
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'DETAIL'
       INTEGER FOUND, FIND_IN_FILE, ERR, LNUM, LUN
@@ -463,7 +463,7 @@ C  02/09/2007 GH  Add path for fileA
       CHARACTER*6   DAT(EvaluateNum), X(EvaluateNum)  !, ERRKEY
       CHARACTER*12  FILEA
       CHARACTER*78  MSG(10)
-	CHARACTER*80  PATHEX
+	CHARACTER*256  PATHEX
 	CHARACTER*92  FILEA_P
       CHARACTER*255 C255
 
@@ -662,9 +662,9 @@ C-----------------------------------------------------------------------
       CHARACTER*6, PARAMETER :: ERRKEY = 'GETDSC'
       CHARACTER*8  FILECDE
       CHARACTER*50 DESCRIP(*), LONGTEXT
-      CHARACTER*120 DATAX
+      CHARACTER*256 DATAX
       CHARACTER*78 MSG(3)
-      CHARACTER*120 PATHX
+      CHARACTER*256 PATHX
 
       INTEGER COUNT, ERR, I, LUN, LNUM
 
@@ -945,9 +945,9 @@ C-----------------------------------------------------------------------
       CHARACTER*5   ModelName(MaxNum)
       CHARACTER*14  FILECDE
       CHARACTER*23  SECTION
-      CHARACTER*80  CHAR
-      CHARACTER*120 DATAX
-      CHARACTER*120 PATHX
+      CHARACTER*256  CHAR
+      CHARACTER*256 DATAX
+      CHARACTER*256 PATHX
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'SIMCDE'
       INTEGER FOUND, ERR, LNUM, LUN
@@ -1029,7 +1029,7 @@ C=======================================================================
         CHARACTER*12  X(EvaluateNum)  !, ERRKEY
         CHARACTER*12  FILEA
         CHARACTER*78  MSG(2)
-	      CHARACTER*80  PATHEX
+	      CHARACTER*256  PATHEX
 	      CHARACTER*92  FILEA_P
         CHARACTER*255 C255
         CHARACTER*20  DAT

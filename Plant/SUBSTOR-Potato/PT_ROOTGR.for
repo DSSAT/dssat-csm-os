@@ -223,7 +223,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6   SECTION
       CHARACTER*12  FILEC
       CHARACTER*30  FILEIO
-      CHARACTER*80  PATHCR
+      CHARACTER*256  PATHCR
       CHARACTER*92  FILECC
       CHARACTER*180 CHAR
 

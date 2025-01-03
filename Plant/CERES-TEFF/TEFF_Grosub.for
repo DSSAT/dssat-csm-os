@@ -65,7 +65,7 @@ C=======================================================================
       CHARACTER*6     ERRKEY          
       PARAMETER       (ERRKEY='TEFF_GRO')   
 
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
       INTEGER   I,YEAR
 
       REAL      SWFAC,TURFAC,PHEFAC
@@ -1433,7 +1433,7 @@ C=======================================================================
       PARAMETER (ERRKEY = 'TEFIPGR')
       CHARACTER*12 FILEC
       CHARACTER*30 FILEIO
-      CHARACTER*80 PATHCR
+      CHARACTER*256 PATHCR
 
       INTEGER LINC, LNUM, LUNIO, ERR, FOUND
 
