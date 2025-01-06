@@ -951,12 +951,15 @@
 !     ************************************************************
         IF (SOM3FRAC(L) < 0.) THEN
           IF (SOM_TOT(L) > 1.E-6) THEN
-!           Adiku equation
-            StableC = 0.15 * (CLAY(L) + SILT(L)) + 0.69    !g/kg
-            StableC = StableC / 10.                        !g/100g
+!           Adiku equation              
+!            StableC = 0.15 * (CLAY(L) + SILT(L)) + 0.69    !g/kg
+!            StableC = StableC / 10.                        !g/100g
 !           Gargiulo's regression
 !           y = 0.0093x + 0.1829
 !           StableC = 0.0093 * (CLAY(L) + SILT(L)) + 0.1829   !g/100g
+!           Changing to the NAPESHM equation 
+            StableC = 0.0053 * (CLAY(L) + SILT(L)) + 0.41    !g/kg
+            StableC = StableC / 10.                        !g/100g
             SOM3FRAC(L) = StableC / SOM_TOT(L)
             Method(L) = 'Regression eqn'
           ELSE
