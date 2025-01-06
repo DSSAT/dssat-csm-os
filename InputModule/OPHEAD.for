@@ -623,13 +623,13 @@ C=======================================================================
 !     CROPGRO
       CASE ('CRGRO','PRFRM')
 !      IF (INDEX (MODEL, 'CRGRO') > 0) THEN
-        IF (INDEX ('BN,CH,CP,FB,GB,LT,PE,PN,PP,SB,VB,BG',CROP) 
+        IF (INDEX ('BG,BN,CH,CP,FB,GB,LT,PE,PN,PP,SB,VB',CROP) 
      &    > 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('BC,BH,BM,BR,CB,CI,CN,CO,CU,GY,NP,PR,QU,
+        ELSEIF (INDEX ('AM,BC,BH,BM,BR,CB,CI,CN,CO,CU,GY,NP,PR,QU,
      &     SF,SR,SU,TM',CROP) .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1

@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2023
+C COPYRIGHT 1998-2024
 C                     DSSAT Foundation
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -389,7 +389,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Forage model
       CASE('PRFRM')
         CALL FORAGE(CONTROL, ISWITCH,
-     &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
+     &    EOP, NH4, NO3, SOILPROP,                        !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, EORATIO, HARVRES, MDATE,                 !Output
      &    NSTRES, PSTRES1, CropStatus,                    !Output
@@ -895,7 +895,6 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! YREND     Date for end of season (usually harvest date) (YYYYDDD)
 ! YRPLT     Planting date (YYYYDDD)
 !===========================================================================
-
 
 !===========================================================================
       SUBROUTINE READ_ASCE_KT(CONTROL, MEEVP)

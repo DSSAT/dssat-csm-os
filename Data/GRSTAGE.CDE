@@ -1,6 +1,6 @@
 *Phenological/Growth Stage Codes
-! DSSAT v4.8; 2020-07-21
-!
+! DSSAT v4.8; 2024-12-01
+
 ! The fields in the file are as follows:
 !  CDE   The code used in the DSSAT3 crop models
 !  NAME  The 'universal' code used to facilitate data interchange.

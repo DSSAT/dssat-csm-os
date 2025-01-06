@@ -370,7 +370,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
       ! Calculate Photosynthetic Response to CO2
       !
       PCO2   = TABEX (CO2Y,CO2X,CO2,10)
-      !PCARB  = PCARB*PCO2 ! original function 02/15/2016
+!     PCARB  = PCARB*PCO2 ! original function 02/15/2016
       PCARB  = PCARB*PCO2*PRFT
 !     Modified by RR 02/15/2016
 !     CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES)*SLPF + 0.5*DDEADLF ! original function 02/15/2016
@@ -478,7 +478,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           !
           DEVEFF = AMIN1 ((XSTAGE - 2.0) * 10. * PD, 1.0)
           IF (NFAC .GT. 1.0) THEN
-             TIND = (DTII(1)+DTII(2)+DTII(3)/3.0)*(1./NFAC)*DEVEFF     
+             TIND = (DTII(1)+DTII(2)+DTII(3)/3.0)*(1./NFAC)*DEVEFF
            ELSE
              TIND = (DTII(1)+DTII(2)+DTII(3)/3.0)*DEVEFF
           END IF

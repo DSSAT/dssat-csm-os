@@ -461,7 +461,7 @@
           END DO
           ! CHECK IF LANC > LNCX
           ROOTNEXCESS = 0.0
-          IF (RANC.GT.RNCX)
+          IF (RANC.GT.RNCX .AND. PLTPOP .GT. 0.0)
      &      ROOTNEXCESS = (RTWT-(SENWALG(L)/(PLTPOP*10.0)))*(RANC-RNCX)
           ROOTN = ROOTN + (RNUSE(0)-GRAINNGR-ROOTNS-GROLFRTN)
      &                  - ROOTNEXCESS
@@ -1019,7 +1019,10 @@
             IF (LFWT.GT.1.0E-5) LANC = LEAFN / LFWT
             IF (STWT.GT.1.0E-5) SANC = STEMN / STWT
             ! Originally included retained dead matter and reserves
-            IF (((LFWT+STWT+RSWT)*PLTPOP*10.0).GT.0.0)
+            ! TF as reserves were removed from VANC calc.,
+            ! the if statement was adjusted too to avoid fortran
+            ! errors (08/05/2024)
+            IF (((LFWT+STWT)*PLTPOP*10.0).GT.0.0)
      &       VANC = VNAD/((LFWT+STWT)*PLTPOP*10.0)
             IF (LANC.LT.0.0) THEN 
               WRITE(Message(1),'(A27,F4.1)')
@@ -1044,7 +1047,7 @@
             SDNC = 0.0
             GRAINANC = 0.0
             IF (SEEDRS.GT.0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
-            IF (GRWT.GT.0) GRAINANC = GRAINN/GRWT
+            IF (GRWT.GT.0.0) GRAINANC = GRAINN/GRWT
             LNCR = 0.0
             SNCR = 0.0
             RNCR = 0.0
@@ -1519,7 +1522,7 @@
               TNUMPM = 0.0
             ENDIF
 
-            IF (LFWTM+STWTM+RSWTM.GT.0.0)
+            IF (LFWTM+STWTM.GT.0.0)
      &       RSCM = RSWTM/(LFWTM+STWTM)
             IF (RTWTM.GT.0.0)
      &       SHRTM = (LFWTM+STWTM+RSWTM+GRWTM+DEADWTM)/RTWTM

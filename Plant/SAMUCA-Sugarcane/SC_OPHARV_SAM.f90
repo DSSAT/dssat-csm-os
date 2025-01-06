@@ -17,7 +17,8 @@
     USE SAM_ModuleDefs
 
     IMPLICIT NONE
-    EXTERNAL ERROR, EvaluateDat, GETDESC, OPVIEW, READA, SUMVALS, TIMDIF
+    EXTERNAL ERROR, EvaluateDat, GETDESC, OPVIEW, READA, SUMVALS, TIMDIF, &
+             READA_Y4K
     SAVE
 
     CHARACTER*1  RNMODE,IDETO,IPLTI
@@ -50,7 +51,7 @@
     !--- Arrays which contain Simulated and Measured data for printing
     !--- in OVERVIEW.OUT and EVALUATE.OUT files (OPVIEW subroutine)
     CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP !OLAP in dap
-    CHARACTER*6 X(EvaluateNum)
+    CHARACTER*12 X(EvaluateNum)
     CHARACTER*8 Simulated(EvaluateNum), Measured(EvaluateNum)
     CHARACTER*50 DESCRIP(EvaluateNum)
 
@@ -308,20 +309,32 @@
         ELSE
             TRT_ROT = CONTROL % TRTNUM
         ENDIF
-        CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+        !CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+        CALL READA_Y4K(FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
         !--- Store Simulated and Measured data for this season.
-        WRITE(Simulated(1),'(F8.2)')    SUCH;               WRITE(Measured(1),'(A8)')   X(1)
-        WRITE(Simulated(2),'(F8.2)')    AELH;               WRITE(Measured(2),'(A8)')   X(2)
-        WRITE(Simulated(3),'(F8.2)')    STKH;               WRITE(Measured(3),'(A8)')   X(3)
-        WRITE(Simulated(4),'(F8.2)')    TRSH;               WRITE(Measured(4),'(A8)')   X(4)
-        WRITE(Simulated(5),'(F8.2)')    GLAI;               WRITE(Measured(5),'(A8)')   X(5)
-        WRITE(Simulated(6),'(F8.2)')    MAXLAI;				WRITE(Measured(6),'(A8)')   X(6)
-        WRITE(Simulated(7),'(F8.2)')    CHTA;               WRITE(Measured(7),'(A8)')   X(7)
-        WRITE(Simulated(8),'(F8.2)')    HIAM;               WRITE(Measured(8),'(A8)')   X(8)
-        WRITE(Simulated(9),'(F8.2)')    L_SH;               WRITE(Measured(9),'(A8)')   X(9)
-        WRITE(Simulated(10),'(I8)')     DNR_EMRG;           WRITE(Measured(10),'(A8)')  X(10)
-        WRITE(Simulated(13),'(F8.1)')   CFAH;               WRITE(Measured(10),'(A8)')  X(11) ! MV: Why Simulated jumps from 10 to 13? Why Measured 10 is replaced by X(11)?
+        WRITE(Simulated(1),'(F8.2)')    SUCH;               
+                                WRITE(Measured(1),'(A8)')   TRIM(X(1))
+        WRITE(Simulated(2),'(F8.2)')    AELH;               
+                                WRITE(Measured(2),'(A8)')   TRIM(X(2))
+        WRITE(Simulated(3),'(F8.2)')    STKH;               
+                                WRITE(Measured(3),'(A8)')   TRIM(X(3))
+        WRITE(Simulated(4),'(F8.2)')    TRSH;               
+                                WRITE(Measured(4),'(A8)')   TRIM(X(4))
+        WRITE(Simulated(5),'(F8.2)')    GLAI;               
+                                WRITE(Measured(5),'(A8)')   TRIM(X(5))
+        WRITE(Simulated(6),'(F8.2)')    MAXLAI;				
+                                WRITE(Measured(6),'(A8)')   TRIM(X(6))
+        WRITE(Simulated(7),'(F8.2)')    CHTA;               
+                                WRITE(Measured(7),'(A8)')   TRIM(X(7))
+        WRITE(Simulated(8),'(F8.2)')    HIAM;               
+                                WRITE(Measured(8),'(A8)')   TRIM(X(8))
+        WRITE(Simulated(9),'(F8.2)')    L_SH;               
+                                WRITE(Measured(9),'(A8)')   TRIM(X(9))
+        WRITE(Simulated(10),'(I8)')     DNR_EMRG;           
+                                WRITE(Measured(10),'(A8)')  TRIM(X(10))
+        WRITE(Simulated(13),'(F8.1)')   CFAH;               
+                                WRITE(Measured(10),'(A8)')  TRIM(X(11)) ! MV: Why Simulated jumps from 10 to 13? Why Measured 10 is replaced by X(11)?
         ENDIF
                         
         !-----------------------------------------------------------------------

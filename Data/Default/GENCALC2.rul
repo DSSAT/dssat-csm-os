@@ -1,0 +1,417 @@
+$GENCALC2 GENOTYPE COEFFICIENT RULES FILE
+
+!  Last edit 11/16/2024 GH
+
+! The control section variables are:
+! MSGBX 'Flag' which determines whether message boxes are displayed or not: 
+!         Y  All message boxes are written to the screen, and all 'beeps' are sounded. 
+!         N  Message boxes are only written, and 'beeps' sounded, when no rules file is 
+!            found at the start of a session, and when no log file is found when trying 
+!            to edit the log. Users should note that when using this mode, the ecotype 
+!            option file is automatically recreated after editing the ecotype file. 
+!       Set to 'Y' if not found.
+! RULER Maximum number of re-runs allowed for each rule. Set to 0 if not found
+! RULEC Maximum number of changes in step size for each rule. Set to 0 if not found.   
+! MXMIN 'Flag' which determines whether the maximum and minimum values for each
+!       coefficient, if found in the cultivar file, will be used in computation:   
+!         Y  Use the maximum and minimum values to keep the intermediate, exploratory
+!            coefficients equal to or less than the maximum, and equal to or greater 
+!            than the minimum. And, when coefficients are near zero, use the span 
+!            between max and min values rather than the actual coefficient to 
+!            calculate the amount to change to be made in the exporatory coefficient 
+!            value.  
+!         N  Do not use the maximum and minimum values, even if present in the 
+!            CUL file.
+! LOG   'Flag' which determines whether detailed messages are written to the log file
+!       during a calibration run.
+!         Y  All messages are written.                                            
+!         N  Only initial,final,and ERROR messages are written. 
+!       Set to 'Y' if not found.
+! MNCH% The minimum change in a coefficient that is allowed when updating values       
+!       for the next run. Given as a percentage of the span betwen minimum and 
+!       maximum values in the cultivar coefficients file. Allows coefficients 
+!       to move away from a zero value in the coefficients file, or to move to 
+!       a zero value during calibration runs.
+
+! The individual model (or module) sections variables are:
+! TARGET = Target trait (Columns 1-5 for abbreviation,8-18 for name)
+! (ExFLAG),STEP,COEFF,LOOPS = Calibration controls (Columns 20 on). Each control has:
+!  STEP  Percentage that coefficient to be changed between each run 
+!  COEFF Coefficient abbreviation as in the CUL file
+!  LOOPS Number of calibration runs for this particular coefficient 
+! And may have a leading 'flag' ('E') indicating that the coefficient is for 
+! exploration, not optimization. (ie. only to be run with the step size and loop
+! number indicated, with no re-runs or changes in step size even if these are 
+! called for in the control section of the file)
+
+*CONTROLS
+@MSGBX RULER RULEC MXMIN   LOG MNCH%
+     Y     5     5     Y     Y     1
+    
+*WHCER048  DSCSM048 WHEAT
+@TARGET...........  (ExFLAG),STEP,COEFF,LOOPS
+ ADAP  ANTHESIS     10.0,P1V,3 10.0,P1D,3
+ MDAP  MATURITY     10.0,P5,5
+!L#SM  LEAF NO      10.0,PHINT,5  ! Needs leaf number data
+!T#AM  SPIKE NO     10.0,G3,5     ! Needs spike # data           
+!H#AM  GRAIN NO     10.0,G1,5     ! Needs yield analysis data
+!HWUM  GRAIN WT     10.0,G2,5     ! Needs yield analysis data
+!HWAM  GRAIN YLD    10.0,G1,3 10.0,G2,3 10.0,G3,3
+
+*WHCRP048  DSCSM048 WHEAT
+@TARGET...........  (ExFLAG),STEP,COEFF,LOOPS
+ ADAP  ANTHESIS      10.0,VREQ,3 10.0,PPS1,3 10.0,VEFF,3 10.0,P1,3
+ MDAP  ANTHESIS      10.0,P8,3 
+!L#SM  PHYLLOCHRON   10.0,PHINT,3  ! Needs leaf number data
+!T#AM  FINAL TNUM    10.0,SHWTS,3  ! Needs final tiller # data
+!LAIX  LEAF AREA     10.0,LA1S,3 10.0,LAFV,3 10.0,LAFR,3                          
+!H#AM  KERNEL NUM    10.0,G#WTS,3  ! Needs yield analysis data
+!HWUM  KERNEL WT     10.0,GWTS,3   ! Needs yield analysis data
+!HWAM  GRAIN YIELD   10.0,G#WTS,3
+
+*CSYCA048  DSCSM048 CASSAVA
+@TARGET...........  (ExFLAG),STEP,COEFF,LOOPS
+!1. USE FIRST SIX FOR INITIAL CALIBRATION OF PHENOLOGY
+!   Use just variables available in the CSA files 
+!   If B5DAP OR B6DAP are not available keep it commented out
+ B1DAP  BRANCH 1     10.0,B01ND,20
+ B2DAP  BRANCH 2     10.0,B12ND,20
+ B3DAP  BRANCH 3     10.0,B23ND,20
+ B4DAP  BRANCH 4     10.0,B34ND,20
+! B5DAP  BRANCH 5     10.0,B34ND,20
+! B6DAP  BRANCH 6     10.0,B34ND,20
+!2. DEFINE LEAF APPEARANCE AND NUMBER OF APICES
+! L#SM   LEAF NUMBER  10.0,LNSLP,5
+! BR#SH  #APICES      10.0,BR1FX,3 10.0,BR2FX,3 10.0,BR3FX,3 10.0,BR4FX,3
+!3. DEFINE LAIX (RECOMMEND TO MODIFY KCAN IN ECO FILE OPTIONS)
+! LAIX  LEAF AREA    10.0,LAXS,5 10.0,LLIFA,5 10.0,LPEFR,5
+!4. EVALUATE WEIGHT VALUES (RECOMMEND TO MODIFY RSUSE IN ECO FILE OPTIONS)
+!   Review if total biomass is estimated properly, if not modify PARUE (ECO) before
+! CWAM  CANOPY WT.   10.0,NODWT,5 10.0,SLAS,5
+! HIAM  HARVEST IND. 10.0,NODWT,10 
+! HWAM  HARVEST WT.  10.0,NODWT,10
+  
+*CSCAS048  DSCSM048 CASSAVA
+@TARGET...........  (ExFLAG),STEP,COEFF,LOOPS
+ B1DAP  BRANCH 1     10.0,B01ND,10
+! B2DAP  BRANCH 2     10.0,B12ND,10
+! B3DAP  BRANCH 3     10.0,B23ND,10
+! B4DAP  BRANCH 4     10.0,B34ND,10
+! B5DAP  BRANCH 5     10.0,B45ND,10
+! B6DAP  BRANCH 6     10.0,B56ND,10
+! L#SM   LEAF NUMBER  10.0,PHINT,5
+! LAIX  LEAF AREA    10.0,LA1S,5 10.0,LAXS,5 10.0,LAXND,5 10.0,LAXN2,5
+! CWAM  CANOPY WT.   10.0,SLAS,5 10.0,LLIFA,5 10.0,LAFS,5 10.0,LAFND,5
+! HIAM  HARVEST IND. 10.0,STFR,10
+
+*BACER048  DSCSM048 BARLEY
+@TARGET...........  (ExFLAG),STEP,COEFF,LOOPS
+ ADAP  ANTHESIS     10.0,P1V,3 10.0,P1D,3
+ MDAP  MATURITY     10.0,P5,5
+!L#SM  LEAF NO      10.0,PHINT,5  ! Needs leaf number data
+!T#AM  SPIKE NO     10.0,G3,5     ! Needs spike # data           
+!H#AM  GRAIN NO     10.0,G1,5     ! Needs yield analysis data
+!HWUM  GRAIN WT     10.0,G2,5     ! Needs yield analysis data
+!HWAM  GRAIN YLD    10.0,G1,3 10.0,G2,3 10.0,G3,3
+
+*BACRP048  DSCSM048 BARLEY
+@TARGET...........  (ExFLAG),STEP,COEFF,LOOPS
+ ADAP  ANTHESIS      10.0,VREQ,3 10.0,PPS1,3 10.0,VEFF,3 10.0,P1,3
+ MDAP  ANTHESIS      10.0,P8,3 
+!L#SM  PHYLLOCHRON   10.0,PHINT,3  ! Needs leaf number data
+!T#AM  FINAL TNUM    10.0,SHWTS,3  ! Needs final tiller # data
+!LAIX  LEAF AREA     10.0,LA1S,3 10.0,LAFV,3 10.0,LAFR,3                          
+!H#AM  KERNEL NUM    10.0,G#WTS,3  ! Needs yield analysis data
+!HWUM  KERNEL WT     10.0,GWTS,3   ! Needs yield analysis data
+!HWAM  GRAIN YIELD   10.0,G#WTS,3
+
+*SBGRO048  DSCSM048 SOYBEAN
+@TARGET...........  (ExFLAG),STEP,COEFF,LOOPS
+ ADAP  FLOWERING    10.0,CSDL,5  10.0,EM-FL,5  
+! PDFP  FIRST SEED   10.0,FL-SD,3
+! MDAP  P.MATURITY   10.0,SD-PM,3
+! CWAM  BIOMASS      10.0,LFMAX,3 
+! H#UM  SEED/POD     10.0,SDPDV,3 
+! LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+! CWAM  BIOMASS       5.0,LFMAX,3 
+! HWUM  WT/SEED      10.0,WTPSD,3 
+! HWAM  SEED YIELD   10.0,SFDUR,3 
+! H#AM  SEED NO      10.0,PODUR,3 
+! HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+ 
+*BHGRO048  DSCSM048 BAHIA GRASS
+@TARGET..........   STEP,COEFF,LOOPS
+!VERY LITTLE DATA IN FILE A FOR CALIBRATION, NO PHENOLOGY
+ CWAM  BIOMASS       5.0,LFMAX,5  5.0,SLAVR,5
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,SLAVAR,3 
+
+*BRGRO048  DSCSM048 BRACHIARIA DECUMBENS
+@TARGET..........   STEP,COEFF,LOOPS
+!VERY LITTLE DATA IN FILE A FOR CALIBRATION, NO PHENOLOGY
+ CWAM  BIOMASS       5.0,LFMAX,5  5.0,SLAVR,5
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,SLAVAR,3 
+
+*CBGRO048  DSCSM048 CABBAGE
+@TARGET..........   STEP,COEFF,LOOPS
+!ADAP  FLOWERING    10.0,CSDL,3  10.0,EM-FL,3  
+!PDFP  FIRST SEED   10.0,FL-SD,3
+!MDAP  P.MATURITY   10.0,SD-PM,3
+ PWAM  HEAD MASS    10.0,LFMAX,5 10.0,SLAVR,5
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*CHGRO048  DSCSM048 CHICKPEA
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING    10.0,CSDL,3  10.0,EM-FL,3  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+! MDAP  P.MATURITY   10.0,SD-PM,3
+! CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*CNGRO048  DSCSM048 CANOLA
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING    10.0,CSDL,3  10.0,EM-FL,3  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+ MDAP  P.MATURITY   10.0,SD-PM,3
+ CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*COGRO048  DSCSM048 COTTON
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING    10.0,CSDL,3  10.0,EM-FL,3  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+ MDAP  P.MATURITY   10.0,SD-PM,3
+ CWAM  BIOMASS      10.0,LFMAX,3 
+ H#UM  SEED/POD     10.0,SDPDV,3 
+ LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+ CWAM  BIOMASS       5.0,LFMAX,3 
+ HWUM  WT/SEED      10.0,WTPSD,3 
+ HWAM  SEED YIELD   10.0,SFDUR,3 
+ H#AM  SEED NO      10.0,PODUR,3 
+ HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*CPGRO048  DSCSM048 COWPEA 
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING    10.0,CSDL,3  10.0,EM-FL,3  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+ MDAP  P.MATURITY   10.0,SD-PM,3
+!CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*BNGRO048  DSCSM048 DRYBEAN
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING     5.0,PPSEN,5  5.0,EM-FL,5  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+ MDAP  P.MATURITY   10.0,SD-PM,3
+!CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*GBGRO048  DSCSM048 GREENBEAN
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING     5.0,PPSEN,5  5.0,EM-FL,5  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+ MDAP  P.MATURITY   10.0,SD-PM,3
+!CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*FBGRO048  DSCSM048 FABABEAN
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING    10.0,CSDL,3  10.0,EM-FL,3  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+ MDAP  P.MATURITY   10.0,SD-PM,3
+!CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*MLCER048  DSCSM048 MILLET
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  ANTHESIS      5.0,P1,3 5.0,P2O,3                                 
+!ADAP  ANTHESIS     20.0,P1,5 5.0,P2O,3 5.0,P2R,3
+ MDAP  MATURITY      5.0,P5,3
+!LAIX  MAX. LAI      5.0,G1,3
+!LAIX  MAX. LAI      5.0,PHINT,3
+!CWAM  BIOMASS MATU  5.0,G1,3 
+!HWAM  GRAIN YLD     5.0,G2,3
+
+*MZCER048  DSCSM048 MAIZE
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  ANTHESIS     10.0,P1,5   5.0,P2,5   5.0,PHINT,5
+ L#SM  LEAF NO       5.0,PHINT,3 
+!MDAP  MATURITY     20.0,P5,5
+!HWAM  GRAIN YLD     5.0,G2,5   5.0,G3,5
+
+*PNGRO048  DSCSM048 PEANUT 
+@TARGET..........   STEP,COEFF,LOOPS
+!USE FIRST THREE FOR INITIAL CALIBRATION OF PHENOLOGY
+ ADAP  FLOWERING     5.0,EM-FL,3  
+ PDFP  FIRST SEED    5.0,FL-SD,3
+ MDAP  P.MATURITY    5.0,SD-PM,3
+!USE NEXT THREE TO REFINE CALIBRATION OF PHENOLOGY
+!ADAP  FLOWERING     3.0,EM-FL,3  
+!PDFP  FIRST SEED    3.0,FL-SD,3
+!MDAP  P.MATURITY    3.0,SD-PM,3
+!CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*PRGRO048  DSCSM048 BELL PEPPER
+@TARGET..........   STEP,COEFF,LOOPS
+!USE FIRST THREE FOR INITIAL CALIBRATION OF PHENOLOGY
+ ADAP  FLOWERING     5.0,EM-FL,3  
+ PDFP  FIRST SEED    5.0,FL-SD,3
+ MDAP  P.MATURITY    5.0,SD-PM,3
+!USE NEXT THREE TO REFINE CALIBRATION OF PHENOLOGY
+!ADAP  FLOWERING     3.0,EM-FL,3  
+!PDFP  FIRST SEED    3.0,FL-SD,3
+!MDAP  P.MATURITY    3.0,SD-PM,3
+!CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*PTSUB048  DSCSM048 POTATO
+@TARGET..........   STEP,COEFF,LOOPS
+ LAIX  MAX LAI      10.0,G2,3
+ UWAH  TUBER DW YLD 20.0,G3,3   5.0,PD,3
+ TDAP  TUBER INIT   10.0,P2,3   5.0,TC,3
+ 
+*BSCER048  DSCSM048 SUGARBEET
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  ANTHESIS     10.0,P1,3
+ MDAP  MATURITY     10.0,P5,5
+!L#SM  LEAF NO      10.0,PHINT,5  ! Needs leaf number data
+ HWAM  GRAIN YLD    10.0,G2,3 10.0,G3,3
+
+*RICER048  DSCSM048 RICE
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  ANTHESIS      5.0,P1,3 5.0,P2O,3 5.0,P2R,3
+ MDAP  MATURITY     10.0,P5,3
+ HWAM  GRAIN YLD    10.0,G1,3
+!HWAM  GRAIN YLD    10.0,G1,3 10.0,G2,3 
+!H#AM  GRAIN NO      10.0,G1,5     ! Needs yield analysis data
+!HWUM  GRAIN WT      10.0,G2,5     ! Needs yield analysis data
+!T#AM  TILLER NO      5.0,G3,5     ! Needs tiller # data           
+
+*SGCER048  DSCSM048 SORGHUM
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  ANTHESIS      3.0,P1,5 1.0,P2O,1 3.0,P2R,5
+!ADAP  ANTHESIS      1.0,P1,7 1.0,P2O,1 1.0,P2R,7
+!ADAP  ANTHESIS     20.0,P1,5 5.0,P2O,3 5.0,P2R,3
+!MDAP  MATURITY      1.5,P5,7
+!LAIX  MAX. LAI      5.0,G1,3 5.0,PHINT,3
+!LAIX  MAX. LAI      5.0,PHINT,3
+!CWAM  BIOMASS MATU  5.0,G1,3 
+!HWAM  GRAIN YLD     5.0,G2,3
+
+*SUOIL048  DSCSM048 SUNFLOWER
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  ANTHESIS      5.0,P1,5  5.0,P2,5
+!L#SM  LEAF NO       5.0,PHINT,3 
+!MDAP  MATURITY     10.0,P5,5
+ HSAM  GRAIN YLD     5.0,G2,5  5.0,G3,5
+!H#AM  GRAIN NO      5.0,G2,5
+!HWUM  GRAIN WT      5.0,G3,5
+
+*TMGRO048  DSCSM048 TOMATO 
+@TARGET..........   STEP,COEFF,LOOPS
+!USE FIRST THREE FOR INITIAL CALIBRATION OF PHENOLOGY
+ ADAP  FLOWERING     5.0,EM-FL,3  
+!PDFP  FIRST SEED    5.0,FL-SD,3
+!MDAP  P.MATURITY    5.0,SD-PM,3
+!USE NEXT THREE TO REFINE CALIBRATION OF PHENOLOGY
+!ADAP  FLOWERING     3.0,EM-FL,3  
+!PDFP  FIRST SEED    3.0,FL-SD,3
+!MDAP  P.MATURITY    3.0,SD-PM,3
+!CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI       5.0,SLAVR,5
+!CWAM  BIOMASS       5.0,LFMAX,5 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*VBGRO048  DSCSM048 VELVETBEAN
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING     5.0,PPSEN,5  5.0,EM-FL,5  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+ MDAP  P.MATURITY   10.0,SD-PM,3
+!CWAM  BIOMASS      10.0,LFMAX,3 
+!H#UM  SEED/POD     10.0,SDPDV,3 
+!LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+!CWAM  BIOMASS       5.0,LFMAX,3 
+!HWUM  WT/SEED      10.0,WTPSD,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 
+!H#AM  SEED NO      10.0,PODUR,3 
+!HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3
+
+*WHAPSP048  DSCSM048 WHEAT
+@TARGET...........  (ExFLAG),STEP,COEFF,LOOPS
+ ADAP  ANTHESIS      10.0,VSEN,3 10.0,PPSEN,3 10.0,P1,3
+ MDAP  MATURITY     10.0,P5,5
+ L#SM  LEAF NO      10.0,PHINT,5  ! Needs leaf number data
+!
+*PPGRO048  DSCSM048 PIGEONPea
+@TARGET..........   STEP,COEFF,LOOPS
+ ADAP  FLOWERING    10.0,CSDL,3  10.0,EM-FL,3  
+ PDFP  FIRST SEED   10.0,FL-SD,3
+ MDAP  P.MATURITY   10.0,SD-PM,3
+ CWAM  BIOMASS      10.0,LFMAX,3 
+ H#UM  SEED/POD     10.0,SDPDV,3 
+ LAIX  MAX LAI      10.0,FL-LF,3 10.0,SLAVR,3
+ CWAM  BIOMASS       5.0,LFMAX,3 
+ HWUM  WT/SEED      10.0,WTPSD,3 
+ HWAM  SEED YIELD   10.0,SFDUR,3 
+ H#AM  SEED NO      10.0,PODUR,3 
+HWAM  SEED YIELD   10.0,SFDUR,3 10.0,LFMAX,3

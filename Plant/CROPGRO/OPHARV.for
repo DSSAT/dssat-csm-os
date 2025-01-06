@@ -22,6 +22,10 @@ C  02/09/2007 GH  Add path for FileA
 !  09/17/2019 CHP remove crop CT
 C  07/08/2022 GH  Add CU for Cucumber
 C  05/01/2023 GH  Add GY for Guar; SR for Strawberry
+!  06/20/2024 FO  Added Economic Yield for Evaluate and Summary
+!  06/27/2024 FO  Added Lint Percentage for Evaluate
+!  07/11/2024 FO  Added Economic standard output format
+!  10/11/2024 GH  Add AM for Amaranth
 C=======================================================================
 
       SUBROUTINE OPHARV(CONTROL, ISWITCH, 
@@ -31,7 +35,7 @@ C=======================================================================
      &    SEEDNO, STGDOY, SWFAC, TOPWT, TURFAC,           !Input
      &    VSTAGE, WTNCAN, WTNFX, WTNSD, WTNST, WTNUP,     !Input
      &    XLAI, RSTAGE, YREMRG, YRNR1, YRNR3, YRNR5,      !Input
-     &    YRNR7, YRPLT,                                   !Input
+     &    YRNR7, YRPLT, LINTW, LINTP,                     !Input
      &    SDWTAH)                                         !Output
 
 C-----------------------------------------------------------------------
@@ -39,8 +43,8 @@ C-----------------------------------------------------------------------
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
-      EXTERNAL FIND, ERROR, STNAMES, OPVIEW, READA, READA_Dates, 
-     &  CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat, TIMDIF
+      EXTERNAL FIND, ERROR, STNAMES, OPVIEW, READA_Dates, ROUND,
+     &  CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI, PLME
@@ -48,9 +52,9 @@ C-----------------------------------------------------------------------
       CHARACTER*6  SECTION
       CHARACTER*6, PARAMETER :: ERRKEY = 'OPHARV'
       CHARACTER*10 STNAME(20)
-      CHARACTER*12 FILEA
+      CHARACTER*12 FILEA, FMT
       CHARACTER*30 FILEIO
-	CHARACTER*80 PATHEX
+	    CHARACTER*80 PATHEX
 
       INTEGER ACOUNT, DFLR, DEMRG, DFPD, DFSD, DHRV
       INTEGER DNR8,DMAT,DNR0, DNR1,DNR3,DNR5,DNR7
@@ -58,27 +62,27 @@ C-----------------------------------------------------------------------
       INTEGER IFLR, IEMRG, IFPD, IFSD, IHRV, IMAT, ISENS
       INTEGER LINC, LNUM, LUNIO, RUN, TIMDIF, TRTNUM, YIELD, YREMRG
       INTEGER YRNR1,YRNR3,YRNR5,YRNR7,MDATE,YRDOY, YRPLT,YRSIM
-      INTEGER RSTAGE
+      INTEGER RSTAGE, iEYLDH
       INTEGER TRT_ROT
       INTEGER STGDOY(20)
 
       REAL BIOMAS, BWAH, CANHT, CANNAA, CANWAA, HI, HWAH, HWAM
       REAL LAIMX, PCLSD, PCNSD, PODWT, PODNO, PSDWT, PSPP
-      REAL SDRATE, SDWT, SDWTAH, SEEDNO
+      REAL SDRATE, SDWT, SDWTAH, SEEDNO, EYLDH, ROUND, LINTW, LINTP
       REAL THRES, TOPWT, VSTAGE
       REAL WTNCAN, WTNFX, WTNSD, WTNST, WTNUP, XLAI
       REAL, DIMENSION(2) :: HARVFRAC
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
-      INTEGER, PARAMETER :: SUMNUM = 18
-      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      INTEGER, PARAMETER :: SUMNUM = 19
+      CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
 !     Arrays which contain Simulated and Measured data for printing
 !       in OVERVIEW.OUT and EVALUATE.OUT files (OPVIEW subroutine)
       CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP !OLAP in dap
-      CHARACTER*6 X(EvaluateNum)
+      CHARACTER*12 X(EvaluateNum)
       CHARACTER*8 Simulated(EvaluateNum), Measured(EvaluateNum)
       CHARACTER*50 DESCRIP(EvaluateNum)
 
@@ -107,41 +111,42 @@ C-----------------------------------------------------------------------
       IDETO = ISWITCH % IDETO
       IPLTI = ISWITCH % IPLTI
 
-      ACOUNT = 25  !Number of possible FILEA headers for this crop
+      ACOUNT = 27  !Number of possible FILEA headers for this crop
 
 !CHP 12/16/2004 Need to be able to read FILEA headers of either
 !     'BWAM' or 'BWAH' and interpret data as 'BWAM'
 
 !     Define headings for observed data file (FILEA)
-      DATA OLAB / !Pred.                 Obs.   Definition
-                  !------------          -----  -----------
-                  !new!old!
-     & 'EDAT  ',  ! 1 !25 EDAT                  Emergence date
-     & 'ADAT  ',  ! 2 ! 1 DNR1           DFLR   Anthesis date
-     & 'PD1T  ',  ! 3 ! 2 DNR3           DFPD   First Pod        
-     & 'PDFT  ',  ! 4 ! 3 DNR5           DFSD   First Seed       
-     & 'MDAT  ',  ! 5 ! 4 DNR7           DMAT   Physiological Maturity
-     & 'R8AT  ',  ! 6 !24 DNR8           DHRV   Harvest Maturity (dap)
-     & 'HWAM  ',  ! 7 ! 5 NINT(SDWT*10)  XGWT   Seed Yield (kg/ha;dry)
-     & 'PWAM  ',  ! 8 ! 6 NINT(PODWT*10) XPDW   Pod Yield (kg/ha;dry) 
-     & 'CWAA  ',  ! 9 !19 NINT(CANWAA*10)XCWAA  Biomass (kg/ha) at Anth
-     & 'CWAM  ',  !10 !10 NINT(TOPWT*10) XCWT   Biomass (kg/ha) Harv Mat
-     & 'BWAM  ',  !11 !11 (TOPWT-PODWT)*10 XSWT Tops - seed (kg/ha) @Mat
-     & 'H#AM  ',  !12 ! 7 NINT(SEEDNO)   XNOGR  Seed Number (Seed/m2)
-     & 'HWUM  ',  !13 ! 8 PSDWT          XGWU   Weight Per Seed (g;dry)
-     & 'H#UM  ',  !14 ! 9 PSPP           XNOGU  Seeds/Pod
-     & 'HIAM  ',  !15 !13 HI             XHIN   Harvest Index (kg/kg)
-     & 'THAM  ',  !16 !14 THRES          XTHR   Shelling Percentage (%)
-     & 'LAIX  ',  !17 !12 LAIMX          XLAM   Maximum LAI (m2/m2)
-     & 'L#SM  ',  !18 !21 VSTAGE         XLFNO  Final Leaf # Main Stem
-     & 'CHTA  ',  !19 !23 CANHT          XCNHT  Canopy Height (m)
-     & 'CNAA  ',  !20 !20                XCNAA  Biomass N @ anth (kg/ha)
-     & 'CNAM  ',  !21 !16 NINT(WTNCAN*10)XNTP   Biomass N (kg N/ha)
-     & 'SNAM  ',  !22 !17 NINT(WTNST*10) XNST   Stalk N (kg N/ha)
-     & 'GNAM  ',  !23 !15 NINT(WTNSD*10) XNGR   Seed N (kg N/ha)
-     & 'GN%M  ',  !24 !18 PCNSD          XNPS   Seed N (%)
-     & 'GL%M  ',  !25 !22 PCLSD          XLPS   Seed Lipid (%)
-     & 15*'      '/
+      DATA OLAB / !Pred.             Obs.   Definition
+                  !------------      -----  -----------
+     & 'EDAT  ',  ! 1 EDAT                  Emergence date
+     & 'ADAT  ',  ! 2 DNR1           DFLR   Anthesis date
+     & 'PD1T  ',  ! 3 DNR3           DFPD   First Pod        
+     & 'PDFT  ',  ! 4 DNR5           DFSD   First Seed       
+     & 'MDAT  ',  ! 5 DNR7           DMAT   Physiological Maturity
+     & 'R8AT  ',  ! 6 DNR8           DHRV   Harvest Maturity (dap)
+     & 'HWAM  ',  ! 7 NINT(SDWT*10)  XGWT   Seed Yield (kg/ha;dry)
+     & 'EYLDH ',  ! 8 EYLDH          EYLDH  Economic Yield
+     & 'LINTP ',  ! 9 LINTP          LINTP  Percent Lint (%)
+     & 'PWAM  ',  !10 NINT(PODWT*10) XPDW   Pod Yield (kg/ha;dry) 
+     & 'CWAA  ',  !11 NINT(CANWAA*10)XCWAA  Biomass (kg/ha) at Anth
+     & 'CWAM  ',  !12 NINT(TOPWT*10) XCWT   Biomass (kg/ha) Harv Mat
+     & 'BWAM  ',  !13 (TOPWT-PODWT)*10 XSWT Tops - seed (kg/ha) @Mat
+     & 'H#AM  ',  !14 NINT(SEEDNO)   XNOGR  Seed Number (Seed/m2)
+     & 'HWUM  ',  !15 PSDWT          XGWU   Weight Per Seed (g;dry)
+     & 'H#UM  ',  !16 PSPP           XNOGU  Seeds/Pod
+     & 'HIAM  ',  !17 HI             XHIN   Harvest Index (kg/kg)
+     & 'THAM  ',  !18 THRES          XTHR   Shelling Percentage (%)
+     & 'LAIX  ',  !19 LAIMX          XLAM   Maximum LAI (m2/m2)
+     & 'L#SM  ',  !20 VSTAGE         XLFNO  Final Leaf # Main Stem
+     & 'CHTA  ',  !21 CANHT          XCNHT  Canopy Height (m)
+     & 'CNAA  ',  !22                XCNAA  Biomass N @ anth (kg/ha)
+     & 'CNAM  ',  !23 NINT(WTNCAN*10)XNTP   Biomass N (kg N/ha)
+     & 'SNAM  ',  !24 NINT(WTNST*10) XNST   Stalk N (kg N/ha)
+     & 'GNAM  ',  !25 NINT(WTNSD*10) XNGR   Seed N (kg N/ha)
+     & 'GN%M  ',  !26 PCNSD          XNPS   Seed N (%)
+     & 'GL%M  ',  !27 PCLSD          XLPS   Seed Lipid (%)
+     & 13*'      '/
 !     GWAH    !Grain weight at harvest (kg/ha)
 !     CWAH    !Canopy weight at harvest (kg/ha)
 !     FWAH    !Fruit weight at harvest (kg/ha)
@@ -204,6 +209,7 @@ C-----------------------------------------------------------------------
       XLAI   = -99.
       YIELD  = -99.
       RSTAGE = -99.
+      EYLDH  = -99.
 
       CALL OPVIEW(CONTROL, 
      &    BIOMAS, ACOUNT, DESCRIP, IDETO, VSTAGE, 
@@ -220,14 +226,14 @@ C-----------------------------------------------------------------------
       Measured  = ' '
       YIELD  = 0
       BIOMAS = 0.0
-      
+
 !     Establish #, names of stages for environmental & stress summary
       PlantStres % ACTIVE = .FALSE.
       PlantStres % StageName = '                       '
       SELECT CASE (CROP)
-      CASE ('BC','BG','BN','CH','CI','CN','CO','CP','CU',
-     &      'FB','GB','GY','LT','PE','PN','PP','PR','QU',
-     &      'SB','SF','SR','SU','TM','VB')
+      CASE ('AM','BC','BG','BN','CH','CI','CN','CO','CP',
+     &      'CU','FB','GB','GY','LT','PE','PN','PP',
+     &      'PR','QU','SB','SF','SR','SU','TM','VB')
         PlantStres % NSTAGES = 4
         PlantStres % StageName(1)  = 'Emergence -First Flower'
         PlantStres % StageName(2)  = 'First Flower-First Seed'
@@ -270,9 +276,9 @@ C-----------------------------------------------------------------------
 
 !     Set ACTIVE variable to indicate that current phase is active
       SELECT CASE (CROP)
-      CASE ('BC','BG','BN','CH','CI','CN','CO','CP','CU',
-     &      'FB','GB','GY','LT','PE','PN','PP','PR','QU',
-     &      'SB','SF','SR','SU','TM','VB')
+      CASE ('AM','BC','BG','BN','CH','CI','CN','CO','CP',
+     &      'CU','FB','GB','GY','LT','PE','PN','PP',
+     &      'PR','QU','SB','SF','SR','SU','TM','VB')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(5)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -344,7 +350,33 @@ C-----------------------------------------------------------------------
       ENDIF
 
       IF (CROP .EQ. 'FA') YRPLT = -99
-
+      
+      ! 2024-06-20 FO - Economic Yield for Cotton.
+      IF(CROP .EQ. 'CO') THEN
+        ! Units from g/m2 to ton/ha
+        EYLDH = LINTW / 100
+      ENDIF
+      
+      ! 2024-07-11 FO - Economic standard output format
+      IF    (EYLDH < 0.999) THEN; FMT = '(F8.3)'
+      ELSEIF(EYLDH < 10.0)  THEN; FMT = '(F8.2)'
+      ELSEIF(EYLDH < 100.0) THEN; FMT = '(F8.1)'
+      ELSEIF(EYLDH < 1000.0)THEN
+        iEYLDH = INT(EYLDH)
+        FMT = '(I8)'
+      ELSEIF(EYLDH < 10000.0)THEN
+        EYLDH = ROUND(EYLDH, -1)
+        iEYLDH = INT(EYLDH)
+        FMT = '(I8)'
+      ELSEIF(EYLDH < 100000.0)THEN
+        EYLDH = ROUND(EYLDH, -2)
+        iEYLDH = INT(EYLDH)
+        FMT = '(I8)'
+      ELSE
+        EYLDH = ROUND(EYLDH, -2)
+        iEYLDH = INT(EYLDH)
+        FMT = '(I8)'
+      ENDIF
 !-----------------------------------------------------------------------
 !     Read Measured (measured) data from FILEA
 !-----------------------------------------------------------------------
@@ -355,7 +387,8 @@ C-----------------------------------------------------------------------
          ELSE
            TRT_ROT = TRTNUM
          ENDIF
-         CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+         !CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+         CALL READA_Y4K(FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !     Convert from YRDOY format to DAP.  Change descriptions to match.
 !       Anthesis
@@ -469,38 +502,54 @@ C-----------------------------------------------------------------------
       WRITE(Simulated(5),' (I8)') DNR7;  WRITE(Measured(5),'(I8)') DMAT
       WRITE(Simulated(6),' (I8)') DNR8;  WRITE(Measured(6),'(I8)') DHRV
       WRITE(Simulated(7),' (I8)') NINT(SDWT*10);  
-                                         WRITE(Measured(7),'(A8)') X(7)
-      WRITE(Simulated(8),' (I8)') NINT(PODWT*10); 
-                                         WRITE(Measured(8),'(A8)') X(8)
-      WRITE(Simulated(9), '(I8)') NINT(CANWAA*10);
-                                         WRITE(Measured(9),'(A8)') X(9)
-      WRITE(Simulated(10),'(I8)') NINT(TOPWT*10); 
-                                         WRITE(Measured(10),'(A8)')X(10)
-!     WRITE(Simulated(11),'(I8)') NINT(STMWT*10); 
-!                                        WRITE(Measured(11),'(A8)')X(11)
-! KJB, LAH, CHP 12/16/2004  change BWAH to BWAM
-      WRITE(Simulated(11),'(I8)') NINT(TOPWT-SDWT)*10; 
-                                         WRITE(Measured(11),'(A8)')X(11)
-      WRITE(Simulated(12),'(I8)') NINT(SEEDNO);   
-                                         WRITE(Measured(12),'(A8)')X(12)
-      WRITE(Simulated(13),'(F8.4)')PSDWT;WRITE(Measured(13),'(A8)')X(13)
-      WRITE(Simulated(14),'(F8.2)')PSPP; WRITE(Measured(14),'(A8)')X(14)
-      WRITE(Simulated(15),'(F8.3)')HI;   WRITE(Measured(15),'(A8)')X(15)
-      WRITE(Simulated(16),'(F8.2)')THRES;WRITE(Measured(16),'(A8)')X(16)
-      WRITE(Simulated(17),'(F8.2)')LAIMX;WRITE(Measured(17),'(A8)')X(17)
-      WRITE(Simulated(18),'(F8.2)')VSTAGE;
-                                         WRITE(Measured(18),'(A8)')X(18)
-      WRITE(Simulated(19),'(F8.2)')CANHT;WRITE(Measured(19),'(A8)')X(19)
-      WRITE(Simulated(20),'(I8)') NINT(CANNAA*10);
-                                         WRITE(Measured(20),'(A8)')X(20)
-      WRITE(Simulated(21),'(I8)') NINT(WTNCAN*10);
-                                         WRITE(Measured(21),'(A8)')X(21)
-      WRITE(Simulated(22),'(I8)') NINT(WTNST*10); 
-                                         WRITE(Measured(22),'(A8)')X(22)
-      WRITE(Simulated(23),'(I8)') NINT(WTNSD*10); 
-                                         WRITE(Measured(23),'(A8)')X(23)
-      WRITE(Simulated(24),'(F8.2)')PCNSD;WRITE(Measured(24),'(A8)')X(24)
-      WRITE(Simulated(25),'(F8.2)')PCLSD;WRITE(Measured(25),'(A8)')X(25)
+                                  WRITE(Measured(7),'(A8)') TRIM(X(7))
+      IF(EYLDH < 100.0) THEN
+        WRITE(Simulated(8),FMT) EYLDH; 
+                                  WRITE(Measured(8),'(A8)')TRIM(X(8))
+      ELSE
+        WRITE(Simulated(8),FMT) iEYLDH; 
+                                  WRITE(Measured(8),'(A8)')TRIM(X(8))
+      ENDIF
+      IF(CROP .EQ. 'CO') THEN
+        WRITE(Simulated(9),'(F8.1)') LINTP; 
+                                  WRITE(Measured(9),'(A8)')TRIM(X(9))
+      ENDIF
+      WRITE(Simulated(10),' (I8)') NINT(PODWT*10); 
+                                  WRITE(Measured(10),'(A8)') TRIM(X(10))
+      WRITE(Simulated(11), '(I8)') NINT(CANWAA*10);
+                                  WRITE(Measured(11),'(A8)')TRIM(X(11))
+      WRITE(Simulated(12),'(I8)') NINT(TOPWT*10); 
+                                  WRITE(Measured(12),'(A8)')TRIM(X(12))
+      WRITE(Simulated(13),'(I8)') NINT(TOPWT-SDWT)*10; 
+                                  WRITE(Measured(13),'(A8)')TRIM(X(13))
+      WRITE(Simulated(14),'(I8)') NINT(SEEDNO);   
+                                  WRITE(Measured(14),'(A8)')TRIM(X(14))
+      WRITE(Simulated(15),'(F8.4)')PSDWT;
+                                  WRITE(Measured(15),'(A8)')TRIM(X(15))
+      WRITE(Simulated(16),'(F8.2)')PSPP; 
+                                  WRITE(Measured(16),'(A8)')TRIM(X(16))
+      WRITE(Simulated(17),'(F8.3)')HI;   
+                                  WRITE(Measured(17),'(A8)')TRIM(X(17))
+      WRITE(Simulated(18),'(F8.2)')THRES;
+                                  WRITE(Measured(18),'(A8)')TRIM(X(18))
+      WRITE(Simulated(19),'(F8.2)')LAIMX;
+                                  WRITE(Measured(19),'(A8)')TRIM(X(19))
+      WRITE(Simulated(20),'(F8.2)')VSTAGE;
+                                  WRITE(Measured(20),'(A8)')TRIM(X(20))
+      WRITE(Simulated(21),'(F8.2)')CANHT;
+                                  WRITE(Measured(21),'(A8)')TRIM(X(21))
+      WRITE(Simulated(22),'(I8)') NINT(CANNAA*10);
+                                  WRITE(Measured(22),'(A8)')TRIM(X(22))
+      WRITE(Simulated(23),'(I8)') NINT(WTNCAN*10);
+                                  WRITE(Measured(23),'(A8)')TRIM(X(23))
+      WRITE(Simulated(24),'(I8)') NINT(WTNST*10); 
+                                  WRITE(Measured(24),'(A8)')TRIM(X(24))
+      WRITE(Simulated(25),'(I8)') NINT(WTNSD*10); 
+                                  WRITE(Measured(25),'(A8)')TRIM(X(25))
+      WRITE(Simulated(26),'(F8.2)')PCNSD;
+                                  WRITE(Measured(26),'(A8)')TRIM(X(26))
+      WRITE(Simulated(27),'(F8.2)')PCLSD;
+                                  WRITE(Measured(27),'(A8)')TRIM(X(27))
       ENDIF  
 
       IF (CONTROL % ERRCODE > 0) THEN
@@ -573,6 +622,7 @@ C     Byproduct not harvested is incorporated
         LABEL(16) = 'LAIX'; VALUE(16) = LAIMX
         LABEL(17) = 'HIAM'; VALUE(17) = HI
         LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
+        LABEL(19) = 'EYLDH'; VALUE(19) = EYLDH
 
         !Send labels and values to OPSUM
         CALL SUMVALS (SUMNUM, LABEL, VALUE) 
@@ -634,8 +684,8 @@ C-----------------------------------------------------------------------
       ENDDO
 
       SELECT CASE (CROP)
-      CASE ('BC','BN','CH','CI','CN','CP','CU','FB','GB','GY','PE',
-     &      'PP','PR','SB','SR','TM','VB','LT')
+      CASE ('AM','BC','BN','CH','CI','CN','CP','CU','FB','GB','GY',
+     &      'PE','PP','PR','SB','SR','TM','VB','LT')
 !     For stage-dependant irrigation - send GSTAGE back to irrig routine
         STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
         STNAME(2) = 'Unifoliate'

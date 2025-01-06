@@ -1,6 +1,6 @@
 *CODES FOR SOIL DATA
-! DSSAT v4.8; 05/11/2023
-!
+! DSSAT v4.8; 2024-12-01
+
 ! Codes currently used for both detailed profile analysis and occasional
 ! analysis of the surface layers are listed. The soil analysis codes are
 ! also listed in the DATA.CDE file.

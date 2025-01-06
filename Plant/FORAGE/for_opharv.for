@@ -27,7 +27,7 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       EXTERNAL FIND, ERROR, FOR_STNAMES, FOR_OPVIEW, READA, 
      &  READA_Dates, CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat,
-     &  TIMDIF
+     &  TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IDETS,IPLTI, PLME
@@ -67,7 +67,7 @@ C-----------------------------------------------------------------------
 !       in OVERVIEW.OUT and EVALUATE.OUT files (FOR_OPVIEW subroutine)
 !         OLAP modified for dap
       CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP  
-      CHARACTER*6  X(EvaluateNum)
+      CHARACTER*12  X(EvaluateNum)
       CHARACTER*8 PREDICTED(EvaluateNum), OBSERVED(EvaluateNum)
       CHARACTER*50 DESCRIP(EvaluateNum)
 
@@ -238,7 +238,8 @@ C-----------------------------------------------------------------------
 !     Read observed (measured) data from FILEA
 !-----------------------------------------------------------------------
       IF(IDETO .EQ. 'Y' .OR. INDEX('IAEBCGD',RNMODE) .GT. 0) THEN
-        CALL READA(FILEA, PATHEX, OLAB, TRTNO, YRSIM, X)
+        !CALL READA(FILEA, PATHEX, OLAB, TRTNO, YRSIM, X)
+        CALL READA_Y4K(FILEA, PATHEX,OLAB, TRTNO, YRSIM, X)
 !     &    FILEA, OLAB, TRTNO, YRSIM,                      !Input
 !     &    IFLR, IFPD, IFSD, IHRV, IMAT, XCNAA, XCNHT,     !Output
 !     &    XCWAA, XCWT, XGWT, XGWU, XHIN, XLAM, XLFNO,     !Output
@@ -333,36 +334,45 @@ C-----------------------------------------------------------------------
       WRITE(PREDICTED(3),' (I8)') DNR5;  WRITE(OBSERVED(3),'(I8)') DFSD
       WRITE(PREDICTED(4),' (I8)') DNR7;  WRITE(OBSERVED(4),'(I8)') DMAT
       WRITE(PREDICTED(5),' (I8)') NINT(SDWT*10);  
-        WRITE(OBSERVED(5),'(A8)') X(5)
+        WRITE(OBSERVED(5),'(A8)') TRIM(X(5))
       WRITE(PREDICTED(6),' (I8)') NINT(PODWT*10); 
-        WRITE(OBSERVED(6),'(A8)') X(6)
+        WRITE(OBSERVED(6),'(A8)') TRIM(X(6))
       WRITE(PREDICTED(7),' (I8)') NINT(SEEDNO);   
-        WRITE(OBSERVED(7),'(A8)') X(7)
-      WRITE(PREDICTED(8),'(F8.3)')PSDWT; WRITE(OBSERVED(8),'(A8)') X(8)
-      WRITE(PREDICTED(9),'(F8.2)')PSPP;  WRITE(OBSERVED(9),'(A8)') X(9)
+        WRITE(OBSERVED(7),'(A8)') TRIM(X(7))
+      WRITE(PREDICTED(8),'(F8.3)')PSDWT; 
+                                WRITE(OBSERVED(8),'(A8)') TRIM(X(8))
+      WRITE(PREDICTED(9),'(F8.2)')PSPP;  
+                                WRITE(OBSERVED(9),'(A8)') TRIM(X(9))
       WRITE(PREDICTED(10),'(I8)') NINT(TOPWT*10); 
-        WRITE(OBSERVED(10),'(A8)')X(10)
+        WRITE(OBSERVED(10),'(A8)') TRIM(X(10))
       WRITE(PREDICTED(11),'(I8)') NINT(STMWT*10); 
-        WRITE(OBSERVED(11),'(A8)')X(11)
-      WRITE(PREDICTED(12),'(F8.2)')LAIMX;WRITE(OBSERVED(12),'(A8)')X(12)
-      WRITE(PREDICTED(13),'(F8.3)')HI;   WRITE(OBSERVED(13),'(A8)')X(13)
-      WRITE(PREDICTED(14),'(F8.2)')THRES;WRITE(OBSERVED(14),'(A8)')X(14)
+        WRITE(OBSERVED(11),'(A8)') TRIM(X(11))
+      WRITE(PREDICTED(12),'(F8.2)')LAIMX;
+                                WRITE(OBSERVED(12),'(A8)') TRIM(X(12))
+      WRITE(PREDICTED(13),'(F8.3)')HI;   
+                                WRITE(OBSERVED(13),'(A8)') TRIM(X(13))
+      WRITE(PREDICTED(14),'(F8.2)')THRES;
+                                WRITE(OBSERVED(14),'(A8)') TRIM(X(14))
       WRITE(PREDICTED(15),'(I8)') NINT(WTNSD*10); 
-        WRITE(OBSERVED(15),'(A8)')X(15)
+        WRITE(OBSERVED(15),'(A8)') TRIM(X(15))
       WRITE(PREDICTED(16),'(I8)') NINT(WTNCAN*10);
-        WRITE(OBSERVED(16),'(A8)')X(16)
+        WRITE(OBSERVED(16),'(A8)') TRIM(X(16))
       WRITE(PREDICTED(17),'(I8)') NINT(WTNST*10); 
-        WRITE(OBSERVED(17),'(A8)')X(17)
-      WRITE(PREDICTED(18),'(F8.2)')PCNSD;WRITE(OBSERVED(18),'(A8)')X(18)
+        WRITE(OBSERVED(17),'(A8)') TRIM(X(17))
+      WRITE(PREDICTED(18),'(F8.2)')PCNSD;
+                                WRITE(OBSERVED(18),'(A8)') TRIM(X(18))
       WRITE(PREDICTED(19),'(I8)') NINT(CANWAA*10);
-        WRITE(OBSERVED(19),'(A8)')X(19)
+        WRITE(OBSERVED(19),'(A8)') TRIM(X(19))
       WRITE(PREDICTED(20),'(I8)') NINT(CANNAA*10);
-        WRITE(OBSERVED(20),'(A8)')X(20)
+        WRITE(OBSERVED(20),'(A8)') TRIM(X(20))
       WRITE(PREDICTED(21),'(F8.2)')VSTAGE
-        WRITE(OBSERVED(21),'(A8)')X(21)
-      WRITE(PREDICTED(22),'(F8.2)')PCLSD;WRITE(OBSERVED(22),'(A8)')X(22)
-      WRITE(PREDICTED(23),'(F8.2)')CANHT;WRITE(OBSERVED(23),'(A8)')X(23)
-      WRITE(PREDICTED(24),'(I8)')  DNR8; WRITE(OBSERVED(24),'(I8)')DHRV
+        WRITE(OBSERVED(21),'(A8)') TRIM(X(21))
+      WRITE(PREDICTED(22),'(F8.2)')PCLSD;
+                                WRITE(OBSERVED(22),'(A8)') TRIM(X(22))
+      WRITE(PREDICTED(23),'(F8.2)')CANHT;
+                                WRITE(OBSERVED(23),'(A8)') TRIM(X(23))
+      WRITE(PREDICTED(24),'(I8)')  DNR8; 
+                                WRITE(OBSERVED(24),'(I8)')DHRV
      
       ENDIF  
 

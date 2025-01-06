@@ -1,7 +1,7 @@
 *CSM OUTPUT FILES
-! DSSAT v4.8; 2023-05-11
-!
-! Output files currently created by DSSAT crop simulation models.
+! DSSAT v4.8; 2024-12-01
+
+! Output files currently created by the DSSAT Cropping System Model
 !
 @NAME......... CDE Description....................................... ALIAS
 !Daily output files:
@@ -47,6 +47,7 @@ Potential.OUT      Water potential - daily
 Dormancy.OUT       Forage daylength signal for stolon daily output
 PlantMob.OUT       Forage plant mobilization and refill of storage
 Storage.OUT        Forage storage organ characteristics daily output
+SoilWater.OUT      Daily soil water output file by layer              OUTSWL
 
 !Daily csv format files:
 plantgro.csv       Daily plant growth output file in CSV format

@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.8; 05/11/2023
+! DSSAT v4.8; 2024-12-01
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -236,10 +236,12 @@ CH102    Ethylene [Growth Regulator]                                          IB
 *Crop and Weed Species
 @CDE     DESCRIPTION                                                          SO
 AL       Alfalfa                                                              IB
+AM       Amaranth                                                             IB
 BA       Barley                                                               IB
 BC       Carinata                                                             IB
-BM       Bermudagrass                                                         IB
+BG       Bambara groundnut                                                    IB
 BH       Bahia grass                                                          IB
+BM       Bermudagrass                                                         IB
 BN       Dry bean                                                             IB
 BR       Brachiaria                                                           IB
 BS       Sugar beet                                                           IB
@@ -272,14 +274,13 @@ SB       Soybean                                                              IB
 SC       Sugarcane                                                            IB
 SF       Safflower                                                            IB
 SG       Sorghum                                                              IB
-SQ       Sequence                                                             IB
 SR       Strawberry                                                           IB
 SS       Sesame                                                               IB
 SU       Sunflower                                                            IB
 SW       Sweet corn                                                           IB
 TF       Teff                                                                 IB
 TM       Tomato                                                               IB
-TN       Tannier                                                              IB
+TN       Tanier                                                               IB
 TR       Taro                                                                 IB
 VB       Velvet bean                                                          IB
 WH       Wheat                                                                IB
@@ -682,3 +683,10 @@ FH302    Cultivated, poor mgmt, init degraded land                            IB
  100     Crop season length exceeded limits                                   IB
  200     Weather data error                                                   IB
  999     Unspecified error condition                                          IB
+ 
+*Applications
+@CDE     DESCRIPTION                                                          SO
+SN       Climate change                                                       IB
+FX       Yield/In-season forecast                                             IB
+SN       Seaseonal                                                            IB
+SQ       Sequence/Crop rotations                                              IB

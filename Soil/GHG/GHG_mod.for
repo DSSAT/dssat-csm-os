@@ -577,12 +577,14 @@ C  Generates output for daily soil N2O routines
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  06/15/2014 CHP Written
+!  05/10/2024 CHP Added estimates of net CO2 emissions per PG
 !=======================================================================
 
       SUBROUTINE OpGHG(CONTROL, ISWITCH, N2O_data, CH4_data) 
 !-------------------------------------------------------------------
+      USE ModuleData
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, YR_DOY
+      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
       SAVE
 !-----------------------------------------------------------------------
 
@@ -597,10 +599,16 @@ C  06/15/2014 CHP Written
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, REPNO
       INTEGER GHGLUN, RUN, YEAR, YRDOY
 
-      REAL CO2EC, N2OEC, CH4EC
+      REAL CO2EC, CO2ENC, N2OEC, CH4EC
+      REAL CO2GED, CO2END, N2OGED, CH4GED 
       REAL CCEQC, NCEQC, MCEQC, TCEQC
-      REAL CO2GED, N2OGED, CH4GED !CO2ED, N2OED, CH4ED, 
+      REAL TSOMC, TSOMC_init, CO2ENC_Y 
       LOGICAL FEXIST
+
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 1  !CO2EM now from GHG module
+      CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -651,24 +659,31 @@ C-----------------------------------------------------------------------
             CALL HEADER(SEASINIT, GHGLUN, RUN)
           ENDIF
 
-          WRITE(GHGLUN,'("!",15X,A,A)')
-     &"|------ Daily (g/ha) -----|--- Cumulative (kg/ha) ---",
+          WRITE(GHGLUN,'("!",15X,A,A,A)')
+     &"|---------- Daily (g/ha) ----------",
+     &"|------- Cumulative (kg/ha) --------",
      &"|---- Cum CO2-equiv kg[CO2eq]/ha ---|"
 
-          WRITE(GHGLUN,'("!",14X,A,A)')
-     &"      CO2      N2O      CH4      CO2      N2O      CH4",
-     &"      CO2      N2O      CH4    Total"
+          WRITE(GHGLUN,'("!",14X,A,A,A)')
+     &" Soil CO2  Net CO2      N2O      CH4",
+     &" Soil CO2  Net CO2      N2O      CH4",
+     &"  Net CO2      N2O      CH4    Total"
 
-          WRITE(GHGLUN,'("!",14X,A,A,A,T176,50A8)')
-     &"  g[C]/ha  g[N]/ha  g[C]/ha kg[C]/ha kg[N]/ha kg[C]/ha",
+          WRITE(GHGLUN,'("!",14X,A,A,A)')
+     &"  g[C]/ha  g[C]/ha  g[N]/ha  g[C]/ha",
+     &" kg[C]/ha kg[C]/ha kg[N]/ha kg[C]/ha",
      &"    CO2eq    CO2eq    CO2eq    CO2eq"
 
-          WRITE(GHGLUN,'(A,A,A)') "@YEAR DOY   DAS",
-     &"   CO2GED   N2OGED   CH4GED    CO2EC    N2OEC    CH4EC",
+          WRITE(GHGLUN,'(A,A,A,A)') "@YEAR DOY   DAS",
+     &"   CO2GED   CO2END   N2OGED   CH4GED",
+     &"    CO2EC   CO2ENC    N2OEC    CH4EC",
      &"    CCEQC    NCEQC    MCEQC    TCEQC"
 
         ENDIF
       ENDIF
+
+      CALL GET('ORGC','TSOMC',TSOMC_init)
+      CO2ENC_Y = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -691,9 +706,21 @@ C-----------------------------------------------------------------------
       N2OEC = N2O_data % CN2O_emitted         !kg/d
       CH4EC = CH4_data % CumCH4Emission       !kg/d
 
+!     CHP per Peter Grace, 2024-05-08
+!     Estimate net CO2 emissions based on SOC. This is the integration
+!       of all additions and losses to the system and is the accepted
+!       method for calculating global CO2 emissions.
+!     TSOMC = total soil organic matter (kg[C]/ha) = SOM1 + SOM2 + SOM3
+!       Does not include fresh organic matter.
+      CALL GET('ORGC','TSOMC',TSOMC)
+      CO2ENC = (TSOMC_init - TSOMC )      !cumul net CO2 emissions kg/d
+      CO2END = (CO2ENC - CO2ENC_Y) * 1000. !daily net CO2 emissions g/d
+      CO2ENC_Y = CO2ENC
+
 !     Calculation of cumulative CO2-equivalent emissions
 !     CO2 - convert from units of C to units of CO2
-      CCEQC = CO2EC * 3.67 
+!     CCEQC = CO2EC * 3.67 
+      CCEQC = CO2ENC * 3.67 !use estimated net CO2 emissions
 
 !     N2O - convert from N to N2O and multiply by 298
       NCEQC = N2OEC * 1.571 * 298.
@@ -705,18 +732,26 @@ C-----------------------------------------------------------------------
       TCEQC = CCEQC + NCEQC + MCEQC
 
         IF (IDETN .EQ. 'Y') THEN
-          WRITE (GHGLUN,'(I5,I4.3,I6,I9,2F9.2,I9,2F9.2,4I9)')  
+          WRITE (GHGLUN,'(I5,I4.3,I6,2I9,2F9.2,2I9,2F9.2,4I9)')  
      &      YEAR, DOY, DAS, 
-     &      NINT(CO2GED), N2OGED, CH4GED, NINT(CO2EC), N2OEC, CH4EC,
+     &      NINT(CO2GED), NINT(CO2END), N2OGED, CH4GED, 
+     &      NINT(CO2EC), NINT(CO2ENC), N2OEC, CH4EC,
      &      NINT(CCEQC), NINT(NCEQC), NINT(MCEQC), NINT(TCEQC)
         ENDIF
 
+      
 !***********************************************************************
 !***********************************************************************
 !     SEASEND
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
+!     Store Summary.out labels and values in arrays to send to
+!     OPSUM routines for printing.
+      LABEL(1)  = 'CO2EM'; VALUE(1)  = CO2ENC
+
+!     Send labels and values to OPSUM
+      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 !      IF (INDEX('AD',IDETL) == 0) RETURN
       !Close daily output files.
       CLOSE(GHGLUN)

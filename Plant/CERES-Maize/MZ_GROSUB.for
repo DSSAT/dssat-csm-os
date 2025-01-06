@@ -1507,7 +1507,9 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
                           CALL YR_DOY(YRDOY, YR, DOY)
                           WRITE(MESSAGE(1),2700) DOY                  !
                           CALL WARNING(1,ERRKEY, MESSAGE)             !
-                          WRITE (     *,2700) DOY                     !
+                          IF (ISWITCH % IDETL .NE. '0') THEN          !
+                            WRITE (     *,2700) DOY                   !
+                          ENDIF                                       !
                           IF (IDETO .EQ. 'Y') THEN                    !
                               WRITE (NOUTDO,2700) DOY                 !
                           ENDIF                                       !
@@ -1522,7 +1524,9 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
                   CALL YR_DOY(YRDOY, YR, DOY)
                   WRITE(MESSAGE(1),2700) DOY                          !
                   CALL WARNING(1,ERRKEY, MESSAGE)                     !
-                  WRITE (     *,2700) DOY                             !
+                  IF (ISWITCH % IDETL .NE. '0') THEN                  !
+                    WRITE (     *,2700) DOY                           !
+                  ENDIF                                               !
                   IF (IDETO .EQ. 'Y') THEN                            !
                       WRITE (NOUTDO,2700) DOY                         !
                   ENDIF                                               !

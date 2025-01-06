@@ -1,5 +1,5 @@
-*SOMFX048.SDA Coefficients - DSCSM048 Model 2020-07-21
-======================================================
+*SOMFX048.SDA Coefficients - DSSAT Version 4.8.5.0 2024-12-01
+=============================================================
 This is an input file for the CENTURY-based soil organic matter/residue 
 module. These variables and parameters can be considered as constant. 
 The user does not have to modify these under normal circumstances.

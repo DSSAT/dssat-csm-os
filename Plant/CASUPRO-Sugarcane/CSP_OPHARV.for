@@ -30,7 +30,7 @@ C-----------------------------------------------------------------------
                          ! parameters, hourly weather data.
       IMPLICIT NONE
       EXTERNAL GETDESC, OPVIEW, READA, READA_Dates, CHANGE_DESC, 
-     &   SUMVALS, EvaluateDat, ERROR, TIMDIF, INCDAT
+     &   SUMVALS, EvaluateDat, ERROR, TIMDIF, INCDAT, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI
@@ -76,7 +76,7 @@ C-----------------------------------------------------------------------
 !     Arrays which contain Simulated and Measured data for printing
 !       in OVERVIEW.OUT and EVALUATE.OUT files (OPVIEW subroutine)
       CHARACTER*6 OLAB(40), OLAP(40)  !OLAP modified for dap
-      CHARACTER*6  X(40)
+      CHARACTER*12  X(40)
       CHARACTER*8 Simulated(40), Measured(40)
       CHARACTER*50 DESCRIP(40)
 
@@ -378,7 +378,8 @@ C-----------------------------------------------------------------------
          ELSE
            TRT_ROT = CONTROL % TRTNUM
          ENDIF
-         CALL READA (FILEA, PATHEX, OLAB, TRT_ROT, YRSIM, X)
+         !CALL READA (FILEA, PATHEX, OLAB, TRT_ROT, YRSIM, X)
+         CALL READA_Y4K(FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !     Convert Date of max leaf area index from YRDOY to DAP.  
 !     and change descriptions to match.
@@ -466,40 +467,48 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
 !     Store Simulated and Measured data for this season.
-      WRITE(Simulated(1),'(F8.2)')SMFMH;	 WRITE(Measured(1),'(A8)')X(1)
-      WRITE(Simulated(2),'(F8.2)')SUCH;    WRITE(Measured(2),'(A8)')X(2)
-      WRITE(Simulated(3),'(F8.2)')SSTKH;   WRITE(Measured(3),'(A8)')X(3)
+      WRITE(Simulated(1),'(F8.2)')SMFMH;	 
+                                    WRITE(Measured(1),'(A8)')TRIM(X(1))
+      WRITE(Simulated(2),'(F8.2)')SUCH;    
+                                    WRITE(Measured(2),'(A8)')TRIM(X(2))
+      WRITE(Simulated(3),'(F8.2)')SSTKH;   
+                                    WRITE(Measured(3),'(A8)')TRIM(X(3))
       WRITE(Simulated(4),'(F8.2)')CWAM/1000;    
-									WRITE(Measured(4),'(A8)')X(4)
-      WRITE(Simulated(5),'(F8.2)')TRSH;    WRITE(Measured(5),'(A8)')X(5)
-      WRITE(Simulated(6),'(F8.2)') LAIMX;  WRITE(Measured(6),'(A8)')X(6)
-      WRITE(Simulated(7),'(I8)')LAIXD;     WRITE(Measured(7),'(I8)')DLFX
-      WRITE(Simulated(8),'(F8.2)') LAIH;   WRITE(Measured(8),'(A8)')X(8)
-      WRITE(Simulated(9),'(F8.0)')AvgLfAr; WRITE(Measured(9),'(A8)')X(9)
+						WRITE(Measured(4),'(A8)')TRIM(X(4))
+      WRITE(Simulated(5),'(F8.2)')TRSH;    
+                                    WRITE(Measured(5),'(A8)')TRIM(X(5))
+      WRITE(Simulated(6),'(F8.2)') LAIMX;  
+                                    WRITE(Measured(6),'(A8)')TRIM(X(6))
+      WRITE(Simulated(7),'(I8)')LAIXD;     
+                                    WRITE(Measured(7),'(I8)')DLFX
+      WRITE(Simulated(8),'(F8.2)') LAIH;   
+                                    WRITE(Measured(8),'(A8)')TRIM(X(8))
+      WRITE(Simulated(9),'(F8.0)')AvgLfAr; 
+                                    WRITE(Measured(9),'(A8)')TRIM(X(9))
       WRITE(Simulated(10),'(F8.2)')AvgLfWt; 
-									WRITE(Measured(10),'(A8)')X(10)
+					     WRITE(Measured(10),'(A8)')TRIM(X(10))
       WRITE(Simulated(11),'(F8.2)')AvgNode; 
-									WRITE(Measured(11),'(A8)')X(11)
+					     WRITE(Measured(11),'(A8)')TRIM(X(11))
       WRITE(Simulated(12),'(I8)')SPDAT;     
-									WRITE(Measured(12),'(I8)')DSPT
+						WRITE(Measured(12),'(I8)')DSPT
       WRITE(Simulated(13),'(I8)')EDAT0;     
-									WRITE(Measured(13),'(I8)')DEM0
+						WRITE(Measured(13),'(I8)')DEM0
       WRITE(Simulated(14),'(I8)')EDAT1;     
-									WRITE(Measured(14),'(I8)')DEM1
+						WRITE(Measured(14),'(I8)')DEM1
       WRITE(Simulated(15),'(I8)')EDAT2;     
-									WRITE(Measured(15),'(I8)')DEM2
+						WRITE(Measured(15),'(I8)')DEM2
       WRITE(Simulated(16),'(F8.2)')MaxStkPop; 
-									WRITE(Measured(16),'(A8)')X(16)
+					     WRITE(Measured(16),'(A8)')TRIM(X(16))
       WRITE(Simulated(17),'(I8)')MaxStkDay;     
-									WRITE(Measured(17),'(I8)')DTMX  
+						WRITE(Measured(17),'(I8)')DTMX  
       WRITE(Simulated(18),'(I8)')StkDecDay;     
-									WRITE(Measured(18),'(I8)')DPOP
+						WRITE(Measured(18),'(I8)')DPOP
       WRITE(Simulated(19),'(F8.2)')SNAH; 
-									WRITE(Measured(19),'(A8)')X(19)
+					     WRITE(Measured(19),'(A8)')TRIM(X(19))
       WRITE(Simulated(20),'(F8.2)')AvgHeight; 
-									WRITE(Measured(20),'(A8)')X(20)
+					     WRITE(Measured(20),'(A8)')TRIM(X(20))
       WRITE(Simulated(21),'(F8.2)')HIAM; 
-									WRITE(Measured(21),'(A8)')X(21)
+					     WRITE(Measured(21),'(A8)')TRIM(X(21))
      
       ENDIF  
 

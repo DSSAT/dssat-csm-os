@@ -24,7 +24,7 @@
                          ! parameters, hourly weather data.
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, OPVIEW, READA, READA_Dates, 
-     &  GetDesc, SUMVALS, EvaluateDat, TIMDIF
+     &  GetDesc, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
@@ -67,7 +67,7 @@
 !       in OVERVIEW.OUT and EVALUATE.OUT files (OPVIEW subroutine)
       INTEGER ACOUNT
       CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP !OLAP in dap
-      CHARACTER*6 X(EvaluateNum)
+      CHARACTER*12 X(EvaluateNum)
       CHARACTER*8 Simulated(EvaluateNum), Measured(EvaluateNum)
       CHARACTER*50 DESCRIP(EvaluateNum)
 
@@ -313,7 +313,8 @@ C** end changes
          ELSE
            TRT_ROT = TRTNUM
          ENDIF
-         CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+         !CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
+         CALL READA_Y4K(FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !-----------------------------------------------------------------------
 !     Convert from YRDOY format to DAP.  Change descriptions to match.
@@ -392,37 +393,42 @@ C** end changes
       WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT
       WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT    !MDAT
       WRITE(Simulated(5),'(I8)') NINT(YIELD)
-                                        WRITE(Measured(5),'(A8)') X(5)    !HWAM
+                              WRITE(Measured(5),'(A8)') TRIM(X(5))        !HWAM
       WRITE(Simulated(6),'(I8)') -99 ;  WRITE(Measured(6),'(I8)') -99     !PWAM
       WRITE(Simulated(7),'(I8)') NINT(GPSM)
-                                        WRITE(Measured(7),'(A8)') X(7)    !H#AM
+                              WRITE(Measured(7),'(A8)') TRIM(X(7))        !H#AM
       WRITE(Simulated(8),'(F8.4)') SKERWT
-                                        WRITE(Measured(8),'(A8)') X(8)    !HWUM 
-      WRITE(Simulated(9),'(F8.1)') GPP; WRITE(Measured(9),'(A8)') X(9)    !H#UM 
+                              WRITE(Measured(8),'(A8)') TRIM(X(8))        !HWUM 
+      WRITE(Simulated(9),'(F8.1)') GPP; 
+                              WRITE(Measured(9),'(A8)') TRIM(X(9))        !H#UM 
       WRITE(Simulated(10),'(I8)') NINT(PBIOMS)
-                                        WRITE(Measured(10),'(A8)') X(10)  !CWAM
+                              WRITE(Measured(10),'(A8)') TRIM(X(10))      !CWAM
 
 !     08/11/2005 CHP changed from BWAH to BWAM, valu eremains the same as (TOPWT) 
       WRITE(Simulated(11),'(I8)') NINT(BWAM)  
-                                        WRITE(Measured(11),'(A8)') X(11)  !BWAM
+                              WRITE(Measured(11),'(A8)') TRIM(X(11))      !BWAM
 
       WRITE(Simulated(12),'(F8.2)') MAXLAI
-                                        WRITE(Measured(12),'(A8)') X(12)  !LAIX
-      WRITE(Simulated(13),'(F8.3)') HI; WRITE(Measured(13),'(A8)') X(13)  !HIAM
-      WRITE(Simulated(14),'(I8)') -99 ; WRITE(Measured(14),'(I8)') -99    !THAM
+                              WRITE(Measured(12),'(A8)') TRIM(X(12))      !LAIX
+      WRITE(Simulated(13),'(F8.3)') HI; 
+                              WRITE(Measured(13),'(A8)') TRIM(X(13))      !HIAM
+      WRITE(Simulated(14),'(I8)') -99 ; 
+                              WRITE(Measured(14),'(I8)') -99              !THAM
 !      WRITE(Simulated(15),'(I8)') NINT(GNUP)
 !                                        WRITE(Measured(15),'(A8)') X(15)  !GNAM
       WRITE(Simulated(16),'(I8)') NINT(WTNCAN*10.)
-                                        WRITE(Measured(16),'(A8)') X(16)  !CNAM
+                              WRITE(Measured(16),'(A8)') TRIM(X(16))      !CNAM
       WRITE(Simulated(17),'(I8)') NINT(APTNUP)
-                                        WRITE(Measured(17),'(A8)') X(17)  !SNAM
+                              WRITE(Measured(17),'(A8)') TRIM(X(17))      !SNAM
 !      WRITE(Simulated(18),'(F8.1)')XGNP;WRITE(Measured(18),'(A8)') X(18)  !GN%M
       WRITE(Simulated(19),'(I8)') NINT(CANWAA*10)
-                                        WRITE(Measured(19),'(A8)') X(19)  !CWAA
+                              WRITE(Measured(19),'(A8)') TRIM(X(19))      !CWAA
       WRITE(Simulated(20),'(I8)') NINT(CANNAA*10)
-                                        WRITE(Measured(20),'(A8)') X(20)  !CNAA
-      WRITE(Simulated(21),'(F8.2)') XN; WRITE(Measured(21),'(A8)') X(21)  !L#SM
-      WRITE(Simulated(22),'(I8)') DNR0; WRITE(Measured(22),'(I8)') DEMRG
+                              WRITE(Measured(20),'(A8)') TRIM(X(20))      !CNAA
+      WRITE(Simulated(21),'(F8.2)') XN; 
+                              WRITE(Measured(21),'(A8)') TRIM(X(21))      !L#SM
+      WRITE(Simulated(22),'(I8)') DNR0; 
+                              WRITE(Measured(22),'(I8)') DEMRG
 
       ENDIF
 
