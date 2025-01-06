@@ -697,11 +697,11 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
      &              i, NINT(DS(i)), CLAY(i), SILT(i), OC(i)
               ENDDO
             ENDIF
-ENDIF
+          ENDIF
 
    !   OC(L) = (0.15 * (CLAY(L) + SILT(L)) + 0.69) / 10.    !g/100g 
    !   Making change based on NAPESHM equation [CM] 1/6/25
-          OC(L) = (0.0053 * (CLAY(L) + SILT(L)) + 0.41)/10.    !g/100g
+          OC(L) = (0.0053 * (CLAY(L) + SILT(L)) + 0.41) / 10.    !g/100g
           NMSG = NMSG+1
           WRITE(MSG(NMSG),'(I5,I6,2F6.1,F6.2," (estimated)")') 
      &          L, NINT(DS(L)), CLAY(L), SILT(L), OC(L)
