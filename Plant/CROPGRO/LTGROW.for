@@ -13,7 +13,7 @@ C========================================================================
 C-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
-      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TABEX
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TABEX, ECO_READ
       SAVE
 
       CHARACTER*6 ERRKEY
@@ -24,7 +24,7 @@ C-----------------------------------------------------------------------
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*255 C255
 
-      INTEGER I, LUNCRP, LUNECO, ERR, LINC, LNUM, ISECT
+      INTEGER I, LUNCRP, ERR, LINC, LNUM, ISECT, LUNECO
       INTEGER DYNAMIC
       INTEGER FOUND
       
@@ -44,8 +44,8 @@ C-----------------------------------------------------------------------
 C    Read Ecotype Parameter File
 C-----------------------------------------------------------------------
         PCTLT = -99.0
-        SPCTLT = ' '
-        
+!       SPCTLT = ' '
+
         CALL GETLUN('FILEE', LUNECO)
         OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
@@ -71,8 +71,12 @@ C-----------------------------------------------------------------------
             LNUM = 0
             ENDIF
         ENDDO
-
         CLOSE (LUNECO)
+
+        CALL ECO_read('PCTLT', PCTLT)
+        IF (PCTLT .LT. 25 .OR. PCTLT .GT. 60) 
+     &        CALL ERROR(ERRKEY,11,FILEGC,LNUM)
+
 !-----------------------------------------------------------------------
 !     Read in values from input file, which were previously input
 !       in Subroutine IPCROP.
