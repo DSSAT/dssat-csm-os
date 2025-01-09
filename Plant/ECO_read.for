@@ -1,0 +1,179 @@
+!============================================================================================
+      Subroutine ECO_read(LABEL, Value)
+
+      USE ModuleData
+      IMPLICIT NONE
+      SAVE
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE, IGNORE2, PARSE_HEADERS, 
+     &    UPCASE, WARNING
+
+      CHARACTER*(*), INTENT(IN) :: LABEL
+      REAL, INTENT(OUT) :: Value
+
+      INTEGER C1, C2, ERR, FOUND, I, J, ISECT, LINC, LNUM
+      INTEGER LUNECO, LUNIO, PATHL
+      INTEGER, PARAMETER :: MAXCOL = 30  !Max number of ecotype columns
+      INTEGER iCOUNT, COL(MAXCOL,2)
+
+      CHARACTER*1, PARAMETER :: BLANK = ' '
+      CHARACTER*1 UPCASE
+      CHARACTER*6 ECONO, ECOTYP, SECTION
+      CHARACTER*7, PARAMETER :: ERRKEY = 'IPECO'
+      CHARACTER*12 FILEIO, FILEE 
+      CHARACTER*15 HTXT
+      CHARACTER*80 PATHEC
+      CHARACTER*92 FILEGC
+      CHARACTER*92 MSG(3)
+      CHARACTER*200 HEADERLINE, TEXTLINE
+
+!     Array of headers and text value of ecotype parameters. 
+!     Each header can be up to 15 characters long
+      CHARACTER*15 HEADER(MAXCOL) 
+!     Values are stored as text because they may contain both character and numeric values
+      CHARACTER*15 TEXTVAL(MAXCOL) 
+
+      LOGICAL ECOFOUND
+
+      TYPE (ControlType) CONTROL
+!***********************************************************************
+
+      IF (TRIM(LABEL) .EQ. 'NEW') THEN
+!       This is a new simulation, 
+!       Ecotype data has not been extracted yet.
+        CALL GET(CONTROL)
+        FILEIO  = CONTROL % FILEIO
+        LUNIO   = CONTROL % LUNIO
+
+!       Read name and path of ecotype file from FILEIO
+        OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERR)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
+        
+        READ (LUNIO,105,IOSTAT=ERR) FILEE, PATHEC; LNUM = LNUM + 1
+  105   FORMAT(///////,15X,A12,1X,A80)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+        
+!       Read Cultivar Section to get ecotype name
+        SECTION = '*CULTI'
+        CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+!       Need the 2nd cultivar section at the bottom of FileIO
+        CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+        IF (FOUND .EQ. 0) THEN
+          CALL ERROR(SECTION, 42, FILEIO, LNUM)
+        ELSE
+          READ(LUNIO,'(24X,A6)',IOSTAT=ERR) ECONO ; LNUM = LNUM + 1
+          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+        ENDIF
+        
+        CLOSE (LUNIO)
+
+!-----------------------------------------------------------------------
+!       Open ecotype file
+        LNUM = 0
+        PATHL  = INDEX(PATHEC,BLANK)
+        IF (PATHL .LE. 1) THEN
+          FILEGC = FILEE
+        ELSE
+          FILEGC = PATHEC(1:(PATHL-1)) // FILEE
+        ENDIF
+        
+        CALL GETLUN('FILEE', LUNECO)
+        OPEN (LUNECO,FILE = FILEGC, STATUS = 'OLD', IOSTAT=ERR)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+
+!-----------------------------------------------------------------------
+
+!       Look for 1st header line beginning with '@' in column 1 (ISECT = 3)
+        DO WHILE (.TRUE.)   !
+          CALL IGNORE2 (LUNECO, LNUM, ISECT, HEADERLINE)
+          SELECT CASE(ISECT)
+          CASE(0)                                     !End of file
+!           Use default if the ecotype name is not found.
+            IF (ECONO .EQ. 'DFAULT') THEN
+              CALL ERROR(ERRKEY,3,FILEGC,LNUM)
+            ELSE
+              ECONO = 'DFAULT'
+              REWIND (LUNECO)
+              CYCLE
+            ENDIF
+          CASE(1); CYCLE                              !data line
+          CASE(2); CYCLE                              !End of section 
+          CASE(3); EXIT                               !Header line 
+          END SELECT
+        ENDDO
+        
+!       Found header line for weather station data
+        CALL PARSE_HEADERS(HEADERLINE, MAXCOL, HEADER, ICOUNT, COL)
+        IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,3,FILEGC,LNUM)
+        DO I = 1, ICOUNT
+          HTXT = HEADER(I)
+          DO J = 1, LEN(TRIM(HTXT))
+            HTXT(J:J) = UPCASE(HTXT(J:J))
+          END DO
+          HEADER(I) = HTXT
+          WRITE(5656,*) HEADER(I), COL(I,1), COL(I,2)
+        ENDDO
+        
+        ECOFOUND = .FALSE.
+!       Look for correct ecotype line
+        DO WHILE (.TRUE.)   !
+          CALL IGNORE (LUNECO, LNUM, ISECT, TEXTLINE)
+          SELECT CASE(ISECT)
+          CASE(0); EXIT                               !End of file 
+        
+          CASE(1)                                     !data line
+!           Found a line of ecotype data. Is it the right one?
+            READ(TEXTLINE(COL(1,1):COL(1,2)+1),*,IOSTAT=ERR) ECOTYP
+            IF (ECOTYP .EQ. ECONO) THEN
+              ECOFOUND = .TRUE.
+              TEXTVAL(1) = ECOTYP
+              DO I = 2, ICOUNT
+                C1 = COL(I,1)
+                C2 = COL(I,2)
+                TEXTVAL(I) = TEXTLINE(C1:C2)
+              ENDDO
+              EXIT
+            ENDIF
+        
+          CASE(2); EXIT                               !End of section 
+          CASE(3); EXIT                               !Header line 
+          END SELECT
+        ENDDO
+        
+        IF (.NOT. ECOFOUND) THEN
+          WRITE(MSG(1),'(A,A,A)')'Ecotype ',ECONO, ' not found in file:'
+          MSG(2) = FILEGC
+          MSG(3) = "Program will stop."
+          CALL WARNING(3, ERRKEY, MSG)
+          CALL ERROR(ERRKEY,3,FILEGC,LNUM)
+        ENDIF
+        CLOSE (LUNECO)
+
+!       Return a dummy value
+        Value = -99.
+
+!     TEMP CHP
+      DO I = 1, ICOUNT
+        WRITE(5656,*) HEADER(I), TEXTVAL(I)
+      ENDDO
+
+!-----------------------------------------------------------------------
+!     Ecotype info is already in memory, just send back the requested value
+
+      ELSE
+        Value = -99.
+        DO I = 2, ICOUNT
+          IF (TRIM(HEADER(I)) .EQ. TRIM(LABEL)) THEN
+            READ (TEXTVAL(I),*,IOSTAT=ERR) Value
+            IF (ERR .NE. 0) THEN
+              WRITE(MSG(1),'()') HEADER(I),' contains non-numeric data.'
+              MSG(2) = "Program will stop."
+              CALL WARNING(2, ERRKEY, MSG)
+              CALL ERROR(ERRKEY,1,FILEGC,LNUM)
+            ENDIF
+          ENDIF
+        ENDDO
+      ENDIF
+
+      RETURN
+      END SUBROUTINE ECO_read
+!============================================================================================
