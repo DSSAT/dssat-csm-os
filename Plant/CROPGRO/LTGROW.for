@@ -43,35 +43,35 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C    Read Ecotype Parameter File
 C-----------------------------------------------------------------------
-        PCTLT = -99.0
+!       PCTLT = -99.0
 !       SPCTLT = ' '
 
-        CALL GETLUN('FILEE', LUNECO)
-        OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
-        ECOTYP = '      '
-        LNUM = 0
-        DO WHILE (ECOTYP .NE. ECONO)
-            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
-            IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
-     &        (C255(1:1) .NE. '*')) THEN
-            READ (C255,'(A6,120X,A6)',IOSTAT=ERR)
-     &        ECOTYP, SPCTLT
-            IF (SPCTLT .EQ. '') CALL ERROR(ERRKEY,10,FILEGC,LNUM)
-            READ(SPCTLT,'(F6.0)',IOSTAT=ERR) PCTLT
-            IF (PCTLT .LT. 25 .OR. PCTLT .GT. 60) 
-     &        CALL ERROR(ERRKEY,11,FILEGC,LNUM)
-            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
-            IF (ECOTYP .EQ. ECONO) EXIT
-
-            ELSE IF (ISECT .EQ. 0) THEN
-            IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
-            ECONO = 'DFAULT'
-            REWIND(LUNECO)
-            LNUM = 0
-            ENDIF
-        ENDDO
-        CLOSE (LUNECO)
+!        CALL GETLUN('FILEE', LUNECO)
+!        OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
+!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+!        ECOTYP = '      '
+!        LNUM = 0
+!        DO WHILE (ECOTYP .NE. ECONO)
+!            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+!            IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
+!     &        (C255(1:1) .NE. '*')) THEN
+!            READ (C255,'(A6,120X,A6)',IOSTAT=ERR)
+!     &        ECOTYP, SPCTLT
+!            IF (SPCTLT .EQ. '') CALL ERROR(ERRKEY,10,FILEGC,LNUM)
+!            READ(SPCTLT,'(F6.0)',IOSTAT=ERR) PCTLT
+!            IF (PCTLT .LT. 25 .OR. PCTLT .GT. 60) 
+!     &        CALL ERROR(ERRKEY,11,FILEGC,LNUM)
+!            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
+!            IF (ECOTYP .EQ. ECONO) EXIT
+!
+!            ELSE IF (ISECT .EQ. 0) THEN
+!            IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+!            ECONO = 'DFAULT'
+!            REWIND(LUNECO)
+!            LNUM = 0
+!            ENDIF
+!        ENDDO
+!        CLOSE (LUNECO)
 
         CALL ECO_read('PCTLT', PCTLT)
         IF (PCTLT .LT. 25 .OR. PCTLT .GT. 60) 

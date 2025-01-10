@@ -19,7 +19,8 @@ C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
 
       SUBROUTINE CANOPY(DYNAMIC, 
-     &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
+!     &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
+     &    FILECC, KCAN, PAR, ROWSPC,                      !Input
      &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
@@ -33,11 +34,11 @@ C-----------------------------------------------------------------------
       PARAMETER (ERRKEY = 'CANOPY')
 
       CHARACTER*6   SECTION
-      CHARACTER*6   ECOTYP, ECONO
-      CHARACTER*92  FILECC, FILEGC
+!     CHARACTER*6   ECOTYP, ECONO
+      CHARACTER*92  FILECC !, FILEGC
       CHARACTER*255 C255
 
-      INTEGER I, II, LUNCRP, LUNECO, ERR, LINC, LNUM, ISECT
+      INTEGER I, II, LUNCRP, ERR, LINC, LNUM, ISECT !, LUNECO
       INTEGER DYNAMIC
       INTEGER FOUND
 
