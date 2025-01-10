@@ -4,14 +4,14 @@
       USE ModuleData
       IMPLICIT NONE
       SAVE
-      EXTERNAL ERROR, FIND, GETLUN, IGNORE, IGNORE2, PARSE_HEADERS, 
-     &    UPCASE, WARNING
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE, IGNORE2, LENSTRING, 
+     &    PARSE_HEADERS, UPCASE, WARNING
 
       CHARACTER*(*), INTENT(IN) :: LABEL
       REAL, INTENT(OUT) :: Value
 
       INTEGER C1, C2, ERR, FOUND, I, J, ISECT, LINC, LNUM
-      INTEGER LUNECO, LUNIO, PATHL
+      INTEGER LENGTH, LUNECO, LUNIO, PATHL, LENSTRING
       INTEGER, PARAMETER :: MAXCOL = 30  !Max number of ecotype columns
       INTEGER iCOUNT, COL(MAXCOL,2)
 
@@ -87,21 +87,14 @@
           CALL IGNORE2 (LUNECO, LNUM, ISECT, HEADERLINE)
           SELECT CASE(ISECT)
           CASE(0)                                     !End of file
-!           Use default if the ecotype name is not found.
-            IF (ECONO .EQ. 'DFAULT') THEN
-              CALL ERROR(ERRKEY,3,FILEGC,LNUM)
-            ELSE
-              ECONO = 'DFAULT'
-              REWIND (LUNECO)
-              CYCLE
-            ENDIF
+            CALL ERROR(ERRKEY,3,FILEGC,LNUM)
           CASE(1); CYCLE                              !data line
           CASE(2); CYCLE                              !End of section 
           CASE(3); EXIT                               !Header line 
           END SELECT
         ENDDO
         
-!       Found header line for weather station data
+!       Found header line for ecotype file
         CALL PARSE_HEADERS(HEADERLINE, MAXCOL, HEADER, ICOUNT, COL)
         IF (ICOUNT .LT. 1) CALL ERROR (ERRKEY,3,FILEGC,LNUM)
         DO I = 1, ICOUNT
@@ -130,10 +123,19 @@
                 C1 = COL(I,1)
                 C2 = COL(I,2)
                 TEXTVAL(I) = TEXTLINE(C1:C2)
+                LENGTH = LenString(TEXTVAL(I))
+                IF (LENGTH < 1) THEN
+                  WRITE(MSG(1),'(A,A)') 
+     &              "Ecotype value missing for parameter ", HEADER(I)
+                  WRITE(MSG(2),'(A,A)') "Ecotype: ", ECOTYP
+                  MSG(3) = FILEGC
+                  CALL WARNING(3,ERRKEY,MSG) 
+                  CALL ERROR(ERRKEY,4,FILEGC,LNUM)
+                ENDIF
               ENDDO
               EXIT
             ENDIF
-        
+
           CASE(2); EXIT                               !End of section 
           CASE(3); EXIT                               !Header line 
           END SELECT
