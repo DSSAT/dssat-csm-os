@@ -122,10 +122,10 @@ C=======================================================================
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
-     &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
-     &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
-     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    ISTAGE, LFWT, MAXLAI, MDATE, NSTRES, PLTPOP,    !Input
+     &    SDWT, SDWTPL, SEEDNO, STGDOY, STMWT, STOVWT,    !Input
+     &    SWFAC, TOTNUP, TUBN, TUBWT, TURFAC, WTNCAN,     !Input
+     &    WTNUP, XLAI, YIELD, YRPLT,                      !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -196,10 +196,10 @@ C=======================================================================
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
-     &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
-     &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
-     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    ISTAGE, LFWT, MAXLAI, MDATE, NSTRES, PLTPOP,    !Input
+     &    SDWT, SDWTPL, SEEDNO, STGDOY, STMWT, STOVWT,    !Input
+     &    SWFAC, TOTNUP, TUBN, TUBWT, TURFAC, WTNCAN,     !Input
+     &    WTNUP, XLAI, YIELD, YRPLT,                      !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !***********************************************************************
@@ -287,10 +287,10 @@ C=======================================================================
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
-     &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
-     &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
-     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    ISTAGE, LFWT, MAXLAI, MDATE, NSTRES, PLTPOP,    !Input
+     &    SDWT, SDWTPL, SEEDNO, STGDOY, STMWT, STOVWT,    !Input
+     &    SWFAC, TOTNUP, TUBN, TUBWT, TURFAC, WTNCAN,     !Input
+     &    WTNUP, XLAI, YIELD, YRPLT,                      !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
      
      
@@ -319,10 +319,10 @@ C=======================================================================
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
-     &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
-     &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
-     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    ISTAGE, LFWT, MAXLAI, MDATE, NSTRES, PLTPOP,    !Input
+     &    SDWT, SDWTPL, SEEDNO, STGDOY, STMWT, STOVWT,    !Input
+     &    SWFAC, TOTNUP, TUBN, TUBWT, TURFAC, WTNCAN,     !Input
+     &    WTNUP, XLAI, YIELD, YRPLT,                      !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
       PODWT = 0.0

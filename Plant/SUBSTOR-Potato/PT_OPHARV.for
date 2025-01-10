@@ -20,10 +20,10 @@ C=======================================================================
 
       SUBROUTINE PT_OPHARV(CONTROL, ISWITCH, 
      &    AGEFAC, APTNUP, BIOMAS, GNUP, HARVFRAC, ISDATE, !Input
-     &    ISTAGE, MAXLAI, MDATE, NSTRES, PLTPOP, SDWT,    !Input
-     &    SDWTPL, SEEDNO, STGDOY, STOVWT, SWFAC, TOTNUP,  !Input
-     &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
-     &    YIELD, YRPLT,                                   !Input
+     &    ISTAGE, LFWT, MAXLAI, MDATE, NSTRES, PLTPOP,    !Input
+     &    SDWT, SDWTPL, SEEDNO, STGDOY, STMWT, STOVWT,    !Input
+     &    SWFAC, TOTNUP, TUBN, TUBWT, TURFAC, WTNCAN,     !Input
+     &    WTNUP, XLAI, YIELD, YRPLT,                      !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
 
 !-----------------------------------------------------------------------
@@ -58,7 +58,7 @@ C=======================================================================
       INTEGER STGDOY(20)
       
       REAL AGEFAC, APTNUP, BIOMAS, BWAH, CTPP, GNUP, GPP
-      REAL HAULM, HI
+      REAL HAULM, HI, LFWT, STMWT
       REAL LeafNo, MAXLAI, NSTRES, PBIOMS, PLTPOP, PSDWT, PTUBNP
       REAL Pstres1, Pstres2   
       REAL SDWT, SDWTAH, SDWTAM, SDWTPL, SEEDNO, STOVER, STOVWT
@@ -436,7 +436,11 @@ C-----------------------------------------------------------------------
           LABEL(1)  = 'ADAT'; VALUE(1)  = FLOAT(YRNR1)
           LABEL(2)  = 'MDAT'; VALUE(2)  = FLOAT(YRNR7)
           LABEL(3)  = 'DWAP'; VALUE(3)  = SDWTPL
-          LABEL(4)  = 'CWAM'; VALUE(4)  = BIOMAS*10.
+
+!         2025-01-06 chp CWAM should match CWAD variable
+!         LABEL(4)  = 'CWAM'; VALUE(4)  = BIOMAS*10.
+          LABEL(4)  = 'CWAM'; VALUE(4)  = (LFWT + STMWT) * PLTPOP * 10.0
+
           LABEL(5)  = 'HWAM'; VALUE(5)  = YIELD
           LABEL(6)  = 'HWAH'; VALUE(6)  = SDWTAH * 10.
           LABEL(7)  = 'BWAH'; VALUE(7)  = BWAH
