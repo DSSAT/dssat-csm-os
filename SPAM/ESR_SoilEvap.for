@@ -117,22 +117,32 @@
         ENDIF
       ENDIF
 
-      DO L = 1, NLAYR
+!     Find layer for 15 cm depth
+      L15 = 1
+      DO L = 2, NLAYR
+        ZMID = DS(L-1) + 0.5 * DLAYR(L)
+        IF (ZMID < 15.) THEN
+          L15 = L
+        ELSE
+          EXIT
+        ENDIF
+      ENDDO
+
+      DO L = 1, L15
 !-----------------------------------------------------------------------
         SELECT CASE (ProfileType)
 
 !       Dry profile
         CASE (3)
 !         Depth-dependant coefficients based on Ritchie spreadsheet 11/29/2006
-          A =  0.5  + 0.24 * DUL(L)
-          B = -2.04 + 0.20 * DUL(L)
+!         A =  0.5  + 0.24 * DUL(L)
+!         B = -2.04 + 0.20 * DUL(L)
 
-!!     From Ayman Suilieman 2025-01-09
-!!     Use these equations above 15 cm
-!!     Below 15 cm just uofkiw
-!!         from Suleiman Ritchie publication
-!          A =  0.56  + 0.3 * DUL(L)
-!          B = -1.99 + 0.22 * DUL(L)
+!         From Ayman Suilieman 2025-01-09
+!         Use these equations above 15 cm; Below 15 cm just UPFLOW.
+!         from Suleiman Ritchie 2003 publication
+          A =  0.56  + 0.3 * DUL(L)
+          B = -1.99 + 0.22 * DUL(L)
 
           ES_Coef(L) = A * MEANDEP(L) ** B
 
@@ -180,11 +190,11 @@
         ES = EOS
       End If
 
-      UPFLOW = 0.0
-      UPFLOW(NLAYR) = ES_LYR(NLAYR) / 10.
-      DO L = NLAYR-1, 1, -1
-        UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10.     !cm/d
-      ENDDO
+!      UPFLOW = 0.0
+!      UPFLOW(NLAYR) = ES_LYR(NLAYR) / 10.
+!      DO L = NLAYR-1, 1, -1
+!        UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10.     !cm/d
+!      ENDDO
 
 !-----------------------------------------------------------------------
       RETURN
