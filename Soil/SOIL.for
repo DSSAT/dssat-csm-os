@@ -34,7 +34,7 @@
 C=====================================================================
 
       SUBROUTINE SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    ES, ES_LYR, FERTDATA, FracRts, HARVRES, IRRAMT, !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
@@ -58,7 +58,7 @@ C=====================================================================
       TYPE (SwitchType)  , INTENT(IN) :: ISWITCH
       REAL               , INTENT(IN) :: ES
       TYPE (FertType)    , INTENT(IN) :: FERTDATA
-      REAL, DIMENSION(NL), INTENT(IN) :: FracRts
+      REAL, DIMENSION(NL), INTENT(IN) :: FracRts, ES_LYR
       Type (ResidueType) , INTENT(IN) :: HARVRES
       REAL               , INTENT(IN) :: IRRAMT
       REAL               , INTENT(IN) :: KTRANS
@@ -133,7 +133,7 @@ C=====================================================================
 !     Call WATBAL first for all except seasonal initialization
       IF (DYNAMIC /= SEASINIT) THEN
         CALL WATBAL(CONTROL, ISWITCH, 
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+     &    ES, ES_LYR, IRRAMT, SOILPROP, SWDELTX,          !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
@@ -183,7 +183,7 @@ C=====================================================================
       IF (DYNAMIC == SEASINIT) THEN
 !       Soil water balance -- call last for initialization
         CALL WATBAL(CONTROL, ISWITCH, 
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+     &    ES, ES_LYR, IRRAMT, SOILPROP, SWDELTX,          !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output

@@ -39,7 +39,7 @@ C=======================================================================
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    EO, EOP, EOS, EP, ES, ES_LYR, RWU, SRFTEMP, ST, !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 !-----------------------------------------------------------------------
@@ -50,7 +50,7 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS
       EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
-      EXTERNAL XTRACT
+      EXTERNAL XTRACT, ESR_SoilEvap_mod
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT
@@ -350,10 +350,14 @@ C=======================================================================
             SELECT CASE(MESEV)
 !           ------------------------
             CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
-!             Note that this routine calculates UPFLOW, unlike the SOILEV.
               CALL ESR_SoilEvap(
      &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
      &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+!           ------------------------
+            CASE ('M')  ! Modified Sulieman-Ritchie soil evap routine
+              CALL ESR_SoilEvap_mod(
+     &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
+     &          ES, ES_LYR, SWDELTU)                      !Output
 !           ------------------------
             CASE DEFAULT
 !           CASE ('R')  !Ritchie soil evaporation routine
@@ -411,7 +415,7 @@ C=======================================================================
           !   (MEPHO = 'L' and MEEVP = 'Z').
           CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
+     &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
           EVAP = ES  !CHP / BK 7/13/2017
         ENDIF

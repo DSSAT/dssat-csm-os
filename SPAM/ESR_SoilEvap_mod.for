@@ -1,7 +1,7 @@
 !=======================================================================
 !  SALUS SOIL EVAPORATION MODULE - File ESR_SoilEvap.for
 !=======================================================================
-!  ESR_SoilEvap, Subroutine, J. Ritchie, C. Porter
+!  ESR_SoilEvap_Mod, Subroutine, J. Ritchie, C. Porter
 !
 !  Calculates actual soil evaporation (ES, mm/d) based on method
 !  described in:
@@ -27,12 +27,13 @@
 !  05/29/2008 JTR added intermediate profile case
 !  10/02/2008 CHP/JTR changed depth for determining evaporation case
 !                     from 50 cm to 100 cm.
+!  01/05/2025 CHP / AS Modified to take evaporation only from top 15 cm
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !=======================================================================
-      SUBROUTINE ESR_SoilEvap(
+      SUBROUTINE ESR_SoilEvap_mod(
      &   EOS, SOILPROP, SW, SWDELTS,                      !Input
-     &   ES, ES_LYR, SWDELTU, UPFLOW)                     !Output
+     &   ES, ES_LYR, SWDELTU)                             !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs; USE ModuleData
@@ -48,16 +49,16 @@
 
       REAL, INTENT(OUT):: ES           !Actual soil evaporation (mm/d)
       REAL, INTENT(OUT):: SWDELTU(NL)  !Change in soil water (cm3/cm3)
-      REAL, INTENT(OUT):: UPFLOW(NL)   !Flow or N transport (cm/d)
+!     REAL, INTENT(OUT):: UPFLOW(NL)   !Flow or N transport (cm/d)
       REAL, INTENT(OUT):: ES_LYR(NL)   !Actual soil evap by layer (mm/d)
 !     UPFLOW(1:NL) refers to water which moves up from layer L to
 !       layer L-1, and includes upflow from lower layers.
 !     ------------------------------------------------
 
 !      CHARACTER*12, PARAMETER :: ERRKEY = 'SAL_SoilEvap'
-      INTEGER L, NLAYR, ProfileType
+      INTEGER L, L15, NLAYR, ProfileType
       REAL A, B, RedFac, SW_threshold
-      REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
+      REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP, L15frac
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
       REAL PMFRACTION
 
@@ -117,22 +118,36 @@
         ENDIF
       ENDIF
 
-      DO L = 1, NLAYR
+!     By default, set proportion of soil layers within top 15 cm to zero
+      L15frac = 0.0
+
+!     Find proportion of each layer in top 15 cm
+      L15frac(1) = MIN(1.0, 15.0 / DS(1))  !Top layer
+      DO L = 2, NLAYR
+        L15frac(L) = MIN(1.0, (15. - DS(L-1) / DLAYR(L)))
+        IF (L15frac(L) < 1.0) THEN
+          L15 = L
+          EXIT
+        ENDIF
+      ENDDO
+
+      ES_LYR = 0.0
+!     Calculate evaporation in the top 15 cm
+      DO L = 1, L15
 !-----------------------------------------------------------------------
         SELECT CASE (ProfileType)
 
 !       Dry profile
         CASE (3)
 !         Depth-dependant coefficients based on Ritchie spreadsheet 11/29/2006
-          A =  0.5  + 0.24 * DUL(L)
-          B = -2.04 + 0.20 * DUL(L)
+!         A =  0.5  + 0.24 * DUL(L)
+!         B = -2.04 + 0.20 * DUL(L)
 
-!!     From Ayman Suilieman 2025-01-09
-!!     Use these equations above 15 cm
-!!     Below 15 cm just uofkiw
-!!         from Suleiman Ritchie publication
-!          A =  0.56  + 0.3 * DUL(L)
-!          B = -1.99 + 0.22 * DUL(L)
+!         From Ayman Suilieman 2025-01-09
+!         Use these equations above 15 cm; Below 15 cm just UPFLOW.
+!         from Suleiman Ritchie 2003 publication
+          A =  0.56  + 0.3 * DUL(L)
+          B = -1.99 + 0.22 * DUL(L)
 
           ES_Coef(L) = A * MEANDEP(L) ** B
 
@@ -180,14 +195,14 @@
         ES = EOS
       End If
 
-      UPFLOW = 0.0
-      UPFLOW(NLAYR) = ES_LYR(NLAYR) / 10.
-      DO L = NLAYR-1, 1, -1
-        UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10.     !cm/d
-      ENDDO
+!      UPFLOW = 0.0
+!      UPFLOW(NLAYR) = ES_LYR(NLAYR) / 10.
+!      DO L = NLAYR-1, 1, -1
+!        UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10.     !cm/d
+!      ENDDO
 
 !-----------------------------------------------------------------------
       RETURN
-      END SUBROUTINE ESR_SoilEvap
+      END SUBROUTINE ESR_SoilEvap_mod
 !=======================================================================
 

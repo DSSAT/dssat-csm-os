@@ -225,11 +225,11 @@ C
          ICO2   = UPCASE(ICO2)
 
          SELECT CASE (CROP)
-              CASE ('BN','SB','PN','PE','CH','PP','GY',
+           CASE ('BN','SB','PN','PE','CH','PP','GY',
      &              'VB','CP','CB','FB','GB','LT','AL',
      &              'CV','BG')
 !          Do nothing -- these crops fix N and can have Y or N
-              CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
+           CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
          END SELECT
 !        ENDIF
          IF (ISWCHE .EQ. ' ') THEN
@@ -319,6 +319,7 @@ C
 
          SELECT CASE(MESEV)
             CASE('R','r'); MESEV = 'R'
+            CASE('M','m'); MESEV = 'M'
             CASE('s','S'); MESEV = 'S'
             CASE DEFAULT;  MESEV = 'R'   !Default method Ritchie
          END SELECT
@@ -1434,7 +1435,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 
             IF (INDEX('PG' ,MESOM) == 0) MESOM = ' '
             IF (INDEX('123',MESOL) == 0) MESOL = ' '
-            IF (INDEX('RS' ,MESEV) == 0) MESEV = ' '
+            IF (INDEX('RSM',MESEV) == 0) MESEV = ' '
             IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
 !           IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
             IF (INDEX('ED' ,METMP) == 0) METMP = 'D' !7/21/2016

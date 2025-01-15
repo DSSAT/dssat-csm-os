@@ -49,7 +49,7 @@ C             SATFLO  (File SATFLO.for)
 C=======================================================================
 
       SUBROUTINE WATBAL(CONTROL, ISWITCH,                 !Input
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+     &    ES, ES_LYR, IRRAMT, SOILPROP, SWDELTX,          !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
@@ -62,7 +62,7 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
      &  MULCHWATER, WBAL, OPWBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
-     &  SOILMIXING, SUMSW, WTDEPT, WaterTable
+     &  SOILMIXING, SUMSW, WTDEPT, WaterTable, OPSWBL
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -71,6 +71,7 @@ C=======================================================================
       TYPE (ControlType), INTENT(IN) :: CONTROL
       TYPE (SwitchType) , INTENT(IN) :: ISWITCH
       REAL              , INTENT(IN) :: ES   
+      REAL, DIMENSION(NL),INTENT(IN) :: ES_LYR
       REAL              , INTENT(IN) :: IRRAMT    
       TYPE (SoilType)   , INTENT(IN) :: SOILPROP
       REAL, DIMENSION(NL),INTENT(IN) :: SWDELTX
@@ -419,7 +420,6 @@ C     Conflict with CERES-Wheat
 
 C       Calculate upward movement of water due to evaporation and root 
 C       extraction (based on yesterday's values) for each soil layer.
-!       Don't call when using SALUS soil evaporation routine (MESEV = 'S')
         CALL UP_FLOW(    
      &    NLAYR, DLAYR, DUL, LL, SAT, SW, SW_AVAIL,       !Input
      &    UPFLOW, SWDELTU)                                !Output
@@ -473,6 +473,10 @@ C       extraction (based on yesterday's values) for each soil layer.
 !         Perform integration of soil water fluxes
 !         Subtract soil evaporation from layer 1
           SW(1) = SW(1) - 0.1 * ES / DLAYR_YEST(1)
+        ELSEIF (MESEV .EQ. 'M') THEN
+          DO L = 1, NLAYR
+            SW(L) = SW(1) - 0.1 * ES_LYR(L) / DLAYR_YEST(L)
+          ENDDO
         ENDIF
 
 !       Perform integration of soil water fluxes

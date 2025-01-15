@@ -64,7 +64,7 @@ C     Soil Processes Module Variables
 C-----------------------------------------------------------------------
       REAL SNOW, WINF
       REAL, DIMENSION(NL) :: NH4_plant, NO3_plant, SPi_Avail, SKi_Avail
-      REAL, DIMENSION(NL) :: ST, UPPM, SW, SWDELTS, UPFLOW
+      REAL, DIMENSION(NL) :: ST, UPPM, SW, SWDELTS, UPFLOW, ES_LYR
       TYPE (SoilType) SOILPROP    !type defined in ModuleDefs
       TYPE (FloodWatType) FLOODWAT
       TYPE (FloodNType)   FloodN
@@ -166,7 +166,7 @@ C-----------------------------------------------------------------------
 C     Read initial soil data 
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    ES, ES_LYR, FERTDATA, FracRts, HARVRES, IRRAMT, !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
@@ -183,7 +183,7 @@ C-----------------------------------------------------------------------
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    EO, EOP, EOS, EP, ES, ES_LYR, RWU, SRFTEMP, ST, !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 C-----------------------------------------------------------------------
@@ -236,7 +236,7 @@ C-----------------------------------------------------------------------
 C     Seasonal initialization for soil processes
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    ES, ES_LYR, FERTDATA, FracRts, HARVRES, IRRAMT, !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
@@ -255,7 +255,7 @@ C-----------------------------------------------------------------------
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    EO, EOP, EOS, EP, ES, ES_LYR, RWU, SRFTEMP, ST, !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 C-----------------------------------------------------------------------
@@ -308,7 +308,7 @@ C     Call Soil processes module to determine today's rates of
 C     change of soil properties.
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    ES, ES_LYR, FERTDATA, FracRts, HARVRES, IRRAMT, !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
@@ -326,7 +326,7 @@ C-----------------------------------------------------------------------
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    EO, EOP, EOS, EP, ES, ES_LYR, RWU, SRFTEMP, ST, !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 C-----------------------------------------------------------------------
@@ -356,7 +356,7 @@ C***********************************************************************
 C     Integrate soil state variables
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    ES, ES_LYR, FERTDATA, FracRts, HARVRES, IRRAMT, !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
@@ -373,7 +373,7 @@ C-----------------------------------------------------------------------
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    EO, EOP, EOS, EP, ES, ES_LYR, RWU, SRFTEMP, ST, !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 C-----------------------------------------------------------------------
@@ -413,7 +413,7 @@ C***********************************************************************
       CALL WEATHR(CONTROL, ISWITCH, WEATHER, YREND)
 
         CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    ES, ES_LYR, FERTDATA, FracRts, HARVRES, IRRAMT, !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
@@ -427,7 +427,7 @@ C***********************************************************************
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    EO, EOP, EOS, EP, ES, ES_LYR, RWU, SRFTEMP, ST, !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 C-----------------------------------------------------------------------
@@ -463,7 +463,7 @@ C     Call WEATHER module to close current weather file
 
 C     Print seasonal summaries and close files.
       CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    ES, ES_LYR, FERTDATA, FracRts, HARVRES, IRRAMT, !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
@@ -477,7 +477,7 @@ C     Print seasonal summaries and close files.
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    EO, EOP, EOS, EP, ES, ES_LYR, RWU, SRFTEMP, ST, !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
       CALL PLANT(CONTROL, ISWITCH, 
@@ -538,7 +538,7 @@ C     End of Run
 C*********************************************************************** 
       ELSE IF (DYNAMIC .EQ. ENDRUN) THEN
         CALL SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    ES, ES_LYR, FERTDATA, FracRts, HARVRES, IRRAMT, !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
