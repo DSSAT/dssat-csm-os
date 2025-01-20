@@ -31,17 +31,18 @@
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !=======================================================================
-      SUBROUTINE ESR_SoilEvap_mod(
+      SUBROUTINE ESR_SoilEvap_mod(DYNAMIC,
      &   EOS, SOILPROP, SW, SWDELTS,                      !Input
      &   ES, ES_LYR, SWDELTU)                             !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs; USE ModuleData
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
 !     ------------------------------------------------
 !     Interface Variables:
+      INTEGER, INTENT(IN) :: DYNAMIC
       REAL, INTENT(IN) :: EOS          !Potential soil evap (mm/d)
       REAL, INTENT(IN) :: SW(NL)       !Soil water content (cm3/cm3)
       REAL, INTENT(IN) :: SWDELTS(NL)  !Rate of drainage (cm3/cm3)
@@ -74,15 +75,37 @@
       DS    = SOILPROP % DS
       DUL   = SOILPROP % DUL
       LL    = SOILPROP % LL
+
+!***********************************************************************
+!***********************************************************************
+!     Seasonal initialization - run once per season
+!***********************************************************************
+      IF (DYNAMIC .EQ. SEASINIT) THEN
+!-----------------------------------------------------------------------
       NLAYR = SOILPROP % NLAYR
+      ES = 0.0
+      ES_LYR = 0.0
       CALL GET("PM", "PMFRACTION", PMFRACTION)
 
-      ES = 0.0
+!     Calculate the proportion of each soil layer within top 15 cm
+      L15frac = 0.0           !default to 0.0 for all layers
+      L15frac(1) = MIN(1.0, 15.0 / DS(1))         !Top layer
+      DO L = 2, NLAYR
+        L15frac(L) = MIN(1.0, (15. - DS(L-1)) / DLAYR(L))
+        IF (L15frac(L) < 1.0) THEN
+          L15 = L
+          EXIT
+        ENDIF
+      ENDDO
 
-!**********************************************************************
+!***********************************************************************
+!     RATE CALCULATIONS
+!***********************************************************************
+      ELSEIF (DYNAMIC .EQ. RATE) THEN
+!-----------------------------------------------------------------------
 !     NEW 4/18/2008
       ProfileType = 3   !assume dry profile until proven wet
-      DO L = 1, NLAYR
+      DO L = 1, L15
 !       Air dry water content
         SWAD(L) = 0.30 * LL(L) !JTR 11/28/2006
 
@@ -118,19 +141,6 @@
         ENDIF
       ENDIF
 
-!     By default, set proportion of soil layers within top 15 cm to zero
-      L15frac = 0.0
-
-!     Find proportion of each layer in top 15 cm
-      L15frac(1) = MIN(1.0, 15.0 / DS(1))  !Top layer
-      DO L = 2, NLAYR
-        L15frac(L) = MIN(1.0, (15. - DS(L-1) / DLAYR(L)))
-        IF (L15frac(L) < 1.0) THEN
-          L15 = L
-          EXIT
-        ENDIF
-      ENDDO
-
       ES_LYR = 0.0
 !     Calculate evaporation in the top 15 cm
       DO L = 1, L15
@@ -163,6 +173,8 @@
           ES_Coef(L) = A * MEANDEP(L) ** B !function, no integration
 
         END SELECT
+
+        ES_Coef(L) = ES_Coef(L) * L15frac(L)
 !-----------------------------------------------------------------------
 
         SWDELTU(L) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) !mm3/mm3
@@ -201,7 +213,12 @@
 !        UPFLOW(L) = UPFLOW(L+1) + ES_LYR(L) / 10.     !cm/d
 !      ENDDO
 
-!-----------------------------------------------------------------------
+!***********************************************************************
+!***********************************************************************
+!     END OF DYNAMIC IF CONSTRUCT
+!***********************************************************************
+      ENDIF
+!***********************************************************************
       RETURN
       END SUBROUTINE ESR_SoilEvap_mod
 !=======================================================================

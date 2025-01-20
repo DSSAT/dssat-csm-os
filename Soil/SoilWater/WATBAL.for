@@ -469,15 +469,19 @@ C       extraction (based on yesterday's values) for each soil layer.
 
 !       CALL SUMSW(NLAYR, DLAYR, SW, SWTOT1)
 
-        IF (MESEV .NE. 'S' .OR. MEEVP == 'Z') THEN
-!         Perform integration of soil water fluxes
-!         Subtract soil evaporation from layer 1
-          SW(1) = SW(1) - 0.1 * ES / DLAYR_YEST(1)
-        ELSEIF (MESEV .EQ. 'M') THEN
+        SELECT CASE(MESEV)
+        CASE ('M')  !Subtract ES from top 15 cm
           DO L = 1, NLAYR
-            SW(L) = SW(1) - 0.1 * ES_LYR(L) / DLAYR_YEST(L)
+            SW(L) = SW(L) - 0.1 * ES_LYR(L) / DLAYR_YEST(L)
           ENDDO
-        ENDIF
+
+        CASE DEFAULT
+          IF (MESEV .NE. 'S' .OR. MEEVP == 'Z') THEN
+!           Perform integration of soil water fluxes
+!           Subtract soil evaporation from layer 1
+            SW(1) = SW(1) - 0.1 * ES / DLAYR_YEST(1)
+          ENDIF
+        END SELECT
 
 !       Perform integration of soil water fluxes
         DO L = 1, NLAYR

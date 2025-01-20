@@ -24,6 +24,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !  10/16/2020 CHP Cumulative "soil" evaporation includes mulch and flood evap
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
+!  01/10/2025 CHP Added modified Sulieman-Ritchie method per AS
 C-----------------------------------------------------------------------
 C  Called by: Main
 C  Calls:     XTRACT, OPSPAM    (File SPSUBS.for)
@@ -196,6 +197,11 @@ C=======================================================================
      &      DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
      &      U, WINF,                                      !Input
      &      ES)                                           !Output
+!           ------------------------
+        CASE ('M')  ! Modified Sulieman-Ritchie soil evap routine
+          CALL ESR_SoilEvap_mod(DYNAMIC,
+     &      EOS_SOIL, SOILPROP, SW, SWDELTS,              !Input
+     &      ES, ES_LYR, SWDELTU)                          !Output
 !     ----------------------------
         END SELECT
 
@@ -355,7 +361,7 @@ C=======================================================================
      &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
 !           ------------------------
             CASE ('M')  ! Modified Sulieman-Ritchie soil evap routine
-              CALL ESR_SoilEvap_mod(
+              CALL ESR_SoilEvap_mod(DYNAMIC,
      &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
      &          ES, ES_LYR, SWDELTU)                      !Output
 !           ------------------------
