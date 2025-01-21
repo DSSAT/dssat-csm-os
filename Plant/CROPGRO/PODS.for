@@ -47,7 +47,7 @@
       USE ModuleData
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, IGNORE, PODCOMP, FreshWt, 
-     &  WARNING, TIMDIF, CURV, TABEX
+     &  WARNING, TIMDIF, CURV, TABEX, ECO_read
       SAVE
 
       CHARACTER*1   ISWWAT, ISWFWT
@@ -242,36 +242,49 @@
 !-----------------------------------------------------------------------
 !    Read Ecotype Parameter File
 !-----------------------------------------------------------------------
-      CALL GETLUN('FILEE', LUNECO)
-      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
-      ECOTYP = '      '
-      LNUM = 0
-      DO WHILE (ECOTYP .NE. ECONO)
-        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
-        IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
-     &        (C255(1:1) .NE. '*')) THEN
-!          READ (C255,'(A6,66X,F6.0,30X,F6.0)',IOSTAT=ERR)
-!     &        ECOTYP, LNGSH, THRESH
-          READ (C255,'(A6,66X,F6.0)',IOSTAT=ERR)
-     &        ECOTYP, LNGSH
-          IF (ISWFWT .EQ. 'Y') THEN
-            READ (C255,'(126X,F6.0)',IOSTAT=ERR) XMAGE
-          ENDIF
-          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
-          IF (ECOTYP .EQ. ECONO) THEN
-            EXIT
-          ENDIF
+!      CALL GETLUN('FILEE', LUNECO)
+!      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
+!      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+!      ECOTYP = '      '
+!      LNUM = 0
+!      DO WHILE (ECOTYP .NE. ECONO)
+!        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+!        IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
+!     &        (C255(1:1) .NE. '*')) THEN
+!!          READ (C255,'(A6,66X,F6.0,30X,F6.0)',IOSTAT=ERR)
+!!     &        ECOTYP, LNGSH, THRESH
+!          READ (C255,'(A6,66X,F6.0)',IOSTAT=ERR)
+!     &        ECOTYP, LNGSH
+!          IF (ISWFWT .EQ. 'Y') THEN
+!            READ (C255,'(126X,F6.0)',IOSTAT=ERR) XMAGE
+!          ENDIF
+!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
+!          IF (ECOTYP .EQ. ECONO) THEN
+!            EXIT
+!          ENDIF
+!
+!        ELSE IF (ISECT .EQ. 0) THEN
+!          IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+!          ECONO = 'DFAULT'
+!          REWIND(LUNECO)
+!          LNUM = 0
+!        ENDIF
+!      ENDDO
+!
+!      CLOSE (LUNECO)
 
-        ELSE IF (ISECT .EQ. 0) THEN
-          IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
-          ECONO = 'DFAULT'
-          REWIND(LUNECO)
-          LNUM = 0
+        CALL ECO_read('LNGSH', LNGSH)
+        IF (ISWFWT .EQ. 'Y') THEN
+          CALL ECO_read('XMAGE', XMAGE)
         ENDIF
-      ENDDO
 
-      CLOSE (LUNECO)
+!     TEMP CHP
+        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'LNGSH',LNGSH
+        IF (ISWFWT .EQ. 'Y') THEN
+          WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'XMAGE',XMAGE
+        ENDIF
+
+
 
 !-----------------------------------------------------------------------
 
