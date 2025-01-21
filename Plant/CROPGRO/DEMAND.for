@@ -997,6 +997,11 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
       CALL ECO_read('XFPHT',XFPHT)
       CALL ECO_read('XFINT',XFINT)
 
+!     temp chp
+      WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'LNGSH',LNGSH
+      WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'XFPHT',XFPHT
+      WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'XFINT',XFINT
+
 !     chp 2025-01-09
 !     Use of these values is triggered by a value > 0.0
 !     Generic ECO_read checks for missing data.

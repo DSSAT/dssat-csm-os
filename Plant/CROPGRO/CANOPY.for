@@ -164,6 +164,10 @@ C-----------------------------------------------------------------------
       CALL ECO_read('RWDTH', RWIDTH)
       CALL ECO_read('RHGHT', RHGHT)
 
+!     temp chp
+      WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'RWDTH', RWIDTH
+      WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'RHGHT', RHGHT
+
       CANHT = 0.0
       CANWH = 0.0
 
