@@ -17,6 +17,7 @@
 
       CHARACTER*1, PARAMETER :: BLANK = ' '
       CHARACTER*1 UPCASE
+      CHARACTER*5 MODEL
       CHARACTER*6 ECONO, ECOTYP, SECTION
       CHARACTER*7, PARAMETER :: ERRKEY = 'IPECO'
       CHARACTER*12 FILEIO, FILEE 
@@ -79,6 +80,8 @@
         CALL GETLUN('FILEE', LUNECO)
         OPEN (LUNECO,FILE = FILEGC, STATUS = 'OLD', IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+
+        MODEL = FILEE(1:5)
 
 !-----------------------------------------------------------------------
 
@@ -181,14 +184,24 @@
 !       Error checking is crop specific
         IF (I > ICOUNT) THEN
 !         Parameter not found in ECO file, check to see if it's required for this crop model
-          ERR = 4  !assume it's needed, exclusions are below
+          ERR = 4  !assume the missing parameter is needed, check for exclusions below
 
 !         Some strawberry model parameters not needed for other crops
-          IF (TRIM(LABEL) == 'XFPHT' .AND. CONTROL%CROP /= 'SR') ERR = 0
-          IF (TRIM(LABEL) == 'XFINT' .AND. CONTROL%CROP /= 'SR') ERR = 0
+          IF (TRIM(LABEL) == 'XFPHT' .AND. MODEL /= 'SRGRO') ERR = 0
+          IF (TRIM(LABEL) == 'XFINT' .AND. MODEL /= 'SRGRO') ERR = 0
 
 !         Some cotton model parameters not needed for other crops
-!         IF (TRIM(LABEL) == '?????' .AND. CONTROL%CROP /= 'CO') ERR = 0
+          IF (TRIM(LABEL) == 'PCTLT' .AND. MODEL /= 'COGRO') ERR = 0
+
+!         Tomato, pepper, strawberry, green bean use XMAGE. Other crops don't
+          IF (TRIM(LABEL) == 'XMAGE') THEN
+            IF (INDEX('TMGRO PRGRO SRGRO GBGRO',MODEL) < 1) ERR = 0
+          ENDIF
+
+!         G0GRO
+          IF (TRIM(LABEL) == 'THRSH' .AND. MODEL /= 'G0GRO') ERR = 0
+          IF (TRIM(LABEL) == 'SDPRO' .AND. MODEL /= 'G0GRO') ERR = 0
+          IF (TRIM(LABEL) == 'SDLIP' .AND. MODEL /= 'G0GRO') ERR = 0
 
           IF (ERR > 0) THEN
             MSG(1) = "Ecotype variable not found."
