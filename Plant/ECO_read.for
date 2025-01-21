@@ -23,7 +23,7 @@
       CHARACTER*15 HTXT
       CHARACTER*80 PATHEC
       CHARACTER*92 FILEGC
-      CHARACTER*92 MSG(3)
+      CHARACTER*92 MSG(4)
       CHARACTER*200 HEADERLINE, TEXTLINE
 
 !     Array of headers and text value of ecotype parameters. 
@@ -153,6 +153,7 @@
 !       Return a dummy value
         Value = -99.
 
+
 !     TEMP CHP
       DO I = 1, ICOUNT
         WRITE(5656,*) HEADER(I), TEXTVAL(I)
@@ -167,13 +168,37 @@
           IF (TRIM(HEADER(I)) .EQ. TRIM(LABEL)) THEN
             READ (TEXTVAL(I),*,IOSTAT=ERR) Value
             IF (ERR .NE. 0) THEN
-              WRITE(MSG(1),'()') HEADER(I),' contains non-numeric data.'
+              WRITE(MSG(1),'(A,A)') 
+     &          HEADER(I),' contains non-numeric data.'
               MSG(2) = "Program will stop."
               CALL WARNING(2, ERRKEY, MSG)
               CALL ERROR(ERRKEY,1,FILEGC,LNUM)
             ENDIF
+            EXIT
           ENDIF
         ENDDO
+
+!       Error checking is crop specific
+        IF (I > ICOUNT) THEN
+!         Parameter not found in ECO file, check to see if it's required for this crop model
+          ERR = 4  !assume it's needed, exclusions are below
+
+!         Some strawberry model parameters not needed for other crops
+          IF (TRIM(LABEL) == 'XFPHT' .AND. CONTROL%CROP /= 'SR') ERR = 0
+          IF (TRIM(LABEL) == 'XFINT' .AND. CONTROL%CROP /= 'SR') ERR = 0
+
+!         Some cotton model parameters not needed for other crops
+!         IF (TRIM(LABEL) == '?????' .AND. CONTROL%CROP /= 'CO') ERR = 0
+
+          IF (ERR > 0) THEN
+            MSG(1) = "Ecotype variable not found."
+            MSG(2) = "Variable: " // LABEL
+            MSG(3) = "File: " // FILEGC
+            MSG(4) = "Simulations terminated."
+            CALL WARNING(4, ERRKEY, MSG)
+            CALL ERROR(ERRKEY,4,FILEGC,LNUM)
+          ENDIF
+        ENDIF
       ENDIF
 
       RETURN
