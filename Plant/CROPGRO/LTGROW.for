@@ -77,9 +77,6 @@ C-----------------------------------------------------------------------
         IF (PCTLT .LT. 25 .OR. PCTLT .GT. 60) 
      &        CALL ERROR(ERRKEY,11,FILEGC,LNUM)
 
-!     TEMP CHP
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'PCTLT',PCTLT
-
 !-----------------------------------------------------------------------
 !     Read in values from input file, which were previously input
 !       in Subroutine IPCROP.

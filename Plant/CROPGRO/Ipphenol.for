@@ -252,23 +252,6 @@ C-----------------------------------------------------------------------
         CALL ECO_read('OPTBI',OPTBI)
         CALL ECO_read('SLOBI',SLOBI)
 
-!     TEMP CHP
-        WRITE(555,'(A6,1X,A10,I10)')   ERRKEY, 'MG',IVRGRP
-        WRITE(555,'(A6,1X,A10,I10)')   ERRKEY, 'TM',IVRTEM
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'THVAR',THVAR
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'PL-EM',PHTHRS(1)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'EM-V1',PHTHRS(2)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'V1-JU',PHTHRS(3)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'JU-R0',PHTHRS(4)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'PM06',PM06
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'PM09',PM09
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'R7-R8',PHTHRS(11)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'FL-VS',PHTHRS(12)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'TRIFL',TRIFOL
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'R1PPO',R1PPO
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'OPTBI',OPTBI
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'SLOBI',SLOBI
-
         PHTHRS(5) = MAX(0.,PH2T5 - PHTHRS(3) - PHTHRS(4))
         PHTHRS(7) = PHTHRS(6) + MAX(0.,(PHTHRS(8) - PHTHRS(6))* PM06)
         PHTHRS(9) = MAX(0.,PHTHRS(10) * PM09)
@@ -281,14 +264,6 @@ C-----------------------------------------------------------------------
   
         CSDVRR = CSDVAR - R1PPO
         CLDVRR = CLDVAR - R1PPO
-
-!     TEMP CHP
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'PHTHRS(5)',PHTHRS(5)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'PHTHRS(7)',PHTHRS(7)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'PHTHRS(9)',PHTHRS(9)
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'CLDVAR',CLDVAR
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'CLDVAR',CSDVRR
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'CLDVAR',CLDVRR
 
       ENDIF
 

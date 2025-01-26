@@ -156,12 +156,6 @@
 !       Return a dummy value
         Value = -99.
 
-
-!     TEMP CHP
-      DO I = 1, ICOUNT
-        WRITE(5656,*) HEADER(I), TEXTVAL(I)
-      ENDDO
-
 !-----------------------------------------------------------------------
 !     Ecotype info is already in memory, just send back the requested value
 

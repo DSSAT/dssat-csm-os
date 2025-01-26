@@ -278,14 +278,6 @@
           CALL ECO_read('XMAGE', XMAGE)
         ENDIF
 
-!     TEMP CHP
-        WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'LNGSH',LNGSH
-        IF (ISWFWT .EQ. 'Y') THEN
-          WRITE(555,'(A6,1X,A10,F10.3)') ERRKEY, 'XMAGE',XMAGE
-        ENDIF
-
-
-
 !-----------------------------------------------------------------------
 
       CALL PODCOMP(
