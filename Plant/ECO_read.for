@@ -1,5 +1,18 @@
 !============================================================================================
       Subroutine ECO_read(LABEL, Value)
+!-----------------------------------------------------------------------
+!     Opens and reads Ecotype file and stores parameters for the current
+!     ecotype in memory.
+!     - Ecotype files must be one line per ecotype with the data values
+!       right-justified under each header.
+!     - Values are stored as text, but sent back as real.
+!     - Ecotype file is read each time the routine is called with 
+!       LABEL = 'NEW'
+!     - Initially implemented only for CROPGRO but should work for any crop.
+!-----------------------------------------------------------------------
+!  REVISION HISTORY
+!  01/09/2025 CHP Written
+!-----------------------------------------------------------------------
 
       USE ModuleData
       IMPLICIT NONE
@@ -36,11 +49,10 @@
       LOGICAL ECOFOUND
 
       TYPE (ControlType) CONTROL
-!***********************************************************************
 
+!-----------------------------------------------------------------------
+!     New simulation, need to read Ecotype file
       IF (TRIM(LABEL) .EQ. 'NEW') THEN
-!       This is a new simulation, 
-!       Ecotype data has not been extracted yet.
         CALL GET(CONTROL)
         FILEIO  = CONTROL % FILEIO
         LUNIO   = CONTROL % LUNIO
@@ -64,7 +76,6 @@
           READ(LUNIO,'(24X,A6)',IOSTAT=ERR) ECONO ; LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF
-        
         CLOSE (LUNIO)
 
 !-----------------------------------------------------------------------
@@ -84,7 +95,6 @@
         MODEL = FILEE(1:5)
 
 !-----------------------------------------------------------------------
-
 !       Look for 1st header line beginning with '@' in column 1 (ISECT = 3)
         DO WHILE (.TRUE.)   !
           CALL IGNORE2 (LUNECO, LNUM, ISECT, HEADERLINE)
@@ -106,7 +116,6 @@
             HTXT(J:J) = UPCASE(HTXT(J:J))
           END DO
           HEADER(I) = HTXT
-          WRITE(5656,*) HEADER(I), COL(I,1), COL(I,2)
         ENDDO
         
         ECOFOUND = .FALSE.
@@ -115,7 +124,7 @@
           CALL IGNORE (LUNECO, LNUM, ISECT, TEXTLINE)
           SELECT CASE(ISECT)
           CASE(0); EXIT                               !End of file 
-        
+
           CASE(1)                                     !data line
 !           Found a line of ecotype data. Is it the right one?
             READ(TEXTLINE(COL(1,1):COL(1,2)+1),*,IOSTAT=ERR) ECOTYP
@@ -143,8 +152,11 @@
           CASE(3); EXIT                               !Header line 
           END SELECT
         ENDDO
-        
+
         IF (.NOT. ECOFOUND) THEN
+!         Error if ecotype not found. 
+!         NOTE: previously, the DFAULT ecotype was used if ECONO not found.
+!         As per GH, stop doing that!
           WRITE(MSG(1),'(A,A,A)')'Ecotype ',ECONO, ' not found in file:'
           MSG(2) = FILEGC
           MSG(3) = "Program will stop."
@@ -157,13 +169,13 @@
         Value = -99.
 
 !-----------------------------------------------------------------------
-!     Ecotype info is already in memory, just send back the requested value
-
+!     Ecotype info has already been read, just send back the requested value
       ELSE
         Value = -99.
         DO I = 2, ICOUNT
           IF (TRIM(HEADER(I)) .EQ. TRIM(LABEL)) THEN
             READ (TEXTVAL(I),*,IOSTAT=ERR) Value
+!           Note chp: will we ever need non-numeric values in ecotype file?
             IF (ERR .NE. 0) THEN
               WRITE(MSG(1),'(A,A)') 
      &          HEADER(I),' contains non-numeric data.'
@@ -180,19 +192,19 @@
 !         Parameter not found in ECO file, check to see if it's required for this crop model
           ERR = 4  !assume the missing parameter is needed, check for exclusions below
 
-!         Some strawberry model parameters not needed for other crops
+!         Some strawberry model parameters not needed for other crops.
           IF (TRIM(LABEL) == 'XFPHT' .AND. MODEL /= 'SRGRO') ERR = 0
           IF (TRIM(LABEL) == 'XFINT' .AND. MODEL /= 'SRGRO') ERR = 0
 
-!         Some cotton model parameters not needed for other crops
+!         Some cotton model parameters not needed for other crops.
           IF (TRIM(LABEL) == 'PCTLT' .AND. MODEL /= 'COGRO') ERR = 0
 
-!         Tomato, pepper, strawberry, green bean use XMAGE. Other crops don't
+!         Tomato, pepper, strawberry, green bean use XMAGE. Other crops don't.
           IF (TRIM(LABEL) == 'XMAGE') THEN
             IF (INDEX('TMGRO PRGRO SRGRO GBGRO',MODEL) < 1) ERR = 0
           ENDIF
 
-!         G0GRO
+!         G0GRO - is this model used anymore?
           IF (TRIM(LABEL) == 'THRSH' .AND. MODEL /= 'G0GRO') ERR = 0
           IF (TRIM(LABEL) == 'SDPRO' .AND. MODEL /= 'G0GRO') ERR = 0
           IF (TRIM(LABEL) == 'SDLIP' .AND. MODEL /= 'G0GRO') ERR = 0
