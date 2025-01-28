@@ -187,16 +187,17 @@
           ENDIF
         ENDDO
 
+!-----------------------------------------------------------------------
 !       Error checking is crop specific
         IF (I > ICOUNT) THEN
 !         Parameter not found in ECO file, check to see if it's required for this crop model
           ERR = 4  !assume the missing parameter is needed, check for exclusions below
 
-!         Some strawberry model parameters not needed for other crops.
+!         Some strawberry model parameters are not needed for other crops.
           IF (TRIM(LABEL) == 'XFPHT' .AND. MODEL /= 'SRGRO') ERR = 0
           IF (TRIM(LABEL) == 'XFINT' .AND. MODEL /= 'SRGRO') ERR = 0
 
-!         Some cotton model parameters not needed for other crops.
+!         Some cotton model parameters are not needed for other crops.
           IF (TRIM(LABEL) == 'PCTLT' .AND. MODEL /= 'COGRO') ERR = 0
 
 !         Tomato, pepper, strawberry, green bean use XMAGE. Other crops don't.
@@ -204,7 +205,7 @@
             IF (INDEX('TMGRO PRGRO SRGRO GBGRO',MODEL) < 1) ERR = 0
           ENDIF
 
-!         G0GRO - is this model used anymore?
+!         G0GRO - is this model even used anymore?
           IF (TRIM(LABEL) == 'THRSH' .AND. MODEL /= 'G0GRO') ERR = 0
           IF (TRIM(LABEL) == 'SDPRO' .AND. MODEL /= 'G0GRO') ERR = 0
           IF (TRIM(LABEL) == 'SDLIP' .AND. MODEL /= 'G0GRO') ERR = 0
@@ -220,6 +221,7 @@
         ENDIF
       ENDIF
 
+!-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE ECO_read
 !============================================================================================
