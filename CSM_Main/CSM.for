@@ -75,7 +75,7 @@ C  10/09/2020 FO  Y4K implementation for weather files
 C=======================================================================
       PROGRAM CSM
 
-      USE ModuleDefs 
+      USE ModuleDefs
       USE ModuleData
       USE HeaderMod
 

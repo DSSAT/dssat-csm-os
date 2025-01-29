@@ -21,7 +21,7 @@
      &    TDRAIN, TRUNOF, TSW)
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs 
+!     USE ModuleDefs !already USED by Cells_2D
       USE ModuleData
       USE Cells_2D
       IMPLICIT NONE

@@ -50,7 +50,7 @@
      &  SomLit,SomLitC, SomLitE, SSOMC)               !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       USE FloodModule             
       USE ModSoilMix

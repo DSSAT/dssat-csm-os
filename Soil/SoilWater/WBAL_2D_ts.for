@@ -20,7 +20,6 @@
      &    Count, LatFlow, SWV_D)                                !Input
 !     ------------------------------------------------------------------
       USE Cells_2D
-
       USE ModuleData
       IMPLICIT NONE
       EXTERNAL GETLUN, HEADER, YR_DOY

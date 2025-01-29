@@ -21,7 +21,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE Cells_2D
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       IMPLICIT NONE
       EXTERNAL GETLUN, ERROR, FIND, IGNORE
       SAVE

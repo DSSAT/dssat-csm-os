@@ -18,7 +18,7 @@
      &    NDRIP, YRDOY, YRPLT, IRRAPL_cm2,        !Input
      &    DEPIR)                                  !Output
 
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE ModuleData
       USE Cells_2D
       IMPLICIT NONE
@@ -227,7 +227,7 @@ C-----------------------------------------------------------------------
      &    DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,       !Input
      &    ATHETA, SWDEF, SWDEF_cm2)                       !Output
 
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       IMPLICIT NONE
       EXTERNAL SWDEFICIT

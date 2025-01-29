@@ -60,6 +60,9 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    MaxFiles = 500,   !Maximum number of output files
      &    MaxPest = 500    !Maximum number of pest operations
 
+!     2D Cell arrays -- fixed maximum dimensions for now
+      INTEGER, PARAMETER :: MaxRows = 40, MaxCols = 25 
+
       REAL, PARAMETER :: 
      &    PI = 3.14159265,
      &    RAD=PI/180.0
@@ -443,7 +446,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     5.  A call to the PUT routine must be used to store data prior to
 !         a call to the GET routine to retrive the data.
 
-      USE Cells_2D
+      USE ModuleDefs
       SAVE
 
 !======================================================================

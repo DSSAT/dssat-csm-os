@@ -13,7 +13,8 @@
   SAVE
   
 ! Cell arrays -- fixed maximum dimensions for now
-  INTEGER, PARAMETER :: MaxRows = 40, MaxCols = 25 
+! chp 2025-01-29 move MaxRows, MaxCols to ModuleDefs to avoid circular USE stmts
+! INTEGER, PARAMETER :: MaxRows = 40, MaxCols = 25
   INTEGER, PARAMETER :: MaxCells = 10
   REAL, DIMENSION(MaxRows,NL)     :: Layer_Cell_Dep
   REAL, DIMENSION(MaxRows,MaxCols):: Surf_Cell_Frac
@@ -212,7 +213,7 @@
        CellStruc, NLAYR, DLAYR, LayerArray, SurfaceVal, &  !Input
        CellArray)                                          !Output
 
-  USE ModuleDefs
+! USE ModuleDefs
   IMPLICIT NONE
             
   TYPE (CellStrucType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CellStruc
@@ -279,7 +280,7 @@
         CellArray, CellStruc, NLAYR,                   & !Input
         LayerArray, SurfaceVal)                          !Output
 
-  USE ModuleDefs
+! USE ModuleDefs
   IMPLICIT NONE
           
   TYPE (CellStrucType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CellStruc
@@ -340,7 +341,7 @@
         CellStruc, SOILPROP, LayerArray, SurfaceVal,  &  !Input
         CellArray)                                       !Output
 
-  USE ModuleDefs
+! USE ModuleDefs
   IMPLICIT NONE
           
   TYPE (CellStrucType), DIMENSION(MaxRows,MaxCols), INTENT(IN) :: CellStruc
@@ -400,7 +401,7 @@
 ! -----------------------------------------------------------------------------
   Subroutine Layer_Cell_Assoc(CellStruc, SOILPROP) 
 
-  USE ModuleDefs
+! USE ModuleDefs
   IMPLICIT NONE
   SAVE
                                         

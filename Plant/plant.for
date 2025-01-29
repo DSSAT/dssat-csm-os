@@ -107,7 +107,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 ! Each plant module must compute SATFAC, SWFAC, and TURFAC
 C-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE ModuleData
       USE FloodModule
       USE Cells_2D

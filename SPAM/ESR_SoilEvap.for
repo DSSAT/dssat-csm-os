@@ -38,7 +38,8 @@
      &   ES, ES_LYR, SWDELTU, UPFLOW)                           !Output
 
 !-----------------------------------------------------------------------
-      USE Cells_2D; USE ModuleData
+      USE Cells_2D
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 

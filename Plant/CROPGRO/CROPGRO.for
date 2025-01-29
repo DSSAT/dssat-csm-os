@@ -54,7 +54,7 @@ C=======================================================================
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)              !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+!     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       USE ModuleData
 

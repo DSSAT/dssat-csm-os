@@ -1741,7 +1741,7 @@ C-----------------------------------------------------------------------
 !debug CHP
       Subroutine SUM_N(Cell_Type, NCells, TotN, Nrow)
 
-      use Cells_2d
+      USE Cells_2D
       implicit none
 
       integer L, j

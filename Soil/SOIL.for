@@ -47,7 +47,7 @@ C=====================================================================
      &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       USE FloodModule
       USE GHG_mod

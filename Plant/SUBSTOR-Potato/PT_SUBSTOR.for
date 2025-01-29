@@ -33,9 +33,7 @@ C=======================================================================
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+!     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       USE ModuleData
       IMPLICIT NONE

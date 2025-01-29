@@ -44,7 +44,7 @@
      &    SENRT, SRDOT, TRLV)                             !Output
 !-----------------------------------------------------------------------
       USE Cells_2D
-      USE ModuleData
+!     USE ModuleDefs !already USED by Cells_2D
       IMPLICIT NONE
       EXTERNAL IPROOT_2D, INROOT_2D, TABEX, OPROOTS_2D, AGGREGATE_ROOTS
 

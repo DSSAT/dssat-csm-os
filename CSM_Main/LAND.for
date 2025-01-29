@@ -26,10 +26,10 @@ C=======================================================================
      &                YRPLT, MDATE, YREND)
       
 C-----------------------------------------------------------------------
-      USE ModuleDefs      
+!     USE ModuleDefs !already USED by Cells_2D
       USE FloodModule      
       USE CsvOutput   ! VSH 
-      USE Cells_2D
+      USE Cells_2D  !Cells_2D uses ModuleDefs
 
       IMPLICIT NONE
       EXTERNAL INFO, ERROR, WARNING, IPIBS, WEATHR, SOIL, SPAM, PLANT, 

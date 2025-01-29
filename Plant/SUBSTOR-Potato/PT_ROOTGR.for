@@ -46,7 +46,7 @@ C=======================================================================
      &    CUMDEP, RLV, RTDEP)                             !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       IMPLICIT  NONE
       EXTERNAL PT_IPROOT

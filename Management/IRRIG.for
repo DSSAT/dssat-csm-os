@@ -41,7 +41,7 @@ C=======================================================================
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs 
+!     USE ModuleDefs !already USED by Cells_2D
       USE ModuleData
       USE FloodModule
       USE Cells_2D

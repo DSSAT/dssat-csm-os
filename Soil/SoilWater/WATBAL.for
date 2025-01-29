@@ -56,7 +56,7 @@ C=======================================================================
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE ModuleData
       USE Cells_2D
       USE FloodModule

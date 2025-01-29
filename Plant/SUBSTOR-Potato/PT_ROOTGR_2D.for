@@ -46,7 +46,7 @@ C=======================================================================
      &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       IMPLICIT  NONE
       EXTERNAL PT_IPROOT_2D, AGGREGATE_ROOTS, PT_OPROOTS_2D, 

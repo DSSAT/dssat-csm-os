@@ -37,7 +37,7 @@ C  05/11/1999 GH  Incorporated in CROPGRO
      &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       IMPLICIT NONE
       EXTERNAL IPROOT, INROOT, TABEX
