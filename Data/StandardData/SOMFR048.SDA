@@ -1,4 +1,7 @@
-*SOMFR047.SDA Stable SOM fractions - DSCSM047 Model 09/01/2017
+*Stable SOM fractions
+
+@VERSION
+  4.8.5.0; 2024-12-01
 
 !========================================================================================================
 ! Initial SOM fractions are based on previous land use / management,

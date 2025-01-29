@@ -225,13 +225,12 @@ C
          ISWTIL = UPCASE(ISWTIL)
          ICO2   = UPCASE(ICO2)
 
-!        IF (INDEX ('BNSBPNPECHPPVBCPCBFB',CROP) .EQ. 0) THEN
          SELECT CASE (CROP)
-         CASE ('BN','SB','PN','PE','CH','PP','GY',
-     &          'VB','CP','CB','FB','GB','LT','AL','BG')
-C     &          'VB','CP','CB','FB','GB','LT')
+              CASE ('BN','SB','PN','PE','CH','PP','GY',
+     &              'VB','CP','CB','FB','GB','LT','AL',
+     &              'CV','BG')
 !          Do nothing -- these crops fix N and can have Y or N
-         CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
+              CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
          END SELECT
 !        ENDIF
          IF (ISWCHE .EQ. ' ') THEN
@@ -745,8 +744,8 @@ C-----------------------------------------------------------------------
 
 !     Planting date needed for generic start of simulation
       SELECT CASE(IPLTI)
-      CASE('R'); PLDATE = YRPLT
-      CASE('A'); PLDATE = PWDINF
+           CASE('R'); PLDATE = YRPLT
+           CASE('A'); PLDATE = PWDINF
       END SELECT
 
 !     Check Simulation control file for control overrides 
@@ -812,7 +811,7 @@ C-----------------------------------------------------------------------
 !     Check for N model compatible with crop model
       IF (ISWNIT /= 'N') THEN
         SELECT CASE(MODEL(1:5))
-        CASE ('SALUS', 'SCCSP', 'SCSAM')
+        CASE ('SCCSP', 'SCSAM')
 !           N model has NOT been linked for these models
 !           Print a warning message.
             CALL GET_CROPD(CROP, CROPD)
@@ -1659,12 +1658,11 @@ C-----------------------------------------------------------------------
 
       ISWSYM_SAVE = ISWSYM
       SELECT CASE (CONTROL % CROP)
-      CASE ('BN','SB','PN','PE','CH','PP',
-     &          'VB','CP','CB','FB','GB','LT','AL')
-C     &          'VB','CP','CB','FB','GB','LT')
-C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
-!         Do nothing -- CROPGRO crops can have Y or N
-        CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
+           CASE ('BN','SB','PN','PE','CH','PP',
+     &           'VB','CP','CB','FB','GB','LT',
+     &            'AL','BG','CV' )
+C!         Do nothing -- CROPGRO crops can have Y or N
+           CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
       END SELECT
 
       IF ((INDEX('CSPT',CONTROL % CROP)) .GT. 0) THEN

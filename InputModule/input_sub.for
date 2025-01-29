@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2024
+C COPYRIGHT 1998-2025
 C                     DSSAT Foundation                      
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -9,7 +9,7 @@ C=======================================================================
 C=======================================================================
 C  INPUT, Subroutine
 C
-C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.8
+C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.8.x
 C
 C  Gerrit Hoogenboom, Cheryl Porter and Jim Jones
 C
@@ -81,7 +81,6 @@ C                         DEFINITIONS
 C
 C  HDLAY  :
 C=======================================================================
-!      PROGRAM INPUT_PROGRAM
       SUBROUTINE INPUT_SUB(
      &    FILECTL, FILEIO, FILEX, MODELARG, PATHEX,       !Input
      &    RNMODE, ROTNUM, RUN, TRTNUM,                    !Input

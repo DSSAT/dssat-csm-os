@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2024 DSSAT Foundation
+C  COPYRIGHT 1998-2025 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                     
