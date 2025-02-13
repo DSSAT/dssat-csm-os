@@ -727,7 +727,7 @@ C-----------------------------------------------------------------------
 !     Total CO2-equivalent
       TCEQC = CCEQC + NCEQC + MCEQC
 
-        IF (IDETN .EQ. 'Y' .AND. MOD(DAS, FROP) .NE. 0) THEN
+        IF (IDETN .EQ. 'Y' .AND. MOD(DAS, FROP) == 0) THEN
           WRITE (GHGLUN,'(I5,I4.3,I6,2I9,2F9.2,2I9,2F9.2,4I9)')  
      &      YEAR, DOY, DAS, 
      &      NINT(CO2GED), NINT(CO2END), N2OGED, CH4GED, 

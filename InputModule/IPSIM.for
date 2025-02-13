@@ -954,6 +954,9 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         END SELECT
       ENDIF
 
+      CALL FILL_ISWITCH(
+     &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
+
       RETURN
 
 C-----------------------------------------------------------------------
@@ -1125,6 +1128,9 @@ C-----------------------------------------------------------------------
       DATA FIRST /.TRUE./
 
       PARAMETER (ERRKEY = 'SIMCTR')
+
+      MEPHO_SAVE  = ISWITCH % MEPHO
+      ISWSYM_SAVE = ISWITCH % ISWSYM
 
 !-----------------------------------------------------------------------
       IF (FIRST) THEN
@@ -1557,6 +1563,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         IF (NMSG < 6) THEN
           MSG(4)='No default simulation controls read.'
           NMSG = 4
+          UseSimCtr = .FALSE.
         ELSE
           UseSimCtr = .TRUE.
         ENDIF
