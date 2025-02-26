@@ -38,7 +38,7 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 !                   2D, variable time step model.
 !  06/15/2022 CHP Added CropStatus
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
-!                 unused variables, shorten lines. 
+!                 unused variables, shorten lines.
 !  10/24/2024 CHP Added TRLV to PlantGro.OUT
 !  11/08/2023  FO Added parameters for lint growth rate in GROW.
 !  21/06/2024  FO Added Lint Yield to OPHARV. 
@@ -394,6 +394,7 @@ C-----------------------------------------------------------------------
      &    SENRT, SRDOT, TRLV)                             !Output
         ENDIF     
       ENDIF
+
 !-----------------------------------------------------------------------
       CALL GROW(CONTROL, ISWITCH, RUNINIT, SOILPROP, 
      &  AGEFAC, CADLF, CADST, CRUSLF, CRUSRT, CRUSSH,     !Input

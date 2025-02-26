@@ -1001,3 +1001,9 @@ Input date is greather than 99 years after start simulation date.
 
 FORCST    1
 Forecast date is before start of simulation date.
+
+TRANS     1
+VPD sensitivity parameter PHSV missing for EVAPO method H.
+
+TRANS     2
+VPD threshold parameter PHTV missing for EVAPO method H.
