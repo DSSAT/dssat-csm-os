@@ -120,23 +120,8 @@ C     The variable "CONTROL" is of type "ControlType".
 C     The variable "ISWITCH" is of type "SwitchType".
       TYPE (SwitchType) ISWITCH
 
-!!-----------------------------------------------------------------------
-!!     Timer function
-!!     Date / time variables
-!      INTEGER DATE_TIME(8), LUNTIME
-!!      date_time(1)  The 4-digit year  
-!!      date_time(2)  The month of the year  
-!!      date_time(3)  The day of the month  
-!!      date_time(4)  The time difference with respect to Coordinated Universal Time (UTC) in minutes  
-!!      date_time(5)  The hour of the day (range 0 to 23) - local time  
-!!      date_time(6)  The minutes of the hour (range 0 to 59) - local time  
-!!      date_time(7)  The seconds of the minute (range 0 to 59) - local time  
-!!      date_time(8)  The milliseconds of the second (range 0 to 999) - local time  
-!      REAL TIME0, TIME1, TIME2, TIMEE
-!      REAL DELTA_TIME_RUN
-!      CHARACTER*25  TITLET
-
 !-----------------------------------------------------------------------
+
       DONE = .FALSE.
       YRDOY_END = 9999999
 
@@ -148,20 +133,6 @@ C     The variable "ISWITCH" is of type "SwitchType".
 
       CALL GETLUN('FILEIO', LUNIO)
       FILEIO = 'DSSAT48.INP'
-
-!!-----------------------------------------------------------------------
-!!     Get initial time
-!      CALL DATE_AND_TIME (VALUES=DATE_TIME)
-!!     Convert time to seconds
-!      TIME0 = DATE_TIME(7)                !seconds
-!     &      + DATE_TIME(8) / 1000.        !milliseconds
-!     &      + DATE_TIME(6) * 60.          !minutes
-!     &      + DATE_TIME(5) * 3600.        !hours
-!      CALL GETLUN('TIMER',LUNTIME)
-!      OPEN (UNIT=LUNTIME, FILE='TIMER.OUT', STATUS='REPLACE')
-!      WRITE(LUNTIME,'(" RUN FILEX       TRT       START         END",
-!     &  "  DeltaT Treatment")')
-!!-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
 C    Get argument from runtime module to determine path of the EXE files
@@ -289,17 +260,6 @@ C***********************************************************************
       CONTROL % RUN = RUN
       CONTROL % YRDOY = 0
       CALL PUT(CONTROL)
-
-!!-----------------------------------------------------------------------
-!!     Timer function
-!!     Get time before call to input module
-!      CALL DATE_AND_TIME (VALUES=DATE_TIME)
-!!     Convert time to seconds
-!      TIME1 = DATE_TIME(7)                !seconds
-!     &      + DATE_TIME(8) / 1000.        !milliseconds
-!     &      + DATE_TIME(6) * 60.          !minutes
-!     &      + DATE_TIME(5) * 3600.        !hours
-!!-----------------------------------------------------------------------
 
       IF ((INDEX('NSFBTY',RNMODE) .GT. 0) .OR. 
      &    (INDEX('E',RNMODE) .GT. 0 .AND. RUN .EQ. 1)) THEN
@@ -586,21 +546,6 @@ C***********************************************************************
      &          YRPLT, MDATE, YREND)
 
 C-----------------------------------------------------------------------
-!!     Timer function
-!!     Get time at end of run
-!      CALL DATE_AND_TIME (VALUES=DATE_TIME)
-!      
-!!     Convert time to seconds
-!      TIME2 = DATE_TIME(7)                !seconds
-!     &      + DATE_TIME(8) / 1000.        !milliseconds
-!     &      + DATE_TIME(6) * 60.          !minutes
-!     &      + DATE_TIME(5) * 3600.        !hours
-!      DELTA_TIME_RUN = TIME2 - TIME1
-!      WRITE(LUNTIME,'(1X,I3,1X,A12,I3,2F12.3,F8.3,1X,A)') 
-!     &     RUN, FILEX, TRTNUM, TIME1, TIME2, DELTA_TIME_RUN, TITLET
-
-C-----------------------------------------------------------------------
-C-----------------------------------------------------------------------
       ENDDO SEAS_LOOP  
 C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
@@ -652,22 +597,6 @@ C-----------------------------------------------------------------------
       CALL OPNAMES(FNAME)
 
       CALL RUNLIST(CONTROL)
-!C-----------------------------------------------------------------------
-!!     Timer function
-!!     Get time at end of run
-!      CALL DATE_AND_TIME (VALUES=DATE_TIME)
-!      
-!!     Convert time to seconds
-!      TIMEE = DATE_TIME(7)                !seconds
-!     &      + DATE_TIME(8) / 1000.        !milliseconds
-!     &      + DATE_TIME(6) * 60.          !minutes
-!     &      + DATE_TIME(5) * 3600.        !hours
-!      DELTA_TIME_RUN = TIMEE - TIME0
-!      WRITE(LUNTIME,'(/," TOTAL",14X,2F12.3,F8.3)') 
-!     &     TIME0, TIMEE, DELTA_TIME_RUN
-!      CLOSE(LUNTIME)
-
-C-----------------------------------------------------------------------
 
       END PROGRAM CSM 
 

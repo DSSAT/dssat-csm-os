@@ -49,7 +49,7 @@ CHTA   Canopy height m Canopy height (m)                                        
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
 CO2A   Avg CO2 (ppm)   Average atmospheric CO2 (ppm), planting to harvest       .
-CO2EM  Cum CO2 emit    Cumulative net CO2 emissions at maturity (kg[C]/ha)      .
+CO2EM  Cum CO2 emitted Cumulative CO2 emitted from soil at maturity (kg[C]/ha)  .
 CPAM   Tops P kg/ha    Tops P at maturity (kg/ha)                               .
 CWAA   Tops wt,anthsis Tops weight at anthesis (kg [dm]/ha)                     .
 CWAM   Tops wt kg/ha   Tops weight at maturity (kg [dm]/ha)                     .
@@ -1527,11 +1527,11 @@ CH4PRD CH4Production   Daily CH4 Production (kg[C]/ha)                          
 CH4SBD TCH4Substrate   Daily portion of new CO2 proportioned to CH4 (kg[C]/ha)  .
 CH4SFD StorageFlux     Daily CH4 Storage flux (kg[C]/ha)                        .
 CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             .
-CO2EC  Cum CO2 soil    Cumulative CO2 emissions from soil decomp (kg[C]/ha)     .
-CO2ED  CO2 soil kg     Daily CO2 emission from soil decomposition (kg[C]/ha)    .
-CO2GED CO2 soil g      Daily CO2 emission from soil decomposition (g[C]/ha)     .
-CO2ENC Cum net CO2 kg  Cumulative net CO2 emissions (kg[C]/ha)                  .
-CO2END Day net CO2 g   Daily net CO2 emissions (g[C]/ha)                  .
+CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
+CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
+CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
+CO2ENC CO2emi net kg/d Cumulative net CO2 emissions kg/d                        .
+CO2END CO2emi net g/d  Daily net CO2 emissions kg/d                             .
 CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
 CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
 MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .
