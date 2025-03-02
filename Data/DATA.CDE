@@ -158,6 +158,7 @@ R5AT   First seed      Beginning Seed Stage                                     
 R6AT   Full seed       Full Seed Stage                                          .
 R7AT   First maturity  Beginning Maturity Stage                                 .
 R8AP   Harv maturity   Harvest maturity day (dap)                               .
+HDAT   Harv maturity   Harvest maturity day (dap)                               .
 R8AT   Harv maturity   Date of Harvest Maturity Stage (YrDoy)                   .
 R9AT   Over-mature     Over-Mature Pod Stage                                    .
 RECM   Residue kg/ha   Residue applied (kg/ha)                                  .
