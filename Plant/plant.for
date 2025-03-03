@@ -797,6 +797,9 @@ c     Total LAI must exceed or be equal to healthy LAI:
           FixCanht = .FALSE.
         ENDIF
 
+! 2025-03-03 chp Is this still needed? 
+!   We handle the 2D arrays differently in SoilNi so we may be able to get rid of this section.
+
 !       Sync 2D variables for use in SoilN routines
         IF (CONTROL % SIM2D .AND. 
      &      (MODEL(1:5) .EQ. 'CRGRO' .OR.

@@ -170,7 +170,7 @@
      &    PConc_Shut, PConc_Shut_min, PConc_Shut_opt,     !Input
      &    PConc_Seed_opt, PRoot_kg, PSeed_kg, PShel_kg,   !Input
      &    PShut_kg, Root_kg, RootMob, Seed_kg, Shel_kg,   !Input
-     &    ShelMob, Shut_kg, ShutMob, PhFrac2,             !Input
+     &    ShelMob, Shut_kg, ShutMob,                      !Input
      &    DeltPRoot, DeltPSeed, DeltPShel, DeltPShut,     !I/O
      &    PRootDem, PSeedDem, PShelDem, PShutDem,         !Output
      &    PTotDem)                                        !Output
@@ -361,7 +361,7 @@
      &    PConc_Shut, PConc_Shut_min, PConc_Shut_opt,     !Input
      &    PConc_Seed_opt, PRoot_kg, PSeed_kg, PShel_kg,   !Input
      &    PShut_kg, Root_kg, RootMob, Seed_kg, Shel_kg,   !Input
-     &    ShelMob, Shut_kg, ShutMob, PhFrac2,             !Input
+     &    ShelMob, Shut_kg, ShutMob,                      !Input
      &    DeltPRoot, DeltPSeed, DeltPShel, DeltPShut,     !I/O
      &    PRootDem, PSeedDem, PShelDem, PShutDem,         !Output
      &    PTotDem)                                        !Output

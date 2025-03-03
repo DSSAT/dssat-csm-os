@@ -11,7 +11,7 @@ C  02/07/1993 PWW Added switch common block, restructured +
 C  08/28/2001 CHP Moved GROSUB and ROOTGR calculations to those routines.
 C=======================================================================
 
-      SUBROUTINE PT_PHASEI ( 
+      SUBROUTINE PT_PHASEI (
      &    ISTAGE, CUMDTT, XPLANT, SPRLAP,                 !I/O
      &    CTII, CUMSTT, MAXLAI, SENLA, TSPRWT, XDTT)      !Output
 

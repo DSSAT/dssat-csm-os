@@ -187,7 +187,7 @@ C=======================================================================
 !                cm2[soil]   cm[root]     m2         (g/m2)
 
 !     Cumulative root mass does not include losses due to senescence
-      CumRootMass = CumRootMass + GRORT * PLTPOP *  10
+      CumRootMass = CumRootMass + GRORT * PLTPOP *  10.
 !        kg[root]       kg          g     plants   kg/ha
 !        -------- =    ----     + ----- * ------ * -----
 !           ha          ha        plant     m2      g/m2

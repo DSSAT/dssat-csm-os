@@ -985,7 +985,7 @@
         SOM2FRAC(L) = 1.0 - SOM1FRAC(L) - SOM3FRAC(L)
 
 !!***********************************************************************
-!!       CHP Use Tirol-Padre equation for SOM2 g/100g
+!!       TEMP CHP Use Tirol-Padre equation for SOM2 g/100g
 !        SOM2_p = (7.71 - 0.07 * (CLAY(L) + SILT(L)) / OC(L)) / 10. 
 !        SOM2_P = MIN(SOM2_P, 0.20 * OC(L))
 !        SOM2FRAC(L) = SOM2_P / SOM_TOT(L)

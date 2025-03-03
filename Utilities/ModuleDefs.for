@@ -1150,24 +1150,6 @@ C             CHP Added TRTNUM to CONTROL variable.
       RETURN
       END SUBROUTINE PUT_Integer
 
-!!----------------------------------------------------------------------
-!      Subroutine Get_CellData (Cell_arg)
-!!     Retrieves CELL variable
-!      IMPLICIT NONE
-!      Type (CellType) Cell_arg
-!      Cell_arg = SAVE_data % CellData
-!      Return
-!      End Subroutine Get_CellData
-!
-!!----------------------------------------------------------------------
-!      Subroutine Put_CellData (Cell_arg)
-!!     Stores CELL variable
-!      IMPLICIT NONE
-!      Type (CellType) Cell_arg
-!      SAVE_data % CellData = Cell_arg
-!      Return
-!      End Subroutine Put_CellData
-
 !----------------------------------------------------------------------
       Subroutine Get_DripIrrig (Drip_arg)
 !     Retrieves CELL variable
