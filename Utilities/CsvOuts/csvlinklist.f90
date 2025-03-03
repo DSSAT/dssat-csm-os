@@ -85,6 +85,19 @@ Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
     Integer :: istatMZCER                            
 !------------------------------------------------------------------------------
 
+!   for PTSUB
+    Type :: lin_valuePTSUB
+       Character(:), Allocatable :: pclinePTSUB
+       Type (lin_valuePTSUB), Pointer :: pPTSUB
+    End Type
+
+    Type (lin_valuePTSUB), Pointer :: headPTSUB      
+    Type (lin_valuePTSUB), Pointer :: tailPTSUB      
+    Type (lin_valuePTSUB), Pointer :: ptrPTSUB      
+    
+    Integer :: istatPTSUB                            
+!------------------------------------------------------------------------------
+
 !   for RICER
     Type :: lin_valueRICER
        Character(:), Allocatable :: pclineRICER
@@ -205,7 +218,7 @@ Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
 !    Integer :: istatPlNRICer                            
 !------------------------------------------------------------------------------
 
-!   for PlNMzCer
+!   for PlNWth
     Type :: lin_valueWth
        Character(:), Allocatable :: pclineWth
        Type (lin_valueWth), Pointer :: pWth
@@ -604,6 +617,33 @@ Contains
     End If
 
  End Subroutine LinklstMZCER
+!------------------------------------------------------------------------------
+
+ Subroutine LinklstPTSUB(ptxtlinePTSUB)
+
+    Character(:), Allocatable :: ptxtlinePTSUB            
+        
+    If(.Not. Associated(headPTSUB)) Then          
+      Allocate(headPTSUB, Stat=istatPTSUB)        
+      If(istatPTSUB==0) Then                      
+        tailPTSUB => headPTSUB                    
+        Nullify(tailPTSUB%pPTSUB)                 
+        tailPTSUB%pclinePTSUB = ptxtlinePTSUB     
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailPTSUB%pPTSUB, Stat=istatPTSUB)      
+      If(istatPTSUB==0) Then                           
+        tailPTSUB=> tailPTSUB%pPTSUB                   
+        Nullify(tailPTSUB%pPTSUB)                      
+        tailPTSUB%pclinePTSUB = ptxtlinePTSUB          
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstPTSUB
 !------------------------------------------------------------------------------
 
  Subroutine LinklstRICER(ptxtlineRICER)
@@ -1302,7 +1342,7 @@ End Subroutine LinklstSUOIL
   //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
   //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
 
-      Allocate(character(LEN=length) :: Header)
+  Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
@@ -1328,6 +1368,48 @@ End Subroutine LinklstSUOIL
       Nullify(ptrMZCER, headMZCER, tailMZCER)
       Close(nf)
   End Subroutine ListtofileMZCER
+!------------------------------------------------------------------------------
+
+  Subroutine ListtofilePTSUB()
+      EXTERNAL GETLUN
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header 
+      
+      If(.Not. Associated(headPTSUB)) Return
+
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,'                      //  &
+              'GSTD,LAID,UYAD,LWAD,'                                               //  &
+              'SWAD,UWAD,RWAD,TWAD,CWAD,DWAD,HIAD,EWAD,E#AD,WSPD,WSGD,'            //  &
+              'NSTD,LN%D,SH%D,SLAD,CHTD,CWID,EWSD,RDPD,RL1D,RL2D,RL3D,'            //  &
+              'RL4D,RL5D,SNW0C,SNW1C')
+
+  Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,GSTD,LAID,UYAD,LWAD,'  //  &
+           'SWAD,UWAD,RWAD,TWAD,CWAD,DWAD,HIAD,EWAD,E#AD,WSPD,WSGD,'            //  &
+           'NSTD,LN%D,SH%D,SLAD,CHTD,CWID,EWSD,RDPD,RL1D,RL2D,RL3D,'            //  &
+           'RL4D,RL5D,SNW0C,SNW1C' 
+        
+      fn = 'plantgro.csv'
+      Call GETLUN (fn,nf)
+   
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+
+      ptrPTSUB => headPTSUB
+      Do
+        If(.Not. Associated(ptrPTSUB)) Exit                
+        Write(nf,'(A)') ptrPTSUB % pclinePTSUB            
+        ptrPTSUB => ptrPTSUB % pPTSUB                      
+      End Do
+
+      Nullify(ptrPTSUB, headPTSUB, tailPTSUB)
+      Close(nf)
+  End Subroutine ListtofilePTSUB
 !------------------------------------------------------------------------------
 
   Subroutine ListtofileRICER(nlayers)

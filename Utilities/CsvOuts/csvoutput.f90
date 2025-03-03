@@ -29,6 +29,11 @@ Character(:), allocatable, Target :: vCsvlineMZCER
 Character (:), Pointer :: vpCsvlineMZCER
 Integer :: vlngthMZCER
 !------------------------------------------------------------------------------
+! for PlantGro SUBSTOR
+Character(:), allocatable, Target :: vCsvlinePTSUB
+Character (:), Pointer :: vpCsvlinePTSUB
+Integer :: vlngthPTSUB
+!------------------------------------------------------------------------------
 ! for RICER
 Character(:), allocatable, Target :: vCsvlineRICER
 Character (:), Pointer :: vpCsvlineRICER
@@ -611,6 +616,58 @@ Subroutine CsvOut_mzcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    
    return
 end Subroutine CsvOut_mzcer
+
+!------------------------------------------------------------------------------
+! Sub for csv output PTSUB PlantGro.csv
+Subroutine CsvOut_PTSUB(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
+          GSTD, LAID, UYAD,                                                   &
+          LWAD,  SWAD, UWAD,                                                  &
+          RWAD, TWAD,                                                         &
+          CWAD, DWAD, HIAD,                                                   &
+          EWAD, PODNO, WSPD, WSGD,                                            &
+          NSTD, PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,                      &
+          RDPD, RL1D, RL2D, RL3D, RL4D, RL5D,                                 &
+          SNW0C, SNW1C,                                                       &
+          Csvline, pCsvline, lngth)                         
+
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer,Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP                  
+   Integer, Intent (IN) :: GSTD   
+   Real, Intent(IN) ::                                                        &
+          LAID, UYAD,                                                         &
+          LWAD,  SWAD, UWAD,                                                  &
+          RWAD, TWAD,                                                         &
+          CWAD, DWAD, HIAD,                                                   &
+          EWAD, PODNO, WSPD, WSGD,                                            &
+          NSTD, PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,                      &
+          RDPD, RL1D, RL2D, RL3D, RL4D, RL5D,                                 &
+          SNW0C, SNW1C                                                        
+  
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Character(Len=800) :: tmp
+!  End of vars
+          
+   Write(tmp,'(75(g0,","))')RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,& 
+          GSTD, LAID, UYAD,                                                   &
+          LWAD,  SWAD, UWAD,                                                  &
+          RWAD, TWAD,                                                         &
+          CWAD, DWAD, HIAD,                                                   &
+          EWAD, PODNO, WSPD, WSGD,                                            &
+          NSTD, PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,                      &
+          RDPD, RL1D, RL2D, RL3D, RL4D, RL5D,                                 &
+          SNW0C, SNW1C                                                         
+    
+   lngth = Len(Trim(tmp))
+   Allocate(Character(Len=Len(Trim(tmp)))::Csvline)
+   Csvline = Trim(tmp)
+   pCsvline => Csvline
+   
+   return
+end Subroutine CsvOut_PTSUB
+
 !------------------------------------------------------------------------------
 ! Sub for csv output RICER PlantGro.csv
 Subroutine CsvOut_RIcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
@@ -2323,6 +2380,8 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofileMZCER(nlayers)        ! plantgro.csv
                  Call ListtofilePlNMzCer              ! plantn.csv
                  Call ListtofileEvOpsum               ! evaluate.csv
+             Case('PTSUB')
+                 Call ListtofilePTSUB()               ! plantgro.csv
              Case('RICER')
                  Call ListtofileRICER(nlayers)        ! plantgro.csv
 !                Call ListtofilePlNMzCer              ! plantn.csv

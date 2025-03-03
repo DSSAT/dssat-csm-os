@@ -419,21 +419,20 @@ C-----------------------------------------------------------------------
      &        NINT(CUMSENSURF), NINT(CUMSENSOIL)   
   316       FORMAT (I8,1X,I7, F10.1)
           END IF   ! VSH
-!-----------------------------------------------------------------------
-!     VSH CSV output corresponding to PlantGro.OUT
-      IF (FMOPT == 'C') THEN
-         CALL CsvOut(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,CONTROL%ROTNUM
-     &,CONTROL%REPNO, YEAR, DOY, DAS, DAP, VSTAGE, RSTAGE, XLAI, 
-     &WTLF, STMWT, SDWT, LINTW, LINTP,
-     &RTWT, VWAD, TOPWT, SEEDNO, SDSIZE, HI, PODWT,
-     &PODNO, SWF_AV, TUR_AV, NST_AV, PS1_AV, PS2_AV, KST_AV, EXW_AV,
-     &PCNLP, SHELPC, HIP, PODWTD, SLAP, CANHT, CANWH,
-     &DWNOD, RTDEP, TRLV, N_LYR, RLV, CUMSENSURF, CUMSENSOIL,
-     &vCsvline, vpCsvline, vlngth)
-     
-         CALL Linklst(vCsvline)
-      END IF
+!---------------------------------------------------------------------
+!         VSH CSV output corresponding to PlantGro.OUT
+          IF (FMOPT == 'C') THEN
+            CALL CsvOut(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM, 
+     &        CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &        VSTAGE, RSTAGE, XLAI, WTLF, STMWT, SDWT, LINTW, LINTP,
+     &        RTWT, VWAD, TOPWT, SEEDNO, SDSIZE, HI, PODWT,
+     &        PODNO, SWF_AV, TUR_AV, NST_AV, PS1_AV, PS2_AV, KST_AV, 
+     &        EXW_AV, PCNLP, SHELPC, HIP, PODWTD, SLAP, CANHT, CANWH,
+     &        DWNOD, RTDEP, TRLV, N_LYR, RLV, CUMSENSURF, CUMSENSOIL,
+     &        vCsvline, vpCsvline, vlngth)
 
+            CALL Linklst(vCsvline)
+          ENDIF
 
 !         Set average stress factors since last printout back to zero
           SWF_AV = 0.0
