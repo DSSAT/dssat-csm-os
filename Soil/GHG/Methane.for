@@ -24,7 +24,7 @@ C=======================================================================
 
       INTEGER n1,NLAYR,i,j, DYNAMIC
       REAL dlayr(NL),SW(NL),DLL(NL),RLV(NL),CSubstrate(NL),BD(NL),
-     &     Buffer(NL,2),afp(NL), SAEA(NL), SAT(NL), DUL(NL)
+     &     Buffer(NL,2),afp(NL), SAEA(NL) !, SAT(NL), DUL(NL)
       REAL, DIMENSION(0:NL) :: newCO2
       REAL drain,flood,x,CH4Emission,buffconc,rCO2,
      &     rCH4,TCH4Substrate,rbuff,afpmax,
