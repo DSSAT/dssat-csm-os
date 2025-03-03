@@ -28,6 +28,7 @@
 !  10/02/2008 CHP/JTR changed depth for determining evaporation case
 !                     from 50 cm to 100 cm.
 !  01/05/2025 CHP / AS Modified to take evaporation only from top 15 cm
+!  03/03/2025 CHP / AS Modified to take evaporation only from top 30 cm
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !=======================================================================
@@ -57,9 +58,9 @@
 !     ------------------------------------------------
 
 !      CHARACTER*12, PARAMETER :: ERRKEY = 'SAL_SoilEvap'
-      INTEGER L, L15, NLAYR, ProfileType
+      INTEGER L, L30, NLAYR, ProfileType
       REAL A, B, RedFac, SW_threshold
-      REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP, L15frac
+      REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP, L30frac
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
       REAL PMFRACTION
 
@@ -87,13 +88,13 @@
       ES_LYR = 0.0
       CALL GET("PM", "PMFRACTION", PMFRACTION)
 
-!     Calculate the proportion of each soil layer within top 15 cm
-      L15frac = 0.0           !default to 0.0 for all layers
-      L15frac(1) = MIN(1.0, 15.0 / DS(1))         !Top layer
+!     Calculate the proportion of each soil layer within top 30 cm
+      L30frac = 0.0           !default to 0.0 for all layers
+      L30frac(1) = MIN(1.0, 30.0 / DS(1))         !Top layer
       DO L = 2, NLAYR
-        L15frac(L) = MIN(1.0, (15. - DS(L-1)) / DLAYR(L))
-        IF (L15frac(L) < 1.0) THEN
-          L15 = L
+        L30frac(L) = MIN(1.0, (30. - DS(L-1)) / DLAYR(L))
+        IF (L30frac(L) < 1.0) THEN
+          L30 = L
           EXIT
         ENDIF
       ENDDO
@@ -105,7 +106,7 @@
 !-----------------------------------------------------------------------
 !     NEW 4/18/2008
       ProfileType = 3   !assume dry profile until proven wet
-      DO L = 1, L15
+      DO L = 1, L30
 !       Air dry water content
         SWAD(L) = 0.30 * LL(L) !JTR 11/28/2006
 
@@ -143,7 +144,7 @@
 
       ES_LYR = 0.0
 !     Calculate evaporation in the top 15 cm
-      DO L = 1, L15
+      DO L = 1, L30
 !-----------------------------------------------------------------------
         SELECT CASE (ProfileType)
 
@@ -174,7 +175,7 @@
 
         END SELECT
 
-        ES_Coef(L) = ES_Coef(L) * L15frac(L)
+        ES_Coef(L) = ES_Coef(L) * L30frac(L)
 !-----------------------------------------------------------------------
 
         SWDELTU(L) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) !mm3/mm3
