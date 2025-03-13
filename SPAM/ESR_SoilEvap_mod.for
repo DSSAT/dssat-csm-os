@@ -27,14 +27,13 @@
 !  05/29/2008 JTR added intermediate profile case
 !  10/02/2008 CHP/JTR changed depth for determining evaporation case
 !                     from 50 cm to 100 cm.
-!  01/05/2025 CHP / AS Modified to take evaporation only from top 15 cm
-!  03/03/2025 CHP / AS Modified to take evaporation only from top 30 cm
+!  01/05/2025 CHP / AS Modified to take evaporation only from EvapDepth cm
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !=======================================================================
-      SUBROUTINE ESR_SoilEvap_mod(DYNAMIC,
-     &   EOS, SOILPROP, SW, SWDELTS,                      !Input
-     &   ES, ES_LYR, SWDELTU)                             !Output
+      SUBROUTINE ESR_SoilEvap_mod(DYNAMIC, 
+     &   EOS, SOILPROP, SW, SWDELTS,            !Input
+     &   ES, ES_LYR)                            !Output
 
 !-----------------------------------------------------------------------
       USE ModuleData
@@ -50,18 +49,20 @@
       TYPE (SoilType), INTENT(IN) :: SOILPROP !Soil properties
 
       REAL, INTENT(OUT):: ES           !Actual soil evaporation (mm/d)
-      REAL, INTENT(OUT):: SWDELTU(NL)  !Change in soil water (cm3/cm3)
+!     REAL, INTENT(OUT):: SWDELTU(NL)  !Change in soil water (cm3/cm3)
 !     REAL, INTENT(OUT):: UPFLOW(NL)   !Flow or N transport (cm/d)
       REAL, INTENT(OUT):: ES_LYR(NL)   !Actual soil evap by layer (mm/d)
 !     UPFLOW(1:NL) refers to water which moves up from layer L to
 !       layer L-1, and includes upflow from lower layers.
+
 !     ------------------------------------------------
 
-!      CHARACTER*12, PARAMETER :: ERRKEY = 'SAL_SoilEvap'
-      INTEGER L, L30, NLAYR, ProfileType
+      REAL, PARAMETER :: EvapDepth = 30.
+      INTEGER L, Levap, NLAYR, ProfileType
       REAL A, B, RedFac, SW_threshold
-      REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP, L30frac
+      REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP, EvapFrac
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
+      REAL SWDELTEvap(NL)  !Change in soil water (cm3/cm3)
       REAL PMFRACTION
 
 !-----------------------------------------------------------------------
@@ -84,17 +85,19 @@
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       NLAYR = SOILPROP % NLAYR
-      ES = 0.0
-      ES_LYR = 0.0
       CALL GET("PM", "PMFRACTION", PMFRACTION)
 
+      ES = 0.0
+      ES_LYR = 0.0
+
 !     Calculate the proportion of each soil layer within top 30 cm
-      L30frac = 0.0           !default to 0.0 for all layers
-      L30frac(1) = MIN(1.0, 30.0 / DS(1))         !Top layer
+      EvapFrac = 0.0           !default to 0.0 for all layers
+      EvapFrac(1) = MIN(1.0, EvapDepth / DS(1))         !Top layer
+      Levap = 1
       DO L = 2, NLAYR
-        L30frac(L) = MIN(1.0, (30. - DS(L-1)) / DLAYR(L))
-        IF (L30frac(L) < 1.0) THEN
-          L30 = L
+        EvapFrac(L) = MIN(1.0, (EvapDepth - DS(L-1)) / DLAYR(L))
+        Levap = L
+        IF (EvapFrac(L) < 1.0) THEN
           EXIT
         ENDIF
       ENDDO
@@ -106,7 +109,7 @@
 !-----------------------------------------------------------------------
 !     NEW 4/18/2008
       ProfileType = 3   !assume dry profile until proven wet
-      DO L = 1, L30
+      DO L = 1, Levap
 !       Air dry water content
         SWAD(L) = 0.30 * LL(L) !JTR 11/28/2006
 
@@ -143,22 +146,24 @@
       ENDIF
 
       ES_LYR = 0.0
-!     Calculate evaporation in the top 15 cm
-      DO L = 1, L30
+!     Calculate evaporation in the top EvapDepth cm
+      DO L = 1, Levap
 !-----------------------------------------------------------------------
         SELECT CASE (ProfileType)
 
 !       Dry profile
         CASE (3)
-!         Depth-dependant coefficients based on Ritchie spreadsheet 11/29/2006
-!         A =  0.5  + 0.24 * DUL(L)
-!         B = -2.04 + 0.20 * DUL(L)
 
-!         From Ayman Suilieman 2025-01-09
-!         Use these equations above 15 cm; Below 15 cm just UPFLOW.
-!         from Suleiman Ritchie 2003 publication
-          A =  0.56  + 0.3 * DUL(L)
-          B = -1.99 + 0.22 * DUL(L)
+!     chp temp go back to original equations for comparison
+!         Depth-dependant coefficients based on Ritchie spreadsheet 11/29/2006
+          A =  0.5  + 0.24 * DUL(L)
+          B = -2.04 + 0.20 * DUL(L)
+
+!!         From Ayman Suilieman 2025-01-09
+!!         Use these equations above 15 cm; Below 15 cm just UPFLOW.
+!!         from Suleiman Ritchie 2003 publication
+!          A =  0.56  + 0.3 * DUL(L)
+!          B = -1.99 + 0.22 * DUL(L)
 
           ES_Coef(L) = A * MEANDEP(L) ** B
 
@@ -175,27 +180,27 @@
 
         END SELECT
 
-        ES_Coef(L) = ES_Coef(L) * L30frac(L)
+        ES_Coef(L) = ES_Coef(L) * EvapFrac(L)
 !-----------------------------------------------------------------------
 
-        SWDELTU(L) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) !mm3/mm3
+        SWDELTEvap(L) = -(SWTEMP(L) - SWAD(L)) * ES_Coef(L) !mm3/mm3
 
 !       Apply the fraction of plastic mulch coverage
         IF (PMFRACTION .GT. 1.E-6) THEN
-          SWDELTU(L) = SWDELTU(L) * (1.0 - PMFRACTION)
+          SWDELTEvap(L) = SWDELTEvap(L) * (1.0 - PMFRACTION)
         END IF
 
 !       Limit to available water
         SW_AVAIL(L) = SW(L) + SWDELTS(L) - SWAD(L)
-        IF (-SWDELTU(L) > SW_AVAIL(L)) THEN
-          SWDELTU(L) = -SW_AVAIL(L)                   !mm3/mm3
+        IF (-SWDELTEvap(L) > SW_AVAIL(L)) THEN
+          SWDELTEvap(L) = -SW_AVAIL(L)                   !mm3/mm3
         ENDIF
 
 !       Limit to negative values (decrease SW)
-        SWDELTU(L) = AMIN1(0.0, SWDELTU(L))
+        SWDELTEvap(L) = AMIN1(0.0, SWDELTEvap(L))
 
 !       Aggregate soil evaporation from each layer
-        ES_LYR(L) = -SWDELTU(L) * DLAYR(L) * 10.      !mm
+        ES_LYR(L) = -SWDELTEvap(L) * DLAYR(L) * 10.      !mm
         ES = ES + ES_LYR(L)                           !profile sum (mm)
       ENDDO
 
@@ -204,7 +209,7 @@
       If (ES > EOS) Then
         RedFac = EOS / ES
         ES_LYR = ES_LYR * RedFac
-        SWDELTU = SWDELTU * RedFac
+        SWDELTEvap = SWDELTEvap * RedFac
         ES = EOS
       End If
 

@@ -200,8 +200,8 @@ C=======================================================================
 !           ------------------------
         CASE ('M')  ! Modified Sulieman-Ritchie soil evap routine
           CALL ESR_SoilEvap_mod(DYNAMIC,
-     &      EOS_SOIL, SOILPROP, SW, SWDELTS,              !Input
-     &      ES, ES_LYR, SWDELTU)                          !Output
+     &      EOS, SOILPROP, SW, SWDELTS,            !Input
+     &      ES, ES_LYR)                            !Output
 !     ----------------------------
         END SELECT
 
@@ -363,7 +363,7 @@ C=======================================================================
             CASE ('M')  ! Modified Sulieman-Ritchie soil evap routine
               CALL ESR_SoilEvap_mod(DYNAMIC,
      &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
-     &          ES, ES_LYR, SWDELTU)                      !Output
+     &          ES, ES_LYR)                               !Output
 !           ------------------------
             CASE DEFAULT
 !           CASE ('R')  !Ritchie soil evaporation routine
