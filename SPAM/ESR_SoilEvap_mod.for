@@ -57,7 +57,7 @@
 
 !     ------------------------------------------------
 
-      REAL, PARAMETER :: EvapDepth = 30.
+      REAL, PARAMETER :: EvapDepth = 50.
       INTEGER L, Levap, NLAYR, ProfileType
       REAL A, B, RedFac, SW_threshold
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP, EvapFrac
@@ -154,16 +154,15 @@
 !       Dry profile
         CASE (3)
 
-!     chp temp go back to original equations for comparison
-!         Depth-dependant coefficients based on Ritchie spreadsheet 11/29/2006
-          A =  0.5  + 0.24 * DUL(L)
-          B = -2.04 + 0.20 * DUL(L)
+!!        Depth-dependant coefficients based on Ritchie spreadsheet 11/29/2006
+!         A =  0.5  + 0.24 * DUL(L)
+!         B = -2.04 + 0.20 * DUL(L)
 
-!!         From Ayman Suilieman 2025-01-09
-!!         Use these equations above 15 cm; Below 15 cm just UPFLOW.
-!!         from Suleiman Ritchie 2003 publication
-!          A =  0.56  + 0.3 * DUL(L)
-!          B = -1.99 + 0.22 * DUL(L)
+!         From Ayman Suilieman 2025-01-09
+!         Use these equations above 15 cm; Below 15 cm just UPFLOW.
+!         from Suleiman Ritchie 2003 publication
+          A =  0.56  + 0.3 * DUL(L)
+          B = -1.99 + 0.22 * DUL(L)
 
           ES_Coef(L) = A * MEANDEP(L) ** B
 
