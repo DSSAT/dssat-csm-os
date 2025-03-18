@@ -213,6 +213,15 @@ C       Variable heading for GROWTH.OUT
      &    'RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C'
 
         IF (ISWNIT .EQ. 'Y') THEN
+          INQUIRE (FILE = OUTPN, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'OLD',
+     &        IOSTAT = ERRNUM, POSITION = 'APPEND')
+          ELSE
+            OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'NEW',
+     &        IOSTAT = ERRNUM)
+          ENDIF
+
           WRITE(NOUTPN,'(A,A,A,A)')
      &    'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,',
      &    'TUNA,UNAD,VNAD,UN%D,',  
