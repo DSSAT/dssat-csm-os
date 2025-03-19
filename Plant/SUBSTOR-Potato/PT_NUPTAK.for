@@ -171,6 +171,8 @@ C-----------------------------------------------------------------------
       TRNO3U   = 0.0
       TRNH4U   = 0.0
 
+      CellArea = CELLS % STRUC % CellArea
+
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
 !         Concentration

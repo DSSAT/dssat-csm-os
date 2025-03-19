@@ -1,10 +1,3 @@
-! 08/15/2011  Move the NH4I and NO3I reading and handling from SoilNi_init_2D to this subroutine
-!                because the initia condition in SoilCNPinit_C is called by Century and
-!                SoilNi_init_2D is after the call of Century
-!             Add the handling of alphVG, mVG and nVG as well as TEXTURE, CACO3, DMOD, EXTP
-!                SASC, TOTBAS, TOTP, ORGP, EXCA, EXNA, EXK
-!             Set the error for the case of full plastic cover
-!             Rename RowFrac to ColFrac
 !==============================================================================
 ! Cell initialization subroutines for 2-D cell data
 ! To be called when (RUN = 1 OR INDEX('QF',RNMODE)<0)
@@ -41,6 +34,13 @@
 !  07/27/2010 CHP Added option for flat surface with partial or full plastic mulch cove
 !                   (cases 2 & 3).
 !  08/04/2010 CHP Changed MixMass subroutines.
+!  08/15/2011     Move the NH4I and NO3I reading and handling from SoilNi_init_2D to this subroutine
+!                because the initia condition in SoilCNPinit_C is called by Century and
+!                SoilNi_init_2D is after the call of Century
+!             Add the handling of alphVG, mVG and nVG as well as TEXTURE, CACO3, DMOD, EXTP
+!                SASC, TOTBAS, TOTP, ORGP, EXCA, EXNA, EXK
+!             Set the error for the case of full plastic cover
+!             Rename RowFrac to ColFrac
 !  ---------------------------------------------------------
 !   Key to array indices:
 !   L = original soil layers as input from soil profile data, 1 to NLAYR

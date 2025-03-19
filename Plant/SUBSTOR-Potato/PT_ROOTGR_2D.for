@@ -86,6 +86,17 @@ C=======================================================================
       REAL, DIMENSION(NL) :: RLV
       TYPE (SoilType) SOILPROP
 
+!     Variables available in 2D CELLS
+      STRUC = CELLS%STRUC
+      Thick = STRUC%THICK
+      Width = STRUC%WIDTH
+      CellArea = STRUC%CellArea
+      TypeCell = STRUC%Cell_Type
+      DUL = CELLS%STATE%DUL
+      LL  = CELLS%STATE%LL
+      SAT = CELLS%STATE%SAT
+      WR  = CELLS%STATE%WR
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -112,17 +123,6 @@ C=======================================================================
 !!     RLWR 1E4 g/cm; RFAC3 g/cm
 !      RFAC3 = RLWR * 1.E-4
       RFAC3 = RLWR
-
-!     Variables available in 2D CELLS
-      STRUC = CELLS%STRUC
-      Thick = STRUC%THICK
-      Width = STRUC%WIDTH
-      CellArea = STRUC%CellArea
-      TypeCell = STRUC%Cell_Type
-      DUL = CELLS%STATE%DUL
-      LL  = CELLS%STATE%LL
-      SAT = CELLS%STATE%SAT
-      WR  = CELLS%STATE%WR
 
 !     Calculate maximum depth in each column and width in each row
       FirstRow = 0

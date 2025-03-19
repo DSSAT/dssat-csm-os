@@ -98,6 +98,15 @@
       TYPE (SoilType) SOILPROP
       NLAYR = SOILPROP % NLAYR
 
+      STRUC = CELLS%STRUC
+      Thick = STRUC%THICK
+      Width = STRUC%WIDTH
+      CellArea = STRUC%CellArea
+      TypeCell = STRUC%Cell_Type
+      DUL = CELLS%STATE%DUL
+      LL  = CELLS%STATE%LL
+      SAT = CELLS%STATE%SAT
+
 !***********************************************************************
 !***********************************************************************
 !     Run Initialization - Called once per simulation
@@ -130,15 +139,6 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      STRUC = CELLS%STRUC
-      Thick = STRUC%THICK
-      Width = STRUC%WIDTH
-      CellArea = STRUC%CellArea
-      TypeCell = STRUC%Cell_Type
-      DUL = CELLS%STATE%DUL
-      LL  = CELLS%STATE%LL
-      SAT = CELLS%STATE%SAT
-
 !     Calculate maximum depth in each column and width in each row
       FirstRow = 0
       WidMax = 0.0

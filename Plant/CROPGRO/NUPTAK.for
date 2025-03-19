@@ -156,6 +156,8 @@ C-----------------------------------------------------------------------
       UNH4  = 0.0
       UNO3  = 0.0
 
+      CellArea = CELLS % STRUC % CellArea
+
       DO L = 1, NRowsTot
         DO J = 1, NColsTot
 !         Concentration

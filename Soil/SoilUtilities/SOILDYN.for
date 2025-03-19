@@ -1467,6 +1467,8 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !     processes, even when in 1D simulation mode.
       DO L = 1, NLAYR
         Cells(L,1) % Struc % Thick = DLAYR(L)
+        Cells(L,1) % Struc % CellArea = DLAYR(L) * 
+     &                                        Cells(L,1) % Struc % Width
         Cells(L,1) % State % BD    = BD(L)
         Cells(L,1) % State % DUL   = DUL(L)
         Cells(L,1) % State % LL    = LL(L)

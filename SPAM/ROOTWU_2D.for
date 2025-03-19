@@ -55,6 +55,13 @@ C-----------------------------------------------------------------------
       PARAMETER (SWCON1 = 1.32E-3)
       PARAMETER (SWCON3 = 7.01)
 
+      LL  = CELLS%STATE%LL
+      SAT = CELLS%STATE%SAT
+      CellArea = CELLS%STRUC%CellArea
+      Cell_TYPE = CELLS%STRUC%Cell_Type
+      ColFrac = BedDimension % ColFrac
+      Thick = CELLS % Struc % Thick
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -64,13 +71,6 @@ C-----------------------------------------------------------------------
 !     Compute SWCON2 for each soil layer.  Adjust SWCON2 for extremely
 !     high LL to avoid water uptake limitations.
 !-----------------------------------------------------------------------
-      LL  = CELLS%STATE%LL
-      SAT = CELLS%STATE%SAT
-      CellArea = CELLS%STRUC%CellArea
-      Cell_TYPE = CELLS%STRUC%Cell_Type
-      ColFrac = BedDimension % ColFrac
-      Thick = CELLS % Struc % Thick
-
       TSS    = 0.0
       TSS_LAST = 0.0
       TRWU_ts   = 0.0

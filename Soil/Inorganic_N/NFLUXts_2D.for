@@ -106,6 +106,8 @@
 !       N fluxes at a sub-daily time step. The integration of sub-daily fluxes 
 !       is used to compute daily DeltaSNO3 and DeltaUrea.
 
+      CellArea  = CELLS % STRUC % CellArea
+
 !     Update Delta N variables to send back
       DeltaSNO3 = SNO3ts - SNO3init
       DeltaUrea = UREAts - UREAinit
