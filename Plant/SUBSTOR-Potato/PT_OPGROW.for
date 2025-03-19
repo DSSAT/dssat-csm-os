@@ -17,6 +17,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
 !-----------------------------------------------------------------------
@@ -46,7 +47,7 @@ C=======================================================================
 
       REAL LFWT, GPP, PCNGRN, PCNRT
       REAL PCNST, PCNVEG, ROOTN
-      REAL STOVN, STOVWT
+      REAL STOVN, STOVWT, TRLV
       REAL TUBN, TUBWT, WTNCAN
       REAL WTNGRN, WTNLF, WTNRT, WTNSD, WTNSH, WTNST
       REAL WTNUP, WTNVEG
@@ -80,30 +81,35 @@ C=======================================================================
       ISWNIT  = ISWITCH % ISWNIT
 
 C-----------------------------------------------------------------------
-      DATA GROHEAD /
-!      DATA GROHEAD(1)/
-     &'! YR       Days  Days  Grow       Fresh          
-     &      Dry Weight                           Pod      Phot. Grow    
-     &   Leaf Shell   Spec    Canopy          Root  ³    Root Length Den
-     &sity   ³ Senesced mass              ',
+      
+      GROHEAD(1) = 
+     &"!          Days  Days             Fresh" //
+     &"  <------------ Dry Weight -------------->" //
+     &"       <-- Pod --> <---- Stress (0-1)---->" //
+     &" < Nitrogen>  Spec  < Canopy >  Root   Root" //
+     &" <--- Root Length Density --->   Senesced "
 
-!      DATA GROHEAD(2)/
-     &'!   and   after after Stage  LAI  Yield  Leaf  St
-     &em Tuber  Root  Crop  Tops DLeaf   HI   Wgt.   No.    Water     Ni
-     &t.   Nit -ing   Leaf  Hght  Brdth      Depth  ³     cm3/cm3   of 
-     &soil    ³    (kg/ha)                ',
 
-!      DATA GROHEAD(3)/
-     &'!     DOY   sim plant             Mg/Ha  ³<------
-     &--------- kg/Ha --------------->³      Kg/Ha        ³<Stress (0-1)
-     &>³    %     %   Area    m     m           m   ³<------------------
-     &------>³ Surface  Soil              ',
+      GROHEAD(2) = 
+     &"!         after after  Grow   LAI Yield" //
+     &"  Leaf  Stem Tuber  Root  Crop  Tops DLeaf" //
+     &"            Mass   No. <---- Water ---->  " //
+     &"  Leaf Shell  Leaf  Hght Width Depth   Dens" //
+     &" <----- cm3/cm3 of soil -----> mass(kg/ha)"
 
-!      DATA GROHEAD(4) / 
-     &'@YEAR DOY   DAS   DAP  GSTD  LAID  UYAD  LWAD  
-     &SWAD  UWAD  RWAD  TWAD  CWAD  DWAD  HIAD  EWAD  E#AD  WSPD  WSGD  
-     &NSTD  LN%D  SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  
-     &RL4D  RL5D  SNW0C  SNW1C'/
+      GROHEAD(3) = 
+     &"!           sim plant Stage m2/m2 Mg/Ha" //
+     &"  <---------------- kg/Ha --------------->" //
+     &"    HI kg/ha     #  Phot  Grow Exces  Nitr" //
+     &"     %     %  Area     m     m    m  cm/cm3" //
+     &" <--------------------------->  Surf  Soil"
+
+      GROHEAD(4) = 
+     &"@YEAR DOY   DAS   DAP  GSTD  LAID  UYAD" //
+     &"  LWAD  SWAD  UWAD  RWAD  TWAD  CWAD  DWAD" //
+     &"  HIAD  EWAD  E#AD  WSPD  WSGD  EWSD  NSTD" //
+     &"  LN%D  SH%D  SLAD  CHTD  CWID  RDPD   RLAD" //
+     &"  RL1D  RL2D  RL3D  RL4D  RL5D SNW0C SNW1C" 
 
 C-----------------------------------------------------------------------
       DATA NITHEAD /
@@ -209,8 +215,8 @@ C       Variable heading for GROWTH.OUT
         WRITE(NOUTDG,'(A,A,A,A)')
      &    'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,GSTD,LAID,',
      &    'UYAD,LWAD,SWAD,UWAD,RWAD,TWAD,CWAD,DWAD,HIAD,EWAD,E#AD,',
-     &    'WSPD,WSGD,NSTD,LN%D,SH%D,SLAD,CHTD,CWID,EWSD,RDPD,RL1D,',
-     &    'RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C'
+     &    'WSPD,WSGD,NSTD,LN%D,SH%D,SLAD,CHTD,CWID,EWSD,RDPD,TRLV,',
+     &    'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C'
 
         IF (ISWNIT .EQ. 'Y') THEN
           INQUIRE (FILE = OUTPN, EXIST = FEXIST)
@@ -368,13 +374,13 @@ C
      &        NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(SDWT*GM2KG),
      &        NINT(RTWT*GM2KG),NINT(BIOMAS*10.0),
      &        NINT(WTLF*10.0)+NINT(STMWT*GM2KG),NINT(DEADLF*GM2KG),HI,
-     &        NINT(PODWT*GM2KG),NINT(PODNO),1.0-SWFAC,1.0-TURFAC,
-     &        1.0-NSTRES,PCNL,SHELPC,SLA,CANHT,CANWH,SATFAC,
-     &        (RTDEP/100),(RLV(I),I=1,5)
+     &        NINT(PODWT*GM2KG),NINT(PODNO),1.0-SWFAC,1.0-TURFAC,SATFAC,
+     &        1.0-NSTRES,PCNL,SHELPC,SLA,CANHT,CANWH,
+     &        (RTDEP/100),TRLV,(RLV(I),I=1,5)
      &       ,NINT(CUMSENSURF), NINT(CUMSENSOIL)
  400      FORMAT (1X,I4,1X,I3.3,3(1X,I5),1X,F5.2,1X,F5.1,7(1X,I5),
-     &          1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,
-     &          2(1X,F5.2),1X,F5.3,6(1X,F5.2), 2I6)
+     &          1X,F5.3,2(1X,I5),4(1X,F5.3),2(1X,F5.2),1X,F5.1,
+     &          2(1X,F5.2),(1X,F5.2),F7.1,5(1X,F5.2), 2I6)
         ENDIF
 
 C-----------------------------------------------------------------------
@@ -393,8 +399,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     CSV output corresponding to PlantGro.OUT
-!     CHP TEMP - write CSV output manually here. I've wasted 2 days trying to get the
-!       csv routines to work for potato!
+!     CHP TEMP - write CSV output manually here. 
       IF (FMOPT == 'C') THEN
 !         CALL CsvOut_PTSUB(
 !     &     EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, CONTROL%ROTNUM,
@@ -420,7 +425,7 @@ C-----------------------------------------------------------------------
      &     (WTLF*10.0+STMWT*GM2KG), DEADLF*GM2KG, HI,
      &     PODWT*GM2KG, PODNO, 1.0-SWFAC, 1.0-TURFAC,
      &     1.0-NSTRES, PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,
-     &     (RTDEP/100), RLV(1), RLV(2), RLV(3), RLV(4), RLV(5),
+     &     (RTDEP/100), TRLV, RLV(1), RLV(2), RLV(3), RLV(4), RLV(5),
      &     CUMSENSURF, CUMSENSOIL
 
         IF (ISWNIT .EQ. 'Y') THEN

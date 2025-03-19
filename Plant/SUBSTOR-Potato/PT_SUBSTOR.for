@@ -57,7 +57,7 @@ C=======================================================================
       REAL PLANTS, PLTPOP, PODWT, ROOTN, RTDEP, RTF
       REAL RTWT, SDWTAH, SDWTPL, SEEDNI, SEEDRV, SRAD, STMWT, STOVN
       REAL SLPF
-      REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN
+      REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN, TRLV
       REAL TOPWT, TOTNUP, TRNU, TUBN, TUBWT, TURFAC, TWILEN
       REAL WTNCAN, WTNLO, XLAI, XSTAGE
       REAL SDWT, SEEDNO, TRWUP, WTNSD, WTNUP, YIELD
@@ -116,6 +116,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
@@ -154,13 +155,13 @@ C=======================================================================
         CALL PT_ROOTGR_2D(SEASINIT, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
-     &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
+     &    CUMDEP, RLV, RLV_2D, RTDEP, TRLV)             !Output
 
       ELSE
         CALL PT_ROOTGR (SEASINIT, CELLS, YRDOY,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output
+     &    CUMDEP, RLV, RTDEP, TRLV)                       !Output
       ENDIF
 
       CALL PT_PHENOL (
@@ -190,6 +191,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
@@ -228,13 +230,13 @@ C=======================================================================
             CALL PT_ROOTGR_2D(RATE, ISWWAT, CELLS, YRDOY,
      &        DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &        SOILPROP,                                     !Input
-     &        CUMDEP, RLV, RLV_2D, RTDEP)                  !Output
+     &        CUMDEP, RLV, RLV_2D, RTDEP, TRLV)             !Output
 
           ELSE
             CALL PT_ROOTGR (RATE, CELLS, YRDOY,
      &        DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &        LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
-     &        CUMDEP, RLV, RTDEP)                             !Output
+     &        CUMDEP, RLV, RTDEP, TRLV)                       !Output
           ENDIF
         ENDIF
       ENDIF
@@ -281,6 +283,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
@@ -297,7 +300,7 @@ C=======================================================================
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
-     &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
+     &    CUMDEP, RLV, RLV_2D, RTDEP, TRLV)             !Output
       ENDIF
 
 !***********************************************************************
@@ -313,6 +316,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
@@ -341,7 +345,7 @@ C=======================================================================
         CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
      &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
      &    SOILPROP,                                     !Input
-     &    CUMDEP, RLV, RLV_2D, RTDEP)                   !Output
+     &    CUMDEP, RLV, RLV_2D, RTDEP, TRLV)             !Output
       ENDIF
 
 !***********************************************************************
