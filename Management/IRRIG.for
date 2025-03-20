@@ -950,17 +950,17 @@ C-----------------------------------------------------------------------
 !         Soil water irrigation
           SELECT CASE (IIRRI)
           CASE ('A', 'F')
-!         Soil water content determins demand
-!         2023-11-05 CHP changed from MEHYD = "G" or "C" (2D simulation) to MESOL = "D" (raised bed)
-          IF (ISWITCH % MESOL == 'D') THEN
+!         Soil water content determines demand
+          IF (BedDimension % RaisedBed) THEN
 !           SWDEFICIT_bed looks for bedded system, which has a different
 !           method for calculating volume of water deficit
-           
             CALL SWDEFICIT_bed(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
      &        ATHETA, SWDEF, SWDEF_cm2)                   !Output
+
             IRRAPL_cm2 = SWDEF_cm2
             IRRAPL_cm2 = MAX(0.,IRRAPL_cm2)
+
           ELSE
             CALL SWDEFICIT(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
@@ -1069,16 +1069,16 @@ C-----------------------------------------------------------------------
           IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &        (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
-!           2023-11-05 CHP changed from MEHYD = "G" or "C" (2D simulation) to MESOL = "D" (raised bed)
-            IF (ISWITCH % MESOL == 'D') THEN
+            IF (BedDimension % RaisedBed) THEN
 !             SWDEFICIT_bed looks for bedded system, which has a different
 !             method for calculating volume of water deficit
-           
               CALL SWDEFICIT_bed(
      &          DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU, !Input
      &          ATHETA, SWDEF, SWDEF_cm2)                 !Output
+
               IRRAPL_cm2 = SWDEF_cm2
               IRRAPL_cm2 = MAX(0.,IRRAPL_cm2)
+
             ELSE
               CALL SWDEFICIT(
      &          DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input

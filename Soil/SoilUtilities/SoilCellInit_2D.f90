@@ -245,7 +245,7 @@
 
 ! ---------------------------------------------------------------------------
 !   Define column dimensions
-    IF (ISWITCH % MESOL == 'D') THEN
+    IF (Sim2D) THEN
 !     2D model
 !     Half of the bed is simulated area because of the symmetry vertically
 !     IF (( RaisedBed ) .or. ((BedCase .EQ. 1) .AND. (BEDWD > 2.) )) Then
@@ -881,30 +881,31 @@
 ! write output
 ! ---------------------------------------------------------------------  
 !---------------- Output Cell Structures ---------------------------------
-!   IF (ISWITCH % MESOL == 'D') THEN
-      msg(1) = "2D model initialized:"
-      Write(msg(2), '(" Bed height (cm)  =",F8.2)') BEDHT
-      Write(msg(3), '(" Bed width (cm)   =",F8.2)') BEDWD
-      Write(msg(4), '(" Row spacing (cm) =",F8.2)') ROWSPC_CM
-      Write(msg(5), '(" # Bed Rows       =",I3)') N_Bed_Rows
-      Write(msg(6), '(" Total # Rows     =",I3)') NRowsTOT
-      Write(msg(7), '(" # Bed columns    =",I3)') N_Bed_Cols
-      Write(msg(8), '(" # furrow columns =",I3)') N_Fur_Cols
-      Write(msg(9), '(" Bed col wid (cm) =",F8.3)') Bed_Col_Width
-      Write(msg(10),'(" Furrow wid (cm)  =",F8.3)') Fur_Col_Width 
-      Write(msg(11),'(" Dig Depth (cm)   =",F8.3)') DigDep 
-      call info(11,errkey,msg)
-     
-      Write(msg(1),'(" Column ->",20I5)') (Col, Col=1, NColsTOT)
-      Write(msg(2),'("Wid(cm) ->",20F5.1)') (Cells(1,Col)%Struc%width,Col = 1, NColsTOT)
-      Write(msg(3),'("     Thick")') 
-      Write(msg(4),'("Lyr   (cm)   Cell type:")')
-      WRITE(FMT,'("(I2,F8.2,",I2,"I5)")') NColsTot 
-      DO Row = 1, NRowsTot  
-        Write(msg(4+Row),FMT)    &
-        Row, Cells(Row,1)%Struc%Thick, (Cells(Row,Col)%Struc%Cell_Type,Col = 1, NColsTOT) 
-      Enddo 
-      call info(NRowsTot+4,errkey,msg)  
+      IF (Sim2D) THEN
+        msg(1) = "2D model initialized:"
+        Write(msg(2), '(" Bed height (cm)  =",F8.2)') BEDHT
+        Write(msg(3), '(" Bed width (cm)   =",F8.2)') BEDWD
+        Write(msg(4), '(" Row spacing (cm) =",F8.2)') ROWSPC_CM
+        Write(msg(5), '(" # Bed Rows       =",I3)') N_Bed_Rows
+        Write(msg(6), '(" Total # Rows     =",I3)') NRowsTOT
+        Write(msg(7), '(" # Bed columns    =",I3)') N_Bed_Cols
+        Write(msg(8), '(" # furrow columns =",I3)') N_Fur_Cols
+        Write(msg(9), '(" Bed col wid (cm) =",F8.3)') Bed_Col_Width
+        Write(msg(10),'(" Furrow wid (cm)  =",F8.3)') Fur_Col_Width 
+        Write(msg(11),'(" Dig Depth (cm)   =",F8.3)') DigDep 
+        call info(11,errkey,msg)
+        
+        Write(msg(1),'(" Column ->",20I5)') (Col, Col=1, NColsTOT)
+        Write(msg(2),'("Wid(cm) ->",20F5.1)') (Cells(1,Col)%Struc%width,Col = 1, NColsTOT)
+        Write(msg(3),'("     Thick")') 
+        Write(msg(4),'("Lyr   (cm)   Cell type:")')
+        WRITE(FMT,'("(I2,F8.2,",I2,"I5)")') NColsTot 
+        DO Row = 1, NRowsTot  
+          Write(msg(4+Row),FMT)    &
+          Row, Cells(Row,1)%Struc%Thick, (Cells(Row,Col)%Struc%Cell_Type,Col = 1, NColsTOT) 
+        Enddo 
+        call info(NRowsTot+4,errkey,msg)  
+      ENDIF
 !   ENDIF
 !------------------------------
     NH4I = NewPropNH4I 

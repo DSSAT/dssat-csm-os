@@ -922,7 +922,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, SW,
      &        SoilProp_Bed, SoilProp_Furrow)
 
-      IF (SIM2D) THEN  !MESOL = 'D' for 2D raised bed 
+      IF (BedDimension % RaisedBed) THEN   
         SOILPROP_profile = SOILPROP  !Save original profile info
         SOILPROP = SoilProp_Bed      !this is the new soil profile data
 
@@ -936,7 +936,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP) 
 
         CALL PRINT_SOILPROP(SOILPROP)
-        IF (ISWITCH%MESOL == 'D') THEN  !MESOL = 'D' for 2D raised bed 
+        IF (BedDimension % RaisedBed) THEN
           CALL PRINT_SOILPROP(SoilProp_Furrow)
         ENDIF
 

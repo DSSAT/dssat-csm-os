@@ -337,7 +337,7 @@ c     MJ, Mar 2008: Soil information
          ENDIF
 
 !        2023-09-05 chp ignore irrig for 2D
-         IF (ISWITCH % MESOL /= 'D') THEN
+         IF (.NOT. CONTROL % SIM2D) THEN
            IF (IIRRI .EQ. 'R' .OR. IIRRI .EQ. 'D') THEN
               IF (IIRRI .EQ. 'R') THEN
                  WRITE (HEADER(I),650)
