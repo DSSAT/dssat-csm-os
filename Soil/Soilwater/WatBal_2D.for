@@ -543,24 +543,14 @@
       IrrIdxArr = 1
 
 !     Can also use conventional irrigation, if no drip irrig entries
-!     IF (.NOT. BedDimension % RaisedBed .AND. DripNum == 0) THEN
-!     Removed by Jin Wu on March, 2013 , StdIrrig is for dripper and non-dripper
       IF (MAXVAL(DripNumTotArr) == 0) THEN 
         StdIrrig = IRRAMT ! for non-drip irrigation
         IF (StdIrrig < 1.E-6) THEN
           StdIrrig = 0.0
         ELSE
+!         This assumes that plastic mulch does not affect irrigation amounts
           DO J = 1, NColsTot
-          !JZW Should be handled by CALL Rnoff_furrow to count runoff
-            IF (BedDimension % PMCover) then
-              WINF_col(j) = WINF_col(j) + 
-     &           StdIrrig * ROWSPC_cm/(ROWSPC_cm - BedDimension % BEDWD)
-!              Standard one dimension effective irrigation amount(mm)
-!              The irrigation water on plastic cover run to furrow area
-!              Rnoff_furrow calculated the iffitration for rain, here add the iffitration of sprinkle
-            else 
-              WINF_col(j) = WINF_col(j) + StdIrrig 
-            Endif
+            WINF_col(j) = WINF_col(j) + StdIrrig
           ENDDO
         ENDIF
       ELSE
@@ -782,26 +772,23 @@
 !       ADDITION OF INFILTRATION AMOUNT
 !       Add infiltration to top furrow cells evenly throughout day.
         IF (RAIN > 1.E-6 .OR. StdIrrig > 1.E-6) THEN
-          IF (BedDimension % PMCover) then
-!           If there is plastic cover, the infiltration is in the furrow
-            jj = FurCol1 
-            i = FurRow1
-          else
-            jj = 1
-            i = 1
-          endif
-          DO j = jj, NColsTot
-            if ((j .GE. FurCol1) .and. (i .eq. 1) ) i = FurRow1
-          !DO j = FurCol1, NColsTot
-!           Within furrow, add infiltration to top cells
-            !INF_vol = WINF_col(j) * 0.1 * DayIncr / Thick(FurRow1,j)
+          DO j = 1, NColsTot
+!           add infiltration to top cells
+            IF (BedDimension % RaisedBed) THEN
+              IF (j < FurCol1) THEN
+                i = 1       !top of raised bed
+              ELSE
+                i = FurRow1 !top of furrow
+              ENDIF
+            ELSE
+              i = 1         !flat surface
+            ENDIF
+
             INF_vol = WINF_col(j) * 0.1 * DayIncr / Thick(i,j)
 !           cm3[water]   mm[water]   cm         1           
 !           ---------- = --------- * -- * d * --------
 !            cm3[soil]       d       mm       cm[soil]   
-!JZW find bug here if rain is large SWV_avail >sat; Drainage_2D can not handle if SW>SAT
-!infitration not to Row=1, but to FurRow1
-            ! SWV_avail(FurRow1,j) = SWV_avail(FurRow1,j) + INF_vol
+
             SWV_avail(i,j) = SWV_avail(i,j) + INF_vol
 !           debug chp
             INF_vol_dtal(i,j) = INF_vol

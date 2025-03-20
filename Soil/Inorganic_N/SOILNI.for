@@ -333,6 +333,10 @@ C=======================================================================
         IUOF   = 0
         IUON   = .FALSE.
 
+!       CHP - 1D model does not initialize XMIN, just uses it.
+        XMIN   = 0.0
+
+
         DLTSNO3 = 0.0
         DLTSNH4 = 0.0
         DLTUREA = 0.0

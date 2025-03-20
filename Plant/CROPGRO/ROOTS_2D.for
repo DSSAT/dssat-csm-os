@@ -842,14 +842,14 @@
       INTEGER Row, Col, L, NLAYR
       REAL, DIMENSION(NL) :: DLAYR, RtLen_1D
       TYPE (CellStrucType) Struc(MaxRows,MaxCols)
-      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, ColFrac, 
+      REAL, DIMENSION(MaxRows,MaxCols) :: CellArea, !ColFrac, 
      &    Width, Thick
 
 !     Variables available in 2D CELLS
       STRUC = CELLS%STRUC
       Thick = STRUC%THICK
       Width = STRUC%WIDTH
-      ColFrac = BedDimension % ColFrac
+!     ColFrac = BedDimension % ColFrac
       Rowspc_cm = BedDimension % Rowspc_cm
       Cell_Type = STRUC%Cell_Type
       CellArea = STRUC % CellArea

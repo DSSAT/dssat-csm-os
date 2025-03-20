@@ -290,12 +290,15 @@
       SELECT CASE(BedCase)
       CASE (1) !Flat surface, no plastic
         FurRow1 = 1
-        If (N_Bed_Cols .GE. 0) then
-          FurCol1 = N_Bed_Cols + 1
-        else
+        !If (N_Bed_Cols .GE. 0) then
+        !  FurCol1 = N_Bed_Cols + 1
+        !else
           FurCol1 = 1
-        endif
-      CASE (2,3) !Flat surface, partial or full plastic
+        !endif
+      CASE (2) !Flat surface, partial plastic
+        FurRow1 = 1
+        FurCol1 = N_Bed_Cols + 1
+      CASE (3) !Flat surface, full plastic
         FurRow1 = 1
         FurCol1 = N_Bed_Cols + 1
       CASE (4) !Raised bed, partial plastic
