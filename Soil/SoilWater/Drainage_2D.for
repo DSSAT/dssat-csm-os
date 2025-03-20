@@ -95,6 +95,11 @@ C=======================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
+      Thick = CELLS % Struc % Thick
+      Width = CELLS % Struc % Width
+      CellArea = CELLS % Struc % CellArea
+      Cell_Type = CELLS % Struc % Cell_Type
+       
 !     LatFlow_ts = 0.0
 
       SWFh_ts = 0.0
