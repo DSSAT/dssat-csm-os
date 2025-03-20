@@ -138,7 +138,7 @@ C-----------------------------------------------------------------------
       REAL KCAN, KEP, KSEVAP, KTRANS, LAI, NSTRES
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW, IRRAMT
       REAL TMAX, TMIN !, TRWU
-      REAL TRWUP, TWILEN, XLAI, XHLAI, DUMMY
+      REAL TRWUP, TWILEN, XLAI, XHLAI
 
 !     Water stress factors computed in SPAM now for variable time step 
 !       root water uptake model
@@ -797,62 +797,38 @@ c     Total LAI must exceed or be equal to healthy LAI:
           FixCanht = .FALSE.
         ENDIF
 
-! 2025-03-03 chp Is this still needed? 
-!   We handle the 2D arrays differently in SoilNi so we may be able to get rid of this section.
-
-!       Sync 2D variables for use in SoilN routines
-        IF (CONTROL % SIM2D .AND. 
-     &      (MODEL(1:5) .EQ. 'CRGRO' .OR.
-     &       MODEL(1:5) .EQ. 'PTSUB')) THEN
-
+!       Sync 1D and 2D variables for use in SoilN routines
+        SELECT CASE(MODEL(1:5))
+          CASE('CRGRO', 'PTSUB')
 !         Currently, only CROPGRO and SUBSTOR have 2D root models
-!         For these 2 models only, when simulating in 2D mode, 
-!         Export RLV and NUptake variables to 1D arrays for use in
-!         1D processes elsewhere in CSM.
+!         For these 2 models only, both 1D and 2D arrays for RLV
+!         and N uptake are already exported.
 
-! chp 2024-05-07 This is already done in the CROPGRO and SUBSTOR 2D root growth modules
-!!         Interpolate2Layers_2D is for concentration variables which are
-!!         averaged over a layer, weighted by column width.
-!          CALL Interpolate2Layers_2D(                    
-!     &      RLV_2D, CELLS%STRUC, SOILPROP%NLAYR,          !Input
-!     &      RLV, Dummy)                                   !Output
-!!         "Dummy" represents the surface value of a 2d array. Not relevant here.
-
-!         Cell2Layer_2D is for mass variables which are aggregated across 
-!         a soil layer.
-          CALL Cell2Layer_2D(
-     &      CELLS%RATE%NO3Uptake, CELLS%STRUC, SOILPROP%NLAYR, !Input
-     &      UNO3, Dummy)                                       !Output
-
-          CALL Cell2Layer_2D(
-     &      CELLS%RATE%NH4Uptake, CELLS%STRUC, SOILPROP%NLAYR, !Input
-     &      UNH4, Dummy)                                       !Output
-
-        ELSE
+          CASE DEFAULT
 !         For all other cases (i.e., 1D model, or not CROPGRO or SUBSTOR),
 !           only 1D RLV was calculated, so need to transfer values into
 !           the 2D arrays for use elsewhere in the model.
 
-!         Interpolate2Cells_2D is used for concentration variables.
-          CALL Interpolate2Cells_2D(
-     &      CELLS%STRUC, SOILPROP, RLV, 0.0,              !Input
-     &      RLV_2D)                                       !Output
-
-!         Layer2Cell_2D is used for mass variables
-          CALL Layer2Cell_2D(
-     &      CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
-     &      UNO3, 0.0,                                    !Input
-     &      NO3Uptake_2D)                                 !Output
-
-          CALL Layer2Cell_2D(
-     &      CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
-     &      UNH4, 0.0,                                    !Input
-     &      NH4Uptake_2D)                                 !Output
-
-          CELLS % RATE % NO3Uptake = NO3Uptake_2D
-          CELLS % RATE % NH4Uptake = NH4Uptake_2D
-          CELLS % STATE % RLV = RLV_2D
-        END IF
+!           Interpolate2Cells_2D is used for concentration variables.
+            CALL Interpolate2Cells_2D(
+     &        CELLS%STRUC, SOILPROP, RLV, 0.0,              !Input
+     &        RLV_2D)                                       !Output
+            
+!           Layer2Cell_2D is used for mass variables
+            CALL Layer2Cell_2D(
+     &        CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
+     &        UNO3, 0.0,                                    !Input
+     &        NO3Uptake_2D)                                 !Output
+            
+            CALL Layer2Cell_2D(
+     &        CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
+     &        UNH4, 0.0,                                    !Input
+     &        NH4Uptake_2D)                                 !Output
+            
+            CELLS % RATE % NO3Uptake = NO3Uptake_2D
+            CELLS % RATE % NH4Uptake = NH4Uptake_2D
+            CELLS % STATE % RLV = RLV_2D
+        END SELECT
 
 
 !***********************************************************************
