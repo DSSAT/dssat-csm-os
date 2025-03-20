@@ -551,7 +551,7 @@ C    Select Model Name and Path -- order of priority:
 !         over all other values if valid. (Done in External_SimControls)
 !     CRMODEL is read from FILEX.  Use this if no control file.  
 !     MODELARG is from command line argument list. Third priority. 
-!     Last, use value from DSSATPRO.v??.
+!     Last, use value from DSSATPRO.vxx.
 C-----------------------------------------------------------------------
 !     -------------------------------------------------
 !     Line 1
@@ -686,12 +686,26 @@ C-----------------------------------------------------------------------
 
       IF (MEEVP == 'Z' .AND. MEPHO /= 'L') CALL ERROR(ERRKEY,3,' ',0)
 
-      IF (MEHYD .EQ. ' ') MEHYD = 'R'
+      IF (INDEX('RG',MEHYD) < 1) MEHYD = 'R'
+      SELECT CASE(MEHYD)
+      CASE ('G')  !2D (gridded soil) simulation
+        CONTROL % SIM2D = .TRUE.
+!       2D soil water and N processes. 
+        MESOL  = 'D'
+!       Not compatible with tillage.
+        ISWTIL = 'N'
+      CASE ('R')
+        CONTROL % SIM2D = .FALSE.
+        IF (INDEX('123',MESOL) < 1) THEN
+           MESOL = '2'
+        ENDIF
+      END SELECT
 
       IF (NSWITCH .LE. 0 .AND. ISWNIT .EQ. 'Y') THEN
         NSWITCH = 1
       ENDIF
 
+!     ==============================================================
 !     -------------------------------------------------
 !     Line 4
 !     -------------------------------------------------
@@ -754,7 +768,7 @@ C     TF, FO & DP - 2022-07-12 - AutomaticMOW Switch
 !     By default, use ASCII outputs
       IF (INDEX('CA',FMOPT) < 1) FMOPT = 'A'
 
-!     IDETL = VBOSE. 
+!     IDETL = VBOSE
 !       0  Only Summary.OUT
 !       N  Minimal output  
 !       Y  Normal output   
