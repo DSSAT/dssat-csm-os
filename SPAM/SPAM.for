@@ -24,6 +24,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !  10/16/2020 CHP Cumulative "soil" evaporation includes mulch and flood evap
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
+!  01/10/2025 CHP Added modified Sulieman-Ritchie method per AS
 C-----------------------------------------------------------------------
 C  Called by: Main
 C  Calls:     XTRACT, OPSPAM    (File SPSUBS.for)
@@ -39,7 +40,7 @@ C=======================================================================
      &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    EO, EOP, EOS, EP, ES, ES_LYR, RWU, SRFTEMP, ST, !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 !-----------------------------------------------------------------------
@@ -50,7 +51,7 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS
       EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
-      EXTERNAL XTRACT
+      EXTERNAL XTRACT, ESR_SoilEvap_mod
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT
@@ -196,6 +197,11 @@ C=======================================================================
      &      DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
      &      U, WINF,                                      !Input
      &      ES)                                           !Output
+!           ------------------------
+        CASE ('M')  ! Modified Sulieman-Ritchie soil evap routine
+          CALL ESR_SoilEvap_mod(DYNAMIC,
+     &      EOS, SOILPROP, SW, SWDELTS,            !Input
+     &      ES, ES_LYR)                            !Output
 !     ----------------------------
         END SELECT
 
@@ -350,10 +356,14 @@ C=======================================================================
             SELECT CASE(MESEV)
 !           ------------------------
             CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
-!             Note that this routine calculates UPFLOW, unlike the SOILEV.
               CALL ESR_SoilEvap(
      &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
      &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+!           ------------------------
+            CASE ('M')  ! Modified Sulieman-Ritchie soil evap routine
+              CALL ESR_SoilEvap_mod(DYNAMIC,
+     &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
+     &          ES, ES_LYR)                               !Output
 !           ------------------------
             CASE DEFAULT
 !           CASE ('R')  !Ritchie soil evaporation routine
@@ -411,7 +421,7 @@ C=======================================================================
           !   (MEPHO = 'L' and MEEVP = 'Z').
           CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
+     &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
           EVAP = ES  !CHP / BK 7/13/2017
         ENDIF

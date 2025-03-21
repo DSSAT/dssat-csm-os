@@ -632,6 +632,7 @@ set(
         "Soil/SoilWater/WBAL.for"
         "Soil/SoilWater/WBSUBS.for"
         "SPAM/ESR_SoilEvap.for"
+        "SPAM/ESR_SoilEvap_mod.for"
         "SPAM/ETPHOT.for"
         "SPAM/ETPHR.for"
         "SPAM/OPETPHOT.for"

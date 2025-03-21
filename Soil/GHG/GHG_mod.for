@@ -361,9 +361,9 @@ C-----------------------------------------------------------------------
 !      IDETL = ISWITCH % IDETL
 !      IF (INDEX('AD',IDETL) == 0) RETURN
 
-      IF (IDETN .EQ. 'Y') THEN
+      FROP    = CONTROL % FROP
 
-        FROP    = CONTROL % FROP
+      IF (IDETN .EQ. 'Y') THEN
         RNMODE  = CONTROL % RNMODE
         REPNO   = CONTROL % REPNO
         RUN     = CONTROL % RUN
@@ -451,7 +451,7 @@ C-----------------------------------------------------------------------
           ENDIF
         ENDIF
       ENDIF
-      
+
       ENDIF ! Close FMOPT
 
 !     NDN20 = 0.0
@@ -477,13 +477,12 @@ C-----------------------------------------------------------------------
       CN2O_emitted = N2O_data % CN2O_emitted 
       CN2_emitted  = N2O_data % CN2_emitted  
       CNO_emitted  = N2O_data % CNO_emitted  
-    
-      IF (IDETN == 'N') RETURN
-      IF (MOD(DAS, FROP) .NE. 0) RETURN
+
+!     IF (IDETN == 'N') RETURN
+!     IF (MOD(DAS, FROP) .NE. 0) RETURN
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
-      
-      
+
 !     Conver Variables (CV)
       cvN2O_emitted =  N2O_emitted*1000.
       cvN2_emitted = N2_emitted*1000. 
@@ -501,17 +500,17 @@ C-----------------------------------------------------------------------
         cvN2flux(I)   = N2flux(I)*1000.
         cvNOflux(I)   = NOflux(I)*1000.
       END DO
-      
-      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! FO-OPEN FILE
 
-      WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
+      IF ((FMOPT == 'A' .OR. FMOPT == ' ')    ! FO-ASCII output
+     &   .AND. (IDETN .EQ. 'Y')               ! N output requested
+     &   .AND. (MOD(DAS, FROP) .EQ. 0)) THEN  ! Every FROP days
+        WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
      &   '(1X,I4,1X,I3.3,I6,',
      &   '3F8.2,F8.2,F8.1,4F8.3,',
      &   '3F8.1, F8.1,I8,4F8.2,',
      &   N_LYR, 'F8.1,', N_LYR,'F8.0,', 3*N_LYR, 'F8.1)'
 
-        IF (IDETN .EQ. 'Y') THEN
-          WRITE (GHGLUN,TRIM(FRMT2)) YEAR, DOY, DAS, 
+         WRITE (GHGLUN,TRIM(FRMT2)) YEAR, DOY, DAS, 
      &      CN2O_emitted, CN2_emitted, CNO_emitted, 
      &      CNOX, CNITRIFY, CN2Odenit, CN2Onitrif, CN2, CNOflux,
      &      cvN2O_emitted, cvN2_emitted, cvNO_emitted, 
@@ -520,9 +519,6 @@ C-----------------------------------------------------------------------
      &      (cvDENITRIF(I), i=1,N_LYR), (cvNITRIF(I),I=1,N_LYR),
      &      (cvN2Oflux(i), i=1,n_lyr), (cvN2flux(i),i=1,n_lyr), 
      &      (cvNOflux(i),i=1,n_lyr)
-        ENDIF
-
-
       ENDIF ! Close FMOPT
 
 C     05/01/2022 FO Added csv output for N2O.csv
@@ -632,9 +628,9 @@ C  06/15/2014 CHP Written
 C-----------------------------------------------------------------------
 C     Variable heading for GHG.OUT
 C-----------------------------------------------------------------------
-      IF (IDETN .EQ. 'Y') THEN
+      FROP    = CONTROL % FROP
 
-        FROP    = CONTROL % FROP
+      IF (IDETN .EQ. 'Y') THEN
         RNMODE  = CONTROL % RNMODE
         REPNO   = CONTROL % REPNO
         RUN     = CONTROL % RUN
@@ -693,8 +689,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 !      IF (INDEX('AD',IDETL) == 0) RETURN
 
-      IF (IDETN == 'N') RETURN
-      IF (MOD(DAS, FROP) .NE. 0) RETURN
+!     IF (IDETN == 'N') RETURN
+!     IF (MOD(DAS, FROP) .NE. 0) RETURN
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
@@ -731,7 +727,7 @@ C-----------------------------------------------------------------------
 !     Total CO2-equivalent
       TCEQC = CCEQC + NCEQC + MCEQC
 
-        IF (IDETN .EQ. 'Y') THEN
+        IF (IDETN .EQ. 'Y' .AND. MOD(DAS, FROP) == 0) THEN
           WRITE (GHGLUN,'(I5,I4.3,I6,2I9,2F9.2,2I9,2F9.2,4I9)')  
      &      YEAR, DOY, DAS, 
      &      NINT(CO2GED), NINT(CO2END), N2OGED, CH4GED, 

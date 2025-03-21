@@ -127,7 +127,7 @@ C-----------------------------------------------------------------------
             ENDIF
           END IF   ! VSH
 
-          IF (ISWITCH % MESEV == 'S') THEN
+          IF (ISWITCH % MESEV == 'S'. OR. ISWITCH % MESEV == 'M') THEN
 !           Include soil evap by soil layer for Suleiman-Ritchie method
 
             IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
@@ -266,7 +266,7 @@ C-----------------------------------------------------------------------
      &        AVTMN, REFA, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA,
      &        EMAA, CEO, CET, CEP, CES, CEF, CEM, KCAA, KBSA, KEAA
 
-            IF (ISWITCH % MESEV == 'S') THEN
+            IF (ISWITCH % MESEV == 'S'. OR. ISWITCH % MESEV == 'M') THEN
               IF (SOILPROP % NLAYR < 11) THEN
                 WRITE(LUN,'(12F8.3)') ES_LYR(1:N_LYR) , AVRWU, AVRWUP
               ELSE

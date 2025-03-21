@@ -188,7 +188,7 @@
 !-----------------------------------------------------------------------
 !         PlantGro.OUT
 !-----------------------------------------------------------------------
-          IF (IDETG == 'Y') THEN
+!         IF (IDETG == 'Y') THEN
 
             LEAFNO = LN
             VSTAGE = REAL (LEAFNO)
@@ -265,7 +265,7 @@
               PCNL = 0.0
             ENDIF
 
-            IF (FMOPT /= 'C') THEN   ! VSH
+            IF (IDETG == 'Y' .AND. FMOPT /= 'C') THEN   ! VSH
               WRITE (NOUTDG,400) YEAR, DOY, DAS, DAP, VSTAGE, ISTAGE, XLAI,         &
                 NINT(TOPWT),  NINT(VWAD), NINT(LWAD), NINT(SWAD), NINT(FLWAD),      &
                 NINT(FWAD), NINT(CRAD), NINT(BWAD), NINT(SUGD), NINT(RWAD), HI,     &
@@ -297,12 +297,12 @@
               !
               !CALL Linklst(vCsvline)
             ENDIF
-          ENDIF     !Print PlantGro report
+!         ENDIF     !Print PlantGro report
 
 !-----------------------------------------------------------------------
 !         PlantN.OUT
 !-----------------------------------------------------------------------
-          IF (IDETN .EQ. 'Y' .AND. ISWNIT .EQ. 'Y') THEN
+          IF (ISWNIT .EQ. 'Y') THEN
 
             WTNSD = GRAINN * PLTPOP
             WTNRT = ROOTN * PLTPOP        ! Is this right?
@@ -337,7 +337,7 @@
 
 !-----------------------------------------------------------------------
 
-            IF (FMOPT /= 'C') THEN       ! VSH
+            IF (IDETN == 'Y' .AND. FMOPT /= 'C') THEN       ! VSH
               WRITE (NOUTPN,300) YEAR, DOY, DAS, DAP,                   &
                      (WTNUP*10.0), (WTNCAN*10.0), (WTNVEG*10.0), (WTNLF*10.0), (WTNST*10.0), (WTNRT*10),     &
                      PCNVEG, PCNL, PCNST, PCNRT

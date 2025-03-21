@@ -23,7 +23,7 @@
       type (SoilType), intent(in) :: SOILPROP
       
       real, dimension(NL) :: dul, bd, poros
-      real, dimension(NL) :: dD0_fc, dD0_DayCent, ratio
+      real, dimension(NL) :: dD0_fc, dD0_DayCent !, ratio
       real POROSer
       REAL PFC, VFRAC, THETA_V, THETA_P, THETA_A, S_WAT, SW_P
       REAL TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8
@@ -147,8 +147,9 @@
         dD0_DayCent(L) = MAX(0.0, (TP8/1.E7 + TP7 * TP6))
 
 !*****************************************************************************
-!       compare with Shcherbak method
-        ratio(L) = dD0_DayCent(L) / dD0_fc(L)
+!!       compare with Shcherbak method
+!        ratio(L) = dD0_DayCent(L) / dD0_fc(L)
+
       enddo
 
       dD0 = dD0_DayCent
