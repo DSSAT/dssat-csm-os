@@ -217,7 +217,7 @@ C=======================================================================
       INTERFACE
         SUBROUTINE SoilNiBal(CONTROL, ISWITCH, 
      &      ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,
-     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE,
      &      N2O_data) 
           USE GHG_mod
           USE FertType_mod
