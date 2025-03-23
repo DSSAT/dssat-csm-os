@@ -52,7 +52,7 @@ C=======================================================================
       EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV
       EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
       EXTERNAL XTRACT, WATERSTRESS
-      EXTERNAL TRANS_old, TRANS
+      EXTERNAL TRANS
       SAVE
 
 !     Subroutine interface variables

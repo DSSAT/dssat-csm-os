@@ -667,7 +667,6 @@ set(
         "SPAM/STEMP.for"
         "SPAM/STEMP_EPIC.for"
         "SPAM/TRANS.for"
-        "SPAM/TRANS_old.for"
 
         "Weather/CO2VAL.for"
         "Weather/HMET.for"
