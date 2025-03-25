@@ -1,7 +1,9 @@
 !=======================================================================
 !  WaterTable, Subroutine, C.H.Porter
-!  Computes lateral flows necessary to maintain a managed water table depth.
-!  Actual computed water table may rise above or fall below managed water table.
+!  Computes lateral flows necessary to maintain a managed water table depth
+!    (i.e., daily water table depth user inputs).
+!  The actual computed water table may rise above or fall below managed 
+!    water table due to rainfall and rapid changes in user input depths.
 !
 !-----------------------------------------------------------------------
 !  REVISION       HISTORY
@@ -65,11 +67,6 @@
 !   Get initial depth to water table
     CALL GET('MGMT','ICWD',MgmtWTD)
 
-!   Negative or zero value means no managed water table
-    IF (MgmtWTD < 1.E-6) THEN
-      MgmtWTD = 1000.
-    ENDIF
-
 !   If modeling a raised bed, SOILPROP contains soil properties for raised bed plus below bed.
 !   Need to adjust water table depths to be relative to top of bed.
 !   Assumptions:
@@ -81,6 +78,12 @@
       AdjustWTD = 0.0
     ENDIF
 
+!   Negative or zero value means no managed water table
+    IF (MgmtWTD < 1.E-6) THEN
+      MgmtWTD = 10000.
+      AdjustWTD = 0.0
+    ENDIF
+
     MgmtWTD = MgmtWTD + AdjustWTD
     ActWTD    = MgmtWTD
     TargetWTD = MgmtWTD
@@ -88,7 +91,8 @@
 !   Actual water table depth will equal either the managed water table depth or
 !     the target water table depth. When user water table depth records change
 !     a lot from one day to the next, it may take a few days for the actual 
-!     water table depth to reach the managed depth.
+!     water table depth to reach the managed depth. The target depth allows a slow 
+!     transition from one managed depth to another. 
     CALL PUT('WATER','WTDEP' ,ActWTD)  !Actual current water table depth
     CALL PUT('MGMT' ,'WATTAB',MgmtWTD) !Managed water table depth (i.e., user records)
 
@@ -117,8 +121,6 @@
         ENDIF 
       ENDDO
     ENDIF
-
-    CALL PUT('WATER','WTDEP',ActWTD)
 
 !***********************************************************************
 !***********************************************************************
@@ -247,7 +249,7 @@
 !       ThetaCap(L) = MAX(SW_TEMP(L), ThetaCap(L))
         DeltaSW(L) = MAX(0.0, ThetaCap(L) - SW_TEMP(L))
         SW_TEMP(L) = SW_TEMP(L) + DeltaSW(L)
-        LatInflow = LatInflow + DeltaSW(L) * DLAYR(L) * 10.
+        LatInflow = LatInflow + (SW_TEMP(L) - SW(L)) * DLAYR(L) * 10.
       ENDDO
       
 !     Flux in soil water content due to changes in water table and capillary flow
@@ -263,9 +265,9 @@
 !     WaterTable VARIABLE DEFINITIONS:
 !-----------------------------------------------------------------------
 ! ActWTD   The actual water table depth which may vary from the managed water table depth
-!            if there has been rainfall. ActWTD is calculated from soil water content  
-!            at the end of the day.  
-! MgmtWTD  User input fixed management water table depth below surface
+!          if there has been rainfall. ActWTD is calculated from soil water content  
+!          at the end of the day (cm)
+! MgmtWTD  User input managed water table depth below surface (cm)
 ! ThetaCap An array of volumetric soil water contents at the midpoint of each soil layer.
 !          Calculated from the water characteristic curve at the height above the
 !          water table. 

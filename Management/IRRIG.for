@@ -270,8 +270,8 @@ C-----------------------------------------------------------------------
               READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM =LNUM+1
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
               MgmtWTD = ICWD
-!              CALL PUT('MGMT','WATTAB',MgmtWTD)
-!              CALL PUT('MGMT','ICWD',ICWD)
+              CALL PUT('MGMT','WATTAB',MgmtWTD)
+              CALL PUT('MGMT','ICWD',ICWD)
             ENDIF
           ENDIF
 
