@@ -227,7 +227,7 @@ C=======================================================================
           TYPE (N2O_type), INTENT(IN), OPTIONAL :: N2O_DATA
           INTEGER, INTENT(IN) :: NBUND
           REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,
-     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE
         END SUBROUTINE SoilNiBal
       END INTERFACE
 
