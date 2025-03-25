@@ -47,7 +47,7 @@
       USE NFLUXts
 
       IMPLICIT NONE
-      EXTERNAL WATERTABLE, DRAINAGE_2D, ROOTWU_2D, 
+      EXTERNAL WaterTable_2D, DRAINAGE_2D, ROOTWU_2D, 
      &  WBSUM_2D, WBAL_2D, CALC_SW_VOL, WBAL_2D_TS, 
      &  RNOFF_FURROW, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
      &  WATERSTRESS
@@ -95,12 +95,12 @@
       REAL SWFAC,  SWFAC_ts,  SWFAC_day
       REAL TURFAC, TURFAC_ts, TURFAC_day
       REAL ActWTD, MgmtWTD, LatInflow, LatOutflow, LatFlow_ts !, MaxDif
-      REAL StdIrrig, WidTot, DepTot, LatFlow, SurfaceVal
+      REAL StdIrrig, WidTot, DepTot, LatFlow, SurfaceVal, SumLatFlow
       
       REAL, DIMENSION(0:24) :: EOP_HR, CumFracRad
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, Ksat, LL, SAT, WCr
       REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
-      REAL, DIMENSION(NL) :: SWDELTW, ThetaCap, RWU
+      REAL, DIMENSION(NL) :: RWU
 
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       REAL, DIMENSION(MaxCols) :: WINF_col, Drain_col
@@ -112,7 +112,7 @@
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFlux_D, SWFlux_U
       REAL, DIMENSION(MaxRows,MaxCols) :: SWFh_ts, RWUP_2D, Se
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, Kunsat, Diffus
-      REAL, DIMENSION(MaxRows,MaxCols) :: EvapFlow, SWA, SWVDELTW
+      REAL, DIMENSION(MaxRows,MaxCols) :: EvapFlow
       REAL, ALLOCATABLE :: IrrigSched(:,:,:), DripRate(:,:),DripInt(:,:)
 !     REAL, ALLOCATABLE :: DripDep(:,:), DripStart(:,:), DripDur(:,:)
 
@@ -226,46 +226,17 @@
 
       SWV = CELLS % STATE % SWV
 
-!     Water table initialization
-      CALL WaterTable(DYNAMIC,           
-     &  SOILPROP, SW,                         !Input
-     &  ActWTD, LatInflow, LatOutflow,        !Output
-     &  MgmtWTD, SWDELTW, ThetaCap)           !Output
-
-!     Convert the soil water flux due to water table into 2D variable 
-      CALL Interpolate2Cells_2D(
-     &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
-     &  SWVDeltW)                                         !Output
-
-!     The 2D model is not needed in the vicinity of the water table.
-!     Calculate the limits of the 2D model. 
-      IF (ActWTD > DS(NLAYR)) THEN
-!       Water table is below profile depth
-        LIMIT_2D = NRowsTot    
-      Else          
-!       Set LIMIT_2D to be the layer above ThetaCap = .9 * SAT
-        LIMIT_2D = NLAYR
-        DO i = NLAYR, 1, -1
-          IF ((ThetaCap(i) - DUL(i)) > (0.9 * (SAT(i) - DUL(i)))) then
-            LIMIT_2D = i - 1
-          ELSE 
-            EXIT
-          ENDIF
-        ENDDO
-      ENDIF 
-      LIMIT_2D = MAX(LIMIT_2D, 1)
-      BedDimension % LIMIT_2D = LIMIT_2D
-
-!     Set SWV based on initial water table  
-      DO i =1, NLAYR
-        DO j = 1, NColsTot
-          SWV(i,j) = SWV(i,j) + SWVDELTW(i,j)
-          SWA(i,j) = SWV(i,j) - SOILPROP%LL(i)
-        ENDDO
-      ENDDO
+!     Set new water table level for today. This redefines Limit_2D,
+!       the soil layer below which 1D saturated conditions exist.
+      CALL WaterTable_2D(DYNAMIC, 
+     &  CELLS, SOILPROP,                  !Input
+     &  SW, SWV,                          !Input/Output
+     &  ActWTD, LatInflow, LatOutflow,    !Output
+     &  MgmtWTD, LIMIT_2D)                !Output
 
 !     convert to double precision for time step loops
       SWV_D = DBLE(SWV)
+      SWV_avail = SWV
 
       !CALL ArrayHandler(CELLS, CONTROL, SOILPROP, SWV, "SWV", 0.0, 0.5)
 
@@ -370,6 +341,7 @@
       TRWUP = 0.0
       LatFlow_ts = 0.0
       LatFlow = 0.0
+      SumLatFlow = 0.0
 
       SWFAC  = 0.0
       TURFAC = 0.0
@@ -414,45 +386,16 @@
         CumFracRad(i) = CumFracRad(i-1) + WEATHER%RADHR(i) / SRAD_TOT
       ENDDO
 
-!     Update soil water today based on measured depth to water table
-      CALL WaterTable(DYNAMIC,           
-     &  SOILPROP, SW,                         !Input
-     &  ActWTD, LatInflow, LatOutflow,        !Output
-     &  MgmtWTD, SWDELTW, ThetaCap)           !Output
+!     Set new water table level for today. This redefines Limit_2D,
+!       the soil layer below which 1D saturated conditions exist.
+      CALL WaterTable_2D(DYNAMIC, 
+     &  CELLS, SOILPROP,                  !Input
+     &  SW, SWV,                          !Input/Output
+     &  ActWTD, LatInflow, LatOutflow,    !Output
+     &  MgmtWTD, LIMIT_2D)                !Output
 
-!     Convert the soil water flux due to water table into 2D variable 
-      CALL Interpolate2Cells_2D(
-     &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
-     &  SWVDeltW)                                         !Output
-
-!     The 2D model is not needed in the vicinity of the water table.
-!     Calculate the limits of the 2D model. 
-      IF (ActWTD > DS(NLAYR)) THEN
-!       Water table is below profile depth
-        LIMIT_2D = NRowsTot    
-      Else          
-!       Set LIMIT_2D to be the layer above ThetaCap = .9 * SAT
-        LIMIT_2D = NLAYR
-        DO i = NLAYR, 1, -1
-          IF ((ThetaCap(i) - DUL(i)) > (0.9 * (SAT(i) - DUL(i)))) then
-            LIMIT_2D = i - 1
-          ELSE 
-            EXIT
-          ENDIF
-        ENDDO
-      ENDIF 
-      LIMIT_2D = MAX(LIMIT_2D, 1)
-      BedDimension % LIMIT_2D = LIMIT_2D
-
-!     This resets the soil water once per day for the lateral inflow (outflow). Could do this on a time-step basis.
-!     After call WaterTable_2D to get theLIMIT_2D, set the soil water content below LIMIT_2D as ThetaCap
-      LIMIT_2D = BedDimension % LIMIT_2D
-      DO i = LIMIT_2D+1, NLAYR
-        DO j = 1, NColsTot
-          SWV_avail(i,j) = SWV_avail(i,j) + DBLE(SWVDELTW(i,j))
-        ENDDO
-      ENDDO
-      SWV_D= DBLE(SWV_avail)
+      SWV_avail = DBLE(SWV)
+      SWV_D= SWV_avail
 
 !     Compute daily runoff from furrows and water available for infiltration
 !       for each column in furrow.
@@ -797,9 +740,12 @@
           ENDDO
           Runoff_ts = RUNOFF * DayIncr
           Rain_ts = RAIN * DayIncr ! in mm
-          LatFlow_ts = (LatInflow - LatOutflow) * DayIncr
           IRR_ts = IRR_ts + StdIrrig * DayIncr
         ENDIF
+
+!       Update lateral flow time step
+        LatFlow_ts = (LatInflow - LatOutflow) * DayIncr  !mm
+        SumLatFlow = SumLatFlow + LatFlow_ts
 
 !       ===============================================================
 !       Estimate cumulative fraction of daily solar radiation that will 
@@ -1176,7 +1122,7 @@ C=====================================================================
 ! LIMIT_2D    Represents the lowest layer for which 2D modeling is done.
 ! mm_2_vf(Row,Col)  Conversion from mm[water] to volumetric fraction for each cell  
 !                     cm2[water]/cm3[soil]
-! MgmtWTD inputed fixed management water table depth. Counted from top to down
+! MgmtWTD     Managed water table depth, user input. Counted from top of bed or flat surface. 
 ! NDrpEvnt    Maximum # of dripper irrigation event entries per day 
 ! PORMIN      Minimum pore space required for supplying oxygen to roots for 
 !                optimal growth and function (cm3/cm3)
@@ -1492,3 +1438,82 @@ C=====================================================================
 !     END FUNCTION Kunsat
 !=======================================================================
 
+!=======================================================================
+!=======================================================================
+!     Subroutine WaterTable_2D is an interface to the more generic
+!       WaterTable subroutine which is used by both 1D and 2D models.
+!     This routine translates the 1D outputs of the WaterTable routine
+!       into 2D arrays and updates the soil water content for changes in 
+!       water table management at the beginning of the day.
+!-----------------------------------------------------------------------
+
+      Subroutine WaterTable_2D(DYNAMIC, 
+     &  CELLS, SOILPROP,                  !Input
+     &  SW, SWV,                          !Input/Output
+     &  ActWTD, LatInflow, LatOutflow,    !Output
+     &  MgmtWTD, LIMIT_2D)           !Output
+
+      USE CELLS_2D
+      Implicit none
+      EXTERNAL WaterTable
+
+      INTEGER, INTENT(IN) :: DYNAMIC
+      Type (CellType), INTENT(IN) :: Cells(MaxRows,MaxCols)
+      TYPE (SoilType), INTENT(IN) :: SOILPROP
+      REAL, DIMENSION(NL), INTENT(INOUT) :: SW
+      REAL, DIMENSION(MaxRows,MaxCols), INTENT(INOUT) :: SWV
+      REAL, INTENT(OUT) :: ActWTD, LatInflow, LatOutflow, MgmtWTD
+      INTEGER, INTENT(OUT) :: LIMIT_2D
+
+      REAL MaxDepth
+      REAL, DIMENSION(NL) :: SWDELTW, ThetaCap
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWVDeltW
+      INTEGER i,j
+
+!-----------------------------------------------------------------------
+      MaxDepth = SOILPROP % DS(SOILPROP % NLAYR)
+
+!     Water table initialization
+      CALL WaterTable(DYNAMIC,          
+     &  SOILPROP, SW,                         !Input
+     &  ActWTD, LatInflow, LatOutflow,        !Output
+     &  MgmtWTD, SWDELTW, ThetaCap)           !Output
+
+!     Convert the soil water flux due to water table into 2D variable 
+      CALL Interpolate2Cells_2D(
+     &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
+     &  SWVDeltW)                                         !Output
+
+!     Set SWV based on initial water table  
+      DO i = 1, SOILPROP % NLAYR
+          SW(i) = SW(i) + SWDELTW(i)
+        DO j = 1, NColsTot
+          SWV(i,j) = SWV(i,j) + SWVDeltW(i,j)
+        ENDDO
+      ENDDO
+
+!     The 2D model is not needed in the vicinity of the water table.
+!     Calculate the limits of the 2D model. 
+      IF (ActWTD > MaxDepth) THEN
+!       Water table is below profile depth
+        LIMIT_2D = NRowsTot    
+      Else          
+!       Set LIMIT_2D to be the layer above ThetaCap = .9 * SAT
+        LIMIT_2D = SOILPROP % NLAYR
+        DO i = SOILPROP % NLAYR, 1, -1
+          IF ((SW(i) - SOILPROP % DUL(i)) > 
+     &        (0.9 * (SOILPROP % SAT(i) - SOILPROP % DUL(i)))) then
+            LIMIT_2D = i - 1
+          ELSE 
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF 
+      LIMIT_2D = MAX(LIMIT_2D, 1)
+      BedDimension % LIMIT_2D = LIMIT_2D
+
+      Return
+      End Subroutine WaterTable_2D
+
+!=======================================================================
+!=======================================================================
