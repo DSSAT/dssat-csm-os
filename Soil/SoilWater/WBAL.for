@@ -15,7 +15,7 @@ C  08/20/2002 GH  Modified for Y2K
 !  Called by: WATBAL
 C=====================================================================
       SUBROUTINE Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
+     &    CRAIN, DLAYR, DRAIN, FLOODWAT, netLatFlow,
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
@@ -36,8 +36,8 @@ C=====================================================================
       REAL CEO, CEP, CES, CRAIN, EFFIRR
       REAL TDFC, TDFD
       REAL TDRAIN, TOTIR, TRUNOF, TSW, TSWINI
-      REAL LatInflow, LatOutflow
-      REAL CumLatInflow, CumLatOutflow
+      REAL netLatFlow
+      REAL CumNetLatFlow
       REAL WBALAN
 
 !     Temporary daily balance
@@ -108,8 +108,7 @@ C=====================================================================
       CUMWBAL = 0.0
       CUMRESWATADD = 0.0
       CUMMULEVAP = 0.0
-      CumLatInflow = 0.0
-      CumLatOutflow = 0.0
+      CumNetLatFlow = 0.0
 
 !     Open output file
       CALL GETLUN('SWBAL', LUNWBL)
@@ -177,8 +176,7 @@ C=====================================================================
         WBALAN = 
      &         + IRRAMT + RAIN                !Inflows
      &         + RESWATADD_T                  !Inflows
-!                LatOutflow is negative!
-     &         + LatInflow + LatOutflow       !Lateral flow
+     &         + netLatFlow   !Net lateral flow (could be negative)
      &         - MULCHEVAP                    !Outflows
      &         - DRAIN - RUNOFF - FRUNOFF     !Outflows
      &         - ES - EP - EF - (TDFD*10.)    !Outflows
@@ -206,7 +204,7 @@ C=====================================================================
      &    ,(TSW * 10.), FLOOD, SNOW, MULCHWAT         !State variables
      &    ,IRRAMT, RAIN                               !Inflows
      &    ,RESWATADD_T                                !Inflows
-     &    ,LatInflow+LatOutflow                       !Lateral flow
+     &    , netLatFlow                      !net lateral flow
      &    ,MULCHEVAP                                  !Outflows
 !!     &    ,INFILT                 !Exchange between flood and soil water
      &    ,DRAIN, RUNOFF, FRUNOFF, ES, EP, EF, TDFD*10. !Outflows
@@ -232,8 +230,7 @@ C=====================================================================
       
       CUMMULEVAP   = CUMMULEVAP + MULCHEVAP
       CUMRESWATADD = CUMRESWATADD + RESWATADD_T
-      CumLatInflow = CumLatInflow + LatInflow
-      CumLatOutflow = CumLatOutflow + LatOutflow
+      CumNetLatFlow = CumNetLatFlow + netLatFlow
 
 !***********************************************************************
 !***********************************************************************
@@ -261,7 +258,7 @@ C-----------------------------------------------------------------------
      &                   YR2, DY2, TSW*10, 
      &                   TOTEFFIRR,
      &                   CRAIN, CUMRESWATADD, 
-     &                   CumLatInflow+CumLatOutflow,
+     &                   CumNetLatFlow,
      &                   TDRAIN, TDFC*10., TRUNOF, CUMMULEVAP,
      &                   CES, CEP, CES+CEP, CEO
   400 FORMAT(
@@ -282,7 +279,7 @@ C-----------------------------------------------------------------------
 
       WBALAN = (TSWINI * 10.) - (TSW * 10.) !Change in water content
      &       + TOTEFFIRR + CRAIN + CUMRESWATADD           !Inflows
-     &       + CumLatInflow + CumLatOutflow               !Lateral flow
+     &       + CumNetLatFlow                  !Lateral flow
      &       - CUMMULEVAP                                 !Outflows
      &       - TDRAIN - TRUNOF - CES - CEP - (TDFC*10.)   !Outflows
 

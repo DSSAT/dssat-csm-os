@@ -106,7 +106,7 @@ C=======================================================================
       REAL TSW, TSWINI, WATAVL, WTDEP
 
       REAL, DIMENSION(NL) :: DLAYR, DLAYR_YEST, DS, DUL, LL  
-      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL, ThetaCap
+      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL
 
 !     Flood management variables:
       REAL FLOOD, INFILT, PUDPERC
@@ -129,7 +129,7 @@ C=======================================================================
 
 !     Water table variables:
       REAL ActWTD, MgmtWTD
-      REAL LatInflow, LatOutflow
+      REAL netLatFlow
       REAL, DIMENSION(NL) :: SWDELTW, SWDELTW_mm
 
 !     Transfer out 2D soil water variables for use in soil N routines.
@@ -181,6 +181,8 @@ C=======================================================================
       SNOW = 0.0
       CALL PUT('WATER','SNOW'  , SNOW)
 
+      Sim2D = CONTROL % Sim2D
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -203,8 +205,8 @@ C=======================================================================
 !     Initialize water table
       Call WaterTable(SEASINIT,  
      &  SOILPROP, SW,                                     !Input
-     &  ActWTD, LatInflow, LatOutflow,                    !Output
-     &  MgmtWTD, SWDELTW, ThetaCap)                       !Output
+     &  ActWTD, netLatFlow,                               !Output
+     &  MgmtWTD, SWDELTW)                                 !Output
 
 !     Use inital water table depth and capillary rise to set initial
 !       soil water content
@@ -244,15 +246,15 @@ C=======================================================================
       IF (ISWWAT == 'Y') THEN
 !       Water balance output initialization
         CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
+     &    CRAIN, DLAYR, DRAIN, FLOODWAT, netLatFlow,
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
 
 !       Call OPWBAL to write headers to output file
         CALL OPWBAL(CONTROL, ISWITCH, 
-     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
-     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    CRAIN, DLAYR, IRRAMT,                       !Input
+     &    netLatFlow, LL, NLAYR,                      !Input
      &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
      &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
 
@@ -308,9 +310,9 @@ C     Conflict with CERES-Wheat
 !     Maintain water table depth and calculate capillary rise
       IF (FLOOD < 1.E-6) THEN
         Call WaterTable(RATE,   
-     &    SOILPROP, SW,                                   !Input
-     &    ActWTD, LatInflow, LatOutflow,                  !Output
-     &  MgmtWTD, SWDELTW, ThetaCap)                       !Output
+     &    SOILPROP, SW,                                     !Input
+     &    ActWTD, netLatFlow,                               !Output
+     &    MgmtWTD, SWDELTW)                                 !Output
       ENDIF
 
 !     Set process rates to zero.
@@ -566,8 +568,8 @@ C-----------------------------------------------------------------------
       IF (ISWWAT .NE. 'Y') RETURN
 
       CALL OPWBAL(CONTROL, ISWITCH, 
-     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
-     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    CRAIN, DLAYR, IRRAMT,                       !Input
+     &    netLatFlow, LL, NLAYR,                      !Input
      &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
      &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
 
@@ -576,7 +578,7 @@ C-----------------------------------------------------------------------
 
 !     Water balance daily output 
       CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
+     &    CRAIN, DLAYR, DRAIN, FLOODWAT, netLatFlow,
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
@@ -596,8 +598,8 @@ C-----------------------------------------------------------------------
       IF (ISWWAT .NE. 'Y') RETURN
 
       CALL OPWBAL(CONTROL, ISWITCH, 
-     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
-     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    CRAIN, DLAYR, IRRAMT,                       !Input
+     &    netLatFlow, LL, NLAYR,                      !Input
      &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
      &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
 
@@ -606,7 +608,7 @@ C-----------------------------------------------------------------------
 
 !     Water balance seasonal output 
       CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, LatInflow, LatOutflow,
+     &    CRAIN, DLAYR, DRAIN, FLOODWAT, netLatFlow,
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)

@@ -13,13 +13,13 @@ C  Calls:         None
 C=======================================================================
 
       SUBROUTINE OPWBAL(CONTROL, ISWITCH, 
-     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
-     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    CRAIN, DLAYR, IRRAMT,                       !Input
+     &    netLatFlow, LL, NLAYR,                      !Input
      &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
      &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+      USE ModuleData
       USE FloodModule
       USE CsvOutput 
       USE Linklist
@@ -32,8 +32,8 @@ C=======================================================================
       TYPE (SwitchType)  , INTENT(IN) :: ISWITCH
       TYPE (SoilType)    , INTENT(IN) :: SoilProp
       INTEGER NLAYR
-      REAL, INTENT(IN) :: ActWTD, CRAIN, IRRAMT, 
-     &                    LatInflow, LatOutflow, 
+      REAL, INTENT(IN) :: CRAIN, IRRAMT, 
+     &                    netLatFlow,
      &                    RUNOFF, TDRAIN, TRUNOF
       REAL, DIMENSION(NL), INTENT(IN) :: DLAYR, LL, SW
 !     Optional inputs:
@@ -56,8 +56,9 @@ C=======================================================================
 
 !     Water table
       INTEGER NAVWB
+      REAL ActWTD, MgmtWTD, AdjWTD 
       REAL WaterTable
-      REAL CumLatInflow, CumLatOutflow
+      REAL CumNetLatFlow
       REAL AVWTD, AVMWTD
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
@@ -66,6 +67,10 @@ C=======================================================================
       REAL, DIMENSION(SUMNUM) :: VALUE
 
       CHARACTER*8, DIMENSION(NL) :: SW_txt, LayerText
+
+      CALL GET('MGMT','WATTAB', MgmtWTD)  !user input water table
+      CALL GET('MGMT','ADJWTD', AdjWTD)   !adjusted for raised bed ht
+      CALL GET('WATER','WTDEP', ActWTD)   !actual water table depth
 
 !-----------------------------------------------------------------------
       DAS     = CONTROL % DAS
@@ -141,8 +146,7 @@ C-----------------------------------------------------------------------
       AVWTD = 0.
       AVMWTD = 0.
       TOTIR = 0.
-      CumLatInflow = 0.
-      CumLatOutflow = 0.
+      CumnetLatFlow = 0.
 
       IF (IDETW == 'N' .OR. ISWWAT == 'N' .OR. IDETL == '0') THEN
         DOPRINT = .FALSE.
@@ -193,7 +197,7 @@ C-----------------------------------------------------------------------
           WRITE (NOUTDW,1120, ADVANCE='NO')
  1120     FORMAT('@YEAR DOY   DAS',
      &    '    SWTD    SWXD    ROFC    DRNC    PREC    IR#C',
-     &    '    IRRC   LATFC    DTWT',
+     &    '    IRRC   LATFC    DTWT   DTWTM',
      &    '    MWTD    TDFD    TDFC    ROFD    ROSD')
 
 !       print SW for all layers
@@ -222,26 +226,27 @@ C-----------------------------------------------------------------------
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
 !         New print format includes mulch, tiledrain and runoff info
           WRITE (NOUTDW,1300)YEAR,DOY,DAS, NINT(TSW), 
-     &    NINT(PESW*10.),0,0,0,0,
-     &      0, 0, NINT(WaterTable), 
+     &      NINT(PESW*10.),0,0,0,0,
+     &      0, 0, NINT(WaterTable), NINT(AdjWTD),
      &      MULCHWAT, 0.0, 0.0, 0.0, 0.0,
      &      (SW(L),L=1,NLAYR)
- 1300     FORMAT(1X,I4,1X,I3.3,1X,I5,9(1X,I7),  !was 10(1X,I7)
+ 1300     FORMAT(1X,I4,1X,I3.3,1X,I5,10(1X,I7), 
      &      F8.2,2F8.1,F8.2,
      &      F8.2,   !EXCS
      &      40(F8.3))
 
         END IF   ! VSH
          
-      IF (FMOPT == 'C') THEN
-         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
-         CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
-     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
-     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFDp*10., TDFCp*10.,
-     &RUNOFF, N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
+        IF (FMOPT == 'C') THEN
+          N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
+          CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &      CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, 
+     &      TRUNOF,TDRAIN, CRAIN, NAP, 
+     &      TOTIR, AVWTD, MULCHWAT, TDFDp*10., TDFCp*10.,
+     &      RUNOFF, N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
      
-         CALL LinklstSW(vCsvlineSW)
-      END IF     
+          CALL LinklstSW(vCsvlineSW)
+        END IF     
       ENDIF
 
 !***********************************************************************
@@ -257,9 +262,10 @@ C-----------------------------------------------------------------------
 C   Calculate average values as a function of the output interval
 C-----------------------------------------------------------------------
       IF (DOPRINT) THEN
-        IF (ActWTD > 1.E-6) THEN
+        IF (WaterTable > 1.E-6) THEN
           NAVWB  = NAVWB  + 1
           AVWTD  = AVWTD  + WaterTable
+          AVMWTD = AVMWTD + AdjWTD
         ENDIF
 
         IF (IRRAMT .GT. 1.E-4) THEN
@@ -275,8 +281,7 @@ C-----------------------------------------------------------------------
           PESW = 0.0
         ENDIF
 
-        CumLatInflow = CumLatInflow + LatInflow
-        CumLatOutflow = CumLatOutflow + LatOutflow
+        CumNetLatFlow = CumNetLatFlow + netLatFlow
 
 C-----------------------------------------------------------------------
 C  Generate output for file WATER.OUT
@@ -291,7 +296,7 @@ C-----------------------------------------------------------------------
             AVMWTD= AVMWTD / NAVWB
           ELSE
             AVWTD = WaterTable
-!           AVMWTD= MgmtWTD
+            AVMWTD= AdjWTD
           ENDIF
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
@@ -299,23 +304,24 @@ C-----------------------------------------------------------------------
             WRITE (NOUTDW,1300)YEAR,DOY,MOD(DAS,100000), NINT(TSW), 
      &        NINT(PESW*10),NINT(TRUNOF),NINT(TDRAIN),NINT(CRAIN),
      &        NAP, NINT(TOTIR),
-     &        NINT(CumLatInflow+CumLatOutflow), 
-     &        NINT(AVWTD),
+     &        NINT(CumNetLatFlow), 
+     &        NINT(AVWTD), NINT(AVMWTD),
      &        MULCHWAT, TDFDp*10., TDFCp*10., RUNOFF, EXCSp,
      &        (SW(L),L=1,NLAYR)
 
           END IF   ! VSH 
 
-!     VSH CSV output corresponding to SoilWat.OUT
-      IF (FMOPT == 'C') THEN
-         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
-         CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
-     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
-     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFDp*10., TDFCp*10.,
-     &RUNOFF, N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
+!         VSH CSV output corresponding to SoilWat.OUT
+          IF (FMOPT == 'C') THEN
+            N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
+            CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &        CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, 
+     &        TRUNOF,TDRAIN, CRAIN, NAP, TOTIR, 
+     &        AVWTD, MULCHWAT, TDFDp*10., TDFCp*10.,
+     &        RUNOFF, N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
      
-         CALL LinklstSW(vCsvlineSW)
-      END IF         
+            CALL LinklstSW(vCsvlineSW)
+          END IF         
       
           NAVWB = 0
           AVWTD = 0.
@@ -344,19 +350,19 @@ C-----------------------------------------------------------------------
             PESW = 0.0
           ENDIF
 
-!           Store Summary.out labels and values in arrays to send to
-!           OPSUM routines for printing.  Integers are temporarily 
-!           saved aS real numbers for placement in real array.
-            LABEL(1)  = 'PRCM'; VALUE(1)  = CRAIN
-            LABEL(2)  = 'ROCM'; VALUE(2)  = TRUNOF + TOTBUNDRO
-            LABEL(3)  = 'DRCM'; VALUE(3)  = TDRAIN
-            LABEL(4)  = 'SWXM'; VALUE(4)  = PESW*10.
+!         Store Summary.out labels and values in arrays to send to
+!         OPSUM routines for printing.  Integers are temporarily 
+!         saved aS real numbers for placement in real array.
+          LABEL(1)  = 'PRCM'; VALUE(1)  = CRAIN
+          LABEL(2)  = 'ROCM'; VALUE(2)  = TRUNOF + TOTBUNDRO
+          LABEL(3)  = 'DRCM'; VALUE(3)  = TDRAIN
+          LABEL(4)  = 'SWXM'; VALUE(4)  = PESW*10.
 
-            !Send labels and values to OPSUM
-            CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+          !Send labels and values to OPSUM
+          CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
-            !Close daily output files.
-            CLOSE (NOUTDW)
+          !Close daily output files.
+          CLOSE (NOUTDW)
         ENDIF
 !***********************************************************************
 !***********************************************************************
@@ -373,8 +379,8 @@ C-----------------------------------------------------------------------
 !     Interface needed for dummy arguments with OPWBAL
       INTERFACE 
         SUBROUTINE OPWBAL(CONTROL, ISWITCH, 
-     &    ActWTD, CRAIN, DLAYR, IRRAMT,               !Input
-     &    LatInflow, LatOutflow, LL, NLAYR,           !Input
+     &    CRAIN, DLAYR, IRRAMT,                       !Input
+     &    netLatFlow, LL, NLAYR,                      !Input
      &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF,       !Input
      &    FLOODWAT, MULCH, TDFC, TDFD, EXCS, WTDEP)   !Optional input
 
@@ -388,8 +394,8 @@ C-----------------------------------------------------------------------
           TYPE (SwitchType)  , INTENT(IN) :: ISWITCH
           TYPE (SoilType)    , INTENT(IN) :: SoilProp
           INTEGER NLAYR
-          REAL, INTENT(IN) :: ActWTD, CRAIN, IRRAMT, 
-     &                        LatInflow, LatOutflow, 
+          REAL, INTENT(IN) :: CRAIN, IRRAMT, 
+     &                        netLatFlow,
      &                        RUNOFF, TDRAIN, TRUNOF
           REAL, DIMENSION(NL), INTENT(IN) :: DLAYR, LL, SW
 !         Optional inputs:

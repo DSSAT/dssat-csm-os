@@ -17,7 +17,7 @@
 !=====================================================================
       SUBROUTINE Wbal_2D(CONTROL, ISWITCH, COUNT,
      &    CRAIN, DRAIN_2D, ES_DAY, 
-     &    IRRAMT, LatInflow, LatOutflow, RAIN, RUNOFF, 
+     &    IRRAMT, netLatFlow, RAIN, RUNOFF, 
      &    TDRAIN, TRUNOF, TSW)
 
 !     ------------------------------------------------------------------
@@ -32,7 +32,7 @@
       TYPE (SwitchType),  INTENT(IN) :: ISWITCH
       INTEGER, INTENT(IN) :: COUNT
       REAL, INTENT(IN) :: CRAIN, DRAIN_2D, IRRAMT, 
-     &  LatInflow, LatOutflow, RAIN, RUNOFF, TDRAIN, 
+     &  netLatFlow, RAIN, RUNOFF, TDRAIN, 
      &  TRUNOF, TSW
       DOUBLE PRECISION, INTENT(IN) :: ES_DAY
 
@@ -45,8 +45,8 @@
       REAL CEP, CES, ES, EP
       REAL CEO, EFFIRR 
       REAL TOTIR, TSWINI
-      REAL CumLatInflow, CumLatOutflow
-      REAL WBALAN, MgmtWTD, SolProfDrain
+      REAL CumNetLatFlow
+      REAL WBALAN, SolProfDrain, ActWTD, AdjWTD
       REAL CUMWBAL, TOTEFFIRR, TSWY
 
       LOGICAL FEXIST
@@ -66,7 +66,11 @@
       ISWWAT  = ISWITCH % ISWWAT
       MEINF   = ISWITCH % MEINF
 
-      CALL GET('MGMT','WATTAB',MgmtWTD)
+!     Today's actual water table depth
+      CALL GET('WATER','WTDEP',ActWTD)
+!     Managed water table depth adjusted for raised bed construction
+      CALL GET('MGMT','ADJWTD',AdjWTD) 
+!     Above LIMIT_2D is 2D unsaturated flow, below is saturated
       LIMIT_2D = BedDimension % LIMIT_2D
 
 !***********************************************************************
@@ -80,8 +84,7 @@
       TSWINI = TSW
       TSWY   = TSW
       CUMWBAL = 0.0
-      CumLatInflow = 0.0
-      CumLatOutflow = 0.0
+      CumNetLatFlow = 0.0
 
 !     Open output file
       CALL GETLUN('SWBAL', LUNWBL)
@@ -106,7 +109,11 @@
      & '     DRND     ROFD     ESAD     EPAD', !Outflows
      & '     WBAL    CUMWBAL',                 !Balance
      & '    COUNT         ES     ES_DAY',      !Extras
-     & ' LIMIT_2D   MgWTD')                        
+     & ' LIMIT_2D   DTWTM    DTWT')                        
+
+!       DTWT   Water table cm  Water table depth (cm)                                   .
+!       DTWTM  Mgmt wat table  Managed water table depth (user input) (cm)              .
+
 
         CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
         WRITE (LUNWBL,1300) YEAR, DOY, DAS, 
@@ -115,7 +122,7 @@
      &    0.0, 0.0, 0.0, 0.0,               !Outflows
      &    0.0, 0.0,                         !Balance
      &    COUNT, 0.0, 0.0,                  !Extras
-     &    LIMIT_2D, MgmtWTD                 !LIMIT_2D, WaterTableDepth
+     &    LIMIT_2D, AdjWTD, ActWTD          !LIMIT_2D, WaterTableDepth
       ENDIF
 
 !***********************************************************************
@@ -146,8 +153,7 @@
 
         WBALAN = 
      &         + IRRAMT + RAIN                !Inflows
-!                LatOutflow is negative!
-     &         + LatInflow + LatOutflow       !Lateral flow
+     &         + netLatFlow   !Net lateral flow (could be negative)
      &         - SolProfDrain - RUNOFF        !Outflows
      &         - ES - EP                      !Outflows
      &         - (TSW - TSWY)                 !Change in soil water 
@@ -155,28 +161,26 @@
         CUMWBAL = CUMWBAL + WBALAN
 
         WRITE (LUNWBL,1300) YEAR, DOY, DAS
-     &    , TSW                                       !State variables
-   
-     &    , IRRAMT, RAIN                              !Inflows
-     &    ,LatInflow+LatOutflow                       !Lateral flow
-     &    , SolProfDrain, RUNOFF, ES, EP            !Outflows
-     &    , WBALAN, CUMWBAL                           !Balance
+     &    , TSW                             !State variables
+     &    , IRRAMT, RAIN                    !Inflows
+     &    , netLatFlow                      !net lateral flow
+     &    , SolProfDrain, RUNOFF, ES, EP    !Outflows
+     &    , WBALAN, CUMWBAL                 !Balance
      &    , COUNT, ES, ES_DAY
-     &    , LIMIT_2D, MgmtWTD
+     &    , LIMIT_2D, AdjWTD, ActWTD
  1300   FORMAT(1X,I4,1X,I3.3,1X,I5
      &    , F10.4       !TSW
      &    , 2F9.4       !Inflows
      &    , 5F9.4       !Outflows
      &    , F9.4, F11.4 !Balances
      &    , I9, 2F11.4  !COUNT, ES, ES_DAY
-     &    , 5X, I3, 1X, F8.1)    !LIMIT_2D, MgmtWTD
+     &    , 5X, I3, 1X, 2F8.1)    !LIMIT_2D, MgmtWTD
 
         !Save values for comparison tomorrow
         TSWY   = TSW
       ENDIF
       
-      CumLatInflow = CumLatInflow + LatInflow
-      CumLatOutflow = CumLatOutflow + LatOutflow
+      CumNetLatFlow = CumNetLatFlow + netLatFlow
 
 !***********************************************************************
 !***********************************************************************
@@ -205,7 +209,7 @@ C-----------------------------------------------------------------------
      &                   YR2, DY2, TSW, 
      &                   TOTEFFIRR,
      &                   CRAIN, 
-     &                   CumLatInflow+CumLatOutflow,
+     &                   CumNetLatFlow,
      &                   TDRAIN, TRUNOF,
      &                   CES, CEP, CES+CEP, CEO
   400 FORMAT(
@@ -223,7 +227,7 @@ C-----------------------------------------------------------------------
 
       WBALAN = TSWINI - TSW    !Change in water content
      &       + TOTEFFIRR + CRAIN +            !Inflows
-     &       + CumLatInflow + CumLatOutflow   !Lateral flow
+     &       + CumNetLatFlow                  !Lateral flow
      &       - TDRAIN - TRUNOF - CES - CEP    !Outflows
 
       WRITE  (LUNWBL,500) WBALAN

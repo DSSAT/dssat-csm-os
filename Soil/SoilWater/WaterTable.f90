@@ -14,8 +14,8 @@
 
   Subroutine WaterTable(DYNAMIC,      &
     SOILPROP, SW,                     &   !Input
-    ActWTD, LatInflow, LatOutflow,    &   !Output
-    MgmtWTD, SWDELTW, ThetaCap)           !Output
+    ActWTD, netLatFlow,               &   !Output
+    MgmtWTD, SWDELTW)                     !Output
 
 !-----------------------------------------------------------------------
     USE Cells_2D
@@ -29,14 +29,14 @@
     TYPE(SoilType)     , INTENT(IN) :: SOILPROP
     REAL, DIMENSION(NL), INTENT(IN) :: SW
     REAL               , INTENT(OUT):: ActWTD, MgmtWTD
-    REAL               , INTENT(OUT):: LatInflow, LatOutflow
-    REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW, ThetaCap
+    REAL               , INTENT(OUT):: netLatFlow
+    REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
 
 !   Local
     INTEGER L, NLAYR
-    REAL Bottom, Top, Thick, TargetWTD, AdjustWTD
-    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR
-    REAL, DIMENSION(NL) :: SW_temp, DeltaSW
+    REAL Bottom, Top, Thick, TargetWTD, BedAdjust, MinWTD, AdjWTD
+    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR, ThetaCap
+    REAL, DIMENSION(NL) :: SW_temp
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
@@ -46,8 +46,7 @@
 
 !***********************************************************************
 !***********************************************************************
-    LatInflow  = 0.0
-    LatOutflow = 0.0
+    netLatFlow = 0.0
     SWDELTW    = 0.0
     SW_temp    = SW
 
@@ -72,21 +71,25 @@
 !   Assumptions:
 !   - Recorded water table depths are relative to the soil surface prior to making a raised bed.
 !   - The difference between the surface of the bed and the original surface is BEDHT - DIGDEP
-    IF (BedDimension % RaisedBed) THEN
-      AdjustWTD = BedDimension % BedHt - BedDimension % DigDep
+    IF (Sim2D .AND. BedDimension % RaisedBed) THEN
+      BedAdjust = BedDimension % BedHt - BedDimension % DigDep
+!     for 2D, raised bed systems, limit water table to below the bed for now.
+!     We might want to allow this later, but would require handling a flooded furrow.
+      MinWTD    = BedDimension % BedHt
     ELSE
-      AdjustWTD = 0.0
+      BedAdjust = 0.0
+      MinWTD    = 0.0
     ENDIF
 
 !   Negative or zero value means no managed water table
     IF (MgmtWTD < 1.E-6) THEN
       MgmtWTD = 10000.
-      AdjustWTD = 0.0
+      BedAdjust = 0.0
     ENDIF
 
-    MgmtWTD = MgmtWTD + AdjustWTD
-    ActWTD    = MgmtWTD
-    TargetWTD = MgmtWTD
+    AdjWTD = MAX(MgmtWTD + BedAdjust, MinWTD)
+    ActWTD    = AdjWTD
+    TargetWTD = AdjWTD
 
 !   Actual water table depth will equal either the managed water table depth or
 !     the target water table depth. When user water table depth records change
@@ -94,9 +97,10 @@
 !     water table depth to reach the managed depth. The target depth allows a slow 
 !     transition from one managed depth to another. 
     CALL PUT('WATER','WTDEP' ,ActWTD)  !Actual current water table depth
-    CALL PUT('MGMT' ,'WATTAB',MgmtWTD) !Managed water table depth (i.e., user records)
+!   Managed water table depth (i.e., user records) adjusted for bed construction
+    CALL PUT('MGMT' ,'ADJWTD',AdjWTD)  
 
-    IF (MgmtWTD < DS(NLAYR)) THEN
+    IF (AdjWTD < DS(NLAYR)) THEN
 !     Initialize soil water content with water table depth, starting at bottom of profile
       DO L = NLAYR, 1, -1
         IF (L == 1) THEN 
@@ -105,14 +109,14 @@
           Top = DS(L-1)
         ENDIF
         Bottom = DS(L)
-        IF (MgmtWTD > Bottom) THEN
+        IF (AdjWTD > Bottom) THEN
 !         This layer is entirely above the managed water table; done.
 !         Leave water content as read from initial conditions.
           EXIT
-        ELSEIF (MgmtWTD > Top) THEN
+        ELSEIF (AdjWTD > Top) THEN
 !         This layer is partially in managed water table.  
 !         Assume saturated water content below water table, DUL above.
-          Thick = Bottom - MgmtWTD
+          Thick = Bottom - AdjWTD
           SW_TEMP(L) = (SAT(L) * Thick + DUL(L) * (DLAYR(L) - Thick)) / DLAYR(L)
           SW_TEMP(L) = MAX(SW_TEMP(L), SW(L))
         ELSE
@@ -128,25 +132,34 @@
 !***********************************************************************
   ELSEIF (DYNAMIC .EQ. RATE) THEN
 
-!   Get management depth to water table
+!   Get management depth to water table (user input)
     CALL GET('MGMT','WATTAB',MgmtWTD)
-    MgmtWTD = MgmtWTD + AdjustWTD
 
-    IF (MgmtWTD > DS(NLayr) .AND. ActWTD > DS(NLayr)) THEN
+!   Adjust depth to water table for bed height contruction
+!   i.e., measure from top of bed instead of original ground level
+    IF (MgmtWTD > 0 .AND. MgmtWTD < 9999.) THEN
+      AdjWTD = MAX(MgmtWTD + BedAdjust, MinWTD)
+    ELSE
+       AdjWTD = 10000.
+    ENDIF
+     
+    CALL PUT('MGMT','ADJWTD',AdjWTD)
+
+    IF (AdjWTD > DS(NLayr) .AND. ActWTD > DS(NLayr)) THEN
       RETURN
     ENDIF
 
 !-----------------------------------------------------------------------
-!   Compute lateral flow to maintain managed water table depth
+!   Compute updated soil water content with today's water table depth
 !   Use tolerance in cm to get target water table depth close to management 
 !   depth.  If the exact management depth is used, instabilities occur due
 !   to soil water changes with other simultaneous processes.
 
-!   Actual water table lower than management.  Lateral Inflow calculations
-    IF (ActWTD - MgmtWTD > TOL) THEN
+!   Actual water table lower than management. Water table has been raised.
+    IF (ActWTD - AdjWTD > TOL) THEN
 
 !     initial guess at today's water table depth
-      TargetWTD = (ActWTD - MgmtWTD) * Kd + MgmtWTD
+      TargetWTD = (ActWTD - AdjWTD) * Kd + AdjWTD
 
 !     Water content below the target water table will be set to SAT. 
 !     Calculate lateral inflow needed to raise water table to target depth
@@ -167,17 +180,22 @@
 !         This layer is entirely within target water table.
           Thick = DLAYR(L)
         ENDIF 
-        SWDELTW(L) = MAX(0.0,(SAT(L) - SW(L)) * Thick / DLAYR(L))
-        LatInflow = LatInflow + SWDELTW(L) * DLAYR(L) * 10. !mm
+
+!       Set water content below the water table depth to SAT
+        IF (SW(L) < SAT(L)) THEN
+          SWDELTW(L) = (SAT(L) - SW(L)) * Thick / DLAYR(L)
+        ELSE
+          SWDELTW(L) = 0.0
+        ENDIF
       ENDDO
 
 !-------------------------------------------------------------------------
 !   Actual water table higher than management - drawdown using Kd
-    ELSEIF (MgmtWTD - ActWTD > TOL .AND. MgmtWTD < 9999.) THEN
+    ELSEIF (AdjWTD - ActWTD > TOL .AND. AdjWTD < 9999.) THEN
 !     Calculate lateral outflow needed to draw water table down to specified depth
 
 !     initial guess at today's water table depth
-      TargetWTD = (ActWTD - MgmtWTD) * Kd + MgmtWTD
+      TargetWTD = (ActWTD - AdjWTD) * Kd + AdjWTD
 
 !     Water content above the target water table will be set to DUL. 
 !       The capillary rise routine will then reset theta values 
@@ -193,24 +211,28 @@
         Bottom = DS(L)
         IF (TargetWTD > Bottom) THEN
 !         This layer is entirely above the target water table. Set the 
-!           water content to DUL in the entire layer.
+!           water content to DUL or below in the entire layer.
           Thick = DLAYR(L)
         ELSEIF (TargetWTD > Top) THEN
 !         This layer is partially in target water table. The top portion
-!           of the layer (above the TargetWTD) is set to DUL.
+!           of the layer (above the TargetWTD) is set to DUL (or below).
           Thick = TargetWTD - Top
         ELSE
 !         This layer is entirely within target water table. Do nothing 
 !           because it was in the water table yesterday, too.
           EXIT
         ENDIF 
-        SWDELTW(L) = MAX(0.0,-(SW(L) - DUL(L)) * Thick / DLAYR(L))
-!       Lateral outflow values are negative (so are SWDELTW here)
-        LatOutflow = LatOutflow + SWDELTW(L) * DLAYR(L) * 10. !mm 
+
+!       Set water content that is now above the water table depth to DUL
+        IF (SW(L) > DUL(L)) THEN
+          SWDELTW(L) = -(SW(L) - DUL(L)) * Thick / DLAYR(L)
+        ELSE
+          SWDELTW(L) = 0.0
+        ENDIF
       ENDDO
 
     ELSE
-      TargetWTD = MgmtWTD
+      TargetWTD = AdjWTD
     ENDIF 
 
     ActWTD = TargetWTD
@@ -234,30 +256,24 @@
 !   water table depth based on water table and drawdown dynamics, but
 !   previous attempts resulted in instability for daily model.
 
-!   No effect of water table if it is below the bottom of the soil profile.
     IF (ActWTD .GE. DS(NLAYR)) THEN
-      RETURN
-
+!     No effect of water table if it is below the bottom of the soil profile.
+      ThetaCap = SOILPROP % WCR
     ELSE
 !     Calculate water content within capillary fringe, ThetaCap
       CALL CapFringe(           &
         ActWTD,  SOILPROP,      &   !Input
         ThetaCap)                   !Output
-
-!     Update temporary soil water content with ThetaCap
-      DO L = 1, NLAYR
-!       ThetaCap(L) = MAX(SW_TEMP(L), ThetaCap(L))
-        DeltaSW(L) = MAX(0.0, ThetaCap(L) - SW_TEMP(L))
-        SW_TEMP(L) = SW_TEMP(L) + DeltaSW(L)
-        LatInflow = LatInflow + (SW_TEMP(L) - SW(L)) * DLAYR(L) * 10.
-      ENDDO
-      
-!     Flux in soil water content due to changes in water table and capillary flow
-      DO L = 1, NLAYR
-        SWDELTW(L) = SW_TEMP(L) - SW(L)
-      ENDDO
     ENDIF
 
+!   Update temporary soil water content with ThetaCap
+    DO L = 1, NLAYR
+      SW_TEMP(L) = MAX(SW_TEMP(L), ThetaCap(L))
+      SWDELTW(L) = SW_TEMP(L) - SW(L)
+!     net lateral flow (+ inflow, - outflow)
+      netLatFlow = netLatFlow + SWDELTW(L) * DLAYR(L) * 10.
+    ENDDO
+    
 !-----------------------------------------------------------------------
     RETURN
     End Subroutine WaterTable
@@ -268,6 +284,7 @@
 !          if there has been rainfall. ActWTD is calculated from soil water content  
 !          at the end of the day (cm)
 ! MgmtWTD  User input managed water table depth below surface (cm)
+! AdjWTD   Adjusted water table depth = MgmtWTD + adustment factor based on bed geometry
 ! ThetaCap An array of volumetric soil water contents at the midpoint of each soil layer.
 !          Calculated from the water characteristic curve at the height above the
 !          water table. 
