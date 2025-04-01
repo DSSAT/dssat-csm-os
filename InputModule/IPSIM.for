@@ -1090,7 +1090,7 @@ C-----------------------------------------------------------------------
 !=======================================================================
 !  External_SimControls, Subroutine
 !
-!  Reads default simulation controls file. These values override the 
+!  Reads external simulation controls file. These values override the 
 !     values in the FileX simulation controls.
 !-----------------------------------------------------------------------
 !  Revision history
@@ -1245,15 +1245,16 @@ C-----------------------------------------------------------------------
         NMSG = 5
 
 !       Initialize override values
-        NYRS    = -99
-        NREPSQ  = -99
+        NYRS    = CONTROL % NYRS
+        NREPSQ  = 1
         ISIMI   = ' '
-        YRSIM   = -99
-        RSEED1  = -99
+        YRSIM   = CONTROL % YRSIM
+        RSEED1  = 2150
+
 
         ISWWAT  = ' '
         ISWNIT  = ' '
-        NSWITCH = -99
+        NSWITCH = ISWITCH % NSWI
         ISWSYM  = ' '
         ISWPHO  = ' '
         ISWPOT  = ' '
@@ -1269,7 +1270,6 @@ C-----------------------------------------------------------------------
         MEINF   = ' '
         MEPHO   = ' '
         MEHYD   = ' '
-        NSWITCH = -99
         MESOM   = ' '
         METMP   = ' '
         MEGHG   = ' '
@@ -1281,7 +1281,7 @@ C-----------------------------------------------------------------------
         IRESI   = ' '
         IHARI   = ' '
         IOX     = ' '
-        FROP    = -99
+        FROP    = CONTROL % FROP
         IDETO   = ' '
         IDETS   = ' '
         IDETG   = ' '
@@ -1333,22 +1333,25 @@ C-----------------------------------------------------------------------
 !  55       FORMAT (14X,2(1X,I5),5X,A1,1X,I5,1X,I5,1X,A25,1X,A8)
 
             READ (CHARTEST,'(15X,I5)',IOSTAT=ERRNUM) NYRS
-            CALL CHECK_I('NYRS', NYRS, ERRNUM, MSG, NMSG)
+            CALL CHECK_I('NYRS', NYRS, ERRNUM, MSG, NMSG, CONTROL%NYRS)
 
             READ (CHARTEST,'(21X,I5)',IOSTAT=ERRNUM) NREPSQ
-            CALL CHECK_I('NREPSQ', NREPSQ, ERRNUM, MSG, NMSG)
+            CALL CHECK_I('NREPSQ', NREPSQ, ERRNUM, MSG, NMSG, 1)
 
             READ (CHARTEST,'(31X,A1)',IOSTAT=ERRNUM) ISIMI
             CALL CHECK_A('ISIMI', ISIMI, ERRNUM, MSG, NMSG)
 
             READ (CHARTEST,'(33X,I5)',IOSTAT=ERRNUM) YRSIM
-            IF (YRSIM == -99) YRSIM = '.'
-            CALL CHECK_I('YRSIM', YRSIM, ERRNUM, MSG, NMSG)
-            IF (ERRNUM == 0) THEN
+            IF (YRSIM == -99) THEN
+              YRSIM = CONTROL % YRSIM
+            ELSE
+              CALL CHECK_I('YRSIM',YRSIM,ERRNUM,MSG,NMSG,CONTROL%YRSIM)
+              IF (ERRNUM == 0) THEN
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
-              !CALL Y2K_DOY (YRSIM)
-              CALL Y4K_DOY (YRSIM,FILEX,LINEXP,ERRKEY,1)
-              CALL YR_DOY (YRSIM,YEAR,ISIM)
+                !CALL Y2K_DOY (YRSIM)
+                CALL Y4K_DOY (YRSIM,FILEX,LINEXP,ERRKEY,1)
+                CALL YR_DOY (YRSIM,YEAR,ISIM)
+              ENDIF
             ENDIF
 
 !            READ (CHARTEST,'(39X,I5)',IOSTAT=ERRNUM) RSEED1
@@ -1439,7 +1442,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             CALL CHECK_A('MEHYD', MEHYD, ERRNUM, MSG, NMSG)
 
             READ (CHARTEST,'(61X,I1)',IOSTAT=ERRNUM) NSWITCH
-            CALL CHECK_I('NSWITCH', NSWITCH, ERRNUM, MSG, NMSG)
+            CALL CHECK_I('NSWITCH',NSWITCH,ERRNUM,MSG,NMSG,ISWITCH%NSWI)
 
             READ (CHARTEST,'(67X,A1)',IOSTAT=ERRNUM) MESOM
             CALL CHECK_A('MESOM', MESOM, ERRNUM, MSG, NMSG)
@@ -1522,7 +1525,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             CALL CHECK_A('IDETS', IDETS, ERRNUM, MSG, NMSG)
 
             READ (CHARTEST,'(35X,I3)',IOSTAT=ERRNUM) FROP
-            CALL CHECK_I('FROP', FROP, ERRNUM, MSG, NMSG)
+            CALL CHECK_I('FROP', FROP, ERRNUM, MSG, NMSG, CONTROL%FROP)
 
             READ (CHARTEST,'(43X,A1)',IOSTAT=ERRNUM) IDETG
             CALL CHECK_A('IDETG', IDETG, ERRNUM, MSG, NMSG)
@@ -1671,18 +1674,19 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 
 !=======================================================================
 
-      SUBROUTINE CHECK_I(LABEL, VALUE, ERRNUM, MSG, NMSG)
+      SUBROUTINE CHECK_I(LABEL, VALUE, ERRNUM, MSG, NMSG, FILEX_VALUE)
       IMPLICIT NONE
       EXTERNAL MSG_TEXT
 
-      INTEGER VALUE
+      INTEGER VALUE, FILEX_VALUE
       CHARACTER*(*) LABEL
       CHARACTER*30 MSG_TEXT
       CHARACTER*78 MSG(50)
       INTEGER ERRNUM, NMSG
 
       IF (ERRNUM /= 0)  THEN
-        VALUE = -99
+        VALUE = FILEX_VALUE
+        RETURN
       ENDIF
 
       IF (VALUE > 0) THEN
@@ -1695,7 +1699,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &      MSG_TEXT(LABEL)  
         ENDIF
       ELSE
-        VALUE = -99
+        VALUE = FILEX_VALUE
       ENDIF
 
       RETURN
