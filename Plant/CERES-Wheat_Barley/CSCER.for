@@ -212,7 +212,7 @@
 
 
         INTEGER ACOUNT
-        CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP !OLAP in dap
+        CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB
         CHARACTER*40 DESCRIP(EvaluateNum)    
         
         
@@ -256,7 +256,8 @@
      &    'SPDAT ',
      &    'JDAT  ',
      &    'GS059 ',
-     &    6*'    '/
+     &    'BWAM  ',
+     &    5*'    '/
 
       YEARDOY = YEAR*1000 + DOY
 

@@ -607,6 +607,9 @@ Soil input section not found.  Please correct file.
 IPSOIL   29
 File not found.  Please check soil profile name or create file.
 
+IPSOIL   98
+Tab detected in the soil profile. Please correct input file.
+
 IPTILL    2
 Tillage input level not found. Please correct input file.
 
@@ -696,6 +699,9 @@ File not found.  Please check file name or create file.
 
 IPWTH    30
 Error opening file.
+
+IPWTH    98
+Tab detected in the weather file. Please correct input file.
 
 IPASCE    1
 Error reading species parameters for evapotranspiration.

@@ -282,6 +282,163 @@ C       TO READ THE NEXT LINE
       END SUBROUTINE IGNORE2
 
 C=======================================================================
+C  IGNORE3, Subroutine, Thiago B. Ferreira 01/06/2025
+C----------------------------------------------------------------------------
+C  PURPOSE: To read lines as an n-character variable and check it
+C           for a blank line or for a comment line denoted by ! in col 1.
+C           Also check for second tier of data as notated by @ in the first
+C           column and check the exisance of tabs in files.
+C----------------------------------------------------------------------------
+! Revision history
+! 06/01/2025 TF Created new function based on IGNORE2 to detect TABs  
+!               in the first character of an input lines.
+! 07/01/2025 TF Updated the code with a DO LOOP to loop throughtout the line
+!               and check for TABs
+C----------------------------------------------------------------------------
+C INPUTS:  LUN - Logical unit number of the file to be read
+C          LINEXP - Starting line number at which this routine begins to
+C                   read the file
+C OUTPUTS: LINEXP - Line number last read by the routine
+C          ISECT - Indicator of completion of IGNORE3 routine
+C                  0 - End of file encountered
+C                  1 - Found a good line to read
+C                  2 - End of Section in file encountered ("*") found
+C                  3 - Second tier headers found ("@" found)
+C                  4 - TAB ("	") found.
+C          CHARTEST - 80-character variable containing the contents of
+C                     the last line read by the IGNORE3 routine
+C=======================================================================
+      SUBROUTINE IGNORE3(LUN,LINEXP,ISECT,CHARTEST)
+      CHARACTER CHARTEST*(*), TAB
+      INTEGER LUN,LINEXP,ISECT, Length, I
+!     CHARACTER BLANK*80
+!     DATA BLANK/'                                                    '/
+C----------------------------------------------------------------------------
+      TAB = "	"
+      ISECT = 1
+ 30   READ(LUN,'(A)',ERR=70,END=70)CHARTEST
+      LINEXP = LINEXP + 1
+C     CHECK TO SEE IF ALL OF THIS SECTION HAS BEEN READ
+
+      IF(CHARTEST(1:1) .EQ. '*' )THEN
+C       INTERMEDIATE HEADER FOUND.  
+        ISECT = 2
+!        GOTO 30
+        RETURN
+      ENDIF
+
+      IF(CHARTEST(1:1) .EQ.'@') THEN
+C       NEXT TIER ENCOUNTERED
+        ISECT = 3
+        RETURN
+      ENDIF
+
+C     CHECK FOR BLANK LINES AND COMMENTS (DENOTED BY ! IN COLUMN 1)
+      IF(CHARTEST(1:1).NE.'!' .AND. CHARTEST(1:1).NE.'@') THEN
+C       IF(CHARTEST.NE.BLANK)THEN
+        Length = Len_Trim(CHARTEST)
+
+C     TF (01/07/2025) - Reads each character in the line and
+C     check if there are any TABs      
+       IF(CHARTEST(1:1) .EQ. TAB) THEN
+         ISECT = 4
+         RETURN
+       ENDIF
+
+C      DO I = 1, LEN(CHARTEST)
+C        IF(CHARTEST(I:I) .EQ. TAB) THEN
+C          ISECT = 4
+C          RETURN
+C        ENDIF
+C      ENDDO
+
+        IF (Length > 0) THEN
+C         FOUND A GOOD LINE TO READ
+          RETURN
+        ENDIF
+      ENDIF
+
+      GO TO 30
+C       TO READ THE NEXT LINE
+ 70   ISECT = 0
+
+      RETURN
+      END SUBROUTINE IGNORE3
+
+C=======================================================================
+C  IGNORE4, Subroutine, Thiago B. Ferreira 01/08/2025
+C----------------------------------------------------------------------------
+C  PURPOSE: To read lines as an n-character variable and check it
+C           for a blank line or for a comment line denoted by ! in col 1.
+C  INPUTS:  LUN - Logical unit number of the file to be read
+C           LINEXP - Starting line number at which this routine begins to
+C                    read the file
+C  OUTPUTS: LINEXP - Line number last read by the routine
+C           ISECT - Indicator of completion of IGNORE routine
+C                   0 - End of file encountered
+C                   1 - Found a good line to read
+C                   2 - End of Section in file encountered, denoted by *
+C                       in column 1
+C                   4 - TAB ("	") found.
+C           CHARTEST - n-character variable containing the contents of
+C                      the last line read by the IGNORE routine
+C----------------------------------------------------------------------------
+C
+      SUBROUTINE IGNORE4(LUN,LINEXP,ISECT,CHARTEST)
+
+      CHARACTER BLANK*(80),CHARTEST*(*), TAB
+      INTEGER   LENGTH, LUN,LINEXP,ISECT, I
+      DATA BLANK/'                                                    '/
+
+      LENGTH = LEN(CHARTEST)
+      TAB = "	"
+      ISECT = 1
+ 30   READ(LUN,'(A)',ERR=70, END=70)CHARTEST
+      LINEXP = LINEXP + 1
+
+!     CHP 5/1/08
+      IF (CHARTEST(1:1) == CHAR(26)) THEN
+        GO TO 70
+      ENDIF
+
+C     Check to see if all of this section has been read
+      IF(CHARTEST(1:1) .EQ. '*'  .OR. CHARTEST(1:1) .EQ. '$') THEN
+C        End of section encountered
+         ISECT = 2
+         RETURN
+      ENDIF
+
+C     TF (01/07/2025) - Reads each character in the line and
+C     check if there are any TABs      
+       IF(CHARTEST(1:1) .EQ. TAB) THEN
+         ISECT = 4
+         RETURN
+       ENDIF
+
+C      DO I = 1, LEN(CHARTEST)
+C        IF(CHARTEST(I:I) .EQ. TAB) THEN
+C          ISECT = 45
+C          RETURN
+C        ENDIF
+C      ENDDO      
+
+C
+C     Check for blank lines and comments (denoted by ! in column 1)
+      IF(CHARTEST(1:1).NE.'!' .AND. CHARTEST(1:1).NE.'@') THEN
+!         IF(CHARTEST(1:80).NE.BLANK)THEN
+         IF(CHARTEST(1:LENGTH).NE.BLANK)THEN
+C           FOUND A GOOD LINE TO READ
+            RETURN
+         ENDIF
+      ENDIF
+
+      GO TO 30
+C     To read the next line
+
+ 70   ISECT = 0
+      RETURN
+      END SUBROUTINE IGNORE4
+C=======================================================================
 C  HFIND, Subroutine  GPF 7/95
 C  Finds appropriate HEADER in a file of logical unit number LUNUM
 C  by searching for a 5-character NAME following the '@' at the

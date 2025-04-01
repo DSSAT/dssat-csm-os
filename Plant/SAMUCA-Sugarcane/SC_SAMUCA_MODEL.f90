@@ -21,7 +21,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !---------- Agronomic Modular Simulator for Sugarcane (SAMUCA) -----------
     !-------------------------------------------------------------------------
     !  Written in Microsoft Visual Studio FORTRAN              
-	!  
+    !  
     !  1st Version:
     !  Author: FABIO R. MARIN (2014)
     !  Scientific base - dx.doi.org/10.1590/S0103-90162014000100001
@@ -33,7 +33,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !  Source Code     - murilodsv@bitbucket.org/murilodsv/samuca.git
     !
     !  Dev. History:
-	!  Edited in: Sep-2015 by Murilo dos S. Vianna  -> Model Review and Assessment
+    !  Edited in: Sep-2015 by Murilo dos S. Vianna  -> Model Review and Assessment
     !  Edited in: Feb-2016 by Murilo dos S. Vianna  -> Coupled to SWAP: https://scisoc.confex.com/crops/2017am/webprogram/Paper105395.html
     !  Edited in: Dec-2017 by Murilo dos S. Vianna  -> New Version Including Layered Photosynthesis, Source-Sink at Phytomer Level, Tillering: https://www.teses.usp.br/teses/disponiveis/11/11152/tde-01082018-150704/pt-br.php
     !  Edited in: Aug-2019 by Murilo dos S. Vianna  -> Refined and tested New Version with standalone platform: https://doi.org/10.1016/j.compag.2020.105361
@@ -47,45 +47,44 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     use SAM_ModuleDefs
     
     Implicit None
-    EXTERNAL DAYLEN, FGROWTH, FIND_INP_SAM, GET_CULTIVAR_COEFF, GET_SPECIES_COEFF, IT_STRUC_PFAC,     &
+    EXTERNAL DAYLEN, FIND_INP_SAM, GET_CULTIVAR_COEFF, GET_SPECIES_COEFF,     &
       PGS, ROOT_PROFILE, SC_OPGROW_SAM, SC_OPGROW_SAM_DETAILED, SC_OPHARV_SAM, SC_WATERSTRESS, SOLAR, &
-      SUBS_BALANCE, SUCROSE_CONTENT, TEMPERATURE_FACTOR, TILLER_SENES, TOTASS
-    save
+      SUBS_BALANCE, SUCROSE_CONTENT, TOTASS    
     
     integer     DYNAMIC         ! This is the dynamic call initialization, rate, integration (~task) (IN) 
     
-    integer 	YREND	        ! (IN)
-    integer 	YRPLT			! (IN)
+    integer     YREND           ! (IN)
+    integer     YRPLT           ! (IN)
     integer     STGDOY(20)      ! (IN)
-	integer 	MDATE			! (OUT)
-	real    	CO2             ! (IN)
-    real    	DAYL            ! (IN)
-    real    	EOP             ! (IN)
-!   real    	EP              ! (IN)
-!	real		EP1             ! (IN)
-	real		RWUEP1          ! (IN)
-	real		RWUEP2          ! (IN)
-!   real    	EO              ! (IN)
-!	real		EOS             ! (IN)
-!	real		ES              ! (IN)
-!   real    	HARVFRAC(2)     ! (IN)
-!   real    	NH4(NL)         ! (IN)
-!   real    	NO3(NL)         ! (IN)
-!   real    	SNOW            ! (IN)
-    real    	SRAD            ! (IN)    
-!   real    	SW(NL)          ! (IN)
-    real    	TMAX            ! (IN)
-    real    	TMIN            ! (IN)
-    real    	TRWUP           ! (IN)
-!   real    	TRWU            ! (IN)
-!   real    	TWILEN          ! (IN)
-!   real 		IRRAMT          ! (IN)	
-	real     	CANHT			! (OUT)
-    real     	KCAN            ! (OUT)
-    real     	KTRANS          ! (OUT)
-    real     	NSTRES			! (OUT)
-!   real     	PORMIN			! (OUT)
-    real     	RLV(NL)			! (OUT)	    
+    integer     MDATE           ! (OUT)
+    real        CO2             ! (IN)
+    real        DAYL            ! (IN)
+    real        EOP             ! (IN)
+!   real        EP              ! (IN)
+!   real        EP1             ! (IN)
+    real        RWUEP1          ! (IN)
+    real        RWUEP2          ! (IN)
+!   real        EO              ! (IN)
+!   real        EOS             ! (IN)
+!   real        ES              ! (IN)
+!   real        HARVFRAC(2)     ! (IN)
+!   real        NH4(NL)         ! (IN)
+!   real        NO3(NL)         ! (IN)
+!   real        SNOW            ! (IN)
+    real        SRAD            ! (IN)    
+!   real        SW(NL)          ! (IN)
+    real        TMAX            ! (IN)
+    real        TMIN            ! (IN)
+    real        TRWUP           ! (IN)
+!   real        TRWU            ! (IN)
+!   real        TWILEN          ! (IN)
+!   real        IRRAMT          ! (IN) 
+    real        CANHT           ! (OUT)
+    real        KCAN            ! (OUT)
+    real        KTRANS          ! (OUT)
+    real        NSTRES          ! (OUT)
+!   real        PORMIN          ! (OUT)
+    real        RLV(NL)         ! (OUT)     
     real        RWUMX           ! (OUT)
 !   real        UNH4(NL)        ! (OUT)
 !   real        UNO3(NL)        ! (OUT)
@@ -93,14 +92,12 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real        XHLAI           ! (OUT)
     
     !--- DSSAT composite variables:
-	TYPE (ControlType) CONTROL
-	TYPE (SoilType)    SOILPROP
-	TYPE (SwitchType)  ISWITCH
-!	Type (ResidueType) HARVRES 
-!	Type (ResidueType) SENESCE
-	Type (WeatherType) WEATHER
-    
-    
+    TYPE (ControlType) CONTROL
+    TYPE (SoilType)    SOILPROP
+    TYPE (SwitchType)  ISWITCH
+!   Type (ResidueType) HARVRES 
+    Type (ResidueType) SENESCE
+    Type (WeatherType) WEATHER
     
     !--- Local composite variables:
     type (CaneSamuca)   CaneCrop
@@ -111,577 +108,584 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !-----------------------------------------------------------!-------------------------------------------------------------------------------!
     ! Local Variables and Input Parameters                      ! Description                                                                   !
     !-----------------------------------------------------------!-------------------------------------------------------------------------------!
-    integer		task                                      		! Model task:           1 = initialization, 2 = step rate and integration of potential rates, 3 = step rate and integration of actual rates
-    integer     method_pop                                      ! Tillering Method:     1 = Cdays; 2 = Cdays + Light Transmission; 3 = Source-Sink
-    integer		nseason                                   		! Crop season counter
-    integer		atln                                      		! Absolute tiller number
-    integer		atln_now                                  		! Absolute tiller number at current timestep (storer)
-    integer		dn_lf_alive_dewlap                        		! Daily Rate for new leaves with dewlap
-    integer		maxdgl                                    		! Max number of developed green leaves on a stalk [parameter]
-    integer		maxgl                                     		! Max total number of green leaves on a stalk (maxgl > maxdgl) [parameter]
-    integer		n_it                                      		! Number of internodes at primary stalk
-    integer		n_it_ag                                   		! Number of internodes at primary stalk aboveground
-    integer		n_it_bg                                   		! Number of internodes at primary stalk belowground
-    integer		n_lf                                      		! Total number of leaves initiated at primary stalk
-    integer		n_lf_ag                                   		! Total number of leaves initiated at primary stalk when its aboveground
-    integer		n_lf_ag_dewlap                            		! Number of developed green leaves
-    integer		n_lf_alive                                		! Number of alive leaves
-    integer		n_lf_alive_ag                             		! Number of alive leaves at primary stalk initiated when internodes were aboveground 
-    integer		n_lf_alive_bg                             		! Number of alive leaves at primary stalk initiated when internodes were belowground 
-    integer		n_lf_alive_dewlap                         		! Number of alive developed (dewlap) leaves
-    integer		n_lf_alive_juveni                         		! Number of alive non-developed (without dewlap formed) leaves
-    integer		n_lf_alive_juveni_ag                      		! Number of alive non-developed (without dewlap formed) leaves aboveground 
-    integer		n_lf_alive_juveni_bg                      		! Number of alive non-developed (without dewlap formed) leaves belowground 
-    integer		n_lf_bg                                   		! Total Number of leaves initated when internodes were belowground
-    integer		n_lf_dead                                 		! Total Number of senesced leaves
-    integer		n_lf_dead_ag                              		! Total Number of senesced leaves aboveground
-    integer		n_lf_dead_bg                              		! Total Number of senesced leaves belowground
-    integer		n_lf_it_form                              		! Number of leaves appeared before internode formation (#/tiller) [parameter]
-    integer		n_lf_when_stk_emerg                       		! Number of leaves appeared before stalks emerges at soil surface (#/tiller) [parameter]
-    integer		n_ph                                      		! Number of phytomers at primary stalk
-    integer		n_ph_ag                                   		! Number of phytomers at primary stalk initiated aboveground
-    integer		n_ph_bg                                   		! Number of phytomers at primary stalk initiated belowground
-    integer		nphy_bground                              		! Total number of phytomers at primary stalk initiated belowground
-    integer		nsublay                                   		! Number of soil sublayers for root profile rate 
-    integer		phy                                       		! Phytomer iterator
-    integer		pos_it_bg                                 		! Position of first Below Ground Internode
-    integer		sl                                        		! Soil layer iterator
-    integer		tl                                        		! Tiller iterator
-    integer     nlay                                            ! Number of soil layers
-    integer     das                                             ! Days after simulation started
-    integer     dap                                             ! Days after planting
-    integer     year                                            ! year
-    logical		fl_potential                              		! Flag for potential simulations only [no water/nutrients stress]
-    logical		fl_appear_leaf                            		! Flag for appeared leaf [leaf can be initiated but not yet visible on the top of stalks]
-    logical		fl_hasleaf                                		! Flag indicating if internode has a leaf still attached [F=sensesced]
-    logical		fl_it_visible                             		! Flag for internodes that can be seen on top stalks 
-    logical		fl_lf_ag_phy                              		! Flag indicating if leaf is aboveground
-    logical		fl_shed_leaf                              		! Flag indicating if leaf was sensesced
-    logical		fl_stalk_emerged                          		! Flag indicating stalks emergence at soil surface
-    logical		fl_tiller_decrease                        		! Flag for start of tiller senescence phase
-    logical		fl_tiller_increase                        		! Flag for start of tiller increase phase
-    logical		fl_tiller_peaked                          		! Flag for peak of tillering phase
-    logical		fl_tiller_stop                            		! Flag for stabilisation of tillering population phase
-    logical		fl_use_reserves                           		! Flag controlling when the crop should use reserves for growing or not
-    logical     flcropalive                                     ! Flag indicating if crop is alive
-    real		agefactor_fac_amax                        		! Age factor parameter on amax [photsynthesis]
-    real		agefactor_fac_rue                         		! Age factor parameter on rue [when usinf RUE approach]
-    real		agefactor_fac_per                         		! Age factor parameter on per [plant elongation]
-    real		max_lf_dw                                 		! Maximum dry weight of a fully-developed leaf without supply restrictions [parameter]
-    real		init_stalkfw                              		! Fresh weight of cutted stalks used at planting date [used to initialise the model]
-    real		init_stalkht                              		! Height of cutted stalks at planting date [used to initialise the model]
-    real		nstalks_planting                          		! Number of stalks used at planting [used to initialise the model]
-    real		ini_nstk                                  		! Initial number of stalks [plants m-2]
-    real		tilleragefac                              		! Correction factor to extrapolate source-sink relationship to younger tillers [this avoids explicit calculation at every tiller-phytomer]
-    real		initcropdepth                             		! Initial crop soil depth 
-    real		init_plantdepth_ratoon                    		! Initial crop soil depth for ratooning [parameter]
-    real		dw_rt                                     		! Dry weight of roots
-    real		max_rt_dw                                 		! Maximum roots dry weights of a fully-developed root system without supply restrictions [parameter]
-    real		dw_it_bg                                  		! Dry weight of belowground internodes
-    real		str_it_bg                                 		! Dry weight of internodes structural fraction
-    real		sug_it_bg                                 		! Weight of sugars within internodes
-    real		suc_it_bg                                 		! Weight of sucrose within internodes sugars
-    real		hex_it_bg                                 		! Weight of hexoses within internodes sugars
-    real		dw_it                                     		! Dry weight of internodes
-    real        dw_it_dead                                      ! Dry weight of dead internodes [tillering senescence]
-    real        dw_it_dead_AG                                   ! Dry weight of dead internodes aboveground [tillering senescence]
-    real        dw_it_dead_BG                                   ! Dry weight of dead internodes belowground [tillering senescence]
-    real		ini_dw_rt                                 		! Initial dry weight of the root system
-    real		rootleftfrac                              		! Fraction of roots that will remain alive from last cut [1-rootleftfrac=roots that imediately dies]
-    real		dw_total	                              		! Total dry weight of the crop
-    real		age_it_phy                                		! Age of internode [thermal-time]
-    real		age_lf_phy                                		! Age of leaf [thermal-time]
-    real		agefactor_amax                            		! Calculated Age factor on amax 
-    real		agefactor_per                             		! Calculated Age factor on RUE 
-    real		agefactor_rue                             		! Calculated Age factor on per 
-    real		amax_conv                                 		! Converted amax [kgCO2 ha-1 h-1]
-    real		amax_mod                                  		! Amax modified after stress factors
-    real		amaxfbfac                                 		! Amax stress factor
-    real		avail_subs_crop                           		! Available substrates for the crop
-    real		c_check_tol                               		! Carbon balance check
-    real		c_scattering                              		! Canopy light scattering coefficient
-    real		can_ipar                                  		! Canopy intercepted PAR
-    real		chudec_lt                                 		! Thermal time at start of tillering senescence phase
-    real		chumat_lt                                 		! Thermal time at start of tillering stabilisation phase
-    real		co2_pho_res_end                           		! Parameter controlling crop response to atmospheric CO2
-    real		co2_pho_res_ini                           		! Parameter controlling crop response to atmospheric CO2
-    real		cr_source_sink_ratio                      		! Crop source-sink ratio
-    real		cr_source_sink_ratio_ruse                 		! Source-sink ratio threshold crop can use its reserves [parameter]
-    real		dage_it_phy                               		! Rate of internode aging 
-    real		dage_lf_phy                               		! Rate of leaf aging 
-    real        ddw                                             ! Rate of crop dry weight
-    real		ddw_it                                    		! Rate of internode dry weight
-    real		ddw_it_ag                                 		! Rate of aboveground internode dry weight
-    real		ddw_it_ag_dead                            		! Rate of aboveground senesced internode dry weight
-    real		ddw_it_bg                                 		! Rate of belowground internode dry weight
-    real		ddw_it_bg_dead                            		! Rate of belowground senesced internode dry weight
-    real		ddw_it_dead                               		! Rate of senesced internode dry weight
-    real		ddw_it_phy_growth                         		! Rate of internode growth
-    real		ddw_it_phy_reserves                       		! Rate of internode reserves
-    real		ddw_lf                                    		! Rate of green leaves dry weight
-    real		ddw_lf_ag                                 		! Rate of aboveground green leaves dry weight
-    real		ddw_lf_appear                             		! Rate of appeared green leaves dry weight
-    real		ddw_lf_bg                                 		! Rate of belowground green leaves dry weight
-    real		ddw_lf_dead                               		! Rate of senesced leaves dry weight still attached to internodes
-    real		ddw_lf_shed                               		! Rate of senesced leaves dry weight falling on the ground
-    real		ddw_rt                                    		! Rate of root dry weights
-    real		ddw_rt_dead                               		! Rate of sensesced root dry weights
-    real		dead_lai                                  		! Leaf area index of dry leaves that are still attached to internodes
-    real		diac_at_emergence                         		! Thermal time at crop emergence
-    real		diacem                                    		! Thermal time from emergence
-    real		diacsoil                                  		! Thermal time with soil temperature
-    real		diacsoilem                                		! Thermal time from emergence with soil temperature
-    real		diair                                     		! Degree-day using air temperature
-    real		diam_stk                                  		! Stalk diameter
-    real		diphy                                     		! Degree-day for internode
-    real		disoil                                    		! Degree-day using soil temperature
-    real		dla_gain_ref_till                         		! Rate of leaf area gain at reference primary tiller
-    real		dla_phy                                   		! Rate of leaf area gain at phytomer
-    real		dlai_dead                                 		! Rate of sensesced leaf area index
-    real		dlai_gain                                 		! Rate of gained leaf area index due to growth
-    real		dlai_gain_appear                          		! Rate of gained leaf area index due to appearance of new leaves
-    real		dlai_shed                                 		! Rate of dry leaf area falling on the ground
-    real		dnstk                                     		! Rate of tillering
-    real		dnstk_dead_rate                           		! Rate of tillering senescence
-    real		dphy_stimuli                              		! Rate of stimuli for new phytomer creation
-    real		dr_itss                                   		! Relative sink-strenght of internodes
-    real		dr_lfss                                   		! Relative sink-strenght of leaves
-    real		dr_rtss                                   		! Relative sink-strenght of roots
-    real		drdepth                                   		! Root front velocity
-    real		dshootext_bg                              		! Calculated rate of shoot elongation belowground
-    real		dshootext_bg_rate                         		! Parameter controling shoot elongation belowground
-    real		dstr_it_ag                                		! Rate of dry weight of aboveground internode structural parts
-    real		dstr_it_ag_dead                           		! Rate of dry weight of senesced aboveground internode structural parts
-    real		dstr_it_bg                                		! Rate of dry weight of belowground internode structural parts
-    real		dstr_it_bg_dead                           		! Rate of dry weight of senesced belowground internode structural parts
-    real		dstr_it_phy                               		! Rate of dry weight of internode in phytomer
-    real		dstr_it_phy_growth                        		! Rate of dry weight growth of internode in phytomer
-    real		dsubsres                                  		! Rate of substrate reserves balance
-    real		dsubsres_it                               		! Rate of substrate reserves to internodes
-    real		dsubsres_lf                               		! Rate of substrate reserves to leaves
-    real		dsubsres_ratio                            		! Rate of substrate reserves ratio
-    real		dsubsres_rt                               		! Rate of substrate reserves to roots
-    real		dsug_corr_fac_ag                          		! Rate correction of sugars reserves aboveground
-    real		dsug_corr_fac_bg                          		! Rate correction of sugars reserves belowground
-    real		dsug_it_ag                                		! Rate of sugar weight in aboveground internodes
-    real		dsug_it_ag_dead                           		! Rate of sugar weight in sensesced aboveground internodes
-    real		dsug_it_bg                                		! Rate of sugar weight in belowground internodes
-    real		dsug_it_bg_dead                           		! Rate of sugar weight in sensesced belowground internodes
-    real		dsug_it_phy                               		! Rate of sugar weight in internode phytomer
-    real		dsug_it_phy_growth                        		! Rate of sugar weight in internode phytomer to growth
-    real		dsug_it_phy_reserves                      		! Rate of sugar weight in internode phytomer to reserves
-    real		dswat_ddws                                		! Parameter controlling dry-to-fresh weight conversion
-    real		dswat_dsuc                                		! Parameter controlling dry-to-fresh weight conversion
-    real		dtcrss                                    		! Rate of Total substrates needed for crop growth
-    real		dtg                                       		! Rate of carbon assimilation
-    real		dtg_avail_it                              		! Rate of carbon assimilation available to internodes
-    real		dtg_avail_it_ag                           		! Rate of carbon assimilation available to aboveground internodes
-    real		dtg_avail_it_ag_ref_till                  		! Rate of carbon assimilation available to aboveground internodes at primary stalk
-    real		dtg_avail_it_bg                           		! Rate of carbon assimilation available to belowground internodes
-    real		dtg_avail_it_bg_ref_till                  		! Rate of carbon assimilation available to belowground internodes at primary stalk
-    real		dtg_avail_it_phy                          		! Rate of carbon assimilation available to the phytomer
-    real		dtg_avail_it_ref_till                     		! Rate of carbon assimilation available to internodes at primary stalk
-    real		dtg_avail_lf                              		! Rate of carbon assimilation available to leaves
-    real		dtg_avail_lf_phy                          		! Rate of carbon assimilation available to leaves at phytomer
-    real		dtg_avail_lf_ref_till                     		! Rate of carbon assimilation available to leaves at primary stalk
-    real		dtg_avail_rt                              		! Rate of carbon assimilation available to roots
-    real		dtitss                                    		! Rate of substrate demand from internodes
-    real		dtitss_ag                                 		! Rate of substrate demand from aboveground internodes
-    real		dtitss_ag_ref_till                        		! Rate of substrate demand from aboveground internodes at primary stalk
-    real		dtitss_bg                                 		! Rate of substrate demand from belowground internodes
-    real		dtitss_bg_ref_till                        		! Rate of substrate demand from belowground internodes at primary stalk
-    real		dtitss_phy                                		! Rate of substrate demand from internodes at phytomer level
-    real		dtitss_ref_till                           		! Rate of substrate demand from internodes at primary stalk
-    real		dtlfss                                    		! Rate of substrate demand from leaves
-    real		dtlfss_phy                                		! Rate of substrate demand from leaves at phytomer level
-    real		dtlfss_ref_till                           		! Rate of substrate demand from leaves at primary stalk
-    real		dtot_str_dw_ref_till                      		! Fraction of stalk extension partitioned among internodes as function of structural gain
-    real		dtrtss                                    		! Rate of substrate demand from roots
-    real		dw_aerial                                 		! Dry weight of aerial crop parts
-    real		dw_it_phy                                 		! Dry weight of internode at phytomer level
-    real		dw_lf                                     		! Dry weight of green leaves
-    real        dw_lf_dead                                      ! Dry weight of sensesced leaves
-    real		dw_lf_ag                                  		! Dry weight of green leaves aboveground
-    real		dw_lf_bg                                  		! Dry weight of green leaves belowground
-    real		dw_lf_phy                                 		! Dry weight of green leaves at phytomer level
-    real		dw_lf_shed_phy                            		! Dry weight of senesced leaves that fallen on the ground at phytomer level
-    real		dw_ss_it                                  		! Internode sink-strenght
-    real		dw_ss_it_phy                              		! Internode sink-strenght at phytomer level
-    real		dw_ss_lf                                  		! Leaf sink-strenght
-    real		dw_ss_lf_phy                              		! Leaf sink-strenght at phytomer level
-    real		dw_ss_rt                                  		! Root sink-strenght
-    real		dwat_it_ag                                		! Water fraction rate of Stalks aboveground
-    real		dwat_it_ag_dead                           		! Water fraction rate of senesced Stalks aboveground
-    real		eff_conv                                  		! Canopy Quantum Efficiency [kgCO2 ha-1 h-1 (J m-2 s-1)-1]
-    real		eff_mod                                   		! Canopy Quantum Efficiency after stress factors
-    real		effective_rd                              		! Effective root depth where roots are actively growing
-    real		end_tt_it_growth                          		! Thermal time internode stop growing
-    real		end_tt_lf_growth                          		! Thermal time leaf stop growing
-    real		end_tt_rt_growth                          		! Thermal time roots stop growing
-    real		exc_dtg_it                                		! Exceeded Substrates in internodes
-    real		exc_dtg_lf                                		! Exceeded Substrates in leaves
-    real		exc_dtg_rt                                		! Exceeded Substrates in roots
-    real		fdeadlf                                   		! Fraction of dryied leaves blade area considered on canopy light transmission (0-1) [parameter]
-    real		frac_ag                                   		! Fraction of internodes growing aboveground
-    real		frac_bg                                   		! Fraction of internodes growing belowground
-    real		frac_hex_bg                               		! Fraction of hexoses belowground
-    real		frac_li                                   		! Fraction of light intercepted
-    real		frac_suc_bg                               		! Fraction of sugars belowground
-    real		fw_it_ag                                  		! Stalk Fresh Mass
-    real		gresp                                     		! Growth respiration of crop
-    real		gresp_it                                  		! Growth respiration of internodes
-    real		gresp_it_phy                              		! Growth respiration of internodes at phytomer level
-    real		gresp_lf                                  		! Growth respiration of leaves
-    real		gresp_lf_phy                              		! Growth respiration of leaves at phytomer level
-    real		gresp_rt                                  		! Growth respiration of roots
-    real		hex_it_ag                                 		! Hexoses at aboveground internodes
-    real		hex_it_ag_ref_till                        		! Hexoses at aboveground internodes at primary stalk
-    real		hex_it_bg_ref_till                        		! Hexoses at belowground internodes at primary stalk
-    real		hex_it_phy                                		! Hexoses at aboveground internodes at phytomer level
-    real		hex_min                                   		! Minimum hexose concentration at internode
-    real		hour                                      		! Hour counter
-    real		ini_dw_lf_phy                             		! Initial dry weight of new leaves
-    real		ini_la                                    		! Initial leaf area index
-    real		init_leaf_area                            		! Initial leaf area of single leaf    
-    real		it_struc_pfac_delta                       		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_pfac_max                         		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_pfac_min                         		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_pfac_rate                        		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_pfac_tb                          		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_pfac_te                          		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_pfac_temp_max_red                		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_pfac_tm                          		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_pfac_wate_max_red                		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_tb_end                           		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_tb_ini                           		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_to1                              		! Parameter controlling structural carbon partitioning in internodes
-    real		it_struc_to2                              		! Parameter controlling structural carbon partitioning in internodes
-    real		k                                         		! Canopy light extinction coefficient
-    real		kmr_it_phy                                		! Michaelis–Menten kinetics of the O2 on internode at phytomer level
-    real		kmr_leaf                                  		! Michaelis–Menten kinetics of the O2 on Leaves
-    real		kmr_root                                  		! Michaelis–Menten kinetics of the O2 on Roots
-    real		kmr_stem                                  		! Michaelis–Menten kinetics of the O2 on Stems[structural]
-    real		kmr_stor                                  		! Michaelis–Menten kinetics of the O2 on Reserves 
-    real		la_lf_shed_phy                            		! Leaf area falling to ground at phytomer level
-    real		lai_ass                                   		! Leaf area index used for carbon assimilation
-    real		laimod                                    		! Leaf area index used for light transmission through the canopy
-    real		lf_dpos                                   		! Dead leaf position below the living leaves profile
-    real		lgpf                                      		! Initial leaf partitioning factor
-    real	    sgpf		                                    ! Initial stem partitioning factor
-    real		lt                                        		! Fraction of Transmitted Light Through Canopy
-    real		ltthreshold                               		! Threshold of light transmited through canopy to start tiller senescence (0-1)
-    real		maintenance_factor_crop                   		! Balance factor of crop maintenance respiration
-    real		maintenance_factor_it                     		! Balance factor of internode maintenance respiration
-    real		maintenance_factor_it_ag                  		! Balance factor of aboveground internode maintenance respiration
-    real		maintenance_factor_it_bg                  		! Balance factor of belowground internode maintenance respiration
-    real		maintenance_factor_it_phy                 		! Balance factor of internode maintenance respiration at phytomer level
-    real		maintenance_factor_lf                     		! Balance factor of leaves maintenance respiration
-    real		maintenance_factor_lf_phy                 		! Balance factor of leaves maintenance respiration at phytomer level
-    real		maintenance_factor_rt                     		! Balance factor of roots maintenance respiration
-    real		max_ini_la                                		! Maximum initial leaf area
-    real		max_it_dw                                 		! Maximum dry weight of a fully-developed internode without supply restrictions [parameter]
-    real		max_it_dw_bg                              		! Maximum dry weight of a fully-developed belowground internode without supply restrictions
-    real		max_it_dw_phy                             		! Maximum dry weight of a fully-developed internode without supply restrictions at phytomer level
-    real		max_per_it                                		! Maximum internode elongation
-    real		mid_tt_it_growth                          		! Thermal-time when internode growth rate is at peak
-    real		mid_tt_lf_growth                          		! Thermal-time when leaf growth rate is at peak
-    real		mid_tt_rt_growth                          		! Thermal-time when root growth rate is at peak
-    real		mresp_it                                  		! Maintenance respiration of internodes
-    real		mresp_it_phy                              		! Maintenance respiration of internodes at phytomer level
-    real		mresp_lf                                  		! Maintenance respiration of leaves
-    real		mresp_lf_phy                              		! Maintenance respiration of leaves at phytomer level
-    real		mresp_rt                                  		! Maintenance respiration of roots
-    real		n_lf_max_ini_la                           		! Number of leaves when leaves appear at it maximum initial area (#/tiller)
-    real		n_lf_tiller                               		! Number of leaves per tiller
-    real		nsenesleaf_effect                         		! Number of dry leaves to consider on canopy light transmission (#/tiller)
-    real		nstk_at_appearance                        		! Number of stalks when a leaf appears
-    real		nstk_now                                  		! Current tiller number (helper)
-    real		par_rad                                   		! PAR radiation as 50% of SRAD
-    real		per                                       		! Plant elongation rate
-    real		per_hour                                  		! Plant elongation rate at hourly step
-    real		per_it_phy                                		! Internode elongatino rate at phytomer level
-    real		pho_fac_co2                               		! Stress factor due to atm CO2
-    real		phy_stimuli                               		! Phytomer stimuli
-    real		phyllochron                               		! Phyllochron
-    real		plastochron                               		! Plastochron
-    real		poppeak_lt                                		! Peak of stalk population
-    real		q10_it_phy                                		! Internode proportional change in respiration with a 10 °C increase in temperature
-    real		q10_leaf                                  		! Leaf proportional change in respiration with a 10 °C increase in temperature
-    real		q10_root                                  		! Root proportional change in respiration with a 10 °C increase in temperature
-    real		q10_stem                                  		! Stem[structural] proportional change in respiration with a 10 °C increase in temperature
-    real		q10_stor                                  		! Reserves proportional change in respiration with a 10 °C increase in temperature
-    real		rdprof                                    		! Root depth profile
-    real		reduc_growth_factor_crop                  		! Reduced factor due to supply limitation
-    real		reduc_growth_factor_it                    		! Reduced factor due to supply limitation in internodes
-    real		reduc_growth_factor_it_ag                 		! Reduced factor due to supply limitation in internodes aboveground
-    real		reduc_growth_factor_it_bg                 		! Reduced factor due to supply limitation in internodes belowground
-    real		reduc_growth_factor_it_phy                		! Reduced factor due to supply limitation in internodes phytomer level
-    real		reduc_growth_factor_lf                    		! Reduced factor due to supply limitation in leaves
-    real		reduc_growth_factor_lf_phy                		! Reduced factor due to supply limitation in leaves phytomer level
-    real		reduc_growth_factor_rt                    		! Reduced factor due to supply limitation in roots
-    real		rel_ss_it_phy                             		! Relative sink-strength internode phytomer level
-    real		rel_ss_lf_phy                             		! Relative sink-strength leaf phytomer level
-    real		res_used_emerg                            		! Total reserves used before emergence (crop 'memory')
-    real		res_used_emerg_fac                        		! Factor controlling when crop should use reserves or not based on reserves balance [parameter]
-    real		reserves_used_growth_it                   		! Reserves used for internode growth
-    real		reserves_used_growth_lf                   		! Reserves used for leaf growth
-    real		reserves_used_growth_rt                   		! Reserves used for root growth
-    real		reserves_used_mresp_crop                  		! Reserves used for maintenance respiration
-    real		reserves_used_mresp_it                    		! Reserves used for maintenance respiration in internodes
-    real		reserves_used_mresp_it_ag                 		! Reserves used for maintenance respiration in aboveground internodes
-    real		reserves_used_mresp_it_bg                 		! Reserves used for maintenance respiration in belowground internodes
-    real		reserves_used_mresp_it_phy                		! Reserves used for maintenance respiration in internodes at phytomer level
-    real		reserves_used_mresp_lf                    		! Reserves used for maintenance respiration in leaves
-    real		reserves_used_mresp_lf_phy                		! Reserves used for maintenance respiration in leaves at phytomer level
-    real		reserves_used_mresp_rt                    		! Reserves used for maintenance respiration in roots
-    real		rgpf                                      		! Initial partitioning factor to roots
-    real		root_front_size                           		! Root front size
-    real		rootdrate                                 		! Rooting depth rate
-    real		rootshape                                 		! Shape of root profile
-    real		rpup                                      		! Rate of belowground shoot upward elongation 
-    real		rue_mod                                   		! RUE after stress factors [metpg=1]
-    real		shared_it_str_bg                          		! Shared Structual parts among below ground internodes
-    real		shared_it_sug_bg                          		! Shared Sugars among below ground internodes
-    real		shootdepth                                		! Shoot depth before emergence
-    real		soiltemperature                           		! soil temperature
-    real		srlmax                                    		! Max specific root length density
-    real		srlmin                                    		! Min specific root length density
-    real		stk_h                                     		! Stalk height
-    real		str_it_ag                                 		! Structural dry weight of aboveground internodes
-    real		str_it_phy                                		! Structural dry weight of internode at phytoemr level
-    real		subs_avail_growth_crop                    		! Substrates available for crop growth
-    real		subs_avail_growth_it                      		! Substrates available for internodes growth
-    real		subs_avail_growth_it_ag                   		! Substrates available for aboveground internodes growth
-    real		subs_avail_growth_it_ag_ref_till          		! Substrates available for aboveground internodes growth at primary stalk
-    real		subs_avail_growth_it_bg                   		! Substrates available for belowground internodes growth
-    real		subs_avail_growth_it_bg_ref_till          		! Substrates available for belowground internodes growth at primary stalk
-    real		subs_avail_growth_it_phy                  		! Substrates available for internodes growth phytomer level
-    real		subs_avail_growth_it_ref_till             		! Substrates available for internodes growth at priamry stalk
-    real		subs_avail_growth_lf                      		! Substrates available for leaf growth
-    real		subs_avail_growth_lf_phy                  		! Substrates available for leaf growth phytomer level
-    real		subs_avail_growth_lf_ref_till             		! Substrates available for leaf growth at primary stalk
-    real		subs_avail_growth_rt                      		! Substrates available for root growth
-    real		subsres                                   		! Available substrates for crop growth and maintenance
-    real		subsres_avail_it                          		! Substrates available for internodes
-    real		subsres_avail_it_ag                       		! Substrates available for internodes aboveground
-    real		subsres_avail_it_ag_ref_till              		! Substrates available for internodes aboveground at primary stalk
-    real		subsres_avail_it_bg                       		! Substrates available for internodes belowground
-    real		subsres_avail_it_bg_ref_till              		! Substrates available for internodes belowground at primary stalk
-    real		subsres_avail_it_phy                      		! Substrates available for internodes at phytomer level
-    real		subsres_avail_it_ref_till                 		! Substrates available for internodes at primary stalk
-    real		subsres_avail_lf                          		! Substrates available for leaves
-    real		subsres_avail_lf_phy                      		! Substrates available for leaves at phytomer level
-    real		subsres_avail_lf_ref_till                 		! Substrates available for leaves at primary stalk
-    real		subsres_avail_rt                          		! Substrates available for roots
-    real		suc_acc_ini                               		! Internode total sugars concentration where sucrose accumulation onsets (0-1)
-    real		suc_frac_rate_ts                          		! Sucrose weight increment per unit of total sugars increment in internodes (TSUG > suc_acc_ini) (d[SUC]/d[TSUG])
-    real		suc_it_ag                                 		! Sucrose weight in internodes
-    real		suc_it_ag_ref_till                        		! Sucrose weight in aboveground internodes at primary stalk
-    real		suc_it_bg_ref_till                        		! Sucrose weight in belowground internodes at primary stalk
-    real		suc_it_phy                                		! Sucrose weight in internodes at phytomer level
-    real		suc_min                                   		! Min sucrose concentration at internode
-    real		sug_cont                                  		! Overall sugar content in dry mass basis
-    real		sug_it_ag                                 		! Sugar weight in aboveground internodes
-    real		sug_it_phy                                		! Sugar weight in internodes at phytomer level
-    real		sup_ratio_it                              		! Ratio of substrate balance for internodes
-    real		sup_ratio_it_ag                           		! Ratio of substrate balance for internodes aboveground
-    real		sup_ratio_it_bg                           		! Ratio of substrate balance for internodes belowground
-    real		sup_ratio_it_phy                          		! Ratio of substrate balance for internodes phytomer level
-    real		sup_ratio_lf                              		! Ratio of substrate balance for leaves
-    real		sup_ratio_lf_phy                          		! Ratio of substrate balance for leaves phytomer level
-    real		sup_ratio_rt                              		! Ratio of substrate balance for roots
-    real		supply_rate_it                            		! Supply rate for internodes
-    real		supply_rate_it_ag                         		! Supply rate for internodes aboveground
-    real		supply_rate_it_bg                         		! Supply rate for internodes belowground
-    real		supply_rate_it_phy                        		! Supply rate for internodes phytomer level
-    real		supply_rate_lf                            		! Supply rate for leaves
-    real		supply_rate_lf_phy                        		! Supply rate for leaves phytomer level
-    real		supply_rate_rt                            		! Supply rate for roots
-    real		supply_used_crop                          		! Supply used by crop
-    real		supply_used_dw_crop                       		! Supply used dry weight by crop
-    real		supply_used_dw_it                         		! Supply used dry weight by internodes
-    real		supply_used_dw_it_ag                      		! Supply used dry weight by internodes aboveground
-    real		supply_used_dw_it_bg                      		! Supply used dry weight by internodes belowground
-    real		supply_used_dw_it_phy                     		! Supply used dry weight by internodes at phytomer level
-    real		supply_used_dw_lf                         		! Supply used dry weight by leaves
-    real		supply_used_dw_lf_phy                     		! Supply used dry weight by leaves at phytomer level
-    real		supply_used_dw_rt                         		! Supply used dry weight by roots
-    real		supply_used_gresp_crop                    		! Supply used for crop growth respiration 
-    real		supply_used_gresp_it                      		! Supply used for internodes growth respiration
-    real		supply_used_gresp_it_ag                   		! Supply used for aboveground internodes growth respiration
-    real		supply_used_gresp_it_bg                   		! Supply used for belowground internodes growth respiration
-    real		supply_used_gresp_it_phy                  		! Supply used for internodes growth respiration at phytomer level
-    real		supply_used_gresp_lf                      		! Supply used for leaves growth respiration
-    real		supply_used_gresp_lf_phy                  		! Supply used for leaves growth respiration at phytomer level
-    real		supply_used_gresp_rt                      		! Supply used for roots growth respiration
-    real		supply_used_it                            		! Supply used by internodes
-    real		supply_used_it_ag                         		! Supply used by aboveground internodes
-    real		supply_used_it_bg                         		! Supply used by belowground internodes
-    real		supply_used_it_phy                        		! Supply used by internodes at phytomer level
-    real		supply_used_lf                            		! Supply used by leaves
-    real		supply_used_lf_phy                        		! Supply used by leaves at phytomer level
-    real		supply_used_mresp_crop                    		! Supply used for crop maitenance respiration 
-    real		supply_used_mresp_it                      		! Supply used for internodes maitenance respiration 
-    real		supply_used_mresp_it_ag                   		! Supply used for aboveground internodes maitenance respiration 
-    real		supply_used_mresp_it_bg                   		! Supply used for belowground internodes maitenance respiration 
-    real		supply_used_mresp_it_phy                  		! Supply used for internodes maitenance respiration at phytomer level
-    real		supply_used_mresp_lf                      		! Supply used for leaves maitenance respiration 
-    real		supply_used_mresp_lf_phy                  		! Supply used for leaves maitenance respiration at phytomer level
-    real		supply_used_mresp_rt                      		! Supply used for roots maitenance respiration 
-    real		supply_used_rt                            		! Supply used by roots 
-    real		t_mresp                                   		! Temperature used for maintenance respiration
-    real		tb0pho                                    		! Base temperature - Tb0 for photosynthesis
-    real		tb1pho                                    		! Base temperature - Tb1 for photosynthesis [optimal]
-    real		tb2pho                                    		! Base temperature - Tb2 for photosynthesis [optimal]
-    real		tbfpho                                    		! Base temperature - Tbf for photosynthesis
-    real		tbmax_per                                 		! Base temperature for plant elongation    
-    real		tempfac_per                               		! Temperature factor for plant elongation
-    real		tempfac_pho                               		! Temperature factor for photosynthesis
-    real		tilleragefac_adjust                       		! Tiller age adjusting factor for young tillers to the primary tiller
-    real		tillochron                                		! Tillochron
-    real		tot_dw_ss_crop                            		! Total substrates needed for crop growth/maintenance respiration and growth
-    real		tot_dw_ss_it                              		! Total substrates needed for internodes growth/maintenance respiration and growth
-    real		tot_dw_ss_it_ag                           		! Total substrates needed for aboveground internodes growth/maintenance respiration and growth
-    real		tot_dw_ss_it_bg                           		! Total substrates needed for belowground internodes growth/maintenance respiration and growth
-    real		tot_dw_ss_lf                              		! Total substrates needed for leaves growth/maintenance respiration and growth
-    real		tot_dw_ss_rt                              		! Total substrates needed for roots growth/maintenance respiration and growth
-    real		tot_gresp_crop                            		! Total substrates needed for crop growth respiration
-    real		tot_gresp_it                              		! Total substrates needed for internodes growth respiration
-    real		tot_gresp_it_ag                           		! Total substrates needed for aboveground internodes growth respiration
-    real		tot_gresp_it_bg                           		! Total substrates needed for belowground internodes growth respiration
-    real		tot_gresp_lf                              		! Total substrates needed for leaves growth respiration
-    real		tot_gresp_rt                              		! Total substrates needed for roots growth respiration
-    real		tot_mresp_crop                            		! Total substrates needed for crop maitenance respiration
-    real		tot_mresp_it                              		! Total substrates needed for internodes maitenance respiration
-    real		tot_mresp_it_ag                           		! Total substrates needed for aboveground internodes maitenance respiration
-    real		tot_mresp_it_bg                           		! Total substrates needed for belowground internodes maitenance respiration
-    real		tot_mresp_lf                              		! Total substrates needed for leaves maitenance respiration
-    real		tot_mresp_rt                              		! Total substrates needed for roots maitenance respiration
-    real		tref_mr                                   		! Reference temperature for maintenance respiration
-    real		tref_mr_it_phy                            		! Reference temperature for maintenance respiration at phytomer level
-    real		ts_it_phy                                 		! Total sugars in internode
-    real		tt_chumat_lt                              		! Thermal time required after peak of population for tillering stabilization (oCdays)
-    real		wat_con                                   		! Fraction of water in stalks
-    real		wat_it_ag                                 		! Fresh weight of aboveground internodes
-    real        acc_par                                         ! Accumulated intercepted PAR
-    real        dacc_par                                        ! Rate of intercepted PAR
-    real        drue_calc                                       ! Calculated daily RUE
-    real        rue_calc                                        ! Calculated RUE
-    real        gstd                                            ! Growth stage 
-    real        cstat                                           ! Crop status level
-    real        rowsp				     	                    ! rowspacing  
-    real        plantdepth                                      ! planting depth    
-    real        rd                                              ! Root depth
-    real        srl                                             ! Specific root length density
-    real        dileaf                                          ! degree-days for leaf development
-    real        z                                               ! zero helper fortran
-    real        resp                                            ! Canopy respiration used for carbon assimilation [deprecated method] 
-    real        pol                                             ! Percentage of sucrose content in fresh stalk biomass
-    real        kc                                              ! Crop coefficient for evapotranspiration calculations
-    real        maxlai                                          ! Maximum LAI hit throughout the season (needed for SC_OPHARV_SAM)     
+    integer  task                                        ! Model task:           1 = initialization, 2 = step rate and integration of potential rates, 3 = step rate and integration of actual rates
+    integer  method_pop                                  ! Tillering Method:     1 = Cdays; 2 = Cdays + Light Transmission; 3 = Source-Sink
+    integer  nseason                                     ! Crop season counter
+    integer  atln                                        ! Absolute tiller number
+    integer  atln_now                                    ! Absolute tiller number at current timestep (storer)
+    integer  dn_lf_alive_dewlap                          ! Daily Rate for new leaves with dewlap
+    integer  maxdgl                                      ! Max number of developed green leaves on a stalk [parameter]
+    integer  maxgl                                       ! Max total number of green leaves on a stalk (maxgl > maxdgl) [parameter]
+    integer  n_it                                        ! Number of internodes at primary stalk
+    integer  n_it_ag                                     ! Number of internodes at primary stalk aboveground
+    integer  n_it_bg                                     ! Number of internodes at primary stalk belowground
+    integer  n_lf                                        ! Total number of leaves initiated at primary stalk
+    integer  n_lf_ag                                     ! Total number of leaves initiated at primary stalk when its aboveground
+    integer  n_lf_ag_dewlap                              ! Number of developed green leaves
+    integer  n_lf_alive                                  ! Number of alive leaves
+    integer  n_lf_alive_ag                               ! Number of alive leaves at primary stalk initiated when internodes were aboveground 
+    integer  n_lf_alive_bg                               ! Number of alive leaves at primary stalk initiated when internodes were belowground 
+    integer  n_lf_alive_dewlap                           ! Number of alive developed (dewlap) leaves
+    integer  n_lf_alive_juveni                           ! Number of alive non-developed (without dewlap formed) leaves
+    integer  n_lf_alive_juveni_ag                        ! Number of alive non-developed (without dewlap formed) leaves aboveground 
+    integer  n_lf_alive_juveni_bg                        ! Number of alive non-developed (without dewlap formed) leaves belowground 
+    integer  n_lf_bg                                     ! Total Number of leaves initated when internodes were belowground
+    integer  n_lf_dead                                   ! Total Number of senesced leaves
+    integer  n_lf_dead_ag                                ! Total Number of senesced leaves aboveground
+    integer  n_lf_dead_bg                                ! Total Number of senesced leaves belowground
+    integer  n_lf_it_form                                ! Number of leaves appeared before internode formation (#/tiller) [parameter]
+    integer  n_lf_when_stk_emerg                         ! Number of leaves appeared before stalks emerges at soil surface (#/tiller) [parameter]
+    integer  n_ph                                        ! Number of phytomers at primary stalk
+    integer  n_ph_ag                                     ! Number of phytomers at primary stalk initiated aboveground
+    integer  n_ph_bg                                     ! Number of phytomers at primary stalk initiated belowground
+    integer  nphy_bground                                ! Total number of phytomers at primary stalk initiated belowground
+    integer  nsublay                                     ! Number of soil sublayers for root profile rate 
+    integer  phy                                         ! Phytomer iterator
+    integer  pos_it_bg                                   ! Position of first Below Ground Internode
+    integer  sl                                          ! Soil layer iterator
+    integer  tl                                          ! Tiller iterator
+    integer  nlay                                        ! Number of soil layers
+    integer  nlay_roots                                  ! Number of soil layers with roots
+    integer  das                                         ! Days after simulation started
+    integer  dap                                         ! Days after planting
+    integer  year                                        ! year
+    logical  fl_potential                                ! Flag for potential simulations only [no water/nutrients stress]
+    logical  fl_appear_leaf                              ! Flag for appeared leaf [leaf can be initiated but not yet visible on the top of stalks]
+    logical  fl_hasleaf                                  ! Flag indicating if internode has a leaf still attached [F=sensesced]
+    logical  fl_it_visible                               ! Flag for internodes that can be seen on top stalks 
+    logical  fl_lf_ag_phy                                ! Flag indicating if leaf is aboveground
+    logical  fl_shed_leaf                                ! Flag indicating if leaf was sensesced
+    logical  fl_stalk_emerged                            ! Flag indicating stalks emergence at soil surface
+    logical  fl_tiller_decrease                          ! Flag for start of tiller senescence phase
+    logical  fl_tiller_increase                          ! Flag for start of tiller increase phase
+    logical  fl_tiller_peaked                            ! Flag for peak of tillering phase
+    logical  fl_tiller_stop                              ! Flag for stabilisation of tillering population phase
+    logical  fl_use_reserves                             ! Flag controlling when the crop should use reserves for growing or not
+    logical  flcropalive                                 ! Flag indicating if crop is alive
+    real  agefactor_fac_amax                             ! Age factor parameter on amax [photsynthesis]
+    real  agefactor_fac_rue                              ! Age factor parameter on rue [when usinf RUE approach]
+    real  agefactor_fac_per                              ! Age factor parameter on per [plant elongation]
+    real  max_lf_dw                                      ! Maximum dry weight of a fully-developed leaf without supply restrictions [parameter]
+    real  init_stalkfw                                   ! Fresh weight of cutted stalks used at planting date [used to initialise the model]
+    real  init_stalkht                                   ! Height of cutted stalks at planting date [used to initialise the model]
+    real  nstalks_planting                               ! Number of stalks used at planting [used to initialise the model]
+    real  ini_nstk                                       ! Initial number of stalks [plants m-2]
+    real  tilleragefac                                   ! Correction factor to extrapolate source-sink relationship to younger tillers [this avoids explicit calculation at every tiller-phytomer]
+    real  initcropdepth                                  ! Initial crop soil depth 
+    real  init_plantdepth_ratoon                         ! Initial crop soil depth for ratooning [parameter]
+    real  dw_rt                                          ! Dry weight of roots
+    real  max_rt_dw                                      ! Maximum roots dry weights of a fully-developed root system without supply restrictions [parameter]
+    real  dw_it_bg                                       ! Dry weight of belowground internodes
+    real  str_it_bg                                      ! Dry weight of internodes structural fraction
+    real  sug_it_bg                                      ! Weight of sugars within internodes
+    real  suc_it_bg                                      ! Weight of sucrose within internodes sugars
+    real  hex_it_bg                                      ! Weight of hexoses within internodes sugars
+    real  dw_it                                          ! Dry weight of internodes
+    real  dw_it_dead                                     ! Dry weight of dead internodes [tillering senescence]
+    real  dw_it_dead_AG                                  ! Dry weight of dead internodes aboveground [tillering senescence]
+    real  dw_it_dead_BG                                  ! Dry weight of dead internodes belowground [tillering senescence]
+    real  ini_dw_rt                                      ! Initial dry weight of the root system
+    real  rootleftfrac                                   ! Fraction of roots that will remain alive from last cut [1-rootleftfrac=roots that imediately dies]
+    real  dw_total                                       ! Total dry weight of the crop
+    real  age_it_phy                                     ! Age of internode [thermal-time]
+    real  age_lf_phy                                     ! Age of leaf [thermal-time]
+    real  agefactor_amax                                 ! Calculated Age factor on amax 
+    real  agefactor_per                                  ! Calculated Age factor on RUE 
+    real  agefactor_rue                                  ! Calculated Age factor on per 
+    real  amax_conv                                      ! Converted amax [kgCO2 ha-1 h-1]
+    real  amax_mod                                       ! Amax modified after stress factors
+    real  amaxfbfac                                      ! Amax stress factor
+    real  avail_subs_crop                                ! Available substrates for the crop
+    real  c_check_tol                                    ! Carbon balance check
+    real  c_scattering                                   ! Canopy light scattering coefficient
+    real  can_ipar                                       ! Canopy intercepted PAR
+    real  chudec_lt                                      ! Thermal time at start of tillering senescence phase
+    real  chumat_lt                                      ! Thermal time at start of tillering stabilisation phase
+    real  co2_pho_res_end                                ! Parameter controlling crop response to atmospheric CO2
+    real  co2_pho_res_ini                                ! Parameter controlling crop response to atmospheric CO2
+    real  cr_source_sink_ratio                           ! Crop source-sink ratio
+    real  cr_source_sink_ratio_ruse                      ! Source-sink ratio threshold crop can use its reserves [parameter]
+    real  dage_it_phy                                    ! Rate of internode aging 
+    real  dage_lf_phy                                    ! Rate of leaf aging 
+    real  ddw                                            ! Rate of crop dry weight
+    real  ddw_it                                         ! Rate of internode dry weight
+    real  ddw_it_ag                                      ! Rate of aboveground internode dry weight
+    real  ddw_it_ag_dead                                 ! Rate of aboveground senesced internode dry weight
+    real  ddw_it_bg                                      ! Rate of belowground internode dry weight
+    real  ddw_it_bg_dead                                 ! Rate of belowground senesced internode dry weight
+    real  ddw_it_dead                                    ! Rate of senesced internode dry weight
+    real  ddw_it_phy_growth                              ! Rate of internode growth
+    real  ddw_it_phy_reserves                            ! Rate of internode reserves
+    real  ddw_lf                                         ! Rate of green leaves dry weight
+    real  ddw_lf_ag                                      ! Rate of aboveground green leaves dry weight
+    real  ddw_lf_appear                                  ! Rate of appeared green leaves dry weight
+    real  ddw_lf_bg                                      ! Rate of belowground green leaves dry weight
+    real  ddw_lf_dead                                    ! Rate of senesced leaves dry weight still attached to internodes
+    real  ddw_lf_shed                                    ! Rate of senesced leaves dry weight falling on the ground
+    real  ddw_rt                                         ! Rate of root dry weights
+    real  ddw_rt_dead                                    ! Rate of sensesced root dry weights
+    real  dead_lai                                       ! Leaf area index of dry leaves that are still attached to internodes
+    real  diac_at_emergence                              ! Thermal time at crop emergence
+    real  diacem                                         ! Thermal time from emergence
+    real  diacsoil                                       ! Thermal time with soil temperature
+    real  diacsoilem                                     ! Thermal time from emergence with soil temperature
+    real  diair                                          ! Degree-day using air temperature
+    real  diam_stk                                       ! Stalk diameter
+    real  diphy                                          ! Degree-day for internode
+    real  disoil                                         ! Degree-day using soil temperature
+    real  dla_gain_ref_till                              ! Rate of leaf area gain at reference primary tiller
+    real  dla_phy                                        ! Rate of leaf area gain at phytomer
+    real  dlai_dead                                      ! Rate of sensesced leaf area index
+    real  dlai_gain                                      ! Rate of gained leaf area index due to growth
+    real  dlai_gain_appear                               ! Rate of gained leaf area index due to appearance of new leaves
+    real  dlai_shed                                      ! Rate of dry leaf area falling on the ground
+    real  dnstk                                          ! Rate of tillering
+    real  dnstk_dead_rate                                ! Rate of tillering senescence
+    real  dphy_stimuli                                   ! Rate of stimuli for new phytomer creation
+    real  dr_itss                                        ! Relative sink-strenght of internodes
+    real  dr_lfss                                        ! Relative sink-strenght of leaves
+    real  dr_rtss                                        ! Relative sink-strenght of roots
+    real  drdepth                                        ! Root front velocity
+    real  dshootext_bg                                   ! Calculated rate of shoot elongation belowground
+    real  dshootext_bg_rate                              ! Parameter controling shoot elongation belowground
+    real  dstr_it_ag                                     ! Rate of dry weight of aboveground internode structural parts
+    real  dstr_it_ag_dead                                ! Rate of dry weight of senesced aboveground internode structural parts
+    real  dstr_it_bg                                     ! Rate of dry weight of belowground internode structural parts
+    real  dstr_it_bg_dead                                ! Rate of dry weight of senesced belowground internode structural parts
+    real  dstr_it_phy                                    ! Rate of dry weight of internode in phytomer
+    real  dstr_it_phy_growth                             ! Rate of dry weight growth of internode in phytomer
+    real  dsubsres                                       ! Rate of substrate reserves balance
+    real  dsubsres_it                                    ! Rate of substrate reserves to internodes
+    real  dsubsres_lf                                    ! Rate of substrate reserves to leaves
+    real  dsubsres_ratio                                 ! Rate of substrate reserves ratio
+    real  dsubsres_rt                                    ! Rate of substrate reserves to roots
+    real  dsug_corr_fac_ag                               ! Rate correction of sugars reserves aboveground
+    real  dsug_corr_fac_bg                               ! Rate correction of sugars reserves belowground
+    real  dsug_it_ag                                     ! Rate of sugar weight in aboveground internodes
+    real  dsug_it_ag_dead                                ! Rate of sugar weight in sensesced aboveground internodes
+    real  dsug_it_bg                                     ! Rate of sugar weight in belowground internodes
+    real  dsug_it_bg_dead                                ! Rate of sugar weight in sensesced belowground internodes
+    real  dsug_it_phy                                    ! Rate of sugar weight in internode phytomer
+    real  dsug_it_phy_growth                             ! Rate of sugar weight in internode phytomer to growth
+    real  dsug_it_phy_reserves                           ! Rate of sugar weight in internode phytomer to reserves
+    real  dswat_ddws                                     ! Parameter controlling dry-to-fresh weight conversion
+    real  dswat_dsuc                                     ! Parameter controlling dry-to-fresh weight conversion
+    real  dtcrss                                         ! Rate of Total substrates needed for crop growth
+    real  dtg                                            ! Rate of carbon assimilation
+    real  dtg_avail_it                                   ! Rate of carbon assimilation available to internodes
+    real  dtg_avail_it_ag                                ! Rate of carbon assimilation available to aboveground internodes
+    real  dtg_avail_it_ag_ref_till                       ! Rate of carbon assimilation available to aboveground internodes at primary stalk
+    real  dtg_avail_it_bg                                ! Rate of carbon assimilation available to belowground internodes
+    real  dtg_avail_it_bg_ref_till                       ! Rate of carbon assimilation available to belowground internodes at primary stalk
+    real  dtg_avail_it_phy                               ! Rate of carbon assimilation available to the phytomer
+    real  dtg_avail_it_ref_till                          ! Rate of carbon assimilation available to internodes at primary stalk
+    real  dtg_avail_lf                                   ! Rate of carbon assimilation available to leaves
+    real  dtg_avail_lf_phy                               ! Rate of carbon assimilation available to leaves at phytomer
+    real  dtg_avail_lf_ref_till                          ! Rate of carbon assimilation available to leaves at primary stalk
+    real  dtg_avail_rt                                   ! Rate of carbon assimilation available to roots
+    real  dtitss                                         ! Rate of substrate demand from internodes
+    real  dtitss_ag                                      ! Rate of substrate demand from aboveground internodes
+    real  dtitss_ag_ref_till                             ! Rate of substrate demand from aboveground internodes at primary stalk
+    real  dtitss_bg                                      ! Rate of substrate demand from belowground internodes
+    real  dtitss_bg_ref_till                             ! Rate of substrate demand from belowground internodes at primary stalk
+    real  dtitss_phy                                     ! Rate of substrate demand from internodes at phytomer level
+    real  dtitss_ref_till                                ! Rate of substrate demand from internodes at primary stalk
+    real  dtlfss                                         ! Rate of substrate demand from leaves
+    real  dtlfss_phy                                     ! Rate of substrate demand from leaves at phytomer level
+    real  dtlfss_ref_till                                ! Rate of substrate demand from leaves at primary stalk
+    real  dtot_str_dw_ref_till                           ! Fraction of stalk extension partitioned among internodes as function of structural gain
+    real  dtrtss                                         ! Rate of substrate demand from roots
+    real  dw_aerial                                      ! Dry weight of aerial crop parts
+    real  dw_it_phy                                      ! Dry weight of internode at phytomer level
+    real  dw_lf                                          ! Dry weight of green leaves
+    real  dw_lf_dead                                     ! Dry weight of sensesced leaves
+    real  dw_lf_ag                                       ! Dry weight of green leaves aboveground
+    real  dw_lf_bg                                       ! Dry weight of green leaves belowground
+    real  dw_lf_phy                                      ! Dry weight of green leaves at phytomer level
+    real  dw_lf_shed_phy                                 ! Dry weight of senesced leaves that fallen on the ground at phytomer level
+    real  dw_ss_it                                       ! Internode sink-strenght
+    real  dw_ss_it_phy                                   ! Internode sink-strenght at phytomer level
+    real  dw_ss_lf                                       ! Leaf sink-strenght
+    real  dw_ss_lf_phy                                   ! Leaf sink-strenght at phytomer level
+    real  dw_ss_rt                                       ! Root sink-strenght
+    real  dwat_it_ag                                     ! Water fraction rate of Stalks aboveground
+    real  dwat_it_ag_dead                                ! Water fraction rate of senesced Stalks aboveground
+    real  eff_conv                                       ! Canopy Quantum Efficiency [kgCO2 ha-1 h-1 (J m-2 s-1)-1]
+    real  eff_mod                                        ! Canopy Quantum Efficiency after stress factors
+    real  effective_rd                                   ! Effective root depth where roots are actively growing
+    real  end_tt_it_growth                               ! Thermal time internode stop growing
+    real  end_tt_lf_growth                               ! Thermal time leaf stop growing
+    real  end_tt_rt_growth                               ! Thermal time roots stop growing
+    real  exc_dtg_it                                     ! Exceeded Substrates in internodes
+    real  exc_dtg_lf                                     ! Exceeded Substrates in leaves
+    real  exc_dtg_rt                                     ! Exceeded Substrates in roots
+    real  fdeadlf                                        ! Fraction of dryied leaves blade area considered on canopy light transmission (0-1) [parameter]
+    real  frac_ag                                        ! Fraction of internodes growing aboveground
+    real  frac_bg                                        ! Fraction of internodes growing belowground
+    real  frac_hex_bg                                    ! Fraction of hexoses belowground
+    real  frac_li                                        ! Fraction of light intercepted
+    real  frac_suc_bg                                    ! Fraction of sugars belowground
+    real  fw_it_ag                                       ! Stalk Fresh Mass
+    real  gresp                                          ! Growth respiration of crop
+    real  gresp_it                                       ! Growth respiration of internodes
+    real  gresp_it_phy                                   ! Growth respiration of internodes at phytomer level
+    real  gresp_lf                                       ! Growth respiration of leaves
+    real  gresp_lf_phy                                   ! Growth respiration of leaves at phytomer level
+    real  gresp_rt                                       ! Growth respiration of roots
+    real  hex_it_ag                                      ! Hexoses at aboveground internodes
+    real  hex_it_ag_ref_till                             ! Hexoses at aboveground internodes at primary stalk
+    real  hex_it_bg_ref_till                             ! Hexoses at belowground internodes at primary stalk
+    real  hex_it_phy                                     ! Hexoses at aboveground internodes at phytomer level
+    real  hex_min                                        ! Minimum hexose concentration at internode
+    real  hour                                           ! Hour counter
+    real  ini_dw_lf_phy                                  ! Initial dry weight of new leaves
+    real  ini_la                                         ! Initial leaf area index
+    real  init_leaf_area                                 ! Initial leaf area of single leaf    
+    real  it_struc_pfac_delta                            ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_pfac_max                              ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_pfac_min                              ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_pfac_rate                             ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_pfac_tb                               ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_pfac_te                               ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_pfac_temp_max_red                     ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_pfac_tm                               ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_pfac_wate_max_red                     ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_tb_end                                ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_tb_ini                                ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_to1                                   ! Parameter controlling structural carbon partitioning in internodes
+    real  it_struc_to2                                   ! Parameter controlling structural carbon partitioning in internodes
+    real  k                                              ! Canopy light extinction coefficient
+    real  kmr_it_phy                                     ! Michaelis–Menten kinetics of the O2 on internode at phytomer level
+    real  kmr_leaf                                       ! Michaelis–Menten kinetics of the O2 on Leaves
+    real  kmr_root                                       ! Michaelis–Menten kinetics of the O2 on Roots
+    real  kmr_stem                                       ! Michaelis–Menten kinetics of the O2 on Stems[structural]
+    real  kmr_stor                                       ! Michaelis–Menten kinetics of the O2 on Reserves 
+    real  la_lf_shed_phy                                 ! Leaf area falling to ground at phytomer level
+    real  lai_ass                                        ! Leaf area index used for carbon assimilation
+    real  laimod                                         ! Leaf area index used for light transmission through the canopy
+    real  lf_dpos                                        ! Dead leaf position below the living leaves profile
+    real  lgpf                                           ! Initial leaf partitioning factor
+    real  sgpf                                           ! Initial stem partitioning factor
+    real  lt                                             ! Fraction of Transmitted Light Through Canopy
+    real  ltthreshold                                    ! Threshold of light transmited through canopy to start tiller senescence (0-1)
+    real  maintenance_factor_crop                        ! Balance factor of crop maintenance respiration
+    real  maintenance_factor_it                          ! Balance factor of internode maintenance respiration
+    real  maintenance_factor_it_ag                       ! Balance factor of aboveground internode maintenance respiration
+    real  maintenance_factor_it_bg                       ! Balance factor of belowground internode maintenance respiration
+    real  maintenance_factor_it_phy                      ! Balance factor of internode maintenance respiration at phytomer level
+    real  maintenance_factor_lf                          ! Balance factor of leaves maintenance respiration
+    real  maintenance_factor_lf_phy                      ! Balance factor of leaves maintenance respiration at phytomer level
+    real  maintenance_factor_rt                          ! Balance factor of roots maintenance respiration
+    real  max_ini_la                                     ! Maximum initial leaf area
+    real  max_it_dw                                      ! Maximum dry weight of a fully-developed internode without supply restrictions [parameter]
+    real  max_it_dw_bg                                   ! Maximum dry weight of a fully-developed belowground internode without supply restrictions
+    real  max_it_dw_phy                                  ! Maximum dry weight of a fully-developed internode without supply restrictions at phytomer level
+    real  max_per_it                                     ! Maximum internode elongation
+    real  mid_tt_it_growth                               ! Thermal-time when internode growth rate is at peak
+    real  mid_tt_lf_growth                               ! Thermal-time when leaf growth rate is at peak
+    real  mid_tt_rt_growth                               ! Thermal-time when root growth rate is at peak
+    real  mresp_it                                       ! Maintenance respiration of internodes
+    real  mresp_it_phy                                   ! Maintenance respiration of internodes at phytomer level
+    real  mresp_lf                                       ! Maintenance respiration of leaves
+    real  mresp_lf_phy                                   ! Maintenance respiration of leaves at phytomer level
+    real  mresp_rt                                       ! Maintenance respiration of roots
+    real  n_lf_max_ini_la                                ! Number of leaves when leaves appear at it maximum initial area (#/tiller)
+    real  n_lf_tiller                                    ! Number of leaves per tiller
+    real  nsenesleaf_effect                              ! Number of dry leaves to consider on canopy light transmission (#/tiller)
+    real  nstk_at_appearance                             ! Number of stalks when a leaf appears
+    real  nstk_now                                       ! Current tiller number (helper)
+    real  par_rad                                        ! PAR radiation as 50% of SRAD
+    real  per                                            ! Plant elongation rate
+    real  per_hour                                       ! Plant elongation rate at hourly step
+    real  per_it_phy                                     ! Internode elongatino rate at phytomer level
+    real  pho_fac_co2                                    ! Stress factor due to atm CO2
+    real  phy_stimuli                                    ! Phytomer stimuli
+    real  phyllochron                                    ! Phyllochron
+    real  plastochron                                    ! Plastochron
+    real  poppeak_lt                                     ! Peak of stalk population
+    real  q10_it_phy                                     ! Internode proportional change in respiration with a 10 °C increase in temperature
+    real  q10_leaf                                       ! Leaf proportional change in respiration with a 10 °C increase in temperature
+    real  q10_root                                       ! Root proportional change in respiration with a 10 °C increase in temperature
+    real  q10_stem                                       ! Stem[structural] proportional change in respiration with a 10 °C increase in temperature
+    real  q10_stor                                       ! Reserves proportional change in respiration with a 10 °C increase in temperature
+    real  rdprof                                         ! Root depth profile
+    real  reduc_growth_factor_crop                       ! Reduced factor due to supply limitation
+    real  reduc_growth_factor_it                         ! Reduced factor due to supply limitation in internodes
+    real  reduc_growth_factor_it_ag                      ! Reduced factor due to supply limitation in internodes aboveground
+    real  reduc_growth_factor_it_bg                      ! Reduced factor due to supply limitation in internodes belowground
+    real  reduc_growth_factor_it_phy                     ! Reduced factor due to supply limitation in internodes phytomer level
+    real  reduc_growth_factor_lf                         ! Reduced factor due to supply limitation in leaves
+    real  reduc_growth_factor_lf_phy                     ! Reduced factor due to supply limitation in leaves phytomer level
+    real  reduc_growth_factor_rt                         ! Reduced factor due to supply limitation in roots
+    real  rel_ss_it_phy                                  ! Relative sink-strength internode phytomer level
+    real  rel_ss_lf_phy                                  ! Relative sink-strength leaf phytomer level
+    real  res_used_emerg                                 ! Total reserves used before emergence (crop 'memory')
+    real  res_used_emerg_fac                             ! Factor controlling when crop should use reserves or not based on reserves balance [parameter]
+    real  reserves_used_growth_it                        ! Reserves used for internode growth
+    real  reserves_used_growth_lf                        ! Reserves used for leaf growth
+    real  reserves_used_growth_rt                        ! Reserves used for root growth
+    real  reserves_used_mresp_crop                       ! Reserves used for maintenance respiration
+    real  reserves_used_mresp_it                         ! Reserves used for maintenance respiration in internodes
+    real  reserves_used_mresp_it_ag                      ! Reserves used for maintenance respiration in aboveground internodes
+    real  reserves_used_mresp_it_bg                      ! Reserves used for maintenance respiration in belowground internodes
+    real  reserves_used_mresp_it_phy                     ! Reserves used for maintenance respiration in internodes at phytomer level
+    real  reserves_used_mresp_lf                         ! Reserves used for maintenance respiration in leaves
+    real  reserves_used_mresp_lf_phy                     ! Reserves used for maintenance respiration in leaves at phytomer level
+    real  reserves_used_mresp_rt                         ! Reserves used for maintenance respiration in roots
+    real  rgpf                                           ! Initial partitioning factor to roots
+    real  root_front_size                                ! Root front size
+    real  rootdrate                                      ! Rooting depth rate
+    real  rootshape                                      ! Shape of root profile
+    real  rpup                                           ! Rate of belowground shoot upward elongation 
+    real  rue_mod                                        ! RUE after stress factors [metpg=1]
+    real  shared_it_str_bg                               ! Shared Structual parts among below ground internodes
+    real  shared_it_sug_bg                               ! Shared Sugars among below ground internodes
+    real  shootdepth                                     ! Shoot depth before emergence
+    real  soiltemperature                                ! soil temperature
+    real  srlmax                                         ! Max specific root length density
+    real  srlmin                                         ! Min specific root length density
+    real  stk_h                                          ! Stalk height
+    real  str_it_ag                                      ! Structural dry weight of aboveground internodes
+    real  str_it_phy                                     ! Structural dry weight of internode at phytoemr level
+    real  subs_avail_growth_crop                         ! Substrates available for crop growth
+    real  subs_avail_growth_it                           ! Substrates available for internodes growth
+    real  subs_avail_growth_it_ag                        ! Substrates available for aboveground internodes growth
+    real  subs_avail_growth_it_ag_ref_till               ! Substrates available for aboveground internodes growth at primary stalk
+    real  subs_avail_growth_it_bg                        ! Substrates available for belowground internodes growth
+    real  subs_avail_growth_it_bg_ref_till               ! Substrates available for belowground internodes growth at primary stalk
+    real  subs_avail_growth_it_phy                       ! Substrates available for internodes growth phytomer level
+    real  subs_avail_growth_it_ref_till                  ! Substrates available for internodes growth at priamry stalk
+    real  subs_avail_growth_lf                           ! Substrates available for leaf growth
+    real  subs_avail_growth_lf_phy                       ! Substrates available for leaf growth phytomer level
+    real  subs_avail_growth_lf_ref_till                  ! Substrates available for leaf growth at primary stalk
+    real  subs_avail_growth_rt                           ! Substrates available for root growth
+    real  subsres                                        ! Available substrates for crop growth and maintenance
+    real  subsres_avail_it                               ! Substrates available for internodes
+    real  subsres_avail_it_ag                            ! Substrates available for internodes aboveground
+    real  subsres_avail_it_ag_ref_till                   ! Substrates available for internodes aboveground at primary stalk
+    real  subsres_avail_it_bg                            ! Substrates available for internodes belowground
+    real  subsres_avail_it_bg_ref_till                   ! Substrates available for internodes belowground at primary stalk
+    real  subsres_avail_it_phy                           ! Substrates available for internodes at phytomer level
+    real  subsres_avail_it_ref_till                      ! Substrates available for internodes at primary stalk
+    real  subsres_avail_lf                               ! Substrates available for leaves
+    real  subsres_avail_lf_phy                           ! Substrates available for leaves at phytomer level
+    real  subsres_avail_lf_ref_till                      ! Substrates available for leaves at primary stalk
+    real  subsres_avail_rt                               ! Substrates available for roots
+    real  suc_acc_ini                                    ! Internode total sugars concentration where sucrose accumulation onsets (0-1)
+    real  suc_frac_rate_ts                               ! Sucrose weight increment per unit of total sugars increment in internodes (TSUG > suc_acc_ini) (d[SUC]/d[TSUG])
+    real  suc_it_ag                                      ! Sucrose weight in internodes
+    real  suc_it_ag_ref_till                             ! Sucrose weight in aboveground internodes at primary stalk
+    real  suc_it_bg_ref_till                             ! Sucrose weight in belowground internodes at primary stalk
+    real  suc_it_phy                                     ! Sucrose weight in internodes at phytomer level
+    real  suc_min                                        ! Min sucrose concentration at internode
+    real  sug_cont                                       ! Overall sugar content in dry mass basis
+    real  sug_it_ag                                      ! Sugar weight in aboveground internodes
+    real  sug_it_phy                                     ! Sugar weight in internodes at phytomer level
+    real  sup_ratio_it                                   ! Ratio of substrate balance for internodes
+    real  sup_ratio_it_ag                                ! Ratio of substrate balance for internodes aboveground
+    real  sup_ratio_it_bg                                ! Ratio of substrate balance for internodes belowground
+    real  sup_ratio_it_phy                               ! Ratio of substrate balance for internodes phytomer level
+    real  sup_ratio_lf                                   ! Ratio of substrate balance for leaves
+    real  sup_ratio_lf_phy                               ! Ratio of substrate balance for leaves phytomer level
+    real  sup_ratio_rt                                   ! Ratio of substrate balance for roots
+    real  supply_rate_it                                 ! Supply rate for internodes
+    real  supply_rate_it_ag                              ! Supply rate for internodes aboveground
+    real  supply_rate_it_bg                              ! Supply rate for internodes belowground
+    real  supply_rate_it_phy                             ! Supply rate for internodes phytomer level
+    real  supply_rate_lf                                 ! Supply rate for leaves
+    real  supply_rate_lf_phy                             ! Supply rate for leaves phytomer level
+    real  supply_rate_rt                                 ! Supply rate for roots
+    real  supply_used_crop                               ! Supply used by crop
+    real  supply_used_dw_crop                            ! Supply used dry weight by crop
+    real  supply_used_dw_it                              ! Supply used dry weight by internodes
+    real  supply_used_dw_it_ag                           ! Supply used dry weight by internodes aboveground
+    real  supply_used_dw_it_bg                           ! Supply used dry weight by internodes belowground
+    real  supply_used_dw_it_phy                          ! Supply used dry weight by internodes at phytomer level
+    real  supply_used_dw_lf                              ! Supply used dry weight by leaves
+    real  supply_used_dw_lf_phy                          ! Supply used dry weight by leaves at phytomer level
+    real  supply_used_dw_rt                              ! Supply used dry weight by roots
+    real  supply_used_gresp_crop                         ! Supply used for crop growth respiration 
+    real  supply_used_gresp_it                           ! Supply used for internodes growth respiration
+    real  supply_used_gresp_it_ag                        ! Supply used for aboveground internodes growth respiration
+    real  supply_used_gresp_it_bg                        ! Supply used for belowground internodes growth respiration
+    real  supply_used_gresp_it_phy                       ! Supply used for internodes growth respiration at phytomer level
+    real  supply_used_gresp_lf                           ! Supply used for leaves growth respiration
+    real  supply_used_gresp_lf_phy                       ! Supply used for leaves growth respiration at phytomer level
+    real  supply_used_gresp_rt                           ! Supply used for roots growth respiration
+    real  supply_used_it                                 ! Supply used by internodes
+    real  supply_used_it_ag                              ! Supply used by aboveground internodes
+    real  supply_used_it_bg                              ! Supply used by belowground internodes
+    real  supply_used_it_phy                             ! Supply used by internodes at phytomer level
+    real  supply_used_lf                                 ! Supply used by leaves
+    real  supply_used_lf_phy                             ! Supply used by leaves at phytomer level
+    real  supply_used_mresp_crop                         ! Supply used for crop maitenance respiration 
+    real  supply_used_mresp_it                           ! Supply used for internodes maitenance respiration 
+    real  supply_used_mresp_it_ag                        ! Supply used for aboveground internodes maitenance respiration 
+    real  supply_used_mresp_it_bg                        ! Supply used for belowground internodes maitenance respiration 
+    real  supply_used_mresp_it_phy                       ! Supply used for internodes maitenance respiration at phytomer level
+    real  supply_used_mresp_lf                           ! Supply used for leaves maitenance respiration 
+    real  supply_used_mresp_lf_phy                       ! Supply used for leaves maitenance respiration at phytomer level
+    real  supply_used_mresp_rt                           ! Supply used for roots maitenance respiration 
+    real  supply_used_rt                                 ! Supply used by roots 
+    real  t_mresp                                        ! Temperature used for maintenance respiration
+    real  tb0pho                                         ! Base temperature - Tb0 for photosynthesis
+    real  tb1pho                                         ! Base temperature - Tb1 for photosynthesis [optimal]
+    real  tb2pho                                         ! Base temperature - Tb2 for photosynthesis [optimal]
+    real  tbfpho                                         ! Base temperature - Tbf for photosynthesis
+    real  tbmax_per                                      ! Base temperature for plant elongation    
+    real  tempfac_per                                    ! Temperature factor for plant elongation
+    real  tempfac_pho                                    ! Temperature factor for photosynthesis
+    real  tilleragefac_adjust                            ! Tiller age adjusting factor for young tillers to the primary tiller
+    real  tillochron                                     ! Tillochron
+    real  tot_dw_ss_crop                                 ! Total substrates needed for crop growth/maintenance respiration and growth
+    real  tot_dw_ss_it                                   ! Total substrates needed for internodes growth/maintenance respiration and growth
+    real  tot_dw_ss_it_ag                                ! Total substrates needed for aboveground internodes growth/maintenance respiration and growth
+    real  tot_dw_ss_it_bg                                ! Total substrates needed for belowground internodes growth/maintenance respiration and growth
+    real  tot_dw_ss_lf                                   ! Total substrates needed for leaves growth/maintenance respiration and growth
+    real  tot_dw_ss_rt                                   ! Total substrates needed for roots growth/maintenance respiration and growth
+    real  tot_gresp_crop                                 ! Total substrates needed for crop growth respiration
+    real  tot_gresp_it                                   ! Total substrates needed for internodes growth respiration
+    real  tot_gresp_it_ag                                ! Total substrates needed for aboveground internodes growth respiration
+    real  tot_gresp_it_bg                                ! Total substrates needed for belowground internodes growth respiration
+    real  tot_gresp_lf                                   ! Total substrates needed for leaves growth respiration
+    real  tot_gresp_rt                                   ! Total substrates needed for roots growth respiration
+    real  tot_mresp_crop                                 ! Total substrates needed for crop maitenance respiration
+    real  tot_mresp_it                                   ! Total substrates needed for internodes maitenance respiration
+    real  tot_mresp_it_ag                                ! Total substrates needed for aboveground internodes maitenance respiration
+    real  tot_mresp_it_bg                                ! Total substrates needed for belowground internodes maitenance respiration
+    real  tot_mresp_lf                                   ! Total substrates needed for leaves maitenance respiration
+    real  tot_mresp_rt                                   ! Total substrates needed for roots maitenance respiration
+    real  tref_mr                                        ! Reference temperature for maintenance respiration
+    real  tref_mr_it_phy                                 ! Reference temperature for maintenance respiration at phytomer level
+    real  ts_it_phy                                      ! Total sugars in internode
+    real  tt_chumat_lt                                   ! Thermal time required after peak of population for tillering stabilization (oCdays)
+    real  wat_con                                        ! Fraction of water in stalks
+    real  wat_it_ag                                      ! Fresh weight of aboveground internodes
+    real  acc_par                                        ! Accumulated intercepted PAR
+    real  dacc_par                                       ! Rate of intercepted PAR
+    real  drue_calc                                      ! Calculated daily RUE
+    real  rue_calc                                       ! Calculated RUE
+    real  gstd                                           ! Growth stage 
+    real  cstat                                          ! Crop status level
+    real  rowsp                                          ! rowspacing  
+    real  plantdepth                                     ! planting depth    
+    real  rd                                             ! Root depth
+    real  srl                                            ! Specific root length density
+    real  dileaf                                         ! degree-days for leaf development
+    real  z                                              ! zero helper fortran
+    real  resp                                           ! Canopy respiration used for carbon assimilation [deprecated method] 
+    real  pol                                            ! Percentage of sucrose content in fresh stalk biomass
+    real  kc                                             ! Crop coefficient for evapotranspiration calculations
+    real  maxlai                                         ! Maximum LAI hit throughout the season (needed for SC_OPHARV_SAM)
+
+    !--- N-related variables [based on MZCER]
+    real  TMNC                                           ! Plant top minimum N concentration g N/g dry matter
+    real  TANCE                                          ! Nitrogen content in above ground biomass at emergence, g N/g dry matter
+    real  RCNP                                           ! Root critical nitrogen concentration, g N/g root dry weight
+    real  RANCE                                          ! Root N content at emergence   g N/g root
 
     !--- Arrays Variables
-    real        phprof(200,60)                                  ! Phytomer profile and attributes dimensions    
-    real        ddw_rt_sl(nl)                                   ! Rate of dry weight of roots per soil layer
-    real        geot(SOILPROP%NLAYR)                            ! Geotropism parameter
-    real        dw_rt_prof(SOILPROP%NLAYR)                      ! Dry weight of roots per soil layer
-    real        tillerageprof(100,2)                            ! Tiller age profile
-    real        tempfac_h_per(24)                               ! 24 hours
-    real        Acanopy(3+1,5+1)                                ! Instantaneous CO2 Assimilation Rate at three hours and five canopy depth in kg(CO2) ha-1(leaf) h-1 
-    real        Qleaf(3+1,5+1)                                  ! Instantaneous par absorbed by leaves at three hours and five canopy depth in W m-2
-    real        incpar(3,4)                                     ! Incoming direct, difuse and total par radiation above canopy in three hours W m-2
-    real        photo_layer_act(3)                              ! Actual Total Daily Photosynthesis per canopy Layer  
-    real        rgf(SOILPROP%NLAYR+1,3)                         ! Root growth factor
-    real        lroot(SOILPROP%NLAYR)                           ! Root length
-    real        drld(nl)                                        ! Rate of root lenght density 
-    real        drld_dead(nl)                                   ! Rate of root lenght density senescence
-    real 	    bottom				(nl)                        ! bottom level of soil layer 
-    real        upper               (nl)                        ! upper level of soil layer
-    real        slthickness         (nl)                        ! soil	layer thickness 
-    real        dep                 (nl)                        ! depth of soil layer [=bottom]
-    real        rld                 (nl)                        ! root length density at soil layer
-    real        thour(24)                                       ! Hourly temperature
-    real        tsoil(nl)                                       ! Soil temperature at soil layer
-    logical     fl_it_AG(200)                                   ! Above Ground Internode Flag
-    logical     fl_lf_AG(200)                                   ! Above Ground Leaf Flag
-    logical     fl_lf_alive(200)                                ! Flag of alive leaf    
+    real        phprof(200,60)                           ! Phytomer profile and attributes dimensions    
+    real        ddw_rt_sl(nl)                            ! Rate of dry weight of roots per soil layer
+    real        geot(SOILPROP%NLAYR)                     ! Geotropism parameter
+    real        dw_rt_prof(SOILPROP%NLAYR)               ! Dry weight of roots per soil layer
+    real        tillerageprof(100,2)                     ! Tiller age profile
+    real        tempfac_h_per(24)                        ! 24 hours
+    real        Acanopy(3+1,5+1)                         ! Instantaneous CO2 Assimilation Rate at three hours and five canopy depth in kg(CO2) ha-1(leaf) h-1 
+    real        Qleaf(3+1,5+1)                           ! Instantaneous par absorbed by leaves at three hours and five canopy depth in W m-2
+    real        incpar(3,4)                              ! Incoming direct, difuse and total par radiation above canopy in three hours W m-2
+    real        photo_layer_act(3)                       ! Actual Total Daily Photosynthesis per canopy Layer  
+    real        rgf(SOILPROP%NLAYR+1,3)                  ! Root growth factor
+    real        lroot(SOILPROP%NLAYR)                    ! Root length
+    real        drld(nl)                                 ! Rate of root lenght density 
+    real        drld_dead(nl)                            ! Rate of root lenght density senescence
+    real        bottom(nl)                               ! bottom level of soil layer 
+    real        upper(nl)                                ! upper level of soil layer
+    real        slthickness(nl)                          ! soil layer thickness 
+    real        dep(nl)                                  ! depth of soil layer [=bottom]
+    real        rld(nl)                                  ! root length density at soil layer
+    real        thour(24)                                ! Hourly temperature
+    real        tsoil(nl)                                ! Soil temperature at soil layer
+    logical     fl_it_AG(200)                            ! Above Ground Internode Flag
+    logical     fl_lf_AG(200)                            ! Above Ground Leaf Flag
+    logical     fl_lf_alive(200)                         ! Flag of alive leaf    
     
     !--- Real Functions
-    real        fgrowth                                         ! Flexible growth function
-    real        tiller_senes                                    ! Tiller senescence function    
-    real		it_struc_pfac                             		! Structural partitioning factor in internodes
-    real		temperature_factor                        		! Interpolation function
+    real        fgrowth                                  ! Flexible growth function
+    real        tiller_senes                             ! Tiller senescence function    
+    real  it_struc_pfac                                  ! Structural partitioning factor in internodes
+    real  temperature_factor                             ! Interpolation function
     
     !--- Variable further coupled to DSSAT states or outputs
-    real 	    AMAX		                                    ! Assimilation rate at light saturation point (mmol/m2/s)
-    real 	    EFF			                                    ! Carboxylation efficiency (mmol[CO2]/m2/s (mmol[PPFD]/m2/s)-1)
-    real 	    PHTMAX		                                    ! Parameter controlling carbon assimilation [deprecated method] 
-    real 	    PARMAX		                                    ! Parameter controlling carbon assimilation [deprecated method] 
-    real 	    CCMP		                                    ! Parameter controlling carbon assimilation [deprecated method] 
-    real 	    CCMAX		                                    ! Parameter controlling carbon assimilation [deprecated method] 
-    real 	    CCEFF		                                    ! Parameter controlling carbon assimilation [deprecated method] 
-    real 	    RUE			                                    ! Radiation use efficiency [metpg=1]
-    real 	    TB			                                    ! Base temperature for crop development
-    real 	    TBPER		                                    ! Base temperature for crop elongation
-    real 	    CHUSTK		                                    ! TT for stalk emergence (oCdays)
-    real 	    CHUPEAK		                                    ! TT for tillering peak (only used when competition for light is switched-off, method_pop = 1) (oCdays)
-    real 	    CHUDEC                                          ! TT for tillering senescence (oCdays)
-    real 	    CHUMAT		                                    ! TT for population stabilization (oCdays)
-    real 	    POPMAT		                                    ! Tiller population at tillering stabilization (tillers/m2)
-    real 	    POPPEAK		                                    ! Number of tillers at peak of population (tillers/m2, only used if competition for light is switched-off,method_pop=1)
-    real 	    SLA			                                    ! Specific Leaf Area (cm2/g)
-    real 	    RDM			                                    ! Maximum rooting depth
-    real 	    KDIF		                                    ! Difuse light extinction coefficient
-    real 	    DPERCOEFF	                                    ! Maximum plant expansion rate (mm/h)
-    real 	    MLA			                                    ! Maximum leaf area (cm2)
-    real 	    KC_MIN		                                    ! Minimum Crop coefficient for evapotranspiration calculations
-    real 	    EORATIO		                                    ! Ratio used to calculate actual Crop coefficient for evapotranspiration
-    real 	    T_MAX_WS_PHO                                    ! Supply/Demand ratio where water stress effect is maximum for photosynthesis (0-1)
-    real 	    T_MID_WS_PHO                                    ! Supply/Demand ratio where half of maximum water stress effect (0.5) for photosynthesis occurs (0-1)
-    real 	    T_MIN_WS_PHO                                    ! Supply/Demand ratio where water stress effect on photosynthesis onsets (0-1)
-    real	    T_MAX_WS_EXP                                    ! Supply/Demand ratio where water stress effect is maximum for expansion (0-1)
-    real	    T_MID_WS_EXP                                    ! Supply/Demand ratio where half of maximum water stress effect (0.5) for expansionoccurs (0-1)
-    real	    T_MIN_WS_EXP                                    ! Supply/Demand ratio where water stress effect on expansion onsets (0-1)
-    real	    MAXLAI_EO	                                    ! Max LAI for Kc calculations
-    real	    TBM			                                    ! Maximum temperature when crop development stops
-    real	    THRESHEWS	                                    ! Thresold controlling water stress curve
-    real	    RWUMAX			                                ! Max root water uptake
-    real	    T_MAX_WS_FPF                                    ! Parameeter controlling partitioning factors response to waterstress
-    real	    T_MID_WS_FPF                                    ! Parameeter controlling partitioning factors response to waterstress
-    real	    T_MIN_WS_FPF                                    ! Parameeter controlling partitioning factors response to waterstress
-    real	    T_MAX_WS_TIL                                    ! Parameeter controlling tillering response to waterstress
-    real	    T_MID_WS_TIL                                    ! Parameeter controlling tillering response to waterstress
-    real	    T_MIN_WS_TIL                                    ! Parameeter controlling tillering response to waterstress    
-    real	    DW_IT_AG	                                    ! Dry weight of aboveground internodes
-    real	    NSTK		                                    ! Tiller population
-    real	    LAI			                                    ! Leaf area index
-    real	    DIAC		                                    ! Accumulated thermal-time
-    real	    DI		                                        ! Daily degree-day
-    real	    LI		                                        ! Fraction of light interception
-    real	    SWFACP                                          ! Waterstress factor on photosynthesis
-    real	    SWFACE	                                        ! Waterstress factor on elongation
-    real	    SWFACT	                                        ! Waterstress factor on tillering
-    real	    SWFACF	                                        ! Waterstress factor on 
-    real	    TMN		                                        ! Daily mean air temperature
-    integer	    DOY		                                        ! Day of year
-    real	    LAT_SIM	                                        ! Latitude
-    integer     NDWS                                            ! Consecutive days of waterstress
-    integer     NDEWS	                                        ! Consecutive days of extreme waterstress
-    logical     FLEMERGED	                                    ! Flag indicating crop has emerged
-    logical     writedcrop                                      ! Flag for creating detailed output
-    logical     usetsoil                                        ! Flag for using soil temperature
-    logical     mulcheffect                                     ! Flag for using mulch cover effect [e.g. soil temperature]
-    logical     ratoon				                            ! Flag indicating if its a ratoon crop
-    integer     metpg                                           ! Photosynthesis method
-    integer     seqnow                                          ! Counter of sequential cuts [ratoons]
-    integer     nratoon                                         ! Ratoon counter
-    integer     max_ratoon                                      ! Max number of sequential ratoons
-    real        DEC, SNDN, SNUP, CLOUDS, ISINB, S0N             ! DSSAT astro calculations
-    real        par_sim                                         ! simulated PAR
-    character 	(len = 6)	pltype                              ! Character indicating Planting type (Ratoon or PlCane)    
-    character 	(len = 6)	cropstatus                          ! Character indicating  Dead or Alive
-	character 	(len = 6)	cropdstage                          ! Character indicating Development Stage - Only Sprout or Emergd
-    character   (len=7)     YRDOY_ch                            ! Character indicating year and doy [from CONTROL%YRDOY]
+    real     AMAX                                        ! Assimilation rate at light saturation point (mmol/m2/s)
+    real     EFF                                         ! Carboxylation efficiency (mmol[CO2]/m2/s (mmol[PPFD]/m2/s)-1)
+    real     PHTMAX                                      ! Parameter controlling carbon assimilation [deprecated method] 
+    real     PARMAX                                      ! Parameter controlling carbon assimilation [deprecated method] 
+    real     CCMP                                        ! Parameter controlling carbon assimilation [deprecated method] 
+    real     CCMAX                                       ! Parameter controlling carbon assimilation [deprecated method] 
+    real     CCEFF                                       ! Parameter controlling carbon assimilation [deprecated method] 
+    real     RUE                                         ! Radiation use efficiency [metpg=1]
+    real     TB                                          ! Base temperature for crop development
+    real     TBPER                                       ! Base temperature for crop elongation
+    real     CHUSTK                                      ! TT for stalk emergence (oCdays)
+    real     CHUPEAK                                     ! TT for tillering peak (only used when competition for light is switched-off, method_pop = 1) (oCdays)
+    real     CHUDEC                                      ! TT for tillering senescence (oCdays)
+    real     CHUMAT                                      ! TT for population stabilization (oCdays)
+    real     POPMAT                                      ! Tiller population at tillering stabilization (tillers/m2)
+    real     POPPEAK                                     ! Number of tillers at peak of population (tillers/m2, only used if competition for light is switched-off,method_pop=1)
+    real     SLA                                         ! Specific Leaf Area (cm2/g)
+    real     RDM                                         ! Maximum rooting depth
+    real     KDIF                                        ! Difuse light extinction coefficient
+    real     DPERCOEFF                                   ! Maximum plant expansion rate (mm/h)
+    real     MLA                                         ! Maximum leaf area (cm2)
+    real     KC_MIN                                      ! Minimum Crop coefficient for evapotranspiration calculations
+    real     EORATIO                                     ! Ratio used to calculate actual Crop coefficient for evapotranspiration
+    real     T_MAX_WS_PHO                                ! Supply/Demand ratio where water stress effect is maximum for photosynthesis (0-1)
+    real     T_MID_WS_PHO                                ! Supply/Demand ratio where half of maximum water stress effect (0.5) for photosynthesis occurs (0-1)
+    real     T_MIN_WS_PHO                                ! Supply/Demand ratio where water stress effect on photosynthesis onsets (0-1)
+    real     T_MAX_WS_EXP                                ! Supply/Demand ratio where water stress effect is maximum for expansion (0-1)
+    real     T_MID_WS_EXP                                ! Supply/Demand ratio where half of maximum water stress effect (0.5) for expansionoccurs (0-1)
+    real     T_MIN_WS_EXP                                ! Supply/Demand ratio where water stress effect on expansion onsets (0-1)
+    real     MAXLAI_EO                                   ! Max LAI for Kc calculations
+    real     TBM                                         ! Maximum temperature when crop development stops
+    real     THRESHEWS                                   ! Thresold controlling water stress curve
+    real     RWUMAX                                      ! Max root water uptake
+    real     T_MAX_WS_FPF                                ! Parameeter controlling partitioning factors response to waterstress
+    real     T_MID_WS_FPF                                ! Parameeter controlling partitioning factors response to waterstress
+    real     T_MIN_WS_FPF                                ! Parameeter controlling partitioning factors response to waterstress
+    real     T_MAX_WS_TIL                                ! Parameeter controlling tillering response to waterstress
+    real     T_MID_WS_TIL                                ! Parameeter controlling tillering response to waterstress
+    real     T_MIN_WS_TIL                                ! Parameeter controlling tillering response to waterstress    
+    real     DW_IT_AG                                    ! Dry weight of aboveground internodes
+    real     NSTK                                        ! Tiller population
+    real     LAI                                         ! Leaf area index
+    real     DIAC                                        ! Accumulated thermal-time
+    real     DI                                          ! Daily degree-day
+    real     LI                                          ! Fraction of light interception
+    real     SWFACP                                      ! Waterstress factor on photosynthesis
+    real     SWFACE                                      ! Waterstress factor on elongation
+    real     SWFACT                                      ! Waterstress factor on tillering
+    real     SWFACF                                      ! Waterstress factor on 
+    real     TMN                                         ! Daily mean air temperature
+    integer  DOY                                         ! Day of year
+    real     LAT_SIM                                     ! Latitude
+    integer  NDWS                                        ! Consecutive days of waterstress
+    integer  NDEWS                                       ! Consecutive days of extreme waterstress
+    logical  FLEMERGED                                   ! Flag indicating crop has emerged
+    logical  writedcrop                                  ! Flag for creating detailed output
+    logical  usetsoil                                    ! Flag for using soil temperature
+    logical  mulcheffect                                 ! Flag for using mulch cover effect [e.g. soil temperature]
+    logical  ratoon                                      ! Flag indicating if its a ratoon crop
+    integer  metpg                                       ! Photosynthesis method
+    integer  seqnow                                      ! Counter of sequential cuts [ratoons]
+    integer  nratoon                                     ! Ratoon counter
+    integer  max_ratoon                                  ! Max number of sequential ratoons
+    real     DEC, SNDN, SNUP, CLOUDS, ISINB, S0N         ! DSSAT astro calculations
+    real     par_sim                                     ! simulated PAR
+    character  (len = 6) pltype                          ! Character indicating Planting type (Ratoon or PlCane)    
+    character  (len = 6) cropstatus                      ! Character indicating  Dead or Alive
+    character  (len = 6) cropdstage                      ! Character indicating Development Stage - Only Sprout or Emergd
+    character  (len = 7) YRDOY_ch                        ! Character indicating year and doy [from CONTROL%YRDOY]
     
     !--- Helpers for reading integer parameter as real and convert afterwards
     !--- This is easier than creating a dedicated subroutine only for that
@@ -753,7 +757,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             
     !--- Number of soil layers (according to soil profile)
     nlay        = SOILPROP % NLAYR
-    bottom		= SOILPROP % DS
+    bottom      = SOILPROP % DS
     slthickness = SOILPROP % DLAYR
     upper       = bottom - slthickness
     dep         = bottom        
@@ -785,7 +789,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     flemerged           = .false.
     maxlai              = 0.d0
     xlai                = 0.d0    
-    swfacp				= 1.d0
+    swfacp              = 1.d0
     swface              = 1.d0
     STGDOY              = 0
     
@@ -925,7 +929,14 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     call get_species_coeff(                   c_scattering,   'C_SCATTERING', CONTROL, SPC_ERROR)
     call get_species_coeff(                              k,              'K', CONTROL, SPC_ERROR)
     call get_species_coeff(                root_front_size,  'RT_FRONT_SIZE', CONTROL, SPC_ERROR)
-    
+
+    !--- N-related parameters (experimental!)
+    !--- TODO: when finished, transfer to samuca .SPE
+    TMNC  = 0.00450 ! Same as Genotype/MZCER048.SPE [v4.8.5]
+    TANCE = 0.0440  ! Same as Genotype/MZCER048.SPE [v4.8.5]
+    RCNP  = 0.01060 ! Same as Genotype/MZCER048.SPE [v4.8.5]
+    RANCE = 0.0220  ! Same as Genotype/MZCER048.SPE [v4.8.5]
+
     !--- Get integer variables
     maxgl               = aint(maxgl_r)
     maxdgl              = aint(maxdgl_r)
@@ -1202,52 +1213,52 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     endif
             
     !--- Biomass and Aerial Conditions
-    dw_aerial   			=   0.d0
-    dw_lf       			=   0.d0
-    dw_lf_BG    			=   0.d0
-    dw_lf_AG    			=   0.d0
-    dw_it_AG    			=   0.d0
-    dw_it       			=   dw_it_AG + dw_it_BG
-    str_it_AG   			=   0.d0
-    sug_it_AG   			=   0.d0
-    wat_it_AG   			=   0.d0
-    fw_it_AG    			=   0.d0
-    suc_it_AG   			=   0.d0
-    hex_it_AG   			=   0.d0
-    nstk					=	0.d0
-    lai         			=   0.d0
+    dw_aerial               =   0.d0
+    dw_lf                   =   0.d0
+    dw_lf_BG                =   0.d0
+    dw_lf_AG                =   0.d0
+    dw_it_AG                =   0.d0
+    dw_it                   =   dw_it_AG + dw_it_BG
+    str_it_AG               =   0.d0
+    sug_it_AG               =   0.d0
+    wat_it_AG               =   0.d0
+    fw_it_AG                =   0.d0
+    suc_it_AG               =   0.d0
+    hex_it_AG               =   0.d0
+    nstk                    =   0.d0
+    lai                     =   0.d0
     laimod                  =   0.d0
     maxlai                  =   0.d0
-    lai_ass     			=   0.d0
-    stk_h					=	0.d0
-    diac        			=   0.d0
-    diacsoil    			=   0.d0
-    diacem      			=   0.d0
-    diacsoilem  			=   0.d0
-    nstk_now    			=   ini_nstk
-    n_lf_tiller 			=   0.d0
-    sug_cont    			=   0.d0
+    lai_ass                 =   0.d0
+    stk_h                   =   0.d0
+    diac                    =   0.d0
+    diacsoil                =   0.d0
+    diacem                  =   0.d0
+    diacsoilem              =   0.d0
+    nstk_now                =   ini_nstk
+    n_lf_tiller             =   0.d0
+    sug_cont                =   0.d0
     dw_it_dead              =   0.d0
     dw_lf_dead              =   0.d0
     dw_it_dead_AG           =   0.d0
     dw_it_dead_BG           =   0.d0
     
     !--- Counters
-    n_lf_dead               = 0			
-    n_lf_dead_AG            = 0		
-    n_lf_dead_BG            = 0		
-    n_lf_alive_juveni	    = 1
+    n_lf_dead               = 0   
+    n_lf_dead_AG            = 0  
+    n_lf_dead_BG            = 0  
+    n_lf_alive_juveni       = 1
     n_lf_alive_dewlap       = 0
     n_lf_AG_dewlap          = 0
-    n_ph_AG                 = 0				
-    n_lf_alive_AG		    = 0
+    n_ph_AG                 = 0    
+    n_lf_alive_AG           = 0
     n_lf_alive_juveni_AG    = 0
-    n_it_AG                 = 0				
-    n_ph_BG                 = 1				
-    n_lf_BG                 = 1				
-    n_lf_alive_BG           = 1		
+    n_it_AG                 = 0    
+    n_ph_BG                 = 1    
+    n_lf_BG                 = 1    
+    n_lf_alive_BG           = 1  
     n_lf_alive_juveni_BG    = 1
-    n_ph		            = 1    
+    n_ph                    = 1    
     n_lf_alive              = 1
     n_it                    = 1
     n_it_BG                 = 1
@@ -1287,7 +1298,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     fl_stalk_emerged    = .false.    
     fl_shed_leaf        = .false.
     fl_it_visible       = .false.
-    fl_hasleaf          = .false.	
+    fl_hasleaf          = .false. 
     fl_appear_leaf      = .false.
     fl_tiller_increase  = .true.
     fl_tiller_peaked    = .false.
@@ -1311,6 +1322,12 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !--- Initial Crop Depth [cm]
     shootdepth          = initcropdepth
     diac_at_emergence   = 0.d0
+    nlay_roots = 0
+    do sl=1, nlay
+        if (rld(sl) .gt. z) then
+            nlay_roots = nlay
+        endif
+    enddo
     
     !--- Resources used for emergence (reset plant memory)
     res_used_emerg      = 0.d0        
@@ -1322,7 +1339,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     
     !--- Prepare for summary outputs
     xlai                = 0.d0    
-    swfacp				= 1.d0
+    swfacp              = 1.d0
     swface              = 1.d0
     
     !---------------------------------------------------!
@@ -1389,6 +1406,12 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !--- Total LAI must exceed or be equal to healthy LAI
     !--- Following MJ:
     XLAI = MAX(XLAI, XHLAI)
+
+    !--- Composite variable containing data about daily senesced plant matter. Structure of variable is defined in ModuleDefs.for
+    SENESCE % ResWt  = 0.0
+    SENESCE % ResLig = 0.0
+    SENESCE % ResE   = 0.0
+
     
     !HARVRES     ! Composite variable containing harvest residue amounts for total dry matter, lignin, and N amounts.  Structure of variable is defined in ModuleDefs.for. 
     !MDATE       ! Harvest maturity date (YYYYDDD)
@@ -1413,167 +1436,167 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     return
     
 40  continue
-	
+ 
     !-------------------------------------!
     !--- Time-Step Rate Initialization ---!
     !-------------------------------------!
     
     !--- Crop Step-Rates
-    di							= 0.d0
-    disoil						= 0.d0
-    drdepth						= 0.d0
-    dshootext_BG				= 0.d0
-    rgf     					= 0.d0
-    dw_rt_prof                  = 0.d0
-    drld						= 0.d0
-    drld_dead					= 0.d0
-    dphy_stimuli				= 0.d0
-    dla_gain_ref_till           = 0.d0
-    dlai_gain					= 0.d0
-    dlai_dead					= 0.d0
-    dlai_shed					= 0.d0
-    dlai_gain_appear            = 0.d0
-    ddw_lf_appear               = 0.d0
-    per							= 0.d0
-    per_hour					= 0.d0
-    dnstk						= 0.d0
-    ddw_rt         				= 0.d0
-    ddw_lf         				= 0.d0
-    ddw_lf_BG                   = 0.d0
-    ddw_lf_AG                   = 0.d0
-    ddw_it         				= 0.d0
-    ddw_it_AG      				= 0.d0
-    dstr_it_AG     				= 0.d0
-    dsug_it_AG     				= 0.d0
-    ddw_it_BG      				= 0.d0
-    dstr_it_BG     				= 0.d0
-    dsug_it_BG     				= 0.d0
-    dwat_it_AG     				= 0.d0
-    ddw_lf_shed    				= 0.d0
-    dsubsres       				= 0.d0
-    ddw_rt_dead    				= 0.d0
-    ddw_lf_dead    				= 0.d0
-    ddw_it_dead    				= 0.d0
-    ddw_it_AG_dead 				= 0.d0
-    dstr_it_AG_dead				= 0.d0
-    dsug_it_AG_dead				= 0.d0
-    ddw_it_BG_dead 				= 0.d0
-    dstr_it_BG_dead				= 0.d0
-    dsug_it_BG_dead				= 0.d0
-    dwat_it_AG_dead				= 0.d0
+    di                 = 0.d0
+    disoil             = 0.d0
+    drdepth            = 0.d0
+    dshootext_BG       = 0.d0
+    rgf                = 0.d0
+    dw_rt_prof         = 0.d0
+    drld               = 0.d0
+    drld_dead          = 0.d0
+    dphy_stimuli       = 0.d0
+    dla_gain_ref_till  = 0.d0
+    dlai_gain          = 0.d0
+    dlai_dead          = 0.d0
+    dlai_shed          = 0.d0
+    dlai_gain_appear   = 0.d0
+    ddw_lf_appear      = 0.d0
+    per                = 0.d0
+    per_hour           = 0.d0
+    dnstk              = 0.d0
+    ddw_rt             = 0.d0
+    ddw_lf             = 0.d0
+    ddw_lf_BG          = 0.d0
+    ddw_lf_AG          = 0.d0
+    ddw_it             = 0.d0
+    ddw_it_AG          = 0.d0
+    dstr_it_AG         = 0.d0
+    dsug_it_AG         = 0.d0
+    ddw_it_BG          = 0.d0
+    dstr_it_BG         = 0.d0
+    dsug_it_BG         = 0.d0
+    dwat_it_AG         = 0.d0
+    ddw_lf_shed        = 0.d0
+    dsubsres           = 0.d0
+    ddw_rt_dead        = 0.d0
+    ddw_lf_dead        = 0.d0
+    ddw_it_dead        = 0.d0
+    ddw_it_AG_dead     = 0.d0
+    dstr_it_AG_dead    = 0.d0
+    dsug_it_AG_dead    = 0.d0
+    ddw_it_BG_dead     = 0.d0
+    dstr_it_BG_dead    = 0.d0
+    dsug_it_BG_dead    = 0.d0
+    dwat_it_AG_dead    = 0.d0
 
     !--- Respiration Rates and Sink Strenght
-    tot_gresp_lf 				= 0.d0
-    tot_mresp_lf 				= 0.d0
-    tot_dw_ss_lf 				= 0.d0
-    tot_gresp_it_AG 			= 0.d0               
-    tot_mresp_it_AG 			= 0.d0        
-    tot_dw_ss_it_AG 			= 0.d0
-    tot_gresp_it_BG 			= 0.d0   
-    tot_mresp_it_BG 			= 0.d0
-    tot_dw_ss_it_BG 			= 0.d0
-    tot_gresp_rt				= 0.d0
-    tot_mresp_rt				= 0.d0
-    dw_ss_rt					= 0.d0
-    dtlfss						= 0.d0
-    dtitss						= 0.d0
-    dtitss_AG					= 0.d0
-    dtitss_BG					= 0.d0
-    dtrtss						= 0.d0
-    dtcrss						= 0.d0
-    tot_gresp_it				= 0.d0
-    tot_mresp_it				= 0.d0
-    tot_dw_ss_it				= 0.d0		
-    tot_gresp_crop 				= 0.d0
-    tot_mresp_crop 				= 0.d0
-    tot_dw_ss_crop 				= 0.d0
-    dr_rtss 					= 0.d0
-    dr_lfss 					= 0.d0
-    dr_itss 					= 0.d0		
-    frac_AG   					= 0.d0
-    frac_BG   					= 0.d0		
-    rel_ss_lf_phy				= 0.d0
-    rel_ss_it_phy				= 0.d0
-    dw_ss_lf					= 0.d0
-	gresp_lf					= 0.d0
-	mresp_lf					= 0.d0
-	dw_ss_it					= 0.d0
-	gresp_it					= 0.d0
-	mresp_it					= 0.d0
+    tot_gresp_lf       = 0.d0
+    tot_mresp_lf       = 0.d0
+    tot_dw_ss_lf       = 0.d0
+    tot_gresp_it_AG    = 0.d0               
+    tot_mresp_it_AG    = 0.d0        
+    tot_dw_ss_it_AG    = 0.d0
+    tot_gresp_it_BG    = 0.d0   
+    tot_mresp_it_BG    = 0.d0
+    tot_dw_ss_it_BG    = 0.d0
+    tot_gresp_rt       = 0.d0
+    tot_mresp_rt       = 0.d0
+    dw_ss_rt           = 0.d0
+    dtlfss             = 0.d0
+    dtitss             = 0.d0
+    dtitss_AG          = 0.d0
+    dtitss_BG          = 0.d0
+    dtrtss             = 0.d0
+    dtcrss             = 0.d0
+    tot_gresp_it       = 0.d0
+    tot_mresp_it       = 0.d0
+    tot_dw_ss_it       = 0.d0  
+    tot_gresp_crop     = 0.d0
+    tot_mresp_crop     = 0.d0
+    tot_dw_ss_crop     = 0.d0
+    dr_rtss            = 0.d0
+    dr_lfss            = 0.d0
+    dr_itss            = 0.d0  
+    frac_AG            = 0.d0
+    frac_BG            = 0.d0  
+    rel_ss_lf_phy      = 0.d0
+    rel_ss_it_phy      = 0.d0
+    dw_ss_lf           = 0.d0
+    gresp_lf           = 0.d0
+    mresp_lf           = 0.d0
+    dw_ss_it           = 0.d0
+    gresp_it           = 0.d0
+    mresp_it           = 0.d0
 
     !--- Substrates Assimilated
-    dtg							= 0.d0
-    frac_li                     = 0.d0
-    li                          = 0.d0
-    dacc_par                    = 0.d0
-    drue_calc                   = 0.d0
-    rue_calc                    = 0.d0
-    Acanopy				        = 0.d0
-    Qleaf				        = 0.d0
-    incpar				        = 0.d0
-    photo_layer_act				= 0.d0
-    avail_subs_crop				= 0.d0
-    dtg_avail_rt    			= 0.d0 
-    dtg_avail_lf    			= 0.d0 
-    dtg_avail_it    			= 0.d0 
-    dtg_avail_it_BG 			= 0.d0 
-    dtg_avail_it_AG 			= 0.d0
-    subsres_avail_rt    		= 0.d0
-    subsres_avail_lf    		= 0.d0
-    subsres_avail_it    		= 0.d0
-    subsres_avail_it_BG 		= 0.d0
-    subsres_avail_it_AG 		= 0.d0
-    sup_ratio_lf				= 0.d0
-    supply_rate_lf				= 0.d0
-    supply_used_lf				= 0.d0
-    supply_used_mresp_lf		= 0.d0
-    supply_used_gresp_lf		= 0.d0
-    supply_used_dw_lf			= 0.d0
-    reserves_used_mresp_lf		= 0.d0
-    maintenance_factor_lf		= 1.d0
-    reduc_growth_factor_lf		= 1.d0
-    sup_ratio_it				= 0.d0
-    supply_rate_it				= 0.d0
-    supply_used_it				= 0.d0
-    supply_used_mresp_it		= 0.d0
-    supply_used_gresp_it		= 0.d0
-    supply_used_dw_it			= 0.d0
-    reserves_used_mresp_it		= 0.d0
-    maintenance_factor_it		= 1.d0
-    reduc_growth_factor_it		= 1.d0
-    sup_ratio_it_BG				= 0.d0
-    supply_rate_it_BG			= 0.d0
-    supply_used_it_BG			= 0.d0
-    supply_used_mresp_it_BG		= 0.d0
-    supply_used_gresp_it_BG		= 0.d0
-    supply_used_dw_it_BG		= 0.d0
-    reserves_used_mresp_it_BG	= 0.d0
-    maintenance_factor_it_BG	= 1.d0
-    reduc_growth_factor_it_BG	= 1.d0
-    sup_ratio_it_AG				= 0.d0
-    supply_rate_it_AG			= 0.d0
-    supply_used_it_AG			= 0.d0
-    supply_used_mresp_it_AG		= 0.d0
-    supply_used_gresp_it_AG		= 0.d0
-    supply_used_dw_it_AG		= 0.d0
-    reserves_used_mresp_it_AG	= 0.d0
-    maintenance_factor_it_AG	= 1.d0
-    reduc_growth_factor_it_AG	= 1.d0
-    sup_ratio_rt				= 0.d0
-    supply_rate_rt				= 0.d0
-    supply_used_rt				= 0.d0
-    supply_used_mresp_rt		= 0.d0
-    supply_used_gresp_rt		= 0.d0
-    supply_used_dw_rt			= 0.d0
-    reserves_used_mresp_rt		= 0.d0
-    maintenance_factor_rt		= 1.d0
-    reduc_growth_factor_rt		= 1.d0
-    supply_used_crop		    = 0.d0
-    supply_used_mresp_crop	    = 0.d0
-    supply_used_gresp_crop	    = 0.d0
-    supply_used_dw_crop		    = 0.d0
+    dtg                       = 0.d0
+    frac_li                   = 0.d0
+    li                        = 0.d0
+    dacc_par                  = 0.d0
+    drue_calc                 = 0.d0
+    rue_calc                  = 0.d0
+    Acanopy                   = 0.d0
+    Qleaf                     = 0.d0
+    incpar                    = 0.d0
+    photo_layer_act           = 0.d0
+    avail_subs_crop           = 0.d0
+    dtg_avail_rt              = 0.d0 
+    dtg_avail_lf              = 0.d0 
+    dtg_avail_it              = 0.d0 
+    dtg_avail_it_BG           = 0.d0 
+    dtg_avail_it_AG           = 0.d0
+    subsres_avail_rt          = 0.d0
+    subsres_avail_lf          = 0.d0
+    subsres_avail_it          = 0.d0
+    subsres_avail_it_BG       = 0.d0
+    subsres_avail_it_AG       = 0.d0
+    sup_ratio_lf              = 0.d0
+    supply_rate_lf            = 0.d0
+    supply_used_lf            = 0.d0
+    supply_used_mresp_lf      = 0.d0
+    supply_used_gresp_lf      = 0.d0
+    supply_used_dw_lf         = 0.d0
+    reserves_used_mresp_lf    = 0.d0
+    maintenance_factor_lf     = 1.d0
+    reduc_growth_factor_lf    = 1.d0
+    sup_ratio_it              = 0.d0
+    supply_rate_it            = 0.d0
+    supply_used_it            = 0.d0
+    supply_used_mresp_it      = 0.d0
+    supply_used_gresp_it      = 0.d0
+    supply_used_dw_it         = 0.d0
+    reserves_used_mresp_it    = 0.d0
+    maintenance_factor_it     = 1.d0
+    reduc_growth_factor_it    = 1.d0
+    sup_ratio_it_BG           = 0.d0
+    supply_rate_it_BG         = 0.d0
+    supply_used_it_BG         = 0.d0
+    supply_used_mresp_it_BG   = 0.d0
+    supply_used_gresp_it_BG   = 0.d0
+    supply_used_dw_it_BG      = 0.d0
+    reserves_used_mresp_it_BG = 0.d0
+    maintenance_factor_it_BG  = 1.d0
+    reduc_growth_factor_it_BG = 1.d0
+    sup_ratio_it_AG           = 0.d0
+    supply_rate_it_AG         = 0.d0
+    supply_used_it_AG         = 0.d0
+    supply_used_mresp_it_AG   = 0.d0
+    supply_used_gresp_it_AG   = 0.d0
+    supply_used_dw_it_AG      = 0.d0
+    reserves_used_mresp_it_AG = 0.d0
+    maintenance_factor_it_AG  = 1.d0
+    reduc_growth_factor_it_AG = 1.d0
+    sup_ratio_rt              = 0.d0
+    supply_rate_rt            = 0.d0
+    supply_used_rt            = 0.d0
+    supply_used_mresp_rt      = 0.d0
+    supply_used_gresp_rt      = 0.d0
+    supply_used_dw_rt         = 0.d0
+    reserves_used_mresp_rt    = 0.d0
+    maintenance_factor_rt     = 1.d0
+    reduc_growth_factor_rt    = 1.d0
+    supply_used_crop          = 0.d0
+    supply_used_mresp_crop    = 0.d0
+    supply_used_gresp_crop    = 0.d0
+    supply_used_dw_crop       = 0.d0
     reserves_used_mresp_crop    = 0.d0
-    maintenance_factor_crop	    = 1.d0
+    maintenance_factor_crop     = 1.d0
     reduc_growth_factor_crop    = 1.d0
     dtg_avail_lf_ref_till       = 0.d0
     dtg_avail_it_ref_till       = 0.d0
@@ -1587,99 +1610,99 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     dtitss_ref_till             = 0.d0
     dtitss_BG_ref_till          = 0.d0
     dtitss_AG_ref_till          = 0.d0
-    dtg_avail_lf_phy          	= 0.d0
-    subsres_avail_lf_phy      	= 0.d0
-    dtlfss_phy                	= 0.d0
-    mresp_lf_phy              	= 0.d0
-    gresp_lf_phy              	= 0.d0
-    dw_ss_lf_phy              	= 0.d0
-    sup_ratio_lf_phy          	= 0.d0
-    supply_rate_lf_phy        	= 0.d0
-    supply_used_lf_phy        	= 0.d0
-    supply_used_mresp_lf_phy  	= 0.d0
-    supply_used_gresp_lf_phy  	= 0.d0
-    supply_used_dw_lf_phy     	= 0.d0
-    reserves_used_mresp_lf_phy	= 0.d0
-    maintenance_factor_lf_phy 	= 1.d0
-    reduc_growth_factor_lf_phy	= 1.d0
-    dtg_avail_it_phy          	= 0.d0
-    subsres_avail_it_phy      	= 0.d0
-    dtitss_phy                	= 0.d0
-    mresp_it_phy              	= 0.d0
-    gresp_it_phy              	= 0.d0
-    dw_ss_it_phy              	= 0.d0
-    sup_ratio_it_phy          	= 0.d0
-    supply_rate_it_phy        	= 0.d0
-    supply_used_it_phy        	= 0.d0
-    supply_used_mresp_it_phy  	= 0.d0
-    supply_used_gresp_it_phy  	= 0.d0
-    supply_used_dw_it_phy     	= 0.d0
-    reserves_used_mresp_lf_phy	= 0.d0
-    maintenance_factor_it_phy 	= 1.d0
-    reduc_growth_factor_it_phy	= 1.d0
-    it_struc_pfac_rate			= 0.d0
-    dstr_it_phy					= 0.d0
-    dsug_it_phy					= 0.d0
-    exc_dtg_lf      			= 0.d0
-    exc_dtg_it      			= 0.d0
-    exc_dtg_rt      			= 0.d0   
-    dtot_str_dw_ref_till		= 0.d0
-    suc_it_AG_ref_till	        = 0.d0
-    hex_it_AG_ref_till	        = 0.d0                  
-    suc_it_BG_ref_till	        = 0.d0
-    hex_it_BG_ref_till	        = 0.d0 
+    dtg_avail_lf_phy            = 0.d0
+    subsres_avail_lf_phy        = 0.d0
+    dtlfss_phy                  = 0.d0
+    mresp_lf_phy                = 0.d0
+    gresp_lf_phy                = 0.d0
+    dw_ss_lf_phy                = 0.d0
+    sup_ratio_lf_phy            = 0.d0
+    supply_rate_lf_phy          = 0.d0
+    supply_used_lf_phy          = 0.d0
+    supply_used_mresp_lf_phy    = 0.d0
+    supply_used_gresp_lf_phy    = 0.d0
+    supply_used_dw_lf_phy       = 0.d0
+    reserves_used_mresp_lf_phy  = 0.d0
+    maintenance_factor_lf_phy   = 1.d0
+    reduc_growth_factor_lf_phy  = 1.d0
+    dtg_avail_it_phy            = 0.d0
+    subsres_avail_it_phy        = 0.d0
+    dtitss_phy                  = 0.d0
+    mresp_it_phy                = 0.d0
+    gresp_it_phy                = 0.d0
+    dw_ss_it_phy                = 0.d0
+    sup_ratio_it_phy            = 0.d0
+    supply_rate_it_phy          = 0.d0
+    supply_used_it_phy          = 0.d0
+    supply_used_mresp_it_phy    = 0.d0
+    supply_used_gresp_it_phy    = 0.d0
+    supply_used_dw_it_phy       = 0.d0
+    reserves_used_mresp_lf_phy  = 0.d0
+    maintenance_factor_it_phy   = 1.d0
+    reduc_growth_factor_it_phy  = 1.d0
+    it_struc_pfac_rate          = 0.d0
+    dstr_it_phy                 = 0.d0
+    dsug_it_phy                 = 0.d0
+    exc_dtg_lf                  = 0.d0
+    exc_dtg_it                  = 0.d0
+    exc_dtg_rt                  = 0.d0   
+    dtot_str_dw_ref_till        = 0.d0
+    suc_it_AG_ref_till          = 0.d0
+    hex_it_AG_ref_till          = 0.d0                  
+    suc_it_BG_ref_till          = 0.d0
+    hex_it_BG_ref_till          = 0.d0 
     shared_it_sug_BG            = 0.d0
 
     !--- Crop Stress factors
-    swfacp						= 1.d0
-    swface						= 1.d0
-    swfact						= 1.d0
-    swfacf						= 1.d0    
-    agefactor_per				= 1.d0
-    agefactor_rue				= 1.d0
-    pho_fac_co2					= 1.d0
-    tempfac_h_per				= 1.d0
-    tempfac_pho					= 1.d0
-    tempfac_per					= 1.d0
-    amaxfbfac					= 1.d0
-    agefactor_amax              = 1.d0 
+    swfacp         = 1.d0
+    swface         = 1.d0
+    swfact         = 1.d0
+    swfacf         = 1.d0    
+    agefactor_per  = 1.d0
+    agefactor_rue  = 1.d0
+    pho_fac_co2    = 1.d0
+    tempfac_h_per  = 1.d0
+    tempfac_pho    = 1.d0
+    tempfac_per    = 1.d0
+    amaxfbfac      = 1.d0
+    agefactor_amax = 1.d0 
 
     !--- Phytomer Rates
-    phprof(1: 200, 2) 		= 0.d0  ! Leaf Sink strenght
-    phprof(1: 200, 3) 		= 0.d0  ! Allocated Leaf biomass
-    phprof(1: 200, 4) 		= 0.d0  ! Leaf area rate
-    phprof(1: 200, 7) 		= 0.d0  ! Internode Sink Strength dw rate g d-1
-    phprof(1: 200,21) 		= 0.d0 	! Internode Growth Respiration
-    phprof(1: 200,22) 		= 1.d0 	! Maintenance Respiration Factor (0-1) 1 =  is maintenance is ok
-    phprof(1: 200,23) 		= 0.d0 	! dLength (cm)
-    phprof(1: 200,25) 		= 0.d0 	! mresp leaf
-    phprof(1: 200,26) 		= 0.d0 	! gresp leaf
-    phprof(1: 200,27) 		= 0.d0 	! dw ss leaf
-    phprof(1: 200,28) 		= 1.d0 	! sup_ratio_lf_phy
-    phprof(1: 200,29) 		= 0.d0 	! supply_rate_lf
-    phprof(1: 200,30) 		= 0.d0 	! sup_ratio_lf_phy
-    phprof(1: 200,31) 		= 0.d0 	! supply_used_mresp_lf
-    phprof(1: 200,32) 		= 0.d0 	! supply_used_gresp_lf
-    phprof(1: 200,33) 		= 0.d0 	! supply_used_dw_lf
-    phprof(1: 200,34) 		= 1.d0 	! maintenance_factor_lf
-    phprof(1: 200,35) 		= 1.d0 	! reduc_growth_factor_lf
-    phprof(1: 200,36) 		= 0.d0 	! mresp internode
-    phprof(1: 200,37) 		= 0.d0 	! gresp internode
-    phprof(1: 200,38) 		= 0.d0 	! dw ss internode
-    phprof(1: 200,39) 		= 0.d0 	! supply_rate_it
-    phprof(1: 200,40) 		= 1.d0 	! sup_ratio_it_phy
-    phprof(1: 200,41) 		= 0.d0 	! supply_used_it
-    phprof(1: 200,42) 		= 0.d0 	! supply_used_mresp_it
-    phprof(1: 200,43) 		= 0.d0 	! supply_used_gresp_it
-    phprof(1: 200,44) 		= 0.d0 	! supply_used_dw_it
-    phprof(1: 200,45) 		= 1.d0 	! maintenance_factor_it
-    phprof(1: 200,46) 		= 1.d0 	! reduc_growth_factor_it
-    phprof(1: 200,47) 		= 0.d0 	! Internode dry weigth rate [g dt-1]
-    phprof(1: 200,48) 		= 0.d0 	! Internode structural dry weigth rate [g dt-1]
-    phprof(1: 200,49) 		= 0.d0 	! Internode total sugars rate [g dt-1]    
-    phprof(1: 200,55)       = 0.d0  ! Leaf Age rate [dCdays]
-    phprof(1: 200,56)       = 0.d0  ! Phytomer Age rate [dCdays]
-    phprof(1: 200,57)       = 0.d0  ! Internode Age rate [dCdays]
+    phprof(1: 200, 2)   = 0.d0  ! Leaf Sink strenght
+    phprof(1: 200, 3)   = 0.d0  ! Allocated Leaf biomass
+    phprof(1: 200, 4)   = 0.d0  ! Leaf area rate
+    phprof(1: 200, 7)   = 0.d0  ! Internode Sink Strength dw rate g d-1
+    phprof(1: 200,21)   = 0.d0  ! Internode Growth Respiration
+    phprof(1: 200,22)   = 1.d0  ! Maintenance Respiration Factor (0-1) 1 =  is maintenance is ok
+    phprof(1: 200,23)   = 0.d0  ! dLength (cm)
+    phprof(1: 200,25)   = 0.d0  ! mresp leaf
+    phprof(1: 200,26)   = 0.d0  ! gresp leaf
+    phprof(1: 200,27)   = 0.d0  ! dw ss leaf
+    phprof(1: 200,28)   = 1.d0  ! sup_ratio_lf_phy
+    phprof(1: 200,29)   = 0.d0  ! supply_rate_lf
+    phprof(1: 200,30)   = 0.d0  ! sup_ratio_lf_phy
+    phprof(1: 200,31)   = 0.d0  ! supply_used_mresp_lf
+    phprof(1: 200,32)   = 0.d0  ! supply_used_gresp_lf
+    phprof(1: 200,33)   = 0.d0  ! supply_used_dw_lf
+    phprof(1: 200,34)   = 1.d0  ! maintenance_factor_lf
+    phprof(1: 200,35)   = 1.d0  ! reduc_growth_factor_lf
+    phprof(1: 200,36)   = 0.d0  ! mresp internode
+    phprof(1: 200,37)   = 0.d0  ! gresp internode
+    phprof(1: 200,38)   = 0.d0  ! dw ss internode
+    phprof(1: 200,39)   = 0.d0  ! supply_rate_it
+    phprof(1: 200,40)   = 1.d0  ! sup_ratio_it_phy
+    phprof(1: 200,41)   = 0.d0  ! supply_used_it
+    phprof(1: 200,42)   = 0.d0  ! supply_used_mresp_it
+    phprof(1: 200,43)   = 0.d0  ! supply_used_gresp_it
+    phprof(1: 200,44)   = 0.d0  ! supply_used_dw_it
+    phprof(1: 200,45)   = 1.d0  ! maintenance_factor_it
+    phprof(1: 200,46)   = 1.d0  ! reduc_growth_factor_it
+    phprof(1: 200,47)   = 0.d0  ! Internode dry weigth rate [g dt-1]
+    phprof(1: 200,48)   = 0.d0  ! Internode structural dry weigth rate [g dt-1]
+    phprof(1: 200,49)   = 0.d0  ! Internode total sugars rate [g dt-1]    
+    phprof(1: 200,55)   = 0.d0  ! Leaf Age rate [dCdays]
+    phprof(1: 200,56)   = 0.d0  ! Phytomer Age rate [dCdays]
+    phprof(1: 200,57)   = 0.d0  ! Internode Age rate [dCdays]
     
     !------------------------------!
     !--- Check if crop is alive ---!
@@ -1853,7 +1876,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         if(.not. fl_stalk_emerged) then 
             
             !--- Computing crop age (degree-days) based on soil temperature 
-	        di      = disoil
+            di      = disoil
             
             if(flemerged)then                
                 !--- Leaves emerges prior to stalks
@@ -1911,19 +1934,19 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
                 !--- Daily initial tillers numbers rate
                 if(diacsoil .lt. (chupeak + diac_at_emergence)) then
                     !--- Initial tiller grow
-				        dnstk = ((poppeak-ini_nstk)/(chupeak)) * disoil			   
+                        dnstk = ((poppeak-ini_nstk)/(chupeak)) * disoil      
                 
                 elseif(diacsoil .ge. (chupeak + diac_at_emergence) .and. diacsoil .lt. (chudec + diac_at_emergence)) then
                     !--- tillering peak
-				        dnstk = 0.   
+                        dnstk = 0.   
                 
                 elseif(diacsoil .ge. (chudec + diac_at_emergence) .and. diacsoil .lt. (chumat + diac_at_emergence)) then
                     !--- reduction phase to mature (abortion of tillers)
-				        dnstk = (-(poppeak - popmat) / ((chumat)-(chudec))) * disoil 	   
+                        dnstk = (-(poppeak - popmat) / ((chumat)-(chudec))) * disoil     
                 
                 elseif(diacsoil .ge. (chumat+diac_at_emergence)) then
                     !--- late stable tiller population
-				        dnstk = 0.		            						               
+                        dnstk = 0.                                   
                 endif
         
             case(2)       
@@ -2478,8 +2501,8 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         subs_avail_growth_crop  = (dtg + subsres) * (1.e6/1.e4)
         
         !--- This condition will happen before emergence [g m-2]
-        subs_avail_growth_rt    = dtg_avail_rt  	+   subsres_avail_rt
-        subs_avail_growth_lf    = dtg_avail_lf		+   subsres_avail_lf
+        subs_avail_growth_rt    = dtg_avail_rt      +   subsres_avail_rt
+        subs_avail_growth_lf    = dtg_avail_lf      +   subsres_avail_lf
         subs_avail_growth_it    = dtg_avail_it      +   subsres_avail_it
         subs_avail_growth_it_BG = dtg_avail_it_BG   +   subsres_avail_it_BG
         subs_avail_growth_it_AG = dtg_avail_it_AG   +   subsres_avail_it_AG
@@ -2502,7 +2525,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         
         !--- Still the reserves will be used for maintenance when renecessary [g m-2]
         subs_avail_growth_rt    = dtg_avail_rt  
-        subs_avail_growth_lf    = dtg_avail_lf	
+        subs_avail_growth_lf    = dtg_avail_lf 
         subs_avail_growth_it    = dtg_avail_it   
         subs_avail_growth_it_BG = dtg_avail_it_BG
         subs_avail_growth_it_AG = dtg_avail_it_AG
@@ -2610,13 +2633,13 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
                         reduc_growth_factor_rt)   ! Output
     
     !--- Overall Crop Carbon Balance
-    supply_used_crop    	     = supply_used_rt   	   	+ 	supply_used_it   	   	+	 supply_used_lf   	 
-    supply_used_mresp_crop	     = supply_used_mresp_rt	   	+ 	supply_used_mresp_it   	+	 supply_used_mresp_lf	   
-    supply_used_gresp_crop	     = supply_used_gresp_rt	   	+ 	supply_used_gresp_it   	+	 supply_used_gresp_lf	   
-    supply_used_dw_crop	         = supply_used_dw_rt	   	+ 	supply_used_dw_it	   	+	 supply_used_dw_lf	  
-    reserves_used_mresp_crop	 = reserves_used_mresp_rt  	+ 	reserves_used_mresp_it 	+	 reserves_used_mresp_lf
-    maintenance_factor_crop	     = (maintenance_factor_rt  * dw_rt 		+	maintenance_factor_it  * dw_it  + 	 maintenance_factor_lf  * dw_lf) / dw_total
-    reduc_growth_factor_crop	 = (reduc_growth_factor_rt * dw_rt  	+	reduc_growth_factor_it * dw_it  + 	 reduc_growth_factor_lf * dw_lf) / dw_total
+    supply_used_crop          = supply_used_rt           +  supply_used_it          +  supply_used_lf     
+    supply_used_mresp_crop    = supply_used_mresp_rt     +  supply_used_mresp_it    +  supply_used_mresp_lf    
+    supply_used_gresp_crop    = supply_used_gresp_rt     +  supply_used_gresp_it    +  supply_used_gresp_lf    
+    supply_used_dw_crop       = supply_used_dw_rt        +  supply_used_dw_it       +  supply_used_dw_lf   
+    reserves_used_mresp_crop  = reserves_used_mresp_rt   +  reserves_used_mresp_it  +  reserves_used_mresp_lf
+    maintenance_factor_crop   = (maintenance_factor_rt  * dw_rt   + maintenance_factor_it  * dw_it  +   maintenance_factor_lf  * dw_lf) / dw_total
+    reduc_growth_factor_crop  = (reduc_growth_factor_rt * dw_rt   + reduc_growth_factor_it * dw_it  +   reduc_growth_factor_lf * dw_lf) / dw_total
         
     !--- Downscale to organ level to find structural and sugar partitioning factors
     dstr_it_BG  = 0.d0
@@ -2846,10 +2869,10 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     enddo
         
     !--- Upscale Structural and Sugar Rates to Field Level [g m-2]
-    dstr_it_BG  = dstr_it_BG	* nstk_now * tilleragefac
-    dsug_it_BG  = dsug_it_BG	* nstk_now * tilleragefac
-    dstr_it_AG  = dstr_it_AG	* nstk_now * tilleragefac
-    dsug_it_AG  = dsug_it_AG	* nstk_now * tilleragefac
+    dstr_it_BG  = dstr_it_BG * nstk_now * tilleragefac
+    dsug_it_BG  = dsug_it_BG * nstk_now * tilleragefac
+    dstr_it_AG  = dstr_it_AG * nstk_now * tilleragefac
+    dsug_it_AG  = dsug_it_AG * nstk_now * tilleragefac
             
     !--- Correction factor to meet carbon balance
     dsug_corr_fac_BG   = 1.d0
@@ -2872,7 +2895,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         
     !--- Correct to meet carbon balance
     dstr_it_BG  = dstr_it_BG    *   dsug_corr_fac_BG
-    dsug_it_BG  = dsug_it_BG	*   dsug_corr_fac_BG
+    dsug_it_BG  = dsug_it_BG    *   dsug_corr_fac_BG
         
     !--- Biomass Rates [ton ha-1]
     ddw_rt      = supply_used_dw_rt     * (1.e4/1.e6)
@@ -2881,9 +2904,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     ddw_it_BG   = supply_used_dw_it_BG  * (1.e4/1.e6)        
     ddw_it_AG   = supply_used_dw_it_AG  * (1.e4/1.e6)
     dstr_it_BG  = dstr_it_BG            * (1.e4/1.e6)
-    dsug_it_BG  = dsug_it_BG	        * (1.e4/1.e6)
-    dstr_it_AG  = dstr_it_AG	        * (1.e4/1.e6)
-    dsug_it_AG  = dsug_it_AG	        * (1.e4/1.e6)
+    dsug_it_BG  = dsug_it_BG            * (1.e4/1.e6)
+    dstr_it_AG  = dstr_it_AG            * (1.e4/1.e6)
+    dsug_it_AG  = dsug_it_AG            * (1.e4/1.e6)
     
     !--- Leaf Area Index Gain [m2 m-2]
     dlai_gain   = dla_gain_ref_till     * (nstk_now * tilleragefac) / 1.e4
@@ -2934,10 +2957,10 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             !--- Plant extension rate
             do hour = 1, 24            
                 !--- Hourly plant extension rate [mm h-1]
-			    per_hour = dpercoeff * tempfac_h_per(hour) * swface * agefactor_per
-			
+                per_hour = dpercoeff * tempfac_h_per(hour) * swface * agefactor_per
+            
                 !--- Integrate to daily rate [mm day-1]
-			    per = per + per_hour	        
+                per = per + per_hour         
             enddo
         
             !--- Fraction of stalk extension partitioned among internodes as function of structural gain        
@@ -2981,20 +3004,20 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     nsublay = aint(dep(nlay))
     
     !--- Root Profile Rate (RLD and Biomass)
-    call root_profile(nlay			                , & ! Input
-                        nsublay						, & ! Input
-                        initcropdepth				, & ! Input
-                        rpup						, & ! Input
-                        effective_rd				, & ! Input
-                        root_front_size				, & ! Input
-                        srlmax						, & ! Input
-                        srlmin						, & ! Input
-                        bottom						, & ! Input
-                        slthickness                 , & ! Input
-                        ddw_rt                      , & ! Input
-                        flemerged					, & ! Input
-                        drld						, & ! Output
-                        ddw_rt_sl)                      ! Output
+    call root_profile(nlay                   , & ! Input
+                        nsublay              , & ! Input
+                        initcropdepth        , & ! Input
+                        rpup                 , & ! Input
+                        effective_rd         , & ! Input
+                        root_front_size      , & ! Input
+                        srlmax               , & ! Input
+                        srlmin               , & ! Input
+                        bottom               , & ! Input
+                        slthickness          , & ! Input
+                        ddw_rt               , & ! Input
+                        flemerged            , & ! Input
+                        drld                 , & ! Output
+                        ddw_rt_sl)               ! Output
        
     !--- Root Senescence (PIT)
     ddw_rt_dead = 0.d0
@@ -3145,10 +3168,10 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
 !            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_AG) * 100.d0, '% was corrected.'
     endif        
     
-    suc_it_AG   =   suc_it_AG	*	dsug_corr_fac_AG
-    hex_it_AG   =   hex_it_AG	*	dsug_corr_fac_AG
-    suc_it_BG   =   suc_it_BG	*	dsug_corr_fac_BG 
-    hex_it_BG   =   hex_it_BG	*	dsug_corr_fac_BG    
+    suc_it_AG   =   suc_it_AG * dsug_corr_fac_AG
+    hex_it_AG   =   hex_it_AG * dsug_corr_fac_AG
+    suc_it_BG   =   suc_it_BG * dsug_corr_fac_BG 
+    hex_it_BG   =   hex_it_BG * dsug_corr_fac_BG    
     
     !--- Total Dry Biomass [ton ha-1]
     dw_total    =   dw_it       +   dw_lf   +   dw_rt
@@ -3587,7 +3610,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             !------------------------------------------!
             !--- Initialize above ground conditions ---!
             !------------------------------------------!
-		    shootdepth          = 0.d0
+            shootdepth          = 0.d0
             phprof(n_ph,5)      = init_leaf_area                            ! Inital leaf area (cm2)
             nstk                = ini_nstk                                  ! Initial Tillering
             cropdstage          = 'Emergd'                                  ! Update Stage ID     
@@ -3640,59 +3663,59 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !--------------------------!
     
     !--- Passing variables to composite variables of SAMUCA
-    CaneCrop % seqnow         		= seqnow        
-    CaneCrop % pltype         		= pltype        
-    CaneCrop % year           		= year          
-    CaneCrop % doy            		= doy           
-    CaneCrop % das            		= das           
-    CaneCrop % diac           		= diac   
-    CaneCrop % diacem               = diacem
-    CaneCrop % dw_total       		= dw_total
-    CaneCrop % dw_aerial      		= dw_aerial
-    CaneCrop % dw_BG          		= max(0.d0, dw_total - dw_aerial)
-    CaneCrop % dw_it_AG       		= dw_it_AG      
-    CaneCrop % dw_lf          		= dw_lf         
-    CaneCrop % dw_rt          		= dw_rt         
-    CaneCrop % fw_it_AG       		= fw_it_AG      
-    CaneCrop % suc_it_AG      		= suc_it_AG     
-    CaneCrop % pol            		= pol           
-    CaneCrop % lai            		= lai   
-    CaneCrop % lai_ass              = lai_ass   
-    CaneCrop % nstk           		= nstk          
-    CaneCrop % stk_h          		= stk_h         
-    CaneCrop % n_lf_AG_dewlap 		= n_lf
-    CaneCrop % swface         		= swface        
-    CaneCrop % swfacp         		= swfacp        
-    CaneCrop % tempfac_pho          = tempfac_pho
-    CaneCrop % tempfac_per          = tempfac_per
-    CaneCrop % co2                  = co2
-    CaneCrop % agefactor_amax       = agefactor_amax
-    CaneCrop % agefactor_per        = agefactor_per
-    CaneCrop % sug_it_BG            = sug_it_BG
-    CaneCrop % amaxfbfac            = amaxfbfac
-    CaneCrop % per                  = per
-    CaneCrop % cropstatus     		= cropstatus    
-    CaneCrop % cropdstage     		= cropdstage  
-    CaneCrop % rd             		= rd
-    CaneCrop % rld            		= rld
-    CaneCrop % frac_li_pho    		= frac_li
-    CaneCrop % frac_li_till   		= li
-    CaneCrop % trwup          		= trwup * 10.d0 ! [mm]
-    CaneCrop % eop            		= eop    
-    CaneCrop % dtg            		= dtg
-    CaneCrop % drue_calc      		= drue_calc 
-    CaneCrop % rue_calc       		= rue_calc
-    CaneCrop % tot_gresp_crop 		= tot_gresp_crop * (1.e4/1.e6) ! [ton ha-1]
-    CaneCrop % tot_mresp_crop 		= tot_mresp_crop * (1.e4/1.e6) ! [ton ha-1]
-    CaneCrop % gstd           		= gstd
-    CaneCrop % nratoon        		= nratoon
-    CaneCrop % cstat          		= cstat
-    CaneCrop % dw_it_dead           = dw_it_dead
-    CaneCrop % dw_it_dead_AG        = dw_it_dead_AG
-    CaneCrop % dw_it_dead_BG        = dw_it_dead_BG
-	CaneCrop % dw_lf_dead           = dw_lf_dead
-    CaneCrop % tmn                  = tmn    
-    CaneCrop % flemerged            = flemerged
+    CaneCrop % seqnow           = seqnow        
+    CaneCrop % pltype           = pltype        
+    CaneCrop % year             = year          
+    CaneCrop % doy              = doy           
+    CaneCrop % das              = das           
+    CaneCrop % diac             = diac   
+    CaneCrop % diacem           = diacem
+    CaneCrop % dw_total         = dw_total
+    CaneCrop % dw_aerial        = dw_aerial
+    CaneCrop % dw_BG            = max(0.d0, dw_total - dw_aerial)
+    CaneCrop % dw_it_AG         = dw_it_AG      
+    CaneCrop % dw_lf            = dw_lf         
+    CaneCrop % dw_rt            = dw_rt         
+    CaneCrop % fw_it_AG         = fw_it_AG      
+    CaneCrop % suc_it_AG        = suc_it_AG     
+    CaneCrop % pol              = pol           
+    CaneCrop % lai              = lai   
+    CaneCrop % lai_ass          = lai_ass   
+    CaneCrop % nstk             = nstk          
+    CaneCrop % stk_h            = stk_h         
+    CaneCrop % n_lf_AG_dewlap   = n_lf
+    CaneCrop % swface           = swface        
+    CaneCrop % swfacp           = swfacp        
+    CaneCrop % tempfac_pho      = tempfac_pho
+    CaneCrop % tempfac_per      = tempfac_per
+    CaneCrop % co2              = co2
+    CaneCrop % agefactor_amax   = agefactor_amax
+    CaneCrop % agefactor_per    = agefactor_per
+    CaneCrop % sug_it_BG        = sug_it_BG
+    CaneCrop % amaxfbfac        = amaxfbfac
+    CaneCrop % per              = per
+    CaneCrop % cropstatus       = cropstatus    
+    CaneCrop % cropdstage       = cropdstage  
+    CaneCrop % rd               = rd
+    CaneCrop % rld              = rld
+    CaneCrop % frac_li_pho      = frac_li
+    CaneCrop % frac_li_till     = li
+    CaneCrop % trwup            = trwup * 10.d0 ! [mm]
+    CaneCrop % eop              = eop    
+    CaneCrop % dtg              = dtg
+    CaneCrop % drue_calc        = drue_calc 
+    CaneCrop % rue_calc         = rue_calc
+    CaneCrop % tot_gresp_crop   = tot_gresp_crop * (1.e4/1.e6) ! [ton ha-1]
+    CaneCrop % tot_mresp_crop   = tot_mresp_crop * (1.e4/1.e6) ! [ton ha-1]
+    CaneCrop % gstd             = gstd
+    CaneCrop % nratoon          = nratoon
+    CaneCrop % cstat            = cstat
+    CaneCrop % dw_it_dead       = dw_it_dead
+    CaneCrop % dw_it_dead_AG    = dw_it_dead_AG
+    CaneCrop % dw_it_dead_BG    = dw_it_dead_BG
+    CaneCrop % dw_lf_dead       = dw_lf_dead
+    CaneCrop % tmn              = tmn    
+    CaneCrop % flemerged        = flemerged
     
     !--- Water demand
     if(eop .le. z)then

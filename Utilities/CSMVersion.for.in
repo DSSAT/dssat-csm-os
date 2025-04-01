@@ -21,6 +21,11 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-2D_integrate'
 
 !     Version history:
+!       4.8.5.5   FO 2025-03-28 v4.8.5.5 PR 473 Commit SHA: 78bddc9
+!       4.8.5.4   FO 2025-03-21 v4.8.5.4 PR 479 Commit SHA: cfcb8f6
+!       4.8.5.3   FO 2025-03-21 v4.8.5.3 PR 470 Commit SHA: 03dd5cf
+!       4.8.5.2   FO 2025-03-21 v4.8.5.2 PR 469 Commit SHA: a15169a
+!       4.8.5.1   FO 2025-03-19 v4.8.5.1 PR 475 Commit SHA: 218ef51
 !       4.8.5.0   FO 2024-12-19 v4.8.5 Release 2024
 !       4.8.2.0   FO 2023-09-02 v4.8.2 Release 2023
 !       4.8.1.0   FO 2022-10-28 v4.8.1 Interim release 2022

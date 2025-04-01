@@ -39,7 +39,7 @@
         CHARACTER(LEN=10) TL10FROMI
         
         CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP
-        CHARACTER*12 X(EvaluateNum)
+        CHARACTER*12 X(EvaluateNum), FILEA_NAME
         CHARACTER*80 PATHEX
         
         TYPE (ControlType) CONTROL
@@ -1030,7 +1030,11 @@
               ELSE
                 TRT_ROT = TN
               ENDIF
-              CALL READA_Y4K(FILEA, PATHEX,OLAB, TRT_ROT, YEARSIM, X)
+!             READA_Y4K needs fileA name only. FILEA variable contains
+!             the entire path to the file.
+              FILEA_NAME = EXCODE(1:8)//'.'//EXCODE(9:10)//'A'
+              CALL READA_Y4K(FILEA_NAME, PATHEX,OLAB, TRT_ROT, 
+     &              YEARSIM, X)
              
               CALL READA_Dates(X(1), YEARSIM, IFLR)
               IF (IFLR .GT. 0 .AND. IPLTI .EQ. 'R' 
