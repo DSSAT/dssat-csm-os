@@ -1468,11 +1468,14 @@ C=====================================================================
 
       REAL MaxDepth
       REAL, DIMENSION(NL) :: SWDELTW
-      REAL, DIMENSION(MaxRows,MaxCols) :: SWVDeltW
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWVDeltW, Thick, Colfrac
       INTEGER i,j
 
 !-----------------------------------------------------------------------
       MaxDepth = SOILPROP % DS(SOILPROP % NLAYR)
+      Thick = CELLS % Struc % Thick
+      Colfrac = BedDimension % Colfrac
+      SWVDeltW = 0.0
 
 !     Water table initialization
       CALL WaterTable(DYNAMIC,          
@@ -1492,7 +1495,8 @@ C=====================================================================
           DO j = 1, NColsTot
             SELECT CASE(CELLS(i,j) % STRUC % Cell_Type)
             CASE (3,4,5)
-              netLatFlow = netLatFlow + SWVDeltW(i,j)
+              netLatFlow = netLatFlow + 
+     &           SWVDeltW(i,j) * Thick(i,j) * ColFrac(i,j) * 10.
             END SELECT
           ENDDO
         ENDDO
