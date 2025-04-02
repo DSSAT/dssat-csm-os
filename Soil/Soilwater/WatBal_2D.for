@@ -1502,8 +1502,15 @@ C=====================================================================
         ENDDO
       ENDIF
 
-!     This should be distributed over a day!!
+!     ------------------------------------------------------------------------
 !     Set SWV based on today's water table  
+!     Note chp 2025-04-02: I tried this SWV update as a time-step update in the 
+!         main routine, but it caused a lot more drainage and a lot more loss
+!         of N, enough to stress the plant and depress yields.
+!     Capillary rise should come with an upflux of N which we are not modeling.
+!     For now, just stick with this daily update to SWV and assume that
+!       N movement upward due to capillary rise is approximately equal to 
+!       N movement downward due to extra drainage. 
       DO i = 1, SOILPROP % NLAYR
         SW(i) = SW(i) + SWDELTW(i)
         DO j = 1, NColsTot
@@ -1513,7 +1520,7 @@ C=====================================================================
           END SELECT
         ENDDO
       ENDDO
-
+!     ------------------------------------------------------------------------
 
 !     The 2D model is not needed in the vicinity of the water table.
 !     Calculate the limits of the 2D model. 
