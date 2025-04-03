@@ -11,7 +11,8 @@
 !              Fix bug of YRDOY
 !              Clarify the output Drain as SolProfDrain to distiguish the drain from LIMIT_2D
 !              StdIrrig may need replace by IRRAMT
-!              Need to handle if both dripper and convension irrigtaion applied on same day 
+!              Need to handle if both dripper and convension irrigaion applied on same day 
+!  04/02/2025 chp add SoilWatBalSum.OUT
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !=====================================================================
@@ -37,7 +38,9 @@
       DOUBLE PRECISION, INTENT(IN) :: ES_DAY
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
-      CHARACTER*14, PARAMETER :: SWBAL = 'SoilWatBal.OUT'
+      CHARACTER*14, PARAMETER :: SWBAL  = 'SoilWatBal.OUT'
+      CHARACTER*14, PARAMETER :: SWBALS = 'SWatBalSum.OUT'
+        
       INTEGER DAS, DOY, DYNAMIC, INCDAT, LIMIT_2D, LUNWBL
       INTEGER RUN, YEAR, YRSIM, YRDOY
       INTEGER YR1, DY1, YR2, DY2
@@ -125,6 +128,21 @@
      &    LIMIT_2D, AdjWTD, ActWTD          !LIMIT_2D, WaterTableDepth
       ENDIF
 
+!!     -------------------------------------------------------------
+!!     SoilWatBalSum.OUT
+!!     One line per simulation summary of soil water balance
+!      CALL GETLUN('SWBALS', LUNWBLS)
+!      INQUIRE (FILE = SWBAL, EXIST = FEXIST)
+!      IF (FEXIST) THEN
+!        OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'OLD',
+!     &    POSITION = 'APPEND')
+!      ELSE
+!        OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'NEW')
+!        WRITE(LUNWBL,'("*WATER BALANCE OUTPUT FILE")')
+!      ENDIF
+!
+!      CALL HEADER(SEASINIT, LUNWBL, RUN)
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY OUTPUT 
@@ -169,11 +187,11 @@
      &    , COUNT, ES, ES_DAY
      &    , LIMIT_2D, AdjWTD, ActWTD
  1300   FORMAT(1X,I4,1X,I3.3,1X,I5
-     &    , F10.4       !TSW
-     &    , 2F9.4       !Inflows
-     &    , 5F9.4       !Outflows
-     &    , F9.4, F11.4 !Balances
-     &    , I9, 2F11.4  !COUNT, ES, ES_DAY
+     &    , F10.4                 !TSW
+     &    , 2F9.4                 !Inflows
+     &    , 5F9.4                 !Outflows
+     &    , F9.4, F11.4           !Balances
+     &    , I9, 2F11.4            !COUNT, ES, ES_DAY
      &    , 5X, I3, 1X, 2F8.1)    !LIMIT_2D, MgmtWTD
 
         !Save values for comparison tomorrow

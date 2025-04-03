@@ -200,15 +200,15 @@ C-----------------------------------------------------------------------
      &    '    IRRC   LATFC    DTWT   DTWTM',
      &    '    MWTD    TDFD    TDFC    ROFD    ROSD')
 
-!       print SW for all layers
-        DO L = 1, NLAYR
-          IF (L < 10) THEN
-            WRITE(SW_txt(L),'("    SW",I1,"D")') L
-          ELSE
-            WRITE(SW_txt(L),'("   SW",I2,"D")') L
-          ENDIF
-        ENDDO
-        WRITE(NOUTDW,'(40(A8))') (SW_txt(L), L=1,NLAYR)
+!         print SW for all layers
+          DO L = 1, NLAYR
+            IF (L < 10) THEN
+              WRITE(SW_txt(L),'("    SW",I1,"D")') L
+            ELSE
+              WRITE(SW_txt(L),'("   SW",I2,"D")') L
+            ENDIF
+          ENDDO
+          WRITE(NOUTDW,'(240(A8))') (SW_txt(L), L=1,NLAYR)
 
         END IF   ! VSH
 
