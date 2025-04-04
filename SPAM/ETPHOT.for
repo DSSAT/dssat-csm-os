@@ -682,27 +682,32 @@ C          ES = MAX(MIN(EDAY,AWEV1),0.0)
             ENDIF
           ENDIF
 !*****************************************
-!         Calculate ozone stress on photosynthesis. Added by JG 12/15/2021
-!         FO3 ranges between 0.0-1.0, 1.0 = no stress, 0.0 = max stress
-          IF (OZON7 .GT. OBASE .and. ISWDIS .eq. 'O') THEN
-              FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
-              FO3 = MAX(FO3, 0.0)
-          ELSE
-              FO3 = 1.0
-          ENDIF
-!         Ozone interaction with CO2 and water stress (SWFAC). SWFAC is between 0.0-1.0
-!         CO2 effect on photosynthesis, same as in PHOTO.for
+!         Calculate ozone stress on photosynthesis. 
+!         Added by JG 12/15/2021 FO3 ranges between 0.0-1.0, 
+!         1.0 = no stress, 0.0 = max stress Ozone interaction 
+!         with CO2 and water stress (SWFAC). SWFAC is between 
+!         0.0-1.0 CO2 effect on photosynthesis, same as in 
+!         PHOTO.for.
 !         Adjust canopy photosynthesis for CO2 concentration assuming a
 !         reference value of CO2 of 330 ppmv.
-          CCK = CCEFF / CCMAX
-          A0 = -CCMAX * (1. - EXP(-CCK * CCMP))
-          PRATIO = A0 + CCMAX * (1. - EXP(-CCK * CO2))
-          
-          IF (SWFAC .LT. 0.0001) THEN  ! added to prevent dividing by 0
-              PRFO3 = 1.0
-          ELSE
+          IF (ISWDIS .EQ. 'O') THEN
+            IF(OZON7 .GT. OBASE) THEN
+              FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
+              FO3 = MAX(FO3, 0.0)
+            ELSE
+              FO3 = 1.0
+            ENDIF
+            CCK = CCEFF / CCMAX
+            A0 = -CCMAX * (1. - EXP(-CCK * CCMP))
+            PRATIO = A0 + CCMAX * (1. - EXP(-CCK * CO2))
+            IF (SWFAC .GT. 0.0) THEN
               PRFO3 = MIN(1.0, (FO3*PRATIO)/SWFAC)
-          ENDIF
+            ELSE
+              PRFO3 = 1.0
+            ENDIF
+          ELSE
+            PRFO3 = 1.0
+          ENDIF          
 
           IF (MEEVP .NE. 'Z') THEN
 C
