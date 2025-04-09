@@ -25,7 +25,7 @@ C           water content.  Then saturated flow is calculated.
 C=======================================================================
       SUBROUTINE INFIL(
      &    DLAYR, DS, DUL, NLAYR, PINF, SAT, SW,           !Input
-     &    SWCN, SWCON, MgmtWTD,                           !Input
+     &    SWCN, SWCON, ActWTD,                            !Input
      &    DRAIN, DRN, EXCS, SWDELTS)                      !Output
 
 !     ------------------------------------------------------------------
@@ -37,7 +37,7 @@ C=======================================================================
       INTEGER L, LK, NLAYR
 
       REAL DRAIN, DRCM, EXCS, HOLD, PINF, SWCON, TMPEXCS
-      REAL MgmtWTD
+      REAL ActWTD
       REAL DLAYR(NL), DRN(NL), DS(NL), DUL(NL), SAT(NL), SW(NL)
       REAL SWCN(NL), SWDELTS(NL), SWTEMP(NL)
 
@@ -57,7 +57,7 @@ C=======================================================================
 ! 11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
 !     increased evaporation for wet soils
 
-          IF (DS(L) > MgmtWTD) THEN
+          IF (DS(L) > ActWTD .AND. ActWTD > 0.0) THEN
             DRN(L) = 0.0
             DRCM = 0.0
           ELSE
@@ -111,7 +111,7 @@ C           If there is excess water, redistribute it in layers above.
         ELSE
           SWTEMP(L) = SWTEMP(L) + PINF / DLAYR(L)
           IF (SWTEMP(L) .GE. DUL(L) + 0.003 .AND.
-     &          DS(L) < MgmtWTD) THEN
+     &          DS(L) < ActWTD .AND. ActWTD > 0.0) THEN
 
 ! 11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
 !     increased evaporation for wet soils
@@ -162,7 +162,7 @@ C           If there is excess water, redistribute it in layers above.
 ! HOLD       Amount of water a soil layer will hold above it's present 
 !               level, used to calculate downward flow; also, temporary 
 !               variable/ intermediate calculation (cm)
-! MgmtWTD    Managed depth to water table (cm)
+! ActWTD     Depth to water table (cm)
 ! NLAYR      Actual number of soil layers 
 ! PINF       Potential water available for infiltration (cm)
 ! SAT(L)     Volumetric soil water content in layer L at saturation

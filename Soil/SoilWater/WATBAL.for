@@ -397,7 +397,7 @@ C     Conflict with CERES-Wheat
         IF (PINF .GT. 0.0001) THEN
           CALL INFIL(
      &      DLAYR, DS, DUL, NLAYR, PINF, SAT, SW,         !Input
-     &      SWCN, SWCON, MgmtWTD,                         !Input
+     &      SWCN, SWCON, ActWTD,                         !Input
      &      DRAIN, DRN, EXCS, SWDELTS)                    !Output
 
           INFILT = 0.0

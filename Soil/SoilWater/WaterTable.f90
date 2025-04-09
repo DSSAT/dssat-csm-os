@@ -36,7 +36,7 @@
     INTEGER L, NLAYR
     REAL Bottom, Top, Thick, TargetWTD, BedAdjust, MinWTD, AdjWTD
     REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR, ThetaCap
-    REAL, DIMENSION(NL) :: SW_temp
+    REAL, DIMENSION(NL) :: SW_temp, DeltaSW
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
@@ -256,24 +256,26 @@
 !   water table depth based on water table and drawdown dynamics, but
 !   previous attempts resulted in instability for daily model.
 
+!   No effect of water table if it is below the bottom of the soil profile.
     IF (ActWTD .GE. DS(NLAYR)) THEN
-!     No effect of water table if it is below the bottom of the soil profile.
-      ThetaCap = SOILPROP % WCR
-    ELSE
-!     Calculate water content within capillary fringe, ThetaCap
-      CALL CapFringe(           &
-        ActWTD,  SOILPROP,      &   !Input
-        ThetaCap)                   !Output
+      RETURN
     ENDIF
+
+!   Calculate water content within capillary fringe, ThetaCap
+    CALL CapFringe(           &
+      ActWTD,  SOILPROP,      &   !Input
+      ThetaCap)                   !Output
 
 !   Update temporary soil water content with ThetaCap
     DO L = 1, NLAYR
-      SW_TEMP(L) = MAX(SW_TEMP(L), ThetaCap(L))
+      DeltaSW(L) = MAX(0.0, ThetaCap(L) - SW_TEMP(L))
+      SW_TEMP(L) = SW_TEMP(L) + DeltaSW(L)
       SWDELTW(L) = SW_TEMP(L) - SW(L)
 !     net lateral flow (+ inflow, - outflow)
       netLatFlow = netLatFlow + SWDELTW(L) * DLAYR(L) * 10.
+
     ENDDO
-    
+
 !-----------------------------------------------------------------------
     RETURN
     End Subroutine WaterTable
