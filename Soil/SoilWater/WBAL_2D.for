@@ -8,11 +8,7 @@
 !  REVISION HISTORY
 !  09/05/2008 CHP adapted WBAL for 2D model 
 !  08/15/2011  Add columns of LIMIT_2D and MgWTD for SoilWatBal.OUT
-!              Fix bug of YRDOY
-!              Clarify the output Drain as SolProfDrain to distiguish the drain from LIMIT_2D
-!              StdIrrig may need replace by IRRAMT
-!              Need to handle if both dripper and convension irrigaion applied on same day 
-!  04/02/2025 chp add SoilWatBalSum.OUT
+!  04/02/2025 chp add SWBalSum.OUT
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !=====================================================================
@@ -38,17 +34,15 @@
       DOUBLE PRECISION, INTENT(IN) :: ES_DAY
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
-      CHARACTER*14, PARAMETER :: SWBAL = 'SoilWatBal.OUT'
-      CHARACTER*12, PARAMETER :: SWBSUM = 'SWBalSum.OUT'
+      CHARACTER*14, PARAMETER :: SWBAL2 = 'SolWatBal2.OUT'
+      CHARACTER*12, PARAMETER :: SWBSUM2 = 'SWBalSm2.OUT'
         
       INTEGER DAS, DOY, DYNAMIC, INCDAT, LIMIT_2D, LUNWBL, LUNWBLS
       INTEGER RUN, YEAR, YRSIM, YRDOY
       INTEGER YR1, DY1, YR2, DY2
 
-      REAL CEP, CES, ES, EP, CEVAP
-      REAL CEO, EFFIRR 
-      REAL TOTIR, TSWINI
-      REAL CumNetLatFlow
+      REAL CEO, CEP, CES, CEVAP, EFFIRR, ES, EP
+      REAL TOTIR, CumNetLatFlow, TSWINI
       REAL WBALAN, SolProfDrain, ActWTD, AdjWTD
       REAL CUMWBAL, TOTEFFIRR, TSWY
 
@@ -64,9 +58,6 @@
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
       DAS     = CONTROL % DAS
-      IDETW   = ISWITCH % IDETW
-      IDETL   = ISWITCH % IDETL
-      ISWWAT  = ISWITCH % ISWWAT
       MEINF   = ISWITCH % MEINF
 
 !     Today's actual water table depth
@@ -89,14 +80,15 @@
       CUMWBAL = 0.0
       CumNetLatFlow = 0.0
 
-!     Open output file
-      CALL GETLUN('SWBAL', LUNWBL)
-      INQUIRE (FILE = SWBAL, EXIST = FEXIST)
+!--------------------------------------------------------------
+!     Initialize SoilWatBal.OUT file
+      CALL GETLUN('SWBAL2', LUNWBL)
+      INQUIRE (FILE = SWBAL2, EXIST = FEXIST)
       IF (FEXIST) THEN
-        OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'OLD',
+        OPEN (UNIT = LUNWBL, FILE = SWBAL2, STATUS = 'OLD',
      &    POSITION = 'APPEND')
       ELSE
-        OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'NEW')
+        OPEN (UNIT = LUNWBL, FILE = SWBAL2, STATUS = 'NEW')
         WRITE(LUNWBL,'("*WATER BALANCE OUTPUT FILE")')
       ENDIF
 
@@ -131,13 +123,13 @@
 !--------------------------------------------------------------
 !     Initialize SWBalSum.OUT file
       IF (INDEX('AD',IDETL) > 0) THEN
-        CALL GETLUN('SWBSUM', LUNWBLS)
-        INQUIRE (FILE = SWBSUM, EXIST = FEXIST)
+        CALL GETLUN('SWBSUM2', LUNWBLS)
+        INQUIRE (FILE = SWBSUM2, EXIST = FEXIST)
         IF (FEXIST) THEN
-          OPEN (UNIT = LUNWBLS, FILE = SWBSUM, STATUS = 'OLD',
+          OPEN (UNIT = LUNWBLS, FILE = SWBSUM2, STATUS = 'OLD',
      &      POSITION = 'APPEND')
         ELSE
-          OPEN (UNIT = LUNWBLS, FILE = SWBSUM, STATUS = 'NEW')
+          OPEN (UNIT = LUNWBLS, FILE = SWBSUM2, STATUS = 'NEW')
           WRITE(LUNWBLS,'("*WATER BALANCE SUMMARY OUTPUT FILE")')
         
           CALL HEADER(SEASINIT, LUNWBLS, RUN)
