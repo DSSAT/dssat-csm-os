@@ -38,14 +38,14 @@
       DOUBLE PRECISION, INTENT(IN) :: ES_DAY
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
-      CHARACTER*14, PARAMETER :: SWBAL  = 'SoilWatBal.OUT'
-      CHARACTER*14, PARAMETER :: SWBALS = 'SWatBalSum.OUT'
+      CHARACTER*14, PARAMETER :: SWBAL = 'SoilWatBal.OUT'
+      CHARACTER*12, PARAMETER :: SWBSUM = 'SWBalSum.OUT'
         
-      INTEGER DAS, DOY, DYNAMIC, INCDAT, LIMIT_2D, LUNWBL
+      INTEGER DAS, DOY, DYNAMIC, INCDAT, LIMIT_2D, LUNWBL, LUNWBLS
       INTEGER RUN, YEAR, YRSIM, YRDOY
       INTEGER YR1, DY1, YR2, DY2
 
-      REAL CEP, CES, ES, EP
+      REAL CEP, CES, ES, EP, CEVAP
       REAL CEO, EFFIRR 
       REAL TOTIR, TSWINI
       REAL CumNetLatFlow
@@ -128,20 +128,43 @@
      &    LIMIT_2D, AdjWTD, ActWTD          !LIMIT_2D, WaterTableDepth
       ENDIF
 
-!!     -------------------------------------------------------------
-!!     SoilWatBalSum.OUT
-!!     One line per simulation summary of soil water balance
-!      CALL GETLUN('SWBALS', LUNWBLS)
-!      INQUIRE (FILE = SWBAL, EXIST = FEXIST)
-!      IF (FEXIST) THEN
-!        OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'OLD',
-!     &    POSITION = 'APPEND')
-!      ELSE
-!        OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'NEW')
-!        WRITE(LUNWBL,'("*WATER BALANCE OUTPUT FILE")')
-!      ENDIF
-!
-!      CALL HEADER(SEASINIT, LUNWBL, RUN)
+!--------------------------------------------------------------
+!     Initialize SWBalSum.OUT file
+      IF (INDEX('AD',IDETL) > 0) THEN
+        CALL GETLUN('SWBSUM', LUNWBLS)
+        INQUIRE (FILE = SWBSUM, EXIST = FEXIST)
+        IF (FEXIST) THEN
+          OPEN (UNIT = LUNWBLS, FILE = SWBSUM, STATUS = 'OLD',
+     &      POSITION = 'APPEND')
+        ELSE
+          OPEN (UNIT = LUNWBLS, FILE = SWBSUM, STATUS = 'NEW')
+          WRITE(LUNWBLS,'("*WATER BALANCE SUMMARY OUTPUT FILE")')
+        
+          CALL HEADER(SEASINIT, LUNWBLS, RUN)
+
+!         Write header for daily output
+          WRITE (LUNWBLS,1130)
+ 1130     FORMAT(/,'!                           ',
+     &    '|----- Initial Water Content (mm) -----',
+     &    '|------ Final Water Content (mm) -------',
+     &    '|-------- Water Additions (mm) ---------',
+     &    '|--------------- Water Losses (mm) ---------------',
+     &    '|-----------|',/,
+     &    '!                           ',
+     &    '|    Soil     Mulch     Flood      Snow',
+     &    '      Soil     Mulch     Flood      Snow',
+     &    '    Precip     Irrig   LatFlow   Residue',
+     &    '      Evap  Transpir    Runoff  Drainage   Tile Dr',
+     &    '     Balance',/,
+     &    '@  Run FILEX          TN CR',
+     &    '     SWTDi     MWTDi     FWTDi    SNOWDi',
+     &    '      SWTD      MWTD      FWTD     SNOWD',
+     &    '      PRCM      IRRC     LATFC     RESAC',
+     &    '      ESCM      EPCM      ROCM      DRCM      TDFC',
+     &    '     CUMWBAL')
+
+        ENDIF
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -253,6 +276,20 @@ C-----------------------------------------------------------------------
 
       CLOSE(LUNWBL)       
 
+!--------------------------------------------------------------
+      IF (INDEX('AD',IDETL) > 0) THEN
+!       Write seasonal summary to SWBalSum.OUT
+        CALL GET('SPAM', 'CEVAP', CEVAP)
+        
+        WRITE (LUNWBLS,'(I6,1X,A12,1X,I4,1X,A2,17F10.2,F12.4)')
+     &    RUN, CONTROL % FILEX, CONTROL % TRTNUM, CONTROL % CROP, 
+     &    TSWINI, 0.0, 0.0, 0.0,
+     &    TSW, 0.0, 0.0, 0.0,  
+     &    CRAIN, TOTEFFIRR, CumNetLatFlow, 0.0, 
+     &    CEVAP, CEP, TRUNOF, TDRAIN, 0., 
+     &    WBALAN
+      ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
@@ -267,14 +304,14 @@ C=======================================================================
 C=====================================================================
 !     Wbal_2D VARIABLE DEFINITIONS:
 !-----------------------------------------------------------------------
-! CEO      Cumulative potential evapotranspiration from 0:00am to the end of this time step(mm)
-! CEP      Cumulative transpiration from 0:00am to the end of this time step (mm)
-! CES      Cumulative evaporation from 0:00am to the end of this time step (mm)
-! CRAIN    Cumulative precipitation from 0:00am to the end of this time step (mm)
+! CEO      Cumulative potential evapotranspiration (mm)
+! CEP      Cumulative transpiration (mm)
+! CES      Cumulative evaporation (mm)
+! CRAIN    Cumulative precipitation (mm)
 ! CUMWBAL  Cumulative water balance
 ! DEFICIT  Amount by which the allowable minimum soil water content in top 
 !            layer exceeds the actual calculated soil water content (cm3/cm3)
-! DLAYR(L) Soil thickness in layer L (cm)
+! DLAYR(L)  Soil thickness in layer L (cm)
 ! Drain_Limit2D Drain water in mm
 ! DY2      Day of year
 ! EFFIRR   Irrigation application efficiency (cm/cm)
@@ -299,9 +336,6 @@ C=====================================================================
 ! RAIN     Precipitation in mm. Considered that the rain on the plastic run to furrow. 
 !          Thus the infiltration amount is WATAVL = RAIN * HalfRow / HalfFurrow      !mm
 ! RUNOFF   Run off water in mm
-! RWUbed   Root uptake from bed
-! RWUubd   Root uptake from under-bid
-! RWUfur   Root uptake from furrow
 ! SAT(L)   Volumetric soil water content in layer L at saturation
 !            (cm3 [water] / cm3 [soil])
 ! SW(L)    Volumetric soil water content in layer L

@@ -11,6 +11,7 @@ C  08/20/2002 GH  Modified for Y2K
 !  02/22/2006 CHP Added tiledrain.
 !  03/06/2006 CHP Added mulch layer effects on evaporation and infiltration.
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
+!  04/02/2025 chp add SWBalSum.OUT
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 C=====================================================================
@@ -29,11 +30,12 @@ C=====================================================================
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
       CHARACTER*14, PARAMETER :: SWBAL = 'SoilWatBal.OUT'
-      INTEGER DAS, DOY, DYNAMIC, INCDAT, LUNWBL
+      CHARACTER*12, PARAMETER :: SWBSUM = 'SWBalSum.OUT'
+      INTEGER DAS, DOY, DYNAMIC, INCDAT, LUNWBL, LUNWBLS
       INTEGER RUN, YEAR, YRSIM, YRDOY, NBUND
       INTEGER YR1, DY1, YR2, DY2
 
-      REAL CEO, CEP, CES, CRAIN, EFFIRR
+      REAL CEO, CEP, CES, CEVAP, CRAIN, EFFIRR
       REAL TDFC, TDFD
       REAL TDRAIN, TOTIR, TRUNOF, TSW, TSWINI
       REAL netLatFlow
@@ -110,7 +112,8 @@ C=====================================================================
       CUMMULEVAP = 0.0
       CumNetLatFlow = 0.0
 
-!     Open output file
+!--------------------------------------------------------------
+!     Initialize SoilWatBal.OUT file
       CALL GETLUN('SWBAL', LUNWBL)
       INQUIRE (FILE = SWBAL, EXIST = FEXIST)
       IF (FEXIST) THEN
@@ -127,7 +130,7 @@ C=====================================================================
 !       Write header for daily output
         WRITE (LUNWBL,1120)
  1120   FORMAT('@YEAR DOY   DAS',
-     & '    SWTD    FWTD    SNTD   MWTD',                   !State vars
+     & '    SWTD    FWTD   SNOWD   MWTD',                   !State vars
      & '   IRRD   PRED',                                    !Inflows
      & '  RESAD   LFLOD',                                   !Inflows
      & '  MEVAP',                                           !Outflows
@@ -149,9 +152,43 @@ C=====================================================================
 
       ENDIF
 
-      SNOWY = SNOW
-      MWI   = MULCHWAT
-      MWY   = MULCHWAT
+!--------------------------------------------------------------
+!     Initialize SWBalSum.OUT file
+      IF (INDEX('AD',IDETL) > 0) THEN
+        CALL GETLUN('SWBSUM', LUNWBLS)
+        INQUIRE (FILE = SWBSUM, EXIST = FEXIST)
+        IF (FEXIST) THEN
+          OPEN (UNIT = LUNWBLS, FILE = SWBSUM, STATUS = 'OLD',
+     &      POSITION = 'APPEND')
+        ELSE
+          OPEN (UNIT = LUNWBLS, FILE = SWBSUM, STATUS = 'NEW')
+          WRITE(LUNWBLS,'("*WATER BALANCE SUMMARY OUTPUT FILE")')
+        
+          CALL HEADER(SEASINIT, LUNWBLS, RUN)
+
+!         Write header for daily output
+          WRITE (LUNWBLS,1130)
+ 1130     FORMAT(/,'!                           ',
+     &    '|----- Initial Water Content (mm) -----',
+     &    '|------ Final Water Content (mm) -------',
+     &    '|-------- Water Additions (mm) ---------',
+     &    '|--------------- Water Losses (mm) ---------------',
+     &    '|-----------|',/,
+     &    '!                           ',
+     &    '|    Soil     Mulch     Flood      Snow',
+     &    '      Soil     Mulch     Flood      Snow',
+     &    '    Precip     Irrig   LatFlow   Residue',
+     &    '      Evap  Transpir    Runoff  Drainage   Tile Dr',
+     &    '     Balance',/,
+     &    '@  Run FILEX          TN CR',
+     &    '     SWTDi     MWTDi     FWTDi    SNOWDi',
+     &    '      SWTD      MWTD      FWTD     SNOWD',
+     &    '      PRCM      IRRC     LATFC     RESAC',
+     &    '      ESCM      EPCM      ROCM      DRCM      TDFC',
+     &    '     CUMWBAL')
+
+        ENDIF
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -313,7 +350,21 @@ C-----------------------------------------------------------------------
       WRITE  (LUNWBL,500) WBALAN
   500 FORMAT(/,'!',5X,'Final Balance ',T42,F12.3,/)
 
-      CLOSE(LUNWBL)       
+      CLOSE(LUNWBL)   
+
+!--------------------------------------------------------------
+      IF (INDEX('AD',IDETL) > 0) THEN
+!       Write seasonal summary to SWBalSum.OUT
+        CALL GET('SPAM', 'CEVAP', CEVAP)
+        
+        WRITE (LUNWBLS,'(I6,1X,A12,1X,I4,1X,A2,17F10.2,F12.4)')
+     &    RUN, CONTROL % FILEX, CONTROL % TRTNUM, CONTROL % CROP, 
+     &    TSWINI*10, MWI, FLOODI, SNOWI,
+     &    TSW*10, MULCHWAT, FLOOD, SNOW,  
+     &    CRAIN, TOTEFFIRR, CumNetLatFlow, CUMRESWATADD, 
+     &    CEVAP, CEP, TRUNOF, TDRAIN, TDFC*10., 
+     &    WBALAN
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
