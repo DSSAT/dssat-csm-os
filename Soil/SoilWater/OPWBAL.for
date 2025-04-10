@@ -159,27 +159,27 @@ C-----------------------------------------------------------------------
 C   Generate headings for output file
 C-----------------------------------------------------------------------
       IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-      CALL GETLUN('OUTWAT', NOUTDW)
-      INQUIRE (FILE = OUTWAT, EXIST = FEXIST)
-      IF (FEXIST) THEN
-        OPEN (UNIT = NOUTDW, FILE = OUTWAT, STATUS = 'OLD',
-     &    IOSTAT = ERRNUM, POSITION = 'APPEND')
-      ELSE
-        OPEN (UNIT = NOUTDW, FILE = OUTWAT, STATUS = 'NEW',
-     &    IOSTAT = ERRNUM)
-        WRITE(NOUTDW,'("*SOIL WATER DAILY OUTPUT FILE")')
-      ENDIF
+        CALL GETLUN('OUTWAT', NOUTDW)
+        INQUIRE (FILE = OUTWAT, EXIST = FEXIST)
+        IF (FEXIST) THEN
+          OPEN (UNIT = NOUTDW, FILE = OUTWAT, STATUS = 'OLD',
+     &      IOSTAT = ERRNUM, POSITION = 'APPEND')
+        ELSE
+          OPEN (UNIT = NOUTDW, FILE = OUTWAT, STATUS = 'NEW',
+     &      IOSTAT = ERRNUM)
+          WRITE(NOUTDW,'("*SOIL WATER DAILY OUTPUT FILE")')
+        ENDIF
       END IF   ! VSH
 C-----------------------------------------------------------------------
 C     Variable heading for WATER.OUT
 C-----------------------------------------------------------------------
       IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-        IF (RNMODE .EQ. 'Q') THEN
-          CALL HEADER(SEASINIT, NOUTDW, REPNO)
-        ELSE
-          CALL HEADER(SEASINIT, NOUTDW, RUN)
-        ENDIF
+          IF (RNMODE .EQ. 'Q') THEN
+            CALL HEADER(SEASINIT, NOUTDW, REPNO)
+          ELSE
+            CALL HEADER(SEASINIT, NOUTDW, RUN)
+          ENDIF
         END IF   ! VSH
 
 !       Print all layers

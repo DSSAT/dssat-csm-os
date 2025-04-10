@@ -246,10 +246,9 @@ C=======================================================================
       IF (ISWWAT == 'Y') THEN
 !       Water balance output initialization
         CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, netLatFlow,
-     &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
-     &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
-     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
+     &    CRAIN, DRAIN, FLOODWAT, netLatFlow,
+     &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
+     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW)
 
 !       Call OPWBAL to write headers to output file
         CALL OPWBAL(CONTROL, ISWITCH, 
@@ -578,10 +577,9 @@ C-----------------------------------------------------------------------
 
 !     Water balance daily output 
       CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, netLatFlow,
-     &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
-     &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
-     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
+     &    CRAIN, DRAIN, FLOODWAT, netLatFlow,
+     &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
+     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW)
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
       IF (INDEX('RSM',MEINF) > 0) THEN   
@@ -608,10 +606,9 @@ C-----------------------------------------------------------------------
 
 !     Water balance seasonal output 
       CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, netLatFlow,
-     &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
-     &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
-     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
+     &    CRAIN, DRAIN, FLOODWAT, netLatFlow,
+     &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
+     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW)
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
       IF (INDEX('RSM',MEINF) > 0) THEN   

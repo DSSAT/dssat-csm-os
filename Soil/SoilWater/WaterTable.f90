@@ -273,7 +273,6 @@
       SWDELTW(L) = SW_TEMP(L) - SW(L)
 !     net lateral flow (+ inflow, - outflow)
       netLatFlow = netLatFlow + SWDELTW(L) * DLAYR(L) * 10.
-
     ENDDO
 
 !-----------------------------------------------------------------------

@@ -43,6 +43,7 @@
 !-----------------------------------------------------------------------
       USE Cells_2D
       USE ModuleData
+      USE FloodModule 
       USE Interface_OPWBAL
       USE NFLUXts
 
@@ -50,7 +51,7 @@
       EXTERNAL WaterTable_2D, DRAINAGE_2D, ROOTWU_2D, 
      &  WBSUM_2D, WBAL_2D, CALC_SW_VOL, WBAL_2D_TS, 
      &  RNOFF_FURROW, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
-     &  WATERSTRESS
+     &  WATERSTRESS, WBAL
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -79,11 +80,11 @@
       INTEGER NextUpdate, Count, CritCell(2), DAYCOUNT
 
       REAL CN, BEDHT, BEDWD, CRAIN
-      REAL DRAIN_2D, DRAIN_2D_Y, HalfRow, HalfFurrow
+      REAL DRAIN_2D, DRAIN_2D_Y, HalfRow, HalfFurrow, SolProfDrain
       REAL DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
       REAL RAIN, RUNOFF
       REAL TEP, SRAD_TOT
-      REAL TDRAIN, TRUNOF, TSW, TSWINI
+      REAL TDRAIN, TRUNOF, TSW, TSWINI, TSW_cm
 !     INTEGER, PARAMETER :: MaxNEvent = 20  !Max number of irrigation event
 !     REAL, DIMENSION(MaxNEvent) :: DripStart, DripDur, DripInt, DripRate
       REAL IrrRate(NDrpLn), RWUEP1, Drainage_ts_col
@@ -135,6 +136,11 @@
 
       LOGICAL IRRIG, IRRIGArr(NDrpLn)
 
+!     Needed for generic water balance routine, but not actually used for 2D
+      TYPE (FloodWatType) FLOODWAT
+      TYPE (Mulchtype) MULCH
+      REAL SNOW, TDFC, TDFD
+
 !     Default time steps durring irrigation and drying !minutes
       REAL, PARAMETER :: TSI = 5.0, TSN = 30.0, Max_Time_Step=60.
 !                         irrig        rain        default  
@@ -169,6 +175,7 @@
       mVG   = SOILPROP % mVG
       nVG   = SOILPROP % nVG
       TEXTURE = SOILPROP % TEXTURE
+      SolProfDrain = 0.0
 
       CALL GET('PLANT', 'RWUEP1', RWUEP1)
 
@@ -262,12 +269,6 @@
      &  CELLS%State%SWV, CELLS%Struc, SOILPROP%NLAYR,     !Input
      &  SW)                                               !Output
 
-!     Water balance output initialization
-      CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CRAIN, DRAIN_2D, ES_DAY, 
-     &    IRRAMT, netLatFlow, RAIN, RUNOFF, 
-     &    TDRAIN, TRUNOF, TSW)
-     
 !     Call OPWBAL to write headers to output file
       CALL OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, IRRAMT,                       !Input
@@ -306,10 +307,13 @@
 !     chp 2022-07-10
       INF_vol_dtal_temp = 0.0
 
-      Call Wbal_2D_ts(CONTROL, ISWITCH, 0.0, 0.0, 
-     &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
-     &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, Diffus, Kunsat, 0.0,
-     &    0, 0.0, SWV_D)
+!     In 2D model, TSW units are mm. 1D model uses cm.
+      TSW_cm = TSW / 10.
+      CALL Wbal(CONTROL, ISWITCH, 
+     &    CRAIN, DRAIN_2D, FLOODWAT, netLatFlow,
+     &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
+     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
+
 !     ------------------------------------------------------------------
 
       msg(1) = "Start 2D, variable time-step model"
@@ -320,6 +324,14 @@
 
       !call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
  !     call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
+
+!     Needed for generic water balance routine, but not actually used for 2D
+      SNOW = 0.0
+      TDFC = 0.0
+      TDFD = 0.0
+      FLOODWAT % FLOOD = 0.0
+      FLOODWAT % EF = 0.0
+      FLOODWAT % CEF = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -1002,12 +1014,20 @@ C-----------------------------------------------------------------------
      &    netLatFlow, LL, NLAYR,                      !Input
      &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF)       !Input
 
+!     ---------------------------------------------------------
 !     Daily water balance output to SoilWatBal.OUT 
-!       NOTE: DRAIN_2D vs Drain_Limit2D. Could not find the latter, so using the former.
-      CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CRAIN, DRAIN_2D, ES_DAY, 
-     &    IRRAMT, netLatFlow, RAIN, RUNOFF, 
-     &    TDRAIN, TRUNOF, TSW)
+      IF (LIMIT_2D .GE. NRowsTot) THEN 
+        SolProfDrain = DRAIN_2D
+      ELSE
+        SolProfDrain = 0.0
+      ENDIF
+
+!     In 2D model, TSW units are mm. 1D model uses cm.
+      TSW_cm = TSW / 10.
+      CALL Wbal(CONTROL, ISWITCH, 
+     &    CRAIN, SolProfDrain, FLOODWAT, netLatFlow,
+     &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
+     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
 
 !-----------------------------------------------------------------
 !          call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
@@ -1030,10 +1050,12 @@ C-----------------------------------------------------------------------
      &    RUNOFF, SOILPROP, SW, TDRAIN, TRUNOF)       !Input
 
 !     Seasonal water balance output 
-      CALL Wbal_2D(CONTROL, ISWITCH, COUNT, 
-     &    CRAIN, DRAIN_2D, ES_DAY, 
-     &    IRRAMT, netLatFlow, RAIN, RUNOFF, 
-     &    TDRAIN, TRUNOF, TSW)
+!     In 2D model, TSW units are mm. 1D model uses cm.
+      TSW_cm = TSW / 10.
+      CALL Wbal(CONTROL, ISWITCH, 
+     &    CRAIN, SolProfDrain, FLOODWAT, netLatFlow,
+     &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
+     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
 
 !     chp 2022-07-10 can't use an array of zeros in the argument. 
 !     I don't want to set the original variables to zero, so use a dummy argument here.

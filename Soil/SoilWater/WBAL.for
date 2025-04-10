@@ -12,21 +12,28 @@ C  08/20/2002 GH  Modified for Y2K
 !  03/06/2006 CHP Added mulch layer effects on evaporation and infiltration.
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
 !  04/02/2025 chp add SWBalSum.OUT
+!  04/10/2025 chp merge 1D and 2D versions of this file
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 C=====================================================================
       SUBROUTINE Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, DLAYR, DRAIN, FLOODWAT, netLatFlow,
-     &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
-     &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
-     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
+     &    CRAIN, DRAIN, FLOODWAT, netLatFlow,
+     &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
+     &    TDFC, TDFD, TDRAIN, TRUNOF, TSW)
 !     ------------------------------------------------------------------
-      USE ModuleDefs 
+      USE Cells_2D
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
       EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
+
+      TYPE (ControlType), INTENT(IN) :: CONTROL
+      TYPE (SwitchType),  INTENT(IN) :: ISWITCH
+      TYPE (FloodWatType),INTENT(IN) :: FLOODWAT
+      TYPE (MulchType),   INTENT(IN) :: MULCH
+      REAL, INTENT(IN) :: CRAIN, DRAIN, netLatFlow, IRRAMT, RAIN, 
+     &  RUNOFF, SNOW, TDFC, TDFD, TDRAIN, TRUNOF, TSW
 
       CHARACTER*1 IDETL, IDETW, ISWWAT, MEINF
       CHARACTER*14, PARAMETER :: SWBAL = 'SoilWatBal.OUT'
@@ -35,33 +42,19 @@ C=====================================================================
       INTEGER RUN, YEAR, YRSIM, YRDOY, NBUND
       INTEGER YR1, DY1, YR2, DY2
 
-      REAL CEO, CEP, CES, CEVAP, CRAIN, EFFIRR
-      REAL TDFC, TDFD
-      REAL TDRAIN, TOTIR, TRUNOF, TSW, TSWINI
-      REAL netLatFlow
-      REAL CumNetLatFlow
-      REAL WBALAN
+      REAL CEO, CEP, CES, CEVAP, EFFIRR
+      REAL TOTIR, CumNetLatFlow, WBALAN, TSWINI
 
-!     Temporary daily balance
-      REAL, DIMENSION(NL) :: DLAYR, SWDELTS, SWDELTX, SWDELTU, SWDELTT
-      REAL, DIMENSION(NL) :: SWDELTL
-      REAL SWDELTSTOT, SWDELTUTOT, SWDELTXTOT, SWDELTTTOT, SWDELTLTOT
-      REAL IRRAMT, ES, EF, RAIN, RUNOFF, TOTEFFIRR
-      REAL DRAIN, EP, TSWY    !, INFILT
+!     Daily balance
+      REAL ES, EF, TOTEFFIRR
+      REAL EP, TSWY    !, INFILT
       REAL CEF, FLOOD, FLOODI, TOTBUNDRO, FRUNOFF, FLOODY
-      REAL SNOW, SNOWI, SNOWY, CUMWBAL
+      REAL SNOWI, SNOWY, CUMWBAL
       REAL MULCHWAT, MWI, MWY
       REAL CUMRESWATADD, RESWATADD_T
       REAL CUMMULEVAP, MULCHEVAP
-      INTEGER NLAYR, L
 
       LOGICAL FEXIST
-
-!     The variable "ISWITCH" is of type "SwitchType".
-      TYPE (ControlType)  CONTROL
-      TYPE (SwitchType)   ISWITCH
-      TYPE (FloodWatType) FLOODWAT
-      TYPE (MulchType)    MULCH
 
 !     ------------------------------------------------------------------
       IDETW   = ISWITCH % IDETW
@@ -73,14 +66,12 @@ C=====================================================================
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
       DAS     = CONTROL % DAS
-      IDETW   = ISWITCH % IDETW
-      IDETL   = ISWITCH % IDETL
-      ISWWAT  = ISWITCH % ISWWAT
       MEINF   = ISWITCH % MEINF
 
       EF        = FLOODWAT % EF    
       CEF       = FLOODWAT % CEF    
       FLOOD     = FLOODWAT % FLOOD    
+      IF (FLOOD .LT. 0.0) FLOOD = 0.0
       NBUND     = FLOODWAT % NBUND    
       TOTBUNDRO = FLOODWAT % TOTBUNDRO
       FRUNOFF   = FLOODWAT % FRUNOFF
@@ -96,12 +87,13 @@ C=====================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       RUN     = CONTROL % RUN
+      Sim2D   = CONTROL % Sim2D
 
+      TSWINI = TSW
       TSWY   = TSWINI
       FLOODI = FLOOD
       FLOODY = FLOOD
 
-      !CINF = 0.0
       SNOWI = SNOW
       SNOWY = SNOW
       MWI   = MULCHWAT
@@ -123,20 +115,19 @@ C=====================================================================
         OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'NEW')
         WRITE(LUNWBL,'("*WATER BALANCE OUTPUT FILE")')
       ENDIF
-
+      
       CALL HEADER(SEASINIT, LUNWBL, RUN)
 
       IF (INDEX('AD',IDETL) > 0) THEN
 !       Write header for daily output
         WRITE (LUNWBL,1120)
- 1120   FORMAT('@YEAR DOY   DAS',
+ 1120   FORMAT(/,'@YEAR DOY   DAS',
      & '    SWTD    FWTD   SNOWD   MWTD',                   !State vars
      & '   IRRD   PRED',                                    !Inflows
      & '  RESAD   LFLOD',                                   !Inflows
      & '  MEVAP',                                           !Outflows
      & '   DRND   ROFD   FROD   ESAD   EPAD   EFAD   TDFD', !Outflows
-     & '    WBAL   CUMWBAL',                                !Balance
-     & '        TOTS    TOTU    TOTX    TOTT    TOTL')    !Changes to SW
+     & '    WBAL   CUMWBAL')                                !Balance
 
         CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
         WRITE (LUNWBL,1300) YEAR, DOY, DAS, 
@@ -147,8 +138,6 @@ C=====================================================================
 !     &    INFILT,                 !Exchange between flood and soil water
      &    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,          !Outflows
      &    0.0, 0.0                                    !Balance
-     &    ,0., 0., 0., 0.
-     &    ,0.
 
       ENDIF
 
@@ -224,19 +213,6 @@ C=====================================================================
 
         CUMWBAL = CUMWBAL + WBALAN
 
-        SWDELTSTOT = 0.0
-        SWDELTUTOT = 0.0
-        SWDELTTTOT = 0.0
-        SWDELTXTOT = 0.0
-        SWDELTLTOT = 0.0
-        DO L = 1, NLAYR
-          SWDELTSTOT = SWDELTSTOT + SWDELTS(L) * DLAYR(L)
-          SWDELTUTOT = SWDELTUTOT + SWDELTU(L) * DLAYR(L)
-          SWDELTTTOT = SWDELTTTOT + SWDELTT(L) * DLAYR(L)
-          SWDELTXTOT = SWDELTXTOT + SWDELTX(L) * DLAYR(L)
-          SWDELTLTOT = SWDELTLTOT + SWDELTL(L) * DLAYR(L)
-        ENDDO
-
         WRITE (LUNWBL,1300) YEAR, DOY, DAS
      &    ,(TSW * 10.), FLOOD, SNOW, MULCHWAT         !State variables
      &    ,IRRAMT, RAIN                               !Inflows
@@ -246,16 +222,13 @@ C=====================================================================
 !!     &    ,INFILT                 !Exchange between flood and soil water
      &    ,DRAIN, RUNOFF, FRUNOFF, ES, EP, EF, TDFD*10. !Outflows
      &    ,WBALAN, CUMWBAL                             !Balance
-     &    ,SWDELTSTOT*10., SWDELTUTOT*10.,SWDELTXTOT*10., SWDELTTTOT*10.
-     &    ,SWDELTLTOT*10.
-!1300   FORMAT(1X,I4,1X,I3.3,1X,I5,3F8.2, 12F7.2, F8.2, F10.2,4X,5F8.3)
+
  1300   FORMAT(1X,I4,1X,I3.3,1X,I5
      &      ,3F8.2,F7.2
      &      ,3F7.2
      &      ,F8.2       !Lateral flow
      &      ,8F7.2
-     &      ,F8.2,F10.2 !Balances
-     &      ,4X,5F8.2   !SWDELT's
+     &      ,F8.3,F10.3 !Balances
      &      )
 
         !Save values for comparison tomorrow
@@ -275,7 +248,6 @@ C=====================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
-      YRSIM   = CONTROL % YRSIM
       CALL YR_DOY(YRSIM, YR1, DY1)
       CALL YR_DOY(YRDOY, YR2, DY2)
 
@@ -327,7 +299,6 @@ C-----------------------------------------------------------------------
         WBALAN = WBALAN - SNOW + SNOWI
       ENDIF
 
-!     IF (INDEX('RSN',MEINF) <= 0) THEN
       IF (INDEX('RSM',MEINF) > 0) THEN   
         WRITE(LUNWBL, 430) MWI, MULCHWAT
   430   FORMAT(/,'!',5X,'Initial mulch water content ', T44, F10.2,
@@ -386,7 +357,6 @@ C=====================================================================
 ! CRAIN    Cumulative precipitation (mm)
 ! DEFICIT  Amount by which the allowable minimum soil water content in top 
 !            layer exceeds the actual calculated soil water content (cm3/cm3)
-! DLAYR(L)  Soil thickness in layer L (cm)
 ! EFFIRR   Irrigation application efficiency (cm/cm)
 ! ES       Actual soil evaporation rate (mm/d)
 ! EXPER    Experiment code (prefix of input files) 
@@ -396,7 +366,6 @@ C=====================================================================
 ! LUNWARN  Logical unit number for Warning.OUT file 
 ! LUNWBL   Logical unit number for WBAL.OUT file 
 ! NL       Maximum number of soil layers = 20 
-! NLAYR    Actual number of soil layers 
 ! SAT(L)   Volumetric soil water content in layer L at saturation
 !            (cm3 [water] / cm3 [soil])
 ! SW(L)    Volumetric soil water content in layer L

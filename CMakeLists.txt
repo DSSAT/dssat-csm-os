@@ -648,7 +648,7 @@ set(
         "Soil/SoilWater/WatBal_2D.for"
         "Soil/SoilWater/WaterTable.f90"
         "Soil/SoilWater/WBAL.for"
-        "Soil/SoilWater/WBAL_2D.for"
+        "Soil/SoilWater/WBSUBS_2D.for"
         "Soil/SoilWater/WBAL_2D_ts.for"
         "Soil/SoilWater/WBSUBS.for"
 
