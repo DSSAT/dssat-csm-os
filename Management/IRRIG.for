@@ -179,8 +179,10 @@ C-----------------------------------------------------------------------
       NDRIP  = 0  !# drip irrigation days
       NPUD   = 0  !# puddling events
 
+      DEPIR  = 0.0
+      EFFIRR = 0.0
       IRRAMT = 0.0
-      TOTIR  = 0.
+      TOTIR  = 0.0
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
       GSWatUsed = 0.0
@@ -203,6 +205,7 @@ C-----------------------------------------------------------------------
 
 !     Water table depth (-99 indicates no water table present)
       MgmtWTD = -99.  
+      ICWD    = -99.  
 
       IF (ISWWAT .EQ. 'Y') THEN
 
@@ -781,10 +784,13 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Transfer data to ModuleData
-      CALL PUT('MGMT','TOTIR',TOTIR)
-      CALL PUT('MGMT','EFFIRR',EFFIRR)
-      CALL PUT('MGMT','IRRAMT',IRRAMT)
       CALL PUT('MGMT','DEPIR', DEPIR)
+      CALL PUT('MGMT','EFFIRR',EFFIRR)
+      CALL PUT('MGMT','ICWD',ICWD)
+      CALL PUT('MGMT','IRRAMT',IRRAMT)
+      CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) 
+      CALL PUT('MGMT','TOTIR',TOTIR)
+      CALL PUT('MGMT','WATTAB',MgmtWTD)
 
       NDAYS_DRY = 0
 
