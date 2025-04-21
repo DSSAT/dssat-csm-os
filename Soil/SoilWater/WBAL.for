@@ -60,7 +60,8 @@ C=====================================================================
       IDETW   = ISWITCH % IDETW
       IDETL   = ISWITCH % IDETL
       ISWWAT  = ISWITCH % ISWWAT
-      IF (IDETW .EQ. 'N' .OR. ISWWAT .EQ. 'N' .OR. IDETL == '0') RETURN
+
+      IF (IDETW .EQ. 'N' .OR. ISWWAT .EQ. 'N') RETURN
 !     ------------------------------------------------------------------
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
@@ -115,7 +116,7 @@ C=====================================================================
         OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'NEW')
         WRITE(LUNWBL,'("*WATER BALANCE OUTPUT FILE")')
       ENDIF
-      
+
       CALL HEADER(SEASINIT, LUNWBL, RUN)
 
       IF (INDEX('AD',IDETL) > 0) THEN
@@ -143,7 +144,7 @@ C=====================================================================
 
 !--------------------------------------------------------------
 !     Initialize SWBalSum.OUT file
-      IF (INDEX('AD',IDETL) > 0) THEN
+!     IF (INDEX('AD',IDETL) > 0) THEN
         CALL GETLUN('SWBSUM', LUNWBLS)
         INQUIRE (FILE = SWBSUM, EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -163,12 +164,14 @@ C=====================================================================
      &    '|-------- Water Additions (mm) ---------',
      &    '|--------------- Water Losses (mm) ---------------',
      &    '|-----------|',/,
+
      &    '!                           ',
      &    '|    Soil     Mulch     Flood      Snow',
      &    '      Soil     Mulch     Flood      Snow',
      &    '    Precip     Irrig   LatFlow   Residue',
      &    '      Evap  Transpir    Runoff  Drainage   Tile Dr',
      &    '     Balance',/,
+
      &    '@  Run FILEX          TN CR',
      &    '     SWTDi     MWTDi     FWTDi    SNOWDi',
      &    '      SWTD      MWTD      FWTD     SNOWD',
@@ -177,7 +180,7 @@ C=====================================================================
      &    '     CUMWBAL')
 
         ENDIF
-      ENDIF
+!     ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -248,6 +251,8 @@ C=====================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
+      IF (INDEX('0',IDETL) > 0) RETURN
+
       CALL YR_DOY(YRSIM, YR1, DY1)
       CALL YR_DOY(YRDOY, YR2, DY2)
 
@@ -321,10 +326,10 @@ C-----------------------------------------------------------------------
       WRITE  (LUNWBL,500) WBALAN
   500 FORMAT(/,'!',5X,'Final Balance ',T42,F12.3,/)
 
-      CLOSE(LUNWBL)   
+      CLOSE(LUNWBL)
 
 !--------------------------------------------------------------
-      IF (INDEX('AD',IDETL) > 0) THEN
+!     IF (INDEX('AD',IDETL) > 0) THEN
 !       Write seasonal summary to SWBalSum.OUT
         CALL GET('SPAM', 'CEVAP', CEVAP)
         
@@ -335,7 +340,7 @@ C-----------------------------------------------------------------------
      &    CRAIN, TOTEFFIRR, CumNetLatFlow, CUMRESWATADD, 
      &    CEVAP, CEP, TRUNOF, TDRAIN, TDFC*10., 
      &    WBALAN
-      ENDIF
+!     ENDIF
 
 !***********************************************************************
 !***********************************************************************

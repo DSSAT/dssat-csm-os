@@ -9,13 +9,13 @@
 !  REVISION       HISTORY
 !  01/23/2010 CHP Written
 !  02/10/2023 chp move SW integration to WATBAL
-!  10/02/2023 CHP integrated 1D and 2D water table routines.
+!  04/15/2025 CHP integrated 1D and 2D water table routines.
 !=======================================================================
 
-  Subroutine WaterTable(DYNAMIC,      &
-    SOILPROP, SW,                     &   !Input
-    ActWTD, netLatFlow,               &   !Output
-    MgmtWTD, SWDELTW)                     !Output
+    Subroutine WaterTable(DYNAMIC,              &
+      SOILPROP, SW,                             &   !Input
+      ActWTD, netLatFlow,                       &   !Output
+      MgmtWTD, SWDELTW)                             !Output
 
 !-----------------------------------------------------------------------
     USE Cells_2D
@@ -35,12 +35,12 @@
 !   Local
     INTEGER L, NLAYR
     REAL Bottom, Top, Thick, TargetWTD, BedAdjust, MinWTD, AdjWTD
-    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR, ThetaCap
-    REAL, DIMENSION(NL) :: SW_temp, DeltaSW
+    REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR
+    REAL, DIMENSION(NL) :: ThetaCap, SW_temp, DeltaSW
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
-!     Kd should be a user specified input in the Fields section of FILEX
+!   Kd should be a user specified input in the Fields section of FILEX
 !     based on field measurement. Or it could be calculated from soil 
 !     properties. For now assume a constant value.  
 
@@ -83,7 +83,7 @@
 
 !   Negative or zero value means no managed water table
     IF (MgmtWTD < 1.E-6) THEN
-      MgmtWTD = 10000.
+      MgmtWTD = 1000.
       BedAdjust = 0.0
     ENDIF
 
@@ -137,10 +137,10 @@
 
 !   Adjust depth to water table for bed height contruction
 !   i.e., measure from top of bed instead of original ground level
-    IF (MgmtWTD > 0 .AND. MgmtWTD < 9999.) THEN
+    IF (MgmtWTD > 0 .AND. MgmtWTD < 999.) THEN
       AdjWTD = MAX(MgmtWTD + BedAdjust, MinWTD)
     ELSE
-       AdjWTD = 10000.
+       AdjWTD = 1000.
     ENDIF
      
     CALL PUT('MGMT','ADJWTD',AdjWTD)
@@ -191,7 +191,7 @@
 
 !-------------------------------------------------------------------------
 !   Actual water table higher than management - drawdown using Kd
-    ELSEIF (AdjWTD - ActWTD > TOL .AND. AdjWTD < 9999.) THEN
+    ELSEIF (AdjWTD - ActWTD > TOL .AND. AdjWTD < 999.) THEN
 !     Calculate lateral outflow needed to draw water table down to specified depth
 
 !     initial guess at today's water table depth

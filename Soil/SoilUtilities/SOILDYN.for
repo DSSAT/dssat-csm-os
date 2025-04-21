@@ -129,7 +129,7 @@ C-----------------------------------------------------------------------
 !     Soil dynamics variables
       INTEGER NTIL, TILDATE, NMSG
       REAL AS, CRAIN, CUMDEP   !, FF, CANCOV
-      REAL LCRAIN, MCUMDEP, MIXPCT, MULCHCOVER
+      REAL LCRAIN, MCUMDEP, MIXPCT, MULCHALB, MULCHCOVER
       REAL RAIN, RSTL, SOILCOV, SRATE
       REAL SUMKE, SUMKEL, SUMKET, TDEP, TIL_IRR, XHLAI
       REAL CN_TILLED
@@ -192,6 +192,8 @@ C-----------------------------------------------------------------------
 
       MEINF   = ISWITCH % MEINF
       MESOM   = ISWITCH % MESOM
+
+      MULCHALB = MULCH % MULCHALB
 
       RAIN = WEATHER % RAIN
 
@@ -257,7 +259,7 @@ C-----------------------------------------------------------------------
       EXCA   = -99.
       EXK    = -99.
       EXNA   = -99.
-      
+
       ISWWAT = ISWITCH % ISWWAT
 
 !-----------------------------------------------------------------------
@@ -424,9 +426,6 @@ C-----------------------------------------------------------------------
       ENDIF
 
       CLOSE (LUNIO)
-
-!     Jin Wu **********************************************************************
-!     Need to use LMATCH to convert NH4 and NO3 to 1D layer thicknesses.
 
       GOTO 2000
 !     Error trap
@@ -1072,10 +1071,6 @@ C  tillage and rainfall kinetic energy
 !-----------------------------------------------------------------------
       IF (ISWWAT == 'N') RETURN
 
-      CALL ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
-      CALL PUT(SOILPROP)
-      IF (SIM2D) RETURN
-
 !     Initial SOM not established until end of SEASINIT section so 
 !     remember initial values here.  Units are kg[Organic matter]/ha
       IF (FIRST) THEN
@@ -1105,13 +1100,16 @@ C  tillage and rainfall kinetic energy
       ENDIF
 
 !     ------------------------------------------------------------------
+      CALL ALBEDO_avg(KTRANS, MEINF, MULCH, SOILPROP, SW(1), XHLAI)
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
-      IF (INDEX('RSM',MEINF) > 0) THEN
+      IF (INDEX('RSM',MEINF) > 0) THEN 
+
 !       ---------------------------------------------------
 !       Update combined soil/mulch albedo
 !       Transfer local values from constructed variables
         MULCHCOVER = MULCH % MULCHCOVER
+        MULCHALB   = MULCH % MULCHALB
 
 !       ---------------------------------------------------
 !       Update BD, DLAYR, DUL, LL based on changes to soil organic matter 
