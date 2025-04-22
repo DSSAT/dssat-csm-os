@@ -237,11 +237,9 @@ C=======================================================================
      &    WATAVL, MULCH)
 
 !     Initialize tile drainage
-      IF (TDLNO .GT. 0) THEN
-        CALL TILEDRAIN(CONTROL, 
+      CALL TILEDRAIN(CONTROL, 
      &    DLAYR, DUL, ETDR, NLAYR, SAT, SW, SWDELTS,      !Input
      &    DRN, SWDELTT, TDFC, TDFD, TDLNO)                !Output
-      ENDIF
 
       IF (ISWWAT == 'Y') THEN
 !       Water balance output initialization
