@@ -243,7 +243,7 @@ C-----------------------------------------------------------------------
       CASE ('CB')
         PlantStres % NSTAGES = 0
 
-      CASE ('BM','BH','BR','C3','C4','NP')
+      CASE ('BM','BH','BR','C3','C4','NP','CV')
         PlantStres % NSTAGES = 1
         PlantStres % StageName(1)  = 'Emergence  - Phys. Mat.'
 
@@ -300,7 +300,7 @@ C-----------------------------------------------------------------------
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
 
-      CASE ('BM','BH','BR','NP')
+      CASE ('BM','BH','BR','NP','CV')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(16)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -783,7 +783,7 @@ C-----------------------------------------------------------------------
         STNAME(15) = 'Sowing    '
         STNAME(16) = 'Harvest   '
 
-      CASE ('BM','BH','BR','NP')
+      CASE ('BM','BH','BR','NP','CV')
          STNAME( 1) = 'Emergence '
          STNAME( 2) = 'First Leaf'
          STNAME( 3) = 'End Juven.'
