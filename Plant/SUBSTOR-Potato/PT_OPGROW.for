@@ -92,21 +92,21 @@ C-----------------------------------------------------------------------
 
       GROHEAD(2) = 
      &"!         after after  Grow   LAI Yield" //
-     &"  Leaf  Stem Tuber  Root  Crop  Tops DLeaf" //
+     &"  Leaf  Stem Tuber  Root  Tops  Crop DLeaf" //
      &"            Mass   No. <---- Water ---->  " //
      &"  Leaf Shell  Leaf  Hght Width Depth   Dens" //
      &" <----- cm3/cm3 of soil -----> mass(kg/ha)"
 
       GROHEAD(3) = 
      &"!           sim plant Stage m2/m2 Mg/Ha" //
-     &"  <---------------- kg/Ha --------------->" //
+     &"  <---------------- kg/ha --------------->" //
      &"    HI kg/ha     #  Phot  Grow Exces  Nitr" //
      &"     %     %  Area     m     m    m  cm/cm3" //
      &" <--------------------------->  Surf  Soil"
 
       GROHEAD(4) = 
      &"@YEAR DOY   DAS   DAP  GSTD  LAID  UYAD" //
-     &"  LWAD  SWAD  UWAD  RWAD  TWAD  CWAD  DWAD" //
+     &"  LWAD  SWAD  UWAD  RWAD  VWAD  CWAD  DWAD" //
      &"  HIAD  EWAD  E#AD  WSPD  WSGD  EWSD  NSTD" //
      &"  LN%D  SH%D  SLAD  CHTD  CWID  RDPD   RLAD" //
      &"  RL1D  RL2D  RL3D  RL4D  RL5D SNW0C SNW1C" 
@@ -214,7 +214,7 @@ C       Variable heading for GROWTH.OUT
 !       Header for csv files
         WRITE(NOUTDG,'(A,A,A,A)')
      &    'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,GSTD,LAID,',
-     &    'UYAD,LWAD,SWAD,UWAD,RWAD,TWAD,CWAD,DWAD,HIAD,EWAD,E#AD,',
+     &    'UYAD,LWAD,SWAD,UWAD,RWAD,VWAD,CWAD,DWAD,HIAD,EWAD,E#AD,',
      &    'WSPD,WSGD,NSTD,LN%D,SH%D,SLAD,CHTD,CWID,EWSD,RDPD,TRLV,',
      &    'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C'
 
@@ -372,8 +372,8 @@ C
         IF (IDETG .EQ. 'Y') THEN
           WRITE (NOUTDG,400)YEAR, DOY, DAS, DAP,RSTAGE,XLAI,FRYLD,
      &        NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(SDWT*GM2KG),
-     &        NINT(RTWT*GM2KG),NINT(BIOMAS*10.0),
-     &        NINT(WTLF*10.0)+NINT(STMWT*GM2KG),NINT(DEADLF*GM2KG),HI,
+     &        NINT(RTWT*GM2KG),NINT(WTLF*10.0)+NINT(STMWT*GM2KG),
+     &        NINT(BIOMAS*10.0),NINT(DEADLF*GM2KG),HI,
      &        NINT(PODWT*GM2KG),NINT(PODNO),1.0-SWFAC,1.0-TURFAC,SATFAC,
      &        1.0-NSTRES,PCNL,SHELPC,SLA,CANHT,CANWH,
      &        (RTDEP/100),TRLV,(RLV(I),I=1,5)
@@ -421,8 +421,8 @@ C-----------------------------------------------------------------------
      &     CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
      &     RSTAGE,XLAI,FRYLD,
      &     WTLF*10.0,  STMWT*GM2KG, SDWT*GM2KG,
-     &     RTWT*GM2KG, BIOMAS*10.0,
-     &     (WTLF*10.0+STMWT*GM2KG), DEADLF*GM2KG, HI,
+     &     RTWT*GM2KG, (WTLF*10.0+STMWT*GM2KG), BIOMAS*10.0,
+     &     DEADLF*GM2KG, HI,
      &     PODWT*GM2KG, PODNO, 1.0-SWFAC, 1.0-TURFAC,
      &     1.0-NSTRES, PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,
      &     (RTDEP/100), TRLV, RLV(1), RLV(2), RLV(3), RLV(4), RLV(5),

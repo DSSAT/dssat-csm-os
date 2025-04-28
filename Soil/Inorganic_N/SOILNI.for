@@ -13,7 +13,8 @@ C
 C  Determines inorganic N transformations
 C  This routine was modified from NTRANS when the module was split into
 C  organic and inorganic sections.
-!  2023 - Integration of 2D soil water and N routines now work with 2D 
+
+!  2025 - Integration of 2D soil water and N routines now work with 2D 
 !    arrays even in 1D mode. Some processes are still 1D so 2D arrays are
 !    collapsed into 1D array as needed.
 
@@ -407,6 +408,7 @@ C=======================================================================
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
+
 !     GHG emissions, 1D processes for now
       CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
       CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
@@ -1167,14 +1169,14 @@ C=======================================================================
 
 !*************************************************************************************************
 !*************************************************************************************************
-!    NFLUX is used for 1D simulations and NFLUX_2D for 2D simulations. That is, the DLTUREA and
-!     DLTSNO3 are updated for 1D simulations. The DLTUREA_2D and DLTSNO3_2D are updated for the 2D 
-!     simulation. 
+!    NFLUX is used for 1D simulations and NFLUX_2D for 2D simulations. That is, 
+!     the DLTUREA and DLTSNO3 are updated for 1D simulations. 
+!     The DLTUREA_2D and DLTSNO3_2D are updated for 2D simulations. 
 
 !     At this point, the 1D processes above have changed the 1D DLT variables. 1D NFLUX
 !     will further modify those 1D DLT variables. 
 
-!     If it is a 2D simulation, then the 1D processes above have not yet been incorporated into the
+!     For 2D simulations, the 1D processes above have not yet been incorporated into the
 !     2D DLT variable. First, add in the 1D process effects to the 2D DLT variables.
 !*************************************************************************************************
 !     ------------------------------------------------------------------

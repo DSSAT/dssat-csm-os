@@ -27,7 +27,6 @@ SOMLITC.OUT     LC Daily soil organic matter carbon output file       OUTSOMC
 SOMLITN.OUT     LN Daily soil organic matter nitrogen output file     OUTSOMN
 SOMLITP.OUT     LP Daily soil organic matter phosphorus output file   OUTSOMP
 Weather.OUT     WE Daily weather output file                          OUTWTH
-EAAMOD.OUT         Daily output from EAAMOD high water table model
 FreshWt.OUT        Daily fresh fruit weight                           FWOUT
 Mulch.OUT          Daily surface mulch output file
 PrimaryStalk.OUT   Casupro sugarcane output                           PSTALK
@@ -69,10 +68,8 @@ soilpi.csv         Daily inorganic soil phosphorus output file, CSV
 n2o.csv            Daily N2O output file, CSV
 
 !Seasonal summary output files
-Environ.OUT     EN Environmental modifications output file            SOUTE
 Evaluate.OUT    EV Evaluation output file (simulated vs. measured)    SEVAL
 MgmtEvent.OUT   ME Management event output file
-MgmtOpsSum.OUT  OP Operations summary output file                     SOUTM
 MulWatBal.OUT      Mulch water balance file
 OVERVIEW.OUT    OV Seasonal overview output file                      OUTO
 PlantCBal.OUT      Not currently operational                          PCBAL
@@ -83,16 +80,14 @@ SoilCBal.OUT       Seasonal soil carbon balance                       SCBAL
 SoilCBalSum.OUT    Soil C balance summary                                  
 SoilKBal.OUT       Seasonal soil potassium balance                    SKBAL
 SoilNBalSum.OUT    Soil N balance summary
-SoilNBal.OUT       Seasonal soil N balance (v4.02 and earlier)        SNBAL
 SoilNiBal.OUT      Seasonal inorganic soil N balance
 SoilNoBal.OUT      Seasonal organic soil N balance
 SoilPBalSum.OUT    Soil P balance summary
 SoilPiBal.OUT      Seasonal inorganic soil P balance
 SoilPoBal.OUT      Seasonal organic soil P balance
-SoilWatBal.OUT     Seasonal soil water balance                        SWBAL
+SoilWatBal.OUT     Seasonal & daily soil water balance                SWBAL
+SWBalSum.OUT       Seasonal summary soil water balance
 Summary.OUT     SU Seasonal summary output file                       OUTSUM
-WeatherSum.OUT     Not currently operational                          SOUTWTH
-SoilWatBal2.OUT    Temporary
 FORAGE.OUT      FH Forage harvest output file                         FORHARV
 
 !Summary csv files:
@@ -102,7 +97,6 @@ Version.OUT        Version number for simulation
 !Information files:
 ERROR.OUT          Error messages                                     ERRORO
 INFO.OUT           Information output file                            OUTINFO
-ORYZA_LOG.OUT      ORYZA log file
 SOMLIT1.OUT        Detailed Century SOM output                        SLDET
 TEMP.bat                                                              OUTBAT
 WARNING.OUT        Warning messages                                   OUTWARN

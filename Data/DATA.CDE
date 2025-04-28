@@ -52,7 +52,7 @@ CO2A   Avg CO2 (ppm)   Average atmospheric CO2 (ppm), planting to harvest       
 CO2EM  Cum CO2 emitted Cumulative CO2 emitted from soil at maturity (kg[C]/ha)  .
 CPAM   Tops P kg/ha    Tops P at maturity (kg/ha)                               .
 CWAA   Tops wt,anthsis Tops weight at anthesis (kg [dm]/ha)                     .
-CWAM   Tops wt kg/ha   Tops weight at maturity (kg [dm]/ha)                     .
+CWAM   Biomass kg/ha   Biomass at maturity (total crop minus roots) (kg[dm]/ha) .
 DMPEM  DM-ET Prod      Dry matter-ET productivity (kg[DM]/ha/mm[ET])            .
 DMPIM  DM-Irrig Prod   Dry matter-irrigation productivity (kg[DM]/ha/mm[irrig]) .
 DMPPM  DM-Rain Prod    Dry matter-rainfall productivity (kg[DM]/ha/mm[rain])    .
@@ -217,7 +217,7 @@ CHTCM  Canopy ht, cm   Canopy (forage) height (cm)                              
 CMDMD  Cellulose DM    Stalk cellulose dry mass (t/ha)                          .
 CRAD   Crown weight    Crown weight (kg [dm]/ha)                                .
 CRWAD  Crown weight    Crown weight (kg [dm]/ha)                                .
-CWAD   Tops wt kg/ha   Tops weight (kg [dm]/ha)                                 .
+CWAD   Biomass kg/ha   Total crop weight minus roots (kg [dm]/ha)               .
 CWID   Canopy width m  Canopy width (m;for 1 row)                               .
 CWPD   Tops wt g/pl    Tops weight (g [dm]/pl)                                  .
 CWSI   Water stress    Recovery time-lagged photosynthesis water stress factor  .
@@ -538,6 +538,7 @@ DAYD   Daylength h     Daylength (h;sunrise to sunset)                          
 DRNC   Drainage Mm     Cumulative drainage (mm)                                 .
 DTR    Shortwave RAD   Daily shortwave radiation  (J/(m2.d))                    .
 DTWT   Water table cm  Water table depth (cm)                                   .
+DTWTM  Mgmt wat table  Managed water table depth (user input) (cm)              .
 EFAA   Flood evap mm/d Avg flood evaporation (mm/d)                             .
 EMAA   Mulch EVAP mm/d Average mulch evaporation (mm/d)                         .
 EMAC   Mulch EVAP mm   Cumulative mulch evaporation (mm)                        .
@@ -1531,7 +1532,7 @@ CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
 CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
-CO2ENC CO2emi net kg/d Cumulative net CO2 emissions kg/d                        .
+CO2ENC CO2emi net kg/d Cumulative net CO2 emissions kg/ha                        .
 CO2END CO2emi net g/d  Daily net CO2 emissions kg/d                             .
 CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
 CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
