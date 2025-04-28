@@ -36,9 +36,9 @@
 !=======================================================================
 
       SUBROUTINE WatBal2D(CONTROL, ISWITCH, 
-     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW,               !Input
-     &    WEATHER,                                              !Input
-     &    Cells, SW, SWDELTS, SWFAC, TURFAC, TRWU, TRWUP)       !Output
+     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW,   !Input
+     &    WEATHER,                                  !Input
+     &    Cells, SW, SWDELTS, TRWU, TRWUP)          !Output
 
 !-----------------------------------------------------------------------
       USE Cells_2D
@@ -813,6 +813,7 @@
 
         CALL WaterStress(SNGL(EOP_ts), RWUEP1, SNGL(TRWUP_ts)/10., 
      &      SWFAC_ts, TURFAC_ts)
+
         SWFAC  = SWFAC  + SWFAC_ts  * TSRadFrac
         TURFAC = TURFAC + TURFAC_ts * TSRadFrac
         SUM_TSRF = SUM_TSRF + TSRadFrac
