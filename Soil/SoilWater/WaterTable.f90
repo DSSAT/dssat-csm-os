@@ -290,5 +290,3 @@
 !          Calculated from the water characteristic curve at the height above the
 !          water table. 
 !=======================================================================
-
-

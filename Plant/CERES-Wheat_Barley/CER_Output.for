@@ -447,12 +447,12 @@
           IF (STGDOY(11).EQ.YEARDOY .OR.
      &     DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
      
-            IF (DYNAMIC.EQ.SEASEND) THEN
+!            IF (DYNAMIC.EQ.SEASEND) THEN
 !              WRITE (fnumwrk,*)' '
 !              WRITE (fnumwrk,'(A46,A25)')
 !     &         ' RUN TERMINATED PREMATURELY (PROBABLY BECAUSE ',
 !     &         'OF MISSING WEATHER DATA) '
-            ENDIF
+!            ENDIF
             
 !            WRITE(fnumwrk,*)' '
 !            WRITE(fnumwrk,'(A17,I2)')' CROP COMPONENT: ',CN
@@ -661,7 +661,7 @@
             
 !            WRITE (fnumwrk,*) ' '
 
-            IF (DYNAMIC.EQ.SEASEND) THEN
+            IF (DYNAMIC.EQ.SEASEND .AND. IHARI.EQ.'M') THEN
             
 !              WRITE(fnumwrk,*)  'WRITING END OF RUN OUTPUTS     '
 
@@ -1033,6 +1033,8 @@
 !             READA_Y4K needs fileA name only. FILEA variable contains
 !             the entire path to the file.
               FILEA_NAME = EXCODE(1:8)//'.'//EXCODE(9:10)//'A'
+              !XREADT sets fileadir to "-99" instead of empty string
+              IF(FILEADIR .NE. "-99") PATHEX = FILEADIR
               CALL READA_Y4K(FILEA_NAME, PATHEX,OLAB, TRT_ROT, 
      &              YEARSIM, X)
              
@@ -1261,8 +1263,9 @@
             ENDIF
             
             ! If nothing in A-file,use X-file
-            IF (EDATM.LE.0) edatm = emdatm   
-            
+            IF (EDATM.LE.0 .AND. emdatm .GT. 0) THEN
+              edatm = CSTIMDIF(YEARPLT,emdatm)
+            ENDIF
             ! END OF A-FILE READS
             
 !-----------------------------------------------------------------------
