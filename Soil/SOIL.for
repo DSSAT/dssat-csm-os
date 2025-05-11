@@ -44,8 +44,7 @@ C=====================================================================
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
-
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 !-----------------------------------------------------------------------
 !     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
@@ -99,7 +98,7 @@ C=====================================================================
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTS
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
       REAL               , INTENT(OUT) :: WINF
-      REAL               , INTENT(OUT) :: SWFAC, TRWU, TRWUP, TURFAC
+      REAL               , INTENT(OUT) :: TRWU, TRWUP
       REAL, DIMENSION(NL), INTENT(OUT) :: UPPM
       INTEGER            , INTENT(OUT) :: YREND
 

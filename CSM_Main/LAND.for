@@ -83,9 +83,6 @@ C-----------------------------------------------------------------------
       REAL SWDELTU(NL), SWDELTX(NL) !, RWU(NL)
 !     Needed for CaneGro_SA
       REAL EOS, EP, TRWU
-!     Water stress factors computed in SPAM now for variable time step 
-!       root water uptake model
-      REAL SWFAC, TURFAC
 !     Calculated by ORYZA-Rice
       REAL UH2O(NL)
 !     Needed for SALUS
@@ -180,7 +177,7 @@ C-----------------------------------------------------------------------
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 
 
 C-----------------------------------------------------------------------
@@ -253,7 +250,7 @@ C-----------------------------------------------------------------------
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 
 C-----------------------------------------------------------------------
 C     Seasonal initialization for soil-plant-atmosphere processes
@@ -350,7 +347,7 @@ C-----------------------------------------------------------------------
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 
 C-----------------------------------------------------------------------
 C     Call Soil-plant-atmosphere module to determine today's
@@ -401,7 +398,7 @@ C-----------------------------------------------------------------------
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 
 C-----------------------------------------------------------------------
 C     Compute cumulative totals for soil-plant-atmosphere processes
@@ -460,7 +457,7 @@ C***********************************************************************
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 
       CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
@@ -512,7 +509,7 @@ C     Print seasonal summaries and close files.
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 
       CALL SPAM(CONTROL, ISWITCH,
      &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
@@ -589,7 +586,7 @@ C***********************************************************************
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
      &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
      &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
-     &    SWFAC, TRWU, TRWUP, TURFAC, WINF, Cells, YREND) !Output
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 
 !!     Timer function
 !      CALL DATE_AND_TIME (VALUES=DATE_TIME)
