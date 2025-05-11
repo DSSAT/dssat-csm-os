@@ -154,6 +154,8 @@
           State_init = State
           COUNT = 0
           State = 0.
+          Add   = 0.
+          Sub   = 0.
         ENDIF
 !      ENDIF
 

@@ -1,5 +1,5 @@
 !==============================================================================
-! Utility subroutines for 2-D cell data
+! Utility subroutines for 2D cell data
 ! -----------------------------------------------------------------------------
 ! 09/13/2006 CHP Written
 ! 04/16/2007 CHP Convert from 1D to 2D
