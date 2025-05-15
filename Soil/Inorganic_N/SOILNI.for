@@ -104,7 +104,7 @@ C=======================================================================
       REAL, DIMENSION(MaxRows,MaxCols) :: UREA_2D, UPPM_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV, TFNITY_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: UNH4_2D, UNO3_2D
-      REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
+      REAL, DIMENSION(MaxRows,MaxCols) :: BedFrac
 !     REAL, DIMENSION(MaxRows,MaxCols) :: MINERN_2D, IMMOBN_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: NITRIFppm, NITRIF_2D
       REAL, DIMENSION(MaxRows,MaxCols) :: N2Onitrif_2D, nNOflux_2D
@@ -125,7 +125,7 @@ C=======================================================================
       REAL ADCOEF(NL), BD(NL), DLAYR(NL)
       REAL DLTSNH4(NL), DLTSNO3(NL), DLTUREA(NL), DRN(NL), DUL(NL)
       REAL UPFLOW(NL)
-      REAL KG2PPM(NL), LITC(0:NL), LL(NL) 
+      REAL LITC(0:NL), LL(NL) 
       REAL NH4(NL), NO3(NL), PH(NL), SAT(NL), SNH4(NL)
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL), WCR(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
@@ -242,29 +242,13 @@ C=======================================================================
       SNH4_2D = Cells % State % SNH4
       SNO3_2D = Cells % State % SNO3
 
-!     BED & Cell info
-      Cell_Type = CELLS % Struc % Cell_Type
-      BEDWD   = BedDimension % BEDWD
-      HalfRow = BedDimension % ROWSPC_cm / 2.
-      FurRow1 = BedDimension % FurRow1
-      FurCol1 = BedDimension % FurCol1
-      ColFrac = BedDimension % ColFrac
-      BedFrac = BedDimension % BedFrac
-
-      ADCOEF = SOILPROP % ADCOEF 
+!     These soil properties potentially can change during the simulation
       BD     = SOILPROP % BD     
       DLAYR  = SOILPROP % DLAYR  
       DUL    = SOILPROP % DUL    
       KG2PPM = SOILPROP % KG2PPM  
       LL     = SOILPROP % LL     
-      NLAYR  = SOILPROP % NLAYR  
-      PH     = SOILPROP % PH     
       SAT    = SOILPROP % SAT    
-      WCR    = SOILPROP % WCR
-
-      NSWITCH = ISWITCH % NSWI
-      ISWNIT  = ISWITCH % ISWNIT
-      MEGHG   = ISWITCH % MEGHG
 
       NBUND = FLOODWAT % NBUND
       FLOOD = FLOODWAT % FLOOD
@@ -282,6 +266,11 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !     ------------------------------------------------------------------
+        NSWITCH = ISWITCH % NSWI
+        ISWNIT  = ISWITCH % ISWNIT
+        MEGHG   = ISWITCH % MEGHG
+
+!       For 2D model
         Sim2D = CONTROL % Sim2D
         IF (SIM2D) THEN
           FieldFac = 2.0
@@ -289,16 +278,48 @@ C=======================================================================
           FieldFac = 1.0
         ENDIF
 
-!       Today's values
+!       BED & Cell info
+        Cell_Type = CELLS % Struc % Cell_Type
+        BEDWD   = BedDimension % BEDWD
+        HalfRow = BedDimension % ROWSPC_cm / 2.
+        FurRow1 = BedDimension % FurRow1
+        FurCol1 = BedDimension % FurCol1
+        ColFrac = BedDimension % ColFrac
+        BedFrac = BedDimension % BedFrac
+
+!       These soil properties will not change during the simulation
+        ADCOEF = SOILPROP % ADCOEF 
+        NLAYR  = SOILPROP % NLAYR  
+        PH     = SOILPROP % PH     
+        WCR    = SOILPROP % WCR
+
+!       Initialization
         TMINERN  = 0.0  !mineralization
         TIMMOBN  = 0.0  !immobilization
         TNITRIFY = 0.0  !nitrification
         TNOXD    = 0.0  !denitrification
         TLeachD  = 0.0  !leaching
-        NTILEDR = 0.0   !tile drain HJ added
-
-!       debug chp
+        NTILEDR  = 0.0  !tile drain HJ added
+        TOTAML = 0.0    !Ammonia volatilization
         TNOM = 0.0
+        DLTSNO3 = 0.0
+        DLTSNH4 = 0.0
+        DLTUREA = 0.0
+        DLTSNO3_2D  = 0.0
+        DLTSNH4_2D  = 0.0
+        DLTUREA_2D  = 0.0
+        DLAG_2D   = 0   !REVISED-US
+        TFNITY = 0.0
+        IUOF   = 0
+        IUON   = .FALSE.
+        nitrif = 0.0
+        denitrif = 0.0
+        N2O_data % wfps = 0.0
+
+!       Initialize uptake variables here, or they will have residual
+!         value on first day of multi-season runs.
+        UNH4_2D   = 0.0
+        UNO3_2D   = 0.0
 
 !       Seasonal cumulative values, kg[N]/ha
         CMINERN  = 0.0  !mineralization
@@ -310,18 +331,11 @@ C=======================================================================
         CLeach   = 0.0  !leaching
         CNTILEDR = 0.0  !N loss to tile drainage     !HJ added
         WTNUP    = 0.0  !N uptake
-
-        TOTAML = 0.0    !Ammonia volatilization
-
         CN2Onitrif=0.0  !N2O[N] from nitrification
         CN2Odenit =0.0  !N2O[N] from nitrification
         CNOflux   = 0.0 !NO
         CN2       = 0.0 !N2
         CumSumFert= 0.0 !Total fertilizer
-
-        nitrif = 0.0
-        denitrif = 0.0
-        N2O_data % wfps = 0.0
 
 !       proportion of N2O from nitrification PG calibrated this variable for DayCent
         pn2Onitrif = .001  
@@ -330,30 +344,14 @@ C=======================================================================
 !       double turnovfrac = 0.02;
 ! chp - tried pn2Onitrif = .02, but n2o emissions are way too high.
 
-        TFNITY = 0.0
-        IUOF   = 0
-        IUON   = .FALSE.
-
 !       CHP - 1D model does not initialize XMIN, just uses it.
         XMIN   = 0.0
-
-
-        DLTSNO3 = 0.0
-        DLTSNH4 = 0.0
-        DLTUREA = 0.0
-        DLTSNO3_2D  = 0.0
-        DLTSNH4_2D  = 0.0
-        DLTUREA_2D  = 0.0
-        DLAG_2D   = 0   !REVISED-US
-
-!       Initialize uptake variables here, or they will have residual
-!         value on first day of multi-season runs.
-        UNH4_2D   = 0.0
-        UNO3_2D   = 0.0
 
         DO L = 1, NLAYR
           N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
         ENDDO
+
+        SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
 
 !       IF (INDEX('N',ISWNIT) > 0) RETURN
 
@@ -373,8 +371,6 @@ C=======================================================================
      &      CELLS, SNO3_2D, SOILPROP, UREA_2D,              !Input
      &      CLeach, TLeachD, DLTSNO3_2D, DLTUREA_2D)        !Output
         ENDIF
-
-        SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
 
 !       Initialize flooded N if flooding is a possibility.
         CALL FLOOD_CHEM(CONTROL, ISWITCH, 
@@ -427,6 +423,13 @@ C=======================================================================
       IF (INDEX('N',ISWNIT) > 0) RETURN
 
 !     Initialize Soil N process rates for this time step.
+      TMINERN  = 0.0  !mineralization
+      TIMMOBN  = 0.0  !immobilization
+      TNITRIFY = 0.0  !nitrification
+      TNOXD    = 0.0  !denitrification
+      TLeachD  = 0.0  !leaching
+      NTILEDR  = 0.0  !tile drain HJ added
+      TNOM = 0.0
       DLTUREA_2D = 0.0
       DLTSNO3_2D = 0.0
       DLTSNH4_2D = 0.0
@@ -436,11 +439,8 @@ C=======================================================================
       TNH4 = 0.0
       TNO3 = 0.0
       TUREA = 0.0
-      TNOXD = 0.0
       TotUptake = 0.0
       CellFert = 0.0
-      TLeachD = 0.0
-      NTILEDR = 0.0
 
 !     debug chp
       UHYDR_TOT = 0.0
@@ -450,18 +450,22 @@ C=======================================================================
       DO L = 1, NRowsTot
         DO J = 1, NColsTot 
 !         Update with yesterday's plant N uptake
-          SNO3_2D(L, J) = SNO3_2D(L, J) - UNO3_2D(L, J)
-          SNH4_2D(L, J) = SNH4_2D(L, J) - UNH4_2D(L, J)
+          SNO3_2D(L,J) = SNO3_2D(L,J) - UNO3_2D(L,J)
+          SNH4_2D(L,J) = SNH4_2D(L,J) - UNH4_2D(L,J)
 !         KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g
           SELECT CASE(Cell_type(L,J))
           CASE (3,4,5)
-            NO3_2D(L, J)  = SNO3_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
-            NH4_2D(L, J)  = SNH4_2D(L, J) * KG2PPM(L) / ColFrac(L,J)
+            NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+            NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+!           Adjust for field factor
+            NO3_2D(L,J) = NO3_2D(L,J) * FieldFac
+            NH4_2D(L,J) = NH4_2D(L,J) * FieldFac
           END SELECT
 
           TotUptake = TotUptake + (UNO3_2D(L,J) +UNH4_2D(L,J))  !kg/ha
         ENDDO
       ENDDO
+
 
 !     Convert 2D arrays to 1D after N uptake 
       CALL Cell2Layer_2D(SNO3_2D, CELLS % Struc, NLAYR, SNO3)

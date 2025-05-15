@@ -105,7 +105,7 @@
 
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
       REAL, DIMENSION(MaxCols) :: WINF_col, Drain_col
-      REAL, DIMENSION(MaxRows,MaxCols) :: ES_mm, ColFrac
+      REAL, DIMENSION(MaxRows,MaxCols) :: ES_mm
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, mm_2_vf
       REAL, DIMENSION(MaxRows,MaxCols) :: CellInf, CellDrip
       REAL, DIMENSION(MaxRows,MaxCols) :: RWU_2D, RWU_2D_frac

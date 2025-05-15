@@ -100,19 +100,19 @@
 
           DO J = 1, NColsTot
             TFNITY(L,J) = TFNITY(L,1)
-            NO3_2D(L, J) = NO3(L)
-            NH4_2D(L, J) = NH4(L)
+            NO3_2D(L,J) = NO3(L)
+            NH4_2D(L,J) = NH4(L)
 !           --------------------------------------------------------------
 !           Initialize soil mineral nitrogen and urea.
 !           --------------------------------------------------------------
 !           Convert the N concentrations to kg[N] / ha per soil layer.
             SELECT CASE (Cell_type(L,J))
             CASE (3)
-              SNO3_2D(L, J) = SNO3(L) / FieldFac * BedFrac(L,J)
-              SNH4_2D(L, J) = SNH4(L) / FieldFac * BedFrac(L,J)
+              SNO3_2D(L,J) = SNO3(L) / FieldFac * BedFrac(L,J)
+              SNH4_2D(L,J) = SNH4(L) / FieldFac * BedFrac(L,J)
             CASE(4,5)
-              SNO3_2D(L, J) = SNO3(L) / FieldFac * ColFrac(L,J)
-              SNH4_2D(L, J) = SNH4(L) / FieldFac * ColFrac(L,J)
+              SNO3_2D(L,J) = SNO3(L) / FieldFac * ColFrac(L,J)
+              SNH4_2D(L,J) = SNH4(L) / FieldFac * ColFrac(L,J)
             END SELECT
           ENDDO
         END DO   !End of soil layer loop.
