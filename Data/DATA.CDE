@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2024-12-01
+! DSSAT v4.8; 2025-05-16
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -49,8 +49,9 @@ CHTA   Canopy height m Canopy height (m)                                        
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
 CO2A   Avg CO2 (ppm)   Average atmospheric CO2 (ppm), planting to harvest       .
-CO2EM  Cum CO2 emitted Cumulative CO2 emitted from soil at maturity (kg[C]/ha)  .
+CO2EM  CO2emi net kg/d Cumulative net CO2 emissions kg[C]/ha                    .
 CPAM   Tops P kg/ha    Tops P at maturity (kg/ha)                               .
+CRST   Sim Status      End of season crop status
 CWAA   Tops wt,anthsis Tops weight at anthesis (kg [dm]/ha)                     .
 CWAM   Biomass kg/ha   Biomass at maturity (total crop minus roots) (kg[dm]/ha) .
 DMPEM  DM-ET Prod      Dry matter-ET productivity (kg[DM]/ha/mm[ET])            .
@@ -158,7 +159,6 @@ R5AT   First seed      Beginning Seed Stage                                     
 R6AT   Full seed       Full Seed Stage                                          .
 R7AT   First maturity  Beginning Maturity Stage                                 .
 R8AP   Harv maturity   Harvest maturity day (dap)                               .
-HDAT   Harv maturity   Harvest maturity day (dap)                               .
 R8AT   Harv maturity   Date of Harvest Maturity Stage (YrDoy)                   .
 R9AT   Over-mature     Over-Mature Pod Stage                                    .
 RECM   Residue kg/ha   Residue applied (kg/ha)                                  .

@@ -1,0 +1,55 @@
+*HEMP CULTIVAR COEFFICIENTS: CRGRO048 MODEL
+!
+! COEFF       DEFINITIONS
+! =====       ===========
+! VAR#        Identification code or number for a specific cultivar.
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Code for the ecotype to which this cultivar belongs (see *.eco file)
+! CSDL        Critical Short Day Length below which reproductive development
+!             progresses with no daylength effect (for shortday plants) (hour)
+! PPSEN       Slope of the relative response of development to photoperiod with time
+!             (positive for shortday plants) (1/hour)
+! EM-FL       Time between plant emergence and flower appearance (R1)
+!             (photothermal days)
+! FL-SH       Time between first flower and first pod (R3) (photothermal days)
+! FL-SD       Time between first flower and first seed (R5) (photothermal days)
+! SD-PM       Time between first seed (R5) and physiological maturity (R7)
+!             (photothermal days)
+! FL-LF       Time between first flower (R1) and end of leaf expansion
+!             (photothermal days)
+! LFMAX       Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
+!             (mg CO2/m2-s)
+! SLAVR       Specific leaf area of cultivar under standard growth conditions
+!             (cm2/g)
+! SIZLF       Maximum size of full leaf (three leaflets) (cm2)
+! XFRT        Maximum fraction of daily growth that is partitioned to seed + shell
+! WTPSD       Maximum weight per seed (g)
+! SFDUR       Seed filling duration for pod cohort at standard growth conditions
+!             (photothermal days)
+! SDPDV       Average seed per pod under standard growing conditions (#/pod)
+! PODUR       Time required for cultivar to reach final pod load under optimal
+!             conditions (photothermal days)
+! THRSH       Threshing percentage. The maximum ratio of (seed/(seed+shell))
+!             at maturity. Causes seeds to stop growing as their dry weight
+!             increases until shells are filled in a cohort.
+! SDPRO       Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP       Fraction oil in seeds (g(oil)/g(seed))
+!
+!            P/G/N:Phenology/Growth/Not used for calbration
+!
+!Alwin Hopf: SLAVR determined from scanned fresh leaves. 1g fresh leaf = 66.8 cm2. 3.2g fresh leaf equal to 1g dry leaf. --> 66.8*3.2 = 214
+@VAR#  VAR-NAME........ EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
+!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
+!Calibration                             P     P     P     N     P     P     N     G     G     G     N     G     G     G     N     N     N     N
+
+!copy of each cultivar with very short SD-PM to go from flowering to harvest maturity to guide the harvest date of seasonal analysis
+IB0001 SS-Beta/IH Williams  . HM0001 13.45 0.96   20.5   9.0  15.0 53.00 30.00 1.300  240. 220.0  0.40  0.02  20.0   1.0  30.0  80.0  .256  .319
+IB0010 SS-Beta/IH Williams  . HM0010 13.45 0.96   20.5   9.0  10.0  0.10 30.00 1.300  240. 220.0  0.40  0.02  20.0   1.0  30.0  80.0  .256  .319
+!next three cultivars are also for seasonal analysis
+IB0011 IHW with -0.25 CSDL  . HM0010 13.20 0.96   20.5   9.0  10.0  0.10 30.00 1.300  240. 220.0  0.40  0.02  20.0   1.0  30.0  80.0  .256  .319
+IB0012 IHW with -0.50 CSDL  . HM0010 12.95 0.96   20.5   9.0  10.0  0.10 30.00 1.300  240. 220.0  0.40  0.02  20.0   1.0  30.0  80.0  .256  .319
+IB0013 IHW with -1.00 CSDL  . HM0010 12.45 0.96   20.5   9.0  10.0  0.10 30.00 1.300  240. 220.0  0.40  0.02  20.0   1.0  30.0  80.0  .256  .319
+IB0002 Abound/NWG-2730      . HM0002 13.55 0.32   16.5   6.0  10.0 30.00 25.00 1.300  230. 220.0  0.70  0.02  20.0   1.0  25.0  80.0  .256  .319
+!copy of each cultivar with very short SD-PM to go from flowering to harvest maturity to guide the harvest date of seasonal analysis
+IB0020 Abound/NWG-2730      . HM0020 13.55 0.32   16.5   6.0  10.0  0.10 25.00 1.300  230. 220.0  0.70  0.02  20.0   1.0  25.0  80.0  .256  .319
