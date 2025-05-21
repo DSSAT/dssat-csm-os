@@ -85,6 +85,7 @@
   TYPE CellStateType
     Sequence
     Real SWV                         !Soil water mm3/mm3
+    Real SWV_init                    !Initial soil water content mm3/mm3
     Real RLV                         !Root len dens cm/cm3 (PLANT)
     REAL SNO3, SNH4, UREA            !Soil N (kg[N]/ha)
     REAL BD, DUL, LL, SAT, SWCN, WR  !Soil properties 

@@ -914,6 +914,7 @@
     NH4I = NewPropNH4I 
     NO3I = NewPropNO3I 
     SWI  = NewPropSWi
+    CELLS % State % SWV_init = CELLS % State % SWV
 
     Return
     End Subroutine CellInit_2D

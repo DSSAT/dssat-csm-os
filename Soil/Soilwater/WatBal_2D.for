@@ -231,7 +231,7 @@
         ENDDO
       ENDDO
 
-      SWV = CELLS % STATE % SWV
+      SWV = CELLS % STATE % SWV_INIT
 
 !     Set new water table level for today. This redefines Limit_2D,
 !       the soil layer below which 1D saturated conditions exist.
