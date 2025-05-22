@@ -844,25 +844,28 @@ Insufficient soil P data provided.  Program will stop.
 SWCROP    1
 Error in Crop entry.  Fix entry or batch file.
 
-SWFERT   1
+SWFERT    1
 Error in Fertilizer Sensitivity Analysis Selection.  Fix entry or batch file.
 
-SWFIX    1
+SWFIX     1
 Error in Fertilizer Sensitivity Analysis Selection.  Fix entry or batch file.
 
-SWINSC   1
+SWINSC    1
 Error in Initial Soil Sensitivity Analysis Selection.  Fix entry or batch file.
 
-SWIRR    1
+SWIRR     1
 Error in Irrigation Sensitivity Analysis Selection.  Fix entry or batch file.
 
-SWWTH    1
+SWWTH     1
 Error in Weather Sensitivity Analysis Selection.  Fix entry or batch file.
 
 TILLAG  29
 Tillage operations file not found.
 
-WEATHR   1
+TILLAG    4
+Tillage implement is not defined or missing. Please correct input file.
+
+WEATHR    1
 Weather method selected not available.  Please fix input file.
 
 WTHMOD    1
@@ -940,7 +943,6 @@ Invalid format in file.
 GENERI   75
 Array size exceeded.
 
-
 MAKEFW    1
 Field level not found. Please correct input file.
 
@@ -952,7 +954,6 @@ Weather station input is missing. Please add to input file.
 
 MAKEFW    4
 Error in weather station input. Correct input file.
-
 
 MAKEFW    5
 Simulation Controls level not found. Please correct input file.
@@ -966,7 +967,6 @@ Start simulation date input is missing. Please add to input file.
 MAKEFW    8
 Error in Start simulation date input. Correct input file.
 
-
 MAKEFW    9
 Weather method section not found. Please add to input file.
 
@@ -976,7 +976,6 @@ Weather method input is missing. Please add to input file.
 MAKEFW   11
 Error in weather method input. Correct input file.
 
-
 MAKEFW   12
 Planting input section not found. Please add to input file.
 
@@ -985,7 +984,6 @@ Planting input is missing. Please add to input file.
 
 MAKEFW   14
 Error in planting date input. Correct input file.
-
 
 MAKEFW   15
 Start simulation date or planting date missing. Correct input file.
