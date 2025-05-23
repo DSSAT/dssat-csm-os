@@ -110,6 +110,7 @@ C=====================================================================
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
       REAL, DIMENSION(NL) :: SPi_Labile, NO3, NH4
+      REAL, DIMENSION(NL) :: NO3_init, NH4_init
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
       REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
       TYPE (SoilType) SOILPROP_furrow, SOILPROP_profile
@@ -135,8 +136,15 @@ C=====================================================================
      &    KTRANS, MULCH, SomLit, SomLitC, SW, TILLVALS,   !Input
      &    WEATHER, XHLAI,                                 !Input
      &    CELLS, SOILPROP, SOILPROP_furrow,               !Output
-     &    SOILPROP_profile, NH4, NO3)                     !Output
+     &    SOILPROP_profile, NH4_init, NO3_init)           !Output
 !      ENDIF
+
+!     When DYNAMIC = RUNINIT, NH4 and NO3 are from SOILDYN. 
+!       When DYNAMIC = RATE, NH4 and NO3 are from previous day's SoilOrg and Soilni
+      IF (DYNAMIC .EQ. RUNINIT) THEN
+        NH4 = NH4_init
+        NO3 = NO3_init
+      ENDIF
 
 !     Call WATBAL first for all except seasonal initialization
       IF (DYNAMIC /= SEASINIT) THEN
@@ -158,8 +166,6 @@ C=====================================================================
 !     Soil organic matter modules
       IF (MESOM .EQ. 'P') THEN
 !       Parton (Century-based) soil organic matter module
-!       When DYNAMIC = RUNINIT, NH4 and NO3 are from SOILDYN. 
-!       When DYNAMIC = RATE, NH4 and NO3 are from previous day's SoilOrg and Soilni
         CALL CENTURY(CONTROL, ISWITCH, 
      &  DRAIN, FERTDATA, FLOODWAT, FLOODN, HARVRES,   !Input
      &  NH4, NO3, OMADATA, RLV, SENESCE,              !Input
@@ -180,6 +186,7 @@ C=====================================================================
       CALL SoilNi (CONTROL, ISWITCH, 
      &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
      &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
+     &    NO3_init, NH4_init,                             !Input
      &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI,                                 !Input
      &    CELLS, FLOODN,                                  !I/O

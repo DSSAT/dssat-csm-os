@@ -67,6 +67,7 @@ C=======================================================================
       SUBROUTINE SoilNi (CONTROL, ISWITCH, 
      &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
      &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
+     &    NO3_init, NH4_init,                             !Input
      &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI,                                 !Input
      &    CELLS, FLOODN,                                  !I/O
@@ -130,6 +131,7 @@ C=======================================================================
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL), WCR(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
       REAL NH4_plant(NL), NO3_plant(NL)
+      REAL NH4_init(NL), NO3_init(NL)
 
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
@@ -357,9 +359,9 @@ C=======================================================================
 
 !       Set initial SOM and nitrogen conditions for each 1D soil layer and 2D soil cell.
         CALL SoilNi_init(CONTROL, 
-     &      Cell_Type, SOILPROP, ST, NH4, NO3,      !Input
-     &      NH4_2D, NO3_2D, SNH4, SNH4_2D, SNO3,    !Output
-     &      SNO3_2D, TFNITY_2D, UPPM, UREA, UREA_2D)   !Output
+     &      Cell_Type, SOILPROP, ST, NH4_init, NO3_init,  !Input
+     &      NH4_2D, NO3_2D, SNH4, SNH4_2D, SNO3,          !Output
+     &      SNO3_2D, TFNITY_2D, UPPM, UREA, UREA_2D)      !Output
 
 !       2D values are checked every day
         CALL NCHECK_inorg(CONTROL, 

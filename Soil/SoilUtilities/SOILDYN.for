@@ -42,7 +42,7 @@ C=======================================================================
      &    KTRANS, MULCH, SomLit, SomLitC, SW, TILLVALS,   !Input
      &    WEATHER, XHLAI,                                 !Input
      &    CELLS, SOILPROP, SOILPROP_furrow,               !Output
-     &    SOILPROP_profile, NH4, NO3)                     !Output
+     &    SOILPROP_profile, NH4_init, NO3_init)           !Output
 
 C-----------------------------------------------------------------------
       USE Cells_2D
@@ -82,7 +82,7 @@ C-----------------------------------------------------------------------
       LOGICAL, DIMENSION(NL) :: COARSE
 
 !     Initial conditions (used to calculate TotOrgN from TOTN)
-      REAL, DIMENSION(NL) :: NO3, NH4
+      REAL, DIMENSION(NL) :: NO3_init, NH4_init
 
 !     Second tier soils data:
       REAL, DIMENSION(NL) :: EXTP, TOTP, ORGP, CACO, CACO3
@@ -370,7 +370,8 @@ C-----------------------------------------------------------------------
 
       NMSG = 0
       DO L = 1, NLAYR
-        READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)SW(L), NH4(L),NO3(L)
+        READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)
+     &     SW(L), NH4_init(L),NO3_init(L)
 100     FORMAT (8X, 3 (1X, F5.1))
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
@@ -751,11 +752,11 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
         IF (TOTN(L) > 1.E-5) THEN
 !         Use inorganic N values to calculate organic N in kg/ha
-          NO3(L) = AMAX1 (NO3(L), 0.01) !ppm
-          NH4(L) = AMAX1 (NH4(L), 0.01) !ppm
+          NO3_init(L) = AMAX1 (NO3_init(L), 0.01) !ppm
+          NH4_init(L) = AMAX1 (NH4_init(L), 0.01) !ppm
 !         TOTN in %
-          TotOrgN(L) = (TOTN(L)*1.E4 - NO3(L) - NH4(L)) / KG2PPM(L)
-          TotOrgN(L) = MAX(0.0, TotOrgN(L))
+          TotOrgN(L) = (TOTN(L) * 1.E4 - NO3_init(L) - NH4_init(L)) 
+          TotOrgN(L) = MAX(0.0, TotOrgN(L)) / KG2PPM(L)
         ELSE
           TotOrgN(L) = -99.
         ENDIF
@@ -918,7 +919,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
 !=====================================================================
 !     Initialize 2D variables for all cases.
-      CALL CellInit_2D(SOILPROP, CELLS, NH4, NO3, SW,
+      CALL CellInit_2D(SOILPROP, CELLS, NH4_init, NO3_init, SW,
      &        SoilProp_Bed, SoilProp_Furrow)
 
       IF (BedDimension % RaisedBed) THEN   
