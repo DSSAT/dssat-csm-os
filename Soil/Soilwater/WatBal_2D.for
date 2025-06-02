@@ -50,7 +50,7 @@
       IMPLICIT NONE
       EXTERNAL WaterTable_2D, DRAINAGE_2D, ROOTWU_2D, 
      &  WBSUM_2D, CALC_SW_VOL, WBAL_2D_TS, 
-     &  RNOFF_FURROW, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
+     &  Rnoff_2D, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
      &  WATERSTRESS, WBAL
       SAVE
 
@@ -82,7 +82,7 @@
       REAL CN, BEDHT, BEDWD, CRAIN
       REAL DRAIN_2D, DRAIN_2D_Y, HalfRow, HalfFurrow, SolProfDrain
       REAL DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
-      REAL RAIN, RUNOFF
+      REAL RAIN, RUNOFF, Runoff_day
       REAL TEP, SRAD_TOT
       REAL TDRAIN, TRUNOF, TSW, TSWINI, TSW_cm
 !     INTEGER, PARAMETER :: MaxNEvent = 20  !Max number of irrigation event
@@ -97,6 +97,7 @@
       REAL TURFAC, TURFAC_ts, TURFAC_day
       REAL ActWTD, MgmtWTD, netLatFlow, LatFlow_ts !, MaxDif
       REAL StdIrrig, WidTot, DepTot, LatFlow, SurfaceVal, SumLatFlow
+      REAL Excess_vf, Excess_mm
       
       REAL, DIMENSION(0:24) :: EOP_HR, CumFracRad
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, Ksat, LL, SAT, WCr
@@ -104,7 +105,7 @@
       REAL, DIMENSION(NL) :: RWU
 
       REAL, DIMENSION(0:MaxCols) :: PMFRACTION
-      REAL, DIMENSION(MaxCols) :: WINF_col, Drain_col
+      REAL, DIMENSION(MaxCols) :: WINF_col, Drain_col, Runoff_col
       REAL, DIMENSION(MaxRows,MaxCols) :: ES_mm
       REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, mm_2_vf
       REAL, DIMENSION(MaxRows,MaxCols) :: CellInf, CellDrip
@@ -401,12 +402,12 @@
       SWV_avail = DBLE(SWV)
       SWV_D= SWV_avail
 
-!     Compute daily runoff from furrows and water available for infiltration
-!       for each column in furrow.
-      CALL Rnoff_furrow( 
+!     Compute daily runoff and water available for infiltration
+!       for each column.
+      CALL Rnoff_2D( 
      &  CN, ColFrac, FurCol1, FurRow1, HalfFurrow,        !Input
      &  HalfRow, LL, Rain, SAT, SWV_D,                    !Input
-     &  RUNOFF, WINF_col)                                 !Output
+     &  RUNOFF, Runoff_col, WINF_col)                     !Output
 !       The rain water from plastic cover run to furrow and infitration
 
 !-----------------------------------------------------------------
@@ -515,6 +516,7 @@
       ES_day = 0.0
       LastCumRad = 0.0
       MinTimeIncr = 60.
+      Runoff_day = 0.0
 
       TimeLoop: DO WHILE (StartTime < 24.0)
         Count = Count + 1
@@ -530,7 +532,8 @@
         INF_vol_dtal= 0.d0
 
 !       ---------------------------------------------------------------
-!       TIME STEP
+!       ---------------------------------------------------------------
+!       SET THE TIME STEP
 !       First determine unsaturated hydraulic conductivity and diffusivity
 !       for each cell based on soil water content at beginning of time step
 !       Also compute optimum time increment for stability
@@ -686,6 +689,10 @@
 !       Minimum time increment today
         IF (TimeIncr < MinTimeIncr) MinTimeIncr = TimeIncr
 
+!       DONE SETTING THE TIME STEP
+!       ---------------------------------------------------------------
+!       ---------------------------------------------------------------
+
 !       Compute water available for uptake, drainage, lateral flow this time step
 !       ---------------------------------------------------------------
 !       ADDITION OF IRRIGATION AMOUNT
@@ -716,6 +723,8 @@
         END DO
 
 !       ---------------------------------------------------------------
+        Runoff_ts = RUNOFF * DayIncr
+
 !       ADDITION OF INFILTRATION AMOUNT
 !       Add infiltration to top furrow cells evenly throughout day.
         IF (RAIN > 1.E-6 .OR. StdIrrig > 1.E-6) THEN
@@ -737,12 +746,29 @@
 !            cm3[soil]       d       mm       cm[soil]   
 
             SWV_avail(i,j) = SWV_avail(i,j) + INF_vol
+
+!           Check for soil water content above saturation after addition of 
+!           rainfall and standard irrigation in this time step.
+            IF (SWV_avail(i,j) > SAT(i)) THEN
+              Excess_vf = SWV_avail(i,j) - SAT(i)
+              Excess_mm = Excess_vf * 10. * Thick(i,j)
+!                         cm3[water]  mm         
+!             mm[water] = --------- * --  * cm[soil]
+!                         cm3[soil]   cm  
+  
+              SWV_avail(i,j) = SAT(i)
+              INF_vol = INF_vol - Excess_vf
+              RUNOFF_col(j) = RUNOFF_col(j) + Excess_mm * ColFrac(i,j)
+              Runoff_ts = Runoff_ts + Excess_mm * ColFrac(i,j)
+              CALL PUT('WATER', 'WINF_COL', WINF_col, MaxCols)
+            ENDIF
+
 !           debug chp
             INF_vol_dtal(i,j) = INF_vol
 !           Daily rainfall plus standard irrigation to cell i,j
             CellInf(i,j) = CellInf(i,j) + INF_vol_dtal(i,j)
           ENDDO
-          Runoff_ts = RUNOFF * DayIncr
+          Runoff_day = Runoff_day + Runoff_ts 
           Rain_ts = RAIN * DayIncr ! in mm
           IRR_ts = IRR_ts + StdIrrig * DayIncr
         ENDIF
@@ -989,6 +1015,7 @@
 
       CELLS % State % SWV = SWV
 
+      RUNOFF = Runoff_day
       CALL WBSUM_2D(INTEGR,
      &    CELLS, DRAIN_2D, HalfRow, RAIN, RUNOFF, SWV,    !Input
      &    CRAIN, TDRAIN, TEP, TRUNOF,                     !Output
@@ -1240,10 +1267,10 @@ C=====================================================================
 
 !=======================================================================
 !     Calculates runoff column by column
-      Subroutine Rnoff_furrow( 
+      Subroutine Rnoff_2D( 
      &  CN, ColFrac, FurCol1, FurRow1, HalfFurrow,        !Input
      &  HalfRow, LL, Rain, SAT, SWV_D,                    !Input
-     &  RUNOFF, WINF_col)                                 !Output
+     &  RUNOFF, Runoff_col, WINF_col)                     !Output
 
       Use Cells_2D
       USE ModuleData
@@ -1281,10 +1308,11 @@ C=====================================================================
 !         Initial abstraction ratio
 !         Runoff is related to the average soil water content of the top
 !         two layers of soil
-          SWABI = 0.15 * ((SAT(FurRow1) - SWV_D(FurRow1,j)) / 
-     &                    (SAT(FurRow1) - LL(FurRow1) * 0.5) +
-     &                    (SAT(FurRow1+1) - SWV_D(FurRow1+1,j)) / 
-     &                    (SAT(FurRow1+1) - LL(FurRow1+1) * 0.5))
+          SWABI = 0.15 * 0.5 * 
+     &      (   ( SAT(FurRow1)   - SWV_D(FurRow1,j)   )
+     &        / ( SAT(FurRow1)   -    LL(FurRow1)     )
+     &      +   ( SAT(FurRow1+1) - SWV_D(FurRow1+1,j) )
+     &        / ( SAT(FurRow1+1) -    LL(FurRow1+1)   ) )
           SWABI = MAX(0.0, SWABI)
           
 !         No mulch effects on runoff
@@ -1300,10 +1328,10 @@ C=====================================================================
       ENDIF
  
       RETURN
-      END Subroutine Rnoff_furrow
+      END Subroutine Rnoff_2D
 !=======================================================================
 C=====================================================================
-!     Rnoff_furrow VARIABLE DEFINITIONS:
+!     Rnoff_2D VARIABLE DEFINITIONS:
 !-----------------------------------------------------------------------
 ! ColFrac(Col) Cell column width divided half row width
 ! IABS   Initial abstraction ratio, modified for surface mulch layer effects.
@@ -1323,7 +1351,7 @@ C=====================================================================
 !               irrigation) (mm)
 ! WINF_col(Col) Column infiltration water in mm/d
 !-----------------------------------------------------------------------
-!     END SUBROUTINE Rnoff_furrow
+!     END SUBROUTINE Rnoff_2D
 !=======================================================================
 
 !=======================================================================
