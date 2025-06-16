@@ -11,6 +11,7 @@
 !  08/15/2011 Make detail available for cell(1,DripCol) and for cell(FurRow1,j), add INF_vol for cell detail
 !             Add handling of LIMIT_2D for WBALAN
 !             For 1st timestep, LatFlow include the portion which is calculated in WaterTable_2D
+!  06/16/2025 CHP Add 15-minute interval SWV for all cells
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !=====================================================================
@@ -86,6 +87,10 @@
         OPEN (UNIT = LUNWBL, FILE = SWBAL, STATUS = 'NEW')
         WRITE(LUNWBL,'("*WATER BALANCE OUTPUT FILE")')
       ENDIF
+
+!     temp chp
+      inquire(unit=LUNWBL, exist=fexist)
+      inquire(unit=LUNWBL, opened=fexist)
 
       CALL HEADER(SEASINIT, LUNWBL, CONTROL % RUN)
 

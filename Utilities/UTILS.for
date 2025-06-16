@@ -999,7 +999,10 @@ C        USE IFPORT
 !       Loop thru files, if it exists, delete it.
         DO I = 1, FileData % NumFiles
           OPEN (FILE=trim(FileName(I)),UNIT=LUN,STATUS='OLD',IOSTAT=ERR)
-          IF (ERR == 0) CLOSE(LUN,STATUS='DELETE',ERR=50)
+!         IF (ERR == 0) CLOSE(LUN,STATUS='DELETE',ERR=50)
+          IF (ERR == 0) THEN
+            CLOSE(LUN,STATUS='DELETE',IOSTAT=ERR)
+          ENDIF
   50    CONTINUE
         ENDDO
 

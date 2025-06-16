@@ -315,6 +315,12 @@
      &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
 
+!       Output to SoilWat_ts.OUT and CellDetail.OUT
+        Call Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr, !Input
+     &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,              !Input
+     &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,              !Input
+     &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
+     &    SWV_D)
 !     ------------------------------------------------------------------
 
       msg(1) = "Start 2D, variable time-step model"
