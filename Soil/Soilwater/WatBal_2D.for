@@ -51,7 +51,7 @@
       EXTERNAL WaterTable_2D, DRAINAGE_2D, ROOTWU_2D, 
      &  WBSUM_2D, CALC_SW_VOL, WBAL_2D_TS, 
      &  Rnoff_2D, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
-     &  WATERSTRESS, WBAL
+     &  WATERSTRESS, WBAL, OpSW15min
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -315,12 +315,16 @@
      &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
 
-!       Output to SoilWat_ts.OUT and CellDetail.OUT
-        Call Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr, !Input
+!     Output to SoilWat_ts.OUT and CellDetail.OUT
+      CALL Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr, !Input
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,              !Input
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,              !Input
      &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
      &    SWV_D)
+
+      CALL OpSW15min(CONTROL, ISWITCH, 
+     &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
+
 !     ------------------------------------------------------------------
 
       msg(1) = "Start 2D, variable time-step model"
@@ -917,7 +921,9 @@
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,              !Input
      &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
      &    SWV_D)
-!         for the 1st timestep, should not be LatFlow_ts
+
+        CALL OpSW15min(CONTROL, ISWITCH, 
+     &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
 
 !       ---------------------------------------------------------------
 !       Update time for next iteration
@@ -1099,6 +1105,9 @@ C-----------------------------------------------------------------------
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, 
      &    Diffus, Kunsat, LatFlow, 0, 0.0, SWV_D)
+
+      CALL OpSW15min(CONTROL, ISWITCH, 
+     &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
 
 !***********************************************************************
 !***********************************************************************
