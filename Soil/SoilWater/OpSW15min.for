@@ -29,7 +29,7 @@
       INTEGER YRDOY, YEAR, DOY, DAS
 
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV_inst, SWV_max, SWV_min, 
-     &                                    SWV_avg
+     &                                    SWV_avg, SWV_ts
       REAL Last_print_time, Target_print_time, Last_clock_time, Sum_time
       REAL ThisTS, SWcell
 
@@ -42,6 +42,11 @@
       TYPE (Save_type), Dimension(0:1000) :: SW_save
 
       LOGICAL FEXIST, DOPRINT
+
+!     temp chp - print info for one cell
+      integer r1,c1
+      r1 = 2
+      c1 = 3
 
 !     ------------------------------------------------------------------
       DYNAMIC = CONTROL % DYNAMIC
@@ -81,8 +86,6 @@
         WRITE(LUNW15,'("*2D Soil Water, 15-minute interval")')
       ENDIF
 
-      CALL HEADER(SEASINIT, LUNW15, CONTROL % RUN)
-
 !     Write header for daily output
       WRITE (LUNW15,'(A)')
      &  'YEAR,DOY,DAS,TIME,Row,Col,SWV_inst,SWV_min,SWV_avg,SWV_max'
@@ -111,8 +114,18 @@
       Last_clock_time = 0.0
       Sum_time = 0.0  !duration of time since last printout
 
-      SW_save % ts  = 0.0
+      SW_save(0) % ts  = 0.0
       SW_save(0) % SWV = SWV_inst
+
+!     temp chp
+!     for one cell, print at every time step (unit 6123) and at every print interval (unit 6124)
+      write(6123,'(A,/,3(g0,","),g0)') 
+     &  "YEAR,DOY,TIME,SWV", 
+     &  year, doy+1, 0.0, swv_inst(r1,c1)
+
+      write(6124,'(A,/,3(g0,","),g0)')
+     &  "YEAR,DOY,TIME,SWV_inst,SWV_min,SWV_avg,SWV_max",
+     &  year, doy+1, 0.0, swv_inst(r1,c1)
 
 !***********************************************************************
 !***********************************************************************
@@ -122,23 +135,36 @@
 !-----------------------------------------------------------------------
       IF (.NOT. DOPRINT) RETURN
 !     ------------------------------------------------------------------
+!     temp chp
+      write(6123,'(3(g0,","),g0)') 
+     &  year, doy, time, swv_inst(r1,c1)
+
 !     15-minute SWV output for all cells
       IF (TIME - Target_print_time >= -0.01) THEN
+
+!       Handle time steps larger than 15 minutes 
+!       Skip some print steps rather than interpolate between values.
+        DO WHILE (.TRUE.)
+          IF (TIME - Target_print_time > 0.25) THEN   !hours
+            Target_print_time = Target_print_time + 0.25
+          ELSE
+            EXIT
+          ENDIF
+        ENDDO
 
 !       It's time to print, save last value for aggregation
         count = count + 1
 !       Partial time step ending in Target_print_time
         SW_save(count) % ts  = Target_print_time - Last_clock_time
         Sum_time = Sum_time + SW_save(count) % ts   !hours
-        Last_clock_time = TIME                      !hours
 
 !       Interpolate last SWV value at the target time
         SW_save(count) % SWV = (SWV_inst - SW_save(count-1) % SWV) 
      &      * SW_save(count) % ts / (TimeIncr / 60.)
      &      + SW_save(count-1) % SWV
 
-        SWV_min = 99.
-        SWV_max = -99.
+        SWV_min = SW_save(0) % SWV
+        SWV_max = SW_save(0) % SWV
         SWV_avg = 0.0
 
         DO i = 1, count
@@ -167,10 +193,14 @@
               ENDIF
 
 !             Average is weighted average over the 15-minute print interval
-              SWV_avg = SWV_avg + 
+              SWV_avg(row,col) = SWV_avg(row,col) + 
      &          (SWcell + SW_save(i-1) % SWV(row,col)) / 2.0 * ThisTS
 !               (current SWV + last time step SWV) / 2.0 * time step
 
+!             The instantaneous value is the SWV calculated at the print time
+              IF (i == count) THEN
+                SWV_ts(row,col) = SW_save(count) % SWV(row,col)
+              ENDIF
             ENDDO
           ENDDO
         ENDDO
@@ -180,12 +210,22 @@
 !       Write initial value for instantaneous soil water
         DO row = 1, nRowsTot
           DO col = 1, nColsTot
+            SELECT CASE(CELLS(row,col)%STRUC%Cell_Type)
+            CASE (3,4,5);CONTINUE
+            CASE DEFAULT; CYCLE
+            END SELECT
+
             CALL YR_DOY(YRDOY, YEAR, DOY)
-            WRITE (LUNW15,'(6(g0,","),g0)') YEAR, DOY, DAS, TIME,
-     &             SWV_inst(row,col), SWV_min(row,col), 
+            WRITE (LUNW15,'(7(g0,","),g0)') YEAR, DOY, DAS, TIME,
+     &             SWV_ts(row,col), SWV_min(row,col), 
      &             SWV_avg(row,col), SWV_max(row,col) 
           ENDDO
         ENDDO
+
+!       temp chp
+        write(6124,'(3(g0,","),g0)')year, doy, time,  
+     &    SWV_ts(r1,c1), SWV_min(r1,c1), 
+     &    SWV_avg(r1,c1), SWV_max(r1,c1) 
 
 !       First time increment includes the partial time step which was 
 !         beyond the target print time
@@ -200,8 +240,9 @@
           ENDDO
         ENDDO
 
+        Last_clock_time = TIME                      !hours
         Last_print_time = Target_print_time
-        Target_print_time = Target_print_time + 15.
+        Target_print_time = Target_print_time + 0.25
         Sum_time = 0.0
 
       ELSE
