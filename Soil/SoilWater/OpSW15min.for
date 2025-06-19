@@ -53,7 +53,7 @@
       YRDOY   = CONTROL % YRDOY
       DAS     = CONTROL % DAS
 
-      SWV_inst = SNGL(SWV_D)
+      SWV_ts = SNGL(SWV_D)
 
 !***********************************************************************
 !***********************************************************************
@@ -103,29 +103,29 @@
           
           CALL YR_DOY(YRDOY, YEAR, DOY)
           WRITE (LUNW15,'(6(g0,","),g0)') YEAR, DOY+1, DAS+1, 0.0,
-     &           SWV_inst(row,col) 
+     &           SWV_ts(row,col) 
         ENDDO
       ENDDO
 
 !     These times are in hours on a 24 hour clock. 
       Last_print_time = 0.0
-      Target_print_time = Last_print_time + 0.25
+      Target_print_time = 0.25
       count = 0
       Last_clock_time = 0.0
       Sum_time = 0.0  !duration of time since last printout
 
       SW_save(0) % ts  = 0.0
-      SW_save(0) % SWV = SWV_inst
+      SW_save(0) % SWV = SWV_ts
 
 !     temp chp
 !     for one cell, print at every time step (unit 6123) and at every print interval (unit 6124)
-      write(6123,'(A,/,3(g0,","),g0)') 
-     &  "YEAR,DOY,TIME,SWV", 
-     &  year, doy+1, 0.0, swv_inst(r1,c1)
+      write(6123,'(A,/,7(g0,","),g0)') 
+     &  "YEAR,DOY,DAS,TIME,DeltaT,ROW,COL,SWV_ts", 
+     &  year, doy+1, 0, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
 
-      write(6124,'(A,/,3(g0,","),g0)')
-     &  "YEAR,DOY,TIME,SWV_inst,SWV_min,SWV_avg,SWV_max",
-     &  year, doy+1, 0.0, swv_inst(r1,c1)
+      write(6124,'(A,A,/,7(g0,","),g0)') "YEAR,DOY,DAS,TIME,DeltaT,",
+     &  "ROW,COL,SWV_inst,SWV_min,SWV_avg,SWV_max",
+     &  year, doy+1, 0, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
 
 !***********************************************************************
 !***********************************************************************
@@ -136,20 +136,16 @@
       IF (.NOT. DOPRINT) RETURN
 !     ------------------------------------------------------------------
 !     temp chp
-      write(6123,'(3(g0,","),g0)') 
-     &  year, doy, time, swv_inst(r1,c1)
+      write(6123,'(7(g0,","),g0)') 
+     &  year, doy, das, time, TimeIncr, r1, c1, swv_ts(r1,c1)
 
 !     15-minute SWV output for all cells
       IF (TIME - Target_print_time >= -0.01) THEN
 
 !       Handle time steps larger than 15 minutes 
 !       Skip some print steps rather than interpolate between values.
-        DO WHILE (.TRUE.)
-          IF (TIME - Target_print_time > 0.25) THEN   !hours
-            Target_print_time = Target_print_time + 0.25
-          ELSE
-            EXIT
-          ENDIF
+        DO WHILE (TIME - Target_print_time > 0.25)
+          Target_print_time = Target_print_time + 0.25
         ENDDO
 
 !       It's time to print, save last value for aggregation
@@ -159,7 +155,7 @@
         Sum_time = Sum_time + SW_save(count) % ts   !hours
 
 !       Interpolate last SWV value at the target time
-        SW_save(count) % SWV = (SWV_inst - SW_save(count-1) % SWV) 
+        SW_save(count) % SWV = (SWV_ts - SW_save(count-1) % SWV) 
      &      * SW_save(count) % ts / (TimeIncr / 60.)
      &      + SW_save(count-1) % SWV
 
@@ -199,7 +195,7 @@
 
 !             The instantaneous value is the SWV calculated at the print time
               IF (i == count) THEN
-                SWV_ts(row,col) = SW_save(count) % SWV(row,col)
+                SWV_inst(row,col) = SW_save(count) % SWV(row,col)
               ENDIF
             ENDDO
           ENDDO
@@ -216,21 +212,18 @@
             END SELECT
 
             CALL YR_DOY(YRDOY, YEAR, DOY)
-            WRITE (LUNW15,'(7(g0,","),g0)') YEAR, DOY, DAS, TIME,
-     &             SWV_ts(row,col), SWV_min(row,col), 
-     &             SWV_avg(row,col), SWV_max(row,col) 
+            WRITE (LUNW15,'(10(g0,","),g0)') 
+     &        YEAR, DOY, DAS, Target_print_time, Sum_time, row, col, 
+     &        SWV_inst(row,col), SWV_min(row,col), 
+     &        SWV_avg(row,col), SWV_max(row,col) 
           ENDDO
         ENDDO
 
 !       temp chp
-        write(6124,'(3(g0,","),g0)')year, doy, time,  
-     &    SWV_ts(r1,c1), SWV_min(r1,c1), 
+        write(6124,'(10(g0,","),g0)')year, doy, das, Target_print_time,  
+     &    Sum_time, r1, c1, 
+     &    SWV_inst(r1,c1), SWV_min(r1,c1), 
      &    SWV_avg(r1,c1), SWV_max(r1,c1) 
-
-!       First time increment includes the partial time step which was 
-!         beyond the target print time
-        count = 0
-        SW_save(0) % SWV = SW_save(count) % SWV
 
 !       Initialize arrays for next print interval
         SW_save % ts  = 0.0
@@ -240,30 +233,36 @@
           ENDDO
         ENDDO
 
+!       First time increment includes the partial time step which was 
+!         beyond the target print time
         Last_clock_time = TIME                      !hours
         Last_print_time = Target_print_time
         Target_print_time = Target_print_time + 0.25
-        Sum_time = 0.0
+
+        count = 1
+        SW_save(0) % SWV = SWV_inst   !SWV at last print time
+        SW_save(0) % ts  = 0.0
+        SW_save(1) % SWV = SWV_ts     !SWV at current clock time
+        SW_save(1) % ts  = TIME - Last_print_time 
+        Sum_time = SW_SAVE(1) % ts
+
+!       Is this the last time interval of the day?
+        IF (ABS(TIME - 24.) < 0.01) THEN
+!         End of day
+          count = 0
+          Last_clock_time = 24. - Last_clock_time
+          Last_print_time = 0.0
+          Target_print_time = 0.25
+        ENDIF
 
       ELSE
 !       Save values for later aggregation
         count = count + 1
-
-        SW_save(count) % SWV = SWV_inst
-        IF (count == 1) THEN
-          SW_save(count) % ts  = TIME - Last_print_time !hours
-        ELSE
-          SW_save(count) % ts  = TimeIncr / 60.    !hours
-        ENDIF
+        SW_save(count) % ts  = TimeIncr / 60.    !hours
 
 !       Duration since last print
         Sum_time = Sum_time + SW_save(count) % ts  !hours
         Last_clock_time = TIME                      !hours
-      ENDIF
-
-!     Is this the last time interval of the day?
-      IF (ABS(TIME - 24.) < 0.01) THEN
-!       End of day
       ENDIF
 
 !***********************************************************************
