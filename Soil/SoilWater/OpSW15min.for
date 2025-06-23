@@ -31,7 +31,7 @@
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV_inst, SWV_max, SWV_min, 
      &                                    SWV_avg, SWV_ts
       REAL Last_print_time, Target_print_time, Last_clock_time, Sum_time
-      REAL ThisTS, SWcell
+      REAL ThisTS, SWcell, Clock_ratio
 
 !     Save up to 1000 values of SWV between reporting intervals
 !     900 seconds per 15 minutes, so 1000 should be enough (?)
@@ -102,7 +102,7 @@
           END SELECT
           
           CALL YR_DOY(YRDOY, YEAR, DOY)
-          WRITE (LUNW15,'(6(g0,","),g0)') YEAR, DOY+1, DAS+1, 0.0,
+          WRITE (LUNW15,'(6(g0,","),g0)') YEAR, DOY, DAS+1, 0.0,
      &           SWV_ts(row,col) 
         ENDDO
       ENDDO
@@ -121,11 +121,11 @@
 !     for one cell, print at every time step (unit 6123) and at every print interval (unit 6124)
       write(6123,'(A,/,7(g0,","),g0)') 
      &  "YEAR,DOY,DAS,TIME,DeltaT,ROW,COL,SWV_ts", 
-     &  year, doy+1, 0, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
+     &  year, doy, das+1, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
 
-      write(6124,'(A,A,/,7(g0,","),g0)') "YEAR,DOY,DAS,TIME,DeltaT,",
-     &  "ROW,COL,SWV_inst,SWV_min,SWV_avg,SWV_max",
-     &  year, doy+1, 0, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
+      write(6124,'(A,A,/,8(g0,","),g0)') "YEAR,DOY,DAS,TIME,DeltaT,",
+     &  "count,ROW,COL,SWV_inst,SWV_min,SWV_avg,SWV_max",
+     &  year, doy, das+1, 0.0, 0.0, 0, r1, c1, swv_ts(r1,c1)
 
 !***********************************************************************
 !***********************************************************************
@@ -140,11 +140,11 @@
      &  year, doy, das, time, TimeIncr, r1, c1, swv_ts(r1,c1)
 
 !     15-minute SWV output for all cells
-      IF (TIME - Target_print_time >= -0.01) THEN
+      IF (TIME - Target_print_time >= -1E-5) THEN
 
 !       Handle time steps larger than 15 minutes 
 !       Skip some print steps rather than interpolate between values.
-        DO WHILE (TIME - Target_print_time > 0.25)
+        DO WHILE (TIME - Target_print_time >= 0.25)
           Target_print_time = Target_print_time + 0.25
         ENDDO
 
@@ -152,12 +152,23 @@
         count = count + 1
 !       Partial time step ending in Target_print_time
         SW_save(count) % ts  = Target_print_time - Last_clock_time
-        Sum_time = Sum_time + SW_save(count) % ts   !hours
 
-!       Interpolate last SWV value at the target time
-        SW_save(count) % SWV = (SWV_ts - SW_save(count-1) % SWV) 
-     &      * SW_save(count) % ts / (TimeIncr / 60.)
-     &      + SW_save(count-1) % SWV
+
+        IF (ABS(Target_print_time - TIME) < 0.001) THEN
+!         Print time and clock time are in synch
+          SW_save(count) % SWV = SWV_ts
+        ELSE
+!         Interpolate last SWV value at the target print time
+          Clock_ratio = SW_save(count) % ts / (TIME - Last_clock_time)
+          DO row = 1, nRowsTot
+            DO col = 1, nColsTot
+              SW_save(count) % SWV(row,col) = 
+     &          SW_save(count-1) % SWV(row,col)
+     &          + (SWV_ts(row,col) - SW_save(count-1) % SWV(row,col))
+     &          * Clock_ratio
+            ENDDO
+          ENDDO
+        ENDIF
 
         SWV_min = SW_save(0) % SWV
         SWV_max = SW_save(0) % SWV
@@ -166,6 +177,7 @@
         DO i = 1, count
 !         To make it easy to read
           ThisTS = SW_save(i) % ts  !current time step in hours
+          Sum_time = Sum_time + ThisTS  !hours
 
           DO row = 1, nRowsTot
             DO col = 1, nColsTot
@@ -220,12 +232,14 @@
         ENDDO
 
 !       temp chp
-        write(6124,'(10(g0,","),g0)')year, doy, das, Target_print_time,  
-     &    Sum_time, r1, c1, 
+        write(6124,'(11(g0,","),g0)')year, doy, das, Target_print_time,
+     &    Sum_time, count, r1, c1, 
      &    SWV_inst(r1,c1), SWV_min(r1,c1), 
      &    SWV_avg(r1,c1), SWV_max(r1,c1) 
 
 !       Initialize arrays for next print interval
+        count = 0  
+        Sum_time = 0.0
         SW_save % ts  = 0.0
         DO row = 1, nRowsTot
           DO col = 1, nColsTot
@@ -233,18 +247,18 @@
           ENDDO
         ENDDO
 
-!       First time increment includes the partial time step which was 
-!         beyond the target print time
+        SW_save(0) % SWV = SWV_inst   !SWV at last print time
+        IF (ABS(Last_print_time - Last_clock_time) > 0.001) THEN
+!         Print time and clock time are not in synch. Need to save the extra
+!           bit of time beyond the last print time as the first element of the array.
+          count = 1
+          SW_save(1) % SWV = SWV_ts     !SWV at current clock time
+          SW_save(1) % ts  = TIME - Last_print_time 
+        ENDIF
+
         Last_clock_time = TIME                      !hours
         Last_print_time = Target_print_time
         Target_print_time = Target_print_time + 0.25
-
-        count = 1
-        SW_save(0) % SWV = SWV_inst   !SWV at last print time
-        SW_save(0) % ts  = 0.0
-        SW_save(1) % SWV = SWV_ts     !SWV at current clock time
-        SW_save(1) % ts  = TIME - Last_print_time 
-        Sum_time = SW_SAVE(1) % ts
 
 !       Is this the last time interval of the day?
         IF (ABS(TIME - 24.) < 0.01) THEN
@@ -259,9 +273,7 @@
 !       Save values for later aggregation
         count = count + 1
         SW_save(count) % ts  = TimeIncr / 60.    !hours
-
-!       Duration since last print
-        Sum_time = Sum_time + SW_save(count) % ts  !hours
+        SW_save(count) % SWV = SWV_ts
         Last_clock_time = TIME                      !hours
       ENDIF
 
