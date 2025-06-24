@@ -78,6 +78,9 @@
   10.0 9999. 0.015   0.1  0.01  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX
    0.0  2.85   3.0  2.85   6.0  2.85  30.0  2.85   XRTFAC,YRTFAC
  0.012 0.012  0.02  0.10                   RTNO3,RTNH4,PORMIN,RTEXF
+!parameters added for 2D model
+   5.0                                      RTWIDI
+   0.0  0.71   3.0  0.71   6.0  0.71  30.0  0.71   XRTFACH,YRTFACH
 
 !*SEED AND SHELL GROWTH PARAMETERS
   0.30   0.3   0.00  100.              SETMAX,SRMAX,RFLWAB,XMPAGE
