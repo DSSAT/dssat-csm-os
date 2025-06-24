@@ -111,3 +111,7 @@ ETSUMMRY.OUT    ET extended summary output file                       OUTEX
 PlantGr_Det.OUT    Detailed phytomeric outputs                        SAMPHY
 Canopy_Phot.OUT    Layered canopy photosynthesis outputs              SAMCPH
 Crop_Stress.OUT    Crop abiotic stress factors                        SAMSTR
+
+!Sub-daily 2D files
+SoilWat_ts.OUT     Soil water content by 2D-cell, sub-daily time step
+SoilWat_15min.csv  15-minute soil water content by 2D-cell
