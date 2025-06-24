@@ -146,9 +146,9 @@
       REAL, PARAMETER :: TSI = 5.0, TSN = 30.0, Max_Time_Step=60.
 !                         irrig        rain        default  
 
-!     debug chp
-      Cell_detail%row = 7 !FurRow1
-      Cell_detail%col = 9 !FurCol1
+!!     debug chp
+!      Cell_detail%row = 7 !FurRow1
+!      Cell_detail%col = 9 !FurCol1
 
       DYNAMIC = CONTROL % DYNAMIC
       RAIN    = WEATHER % RAIN
@@ -373,9 +373,6 @@
       SUM_TSRF = 0.0
       CellInf = 0.0
       CellDrip = 0.0
-
-      Cell_detail%IrrVol = 0
-      Cell_detail%InfVol = 0
 
 !     Compute water available at beginning of day
       SWV_avail = SWV_D

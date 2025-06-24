@@ -43,27 +43,27 @@
   END TYPE
   TYPE (BedDimType) BedDimension
 
-  type Cell_detail_type
-    integer :: row = 1, col = 9  !cm
-    integer, DIMENSION(MaxCells) :: rows = (/ 2, 2, 3, 4, 5, 5, 6, 7, 8, 9 /) !cm
-    integer, DIMENSION(MaxCells) :: cols = (/ 1, 2, 2, 2, 1, 2, 2, 2, 2, 2 /) !cm
-    integer :: NPTFLG = 3 ! 0 for cell; 1 for whole row; 2 for whole column; 3 for all cells; 4 for warning
-    integer :: WPTFLG = 0 ! 0 for cell; 1 for whole row; 2 for whole column; 3 for all cells; 4 for warning; 5 for multi-cells
-    real    :: MINTS = 0.25! hour
-    real    :: NEXTTS = 0.25
-    integer :: MULTI = 0 ! for multiple row/col output
-    integer :: start = 0, fin = 1000  !day
-    Double Precision, Dimension(MaxRows,MaxCols) :: vdiff, vgrav   !cm2
-    Double Precision, Dimension(MaxRows,MaxCols+1) :: H_in, H_out  !cm2
-    Double Precision, Dimension(MaxRows+1,MaxCols) :: V_in, V_out  !cm2
-    Double Precision, Dimension(MaxRows,MaxCols) :: IrrVol, InfVol !cm2
-  end type
-  type (Cell_detail_type) Cell_detail
+  !type Cell_detail_type
+  !  integer :: row = 1, col = 9  !cm
+  !  integer, DIMENSION(MaxCells) :: rows = (/ 2, 2, 3, 4, 5, 5, 6, 7, 8, 9 /) !cm
+  !  integer, DIMENSION(MaxCells) :: cols = (/ 1, 2, 2, 2, 1, 2, 2, 2, 2, 2 /) !cm
+  !  integer :: NPTFLG = 3 ! 0 for cell; 1 for whole row; 2 for whole column; 3 for all cells; 4 for warning
+  !  integer :: WPTFLG = 0 ! 0 for cell; 1 for whole row; 2 for whole column; 3 for all cells; 4 for warning; 5 for multi-cells
+  !  real    :: MINTS = 0.25! hour
+  !  real    :: NEXTTS = 0.25
+  !  integer :: MULTI = 0 ! for multiple row/col output
+  !  integer :: start = 0, fin = 1000  !day
+  !  Double Precision, Dimension(MaxRows,MaxCols) :: vdiff, vgrav   !cm2
+  !  Double Precision, Dimension(MaxRows,MaxCols+1) :: H_in, H_out  !cm2
+  !  Double Precision, Dimension(MaxRows+1,MaxCols) :: V_in, V_out  !cm2
+  !  Double Precision, Dimension(MaxRows,MaxCols) :: IrrVol, InfVol !cm2
+  !end type
+  !type (Cell_detail_type) Cell_detail
   
-  type Cell_Ndetail_type
-    integer row, col  !cm
-  end type
-  type (Cell_Ndetail_type) Cell_Ndetail
+  !type Cell_Ndetail_type
+  !  integer row, col  !cm
+  !end type
+  !type (Cell_Ndetail_type) Cell_Ndetail
 
 ! -----------------------------------------------------------------------------
 

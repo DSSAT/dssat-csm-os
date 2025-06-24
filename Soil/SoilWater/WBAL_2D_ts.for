@@ -100,7 +100,7 @@
       CUMWBAL = 0.0
 
       CALL YR_DOY(YRDOY, YR2, DY2)
-      WRITE (LUNWBL,1300,ADVANCE='NO') YR2, DY2, DAS, Time, TimeIncr, 
+      WRITE (LUNWBL,1300) YR2, DY2, DAS, Time, TimeIncr, 
      &    0.0, 0.0, 0, 0,
      &    TSW,                                     !State variables
      &    0.0, 0.0, 0.0,                           !Inflows

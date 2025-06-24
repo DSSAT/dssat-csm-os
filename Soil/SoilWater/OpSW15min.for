@@ -1,8 +1,11 @@
 !=====================================================================
 !  OpSW15min, Subroutine, Cheryl Porter
-!  15-minute output interval for soil water content, all cells
-!  Where time steps are greater than 15 minutes, less frequent output is reported.
-!  Each output includes instantaneous, average, minimum, and maximum values since last report.
+!  15-minute output interval for soil water content, all cells.
+!  For time steps greater than 15 minutes, less frequent output is reported.
+!  Each output includes instantaneous, average, minimum, and maximum values 
+!    since the last report.
+!    - The instantaneous value is reported at the end of the print interval.
+!    - Max, min, and mean values are over the previous 15 minutes.
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  06/17/2025 CHP written
@@ -25,6 +28,7 @@
       Double Precision, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: SWV_D 
 
       CHARACTER*17, PARAMETER :: SWV15 = 'SoilWat_15min.csv'
+      INTEGER, PARAMETER :: MaxCount = 1000
       INTEGER DYNAMIC, LUNW15, I, count, row, col
       INTEGER YRDOY, YEAR, DOY, DAS
 
@@ -39,14 +43,14 @@
         REAL, DIMENSION(MaxRows,MaxCols) :: SWV
         REAL ts
       END TYPE Save_type
-      TYPE (Save_type), Dimension(0:1000) :: SW_save
+      TYPE (Save_type), Dimension(0:MaxCount) :: SW_save
 
       LOGICAL FEXIST, DOPRINT
 
-!     temp chp - print info for one cell
-      integer r1,c1
-      r1 = 2
-      c1 = 3
+!!     temp chp - print info for one cell
+!      integer r1,c1
+!      r1 = 2
+!      c1 = 3
 
 !     ------------------------------------------------------------------
       DYNAMIC = CONTROL % DYNAMIC
@@ -117,15 +121,15 @@
       SW_save(0) % ts  = 0.0
       SW_save(0) % SWV = SWV_ts
 
-!     temp chp
-!     for one cell, print at every time step (unit 6123) and at every print interval (unit 6124)
-      write(6123,'(A,/,7(g0,","),g0)') 
-     &  "YEAR,DOY,DAS,TIME,DeltaT,ROW,COL,SWV_ts", 
-     &  year, doy, das+1, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
-
-      write(6124,'(A,A,/,8(g0,","),g0)') "YEAR,DOY,DAS,TIME,DeltaT,",
-     &  "count,ROW,COL,SWV_inst,SWV_min,SWV_avg,SWV_max",
-     &  year, doy, das+1, 0.0, 0.0, 0, r1, c1, swv_ts(r1,c1)
+!!     temp chp
+!!     for one cell, print at every time step (unit 6123) and at every print interval (unit 6124)
+!      write(6123,'(A,/,7(g0,","),g0)') 
+!     &  "YEAR,DOY,DAS,TIME,DeltaT,ROW,COL,SWV_ts", 
+!     &  year, doy, das+1, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
+!
+!      write(6124,'(A,A,/,8(g0,","),g0)') "YEAR,DOY,DAS,TIME,DeltaT,",
+!     &  "count,ROW,COL,SWV_inst,SWV_min,SWV_avg,SWV_max",
+!     &  year, doy, das+1, 0.0, 0.0, 0, r1, c1, swv_ts(r1,c1)
 
 !***********************************************************************
 !***********************************************************************
@@ -135,9 +139,13 @@
 !-----------------------------------------------------------------------
       IF (.NOT. DOPRINT) RETURN
 !     ------------------------------------------------------------------
-!     temp chp
-      write(6123,'(7(g0,","),g0)') 
-     &  year, doy, das, time, TimeIncr, r1, c1, swv_ts(r1,c1)
+!!     temp chp
+!      write(6123,'(7(g0,","),g0)') 
+!     &  year, doy, das, time, TimeIncr, r1, c1, swv_ts(r1,c1)
+
+      IF (count == MaxCount - 1) THEN
+        Target_print_time = TIME
+      ENDIF
 
 !     15-minute SWV output for all cells
       IF (TIME - Target_print_time >= -1E-5) THEN
@@ -231,11 +239,11 @@
           ENDDO
         ENDDO
 
-!       temp chp
-        write(6124,'(11(g0,","),g0)')year, doy, das, Target_print_time,
-     &    Sum_time, count, r1, c1, 
-     &    SWV_inst(r1,c1), SWV_min(r1,c1), 
-     &    SWV_avg(r1,c1), SWV_max(r1,c1) 
+!!       temp chp
+!        write(6124,'(11(g0,","),g0)')year, doy, das, Target_print_time,
+!     &    Sum_time, count, r1, c1, 
+!     &    SWV_inst(r1,c1), SWV_min(r1,c1), 
+!     &    SWV_avg(r1,c1), SWV_max(r1,c1) 
 
 !       Initialize arrays for next print interval
         count = 0  
@@ -298,10 +306,12 @@ C=======================================================================
 C=====================================================================
 !     OpSW15min VARIABLE DEFINITIONS:
 !-----------------------------------------------------------------------
-!     SWV_inst
-!     SWV_max
-!     SWV_min
-!     SWV_avg
+! Values represent soil water content (mm3/mm3) for the time period 
+!   since the last print.
+! SWV_inst Instantaneous value at time of output
+! SWV_max  Maximum SW over interval
+! SWV_min  Minimum SW over interval
+! SWV_avg  Mean SW over interval
 !-----------------------------------------------------------------------
 !     END SUBROUTINE OpSW15min
 !=======================================================================

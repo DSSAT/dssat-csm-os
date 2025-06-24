@@ -323,13 +323,13 @@ C=======================================================================
           SWFh_ts(i,j) = H_out(i,j) !cm2
           SWFv_ts(i,j) = V_out(i,j) !cm2
 
-!         debug chp
-          Cell_detail%H_in(i,j)  = H_in(i,j)
-          Cell_detail%H_out(i,j) = H_out(i,j)
-          Cell_detail%V_in(i,j)  = V_in(i,j)
-          Cell_detail%V_out(i,j) = V_out(i,j)
-          Cell_detail%Vdiff(i,j) = V_diff
-          Cell_detail%Vgrav(i,j) = V_grav
+!!         debug chp
+!          Cell_detail%H_in(i,j)  = H_in(i,j)
+!          Cell_detail%H_out(i,j) = H_out(i,j)
+!          Cell_detail%V_in(i,j)  = V_in(i,j)
+!          Cell_detail%V_out(i,j) = V_out(i,j)
+!          Cell_detail%Vdiff(i,j) = V_diff
+!          Cell_detail%Vgrav(i,j) = V_grav
         ENDDO ! Drainage column by column
       ENDDO ! Drainage row by row
 

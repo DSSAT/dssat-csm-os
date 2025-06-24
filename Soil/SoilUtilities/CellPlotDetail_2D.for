@@ -1,7 +1,6 @@
 !=======================================================================
 C  CellPlotDetail_2D, Subroutine
-C 
-C  Purpose: Provide daily plotting info for cell soil water and N data.
+C  Purpose: Provide daily 2D plotting info by cell for soil water and N data.
 C
 C  REVISION   HISTORY
 C  03/04/2005 CHP wrote based on SoilNBal
@@ -26,7 +25,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       TYPE (SoilType)    SOILPROP
 
 !     ------------------------------------------------------------------
-!     2D cell detail output file
+!     2D cell detail output file name
       CHARACTER*22 CellOut
 
       INTEGER Clunn, row, col
@@ -43,9 +42,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !     ------------------------------------------------------------------
       IDETL   = ISWITCH % IDETL
       IDETN   = ISWITCH % IDETN
-      IF (IDETL  == 'N' .OR. 
-     &    IDETL  == '0' .OR.    !zero
-     &    IDETN  == 'N') RETURN
+      IF (IDETL  /= 'D' .OR. IDETN  == 'N') RETURN
 
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
@@ -58,14 +55,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
       IF (DYNAMIC == SEASINIT) THEN
 !     ------------------------------------------------------------------
 
-!     Separate file names for each run
-      IF (CONTROL%RUN < 10) THEN
-        write (CellOut,'("CellPlotDetail_", I1,".OUT")') CONTROL%RUN
-      ELSE IF (CONTROL%RUN < 100) THEN
-        write(CellOut,'("CellPlotDetail_", I2, ".OUT")') CONTROL%RUN
-      ELSE
-        write(CellOut,'("CellPlotDetail_", I3, ".OUT")') CONTROL%RUN
-      END IF
+!     Separate file names for each run for up to 999 simulations
+      write(CellOut,'("CellPlotDetail_", I3.3, ".OUT")') CONTROL%RUN
 
       CALL GETLUN(CellOut, CLunn)
       OPEN (UNIT = CLunn, FILE = CellOut, STATUS = 'REPLACE')
@@ -107,7 +98,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
           IF (CellDetail%STRUC%Cell_Type > 5 .OR. 
      &        CellDetail%STRUC%Cell_Type < 3) CYCLE
 
-!         Cell N variables
+!         Cell N variables kg/ha
           CelNtot =
      &      CellDetail % state % SNO3 +
      &      CellDetail % state % SNH4 +
@@ -122,16 +113,24 @@ C  03/04/2005 CHP wrote based on SoilNBal
           CelNH4Conc = CellDetail % State % SNH4 * ConvFactor
           CelUreaConc= CellDetail % State % UREA * ConvFactor
 
+!         Plant N uptake kg/ha
           CelNUptake = 
      &      CellDetail % rate % NO3Uptake + 
      &      CellDetail % rate % NH4Uptake
 
+!         Total water content 
           WTot = CellDetail % State % SWV * CellDetail % Struc %CellArea
+!           cm3[water]         cm3[water]     cm3[soil]
+!         -------------- =     ---------- * --------------
+!         cm[row length]        cm3[soil]   cm[row length]
+
+          DeltaSWTot = WTot - Wtot_Y(row,col)
+
+!         Transpiration and Soil evaporation in mm/d
           EPTot = CellDetail % rate % EP_RATE / 10. 
      &       * CellDetail % Struc % Width
           ESTot = CellDetail % rate % ES_RATE / 10. 
      &       * CellDetail % Struc % Width
-          DeltaSWTot = WTot - Wtot_Y(row,col)
 
           IF (DAS == 0) THEN
             DeltaSWTot = 0.0
@@ -146,42 +145,46 @@ C  03/04/2005 CHP wrote based on SoilNBal
           WRITE (CLunn,1325) 
      &      YR, DOY, DAS, row, col, 
 
-!           N Variables
+!           N Variables in kg/ha
      &      CelNtot, 
      &      DeltaNTot,
      &      CellDetail % State % SNO3, 
      &      CellDetail % State % SNH4, 
      &      CellDetail % State % Urea,
+
+!           N variables in ppm
      &      CelNConc, 
      &      CelNO3conc, 
      &      CelNH4conc, 
      &      CelUREAconc,
-     &      CellDetail % rate % CellFert, 
-     &      CellDetail % rate % NMINER,
-     &      CelNUptake,
-     &      CellDetail % rate % GHG,
-     &      CellDetail % rate % NFlux_R,
-     &      CellDetail % rate % NFlux_L,
-     &      CellDetail % rate % NFlux_D,
-     &      CellDetail % rate % NFlux_U,
+
+!           N rates in kg/ha
+     &      CellDetail % rate % CellFert, !kg[N]/ha/d
+     &      CellDetail % rate % NMINER,   !kg[N]/ha/d
+     &      CelNUptake,                   !kg[N]/ha/d
+     &      CellDetail % rate % GHG,      !kg[N]/ha/d
+     &      CellDetail % rate % NFlux_R,  !kg[N]/ha/d
+     &      CellDetail % rate % NFlux_L,  !kg[N]/ha/d
+     &      CellDetail % rate % NFlux_D,  !kg[N]/ha/d
+     &      CellDetail % rate % NFlux_U,  !kg[N]/ha/d
 
 !           Root variables
-     &      CellDetail % state % RLV, 
+     &      CellDetail % state % RLV,     !cm/cm3 
 
 !           Water variables
-     &      CellDetail % state % SWV,
-     &      WTot,
-     &      DeltaSWTot, 
-     &      ESTot, 
-     &      EPTot,
-     &      CellDetail % rate % ES_RATE,
-     &      CellDetail % rate % EP_RATE,
-     &      CellDetail % rate % DripIrr,
-     &      CellDetail % rate % CellInf,
-     &      CellDetail % rate % SWFlux_R, 
-     &      CellDetail % rate % SWFlux_L, 
-     &      CellDetail % rate % SWFlux_D, 
-     &      CellDetail % rate % SWFlux_U
+     &      CellDetail % state % SWV,     !mm3/mm3
+     &      WTot,                         !cm3[water]/cm[row length]
+     &      DeltaSWTot,                   !cm3[water]/cm[row length]
+     &      ESTot,                        !mm
+     &      EPTot,                        !mm
+     &      CellDetail % rate % ES_RATE,  !mm
+     &      CellDetail % rate % EP_RATE,  !mm
+     &      CellDetail % rate % DripIrr,  !mm
+     &      CellDetail % rate % CellInf,  !mm
+     &      CellDetail % rate % SWFlux_R, !cm2/d
+     &      CellDetail % rate % SWFlux_L, !cm2/d
+     &      CellDetail % rate % SWFlux_D, !cm2/d
+     &      CellDetail % rate % SWFlux_U  !cm2/d
 
         enddo
       enddo
@@ -196,24 +199,53 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !=======================================================================
 ! CellPlotDetail_2D VARIABLE DEFINITIONS:
 !-----------------------------------------------------------------------
-! ALGFIX        N in algae (kg [N] / ha)
-! AMTFER     Cumulative amount of N in fertilizer applications
-! BD(L,j)   Bulk density, soil layer L (g [soil] / cm3 [soil])
-! cellNtot  Nitrogen in soil cell (�g[N] / g[soil])
-! CMINERN   Cumulative seasonal mineralization of N in soil profile (kg[N]/ha)
-! CUMFNRO   Cumulative N lost in runoff over bund (kg [N] / ha)
+! CelNConc    Total N concentration in cell (ppm)
+! CelNH4Conc  Ammonium in cell (ppm)
+! CelNO3Conc  Nitrate in cell (ppm)
+! celNtot     Total Nitrogen in soil cell (kg[N]/ha)
+! CelNtot     Total N in cell (kg/ha)
+! CelNtot_Y   Yesterday's value of CelNtot (kg/ha)
+! CelNUptake  N uptake from cell (kg/ha)
+! CelUreaConc Urea concentration in cell (ppm)
+! ConvFactor  Conversion from kg/ha to ppm for this cell
+! DeltaNTot   Change in N content from yesterday (kg/ha)
+! DeltaSWtot  Change in water content from yesterday(cm3[water]/cm[row length])
+! EPTot       Plant transpiration from cell today (mm)
+! ESTot       Soil evaporation from cell today (mm)
 ! KG2PPM(L) Conversion factor to switch from kg [N] / ha to ug [N] / g 
 !           KG2PPM(L) = 1.0/(BD*1.E-01*DLAYR(L))
-! NFlux_D   Downward movement of nitrogen with the water flow. (kg [N] / ha / d)
-! NFlux_U   upward movement of nitrogen with the water flow.
-! NH4Uptake      in kg[N]/ha
-! NO3Uptake      in kg[N]/ha
 ! SNO3(L,j) Total extractable nitrate N in soil layer L (kg [N] / ha) 
-! TNOX      Season cumulative denitrification across the total soil profile adding to 
-!                 the nitrous oxide (NOx) pool of the air (kg [N] / ha)  
-! TNOXY     Yesterday's TNOX
-! TOTAML         Cumulative ammonia volatilization (kg [N] / ha)
+! Wtot   Today's value of total water content (cm3[water]/cm[row length])
+! Wtot_Y   Yesterday's value of total water content (cm3[water]/cm[row length])
+
+!-----------------------------------------------------------------------
+! CELLS(MaxRows,MaxCols) Contains cell state, rate, and structure info
+!   see selected definitions below. See SoilCellUtils_2D.f90 for full list. 
+! CellDetail contains same info as CELLS for one cell
+!-----------------------------------------------------------------------
+!  TYPE CellStateType variables
+!    Real SWV                         !Soil water mm3/mm3
+!    Real RLV                         !Root len dens cm/cm3 (PLANT)
+!    REAL SNO3, SNH4, UREA            !Soil N (kg[N]/ha)
+!    REAL KG2PPM                      !Conversion ppm to kg/ha
+!  END TYPE CellStateType 
+!
+!  TYPE CellRateType variables
+!    Sequence
+!    REAL SWFlux_L, SWFlux_R   !Horiz soil water movement, cm2/d
+!    REAL SWFlux_D, SWFlux_U   !Vert soil water movement, cm2/d
+!    REAL ES_Rate              !Evaporation rates, mm/d
+!    REAL EP_Rate              !Transpiration rates, mm/d
+!    REAL DripIrr              !Drip irrig added directly to cell (mm/d)
+!    REAL CellInf              !Rain + standard irrig (mm/d)
+!    REAL NFlux_L, NFlux_R     !Horiz N movement (kg/ha)
+!    REAL NFlux_D, NFlux_U     !Vert N movement (kg/ha)
+!    REAL NO3Uptake, NH4Uptake !PLANT N uptake rates (kg/ha)
+!    REAL CellFert             !Fertilizer (kg/ha)
+!    REAL NMINER               !Net mineralization (kg/ha)
+!    REAL NITRIF               !Nitrification (kg/ha)
+!    REAL GHG                  !GHG N loss including denit (kg/ha)
+!  END TYPE CellRateType
 !-----------------------------------------------------------------------
 ! END SUBROUTINE CellPlotDetail_2D
 !=======================================================================
-
