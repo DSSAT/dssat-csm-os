@@ -639,7 +639,7 @@ set(
         "Soil/SoilWater/Drainage_2D.for"
         "Soil/SoilWater/INFIL.for"
         "Soil/SoilWater/OPSWBL.for"
-        "Soil/SoilWater/OpSW15min.for"
+        "Soil/SoilWater/OpSWxmin.for"
         "Soil/SoilWater/OPWBAL.for"
         "Soil/SoilWater/RETC_VG.for"
         "Soil/SoilWater/RNOFF.for"

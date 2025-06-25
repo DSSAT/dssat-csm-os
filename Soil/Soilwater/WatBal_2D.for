@@ -51,7 +51,7 @@
       EXTERNAL WaterTable_2D, DRAINAGE_2D, ROOTWU_2D, 
      &  WBSUM_2D, CALC_SW_VOL, WBAL_2D_TS, 
      &  Rnoff_2D, INFO, K_UNSAT, DIFFUS_COEF, TIME_INTERVAL, 
-     &  WATERSTRESS, WBAL, OpSW15min
+     &  WATERSTRESS, WBAL, OpSWxmin
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
@@ -322,7 +322,7 @@
      &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
      &    SWV_D)
 
-      CALL OpSW15min(CONTROL, ISWITCH, 
+      CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
 
 !     ------------------------------------------------------------------
@@ -332,9 +332,6 @@
 
 !     debug chp
       DAYCOUNT = 0
-
-      !call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
- !     call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
 
 !     Needed for generic water balance routine, but not actually used for 2D
       SNOW = 0.0
@@ -919,7 +916,7 @@
      &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
      &    SWV_D)
 
-        CALL OpSW15min(CONTROL, ISWITCH, 
+        CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
 
 !       ---------------------------------------------------------------
@@ -1103,7 +1100,7 @@ C-----------------------------------------------------------------------
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, 
      &    Diffus, Kunsat, LatFlow, 0, 0.0, SWV_D)
 
-      CALL OpSW15min(CONTROL, ISWITCH, 
+      CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
 
 !***********************************************************************
