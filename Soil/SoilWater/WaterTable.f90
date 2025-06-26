@@ -15,7 +15,7 @@
     Subroutine WaterTable(DYNAMIC,              &
       SOILPROP, SW,                             &   !Input
       ActWTD, netLatFlow,                       &   !Output
-      MgmtWTD, SWDELTW)                             !Output
+      MgmtWTD, SWDELTW, ThetaCap)                   !Output
 
 !-----------------------------------------------------------------------
     USE Cells_2D
@@ -31,12 +31,13 @@
     REAL               , INTENT(OUT):: ActWTD, MgmtWTD
     REAL               , INTENT(OUT):: netLatFlow
     REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
+    REAL, DIMENSION(NL), INTENT(OUT):: ThetaCap
 
 !   Local
     INTEGER L, NLAYR
     REAL Bottom, Top, Thick, TargetWTD, BedAdjust, MinWTD, AdjWTD
     REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR
-    REAL, DIMENSION(NL) :: ThetaCap, SW_temp, DeltaSW
+    REAL, DIMENSION(NL) :: SW_temp, DeltaSW
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)

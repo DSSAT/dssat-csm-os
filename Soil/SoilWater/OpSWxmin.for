@@ -35,9 +35,9 @@
 !     ****************************************************************
 !     Change this value to get printout in different time intervals
 !     Use 60 minutes or smaller
-!     INTEGER, PARAMETER :: INTERVAL = 15  !minutes
+      INTEGER, PARAMETER :: INTERVAL = 15  !minutes
 !     INTEGER, PARAMETER :: INTERVAL = 30  !minutes
-      INTEGER, PARAMETER :: INTERVAL = 60  !minutes
+!     INTEGER, PARAMETER :: INTERVAL = 60  !minutes
 !     ****************************************************************
 
       CHARACTER*13 SWVXFile
@@ -61,15 +61,15 @@
 
       LOGICAL DOPRINT, FEXIST
 
-!!     ------------------------------------------------------------------
-!!     Detailed printout for one cell - currently disabled
-!!     ------------------------------------------------------------------
-!      integer lunts,lunpi        !unit numbers
-!      character*14 CellTS, CellPI  !file names
-!      integer r1,c1  !row and column for detailed printout
-!      r1 = 2  !cell row for detailed printout
-!      c1 = 3  !cell column for detailed printout
-!!     ------------------------------------------------------------------
+!     ------------------------------------------------------------------
+!     Detailed printout for one cell - currently disabled
+!     ------------------------------------------------------------------
+      integer lunts,lunpi        !unit numbers
+      character*14 CellTS, CellPI  !file names
+      integer r1,c1  !row and column for detailed printout
+      r1 = 6  !cell row for detailed printout
+      c1 = 1  !cell column for detailed printout
+!     ------------------------------------------------------------------
 
 !     ------------------------------------------------------------------
       DYNAMIC = CONTROL % DYNAMIC
@@ -148,41 +148,41 @@
       SW_save(0) % ts  = 0.0
       SW_save(0) % SWV = SWV_ts
 
-!!     ------------------------------------------------------------------
-!!     Detailed printout for one cell - currently disabled
-!!     ------------------------------------------------------------------
-!!     For one cell, print at every time step (unit lunts)
-!      WRITE(CellTS,'(A,I2.2,A,I2.2,A)') "SWts-",r1,"-",c1,".csv"
-!      
-!      CALL GETLUN(CellTS,lunts)
-!      INQUIRE (FILE = CellTS, EXIST = FEXIST)
-!      IF (FEXIST) THEN
-!        OPEN (UNIT = lunts, FILE = CellTS, STATUS = "REPLACE")
-!      ELSE
-!        OPEN (UNIT = lunts, FILE = CellTS, STATUS = 'NEW')
-!      ENDIF
-!
-!      write(lunts,'(A,/,7(g0,","),g0)') 
-!     &  "YEAR,DOY,DAS,TIME,DeltaT,ROW,COL,SWV_ts", 
-!     &  year, doy, das+1, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
-!
-!!     ------------------------------------------------------------------
-!!     For one cell, print at every print interval (unit lunpi)
-!      WRITE(CellPI,'(A,I2.2,A,I2.2,A,I2.2,A)') 
-!     &  "SW",INTERVAL,"-",r1,"-",c1,".csv"
-!      
-!      CALL GETLUN(CellPI,lunpi)
-!      INQUIRE (FILE = CellPI, EXIST = FEXIST)
-!      IF (FEXIST) THEN
-!        OPEN (UNIT = lunpi, FILE = CellPI, STATUS = "REPLACE")
-!      ELSE
-!        OPEN (UNIT = lunpi, FILE = CellPI, STATUS = 'NEW')
-!      ENDIF
-!
-!      write(lunpi,'(A,A,/,8(g0,","),g0)') "YEAR,DOY,DAS,TIME,DeltaT,",
-!     &  "count,ROW,COL,SWV_inst,SWV_min,SWV_avg,SWV_max",
-!     &  year, doy, das+1, 0.0, 0.0, 0, r1, c1, swv_ts(r1,c1)
-!!     ------------------------------------------------------------------
+!     ------------------------------------------------------------------
+!     Detailed printout for one cell - currently disabled
+!     ------------------------------------------------------------------
+!     For one cell, print at every time step (unit lunts)
+      WRITE(CellTS,'(A,I2.2,A,I2.2,A)') "SWts-",r1,"-",c1,".csv"
+      
+      CALL GETLUN(CellTS,lunts)
+      INQUIRE (FILE = CellTS, EXIST = FEXIST)
+      IF (FEXIST) THEN
+        OPEN (UNIT = lunts, FILE = CellTS, STATUS = "REPLACE")
+      ELSE
+        OPEN (UNIT = lunts, FILE = CellTS, STATUS = 'NEW')
+      ENDIF
+
+      write(lunts,'(A,/,7(g0,","),g0)') 
+     &  "YEAR,DOY,DAS,TIME,DeltaT,ROW,COL,SWV_ts", 
+     &  year, doy, das+1, 0.0, 0.0, r1, c1, swv_ts(r1,c1)
+
+!     ------------------------------------------------------------------
+!     For one cell, print at every print interval (unit lunpi)
+      WRITE(CellPI,'(A,I2.2,A,I2.2,A,I2.2,A)') 
+     &  "SW",INTERVAL,"-",r1,"-",c1,".csv"
+      
+      CALL GETLUN(CellPI,lunpi)
+      INQUIRE (FILE = CellPI, EXIST = FEXIST)
+      IF (FEXIST) THEN
+        OPEN (UNIT = lunpi, FILE = CellPI, STATUS = "REPLACE")
+      ELSE
+        OPEN (UNIT = lunpi, FILE = CellPI, STATUS = 'NEW')
+      ENDIF
+
+      write(lunpi,'(A,A,/,8(g0,","),g0)') "YEAR,DOY,DAS,TIME,DeltaT,",
+     &  "count,ROW,COL,SWV_inst,SWV_min,SWV_avg,SWV_max",
+     &  year, doy, das+1, 0.0, 0.0, 0, r1, c1, swv_ts(r1,c1)
+!     ------------------------------------------------------------------
 
 !***********************************************************************
 !***********************************************************************
@@ -192,13 +192,13 @@
 !-----------------------------------------------------------------------
       IF (.NOT. DOPRINT) RETURN
 !     ------------------------------------------------------------------
-!!     ------------------------------------------------------------------
-!!     Detailed printout for one cell - currently disabled
-!!     ------------------------------------------------------------------
-!!     For one cell, print at every time step (unit lunts)
-!      write(lunts,'(7(g0,","),g0)') 
-!     &  year, doy, das, time, TimeIncr, r1, c1, swv_ts(r1,c1)
-!!     ------------------------------------------------------------------
+!     ------------------------------------------------------------------
+!     Detailed printout for one cell - currently disabled
+!     ------------------------------------------------------------------
+!     For one cell, print at every time step (unit lunts)
+      write(lunts,'(7(g0,","),g0)') 
+     &  year, doy, das, time, TimeIncr, r1, c1, swv_ts(r1,c1)
+!     ------------------------------------------------------------------
 
 !     If the array size is at maximum, print now.
       IF (count == MaxCount - 1) THEN
@@ -296,15 +296,15 @@
           ENDDO
         ENDDO
 
-!!     ------------------------------------------------------------------
-!!     Detailed printout for one cell - currently disabled
-!!     ------------------------------------------------------------------
-!!     For one cell, print at every print interval (unit lunpi)
-!        write(lunpi,'(11(g0,","),g0)')year, doy, das, Target_print_time,
-!     &    Sum_time, count, r1, c1, 
-!     &    SWV_inst(r1,c1), SWV_min(r1,c1), 
-!     &    SWV_avg(r1,c1), SWV_max(r1,c1) 
-!!     ------------------------------------------------------------------
+!     ------------------------------------------------------------------
+!     Detailed printout for one cell - currently disabled
+!     ------------------------------------------------------------------
+!     For one cell, print at every print interval (unit lunpi)
+        write(lunpi,'(11(g0,","),g0)')year, doy, das, Target_print_time,
+     &    Sum_time, count, r1, c1, 
+     &    SWV_inst(r1,c1), SWV_min(r1,c1), 
+     &    SWV_avg(r1,c1), SWV_max(r1,c1) 
+!     ------------------------------------------------------------------
 
 !       Initialize arrays for next print interval
         count = 0  

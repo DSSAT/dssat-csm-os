@@ -146,15 +146,9 @@
       REAL, PARAMETER :: TSI = 5.0, TSN = 30.0, Max_Time_Step=60.
 !                         irrig        rain        default  
 
-!!     debug chp
-!      Cell_detail%row = 7 !FurRow1
-!      Cell_detail%col = 9 !FurCol1
-
       DYNAMIC = CONTROL % DYNAMIC
       RAIN    = WEATHER % RAIN
       IF (DYNAMIC .EQ. RUNINIT) THEN
-!         call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
-!         call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
 
 !***********************************************************************
 !***********************************************************************
@@ -187,7 +181,6 @@
       BEDHT = BedDimension % BEDHT
       BEDWD = BedDimension % BEDWD
       ROWSPC_cm = BedDimension % ROWSPC_cm
-      ! Jin Wu add in Feb. 2011
       BedDimension % LIMIT_2D = MaxRows + 10
       LIMIT_2D = BedDimension % LIMIT_2D
       FurRow1 = BedDimension % FurRow1
@@ -302,9 +295,6 @@
      &  CellArea, Cell_Type, HalfRow, SWV_D,                !Input
      &  SW_vol_tot)                                         !Output
 
-!      call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 0)
-!      call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
-
 !     chp 2022-07-10
       INF_vol_dtal_temp = 0.0
 
@@ -418,6 +408,7 @@
 !     Drip irrigation schedule for today
       CALL GET(DripIrrig)
  
+!     Drip irrigation definitions:
 !     DripDur   = DripIrrig % DripDur   !duration of ea. irrig (hr)
 !     DripInt   = DripIrrig % DripInt   !interval between irrig (hr)
 !     DripNum   = DripIrrig % DripNum   !# of irrigs for J'th entries today
@@ -591,8 +582,8 @@
               IF (StartTime - IrrigSched(IDL,IrrigIndex,2) > -0.5/60.)
      &                THEN
 !               End of irrig cycle
-!       NOTE: should change this logic. For very small time steps we should
-!       continue to irrigate.  could add irrigation over a partial time step.
+!               NOTE: should change this logic. For very small time steps we should
+!               continue to irrigate.  could add irrigation over a partial time step.
                 IRRIG = .FALSE.
                 IrrigIndex = IrrigIndex + 1
               ENDIF
@@ -609,20 +600,9 @@
           ENDIF
 
           IF (RAIN > 1.E-6) THEN  ! check if both irr and rain exist
-!           Actually, under above if statement, the TimeIncr is overwrite by the next if (IRRIG) elseif 
-!           IF (DripInt(J) > 1.E-6) THEN
-!             if (IrrigIndex < DripNumTot) Then
-!               DripIntNow =  ! Check if it  is correct ?????
-!     &         IrrigSched(IrrigIndex+1,1) - IrrigSched(IrrigIndex,2)
-!             else 
-!               DripIntNow = 0
-!             endif
-!           IF ( DripIntNow > 1.E-6) THEN
-!           IF ( DripInt(IrrigIndex) > 1.E-6) THEN
             IF (IrrigIndex .LT. DripNumTot) then 
               IF (DripInt(IDL,IrrigIndex) > 1.E-6) DeltaT =
      &                 Time_interval(DripInt(IDL,IrrigIndex), TSN)  
-!             DeltaT = Time_interval(DripInt, TSN)  !minutes !TSN:Approximate time interval, min
             ELSE
               DeltaT = TSN
             ENDIF
@@ -631,7 +611,6 @@
 
           IF (IRRIG) THEN
 !           Irrigated time step
-            !DeltaT = Time_interval(DripDur(J), TSI)  !minutes
             DeltaT = Time_interval(IrrigSched(IDL,IrrigIndex,2) 
      &              - IrrigSched(IDL,IrrigIndex,1), TSI)  !minutes
             TimeIncr = MIN(TimeIncr, DeltaT)
@@ -678,17 +657,12 @@
             EndTime = HR
           ENDIF
         END DO
-!        If (EndTime > 24.1) Then
-!          Write(*,*) "irrigation schedule is beyond 24:00pm"
-!          Write(*,*) " Program stop on ", CONTROL % YRDOY
-!          Stop
-!        Endif
+
         IF (EndTime > 24.) THEN
           EndTime = 24.
         ENDIF
         TimeIncr = (EndTime - StartTime) * 60.  !min
         DayIncr  = TimeIncr / 60. / 24.         !days
-!        Print *, StartTime, TimeIncr
 
 !       Minimum time increment today
         IF (TimeIncr < MinTimeIncr) MinTimeIncr = TimeIncr
@@ -718,8 +692,7 @@
 !           Apply all irrigation to DripRow, DripCol cell
             SWV_avail(DripRow,DripCol) = SWV_avail(DripRow,DripCol) + 
      &                           IrrVol(IDL)/ CellArea(DripRow,DripCol)
-!          SWV_avail(1,DripCol) = SWV_avail(1,DripCol) + IrrVol(IDL)
-!     &                                          / CellArea(1,DripCol)
+
             IRR_ts = IRR_ts + IrrVol(IDL) / HalfRow * 10.     !mm
             CellDrip(DripRow,DripCol) = CellDrip(DripRow,DripCol) 
      &                                   + IrrVol(IDL) / HalfRow * 10.
@@ -928,16 +901,9 @@
         if (((iHr < 23) .OR.
      &       (iHr >= 23 .AND. NextUpdate == 23.)) .AND. 
      &      (iHr . GE. float(NextUpdate)))    then
-    ! &      StartTime > float(NextUpdate))    then
           NextUpdate = NextUpdate + 1
           if (NextUpdate > 23) NextUpdate = 0
           SWV = SNGL(SWV_ts)    !real
-!          call SW_SensorH(SOILPROP, CONTROL, Cells, SWV, 
-!     &       iHr)  
- !    &       NextUpdate)
-          
-         !CALL ArrayHandler(CELLS, CONTROL, SOILPROP, SNGL(SWV_ts), 
-  !   &          "SWV", 0.0, 0.5)
         endif
     
 !-----------------------------------------------------------------------
@@ -1039,9 +1005,6 @@
 C-----------------------------------------------------------------------
       IF (ISWITCH%ISWWAT == 'N') RETURN
       
-      !CALL ArrayHandler(CELLS, CONTROL, SOILPROP, SWV,
-    ! &          "SWV", 0.0, 0.5)
-
 !     Output SoilWat.OUT
       CALL OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, IRRAMT,                       !Input
@@ -1063,9 +1026,6 @@ C-----------------------------------------------------------------------
      &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
 
-!-----------------------------------------------------------------
-!          call SW_SensorD(SOILPROP, CONTROL, Cells, SWV)
-!------------------------------------------------------------
 !***********************************************************************
 !***********************************************************************
 !     SEASEND - Seasonal output
@@ -1073,8 +1033,6 @@ C-----------------------------------------------------------------------
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
       RLV_2D = CELLS % STATE % RLV
-      !CALL ArrayHandler(CELLS, CONTROL, SOILPROP, SWV,
-   !  &          "SWV", 0.0, 0.5)
 
       IF (ISWITCH%ISWWAT == 'N') RETURN
       
@@ -1527,7 +1485,7 @@ C=====================================================================
       INTEGER, INTENT(OUT) :: LIMIT_2D
 
       REAL MaxDepth
-      REAL, DIMENSION(NL) :: SWDELTW
+      REAL, DIMENSION(NL) :: SWDELTW, ThetaCap
       REAL, DIMENSION(MaxRows,MaxCols) :: SWVDeltW, Thick, Colfrac
       INTEGER i,j
 
@@ -1540,13 +1498,31 @@ C=====================================================================
 !     Water table initialization
       CALL WaterTable(DYNAMIC,          
      &  SOILPROP, SW,                           !Input
-     &  ActWTD, netLatFlow, MgmtWTD, SWDELTW)   !Output
+     &  ActWTD, netLatFlow, MgmtWTD, SWDELTW,   !Output
+     &  ThetaCap)                               !Output
 
 !     Convert the soil water flux due to water table into 2D variable 
       CALL Interpolate2Cells_2D(
      &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
      &  SWVDeltW)                                         !Output
 
+!     ------------------------------------------------------------------------
+!     Set SW and SWV based on today's water table  
+!     SWV should not exceed ThetaCap unless it was already > ThetaCap
+!     SWV should never exceed SAT
+      DO i = 1, SOILPROP % NLAYR
+        DO j = 1, NColsTot
+          SELECT CASE(CELLS(i,j) % STRUC % Cell_Type)
+          CASE (3,4,5)
+            SWV(i,j) = MIN(SWV(i,j) + SWVDeltW(i,j), ThetaCap(i), 
+     &                     SOILPROP%SAT(i))
+          END SELECT
+        ENDDO
+      ENDDO
+
+
+      SW(i) = SW(i) + SWDELTW(i)
+!     ------------------------------------------------------------------------
 !     Recalculate netLatFlow for raised bed case to remove effect of moving water 
 !       out of area above the furrow.
       IF (BedDimension % RaisedBed) THEN
@@ -1563,25 +1539,6 @@ C=====================================================================
       ENDIF
 
 !     ------------------------------------------------------------------------
-!     Set SWV based on today's water table  
-!     Note chp 2025-04-02: I tried this SWV update as a time-step update in the 
-!         main routine, but it caused a lot more drainage and a lot more loss
-!         of N, enough to stress the plant and depress yields.
-!     Capillary rise should come with an upflux of N which we are not modeling.
-!     For now, just stick with this daily update to SWV and assume that
-!       N movement upward due to capillary rise is approximately equal to 
-!       N movement downward due to extra drainage. 
-      DO i = 1, SOILPROP % NLAYR
-        SW(i) = SW(i) + SWDELTW(i)
-        DO j = 1, NColsTot
-          SELECT CASE(CELLS(i,j) % STRUC % Cell_Type)
-          CASE (3,4,5)
-            SWV(i,j) = SWV(i,j) + SWVDeltW(i,j)
-          END SELECT
-        ENDDO
-      ENDDO
-!     ------------------------------------------------------------------------
-
 !     The 2D model is not needed in the vicinity of the water table.
 !     Calculate the limits of the 2D model. 
       IF (ActWTD > MaxDepth) THEN
