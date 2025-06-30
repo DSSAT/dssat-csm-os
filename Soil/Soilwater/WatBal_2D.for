@@ -120,7 +120,7 @@
 
       Double Precision DRAIN_ts, EOP_ts, ES_avg, ES_day, ES_ts
       Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn), Rain_ts
-      Double Precision IrrVol_temp(NDrpLn), Runoff_ts  !chp
+      Double Precision  Runoff_ts  !IrrVol_temp(NDrpLn),
       Double Precision TRWU_ts,TRWUP_ts,SW_VOL_tot
 
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
@@ -128,8 +128,6 @@
       Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_ts, RWU_2D_ts
       Double precision, DIMENSION(MaxRows,MaxCols) :: RWUP_2D_ts, EP_vf,
      &       ES_vf_ts, INF_vol_dtal
-      Double precision, DIMENSION(MaxRows,MaxCols) :: INF_vol_dtal_temp
-!     Double precision, DIMENSION(MaxRows,MaxCols) :: SWV_LAST
       Double Precision, DIMENSION(MaxRows,MaxCols,0:24) :: ES_Hr
 
 !     Functions
@@ -230,7 +228,7 @@
 !     Set new water table level for today. This redefines Limit_2D,
 !       the soil layer below which 1D saturated conditions exist.
       CALL WaterTable_2D(DYNAMIC, 
-     &  CELLS, SOILPROP,                        !Input
+     &  CELLS, SOILPROP, HalfRow,               !Input
      &  SW, SWV,                                !Input/Output
      &  ActWTD, netLatFlow, MgmtWTD, LIMIT_2D)  !Output
 
@@ -295,9 +293,6 @@
      &  CellArea, Cell_Type, HalfRow, SWV_D,                !Input
      &  SW_vol_tot)                                         !Output
 
-!     chp 2022-07-10
-      INF_vol_dtal_temp = 0.0
-
 !     In 2D model, TSW units are mm. 1D model uses cm.
       TSW_cm = TSW / 10.
       CALL Wbal(CONTROL, ISWITCH, 
@@ -306,11 +301,10 @@
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
 
 !     Output to SoilWat_ts.OUT and CellDetail.OUT
-      CALL Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr, !Input
-     &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,              !Input
-     &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,              !Input
-     &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
-     &    SWV_D)
+      CALL Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr,  !Input
+     &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,             !Input
+     &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,             !Input
+     &    Diffus, Kunsat, LatFlow_ts)                       !Input
 
       CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
@@ -389,7 +383,7 @@
 !     Set new water table level for today. This redefines Limit_2D,
 !       the soil layer below which 1D saturated conditions exist.
       CALL WaterTable_2D(DYNAMIC, 
-     &  CELLS, SOILPROP,                        !Input
+     &  CELLS, SOILPROP, HalfRow,               !Input
      &  SW, SWV,                                !Input/Output
      &  ActWTD, netLatFlow, MgmtWTD, LIMIT_2D)  !Output
 
@@ -882,12 +876,11 @@
      &    CellArea, Cell_Type, HalfRow, SWV_ts,             !Input
      &    SW_vol_tot)                                       !Output
 
-        ! Output to SoilWat_ts.OUT and CellDetail.OUT
-        Call Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr, !Input
-     &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,              !Input
-     &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,              !Input
-     &    Diffus, Kunsat, LatFlow_ts, Count, LatFlow,        !Input
-     &    SWV_D)
+!       Output to SoilWat_ts.OUT and CellDetail.OUT
+        CALL Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr,  !Input
+     &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,             !Input
+     &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,             !Input
+     &    Diffus, Kunsat, LatFlow_ts)                       !Input
 
         CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
@@ -1049,14 +1042,11 @@ C-----------------------------------------------------------------------
      &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
 
-!     chp 2022-07-10 can't use an array of zeros in the argument. 
-!     I don't want to set the original variables to zero, so use a dummy argument here.
-      IrrVol_temp = 0.0
-      INF_vol_dtal_temp = 0.0
-      Call Wbal_2D_ts(CONTROL, ISWITCH, 24.0, 0.0, 
-     &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts, 
-     &    ES_TS, TRWU_ts, SW_vol_tot, CritCell, 
-     &    Diffus, Kunsat, LatFlow, 0, 0.0, SWV_D)
+!     Output to SoilWat_ts.OUT and CellDetail.OUT
+      CALL Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr,  !Input
+     &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,             !Input
+     &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,             !Input
+     &    Diffus, Kunsat, LatFlow_ts)                       !Input
 
       CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
@@ -1322,6 +1312,7 @@ C=====================================================================
 !=======================================================================
 
 !=======================================================================
+!     Calculates total soil water volume in mm for double precision input
       Subroutine Calc_SW_Vol(
      &  CellArea, Cell_Type, HalfRow, SWV_D,              !Input
      &  SW_vol_tot)                                       !Output
@@ -1357,6 +1348,35 @@ C=====================================================================
 ! SWV_D(Row,Col) Cell soil water content. e.g. SWV_ts in cm2/cm2 
 !-----------------------------------------------------------------------
 !     END SUBROUTINE Calc_SW_Vol
+!=======================================================================
+!=======================================================================
+!     Calculates total soil water volume in mm for single precision input
+      Subroutine Calc_SW_Vol2(
+     &  CellArea, Cell_Type, HalfRow, SWV,                !Input
+     &  SW_vol_tot)                                       !Output
+
+      Use Cells_2D
+      Implicit None
+      Integer i, j, Cell_Type(MaxRows,MaxCols)
+      Real HalfRow
+      Real, Dimension(MaxRows,MaxCols) :: CellArea
+      REAL SW_vol_tot
+      REAL, Dimension(MaxRows,MaxCols) :: SWV
+
+      SW_vol_tot = 0.0
+      DO i = 1, NRowsTot
+        DO j = 1, NColsTot
+          SELECT CASE (Cell_Type(i,j))
+          CASE (3,4,5); CONTINUE
+          CASE DEFAULT; CYCLE
+          END SELECT
+          SW_vol_tot = SW_vol_tot + SWV(i,j) * CellArea(i,j)  !cm2
+        ENDDO
+      ENDDO
+      SW_vol_tot = SW_vol_tot / HalfRow * 10.   !mm
+
+      Return
+      End Subroutine Calc_SW_Vol2
 !=======================================================================
 
 !=====================================================================
@@ -1458,109 +1478,3 @@ C=====================================================================
 !     END FUNCTION Kunsat
 !=======================================================================
 
-!=======================================================================
-!=======================================================================
-!     Subroutine WaterTable_2D is an interface to the more generic
-!       WaterTable subroutine which is used by both 1D and 2D models.
-!     This routine translates the 1D outputs of the WaterTable routine
-!       into 2D arrays and updates the soil water content for changes in 
-!       water table management at the beginning of the day.
-!-----------------------------------------------------------------------
-
-      Subroutine WaterTable_2D(DYNAMIC, 
-     &  CELLS, SOILPROP,                        !Input
-     &  SW, SWV,                                !Input/Output
-     &  ActWTD, netLatFlow, MgmtWTD, LIMIT_2D)  !Output
-
-      USE CELLS_2D
-      Implicit none
-      EXTERNAL WaterTable
-
-      INTEGER, INTENT(IN) :: DYNAMIC
-      Type (CellType), INTENT(IN) :: Cells(MaxRows,MaxCols)
-      TYPE (SoilType), INTENT(IN) :: SOILPROP
-      REAL, DIMENSION(NL), INTENT(INOUT) :: SW
-      REAL, DIMENSION(MaxRows,MaxCols), INTENT(INOUT) :: SWV
-      REAL, INTENT(OUT) :: ActWTD, netLatFlow, MgmtWTD
-      INTEGER, INTENT(OUT) :: LIMIT_2D
-
-      REAL MaxDepth
-      REAL, DIMENSION(NL) :: SWDELTW, ThetaCap
-      REAL, DIMENSION(MaxRows,MaxCols) :: SWVDeltW, Thick, Colfrac
-      INTEGER i,j
-
-!-----------------------------------------------------------------------
-      MaxDepth = SOILPROP % DS(SOILPROP % NLAYR)
-      Thick = CELLS % Struc % Thick
-      Colfrac = BedDimension % Colfrac
-      SWVDeltW = 0.0
-
-!     Water table initialization
-      CALL WaterTable(DYNAMIC,          
-     &  SOILPROP, SW,                           !Input
-     &  ActWTD, netLatFlow, MgmtWTD, SWDELTW,   !Output
-     &  ThetaCap)                               !Output
-
-!     Convert the soil water flux due to water table into 2D variable 
-      CALL Interpolate2Cells_2D(
-     &  CELLS%STRUC, SOILPROP, SWDELTW, 0.0,              !Input
-     &  SWVDeltW)                                         !Output
-
-!     ------------------------------------------------------------------------
-!     Set SW and SWV based on today's water table  
-!     SWV should not exceed ThetaCap unless it was already > ThetaCap
-!     SWV should never exceed SAT
-      DO i = 1, SOILPROP % NLAYR
-        DO j = 1, NColsTot
-          SELECT CASE(CELLS(i,j) % STRUC % Cell_Type)
-          CASE (3,4,5)
-            SWV(i,j) = MIN(SWV(i,j) + SWVDeltW(i,j), ThetaCap(i), 
-     &                     SOILPROP%SAT(i))
-          END SELECT
-        ENDDO
-      ENDDO
-
-
-      SW(i) = SW(i) + SWDELTW(i)
-!     ------------------------------------------------------------------------
-!     Recalculate netLatFlow for raised bed case to remove effect of moving water 
-!       out of area above the furrow.
-      IF (BedDimension % RaisedBed) THEN
-        netLatFlow = 0.0
-        DO i = 1, SOILPROP % NLAYR
-          DO j = 1, NColsTot
-            SELECT CASE(CELLS(i,j) % STRUC % Cell_Type)
-            CASE (3,4,5)
-              netLatFlow = netLatFlow + 
-     &           SWVDeltW(i,j) * Thick(i,j) * ColFrac(i,j) * 10.
-            END SELECT
-          ENDDO
-        ENDDO
-      ENDIF
-
-!     ------------------------------------------------------------------------
-!     The 2D model is not needed in the vicinity of the water table.
-!     Calculate the limits of the 2D model. 
-      IF (ActWTD > MaxDepth) THEN
-!       Water table is below profile depth
-        LIMIT_2D = NRowsTot  
-      Else          
-!       Set LIMIT_2D to be the layer above ThetaCap = .9 * SAT
-        LIMIT_2D = SOILPROP % NLAYR
-        DO i = SOILPROP % NLAYR, 1, -1
-          IF ((SW(i) - SOILPROP % DUL(i)) > 
-     &        (0.9 * (SOILPROP % SAT(i) - SOILPROP % DUL(i)))) then
-            LIMIT_2D = i - 1
-          ELSE 
-            EXIT
-          ENDIF
-        ENDDO
-      ENDIF 
-      LIMIT_2D = MAX(LIMIT_2D, 1)
-      BedDimension % LIMIT_2D = LIMIT_2D
-
-      Return
-      End Subroutine WaterTable_2D
-
-!=======================================================================
-!=======================================================================

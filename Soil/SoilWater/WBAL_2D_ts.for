@@ -16,8 +16,7 @@
 !=====================================================================
       SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input
      &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input
-     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts,  !Input
-     &    Count, LatFlow, SWV_D)                                !Input
+     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts)  !Input
 !     ------------------------------------------------------------------
       USE Cells_2D
       USE ModuleData
@@ -26,11 +25,11 @@
       SAVE
 
       CHARACTER*14, PARAMETER :: SWBAL = 'SoilWat_ts.OUT'
-      INTEGER DAS, DYNAMIC, LUNWBL, I, Count 
+      INTEGER DAS, DYNAMIC, LUNWBL, I  !, Count 
       INTEGER YRDOY
       INTEGER YR2, DY2, CritCell(2)
 
-      REAL WBALAN, Time, TimeIncr, LatFlow_ts, LatFlow
+      REAL WBALAN, Time, TimeIncr, LatFlow_ts  !, LatFlow
       REAL CUMWBAL, Diffus1, Kunsat1
 
       REAL, DIMENSION(MaxRows,MaxCols) :: Kunsat, Diffus
@@ -88,13 +87,13 @@
      & '     DRND     ROFD     ESAD     EPAD',     !Outflows
      & '     WBAL    CUMWBAL')                     !Balance
 
-!     Soil water content for 1D simulations
-      IF (NColsTot == 1) THEN
-        WRITE(LUNWBL,1121) ("SW",I,"T",I=1,NRowsTot)
- 1121   FORMAT(50(5X,A2,I2.2,A1))
-      ELSE
+!!     Soil water content for 1D simulations
+!      IF (NColsTot == 1) THEN
+!        WRITE(LUNWBL,1121) ("SW",I,"T",I=1,NRowsTot)
+! 1121   FORMAT(50(5X,A2,I2.2,A1))
+!      ELSE
         WRITE(LUNWBL,'(" ")')
-      ENDIF
+!      ENDIF
 
       TSWY   = TSW
       CUMWBAL = 0.0
@@ -120,20 +119,20 @@
 !     Balance = Inflows - Outflows - Change in storage
       IF (BedDimension % LIMIT_2D .GE. NRowsTot) THEN 
         WBALAN = 
-     &       + IRRAMT + RAIN + LatFlow_ts      !Inflows
+     &       + IRRAMT + RAIN + LatFlow_ts   !Inflows
      &       - DRAIN - RUNOFF - TES - TEP   !Outflows
      &       - (TSW - TSWY)                 !Change in soil water 
       ELSE ! Drain is part of LatFlow_ts
         WBALAN = 
-     &       + IRRAMT + RAIN + LatFlow_ts      !Inflows
-     &       - RUNOFF - TES - TEP   !Outflows
+     &       + IRRAMT + RAIN + LatFlow_ts   !Inflows
+     &       - RUNOFF - TES - TEP           !Outflows
      &       - (TSW - TSWY)                 !Change in soil water 
       ENDIF
 
-!     for 1st timestep, LatFlow include the portion which is calculated in WaterTable_2D
-      IF (Count .eq. 1)  WBALAN =  WBALAN - LatFlow_ts + LatFlow
-      CUMWBAL = CUMWBAL + WBALAN
-
+!!     for 1st timestep, LatFlow include the portion which is calculated in WaterTable_2D
+!      IF (Count .eq. 1)  WBALAN =  WBALAN - LatFlow_ts + LatFlow
+!      CUMWBAL = CUMWBAL + WBALAN
+!
 !     CritCell is the cell that controls the calculation of the minimum time 
 !     step required to ensure stability.
       IF (CritCell(1) > 0 .and. CritCell(1) <= NRowsTot .and. 
@@ -146,15 +145,15 @@
       ENDIF
 
       CALL YR_DOY(YRDOY, YR2, DY2)
-      IF (Count .EQ. 1) then 
-        WRITE (LUNWBL,1300,ADVANCE='NO') YR2, DY2, DAS, Time,TimeIncr,
-     &    Diffus1, Kunsat1, 
-     &    CritCell(1), CritCell(2),
-     &    TSW,                                        !State variables
-     &    IRRAMT, RAIN, LatFlow,                      !Inflows
-     &    DRAIN, RUNOFF, TES, TEP,                    !Outflows
-     &    WBALAN, CUMWBAL                             !Balance
-      ELSE
+!      IF (Count .EQ. 1) then 
+!        WRITE (LUNWBL,1300,ADVANCE='NO') YR2, DY2, DAS, Time,TimeIncr,
+!     &    Diffus1, Kunsat1, 
+!     &    CritCell(1), CritCell(2),
+!     &    TSW,                                        !State variables
+!     &    IRRAMT, RAIN, LatFlow,                      !Inflows
+!     &    DRAIN, RUNOFF, TES, TEP,                    !Outflows
+!     &    WBALAN, CUMWBAL                             !Balance
+!      ELSE
         WRITE (LUNWBL,1300,ADVANCE='NO') YR2, DY2, DAS, Time,TimeIncr,
      &    Diffus1, Kunsat1, 
      &    CritCell(1), CritCell(2),
@@ -162,7 +161,7 @@
      &    IRRAMT, RAIN, LatFlow_ts,                      !Inflows
      &    DRAIN, RUNOFF, TES, TEP,                    !Outflows
      &    WBALAN, CUMWBAL                             !Balance 
-      ENDIF
+!      ENDIF
 
  1300 FORMAT
      &    (1X,I4,1X,I3.3,1X,I5,2F7.3,   !Time
@@ -192,7 +191,6 @@ C-----------------------------------------------------------------------
       IF (.NOT. DOPRINT) RETURN
 
       CLOSE(LUNWBL)    
-!      close(clun)   
 
 !***********************************************************************
 !***********************************************************************
