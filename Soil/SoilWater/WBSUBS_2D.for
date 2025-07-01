@@ -13,7 +13,8 @@ C  12/05/1993 NBP Made into subroutine
 C=======================================================================
       SUBROUTINE WBSUM_2D(DYNAMIC,
      &    CELLS, DRAIN_2D, HalfRow, RAIN, RUNOFF, SWV,    !Input
-     &    CRAIN, TDRAIN, TEP, TRUNOF,                     !Output
+     &    netLatFlow,                                     !Input
+     &    CRAIN, TDRAIN, TEP, TRUNOF, DayLatFlow,         !Output
      &    TSW, TSWINI)                                    !Output
 
 !-----------------------------------------------------------------------
@@ -24,7 +25,8 @@ C=======================================================================
 
       INTEGER DYNAMIC, i, j
       REAL CRAIN, DRAIN_2D, HalfRow, RAIN, RUNOFF
-      REAL TDRAIN, TEP, TRUNOF, TSW, TSWINI
+      REAL TDRAIN, TEP, TRUNOF, TSW, TSWINI, DayLatFlow, netLatFlow
+
       REAL, DIMENSION(MaxRows,MaxCols) :: CellArea
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
       
@@ -78,9 +80,17 @@ C=======================================================================
 C     Increment summation variables.
 !-----------------------------------------------------------------------
       CRAIN  = CRAIN  + RAIN
-      if (BedDimension % LIMIT_2D .GE. NRowsTot) 
-     &    TDRAIN = TDRAIN + DRAIN_2D
       TRUNOF = TRUNOF + RUNOFF
+
+      IF (BedDimension % LIMIT_2D .GE. NRowsTot) THEN 
+!       No water table, drainage is from the bottom of the profile.
+        TDRAIN = TDRAIN + DRAIN_2D
+      ELSE
+!       Where there is a water table, drainage is from lowest 2D layer
+!         into water table and affects the net lateral flow, but
+!         should not be reported as deep drainage. 
+        DayLatFlow = netLatFlow - DRAIN_2D
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -97,23 +107,21 @@ C     Increment summation variables.
 !-----------------------------------------------------------------------
 !     WBSUM_2D VARIABLE DEFINITIONS:
 !-----------------------------------------------------------------------
-! CEO      Cumulative potential evapotranspiration from 0:00 am to the end of this time step in mm
-! CEP      Cumulative transpiration from simulation start day to current day (mm)
-! CES      Cumulative evaporation from simulation start day to current day(mm)
 ! CRAIN     Cumulative precipitation from 0:00 am to the end of this time step (mm)
-! DLAYR(L)  Soil thickness in layer L (cm)
-! Drain_Limit2D Drain from LIMIT_2D  
-!               Drainage rate from soil profile in current time step(mm/d) if there is no water table 
-! NL        Maximum number of soil layers = 20 
-! NLAYR     Actual number of soil layers 
+! DRAIN_2D  Drainage this time step from bottom of profile or from bottom of 2D simulation to water table (mm)
+! HalfRow   Half the width of a row (cm)
 ! RAIN      Precipitation depth for current day (mm)
 ! RUNOFF    Calculated runoff (mm/d)
-! SWV(Row, Col)     Volumetric soil water content in cell
-!             (cm3 [water] / cm3 [soil])
 ! TDRAIN    Cumulative daily drainage from profile (mm)
+! TEP       Daily plant transpirtation (mm)
 ! TRUNOF    Cumulative runoff (mm)
 ! TSW       Total soil water in profile (mm)
 ! TSWINI    Initial soil water content (mm)
+! DayLatFlow Daily value of lateral flow, minus flow from 2D simulation layers to water table (mm)
+! netLatFlow Net lateral flow into the system, computed daily to maintain a managed water table (mm)
+! CellArea   Area of one cell (cm2)
+! SWV        Volumetric soil water content in cell (cm3 [water] / cm3 [soil])
+! ColFrac    Fraction of Half row width represented by each soil column
 !-----------------------------------------------------------------------
 !     END SUBROUTINE WBSUM_2D
 C=======================================================================

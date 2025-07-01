@@ -76,8 +76,7 @@
       INTEGER DripNumTotArr(NDrpLn), IrrIdxArr(NDrpLn)
 !     INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_Type
 
-!     debug chp
-      INTEGER NextUpdate, Count, CritCell(2), DAYCOUNT
+      INTEGER NextUpdate, Count, CritCell(2)
 
       REAL CN, BEDHT, BEDWD, CRAIN
       REAL DRAIN_2D, DRAIN_2D_Y, HalfRow, HalfFurrow, SolProfDrain
@@ -85,8 +84,6 @@
       REAL RAIN, RUNOFF, Runoff_day
       REAL TEP, SRAD_TOT
       REAL TDRAIN, TRUNOF, TSW, TSWINI, TSW_cm
-!     INTEGER, PARAMETER :: MaxNEvent = 20  !Max number of irrigation event
-!     REAL, DIMENSION(MaxNEvent) :: DripStart, DripDur, DripInt, DripRate
       REAL IrrRate(NDrpLn), RWUEP1, Drainage_ts_col
 
       REAL TimeIncr, MinTimeIncr, ROWSPC_cm, DayIncr
@@ -95,8 +92,8 @@
 
       REAL SWFAC,  SWFAC_ts,  SWFAC_day
       REAL TURFAC, TURFAC_ts, TURFAC_day
-      REAL ActWTD, MgmtWTD, netLatFlow, LatFlow_ts !, MaxDif
-      REAL StdIrrig, WidTot, DepTot, LatFlow, SurfaceVal, SumLatFlow
+      REAL ActWTD, MgmtWTD, netLatFlow, DayLatFlow 
+      REAL StdIrrig, WidTot, DepTot, SurfaceVal 
       REAL Excess_vf, Excess_mm
       
       REAL, DIMENSION(0:24) :: EOP_HR, CumFracRad
@@ -116,11 +113,10 @@
       REAL, DIMENSION(MaxRows,MaxCols) :: Thick, Width, Kunsat, Diffus
       REAL, DIMENSION(MaxRows,MaxCols) :: EvapFlow
       REAL, ALLOCATABLE :: IrrigSched(:,:,:), DripRate(:,:),DripInt(:,:)
-!     REAL, ALLOCATABLE :: DripDep(:,:), DripStart(:,:), DripDur(:,:)
 
       Double Precision DRAIN_ts, EOP_ts, ES_avg, ES_day, ES_ts
       Double Precision INF_vol, IRR_ts, IrrVol(NDrpLn), Rain_ts
-      Double Precision  Runoff_ts  !IrrVol_temp(NDrpLn),
+      Double Precision  Runoff_ts  
       Double Precision TRWU_ts,TRWUP_ts,SW_VOL_tot
 
       REAL, DIMENSION(MaxRows,MaxCols) :: SWV
@@ -236,8 +232,6 @@
       SWV_D = DBLE(SWV)
       SWV_avail = SWV
 
-      !CALL ArrayHandler(CELLS, CONTROL, SOILPROP, SWV, "SWV", 0.0, 0.5)
-
       CELLS%STATE%SWV = SWV
       CELLS%RATE%ES_Rate = 0.0
       CELLS%RATE%EP_Rate = 0.0
@@ -254,7 +248,8 @@
 !     Initialize summary variables
       CALL WBSUM_2D(SEASINIT,
      &    CELLS, DRAIN_2D, HalfRow, RAIN, RUNOFF, SWV,    !Input
-     &    CRAIN, TDRAIN, TEP, TRUNOF,                     !Output
+     &    netLatFlow,                                     !Input
+     &    CRAIN, TDRAIN, TEP, TRUNOF, DayLatFlow,         !Output
      &    TSW, TSWINI)                                    !Output
 
       CALL Interpolate2Layers_2D(                    
@@ -281,8 +276,6 @@
       TRWU_ts = 0.0
       EP_VF = 0.0
       IrrVol = 0.d0
-      LatFlow_ts = 0.0
-      LatFlow = 0.0
       DRAIN_2D = 0.0
       DRAIN_2D_Y = 0.0
 
@@ -304,7 +297,7 @@
       CALL Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr,  !Input
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,             !Input
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,             !Input
-     &    Diffus, Kunsat, LatFlow_ts)                       !Input
+     &    Diffus, Kunsat, netLatFlow)                       !Input
 
       CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
@@ -313,9 +306,6 @@
 
       msg(1) = "Start 2D, variable time-step model"
       call info(1, ERRKEY, msg)
-
-!     debug chp
-      DAYCOUNT = 0
 
 !     Needed for generic water balance routine, but not actually used for 2D
       SNOW = 0.0
@@ -345,9 +335,6 @@
       SWFlux_U = 0.0
       TRWU = 0.0
       TRWUP = 0.0
-      LatFlow_ts = 0.0
-      LatFlow = 0.0
-      SumLatFlow = 0.0
 
       SWFAC  = 0.0
       TURFAC = 0.0
@@ -744,9 +731,9 @@
           IRR_ts = IRR_ts + StdIrrig * DayIncr
         ENDIF
 
-!       Update lateral flow time step (for checking balance only)
-        LatFlow_ts = netLatFlow * DayIncr  !mm
-        SumLatFlow = SumLatFlow + LatFlow_ts
+!!       Update lateral flow time step (for checking balance only)
+!        LatFlow_ts = netLatFlow * DayIncr  !mm
+!        SumLatFlow = SumLatFlow + LatFlow_ts
 
 !       ===============================================================
 !       Estimate cumulative fraction of daily solar radiation that will 
@@ -852,7 +839,6 @@
      &    SOILPROP, SWV_avail, TimeIncr, WCr,         !Input
      &    SWV_ts, SWFh_ts, SWFv_ts)                   !Output
 
-!       Here LatFlow_ts is due to the drainage of layer LIMIT_2D 
 !       Drainage is from first layer to LIMIT_2D
         DRAIN_ts = 0.0
         DRAIN_col = 0.0
@@ -880,7 +866,7 @@
         CALL Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr,  !Input
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,             !Input
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,             !Input
-     &    Diffus, Kunsat, LatFlow_ts)                       !Input
+     &    Diffus, Kunsat, netLatFlow)                       !Input
 
         CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
@@ -919,15 +905,22 @@
       SWV_D = SWV_ts
       SWV = SNGL(SWV_D)
 
-!     When a managed water table is present, 
-!       adjust the lateral flow to include today's drainage
-!     Drainage for systems with a water table is from the 2D top layers
-!       to the 1D saturated layers and is "absorbed" by the lateral 
-!       inflows or outflows which were calculated based on the depth 
-!       to the watertable.
-      IF (LIMIT_2D .LT. NLAYR) THEN
-        NetLatFlow = NetLatFlow - DRAIN_2D
-      ENDIF
+!!     When a managed water table is present, 
+!!       adjust the lateral flow to include today's drainage
+!!     Drainage for systems with a water table is from the 2D top layers
+!!       to the 1D saturated layers and is "absorbed" by the lateral 
+!!       inflows or outflows which were calculated based on the depth 
+!!       to the watertable.
+!     2025-07-01 chp removed this
+!     Currently, the change in water content due to the water table is
+!     a daily process and is implemented at the beginning of each new day.
+!     So, at midnight, a jump in water content occurs due to changes to water table.
+!     I tried updating this on a time step basis throughout the day, but it 
+!     did not work with the N movement. We probably need to come back to this and
+!     improve it.
+!      IF (LIMIT_2D .LT. NLAYR) THEN
+!        NetLatFlow = NetLatFlow - DRAIN_2D
+!      ENDIF
 
 !     Convert units from mm to cm for DSSAT plant routines.
       TRWUP = TRWUP / 10.           !cm
@@ -983,7 +976,8 @@
       RUNOFF = Runoff_day
       CALL WBSUM_2D(INTEGR,
      &    CELLS, DRAIN_2D, HalfRow, RAIN, RUNOFF, SWV,    !Input
-     &    CRAIN, TDRAIN, TEP, TRUNOF,                     !Output
+     &    netLatFlow,                                     !Input
+     &    CRAIN, TDRAIN, TEP, TRUNOF, DayLatFlow,         !Output
      &    TSW, TSWINI)                                    !Output
 
       CALL Interpolate2Layers_2D(                    
@@ -1015,7 +1009,7 @@ C-----------------------------------------------------------------------
 !     In 2D model, TSW units are mm. 1D model uses cm.
       TSW_cm = TSW / 10.
       CALL Wbal(CONTROL, ISWITCH, 
-     &    CRAIN, SolProfDrain, FLOODWAT, netLatFlow,
+     &    CRAIN, SolProfDrain, FLOODWAT, DayLatFlow,
      &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW_cm)
 
@@ -1046,7 +1040,7 @@ C-----------------------------------------------------------------------
       CALL Wbal_2D_ts(CONTROL, ISWITCH, EndTime, TimeIncr,  !Input
      &    DRAIN_ts, RUNOFF_ts, IRR_ts, RAIN_ts,             !Input
      &    ES_TS, TRWU_ts, SW_vol_tot, CritCell,             !Input
-     &    Diffus, Kunsat, LatFlow_ts)                       !Input
+     &    Diffus, Kunsat, netLatFlow)                       !Input
 
       CALL OpSWxmin(CONTROL, ISWITCH, 
      &    CELLS, EndTime, TimeIncr, SWV_D)  !Input
@@ -1125,8 +1119,8 @@ C=====================================================================
 ! IRRIG       Irrigation simulation switch status
 ! Kunsat(Row,Col) Un-saturated hydraulic conductivity in cm/hr
 ! LastCumRad  Cumulative solar radiation until last time step
-! LatFlow     Daily total lat flow for all cells. Inward is positive.
-! LatFlow_ts  Total lat flow for all cells for current time step. Inward is positive.
+! netLatFlow  Daily net lateral flow for all cells. Inflow is positive.
+! LatFlow_ts  Total lat flow for all cells for current time step. Inflow is positive.
 !             It is in mm finally when pass to this subroutine
 ! LIMIT_2D    Represents the lowest layer for which 2D modeling is done.
 ! mm_2_vf(Row,Col)  Conversion from mm[water] to volumetric fraction for each cell  

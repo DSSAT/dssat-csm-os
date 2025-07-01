@@ -319,17 +319,12 @@
       REAL, INTENT(OUT) :: ActWTD, netLatFlow, MgmtWTD
       INTEGER, INTENT(OUT) :: LIMIT_2D
 
-      REAL MaxDepth, SWTot1, SWTot2
+      REAL MaxDepth
       REAL, DIMENSION(NL) :: SWDELTW, ThetaCap
       REAL, DIMENSION(MaxRows,MaxCols) :: SWVDeltW, Thick, Colfrac, SWV_new
       INTEGER i,j
 
 !-----------------------------------------------------------------------
-!     temp chp - calc starting soil water volume
-      call Calc_SW_Vol2(  &
-        CELLS%STRUC%CellArea, CELLS%STRUC%Cell_Type, HalfRow, SWV,        &      !Input
-        SWTot1)                                       !Output
-
       MaxDepth = SOILPROP % DS(SOILPROP % NLAYR)
       Thick = CELLS % Struc % Thick
       Colfrac = BedDimension % Colfrac
@@ -380,11 +375,6 @@
       call Calc_SW_Vol2(  &
         CELLS%STRUC%CellArea, CELLS%STRUC%Cell_Type, HalfRow, SWVDeltW,     &         !Input
         netLatFlow)                                       !Output
-
-!     temp chp - calc new soil water volume
-      call Calc_SW_Vol2(  &
-        CELLS%STRUC%CellArea, CELLS%STRUC%Cell_Type, HalfRow, SWV,         &     !Input
-        SWTot2)                                       !Output
 
 !     ------------------------------------------------------------------------
 !     The 2D model is not needed in the vicinity of the water table.

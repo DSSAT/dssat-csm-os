@@ -16,7 +16,7 @@
 !=====================================================================
       SUBROUTINE Wbal_2D_ts(CONTROL, ISWITCH, Time, TimeIncr,   !Input
      &    DRAIN, RUNOFF, IRRAMT, RAIN,                          !Input
-     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, LatFlow_ts)  !Input
+     &    TES, TEP, TSW, CritCell, Diffus, Kunsat, netLatFlow)  !Input
 !     ------------------------------------------------------------------
       USE Cells_2D
       USE ModuleData
@@ -25,11 +25,11 @@
       SAVE
 
       CHARACTER*14, PARAMETER :: SWBAL = 'SoilWat_ts.OUT'
-      INTEGER DAS, DYNAMIC, LUNWBL, I  !, Count 
+      INTEGER DAS, DASY, DYNAMIC, LUNWBL  
       INTEGER YRDOY
       INTEGER YR2, DY2, CritCell(2)
 
-      REAL WBALAN, Time, TimeIncr, LatFlow_ts  !, LatFlow
+      REAL WBALAN, Time, TimeIncr, netLatFlow, LatFlow  
       REAL CUMWBAL, Diffus1, Kunsat1
 
       REAL, DIMENSION(MaxRows,MaxCols) :: Kunsat, Diffus
@@ -38,7 +38,6 @@
 
       Double Precision DRAIN, IRRAMT, RAIN, RUNOFF
       Double Precision TEP, TES, TSW, TSWY
-      Double Precision, DIMENSION(MaxRows,MaxCols) :: SWV_D 
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
 
@@ -80,31 +79,25 @@
       CALL HEADER(SEASINIT, LUNWBL, CONTROL % RUN)
 
 !     Write header for daily output
-      WRITE (LUNWBL,1120,ADVANCE='NO')
+      WRITE (LUNWBL,1120)
  1120 FORMAT('@YEAR DOY   DAS   TIME   INCR  Diffus  Kunsat  Row  Col',
      & '      SWTD',                               !State vars
      & '     IRRD     PRED     LAFD',              !Inflows
      & '     DRND     ROFD     ESAD     EPAD',     !Outflows
      & '     WBAL    CUMWBAL')                     !Balance
 
-!!     Soil water content for 1D simulations
-!      IF (NColsTot == 1) THEN
-!        WRITE(LUNWBL,1121) ("SW",I,"T",I=1,NRowsTot)
-! 1121   FORMAT(50(5X,A2,I2.2,A1))
-!      ELSE
-        WRITE(LUNWBL,'(" ")')
-!      ENDIF
-
       TSWY   = TSW
       CUMWBAL = 0.0
 
       CALL YR_DOY(YRDOY, YR2, DY2)
-      WRITE (LUNWBL,1300) YR2, DY2, DAS, Time, TimeIncr, 
+      WRITE (LUNWBL,1300) YR2, DY2, DAS+1, Time, TimeIncr, 
      &    0.0, 0.0, 0, 0,
      &    TSW,                                     !State variables
      &    0.0, 0.0, 0.0,                           !Inflows
      &    0.0, 0.0, 0.0, 0.0,                      !Outflows
      &    0.0, CUMWBAL                             !Balance
+
+      DASY = DAS
       
 !***********************************************************************
 !***********************************************************************
@@ -114,25 +107,24 @@
 !-----------------------------------------------------------------------
       IF (.NOT. DOPRINT) RETURN
 
+!     Lateral flow is considered only for first time step of the day
+!       because this is a daily process
+      IF (DAS /= DASY) THEN 
+        LatFlow = netLatFlow
+      ELSE
+        LatFlow = 0.0
+      ENDIF
+
 !     Water Balance for this time step
 !     Change in storage = Inflows - Outflows
 !     Balance = Inflows - Outflows - Change in storage
-      IF (BedDimension % LIMIT_2D .GE. NRowsTot) THEN 
-        WBALAN = 
-     &       + IRRAMT + RAIN + LatFlow_ts   !Inflows
+      WBALAN = 
+     &       + IRRAMT + RAIN + LatFlow      !Inflows
      &       - DRAIN - RUNOFF - TES - TEP   !Outflows
      &       - (TSW - TSWY)                 !Change in soil water 
-      ELSE ! Drain is part of LatFlow_ts
-        WBALAN = 
-     &       + IRRAMT + RAIN + LatFlow_ts   !Inflows
-     &       - RUNOFF - TES - TEP           !Outflows
-     &       - (TSW - TSWY)                 !Change in soil water 
-      ENDIF
 
-!!     for 1st timestep, LatFlow include the portion which is calculated in WaterTable_2D
-!      IF (Count .eq. 1)  WBALAN =  WBALAN - LatFlow_ts + LatFlow
-!      CUMWBAL = CUMWBAL + WBALAN
-!
+      CUMWBAL = CUMWBAL + WBALAN
+
 !     CritCell is the cell that controls the calculation of the minimum time 
 !     step required to ensure stability.
       IF (CritCell(1) > 0 .and. CritCell(1) <= NRowsTot .and. 
@@ -145,20 +137,11 @@
       ENDIF
 
       CALL YR_DOY(YRDOY, YR2, DY2)
-!      IF (Count .EQ. 1) then 
-!        WRITE (LUNWBL,1300,ADVANCE='NO') YR2, DY2, DAS, Time,TimeIncr,
-!     &    Diffus1, Kunsat1, 
-!     &    CritCell(1), CritCell(2),
-!     &    TSW,                                        !State variables
-!     &    IRRAMT, RAIN, LatFlow,                      !Inflows
-!     &    DRAIN, RUNOFF, TES, TEP,                    !Outflows
-!     &    WBALAN, CUMWBAL                             !Balance
-!      ELSE
-        WRITE (LUNWBL,1300,ADVANCE='NO') YR2, DY2, DAS, Time,TimeIncr,
+      WRITE (LUNWBL,1300) YR2, DY2, DAS, Time,TimeIncr,
      &    Diffus1, Kunsat1, 
      &    CritCell(1), CritCell(2),
      &    TSW,                                        !State variables
-     &    IRRAMT, RAIN, LatFlow_ts,                      !Inflows
+     &    IRRAMT, RAIN, LatFlow,                      !Inflows
      &    DRAIN, RUNOFF, TES, TEP,                    !Outflows
      &    WBALAN, CUMWBAL                             !Balance 
 !      ENDIF
@@ -172,15 +155,9 @@
      &    4F9.4,                        !Outflows
      &    F9.4,F11.4)                   !Balances, TSRadFrac
 
-!     Soil water content for 1D simulations
-      IF (NColsTot == 1) THEN
-        WRITE(LUNWBL,'(50F10.4)') (SWV_D(I,1),I=1,NRowsTot)
-      ELSE
-        WRITE(LUNWBL,'(" ")')
-      ENDIF
-
-      !Save values for comparison tomorrow
-      TSWY   = TSW
+!     Save values for comparison tomorrow
+      TSWY = TSW
+      DASY = DAS
 
 !***********************************************************************
 !***********************************************************************
