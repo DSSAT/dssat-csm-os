@@ -41,6 +41,7 @@
 !                SASC, TOTBAS, TOTP, ORGP, EXCA, EXNA, EXK
 !             Set the error for the case of full plastic cover
 !             Rename RowFrac to ColFrac
+!  07/01/2025 CHP Added SAEA to 2D modified soils for raised bed.
 !  ---------------------------------------------------------
 !   Key to array indices:
 !   L = original soil layers as input from soil profile data, 1 to NLAYR
@@ -82,7 +83,7 @@
     REAL, DIMENSION(MaxRows,MaxCols) :: ColFrac, BedFrac
     REAL Bed_BD, Bed_CEC, Bed_Clay, Bed_DUL, Bed_LL, Bed_OC, Bed_PH, Bed_NH4, Bed_NO3, Bed_SW
     REAL Bed_Sand, Bed_SAT, Bed_Silt, Bed_SWCN, Bed_ADCOEF, Bed_TOTN, Bed_WR, Bed_TotOrgN
-    REAL Bed_WCR, Bed_alphaVG, Bed_mVG, Bed_nVG, Bed_CACO3  !, Bed_DMOD
+    REAL Bed_WCR, Bed_alphaVG, Bed_mVG, Bed_nVG, Bed_CACO3, Bed_Poros, Bed_SAEA  !, Bed_DMOD
     Real Bed_SASC, Bed_TOTBAS, Bed_EXCA, Bed_EXNA, Bed_EXK, Bed_EXTP, Bed_TOTP, Bed_ORGP
     REAL LayerThick, SimWidth
 
@@ -375,6 +376,7 @@
       CALL MixMassVol (SOILPROP%SWCN,  SOILPROP, DigDep, Bed_SWCN)    !cm/hr
       CALL MixMassVol (SOILPROP%ADCOEF,SOILPROP, DigDep, Bed_ADCOEF)  !cm3[H2O]/g[soil]
       CALL MixMassVol (SWi,            SOILPROP, DigDep, Bed_SW)      !mm3/mm3
+      CALL MixMassVol (SOILPROP%SAEA  ,SOILPROP, DigDep, Bed_SAEA)    !mol Ceq/m3
 
 !     These variables are in units of mass per unit soil mass
 !        Weighted average by soil mass.
@@ -383,26 +385,26 @@
       Call MixMassMass(SOILPROP%OC,    SOILPROP, DigDep, Bed_OC)      !%
       Call MixMassMass(SOILPROP%SILT,  SOILPROP, DigDep, Bed_Silt)    !%
       Call MixMassMass(SOILPROP%TOTN,  SOILPROP, DigDep, Bed_TOTN)    !%
-      Call MixMassMass(NH4I,           SOILPROP, DigDep, Bed_NH4)
-      Call MixMassMass(NO3I,           SOILPROP, DigDep, Bed_NO3)
+      Call MixMassMass(NH4I,           SOILPROP, DigDep, Bed_NH4)     !ppm
+      Call MixMassMass(NO3I,           SOILPROP, DigDep, Bed_NO3)     !ppm
       Call MixMassMass(SOILPROP%SASC,  SOILPROP, DigDep, Bed_SASC)    !%
-      Call MixMassMass(SOILPROP%TOTBAS,SOILPROP, DigDep, Bed_TOTBAS) !cmol/kg
-      Call MixMassMass(SOILPROP%EXCA,  SOILPROP, DigDep, Bed_EXCA)  !cmol/kg
-      Call MixMassMass(SOILPROP%EXNA,  SOILPROP, DigDep, Bed_EXNA)  !cmol/kg
-      Call MixMassMass(SOILPROP%EXK,   SOILPROP, DigDep, Bed_EXK)   !cmol/kg
-      Call MixMassMass(SOILPROP%EXTP,  SOILPROP, DigDep, Bed_EXTP)  !mg/kg
-      Call MixMassMass(SOILPROP%TOTP,  SOILPROP, DigDep, Bed_TOTP)  !mg/kg
-      Call MixMassMass(SOILPROP%ORGP,  SOILPROP, DigDep, Bed_ORGP)  !mg/kg
-      Call MixMassMass(SOILPROP%CACO3, SOILPROP, DigDep, Bed_CACO3) !g/kg
-!     Call MixMassMass(SOILPROP%DMOD,  SOILPROP, DigDep, Bed_DMOD)  !DMOD is not array. 0-1 scale factor use MixMassTot????
+      Call MixMassMass(SOILPROP%TOTBAS,SOILPROP, DigDep, Bed_TOTBAS)  !cmol/kg
+      Call MixMassMass(SOILPROP%EXCA,  SOILPROP, DigDep, Bed_EXCA)    !cmol/kg
+      Call MixMassMass(SOILPROP%EXNA,  SOILPROP, DigDep, Bed_EXNA)    !cmol/kg
+      Call MixMassMass(SOILPROP%EXK,   SOILPROP, DigDep, Bed_EXK)     !cmol/kg
+      Call MixMassMass(SOILPROP%EXTP,  SOILPROP, DigDep, Bed_EXTP)    !mg/kg
+      Call MixMassMass(SOILPROP%TOTP,  SOILPROP, DigDep, Bed_TOTP)    !mg/kg
+      Call MixMassMass(SOILPROP%ORGP,  SOILPROP, DigDep, Bed_ORGP)    !mg/kg
+      Call MixMassMass(SOILPROP%CACO3, SOILPROP, DigDep, Bed_CACO3)   !g/kg
+!     Call MixMassMass(SOILPROP%DMOD,  SOILPROP, DigDep, Bed_DMOD)    !DMOD is not array. 0-1 scale factor use MixMassTot????
 !     These variables are in units of kg/ha.  Sum of total within bed.
       CALL MixMassTot (SOILPROP%TotOrgN,SOILPROP,DigDep, Bed_TotOrgN) !kg[N]/ha
-
-!     Initialize 1D soil water with modified soil depths
 
       !bedSOILLAYERTYPE = SOILPROP%SOILLAYERTYPE(1)
       Bed_Sand = 100. - Bed_Clay - Bed_Silt
       Bed_WR = 1.0
+      Bed_Poros = 1.0 - Bed_BD / 2.65
+      IF (Bed_Poros < Bed_DUL) Bed_Poros = Bed_SAT
 
 !-----------------------------------------------------------------------
 !     Compute vanGenuchten parameters which describe water retention curve
@@ -464,6 +466,7 @@
           FurrowNO3I(M)            = NO3I(L)
           FurrowSWi(M)             = AMAX1(SWI(L), Soilprop%DUL(L))
           SoilProp_Furrow%SASC(M)  = SOILPROP%SASC(L)
+          SoilProp_Furrow%SAEA(M)  = SOILPROP%SAEA(L)
           SoilProp_Furrow%TOTBAS(M)= SOILPROP%TOTBAS(L)
           SoilProp_Furrow%EXCA(M)  = SOILPROP%EXCA(L)
           SoilProp_Furrow%EXNA(M)  = SOILPROP%EXNA(L)
@@ -472,6 +475,7 @@
           SoilProp_Furrow%TOTP(M)  = SOILPROP%TOTP(L)
           SoilProp_Furrow%ORGP(M)  = SOILPROP%ORGP(L)
           SoilProp_Furrow%CACO3(M) = SOILPROP%CACO3(L)
+          SoilProp_Furrow%POROS(M) = SOILPROP%POROS(L)
 !         kg/ha - possibly need to split for first furrow row
           IF (M == 1) THEN
             SoilProp_Furrow%TotOrgN(M)=Soilprop%TotOrgN(L) * DLAYR_shift(M) / DLAYR(L)
@@ -505,6 +509,7 @@
       CALL LMATCH (M, DS_shift, FurrowNO3I             ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, FurrowSWI              ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, SoilProp_Furrow%SASC   ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
+      CALL LMATCH (M, DS_shift, SoilProp_Furrow%SAEA   ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, SoilProp_Furrow%TOTBAS ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, SoilProp_Furrow%EXCA   ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
       CALL LMATCH (M, DS_shift, SoilProp_Furrow%EXNA   ,SoilProp_Furrow%NLAYR, SoilProp_Furrow%DS)
@@ -618,6 +623,7 @@
         NewPropNO3I(Row)         = Bed_NO3
         NewPropSWi(Row)          = AMAX1(Bed_SW, Soilprop%DUL(L))
         SoilProp_Bed%SASC(Row)   = Bed_SASC
+        SoilProp_Bed%SAEA(Row)   = Bed_SAEA
         SoilProp_Bed%TOTBAS(Row) = Bed_TOTBAS   
         SoilProp_Bed%EXCA(Row)   = Bed_EXCA
         SoilProp_Bed%EXNA(Row)   = Bed_EXNA
@@ -663,6 +669,7 @@
         NewPropNO3I(Row)         = FurrowNO3I(M)
         NewPropSWi(Row)          = FurrowSWi(M)
         SoilProp_Bed%SASC(Row)   = SoilProp_Furrow%SASC(M)
+        SoilProp_Bed%SAEA(Row)   = SoilProp_Furrow%SAEA(M)
         SoilProp_Bed%TOTBAS(Row) = SoilProp_Furrow%TOTBAS(M)   
         SoilProp_Bed%EXCA(Row)   = SoilProp_Furrow%EXCA(M)
         SoilProp_Bed%EXNA(Row)   = SoilProp_Furrow%EXNA(M)
