@@ -5270,15 +5270,23 @@ C-GH As per Tony Hunt 2017 for GenCalc
               ! For supplying minimum
               NDEMMN = GROLF*LNCM+RTWTG*RNCM
      &              +(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5
-              LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)
-              RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)
-              SNUSE(1) = 
-     &         ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)
-              SRNUSE(1) = 
-     &           (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)
+
+              IF (NDEMMN > 0.) THEN
+                LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)
+                RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)
+                SNUSE(1) = 
+     &           ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)
+                SRNUSE(1) = 
+     &             (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)
+              ELSE
+                LNUSE(1) = GROLF*LNCM
+                RNUSE(1) = RTWTG*RNCM
+                SNUSE(1) = (GROST+GROCR)*SNCM
+                SRNUSE(1) = GROSR*(SRNPCS/100.0)*0.5
+              ENDIF
 
               ! Reduce stem,crown,root growth if N < supply minimum
-              IF (NDEMMN.GT.NULEFT) THEN
+              IF (NDEMMN.GT.NULEFT .AND. NDEMMN > 0.) THEN
                 GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)
                 GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)
                 RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)
