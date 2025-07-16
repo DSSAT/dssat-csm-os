@@ -18,8 +18,9 @@ class FlexibleIO
 {
 
 private:
-    static std::unordered_map<std::string, std::unordered_map<std::string, std::string>> datatwodimensional;
-    static std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>> datathreedimensional;
+    static std::unordered_map<std::string,std::unordered_map<std::string, std::string>> datatwodimensional;
+    static std::unordered_map<std::string,std::unordered_map<std::string,std::unordered_map<std::string, std::string>>> datathreedimensional;
+    static std::unordered_map<std::string,std::unordered_map<std::string,std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>> datafourdimensional;
 
 protected:
     FlexibleIO();
@@ -29,28 +30,35 @@ public:
     static FlexibleIO* getInstance();
     static FlexibleIO* newInstance();
 
-    float getReal(std::string GROUP, std::string VARNAME);
-    int getInteger(std::string GROUP, std::string VARNAME);
-    std::string getChar(std::string GROUP, std::string VARNAME);
-    float getRealIndex(std::string GROUP, std::string VARNAME, int INDEX);
-    int getIntegerIndex(std::string GROUP, std::string VARNAME, int INDEX);
-    std::string getCharIndex(std::string GROUP, std::string VARNAME, int INDEX);
-    float* getRealArray(std::string GROUP, std::string VARNAME, std::string SIZE);
-    int* getIntegerArray(std::string GROUP, std::string VARNAME, std::string SIZE);
-    std::string getCharArray(std::string GROUP, std::string VARNAME, std::string SIZE);
-    float getRealYrdoy(std::string GROUP, std::string YRDOY, std::string VARNAME);
-    int getIntegerYrdoy(std::string GROUP, std::string YRDOY, std::string VARNAME);
-    std::string getCharYrdoy(std::string GROUP, std::string YRDOY, std::string VARNAME);
+    float       getFloat(std::string GROUP, std::string VARNAME);
+    int         getInteger(std::string GROUP, std::string VARNAME);
+    std::string getString(std::string GROUP, std::string VARNAME);
+    float       getIndexFloat(std::string GROUP, std::string VARNAME, int INDEX);
+    int         getIndexInteger(std::string GROUP, std::string VARNAME, int INDEX);
+    std::string getIndexString(std::string GROUP, std::string VARNAME, int INDEX);
+    float*      getArrayFloat(std::string GROUP, std::string VARNAME, std::string SIZE);
+    int*        getArrayInteger(std::string GROUP, std::string VARNAME, std::string SIZE);
+    std::string getArrayString(std::string GROUP, std::string VARNAME, std::string SIZE);
+    float       getForKeyFloat(std::string GROUP, std::string KEY, std::string VARNAME);
+    int         getForKeyInteger(std::string GROUP, std::string KEY, std::string VARNAME);
+    std::string getForKeyString(std::string GROUP, std::string KEY, std::string VARNAME);
+    float       getFor2KeyFloat(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME);
+    int         getFor2KeyInteger(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME);
+    std::string getFor2KeyString(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME);
 
-    void setRealMemory(std::string GROUP, std::string VARNAME, float VALUE);
-    void setIntegerMemory(std::string GROUP, std::string VARNAME, int VALUE);
-    void setCharMemory(std::string GROUP, std::string VARNAME, std::string VALUE);
-    void setRealIndexMemory(std::string GROUP, std::string VARNAME, float VALUE, int INDEX);
-    void setIntegerIndexMemory(std::string GROUP, std::string VARNAME, int VALUE, int INDEX);
-    void setCharIndexMemory(std::string GROUP, std::string VARNAME, std::string VALUE, int INDEX);
-    void setRealYrdoyMemory(std::string GROUP, std::string YRDOY, std::string VARNAME, float VALUE);
-    void setIntegerYrdoyMemory(std::string GROUP, std::string YRDOY, std::string VARNAME, int VALUE);
-    void setCharYrdoyMemory(std::string GROUP, std::string YRDOY, std::string VARNAME, std::string VALUE);
+    
+    void setFloat(std::string GROUP, std::string VARNAME, float VALUE);
+    void setInteger(std::string GROUP, std::string VARNAME, int VALUE);
+    void setString(std::string GROUP, std::string VARNAME, std::string VALUE);
+    void setIndexFloat(std::string GROUP, std::string VARNAME, float VALUE, int INDEX);
+    void setIndexInteger(std::string GROUP, std::string VARNAME, int VALUE, int INDEX);
+    void setIndexString(std::string GROUP, std::string VARNAME, std::string VALUE, int INDEX);
+    void setForKeyFloat(std::string GROUP, std::string KEY, std::string VARNAME, float VALUE);
+    void setForKeyInteger(std::string GROUP, std::string KEY, std::string VARNAME, int VALUE);
+    void setForKeyString(std::string GROUP, std::string KEY, std::string VARNAME, std::string VALUE);
+    void setFor2KeyFloat(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME, float VALUE);
+    void setFor2KeyInteger(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME, int VALUE);
+    void setFor2KeyString(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME, std::string VALUE);
 
     void eraseGroupMemory(std::string GROUP);
 

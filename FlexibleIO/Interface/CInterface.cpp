@@ -22,37 +22,44 @@
 
 extern "C" {
 
-    void getReal(char *GROUP, char *VARNAME, float *VALUE);
+    void getFloat(char *GROUP, char *VARNAME, float *VALUE);
     void getInteger(char *GROUP, char *VARNAME, int *VALUE);
-    void getChar(char *GROUP, char *VARNAME, char  *VALUE, int *VSIZE);
-    void getRealIndex(char *GROUP, char *VARNAME, float *VALUE, int *INDEX);
-    void getIntegerIndex(char *GROUP, char *VARNAME, int *VALUE, int *INDEX);
-    void getCharIndex(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, int *INDEX);
-    void getRealArray(char *GROUP, char *VARNAME, float *VALUE, char *SIZE);
-    void getIntegerArray(char *GROUP, char *VARNAME, int *VALUE, char *SIZE);
-    void getCharArray(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, char *SIZE);
-    void getRealYrdoy(char *GROUP, int *YRDOY, char *VARNAME, float *VALUE);
-    void getIntegerYrdoy(char *GROUP, int *YRDOY, char *VARNAME, int *VALUE);
-    void getCharYrdoy(char *GROUP, int *YRDOY, char *VARNAME, char  *VALUE, int *VSIZE);
+    void getString(char *GROUP, char *VARNAME, char  *VALUE, int *VSIZE);
+    void getIndexFloat(char *GROUP, char *VARNAME, float *VALUE, int *INDEX);
+    void getIndexInteger(char *GROUP, char *VARNAME, int *VALUE, int *INDEX);
+    void getIndexString(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, int *INDEX);
+    void getArrayFloat(char *GROUP, char *VARNAME, float *VALUE, char *SIZE);
+    void getArrayInteger(char *GROUP, char *VARNAME, int *VALUE, char *SIZE);
+    void getArrayString(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, char *SIZE);
+    void getForKeyFloat(char *GROUP, int *KEY, char *VARNAME, float *VALUE);
+    void getForKeyInteger(char *GROUP, int *KEY, char *VARNAME, int *VALUE);
+    void getForKeyString(char *GROUP, int *KEY, char *VARNAME, char  *VALUE, int *VSIZE);
+    void getFor2KeyFloat(char *GROUP, int *KEY, int *KEY2, char *VARNAME, float *VALUE);
+    void getFor2KeyInteger(char *GROUP, int *KEY, int *KEY2, char *VARNAME, int *VALUE);
+    void getFor2KeyString(char *GROUP, int *KEY, int *KEY2, char *VARNAME, char  *VALUE, int *VSIZE);
 
-    void setRealMemory(char *GROUP, char *VARNAME, float *VALUE);
-    void setIntegerMemory(char *GROUP, char *VARNAME, int *VALUE);
-    void setCharMemory(char *GROUP, char *VARNAME, char  *VALUE);
-    void setRealIndexMemory(char *GROUP, char *VARNAME, float *VALUE, int *INDEX);
-    void setIntegerIndexMemory(char *GROUP, char *VARNAME, int *VALUE, int *INDEX);
-    void setCharIndexMemory(char *GROUP, char *VARNAME, char  *VALUE, int *INDEX);
-    void setRealYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, float *VALUE);
-    void setIntegerYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, int *VALUE);
-    void setCharYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, char *VALUE);
+    void setFloat(char *GROUP, char *VARNAME, float *VALUE);
+    void setInteger(char *GROUP, char *VARNAME, int *VALUE);
+    void setString(char *GROUP, char *VARNAME, char  *VALUE);
+    void setIndexFloat(char *GROUP, char *VARNAME, float *VALUE, int *INDEX);
+    void setIndexInteger(char *GROUP, char *VARNAME, int *VALUE, int *INDEX);
+    void setIndexString(char *GROUP, char *VARNAME, char  *VALUE, int *INDEX);
+    void setForKeyFloat(char *GROUP, int *KEY, char *VARNAME, float *VALUE);
+    void setForKeyInteger(char *GROUP, int *KEY, char *VARNAME, int *VALUE);
+    void setForKeyString(char *GROUP, int *KEY, char *VARNAME, char *VALUE);
+    void setFor2KeyFloat(char *GROUP, int *KEY, int *KEY2, char *VARNAME, float *VALUE);
+    void setFor2KeyInteger(char *GROUP, int *KEY, int *KEY2, char *VARNAME, int *VALUE);
+    void setFor2KeyString(char *GROUP, int *KEY, int *KEY2, char *VARNAME, char *VALUE);
+
 
 }
 
-void getReal(char *GROUP, char *VARNAME, float *VALUE)
+void getFloat(char *GROUP, char *VARNAME, float *VALUE)
 {
 
     std::string group(GROUP), varname(VARNAME);
 
-    *VALUE = FlexibleIO::getInstance()->getReal(group, VARNAME);
+    *VALUE = FlexibleIO::getInstance()->getFloat(group, VARNAME);
 
 }
 
@@ -65,187 +72,249 @@ void getInteger(char *GROUP, char *VARNAME, int *VALUE)
 
 }
 
-void getChar(char *GROUP, char *VARNAME, char  *VALUE, int *VSIZE)
+void getString(char *GROUP, char *VARNAME, char  *VALUE, int *VSIZE)
 {
     *VALUE = '\0';
     std::string group(GROUP), varname(VARNAME);
     
-    std::string result = FlexibleIO::getInstance()->getChar(group, varname);
+    std::string result = FlexibleIO::getInstance()->getString(group, varname);
     size_t size = static_cast<size_t>(*VSIZE);    
     size_t sizecpy = std::min(result.size(), size);
     std::memcpy(VALUE, result.c_str(), sizecpy);
 }
 
-void getRealIndex(char *GROUP, char *VARNAME, float *VALUE, int *INDEX)
+void getIndexFloat(char *GROUP, char *VARNAME, float *VALUE, int *INDEX)
 {
 
     std::string group(GROUP), varname(VARNAME);
 
-    *VALUE = FlexibleIO::getInstance()->getRealIndex(group, varname, *INDEX);
+    *VALUE = FlexibleIO::getInstance()->getIndexFloat(group, varname, *INDEX);
 
 }
 
-void getIntegerIndex(char *GROUP, char *VARNAME, int *VALUE, int *INDEX)
+void getIndexInteger(char *GROUP, char *VARNAME, int *VALUE, int *INDEX)
 {
 
     std::string group(GROUP), varname(VARNAME);
 
-    *VALUE = FlexibleIO::getInstance()->getIntegerIndex(group, varname, *INDEX);
+    *VALUE = FlexibleIO::getInstance()->getIndexInteger(group, varname, *INDEX);
 
 }
 
-void getCharIndex(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, int *INDEX)
+void getIndexString(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, int *INDEX)
 {
 
     *VALUE = '\0';
     std::string group(GROUP), varname(VARNAME);
     
-    std::string result = FlexibleIO::getInstance()->getCharIndex(group, varname, *INDEX).c_str();
+    std::string result = FlexibleIO::getInstance()->getIndexString(group, varname, *INDEX).c_str();
     size_t size = static_cast<size_t>(*VSIZE);    
     size_t sizecpy = std::min(result.size(), size);
     std::memcpy(VALUE, result.c_str(), sizecpy);
 }
 
-void getRealArray(char *GROUP, char *VARNAME, float *VALUE, char *SIZE)
+void getArrayFloat(char *GROUP, char *VARNAME, float *VALUE, char *SIZE)
 {
 
     std::string group(GROUP), varname(VARNAME), size(SIZE);
 
-    float *array = FlexibleIO::getInstance()->getRealArray(group, varname, size);
+    float *array = FlexibleIO::getInstance()->getArrayFloat(group, varname, size);
 
     std::copy(array, array + std::stoi(size,NULL, 0), VALUE);
 
 }
 
-void getIntegerArray(char *GROUP, char *VARNAME, int *VALUE, char *SIZE)
+void getArrayInteger(char *GROUP, char *VARNAME, int *VALUE, char *SIZE)
 {
 
     std::string group(GROUP), varname(VARNAME), size(SIZE);
 
-    int *array = FlexibleIO::getInstance()->getIntegerArray(group, varname, size);
+    int *array = FlexibleIO::getInstance()->getArrayInteger(group, varname, size);
 
     std::copy(array, array + std::stoi(size,NULL, 0), VALUE);
 
 }
 
-void getCharArray(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, char *SIZE)
+void getArrayString(char *GROUP, char *VARNAME, char *VALUE, int *VSIZE, char *SIZE)
 {
 
     std::string group(GROUP), varname(VARNAME), size(SIZE);
     
-    std::string result = FlexibleIO::getInstance()->getCharArray(group, varname, size).c_str();
+    std::string result = FlexibleIO::getInstance()->getArrayString(group, varname, size).c_str();
     size_t vsz = static_cast<size_t>(*VSIZE);    
     size_t sizecpy = std::min(result.size(), vsz);
     std::memcpy(VALUE, result.c_str(), sizecpy);
 }
 
-void getRealYrdoy(char *GROUP, int *YRDOY, char *VARNAME, float *VALUE)
+void getForKeyFloat(char *GROUP, int *KEY, char *VARNAME, float *VALUE)
 {
 
-    std::string group(GROUP), yrdoy(std::to_string(*YRDOY)), varname(VARNAME);
+    std::string group(GROUP), K(std::to_string(*KEY)), varname(VARNAME);
 
-    *VALUE = FlexibleIO::getInstance()->getRealYrdoy(group, yrdoy, varname);
+    *VALUE = FlexibleIO::getInstance()->getForKeyFloat(group, K, varname);
 
 }
 
-void getIntegerYrdoy(char *GROUP, int *YRDOY, char *VARNAME, int *VALUE)
+void getForKeyInteger(char *GROUP, int *KEY, char *VARNAME, int *VALUE)
 {
 
-    std::string group(GROUP), yrdoy(std::to_string(*YRDOY)), varname(VARNAME);
+    std::string group(GROUP), K(std::to_string(*KEY)), varname(VARNAME);
 
-    *VALUE = FlexibleIO::getInstance()->getIntegerYrdoy(group, yrdoy, varname);
+    *VALUE = FlexibleIO::getInstance()->getForKeyInteger(group, K, varname);
 
 }
 
-void getCharYrdoy(char *GROUP, int *YRDOY, char *VARNAME, char  *VALUE, int *VSIZE)
+void getForKeyString(char *GROUP, int *KEY, char *VARNAME, char  *VALUE, int *VSIZE)
 {
 
-    std::string group(GROUP), yrdoy(std::to_string(*YRDOY)), varname(VARNAME);
+    std::string group(GROUP), K(std::to_string(*KEY)), varname(VARNAME);
     
-    std::string result = FlexibleIO::getInstance()->getCharYrdoy(group, yrdoy, varname).c_str();
+    std::string result = FlexibleIO::getInstance()->getForKeyString(group, K, varname).c_str();
+    size_t size = static_cast<size_t>(*VSIZE);    
+    size_t sizecpy = std::min(result.size(), size);
+    std::memcpy(VALUE, result.c_str(), sizecpy);
+}
+
+void getFor2KeyFloat(char *GROUP, int *KEY, int *KEY2, char *VARNAME, float *VALUE)
+{
+    std::string group(GROUP);
+    std::string K(std::to_string(*KEY)), K2(std::to_string(*KEY2));
+    std::string varname(VARNAME);
+
+    *VALUE = FlexibleIO::getInstance()->getFor2KeyFloat(group, K, K2, varname);
+
+}
+
+void getFor2KeyInteger(char *GROUP, int *KEY, int *KEY2, char *VARNAME, int *VALUE)
+{
+    std::string group(GROUP);
+    std::string K(std::to_string(*KEY)), K2(std::to_string(*KEY2));
+    std::string varname(VARNAME);
+
+    *VALUE = FlexibleIO::getInstance()->getFor2KeyInteger(group, K, K2, varname);
+
+}
+
+void getFor2KeyString(char *GROUP, int *KEY, int *KEY2, char *VARNAME, char  *VALUE, int *VSIZE)
+{
+    std::string group(GROUP);
+    std::string K(std::to_string(*KEY)), K2(std::to_string(*KEY2));
+    std::string varname(VARNAME);
+    
+    std::string result = FlexibleIO::getInstance()->getFor2KeyString(group, K, K2, varname).c_str();
     size_t size = static_cast<size_t>(*VSIZE);    
     size_t sizecpy = std::min(result.size(), size);
     std::memcpy(VALUE, result.c_str(), sizecpy);
 }
 
 
-void setRealMemory(char *GROUP, char *VARNAME, float *VALUE)
+void setFloat(char *GROUP, char *VARNAME, float *VALUE)
 {
 
     std::string group(GROUP), varname(VARNAME);
 
-    FlexibleIO::getInstance()->setRealMemory(group, varname, *VALUE);
+    FlexibleIO::getInstance()->setFloat(group, varname, *VALUE);
 
 }
 
-void setIntegerMemory(char *GROUP, char *VARNAME, int *VALUE)
+void setInteger(char *GROUP, char *VARNAME, int *VALUE)
 {
 
     std::string group(GROUP), varname(VARNAME);
 
-    FlexibleIO::getInstance()->setIntegerMemory(group, varname, *VALUE);
+    FlexibleIO::getInstance()->setInteger(group, varname, *VALUE);
 
 }
 
-void setCharMemory(char *GROUP, char *VARNAME, char  *VALUE)
+void setString(char *GROUP, char *VARNAME, char  *VALUE)
 {
 
     std::string group(GROUP), varname(VARNAME), value(VALUE);
 
-    FlexibleIO::getInstance()->setCharMemory(group, varname, value);
+    FlexibleIO::getInstance()->setString(group, varname, value);
 
 }
 
-void setRealIndexMemory(char *GROUP, char *VARNAME, float *VALUE, int *INDEX)
+void setIndexFloat(char *GROUP, char *VARNAME, float *VALUE, int *INDEX)
 {
 
     std::string group(GROUP), varname(VARNAME);
 
-    FlexibleIO::getInstance()->setRealIndexMemory(group, varname, *VALUE, *INDEX);
+    FlexibleIO::getInstance()->setIndexFloat(group, varname, *VALUE, *INDEX);
 
 }
 
-void setIntegerIndexMemory(char *GROUP, char *VARNAME, int *VALUE, int *INDEX)
+void setIndexInteger(char *GROUP, char *VARNAME, int *VALUE, int *INDEX)
 {
 
     std::string group(GROUP), varname(VARNAME);
 
-    FlexibleIO::getInstance()->setIntegerIndexMemory(group, varname, *VALUE, *INDEX);
+    FlexibleIO::getInstance()->setIndexInteger(group, varname, *VALUE, *INDEX);
 
 }
 
-void setCharIndexMemory(char *GROUP, char *VARNAME, char  *VALUE, int *INDEX)
+void setIndexString(char *GROUP, char *VARNAME, char  *VALUE, int *INDEX)
 {
 
     std::string group(GROUP), varname(VARNAME), value(VALUE);
 
-    FlexibleIO::getInstance()->setCharIndexMemory(group, varname, value, *INDEX);
+    FlexibleIO::getInstance()->setIndexString(group, varname, value, *INDEX);
 
 }
 
-void setRealYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, float *VALUE)
+void setForKeyFloat(char *GROUP, int *KEY, char *VARNAME, float *VALUE)
 {
 
-    std::string group(GROUP), yrdoy(std::to_string(*YRDOY)), varname(VARNAME);
+    std::string group(GROUP), key(std::to_string(*KEY)), varname(VARNAME);
 
-    FlexibleIO::getInstance()->setRealYrdoyMemory(group, yrdoy, varname, *VALUE);
+    FlexibleIO::getInstance()->setForKeyFloat(group, key, varname, *VALUE);
 
 }
 
-void setIntegerYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, int *VALUE)
+void setForKeyInteger(char *GROUP, int *KEY, char *VARNAME, int *VALUE)
 {
 
-    std::string group(GROUP), yrdoy(std::to_string(*YRDOY)), varname(VARNAME);
+    std::string group(GROUP), key(std::to_string(*KEY)), varname(VARNAME);
 
-    FlexibleIO::getInstance()->setIntegerYrdoyMemory(group, yrdoy, varname, *VALUE);
+    FlexibleIO::getInstance()->setForKeyInteger(group, key, varname, *VALUE);
 
 }
 
-void setCharYrdoyMemory(char *GROUP, int *YRDOY, char *VARNAME, char *VALUE)
+void setForKeyString(char *GROUP, int *KEY, char *VARNAME, char *VALUE)
 {
 
-    std::string group(GROUP), yrdoy(std::to_string(*YRDOY)), varname(VARNAME), value(VALUE);
+    std::string group(GROUP), key(std::to_string(*KEY)), varname(VARNAME), value(VALUE);
 
-    FlexibleIO::getInstance()->setCharYrdoyMemory(group, yrdoy, varname, value);
+    FlexibleIO::getInstance()->setForKeyString(group, key, varname, value);
+
+}
+
+void setFor2KeyFloat(char *GROUP, int *KEY, int *KEY2, char *VARNAME, float *VALUE)
+{
+    std::string group(GROUP);
+    std::string key(std::to_string(*KEY)), key2(std::to_string(*KEY2));
+    std::string varname(VARNAME);
+
+    FlexibleIO::getInstance()->setFor2KeyFloat(group, key, key2, varname, *VALUE);
+
+}
+
+void setFor2KeyInteger(char *GROUP, int *KEY, int *KEY2, char *VARNAME, int *VALUE)
+{
+    std::string group(GROUP);
+    std::string key(std::to_string(*KEY)), key2(std::to_string(*KEY2));
+    std::string varname(VARNAME);
+
+    FlexibleIO::getInstance()->setFor2KeyInteger(group, key, key2, varname, *VALUE);
+
+}
+
+void setFor2KeyString(char *GROUP, int *KEY, int *KEY2, char *VARNAME, char *VALUE)
+{
+    std::string group(GROUP);
+    std::string key(std::to_string(*KEY)), key2(std::to_string(*KEY2));
+    std::string varname(VARNAME), value(VALUE);
+
+    FlexibleIO::getInstance()->setFor2KeyString(group, key, key2, varname, value);
 
 }
