@@ -141,6 +141,7 @@ set(
         "InputModule/COMIBS.blk"
         "InputModule/COMSOI.blk"
         "InputModule/COMSWI.blk"
+        "InputModule/CY4KWTH.f90"
         "InputModule/input_sub.for"
         "InputModule/INSOIL.for"
         "InputModule/INSTGE.for"
@@ -156,13 +157,13 @@ set(
         "InputModule/IPSOIL_Inp.for"
         "InputModule/IPTILL.for"
         "InputModule/IPVAR.for"
-        "InputModule/MAKEFILEW.f90"
         "InputModule/OPGEN.for"
         "InputModule/OPHEAD.for"
         "InputModule/OPTEMPXY2K.for"
         "InputModule/optempy2k.for"
         "InputModule/PATH.for"
         "InputModule/WEATHR_Inp.for"
+        "InputModule/WTHFDIR.for"
         "InputModule/WTHSET.for"
         "InputModule/SECLI.for"
         "InputModule/SECROP.for"
@@ -662,7 +663,9 @@ set(
     CXX_SRC_LIST
         "FlexibleIO/Data/FlexibleIO.cpp" 
         "FlexibleIO/Interface/CInterface.cpp"
-        "FlexibleIO/Input/InputWeather.cpp" 
+        "FlexibleIO/Input/IPWTHDCSV.cpp"
+        "FlexibleIO/Input/IPWTHDTXT.cpp" 
+        "FlexibleIO/Input/IPWTHHTXT.cpp"
 
 )
 
