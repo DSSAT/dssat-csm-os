@@ -206,6 +206,8 @@ C     The components are copied into local variables for use here.
       IF (RNMODE .EQ. 'Y') THEN
         SELECT CASE (MEWTH)
           CASE ('M')
+          CASE ('C')
+          CASE ('H')
           CASE ('G')
             READ (LUNIO,'(15X,A12,1X,A80)',IOSTAT=ERR) 
      &        FILEWG, PATHWTG
@@ -220,6 +222,8 @@ C     The components are copied into local variables for use here.
 !       In any case, need to keep separate weather file names
         SELECT CASE (MEWTH)
           CASE ('M')
+          CASE ('C')
+          CASE ('H')
           CASE ('G')
             FILEWG = FILEW
             PATHWTG = PATHWTW
@@ -243,7 +247,7 @@ C     The components are copied into local variables for use here.
       ENDIF
 
 !     Detect name of weather file based on MEWTH
-      IF (INDEX('M',MEWTH) .GT. 0 .OR. SOURCE .EQ. 'FORCST') THEN
+      IF (INDEX('MCH',MEWTH) .GT. 0 .OR. SOURCE .EQ. 'FORCST') THEN
         WFile = FILEW
         WPath = PATHWTW
       ELSEIF (INDEX('G',MEWTH) .GT. 0 .AND. SOURCE .EQ. 'WEATHR') THEN
@@ -339,20 +343,27 @@ C     The components are copied into local variables for use here.
         WINDHT= -99.
         CCO2  = -99.
         
-        CALL FILETYPE(FILEWW, RTYPE, ERRCODE)
-        CALL READ_WSTAT(FILEWW, ERRCODE)
+        NRecords = 0
+        YRSIMPREV = INCYD(YRSIM,-1)
 
-        IF(INDEX(RTYPE,'Y2K') .GT. 0 .OR.
-     &     INDEX(RTYPE,'Y4K') .GT. 0 .AND. ERRCODE .EQ. 0) THEN
-          NRecords = 0
-          YRSIMPREV = INCYD(YRSIM,-1)
+        
+        IF(MEWTH .EQ. 'M') THEN
           CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRSIMPREV,FirstWeatherDay, 
+     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+        ENDIF
+        IF(MEWTH .EQ. 'C') THEN
+          CALL READ_WTH_CSV(FILEWW,YRSIMPREV,FirstWeatherDay, 
      &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
-          IF (ERRCODE /= 0) THEN
-            CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
-            RETURN
-          ENDIF
-          IF(NRecords .EQ. MXRecords) LongFile = .TRUE.
+        ENDIF
+        IF(MEWTH .EQ. 'H') THEN
+          CALL READ_WTH_HOURLY(FILEWW,YRSIMPREV,FirstWeatherDay, 
+     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+        ENDIF
+    
+        IF(NRecords .EQ. MXRecords) LongFile = .TRUE.
+        IF(ERRCODE /= 0) THEN
+          CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
+          RETURN
         ENDIF
         
         CALL fio % get('WTH', 'INSI', INSI)
@@ -418,8 +429,20 @@ C       Substitute default values if REFHT or WINDHT are missing.
 !       Starting over with long file -- same file, but need to read
 !       from top or starting a historical ensemble for forecast mode.
         NRecords = 0
-        CALL READ_WTH_Y2_4K(FILEWW, RTYPE, YRDOY, FirstWeatherDay, 
+        
+        IF(MEWTH .EQ. 'M') THEN
+          CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRDOY,FirstWeatherDay, 
+     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+        ENDIF
+        IF(MEWTH .EQ. 'C') THEN
+          CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
      &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+        ENDIF
+        IF(MEWTH .EQ. 'H') THEN
+          CALL READ_WTH_HOURLY(FILEWW,YRDOY,FirstWeatherDay, 
+     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+        ENDIF
+        
         IF (ERRCODE /= 0) THEN
           CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
         RETURN
@@ -427,10 +450,22 @@ C       Substitute default values if REFHT or WINDHT are missing.
         
       ELSEIF (LongFile .AND. YRDOY > LastWeatherDay) THEN
 !       Need to get next batch of records from long file
-        NRecords = 0
         YRSIMPREV = INCYD(YRSIM,-1)
-        CALL READ_WTH_Y2_4K(FILEWW, RTYPE, YRSIMPREV,FirstWeatherDay, 
+        NRecords = 0
+        
+        IF(MEWTH .EQ. 'M') THEN
+          CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRSIMPREV,FirstWeatherDay, 
+     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+        ENDIF
+        IF(MEWTH .EQ. 'C') THEN
+          CALL READ_WTH_CSV(FILEWW,YRSIMPREV,FirstWeatherDay, 
      &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+        ENDIF
+        IF(MEWTH .EQ. 'H') THEN
+          CALL READ_WTH_HOURLY(FILEWW,YRSIMPREV,FirstWeatherDay, 
+     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+        ENDIF
+        
         IF (ERRCODE /= 0) THEN
           CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
           RETURN
@@ -571,16 +606,19 @@ C     Send labels and values to OPSUM
           
           WSTAT = WFile(1:8)
           CALL PUT('WEATHER','WSTA',WSTAT)
-            
-          IF(INDEX(RTYPE,'Y2K') .GT. 0 .OR.
-     &       INDEX(RTYPE,'Y4K') .GT. 0 .AND. ERRCODE .EQ. 0) THEN
-            NRecords = 0
-            CALL READ_WTH_Y2_4K(FILEWW, RTYPE, YRDOY, FirstWeatherDay, 
+    
+          NRecords = 0
+          IF(MEWTH .EQ. 'M') THEN
+            CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRDOY,FirstWeatherDay, 
+     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+          ENDIF
+          IF(MEWTH .EQ. 'C') THEN
+            CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
      &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
-            IF (ERRCODE /= 0) THEN
-              CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
-              RETURN
-            ENDIF
+          ENDIF
+          IF(MEWTH .EQ. 'H') THEN
+            CALL READ_WTH_HOURLY(FILEWW,YRDOY,FirstWeatherDay, 
+     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
           ENDIF
 ! FLEXIBLEIO - Ends
           LastFileW = WFile
@@ -593,8 +631,19 @@ C     Send labels and values to OPSUM
         ELSEIF (LongFile) THEN
 !       Need to get next batch of records from long file
           NRecords = 0
-          CALL READ_WTH_Y2_4K(FILEWW, RTYPE, YRDOY, FirstWeatherDay, 
-     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          IF(MEWTH .EQ. 'M') THEN
+            CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRDOY,FirstWeatherDay, 
+     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+          ENDIF
+          IF(MEWTH .EQ. 'C') THEN
+            CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
+     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          ENDIF
+          IF(MEWTH .EQ. 'H') THEN
+            CALL READ_WTH_HOURLY(FILEWW,YRDOY,FirstWeatherDay, 
+     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          ENDIF
+
           IF (ERRCODE /= 0) THEN
             CALL WeatherError(CONTROL,ERRCODE,FILEWW,0,YRSIM,YREND)
             RETURN
