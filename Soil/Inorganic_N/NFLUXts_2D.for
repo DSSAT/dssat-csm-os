@@ -38,6 +38,9 @@
       contains
 
 !==========================================================================
+!     This subroutine is called once per day to aggregate the soil N fluxes
+!     for daily model.
+!==========================================================================
       SUBROUTINE NFLUX_2D (DYNAMIC,
      &  CELLS, SNO3_2D, SOILPROP, UREA_2D,              !Input
      &  CLeach, TLeachD, DLTSNO3_2D, DLTUREA_2D)        !Output

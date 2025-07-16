@@ -49,7 +49,7 @@ C=======================================================================
 !     USE ModuleDefs !already USED by Cells_2D
       USE Cells_2D
       IMPLICIT  NONE
-      EXTERNAL PT_IPROOT_2D, AGGREGATE_ROOTS, PT_OPROOTS_2D, 
+      EXTERNAL PT_IPROOT_2D, AGGREGATE_ROOTS, !PT_OPROOTS_2D, 
      &  PT_INROOT_2D
       SAVE
 
@@ -161,9 +161,9 @@ C=======================================================================
       LastRow = 1
       LastCol = 1
 
-      CALL PT_OPRoots_2D(TotRootMass, RLWR,RLV_2D,RLV,DepFrac, WidFrac, 
-     &    Thick, Width, RTDEP, RTWID, RTWIDr, CumRootMass, RTMasSenes,
-     &    GRORT, DTT, SDEPTH, LastRow, LastCol)
+!      CALL PT_OPRoots_2D(TotRootMass, RLWR,RLV_2D,RLV,DepFrac, WidFrac, 
+!     &    Thick, Width, RTDEP, RTWID, RTWIDr, CumRootMass, RTMasSenes,
+!     &    GRORT, DTT, SDEPTH, LastRow, LastCol)
 
 !***********************************************************************
 !***********************************************************************
@@ -738,246 +738,246 @@ C-----------------------------------------------------------------------
 !=======================================================================
 
 
-!=======================================================================
-!  OPRoots_2D, Subroutine, C.H.Porter from Soil Water portions of OPDAY
-!  Generates output for daily soil water data
-!-----------------------------------------------------------------------
-!  REVISION       HISTORY
-!  07/02/2009 CHP Written
-!-----------------------------------------------------------------------
-!  Called from:   WatBal2D
-!  Calls:         None
-!=======================================================================
-      SUBROUTINE PT_OPRoots_2D(TotRootMass, RLWR,RLV_2D, RLV,DepFrac, 
-      !                              kg/ha,  cm/g, cm/cm3, cm/cm3
-     &   WidFrac, Thick, Width, RTDEP, RTWID, RTWIDr, CumRootMass,
-     &  RTMasSenes, GRORT, DTT, SDEPTH, LastRow, LastCol)
-
-!-----------------------------------------------------------------------
-      USE Cells_2D
-      USE ModuleData
-      IMPLICIT NONE
-      EXTERNAL YR_DOY, GETLUN, HEADER, INCDAT
-      SAVE
-      
-      INTEGER LastRow, LastCol
-
-      REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: RLV_2D,Thick,Width
-      REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: DepFrac, WidFrac
-      REAL, INTENT(IN) :: TotRootMass, RLWR, RTDEP, RTWID, CumRootMass
-      REAL RTMasSenes, GRORT, DTT, SDEPTH 
-      REAL, DIMENSION(MaxRows), INTENT(IN) :: RTWIDr, RLV
-
-      CHARACTER*1 IDETG, IDETL, RNMODE
-      CHARACTER*13 OUTRoot1
-      CHARACTER*14 OUTRoot2, OUTRoot3
-!     CHARACTER*7 FileName
-      !PARAMETER (OUTRoot1 = 'PT_RLV_2D.OUT')
-      CHARACTER*17 FMT
-
-      INTEGER COL, DAS, DOY, DYNAMIC, ERRNUM, FROP
-      INTEGER NOUTRLV, NOUTDPF, NOUTWDF, ROW, RUN
-      INTEGER YEAR, YRDOY, REPNO, YRSTART, INCDAT
-
-      LOGICAL FEXIST, DOPRINT
-
-!-----------------------------------------------------------------------
-!     Define constructed variable types based on definitions in
-!     ModuleDefs.for.
-      TYPE (ControlType) CONTROL
-      TYPE (SwitchType)  ISWITCH
-      
-      CALL GET(CONTROL)
-
-      DAS     = CONTROL % DAS
-      DYNAMIC = CONTROL % DYNAMIC
-      FROP    = CONTROL % FROP
-      RUN     = CONTROL % RUN
-      RNMODE  = CONTROL % RNMODE
-      REPNO   = CONTROL % REPNO
-      YRDOY   = CONTROL % YRDOY
-
-      CALL YR_DOY(YRDOY, YEAR, DOY) 
-
-!***********************************************************************
-!***********************************************************************
-!     Seasonal initialization - run once per season
-!***********************************************************************
-      IF (DYNAMIC == SEASINIT) THEN
-!-----------------------------------------------------------------------
-!   Set initial values to calculate average values
-!-----------------------------------------------------------------------
-      CALL GET(ISWITCH)
-      IDETL   = ISWITCH % IDETL
-      IDETG   = ISWITCH % IDETG
-
-      IF (IDETG == 'N' .OR. IDETL == '0') THEN
-        DOPRINT = .FALSE.
-      ELSE
-        DOPRINT = .TRUE.
-      ENDIF
-      IF (.NOT. DOPRINT) RETURN
-
-!-----------------------------------------------------------------------
-!   Generate headings for output file
-!-----------------------------------------------------------------------
-      OUTRoot1 = 'PT_RLV_2D.OUT'
-      CALL GETLUN('OUTRoot1',  NOUTRLV)
-      INQUIRE (FILE = OUTRoot1, EXIST = FEXIST)
-      IF (FEXIST) THEN
-        OPEN (UNIT = NOUTRLV, FILE = OUTRoot1, STATUS = 'OLD',
-     &    IOSTAT = ERRNUM, POSITION = 'APPEND')
-      ELSE
-        OPEN (UNIT = NOUTRLV, FILE = OUTRoot1, STATUS = 'NEW',
-     &    IOSTAT = ERRNUM)
-        WRITE(NOUTRLV,'("*2D Cell Root RLV_2D DAILY OUTPUT FILE")')
-      ENDIF
-
-      OUTRoot2 = 'PT_DepFrac.OUT'
-      CALL GETLUN('OUTRoot2', NOUTDPF)
-      INQUIRE (FILE = OUTRoot2, EXIST = FEXIST)
-      IF (FEXIST) THEN
-        OPEN (UNIT = NOUTDPF, FILE = OUTRoot2, STATUS = 'OLD',
-     &    IOSTAT = ERRNUM, POSITION = 'APPEND')
-      ELSE
-        OPEN (UNIT = NOUTDPF, FILE = OUTRoot2, STATUS = 'NEW',
-     &    IOSTAT = ERRNUM)
-        WRITE(NOUTDPF,'("*2D Cell ROOTS DepFrac DAILY OUTPUT FILE")')
-      ENDIF
-
-      OUTRoot3 = 'PT_WidFrac.OUT'
-      CALL GETLUN('OUTRoot3', NOUTWDF)
-      INQUIRE (FILE = OUTRoot3, EXIST = FEXIST)
-      IF (FEXIST) THEN
-        OPEN (UNIT = NOUTWDF, FILE = OUTRoot3, STATUS = 'OLD',
-     &    IOSTAT = ERRNUM, POSITION = 'APPEND')
-      ELSE
-        OPEN (UNIT = NOUTWDF, FILE = OUTRoot3, STATUS = 'NEW',
-     &    IOSTAT = ERRNUM)
-        WRITE(NOUTWDF,'("*2D Cell ROOTS WiDFrac DAILY OUTPUT FILE")')
-      ENDIF
-
-!-----------------------------------------------------------------------
-!     Variable heading for WATER.OUT
-!-----------------------------------------------------------------------
-      IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
-        IF (RNMODE .EQ. 'Q') THEN
-          CALL HEADER(SEASINIT, NOUTRLV, REPNO)
-          CALL HEADER(SEASINIT, NOUTDPF, REPNO)
-          CALL HEADER(SEASINIT, NOUTWDF, REPNO)
-        ELSE
-          CALL HEADER(SEASINIT, NOUTRLV, RUN)
-          CALL HEADER(SEASINIT, NOUTDPF, REPNO)
-          CALL HEADER(SEASINIT, NOUTWDF, REPNO)
-        ENDIF
-        Write(NOUTRLV,'(" Seed Depth     : ",F10.2,
-     &        " cm")') SDEPTH
-        Write(NOUTDPF,'(" Seed Depth     : ",F10.2,
-     &        " cm")') SDEPTH
-        Write(NOUTWDF,'(" Seed Depth is  : ",F10.2,
-     &        " cm")') SDEPTH
-        YRSTART = YRDOY
-        CALL YR_DOY(INCDAT(YRSTART,-1),YEAR,DOY)
-      ENDIF
-
-!***********************************************************************
-!***********************************************************************
-      ENDIF !DYNAMIC CONTROL
-!***********************************************************************
-!***********************************************************************
-!     Daily Output
-!***********************************************************************
-      IF (DYNAMIC == SEASINIT .OR. DYNAMIC == OUTPUT .OR. 
-     &      DYNAMIC == SEASEND) THEN
-!-----------------------------------------------------------------------
-      IF (DOPRINT) THEN
-!           Print initial conditions, 
-        IF (DYNAMIC == SEASINIT .OR.
-!           Print every FROP days, and
-     &     (DYNAMIC .EQ. OUTPUT .AND. MOD(DAS, FROP) .EQ. 0) .OR. 
-!           Print on last day if not already done.
-     &     (DYNAMIC .EQ. SEASEND  .AND. MOD(DAS, FROP) .NE. 0)) THEN
-
-          Write(NOUTRLV,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
-     &          DOY, DAS
-          Write(NOUTRLV,'("CumRootMass based on GRART=",F8.2,
-     &        " kg/ha")') CumRootMass
-          Write(NOUTRLV,'("Root Mass based on RLV = ",F10.2," kg/ha")')
-     &          TotRootMass
-          Write(NOUTRLV,'("Root Mass Senes        = ",F10.2," kg/ha")')
-     &          RTMasSenes
-          Write(NOUTRLV,'("Root L:M ratio =",F10.2," cm/g")') RLWR
-          Write(NOUTRLV,'("Grow Rate (GRORT) :",F10.2,"g/plant; 
-     &     Growing degree days (DTT)", F6.2)') GRORT, DTT
-          Write(NOUTRLV,'("Width(cm)->",20F10.3)') 
-     &                  (width(1,Col),Col = 1, NColsTOT)
-          Write(NOUTRLV,'("      Thick")') 
-          Write(NOUTRLV,'("Lyr    (cm)   ------- ",
-     &      "RLV (cm[root]/cm3[soil] -------")')
-          WRITE(FMT,'("(I3,F8.1,",I2,"F10.4)")') (NColsTot+1) 
-          DO Row = 1, NRowsTot  
-            Write(NOUTRLV,FMT)  Row, Thick(Row,1),     
-     &     (RLV_2D(Row,Col),Col = 1, NColsTOT), RLV(Row)
-          Enddo 
-          
-!         Output DepFrac
-          Write(NOUTDPF,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
-     &             DOY, DAS
-          Write(NOUTDPF,'("Root Depth =    ",F10.2," cm")') RTDep
-          Write(NOUTDPF,'("Last Row =    ", I2)') LastRow
-          Write(NOUTDPF,'("  Column ->",20I10)') (Col, Col=1, NColsTOT)
-          Write(NOUTDPF,'("Width(cm)->",20F10.3)') 
-     &                  (width(1,Col),Col = 1, NColsTOT)
-          Write(NOUTDPF,'("      Thick")') 
-          Write(NOUTDPF,'("Lyr    (cm)   ------- ",
-     &      "DepFrac -------")')
-          WRITE(FMT,'("(I3,F8.1,",I2,"F10.4)")') NColsTot 
-          DO Row = 1, NRowsTot  
-            Write(NOUTDPF,FMT)     
-     &      Row, Thick(Row,1), (DepFrac(Row,Col),Col = 1, NColsTOT) 
-          Enddo 
-          
-!         Out put WidFrac
-          Write(NOUTWDF,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
-     &             DOY, DAS
-          Write(NOUTWDF,'("Root Width =",F10.2," cm")') RTWid
-          Write(NOUTWDF,'("Last Col =    ", I2)') LastCol
-!         Write(NOUTWDF,'("  Column ->",8I10, A14)') 
-!     &      (Col, Col=1, NColsTOT), "   RTWidth(Row)"
-          Write(NOUTWDF,'("Width(cm)->",20F10.3)') 
-     &                  (width(1,Col),Col = 1, NColsTOT)
-          Write(NOUTWDF,'("      Thick")') 
-          Write(NOUTWDF,'("Lyr    (cm)   ------- ",
-     &      "WidFrac -------")')
-          WRITE(FMT,'("(I3,F8.1,",I2,"F10.4)")') (NColsTot +1) 
-          DO Row = 1, NRowsTot  
-            Write(NOUTWDF,FMT)  Row, Thick(Row,1),    
-     &      (WidFrac(Row,Col),Col = 1, NColsTOT), RTWIDr(Row)
-          Enddo 
-
-        ENDIF
-      ENDIF
-
-!***********************************************************************
-!***********************************************************************
-!     SEASEND - Sesaonal Output
-!***********************************************************************
-        IF (DYNAMIC .EQ. SEASEND) THEN
-!-----------------------------------------------------------------------
-            !Close daily output files.
-            CLOSE (NOUTRLV)
-            CLOSE (NOUTDPF)
-            CLOSE (NOUTWDF)
-        ENDIF
-!***********************************************************************
-!***********************************************************************
-!     END OF DYNAMIC IF CONSTRUCT
-!***********************************************************************
-      ENDIF
-!***********************************************************************
-      RETURN
-      END SUBROUTINE PT_OPRoots_2D
-!=======================================================================
+!!=======================================================================
+!!  OPRoots_2D, Subroutine, C.H.Porter from Soil Water portions of OPDAY
+!!  Generates output for daily soil water data
+!!-----------------------------------------------------------------------
+!!  REVISION       HISTORY
+!!  07/02/2009 CHP Written
+!!-----------------------------------------------------------------------
+!!  Called from:   WatBal2D
+!!  Calls:         None
+!!=======================================================================
+!      SUBROUTINE PT_OPRoots_2D(TotRootMass, RLWR,RLV_2D, RLV,DepFrac, 
+!      !                              kg/ha,  cm/g, cm/cm3, cm/cm3
+!     &   WidFrac, Thick, Width, RTDEP, RTWID, RTWIDr, CumRootMass,
+!     &  RTMasSenes, GRORT, DTT, SDEPTH, LastRow, LastCol)
+!
+!!-----------------------------------------------------------------------
+!      USE Cells_2D
+!      USE ModuleData
+!      IMPLICIT NONE
+!      EXTERNAL YR_DOY, GETLUN, HEADER, INCDAT
+!      SAVE
+!      
+!      INTEGER LastRow, LastCol
+!
+!      REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: RLV_2D,Thick,Width
+!      REAL, DIMENSION(MaxRows,MaxCols), INTENT(IN) :: DepFrac, WidFrac
+!      REAL, INTENT(IN) :: TotRootMass, RLWR, RTDEP, RTWID, CumRootMass
+!      REAL RTMasSenes, GRORT, DTT, SDEPTH 
+!      REAL, DIMENSION(MaxRows), INTENT(IN) :: RTWIDr, RLV
+!
+!      CHARACTER*1 IDETG, IDETL, RNMODE
+!      CHARACTER*13 OUTRoot1
+!      CHARACTER*14 OUTRoot2, OUTRoot3
+!!     CHARACTER*7 FileName
+!      !PARAMETER (OUTRoot1 = 'PT_RLV_2D.OUT')
+!      CHARACTER*17 FMT
+!
+!      INTEGER COL, DAS, DOY, DYNAMIC, ERRNUM, FROP
+!      INTEGER NOUTRLV, NOUTDPF, NOUTWDF, ROW, RUN
+!      INTEGER YEAR, YRDOY, REPNO, YRSTART, INCDAT
+!
+!      LOGICAL FEXIST, DOPRINT
+!
+!!-----------------------------------------------------------------------
+!!     Define constructed variable types based on definitions in
+!!     ModuleDefs.for.
+!      TYPE (ControlType) CONTROL
+!      TYPE (SwitchType)  ISWITCH
+!      
+!      CALL GET(CONTROL)
+!
+!      DAS     = CONTROL % DAS
+!      DYNAMIC = CONTROL % DYNAMIC
+!      FROP    = CONTROL % FROP
+!      RUN     = CONTROL % RUN
+!      RNMODE  = CONTROL % RNMODE
+!      REPNO   = CONTROL % REPNO
+!      YRDOY   = CONTROL % YRDOY
+!
+!      CALL YR_DOY(YRDOY, YEAR, DOY) 
+!
+!!***********************************************************************
+!!***********************************************************************
+!!     Seasonal initialization - run once per season
+!!***********************************************************************
+!      IF (DYNAMIC == SEASINIT) THEN
+!!-----------------------------------------------------------------------
+!!   Set initial values to calculate average values
+!!-----------------------------------------------------------------------
+!      CALL GET(ISWITCH)
+!      IDETL   = ISWITCH % IDETL
+!      IDETG   = ISWITCH % IDETG
+!
+!      IF (IDETG == 'N' .OR. IDETL == '0') THEN
+!        DOPRINT = .FALSE.
+!      ELSE
+!        DOPRINT = .TRUE.
+!      ENDIF
+!      IF (.NOT. DOPRINT) RETURN
+!
+!!-----------------------------------------------------------------------
+!!   Generate headings for output file
+!!-----------------------------------------------------------------------
+!      OUTRoot1 = 'PT_RLV_2D.OUT'
+!      CALL GETLUN('OUTRoot1',  NOUTRLV)
+!      INQUIRE (FILE = OUTRoot1, EXIST = FEXIST)
+!      IF (FEXIST) THEN
+!        OPEN (UNIT = NOUTRLV, FILE = OUTRoot1, STATUS = 'OLD',
+!     &    IOSTAT = ERRNUM, POSITION = 'APPEND')
+!      ELSE
+!        OPEN (UNIT = NOUTRLV, FILE = OUTRoot1, STATUS = 'NEW',
+!     &    IOSTAT = ERRNUM)
+!        WRITE(NOUTRLV,'("*2D Cell Root RLV_2D DAILY OUTPUT FILE")')
+!      ENDIF
+!
+!      OUTRoot2 = 'PT_DepFrac.OUT'
+!      CALL GETLUN('OUTRoot2', NOUTDPF)
+!      INQUIRE (FILE = OUTRoot2, EXIST = FEXIST)
+!      IF (FEXIST) THEN
+!        OPEN (UNIT = NOUTDPF, FILE = OUTRoot2, STATUS = 'OLD',
+!     &    IOSTAT = ERRNUM, POSITION = 'APPEND')
+!      ELSE
+!        OPEN (UNIT = NOUTDPF, FILE = OUTRoot2, STATUS = 'NEW',
+!     &    IOSTAT = ERRNUM)
+!        WRITE(NOUTDPF,'("*2D Cell ROOTS DepFrac DAILY OUTPUT FILE")')
+!      ENDIF
+!
+!      OUTRoot3 = 'PT_WidFrac.OUT'
+!      CALL GETLUN('OUTRoot3', NOUTWDF)
+!      INQUIRE (FILE = OUTRoot3, EXIST = FEXIST)
+!      IF (FEXIST) THEN
+!        OPEN (UNIT = NOUTWDF, FILE = OUTRoot3, STATUS = 'OLD',
+!     &    IOSTAT = ERRNUM, POSITION = 'APPEND')
+!      ELSE
+!        OPEN (UNIT = NOUTWDF, FILE = OUTRoot3, STATUS = 'NEW',
+!     &    IOSTAT = ERRNUM)
+!        WRITE(NOUTWDF,'("*2D Cell ROOTS WiDFrac DAILY OUTPUT FILE")')
+!      ENDIF
+!
+!!-----------------------------------------------------------------------
+!!     Variable heading for WATER.OUT
+!!-----------------------------------------------------------------------
+!      IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
+!        IF (RNMODE .EQ. 'Q') THEN
+!          CALL HEADER(SEASINIT, NOUTRLV, REPNO)
+!          CALL HEADER(SEASINIT, NOUTDPF, REPNO)
+!          CALL HEADER(SEASINIT, NOUTWDF, REPNO)
+!        ELSE
+!          CALL HEADER(SEASINIT, NOUTRLV, RUN)
+!          CALL HEADER(SEASINIT, NOUTDPF, REPNO)
+!          CALL HEADER(SEASINIT, NOUTWDF, REPNO)
+!        ENDIF
+!        Write(NOUTRLV,'(" Seed Depth     : ",F10.2,
+!     &        " cm")') SDEPTH
+!        Write(NOUTDPF,'(" Seed Depth     : ",F10.2,
+!     &        " cm")') SDEPTH
+!        Write(NOUTWDF,'(" Seed Depth is  : ",F10.2,
+!     &        " cm")') SDEPTH
+!        YRSTART = YRDOY
+!        CALL YR_DOY(INCDAT(YRSTART,-1),YEAR,DOY)
+!      ENDIF
+!
+!!***********************************************************************
+!!***********************************************************************
+!      ENDIF !DYNAMIC CONTROL
+!!***********************************************************************
+!!***********************************************************************
+!!     Daily Output
+!!***********************************************************************
+!      IF (DYNAMIC == SEASINIT .OR. DYNAMIC == OUTPUT .OR. 
+!     &      DYNAMIC == SEASEND) THEN
+!!-----------------------------------------------------------------------
+!      IF (DOPRINT) THEN
+!!           Print initial conditions, 
+!        IF (DYNAMIC == SEASINIT .OR.
+!!           Print every FROP days, and
+!     &     (DYNAMIC .EQ. OUTPUT .AND. MOD(DAS, FROP) .EQ. 0) .OR. 
+!!           Print on last day if not already done.
+!     &     (DYNAMIC .EQ. SEASEND  .AND. MOD(DAS, FROP) .NE. 0)) THEN
+!
+!          Write(NOUTRLV,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
+!     &          DOY, DAS
+!          Write(NOUTRLV,'("CumRootMass based on GRART=",F8.2,
+!     &        " kg/ha")') CumRootMass
+!          Write(NOUTRLV,'("Root Mass based on RLV = ",F10.2," kg/ha")')
+!     &          TotRootMass
+!          Write(NOUTRLV,'("Root Mass Senes        = ",F10.2," kg/ha")')
+!     &          RTMasSenes
+!          Write(NOUTRLV,'("Root L:M ratio =",F10.2," cm/g")') RLWR
+!          Write(NOUTRLV,'("Grow Rate (GRORT) :",F10.2,"g/plant; 
+!     &     Growing degree days (DTT)", F6.2)') GRORT, DTT
+!          Write(NOUTRLV,'("Width(cm)->",20F10.3)') 
+!     &                  (width(1,Col),Col = 1, NColsTOT)
+!          Write(NOUTRLV,'("      Thick")') 
+!          Write(NOUTRLV,'("Lyr    (cm)   ------- ",
+!     &      "RLV (cm[root]/cm3[soil] -------")')
+!          WRITE(FMT,'("(I3,F8.1,",I2,"F10.4)")') (NColsTot+1) 
+!          DO Row = 1, NRowsTot  
+!            Write(NOUTRLV,FMT)  Row, Thick(Row,1),     
+!     &     (RLV_2D(Row,Col),Col = 1, NColsTOT), RLV(Row)
+!          Enddo 
+!          
+!!         Output DepFrac
+!          Write(NOUTDPF,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
+!     &             DOY, DAS
+!          Write(NOUTDPF,'("Root Depth =    ",F10.2," cm")') RTDep
+!          Write(NOUTDPF,'("Last Row =    ", I2)') LastRow
+!          Write(NOUTDPF,'("  Column ->",20I10)') (Col, Col=1, NColsTOT)
+!          Write(NOUTDPF,'("Width(cm)->",20F10.3)') 
+!     &                  (width(1,Col),Col = 1, NColsTOT)
+!          Write(NOUTDPF,'("      Thick")') 
+!          Write(NOUTDPF,'("Lyr    (cm)   ------- ",
+!     &      "DepFrac -------")')
+!          WRITE(FMT,'("(I3,F8.1,",I2,"F10.4)")') NColsTot 
+!          DO Row = 1, NRowsTot  
+!            Write(NOUTDPF,FMT)     
+!     &      Row, Thick(Row,1), (DepFrac(Row,Col),Col = 1, NColsTOT) 
+!          Enddo 
+!          
+!!         Out put WidFrac
+!          Write(NOUTWDF,'(/,"Year DOY:",I5,I4.3, ", DAS:",I3)') YEAR, 
+!     &             DOY, DAS
+!          Write(NOUTWDF,'("Root Width =",F10.2," cm")') RTWid
+!          Write(NOUTWDF,'("Last Col =    ", I2)') LastCol
+!!         Write(NOUTWDF,'("  Column ->",8I10, A14)') 
+!!     &      (Col, Col=1, NColsTOT), "   RTWidth(Row)"
+!          Write(NOUTWDF,'("Width(cm)->",20F10.3)') 
+!     &                  (width(1,Col),Col = 1, NColsTOT)
+!          Write(NOUTWDF,'("      Thick")') 
+!          Write(NOUTWDF,'("Lyr    (cm)   ------- ",
+!     &      "WidFrac -------")')
+!          WRITE(FMT,'("(I3,F8.1,",I2,"F10.4)")') (NColsTot +1) 
+!          DO Row = 1, NRowsTot  
+!            Write(NOUTWDF,FMT)  Row, Thick(Row,1),    
+!     &      (WidFrac(Row,Col),Col = 1, NColsTOT), RTWIDr(Row)
+!          Enddo 
+!
+!        ENDIF
+!      ENDIF
+!
+!!***********************************************************************
+!!***********************************************************************
+!!     SEASEND - Sesaonal Output
+!!***********************************************************************
+!        IF (DYNAMIC .EQ. SEASEND) THEN
+!!-----------------------------------------------------------------------
+!            !Close daily output files.
+!            CLOSE (NOUTRLV)
+!            CLOSE (NOUTDPF)
+!            CLOSE (NOUTWDF)
+!        ENDIF
+!!***********************************************************************
+!!***********************************************************************
+!!     END OF DYNAMIC IF CONSTRUCT
+!!***********************************************************************
+!      ENDIF
+!!***********************************************************************
+!      RETURN
+!      END SUBROUTINE PT_OPRoots_2D
+!!=======================================================================
 
 
 !-----------------------------------------------------------------------

@@ -1626,6 +1626,15 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !!     R = Rsat + (Rdry - Rsat) * exp(-c*SW)
 !!     No data to parameterize, so don't use this method.
 
+!     NOTE: albedo of plastic mulch is not considered here.
+!     - In SoilCellInit_2D.for, the initial soil albedo uses plastic mulch, 
+!       but it's not done here in the daily update. 
+!     - Note also that MSALB_2D is calculated in subroutine SETPM
+!        in this file, but it is also not updated daily.
+!     - Do we assume organic mulch cover and plastic mulch cover to
+!       be mutually exclusive? If they occur together, is organic mulch
+!       always on top of plastic mulch?
+
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
       IF (INDEX('RSM',MEINF) > 0) THEN   
 !       Update combined soil/mulch albedo
