@@ -79,10 +79,10 @@
 !          data are available. Convert old cultivars TCLDF = 15.*G5.
 
 ! FOZ1     Ozone stress factor for photosynthesis (0.00-1.00), 0.00 = off,
-!          0.10 = ozone tolerant, 0.30 = intermediate, 0.70 = sensitive
+!          0.10 = ozone tolerant, 0.30 = intermediate, 0.65 = sensitive
 
 ! SFOZ1    Ozone stress factor for leaf senescence (0.00-1.00), 0.00 = off,
-!          0.05 = ozone tolerant, 0.10 = intermediate, 0.50 = sensitive
+!          0.08 = ozone tolerant, 0.10 = intermediate, 0.12 = sensitive
 
 ! OBASE    Base mean 7-hour (M7) ozone damage threshold, default = 25.0 ppb
 

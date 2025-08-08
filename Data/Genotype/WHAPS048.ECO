@@ -49,7 +49,6 @@
 ! RTDP1 - sw effect, 0 = old version
 ! RTDP2 - crop stress effect, 0 = old version
 ! FOZ1  - ozone effect rate on photosynthesis: 0.06 = ozone tolerant, 0.10 = intermediate, 0.50 = ozone sensitive
-! FOZ2  - ozone effect initialization on photosynthesis (dependent on FOZ1): 1.015 = ozone tolerant, 1.025 = intermediate, 1.125 = ozone sensitive
 ! SFOZ1 - ozone effect rate on leaf senescence: 0.08 = ozone tolerant, 0.25 = intermediate, 0.40 = ozone sensitive
 ! OBASE - Base mean 7-hour (M7) ozone damage threshold, default = 25.0 ppb
 ! TSEN  - Critical temperature below which leaf damage occurs (default 6°C)
