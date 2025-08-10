@@ -164,6 +164,9 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR
         REAL, DIMENSION(TS) :: RADHR, RHUMHR, TAIRHR, TGRO, WINDHR
 
+!       Cumulative weather
+        REAL :: CPRED = 0.0
+        
       END TYPE WeatherType
 
 !=======================================================================

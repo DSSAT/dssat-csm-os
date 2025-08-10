@@ -6,8 +6,10 @@
   80.0  2.09 .0105                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN
   1.30  4.00  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG
   0.00 17.0  25.0  40.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG
- -10.0 -10.0  30.0  32.0  38.0  50.0       XLMAXT (6 VALUES) !8-5-22 kjb, failure on cold days,why?
-  0.01  0.01   1.0   0.8   0.1   0.0       YLMAXT (6 VALUES) !did not work with 0.0 C
+! -10.0 -10.0  30.0  32.0  38.0  50.0       XLMAXT (6 VALUES) !8-5-22 kjb, failure on cold days,why?
+!  0.01  0.01   1.0   0.8   0.1   0.0       YLMAXT (6 VALUES) !did not work with 0.0 C
+ -30.0 -10.0  30.0  32.0  38.0  50.0       XLMAXT (6 VALUES) ! 8/4/25 GH fix lowest X-value
+  0.00  0.01   1.0   0.8   0.1   0.0       YLMAXT (6 VALUES) 
 !   0.0   0.0  30.0  32.0  38.0  50.0       XLMAXT (6 VALUES)  !9/7/20
 !   0.0   0.0   1.0   0.8   0.1   0.0       YLMAXT (6 VALUES)
  -4.00  7.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG

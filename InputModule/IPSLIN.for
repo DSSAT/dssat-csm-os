@@ -13,6 +13,7 @@ C  12/01/1993 WTB Modifed to read soil test P
 C  08/19/2002 GH  Modified for Y2K
 C  02/07/2007 GH  Add path to FileX
 C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C  08/01/2025 GH Check initial water table depth .GE. 0
 C-----------------------------------------------------------------------
 C  INPUT  : FILEX,LNIC,NLAYR,DUL,SWINIT,PEDON,SLNO
 C
@@ -31,29 +32,27 @@ C=======================================================================
 
       SUBROUTINE IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &        WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
-!     &        SOM1I, SOM2I, SOM3I)
+     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) 
 
-!     2023-01-26 chp removed unused variables in argument list:
-!       YRSIM
 
       USE ModuleDefs
       IMPLICIT     NONE
-      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH
+      EXTERNAL ERROR, FIND, WARNING, IGNORE, Y4K_DOY, LMATCH
 
       CHARACTER*2  PRCROP
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*10 PEDON,SLNO
       CHARACTER*12 FILEX
+      CHARACTER*78 MSG(10)
       CHARACTER*80 CHARTEST
 	CHARACTER*92 FILEX_P
+      
 
-      INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC, !,FWY1P,
-     &             YRIC,ERRNUM,IFIND   !,YRSIM, YRICYEAR, YR, DOY
+      INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC,
+     &             YRIC,ERRNUM,IFIND
       REAL         DS(NL),DLAYRI(NL),SWINIT(NL)
       REAL         DUL(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
-      REAL         ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID !, TOTSOM
-!      REAL, DIMENSION(NL) :: SOM1I, SOM2I, SOM3I
+      REAL         ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID 
 
       TYPE (SwitchType) ISWITCH
 
@@ -128,6 +127,15 @@ C-PW     ICRES = MAX(ICRES,10.0)
          ICRID = MAX(ICRID,0.0)
 C-GH     ICRID = MAX(ICRID,15.0)
          IF (ICRIP  .LT. 0.0) ICRIP  = 100.0
+         
+C-GH  08/01/2025 Check if ICWD .GE. 0.0
+         if (ICWD .GE. 0.0) then
+            WRITE(MSG(1),'("Your initial water table depth is",F5.0,
+     &       " cm")') ICWD 
+           WRITE(MSG(2),'("Please check if this is correct")')
+           CALL WARNING(2,ERRKEY,MSG)            
+        endif
+         
       ENDIF
 
       NLAYRI = 1
@@ -241,8 +249,8 @@ C=======================================================================
      &            SASC, SAEA, NLAYR)    !, YRSIM)
 
       USE ModuleDefs
-      IMPLICIT     NONE
-      EXTERNAL ERROR, FIND, IGNORE, Y4K_DOY, LMATCH
+      IMPLICIT NONE
+      EXTERNAL ERROR, FIND, WARNING, IGNORE, Y4K_DOY, LMATCH
 
       CHARACTER*5  SMHB, SMKE, SMPX, SMHBtemp, SMKEtemp, SMPXtemp
       CHARACTER*6  ERRKEY, FINDCH

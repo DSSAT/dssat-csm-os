@@ -996,6 +996,7 @@ DAYLD  DAYLENGTH hr    Day length sunrise to sunset (hr)                        
 OZON7  Ozone ppb       Daily 7-hour mean ozone concentration (9:00-15:59), ppb  .
 PARD   PAR             Daily PAR or photon flux density (moles[quanta]/(m2.d))  .
 PRED   PRECIP mm/d     Precipitation depth (mm/d)                               .
+CPRED  Cum. PRECIP mm  Cumulative precipitation depth (mm)                      .
 SRAD   SRAD MJ/m2.d    Solar radiation (MJ/(m2.d))                              .
 TAVD   AVG TEMP oC     Average daily temperature (oC)                           .
 TDWD   DEWPOINT oC     Dewpoint temperature (oC)                                .

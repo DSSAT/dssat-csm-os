@@ -49,7 +49,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     Implicit None
     EXTERNAL DAYLEN, FIND_INP_SAM, GET_CULTIVAR_COEFF, GET_SPECIES_COEFF,     &
       PGS, ROOT_PROFILE, SC_OPGROW_SAM, SC_OPGROW_SAM_DETAILED, SC_OPHARV_SAM, SC_WATERSTRESS, SOLAR, &
-      SUBS_BALANCE, SUCROSE_CONTENT, TOTASS    
+      SUBS_BALANCE, SUCROSE_CONTENT, TOTASS, temperature_factor, tiller_senes, fgrowth,it_struc_pfac    
     
     integer     DYNAMIC         ! This is the dynamic call initialization, rate, integration (~task) (IN) 
     

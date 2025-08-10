@@ -906,7 +906,8 @@ C         Read in weather file header.
       USE ModuleDefs
       USE Forecast
       IMPLICIT NONE
-      EXTERNAL IGNORE, WEATHERERROR, Y2K_DOYW, YR_DOY, WARNING, IGNORE4
+      EXTERNAL IGNORE, WEATHERERROR, Y2K_DOYW, YR_DOY, WARNING, IGNORE4,
+     &         ERROR
       SAVE
 
       INTEGER MaxRecords

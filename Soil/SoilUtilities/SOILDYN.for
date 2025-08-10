@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2020 DSSAT Foundation
+C  COPYRIGHT 1998-2025 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      Inernational Fertilizer Development Center
 C  
@@ -33,6 +33,7 @@ C  08/12/2003 CHP Added I/O error checking
 !  01/24/2023 chp added SAEA to soil analysis in FileX for methane
 !  08/22/2023 CHP begin integration of 2D model into develop
 !  08/30/2024  FO Added WARNING message if LL > DUL > SAT.
+!  08/01/2025 GH  Add additional information for SLPF
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -453,8 +454,11 @@ C-----------------------------------------------------------------------
       IF (SLPF < 1.E-4) THEN
         SLPF = 1.0
       ELSEIF (SLPF < 0.9999) THEN
-        WRITE(MSG(1),'("Soil photosynthesis factor (SLPF) =",F5.2)')SLPF
-        CALL WARNING(1,ERRKEY,MSG)
+        WRITE(MSG(1),'("Soil photosynthesis factor (SLPF) is",F5.2)')
+     &                SLPF
+        WRITE(MSG(2),'("This will reduce your potential biomass by",
+     &                F5.2)')SLPF
+        CALL WARNING(2,ERRKEY,MSG)
       ENDIF
 
 C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB

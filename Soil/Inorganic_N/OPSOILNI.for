@@ -136,7 +136,7 @@ C-----------------------------------------------------------------------
             WRITE(NOUTDN, FRMT1, ADVANCE='NO')
 
             WRITE(FRMT2,'(A,I2.2,A)') 
-     &       '(T',SPACES,'X,"Total Inorganic N @dep(ppm):")'
+     &       '(',SPACES,'X,"Total Inorganic N @dep(ppm):")'
             WRITE(NOUTDN, FRMT2)
 
             WRITE(NOUTDN,'("!",T132,30A8)')

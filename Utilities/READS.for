@@ -310,7 +310,7 @@ C                     the last line read by the IGNORE3 routine
 C=======================================================================
       SUBROUTINE IGNORE3(LUN,LINEXP,ISECT,CHARTEST)
       CHARACTER CHARTEST*(*), TAB
-      INTEGER LUN,LINEXP,ISECT, Length, I
+      INTEGER LUN,LINEXP,ISECT, Length
 !     CHARACTER BLANK*80
 !     DATA BLANK/'                                                    '/
 C----------------------------------------------------------------------------
@@ -387,7 +387,7 @@ C
       SUBROUTINE IGNORE4(LUN,LINEXP,ISECT,CHARTEST)
 
       CHARACTER BLANK*(80),CHARTEST*(*), TAB
-      INTEGER   LENGTH, LUN,LINEXP,ISECT, I
+      INTEGER   LENGTH, LUN,LINEXP,ISECT
       DATA BLANK/'                                                    '/
 
       LENGTH = LEN(CHARTEST)

@@ -1096,7 +1096,7 @@ Subroutine CsvOutPlNMzCer(EXCODE, RUNRUNI, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
 end Subroutine CsvOutPlNMzCer
 !------------------------------------------------------------------------------
 ! Sub for weather.csv output
-Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
+Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, CPRED,&
    DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG, TDAY, TDEW, TGROAV, &
    TGRODY, WINDSP, CO2, VPDF, vpd_transp, Csvline, pCsvline, lngth) 
     
@@ -1106,7 +1106,7 @@ Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
 !  INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
 !  INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
 !  INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #  
-   REAL,Intent(IN) :: RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG
+   REAL,Intent(IN) :: RAIN, CPRED, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG
    REAL,Intent(IN) :: TDAY, TDEW, TGROAV, TGRODY, WINDSP, CO2, VPDF, vpd_transp
   
    Character(:), allocatable, Target, Intent(Out) :: Csvline
@@ -1116,8 +1116,8 @@ Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
    Character(Len=400) :: tmp      
 !  End of vars
 
-   Write(tmp,'(24(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
-     DAS, RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG, TDAY, TDEW, &
+   Write(tmp,'(25(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+     DAS, RAIN, CPRED, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG, TDAY, TDEW, &
      TGROAV, TGRODY, WINDSP, CO2, VPDF, vpd_transp
       
    lngth = Len(Trim(Adjustl(tmp)))

@@ -122,6 +122,11 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                  Fortran "-mmacosx-version-min=10.10.0"
                 )
 
+# Disable Ifort deprecated message
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "/Qdiag-disable:10448"
+                )
+
 ####################
 ### LINKER FLAGS ###
 ####################

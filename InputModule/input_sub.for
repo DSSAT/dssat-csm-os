@@ -223,7 +223,7 @@ C-----------------------------------------------------------------------
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
          CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &        WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
+     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)
          IF (ISIMI .EQ. 'I') THEN
            IF (YRIC .LT. YRSIM .AND. YRIC .GT. 0) THEN
              YRSIM = YRIC
@@ -276,7 +276,7 @@ C-----------------------------------------------------------------------
                   CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,
      &                 PRCROP,WRESR,WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,
      &                 SWINIT,INH4,INO3,ISWITCH,
-     &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)    !,YRSIM) 
+     &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)
                   CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, 
      &            OC, PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
      &            SASC, SAEA, NLAYR)    !, YRSIM)

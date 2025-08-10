@@ -7,8 +7,9 @@ C  03/21/2002 CHP Written
 C  09/03/2004 CHP Modified call to GETPUT_CONTROL 
 C  03/22/2005 CHP Added option to suppress Warning.OUT messages with 
 C                 IDETL = 0 (zero).
-!  05/04/2005 CHP Added date to warning message.
-!  01/11/2007 CHP Changed GETPUT calls to GET and PUT
+C  05/04/2005 CHP Added date to warning message.
+C  01/11/2007 CHP Changed GETPUT calls to GET and PUT
+C  08/01/2025 GH  Write Year and date only when available
 C=======================================================================
 
       SUBROUTINE WARNING (ICOUNT, ERRKEY, MESSAGE)
@@ -97,7 +98,12 @@ C=======================================================================
 
 !       Print the warning.  Message is sent from calling routine as text.
         CALL YR_DOY(YRDOY, YEAR, DOY)
-        WRITE(LUN,'(/,1X,A,"  YEAR DOY = ",I4,1X,I3)')ERRKEY,YEAR,DOY
+C-GH 08/01/2025
+        if (YEAR .LE. 0) then
+           WRITE(LUN,'(/,1X,A)') ERRKEY
+            else
+          WRITE(LUN,'(/,1X,A,"  YEAR DOY = ",I4,1X,I3)') ERRKEY,YEAR,DOY
+        endif
         DO I = 1, ICOUNT
           WRITE(LUN,'(1X,A78)') MESSAGE(I)
         ENDDO

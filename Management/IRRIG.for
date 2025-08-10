@@ -913,12 +913,20 @@ C-----------------------------------------------------------------------
       IF (DSOIL < 1) THEN
         DSOIL = 30.
       ENDIF
-      IF (THETAC < 1) THEN
-        THETAC = 50.
-      ENDIF
+
+!     For E and T methods, THETAC is not used, but it must still be > THETAU
+      SELECT CASE (IIRRI)
+        CASE ('E', 'T')
+          THETAC = 1.
+        CASE DEFAULT
+          IF (THETAC < 1) THEN
+            THETAC = 50.
+          ENDIF
+      END SELECT
       IF (THETAU < THETAC) THEN
         THETAU = 100.
       ENDIF
+
       IF (AIRAMT < 0) THEN
         AIRAMT = 0.
       ENDIF
