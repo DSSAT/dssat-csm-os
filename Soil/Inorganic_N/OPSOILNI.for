@@ -28,8 +28,10 @@ C  08/20/2002 GH  Modified for Y2K
 !     VSH
       USE CsvOutput 
       USE Linklist
+      USE SumModule
+
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, INCDAT, SUMVALS, YR_DOY
+      EXTERNAL GETLUN, HEADER, INCDAT, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
 

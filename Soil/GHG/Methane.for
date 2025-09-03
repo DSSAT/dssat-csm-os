@@ -68,6 +68,19 @@ C***********************************************************************
 C-----------------------------------------------------------------------
       FirstTime = .TRUE.
 
+      IF (ISWITCH % ISWNIT .EQ. 'N') THEN
+        CH4_data % CO2emission    = -99.
+        CH4_data % CH4Emission    = -99.
+        CH4_data % CH4Consumption = -99.
+        CH4_data % CH4Leaching    = -99.
+        CH4_data % CumCO2Emission = -99.
+        CH4_data % CumCH4Emission = -99.
+        CH4_data % CumCH4Consumpt = -99.
+        CH4_data % CumCH4Leaching = -99.
+        CumCH4Emission = -99.
+        RETURN
+      ENDIF
+
       TCO2 = 0.0
       TCH4 = 0.0
       newCO2Tot = 0.0
@@ -130,6 +143,8 @@ C     Rate Calculations
 C***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 C-----------------------------------------------------------------------
+      IF (ISWITCH % ISWNIT .EQ. 'N') RETURN
+
       CO2emission = 0.0
       CH4emission = 0.0
       CH4Consumption = 0.0
@@ -294,6 +309,8 @@ C     Daily integration
 C***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 C-----------------------------------------------------------------------
+      IF (ISWITCH % ISWNIT .EQ. 'N') RETURN
+
 !     Calculate emissions from dissolved CH4 on draining
       if (FLOOD.gt.0.0) then
         CH4Stored = meth%Storage !chp * 12. * 10.	! kgC/ha
@@ -381,8 +398,10 @@ C  07/02/2021 CHP Written
 
 !-------------------------------------------------------------------
       USE ModuleDefs
+      USE SumModule
+
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, SUMVALS, YR_DOY
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       TYPE (ControlType) CONTROL

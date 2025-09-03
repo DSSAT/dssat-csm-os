@@ -329,7 +329,7 @@ C=======================================================================
       USE ModuleData
       USE SumModule
       IMPLICIT NONE
-      EXTERNAL ERROR, GETLUN, FIND, IGNORE, SUMVALS, CFACT
+      EXTERNAL ERROR, GETLUN, FIND, IGNORE, CFACT
 
       CHARACTER BLANK*1,FILEW*12,FILEWW*92,LINE*100
       CHARACTER*6 ERRKEY,FINDCH
@@ -514,7 +514,7 @@ C=======================================================================
       USE ModuleData
       USE SumModule
       IMPLICIT NONE
-      EXTERNAL ERROR, GETLUN, FIND, IGNORE, SUMVALS, CFACT, AVG, 
+      EXTERNAL ERROR, GETLUN, FIND, IGNORE, CFACT, AVG, 
      &  FOURCF, FOURIN
 
       CHARACTER BLANK*1,FILEW*12,FILEWW*92,LINE*100

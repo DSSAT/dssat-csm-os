@@ -42,17 +42,17 @@ C=======================================================================
 !     Variables not used:
 !     KSEVAP, KTRANS, HARVFRAC, 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-        ! which contain control information, soil
-        ! parameters, hourly weather data.
+      USE ModuleDefs
       USE ModuleData
+      USE SumModule
+
       IMPLICIT NONE
       EXTERNAL FOR_IPPLNT, FOR_PHOTO, FOR_PHENOL, FOR_DORMANCY,
      &  FOR_PEST, FOR_DEMAND, FOR_INCOMP, FOR_SENMOB, FOR_NUPTAK,
      &  FOR_NFIX, FOR_PODS, FOR_PODDET, FOR_CH2OREF, FOR_VEGGR,
      &  FOR_ROOTS, FOR_GROW, for_opgrow, for_mobil,
      &  for_opmob, FOR_RESPIR, FOR_FREEZE, FORAGE_HARVEST,
-     &  SUMVALS, FOR_PLANTNBAL, FOR_HRES_CGRO
+     &  FOR_PLANTNBAL, FOR_HRES_CGRO
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 DETACH, IDETO, ISWNIT, ISWSYM,

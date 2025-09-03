@@ -15,11 +15,11 @@
      &    SOILPROP, Ki_AVAIL, SKiAvlProf, SkiTotProf) 
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE SumModule
+
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, INCDAT, YR_DOY, SUMVALS
+      EXTERNAL GETLUN, HEADER, INCDAT, YR_DOY
       SAVE
 
       CHARACTER*1  ISWPOT, RNMODE

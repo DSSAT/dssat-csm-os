@@ -21,12 +21,14 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       USE FloodModule
+      USE SumModule
+
 !     VSH
       USE CsvOutput
       USE Linklist
 
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT, RNMODE

@@ -228,6 +228,34 @@ C
          ISWTIL = UPCASE(ISWTIL)
          ICO2   = UPCASE(ICO2)
 
+         SELECT CASE (CROP)
+           CASE ('BN','SB','PN','PE','CH','PP','GY',
+     &              'VB','CP','CB','FB','GB','LT','AL',
+     &              'CV','BG')
+!          Do nothing -- these crops fix N and can have Y or N
+           CASE DEFAULT; ISWSYM = 'N'  !other crops, no choice
+         END SELECT
+!        ENDIF
+         IF (ISWCHE .EQ. ' ') THEN
+            ISWCHE = 'N'
+         ENDIF
+         IF (ISWTIL .EQ. ' ') THEN
+            ISWTIL = 'N'
+         ENDIF
+         IF (ISWWAT .EQ. 'N') THEN
+            ISWNIT = 'N'
+            ISWPHO = 'N'
+!            ISWCHE = 'N'
+         ENDIF
+
+         IF (INDEX('FNQS',RNMODE) > 0) THEN
+!          For sequence, seasonal runs, default CO2 uses static value
+           IF (INDEX ('WMD', ICO2) < 1) ICO2 = 'D'
+         ELSE
+!          For experimental runs, default CO2 uses measured values
+           IF (INDEX ('WMD', ICO2) < 1) ICO2 = 'M'
+         ENDIF
+
 !     ==============================================================
 C        Read THIRD line of simulation control - METHODS
 C

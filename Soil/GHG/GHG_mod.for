@@ -110,12 +110,21 @@ C-----------------------------------------------------------------------
       ISWWAT = ISWITCH % ISWWAT
       ISWNIT = ISWITCH % ISWNIT
 
-      N2_emitted   = 0.0
-      N2O_emitted  = 0.0
-      NO_emitted   = 0.0
-      CN2_emitted  = 0.0
-      CN2O_emitted = 0.0
-      CNO_emitted  = 0.0
+      IF (ISWNIT .EQ. 'N') THEN
+        N2_emitted   = -99.
+        N2O_emitted  = -99.
+        NO_emitted   = -99.
+        CN2_emitted  = -99.
+        CN2O_emitted = -99.
+        CNO_emitted  = -99.
+      ELSE
+        N2_emitted   = 0.0
+        N2O_emitted  = 0.0
+        NO_emitted   = 0.0
+        CN2_emitted  = 0.0
+        CN2O_emitted = 0.0
+        CNO_emitted  = 0.0
+      ENDIF
 
 !     For sequenced runs, only read values for RUN 1
       IF (INDEX('QF',CONTROL%RNMODE) .LE. 0 .OR. CONTROL%RUN .EQ. 1)THEN
@@ -232,8 +241,10 @@ C  05/01/2022 FO  Added N2O.csv output
 !-------------------------------------------------------------------
       USE CsvOutput 
       USE Linklist
+      USE SumModule
+
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
 
@@ -523,7 +534,8 @@ C-----------------------------------------------------------------------
 
 C     05/01/2022 FO Added csv output for N2O.csv
 !     CSV output corresponding to N2O.csv
-      IF (FMOPT == 'C') THEN
+      IF (FMOPT == 'C' .AND. IDETN .EQ. 'Y') THEN  
+
           CALL CsvOutN2O(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &      CONTROL%ROTNUM, CONTROL%REPNO,YEAR, DOY, DAS,
      &      CN2O_emitted, CN2_emitted, CNO_emitted, 
@@ -579,8 +591,10 @@ C  06/15/2014 CHP Written
       SUBROUTINE OpGHG(CONTROL, ISWITCH, N2O_data, CH4_data) 
 !-------------------------------------------------------------------
       USE ModuleData
+      USE SumModule
+
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 !-----------------------------------------------------------------------
 
@@ -602,7 +616,7 @@ C  06/15/2014 CHP Written
       LOGICAL FEXIST
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 1  !CO2EM now from GHG module
+      INTEGER, PARAMETER :: SUMNUM = 2  !CO2EM, TCEQM 
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -676,6 +690,7 @@ C-----------------------------------------------------------------------
      &"    CCEQC    NCEQC    MCEQC    TCEQC"
 
         ENDIF
+
       ENDIF
 
       CALL GET('ORGC','TSOMC',TSOMC_init)
@@ -689,52 +704,48 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 !      IF (INDEX('AD',IDETL) == 0) RETURN
 
-!     IF (IDETN == 'N') RETURN
-!     IF (MOD(DAS, FROP) .NE. 0) RETURN
+        CALL YR_DOY(YRDOY, YEAR, DOY) 
+        
+        CO2GED = CH4_data % CO2emission * 1000.  !g/d
+        N2OGED = N2O_data % N2O_emitted * 1000.  !g/d
+        CH4GED = CH4_data % CH4Emission * 1000.  !g/d
+        
+        CO2EC = CH4_data % CumCO2Emission       !kg/d
+        N2OEC = N2O_data % CN2O_emitted         !kg/d
+        CH4EC = CH4_data % CumCH4Emission       !kg/d
+        
+!       CHP per Peter Grace, 2024-05-08
+!       Estimate net CO2 emissions based on SOC. This is the integration
+!         of all additions and losses to the system and is the accepted
+!         method for calculating global CO2 emissions.
+!       TSOMC = total soil organic matter (kg[C]/ha) = SOM1 + SOM2 + SOM3
+!         Does not include fresh organic matter.
+        CALL GET('ORGC','TSOMC',TSOMC)
+        CO2ENC = (TSOMC_init - TSOMC )     !cumul net CO2 emissions kg/d
+        CO2END = (CO2ENC - CO2ENC_Y) *1000. !daily net CO2 emissions g/d
+        CO2ENC_Y = CO2ENC
+        
+!       Calculation of cumulative CO2-equivalent emissions
+!       CO2 - convert from units of C to units of CO2
+!       CCEQC = CO2EC * 3.67 
+        CCEQC = CO2ENC * 3.67 !use estimated net CO2 emissions
+        
+!       N2O - convert from N to N2O and multiply by 298
+        NCEQC = N2OEC * 1.571 * 298.
+        
+!       CH4 - convert from C to CH4 and multiply by 25
+        MCEQC = CH4EC * 1.33 * 25.
+        
+!       Total CO2-equivalent
+        TCEQC = CCEQC + NCEQC + MCEQC
 
-      CALL YR_DOY(YRDOY, YEAR, DOY) 
-
-      CO2GED = CH4_data % CO2emission * 1000.  !g/d
-      N2OGED = N2O_data % N2O_emitted * 1000.  !g/d
-      CH4GED = CH4_data % CH4Emission * 1000.  !g/d
-
-      CO2EC = CH4_data % CumCO2Emission       !kg/d
-      N2OEC = N2O_data % CN2O_emitted         !kg/d
-      CH4EC = CH4_data % CumCH4Emission       !kg/d
-
-!     CHP per Peter Grace, 2024-05-08
-!     Estimate net CO2 emissions based on SOC. This is the integration
-!       of all additions and losses to the system and is the accepted
-!       method for calculating global CO2 emissions.
-!     TSOMC = total soil organic matter (kg[C]/ha) = SOM1 + SOM2 + SOM3
-!       Does not include fresh organic matter.
-      CALL GET('ORGC','TSOMC',TSOMC)
-      CO2ENC = (TSOMC_init - TSOMC )      !cumul net CO2 emissions kg/d
-      CO2END = (CO2ENC - CO2ENC_Y) * 1000. !daily net CO2 emissions g/d
-      CO2ENC_Y = CO2ENC
-
-!     Calculation of cumulative CO2-equivalent emissions
-!     CO2 - convert from units of C to units of CO2
-!     CCEQC = CO2EC * 3.67 
-      CCEQC = CO2ENC * 3.67 !use estimated net CO2 emissions
-
-!     N2O - convert from N to N2O and multiply by 298
-      NCEQC = N2OEC * 1.571 * 298.
-
-!     CH4 - convert from C to CH4 and multiply by 25
-      MCEQC = CH4EC * 1.33 * 25.
-
-!     Total CO2-equivalent
-      TCEQC = CCEQC + NCEQC + MCEQC
-
-        IF (IDETN .EQ. 'Y' .AND. MOD(DAS, FROP) == 0) THEN
+        IF (IDETN == 'Y' .AND. MOD(DAS, FROP) == 0) THEN
           WRITE (GHGLUN,'(I5,I4.3,I6,2I9,2F9.2,2I9,2F9.2,4I9)')  
      &      YEAR, DOY, DAS, 
      &      NINT(CO2GED), NINT(CO2END), N2OGED, CH4GED, 
      &      NINT(CO2EC), NINT(CO2ENC), N2OEC, CH4EC,
      &      NINT(CCEQC), NINT(NCEQC), NINT(MCEQC), NINT(TCEQC)
         ENDIF
-
       
 !***********************************************************************
 !***********************************************************************
@@ -745,6 +756,7 @@ C-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.
       LABEL(1)  = 'CO2EM'; VALUE(1)  = CO2ENC
+      LABEL(2)  = 'TCEQM'; VALUE(2)  = TCEQC
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 

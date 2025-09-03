@@ -25,12 +25,12 @@ C=======================================================================
      &    WTNCAN, WTNUP, XLAI, YRPLT)                     !Input
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE SumModule
+
       IMPLICIT NONE
       EXTERNAL GETDESC, OPVIEW, READA, READA_Dates, CHANGE_DESC, 
-     &   SUMVALS, EvaluateDat, ERROR, TIMDIF, INCDAT, READA_Y4K
+     &   ERROR, TIMDIF, INCDAT, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI
@@ -186,8 +186,9 @@ C-----------------------------------------------------------------------
       PlantStres % StageName = '                       '
       PlantStres % NSTAGES = 1
       PlantStres % ACTIVE = .FALSE.
-      PlantStres % StageName(0) = 'Planting to Harvest    '
-      PlantStres % StageName(1) = 'Emergence -Harvest     '
+      PlantStres % StageName =    '.......................'
+      PlantStres % StageName(0) = 'Planting to Harvest....'
+      PlantStres % StageName(1) = 'Emergence -Harvest.....'
 
       CALL OPVIEW(CONTROL, 
      &    BIOMAS, ACOUNT, DESCRIP, IDETO, LFNUM, 

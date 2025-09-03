@@ -33,12 +33,12 @@ C=======================================================================
      &    BWAH, PODWT, SDWT, SDWTAH, TOPWT, WTNSD)        !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE SumModule
+
       IMPLICIT     NONE
       EXTERNAL FIND, ERROR, OPVIEW, READA, READA_Dates,
-     &  GetDesc, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
+     &  GetDesc, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE, IDETO, IPLTI
@@ -202,12 +202,12 @@ C-----------------------------------------------------------------------
 !     Establish #, names of stages for environmental & stress summary
       PlantStres % ACTIVE = .FALSE.
       PlantStres % NSTAGES = 5
-      PlantStres % StageName(0) = 'Planting to Harvest    '
+      PlantStres % StageName(0) = 'Planting to Harvest ...'
       PlantStres % StageName(1) = 'Emergence-End Juvenile '
       PlantStres % StageName(2) = 'End Juvenil-Panicl Init'
       PlantStres % StageName(3) = 'Panicl Init-End Lf Grow'
       PlantStres % StageName(4) = 'End Lf Grth-Beg Grn Fil'
-      PlantStres % StageName(5) = 'Grain Filling Phase    '
+      PlantStres % StageName(5) = 'Grain Filling Phase ...'
 
       CALL OPVIEW(CONTROL, 
      &    PBIOMS, ACOUNT, DESCRIP, IDETO, VSTAGE, 

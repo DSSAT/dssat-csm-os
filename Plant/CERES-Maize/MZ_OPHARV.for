@@ -27,12 +27,12 @@ C  02/09/2007 GH  Add path for FileA
      &    BWAH, SDWTAH)                                   !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE SumModule
+
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, GETDESC, OPVIEW, READA, 
-     &  READA_Dates, SUMVALS, TIMDIF, EvaluateDat, READA_Y4K
+     &  READA_Dates, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
@@ -206,12 +206,12 @@ C  02/09/2007 GH  Add path for FileA
       PlantStres % ACTIVE = .FALSE.
       PlantStres % NSTAGES = 5
 
-      PlantStres % StageName(0) = 'Planting to Harvest    '
+      PlantStres % StageName(0) = 'Planting to Harvest ...'
       PlantStres % StageName(1) = 'Emergence-End Juvenile '
       PlantStres % StageName(2) = 'End Juvenil-Floral Init'
       PlantStres % StageName(3) = 'Floral Init-End Lf Grow'
       PlantStres % StageName(4) = 'End Lf Grth-Beg Grn Fil'
-      PlantStres % StageName(5) = 'Grain Filling Phase    '
+      PlantStres % StageName(5) = 'Grain Filling Phase ...'
 
       APTNUP = 0.0
       CANWAA = 0.0

@@ -23,8 +23,10 @@ C=======================================================================
       USE FloodModule
       USE CsvOutput 
       USE Linklist
+      USE SumModule
+
       IMPLICIT NONE
-      EXTERNAL YR_DOY, GETLUN, HEADER, SUMSW, SUMVALS, INCDAT
+      EXTERNAL YR_DOY, GETLUN, HEADER, SUMSW, INCDAT
      &   , SoilLayerText2
       SAVE
 

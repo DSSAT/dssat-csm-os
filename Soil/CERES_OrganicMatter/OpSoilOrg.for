@@ -29,8 +29,10 @@
       USE ModuleDefs
       USE CsvOutput 
       USE Linklist
+      USE SumModule
+
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS, INCDAT, INTERPOLATE
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT, INTERPOLATE
       SAVE
 !-----------------------------------------------------------------------
 
@@ -38,7 +40,7 @@
       CHARACTER*11, PARAMETER :: OUTSC = 'SoilOrg.OUT'
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, INCDAT, L, REPNO
-      INTEGER N_ELEMS, NLAYR, NOUTDC, RUN, YEAR, YRDOY
+      INTEGER N_ELEMS, NLAYR, NOUTDC, RUN, YEAR, YRDOY, SUMCOUNT
 
       REAL CUMRES, DSNC, INTERPOLATE
       REAL SCDD, SNDD, SPDD, TLITC, TLITE(NELEM)
@@ -253,13 +255,22 @@
 !       12/12/2005 CHP Add SOCD and ONTAM variables
         LABEL(2)  = 'OCTAM'; VALUE(2) = SomLitC(0) + TSOMC + TLITC
         LABEL(3)  = 'OCAM '; VALUE(3) = TSOMC + TLITC 
-        LABEL(4)  = 'ONTAM'; VALUE(4) = SomLitE(0,N) +TSOME(N) +TLITE(N)
-        LABEL(5)  = 'ONAM '; VALUE(5) = TSOME(N) + TLITE(N) 
-        LABEL(6)  = 'OPTAM'; VALUE(6) = SomLitE(0,P) +TSOME(P) +TLITE(P)
-        LABEL(7)  = 'OPAM '; VALUE(7) = TSOME(P) + TLITE(P) 
+        SUMCOUNT = 3
+
+        IF (ISWITCH % ISWNIT .EQ. 'Y') THEN
+          LABEL(4) = 'ONTAM'; VALUE(4) = SomLitE(0,N) +TSOME(N)+TLITE(N)
+          LABEL(5) = 'ONAM '; VALUE(5) = TSOME(N) + TLITE(N) 
+          SUMCOUNT = 5
+        ENDIF
+
+        IF (ISWITCH % ISWPHO .EQ. 'Y') THEN
+          LABEL(6) = 'OPTAM'; VALUE(6) = SomLitE(0,P) +TSOME(P)+TLITE(P)
+          LABEL(7) = 'OPAM '; VALUE(7) = TSOME(P) + TLITE(P) 
+          SUMCOUNT = 7
+        ENDIF
 
 !       Send labels and values to OPSUM
-        CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+        CALL SUMVALS (SUMCOUNT, LABEL, VALUE) 
 
 !       Close daily output files.
 !        IF (IDETC == 'Y') CLOSE(NOUTDC)

@@ -30,10 +30,11 @@ C-----------------------------------------------------------------------
       USE FloodModule      
       USE CsvOutput   ! VSH 
       USE Cells_2D  !Cells_2D uses ModuleDefs
+      USE SumModule
 
       IMPLICIT NONE
       EXTERNAL INFO, ERROR, WARNING, IPIBS, WEATHR, SOIL, SPAM, PLANT, 
-     &  OPSUM, MGMTOPS, SOILDYN
+     &  MGMTOPS, SOILDYN
       SAVE
 C-----------------------------------------------------------------------
 C     Crop, Experiment, Command line Variables

@@ -144,6 +144,7 @@ PD1T   1st pod date yd First pod date (YrDoy)                                   
 PDAT   Planting date   Planting date (YrDoy)                                    .
 PDFP   1st seed day    First seed day (dap)                                     .
 PDFT   1st seed date   First seed date (YrDoy)                                  .
+PETP   Pot ET season   Total potential evapotranspiration, planting to harv (mm).
 PI#M   P application # Number of P applications (no)                            .
 PICM   P applied kg/ha Inorganic P applied (kg/ha)                              .
 PM%M   Mature pods %   Mature Pods (%)                                          .
@@ -173,11 +174,13 @@ SRADA  Avg solar rad   Average solar radiation (MJ/m2/d), planting - harvest    
 SWAH   Stem wt kg/ha   Stem weight at harvest (kg/ha)                           .
 SWXM   Extr water mm   Extractable water at maturity (mm)                       .
 T#AM   Tiller no #/m2  Tiller number at maturity (no/m2)                        .
+TAVGA  Avg temp oC     Avg daily air temperature (oC)                           .
+TCEQM  Tot CO2 Eqv k/h Total CO2-equivalent emissions (kg/ha)                   .
 TDAP   Tuber init day  Tuber initiation day (dap)                               .
 TDAT   Tuber init date Tuber initiation date (YrDoy)                            .
 THAM   Threshing %     Threshing % at maturity                                  .
-TMINA  Minimum temp oC Avg minimum air temperature (oC)                         TMNA
-TMAXA  Maximum temp oC Avg maximum air temperature (oC)                         TMXA
+TMINA  Minimum temp oC Avg minimum air temperature, planting to harvest (oC)    TMNA
+TMAXA  Maximum temp oC Avg maximum air temperature, planting to harvest (oC)    TMXA
 TN%H   Tuber N %       Tuber N at harvest (%)                                   .
 TNAH   Biomass N kg/ha Tuber+stem+leaf N at harvest (kg/ha)                     .
 TNAM   Treatment name  Treatment title                                          .
@@ -199,6 +202,53 @@ YPNAM  Yd-N fert Prod  Yield-N fertilizer productivity (kg[yield]/kg[N fert]    
 YPNUM  Yd-N upt Prod   Yield-N uptake productivity (kg[yield]/kg[N uptake]      .
 YPPM   Yd-Rain Prod    Yield-rainfall productivity (kg[yield]/ha/mm[rain])      .
 YPTM   Yd-EP Prod      Yield-transpiration productivity (kg[yield]/ha/mm[EP])   .
+
+NDCH1  Phase duration  Duration, phase 1 (d)                                    .
+TMAX1  Ph1 max temp oC Avg maximum daily air temperature, plant phase 1 (oC)    .
+TMIN1  Ph1 min temp oC Avg minimum daily air temperature, plant phase 1 (oC)    .
+TAVG1  Ph1 avg temp oC Avg daily air temperature, plant phase 1 (oC)            .
+SRAD1  Ph1 avg srad    Average solar radiation (MJ/m2/d), plant phase 1         .
+PRCP1  Ph1 Tot precip  Total precipitation (mm), plant phase 1                  .
+ETCP1  Ph1 Tot ET      Total evapotranspiration (mm), plant phase 1             .
+ESCP1  Ph1 Soil evap   Total soil evaporation (mm), plant phase 1               .
+EPCP1  Ph1 Transpir    Total plant transpiration (mm), plant phase 1            .
+PETP1  Ph1 Pot ET      Total potential evapotranspiration (mm), plant phase 1   .
+
+NDCH2  Phase duration  Duration, phase 2 (d)                                    .
+TMAX2  Ph2 max temp oC Avg maximum daily air temperature, plant phase 2 (oC)    .
+TMIN2  Ph2 min temp oC Avg minimum daily air temperature, plant phase 2 (oC)    .
+TAVG2  Ph2 avg temp oC Avg daily air temperature, plant phase 2 (oC)            .
+SRAD2  Ph2 avg srad    Average solar radiation (MJ/m2/d), plant phase 2         .
+PRCP2  Ph2 Tot precip  Total precipitation (mm), plant phase 2                  .
+ETCP2  Ph2 Tot ET      Total evapotranspiration (mm), plant phase 2             .
+ESCP2  Ph2 Soil evap   Total soil evaporation (mm), plant phase 2               .
+EPCP2  Ph2 Transpir    Total plant transpiration (mm), plant phase 2            .
+PETP2  Ph2 Pot ET      Total potential evapotranspiration (mm), plant phase 2   .
+
+NDCH3  Phase duration  Duration, phase 3 (d)                                    .
+TMAX3  Ph3 max temp oC Avg maximum daily air temperature, plant phase 3 (oC)    .
+TMIN3  Ph3 min temp oC Avg minimum daily air temperature, plant phase 3 (oC)    .
+TAVG3  Ph3 avg temp oC Avg daily air temperature, plant phase 3 (oC)            .
+SRAD3  Ph3 avg srad    Average solar radiation (MJ/m2/d), plant phase 3         .
+PRCP3  Ph3 Tot precip  Total precipitation (mm), plant phase 3                  .
+ETCP3  Ph3 Tot ET      Total evapotranspiration (mm), plant phase 3             .
+ESCP3  Ph3 Soil evap   Total soil evaporation (mm), plant phase 3               .
+EPCP3  Ph3 Transpir    Total plant transpiration (mm), plant phase 3            .
+PETP3  Ph3 Pot ET      Total potential evapotranspiration (mm), plant phase 3   .
+
+NDCH4  Phase duration  Duration, phase 4 (d)                                    .
+TMAX4  Ph4 max temp oC Avg maximum daily air temperature, plant phase 4 (oC)    .
+TMIN4  Ph4 min temp oC Avg minimum daily air temperature, plant phase 4 (oC)    .
+TAVG4  Ph4 avg temp oC Avg daily air temperature, plant phase 4 (oC)            .
+SRAD4  Ph4 avg srad    Average solar radiation (MJ/m2/d), plant phase 4         .
+PRCP4  Ph4 Tot precip  Total precipitation (mm), plant phase 4                  .
+ETCP4  Ph4 Tot ET      Total evapotranspiration (mm), plant phase 4             .
+ESCP4  Ph4 Soil evap   Total soil evaporation (mm), plant phase 4               .
+EPCP4  Ph4 Transpir    Total plant transpiration (mm), plant phase 4            .
+PETP4  Ph4 Pot ET      Total potential evapotranspiration (mm), plant phase 4   .
+
+
+
 
 *GROWTH
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS

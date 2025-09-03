@@ -88,6 +88,7 @@ SoilPoBal.OUT      Seasonal organic soil P balance
 SoilWatBal.OUT     Seasonal & daily soil water balance                SWBAL
 SWBalSum.OUT       Seasonal summary soil water balance
 Summary.OUT     SU Seasonal summary output file                       OUTSUM
+EnvSum.OUT      ES Environmental seasonal summary                     
 FORAGE.OUT      FH Forage harvest output file                         FORHARV
 
 !Summary csv files:

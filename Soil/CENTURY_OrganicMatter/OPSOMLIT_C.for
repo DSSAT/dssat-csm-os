@@ -28,14 +28,14 @@
      &  TSOM3C, TSOM3E, TSOMC, TSOME, TSTRUCC, TSTRUCE)   !Input
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         !which contain control information, soil
-                         !parameters, hourly weather data.
+      USE ModuleDefs
+      USE SumModule
+
       ! VSH
       USE CsvOutput 
       USE Linklist
       IMPLICIT  NONE
-      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS, INCDAT
+      EXTERNAL GETLUN, HEADER, YR_DOY, INCDAT
       SAVE
 !     ------------------------------------------------------------------
 
@@ -47,7 +47,7 @@
       INTEGER NOUTDC, NOUTDN, NOUTDP 
       INTEGER RUN, YRDOY, YEAR, DOY, REPNO, RUNNO
       INTEGER, PARAMETER :: SRFC = 0, SOIL = 1
-      INTEGER NLAYR
+      INTEGER NLAYR, SUMCOUNT
 !     REAL, DIMENSION(5) :: SL, S1, S2, S3, LIT, MET, STR
       REAL, DIMENSION(5) :: TC, S1C, S2C, S3C, LIT, MET, STR
       REAL, DIMENSION(5) :: TN, S1N, S2N, S3N, LIN, MEN, STN
@@ -524,11 +524,16 @@
 !       12/12/2005 CHP Add OCTAM and ONTAM variables
         LABEL(2)  = 'OCTAM'; VALUE(2) = SomLitC(0) + TSOMC + TLITC
         LABEL(3)  = 'OCAM '; VALUE(3) = TSOMC + TLITC 
-        LABEL(4)  = 'ONTAM'; VALUE(4) = SomLitE(0,1) +TSOME(1) +TLITE(1)
-        LABEL(5)  = 'ONAM '; VALUE(5) = TSOME(1) + TLITE(1) 
+        SUMCOUNT = 3
+
+        IF (ISWITCH % ISWNIT .EQ. 'Y') THEN
+          LABEL(4) = 'ONTAM'; VALUE(4) = SomLitE(0,1) +TSOME(1)+TLITE(1)
+          LABEL(5) = 'ONAM '; VALUE(5) = TSOME(1) + TLITE(1) 
+          SUMCOUNT = 5
+        ENDIF
 
         !Send labels and values to OPSUM
-        CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+        CALL SUMVALS (SUMCOUNT, LABEL, VALUE) 
 
 !***********************************************************************
 !***********************************************************************

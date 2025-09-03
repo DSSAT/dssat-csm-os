@@ -14,9 +14,9 @@
         USE ModuleDefs                                                                        ! MF 31AU14 Added for access to WEATHER
         USE YCA_First_Trans_m
         USE YCA_Formats_m
+        USE SumModule
      
         IMPLICIT NONE 
-        EXTERNAL SUMVALS
      
         INTEGER :: STGYEARDOY(0:19)            
         

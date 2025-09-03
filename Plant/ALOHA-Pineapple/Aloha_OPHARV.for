@@ -16,9 +16,10 @@
 
 !-----------------------------------------------------------------------
       USE Aloha_mod
+      USE SumModule
       IMPLICIT NONE
       EXTERNAL GETLUN, FIND, ERROR, GETDESC, OPVIEW, READA, 
-     &  READA_Dates, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
+     &  READA_Dates, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
@@ -192,11 +193,11 @@
       PlantStres % ACTIVE = .FALSE.
       PlantStres % NSTAGES = 5
 
-      PlantStres % StageName(0) = 'Planting to Harvest    '
-      PlantStres % StageName(1) = 'Emergence - Zero Stem  '
-      PlantStres % StageName(2) = 'Zero Stem - Forcing    '
-      PlantStres % StageName(3) = 'Forcing - SCY          '
-      PlantStres % StageName(4) = 'SCY - Early Flwr       '
+      PlantStres % StageName(0) = 'Planting to Harvest ...'
+      PlantStres % StageName(1) = 'Emergence - Zero Stem .'
+      PlantStres % StageName(2) = 'Zero Stem - Forcing ...'
+      PlantStres % StageName(3) = 'Forcing - SCY .........'
+      PlantStres % StageName(4) = 'SCY - Early Flwr ......'
       PlantStres % StageName(5) = 'Early Flwr - Fruit Harv'
 
       Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha

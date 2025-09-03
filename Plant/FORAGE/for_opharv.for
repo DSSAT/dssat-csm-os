@@ -21,13 +21,12 @@ C=======================================================================
      &    BWAH, SDWTAH)                                   !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-        ! which contain control information, soil
-        ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE SumModule
+
       IMPLICIT NONE
       EXTERNAL FIND, ERROR, FOR_STNAMES, FOR_OPVIEW, READA, 
-     &  READA_Dates, CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat,
-     &  TIMDIF, READA_Y4K
+     &  READA_Dates, CHANGE_DESC, GetDesc, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IDETS,IPLTI, PLME

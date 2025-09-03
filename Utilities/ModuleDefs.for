@@ -58,7 +58,8 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
      &    EvaluateNum = 40, !Number of evaluation variables
      &    MaxFiles = 500,   !Maximum number of output files
-     &    MaxPest = 500    !Maximum number of pest operations
+     &    MaxPest = 500,    !Maximum number of pest operations
+     &    MaxStag = 5       !max # of stages output
 
 !     2D Cell arrays -- fixed maximum dimensions for now
       INTEGER, PARAMETER :: MaxRows = 40, MaxCols = 25 

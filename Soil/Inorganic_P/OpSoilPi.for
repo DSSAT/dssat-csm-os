@@ -28,8 +28,10 @@ C-----------------------------------------------------------------------
 !     VSH
       USE CsvOutput 
       USE Linklist
+      USE SumModule
+
       IMPLICIT NONE
-      EXTERNAL GETLUN, HEADER, YR_DOY, SUMVALS
+      EXTERNAL GETLUN, HEADER, YR_DOY
       SAVE
 
       CHARACTER*1  IDETL, IDETP, ISWPHO, RNMODE

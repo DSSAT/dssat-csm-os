@@ -39,12 +39,12 @@ C=======================================================================
      &    SDWTAH)                                         !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE SumModule
+
       IMPLICIT NONE
       EXTERNAL FIND, ERROR, STNAMES, OPVIEW, READA_Dates, ROUND,
-     &  CHANGE_DESC, GetDesc, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
+     &  CHANGE_DESC, GetDesc, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  RNMODE,IDETO,IPLTI, PLME
@@ -229,7 +229,7 @@ C-----------------------------------------------------------------------
 
 !     Establish #, names of stages for environmental & stress summary
       PlantStres % ACTIVE = .FALSE.
-      PlantStres % StageName = '                       '
+      PlantStres % StageName = '.......................'
       SELECT CASE (CROP)
       CASE ('AM','BC','BG','BN','CH','CI','CN','CO','CP',
      &      'CU','FB','GB','GY','HM','LT','PE','PN','PP',
@@ -241,7 +241,7 @@ C-----------------------------------------------------------------------
         PlantStres % StageName(4)  = 'Emergence  - Phys. Mat.'
 
       CASE ('CB')
-        PlantStres % NSTAGES = 0
+        PlantStres % NSTAGES = 4
 
       CASE ('BM','BH','BR','C3','C4','NP','CV')
         PlantStres % NSTAGES = 1
@@ -251,7 +251,7 @@ C-----------------------------------------------------------------------
         PlantStres % NSTAGES = 0
       END SELECT
 
-      PlantStres % StageName(0) = 'Planting to Harvest    '
+      PlantStres % StageName(0) = 'Planting to Harvest ...'
 
       CALL OPVIEW(CONTROL, 
      &    BIOMAS, ACOUNT, DESCRIP, IDETO, VSTAGE, 

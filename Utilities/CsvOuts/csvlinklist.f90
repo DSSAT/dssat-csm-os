@@ -290,6 +290,18 @@ Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
     
     Integer :: istatSumOpsum                             
 !------------------------------------------------------------------------------ 
+!   for EnvSum.csv
+    Type :: lin_valueEnvSum
+       Character(:), Allocatable :: pclineEnvSum
+       Type (lin_valueEnvSum), Pointer :: pEnvSum
+    End Type
+
+    Type (lin_valueEnvSum), Pointer :: headEnvSum    
+    Type (lin_valueEnvSum), Pointer :: tailEnvSum    
+    Type (lin_valueEnvSum), Pointer :: ptrEnvSum     
+    
+    Integer :: istatEnvSum                            
+!------------------------------------------------------------------------------ 
     Type :: lin_valuePlCCrGro
        Character(:), Allocatable :: pclinePlCCrGro
        Type (lin_valuePlCCrGro), Pointer :: pPlCCrGro
@@ -1017,6 +1029,32 @@ End Subroutine LinklstSUOIL
     End If
 
  End Subroutine LinklstEvOpsum
+!------------------------------------------------------------------------------
+ Subroutine LinklstEnvSum(ptxtlineEnvSum)
+
+    Character(:), Allocatable :: ptxtlineEnvSum            
+        
+    If(.Not. Associated(headEnvSum)) Then            
+      Allocate(headEnvSum, Stat=istatEnvSum)        
+      If(istatEnvSum==0) Then                        
+        tailEnvSum => headEnvSum                    
+        Nullify(tailEnvSum%pEnvSum)                 
+        tailEnvSum%pclineEnvSum = ptxtlineEnvSum   
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailEnvSum%pEnvSum, Stat=istatEnvSum)      
+      If(istatEnvSum==0) Then                               
+        tailEnvSum=> tailEnvSum%pEnvSum                   
+        Nullify(tailEnvSum%pEnvSum)                        
+        tailEnvSum%pclineEnvSum = ptxtlineEnvSum          
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstEnvSum
 !------------------------------------------------------------------------------
  Subroutine LinklstSumOpsum(ptxtlineSumOpsum)
 
@@ -2033,6 +2071,54 @@ End Subroutine LinklstSUOIL
       Nullify(ptrSumOpsum, headSumOpsum, tailSumOpsum)
       Close(nf)
    End Subroutine ListtofileSumOpsum
+!------------------------------------------------------------------------------
+
+   Subroutine ListtofileEnvSum
+      EXTERNAL GETLUN
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn  
+      Character(:),Allocatable :: Header        
+      
+      If(.Not. Associated(headEnvSum)) Return
+      
+   length= Len('RUNNO,TRNO,R#,O#,P#,CR,MODEL,EXNAME,N2OEM,CO2EM,CH4EM,TCEQM,'  &
+  // 'NDCH,DAYLA,CO2A,TMINA,TAVGA,TMAXA,SRADA,PRCP,PETP,ETCP,ESCP,EPCP,'  &
+  // 'NDCH1,TMIN1,TAVG1,TMAX1,SRAD1,PRCP1,PETP1,ETCP1,ESCP1,EPCP1,'       &
+  // 'NDCH2,TMIN2,TAVG2,TMAX2,SRAD2,PRCP2,PETP2,ETCP2,ESCP2,EPCP2,'       &
+  // 'NDCH3,TMIN3,TAVG3,TMAX3,SRAD3,PRCP3,PETP3,ETCP3,ESCP3,EPCP3,'       &
+  // 'NDCH4,TMIN4,TAVG4,TMAX4,SRAD4,PRCP4,PETP4,ETCP4,ESCP4,EPCP4,'       &
+  // 'NDCH5,TMIN5,TAVG5,TMAX5,SRAD5,PRCP5,PETP5,ETCP5,ESCP5,EPCP5')
+
+      Allocate(character(LEN=length) :: Header)
+
+! Header = 'RUNNO,TRNO,R#,O#,C#,CR,MODEL,EXNAME,TNAM,FNAM,WSTA,SOIL_ID,' &
+  Header = 'RUNNO,TRNO,R#,O#,P#,CR,MODEL,EXNAME,N2OEM,CO2EM,CH4EM,TCEQM,' &
+  // 'NDCH,DAYLA,CO2A,TMINA,TAVGA,TMAXA,SRADA,PRCP,PETP,ETCP,ESCP,EPCP,'  &
+  // 'NDCH1,TMIN1,TAVG1,TMAX1,SRAD1,PRCP1,PETP1,ETCP1,ESCP1,EPCP1,'       &
+  // 'NDCH2,TMIN2,TAVG2,TMAX2,SRAD2,PRCP2,PETP2,ETCP2,ESCP2,EPCP2,'       &
+  // 'NDCH3,TMIN3,TAVG3,TMAX3,SRAD3,PRCP3,PETP3,ETCP3,ESCP3,EPCP3,'       &
+  // 'NDCH4,TMIN4,TAVG4,TMAX4,SRAD4,PRCP4,PETP4,ETCP4,ESCP4,EPCP4,'       &
+  // 'NDCH5,TMIN5,TAVG5,TMAX5,SRAD5,PRCP5,PETP5,ETCP5,ESCP5,EPCP5'
+      
+      fn = 'EnvSum.csv'
+      Call GETLUN (fn,nf)
+   
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+       
+      ptrEnvSum => headEnvSum
+      Do
+        If(.Not. Associated(ptrEnvSum)) Exit                 
+        Write(nf,'(A)') ptrEnvSum % pclineEnvSum           
+        ptrEnvSum => ptrEnvSum % pEnvSum                 
+      End Do
+
+      Nullify(ptrEnvSum, headEnvSum, tailEnvSum)
+      Close(nf)
+   End Subroutine ListtofileEnvSum
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlCCrGro

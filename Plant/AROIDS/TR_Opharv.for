@@ -18,12 +18,12 @@ C=======================================================================
      &    BWAH, SDWT, SDWTAH, TOPWT, WTNSD,               !Output
      &    MCORMWT)    !, TCORMWT ) !additions RMO
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE SumModule
+
       IMPLICIT NONE
       EXTERNAL FIND, ERROR, GETDESC, OPVIEW, READA, READA_Dates, 
-     &  SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
+     &  TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  IDETO, IPLTI, RNMODE
@@ -184,8 +184,8 @@ C-----------------------------------------------------------------------
       PlantStres % StageName(1) = 'Establishment phase '
       PlantStres % StageName(2) = 'Initial growth phase'
       PlantStres % StageName(3) = 'Maximum growth phase'
-      PlantStres % StageName(4) = 'Corm growth'
-      PlantStres % StageName(5) = 'Cormel growth    '
+      PlantStres % StageName(4) = 'Corm growth ........'
+      PlantStres % StageName(5) = 'Cormel growth ......'
 
       CALL OPVIEW(CONTROL, 
      &    PBIOMS, ACOUNT, DESCRIP, IDETO, VSTAGE, 

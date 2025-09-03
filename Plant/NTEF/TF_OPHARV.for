@@ -31,9 +31,11 @@
 !-----------------------------------------------------------------------
       USE ModuleDefs 
       USE TF_module
+      USE SumModule
+
       IMPLICIT NONE
       EXTERNAL GETLUN, ERROR, FIND, OPVIEW, READA, READA_Dates, 
-     &   GetDesc, SUMVALS, EvaluateDat, TIMDIF, READA_Y4K
+     &   GetDesc, TIMDIF, READA_Y4K
       SAVE
 
       CHARACTER*1  IDETO, IDETS, IPLTI, RNMODE
@@ -229,12 +231,12 @@
       PlantStres % ACTIVE = .FALSE.
       PlantStres % NSTAGES = 5
 
-      PlantStres % StageName(0) = 'Planting to Harvest    '
+      PlantStres % StageName(0) = 'Planting to Harvest ...'
       PlantStres % StageName(1) = 'Emergence-End Juvenile '
       PlantStres % StageName(2) = 'End Juvenil-Floral Init'
       PlantStres % StageName(3) = 'Floral Init-End Lf Grow'
       PlantStres % StageName(4) = 'End Lf Grth-Beg Grn Fil'
-      PlantStres % StageName(5) = 'Grain Filling Phase    '
+      PlantStres % StageName(5) = 'Grain Filling Phase ...'
 
       CALL OPVIEW(CONTROL, 
      &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN, 

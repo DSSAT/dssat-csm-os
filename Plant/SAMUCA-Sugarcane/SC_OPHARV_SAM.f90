@@ -15,9 +15,10 @@
 
     USE ModuleDefs
     USE SAM_ModuleDefs
+    USE SumModule
 
     IMPLICIT NONE
-    EXTERNAL ERROR, EvaluateDat, GETDESC, OPVIEW, READA, SUMVALS, TIMDIF, &
+    EXTERNAL ERROR, GETDESC, OPVIEW, READA, TIMDIF, &
              READA_Y4K
     SAVE
 
@@ -160,15 +161,14 @@
 
         !--- Establish # and names of stages for environmental stress summary
         PlantStres % ACTIVE         = .FALSE.
-        PlantStres % StageName      = '                       '
+        PlantStres % StageName      = '.......................'
         PlantStres % NSTAGES        = 4
-        PlantStres % ACTIVE         = .FALSE.        
+        PlantStres % StageName(0)   = 'Emergence to Harvest ..'
         PlantStres % StageName(1)   = 'Planting to Emergence  '
         PlantStres % StageName(2)   = 'Emergence->Stk Elongatn'
         PlantStres % StageName(3)   = 'Stk Elong to Peak Popn.'
-        PlantStres % StageName(4)   = 'Peak Popn. to Harvest  '
-        PlantStres % StageName(0)   = 'Emergence to Harvest   '
-        
+        PlantStres % StageName(4)   = 'Peak Popn. to Harvest .'
+       
         CALL OPVIEW(CONTROL, &
             BIOMAS, ACOUNT, DESCRIP, IDETO, LFNUM,      &
             Measured, PlantStres, Simulated, STGDOY,	&
