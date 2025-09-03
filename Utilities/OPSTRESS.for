@@ -295,11 +295,11 @@
           DAYLR(I) = -99.
           RADR (I) = -99.
           CO2R (I) = -99.
-          RAINR    = -99.
-          CETR     = -99.
-          CEVAPR   = -99.
-          CEPR     = -99.
-          CEOR     = -99.
+          RAINR(I) = -99.
+          CETR(I)  = -99.
+          CEVAPR(I)= -99.
+          CEPR(I)  = -99.
+          CEOR(I)  = -99.
         ENDIF
 
         IF (I == 0 .OR. NNR(I) == 0) CYCLE
