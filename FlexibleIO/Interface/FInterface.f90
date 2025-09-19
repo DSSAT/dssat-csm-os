@@ -948,63 +948,13 @@ contains
         call set_For2KeyString(groupstr, key, key2, varnamestr, valuestr)
         
     end subroutine setFor2KeyString
-
-     subroutine FILETYPE(fileww, rtype, errcode)
-        
-        implicit none
-        character(len=*), intent(in) :: fileww
-        character(LEN(fileww)+1) :: filewwstr
-        character(len=*), intent(out) :: rtype
-        integer, intent(out) :: errcode
-
-        interface
-            subroutine readftype(filewwstr, rtype, errcode)&
-                bind(C, name = 'FILETYPE')
-                use, intrinsic :: iso_c_binding
-                character(kind = c_char), dimension(*) :: filewwstr
-                character(kind = c_char), dimension(*) :: rtype
-                integer :: errcode                
-            end subroutine readftype
-        end interface
-
-        filewwstr = fileww
-        filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)
-        rtype = CHAR(0)
-        
-        call readftype(filewwstr, rtype, errcode)
-        
-     end subroutine FILETYPE
-     
-     subroutine READ_WSTAT(fileww, errcode)
-        
-        implicit none
-        character(len=*), intent(in) :: fileww
-        character(LEN(fileww)+1) :: filewwstr
-        integer, intent(out) :: errcode
-
-        interface
-            subroutine readwstat(filewwstr, errcode)&
-                bind(C, name = 'READ_WSTAT')
-                use, intrinsic :: iso_c_binding
-                character(kind = c_char), dimension(*) :: filewwstr
-                integer :: errcode                
-            end subroutine readwstat
-        end interface
-
-        filewwstr = fileww
-        filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)
-        
-        call readwstat(filewwstr, errcode)
-        
-     end subroutine READ_WSTAT
     
-     subroutine READ_WTH_Y2_4K(fileww, rtype, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
+    subroutine READ_WTH_Y2_4K(fileww, firstweatherdate, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
 
          implicit none
          character(len=*), intent(in) :: fileww
          character(LEN(fileww)+1) :: filewwstr
-         character(len=*), intent(in) :: rtype
-         character(LEN(rtype)+1) :: rtypestr
+         integer, intent(in) :: firstweatherdate   
          integer, intent(in) :: yrdoy
          integer, intent(out) :: firstweatherday
          integer, intent(out) :: lastweatherday
@@ -1015,11 +965,11 @@ contains
 
     
          interface
-             subroutine readwthfile(filewwstr, rtypestr, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)&
+             subroutine readwthfile(filewwstr, firstweatherdate, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)&
                  bind(C, name = 'READ_WTH_Y2_4K')
                  use, intrinsic :: iso_c_binding
                  character(kind = c_char), dimension(*) :: filewwstr
-                 character(kind = c_char), dimension(*) :: rtypestr
+                 integer :: firstweatherdate
                  integer :: yrdoy
                  integer :: firstweatherday
                  integer :: lastweatherday
@@ -1031,15 +981,13 @@ contains
          end interface
     
          filewwstr = fileww
-         filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0) 
-         rtypestr = rtype
-         rtypestr(LEN(rtypestr):LEN(rtypestr)) = CHAR(0)      
+         filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)     
     
-         call readwthfile(filewwstr, rtypestr, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
+         call readwthfile(filewwstr, firstweatherdate, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
         
-     end subroutine READ_WTH_Y2_4K
+    end subroutine READ_WTH_Y2_4K
      
-     subroutine READ_WTH_HOURLY(fileww, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
+    subroutine READ_WTH_HOURLY(fileww, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
 
         implicit none
         character(len=*), intent(in) :: fileww

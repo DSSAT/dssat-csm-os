@@ -348,8 +348,9 @@ C     The components are copied into local variables for use here.
 
         
         IF(MEWTH .EQ. 'M') THEN
-          CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRSIMPREV,FirstWeatherDay, 
-     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+          CALL READ_WTH_Y2_4K(FILEWW,FirstWeatherDate,YRSIMPREV,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'C') THEN
           CALL READ_WTH_CSV(FILEWW,YRSIMPREV,FirstWeatherDay, 
@@ -431,8 +432,9 @@ C       Substitute default values if REFHT or WINDHT are missing.
         NRecords = 0
         
         IF(MEWTH .EQ. 'M') THEN
-          CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRDOY,FirstWeatherDay, 
-     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+          CALL READ_WTH_Y2_4K(FILEWW,FirstWeatherDate,YRDOY,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'C') THEN
           CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
@@ -454,8 +456,9 @@ C       Substitute default values if REFHT or WINDHT are missing.
         NRecords = 0
         
         IF(MEWTH .EQ. 'M') THEN
-          CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRSIMPREV,FirstWeatherDay, 
-     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+          CALL READ_WTH_Y2_4K(FILEWW,FirstWeatherDate,YRSIMPREV,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'C') THEN
           CALL READ_WTH_CSV(FILEWW,YRSIMPREV,FirstWeatherDay, 
@@ -601,16 +604,14 @@ C     Send labels and values to OPSUM
             RETURN
           ENDIF
 ! FLEXIBLEIO - Starts  
-          CALL FILETYPE(FILEWW, RTYPE, ERRCODE)
-          CALL READ_WSTAT(FILEWW, ERRCODE)
-          
           WSTAT = WFile(1:8)
           CALL PUT('WEATHER','WSTA',WSTAT)
     
           NRecords = 0
           IF(MEWTH .EQ. 'M') THEN
-            CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRDOY,FirstWeatherDay, 
-     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+          CALL READ_WTH_Y2_4K(FILEWW,FirstWeatherDate,YRDOY,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
           ENDIF
           IF(MEWTH .EQ. 'C') THEN
             CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
@@ -632,8 +633,9 @@ C     Send labels and values to OPSUM
 !       Need to get next batch of records from long file
           NRecords = 0
           IF(MEWTH .EQ. 'M') THEN
-            CALL READ_WTH_Y2_4K(FILEWW,RTYPE,YRDOY,FirstWeatherDay, 
-     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE) 
+          CALL READ_WTH_Y2_4K(FILEWW,FirstWeatherDate,YRDOY,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
           ENDIF
           IF(MEWTH .EQ. 'C') THEN
             CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
