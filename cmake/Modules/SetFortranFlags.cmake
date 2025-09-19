@@ -117,6 +117,11 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                          "-ffpe-trap=invalid,zero,overflow" # GNU
                 )
 
+# Disable Ifort deprecated message
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "/Qdiag-disable:10448"
+                )
+                
 ####################
 ### LINKER FLAGS ###
 ####################
