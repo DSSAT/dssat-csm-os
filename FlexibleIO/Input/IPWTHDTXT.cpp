@@ -47,7 +47,7 @@ void READ_WTH_Y2_4K(char *FILEWW, int *FirstWeatherDate, int *YRDOY,
   std::regex word_regex("\\S+");
   hdsection = false;
   
-  //std::cout << "READ_WTH_Y2_4K: " << fileww << "/" << rtype << std::endl;
+  //std::cout << "READ_WTH_Y2_4K: " << fileww << "/" << *FirstWeatherDate << std::endl;
   
   file.open(fileww, std::ifstream::in);
   
@@ -91,8 +91,6 @@ void READ_WTH_Y2_4K(char *FILEWW, int *FirstWeatherDate, int *YRDOY,
       //Read Data
       else if(hdsection && line.size() > 1 && line[0] != '\32' && line[0] != '!' && 
               line[0] != '$' && line[1] != '$' && line[0] != '*' && line[0] != '@'){        
-        std::replace_if(line.begin(), line.end(), [](char x)
-        {return !(x == 32 || x >= 45 && x <= 57 );}, ' ');
         
         drit = std::regex_iterator<std::string::iterator>(line.begin(), line.end(), word_regex);
         
