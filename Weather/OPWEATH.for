@@ -6,6 +6,7 @@ C  REVISION       HISTORY
 C  02/08/2002 CHP Written
 C  06/06/2002 GH  Modified for crop rotations
 C  08/20/2002 GH  Modified for Y2K
+C  07/01/2025 FO  Added cumulative precipitation in Weather.OUT
 C-----------------------------------------------------------------------
 C  Called from:   WEATHR
 C  Calls:         None
@@ -33,7 +34,7 @@ C=======================================================================
       INTEGER RUN, YEAR, YRDOY, REPNO, FYRDOY, WDATE
 
       REAL
-     &  CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD, 
+     &  CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD, CPRED, 
      &  TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, WINDSP, VPDF, vpd_transp
 
@@ -97,9 +98,9 @@ C           Variable heading for Weather.OUT
 C-----------------------------------------------------------------------
             WRITE (LUN,120)
   120       FORMAT('@YEAR DOY   DAS',
-     &'   PRED  DAYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND   TAVD',
-     &'   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D   VPDF    VPD  OZON7',
-     &'   WDATE')
+     &'   PRED  CPRED  DAYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND',
+     &'   TAVD   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D   VPDF    VPD',
+     &'  OZON7   WDATE')
           END IF   ! VSH
         ENDIF
 
@@ -118,7 +119,7 @@ C       Generate output for file Weather.OUT
 !         These can be modified by ETPHOT during hourly energy balance
           TGROAV = WEATHER % TGROAV
           TGRODY = WEATHER % TGRODY
-
+          CPRED  = WEATHER % CPRED
       
           CALL YR_DOY(YRDOY, YEAR, DOY)
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
@@ -131,20 +132,21 @@ C       Generate output for file Weather.OUT
             ENDIF
 
             WRITE (LUN,300) YEAR, DOY, DAS, 
-     &        RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, 
+             !PRED  CPRED DAYLD    TWLD  SRAD PARD    CLDD
+     &        RAIN, CPRED, DAYL, TWILEN, SRAD, PAR, CLOUDS, 
              !TMXD  TMND  TAVD  TDYD   TDWD   TGAD   TGRD   
      &        TMAX, TMIN, TAVG, TDAY, TDEW, TGROAV, TGRODY,
            !  WDSD   CO2D  VPDF  VPD
      &        WINDSP, CO2, VPDF, vpd_transp, OZON7, WDATE
   300       FORMAT(1X,I4,1X,I3.3,1X,I5,
-     &        5(1X,F6.1),1X,F6.2,
+     &        6(1X,F6.1),1X,F6.2,
      &        8(1X,F6.1),F7.1, 1x, F6.2, 1X, F6.2, F7.2, I8)
           END IF   ! VSH
           
           IF (FMOPT == 'C') THEN 
             CALL CsvOutWth(EXPNAME, RUN, CONTROL%TRTNUM, 
      &        CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
-     &        RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX,  
+     &        RAIN, CPRED, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX,  
      &        TMIN, TAVG, TDAY, TDEW, TGROAV, TGRODY, WINDSP, CO2,
      &        VPDF, vpd_transp,   
      &        vCsvlineWth, vpCsvlineWth, vlngthWth)

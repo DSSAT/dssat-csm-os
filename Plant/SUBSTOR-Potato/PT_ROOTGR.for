@@ -40,10 +40,10 @@ C           growth in the soil - unitless value between 0 and 1
 C  L,L1   : Loop counter
 C=======================================================================
 
-      SUBROUTINE PT_ROOTGR (DYNAMIC, 
+      SUBROUTINE PT_ROOTGR (DYNAMIC, YRDOY,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output
+     &    CUMDEP, RLV, RTDEP, TRLV)                       !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -55,9 +55,9 @@ C=======================================================================
       CHARACTER*1   ISWNIT
       CHARACTER*30 FILEIO
 
-      INTEGER DYNAMIC, L, L1, NLAYR
+      INTEGER DYNAMIC, L, L1, NLAYR, YRDOY
 
-      REAL CUMDEP, DEP, DEPMAX, DTT, GRORT, PLTPOP
+      REAL CUMDEP, DEP, DEPMAX, DTT, GRORT, PLTPOP, CumRootMass
       REAL RLINIT, RLNEW, RLWR, RNFAC, RNLF, RTDEP, RTDEPI
       REAL SDEPTH, SWDF, SWFAC, TRLDF, TRLV, RLV_init
 
@@ -83,6 +83,7 @@ C=======================================================================
       DEPMAX = DS(NLAYR)
       CUMDEP = 0.0
       RTDEP  = 0.0
+      CumRootMass = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -180,10 +181,11 @@ C=======================================================================
 !        kg/ha  = -------- * ------- * -------- * ---------
 !                cm2[soil]   cm[root]     m2         (g/m2)
 
-!        CumRootMass=CumRootMass+ GRORT * PLTPOP *  10 ! 1 ha = 10000m2
-       ! kg[root]       kg        g      # plants     kg/ha
-       !----------- = --------+ ------ * --------*  --------
-       ! ha             ha       plant      m2         g/m2
+!     Cumulative root mass does not include losses due to senescence
+      CumRootMass = CumRootMass + GRORT * PLTPOP *  10.
+!        kg[root]       kg          g     plants   kg/ha
+!        -------- =    ----     + ----- * ------ * -----
+!           ha          ha        plant     m2      g/m2
 
 !***********************************************************************
 !***********************************************************************

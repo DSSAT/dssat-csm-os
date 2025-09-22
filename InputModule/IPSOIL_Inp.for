@@ -38,7 +38,7 @@ C=======================================================================
       USE ModuleDefs
       IMPLICIT NONE
       EXTERNAL ERROR, WARNING, IGNORE2, IGNORE, CLEAR, UPCASE, VERIFY, 
-     &  PARSE_HEADERS, LYRSET, LYRSET3, LYRSET2, LMATCH
+     &  PARSE_HEADERS, LYRSET, LYRSET3, LYRSET2, LMATCH, IGNORE3
 
       INCLUDE 'COMSOI.blk'
 
@@ -318,7 +318,8 @@ C-KRT    GoodSoil: DO WHILE (.NOT. EOF(LUNSL))
          GoodSoil: DO WHILE (.true.)
 C-KRT*******************************************************************
 
-           CALL IGNORE2 (LUNSL, LINSOL, ISECT, C255)
+           CALL IGNORE3 (LUNSL, LINSOL, ISECT, C255)
+           IF (ISECT == 4) CALL ERROR(ERRKEY,98,FILES,LINSOL)
            SELECT CASE(ISECT)
 
 !          ----------------------------------------------

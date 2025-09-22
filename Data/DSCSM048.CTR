@@ -157,7 +157,7 @@ $SIMULATION_CONTROLS
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
-45 Modified Suleiman-Ritchie soil evaporation method
+45 Suleiman-Ritchie soil evaporation method
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
 45 ME              .     .     .     .     .     .     .     .     .     S     .
 

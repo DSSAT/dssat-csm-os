@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2024-12-01
+! DSSAT v4.8; 2025-05-16
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -49,10 +49,11 @@ CHTA   Canopy height m Canopy height (m)                                        
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
 CO2A   Avg CO2 (ppm)   Average atmospheric CO2 (ppm), planting to harvest       .
-CO2EM  Cum CO2 emitted Cumulative CO2 emitted from soil at maturity (kg[C]/ha)  .
+CO2EM  CO2emi net kg/d Cumulative net CO2 emissions kg[C]/ha                    .
 CPAM   Tops P kg/ha    Tops P at maturity (kg/ha)                               .
+CRST   Sim Status      End of season crop status
 CWAA   Tops wt,anthsis Tops weight at anthesis (kg [dm]/ha)                     .
-CWAM   Tops wt kg/ha   Tops weight at maturity (kg [dm]/ha)                     .
+CWAM   Biomass kg/ha   Biomass at maturity (total crop minus roots) (kg[dm]/ha) .
 DMPEM  DM-ET Prod      Dry matter-ET productivity (kg[DM]/ha/mm[ET])            .
 DMPIM  DM-Irrig Prod   Dry matter-irrigation productivity (kg[DM]/ha/mm[irrig]) .
 DMPPM  DM-Rain Prod    Dry matter-rainfall productivity (kg[DM]/ha/mm[rain])    .
@@ -216,7 +217,7 @@ CHTCM  Canopy ht, cm   Canopy (forage) height (cm)                              
 CMDMD  Cellulose DM    Stalk cellulose dry mass (t/ha)                          .
 CRAD   Crown weight    Crown weight (kg [dm]/ha)                                .
 CRWAD  Crown weight    Crown weight (kg [dm]/ha)                                .
-CWAD   Tops wt kg/ha   Tops weight (kg [dm]/ha)                                 .
+CWAD   Biomass kg/ha   Total crop weight minus roots (kg [dm]/ha)               .
 CWID   Canopy width m  Canopy width (m;for 1 row)                               .
 CWPD   Tops wt g/pl    Tops weight (g [dm]/pl)                                  .
 CWSI   Water stress    Recovery time-lagged photosynthesis water stress factor  .
@@ -481,16 +482,16 @@ NOF6D  NO flux layer 6 Daily NO flux, soil layer 6 (g[N]/ha)                    
 NOF7D  NO flux layer 7 Daily NO flux, soil layer 7 (g[N]/ha)                    .
 NOF8D  NO flux layer 8 Daily NO flux, soil layer 8 (g[N]/ha)                    .
 NOF9D  NO flux layer 9 Daily NO flux, soil layer 9 (g[N]/ha)                    .
-NT10   InorgN layer 10 Total inorganic N, soil layer 10(g[N]/kg[soil])          .
-NT1D   InorgN layer 1  Total inorganic N, soil layer 1 (g[N]/kg[soil])          .
-NT2D   InorgN layer 2  Total inorganic N, soil layer 2 (g[N]/kg[soil])          .
-NT3D   InorgN layer 3  Total inorganic N, soil layer 3 (g[N]/kg[soil])          .
-NT4D   InorgN layer 4  Total inorganic N, soil layer 4 (g[N]/kg[soil])          .
-NT5D   InorgN layer 5  Total inorganic N, soil layer 5 (g[N]/kg[soil])          .
-NT6D   InorgN layer 6  Total inorganic N, soil layer 6 (g[N]/kg[soil])          .
-NT7D   InorgN layer 7  Total inorganic N, soil layer 7 (g[N]/kg[soil])          .
-NT8D   InorgN layer 8  Total inorganic N, soil layer 8 (g[N]/kg[soil])          .
-NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (g[N]/kg[soil])          .
+NT10   InorgN layer 10 Total inorganic N, soil layer 10(mg[N]/kg[soil])          .
+NT1D   InorgN layer 1  Total inorganic N, soil layer 1 (mg[N]/kg[soil])          .
+NT2D   InorgN layer 2  Total inorganic N, soil layer 2 (mg[N]/kg[soil])          .
+NT3D   InorgN layer 3  Total inorganic N, soil layer 3 (mg[N]/kg[soil])          .
+NT4D   InorgN layer 4  Total inorganic N, soil layer 4 (mg[N]/kg[soil])          .
+NT5D   InorgN layer 5  Total inorganic N, soil layer 5 (mg[N]/kg[soil])          .
+NT6D   InorgN layer 6  Total inorganic N, soil layer 6 (mg[N]/kg[soil])          .
+NT7D   InorgN layer 7  Total inorganic N, soil layer 7 (mg[N]/kg[soil])          .
+NT8D   InorgN layer 8  Total inorganic N, soil layer 8 (mg[N]/kg[soil])          .
+NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (mg[N]/kg[soil])          .
 NUAC   N Uptake kg/ha  N uptake, cumulative (kg [N]/ha)                         .
 NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
@@ -519,6 +520,7 @@ SENNS  Sen N to soil   Senesced N added to soil (kg/(ha.d))                     
 SENNT  Sen N kg/ha.d   Senesced N added to litter+soil (kg/(ha.d))              .
 SENWT  Sen wt kg/ha.d  Senesced wt added to litter+soil (kg/(ha.d))             .
 SHND   Shell N %       Shell N concentration (%)                                .
+SHNAD  Shell N kg/ha   Shell N (kg/ha)                                          .
 SN%D   Stem N %        Stem N concentration (%)                                 .
 SN%RD  ShootN% relativ Shoot tissue relative (to critical) N conc. (%)          .
 SNAD   Stem N kg/ha    Stem N (kg/ha)                                           .
@@ -537,6 +539,7 @@ DAYD   Daylength h     Daylength (h;sunrise to sunset)                          
 DRNC   Drainage Mm     Cumulative drainage (mm)                                 .
 DTR    Shortwave RAD   Daily shortwave radiation  (J/(m2.d))                    .
 DTWT   Water table cm  Water table depth (cm)                                   .
+DTWTM  Mgmt wat table  Managed water table depth (user input) (cm)              .
 EFAA   Flood evap mm/d Avg flood evaporation (mm/d)                             .
 EMAA   Mulch EVAP mm/d Average mulch evaporation (mm/d)                         .
 EMAC   Mulch EVAP mm   Cumulative mulch evaporation (mm)                        .
@@ -994,6 +997,7 @@ DAYLD  DAYLENGTH hr    Day length sunrise to sunset (hr)                        
 OZON7  Ozone ppb       Daily 7-hour mean ozone concentration (9:00-15:59), ppb  .
 PARD   PAR             Daily PAR or photon flux density (moles[quanta]/(m2.d))  .
 PRED   PRECIP mm/d     Precipitation depth (mm/d)                               .
+CPRED  Cum. PRECIP mm  Cumulative precipitation depth (mm)                      .
 SRAD   SRAD MJ/m2.d    Solar radiation (MJ/(m2.d))                              .
 TAVD   AVG TEMP oC     Average daily temperature (oC)                           .
 TDWD   DEWPOINT oC     Dewpoint temperature (oC)                                .
@@ -1530,7 +1534,7 @@ CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
 CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
-CO2ENC CO2emi net kg/d Cumulative net CO2 emissions kg/d                        .
+CO2ENC CO2emi net kg/d Cumulative net CO2 emissions kg/ha                        .
 CO2END CO2emi net g/d  Daily net CO2 emissions kg/d                             .
 CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
 CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .

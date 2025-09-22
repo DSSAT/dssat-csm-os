@@ -24,6 +24,7 @@ C  05/11/1999 GH  Incorporated in CROPGRO
 !  01/19/2006 CHP Fixed discrepancies between plant root senescence  
 !                 calculated and that sent to soil routines for addition
 !                 to organic matter.  
+!  10/24/2024 CHP Added TRLV to PlantGro.OUT
 !-----------------------------------------------------------------------
 !  Called by  :  PLANT
 !  Calls      :  IPROOT, INROOT
@@ -33,7 +34,7 @@ C  05/11/1999 GH  Incorporated in CROPGRO
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
-     &    RLV, RTDEP, SATFAC, SENRT, SRDOT)               !Output
+     &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
 
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -100,6 +101,7 @@ C-----------------------------------------------------------------------
       SUMEX = 0.0
       SUMRL = 0.0
       SATFAC = 0.0
+      TRLV = 0.0
 
 !-----------------------------------------------------------------------
 C     ROOT DEPTH INCREASE RATE WITH TIME, cm/physiological day
@@ -361,7 +363,7 @@ C     respiration, and update root length density for each layer.
 !                  cm2[soil]   cm[root]     m2         (g/m2)
 
       CumRootMass = CumRootMass + WRDOTN * 10. - SRDOT * 10. 
-           
+
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT

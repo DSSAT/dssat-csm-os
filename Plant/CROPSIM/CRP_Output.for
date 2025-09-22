@@ -56,7 +56,8 @@
 !             A switches ALL outputs on  
 
         ! If model failure so that cycle not completed
-        IF (DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
+        IF (DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y' 
+     &     .AND. IHARI .EQ. 'M') THEN
           laix = -99.0
           cwahc = -99.0
           nupac = -99.0

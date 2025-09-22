@@ -16,9 +16,9 @@ C  08/29/2001 CHP Written for modular pototo model to be incorporated
 C                   into CROPGRO.
 C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
-C  12/17/2004 CHP Modified HRESCeres call for harvest residue
-C  08/17/2005 CHP Renamed to PT_SUBSTOR to accomodate TN, TR SUBSTOR
-C                 routines.
+!  12/17/2004 CHP Modified HRESCeres call for harvest residue
+!  08/17/2005 CHP Renamed to PT_SUBSTOR to accomodate TN, TR SUBSTOR
+!                 routines.
 C  08/23/2011 GH Added CO2 response for tuber growth
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
@@ -54,7 +54,7 @@ C=======================================================================
       REAL PLANTS, PLTPOP, PODWT, ROOTN, RTDEP, RTF
       REAL RTWT, SDWTAH, SDWTPL, SEEDNI, SEEDRV, SRAD, STMWT, STOVN
       REAL SLPF
-      REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN
+      REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN, TRLV
       REAL TOPWT, TOTNUP, TRNU, TUBN, TUBWT, TURFAC, TWILEN
       REAL WTNCAN, WTNLO, XLAI, XSTAGE
       REAL SDWT, SEEDNO, TRWUP, WTNSD, WTNUP, YIELD
@@ -111,6 +111,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
@@ -145,10 +146,10 @@ C=======================================================================
       PConc_Shel = 0.0
       PConc_Seed = 0.0
 
-      CALL PT_ROOTGR (SEASINIT,
+      CALL PT_ROOTGR (SEASINIT, YRDOY,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output
+     &    CUMDEP, RLV, RTDEP, TRLV)                       !Output
 
       CALL PT_PHENOL (
      &    DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
@@ -177,6 +178,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
@@ -211,10 +213,10 @@ C=======================================================================
 
 !       WRESR growth and depth routine
         IF (GRORT .GT. 0.0) THEN
-          CALL PT_ROOTGR (RATE, 
+          CALL PT_ROOTGR (RATE, YRDOY, 
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
-     &    CUMDEP, RLV, RTDEP)                             !Output
+     &    CUMDEP, RLV, RTDEP, TRLV)                       !Output
         ENDIF
       ENDIF
 
@@ -260,6 +262,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 
@@ -283,6 +286,7 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
       CALL PT_OPHARV(CONTROL, ISWITCH, 

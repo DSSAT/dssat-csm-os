@@ -17,12 +17,14 @@ C=======================================================================
      &    BIOMAS, DEADLF, GRAINN, ISTAGE, LFWT, MDATE,    !Input
      &    NLAYR, NSTRES, PLTPOP, RLV, ROOTN, RTDEP, RTWT, !Input
      &    SATFAC, SENESCE, STMWT, STOVN, STOVWT, SWFAC,   !Input
+     &    TRLV,
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)!Input
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
+      USE CsvOutput 
+      USE Linklist
+
       IMPLICIT  NONE
       EXTERNAL GETLUN, HEADER, TIMDIF, YR_DOY
       SAVE
@@ -45,14 +47,14 @@ C=======================================================================
 
       REAL LFWT, GPP, PCNGRN, PCNRT
       REAL PCNST, PCNVEG, ROOTN
-      REAL STOVN, STOVWT
+      REAL STOVN, STOVWT, TRLV
       REAL TUBN, TUBWT, WTNCAN
       REAL WTNGRN, WTNLF, WTNRT, WTNSD, WTNSH, WTNST
       REAL WTNUP, WTNVEG
 
       REAL CUMSENSURF, CUMSENSOIL, CUMSENSURFN, CUMSENSOILN  
 
-      LOGICAL FEXIST, FIRST
+      LOGICAL FEXIST
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -79,31 +81,35 @@ C=======================================================================
       ISWNIT  = ISWITCH % ISWNIT
 
 C-----------------------------------------------------------------------
-      DATA GROHEAD /
-!      DATA GROHEAD(1)/
-     &'! YR       Days  Days  Grow       Fresh          
-     &      Dry Weight                           Pod      Phot. Grow    
-     &   Leaf Shell   Spec    Canopy          Root  ³    Root Length Den
-     &sity   ³ Senesced mass              ',
+      
+      GROHEAD(1) = 
+     &"!          Days  Days             Fresh" //
+     &"  <------------ Dry Weight -------------->" //
+     &"       <-- Pod --> <---- Stress (0-1)---->" //
+     &" < Nitrogen>  Spec  < Canopy >  Root   Root" //
+     &" <--- Root Length Density --->   Senesced "
 
-!      DATA GROHEAD(2)/
-     &'!   and   after after Stage  LAI  Yield  Leaf  St
-     &em Tuber  Root  Crop  Tops DLeaf   HI   Wgt.   No.    Water     Ni
-     &t.   Nit -ing   Leaf  Hght  Brdth      Depth  ³     cm3/cm3   of 
-     &soil    ³    (kg/ha)                ',
 
-!      DATA GROHEAD(3)/
-     &'!     DOY   sim plant             Mg/Ha  ³<------
-     &--------- kg/Ha --------------->³      Kg/Ha        ³<Stress (0-1)
-     &>³    %     %   Area    m     m           m   ³<------------------
-     &------>³ Surface  Soil              ',
+      GROHEAD(2) = 
+     &"!         after after  Grow   LAI Yield" //
+     &"  Leaf  Stem Tuber  Root  Tops  Crop DLeaf" //
+     &"            Mass   No. <---- Water ---->  " //
+     &"  Leaf Shell  Leaf  Hght Width Depth   Dens" //
+     &" <----- cm3/cm3 of soil -----> mass(kg/ha)"
 
-!      DATA GROHEAD(4) / 
-     &'@YEAR DOY   DAS   DAP  GSTD  LAID  UYAD  LWAD  
-     &SWAD  UWAD  RWAD  TWAD  CWAD  DWAD  HIAD  EWAD  E#AD  WSPD  WSGD  
-     &NSTD  LN%D  SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  
-!     &RL4D  RL5D              '/
-     &RL4D  RL5D  SNW0C  SNW1C'/
+      GROHEAD(3) = 
+     &"!           sim plant Stage m2/m2 Mg/Ha" //
+     &"  <---------------- kg/ha --------------->" //
+     &"    HI kg/ha     #  Phot  Grow Exces  Nitr" //
+     &"     %     %  Area     m     m    m  cm/cm3" //
+     &" <--------------------------->  Surf  Soil"
+
+      GROHEAD(4) = 
+     &"@YEAR DOY   DAS   DAP  GSTD  LAID  UYAD" //
+     &"  LWAD  SWAD  UWAD  RWAD  VWAD  CWAD  DWAD" //
+     &"  HIAD  EWAD  E#AD  WSPD  WSGD  EWSD  NSTD" //
+     &"  LN%D  SH%D  SLAD  CHTD  CWID  RDPD   RLAD" //
+     &"  RL1D  RL2D  RL3D  RL4D  RL5D SNW0C SNW1C" 
 
 C-----------------------------------------------------------------------
       DATA NITHEAD /
@@ -129,11 +135,20 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN
         OUTG  = 'PlantGro.OUT'
         CALL GETLUN('OUTG',  NOUTDG)
 
         OUTPN  = 'PlantN.OUT  '
         CALL GETLUN('OUTPN', NOUTPN)
+
+      ELSE
+        OUTG = 'PlantGro.csv'
+        CALL GETLUN('OUTG', NOUTDG)
+
+        OUTPN  = 'PlantN.csv  '
+        CALL GETLUN('OUTPN', NOUTPN)
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -141,17 +156,17 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN
+
 !     Initialize daily growth output file
         INQUIRE (FILE = OUTG, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'OLD',
      &      IOSTAT = ERRNUM, POSITION = 'APPEND')
-          FIRST = .FALSE.  
         ELSE
           OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'NEW',
      &      IOSTAT = ERRNUM)
           WRITE(NOUTDG,'("*GROWTH ASPECTS OUTPUT FILE")')
-          FIRST = .TRUE.  
         ENDIF
 
         !Write headers
@@ -164,35 +179,67 @@ C       Variable heading for GROWTH.OUT
         WRITE (NOUTDG,2192) GROHEAD(4)
  2192   FORMAT (A219)
 
-        SEEDNO = 0.0
-        GPP   = 0.0
-        WTNUP = 0.0
-        CANHT = 0.0
-        CANWH = 0.0
-
 !-----------------------------------------------------------------------
-!     Initialize daily plant nitrogen output file
-      IF (ISWNIT .EQ. 'Y') THEN
-        INQUIRE (FILE = OUTPN, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'OLD',
-     &      IOSTAT = ERRNUM, POSITION = 'APPEND')
-          FIRST = .FALSE.
-        ELSE
-          OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'NEW',
-     &      IOSTAT = ERRNUM)
-          WRITE(NOUTPN,'("*PLANT N OUTPUT FILE")')
-          FIRST = .TRUE.
+!       Initialize daily plant nitrogen output file
+        IF (ISWNIT .EQ. 'Y') THEN
+          INQUIRE (FILE = OUTPN, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'OLD',
+     &        IOSTAT = ERRNUM, POSITION = 'APPEND')
+          ELSE
+            OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'NEW',
+     &        IOSTAT = ERRNUM)
+            WRITE(NOUTPN,'("*PLANT N OUTPUT FILE")')
+          ENDIF
+        
+          CALL HEADER(SEASINIT, NOUTPN, RUN)
+        
+          WRITE (NOUTPN,2240) NITHEAD(1)
+          WRITE (NOUTPN,2240) NITHEAD(2)
+          WRITE (NOUTPN,2240) NITHEAD(3)
+          WRITE (NOUTPN,2240) NITHEAD(4)
+ 2240     FORMAT (A110)
         ENDIF
 
-        CALL HEADER(SEASINIT, NOUTPN, RUN)
+      ELSE  !csv format
 
-        WRITE (NOUTPN,2240) NITHEAD(1)
-        WRITE (NOUTPN,2240) NITHEAD(2)
-        WRITE (NOUTPN,2240) NITHEAD(3)
-        WRITE (NOUTPN,2240) NITHEAD(4)
- 2240   FORMAT (A110)
+        INQUIRE (FILE = OUTG, EXIST = FEXIST)
+        IF (FEXIST) THEN
+          OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'OLD',
+     &      IOSTAT = ERRNUM, POSITION = 'APPEND')
+        ELSE
+          OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'NEW',
+     &      IOSTAT = ERRNUM)
+        ENDIF
+!       Header for csv files
+        WRITE(NOUTDG,'(A,A,A,A)')
+     &    'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,GSTD,LAID,',
+     &    'UYAD,LWAD,SWAD,UWAD,RWAD,VWAD,CWAD,DWAD,HIAD,EWAD,E#AD,',
+     &    'WSPD,WSGD,NSTD,LN%D,SH%D,SLAD,CHTD,CWID,EWSD,RDPD,TRLV,',
+     &    'RL1D,RL2D,RL3D,RL4D,RL5D,SNW0C,SNW1C'
+
+        IF (ISWNIT .EQ. 'Y') THEN
+          INQUIRE (FILE = OUTPN, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'OLD',
+     &        IOSTAT = ERRNUM, POSITION = 'APPEND')
+          ELSE
+            OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS = 'NEW',
+     &        IOSTAT = ERRNUM)
+          ENDIF
+
+          WRITE(NOUTPN,'(A,A,A,A)')
+     &    'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,',
+     &    'TUNA,UNAD,VNAD,UN%D,',  
+     &    'VN%D, NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C'
+        ENDIF
       ENDIF
+
+      SEEDNO = 0.0
+      GPP   = 0.0
+      WTNUP = 0.0
+      CANHT = 0.0
+      CANWH = 0.0
 
       CUMSENSURF  = 0.0
       CUMSENSOIL  = 0.0
@@ -312,27 +359,28 @@ C
       ENDIF
 
 !---------------------------------------------------------------------------
-      IF ((MOD(DAS,FROP) .EQ. 0)          !Daily output every FROP days,
-     &  .OR. (YRDOY .EQ. YRPLT)           !on planting date, and
-     &  .OR. (YRDOY .EQ. MDATE)) THEN     !at harvest maturity 
+      DAP = MAX(0,TIMDIF(YRPLT,YRDOY))
+      IF (DAP > DAS) DAP = 0
+      CALL YR_DOY(YRDOY, YEAR, DOY)
 
-        DAP = MAX(0,TIMDIF(YRPLT,YRDOY))
-        IF (DAP > DAS) DAP = 0
-        CALL YR_DOY(YRDOY, YEAR, DOY)
+      IF ((FMOPT == 'A' .OR. FMOPT == ' ') .AND. !ASCII output
+     &      ((MOD(DAS,FROP) .EQ. 0)       !Daily output every FROP days,
+     &  .OR. (YRDOY .EQ. YRPLT)           !on planting date, and
+     &  .OR. (YRDOY .EQ. MDATE))) THEN    !at harvest maturity 
 
 !       PlantGro.out file
         IF (IDETG .EQ. 'Y') THEN
           WRITE (NOUTDG,400)YEAR, DOY, DAS, DAP,RSTAGE,XLAI,FRYLD,
      &        NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(SDWT*GM2KG),
-     &        NINT(RTWT*GM2KG),NINT(BIOMAS*10.0),
-     &        NINT(WTLF*10.0)+NINT(STMWT*GM2KG),NINT(DEADLF*GM2KG),HI,
-     &        NINT(PODWT*GM2KG),NINT(PODNO),1.0-SWFAC,1.0-TURFAC,
-     &        1.0-NSTRES,PCNL,SHELPC,SLA,CANHT,CANWH,SATFAC,
-     &        (RTDEP/100),(RLV(I),I=1,5)
+     &        NINT(RTWT*GM2KG),NINT(WTLF*10.0)+NINT(STMWT*GM2KG),
+     &        NINT(BIOMAS*10.0),NINT(DEADLF*GM2KG),HI,
+     &        NINT(PODWT*GM2KG),NINT(PODNO),1.0-SWFAC,1.0-TURFAC,SATFAC,
+     &        1.0-NSTRES,PCNL,SHELPC,SLA,CANHT,CANWH,
+     &        (RTDEP/100),TRLV,(RLV(I),I=1,5)
      &       ,NINT(CUMSENSURF), NINT(CUMSENSOIL)
  400      FORMAT (1X,I4,1X,I3.3,3(1X,I5),1X,F5.2,1X,F5.1,7(1X,I5),
-     &          1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,
-     &          2(1X,F5.2),1X,F5.3,6(1X,F5.2), 2I6)
+     &          1X,F5.3,2(1X,I5),4(1X,F5.3),2(1X,F5.2),1X,F5.1,
+     &          2(1X,F5.2),(1X,F5.2),F7.1,5(1X,F5.2), 2I6)
         ENDIF
 
 C-----------------------------------------------------------------------
@@ -349,6 +397,47 @@ C-----------------------------------------------------------------------
      &        ,2(1X,F6.2))
         ENDIF
       ENDIF
+
+!     CSV output corresponding to PlantGro.OUT
+!     CHP TEMP - write CSV output manually here. 
+      IF (FMOPT == 'C') THEN
+!         CALL CsvOut_PTSUB(
+!     &     EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, CONTROL%ROTNUM,
+!     &     CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+!     &     RSTAGE,XLAI,FRYLD,
+!     &     WTLF*10.0,  STMWT*GM2KG, SDWT*GM2KG,
+!     &     RTWT*GM2KG, BIOMAS*10.0,
+!     &     (WTLF*10.0+STMWT*GM2KG), DEADLF*GM2KG, HI,
+!     &     PODWT*GM2KG, PODNO, 1.0-SWFAC, 1.0-TURFAC,
+!     &     1.0-NSTRES, PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,
+!     &     (RTDEP/100), RLV(1), RLV(2), RLV(3), RLV(4), RLV(5),
+!     &     CUMSENSURF, CUMSENSOIL,
+!     &     vCsvlinePTSUB, vpCsvlinePTSUB, vlngthPTSUB)
+!
+!         CALL Linklst(vCsvlinePTSUB)
+
+        Write(NOUTDG,'(75(g0,","))')
+     &     EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, CONTROL%ROTNUM,
+     &     CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &     RSTAGE,XLAI,FRYLD,
+     &     WTLF*10.0,  STMWT*GM2KG, SDWT*GM2KG,
+     &     RTWT*GM2KG, (WTLF*10.0+STMWT*GM2KG), BIOMAS*10.0,
+     &     DEADLF*GM2KG, HI,
+     &     PODWT*GM2KG, PODNO, 1.0-SWFAC, 1.0-TURFAC,
+     &     1.0-NSTRES, PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,
+     &     (RTDEP/100), TRLV, RLV(1), RLV(2), RLV(3), RLV(4), RLV(5),
+     &     CUMSENSURF, CUMSENSOIL
+
+        IF (ISWNIT .EQ. 'Y') THEN
+          WRITE (NOUTPN,'(75(g0,","))')
+     &      EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, CONTROL%ROTNUM,
+     &      CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &      (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0), PCNGRN, PCNVEG,
+     &      WTNUP, (WTNLF*10.0), (WTNST*10.0), 
+     &      PCNL, PCNST, PCNRT, CUMSENSURFN, CUMSENSOILN
+        ENDIF
+
+      END IF
 
 !***********************************************************************
 !***********************************************************************

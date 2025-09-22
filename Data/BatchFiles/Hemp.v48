@@ -1,0 +1,25 @@
+$BATCH(HEMP)
+!
+! Directory    : C:\DSSAT48\Hemp
+! Command Line : C:\DSSAT48\DSCSM048.EXE CRGRO048 B DSSBatch.v48
+! Crop         : HEMP
+! Experiment   : EMSC1701.GGX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE CRGRO048 " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Hemp\UFCI2101.HMX                                                                      1      1      0      1      0
+C:\DSSAT48\Hemp\UFCI2101.HMX                                                                      2      1      0      1      0
+C:\DSSAT48\Hemp\UFCI2101.HMX                                                                      3      1      0      1      0
+C:\DSSAT48\Hemp\UFCI2201.HMX                                                                      1      1      0      1      0
+C:\DSSAT48\Hemp\UFCI2201.HMX                                                                      2      1      0      1      0
+C:\DSSAT48\Hemp\UFCI2201.HMX                                                                      3      1      0      1      0
+C:\DSSAT48\Hemp\UFCI2201.HMX                                                                      4      1      0      1      0
+C:\DSSAT48\Hemp\UFJA2101.HMX                                                                      1      1      0      1      0
+C:\DSSAT48\Hemp\UFJA2101.HMX                                                                      2      1      0      1      0
+C:\DSSAT48\Hemp\UFJA2101.HMX                                                                      3      1      0      1      0
+C:\DSSAT48\Hemp\UFJA2101.HMX                                                                      4      1      0      1      0
+C:\DSSAT48\Hemp\UFJA2201.HMX                                                                      1      1      0      1      0
+C:\DSSAT48\Hemp\UFJA2201.HMX                                                                      2      1      0      1      0
+C:\DSSAT48\Hemp\UFJA2201.HMX                                                                      3      1      0      1      0
+C:\DSSAT48\Hemp\UFJA2201.HMX                                                                      4      1      0      1      0

@@ -1,0 +1,32 @@
+$CULTIVARS:RYCER048.20200721   Last edit: 20211-05-26 GH
+
+! Coefficients used in the Cropsim-Ceres model differ from those used
+! in DSSAT Versions 3.5 and 4.0. They can be calculated (approximately) from 
+! V3.5 coefficients as follows:
+
+! P1V   = P1V(v3.5)*10 
+! P1D   = P1D(V3.5)*20
+! P5    = P5(V3.5)*20 + 430
+! G1    = G1(V3.5)*5 + 5
+! G2    = (G2(V3.5)*0.35+0.65) * P5/20
+! G3    = G3(V3.5)*0.7 
+! PHINT = PHINT(V3.5)
+
+! Converted coefficients,and those listed below,should always be
+! tested by using them with real experiments and comparing model 
+! outputs with measured values. 
+!
+!             P/G/N:Phenology/Growth/Not used for calbration
+!
+*CULTIVARS:WHCER048
+@VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
+!Coeffient #                             1     2     3     4     5     6     7
+!Calibration                             P     P     P     G     G     G     N
+!                                     Vday %/10h  oC.d   #/g    mg     g  oC.d
+999991 MINIMA               . 999991     0     0   100    10    10   0.5    30
+999992 MAXIMA               . 999992    60   200   999    50    80   8.0   150
+                                                                            
+DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
+
+RY0001 Test              1,14 RY0001     8   100   320    23    23   2.5    86 
+JR2020 Palazzo              . JKWR10    17   178   755    23    32   5.1    85

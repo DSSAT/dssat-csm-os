@@ -1488,8 +1488,8 @@
 !-----------------------------------------------------------------------
 !         Compute weights,etc. at end crop
 !-----------------------------------------------------------------------
-
-          IF (STGYEARDOY(11).EQ.YEARDOY) THEN
+          IF (STGYEARDOY(11).EQ.YEARDOY .OR. YEARDOY 
+     &        .EQ. YEARDOYHARF) THEN
 
             ! LAH No adjustment for fraction of day to maturity
             GRWTM = GRWT

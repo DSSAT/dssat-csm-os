@@ -1,5 +1,5 @@
-*GUINEAGRASS SPECIES COEFFICIENTS 
-!Guineagrass - Panicum maximum                                                                         
+*GUINEA GRASS SPECIES COEFFICIENTS 
+!Guinea grass - Panicum maximum                                                                         
                                                                                                     
 !*PHOTOSYNTHESIS PARAMETERS                                                                         
   45.0 130.0  0.55                         PARMAX,PHTMAX,KCAN  0.55                                 

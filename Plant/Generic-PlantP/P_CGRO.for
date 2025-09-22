@@ -161,9 +161,9 @@
           PestSeed = SWIDOT * 10.  
          ENDIF
 
-!       PhFrac1_2 is the fraction of physiological time which has 
+!       PhFrac1 is the fraction of physiological time which has 
 !         occurred between emergence and first seed.
-!       PhFrac2_3 is the fraction of physiological time which has 
+!       PhFrac2 is the fraction of physiological time which has 
 !         occurred between first seed and physiological maturity. 
         PhFrac1 = VegFrac
         PhFrac2 = SeedFrac

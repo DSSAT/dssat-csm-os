@@ -42,7 +42,7 @@ C=======================================================================
 
       CHARACTER*2  CROP
       CHARACTER*1  MEEVP
-      CHARACTER(len=6), PARAMETER :: ERRKEY = 'IPECO'
+      CHARACTER(len=6), PARAMETER :: ERRKEY = 'TRANS '
       CHARACTER(len=78)  MSG(2)
 
       INTEGER DYNAMIC
@@ -108,14 +108,14 @@ C       soil water balance and predicting measured ET.
      &              " is not defined for EVAPO method (H)."
                   MSG(2) = "Program will stop."
                   CALL WARNING(2, ERRKEY, MSG)
-                  CALL ERROR(ERRKEY,4,"",0)
+                  CALL ERROR(ERRKEY,1,"",0)
               ENDIF
               IF (phtv <= 0.0) THEN
                   MSG(1) = "VPD threshold parameter PHTV is" //
      &              " not defined for EVAPO method (H)."
                   MSG(2) = "Program will stop."
                   CALL WARNING(2, ERRKEY, MSG)
-                  CALL ERROR(ERRKEY,4,"",0)
+                  CALL ERROR(ERRKEY,2,"",0)
               ENDIF
               DO hour = 1,TS
                   VPDFPHR(hour) =  get_Growth_VPDFPHR(PHSV, PHTV, TDEW,

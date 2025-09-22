@@ -173,7 +173,7 @@ C=======================================================================
       INTERFACE
         SUBROUTINE SoilNiBal(CONTROL, ISWITCH, 
      &      ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,
-     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE,
      &      N2O_data) 
           USE GHG_mod
           USE FertType_mod
@@ -183,7 +183,7 @@ C=======================================================================
           TYPE (N2O_type), INTENT(IN), OPTIONAL :: N2O_DATA
           INTEGER, INTENT(IN) :: NBUND
           REAL, INTENT(IN) :: ALGFIX, CIMMOBN, CMINERN, CUMFNRO, CLeach,
-     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP
+     &      CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE
         END SUBROUTINE SoilNiBal
       END INTERFACE
 
@@ -986,7 +986,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE,
      &    N2O_data) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
@@ -1023,7 +1023,7 @@ C     Write daily output
 
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, TOTAML, TOTFLOODN, TUREA, CNUPTAKE,
      &    N2O_data) 
 
       CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 

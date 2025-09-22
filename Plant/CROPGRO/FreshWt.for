@@ -256,9 +256,12 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
-        IF (INDEX('Y',ISWFWT) < 1 .OR. 
-     &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
-        
+!     chp 2024-12-11 Need to continue with calculations for multiple harvests
+!                     regardless of IDETL value.
+!       IF (INDEX('Y',ISWFWT) < 1 .OR. 
+!    &    INDEX('N,0',ISWITCH%IDETL) > 0) RETURN
+        IF (INDEX('Y',ISWFWT) < 1)  RETURN
+
         ! Total values
         TOSDN   = 0.0      
         TOWSD   = 0.0      
@@ -298,7 +301,10 @@
     !         DMC(NPP) = 0.0465 + 0.0116 * EXP(0.161 * PAGE)
               DMC(NPP) = 0.023 + 0.0277 * EXP(0.116 * PAGE)  
             CASE ('PR')       ! Bell pepper
-              DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
+              !DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
+C-HBD from Wurbs et al. (2012) and Marcelis & Baan Hofman-Eijer (1995)
+              DMC(NPP) = (5.6165+11.5396*EXP(-3.6197*PAGE/40.))/100.
+C-HBD                     R nls fitting considering DAA < 41
             CASE ('SR')       ! Strawberry
               !Fixed value for Strawberry. 
               !From Code from Ken Boote / VSH

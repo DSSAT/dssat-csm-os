@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.8; 2024-12-01
+! DSSAT v4.8; 2025-05-16
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -257,6 +257,7 @@ FB       Faba bean                                                            IB
 GB       Green bean                                                           IB
 GG       Guinea grass                                                         IB
 GY       Guar                                                                 IB
+HM       Hemp                                                                 IB
 LT       Lentil                                                               IB
 ML       Pearl millet                                                         IB
 MZ       Maize                                                                IB
@@ -270,6 +271,7 @@ PR       Bell pepper                                                          IB
 PT       Potato                                                               IB
 QU       Quinoa                                                               IB
 RI       Rice                                                                 IB
+RY       Rye                                                                  IB
 SB       Soybean                                                              IB
 SC       Sugarcane                                                            IB
 SF       Safflower                                                            IB
@@ -284,6 +286,26 @@ TN       Tanier                                                               IB
 TR       Taro                                                                 IB
 VB       Velvet bean                                                          IB
 WH       Wheat                                                                IB
+
+*Crop Status at end of season
+@CDE     DESCRIPTION                                                          SO
+   1     Crop harvested at maturity                                           IB
+   2     Crop harvested on reported date                                      IB
+   3     Crop harvested at reported growth stage                              IB
+   6     Auto-harvest within window                                           IB
+  11     Failure to plant (automatic planting)                                IB
+  12     Failure to germinate                                                 IB
+  13     Failure to emerge                                                    IB
+  21     Crop mature due to slow grain filling                                IB
+  31     Crop died due to heat stress                                         IB
+  32     Crop died due to cold stress                                         IB
+  33     Crop died due to deficit water stress                                IB
+  34     Crop died due to excess water stress                                 IB
+  39     Crop died due to excess stress                                       IB
+  51     Crop died due to pest damage                                         IB
+ 100     Crop season length exceeded limits                                   IB
+ 200     Weather data error                                                   IB
+ 999     Unspecified error condition                                          IB
 
 *Disease and Pest Organisms
 @CDE     DESCRIPTION                                                          SO
@@ -637,7 +659,7 @@ TI017    Bedder                                                               IB
 TI018    Blade cultivator                                                     IB
 TI019    Fertilizer applicator, anhydrous                                     IB
 TI020    Manure injector                                                      IB
-TI021    Animal-drawn implement                                               IB
+!I021    Animal-drawn implement                                               IB
 TI022    Mulch treader                                                        IB
 TI023    Plank                                                                IB
 TI024    Roller packer                                                        IB

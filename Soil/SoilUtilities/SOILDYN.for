@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2020 DSSAT Foundation
+C  COPYRIGHT 1998-2025 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      Inernational Fertilizer Development Center
 C  
@@ -28,7 +28,8 @@ C  08/12/2003 CHP Added I/O error checking
 !  02/11/2009 CHP Do not run SoilDyn when ISWWAT = 'N'
 !                 Changed condition for missing or zero OC.
 !  01/24/2023 chp added SAEA to soil analysis in FileX for methane
-!  08/30/2024  FO Added WARNING message if LL > DUL > SAT.
+!  08/30/2024 FO  Added WARNING message if LL > DUL > SAT.
+!  08/01/2025 GH  Add additional information for SLPF
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -153,7 +154,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: BD_calc, BD_calc_init  !, BD_mineral
 
       REAL CN_BASE
-      REAL, DIMENSION(NL) :: BD_BASE, DL_BASE, DS_BASE, SAT_BASE,SC_BASE    !, RG_BASE
+      REAL, DIMENSION(NL) :: BD_BASE, DL_BASE, DS_BASE, SAT_BASE,SC_BASE
 
 !     Labels for soil layer depth info
       CHARACTER*8 LayerText(11)
@@ -182,7 +183,7 @@ C-----------------------------------------------------------------------
 
       MEINF   = ISWITCH % MEINF
       MESOM   = ISWITCH % MESOM
-      
+
       MULCHALB = MULCH % MULCHALB
 
       RAIN = WEATHER % RAIN
@@ -205,7 +206,7 @@ C-----------------------------------------------------------------------
       SLSOUR = '           '
       SLDESC = '                                                 '
       TAXON  = '                                                 '
-      SLNO   = '-99.      '
+      SLNO   = '-99       '
       LayerText = '        '
 
       SLDP   = -99.
@@ -249,11 +250,7 @@ C-----------------------------------------------------------------------
       EXCA   = -99.
       EXK    = -99.
       EXNA   = -99.
-      
-!-----------------------------------------------------------------------
-!     Should not need to run this unless soil water is being simulated.
-!     However, currently roots are grown even with no soil water simulation.
-!     Need to fix this in the future
+
       ISWWAT = ISWITCH % ISWWAT
 
 !-----------------------------------------------------------------------
@@ -446,8 +443,11 @@ C-----------------------------------------------------------------------
       IF (SLPF < 1.E-4) THEN
         SLPF = 1.0
       ELSEIF (SLPF < 0.9999) THEN
-        WRITE(MSG(1),'("Soil photosynthesis factor (SLPF) =",F5.2)')SLPF
-        CALL WARNING(1,ERRKEY,MSG)
+        WRITE(MSG(1),'("Soil photosynthesis factor (SLPF) is",F5.2)')
+     &                SLPF
+        WRITE(MSG(2),'("This will reduce your potential biomass by",
+     &                F5.2)')SLPF
+        CALL WARNING(2,ERRKEY,MSG)
       ENDIF
 
 C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
@@ -906,7 +906,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % TAXON         = TAXON
 
       SOILPROP % COARSE = COARSE
-      
+
       CALL SETPM(SOILPROP)
 
       CALL PUT(SOILPROP)
@@ -914,7 +914,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       IF (ISWWAT == 'N') RETURN
 
       CALL PRINT_SOILPROP(SOILPROP)
-      
+
 !-----------------------------------------------------------------------
 !     Initialization
 C  Designate the CN2, BD, and SWCN values from CROPGRO as the settled
@@ -1530,7 +1530,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SWALB = SOILPROP % SALB * (1.0 - 0.45 * FF)
 
 !     1/18/2008 chp change albedo calculations back to original at GH's request.
-!     Probably temporary-- temp chp
+!     Probably temporary
 !!     chp 12/21/2007
 !!     Based on Idso, Jackson et al., 1975. The dependence of bare soil 
 !!     albedo on soil water content. Journal of Applied Meteorology 14, 109-113. 
@@ -1572,12 +1572,6 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SOILPROP % CMSALB = CMSALB
       SOILPROP % MSALB  = MSALB
       SOILPROP % SWALB  = SWALB
-
-!!    Temporary -- print soil albedo stuff
-!     GET (CONTROL)
-!     CALL YR_DOY(CONTROL.YRDOY, YEAR, DOY)
-!     WRITE(2250,'(1X,I4,1X,I3.3,1X,I5,8F8.3)') YEAR, DOY, CONTROL.DAS, SOILPROP.SALB, 
-!     &      FF, SWALB, MULCHCOVER, MSALB, CANCOV, CMSALB
 
       RETURN
       END SUBROUTINE ALBEDO_avg
@@ -1687,12 +1681,12 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       TAXON         = SOILPROP % TAXON        
 
 !     General profile data:
-      MSG(1) = "Soil ID: " // SLNO
-      MSG(2) = SLDESC
-      MSG(3) = TAXON
+      WRITE(MSG(1),'("Soil ID: ",A)') TRIM(SLNO)
+      WRITE(MSG(2),'(A)') TRIM(SLDESC)
+      WRITE(MSG(3),'(A)') TRIM(TAXON)
       MSG(4) = "  SALB SWCON    CN  DMOD  SLPF SMPX"
-      WRITE(MSG(5),'(2F6.2,F6.1,2F6.2,1X,A5)') 
-     &      SALB, SWCON, CN,DMOD,SLPF, SMPX
+      WRITE(MSG(5),'(2F6.2,F6.1,2F6.2,1X,A)') 
+     &      SALB, SWCON, CN,DMOD,SLPF, TRIM(SMPX)
       WRITE(MSG(6),'(A,A)') 
      &      "Soil layer distribution method: ",ISWITCH%MESOL 
       

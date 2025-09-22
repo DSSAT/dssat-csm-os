@@ -4,7 +4,7 @@
 # Define the project and the dependencies that it has
 ##########################################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
    message(FATAL_ERROR "DSSAT in-source builds are not permitted. \nMake a separate folder"
@@ -21,8 +21,8 @@ PROJECT(DSSAT-CSM Fortran CXX)
 
 SET(MAJOR 4)
 SET(MINOR 8)
-SET(MODEL 2)
-SET(BUILD 29)
+SET(MODEL 5)
+SET(BUILD 32)
 
 # Get the current working branch
 execute_process(

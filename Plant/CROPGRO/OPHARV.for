@@ -232,8 +232,9 @@ C-----------------------------------------------------------------------
       PlantStres % StageName = '                       '
       SELECT CASE (CROP)
       CASE ('AM','BC','BG','BN','CH','CI','CN','CO','CP',
-     &      'CU','FB','GB','GY','LT','PE','PN','PP',
-     &      'PR','QU','SB','SF','SR','SU','TM','VB')
+     &      'CU','FB','GB','GY','HM','LT','PE','PN','PP',
+     &      'PR','QU','SB','SF','SR','SU','TM','VB',
+     &      'CM')  !VSH
         PlantStres % NSTAGES = 4
         PlantStres % StageName(1)  = 'Emergence -First Flower'
         PlantStres % StageName(2)  = 'First Flower-First Seed'
@@ -243,7 +244,7 @@ C-----------------------------------------------------------------------
       CASE ('CB')
         PlantStres % NSTAGES = 0
 
-      CASE ('BM','BH','BR','C3','C4','NP')
+      CASE ('BM','BH','BR','C3','C4','NP','CV')
         PlantStres % NSTAGES = 1
         PlantStres % StageName(1)  = 'Emergence  - Phys. Mat.'
 
@@ -277,8 +278,9 @@ C-----------------------------------------------------------------------
 !     Set ACTIVE variable to indicate that current phase is active
       SELECT CASE (CROP)
       CASE ('AM','BC','BG','BN','CH','CI','CN','CO','CP',
-     &      'CU','FB','GB','GY','LT','PE','PN','PP',
-     &      'PR','QU','SB','SF','SR','SU','TM','VB')
+     &      'CU','FB','GB','GY','HM','LT','PE','PN','PP',
+     &      'PR','QU','SB','SF','SR','SU','TM','VB',
+     &      'CM') !VSH
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(5)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -300,7 +302,7 @@ C-----------------------------------------------------------------------
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
 
-      CASE ('BM','BH','BR','NP')
+      CASE ('BM','BH','BR','NP','CV')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(16)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -685,7 +687,8 @@ C-----------------------------------------------------------------------
 
       SELECT CASE (CROP)
       CASE ('AM','BC','BN','CH','CI','CN','CP','CU','FB','GB','GY',
-     &      'PE','PP','PR','SB','SR','TM','VB','LT')
+     &      'HM','PE','PP','PR','SB','SR','TM','VB','LT',
+     &      'CM') ! VSH
 !     For stage-dependant irrigation - send GSTAGE back to irrig routine
         STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
         STNAME(2) = 'Unifoliate'
@@ -783,7 +786,7 @@ C-----------------------------------------------------------------------
         STNAME(15) = 'Sowing    '
         STNAME(16) = 'Harvest   '
 
-      CASE ('BM','BH','BR','NP')
+      CASE ('BM','BH','BR','NP','CV')
          STNAME( 1) = 'Emergence '
          STNAME( 2) = 'First Leaf'
          STNAME( 3) = 'End Juven.'

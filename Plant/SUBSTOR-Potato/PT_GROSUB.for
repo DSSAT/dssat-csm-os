@@ -255,11 +255,10 @@ C-----------------------------------------------------------------------
       ELSE
           PRFT = 0
       END IF
-!      --------End-----effect of Tmean on PRFT, modified by RR 02/15/2016
-!      
-    
-!       Calculation of daily leaf senescence, begin
-!      
+!     --------End-----effect of Tmean on PRFT, modified by RR 02/15/2016
+
+!     Calculation of daily leaf senescence, begin
+
       SELECT CASE (ISTAGE)
         CASE (1)                        ! Natural senescence, SLAN
           SLAN = CUMDTT*PLA/10000.
@@ -341,24 +340,24 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
          DEADLN = DEADLN + (DDEADLF*TMNC)
       ENDIF
       
-!      This unction was merged with PRFT
-!      --------beggin----RR effect of Tmean on RUE 02/15/2016
-!      IF (TEMPM .LE. 24) THEN
-!          TX_RUE = 1.0
-!      ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
-!          TX_RUE = -0.0909*(TEMPM) + 3.1818 !RR linear function from 24 to 40  y = -0.0909x + 3.1818      
-!      ELSE
-!         TX_RUE = 0
-!      END IF
-!      --------end----------
+!     This function was merged with PRFT
+!     --------beggin----RR effect of Tmean on RUE 02/15/2016
+!     IF (TEMPM .LE. 24) THEN
+!         TX_RUE = 1.0
+!     ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
+!         TX_RUE = -0.0909*(TEMPM) + 3.1818 !RR linear function from 24 to 40  y = -0.0909x + 3.1818      
+!     ELSE
+!        TX_RUE = 0
+!     END IF
+!     --------end----------
 
-!       Potential carbon fixation
+!     Potential carbon fixation
       PT_PAR = SRAD*0.5               ! PAR = SRAD*.02092
       IF (ISTAGE .LT. 2) THEN
-         !PCARB = 3.5*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+!        PCARB = 3.5*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))     !CHP
          PCARB = RUE1*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
        ELSE
-!        PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+!        PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))     !CHP
 !        PCARB = RUE2*TX_RUE*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
          PCARB = RUE2*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
       END IF

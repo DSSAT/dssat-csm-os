@@ -442,7 +442,6 @@ C-----------------------------------------------------------------------
      &   PCNST, PCNSR, PCNSH, PCNRT, NFIXN*10
 410     FORMAT(1X,I4,1X,I3.3,2(1X,I5),3(1X,F5.1),2(1X,F5.2),1X,
      &   2(1X,F6.1),3(1X,F5.1),3(1X,F5.2),2(1X,F5.2),1X,F5.1)
-!CHP TEMP     &   (1X,F6.1),1X,F8.3,2(1X,F5.1),2(1X,F5.2),3(1X,F5.1))
 
         WRITE (NOUTPC,510) YEAR, DOY, DAS, DAP,
      &    NINT(TOTWT*10), PG, CMINEA, GROWTH,

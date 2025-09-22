@@ -20,35 +20,39 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:
-!       4.8.2.29  FO 2024-11-27 PR 461 Commit SHA: 872a1d4
-!       4.8.2.28  FO 2024-11-25 PR 459 Commit SHA: 1335cab
-!       4.8.2.27  FO 2024-11-25 PR 457 Commit SHA: 8a81593
-!       4.8.2.26  FO 2024-11-25 PR 456 Commit SHA: eac7ba6
-!       4.8.2.25  FO 2024-11-24 PR 458 Commit SHA: 7fd86bd
-!       4.8.2.24  FO 2024-10-28 PR 452 Commit SHA: 05d0d58
-!       4.8.2.23  FO 2024-10-28 PR 449 Commit SHA: 2bbadd1
-!       4.8.2.22  FO 2024-10-28 PR 451 Commit SHA: 448192c
-!       4.8.2.21  FO 2024-09-28 PR 446 Commit SHA: 433f2fd
-!       4.8.2.20  FO 2024-09-27 PR 446 Commit SHA: 83e008b
-!       4.8.2.19  FO 2024-09-20 PR 441 Commit SHA: e9c64bf
-!       4.8.2.18  FO 2024-09-06 PR 437 Commit SHA: 44bfa27
-!       4.8.2.17  FO 2024-09-06 PR 436 Commit SHA: 88e3060
-!       4.8.2.16  FO 2024-08-23 PR 431 Commit SHA: 635a664
-!       4.8.2.15  FO 2024-08-23 PR 434 Commit SHA: ff849ef
-!       4.8.2.14  FO 2024-08-09 PR 429 Commit SHA: c93205a
-!       4.8.2.13  FO 2024-07-13 PR 424 Commit SHA: 0c15449
-!       4.8.2.12  FO 2024-06-13 PR 408 Commit SHA: 4fd64a3
-!       4.8.2.11  FO 2024-06-13 PR 409 Commit SHA: 2e5a360
-!       4.8.2.10  FO 2024-05-16 PR 413 Commit SHA: 1e6ac3c
-!       4.8.2.9   FO 2024-05-16 PR 412 Commit SHA: 6488713
-!       4.8.2.8   FO 2024-04-26 PR 406 Commit SHA: f65fc5c
-!       4.8.2.7   FO 2024-03-22 PR 402 Commit SHA: 9b4a3cd
-!       4.8.2.6   FO 2024-02-16 PR 397 & 400 Commit SHA: fccf858
-!       4.8.2.5   FO 2024-02-16 PR 398 Commit SHA: 4870729
-!       4.8.2.4   FO 2024-01-26 PR 394 Commit SHA: 28ad6da
-!       4.8.2.3   FO 2024-01-26 PR 388 Commit SHA: 32b61e9
-!       4.8.2.2   FO 2024-01-26 PR 395 Commit SHA: 8a2a06f
-!       4.8.2.1   FO 2023-10-20 Commit SHA: 8be2eef
+!       4.8.5.32  FO 2025-09-12 v4.8.5.32 PR 521 Commit SHA: 75ac3ff
+!       4.8.5.31  FO 2025-09-08 v4.8.5.31 PR 525 Commit SHA: 3db4fc4
+!       4.8.5.30  FO 2025-09-08 v4.8.5.30 PR 523 Commit SHA: c7d07ba
+!       4.8.5.29  FO 2025-09-08 v4.8.5.29 PR 516 Commit SHA: eb3c1a9
+!       4.8.5.28  FO 2025-08-22 v4.8.5.28 PR 520 Commit SHA: 3713920
+!       4.8.5.27  FO 2025-08-04 v4.8.5.27 PR 518 Commit SHA: 8e1667b
+!       4.8.5.26  FO 2025-08-03 v4.8.5.26 PR 514 Commit SHA: 5059f4c
+!       4.8.5.25  FO 2025-08-01 v4.8.5.25 PR 517 Commit SHA: c8c0189
+!       4.8.5.24  FO 2025-08-01 v4.8.5.24 PR 515 Commit SHA: fe0720e
+!       4.8.5.23  FO 2025-07-11 v4.8.5.23 PR 513 Commit SHA: dea8e12
+!       4.8.5.22  FO 2025-07-11 v4.8.5.22 PR 512 Commit SHA: 227ed77
+!       4.8.5.21  FO 2025-07-01 v4.8.5.21 PR 510 Commit SHA: 8430559
+!       4.8.5.20  FO 2025-06-27 v4.8.5.20 PR 506 Commit SHA: 4c42c4c
+!       4.8.5.19  FO 2025-06-27 v4.8.5.19 PR 508 Commit SHA: f1ee30a
+!       4.8.5.18  FO 2025-06-27 v4.8.5.18 PR 505 Commit SHA: 97ab643
+!       4.8.5.17  FO 2025-05-16 v4.8.5.17 PR 500 Commit SHA: 1beeabd
+!       4.8.5.16  FO 2025-05-12 v4.8.5.16 PR 500 Commit SHA: 3c6c041
+!       4.8.5.15  FO 2025-05-12 v4.8.5.15 PR 499 Commit SHA: f5196fd
+!       4.8.5.14  FO 2025-05-12 v4.8.5.14 PR 498 Commit SHA: 6aed710
+!       4.8.5.13  FO 2025-05-10 v4.8.5.13 PR 491 Commit SHA: ecfe7cf
+!       4.8.5.12  FO 2025-05-03 v4.8.5.12 PR 494 Commit SHA: 54fff70
+!       4.8.5.11  FO 2025-05-02 v4.8.5.11 PR 493 Commit SHA: 4e29d72
+!       4.8.5.10  FO 2025-05-02 v4.8.5.10 PR 481 Commit SHA: 483791e
+!       4.8.5.9   FO 2025-04-25 v4.8.5.9  PR 483 Commit SHA: a0056f0
+!       4.8.5.8   FO 2025-04-25 v4.8.5.8  PR 485 Commit SHA: dcd1aa3
+!       4.8.5.7   FO 2025-04-18 v4.8.5.7  PR 484 Commit SHA: 80e7827
+!       4.8.5.6   FO 2025-04-01 v4.8.5.6  PR 482 Commit SHA: 7a952ed
+!       4.8.5.5   FO 2025-03-28 v4.8.5.5  PR 473 Commit SHA: 78bddc9
+!       4.8.5.4   FO 2025-03-21 v4.8.5.4  PR 479 Commit SHA: cfcb8f6
+!       4.8.5.3   FO 2025-03-21 v4.8.5.3  PR 470 Commit SHA: 03dd5cf
+!       4.8.5.2   FO 2025-03-21 v4.8.5.2  PR 469 Commit SHA: a15169a
+!       4.8.5.1   FO 2025-03-19 v4.8.5.1  PR 475 Commit SHA: 218ef51
+!       4.8.5.0   FO 2024-12-19 v4.8.5 Release 2024
 !       4.8.2.0   FO 2023-09-02 v4.8.2 Release 2023
 !       4.8.1.0   FO 2022-10-28 v4.8.1 Interim release 2022
 !       4.8.0.1  chp 2020-07-21 v4.8 (=v4.7.5.14)

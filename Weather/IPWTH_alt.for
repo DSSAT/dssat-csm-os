@@ -44,7 +44,7 @@ C=======================================================================
 
       IMPLICIT NONE
       EXTERNAL YR_DOY, INCYD, ERROR, FIND, GETLUN, WARNING, UPCASE, 
-     &  IGNORE, PARSE_HEADERS, WEATHERERROR, IGNORE2, 
+     &  IGNORE, PARSE_HEADERS, WEATHERERROR, IGNORE2,
      &  CHECK_WEATHER_HEADERS, SUMVALS, IPWREC, DAILYWEATHERCHECK
       SAVE
 
@@ -746,7 +746,8 @@ C     Send labels and values to OPSUM
       USE ModuleDefs
       USE Forecast
       IMPLICIT NONE
-      EXTERNAL IGNORE, WEATHERERROR, Y2K_DOYW, YR_DOY, WARNING
+      EXTERNAL IGNORE, WEATHERERROR, Y2K_DOYW, YR_DOY, WARNING, IGNORE4,
+     &         ERROR
       SAVE
 
       INTEGER MaxRecords
@@ -816,7 +817,8 @@ C     Send labels and values to OPSUM
 !       Read array of weather records for this calendar year 
 !       starting with simulation start date and ending at end 
 !       of file or at MaxRecords # of records
-        CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
+        CALL IGNORE4(LUNWTH,LINWTH,FOUND,LINE)
+        IF (FOUND .EQ. 4) CALL ERROR (ERRKEY,98,FILEWW,LINWTH)
         IF (FOUND == 1) THEN
 
           SRAD  = -99.

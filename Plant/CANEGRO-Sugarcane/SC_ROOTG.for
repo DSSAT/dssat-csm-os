@@ -13,6 +13,7 @@ c     work with the DSSAT CANEGRO Plant
 c     Module structure / variables
 
 !     2023-01-26 chp removed unused variables from argument list: HU16
+!     2025-03-20  FO PR473-Fixed VBOSE mode issue that switches off WatBal
 c     ****************************************************************
 
       SUBROUTINE ROOTGROWTH(
@@ -365,16 +366,11 @@ c     Reference root elongation rate:
 
 c     Switches:
 c     :::::::::
-          IF (INDEX('YDA',ISWITCH%IDETL) > 0) THEN
-!            CALL GETLUN('WORK.OUT',SCLUN)
-            IF (ISWITCH%ISWWAT .EQ. 'Y') THEN
-                ISWATBAL = .TRUE.
-!                WRITE(SCLUN, '(A)') 'Water balance IS modeled.'
-            ELSE
-                ISWATBAL = .FALSE.
-!                WRITE(SCLUN, '(A)') 'Water balance NOT modeled.'
-                SWDF1 = 1.
-            ENDIF
+          IF (ISWITCH%ISWWAT .EQ. 'Y') THEN
+              ISWATBAL = .TRUE.
+          ELSE
+              ISWATBAL = .FALSE.
+              SWDF1 = 1.
           ENDIF
 
 c     If rooting weight was not set:
