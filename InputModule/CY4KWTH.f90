@@ -223,7 +223,13 @@
         !Error - If both (SM, PLT) are not found
         CALL ERROR (ERRKEY,5,FILEX,LNUM)
       ENDIF
-
+!-----------------------------------------------------------------------
+!    If Weather method is different than Daily Measured return
+!-----------------------------------------------------------------------
+      IF(MEWTH .NE. 'M' .OR. MEWTH .NE. 'G') THEN
+        FirstWeatherDate = -99
+        RETURN
+      ENDIF
 !-----------------------------------------------------------------------
 !    Converts SDATE or PDATE to YR and DOY
 !-----------------------------------------------------------------------

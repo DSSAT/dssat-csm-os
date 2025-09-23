@@ -164,7 +164,8 @@ C=======================================================================
 
 !       Initialize read from file for 'M', 'G' weather options and also for
 !         RNMODE = 'Y' (yield forecast mode) regardless of weather option
-        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G')THEN
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' .OR.
+     &      MEWTH .EQ. 'H' .OR. MEWTH .EQ. 'C')THEN
           CALL IPWTH(CONTROL2, ERRKEY,
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
@@ -342,7 +343,8 @@ C     Compute daily normal temperature.
 !       Get weather data by normal means    
 !-----------------------------------------------------------------------
 C       Read new weather record.
-        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' ) THEN
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' .OR.
+     &      MEWTH .EQ. 'H' .OR. MEWTH .EQ. 'C')THEN
           CALL IPWTH(CONTROL2, ERRKEY,
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
@@ -461,7 +463,8 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
-      IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' .OR.
+     &      MEWTH .EQ. 'H' .OR. MEWTH .EQ. 'C')THEN
         CALL IPWTH(CONTROL, ERRKEY,
      &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
      &    MEWTH, OZON7, PAR,                              !Output

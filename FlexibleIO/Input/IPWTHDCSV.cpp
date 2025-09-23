@@ -40,7 +40,7 @@ void READ_WTH_CSV(char *FILEWW, int *YRDOY,
   
   //Initialize
   fileww.erase(fileww.find_first_of(" "), fileww.size());
-  std::regex word_regex("[^,]+");
+  std::regex word_regex("[^,\\s]+");
   hdsection = false;
   
   file.open(fileww, std::ifstream::in);
