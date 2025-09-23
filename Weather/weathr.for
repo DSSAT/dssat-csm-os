@@ -295,10 +295,10 @@ c                   available.
       ENDIF
 
 C     Calculate hourly weather data.
-      CALL HMET(
+      CALL HMET(YRDOY,
      &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
      &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
-     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
+     &    TMIN, WINDHT, WINDSP, XLAT, MEWTH,              !Input
      &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
      &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
      &    TGROAV, TGRODY, WINDHR)                         !Output
@@ -433,10 +433,10 @@ c                   available.
       WEATHER % CPRED  = WEATHER % CPRED + RAIN
             
 C     Calculate hourly weather data.
-      CALL HMET(
+      CALL HMET(YRDOY,
      &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
      &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
-     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
+     &    TMIN, WINDHT, WINDSP, XLAT, MEWTH,              !Input
      &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
      &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
      &    TGROAV, TGRODY, WINDHR)                         !Output
