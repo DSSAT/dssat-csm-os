@@ -18,20 +18,20 @@
 #include "../Data/FlexibleIO.hpp"
 
 extern "C" {
-void READ_WTH_CSV(char *FILEWW, int *YRDOY, 
+void READ_WTH_CSV(char *FILEWW, int *FirstWeatherDate, int *YRDOY, 
                       int *FirstWeatherDay, int *LastWeatherDay, 
                       int *LNUM, int *NRECORDS, int *MXRECORDS, 
                       int *ERRCODE);
 }
 
-void READ_WTH_CSV(char *FILEWW, int *YRDOY, 
+void READ_WTH_CSV(char *FILEWW, int *FirstWeatherDate, int *YRDOY, 
                       int *FirstWeatherDay, int *LastWeatherDay, 
                       int *LNUM, int *NRECORDS, int *MXRECORDS, 
                       int *ERRCODE){
   FlexibleIO *flexibleio = FlexibleIO::getInstance();
-  std::string fileww(FILEWW), line, value, hour;
+  std::string fileww(FILEWW), line, value;
   std::ifstream file;
-  int hdcounter, datecol, nrow, fwd, lwd, nrec, century, yeardoy;
+  int hdcounter, datecol, nrow, fwd, lwd, nrec, century, yeardoy, yydoy,yy,doy;
   bool hdsection;
   std::vector<std::string> hddata, dtdata;
   std::regex_iterator<std::string::iterator> hrit;
@@ -102,10 +102,33 @@ void READ_WTH_CSV(char *FILEWW, int *YRDOY,
           // Store CSV Weather Data.
           int i = 0;
           while(drit != rend && i < hddata.size()) {
-            if(hddata[i] == "DATE"){
-              value = drit->str();
-              yeardoy = std::stoi(value);
+            if(hddata[i] == "DATE" && *FirstWeatherDate == -99){
+              yydoy =  std::stoi(drit->str());
+              yy  = yydoy / 1000;
+              doy = yydoy - yy * 1000;
+              //cross-over year based on DATES.for
+              if(yy <= 35){
+                yeardoy = (2000 + yy) * 1000 + doy;
+              }
+              else{
+                yeardoy = (1900 + yy) * 1000 + doy;
+              }
+              
               if(yeardoy >= *YRDOY){
+                value = std::to_string(yeardoy);
+                lwd = yeardoy;
+                if(yeardoy <= fwd || fwd == 0)
+                  fwd = yeardoy;
+                nrec+=1;
+              }
+              else{
+                break;
+              }
+            }
+            else if(hddata[i] == "DATE" && *FirstWeatherDate != -99){
+              yeardoy = std::stoi(drit->str());
+              if(yeardoy >= *YRDOY){
+                value = drit->str();
                 lwd = yeardoy;
                 if(yeardoy <= fwd || fwd == 0)
                   fwd = yeardoy;

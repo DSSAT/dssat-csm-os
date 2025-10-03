@@ -1023,40 +1023,42 @@ contains
        
     end subroutine READ_WTH_HOURLY
     
-    subroutine READ_WTH_CSV(fileww, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
+    subroutine READ_WTH_CSV(fileww, firstweatherdate, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
 
-        implicit none
-        character(len=*), intent(in) :: fileww
-        character(LEN(fileww)+1) :: filewwstr
-        integer, intent(in) :: yrdoy
-        integer, intent(out) :: firstweatherday
-        integer, intent(out) :: lastweatherday
-        integer, intent(out) :: lnum
-        integer, intent(out) :: nrecords
-        integer, intent(in)  :: mxrecords
-        integer, intent(out) :: errcode
+         implicit none
+         character(len=*), intent(in) :: fileww
+         character(LEN(fileww)+1) :: filewwstr
+         integer, intent(in) :: firstweatherdate   
+         integer, intent(in) :: yrdoy
+         integer, intent(out) :: firstweatherday
+         integer, intent(out) :: lastweatherday
+         integer, intent(out) :: lnum
+         integer, intent(out) :: nrecords
+         integer, intent(in)  :: mxrecords
+         integer, intent(out) :: errcode
 
-   
-        interface
-            subroutine READWTHCSV(filewwstr, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)&
-                bind(C, name = 'READ_WTH_CSV')
-                use, intrinsic :: iso_c_binding
-                character(kind = c_char), dimension(*) :: filewwstr
-                integer :: yrdoy
-                integer :: firstweatherday
-                integer :: lastweatherday
-                integer :: lnum
-                integer :: nrecords
-                integer :: mxrecords
-                integer :: errcode                
-            end subroutine READWTHCSV
-        end interface
-   
-        filewwstr = fileww
-        filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)    
-   
-        call READWTHCSV(filewwstr, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
-       
+    
+         interface
+             subroutine readwthcsv(filewwstr, firstweatherdate, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)&
+                 bind(C, name = 'READ_WTH_CSV')
+                 use, intrinsic :: iso_c_binding
+                 character(kind = c_char), dimension(*) :: filewwstr
+                 integer :: firstweatherdate
+                 integer :: yrdoy
+                 integer :: firstweatherday
+                 integer :: lastweatherday
+                 integer :: lnum
+                 integer :: nrecords
+                 integer :: mxrecords
+                 integer :: errcode                
+             end subroutine readwthcsv
+         end interface
+    
+         filewwstr = fileww
+         filewwstr(LEN(filewwstr):LEN(filewwstr)) = CHAR(0)     
+    
+         call readwthcsv(filewwstr, firstweatherdate, yrdoy, firstweatherday, lastweatherday, lnum, nrecords, mxrecords, errcode)
+        
     end subroutine READ_WTH_CSV
     
 end module flexibleio  

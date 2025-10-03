@@ -353,8 +353,9 @@ C     The components are copied into local variables for use here.
      &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'C') THEN
-          CALL READ_WTH_CSV(FILEWW,YRSIMPREV,FirstWeatherDay, 
-     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          CALL READ_WTH_CSV(FILEWW,FirstWeatherDate,YRSIMPREV,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'H') THEN
           CALL READ_WTH_HOURLY(FILEWW,YRSIMPREV,FirstWeatherDay, 
@@ -437,8 +438,9 @@ C       Substitute default values if REFHT or WINDHT are missing.
      &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'C') THEN
-          CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
-     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          CALL READ_WTH_CSV(FILEWW,FirstWeatherDate,YRDOY,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'H') THEN
           CALL READ_WTH_HOURLY(FILEWW,YRDOY,FirstWeatherDay, 
@@ -461,8 +463,9 @@ C       Substitute default values if REFHT or WINDHT are missing.
      &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'C') THEN
-          CALL READ_WTH_CSV(FILEWW,YRSIMPREV,FirstWeatherDay, 
-     &     LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          CALL READ_WTH_CSV(FILEWW,FirstWeatherDate,YRSIMPREV,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
         ENDIF
         IF(MEWTH .EQ. 'H') THEN
           CALL READ_WTH_HOURLY(FILEWW,YRSIMPREV,FirstWeatherDay, 
@@ -614,8 +617,9 @@ C     Send labels and values to OPSUM
      &    MXRecords, ERRCODE) 
           ENDIF
           IF(MEWTH .EQ. 'C') THEN
-            CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
-     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          CALL READ_WTH_CSV(FILEWW,FirstWeatherDate,YRDOY,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
           ENDIF
           IF(MEWTH .EQ. 'H') THEN
             CALL READ_WTH_HOURLY(FILEWW,YRDOY,FirstWeatherDay, 
@@ -638,8 +642,9 @@ C     Send labels and values to OPSUM
      &    MXRecords, ERRCODE) 
           ENDIF
           IF(MEWTH .EQ. 'C') THEN
-            CALL READ_WTH_CSV(FILEWW,YRDOY,FirstWeatherDay, 
-     &       LastWeatherDay, LNUM, NRecords, MXRecords, ERRCODE)
+          CALL READ_WTH_CSV(FILEWW,FirstWeatherDate,YRDOY,
+     &    FirstWeatherDay, LastWeatherDay, LNUM, NRecords, 
+     &    MXRecords, ERRCODE) 
           ENDIF
           IF(MEWTH .EQ. 'H') THEN
             CALL READ_WTH_HOURLY(FILEWW,YRDOY,FirstWeatherDay, 

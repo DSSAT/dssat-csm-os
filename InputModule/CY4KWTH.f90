@@ -226,7 +226,7 @@
 !-----------------------------------------------------------------------
 !    If Weather method is different than Daily Measured return
 !-----------------------------------------------------------------------
-      IF(MEWTH .NE. 'M' .OR. MEWTH .NE. 'G') THEN
+      IF(MEWTH .EQ. 'H') THEN
         FirstWeatherDate = -99
         RETURN
       ENDIF
