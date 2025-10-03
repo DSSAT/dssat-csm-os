@@ -68,8 +68,7 @@
          PROCODC = 'CLD'
       ENDIF
 !     Measured weather data
-      IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'H' .OR.
-     &    RNMODE .EQ. 'Y') THEN
+      IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'H') THEN
          IF (WSTA1(4:4) .EQ. BLANK) THEN
            WRITE (FILEW(1:12),'(A4,I2.2,A6)') WSTA,YR,'01.WTH'
          ELSE
@@ -77,7 +76,7 @@
          ENDIF
          PROCODW = 'WED'
       ENDIF
-      IF (MEWTH .EQ. 'C' .OR. RNMODE .EQ. 'Y') THEN
+      IF (MEWTH .EQ. 'C') THEN
          IF (WSTA1(4:4) .EQ. BLANK) THEN
            WRITE (FILEW(1:12),'(A4,I2.2,A6)') WSTA,YR,'01.CSV'
          ELSE
