@@ -527,7 +527,8 @@ C     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE)
 !-----------------------------------------------------------------------      
 ! FLEXIBLEIO - Starts
-      YRSIMPREV = INCYD(YRSIM,-1)
+      !YRSIMPREV = INCYD(YRSIM,-1)
+      YRSIMPREV = YRSIM
       
       CALL fio % get('WTH', YRSIMPREV, "DATE", DATE)
       IF(DATE .NE. -99.0) THEN
