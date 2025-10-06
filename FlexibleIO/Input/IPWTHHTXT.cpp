@@ -119,7 +119,6 @@ void READ_WTH_HOURLY(char *FILEWW, int *YRDOY,
             }
 
             flexibleio->setFor2KeyString("WTH", value, hour, hddata[i], drit->str());
-            flexibleio->setForKeyString("WTH", value, hddata[i], drit->str());
             //std::cout << "ADDED FIO: " << hddata[i] << "  " <<  value << " " << hour << " " <<
             //flexibleio->getFor2KeyString("WTH", value, hour, hddata[i]) << " " << std::endl;
             

@@ -549,6 +549,11 @@ C     Send labels and values to OPSUM
         IF(DCO2 .EQ. -99.0) 
      &    CALL fio % get('WTH', YRSIMPREV, 'CO2', DCO2)
         CALL fio % get('WTH', YRSIMPREV, 'OZON7', OZON7)
+          
+        IF(MEWTH .EQ. 'H') THEN
+          CALL HR2DLY(YRSIMPREV, SRAD, TMAX, TMIN, RAIN)
+        ENDIF
+        
         !     Error checking
         CALL DailyWeatherCheck(CONTROL,
      &    "WTHINIT", FILEWW, RAIN, RecNum,                !Input
@@ -572,6 +577,11 @@ C     Send labels and values to OPSUM
         IF(DCO2 .EQ. -99.0) 
      &   CALL fio % get('WTH', YRSIM, 'CO2', DCO2)
         CALL fio % get('WTH', YRSIM, 'OZON7', OZON7)
+        
+        IF(MEWTH .EQ. 'H') THEN
+          CALL HR2DLY(YRSIM, SRAD, TMAX, TMIN, RAIN)
+        ENDIF
+        
         !     Error checking
         CALL DailyWeatherCheck(CONTROL,
      &    "WTHINIT", FILEWW, RAIN, RecNum,                !Input
@@ -677,6 +687,11 @@ C     Send labels and values to OPSUM
         IF(DCO2 .EQ. -99.0) 
      &    CALL fio % get('WTH', YRDOY, 'CO2', DCO2)
         CALL fio % get('WTH', YRDOY, 'OZON7', OZON7)
+        
+        IF(MEWTH .EQ. 'H') THEN
+          CALL HR2DLY(YRDOY, SRAD, TMAX, TMIN, RAIN)
+        ENDIF
+        
         !     Error checking
         CALL DailyWeatherCheck(CONTROL,
      &     ERRKEY, FILEWW, RAIN, RecNum,                   !Input
@@ -702,6 +717,11 @@ C     Send labels and values to OPSUM
         IF(DCO2 .EQ. -99.0) 
      &     CALL fio % get('WTH', YRDOY, 'CO2', DCO2)
         CALL fio % get('WTH', YRDOY, 'OZON7', OZON7)
+        
+        IF(MEWTH .EQ. 'H') THEN
+          CALL HR2DLY(YRDOY, SRAD, TMAX, TMIN, RAIN)
+        ENDIF
+        
         !     Error checking
         CALL DailyWeatherCheck(CONTROL,
      &      ERRKEY, FILEWW, RAIN, RecNum,                   !Input

@@ -650,6 +650,7 @@ set(
         "SPAM/TRANS.for"
         "Weather/CO2VAL.for"
         "Weather/HMET.for"
+        "Weather/HR2DLY.for"
         "Weather/IPWTH_alt.for"
         "Weather/OPWEATH.for"
         "Weather/ModForecast.f90"
