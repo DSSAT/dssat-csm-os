@@ -12,7 +12,8 @@ C  08/20/2002 GH  Modified for Y2K
 C  07/08/2003 CHP Changed senescence output.
 C  03/24/2004 CHP Added P stresses to PlantGro.out
 !  10/24/2024 CHP Added TRLV to PlantGro.OUT
-C  11/08/2023  FO Added LINTW and LINTP for lint growth outputs.
+C  11/08/2023 FO  Added LINTW and LINTP for lint growth outputs.
+C  01/08/2025 HBD Added Shell N mass and Pod/Fruit N % and mass
 C-----------------------------------------------------------------------
 C  Called by: PLANT
 C  Calls:     None
@@ -25,7 +26,8 @@ C  Calls:     None
      &    RLV, RSTAGE, RTDEP, RTWT, SATFAC, SDWT, SEEDNO, 
      &    SENESCE, SLA, STMWT, SWFAC, TGRO, TGROAV, TOPWT, 
      &    TOTWT, TURFAC, VSTAGE, WTLF, WTNCAN, WTNLF, WTNST, 
-     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT, TRLV, LINTW, LINTP)
+     &    WTNSD, WTNUP, WTNFX, XLAI, YRPLT, TRLV, LINTW, LINTP,
+     &    WTNRT, WTNSH)
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -63,9 +65,10 @@ C  Calls:     None
       REAL RLV(NL), TRLV
       REAL TGRO(TS)
 
-      REAL WTNCAN,WTNLF,WTNST,WTNSD,WTNUP,WTNFX
+      REAL WTNCAN,WTNLF,WTNST,WTNRT,WTNSD,WTNUP,WTNFX
       REAL WTNVEG,PCNVEG,NFIXN    
       REAL PCNST,PCNRT,PCNSH,PCNSD
+      REAL WTNSH, PCNPOD, PNAD
 
       REAL CUMSENSURF,  CUMSENSOIL  !cumul. senesced matter, soil & surf
       REAL CUMSENSURFN, CUMSENSOILN !cumul. senes. N soil and surface
@@ -217,7 +220,9 @@ C  Calls:     None
      &      '    CNAD    GNAD    VNAD    GN%D    VN%D     NFXC    NUPC',
      &      '    LNAD    SNAD    LN%D    SN%D    SHND',
 !CHP &      '  RN%D  NFXD')
-     &      '   RN%D   NFXD   SNN0C   SNN1C')
+     &      '   RN%D   NFXD   SNN0C   SNN1C',
+! HBD     
+     &      '    RNAD   SHNAD   FRN%D   FRNAD')
 
 !-----------------------------------------------------------------------
 !         Initialize daily plant carbon output file
@@ -453,14 +458,23 @@ C-----------------------------------------------------------------------
             PCNVEG = 0.
           ENDIF
 
+          IF (PODWT.GT. 0.0001) THEN
+            PCNPOD = ((WTNCAN-WTNVEG)/(PODWT))*100.
+            PNAD = WTNCAN-WTNVEG
+          ELSE
+            PCNPOD = 0.
+            PNAD   = 0.
+          ENDIF
+
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN       ! VSH
             WRITE (NOUTPN,410) YEAR, DOY, DAS, DAP, (WTNCAN*10), 
      &       (WTNSD*10), (WTNVEG*10), PCNSDP, PCNVEG, (WTNFX*10),
      &       (WTNUP*10), (WTNLF*10), (WTNST*10), PCNLP, PCNSTP,
-     &       PCNSHP, PCNRTP, NFIXN*10, CUMSENSURFN, CUMSENSOILN
+     &       PCNSHP, PCNRTP, NFIXN*10, CUMSENSURFN, CUMSENSOILN,
+     &       (WTNRT*10), (WTNSH*10), PCNPOD, PNAD*10
   410       FORMAT(1X,I4,1X,I3.3,2(1X,I5),3(1X,F7.1),2(1X,F7.2),1X,
      &       2(1X,F7.1),2(1X,F7.1),2(1X,F7.2),1X,F7.1,2(1X,F6.1),
-     &       2(1X,F7.2))
+     &       6(1X,F7.2))
           END IF    ! VSH
 
 !         VSH

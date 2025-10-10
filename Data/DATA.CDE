@@ -532,16 +532,16 @@ NOF6D  NO flux layer 6 Daily NO flux, soil layer 6 (g[N]/ha)                    
 NOF7D  NO flux layer 7 Daily NO flux, soil layer 7 (g[N]/ha)                    .
 NOF8D  NO flux layer 8 Daily NO flux, soil layer 8 (g[N]/ha)                    .
 NOF9D  NO flux layer 9 Daily NO flux, soil layer 9 (g[N]/ha)                    .
-NT10   InorgN layer 10 Total inorganic N, soil layer 10(g[N]/kg[soil])          .
-NT1D   InorgN layer 1  Total inorganic N, soil layer 1 (g[N]/kg[soil])          .
-NT2D   InorgN layer 2  Total inorganic N, soil layer 2 (g[N]/kg[soil])          .
-NT3D   InorgN layer 3  Total inorganic N, soil layer 3 (g[N]/kg[soil])          .
-NT4D   InorgN layer 4  Total inorganic N, soil layer 4 (g[N]/kg[soil])          .
-NT5D   InorgN layer 5  Total inorganic N, soil layer 5 (g[N]/kg[soil])          .
-NT6D   InorgN layer 6  Total inorganic N, soil layer 6 (g[N]/kg[soil])          .
-NT7D   InorgN layer 7  Total inorganic N, soil layer 7 (g[N]/kg[soil])          .
-NT8D   InorgN layer 8  Total inorganic N, soil layer 8 (g[N]/kg[soil])          .
-NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (g[N]/kg[soil])          .
+NT10   InorgN layer 10 Total inorganic N, soil layer 10(mg[N]/kg[soil])          .
+NT1D   InorgN layer 1  Total inorganic N, soil layer 1 (mg[N]/kg[soil])          .
+NT2D   InorgN layer 2  Total inorganic N, soil layer 2 (mg[N]/kg[soil])          .
+NT3D   InorgN layer 3  Total inorganic N, soil layer 3 (mg[N]/kg[soil])          .
+NT4D   InorgN layer 4  Total inorganic N, soil layer 4 (mg[N]/kg[soil])          .
+NT5D   InorgN layer 5  Total inorganic N, soil layer 5 (mg[N]/kg[soil])          .
+NT6D   InorgN layer 6  Total inorganic N, soil layer 6 (mg[N]/kg[soil])          .
+NT7D   InorgN layer 7  Total inorganic N, soil layer 7 (mg[N]/kg[soil])          .
+NT8D   InorgN layer 8  Total inorganic N, soil layer 8 (mg[N]/kg[soil])          .
+NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (mg[N]/kg[soil])          .
 NUAC   N Uptake kg/ha  N uptake, cumulative (kg [N]/ha)                         .
 NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
@@ -570,6 +570,7 @@ SENNS  Sen N to soil   Senesced N added to soil (kg/(ha.d))                     
 SENNT  Sen N kg/ha.d   Senesced N added to litter+soil (kg/(ha.d))              .
 SENWT  Sen wt kg/ha.d  Senesced wt added to litter+soil (kg/(ha.d))             .
 SHND   Shell N %       Shell N concentration (%)                                .
+SHNAD  Shell N kg/ha   Shell N (kg/ha)                                          .
 SN%D   Stem N %        Stem N concentration (%)                                 .
 SN%RD  ShootN% relativ Shoot tissue relative (to critical) N conc. (%)          .
 SNAD   Stem N kg/ha    Stem N (kg/ha)                                           .

@@ -659,7 +659,7 @@ TI017    Bedder                                                               IB
 TI018    Blade cultivator                                                     IB
 TI019    Fertilizer applicator, anhydrous                                     IB
 TI020    Manure injector                                                      IB
-TI021    Animal-drawn implement                                               IB
+!I021    Animal-drawn implement                                               IB
 TI022    Mulch treader                                                        IB
 TI023    Plank                                                                IB
 TI024    Roller packer                                                        IB

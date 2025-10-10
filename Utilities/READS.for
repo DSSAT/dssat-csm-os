@@ -1219,6 +1219,8 @@ C         FIND THE HEADER LINE, DESIGNATED BY @TRNO
             LINEXP = LINEXP + 1
             IF (C255(1:1) .EQ. '@') EXIT    
           ENDDO
+        ELSE
+          RETURN
         ENDIF
         
         CALL PARSE_HEADERS(C255, MAXCOLN, HEADER, ICOUNT, COL)
