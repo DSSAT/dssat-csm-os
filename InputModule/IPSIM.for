@@ -215,7 +215,10 @@ C        Read SECOND line of simulation control - OPTIONS
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,ISWWAT,ISWNIT,ISWSYM,
-     &        ISWPHO,ISWPOT,ISWDIS,ISWCHE,ISWTIL, ICO2
+     &        ISWPHO,ISWPOT,ISWDIS,ISWCHE,ISWTIL, ICO2, PEST_SEVERITY
+         IF (ERRNUM .NE. 0) THEN
+             PEST_SEVERITY = 0.0
+         ENDIF
          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 
          ISWWAT = UPCASE(ISWWAT)
@@ -965,7 +968,7 @@ C     FORMAT Strings
 C-----------------------------------------------------------------------
 
   55  FORMAT (I3,11X,2(1X,I5),5X,A1,1X,I5,1X,I5,1X,A25,1X,A8)
-  60  FORMAT (I3,11X,9(5X,A1))
+  60  FORMAT (I3,11X,9(5X,A1),5X,F5.0)
   61  FORMAT (I3,11X,7(5X,A1),5X,I1,5(5X,A1))
   65  FORMAT (I3,11X,3(5X,A1),4X,I2,9(5X,A1),
      &5X, A1)   ! VSH
@@ -1109,7 +1112,7 @@ C-----------------------------------------------------------------------
       CHARACTER*1 FMOPT
       CHARACTER*1 NSWITCH_txt
       CHARACTER*3 FROP_txt
-      CHARACTER*5 NYRS_txt, NREPSQ_txt, YRSIM_txt
+      CHARACTER*5 NYRS_txt, NREPSQ_txt, YRSIM_txt, PEST_SEVERITY_txt
       CHARACTER*6 ERRKEY,FINDCH, SECTION
       CHARACTER*8 MODEL, CTRMODEL
       CHARACTER*12 FILEX  !, DSSATS
@@ -1123,6 +1126,8 @@ C-----------------------------------------------------------------------
       INTEGER RSEED1, SCLun, YEAR, YRSIM, YRSIM_ERR
       INTEGER SimLen, LenString, FIND_IN_FILE
       INTEGER YRSIM_SAVE
+      REAL PEST_SEVERITY
+
 
       TYPE (SwitchType)  ISWITCH
       TYPE (ControlType) CONTROL
@@ -1249,6 +1254,8 @@ C-----------------------------------------------------------------------
         ISWDIS  = ' '
         ISWCHE  = ' '
         ISWTIL  = ' '
+        PEST_SEVERITY = 0.0
+
 
         ICO2    = ' '
         MEWTH   = ' '
@@ -1378,6 +1385,11 @@ C-----------------------------------------------------------------------
 
             READ (CHARTEST,'(67X,A1)',IOSTAT=ERRNUM) ICO2
             CALL CHECK_A('ICO2  ', ICO2, ERRNUM, MSG, NMSG)
+
+            READ (CHARTEST,'(73X,A5)',IOSTAT=ERRNUM) PEST_SEVERITY_txt
+            CALL CHECK_R('PEST_SEVERITY', PEST_SEVERITY_txt, ERRNUM, 0.0,
+     &        MSG, NMSG, PEST_SEVERITY)
+
 
             ISWWAT = UPCASE(ISWWAT)
             ISWNIT = UPCASE(ISWNIT)
@@ -1722,6 +1734,52 @@ C-----------------------------------------------------------------------
 
 !=======================================================================
 
+      SUBROUTINE CHECK_R(
+     &  LABEL, txtVALUE, ERRNUM, FILEX_VALUE,   !Input
+     &  MSG, NMSG, VALUE)                       !Output
+
+      IMPLICIT NONE
+      EXTERNAL MSG_TEXT
+
+      CHARACTER*(*), INTENT(IN) :: LABEL
+      CHARACTER*(*), INTENT(IN) :: txtVALUE
+      INTEGER, INTENT(IN) :: ERRNUM
+      REAL, INTENT(IN) :: FILEX_VALUE
+      CHARACTER*78, INTENT(INOUT) :: MSG(50)
+      INTEGER, INTENT(INOUT) :: NMSG
+      REAL, INTENT(OUT) :: VALUE
+
+      INTEGER LENGTH
+      CHARACTER*4 FMT
+      CHARACTER*30 MSG_TEXT
+
+      IF (ERRNUM /= 0)  THEN
+        VALUE = FILEX_VALUE
+        RETURN
+      ENDIF
+
+      IF (INDEX(txtVALUE,".") > 0) THEN
+        VALUE = FILEX_VALUE
+        RETURN
+      ENDIF
+
+      Length = LEN(TRIM(txtVALUE))
+      WRITE(FMT,'(A,I1,A)') "(F", Length, ".0)"
+      READ(txtValue, FMT) VALUE
+
+      IF (VALUE > 0.0) THEN
+        NMSG = NMSG + 1
+        WRITE(MSG(NMSG),'(A8,A,F5.2,2X,A30)') LABEL," = ",VALUE,
+     &      MSG_TEXT(LABEL)
+      ELSE
+        VALUE = FILEX_VALUE
+      ENDIF
+
+      RETURN
+      END SUBROUTINE CHECK_R
+
+!=======================================================================
+
 !=======================================================================
       CHARACTER*30 FUNCTION MSG_TEXT(LABEL)
 
@@ -1739,6 +1797,7 @@ C-----------------------------------------------------------------------
       CASE('ISWCHE'); MSG_TEXT="Chemical application switch   "
       CASE('ISWTIL'); MSG_TEXT="Tillage option switch         "
       CASE('ICO2');   MSG_TEXT="Option to read CO2 from file  "
+      CASE('PEST_SEVERITY'); MSG_TEXT="Pest severity factor          "
       CASE('MEWTH');  MSG_TEXT="Weather method                "
       CASE('MESOM');  MSG_TEXT="Soil organic matter method    "
       CASE('MELI') ;  MSG_TEXT="Light interception method     "

@@ -15,3 +15,4 @@ PSTDS   General pest and diseases losses due to rot, tikka, leafminer, etc.
 PCLA    Defoliation, %
 PDLA    Diseased leaf area, %
 PRP     Reduction in photosynthetic rate, %
+MZINF   Maize infestation, % reduction in growth
