@@ -1052,6 +1052,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
           ! ------------------------------------------------------------
           SWFAC  = 1.0
           TURFAC = 1.0
+          print *, "   MAIZE EP1=", EP1, "TRWUP=", TRWUP
           IF(ISWWAT.NE.'N') THEN
              IF (EOP .GT. 0.0) THEN
                 EP1 = EOP * 0.1
@@ -1064,6 +1065,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
              ENDIF
           ENDIF
           TURFAC = REAL(INT(TURFAC*1000))/1000
+          print *, "   MAIZE SWFAC=", SWFAC, "TURFAC=", TURFAC
 
 
           !-------------------------------------------------------------
@@ -1075,6 +1077,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
           SUMRL = 0.0
       
           DO L = 1,NLAYR
+              print *, "        MAIZE: L=", L
 
           !------------------------------------------------------------
           !PORMIN = Minimum pore space required for supplying oxygen to 
@@ -1082,6 +1085,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
           !TSS(L) = Number of days soil layer L has been saturated 
           !         above PORMIN
           !------------------------------------------------------------
+              print *, "        MAIZE: L=", L, "SAT(L)=", SAT(L), "SW(L)", SW(L)
               IF ((SAT(L)-SW(L)) .GE. PORMIN) THEN
                   TSS(L) = 0.
               ELSE
@@ -1110,6 +1114,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
           ENDIF
           SATFAC = AMAX1(SATFAC,0.0)
           SATFAC = AMIN1(SATFAC,1.0)
+          print *, "        MAIZE: SUMEX=", SUMEX, "SUMRL=", SUMRL,"SATFAC=",SATFAC
 
           !-------------------------------------------------------------
           !                Daily Photosynthesis Rate

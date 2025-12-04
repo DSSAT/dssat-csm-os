@@ -1,0 +1,113 @@
+*CSM OUTPUT FILES
+! DSSAT v4.8; 2025-05-12
+
+! Output files currently created by the DSSAT Cropping System Model
+!
+@NAME......... CDE Description....................................... ALIAS
+!Daily output files:
+Chemical.OUT    CH Daily chemical applications output file            OUTCH
+ET.OUT          EB Daily soil-plant-atmosphere output file            OUTET
+ETPhot.OUT      PH Daily evapotranspiration output file
+FloodN.OUT      FN Daily flood water nitrogen output file             FLDN
+FloodW.OUT      FL Daily flood management output file                 OUTFLD
+MgmtOps.OUT     MO Daily management operations output file            OUTM
+Pest.OUT        PS Daily pest and disease damage output file          OUTD
+PlantC.OUT      PC Daily plant carbon output file                     OUTPC
+PlantGro.OUT    PG Daily plant growth output file                     OUTG
+PlantN.OUT      PN Daily plant nitrogen output file                   OUTPN
+PlantP.OUT      PP Daily plant phosphorus output
+SoilDyn.OUT        Daily soil dynamics output file (temp)
+SoilNi.OUT      SN Daily inorganic soil N output file
+SoilOrg.OUT     SC Daily soil carbon output file
+SoilPi.OUT      SP Daily inorganic soil phosphorus output file
+SoilKi.OUT      SK Daily inorganic soil potassium output file
+SoilTemp.OUT    TS Daily soil temperature output file                 OUTT
+SoilWat.OUT     SW Daily soil water output file                       OUTWAT
+SOMLITC.OUT     LC Daily soil organic matter carbon output file       OUTSOMC
+SOMLITN.OUT     LN Daily soil organic matter nitrogen output file     OUTSOMN
+SOMLITP.OUT     LP Daily soil organic matter phosphorus output file   OUTSOMP
+Weather.OUT     WE Daily weather output file                          OUTWTH
+FreshWt.OUT        Daily fresh fruit weight                           FWOUT
+Mulch.OUT          Daily surface mulch output file
+PrimaryStalk.OUT   Casupro sugarcane output                           PSTALK
+CSP_SENES.OUT      Casupro sugarcane output                           CSP_SENES
+CSP_PHOTO.OUT      Casupro sugarcane output                           CSP_PHOTO
+CSP_GrowCane.OUT   Casupro sugarcane output                           CSP_GRO
+CSP_PHEN.OUT       Casupro sugarcane output                           OUTPHNL
+PlantKg.OUT        Casupro sugarcane output                           OUTKG
+Generic.OUT        Generic (temporary) output file
+GHG.OUT            Greenhouse gas emissions report
+N2O.OUT         NO Soil N2O and N2 daily emissions output        
+Methane.OUT     MT Methane emissions daily output file
+Potential.OUT      Water potential - daily
+PlantGr2.OUT    G2 Wheat and barley specific output file
+PlantGrf.OUT    GF Wheat and barley specific output file
+Potential.OUT      Water potential - daily
+Dormancy.OUT       Forage daylength signal for stolon daily output
+PlantMob.OUT       Forage plant mobilization and refill of storage
+Storage.OUT        Forage storage organ characteristics daily output
+SoilWater.OUT      Daily soil water output file by layer              OUTSWL
+
+!Daily csv format files:
+plantgro.csv       Daily plant growth output file in CSV format
+plantn.csv         Daily plant nitrogen output file in CSV format
+evaluate.csv       Evaluation output file (simulated vs. measured)
+plantc.csv         Daily plant carbon output file in CSV format
+plantgr2.csv       Daily plant growth output file in CSV format
+plantgrf.csv       Daily plant growth output file in CSV format
+soilwat.csv        Daily soil water output file in CSV format
+soiltemp.csv       Daily soil temperature output file in CSV format
+et.csv             Daily soil-plant-atmosphere output file in CSV
+soilni.csv         Daily inorganic soil N output file in CSV format
+weather.csv        Daily weather output file in CSV format
+soilorg.csv        Daily soil carbon output file in CSV format
+etphot.csv         Daily evapotranspiration output file in CSV
+mulch.csv          Daily surface mulch output file in CSV format
+plantp.csv         Daily plant phosphorus output in CSV format
+soilpi.csv         Daily inorganic soil phosphorus output file, CSV
+n2o.csv            Daily N2O output file, CSV
+
+!Seasonal summary output files
+Evaluate.OUT    EV Evaluation output file (simulated vs. measured)    SEVAL
+MgmtEvent.OUT   ME Management event output file
+MulWatBal.OUT      Mulch water balance file
+OVERVIEW.OUT    OV Seasonal overview output file                      OUTO
+PlantCBal.OUT      Not currently operational                          PCBAL
+PlantNBal.OUT      Plant nitrogen balance                             PNBAL
+PlantPBal.OUT      Plant phosphorus balance
+Plantsum.OUT       Not currently operational                          SOUTG
+SoilCBal.OUT       Seasonal soil carbon balance                       SCBAL
+SoilCBalSum.OUT    Soil C balance summary                                  
+SoilKBal.OUT       Seasonal soil potassium balance                    SKBAL
+SoilNBalSum.OUT    Soil N balance summary
+SoilNiBal.OUT      Seasonal inorganic soil N balance
+SoilNoBal.OUT      Seasonal organic soil N balance
+SoilPBalSum.OUT    Soil P balance summary
+SoilPiBal.OUT      Seasonal inorganic soil P balance
+SoilPoBal.OUT      Seasonal organic soil P balance
+SoilWatBal.OUT     Seasonal & daily soil water balance                SWBAL
+SWBalSum.OUT       Seasonal summary soil water balance
+Summary.OUT     SU Seasonal summary output file                       OUTSUM
+FORAGE.OUT      FH Forage harvest output file                         FORHARV
+
+!Summary csv files:
+summary.csv        Summary output file in CSV format
+Version.OUT        Version number for simulation
+
+!Information files:
+ERROR.OUT          Error messages                                     ERRORO
+INFO.OUT           Information output file                            OUTINFO
+SOMLIT1.OUT        Detailed Century SOM output                        SLDET
+TEMP.bat                                                              OUTBAT
+WARNING.OUT        Warning messages                                   OUTWARN
+WORK.OUT           CSCER, CSP information output file
+LUN.LST            List of output files generated                     LUNLST
+
+! MJ & SK Climate change summary output file
+CCSUMMRY.OUT    CC Climate change summary output file                 OUTCC
+ETSUMMRY.OUT    ET extended summary output file                       OUTEX
+
+! Sugarcane-SAMUCA Detailed outputs
+PlantGr_Det.OUT    Detailed phytomeric outputs                        SAMPHY
+Canopy_Phot.OUT    Layered canopy photosynthesis outputs              SAMCPH
+Crop_Stress.OUT    Crop abiotic stress factors                        SAMSTR

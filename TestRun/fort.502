@@ -1,0 +1,12 @@
+
+ OUTFLE
+ OUTPUT.CDE file not found                                                     
+ Error in subroutine OUTFILES                                                  
+
+*DSSAT Cropping System Model Ver. 4.8.5.032 -pest_model  NOV 29, 2025 22:01:40
+
+ SIMCDE
+ Could not locate error file:                                      ./MODEL.ERR 
+ File not found. Please check file name or create file. Error number:    29    
+ File: SIMULATION.C   Line:     0 Error key: SIMCDE                            
+ Simulations terminated.                                                       

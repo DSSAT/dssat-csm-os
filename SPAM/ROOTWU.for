@@ -73,6 +73,7 @@ C-----------------------------------------------------------------------
       ENDDO
 
       DO L = 1,NLAYR
+        print *, "ROOTWU L=", L
         IF (RLV(L) .LE. 0.00001 .OR. SW(L) .LE. LL(L)) THEN
           RWU(L) = 0.
         ELSE
@@ -84,6 +85,7 @@ C-----------------------------------------------------------------------
 
           RWU(L) = SWCON1*EXP(MIN((SWCON2(L)*(SW(L)-LL(L))),40.))/
      &      DENOMINATOR
+          print *, "ROOTWU L=", L, "RWU=", RWU(L)
 !           Previous denominator - could explode for large RLV - problem with RLV?
 !     &      (SWCON3-ALOG(RLV(L)))
 !           RWU in cm3[water]/cm[root]-d
@@ -100,6 +102,7 @@ C-----------------------------------------------------------------------
           ELSE
              TSS(L) = TSS(L) + 1.
           ENDIF
+          print *, "ROOTWU L=", L, "TSS=", TSS(L)
 C-----------------------------------------------------------------------
 C           Delay of 2 days after soil layer is saturated before root
 C           water uptake is affected

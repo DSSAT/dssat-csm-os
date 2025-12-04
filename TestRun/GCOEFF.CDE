@@ -1,0 +1,79 @@
+*GENOTYPE COEFFICIENT CODES
+! DSSAT v4.8; 2024-12-01
+
+! The fields in the file are as follows:
+! CDE  The genotype coeff code as used in the particular model
+! DESCRIPTION  A description of the code, with units.
+
+*WHSIM940
+@CDE DESCRIPTION
+AWNL Awn length (0-1.0;0=none,1=long and active)
+BIOM Biomass accumulation factor (g MJ-1 PAR)
+DESP Photoperiod sensitivity (100*Reduction in rel.rate per h<threshold)
+DESV Vernalization requirement (Vernalization days)
+DSP2 Photoperiod sensitivity apex1 to terminal spikelet(100*Redn per h)
+DUA1 Pre apex1 period (Biological days)
+DUGF Grain filling period (Biological days)
+DULL Terminal spikelet to last leaf expanded period (Biological days)
+DUSE Last leaf expanded to spike emergence period (Biological days)
+DUTS Apex1 to terminal spikelet period (Biological days)
+GRWT Grain weight, standard conditions (mg grain-1)
+GNUM Grain number coefficient (Grains per g total weight at anthesis)
+!       (Was Grains per g accumulated stage 4.8 to 8.0)
+L#IR Leaf number increase rate (Lf Bday-1)
+LGRO Leaf growth rate (cm Bday-1)
+LRHF Leaf rust host factor (0-1.0;0=resistant,1=fully susceptible)
+LSHF Leaf spot host factor (0-1.0;0=resistant,1=fully susceptible)
+PMHF Powdery mildew host factor (0-1.0;0=resistant,1=fully susceptible)
+SNUM Shoot number coefficient (mg CH2O/tiller for survival)
+GPPC Grains per plant critical for decrease in potential grain weight
+GPRO Grain protein concentration (%)
+LFEI Leaf expansion rate increment (fraction leaf-1)
+LFSN Leaf senescence factor for lag period - reduction in photosynthesis
+SFLL Stem fraction at last leaf stage
+TBGF Temperature base for grain filling (C)
+TILU Tiller production critical light interception (%)
+WK1H Winter kill temperature, stage 1 hardened (C)
+
+*CSSIM940
+@CDE DESCRIPTION
+DUB1 Duration of branch 1 phase (Bday germination to first branch)
+DUBR Duration of branch 2 and greater phases (Bday between branches)
+DULA Duration of leaf area increase phase (Bday after germination)
+DUL# Duration of leaf number increase phase (Bday after germination)
+DESP Development,sensitivity to photoperiod (h-1) (0=insensitive)
+PHCX Photosynthesis,canopy,maximum rate (g dm m-2 d-1)
+S#PE Shoot no per plant at emergence (#)
+S#FX Shoot no per fork,maximum (#)
+S#PX Shoot no per plant,maximum (#)
+SWNX Stem weight to node weight ratio (fr)
+L#IR Leaf number increase rate (leaves(shoot-1) Bday-1)
+LAXS Leaf area,maximum,standard (cm2 leaf-1)
+LANS Leaf area,minimum,standard (cm2 leaf-1)
+LAWS Leaf area to weight ratio,standard (cm2 g-1)
+LLIF Leaf life (Day)
+
+DUJU DURATION OF THE JUVENILE PHASE (DAYS)
+DUFL DURATION OF THE FLOWER DEVELOPMENT PHASE (DAYS)
+DUPD DURATION OF THE POD DEVELOPMENT PHASE (DAYS)
+DUGD DURATION OF THE GRAIN DEVELOPMENT PHASE (DAYS)
+DUGF DURATION OF THE GRAIN FILLING PHASE (DAYS)
+DULF DURATION OF THE LEAF DEVELOPMENT PHASE (DAYS)
+DESV DEVELOPMENT SENSITIVITY TO VERNALIZATION (DAYS)
+DESP DEVELOPMENT SENSITIVITY TO PHOTOPERIOD (DAYS)
+DETP THRESHOLD FOR DEVELOPMENTAL RESPONSE TO PHOTOPERIOD (HOURS LIGHT)
+PNUW POD NUMBER PER UNIT SHOOT WEIGHT AT SPECIFIED STAGE (NO.G-1)
+GNUP GRAIN NUMBER PER POD (NO.)
+GNUS GRAIN NUMBER PER SHOOT (NO.)
+GRWT GRAIN WEIGHT (MG)
+GRNC GRAIN NITROGEN CONCENTRATION (%)
+HIND HARVEST INDEX (%, FINAL WT [DETERMINATES] OR DISTRIBUTION )
+THRI THRESHING INDEX (%, GRAIN/GRAIN + SHELL OR SPECIFIED STRUCTURES)
+GNST GRAIN NUMBER SENSITIVITY TO TEMPERATURE (NO.C-1)
+LFAP LEAF APPEARANCE RATE (DAY-1)
+LFSZ LEAF SIZE (CM*2)
+LFSA LEAF SPECIFIC AREA (CM*2 G-1)
+BIOM BIOMASS ACCUMULATION (G MJ-1 OR M M-2 SEC-1)
+TLAP TILLER APPEARANCE RATE (DAY-1)
+CANB CANOPY BREADTH TO HEIGHT RATIO
+

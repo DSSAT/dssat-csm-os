@@ -31,6 +31,7 @@
 !  10/31/2007 CHP Added simple K model.
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
+!  11/26/2025 AG  Added Biochar module
 C=====================================================================
 
       SUBROUTINE SOIL(CONTROL, ISWITCH, 
@@ -47,6 +48,7 @@ C=====================================================================
       USE ModuleDefs
       USE FloodModule
       USE GHG_mod
+      USE Biochar_mod
       IMPLICIT NONE
       EXTERNAL SOILDYN, WATBAL, CENTURY, SoilOrg, SoilNi, SoilPi, SoilKi
       SAVE
@@ -115,6 +117,9 @@ C=====================================================================
 !     Added for methane
       REAL DRAIN
       TYPE (CH4_type) CH4_data
+      
+!     Biochar
+
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -129,6 +134,14 @@ C=====================================================================
      &    WEATHER, XHLAI,                                 !Input
      &    SOILPROP)                                       !Output
 !      ENDIF
+
+!     Initialize Biochar
+      IF (DYNAMIC .EQ. RUNINIT) THEN
+         CALL Biochar_Init(CONTROL)
+      ENDIF
+
+!     Apply Biochar Effects
+
 
 !     Call WATBAL first for all except seasonal initialization
       IF (DYNAMIC /= SEASINIT) THEN
@@ -189,6 +202,10 @@ C=====================================================================
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
       ENDIF
+
+!     Apply Biochar Effects (After nutrient modules to add to available pools)
+      CALL Biochar_Daily(CONTROL, SOILPROP, 
+     &    NH4_plant, NO3_plant, SPi_AVAIL, SKi_AVAIL)
 
 !***********************************************************************
 

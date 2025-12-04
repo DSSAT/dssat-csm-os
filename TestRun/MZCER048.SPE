@@ -1,0 +1,92 @@
+*MAIZE SPECIES COEFFICIENTS: MZCER048 MODEL
+
+*TEMPERATURE EFFECTS
+!       TBASE TOP1  TOP2  TMAX
+  PRFTC  6.2  16.5  33.0  44.0     !Effect of temperature on photosynthesis
+!  RGFIL  5.5  16.0  29.0  37.0     !Effect of temperature on relative grain filling rate (tolerant)
+  RGFIL  5.5  16.0  27.0  35.0     !Effect of temperature on relative grain filling rate (suscept)
+
+*PHOTOSYNTHESIS PARAMETERS 
+  PARSR   0.50      !Conversion of solar radiation to PAR 
+  CO2X     0   220   280   330   400   490   570   750   990  9999
+  CO2Y  0.00  0.85  0.95  1.00  1.02  1.04  1.05  1.06  1.07  1.08
+
+*STRESS RESPONSE
+  FSLFW   0.050     !Fraction of leaf area senesced under 100% water stress, 1/day
+  FSLFN   0.050     !Fraction of leaf area senesced under 100% nitrogen stress, 1/day
+  FSLFP   0.050     !Fraction of leaf area senesced under 100% phosphorus stress, 1/day
+  
+*SEED GROWTH PARAMETERS     
+  SDSZ   .2750      !Maximum potential seed size, mg/sd 
+  RSGR     0.1      !Relative seed growth rate below which plant may mature early
+  RSGRT    5.0      !Number of consecutive days relative seed growth rate is below RSGR that triggers early maturity
+  CARBOT   7.0      !Number of consecutive days CARBO is less than .001 before plant matures due to temperature, water or nitrogen stress
+  DSGT    21.0      !Maximum days from sowing to germination before seed dies.
+  DGET   150.0      !Growing degree days between germination and emergence after which the seed dies due to drought
+  SWCG    0.02      !Minimimum available soil water required for seed germination, cm3/cm3 
+  
+*EMERGENCE INITIAL CONDITIONS  
+  STMWTE  0.20      !Stem weight at emergence, g/plant
+  RTWTE   0.20      !Root weight at emergence, g/plant
+  LFWTE   0.20      !Leaf weight at emergence, g/plant
+  SEEDRVE 0.20      !Carbohydrate reserve in seed at emergence, g/plant
+  LEAFNOE 1.0       !Leaf number at emergence, #/plant
+  PLAE    1.0       !Leaf area at emergence, cm2/plant
+
+*NITROGEN PARAMETERS
+  TMNC    0.00450   !Plant top minimum N concentration g N/g dry matter (orig)
+  TANCE   0.0440    !Nitrogen content in above ground biomass at emergence, g N/g dry matter
+  RCNP    0.01060   !Root critical nitrogen concentration, g N/g root dry weight
+  RANCE   0.0220    !Root N content at emergence   g N/g root
+  CTCNP1  1.52      !Maximum value for critical tissue N concentration (in developing seed embryo)
+  CTCNP2  0.160     !Coefficent for change in conc. with growth stage
+
+*ROOT PARAMETERS
+  PORM    0.05      !Minimum volume required for supplying oxygen to roots for optimum growth (1-1.0)
+  RWMX    0.03      !Not used in ceres, but passed through AltPlant for use elsewhere
+  RLWR    0.98      !Root length to weight ratio (cm/g * 1E-4)
+  RWUEP1  1.50  
+
+*PLANT COMPOSITION VALUES
+  PLIGLF  0.070     !Leaf lignin fraction
+  PLIGST  0.070     !Stem lignin fraction 
+  PLIGRT  0.070     !Root lignin fraction 
+  PLIGSH  0.280     !Shell lignin fraction 
+  PLIGSD  0.020     !Seed lignin fraction 
+
+*PHOSPHORUS CONTENT (g [P]/g [shoot])                                                                 
+  0.0070  0.0025  0.0020  Optimum Shoot Conc (emerg, End L. Growth, p. mat)
+   -99.0   -99.0   -99.0  Optimum Leaf Conc  (   "              "            "     )
+   -99.0   -99.0   -99.0  Optimum Stem Conc  (   "              "            "     )
+  .00041  .00041  .00041  Optimum Root Conc  (   "              "            "     )
+  0.0050  0.0050  0.0005  Optimum Shell Conc (   "              "            "     )
+  0.0035  0.0035  0.0035  Optimum Seed Conc  (   "              "            "     )
+
+  0.0040  0.0015  0.0010  Minimum Shoot Conc (emerg, End L. Growth, p. mat)
+   -99.0   -99.0   -99.0  Minimum Leaf Conc  (   "              "            "     )
+   -99.0   -99.0   -99.0  Minimum Stem Conc  (   "              "            "     )
+  .00020  .00020  .00020  Minimum Root Conc  (   "              "            "     )
+  0.0025  0.0025  .00025  Minimum Shell Conc (   "              "            "     )
+  .00175  .00175  .00175  Minimum Seed Conc  (   "              "            "     )
+
+    25.0    15.0     9.3  Maximum Veg N:P ratio (emergence, eff. grain fill, phys. mat)
+     4.2     2.7     2.1  Minimum Veg N:P ratio (emergence, eff. grain fill, phys. mat)
+
+    0.80    1.00  SRATPHOTO, SRATPART
+    0.10          FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
+  0.0028          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m)
+
+!*EVAPOTRANSPIRATION
+  0.68   1.1       KEP, EORATIO
+  0.50  1.15       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.96       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
+  
+!At emergence and end of leaf growth: 
+!Optimum shoot P concentration (%) = 0.684 - 0.108X (Jones, 1983) 
+!At physiological maturity: 
+!Optimum shoot P concentration (%) = 0.238 - 0.0056X (Jones, 1983)
+!Where:
+!X is the growth stage.
+!Emergence was defined as growth stage 0 (X = 0), end of leaf growth as growth stage 4, and 
+!physiological maturity as growth stage 10 (Jones, 1983). Minimum shoot P concentration was 
+!taken as 60% of the estimated optimum (Daroub et al., 2003).

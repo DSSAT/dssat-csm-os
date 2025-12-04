@@ -1,0 +1,179 @@
+*** *  DSSAT PROFILE LINUX* ***
+DDB // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DTB // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DTE // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DTO // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DAT // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DPT // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DIM // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DTP // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DPF // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DFO // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DIS // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DDW // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DWG // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DWC // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DDS // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DTS // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DDG // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DCG // /usr/local/google/home/bronevet/dssat-csm-os/Data/TOOLS/GENCALC GENCALC2.EXE
+DGL // /usr/local/google/home/bronevet/dssat-csm-os/Data/TOOLS/GLUE GLUE.BAT
+DPM // /usr/local/google/home/bronevet/dssat-csm-os/Data
+DDE // /usr/local/google/home/bronevet/dssat-csm-os/Data
+TOG // /usr/local/google/home/bronevet/dssat-csm-os/Data/TOOLS/GBUILD GBUILD.EXE
+
+MAL // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 PRFRM048
+MBA // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CSCER048
+MBH // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 PRFRM048
+MBM // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 PRFRM048
+MBN // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MBR // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 PRFRM048
+MBS // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 BSCER048
+MCB // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MCH // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MCN // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MCO // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MCP // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MCS // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CSYCA048
+MFA // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MFB // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MGB // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MGG // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 PRFRM048
+MLT // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MML // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 MLCER048
+MMZ // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 MZCER048
+MNP // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MPI // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 PIALO048
+MPN // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MPP // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MPR // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MPT // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 PTSUB048
+MRI // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 RICER048
+MSB // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MSC // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 SCCAN048
+MSF // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MSG // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 SGCER048
+MSI // /usr/local/google/home/bronevet/dssat-csm-os/Data
+MSU // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MSW // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 SWCER048
+MTF // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 TFAPS048
+MTM // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MTN // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 TNARO048
+MTR // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 TRARO048
+MVB // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MWH // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CSCER048
+MOT // /usr/local/google/home/bronevet/dssat-csm-os/Data
+MU1 // /usr/local/google/home/bronevet/dssat-csm-os/Data
+MU2 // /usr/local/google/home/bronevet/dssat-csm-os/Data
+MIO // /usr/local/google/home/bronevet/dssat-csm-os/Data
+MLO // /usr/local/google/home/bronevet/dssat-csm-os/Data
+
+MGR // /usr/local/google/home/bronevet/dssat-csm-os/Data
+NSH // /usr/local/google/home/bronevet/dssat-csm-os/Data
+ASP // /usr/local/google/home/bronevet/dssat-csm-os/Data
+ASS // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048
+ASA // /usr/local/google/home/bronevet/dssat-csm-os/Data VARAN2.EXE
+AGR // /usr/local/google/home/bronevet/dssat-csm-os/Data
+AQS // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048
+AQA // /usr/local/google/home/bronevet/dssat-csm-os/Data SUSTAIN2.EXE
+ASX // /usr/local/google/home/bronevet/dssat-csm-os/Data
+APS // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048
+APV // /usr/local/google/home/bronevet/dssat-csm-os/Data
+APM // /usr/local/google/home/bronevet/dssat-csm-os/Data
+APA // /usr/local/google/home/bronevet/dssat-csm-os/Data VARAN2.EXE
+APJ // /usr/local/google/home/bronevet/dssat-csm-os/Data
+APF // /usr/local/google/home/bronevet/dssat-csm-os/Data
+APP // /usr/local/google/home/bronevet/dssat-csm-os/Data
+APK // /usr/local/google/home/bronevet/dssat-csm-os/Data DISC9801.EXE
+TOE // /WINDOWS NOTEPAD.EXE
+TOS // /
+TOM // /
+STD // /usr/local/google/home/bronevet/dssat-csm-os/Data/StandardData
+WED // /usr/local/google/home/bronevet/dssat-csm-os/Data/Weather
+WGD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Weather/Gen
+CLD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Weather/Climate
+WMD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Weather/Month
+SLD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Soil
+CRD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Genotype
+FID // /usr/local/google/home/bronevet/dssat-csm-os/Data/Background
+ALD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Alfalfa
+GCD // /usr/local/google/home/bronevet/dssat-csm-os/Data/GCWork
+GUD // /usr/local/google/home/bronevet/dssat-csm-os/Data/GLWork
+BAD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Barley
+BHD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Bahia
+BMD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Bermudagrass
+BND // /usr/local/google/home/bronevet/dssat-csm-os/Data/Drybean
+BRD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Brachiaria
+BSD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Sugarbeet
+CBD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Cabbage
+CHD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Chickpea
+CND // /usr/local/google/home/bronevet/dssat-csm-os/Data/Canola
+COD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Cotton
+CPD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Cowpea
+CSD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Cassava
+FAD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Fallow
+FBD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Fababean
+GBD // /usr/local/google/home/bronevet/dssat-csm-os/Data/GreenBean
+GGD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Guineagrass
+LTD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Lentil
+MLD // /usr/local/google/home/bronevet/dssat-csm-os/Data/PearlMillet
+MZD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Maize
+NPD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Napier
+PED // /usr/local/google/home/bronevet/dssat-csm-os/Data/Pea
+PID // /usr/local/google/home/bronevet/dssat-csm-os/Data/Pineapple
+PND // /usr/local/google/home/bronevet/dssat-csm-os/Data/Peanut
+POD // /usr/local/google/home/bronevet/dssat-csm-os/Data/PerennialPeanut
+PPD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Pigeonpea
+PRD // /usr/local/google/home/bronevet/dssat-csm-os/Data/BellPepper
+PTD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Potato
+RID // /usr/local/google/home/bronevet/dssat-csm-os/Data/Rice
+SBD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Soybean
+SCD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Sugarcane
+SFD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Safflower
+SGD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Sorghum
+SID // /usr/local/google/home/bronevet/dssat-csm-os/Data
+SUD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Sunflower
+SWD // /usr/local/google/home/bronevet/dssat-csm-os/Data/SweetCorn
+TFD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Teff
+TMD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Tomato
+TND // /usr/local/google/home/bronevet/dssat-csm-os/Data/Tanier
+TRD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Taro
+VBD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Velvetbean
+WHD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Wheat
+U1D // /usr/local/google/home/bronevet/dssat-csm-os/Data/CROP1
+U2D // /usr/local/google/home/bronevet/dssat-csm-os/Data/CROP2
+OTD // /
+ASD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Seasonal
+AQD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Sequence
+APD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Spatial
+PSD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Pest
+ECD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Economic
+TOD // /
+
+MQU // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+QUD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Quinoa
+ACC // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048
+CCD // /usr/local/google/home/bronevet/dssat-csm-os/Data/ClimateChange
+AYF // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048
+YFD // /usr/local/google/home/bronevet/dssat-csm-os/Data/YieldForecast
+SRD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Strawberry
+MSR // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+CID // /usr/local/google/home/bronevet/dssat-csm-os/Data/Chia
+MCI // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MPE // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+MPO // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 PRFRM048
+MSS // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+SSD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Sesame
+
+MBC // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+BCD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Carinata
+MGY // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+GYD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Guar
+MBG // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+BGD // /usr/local/google/home/bronevet/dssat-csm-os/Data/BambaraGroundnut
+MAM // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+AMD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Amaranth
+MHM // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CRGRO048
+HMD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Hemp
+MRY // /usr/local/google/home/bronevet/dssat-csm-os/Data dscsm048 CSCER048
+RYD // /usr/local/google/home/bronevet/dssat-csm-os/Data/Rye

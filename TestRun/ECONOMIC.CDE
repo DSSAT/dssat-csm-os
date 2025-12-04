@@ -1,0 +1,44 @@
+*ECONOMIC CODES
+! DSSAT v4.8; 2024-12-01
+
+! Headers used in the @ line to identify variables are listed first, codes to
+! identify variables next.
+!
+! if IDIS=-1, cost/price component is ignored in analysis
+! if IDIS= 0, fixed value in PAR1
+! if IDIS= 1, uniform variate (PAR1=lower, PAR2=upper bound)
+! if IDIS= 2, triangular variate (PAR1=lower, PAR2=mode, PAR3=upper bound)
+! if IDIS= 3, normal variate (PAR1=mean, PAR2=st. dev.)
+!
+! Files are sectioned by crop.  A crop's treatment sections must be contiguous.
+!
+!* MZ
+!* TREATMENT 1
+!@PRAM     GRAN      BYPR       BASE     NFER      NCOS      IRRI     IRCO       SCOS      RESM      PCOS      PFER      KCOS      KFER
+!IDIS       3         0         0         0         0         0         0         0        -1        -1        -1        -1        -1
+!PAR1    160.00     10.00    240.00      0.45     12.00       .50     12.50       .46       .00       .00       .00       .00       .00
+!PAR2     16.00       .00       .00       .00       .00       .00       .00       .00       .00       .00       .00       .00       .00
+!PAR3       .00       .00       .00       .00       .00       .00       .00       .00       .00       .00       .00       .00       .00
+
+
+*Headers
+@CDE     DESCRIPTION                                                          SO
+ADDRESS  Contact address of principal scientist                               IB
+PRAM     Parameter                                                            IB
+IDIS     Distribution type (see file header)                                  IB
+PAR1     Distribution parameter 1                                             IB
+PAR2     Distribution parameter 2                                             IB
+PAR3     Distribution parameter 3                                             IB
+GRAN     Price of grain, $/t                                                  IB
+BYPR     Price of harvest byproduct, $/t                                      IB
+BASE     Base production costs, $/ha                                          IB
+NFER     Nitrogen fertilizer cost, $/kg                                       IB
+NCOS     Cost per N fertilizer application, $                                 IB
+IRRI     Irrigation cost, $/mm                                                IB
+IRCO     Cost per irrigation application, $/ha                                IB
+SCOS     Seed cost, $/kg                                                      IB
+RESM     Cost of organic amendments, $/t                                      IB
+PCOS     Phosphorus fertilizer cost, $/kg                                     IB
+PFER     Cost per P fertilizer application, $                                 IB
+KCOS     Potassium fertilizer cost, $/kg                                      IB
+KFER     Cost per K fertilizer application, $                                 IB

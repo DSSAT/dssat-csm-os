@@ -199,6 +199,7 @@ C      REAL            PRLF
       INTEGER         YRSIM    
 	REAL            Z2STAGE
       REAL            PEST_SEVERITY
+      REAL            PEAR
 
 !     Added by W.D.B. for pest damage at CIMMYT 4/14/2001
 
@@ -234,7 +235,7 @@ C      REAL            PRLF
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
-      CROP    = CONTROL % CROP
+!ROP    = CONTROL % CROP
       MODEL   = CONTROL % MODEL
       FROP    = CONTROL % FROP
       RUN     = CONTROL % RUN
@@ -261,7 +262,7 @@ C      REAL            PRLF
       IDETS  = ISWITCH % IDETS
 
       AMTRH  = WEATHER % AMTRH
-      CO2    = WEATHER % CO2
+!O2    = WEATHER % CO2
       DAYL   = WEATHER % DAYL
       SRAD   = WEATHER % SRAD
       TMAX   = WEATHER % TMAX
@@ -441,7 +442,7 @@ C----------------------------------------------------------------------
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
      &    PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
      &    SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
-          PEST_SEVERITY,                                  !Input
+     &    PEST_SEVERITY,                                  !Input
      &    RLV, SDNO, SHELN, SWIDOT,                       !Input/Output
      &    VSTAGE, WSHIDT, WTSD, WTSHE,                    !Input/Output
      &    ASMDOT, DISLA, NPLTD, PPLTD,                    !Output
@@ -452,13 +453,23 @@ C-----------------------------------------------------------------------
 
             ELSEIF(DYNAMIC.EQ.SEASINIT) THEN
 
-      C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
 
-      C     Subroutine IPPARM reads FILEP, the PEST progress file.
+!     Subroutine IPPARM reads FILEP, the PEST progress file.
 
-      C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
 
-                      IF (ISWDIS.EQ.'Y') THEN        CALL PEST(CONTROL, ISWITCH,      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input     &    PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input     &    SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input           PEST_SEVERITY,                                  !Input     &    RLV, SDNO, SHELN, SWIDOT,                       !Input/Output     &    VSTAGE, WSHIDT, WTSD, WTSHE,                    !Input/Output     &    ASMDOT, DISLA, NPLTD, PPLTD,                    !Output     &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT)             !Output      ENDIF
+        IF (ISWDIS.EQ.'Y') THEN
+          CALL PEST(CONTROL, ISWITCH, 
+     &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
+     &    PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
+     &    SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
+     &    PEST_SEVERITY,                                  !Input
+     &    RLV, SDNO, SHELN, SWIDOT,                       !Input/Output
+     &    VSTAGE, WSHIDT, WTSD, WTSHE,                    !Input/Output
+     &    ASMDOT, DISLA, NPLTD, PPLTD,                    !Output
+     &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT)             !Output
+        ENDIF
       
           DO I = 1, 20
               STNAME(I) = '          '
@@ -590,16 +601,16 @@ C
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
 
+      ELSEIF(DYNAMIC.EQ.RATE) THEN
           CALL PEST(CONTROL, ISWITCH, 
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
      &    PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
      &    SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
-     &    PEST_SEVERity,                                  !Input
+     &    PEST_SEVERITY,                                  !Input
      &    RLV, SDNO, SHELN, SWIDOT,                       !Input/Output
      &    VSTAGE, WSHIDT, WTSD, WTSHE,                    !Input/Output
      &    ASMDOT, DISLA, NPLTD, PPLTD,                    !Output
      &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT)             !Output
-        ENDIF
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
 C

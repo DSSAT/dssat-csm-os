@@ -1,0 +1,94 @@
+*CODES FOR SOIL DATA
+! DSSAT v4.8; 2024-12-01
+
+! Codes currently used for both detailed profile analysis and occasional
+! analysis of the surface layers are listed. The soil analysis codes are
+! also listed in the DATA.CDE file.
+!
+! The fields in the file are as follows:
+!  CDE   The 'universal' code used to facilitate data interchange.
+!  DESCRIPTION  A description of the code, with units.
+!  SO    The source of the codes (IB=IBSNAT). Codes added by a user should be
+!        referenced in this field and the name and address of the person adding
+!        the code should be entered as a comment (ie.with a '!' in column 1)
+!        below this note. This is important to ensure that information from
+!        different workers can be easily integrated.
+
+@CDE     DESCRIPTION                                                          
+C        Clay                                                                
+CACO3    CaCO3 content, g kg-1                                               
+CL       Clay loam                                                           
+L        Loam                                                                
+LAT      Latitude, degrees (decimals;+ve north)                              
+LONG     Longitude, degrees (decimals;+ve east)                              
+LS       Loamy sand                                                          
+S        Sand                                                                
+SABD     Bulk density, moist, g cm-3                                         
+SABL     Depth, base of layer, cm                                            
+SADAT    Analysis date, year + days from Jan. 1                              
+SADC     Anion adsorption coefficient (reduced nitrate flow), cm3 (H2O) g [soil]-1
+SAHB     pH in buffer                                                        
+SAHW     pH in water                                                         
+SAKE     Potassium, exchangeable, cmol kg-1                                  
+SALB     Albedo, fraction                                                    
+SANI     Total nitrogen, %                                                   
+SAOC     Organic carbon, %                                                   
+SAPX     Phosphorus, extractable, mg kg-1                                    
+SBDM     Bulk density, moist, g cm-3                                         
+SC       Silty clay                                                          
+SCEC     Cation exchange capacity, cmol kg-1                                 
+SCL      Silty clay loam                                                     
+SCOM     Color, moist, Munsell hue                                           
+SCSFAM   Family, US NRCS system, formerly SCS                                                  
+SDUL     Drained upper limit, cm3 cm-3                                      
+SH20     Water, cm3 cm-3                                                     
+SI       Silt                                                                
+SIC      Silty clay                                                          
+SICL     Silty clay loam                                                     
+SIL      Silty loam                                                          
+SITE     Site name                                                           
+SL       Sandy loam                                                          
+SLAL     Aluminum                                                            
+SLB      Depth, base of layer, cm                                             
+SLBS     Base saturation, cmol kg-1                                           
+SLCA     Calcium, exchangeable, cmol kg-1                                     
+SLCF     Coarse fraction (>2 mm), %                                           
+SLCL     Clay (<0.002 mm), %                                                  
+SLDP     Soil depth, cm                                                       
+SLDR     Drainage rate, fraction day-1                                        
+SLEC     Electric conductivity, seimen                                        
+SLFE     Iron                                                                 
+SLHB     pH in buffer                                                         
+SLHW     pH in water                                                          
+SLKE     Potassium, exchangeable, cmol kg-1                                   
+SLLL     Lower limit of plant extractable soil water, cm3 cm-3 
+SLMG     Magnesium, cmol kg-1                                  
+SLMH     Master horizon                                        
+SLMN     Manganese                                             
+SLNA     Sodium, cmol kg-1                                     
+SLNF     Mineralization factor, 0 to 1 scale                   
+SLNI     Total nitrogen, %                                     
+SLOC     Organic carbon, %                                     
+SLPA     Phosphorus isotherm A, mmol kg-1                      
+SLPB     Phosphorus iostherm B, mmol l-1                       
+SLPF     Soil fertility factor, 0 to 1 scale [for soil factors not simulated by the model]                   
+SLPO     Phosphorus, organic, mg kg-1                          
+SLPT     Phosphorus, total, mg kg-1                            
+SLPX     Phosphorus, extractable, mg kg-1                      
+SLRF     Root growth factor, soil+plant, 0.0 to 1.0            
+SLRO     Runoff curve no. [Soil Conservation Service/NRCS]
+SLSI     Silt (0.05 to 0.002 mm), %                            
+SLSU     Sulphur                                               
+SLTX     Soil texture                                          
+SLU1     Stage 1 evaporation limit, mm                                 
+SMHB     pH in buffer determination method, code               
+SMKE     Potassium determination method, code                  
+SMPX     Phosphorus determination code                         
+SNH4     Ammonium, KCl, g elemental N Mg-1 soil                
+SNO3     Nitrate, KCl, g elemental N Mg-1 soil                 
+SRGF     Root growth factor, soil only, 0.0 to 1.0             
+SSAT     Upper limit, saturated, cm3 cm-3                      
+SSKS     Sat. hydraulic conductivity, macropore, cm h-1        
+
+
+

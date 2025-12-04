@@ -1,0 +1,86 @@
+
+*EXP.DETAILS: TEST01MZ Test Maize Run
+
+*GENERAL
+@PEOPLE
+Author
+@ADDRESS
+Address
+@SITE
+Site
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 Test Treatment             1  1  0  1  1  0  0  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 MZ IB0001 Generic Maize
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL
+ 1 TEST0001 UFGA -99   -99   -99   -99   -99   -99   -99 -99    180  UFGA0001
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD  ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    MZ 01001   -99   -99     1     1   -99   -99   -99   -99   -99   -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 01005   -99   7.0   7.0     S     R    80     0     5   -99   -99   -99   -99   -99                        -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME....................
+ 1 GE              1     1     S 01001  2150 DEFAULT SIMULATION CONTROL
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y     A
+
+*EXP.DETAILS: TEST01MZ Test Maize Run
+
+*GENERAL
+@PEOPLE
+Author
+@ADDRESS
+Address
+@SITE
+Site
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 Test Treatment             1  1  0  1  1  0  0  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 MZ IB0001 Generic Maize
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL
+ 1 TEST0001 UFGA       -99   -99   -99   -99   -99   -99 -99    180  IB00000001
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD  ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    MZ 2001001   -99   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 01005   -99   7.0   7.0     S     R    80     0     5   -99   -99   -99   -99   -99                        -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME....................
+ 1 GE              1     1     S 01001  2150 DEFAULT SIMULATION CONTROL
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y     A
+
+
