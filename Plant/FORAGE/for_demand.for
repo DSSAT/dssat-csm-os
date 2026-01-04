@@ -163,6 +163,14 @@ C Variables for apportioning NDMVEG and NDMOLD
 !    &   STSCMOB, STSNMOB
       REAL WTNLF, WTNRT, WTNSR, WTNST
       REAL PROLFR, PROSTR, PRORTR, PROSRR
+      REAL LFDELT
+
+      INTEGER LUNECO, LUNIO
+
+      CHARACTER*6   ERRKEY
+      CHARACTER*6   ECOTYP, ECONO
+
+      PARAMETER (ERRKEY = 'DEMAND')
 !***********************************************************************
 !***********************************************************************
 !     Run Initialization - Called once per simulation
@@ -216,7 +224,62 @@ C Variables for apportioning NDMVEG and NDMOLD
       CUMNSF = 1.0
       
       FNINSR=0.0
+      LFDELT=0.0
 
+!-----------------------------------------------------------------------
+      CALL GETLUN('FILEIO', LUNIO)
+      OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
+
+
+!-----------------------------------------------------------------------
+!    Read Planting Details Section
+!-----------------------------------------------------------------------
+      LNUM = 1
+        SECTION = '*PLANT'
+        CALL FIND(LUNIO, SECTION, LNUM, FOUND)
+
+!-----------------------------------------------------------------------
+C    Find and Read Field Section from FILEIO - previously read in IPIBS
+!       Look for the second section header beginning with '*CULTI'
+C-----------------------------------------------------------------------
+      LNUM = 50
+
+      SECTION = '*CULTI'
+      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
+
+      IF (FOUND .EQ. 0) THEN
+        CALL ERROR(ERRKEY, 1, FILEIO, LNUM)
+      ELSE
+        READ(LUNIO,'(24X,A6)') ECONO
+      ENDIF
+
+      CLOSE (LUNIO)
+
+      CALL GETLUN('FILEE', LUNECO)
+      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
+
+      ISECT = 2
+      DO I=1,200
+        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+        IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
+     &    (C255(1:1) .NE. '*')) THEN
+        READ (C255,'(A6,145X,F6.0)',IOSTAT=ERR)
+     &          ECOTYP, LFDELT
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
+
+        LFDELT = MAX(-0.05,MIN(0.05,LFDELT))
+        IF (ECOTYP .EQ. ECONO) EXIT
+        
+        ELSE IF (ISECT .EQ. 0) THEN
+         IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,3,FILEGC,LNUM)
+         ECONO = 'DFAULT'
+         REWIND(LUNECO)
+        ENDIF
+      ENDDO
+
+      CLOSE (LUNECO)
 C-----------------------------------------------------------------------
 C     SET VARIETY SPECIFIC LEAF PARAMETERS
 C-----------------------------------------------------------------------
@@ -239,6 +302,13 @@ C-----------------------------------------------------------------------
         FRLF = TABEX(YLEAF,XLEAF,0.0,8)
         FRSTM = TABEX(YSTEM,XLEAF,0.0,8)
         FRSTR = TABEX(YSTOR,XLEAF,0.0,8)
+
+        FRLF = FRLF + LFDELT
+        FRSTM = FRSTM - LFDELT
+!     Cap negative values
+        FRLF = MAX(0.001,FRLF)
+        FRSTM = MAX(0.001,FRSTM)
+
         FRRT = 1.0 - FRLF - FRSTM - FRSTR
 
 
@@ -1306,7 +1376,7 @@ C-----------------------------------------------------------------------
 ! FNINSR    Maximum fraction of N for growing storage tissue 
 !                  (g[N] / g[storage])
 ! FNSDT(I)  Temperature values which describe function for modifying seed 
-!             growth rate with temperature (°C)
+!             growth rate with temperature (ï¿½C)
 ! FRACDN    Relative time between flowering (NR1) and last leaf appearance 
 !             (NDLEAF) 
 ! FRLF      Fraction of vegetative tissue growth that goes to leaves on a 
@@ -1363,8 +1433,8 @@ C-----------------------------------------------------------------------
 !           NDMOLD when PG is low
 ! LAGSD     Time required between shell growth and seed growth, per cohort
 !             (Photo-thermal days)
-! LIPOPT    Temperature above which lipid composition is at a maximum (°C)
-! LIPTB     Temperature below which lipid composition is zero (°C)
+! LIPOPT    Temperature above which lipid composition is at a maximum (ï¿½C)
+! LIPTB     Temperature below which lipid composition is zero (ï¿½C)
 ! LNGPEG    Time between start of peg and rapid shell formation (for 
 !             peanuts only).  Defines slow growth period. (Photo-thermal days)
 ! LNGSH     Time required for shell growth (Photo-thermal days)
@@ -1534,7 +1604,7 @@ C-----------------------------------------------------------------------
 !             temperature. 
 ! SWFAC     Effect of soil-water stress on photosynthesis, 1.0=no stress, 
 !             0.0=max stress 
-! TAVG      Average daily temperature (°C)
+! TAVG      Average daily temperature (ï¿½C)
 ! TDUMX     Photo-thermal time that occurs in a real day based on early 
 !             reproductive development temperature function
 !             (photo-thermal days / day)
@@ -1543,7 +1613,7 @@ C-----------------------------------------------------------------------
 !             (photo-thermal days / day)
 ! TEMXFR    Temperature effect on partitioning to pods, high temp. 
 !             increases fraction of growth to vegetative tissue (0-1) 
-! TGRO(I)   Hourly air temperature (°C)
+! TGRO(I)   Hourly air temperature (ï¿½C)
 ! THRESH    The maximum ratio mass of seed to mass of seed plus shell at 
 !             maturity.  Causes seed to stop growing as their dry weights 
 !             increase until shells are filled in a cohort. 
@@ -1604,7 +1674,7 @@ C-----------------------------------------------------------------------
 ! XPOD      Growth partitioning to pods which slows node appearance
 !             (fraction)
 ! XSLATM(I) Temperature values for function that reduces specific leaf area 
-!             (SLA) (°C)
+!             (SLA) (ï¿½C)
 ! XSTR        Difference between partitioning fraction to storage organ at 
 !             beginning bloom (R1) and at the day on which the maximum  
 !             number of V-stages occurs (NDLEAF)       
@@ -1616,7 +1686,7 @@ C-----------------------------------------------------------------------
 !             bloom (R1) and at the day on which the maximum number of 
 !             V-stages occurs (NDLEAF) 
 ! XXFTEM(I) Array of temperature values in table lookup describing effect 
-!             of temperature on partitioning to pods (YXFTEM = 0 TO 1). (°C)
+!             of temperature on partitioning to pods (YXFTEM = 0 TO 1). (ï¿½C)
 ! YLEAF(I)  Partitioning fraction to leaves at V-stage XLEAF(I)
 !             ( g[leaf] / g[veg. plant])
 ! YRDOY     Current day of simulation (YYDDD)

@@ -1050,7 +1050,7 @@ C========================================================================
       INTEGER ShortCount
 
       DATA PREV_RUN /0/
-      INTEGER, PARAMETER :: MAXLUN = 600
+      INTEGER, PARAMETER :: MAXLUN = 1000
       logical NOHEADER(MAXLUN)
 
       TYPE (ControlType) CONTROL

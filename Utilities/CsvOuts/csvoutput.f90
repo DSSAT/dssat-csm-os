@@ -1444,16 +1444,16 @@ end Subroutine CsvOutSumOpsum
 ! Sub for EnvSum.csv
 Subroutine CsvOutEnvSum(                                        &
      RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL,            &
-     EXNAME,                                        &
+     MaxStag, EXNAME,                                           &
      N2OEM, CO2EM, CH4EM, TCEQM,                                &
      NDCH, CO2A, DAYLA, TMINA, TAVGA, TMAXA, SRADA,             &
      PRCP, PETP, ETCP, ESCP, EPCP,                              &
      Csvline, pCsvline, lngth) 
       
-   USE SumModule
+!  USE SumModule
 
 !  Input vars
-   Integer, Intent(IN) :: RUN, TRTNUM, ROTNO, ROTOPT, REPNO  
+   Integer, Intent(IN) :: RUN, TRTNUM, ROTNO, ROTOPT, REPNO, MaxStag
    Character(Len=2), Intent(IN) :: CROP  
    Character(Len=8), Intent(IN) :: MODEL, EXNAME
    Integer, Dimension(0:MaxStag), Intent(IN) :: NDCH

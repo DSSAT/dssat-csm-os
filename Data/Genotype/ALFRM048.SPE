@@ -223,3 +223,9 @@
  -18.0 -25.0 0.050		      HARD1, HARD2, FRZDC - freezing temperatures that will kill storage organ b (wafa)
  -25.0 -25.0 -25.0  0.16   REV	      FRZHRD(4),TYPHRD-COLD HARDENING RESPONSE, start hardening at FR
  -25.0 -25.0 -25.0  0.80   DHD	      FRZDHD(4),TYPDHD-COLD DEHARDENING RESPONSE, start dehardening a
+
+!*SURVIVING WINTER COLD AND DROUGHT 
+ -40.0   0.0  14.0  20.0  30.0  40.0      XMOTEM (6 VALUES) 24h average air temperature values
+   0.2   0.2   1.0   1.0   1.0   1.0      YMOTEM (6 VALUES) relative change on NMOBSR and CMOBSR
+  0.00  0.20  1.00  1.00                  XMOSWF(4 VALUES) SWFAC values responding to drought                                                  
+   0.1   0.1  1.00  1.00                  YMOSWF(4 VALUES) relative change on NMOBSR and CMOBSR    

@@ -440,6 +440,22 @@ C     Initialize OPSUM variables.
       SUMDAT % YPNAM  = -99.0 !Yield : N applied
       SUMDAT % YPNUM  = -99.0 !Yield : N uptake
 
+!     Environmental summary variables 
+      ESData % PhaseCount = -99
+      ESData % PhaseName  = ""
+      ESData % NDCH = -99
+      ESData % CO2A  = -99.
+      ESData % DAYLA = -99.
+      ESData % TMAXA = -99.
+      ESData % TMINA = -99.
+      ESData % TAVGA = -99.
+      ESData % SRADA = -99.
+      ESData % PRCP  = -99.
+      ESData % ETCP  = -99.
+      ESData % ESCP  = -99.
+      ESData % EPCP  = -99.
+      ESData % PETP  = -99.
+
       SUMDAT % CRST   = -99   !End of season crop status code
 
       CALL GET('WEATHER','WSTA',WSTAT)
@@ -1141,7 +1157,7 @@ C-------------------------------------------------------------------
 
            CALL CsvOutEnvSum( 
      &       RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, 
-     &       CONTROL%FILEX(1:8),
+     &       MaxStag, CONTROL%FILEX(1:8),
      &       N2OEM, CO2EM, CH4EM, TCEQM, 
      &       NDCH, CO2A, DAYLA, TMINA, TAVGA, TMAXA, SRADA, PRCP, 
      &       PETP, ETCP, ESCP, EPCP,

@@ -19,7 +19,7 @@ C========================================================================
      &    STRWT, SW, SWFAC, TDUMX, TDUMX2, VSTAGE, WCRLF,       !Input
      &    WCRRT,WCRSH, WCRSR, WCRST, WNRLF, WNRRT, WNRSH,       !Input
      &    WNRSR,WNRST, WTLF, XLAI, XPOD,                        !Input
-     &    YRDOY, YRSIM,                                         !Input
+     &    YRDOY, YRSIM, TGRO,                                   !Input
      &    CMINELF, CMINEP, CMINERT, CMINESH, CMINESR,           !Output
      &    CMINEST, CMOBMX, CMOBSR, LAIMOBR, LFCMINE,            !Output
      &    LFSCMOB, LFSENWT, LFSNMOB, LTSEN, NMINELF,            !Output
@@ -112,6 +112,14 @@ C-----------------------------------------------------------------------
 
       REAL CMINEO, NMINEO
       REAL CURV
+      REAL MOBTEM,TGRO(TS)
+*      INTEGER,dimension(6) :: IXFREQ
+      REAL,dimension(6) :: XMOTEM
+      REAL,dimension(6) :: YMOTEM
+      REAL MOBSWF
+
+      REAL,dimension(4) :: XMOSWF
+      REAL,dimension(4) :: YMOSWF
 
 !***********************************************************************
 !***********************************************************************
@@ -328,6 +336,28 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
         READ(CHAR,'(F6.0)',IOSTAT=ERR) SENSR
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+        ENDIF
+
+C-----------------------------------------------------------------------
+C    Find and Read Surviving section  Added by Diego
+!-----------------------------------------------------------------------
+        SECTION = '!*SURVIVI'
+        CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+        IF (FOUND .EQ. 0) THEN
+         CALL ERROR(ERRKEY, 1, FILECC, LNUM)
+        ELSE
+         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+         READ(CHAR,'(6F6.0)',IOSTAT=ERR) (XMOTEM(I),I=1,6)
+         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+         READ(CHAR,'(6F6.0)',IOSTAT=ERR) (YMOTEM(I),I=1,6)
+         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+         READ(CHAR,'(6F6.0)',IOSTAT=ERR) (XMOSWF(I),I=1,4)
+         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+         READ(CHAR,'(6F6.0)',IOSTAT=ERR) (YMOSWF(I),I=1,4)
+         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         ENDIF
 
 
@@ -849,8 +879,37 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C      Let the maximum of the two modifiers set the rate of mobilization.
 C-----------------------------------------------------------------------
+C      Modified to control mobilization to storage when low temperature
+C      and drought occurs to prevent plants to die (new parameters in SPE.)
+C      Diego Pequeno and Ken Boote (01-10-2024)
+C-----------------------------------------------------------------------
+      MOBSWF = TABEX (YMOSWF,XMOSWF,SWFAC,4)
+*      write(*,*) YRDOY,'YRDOY',MOBSWF,'MOBSWF'
+!       MOBSWF=1
+!      write(*,*) MOBSWF,'MOBSWF',SWFAC,'SWFAC'
+      MOBSWF = MAX(0.001,MOBSWF)
+      MOBTEM = 0.0
+      DO I = 1, 24
+        MOBTEM = MOBTEM + TABEX(YMOTEM,XMOTEM,TGRO(I),6)
+!     Cap negative values
+*      MOBTEM = MAX(0.1,MOBTEM)
+*      YMOTEM = MAX(0.1,YMOTEM)
+      ENDDO
+      MOBTEM = MOBTEM / 24.
+
+      !     Cap negative values
+      MOBTEM = MAX(0.001,MOBTEM)
+
       NMOBSR = (NMOBSRN + MAX(VNMOBR,LAIMOBR) *
-     &    (NMOBSRX - NMOBSRN)) * PPMFAC
+!     &    (NMOBSRX - NMOBSRN)) * PPMFAC
+     &    (NMOBSRX - NMOBSRN)) * PPMFAC * MOBTEM * MOBSWF
+!     Cap negative values
+!      NMOBSR = MAX(0.1,NMOBSR)
+!      MOBTEM = MAX(0.1,MOBTEM)
+!      MOBSWF = MAX(0.1,MOBSWF)
+
+      WRITE(8500,'(I8,2F6.3,1X,F6.3,1X,F6.3,1X,F6.3)') YRDOY,NMOBSR,
+     & MOBTEM, TGRO(TS), MOBSWF,SWFAC
 
 C-----------------------------------------------------------------------
 C      Set C mobilization rate from storage
@@ -868,8 +927,16 @@ C-----------------------------------------------------------------------
 !     &              (CMOBSRX - CMOBSRN)) * PPMFAC
 
       CMOBSR = (CMOBSRN + LAIMOBR *
-     &    (CMOBSRX - CMOBSRN)) * PPMFAC
-      
+!     &    (CMOBSRX - CMOBSRN)) * PPMFAC
+     &    (CMOBSRX - CMOBSRN)) * PPMFAC * MOBTEM * MOBSWF
+!     Cap negative values
+      CMOBSR = MAX(0.001,CMOBSR)
+!      MOBTEM = MAX(0.1,MOBTEM)
+!      MOBSWF = MAX(0.1,MOBSWF)
+
+
+      WRITE(8560,'(I8,8F6.3)') YRDOY,CMOBSR,CMOBSRN,LAIMOBR,CMOBSRX,
+     & CMOBSRN,PPMFAC,MOBTEM,MOBSWF
 C-----------------------------------------------------------------------
 C      Calculate potential N mobilization for the day
 C-----------------------------------------------------------------------
@@ -934,20 +1001,41 @@ C      ADDITIONAL DM LOSS DUE TO N MOBILIZATION? SENRTE
 C-----------------------------------------------------------------------
 C      Calculate potential CH2O mobilization for the day
 C-----------------------------------------------------------------------
+C    Adding cold temperature and water stress to reduce mobilization
+C    1-12-2024 KJB and DP
       CMINELF = CMOBMX * (DTX + DXR57)* (WCRLF - WTLF * PCHOLFF)
+     & * MOBTEM * MOBSWF
+!     Cap negative values
+      MOBTEM = MAX(0.0,MOBTEM)
+      MOBSWF = MAX(0.0,MOBSWF)
+
       LFCMINE = MAX(LFSCMOB, CMINELF)
 
       CMINEST = CMOBMX * (DTX + DXR57)* (WCRST - STMWT * PCHOSTF)
+     & * MOBTEM * MOBSWF
+!     Cap negative values
+      MOBTEM = MAX(0.0,MOBTEM)
+      MOBSWF = MAX(0.0,MOBSWF)
+
       STCMINE = MAX(STSCMOB, CMINEST)
 
-      CMINERT = CMOBMX * (DTX + DXR57)* PPMFAC * 
+      CMINERT = CMOBMX * (DTX + DXR57)* PPMFAC *
      &    (WCRRT - RTWT * PCHORTF)
+     & * MOBTEM * MOBSWF
+!     Cap negative values
+      MOBTEM = MAX(0.0,MOBTEM)
+      MOBSWF = MAX(0.0,MOBSWF)
+
       RTCMINE = MAX(RTSCMOB, CMINERT)
 
       CMINESR = CMOBSR * (DTX + DXR57)* (WCRSR - STRWT * PCHOSRF)
       SRCMINE = MAX(SRSCMOB, CMINESR)
 
       SHCMINE = CMOBMX * (DTX + DXR57)* WCRSH
+     & * MOBTEM * MOBSWF
+!     Cap negative values
+      MOBTEM = MAX(0.0,MOBTEM)
+      MOBSWF = MAX(0.0,MOBSWF)
 
       CMINEP = LFCMINE + STCMINE + RTCMINE + SRCMINE + SHCMINE
       CMINEO = CMINELF + CMINEST + CMINERT + CMINESR + SHCMINE

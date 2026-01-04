@@ -413,7 +413,7 @@ c     Green Leaf area index at harvest
                                    WRITE(Measured(10),'(A8)')TRIM(X(10))
 c       MJ, Feb 2012: add fresh stalk mass at harvest to output file
         WRITE(Simulated(13),'(F8.1)')  Part%STKWM
-                                   WRITE(Measured(10),'(A8)')TRIM(X(11))
+                                   WRITE(Measured(13),'(A8)')TRIM(X(13))
       ENDIF  
 
 

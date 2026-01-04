@@ -319,6 +319,7 @@
       INTEGER       EVHEADNMMAX   ! Maximum no headings in ev file #
       INTEGER       EYEARDOY      ! Emergence Year+DOY             #
       REAL          FAC(20)       ! Factor ((g/Mg)/(kg/ha))        #
+      REAL          FACTOR        ! Factor chp 2025-10-24
       INTEGER       FAPPNUM       ! Fertilization application number
       INTEGER       FDAY(200)     ! Dates of fertilizer appn       YrDoy
       REAL          FERNIT        ! Fertilizer N applied           kg/ha
@@ -4358,9 +4359,15 @@ C-GH As per Tony Hunt 2017 for GenCalc
                 DUPNEXT = 0.0
               ELSE  
                 DUPHASE = DUNEED
-                TIMENEED = DUNEED/
-     &           (TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))
-                DUPNEXT = TTNEXT*(1.0-TIMENEED)*DFNEXT
+!               2025-10-24 CHP Prevent zero-divide
+                IF (TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR) > 0.0) THEN
+                  TIMENEED = DUNEED/
+     &             (TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))
+                  DUPNEXT = TTNEXT*(1.0-TIMENEED)*DFNEXT
+                ELSE
+                  TIMENEED = 1.0
+                  DUPNEXT = 0.0
+                ENDIF
               ENDIF
             ELSE
             ENDIF
@@ -5272,25 +5279,35 @@ C-GH As per Tony Hunt 2017 for GenCalc
               NDEMMN = GROLF*LNCM+RTWTG*RNCM
      &              +(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5
 
-              IF (NDEMMN > 0.) THEN
-                LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)
-                RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)
-                SNUSE(1) = 
-     &           ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)
-                SRNUSE(1) = 
-     &             (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)
+!             2025-10-24 CHP Prevent zero-divide
+!             LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)
+!             RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)
+!             SNUSE(1) = 
+!    &         ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)
+!             SRNUSE(1) = 
+!    &           (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)
+
+              IF (NDEMMN .LE. 0) THEN
+                FACTOR = 1.0
               ELSE
-                LNUSE(1) = GROLF*LNCM
-                RNUSE(1) = RTWTG*RNCM
-                SNUSE(1) = (GROST+GROCR)*SNCM
-                SRNUSE(1) = GROSR*(SRNPCS/100.0)*0.5
+                FACTOR = AMIN1(1.0,NULEFT/NDEMMN)
               ENDIF
 
+              LNUSE(1) = (GROLF*LNCM) * FACTOR
+              RNUSE(1) = (RTWTG*RNCM) * FACTOR
+              SNUSE(1) = ((GROST+GROCR)*SNCM) * FACTOR
+              SRNUSE(1) = (GROSR*(SRNPCS/100.0)*0.5) * FACTOR
+
               ! Reduce stem,crown,root growth if N < supply minimum
-              IF (NDEMMN.GT.NULEFT .AND. NDEMMN > 0.) THEN
-                GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)
-                GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)
-                RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)
+              IF (NDEMMN.GT.NULEFT) THEN
+!               2025-10-24 CHP Prevent zero-divide
+!               GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)
+!               RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)
+!               GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)
+
+                GROSTADJ = GROST * FACTOR
+                GROCRADJ = GROCR * FACTOR
+                RTWTGADJ = RTWTG * FACTOR
                 RTRESPADJ = RTWTGADJ*RRESP/(1.0-RRESP)   
               ELSE
                 GROSTADJ = GROST

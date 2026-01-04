@@ -438,11 +438,12 @@ C     Process at maximum rate at or below XB
 C	Rate decreases linearly to 0 at X1
 C	Process reverses at a linear rate from X1 to X2
 C	XM is the maximum absolute rate
+C     20251017 FO Added protection for division by zero for X2-X1.
 C-------------------------------------------------------------------------------
       IF(CTYPE .EQ. 'REV' .OR. CTYPE .EQ. 'rev') THEN
         CURV = 1.
         IF(X .GT. XB .AND. X .LT. X1)CURV = 1.0-((X-XB)/(X1-XB))
-        IF(X .GE. X1 .AND. X .LE. X2)CURV = 0.0-((X-X1)/(X2-X1))
+        IF(X .GT. X1 .AND. X .LT. X2)CURV = 0.0-((X-X1)/(X2-X1))
         IF(X .GT. X2 )CURV = -1.0 
         CURV = MAX(CURV,-1.0)
         CURV = MIN(CURV,1.0)

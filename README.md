@@ -137,7 +137,7 @@ See: [Non-threatening best practice DSSAT Fortran coding guidelines](https://dss
 
 If you are planning to use DSSAT in any reports or publications, please make sure to refer to the version number you used.
 The version and sub-version numbers can be found in the top section of your output files, e.g., 4.8.X (replace X with current version).
-In addition, please use the following two references for DSSAT and the Cropping System Model. Other related publications can be found
+In addition, please use the following three references for DSSAT and the Cropping System Model. Other related publications can be found
 in the Documentation section under DSSAT References and Model References.
 
 Hoogenboom, G., C.H. Porter, K.J. Boote, V. Shelia, P.W. Wilkens, U. Singh, J.W. White, S. Asseng, J.I. Lizaso, L.P. Moreno, W. Pavan, R. Ogoshi, L.A. Hunt, G.Y. Tsuji, and J.W. Jones. 2019. The DSSAT crop modeling ecosystem. In: p.173-216 [K.J. Boote, editor] Advances in Crop Modeling for a Sustainable Agriculture. Burleigh Dodds Science Publishing, Cambridge, United Kingdom (https://dx.doi.org/10.19103/AS.2019.0061.10).
