@@ -986,7 +986,7 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
         ELSE IF (ISECT .EQ. 0) THEN
 !         TF (01/16/2026) - Replaced the default ecotype handling with
 !         an error call to avoid the use of unexisting ecotype IDs.
-          CALL ERROR("IPECO",21,FILEGC,1)
+          CALL ERROR("IPECO",5,FILEGC,1)
           
           !IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
           !ECONO = 'DFAULT'

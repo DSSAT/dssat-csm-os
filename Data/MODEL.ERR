@@ -244,6 +244,9 @@ DEFAULT Ecotype not found. Fix ecotype input file.
 IPECO     4
 Missing ecotype coefficients. Fix ecotype input file.
 
+IPECO     5
+Ecotype ID (ECONAME) not found. Fix ecotype input file.
+
 IPECO    21
 Ecotype input section not found.  Please correct file.
 
