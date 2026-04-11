@@ -101,6 +101,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) FILEX
         CHARACTER (len=30) FILEIO
         CHARACTER (len=102)DSSATP
+        CHARACTER (len=102) PATHPE
         CHARACTER (len=120) :: SimControl = 
      &  "                                                            "//
      &  "                                                            "
@@ -221,6 +222,9 @@ C             CHP Added TRTNUM to CONTROL variable.
       !Second tier soils data that could be used:
 !        REAL, DIMENSION(NL) :: EXTAL, EXTFE, EXTMN, 
 !        REAL, DIMENSION(NL) :: EXMG, EXTS, SLEC
+        
+      ! Hourly Soil Temperature
+        REAL, DIMENSION(24) :: HST
 
       END TYPE SoilType
 

@@ -27,6 +27,7 @@ C  01/14/2005 CHP Added METMP = 3: Corrected water content in temp. eqn.
 !  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil
 !                 water effects on albedo)
 !  12/09/2008 CHP Remove METMP and code for old (incorrect) soil water effect
+!  04/15/2024  FO Added Hourly Soil Temperature.
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : SOILT
@@ -40,6 +41,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE ModuleData
       IMPLICIT  NONE
       EXTERNAL YR_DOY, SOILT, OPSTEMP
       SAVE
@@ -60,6 +62,7 @@ C-----------------------------------------------------------------------
       REAL TMA(5)
       REAL, DIMENSION(NL) :: BD, DLAYR, DLI, DS, DSI, DSMID, DUL, LL,
      &      ST, SW, SWI
+      REAL, DIMENSION(24) :: HST
 
 !-----------------------------------------------------------------------
       TYPE (ControlType) CONTROL
@@ -85,6 +88,7 @@ C-----------------------------------------------------------------------
       LL     = SOILPROP % LL
       NLAYR  = SOILPROP % NLAYR
       MSALB  = SOILPROP % MSALB
+      HST    = SOILPROP % HST
 
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRDOY, YEAR, DOY)
@@ -196,10 +200,14 @@ C-----------------------------------------------------------------------
      &        ALBEDO, B, CUMDPT, DOY, DP, HDAY,           !Input
      &        METMP, NLAYR,                               !Input
      &        PESW, SRAD, TAMP, TAV, TAVG, TMAX, WW, DSMID,!Input
-     &        ATOT, TMA, SRFTEMP, ST)                     !Output
+     &        ATOT, TMA, SRFTEMP, ST, HST)                !Output
         END DO
       ENDIF
-
+      
+      ! FO Update soil properties with Hourly Soil Temperature 
+      SOILPROP % HST = HST
+      CALL PUT(SOILPROP)
+      
 !     Print soil temperature data in STEMP.OUT
       CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
@@ -237,7 +245,11 @@ C-----------------------------------------------------------------------
      &    ALBEDO, B, CUMDPT, DOY, DP, HDAY,           !Input
      &    METMP, NLAYR,                               !Input
      &    PESW, SRAD, TAMP, TAV, TAVG, TMAX, WW, DSMID,!Input
-     &    ATOT, TMA, SRFTEMP, ST)                     !Output
+     &    ATOT, TMA, SRFTEMP, ST, HST)                !Output
+     
+      ! FO Update soil properties with Hourly Soil Temperature 
+      SOILPROP % HST = HST
+      CALL PUT(SOILPROP)
 
 !***********************************************************************
 !***********************************************************************
@@ -278,7 +290,7 @@ C=======================================================================
      &    ALBEDO, B, CUMDPT, DOY, DP, HDAY,               !Input
      &    METMP, NLAYR,                                   !Input
      &    PESW, SRAD, TAMP, TAV, TAVG, TMAX, WW, DSMID,   !Input
-     &    ATOT, TMA, SRFTEMP, ST)                         !Output
+     &    ATOT, TMA, SRFTEMP, ST, HST)                    !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types,
@@ -297,6 +309,7 @@ C=======================================================================
       REAL TMA(5)
       REAL DSMID(NL)
       REAL ST(NL)
+      REAL HST(24)
 
 !-----------------------------------------------------------------------
       ALX    = (FLOAT(DOY) - HDAY) * 0.0174
@@ -357,6 +370,10 @@ C=======================================================================
         ST(L) = NINT(ST(L) * 1000.) / 1000.   !debug vs release fix
       END DO
 
+!     FO: Compute Hourly Soil Temperature based on first layer only
+!     for Aflatoxin.
+      HST = ST(1)
+      
 !     Added: soil T for surface litter layer.
 !     NB: this should be done by adding array element 0 to ST(L). Now
 !     temporarily done differently.
@@ -365,7 +382,6 @@ C=======================================================================
 !     canopy zone.  1=sunlit leaves.  2=shaded leaves.  3= soil.  Should
 !     we combine these variables?  At this time, only SRFTEMP is used
 !     elsewhere. - chp 11/27/01
-
 !-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE SOILT
@@ -400,6 +416,7 @@ C=======================================================================
 !            (0 - End-of-file encountered, 1 - NAME was found)
 ! FX
 ! HDAY
+! HST(24)  Hourly Soil Temperature (°C)
 ! ICWD     Initial water table depth (cm)
 ! ISWITCH  Composite variable containing switches which control flow of
 !            execution for model.  The structure of the variable
