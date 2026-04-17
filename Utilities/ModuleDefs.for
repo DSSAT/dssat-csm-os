@@ -222,9 +222,6 @@ C             CHP Added TRTNUM to CONTROL variable.
       !Second tier soils data that could be used:
 !        REAL, DIMENSION(NL) :: EXTAL, EXTFE, EXTMN, 
 !        REAL, DIMENSION(NL) :: EXMG, EXTS, SLEC
-        
-      ! Hourly Soil Temperature
-        REAL, DIMENSION(24) :: HST
 
       END TYPE SoilType
 

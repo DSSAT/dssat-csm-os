@@ -906,9 +906,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % TAXON         = TAXON
 
       SOILPROP % COARSE = COARSE
-      
-      SOILPROP % HST = -99.0
-      
+
       CALL SETPM(SOILPROP)
 
       CALL PUT(SOILPROP)
