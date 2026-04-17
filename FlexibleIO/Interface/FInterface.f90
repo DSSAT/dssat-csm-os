@@ -633,7 +633,7 @@ contains
         varnamestr = varname
         varnamestr(LEN(varnamestr):LEN(varnamestr)) = CHAR(0)
         
-        call set_real_mem_yrdoy(groupstr, yrdoy, varname, value)
+        call set_real_mem_yrdoy(groupstr, yrdoy, varnamestr, value)
         
     end subroutine setRealYrdoyMemory
     
