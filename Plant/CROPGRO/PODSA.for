@@ -21,7 +21,7 @@
 !  05/09/2007 CHP Added calls to fresh weight subroutine (tomato only)
 !  06/11/2007 CHP PStres2 affects growth
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
-!  11/27/2024 TF  Implemented the aflatoxin module
+!  04/09/2024 TF  Implemented the aflatoxin module
 !-----------------------------------------------------------------------
 !  Called from:  PLANT
 !  Calls:        PODCOMP
@@ -67,11 +67,12 @@
     	CHARACTER*200 HEADER1
       
       CHARACTER*12 FILEP
-      CHARACTER*13 OUTAF 
+!      CHARACTER*13 OUTAF 
       CHARACTER*19 OUTAC 
-      CHARACTER*20 OUTAS 
+!      CHARACTER*20 OUTAS 
       CHARACTER*92 INPA
-      INTEGER NOUTAF, NOUTAC, NOUTAS, NINPA, ERRNUM, RUN
+      INTEGER NOUTAC, NINPA, ERRNUM, RUN
+!     INTEGER NOUTAF, NOUTAS
       LOGICAL FEXIST, FIRST
       INTEGER LUNECO, LUNCRP, LUNIO, ERR, LINC, LNUM, FOUND, ISECT, II
       INTEGER NPP,NAGE,I,NLAYR
@@ -131,25 +132,21 @@
       REAL PStres2, CPSTRES
       TYPE (ControlType) CONTROL
       TYPE (SwitchType) ISWITCH
-      TYPE (SoilType) SOILPROP
 
       !    Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
       INTEGER, PARAMETER :: SUMNUM = 2
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
-      REAL, DIMENSION(24) :: HST
       
       CALL GET(CONTROL)
       CALL GET(ISWITCH)
-      CALL GET(SOILPROP)
       
       RUN     = CONTROL % RUN
       YRSIM   = CONTROL % YRSIM
       DAS     = CONTROL % DAS
       YRDOY   = CONTROL % YRDOY
       IDETL   = ISWITCH % IDETL
-      HST     = SOILPROP % HST
 
 !***********************************************************************
 !***********************************************************************
@@ -327,14 +324,14 @@
       
 !TF   Detailed output (VBOSE) - Hourly ST
 !     and daily aflatoxin per cohort 04/09/2024
-      IF(IDETL == 'D') THEN
-
-        OUTAF  = 'Aflatoxin.OUT'
-        CALL GETLUN('OUTAF',  NOUTAF)
-                
-        OUTAS  = 'Hourly_Soil_Temp.OUT'
-        CALL GETLUN('OUTAS',  NOUTAS)
-      ENDIF
+!      IF(IDETL == 'D') THEN
+!
+!        OUTAF  = 'Aflatoxin.OUT'
+!        CALL GETLUN('OUTAF',  NOUTAF)
+!                
+!        OUTAS  = 'Hourly_Soil_Temp.OUT'
+!        CALL GETLUN('OUTAS',  NOUTAS)
+!      ENDIF
       !INPA = trim(STDPATH) // 'Aflatoxin.INP'
       
       FILEP(1:12) = CONTROL % CROP//CONTROL % MODEL(3:8)//'.PST'
@@ -404,42 +401,42 @@
         ENDIF
 
 
-        IF(IDETL == 'D') THEN
-          INQUIRE (FILE = OUTAF, EXIST = FEXIST)
-          IF (FEXIST) THEN
-            OPEN (UNIT = NOUTAF, FILE = OUTAF, STATUS = 'OLD',
-     &        IOSTAT = ERRNUM)
-            FIRST = .TRUE.
-          ELSE
-            OPEN (UNIT = NOUTAF, FILE = OUTAF, STATUS = 'NEW',
-     &        IOSTAT = ERRNUM)
-            FIRST = .TRUE.
-          ENDIF
+!        IF(IDETL == 'D') THEN
+!          INQUIRE (FILE = OUTAF, EXIST = FEXIST)
+!          IF (FEXIST) THEN
+!            OPEN (UNIT = NOUTAF, FILE = OUTAF, STATUS = 'OLD',
+!     &        IOSTAT = ERRNUM)
+!            FIRST = .TRUE.
+!          ELSE
+!            OPEN (UNIT = NOUTAF, FILE = OUTAF, STATUS = 'NEW',
+!     &        IOSTAT = ERRNUM)
+!            FIRST = .TRUE.
+!          ENDIF
 
-          INQUIRE (FILE = OUTAS, EXIST = FEXIST)
-          IF (FEXIST) THEN
-            OPEN (UNIT = NOUTAS, FILE = OUTAS, STATUS = 'OLD',
-     &        IOSTAT = ERRNUM)
-            FIRST = .FALSE.
-          ELSE
-            OPEN (UNIT = NOUTAS, FILE = OUTAS, STATUS = 'NEW',
-     &        IOSTAT = ERRNUM)
-            FIRST = .TRUE.
-          ENDIF
+!          INQUIRE (FILE = OUTAS, EXIST = FEXIST)
+!          IF (FEXIST) THEN
+!            OPEN (UNIT = NOUTAS, FILE = OUTAS, STATUS = 'OLD',
+!     &        IOSTAT = ERRNUM)
+!            FIRST = .FALSE.
+!          ELSE
+!            OPEN (UNIT = NOUTAS, FILE = OUTAS, STATUS = 'NEW',
+!     &        IOSTAT = ERRNUM)
+!            FIRST = .TRUE.
+!          ENDIF
 
-          CALL HEADER(SEASINIT, NOUTAF, RUN)
-          Write (NOUTAF, 151)       
- 151      Format ('@YEAR DOY   DAS   DAP',
-     &    ' NR2TIM NAGE   SHELN   WTSHE  SEEDNO    WTSD    WTSEED'        ! VSH
-     &    '   AVTEM   SUPDE   PAGE  AVSWBAR AVSWFAC   STEMP   ATEMP'
-     &    '   ST(1)  STEMPE  AFINFE  AFMASS ASPMASS')
+!          CALL HEADER(SEASINIT, NOUTAF, RUN)
+!          Write (NOUTAF, 151)       
+! 151      Format ('@YEAR DOY   DAS   DAP',
+!     &    ' NR2TIM NAGE   SHELN   WTSHE  SEEDNO    WTSD    WTSEED'        ! VSH
+!     &    '   AVTEM   SUPDE   PAGE  AVSWBAR AVSWFAC   STEMP   ATEMP'
+!     &    '   ST(1)  STEMPE  AFINFE  AFMASS ASPMASS')
 
-          CALL HEADER(SEASINIT, NOUTAS, RUN)
-          
-          Write (NOUTAS, 152)
- 152      Format ('   YRDOY    HOUR  SOIL TEMP(First Layer)')
+!          CALL HEADER(SEASINIT, NOUTAS, RUN)
+!          
+!          Write (NOUTAS, 152)
+! 152      Format ('   YRDOY    HOUR  SOIL TEMP(First Layer)')
 
-        ENDIF
+!        ENDIF
         !Write headers
         CALL HEADER(SEASINIT, NOUTAC, RUN)
 
@@ -554,19 +551,19 @@
 ! AF
 !      TSOIL (I): HOURLY SOIL TEMPERATURE FOR LAYER 1
 !      TSOILA   : DAILY AVERAGE OF HOURLY SOIL TEMPERATURE FOR LAYER 1
-
-      IF(IDETL == 'D') THEN        
-	      DO I = 1, TS
-	       WRITE (NOUTAS, '(2I8, 2X, f8.3)') YRDOY, I, HST(I)
-        ENDDO
-      ENDIF
-      
-      TSOILA = 0.
-          
-	    DO I = 1, TS
-          TSOILA = TSOILA + HST(I)
-      ENDDO
-          TSOILA = TSOILA/24.
+!
+!      IF(IDETL == 'D') THEN        
+!	      DO I = 1, TS
+!	       WRITE (NOUTAS, '(2I8, 2X, f8.3)') YRDOY, I, TSOIL(I)
+!        ENDDO
+!      ENDIF
+!      
+!      TSOILA = 0.
+!          
+!	    DO I = 1, TS
+!          TSOILA = TSOILA + TSOIL(I)
+!      ENDDO
+!          TSOILA = TSOILA/24.
 
 !***********************************************************************
 !     Seed growth section
@@ -1081,13 +1078,13 @@ C-----------------------------------------------------------------------
       END IF     
 
 
-      IF(IDETL == 'D') THEN            
-        WRITE (NOUTAF, 13) YEAR, DOY, DAS, DAP, NR2TIM, NAGE,      ! VSH
-     &   SHELN(NPP), WTSHE(NPP), SDNO(NPP), WTSD(NPP), WTSEED,  
-     &   AVTEM(NPP),SUPDE(NPP), PAGE, AVSWBAR(NPP), AVSWFAC(NPP), 
-     &   STEMP(NPP), ATEMP(NPP), ST (1), STEMPE (NPP),
-     &   AFINFE (NPP), AFMASS (NPP), ASPMASS (NPP)
-      ENDIF
+!      IF(IDETL == 'D') THEN            
+!        WRITE (NOUTAF, 13) YEAR, DOY, DAS, DAP, NR2TIM, NAGE,      ! VSH
+!     &   SHELN(NPP), WTSHE(NPP), SDNO(NPP), WTSD(NPP), WTSEED,  
+!     &   AVTEM(NPP),SUPDE(NPP), PAGE, AVSWBAR(NPP), AVSWFAC(NPP), 
+!     &   STEMP(NPP), ATEMP(NPP), ST (1), STEMPE (NPP),
+!     &   AFINFE (NPP), AFMASS (NPP), ASPMASS (NPP)
+!      ENDIF
 
      
 13    FORMAT (1X,I4,1X,I3.3,2(1X,I5), 2X, 2I5, 4f8.3, f10.1, 4f8.3,     ! VSH

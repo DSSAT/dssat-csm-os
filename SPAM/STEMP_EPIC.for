@@ -16,7 +16,6 @@ C  Revision history
 C  12/01/1980     Originally based on EPIC soil temperature routines
 !  09/16/2010 CHP / MSC modified for EPIC soil temperature method.
 !     Cite Potter & Williams here
-!  04/15/2024  FO Added Hourly Soil Temperature.
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : SOILT
@@ -53,7 +52,6 @@ C-----------------------------------------------------------------------
       REAL DEPIR, WFT, BCV, RAIN, BIOMAS, MULCHMASS
       REAL SNOW, CV, BCV1, BCV2
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL, ST, SW, SWI, DSMID
-      REAL, DIMENSION(24) :: HST
 
 !-----------------------------------------------------------------------
       TYPE (ControlType) CONTROL
@@ -74,7 +72,6 @@ C-----------------------------------------------------------------------
       DUL    = SOILPROP % DUL
       LL     = SOILPROP % LL
       NLAYR  = SOILPROP % NLAYR
-      HST    = SOILPROP % HST
 
       TAMP = WEATHER % TAMP
 
@@ -181,14 +178,10 @@ C-----------------------------------------------------------------------
           CALL SOILT_EPIC (
      &    B, BCV, CUMDPT, DP, DSMID, NLAYR, PESW, TAV,    !Input
      &    TAVG, TMAX, TMIN, 0, WFT, WW,                   !Input
-     &    TMA, SRFTEMP, ST, X2_AVG, HST)                  !Output
+     &    TMA, SRFTEMP, ST, X2_AVG)                       !Output
         END DO
       ENDIF
-      
-      ! FO Update soil properties with Hourly Soil Temperature
-      SOILPROP % HST = HST
-      CALL PUT(SOILPROP)
-      
+
 !     Print soil temperature data in STEMP.OUT
       CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
@@ -258,11 +251,7 @@ C-----------------------------------------------------------------------
       CALL SOILT_EPIC (
      &    B, BCV, CUMDPT, DP, DSMID, NLAYR, PESW, TAV,    !Input
      &    TAVG, TMAX, TMIN, WetDay(NDays), WFT, WW,       !Input
-     &    TMA, SRFTEMP, ST, X2_AVG, HST)                  !Output
-     
-      ! FO Update soil properties with Hourly Soil Temperature 
-      SOILPROP % HST = HST
-      CALL PUT(SOILPROP)
+     &    TMA, SRFTEMP, ST, X2_AVG)                       !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -303,7 +292,7 @@ C=======================================================================
       SUBROUTINE SOILT_EPIC (
      &    B, BCV, CUMDPT, DP, DSMID, NLAYR, PESW, TAV,    !Input
      &    TAVG, TMAX, TMIN, WetDay, WFT, WW,              !Input
-     &    TMA, SRFTEMP, ST, X2_AVG, HST)                  !Output
+     &    TMA, SRFTEMP, ST, X2_AVG)                       !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
@@ -319,7 +308,6 @@ C=======================================================================
       REAL TMA(5)
       REAL DSMID(NL)
       REAL ST(NL)
-      REAL HST(24)
       REAL X1, X2, X3, F, WFT, BCV, TMIN, X2_AVG, X2_PREV
       REAL LAG
       PARAMETER (LAG=0.5)
@@ -368,7 +356,6 @@ C=======================================================================
 !     X1=AVT-X3
       X1=TAV-X3
 
-      
       DO L = 1, NLAYR
         ZD    = DSMID(L) / DD  !Eqn 8
 !       Eqn 7
@@ -377,10 +364,6 @@ C=======================================================================
 !       T(L)=PARM(15)*T(L)+XLG1*(F*X1+X3)
         ST(L)=LAG*ST(L)+(1.-LAG)*(F*X1+X3)
       END DO
-      
-!     FO: Compute Hourly Soil Temperature based on first layer only
-!     for Aflatoxin.
-      HST = ST(1)
 
       X2_PREV = X2_AVG
 
@@ -431,7 +414,6 @@ C=======================================================================
 !            execution for model.  The structure of the variable
 !            (SwitchType) is defined in ModuleDefs.for.
 ! ISWWAT   Water simulation control switch (Y or N)
-! HST(24)  Hourly Soil Temperature (°C)
 ! LINC     Line number of input file
 ! LL(L)    Volumetric soil water content in soil layer L at lower limit
 !           (cm3 [water] / cm3 [soil])
@@ -450,20 +432,20 @@ C=======================================================================
 ! SOILPROP Composite variable containing soil properties including bulk
 !            density, drained upper limit, lower limit, pH, saturation
 !            water content.  Structure defined in ModuleDefs.
-! SRFTEMP  Temperature of soil surface litter (°C)
-! ST(L)    Soil temperature in soil layer L (°C)
+! SRFTEMP  Temperature of soil surface litter (�C)
+! ST(L)    Soil temperature in soil layer L (�C)
 ! SW(L)    Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! SWI(L)   Initial soil water content (cm3[water]/cm3[soil])
 ! TAV      Average annual soil temperature, used with TAMP to calculate
-!            soil temperature. (°C)
-! TAVG     Average daily temperature (°C)
+!            soil temperature. (�C)
+! TAVG     Average daily temperature (�C)
 ! TBD      Sum of bulk density over soil profile
 ! TDL      Total water content of soil at drained upper limit (cm)
 ! TLL      Total soil water in the profile at the lower limit of
 !            plant-extractable water (cm)
-! TMA(I)   Array of previous 5 days of average soil temperatures. (°C)
-! TMAX     Maximum daily temperature (°C)
+! TMA(I)   Array of previous 5 days of average soil temperatures. (�C)
+! TMAX     Maximum daily temperature (�C)
 ! TSW      Total soil water in profile (cm)
 ! WC
 ! WW
