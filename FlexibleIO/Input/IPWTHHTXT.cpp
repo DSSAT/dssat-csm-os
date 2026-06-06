@@ -41,6 +41,7 @@ void READ_WTH_HOURLY(char *FILEWW, int *YRDOY,
   fileww.erase(fileww.find_first_of(" "), fileww.size());
   std::regex word_regex("\\S+");
   hdsection = false;
+  *MXRECORDS = *MXRECORDS * 24;
   
   file.open(fileww, std::ifstream::in);
   
@@ -75,11 +76,9 @@ void READ_WTH_HOURLY(char *FILEWW, int *YRDOY,
         while(hrit != rend) {
           hddata.push_back(hrit->str());
           if("DATE" == hrit->str()) datecol = i;
-          //std::cout << hrit->str() << " ";
           ++hrit;
           ++i;
         }
-        //std::cout << std::endl;
       }
       //Read Data
       else if(hdsection && line.size() > 1 && line[0] != '\32' && line[0] != '!' && 
@@ -92,7 +91,6 @@ void READ_WTH_HOURLY(char *FILEWW, int *YRDOY,
           int i = 0;
           while(drit != rend && i < hddata.size()) {
             flexibleio->setString("WTH", hddata[i], drit->str());
-            //std::cout << "REGEX DATA WSTAT:" << hddata[i] << " " << drit->str() << std::endl;
             ++drit;
             ++i;
           }
@@ -106,7 +104,7 @@ void READ_WTH_HOURLY(char *FILEWW, int *YRDOY,
               std::size_t pos = value.find("-");
               yeardoy = std::stoi(value.substr(0,pos));
               if(yeardoy >= *YRDOY){
-                hour = value.substr(pos+1);
+                hour = std::to_string(std::stoi(value.substr(pos+1,2)));
                 value = std::to_string(yeardoy);
                 lwd = yeardoy;
                 if(yeardoy <= fwd || fwd == 0)
@@ -119,8 +117,6 @@ void READ_WTH_HOURLY(char *FILEWW, int *YRDOY,
             }
 
             flexibleio->setFor2KeyString("WTH", value, hour, hddata[i], drit->str());
-            //std::cout << "ADDED FIO: " << hddata[i] << "  " <<  value << " " << hour << " " <<
-            //flexibleio->getFor2KeyString("WTH", value, hour, hddata[i]) << " " << std::endl;
             
             ++drit;
             ++i;
@@ -138,7 +134,6 @@ void READ_WTH_HOURLY(char *FILEWW, int *YRDOY,
     *NRECORDS = nrec;
     *FirstWeatherDay = fwd;
     *LastWeatherDay = lwd;
-    //std::cout << "Cpp values: " << *FirstWeatherDay << ", " << *LastWeatherDay << std::endl;
   }
   else{
     // Error: File not found.  Please check file name or create file.
