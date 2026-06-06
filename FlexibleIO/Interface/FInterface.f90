@@ -859,7 +859,7 @@ contains
         real, intent(in) :: value
         
         interface
-          subroutine set_For2KeyFloat(groupstr, key, key2, varnamestr, value)bind(C, name = 'setForKeyFloat')
+          subroutine set_For2KeyFloat(groupstr, key, key2, varnamestr, value)bind(C, name = 'setFor2KeyFloat')
             use, intrinsic :: iso_c_binding
             character(kind = c_char), dimension(*) :: groupstr
             integer :: key
@@ -892,7 +892,7 @@ contains
         integer, intent(in) :: value
 
         interface
-            subroutine set_For2KeyInteger(groupstr, key, key2, varnamestr, value)bind(C, name = 'setForKeyInteger')
+            subroutine set_For2KeyInteger(groupstr, key, key2, varnamestr, value)bind(C, name = 'setFor2KeyInteger')
                 use, intrinsic :: iso_c_binding
                 character(kind = c_char), dimension(*) :: groupstr
                 integer :: key
@@ -927,7 +927,7 @@ contains
         character(LEN(value)+1) :: valuestr
         
         interface
-            subroutine set_For2KeyString(groupstr, key, key2, varnamestr, valuestr)bind(C, name = 'setForKeyString')
+            subroutine set_For2KeyString(groupstr, key, key2, varnamestr, valuestr)bind(C, name = 'setFor2KeyString')
                 use, intrinsic :: iso_c_binding
                 character(kind = c_char), dimension(*) :: groupstr
                 character(kind = c_char), dimension(*) :: varnamestr

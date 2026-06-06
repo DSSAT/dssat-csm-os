@@ -50,6 +50,7 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
 !     TS defined in ModuleDefs.for
+      USE flexibleio
       IMPLICIT NONE
       EXTERNAL HANG, HTEMP, VPSAT, HWIND, HRAD, FRACD, HPAR
       CHARACTER*1  MEWTH
@@ -59,8 +60,8 @@ C=======================================================================
       REAL, DIMENSION(TS) :: RADHR, RHUMHR, TAIRHR, TGRO, WINDHR
 
       REAL CLOUDS, DAYL, DEC,
-     &  HS,ISINB,PAR,REFHT,S0N,SRAD,SNDN,SNUP,
-     &  TAVG,TDAY,TDEW,TGROAV,TGRODY,TINCR,TMAX,TMIN,
+     &  HS,ISINB,PAR,REFHT,S0N,SRAD,SNDN,SNUP,HSRAD,
+     &  TAVG,TDAY,TDEW,TGROAV,TGRODY,TINCR,TMAX,TMIN,HTMAX,HTMIN,
      &  RH,VPSAT,WINDAV,WINDHT,WINDSP,
      &  XLAT
       PARAMETER (TINCR=24./TS)
@@ -83,9 +84,15 @@ C       Calculate sun angles and hourly weather variables.
      &    DEC, HS, XLAT,                                  !Input
      &    AZZON(H), BETA(H))                              !Output
         
+        IF(MEWTH .NE. 'H') THEN
           CALL HTEMP(
      &      DAYL, HS, SNDN, SNUP, TMAX, TMIN,               !Input
      &      TAIRHR(H))                                      !Output
+        ELSE
+          CALL fio % get('WTH', YRDOY, H, 'TMAX', HTMAX)
+          CALL fio % get('WTH', YRDOY, H, 'TMIN', HTMIN)
+          TAIRHR(H) = (HTMAX + HTMIN) / 2
+        ENDIF
         
         RH = VPSAT(TDEW) / VPSAT(TAIRHR(H)) * 100.0
         RHUMHR(H) = MIN(RH,100.0)
@@ -94,9 +101,13 @@ C       Calculate sun angles and hourly weather variables.
      &    DAYL, HS, SNDN, SNUP, WINDAV,                   !Input
      &    WINDHR(H))                                      !Output
 
+        IF(MEWTH .NE. 'H') THEN
           CALL HRAD(
      &      BETA(H), HS, ISINB, SNDN, SNUP, SRAD,           !Input
      &      RADHR(H))                                       !Output
+        ELSE
+          CALL fio % get('WTH', YRDOY, H, 'SRADJ', RADHR(H))
+        ENDIF
         
         CALL FRACD(
      &    BETA(H), CLOUDS, HS, RADHR(H), S0N, SNDN, SNUP, !Input

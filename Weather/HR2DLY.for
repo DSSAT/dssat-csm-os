@@ -11,13 +11,12 @@
      &    SRAD, TMAX, TMIN, RAIN)                          !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
       USE flexibleio
       IMPLICIT NONE
       INTEGER H,TINCR, YRDOY
 
       ! Daily (D) and (H) weather variables
-      REAL HSRAD, HTMAX, HTMIN, HRAIN
+      REAL HSRAD, SRADMJ, SRADJ, HTMAX, HTMIN, HRAIN
       REAL DSRAD, DTMAX, DTMIN, DRAIN
       
       ! Weather variables converted
@@ -36,7 +35,13 @@
         CALL fio % get('WTH', YRDOY, H, 'TMIN',HTMIN)
         CALL fio % get('WTH', YRDOY, H, 'RAIN',HRAIN)
         
-        DSRAD = DSRAD + HSRAD
+        !Solar Radiation converstion from W/m2/hour to MJ/m2/hour
+        SRADMJ = HSRAD * 0.0036
+        !J/m2/s the same unit as W m^-2
+        SRADJ  = HSRAD
+        CALL fio % set('WTH', YRDOY, H, 'SRADJ',SRADJ)
+
+        DSRAD = DSRAD + SRADMJ
         DRAIN = DRAIN + HRAIN
         IF(H .EQ. 1) THEN
             DTMAX = HTMAX

@@ -71,7 +71,7 @@ C=======================================================================
       INTEGER CenturyWRecord !Century associated with weather record
 
       INTEGER, PARAMETER :: MaxRecords = 10000
-      INTEGER :: MXRecords = 10000
+      INTEGER :: MXRecords = 366
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
@@ -344,6 +344,10 @@ C     The components are copied into local variables for use here.
         CCO2  = -99.
         
         NRecords = 0
+        IF (CONTROL % NYRS .GT. 1) THEN
+          MXRecords = CONTROL % NYRS * 366
+        ENDIF
+
         YRSIMPREV = INCYD(YRSIM,-1)
 
         
