@@ -43,8 +43,8 @@
 !
 @ECO#  ECONAME.......... MG TM THVAR PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNGSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI
 !                                  1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16
-HM0001 IH-Williams Seed  07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0  25.0 53.00  0.28   1.0   1.2  .504  20.0  .035
+HM0001 IHW Grain Mat     07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0  25.0 53.00  0.28   1.0   1.2  .504  20.0  .035
 !copy of ecotype for seasonal analysis, harvest maturity right after physiological maturity
-HM0010 IH-Williams Fiber 07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0   0.1 53.00  0.28   1.0   1.2  .504  20.0  .035
+HM0010 IHW Fiber Mat     07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0   0.1 53.00  0.28   1.0   1.2  .504  20.0  .035
 HM0002 NWG-2730 Seed     07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0  20.0 34.00  0.31   1.0   0.8  .504  20.0  .035
 HM0020 NWG-2730 Fiber    07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0   0.1 34.00  0.31   1.0   0.8  .504  20.0  .035
