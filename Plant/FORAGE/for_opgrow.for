@@ -9,6 +9,8 @@ C  09/21/1998 CHP Split off from OPDAY.FOR file
 C  05/11/1999 GH  Incorporated in CROPGRO
 C  06/19/2001 GH  Modified output format
 C  08/20/2002 GH  Modified for Y2K
+C  05/12/2026 GH  Commented out Dormancy.out
+C  05/12/2026 GH  Commented out Storage.out
 C-----------------------------------------------------------------------
 C  Called by: PLANT
 C  Calls:     None
@@ -165,11 +167,11 @@ C-------------------------------------------
         OUTPC  = 'PlantC.OUT  '
         CALL GETLUN('OUTPC', NOUTPC)
 
-        OUTDRM  = 'Dormancy.OUT'
-        CALL GETLUN('OUTDRM', NOUTDRM)
+C-GH        OUTDRM  = 'Dormancy.OUT'
+C-GH        CALL GETLUN('OUTDRM', NOUTDRM)
 
-        OUTSTOR  = 'Storage.OUT '
-        CALL GETLUN('OUTSTOR', NOUTSTOR)
+C-GH        OUTSTOR  = 'Storage.OUT '
+C-GH        CALL GETLUN('OUTSTOR', NOUTSTOR)
         END IF    ! VSH
 !        OUTINSTR  = 'StorSpIn.OUT'
 !        CALL GETLUN('OUTINSTR', NOUTINSTR)
@@ -260,53 +262,53 @@ C-------------------------------------------
 
 !-----------------------------------------------------------------------
 !       Initialize daily Dormancy output file
-        INQUIRE (FILE = OUTDRM, EXIST = FEXIST)
-        IF (FEXIST) THEN
-        OPEN (UNIT = NOUTDRM, FILE = OUTDRM, STATUS = 'OLD',
-     &  IOSTAT = ERRNUM, ACCESS = 'APPEND')
-        FIRST = .FALSE.
-        ELSE
-        OPEN (UNIT = NOUTDRM, FILE = OUTDRM, STATUS = 'NEW',
-     &  IOSTAT = ERRNUM)
-        WRITE(NOUTDRM,'("*PLANT DORMANCY OUTPUT FILE")')
-        FIRST = .TRUE.
-        ENDIF
+C-GH        INQUIRE (FILE = OUTDRM, EXIST = FEXIST)
+C        IF (FEXIST) THEN
+C        OPEN (UNIT = NOUTDRM, FILE = OUTDRM, STATUS = 'OLD',
+C     &  IOSTAT = ERRNUM, ACCESS = 'APPEND')
+C        FIRST = .FALSE.
+C        ELSE
+C        OPEN (UNIT = NOUTDRM, FILE = OUTDRM, STATUS = 'NEW',
+C     &  IOSTAT = ERRNUM)
+C        WRITE(NOUTDRM,'("*PLANT DORMANCY OUTPUT FILE")')
+C        FIRST = .TRUE.
+C-GH        ENDIF
 
-        !Write headers
+c-GH        !Write headers
 !        CALL HEADER(SEASINIT, FILEIO, NOUTDRM, RUN)
-        CALL HEADER(SEASINIT, NOUTDRM, RUN)
+C-GH        CALL HEADER(SEASINIT, NOUTDRM, RUN)
 
-        WRITE (NOUTDRM,270)
-270   FORMAT('@YEAR DOY   DAS   DAP',
-     &  '   QDSD  PPGF  PPMF  PPTF  TSRD  TS1D  FRZ2  LV%D  SV%D',
-     &    '  QV%D  RV%D')
+C-GH        WRITE (NOUTDRM,270)
+C-GH 270   FORMAT('@YEAR DOY   DAS   DAP',
+C     &  '   QDSD  PPGF  PPMF  PPTF  TSRD  TS1D  FRZ2  LV%D  SV%D',
+C     &    '  QV%D  RV%D')
 
 !-----------------------------------------------------------------------
 !       Initialize daily Storage output file
-        INQUIRE (FILE = OUTSTOR, EXIST = FEXIST)
-        IF (FEXIST) THEN
-        OPEN (UNIT = NOUTSTOR, FILE = OUTSTOR, STATUS = 'OLD',
-     &  IOSTAT = ERRNUM, ACCESS = 'APPEND')
-        FIRST = .FALSE.
-        ELSE
-        OPEN (UNIT = NOUTSTOR, FILE = OUTSTOR, STATUS = 'NEW',
-     &  IOSTAT = ERRNUM)
-        WRITE(NOUTSTOR,'("*PLANT STORAGE OUTPUT FILE")')
-        FIRST = .TRUE.
-        ENDIF
+C-GH        INQUIRE (FILE = OUTSTOR, EXIST = FEXIST)
+C        IF (FEXIST) THEN
+C        OPEN (UNIT = NOUTSTOR, FILE = OUTSTOR, STATUS = 'OLD',
+C     &  IOSTAT = ERRNUM, ACCESS = 'APPEND')
+C        FIRST = .FALSE.
+C        ELSE
+C        OPEN (UNIT = NOUTSTOR, FILE = OUTSTOR, STATUS = 'NEW',
+C     &  IOSTAT = ERRNUM)
+C        WRITE(NOUTSTOR,'("*PLANT STORAGE OUTPUT FILE")')
+C        FIRST = .TRUE.
+C        ENDIF
 
         !Write headers
 !        CALL HEADER(SEASINIT, FILEIO, NOUTSTOR, RUN)
-        CALL HEADER(SEASINIT, NOUTSTOR, RUN)
+C-GH        CALL HEADER(SEASINIT, NOUTSTOR, RUN)
 
-        WRITE (NOUTSTOR,280)
-280   FORMAT('@YEAR DOY   DAS   DAP',
-     &   '  QCQD  QHAD  QC%M  QRAD  QMAD  QCFD  QCAD  QCDD  QDTD',
-     &   '  QN%X  QN%I  QV%D  QV%T  QNAA  QNRX  QNRN  QNAR  QNAM',
-     &   '  QNAG  QNAN  QNAL  QN%N  QN%D  QW%C  QP%W  QL%S  QL%1',
-     &   '  QS%D  Q1%D  QC%D  QCAM  QFDS  QFD1  QEAD  QEWD  QWAD',
-     &   '  QT%S  QT%1  QCRD  QNMD  QCAG  QWNG  QWND  QFAD  QWAI',
-     &   '  QMAM  QNAD  QNAC  QNLC  QDAD  XSTR')
+C-GH        WRITE (NOUTSTOR,280)
+C 280   FORMAT('@YEAR DOY   DAS   DAP',
+C      &   '  QCQD  QHAD  QC%M  QRAD  QMAD  QCFD  QCAD  QCDD  QDTD',
+C     &   '  QN%X  QN%I  QV%D  QV%T  QNAA  QNRX  QNRN  QNAR  QNAM',
+C     &   '  QNAG  QNAN  QNAL  QN%N  QN%D  QW%C  QP%W  QL%S  QL%1',
+C     &   '  QS%D  Q1%D  QC%D  QCAM  QFDS  QFD1  QEAD  QEWD  QWAD',
+C     &   '  QT%S  QT%1  QCRD  QNMD  QCAG  QWNG  QWND  QFAD  QWAI',
+C     &   '  QMAM  QNAD  QNAC  QNLC  QDAD  XSTR')
          END IF    ! VSH
 !-----------------------------------------------------------------------
 !       Initialize Storage inputs output file
@@ -452,28 +454,28 @@ C-----------------------------------------------------------------------
      &   2(1X,F5.1),3(1X,F5.2))
 
 
-        WRITE (NOUTDRM,610) YEAR, DOY, DAS, DAP,
-     &    DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST(1), FREEZ2,
-     &    FRLF, FRSTM, FRSTR, FRRT
-610     FORMAT(1X,I4,1X,I3.3,2(1X,I5),1X,A6,3(1X,F5.3),
-     &    3(1X,F5.1),4(1X,F5.3))
+C-GH        WRITE (NOUTDRM,610) YEAR, DOY, DAS, DAP,
+C     &    DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST(1), FREEZ2,
+C     &    FRLF, FRSTM, FRSTR, FRRT
+C 610     FORMAT(1X,I4,1X,I3.3,2(1X,I5),1X,A6,3(1X,F5.3),
+C-GH     &    3(1X,F5.1),4(1X,F5.3))
         
 
-        WRITE (NOUTSTOR,710) YEAR, DOY, DAS, DAP,
-     &    AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ,  
-     &    NINT(CSRW), CSTRM, DSTOR, FNINSR, FNINSRG, FRSTR,  
-     &    FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, 
-     &    NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, 
-     &    PSRLYRD, PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, 
-     &    SRLYRD, SSRDOT, SSRNDOT, NINT (STRWT*10), TPSRSRFL,  
-     &    TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN,  
-     &    WSRFDOT, WSRI, WSRIDOT, WTNSR, NINT(WTNSRA*10), 
-     &    WTNSRO, NINT(WTSRO*10.), XSTR
+C-GH        WRITE (NOUTSTOR,710) YEAR, DOY, DAS, DAP,
+C     &    AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ,  
+C     &    NINT(CSRW), CSTRM, DSTOR, FNINSR, FNINSRG, FRSTR,  
+C     &    FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, 
+C     &    NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, 
+C     &    PSRLYRD, PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, 
+C     &    SRLYRD, SSRDOT, SSRNDOT, NINT (STRWT*10), TPSRSRFL,  
+C     &    TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN,  
+C     &    WSRFDOT, WSRI, WSRIDOT, WTNSR, NINT(WTNSRA*10), 
+C     &    WTNSRO, NINT(WTSRO*10.), XSTR
 
-710    FORMAT(1X,I4,1X,I3.3,2(1X,I5),2(1X,F5.2),1X,F5.4,3(1X,F5.2),
-     &    1X,I5,2(1X,F5.2),4(1X,F5.3),9(1X,F5.2),7(1X,F5.2),1X, 
-     &    F5.3,5(1X,F5.2),1X,I5,2(1X,F5.3),1X,F5.1,5(1X,F5.2),
-     &    1X,F5.0,2(1X,F5.2),1X,I5,1X,F5.2,1X,I6,1X,F5.2)
+C-GH 710    FORMAT(1X,I4,1X,I3.3,2(1X,I5),2(1X,F5.2),1X,F5.4,3(1X,F5.2),
+C     &    1X,I5,2(1X,F5.2),4(1X,F5.3),9(1X,F5.2),7(1X,F5.2),1X, 
+C     &    F5.3,5(1X,F5.2),1X,I5,2(1X,F5.3),1X,F5.1,5(1X,F5.2),
+C     &    1X,F5.0,2(1X,F5.2),1X,I5,1X,F5.2,1X,I6,1X,F5.2)
         END IF    ! VSH
         
         IF (FMOPT == 'C') THEN   ! VSH
@@ -551,8 +553,8 @@ C-----------------------------------------------------------------------
         CLOSE (NOUTDG)
         CLOSE (NOUTPN)
         CLOSE (NOUTPC)
-        CLOSE (NOUTDRM)
-        CLOSE (NOUTSTOR)
+C-GH        CLOSE (NOUTDRM)
+C-GH        CLOSE (NOUTSTOR)
 !        CLOSE (NOUTINSTR)
         END IF   ! VSH
 !***********************************************************************

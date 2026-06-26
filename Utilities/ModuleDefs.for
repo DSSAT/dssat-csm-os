@@ -538,7 +538,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !======================================================================
 !     GET and PUT routines are differentiated by argument type.  All of 
-!       these procedures can be accessed with a CALL GET(...)
+!       these procedures can be accessed with a CALL GET(...) or CALL PUT(...)
       INTERFACE GET
          MODULE PROCEDURE GET_Control
      &                  , GET_ISWITCH 

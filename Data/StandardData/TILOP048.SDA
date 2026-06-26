@@ -1,6 +1,6 @@
 *Tillage Operations
 
-! DSSAT v4.8.5.0; 2024-12-01
+! DSSAT v4.8.6.0; 2026-05-05
 !  Tilllage Input File
 !
 !  JWW/CP/BB
@@ -205,6 +205,15 @@
 *TI020 Manure injector                  One pass, Generic soil conditions
 @ CN2T  RINP  SSDT  MIXT  HPAN
    0.0    50    40    10     0
+@  SLB  SBDT  SKST
+ 15.00   5.0  -5.0
+
+! 2025-05-19 Unclear why there was no TI021 in DSSAT releases.
+! Bsed on report that this was at one point defined as "animal-drawn implement"
+! JWW reintroduced the tillage operation. But this really is far too generic.
+*TI021 Animal-drawn implement           One pass, Generic soil conditions
+@ CN2T  RINP  SSDT  MIXT  HPAN
+  -5.0    20    40    10     0
 @  SLB  SBDT  SKST
  15.00   5.0  -5.0
 

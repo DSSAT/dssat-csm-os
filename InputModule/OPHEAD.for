@@ -629,14 +629,18 @@ C=======================================================================
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('AM,BC,BH,BM,BR,CB,CI,CN,CO,CU,GY,NP,PR,QU,
-     &     SF,SR,SU,TM,CV,HM,CM',CROP) .GT. 0) THEN   ! VSH added CM
+        ELSEIF (INDEX ('AM,BC,BH,BM,BR,CB,CI,CN,CO,CU,FX,GY,NP,
+     &     PR,QU,SF,SR,SU,TM,CV,HM,CM',CROP) .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
-           WRITE (HEADER(I),852) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
+           WRITE (HEADER(I),852) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1           
+        ELSEIF (INDEX ('ON,RD',CROP) .GT. 0) THEN
+           WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
+     &                        PHTHRS(8),PHTHRS(10); I=I+1
+           WRITE (HEADER(I),853) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
         ENDIF
 
-        WRITE (HEADER(I),853) THRESH, SDPRO, SDLIP; I=I+1
+        WRITE (HEADER(I),855) THRESH, SDPRO, SDLIP; I=I+1
 
 !-----------------------------------------------------------------------
 !     CSCER - Wheat, barley
@@ -903,13 +907,17 @@ C-----------------------------------------------------------------------
   800 FORMAT (1X,A16,1X,'CULTIVAR: ',A6,'-',A16,3X,'ECOTYPE: ',
      &        A6)
   850 FORMAT (1X,'CSDVAR :',F5.2,'  PPSEN  :',F5.2,
-     &         '  EMG-FLW:',F5.2,'  FLW-FSD:',F5.2,'  FSD-PHM :',F6.2)
+     &         '  EMG-FLW :',F5.2,'  FLW-FSD:',F5.2,'  FSD-PHM :',F6.2)
   851 FORMAT (1X,'WTPSD  :',F5.3,'  SDPDVR :',F5.2,
-     &         '  SDFDUR :',F5.2,'  PODDUR :',F5.2,'  XFRUIT  :',F6.2)
-  853 FORMAT (1X,'THRESH :',F5.1,'  SDPRO  :',F5.3,'  SDLIP   :',F6.3)
+     &         '  SDFDUR  :',F5.2,'  PODDUR :',F5.2,'  XFRUIT  :',F6.2)
+  855 FORMAT (1X,'THRESH :',F5.1,'  SDPRO  :',F5.3,'  SDLIP   :',F5.3)
 
   852 FORMAT (1X,'WTPSD  :',F5.3,'  SDPDVR :',F5.1,
-     &         '  SDFDUR :',F5.2,'  PODDUR :',F5.2,'  XFRUIT  :',F6.2)
+     &         '  SDFDUR  :',F5.2,'  PODDUR :',F5.2,'  XFRUIT  :',F6.2)
+      
+  853 FORMAT (1X,'WTPSD  :',F5.3,'  SDPDVR :',F5.1,
+     &         '  SDFDUR  :',F5.2,'  PODDUR :',F5.2,'  XFRUIT  :',F6.3)
+
 
   870 FORMAT (1X,'VREQ   :',F6.1,'  VBASE  :',F6.1,'  VEFF   :',F6.2,
      &         '  PPS1   :',F6.3,'  PPS2   :',F6.1)

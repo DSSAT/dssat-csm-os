@@ -106,7 +106,9 @@ C=======================================================================
      &    ETCP,         !Tot ET (mm) per plant phase
      &    ESCP,         !Soil evap (mm) per plant phase
      &    EPCP,         !Transpir (mm) per plant phase
-     &    PETP          !Pot ET (mm) per plant phase
+     &    PETP,         !Pot ET (mm) per plant phase
+     &    WSGA,         !Water stress growth
+     &    NSTA          !N stress growth
       End Type EnvSumType
 
       Type EvaluateType
@@ -184,7 +186,8 @@ C-----------------------------------------------------------------------
 !     Added 02/23/2011 Seasonal average environmental data
       INTEGER, DIMENSION(0:MaxStag) :: NDCH
       REAL, DIMENSION(0:MaxStag) :: TMINA, TAVGA, TMAXA, SRADA, 
-     &  DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP, PETP
+     &  DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP, PETP, WSGA, NSTA
+
       INTEGER CRST
       REAL CO2EM, N2OEM, CH4EM, TCEQM  !kg/ha
 
@@ -455,6 +458,8 @@ C     Initialize OPSUM variables.
       ESData % ESCP  = -99.
       ESData % EPCP  = -99.
       ESData % PETP  = -99.
+      ESData % WSGA  = -99.
+      ESData % NSTA  = -99.
 
       SUMDAT % CRST   = -99   !End of season crop status code
 
@@ -560,6 +565,9 @@ C     Initialize OPSUM variables.
       ETCP   = ESDATA % ETCP  !Cumul ET (mm), planting to harvest
       ESCP   = ESDATA % ESCP  !Cumul soil evap (mm), planting to harvest
       EPCP   = ESDATA % EPCP  !Cumul transp (mm), planting to harvest
+      WSGA   = ESDATA % WSGA  !Water stress growth
+      NSTA   = ESDATA % NSTA  !N stress growth
+
 
       CRST   = SUMDAT % CRST  !End of season crop status code
 
@@ -691,20 +699,19 @@ C-------------------------------------------------------------------
         IF (BWAH < -1) BWAH = -9.9
 
         MODEL = CONTROL % MODEL
-        IF (MODEL == MODEL_LAST) THEN
+        CROP = CONTROL % CROP
+        IF (MODEL == MODEL_LAST .OR. CROP == 'FA') THEN
           NewModel = .FALSE.
         ELSE
           NewModel = .TRUE.
           MODEL_LAST = MODEL
         ENDIF
 
-        CROP = CONTROL % CROP
         IF (CROP == CROP_LAST .OR. CROP == 'FA') THEN
           NewCrop = .FALSE.
         ELSE
           NewCrop = .TRUE.
           CROP_LAST = CROP
-
         ENDIF
 
         IF (FMOPT == 'A' .OR. FMOPT == ' ' .OR. FMOPT == '') THEN
@@ -1079,35 +1086,38 @@ C-------------------------------------------------------------------
             IF (NewCrop .OR. NewModel) THEN
               WRITE(ESLUN, 810, ADVANCE='NO')
   810         FORMAT(/,
-     &        '!',T78,'SEASONAL ENVIRONMENTAL DATA',/,
-     &        '!IDENTIFIERS..................................  ',
-     &        'GHG Emissions (kg/ha) ....   ',
-     &        'Planting to Harvest ...................................',
-     &        '..........................  ')
+     &     '!',T86,'SEASONAL ENVIRONMENTAL DATA',/,
+     &     '!IDENTIFIERS..........................................  ',
+     &     'GHG Emissions (kg/ha) ....   ',
+     &     'Planting to Harvest ...................................',
+     &     '........................................  ')
             
               DO I = 1, ESData % PhaseCount
                 WRITE(ESLUN,'(A,I1,A,A,A,A)', ADVANCE='NO')
      &            'Phase ', I, ": ", ESData % PhaseName(I), 
-     &            repeat(".", 36), "  "
+     &            repeat(".", 50), "  "
               ENDDO
             
-              WRITE(ESLUN,'(/,A,A,A,A)', ADVANCE='NO')
-     &          '@   RUNNO   TRNO R# O# P# CR MODEL... EXNAME..',
-     &          '  N2OEM  CO2EM  CH4EM  TCEQM   NDCH  DAYLA   CO2A',
-     &          '  TMINA  TAVGA  TMAXA  SRADA   PRCP   PETP   ETCP',
-     &          '   ESCP   EPCP'
+              WRITE(ESLUN,'(/,A,A,A,A,A)', ADVANCE='NO')
+     &        '@   RUNNO   TRNO R# O# P# CR MODEL... EXNAME..    HDAT',
+     &        '  N2OEM  CO2EM  CH4EM  TCEQM   NDCH  DAYLA   CO2A',
+     &        '  TMINA  TAVGA  TMAXA  SRADA   PRCP   PETP   ETCP',
+     &        '   ESCP   EPCP   WSGA   NSTA'
             
               IF (ESData % PhaseCount > 0) THEN
                 DO I = 1, ESData % PhaseCount-1
-                  WRITE(ESLUN,'(10(A6,I1))',ADVANCE='NO')
+                  WRITE(ESLUN,'(12(A6,I1))',ADVANCE='NO')
      &           '  NDCH',I,'  TMIN',I,'  TAVG',I,'  TMAX',I,'  SRAD',I,
-     &           '  PRCP',I,'  PETP',I,'  ETCP',I,'  ESCP',I,'  EPCP',I
+     &           '  PRCP',I,'  PETP',I,'  ETCP',I,'  ESCP',I,'  EPCP',I,
+     &           '  WSGA',I,'  NSTA',I
                 ENDDO
 !               Last phase, advance line
-                WRITE(ESLUN,'(10(A6,I1))')
+                WRITE(ESLUN,'(12(A6,I1))')
      &           '  NDCH',I,'  TMIN',I,'  TAVG',I,'  TMAX',I,'  SRAD',I,
-     &           '  PRCP',I,'  PETP',I,'  ETCP',I,'  ESCP',I,'  EPCP',I
+     &           '  PRCP',I,'  PETP',I,'  ETCP',I,'  ESCP',I,'  EPCP',I,
+     &           '  WSGA',I,'  NSTA',I
               ENDIF
+
             ENDIF
           
 !           These 3 variables are not in Summary.OUT
@@ -1119,21 +1129,22 @@ C-------------------------------------------------------------------
    
             WRITE(ESLUN,820,ADVANCE='NO')
      &        RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, 
-     &        CONTROL%FILEX(1:8),
+     &        CONTROL%FILEX(1:8), YRDOY,
      &        N2OEC_TXT, CO2EM_TXT, CH4EM_TXT, TCEQM_TXT,
      &        NDCH(0), DAYLA_TXT, CO2A_TXT, TMINA_TXT, TAVGA_TXT, 
      &        TMAXA_TXT, SRADA_TXT, PRCP_TXT, PETP_TXT, ETCP_TXT, 
-     &        ESCP_TXT, EPCP_TXT
-          
+     &        ESCP_TXT, EPCP_TXT, WSGA(0), NSTA(0)
 
-!             RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, FILEX
-  820         FORMAT (I9,1X,I6,3(I3),1X,A2,1X,A8,1X,A8,               
+!             RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, FILEX, YRDOY
+  820         FORMAT (I9,1X,I6,3(I3),1X,A2,1X,A8,1X,A8,I8,              
 !             N2OEC_TXT, CO2EM_TXT, CH4EM, NINT(TCEQM),
      &        4A7, 
 !             NDCH, DAYLA_TXT, CO2A_TXT, TMINA_TXT, TAVGA_TXT, TMAXA_TXT,
 !             SRADA_TXT, PRCP_TXT, PETP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
-     &        I7, 11A7)
-          
+     &        I7, 11A7,
+!             WSGA(0), NSTA(0)
+     &        2F7.2)
+
             IF (ESData % PhaseCount > 0) THEN
               DO I = 1, ESData % PhaseCount
                 CALL PrintText(ESData % TMINA(I), "(F7.1)", TMINA_TXT)
@@ -1145,10 +1156,12 @@ C-------------------------------------------------------------------
                 CALL PrintText(ESData % ETCP(I),  "(F7.1)", ETCP_TXT )
                 CALL PrintText(ESData % ESCP(I),  "(F7.1)", ESCP_TXT )
                 CALL PrintText(ESData % EPCP(I),  "(F7.1)", EPCP_TXT )
-          
-                WRITE(ESLUN,'(I7,9A7)',ADVANCE='NO') ESData % NDCH(I),
+
+                WRITE(ESLUN,'(I7,9A7,2F7.2)',ADVANCE='NO') 
+     &            ESData % NDCH(I),
      &            TMINA_TXT, TAVGA_TXT, TMAXA_TXT, SRADA_TXT, 
-     &            PRCP_TXT, PETP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
+     &            PRCP_TXT, PETP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT,
+     &            WSGA(I), NSTA(I)
               ENDDO
             ENDIF
 
@@ -1157,14 +1170,16 @@ C-------------------------------------------------------------------
 
            CALL CsvOutEnvSum( 
      &       RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, 
-     &       MaxStag, CONTROL%FILEX(1:8),
+     &       MaxStag, CONTROL%FILEX(1:8), YRDOY,
      &       N2OEM, CO2EM, CH4EM, TCEQM, 
      &       NDCH, CO2A, DAYLA, TMINA, TAVGA, TMAXA, SRADA, PRCP, 
-     &       PETP, ETCP, ESCP, EPCP,
+     &       PETP, ETCP, ESCP, EPCP, WSGA, NSTA, ESData % PhaseName,
      &       vCsvlineEnvSum, vpCsvlineEnvSum, vlngthEnvSum) 
-          
+
            CALL LinklstEnvSum(vCsvlineEnvSum)
+
           ENDIF   !ascii or csv format
+          CLOSE(ESLUN)
         END SELECT
       ENDIF     !IDETO switch for output
 
@@ -1482,7 +1497,8 @@ C=======================================================================
 !  02/18/2025 CHP Written
 !=======================================================================
       SUBROUTINE EnvSumDat(NSTAGES, NNR, CEOR, CEPR, CETR, CEVAPR, 
-     &   CO2R, DAYLR, RADR, RAINR, STAG, TMAXR, TMEANR, TMINR)
+     &   CO2R, DAYLR, RADR, RAINR, STAG, TMAXR, TMEANR, TMINR, 
+     &   W_growR, N_growR)
 !-----------------------------------------------------------------------
 !     USE SumModule     
       IMPLICIT NONE
@@ -1492,7 +1508,7 @@ C=======================================================================
       CHARACTER*23, DIMENSION(0:MaxStag), INTENT(IN) :: STAG
       REAL, DIMENSION(0:MaxStag), INTENT(IN) :: 
      &   CETR, CEPR, DAYLR, CEVAPR, RAINR, RADR, CO2R,
-     &   TMAXR, TMINR, TMEANR, CEOR
+     &   TMAXR, TMINR, TMEANR, CEOR, W_growR, N_growR
 
 !     Environmental summary variables 
       ESData % PhaseCount = NSTAGES
@@ -1509,6 +1525,8 @@ C=======================================================================
       ESData % ESCP = CEVAPR
       ESData % EPCP = CEPR
       ESData % PETP = CEOR
+      ESData % WSGA = W_growR
+      ESData % NSTA = N_growR
 
 !-----------------------------------------------------------------------
       RETURN

@@ -1,5 +1,5 @@
 *CODES FOR SOIL DATA
-! DSSAT v4.8; 2024-12-01
+! DSSAT v4.8; 2026-05-05
 
 ! Codes currently used for both detailed profile analysis and occasional
 ! analysis of the surface layers are listed. The soil analysis codes are
@@ -34,7 +34,7 @@ SALB     Albedo, fraction
 SANI     Total nitrogen, %                                                   
 SAOC     Organic carbon, %                                                   
 SAPX     Phosphorus, extractable, mg kg-1                                    
-SBDM     Bulk density, moist, g cm-3                                         
+SBDM     Bulk density, dry, g cm-3                                         
 SC       Silty clay                                                          
 SCEC     Cation exchange capacity, cmol kg-1                                 
 SCL      Silty clay loam                                                     

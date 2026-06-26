@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.8; 2025-05-12
+! DSSAT v4.8; 2026-05-05
 
 ! Codes currently used for simulation options for the DSSAT Cropping System
 ! Model
@@ -167,9 +167,10 @@ CRGRO    CO   CROPGRO-Cotton
 CRGRO    CP   CROPGRO-Cowpea
 CRGRO    FA   CROPGRO-Fallow
 CRGRO    FB   CROPGRO-Faba bean
+CRGRO    FX   CROPGRO-Flax
 CRGRO    GB   CROPGRO-Green bean
 CRGRO    GY   CROPGRO-Guar
-CRGRO    HM   CRGRO-Hemp
+CRGRO    HM   CROPGRO-Hemp
 CRGRO    LT   CROPGRO-Lentil
 CRGRO    NP   CROPGRO-Napier grass
 CRGRO    PE   CROPGRO-Pea

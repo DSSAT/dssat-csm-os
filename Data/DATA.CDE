@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2025-05-16
+! DSSAT v4.8; 2026-05-12
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -1548,16 +1548,18 @@ RSPLF  Residual leaf   Residual leaf after mowing (%)                           
 
 *FORAGES
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
-FHC%H  Harv. For.%CH2O Harvested forage carbohydrate conc. at harvest (% CH2O)  .
-FHLGH  Harv. For. Lig. Harvested forage lignin conc. at forage harv. (% lignin) .
-FHL%H  Harv. For. %Lf  Harvested forage leaf percentage at forage harv. (% leaf).
-FHN%H  Harv. For. %N   Harvested forage nitrogen conc. at forage harvest (% N)  .
-FHNAH  Harv. For. N    Harvested forage N weight at forage harvest (kg N/ha)    .
-FHNO   Forage harvest  Count of forage harvests within current run              .
+FHC%H  Harv For %CH2O  Harvested forage carbohydrate conc. at harvest (% CH2O)  .
+FHLGH  Harv For %Lig   Harvested forage lignin conc. at forage harv. (% lignin) .
+FHL%H  Harv For %Lf    Harvested forage leaf percentage at forage harv. (% leaf).
+FHN%H  Harv For %N     Harvested forage nitrogen conc. at forage harvest (% N)  .
+FHNAH  Harv For N wt   Harvested forage N weight at forage harvest (kg N/ha)    .
+FHNO   For harvest #   Count of forage harvests within current run (#)          .
 FHWAH  Harv. For. Wt.  Harvested forage wt. (leaf+stem) @ forage harv. (kg/ha)  .
+MOWC   Tops left kg/ha Top weight left after mowing (kg/ha)                     .
 RCWAH  Resid. Can. Wt. Residual canopy weight after forage harvest (kg/ha)      .
 RLAIH  Resid. LAI      Residual leaf area index after forage harvest            .
 RLWAH  Resid. Leaf Wt. Residual leaf weight after forage harvest (kg/ha)        .
+RSPLC  Stubble leaf %  Stubble leaf percentage (%)                              .
 RSWAH  Resid. Stem Wt. Residual stem weight after forage harvest (kg/ha)        .
 RSRWH  Resid. Stor.Wt. Residual storage organ weight after forage harv. (kg/ha) .
 RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)        .

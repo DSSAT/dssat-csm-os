@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.8; 2025-05-16
+! DSSAT v4.8; 2026-05-05
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -254,6 +254,7 @@ CP       Cowpea                                                               IB
 CS       Cassava                                                              IB
 FA       Fallow                                                               IB
 FB       Faba bean                                                            IB
+FX       Flax                                                                 IB
 GB       Green bean                                                           IB
 GG       Guinea grass                                                         IB
 GY       Guar                                                                 IB
@@ -659,7 +660,7 @@ TI017    Bedder                                                               IB
 TI018    Blade cultivator                                                     IB
 TI019    Fertilizer applicator, anhydrous                                     IB
 TI020    Manure injector                                                      IB
-!I021    Animal-drawn implement                                               IB
+TI021    Animal-drawn implement                                               IB
 TI022    Mulch treader                                                        IB
 TI023    Plank                                                                IB
 TI024    Roller packer                                                        IB
@@ -710,5 +711,6 @@ FH302    Cultivated, poor mgmt, init degraded land                            IB
 @CDE     DESCRIPTION                                                          SO
 SN       Climate change                                                       IB
 FX       Yield/In-season forecast                                             IB
-SN       Seaseonal                                                            IB
+SN       Seasonal                                                             IB
 SQ       Sequence/Crop rotations                                              IB
+SN       Spatial                                                              IB

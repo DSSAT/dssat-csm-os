@@ -14,6 +14,7 @@
 !                 Added total soil C at 0-20cm and 20-40cm depth.
 !  06/06/2006 CHP Added total soil N at 0-20cm and 20-40cm depth.
 !  10/02/2007 CHP Added C:N output file (temp?)
+!  03/11/2026 GH  Correct zero divide for SOC_40cm
 !
 !  Called: CENTURY
 !  Calls: --
@@ -369,10 +370,21 @@
       SLC_20CM_P = SLC_20CM / SOIL_20CM * 100.
       SON_20CM_P = SON_20CM / SOIL_20CM * 100.
       SOP_20CM_P = SOP_20CM / SOIL_20CM * 100.
-      SOC_40CM_P = SOC_40CM / SOIL_40CM * 100.
-      SLC_40CM_P = SLC_40CM / SOIL_40CM * 100.
-      SON_40CM_P = SON_40CM / SOIL_40CM * 100.
-      SOP_40CM_P = SOP_40CM / SOIL_40CM * 100.
+            
+C-GH 03/11/2026
+C Correct for shallows soils < 20 cm
+      
+      IF (SOIL_40CM .GT. 0.0) THEN
+        SOC_40CM_P = SOC_40CM / SOIL_40CM * 100.
+        SLC_40CM_P = SLC_40CM / SOIL_40CM * 100.
+        SON_40CM_P = SON_40CM / SOIL_40CM * 100.
+        SOP_40CM_P = SOP_40CM / SOIL_40CM * 100.
+      ELSE
+        SOC_40CM_P = 0.0
+        SLC_40CM_P = 0.0
+        SON_40CM_P = 0.0
+        SOP_40CM_P = 0.0
+      ENDIF
 
       IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
       IF (PRINTC) THEN

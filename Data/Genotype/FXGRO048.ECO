@@ -1,4 +1,4 @@
-*HEMP ECOTYPE COEFFICIENTS: CRGRO048 MODEL
+*FLAX ECOTYPE COEFFICIENTS: CRGRO048 MODEL
 !
 ! COEFF   DEFINITIONS
 ! =====   ===========
@@ -34,6 +34,12 @@
 ! RHGHT   Relative height of this ecotype in comparison to the
 !         standard height per node (YVSHT) defined in the species file
 !         (*.SPE)
+! THRSH   The maximum ratio of (seed/(seed+shell)) at maturity.
+!         Causes seed to stop growing as their dry weights
+!         increase until shells are filled in a cohort.
+!         (Threshing percentage).
+! SDPRO   Fraction protein in seeds (g(protein)/g(seed))
+! SDLIP   Fraction oil in seeds (g(oil)/g(seed))
 ! R1PPO   Increase in daylength sensitivity after R1 (CSDVAR and CLDVAR
 !         both decrease with the same amount) (h)
 ! OPTBI   Minimum daily temperature above which there is no effect on
@@ -43,8 +49,10 @@
 !
 @ECO#  ECONAME.......... MG TM THVAR PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNGSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI
 !                                  1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16
-HM0001 IHW Grain Mat     07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0  25.0 53.00  0.28   1.0   1.2  .504  20.0  .035
-!copy of ecotype for seasonal analysis, harvest maturity right after physiological maturity
-HM0010 IHW Fiber Mat     07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0   0.1 53.00  0.28   1.0   1.2  .504  20.0  .035
-HM0002 NWG-2730 Seed     07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0  20.0 34.00  0.31   1.0   0.8  .504  20.0  .035
-HM0020 NWG-2730 Fiber    07 01   0.0   4.5   3.0   0.0   1.0   0.0  0.80   5.0   0.1 34.00  0.31   1.0   0.8  .504  20.0  .035
+!Calibration              N  N     N     P     P     N     N     N     G     G     P     G     G     G     G     N     N     N
+
+999991 MINIMA             .  .   0.0   2.0   5.0   0.0  05.0   0.0  0.30   9.0   2.0  0.00  0.32   0.9   0.9  .000   0.0  .000
+999992 MAXIMA             .  .   0.0   3.8   7.0   0.0  05.0   0.0  0.50  11.0  10.0  6.00  0.38   1.0   1.6  .000   0.0  .000
+DFAULT DEFAULT TYPE      01 01   0.0   3.6   6.0   0.0  05.0   0.0  0.35  10.0  12.0  0.00  0.32   1.0   0.9  .504  20.0  .035
+!
+FX0001 MATURITY GROUP 01 01 01   0.0   1.0  35.0   0.0  05.0   0.0  0.35  10.0   3.0  0.00  0.36   1.0   1.8  .000  00.0  .000

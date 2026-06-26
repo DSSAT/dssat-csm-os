@@ -101,7 +101,8 @@ C-------------------------------------------
 !     No output for fallow crop
       CROP    = CONTROL % CROP
       IDETG   = ISWITCH % IDETG
-      IF (CROP .EQ. 'FA' .OR. IDETG .EQ. 'N') RETURN
+      IF (CROP .EQ. 'FA' .OR. IDETG .NE. 'D') RETURN
+C-GH  IF (CROP .EQ. 'FA' .OR. IDETG .EQ. 'N') RETURN
 
 !     Transfer values from constructed data types into local variables.
       DAS     = CONTROL % DAS

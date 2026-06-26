@@ -1,5 +1,6 @@
 C=======================================================================
-C  COPYRIGHT 1998-2021 DSSAT Foundation
+C  COPYRIGHT 1998-2026
+C                      DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C    
@@ -30,6 +31,7 @@ C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 !                 RPLACE_C in Century)
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
+!  06-23-2026 CHP Convert BWAH from g/m2 to kg/ha for output
 C=====================================================================
 
       SUBROUTINE MGMTOPS(CONTROL, ISWITCH, 
@@ -745,7 +747,7 @@ C-----------------------------------------------------------------------
           WRITE(DLUN2,312) HARVFRAC(1)*100., " % yield harvested",
      &            SumDat % HWAH, " kg/ha"
           WRITE(DLUN2,312) HARVFRAC(2)*100., " % by-product harv",
-     &            SumDat % BWAH, " kg/ha"
+     &            SumDat % BWAH * 10., " kg/ha"  !BWAH sent as g/m2
   312     FORMAT(T45,F6.1,A,T72,F7.0,A)
 
 !         Harvest residues

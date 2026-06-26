@@ -14,6 +14,8 @@
 !  11/14/2003 CHP  Added checks for zero divides
 !  05/18/2004 AJG Completely reshuffled to get it ready for N and P with
 !                 a SOM23 pool for P.
+!  03/15/2026 GH  Fix nmob error for surface layer calculations
+!  03/27/2026 GH  Replace 1.E-6 with 0.0
 !
 !  Called: CENTURY
 !  Calls : --
@@ -237,7 +239,9 @@
 !         --------------------------------------------------
 !         Surface flow from metabolic litter to SOM1.
           Net_immob = IMMMETS1(SRFC,LIM_EL) - MNRMETS1(SRFC,LIM_EL)
-          IF (Net_immob > 1.E-6)THEN
+C-GH 03/27/2026
+C         IF (Net_immob > 1.E-6)THEN
+          IF (Net_immob > 0.0)THEN
 !           Carbon
             CFMETS1(SRFC)   = CFMETS1(SRFC)    * REDUCFACTMIN(1)
             CO2FMET(SRFC)   = CO2FMET(SRFC)    * REDUCFACTMIN(1)
@@ -270,7 +274,9 @@
      &                + IMMSTRS23(SRFC,P)- MNRSTRS23(SRFC,P)
           ENDIF
 
-          IF (Net_immob > 1.E-6) THEN
+C-GH 03/27/2026
+C         IF (Net_immob > 1.E-6) THEN
+          IF (Net_immob > 0.0) THEN
 !           Carbon
             CFSTRS1(SRFC)        = CFSTRS1(SRFC) * REDUCFACTMIN(1)
             CFSTRS2(SRFC)        = CFSTRS2(SRFC) * REDUCFACTMIN(1)
@@ -304,19 +310,26 @@
             Net_immob = IMMS1S2(SRFC,N)  - MNRS1S2(SRFC,N)
           ELSEIF (LIM_EL == P) THEN
             Net_immob = IMMS1S23(SRFC,P) - MNRS1S23(SRFC,P)
-          ENDIF
-
-          IF (Net_immob > 1.E-6) THEN
+          ENDIF          
+        
+C-GH 03/27/2026
+C         IF (Net_immob > 1.E-6) THEN
+          IF (Net_immob > 0.0) THEN
 !           Carbon
             CFS1S2(SRFC) = CFS1S2(SRFC) * REDUCFACTMIN(1)
-            CO2FS1(SRFC) = CO2FS1(SRFC) * REDUCFACTMIN(L)
-
-!           Nitrogen.
+            CO2FS1(SRFC) = CO2FS1(SRFC) * REDUCFACTMIN(1)         
+            
+C-GH 03/15/2026       
+C           Replace "L" with 1 using layer 1 for layer 0 = 
+C            surface layer calculations
+C            CO2FS1(SRFC) = CO2FS1(SRFC) * REDUCFACTMIN(L)         
+          
+!           Nitrogen
             EFS1S2(SRFC,N)  = EFS1S2(SRFC,N)  * REDUCFACTMIN(1) 
             IMMS1S2(SRFC,N) = IMMS1S2(SRFC,N) * REDUCFACTMIN(1)
             MNRS1S2(SRFC,N) = MNRS1S2(SRFC,N) * REDUCFACTMIN(1)
 
-!           Phosphorus.
+!           Phosphorus
             IF (N_ELEMS > 1) THEN
               EFS1S23(SRFC,P)  = EFS1S23(SRFC,P)  * REDUCFACTMIN(1) 
               IMMS1S23(SRFC,P) = IMMS1S23(SRFC,P) * REDUCFACTMIN(1)
@@ -332,7 +345,9 @@
 !           --------------------------------------------------
 !           Soil flow from metabolic litter to SOM1.
             Net_immob = IMMMETS1(L,LIM_EL) - MNRMETS1(L,LIM_EL)
-            IF (Net_immob > 1.E-6) THEN
+C-GH 03/27/2026
+C           IF (Net_immob > 1.E-6) THEN
+            IF (Net_immob > 0.0) THEN
 !             Carbon.
               CFMETS1(L) = CFMETS1(L) * REDUCFACTMIN(L)
               CO2FMET(L) = CO2FMET(L) * REDUCFACTMIN(L)
@@ -360,7 +375,9 @@
      &                  + IMMSTRS23(L,P)- MNRSTRS23(L,P)
             ENDIF
           
-            IF (Net_immob > 1.E-6) THEN
+C-GH 03/27/2026
+C           IF (Net_immob > 1.E-6) THEN
+            IF (Net_immob > 0.0) THEN
 !             Carbon.
               CFSTRS1(L) = CFSTRS1(L) * REDUCFACTMIN(L)
               CFSTRS2(L) = CFSTRS2(L) * REDUCFACTMIN(L)
@@ -397,7 +414,9 @@
               Net_immob = IMMS1S23(L,P) - MNRS1S23(L,P)
             ENDIF
           
-            IF (Net_immob > 1.E-6) THEN
+C-GH 03/27/2026
+C           IF (Net_immob > 1.E-6) THEN
+            IF (Net_immob > 0.0) THEN
 !             Carbon.
               CFS1S2(L) = CFS1S2(L) * REDUCFACTMIN(L)
               CFS1S3(L) = CFS1S3(L) * REDUCFACTMIN(L)
@@ -430,7 +449,9 @@
               Net_immob = IMMS23S1(L,P) - MNRS23S1(L,P)
             ENDIF
           
-            IF (Net_immob > 1.E-6) THEN
+C-GH 03/27/2026
+C           IF (Net_immob > 1.E-6) THEN
+            IF (Net_immob > 0.0) THEN
 !             Carbon.
               CFS2S1(L) = CFS2S1(L) * REDUCFACTMIN(L)
               CFS2S3(L) = CFS2S3(L) * REDUCFACTMIN(L)
@@ -460,7 +481,9 @@
               Net_immob = 0.0
             ENDIF
           
-            IF (Net_immob > 1.E-6) THEN
+C-GH 03/27/2026
+C           IF (Net_immob > 1.E-6) THEN
+            IF (Net_immob > 0.0) THEN
 !             Carbon.
               CFS3S1(L) = CFS3S1(L) * REDUCFACTMIN(L)
               CO2FS3(L) = CO2FS3(L) * REDUCFACTMIN(L)

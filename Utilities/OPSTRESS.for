@@ -60,7 +60,7 @@
       REAL, DIMENSION(0:MaxStag) :: N_growR, P_growR, P_photR
       REAL, DIMENSION(0:MaxStag) :: RAINR, RADR, CO2R
       REAL, DIMENSION(0:MaxStag) :: W_photR, TMAXR, TMINR, W_growR
-      REAL, DIMENSION(0:MaxStag) :: TMEANR, CEOR
+      REAL, DIMENSION(0:MaxStag) :: TMEANR, CEOR, WSGA, NSTA
       INTEGER, DIMENSION(0:MaxStag) :: NNR, Ndays_RAIN
       INTEGER, DIMENSION(0:MaxStag) :: Ndays_LT0, Ndays_LT2, Ndays_GT30
       INTEGER, DIMENSION(0:MaxStag) :: Ndays_GT32, Ndays_GT34
@@ -118,6 +118,7 @@
       RADR  = 0.0
       CO2R  = 0.0
       CETR  = 0.0; CEPR = 0.0; CEOR = 0.0
+      WSGA  = 0.0; NSTA = 0.0
       CEVAPR= 0.0  !; CESR = 0.0
       W_growR = 0.0
       W_photR = 0.0
@@ -302,7 +303,7 @@
           CEOR(I)  = -99.
         ENDIF
 
-        IF (I == 0 .OR. NNR(I) == 0) CYCLE
+        IF (I == 0 .OR. NNR(I) <= 0) CYCLE
 
         IF (IDETO_SAVE .EQ. 'Y' .AND. STTOT > 0 .AND.
      &      CONTROL % ErrCode == 0) THEN
@@ -405,7 +406,7 @@
             ESCP  = CEVAPR(0)
             EPCP  = CEPR(0)
           ENDIF
-          
+
           CALL GET(ISWITCH)
           IF (IDETO_SAVE == 'Y' .AND. ISWITCH % ISWWAT == 'Y') THEN
             WRITE (NOUTDO, 1200) NNR(0), 
@@ -440,7 +441,8 @@
 
 !         Send environmental summary variables to EnvSumDat 
           CALL EnvSumDat(STTOT, NNR, CEOR, CEPR, CETR, CEVAPR, 
-     &      CO2R, DAYLR, RADR, RAINR, STAG, TMAXR, TMEANR, TMINR)
+     &      CO2R, DAYLR, RADR, RAINR, STAG, TMAXR, TMEANR, TMINR,
+     &      W_growR, N_growR)
 
 !         Reset arrays for next run.
           TMAXR = 0.0

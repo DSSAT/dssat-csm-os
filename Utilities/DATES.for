@@ -11,9 +11,10 @@ C  07/01/2000 GH  Added INCDAT
 C  06/09/2002 GH  Modified for Y2K
 C  11/29/2004 CHP Added ETAD_NAILUJ for Ponding routine -- provides 
 C                   integer month given date.
-!  10/11/2005 CHP Fix problem in Y2K_DOYW, sequenced runs spanning Y2K 
-!  11/16/2007 CHP Added leap year function
-!  03/23/2022 GH  Updated crossover year to 2035
+C  10/11/2005 CHP Fix problem in Y2K_DOYW, sequenced runs spanning Y2K 
+C  11/16/2007 CHP Added leap year function
+C  03/23/2022 GH  Updated crossover year to 2035
+C  05/29/2026 GH  Updated crossover year to 2040
 C=======================================================================
 C=======================================================================
 C  DOYC, Integer function, N.B. Pickering, 09/13/91
@@ -79,7 +80,8 @@ C=======================================================================
 !     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
 !     CHP 07/06/2017 - change "cross-over" year from 2020 to 2025
 !     GH  03/23/2022 - change "cross-over" year from 2025 to 2035
-          IF (YR .LE. 35) THEN
+!     GH  05/29/2026 - change "cross-over" year from 2035 to 2040
+          IF (YR .LE. 40) THEN
             YRDOY = (2000 + YR) * 1000 + DOY
           ELSE
             YRDOY = (1900 + YR) * 1000 + DOY
@@ -120,7 +122,9 @@ C=======================================================================
 !    Convert input date (YRDOY) to 7-digit
 !-----------------------------------------------------------------------  
       IF (FirstWeatherDate .GT. 0 .AND. 
-     &    YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
+C-GH 05/29/26 Correct for leap years
+C-GH &    YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
+     &    YRDOY .GT. 0 .AND. YRDOY .LE. 99366) THEN
         
         !Convert dates
         NEWYRDOY = INT(FirstWeatherDate/100000) * 100000 + YRDOY
