@@ -1419,8 +1419,9 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    cHWAHF1 = NINT(HWAHF)
    cFBWAH1 = NINT(FBWAH)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
-           
-   Write(tmp,'(1500(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
+
+   !TF Editted to avoid having an extra comma at the end of the line
+   Write(tmp,'(98(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, &
    EXNAME, TITLET1, FLDNAM, WSTAT, WYEAR, SLNO, LATI, LONG, ELEV, &
    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, HYEAR, DWAP, &
    !CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &
@@ -1470,7 +1471,7 @@ Subroutine CsvOutEnvSum(                                        &
    Character(Len=1300) :: tmp      
 !  End of vars
   
-   Write(tmp,'(1500(g0,","),g0)')                           &
+   Write(tmp,'(92(g0,","),g0)')                           &
    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP, MODEL, EXNAME, YRDOY,  &
    N2OEM, CO2EM, CH4EM, TCEQM,                              &   
    NDCH(0), DAYLA(0), CO2A(0), TMINA(0), TAVGA(0), TMAXA(0), SRADA(0), PRCP(0), PETP(0), ETCP(0), ESCP(0), EPCP(0),  &
