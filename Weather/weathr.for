@@ -145,6 +145,10 @@ C=======================================================================
 !     Seasonal initialization - run once per season
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
+
+        ! Initialize variables
+        WEATHER % CPRED = 0.0
+!-----------------------------------------------------------------------        
         YYDDD = YRSIM
         CALL YR_DOY(YYDDD, WYEAR, DOY)
         FYRDOY = 0
