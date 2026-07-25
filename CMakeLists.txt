@@ -375,7 +375,7 @@ set(
         "Plant/CROPSIM/CRP_Output.for"
         "Plant/CROPSIM/CRP_RunInit.for"
         "Plant/CROPSIM/CRP_SeasInit.for"
-        "Plant/CROPSIM/CRP_SeasInit_VarInit.for"
+        "Plant/CROPSIM/CRP_VarInit.for"
         "Plant/CSYCA-Cassava/CSYCA.f90"
         "Plant/CSYCA-Cassava/CSYCA_Interface.for"
         "Plant/CSYCA-Cassava/YCA_Albedo_Check_m.f90"

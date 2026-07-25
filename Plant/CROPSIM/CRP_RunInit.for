@@ -17,11 +17,27 @@
       INTEGER YEAR
       !INTEGER VERSIONCSCRP
       INTEGER TVILENT          ! Integer function call
+      INTEGER STGYEARDOY(20)
+
+      REAL GSTAGE, LAI, CANHT, DEWDUR, NFP, PARIP, PARIPA, TRWUP
+      REAL LAIL(30), LAILA(30)
+      REAL RESCALG(0:NL), RESLGALG(0:NL), RESNALG(0:NL)
+      REAL SENCALG(0:NL), SENLALG(0:NL), SENNALG(0:NL)
+      REAL RLV(NL), UH2O(NL), UNH4(NL), UNO3(NL)
 
       CHARACTER(LEN=1)   IDETL, ISWNIT, RNMODE !, ISWWAT     
       CHARACTER (LEN=250) FILEIOIN  
       CHARACTER(LEN=10)  TL10FROMI      
-        
+
+!-----------------------------------------------------------------------
+!       Initialize both state and rate variables                       
+!-----------------------------------------------------------------------
+      CALL CRP_VarInit (GSTAGE, LAI, CANHT, DEWDUR, LAIL,
+     &   LAILA, NFP, PARIP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,
+     &   SENCALG, SENLALG, SENNALG, STGYEARDOY, TRWUP, UH2O,
+     &   UNH4, UNO3)
+!-----------------------------------------------------------------------
+
        IF (RUNCRP.LE.0) THEN          ! First time through
 
           MODNAME(1:8) = 'CSCRP048'

@@ -21,7 +21,7 @@
         EXTERNAL YR_DOY, GETLUN, Y4K_DOY, TVILENT, LTRIM, XREADC, 
      &    XREADT, SPREADRA, XREADI, XREADR, UCASE, XREADIA, XREADRA, 
      &    FVCHECK, FINDDIR, CUREADC, CUREADR, ECREADR, SPREADR, 
-     &    CRP_SeasInit_VarInit, XREADCA, LTRIM2, CSUCASE, SPREADC,
+     &    CRP_VarInit, XREADCA, LTRIM2, CSUCASE, SPREADC,
      &    SPREADCA, WARNING, CSENDYR
       
       INTEGER TVILENT, CSENDYR
@@ -40,7 +40,7 @@
 !       Initialize both state and rate variables                       
 !-----------------------------------------------------------------------
         
-      CALL CRP_SeasInit_VarInit (GSTAGE, LAI, CANHT, DEWDUR, LAIL,
+      CALL CRP_VarInit (GSTAGE, LAI, CANHT, DEWDUR, LAIL,
      &   LAILA, NFP, PARIP, PARIPA, RESCALG, RESLGALG, RESNALG, RLV,
      &   SENCALG, SENLALG, SENNALG, STGYEARDOY, TRWUP, UH2O,
      &   UNH4, UNO3)
