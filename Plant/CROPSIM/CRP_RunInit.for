@@ -4,7 +4,10 @@
 !***********************************************************************
 
       SUBROUTINE CRP_RunInit (CN, DOY, FILEIOIN, FROP, IDETL, ISWNIT,
-     &     ON, RN, RNMODE, RUN, SN, TN, YEAR)
+     &     ON, RN, RNMODE, RUN, SN, TN, YEAR, GSTAGE, LAI, CANHT, 
+     &     DEWDUR, LAIL, LAILA, NFP, PARIP, PARIPA, RESCALG, RESLGALG,
+     &     RESNALG, RLV, SENCALG, SENLALG, SENNALG, STGYEARDOY, TRWUP, 
+     &     UH2O, UNH4, UNO3)
       
       USE ModuleDefs
       USE CRP_First_Trans_m 
