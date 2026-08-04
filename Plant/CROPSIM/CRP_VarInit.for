@@ -1,10 +1,10 @@
 !**********************************************************************************************************************
 ! This is the code from the section (DYNAMIC == RUNINIT) ! Initialization, lines 1827 - 2336 of the original CRCRP code.
 !
-! Subroutine CRP_SeasInit_VarInit initializes state and rate variables.
+! Subroutine CRP_VarInit initializes state and rate variables.
 !**********************************************************************************************************************
     
-      SUBROUTINE CRP_SeasInit_VarInit (GSTAGE, LAI, CANHT, DEWDUR,
+      SUBROUTINE CRP_VarInit (GSTAGE, LAI, CANHT, DEWDUR,
      &   LAIL, LAILA, NFP, PARIP, PARIPA, RESCALG, RESLGALG, RESNALG,
      &   RLV, SENCALG, SENLALG, SENNALG, STGYEARDOY, TRWUP, UH2O,
      &   UNH4, UNO3)
@@ -644,4 +644,4 @@
         nh4mn = -99.0
      
 
-      END SUBROUTINE CRP_SeasInit_VarInit
+      END SUBROUTINE CRP_VarInit

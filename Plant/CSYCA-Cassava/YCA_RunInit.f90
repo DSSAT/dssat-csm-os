@@ -10,24 +10,44 @@
       
     SUBROUTINE YCA_RunInit (&
         CN          , DOY         , FILEIOIN    , FROP        , IDETL       , ISWNIT      , ON          , RN          , &
-        RNMODE      , RUN         , SN          , TN          , YEAR        & 
+        RNMODE      , RUN         , SN          , TN          , YEAR        , BRSTAGE     , LAI         , CANHT       , &
+        DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , PARIPA      , RESCALG     , RESLGALG    , &
+        RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
+        STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3          &  
         )
       
         USE ModuleDefs
         USE YCA_First_Trans_m
       
         IMPLICIT NONE
-        EXTERNAL GETLUN, TVILENT, TL10FROMI, XREADC, XREADT, UCASE
+        EXTERNAL GETLUN, TVILENT, TL10FROMI, XREADC, XREADT, UCASE, YCA_VarInit
 
         INTEGER CN          , DOY         , FROP        , ON          , RN          , RUN         , SN          , TN          
         INTEGER YEAR
         !INTEGER VERSIONCSCAS
-        INTEGER TVILENT                                                                       ! Integer function call
+        INTEGER TVILENT
+        INTEGER STGYEARDOY(0:19)                                                                       ! Integer function call
 
         CHARACTER(LEN=1)   IDETL       , ISWNIT      , RNMODE      ! ISWWAT      
         CHARACTER(LEN=120) FILEIOIN    
-        CHARACTER(LEN=10)  TL10FROMI                                                          ! Character function call
+        CHARACTER(LEN=10)  TL10FROMI
         
+        REAL    BRSTAGE     , LAI         , CANHT       , DEWDUR
+        REAL    LAIL(30)    , LAILA(30)   , NFP         , PARIP       , PARIPA      , RESCALG(0:NL)             
+        REAL    RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)        
+        REAL    SENCALG(0:NL)             , SENLALG(0:NL)             , SENNALG(0:NL)  
+        REAL    TRWUP       , UH2O(NL)    , UNH4(NL)    , UNO3(NL)
+
+        !-----------------------------------------------------------------------
+        !       Initialize both state and rate variables                       
+        !-----------------------------------------------------------------------
+        
+        CALL YCA_VarInit ( &
+            BRSTAGE     , LAI         , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
+            PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
+            STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3         &
+            ) 
+
         !-----------------------------------------------------------------------
         !         The body of YCA_RunInit
         !-----------------------------------------------------------------------
