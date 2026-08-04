@@ -25,7 +25,7 @@
         USE YCA_First_Trans_m
 
         IMPLICIT     NONE
-        EXTERNAL YCA_SeasInit_VarInit, YCA_SeasInit_ReadXfile, YCA_SeasInit_PlHarvDat, YCA_SeasInit_ReadGeno, &
+        EXTERNAL YCA_VarInit, YCA_SeasInit_ReadXfile, YCA_SeasInit_PlHarvDat, YCA_SeasInit_ReadGeno, &
           YCA_SeasInit_SetStage, YCA_SeasInit_Final
         
         INTEGER STGYEARDOY(0:19)            , CN          , DOY         , ON          , RN          , RUN         , RUNI        
@@ -43,7 +43,7 @@
         !       Initialize both state and rate variables                       ! MF Equivalent to line 1828 in CSCAS.FOR
         !-----------------------------------------------------------------------------------------------------------------------
         
-        CALL YCA_SeasInit_VarInit ( &
+        CALL YCA_VarInit ( &
             BRSTAGE     , LAI         , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
             PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
             STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3         &

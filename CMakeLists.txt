@@ -428,7 +428,7 @@ set(
         "Plant/CSYCA-Cassava/YCA_SeasInit_ReadGeno.f90"
         "Plant/CSYCA-Cassava/YCA_SeasInit_ReadXfile.f90"
         "Plant/CSYCA-Cassava/YCA_SeasInit_SetStage.f90"
-        "Plant/CSYCA-Cassava/YCA_SeasInit_VarInit.f90"
+        "Plant/CSYCA-Cassava/YCA_VarInit.f90"
         "Plant/FORAGE/forage.for"
         "Plant/FORAGE/for_asmdm.for"
         "Plant/FORAGE/for_canopy.for"

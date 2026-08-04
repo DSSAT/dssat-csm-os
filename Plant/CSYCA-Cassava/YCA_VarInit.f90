@@ -4,10 +4,10 @@
 ! here. The variables that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all 
 ! comments are those of the original CSCAS.FOR code.
 !
-! Subroutine YCA_SeasInit_VarInit initializes state and rate variables.
+! Subroutine YCA_VarInit initializes state and rate variables.
 !**********************************************************************************************************************
     
-    SUBROUTINE YCA_SeasInit_VarInit( &
+    SUBROUTINE YCA_VarInit( &
         BRSTAGE     , LAI         , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
         PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
         STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3         &
@@ -539,4 +539,4 @@
         no3mn = -99.0
         nh4mn = -99.0
 
-       END SUBROUTINE YCA_SeasInit_VarInit
+       END SUBROUTINE YCA_VarInit
