@@ -28,7 +28,8 @@ C========================================================================
 
       SUBROUTINE VEGGR (DYNAMIC, 
      &    AGRLF, AGRRT, AGRSTM, CMINEP, CSAVEV, DTX,      !Input
-     &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+!    &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+     &    DXR57, FILECC, FNINL, FNINR,     !Input
      &    FNINS, KCAN, NAVL, NDMNEW, NDMOLD,              !Input
      &    NFIXN, NMINEA, NR1, PAR, PCH2O, PG, PGAVL,      !Input
      &    PStres2, ROWSPC, RVSTGE, STMWT, TGRO,           !Input
@@ -50,9 +51,9 @@ C========================================================================
       CHARACTER*6  ERRKEY
       PARAMETER   (ERRKEY = 'VEGGR')
 
-      CHARACTER*6  ECONO, SECTION
+      CHARACTER*6  SECTION !ECONO, 
       CHARACTER*80 C80
-      CHARACTER*92 FILECC, FILEGC
+      CHARACTER*92 FILECC !, FILEGC
 
       INTEGER DYNAMIC
       INTEGER YRDOY, YREMRG, NR1, DAS
@@ -165,7 +166,7 @@ C========================================================================
 !    Call CANOPY for input
 !-----------------------------------------------------------------------
       CALL CANOPY(RUNINIT,
-     &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
+     &    FILECC, KCAN, PAR, ROWSPC,                      !Input
      &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
@@ -205,7 +206,7 @@ C========================================================================
       XNSTRES= 1.0
       
       CALL CANOPY(SEASINIT,
-     &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
+     &    FILECC, KCAN, PAR, ROWSPC,                      !Input
      &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
@@ -222,7 +223,7 @@ C========================================================================
       CUMTUR = 1.0             
 
       CALL CANOPY(EMERG,
-     &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
+     &    FILECC, KCAN, PAR, ROWSPC,                      !Input
      &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
@@ -464,7 +465,7 @@ C     function of VSTAGE, air temperature, drought stress (TURFAC),
 C     daylenght and radiation (PAR).
 C-----------------------------------------------------------------------
       CALL CANOPY(INTEGR,
-     &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
+     &    FILECC, KCAN, PAR, ROWSPC,                      !Input
      &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 

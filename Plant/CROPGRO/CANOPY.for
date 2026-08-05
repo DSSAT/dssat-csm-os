@@ -19,25 +19,26 @@ C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
 
       SUBROUTINE CANOPY(DYNAMIC, 
-     &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
+!     &    ECONO, FILECC, FILEGC, KCAN, PAR, ROWSPC,       !Input
+     &    FILECC, KCAN, PAR, ROWSPC,                      !Input
      &    RVSTGE, TGRO, TURFAC, VSTAGE, XLAI, NSTRES,     !Input
      &    CANHT, CANWH)                                   !Output
 
 C-----------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
-      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TABEX
+      EXTERNAL GETLUN, FIND, ERROR, IGNORE, TABEX, ECO_read
       SAVE
 
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'CANOPY')
 
       CHARACTER*6   SECTION
-      CHARACTER*6   ECOTYP, ECONO
-      CHARACTER*92  FILECC, FILEGC
+!     CHARACTER*6   ECOTYP, ECONO
+      CHARACTER*92  FILECC !, FILEGC
       CHARACTER*255 C255
 
-      INTEGER I, II, LUNCRP, LUNECO, ERR, LINC, LNUM, ISECT
+      INTEGER I, II, LUNCRP, ERR, LINC, LNUM, ISECT !, LUNECO
       INTEGER DYNAMIC
       INTEGER FOUND
 
@@ -134,31 +135,34 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C    Read Ecotype Parameter File
 C-----------------------------------------------------------------------
-      CALL GETLUN('FILEE', LUNECO)
-      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
-      ECOTYP = '      '
-      LNUM = 0
-      DO WHILE (ECOTYP .NE. ECONO)
-        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
-          IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
-     &        (C255(1:1) .NE. '*')) THEN
-          READ (C255,'(A6,90X,2(1X,F5.0))',IOSTAT=ERR)
-     &        ECOTYP, RWIDTH, RHGHT
-          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
-          IF (ECOTYP .EQ. ECONO) THEN
-              EXIT
-          ENDIF
+!      CALL GETLUN('FILEE', LUNECO)
+!      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
+!      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+!      ECOTYP = '      '
+!      LNUM = 0
+!      DO WHILE (ECOTYP .NE. ECONO)
+!        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+!          IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
+!     &        (C255(1:1) .NE. '*')) THEN
+!          READ (C255,'(A6,90X,2(1X,F5.0))',IOSTAT=ERR)
+!     &        ECOTYP, RWIDTH, RHGHT
+!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
+!          IF (ECOTYP .EQ. ECONO) THEN
+!              EXIT
+!          ENDIF
+!
+!        ELSE IF (ISECT .EQ. 0) THEN
+!          IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+!          ECONO = 'DFAULT'
+!          REWIND(LUNECO)
+!          LNUM = 0
+!        ENDIF
+!      ENDDO
+!
+!      CLOSE (LUNECO)
 
-        ELSE IF (ISECT .EQ. 0) THEN
-          IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
-          ECONO = 'DFAULT'
-          REWIND(LUNECO)
-          LNUM = 0
-        ENDIF
-      ENDDO
-
-      CLOSE (LUNECO)
+      CALL ECO_read('RWDTH', RWIDTH)
+      CALL ECO_read('RHGHT', RHGHT)
 
       CANHT = 0.0
       CANWH = 0.0
