@@ -161,6 +161,11 @@ C=======================================================================
       REAL TOSHMINE, TOCHMINE
       REAL HPODWT,HSDWT,HSHELWT
       REAL NHSHWT, NHSDWT
+
+!WDB 8/14/2023
+!RSWLIDOT - New leaf weight to add if Remote sensing increases leaf area
+!Used to get around adding leaf N when adding leaf weight and LAI
+      REAL RSWLIDOT
 !-----------------------------------------------------------------------
 !     Constructed variable types defined in ModuleDefs.for.
       TYPE (ControlType) CONTROL
@@ -496,8 +501,25 @@ C     to account for mass, N and C lost this way in sections below
 C-----------------------------------------------------------------------
 C       WLDOT = Net leaf growth rate
 C-----------------------------------------------------------------------
+
+!WDB 8/14/2023 To add LAI for remote sensing, WLIDOT is negative
+!If RS reduces LAI, run the damage through WLIDOT
+!If RS increases LAI, set WLIDOT to 0 and run damage through RSWLIDOT
+!Add positive leaf weight adjustment directly to WLDOTN
+
+      RSWLIDOT = 0.0                !Remote sensed increased in leaf weight today
+      IF(WLIDOT.LT.0) THEN 
+          RSWLIDOT = -WLIDOT
+          WLIDOT = 0.0
+          WLDOTN = WLDOTN + RSWLIDOT
+      ENDIF
+!End Change
+       
+      
       WLDOT = WLDOTN - SLDOT - WLIDOT - WLFDOT - NRUSLF/0.16 - CRUSLF
 
+        
+      
 !     ShutMob is amount of leaf mass lost due to N and C mobilization
 !     A positive value represents leaf mass lost. (kg/ha)
       ShutMob = (NRUSLF/0.16 + CRUSLF) * 10.      !kg/ha
@@ -732,10 +754,11 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Leaf nitrogen senescence and pest damage loss
 C-----------------------------------------------------------------------
-!              senesc. + pest   + freeze  
+!              senesc. + pest   + freeze       
       NLOFF  = (SLNDOT + WLIDOT + WLFDOT) * (PCNL/100.) +
      &         (SLDOT-SLNDOT) * PROLFF * 0.16
       NLPEST = NLPEST + WLIDOT * PCNL/100.
+      
       IF (NLOFF. LT. 0.0) THEN
         NLOFF = 0.0
       ENDIF
@@ -743,11 +766,20 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Net growth rate of nitrogen in the leaves
 C-----------------------------------------------------------------------
+
       NLDOT = NGRLF - NLOFF - NRUSLF
       IF (WTLF > 1.E-4) THEN
          NLDOT = NLDOT + NADLF *
      &                  (1. - MIN(1.0,(SLDOT + WLIDOT + WLFDOT) / WTLF))
       ENDIF
+
+C** WDB 8/14/23 
+C Add leaf N if remote sensing adjusts LAI up
+      IF(RSWLIDOT.GT.0) THEN
+       NLDOT = NLDOT + RSWLIDOT * PCNL/100   
+      ENDIF      
+c** end changes      
+      
 
 C-----------------------------------------------------------------------
 C     Stem nitrogen senescence and pest damage loss
@@ -769,6 +801,7 @@ C-----------------------------------------------------------------------
      &                  (1. - MIN(1.0,(SSDOT + WSIDOT) / STMWT))
       ENDIF
 
+     
 C-----------------------------------------------------------------------
 C     Root nitrogen senescence and pest damage loss
 C-----------------------------------------------------------------------
@@ -825,8 +858,8 @@ C-----------------------------------------------------------------------
       IF ((NLDOT < 0.0) .AND. (ABS(NLDOT) > WTNLF)) THEN
          NLDOT = - WTNLF
       ENDIF
-      WTNLF = WTNLF + NLDOT
-
+      
+       WTNLF = WTNLF + NLDOT
 C-----------------------------------------------------------------------
 C     Total nitrogen in the stems
 C-----------------------------------------------------------------------     

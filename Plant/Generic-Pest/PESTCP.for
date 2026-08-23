@@ -21,7 +21,7 @@ C=======================================================================
      &    PL, PLTPOP, PNO, RTWT, SLA, STMWT, TOPWT,       !Input
      &    TSDNOL, TSDNOM, TSDNOS, TSDWTL, TSDWTM, TSDWTS, !Input
      &    TSHNOL, TSHNOM, TSHNOS, TSHWTL, TSHWTM, TSHWTS, !Input
-     &    VSTAGE, WTLF,                                   !Input
+     &    TLAI, VSTAGE, WTLF,                             !Input
 
      &    NSDDL, NSDDM, NSDDS, NSHDL, NSHDM, NSHDS,       !Input/Output
      &    PPLTD, TLFAD, TLFMD, TRTLV,                     !Input/Output
@@ -80,6 +80,9 @@ C     Photosynthesis Variables
 C     Weed Leaf Area Variables (Light Competition)
       REAL LAIW,PLAIW
 	REAL BETALS,PNPDLA
+c**WDB 1/29/2020 Added Target LAI from Remote Sensing Data coupling point
+      REAL TLAI
+C**WDB End change      
 
 !***********************************************************************
 !***********************************************************************
@@ -91,6 +94,7 @@ C     Weed Leaf Area Variables (Light Competition)
       PL     = 0.0
 
 C -- Leaf Variables --
+      TLAI   = 0.0
       TLFAD  = 0.0
       TLFMD  = 0.0
       PLFAD  = 0.0
@@ -158,6 +162,7 @@ C-----------------------------------------------------------------------
 C     Initialize coupling point damage variables each day of simulation
 C-----------------------------------------------------------------------
 C -- Leaf Variables --
+      TLAI   = 0.0
       TLFAD  = 0.0        
       TLFMD  = 0.0    
       PLFAD  = 0.0   
@@ -228,7 +233,9 @@ C--------------------------------------------------------------------
 !     Bypass pest coupling point loop if pest damage characterization
 !         method is invalid (PCTID>4 or PCTID<1).
 !-----------------------------------------------------------------------
-        IF (PCTID(I) .GT. 0 .AND. PCTID(I) .LE. 4) THEN
+C**WDB 1/2022 Added pest coupling point type 5 for target LAI
+c        IF (PCTID(I) .GT. 0 .AND. PCTID(I) .LE. 4) THEN
+         IF (PCTID(I) .GT. 0 .AND. PCTID(I) .LE. 5) THEN
           REMDAM = 0.0
 !***********************************************************************
 !     COUPLING POINT LOOP
@@ -243,6 +250,7 @@ C   1 = Absolute daily damage rate
 C   2 = Percent Apparent observed damage
 C   3 = daily percent damage rate
 C   4 = absolute damage rate with pref and competition
+C   5 = target value for state variables from remote sensing            
 !***********************************************************************
             IF (PCTID(I) .EQ. 1) THEN
 C-----------------------------------------------------------------------
@@ -464,6 +472,14 @@ C-----------------------------------------------------------------------
               ELSE
                 REMDAM = 0
               ENDIF
+
+C**WDB 1/2022 Added pest type 5 - target state variable level read in from remote sensing              
+          ELSEIF (PCTID(I) .EQ. 5) THEN  
+             DAM = PL(K) * PDCF1(I,J)
+             IF (INDEX (PCPID(I,J),'TLAI') .GT. 0) TLAI = TLAI + DAM
+C** WDB end changes             
+
+              
 !***********************************************************************
             ENDIF     !End of PCTID "IF" construct
 !***********************************************************************
@@ -550,7 +566,7 @@ C                PSDD = PSDD + PPLTD
 
 !***********************************************************************
       RETURN
-      END   ! SUBROUTINE PESTCP
+         END   ! SUBROUTINE PESTCP
 
 !-----------------------------------------------------------------------
 !     Variable Definitions
@@ -611,6 +627,7 @@ C                PSDD = PSDD + PPLTD
 ! STMWT      Dry mass of stem tissue, including C and N
 !              (g[stem] / m2[ground)
 ! TDLA       Total diseased leaf area (cm2/m2)
+! TLAI       Target LAI from remote sensing observations (m2/m2)
 ! TLFAD      Total leaf area damage (cm2/cm2/d)
 ! TLFMD      Total leaf mass damage (g/m2/day)
 ! TOPWT      Total above ground biomass (g/m2)
