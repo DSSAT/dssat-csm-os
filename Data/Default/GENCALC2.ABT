@@ -1,0 +1,720 @@
+ABOUT GENCALC2
+
+GenCalc is a very powerful tool for the determination of the cultivar 
+coefficients. You can change and update the rules file for the crop you are
+interested in following the strategy of calibrating "first things first",
+starting with phenology, then growth, then biomass, and finally yield
+and yield components. Carefully read this file before you start and
+make sure to make a backup of the GENCALC2.RUL (Rules) file. Note that for
+some crops the rules are incomplete and require updating due to the lack
+of experimental data for a thorough calibration with GenCalc.
+
+!  Last edit 11/16/2024 GH-Update to DSSAT Version 4.8.5
+
+  CONTENTS
+
+    GENERAL
+    SETUP
+    MODE OF OPERATION 
+    RULES FILE
+     CROP MODULE SECTION
+     CONTROL SECTION
+    MISSING INITIAL VALUES
+    CONFLICTING NAMES
+    ECOTYPE COEFFICIENTS
+    WORK AND BACKUP COEFFICIENT FILES
+    EXPERIMENT/TREATMENT (BATCH) FILES
+    CONFIGURATION FILE
+    CHECKING DATASETS 
+    MESSAGE BOXES AND 'BEEPS'
+    RUNNING
+    EXAMINING RESULTS
+    UPGRADING COEFFICIENTS USING CALIBRATION RESULTS
+    REVIEWING AND USING RESULTS FROM A PREVIOUS SESSION
+    PROBLEMS
+    LIMITS
+    POWER OR COMPUTER FAILURES
+
+
+  GENERAL
+
+    GENCALC2 is software that makes use of crop models to 
+  determine cultivar trait coefficients from data reported 
+  for an array of experiments. The name GENCALC stands for 
+  Genotype Coefficient Calculator, and the digit '2' indicates 
+  that the program is an update of the original calculator 
+  included in the DSSAT 3.5 package, and described in:
+
+    Hunt,L.A.,S.Pararajaysingham,J.W.Jones,G.Hoogenboom,
+    D.T.Imamura,and R.M.Ogoshi. 1993 GENCALC:Software to 
+    facilitate the use of crop models for analyzing field 
+    experiments.  Agronomy J. 85(5):1090-1094
+  
+    For use with Gencalc2, the crop models and, if more than 
+  one crop module is included, the individual crop modules, 
+  must have eight character names, and must use CULTIVAR and 
+  ECOTYPE files which have the same structure as the files 
+  used by the DSSAT models and names matching the model or 
+  module name. For example, if the model executable was 
+  DSCSM048.EXE, then the cultivar file must be SBGRO048.CUL
+  
+    Additionally, the models must generate an EVALUATE.OUT 
+  file which conforms to the standards set up for DSSAT, 
+  and make use of a configuration file similar to the 
+  DSSATPRO file of DSSAT. They also should be launchable 
+  with a command line argument which contains the name of a 
+  file containing information on the experiment/treatment 
+  combinations to be used. For the DSSAT CSM model, the 
+  command line could have (depending on general 
+  configuration) the following form:
+  
+  C:\DSSAT48\TOOLS\GENCALC2 BRAGG.SBC DSSATPRO.V48 DSCSM048_GC2.CTR
+  
+  In which the BRAGG.SBC is the name of a file containing a list 
+  of experiment/treatment combinations to be used, the 
+  DSSATPRO.V48 indicates that the program is to run using the 
+  Dssat V48 configuration file, and the DSCSM048_GC2.CTR indicates
+  that the Gencalc simulation control file is to be used for 
+  all experiments. The names of all of these files can be 
+  changed, and the control file name can be omitted. If a 
+  control file is indicated, however, this file will be used 
+  for all experiments and, depending on its contents, all 
+  controls at the bottom of X-files could be ignored.
+  
+
+  SETUP  
+
+    The Gencalc2 executable file must be reside in a
+  directory in which the auxilliary files (Gencalc2.Rul
+  and Gencalc2.Abt) are located. A configuration file
+  conforming in structure to the files used in Dssat 
+  (e.g.Dssatpro.v48) must be present along with a Dssat 
+  codes file (Data.cde) in the root directory of the 
+  tree containing the Gencalc2 executable. And the 
+  program must be run from the directory containing 
+  the file listing the experiment/treatment combinations 
+  to be used. An example of an appropriate setup, as 
+  needed for running under Dssat, is:
+  
+           Directory                 Files
+           
+           C:\Dssat48\Tools\Gencalc  Gencalc2.Exe 
+                                     Gencalc2.Rul
+                                     Gencalc2.Abt    
+                                    
+           C:\Dssat48                Dssatpro.V48
+                                     Data.Cde
+                                    
+           C:\Dssat48\GCWork         Newton.Whc                                   
+           
+  The program will need access to a text editor and a graphing
+  program, and these must be defined in the appropriate spot in
+  the configuration file. And if running under DSSAT Gencalc2 
+  needs to be accompanied by a selector program (currently 
+  named Gencalc.exe) and its associated help file, Gencalc.chm.      
+  
+  
+  MODE OF OPERATION 
+
+    The program works by running the model with a number 
+  of different sets of cultivar coefficients. The outputs
+  from the model runs are examined, and the coefficient set
+  that results in the least difference (evaluated using 
+  the Root Mean Square Error) between simulated and measured 
+  values over all runs is selected. 
+  
+    An initial set of cultivar coefficients is obtained from 
+  the cultivar file each time that the RUN option is activated.
+  Changes made to this file after a set of runs has been 
+  completed will thus be reflected in the initial coefficients 
+  used for a new set of runs. 
+  
+  RULES FILE
+
+    Overall control of the program resides in a so-called RULES 
+  file. This file is structured in conformity with the ICASA file 
+  standards, and has one overall CONTROL section and individual 
+  CROP MODULE section for each of the crop models or modules 
+  that may be used with the program. 
+  
+  RULES FILE - CROP MODULE SECTION
+  
+    The CROP MODULE sections contain information on the number 
+  of simulations to be conducted, on the changes to be made to 
+  the cultivar coefficients, and on the aspects that are to be
+  used to determine error (the 'Target' trait) during one 'pass' 
+  of calibration runs. The sections have a header line and 
+  individual 'rules' lines as indicated below:
+    
+  @TARGET............ (ExCOEFF),STEP,COEFF,LOOPS
+   ADAP  FLOWERING    'E',10.0,CSDL,3 10.0,EM-FL,3  
+  
+  in which the standard abbreviation for the target aspect 
+  is given along with a brief description, followed by 
+  information on the coefficient(s) to be changed. The 
+  standard abbreviations are those present in the model
+  output file 'Evaluate.out'. The abbreviations used in
+  the rules file should thus be compared to those in 
+  Evaluate.out, and if necessary changed to the 
+  Evaluate.out standard,when Gencalc fails to find 
+  a match match for the desired target trait. 
+  
+    The coefficients are defined using the abbreviations 
+  from the cultivar coefficient file. Each abbreviation 
+  is preceded by a 'step' value, and followed by a 'loop'
+  number. The step value defines the amount that the 
+  coefficient will be changed, given as a percentage of
+  the value in the coefficients file; and the loop value
+  defines the number of simulations that will be performed 
+  for the coefficient during one calculation 'pass' for
+  the rule in question. The 'step' value may be preceded 
+  by a flag ('E') indicating that the coefficient is to
+  be excluded from any optimization calculations called 
+  for in the overall control section. Only one such
+  'explore' coefficient is allowed for each line of rules.
+  
+    The starting coeficient value is calculated as:
+  
+    INITIAL value * (1.0 - (Step/100)*((Loops-1)/2)) 
+  
+  Thus, if the step is entered as 10.0 and the loop number
+  as 3, the first simulation would be run with a coefficient 
+  10% less than the initial value, the last run with a value 
+  10% greater. And if the loop number was entered as 5, the 
+  first coefficient value would be 20% less than the initial
+  value. The INITIAL value is generally the value in the
+  cultivar (CUL) file, but when this is small and the
+  settings in the CONTROL section of the rules are appropriate
+  (see below), it is the difference between the maximum and 
+  minimum values for the coefficient in question.
+  
+    Depending on the entries in the rules file, the model 
+  will run for one 'target' trait, then for a second, and
+  so on until the coefficient changes for the final trait
+  have been run. The coefficients which produce the least 
+  error for the first target are used during runs with the 
+  second target, and so on throughout the rules package. 
+  
+  RULES FILE - CONTROL SECTION
+  
+    The CONTROL section contains:
+       1. 'Flags' that determine whether message boxes will 
+  be displayed (and thir associated 'beeps' sounded),  
+  whether information on the maximum and minimum coefficient
+  values will be used when changing coefficient values during
+  calibration,and whether a large number of messages will be
+  written to the LOG file during a Gencalc run.
+       2. Two control numbers that determine the maximum number 
+  of repeat calibration 'passes' that will be made. These repeats
+  are not made for coefficients flagged with an 'E' as 'Explore' 
+  coefficients.
+       3. A value that determines the minimum size of the change 
+  in coeffcient value. This minimum change size is inputed as a 
+  percentage value, and this value is multiplied by the difference 
+  between the minimum and maximum coefficient values as documented 
+  in the cultivar (CUL) file,to determine the minimum value used
+  within the program for each coefficient.       
+
+  The #2 aspect listed above is necessary firstly because one 
+  or more of the best set of coefficients determined at the end 
+  of a calculations 'pass' for a specific rule may lie at the 
+  extremes of the allowed span of values. In such a case, to 
+  determine whether further changes beyond the extremes would 
+  result in a better 'fit', a new 'pass' of calibration 
+  simulations is made. How many of such new 'passes' are 
+  permitted is determined by the control variable, RULER. 
+
+  And the #2 aspect above is necessary secondly because once 
+  it is established that the best coefficients do not lie at 
+  the extremes of the allowed range, calculations to determine 
+  if the optimum coefficient lies at some intermediate value 
+  within the range of tried coefficients need to be made. To 
+  do this, a series of reductions in step size, followed by 
+  re-running for the particular rule until no change in 'fit' 
+  is noted, are made. Such changes in step size (a halving the 
+  initial step size) are under the control the control variable, 
+  RULEC. This variable sets the maximum number of changes in step 
+  size for each rule. 
+
+
+  MISSING INITIAL VALUES
+
+    The initial set of cultivar coefficients is obtained from 
+  the cultivar file using the cultivar identifier. If no entry
+  with the identifier is present in the file, a set of values
+  is entered for the missing cultivar using one of the defaults 
+  (i.e. those with an identifier beginning with '99') or one of
+  the named cultivars at the top of the file. The default to be 
+  used must be chosen using a selector box that appears on the 
+  screen, and then adding the cultivar to the CUL file by 
+  activating the 'Add' item in the 'Action' menu.(The selector
+  box and the 'Add' menu option only appears when the cultivar 
+  listed in the experiment details file is missing from the CUL 
+  file).
+
+
+  CONFLICTING NAMES
+
+    If the name in the cultivar list file, which is obtained 
+  from the first experiment details file used, does not match 
+  with the name in the cultivar file, a warning message may be
+  (depending on the control settings) be presented on the screen, 
+  and the user may be asked to choose whether to proceed or to 
+  abort a run. Such a conflict may merely stem from a typing error, 
+  or the addition of some information on the type or class of 
+  cultivar (e.g. HRS for hard red spring wheat) in the cultivar 
+  file. Alternatively, it may result because the number used in 
+  the experiment file had already been assigned to another 
+  cultivar. In this latter case, the run should be aborted and 
+  the experiment files edited to change the number assigned to 
+  the cultivar in those files. If the message boxes are turned 
+  off, however, no such message is available and a user should 
+  review the LOG file after a calibration session to determine 
+  if there was a problem with the cultivar numbers before 
+  upgrading the coefficient file.
+
+     
+  ECOTYPE COEFFICIENTS
+
+    The cultivar optimization can be conducted with a number 
+  of different sets of ecotype coefficients, so permitting an
+  optimization for one or more of the ecotype coefficient sets.
+  To do this, additional sets of ecotype coefficients should be 
+  added to an 'Options' ecotype file before starting a 
+  calibration run.
+  
+    To edit the Options ecotype file, activate the 'Files',
+  'Coefficients','Options Eco File' menu, duplicate (as
+  many times as desired) the single line of coefficients that
+  will be present in the file, change the values of the
+  coefficients that are to be explored, and save the file.    
+
+
+  WORKING AND BACKUP COEFFICIENT FILES
+  
+    To avoid having to make changes to the main cultivar and
+  ecotype files, Gencalc2 creates 'working' cultivar and ecotype
+  files that are used by the crop simulation model when running in
+  calibration mode. These files reside in the directory from which 
+  Gencalc2 is running; and they are named 'GENCALC2.CUL' and 
+  'GENCALC2.ECO'. 
+
+    And to avoid the possibility of potentially losing the main 
+  cultivar and ecotype files, Gencalc2 also creates 'backup' files 
+  that can be used to replace lost or corrupted files following
+  power or computer failure. These files, which reside in the same 
+  directory as the working files, are named 'BACKUP.CUL' and 
+  'BACKUP.ECO'.
+
+
+  EXPERIMENT/TREATMENT (BATCH) FILES
+
+    The batch files, which contain lists of the experiment/treatment 
+  combinations to be used, must have the form shown below:
+  
+  $BATCH(CULTIVAR):SBIB0001 BRAGG
+ 
+  @FILEX                                 TRTNO  RP  SQ  OP  CO
+  C:\DSSAT48\GCWork\UFGA7801.SBX             1   0   1   1   1
+  C:\DSSAT48\GCWork\UFGA7801.SBX             2   0   1   1   1
+  
+  The files are designed to allow for the specification of both treatment 
+  number (TRTNO), treatment replicate number (RP), position in a sequence
+  of crops (SQ,OP), and component of a crop with multiple components (CO). 
+  Currently, however, the replicate option is not used by many crop models, 
+  including the CSM model in DSSAT, and so a '0' is entered to indicate 
+  that mean values are  to be used.
+  
+    The files can be created using a text editor of choice and manually
+  entering the required information. This process can be rather tedious,
+  however, and it is generally easier to create the files by using a 
+  'selector' program that displays the experiment/treatment combinations 
+  available for a specified cultivar, allows a user to select desired
+  combinations, and inserts these selected combinations into a new or 
+  existing batch file. Such a 'selector' program is available in DSSAT.
+  It is described under the heading 'ABOUT GENSELECT' at the foot of
+  this file.
+
+    For individual runs, it may be desirable to eliminate, or comment 
+  out (with a ! in the first position) existing treatments, or add new 
+  ones in which the same cultivar is present. This can be done by
+  activating the appropriate item in the 'Files' menu list, and then 
+  editing the file. After accessing the file, even if no changes are made, 
+  the run number is re-freshed.
+     
+       
+  CONFIGURATION FILE
+  
+    The configuration file can be accessed and edited by
+  activating the appropriate item in the 'Files' menu list. In 
+  the file, the editor, graphics program, and model/module can 
+  be changed.
+
+  
+  CHECKING DATASETS   
+  
+    Before proceeding to calibration, a 'check' run should be
+  made to ensure that the model will run with all experiment/
+  treatment combinations. This could be done by running from 
+  the model interface but, when a lot of experiment/treatment 
+  combinations are to be examined, is perhaps best done by 
+  choosing the 'Check' option from the 'Action' menu.
+    
+    If the model does not run with one of the combinations,
+  a message will be written to the Log file and possibly to
+  a message box on the screen, and the run will be terminated. 
+  Examine the model 'Error.out' file to determine the reason 
+  for failure, and correct the problem before proceeding. 
+  Alternatively, the 'offending' experiment/treatment 
+  combination could be removed from the list file. 
+  
+    Once the model runs with all combinations, proceed to 
+  examine the Evaluation.out file to ensure that the 
+  simulated emergence dates appear reasonable. If this was not 
+  the case, check the individual experiments to determine
+  the cause of a delayed emergence, and correct whatever 
+  problems were identified before proceeding with calibration.
+  
+    Finally, check the Overview.out file to ensure that the 
+  correct weather data had been used for the individual runs.
+  This could happen if the planting date had been erroneously
+  entered as sometimes happens with crops that are planted in 
+  one year, harvested in another.  
+
+
+  MESSAGE BOXES AND 'BEEPS'
+    
+   In public areas such as libraries and communal labs, 'beeps' during
+  a calibration session could be disturbing to neighbouring workers. 
+  Because of this, the program allows a user to swich-off most beeps 
+  together with their associated message boxes. Control over these aspects
+  resides in a MSGBX 'flag' in the CONTROL section of the RULES file.
+  This 'flag' can be set to N or Y:
+     Y  All message boxes are written to the screen, and all 'beeps' 
+        are sounded. 
+     N  Message boxes are written, and 'beeps' sounded, only when no 
+        rules file is found at the start of a session, or when no 
+        log file is found when trying to edit the log. The ecotype 
+        option file is automatically recreated after editing the ecotype 
+        file, with no user option for aborting this step.
+  If no control section is present, the MSGBX 'flag' is set to Y.  
+  
+  
+  RUNNING
+  
+    A calibration run is initiated by activating the 'Action' -
+  'Run' menu item. Before initiating a comprehensive calibration
+  run, however, users should determine if the time that will be 
+  needed for the calibration run fits in with other demands on 
+  computer and personal time. This can be done by examining the 
+  'Runs needed' box on the computer screen and then making a 
+  quick mental calculation of the total time necessary for an 
+  individual run. The 'runs needed' box indicates the maximum
+  number of individual simulation runs that the contents of 
+  the list and rules files call for, taking into account 
+  possible re-runs and step size changes. With information
+  from this box, plus pre-knowledge of the time necessary for 
+  one simulation, a general overall calculation of the maximum
+  time neccessary can be made. 
+
+    Users should note that results from calibrating the timing 
+  of later stages in the growth cycle are not truly meaningfull 
+  until the earlier stages have been well calibrated, and that 
+  calibration of growth and yield aspects is not meaningfull 
+  until phenology is well simulated. The Rules file should thus
+  not be edited in such a manner that rules for early phases
+  appear after later phases, or rules for growth aspects before
+  those for phenology. 
+ 
+    Once initiated, the progress of the calibration run is
+  indicated in a 'Runs completed' box at the base of the screen.              
+  However, because the model uses the list file, the number of
+  runs completed is only up-dated when all experiment/treatment 
+  combinations in the list file have been completed for one set
+  of coefficient values. On completion, and depending on the 
+  message box control variable, a 'beep' may be sounded and a 
+  message box placed on the screen.    
+  
+    If it is desired to stop a calibration run, activating the
+  'Cancel' button at the base of the screen will stop the run
+  as soon as control is returned from the model to Gencalc2 (i.e.
+  when all experiment/treatments in the list file have been 
+  completed for the coefficients being examined at the time of
+  activation).  
+  
+  
+  EXAMINING RESULTS
+  
+    Gencalc2 produces a number of files showing the results 
+  of the succession of simulation runs, together with the
+  coefficients used in the runs. These files can be examined
+  by activating the menu items under 'Files', 'Results'. 
+  
+    The 'Details' file contains the simulated and measured 
+  values for each individual model run, 'Summary', the errors 
+  after running all experiment/treatment combinations with 
+  one of the required sets of coefficients, sorted so that 
+  runs with the smallest errors appear at the top. And finally
+  'Minima' with the 'best' results for the runs with different 
+  target traits, and 'Comparison' with errors for all traits
+  for which data are available (not only those used as targets).
+  This latter file, in which errors using the original 
+  coefficients are compared with those using the 'best' 
+  coefficients from the calibration run, is probably the most
+  useful in deciding whether to upgrade the cultivar file
+  with the calibration results.
+  
+    There is one additional results file produced if one of the
+  coefficients has been defined as an 'Explore' coefficient. This
+  contains the results after optimizing other coefficients for 
+  the different values specified for the 'Explore' coefficient.   
+  
+    Before proceeding to these 'Results' files, however, it is
+  worthwhile examining the 'Log' file to see if Gencalc2 had
+  detected any missing simulated data. If so, there would 
+  have been some problem either with the coefficients used
+  for a particular run (e.g. a vernalization requirement 
+  that prevented the crop proceeding to flowering and 
+  maturity), or with the model code. In both cases, the 
+  causes of the problem should be examined in some detail 
+  before proceeding further with a results examination.
+        
+    The simulation outputs using the final 'best' set of 
+  coefficients can be examined by activating the 'Model 
+  Outputs' menu item. The Overview gives detail for each
+  run with the 'best' coefficients, whilst the Evaluate
+  gives a summary comparison of measured and simulated 
+  values that can be viewed or plotted, as desired. 
+  The graphing program in Dssat V4 does not differentiate 
+  between sub-set of data in the Evaluate.out file, and so 
+  it is not easy to gain a visual impression of the gains 
+  made through calibration. Inspection of the file, or use 
+  of an alternative graphing program, however, can provide 
+  an insight into gains and/or losses in precision and 
+  accuracy.     
+  
+    When examining results it is important to bear in mind
+  that errors in the timing of later stages in the life
+  cycle may show an increase when the simulation of earlier
+  stages was initially poor. Errors in various growth and  
+  yield aspects also may increase when the timing of the
+  various growth stages was originally poorly simulated.
+  
+    And finally, if it is impossible to obtain a set of
+  coefficients that result in reasonable correspondence 
+  between measured and simulated values, then the 
+  Experiment files should be checked carefully for possible
+  mis-reporting of initial conditions, management (eg.,
+  irrigation schedules), and performance aspects (eg.,
+  anthesis date) for some of the experiments/treatment
+  combinations used.       
+
+
+  UPGRADING COEFFICIENTS USING CALIBRATION RESULTS
+  
+    The coefficients with the least error for the final
+  target represent the 'best' overall coefficients for
+  all targets, and if desired (after examination of the
+  outputs) these can be used to replace (upgrade) the
+  coefficients in the cultivar or ecotype files. This is 
+  done by activating the 'Automatic' option from the
+  'Files','Coefficients','Main cultivar file' menu.
+
+    The coefficients used for upgrading are those present
+  in the 'working' cultivar and ecotype files at the end
+  of a calibration session. If any of the values in the
+  files are changed by using the edit option, the changed
+  values will be used when inserting new values into the
+  main files. 
+    
+    When a coefficients upgrade is attempted, the cultivar
+  and ecotype files are first copied to backup files, then
+  the coefficients in the respective files are replaced. The
+  original coefficients, however, are retained in the files, 
+  but with a ! in the first column position. To avoid 
+  'cluttering' the files with such saved coefficients, 
+  a user should thus occassionally manually edit both the
+  cultivar and ecotype files and delete saved entries from
+  earlier calibration sessions.
+
+
+  REVIEWING AND USING RESULTS FROM A PREVIOUS SESSION
+    
+     The results files are not over-writtten until the RUN
+  menu item is activated after re-entering GENCALC2. Thus
+  a user can return to review previous results after having
+  exited the program. The automatic upgrade of the main
+  cultivar and ecotype files will also work with the results
+  from the previous session until either the CHECK or RUN menu 
+  option is activated. Similarly,the model output files are 
+  not over-written until either the CHECK or RUN menu items 
+  are activated on returning to the program.         
+  
+  
+  PROBLEMS               
+
+    All activities during a session are written to a 'log' 
+  file which can be examined by activating the Log menu item
+  under Files. All Gencalc2 error messages are written to 
+  this file (even though they may first be shown in a message
+  box). A model error will be identified in the log file.
+  
+    When calibrating phenology, coefficients that extend the 
+  duration of the life cycle beyond the measured value are
+  often explored. This can result in a model error if the
+  weather data terminate at the measured maturity date. Such
+  a situation can be corrected by duplicating the final days 
+  weather and changing the dates for each duplicate at the 
+  end of the file. Naturally such additions should be 
+  highlighted either by adding some text to the 'Notes' 
+  section of the file, or by adding a comment before the
+  added 'artificial' data.
+  
+    Further, a particular set of calibration coefficients 
+  may result in the model running with coefficients not 
+  normally encountered. Such 'extreme' coefficient values 
+  may 'expose' new model problems, and these should be
+  communicated to the model developer. To proceed with
+  calibration, the rules file should be changed so that
+  such 'offending' extreme coefficients are not encountered.
+
+
+  LIMITS
+  
+    The program is set-up to run within the following limits:
+    
+         Experiments                           999
+         Experiment/treatment combinations     999
+         Cultivar coefficients                  30
+         Coefficients in one rule set           12
+         Rules sets for one model               20
+         Ecotype coefficient options            20
+         Cultivars presented for selection      20
+         
+  If these limts are exceeded an error or warning message will 
+  be written to the 'Log' file, and the run will be terminated.        
+
+
+  POWER OR COMPUTER FAILURES      
+  
+    In the rare event of a power or computer failure at the time
+  of an attempted coefficients file upgrade, the main cultivar 
+  and/or ecotype files may become lost or corrupted. In such a case, 
+  the backup cultivar and ecotype coefficient files should be copied 
+  to serve as replacements for the lost or damaged files.     
+
+  
+       
+  L.A.Hunt,
+  Plant Agriculture,
+  University of Guelph,
+  Guelph,
+  Ontario N1G 1K1,
+  Canada
+
+  thunt@uoguelph.ca (Work)
+  mthunt@sympatico.ca (Home)
+
+  519-821-2044 (Home)
+ 
+  14 January 2009
+
+
+
+ABOUT GENSELECT
+
+  CONTENTS
+
+    GENERAL 
+    SETUP
+    OPERATION - CHOICE OF CROP
+    OPERATION - CHOICE OF AN EXISTING 'BATCH' FILE
+    OPERATION - CHOICE OF EXPERIMENT/TREATMENT COMBINATIONS
+
+
+  GENERAL
+
+    GENSELECT is software that makes it possible:
+    
+     (A) to select and organize experiment/treatment 
+         combinations for use when estimating coefficients 
+         for a specific cultivar using the software 
+         'GENCALC2'. 
+    
+     (B) to launch 'GENCALC2' for a chosen cultivar, and with
+         a chosen set of experiment/treatment combinations.
+         
+    The combinations selected using Genselect are listed in 
+    a file, the name of which is constructed from the cultivar 
+    name, the crop code (e.g. SB for soybean),and a final 'C' 
+    (e.g. BRAGG.SBC)
+
+
+  SETUP  
+
+    The 'GENSELECT' executable file (Gencalc.exe) must reside 
+  in a directory in which its auxilliary file (Gencalc.Chm) is
+  located. If running under DSSAT, the directory should be:
+  
+       C(or other chosen drive):\Dssat4\Tools\Gencalc   
+
+
+  OPERATION - CHOICE OF CROP
+
+    The program will handle appropriate (ie.conforming to 
+  DSSAT standards) experimental files for any crop, and so
+  the first step in any session is to chose the crop to
+  be considered. A user should thus proceed from the main
+  screen by pressing the 'StartGenselect' button to proceed 
+  to the first 'working' screen, and there, chose the 
+  desired crop species.
+  
+  
+  OPERATION - CHOICE OF AN EXISTING 'BATCH' FILE
+  
+     Once the crop is chosen, a user has two options - to
+  chose an existing 'Batch' file and proceed directly to the
+  calibration program GENCALC, or to create a new 'List'
+  file prior to proceeding. Normally, therefore, the second
+  step in any session is to examine the list of experiment/
+  treatment combination files that are already present. If 
+  there is a file for the cultivar to be examined, the file 
+  should be highlighted and then the 'View the GC cultivar 
+  file' bar activated, and the file examined to determine 
+  if the experiment/treatment combinations desired are 
+  included. If so, the 'Use the GC cultivar file' bar should
+  be activated to proceed to GENCALC per se. If not, then 
+  a new 'Batch' file should be created.
+
+  
+  OPERATION - CHOICE OF NEW EXPERIMENT/TREATMENT COMBINATIONS
+
+     The first step in proceding to create a new 'Batch' file 
+  with new Experiment/treatment combinations is to select a 
+  cultivar and one or more of the data directories listed in
+  the 'choice' boxes on the first 'working' screen. If it is 
+  desired to include experiments from other directories, 
+  activate the 'Scan more directories' bar and select the 
+  desired directories. When satisfied, activate the 'Go' 
+  button and then select the experiment/treatment combinations
+  to be used, remembering that it is best to first work with 
+  the non-stressed treatments. Next, activate the 'Go' button 
+  and change the batch file name if the indicated name is not 
+  acceptable. Once the name is acceptable, activate the 'Save' 
+  button. At this stage, all required files will be copied to 
+  a working directory and the progress of this copying will be
+  displayed in a 'DOS box'. After completing the copying
+  process, a screen with several choices will appear. Activate
+  the 'Run Gencalc' button to load the Gencalc program, after 
+  which the main Gencalc screen should appear on the screen.
+  
+
+  L.A.Hunt,
+  Plant Agriculture,
+  University of Guelph,
+  Guelph,
+  Ontario N1G 1K1,
+  Canada
+
+  mthunt@sympatico.ca
+

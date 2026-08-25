@@ -31,15 +31,16 @@ C  03/15/2000 GH  Modular version revisited
 C  02/10/2006 JIL New calculation of fraction of diffuse radiation
 C  02/13/2006 JIL Export AMTRH (R/R0) for leaf rolling calculation
 C  10/02/2007 JIL New calculation of PARHR
+C  09/23/2025  FO Added Flexible calls for hourly weather input
 C-----------------------------------------------------------------------
 c  Called by: WEATHR
 C  Calls:     HANG, HTEMP, HRAD, FRACD, HPAR
 C=======================================================================
 
-      SUBROUTINE HMET(
+      SUBROUTINE HMET(YRDOY,
      &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
      &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
-     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
+     &    TMIN, WINDHT, WINDSP, XLAT, MEWTH,              !Input
      &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
      &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
      &    TGROAV, TGRODY, WINDHR)                         !Output
@@ -49,16 +50,18 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
 !     TS defined in ModuleDefs.for
+      USE flexibleio
       IMPLICIT NONE
       EXTERNAL HANG, HTEMP, VPSAT, HWIND, HRAD, FRACD, HPAR
-      INTEGER H,NDAY
+      CHARACTER*1  MEWTH
+      INTEGER H,NDAY,YRDOY
 
       REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR
       REAL, DIMENSION(TS) :: RADHR, RHUMHR, TAIRHR, TGRO, WINDHR
 
       REAL CLOUDS, DAYL, DEC,
-     &  HS,ISINB,PAR,REFHT,S0N,SRAD,SNDN,SNUP,
-     &  TAVG,TDAY,TDEW,TGROAV,TGRODY,TINCR,TMAX,TMIN,
+     &  HS,ISINB,PAR,REFHT,S0N,SRAD,SNDN,SNUP,HSRAD,
+     &  TAVG,TDAY,TDEW,TGROAV,TGRODY,TINCR,TMAX,TMIN,HTMAX,HTMIN,
      &  RH,VPSAT,WINDAV,WINDHT,WINDSP,
      &  XLAT
       PARAMETER (TINCR=24./TS)
@@ -80,11 +83,17 @@ C       Calculate sun angles and hourly weather variables.
         CALL HANG(
      &    DEC, HS, XLAT,                                  !Input
      &    AZZON(H), BETA(H))                              !Output
-
-        CALL HTEMP(
-     &    DAYL, HS, SNDN, SNUP, TMAX, TMIN,               !Input
-     &    TAIRHR(H))                                      !Output
-
+        
+        IF(MEWTH .NE. 'H') THEN
+          CALL HTEMP(
+     &      DAYL, HS, SNDN, SNUP, TMAX, TMIN,               !Input
+     &      TAIRHR(H))                                      !Output
+        ELSE
+          CALL fio % get('WTH', YRDOY, H, 'TMAX', HTMAX)
+          CALL fio % get('WTH', YRDOY, H, 'TMIN', HTMIN)
+          TAIRHR(H) = (HTMAX + HTMIN) / 2
+        ENDIF
+        
         RH = VPSAT(TDEW) / VPSAT(TAIRHR(H)) * 100.0
         RHUMHR(H) = MIN(RH,100.0)
 
@@ -92,10 +101,14 @@ C       Calculate sun angles and hourly weather variables.
      &    DAYL, HS, SNDN, SNUP, WINDAV,                   !Input
      &    WINDHR(H))                                      !Output
 
-        CALL HRAD(
-     &    BETA(H), HS, ISINB, SNDN, SNUP, SRAD,           !Input
-     &    RADHR(H))                                       !Output
-
+        IF(MEWTH .NE. 'H') THEN
+          CALL HRAD(
+     &      BETA(H), HS, ISINB, SNDN, SNUP, SRAD,           !Input
+     &      RADHR(H))                                       !Output
+        ELSE
+          CALL fio % get('WTH', YRDOY, H, 'SRADJ', RADHR(H))
+        ENDIF
+        
         CALL FRACD(
      &    BETA(H), CLOUDS, HS, RADHR(H), S0N, SNDN, SNUP, !Input
      &    AMTRH(H), FRDIFP(H), FRDIFR(H))                 !Output
@@ -158,16 +171,16 @@ C=======================================================================
 ! SNDN       Time of sunset (hr)
 ! SNUP       Time of sunrise (hr)
 ! SRAD       Solar radiation (MJ/m2-d)
-! TAIRHR(TS) Hourly air temperature (in some routines called TGRO) (°C)
-! TAVG       Average daily temperature (°C)
-! TDAY       Average temperature during daylight hours (°C)
-! TDEW       Dewpoint temperature (°C)
-! TGRO(I)    Hourly air temperature (°C)
-! TGROAV     Average daily canopy temperature (°C)
-! TGRODY     Average temperature during daylight hours (°C)
+! TAIRHR(TS) Hourly air temperature (in some routines called TGRO) (ï¿½C)
+! TAVG       Average daily temperature (ï¿½C)
+! TDAY       Average temperature during daylight hours (ï¿½C)
+! TDEW       Dewpoint temperature (ï¿½C)
+! TGRO(I)    Hourly air temperature (ï¿½C)
+! TGROAV     Average daily canopy temperature (ï¿½C)
+! TGRODY     Average temperature during daylight hours (ï¿½C)
 ! TINCR      Time increment (hr)
-! TMAX       Maximum daily temperature (°C)
-! TMIN       Minimum daily temperature (°C)
+! TMAX       Maximum daily temperature (ï¿½C)
+! TMIN       Minimum daily temperature (ï¿½C)
 ! TS         Number of intermediate time steps (=24) 
 ! VPSAT      Saturated vapor pressure of air (Pa)
 ! WINDAV     Average wind speed (m/s)
@@ -320,12 +333,12 @@ C=======================================================================
 ! SNDN       Time of sunset (hr)
 ! SNUP       Time of sunrise (hr)
 ! T          Time factor for hourly calculations 
-! TAIRHR(TS) Hourly air temperature (in some routines called TGRO) (°C)
-! TMAX       Maximum daily temperature (°C)
-! TMIN       Minimum daily temperature (°C)
+! TAIRHR(TS) Hourly air temperature (in some routines called TGRO) (ï¿½C)
+! TMAX       Maximum daily temperature (ï¿½C)
+! TMIN       Minimum daily temperature (ï¿½C)
 ! TMINI      Theoretical temperature at infinite time used for exponential 
-!              temperature decay after sunset (°C)
-! TSNDN      Temperature at sundown (°C)
+!              temperature decay after sunset (ï¿½C)
+! TSNDN      Temperature at sundown (ï¿½C)
 C=======================================================================
 
 
@@ -476,7 +489,7 @@ C=======================================================================
 ! CORR       Correction to decrease diffuse solar radiation by the 
 !              circumsolar component, since circumsolar diffuse radiation 
 !              acts like direct radiation (Spitters, 1986) 
-! COS90B     Cosine of (90° - BETA) 
+! COS90B     Cosine of (90ï¿½ - BETA) 
 ! COSB       Cosine of BETA 
 ! FRDFH      Hourly fraction diffuse radiation before correcting for 
 !              circumsolar radiation (Spitters, 1986) 

@@ -733,7 +733,7 @@ C=======================================================================
              count = count+1
              nlayr_nw = count
              tempsum = tempsum + dlayr_nw(L)
-             if (depth_nw .LE. tempsum) then
+             if (depth_nw .LE. tempsum+0.01) then
 	         nwheats_level = nlayr_nw
                exit
              endif

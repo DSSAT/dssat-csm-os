@@ -156,8 +156,10 @@ C-----------------------------------------------------------------------
       NPERC  = 0  !# percs
       NPUD   = 0  !# puddling events
 
+      DEPIR  = 0.0
+      EFFIRR = 0.0
       IRRAMT = 0.0
-      TOTIR  = 0.
+      TOTIR  = 0.0
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
       GSWatUsed = 0.0
@@ -166,6 +168,7 @@ C-----------------------------------------------------------------------
 
 !     Water table depth (-99 indicates no water table present)
       MgmtWTD = -99.  
+      ICWD    = -99.  
 
       IF (ISWWAT .EQ. 'Y') THEN
 
@@ -227,8 +230,8 @@ C-----------------------------------------------------------------------
               READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM =LNUM+1
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
               MgmtWTD = ICWD
-!              CALL PUT('MGMT','WATTAB',MgmtWTD)
-!              CALL PUT('MGMT','ICWD',ICWD)
+              CALL PUT('MGMT','WATTAB',MgmtWTD)
+              CALL PUT('MGMT','ICWD',ICWD)
             ENDIF
           ENDIF
 
@@ -637,10 +640,13 @@ C-----------------------------------------------------------------------
       FLOODWAT % NBUND   = NBUND
 
 !     Transfer data to ModuleData
-      CALL PUT('MGMT','TOTIR',TOTIR)
-      CALL PUT('MGMT','EFFIRR',EFFIRR)
-      CALL PUT('MGMT','IRRAMT',IRRAMT)
       CALL PUT('MGMT','DEPIR', DEPIR)
+      CALL PUT('MGMT','EFFIRR',EFFIRR)
+      CALL PUT('MGMT','ICWD',ICWD)
+      CALL PUT('MGMT','IRRAMT',IRRAMT)
+      CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) 
+      CALL PUT('MGMT','TOTIR',TOTIR)
+      CALL PUT('MGMT','WATTAB',MgmtWTD)
 
       NDAYS_DRY = 0
 
@@ -762,12 +768,20 @@ C-----------------------------------------------------------------------
       IF (DSOIL < 1) THEN
         DSOIL = 30.
       ENDIF
-      IF (THETAC < 1) THEN
-        THETAC = 50.
-      ENDIF
+
+!     For E and T methods, THETAC is not used, but it must still be > THETAU
+      SELECT CASE (IIRRI)
+        CASE ('E', 'T')
+          THETAC = 1.
+        CASE DEFAULT
+          IF (THETAC < 1) THEN
+            THETAC = 50.
+          ENDIF
+      END SELECT
       IF (THETAU < THETAC) THEN
         THETAU = 100.
       ENDIF
+
       IF (AIRAMT < 0) THEN
         AIRAMT = 0.
       ENDIF

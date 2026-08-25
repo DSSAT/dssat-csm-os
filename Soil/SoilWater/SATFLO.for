@@ -41,6 +41,7 @@ C=======================================================================
       REAL DRAIN, HOLD, SWCON, SWOLD !, MgmtWTD
       REAL DLAYR(NL), DRMX(NL), DRN(NL), DUL(NL), SAT(NL), !DS(NL), 
      &        SW(NL), SWCN(NL), SWDELTS(NL), SWTEMP(NL)
+      REAL OVERSAT
 
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
@@ -54,12 +55,8 @@ C=======================================================================
         DRN(L) = 0.0
         DRMX(L) = 0.0
 
-!        IF (DS(L) > MgmtWTD) THEN
-!          EXIT
-!        ENDIF
-
         IF (SWTEMP(L) .GE. (DUL(L) + 0.003)) THEN
-          DRMX(L) = (SWTEMP(L) - DUL(L)) * SWCON * DLAYR(L)
+          DRMX(L) = (SWTEMP(L) - DUL(L)) * SWCON * DLAYR(L)  !cm
           DRMX(L) = MAX(0.0, DRMX(L))
         ENDIF
 
@@ -67,17 +64,18 @@ C=======================================================================
           DRN(L) = DRMX(L)
         ELSE
           HOLD = 0.0
-          IF (SWTEMP(L) .LT. DUL(L)) 
-     &        HOLD = (DUL(L) - SWTEMP(L)) * DLAYR(L)
+          IF (SWTEMP(L) .LT. DUL(L)) THEN
+            HOLD = (DUL(L) - SWTEMP(L)) * DLAYR(L)
+          ENDIF
           DRN(L) = MAX(DRN(L-1) + DRMX(L) - HOLD,0.0)
         ENDIF
 
 !       Failed experiment -- too many problems with zero SWCN and 
 !         historic soil profiles
 !       IF (SWCN(L) .GE. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0)
-        IF (SWCN(L) .GT. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0)
-     &    DRN(L) = SWCN(L) * 24.0
-
+        IF (SWCN(L) .GT. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
+          DRN(L) = SWCN(L) * 24.0
+        ENDIF
 !        IF (DRN(L) .GT. 0.0) IDRSW = 1
       ENDDO
 
@@ -88,9 +86,22 @@ C     as water drains down in the profile.
       DO L = NLAYR, 2, -1
         SWOLD = SWTEMP(L)
         SWTEMP(L) = SWTEMP(L) + (DRN(L-1) - DRN(L)) / DLAYR(L)
-        IF (SWTEMP(L) .GT. SAT(L)) THEN
-          DRN(L-1) = MAX(0.0,(SAT(L) - SWOLD) * DLAYR(L) + DRN(L))
-          SWTEMP(L) = SAT(L)
+
+!       Is water content above saturation? 
+        OVERSAT = (SWTEMP(L) - SAT(L)) * DLAYR(L)  !cm
+        IF (OVERSAT > 0.0) THEN
+!         SW after drainage would result in oversaturation. 
+!         Reduce drainage from above.
+          IF (OVERSAT .GT. DRN(L-1)) THEN
+!           Drainage from above is less than oversaturation. 
+!           Layer will remain oversaturated for this time step.
+            SWTEMP(L) = SWTEMP(L) - DRN(L-1) / DLAYR(L)
+            DRN(L-1) = 0.0
+          ELSE
+!           Can reduce drainage from above to limit SW to saturation.
+            SWTEMP(L) = SAT(L)
+            DRN(L-1) = DRN(L-1) - OVERSAT
+          ENDIF
         ENDIF
       ENDDO
 

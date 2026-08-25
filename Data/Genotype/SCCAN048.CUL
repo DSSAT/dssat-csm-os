@@ -39,20 +39,20 @@
 !              |       |                     | have after it is old enough to lose some leaves.                                |                                                                                |
 ! MXLFAREA     |   360 | Canopy - leaves     | Max leaf area assigned to all leaves above leaf number MXLFARNO (cm2)           |Inman-Bamber (1991)                                                             |
 ! MXLFARNO     |    14 | Canopy - leaves     | Leaf number above which leaf area is limited to MXLFAREA                        |Inman-Bamber (1991)                                                             |
-! LER0         |0.2-0.4| Canopy - leaves     | Max. leaf elongation rate, per °Cd
+! LER0         |0.2-0.4| Canopy - leaves     | Max. leaf elongation rate, per ï¿½Cd
 ! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
 ! PI1          |    69 | Leaf phenology      | Phyllocron interval 1 (for leaf numbers below Pswitch,  oC.d (base TTBASELFEX)) |Inman-Bamber (1991)                                                             |                                                                                 
 ! PI2          |   169 | Leaf phenology      | Phyllocron interval 2 (for leaf numbers above Pswitch,  oC.d (base TTBASELFEX)) |Inman-Bamber (1991)                                                             |
 ! PSWITCH      |    18 | Leaf phenology      | Leaf number at which the phyllocron changes.                                    |Inman-Bamber (1991)                                                             |
 ! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
 ! TDELAY       | 0-70  | Tiller phenology    | Delay between primary shoot appearance and appearance of first secondary shoot  | 
-! TAR0         |0.02-0.03Tiller phenology    | Maximum tiller appearance rate, per primary shoot, per °Cd                      |                                                                                |
+! TAR0         |0.02-0.03Tiller phenology    | Maximum tiller appearance rate, per primary shoot, per ï¿½Cd                      |                                                                                |
 ! POPTT16      |  13.3 | Tiller phenology    | Stalk population at/after 1600 degree days (/m2)                                |                                                                                |
 ! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
 ! TTPLNTEM     | 50-150| Phenology           | Thermal time to emergence for a plant crop                                      |                                                                                |
 ! TTRATNEM     |  0-100| Phenology           | Thermal time to emergence for a ratoon crop                                     |                                                                                |
 ! CHUPIBASE    |700-1200 Phenology           | Thermal time from emergence to start of stalk growth                            | 'TTskp' in Singels & Bezuidenhout, 2002                                        |
-! SER0         |0.1-0.4|                     | Max. stalk elongation rate, per °Cd                                             | 
+! SER0         |0.1-0.4|                     | Max. stalk elongation rate, per ï¿½Cd                                             | 
 ! TT_POPGROWTH |500-700| Phenology           | Thermal time to peak tiller population                                          |                                                                                |
 ! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+                                                                                                                                                  
 ! LG_AMBASE    |   220 | Lodging             | Aerial mass (fresh mass of stalks, leaves, and water attached to them) at       |                                                                                |
@@ -65,7 +65,7 @@
 !             P/G/N:Phenology/Growth/Not used for calbration
 !
 @VAR#  VAR-NAME........ EXPNO   ECO#       MaxPARCE          APFMX       STKPFMAX           SUCA           TBFT          LFMAX       MXLFAREA       MXLFARNO            PI1            PI2        PSWITCH       TTPLNTEM       TTRATNEM      CHUPIBASE   TT_POPGROWTH        POPTT16           TAR0         TDELAY           LER0           SER0      LG_AMBASE        AQP_UP5
-!Coeffient #                                      1              2              3              4              5              6              7              8              9             10             11             12             13             14             15             16             17             18             19             20             21             22
+!Coefficient #                                    1              2              3              4              5              6              7              8              9             10             11             12             13             14             15             16             17             18             19             20             21             22
 !Calibration                                      G              G              G              G              N              N              G              N              P              P              P              N              N              N              P              P              N              N              N              N              N
 
 999991 MINIMA               . DFAULT         5.0000         0.8800         0.6000         0.5000        25.0000        10.0000       360.0000        15.0000        50.0000       107.0000        12.0000       150.0000        30.0000      1000.0000       500.0000        10.0000         0.0100        20.0000         0.2000         0.1400       220.0000         0.5000

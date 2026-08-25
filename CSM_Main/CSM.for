@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2023
+C COPYRIGHT 1998-2025
 C                     DSSAT Foundation
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -34,17 +34,19 @@ C ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C
-C     CROPPING SYSTEM MODEL Version 4.8.1
+C     CROPPING SYSTEM MODEL Version 4.8.5.x
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     May 2023  CSM Version 4.8.1
+C     December 2024  CSM Version 4.8.5
 C
-C     Hoogenboom, G., C.H. Porter, V. Shelia, K.J. Boote, U. Singh,  
-C     J.W. White, W. Pavan, F.A. de Oliveira, L.P. Moreno, J.I. Lizaso, 
-C     S. Asseng, D.N.L. Pequeno, B.A. Kimball, P. Alderman, K.R. Thorp, 
-C     M.R. Jones, S.V. Cuadra, M. Vianna, F.J. Villalobos, T.B. Ferreira,  
-C     W.D. Batchelor, J. Koo, L.A. Hunt, and J.W. Jones
+C     Hoogenboom, G., C.H. Porter, V. Shelia, K.J. Boote, U. Singh,
+C     W. Pavan, F.A.A. Oliveira, L.P. Moreno-Cadena, T.B. Ferreira,
+C     J.W. White, J.I. Lizaso, D.N.L. Pequeno, B.A. Kimball, P.D. Alderman,
+C     K.R. Thorp, S.V. Cuadra, M.S. Vianna, F.J. Villalobos, W.D. Batchelor,
+C     S. Asseng, M.R. Jones, A. Hopf, H.B. Dias, A. Jintrawet, R. Jaikla,
+C     E. Memic, L.A. Hunt, and J.W. Jones
+C
 C=======================================================================
 C
 C=======================================================================
@@ -71,11 +73,12 @@ C  01/11/2007 CHP Changed GETPUT calls to GET and PUT
 C  01/12/2007 CHP Read trt number and rotation number for sequence mode
 C  10/09/2020 FO  Y4K implementation for weather files
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
-!                 unused variables, shorten lines. 
+!                 unused variables, shorten lines.
+!  10/08/2024  FO  Remove NULL char for empty PATHEX 
 C=======================================================================
       PROGRAM CSM
 
-      USE ModuleDefs 
+      USE ModuleDefs
       USE ModuleData
       USE HeaderMod
 
@@ -93,8 +96,7 @@ C-----------------------------------------------------------------------
       CHARACTER*78  MSG(10)
       CHARACTER*80  PATHEX
       CHARACTER*102 DSSATP
-!     CHARACTER*120 INPUTX
-      CHARACTER*120 FILECTL !12/11/08 control file includes path
+      CHARACTER*120 FILECTL
       CHARACTER*120 PATHX
       CHARACTER*130 CHARTEST
 
@@ -291,6 +293,8 @@ C***********************************************************************
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,26,FILEB,LINBIO)
       ENDIF
 
+      IF(PATHEX(1:1) .EQ. CHAR(0)) PATHEX = ''
+        
       CONTROL % FILEIO  = FILEIO
       CONTROL % FILEX   = FILEX
       CONTROL % RNMODE  = RNMODE

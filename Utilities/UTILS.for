@@ -1,5 +1,5 @@
 !=======================================================================
-C  UTILS, File, G. Hoogenboom, P.W. Wilkens and B. Baer
+C  UTILS, File, G. Hoogenboom, P.W. Wilkens, C.H. Porter
 C  General utility functions
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
@@ -1012,22 +1012,29 @@ C        USE IFPORT
 
 !         Open temporary batch file
           CALL GETLUN("OUTBAT", LUNTMP)
-          OPEN (LUNTMP, FILE="TEMP.BAT", STATUS = 'REPLACE')
-          WRITE(LUNTMP,'(A)') "ECHO OFF"
-          WRITE(LUNTMP,'(A)') "COPY /Y *.OUT *.BAK"
-          WRITE(LUNTMP,'(A)') "ERASE *.OUT"
-          CLOSE (LUNTMP)
+          IF(DSSATPRO .EQ. 'DSSATPRO.L48') THEN   
+            SYS = SYSTEM("cp *.OUT *.BAK")
+            SYS = SYSTEM("rm *.OUT")      
+          ELSE
+!            OPEN (LUNTMP, FILE="TEMP.BAT", STATUS = 'REPLACE')
+!            WRITE(LUNTMP,'(A)') "ECHO OFF"
+             SYS = SYSTEM("ECHO OFF")
+!            WRITE(LUNTMP,'(A)') "COPY /Y *.OUT *.BAK"
+             SYS = SYSTEM("COPY /Y *.OUT *.BAK")
+!            WRITE(LUNTMP,'(A)') "ERASE *.OUT"
+             SYS = SYSTEM("ERASE *.OUT")
+!            CLOSE (LUNTMP)
 
-          SYS = SYSTEM("TEMP.BAT >TEMP.BAK")
-          
+!            SYS = SYSTEM("TEMP.BAT >TEMP.BAK")
+            
 !         Delete TEMP.BAT file
-          OPEN (LUNTMP, FILE = "TEMP.BAT", STATUS = 'UNKNOWN')
-          CLOSE (LUNTMP, STATUS = 'DELETE')
-  
+!            OPEN (LUNTMP, FILE = "TEMP.BAT", STATUS = 'UNKNOWN')
+!            CLOSE (LUNTMP, STATUS = 'DELETE')
+      
 !         Delete TEMP.BAK file
-          OPEN (LUNTMP, FILE = "TEMP.BAK", STATUS = 'UNKNOWN')
-          CLOSE (LUNTMP, STATUS = 'DELETE')
-
+!            OPEN (LUNTMP, FILE = "TEMP.BAK", STATUS = 'UNKNOWN')
+!            CLOSE (LUNTMP, STATUS = 'DELETE')
+          ENDIF
 !         Output.CDE file is missing
           WRITE(MSG(1),'(A,A)') "OUTPUT.CDE file not found."
           MSG(2)=
@@ -1058,6 +1065,7 @@ C=======================================================================
       SUBROUTINE OPNAMES(FNAME)
       USE ModuleDefs
       USE ModuleData
+      USE OSDefinitions
 !!!!cDEC$ IF (COMPILER == 0) 
 !        USE DFPORT
 !!!!cDEC$ ELSE
@@ -1124,7 +1132,8 @@ C        USE IFPORT
 !       Re-name output files based on FNAME
 !       Open temporary batch file
         CALL GETLUN("OUTBAT", LUNTMP)
-        OPEN (LUNTMP, FILE="TEMP.BAT", STATUS = 'REPLACE')
+!        IF(DSSATPRO .NE. 'DSSATPRO.L48')
+!     &       OPEN (LUNTMP, FILE="TEMP.BAT", STATUS = 'REPLACE')
         COUNT = 0
 
         DO i = 1, FileData % NumFiles
@@ -1140,21 +1149,35 @@ C        USE IFPORT
             !Check if TempName exists, if so, delete it.
             INQUIRE (FILE = TempName, EXIST = FEXIST)
             IF (FEXIST) THEN   
-              BatchCommand = 'ERASE ' // TempName
-              WRITE(LUNTMP, '(A50)') BatchCommand
-              COUNT = COUNT + 1
+              IF(DSSATPRO .EQ. 'DSSATPRO.L48') THEN
+                  SYS = SYSTEM('rm ' // TempName)
+              ELSE
+                  BatchCommand = 'ERASE ' // TempName
+                  !WRITE(LUNTMP, '(A50)') BatchCommand
+                  SYS = SYSTEM(BatchCommand)
+                  COUNT = COUNT + 1
+              ENDIF
             ENDIF
 
-            !Copy from default filename into new filename 
-            BatchCommand = 'COPY ' // FileName(i) // ' '  
+            IF(DSSATPRO .EQ. 'DSSATPRO.L48') THEN
+                  SYS = SYSTEM('cp ' // FileName(i) // ' '  
+     &                           // TempName)
+                  SYS = SYSTEM('rm ' // FileName(i))
+            ELSE
+                  !Copy from default filename into new filename 
+                  BatchCommand = 'COPY ' // FileName(i) // ' '  
      &                             // TempName // ' /Y'
-            WRITE(LUNTMP,'(A50)') BatchCommand
+                  !WRITE(LUNTMP,'(A50)') BatchCommand
+                  SYS = SYSTEM(BatchCommand)
+                  
 
-            !Delete old file
-            BatchCommand = 'ERASE ' // FileName(i)
-            WRITE(LUNTMP,'(A50)') BatchCommand
-            WRITE(LUNTMP, '(" ")')
-            COUNT = COUNT + 2
+                  !Delete old file
+                  BatchCommand = 'ERASE ' // FileName(i)
+                  !WRITE(LUNTMP,'(A50)') BatchCommand
+                  !WRITE(LUNTMP, '(" ")')
+                  SYS = SYSTEM(BatchCommand)
+                  COUNT = COUNT + 2
+            ENDIF
 
             !If file was left open, close it now.
             INQUIRE(FILE=FILENAME(I), OPENED=FOPEN)
@@ -1175,22 +1198,35 @@ C        USE IFPORT
 
         CLOSE (LUNTMP)
 
-        IF (COUNT > 0) THEN
+!        IF (COUNT > 0) THEN
 !         Run batch file - direct output to TEMP.BAK file
-          BatchCommand = "TEMP.BAT >TEMP.BAK"
-          SYS = SYSTEM(BatchCommand)
+!          BatchCommand = "TEMP.BAT >TEMP.BAK"
+C-KRT February 2, 2024
+C-KRT This file renaming strategy is not compatible with Linux systems.
+C-KRT The Linux operating system will fail to run the following BatchCommand.
+C-KRT Linux OS prints "sh: 1: TEMP.BAT: not found" because it can't
+C-KRT find a system command called TEMP.BAT. Anyway, the commands
+C-KRT given in the batch file are for Windows systems.
+C-KRT Model will continue to run; however, the output files are not
+C-KRT copied to the new output file names as directed in BatchCommand.
+C-KRT Need to rework this strategy for OS compatibility.
+C-TF March 3, 2025
+C-TF Update: Fixed this issue by checking which OS DSSAT is currently 
+C-TF running via DSSATPRO. Sequence file are now also being generated in 
+C-TF unix-based systems.
+!          SYS = SYSTEM(BatchCommand)
   
 !         Delete TEMP.BAT file
-          OPEN (LUNTMP, FILE = "TEMP.BAT", STATUS = 'UNKNOWN')
-          CLOSE (LUNTMP, STATUS = 'DELETE')
+!          OPEN (LUNTMP, FILE = "TEMP.BAT", STATUS = 'UNKNOWN')
+!          CLOSE (LUNTMP, STATUS = 'DELETE')
   
 !         Delete TEMP.BAK file
-          OPEN (LUNTMP, FILE = "TEMP.BAK", STATUS = 'UNKNOWN')
-          CLOSE (LUNTMP, STATUS = 'DELETE')
-        ELSE
+!          OPEN (LUNTMP, FILE = "TEMP.BAK", STATUS = 'UNKNOWN')
+!          CLOSE (LUNTMP, STATUS = 'DELETE')
+!        ELSE
 !         Close empty batch file
-          CLOSE (LUNTMP, STATUS = 'DELETE')
-        ENDIF
+!          CLOSE (LUNTMP, STATUS = 'DELETE')
+!        ENDIF
 
       ENDIF
 
@@ -1659,3 +1695,18 @@ C=======================================================================
         only_dir = full_path(1:pos)        
 
       end subroutine get_dir
+!=======================================================================
+!  ROUND, Subroutine
+!  Subroutine to round decimal part of a number in Fortran
+!-----------------------------------------------------------------------
+!  Revision history
+!  07/11/2024 FO Added round a number function
+!=======================================================================
+      REAL FUNCTION ROUND(VAL, N)
+        IMPLICIT NONE
+        REAL VAL
+        INTEGER N
+        ROUND = ANINT(VAL*10.0**N)/10.0**N
+        RETURN
+      END FUNCTION ROUND
+!=======================================================================

@@ -282,6 +282,163 @@ C       TO READ THE NEXT LINE
       END SUBROUTINE IGNORE2
 
 C=======================================================================
+C  IGNORE3, Subroutine, Thiago B. Ferreira 01/06/2025
+C----------------------------------------------------------------------------
+C  PURPOSE: To read lines as an n-character variable and check it
+C           for a blank line or for a comment line denoted by ! in col 1.
+C           Also check for second tier of data as notated by @ in the first
+C           column and check the exisance of tabs in files.
+C----------------------------------------------------------------------------
+! Revision history
+! 06/01/2025 TF Created new function based on IGNORE2 to detect TABs  
+!               in the first character of an input lines.
+! 07/01/2025 TF Updated the code with a DO LOOP to loop throughtout the line
+!               and check for TABs
+C----------------------------------------------------------------------------
+C INPUTS:  LUN - Logical unit number of the file to be read
+C          LINEXP - Starting line number at which this routine begins to
+C                   read the file
+C OUTPUTS: LINEXP - Line number last read by the routine
+C          ISECT - Indicator of completion of IGNORE3 routine
+C                  0 - End of file encountered
+C                  1 - Found a good line to read
+C                  2 - End of Section in file encountered ("*") found
+C                  3 - Second tier headers found ("@" found)
+C                  4 - TAB ("	") found.
+C          CHARTEST - 80-character variable containing the contents of
+C                     the last line read by the IGNORE3 routine
+C=======================================================================
+      SUBROUTINE IGNORE3(LUN,LINEXP,ISECT,CHARTEST)
+      CHARACTER CHARTEST*(*), TAB
+      INTEGER LUN,LINEXP,ISECT, Length
+!     CHARACTER BLANK*80
+!     DATA BLANK/'                                                    '/
+C----------------------------------------------------------------------------
+      TAB = "	"
+      ISECT = 1
+ 30   READ(LUN,'(A)',ERR=70,END=70)CHARTEST
+      LINEXP = LINEXP + 1
+C     CHECK TO SEE IF ALL OF THIS SECTION HAS BEEN READ
+
+      IF(CHARTEST(1:1) .EQ. '*' )THEN
+C       INTERMEDIATE HEADER FOUND.  
+        ISECT = 2
+!        GOTO 30
+        RETURN
+      ENDIF
+
+      IF(CHARTEST(1:1) .EQ.'@') THEN
+C       NEXT TIER ENCOUNTERED
+        ISECT = 3
+        RETURN
+      ENDIF
+
+C     CHECK FOR BLANK LINES AND COMMENTS (DENOTED BY ! IN COLUMN 1)
+      IF(CHARTEST(1:1).NE.'!' .AND. CHARTEST(1:1).NE.'@') THEN
+C       IF(CHARTEST.NE.BLANK)THEN
+        Length = Len_Trim(CHARTEST)
+
+C     TF (01/07/2025) - Reads each character in the line and
+C     check if there are any TABs      
+       IF(CHARTEST(1:1) .EQ. TAB) THEN
+         ISECT = 4
+         RETURN
+       ENDIF
+
+C      DO I = 1, LEN(CHARTEST)
+C        IF(CHARTEST(I:I) .EQ. TAB) THEN
+C          ISECT = 4
+C          RETURN
+C        ENDIF
+C      ENDDO
+
+        IF (Length > 0) THEN
+C         FOUND A GOOD LINE TO READ
+          RETURN
+        ENDIF
+      ENDIF
+
+      GO TO 30
+C       TO READ THE NEXT LINE
+ 70   ISECT = 0
+
+      RETURN
+      END SUBROUTINE IGNORE3
+
+C=======================================================================
+C  IGNORE4, Subroutine, Thiago B. Ferreira 01/08/2025
+C----------------------------------------------------------------------------
+C  PURPOSE: To read lines as an n-character variable and check it
+C           for a blank line or for a comment line denoted by ! in col 1.
+C  INPUTS:  LUN - Logical unit number of the file to be read
+C           LINEXP - Starting line number at which this routine begins to
+C                    read the file
+C  OUTPUTS: LINEXP - Line number last read by the routine
+C           ISECT - Indicator of completion of IGNORE routine
+C                   0 - End of file encountered
+C                   1 - Found a good line to read
+C                   2 - End of Section in file encountered, denoted by *
+C                       in column 1
+C                   4 - TAB ("	") found.
+C           CHARTEST - n-character variable containing the contents of
+C                      the last line read by the IGNORE routine
+C----------------------------------------------------------------------------
+C
+      SUBROUTINE IGNORE4(LUN,LINEXP,ISECT,CHARTEST)
+
+      CHARACTER BLANK*(80),CHARTEST*(*), TAB
+      INTEGER   LENGTH, LUN,LINEXP,ISECT
+      DATA BLANK/'                                                    '/
+
+      LENGTH = LEN(CHARTEST)
+      TAB = "	"
+      ISECT = 1
+ 30   READ(LUN,'(A)',ERR=70, END=70)CHARTEST
+      LINEXP = LINEXP + 1
+
+!     CHP 5/1/08
+      IF (CHARTEST(1:1) == CHAR(26)) THEN
+        GO TO 70
+      ENDIF
+
+C     Check to see if all of this section has been read
+      IF(CHARTEST(1:1) .EQ. '*'  .OR. CHARTEST(1:1) .EQ. '$') THEN
+C        End of section encountered
+         ISECT = 2
+         RETURN
+      ENDIF
+
+C     TF (01/07/2025) - Reads each character in the line and
+C     check if there are any TABs      
+       IF(CHARTEST(1:1) .EQ. TAB) THEN
+         ISECT = 4
+         RETURN
+       ENDIF
+
+C      DO I = 1, LEN(CHARTEST)
+C        IF(CHARTEST(I:I) .EQ. TAB) THEN
+C          ISECT = 45
+C          RETURN
+C        ENDIF
+C      ENDDO      
+
+C
+C     Check for blank lines and comments (denoted by ! in column 1)
+      IF(CHARTEST(1:1).NE.'!' .AND. CHARTEST(1:1).NE.'@') THEN
+!         IF(CHARTEST(1:80).NE.BLANK)THEN
+         IF(CHARTEST(1:LENGTH).NE.BLANK)THEN
+C           FOUND A GOOD LINE TO READ
+            RETURN
+         ENDIF
+      ENDIF
+
+      GO TO 30
+C     To read the next line
+
+ 70   ISECT = 0
+      RETURN
+      END SUBROUTINE IGNORE4
+C=======================================================================
 C  HFIND, Subroutine  GPF 7/95
 C  Finds appropriate HEADER in a file of logical unit number LUNUM
 C  by searching for a 5-character NAME following the '@' at the
@@ -797,16 +954,16 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL ERROR, Y4K_DOY, YR_DOY
 
-      CHARACTER*6 XDAT,ERRKEY
+      CHARACTER*12 XDAT,ERRKEY
       REAL        RDAT
       INTEGER     ERRNUM, IDAT, ISIM, YR, YRSIM
       
       PARAMETER (ERRKEY = 'RADATE')
 
-      CALL YR_DOY(YRSIM, YR, ISIM)
-      READ(XDAT(1:6),1000,IOSTAT=ERRNUM) RDAT
+      CALL YR_DOY(YRSIM, YR, ISIM)            
+      READ(XDAT(1:12),1000,IOSTAT=ERRNUM) RDAT
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,2,'FILEA',0)
- 1000 FORMAT(F6.0)
+ 1000 FORMAT(F12.0)
       IDAT = INT(RDAT)
 
       IF (IDAT .GT. 0 .AND. IDAT .LT. 1000) THEN
@@ -1008,5 +1165,160 @@ D       DATAX = STDPATH // FILECDE
       END SUBROUTINE ReadCropModels
 C=======================================================================
 
+C=======================================================================
+C  READ_FILEA, Subroutine T. B. Ferreira
+C  Reads FileA data.
+C-----------------------------------------------------------------------
+C  REVISION HISTORY
+C  01/28/2024 CHP Written.
+C=======================================================================
 
+      SUBROUTINE READA_Y4K(FILEA, PATHEX, OLAB, TRTNUM, YRSIM, X)
+        
+        USE ModuleDefs
+        IMPLICIT NONE
+        
+        EXTERNAL UPCASE, GETLUN, PARSE_HEADERS, IGNORE, INFO
+      
+        CHARACTER*1   UPCASE
+        CHARACTER*6   OLAB(EvaluateNum) !HD
+!        CHARACTER*6   HEAD(EvaluateNum)
+        CHARACTER*12  X(EvaluateNum)  !, ERRKEY
+        CHARACTER*12  FILEA
+        CHARACTER*78  MSG(2)
+	      CHARACTER*80  PATHEX
+	      CHARACTER*92  FILEA_P
+        CHARACTER*255 C255
+        CHARACTER*20  DAT
+        CHARACTER*6, PARAMETER :: ERRKEY = 'FILEA'
+!       Headers with aliases -- save column
+!        INTEGER HWAM, HWAH, BWAM, BWAH, PDFT, R5AT, NTR, YRPST 
+        
+        INTEGER TRTNUM,ERRNUM,LUNA,LINEXP,COLN, J
+        INTEGER YRSIM, ACN, ECN, TR, I
+        
+        INTEGER, PARAMETER :: MAXCOLN = 40
+        CHARACTER*15  HEADER(MAXCOLN), HTXT, FAHEADERS(MAXCOLN)
+        INTEGER COL(MAXCOLN,2), ICOUNT, C1, C2, ISECT
+        INTEGER C1D(MAXCOLN), C2D(MAXCOLN)
+
+        LOGICAL FEXIST
+
+        FILEA_P = TRIM(PATHEX)//FILEA
+        ACN = 0
+        X = '   -99'
+        CALL GETLUN('FILEA', LUNA)
+        
+        INQUIRE(FILE=FILEA_P,EXIST=FEXIST)
+        IF (FEXIST) THEN
+          OPEN (LUNA,FILE = FILEA_P,STATUS = 'OLD',IOSTAT=ERRNUM)
+          
+C         FIND THE HEADER LINE, DESIGNATED BY @TRNO
+          DO WHILE (.TRUE.)
+            READ(LUNA,'(A)',END=5010) C255
+            LINEXP = LINEXP + 1
+            IF (C255(1:1) .EQ. '@') EXIT    
+          ENDDO
+        ELSE
+          RETURN
+        ENDIF
+        
+        CALL PARSE_HEADERS(C255, MAXCOLN, HEADER, ICOUNT, COL)
+        DO COLN = 1, ICOUNT
+          HTXT = HEADER(COLN)
+          C1 = COL(COLN,1)
+          C2 = COL(COLN,2)
+!         uppercase every word in each column
+          DO J = 1, LEN(TRIM(HTXT))
+              HTXT(J:J) = UPCASE(HTXT(J:J))
+          END DO
+          HEADER(COLN) = HTXT
+          
+          IF(INDEX(HEADER(COLN),TRIM(HTXT)) .GT. 0) THEN
+            ACN = ACN + 1
+            C1D(ACN) = C1 !beginning
+            C2D(ACN) = C2 !ending            
+          
+            FAHEADERS(ACN) = HEADER(COLN)
+
+            IF(TRIM(HEADER(COLN)) .EQ. "R5AT") FAHEADERS(ACN) = "PDFT"
+            IF(TRIM(HEADER(COLN)) .EQ. "PDFD") FAHEADERS(ACN) = "PDFT"
+            IF(TRIM(HEADER(COLN)) .EQ. "BWAH") FAHEADERS(ACN) = "BWAM"
+            IF(TRIM(HEADER(COLN)) .EQ. "HWAH") FAHEADERS(ACN) = "HWAM"
+            IF(TRIM(HEADER(COLN)) .EQ. "CWAH") FAHEADERS(ACN) = "CWAM"
+            IF(TRIM(HEADER(COLN)) .EQ. "HDAT") FAHEADERS(ACN) = "R8AT"
+            
+          ENDIF
+        ENDDO
+
+       
+C       FIND THE RIGHT TREATMENT LINE OF DATA
+        DO I = 1,1000
+          CALL IGNORE(LUNA,LINEXP,ISECT,C255)
+          
+          IF (ISECT .EQ. 0) THEN
+            WRITE (MSG(1),'(" Error in FILEA-Measured data not used")')
+            CALL INFO(1, "READA ", MSG)
+            CLOSE(LUNA)
+            RETURN
+          ENDIF
+
+!         Search TRNO header        
+          DO J = 1, ACN
+            C1 = COL(J,1)
+            C2 = COL(J,2)
+          
+            IF(TRIM(FAHEADERS(J)).EQ. 'TRNO') THEN            
+                READ(C255(C1:C2+1),'(2X,I4)',IOSTAT=ERRNUM) TR
+
+                IF(TR .EQ. TRTNUM) GO TO 65
+            ENDIF
+          ENDDO
+        ENDDO      
+  65    CONTINUE
+    
+        DO ECN = 1, EvaluateNum
+          DO J = 1, ACN
+
+!         TF - if statement to handle cases where the value has more 
+!         line columns than the variable name
+          IF(J .EQ. 1) THEN
+            C1 = C1D(J)
+            C2 = C1D(J+1)
+          ELSEIF(J .EQ. ACN) THEN
+            C1 = C2D(J-1)
+            C2 = C2D(J)+1
+          ELSE
+            C1 = C2D(J-1)
+            C2 = C1D(J+1)
+          ENDIF
+          IF(TRIM(FAHEADERS(J)) .EQ. TRIM(OLAB(ECN))) THEN
+
+!           Check if the column before was TRNO since it ocuppies one
+!           extract character after the last line column of the header
+            IF(TRIM(FAHEADERS(J-1)) .EQ. 'TRNO') THEN
+              READ(C255(C1+2:C2-1),'(A12)',IOSTAT=ERRNUM) DAT
+              X(ECN) = TRIM(DAT)
+            ELSE
+              READ(C255(C1+1:C2-1),'(A12)',IOSTAT=ERRNUM) DAT
+              X(ECN) = TRIM(DAT)
+            ENDIF
+          ENDIF
+          ENDDO
+        ENDDO  
+
+      CLOSE (LUNA)
+      RETURN
+   
+!       Error handling
+ 5010   CONTINUE
+        X = '   -99'
+        WRITE (MSG(1),'(" Error in FILEA - Measured data not used")')
+        WRITE (MSG(1),'(I7)') YRSIM
+        CALL INFO(1, "READA ", MSG)
+
+      CLOSE (LUNA)
+      RETURN
+      
+      END SUBROUTINE READA_Y4K
 

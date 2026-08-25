@@ -11,13 +11,15 @@ C  12/16/2004 CHP/KJB/LAH changed residue to account for harvest
 C                   fractions.
 !  08/02/2005 CHP Only compute for sequenced runs.  Set to zero otherwise.
 !  07/13/2006 CHP Added P model
+!  07/01/2024 CHP Added storage tissue to harvest residues
 C=======================================================================
 
       SUBROUTINE FOR_HRES_CGRO(CONTROL,
-     &    CROP, DLAYR, DWNOD, HARVFRAC, NLAYR,PLIGLF,     !Input
-     &    PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGST, RLV,    !Input
-     &    RTWT, SDWT, SENESCE, SHELWT, STMWT, WTLF,       !Input
-     &    WTNLF,WTNNOD, WTNRT, WTNSD, WTNSH, WTNST,       !Input
+     &    CROP, DLAYR, DWNOD, NLAYR,PLIGLF, PLIGNO,       !Input
+     &    PLIGRT, PLIGSD, PLIGSH, PLIGST, RLV, RTWT,      !Input
+     &    SDWT, SENESCE, SHELWT, STMWT, WTLF, WTNLF,      !Input
+     &    WTNNOD, WTNRT, WTNSD, WTNSH, WTNST,             !Input
+     &    STRWT, WTNSR, PLIGSR,     !Storage tissue       !Input
      &    HARVRES)                                        !Output
 
 !-------------------------------------------------------------------------
@@ -29,11 +31,11 @@ C=======================================================================
 !     Input variables
       CHARACTER*2 CROP
       INTEGER NLAYR, N_ELEMS
-      REAL DWNOD, PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH,     
-     &     PLIGST, RTWT, SDWT, SHELWT, WTLF, STMWT,
-     &     WTNLF, WTNNOD, WTNRT, WTNSD, WTNSH, WTNST
+      REAL DWNOD, PLIGLF, PLIGNO, PLIGRT, PLIGSD, PLIGSH, PLIGSR,
+     &     PLIGST, RTWT, SDWT, SHELWT, WTLF, STMWT, STRWT, STRRES, 
+     &     WTNLF, WTNNOD, WTNRT, WTNSD, WTNSH, WTNST, WTNSR
       REAL LFRES, STMRES, SDRES, SHLRES
-      REAL HARVFRAC(2)
+!     REAL HARVFRAC(2)
       REAL, DIMENSION(NL) :: DLAYR, RLV
 
 !     Output variables
@@ -65,35 +67,33 @@ C=======================================================================
 !-------------------------------------------------------------------------
 !       Shoot residues.
 !       ---------------
-!       Residue weight equals top weight minus seed and by-product.
-!        HResWt(SRFC) = TOPWT - SDWT - BWAH
-!                      g/m2    g/m2   g/m2
+!       Forages: none of remaining biomass is assumed to be harvested unless specifically
+!         targeted by a mow operation. (KJB 2024-06-28). All of remaining biomass becomes residue.
+!       Values below in kg/ha 
+        LFRES  = AMAX1(0.0, WTLF  * 10.)   !leaf kg/ha
+        STMRES = AMAX1(0.0, STMWT * 10.)   !stem kg/ha
+        SHLRES = AMAX1(0.0, SHELWT * 10.)  !shell kg/ha
+        SDRES  = AMAX1(0.0, SDWT * 10.)    !seed kg/ha
+        STRRES = AMAX1(0.0, STRWT * 10.)   !storage kg/ha
 
-!       By-product not harvested:
-!       TOPRES = (TOPWT - SDWT) * 10. * (1. - HARVFRAC(2)) 
-!       08/11/2005 GH/CHP
-        LFRES  = AMAX1(0.0, WTLF  * 10. * (1. - HARVFRAC(2)))
-        STMRES = AMAX1(0.0, STMWT * 10. * (1. - HARVFRAC(2)))
+!       Surface residues
+        HResWt(SRFC) = LFRES + STMRES + SDRES + SHLRES  !kg/ha
 
-!       Add weight of seeds not harvested
-        SDRES = AMAX1(0.0, SDWT * 10. * (1. - HARVFRAC(1)))
+!!       N in residue 
 
-!       Add weight of shells (100% assumed to remain in field)
-        SHLRES = AMAX1(0.0, SHELWT * 10.)
+!        HResE(SRFC,N) = (WTNLF + WTNST) * 10. * (1. - HARVFRAC(2)) 
+!     &    + WTNSD * 10. * (1.- HARVFRAC(1))
+!     &    + WTNSH * 10.
+!       Don't use HARVFRAC - all remaining biomass becomes residue.
+        HResE(SRFC,N) = (WTNLF + WTNST + WTNSD + WTNSH) * 10. !kg/ha
 
-        HResWt(SRFC) = LFRES + STMRES + SDRES + SHLRES
-
-!       N in residue 
-        HResE(SRFC,N) = (WTNLF + WTNST) * 10. * (1. - HARVFRAC(2)) 
-     &    + WTNSD * 10. * (1.- HARVFRAC(1))
-     &    + WTNSH * 10.
-        IF (N_ELEMS > 1) THEN
-!         P in residue 
+!        IF (N_ELEMS > 1) THEN
+!!         P in residue 
         HResE(SRFC,P) = -99.
-!        HResE(SRFC,P) = PConc_Shut * (LFRES + STMRES)
-!     &    + PConc_Seed * SDRES
-!     &    + PConc_Shel * SHLRES
-        ENDIF
+!!        HResE(SRFC,P) = PConc_Shut * (LFRES + STMRES)
+!!     &    + PConc_Seed * SDRES
+!!     &    + PConc_Shel * SHLRES
+!        ENDIF
 
 !       Senescence has been added daily (subroutine SENESADD), so no need
 !       to add it here as WTLO, WTSO, WTSHO, WTSDO, as in the CERES-based
@@ -105,8 +105,10 @@ C=======================================================================
 !         shell. So separate those here. Correct VEGRES for non-harvested
 !         seeds and shells, and add those separately with their own lignin
 !         concentration.
-        HResLig(SRFC) = (LFRES * PLIGLF + STMRES * PLIGST +
-     &  SDRES * PLIGSD + SHLRES * PLIGSH) / HResWt(SRFC)
+
+!         chp 2024-07-01 HResLig should be in units of kg/ha! Don't divide by HResWt(SRFC)!
+          HResLig(SRFC) = (LFRES * PLIGLF + STMRES * PLIGST +
+     &      SDRES * PLIGSD + SHLRES * PLIGSH) ! / HResWt(SRFC)
         ENDIF 
 
 !-------------------------------------------------------------------------
@@ -116,39 +118,46 @@ C=======================================================================
 !       by layer).
         TRLV = 0.
         DO L = 1, NLAYR
-        TRLV = TRLV + RLV(L) * DLAYR(L)
+          TRLV = TRLV + RLV(L) * DLAYR(L)
         END DO
 
 !       Root + nodule residues.
 !       -----------------------
 !       Total root residues (whole profile) equal root weight plus nodule
 !       weight.
-        TRTRES = RTWT + DWNOD 
+        TRTRES = RTWT + DWNOD   !kg/ha
 
 !       N in root residues is N in roots plus N in nodules.
         TRTRESE(N) = WTNRT + WTNNOD
-         TRTRESE(P) = -99.
-!        TRTRESE(P) = PConc_Root * RTWT
+        TRTRESE(P) = -99.
+!       TRTRESE(P) = PConc_Root * RTWT
 
 !       Senescence has been added daily (subroutine SENESADD), so no need
 !       to add it here as WTRO and WTNOO, as in the CERES-based module.
         IF (TRLV > 1.E-6 .AND. TRTRES > 1.E-6) THEN
-        DO L = 1, NLAYR
-        HResWt(L)  = 10. * TRTRES * RLV(L) * DLAYR(L) / TRLV
-        HResLig(L) = (RTWT * PLIGRT + DWNOD * PLIGNO) / TRTRES 
-     &    * RLV(L) * DLAYR(L) / TRLV
-        DO IEL = 1, N_ELEMS
-        HResE(L,IEL) = 10. * TRTRESE(IEL) * RLV(L) * DLAYR(L)/TRLV
-        ENDDO
-        END DO   !End of soil layer loop.
+          DO L = 1, NLAYR
+            HResWt(L)  = 10. * TRTRES * RLV(L) * DLAYR(L) / TRLV
+            HResLig(L) = (RTWT * PLIGRT + DWNOD * PLIGNO) !/ TRTRES 
+     &        * RLV(L) * DLAYR(L) / TRLV
+            DO IEL = 1, N_ELEMS
+              HResE(L,IEL) = 10. * TRTRESE(IEL) * RLV(L) * DLAYR(L)/TRLV
+            ENDDO
+          ENDDO   !End of soil layer loop.
         ELSE
-        DO L = 1, NLAYR
-        HResWt(L)  = 0.
-        HResLig(L) = 0.
-        HResE(L,N) = 0.
-        HResE(L,P) = 0.
-        ENDDO
+          DO L = 1, NLAYR
+            HResWt(L)  = 0.
+            HResLig(L) = 0.
+            HResE(L,N) = 0.
+            HResE(L,P) = 0.
+          ENDDO
         ENDIF
+
+!       chp 2024-07-01 Add storage tissue to layer 1
+        HResWt(1)  = HResWt(1) + STRRES
+        HResLig(1) = HResLig(1) + STRRES * PLIGSR
+        DO IEL = 1, N_ELEMS
+          HResE(1,IEL) = HResE(1,IEL) + WTNSR * 10.
+        ENDDO
 
 C-------------------------------------------------------------------------
         !Add in last day of senesced plant material (not added in soil
@@ -159,10 +168,10 @@ C-------------------------------------------------------------------------
         HResE(SRFC,P) = HResE(SRFC,P) + SENESCE % ResE(SRFC,P)
 
         DO L = 1, NLAYR
-        HResWt(L)  = HResWt(L)  + SENESCE % ResWt(L)
-        HResLig(L) = HResLig(L) + SENESCE % ResLig(L)
-        HResE(L,N) = HResE(L,N) + SENESCE % ResE(L,N)
-        HResE(L,P) = HResE(L,P) + SENESCE % ResE(L,P)
+          HResWt(L)  = HResWt(L)  + SENESCE % ResWt(L)
+          HResLig(L) = HResLig(L) + SENESCE % ResLig(L)
+          HResE(L,N) = HResE(L,N) + SENESCE % ResE(L,N)
+          HResE(L,P) = HResE(L,P) + SENESCE % ResE(L,P)
         ENDDO
 
       ENDIF   !Crop .NE. 'FA'

@@ -7,6 +7,9 @@
 ####################################################################
 INCLUDE(${CMAKE_MODULE_PATH}/SetCompileFlag.cmake)
 
+# option to use dynamic link
+OPTION(DYNAMIC_LINK "Use dynamic link" OFF)
+
 # Make sure the build type is uppercase
 STRING(TOUPPER "${CMAKE_BUILD_TYPE}" BT)
 
@@ -113,47 +116,38 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                          "-fpe0"                            # Intel Linux/Mac
                          "-ffpe-trap=invalid,zero,overflow" # GNU
                 )
-####################
-### LINKER FLAGS ###
-####################
 
-SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}"
-                 Fortran "/FORCE" # MSVC
-                 	        "-cxxlib"      # Intel
-			                "-static"      # GNU
-                            "-Bstatic"     # MacOSX
-                            "-Bdynamic"    # MacOSX
-                )
-
-# Hack to make MacOS happy.
+# Disable Ifort deprecated message
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
-                 Fortran "-mmacosx-version-min=10.10.0"
+                 Fortran "/Qdiag-disable:10448"
                 )
-
+                
 ####################
 ### LINKER FLAGS ###
 ####################
-IF (APPLE)
-    set(MAC_STATIC_LIBGFORTRAN_DIR "" CACHE PATH "Path to static gFortran libraries")
-    set(MAC_STATIC_LIBGCC_DIR "" CACHE PATH "Path to libgcc library")
-    IF (MAC_STATIC_LIBGFORTRAN_DIR AND MAC_STATIC_LIBGCC_DIR)
-        message("Attempting partial static build for MacOS")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -macosx_version_min 10.10 -lSystem ${MAC_STATIC_LIBGFORTRAN_DIR}/libgfortran.a ${MAC_STATIC_LIBGFORTRAN_DIR}/libquadmath.a ${MAC_STATIC_LIBGCC_DIR}/libgcc.a"
-                        )
-        set(CMAKE_Fortran_LINK_EXECUTABLE "ld ${CMAKE_EXE_LINKER_FLAGS} <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
-    ENDIF()
-ELSE ()
-        SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
-                         Fortran "/FORCE"               # MSVC
-                                 "-static"              # GNU
-                        )
-        SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
-                         Fortran "-static-libgcc"       # GNU
-                        )
-        SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
-                         Fortran "-static-libgfortran"  # GNU
-                        )
-ENDIF(APPLE)
+IF(DYNAMIC_LINK STREQUAL "OFF")
+    IF (APPLE)
+        set(MAC_STATIC_LIBGFORTRAN_DIR "" CACHE PATH "Path to static gFortran libraries")
+        set(MAC_STATIC_LIBGCC_DIR "" CACHE PATH "Path to libgcc library")
+        IF (MAC_STATIC_LIBGFORTRAN_DIR AND MAC_STATIC_LIBGCC_DIR)
+            message("Attempting partial static build for MacOS")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -macosx_version_min 10.10 -lSystem ${MAC_STATIC_LIBGFORTRAN_DIR}/libgfortran.a ${MAC_STATIC_LIBGFORTRAN_DIR}/libquadmath.a ${MAC_STATIC_LIBGCC_DIR}/libgcc.a"
+                            )
+            set(CMAKE_Fortran_LINK_EXECUTABLE "ld ${CMAKE_EXE_LINKER_FLAGS} <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+        ENDIF()
+    ELSE ()
+            SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
+                            Fortran "/FORCE"               # MSVC
+                                    "-static"              # GNU
+                            )
+            SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
+                            Fortran "-static-libgcc"       # GNU
+                            )
+            SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
+                            Fortran "-static-libgfortran"  # GNU
+                            )
+    ENDIF(APPLE)
+ENDIF(DYNAMIC_LINK STREQUAL "OFF")
 ###################
 ### DEBUG FLAGS ###
 ###################

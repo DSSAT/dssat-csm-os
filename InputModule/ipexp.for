@@ -71,9 +71,9 @@ C=======================================================================
       Use CsvOutput   ! VSH
       IMPLICIT NONE
       EXTERNAL ERROR, FIND, WARNING, YR_DOY, IGNORE, VERIFY, CLEAR, 
-     &  IGNORE2, OPHEAD, MAKEFILEW, IPCUL, IPPLNT_INP, IPSIM, PATH, 
-     &  GET_CROPD, IPFLD, IPENV, IPHAR, IPIRR, IPFERT, IPRES, IPCHEM, 
-     &  IPTILL
+     &  IGNORE2, OPHEAD,CHECK_Y4K_WTH,IPCUL,IPPLNT_INP,IPSIM,PATH, 
+     &  GET_CROPD, IPFLD, IPENV, IPHAR, IPIRR, IPFERT, IPRES,IPCHEM, 
+     &  IPTILL, WTHFDIR
 
       SAVE
 
@@ -89,7 +89,7 @@ C=======================================================================
       CHARACTER* 7 FILELS
       CHARACTER* 8 FILES_a, FILES_b, MODEL, MODELARG, FILEW4
       CHARACTER*10 SLNO
-      CHARACTER*12 NAMEF, FILEX, FILE_CHECK
+      CHARACTER*12 NAMEF, FILEX, FILEWTH
       CHARACTER*25 TITLET
       CHARACTER*42 CHEXTR(NAPPL)
       CHARACTER*78 MSG(4)
@@ -412,9 +412,9 @@ C     IF (I .LT. TRTN) GO TO 50
      &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
      
 C-----------------------------------------------------------------------
-C     Call MAKEFILEW to read FILEX and 
+C     Call CHECK_Y4K_WTH to read FILEX and check Date range from WTH
 C-----------------------------------------------------------------------
-      CALL MAKEFILEW(LUNEXP,DSSATP,PATHEX,FILEX,
+      CALL CHECK_Y4K_WTH(CONTROL,MEWTH,LUNEXP,DSSATP,PATHEX,FILEX,
      &               SimLevel,LNSIM,LNPLT,LNFLD)
       
 C-----------------------------------------------------------------------
@@ -669,130 +669,12 @@ C-----------------------------------------------------------------------
       CONTROL % YRSIM = YRSIM
 
 !-----------------------------------------------------------------------
-! 2020-10-11 CHP RNMODE = 'Y' indicates yield forecast mode. May need multiple
-!     weather files. 
-!     If RNMODE = 'Y' and MEWTH = 'G','W','S', then also need a WTH file for
-!     forecast year weather data.
+!     Check for Weather File in the directory
 !-----------------------------------------------------------------------
-!     Generated weather data files
-      IF (MEWTH .EQ. 'G') THEN
-         IF (WSTA1(4:4) .EQ. BLANK) THEN
-            IF (YEAR .LT. 2000) THEN
-              YR = YEAR - 1900
-            ELSE IF (YEAR .LT. 3000) THEN
-              YR = YEAR - 2000
-            ENDIF
-            WRITE (FILEWG(1:12),75) WSTA,YR,'01.WTG'
-         ELSE
-            WRITE (FILEWG(1:12),76) WSTA,WSTA1,'.WTG'
-         ENDIF
-         PROCODG = 'WGD'
-      ENDIF
-!     Interactively generated weather 
-      IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
-         WRITE (FILEWC(1:12),77) WSTA,'.CLI    '
-         PROCODC = 'CLD'
-      ENDIF
-!     Measured weather data
-      IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
-         IF (WSTA1(4:4) .EQ. BLANK) THEN
-           IF (YEAR .LT. 2000) THEN
-             YR = YEAR - 1900
-           ELSE IF (YEAR .LT. 3000) THEN
-             YR = YEAR - 2000
-           ENDIF
-           WRITE (FILEW(1:12),75) WSTA,YR,'01.WTH'
-         ELSE
-            WRITE(FILEW(1:12),76) WSTA,WSTA1,'.WTH'
-         ENDIF
-         PROCODW = 'WED'
-      ENDIF
-      IF (INDEX('GSWM',RNMODE) .LT. 0) THEN
-         CALL ERROR (ERRKEY,22,FILEX,LINEXP)
-      ENDIF
-
-!     Check for existing FILEW, FILEWC, and FILEWG
-      DO I = 1, 3
-        SELECT CASE (I)
-          CASE (1)
-            IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
-              FILE_CHECK = FILEW
-              PROCOD = PROCODW
-            ELSE
-              CYCLE
-            ENDIF
-          CASE (2)
-            IF (MEWTH .EQ. 'G') THEN
-              FILE_CHECK = FILEWG
-              PROCOD = PROCODG
-            ELSE
-              CYCLE
-            ENDIF
-          CASE (3)
-            IF (MEWTH .EQ. 'S' .OR. MEWTH .EQ. 'W') THEN
-              FILE_CHECK = FILEWC
-              PROCOD = PROCODC
-            ELSE
-              CYCLE
-            ENDIF
-          CASE DEFAULT; CYCLE
-        END SELECT
-
-!       Check weather filename in current directory
-        INQUIRE (FILE = FILE_CHECK,EXIST = FEXIST)
-        IF (FEXIST) THEN
-          PATHWT = BLANK
-!       Check weather filename in data directory
-        ELSE
-          FILETMP = TRIM(PATHEX)//FILE_CHECK
-          INQUIRE (FILE = FILETMP,EXIST = FEXIST)
-          IF (FEXIST) THEN
-            PATHWT = TRIM(PATHEX)
-!         Check weather filename in default DSSAT directory
-          ELSE
-            CALL PATH(PROCOD,DSSATP,PATHWT,1,NAMEF)
-            FILETMP = TRIM(PATHWT) // FILE_CHECK
-            INQUIRE (FILE=FILETMP, EXIST = FEXIST)
-            IF (FEXIST) THEN
-              PATHWT = PATHWT
-!           Check 4-character file name in data directory
-            ELSE
-              FILEW4 = FILE_CHECK(1:4) // ".WTH"
-              FILETMP = TRIM(PATHEX) // FILEW4
-              INQUIRE (FILE=FILETMP, EXIST = FEXIST)
-              IF (FEXIST) THEN
-                PATHWT = TRIM(PATHEX)
-                FILE_CHECK = FILEW4
-!             Check 4-character filename in default DSSAT directory
-              ELSE
-                FILETMP = TRIM(PATHWT) // FILE_CHECK
-                INQUIRE (FILE=FILETMP, EXIST = FEXIST)
-                IF (FEXIST) THEN
-                  PATHWT = PATHWT
-                  FILE_CHECK = FILEW4
-                ELSE
-                  MSG(1) = "Weather file not found."
-                  MSG(2) = "  Neither " // FILE_CHECK // " nor "//FILEW4
-                  MSG(3) = 
-     &              "  were found in weather or experiment directories."
-                  MSG(4) = "Simulation will end."
-                  CONTROL % ErrCode = 29
-                  CALL PUT(CONTROL)
-                  CALL WARNING(4,ERRKEY,MSG)
-!                 CALL ERROR(ERRKEY,29,FILEW,0)
-                ENDIF
-              ENDIF
-            ENDIF
-          ENDIF
-        ENDIF
-
-        SELECT CASE(I)
-          CASE (1); FILEW  = FILE_CHECK; PATHWTW = PATHWT
-          CASE (2); FILEWG = FILE_CHECK; PATHWTG = PATHWT
-          CASE (3); FILEWC = FILE_CHECK; PATHWTC = PATHWT
-        END SELECT
-      ENDDO
-
+      CALL WTHFDIR(CONTROL,MEWTH,FILEX,WSTA,WSTA1,YRSIM,        ! Input
+     &             DSSATP,PATHEX,                               ! Input
+     &             FILEW, FILEWG, FILEWC,                       ! Output
+     &             FILEWTH, PATHWT, PATHWTC, PATHWTG, PATHWTW)  ! Output 
 C-----------------------------------------------------------------------
 C     Build output files.
 C

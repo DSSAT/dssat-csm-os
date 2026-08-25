@@ -21,15 +21,15 @@
 
 !
 !                |
-!      PArray(1)>+   x
-!      PArray(2)>+            x
-!                | 
-!                |
-!      PArray(3)>+                     x
-!                |___________________________
+! P    PArray(1)>+   x
+! V    PArray(2)>+            x
+! a              |
+! l              |
+! u    PArray(3)>+                     x
+! e              |___________________________
 !                    |        |        |
 !                Emergence  Stage1   Stage2            
-!
+!                        Time  ->
 !     ------------------------------------------------------------------
 !     Calculate optimum and minimum P concentrations in plant tissue.
 !     ------------------------------------------------------------------

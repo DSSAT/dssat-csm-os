@@ -162,7 +162,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
+      IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'H' .OR. MEWTH .EQ. 'C'
+     &    .OR. RNMODE .EQ. 'Y') THEN
         LINIO = LINIO + 1
         WRITE (LUNIO,'(A8,7X,A12,1X,A80)',IOSTAT=ERRNUM) 
      &     'WEATHERW',FILEW,PATHWTW

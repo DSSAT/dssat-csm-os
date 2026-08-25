@@ -83,6 +83,7 @@ C     Find layer number for tile
         ENDDO
       ENDIF
 
+      TDFC = 0.
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season

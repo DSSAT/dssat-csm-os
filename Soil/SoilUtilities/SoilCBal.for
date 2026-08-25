@@ -347,13 +347,15 @@
 
       TotBal = TotalC - TotalC_init - TotalAdd + TotalSub
 
-      WRITE(LUNSNC,'(/,"!",T50,A,T70,A)') " Initial", "   Final"
-      WRITE(LUNSNC,'(  "!",T50,A,T70,A)') "Year/DOY", "Year/DOY"
-      WRITE(LUNSNC,'(  "!",T50,I4,"-",I3.3,T70,I4,"-",I3.3)') 
+      WRITE(LUNSNC,'(/,A,T50,A,T70,A)')
+     &  "! SOIL C BALANCE"," Initial", "   Final"
+
+      WRITE(LUNSNC,'(A,T50,A,T70,A)') 
+     &  "! all units in kg[C]/ha", "Year/DOY", "Year/DOY"
+
+      WRITE(LUNSNC,'("!",T50,I4,"-",I3.3,T70,I4,"-",I3.3)') 
      &    InitialYr, InitialDOY, YR, DOY
-      WRITE(LUNSNC,'("!",A,T50,A)') " SOIL C BALANCE", 
-     &   "--------- kg[C]/ha ---------"
-      WRITE(LUNSNC,'("!",A)') "  SOIL & SURFACE ORGANIC C"
+      WRITE(LUNSNC,'("!",A)') " SOIL & SURFACE ORGANIC C"
 
       WRITE(LUNSNC,'("!",A,T40,F18.2,T60,F18.2)') 
      &   "   Soil Organic C", SOMCT_init, TSOMC
@@ -370,33 +372,31 @@
 
       WRITE(LUNSNC,'("!",T50,A,T70,A)') "--------","--------"
       WRITE(LUNSNC,'("!",A,T40,F18.2,T60,F18.2)') 
-     &   "   Total C in Soil and Surface Layers", TotalC_init, TotalC 
+     &   " TOTAL C in Soil and Surface Layers", TotalC_init, TotalC 
 
-      WRITE(LUNSNC,'("!",A)') "  ADDITIONS AND REMOVALS:"
+      WRITE(LUNSNC,'(/,"!",A,T49,A,T70,A)') 
+     &  " ADDITIONS & REMOVALS:","Additions","Removals"
+
       WRITE(LUNSNC,'("!",A,T40,F18.2)') 
-     &   "   C in Harvest Residues from Previous Crop", HarvCTot
+     &   "   Harvest residues from prev crop", HarvCTot
       WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   C from Organic Applications", CumResC
+     &   "   Organic matter applications", CumResC
       WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   C in returned senesced material", CumSenC
+     &   "   Senesced plant tissue", CumSenC
 
-      WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   CO2-C emitted", CH4_data % CumCO2Emission
-      WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   CH4-C emitted", CH4_data % CumCH4Emission
-      WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   CH4-C leached", CH4_data % CumCH4Leaching
-      WRITE(LUNSNC,'("!",A,T40,F18.2)')  
-     &   "   CH4-C plant uptake", CH4_data % CumCH4Consumpt
+      WRITE(LUNSNC,'("!",A,T60,F18.2)')  
+     &   "   CO2-C losses", CH4_data % CumCO2Emission
+      WRITE(LUNSNC,'("!",A,T60,F18.2)')  
+     &   "   CH4-C losses", 
+     &   CH4_data % CumCH4Emission + CH4_data % CumCH4Leaching
+     &   + CH4_data % CumCH4Consumpt
  
-!      WRITE(LUNSNC,'("!",A,T60,F18.2)') 
-!     &   "   CO2-C emitted", ACCCO2(0) + ACCCO2(1)  
-!     &                  - ACCCO2_init(0) - ACCCO2_init(1)
-
-      WRITE(LUNSNC,'("!",T50,A,T70,A)')  "--------", "--------"
-      WRITE(LUNSNC,'("!",A,T40,F18.2,T60,F18.2)')" TOTAL C BALANCE",
-     &   TotalC_init + TotalAdd, TotalC + TotalSub
-      WRITE(LUNSNC,'("!",A,T60,F18.3)') "   Balance", TotBal
+      WRITE(LUNSNC,'(/,A)') "! SOIL C BALANCE"
+      WRITE(LUNSNC,'(A)') 
+     &   "!   =      FinalC -    InitialC - Additions +  Removals"
+      WRITE(LUNSNC,'(A,F12.2,A,F12.2,A,F10.2,A,F10.2,A,T60,F18.3,/)')
+     &   "!   =",TotalC," -",TotalC_init," -",TotalAdd," +",TotalSub,
+     &   " =", TotBal
 
 !     -------------------------------------------------------------------
 !     Write seasonal balance summary file

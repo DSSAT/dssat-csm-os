@@ -181,7 +181,7 @@
       USE CER_First_Trans_m
       
       IMPLICIT NONE
-      EXTERNAL CER_Init, CER_Growth, CER_Integrate, CER_Output
+      EXTERNAL CER_Init, CER_Growth, CER_Integrate, CER_Output, GETDESC
 
 !      TYPE (ControlType), intent (in) :: CONTROL ! Defined in ModuleDefs
 !      TYPE (WeatherType), intent (in) :: WEATHER ! Defined in ModuleDefs
@@ -211,9 +211,61 @@
 !     CHARACTER*10  TL10FROMI  
 
 
+        INTEGER ACOUNT
+        CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB
+        CHARACTER*40 DESCRIP(EvaluateNum)    
+        
+        
+        ACOUNT = 40  !Number of FILEA headings.
+!       Headings in FILEA for Measured data. The following measured data will show up in overview.out
+        DATA OLAB /
+     &    'ADAT  ', 
+     &    'MDAT  ', 
+     &    'HWAM  ', 
+     &    'H#AM  ',
+     &    'HWUM  ', 
+     &    'H#UM  ',
+     &    'CWAM  ', 
+     &    'LAIX  ', 
+     &    'HIAM  ', 
+     &    'GNAM  ', 
+     &    'CNAM  ', 
+     &    'GN%M  ', 
+     &    'CWAA  ',
+     &    'CNAA  ',
+     &    'L#SM  ',
+     &    'EDAT  ',
+     &    'HWAH  ',
+     &    'GWUM  ',
+     &    'BWAH  ',
+     &    'T#AM  ',
+     &    'VNAM  ',
+!     &    'LN%A  ',
+     &    'LNCA  ',
+!    &    'GNCM  ',
+     &    'HN%M  ',
+!     &    'HNCM  ',
+     &    'VN%M  ',
+     &    'VN%D  ',
+     &    'VNCD  ',
+     &    'LNOSM ',
+     &    'DRDAT ',
+     &    'TSDAT ',
+     &    'A1DAT ',
+     &    'LLDAT ',
+     &    'SPDAT ',
+     &    'JDAT  ',
+     &    'GS059 ',
+     &    'BWAM  ',
+     &    5*'    '/
+
       YEARDOY = YEAR*1000 + DOY
 
       IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
+
+!       Assign descriptions to Measured and Simulated data 
+!         from DATA.CDE.
+        CALL GETDESC(ACOUNT, OLAB, DESCRIP)
 
         CALL CER_Init (LAI, CANHT,
      &     CN, DOY, HARVFRAC,
@@ -269,7 +321,7 @@
       ELSEIF (DYNAMIC.EQ.OUTPUT .OR. 
      &        DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
 
-        CALL CER_Output (LAI, CANHT, CN, DOY,
+        CALL CER_Output (OLAB, LAI, CANHT, CN, DOY,
      &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS,
      &     ISWNIT, ISWWAT, NFP, ON, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, STEP, STGDOY,

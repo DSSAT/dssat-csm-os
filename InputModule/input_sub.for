@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2023
+C COPYRIGHT 1998-2025
 C                     DSSAT Foundation                      
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -9,7 +9,7 @@ C=======================================================================
 C=======================================================================
 C  INPUT, Subroutine
 C
-C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.8
+C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.8.x
 C
 C  Gerrit Hoogenboom, Cheryl Porter and Jim Jones
 C
@@ -79,7 +79,6 @@ C                         DEFINITIONS
 C
 C  HDLAY  :
 C=======================================================================
-!      PROGRAM INPUT_PROGRAM
       SUBROUTINE INPUT_SUB(
      &    FILECTL, FILEIO, FILEX, MODELARG, PATHEX,       !Input
      &    RNMODE, ROTNUM, RUN, TRTNUM,                    !Input
@@ -218,7 +217,7 @@ C-----------------------------------------------------------------------
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
          CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,PRCROP,WRESR,
      &        WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,SWINIT,INH4,INO3,
-     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID) !,YRSIM) 
+     &        ISWITCH,ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)
          IF (ISIMI .EQ. 'I') THEN
            IF (YRIC .LT. YRSIM .AND. YRIC .GT. 0) THEN
              YRSIM = YRIC
@@ -271,7 +270,7 @@ C-----------------------------------------------------------------------
                   CALL IPSLIN (FILEX,FILEX_P,LNIC,NLAYR,DUL,YRIC,
      &                 PRCROP,WRESR,WRESND,EFINOC,EFNFIX,PEDON,SLNO,DS,
      &                 SWINIT,INH4,INO3,ISWITCH,
-     &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)    !,YRSIM) 
+     &                 ICWD,ICRES,ICREN,ICREP,ICRIP,ICRID)
                   CALL IPSLAN (FILEX, FILEX_P,LNSA, BD, DS, EXK, EXTP, 
      &            OC, PEDON, PH, PHKCL, SLNO, SMHB, SMKE, SMPX, TOTN, 
      &            SASC, SAEA, NLAYR)    !, YRSIM)

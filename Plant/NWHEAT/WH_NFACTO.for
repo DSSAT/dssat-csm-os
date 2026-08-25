@@ -61,7 +61,12 @@ C     ----------------------------------------------------------------
 ! total nitrogen between the critical level and minimum 
 ! level (TCNP-TMNC). 
 
-          NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)
+          !TF 10/19/2024 - Added if statement to avoid zero division
+          IF(TCNP-TMNC .GT. 0.0) THEN
+            NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)
+          ELSE
+            NFAC = 1.0
+          ENDIF
 !          NFAC   = AMIN1 (NFAC,1.0)
 
 !         2/25/2005 chp   

@@ -145,17 +145,6 @@ C-----------------------------------------------------------------------
      &  '    PAV1D    PAV2D    PAV3D    PAV4D    PAV5D',
      &  '    PUP1D    PUP2D    PUP3D    PUP4D    PUP5D', !,
      &  '    PLAB1    PLAB2    PLAB3    PLAB4    PLAB5')
-!!       Temp variables
-!     &  '    ST2AC    AC2ST    AC2LA    LA2AC',
-!     &  '    FRRT1    FRRT2    FRRT3    FRRT4    FRRT5',
-!     &  '   PSOLR1   PSOLR2   PSOLR3   PSOLR4   PSOLR5',
-!     &  '   PSOLN1   PSOLN2   PSOLN3   PSOLN4   PSOLN5',
-!     &  '   PLABR1   PLABR2   PLABR3   PLABR4   PLABR5',
-!     &  '   PLABN1   PLABN2   PLABN3   PLABN4   PLABN5',
-!     &  '  SPSOLR1  SPSOLR2  SPSOLR3  SPSOLR4  SPSOLR5',
-!     &  '  SPSOLN1  SPSOLN2  SPSOLN3  SPSOLN4  SPSOLN5',
-!     &  '  SPLABR1  SPLABR2  SPLABR3  SPLABR4  SPLABR5',
-!     &  '  SPLABN1  SPLABN2  SPLABN3  SPLABN4  SPLABN5')
          END IF   ! VSH
       ENDIF
 
@@ -232,12 +221,6 @@ C-----------------------------------------------------------------------
      &    CumFertP, CMinerP, CImmobP, CumUptakeP,
      &    SPi_AVAIL(1:5), PUptake(1:5),   !,
      &    PiLabile(1:5)
-!!       Temp variables:
-!     &    ProfSta2Act, ProfAct2Sta, ProfAct2Lab, ProfLab2Act, 
-!     &    (FracRts(L),L=1,5), (PiSolRts(L),L=1,5), (PiSolNoRts(L),L=1,5)
-!     &   ,(PiLabRts(L),L=1,5), (PiLabNoRts(L),L=1,5),
-!     &    (SPiSolRts(L),L=1,5), (SPiSolNoRts(L),L=1,5)
-!     &   ,(SPiLabRts(L),L=1,5), (SPiLabNoRts(L),L=1,5)
   300   FORMAT(1X,I4,1X,I3.3,1X,I5,
      &    F9.1, 2F9.3, 3F9.1, F9.1, 3F9.2, 10F9.3, 5F9.2)
         END IF   ! VSH
@@ -290,12 +273,6 @@ C-----------------------------------------------------------------------
 !    &    SPiLabRtsProf, SPiLabNoRtsProf, SPiSolRtsProf,SPiSolNoRtsProf,
      &    CumFertP, CMinerP, CImmobP, CumUptakeP,
      &    SPi_AVAIL(1:5), PUptake(1:5)  !,
-!!       Temp variables:
-!     &    ProfSta2Act, ProfAct2Sta, ProfAct2Lab, ProfLab2Act, 
-!     &    (FracRts(L),L=1,5), (PiSolRts(L),L=1,5), (PiSolNoRts(L),L=1,5)
-!     &   ,(PiLabRts(L),L=1,5), (PiLabNoRts(L),L=1,5),
-!     &    (SPiSolRts(L),L=1,5), (SPiSolNoRts(L),L=1,5)
-!     &   ,(SPiLabRts(L),L=1,5), (SPiLabNoRts(L),L=1,5)
           END IF   ! VSH
         ENDIF
 

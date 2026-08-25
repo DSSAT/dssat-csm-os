@@ -830,6 +830,8 @@ C         recruit (NREQ-N CONC) g of N
         TFPOOL(3) = TFPOOL(3) + FPOOL(L,3)
       ENDDO
 
+      CALL PUT('ORGC','TSOMC',TSOMC)
+
 !     Sum up all the residues that were not incorporated 
       IF (DltSRF > 1.E-6) THEN
         Mulch % Mulch_AM = (Mulch % Mulch_AM * Mulch % MulchMass 

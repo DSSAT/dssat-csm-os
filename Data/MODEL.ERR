@@ -607,6 +607,9 @@ Soil input section not found.  Please correct file.
 IPSOIL   29
 File not found.  Please check soil profile name or create file.
 
+IPSOIL   98
+Tab detected in the soil profile. Please correct input file.
+
 IPTILL    2
 Tillage input level not found. Please correct input file.
 
@@ -697,6 +700,9 @@ File not found.  Please check file name or create file.
 IPWTH    30
 Error opening file.
 
+IPWTH    98
+Tab detected in the weather file. Please correct input file.
+
 IPASCE    1
 Error reading species parameters for evapotranspiration.
 
@@ -705,6 +711,12 @@ Incompatibility between Century SOM method and flooded field management.
 
 LAND      2
 Planting date is defined prior to the start of simulation date.
+
+LTGROW   10
+Percent Lint (PCTLT) missing in the Ecotype file. Please correct file. 
+
+LTGROW   11
+Percent Lint (PCTLT) out of range. Range is from 25 to 60. Please correct file.
 
 MODELN    1
 Error opening file. Please check file.
@@ -832,25 +844,28 @@ Insufficient soil P data provided.  Program will stop.
 SWCROP    1
 Error in Crop entry.  Fix entry or batch file.
 
-SWFERT   1
+SWFERT    1
 Error in Fertilizer Sensitivity Analysis Selection.  Fix entry or batch file.
 
-SWFIX    1
+SWFIX     1
 Error in Fertilizer Sensitivity Analysis Selection.  Fix entry or batch file.
 
-SWINSC   1
+SWINSC    1
 Error in Initial Soil Sensitivity Analysis Selection.  Fix entry or batch file.
 
-SWIRR    1
+SWIRR     1
 Error in Irrigation Sensitivity Analysis Selection.  Fix entry or batch file.
 
-SWWTH    1
+SWWTH     1
 Error in Weather Sensitivity Analysis Selection.  Fix entry or batch file.
 
 TILLAG  29
 Tillage operations file not found.
 
-WEATHR   1
+TILLAG    4
+Tillage implement is not defined or missing. Please correct input file.
+
+WEATHR    1
 Weather method selected not available.  Please fix input file.
 
 WTHMOD    1
@@ -929,65 +944,65 @@ GENERI   75
 Array size exceeded.
 
 
-MAKEFW    1
+Y4KWTH    1
 Field level not found. Please correct input file.
 
-MAKEFW    2
+Y4KWTH    2
 Field input section not found. Please add to input file.
 
-MAKEFW    3
+Y4KWTH    3
 Weather station input is missing. Please add to input file.
 
-MAKEFW    4
+Y4KWTH    4
 Error in weather station input. Correct input file.
 
 
-MAKEFW    5
+Y4KWTH    5
 Simulation Controls level not found. Please correct input file.
 
-MAKEFW    6
+Y4KWTH    6
 Simulation Controls section not found. Please add to input file.
 
-MAKEFW    7
+Y4KWTH    7
 Start simulation date input is missing. Please add to input file.
 
-MAKEFW    8
+Y4KWTH    8
 Error in Start simulation date input. Correct input file.
 
 
-MAKEFW    9
+Y4KWTH    9
 Weather method section not found. Please add to input file.
 
-MAKEFW   10
+Y4KWTH   10
 Weather method input is missing. Please add to input file.
 
-MAKEFW   11
+Y4KWTH   11
 Error in weather method input. Correct input file.
 
 
-MAKEFW   12
+Y4KWTH   12
 Planting input section not found. Please add to input file.
 
-MAKEFW   13
+Y4KWTH   13
 Planting input is missing. Please add to input file.
 
-MAKEFW   14
+Y4KWTH   14
 Error in planting date input. Correct input file.
 
 
-MAKEFW   15
+Y4KWTH   15
 Start simulation date or planting date missing. Correct input file.
 
-MAKEFW   16
+Y4KWTH   16
 Incorrect weather method option selected.  Correct input file.
 
-MAKEFW   17
+Y4KWTH   17
 Error in weather date input. Correct input file.
 
-MAKEFW   18
+Y4KWTH   18
 Weather file not found.  Please check file name or create file.
 
-MAKEFW   19
+Y4KWTH   19
 Start simulation date is lower than first weather date.
 
 Y4KDOY    1
@@ -995,3 +1010,9 @@ Input date is greather than 99 years after start simulation date.
 
 FORCST    1
 Forecast date is before start of simulation date.
+
+TRANS     1
+VPD sensitivity parameter PHSV missing for EVAPO method H.
+
+TRANS     2
+VPD threshold parameter PHTV missing for EVAPO method H.

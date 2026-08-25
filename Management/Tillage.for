@@ -29,7 +29,7 @@ C-----------------------------------------------------------------------
       CHARACTER*1 ISWTIL, RNMODE, BLANK
       PARAMETER (BLANK=' ')
       CHARACTER*6 SECTION
-      CHARACTER*7,  PARAMETER :: ERRKEY = 'TILLAGE'
+      CHARACTER*6,  PARAMETER :: ERRKEY = 'TILLAG'
       CHARACTER*12 FILETL
       CHARACTER*12 NAMEF
       CHARACTER*30 FILEIO
@@ -81,6 +81,10 @@ C-----------------------------------------------------------------------
       IF (INDEX('YR',ISWTIL) > 0) THEN
 
       FILETL = 'TILOP' // ModelVerTxt // '.SDA'
+
+      TILLDATE = -99
+      TILOP = "-99"
+      TDEP = -99.
 
 C-----------------------------------------------------------------------
 C     Read FILEIO
@@ -167,7 +171,21 @@ C-----------------------------------------------------------------------
 
           READLOOP: DO WHILE (.TRUE.)    !.NOT. EOF(LUNTIL)
             CALL IGNORE(LUNTIL, LNUM, ISECT, CHAR)
-            IF (ISECT == 0) EXIT READLOOP
+
+!           Specified tillage operation not found
+            IF (ISECT == 0) THEN
+              MSG(1) = 
+     &          "Tillage operation: " // TILOP(I) // " not found."
+              MSG(2) = "File: " // TRIM(TILFILE)
+              MSG(3) = 
+     &    "You can edit the file to add the missing tillage operation,"
+              MSG(4) = 
+     &       "  or choose an existing tillage operation from the file."
+              MSG(5) = "Program will stop."
+              CALL WARNING(5,ERRKEY,MSG)
+              CALL ERROR (ERRKEY,4,FILETL,LNUM)
+            ENDIF
+
             IF (CHAR(2:6) .EQ. TILOP(I)) THEN
               READ(CHAR,'(7X,A32)') TIL_DESC(I)
 !             Found the right tillage operation, read after-tillage

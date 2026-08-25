@@ -209,6 +209,8 @@
 !  0.52   1.0       KEP, EORATIO  ! kjb guar 1/8/22
 !  0.68   1.1       KEP, EORATIO
 !  0.72   1.1       KEP, EORATIO
+  0.50  1.10       SSKC, SKCBmax ASCE short ref (12 cm grass)
+  0.50  0.95       TSKC, TKCBmax ASCE tall ref (50 cm alfalfa)
 
 *PHOSPHORUS CONTENT
 ! Two options for Optimum and minimum P concentrations for shoots: 

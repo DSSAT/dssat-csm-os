@@ -4,7 +4,7 @@
 # Define the project and the dependencies that it has
 ##########################################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
    message(FATAL_ERROR "DSSAT in-source builds are not permitted. \nMake a separate folder"
@@ -21,8 +21,8 @@ PROJECT(DSSAT-CSM Fortran CXX)
 
 SET(MAJOR 4)
 SET(MINOR 8)
-SET(MODEL 2)
-SET(BUILD 1)
+SET(MODEL 5)
+SET(BUILD 32)
 
 # Get the current working branch
 execute_process(
@@ -141,6 +141,7 @@ set(
         "InputModule/COMIBS.blk"
         "InputModule/COMSOI.blk"
         "InputModule/COMSWI.blk"
+        "InputModule/CY4KWTH.f90"
         "InputModule/input_sub.for"
         "InputModule/INSOIL.for"
         "InputModule/INSTGE.for"
@@ -156,13 +157,13 @@ set(
         "InputModule/IPSOIL_Inp.for"
         "InputModule/IPTILL.for"
         "InputModule/IPVAR.for"
-        "InputModule/MAKEFILEW.f90"
         "InputModule/OPGEN.for"
         "InputModule/OPHEAD.for"
         "InputModule/OPTEMPXY2K.for"
         "InputModule/optempy2k.for"
         "InputModule/PATH.for"
         "InputModule/WEATHR_Inp.for"
+        "InputModule/WTHFDIR.for"
         "InputModule/WTHSET.for"
         "InputModule/SECLI.for"
         "InputModule/SECROP.for"
@@ -342,6 +343,7 @@ set(
         "Plant/CROPGRO/INCOMP.for"
         "Plant/CROPGRO/Ipphenol.for"
         "Plant/CROPGRO/IPPLNT.for"
+        "Plant/CROPGRO/LTGROW.for"
         "Plant/CROPGRO/MOBIL.for"
         "Plant/CROPGRO/NFIX.for"
         "Plant/CROPGRO/NUPTAK.for"
@@ -622,6 +624,7 @@ set(
         "Soil/SoilUtilities/TextureClass.for"
         "Soil/SoilWater/CapFringe.f90"
         "Soil/SoilWater/INFIL.for"
+        "Soil/SoilWater/OPSWBL.for"
         "Soil/SoilWater/OPWBAL.for"
         "Soil/SoilWater/RETC_VG.for"
         "Soil/SoilWater/RNOFF.for"
@@ -647,6 +650,7 @@ set(
         "SPAM/TRANS.for"
         "Weather/CO2VAL.for"
         "Weather/HMET.for"
+        "Weather/HR2DLY.for"
         "Weather/IPWTH_alt.for"
         "Weather/OPWEATH.for"
         "Weather/ModForecast.f90"
@@ -660,7 +664,9 @@ set(
     CXX_SRC_LIST
         "FlexibleIO/Data/FlexibleIO.cpp" 
         "FlexibleIO/Interface/CInterface.cpp"
-        "FlexibleIO/Input/InputWeather.cpp" 
+        "FlexibleIO/Input/IPWTHDCSV.cpp"
+        "FlexibleIO/Input/IPWTHDTXT.cpp" 
+        "FlexibleIO/Input/IPWTHHTXT.cpp"
 
 )
 
@@ -693,10 +699,13 @@ install(DIRECTORY Data/ DESTINATION .
 # Resume information about flags and option used #
 ##################################################
 
+message( "   SYSTEM             ${CMAKE_SYSTEM_NAME}")
 message( "-- Flags" )
 message( "   FORTRAN FLAGS      ${CMAKE_Fortran_FLAGS}" )
 message( "   FORTRAN RELEASE    ${CMAKE_Fortran_FLAGS_RELEASE}" )
 message( "   FORTRAN DEBUG      ${CMAKE_Fortran_FLAGS_DEBUG}" )
+message( "   LINKER RELEASE     ${CMAKE_EXE_LINKER_FLAGS}")
+message( "   LINKER DEBUG       ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 message( "   CXX FLAGS        ${CMAKE_CXX_FLAGS}" )
 message( "   CXX RELEASE      ${CMAKE_CXX_FLAGS_RELEASE}" )
 message( "   CXX DEBUG        ${CMAKE_CXX_FLAGS_DEBUG}" )

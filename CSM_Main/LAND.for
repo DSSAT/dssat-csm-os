@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2023
+C COPYRIGHT 1998-2025
 C                     DSSAT Foundation
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -108,7 +108,7 @@ C-----------------------------------------------------------------------
       TYPE (OrgMatAppType)OMAData      !Organic matter application
 
 C-----------------------------------------------------------------------
-!!     Temporary timer function
+!!     Timer function
 !!     Date / time variables
 !      INTEGER DATE_TIME(8)
 !!      date_time(1)  The 4-digit year  
@@ -143,8 +143,8 @@ C     Run Initialization - Called once per simulation
 C***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 C-----------------------------------------------------------------------
-!!     Temporary timer function
-!      !Get initial time
+!!     Timer function
+!!     Get initial time
 !      CALL DATE_AND_TIME (VALUES=DATE_TIME)
 !!     Convert time to seconds
 !      TIME0 = DATE_TIME(7) 
@@ -504,7 +504,7 @@ C     Call end of season and summary output subroutines
 C-----------------------------------------------------------------------
       CALL OPSUM (CONTROL, ISWITCH, YRPLT)
 
-!!     Temporary timer function
+!!     Timer function
 !      CALL DATE_AND_TIME (VALUES=DATE_TIME)
 !      
 !!     Convert time to seconds
@@ -547,7 +547,7 @@ C***********************************************************************
      &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
      &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
 
-!!     Temporary timer function
+!!     Timer function
 !      CALL DATE_AND_TIME (VALUES=DATE_TIME)
 !      
 !!     Convert time to seconds

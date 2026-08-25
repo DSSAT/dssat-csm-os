@@ -40,7 +40,7 @@
 !             P/G/N:Phenology/Growth/Not used for calbration
 !
 @VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
-!Coeffient #                             1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    14    17    18
+!Coefficient #                           1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    14    17    18
 !Calibration                             N     N     P     N     P     P     N     G     G     G     N     G     G     G     N     N     N     N
 999991 MINIMA               . DFAULT 12.00  0.01  29.0  10.0  12.0 40.00 25.00  0.95  170.  250.  0.01 0.018  15.0  2.05  20.0  78.0  .115  .035
 999992 MAXIMA               . DFAULT 23.00  0.20  45.0  10.0  18.0 54.00 75.00  1.50  300.  300.  0.75 0.020  40.0  2.05  20.0  78.0  .153  .035

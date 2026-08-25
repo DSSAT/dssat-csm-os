@@ -3,7 +3,7 @@
 ! lines 6134 - 8983.
 !**********************************************************************
 
-      SUBROUTINE CER_Output (LAI, CANHT, CN, DOY,
+      SUBROUTINE CER_Output (OLAB, LAI, CANHT, CN, DOY,
      &     DYNAMIC, EOP, IDETG, IDETL, IDETO, IDETS,
      &     ISWNIT, ISWWAT, NFP, ON, REP,
      &     RLV, RN, RNMODE, RUN, RUNI, SN, STEP, STGDOY,
@@ -20,13 +20,15 @@
         EXTERNAL YR_DOY, GETLUN, SUMVALS, HEADER, TVILENT, TVICOLNM, 
      &    TL10FROMI, LTRIM, CSTIMDIF, CSOPLINE, CALENDAR, DAPCALC, 
      &    LTRIM2, AREADR, AREADI, CSYDOY, GETSTRI, CSCLEAR5, GETSTR, 
-     &    GETSTRR
+     &    GETSTRR, TIMDIF, READA_Y4K, READA_Dates
         SAVE
         
         INTEGER CN, DOY, DYNAMIC, ON, REP, RN !NLAYR
         INTEGER RUN, RUNI, SN, STGDOY(20), TN, YEAR
-        INTEGER CSTIMDIF, STEP
+        INTEGER CSTIMDIF, STEP, TRT_ROT
         INTEGER TVICOLNM, TVILENT, CSYDOY, DAPCALC
+        INTEGER IFLR, IJDAT, SEDAT, LFDAT, IADAT, ITDAT, IGS059
+        INTEGER IDDAT, IEDT, IMAT, ISENS
         
         REAL LAI, CANHT, NFP, RLV(20) !, RAIN
         REAL EOP !CO2, UNH4ALG(20), UNO3ALG(20), 
@@ -35,6 +37,14 @@
         CHARACTER(LEN=1) IDETG, IDETL, IDETO, IDETS, ISWNIT, ISWWAT 
         CHARACTER(LEN=1) RNMODE     
         CHARACTER(LEN=10) TL10FROMI
+        
+        CHARACTER*6, DIMENSION(EvaluateNum) :: OLAB, OLAP
+        CHARACTER*12 X(EvaluateNum), FILEA_NAME
+        CHARACTER*80 PATHEX
+        
+        TYPE (ControlType) CONTROL
+        
+        OLAP = OLAB
         
         IF (YEARDOY.GE.YEARPLT .AND. STEP.EQ.STEPNUM) THEN             
           ! General file header
@@ -437,12 +447,12 @@
           IF (STGDOY(11).EQ.YEARDOY .OR.
      &     DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
      
-            IF (DYNAMIC.EQ.SEASEND) THEN
+!            IF (DYNAMIC.EQ.SEASEND) THEN
 !              WRITE (fnumwrk,*)' '
 !              WRITE (fnumwrk,'(A46,A25)')
 !     &         ' RUN TERMINATED PREMATURELY (PROBABLY BECAUSE ',
 !     &         'OF MISSING WEATHER DATA) '
-            ENDIF
+!            ENDIF
             
 !            WRITE(fnumwrk,*)' '
 !            WRITE(fnumwrk,'(A17,I2)')' CROP COMPONENT: ',CN
@@ -651,7 +661,7 @@
             
 !            WRITE (fnumwrk,*) ' '
 
-            IF (DYNAMIC.EQ.SEASEND) THEN
+            IF (DYNAMIC.EQ.SEASEND .AND. IHARI.EQ.'M') THEN
             
 !              WRITE(fnumwrk,*)  'WRITING END OF RUN OUTPUTS     '
 
@@ -1014,82 +1024,248 @@
             IF (.not.FEXISTA) THEN
 !              WRITE (fnumwrk,*) 'A-file not found!'
             ELSE
-!              WRITE (fnumwrk,*) 'A-file found: ',filea(1:60)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'GWAM',gwamm)
-              IF (gwamm.LE.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HWAM',gwamm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HWAH',hwahm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HWUM',gwumm)
-              IF (gwumm.le.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'GWUM',gwumm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LAIX',laixm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CWAM',cwamm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'BWAH',vwamm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CWAA',cwaam)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'T#AM',tnumamm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'H#AM',hnumamm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'H#UM',hnumgmm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'L#SM',lnumsmm)
-            
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CNAM',cnamm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'VNAM',vnamm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CNAA',cnaam)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'GNAM',gnamm)
-              IF (gnamm.LE.0.0) 
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HNAM',gnamm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LN%A',lnpcam)
-              IF (lnpcam.LE.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LNCA',lnpcam)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'GN%M',gnpcmm)
-              IF (gnpcmm.LE.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'GNCM',gnpcmm)
-              IF (gnpcmm.LE.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HN%M',gnpcmm)
-              IF (gnpcmm.LE.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HNCM',gnpcmm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'VN%M',vnpcmm)
-              IF (vnpcmm.le.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'VN%D',vnpcmm)
-              IF (vnpcmm.le.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'VNCD',vnpcmm)
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'L#SM',lnumsmm)
-              IF (lnumsmm.le.0.0)
-     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LNOSM',lnumsmm)
-            
-              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HIAM',hiamm)
+
+              IF (INDEX('FQ',RNMODE) > 0) THEN
+                TRT_ROT = CONTROL % ROTNUM
+              ELSE
+                TRT_ROT = TN
+              ENDIF
+!             READA_Y4K needs fileA name only. FILEA variable contains
+!             the entire path to the file.
+              FILEA_NAME = EXCODE(1:8)//'.'//EXCODE(9:10)//'A'
+              !XREADT sets fileadir to "-99" instead of empty string
+              IF(FILEADIR .NE. "-99") PATHEX = FILEADIR
+              CALL READA_Y4K(FILEA_NAME, PATHEX,OLAB, TRT_ROT, 
+     &              YEARSIM, X)
+             
+              CALL READA_Dates(X(1), YEARSIM, IFLR)
+              IF (IFLR .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                adapm = CSTIMDIF(YEARPLT,IFLR)
+              ELSE
+                adapm  = -99
+              ENDIF
+              
+              CALL READA_Dates(X(2), YEARSIM, IMAT)
+              IF (IMAT .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                mdatm = CSTIMDIF(YEARPLT,IMAT)
+              ELSE
+                mdatm  = -99
+              ENDIF              
+                            
+              IF(X(3) .NE. "   -99") THEN
+                READ(X(3), '(F12.0)') gwamm
+              ELSE
+                gwamm = -99
+              ENDIF
+
+              IF(X(4) .NE. "   -99") THEN
+                READ(X(4), '(F12.0)') hnumamm
+              ELSE
+                hnumamm = -99
+              ENDIF
+
+              IF(X(5) .NE. "   -99") THEN
+                READ(X(5), '(F12.0)') gwumm
+              ELSE
+                gwumm = -99
+              ENDIF
+
+              IF(X(6) .NE. "   -99") THEN
+                READ(X(6), '(F12.0)') hnumgmm
+              ELSE
+                hnumgmm = -99
+              ENDIF
+
+              IF(X(7) .NE. "   -99") THEN
+                READ(X(7), '(F12.0)') cwamm
+              ELSE
+                cwamm = -99
+              ENDIF
+
+              IF(X(8) .NE. "   -99") THEN
+                READ(X(8), '(F12.0)') laixm
+              ELSE
+                laixm = -99
+              ENDIF
+
+              IF(X(9) .NE. "   -99") THEN
+                READ(X(9), '(F12.0)') hiamm
+              ELSE
+                hiamm = -99
+              ENDIF
+
+              IF(X(10) .NE. "   -99") THEN
+                READ(X(10), '(F12.0)') gnamm
+              ELSE
+                gnamm = -99
+              ENDIF
+
+              IF(X(11) .NE. "   -99") THEN
+                READ(X(11), '(F12.0)') cnamm
+              ELSE
+                cnamm = -99
+              ENDIF
+
+              IF(X(12) .NE. "   -99") THEN
+                READ(X(12), '(F12.0)') gnpcmm
+              ELSE
+                gnpcmm = -99
+              ENDIF
+
+              IF(X(13) .NE. "   -99") THEN
+                READ(X(13), '(F12.0)') cwaam
+              ELSE
+                cwaam = -99
+              ENDIF
+
+              IF(X(14) .NE. "   -99" .AND. adapm .LE. 0.0) THEN
+                READ(X(14), '(F12.0)') cnamm
+              ENDIF
+
+              IF(X(15) .NE. "   -99") THEN
+                READ(X(15), '(F12.0)') lnumsmm
+              ELSE
+                lnumsmm = -99
+              ENDIF
+
+              CALL READA_Dates(X(16), YEARSIM, IEDT)
+              IF (IEDT .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                edatm = CSTIMDIF(YEARPLT,IEDT)
+              ELSE
+                edatm  = -99
+              ENDIF              
+              IF(X(17) .NE. "   -99") THEN
+                READ(X(17), '(F12.0)') hwahm
+              ELSE
+                hwahm = -99
+              ENDIF
+
+              IF(X(18) .NE. "   -99" .AND. gwumm .LE. 0.0) THEN
+                READ(X(18), '(F12.0)') gwumm
+              ENDIF
+
+              IF(X(19) .NE. "   -99") THEN
+                READ(X(19), '(F12.0)') vwamm
+              ELSE
+                vwamm = -99
+              ENDIF
+
+              IF(X(20) .NE. "   -99") THEN
+                READ(X(20), '(F12.0)') tnumamm
+              ELSE
+                tnumamm = -99
+              ENDIF
+
+              IF(X(21) .NE. "   -99") THEN
+                READ(X(21), '(F12.0)') vnamm
+              ELSE
+                vnamm = -99
+              ENDIF
+
+              IF(X(22) .NE. "   -99") THEN
+                READ(X(22), '(F12.0)') lnpcam
+              ELSE
+                lnpcam = -99
+              ENDIF
+
+              IF(X(23) .NE. "   -99") THEN
+                READ(X(23), '(F12.0)') gnpcmm
+              ELSE
+                gnpcmm = -99
+              ENDIF
+
+              IF(X(24) .NE. "   -99") THEN
+                READ(X(24), '(F12.0)') vnpcmm
+              ELSE
+                vnpcmm = -99
+              ENDIF
+
+              IF(X(25) .NE. "   -99") THEN
+                READ(X(25), '(F12.0)') vnpcmm
+              ELSE
+                vnpcmm = -99
+              ENDIF
+
+              IF(X(26) .NE. "   -99") THEN
+                READ(X(26), '(F12.0)') vnpcmm
+              ELSE
+                vnpcmm = -99
+              ENDIF
+
+              IF(X(27) .NE. "   -99") THEN
+                READ(X(27), '(F12.0)') lnumsmm
+              ELSE
+                lnumsmm = -99
+              ENDIF            
+
+              CALL READA_Dates(X(28), YEARSIM, IDDAT)
+              IF (IDDAT .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                drdatm = CSTIMDIF(YEARPLT,IDDAT)
+              ELSE
+                drdatm  = -99
+              ENDIF
+
+              CALL READA_Dates(X(29), YEARSIM, ITDAT)
+              IF (ITDAT .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                tsdatm = CSTIMDIF(YEARPLT,ITDAT)
+              ELSE
+                tsdatm  = -99
+              ENDIF
+
+              CALL READA_Dates(X(30), YEARSIM, IADAT)
+              IF (IADAT .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                a1datm = CSTIMDIF(YEARPLT,IADAT)
+              ELSE
+                a1datm  = -99
+              ENDIF
+
+              CALL READA_Dates(X(31), YEARSIM, LFDAT)
+              IF (LFDAT .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                lldatm = CSTIMDIF(YEARPLT,LFDAT)
+              ELSE
+                lldatm  = -99
+              ENDIF
+
+              CALL READA_Dates(X(32), YEARSIM, SEDAT)
+              IF (SEDAT .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                spdatm = CSTIMDIF(YEARPLT,SEDAT)
+              ELSE
+                spdatm  = -99
+              ENDIF
+
+              CALL READA_Dates(X(33), YEARSIM, IJDAT)
+              IF (IJDAT .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0) THEN
+                jdatm = CSTIMDIF(YEARPLT,IJDAT)
+              ELSE
+                jdatm  = -99
+              ENDIF
+
+              CALL READA_Dates(X(34), YEARSIM, IGS059)
+              IF (IGS059 .GT. 0 .AND. IPLTI .EQ. 'R' 
+     &            .AND. ISENS .EQ. 0 .AND. adapm .LE. 0.0) THEN
+                !2 days after GS59 -- according to original code
+                adatm = CSTIMDIF(YEARPLT,IGS059 + 2) 
+              ELSE
+                adatm  = -99
+              ENDIF
+              
               IF (HIAMM.GE.1.0) HIAMM = HIAMM/100.0
-            
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'EDAT',edatm)
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'DRDAT',drdatm)
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'TSDAT',tsdatm)
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'A1DAT',a1datm)
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'LLDAT',lldatm)
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'SPDAT',spdatm)
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'ADAT',adatm)
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'JDAT',jdatm)
-              IF (ADATM.LE.0) THEN
-                CALL AREADI (FILEA,TN,RN,SN,ON,CN,'GS059',adatm)
-                IF (ADATM.GT.0) THEN
-                  ADATM = ADATM + 2
-!                  WRITE (fnumwrk,*) 'WARNING  ADAT = GS059 + 2'
-                ENDIF
-              ENDIF
-              IF (ADATM.LE.0) THEN
-                CALL AREADI (FILEA,TN,RN,SN,ON,CN,'ADAY',adaym)
-                CALL AREADI (FILEA,TN,RN,SN,ON,CN,'YEAR',ayearm)
-                ADATM = CSYDOY(AYEARM,ADAYM)
-              ENDIF
-              CALL AREADI (FILEA,TN,RN,SN,ON,CN,'MDAT',mdatm)
-              IF (MDATM.LE.0) THEN
-                CALL AREADI (FILEA,TN,RN,SN,ON,CN,'MDAY',mdaym)
-                CALL AREADI (FILEA,TN,RN,SN,ON,CN,'YEAR',myearm)
-                MDATM = CSYDOY(MYEARM,MDAYM)
-              ENDIF
+
             ENDIF
             
             ! If nothing in A-file,use X-file
-            IF (EDATM.LE.0) edatm = emdatm   
-            
+            IF (EDATM.LE.0 .AND. emdatm .GT. 0) THEN
+              edatm = CSTIMDIF(YEARPLT,emdatm)
+            ENDIF
             ! END OF A-FILE READS
             
 !-----------------------------------------------------------------------
@@ -1505,9 +1681,9 @@
             ELSE
               EDAP = -99
               stgdoy(9) = -99
-            ENDIF  
+            ENDIF
             IF (edatm.GT.0) THEN
-             edapm = Dapcalc(edatm,plyear,plday)
+             edapm = edatm
             ELSE
              edapm = -99
             ENDIF 
@@ -1515,9 +1691,9 @@
               drdap = Dapcalc(drdat,plyear,plday)
             ELSE
              drdap = -99
-            ENDIF  
+            ENDIF
             IF (drdatm.GT.0) THEN
-             drdapm = Dapcalc(drdatm,plyear,plday)
+             drdapm = drdatm
             ELSE
              drdapm = -99
             ENDIF 
@@ -1525,9 +1701,9 @@
               tsdap = Dapcalc(tsdat,plyear,plday)
             ELSE
              tsdap = -99
-            ENDIF  
+            ENDIF
             IF (tsdatm.GT.0) THEN
-             tsdapm = Dapcalc(tsdatm,plyear,plday)
+             tsdapm = tsdatm
             ELSE
              tsdapm = -99
             ENDIF 
@@ -1535,9 +1711,9 @@
               jdap = Dapcalc(jdat,plyear,plday)
             ELSE
              jdap = -99
-            ENDIF  
+            ENDIF
             IF (jdatm.GT.0) THEN
-             jdapm = Dapcalc(jdatm,plyear,plday)
+             jdapm = jdatm
             ELSE
              jdapm = -99
             ENDIF 
@@ -1545,24 +1721,19 @@
               adap = Dapcalc(adat,plyear,plday)
             ELSE
               adap = -99
-            ENDIF  
-            IF (adatm.GT.0) THEN
-              adapm = Dapcalc(adatm,plyear,plday)
-            ELSE
-              adapm = -99
-            ENDIF  
+            ENDIF
+            IF (adatm.GT.0) adapm = adatm
             IF (stgdoy(5).LT.9999999) THEN 
               mdap = Dapcalc(stgdoy(5),plyear,plday)
             ELSE 
               mdap = -99
               stgdoy(5) = -99
-            ENDIF     
+            ENDIF
             IF (mdatm.GT.0) THEN
-              mdapm = Dapcalc(mdatm,plyear,plday)
+              mdapm = mdatm
             ELSE
               mdapm = -99 
             ENDIF
-            
 !-----------------------------------------------------------------------
             
             ! SCREEN WRITES FOR DSSAT IN SENSITIVITY RNMODE

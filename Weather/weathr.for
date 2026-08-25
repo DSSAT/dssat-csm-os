@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2021 DSSAT Foundation
+C  COPYRIGHT 1998-2025 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                     
@@ -164,7 +164,8 @@ C=======================================================================
 
 !       Initialize read from file for 'M', 'G' weather options and also for
 !         RNMODE = 'Y' (yield forecast mode) regardless of weather option
-        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G')THEN
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' .OR.
+     &      MEWTH .EQ. 'H' .OR. MEWTH .EQ. 'C')THEN
           CALL IPWTH(CONTROL2, ERRKEY,
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
@@ -227,7 +228,7 @@ C         message to the WARNING.OUT file.
      &   ('Value of TAV, average annual soil temperature, is missing.')
   110 FORMAT('Value of TAMP, amplitude of soil temperature function,',
      &            ' is missing.')
-  120 FORMAT('A default value of', F5.1, 'ºC is being used for this',
+  120 FORMAT('A default value of', F5.1, 'ï¿½C is being used for this',
      &            ' simulation,')
   130 FORMAT('which may produce undesirable results.')
 
@@ -294,10 +295,10 @@ c                   available.
       ENDIF
 
 C     Calculate hourly weather data.
-      CALL HMET(
+      CALL HMET(YRDOY,
      &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
      &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
-     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
+     &    TMIN, WINDHT, WINDSP, XLAT, MEWTH,              !Input
      &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
      &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
      &    TGROAV, TGRODY, WINDHR)                         !Output
@@ -342,7 +343,8 @@ C     Compute daily normal temperature.
 !       Get weather data by normal means    
 !-----------------------------------------------------------------------
 C       Read new weather record.
-        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' ) THEN
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' .OR.
+     &      MEWTH .EQ. 'H' .OR. MEWTH .EQ. 'C')THEN
           CALL IPWTH(CONTROL2, ERRKEY,
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
@@ -427,11 +429,14 @@ c                   available.
           NOTDEW = .FALSE.
       ENDIF      
       
+!     Cumulative weather data
+      WEATHER % CPRED  = WEATHER % CPRED + RAIN
+            
 C     Calculate hourly weather data.
-      CALL HMET(
+      CALL HMET(YRDOY,
      &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
      &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
-     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
+     &    TMIN, WINDHT, WINDSP, XLAT, MEWTH,              !Input
      &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
      &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
      &    TGROAV, TGRODY, WINDHR)                         !Output
@@ -458,7 +463,8 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
-      IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
+        IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' .OR.
+     &      MEWTH .EQ. 'H' .OR. MEWTH .EQ. 'C')THEN
         CALL IPWTH(CONTROL, ERRKEY,
      &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
      &    MEWTH, OZON7, PAR,                              !Output
@@ -585,19 +591,19 @@ C-----------------------------------------------------------------------
 ! SNDN       Time of sunset (hr)
 ! SNUP       Time of sunrise (hr)
 ! SRAD       Solar radiation (MJ/m2-d)
-! TAIRHR(TS) Hourly air temperature (in some routines called TGRO) (°C)
+! TAIRHR(TS) Hourly air temperature (in some routines called TGRO) (ï¿½C)
 ! TAMP       Amplitude of temperature function used to calculate soil 
-!              temperatures (°C)
+!              temperatures (ï¿½C)
 ! TAV        Average annual soil temperature, used with TAMP to calculate 
-!              soil temperature. (°C)
-! TAVG       Average daily temperature (°C)
-! TDAY       Average temperature during daylight hours (°C)
-! TDEW       Dewpoint temperature (°C)
-! TGRO(I)    Hourly air temperature (°C)
-! TGROAV     Average daily canopy temperature (°C)
-! TGRODY     Average temperature during daylight hours (°C)
-! TMAX       Maximum daily temperature (°C)
-! TMIN       Minimum daily temperature (°C)
+!              soil temperature. (ï¿½C)
+! TAVG       Average daily temperature (ï¿½C)
+! TDAY       Average temperature during daylight hours (ï¿½C)
+! TDEW       Dewpoint temperature (ï¿½C)
+! TGRO(I)    Hourly air temperature (ï¿½C)
+! TGROAV     Average daily canopy temperature (ï¿½C)
+! TGRODY     Average temperature during daylight hours (ï¿½C)
+! TMAX       Maximum daily temperature (ï¿½C)
+! TMIN       Minimum daily temperature (ï¿½C)
 ! TS         Number of intermediate time steps per day (usually 24)
 !                    set = 240 on 9JAN17 by Bruce Kimball      
 ! WINDHR(TS) Hourly wind speed (m/s)

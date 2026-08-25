@@ -1,0 +1,35 @@
+$BATCH(Rye)
+!
+! Directory    : C:\DSSAT48\Rye
+! Command Line : C:\DSSAT48\DSCSM048.EXE B DSSBatch.v48
+! Crop         : Rye
+! Experiment   : EMSC1701.GGX
+! ExpNo        : 1
+! Debug        : C:\DSSAT48\DSCSM048.EXE " B DSSBatch.v48"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+C:\DSSAT48\Rye\BBPK1301.RYX                                                                       1      1      0      1      0
+C:\DSSAT48\Rye\BBPK1301.RYX                                                                       2      1      0      1      0
+C:\DSSAT48\Rye\BBPK1301.RYX                                                                       3      1      0      1      0
+C:\DSSAT48\Rye\BBPK1301.RYX                                                                       4      1      0      1      0
+C:\DSSAT48\Rye\BBPK1301.RYX                                                                       5      1      0      1      0
+C:\DSSAT48\Rye\BYER1301.RYX                                                                       1      1      0      1      0
+C:\DSSAT48\Rye\BYER1301.RYX                                                                       2      1      0      1      0
+C:\DSSAT48\Rye\BYER1301.RYX                                                                       3      1      0      1      0
+C:\DSSAT48\Rye\BYER1301.RYX                                                                       4      1      0      1      0
+C:\DSSAT48\Rye\BYER1301.RYX                                                                       5      1      0      1      0
+C:\DSSAT48\Rye\JKBG1101.RYX                                                                       1      1      0      1      0
+C:\DSSAT48\Rye\JKBG1101.RYX                                                                       2      1      0      1      0
+C:\DSSAT48\Rye\JKBG1201.RYX                                                                       1      1      0      1      0
+C:\DSSAT48\Rye\JKBG1201.RYX                                                                       2      1      0      1      0
+C:\DSSAT48\Rye\JKBG1201.RYX                                                                       3      1      0      1      0
+C:\DSSAT48\Rye\JKBG1201.RYX                                                                       4      1      0      1      0
+C:\DSSAT48\Rye\JKBG1301.RYX                                                                       1      1      0      1      0
+C:\DSSAT48\Rye\JKBG1301.RYX                                                                       2      1      0      1      0
+C:\DSSAT48\Rye\JKBG1301.RYX                                                                       3      1      0      1      0
+C:\DSSAT48\Rye\JKBG1301.RYX                                                                       4      1      0      1      0
+C:\DSSAT48\Rye\SVTT1001.RYX                                                                       1      1      0      1      0
+C:\DSSAT48\Rye\SVTT1001.RYX                                                                       2      1      0      1      0
+C:\DSSAT48\Rye\SVTT1001.RYX                                                                       3      1      0      1      0
+C:\DSSAT48\Rye\SVTT1001.RYX                                                                       4      1      0      1      0
+C:\DSSAT48\Rye\SVTT1001.RYX                                                                       5      1      0      1      0

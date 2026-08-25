@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.8; 2023-05-11
+! DSSAT v4.8; 2025-05-16
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -49,10 +49,11 @@ CHTA   Canopy height m Canopy height (m)                                        
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
 CO2A   Avg CO2 (ppm)   Average atmospheric CO2 (ppm), planting to harvest       .
-CO2EM  Cum CO2 emitted Cumulative CO2 emitted from soil at maturity (kg[C]/ha)  .
+CO2EM  CO2emi net kg/d Cumulative net CO2 emissions kg[C]/ha                    .
 CPAM   Tops P kg/ha    Tops P at maturity (kg/ha)                               .
+CRST   Sim Status      End of season crop status
 CWAA   Tops wt,anthsis Tops weight at anthesis (kg [dm]/ha)                     .
-CWAM   Tops wt kg/ha   Tops weight at maturity (kg [dm]/ha)                     .
+CWAM   Biomass kg/ha   Biomass at maturity (total crop minus roots) (kg[dm]/ha) .
 DMPEM  DM-ET Prod      Dry matter-ET productivity (kg[DM]/ha/mm[ET])            .
 DMPIM  DM-Irrig Prod   Dry matter-irrigation productivity (kg[DM]/ha/mm[irrig]) .
 DMPPM  DM-Rain Prod    Dry matter-rainfall productivity (kg[DM]/ha/mm[rain])    .
@@ -75,6 +76,7 @@ ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) 
 ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. g       Eye weight (g)                                           .
+EYLDH  Eco. Yld t/ha   Economic Yield (ton/ha)                                  .
 FBWAH  Fr. byproduct   By-product removed during harvest fresh wt (kg/ha)       . 
 FCWAM  Fr tops wt      Fresh tops weight at maturity (kg/ha)                    .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .
@@ -115,7 +117,8 @@ L#SX   Leaf number #   Leaf number per stem, maximum                            
 LAIH   LAI harvest     Leaf area index, at harvest                              .
 LAIX   LAI maximum     Leaf area index, maximum                                 .
 LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      .
-LONG   Longitude °     Longitude (degrees)                                      .
+LINTP  Lint %          Lint Percentage (%)                                      .
+LONG   Longitude o     Longitude (degrees)                                      .
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
@@ -173,8 +176,8 @@ T#AM   Tiller no #/m2  Tiller number at maturity (no/m2)                        
 TDAP   Tuber init day  Tuber initiation day (dap)                               .
 TDAT   Tuber init date Tuber initiation date (YrDoy)                            .
 THAM   Threshing %     Threshing % at maturity                                  .
-TMINA  Minimum temp °C Avg minimum air temperature (°C)                         TMNA
-TMAXA  Maximum temp °C Avg maximum air temperature (°C)                         TMXA
+TMINA  Minimum temp oC Avg minimum air temperature (oC)                         TMNA
+TMAXA  Maximum temp oC Avg maximum air temperature (oC)                         TMXA
 TN%H   Tuber N %       Tuber N at harvest (%)                                   .
 TNAH   Biomass N kg/ha Tuber+stem+leaf N at harvest (kg/ha)                     .
 TNAM   Treatment name  Treatment title                                          .
@@ -188,7 +191,7 @@ VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         
 VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
 WYEAR  Weather year    Year for weather data (for forecast ensembles)           .
-XLAT   Latitude °      Latitude (degrees)                                       .
+XLAT   Latitude o      Latitude (degrees)                                       .
 YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
@@ -214,7 +217,7 @@ CHTCM  Canopy ht, cm   Canopy (forage) height (cm)                              
 CMDMD  Cellulose DM    Stalk cellulose dry mass (t/ha)                          .
 CRAD   Crown weight    Crown weight (kg [dm]/ha)                                .
 CRWAD  Crown weight    Crown weight (kg [dm]/ha)                                .
-CWAD   Tops wt kg/ha   Tops weight (kg [dm]/ha)                                 .
+CWAD   Biomass kg/ha   Total crop weight minus roots (kg [dm]/ha)               .
 CWID   Canopy width m  Canopy width (m;for 1 row)                               .
 CWPD   Tops wt g/pl    Tops weight (g [dm]/pl)                                  .
 CWSI   Water stress    Recovery time-lagged photosynthesis water stress factor  .
@@ -223,8 +226,8 @@ DAS    Days after st   Days after start of simulation (#)                       
 DCCD   Zadoks code     Growth stage (Zadoks code, 1-90)                         .
 DLAID  LAI-dead        Leaf area index, dead leaves                             .
 DLW_1  Dead Lf wt stk1 Dead leaf weight, primary stalk (g[dm]/stk)              .
-DTTC   Cum gr degees   Cumulutive growing degrees (°C)                          .
-DTTD   Grow deg-days   Growing degree days (°C-d/d)                             .
+DTTC   Cum gr degees   Cumulutive growing degrees (oC)                          .
+DTTD   Grow deg-days   Growing degree days (oC-d/d)                             .
 DU     Develpm units   Developmental units  (PVC.d)                             .
 DWTCO  Dead canopy     Dead canopy weight (kg [dm]/ha)                          .
 DWTLO  Dead leaf       Dead leaf weight (kg [dm]/ha)                            .
@@ -331,23 +334,23 @@ SLAD   SLA cm2/g       Specific leaf area (cm2/g)                               
 SLFT   Leaf sen factor Leaf senescence factor due to temperature (0-1)          . 
 SSTKH  Stalk t[dm]/ha  Stalk (structural) dry mass at harvest (t/ha)            .
 STD_1  Stk1+Suc g [dm] Primary stalk dry weight with sucrose (g [dm]/stalk)     .
-STTD   Leaf exp °C-day Sum of heat units, emrg & leaf expansion °C-day TB(1)    .
-STTG   Tillering°C-day Sum of heat units, tillering °C-day TB(2)                .
+STTD   Leaf exp oC-day Sum of heat units, emrg & leaf expansion oC-day TB(1)    .
+STTG   TilleringoC-day Sum of heat units, tillering oC-day TB(2)                .
 SUAD   Sucrose  kg/ha  Sucrose weight (kg [dm]/ha)                              .
 SUGD   Sucker weight   Sucker weight (kg [dm]/ha)                               .
 SUID   Sucrose index   Sucrose harvest index (sucrose/top)                      .
-SUMDTT Sum of GDD (°C) Sum of growing degree days since stage initiation, °C    .
+SUMDTT Sum of GDD (oC) Sum of growing degree days since stage initiation, oC    .
 SUW_1  Sucrose stk 1   Sucrose weight, primary stalk (g /stk)                   .
 SWAD   Stem wt kg/ha   Stem weight (kg [dm]/ha)                                 .
 SWD_1  Stalk 1 g[dm]   Primary stalk dry weight - no sucrose (g [dm]/stalk)     .
 SWF_1  Stalk 1 fresh g Primary stalk fresh weight - with sucrose (g /stalk)     .
 T#AD   Tiller no #/m2  Tiller number (no/m2)                                    .
 T#SD   Leaf tip no     Leaf tip number per stem                                 .
-TCDIF  Temp difference Temperature difference, canopy - air (°C)                .
-TDIF   Temp difference Temperature difference, canopy - air (°C)                .
+TCDIF  Temp difference Temperature difference, canopy - air (oC)                .
+TDIF   Temp difference Temperature difference, canopy - air (oC)                .
 TDRW   Total biomass   Total crop biomass (kg [dm]/ha)                          .
 TFDD   Temp.factor,dev Temperature factor for development (0-1)                 .
-TKILL  Pl death tmp °C Temperature for plant death (°C)                         .
+TKILL  Pl death tmp oC Temperature for plant death (oC)                         .
 TLA_1  Leaf area stk 1 Total green+dead leaf area, primary stalk only (cm2)     .
 TLAG1  Tiller area gr  Tiller leaf area expansion                               .
 TLFWT  Total till lf w Total leaf weight of tiller                              .
@@ -357,7 +360,7 @@ TPLAG  Tiller area gr  Tiller leaf area growth                                  
 TPSM   Tillers no #/m2 Tiller number (no/m2)                                    .
 TRAD   Trash DM kg/ha  Trash weight (kg [dm]/ha)                                .
 TSTMWT Total till st w Total stem weight of tiller                              .
-TT     Thermal time    Daily thermal (°C.d)                                     .
+TT     Thermal time    Daily thermal (oC.d)                                     .
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
 UWAD   Tuber kg dm/ha  Tuber dry weight (kg [dm]/ha)                            .
 UYAD   Tuber Mg fm/ha  Tuber fresh weight (Mg [fm]/ha)                          .
@@ -423,27 +426,27 @@ NDN8D  Denit layer 8   Daily denitrification, soil layer 8 (g[N]/ha)            
 NDN9D  Denit layer 9   Daily denitrification, soil layer 9 (g[N]/ha)            .
 NFXC   N Fixed kg/ha   N fixed (kg/ha)                                          .
 NFXD   N Fixed kg/ha.d N fixation rate (kg/(ha.day))                            .
-NH10   NH4  layer 10   NH4, soil layer 10(g[N]/kg[soil])                        .
-NH1D   NH4  layer 1    NH4, soil layer 1 (g[N]/kg[soil])                        .
-NH2D   NH4  layer 2    NH4, soil layer 2 (g[N]/kg[soil])                        .
-NH3D   NH4  layer 3    NH4, soil layer 3 (g[N]/kg[soil])                        .
-NH4D   NH4  layer 4    NH4, soil layer 4 (g[N]/kg[soil])                        .
-NH5D   NH4  layer 5    NH4, soil layer 5 (g[N]/kg[soil])                        .
-NH6D   NH4  layer 6    NH4, soil layer 6 (g[N]/kg[soil])                        .
-NH7D   NH4  layer 7    NH4, soil layer 7 (g[N]/kg[soil])                        .
-NH8D   NH4  layer 8    NH4, soil layer 8 (g[N]/kg[soil])                        .
-NH9D   NH4  layer 9    NH4, soil layer 9 (g[N]/kg[soil])                        .
+NH10   NH4  layer 10   NH4, soil layer 10(mg[N]/kg[soil])                        .
+NH1D   NH4  layer 1    NH4, soil layer 1 (mg[N]/kg[soil])                        .
+NH2D   NH4  layer 2    NH4, soil layer 2 (mg[N]/kg[soil])                        .
+NH3D   NH4  layer 3    NH4, soil layer 3 (mg[N]/kg[soil])                        .
+NH4D   NH4  layer 4    NH4, soil layer 4 (mg[N]/kg[soil])                        .
+NH5D   NH4  layer 5    NH4, soil layer 5 (mg[N]/kg[soil])                        .
+NH6D   NH4  layer 6    NH4, soil layer 6 (mg[N]/kg[soil])                        .
+NH7D   NH4  layer 7    NH4, soil layer 7 (mg[N]/kg[soil])                        .
+NH8D   NH4  layer 8    NH4, soil layer 8 (mg[N]/kg[soil])                        .
+NH9D   NH4  layer 9    NH4, soil layer 9 (mg[N]/kg[soil])                        .
 NHTD   Total NH4 kg/ha Total soil NH4 (kg [N]/ha)                               .
-NI10   NO3 layer 10    NO3, soil layer 10(g[N]/kg[soil])                        .
-NI1D   NO3 layer 1     NO3, soil layer 1 (g[N]/kg[soil])                        .
-NI2D   NO3 layer 2     NO3, soil layer 2 (g[N]/kg[soil])                        .
-NI3D   NO3 layer 3     NO3, soil layer 3 (g[N]/kg[soil])                        .
-NI4D   NO3 layer 4     NO3, soil layer 4 (g[N]/kg[soil])                        .
-NI5D   NO3 layer 5     NO3, soil layer 5 (g[N]/kg[soil])                        .
-NI6D   NO3 layer 6     NO3, soil layer 6 (g[N]/kg[soil])                        .
-NI7D   NO3 layer 7     NO3, soil layer 7 (g[N]/kg[soil])                        .
-NI8D   NO3 layer 8     NO3, soil layer 8 (g[N]/kg[soil])                        .
-NI9D   NO3 layer 9     NO3, soil layer 9 (g[N]/kg[soil])                        .
+NI10   NO3 layer 10    NO3, soil layer 10(mg[N]/kg[soil])                        .
+NI1D   NO3 layer 1     NO3, soil layer 1 (mg[N]/kg[soil])                        .
+NI2D   NO3 layer 2     NO3, soil layer 2 (mg[N]/kg[soil])                        .
+NI3D   NO3 layer 3     NO3, soil layer 3 (mg[N]/kg[soil])                        .
+NI4D   NO3 layer 4     NO3, soil layer 4 (mg[N]/kg[soil])                        .
+NI5D   NO3 layer 5     NO3, soil layer 5 (mg[N]/kg[soil])                        .
+NI6D   NO3 layer 6     NO3, soil layer 6 (mg[N]/kg[soil])                        .
+NI7D   NO3 layer 7     NO3, soil layer 7 (mg[N]/kg[soil])                        .
+NI8D   NO3 layer 8     NO3, soil layer 8 (mg[N]/kg[soil])                        .
+NI9D   NO3 layer 9     NO3, soil layer 9 (mg[N]/kg[soil])                        .
 NIAD   Tot soil N kg/haTotal soil NO3+NH4 (kg [N]/ha)                           .
 NIMC   N Immobilized   Cumulative N immobilization (kg [N]/ha)                  .
 NITC   Nitrification   Cumulative nitrification (kg [N]/ha)                     .
@@ -479,16 +482,16 @@ NOF6D  NO flux layer 6 Daily NO flux, soil layer 6 (g[N]/ha)                    
 NOF7D  NO flux layer 7 Daily NO flux, soil layer 7 (g[N]/ha)                    .
 NOF8D  NO flux layer 8 Daily NO flux, soil layer 8 (g[N]/ha)                    .
 NOF9D  NO flux layer 9 Daily NO flux, soil layer 9 (g[N]/ha)                    .
-NT10   InorgN layer 10 Total inorganic N, soil layer 10(g[N]/kg[soil])          .
-NT1D   InorgN layer 1  Total inorganic N, soil layer 1 (g[N]/kg[soil])          .
-NT2D   InorgN layer 2  Total inorganic N, soil layer 2 (g[N]/kg[soil])          .
-NT3D   InorgN layer 3  Total inorganic N, soil layer 3 (g[N]/kg[soil])          .
-NT4D   InorgN layer 4  Total inorganic N, soil layer 4 (g[N]/kg[soil])          .
-NT5D   InorgN layer 5  Total inorganic N, soil layer 5 (g[N]/kg[soil])          .
-NT6D   InorgN layer 6  Total inorganic N, soil layer 6 (g[N]/kg[soil])          .
-NT7D   InorgN layer 7  Total inorganic N, soil layer 7 (g[N]/kg[soil])          .
-NT8D   InorgN layer 8  Total inorganic N, soil layer 8 (g[N]/kg[soil])          .
-NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (g[N]/kg[soil])          .
+NT10   InorgN layer 10 Total inorganic N, soil layer 10(mg[N]/kg[soil])          .
+NT1D   InorgN layer 1  Total inorganic N, soil layer 1 (mg[N]/kg[soil])          .
+NT2D   InorgN layer 2  Total inorganic N, soil layer 2 (mg[N]/kg[soil])          .
+NT3D   InorgN layer 3  Total inorganic N, soil layer 3 (mg[N]/kg[soil])          .
+NT4D   InorgN layer 4  Total inorganic N, soil layer 4 (mg[N]/kg[soil])          .
+NT5D   InorgN layer 5  Total inorganic N, soil layer 5 (mg[N]/kg[soil])          .
+NT6D   InorgN layer 6  Total inorganic N, soil layer 6 (mg[N]/kg[soil])          .
+NT7D   InorgN layer 7  Total inorganic N, soil layer 7 (mg[N]/kg[soil])          .
+NT8D   InorgN layer 8  Total inorganic N, soil layer 8 (mg[N]/kg[soil])          .
+NT9D   InorgN layer 9  Total inorganic N, soil layer 9 (mg[N]/kg[soil])          .
 NUAC   N Uptake kg/ha  N uptake, cumulative (kg [N]/ha)                         .
 NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
@@ -517,6 +520,7 @@ SENNS  Sen N to soil   Senesced N added to soil (kg/(ha.d))                     
 SENNT  Sen N kg/ha.d   Senesced N added to litter+soil (kg/(ha.d))              .
 SENWT  Sen wt kg/ha.d  Senesced wt added to litter+soil (kg/(ha.d))             .
 SHND   Shell N %       Shell N concentration (%)                                .
+SHNAD  Shell N kg/ha   Shell N (kg/ha)                                          .
 SN%D   Stem N %        Stem N concentration (%)                                 .
 SN%RD  ShootN% relativ Shoot tissue relative (to critical) N conc. (%)          .
 SNAD   Stem N kg/ha    Stem N (kg/ha)                                           .
@@ -535,6 +539,7 @@ DAYD   Daylength h     Daylength (h;sunrise to sunset)                          
 DRNC   Drainage Mm     Cumulative drainage (mm)                                 .
 DTR    Shortwave RAD   Daily shortwave radiation  (J/(m2.d))                    .
 DTWT   Water table cm  Water table depth (cm)                                   .
+DTWTM  Mgmt wat table  Managed water table depth (user input) (cm)              .
 EFAA   Flood evap mm/d Avg flood evaporation (mm/d)                             .
 EMAA   Mulch EVAP mm/d Average mulch evaporation (mm/d)                         .
 EMAC   Mulch EVAP mm   Cumulative mulch evaporation (mm)                        .
@@ -607,26 +612,126 @@ SW17D  SWC layer17     Soil water, soil layer 17 (cm3/cm3)                      
 SW18D  SWC layer18     Soil water, soil layer 18 (cm3/cm3)                      .
 SW19D  SWC layer19     Soil water, soil layer 19 (cm3/cm3)                      .
 SW20D  SWC layer20     Soil water, soil layer 20 (cm3/cm3)                      .
+LL1D   SWC LL layer 1  Soil water at Lower Limit, soil layer 1 (cm3/cm3)        .
+LL2D   SWC LL layer 2  Soil water at Lower Limit, soil layer 2 (cm3/cm3)        .
+LL3D   SWC LL layer 3  Soil water at Lower Limit, soil layer 3 (cm3/cm3)        .
+LL4D   SWC LL layer 4  Soil water at Lower Limit, soil layer 4 (cm3/cm3)        .
+LL5D   SWC LL layer 5  Soil water at Lower Limit, soil layer 5 (cm3/cm3)        .
+LL6D   SWC LL layer 6  Soil water at Lower Limit, soil layer 6 (cm3/cm3)        .
+LL7D   SWC LL layer 7  Soil water at Lower Limit, soil layer 7 (cm3/cm3)        .
+LL8D   SWC LL layer 8  Soil water at Lower Limit, soil layer 8 (cm3/cm3)        .
+LL9D   SWC LL layer 9  Soil water at Lower Limit, soil layer 9 (cm3/cm3)        .
+LL10D  SWC LL layer10  Soil water at Lower Limit, soil layer 10 (cm3/cm3)       .
+LL11D  SWC LL layer11  Soil water at Lower Limit, soil layer 11 (cm3/cm3)       .
+LL12D  SWC LL layer12  Soil water at Lower Limit, soil layer 12 (cm3/cm3)       .
+LL13D  SWC LL layer13  Soil water at Lower Limit, soil layer 13 (cm3/cm3)       .
+LL14D  SWC LL layer14  Soil water at Lower Limit, soil layer 14 (cm3/cm3)       .
+LL15D  SWC LL layer15  Soil water at Lower Limit, soil layer 15 (cm3/cm3)       .
+LL16D  SWC LL layer16  Soil water at Lower Limit, soil layer 16 (cm3/cm3)       .
+LL17D  SWC LL layer17  Soil water at Lower Limit, soil layer 17 (cm3/cm3)       .
+LL18D  SWC LL layer18  Soil water at Lower Limit, soil layer 18 (cm3/cm3)       .
+LL19D  SWC LL layer19  Soil water at Lower Limit, soil layer 19 (cm3/cm3)       .
+LL20D  SWC LL layer20  Soil water at Lower Limit, soil layer 20 (cm3/cm3)       .
+DUL1D  SWC DUL layer 1 Soil water at D. Upper Limit, soil layer 1 (cm3/cm3)     .
+DUL2D  SWC DUL layer 2 Soil water at D. Upper Limit, soil layer 2 (cm3/cm3)     .
+DUL3D  SWC DUL layer 3 Soil water at D. Upper Limit, soil layer 3 (cm3/cm3)     .
+DUL4D  SWC DUL layer 4 Soil water at D. Upper Limit, soil layer 4 (cm3/cm3)     .
+DUL5D  SWC DUL layer 5 Soil water at D. Upper Limit, soil layer 5 (cm3/cm3)     .
+DUL6D  SWC DUL layer 6 Soil water at D. Upper Limit, soil layer 6 (cm3/cm3)     .
+DUL7D  SWC DUL layer 7 Soil water at D. Upper Limit, soil layer 7 (cm3/cm3)     .
+DUL8D  SWC DUL layer 8 Soil water at D. Upper Limit, soil layer 8 (cm3/cm3)     .
+DUL9D  SWC DUL layer 9 Soil water at D. Upper Limit, soil layer 9 (cm3/cm3)     .
+DUL10D SWC DUL layer10 Soil water at D. Upper Limit, soil layer 10 (cm3/cm3)    .
+DUL11D SWC DUL layer11 Soil water at D. Upper Limit, soil layer 11 (cm3/cm3)    .
+DUL12D SWC DUL layer12 Soil water at D. Upper Limit, soil layer 12 (cm3/cm3)    .
+DUL13D SWC DUL layer13 Soil water at D. Upper Limit, soil layer 13 (cm3/cm3)    .
+DUL14D SWC DUL layer14 Soil water at D. Upper Limit, soil layer 14 (cm3/cm3)    .
+DUL15D SWC DUL layer15 Soil water at D. Upper Limit, soil layer 15 (cm3/cm3)    .
+DUL16D SWC DUL layer16 Soil water at D. Upper Limit, soil layer 16 (cm3/cm3)    .
+DUL17D SWC DUL layer17 Soil water at D. Upper Limit, soil layer 17 (cm3/cm3)    .
+DUL18D SWC DUL layer18 Soil water at D. Upper Limit, soil layer 18 (cm3/cm3)    .
+DUL19D SWC DUL layer19 Soil water at D. Upper Limit, soil layer 19 (cm3/cm3)    .
+DUL20D SWC DUL layer20 Soil water at D. Upper Limit, soil layer 20 (cm3/cm3)    .
+SAT1D  SWC SAT layer 1 Soil water at Saturation, soil layer 1 (cm3/cm3)         .
+SAT2D  SWC SAT layer 2 Soil water at Saturation, soil layer 2 (cm3/cm3)         .
+SAT3D  SWC SAT layer 3 Soil water at Saturation, soil layer 3 (cm3/cm3)         .
+SAT4D  SWC SAT layer 4 Soil water at Saturation, soil layer 4 (cm3/cm3)         .
+SAT5D  SWC SAT layer 5 Soil water at Saturation, soil layer 5 (cm3/cm3)         .
+SAT6D  SWC SAT layer 6 Soil water at Saturation, soil layer 6 (cm3/cm3)         .
+SAT7D  SWC SAT layer 7 Soil water at Saturation, soil layer 7 (cm3/cm3)         .
+SAT8D  SWC SAT layer 8 Soil water at Saturation, soil layer 8 (cm3/cm3)         .
+SAT9D  SWC SAT layer 9 Soil water at Saturation, soil layer 9 (cm3/cm3)         .
+SAT10D SWC SAT layer10 Soil water at Saturation, soil layer 10 (cm3/cm3)        .
+SAT11D SWC SAT layer11 Soil water at Saturation, soil layer 11 (cm3/cm3)        .
+SAT12D SWC SAT layer12 Soil water at Saturation, soil layer 12 (cm3/cm3)        .
+SAT13D SWC SAT layer13 Soil water at Saturation, soil layer 13 (cm3/cm3)        .
+SAT14D SWC SAT layer14 Soil water at Saturation, soil layer 14 (cm3/cm3)        .
+SAT15D SWC SAT layer15 Soil water at Saturation, soil layer 15 (cm3/cm3)        .
+SAT16D SWC SAT layer16 Soil water at Saturation, soil layer 16 (cm3/cm3)        .
+SAT17D SWC SAT layer17 Soil water at Saturation, soil layer 17 (cm3/cm3)        .
+SAT18D SWC SAT layer18 Soil water at Saturation, soil layer 18 (cm3/cm3)        .
+SAT19D SWC SAT layer19 Soil water at Saturation, soil layer 19 (cm3/cm3)        .
+SAT20D SWC SAT layer20 Soil water at Saturation, soil layer 20 (cm3/cm3)        .
+SAT1D  SWC SAT layer 1 Soil water at Saturation, soil layer 1 (cm3/cm3)         .
+SAT2D  SWC SAT layer 2 Soil water at Saturation, soil layer 2 (cm3/cm3)         .
+SAT3D  SWC SAT layer 3 Soil water at Saturation, soil layer 3 (cm3/cm3)         .
+SAT4D  SWC SAT layer 4 Soil water at Saturation, soil layer 4 (cm3/cm3)         .
+SAT5D  SWC SAT layer 5 Soil water at Saturation, soil layer 5 (cm3/cm3)         .
+SAT6D  SWC SAT layer 6 Soil water at Saturation, soil layer 6 (cm3/cm3)         .
+SAT7D  SWC SAT layer 7 Soil water at Saturation, soil layer 7 (cm3/cm3)         .
+SAT8D  SWC SAT layer 8 Soil water at Saturation, soil layer 8 (cm3/cm3)         .
+SAT9D  SWC SAT layer 9 Soil water at Saturation, soil layer 9 (cm3/cm3)         .
+SAT10D SWC SAT layer10 Soil water at Saturation, soil layer 10 (cm3/cm3)        .
+SAT11D SWC SAT layer11 Soil water at Saturation, soil layer 11 (cm3/cm3)        .
+SAT12D SWC SAT layer12 Soil water at Saturation, soil layer 12 (cm3/cm3)        .
+SAT13D SWC SAT layer13 Soil water at Saturation, soil layer 13 (cm3/cm3)        .
+SAT14D SWC SAT layer14 Soil water at Saturation, soil layer 14 (cm3/cm3)        .
+SAT15D SWC SAT layer15 Soil water at Saturation, soil layer 15 (cm3/cm3)        .
+SAT16D SWC SAT layer16 Soil water at Saturation, soil layer 16 (cm3/cm3)        .
+SAT17D SWC SAT layer17 Soil water at Saturation, soil layer 17 (cm3/cm3)        .
+SAT18D SWC SAT layer18 Soil water at Saturation, soil layer 18 (cm3/cm3)        .
+SAT19D SWC SAT layer19 Soil water at Saturation, soil layer 19 (cm3/cm3)        .
+SAT20D SWC SAT layer20 Soil water at Saturation, soil layer 20 (cm3/cm3)        .
+BD1D   BD layer 1      Bulk Density, soil layer 1 (g/cm3)                       .
+BD2D   BD layer 2      Bulk Density, soil layer 2 (g/cm3)                       .
+BD3D   BD layer 3      Bulk Density, soil layer 3 (g/cm3)                       .
+BD4D   BD layer 4      Bulk Density, soil layer 4 (g/cm3)                       .
+BD5D   BD layer 5      Bulk Density, soil layer 5 (g/cm3)                       .
+BD6D   BD layer 6      Bulk Density, soil layer 6 (g/cm3)                       .
+BD7D   BD layer 7      Bulk Density, soil layer 7 (g/cm3)                       .
+BD8D   BD layer 8      Bulk Density, soil layer 8 (g/cm3)                       .
+BD9D   BD layer 9      Bulk Density, soil layer 9 (g/cm3)                       .
+BD10D  BD layer10      Bulk Density, soil layer 10 (g/cm3)                      .
+BD11D  BD layer11      Bulk Density, soil layer 11 (g/cm3)                      .
+BD12D  BD layer12      Bulk Density, soil layer 12 (g/cm3)                      .
+BD13D  BD layer13      Bulk Density, soil layer 13 (g/cm3)                      .
+BD14D  BD layer14      Bulk Density, soil layer 14 (g/cm3)                      .
+BD15D  BD layer15      Bulk Density, soil layer 15 (g/cm3)                      .
+BD16D  BD layer16      Bulk Density, soil layer 16 (g/cm3)                      .
+BD17D  BD layer17      Bulk Density, soil layer 17 (g/cm3)                      .
+BD18D  BD layer18      Bulk Density, soil layer 18 (g/cm3)                      .
+BD19D  BD layer19      Bulk Density, soil layer 19 (g/cm3)                      .
+BD20D  BD layer20      Bulk Density, soil layer 20 (g/cm3)                      .
 SWTD   Total water     Total soil water in profile (mm)                         .
 SWXD   Extr water mm   Extractable water (mm)                                   .
 TCADD  Canopy-air temp Canopy-air temperature difference (oC)                   .
 TCnt   Cano.T midnight Canopy temperature at midnight (oC)                      TCAN(h)
 TDFC   Cum. tile drain Cumulative water lost to tile drain (mm)                 .
 TDFD   Tile drainage   Water lost to tile drain (mm/d)                          .
-TMINA  Minimum temp °C Avg minimum air temperature (°C)                         TMNA
-TMAXA  Maximum temp °C Avg maximum air temperature (°C)                         TMXA
-TSRNIT Surf T midnight Surface temperature midnight (°C)                        TSURF
-TS0D   Surface temp °C Soil surface temperature (°C)                            .
-TS10   S-TMP layer 10  Soil temperature, soil layer 10(°C)                      .
-TS1D   S-TMP layer 1   Soil temperature, soil layer 1 (°C)                      .
-TS2D   S-TMP layer 2   Soil temperature, soil layer 2 (°C)                      .
-TS3D   S-TMP layer 3   Soil temperature, soil layer 3 (°C)                      .
-TS4D   S-TMP layer 4   Soil temperature, soil layer 4 (°C)                      .
-TS5D   S-TMP layer 5   Soil temperature, soil layer 5 (°C)                      .
-TS6D   S-TMP layer 6   Soil temperature, soil layer 6 (°C)                      .
-TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (°C)                      .
-TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (°C)                      .
-TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (°C)                      .
+TMINA  Minimum temp oC Avg minimum air temperature (oC)                         TMNA
+TMAXA  Maximum temp oC Avg maximum air temperature (oC)                         TMXA
+TSRNIT Surf T midnight Surface temperature midnight (oC)                        TSURF
+TS0D   Surface temp oC Soil surface temperature (oC)                            .
+TS10   S-TMP layer 10  Soil temperature, soil layer 10(oC)                      .
+TS1D   S-TMP layer 1   Soil temperature, soil layer 1 (oC)                      .
+TS2D   S-TMP layer 2   Soil temperature, soil layer 2 (oC)                      .
+TS3D   S-TMP layer 3   Soil temperature, soil layer 3 (oC)                      .
+TS4D   S-TMP layer 4   Soil temperature, soil layer 4 (oC)                      .
+TS5D   S-TMP layer 5   Soil temperature, soil layer 5 (oC)                      .
+TS6D   S-TMP layer 6   Soil temperature, soil layer 6 (oC)                      .
+TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (oC)                      .
+TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (oC)                      .
+TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (oC)                      .
 WINNIT Wind speed(noon)Wind speed at midnight (m/s)                             WINDHR 
 
 *CARBON
@@ -713,17 +818,17 @@ TDND   Tile N lost k/h Daily N lost to tile drain (kg[N]/ha/d)                  
 TEMt   Temp/h midnight Hourly air temperature at midnight                       TAIRHR
 TFOM   RESIDUE kg/ha   Plant residue remaining (kg [dm]/ha)                     .
 TFON   RESIDUE N kg/ha Plant residue N remaining (kg/ha)                        .
-TGAV   AVG CAN TMP °C  Daily average canopy temp (°C)                           .
-TGNN   NOON CAN TMP °C Noon canopy temperature (°C)                             .
-TGON   NOON GRO TMP °C Noon growth temperature (°C)                             .
-Tnit   Temp midnight°C Temperature midnight (°C)                                THR
+TGAV   AVG CAN TMP oC  Daily average canopy temp (oC)                           .
+TGNN   NOON CAN TMP oC Noon canopy temperature (oC)                             .
+TGON   NOON GRO TMP oC Noon growth temperature (oC)                             .
+Tnit   Temp midnightoC Temperature midnight (oC)                                THR
 TNN    T@noon mm/h     Transpiration rate at noon (mm/h) 
-TSR1n  Sur T sunlit nt Surface temperature sunlit leaves midnight (°C)          TSURF(1)
-TSR1t  Sur T sunlit nt Surface temperature sunlit leaves midnight (°C)          TSURF(1)
-TSR2n  Sur T sunlit nt Surface temperature shaded leaves midnight (°C)          TSURF(2)
-TSR2t  Sur T sunlit nt Surface temperature shaded leaves midnight (°C)          TSURF(2)
-TSR3n  Sur T sunlit nt Surface temperature soil  midnight (°C)                  TSURF(3)
-TSR3t  Sur T sunlit nt Surface temperature soil  midnight (°C)                  TSURF(3)
+TSR1n  Sur T sunlit nt Surface temperature sunlit leaves midnight (oC)          TSURF(1)
+TSR1t  Sur T sunlit nt Surface temperature sunlit leaves midnight (oC)          TSURF(1)
+TSR2n  Sur T sunlit nt Surface temperature shaded leaves midnight (oC)          TSURF(2)
+TSR2t  Sur T sunlit nt Surface temperature shaded leaves midnight (oC)          TSURF(2)
+TSR3n  Sur T sunlit nt Surface temperature soil  midnight (oC)                  TSURF(3)
+TSR3t  Sur T sunlit nt Surface temperature soil  midnight (oC)                  TSURF(3)
 TWAD   TOTAL WT kg/ha  Tops+roots+storage wt (kg [dm]/ha)                       .
 WDNN   Wind speed(noon)Wind speed at noon (m/s)                                 WINDHR 
 WINn   Wind speed(noon)Wind speed at noon (m/s)                                 WINDHR 
@@ -882,7 +987,7 @@ IRRD   Eff Irrig mm/d  Daily effective irrigation (mm/d)                        
 IRRAD  App Irrig mm/d  Daily applied irrigation (includes losses) (mm/d)        .
 TL#C   TILLAGE #       Number of tillage operations                             .
 TLBD   BD Lyr1-3 g/cm3 Bulk Density average Lyr 1 to 3 after tillage (g/cm3)    .
-TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .    
+TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .
 
 *WEATHER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -892,15 +997,16 @@ DAYLD  DAYLENGTH hr    Day length sunrise to sunset (hr)                        
 OZON7  Ozone ppb       Daily 7-hour mean ozone concentration (9:00-15:59), ppb  .
 PARD   PAR             Daily PAR or photon flux density (moles[quanta]/(m2.d))  .
 PRED   PRECIP mm/d     Precipitation depth (mm/d)                               .
+CPRED  Cum. PRECIP mm  Cumulative precipitation depth (mm)                      .
 SRAD   SRAD MJ/m2.d    Solar radiation (MJ/(m2.d))                              .
-TAVD   AVG TEMP °C     Average daily temperature (°C)                           .
-TDWD   DEWPOINT °C     Dewpoint temperature (°C)                                .
-TDYD   AV DAY TMP °C   Average temperature during daylight hours (°C)           .
-TGAD   AV GRWTH TMP °C Average daily air temperature for growth (°C)            .
-TGRD   AV GRWTH TMP °C Average air temp. daylight hours for growth (°C)         .
-TMEAN  MEAN TEMP °C    Mean Temperature (TMAX+TMIN/2; °C)                       .
-TMND   MIN TEMP °C     Minimum daily temperature (°C)                           .
-TMXD   MAX TEMP °C     Maximum daily temperature (°C)                           .
+TAVD   AVG TEMP oC     Average daily temperature (oC)                           .
+TDWD   DEWPOINT oC     Dewpoint temperature (oC)                                .
+TDYD   AV DAY TMP oC   Average temperature during daylight hours (oC)           .
+TGAD   AV GRWTH TMP oC Average daily air temperature for growth (oC)            .
+TGRD   AV GRWTH TMP oC Average air temp. daylight hours for growth (oC)         .
+TMEAN  MEAN TEMP oC    Mean Temperature (TMAX+TMIN/2; oC)                       .
+TMND   MIN TEMP oC     Minimum daily temperature (oC)                           .
+TMXD   MAX TEMP oC     Maximum daily temperature (oC)                           .
 TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     .
 VPD    Vapor Pres Def  Vapor pressure deficit                                   .
 VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
@@ -1428,6 +1534,8 @@ CH4STD CH4Stored       CH4 stored in soil and floodwater (kg[C]/ha)             
 CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CO2ED  CO2emission kg  Daily CO2 emission (kg[C]/ha)                            .
 CO2GED CO2emission g   Daily CO2 emission (g[C]/ha)                             .
+CO2ENC CO2emi net kg/d Cumulative net CO2 emissions kg/ha                        .
+CO2END CO2emi net g/d  Daily net CO2 emissions kg/d                             .
 CO2TC  CumNewCO2       Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     .
 CO2TD  newCO2Tot       Daily CO2 from surface + soil OM decomp. (g[C]/ha)       .
 MCEQC  CO2eq-CH4       Methane emissions as CO2 equivalent (kg[CO2eq]/ha)       .

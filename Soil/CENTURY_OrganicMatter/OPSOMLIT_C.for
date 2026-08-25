@@ -94,19 +94,6 @@
       REAL, DIMENSION(SUMNUM) :: VALUE
 
 !!==================================================================
-!!     Temporary for Osvaldo's analysis:
-!!     Calculate sample carbon from 0-20 cm and from 20-40 cm
-!!       in kg/ha and percent
-!      INTEGER NOUTDT
-!      REAL SC1_A, SC2_A, SC3_A, SN1_A, SN2_A, SN3_A
-!      REAL SC1_B, SC2_B, SC3_B, SN1_B, SN2_B, SN3_B
-
-!!     TEMP CHP
-!      CHARACTER*11 OUTSUMC
-!      INTEGER NOUTSC
-!      REAL SC_20I, SC_40I
-
-!-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
       TYPE (ControlType)   CONTROL
@@ -151,16 +138,9 @@
         CALL GETLUN('OUTSOMP', NOUTDP)
       ENDIF
 
-!      OUTCN = 'SOM_C2N.OUT'
-!      CALL GETLUN('OUTCN', NOUTCN)
-
       PRINTC = .FALSE.
       PRINTN = .FALSE.
       PRINTP = .FALSE.
-
-!!     TEMP CHP
-!      OUTSUMC = 'SOMCSUM.OUT'
-!      CALL GETLUN(OUTSUMC, NOUTSC)
 
 !***********************************************************************
 !***********************************************************************
@@ -183,18 +163,6 @@
           OPEN (UNIT = NOUTDC, FILE = OUTSOMC, STATUS = 'NEW')
           WRITE(NOUTDC,'("*SOM C DAILY OUTPUT FILE")')
         ENDIF
-
-!!       TEMP CHP
-!        INQUIRE (FILE = OUTSUMC, EXIST = FEXIST)
-!        IF (FEXIST) THEN
-!          OPEN (UNIT = NOUTSC, FILE = OUTSUMC, STATUS = 'OLD',
-!     &      POSITION = 'APPEND')
-!        ELSE
-!          OPEN (UNIT = NOUTSC, FILE = OUTSUMC, STATUS = 'NEW')
-!          WRITE(NOUTSC,'("*SOM C SEASONAL SUMMARY")')
-!          WRITE(NOUTSC,'(/,
-!     &      "@ RUNNO   TRNO R# CR  SC%20I  SC%20H  SC%40I  SC%40H")')
-!        ENDIF
       ENDIF
       END IF    ! VSH
 
@@ -210,15 +178,6 @@
           WRITE(NOUTDN,'("*SOM N DAILY OUTPUT FILE")')
         ENDIF
 
-!!       Open SOM-C:N ratio output file and print headers.
-!        INQUIRE (FILE = OUTCN, EXIST = FEXIST)
-!        IF (FEXIST) THEN
-!          OPEN (UNIT = NOUTCN, FILE = OUTCN, STATUS = 'OLD',
-!     &      POSITION = 'APPEND')
-!        ELSE
-!          OPEN (UNIT = NOUTCN, FILE = OUTCN, STATUS = 'NEW')
-!          WRITE(NOUTCN,'("*SOM C:N RATIO DAILY OUTPUT FILE")')
-!        ENDIF
       ENDIF
       END IF    ! VSH
       
@@ -270,13 +229,6 @@
      &      (LayerText(L), L=1,5)
           WRITE (NOUTDN, 210)
 
-!          CALL HEADER(SEASINIT, NOUTCN, RUNNO)
-!          WRITE (NOUTCN, 115) 
-!     &      (LayerText(L), L=1,5),(LayerText(L), L=1,5),
-!     &      (LayerText(L), L=1,5),(LayerText(L), L=1,5),
-!     &      (LayerText(L), L=1,5),(LayerText(L), L=1,5),
-!     &      (LayerText(L), L=1,5)
-!          WRITE (NOUTCN, 215)
         ENDIF
         END IF    ! VSH
         
@@ -289,26 +241,6 @@
           WRITE (NOUTDP,220)
         ENDIF
       ENDIF
-
-!==================================================================
-!!     Temporary for Osvaldo's analysis:
-!      CALL GETLUN('SomTemp.OUT', NOUTDT)
-!      INQUIRE (FILE = 'SomTemp.OUT', EXIST = FEXIST)
-!      IF (FEXIST) THEN
-!        OPEN (UNIT = NOUTDT, FILE = 'SomTemp.OUT', STATUS = 'OLD',
-!     &    POSITION = 'APPEND')
-!      ELSE
-!        OPEN (UNIT = NOUTDT, FILE = 'SomTemp.OUT', STATUS = 'NEW')
-!        WRITE(NOUTDT,'("*SOM C, N TEMPORARY DAILY OUTPUT FILE")')
-!      ENDIF
-!
-!      IF (RNMODE .NE. 'Q' .OR. RUN == 1) THEN
-!        CALL HEADER(SEASINIT, NOUTDT, RUN)
-!        WRITE(NOUTDT,10) 
-!   10   FORMAT('@YEAR DOY   DAS',
-!     &    '  SC1-A  SC2-A  SC3-A  SC1-B  SC2-B  SC3-B',
-!     &    '  SN1-A  SN2-A  SN3-A  SN1-B  SN2-B  SN3-B')
-!      ENDIF
 
       ENDIF !DYNAMIC=SEASINIT
 
@@ -442,13 +374,6 @@
       SON_40CM_P = SON_40CM / SOIL_40CM * 100.
       SOP_40CM_P = SOP_40CM / SOIL_40CM * 100.
 
-!!     TEMP CHP
-!      IF (DYNAMIC == SEASINIT) THEN
-!        SC_20I = SOC_20CM_P
-!        SC_40I = SOC_40CM_P
-!        IF (.NOT. DOPRINT) RETURN
-!      ENDIF
-      
       IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
       IF (PRINTC) THEN
         WRITE (NOUTDC, 300) YEAR, DOY, DAS,  
@@ -535,46 +460,6 @@
        CALL LinklstSomN(vCsvlineSomN)
       END IF
 
-!!       C:N ratios
-!        TCNTD = 0.0; TCN0D = 0.0; TCNSD = 0.0
-!        IF (TNTD > 1.E-9) TCNTD = TCTD / TNTD
-!        IF (TN0D > 1.E-9) TCN0D = TC0D / TN0D
-!        IF (TNSD > 1.E-9) TCNSD = TCSD / TNSD
-!
-!        S1CN0D = 0.; S1CNSD = 0.; S2CNSD = 0.; S3CNSD = 0.
-!        IF (SOM1E(0,N)> 1.E-9) S1CN0D = SOM1C(0) / SOM1E(0,N)
-!        IF (TSOM1E(N) > 1.E-9) S1CNSD = TSOM1C   / TSOM1E(N)
-!        IF (TSOM2E(N) > 1.E-9) S2CNSD = TSOM2C   / TSOM2E(N)
-!        IF (TSOM3E(N) > 1.E-9) S3CNSD = TSOM3C   / TSOM3E(N)
-!
-!        LCN0D=0.; LCNSD=0.; MECN0D=0.; MECNSD=0.; STCN0D=0.; STCNSD=0.
-!        IF (LITE(0,N)  > 1.E-9) LCN0D  = LITC(0)   / LITE(0,N)
-!        IF (TLITE(N)   > 1.E-9) LCNSD  = TLITC     / TLITE(N)
-!        IF (METABE(0,N)> 1.E-9) MECN0D = METABC(0) / METABE(0,N)
-!        IF (TMETABE(N) > 1.E-9) MECNSD = TMETABC   / TMETABE(N)
-!        IF (STRUCE(0,N)> 1.E-9) STCN0D = STRUCC(0) / STRUCE(0,N)
-!        IF (TSTRUCE(N) > 1.E-9) STCNSD = TSTRUCC   / TSTRUCE(N)
-!        
-!        TCN=0.; S1CN=0.; S2CN=0.; S3CN=0.; LCN=0.; MECN=0.; STCN=0.
-!        DO L = 1, 5
-!          IF (TN(L)  > 1.E-9) TCN(L)  = TC(L)  / TN(L)
-!          IF (S1N(L) > 1.E-9) S1CN(L) = S1C(L) / S1N(L)
-!          IF (S2N(L) > 1.E-9) S2CN(L) = S2C(L) / S2N(L)
-!          IF (S3N(L) > 1.E-9) S3CN(L) = S3C(L) / S3N(L)
-!          IF (LIN(L) > 1.E-9) LCN(L)  = LIT(L) / LIN(L)
-!          IF (MEN(L) > 1.E-9) MECN(L) = MET(L) / MEN(L)
-!          IF (STN(L) > 1.E-9) STCN(L) = STR(L) / STN(L)
-!        ENDDO
-!
-!        WRITE (NOUTCN, 315) YEAR, DOY, DAS, 
-!     &    TCNTD, TCN0D, TCNSD,  (TCN(L),  L=1, 5),
-!     &          S1CN0D, S1CNSD, (S1CN(L), L=1, 5), 
-!     &                  S2CNSD, (S2CN(L), L=1, 5), 
-!     &                  S3CNSD, (S3CN(L), L=1, 5), 
-!     &           LCN0D,  LCNSD, (LCN(L),  L=1, 5), 
-!     &          MECN0D, MECNSD, (MECN(L), L=1, 5), 
-!     &          STCN0D, STCNSD, (STCN(L), L=1, 5)
-!  315   FORMAT (1X,I4,1X,I3.3,1X,I5, 50F8.2)
       ENDIF
 
 !     Phosphorus
@@ -614,110 +499,6 @@
   320   FORMAT (1X,I4,1X,I3.3,1X,I5,  2(I8,F8.4), 50(F8.2))
       ENDIF
 
-!==================================================================
-!!     Temporary for Osvaldo's analysis:
-!!     Calculate sample carbon from 0-20 cm and from 20-40 cm
-!!       in kg/ha and percent
-!      SC1_A = SOM1C(1)
-!      SC2_A = SOM2C(1)
-!      SC3_A = SOM3C(1)
-!
-!      SN1_A = SOM1E(1,1)
-!      SN2_A = SOM2E(1,1)
-!      SN3_A = SOM3E(1,1)
-!
-!      SC1_B = 0.0
-!      SC2_B = 0.0
-!      SC3_B = 0.0
-!
-!      SN1_B = 0.0
-!      SN2_B = 0.0
-!      SN3_B = 0.0
-!
-!      DO L = 2, NLAYR
-!        IF (DS(L) <= 20.) THEN
-!!         Entire layer is in top 20 cm
-!          SC1_A = SC1_A + SOM1C(L)
-!          SC2_A = SC2_A + SOM2C(L)
-!          SC3_A = SC3_A + SOM3C(L)
-!
-!          SN1_A = SN1_A + SOM1E(L,1)
-!          SN2_A = SN2_A + SOM2E(L,1)
-!          SN3_A = SN3_A + SOM3E(L,1)
-!
-!        ELSEIF (DS(L-1) < 20.) THEN
-!!         A portion (FRAC) of layer is in top 20 cm
-!          FRAC = (20. - DS(L-1)) / DLAYR(L)
-!          SC1_A =  SC1_A + FRAC * SOM1C(L)
-!          SC2_A =  SC2_A + FRAC * SOM2C(L)
-!          SC3_A =  SC3_A + FRAC * SOM3C(L)
-!
-!          SN1_A =  SN1_A + FRAC * SOM1E(L,1)
-!          SN2_A =  SN2_A + FRAC * SOM2E(L,1)
-!          SN3_A =  SN3_A + FRAC * SOM3E(L,1)
-!
-!          IF (DS(L) < 40.) THEN
-!!           The remaining portion (1 - FRAC) is between 20-40cm
-!            SC1_B = (1. - FRAC) * SOM1C(L)
-!            SC2_B = (1. - FRAC) * SOM2C(L)
-!            SC3_B = (1. - FRAC) * SOM3C(L)
-!
-!            SN1_B = (1. - FRAC) * SOM1E(L,1)
-!            SN2_B = (1. - FRAC) * SOM2E(L,1)
-!            SN3_B = (1. - FRAC) * SOM3E(L,1)
-!
-!          ELSE
-!!           Part of the remaining portion is between 20-40 cm
-!            FRAC = 20. / DLAYR(L)
-!
-!            SC1_B = FRAC * SOM1C(L)
-!            SC2_B = FRAC * SOM2C(L)
-!            SC3_B = FRAC * SOM3C(L)
-!
-!            SN1_B = FRAC * SOM1E(L,1)
-!            SN2_B = FRAC * SOM2E(L,1)
-!            SN3_B = FRAC * SOM3E(L,1)
-!          ENDIF
-!
-!        ELSEIF (DS(L) <= 40.) THEN
-!!         The entire layer is between 20-40 cm
-!          SC1_B = SC1_B + SOM1C(L)
-!          SC2_B = SC2_B + SOM2C(L)
-!          SC3_B = SC3_B + SOM3C(L)
-!
-!          SN1_B = SN1_B + SOM1E(L,1)
-!          SN2_B = SN2_B + SOM2E(L,1)
-!          SN3_B = SN3_B + SOM3E(L,1)
-!
-!        ELSEIF (DS(L-1) < 40.) THEN
-!!         A portion (FRAC) of layer is between 20-40 cm
-!          FRAC = (40. - DS(L-1)) / DLAYR(L)
-!
-!          SC1_B = SC1_B + FRAC *SOM1C(L)
-!          SC2_B = SC2_B + FRAC *SOM2C(L)
-!          SC3_B = SC3_B + FRAC *SOM3C(L)
-!
-!          SN1_B = SN1_B + FRAC *SOM1E(L,1)
-!          SN2_B = SN2_B + FRAC *SOM2E(L,1)
-!          SN3_B = SN3_B + FRAC *SOM3E(L,1)
-!        ENDIF
-!      ENDDO
-!
-!! When DLAYR doesn't change, this shortcut works:
-!!      SC1_A = SOM1C(1) + SOM1C(2) + SOM1C(3) / 3.
-!!      SC2_A = SOM2C(1) + SOM2C(2) + SOM2C(3) / 3.
-!!      SC3_A = SOM3C(1) + SOM3C(2) + SOM3C(3) / 3.
-!!      SC1_B = (SOM1C(3) + SOM1C(4)) * 2./3.
-!!      SC2_B = (SOM2C(3) + SOM2C(4)) * 2./3.
-!!      SC3_B = (SOM3C(3) + SOM3C(4)) * 2./3.
-!
-!      WRITE (NOUTDT, 5555) YEAR, DOY, DAS,  
-!     &    NINT(SC1_A), NINT(SC2_A),  NINT(SC3_A), 
-!     &    NINT(SC1_B), NINT(SC2_B),  NINT(SC3_B), 
-!     &    NINT(SN1_A), NINT(SN2_A),  NINT(SN3_A), 
-!     &    NINT(SN1_B), NINT(SN2_B),  NINT(SN3_B)
-! 5555 FORMAT (1X,I4,1X,I3.3,1X,I5, 12I7)
-
  5000 CONTINUE
 !***********************************************************************
 !***********************************************************************
@@ -731,13 +512,6 @@
         END IF    ! VSH
         
         CLOSE (NOUTDP)
-
-!!       TEMP CHP
-!        IF (PRINTC) THEN 
-!          WRITE(NOUTSC,'(2I7,I3,1X,A2,4F8.4)')
-!     &      RUN, CONTROL%TRTNUM, CONTROL%ROTNUM, CONTROL%CROP,
-!     &      SC_20I, SOC_20CM_P, SC_40I, SOC_40CM_P
-!        ENDIF
 
 !       Store Summary.out labels and values in arrays to send to
 !       OPSUM routines for printing.  Integers are temporarily 
@@ -806,24 +580,6 @@
      &' Surface    Soil',5A8,   !Structural
      &' (kg/ha)')
 
-!115   FORMAT(
-!     &'!',15X,
-!     &'<------ Total soil organic matter (SOM+LIT) C:N ratios ------->',
-!     &' <------- Active Soil Organic (SOM1) C:N ratios ------->',
-!     &' <--- Intermediate Soil Organic (SOM2) C:N  --->',
-!     &' <------ Passive Soil Organic (SOM3) C:N ------>',
-!     &' <---------------- Litter C:N ratios ------------------>',
-!     &' <------------ Metabolic Litter C:N ratios ------------>',
-!     &' <----------- Structural Litter C:N ratios ------------>',/
-!     &'!',15X,
-!     & '  Total Surface    Soil',5A8, !Total
-!     &        ' Surface    Soil',5A8, !Active
-!     &                '    Soil',5A8, !Intermediate
-!     &                '    Soil',5A8, !Passive
-!     &        ' Surface    Soil',5A8, !Litter
-!     &        ' Surface    Soil',5A8, !Metabolic litter
-!     &        ' Surface    Soil',5A8) !Structural litter
-
 120   FORMAT(
      &'!',352(' '),'Cumul.',/,'!',T17,
      &'<---- SOM P in top layers ----> ',
@@ -867,15 +623,6 @@
      &    '   STN0D   STNTD   STN1D   STN2D   STN3D   STN4D  STN5+D',
      &    '   RESNC')
 
-!215     FORMAT ('@YEAR DOY   DAS   TCNTD',
-!     &    '   TCN0D   TCNSD   TCN1D   TCN2D   TCN3D   TCN4D   TCN5D',
-!     &    '  S1CN0D  S1CNSD  S1CN1D  S1CN2D  S1CN3D  S1CN4D  S1CN5D',
-!     &            '  S2CNSD  S2CN1D  S2CN2D  S2CN3D  S2CN4D  S2CN5D',
-!     &            '  S3CNSD  S3CN1D  S3CN2D  S3CN3D  S3CN4D  S3CN5D',
-!     &    '   LCN0D   LCNSD   LCN1D   LCN2D   LCN3D   LCN4D   LCN5D',
-!     &    '  MECN0D  MECNSD  MECN1D  MECN2D  MECN3D  MECN4D  MECN5D',
-!     &    '  STCN0D  STCNSD  STCN1D  STCN2D  STCN3D  STCN4D  STCN5D')
-
 220   FORMAT ('@YEAR DOY   DAS',
      &  '  SPS20D  SP%20D  SPS40D  SP%40D    SOPD',
      &  '    SP0D    SPTD    SP1D    SP2D    SP3D    SP4D   SP5+D',
@@ -888,76 +635,4 @@
 
       RETURN
       END SUBROUTINE OPSOMLIT_C
-
-!100   FORMAT (
-!     &'!Explanation of variable abbreviations (units: all in kg/ha)',/,
-!     &'!',78('='),/,
-!     &'! SNTD      = soil organic carbon (all SOM pools), summed ',
-!     &    'across the whole soil profile.',/,
-!     &'! SN1D..5D  = soil organic N (all SOM pools) of soil layer 1..5.'
-!     &    ,//,
-!     &'! S1NTD     = active soil organic N (SOM1), summed across',
-!     &    ' the whole soil profile.',/,
-!     &'! S1N0D     = active soil organic N (SOM1) of the surface layer.'
-!     &    ,/,
-!     &'! S1N1D..5D = active soil organic N (SOM1) of soil layers 1..5.',
-!     &    //,
-!     &'! S2NTD     = intermediate soil organic N (SOM2), summed across',
-!     &    ' the whole soil profile.',/,
-!     &'! S2N1D..5D = intermediate soil organic N (SOM2) of soil ',
-!     &    'layer 1..5.',//,
-!     &'! S3NTD     = passive soil organic N (SOM3), summed across the ',
-!     &    'whole soil profile.',/,
-!     &'! S3N1D..5D = passive soil organic N (SOM3) of soil layer 1..5.',
-!     &    //,
-!     &'! LNTD      = litter N, summed across the whole soil profile.',/,
-!     &'! LN0D      = litter N of the surface layer.',/,
-!     &'! LN1D..5D  = litter N of soil layers 1..5.',//,
-!     &'! MENTD     = metabolic litter N, summed across the whole soil ',
-!     &    'profile.',/,
-!     &'! MEN0D     = metabolic litter N of the surface layer.',/,
-!     &'! MEN1D..5D = metabolic litter N of soil layer 1..5.',//,
-!     &'! STNTD     = structural litter N, summed across the whole soil',
-!     &    ' profile.',/,
-!     &'! STN0D     = structural litter N of the surface layer.',/,
-!     &'! STN1D..5D = structural litter N of soil layer 1..5.',//,
-!     &'! RECNC     = N in cumulative residues applied during the run.'/)
-!
-!200   FORMAT (
-!     &'!Explanation of variable abbreviations (units: all in kg/ha', 
-!     &    'except SCTD in tons/ha)',/,
-!     &'!',78('='),/,
-!     &'! SCTD      = soil organic carbon (all SOM pools), summed ',
-!     &    'across the whole soil profile.',/,
-!     &'! SC1D..5D  = soil organic carbon (all SOM pools) of soil layer',
-!     &    ' 1..5.',//,
-!     &'! S1CTD     = active soil organic carbon (SOM1), summed across ',
-!     &    'the whole soil profile.',/,
-!     &'! S1C0D     = active soil organic carbon (SOM1) of the surface ',
-!     &    'layer.',/,
-!     &'! S1C1D..5D = active soil organic carbon (SOM1) of soil layer ',
-!     &    '1..5.',//,
-!     &'! S2CTD     = intermediate soil organic carbon (SOM2), summed ',
-!     &    'across the whole soil profile.',/,
-!     &'! S2C1D..5D = intermediate soil organic carbon (SOM2) of soil ',
-!     &    'layer 1..5.',//,
-!     &'! S3CTD     = passive soil organic carbon (SOM3), summed ',
-!     &    'across the whole soil profile.',/,
-!     &'! S3C1D..5D = passive soil organic carbon (SOM3) of soil layer ',
-!     &    '1..5.',//,
-!     &'! LCTD      = litter carbon, summed across the whole soil ',
-!     &    'profile.',/,
-!     &'! LC0D      = litter carbon of the surface layer.',/,
-!     &'! LC1D..5D  = litter carbon of soil layer 1..5.',//,
-!     &'! MECTD     = metabolic litter carbon, summed across the whole ',
-!     &    'soil profile.',/,
-!     &'! MEC0D     = metabolic litter carbon of the surface layer.',/,
-!     &'! MEC1D..5D = metabolic litter carbon of soil layer 1..5.',//,
-!     &'! STCTD     = structural litter carbon, summed across the ',
-!     &    'whole soil profile.',/,
-!     &'! STC0D     = structural litter carbon of the surface layer.',/,
-!     &'! STC1D..5D = structural litter carbon of soil layer 1..5.',//,
-!     &'! RECC      = Cumulative residues applied during the run.',/,
-!     &'! TCO2C     = Accumulated surface CO2 (kg/ha)  ',/,
-!     &'! SCO2C     = Accumulated soil CO2 (kg/ha)   ',/)     
 

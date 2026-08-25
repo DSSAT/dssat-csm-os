@@ -1624,13 +1624,15 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
                   GRORT  = 0.0                                         !
                 ELSE                                                   !
                   SUMDTT = P5                                          !
-	            ISTAGE = 6                                         !
+	            ISTAGE = 6                                               !
 	            MDATE  = YRDOY 
                   CropStatus = 21  !mature due to slow grain filling   !
                   CALL YR_DOY(YRDOY, YR, DOY)                          !
                   WRITE(MESSAGE(1),2700) DOY                           !
                   CALL WARNING(1,ERRKEY, MESSAGE)                      !
-                  WRITE (     *,2700) DOY                              !
+                  IF (ISWITCH % IDETL .NE. '0') THEN                   !
+                    WRITE (     *,2700) DOY                            !
+                  ENDIF                                                !
                   IF (IDETO .EQ. 'Y') THEN                             !
                     WRITE (NOUTDO,2700) DOY                            !
                   ENDIF                                                !
@@ -1648,7 +1650,9 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
                 CALL YR_DOY(YRDOY, YR, DOY)                            !
                 WRITE(MESSAGE(1),2700) DOY                             !
                 CALL WARNING(1,ERRKEY, MESSAGE)                        !
-                WRITE (     *,2700) DOY                                !
+                IF (ISWITCH % IDETL .NE. '0') THEN                     !
+                  WRITE (     *,2700) DOY                              !
+                ENDIF                                                  !
                 IF (IDETO .EQ. 'Y') THEN                               !
                   WRITE (NOUTDO,2700) DOY                              !
                 ENDIF                                                  !

@@ -1,5 +1,5 @@
 *WEATHER DATA CODES
-! DSSAT v4.8; 05/11/2023
+! DSSAT v4.8; 2024-12-01
 
 ! Headers used in the @ line to identify variables are listed first; codes
 ! ('flags') used to designate data types are listed next.
@@ -23,7 +23,7 @@ BETA1    Gamma hyper distribution scale parameter of the mixed distribution   IB
 BETA2    Gamma hyper distribution scale parameter of the mixed distribution   IB
 BMTH     Angstrom 'b' coefficient, monthly, unitless                          IB
 DATE     Date, year + days from Jan. 1                                        IB
-DEWP     Daily dewpoint temperature average, C                                IB
+DEWP     Daily dewpoint temperature average, oC                               IB
 DOY      Day of year                                                          IB
 DURN     Duration of summarization period for climate files, Yr               IB
 ELEV     Elevation, m                                                         IB
@@ -36,8 +36,8 @@ Ku       Upper limit of the clearness index K = H/H0 (Daily solar irradiance  IB
 LAT      Latitude, degrees (decimals)                                         IB
 LONG     Longitude, degrees (decimals)                                        IB
 MTH      Month, #                                                             IB
-NAMN     Temperature minimum, all days, monthly average, C                    IB
-NASD     Temperature minimum, all days, monthly standard deviation, C         IB
+NAMN     Temperature minimum, all days, monthly average, oC                   IB
+NASD     Temperature minimum, all days, monthly standard deviation, oC        IB
 PAR      Daily photosynthetic radiation, moles m-2 day-1                      IB
 PDDW     Probability of a wet day following two dry days                      IB
 PDW      Probability of a dry-wet sequence                                    IB
@@ -72,24 +72,24 @@ SUNH     Daily sunshine duration, percent                                     IB
 SWMN     Solar radiation,wet days,monthly average, MJ m-2 d-1                 IB
 SWSD     Solar radiation,wet days,monthly standard deviation, MJ m-2 d-1      IB
 T2M      Temperature at 2 meter, C                                            IB
-TAMP     Temperature amplitude (range), monthly averages [long-term], C       IB
-TAV      Temperature average for whole year [long-term], C                    IB
-TDEW     Dew/Frost point temperature at 2 m, C                                IB
-TDRY     Daily dry-bulb temperature, C                                        IB
-TMAX     Daily temperature maximum, C                                         IB
-TMIN     Daily temperature minimum, C                                         IB
-TMNY     Temperature minimum, yearly average, C                               IB
-TMXY     Temperature maximum, yearly average, C                               IB
-TRANGE   Temperature amplitude (range), monthly averages [long-term], C       IB
-TWET     Daily wet-bulb temperature, C                                        IB
-TnMND    Temperature min, dry days, monthly average, C                        IB
-TnSDD    Temperature min, dry days, high-frequency standard deviation, C      IB
-TnMNW    Temperature min, wet days, monthly average, C                        IB
-TnSDW    Temperature min, wet days, high-frequency standard deviation, C      IB
-TxMND    Temperature maximum, dry days, monthly average, C                    IB
-TxSDD    Temperature maximum, dry days, high-frequency standard deviation, C  IB
-TxMNW    Temperature maximum, wet days, monthly average, C                    IB
-TxSDW    Temperature maximum, wet days, high-frequency standard deviation, C  IB
+TAMP     Temperature amplitude (range), monthly averages [long-term], oC      IB
+TAV      Temperature average for whole year [long-term], oC                   IB
+TDEW     Dew/Frost point temperature at 2 m, oC                               IB
+TDRY     Daily dry-bulb temperature, oC                                       IB
+TMAX     Daily temperature maximum, oC                                        IB
+TMIN     Daily temperature minimum, oC                                        IB
+TMNY     Temperature minimum, yearly average, oC                              IB
+TMXY     Temperature maximum, yearly average, oC                              IB
+TRANGE   Temperature amplitude (range), monthly averages [long-term], oC      IB
+TWET     Daily wet-bulb temperature, oC                                       IB
+TnMND    Temperature min, dry days, monthly average, oC                       IB
+TnSDD    Temperature min, dry days, high-frequency standard deviation, oC     IB
+TnMNW    Temperature min, wet days, monthly average, oC                       IB
+TnSDW    Temperature min, wet days, high-frequency standard deviation, oC     IB
+TxMND    Temperature maximum, dry days, monthly average, oC                   IB
+TxSDD    Temperature maximum, dry days, high-frequency standard deviation, oC IB
+TxMNW    Temperature maximum, wet days, monthly average, oC                   IB
+TxSDW    Temperature maximum, wet days, high-frequency standard deviation, oC IB
 TxPHI    Auto-correlation coefficient for TMAX                                IB
 TnPHI    Auto-correlation coefficient for TMIN                                IB
 TxSDC    Low-frequency correction standard deviation for TMAX                 IB 
@@ -99,13 +99,13 @@ WIND     Daily wind speed (km d-1)                                            IB
 WNDHT    Reference height for windspeed measurements, m                       IB
 WTHLAT   Latitude, degrees (decimals)                                         IB
 WTHLONG  Longitude, degrees (decimals)                                        IB
-XAMN     Temperature maximum,all days,monthly average, C                      IB
-XDMN     Temperature maximum,dry days,monthly average, C                      IB
-XDSD     Temperature maximum,dry days,standard deviation, C                   IB
+XAMN     Temperature maximum,all days,monthly average, oC                     IB
+XDMN     Temperature maximum,dry days,monthly average, oC                     IB
+XDSD     Temperature maximum,dry days,standard deviation, oC                  IB
 XPhi     Auto-correlation coefficient for SRAD                                IB
 XSDC     Low-frequency correction standard deviation for SRAD                 IB 
-XWMN     Temperature maximum,wet days,monthly average, C                      IB
-XWSD     Temperature maximum,wet days,standard deviation, C                   IB
+XWMN     Temperature maximum,wet days,monthly average, oC                     IB
+XWSD     Temperature maximum,wet days,standard deviation, oC                  IB
 XMND     Solar radiation, dry days, monthly average, MJ m-2 d-1               IB
 XSDD     Solar radiation, dry days, monthly high-frequency SD, MJ m-2 d-1     IB
 XMNW     Solar radiation, wet days, monthly average, MJ m-2 d-1               IB

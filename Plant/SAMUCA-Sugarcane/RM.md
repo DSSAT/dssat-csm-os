@@ -1,15 +1,14 @@
----
 # DSSAT/SAMUCA Release Notes:
-## DSSAT Development Sprint Jan-2020
+
 ### Murilo Vianna (murilodsv@gmail.com)
+
 ---
 
-The new version of SAMUCA model was incorporated into the DSSAT CSM.
+The new version of SAMUCA model was incorporated into the DSSAT CSM in Jan-2020.
 
-Full description of the SAMUCA model can be found at:
-- Standalone version: 	dx.doi.org/10.1590/S0103-90162014000100001
-- Updated version:		Paper under review
+Full description of the SAMUCA model can be found at: 
 
+- [dx.doi.org/10.1590/S0103-90162014000100001](https://doi.org/10.1016/j.compag.2020.105361)
 
 ---
 ## Crop Parameters:
@@ -29,7 +28,7 @@ from that used in the simulation shell developed for SAMUCA v2, we increased the
 
 ## Detailed Outputs:
 
-Apart of PlantGro.OUT, user's of SAMUCA can get detailed outputs at phytomer level, canopy photosynthesis and crop abiotic stresses when the verbose option (VBOSE) is set to 'D'.
+Besides the default DSSAT outputs (e.g., PlantGro.OUT, Summary.OUT, etc) , a detailed outputs at phytomer level, canopy photosynthesis and crop abiotic stresses can be obtained when the verbose option (VBOSE) is set to 'D'.
 
 ---
 

@@ -54,7 +54,7 @@ C  Calls:     None
       EXTERNAL GETLUN, HEADER, YR_DOY, TIMDIF
       SAVE
 !-----------------------------------------------------------------------
-      CHARACTER*1  IDETG, RNMODE
+      CHARACTER*1  IDETG, IDETL, RNMODE
       CHARACTER*2  CROP
       CHARACTER*6, PARAMETER :: ERRKEY = 'OPGROW'
 !      CHARACTER*8  FNAME
@@ -130,7 +130,8 @@ C-------------------------------------------
 !     No output for fallow crop
       CROP    = CONTROL % CROP
       IDETG   = ISWITCH % IDETG
-      IF (CROP .EQ. 'FA' .OR. IDETG .EQ. 'N') RETURN
+      IDETL   = ISWITCH % IDETL
+      IF (CROP .EQ. 'FA' .OR. IDETG .EQ. 'N' .OR. IDETL .EQ. "0") RETURN
 
 !     Transfer values from constructed data types into local variables.
       DAS     = CONTROL % DAS
@@ -441,7 +442,6 @@ C-----------------------------------------------------------------------
      &   PCNST, PCNSR, PCNSH, PCNRT, NFIXN*10
 410     FORMAT(1X,I4,1X,I3.3,2(1X,I5),3(1X,F5.1),2(1X,F5.2),1X,
      &   2(1X,F6.1),3(1X,F5.1),3(1X,F5.2),2(1X,F5.2),1X,F5.1)
-!CHP TEMP     &   (1X,F6.1),1X,F8.3,2(1X,F5.1),2(1X,F5.2),3(1X,F5.1))
 
         WRITE (NOUTPC,510) YEAR, DOY, DAS, DAP,
      &    NINT(TOTWT*10), PG, CMINEA, GROWTH,

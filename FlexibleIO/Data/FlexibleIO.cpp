@@ -10,14 +10,25 @@
 ========================================================================*/
 #include "FlexibleIO.hpp"
 #include <new>
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
-#include <string.h>
+#include <string>
 #include <unordered_map>
 #include <algorithm>
 
-std::unordered_map<std::string, std::unordered_map<std::string, std::string>> FlexibleIO::datatwodimensional;
-std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>> FlexibleIO::datathreedimensional;
+//// Future Development
+//struct InnerData {std::unordered_map<std::string, std::string> variables;};
+//struct ThirdLevel {std::unordered_map<std::string, InnerData> thirdLevelMap;};
+//struct SecondLevel {std::unordered_map<std::string, ThirdLevel> secondLevelMap;};
+//struct FirstLevel {std::unordered_map<std::string, SecondLevel> firstLevelMap;};
+//// Define the main map
+//static std::unordered_map<std::string, FirstLevel> dataStore;
+//// Access
+//dataStore["Group1"].firstLevelMap["ID1"].secondLevelMap["Var1"].thirdLevelMap["SubVar1"].variables["Value1"];
+
+std::unordered_map<std::string,std::unordered_map<std::string, std::string>> FlexibleIO::datatwodimensional;
+std::unordered_map<std::string,std::unordered_map<std::string,std::unordered_map<std::string, std::string>>> FlexibleIO::datathreedimensional;
+std::unordered_map<std::string,std::unordered_map<std::string,std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>> FlexibleIO::datafourdimensional;
 
 
 FlexibleIO* FlexibleIO::instance = nullptr;
@@ -35,13 +46,11 @@ FlexibleIO* FlexibleIO::newInstance()
     return getInstance();
 }
 
-FlexibleIO::FlexibleIO()
-{
+FlexibleIO::FlexibleIO(){}
 
-}
-
-
-float FlexibleIO::getReal(std::string GROUP, std::string VARNAME)
+// Public Functions Definitions
+// Getters
+float FlexibleIO::getFloat(std::string GROUP, std::string VARNAME)
 {
 
     if ( this->datatwodimensional[GROUP][VARNAME] != "\0")
@@ -69,7 +78,7 @@ int FlexibleIO::getInteger(std::string GROUP, std::string VARNAME)
 
 }
 
-std::string FlexibleIO::getChar(std::string GROUP, std::string VARNAME)
+std::string FlexibleIO::getString(std::string GROUP, std::string VARNAME)
 {
 
     if ( this->datatwodimensional[GROUP][VARNAME] != "\0")
@@ -83,7 +92,7 @@ std::string FlexibleIO::getChar(std::string GROUP, std::string VARNAME)
 
 }
 
-float FlexibleIO::getRealIndex(std::string GROUP, std::string VARNAME, int INDEX)
+float FlexibleIO::getIndexFloat(std::string GROUP, std::string VARNAME, int INDEX)
 {
 
     if ( this->datathreedimensional[GROUP][VARNAME][std::to_string(INDEX)] != "\0")
@@ -97,7 +106,7 @@ float FlexibleIO::getRealIndex(std::string GROUP, std::string VARNAME, int INDEX
 
 }
 
-int FlexibleIO::getIntegerIndex(std::string GROUP, std::string VARNAME, int INDEX)
+int FlexibleIO::getIndexInteger(std::string GROUP, std::string VARNAME, int INDEX)
 {
 
     if ( this->datathreedimensional[GROUP][VARNAME][std::to_string(INDEX)] != "\0")
@@ -111,7 +120,7 @@ int FlexibleIO::getIntegerIndex(std::string GROUP, std::string VARNAME, int INDE
 
 }
 
-std::string FlexibleIO::getCharIndex(std::string GROUP, std::string VARNAME, int INDEX)
+std::string FlexibleIO::getIndexString(std::string GROUP, std::string VARNAME, int INDEX)
 {
 
     if ( this->datathreedimensional[GROUP][VARNAME][std::to_string(INDEX)] != "\0")
@@ -125,7 +134,7 @@ std::string FlexibleIO::getCharIndex(std::string GROUP, std::string VARNAME, int
 
 }
 
-float* FlexibleIO::getRealArray(std::string GROUP, std::string VARNAME, std::string SIZE)
+float* FlexibleIO::getArrayFloat(std::string GROUP, std::string VARNAME, std::string SIZE)
 {
 
     int size = std::stoi(SIZE, NULL, 0);
@@ -152,7 +161,7 @@ float* FlexibleIO::getRealArray(std::string GROUP, std::string VARNAME, std::str
 
 }
 
-int* FlexibleIO::getIntegerArray(std::string GROUP, std::string VARNAME, std::string SIZE)
+int* FlexibleIO::getArrayInteger(std::string GROUP, std::string VARNAME, std::string SIZE)
 {
 
     int size = std::stoi(SIZE, NULL, 0);
@@ -179,7 +188,7 @@ int* FlexibleIO::getIntegerArray(std::string GROUP, std::string VARNAME, std::st
 
 }
 
-std::string FlexibleIO::getCharArray(std::string GROUP, std::string VARNAME, std::string SIZE)
+std::string FlexibleIO::getArrayString(std::string GROUP, std::string VARNAME, std::string SIZE)
 {
 
     std::string strarray = "";
@@ -203,12 +212,12 @@ std::string FlexibleIO::getCharArray(std::string GROUP, std::string VARNAME, std
     return strarray;
 }
 
-float FlexibleIO::getRealYrdoy(std::string GROUP, std::string YRDOY, std::string VARNAME)
+float FlexibleIO::getForKeyFloat(std::string GROUP, std::string KEY, std::string VARNAME)
 {
 
-    if ( this->datathreedimensional[GROUP][YRDOY][VARNAME] != "\0")
+    if ( this->datathreedimensional[GROUP][KEY][VARNAME] != "\0")
     {
-        return strtof(this->datathreedimensional[GROUP][YRDOY][VARNAME].c_str(), NULL);
+        return strtof(this->datathreedimensional[GROUP][KEY][VARNAME].c_str(), NULL);
     }
     else
     {
@@ -217,12 +226,12 @@ float FlexibleIO::getRealYrdoy(std::string GROUP, std::string YRDOY, std::string
 
 }
 
-int FlexibleIO::getIntegerYrdoy(std::string GROUP, std::string YRDOY, std::string VARNAME)
+int FlexibleIO::getForKeyInteger(std::string GROUP, std::string KEY, std::string VARNAME)
 {
 
-    if ( this->datathreedimensional[GROUP][YRDOY][VARNAME] != "\0")
+    if ( this->datathreedimensional[GROUP][KEY][VARNAME] != "\0")
     {
-        return std::stoi(this->datathreedimensional[GROUP][YRDOY][VARNAME], NULL, 0);
+        return std::stoi(this->datathreedimensional[GROUP][KEY][VARNAME], NULL, 0);
     }
     else
     {
@@ -231,12 +240,54 @@ int FlexibleIO::getIntegerYrdoy(std::string GROUP, std::string YRDOY, std::strin
 
 }
 
-std::string FlexibleIO::getCharYrdoy(std::string GROUP, std::string YRDOY, std::string VARNAME)
+std::string FlexibleIO::getForKeyString(std::string GROUP, std::string KEY, std::string VARNAME)
 {
 
-    if ( this->datathreedimensional[GROUP][YRDOY][VARNAME] != "\0")
+    if ( this->datathreedimensional[GROUP][KEY][VARNAME] != "\0")
     {
-        return this->datathreedimensional[GROUP][YRDOY][VARNAME];
+        return this->datathreedimensional[GROUP][KEY][VARNAME];
+    }
+    else
+    {
+        return "-99";
+    }
+
+}
+
+float FlexibleIO::getFor2KeyFloat(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME)
+{
+
+    if ( this->datafourdimensional[GROUP][KEY][KEY2][VARNAME] != "\0")
+    {
+        return strtof(this->datafourdimensional[GROUP][KEY][KEY2][VARNAME].c_str(), NULL);
+    }
+    else
+    {
+        return -99.0;
+    }
+
+}
+
+int FlexibleIO::getFor2KeyInteger(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME)
+{
+
+    if ( this->datafourdimensional[GROUP][KEY][KEY2][VARNAME] != "\0")
+    {
+        return std::stoi(this->datafourdimensional[GROUP][KEY][KEY2][VARNAME], NULL, 0);
+    }
+    else
+    {
+        return -99;
+    }
+
+}
+
+std::string FlexibleIO::getFor2KeyString(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME)
+{
+
+    if ( this->datafourdimensional[GROUP][KEY][KEY2][VARNAME] != "\0")
+    {
+        return this->datafourdimensional[GROUP][KEY][KEY2][VARNAME];
     }
     else
     {
@@ -246,74 +297,97 @@ std::string FlexibleIO::getCharYrdoy(std::string GROUP, std::string YRDOY, std::
 }
 
 
-void FlexibleIO::setRealMemory(std::string GROUP, std::string VARNAME, float VALUE)
+// Setters
+void FlexibleIO::setFloat(std::string GROUP, std::string VARNAME, float VALUE)
 {
 
     this->datatwodimensional[GROUP][VARNAME] = std::to_string(VALUE);
 
 }
 
-void FlexibleIO::setIntegerMemory(std::string GROUP, std::string VARNAME, int VALUE)
+void FlexibleIO::setInteger(std::string GROUP, std::string VARNAME, int VALUE)
 {
 
     this->datatwodimensional[GROUP][VARNAME] = std::to_string(VALUE);
 
 }
 
-void FlexibleIO::setCharMemory(std::string GROUP, std::string VARNAME, std::string VALUE)
+void FlexibleIO::setString(std::string GROUP, std::string VARNAME, std::string VALUE)
 {
 
     this->datatwodimensional[GROUP][VARNAME] = VALUE;
 
 }
 
-void FlexibleIO::setRealIndexMemory(std::string GROUP, std::string VARNAME, float VALUE, int INDEX)
+void FlexibleIO::setIndexFloat(std::string GROUP, std::string VARNAME, float VALUE, int INDEX)
 {
 
     this->datathreedimensional[GROUP][VARNAME][std::to_string(INDEX)] = std::to_string(VALUE);
 
 }
 
-void FlexibleIO::setIntegerIndexMemory(std::string GROUP, std::string VARNAME, int VALUE, int INDEX)
+void FlexibleIO::setIndexInteger(std::string GROUP, std::string VARNAME, int VALUE, int INDEX)
 {
 
     this->datathreedimensional[GROUP][VARNAME][std::to_string(INDEX)] = std::to_string(VALUE);
 
 }
 
-void FlexibleIO::setCharIndexMemory(std::string GROUP, std::string VARNAME, std::string VALUE, int INDEX)
+void FlexibleIO::setIndexString(std::string GROUP, std::string VARNAME, std::string VALUE, int INDEX)
 {
 
     this->datathreedimensional[GROUP][VARNAME][std::to_string(INDEX)] = VALUE;
 
 }
 
-void FlexibleIO::setRealYrdoyMemory(std::string GROUP, std::string YRDOY, std::string VARNAME, float VALUE)
+void FlexibleIO::setForKeyFloat(std::string GROUP, std::string KEY, std::string VARNAME, float VALUE)
 {
 
-    this->datathreedimensional[GROUP][YRDOY][VARNAME] = std::to_string(VALUE);
+    this->datathreedimensional[GROUP][KEY][VARNAME] = std::to_string(VALUE);
 
 }
 
-void FlexibleIO::setIntegerYrdoyMemory(std::string GROUP, std::string YRDOY, std::string VARNAME, int VALUE)
+void FlexibleIO::setForKeyInteger(std::string GROUP, std::string KEY, std::string VARNAME, int VALUE)
 {
 
-    this->datathreedimensional[GROUP][YRDOY][VARNAME] = std::to_string(VALUE);
+    this->datathreedimensional[GROUP][KEY][VARNAME] = std::to_string(VALUE);
 
 }
 
-void FlexibleIO::setCharYrdoyMemory(std::string GROUP, std::string YRDOY, std::string VARNAME, std::string VALUE)
+void FlexibleIO::setForKeyString(std::string GROUP, std::string KEY, std::string VARNAME, std::string VALUE)
 {
 
-    this->datathreedimensional[GROUP][YRDOY][VARNAME] = VALUE;
+    this->datathreedimensional[GROUP][KEY][VARNAME] = VALUE;
 
 }
 
+void FlexibleIO::setFor2KeyFloat(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME, float VALUE)
+{
 
+    this->datafourdimensional[GROUP][KEY][KEY2][VARNAME] = std::to_string(VALUE);
+
+}
+
+void FlexibleIO::setFor2KeyInteger(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME, int VALUE)
+{
+
+    this->datafourdimensional[GROUP][KEY][KEY2][VARNAME] = std::to_string(VALUE);
+
+}
+
+void FlexibleIO::setFor2KeyString(std::string GROUP, std::string KEY, std::string KEY2, std::string VARNAME, std::string VALUE)
+{
+
+    this->datafourdimensional[GROUP][KEY][KEY2][VARNAME] = VALUE;
+
+}
+
+// Others
 void FlexibleIO::eraseGroupMemory(std::string GROUP)
 {
 
     this->datatwodimensional.erase(GROUP);
     this->datathreedimensional.erase(GROUP);
+    this->datafourdimensional.erase(GROUP);
 
 }

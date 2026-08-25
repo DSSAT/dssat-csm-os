@@ -28,11 +28,13 @@ ENDIF(BT STREQUAL "RELEASE")
 ######################################################
 # Determine and set the CXX compiler flags we want 
 ######################################################
+set (CMAKE_CXX_STANDARD 11)
+
 SET_COMPILE_FLAG(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
                  CXX "/std:c++latest"  # MSVC
-                     "-std=c++0x"      # GNU
-                     "-std=gnu++0x"    # GNU
-                     " -c"             # GNU
+                     "-std=c++11"      # GNU
+                     "-std=gnu++11"    # GNU
+                     "-c"              # GNU
                      "-fPIC"           # GNU  
                 )
 
