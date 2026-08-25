@@ -87,7 +87,7 @@ C The statements begining with !*! are refer to APSIM source codes
       INTEGER NOUTXL, ERRNUM, RUN  
       INTEGER nlayr_nw   ! Number of layers in specific soil profile  
       CHARACTER*1 IDETR
-      CHARACTER*1  MEEVP
+      CHARACTER*1  MEEVP, ISWDIS
       CHARACTER*5  temp_Char
       CHARACTER*12 OUTXL
       character*6 uptake_source ! add by JZW
@@ -431,7 +431,7 @@ C The statements begining with !*! are refer to APSIM source codes
       INTEGER     PATHL
       INTEGER     LUNECO
       REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
-      REAL        KVAL1,KVAL2  ! JG added for ecotype file
+      REAL        KVAL1,KVAL2,OBASE  ! JG added for ecotype file
       
       INTEGER         FOUND  
       REAL        FSLFW
@@ -716,6 +716,7 @@ C The statements begining with !*! are refer to APSIM source codes
           ISWWAT = ISWITCH % ISWWAT
           IDETO  = ISWITCH % IDETO
           MEEVP  = ISWITCH % MEEVP
+          ISWDIS = ISWITCH % ISWDIS
           !-------------------------------------------------------
           !     Read input file name (ie. DSSAT45.INP) and path
           !-------------------------------------------------------
@@ -809,8 +810,9 @@ C 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,48(F6.0))
+     &             FOZ1,SFOZ1,OBASE
+3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -2263,11 +2265,11 @@ cbak optimum of 18oc for photosynthesis
          ! JG divided FOZ1 by 100 to clean parameter value 7/24/20
          ! JG replaced FOZ2 with (1 + (FOZ1/100 * 25)) 01/18/2022
          !    same value, but one less parameter needed in ECO file
-      if (OZON7 .gt. 25.0) then
-          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
-!          FO3 = (-0.0006 * OZON7) + 1.015  !Ozone Tolerant cultivars
-!          FO3 = (-0.005 * OZON7) + 1.125   !Ozone Sensitive cultivars
-!          FO3 = (-0.001 * OZON7) + 1.025   !Ozone Intermediate cultivars
+      if (OZON7 .gt. OBASE .and. ISWDIS .eq. 'O') then
+          FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * OBASE))
+          !FO3 = (-0.0006 * OZON7) + 1.015  !Ozone Tolerant cultivars
+          !FO3 = (-0.005 * OZON7) + 1.125   !Ozone Sensitive cultivars
+          !FO3 = (-0.001 * OZON7) + 1.025   !Ozone Intermediate cultivars
           FO3 = MAX(FO3, 0.0)
       else
           FO3 = 1.0
@@ -3224,8 +3226,8 @@ cbak  adjust the green leaf ara of the leaf that is dying
       ! JG divided SFOZ1 by 10 to clean parameter value 7/24/20
       ! JG replaced SFOZ2 with (1 - (SFOZ1/10 * 25)) 01/18/2022
       !    same value, but one less parameter needed in ECO file
-      if (OZON7 .gt. 25.0 ) then
-          SLFO3 = (SFOZ1/10) * OZON7 + (1.0 - (SFOZ1/10 * 25.0))
+      if (OZON7 .gt. OBASE .and. ISWDIS .eq. 'O') then
+          SLFO3 = (SFOZ1/10) * OZON7 + (1.0 - (SFOZ1/10 * OBASE))
           !SLFO3 = 0.008 * OZON7 + 0.8    !Ozone Tolerant cultivars
           !SLFO3 = 0.04 * OZON7 + 0.0     !Ozone Sensitive cultivars
           !SLFO3 = 0.025 * OZON7 + 0.375  !Ozone Intermediate cultivars
@@ -3586,6 +3588,7 @@ cjh quick fix for maturity stage
 ! NSINK       Demand for N associated with grain filling (g/plant/day)
 ! NSTRES      Nitrogen stress factor affecting growth (0-1)
 ! NWSD        No. of consecutive days with severe water stress
+! OBASE       Base mean 7-hour (M7) ozone damage threshold, default = 25.0 ppb
 ! optfr       Fraction of optimum conditions from stress. (0-1)  (NWheat)
 ! OUTPUT      Program control variable to output state and rate variables to output file (value=5)
 ! P5          GDD from silking to physiological maturity, C
