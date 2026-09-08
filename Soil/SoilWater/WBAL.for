@@ -21,7 +21,7 @@ C=====================================================================
      &    IRRAMT, MULCH, RAIN, RUNOFF, SNOW,  
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW)
 !     ------------------------------------------------------------------
-      USE ModuleDefs 
+      USE Cells_2D
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
@@ -54,7 +54,7 @@ C=====================================================================
       REAL CUMRESWATADD, RESWATADD_T
       REAL CUMMULEVAP, MULCHEVAP
 
-      LOGICAL FEXIST, Sim2D
+      LOGICAL FEXIST
 
 !     ------------------------------------------------------------------
       IDETW   = ISWITCH % IDETW
@@ -88,7 +88,7 @@ C=====================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       RUN     = CONTROL % RUN
-      Sim2D   = .FALSE.
+      Sim2D   = CONTROL % Sim2D
 
       TSWINI = TSW
       TSWY   = TSWINI

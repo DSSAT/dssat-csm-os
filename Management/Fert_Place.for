@@ -68,7 +68,7 @@ C=======================================================================
      &  LINC, LNUM, LUNIO, MULTI, NAPFER(NELEM), 
      &  NFERT, NLAYR, TIMDIF
       INTEGER YR, YRDIF, YRDNIT, YRDOY, YRPLT, YRSIM
-      INTEGER METFER
+      INTEGER METFER, DrpRefIdx
       INTEGER FDAY(NAPPL), FERTYP(NAPPL)
 
       REAL DSOILN , FERDEPTH,  !, FERMIXPERC,
@@ -436,7 +436,8 @@ C       Convert character codes for fertilizer method into integer
 
           CALL FertLayers(
      &      DLAYR, FERDEPTH, FERTYPE, METFER, NLAYR,            !Input
-     &      AppType, FERMIXPERC, FMIXEFF, KMAX, PROF, UNINCO)   !Output
+     &      AppType, FERMIXPERC, FMIXEFF, KMAX, PROF, UNINCO,   !Output
+     &      DrpRefIdx)                                          !Output
 
 !         Set soil distribution for slow release fertilizers 
           IF (HASCR) THEN
@@ -635,6 +636,7 @@ C-----------------------------------------------------------------------
 
       FertData % AMTFER  = AMTFER
       FertData % AppType = AppType
+      FertData % DrpRefIdx = DrpRefIdx
       FertData % FERTDAY = FERTDAY
       FertData % FERDEPTH= FERDEPTH
       FertData % FERTYPE = FERTYPE
@@ -670,10 +672,12 @@ C  03/17/2005 CHP pulled N fertilizer distribution from FPLACE
 C=======================================================================
       SUBROUTINE FertLayers(
      &    DLAYR, FERDEPTH, FERTYPE, METFER, NLAYR,            !Input
-     &    AppType, FERMIXPERC, FMIXEFF, KMAX, PROF, UNINCO)   !Output
+     &    AppType, FERMIXPERC, FMIXEFF, KMAX, PROF, UNINCO,   !Output
+     &    DrpRefIdx)                                          !Output             
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE ModuleData
       USE FloodModule
       IMPLICIT NONE
       EXTERNAL IDLAYR, WARNING
@@ -684,7 +688,7 @@ C=======================================================================
       CHARACTER*6, PARAMETER :: ERRKEY = 'FPLACE'
       CHARACTER*7  AppType
 
-      INTEGER FERTYPE, I, IDLAYR, KMAX, L, NLAYR
+      INTEGER FERTYPE, I, IDLAYR, KMAX, L, NLAYR, J
 
       REAL CUMDEP, FERDEPTH
       REAL FMIXEFF, FERMIXPERC
@@ -692,8 +696,10 @@ C=======================================================================
       REAL DLAYR(NL), PROF(NL)
 
       LOGICAL UNINCO
-      INTEGER KD, METFER
+      INTEGER KD, METFER, DrpRefIdx
       REAL FME(10)    !Fertilizer mixing efficiency
+      
+      TYPE (DripIrrType) DripIrrig(NDrpLn)
 
 !-----------------------------------------------------------------------
 !Fertilizer methods -- METFER
@@ -800,7 +806,7 @@ C     Need to make provision for USG as a source
           KMAX     = KD
           
         CASE (5)
-!       This is applying with irrigation placement
+!       This is applying with irrigation placement; fertigation
 !       All fertilizer placed in layer KD with (PROF = 1.0)
           KD = IDLAYR (NLAYR,DLAYR,FERDEPTH)
           PROF(KD) = 1.0
@@ -844,15 +850,30 @@ C     Need to make provision for USG as a source
         CASE DEFAULT;     FERMIXPERC = 0.
       END SELECT
 
-!       Set the percentage of fertilizer that is applied to the root zone
-!       This is used in the soil inorganic phosphorus routine to compute
-!       P available for uptake by roots.
-        SELECT CASE (METFER)
-          CASE (3,4,18); AppType = 'BANDED '
-!         CASE (7,8,9) ; AppType = 'HILL   '
-          CASE (7,8,9,19,20); AppType = 'POINT  '
-          CASE DEFAULT ; AppType = 'UNIFORM'
-        END SELECT
+!     If there is drip irrigation today, and fertilizer is applied in
+!     irrigation water (AP005) then use AppType = 'DRIP   '
+      Call GET(DripIrrig)
+        
+!     Set the percentage of fertilizer that is applied to the root zone
+!     This is used in the soil inorganic phosphorus routine to compute
+!     P available for uptake by roots.
+      DrpRefIdx = -99
+      AppType = ' '
+      SELECT CASE (METFER)
+        CASE (3,4,18); AppType = 'BANDED '
+        CASE (5)
+          DO J = 1, NDrpLn
+            IF (DripIrrig(J)%DripDep .EQ. FERDEPTH 
+     &        .AND. DripIrrig(J)%IrrRate > 1.E-6) THEN
+               AppType = 'DRIP   '
+               DrpRefIdx = J
+               exit
+            ENDIF
+          Enddo
+!       CASE (7,8,9) ; AppType = 'HILL   '
+        CASE (7,8,9,19,20); AppType = 'POINT  '
+        CASE DEFAULT ; AppType = 'UNIFORM'
+      END SELECT
 
       RETURN
       END SUBROUTINE FertLayers
@@ -974,6 +995,78 @@ C=======================================================================
    10 CONTINUE
       RETURN
       END FUNCTION IDLAYR
+
+
+!=======================================================================
+
+!=======================================================================
+!     Subroutine BandWidth determines the fraction of banded fertilizer
+!       placement in each column for a 2D simulation.
+
+!     Rules:
+!     - width of banding is FMAX cm maximum
+!     - use whole columns only for fertilizer placement
+!     - for raised beds, assume the entire bed width
+!     - for plastic mulch covered row, use width of plastic mulch, unless it
+!         covers more than half a row, then default to the FMAX rule.
+!     ----------------------------------------------------------------------
+
+      Subroutine BandWidth(CELLS, FracCol)
+
+      USE Cells_2D
+      IMPLICIT NONE
+
+      TYPE (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
+      REAL, DIMENSION(1:MaxCols), INTENT(OUT) :: FracCol
+      REAL TargetWidth, CumWidth, FertWidth
+      INTEGER col
+
+!     Total width of banded fertilizer placement, cm
+      REAL, PARAMETER :: FMAX = 40. 
+
+      IF (Sim2D) THEN
+!       Set the default width of fertilizer application.
+!       This is the full width in cm (not the simulated half width).
+        TargetWidth = FMAX  !default max width
+
+!       Assume no fertilizer application in any row
+        FertWidth = 0.0
+        FracCol = 0.0
+        
+        IF (BedDimension % RaisedBed) THEN
+!         Raised bed, apply banded fertilizer within bed width
+          TargetWidth = BedDimension % BedWd
+
+        ELSEIF (BedDimension % PMCover) THEN
+!         Plastic mulch cover on flat system, 
+!           apply fertilizer within plastic mulch cover unless 
+!           it covers more than 50% of the row width.
+          TargetWidth = MIN(FMAX, BedDimension % BedWd, 
+     &                      0.5 * BedDimension % RowSpc_cm)
+        ENDIF
+
+        CumWidth = 0.0
+        DO col = 1, NColsTot
+          CumWidth = CumWidth + CELLS(1,col) % STRUC % Width
+          IF (CumWidth <= TargetWidth / 2.0) THEN
+            FracCol(col) = CELLS(1,col) % STRUC % Width
+            FertWidth = CumWidth
+          ELSE
+            EXIT
+          ENDIF
+        ENDDO
+
+        FracCol = FracCol / FertWidth
+
+      ELSE
+!       1D simulation
+        FertWidth = BedDimension % RowSpc_cm
+        FracCol = 1.0
+      ENDIF
+
+      RETURN
+      End Subroutine BandWidth
+!=======================================================================
 
 !=======================================================================
 ! FPLACE and IDLAYR Variables - updated 08/18/2003

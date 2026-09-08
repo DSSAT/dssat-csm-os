@@ -50,9 +50,9 @@ C=======================================================================
       REAL, PARAMETER :: spd = 24.*3600.   ! seconds per day
 !     Reference height for the Arah model to be the top of the bund
       REAL, PARAMETER :: RefHeight = 100. ! mm
-      !1/d EHFMS changed, before was 0.06
+!      1/d EHFMS changed, before was 0.06
       REAL, PARAMETER :: BufferRegenRate = 0.070
-      !EHFMS created this parameter 
+!      EHFMS created this parameter 
       REAL, PARAMETER :: frac_afpmax = 0.30
       DYNAMIC = CONTROL % DYNAMIC
       DLAYR = SOILPROP % DLAYR
@@ -110,23 +110,23 @@ C-----------------------------------------------------------------------
         CH4Stored_Y   = 0.0
         CH4_data % CH4Stored = 0.0
 
-!     SAEA = Soil Alternative Electron Acceptors (mol Ceq/m3)
-!     SAEA = 26.5  
-      SAEA = SOILPROP % SAEA
+!       SAEA = Soil Alternative Electron Acceptors (mol Ceq/m3)
+!       SAEA = 26.5  
+        SAEA = SOILPROP % SAEA
 
-      FloodCH4 = 0.0
-      DO i=1,NLAYR
-!       Convert the alternate electron acceptors in each layer 
-!       from mol Ceq/m3 to kgC/ha
-!       Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
-        Buffer(i,1) = SAEA(i) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
-        Buffer(i,2) = 0.0
-      ENDDO
-
-!     proportionality constant for root transmissivity and RLV	
-!     (0.00015 m air/(m root))
-!     lamda_rho = lamdarho  ! 0.00015
-      lamda_rho = 0.00015
+        FloodCH4 = 0.0
+        DO i=1,NLAYR
+!         Convert the alternate electron acceptors in each layer 
+!         from mol Ceq/m3 to kgC/ha
+!         Buffer(i,1) = Buffer(i,1) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+          Buffer(i,1) = SAEA(i) * 12.*(dlayr(i)/100.)*10. ! kg Ceq/ha
+          Buffer(i,2) = 0.0
+        ENDDO
+        
+!       proportionality constant for root transmissivity and RLV	
+!       (0.00015 m air/(m root))
+!       lamda_rho = lamdarho  ! 0.00015
+        lamda_rho = 0.00015
 
       ENDIF
 
@@ -196,9 +196,9 @@ C-----------------------------------------------------------------------
         IF (FLOOD.GT.0.0) THEN 
           afp(i) = 0.0
         ELSE 
-            afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))          
-      ENDIF
-         afpmax = 1.0 - BD(i)/2.65
+          afp(i) = max(0.0,1.0 - BD(i)/2.65 - SW(i))
+        ENDIF
+        afpmax = 1.0 - BD(i)/2.65
 
 !       Update buffer from new fertilizer
         Buffer(i,1) = Buffer(i,1) + FERTDATA % AddBuffer(i)
@@ -207,31 +207,33 @@ C-----------------------------------------------------------------------
         buffconc = Buffer(i,1)/10./12./(dlayr(i)/100.)  
 
 !       calculate reoxidisation of buffer if soil is aerated
-!         IF (afp(i).GT.0.0) THEN !     
-! EHFMS: Methane Prod. under conditions of partially saturated soil
-      IF (afp(i).GT.frac_afpmax*afpmax) THEN 
-         rCH4 = 0.0              ! no CH4 production
-         rCO2 = CSubstrate(i)    ! aerobic respiration
-         rbuff = -MIN(BufferRegenRate * afp(i) / afpmax * Buffer(i,2),
-     &                Buffer(i,2))
-      ELSE
-      ! calculate methane production
-      IF (buffconc > 0.0) THEN
-         rCH4 = 0.3 * (1.0 - buffconc/24.0)    ! mol C m3/d  was 0.2
-         rCH4 = rCH4 * dlayr(i)/100. * 12. * 10.   ! kgC/ha/d
-      ELSE  
-        rCH4 = CSubstrate(i) / 2.0            ! kgC/ha/d
-      ENDIF
-       rCH4 = MAX(0.0, MIN(rCH4, CSubstrate(i)/2.0))
-       rCO2 = CSubstrate(i) - (2.0 * rCH4)
-      IF (rCO2 > Buffer(i,1)) THEN
-         rCO2 = Buffer(i,1)
-         rCH4 = (CSubstrate(i) - rCO2) / 2.0
-      ENDIF
-      rbuff = rCO2  
-      ENDIF
-      Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidized buffer pool
-      Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool                       
+!       IF (afp(i).GT.0.0) THEN
+!       EHFMS: Methane Prod. under conditions of partially saturated soil
+        IF (afp(i).GT.frac_afpmax*afpmax) THEN 
+           rCH4 = 0.0              ! no CH4 production
+           rCO2 = CSubstrate(i)    ! aerobic respiration
+           rbuff = -MIN(BufferRegenRate * afp(i) / afpmax * Buffer(i,2),
+     &                  Buffer(i,2))
+        ELSE
+!         calculate methane production
+          IF (buffconc > 0.0) THEN
+             rCH4 = 0.3 * (1.0 - buffconc/24.0)    ! mol C m3/d  was 0.2
+             rCH4 = rCH4 * dlayr(i)/100. * 12. * 10.   ! kgC/ha/d
+          ELSE  
+            rCH4 = CSubstrate(i) / 2.0            ! kgC/ha/d
+          ENDIF
+          rCH4 = MAX(0.0, MIN(rCH4, CSubstrate(i)/2.0))
+          rCO2 = CSubstrate(i) - (2.0 * rCH4)
+
+          IF (rCO2 > Buffer(i,1)) THEN
+             rCO2 = Buffer(i,1)
+             rCH4 = (CSubstrate(i) - rCO2) / 2.0
+          ENDIF
+
+          rbuff = rCO2  
+        ENDIF
+        Buffer(i,1) = Buffer(i,1) - rbuff       ! oxidized buffer pool
+        Buffer(i,2) = Buffer(i,2) + rbuff       ! reduced buffer pool
 
 !       Total CH4 substrate (kgC/ha)
         TCH4Substrate = TCH4Substrate + rCH4  
@@ -242,13 +244,16 @@ C-----------------------------------------------------------------------
         theta(j) = SW(i)                  ! soil water content (v/v)
         epsilon(j) = afp(i)               ! air-filled porosity (v/v)
         lamda(j) = RLV(i) * lamda_rho     ! root transmissivity
+
 !       maximum rate of methanogenesis (Vm, mol CH4/m3/s)
 !       (assume all is consumed in a day)
 !       (i.e. convert kgC/ha/d -->moleCH2O/m3/s)
         VV(om,j) = rCH4/10./12./(dlayr(i)/100.)/spd
+
 !       maximum rate of aerobic respiration (Vr, mol CO2/m3/s)
 !       (convert kgC/ha/d -->moleCH2O/m3/s)
         VV(o2,j) = rCH4/10./12./(dlayr(i)/100.)/spd 
+
 !       maximum rate of methane oxidation   (Vo, mol CH4/m3/s)
         VV(ch4,j) = 1.5e-5
       ENDDO

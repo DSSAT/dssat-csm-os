@@ -50,7 +50,8 @@
      &  SomLit,SomLitC, SomLitE, SSOMC)               !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
+      USE Cells_2D
       USE FloodModule             
       USE ModSoilMix
       USE GHG_mod
@@ -152,6 +153,12 @@
       REAL RLV(NL), DRAIN
       TYPE (CH4_type) CH4_data
 
+!-----------------------------------------------------------------------
+!     Added with 2D model - this routine is not yet 2D, but accounts for
+!     bed width in bedded systems for computing quantities of organic matter
+      REAL, DIMENSION(NL) :: BWRATIO
+
+!-----------------------------------------------------------------------
       DATA ADDMETABEFLAG /.FALSE./
       DATA FRMETFLAG /.FALSE./
 
@@ -180,8 +187,6 @@
       BD     = SOILPROP % BD     
       CLAY   = SOILPROP % CLAY    
       DLAYR  = SOILPROP % DLAYR  
-!      DMOD   = SOILPROP % DMOD
-!      IF (DMOD < -1.E-6) CALL ERROR("DMOD",0,"SOILPROP",0)   
       DUL    = SOILPROP % DUL    
       KG2PPM = SOILPROP % KG2PPM  
       LL     = SOILPROP % LL     
@@ -259,9 +264,21 @@
       ACCCO2 = 0.0
       newCO2 = 0.
 
+!     If this is a bedded system, need bed width:row width ratio
+      BWRATIO = 1.0
+      IF (BedDimension % RaisedBed) THEN
+        DO L = 1, NLAYR
+          IF (L < BedDimension % FurRow1) THEN
+            BWRATIO(L) = BedDimension % BEDWD / BedDimension % ROWSPC_cm
+          ELSE
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF
+
 !     Set initial SOM and nitrogen conditions for each soil layer.
       CALL SoilCNPinit_C (CONTROL, ISWITCH,               !Input 
-     &  N_ELEMS, SOILPROP,                                !Input
+     &  N_ELEMS, SOILPROP, NH4, NO3, BWRATIO,             !Input
      &  ACCCO2, ACCMNR, ADDMETABEFLAG, AMINRL, CEDAM,     !Output
      &  CES1, CES1M, CES1T, CES1X, CES2, CES21I, CES21M,  !Output
      &  CES21S, CES21T, CES21X, CES23LM, CES23LX, CES23M, !Output
@@ -469,7 +486,7 @@
       DLTMETABE(1,1) = FLOODN % ALGFON
 
       DO L = 1, NLAYR   
-        AMINRL(L,N) = (NO3(L) + NH4(L)) / KG2PPM(L)
+        AMINRL(L,N) = (NO3(L) + NH4(L)) / KG2PPM(L) * BWRATIO(L)
         AMINRL(L,P) = SPi_Labile(L)
       ENDDO
 

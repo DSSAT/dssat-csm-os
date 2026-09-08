@@ -163,7 +163,7 @@ C=======================================================================
         CALL GET('NITR', 'TNOXD', TNOXD)      !Nitrif today (kg/ha)
         CALL GET('NITR', 'TLCHD', TLCHD)      !Leached N today (kg/ha)
         CALL GET('SPAM','EO',EO) 
-        CALL GET('SPAM','UH2O',UH2O)          !Root water uptake (cm/d)
+        CALL GET('SPAM','UH2O',UH2O, NL)      !Root water uptake (cm/d)
         CALL GET('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
         CALL GET('ORGC','TOMINSOM' ,TOMINSOM) !Miner from SOM (kg/ha)
         CALL GET('ORGC','TOMINSOM1',TOMINSOM1)!Miner from SOM1 (kg/ha)

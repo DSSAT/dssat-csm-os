@@ -27,8 +27,12 @@ C  08/12/2003 CHP Added I/O error checking
 !  03/26/2007 CHP Soil layer depth labels added to SoilProp variable 
 !  02/11/2009 CHP Do not run SoilDyn when ISWWAT = 'N'
 !                 Changed condition for missing or zero OC.
+!  08/11/2011 JW  Move the soilLayerType determination of 1D layer to a new SUBROUTINE SoilLayerClass
+!                 Add soilLayerType determination for bed layer profile
+!                 Add calculation of Matric Potential
 !  01/24/2023 chp added SAEA to soil analysis in FileX for methane
-!  08/30/2024 FO  Added WARNING message if LL > DUL > SAT.
+!  08/22/2023 CHP begin integration of 2D model into develop
+!  08/30/2024  FO Added WARNING message if LL > DUL > SAT.
 !  08/01/2025 GH  Add additional information for SLPF
 C-----------------------------------------------------------------------
 C  Called : Main
@@ -38,16 +42,17 @@ C=======================================================================
       SUBROUTINE SOILDYN(CONTROL, ISWITCH, 
      &    KTRANS, MULCH, SomLit, SomLitC, SW, TILLVALS,   !Input
      &    WEATHER, XHLAI,                                 !Input
-     &    SOILPROP)                                       !Output
+     &    CELLS, SOILPROP, SOILPROP_furrow,               !Output
+     &    SOILPROP_profile, NH4_init, NO3_init)           !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs 
+      USE Cells_2D
       USE ModuleData
 
       IMPLICIT NONE
       EXTERNAL ERROR, FIND, WARNING, INFO, TEXTURECLASS, SOILLAYERCLASS,
      &  CALBROKCRYPARA, RETC_VG, SOILLAYERTEXT, PRINT_SOILPROP, 
-     &  SETPM, OPSOILDYN, ALBEDO_avg, TILLEVENT, SOILMIXING
+     &  CELLINIT_2D, SETPM, OPSOILDYN, ALBEDO_avg, TILLEVENT, SOILMIXING
       SAVE
 
       LOGICAL NOTEXTURE, PHFLAG, FIRST, NO_OC
@@ -78,7 +83,7 @@ C-----------------------------------------------------------------------
       LOGICAL, DIMENSION(NL) :: COARSE
 
 !     Initial conditions (used to calculate TotOrgN from TOTN)
-      REAL, DIMENSION(NL) :: NO3, NH4
+      REAL, DIMENSION(NL) :: NO3_init, NH4_init
 
 !     Second tier soils data:
       REAL, DIMENSION(NL) :: EXTP, TOTP, ORGP, CACO, CACO3
@@ -171,6 +176,10 @@ C-----------------------------------------------------------------------
       TYPE (TillType)   , INTENT(IN) :: TILLVALS !Tillage operation vars
       TYPE (WeatherType), INTENT(IN) :: WEATHER  !Weather variables
 
+!     2D MODEL
+      TYPE (CellType)   , INTENT(OUT):: CELLS(MaxRows,MaxCols)
+      TYPE (SoilType) SoilProp_Bed, SoilProp_Furrow, SOILPROP_profile
+
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
       FILEIO  = CONTROL % FILEIO
@@ -179,6 +188,7 @@ C-----------------------------------------------------------------------
       REPNO   = CONTROL % REPNO
       RNMODE  = CONTROL % RNMODE
       RUN     = CONTROL % RUN
+      SIM2D   = CONTROL % SIM2D
       YRDOY   = CONTROL % YRDOY
 
       MEINF   = ISWITCH % MEINF
@@ -361,7 +371,8 @@ C-----------------------------------------------------------------------
 
       NMSG = 0
       DO L = 1, NLAYR
-        READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)SW(L), NH4(L),NO3(L)
+        READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)
+     &     SW(L), NH4_init(L),NO3_init(L)
 100     FORMAT (8X, 3 (1X, F5.1))
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
@@ -745,25 +756,28 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
         IF (TOTN(L) > 1.E-5) THEN
 !         Use inorganic N values to calculate organic N in kg/ha
-          NO3(L) = AMAX1 (NO3(L), 0.01) !ppm
-          NH4(L) = AMAX1 (NH4(L), 0.01) !ppm
+          NO3_init(L) = AMAX1 (NO3_init(L), 0.01) !ppm
+          NH4_init(L) = AMAX1 (NH4_init(L), 0.01) !ppm
 !         TOTN in %
-          TotOrgN(L) = (TOTN(L)*1.E4 - NO3(L) - NH4(L)) / KG2PPM(L)
-          TotOrgN(L) = MAX(0.0, TotOrgN(L))
+          TotOrgN(L) = (TOTN(L) * 1.E4 - NO3_init(L) - NH4_init(L)) 
+          TotOrgN(L) = MAX(0.0, TotOrgN(L)) / KG2PPM(L)
         ELSE
           TotOrgN(L) = -99.
         ENDIF
 
-!       Remove this ksat estimation 
+!     chp 2023-10-03 - Must have KSAT for 2D model to work. 
+!       Remove this ksat estimation  for 1D simulations
 !       It causes problems when SAT and DUL are close. (KJB/JWJ - India workshop 2011)
-!!       Calculate Ksat (SWCN) if not provided
-!        IF (SWCN(L) < -1.E-6) THEN
-!!         Eqn. 10 from 
-!!         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
-!!           drainage model for more accurate soil water dynamics estimation. 
-!!           Soil Science 169(11):745-757.
-!          SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
-!        ENDIF
+!!       Calculate Ksat (SWCN) if not provided for 2D model
+        IF (Sim2D) THEN
+          IF (SWCN(L) < -1.E-6) THEN
+!           Eqn. 10 from 
+!           Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
+!             drainage model for more accurate soil water dynamics estimation. 
+!             Soil Science 169(11):745-757.
+            SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
+          ENDIF
+        ENDIF
       ENDDO
 
 !-----------------------------------------------------------------------
@@ -907,13 +921,54 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
       SOILPROP % COARSE = COARSE
 
-      CALL SETPM(SOILPROP)
+!=====================================================================
+!     Initialize 2D variables for all cases.
+      CALL CellInit_2D(SOILPROP, CELLS, NH4_init, NO3_init, SW,
+     &        SoilProp_Bed, SoilProp_Furrow)
 
+      IF (BedDimension % RaisedBed) THEN   
+        SOILPROP_profile = SOILPROP  !Save original profile info
+        SOILPROP = SoilProp_Bed      !this is the new soil profile data
+
+        Call SoilLayerClass(ISWITCH, MULTI, SOILPROP%DS, SOILPROP%NLAYR, !Input
+     &    SOILPROP%SLDESC, SOILPROP% TAXON, SOILPROP%CaCO3, SOILPROP%PH, !Input
+     &    SOILPROP%CEC, SOILPROP%Clay, SOILPROP%SOILLAYERTYPE)           !Output 
+
+        CALL SoilLayerText(SOILPROP%DS, SOILPROP%NLAYR, 
+     &          SOILPROP%LayerText)
+
+        CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP) 
+
+        CALL PRINT_SOILPROP(SOILPROP)
+        IF (BedDimension % RaisedBed) THEN
+          CALL PRINT_SOILPROP(SoilProp_Furrow)
+        ENDIF
+
+        BD     = SOILPROP % BD
+        DLAYR  = SOILPROP % DLAYR
+        DS     = SOILPROP % DS
+        DUL    = SOILPROP % DUL
+        KG2PPM = SOILPROP % KG2PPM
+        LL     = SOILPROP % LL
+        NLAYR  = SOILPROP % NLAYR
+        OC     = SOILPROP % OC
+        SAT    = SOILPROP % SAT
+        SWCN   = SOILPROP % SWCN
+        TotOrgN= SOILPROP % TotOrgN
+        TEXTURE = SOILPROP % TEXTURE
+
+      ELSE
+        SoilProp_Bed = SOILPROP
+        SoilProp_Furrow = SOILPROP
+        SOILPROP_profile = SOILPROP
+        CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP) 
+        CALL PRINT_SOILPROP(SOILPROP)
+      ENDIF
+!--------------------------------------------------------------------
+!     Handle plastic mulch for 1D case.
+      CALL SETPM(SOILPROP, CELLS)
       CALL PUT(SOILPROP)
-
       IF (ISWWAT == 'N') RETURN
-
-      CALL PRINT_SOILPROP(SOILPROP)
 
 !-----------------------------------------------------------------------
 !     Initialization
@@ -1192,7 +1247,7 @@ C  tillage and rainfall kinetic energy
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
-      IF (ISWWAT == 'N') RETURN
+      IF (ISWWAT == 'N' .or. SIM2D) RETURN
 
 !-----------------------------------------------------------------------
 !  Initialize surface soil properties 
@@ -1410,6 +1465,25 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
       CALL PUT(SOILPROP)
 
+!     Synchronize the new soil properties with the 2D Cell variables
+!     for use in the SoilNi processes, some of which are done as 2D
+!     processes, even when in 1D simulation mode.
+      DO L = 1, NLAYR
+        Cells(L,1) % Struc % Thick = DLAYR(L)
+        Cells(L,1) % Struc % CellArea = DLAYR(L) * 
+     &                                        Cells(L,1) % Struc % Width
+        Cells(L,1) % State % BD    = BD(L)
+        Cells(L,1) % State % DUL   = DUL(L)
+        Cells(L,1) % State % LL    = LL(L)
+        Cells(L,1) % State % SAT   = SAT(L)
+        Cells(L,1) % State % SWCN  = SWCN(L)
+      ENDDO
+
+!     tillage is only allowed for flat system, not bedded
+!     SOILPROP_FURROW = SOILPROP
+      SOILPROP_BED    = SOILPROP
+      CALL Layer_Cell_Assoc(CELLS%Struc, SOILPROP)
+
 !***********************************************************************
 !***********************************************************************
 !     Daily output
@@ -1488,6 +1562,11 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 ! SOILPROP  Composite variable containing soil properties including bulk 
 !             density, drained upper limit, lower limit, pH, saturation 
 !             water content.  Structure defined in ModuleDefs. 
+!           At the beginning of subrouitine, it represent the original soil profile,
+!           At the latter of teh subroutine, it represent the soil profile of bed 
+! SoilProp_Bed  Soil Profile for bed
+! SOILPROP_furrow   Soil Profile for furrow               
+! SOILPROP_profile  Saved original profile info
 ! STONES(L) Coarse fraction (>2 mm) (%)
 ! SWCN(L)   Saturated hydraulic conductivity in layer L (cm/hr)
 ! SWCON     Soil water conductivity constant; whole profile drainage rate 
@@ -1550,6 +1629,15 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !!     Uses SAT to represent wet soils instead of DUL
 !!     R = Rsat + (Rdry - Rsat) * exp(-c*SW)
 !!     No data to parameterize, so don't use this method.
+
+!     NOTE: albedo of plastic mulch is not considered here.
+!     - In SoilCellInit_2D.for, the initial soil albedo uses plastic mulch, 
+!       but it's not done here in the daily update. 
+!     - Note also that MSALB_2D is calculated in subroutine SETPM
+!        in this file, but it is also not updated daily.
+!     - Do we assume organic mulch cover and plastic mulch cover to
+!       be mutually exclusive? If they occur together, is organic mulch
+!       always on top of plastic mulch?
 
 !     IF (INDEX('RSN',MEINF) .LE. 0) THEN
       IF (INDEX('RSM',MEINF) > 0) THEN   
@@ -2252,108 +2340,85 @@ C=======================================================================
 
 !==============================================================================
 !     Subroutine SETPM
-!     Calculate the fraction of plastic mulch cover 
-      SUBROUTINE SETPM(SOILPROP)                 !input/output
+!     Calculate the fraction of plastic mulch cover for each column
+      SUBROUTINE SETPM(SOILPROP, CELLS)                 !input/output
 !   ---------------------------------------------------------
+      USE Cells_2D
       USE ModuleData
       Implicit NONE
       EXTERNAL ERROR, FIND, WARNING, GETLUN, INFO
 
-      Type (SoilType) SOILPROP
+      Type (SoilType), INTENT(INOUT) :: SOILPROP
+      TYPE (CellType), INTENT(IN) :: CELLS(MaxRows,MaxCols)
 
-      CHARACTER*6 SECTION
       CHARACTER*8, PARAMETER :: ERRKEY = 'SETPM'
-      CHARACTER*125 MSG(50)
-!     CHARACTER*180 CHAR
-      INTEGER ERR, FOUND, LNUM, LUNIO
+      INTEGER J
       REAL PMWD, ROWSPC_CM
-      REAL PMALB, PMFRACTION, MSALB
+      REAL PMALB, MSALB, CumWid, CumWidLast
+      REAL, DIMENSION(0:MaxCols) :: PMFRACTION
+      REAL, DIMENSION(MaxCols) :: MSALB_2D
       LOGICAL PMCover
     
       TYPE (ControlType) CONTROL
       CALL GET(CONTROL)
 
-!   ---------------------------------------------------------
-!     Get bed dimensions and row spacing
-      CALL GETLUN('FILEIO', LUNIO)
-      OPEN (LUNIO, FILE = CONTROL%FILEIO,STATUS = 'OLD',IOSTAT=ERR)
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,0)
-      LNUM = 0
-
 !-----------------------------------------------------------------------
-      PMALB = -99.
-
-!     Read plastic mulch albedo from FIELDS section
-      SECTION = '*FIELD'
-      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
-      IF (FOUND /= 0)  THEN
-!     For 1D model, plastic mulch width is read from "bed width" variable in FileX
-      READ(LUNIO,'(79X,F6.0,F6.0)',IOSTAT=ERR) PMALB, PMWD
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
-        IF ((ERR == 0) .AND. (PMALB .eq. 0.)) THEN
-          PMALB = -99.
-        ENDIF
-      ENDIF
-
-!     Read Planting Details Section
-      SECTION = '*PLANT'
-      CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
-      IF (FOUND == 0) CALL ERROR(SECTION, 42, CONTROL%FILEIO, LNUM)
-      READ(LUNIO,'(42X,F6.0,42X,2F6.0)',IOSTAT=ERR) ROWSPC_CM 
-      LNUM = LNUM + 1
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,CONTROL%FILEIO,LNUM)
-
-      CLOSE(LUNIO)
- 
-      IF (PMALB .GT. 0) THEN
-        IF (PMWD .GT. 0 .AND. PMWD .GE. ROWSPC_CM) THEN
-          PMWD = ROWSPC_CM
-          PMCover   = .TRUE.
-          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
-          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
-          MSG(3) = "Simulating flat surface entirely covered " //
-     &             "by by plastic mulch."
-          call INFO(3,errkey,msg)
-        ELSEIF (PMWD .GT. 0.) THEN 
-          PMCover   = .TRUE.
-          WRITE(MSG(1),'("Plastic mulch width (cm) = ",F6.1)') PMWD
-          WRITE(MSG(2),'("Row spacing (cm)         = ",F6.1)') ROWSPC_CM
-          MSG(3)= "Simulating flat surface partially covered " // 
-     &            "by plastic mulch."
-          call INFO(3,errkey,msg)
-        ELSE
-          PMCover   = .FALSE.
-          MSG(1)= "Missing mulch cover width."
-          MSG(2) = "Simulating flat surface with no plastic mulch."
-          call INFO(2,errkey,msg)
-        ENDIF
-      ELSE
-        IF (PMWD .GT. 0) THEN
-          PMCover   = .FALSE.
-          MSG(1)= "Missing albedo for plastic mulch. "
-          MSG(2)= "Simulating flat surface with no plastic mulch."
-          call INFO(2,errkey,msg)
-        ELSE
-          PMCover   = .FALSE.
-          MSG(1)= "Simulating flat surface with no plastic mulch."
-          call INFO(1,errkey,msg)
-        ENDIF
-      ENDIF
+      PMALB = BedDimension % PMALB
+      ROWSPC_CM = BedDimension % ROWSPC_CM
+      PMWD = BedDimension % BEDWD
+      PMCover = BedDimension % PMCover
 
 !     Default = no plastic mulch cover
       PMFRACTION = 0.0  !no cover
 
       IF (PMCover) THEN
-        if (PMWD .GE. ROWSPC_CM) THEN
-          SOILPROP % SALB   = PMALB
-        ENDIF
-        PMFRACTION = PMWD / ROWSPC_CM
-        MSALB = PMALB * PMFRACTION + SOILPROP % SALB * (1.0 -PMFRACTION)
+!       Overall fraction of row covered by plastic mulch
+        PMFRACTION(0) = PMWD / ROWSPC_CM
         SOILPROP % MSALB  = MSALB
         SOILPROP % CMSALB = MSALB
+
+        IF (PMWD .GE. ROWSPC_CM) THEN
+!         Entire row covered with plastic for 1D and 2D
+          PMFRACTION = 1.0  !for all columns
+        ELSE
+
+          IF (CONTROL % SIM2D) THEN
+!           2D case. Set PMALB and PMFRACTION by column
+            CumWid = 0.0
+            CumWidLast = 0.0
+            DO J = 1, NColsTot
+              CumWid = CumWid + CELLS(1,J)%Struc%Width
+              IF (CumWid <= PMWD/2.0) THEN !model half row
+!               This column is entirely covered by plastic mulch
+!               Assume evaporation over minimum 5% of area.
+                PMFRACTION(J) = 1.0
+                MSALB_2D(J) = PMALB
+
+              ELSEIF (CumWidLast < PMWD/2.0) THEN
+!               Partion PM cover for this column (shouldn't happen?)
+                PMFRACTION(J) = (PMWD/2.0 - CumWidLast)/
+     &            CELLS(1,J) % Struc%Width
+                MSALB_2D(J) = PMALB * PMFRACTION(J) + 
+     &            SOILPROP % SALB * (1.0 - PMFRACTION(J))
+              ELSE
+                PMFRACTION(J) = 0.0
+                MSALB_2D(J) = SOILPROP % SALB
+              ENDIF
+              CumWidLast = CumWid
+            ENDDO
+          ELSE
+!           1D case - only handle column 1 (entire row)
+            PMFRACTION(1) =  PMFRACTION(0)
+            MSALB = PMALB * PMFRACTION(0) + 
+     &        SOILPROP % SALB * (1.0 - PMFRACTION(0))
+          ENDIF
+        ENDIF
       ENDIF
 
-      CALL PUT("PM", "PMFRACTION", PMFRACTION)
+      CALL PUT("SPAM", "PMFRACTION", PMFRACTION, MaxCols+1)
+      CALL PUT("SPAM", "MSALB_2D", MSALB_2D, MaxCols)
 
       RETURN      
       END SUBROUTINE SETPM
+!==============================================================================
+!==============================================================================

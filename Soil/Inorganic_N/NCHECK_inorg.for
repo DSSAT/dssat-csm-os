@@ -10,58 +10,69 @@ C               Note: File names etc. should be dynamically created
 C               Check time stamp
 !  02/25/2005 CHP Split NCHECK into organic and inorganic.
 C-----------------------------------------------------------------------
-      SUBROUTINE NCHECK_inorg(CONTROL, 
-     &    NLAYR, NH4, NO3, SNH4, SNO3, UREA)              !Input
+      SUBROUTINE NCHECK_inorg(CONTROL,
+     &    NH4_2D, NO3_2D, SNH4_2D, SNO3_2D, UREA_2D) !Input  
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
-      IMPLICIT NONE
+      USE Cells_2D
+!     USE ModuleDefs !already USED by Cells_2D
+      IMPLICIT NONE 
       EXTERNAL WARNING
 !-----------------------------------------------------------------------
-      CHARACTER*78  MSG(10)
-      INTEGER L, NLAYR, YRDOY
-      REAL, DIMENSION(NL) :: NH4, NO3, SNH4, SNO3, UREA
+      TYPE (ControlType), INTENT(IN) :: CONTROL
+      REAL, DIMENSION(MaxRows, MaxCols), INTENT(INOUT) ::
+     &     NH4_2D, NO3_2D, SNH4_2D,SNO3_2D, UREA_2D
+
+      CHARACTER*78 MSG(10)
+      INTEGER L, J, YRDOY
       REAL, PARAMETER :: TOL = -1.E-6
 
-      TYPE (ControlType) CONTROL
-      YRDOY   = CONTROL % YRDOY
+      IF (CONTROL % DYNAMIC == SEASINIT) THEN
+        WRITE(MSG(3),"('Value will be set to zero')")
+      ENDIF
 
 !-----------------------------------------------------------------------
-      WRITE(MSG(3),"('Value will be set to zero')")
+      YRDOY   = CONTROL % YRDOY
 
 !     Check for negative soil N values
-      DO L = 1, NLAYR
-
-        WRITE(MSG(1),100) YRDOY, L
-  100   FORMAT('Negative soil N value on day ',I7,' in layer ',I3)
-
-        IF (SNO3(L).LT. 0.0) THEN
-          SNO3(L) = 0.0
-          NO3(L) = 0.0
-          IF (SNO3(L) .LT. TOL) THEN
-            WRITE(MSG(2),"('Nitrate (SNO3) =',F10.3,'kg[N]/ha')")SNO3(L)
-            CALL WARNING(3, "NCHECK", MSG)
+      DO L = 1, NRowsTot
+        DO J = 1, NColsTot
+          IF (Sim2D) THEN
+            WRITE(MSG(1),100) YRDOY, L, J
+  100       FORMAT('Negative soil N value on day ',I7,' in cell ',I3,I3)
+          ELSE
+            WRITE(MSG(1),200) YRDOY, L
+  200       FORMAT('Negative soil N value on day ',I7,' in layer ',I3)
           ENDIF
-        ENDIF
 
-        IF (SNH4(L).LT. 0.0) THEN
-          SNH4(L) = 0.0
-          NH4(L) = 0.0
-          IF (SNH4(L) .LT. TOL) THEN
-           WRITE(MSG(2),"('Ammonium (SNH4) =',F10.3,'kg[N]/ha')")SNH4(L)
-           CALL WARNING(3, "NCHECK", MSG)
+          IF (SNO3_2D(L, J).LT. 0.0) THEN
+            SNO3_2D(L,J) = 0.0
+            NO3_2D(L,J) = 0.0
+            IF (SNO3_2D(L,J) .LT. TOL) THEN
+              WRITE(MSG(2),"('Nitrate =',F10.3,'kg[N]/ha')")
+     &                    SNO3_2D(L, J)
+              CALL WARNING(3, "NCHECK", MSG)
+            ENDIF
           ENDIF
-        ENDIF
 
-        IF (UREA(L).LT. 0.0) THEN
-          UREA(L) = 0.0
-          IF (UREA(L) .LT. TOL) THEN
-            WRITE(MSG(2),"('Urea =',F10.3,'kg[N]/ha')") UREA(L)
-            CALL WARNING(3, "NCHECK", MSG)
+          IF (SNH4_2D(L, J).LT. 0.0) THEN
+            SNH4_2D(L,J) = 0.0
+            NH4_2D(L,J) = 0.0
+            IF (SNH4_2D(L,J) .LT. TOL) THEN
+              WRITE(MSG(2),"('Ammonium =',F10.3,'kg[N]/ha')")
+     &                   SNH4_2D(L, J)
+              CALL WARNING(3, "NCHECK", MSG)
+            ENDIF
           ENDIF
-        ENDIF
+
+          IF (UREA_2D(L, J).LT. 0.0) THEN
+            UREA_2D(L,J) = 0.0
+            IF (UREA_2D(L,J) .LT. TOL) THEN
+              WRITE(MSG(2),"('Urea =',F10.3,'kg[N]/ha')") UREA_2D(L, J)
+              CALL WARNING(3, "NCHECK", MSG)
+            ENDIF
+          ENDIF
+        ENDDO
       ENDDO
 
 !-----------------------------------------------------------------------
@@ -75,9 +86,12 @@ C-----------------------------------------------------------------------
 ! LUNWARN    Logical unit number for Warning.OUT file 
 ! NL         Maximum number of soil layers = 20 
 ! NLAYR      Actual number of soil layers 
-! SNH4(L)    Total extractable ammonium N in soil layer L (kg [N] / ha)
-! SNO3(L)    Total extractable nitrate N in soil layer L (kg [N] / ha)
-! UREA(L)    Amount of urea in soil layer L (kg [N] / ha)
+! SNH4(L)    1D Total extractable ammonium N in soil layer L (kg [N] / ha)
+! SNO3(L)    1D Total extractable nitrate N in soil layer L (kg [N] / ha)
+! UREA(L)    1D Amount of urea in soil layer L (kg [N] / ha)
+! SNH4_2D(L,J) 2D Total extractable ammonium N in soil cell L,J (kg [N] / ha)
+! SNO3_2D(L,J) 2D Total extractable nitrate N in soil cell L,J (kg [N] / ha)
+! UREA_2D(L,J) 2D Amount of urea in soil cell L,J (kg [N] / ha)
 ! VALUE      Value of variable written to warning file 
 ! YRDOY      Current day of simulation (YYDDD)
 !==========================================================================

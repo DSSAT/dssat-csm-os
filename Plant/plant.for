@@ -63,7 +63,7 @@ C  08/09/2012 GH  Added CSCAS model
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
-     &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
+     &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
      &    IRRAMT, NH4, NO3, SKi_Avail, SPi_AVAIL,         !Input
      &    SNOW, SOILPROP, SRFTEMP, ST, SW,                !Input
      &    TRWUP, WEATHER, YREND, YRPLT,                   !Input
@@ -107,10 +107,11 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 ! Each plant module must compute SATFAC, SWFAC, and TURFAC
 C-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
       USE ModuleData
       USE FloodModule
       USE SumModule
+      USE Cells_2D
 
       IMPLICIT NONE
       EXTERNAL ALOHA_PINEAPPLE,BS_CERES,CROPGRO,CSCAS_INTERFACE,
@@ -119,6 +120,7 @@ C-----------------------------------------------------------------------
      &  RICE,SAMUCA,SC_CNGRO,SG_CERES,SU_CERES,TEFF,TF_APSIM,
      &  TR_SUBSTOR,WARNING,WH_APSIM
       EXTERNAL INCDAT, ERROR
+!     EXTERNAL SYNC_NUPTAKE_TO2D
 
       SAVE
 
@@ -138,6 +140,10 @@ C-----------------------------------------------------------------------
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW, IRRAMT
       REAL TMAX, TMIN !, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
+
+!     Water stress factors computed in SPAM now for variable time step 
+!       root water uptake model
+      REAL SWFAC, TURFAC
 
       REAL, DIMENSION(2)  :: HARVFRAC
       REAL, DIMENSION(NL) :: NH4, NO3, RLV  !, RWU, UPPM
@@ -173,6 +179,10 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
+!     2D variables
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, NO3Uptake_2D, 
+     &          NH4Uptake_2D
+
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
       TYPE (ControlType)  CONTROL
@@ -183,6 +193,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       TYPE (FloodWatType) FLOODWAT
       TYPE (FloodNType)   FLOODN
       TYPE (WeatherType)  WEATHER
+      Type (CellType)     CELLS(MaxRows,MaxCols)
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -226,6 +237,16 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         WRITE(MESSAGE(3),130)
         CALL WARNING(3, ERRKEY, MESSAGE)
       ENDIF
+
+!     Initialize 2D variable for general purpose
+      IF (CONTROL % SIM2D) THEN
+        CELLS % RATE % NO3Uptake = 0.0
+        CELLS % RATE % NH4Uptake = 0.0
+        CELLS % STATE % RLV = 0.0
+        NO3Uptake_2D = 0.0
+        NH4Uptake_2D = 0.0
+        RLV_2D = 0.0
+      END IF
 
   110 FORMAT('You have specified use of the Leaf-level photosynthesis')
   120 FORMAT('option, which is not available for crop ', A2, '.')
@@ -300,6 +321,9 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       CropStatus = -99
       CONTROL % CropStatus = -99
 
+!     Initialize stress variables here, needed when water not simulated.
+      SWFAC  = 1.0
+      TURFAC = 1.0
       CALL READ_ASCE_KT(CONTROL, MEEVP)
 
 !***********************************************************************
@@ -376,12 +400,12 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     CROPGRO model
       CASE('CRGRO')
         CALL CROPGRO(CONTROL, ISWITCH,
-     &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
-     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
-     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,    !Output
-     &    KTRANS, MDATE, NSTRES, PSTRES1,                 !Output
-     &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    EOP, CELLS, HARVFRAC, SOILPROP, SPi_AVAIL, ST, SW,     !Input
+     &    SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,           !Input
+     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,           !Output
+     &    KTRANS, MDATE, NSTRES, PSTRES1,                        !Output
+     &    PUptake, PORMIN, RLV, RLV_2D, RWUMX, SENESCE,          !Output
+     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)              !Output
 !-----------------------------------------------------------------------
 !     Forage model
       CASE('PRFRM')
@@ -549,10 +573,12 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     -------------------------------------------------
 !     Potato
       CASE('PTSUB')
-        CALL PT_SUBSTOR(CONTROL, ISWITCH,
+        CALL PT_SUBSTOR(CONTROL, ISWITCH, CELLS,
      &    CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
-     &    ST, SW, TMAX, TMIN, TRWUP, TWILEN, YREND, YRPLT,!Input
+     &    ST, SW, SWFAC, TMAX, TMIN, TRWUP, TURFAC,       !Input
+     &    TWILEN, YREND, YRPLT,                           !Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
+     &    RLV_2D,                                         !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
 
         IF (DYNAMIC .EQ. INTEGR) THEN
@@ -740,7 +766,17 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !***********************************************************************
 !     Processing after calls to crop models:
 !-----------------------------------------------------------------------
-      IF (DYNAMIC .EQ. SEASINIT) THEN
+      IF (DYNAMIC .EQ. RUNINIT) THEN
+!-----------------------------------------------------------------------
+        CALL PUT('PLANT','RWUMX' ,RWUMX)
+        CALL PUT('PLANT','RWUEP1',RWUEP1)
+        CALL PUT('PLANT','PORMIN',PORMIN)
+
+!***********************************************************************
+!***********************************************************************
+!     Processing after calls to crop models:
+!-----------------------------------------------------------------------
+      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
 ! Zero the value of HARVRES composite variable here
 !!!NOTE: At this time, the variable has already been used to
@@ -761,6 +797,40 @@ c     Total LAI must exceed or be equal to healthy LAI:
           CANHT = 0.5
           FixCanht = .FALSE.
         ENDIF
+
+!       Sync 1D and 2D variables for use in SoilN routines
+        SELECT CASE(MODEL(1:5))
+          CASE('CRGRO', 'PTSUB')
+!         Currently, only CROPGRO and SUBSTOR have 2D root models
+!         For these 2 models only, both 1D and 2D arrays for RLV
+!         and N uptake are already exported.
+
+          CASE DEFAULT
+!         For all other cases (i.e., 1D model, or not CROPGRO or SUBSTOR),
+!           only 1D RLV was calculated, so need to transfer values into
+!           the 2D arrays for use elsewhere in the model.
+
+!           Interpolate2Cells_2D is used for concentration variables.
+            CALL Interpolate2Cells_2D(
+     &        CELLS%STRUC, SOILPROP, RLV, 0.0,              !Input
+     &        RLV_2D)                                       !Output
+            
+!           Layer2Cell_2D is used for mass variables
+            CALL Layer2Cell_2D(
+     &        CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
+     &        UNO3, 0.0,                                    !Input
+     &        NO3Uptake_2D)                                 !Output
+            
+            CALL Layer2Cell_2D(
+     &        CELLS%STRUC, SOILPROP%NLAYR, SOILPROP%DLAYR,  !Input
+     &        UNH4, 0.0,                                    !Input
+     &        NH4Uptake_2D)                                 !Output
+            
+            CELLS % RATE % NO3Uptake = NO3Uptake_2D
+            CELLS % RATE % NH4Uptake = NH4Uptake_2D
+            CELLS % STATE % RLV = RLV_2D
+        END SELECT
+
 
 !***********************************************************************
 !***********************************************************************

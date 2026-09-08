@@ -133,13 +133,14 @@ C  03/04/2005 CHP wrote based on SoilNBal
         CALL YR_DOY(INCDAT(YRDOY,-1), YR, DOY)
 !       HJ added RLTD for N loss to tile        
         WRITE(LUNSNC,10)
-   10     FORMAT('!',15X,
-     &   '|------------------- STATE VARIABLES -------------------|',
-     &   '---- ADDED ---|----------------------------- REMOVED ',
-     &   'TODAY --------------------------|    DAILY     CUMUL',/,
-     &   '@YEAR DOY  DAS     NO3     NH4   TUREA   TNGAS  FLOODN  ALG',
-     &   'FIX  UNFERT   AFERT  AMINER  RIMMOB    RLCH    RLTD    RNUP',
-     &   '    RNRO    RAML   N2OED    N2ED    NOED      DBAL      CBAL')
+   10     FORMAT('!',14X,
+     &  '|--------------------- STATE VARIABLES ---------------------',
+     &  '--|----- ADDED -----|--------------------------------- REMOV',
+     &  'ED TODAY --------------------------------|    DAILY     CUMUL',
+     &  /,'@YEAR DOY  DAS      NO3      NH4    TUREA    TNGAS   FLOODN',
+     &  '   ALGFIX   UNFERT    AFERT   AMINER   RIMMOB     RLCH',
+     &  '     RLTD     RNUP     RNRO     RAML    N2OED     N2ED',
+     &  '     NOED      DBAL      CBAL')
         WRITE (LUNSNC,50) YR, DOY, 0, 
      &    TNO3, TNH4, TUREA, TNGSoil, TOTFLOODN, ALGFIX, 0.0,
      &    0.0, 0.0, 
@@ -218,7 +219,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &  IMMOBTODAY, LCHTODAY, NTILEDRTODAY, CNUPTAKETODAY, !HJ
      &  FNROTODAY, AMLTODAY, N2Otoday, N2today, NOtoday,
      &  DAYBAL, CUMBAL
-   50 FORMAT(I5, I4.3, I5, 7F8.3, F8.1, 10F8.4, 2F10.4)
+   50 FORMAT(I5, I4.3, I5, 7F9.4, F9.1, 10F9.5, 2F10.5)
 
 !     Save today's cumulative values for use tomorrow
       AMTFERY  = AMTFER

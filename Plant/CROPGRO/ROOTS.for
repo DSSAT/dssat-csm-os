@@ -30,16 +30,15 @@ C  05/11/1999 GH  Incorporated in CROPGRO
 !  Calls      :  IPROOT, INROOT
 !=======================================================================
 
-      SUBROUTINE ROOTS(DYNAMIC,
+      SUBROUTINE ROOTS(DYNAMIC, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
      &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+!     USE ModuleDefs !already USED by Cells_2D
+      USE Cells_2D
       IMPLICIT NONE
       EXTERNAL IPROOT, INROOT, TABEX
       SAVE
@@ -75,6 +74,9 @@ C-----------------------------------------------------------------------
 !     TRLV_MIN  = conversion of RTWTMIN to RLV units per layer
       REAL TRLV_MIN, RLSENTOT, FACTOR, RTWTMIN
       REAL TotRootMass, CumRootMass
+
+!     Add 2D roots variable - needed for SoilNi, even for 1D runs
+      Type (CellType)    CELLS(MaxRows,MaxCols)
 
 !***********************************************************************
 !***********************************************************************
@@ -370,6 +372,11 @@ C     respiration, and update root length density for each layer.
 !***********************************************************************
       ENDIF
 !***********************************************************************
+!     Transfer RLV values to 2D variable for use in some N routines
+      DO L = 1, NLAYR
+        CELLS(L,1)%STATE%RLV = RLV(L)
+      ENDDO
+
       RETURN
       END SUBROUTINE ROOTS
 !=======================================================================

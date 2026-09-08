@@ -35,23 +35,43 @@ C             TRANS   (File TRANS.for)
 C=======================================================================
 
       SUBROUTINE SPAM(CONTROL, ISWITCH,
-     &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
-     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
+     &    CELLS, CANHT, EORATIO, KSEVAP, KTRANS, MULCH,   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
+     &    SOILPROP_FURROW, SW,                            !Input
+     &    SWDELTS, UH2O, WEATHER, XHLAI, XLAI,            !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+      USE Cells_2D
       USE ModuleData
       USE FloodModule
 
       IMPLICIT NONE
-      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV, TRANS
+      EXTERNAL ETPHOT, STEMP_EPIC, STEMP, ROOTWU, SOILEV
       EXTERNAL MULCH_EVAP, OPSPAM, PET, PSE, FLOOD_EVAP, ESR_SOILEVAP
-      EXTERNAL XTRACT
+      EXTERNAL XTRACT, WATERSTRESS
+      EXTERNAL TRANS
       SAVE
+
+!     Subroutine interface variables
+      TYPE (Controltype), INTENT(INOUT) :: CONTROL
+      TYPE (SwitchType), INTENT(IN) :: ISWITCH
+      Type (CellType), INTENT(INOUT) :: CELLS(MaxRows,MaxCols)
+      TYPE (MulchType), INTENT(IN) :: MULCH
+      TYPE (SoilType), INTENT(IN) :: SOILPROP, SoilProp_Furrow
+      TYPE (WeatherType), INTENT(IN) :: WEATHER
+
+      REAL, INTENT(IN) :: CANHT, EORATIO, KSEVAP, KTRANS, PORMIN, 
+     &      PSTRES1, RWUMX, XHLAI, XLAI
+      REAL, DIMENSION(NL), INTENT(IN) :: RLV, SW, SWDELTS, UH2O
+
+      TYPE (FloodWatType), INTENT(INOUT) :: FLOODWAT
+      REAL, DIMENSION(NL), INTENT(INOUT) :: SWDELTU
+
+      REAL, INTENT(OUT) :: EO, EOP, EOS, EP, ES, SRFTEMP, TRWU, TRWUP
+      REAL, DIMENSION(NL), INTENT(OUT) :: ST, SWDELTX, UPFLOW
 
       CHARACTER*1  IDETW, ISWWAT
       CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV, METMP
@@ -59,45 +79,31 @@ C=======================================================================
       CHARACTER*6, PARAMETER :: ERRKEY = "SPAM  "
 !      CHARACTER*78 MSG(2)
 
-      INTEGER DYNAMIC, L, NLAYR
+      INTEGER DYNAMIC, L, NLAYR, Col, StartRow
 
-      REAL CANHT, CO2, SRAD, TAVG,
-     &    TMAX, TMIN, WINDSP, XHLAI, XLAI
+      REAL CO2, SRAD, TAVG,
+     &    TMAX, TMIN, WINDSP
       REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP
-      REAL EF, EM, EO, EP, ES, ET, EVAP
-      REAL TRWU, TRWUP, U
-      REAL EOS, EOP, WINF, MSALB, ET_ALB
-      REAL XLAT, TAV, TAMP, SRFTEMP
-      REAL EORATIO, KSEVAP, KTRANS
+      REAL EF, EM, ET, EVAP
+      REAL U
+      REAL MSALB, ET_ALB
+      REAL XLAT, TAV, TAMP
 
-      REAL DLAYR(NL), DUL(NL), LL(NL), RLV(NL), RWU(NL),
-     &    SAT(NL), ST(NL), SW(NL), SW_AVAIL(NL), !SWAD(NL),
-     &    SWDELTS(NL), SWDELTU(NL), SWDELTX(NL), UPFLOW(NL)
+      REAL DLAYR(NL), DUL(NL), LL(NL),RWU(NL),
+     &    SAT(NL), SW_AVAIL(NL) !SWAD(NL),
       REAL ES_LYR(NL)
-
-!     Root water uptake computed by some plant routines (optional)
-      REAL UH2O(NL)
-
-!     Species-dependant variables imported from PLANT module:
-      REAL PORMIN, RWUMX
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWV
+      REAL, DIMENSION(MaxCols) :: SWAVAIL, WINF_col
 
 !     Flood management variables:
       REAL FLOOD, EOS_SOIL
 
-!     P Stress on photosynthesis
-      REAL PSTRES1
 !     Hourly transpiration for MEEVP=H
       REAL, DIMENSION(TS)    :: ET0
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
-      TYPE (ControlType) CONTROL
-      TYPE (SoilType)    SOILPROP
-      TYPE (SwitchType)  ISWITCH
-      TYPE (FloodWatType)FLOODWAT
-      TYPE (MulchType)   MULCH
-      TYPE (WeatherType) WEATHER
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -130,6 +136,8 @@ C=======================================================================
       TMIN   = WEATHER % TMIN
       WINDSP = WEATHER % WINDSP
       XLAT   = WEATHER % XLAT
+
+      SWV    = CELLS % State % SWV
 
 !***********************************************************************
 !***********************************************************************
@@ -166,7 +174,7 @@ C=======================================================================
       ES_LYR = 0.0
       SWDELTX = 0.0
       TRWU = 0.0
-      XHLAI = 0.0
+!     XHLAI = 0.0 CANT SET AN INPUT VARIABLE
       ET0 = 0.0
 
 !     ---------------------------------------------------------
@@ -190,14 +198,23 @@ C=======================================================================
 
 !       Initialize soil evaporation variables
         SELECT CASE (MESEV)
-!     ----------------------------
-        CASE ('R')  !Original soil evaporation routine
-          CALL SOILEV(SEASINIT,
-     &      DLAYR, DUL, EOS, LL, SW, SW_AVAIL(1),         !Input
-     &      U, WINF,                                      !Input
-     &      ES)                                           !Output
-!     ----------------------------
-        END SELECT
+!         ------------------------
+          CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
+!           Note that this routine calculates UPFLOW, unlike the SOILEV.
+            CALL ESR_SoilEvap(CONTROL,
+     &        CELLS, EOS, SOILPROP, SOILPROP_FURROW,    !Input
+     &        SWDELTS, WINF_col,                        !Input
+     &        ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+
+!         ----------------------------
+          CASE DEFAULT  !Original soil evaporation routine
+            SWAVAIL = 0.0 !not used for initialization
+            CALL SOILEV(CONTROL,
+     &        CELLS, EOS, U, WINF_col, SWAVAIL,     !Input
+     &        SOILPROP, SOILPROP_FURROW,            !Input
+     &        ES, ES_LYR)                           !Output
+!         ----------------------------
+          END SELECT
 
 !       Initialize plant transpiration variables
         CALL TRANS(DYNAMIC, MEEVP,
@@ -268,9 +285,13 @@ C=======================================================================
 !-----------------------------------------------------------------------
       IF (ISWWAT .EQ. 'Y') THEN
 !       Calculate the availability of soil water for use in SOILEV.
-        DO L = 1, NLAYR
-          SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
-        ENDDO
+
+        IF (.NOT. CONTROL % Sim2D) THEN
+!         for 1D simulation, there is only one column
+          DO L = 1, NLAYR
+            SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+          ENDDO
+        ENDIF
 
 !       These processes are done by ETPHOT for hourly (Zonal) energy
 !       balance method.
@@ -347,24 +368,46 @@ C=======================================================================
 
 !         Soil evaporation after flood and mulch evaporation
           IF (EOS_SOIL > 1.E-6) THEN
+            CALL GET('WATER', 'WINF_COL', WINF_col, MaxCols)
+
             SELECT CASE(MESEV)
 !           ------------------------
             CASE ('S')  ! Sulieman-Ritchie soil evaporation routine
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
-              CALL ESR_SoilEvap(
-     &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
-     &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
+            CALL ESR_SoilEvap(CONTROL,
+     &        CELLS, EOS_SOIL, SOILPROP, SOILPROP_FURROW,   !Input
+     &        SWDELTS, WINF_col,                            !Input
+     &        ES, ES_LYR, SWDELTU, UPFLOW)                  !Output
+
 !           ------------------------
             CASE DEFAULT
 !           CASE ('R')  !Ritchie soil evaporation routine
 !             Calculate the availability of soil water for use in SOILEV.
-              DO L = 1, NLAYR
-                SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
+              DO Col = 1, NColsTot
+                IF (CONTROL % Sim2D) THEN
+                  IF (CELLS(1,col)%Struc%Cell_Type == 3) THEN
+!                   This is either a 1D simulation in the 2D bed, start ES at top
+                    StartRow = 1
+                  ELSE
+!                   This is a 2D furrow column, ES is at top of furrow
+                    StartRow = BedDimension % FurRow1
+                  ENDIF
+
+                  SWAVAIL(Col) = Max(0.0, SWV(StartRow,Col)
+     &               + CELLS(1,Col) % Rate % SWFlux_L
+     &               + CELLS(1,Col) % Rate % SWFlux_R
+     &               + CELLS(1,Col) % Rate % SWFlux_D)
+
+                ELSE
+                  SWAVAIL(Col) = MAX(0.0, 
+     &              SWV(1,Col) + SWDELTS(1) + SWDELTU(1))
+                ENDIF
               ENDDO
-              CALL SOILEV(RATE,
-     &          DLAYR, DUL, EOS_SOIL, LL, SW,             !Input
-     &          SW_AVAIL(1), U, WINF,                     !Input
-     &          ES)                                       !Output
+
+              CALL SOILEV(CONTROL,
+     &        CELLS, EOS_SOIL, U, WINF_col, SWAVAIL,    !Input
+     &        SOILPROP, SOILPROP_FURROW,                !Input
+     &        ES, ES_LYR)                               !Output
             END SELECT
 !           ------------------------
           ENDIF
@@ -447,11 +490,13 @@ C=======================================================================
       CALL PUT('SPAM', 'EF',  EF)
       CALL PUT('SPAM', 'EM',  EM)
       CALL PUT('SPAM', 'EO',  EO)
-      CALL PUT('SPAM', 'EP',  EP)
       CALL PUT('SPAM', 'ES',  ES)
       CALL PUT('SPAM', 'EOP', EOP)
       CALL PUT('SPAM', 'EVAP',EVAP)
-      CALL PUT('SPAM', 'UH2O',RWU)
+      IF (.NOT. CONTROL % Sim2D) THEN
+        CALL PUT('SPAM', 'EP',  EP)
+        CALL PUT('SPAM', 'UH2O',RWU, NL)
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -459,6 +504,10 @@ C=======================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
+      IF (CONTROL % Sim2D) THEN
+        CALL GET('SPAM','EP',EP)
+      ENDIF
+
       IF (ISWWAT .EQ. 'Y') THEN
 !       Perform daily summation of water balance variables.
         ET  = EVAP + EP

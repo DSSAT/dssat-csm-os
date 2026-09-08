@@ -34,6 +34,8 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 !  06/06/2006 CHP/CDM Added KC_SLOPE to SPE file and KC_ECO to ECO file.
 !  07/13/2006 CHP Added P model
 !  06/11/2007 CHP PStres1 affects photosynthesis, PStres2 affects growth
+!  10/20/2009 CHP Soil water stress factors computed in SPAM to accomodate
+!                   2D, variable time step model.
 !  06/15/2022 CHP Added CropStatus
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines.
@@ -44,15 +46,16 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 C=======================================================================
 
       SUBROUTINE CROPGRO(CONTROL, ISWITCH, 
-     &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
-     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
-     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,    !Output
-     &    KTRANS, MDATE, NSTRES, PSTRES1,                 !Output
-     &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    EOP, CELLS, HARVFRAC, SOILPROP, SPi_AVAIL, ST, SW,     !Input
+     &    SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,           !Input
+     &    CANHT, CropStatus, EORATIO, HARVRES, KSEVAP,           !Output
+     &    KTRANS, MDATE, NSTRES, PSTRES1,                        !Output
+     &    PUptake, PORMIN, RLV, RLV_2D, RWUMX, SENESCE,          !Output
+     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)              !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+!     USE ModuleDefs !already USED by Cells_2D
+      USE Cells_2D
       USE ModuleData
 
       IMPLICIT NONE
@@ -60,6 +63,7 @@ C=======================================================================
      &  NFIX, NUPTAK, OPGROW, OPHARV, P_CGRO, PEST, PHENOL,
      &  PHOTO, PLANTNBAL, PODDET, PODS, RESPIR, ROOTS, SENES,
      &  VEGGR
+      EXTERNAL ROOTY_2D
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*1 DETACH, IDETO, ISWNIT, ISWSYM,
@@ -148,7 +152,8 @@ C=======================================================================
 
       REAL DLAYR(NL), DS(NL), DUL(NL), KG2PPM(NL), LL(NL), 
      &    SAT(NL), SW(NL), ST(NL), RLV(NL), WR(NL)
-      REAL NH4(NL), NO3(NL), UNH4(NL), UNO3(NL)
+      REAL UNH4(NL), UNO3(NL) !NH4(NL), NO3(NL), 
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D
       REAL PHTHRS(20)
       REAL TGRO(TS)
       REAL SDDES(NCOHORTS)
@@ -180,6 +185,9 @@ C=======================================================================
 !     K model (not yet implemented)
       REAL KSTRES
 
+!     Drip irrigation bed witdth and depth
+      REAL RTWID !BEDWD, BEDHT, 
+
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -189,6 +197,7 @@ C=======================================================================
       Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
       Type (WeatherType) WEATHER
+      Type (CellType)    CELLS(MaxRows,MaxCols)
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -304,10 +313,10 @@ C-----------------------------------------------------------------------
      &    AGRSH2, AGRSTM, AGRVG, AGRVG2, SDPROR)          !Output
 
 !-----------------------------------------------------------------------
-        CALL NUPTAK(RUNINIT,
-     &     DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT,!Input
-     &     NH4, NO3, NLAYR, RLV, SAT, SW,                 !Input
-     &     TRNH4U, TRNO3U, TRNU, UNH4, UNO3)              !Output
+        CALL NUPTAK(CONTROL,
+     &    CELLS, DUL, FILECC, KG2PPM, LL, NDMSDR,           !Input
+     &    NDMTOT, NLAYR, SAT,                               !Input
+     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 !-----------------------------------------------------------------------
         IF (ISWSYM .EQ. 'Y') THEN
@@ -370,12 +379,21 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
-        CALL ROOTS(RUNINIT,
+        IF (.NOT. CONTROL % SIM2D) THEN
+          CALL ROOTS(RUNINIT, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
      &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
-        ENDIF
+        ELSE
+          CALL ROOTY_2D(RUNINIT,
+     &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
+     &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
+        ENDIF     
+      ENDIF
 
 !-----------------------------------------------------------------------
       CALL GROW(CONTROL, ISWITCH, RUNINIT, SOILPROP, 
@@ -568,10 +586,11 @@ C     Initialize pest coupling point and damage variables
      &  ShutMob, RootMob, ShelMob,                        !Output
      &  TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)           !Output
 !-----------------------------------------------------------------------
-      CALL NUPTAK(SEASINIT, 
-     &    DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT, !Input
-     &    NH4, NO3, NLAYR, RLV, SAT, SW,                  !Input
-     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)               !Output
+!-----------------------------------------------------------------------
+        CALL NUPTAK(CONTROL,
+     &    CELLS, DUL, FILECC, KG2PPM, LL, NDMSDR,           !Input
+     &    NDMTOT, NLAYR, SAT,                               !Input
+     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 !     Plant phosphorus module initialization
       CALL P_CGRO (DYNAMIC, ISWITCH, 
@@ -640,11 +659,20 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
-      CALL ROOTS(SEASINIT,
+      IF (.NOT. CONTROL % SIM2D) THEN      
+        CALL ROOTS(SEASINIT, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
      &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
+      ELSE
+        CALL ROOTY_2D(SEASINIT,
+     &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
+     &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
+      ENDIF     
 
 !-----------------------------------------------------------------------
 !     Write headings to output file GROWTH.OUT
@@ -800,11 +828,20 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
-      CALL ROOTS(EMERG,
+      IF (.NOT. CONTROL % SIM2D) THEN
+        CALL ROOTS(EMERG, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
      &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
+      ELSE
+        CALL ROOTY_2D(EMERG,
+     &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
+     &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
+      ENDIF     
 
 !-----------------------------------------------------------------------
 !       DYNAMIC = EMERG (not INTEGR) here
@@ -972,10 +1009,11 @@ C    If ISWNIT = Y - Call soil N routines. Balance Available C and N
 C    If ISWNIT = N - Do not call soil N routines, N assumed to be limited by C
 C-----------------------------------------------------------------------
       IF (ISWNIT .EQ. 'Y') THEN
-        CALL NUPTAK(INTEGR, 
-     &    DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT, !Input
-     &    NH4, NO3, NLAYR, RLV, SAT, SW,                  !Input
-     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)               !Output
+!-----------------------------------------------------------------------
+        CALL NUPTAK(CONTROL,
+     &    CELLS, DUL, FILECC, KG2PPM, LL, NDMSDR,           !Input
+     &    NDMTOT, NLAYR, SAT,                               !Input
+     &    TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 C-----------------------------------------------------------------------
 C    Account for C Used to reduce N Uptake to protein
@@ -1195,11 +1233,20 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 !-----------------------------------------------------------------------
-      CALL ROOTS(INTEGR,
+      IF (.NOT. CONTROL % SIM2D) THEN
+        CALL ROOTS(INTEGR, CELLS,
      &    AGRRT, CROP, DLAYR, DS, DTX, DUL, FILECC, FRRT, !Input
      &    ISWWAT, LL, NLAYR, PG, PLTPOP, RO, RP, RTWT,    !Input
      &    SAT, SW, SWFAC, VSTAGE, WR, WRDOTN, WTNEW,      !Input
      &    RLV, RTDEP, SATFAC, SENRT, SRDOT, TRLV)         !Output
+      ELSE
+        CALL ROOTY_2D(INTEGR,
+     &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
+     &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
+      ENDIF     
 
 C-----------------------------------------------------------------------
 C     Compute total C cost for growing seed, shell, and vegetative tissue
@@ -1342,6 +1389,15 @@ C-----------------------------------------------------------------------
      &    YRNR7, YRPLT, LINTW, LINTP,                     !Input
      &    SDWTAH)                                         !Output
 
+      IF (CONTROL % SIM2D) THEN
+         CALL ROOTY_2D(SEASEND,
+     &    AGRRT, CELLS, CROP, DTX, FILECC, FRRT,          !Input
+     &    ISWWAT, PLTPOP, RTWT, SOILPROP,                 !Input
+     &    SWFAC, VSTAGE, WRDOTN, WTNEW,                   !Input
+     &    RLV, RLV_2D, RTDEP, RTWID, SATFAC,              !Output
+     &    SENRT, SRDOT, TRLV)                             !Output
+      ENDIF     
+          
 !     Call PlantNBal only for seasonal output.
       IF (DYNAMIC .EQ. SEASEND) THEN
         IF (CROP .NE. 'FA') THEN
@@ -1371,7 +1427,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ENDIF
 !***********************************************************************
-!     Store plant module data for use in ETPHOT.
+!     Store plant module data for use in ETPHOT and 2D Water balance.
       Call PUT('PLANT', 'CANHT',  CANHT)
       Call PUT('PLANT', 'CANWH',  CANWH)
       Call PUT('PLANT', 'DXR57',  DXR57)
@@ -1379,8 +1435,10 @@ C-----------------------------------------------------------------------
       Call PUT('PLANT', 'NR5',    NR5)   
       Call PUT('PLANT', 'PLTPOP', PLTPOP)
       Call PUT('PLANT', 'RNITP',  RNITP) 
+      Call PUT('PLANT', 'ROWSPC', ROWSPC)
       Call PUT('PLANT', 'SLAAD',  SLAAD) 
       Call PUT('PLANT', 'XPOD',   XPOD)
+      CALL PUT('PLANT', 'RTDEP',  RTDEP)
 
       RETURN
       END SUBROUTINE CROPGRO

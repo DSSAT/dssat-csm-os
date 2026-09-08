@@ -24,19 +24,22 @@ C  08/23/2011 GH Added CO2 response for tuber growth
 !                 unused variables, shorten lines. 
 C=======================================================================
 
-      SUBROUTINE PT_SUBSTOR(CONTROL, ISWITCH,
+      SUBROUTINE PT_SUBSTOR(CONTROL, ISWITCH, CELLS, 
      &    CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
-     &    ST, SW, TMAX, TMIN, TRWUP, TWILEN, YREND, YRPLT,!Input
+     &    ST, SW, SWFAC, TMAX, TMIN, TRWUP, TURFAC,       !Input
+     &    TWILEN, YREND, YRPLT,                           !Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
+     &    RLV_2D,                                         !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+!     USE ModuleDefs !already USED by Cells_2D
+      USE Cells_2D
+      USE ModuleData
       IMPLICIT NONE
       EXTERNAL PT_OPGROW, PT_OPHARV, PT_IPSPE, PT_ROOTGR, PT_PHENOL, 
      &  PT_GROSUB, HRes_Ceres
+      EXTERNAL PT_ROOTGR_2D
       SAVE
 
       CHARACTER*1  IDETG, ISWNIT, ISWWAT
@@ -67,6 +70,7 @@ C=======================================================================
       REAL, DIMENSION(NL) :: DLAYR, DUL, DS, LL, KG2PPM
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SAT, SHF
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4 
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D
 
 !     P variables
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
@@ -78,6 +82,7 @@ C=======================================================================
       TYPE (SwitchType)  ISWITCH
       Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
+      Type (CellType)    CELLS(MaxRows,MaxCols)
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -146,10 +151,18 @@ C=======================================================================
       PConc_Shel = 0.0
       PConc_Seed = 0.0
 
-      CALL PT_ROOTGR (SEASINIT, YRDOY,
+      IF (CONTROL % SIM2D) THEN
+        CALL PT_ROOTGR_2D(SEASINIT, ISWWAT, CELLS, YRDOY,
+     &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
+     &    SOILPROP,                                     !Input
+     &    CUMDEP, RLV, RLV_2D, RTDEP, TRLV)             !Output
+
+      ELSE
+        CALL PT_ROOTGR (SEASINIT, CELLS, YRDOY,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &    CUMDEP, RLV, RTDEP, TRLV)                       !Output
+      ENDIF
 
       CALL PT_PHENOL (
      &    DLAYR, FILEIO, GRAINN, ISWWAT, LL, MDATE, NLAYR,!Input
@@ -160,10 +173,10 @@ C=======================================================================
      &    STGDOY, STT, TOTNUP, XSTAGE, YREMRG,            !Output
      &    SEASINIT)
 
-      CALL PT_GROSUB (SEASINIT,
-     &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
-     &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
+      CALL PT_GROSUB (CONTROL, CELLS,
+     &    CO2, CUMDTT, DTT, DUL, FILEIO,                  !Input
+     &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
+     &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
      &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
      &    GRORT, SEEDRV,                                  !I/O
      &    AGEFAC, BIOMAS, CANNAA, CANWAA, CNSD1, CNSD2,   !Output
@@ -213,10 +226,18 @@ C=======================================================================
 
 !       WRESR growth and depth routine
         IF (GRORT .GT. 0.0) THEN
-          CALL PT_ROOTGR (RATE, YRDOY, 
-     &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
-     &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
-     &    CUMDEP, RLV, RTDEP, TRLV)                       !Output
+          IF (CONTROL % SIM2D) THEN
+            CALL PT_ROOTGR_2D(RATE, ISWWAT, CELLS, YRDOY,
+     &        DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
+     &        SOILPROP,                                     !Input
+     &        CUMDEP, RLV, RLV_2D, RTDEP, TRLV)             !Output
+
+          ELSE
+            CALL PT_ROOTGR (RATE, CELLS, YRDOY,
+     &        DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
+     &        LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
+     &        CUMDEP, RLV, RTDEP, TRLV)                       !Output
+          ENDIF
         ENDIF
       ENDIF
 
@@ -232,10 +253,10 @@ C=======================================================================
       ENDIF
 
       IF (ISTAGE .LT. 5) THEN
-        CALL PT_GROSUB (RATE,
-     &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
-     &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
+          CALL PT_GROSUB (CONTROL, CELLS,
+     &    CO2, CUMDTT, DTT, DUL, FILEIO,                  !Input
+     &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
+     &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
      &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
      &    GRORT, SEEDRV,                                  !I/O
      &    AGEFAC, BIOMAS, CANNAA, CANWAA, CNSD1, CNSD2,   !Output
@@ -272,6 +293,15 @@ C=======================================================================
      &    TUBN, TUBWT, TURFAC, WTNCAN, WTNUP, XLAI,       !Input
      &    YIELD, YRPLT,                                   !Input
      &    BWAH, SDWTAH, WTNSD)                            !Output
+     
+     
+!     CALL PT_OPRoots_2D in PT_ROOTGR_2D when DYNAMIC .EQ. OUTPUT
+      IF (CONTROL % SIM2D) THEN
+        CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
+     &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
+     &    SOILPROP,                                     !Input
+     &    CUMDEP, RLV, RLV_2D, RTDEP, TRLV)             !Output
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -310,6 +340,13 @@ C=======================================================================
         SENESCE % ResWt  = 0.0
         SENESCE % ResLig = 0.0
         SENESCE % ResE   = 0.0
+
+      IF (CONTROL % SIM2D) THEN
+        CALL PT_ROOTGR_2D(DYNAMIC, ISWWAT, CELLS, YRDOY,
+     &    DTT, FILEIO, GRORT, ISWNIT, PLTPOP, SWFAC,    !Input
+     &    SOILPROP,                                     !Input
+     &    CUMDEP, RLV, RLV_2D, RTDEP, TRLV)             !Output
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************

@@ -140,7 +140,7 @@ C=======================================================================
      &     ECONO,RUN,MODEL,TITLET,WTHSTR, RNMODE,
      &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
 
-      USE ModuleDefs
+      USE ModuleData
       USE HeaderMod
       IMPLICIT NONE
       EXTERNAL LENSTRING, NAILUJ, YR_DOY
@@ -336,34 +336,38 @@ c     MJ, Mar 2008: Soil information
            I=I+1
          ENDIF
 
-         IF (IIRRI .EQ. 'R' .OR. IIRRI .EQ. 'D') THEN
-            IF (IIRRI .EQ. 'R') THEN
-               WRITE (HEADER(I),650)
-             ELSE IF (IIRRI .EQ. 'D') THEN
-               WRITE (HEADER(I),655)
-            ENDIF
-            I=I+1
-            IF (TOTAPW .EQ. 0 .AND. NAPW .GE. 1) THEN
-               NNAPW = NAPW
-             ELSE
-               NNAPW = NAPW
-            ENDIF
-            WRITE (HEADER(I),660) NINT(TOTAPW),NNAPW; I=I+1
-          ELSE IF (IIRRI .EQ. 'A') THEN
-            WRITE (HEADER(I),665); I=I+1
-            WRITE (HEADER(I),666) DSOIL/100.,THETAC; I=I+1
-          ELSE IF (IIRRI .EQ. 'F') THEN
-            WRITE (HEADER(I),670); I=I+1
-            WRITE (HEADER(I),666) DSOIL/100.,THETAC; I=I+1
-          ELSE IF (IIRRI .EQ. 'E') THEN
-            WRITE (HEADER(I),675); I=I+1
-            WRITE (HEADER(I),676) DSOIL; I=I+1
-          ELSE IF (IIRRI .EQ. 'T') THEN
-            WRITE (HEADER(I),680); I=I+1
-            WRITE (HEADER(I),676) DSOIL; I=I+1
-          ELSE IF (IIRRI .EQ. 'N') THEN
-            WRITE (HEADER(I),690); I=I+1
-            WRITE (HEADER(I),691); I=I+1
+!        2023-09-05 chp ignore irrig for 2D
+         IF (.NOT. CONTROL % SIM2D) THEN
+           IF (IIRRI .EQ. 'R' .OR. IIRRI .EQ. 'D') THEN
+              IF (IIRRI .EQ. 'R') THEN
+                 WRITE (HEADER(I),650)
+               ELSE IF (IIRRI .EQ. 'D') THEN
+                 WRITE (HEADER(I),655)
+              ENDIF
+              I=I+1
+           
+!              IF (TOTAPW .EQ. 0 .AND. NAPW .GE. 1) THEN
+!                 NNAPW = NAPW
+!               ELSE
+                 NNAPW = NAPW
+!              ENDIF
+              WRITE (HEADER(I),660) NINT(TOTAPW),NNAPW; I=I+1
+            ELSE IF (IIRRI .EQ. 'A') THEN
+              WRITE (HEADER(I),665); I=I+1
+              WRITE (HEADER(I),666) DSOIL/100.,THETAC; I=I+1
+            ELSE IF (IIRRI .EQ. 'F') THEN
+              WRITE (HEADER(I),670); I=I+1
+              WRITE (HEADER(I),666) DSOIL/100.,THETAC; I=I+1
+            ELSE IF (IIRRI .EQ. 'E') THEN
+              WRITE (HEADER(I),675); I=I+1
+              WRITE (HEADER(I),676) DSOIL; I=I+1
+            ELSE IF (IIRRI .EQ. 'T') THEN
+              WRITE (HEADER(I),680); I=I+1
+              WRITE (HEADER(I),676) DSOIL; I=I+1
+            ELSE IF (IIRRI .EQ. 'N') THEN
+              WRITE (HEADER(I),690); I=I+1
+              WRITE (HEADER(I),691); I=I+1
+           ENDIF
          ENDIF
 
   660 FORMAT(' IRRIGATION     : ',I8,' mm IN ',I5,' APPLICATIONS')

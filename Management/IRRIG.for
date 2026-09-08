@@ -24,6 +24,11 @@ C  10/28/2004 CHP Fixed problem with multiple applications on same day.
 !  06/06/2006 CHP Export TIL_IRR, the irrigation amount which affects 
 !                 soil dynamics (excludes drip irrigation).
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
+!  03/30/2011 CHP Add Automatic Management for IIRRI
+!             Use (DYNAMIC .EQ. INIT) for both RUNINIT and SEASINIT
+!  08/15/2011 error handling for very small drip duration
+!             remove using flooded conditions with Century method 
+!             Now PUT('MGMT', Irr info) are in daily rate which were in daily integration
 !  04/18/2013 CHP Added error checking for irrigation amount. It is 
 !                   operation-specific, so checking was removed from 
 !                   input module.
@@ -36,28 +41,30 @@ C=======================================================================
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs 
+!     USE ModuleDefs !already USED by Cells_2D
       USE ModuleData
       USE FloodModule
+      USE Cells_2D
       IMPLICIT NONE
       EXTERNAL YR_DOY, ERROR, FIND, TIMDIF, SWDEFICIT, WARNING, 
      &  FLOOD_IRRIG
+      EXTERNAL DRIP_IRRIG, SWDEFICIT_bed
       SAVE
 !-----------------------------------------------------------------------
       CHARACTER*6 ERRKEY
 !      CHARACTER*70 IrrText
       PARAMETER (ERRKEY = 'IRRIG')
 
-      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE    !, MESOM
+      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE !, MEHYD !, MESOM
       CHARACTER*5 IOFF   ! old IRON, for compatibility with old files
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
-      CHARACTER*90 CHAR
+      CHARACTER*98 CHAR
       CHARACTER*78 MSG(10)
 
-      INTEGER AIRRCOD, DAP, DYNAMIC, DAS, ERRNUM, FOUND, I, IDATE
+      INTEGER AIRRCOD, DAP, DYNAMIC, DAS, ERRNUM, FOUND, I, IDATE, J
       INTEGER LUNIO, LINC, LNUM
-      INTEGER MULTI, NAP, NAPW, JIRR, NLAYR, NTBL, NMSG
+      INTEGER MULTI, NAP, NDRIP, NAPW, JIRR, NLAYR, NTBL, NMSG
       INTEGER YR, MDATE, RUN, YRDOY, YRPLT, YRSIM, TIMDIF
       INTEGER YRDIF, NDAYS_DRY
       INTEGER, DIMENSION(NAPPL) :: IDLAPL, IRRCOD
@@ -65,7 +72,7 @@ C=======================================================================
       INTEGER STGDOY(20)
 
       REAL AIRAMT, AIRAMX, ATHETA, DEPIR, DSOIL, DSOILX
-      REAL EFFIRR, EFFIRX, IRRAMT
+      REAL EFFIRR, EFFIRX, IRRAMT, SWDEF_cm2
       REAL SWDEF, THETAC, THETCX, TOTAPW, TOTEFFIRR, TOTIR
       REAL DLAYR(NL), DS(NL), DUL(NL), LL(NL), SW(NL)
       REAL, DIMENSION(NAPPL) :: AMIR, AMT, WTABL
@@ -76,8 +83,8 @@ C=======================================================================
       INTEGER IBDAT(NAPPL), IIRRCV(NAPPL), IPDAT(NAPPL) !, IIRRP(100)
       INTEGER PUDDAT(NAPPL)
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
-      REAL BUND(NAPPL), IPERC(NAPPL), COND(NAPPL)  !, PWAT(NAPPL)
-      REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
+      REAL BUND(NAPPL), IPERC(NAPPL), COND(NAPPL)
+      REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN, IRRAPL_cm2
       
 !     Growth stage dependent irrigation 
       REAL AVWAT        ! Available water for irrigation
@@ -107,6 +114,20 @@ C=======================================================================
       REAL ET_THRESH, ACCUM_ET
 !     REAL ET     !, EP, ES, E0
       REAL EOP, EVAP, RUNOFF
+
+!  Added for drip irrigation
+      INTEGER DripLnNum
+      INTEGER, DIMENSION(NAPPL) :: DripDat, DripEvntEntr
+      INTEGER, DIMENSION(NAPPL, NDrpEvnt) :: DripNum
+      INTEGER, DIMENSION(NAPPL) :: IRSTRH, IRSTRM, IRNUM, IRLN
+      INTEGER, DIMENSION(NDrpLn):: DripLN
+      REAL, DIMENSION(NDrpLn)   :: DripSpc, DripOfset, DripDep
+      REAL, DIMENSION(NAPPL,NDrpEvnt) :: DripInt, DripRefLN
+      REAL, DIMENSION(NAPPL,NDrpEvnt) :: DripDur, DripRate, DripStart
+      ! Max number of irrigation event per day is 10
+      REAL, DIMENSION(NAPPL) :: IRDUR, IRINT
+      LOGICAL AUTO   !indicator that automatic irrigation will be used
+      LOGICAL DRIP2D   !indicator that drip irrigation will be used
 
 !  Added for water table management
       REAL MgmtWTD, ICWD
@@ -148,12 +169,14 @@ C-----------------------------------------------------------------------
       ISWWAT  = ISWITCH % ISWWAT
 
       TOTAPW = 0
+      AMT    = 0. !irrigation amounts
       NAP    = 0
       NAPW   = 0  !irrigation application
       NBUND  = 0  !# bunds
       NTBL   = 0  !# water tables
       NCOND  = 0  !# irrigation applications (same as NAPW??)
       NPERC  = 0  !# percs
+      NDRIP  = 0  !# drip irrigation days
       NPUD   = 0  !# puddling events
 
       DEPIR  = 0.0
@@ -165,6 +188,20 @@ C-----------------------------------------------------------------------
       GSWatUsed = 0.0
       DaysSinceIrrig = 999
       ACCUM_ET = 0.0
+      IRRAPL  = 0.0
+      
+      DripNum = 0
+      DripEvntEntr = 0
+      DripDur = 0.
+      DripRate = 0.
+      DripStart = 0.
+      DripSpc = -99
+      DripOfset = 0.0
+      DripDep = 0.0
+      DripLN  = -99
+      DRIP2D  = .FALSE.
+
+      AUTO = .FALSE.
 
 !     Water table depth (-99 indicates no water table present)
       MgmtWTD = -99.  
@@ -215,6 +252,12 @@ C-----------------------------------------------------------------------
 
             LNUM = LNUM + 2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+
+!           JZW add auto irr for dripper
+            IF (AIRRCOD == 5) then
+              IRRCOD = AIRRCOD
+              DripRate = AIRAMT    
+            Endif
           ENDIF
 
 C-----------------------------------------------------------------------
@@ -251,21 +294,58 @@ C-----------------------------------------------------------------------
           SECTION = '*IRRIG'
           CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
           IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-          READ(LUNIO,'(3X,F5.3,2(1X,F5.0),19X,F5.1)', IOSTAT=ERRNUM)
-     &      EFFIRX, DSOILX, THETCX, AIRAMX
+          READ(LUNIO,'(3X,F5.3,2(1X,F5.0),19X,F5.1,1X,I5)'
+     &      ,IOSTAT=ERRNUM)
+     &      EFFIRX, DSOILX, THETCX, AIRAMX, DripLnNum
           LNUM = LNUM + 1
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+          NDripLnTOT = DripLnNum
+          IF (DripLnNum .GT. 0) THEN
+              DRIP2D = .TRUE.
+              DO I = 1, DripLnNum
+                  READ(LUNIO,'(3X,I5,3F6.0)',ERR=40, END=40) DripLN(I),
+     &                 DripSpc(I), DripOfset(I), DripDep(I)
+                  LNUM = LNUM + 1
+              END DO
+          END IF
+   40     CONTINUE
           JIRR = 0
           DO I = 1,NAPPL
 !           READ(LUNIO,'(3X,I7,3X,I3,1X,F5.0,1X,I5)',IOSTAT=ERRNUM,
-!     &        ERR=50)  IDLAPL(I), IRRCOD(I), AMT(I)   !, IIRRC(I)
+!     &        ERR=50)  IDLAPL(I), IRRCOD(I), AMT(I)
             READ(LUNIO,'(3X,I7,3X,A90)',ERR=50, END=50) IDLAPL(I),CHAR
             LNUM = LNUM + 1
 
             READ(CHAR,'(I3,1X,F5.0,1X,I5)',IOSTAT=ERRNUM) 
      &                 IRRCOD(I), AMT(I) 
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+
+            IF (IRRCOD(I) == 5 .AND. DRIP2D) THEN
+              READ(CHAR,'(9X,2(1X,I2),F6.0,I6)',IOSTAT=ERRNUM) 
+     &          IRSTRH(I),IRSTRM(I),IRDUR(I),IRLN(I)
+              ! read Irrigation starting hour, starting minutes, etc 
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,59,FILEIO,LNUM)
+              IRINT(I) = 0
+              IRNUM(I) = 1
+
+!             Check for small drip duration
+              IF (IRDUR(I) < 1. .AND. IRNUM(I) > 0) THEN
+                MSG(1) = "Drip irrigation duration less than 1 minute"
+                WRITE(MSG(2),'(A,I4)') "Irrigation number ",I
+                WRITE(MSG(3),'(I7,1X,A)') IDLAPL(I), CHAR(1:70)
+                MSG(4) = "Program will stop."
+                CALL WARNING(4,ERRKEY,MSG)
+                CALL ERROR(ERRKEY,20,FILEIO,LNUM)
+              ENDIF
+            ENDIF
+
             JIRR = JIRR + 1
+            If (JIRR == NAPPL) then
+              MSG(1) ="Total # of irrigation events is too large."
+              CALL WARNING(1,ERRKEY,MSG)
+!             Error 59: Error in drip irrigation inputs. 
+              CALL ERROR(ERRKEY,59,FILEIO,LNUM) 
+            Endif
           ENDDO
 
    50     CONTINUE
@@ -315,6 +395,9 @@ C-----------------------------------------------------------------------
         
         IF (EFFIRR < 1.E-3) EFFIRR = 1.0
 
+        IF (INDEX('AFET',IIRRI) > 0) THEN
+          AUTO = .TRUE.
+        ENDIF
 
 !     AMTMIN was not being used -- should it be used in place
 !             of AIRAMT?  CHP
@@ -342,6 +425,7 @@ C
       JULAPL = 0
       JWTBRD = 0
       JULWTB = 0
+      DripDat= 0
       PUDDAT = 0
 
       AMIR  = 0.0
@@ -356,6 +440,7 @@ C
       
       ATHETA = 1.0
       SWDEF = 0 
+      IRRAPL_cm2 = -99.
 
 !-----------------------------------------------------------------------
 !     Irrigation Codes: IRRCOD
@@ -384,7 +469,8 @@ C
            CASE (1:6)    
 !          Regular irrigation (bunded or upland)
 
-             IF (AMT(I) < -1.E-6) THEN
+!            IR005 need 0 input for stopping routine irrigation on the certain day
+             IF (AMT(I) < -1.E-6 .AND. IRRCOD(I) .NE. 5) THEN 
                AMT(I) = 0.0
                NMSG = NMSG + 1
                MSG(NMSG)=
@@ -392,20 +478,50 @@ C
                CYCLE
              ENDIF
 
-             NCOND         = NCOND + 1        
-             CONDAT(NCOND) = IDLAPL(I)
-             IIRRCV(NCOND) = IRRCOD(I)
-             COND(NCOND)   = AMT(I)
+             IF (IRRCOD(I) == 5 .AND. DRIP2D) THEN
+!               ------------------------------
+!               Drip irrigation
+                IF (I == 1) THEN     ! I = irrigation record #
+                  NDRIP = NDRIP + 1 
+                  J = 1              ! J = irrig record # today
+                ELSEIF (I .GT. 1) THEN
+!                 Check if this irrigation is on same day as last
+                  IF ((IDLAPL(I-1) .EQ. IDLAPL(I)) .AND. 
+     &                (IRRCOD(I-1) == 5)) THEN
+                    J = J + 1
+                  ELSE
+                      NDRIP = NDRIP + 1
+                      J = 1
+                  ENDIF
+                ENDIF
+                DripEvntEntr(NDRIP) = J
+                DripDat(NDRIP) = IDLAPL(I)
+                DripRate(NDRIP, j)= AMT(I)          !drip rate ml/s
+                DripStart(NDRIP, j)= IRSTRH(I) + IRSTRM(I) / 60. !hours
+                DripDur(NDRIP, j)  = IRDUR(I) / 60. !duration (hr)
+                if (IRINT(I). GT. 0)  then 
+                  DripInt(NDRIP, j)  = IRINT(I) / 60. !interval (hr)
+                else 
+                  DripInt(NDRIP, j)  = IRINT(I)  ! if -99, keep -99
+                Endif
+                DripNum(NDRIP, j)  = IRNUM(I)       !# per day
+                DripRefLN(NDRIP, j)= IRLN(I)
 
-             ! Regular irrigation upland fields
-             NAPW = NAPW + 1
-             JULAPL(NAPW) = IDLAPL(I)
-             AMIR(NAPW)   = AMT(I)
+             ELSE
+                NCOND         = NCOND + 1        
+                CONDAT(NCOND) = IDLAPL(I)
+                IIRRCV(NCOND) = IRRCOD(I)
+                COND(NCOND)   = AMT(I)
+             
+!               Regular irrigation upland fields
+                NAPW = NAPW + 1
+                JULAPL(NAPW) = IDLAPL(I)
+                AMIR(NAPW)   = AMT(I)
+             ENDIF
 
           !------------------------------
            CASE (7)
 !          Water table
-
              IF (AMT(I) < -1.E-6) THEN
                AMT(I) = 0.0
                NMSG = NMSG + 1
@@ -506,6 +622,9 @@ C
         IF (NMSG > 1) CALL WARNING(NMSG, ERRKEY, MSG)
       ENDIF
 
+      IF (NDRIP .GT. 0) THEN
+        DRIP2D = .TRUE. ! JZW these should goes line 370
+      ENDIF
 !-----------------------------------------------------------------------
 !     Adjust irrigation dates for multi-year simulations
 !     This section was taken from the MRUN subroutine.
@@ -515,6 +634,13 @@ C
           DO I = 1, NAPW
             CALL YR_DOY(JULAPL(I),YR,IDATE)
             JULAPL(I) = (YR + MULTI - 1) * 1000 + IDATE
+          ENDDO
+        ENDIF
+
+        IF (NDRIP .GT. 0 .AND. DripDat(1) .LT. YRSIM) THEN
+          DO I = 1, NDRIP
+            CALL YR_DOY(DripDat(I),YR,IDATE)
+            DripDat(I) = (YR + MULTI - 1) * 1000 + IDATE
           ENDDO
         ENDIF
 
@@ -563,6 +689,14 @@ C-----------------------------------------------------------------------
           DO I = 1, NAPW
             CALL YR_DOY(JULAPL(I),YR,IDATE)
             JULAPL(I) = (YR + YRDIF) * 1000 + IDATE
+          END DO
+        ENDIF
+
+        IF (NDRIP .GT. 0 .AND. DripDat(1) .LT. YRSIM .AND. IIRRI.NE.'D')
+     &      THEN
+          DO I = 1, NDRIP
+            CALL YR_DOY(DripDat(I),YR,IDATE)
+            DripDat(I) = (YR + YRDIF) * 1000 + IDATE
           END DO
         ENDIF
 
@@ -639,6 +773,16 @@ C-----------------------------------------------------------------------
 !       potential flooding.
       FLOODWAT % NBUND   = NBUND
 
+      IF (DRIP2D) THEN
+        CALL DRIP_IRRIG (CONTROL, ! Shoud be call only drip=true?? 
+     &    AUTO, IRRAPL, DripDat, DripEvntEntr,    !Input
+     &    DripDur, DripInt, DripNum, DripRefLN,   !Input
+     &    DripLN, DripOfset, DripDep, DripRate,   !Input
+     &    DripSpc, DripStart, EFFIRR, IIRRI,      !Input
+     &    NDRIP, YRDOY, YRPLT, IRRAPL_cm2,        !Input
+     &    DEPIR)                                  !Output
+      ENDIF
+
 !     Transfer data to ModuleData
       CALL PUT('MGMT','DEPIR', DEPIR)
       CALL PUT('MGMT','EFFIRR',EFFIRR)
@@ -662,6 +806,7 @@ C-----------------------------------------------------------------------
       DEPIR  = 0.
       IRRAMT = 0.
       IRRAPL = 0.0
+      IRRAPL_cm2 = -99.
 
 !     Irrigation amount that affects soil properties after a tillage
 !     event, expressed as equivalent rainfall depth (mm).
@@ -819,10 +964,22 @@ C-----------------------------------------------------------------------
 !         Soil water irrigation
           SELECT CASE (IIRRI)
           CASE ('A', 'F')
-!         Soil water content determins demand
-          CALL SWDEFICIT(
+!         Soil water content determines demand
+          IF (BedDimension % RaisedBed) THEN
+!           SWDEFICIT_bed looks for bedded system, which has a different
+!           method for calculating volume of water deficit
+            CALL SWDEFICIT_bed(
+     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
+     &        ATHETA, SWDEF, SWDEF_cm2)                   !Output
+
+            IRRAPL_cm2 = SWDEF_cm2
+            IRRAPL_cm2 = MAX(0.,IRRAPL_cm2)
+
+          ELSE
+            CALL SWDEFICIT(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
      &        ATHETA, SWDEF)                              !Output
+          ENDIF
 
           IF (ATHETA .LE. THETAC*0.01) THEN
 !           A soil water deficit exists - automatic irrigation today.
@@ -881,42 +1038,66 @@ C             Apply fixed irrigation amount
             CASE(1:4,6); TIL_IRR = TIL_IRR + IRRAPL
           END SELECT
 
-          DEPIR = DEPIR + IRRAPL
-          IF (DEPIR > 0.0001) NAP = NAP + 1
+            IF (.NOT. DRIP2D) THEN
+              DEPIR = DEPIR + IRRAPL
+              IF (DEPIR > 0.0001) NAP = NAP + 1
+            ENDIF
         ENDIF
        ENDIF
 C-----------------------------------------------------------------------
-C** IIRRI = P - As Reported through last reported day, then automatic
+C** IIRRI = P - As Reported through last reported day (YYYYDDD), then automatic
 C          to re-fill profile (as in option A)
-C   IIRRI = W - As Reported through last reported day, then automatic
+C   IIRRI = W - As Reported through last reported day (YYYYDDD), then automatic
 C**         adding AIRAMT each time
 C-----------------------------------------------------------------------
       CASE ('P', 'W')
+
+!       Not drip irrig
         IF (NAPW .GT. 0) THEN
-          LOOP3: DO I = 1, NAPW
-            IF (JULAPL(I) .EQ. YRDOY) THEN
-              DEPIR = DEPIR + AMIR(I)
-              NAP = NAP + 1
-            ELSEIF (JULAPL(I) .GT. YRDOY) THEN
-              EXIT LOOP3
-            ENDIF
-          END DO LOOP3
-		ENDIF
+!       If Today's date is after the last record in the IRRIG section
+!         check to see if automatic irrigation is needed (P or W option)
+          IF (YRDOY .GT. JULAPL(NAPW))THEN
+            AUTO = .TRUE.
+          ELSE
+            LOOP3: DO I = 1, NAPW
+              IF (JULAPL(I) .EQ. YRDOY) THEN
+                DEPIR = DEPIR + AMIR(I)
+                NAP = NAP + 1
+              ENDIF
+            END DO LOOP3
+          ENDIF
+
+!       Drip irrigation
+        ELSEIF (NDRIP > 0 .AND. YRDOY .GT. DripDat(NDRIP))THEN
+          AUTO = .TRUE.
+        ENDIF
 
 C-----------------------------------------------------------------------
 C       If Today's date is after the last record in the IRRIG section
 c           check to see if automatic irrigation is needed (P or W option)
 C-----------------------------------------------------------------------
 
-        IF (YRDOY .GT. JULAPL(NAPW))THEN
+        IF (AUTO) THEN
           !Past end of records - automatic irrigation.
 
           IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &        (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
-            CALL SWDEFICIT(
-     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
-     &        ATHETA, SWDEF)                              !Output
+            IF (BedDimension % RaisedBed) THEN
+!             SWDEFICIT_bed looks for bedded system, which has a different
+!             method for calculating volume of water deficit
+              CALL SWDEFICIT_bed(
+     &          DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU, !Input
+     &          ATHETA, SWDEF, SWDEF_cm2)                 !Output
+
+              IRRAPL_cm2 = SWDEF_cm2
+              IRRAPL_cm2 = MAX(0.,IRRAPL_cm2)
+
+            ELSE
+              CALL SWDEFICIT(
+     &          DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
+     &          ATHETA, SWDEF)                              !Output
+            ENDIF
 
             IF (ATHETA .LE. THETAC*0.01) THEN
 !           A soil water deficit exists - automatic irrigation today.
@@ -926,8 +1107,9 @@ C               Determine supplemental irrigation amount.
 C               Compensate for expected water loss due to soil evaporation
 C               and transpiration today.
 C               Estimate that an average of 5 mm of water will be lost.
-! chp 2023-01-07 could use GET to grab yesterday's ET
-                IRRAPL = SWDEF*10 + 5.0
+!               chp 2023-01-07 could use GET to grab yesterday's ET
+!               IRRAPL = SWDEF*10 + 5.0 ! Jin feel too much water added
+                IRRAPL = SWDEF*10 
                 IRRAPL = MAX(0.,IRRAPL)
 
               ELSE IF (IIRRI .EQ. 'W') THEN
@@ -935,11 +1117,12 @@ C               Apply fixed irrigation amount
                 IRRAPL = AIRAMT
               ENDIF
 
-              DEPIR = DEPIR + IRRAPL
-              NAP = NAP + 1
-              !JULAPL(NAP+1) = YRDOY
-              !AMIR(NAP+1)   = IRRAPL
-
+              IF (.NOT. DRIP2D) THEN
+                DEPIR = DEPIR + IRRAPL
+                NAP = NAP + 1
+                !JULAPL(NAP+1) = YRDOY
+                !AMIR(NAP+1)   = IRRAPL
+              ENDIF
             ENDIF
           ENDIF
         ENDIF
@@ -947,6 +1130,22 @@ C               Apply fixed irrigation amount
       END SELECT
       ENDIF
 
+!-----------------------------------------------------------------------
+!     Check to see if drip irrigation is done today
+!-----------------------------------------------------------------------
+      IF (DRIP2D) THEN
+        CALL DRIP_IRRIG (CONTROL, 
+     &    AUTO, IRRAPL, DripDat, DripEvntEntr,    !Input
+     &    DripDur, DripInt, DripNum, DripRefLN,   !Input
+     &    DripLN, DripOfset, DripDep, DripRate,   !Input
+     &    DripSpc, DripStart, EFFIRR, IIRRI,      !Input
+     &    NDRIP, YRDOY, YRPLT, IRRAPL_cm2,        !Input
+     &    DEPIR)                                  !Output
+
+          IF (DEPIR > 1.E-4) THEN
+            NAP = NAP + 1
+          ENDIF
+      ENDIF
 !-----------------------------------------------------------------------
 !     Water table management
       IF (NTBL .GT. 0) THEN

@@ -10,9 +10,11 @@ C  05/28/1993 PWW Header revision and minor changes
 C  04/16/2002 GH  Modified logic for reading planting date
 C  06/19/2002 GH  Modified for Y2K
 C  08/23/2002 GH  Expanded array for irrigation applications to NAPPL
+!  07/27/2010 CHP Drip irrigation emitter can be offset from centerline.
+!  08/15/2011 JW  Fix the bug of reading format for the case of IR004  
 C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
-C  INPUT  : LUNEXP,FILEX,LNIR,YRSIM,ISWWAT,NIRR,EFFIRX,DSOILX,THETCX
+C  INPUT  : LUNEXP,FILEX,LNIR,YRSIM,ISWWAT,NIRR,NDPLNO,EFFIRX,DSOILX,THETCX
 C           IEPTX,IOFFX,IAMEX,NAPW,TOTAPW,AIRAMX,IDLAPL,IRRCOD,AMT
 C
 C  LOCAL  : IDLAPL,ISECT,LINEXP,IFIND,LN,J,ERRNUM,AMT,ERRKEY,IRRCOD
@@ -30,23 +32,29 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPIRR (LUNEXP,FILEX,LNIR,YRSIM,ISWWAT,
-     &           NIRR,EFFIRX,DSOILX,THETCX,IEPTX,IOFFX,IAMEX,LNSIM,
-     &           NAPW,TOTAPW,AIRAMX,IDLAPL,IRRCOD,AMT,IIRV,IIRRI)
+     &   NIRR,NDPLNO,EFFIRX,DSOILX,THETCX,IEPTX,IOFFX,IAMEX,LNSIM,
+     &   NAPW,TOTAPW,AIRAMX,IDLAPL,IRRCOD,AMT,IIRV,IIRRI,
+     &   MEHYD, IRRSCHED, DripLN, DripSpc, DripOfset, DripDep)
 
       USE ModuleDefs
       IMPLICIT NONE
       EXTERNAL ERROR, FIND, IGNORE, HFIND, IGNORE2, Y4K_DOY
 
-      INTEGER      LNIR,NIRR,LUNEXP,IDLAPL(NAPPL),ISECT,LINEXP,LNSIM
-      INTEGER      YRSIM,IFIND,LN,J,ERRNUM,NAPW,IIRV(NAPPL),IRRCD
+      INTEGER      LNIR,NIRR,NDPLNO,LUNEXP,IDLAPL(NAPPL),ISECT,LINEXP
+      INTEGER      YRSIM,IFIND,LN,J,ERRNUM,NAPW,IIRV(NAPPL),IRRCD,LNSIM
+      INTEGER      DrpRefLN
 
       REAL         AMT(NAPPL),DSOILX,THETCX,IEPTX,EFFIRX,TOTAPW,AIRAMX
+      INTEGER      DripLN(NDrpLn)
+      REAL         DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
 
-      CHARACTER*1  ISWWAT,IIRRI
+      CHARACTER*1  ISWWAT,IIRRI, MEHYD
+      CHARACTER*4  HFNDCH
       CHARACTER*5  IRRCOD(NAPPL),IOFFX,IAMEX
       CHARACTER*6  FINDCH,ERRKEY
       CHARACTER*12 FILEX
-      CHARACTER*80 CHARTEST
+      CHARACTER*30 IRRSCHED(NAPPL)
+      CHARACTER*100 CHARTEST
 
       INTEGER I, PERM, PERMDOY
 
@@ -58,6 +66,11 @@ C     Set default values in case section or data are missing from file EXP
 C
       EFFIRX = 1.00
       NIRR   = 0
+      NDPLNO  = 0
+      DripLN = -99
+      DripSpc= -99
+      DripOfset = 0
+      DripDep= 0
       NAPW   = 0
       TOTAPW = 0.0
       THETCX = 0.0
@@ -65,6 +78,7 @@ C
       AIRAMX = 0.0
       IOFFX  = 'GS000'
       IAMEX  = 'IR001'
+      LN = -99
 
       DO J = 1, NAPPL
          IDLAPL(J) = 0
@@ -96,9 +110,41 @@ C
             IF (IAMEX(1:3) .EQ. '-99' .OR. IAMEX(3:5) .EQ. '-99')
      &          IAMEX = 'IR001'
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-          ELSE
+         ELSE
             CALL ERROR (ERRKEY,2,FILEX,LINEXP)
          ENDIF
+
+!        Read optional drip irrigation emitter spacing (2nd part)
+         HFNDCH='IRDEP'
+         CALL HFIND(LUNEXP,HFNDCH,LINEXP,IFIND)
+         DO WHILE (IFIND .EQ. 1)
+C
+C           Read different dripper configurations for the selected IRR level
+C
+            CALL IGNORE2 (LUNEXP,LINEXP,ISECT,CHARTEST)
+            DO WHILE (ISECT .EQ. 1)
+               READ (CHARTEST,85,IOSTAT=ERRNUM) LN
+               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
+               IF (LN .EQ. LNIR) THEN
+                  NDPLNO = NDPLNO + 1
+                  READ (CHARTEST,85,IOSTAT=ERRNUM) LN,DripLN(NDPLNO),
+     &                DripSpc(NDPLNO),DripOfset(NDPLNO), DripDep(NDPLNO)
+                  IF (ERRNUM .NE. 0) 
+     &                CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+               END IF
+               CALL IGNORE2 (LUNEXP,LINEXP,ISECT,CHARTEST)
+            END DO
+!            IF (LN .EQ. LNIR) THEN
+!               GO TO 80
+!            END IF
+            CALL HFIND(LUNEXP,HFNDCH,LINEXP,IFIND)
+         END DO
+ 80      REWIND (LUNEXP)
+         CALL FIND (LUNEXP,FINDCH,LINEXP,IFIND)
+
+         HFNDCH='IROP'
+ 69      CALL HFIND(LUNEXP,HFNDCH,LINEXP,IFIND)
+         IF (IFIND .EQ. 1) THEN
 C
 C        Read different IRR amounts for the selected IRR level
 C
@@ -108,10 +154,34 @@ C
          IF (ISECT .EQ. 1) THEN
             READ (CHARTEST,60,IOSTAT=ERRNUM) LN
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-            IF (LN .GT. LNIR) GO TO 120
+            !IF (LN .GT. LNIR) GO TO 120
+            IF (LN .NE. LNIR) GO TO 69
             READ (CHARTEST,60,IOSTAT=ERRNUM) LN,IDLAPL(NIRR),
-     &                        IRRCOD(NIRR),AMT(NIRR),IIRV(NIRR)
+     &                        IRRCOD(NIRR),AMT(NIRR)    !,IIRV(NIRR)
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+
+            IF (INDEX('GC',MEHYD) > 0 .AND. IRRCOD(NIRR) == 'IR005')THEN
+              READ(CHARTEST,'(20X,A30)') IRRSCHED(NIRR)
+              READ(IRRSCHED(NIRR),'(25X,I5)') DrpRefLN
+              IF ((DrpRefLN .LT. 0) .OR. (DrpRefLN .GT. NDrpLn)) THEN
+                CALL ERROR (ERRKEY,22,FILEX,LINEXP)
+              END IF
+            ELSE IF (INDEX('GC',MEHYD) > 0 .AND. IRRCOD(NIRR) =='IR007')
+     &        THEN ! Jin WU Add
+              READ(CHARTEST,'(20X,I5)') IIRV(NIRR)
+            ELSE
+!             READ(CHARTEST,'(20X,I5)') IIRV(NIRR) ! should read AMT(NIRR),IIRV(NIRR), 15X, I5, Need handling for AMT
+              if(IRRCOD(NIRR) == 'IR005' .AND.  NDPLNO > 0) then
+                READ(CHARTEST,'(20X,A30)') IRRSCHED(NIRR)
+                READ(IRRSCHED(NIRR),'(25X,I5)') DrpRefLN
+                IF ((DrpRefLN .LT. 0) .OR. (DrpRefLN .GT. NDrpLn)) THEN
+                  CALL ERROR (ERRKEY,22,FILEX,LINEXP)
+                END IF
+              else
+                READ(CHARTEST,'(20X,I5)') IIRV(NIRR)
+              Endif
+            ENDIF
+
             IF ((IDLAPL(NIRR) .LT.  0) .OR.
      &         (IIRRI .EQ. 'R' .AND. MOD(IDLAPL(NIRR),1000) .GT. 366))
      &         CALL ERROR (ERRKEY,10,FILEX,LINEXP)
@@ -189,7 +259,12 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &          (IRRCOD(NIRR)(3:5)) .NE. '010') THEN 
                 NAPW = NAPW + 1
                 IF (AMT(NAPW) .GT. 0.0) THEN
-                  TOTAPW = TOTAPW + AMT(NAPW)
+!                 IF ((IRRCOD(NIRR)(3:5)) .NE. '005') THEN
+                    TOTAPW = TOTAPW + AMT(NAPW)
+!                 ELSE
+!                    SPD = DripIrrig(1)% DripNum(1) * DripIrrig(1) % DripDur(1) * 3600
+!                    TOTAPW = TOTAPW + AMT(NAPW) / (DripSpc(DrpRefLN) * ROWSPC_CM) * 10. * SPD
+!                 ENDIF
                 ENDIF
 
             !CHP start ***********************************************
@@ -205,13 +280,16 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               ENDIF
             ENDIF
             !CHP end *************************************************
-
-            NIRR = NIRR + 1
-            IF (NIRR .GT. NAPPL) GO TO 120
           ELSE
-            GO TO 120
-         ENDIF
-         GO TO 70
+              go to 120 ! Jin Add
+          ENDIF ! Jin Add End if line 120
+
+          NIRR = NIRR + 1
+          IF (NIRR .GT. NAPPL) GO TO 120
+        ELSE
+          GO TO 120
+        ENDIF
+        GO TO 70
       ENDIF
 
  120  CONTINUE
@@ -224,8 +302,9 @@ C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
- 55   FORMAT (I3,F5.0,3(1X,F5.0),2(1X,A5),1X,F5.0)
+ 55   FORMAT (I3,F5.0,3(1X,F5.0),2(1X,A5),1X,F5.0,F6.0)
  60   FORMAT (I3,I5,1X,A5,1X,F5.0,4X,I2)
+ 85   FORMAT (I3,1X,I5,3(1X,F5.0))
       END SUBROUTINE IPIRR
 !=======================================================================
 !     IPIRR VARIABLE DEFINITIONS:

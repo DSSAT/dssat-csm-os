@@ -154,6 +154,8 @@
           State_init = State
           COUNT = 0
           State = 0.
+          Add   = 0.
+          Sub   = 0.
         ENDIF
 !      ENDIF
 
@@ -187,7 +189,7 @@
         WRITE(LUNSNS,'(I4,1X,A12,I10,1X,A2,30F10.2)')
      &    CONTROL%RUN, CONTROL%FILEX, Num, CONTROL%CROP,
      &    State_init, State, Add, Sub, Miner, 
-     &    Bal_inorganic, Bal_organic, Bal(1)+Bal(2)
+     &    Bal_inorganic, Bal_organic, Bal_inorganic+Bal_organic
 
 !       For crop rotations, remember the ending state to use as initial state next season.
         IF (CONTROL % RNMODE == 'Q') THEN

@@ -40,13 +40,14 @@ C           growth in the soil - unitless value between 0 and 1
 C  L,L1   : Loop counter
 C=======================================================================
 
-      SUBROUTINE PT_ROOTGR (DYNAMIC, YRDOY,
+      SUBROUTINE PT_ROOTGR (DYNAMIC, CELLS, YRDOY,
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
      &    CUMDEP, RLV, RTDEP, TRLV)                       !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
+      USE Cells_2D
       IMPLICIT  NONE
       EXTERNAL PT_IPROOT
       SAVE
@@ -64,6 +65,9 @@ C=======================================================================
       REAL, DIMENSION(NL) :: DLAYR, DS, DUL, ESW, LL 
       REAL, DIMENSION(NL) :: NH4, NO3, RLDF, RLV, SHF, SW
       REAL TotRootMass
+
+!     Add 2D roots variable - needed for SoilNi, even for 1D runs
+      Type (CellType)    CELLS(MaxRows,MaxCols)
 
 !***********************************************************************
 !***********************************************************************
@@ -167,12 +171,13 @@ C=======================================================================
               RLV(L) = AMIN1 (RLV(L),5.0)
            END DO
         END IF
-
       ENDIF
 
       TRLV = 0.0
       DO L = 1, NLAYR
         TRLV = TRLV + RLV(L) * DLAYR(L)
+!       Transfer RLV values to 2D variable for use in some N routines
+        CELLS(L,1)%STATE%RLV = RLV(L)
       ENDDO
 
 !     RLWR  Root length to weight ratio, (1E4 cm/g)

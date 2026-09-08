@@ -152,8 +152,9 @@ C-----------------------------------------------------------------------
                WRITE(LUN,FRMT) ("ES",L,"D",L=1,N_LYR),"   TRWUD   TWUPD"
             ELSE
 !             WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
-              WRITE(LUN,122)("ES",L,"D",L=1,9),"  ES10D   TRWUD   TWUPD"
-  122         FORMAT(9("    ",A2,I1,A1),A)
+              WRITE(LUN,'(9("    ",A2,I1,A1),A)')
+     &            ("ES",L,"D",L=1,9),"   ES10D   TRWUD   TWUPD"
+! 122         FORMAT(9("    ",A2,I1,A1),A)
             ENDIF
             END IF   ! VSH
           ELSE
@@ -511,6 +512,37 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !     END SUBROUTINE XTRACT
 C=======================================================================
+
+!=======================================================================
+      SUBROUTINE WaterStress(EOP, RWUEP1, TRWUP, SWFAC, TURFAC)
+!     Calculate daily water stess factors (from SWFACS)
+      
+      USE ModuleDefs
+      IMPLICIT NONE
+
+!     EOP in mm/d
+!     TRWUP and EP1 in cm/d
+      REAL, INTENT(IN) :: EOP       !mm/d
+      REAL, INTENT(IN) :: TRWUP     !cm/d
+      REAL, INTENT(IN) :: RWUEP1
+      REAL, INTENT(OUT):: SWFAC, TURFAC
+      REAL EP1
+      
+      SWFAC  = 1.0
+      TURFAC = 1.0
+
+      IF (EOP .GT. 0.001) THEN
+        EP1 = EOP * 0.1
+        IF (TRWUP / EP1 .LT. RWUEP1) THEN
+          TURFAC = (1./RWUEP1) * TRWUP / EP1
+        ENDIF
+        IF (EP1 .GE. TRWUP) THEN
+          SWFAC = TRWUP / EP1
+        ENDIF
+      ENDIF
+
+      RETURN
+      END SUBROUTINE WaterStress
+!=======================================================================
 !     END SPAM MODULE
 !=======================================================================
-

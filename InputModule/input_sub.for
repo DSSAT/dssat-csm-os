@@ -54,6 +54,8 @@ C 02/21/2006 GH  Read Crop Module from DSSATPRO
 C 02/01/2007 GH  RNMODE=T option for Gencalc Batch files
 C 02/07/2007 GH  Include path for FileX and rotation number to command
 C                line
+! 09/02/2008 CHP Added bed width (for raised bed row) to input parameters
+! 07/27/2010 CHP Drip irrigation emitter can be offset from centerline.
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
 C-----------------------------------------------------------------------
@@ -113,7 +115,7 @@ C=======================================================================
       CHARACTER*120 WTHSTR, FILECTL
       CHARACTER*1000 ATLINE
 
-      INTEGER       NLOOP,FROP,FTYPEN,RUN,IIRV(NAPPL)
+      INTEGER       NLOOP,FROP,FTYPEN,RUN   !,IIRV(NAPPL)
       INTEGER       LUNIO,NYRS,ERRNUM,NSENS,YRIC
       INTEGER       IVRGRP,IPLT,ISIM,EXPP,EXPN,TRTN,TRTALL
       INTEGER       NFORC,NDOF,PMTYPE,ISENS, TRTNUM, ROTNUM
@@ -130,7 +132,9 @@ C-SUN INTEGER       LNBLNK
       REAL          INO3(NL),INH4(NL),EFINOC,EFNFIX
       REAL          AINO3,AINH4,TNMIN,ANO3,ANH4,TSWINI
       REAL          ESW(NL),SW(NL),TLL,TSW,TDUL,TSAT,TPESW,CUMDEP,PESW
-      REAL          PLTFOR, PMBD
+      REAL          PLTFOR, BEDHT, BEDWD    !, PMWD, PMBD
+      REAL          DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
+      INTEGER       DripLN(NDrpLn)
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
@@ -186,10 +190,11 @@ C-----------------------------------------------------------------------
        CALL IPEXP (MODEL, RUN, RNMODE, FILEX,PATHEX,FILEX_P, FILECTL,
      &     SLNO,NYRS,VARNO,CROP,WMODI,
      &     FROP,TRTN,EXPP,EXPN,TITLET,TRTALL,TRTNUM,ROTNUM, 
-     &     IIRV,FTYPEN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,
+     &     FTYPEN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,
      &     LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &     LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES, 
-     &     CONTROL, ISWITCH, UseSimCtr, MODELARG, PMBD)
+     &     CONTROL, ISWITCH, UseSimCtr, MODELARG, BEDHT, BEDWD, !PMBD, 
+     &     DripLN, DripSpc, DripOfset, DripDep)
 
 C-----------------------------------------------------------------------
 C     Call IPSOIL
@@ -198,6 +203,7 @@ C-----------------------------------------------------------------------
 !  MESOL = '1' Original soil layer distribution. Calls LYRSET.
 !  MESOL = '2' New soil layer distribution. Calls LYRSET2.
 !  MESOL = '3' User specified soil layer distribution. Calls LYRSET3.
+!  MESOL = 'D' 2D raised bed system
 !     Skip soils field and soils input for sequence mode
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
         CALL IPSOIL_Inp (RNMODE,FILES,PATHSL,NSENS,ISWITCH)
@@ -325,14 +331,17 @@ C-----------------------------------------------------------------------
      &            YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &            SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,MODEL,
      &            RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,TRTN,
-     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMBD)
+     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,
+     &            BEDHT, BEDWD, !PMWD
+     &            DripLN, DripSpc, DripOfset, DripDep)  
       
         CALL OPTEMPXY2K (YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &           SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,
      &           FILEIO,FROP,ECONO,ATLINE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX,PMBD)
+     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX, !PMWD,
+     &           BEDHT, BEDWD)
 
 C-----------------------------------------------------------------------
 C     Write DSSAT Format Version 4 Output files

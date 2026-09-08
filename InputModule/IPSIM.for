@@ -228,34 +228,6 @@ C
          ISWTIL = UPCASE(ISWTIL)
          ICO2   = UPCASE(ICO2)
 
-         SELECT CASE (CROP)
-           CASE ('BN','SB','PN','PE','CH','PP','GY',
-     &              'VB','CP','CB','FB','GB','LT','AL',
-     &              'CV','BG')
-!          Do nothing -- these crops fix N and can have Y or N
-           CASE DEFAULT; ISWSYM = 'N'  !other crops, no choice
-         END SELECT
-!        ENDIF
-         IF (ISWCHE .EQ. ' ') THEN
-            ISWCHE = 'N'
-         ENDIF
-         IF (ISWTIL .EQ. ' ') THEN
-            ISWTIL = 'N'
-         ENDIF
-         IF (ISWWAT .EQ. 'N') THEN
-            ISWNIT = 'N'
-            ISWPHO = 'N'
-!            ISWCHE = 'N'
-         ENDIF
-
-         IF (INDEX('FNQS',RNMODE) > 0) THEN
-!          For sequence, seasonal runs, default CO2 uses static value
-           IF (INDEX ('WMD', ICO2) < 1) ICO2 = 'D'
-         ELSE
-!          For experimental runs, default CO2 uses measured values
-           IF (INDEX ('WMD', ICO2) < 1) ICO2 = 'M'
-         ENDIF
-
 !     ==============================================================
 C        Read THIRD line of simulation control - METHODS
 C
@@ -615,6 +587,9 @@ C-----------------------------------------------------------------------
            CASE('A'); PLDATE = PWDINF
       END SELECT
 
+!     -------------------------------------------------
+!     Line 2
+!     -------------------------------------------------
 !     Check for N fixation in CROPGRO crops
       SELECT CASE (CROP)
            CASE ('BN','SB','PN','PE','CH','PP','GY',
@@ -714,7 +689,20 @@ C-----------------------------------------------------------------------
 
       IF (MEEVP == 'Z' .AND. MEPHO /= 'L') CALL ERROR(ERRKEY,3,' ',0)
 
-      IF (MEHYD .EQ. ' ') MEHYD = 'R'
+      IF (INDEX('RG',MEHYD) < 1) MEHYD = 'R'
+      SELECT CASE(MEHYD)
+      CASE ('G')  !2D (gridded soil) simulation
+        CONTROL % SIM2D = .TRUE.
+!       2D soil water and N processes. 
+        MESOL  = 'D'
+!       Not compatible with tillage.
+        ISWTIL = 'N'
+      CASE ('R')
+        CONTROL % SIM2D = .FALSE.
+        IF (INDEX('123',MESOL) < 1) THEN
+           MESOL = '2'
+        ENDIF
+      END SELECT
 
       IF (NSWITCH .LE. 0 .AND. ISWNIT .EQ. 'Y') THEN
         NSWITCH = 1

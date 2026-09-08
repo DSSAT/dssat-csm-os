@@ -49,15 +49,16 @@ C             SATFLO  (File SATFLO.for)
 C=======================================================================
 
       SUBROUTINE WATBAL(CONTROL, ISWITCH,                 !Input
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+     &    CELLS, ES, IRRAMT, SOILPROP, SWDELTX,           !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     
+!     USE ModuleDefs !already USED by Cells_2D
       USE ModuleData
+      USE Cells_2D
       USE FloodModule
       USE Interface_OPWBAL
 
@@ -83,6 +84,7 @@ C=======================================================================
       REAL, DIMENSION(NL) :: SWDELTU
       TYPE (FloodWatType) FLOODWAT
       TYPE (MulchType)    MULCH
+      Type (CellType) Cells(MaxRows,MaxCols)
 
 !     Output:
       INTEGER           , INTENT(OUT) :: TDLNO
@@ -105,7 +107,7 @@ C=======================================================================
       REAL TSW, TSWINI, WATAVL, WTDEP
 
       REAL, DIMENSION(NL) :: DLAYR, DLAYR_YEST, DS, DUL, LL  
-      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL
+      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL, ThetaCap
 
 !     Flood management variables:
       REAL FLOOD, INFILT, PUDPERC
@@ -131,6 +133,9 @@ C=======================================================================
       REAL netLatFlow
       REAL, DIMENSION(NL) :: SWDELTW, SWDELTW_mm
 
+!     Transfer out 2D soil water variables for use in soil N routines.
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWV
+      REAL, DIMENSION(MaxCols) :: WINF_col
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -177,6 +182,8 @@ C=======================================================================
       SNOW = 0.0
       CALL PUT('WATER','SNOW'  , SNOW)
 
+      Sim2D = CONTROL % Sim2D
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -200,7 +207,7 @@ C=======================================================================
       Call WaterTable(SEASINIT,  
      &  SOILPROP, SW,                                     !Input
      &  ActWTD, netLatFlow,                               !Output
-     &  MgmtWTD, SWDELTW)                                 !Output
+     &  MgmtWTD, SWDELTW, ThetaCap)                       !Output
 
 !     Use inital water table depth and capillary rise to set initial
 !       soil water content
@@ -258,6 +265,7 @@ C=======================================================================
       DRN    = 0.0
       UPFLOW = 0.0
       WINF   = 0.0
+      WINF_col = 0.0
 
 !     Set process rates to zero.
       SWDELTS = 0.0
@@ -268,6 +276,13 @@ C=======================================================================
       SWDELTW = 0.0
 
       DLAYR_YEST = DLAYR
+
+!     Convert soil water to 2D for use in SoilN routines
+      CALL Interpolate2Cells_2D(
+     &  CELLS % Struc, SOILPROP, SW, 0.0,     !Input
+     &  SWV)                                  !Output
+
+      CELLS % STATE % SWV = SWV
 
 !***********************************************************************
 !***********************************************************************
@@ -295,7 +310,7 @@ C     Conflict with CERES-Wheat
         Call WaterTable(RATE,   
      &    SOILPROP, SW,                                     !Input
      &    ActWTD, netLatFlow,                               !Output
-     &    MgmtWTD, SWDELTW)                                 !Output
+     &    MgmtWTD, SWDELTW, ThetaCap)                       !Output
       ENDIF
 
 !     Set process rates to zero.
@@ -408,6 +423,9 @@ C     Conflict with CERES-Wheat
         ENDIF
 
       ENDIF   !End of IF block for PUDDLED conditions
+
+      WINF_col(1) = WINF
+      CALL PUT('WATER', 'WINF_COL', WINF_col, MaxCols)
 
 !-----------------------------------------------------------------------
       IF (FLOOD .LE. 0.0 .AND. MESEV .NE. 'S') THEN
@@ -532,6 +550,12 @@ C       extraction (based on yesterday's values) for each soil layer.
 !       content
       DLAYR_YEST = DLAYR
 
+!     Convert soil water to 2D for use in SoilN routines
+      CALL Interpolate2Cells_2D(
+     &  CELLS % Struc, SOILPROP, SW, 0.0,     !Input
+     &  SWV)                                  !Output
+
+      CELLS % STATE % SWV = SWV
 
 !***********************************************************************
 !***********************************************************************

@@ -8,38 +8,66 @@ C  03/01/1993 WTB Modified.
 C  01/20/1997 GH  Modified.
 C  07/10/1998 CHP modified for modular format.
 C  05/11/1998 GH  Incorporated in CROPGRO
+!  07/23/2010 JZW, CHP converted to 2D
+!  01/04/2024 CHP integrated 2D into 1D routine
 C-----------------------------------------------------------------------
-C  Called from:  PLANT
-C  Calls:        ERROR, FIND, IGNORE
+C  Called from:  CROPGRO
 C=======================================================================
 
-      SUBROUTINE NUPTAK(DYNAMIC,
-     &  DLAYR, DUL, FILECC, KG2PPM, LL, NDMSDR, NDMTOT,   !Input
-     &  NH4, NO3, NLAYR, RLV, SAT, SW,                    !Input
+      SUBROUTINE NUPTAK(CONTROL,
+     &  CELLS, DUL, FILECC, KG2PPM, LL, NDMSDR,           !Input
+     &  NDMTOT, NLAYR, SAT,                               !Input
      &  TRNH4U, TRNO3U, TRNU, UNH4, UNO3)                 !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+      USE Cells_2D
+!     USE ModuleDefs !already USED by Cells_2D
       IMPLICIT NONE
-      EXTERNAL GETLUN, FIND, ERROR, IGNORE
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE
       SAVE
 
+!     Subroutine interface variables
+      Type (ControlType), INTENT(IN) :: CONTROL
+      Type (CellType), INTENT(INOUT) :: Cells(MaxRows,MaxCols)
+      REAL, DIMENSION(NL), INTENT(IN) :: DUL, KG2PPM, LL, SAT
+      CHARACTER*92, INTENT(IN) :: FILECC
+      REAL, INTENT(IN) :: NDMSDR, NDMTOT
+      INTEGER, INTENT(IN) :: NLAYR
+      REAL, INTENT(OUT) :: TRNO3U, TRNH4U, TRNU
+      REAL, DIMENSION(NL), INTENT(OUT) :: UNO3(NL), UNH4(NL)
+
+      REAL, DIMENSION(MaxRows, MaxCols) :: ColFrac, BedFrac
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'NUPTAK')
       CHARACTER*6 SECTION
       CHARACTER*80 CHAR
-      CHARACTER*92 FILECC
 
-      INTEGER I, LUNCRP, ERR, LNUM, ISECT, FOUND
-      INTEGER L, NLAYR, DYNAMIC
+      INTEGER DYNAMIC
+      INTEGER I, J, LUNCRP, ERR, LNUM, ISECT, FOUND, L
 
       REAL NUF, XMIN
-      REAL DLAYR(NL), LL(NL), DUL(NL), SAT(NL), SW(NL), RLV(NL)
-      REAL SNO3(NL), SNH4(NL), KG2PPM(NL), NO3(NL), NH4(NL)
-      REAL RNO3U(NL), RNH4U(NL), UNO3(NL), UNH4(NL)
-      REAL TRNO3U, TRNH4U, TRNU
-      REAL NDMTOT, NDMSDR, ANDEM, FNH4, FNO3, SMDFR, RFAC
+      REAL ANDEM, FNH4, FNO3, SMDFR
       REAL RTNO3, RTNH4, MXNH4U, MXNO3U
+
+!     2D variables
+      INTEGER, DIMENSION(MaxRows,MaxCols) :: Cell_type
+      REAL, DIMENSION(MaxRows,MaxCols) :: NO3_2D, NH4_2D, RLV_2D, 
+     &    RTLEN_2D, RNH4U_2D, RNO3U_2D, CellArea
+      REAL, DIMENSION(MaxRows,MaxCols) :: SNO3_2D, SNH4_2D, SWV
+      REAL, DIMENSION(MaxRows,MaxCols) :: UNO3_2D, UNH4_2D
+      REAL SurfaceVal !dummy variable
+      Real FieldFac, ROWSPC_cm
+
+!     debug CHP - track losses of N
+      REAL DayLostN, CumLostN
+
+      DYNAMIC = CONTROL % DYNAMIC
+
+      SWV    = CELLS % State % SWV
+      RLV_2D = CELLS % State % RLV
+      SNO3_2D = CELLS % State % SNO3
+      SNH4_2D = CELLS % State % SNH4
+      Cell_type = CELLS % Struc % Cell_type
 
 !***********************************************************************
 !***********************************************************************
@@ -78,6 +106,17 @@ C=======================================================================
 
       CLOSE (LUNCRP)
 
+      ColFrac = BedDimension % ColFrac
+      BedFrac = BedDimension % BedFrac
+      ROWSPC_cm = BedDimension % ROWSPC_cm
+      CellArea = CELLS % STRUC % CellArea
+
+      IF (CONTROL % SIM2D) THEN
+        FieldFac = 2.0
+      ELSE
+        FieldFac = 1.0
+      ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -89,6 +128,13 @@ C=======================================================================
       TRNU   = 0.0 
       UNH4   = 0.0
       UNO3   = 0.0
+      UNH4_2D = 0.0
+      UNO3_2D = 0.0
+      RLV_2D  = 0.0
+      CumLostN = 0.0
+
+      CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
+      CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
 
 !***********************************************************************
 !***********************************************************************
@@ -103,15 +149,28 @@ C-----------------------------------------------------------------------
       TRNH4U = 0.0
       NUF    = 0.0
       XMIN   = 0.0
-      DO L=1,NLAYR
-        RNO3U(L) = 0.0
-        RNH4U(L) = 0.0
-        UNH4(L)  = 0.0
-        UNO3(L)  = 0.0
-        !KG2PPM(L) = 10. / (BD(L) * DLAYR(L))
-        SNO3(L) = NO3(L) / KG2PPM(L)
-        SNH4(L) = NH4(L) / KG2PPM(L)
+      RNO3U_2D = 0.0
+      RNH4U_2D = 0.0
+      UNH4_2D  = 0.0
+      UNO3_2D  = 0.0
+      UNH4  = 0.0
+      UNO3  = 0.0
+
+      CellArea = CELLS % STRUC % CellArea
+
+      DO L = 1, NRowsTot
+        DO J = 1, NColsTot
+!         Concentration
+          SELECT CASE(Cell_type(L,J))
+          CASE(3,4,5)
+             NO3_2D(L,J) = SNO3_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+     &                     * FieldFac
+             NH4_2D(L,J) = SNH4_2D(L,J) * KG2PPM(L) / ColFrac(L,J)
+     &                     * FieldFac
+          END SELECT
+        ENDDO
       ENDDO
+
 C-----------------------------------------------------------------------
 C   Determine crop N demand (kg N/ha), after subtracting mobilized N
 C-----------------------------------------------------------------------
@@ -120,74 +179,133 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C   Calculate potential N uptake in soil layers with roots
 C-----------------------------------------------------------------------
-        DO L=1,NLAYR
-          IF (RLV(L) .GT. 1.E-6) THEN
-            FNH4 = 1.0 - EXP(-0.08 * NH4(L))
-            FNO3 = 1.0 - EXP(-0.08 * NO3(L))
-            IF (FNO3 .LT. 0.04) FNO3 = 0.0  
-            IF (FNO3 .GT. 1.0)  FNO3 = 1.0
-            IF (FNH4 .LT. 0.04) FNH4 = 0.0  
-            IF (FNH4 .GT. 1.0)  FNH4 = 1.0
+        DO L = 1, NRowsTot 
+          DO J = 1, NColsTot  
+            SELECT CASE(Cell_type(L,J))
+            CASE(3,4,5)
+            IF (RLV_2D(L,J) .GT. 1.E-6) THEN
+              FNH4 = 1.0 - EXP(-0.08 * NH4_2D(L,J))
+              FNO3 = 1.0 - EXP(-0.08 * NO3_2D(L,J))
 
-!           SMDFR = relative drought factor
-            SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
+!             CHP 2024-10-23 Not sure why the lower limit of 0.04, but it has a big 
+!               impact on results, so keep it as in the 1D model.
+              IF (FNO3 .LT. 0.04) FNO3 = 0.0  
+              IF (FNO3 .GT. 1.0)  FNO3 = 1.0
+              IF (FNH4 .LT. 0.04) FNH4 = 0.0  
+              IF (FNH4 .GT. 1.0)  FNH4 = 1.0
 
-            IF (SW(L) .GT. DUL(L)) THEN
-              SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
+!             SMDFR = relative drought factor
+              SMDFR = (SWV(L,J) - LL(L)) / (DUL(L) - LL(L))
+
+              IF (SWV(L,J) .GT. DUL(L)) THEN
+                SMDFR = 1.0 - (SWV(L,J) - DUL(L)) / (SAT(L) - DUL(L))
+              ENDIF
+
+              IF (SMDFR .LT. 0.1) THEN
+                SMDFR = 0.1
+              ENDIF
+
+!              ! FO/KJB - Change for Cotton
+!              !RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+!!             RFAC = RLV_2D(L,J) * SQRT(SMDFR) * DLAYR(L) * 100.0
+!
+!!             RLV = Rootlength density (cm/cm3)
+!!             cm[root]/cm2[soil] = cm[root]/cm3[soil] * cm[soil]
+!!-----------------------------------------------------------------------
+!!             RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
+!!             RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)
+!!             RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
+!!-----------------------------------------------------------------------
+!              RNO3U_2D(L,J) = RFAC * FNO3 * RTNO3 
+!              RNH4U_2D(L,J) = RFAC * FNH4 * RTNH4 
+
+!             Convert RLV to root length per area
+              RTLEN_2D(L,J) = RLV_2D(L,J) * CellArea(L,J) / RowSpc_cm
+
+              RNO3U_2D(L,J) = RTLEN_2D(L,J) * RTNO3 * SQRT(SMDFR) * FNO3
+     &                           * 100.
+              RNH4U_2D(L,J) = RTLEN_2D(L,J) * RTNH4 * SQRT(SMDFR) * FNH4
+     &                           * 100.
+!!                 kg[N]          cm[root]     mg[N]     100 kg/ha
+!!                 -----    =     --------- * -------- * ---------
+!!                   ha           cm2[soil]   cm[root]     mg/cm2
+
+              RNO3U_2D(L,J) = MAX(0.0, RNO3U_2D(L,J))
+              RNH4U_2D(L,J) = MAX(0.0, RNH4U_2D(L,J))
+
+!             kg[N]/ha
+              TRNU = TRNU + (RNO3U_2D(L,J) + RNH4U_2D(L,J)) * FieldFac
             ENDIF
-            
-            IF (SMDFR .LT. 0.1) THEN
-              SMDFR = 0.1
-            ENDIF
-            ! FO/KJB - Change for Cotton
-            !RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
-            RFAC = RLV(L) * SQRT(SMDFR) * DLAYR(L) * 100.0
-C-----------------------------------------------------------------------
-C  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
-C  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)
-C  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
-C-----------------------------------------------------------------------
-            RNO3U(L) = RFAC * FNO3 * RTNO3
-            RNH4U(L) = RFAC * FNH4 * RTNH4
-            RNO3U(L) = MAX(0.0,RNO3U(L))
-            RNH4U(L) = MAX(0.0,RNH4U(L))
-            TRNU = TRNU + RNO3U(L) + RNH4U(L) !kg[N]/ha
-          ENDIF
+          END SELECT
         ENDDO
+      ENDDO
+
 C-----------------------------------------------------------------------
 C   Calculate N uptake in soil layers with roots based on demand (kg/ha)
 C-----------------------------------------------------------------------
         IF (ANDEM .GT. TRNU) THEN
           ANDEM = TRNU
         ENDIF
-!        IF (TRNU .EQ. 0.0) GO TO 600
+
+        DayLostN = 0.0
+
         IF (TRNU .GT. 0.0) THEN
           NUF = ANDEM / TRNU
-          DO L=1,NLAYR
-            IF (RLV(L) .GT. 0.0) THEN
-              UNO3(L) = RNO3U(L) * NUF
-              UNH4(L) = RNH4U(L) * NUF
-              XMIN    = 0.25 / KG2PPM(L)
-              MXNO3U  = MAX(0.0,(SNO3(L) - XMIN))
-              IF (UNO3(L) .GT. MXNO3U) THEN
-                UNO3(L) = MXNO3U
+          DO L = 1, NRowsTot
+            DO J = 1, NColsTot
+              SELECT CASE(Cell_type(L,J))
+              CASE(3,4,5)
+              IF (RLV_2D(L,J) .GT. 0.0) THEN
+!               Proportion by demand : supply ratio
+                UNO3_2D(L,J) = RNO3U_2D(L,J) * NUF
+                UNH4_2D(L,J) = RNH4U_2D(L,J) * NUF
+
+!               XMIN = minimum amount NO3 left after uptake (kg[N]/ha)
+                XMIN    = 0.25 / KG2PPM(L) * ColFrac(L,J) / FieldFac
+                MXNO3U  = MAX(0.0,(SNO3_2D(L,J) - XMIN))
+                IF (UNO3_2D(L,J) .GT. MXNO3U) THEN
+                  DayLostN = DayLostN + (UNO3_2D(L,J) - MXNO3U)
+                  UNO3_2D(L,J) = MXNO3U
+                ENDIF
+
+!               XMIN = minimum amount NH4 left after uptake (kg[N]/ha)
+                XMIN = 0.5 / KG2PPM(L) * ColFrac(L,J) / FieldFac
+                MXNH4U  = MAX(0.0,(SNH4_2D(L, J) - XMIN))
+                IF (UNH4_2D(L,J) .GT. MXNH4U) THEN
+                  DayLostN = DayLostN + (UNH4_2D(L,J) - MXNH4U)
+                  UNH4_2D(L,J) = MXNH4U
+                ENDIF
+
+!               For 2D simulations, multiply by 2.0 because we are modeling only half a field.
+                TRNO3U  = TRNO3U + UNO3_2D(L,J) * FieldFac
+                TRNH4U  = TRNH4U + UNH4_2D(L,J) * FieldFac
+                UNO3(L) = UNO3(L) + UNO3_2D(L,J) * FieldFac
+                UNH4(L) = UNH4(L) + UNH4_2D(L,J) * FieldFac
               ENDIF
-              XMIN = 0.5 / KG2PPM(L)
-              MXNH4U  = MAX(0.0,(SNH4(L) - XMIN))
-              IF (UNH4(L) .GT. MXNH4U) UNH4(L) = MXNH4U
-              TRNO3U  = TRNO3U + UNO3(L)
-              TRNH4U  = TRNH4U + UNH4(L)
-            ENDIF
+              END SELECT
+            ENDDO
           ENDDO
-C-----------------------------------------------------------------------
-C   Convert uptake to g/m^2
-C-----------------------------------------------------------------------
+
+!         debug chp
+          CumLostN = CumLostN + DayLostN
+
+!         Convert uptake to g/m^2 for plant routines
           TRNO3U = TRNO3U / 10.0
           TRNH4U = TRNH4U / 10.0
           TRNU   = TRNO3U + TRNH4U
-C-----------------------------------------------------------------------
         ENDIF
       ENDIF
+
+      CELLS % RATE % NH4Uptake = UNH4_2D    !kg[N]/ha
+      CELLS % RATE % NO3Uptake = UNO3_2D    !kg[N]/ha
+
+!     Use Cell2Layer_2D for mass variables
+      CALL Cell2Layer_2D(
+     &  UNO3_2D, Cells%Struc, NLAYR,              !Input
+     &  UNO3, SurfaceVal)                         !Output
+      CALL Cell2Layer_2D(
+     &  UNH4_2D, Cells%Struc, NLAYR,              !Input
+     &  UNH4, SurfaceVal)                         !Output
 
 !***********************************************************************
 !***********************************************************************
@@ -196,7 +314,7 @@ C-----------------------------------------------------------------------
       ENDIF
 !***********************************************************************
       RETURN
-      END ! SUBROUTINE NUPTAK
+      END SUBROUTINE NUPTAK
 C=======================================================================
 
 !-----------------------------------------------------------------------
@@ -223,14 +341,19 @@ C=======================================================================
 !            (g[N] / m2 / d)
 ! NDMTOT   Total N demand (g[N] / m2 / d)
 ! NH4(L)   Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4_2D(L,J) Ammonium N in soil cell (µg[N] / g[soil])
 ! NL       maximum number of soil layers = 20 
 ! NLAYR    Number of soil layers 
 ! NO3(L)   Nitrate in soil layer L (µg[N] / g[soil])
+! NO3_2D(L,J) Nitrate in soil cell (µg[N] / g[soil])
 ! NUF      N uptake fraction (ratio of demand to N uptake), <= 1.0 
 ! RFAC     Nitrogen uptake conversion factor ((kg N/ha) / (mg N / cm root))
 ! RLV(L)   Root length density for soil layer L ((cm root / cm3 soil))
 ! RNH4U(L) Ammonium uptake (kg N/ha)
 ! RNO3U(L) Nitrate uptake (kg N/ha)
+! RLV_2D(L,J) Root length density for soil cell ((cm root / cm3 soil))
+! RNH4U_2D(L,J) Ammonium uptake (kg N/ha)
+! RNO3U_2D(L,J) Nitrate uptake (kg N/ha)
 ! RTNH4    Ammonium uptake per unit root length (mg N / cm)
 ! RTNO3    Nitrate uptake per unit root length (mg N / cm)
 ! SAT(L)   Volumetric soil water content in layer L at saturation
@@ -245,6 +368,8 @@ C=======================================================================
 ! TRNU     Total N uptake in a day (kg[N] / ha / d)
 ! UNH4     Uptake of NH4 from soil (interim value) (kg N/ha)
 ! UNO3     Uptake of NO3 from soil (interim value) (kg N/ha)
+! UNH4_2D(L, J)  Uptake of NH4 from cell
+! UNO3_2D(L, J)  Uptake of NO3 from cell
 ! XMIN     Amount of NH4 that cannot be immobilized but stays behind in 
 !            soil as NH4; Also, Amount of NO3 that cannot denitrify but 
 !            stays behind in the soil as NO3 (kg [N] / ha)

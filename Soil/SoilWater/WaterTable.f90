@@ -15,10 +15,10 @@
     Subroutine WaterTable(DYNAMIC,              &
       SOILPROP, SW,                             &   !Input
       ActWTD, netLatFlow,                       &   !Output
-      MgmtWTD, SWDELTW)                             !Output
+      MgmtWTD, SWDELTW, ThetaCap)                   !Output
 
 !-----------------------------------------------------------------------
-    USE ModuleDefs
+    USE Cells_2D
     USE ModuleData
     IMPLICIT NONE
     EXTERNAL CapFringe
@@ -31,12 +31,13 @@
     REAL               , INTENT(OUT):: ActWTD, MgmtWTD
     REAL               , INTENT(OUT):: netLatFlow
     REAL, DIMENSION(NL), INTENT(OUT):: SWDELTW
+    REAL, DIMENSION(NL), INTENT(OUT):: ThetaCap
 
 !   Local
     INTEGER L, NLAYR
     REAL Bottom, Top, Thick, TargetWTD, BedAdjust, MinWTD, AdjWTD
     REAL, DIMENSION(NL) :: DLAYR, DS, DUL, SAT, WCR
-    REAL, DIMENSION(NL) :: ThetaCap, SW_temp, DeltaSW
+    REAL, DIMENSION(NL) :: SW_temp, DeltaSW
 
     REAL, PARAMETER :: TOL = 0.5  !tolerance for target water table level (cm)
     REAL, PARAMETER :: Kd = 0.5   !drawdown coefficient (fraction/day)
@@ -66,15 +67,21 @@
 !   Get initial depth to water table
     CALL GET('MGMT','ICWD',MgmtWTD)
 
-!   For 2D raised bed systems, we need to adjust the user-input 
-!     water table depths to be relative to top of the constructed bed.
-!   This is not needed for 1D simulations, so this is a placeholder 
-!     until we merge the 2D model into this code.
+!   If modeling a raised bed, SOILPROP contains soil properties for raised bed plus below bed.
+!   Need to adjust water table depths to be relative to top of bed.
+!   Assumptions:
+!   - Recorded water table depths are relative to the soil surface prior to making a raised bed.
+!   - The difference between the surface of the bed and the original surface is BEDHT - DIGDEP
+    IF (Sim2D .AND. BedDimension % RaisedBed) THEN
+      BedAdjust = BedDimension % BedHt - BedDimension % DigDep
+!     for 2D, raised bed systems, limit water table to below the bed for now.
+!     We might want to allow this later, but would require handling a flooded furrow.
+      MinWTD    = BedDimension % BedHt
+    ELSE
+      BedAdjust = 0.0
+      MinWTD    = 0.0
+    ENDIF
 
-!   Water table adjustment for constructed bed
-    BedAdjust = 0.0
-!   Limit the water table depth to bottom of raised bed
-    MinWTD    = 0.0
 !   Negative or zero value means no managed water table
     IF (MgmtWTD < 1.E-6) THEN
       MgmtWTD = 1000.
@@ -285,3 +292,113 @@
 !          water table. 
 !=======================================================================
 
+!=======================================================================
+!=======================================================================
+!     Subroutine WaterTable_2D is 2D interface to the more generic
+!       WaterTable subroutine which is used by both 1D and 2D models.
+!     This routine translates the 1D outputs of the WaterTable routine
+!       into 2D arrays and updates the soil water content for changes in 
+!       water table management at the beginning of the day.
+!-----------------------------------------------------------------------
+
+      Subroutine WaterTable_2D(DYNAMIC, &
+       CELLS, SOILPROP, HalfRow,        &       !Input
+       SW, SWV,                         &       !Input/Output
+       ActWTD, netLatFlow, MgmtWTD, LIMIT_2D)  !Output
+
+      USE CELLS_2D
+      Implicit none
+      EXTERNAL WaterTable, Calc_SW_Vol2
+
+      INTEGER, INTENT(IN) :: DYNAMIC
+      Type (CellType), INTENT(IN) :: Cells(MaxRows,MaxCols)
+      TYPE (SoilType), INTENT(IN) :: SOILPROP
+      REAL, INTENT(IN) :: HalfRow
+      REAL, DIMENSION(NL), INTENT(INOUT) :: SW
+      REAL, DIMENSION(MaxRows,MaxCols), INTENT(INOUT) :: SWV
+      REAL, INTENT(OUT) :: ActWTD, netLatFlow, MgmtWTD
+      INTEGER, INTENT(OUT) :: LIMIT_2D
+
+      REAL MaxDepth
+      REAL, DIMENSION(NL) :: SWDELTW, ThetaCap
+      REAL, DIMENSION(MaxRows,MaxCols) :: SWVDeltW, Thick, Colfrac, SWV_new
+      INTEGER i,j
+
+!-----------------------------------------------------------------------
+      MaxDepth = SOILPROP % DS(SOILPROP % NLAYR)
+      Thick = CELLS % Struc % Thick
+      Colfrac = BedDimension % Colfrac
+      SWVDeltW = 0.0
+
+!     Water table initialization
+      CALL WaterTable(DYNAMIC,               &     
+       SOILPROP, SW,                         &  !Input
+       ActWTD, netLatFlow, MgmtWTD, SWDELTW, &  !Output
+       ThetaCap)                                !Output
+
+!     Convert the soil water flux due to water table into 2D variable 
+      CALL Interpolate2Cells_2D(             &    
+       CELLS%STRUC, SOILPROP, SWDELTW, 0.0,  &  !Input
+       SWVDeltW)                                !Output
+
+!     ------------------------------------------------------------------------
+!     Set SW and SWV based on today's water table  
+!     The 1D DeltaSW may not work well for 2D cells, so need to check a few
+!       things, adjust SWV as needed.
+      netLatFlow = 0.0
+      DO i = 1, SOILPROP % NLAYR
+        DO j = 1, NColsTot
+          SELECT CASE(CELLS(i,j) % STRUC % Cell_Type)
+          CASE (3,4,5)
+            IF (SWV(i,j) > ThetaCap(i)) THEN
+!             If SWV is already above ThetaCap, it can stay where it is, but it should not increase
+              SWV_new(i,j) = SWV(i,j)
+            ELSEIF (SWV(i,j) + SWVDeltW(i,j) > ThetaCap(i)) THEN
+!             Adding DeltaSWV should not result in SWV > ThetaCap
+              SWV_new(i,j) = ThetaCap(i)
+            ELSE
+              SWV_new(i,j) = SWV(i,j) + SWVDeltW(i,j)
+            ENDIF
+              
+!           SWV <= SAT always
+            SWV_new(i,j) = MIN(SWV_new(i,j), SOILPROP%SAT(I))
+
+!           Recalculate 2D DeltaSWV 
+            SWVDeltW(i,j) = SWV_new(i,j) - SWV(i,j)
+          END SELECT
+        ENDDO
+      ENDDO
+
+      SWV = SWV_new
+
+!     Calculate new value of netLateralFlow based on changes to SWV
+      call Calc_SW_Vol2(  &
+        CELLS%STRUC%CellArea, CELLS%STRUC%Cell_Type, HalfRow, SWVDeltW,     &         !Input
+        netLatFlow)                                       !Output
+
+!     ------------------------------------------------------------------------
+!     The 2D model is not needed in the vicinity of the water table.
+!     Calculate the limits of the 2D model. 
+      IF (ActWTD > MaxDepth) THEN
+!       Water table is below profile depth
+        LIMIT_2D = NRowsTot  
+      Else          
+!       Set LIMIT_2D to be the layer above ThetaCap = .9 * SAT
+        LIMIT_2D = SOILPROP % NLAYR
+        DO i = SOILPROP % NLAYR, 1, -1
+          IF ((SW(i) - SOILPROP % DUL(i)) >         &
+             (0.9 * (SOILPROP % SAT(i) - SOILPROP % DUL(i)))) THEN
+            LIMIT_2D = i - 1
+          ELSE 
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF 
+      LIMIT_2D = MAX(LIMIT_2D, 1)
+      BedDimension % LIMIT_2D = LIMIT_2D
+
+      Return
+      End Subroutine WaterTable_2D
+
+!=======================================================================
+!=======================================================================

@@ -17,15 +17,16 @@ C                   as defined in ModuleDefs.for
 C  08/12/2003 CHP Added Walter Bowen's changes to GROLF from 1/2000
 C  08/23/2011 GH/JIL Added CO2 response to tuber growth
 !  04/01/2012 CHP Added two RUE parameters to new ecotype file
+!  02/25/2018 MZ  Converted to 2D
 !  07/28/2023 HBD/FO Protection for SLFT not kill the canopy.
+!  08/31/2023 CHP integrated 2D into 1D
 C=======================================================================
 
-      SUBROUTINE PT_GROSUB (DYNAMIC,
-     &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
-     &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
-!     &    SWFAC, TGROAV,TMAX, TMIN, TURFAC, XSTAGE, YRDOY,!Input
-     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,!Input
+      SUBROUTINE PT_GROSUB (CONTROL, CELLS,
+     &    CO2, CUMDTT, DTT, DUL, FILEIO,                  !Input
+     &    ISTAGE, ISWNIT, KG2PPM, LL, NLAYR,              !Input
+     &    RTF, SAT, SLPF, SRAD, STGDOY, STT,              !Input
+     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
 
      &    GRORT, SEEDRV,                                  !I/O
 
@@ -36,13 +37,16 @@ C=======================================================================
      &    UNH4, UNO3, WTNCAN, WTNLO, WTNUP, XLAI)         !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE Cells_2D
+      USE ModuleData
+
       IMPLICIT  NONE
       EXTERNAL PT_IPGRO, PT_NUPTAK, PT_NFACTO, ALIN, TABEX
+!      EXTERNAL PT_NUPTAK_2D
       SAVE
 
+      Type (ControlType) CONTROL
+      Type (CellType) Cells(MaxRows,MaxCols)
       LOGICAL FIRST
 
       CHARACTER*1  ISWNIT, PLME
@@ -77,12 +81,17 @@ C-----------------------------------------------------------------------
 
       REAL, DIMENSION(4)  :: SENST, SENSF
       REAL, DIMENSION(10) :: CO2X, CO2Y
-      REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
-     &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
+      REAL, DIMENSION(NL) :: DUL, KG2PPM, LL, 
+     &    SAT, UNO3, UNH4  
+
+      TYPE (SwitchType) ISWITCH
 
 !      DATA  LALWR, SLAN /270.,0./
       DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
-     
+
+      CALL GET(ISWITCH)
+      DYNAMIC = CONTROL % DYNAMIC
+
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -90,9 +99,9 @@ C-----------------------------------------------------------------------
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       CALL PT_IPGRO(
-     &    FILEIO,                                         !Input
-     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,           !Output
-     &    SDWTPL, RUE1, RUE2, SENSF, SENST)               !Output
+     &    FILEIO,                                       !Input
+     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,         !Output
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST)             !Output
 
       IF (PLME .EQ. 'B') THEN
         !Bed width ratio = Bed width / Row Spacing
@@ -172,11 +181,12 @@ C-----------------------------------------------------------------------
       TUBN    = 0.0
       TUBWT   = 0.0
       
-      CALL PT_NUPTAK (SEASINIT, 
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
-     &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
+      CALL PT_NUPTAK (CONTROL,  CELLS,
+     &    DUL, KG2PPM, LL, NLAYR, SAT,                    !Input
+     &    GRORT, GROTUB, ISTAGE,                          !Input
+     &    PLTPOP, RCNP, RTWT, TCNP, TMNC,                 !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
-     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
+     &    GROTOP, ROOTN, TOPSN, TUBANC,                   !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
 
@@ -193,7 +203,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     Daily rate calculations
 !***********************************************************************
-      ELSEIF (DYNAMIC .EQ. RATE) THEN
+      ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
 
       IF (FIRST) THEN     !Initializations from PHASEI, all Case(7), 
@@ -573,11 +583,12 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           ! SRVNU  = AMAX1 (SRVNU, 0.0)
           ! AVAILN = (SRVNU)+(0.5*DDEADLF*TMNC)
 
-        CALL PT_NUPTAK (RATE,
-     &    ISTAGE, DLAYR, DUL, KG2PPM, LL, NH4, NLAYR, NO3,!Input
-     &    PLTPOP, RCNP, RLV, RTWT, SAT, SW, TCNP, TMNC,   !Input
+        CALL PT_NUPTAK (CONTROL,  CELLS,
+     &    DUL, KG2PPM, LL, NLAYR, SAT,                    !Input
+     &    GRORT, GROTUB, ISTAGE,                          !Input
+     &    PLTPOP, RCNP, RTWT, TCNP, TMNC,                 !Input
      &    TOPWT, TUBCNP, TUBWT,                           !Input
-     &    GRORT, GROTOP, GROTUB, ROOTN, TOPSN, TUBANC,    !I/O
+     &    GROTOP, ROOTN, TOPSN, TUBANC,                   !I/O
      &    ARVCHO, RANC, TANC, TRNU, TUBN, UNH4, UNO3,     !Output
      &    WTNUP)                                          !Output
 
@@ -815,8 +826,8 @@ C     Read Crop Parameters from FILEC
             END SELECT
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEC,LNUM)
           ENDIF
-        END DO
-      END DO
+        ENDDO
+      ENDDO
 
   200 CLOSE (LUNCRP)
 C-----------------------------------------------------------------------

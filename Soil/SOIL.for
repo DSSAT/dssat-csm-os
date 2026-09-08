@@ -29,26 +29,30 @@
 !                 move fertilizer and organic matter placement routines
 !                 to management module.
 !  10/31/2007 CHP Added simple K model.
+!  08/15/2011 JW  Add NH4 and NO3 outputs for SOILDYN. 
+!                 They are calculated in RUNINIT an used by century 
 !  01/26/2023 CHP Reduce compile warnings: add EXTERNAL stmts, remove 
 !                 unused variables, shorten lines. 
 C=====================================================================
 
       SUBROUTINE SOIL(CONTROL, ISWITCH, 
-     &    ES, FERTDATA, FracRts, HARVRES, IRRAMT,         !Input
+     &    EOP, ES, FERTDATA, FracRts, HARVRES, IRRAMT,    !Input
      &    KTRANS, KUptake, OMAData, PUptake, RLV,         !Input
      &    SENESCE, ST, SWDELTX,TILLVALS, UNH4, UNO3,      !Input
      &    WEATHER, XHLAI,                                 !Input
-     &    FLOODN, FLOODWAT, MULCH, UPFLOW,                !I/O
+     &    FLOODN, FLOODWAT, MULCH,  UPFLOW,               !I/O
      &    NH4_plant, NO3_plant, SKi_AVAIL, SNOW,          !Output
-     &    SPi_AVAIL, SOILPROP, SomLitC, SomLitE,          !Output
-     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
-
+     &    SPi_AVAIL, SOILPROP, SOMLIT, SomLitC, SomLitE,  !Output
+     &    SOILPROP_furrow, SW, SWDELTS, SWDELTU, UPPM,    !Output
+     &    TRWU, TRWUP, WINF, Cells, YREND)                !Output
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+!     USE ModuleDefs !already USED by Cells_2D
+      USE Cells_2D
       USE FloodModule
       USE GHG_mod
       IMPLICIT NONE
-      EXTERNAL SOILDYN, WATBAL, CENTURY, SoilOrg, SoilNi, SoilPi, SoilKi
+      EXTERNAL SOILDYN, WATBAL, CENTURY, SoilOrg, SoilNi, SoilPi, 
+     &  SoilKi, WATBAL2D, CellPlotDetail_2D
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -56,7 +60,7 @@ C=====================================================================
 !     Input:
       TYPE (ControlType) , INTENT(IN) :: CONTROL
       TYPE (SwitchType)  , INTENT(IN) :: ISWITCH
-      REAL               , INTENT(IN) :: ES
+      REAL               , INTENT(IN) :: ES, EOP
       TYPE (FertType)    , INTENT(IN) :: FERTDATA
       REAL, DIMENSION(NL), INTENT(IN) :: FracRts
       Type (ResidueType) , INTENT(IN) :: HARVRES
@@ -73,7 +77,7 @@ C=====================================================================
       REAL, DIMENSION(NL), INTENT(IN) :: UNH4, UNO3
       TYPE (WeatherType) , INTENT(IN) :: WEATHER
       REAL               , INTENT(IN) :: XHLAI
-
+      Type (CellType) Cells(MaxRows,MaxCols)
       REAL, DIMENSION(NL) :: SomLit 
 
 !     Input/Output:
@@ -94,19 +98,22 @@ C=====================================================================
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTS
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
       REAL               , INTENT(OUT) :: WINF
+      REAL               , INTENT(OUT) :: TRWU, TRWUP
       REAL, DIMENSION(NL), INTENT(OUT) :: UPPM
       INTEGER            , INTENT(OUT) :: YREND
 
 !-----------------------------------------------------------------------
 !     Local variables:
-      INTEGER DYNAMIC
       CHARACTER*1  MESOM
+      INTEGER DYNAMIC
 
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
       REAL, DIMENSION(NL) :: SPi_Labile, NO3, NH4
+      REAL, DIMENSION(NL) :: NO3_init, NH4_init
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
       REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
+      TYPE (SoilType) SOILPROP_furrow, SOILPROP_profile
       
 !     Added for tile drainage:
       REAL TDFC
@@ -119,6 +126,7 @@ C=====================================================================
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
+      Sim2D   = CONTROL % Sim2D
       MESOM   = ISWITCH % MESOM
 
 !***********************************************************************
@@ -127,17 +135,32 @@ C=====================================================================
         CALL SOILDYN(CONTROL, ISWITCH, 
      &    KTRANS, MULCH, SomLit, SomLitC, SW, TILLVALS,   !Input
      &    WEATHER, XHLAI,                                 !Input
-     &    SOILPROP)                                       !Output
+     &    CELLS, SOILPROP, SOILPROP_furrow,               !Output
+     &    SOILPROP_profile, NH4_init, NO3_init)           !Output
 !      ENDIF
+
+!     When DYNAMIC = RUNINIT, NH4 and NO3 are from SOILDYN. 
+!       When DYNAMIC = RATE, NH4 and NO3 are from previous day's SoilOrg and Soilni
+      IF (DYNAMIC .EQ. RUNINIT) THEN
+        NH4 = NH4_init
+        NO3 = NO3_init
+      ENDIF
 
 !     Call WATBAL first for all except seasonal initialization
       IF (DYNAMIC /= SEASINIT) THEN
-        CALL WATBAL(CONTROL, ISWITCH, 
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+        IF (SIM2D) THEN
+          CALL WatBal2D(CONTROL, ISWITCH,
+     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW, !Input 
+     &    WEATHER,                                !Input
+     &    Cells, SW, SWDELTS, TRWU, TRWUP)        !Output
+        ELSE
+          CALL WATBAL(CONTROL, ISWITCH, 
+     &    CELLS, ES, IRRAMT, SOILPROP, SWDELTX,           !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
+        ENDIF
       ENDIF
 
 !     Soil organic matter modules
@@ -160,13 +183,13 @@ C=====================================================================
      &    SomLit, SomLitC, SomLitE, SSOMC)                !Output
       ENDIF
 
-!     Inorganic N (formerly NTRANS)
       CALL SoilNi (CONTROL, ISWITCH, 
      &    CH4_data, DRN, ES, FERTDATA, FLOODWAT, IMM,     !Input
      &    LITC, MNR, newCO2, SNOW, SOILPROP, SSOMC, ST,   !Input
+     &    NO3_init, NH4_init,                             !Input
      &    SW, TDFC, TDLNO, TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI,                                 !Input
-     &    FLOODN,                                         !I/O
+     &    CELLS, FLOODN,                                  !I/O
      &    NH4, NO3, NH4_plant, NO3_plant, UPPM)           !Output
 
 !     Inorganic P
@@ -181,13 +204,26 @@ C=====================================================================
      &    SKi_Avail)                                      !Output
 
       IF (DYNAMIC == SEASINIT) THEN
-!       Soil water balance -- call last for initialization
-        CALL WATBAL(CONTROL, ISWITCH, 
-     &    ES, IRRAMT, SOILPROP, SWDELTX,                  !Input
+        IF (SIM2D) THEN
+          CALL WatBal2D(CONTROL, ISWITCH,
+     &    EOP, IRRAMT, SOILPROP, SOILPROP_FURROW, !Input 
+     &    WEATHER,                                !Input
+     &    Cells, SW, SWDELTS, TRWU, TRWUP)        !Output
+
+          SNOW = 0.0; TDFC = 0.0; TDLNO = 0 
+          WINF = 0.0; SWDELTU = 0.0
+        ELSE
+          CALL WATBAL(CONTROL, ISWITCH, 
+     &    CELLS, ES, IRRAMT, SOILPROP, SWDELTX,           !Input
      &    TILLVALS, WEATHER,                              !Input
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
+        ENDIF
+      ENDIF
+
+      IF (SIM2D) THEN
+        CALL CellPlotDetail_2D (CONTROL, ISWITCH, CELLS, SOILPROP)
       ENDIF
 
 !***********************************************************************

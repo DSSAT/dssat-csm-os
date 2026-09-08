@@ -42,7 +42,9 @@ C=======================================================================
      &           FILEIO,FROP,ECONO,ATLINE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX, PMWD)
+     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX, !PMWD,
+     &           BEDHT, BEDWD)
+!                note chp: PMALB comes from a block. Why not pass it here?
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -70,7 +72,7 @@ C=======================================================================
       INTEGER LN
 
       REAL    SWINIT(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
-      REAL    PLTFOR, PMWD
+      REAL    PLTFOR, BEDHT, BEDWD !, PMWD
       INTEGER LNSIMTMP,TVILENT
 
       PARAMETER (LUNIO = 21)
@@ -387,9 +389,15 @@ C-----------------------------------------------------------------------
 !     2023-07-14 chp changed order of PMALB and PMWD variables to allow 
 !                    1D and 2D models to use the same file format.
       WRITE(LUNIO,'("@L  ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD",
-     & 2X,"FLDS  FLST SLTX   SLDP ID_SOIL    PMALB  PMWD")')
+      
+      
+     & 2X,"FLDS  FLST SLTX   SLDP ID_SOIL    PMALB  BDWD  BDHT")')
       WRITE(LUNIO,57,IOSTAT=ERRNUM) LNFLD,FLDNAM,FILEW(1:8),SLOPE,
-     &   FLOB, DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,PMALB,PMWD
+     &   FLOB, DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,
+!     2023-07-14 chp changed order of these three variables to allow 
+!                    1D and 2D models to use the same file format.
+!    &   BEDWD, BEDHT, PMALB
+     &   PMALB, BEDWD, BEDHT
  57   FORMAT(I3,1X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
      &       2(1X,A5),1X,F5.0,1X,A10,F6.2,2F6.1)
        

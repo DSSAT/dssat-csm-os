@@ -30,6 +30,7 @@ C  06/07/2002 GH  Modifed for Y2K Output
 !  12/09/2008 CHP Remove METMP
 !  08/03/2009 FSR Added numerous variables for CASUPRO
 !  06/30/2010 FSR Added PLF2 variable for CASUPRO
+!  07/27/2010 CHP Drip irrigation emitter can be offset from centerline.
 !  05/19/2011 GH  Updated for sorghum
 !  08/09/2012 GH  Updated cassava model
 !  09/01/2011 CHP Added van Genuchten parameters for ORYZA
@@ -59,7 +60,8 @@ C=======================================================================
       SUBROUTINE OPTEMPY2K (RNMODE, FILEX,PATHEX,
      & YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
      & NYRS,VARNO,VRNAME,CROP,MODEL,RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,
-     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMWD)
+     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS, BEDHT, BEDWD, !PMWD, 
+     & DripLN, DripSpc, DripOfset, DripDep)  
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -84,8 +86,10 @@ C=======================================================================
 
       INTEGER NYRS,RUN,I,EXPN,LUNIO,LINIO,ERRNUM,FROP,YRIC,TRTALL
       INTEGER TRTN,NFORC,NDOF,PMTYPE,ISENS
+      INTEGER DripLN(NDrpLn)
 
-      REAL    PLTFOR, PMWD
+      REAL    PLTFOR, BEDHT, BEDWD !, PMWD
+      REAL    DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
       REAL    SWINIT(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
 
       PARAMETER (LUNIO = 21)
@@ -285,11 +289,13 @@ C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,40)'*FIELDS             '
       LINIO = LINIO + 1
-!     2023-07-14 chp changed order of PMALB and PMWD variables to allow 
+      WRITE (LUNIO,59,IOSTAT=ERRNUM) FLDNAM,FILEW(1:8),SLOPE,
+     &       FLOB,DFDRN,FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,
+!     2023-07-14 chp changed order of these three variables to allow 
 !                    1D and 2D models to use the same file format.
-      WRITE (LUNIO,59,IOSTAT=ERRNUM) FLDNAM,FILEW(1:8),SLOPE,FLOB,DFDRN,
-     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,PMALB,PMWD
-   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,1X,F5.0,1X,F5.1,
+!    &       BEDWD, BEDHT, PMALB
+     &       PMALB, BEDWD, BEDHT
+   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
      &        2(1X,A5),1X,F5.0,1X,A10,F6.2,2F6.1)
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
       WRITE (LUNIO,60,IOSTAT=ERRNUM) XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
@@ -373,18 +379,39 @@ C-----------------------------------------------------------------------
       WRITE (LUNIO,40)'*IRRIGATION         '
       LINIO = LINIO + 1
       WRITE (LUNIO,75,IOSTAT=ERRNUM) EFFIRX,DSOILX,THETCX,IEPTX,IOFFX,
-     &       IAMEX,AIRAMX
+     &       IAMEX,AIRAMX,NDPLNO
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+C-----------------------------------------------------------------------
+C
+C-----------------------------------------------------------------------      
+      IF (NDPLNO .GT. 0) THEN
+         DO I = 1, NDPLNO
+            WRITE (LUNIO,'(3X,I5,3F6.0)',IOSTAT=ERRNUM) DripLN(I),
+     &             DripSpc(I),DripOfset(I), DripDep(I)
+            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+         END DO
+      END IF
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
       IF (NIRR .GT. 0) THEN
-         DO I = 1, NIRR
-            LINIO = LINIO + 1
-            WRITE (LUNIO,76,IOSTAT=ERRNUM) IDLAPL(I),IRRCOD(I),AMT(I)!,
-     &             !IIRV(I)
-            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
-         END DO
+        DO I = 1, NIRR
+          LINIO = LINIO + 1
+
+          IF (IRRCOD(I)(3:5) == '005' .AND. NDPLNO > 0) THEN
+            WRITE(LUNIO,'(3X,I7,1X,A5,1X,F5.2,A30)',IOSTAT=ERRNUM) 
+     &        IDLAPL(I), IRRCOD(I), AMT(I), IRRSCHED(I)
+          ELSE
+            IF (AMT(I) < 999.) THEN
+              WRITE(LUNIO,'(3X,I7,1X,A5,1X,F5.1)',IOSTAT=ERRNUM) 
+     &          IDLAPL(I), IRRCOD(I), AMT(I)   !,IIRV(I)
+            ELSE
+              WRITE(LUNIO,'(3X,I7,1X,A5,1X,I5)',IOSTAT=ERRNUM) 
+     &          IDLAPL(I), IRRCOD(I),NINT(AMT(I))   !,IIRV(I)
+            ENDIF
+          ENDIF
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+        END DO
       ENDIF
 C-----------------------------------------------------------------------
 C
@@ -782,7 +809,7 @@ C-----------------------------------------------------------------------
      &        I6,1(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
    74 FORMAT (3X,I7,1X,I7,2I6,2(5X,A1),2(1X,F5.0),1X,F5.1,
      &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
-   75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1)
+   75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1,I6)
    76 FORMAT (3X,I7,1X,A5,1X,F5.1)
    77 FORMAT (3X,I7,2(1X,A5),6(1X,F5.0),1X,A5)
    78 FORMAT (3X,I7,1X,A5,1X,F5.2,1X,A5,1X,F5.1,1X,A5,A42)
