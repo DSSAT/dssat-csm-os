@@ -1148,11 +1148,25 @@ C  tillage and rainfall kinetic energy
 !             Other soils -- use DUL33
               dDUL_SOM = 0.002208 * dOC - 0.1434 * dBD_SOM 
             ENDIF
-            DUL_SOM(L) = DUL_INIT(L) + dDUL_SOM
+            IF (DUL_INIT(L) + dDUL_SOM < LL_INIT(L)) THEN
+              dDUL_SOM = 0.0
+            ELSE
+              DUL_SOM(L) = DUL_INIT(L) + dDUL_SOM
+            ENDIF
+            IF (SAT(L) - DUL_SOM(L) < 0.01) THEN
+              DUL_SOM(L) = SAT(L) - 0.01
+            ENDIF
 
 !           Lower limit
             dLL_SOM = 0.002228 * dOC + 0.02671 * dBD_SOM
-            LL_SOM(L)  = LL_INIT(L) + dLL_SOM
+            IF (LL_INIT(L) + dLL_SOM < WCR(L)) THEN
+              dLL_SOM = 0.0
+            ELSE
+              LL_SOM(L)  = LL_INIT(L) + dLL_SOM
+            ENDIF
+            IF (DUL_SOM(L) - LL_SOM(L) < 0.01) THEN
+              LL_SOM(L) = DUL_SOM(L) - 0.01
+            ENDIF
 
 !            IF (L==1) WRITE(1000,*)dOC, dBD_SOM, dLL_SOM, LL_SOM(1)
           ENDIF
