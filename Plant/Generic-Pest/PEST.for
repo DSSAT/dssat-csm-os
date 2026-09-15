@@ -114,6 +114,8 @@ C     Plant Variables
 C     Photosynthesis Variables
       REAL TPSR, PPSR, CASM, ASMDOT
       REAL PGAVL
+C** WDB 1/2022 Added Target LAI from remote sensing observations (TLAI)      
+      REAL TLAI      
       
 !     Redundant with SAVE stmt earlier
 !      SAVE CASM, CRLV, CRLF, CRTM
@@ -184,7 +186,7 @@ C-----------------------------------------------------------------------
      &    PL, PLTPOP, PNO, RTWT, SLA, STMWT, TOPWT,        !Input
      &    TSDNOL, TSDNOM, TSDNOS, TSDWTL, TSDWTM, TSDWTS, !Input
      &    TSHNOL, TSHNOM, TSHNOS, TSHWTL, TSHWTM, TSHWTS, !Input
-     &    VSTAGE, WTLF,                                   !Input
+     &    TLAI, VSTAGE, WTLF,                             !Input
      &    NSDDL, NSDDM, NSDDS, NSHDL, NSHDM, NSHDS,       !Input/Output
      &    PPLTD, TLFAD, TLFMD, TRTLV,                     !Input/Output
      &    WRTMD, WSDDL, WSDDM, WSDDS,                     !Input/Output
@@ -219,7 +221,7 @@ C-----------------------------------------------------------------------
       CALL VEGDM(SEASINIT,
      &    AREALF, CLW, CSW, PCLMT, PCSTMD, PDLA, PLFAD,   !Input
      &    PLFMD, PSTMD, PVSTGD, SLA, SLDOT, SSDOT,        !Input
-     &    STMWT, TDLA, VSTGD, WLFDOT, WSTMD, WTLF,        !Input
+     &    STMWT, TDLA, TLAI,VSTGD, WLFDOT, WSTMD, WTLF,        !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
      &    LAIDOT, WSIDOT)                                 !Output
@@ -259,7 +261,7 @@ C-----------------------------------------------------------------------
      &    PL, PLTPOP, PNO, RTWT, SLA, STMWT, TOPWT,       !Input
      &    TSDNOL, TSDNOM, TSDNOS, TSDWTL, TSDWTM, TSDWTS, !Input
      &    TSHNOL, TSHNOM, TSHNOS, TSHWTL, TSHWTM, TSHWTS, !Input
-     &    VSTAGE, WTLF,                                   !Input
+     &    TLAI, VSTAGE, WTLF,                             !Input
      &    NSDDL, NSDDM, NSDDS, NSHDL, NSHDM, NSHDS,       !Input/Output
      &    PPLTD, TLFAD, TLFMD, TRTLV,                     !Input/Output
      &    WRTMD, WSDDL, WSDDM, WSDDS,                     !Input/Output
@@ -289,7 +291,7 @@ C-----------------------------------------------------------------------
       CALL VEGDM(RATE,
      &    AREALF, CLW, CSW, PCLMT, PCSTMD, PDLA, PLFAD,   !Input
      &    PLFMD, PSTMD, PVSTGD, SLA, SLDOT, SSDOT,        !Input
-     &    STMWT, TDLA, VSTGD, WLFDOT, WSTMD, WTLF,        !Input
+     &    STMWT, TDLA, TLAI,VSTGD, WLFDOT, WSTMD, WTLF,        !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
      &    LAIDOT, WSIDOT)                                 !Output
@@ -338,7 +340,7 @@ C-----------------------------------------------------------------------
       CALL VEGDM(INTEGR,
      &    AREALF, CLW, CSW, PCLMT, PCSTMD, PDLA, PLFAD,   !Input
      &    PLFMD, PSTMD, PVSTGD, SLA, SLDOT, SSDOT,        !Input
-     &    STMWT, TDLA, VSTGD, WLFDOT, WSTMD, WTLF,        !Input
+     &    STMWT, TDLA, TLAI,VSTGD, WLFDOT, WSTMD, WTLF,        !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
      &    LAIDOT, WSIDOT)                                 !Output

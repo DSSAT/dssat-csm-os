@@ -124,12 +124,16 @@ C     The variable "ISWITCH" is of type "SwitchType".
 
       DONE = .FALSE.
       YRDOY_END = 9999999
+      ! dummy change
+      
 
 !     Pick up model version for setting the name of some files
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
       !Delete existing output files
       CALL OPCLEAR
+
+
 
       CALL GETLUN('FILEIO', LUNIO)
       FILEIO = 'DSSAT48.INP'

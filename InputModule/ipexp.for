@@ -1211,6 +1211,7 @@ C     saved as real numbers for placement in real array.
         MSG(2) = FILEX
         CALL WARNING(2, ERRKEY, MSG)
       ENDIF
+
       
       IF(YCRD .GE. -90.0 .AND. YCRD .LE. 90.0 .AND.
      &   XCRD .GE.-180.0 .AND. XCRD .LE. 180.0 .AND.
