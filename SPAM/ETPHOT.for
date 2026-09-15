@@ -218,15 +218,16 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
 !     Run Initialization - Called once per simulation
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
-        IF (MEEVP .EQ. 'Z') THEN
-          CALL ETINP(
+!***********************************************************************
+!       IF (MEEVP .EQ. 'Z') THEN
+          CALL ETINP(DYNAMIC,
      &    BD, DLAYR, DUL, FILEIO, LL, LUNIO, NLAYR,       !Input
      &    SALBW, SAT,                                     !Input
      &    AZIR, BETN, CEC, DLAYR2, DUL2, DULE, LFANGD,    !Output
      &    LL2, LLE, LWIDTH, NELAYR, PALBW, PHTHRS10,      !Output
      &    RCUTIC, ROWSPC, SAT2, SCVIR,SCVP, SWEF, XSW,    !Output
      &    YSCOND, YSHCAP)                                 !Output
-        ENDIF
+!       ENDIF
 
         IF (MEPHO .EQ. 'L' .AND. CROP .NE. 'FA') THEN
           CALL PGINP(
@@ -319,6 +320,14 @@ C     Initialize DAILY parameters.
         NHOUR = 0
         TCANAV = 0.0
         TCANDY = 0.0
+
+      CALL ETINP(DYNAMIC,
+     &    BD, DLAYR, DUL, FILEIO, LL, LUNIO, NLAYR,       !Input
+     &    SALBW, SAT,                                     !Input
+     &    AZIR, BETN, CEC, DLAYR2, DUL2, DULE, LFANGD,    !Output
+     &    LL2, LLE, LWIDTH, NELAYR, PALBW, PHTHRS10,      !Output
+     &    RCUTIC, ROWSPC, SAT2, SCVIR,SCVP, SWEF, XSW,    !Output
+     &    YSCOND, YSHCAP)                                 !Output
 
         IF (MEEVP .EQ. 'Z') THEN
           CALL ETIND(
@@ -767,7 +776,7 @@ C  Called from: ETPHOT
 C  Calls:       ERROR,FIND,SOIL10
 C=======================================================================
 
-      SUBROUTINE ETINP(
+      SUBROUTINE ETINP(DYNAMIC,
      &    BD, DLAYR, DUL, FILEIO, LL, LUNIO, NLAYR,       !Input
      &    SALBW, SAT,                                     !Input
      &    AZIR, BETN, CEC, DLAYR2, DUL2, DULE, LFANGD,    !Output
@@ -780,6 +789,8 @@ C=======================================================================
       IMPLICIT NONE
       EXTERNAL FIND, GETLUN, IGNORE, SOIL10, ERROR
       SAVE
+
+      INTEGER, INTENT(IN) :: DYNAMIC
 
       CHARACTER BLANK*1,ERRKEY*6,FILEC*12,FILECC*92,FILEIO*30,
      &  PATHCR*80,SECTION*6
@@ -797,6 +808,13 @@ C=======================================================================
       REAL PHTHRS10
       REAL, DIMENSION(NL) :: SAT, SAT2
 
+
+!***********************************************************************
+!***********************************************************************
+!     Run Initialization - Called once per simulation
+!***********************************************************************
+      IF (DYNAMIC .EQ. RUNINIT) THEN
+!***********************************************************************
 C     Read IBSNAT35.INP file.
 
       OPEN(LUNIO,FILE=FILEIO,STATUS='OLD',IOSTAT=ERRNUM)
@@ -876,6 +894,39 @@ C     Initialize some parameters.
         tconds(i) = 7.8
       ENDDO
 
+C     Calculate soil thermal properties.  Arrays YSHCAP and YSCOND store
+C     results for daily table lookup as a function of moisture content.
+
+      N1 = 5.0
+      GA = 1.0 / (2.0+N1)
+      GC = 1.0 - 2.0*GA
+
+      DO I=1,NL
+        DO J=1,3
+          XSW(I,J) = 0.0
+          YSHCAP(I,J) = 0.0
+          YSCOND(I,J) = 0.0
+        ENDDO
+      ENDDO
+
+C     Compute leaf angles in three classes (0-30, 30-60, 60-90) using
+C     the ellipsoidal distribution.  Approx. eqn. for CDF at 30 and 60 deg.
+
+      LFANGD(1) = 0.936 * (1.0-0.630*EXP(-0.719*LFANGB))**4.950
+      LFANGD(2) = 0.974 * (1.0-1.109*EXP(-1.037*LFANGB))**1.408
+      LFANGD(3) = 1.0 - LFANGD(2)
+      LFANGD(2) = LFANGD(2) - LFANGD(1)
+
+C***********************************************************************
+C***********************************************************************
+!     End initialization section
+      ENDIF
+C***********************************************************************
+C***********************************************************************
+
+!     Soil properties are dynamic.
+!     Do the following every day (and at initialization)
+
       SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
 
 C     Transform soil layers from 5,15,etc. to 10,10,etc. (10 in top layer
@@ -914,21 +965,6 @@ C     at 0.1 * the 1st stage evaporation amount.
       ENDDO
 C     CEC = 0.45 * U / (DULE-LLE) * 100.0
       CEC = 0.0
-
-C     Calculate soil thermal properties.  Arrays YSHCAP and YSCOND store
-C     results for daily table lookup as a function of moisture content.
-
-      N1 = 5.0
-      GA = 1.0 / (2.0+N1)
-      GC = 1.0 - 2.0*GA
-
-      DO I=1,NL
-        DO J=1,3
-          XSW(I,J) = 0.0
-          YSHCAP(I,J) = 0.0
-          YSCOND(I,J) = 0.0
-        ENDDO
-      ENDDO
 
       DO I=1,NLAYR
         XSOIL = BD2(I)/2.65
@@ -975,13 +1011,6 @@ C         Saturated soil.
         ENDDO
       ENDDO
 
-C     Compute leaf angles in three classes (0-30, 30-60, 60-90) using
-C     the ellipsoidal distribution.  Approx. eqn. for CDF at 30 and 60 deg.
-
-      LFANGD(1) = 0.936 * (1.0-0.630*EXP(-0.719*LFANGB))**4.950
-      LFANGD(2) = 0.974 * (1.0-1.109*EXP(-1.037*LFANGB))**1.408
-      LFANGD(3) = 1.0 - LFANGD(2)
-      LFANGD(2) = LFANGD(2) - LFANGD(1)
 
       RETURN
       END SUBROUTINE ETINP

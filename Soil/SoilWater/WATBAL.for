@@ -65,6 +65,7 @@ C=======================================================================
       EXTERNAL IPWBAL, TILEDRAIN, WBSUM, SNOWFALL, 
      &  MULCHWATER, WBAL, RNOFF, INFIL, SATFLO, UP_FLOW, 
      &  SOILMIXING, SUMSW, WTDEPT, WaterTable, OPSWBL
+      EXTERNAL ERROR, WARNING
       SAVE
 !-----------------------------------------------------------------------
 !     Interface variables:
@@ -96,6 +97,8 @@ C=======================================================================
 !-----------------------------------------------------------------------
 
       CHARACTER*1  ISWWAT, MEINF, MESEV, MEEVP
+      CHARACTER*6, PARAMETER :: ERRKEY = "WATBAL"
+      CHARACTER*78 MSG(10)
 
       INTEGER DYNAMIC, L, NLAYR, YRDOY
 
@@ -105,7 +108,7 @@ C=======================================================================
       REAL TSW, TSWINI, WATAVL, WTDEP
 
       REAL, DIMENSION(NL) :: DLAYR, DLAYR_YEST, DS, DUL, LL  
-      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL
+      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL, SW_YEST
 
 !     Flood management variables:
       REAL FLOOD, INFILT, PUDPERC
@@ -465,6 +468,7 @@ C       extraction (based on yesterday's values) for each soil layer.
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
       IF (ISWWAT .EQ. 'Y') THEN
+        SW_YEST = SW
 
 !       CALL SUMSW(NLAYR, DLAYR, SW, SWTOT1)
 
@@ -499,6 +503,26 @@ C       extraction (based on yesterday's values) for each soil layer.
 !         Convert to volumetric content based on today's layer thickness
           SW(L) = SW_mm_NEW(L) / DLAYR(L) / 10.
 
+!         Detect SW < 0.0
+          IF (SW(L) < 0.0) THEN
+            MSG(1) = "Soil water less than zero. Model will stop."
+            WRITE(MSG(2), '(A,I2,A)') "Soil layer ", L, 
+     &         " Values below are mm3/mm3"
+            WRITE(MSG(3), '(A,F10.3)') "SW yesterday", SW_YEST(L)
+            WRITE(MSG(4), '(A,F10.3)') "SW today    ", SW(L)
+            WRITE(MSG(5), '(A,F10.3)') "Drainage    ", SWDELTS(L)
+            WRITE(MSG(6), '(A,F10.3)') "Root uptake ", SWDELTX(L)
+            WRITE(MSG(7), '(A,F10.3)') "Tillage     ", SWDELTL(L)
+            WRITE(MSG(8), '(A,F10.3)') "Upflow      ", SWDELTU(L)
+            WRITE(MSG(9), '(A,F10.3)') "Tiledrain   ", SWDELTT(L)
+            WRITE(MSG(10),'(A,F10.3)') "Water table ", SWDELTW(L)
+            CALL WARNING(10, ERRKEY, MSG)
+            CALL ERROR(ERRKEY,99," ",0)
+          ENDIF
+
+!         chp 2026-09-11
+!         This might have been to correct a release vs debug error. 
+!         Do we still need it?
 !         Round SW to 5 decimal places
           NewSW = ANINT(SW(L) * 1.e6)/ 1.e6
           IF (abs(NewSW) < 1.e-4) NewSW = 0.0
