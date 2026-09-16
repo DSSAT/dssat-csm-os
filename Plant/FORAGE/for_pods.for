@@ -221,9 +221,12 @@ C-----------------------------------------------------------------------
         EXIT
         ENDIF
         ELSE IF (ISECT .EQ. 0) THEN
-        IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,3,FILEGC,LNUM)
-        ECONO = 'DFAULT'
-        REWIND(LUNECO)
+!       TF (01/16/2026) - Replaced the default ecotype handling with
+!       an error call to avoid the use of unexisting ecotype IDs.
+        CALL ERROR("IPECO",5,FILEGC,1)
+        !IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,3,FILEGC,LNUM)
+        !ECONO = 'DFAULT'
+        !REWIND(LUNECO)
         ENDIF
       ENDDO
 
@@ -1174,7 +1177,7 @@ C=======================================================================
 !             (g[N] / g[shell])
 ! FNPDT(I)  Critical values of temperature for function to reduce pod 
 !             addition and seed setting rates under non-optimal temperatures
-!             (°C)
+!             (ï¿½C)
 ! GDMSD     Seed growth demand based on temperature and photoperiod
 !             (g[seed] / m2 / d)
 ! GRRAT1    Maximum growth per individual shell (g / shell / d)
@@ -1322,7 +1325,7 @@ C=======================================================================
 !             reproductive development temperature function
 !             (photo-thermal days / day)
 ! TEMPOD    Factor for modifying pod setting based on temperature 
-! TGRO(I)   Hourly air temperature (°C)
+! TGRO(I)   Hourly air temperature (ï¿½C)
 ! THETA     Curvature of rectangular hyperbola to limit seed growth rate to 
 !             hold minimum seed N concentration. 
 ! THRESH    The maximum ratio mass of seed to mass of seed plus shell at 
