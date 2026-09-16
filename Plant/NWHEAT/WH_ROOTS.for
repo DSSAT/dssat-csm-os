@@ -99,7 +99,7 @@ C=======================================================================
       REAL        KVAL1,KVAL2,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2
       REAL        P2AF,STEMN,MXNUP,MXNCR,WFNU,PNUPR,EXNO3,MNNO3,EXNH4
       REAL        MNNH4,INGWT,INGNC,FREAR,MNNCR,GPPSS,GPPES,MXGWT
-      REAL        MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,SFOZ1
+      REAL        MNRTN,NOMOB,RTDP1,RTDP2,FOZ1,SFOZ1,OBASE
       ! JG end for ecotype variables
       
 !     The variable "CONTROL" is of type "ControlType".
@@ -147,8 +147,9 @@ C=======================================================================
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,48(F6.0))
+     &             FOZ1,SFOZ1,OBASE
+3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -339,7 +340,7 @@ C=======================================================================
       REAL        P2AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR
       REAL        WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC
       REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
-      REAL        FOZ1,SFOZ1
+      REAL        FOZ1,SFOZ1,OBASE
       ! JG end for ecotype variables
       
 !     The variable "CONTROL" is of type "ControlType".
@@ -387,8 +388,9 @@ C=======================================================================
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,48(F6.0))
+     &             FOZ1,SFOZ1,OBASE
+3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -754,7 +756,7 @@ C=======================================================================
       REAL        P2AF,P4AF,P5AF,P6AF,ADLAI,ADTIL,STEMN,MXNUP,MXNCR
       REAL        WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC
       REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB
-      REAL        FOZ1,SFOZ1
+      REAL        FOZ1,SFOZ1,OBASE
       ! JG end for ecotype variables
       
       TYPE (ControlType) CONTROL
@@ -813,8 +815,9 @@ C----------------------------------------------------------------------
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,48(F6.0))
+     &             FOZ1,SFOZ1,OBASE
+3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -1059,7 +1062,7 @@ C=======================================================================
       REAL        P4AF,P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR
       REAL        WFNU,PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC
       REAL        FREAR,MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
-      REAL        FOZ1,SFOZ1
+      REAL        FOZ1,SFOZ1,OBASE
       ! JG end for ecotype variables
       
       TYPE (ControlType) CONTROL
@@ -1106,8 +1109,9 @@ C=======================================================================
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,48(F6.0))
+     &             FOZ1,SFOZ1,OBASE
+3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN

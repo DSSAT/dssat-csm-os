@@ -695,12 +695,14 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
                WRITE (LUNIO,1950,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
      &               P1,P2O,P2R,P5,G1,G4,PHINT,G0,G5
 
+! JG added ozone parameters for rice 02/03/2023
 !       Ceres rice
         CASE ('RICER')
             WRITE (LUNIO,1985,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
 !    &             P1,P2R,P5,P2O,G1,G2,G3,G4,PHINT, G5
-     &             P1,P2R,P5,P2O,G1,G2,G3,PHINT, THOT, TCLDP, TCLDF
- 1985 FORMAT (A6,1X,A16,1X,A6,5(F6.1),F6.3,2(F6.2),3F6.1)
+     &             P1,P2R,P5,P2O,G1,G2,G3,PHINT, THOT, TCLDP, TCLDF,
+     &             FOZ1, SFOZ1, OBASE
+ 1985 FORMAT (A6,1X,A16,1X,A6,5(F6.1),F6.3,2(F6.2),3F6.1,2(F6.2),F6.1)
 
 !       Ceres TEFF
         CASE ('TFCER')

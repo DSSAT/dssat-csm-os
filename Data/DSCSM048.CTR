@@ -280,7 +280,7 @@ $SIMULATION_CONTROLS
 ! SYMBI   Symbiosis, N fixation simulation switch (Y=yes, N=no)
 ! PHOSP   P balance and stresses simulation switch (Y=yes, N=no)
 ! POTAS   K balance and stresses simulation switch (Y=yes, N=no)
-! DISES   Disease & pests simulation switch (Y=yes, N=no)
+! DISES   Disease & pests simulation switch (Y=yes, N=no, O=ozone)
 ! CHEM    Chemical applications simulation switch (not currently functional)(Y=yes, N=no)
 ! TILL    Tillage events simulation switch (Y=yes, N=no)
 ! CO2     CO2 data source (D = use static CO2 value from CO2046.WDA file, M = Use time series 
