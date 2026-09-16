@@ -24,3 +24,9 @@
 18 PPDN  % All Pod Dest.      3 PPDN  1.00000000     0.0000    %/day        estimated
 19 PRTM  % Root mass dest.    3 RMD   1.00000000     0.0000    %/day        estimated
 23 MOW   Top weight left.     3 TOPWT 1.00000000     0.0000    kg/ha top weight left
+
+
+*AFLATOXIN PARAMETERS
+   22.   33.   35.   45.  0.07   QDR      FN1TMP
+   13.   28.   29.   46.  0.24   QDR      FN2TMP
+   26.   28.   29.   32.  4.00   QDR      FN3TMP  

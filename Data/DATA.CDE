@@ -885,6 +885,8 @@ WINn   Wind speed(noon)Wind speed at noon (m/s)                                 
 
 *PESTS
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
+AFCON  Aflatoxin, ppb  Aflatoxin concentration in seeds (ppb)                   .
+PCINF  Infect pod, %   Percent pods infected with aspergillus (aflatoxin)       .
 CASM   ASSIM g CH2O    Cumulative assimilate reduction                          .
 CEW    CEW #/row-m     Corn Earworm                                             .
 CLAI   DIS LAI m2/m2   Cumulative leaf area consumed                            .

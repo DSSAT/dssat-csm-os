@@ -351,6 +351,7 @@ set(
         "Plant/CROPGRO/PlantNBal.for"
         "Plant/CROPGRO/PODDET.for"
         "Plant/CROPGRO/PODS.for"
+        "Plant/CROPGRO/PODSA.for"
         "Plant/CROPGRO/RESPIR.for"
         "Plant/CROPGRO/ROOTS.for"
         "Plant/CROPGRO/RStages.for"

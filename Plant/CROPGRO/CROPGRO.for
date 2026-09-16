@@ -180,6 +180,9 @@ C=======================================================================
 !     K model (not yet implemented)
       REAL KSTRES
 
+!     AF Module
+      REAL TSHR1, TSHR (NL),TSOIL(TS)
+      INTEGER YRSIM
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -320,6 +323,22 @@ C-----------------------------------------------------------------------
         ENDIF
 
 !-----------------------------------------------------------------------
+      IF (ISWDIS .EQ. 'A') THEN 
+        CALL PODSA(RUNINIT,  
+     &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
+     &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
+     &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
+     &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
+     &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
+     &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
+     &    PStres2, YRPLT, ST, TSHR1, TSHR,TSOIL,          !Input
+     &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
+     &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
+     &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
+      ELSE
         CALL PODS(RUNINIT, 
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
@@ -334,7 +353,7 @@ C-----------------------------------------------------------------------
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
      &    WTSHE, WTSHMT, FLWN,                            !Output 
      &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
-
+      ENDIF 
 !-----------------------------------------------------------------------
         IF (DETACH .EQ. 'Y') THEN
           CALL PODDET(
@@ -599,7 +618,24 @@ C     Initialize pest coupling point and damage variables
      &    NODGR, WTNFX, SENNOD)                           !Output
 
 !-----------------------------------------------------------------------
-      CALL PODS(SEASINIT, 
+      IF (ISWDIS .EQ. 'A') THEN 
+
+        CALL PODSA(SEASINIT,  
+     &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
+     &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
+     &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
+     &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
+     &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
+     &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
+     &    PStres2, YRPLT, ST, TSHR1, TSHR,TSOIL,          !Input
+     &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
+     &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
+     &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
+      ELSE
+        CALL PODS(SEASINIT, 
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
@@ -613,7 +649,7 @@ C     Initialize pest coupling point and damage variables
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
      &    WTSHE, WTSHMT, FLWN,                            !Output 
      &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
-
+      ENDIF 
 !-----------------------------------------------------------------------
       CALL VEGGR (SEASINIT, 
      &    AGRLF, AGRRT, AGRSTM, CMINEP, CSAVEV, DTX,      !Input
@@ -824,7 +860,24 @@ C-----------------------------------------------------------------------
      &  POTCAR, POTLIP, SDGR, TURADD, XFRT, YREND)        !Output
 
 !-----------------------------------------------------------------------
-      CALL PODS(EMERG, 
+      IF (ISWDIS .EQ. 'A') THEN 
+
+        CALL PODSA(EMERG,  
+     &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
+     &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
+     &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
+     &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
+     &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
+     &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
+     &    PStres2, YRPLT, ST, TSHR1, TSHR,TSOIL,          !Input
+     &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
+     &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
+     &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
+      ELSE
+        CALL PODS(EMERG, 
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
@@ -838,7 +891,7 @@ C-----------------------------------------------------------------------
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
      &    WTSHE, WTSHMT, FLWN,                            !Output 
      &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
-
+      ENDIF 
 !-----------------------------------------------------------------------
         CALL VEGGR(EMERG, 
      &    AGRLF, AGRRT, AGRSTM, CMINEP, CSAVEV, DTX,      !Input
@@ -1093,7 +1146,23 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call routine to compute actual seed and shell growth
 C-----------------------------------------------------------------------
-      CALL PODS(INTEGR, 
+      IF (ISWDIS .EQ. 'A') THEN 
+        CALL PODSA(INTEGR,  
+     &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
+     &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
+     &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
+     &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
+     &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
+     &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
+     &    PStres2, YRPLT, ST, TSHR1, TSHR,TSOIL,          !Input
+     &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
+     &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
+     &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
+      ELSE
+        CALL PODS(INTEGR, 
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
      &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
@@ -1107,7 +1176,7 @@ C-----------------------------------------------------------------------
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
      &    WTSHE, WTSHMT, FLWN,                            !Output 
      &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
-
+      ENDIF 
 C-----------------------------------------------------------------------
 C     Call specific routines for peanut to determine
 C         Seed size
@@ -1292,6 +1361,23 @@ C-----------------------------------------------------------------------
      &      SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT)             !Output
         ENDIF
 
+      IF (ISWDIS .EQ. 'A') THEN 
+
+        CALL PODSA(DYNAMIC,  
+     &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
+     &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
+     &    GRRAT1, ISWWAT, LL, NAVL, NDSET, NLAYR, NRUSSH, !Input
+     &    CRUSSH,                                         !Input
+     &    NSTRES, PGAVL, PHTHRS, PHTIM, PNTIM, PUNCSD,    !Input
+     &    PUNCTR, RNITP, SDDES, SDGR, SHELWT, SW, SWFAC,  !Input
+     &    TDUMX, TGRO, TURADD, XFRT, YRDOY, YRNR1, YRNR2, !Input
+     &    PStres2, YRPLT, ST, TSHR1, TSHR,TSOIL,          !Input
+     &    AGRSD3, LAGSD, LNGPEG, NGRSD, NGRSH, PCTMAT,    !Output
+     &    PODNO, POTCAR, POTLIP, SDNO, SDVAR, SEEDNO,     !Output
+     &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
+     &    WTSHE, WTSHMT, FLWN,                            !Output 
+     &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
+      ELSE
         CALL PODS(DYNAMIC, 
      &    AGRSD1, AGRSH1, DLAYR, DRPP, DUL, FILECC,       !Input
      &    FILEGC,FILEIO, FNINL, FNINSD, FNINSH, GDMSD,    !Input
@@ -1306,7 +1392,7 @@ C-----------------------------------------------------------------------
      &    SHELN, SHVAR, WSDDTN, WSHDTN, WTABRT, WTSD,     !Output
      &    WTSHE, WTSHMT, FLWN,                            !Output 
      &    TOSHMINE,TOCHMINE,HPODWT,HSDWT,HSHELWT)         !Output
-
+      ENDIF 
         CALL OPGROW(CONTROL, ISWITCH, SoilProp, 
      &    CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD, GROWTH,  
      &    GRWRES, KSTRES, MAINR, MDATE, NFIXN, NLAYR, NSTRES, 
