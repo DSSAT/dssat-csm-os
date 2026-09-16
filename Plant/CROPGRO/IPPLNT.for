@@ -35,7 +35,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
-      EXTERNAL FIND, ERROR, GETLUN, IGNORE, WARNING, UPCASE
+      EXTERNAL FIND, ERROR, GETLUN, IGNORE, WARNING, UPCASE, ECO_READ
 
 !-----------------------------------------------------------------------
       CHARACTER*1  BLANK, UPCASE, DETACH, MEEVP
@@ -62,7 +62,7 @@ C-----------------------------------------------------------------------
      &  PLIGSH, PMINSD, PMINSH, POASD, POASH,
      &  PROLFI, PRORTI, PROSHI, PROSTI, R30C2,
      &  RCH2O, RES30C, RFIXN, RLIG, RLIP, RMIN,
-     &  RNH4C, RNO3C, ROA, RPRO, TTFIX
+     &  RNH4C, RNO3C, ROA, RPRO, TTFIX, VALUE
 
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
@@ -331,9 +331,15 @@ C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
         CLOSE (LUNCRP)
-C-----------------------------------------------------------------------
-C    Read Ecotype Parameter File
-C-----------------------------------------------------------------------
+!C-----------------------------------------------------------------------
+! 2025-01-08 REPLACE ECOTYPE READS WITH GENERIC ROUTINE FOR FLEXIBLE INPUT
+      CALL ECO_read('NEW', Value)
+
+!C    Read Ecotype Parameter File
+!     chp 2025-01-09
+!     Keep this section here until all ECO parameters are obtained with 
+!       ECO_read
+!C-----------------------------------------------------------------------
 !    Set file plus pathname for ecotype parameter file
 !    06/29/2023 FO - Removed unused KCAN_ECO read and left FILEGC build.
 !    This is need to feed with FILEGC path for ecotype file present in

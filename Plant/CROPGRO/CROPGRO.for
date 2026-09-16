@@ -347,7 +347,8 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
         CALL VEGGR (RUNINIT, 
      &    AGRLF, AGRRT, AGRSTM, CMINEP, CSAVEV, DTX,      !Input
-     &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+!    &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+     &    DXR57, FILECC, FNINL, FNINR,     !Input
      &    FNINS, KCAN, NAVL, NDMNEW, NDMOLD,              !Input
      &    NFIXN, NMINEA, NR1, PAR, PCH2O, PG, PGAVL,      !Input
      &    PStres2, ROWSPC, RVSTGE, STMWT, TGRO,           !Input
@@ -617,7 +618,8 @@ C     Initialize pest coupling point and damage variables
 !-----------------------------------------------------------------------
       CALL VEGGR (SEASINIT, 
      &    AGRLF, AGRRT, AGRSTM, CMINEP, CSAVEV, DTX,      !Input
-     &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+!    &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+     &    DXR57, FILECC, FNINL, FNINR,     !Input
      &    FNINS, KCAN, NAVL, NDMNEW, NDMOLD,              !Input
      &    NFIXN, NMINEA, NR1, PAR, PCH2O, PG, PGAVL,      !Input
      &    PStres2, ROWSPC, RVSTGE, STMWT, TGRO,           !Input
@@ -842,7 +844,8 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
         CALL VEGGR(EMERG, 
      &    AGRLF, AGRRT, AGRSTM, CMINEP, CSAVEV, DTX,      !Input
-     &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+!    &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+     &    DXR57, FILECC, FNINL, FNINR,     !Input
      &    FNINS, KCAN, NAVL, NDMNEW, NDMOLD,              !Input
      &    NFIXN, NMINEA, NR1, PAR, PCH2O, PG, PGAVL,      !Input
      &    PStres2, ROWSPC, RVSTGE, STMWT, TGRO,           !Input
@@ -1153,7 +1156,8 @@ C     Call routine to compute actual vegetative growth, C to mine or add
 C-----------------------------------------------------------------------
       CALL VEGGR(INTEGR, 
      &    AGRLF, AGRRT, AGRSTM, CMINEP, CSAVEV, DTX,      !Input
-     &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+!    &    DXR57, ECONO, FILECC, FILEGC, FNINL, FNINR,     !Input
+     &    DXR57, FILECC, FNINL, FNINR,     !Input
      &    FNINS, KCAN, NAVL, NDMNEW, NDMOLD,              !Input
      &    NFIXN, NMINEA, NR1, PAR, PCH2O, PG, PGAVL,      !Input
      &    PStres2, ROWSPC, RVSTGE, STMWT, TGRO,           !Input

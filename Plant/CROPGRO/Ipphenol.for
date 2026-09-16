@@ -30,22 +30,22 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
-      EXTERNAL ERROR, FIND, GETLUN, IGNORE
+      EXTERNAL ERROR, FIND, GETLUN, IGNORE, ECO_read
 !-----------------------------------------------------------------------
       CHARACTER*1   PLME, BLANK
       CHARACTER*2   CROP
       CHARACTER*3   CTMP(20), DLTYP(20)
-      CHARACTER*6   SECTION, ECOTYP, ECONO, ERRKEY
+      CHARACTER*6   SECTION, ECONO, ERRKEY  !, ECOTYP
       CHARACTER*12  FILEC, FILEE
-      CHARACTER*16  ECONAM
+!     CHARACTER*16  ECONAM
       CHARACTER*30  FILEIO
       CHARACTER*80  CHAR, PATHCR, PATHEC
       CHARACTER*92  FILECC, FILEGC
-      CHARACTER*255 C255
+!     CHARACTER*255 C255
 
       INTEGER LUNIO, NPHS
-      INTEGER LUNCRP, LUNECO, ISECT, PATHL
-      INTEGER I, J, K
+      INTEGER LUNCRP, ISECT, PATHL !, LUNECO
+      INTEGER I, J !, K
       INTEGER IVRGRP, IVRTEM, ERR, LINC, LNUM, FOUND
       INTEGER NPRIOR(20), TSELC(20)
 
@@ -60,6 +60,8 @@ C=======================================================================
       REAL TB(5), TO1(5), TO2(5), TM(5)
       REAL WSENP(20), NSENP(20)
       REAL PHTHRS(20), PSENP(20)
+
+      REAL IVRGRP_real, IVRTEM_real
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -199,38 +201,56 @@ C-----------------------------------------------------------------------
           FILEGC = PATHEC(1:(PATHL-1)) // FILEE
         ENDIF
 
-C-----------------------------------------------------------------------
-C    Read Ecotype Parameter File
-C-----------------------------------------------------------------------
-        CALL GETLUN('FILEE', LUNECO)
-        OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
-        ECOTYP = '      '
-        LNUM = 0
-  
-        DO WHILE (ECOTYP .NE. ECONO)
-          CALL IGNORE(LUNECO, LNUM, ISECT, C255)
-          IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
-     &          C255(1:1) .NE. '*') THEN
-            READ (C255,3100,IOSTAT=ERR) ECOTYP, ECONAM, IVRGRP, 
-     &          IVRTEM, THVAR, (PHTHRS(K), K=1,4), PM06, PM09,
-     &          (PHTHRS(K),K=11,12), TRIFOL, R1PPO, OPTBI, SLOBI
- 3100       FORMAT (A6, 1X, A16, 1X, 2(1X,A2), 7(1X,F5.0), 6X, 
-     &          3(1X,F5.0), 2(6X), 3(1X,F5.0))
-            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
-            IF (ECOTYP .EQ. ECONO) THEN
-              EXIT
-            ENDIF
+!C-----------------------------------------------------------------------
+!C    Read Ecotype Parameter File
+!C-----------------------------------------------------------------------
+!        CALL GETLUN('FILEE', LUNECO)
+!        OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
+!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+!        ECOTYP = '      '
+!        LNUM = 0
+!  
+!        DO WHILE (ECOTYP .NE. ECONO)
+!          CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+!          IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+!     &          C255(1:1) .NE. '*') THEN
+!            READ (C255,3100,IOSTAT=ERR) ECOTYP, ECONAM, IVRGRP, 
+!     &          IVRTEM, THVAR, (PHTHRS(K), K=1,4), PM06, PM09,
+!     &          (PHTHRS(K),K=11,12), TRIFOL, R1PPO, OPTBI, SLOBI
+! 3100       FORMAT (A6, 1X, A16, 1X, 2(1X,A2), 7(1X,F5.0), 6X, 
+!     &          3(1X,F5.0), 2(6X), 3(1X,F5.0))
+!            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
+!            IF (ECOTYP .EQ. ECONO) THEN
+!              EXIT
+!            ENDIF
+!
+!          ELSE IF (ISECT .EQ. 0) THEN
+!            IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+!            ECONO = 'DFAULT'
+!            REWIND(LUNECO)
+!            LNUM = 0
+!          ENDIF
+!        ENDDO
+!
+!        CLOSE (LUNECO)
 
-          ELSE IF (ISECT .EQ. 0) THEN
-            IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
-            ECONO = 'DFAULT'
-            REWIND(LUNECO)
-            LNUM = 0
-          ENDIF
-        ENDDO
-
-        CLOSE (LUNECO)
+        CALL ECO_read('MG',IVRGRP_real)
+        IVRGRP = NINT(IVRGRP_real)
+        CALL ECO_read('TM',IVRTEM_real)
+        IVRTEM = NINT(IVRTEM_real)
+        CALL ECO_read('THVAR',THVAR)
+        CALL ECO_read('PL-EM',PHTHRS(1))
+        CALL ECO_read('EM-V1',PHTHRS(2))
+        CALL ECO_read('V1-JU',PHTHRS(3))
+        CALL ECO_read('JU-R0',PHTHRS(4))
+        CALL ECO_read('PM06',PM06)
+        CALL ECO_read('PM09',PM09)
+        CALL ECO_read('R7-R8',PHTHRS(11))
+        CALL ECO_read('FL-VS',PHTHRS(12))
+        CALL ECO_read('TRIFL',TRIFOL)
+        CALL ECO_read('R1PPO',R1PPO)
+        CALL ECO_read('OPTBI',OPTBI)
+        CALL ECO_read('SLOBI',SLOBI)
 
         PHTHRS(5) = MAX(0.,PH2T5 - PHTHRS(3) - PHTHRS(4))
         PHTHRS(7) = PHTHRS(6) + MAX(0.,(PHTHRS(8) - PHTHRS(6))* PM06)

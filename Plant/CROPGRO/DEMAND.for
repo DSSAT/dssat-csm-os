@@ -712,20 +712,20 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 
 !-----------------------------------------------------------------------
       IMPLICIT NONE
-      EXTERNAL GETLUN, ERROR, FIND, IGNORE, WARNING
+      EXTERNAL GETLUN, ERROR, FIND, IGNORE, WARNING, ECO_read
 !-----------------------------------------------------------------------
       CHARACTER*3   TYPSDT
       CHARACTER*6   ERRKEY
       PARAMETER (ERRKEY = 'IPDMND')
       CHARACTER*6   SECTION
-      CHARACTER*6   ECOTYP, ECONO
+      CHARACTER*6   ECONO !, ECOTYP, 
       CHARACTER*30  FILEIO
-      CHARACTER*78  MSG(4)
+!     CHARACTER*78  MSG(4)
       CHARACTER*80  C80
       CHARACTER*92  FILECC, FILEGC
-      CHARACTER*255 C255
+!     CHARACTER*255 C255
 
-      INTEGER LUNCRP, LUNIO, LUNECO, ERR, LINC, LNUM, FOUND, ISECT
+      INTEGER LUNCRP, LUNIO, ERR, LINC, LNUM, FOUND, ISECT !, LUNECO
       INTEGER I, II
 
       REAL CARMIN, FINREF, FRLFF, FRLFMX, FRSTMF,
@@ -965,49 +965,59 @@ C 24 changed to TS by Bruce Kimball on 3Jul17
 !-----------------------------------------------------------------------
 !    Read Ecotype Parameter File
 !-----------------------------------------------------------------------
-      CALL GETLUN('FILEE', LUNECO)
-      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
-      ECOTYP = '      '
-      LNUM = 0
-      DO WHILE (ECOTYP .NE. ECONO)
-        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
-        IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
-     &        (C255(1:1) .NE. '*')) THEN
-!          READ (C255,'(A6,66X,F6.0,30X,3F6.0)',IOSTAT=ERR)
-!     &        ECOTYP, LNGSH, THRESH, SDPRO, SDLIP
-          READ (C255,'(A6,66X,F6.0,54X,2(F6.0))',IOSTAT=ERR) ECOTYP, 
-     &        LNGSH, XFPHT, XFINT
-          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
-          IF (ECOTYP .EQ. ECONO) THEN
-            EXIT
-          ENDIF
+!      CALL GETLUN('FILEE', LUNECO)
+!      OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
+!      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
+!      ECOTYP = '      '
+!      LNUM = 0
+!      DO WHILE (ECOTYP .NE. ECONO)
+!        CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+!        IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
+!     &        (C255(1:1) .NE. '*')) THEN
+!!          READ (C255,'(A6,66X,F6.0,30X,3F6.0)',IOSTAT=ERR)
+!!     &        ECOTYP, LNGSH, THRESH, SDPRO, SDLIP
+!          READ (C255,'(A6,66X,F6.0,54X,2(F6.0))',IOSTAT=ERR) ECOTYP, 
+!     &        LNGSH, XFPHT, XFINT
+!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
+!          IF (ECOTYP .EQ. ECONO) THEN
+!            EXIT
+!          ENDIF
+!
+!        ELSE IF (ISECT .EQ. 0) THEN
+!          IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+!          ECONO = 'DFAULT'
+!          REWIND(LUNECO)
+!          LNUM = 0
+!        ENDIF
+!      ENDDO
 
-        ELSE IF (ISECT .EQ. 0) THEN
-          IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
-          ECONO = 'DFAULT'
-          REWIND(LUNECO)
-          LNUM = 0
-        ENDIF
-      ENDDO
+!     chp 2025-01-09 ECO_read returns a value of -99 for cotton because these values are not in the ecotype file
+!     The reads above return a value of zero.
+      CALL ECO_read('LNGSH',LNGSH)
+      CALL ECO_read('XFPHT',XFPHT)
+      CALL ECO_read('XFINT',XFINT)
 
-      IF(XFPHT .LT. 0.0) THEN
-        MSG(1) = 'Ecotype coefficient is not properly defined.'
-        MSG(2) = 'Time required to reach maximum partitioning to '
-        MSG(3) = 'pod/fruit. (photothermal days)'
-        MSG(4) = 'XFPHT must be greater then 0.0.'
-        CALL WARNING (4, ERRKEY, MSG)
-        CALL ERROR(ERRKEY,1,FILEGC,0)
-      ELSE IF(XFINT .LT. 0.0 .OR. XFINT .GT. 1.0) THEN
-        MSG(1) = 'Ecotype Coefficients is not properly defined.'
-        MSG(2) = 'Initial partitioning to pod/fruit during early '
-        MSG(3) = 'pod/fruit growth.'
-        MSG(4) = 'XFINT must be between/included 0.0 and 1.0.'
-        CALL WARNING (4, ERRKEY, MSG)
-        CALL ERROR(ERRKEY,2,FILEGC,0)
-      ENDIF
-
-      CLOSE (LUNECO)
+!     chp 2025-01-09
+!     Use of these values is triggered by a value > 0.0
+!     Generic ECO_read checks for missing data.
+!     This error check no longer useful.
+!      IF(XFPHT .LT. 0.0) THEN
+!        MSG(1) = 'Ecotype coefficient is not properly defined.'
+!        MSG(2) = 'Time required to reach maximum partitioning to '
+!        MSG(3) = 'pod/fruit. (photothermal days)'
+!        MSG(4) = 'XFPHT must be greater then 0.0.'
+!        CALL WARNING (4, ERRKEY, MSG)
+!        CALL ERROR(ERRKEY,1,FILEGC,0)
+!      ELSE IF(XFINT .LT. 0.0 .OR. XFINT .GT. 1.0) THEN
+!        MSG(1) = 'Ecotype Coefficients is not properly defined.'
+!        MSG(2) = 'Initial partitioning to pod/fruit during early '
+!        MSG(3) = 'pod/fruit growth.'
+!        MSG(4) = 'XFINT must be between/included 0.0 and 1.0.'
+!        CALL WARNING (4, ERRKEY, MSG)
+!        CALL ERROR(ERRKEY,2,FILEGC,0)
+!      ENDIF
+!
+!      CLOSE (LUNECO)
 
 !-----------------------------------------------------------------------
       RETURN
