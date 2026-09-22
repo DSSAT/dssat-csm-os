@@ -206,7 +206,8 @@ C-----------------------------------------------------------------------
       INTEGER         NDAS           
       INTEGER         NLAYR          
       INTEGER         NOUTDO
-!     INTEGER         nwheats_status         
+!     INTEGER         nwheats_status  
+      REAL            OBASE       
       REAL            P2O            
       REAL            P3                         
       REAL            P9             
@@ -545,28 +546,29 @@ C-----------------------------------------------------------------------
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
-     &             FOZ1,SFOZ1
-3100          FORMAT (A6,1X,A16,1X,48(F6.0))
+     &             FOZ1,SFOZ1,OBASE
+3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter. 
 !               Default to TSEN = 6.0 if no value given.
-!               JG changed column numbers to match updated ecotype file
-                IF (C255(315:319) == '     ') THEN
+                ! JG changed column numbers to match updated ecotype file
+                IF (C255(321:325) == '     ') THEN
                   TSEN = 6.0
                 ELSE
-                  READ(C255(315:319),'(F5.0)',IOSTAT=ERRNUM) TSEN
+                  READ(C255(321:325),'(F5.0)',IOSTAT=ERRNUM) TSEN
                   IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
                 ENDIF
         
 !               Read optional number of cold days paramter. 
 !               Default to CDAY = 15.0 if no value given.
-!               JG changed column numbers to match updated ecotype file
-                IF (C255(321:325) == '     ') THEN
+                ! JG changed column numbers to match updated ecotype file
+                IF (C255(327:331) == '     ') THEN
                   CDAY = 15
                 ELSE
-                  READ(C255(321:325),'(I5)',IOSTAT=ERRNUM) CDAY
+                  READ(C255(327:331),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
                 ENDIF
         
@@ -1025,7 +1027,7 @@ cbak  ears that is not included in lai calculation.
 !*!          alternatively, could use TWILEN (DSSAT)
 !*!                  ppfac = 1. -   p1d * (20. - hrlt)**2
 !             nwheats_ppfac = 1. - PPSEN * (20. - DAYL)**2 
-!            n Apsim: The parameter “twilight?is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.  
+!            n Apsim: The parameter ï¿½twilight?is set to the angle (degrees) the geometric centre of the sun is relative to the horizon, -6 degrees for APSIM crops being Civil twilight.  
              nwheats_ppfac = 1. - PPSEN * (20. - TWILEN)**2 
         
 !             DSSAT and APSIM may calculate DAYL differently, thus affect DCCD slightly
