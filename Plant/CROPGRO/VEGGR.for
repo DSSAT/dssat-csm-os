@@ -256,6 +256,9 @@ C-----------------------------------------------------------------------
       NSTRES = XNSTRES * 0.5 + PNSTRES * 0.5
       
 !      FRRT  = ATOP * (1.0 - (MIN(TURFAC,NSTRES)))*(1.0-FRRT) + FRRT
+      
+      !Fraction of carbon to go to roots
+      
       FRRT  = ATOP * (1.0 - (MIN(TURFAC, NSTRES, PStres2))) * 
      &                    (1.0 - FRRT) + FRRT
 C-----------------------------------------------------------------------
@@ -290,7 +293,7 @@ C-----------------------------------------------------------------------
       VGRDEM = PGAVL / AGRVG
       WLDOTN = FRLF * VGRDEM
       WSDOTN = FRSTM * VGRDEM
-      WRDOTN = FRRT * VGRDEM
+      WRDOTN = FRRT * VGRDEM    !New Root Growth today
 C-----------------------------------------------------------------------
 C     Compute maximum N required for tissue growth
 C-----------------------------------------------------------------------

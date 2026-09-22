@@ -162,6 +162,14 @@ C-----------------------------------------------------------------------
       LOGICAL PRINT_TODAY, VG_ok
       REAL WCR_TEMP
 
+!WDB 2/16/2022 Following variables added for optimizer
+      LOGICAL FEXIST
+	REAL    OP1,OP2,OP3,OP4,OP5,OP6,OP7,OP8,OP9,OP10   
+      REAL    HPD,HPF,PASW,RHRF
+      REAL    ASW, KSAT
+!WDB End Changes 2/16/2022      
+      
+      
 !     ---------------------------------------------------------------
 !     Composite variables
       TYPE (SoilType)   , INTENT(OUT):: SOILPROP !Soil properties
@@ -188,6 +196,7 @@ C-----------------------------------------------------------------------
 
       RAIN = WEATHER % RAIN
 
+    
 !***********************************************************************
 !***********************************************************************
 !     Run Initialization - Called once per simulation
@@ -213,7 +222,9 @@ C-----------------------------------------------------------------------
       SALB   = -99.
       DMOD   = -99.
       SLPF   = -99.
-      ETDR   = -99.
+c**WDB 2/3/23 Initialize ETDR so it has no effect
+      ETDR = 2.0
+C**WDB      
       CLAY   = -99.
       SILT   = -99.
       SAND   = 0.
@@ -273,10 +284,22 @@ C-----------------------------------------------------------------------
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
       
 !-----------------------------------------------------------------------
+!WDB 4-6-22 Modified to read in optimizer parameters from IO file (ie. DSSAT48.INP)
+!    Original code:      
+!      READ(LUNIO, 80, IOSTAT=ERRNUM,ERR=1000) 
+!     &           SALB, U, SWCON, CN, DMOD, SLPF, SMPX
+!   80FORMAT(7X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),
+!     &       7X,A5,12X,F6.0)
+
+!    Modified Code:      
       READ(LUNIO, 80, IOSTAT=ERRNUM,ERR=1000) 
-     &           SALB, U, SWCON, CN, DMOD, SLPF, SMPX
-   80 FORMAT(7X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),
-     &       7X,A5,12X,F6.0)
+     &   SALB, U, SWCON, CN, DMOD, SLPF, SMPX, 
+     &   HPF, HPD, ETDR, KSAT, PASW, RHRF
+  80  FORMAT(7X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),
+     &    7X,A5,
+     & 12X,1X,F6.2,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F8.4)     
+     
+!WDB End Changes
      
       LNUM = LNUM + 1
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
@@ -344,8 +367,134 @@ C-----------------------------------------------------------------------
      &      alphaVG(L), mVG(L), nVG(L), WCR(L)
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
-      ENDDO
+        ENDDO
 
+        
+
+!-----------------------------------------------------------------------      
+!WDB 2/16/2022  Read Optimizer Files and Overwrite Soil Parameters
+!
+! Notes 4/6/2022. This section needs to be taken out. LL and SRGF factors
+! were already adjusted in IPSOIL_INP. All other adjustments are redundant (no harm).
+! Keep this until NASA project with McGarvey calibrations are finished in April.
+! Then, simply take this code out (or skip over it) and recalibrate McGarvey field
+! This really only affected the LL through PASW. For some reason, WR could not be
+! changed with RHRF in this subroutine (maybe structured variable).         
+!-----------------------------------------------------------------------
+        goto 789
+         INQUIRE (FILE = 'PARAM.DAT',EXIST = FEXIST)
+	   IF(.NOT.FEXIST) GOTO 557
+         OP1 = -99
+	   OP2 = -99
+	   OP3 = -99
+	   OP4 = -99
+	   OP5 = -99
+	   OP6 = -99
+	   OP7 = -99
+	   OP8 = -99
+	   OP9 = -99
+	   OP10 = -99
+C         HPF=1.0
+C         HPD = 20
+C         RHRF = 0.0
+C         PASW = 0.0
+         
+         OPEN (88,FILE='PARAM.DAT',STATUS='UNKNOWN')
+         READ(88,*) OP1   !SCS curve number
+         READ(88,*) OP2   !drainage rate coefficient (used when ksat not defined)
+         READ(88,*) OP3   !tile conductivity
+         READ(88,*) OP4   !ksat of bottom layer
+         READ(88,*) OP5   !hard pan factor
+         READ(88,*) OP6   !depth to hard pan
+         READ(88,*) OP7   !root hospitality reduction factor
+         READ(88,*) OP8   !SLNF nitrogen mineralization factor
+         READ(88,*) OP9   !SLPF soil fertility factor
+         READ(88,*) OP10  !Percent available soil water
+         CLOSE(88)
+         
+	IF(OP1.GT.-90) THEN
+         CN = OP1
+	ENDIF
+
+	IF(OP2.GT.-90) THEN
+        SWCON = OP2
+      ENDIF
+
+!Note: ETDS not used in DSSAT4.8
+      IF(OP3.GT.-90) THEN
+          ETDR = OP3       
+      ENDIF
+           
+	IF(OP4.GT.-90) THEN
+         SWCN(NLAYR) = OP4
+	ENDIF
+
+	IF(OP5.GT.-90) THEN
+         HPF = OP5
+	ENDIF
+
+	IF(OP6.GT.-90) THEN
+         HPD = OP6
+	ENDIF
+
+	IF(OP7.GT.-90) THEN
+         RHRF =OP7
+ 	ENDIF
+
+	IF(OP8.GT.-90) THEN
+         DMOD = OP8
+	ENDIF
+
+	IF(OP9.GT.-90) THEN
+         SLPF = OP9
+	ENDIF
+
+	IF(OP10.GT.-90) THEN
+	PASW = OP10     
+      ENDIF
+
+C** WDB Skip this for April 2022 version B. This is now done in IPSOIL_Inp
+       goto 789
+C      Now, modify parameters using optimum parameter values or default
+c      values from soil.sol
+
+C     Adjust LL(I) to change available water holding capacity
+      IF(PASW.GT.-99) THEN
+        DO I=1,NLAYR
+           ASW = 0.0  
+	     ASW = DUL(I)-LL(I)
+	     ASW=ASW + ASW*PASW/100
+	     LL(I) = DUL(I) - ASW
+	  ENDDO
+      ENDIF
+
+c     Adjust SHF(I) for root shape      
+      IF(RHRF.GT.-99.AND.RHRF.NE.0.0) THEN
+	   Do I = 1,20
+	      IF(DS(I).GT.60.) THEN
+			WR(I) = RHRF * (DS(I)-60.) + 1.
+			IF(WR(I).GT.1) WR(I) = 1.0
+			IF(WR(I).LT.0) WR(I) = 0.0
+	  	  ENDIF
+	   END DO
+      ENDIF         
+   
+c     Adjust SHF(I) in hard pan layer
+
+      DO I=1,19
+          IF(DS(I+1).GT.OP6.AND.DS(I).LE.OP6) THEN
+             WR(I) = OP5
+          ENDIF
+      END DO
+789      Continue      
+557      CONTINUE
+
+!----------------------------------------------------------------------
+! End of Optimizer Adjustments
+!WDB 2/16/2022
+!----------------------------------------------------------------------
+      
+      
 !-----------------------------------------------------------------------
 !     Find and read Initial Conditions section -- get initial inorganic
 !       N for calculation of total organic N.
@@ -854,7 +1003,8 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % DMOD   = DMOD        !formerly SLNF   
       SOILPROP % DS     = DS     
       SOILPROP % DUL    = DUL    
-      SOILPROP % ETDR   = 0.2     !tile drainage rate   
+c      SOILPROP % ETDR   = 0.2     !tile drainage rate   
+      SOILPROP % ETDR   = ETDR     !tile drainage rate  WDB 2/16/2022 from optimizer
       SOILPROP % EXTP   = EXTP          
       SOILPROP % KG2PPM = KG2PPM  !conversion factor 
       SOILPROP % LL     = LL     
