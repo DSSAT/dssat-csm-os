@@ -275,6 +275,7 @@ cnh to allow watching of these variables
      &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
+     &        GNDFR,                                              !Input
      &        pnout)                                             !Output
 
 ! 2023-01-18 CHP removed unused variables from argument list:
@@ -335,6 +336,7 @@ cnh to allow watching of these variables
 !       max_grain_nc_ratio = 0.04;  0.035=20%;  .04=23% protein, max n:c ratio of grain growth 
 !       parameter (p_max_grain_nc_ratio = 0.04) ! JG replaced with MXNCR 7/23/20
       Real MXNCR  ! JG added 7/23/20
+      Real GNDFR  ! Messium: grain N deficit fill rate (0-1)
       real sum_real_array 
 !     real rgnfil
       REAL g_navl(mxpart) 
@@ -358,19 +360,18 @@ cnh to allow watching of these variables
  
               ! -------------- get grain N demand -----------
  
-!       Messium: grain N demand is the deficit to MXNCR over the grain
-!       weight after today's increment, so grain N fills towards MXNCR
-!       (catching up earlier shortfalls) and is limited only by N
-!       supply (navil). Replaces the temperature-driven demand of
-!       nwheats_gndmd, which capped grain N regardless of plant N.
+!       Messium: grain N demand is today's grain increment at MXNCR
+!       plus a fraction GNDFR of the existing deficit to MXNCR, so grain
+!       N fills towards MXNCR and is limited only by N supply (navil).
+!       Replaces the temperature-driven demand of nwheats_gndmd, which
+!       capped grain N regardless of plant N.
 !       plantwt(grain_part) is still yesterday's weight at this point.
 !       delta_grainc is the daily increment in grain weight (after stress)
         !*! delta_grainC = growt(grain)  + transwt(grain)
          delta_grainC =gro_wt(grain_part)  + trans_wt(grain_part)
          if (istage .eq. grnfil) then
-           gndmd = MXNCR * (plantwt(grain_part) + delta_grainC)
-     &           - pl_nit(grain_part)
-           gndmd = max(gndmd, 0.)
+           gndmd = MXNCR * max(delta_grainC, 0.) + GNDFR *
+     &        max(MXNCR * plantwt(grain_part) - pl_nit(grain_part), 0.)
          else
            gndmd = 0.
          endif
