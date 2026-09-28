@@ -2967,6 +2967,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        GNDFR, MNNCR, MXGWT, cnc,                           !Input
+     &        pgdd(grnfil) - sumstgdtt(grnfil),                   !Input
      &        pntrans)                                           !Output
 *     ==================================================================
 ! translocate N -  update plant pools

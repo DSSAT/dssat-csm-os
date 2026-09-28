@@ -276,6 +276,7 @@ cnh to allow watching of these variables
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        GNDFR, MNNCR, MXGWT, cnc,                           !Input
+     &        ttleft,                                             !Input
      &        pnout)                                             !Output
 
 ! 2023-01-18 CHP removed unused variables from argument list:
@@ -344,6 +345,8 @@ cnh to allow watching of these variables
       real dfdmd         ! grain N demand to fill the deficit to MXNCR
       real dfill         ! grain N actually taken for deficit filling
       real reserve       ! N kept for remaining structural grain demand
+      real ttleft        ! thermal time left in grain fill (deg C days)
+      real grain_proj    ! projected remaining grain growth (g/plant)
       Real MXGWT         ! maximum kernel weight (mg/grain)
       real sum_real_array 
 !     real rgnfil
@@ -487,9 +490,16 @@ cnh added for watch purposes
      &     - cnc(stem_part) * plantwt(stem_part), 0.)
       endif
       tlux = lux(leaf_part) + lux(lfsheath_part) + lux(stem_part)
-!       Keep enough N above critical for the remaining structural demand
-      reserve = MNNCR / 100. * max(MXGWT * 0.001 * gpp
+!       Keep enough N above critical for the remaining structural
+!       demand: today's grain growth per deg C day over the thermal time
+!       left in grain fill, capped by the kernel weight limit (MXGWT).
+      grain_proj = max(MXGWT * 0.001 * gpp
      &   - plantwt(grain_part) - max(delta_grainC, 0.), 0.)
+      if (dtt .gt. 0.) then
+        grain_proj = min(grain_proj,
+     &     max(delta_grainC, 0.) / dtt * max(ttleft, 0.))
+      endif
+      reserve = MNNCR / 100. * grain_proj
       if (tlux .gt. reserve) then
         dfill = min(dfdmd, tlux - reserve)
         pnout(leaf_part) = pnout(leaf_part)
