@@ -337,12 +337,13 @@ C=======================================================================
 !         Next meet evaporative demand from mulch
           IF (EOS_SOIL > 1.E-6 .AND. INDEX('RSM',MEINF) > 0) THEN
             CALL MULCH_EVAP(DYNAMIC, MULCH, EOS_SOIL, EM)
-            IF (EOS_SOIL > EM) THEN
-!             Some evaporative demand leftover for soil
-              EOS_SOIL = EOS_SOIL - EM
-            ELSE
-              EOS_SOIL = 0.0
-            ENDIF
+!            chp 2025-03-13 EOS_SOIL has already been reduced based on mulch evap. 
+!            IF (EOS_SOIL > EM) THEN
+!!             Some evaporative demand leftover for soil
+!              EOS_SOIL = EOS_SOIL - EM
+!            ELSE
+!              EOS_SOIL = 0.0
+!            ENDIF
           ENDIF
 
 !         Soil evaporation after flood and mulch evaporation
