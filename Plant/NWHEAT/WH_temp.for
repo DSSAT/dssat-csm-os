@@ -358,28 +358,22 @@ cnh to allow watching of these variables
  
               ! -------------- get grain N demand -----------
  
-      !*! call nwheats_gndmd (gndmd)
-         call nwheats_gndmd (Istage, tempmx, tempmn, dtt, gpp, !Input
-     &   gndmd)                                               !Output
+!       Messium: grain N demand is the deficit to MXNCR over the grain
+!       weight after today's increment, so grain N fills towards MXNCR
+!       (catching up earlier shortfalls) and is limited only by N
+!       supply (navil). Replaces the temperature-driven demand of
+!       nwheats_gndmd, which capped grain N regardless of plant N.
+!       plantwt(grain_part) is still yesterday's weight at this point.
 !       delta_grainc is the daily increment in grain weight (after stress)
-!       check to see if the ratio of delta n /delta c is too high
-!       that is, c stops but n continues. set max limit of 0.10
         !*! delta_grainC = growt(grain)  + transwt(grain)
          delta_grainC =gro_wt(grain_part)  + trans_wt(grain_part)
-         !*! delta_N_fraction = divide (gndmd,delta_grainC,0.0)
-         if (delta_grainC .gt. 0.) then
-           delta_N_fraction = gndmd / delta_grainC
+         if (istage .eq. grnfil) then
+           gndmd = MXNCR * (plantwt(grain_part) + delta_grainC)
+     &           - pl_nit(grain_part)
+           gndmd = max(gndmd, 0.)
          else
-           delta_N_fraction = 0. 
-!          JZW add this case in Oct, 2014. On 1st day of emergence, goes here
+           gndmd = 0.
          endif
-         
-!          JG replaced p_max_grain_nc_ratio with MXNCR 7/23/20
-!         delta_N_fraction = u_bound (delta_N_fraction
-!     :                              ,p_max_grain_nc_ratio)
-         delta_N_fraction = min(delta_N_fraction
-     &                              ,MXNCR)     
-         gndmd = delta_N_fraction * delta_grainC
  
 !               -------------- get grain N potential (supply) -----------
  

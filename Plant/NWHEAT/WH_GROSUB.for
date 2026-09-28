@@ -2400,8 +2400,12 @@ cSenthold-1
 !*!       (from APSIM NWheat subroutine nwheats_gndmd) 
 !---------------------------------------------------------------------- 
 
-      CALL nwheats_gndmd (Istage, tempmx, tempmn, dtt, gpp, !Input
-     &   gndmd_est)                                             !Output
+!     Messium: grain N demand is the deficit to MXNCR (as in
+!     nwheats_grnit), so grain growth is only N-limited when plant
+!     N supply is short.
+      gndmd_est = MXNCR * (plantwt(grain_part) + pl_dmd(grain_part))
+     &          - pl_nit(grain_part)
+      gndmd_est = MAX(gndmd_est, 0.0)
 
 !---------------------------------------------------------------------- 
 !*! End WHAPS calculation of grain nitrogen demand 
