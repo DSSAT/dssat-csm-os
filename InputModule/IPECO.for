@@ -154,10 +154,13 @@ C
 
  3200 CONTINUE
       IF (ECONO .EQ. 'DFAULT') CALL ERROR (ERRKEY,3,FILEE,LINECO)
-      ECONO = 'DFAULT'
-      REWIND (LUNECO)
-      I = 0
-      GO TO 2010
+      ! TF (01/16/2026) - Replaced the default ecotype handling with
+      ! an error call to avoid the use of unexisting ecotype IDs.
+      CALL ERROR("IPECO",4,FILEE,1)
+      !ECONO = 'DFAULT'
+      !REWIND (LUNECO)
+      !I = 0
+      !GO TO 2010
 
 C-----------------------------------------------------------------------
 C     Format Strings

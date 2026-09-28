@@ -65,10 +65,13 @@ C-----------------------------------------------------------------------
             IF (ECOTYP .EQ. ECONO) EXIT
 
             ELSE IF (ISECT .EQ. 0) THEN
-            IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
-            ECONO = 'DFAULT'
-            REWIND(LUNECO)
-            LNUM = 0
+!           TF (01/16/2026) - Replaced the default ecotype handling with
+!           an error call to avoid the use of unexisting ecotype IDs.
+            CALL ERROR("IPECO",5,FILEGC,1)
+            !IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,35,FILEGC,LNUM)
+            !ECONO = 'DFAULT'
+            !REWIND(LUNECO)
+            !LNUM = 0
             ENDIF
         ENDDO
 

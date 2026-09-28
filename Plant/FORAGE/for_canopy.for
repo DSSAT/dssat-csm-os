@@ -164,9 +164,12 @@ C-----------------------------------------------------------------------
         EXIT
         ENDIF
         ELSE IF (ISECT .EQ. 0) THEN
-        IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,3,FILEGC,LNUM)
-        ECONO = 'DFAULT'
-        REWIND(LUNECO)
+!       TF (01/16/2026) - Replaced the default ecotype handling with
+!       an error call to avoid the use of unexisting ecotype IDs.
+        CALL ERROR("IPECO",5,FILEGC,1)
+        !IF (ECONO .EQ. 'DFAULT') CALL ERROR(ERRKEY,3,FILEGC,LNUM)
+        !ECONO = 'DFAULT'
+        !REWIND(LUNECO)
         ENDIF
       ENDDO
 
@@ -294,7 +297,7 @@ C       width.
 ! RWIDTH  Relative width of this ecotype in comparison to the standard
 !           width per node (YVSWH) defined in the species file (m)
 ! TABEX   Function subroutine - Lookup utility
-! TGRO(I) Hourly air temperature (°C)
+! TGRO(I) Hourly air temperature (ï¿½C)
 ! TURFAC  Water stress factor for expansion (0-1)
 ! VSTAGE  Number of nodes on main stem of plant
 ! WPAR    Effect of PAR on canopy width
@@ -302,7 +305,7 @@ C       width.
 !           growth rate, particularily to allow etiliolation at low
 !           PAR values (moles[quanta]/m2-d)
 ! XHWTEM  Temperatures in a table look-up function for modifying height
-!           and width growth rates (°C)
+!           and width growth rates (ï¿½C)
 ! XLAI    Leaf area (one side) per unit of ground area (m2/m2)
 ! XVSHT   Node number on main stem for use in computing height and width
 !           growth rates
