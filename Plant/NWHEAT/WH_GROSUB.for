@@ -2403,11 +2403,10 @@ cSenthold-1
 !*!       (from APSIM NWheat subroutine nwheats_gndmd) 
 !---------------------------------------------------------------------- 
 
-!     Messium: grain N demand as in nwheats_grnit (new grain at MXNCR
-!     plus GNDFR of the existing deficit to MXNCR), so grain growth is
-!     only N-limited when plant N supply is short.
-      gndmd_est = MXNCR * pl_dmd(grain_part) + GNDFR *
-     &   MAX(MXNCR * plantwt(grain_part) - pl_nit(grain_part), 0.0)
+!     Messium: structural grain N demand, new grain at MNNCR (see
+!     nwheats_grnit), so grain growth is only N-limited when plant N
+!     supply cannot meet the minimum grain N concentration.
+      gndmd_est = MNNCR / 100. * pl_dmd(grain_part)
 
 !---------------------------------------------------------------------- 
 !*! End WHAPS calculation of grain nitrogen demand 
@@ -2967,7 +2966,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
      &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
-     &        GNDFR,                                              !Input
+     &        GNDFR, MNNCR, MXGWT, cnc,                           !Input
      &        pntrans)                                           !Output
 *     ==================================================================
 ! translocate N -  update plant pools

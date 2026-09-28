@@ -275,7 +275,7 @@ cnh to allow watching of these variables
      &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
-     &        GNDFR,                                              !Input
+     &        GNDFR, MNNCR, MXGWT, cnc,                           !Input
      &        pnout)                                             !Output
 
 ! 2023-01-18 CHP removed unused variables from argument list:
@@ -337,6 +337,14 @@ cnh to allow watching of these variables
 !       parameter (p_max_grain_nc_ratio = 0.04) ! JG replaced with MXNCR 7/23/20
       Real MXNCR  ! JG added 7/23/20
       Real GNDFR  ! Messium: grain N deficit fill rate (0-1)
+      Real MNNCR  ! minimum grain N concentration (%)
+      REAL cnc(mxpart)   ! critical N concentration, by plant part
+      REAL lux(mxpart)   ! N above critical concentration, by part
+      real tlux          ! total N above critical in leaf, sheath, stem
+      real dfdmd         ! grain N demand to fill the deficit to MXNCR
+      real dfill         ! grain N actually taken for deficit filling
+      real reserve       ! N kept for remaining structural grain demand
+      Real MXGWT         ! maximum kernel weight (mg/grain)
       real sum_real_array 
 !     real rgnfil
       REAL g_navl(mxpart) 
@@ -360,20 +368,24 @@ cnh to allow watching of these variables
  
               ! -------------- get grain N demand -----------
  
-!       Messium: grain N demand is today's grain increment at MXNCR
-!       plus a fraction GNDFR of the existing deficit to MXNCR, so grain
-!       N fills towards MXNCR and is limited only by N supply (navil).
-!       Replaces the temperature-driven demand of nwheats_gndmd, which
-!       capped grain N regardless of plant N.
+!       Messium: replaces the temperature-driven demand of
+!       nwheats_gndmd, which capped grain N regardless of plant N.
+!       Structural demand (gndmd): today's grain increment at MNNCR,
+!       supplied from navl as before.
+!       Deficit demand (dfdmd): GNDFR x the deficit to MXNCR, supplied
+!       only from leaf, sheath and stem N above critical concentration
+!       (cnc), so it never causes N stress or N-driven leaf senescence.
 !       plantwt(grain_part) is still yesterday's weight at this point.
 !       delta_grainc is the daily increment in grain weight (after stress)
         !*! delta_grainC = growt(grain)  + transwt(grain)
          delta_grainC =gro_wt(grain_part)  + trans_wt(grain_part)
          if (istage .eq. grnfil) then
-           gndmd = MXNCR * max(delta_grainC, 0.) + GNDFR *
-     &        max(MXNCR * plantwt(grain_part) - pl_nit(grain_part), 0.)
+           gndmd = MNNCR / 100. * max(delta_grainC, 0.)
+           dfdmd = GNDFR * max(MXNCR * (plantwt(grain_part)
+     &        + max(delta_grainC, 0.)) - pl_nit(grain_part) - gndmd, 0.)
          else
            gndmd = 0.
+           dfdmd = 0.
          endif
  
 !               -------------- get grain N potential (supply) -----------
@@ -460,6 +472,33 @@ cnh added for watch purposes
               pnout(part) = navl(part) !JZW add this case in Oct, 2014
           endif
 1000  continue
+
+!       Messium: deficit filling from N above critical concentration,
+!       after the structural transfer, never from roots, and only from
+!       N not needed for the remaining structural grain demand.
+      lux = 0.
+      if (dfdmd .gt. 0.) then
+        lux(leaf_part) = max(pl_nit(leaf_part) - pnout(leaf_part)
+     &     - cnc(leaf_part) * plantwt(leaf_part), 0.)
+        lux(lfsheath_part) = max(pl_nit(lfsheath_part)
+     &     - pnout(lfsheath_part)
+     &     - cnc(lfsheath_part) * plantwt(lfsheath_part), 0.)
+        lux(stem_part) = max(pl_nit(stem_part) - pnout(stem_part)
+     &     - cnc(stem_part) * plantwt(stem_part), 0.)
+      endif
+      tlux = lux(leaf_part) + lux(lfsheath_part) + lux(stem_part)
+!       Keep enough N above critical for the remaining structural demand
+      reserve = MNNCR / 100. * max(MXGWT * 0.001 * gpp
+     &   - plantwt(grain_part) - max(delta_grainC, 0.), 0.)
+      if (tlux .gt. reserve) then
+        dfill = min(dfdmd, tlux - reserve)
+        pnout(leaf_part) = pnout(leaf_part)
+     &     + dfill * lux(leaf_part) / tlux
+        pnout(lfsheath_part) = pnout(lfsheath_part)
+     &     + dfill * lux(lfsheath_part) / tlux
+        pnout(stem_part) = pnout(stem_part)
+     &     + dfill * lux(stem_part) / tlux
+      endif
  
       !*! call pop_routine (myname)
       return
