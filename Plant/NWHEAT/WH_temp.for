@@ -277,7 +277,7 @@ cnh to allow watching of these variables
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        GNDFR, MNNCR, MXGWT, cnc,                           !Input
      &        ttleft,                                             !Input
-     &        pnout)                                             !Output
+     &        pnout, dfleft)                                     !Output
 
 ! 2023-01-18 CHP removed unused variables from argument list:
 !  ISWITCH,
@@ -344,6 +344,8 @@ cnh to allow watching of these variables
       real tlux          ! total N above critical in leaf, sheath, stem
       real dfdmd         ! grain N demand to fill the deficit to MXNCR
       real dfill         ! grain N actually taken for deficit filling
+      real dfleft        ! (OUTPUT) deficit demand not met from surplus
+                         !   N, added to plant N uptake demand (g/plant)
       real reserve       ! N kept for remaining structural grain demand
       real ttleft        ! thermal time left in grain fill (deg C days)
       real grain_proj    ! projected remaining grain growth (g/plant)
@@ -376,8 +378,9 @@ cnh to allow watching of these variables
 !       Structural demand (gndmd): today's grain increment at MNNCR,
 !       supplied from navl as before.
 !       Deficit demand (dfdmd): GNDFR x the deficit to MXNCR, supplied
-!       only from leaf, sheath and stem N above critical concentration
+!       from leaf, sheath and stem N above critical concentration
 !       (cnc), so it never causes N stress or N-driven leaf senescence.
+!       The unmet part (dfleft) is grain demand for soil N uptake.
 !       plantwt(grain_part) is still yesterday's weight at this point.
 !       delta_grainc is the daily increment in grain weight (after stress)
         !*! delta_grainC = growt(grain)  + transwt(grain)
@@ -500,6 +503,7 @@ cnh added for watch purposes
      &     max(delta_grainC, 0.) / dtt * max(ttleft, 0.))
       endif
       reserve = MNNCR / 100. * grain_proj
+      dfill = 0.
       if (tlux .gt. reserve) then
         dfill = min(dfdmd, tlux - reserve)
         pnout(leaf_part) = pnout(leaf_part)
@@ -509,6 +513,7 @@ cnh added for watch purposes
         pnout(stem_part) = pnout(stem_part)
      &     + dfill * lux(stem_part) / tlux
       endif
+      dfleft = max(dfdmd - dfill, 0.)
  
       !*! call pop_routine (myname)
       return
@@ -732,7 +737,7 @@ cjh  end of correction
      &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR,         rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw,                                       !Input
+     &      WFNU, xstag_nw, dfleft,                               !Input
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
 
@@ -800,6 +805,7 @@ cjh  end of correction
       REAL PLTPOP
       real EXNH4, MNNH4, EXNO3, MNNO3, WFNU, PNUPR
       real MXNUP
+      real dfleft  ! Messium: unmet grain N deficit demand (g/plant)
 !       real p_max_n_uptake  , btk 03/02/2017
 !       PARAMETER (p_max_n_uptake = .6)  !(g/m2) max N uptake per day ; commented out by btk, 03/02/2017
       character*5 G_UPTAKE_SOURCE
@@ -918,6 +924,7 @@ C     The variable "CONTROL" is of type "ControlType".
      &     pl_nit, pcarbo, carbh, cnc,                     !Input 
      &     pndem)	                                       !Output
 * ====================================================================
+      pndem(grain_part) = pndem(grain_part) + max(dfleft, 0.)
       n_demand = sum_real_array (pndem, mxpart)
  
       if (g_uptake_source .eq. 'calc') then

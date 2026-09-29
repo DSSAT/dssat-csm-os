@@ -433,6 +433,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
       REAL        KVAL1,KVAL2,OBASE  ! JG added for ecotype file
       REAL        GNDFR  ! Messium: grain N deficit fill rate (0-1)
+      REAL        dfleft ! Messium: unmet grain N deficit demand (g/plant)
       
       INTEGER         FOUND  
       REAL        FSLFW
@@ -2968,7 +2969,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        GNDFR, MNNCR, MXGWT, cnc,                           !Input
      &        pgdd(grnfil) - sumstgdtt(grnfil),                   !Input
-     &        pntrans)                                           !Output
+     &        pntrans, dfleft)                                   !Output
 *     ==================================================================
 ! translocate N -  update plant pools
       pl_nit(grain_part) = pl_nit(grain_part) 
@@ -2987,7 +2988,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
      &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR/1000000, rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw,                                       !Input
+     &      WFNU, xstag_nw, dfleft,                               !Input
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
        ptnup = sum_real_array (pnup, mxpart)
