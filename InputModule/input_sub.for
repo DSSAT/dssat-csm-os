@@ -209,6 +209,7 @@ C-----------------------------------------------------------------------
         CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,PATHGE,
      &              ECONO, MODEL, ATLINE) !, CROP)
       ENDIF
+      
 
 C-----------------------------------------------------------------------
 C     Call IPSLIN to read initial soil conditions

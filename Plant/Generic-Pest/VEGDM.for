@@ -14,7 +14,7 @@ C=======================================================================
       SUBROUTINE VEGDM(DYNAMIC,
      &    AREALF, CLW, CSW, PCLMT, PCSTMD, PDLA, PLFAD,   !Input
      &    PLFMD, PSTMD, PVSTGD, SLA, SLDOT, SSDOT,        !Input
-     &    STMWT, TDLA, VSTGD, WLFDOT, WSTMD, WTLF,        !Input
+     &    STMWT, TDLA, TLAI, VSTGD, WLFDOT, WSTMD, WTLF,        !Input
      &    TLFAD, TLFMD, VSTAGE, WLIDOT,                   !Input/Output
      &    CLAI, CLFM, CSTEM, DISLA, DISLAP,               !Output
      &    LAIDOT, WSIDOT)                                 !Output
@@ -40,6 +40,10 @@ C     Stem Variables
       REAL VSTAGE,PVSTGD,VSTGD
 
       REAL LDAM
+C** WDB 1/2022 Added Target LAI from remote sensing observations (TLAI)      
+      REAL TLAI
+      REAL CURLAI
+      
       INTEGER DYNAMIC
 
 !***********************************************************************
@@ -173,6 +177,7 @@ C  distinguish whether damage came from senesence or pests.  PWTLF is
         ENDIF
       ENDIF
 
+
 C-----------------------------------------------------------------------
 C     Where is PCLMA?? chp 3/23/01
 C-----------------------------------------------------------------------
@@ -197,6 +202,22 @@ C-----------------------------------------------------------------------
         DISLAP = 0.0
       ENDIF
 
+C-----------------------------------------------------------------------
+C     WDB 1/2022 Added target LAI from remote sensing
+C     LAIDOT and WLIDOT are subtracted from plant state variables in other routines.
+C     Positive values of TLAI in File T increase LAI SO LAIDOT AND WLIDOT must be negative
+C     Negative values of TLAI in File T decrease LAI so LAIDOT and WLIDOT must be positive
+C-----------------------------------------------------------------------     
+        IF (TLAI.GE.0) THEN 
+            IF(TLAI.GT.0.0.AND.SLA.GT.0.0) THEN
+!              compute current LAI (CURLAI) from SLA and WTLF                
+               CURLAI = WTLF*SLA/10000
+               LAIDOT = CURLAI-TLAI
+               WLIDOT = LAIDOT/SLA*10000
+            ENDIF
+        ENDIF      
+      
+      
 !***********************************************************************
 !***********************************************************************
 !     Daily integration

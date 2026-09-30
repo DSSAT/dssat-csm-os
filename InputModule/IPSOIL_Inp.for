@@ -65,13 +65,19 @@ C=======================================================================
       CHARACTER*15  HEADER(MAXCOL)
 !     COL keeps beginning and ending column for each header
       INTEGER COL(MAXCOL,2), C1, C2, COUNT, L
+      
+
+      
+      
+
 
       TYPE (SwitchType) ISWITCH
 
       PARAMETER (ERRKEY = 'IPSOIL')
       PARAMETER (LUNSL  = 12)
       PARAMETER (BLANK = ' ')
-
+      
+     
       NLSOIL = 0
 !-----------------------------------------------------------------------
 !     No soil file read - default conditions
@@ -235,6 +241,7 @@ C
       SASC   = -99.
       SAEA   = -99.
 
+  
 !-----------------------------------------------------------------------
 !     Find correct soil within soil file
          I = 0
@@ -347,6 +354,7 @@ C-KRT*******************************************************************
                DO I = 1, COUNT
                  C1 = COL(I,1)
                  C2 = COL(I,2)
+
                  SELECT CASE (TRIM(HEADER(I)))
 
                  CASE('SCOM'); READ(C255(C1:C2),*,IOSTAT=ERR) SCOM
@@ -361,6 +369,7 @@ C-KRT*******************************************************************
                  CASE('SMKE'); READ(C255(C1:C2),*,IOSTAT=ERR) SMKE
                  CASE('SGRP'); READ(C255(C1:C2),*,IOSTAT=ERR) SGRP
 
+
 !                 CASE('SOILLAT'); READ(C255(C1:C2),*,IOSTAT=ERR) SLAT
 !                 CASE('SOILLONG');READ(C255(C1:C2),*,IOSTAT=ERR) SLONG
 !                 CASE('SLTX');    READ(C255(C1:C2),*,IOSTAT=ERR) SLTXS
@@ -373,9 +382,9 @@ C-KRT*******************************************************************
 !                 CASE('ETDR');    READ(C255(C1:C2),*,IOSTAT=ERR) ETDR
 
                  END SELECT
+                               
                  IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILES,LINSOL)
                ENDDO
-
              ELSE
                !Soil layer data
                 L = L + 1
@@ -474,7 +483,8 @@ C-KRT*******************************************************************
          CLOSE (LUNSL)
 
 !        Check validity of soil values 
-	   IF (SWCON .LT. 0.0) CALL ERROR (ERRKEY,10,FILES,LINSOL)
+
+         IF (SWCON .LT. 0.0) CALL ERROR (ERRKEY,10,FILES,LINSOL)
 	   IF (CN2 .LE. 0.0)   CALL ERROR (ERRKEY,11,FILES,LINSOL)
          IF (SALB .LE. 0.0) THEN
 !           SALB = 0.13
@@ -614,6 +624,13 @@ C-KRT*******************************************************************
          CALL LMATCH (NLAYRI, ZLYR, WCR,  NLAYR, DS)
      
       ENDIF
+
+  
+
+       
+
+
+
 
       RETURN
 
