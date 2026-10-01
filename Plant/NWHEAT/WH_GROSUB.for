@@ -813,7 +813,9 @@ C 60         FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1,OBASE,GNDFR
-3100          FORMAT (A6,1X,A16,1X,50(F6.0))
+!             MXNCR, INGNC and MNNCR are 7 columns wide (extra decimal)
+3100          FORMAT (A6,1X,A16,1X,28(F6.0),F7.0,7(F6.0),F7.0,F6.0,
+     &                F7.0,11(F6.0))
 
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
 !             Blank GNDFR column reads as 0 (no deficit catch-up)

@@ -888,7 +888,9 @@ C     The variable "CONTROL" is of type "ControlType".
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1,OBASE
-3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+!             MXNCR, INGNC and MNNCR are 7 columns wide (extra decimal)
+3100          FORMAT (A6,1X,A16,1X,28(F6.0),F7.0,7(F6.0),F7.0,F6.0,
+     &                F7.0,10(F6.0))
 
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
@@ -1178,7 +1180,9 @@ cbak      parameter (potrate = .9e-6)        ! (g n/mm root/day)
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1,OBASE
-3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+!             MXNCR, INGNC and MNNCR are 7 columns wide (extra decimal)
+3100          FORMAT (A6,1X,A16,1X,28(F6.0),F7.0,7(F6.0),F7.0,F6.0,
+     &                F7.0,10(F6.0))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -1396,7 +1400,9 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
      &             FOZ1,SFOZ1,OBASE
-3100          FORMAT (A6,1X,A16,1X,49(F6.0))
+!             MXNCR, INGNC and MNNCR are 7 columns wide (extra decimal)
+3100          FORMAT (A6,1X,A16,1X,28(F6.0),F7.0,7(F6.0),F7.0,F6.0,
+     &                F7.0,10(F6.0))
 
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
