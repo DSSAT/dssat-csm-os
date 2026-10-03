@@ -68,4 +68,4 @@ IB0098 Cold Sens. (test)   0.0  26.0  26.0  34.0  12.5   50.   6.0  170.   3.8  
 !SFOZ1 - (no effect, TFAPS) ozone effect rate on leaf senescence: 0.08 = ozone tolerant, 0.25 = intermediate, 0.40 = ozone sensitive
 !OBASE - Base mean 7-hour (M7) ozone damage threshold, default = 25.0 ppb
 !TSEN  - Critical temperature below which leaf damage occurs (default 6�C)
-!CDAY  - cold days parameter (default 15.0)
+!CDAY  - cold days parameter (default 15)
