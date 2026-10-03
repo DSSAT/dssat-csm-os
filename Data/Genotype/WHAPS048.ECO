@@ -52,7 +52,7 @@
 ! SFOZ1 - ozone effect rate on leaf senescence: 0.08 = ozone tolerant, 0.25 = intermediate, 0.40 = ozone sensitive
 ! OBASE - Base mean 7-hour (M7) ozone damage threshold, default = 25.0 ppb
 ! TSEN  - Critical temperature below which leaf damage occurs (default 6°C)
-! CDAY  - cold days parameter (default 15.0)
+! CDAY  - cold days parameter (default 15)
 
 !                            1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    28    29    30    31    32    33    34    35    36    37    38    39    40    41    42    43    44    45    46    47    48    49    50    51
 @ECO#  ECONAME.........  TBASE  TOPT  ROPT  TTOP   P20  VREQ  GDDE DSGFT  RUE1  RUE2 KVAL1 KVAL2 SLAP2 TC1P1 TC1P2 DTNP1 PLGP1 PLGP2  P2AF  P3AF  P4AF  P5AF  P6AF ADLAI ADTIL ADPHO STEMN MXNUP MXNCR  WFNU PNUPR EXNO3 MNNO3 EXNH4 MNNH4 INGWT INGNC FREAR MNNCR GPPSS GPPES MXGWT MNRTN NOMOB RTDP1 RTDP2  FOZ1 SFOZ1 OBASE  TSEN  CDAY

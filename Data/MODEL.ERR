@@ -1009,6 +1009,12 @@ Start simulation date is lower than first weather date.
 MAKEFW   20
 Error in weather DATE input. Please see WARNING.OUT file.
 
+PHENOL    1
+Error reading Ecotype parameters. Please check Ecotype file.
+
+PHENOL    2
+Error at number of cold days parameter (CDAY). Check Ecotype file.
+
 Y4KDOY    1
 Input date is greather than 99 years after start simulation date.
 

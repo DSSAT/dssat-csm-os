@@ -547,7 +547,7 @@ C-----------------------------------------------------------------------
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
      &                2(1X,F5.0),2(1X,F5.2),1(1X,F5.0))
-              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+              IF (ERRNUM .NE. 0) CALL ERROR('PHENOL',1,FILEE,LNUM)
 
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter.
@@ -568,6 +568,7 @@ C-----------------------------------------------------------------------
                 ELSE
                   READ(C255(327:331),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
+                  IF (ERRNUM .NE. 0) CALL ERROR('PHENOL',2,FILEE,LNUM)
                 ENDIF
 
                 EXIT

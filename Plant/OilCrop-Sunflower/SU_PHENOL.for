@@ -285,7 +285,7 @@
               READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
      &             ROPT,P2O,DJTI,GDDE,DSGFT,RUE, KCAN
  3100          FORMAT (A6,1X,A16,1X,9(1X,F5.1))
-              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+              IF (ERRNUM .NE. 0) CALL ERROR('PHENOL',1,FILEE,LNUM)
  
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter. 
@@ -304,6 +304,7 @@
                 ELSE
                   READ(C255(86:90),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 7
+                  IF (ERRNUM .NE. 0) CALL ERROR('PHENOL',2,FILEE,LNUM)
                 ENDIF
         
                 EXIT

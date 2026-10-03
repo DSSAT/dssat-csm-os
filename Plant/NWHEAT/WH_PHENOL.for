@@ -549,7 +549,7 @@ C-----------------------------------------------------------------------
      &             FOZ1,SFOZ1,OBASE
 3100          FORMAT (A6,1X,A16,1X,49(F6.0))
 
-              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+              IF (ERRNUM .NE. 0) CALL ERROR('PHENOL',1,FILEE,LNUM)
         
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter. 
@@ -570,6 +570,7 @@ C-----------------------------------------------------------------------
                 ELSE
                   READ(C255(327:331),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
+                  IF (ERRNUM .NE. 0) CALL ERROR('PHENOL',2,FILEE,LNUM)
                 ENDIF
         
                 EXIT

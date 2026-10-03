@@ -18,7 +18,8 @@
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
 !  04/14/2021 CHP Added CropStatus
-!  02/03/2023 JG Added ozone parameters to ecotype file
+!  02/03/2023 JG  Added ozone parameters to ecotype file
+!  10/02/2026 FO  Fixed CDAY reading from ecotype file
 !----------------------------------------------------------------------
       SUBROUTINE MZ_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,           !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
@@ -288,10 +289,10 @@
             IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
      &            C255(1:1) .NE. '*') THEN
               READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
-     &             ROPT,P2O,DJTI,GDDE,DSGFT,RUE, KCAN, TSEN, CDAY,
+     &             ROPT,P2O,DJTI,GDDE,DSGFT,RUE, KCAN, TSEN,
      &             FOZ1, SFOZ1, OBASE
-3100          FORMAT (A6,1X,A16,1X,14(1X,F5.0))
-              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.0),6X,3(1X,F5.0))
+              IF (ERRNUM .NE. 0) CALL ERROR('PHENOL',1,FILEE,LNUM)
         
 !  JG updated TSEN and CDAY format above 02/03/2023
               IF (ECOTYP .EQ. ECONO) THEN
@@ -311,6 +312,7 @@
                 ELSE
                   READ(C255(86:90),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
+                  IF (ERRNUM .NE. 0) CALL ERROR('PHENOL',2,FILEE,LNUM)
                 ENDIF
         
                 EXIT
