@@ -27,6 +27,7 @@ C  01/14/2005 CHP Added METMP = 3: Corrected water content in temp. eqn.
 !  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil
 !                 water effects on albedo)
 !  12/09/2008 CHP Remove METMP and code for old (incorrect) soil water effect
+!  09/16/2026  FO Removed decimal place truncation of ST(L).
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : SOILT
@@ -354,7 +355,6 @@ C=======================================================================
       DO L = 1, NLAYR
         ZD    = -DSMID(L) / DD
         ST(L) = TAV + (TAMP / 2.0 * COS(ALX + ZD) + DT) * EXP(ZD)
-        ST(L) = NINT(ST(L) * 1000.) / 1000.   !debug vs release fix
       END DO
 
 !     Added: soil T for surface litter layer.
