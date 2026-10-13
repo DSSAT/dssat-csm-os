@@ -15,6 +15,7 @@
 !     DOY, KCAN, WEATHER, SOILPROP, CONTROL, YEAR, IDETG, 
      
         USE ModuleDefs
+        USE ModuleData, ONLY: PUT
         USE CER_First_Trans_m
         IMPLICIT NONE
         EXTERNAL CSTIMDIF, Y4K_DOY, CSINCDAT, TFAC4, CSROOTWU, CSTRANS, 
@@ -36,8 +37,20 @@
         REAL SRAD, ST(0:20), SW(20), TMAX, TMIN, TRWUP
         REAL UH2O(20), WINDSP, LAI
         REAL DAYLT, RWUMX, RWUPM, SNOW, TFAC4, YVALXY
+        REAL GrowthStage, Reduction(NL)
+!       BNI concept: active factor is the final multiplier
+!       on nitrification (1.0 = no effect, 0.8 = 20% reduction).
+        REAL, PARAMETER :: StageStart = 30.0
+        REAL, PARAMETER :: StageEnd = 79.0
+        REAL, PARAMETER :: RootLDThreshold = 0.0
+        REAL, PARAMETER :: ActiveFactor = 1.0
+        INTEGER, PARAMETER :: PersistenceDays = 0
+        INTEGER BniPersistenceCounter(NL)
+        LOGICAL BniInitialised, StageActive, RootsActive, BniActive
+        SAVE BniPersistenceCounter, BniInitialised
         
         CHARACTER*1 ISWNIT, ISWWAT, RNMODE  !IDETG, 
+        DATA BniInitialised /.FALSE./
         
         ! Update so that temporary outputs in rate have correct DAP
         DAE = MAX(0,CSTIMDIF(STGDOY(9),YEARDOY))
@@ -1500,5 +1513,35 @@ C-GH      IF (snow.GT.0) THEN
           SENLGALG(0) = 0.0
 
         ENDIF
+
+        IF (.NOT.BniInitialised .OR. DAS.LE.0 .OR.
+     &      YEARDOY.LT.YEARPLT) THEN
+          BniPersistenceCounter = 0
+          BniInitialised = .TRUE.
+        ENDIF
+
+        Reduction = 1.0
+        GrowthStage = ZSTAGE
+        StageActive = YEARDOY.GE.YEARPLT .AND. 
+     &                GrowthStage.GE.StageStart .AND.
+     &                GrowthStage.LE.StageEnd
+
+!       Active release resets the
+!       persistence counter; otherwise residual inhibition counts down.
+        DO L = 1, NLAYR
+          RootsActive = RLV(L).GT.RootLDThreshold
+          BniActive = StageActive .AND. RootsActive
+
+          IF (BniActive) THEN
+            Reduction(L) = ActiveFactor
+            BniPersistenceCounter(L) = PersistenceDays
+          ELSEIF (BniPersistenceCounter(L).GT.0) THEN
+            Reduction(L) = ActiveFactor
+            BniPersistenceCounter(L) = BniPersistenceCounter(L) - 1
+          ELSE
+            Reduction(L) = 1.0
+          ENDIF
+        ENDDO
+        CALL PUT('BNI','REDUCTION',Reduction)
 
       END SUBROUTINE CER_Growth

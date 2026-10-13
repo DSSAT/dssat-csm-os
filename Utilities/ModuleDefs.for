@@ -479,6 +479,11 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL TNOXD, TLeachD    !, TN2OD     ! added N2O PG
       End Type NiType
 
+!     Data transferred from Biological Nitrification Inhibition routines
+      TYPE BNIType
+        REAL, DIMENSION(NL) :: Reduction
+      END TYPE BNIType
+
 !     Data transferred from Organic C routines
       Type OrgCType
         REAL TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2
@@ -521,6 +526,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (PlantType)   PLANT
         Type (MgmtType)    MGMT
         Type (NiType)      NITR
+        Type (BNIType)     BNI
         Type (OrgCType)    ORGC
         Type (SoilType)    SOILPROP
         Type (SPAMType)    SPAM
@@ -955,6 +961,12 @@ C             CHP Added TRTNUM to CONTROL variable.
           CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
+      CASE ('BNI')
+        SELECT CASE (VarName)
+          CASE ('REDUCTION'); Value = SAVE_data % BNI % Reduction
+          CASE DEFAULT; ERR = .TRUE.
+        END SELECT
+
         CASE DEFAULT; ERR = .TRUE.
       END SELECT
 
@@ -984,6 +996,12 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('SPAM')
         SELECT CASE (VarName)
         Case ('UH2O'); SAVE_data % SPAM % UH2O = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('BNI')
+        SELECT CASE (VarName)
+        Case ('REDUCTION'); SAVE_data % BNI % Reduction = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

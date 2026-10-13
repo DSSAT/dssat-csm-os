@@ -45,6 +45,7 @@ C=====================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE ModuleData, ONLY: PUT
       USE FloodModule
       USE GHG_mod
       IMPLICIT NONE
@@ -104,6 +105,7 @@ C=====================================================================
 
       REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
+      REAL, DIMENSION(NL) :: Reduction
       REAL, DIMENSION(NL) :: SPi_Labile, NO3, NH4
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
       REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
@@ -188,6 +190,11 @@ C=====================================================================
      &    FLOODWAT, MULCH, SWDELTU,                       !I/O
      &    DRAIN, DRN, SNOW, SW, SWDELTS,                  !Output
      &    TDFC, TDLNO, UPFLOW, WINF)                      !Output
+      ENDIF
+
+      IF (DYNAMIC .EQ. SEASINIT) THEN
+        Reduction = 1.0
+        CALL PUT('BNI','REDUCTION',Reduction)
       ENDIF
 
 !***********************************************************************

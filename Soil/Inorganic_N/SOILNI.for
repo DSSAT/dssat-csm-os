@@ -103,6 +103,7 @@ C=======================================================================
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
       REAL NH4_plant(NL), NO3_plant(NL)
+      REAL Reduction(NL)
       
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
@@ -345,6 +346,7 @@ C=======================================================================
       DLTUREA = 0.0
       DLTSNO3 = 0.0 
       DLTSNH4 = 0.0 
+      CALL GET('BNI','REDUCTION',Reduction)
 
       DO L = 1, NLAYR
 !       Update with yesterday's plant N uptake
@@ -663,7 +665,9 @@ C=======================================================================
           NITRIF(L) = 0.0
         ELSE
 !         NITRIFppm in ppm; NITRIF in kg/ha  changed by PG from * kg2ppm
-          NITRIF(L)  = NITRIFppm(L) / KG2PPM(L)
+!         BNI reduction is an nitrification reduction multiplier:
+!         1.0 = no effect; values below 1.0 reduce nitrification.
+          NITRIF(L)  = NITRIFppm(L) / KG2PPM(L) * Reduction(L)
         ENDIF
 
         IF (NH4(L).LE. 0.01) THEN
