@@ -104,6 +104,7 @@ C ***********************************************************************
       IMPLICIT NONE
       EXTERNAL interpolate_steps
       INTEGER nlayrs,i,s
+      INTEGER interp_i,interp_a,interp_lo(51),interp_hi(51)
       REAL t(51)
       
       DO s=o2,ch4
@@ -116,21 +117,43 @@ C ***********************************************************************
       ENDDO
 
       h = (z (nlayrs) - z (1)) / (steps - 1)
-      CALL interpolate_steps (nlayrs, epsilon, h, z)
-      CALL interpolate_steps (nlayrs, theta, h, z)
-      CALL interpolate_steps (nlayrs, rho, h, z)
-      CALL interpolate_steps (nlayrs, lamda, h, z)
+      DO interp_i = 2,steps-1
+        interp_lo(interp_i) = 0
+        interp_hi(interp_i) = 0
+
+        DO interp_a = 1,nlayrs
+          IF (z(interp_a) .GE. z(1)+(interp_i-1)*h) THEN
+            IF (interp_hi(interp_i) .EQ. 0) THEN
+              interp_hi(interp_i) = interp_a
+            ENDIF
+          ENDIF
+
+          IF (z(interp_a) .LE. z(1)+(interp_i-1)*h) THEN
+            interp_lo(interp_i) = interp_a
+          ENDIF
+        ENDDO
+      ENDDO
+      CALL interpolate_steps (nlayrs, epsilon, h, z,
+     &                        interp_lo, interp_hi)
+      CALL interpolate_steps (nlayrs, theta, h, z,
+     &                        interp_lo, interp_hi)
+      CALL interpolate_steps (nlayrs, rho, h, z,
+     &                        interp_lo, interp_hi)
+      CALL interpolate_steps (nlayrs, lamda, h, z,
+     &                        interp_lo, interp_hi)
       DO i=1,steps
         t(i) = VV(om,i)
       ENDDO
-      CALL interpolate_steps (nlayrs, t,h,z)
+      CALL interpolate_steps (nlayrs, t,h,z,
+     &                        interp_lo, interp_hi)
       DO i=1,steps
         VV(om,i) = t(i)
       ENDDO
       DO i=1,steps
         t(i) = VV(o2,i)
       ENDDO
-      CALL interpolate_steps (nlayrs, t,h,z)
+      CALL interpolate_steps (nlayrs, t,h,z,
+     &                        interp_lo, interp_hi)
       DO i=1,steps
         VV(o2,i) = t(i)
       ENDDO
@@ -144,7 +167,8 @@ c      CALL interpolate_steps (nlayrs, t,h,z)
       DO i=1,steps
         t(i) = VV(ch4,i)
       ENDDO
-      CALL interpolate_steps (nlayrs, t,h,z)
+      CALL interpolate_steps (nlayrs, t,h,z,
+     &                        interp_lo, interp_hi)
       DO i=1,steps
         VV(ch4,i) = t(i)
       ENDDO
@@ -473,10 +497,8 @@ C ***********************************************************************
         s1 = dS_dy (s,i,y)
 
         NR_b (i) = - 8. * DD (s, i)
-     &          - 2. * h * (L(i+1) - L(i-1)) * dys_dy(s,i) 
-     &          - 4. * h*h * (dQ_dy (s,i,y)
-     &                        + dR_dy (s,i) 
-     &                        + dS_dy (s,i,y))
+     &          - 2. * h * (L(i+1) - L(i-1)) * d1
+     &          - 4. * h*h * (q1 + r1 + s1)
       ENDDO
       NR_b (steps) = - 8. * DD (s, steps)
      &          - 2. * h * (L(steps) - L(steps-1)) * dys_dy(s,steps) 
@@ -993,22 +1015,19 @@ C Thomas algorithm - solves tridiagonal matrices
 C ***********************************************************************
 
 
-      SUBROUTINE interpolate_steps (j,v,h,z)
+      SUBROUTINE interpolate_steps (j,v,h,z,interp_lo,interp_hi)
       USE MethaneConstants
       IMPLICIT NONE
-      INTEGER j,upper,lower,a,i
+      INTEGER j,i,upper,lower
+      INTEGER interp_lo(51),interp_hi(51)
       REAL v(51),oldv(51),h,z(51)
       
       DO i = 1,j
         oldv (i) = v (i)
       ENDDO
       DO i = 2,steps-1
-        DO a = j,1,-1
-          IF (z (a) .GE. z (1) + (i-1) * h) upper = a
-        ENDDO
-        DO a = 1,j
-          IF (z (a) .LE. z (1) + (i-1) * h) lower = a
-        ENDDO
+        upper = interp_hi(i)
+        lower = interp_lo(i)
         IF (upper .EQ. lower) then
            v (i) = oldv (upper)
         ELSE
