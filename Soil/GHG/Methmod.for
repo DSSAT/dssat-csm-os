@@ -104,6 +104,7 @@ C ***********************************************************************
       IMPLICIT NONE
       EXTERNAL interpolate_steps
       INTEGER nlayrs,i,s
+      INTEGER interp_i,interp_a,interp_lo(51),interp_hi(51)
       REAL t(51)
       
       DO s=o2,ch4
@@ -116,21 +117,43 @@ C ***********************************************************************
       ENDDO
 
       h = (z (nlayrs) - z (1)) / (steps - 1)
-      CALL interpolate_steps (nlayrs, epsilon, h, z)
-      CALL interpolate_steps (nlayrs, theta, h, z)
-      CALL interpolate_steps (nlayrs, rho, h, z)
-      CALL interpolate_steps (nlayrs, lamda, h, z)
+      DO interp_i = 2,steps-1
+        interp_lo(interp_i) = 0
+        interp_hi(interp_i) = 0
+
+        DO interp_a = 1,nlayrs
+          IF (z(interp_a) .GE. z(1)+(interp_i-1)*h) THEN
+            IF (interp_hi(interp_i) .EQ. 0) THEN
+              interp_hi(interp_i) = interp_a
+            ENDIF
+          ENDIF
+
+          IF (z(interp_a) .LE. z(1)+(interp_i-1)*h) THEN
+            interp_lo(interp_i) = interp_a
+          ENDIF
+        ENDDO
+      ENDDO
+      CALL interpolate_steps (nlayrs, epsilon, h, z,
+     &                        interp_lo, interp_hi)
+      CALL interpolate_steps (nlayrs, theta, h, z,
+     &                        interp_lo, interp_hi)
+      CALL interpolate_steps (nlayrs, rho, h, z,
+     &                        interp_lo, interp_hi)
+      CALL interpolate_steps (nlayrs, lamda, h, z,
+     &                        interp_lo, interp_hi)
       DO i=1,steps
         t(i) = VV(om,i)
       ENDDO
-      CALL interpolate_steps (nlayrs, t,h,z)
+      CALL interpolate_steps (nlayrs, t,h,z,
+     &                        interp_lo, interp_hi)
       DO i=1,steps
         VV(om,i) = t(i)
       ENDDO
       DO i=1,steps
         t(i) = VV(o2,i)
       ENDDO
-      CALL interpolate_steps (nlayrs, t,h,z)
+      CALL interpolate_steps (nlayrs, t,h,z,
+     &                        interp_lo, interp_hi)
       DO i=1,steps
         VV(o2,i) = t(i)
       ENDDO
@@ -144,7 +167,8 @@ c      CALL interpolate_steps (nlayrs, t,h,z)
       DO i=1,steps
         t(i) = VV(ch4,i)
       ENDDO
-      CALL interpolate_steps (nlayrs, t,h,z)
+      CALL interpolate_steps (nlayrs, t,h,z,
+     &                        interp_lo, interp_hi)
       DO i=1,steps
         VV(ch4,i) = t(i)
       ENDDO
@@ -361,15 +385,21 @@ C ***********************************************************************
       USE MethaneVariables
       IMPLICIT NONE
       EXTERNAL get_a, get_b, get_c, get_d, getNR_b, getNR_d, Thomas
-      INTEGER s
+      INTEGER s,i
+      EXTERNAL dys_dy
+      REAL dy(51),dys_dy
       REAL y(4,51)
       REAL a(51),b(51),c(51),d(51),NR_b(51),NR_d(51),dv(51)
 
-      CALL get_a (s,a)
-      CALL get_b (s,y,b)
-      CALL get_c (s,c)
+      DO i=2,steps
+        dy(i) = dys_dy(s,i)
+      ENDDO
+
+      CALL get_a (s,a,dy)
+      CALL get_b (s,y,b,dy)
+      CALL get_c (s,c,dy)
       CALL get_d (s,y,d)
-      CALL getNR_b (s,y,NR_b)
+      CALL getNR_b (s,y,NR_b,dy)
       CALL getNR_d (s,y,a,b,c,d,NR_d)
 
       CALL Thomas (a,NR_b,c,NR_d,dv)
@@ -384,40 +414,39 @@ C solution of nonlinear tridiagonal problem
 C ***********************************************************************
 
 !-----------------------------------------------------------------
-      SUBROUTINE get_a (s,a) !2023-01-26 chp removed unused "y" argument
+      SUBROUTINE get_a (s,a,dy) !2023-01-26 chp removed unused "y" argument
       USE MethaneConstants
       USE MethaneVariables
       IMPLICIT NONE
-      EXTERNAL dys_dy
       INTEGER s,i
-      REAL a(51),dys_dy  !y(4,51),
+      REAL a(51),dy(51)  !y(4,51),
       a (1) = 0.
       DO i = 2,steps-1
           a (i) = DD (s, i-1) + 4. * DD (s, i) - DD (s, i+1)
-     &              + 2. * h * L(i) * dys_dy(s,i)
+     &              + 2. * h * L(i) * dy(i)
       ENDDO
         a (steps) = 8. * DD (s, steps)
       RETURN
       END
 
 !-----------------------------------------------------------------
-      SUBROUTINE get_b (s,y,b)
+      SUBROUTINE get_b (s,y,b,dy)
       USE MethaneConstants
       USE MethaneVariables
       IMPLICIT NONE
-      EXTERNAL Q_y, R_y, S_y, dys_dy
+      EXTERNAL Q_y, R_y, S_y
       INTEGER i,s
-      REAL y(4,51),b(51),R_y,S_y,Q_y,dys_dy
+      REAL y(4,51),b(51),R_y,S_y,Q_y,dy(51)
       b (1) = -1.
       DO i = 2,steps-1
         b (i) = - 8. * DD (s, i)
-     &        - 2. * h * (L(i+1) - L(i-1)) * dys_dy(s,i) 
+     &        - 2. * h * (L(i+1) - L(i-1)) * dy(i)
      &        - 4. * h*h * (Q_y (s,i,y)
      &                        + R_y (s,i) 
      &                        + S_y (s,i,y))
       ENDDO
       b (steps) = - 8. * DD (s, steps)
-     &        - 2. * h * (L(steps) - L(steps-1)) * dys_dy(s,steps) 
+     &        - 2. * h * (L(steps) - L(steps-1)) * dy(steps)
      &        - 4. * h*h * (Q_y (s,steps,y)
      &                        + R_y (s,steps) 
      &                        + S_y (s,steps,y))
@@ -425,17 +454,16 @@ C ***********************************************************************
       END
 
 !-----------------------------------------------------------------
-      SUBROUTINE get_c (s,c) !2023-01-26 chp removed unused "y" argument
+      SUBROUTINE get_c (s,c,dy)
       USE MethaneConstants
       USE MethaneVariables
       IMPLICIT NONE
-      EXTERNAL dys_dy
       INTEGER s,i
-      REAL dys_dy,c(51)  !y(4,51),
+      REAL c(51),dy(51)  !y(4,51),
       c (1) = 0.
       DO i = 2,steps-1
           c (i) = DD (s, i+1) + 4. * DD (s, i) - DD (s, i-1)
-     &              - 2. * h * L(i) * dys_dy(s,i)
+     &              - 2. * h * L(i) * dy(i)
       ENDDO
       c (steps) = 0.
       RETURN
@@ -457,29 +485,27 @@ C ***********************************************************************
       END
 
 !-----------------------------------------------------------------
-      SUBROUTINE getNR_b (s,y,NR_b)
+      SUBROUTINE getNR_b (s,y,NR_b,dy)
       USE MethaneConstants
       USE MethaneVariables
       IMPLICIT NONE
-      EXTERNAL dys_dy, dQ_dy, dR_dy, dS_dy
+      EXTERNAL dQ_dy, dR_dy, dS_dy
       INTEGER i,s
-      REAL y(4,51),NR_b(51),dR_dy,dS_dy,dQ_dy,dys_dy
+      REAL y(4,51),NR_b(51),dR_dy,dS_dy,dQ_dy,dy(51)
       REAL q1,r1,s1,d1
       NR_b (1) = -1.	  
       DO i = 2,steps-1
-        d1 = dys_dy(s,i)
+        d1 = dy(i)
         q1 = dQ_dy (s,i,y)
         r1 = dR_dy (s,i)
         s1 = dS_dy (s,i,y)
 
         NR_b (i) = - 8. * DD (s, i)
-     &          - 2. * h * (L(i+1) - L(i-1)) * dys_dy(s,i) 
-     &          - 4. * h*h * (dQ_dy (s,i,y)
-     &                        + dR_dy (s,i) 
-     &                        + dS_dy (s,i,y))
+     &          - 2. * h * (L(i+1) - L(i-1)) * d1
+     &          - 4. * h*h * (q1 + r1 + s1)
       ENDDO
       NR_b (steps) = - 8. * DD (s, steps)
-     &          - 2. * h * (L(steps) - L(steps-1)) * dys_dy(s,steps) 
+     &          - 2. * h * (L(steps) - L(steps-1)) * dy(steps)
      &          - 4. * h*h * (dQ_dy (s,steps,y)
      &                        + dR_dy (s,steps) 
      &                        + dS_dy (s,steps,y))
@@ -993,22 +1019,19 @@ C Thomas algorithm - solves tridiagonal matrices
 C ***********************************************************************
 
 
-      SUBROUTINE interpolate_steps (j,v,h,z)
+      SUBROUTINE interpolate_steps (j,v,h,z,interp_lo,interp_hi)
       USE MethaneConstants
       IMPLICIT NONE
-      INTEGER j,upper,lower,a,i
+      INTEGER j,i,upper,lower
+      INTEGER interp_lo(51),interp_hi(51)
       REAL v(51),oldv(51),h,z(51)
       
       DO i = 1,j
         oldv (i) = v (i)
       ENDDO
       DO i = 2,steps-1
-        DO a = j,1,-1
-          IF (z (a) .GE. z (1) + (i-1) * h) upper = a
-        ENDDO
-        DO a = 1,j
-          IF (z (a) .LE. z (1) + (i-1) * h) lower = a
-        ENDDO
+        upper = interp_hi(i)
+        lower = interp_lo(i)
         IF (upper .EQ. lower) then
            v (i) = oldv (upper)
         ELSE
