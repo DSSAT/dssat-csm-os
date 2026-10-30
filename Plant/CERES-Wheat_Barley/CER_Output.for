@@ -2366,7 +2366,7 @@ C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE err
             LABEL(4) = 'CWAM '; VALUE(4) = cwam
             LABEL(5) = 'HWAM '; VALUE(5) = gwam
             LABEL(6) = 'HWAH '; VALUE(6) = gwam * hpc / 100.
-            LABEL(7) = 'BWAH '; VALUE(7) = vwam * hbpc / 100. 
+            LABEL(7) = 'BWAH '; VALUE(7) = vwam * hbpc / 1000. !g/m2
             
             LABEL(8)  = 'HWUM '; VALUE(8) = gwum
             LABEL(9)  = 'H#AM '; VALUE(9) = hnumam
@@ -3011,7 +3011,7 @@ C  FO - 07/16/2021 Added more characters for H#AMS and H#GMS because of GLUE err
               LABEL(4) = 'CWAM '; VALUE(4) = cwam
               LABEL(5) = 'HWAM '; VALUE(5) = gwam
               LABEL(6) = 'HWAH '; VALUE(6) = gwam * hpc / 100.
-              LABEL(7) = 'BWAH '; VALUE(7) = vwam * hbpc / 100. 
+              LABEL(7) = 'BWAH '; VALUE(7) = vwam * hbpc / 1000. !g/m2
             
               LABEL(8)  = 'HWUM '; VALUE(8) = gwum
               LABEL(9)  = 'H#AM '; VALUE(9) = hnumam
